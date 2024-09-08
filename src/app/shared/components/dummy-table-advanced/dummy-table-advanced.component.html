@@ -1,0 +1,38 @@
+<ibm-table-container class="">
+  <ibm-table-toolbar
+    [model]="model"
+    [batchText]="batchText"
+    [size]="size"
+    #toolbar>
+    
+    <ibm-table-toolbar-content>
+      <!-- <ibm-overflow-menu
+        triggerClass="cds--toolbar-action"
+        [customTrigger]="customTrigger"
+        placement="bottom">
+        <ibm-overflow-menu-option>Option 1</ibm-overflow-menu-option>
+        <ibm-overflow-menu-option>Option 2</ibm-overflow-menu-option>
+        <ibm-overflow-menu-option disabled="true">Disabled</ibm-overflow-menu-option>
+        <ibm-overflow-menu-option type="danger">Danger option</ibm-overflow-menu-option>
+      </ibm-overflow-menu> -->
+      <ibm-table-toolbar-search
+        ngDefaultControl
+        [expandable]="false">
+      </ibm-table-toolbar-search>     
+    </ibm-table-toolbar-content>
+  </ibm-table-toolbar>
+  <app-dummy-table-rich
+    [model]="model"
+    [size]="size"
+    [showSelectionColumn]="false"
+    [enableSingleSelect]="false"
+    [striped]="false"
+    [sortable]="true"
+    [skeleton]="false"
+    [stickyHeader]="true"
+    [isDataGrid]="true">
+  </app-dummy-table-rich>
+  <ng-template #customTrigger>
+    <svg ibmIconSettings size="16"></svg>
+  </ng-template>
+</ibm-table-container>

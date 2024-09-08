@@ -1,0 +1,103 @@
+<div class="mb-8" fxHide fxShow.lt-md>
+  <youpez-logo class="cursor-pointer" logoWidth="130px"></youpez-logo>
+</div>
+<h1 class="app-expressive-heading-06 mb-1">Creer un compte</h1>
+<div class="app-body-long-02 mb-8">
+  Vous avez déjà un compte?
+  <a ibmLink routerLink="../signin">Connectez-vous</a>
+</div>
+<form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
+  <div class="app-form">
+    <div class="app-form__item">
+      <ibm-label
+        [helperText]="''"
+        [invalid]="isValid('fullName')"
+        [invalidText]="'Ce champs est obligatoire'">
+        Nom complet
+        <input
+          formControlName="fullName"
+          ibmText
+          size="md"
+          [invalid]="isValid('fullName')"
+          [disabled]="false"
+          theme="dark"
+          [placeholder]="'Votre nom'"
+          [autocomplete]="true">
+      </ibm-label>
+    </div>
+    <div class="app-form__item">
+      <ibm-label
+        [helperText]="''"
+        [invalid]="isValid('email')"
+        [invalidText]="'Email obligatoire'">
+        Email address
+        <input
+          formControlName="email"
+          ibmText
+          size="md"
+          [invalid]="isValid('email')"
+          [disabled]="false"
+          theme="dark"
+          [placeholder]="'Adresse Email'"
+          [autocomplete]="true">
+      </ibm-label>
+    </div>
+    <!-- <div class="app-form__item">
+      <ibm-label
+        [helperText]="''"
+        [invalid]="isValid('company')"
+        [invalidText]="'This field is required'">
+        Company
+        <input
+          formControlName="company"
+          ibmText
+          size="md"
+          [invalid]="isValid('company')"
+          [disabled]="false"
+          theme="light"
+          [placeholder]="'Company'"
+          [autocomplete]="true">
+      </ibm-label>
+    </div> -->
+    <div class="app-form__item">
+      <ibm-label
+        [helperText]="''"
+        [invalid]="isValid('password')"
+        [invalidText]="'Mot de passe obligatoire'">
+        Password
+        <input
+          type="password"
+          formControlName="password"
+          ibmText
+          size="md"
+          [invalid]="isValid('password')"
+          [disabled]="false"
+          theme="dark"
+          [placeholder]="'Mot de passe'"
+          [autocomplete]="true">
+      </ibm-label>
+    </div>
+
+    <div class="app-form__item app-form__item--opts">
+      <div class="flex justify-between items-center">
+        <ibm-checkbox formControlName="condition">
+          J'ai lue et acceptes
+          <a class="app-link">les termes et conditions</a>
+        </ibm-checkbox>
+      </div>
+    </div>
+    <div class="app-form__submit">
+      <!--  -->
+      <button type="submit" cdsButton size="md" class="app-ibm-btn-full" [disabled]="waittingResponse || formGroup.invalid" ibmButton="primary" >
+        <ibm-loading *ngIf="waittingResponse; else noWaitingResponse"></ibm-loading>
+        <ng-template #noWaitingResponse>
+          <span class="btn-text">Creer un compte</span>
+          <youpez-ibm-icon iconClass="cds--btn__icon" iconName="arrowRight" iconSize="20" ></youpez-ibm-icon >
+
+        </ng-template>
+      </button>
+    </div>
+  </div>
+</form>
+
+
