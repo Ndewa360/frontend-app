@@ -7,6 +7,7 @@ import {YoupezModule} from "../../@youpez/youpez.module"
 // import { DummyTableAdvancedComponent } from './components/dummy-table-advanced/dummy-table-advanced.component'
 import { NgxsModule } from '@ngxs/store';
 import { UserProfileState, UserState, PropertyState, RoomState, LocataireState, AuthTokenState } from './store';
+import { NgxsRouterPluginModule } from '@ngxs/router-plugin';
 import { RouterModule } from '@angular/router';
 import { NgxsStoragePluginModule, StorageOption } from '@ngxs/storage-plugin';
 import { NoDataComponent } from './components/no-data/no-data.component';
@@ -30,7 +31,11 @@ import { ToastrModule } from 'ngx-toastr';
         key:"auth_token",
         storage:StorageOption.SessionStorage
       }),
-      ToastrModule.forRoot(),
+      NgxsRouterPluginModule.forRoot(),
+      ToastrModule.forRoot({
+        progressBar:true,
+        closeButton:true
+      }),
   ],
   declarations: [
     // DummyTableRichComponent,
@@ -45,6 +50,7 @@ import { ToastrModule } from 'ngx-toastr';
     // DummyTablePaginationComponent,
     // DummyTableExpansionComponent,
     // DummyTableAdvancedComponent,
+    NgxsRouterPluginModule,
     NoDataComponent,
     NgxsModule,
     RouterModule,

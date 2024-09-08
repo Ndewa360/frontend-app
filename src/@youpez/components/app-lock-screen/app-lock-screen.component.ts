@@ -1,4 +1,7 @@
 import {Component, ElementRef, EventEmitter, HostListener, OnInit, Output, ViewChild} from '@angular/core'
+import { Select } from '@ngxs/store'
+import { Observable } from 'rxjs'
+import { UserProfileModel, UserProfileState } from 'src/app/shared/store'
 
 @Component({
   selector: 'youpez-lock-screen',
@@ -7,6 +10,7 @@ import {Component, ElementRef, EventEmitter, HostListener, OnInit, Output, ViewC
 })
 export class AppLockScreenComponent implements OnInit {
   @Output() close = new EventEmitter()
+  @Select(UserProfileState.selectStateUserProfile) userProfil$:Observable<UserProfileModel>
 
   public loading: boolean = true
 

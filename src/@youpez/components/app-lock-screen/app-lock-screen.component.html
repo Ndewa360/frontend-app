@@ -5,16 +5,16 @@
       <div class="mb-6">
         <youpez-logo class="cursor-pointer" logoWidth="140px"></youpez-logo>
       </div>
-      <div class="app-productive-heading-03 font-bold">Unlock your session</div>
-      <div class="app-body-short-01 mb-4">Your session is locked due to inactivity</div>
+      <div class="app-productive-heading-03 font-bold">Deverouillez votre session</div>
+      <div class="app-body-short-01 mb-4">Votre session à été vérrouillez dù à votre inactivité</div>
       <div class="flex items-center py-3">
         <div class="pr-2">
-          <img class="w-10 h-10 rounded-full" src="assets/img/avatar/avatar2.jpg"/>
+          <img class="w-10 h-10 rounded-full" src="assets/img/avatar/avatarinit.png"/>
         </div>
         <div class="mr-4">
           <div>
-            <div class="app-helper-text-01">Signed in as</div>
-            <div class="app-expressive-heading-02">David Robson</div>
+            <div class="app-helper-text-01">Connecté en tant que </div>
+            <div class="app-expressive-heading-02" *ngIf="userProfil$ | async as userProfil">{{userProfil.name}}</div>
           </div>
         </div>
       </div>
@@ -38,7 +38,7 @@
         </button>
       </div>
       <div class="pt-5 text-center">
-        <a href="/auth/modern/signin" class="app-link">I am not David Robson</a>
+        <a href="/auth/signin" class="app-link" *ngIf="userProfil$ | async as userProfil">Je ne suis pas {{userProfil.name}}</a>
       </div>
     </div>
   </div>

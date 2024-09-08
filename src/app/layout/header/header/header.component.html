@@ -93,12 +93,12 @@
       <div class="app-list app-list--hover app-list--select app-list--no-border app-list--p">
         <div class="app-list__item app-list__item--no-p" ngbDropdownItem>
           <div class="px-2">
-            <img class="w-10 h-10 rounded-full" src="assets/img/avatar/avatar2.jpg"/>
+            <img class="w-10 h-10 rounded-full" src="assets/img/avatar/avatarinit.png"/>
           </div>
           <div class="app-list__item__content mr-4">
             <div>
               <div class="app-helper-text-01">Signed in as</div>
-              <div class="app-expressive-heading-02">David Robson</div>
+              <div class="app-expressive-heading-02" *ngIf="userProfil$ | async as userProfil">{{userProfil.name}}</div>
             </div>
           </div>
         </div>
@@ -119,7 +119,7 @@
           </div>
         </div>
         <div class="app-list__divider"></div>
-        <div class="app-list__item mb-2" ngbDropdownItem routerLink="/auth/modern/signin">
+        <div class="app-list__item mb-2" ngbDropdownItem (click)="logout()">
           <div class="app-list__item__content">
             Logout
           </div>

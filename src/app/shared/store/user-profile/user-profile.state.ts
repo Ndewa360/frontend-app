@@ -9,6 +9,7 @@ import { AuthService } from "./auth.service";
 import { tap,catchError } from "rxjs/operators";
 import { NotificationService } from "carbon-components-angular";
 import { AuthTokenAction } from "../auth-token";
+import { Navigate } from '@ngxs/router-plugin';
 import { ToastrService } from "ngx-toastr";
 
 export class UserProfileStateModel {
@@ -60,25 +61,13 @@ export class UserProfileState{
         ctx.patchState({
             loadingUserProfile: true
         })
-
-        console.log("Login ")
-
         return this._authService.login(email,password).pipe(
             tap(
                 (result)=>{
-                    console.log("Result ",result)
                     ctx.patchState({
                         loadingUserProfile:false,
                         userProfile:result.data.user
-                    })
-                    // this.notificationService.showToast({
-                    //     type: "success",
-                    //     title: "Ndiye",
-                    //     subtitle: "Bienvenue sur Ndiye! ",
-                    //     target: "#notificationHolder",
-                    //     message: "message",
-                    //     duration: 2000,
-                    //   })        
+                    })     
                         ctx.dispatch(new AuthTokenAction.SetAuthToken(result.data.access_token));          
                     this._toastrService.success(`Bienvenue sur Ndiye! `, 'Ndiye');
                 }
@@ -104,6 +93,14 @@ export class UserProfileState{
                 
             })
         )
+    }
+
+    @Action(UserProfileAction.LogoutUserProfile)
+    logoutUserProfileState(ctx:StateContext<UserProfileStateModel>)
+    {
+        ctx.dispatch(new Navigate(['/auth/signin']))
+        this._toastrService.success("Deconnexion avec success! ","Ndiye")
+        ctx.dispatch(new AuthTokenAction.SetAuthToken(null));  
     }
 
     @Action(UserProfileAction.SignupSimpleUserProfile)

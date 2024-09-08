@@ -1,4 +1,7 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core'
+import { Select, Store } from '@ngxs/store'
+import { Observable } from 'rxjs'
+import { UserProfileState, UserProfileModel, UserProfileAction } from 'src/app/shared/store'
 
 @Component({
   selector: 'app-layout-mini-sidebar',
@@ -8,6 +11,7 @@ import {Component, EventEmitter, OnInit, Output} from '@angular/core'
 export class LayoutMiniSidebarComponent implements OnInit {
 
   @Output() itemClick: EventEmitter<any> = new EventEmitter()
+  @Select(UserProfileState.selectStateUserProfile) userProfile$:Observable<UserProfileModel>
 
   public notifications = [
     // {
@@ -19,7 +23,7 @@ export class LayoutMiniSidebarComponent implements OnInit {
   ]
   public messages = [
     // {
-    //   avatar: 'assets/img/avatar/avatar2.jpg',
+    //   avatar: 'assets/img/avatar/avatarinit.png',
     //   name: 'John Belinda',
     //   text: 'Cannot start service web: error while creating mount source path ',
     //   date: '5 mins ago',
@@ -29,7 +33,9 @@ export class LayoutMiniSidebarComponent implements OnInit {
 
   public loading: boolean = false
 
-  constructor() {
+  constructor(
+    private _store:Store
+  ) {
   }
 
   ngOnInit(): void {
@@ -46,4 +52,8 @@ export class LayoutMiniSidebarComponent implements OnInit {
     }, 500)
   }
 
+  logout()
+  {
+    this._store.dispatch(new UserProfileAction.LogoutUserProfile(true))
+  }
 }

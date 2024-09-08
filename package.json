@@ -36,6 +36,7 @@
     "@carbon/themes": "^11.39.0",
     "@ng-bootstrap/ng-bootstrap": "^15.1.2",
     "@ngneat/tailwind": "^7.0.3",
+    "@ngxs/router-plugin": "3.8",
     "@ngxs/storage-plugin": "^3.8.2",
     "@ngxs/store": "^3.8.2",
     "angular-bem": "^2.2.0",

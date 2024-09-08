@@ -24,7 +24,6 @@ export class AuthTokenInterceptor implements HttpInterceptor {
     .pipe(
         take(1),
         mergeMap((token)=> {
-          console.log("Token ",token)
             if(token) return next.handle(req.clone({
                 setHeaders: { Authorization: `Bearer ${token}`}
               }))
@@ -33,21 +32,13 @@ export class AuthTokenInterceptor implements HttpInterceptor {
     )
     .pipe(
       catchError((err: any) => {
-        console.log("Error ",err)
         if (err instanceof HttpErrorResponse) {
           // Handle HTTP errors
           if (err.status === 401) {
             this._router.navigate(["/auth/login"]);
             this._store.dispatch(new AuthTokenAction.SetAuthToken(null));
             this._toastrService.error("Session expiré", "Oups! Vous devez vous reconnecter vous actualiser votre session");
-            // this.notificationService.showToast({
-            //   type: "error",
-            //   title: "Session expiré",
-            //   subtitle: "Oups! Vous devez vous reconnecter vous actualiser votre session",
-            //   target: "#notificationHolder",
-            //   message: "message",
-            //   duration: 2000,
-            // })
+
           } else {
             // Handle other HTTP error codes
             console.error('HTTP error:', err);
