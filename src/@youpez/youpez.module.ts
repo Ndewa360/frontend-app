@@ -79,12 +79,16 @@ import {SafePipe} from "./pipes/safe"
 import {AppLogoComponent} from './components/app-logo/app-logo.component'
 import {AppBreadcrumbComponent} from './components/app-breadcrumb/app-breadcrumb.component'
 import { IbmIconModule } from './components/ibm-icon/ibm-icon.module'
+import { MarkdownModule } from 'ngx-markdown';
+import {NgbDropdownModule, NgbTooltipModule} from '@ng-bootstrap/ng-bootstrap'
 
 
 
 
-const MainModules = [
+const MainModules = [  
   RouterModule,
+  NgbDropdownModule,
+  NgbTooltipModule,
   ResizableModule,
   // BemModule.config({
   //   separators: ['__', '--', '-'], // el / mod / val separators
@@ -98,6 +102,8 @@ const MainModules = [
   FormsModule,
   ReactiveFormsModule,
   MatDialogModule,
+
+  
 ]
 
 const CarbonModules = [
@@ -171,6 +177,7 @@ const Pipes = [
     ...MainModules,
     ...CarbonModules,
     NgScrollbarModule,
+    MarkdownModule.forRoot(),
 
   ],
   declarations: [
@@ -183,6 +190,7 @@ const Pipes = [
     ...CarbonModules,
     ...Pipes,
     NgScrollbarModule,
+    MarkdownModule
   ],
   
 })

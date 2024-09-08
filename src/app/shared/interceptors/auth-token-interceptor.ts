@@ -4,8 +4,8 @@ import { AuthTokenAction, AuthTokenState } from "../store";
 import { Store } from "@ngxs/store";
 import { catchError, map, mergeMap, switchMap, take } from "rxjs/operators";
 import { Router } from "@angular/router";
-import { NotificationService } from "carbon-components-angular";
 import { of, throwError } from "rxjs";
+import { ToastrService } from "ngx-toastr";
 
 
 @Injectable()
@@ -14,7 +14,7 @@ export class AuthTokenInterceptor implements HttpInterceptor {
   constructor(
     private _store:Store,
     private _router:Router,
-    private notificationService: NotificationService,
+    private _toastrService:ToastrService,
 
   ) {}
 
@@ -39,14 +39,15 @@ export class AuthTokenInterceptor implements HttpInterceptor {
           if (err.status === 401) {
             this._router.navigate(["/auth/login"]);
             this._store.dispatch(new AuthTokenAction.SetAuthToken(null));
-            this.notificationService.showToast({
-              type: "error",
-              title: "Session expiré",
-              subtitle: "Oups! Vous devez vous reconnecter vous actualiser votre session",
-              target: "#notificationHolder",
-              message: "message",
-              duration: 2000,
-            })
+            this._toastrService.error("Session expiré", "Oups! Vous devez vous reconnecter vous actualiser votre session");
+            // this.notificationService.showToast({
+            //   type: "error",
+            //   title: "Session expiré",
+            //   subtitle: "Oups! Vous devez vous reconnecter vous actualiser votre session",
+            //   target: "#notificationHolder",
+            //   message: "message",
+            //   duration: 2000,
+            // })
           } else {
             // Handle other HTTP error codes
             console.error('HTTP error:', err);

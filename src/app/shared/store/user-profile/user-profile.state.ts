@@ -9,6 +9,7 @@ import { AuthService } from "./auth.service";
 import { tap,catchError } from "rxjs/operators";
 import { NotificationService } from "carbon-components-angular";
 import { AuthTokenAction } from "../auth-token";
+import { ToastrService } from "ngx-toastr";
 
 export class UserProfileStateModel {
     userProfile:UserProfileModel;
@@ -29,7 +30,7 @@ export class UserProfileStateModel {
 export class UserProfileState{
     constructor(
         private _userProfilesService:UserProfileService,
-        // private _toastrService:ToastrService,
+        private _toastrService:ToastrService,
         private _authService:AuthService,
             //   private notificationService: NotificationService,
     ){}
@@ -79,41 +80,20 @@ export class UserProfileState{
                     //     duration: 2000,
                     //   })        
                         ctx.dispatch(new AuthTokenAction.SetAuthToken(result.data.access_token));          
-                    // this._toastrService.success(`Profil utilisateur modifié avec success`, 'UserProfile');
+                    this._toastrService.success(`Bienvenue sur Ndiye! `, 'Ndiye');
                 }
             ),
             catchError((error) => {
                 switch(error.status)
                 {
                     case 401:
-                        // this.notificationService.showToast({
-                        //     type: "error",
-                        //     title: "Connexion",
-                        //     subtitle: "Email ou mot de passe incorrect",
-                        //     target: "#notificationHolder",
-                        //     message: "message",
-                        //     duration: 10000,
-                        //   })
+                        this._toastrService.error(`Email ou mot de passe incorrect! `, 'Ndiye');
                         break;
-                        case 406:
-                            // this.notificationService.showToast({
-                            //     type: "warning",
-                            //     title: "Connexion",
-                            //     subtitle: "Compte innactivé! Veuillez valider ce compte a partir du lien fourni par mail",
-                            //     target: "#notificationHolder",
-                            //     message: "message",
-                            //     duration: 10000,
-                            //   })
-                            break;
+                    case 406:
+                        this._toastrService.warning(`Compte innactivé! Veuillez valider ce compte a partir du lien fourni par mail! `, 'Ndiye');
+                        break;
                     default:
-                        // this.notificationService.showToast({
-                        //     type: "error",
-                        //     title: "Connexion",
-                        //     subtitle: "Une erreur c'est produite ",
-                        //     target: "#notificationHolder",
-                        //     message: "message",
-                        //     duration: 20000,
-                        //   })
+                        this._toastrService.error(`Une erreur c'est produite! `, 'Ndiye');
                 }
                 
                 // this._toastrService.error(error?.error?.message, 'Erreur');
@@ -141,16 +121,7 @@ export class UserProfileState{
                         loadingUserProfile:false,
                         userProfile:result.data
                     })
-                    // this.notificationService.showToast({
-                    //     type: "success",
-                    //     title: "Ndiye",
-                    //     subtitle: "Compte créé avec success! ",
-                    //     target: "#notificationHolder",
-                    //     message: "message",
-                    //     duration: 2000,
-                    //   })       
-                      
-                    // this._toastrService.success(`Profil utilisateur modifié avec success`, 'UserProfile');
+                    this._toastrService.success("Compte créé avec success! ","Ndiye")
                 }
             ),
             catchError((error) => {
@@ -160,34 +131,13 @@ export class UserProfileState{
                 switch(error.status)
                 {
                     case 409:
-                        // this.notificationService.showToast({
-                        //     type: "error",
-                        //     title: "Création de compte",
-                        //     subtitle: "Ce compete existe déjà",
-                        //     target: "#notificationHolder",
-                        //     message: "message",
-                        //     duration: 2000,
-                        //   })
-                          break;
+                        this._toastrService.error("Ce compete existe déjà! ","Ndiye");
+                        break;
                     case 400:
-                        // this.notificationService.showToast({
-                        //     type: "error",
-                        //     title: "Création de compte",
-                        //     subtitle: "Format de mot de passe incorrect",
-                        //     target: "#notificationHolder",
-                        //     message: "message",
-                        //     duration: 2000,
-                        //     })
-                            break;
+                        this._toastrService.error("Format de mot de passe incorrect! ","Ndiye");
+                        break;
                     default:
-                        // this.notificationService.showToast({
-                        //     type: "error",
-                        //     title: "Création de compte",
-                        //     subtitle: "Une erreur c'est produite ",
-                        //     target: "#notificationHolder",
-                        //     message: "message",
-                        //     duration: 2000,
-                        //   })
+                        this._toastrService.error("Une erreur c'est produite! ","Ndiye");
                 }
                 
                 return throwError(error);

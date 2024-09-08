@@ -12,7 +12,8 @@ import { IconModule, ThemeModule, UIShellModule } from 'carbon-components-angula
 import { SharedModule } from './shared/shared.module';
 import { NgxsModule } from '@ngxs/store';
 import { environment } from 'src/environments/environment';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { AuthTokenInterceptor } from './shared/interceptors';
 
 // Components
 
@@ -35,6 +36,9 @@ import { HttpClientModule } from '@angular/common/http';
 			  developmentMode: !environment.production
 			}),
 	  
+	],
+	providers: [
+		{ provide: HTTP_INTERCEPTORS, useClass: AuthTokenInterceptor, multi: true },
 	],
 	bootstrap: [AppComponent]
 })

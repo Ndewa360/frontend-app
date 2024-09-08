@@ -5,27 +5,23 @@ import { Store } from '@ngxs/store';
 import { AuthTokenState } from '../store/auth-token';
 import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-import { NotificationService } from 'carbon-components-angular';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthGuard implements CanActivate {
               
-  constructor(private notificationService: NotificationService,private _store:Store, private router: Router) {}
+  constructor(
+    // private notificationService: NotificationService,
+    private _toastrService:ToastrService,
+    private _store:Store, private router: Router) {}
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot){
     return this._store.select(AuthTokenState.selectStateAuthToken).pipe(
       map((authToken)=>{
         if(authToken) return true;
-        this.notificationService.showToast({
-          type: "warning",
-          title: "Ndiye",
-          subtitle: "Veuillez vous authentifier",
-          target: "#notificationHolder",
-          message: "message",
-          duration: 4000,
-        })   
+        this._toastrService.warning("Veuillez vous authentifier", "Ndiye");
         return this.router.parseUrl(`/auth/signin?returnUrl=${state.url}`)
       })
     )    

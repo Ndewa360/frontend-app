@@ -9,7 +9,9 @@ import { InjectionToken } from '@angular/core';
 import { WindowRefService } from './window-ref.service'
 
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class AppBreakpointService {
 
   private activeMediaQueryWatcher: Subscription
