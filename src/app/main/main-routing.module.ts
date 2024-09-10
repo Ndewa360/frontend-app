@@ -10,6 +10,12 @@ import {SupportComponent} from "./application/support/support.component"
 import {ChangelogComponent} from "./application/changelog/changelog.component"
 import {WelcomeComponent} from "./welcome/welcome.component"
 import {GettingStartedComponent} from "./application/getting-started/getting-started.component"
+import { LoadingPropertyDataResolver } from '../shared/resolvers'
+import { PropertyFinanceComponent } from './properties/components/property-finance/property-finance.component'
+import { PropertyLocataireComponent } from './properties/components/property-locataire/property-locataire.component'
+import { PropertyRoomComponent } from './properties/components/property-room/property-room.component'
+import { ListPropertyComponent } from './properties/list-property/list-property.component'
+import { ShowPropertyComponent } from './properties/show-property/show-property.component'
 
 
 
@@ -63,69 +69,69 @@ const routes: Routes = [
           },
         ]
       },
-      // {
-      //   path: 'properties',
-      //   data: {
-      //     breadcrumb: 'Biens'
-      //   },  
-      //   children: [      
-      //     {
-      //       path: 'list',
-      //       component: ListPropertyComponent,
-      //       // data: {
-      //       //   breadcrumb: 'Getting started'
-      //       // },
-      //     },
-      //     {
-      //       path: ':id',
-      //       component: ShowPropertyComponent,
-      //       resolve:{
-      //         "propertyResolver":LoadingPropertyDataResolver
-      //       },
-      //       // pathMatch:'full',
-      //       children:[
-      //         {
-      //           path: 'rooms',
-      //           component: PropertyRoomComponent,
-      //           data: {
-      //             breadcrumb: 'chambres'
-      //           },
-      //           children:[
-      //             {
-      //               path:'idRoom',
-      //               component:ShowRoomComponent
-      //             }
-      //           ]
-      //         },
-      //         {
-      //           path: 'finances',
-      //           component: PropertyFinanceComponent,
-      //           data: {
-      //             breadcrumb: 'finances'
-      //           },
-      //         },
-      //         {
-      //           path: 'tenants',
-      //           component: PropertyLocataireComponent,
-      //           // resolve:{
-      //           //   "locataireResolver":LoadingLocataireResolver
-      //           // },
-      //           data: {
-      //             breadcrumb: 'locataires'
-      //           },
-      //         },
-      //         {
-      //           path: '**',
-      //           redirectTo: 'rooms'
-      //         },
-      //       ]
+      {
+        path: 'properties',
+        data: {
+          breadcrumb: 'Biens'
+        },  
+        children: [      
+          {
+            path: 'list',
+            component: ListPropertyComponent,
+            // data: {
+            //   breadcrumb: 'Getting started'
+            // },
+          },
+          {
+            path: ':id',
+            component: ShowPropertyComponent,
+            resolve:{
+              "propertyResolver":LoadingPropertyDataResolver
+            },
+            // pathMatch:'full',
+            children:[
+              {
+                path: 'rooms',
+                component: PropertyRoomComponent,
+                data: {
+                  breadcrumb: 'chambres'
+                },
+                // children:[
+                //   {
+                //     path:'idRoom',
+                //     component:ShowRoomComponent
+                //   }
+                // ]
+              },
+              {
+                path: 'finances',
+                component: PropertyFinanceComponent,
+                data: {
+                  breadcrumb: 'finances'
+                },
+              },
+              {
+                path: 'tenants',
+                component: PropertyLocataireComponent,
+                // resolve:{
+                //   "locataireResolver":LoadingLocataireResolver
+                // },
+                data: {
+                  breadcrumb: 'locataires'
+                },
+              },
+              {
+                path: '**',
+                redirectTo: 'rooms'
+              },
+            ]
     
-      //       // data: {
-      //       //   breadcrumb: 'Getting started'
-      //       // },
-      //     },
-      //   ]
-      // },
+            // data: {
+            //   breadcrumb: 'Getting started'
+            // },
+          },
+        ]
+      },
       {
         path: 'welcome',
         component: WelcomeComponent,

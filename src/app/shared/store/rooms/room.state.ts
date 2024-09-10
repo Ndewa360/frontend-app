@@ -146,6 +146,7 @@ export class RoomState{
         const state = ctx.getState();
         let index = state.rooms.findIndex((u)=>u.property==propertyID);
 
+        console.log("Index ", index)
         if(index>-1) return of(true);
         
         ctx.patchState({

@@ -42,6 +42,11 @@ import ArrowDown24 from '@carbon/icons/es/arrow--down/24';
 import ArrowDown20 from '@carbon/icons/es/arrow--down/20';
 import ArrowDown16 from '@carbon/icons/es/arrow--down/16';
 
+import Error32 from '@carbon/icons/es/error/32';
+import Error24 from '@carbon/icons/es/error/24';
+import Error20 from '@carbon/icons/es/error/20';
+import Error16 from '@carbon/icons/es/error/16';
+
 import Home32 from '@carbon/icons/es/home/32';
 import Home24 from '@carbon/icons/es/home/24';
 import Home20 from '@carbon/icons/es/home/20';
@@ -127,7 +132,56 @@ import Tag24 from '@carbon/icons/es/tag/24';
 import Tag20 from '@carbon/icons/es/tag/20';
 import Tag16 from '@carbon/icons/es/tag/16';
 
+import Add32 from '@carbon/icons/es/add/32';
+import Add24 from '@carbon/icons/es/add/24';
+import Add20 from '@carbon/icons/es/add/20';
+import Add16 from '@carbon/icons/es/add/16';
 
+import Renew32 from '@carbon/icons/es/renew/32';
+import Renew24 from '@carbon/icons/es/renew/24';
+import Renew20 from '@carbon/icons/es/renew/20';
+import Renew16 from '@carbon/icons/es/renew/16';
+
+import Settings32 from '@carbon/icons/es/settings/32';
+import Settings24 from '@carbon/icons/es/settings/24';
+import Settings20 from '@carbon/icons/es/settings/20';
+import Settings16 from '@carbon/icons/es/settings/16';
+
+import TableOfContents32 from '@carbon/icons/es/table-of-contents/32';
+import TableOfContents24 from '@carbon/icons/es/table-of-contents/24';
+import TableOfContents20 from '@carbon/icons/es/table-of-contents/20';
+import TableOfContents16 from '@carbon/icons/es/table-of-contents/16';
+
+import Edit32 from '@carbon/icons/es/edit/32';
+import Edit24 from '@carbon/icons/es/edit/24';
+import Edit20 from '@carbon/icons/es/edit/20';
+import Edit16 from '@carbon/icons/es/edit/16';
+
+import TrashCan32 from '@carbon/icons/es/trash-can/32';
+import TrashCan24 from '@carbon/icons/es/trash-can/24';
+import TrashCan20 from '@carbon/icons/es/trash-can/20';
+import TrashCan16 from '@carbon/icons/es/trash-can/16';
+
+import View32 from '@carbon/icons/es/view/32';
+import View24 from '@carbon/icons/es/view/24';
+import View20 from '@carbon/icons/es/view/20';
+import View16 from '@carbon/icons/es/view/16';
+
+
+import Money32 from '@carbon/icons/es/money/32';
+import Money24 from '@carbon/icons/es/money/24';
+import Money20 from '@carbon/icons/es/money/20';
+import Money16 from '@carbon/icons/es/money/16';
+
+import Location32 from '@carbon/icons/es/location/32';
+import Location24 from '@carbon/icons/es/location/24';
+import Location20 from '@carbon/icons/es/location/20';
+import Location16 from '@carbon/icons/es/location/16';
+
+import Close32 from '@carbon/icons/es/close/32';
+import Close24 from '@carbon/icons/es/close/24';
+import Close20 from '@carbon/icons/es/close/20';
+import Close16 from '@carbon/icons/es/close/16';
 
 
 
@@ -162,10 +216,65 @@ export class IbmIconModule {
 			CloudApp20,
 			CloudApp16,
 
+      TrashCan32,
+			TrashCan24,
+			TrashCan20,
+			TrashCan16,
+
+      View32,
+			View24,
+			View20,
+			View16,
+
+      Edit32,
+			Edit24,
+			Edit20,
+			Edit16,
+
+      TableOfContents32,
+			TableOfContents24,
+			TableOfContents20,
+			TableOfContents16,
+
+      Location32,
+			Location24,
+			Location20,
+			Location16,
+
+      Money32,
+			Money24,
+			Money20,
+			Money16,
+
+      Close32,
+			Close24,
+			Close20,
+			Close16,
+
+      Error32,
+			Error24,
+			Error20,
+			Error16,
+
+      Settings32,
+			Settings24,
+			Settings20,
+			Settings16,
+
       Activity32,
 			Activity24,
 			Activity20,
 			Activity16,
+
+      Renew32,
+			Renew24,
+			Renew20,
+			Renew16,
+
+      Add32,
+			Add24,
+			Add20,
+			Add16,
 
       Tag32,
 			Tag24,

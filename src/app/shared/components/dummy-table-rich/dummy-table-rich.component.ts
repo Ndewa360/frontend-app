@@ -1,10 +1,10 @@
 import {Component, Input, OnInit, SimpleChanges, TemplateRef, ViewChild} from '@angular/core'
-import {TableItem, TableModel,TableHeaderItem} from "carbon-components-angular"
+import {TableItem, TableModel,TableHeaderItem, TableRowSize} from "carbon-components-angular"
 import {getDummyModel} from "../../../../@youpez/data/dummy"
 
 class CustomHeaderItem extends TableHeaderItem {
   // used for custom sorting
-  compare(one: TableItem, two: TableItem) {
+  override compare(one: TableItem, two: TableItem) {
     const stringOne = (one.data.name || one.data.surname || one.data).toLowerCase()
     const stringTwo = (two.data.name || two.data.surname || two.data).toLowerCase()
 
@@ -36,7 +36,7 @@ function sort(model, index: number) {
 export class DummyTableRichComponent implements OnInit {
 
   @Input() model = new TableModel()
-  @Input() size = "md"
+  @Input() size:TableRowSize = "md"
   @Input() showSelectionColumn = true
   @Input() enableSingleSelect = false
   @Input() striped = false
@@ -80,9 +80,9 @@ export class DummyTableRichComponent implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.sortable) {
+    if (changes['sortable']) {
       for (let column of this.model.header) {
-        column.sortable = changes.sortable.currentValue
+        column.sortable = changes['sortable'].currentValue
       }
     }
   }

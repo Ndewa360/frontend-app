@@ -28,6 +28,7 @@
 							"src/assets"
 						],
 						"styles": [
+							"src/styles.scss",
 							{
 								"input": "src/@youpez/styles/scss/theme/app.carbon.light.scss",
 								"bundleName": "theme-light",
@@ -38,12 +39,11 @@
 								"bundleName": "theme-dark",
 								"inject": false
 							  },
-							// "@angular/material/prebuilt-themes/pink-bluegrey.css",
+							"@angular/material/prebuilt-themes/pink-bluegrey.css",
 							"src/@youpez/styles/scss/theme/app.scss",
 							"node_modules/ngx-toastr/toastr.css",
 							"src/app/shared/styles/app.themes.scss",
-							"src/assets/tailwind/tailwind.css",
-							"src/styles.scss"
+							"src/assets/tailwind/tailwind.css"
 						],
 						"scripts": [],
 						"vendorChunk": true,

@@ -1,0 +1,221 @@
+<div fxFill fxLayout="column">
+    <youpez-header>
+      <youpez-header-title>
+        {{getTitle()}}
+      </youpez-header-title>
+      <youpez-header-tools>
+        <button ibmButton="primary" size="sm" (click)="onCreate()">
+          Ajouter
+          <youpez-ibm-icon iconClass="cds--btn__icon" iconName="add" iconSize="20"></youpez-ibm-icon>
+        </button>
+      </youpez-header-tools>
+    </youpez-header>
+    <div fxFlex class="relative">
+      <youpez-sidenav-container panel="solid">
+        <youpez-sidenav
+          [breakpoint]="'md'"
+          [direction]="'left'"
+          [opened]="leftSidebarVisibility"
+          (visibleChange)="leftSidebarVisibility=$event"
+          [hoverAble]="true"
+          [mode]="'side'"
+          [toggleableBtn]="true"
+          [size]="'sideBar1'">
+          <div fxFill fxLayout="column" class="app-bg-container">
+            <div class="app-border-b flex items-center px-4 py-3">
+              <div class="pr-2">
+                <div class="app-symbol">
+                  <div class="app-symbol__label w-10 h-10 rounded-full app-bg-info-lt-40 font-bold app-text-contrast">
+                    D
+                  </div>
+                </div>
+              </div>
+              <div class="mr-4">
+                <div *ngIf="loadingProperty==false else elseNoLoadingPropertyName">
+                  <div class="app-expressive-heading-02">{{propertyFound.name}}</div>
+                  <div class="app-helper-text-01">#{{propertyFound.code}}</div>
+                </div>
+                <ng-template #elseNoLoadingPropertyName>
+                    <div>
+                        <ibm-skeleton-text  [lines]="2" [minLineWidth]="70" [maxLineWidth]="220">
+                        </ibm-skeleton-text>
+                    </div>
+                </ng-template>
+              </div>
+            </div>
+            <ng-container *ngIf="loadingProperty==false else elseNoLoadingPropertyDetail">
+                <div fxFlex class="relative" >
+                    <div class="app-a-box app-scrollbar-fix">
+                      <ng-scrollbar>
+                        <div class="mt-2">
+                          <div class="app-list-header-pill">Details</div>
+                          <div class="app-list-pill">
+                            <div class="app-list-pill__item">
+                              <div class="app-list-pill__item__inner font-bold" routerLink="rooms" routerLinkActive="app-list-pill__item__inner--active">
+                                <youpez-ibm-icon iconSize="20" iconName="home" class="mr-2"></youpez-ibm-icon>
+                                Chambres
+                              </div>
+                            </div>
+                          </div>
+                          <div class="app-list-pill">
+                            <div class="app-list-pill__item">
+                              <div class="app-list-pill__item__inner font-bold" routerLink="finances"  routerLinkActive="app-list-pill__item__inner--active">
+                                <youpez-ibm-icon iconSize="20" iconName="money" class="mr-2"></youpez-ibm-icon>
+                                Finances
+                              </div>
+                            </div>
+                          </div>
+                          <div class="app-list-pill">
+                            <div class="app-list-pill__item">
+                              <div class="app-list-pill__item__inner font-bold" routerLink="tenants"  routerLinkActive="app-list-pill__item__inner--active">
+                                <youpez-ibm-icon iconSize="20" iconName="folderShared" class="mr-2"></youpez-ibm-icon>
+                                Locataires
+                              </div>
+                            </div>
+                          </div>
+                         </div>
+                        <div class="mt-2 other-detail">
+                          <div class="app-list-header-pill">AUTRES</div>
+                          <div class="app-list-pill">
+                            <div class="app-list-pill__item">
+                              <div class="app-list-pill__item__inner">
+                                  <youpez-ibm-icon class="location-icon mr-2"  iconName="location" iconSize="16"></youpez-ibm-icon>
+                                  {{propertyFound.location}}
+                              </div>
+                            </div>
+                          </div>
+                          <div class="app-list-pill">
+                            <div class="app-list-pill__item">
+                              <div class="app-list-pill__item__inner">
+                                <youpez-ibm-icon iconSize="20" iconName="document" class="mr-2"></youpez-ibm-icon>
+                                {{propertyFound.description}} 
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </ng-scrollbar>
+                    </div>
+                  </div>
+                  <div class="px-2 py-4 flex justify-end app-border-t footer-btn-action">
+                      <button   ibmButton="primary" size="sm" class="mr-1">
+                          <span class="btn-text mr-1">Modifier</span>
+                          <youpez-ibm-icon iconSize="20" iconName="edit" class="text-white"></youpez-ibm-icon>
+                      </button>
+                      <button ibmButton="danger" size="sm" [disabled]="waittingResponseDeleteProperty">
+                        <ibm-loading *ngIf="waittingResponseDeleteProperty; else noWaittingResponseDeleteProperty"></ibm-loading>
+                        <ng-template #noWaittingResponseDeleteProperty>
+                          <span class="btn-text mr-1">Supprimer</span>
+                          <youpez-ibm-icon iconSize="20" iconName="trashCan" class="text-white"></youpez-ibm-icon>
+                        </ng-template>
+                      </button>
+                  </div>
+            </ng-container>
+            <ng-template #elseNoLoadingPropertyDetail>
+                <div>
+                    <ibm-skeleton-text  [lines]="7" [minLineWidth]="70" [maxLineWidth]="220">
+                    </ibm-skeleton-text>
+                </div>
+            </ng-template>            
+        </div>
+        </youpez-sidenav>
+  
+        <youpez-sidenav-container panel="solid">
+          <youpez-sidenav
+            [breakpoint]="'md'"
+            [direction]="'right'"
+            [opened]="isDetailsOpened"
+            (visibleChange)="isDetailsOpened=$event"
+            [mode]="'over'"
+            [toggleableBtn]="true"
+            (close)="onClose($event)"
+            [size]="'md'">
+  
+            <!-- <div fxFill fxLayout="column">
+              <div class="px-20 py-20 text-center mb-2 app-border-b">
+                <youpez-ibm-icon iconName="document" iconSize="32"></youpez-ibm-icon>
+              </div>
+              <div class="app-expressive-heading-02 px-4 truncate mb-2">{{selectedItem.name}}</div>
+              <div fxFlex class="relative">
+                <div class="app-a-box app-scrollbar-fix">
+                  <ng-scrollbar>
+                    <div class="px-4 py-3">
+                      <div class="app-list-data app-list-data--horizontal">
+                        <div class="app-expressive-heading-01 app-list-data__title">Offline</div>
+                        <div class="app-list-data__content ">
+                          <ibm-toggle
+                            class="app-ibm-toggle-fix"
+                            [checked]="true"
+                            [size]="'sm'">
+                          </ibm-toggle>
+                        </div>
+                      </div>
+                      <div class="app-list-data app-list-data--horizontal">
+                        <div class="app-expressive-heading-01 app-list-data__title">Type</div>
+                        <div class="app-list-data__content truncate">Yaml</div>
+                      </div>
+                      <div class="app-list-data app-list-data--horizontal">
+                        <div class="app-expressive-heading-01 app-list-data__title">Size</div>
+                        <div class="app-list-data__content truncate">{{selectedItem.size}}</div>
+                      </div>
+                      <div class="app-list-data app-list-data--horizontal">
+                        <div class="app-expressive-heading-01 app-list-data__title">Location</div>
+                        <div class="app-list-data__content truncate">/var/www/tmp</div>
+                      </div>
+                      <div class="app-list-data app-list-data--horizontal">
+                        <div class="app-expressive-heading-01 app-list-data__title">Owner</div>
+                        <div class="app-list-data__content truncate">June Abraham</div>
+                      </div>
+                      <div class="app-list-data app-list-data--horizontal">
+                        <div class="app-expressive-heading-01 app-list-data__title">Modified</div>
+                        <div class="app-list-data__content truncate">june 10, 2020</div>
+                      </div>
+                      <div class="app-list-data app-list-data--horizontal">
+                        <div class="app-expressive-heading-01 app-list-data__title">Opened</div>
+                        <div class="app-list-data__content truncate">june 12, 2020</div>
+                      </div>
+                      <div class="app-list-data app-list-data--horizontal">
+                        <div class="app-expressive-heading-01 app-list-data__title">Created</div>
+                        <div class="app-list-data__content truncate">june 10, 2020</div>
+                      </div>
+                    </div>
+                  </ng-scrollbar>
+                </div>
+              </div>
+              <div class="px-4 py-4">
+                <div class="mb-1">
+                  <button ibmButton="primary" size="sm" class="w-full mb-1">
+                    Download
+                    <svg class="cds--btn__icon" ibmIconDownload size="20"></svg>
+                  </button>
+                </div>
+                <div class="mb-1">
+                  <button ibmButton="primary" size="sm" class="w-full mb-1">
+                    Share
+                    <svg class="cds--btn__icon" ibmIconShare size="20"></svg>
+                  </button>
+                </div>
+                <div class="mb-1">
+                  <button ibmButton="danger" size="sm" class="w-full">
+                    Delete
+                    <svg class="cds--btn__icon" ibmIconTrashCan size="20"></svg>
+                  </button>
+                </div>
+              </div>
+            </div> -->
+          </youpez-sidenav>
+  
+          <div class="app-a-box app-scrollbar-fix">
+            <router-outlet></router-outlet>
+          </div>
+        </youpez-sidenav-container>
+      </youpez-sidenav-container>
+    </div>
+  </div>
+  
+  
+  
+  
+  
+  
+  
+  

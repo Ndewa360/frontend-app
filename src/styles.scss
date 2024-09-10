@@ -1,29 +1,45 @@
-@use "@carbon/styles/scss/config" with (
-	// Use flexbox for grid - stick to CSS Grid or Flexbox
-	// CSS Grid has become the default grid system in v11
-	$use-flexbox-grid: true
-);
+// @use "@carbon/styles/scss/config" with (
+// 	// Use flexbox for grid - stick to CSS Grid or Flexbox
+// 	// CSS Grid has become the default grid system in v11
+// 	$use-flexbox-grid: true
+// );
 
-@use "@carbon/styles";
+// @use "@carbon/styles";
+@forward '@carbon/styles/scss/config';
+@forward '@carbon/styles/scss/spacing';
+@forward '@carbon/styles/scss/colors' hide $white;
+@forward '@carbon/styles/scss/motion';
+@forward '@carbon/styles/scss/type';
+@forward '@carbon/styles/scss/themes';
+@forward '@carbon/styles/scss/theme';
 
-.white {
-	@include styles.theme(styles.$white);
-}
-
-.g10 {
-	@include styles.theme(styles.$g10);
-}
-
-.g90 {
-	@include styles.theme(styles.$g90);
-}
-
-.g100 {
-	@include styles.theme(styles.$g100);
-}
+@forward '@carbon/styles/scss/fonts';
+@forward '@carbon/styles/scss/grid';
+@forward '@carbon/styles/scss/layer';
+@forward '@carbon/styles/scss/layout';
+@forward '@carbon/styles/scss/zone';
+@use '@carbon/styles/scss/components';
 
 
-// Want to use only one theme? Add the css variables directly in root
+
+// .white {
+// 	@include styles.theme(styles.$white);
+// }
+
+// .g10 {
+// 	@include styles.theme(styles.$g10);
+// }
+
+// .g90 {
+// 	@include styles.theme(styles.$g90);
+// }
+
+// .g100 {
+// 	@include styles.theme(styles.$g100);
+// }
+
+
+// // Want to use only one theme? Add the css variables directly in root
 
 // body {
 // 	@include styles.theme(styles.$white);
@@ -31,3 +47,7 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+.textarea-field
+{
+    width: 100%;
+}

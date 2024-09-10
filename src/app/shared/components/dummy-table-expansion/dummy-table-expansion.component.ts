@@ -1,10 +1,10 @@
 import {Component, OnInit, Input, TemplateRef, ViewChild} from '@angular/core'
 
-import {TableItem, TableHeaderItem, TableModel} from "carbon-components-angular"
+import {TableItem, TableHeaderItem, TableModel, TableRowSize} from "carbon-components-angular"
 
 class CustomHeaderItem extends TableHeaderItem {
   // used for custom sorting
-  compare(one: TableItem, two: TableItem) {
+  override compare(one: TableItem, two: TableItem) {
     const stringOne = (one.data.name || one.data.surname || one.data).toLowerCase()
     const stringTwo = (two.data.name || two.data.surname || two.data).toLowerCase()
 
@@ -27,7 +27,7 @@ class CustomHeaderItem extends TableHeaderItem {
 })
 export class DummyTableExpansionComponent implements OnInit {
   @Input() model = new TableModel()
-  @Input() size = "md"
+  @Input() size:TableRowSize = "md"
   @Input() showSelectionColumn = true
   @Input() striped = true
   @Input() isDataGrid = false

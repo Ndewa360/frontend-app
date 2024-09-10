@@ -1,0 +1,105 @@
+<ng-template #invalidText>
+    <img src="assets/img/avatar/avatar3.jpg" class="app-img-select__item w-8 rounded"/>
+  </ng-template>
+  <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
+    <div fxFill fxLayout="column" class="app-bg-container overflow-hidden">
+        <div class="px-4 py-4 flex">
+          <div class="app-productive-heading-03 font-bold">Ajouter une chambre/studio/appartement</div>
+          <div class="flex-1 flex justify-end">
+            <button (click)="onClose()" ibmButton="ghost" size="sm" class="cds--btn--icon-only">
+              <youpez-ibm-icon iconClass="cds--btn__icon" iconName="close" iconSize="32" ></youpez-ibm-icon >
+            </button>
+          </div>
+        </div>
+        <div fxFlex>
+          <div class="app-content app-content--default">
+            <div class="app-form">
+                <div fxLayout="row wrap" class="app-form__row">
+                    <div fxFlex="100%" fxFlex.gt-md="50%" class="app-form__item">
+                        <ibm-label helperText="Le numero de chambre sera généré si non fournis"> Numéro de chambre
+                          <input
+                            ibmText
+                            formControlName="code"
+                            size="md"
+                            theme="dark">
+                        </ibm-label>        
+                    </div>
+                    <div fxFlex="100%" fxFlex.gt-md="50%" class="app-form__item">
+                        <ibm-label helperText="" [invalid]="isValid('type')" [invalidText]="'Le type de biens est obligatoire'">
+                        Type de bien <span class="text-red-600">*</span>
+                            <ibm-combo-box class="mt-2"
+                            [items]="roomList"
+                            (selected)="onSelectedType($event)"
+                            theme="dark"
+                            [invalid]="isValid('type')"
+                            size="md">
+                            <ibm-dropdown-list></ibm-dropdown-list>
+                        </ibm-combo-box>   
+                        </ibm-label>
+                    </div>
+                </div>
+                <div fxLayout="row wrap" class="app-form__row">
+                    <div fxFlex="100%" fxFlex.gt-md="50%" class="app-form__item">
+                        <ibm-label> Prix /mois ({{getMoney()}})<span class="text-red-600">*</span>
+                            <ibm-number class="mt-2"
+                            [helperText]="''"
+                            [theme]="'dark'"
+                            [min]="5000"
+                            [invalid]="false"
+                            [invalidText]="''"
+                            [size]="'md'"
+                            formControlName="price"
+                            [disabled]="false">
+                          </ibm-number>
+                        </ibm-label>        
+                    </div>
+                    <div fxFlex="100%" fxFlex.gt-md="50%" class="app-form__item">
+                        <ibm-label helperText="Laissez vide pour un bien libre" [invalid]="isValid('locataireId')" [invalidText]="'Le type de biens est obligatoire'">
+                        Locataire 
+                            <ibm-combo-box class="mt-2"
+                            [items]="locataireList"
+                            formControlName="locataireId"
+                            theme="dark"
+                            size="md">
+                            <ibm-dropdown-list></ibm-dropdown-list>
+                        </ibm-combo-box>   
+                        </ibm-label>
+                    </div>
+                </div>
+              <div class="">
+                <ibm-label
+                  [helperText]="''">
+                  Description
+                  <textarea
+                    ibmTextArea
+                    formControlName="description"
+                    class="textarea-field"
+                    theme="dark"
+                    [rows]="3"
+                    [cols]="3"
+                    aria-label="textarea"></textarea>
+                </ibm-label>
+              </div>
+            </div>
+      
+          </div>
+        </div>
+        <div class="px-4 py-4 flex justify-end app-border-t">
+          <button (click)="onClose()"
+                  ibmButton="secondary"
+                  size="md"
+                  class="mr-1">
+            Annuler
+          </button>
+          <button ibmButton="primary" size="md" [disabled]="waittingResponse || formGroup.invalid" type="submit">
+            <ibm-loading *ngIf="waittingResponse; else noWaitingResponse"></ibm-loading>
+            <ng-template #noWaitingResponse>
+              <span class="btn-text">Ajouter</span>
+              <youpez-ibm-icon iconClass="cds--btn__icon" iconName="add" iconSize="20" ></youpez-ibm-icon >
+            </ng-template>
+          </button>
+        </div>
+      </div>
+      
+  </form>
+ 

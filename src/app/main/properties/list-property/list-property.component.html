@@ -1,0 +1,89 @@
+<div fxFill fxLayout="column">
+    <youpez-header>
+      <youpez-header-title>
+        Vos biens immobiliés
+      </youpez-header-title>
+      <youpez-header-tools>
+        <button ibmButton="primary" size="sm" (click)="onCreate()">
+          Nouveau
+          <youpez-ibm-icon iconClass="cds--btn__icon" iconName="add" iconSize="20" ></youpez-ibm-icon >
+        </button>
+      </youpez-header-tools>
+    </youpez-header>
+      <div fxFlex class="relative">
+        <youpez-sidenav-container panel="solid">
+            <div class="app-a-box app-scrollbar-fix">
+                <ng-scrollbar>
+                  <div fxFill fxLayout="column">
+                    <div fxFlex class="relative">
+                      <div fxLayout="row wrap">
+                        <div fxFlex="100%">
+      
+                          <div class="app-header-subheader app-header-subheader--transparent app-header-subheader--left-alt app-header-subheader--right-alt" style="height: 65px">
+                            <div class="app-ibm-btn-merge mr-2" fxHide fxShow.gt-sm>
+                                <button ibmButton="tertiary" size="sm" class="cds--btn--icon-only">
+                                  <youpez-ibm-icon iconClass="cds--btn__icon" iconName="renew" iconSize="32" ></youpez-ibm-icon >
+                                </button>
+                              </div>
+                            <div class="ml-3" style="width:500px">
+                              <ibm-search placeholder="Rechercher un bien..." theme="light" size="lg"></ibm-search>
+                            </div>
+                            <div class="flex-1 flex justify-end">
+                              <button
+                                ibmButton="ghost" size="sm"
+                                class="cds--btn--icon-only cds--btn--remove-tooltip">
+                                <youpez-ibm-icon iconClass="cds--btn__icon" iconName="settings" iconSize="32" ></youpez-ibm-icon >
+                              </button>
+                              <button
+                                ibmButton="ghost" size="sm"
+                                class="cds--btn--icon-only cds--btn--remove-tooltip">
+                                <youpez-ibm-icon iconClass="cds--btn__icon" iconName="tableOfContents" iconSize="32" ></youpez-ibm-icon >
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <ng-container *ngIf="properties$ | async as properties">
+                        <div class="app-subtitle app-subtitle--cards mt-2">Biens ({{properties.length}})</div>
+                        <div fxLayout="row wrap" class="app-card-row-holder">                        
+                          <ng-container *ngFor="let property of properties">
+                            <div [routerLink]="['/app/properties',property._id]" fxFlex="100%" fxFlex.gt-md="16.66%">
+                              <div class="app-card app-card--select">
+                                <div class="app-card__content__alt">
+                                  <div class="">
+                                    <div class="px-10 py-10 text-center app-bg-decorative mb-2">
+                                      <youpez-ibm-icon iconName="buildingInsights1" iconSize="32"></youpez-ibm-icon>
+                                      <!-- <ibm-icon-building-insights-1 size="32" innerClass="inner-class" class="host-class"></ibm-icon-building-insights-1> -->
+                                    </div>
+                                    <div>
+                                      <div class="app-expressive-heading-01 truncate">{{property.name}}</div>
+                                      <div class="app-helper-text-01 mb-2">#{{property.code}}</div>
+                                      <div class="flex justify-between">
+                                          <div class="app-label-01 text-muted">
+                                              <youpez-ibm-icon class="location-icon"  iconName="location" iconSize="16"></youpez-ibm-icon>
+                                              <span class="location-zone ml-1">{{property.location}}</span>
+                                          </div>
+                                          <div class="app-label-01 text-muted">                                            
+                                              <span class="mr-1">{{getNumberOfRoom(property._id) | async}}</span>
+                                              <youpez-ibm-icon class="location-icon" iconName="home" iconSize="16"></youpez-ibm-icon>
+                                          </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </ng-container>
+                          <ng-container *ngIf="properties.length==0">
+                            <app-no-data-list textDescription="Aucun bien trouvé" class="flex-auto"></app-no-data-list>                            
+                          </ng-container>
+                        </div>
+                      </ng-container>
+                      
+                    </div>
+                  </div>
+                </ng-scrollbar>
+              </div>
+        </youpez-sidenav-container>
+      </div>
+</div>

@@ -13,6 +13,17 @@ import {SupportComponent} from './application/support/support.component'
 import {ChangelogComponent} from './application/changelog/changelog.component'
 import {WelcomeComponent} from './welcome/welcome.component'
 import {GettingStartedComponent} from './application/getting-started/getting-started.component'
+import { AddPropertyComponent } from './properties/add-property/add-property.component'
+import { AddPropertyLocataireComponent } from './properties/components/add-property-locataire/add-property-locataire.component'
+import { AddPropertyRoomComponent } from './properties/components/add-property-room/add-property-room.component'
+import { FinancialHistoryComponent } from './properties/components/financial-history/financial-history.component'
+import { PropertyFinanceComponent } from './properties/components/property-finance/property-finance.component'
+import { PropertyLocataireComponent } from './properties/components/property-locataire/property-locataire.component'
+import { PropertyRoomComponent } from './properties/components/property-room/property-room.component'
+import { ListPropertyComponent } from './properties/list-property/list-property.component'
+import { ShowPropertyComponent } from './properties/show-property/show-property.component'
+import { LocatairePropertyModule } from './properties/components/locataire-property/locataire-property.module'
+import { AgGridModule } from '@ag-grid-community/angular'
 
 
 @NgModule({
@@ -23,16 +34,15 @@ import {GettingStartedComponent} from './application/getting-started/getting-sta
     ManualComponent,
     SupportComponent,
     WelcomeComponent,
-    // ListPropertyComponent,
-    // ShowPropertyComponent,
-    // AddPropertyComponent,
-    // PropertyRoomComponent,
-    // PropertyFinanceComponent,
-    // PropertyLocataireComponent,
-    // AddPropertyRoomComponent,
-    // AddPropertyLocataireComponent,
-    // FinancialHistoryComponent,
-    // ShowRoomComponent
+    ListPropertyComponent,
+    ShowPropertyComponent,
+    AddPropertyComponent,
+    PropertyRoomComponent,
+    PropertyFinanceComponent,
+    PropertyLocataireComponent,
+    AddPropertyRoomComponent,
+    AddPropertyLocataireComponent,
+    FinancialHistoryComponent,
     
   ],
   imports: [
@@ -41,8 +51,9 @@ import {GettingStartedComponent} from './application/getting-started/getting-sta
     LayoutModule,
     SharedModule,
     ChartsModule,
-    // AgGridModule.withComponents([]),
-    // LocatairePropertyModule
+    
+    AgGridModule,
+    LocatairePropertyModule
   ]
 })
 export class MainModule {

@@ -79,13 +79,14 @@ import {SafePipe} from "./pipes/safe"
 import {AppLogoComponent} from './components/app-logo/app-logo.component'
 import {AppBreadcrumbComponent} from './components/app-breadcrumb/app-breadcrumb.component'
 import { IbmIconModule } from './components/ibm-icon/ibm-icon.module'
-import { MarkdownModule } from 'ngx-markdown';
+// import { MarkdownModule } from 'ngx-markdown';
 import {NgbDropdownModule, NgbTooltipModule} from '@ng-bootstrap/ng-bootstrap'
-
-
+import {MatCardModule} from '@angular/material/card';
+import { NgxMatIntlTelInputComponent } from "ngx-mat-intl-tel-input"
 
 
 const MainModules = [  
+  MatCardModule,
   RouterModule,
   NgbDropdownModule,
   NgbTooltipModule,
@@ -102,8 +103,7 @@ const MainModules = [
   FormsModule,
   ReactiveFormsModule,
   MatDialogModule,
-
-  
+  NgxMatIntlTelInputComponent,
 ]
 
 const CarbonModules = [
@@ -136,7 +136,6 @@ const CarbonModules = [
   ModalModule,
   LoadingModule
 ]
-
 
 const Components = [
   AppSidenavComponent,
@@ -177,8 +176,7 @@ const Pipes = [
     ...MainModules,
     ...CarbonModules,
     NgScrollbarModule,
-    MarkdownModule.forRoot(),
-
+    // MarkdownModule.forRoot(),
   ],
   declarations: [
     ...Components,
@@ -190,9 +188,8 @@ const Pipes = [
     ...CarbonModules,
     ...Pipes,
     NgScrollbarModule,
-    MarkdownModule
+    // MarkdownModule
   ],
-  
 })
 export class YoupezModule {
   constructor() {
