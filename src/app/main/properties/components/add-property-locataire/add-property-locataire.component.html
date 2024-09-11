@@ -21,35 +21,35 @@
                         </ibm-label>        
                     </div>
                     <div fxFlex="100%" fxFlex.gt-md="50%" class="app-form__item">
-                        <ibm-label helperText="" [invalid]="isValid('email')" [invalidText]="'Vérifier le format d\'email'">
-                        Email <input
-                        formControlName="email"
-                        ibmText
-                        size="md"
-                        [invalid]="isValid('email')"
-                        [disabled]="false"
-                        theme="dark"
-                        [placeholder]="'Adresse Email'"
-                        [autocomplete]="true">
-                        </ibm-label>
-                    </div>
+                      <ibm-label helperText="Ex: +237 6xx xx xx xx" [invalid]="isValid('phoneNumber')" [invalidText]="'Format invalide. Ex: +237 6xx xx xx xx'">
+                      Tél <span class="text-red-600">*</span> 
+                      <input
+                      formControlName="phoneNumber"
+                      ibmText
+                      size="md"
+                      [invalid]="isValid('phoneNumber')"
+                      [disabled]="false"
+                      theme="dark"
+                      [placeholder]="'Numéro de téléphone'"
+                      [autocomplete]="true">
+                      </ibm-label>
+                  </div>                    
                 </div>
                 <div fxLayout="row wrap" class="app-form__row">
-                    <div fxFlex="100%" fxFlex.gt-md="50%" class="app-form__item">
-                        <ibm-label helperText="Ex: +237 6xx xx xx xx" [invalid]="isValid('phoneNumber')" [invalidText]="'Format invalide. Ex: +237 6xx xx xx xx'">
-                        Tél <span class="text-red-600">*</span> 
-                        <input
-                        formControlName="phoneNumber"
-                        ibmText
-                        size="md"
-                        [invalid]="isValid('phoneNumber')"
-                        [disabled]="false"
-                        theme="dark"
-                        [placeholder]="'Numéro de téléphone'"
-                        [autocomplete]="true">
-                        </ibm-label>
-                    </div>
-                    <div fxFlex="100%" fxFlex.gt-md="50%" class="app-form__item">
+                  <div fxFlex="100%" fxFlex.gt-md="100%" class="app-form__item">
+                    <ibm-label helperText="" [invalid]="isValid('email')" [invalidText]="'Vérifier le format d\'email'">
+                    Email <input
+                    formControlName="email"
+                    ibmText
+                    size="md"
+                    [invalid]="isValid('email')"
+                    [disabled]="false"
+                    theme="dark"
+                    [placeholder]="'Adresse Email'"
+                    [autocomplete]="true">
+                    </ibm-label>
+                  </div>
+                    <!-- <div fxFlex="100%" fxFlex.gt-md="50%" class="app-form__item">
                         <ibm-label helperText="Laissez vide pour une affection ultérieur" [invalid]="isValid('roomId')" [invalidText]="">
                         Chambre 
                             <ibm-combo-box class="mt-2"
@@ -60,7 +60,7 @@
                             <ibm-dropdown-list></ibm-dropdown-list>
                         </ibm-combo-box>   
                         </ibm-label>
-                    </div>
+                    </div> -->
                 </div>
               <div class="">
                 <ibm-label

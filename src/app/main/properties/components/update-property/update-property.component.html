@@ -4,7 +4,7 @@
   <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
     <div fxFill fxLayout="column" class="app-bg-container overflow-hidden">
         <div class="px-4 py-4 flex">
-          <div class="app-productive-heading-03 font-bold">Ajouter un bien</div>
+          <div class="app-productive-heading-03 font-bold">Mise à jour du bien #{{data.property.code}}</div>
           <div class="flex-1 flex justify-end">
             <button (click)="onClose()" ibmButton="ghost" size="sm" class="cds--btn--icon-only">
               <youpez-ibm-icon iconClass="cds--btn__icon" iconName="close" iconSize="32"></youpez-ibm-icon>

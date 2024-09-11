@@ -75,7 +75,7 @@
                           </div>
                          </div>
                         <div class="mt-2 other-detail">
-                          <div class="app-list-header-pill">AUTRES</div>
+                          <div class="app-list-header-pill">Details</div>
                           <div class="app-list-pill">
                             <div class="app-list-pill__item">
                               <div class="app-list-pill__item__inner">
@@ -86,7 +86,7 @@
                           </div>
                           <div class="app-list-pill">
                             <div class="app-list-pill__item">
-                              <div class="app-list-pill__item__inner">
+                              <div class="app-list-pill__item__inner" *ngIf="propertyFound.description">
                                 <youpez-ibm-icon iconSize="20" iconName="document" class="mr-2"></youpez-ibm-icon>
                                 {{propertyFound.description}} 
                               </div>
@@ -97,7 +97,7 @@
                     </div>
                   </div>
                   <div class="px-2 py-4 flex justify-end app-border-t footer-btn-action">
-                      <button   ibmButton="primary" size="sm" class="mr-1">
+                      <button (click)="updateProperty()"  ibmButton="primary" size="sm" class="mr-1">
                           <span class="btn-text mr-1">Modifier</span>
                           <youpez-ibm-icon iconSize="20" iconName="edit" class="text-white"></youpez-ibm-icon>
                       </button>

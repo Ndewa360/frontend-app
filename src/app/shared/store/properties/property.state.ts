@@ -7,6 +7,7 @@ import { PropertyService } from "./property.service";
 import { of, throwError } from "rxjs";
 import { catchError, tap } from "rxjs/operators";
 import { NotificationService } from "carbon-components-angular";
+import { ToastrService } from "ngx-toastr";
 
 export class PropertyStateModel {
     properties:PropertyModel[]
@@ -27,8 +28,7 @@ export class PropertyStateModel {
 export class PropertyState{
     constructor(
         private _propertysService:PropertyService,
-        // private notificationService: NotificationService,
-
+        private _toastrService:ToastrService
     ){}
 
     @Selector()
@@ -72,6 +72,7 @@ export class PropertyState{
         return this._propertysService.updateProperty(property,id).pipe(
             tap(
                 (result)=>{
+                    console.log("Result ",result)
                     const data = [...state.properties]
                     let index = data.findIndex((u)=>u._id==id);
                     if(index>-1) data[index]=result.data;
@@ -79,14 +80,16 @@ export class PropertyState{
                         loadingProperty:false,
                         properties:data
                     })
-                    // this._toastrService.success(`Profil utilisateur modifié avec success`, 'Property');
+                    this._toastrService.success(`Propriété mise à jour avec success!`, 'Ndiye');
                 }
             ),
             catchError((error) => {
-                // this._toastrService.error(error?.error?.message, 'Erreur');
                 ctx.patchState({
                     loadingProperty: false
                 })
+                let message = error?.error?.message;
+                if(!message) message = "Une erreur c'est produite! Réessayez plus tard"
+                this._toastrService.error(message, 'Ndiye');
                 return throwError(error);
                 
             })

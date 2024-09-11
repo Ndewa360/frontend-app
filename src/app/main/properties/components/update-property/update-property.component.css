@@ -14,7 +14,12 @@
     vertical-align: center;
 }
 
-.type_bien_label label
+.textarea-field
 {
     width: 100%;
+}
+
+.btn-annuler
+{
+    margin-right: .5em;
 }

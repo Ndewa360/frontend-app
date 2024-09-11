@@ -7,6 +7,7 @@ import { LocataireService } from "./locataire.service";
 import { of, throwError } from "rxjs";
 import { catchError, tap } from "rxjs/operators";
 import { NotificationService } from "carbon-components-angular";
+import { ToastrService } from "ngx-toastr";
 
 export class LocataireStateModel {
     locataires:LocataireModel[]
@@ -27,6 +28,7 @@ export class LocataireStateModel {
 export class LocataireState{
     constructor(
         private _locatairesService:LocataireService,
+        private _toastrService:ToastrService
         // private notificationService: NotificationService,
 
     ){}
@@ -138,30 +140,22 @@ export class LocataireState{
         return this._locatairesService.createLocataire(locataire).pipe(
             tap(
                 result => {
-                    // this.notificationService.showToast({
-                    //     type: "success",
-                    //     title: "Locataire",
-                    //     subtitle: "Locataire ajouté avec success!",
-                    //     target: "#notificationHolder",
-                    //     message: "message",
-                    //     duration: 20000,
-                    //   })
                     ctx.patchState({
                         loadingLocataire:false,
                         locataires:[...state.locataires, result.data]
                     })
+                    this._toastrService.success(`Locataire ajouté avec success!`, 'Ndiye');
+
                 }
             ),
             catchError((error)=>{
-                // this.notificationService.showToast({
-                //     type: "error",
-                //     title: "Locataire",
-                //     subtitle: "Une erreur c'est produite ",
-                //     target: "#notificationHolder",
-                //     message: "message",
-                //     duration: 20000,
-                //   });
-                  return throwError(error);
+                ctx.patchState({
+                    loadingLocataire: false
+                })
+                let message = error?.error?.message;
+                if(!message) message = "Une erreur c'est produite! Réessayez plus tard"
+                this._toastrService.error(message, 'Ndiye');
+                return throwError(error);
             })
         )
     }
@@ -186,7 +180,16 @@ export class LocataireState{
                         initLoadingState:"LOADED"
                     })
                 }
-            )
+            ),
+            catchError((error)=>{
+                ctx.patchState({
+                    loadingLocataire: false
+                })
+                let message = error?.error?.message;
+                if(!message) message = "Une erreur c'est produite! Réessayez plus tard"
+                this._toastrService.error(message, 'Ndiye');
+                return throwError(error);
+            })
         )
     }
 }

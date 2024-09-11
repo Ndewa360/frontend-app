@@ -3,7 +3,7 @@
     <ng-template #toLestDataUser><div class="w-full text-left">{{data}}</div></ng-template>
   </ng-template> -->
   <ng-template #propertyTemplate let-data="data">
-    <ng-container *ngIf="data | async as propertyData">
+    <ng-container *ngIf="(getRoomById(data) | async )as propertyData">
         <!-- {{propertyData.type}} -->
         <ng-container *ngSwitch="propertyData['type']">
             <span *ngSwitchCase="'room'">Chambre {{propertyData["code"]}}</span>
@@ -13,25 +13,7 @@
         </ng-container>
     </ng-container>
   </ng-template>
-  <ng-template #statusTemplate let-data="data">
-    <div class="flex">
-      <ng-container *ngIf="data == '0'">
-        <div class="pr-3 pl-2 py-1 app-bg-success-o-30 app-color-success rounded-full flex items-center">
-          OK
-        </div>
-      </ng-container>
-      <ng-container *ngIf="data > '0'">
-        <div class="pr-3 pl-2 py-1 app-bg-warning-o-20 app-color-warning rounded-full flex items-center">
-          +{{data}}
-        </div>
-      </ng-container>
-      <ng-container *ngIf="data < '0'">
-        <div class="pr-3 pl-2 py-1 app-bg-danger-o-20 app-color-danger rounded-full flex items-center">
-          {{data}}
-        </div>
-      </ng-container>
-    </div>
-  </ng-template>
+
   <ng-template #actionTemplate let-data="data" class="flex">
     <div class="app-mini-sidebar__list__item__pill mr-2"  container="body" ngbTooltip="Voir les details du locataire">
         <youpez-ibm-icon class="location-icon text-bleu cursor-pointer " iconName="view" iconSize="20"></youpez-ibm-icon>  

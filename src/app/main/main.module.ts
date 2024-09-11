@@ -23,7 +23,8 @@ import { PropertyRoomComponent } from './properties/components/property-room/pro
 import { ListPropertyComponent } from './properties/list-property/list-property.component'
 import { ShowPropertyComponent } from './properties/show-property/show-property.component'
 import { LocatairePropertyModule } from './properties/components/locataire-property/locataire-property.module'
-import { AgGridModule } from '@ag-grid-community/angular'
+import { AgGridModule } from '@ag-grid-community/angular';
+import { UpdatePropertyComponent } from './properties/components/update-property/update-property.component'
 
 
 @NgModule({
@@ -43,6 +44,7 @@ import { AgGridModule } from '@ag-grid-community/angular'
     AddPropertyRoomComponent,
     AddPropertyLocataireComponent,
     FinancialHistoryComponent,
+    UpdatePropertyComponent,
     
   ],
   imports: [

@@ -82,7 +82,7 @@ import { IbmIconModule } from './components/ibm-icon/ibm-icon.module'
 // import { MarkdownModule } from 'ngx-markdown';
 import {NgbDropdownModule, NgbTooltipModule} from '@ng-bootstrap/ng-bootstrap'
 import {MatCardModule} from '@angular/material/card';
-import { NgxMatIntlTelInputComponent } from "ngx-mat-intl-tel-input"
+// import { NgxMatIntlTelInputComponent } from "ngx-mat-intl-tel-input"
 
 
 const MainModules = [  
@@ -103,7 +103,7 @@ const MainModules = [
   FormsModule,
   ReactiveFormsModule,
   MatDialogModule,
-  NgxMatIntlTelInputComponent,
+  // NgxMatIntlTelInputComponent,
 ]
 
 const CarbonModules = [

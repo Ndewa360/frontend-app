@@ -8,6 +8,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { AddPropertyComponent } from '../add-property/add-property.component';
 import { AddPropertyLocataireComponent } from '../components/add-property-locataire/add-property-locataire.component';
 import { ToastrService } from 'ngx-toastr';
+import { UpdatePropertyComponent } from '../components/update-property/update-property.component';
 
 @Component({
   selector: 'app-show-property',
@@ -75,6 +76,19 @@ export class ShowPropertyComponent implements OnInit {
 
   onToggleLeftSidebar() {
     this.leftSidebarVisibility = !this.leftSidebarVisibility
+  }
+
+  updateProperty()
+  {
+    this.dialog.open(UpdatePropertyComponent, {
+      viewContainerRef:null,
+      disableClose: true,
+      role: 'alertdialog',
+      width: '500px',
+      data:{
+        property:this.propertyFound
+      }
+    })
   }
 
   onCreate() {

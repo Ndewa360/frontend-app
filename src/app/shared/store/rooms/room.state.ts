@@ -6,7 +6,8 @@ import { RoomService } from "./room.service";
 // import { ToastrService } from "ngx-toastr";
 import { of, throwError } from "rxjs";
 import { catchError, tap } from "rxjs/operators";
-import { NotificationService } from "carbon-components-angular";
+import { UtilsString } from "../../utils";
+import { ToastrService } from "ngx-toastr";
 
 export class RoomStateModel {
     rooms:RoomModel[]
@@ -27,7 +28,7 @@ export class RoomStateModel {
 export class RoomState{
     constructor(
         private _roomsService:RoomService,
-        // private notificationService: NotificationService,
+        private _toastrService:ToastrService,
     ){}
 
     @Selector()
@@ -44,6 +45,7 @@ export class RoomState{
     static selectStateRoom(roomId)
     {
         return createSelector([RoomState],(state)=>{
+            if(!roomId) return null;
             let data=state.rooms.find((u)=>u._id==roomId)
             if(data) return data
             return null;
@@ -181,14 +183,7 @@ export class RoomState{
         return this._roomsService.createRoom(bodyToSend).pipe(
             tap(
                 result => {
-                    // this.notificationService.showToast({
-                    //     type: "success",
-                    //     title: "Biens Immobilier",
-                    //     subtitle: "Bien crée avec success!",
-                    //     target: "#notificationHolder",
-                    //     message: "message",
-                    //     duration: 2000,
-                    //   })
+                    this._toastrService.success(`${UtilsString.getStringOfRoomType(room.type)} ajouté avec success!`, 'Ndiye');
                     ctx.patchState({
                         loadingRoom:false,
                         rooms:[...state.rooms, result.data]
@@ -196,15 +191,9 @@ export class RoomState{
                 }
             ),
             catchError((error)=>{
-
-                // this.notificationService.showToast({
-                //     type: "error",
-                //     title: "Biens Immobilier",
-                //     subtitle: "Une erreur c'est produite ",
-                //     target: "#notificationHolder",
-                //     message: "message",
-                //     duration: 2000,
-                //   });
+                let message = error?.error?.message;
+                if(!message) message = "Une erreur c'est produite! Réessayez plus tard"
+                this._toastrService.error(message, 'Ndiye');
                   return error;
             })
         )

@@ -25,46 +25,35 @@
                         </ibm-label>        
                     </div>
                     <div fxFlex="100%" fxFlex.gt-md="50%" class="app-form__item">
-                        <ibm-label helperText="" [invalid]="isValid('type')" [invalidText]="'Le type de biens est obligatoire'">
-                        Type de bien <span class="text-red-600">*</span>
-                            <ibm-combo-box class="mt-2"
-                            [items]="roomList"
-                            (selected)="onSelectedType($event)"
-                            theme="dark"
-                            [invalid]="isValid('type')"
-                            size="md">
-                            <ibm-dropdown-list></ibm-dropdown-list>
-                        </ibm-combo-box>   
-                        </ibm-label>
-                    </div>
+                      <ibm-label> Prix /mois ({{getMoney()}})<span class="text-red-600">*</span>
+                          <ibm-number class="mt-2"
+                          [helperText]="''"
+                          [theme]="'dark'"
+                          [min]="5000"
+                          [invalid]="false"
+                          [invalidText]="''"
+                          [size]="'md'"
+                          formControlName="price"
+                          [disabled]="false">
+                        </ibm-number>
+                      </ibm-label>        
+                  </div>
+                    
                 </div>
                 <div fxLayout="row wrap" class="app-form__row">
-                    <div fxFlex="100%" fxFlex.gt-md="50%" class="app-form__item">
-                        <ibm-label> Prix /mois ({{getMoney()}})<span class="text-red-600">*</span>
-                            <ibm-number class="mt-2"
-                            [helperText]="''"
-                            [theme]="'dark'"
-                            [min]="5000"
-                            [invalid]="false"
-                            [invalidText]="''"
-                            [size]="'md'"
-                            formControlName="price"
-                            [disabled]="false">
-                          </ibm-number>
-                        </ibm-label>        
-                    </div>
-                    <div fxFlex="100%" fxFlex.gt-md="50%" class="app-form__item">
-                        <ibm-label helperText="Laissez vide pour un bien libre" [invalid]="isValid('locataireId')" [invalidText]="'Le type de biens est obligatoire'">
-                        Locataire 
-                            <ibm-combo-box class="mt-2"
-                            [items]="locataireList"
-                            formControlName="locataireId"
-                            theme="dark"
-                            size="md">
-                            <ibm-dropdown-list></ibm-dropdown-list>
-                        </ibm-combo-box>   
-                        </ibm-label>
-                    </div>
+                  <div fxFlex="100%" fxFlex.gt-md="100%" class="app-form__item">                      
+                    <ibm-label helperText="" class="type_bien_label"  [invalid]="isValid('type')" [invalidText]="'Le type de biens est obligatoire'">
+                    Type de bien <span class="text-red-600">*</span>
+                        <ibm-combo-box class="mt-2"
+                        [items]="roomList"
+                        (selected)="onSelectedType($event)"
+                        theme="dark"
+                        [invalid]="isValid('type')"
+                        size="md">
+                        <ibm-dropdown-list></ibm-dropdown-list>
+                    </ibm-combo-box>   
+                    </ibm-label>
+                </div>                    
                 </div>
               <div class="">
                 <ibm-label

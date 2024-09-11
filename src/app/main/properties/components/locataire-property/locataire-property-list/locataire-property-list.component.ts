@@ -31,7 +31,6 @@ export class LocatairePropertyListComponent implements OnInit, OnChanges {
     if(changes['propertyId'].currentValue) 
     {
       this._store.select(LocataireState.selectStateLocataireByPropertyId(changes['propertyId'].currentValue)).subscribe((data)=>{
-        console.log("Data")
         this.model = this.generateLocataireDataModel(data)
       })
     }
@@ -64,10 +63,6 @@ export class LocatairePropertyListComponent implements OnInit, OnChanges {
         className: "items-center",
       }),
       new TableHeaderItem({
-        data: "Status",
-        className: "items-center",
-      }),
-      new TableHeaderItem({
         data: "Actions",
         className: "items-center",
       })
@@ -77,8 +72,7 @@ export class LocatairePropertyListComponent implements OnInit, OnChanges {
         new TableItem({data: locataire.fullName}),
         new TableItem({data: locataire.phoneNumber}),
         new TableItem({data: locataire.email}),
-        new TableItem({data: this._store.select(RoomState.selectStateRoom(locataire.room))}),
-        new TableItem({data: -1}),
+        new TableItem({data: locataire.room?locataire.room:""}),
         new TableItem({data: ""})
       ])
     });

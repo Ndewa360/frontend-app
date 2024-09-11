@@ -19,7 +19,6 @@ export class AddPropertyRoomComponent implements OnInit {
   theme: string = 'light'
 
   roomList =[];
-  locataireList = [];
   waittingResponse = false;
 
   constructor(
@@ -38,13 +37,9 @@ export class AddPropertyRoomComponent implements OnInit {
       description: [null],
       type:[RoomType.ROOM,Validators.required],
       price:[5000,Validators.required],
-      locataireId:[null]
     })
     this.roomList= Object.values(RoomType).map((value)=>({content:UtilsString.getStringOfRoomType(value), valueType:value, selected:value==RoomType.ROOM}));
-    this._store.select(LocataireState.selectStateLocataireByPropertyId(this.data.property._id)).subscribe((locataireList:LocataireModel[])=>{
-      this.locataireList = locataireList.map((value)=>({content:value.fullName,valueType:value._id}))
-      console.log("Value Content ",locataireList.map((value)=>({content:value.fullName,valueType:value._id})))
-    });
+    
 
     this._ngxsAction.pipe(ofActionSuccessful(RoomAction.CreateRoom)).subscribe((value)=>{
       // Navigate to the parent
@@ -78,7 +73,6 @@ export class AddPropertyRoomComponent implements OnInit {
     this.formGroup.markAllAsTouched()
     if(this.formGroup.invalid) return;
     let bodyToSend = FormUtils.removeNullAttribut({...this.formGroup.value})
-    if(bodyToSend.locataireId) bodyToSend.locataireId=bodyToSend.locataireId.valueType;
     this.waittingResponse=true;
     this._store.dispatch(new RoomAction.CreateRoom(bodyToSend,this.data.property._id));
     
@@ -100,7 +94,7 @@ export class AddPropertyRoomComponent implements OnInit {
 
   onSelectedType(roomType)
   {
-    if(roomType.item.valueType!=RoomType.ROOM) this.formGroup.get('type').setValue(null);
-    else this.formGroup.get('type').setValue(roomType.item.valueType)
+    if(roomType.valueType!=RoomType.ROOM) this.formGroup.get('type').setValue(null);
+    else this.formGroup.get('type').setValue(roomType.valueType)
   }
 }

@@ -1,6 +1,8 @@
 import { Component, Input, OnInit, SimpleChanges, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Store } from '@ngxs/store';
 import { TableHeaderItem, TableItem, TableModel, TableRowSize } from 'carbon-components-angular';
 import { getDummyModel } from 'src/@youpez/data/dummy';
+import { RoomState } from 'src/app/shared/store';
 
 
 class CustomHeaderItem extends TableHeaderItem {
@@ -51,27 +53,30 @@ export class LocatairePropertyTableComponent implements OnInit {
   @ViewChild("totalHeaderTemplate", {static: true}) totalHeaderTemplate: TemplateRef<any>
   @ViewChild("actionTemplate", {static: true}) actionTemplate: TemplateRef<any>
   @ViewChild("propertyTemplate", {static: true}) propertyTemplate: TemplateRef<any>
-  @ViewChild("statusTemplate", {static: true}) statusTemplate: TemplateRef<any>
 
+  constructor(
+    private _store:Store
+  ){}
   ngOnInit() {
     // this.model.header[3]= new CustomHeaderItem({
     //   data: this.model.header[3].data,
     //   template: this.totalHeaderTemplate,
     //   className: "items-center"
     // })
+    this.updateDataAfterChanges()
+  }
+
+  updateDataAfterChanges()
+  {
     this.model.data.map(data => {      
       data[3] = new TableItem({
         data: data[3].data,
         template: this.propertyTemplate,
         className: "items-center"
       })
+   
       data[4] = new TableItem({
         data: data[4].data,
-        template: this.statusTemplate,
-        className: "items-center"
-      })
-      data[5] = new TableItem({
-        data: data[5].data,
         template: this.actionTemplate,
         className: "items-center"
       })
@@ -80,6 +85,7 @@ export class LocatairePropertyTableComponent implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    if(changes["model"]) this.updateDataAfterChanges()
     if (changes['sortable']) {
       for (let column of this.model.header) {
         column.sortable = changes['sortable'].currentValue
@@ -89,6 +95,11 @@ export class LocatairePropertyTableComponent implements OnInit {
 
   onRowClick(index: number) {
 
+  }
+
+  getRoomById(roomId)
+  {
+    return this._store.select(RoomState.selectStateRoom(roomId))
   }
 
   simpleSort(index: number) {
