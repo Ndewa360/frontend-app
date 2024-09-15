@@ -6,17 +6,20 @@ import { DummyTablePaginationComponent } from './components/dummy-table-paginati
 import { DummyTableExpansionComponent } from './components/dummy-table-expansion/dummy-table-expansion.component'
 import { DummyTableAdvancedComponent } from './components/dummy-table-advanced/dummy-table-advanced.component'
 import { NgxsModule } from '@ngxs/store';
-import { UserProfileState, UserState, PropertyState, RoomState, LocataireState, AuthTokenState } from './store';
+import { UserProfileState, UserState, PropertyState, RoomState, LocataireState, AuthTokenState, LocationState } from './store';
 import { NgxsRouterPluginModule } from '@ngxs/router-plugin';
 import { RouterModule } from '@angular/router';
 import { NgxsStoragePluginModule, StorageOption } from '@ngxs/storage-plugin';
 import { NoDataComponent } from './components/no-data/no-data.component';
 import { ToastrModule } from 'ngx-toastr';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 @NgModule({
   imports: [
     CommonModule,
     YoupezModule,
-
+    
+    FormsModule,
+    ReactiveFormsModule,
     //Ngxs module
     NgxsModule.forFeature(
       [
@@ -25,6 +28,7 @@ import { ToastrModule } from 'ngx-toastr';
         PropertyState,
         RoomState,
         LocataireState,
+        LocationState,
         AuthTokenState
       ]),
       NgxsStoragePluginModule.forRoot({
@@ -54,7 +58,9 @@ import { ToastrModule } from 'ngx-toastr';
     NoDataComponent,
     NgxsModule,
     RouterModule,
-    ToastrModule
+    ToastrModule,
+    FormsModule,
+    ReactiveFormsModule
   ]
 })
 export class SharedModule {

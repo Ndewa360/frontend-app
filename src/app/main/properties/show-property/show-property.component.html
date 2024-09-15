@@ -4,8 +4,8 @@
         {{getTitle()}}
       </youpez-header-title>
       <youpez-header-tools>
-        <button ibmButton="primary" size="sm" (click)="onCreate()">
-          Ajouter
+        <button ibmButton="primary" size="sm" *ngIf="shoulShowAddProperty()" (click)="onCreate()">
+          {{showTitleOfBtn()}}
           <youpez-ibm-icon iconClass="cds--btn__icon" iconName="add" iconSize="20"></youpez-ibm-icon>
         </button>
       </youpez-header-tools>
@@ -68,8 +68,16 @@
                           <div class="app-list-pill">
                             <div class="app-list-pill__item">
                               <div class="app-list-pill__item__inner font-bold" routerLink="tenants"  routerLinkActive="app-list-pill__item__inner--active">
-                                <youpez-ibm-icon iconSize="20" iconName="folderShared" class="mr-2"></youpez-ibm-icon>
+                                <youpez-ibm-icon iconSize="20" iconName="userIdentification" class="mr-2"></youpez-ibm-icon>
                                 Locataires
+                              </div>
+                            </div>
+                          </div>
+                          <div class="app-list-pill">
+                            <div class="app-list-pill__item">
+                              <div class="app-list-pill__item__inner font-bold" routerLink="locations"  routerLinkActive="app-list-pill__item__inner--active">
+                                <youpez-ibm-icon iconSize="20" iconName="task" class="mr-2"></youpez-ibm-icon>
+                                Voir locations
                               </div>
                             </div>
                           </div>

@@ -1,0 +1,16 @@
+youpez-ibm-icon svg
+{
+    /* stroke: white !important; */
+    fill: white !important;
+}
+
+.btn-text 
+{
+    margin-right: 10px;
+}
+.assigner-chambre
+{
+    justify-content: space-between;
+    align-items: center;
+    padding-right: 10px;
+}

@@ -1,0 +1,91 @@
+<youpez-sidenav-container panel="solid">
+    <youpez-sidenav
+          [breakpoint]="'md'"
+          [direction]="'right'"
+          [opened]="isAssignedOpened"
+          (visibleChange)="isAssignedOpened=$event"
+          [mode]="'over'"
+          [toggleableBtn]="true"
+          (close)="onClose($event)"
+          [size]="'md'">
+    <assign-location [isAssignedOpened]="isAssignedOpened" [property]="property"></assign-location>
+</youpez-sidenav>
+
+    <ibm-table-container class="">
+        <ibm-table-toolbar
+        [model]="model"
+        [batchText]="batchText"
+        [size]="size"
+        #toolbar>
+        
+        <ibm-table-toolbar-content>
+            <!-- <ibm-overflow-menu
+            triggerClass="cds--toolbar-action"
+            [customTrigger]="customTrigger"
+            placement="bottom">
+            <ibm-overflow-menu-option>Option 1</ibm-overflow-menu-option>
+            <ibm-overflow-menu-option>Option 2</ibm-overflow-menu-option>
+            <ibm-overflow-menu-option disabled="true">Disabled</ibm-overflow-menu-option>
+            <ibm-overflow-menu-option type="danger">Danger option</ibm-overflow-menu-option>
+            </ibm-overflow-menu> -->
+            <ibm-table-toolbar-search
+            ngDefaultControl
+            theme="light"
+            [expandable]="false">
+            </ibm-table-toolbar-search>  
+            <button ibmButton="primary" (click)="shouldOpenAssignedOpened()" class="assigner-chambre" size="sm">
+                <span class="btn-text">Assigner une Chambre</span>
+                <!-- <ibm-icon-add size="20" class="bx--btn__icon"></ibm-icon-add> -->
+                <youpez-ibm-icon class="bx--btn__icon" iconName="task" iconSize="20"></youpez-ibm-icon>  
+            </button>   
+        </ibm-table-toolbar-content>
+        </ibm-table-toolbar>
+        
+        <!-- <ng-template #totalHeaderTemplate let-data="data">
+        <ng-container *ngIf="data=='actions' else toLestDataUser" ><div class="w-full text-right">{{data}}</div></ng-container>
+        <ng-template #toLestDataUser><div class="w-full text-left">{{data}}</div></ng-template>
+    </ng-template> -->
+    <ng-template #propertyTemplate let-data="data">
+        <ng-container *ngIf="(getRoomById(data) | async )as propertyData">
+            <!-- {{propertyData.type}} -->
+            <ng-container *ngSwitch="propertyData['type']">
+                <span *ngSwitchCase="'room'">Chambre {{propertyData["code"]}}</span>
+                <span *ngSwitchCase="'studio'">Studio #{{propertyData["code"]}}</span>
+                <span *ngSwitchCase="'simple_apartment'">Apartement #{{propertyData["code"]}}</span>
+                <span *ngSwitchCase="'furnished_apartment'">Apartement Meublé #{{propertyData["code"]}}</span>
+            </ng-container>
+        </ng-container>
+    </ng-template>
+
+    <ng-template #actionTemplate let-data="data" class="flex">
+        <div class="app-mini-sidebar__list__item__pill mr-2"  container="body" ngbTooltip="Voir les details du locataire">
+            <youpez-ibm-icon class="location-icon text-bleu cursor-pointer " iconName="view" iconSize="20"></youpez-ibm-icon>  
+        </div>
+        <div class="app-mini-sidebar__list__item__pill"  container="body" ngbTooltip="Ajouter un paiement">
+            <youpez-ibm-icon class="location-icon text-green cursor-pointer " iconName="money" iconSize="20"></youpez-ibm-icon>  
+        </div>
+
+    </ng-template>
+    
+    
+    <ibm-table
+        [model]="model"
+        [size]="size"
+        [skeleton]="skeleton"
+        [showSelectionColumn]="showSelectionColumn"
+        [enableSingleSelect]="enableSingleSelect"
+        (rowClick)="onRowClick($event)"
+        [sortable]="sortable"
+        [stickyHeader]="stickyHeader"
+        [striped]="striped"
+        [isDataGrid]="isDataGrid"
+        (sort)="simpleSort($event)">
+        <ng-content></ng-content>
+    </ibm-table>
+    
+    
+        <ng-template #customTrigger>
+        <svg ibmIconSettings size="16"></svg>
+        </ng-template>
+    </ibm-table-container>
+</youpez-sidenav-container>

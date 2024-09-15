@@ -124,7 +124,7 @@
   </ng-container>
 
   <ng-container *ngSwitchCase="'document'">
-    <svg [class]="iconClass" cdsIcon="home" [size]="iconSize"></svg>
+    <svg [class]="iconClass" cdsIcon="document" [size]="iconSize"></svg>
   </ng-container>
 
   <ng-container *ngSwitchCase="'email'">
@@ -146,7 +146,10 @@
   <ng-container *ngSwitchCase="'userAvatar'">
     <svg [class]="iconClass" cdsIcon="home" [size]="iconSize"></svg>
   </ng-container>
-
+  <ng-container *ngSwitchCase="'userIdentification'">
+    <svg [class]="iconClass" cdsIcon="user--identification" [size]="iconSize"></svg>
+  </ng-container>
+  
   <ng-container *ngSwitchCase="'folder'">
     <svg [class]="iconClass" cdsIcon="folder" [size]="iconSize"></svg>
   </ng-container>
@@ -280,11 +283,11 @@
   </ng-container>
 
   <ng-container *ngSwitchCase="'download'">
-    <svg [class]="iconClass" cdsIcon="home" [size]="iconSize"></svg>
+    <svg [class]="iconClass" cdsIcon="download" [size]="iconSize"></svg>
   </ng-container>
 
   <ng-container *ngSwitchCase="'share'">
-    <svg [class]="iconClass" cdsIcon="home" [size]="iconSize"></svg>
+    <svg [class]="iconClass" cdsIcon="share" [size]="iconSize"></svg>
   </ng-container>
 
   <ng-container *ngSwitchCase="'move'">

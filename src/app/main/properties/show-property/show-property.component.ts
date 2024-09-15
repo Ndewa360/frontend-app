@@ -14,7 +14,6 @@ import { UpdatePropertyComponent } from '../components/update-property/update-pr
   selector: 'app-show-property',
   templateUrl: './show-property.component.html',
   styleUrls: ['./show-property.component.scss'],
-  encapsulation:ViewEncapsulation.None
 })
 export class ShowPropertyComponent implements OnInit {
 
@@ -64,6 +63,8 @@ export class ShowPropertyComponent implements OnInit {
 
   getTitle() {
     switch (this._activatedRoute.snapshot.firstChild.data['breadcrumb']) {
+      case 'locations':
+        return "Details de locations"
       case 'locataires':
         return "Locataires de biens"
       case 'finances':
@@ -72,6 +73,31 @@ export class ShowPropertyComponent implements OnInit {
         return "Vos Chambres / Studios / Appartements"
     }
     return ""
+  }
+
+  showTitleOfBtn()
+  {
+    switch (this._activatedRoute.snapshot.firstChild.data['breadcrumb']) {
+      case 'locataires':
+        return "Ajouter un locataire"
+      // case 'finances':
+      //   return "Vos finances"
+      case 'chambres':
+        return "Ajouter une chambre "
+    }
+    return ""
+  }
+  shoulShowAddProperty()
+  {
+    switch (this._activatedRoute.snapshot.firstChild.data['breadcrumb']) {
+      case 'locations':
+      case 'finances':
+        return false;
+      case 'locataires':
+      case 'chambres':
+        return true
+    }
+    return false
   }
 
   onToggleLeftSidebar() {

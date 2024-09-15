@@ -162,6 +162,27 @@ import TrashCan24 from '@carbon/icons/es/trash-can/24';
 import TrashCan20 from '@carbon/icons/es/trash-can/20';
 import TrashCan16 from '@carbon/icons/es/trash-can/16';
 
+import UserIdentification32 from '@carbon/icons/es/user--identification/32';
+import UserIdentification24 from '@carbon/icons/es/user--identification/24';
+import UserIdentification20 from '@carbon/icons/es/user--identification/20';
+import UserIdentification16 from '@carbon/icons/es/user--identification/16';
+
+import Document32 from '@carbon/icons/es/document/32';
+import Document24 from '@carbon/icons/es/document/24';
+import Document20 from '@carbon/icons/es/document/20';
+import Document16 from '@carbon/icons/es/document/16';
+
+import Share32 from '@carbon/icons/es/share/32';
+import Share24 from '@carbon/icons/es/share/24';
+import Share20 from '@carbon/icons/es/share/20';
+import Share16 from '@carbon/icons/es/share/16';
+
+import Download32 from '@carbon/icons/es/download/32';
+import Download24 from '@carbon/icons/es/download/24';
+import Download20 from '@carbon/icons/es/download/20';
+import Download16 from '@carbon/icons/es/download/16';
+
+
 import View32 from '@carbon/icons/es/view/32';
 import View24 from '@carbon/icons/es/view/24';
 import View20 from '@carbon/icons/es/view/20';
@@ -182,6 +203,8 @@ import Close32 from '@carbon/icons/es/close/32';
 import Close24 from '@carbon/icons/es/close/24';
 import Close20 from '@carbon/icons/es/close/20';
 import Close16 from '@carbon/icons/es/close/16';
+
+
 
 
 
@@ -220,6 +243,26 @@ export class IbmIconModule {
 			TrashCan24,
 			TrashCan20,
 			TrashCan16,
+
+      Share32,
+			Share24,
+			Share20,
+			Share16,
+
+      UserIdentification32,
+			UserIdentification24,
+			UserIdentification20,
+			UserIdentification16,
+
+      Download32,
+			Download24,
+			Download20,
+			Download16,
+
+      Document32,
+			Document24,
+			Document20,
+			Document16,
 
       View32,
 			View24,

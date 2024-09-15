@@ -26,6 +26,7 @@ export class LocataireStateModel {
 })
 @Injectable()
 export class LocataireState{
+    
     constructor(
         private _locatairesService:LocataireService,
         private _toastrService:ToastrService
@@ -58,6 +59,10 @@ export class LocataireState{
     {
         return createSelector([LocataireState],(state)=> state.locataires.filter((locataire)=>locataire.property==propertyID))
     }
+
+    static selectStateFreeLocataireByPropertyId(propertyID: string) {
+        return createSelector([LocataireState],(state)=> state.locataires.filter((locataire:LocataireModel)=>locataire.property==propertyID && locataire.room==null))
+      }
 
     @Action(LocataireAction.UpdateLocataire)
     updateLocataire(ctx:StateContext<LocataireStateModel>, {locataire,id}:LocataireAction.UpdateLocataire)

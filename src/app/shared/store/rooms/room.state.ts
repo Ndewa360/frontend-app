@@ -26,6 +26,7 @@ export class RoomStateModel {
 })
 @Injectable()
 export class RoomState{
+   
     constructor(
         private _roomsService:RoomService,
         private _toastrService:ToastrService,
@@ -52,6 +53,11 @@ export class RoomState{
         })
     
     }
+
+    static selectStateFreeRoomByPropertyId(propertyId: any) {
+        return createSelector([RoomState],(state)=> state.rooms.filter((room)=>room.property==propertyId && room.isFree==true));    
+
+      }
 
     static selectStateRoomByRoomName(name=null)
     {

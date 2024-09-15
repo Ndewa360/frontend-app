@@ -16,6 +16,7 @@ import { PropertyLocataireComponent } from './properties/components/property-loc
 import { PropertyRoomComponent } from './properties/components/property-room/property-room.component'
 import { ListPropertyComponent } from './properties/list-property/list-property.component'
 import { ShowPropertyComponent } from './properties/show-property/show-property.component'
+import { SeeLocationsComponent } from './properties/components/see-locations/see-locations.component'
 
 
 
@@ -102,6 +103,13 @@ const routes: Routes = [
                 //     component:ShowRoomComponent
                 //   }
                 // ]
+              },
+              {
+                path: 'locations',
+                component: SeeLocationsComponent,
+                data: {
+                  breadcrumb: 'locations'
+                },
               },
               {
                 path: 'finances',

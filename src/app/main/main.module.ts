@@ -24,7 +24,9 @@ import { ListPropertyComponent } from './properties/list-property/list-property.
 import { ShowPropertyComponent } from './properties/show-property/show-property.component'
 import { LocatairePropertyModule } from './properties/components/locataire-property/locataire-property.module'
 import { AgGridModule } from '@ag-grid-community/angular';
-import { UpdatePropertyComponent } from './properties/components/update-property/update-property.component'
+import { UpdatePropertyComponent } from './properties/components/update-property/update-property.component';
+import { SeeLocationsComponent } from './properties/components/see-locations/see-locations.component';
+import { AssignLocationComponent } from './properties/components/assign-location/assign-location.component'
 
 
 @NgModule({
@@ -45,6 +47,8 @@ import { UpdatePropertyComponent } from './properties/components/update-property
     AddPropertyLocataireComponent,
     FinancialHistoryComponent,
     UpdatePropertyComponent,
+    SeeLocationsComponent,
+    AssignLocationComponent,
     
   ],
   imports: [
