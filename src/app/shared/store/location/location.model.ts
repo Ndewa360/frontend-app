@@ -17,5 +17,7 @@ export interface LocationModel {
 
     locationPriceUnit?:number
 
+    removeReason?:string;
+    
     createdAt?:Date
 }

@@ -41,6 +41,14 @@ export class LocationService
 
     }
 
+    removeAssignationLocation(locationId,description):Observable<ApiResultFormat<LocationModel>>
+    {
+        let bodyToSend = {};
+        if(description) bodyToSend = {removeReason:description}
+        return this._httpClient.put<ApiResultFormat<LocationModel>>(`${environment.apiUrl}/location/remove-assignation/${locationId}`,bodyToSend)
+
+    }
+
     getLocations(propertyId:string):Observable<ApiResultFormat<LocationModel[]>>
     {       
         return this._httpClient.get<ApiResultFormat<LocationModel[]>>(`${environment.apiUrl}/location/property/${propertyId}`)

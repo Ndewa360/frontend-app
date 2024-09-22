@@ -101,7 +101,6 @@ export class LocataireState{
     {
         const state = ctx.getState();
         let index = state.locataires.findIndex((u)=>u._id==locataireId);
-        console.log("Index ",index,locataireId,roomId)
         if(index>-1) {
             const data = [...state.locataires];
             data[index]={...data[index],room:roomId}

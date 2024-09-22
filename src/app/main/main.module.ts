@@ -29,7 +29,8 @@ import { SeeLocationsComponent } from './properties/components/see-locations/see
 import { AssignLocationComponent } from './properties/components/assign-location/assign-location.component';
 import { AssignLocationFormComponent } from './properties/components/assign-location-form/assign-location-form.component';
 import { AssignLocationStepperComponent } from './properties/components/assign-location-stepper/assign-location-stepper.component';
-import { AssignLocationListClientComponent } from './properties/components/assign-location-list-client/assign-location-list-client.component'
+import { AssignLocationListClientComponent } from './properties/components/assign-location-list-client/assign-location-list-client.component';
+import { RemoveLocataireRoomComponent } from './properties/components/remove-locataire-room/remove-locataire-room.component'
 
 
 @NgModule({
@@ -55,6 +56,7 @@ import { AssignLocationListClientComponent } from './properties/components/assig
     AssignLocationFormComponent,
     AssignLocationStepperComponent,
     AssignLocationListClientComponent,
+    RemoveLocataireRoomComponent,
     
   ],
   imports: [

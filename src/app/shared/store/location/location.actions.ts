@@ -23,6 +23,12 @@ export namespace LocationAction
         constructor(public locationId:string){}
     }
 
+    export class RemoveAssignationLocation
+    {
+        static readonly type = '[Location] Remove assignation Location'
+        constructor(public locationId:string,public description:string=""){}
+    }
+    
     //Fetch  Location
     export class FetchLocations
     {

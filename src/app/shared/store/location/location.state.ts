@@ -164,6 +164,41 @@ export class LocationState{
         )
     }
 
+    @Action(LocationAction.RemoveAssignationLocation)
+    removeAssignationLocation(ctx:StateContext<LocationStateModel>,{locationId,description}:LocationAction.RemoveAssignationLocation)
+    {
+        const state = ctx.getState();
+        ctx.patchState({
+            loadingLocation:true
+        })
+        return this._locationsService.removeAssignationLocation(locationId,description).pipe(
+            tap(
+                result => {
+                    const data = [...state.locations]
+                    let index = data.findIndex((u)=>u._id==locationId);
+                    if(index>-1) data.splice(index,1)
+                    ctx.patchState({
+                        loadingLocation:false,
+                        locations:data
+                    })
+                    this._toastrService.success(`Location retiré avec success!`, 'Ndiye');
+                    ctx.dispatch(new RoomAction.ChangeStatusRoom(result.data.room,true,null))
+                    ctx.dispatch(new LocataireAction.UpdateLocataireRoom(result.data.locataire,null))
+                }
+            ),
+            catchError((error)=>{
+                ctx.patchState({
+                    loadingLocation: false
+                })
+                let message = error?.error?.message;
+                if(!message) message = "Une erreur c'est produite! Réessayez plus tard"
+                this._toastrService.error(message, 'Ndiye');
+                return throwError(error);
+            })
+        )
+    }
+
+
     @Action(LocationAction.FetchLocationsByPropertyId)
     fetchLocationsByPropertyId(ctx:StateContext<LocationStateModel>,{propertyId}:LocationAction.FetchLocationsByPropertyId)
     {

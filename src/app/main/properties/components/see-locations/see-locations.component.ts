@@ -3,6 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { TableHeaderItem, TableItem, TableModel, TableRowSize } from 'carbon-components-angular';
 import { LocataireState, LocataireModel, PropertyState, LocationState, RoomState } from 'src/app/shared/store';
+import { RemoveLocataireRoomComponent } from '../remove-locataire-room/remove-locataire-room.component';
+import { MatDialog } from '@angular/material/dialog';
 
 function sort(model, index: number) {
   if (model.header[index].sorted) {
@@ -31,7 +33,7 @@ export class SeeLocationsComponent {
   public offset = {x: -9, y: 0}
   public batchText = ''
 
-  showSelectionColumn = true
+  showSelectionColumn = false
   enableSingleSelect = false
   striped = false
   sortable = true
@@ -50,6 +52,7 @@ export class SeeLocationsComponent {
     private _store:Store,
     private _activatedRoute: ActivatedRoute,
     private _router:Router,
+    private dialog: MatDialog,
   ){}
   ngOnInit() {
     let propertyId = this._activatedRoute.parent.snapshot.paramMap.get('id');
@@ -104,7 +107,7 @@ export class SeeLocationsComponent {
           }),
           new TableItem({data: ""}),
           new TableItem({
-            data: "",
+            data: {location},
             template: this.actionTemplate,
             className: "items-center"
           })
@@ -138,6 +141,19 @@ export class SeeLocationsComponent {
   getLocataireById(locataireid)
   {
     return this._store.select(LocataireState.selectStateLocataire(locataireid))
+  }
+
+  removeAssignLocationRoom(location)
+  {
+    this.dialog.open(RemoveLocataireRoomComponent, {
+      viewContainerRef:null,
+      disableClose: true,
+      role: 'alertdialog',
+      width: '500px',
+      data:{
+        location:location
+      }
+    })
   }
 
   simpleSort(index: number) {
