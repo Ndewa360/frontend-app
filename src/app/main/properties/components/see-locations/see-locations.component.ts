@@ -42,8 +42,10 @@ export class SeeLocationsComponent {
 
   @ViewChild("totalHeaderTemplate", {static: true}) totalHeaderTemplate: TemplateRef<any>
   @ViewChild("actionTemplate", {static: true}) actionTemplate: TemplateRef<any>
-  @ViewChild("propertyTemplate", {static: true}) propertyTemplate: TemplateRef<any>
-
+  @ViewChild("locataireTemplate", {static: true}) locataireTemplate: TemplateRef<any>
+  @ViewChild("roomTemplate", {static: true}) roomTemplate: TemplateRef<any>
+  @ViewChild("dateEntryTemplate", {static: true}) dateEntryTemplate: TemplateRef<any>
+  
   constructor(
     private _store:Store,
     private _activatedRoute: ActivatedRoute,
@@ -83,29 +85,31 @@ export class SeeLocationsComponent {
       this.property = value;
     })
     this._store.select(LocationState.selectStateLocationByPropertyId(propertyId)).subscribe((value)=>{
-      this.model.data = value.map((locataire)=> {
+      this.model.data = value.map((location)=> {
         return ([
-          new TableItem({data: locataire.fullName}),
-          new TableItem({data: locataire.phoneNumber}),
-          new TableItem({data: locataire.email}),
-          new TableItem({data: locataire.room?locataire.room:""}),
-          new TableItem({data: ""})
+          new TableItem({
+            data: location.locataire,
+            template: this.locataireTemplate,
+            className: "items-center"
+          }),
+          new TableItem({
+            data: location.room,
+            template: this.roomTemplate,
+            className: "items-center"
+          }),
+          new TableItem({
+            data: location.startedAt,
+            template: this.dateEntryTemplate,
+            className: "items-center"            
+          }),
+          new TableItem({data: ""}),
+          new TableItem({
+            data: "",
+            template: this.actionTemplate,
+            className: "items-center"
+          })
         ])
       });
-      this.model.data.map(data => {      
-        data[3] = new TableItem({
-          data: data[3].data,
-          template: this.propertyTemplate,
-          className: "items-center"
-        })
-     
-        data[4] = new TableItem({
-          data: data[4].data,
-          template: this.actionTemplate,
-          className: "items-center"
-        })
-        return data
-      })
     })    
   }
 
@@ -129,6 +133,11 @@ export class SeeLocationsComponent {
   getRoomById(roomId)
   {
     return this._store.select(RoomState.selectStateRoom(roomId))
+  }
+
+  getLocataireById(locataireid)
+  {
+    return this._store.select(LocataireState.selectStateLocataire(locataireid))
   }
 
   simpleSort(index: number) {

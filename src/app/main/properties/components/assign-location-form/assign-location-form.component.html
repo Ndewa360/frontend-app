@@ -1,0 +1,58 @@
+<form [formGroup]="formGroup"  class="assign-location" (ngSubmit)="onSubmit()">
+    <div class="px-4 py-3">
+        <div class="app-form">
+            <div fxLayout="row wrap" class="app-form__row">
+                <div fxFlex="100%"  class="app-form__item">
+                    <ibm-label  [invalid]="isValid('roomId')" [invalidText]="'Vous devez choisir une chambre'">
+                    Choisissez la chambre 
+                        <ibm-combo-box class="mt-2"
+                        [items]="roomList"
+                        formControlName="roomId"
+                        theme="dark"
+                        size="lg">
+                        <ibm-dropdown-list></ibm-dropdown-list>
+                    </ibm-combo-box>   
+                    </ibm-label>
+                </div>
+
+                <div fxFlex="100%"  class="app-form__item">
+                    <ibm-label [invalid]="isValid('locataireId')" [invalidText]="'Vous devez choisir un locataire libre'">
+                    Choisissez le locataire 
+                        <ibm-combo-box class="mt-2"
+                            [items]="locataireList"
+                            formControlName="locataireId"
+                            theme="dark"
+                            size="lg">
+                            <ibm-dropdown-list></ibm-dropdown-list>
+                        </ibm-combo-box>   
+                    </ibm-label>
+                </div>
+                <div class="mb-6">
+                    <ibm-date-picker
+                        formControlName="startedDate"
+                      [label]="'Date d\'entrée du locataire'"
+                      [placeholder]="'dd/mm/yyyy'"
+                      [language]="'fr'"
+                      [size]="'lg'"
+                      [theme]="'dark'"
+                      [disabled]="false"
+                      [invalid]="false"
+                      [invalidText]="''"
+                      [dateFormat]="'d/m/Y'">
+                    </ibm-date-picker>
+                </div>
+
+                <div class="sm:col-span-3 mb-6">
+                    <youpez-alert
+                        [appearance]="'outline'"
+                        [type]="'info'">
+                        Si vous selectionnez un date précédente alors la facturation sera automatiquement calculé
+                    </youpez-alert>
+                </div>
+
+            </div>
+        </div>
+        
+        
+    </div>
+</form>

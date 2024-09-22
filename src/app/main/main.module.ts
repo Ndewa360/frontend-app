@@ -26,7 +26,10 @@ import { LocatairePropertyModule } from './properties/components/locataire-prope
 import { AgGridModule } from '@ag-grid-community/angular';
 import { UpdatePropertyComponent } from './properties/components/update-property/update-property.component';
 import { SeeLocationsComponent } from './properties/components/see-locations/see-locations.component';
-import { AssignLocationComponent } from './properties/components/assign-location/assign-location.component'
+import { AssignLocationComponent } from './properties/components/assign-location/assign-location.component';
+import { AssignLocationFormComponent } from './properties/components/assign-location-form/assign-location-form.component';
+import { AssignLocationStepperComponent } from './properties/components/assign-location-stepper/assign-location-stepper.component';
+import { AssignLocationListClientComponent } from './properties/components/assign-location-list-client/assign-location-list-client.component'
 
 
 @NgModule({
@@ -49,6 +52,9 @@ import { AssignLocationComponent } from './properties/components/assign-location
     UpdatePropertyComponent,
     SeeLocationsComponent,
     AssignLocationComponent,
+    AssignLocationFormComponent,
+    AssignLocationStepperComponent,
+    AssignLocationListClientComponent,
     
   ],
   imports: [

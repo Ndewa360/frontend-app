@@ -110,6 +110,20 @@ export class RoomState{
         )
     }
 
+    @Action(RoomAction.ChangeStatusRoom)
+    updateRoomStatus(ctx:StateContext<RoomStateModel>, {roomId,status,locataire}:RoomAction.ChangeStatusRoom)
+    {
+        const state = ctx.getState();
+        let index = state.rooms.findIndex((u)=>u._id==roomId);
+        if(index>-1) {
+            const data = [...state.rooms];
+            data[index]={...data[index],isFree:status,locataire:locataire}
+            ctx.patchState({
+                rooms:data
+            })
+        }
+    }
+
     
     @Action(RoomAction.updateLoadingRoomState)
     updateLoadingRoomState(ctx:StateContext<RoomStateModel>,{status}:RoomAction.updateLoadingRoomState)

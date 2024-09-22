@@ -15,6 +15,12 @@ export namespace LocataireAction
         constructor(public locataire:LocataireModel, public id:string){}
     }
 
+    export class UpdateLocataireRoom
+    {
+        static readonly type = '[Locataire] Update Locataire Room';
+        constructor(public locataireId:string,public roomId:string){}
+    }
+
     //Fetch  Locataire profil
     export class FetchLocataire
     {
@@ -53,6 +59,6 @@ export namespace LocataireAction
     export class CreateLocataire
     {
         static readonly type = '[Locataire] create Locataire'
-        constructor(public locataire:LocataireModel){}
+        constructor(public locataire){}
     }
 }

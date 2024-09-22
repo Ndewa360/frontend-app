@@ -1,93 +1,75 @@
 
          <div fxFill fxLayout="column">
-            <div class="px-20 py-20 text-center mb-2 app-border-b">
+            <div class="px-2 py-2 text-center  app-border-b">
               <youpez-ibm-icon iconName="task" iconSize="32"></youpez-ibm-icon>
+              <img src="./../../../../../assets/images/assigne_room.png" alt="" srcset="">
             </div>
-            <div class="app-expressive-heading-02 px-4 truncate mb-2">Assigner un chambre</div>
+            <!-- <div class="app-expressive-heading-02 px-4 truncate mb-2">Assigner un chambre</div> -->
             <div fxFlex class="relative">
               <div class="app-a-box app-scrollbar-fix">
                 <ng-scrollbar>
-                    <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
-                        <div class="px-4 py-3">
-                            <div class="app-form">
-                                <div fxLayout="row wrap" class="app-form__row">
-                                    <div fxFlex="100%"  class="app-form__item">
-                                        <ibm-label  [invalid]="isValid('roomId')" [invalidText]="'Vous devez choisir une chambre'">
-                                        Choisissez la chambre 
-                                            <ibm-combo-box class="mt-2"
-                                            [items]="roomList"
-                                            formControlName="roomId"
-                                            theme="dark"
-                                            size="md">
-                                            <ibm-dropdown-list></ibm-dropdown-list>
-                                        </ibm-combo-box>   
-                                        </ibm-label>
+                  <youpez-content-simple mainTitle="Assigner une chambre">
+                    <div fxLayout="row wrap">
+                      <div fxFlex="100%" >
+                        <div fxLayout="row wrap">
+                          <div fxFlex="100%" class="">
+                            <div class="">
+                              <div class="app-card app-card--m-0">
+                                <div class="app-card__content" style="padding-left:0;">
+                                  <!-- <app-dummy-form-wizard orientation="vertical"></app-dummy-form-wizard> -->
+                                   <!-- <assign-location-stepper [roomList]="roomList" [locataireList]="locataireList"></assign-location-stepper> -->
+                                    <div fxLayout="row wrap">
+                                      <div >
+                                        <ng-container >
+                                          <div class="">
+                                            <!-- <app-dummy-form-billing #billingForm [theme]="formTheme" [layout]="formLayout"></app-dummy-form-billing> -->
+                                             <!--  -->
+                                              <assign-location-form (onSendLocationData)="onSetLocataireFormData($event)" #locationForm [roomList]="roomList" [locataireList]="locataireList"></assign-location-form>
+                                            <div class="mt-1 flex justify-between">
+                                              <button ibmButton="secondary" size="md" [disabled]="waittingResponse" (click)="closeSideNav()">
+                                                  <!-- <youpez-ibm-icon iconClass="cds--btn__icon" iconName="arrowRight" iconSize="20" ></youpez-ibm-icon > -->
+                                                  <span class="btn-text">Annuler</span>
+                                              </button>
+                                              <button ibmButton="primary" [disabled]="waittingResponse || !canSendingData" (click)="onSubmit()" size="md">
+                                                <ibm-loading *ngIf="waittingResponse; else noWaitingResponse"></ibm-loading>
+                                                <ng-template #noWaitingResponse>
+                                                  <span class="btn-text">Enregistrer</span>
+                                                  <!-- <svg class="cds--btn__icon" ibmIconArrowRight size="sm"></svg> -->
+                                                  <youpez-ibm-icon iconClass="cds--btn__icon" iconName="save" iconSize="24" ></youpez-ibm-icon >
+                                                </ng-template>
+                                                <!-- <span class="btn-text">Enregistrer</span>
+                                                <youpez-ibm-icon iconClass="cds--btn__icon" iconName="save" iconSize="24" ></youpez-ibm-icon > -->
+                                              </button>
+                                            </div>
+                                          </div>
+                                        </ng-container>
+                                      </div>
                                     </div>
-
-                                    <div fxFlex="100%"  class="app-form__item">
-                                        <ibm-label [invalid]="isValid('locataireId')" [invalidText]="'Vous devez choisir un locataire libre'">
-                                        Choisissez le locataire 
-                                            <ibm-combo-box class="mt-2"
-                                            [items]="locataireList"
-                                            formControlName="locataireId"
-                                            theme="dark"
-                                            size="md">
-                                            <ibm-dropdown-list></ibm-dropdown-list>
-                                        </ibm-combo-box>   
-                                        </ibm-label>
-                                    </div>
-                                    <div class="mb-6">
-                                        <ibm-date-picker
-                                        formControlName="startedDate"
-                                          [label]="'Date d\'entrée du locataire'"
-                                          [placeholder]="'dd/mm/yyyy'"
-                                          [language]="'fr'"
-                                          [size]="'md'"
-                                          [theme]="'dark'"
-                                          [disabled]="false"
-                                          [invalid]="false"
-                                          [invalidText]="''"
-                                          [dateFormat]="'d/m/Y'">
-                                        </ibm-date-picker>
-                                    </div>
-
-                                    <div class="sm:col-span-3 mb-6">
-                                        <youpez-alert
-                                            [appearance]="'outline'"
-                                            [type]="'info'">
-                                            Vous pouvez sélectionner un template afin de rédiger le message sous la forme proposé par le template. Dans ce cas, le contenu du message n'est plus obligatoire!
-                                        </youpez-alert>
-                                    </div>
-
                                 </div>
+                              </div>
                             </div>
                             
-                            
+                          </div>
                         </div>
-                    </form>
+                      </div>
+                    </div>
+                  </youpez-content-simple>                    
                 </ng-scrollbar>
               </div>
             </div>
-            <div class="px-4 py-4">
+            <!-- <div class="px-4 py-4">
               <div class="mb-1">
                 <button ibmButton="primary" size="sm" class="w-full mb-1">
-                  Download
-                    <youpez-ibm-icon iconClass="bx--btn__icon" iconName="download" iconSize="20"></youpez-ibm-icon>
-                </button>
-              </div>
-              <div class="mb-1">
-                <button ibmButton="primary" size="sm" class="w-full mb-1">
-                  Share
-                  <youpez-ibm-icon iconClass="bx--btn__icon" iconName="share" iconSize="20"></youpez-ibm-icon>
-
+                  Enregistrer
+                    <youpez-ibm-icon iconClass="bx--btn__icon" iconName="save" iconSize="20"></youpez-ibm-icon>
                 </button>
               </div>
               <div class="mb-1">
                 <button ibmButton="danger" size="sm" class="w-full">
-                  Delete
+                  Annuler
                   <youpez-ibm-icon iconClass="bx--btn__icon" iconName="trashCan" iconSize="20"></youpez-ibm-icon>
 
                 </button>
               </div>
-            </div>
+            </div> -->
           </div>

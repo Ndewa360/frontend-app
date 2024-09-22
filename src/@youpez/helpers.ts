@@ -682,3 +682,11 @@ export const headerThemes = [
     theme: 'app-theme-header--dark-blue'
   },
 ]
+
+export const sort = function(model, index: number) {
+  if (model.header[index].sorted) {
+    // if already sorted flip sorting direction
+    model.header[index].ascending = model.header[index].descending
+  }
+  model.sort(index)
+}

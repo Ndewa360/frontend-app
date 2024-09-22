@@ -1,21 +1,21 @@
 import { UserModel } from "../user/user.model";
 
 export interface LocationModel {
-    _id: string;
+    _id?: string;
 
-    locataire: string;
+    locataire?: string;
 
-    isRunning:boolean
+    isRunning?:boolean
 
-    room: string;
+    room?: string;
 
-    property:string;
+    property?:string;
 
-    startedAt:Date;
+    startedAt?:Date;
     
-    endedAt:Date;
+    endedAt?:Date;
 
-    locationPriceUnit:number
+    locationPriceUnit?:number
 
-    createdAt:Date
+    createdAt?:Date
 }

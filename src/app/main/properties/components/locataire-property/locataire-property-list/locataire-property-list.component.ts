@@ -72,7 +72,7 @@ export class LocatairePropertyListComponent implements OnInit, OnChanges {
         new TableItem({data: locataire.fullName}),
         new TableItem({data: locataire.phoneNumber}),
         new TableItem({data: locataire.email}),
-        new TableItem({data: locataire.room?locataire.room:""}),
+        new TableItem({data: locataire.room}),
         new TableItem({data: ""})
       ])
     });

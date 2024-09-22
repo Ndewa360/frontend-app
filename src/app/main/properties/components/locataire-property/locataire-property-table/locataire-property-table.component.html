@@ -3,9 +3,9 @@
     <ng-template #toLestDataUser><div class="w-full text-left">{{data}}</div></ng-template>
   </ng-template> -->
   <ng-template #propertyTemplate let-data="data">
-    <ng-container *ngIf="(getRoomById(data) | async )as propertyData">
+    <ng-container *ngIf="(getRoomById(data) | async ) as propertyData">
         <!-- {{propertyData.type}} -->
-        <ng-container *ngSwitch="propertyData['type']">
+        <ng-container [ngSwitch]="propertyData.type">
             <span *ngSwitchCase="'room'">Chambre {{propertyData["code"]}}</span>
             <span *ngSwitchCase="'studio'">Studio #{{propertyData["code"]}}</span>
             <span *ngSwitchCase="'simple_apartment'">Apartement #{{propertyData["code"]}}</span>

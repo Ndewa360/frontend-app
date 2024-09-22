@@ -36,6 +36,6 @@ export interface RoomModel {
     code:string;
     _id:string;
     property:string;
-    locataireId?:string;
+    locataire?:string;
     isFree:boolean;
 }

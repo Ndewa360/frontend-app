@@ -9,6 +9,7 @@ import {DragDropModule} from '@angular/cdk/drag-drop'
 import {A11yModule} from '@angular/cdk/a11y'
 
 import {MatDialogModule} from "@angular/material/dialog"
+import {MatIconModule} from '@angular/material/icon';
 
 
 
@@ -35,6 +36,7 @@ import {
   ToggleModule,
   DatePickerModule,
   SearchModule as SearchModuleComponent,
+  ProgressBarModule,
   ContentSwitcherModule,
   SkeletonModule,
   DialogModule,
@@ -47,7 +49,8 @@ import {
   NumberModule,
   FileUploaderModule, 
   ModalModule,
-  LoadingModule
+  LoadingModule,
+  ProgressIndicatorModule
    
 } from 'carbon-components-angular'
 
@@ -82,7 +85,7 @@ import { IbmIconModule } from './components/ibm-icon/ibm-icon.module'
 // import { MarkdownModule } from 'ngx-markdown';
 import {NgbDropdownModule, NgbTooltipModule} from '@ng-bootstrap/ng-bootstrap'
 import {MatCardModule} from '@angular/material/card';
-import { YoupezAlertModule } from './components/alert'
+import { YoupezAlertComponent } from './components/alert'
 // import { NgxMatIntlTelInputComponent } from "ngx-mat-intl-tel-input"
 
 
@@ -102,8 +105,7 @@ const MainModules = [
   DragDropModule,
   A11yModule,
   MatDialogModule,
-  YoupezAlertModule,
-
+  MatIconModule
   // NgxMatIntlTelInputComponent,
 ]
 
@@ -135,7 +137,9 @@ const CarbonModules = [
   NumberModule,
   FileUploaderModule,
   ModalModule,
-  LoadingModule
+  LoadingModule,
+  ProgressBarModule,
+  ProgressIndicatorModule
 ]
 
 const Components = [
@@ -163,6 +167,7 @@ const Components = [
   AppContentSimpleComponent,
   AppLogoComponent,
   AppBreadcrumbComponent,
+  YoupezAlertComponent
 ]
 
 const Pipes = [

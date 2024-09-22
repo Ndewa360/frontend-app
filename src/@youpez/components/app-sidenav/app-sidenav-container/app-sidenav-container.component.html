@@ -9,10 +9,12 @@
        [style.marginBottom]="contentMargins.bottom">
     <ng-content></ng-content>
   </div>
+  <!-- (click)="onCloseAll()" -->
   <div class="app-sidenav-container__overlay"
        [ngClass]="{'app-sidenav-container__overlay--visible': overlayVisible && !sideMode}"
-       (click)="onCloseAll()"
+       
        [style.opacity]="overlayOpacity">
+       
   </div>
   <ng-content select="youpez-sidenav"></ng-content>
 </div>

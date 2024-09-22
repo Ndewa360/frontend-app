@@ -1,0 +1,52 @@
+<div fxLayout="row wrap">
+    <div [fxFlex]="orientation === 'vertical'? '145px' : '100%'" [fxFlex.gt-md]="orientation === 'vertical'? '145px' : '100%'">
+      <ibm-progress-indicator
+        [orientation]="orientation"
+        [steps]="steps"
+        [current]="current"
+        (stepSelected)="stepSelected($event)"></ibm-progress-indicator>
+    </div>
+    <div [fxFlex]="orientation === 'vertical'? '' : '100%'" fxFlex.gt-md="">
+      <ng-container *ngIf="current === 0">
+        <div [class]="orientation === 'vertical'? '' : 'mt-6'">
+          <div class="app-productive-heading-02 mb-4">Information de location</div>
+          <!-- <app-dummy-form-billing #billingForm [theme]="formTheme" [layout]="formLayout"></app-dummy-form-billing> -->
+           <!--  -->
+            <assign-location-form (onSendLocationData)="onSetLocataireFormData($event)" #locationForm [roomList]="roomList" [locataireList]="locataireList"></assign-location-form>
+          <div class="mt-1 flex justify-between">
+            <button ibmButton="secondary" size="md" >
+                <!-- <youpez-ibm-icon iconClass="cds--btn__icon" iconName="arrowRight" iconSize="20" ></youpez-ibm-icon > -->
+                <span class="btn-text">Annuler</span>
+            </button>
+            <button ibmButton="primary" size="md" (click)="locationForm.submit();onGotoStep(1,locationForm.isFormValid());">
+              <span class="btn-text">Next</span>
+              <youpez-ibm-icon iconClass="cds--btn__icon" iconName="arrowRight" iconSize="20" ></youpez-ibm-icon >
+            </button>
+          </div>
+        </div>
+      </ng-container>
+  
+      <ng-container *ngIf="current === 1">
+        <div [class]="orientation === 'vertical'? '' : 'mt-6'">
+          <div class="app-productive-heading-02 mb-4">Liste des loyers</div>
+           <assign-location-list-client></assign-location-list-client>
+          <div class="mt-1 flex justify-end">
+            <div class="mt-1 flex justify-between">
+              <button ibmButton="secondary" size="md" (click)="onGotoStep(0,true)">
+                  <youpez-ibm-icon iconClass="cds--btn__icon" iconName="arrowLeft" iconSize="20" ></youpez-ibm-icon >
+                  <span class="btn-text">Retour</span>
+              </button>
+              <button ibmButton="primary" size="md" (click)="createLocation()">
+                <span class="btn-text">Next</span>
+                <youpez-ibm-icon iconClass="cds--btn__icon" iconName="save" iconSize="20" ></youpez-ibm-icon >
+              </button>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+  
+    </div>
+  </div>
+  
+  
+  

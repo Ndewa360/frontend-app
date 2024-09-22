@@ -167,6 +167,11 @@ import UserIdentification24 from '@carbon/icons/es/user--identification/24';
 import UserIdentification20 from '@carbon/icons/es/user--identification/20';
 import UserIdentification16 from '@carbon/icons/es/user--identification/16';
 
+import Save32 from '@carbon/icons/es/save/32';
+import Save24 from '@carbon/icons/es/save/24';
+import Save20 from '@carbon/icons/es/save/20';
+import Save16 from '@carbon/icons/es/save/16';
+
 import Document32 from '@carbon/icons/es/document/32';
 import Document24 from '@carbon/icons/es/document/24';
 import Document20 from '@carbon/icons/es/document/20';
@@ -210,6 +215,8 @@ import Close16 from '@carbon/icons/es/close/16';
 
 
 import {IbmIconComponent} from './ibm-icon.component'
+import { MatIconRegistry } from '@angular/material/icon';
+import { DomSanitizer } from '@angular/platform-browser';
 
 
 @NgModule({
@@ -227,12 +234,21 @@ import {IbmIconComponent} from './ibm-icon.component'
   
 })
 export class IbmIconModule {
-  constructor(protected iconService: IconService) {
+  constructor(
+    protected iconService: IconService,
+    private _domSanitizer: DomSanitizer,
+    private _matIconRegistry: MatIconRegistry
+  ) {
     iconService.registerAll([
 			FaceActived32,
 			FaceActived24,
 			FaceActived20,
 			FaceActived16,
+
+      Save32,
+			Save24,
+			Save20,
+			Save16,
 
       CloudApp32,
 			CloudApp24,
@@ -425,5 +441,13 @@ export class IbmIconModule {
       SendAlt16,
 
 		]);
+
+    // Register icon sets
+    this._matIconRegistry.addSvgIconSet(this._domSanitizer.bypassSecurityTrustResourceUrl('assets/icons/material-twotone.svg'));
+    this._matIconRegistry.addSvgIconSetInNamespace('mat_outline', this._domSanitizer.bypassSecurityTrustResourceUrl('assets/icons/material-outline.svg'));
+    this._matIconRegistry.addSvgIconSetInNamespace('mat_solid', this._domSanitizer.bypassSecurityTrustResourceUrl('assets/icons/material-solid.svg'));
+    this._matIconRegistry.addSvgIconSetInNamespace('feather', this._domSanitizer.bypassSecurityTrustResourceUrl('assets/icons/feather.svg'));
+    this._matIconRegistry.addSvgIconSetInNamespace('heroicons_outline', this._domSanitizer.bypassSecurityTrustResourceUrl('assets/icons/heroicons-outline.svg'));
+    this._matIconRegistry.addSvgIconSetInNamespace('heroicons_solid', this._domSanitizer.bypassSecurityTrustResourceUrl('assets/icons/heroicons-solid.svg'));
   } 
 }

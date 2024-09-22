@@ -32,7 +32,7 @@ export namespace LocationAction
 
     export class FetchLocationsByPropertyId
     {
-        static readonly type = '[Location] Fectch Locations'
+        static readonly type = '[Location] Fectch Locations By PropertyID'
         constructor(public propertyId:string){}
     }
 
@@ -54,6 +54,6 @@ export namespace LocationAction
     export class CreateLocation
     {
         static readonly type = '[Location] create Location'
-        constructor(public location:LocationModel){}
+        constructor(public location:any){}
     }
 }

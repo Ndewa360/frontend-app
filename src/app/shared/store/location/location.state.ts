@@ -8,6 +8,8 @@ import { of, throwError } from "rxjs";
 import { catchError, tap } from "rxjs/operators";
 import { NotificationService } from "carbon-components-angular";
 import { ToastrService } from "ngx-toastr";
+import { RoomAction } from "../rooms";
+import { LocataireAction } from "../locataire";
 
 export class LocationStateModel {
     locations:LocationModel[]
@@ -140,12 +142,14 @@ export class LocationState{
         return this._locationsService.createLocation(location).pipe(
             tap(
                 result => {
+                    console.log("Location Created ",result);
                     ctx.patchState({
                         loadingLocation:false,
                         locations:[...state.locations, result.data]
                     })
                     this._toastrService.success(`Location ajouté avec success!`, 'Ndiye');
-
+                    ctx.dispatch(new RoomAction.ChangeStatusRoom(result.data.room,false,result.data.locataire))
+                    ctx.dispatch(new LocataireAction.UpdateLocataireRoom(result.data.locataire,result.data.room))
                 }
             ),
             catchError((error)=>{
@@ -173,7 +177,7 @@ export class LocationState{
         return this._locationsService.getLocations(propertyId).pipe(
             tap(
                 result => {
-                    console.log("Fetch Location ",result)
+                    console.log("Fetch Locations ",result)
                     ctx.patchState({
                         loadingLocation:false,
                         locations:[...state.locations,...result.data],

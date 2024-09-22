@@ -1,30 +1,37 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
-import { Store } from '@ngxs/store';
-import { LocataireModel, LocataireState, PropertyModel, RoomModel, RoomState } from 'src/app/shared/store';
+import { Component, Input, OnChanges, SimpleChanges, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Actions, ofActionCompleted, ofActionErrored, ofActionSuccessful, Store } from '@ngxs/store';
+import { AppSidenavContainerComponent } from 'src/@youpez/components/app-sidenav/app-sidenav-container/app-sidenav-container.component';
+import { LocataireModel, LocataireState, LocationAction, PropertyModel, RoomModel, RoomState } from 'src/app/shared/store';
+import { AssignLocationFormComponent } from '../assign-location-form/assign-location-form.component';
 
 @Component({
   selector: 'assign-location',
   templateUrl: './assign-location.component.html',
-  styleUrls: ['./assign-location.component.css']
+  styleUrls: ['./assign-location.component.css'],
+  encapsulation:ViewEncapsulation.None
 })
 export class AssignLocationComponent implements OnChanges {
-  public selectedItem = {
-    name: 'import-restrictions.yaml',
-    accessed: '5 mins ago',
-    size: '0.1GB',
-  }
+
+  locataireForm:{
+    locataire?: any,
+    room?: any,
+    entryDate?:Date
+  } = {};
 
   @Input() isAssignedOpened: boolean = false
   @Input() property: PropertyModel = null;
+  @Input() sideNavBarElement: AppSidenavContainerComponent = null
+  @ViewChild('locationForm') assignLocationForm:AssignLocationFormComponent;
+  canSendingData: boolean = false;
+  waittingResponse:boolean = false;
   public leftSidebarVisibility: boolean = true
-  public formGroup = null;
   roomList =[];
   locataireList = [];
 
   constructor(
-    private formBuilder:FormBuilder,
     private _store: Store,
+    private _ngxsAction:Actions,
+
   ){}
   ngOnChanges(changes: SimpleChanges): void {
     if(changes["property"] && changes["property"].currentValue != null)
@@ -41,24 +48,41 @@ export class AssignLocationComponent implements OnChanges {
 
   ngOnInit()
   {    
+    this._ngxsAction.pipe(ofActionSuccessful(LocationAction.CreateLocation)).subscribe((value)=>{
+      this.waittingResponse=false;
+      this.closeSideNav()
+    });
+    this._ngxsAction.pipe(ofActionCompleted(LocationAction.CreateLocation)).subscribe(
+      (value) => {
+        this.waittingResponse=false;
+      }
+    )
 
-    this.formGroup = this.formBuilder.group({
-      roomId: [null, [Validators.required]],
-      locataireId: [null, [Validators.required]],
-      startedDate: [null, [Validators.required]],
-    })
+    this._ngxsAction.pipe(ofActionErrored(LocationAction.CreateLocation)).subscribe(
+      (value) => {
+        this.waittingResponse=false;        
+      })
   }
 
   onSubmit()
   {
+    this.waittingResponse=true;
 
+    this._store.dispatch(new LocationAction.CreateLocation({
+      locataireId:this.locataireForm.locataire,
+      roomId:this.locataireForm.room,
+      startedDate:this.locataireForm.entryDate,
+      propertyId:this.property._id,
+    }))
   }
 
-  isValid(name) {
-    const instance = this.formGroup.get(name)
-    return instance.invalid && (instance.dirty || instance.touched)
+  onSetLocataireFormData(locataireFormData)
+  {
+    if(locataireFormData.locataire && locataireFormData.room && locataireFormData.entryDate) this.canSendingData=true;
+    else this.canSendingData=false;
+    this.locataireForm = locataireFormData;
   }
-
+  
   onClose(event) {
     this.isAssignedOpened = false
   }
@@ -66,4 +90,11 @@ export class AssignLocationComponent implements OnChanges {
   onToggleLeftSidebar() {
     this.leftSidebarVisibility = !this.leftSidebarVisibility
   }
+
+  closeSideNav() {
+      if(this.sideNavBarElement) {
+        this.sideNavBarElement.onCloseAll();
+        this.assignLocationForm.reset();
+      }
+    }
 }

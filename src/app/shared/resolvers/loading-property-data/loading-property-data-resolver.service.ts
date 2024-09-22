@@ -3,7 +3,7 @@ import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot } from "@angular/r
 import { Actions, Store } from "@ngxs/store";
 import { Observable, combineLatest, of} from "rxjs";
 import { mergeMap, skipWhile, tap } from "rxjs/operators";
-import { LocataireAction, PropertyAction, RoomAction, UserProfileAction } from "../../store";
+import { LocataireAction, LocationAction, PropertyAction, RoomAction, UserProfileAction } from "../../store";
 
 
 @Injectable({
@@ -32,7 +32,8 @@ export class LoadingPropertyDataResolver implements Resolve<any>
         let propertyId:any= route.paramMap.get("id")
         this._store.dispatch([
             new LocataireAction.FetchLocatairesByPropertyId(propertyId),
-            new RoomAction.FetchRoomsByPropertyID(propertyId)
+            new RoomAction.FetchRoomsByPropertyID(propertyId),
+            new LocationAction.FetchLocationsByPropertyId(propertyId)
         ])
 
         // combineLatest(

@@ -44,6 +44,13 @@ export namespace RoomAction
         constructor(public room:any,public propertyId:string,public locataireId:string=null){}
     }
 
+    //Change Room usable
+    export class ChangeStatusRoom
+    {
+        static readonly type = '[Room] Change Room Status'
+        constructor(public roomId:any,public status:boolean,public locataire:string=null){}
+    }
+
 
     //Change loading state
     export class updateLoadingRoomState

@@ -48,7 +48,7 @@ export class LocataireState{
     static selectStateLocataire(locataireId)
     {
         return createSelector([LocataireState],(state)=>{
-            let data=state.locataires.find((u)=>u.id==locataireId)
+            let data=state.locataires.find((u)=>u._id==locataireId)
             if(data) return data
             return null;
         })
@@ -94,6 +94,22 @@ export class LocataireState{
                 
             })
         )
+    }
+
+    @Action(LocataireAction.UpdateLocataireRoom)
+    updateLocataireRoom(ctx:StateContext<LocataireStateModel>, {roomId,locataireId}:LocataireAction.UpdateLocataireRoom)
+    {
+        const state = ctx.getState();
+        let index = state.locataires.findIndex((u)=>u._id==locataireId);
+        console.log("Index ",index,locataireId,roomId)
+        if(index>-1) {
+            const data = [...state.locataires];
+            data[index]={...data[index],room:roomId}
+            ctx.patchState({
+                locataires:data
+            })
+        }
+        
     }
 
     

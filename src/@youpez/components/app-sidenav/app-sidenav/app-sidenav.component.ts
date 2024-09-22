@@ -253,6 +253,7 @@ export class AppSidenavComponent implements OnInit, OnDestroy, AfterContentInit,
   }
 
   onClose() {
+    
     this.opened = false
     this.visibleChange.emit(false)
     this.close.emit()

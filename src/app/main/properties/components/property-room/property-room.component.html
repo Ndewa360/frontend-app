@@ -49,7 +49,7 @@
                           <div class="app-label-01 col-span-6 text-muted"> 
                             <ng-container *ngIf="!room.isFree else noFreeRoom">
                               <youpez-ibm-icon class="location-icon text-green"  iconName="user" iconSize="16"></youpez-ibm-icon>
-                              <span>{{(getRoomLocataire(room.locataireId) | async).fullName}}</span>
+                              <span>{{(getRoomLocataire(room.locataire) | async)?.fullName}}</span>
                             </ng-container>
                             <ng-template #noFreeRoom>
                               <youpez-ibm-icon class="location-icon text-red"  iconName="error" iconSize="16"></youpez-ibm-icon>

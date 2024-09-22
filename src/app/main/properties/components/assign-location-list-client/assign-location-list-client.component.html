@@ -1,0 +1,17 @@
+<ibm-table-container class="">
+    <ibm-table
+        [model]="model"
+        [size]="size"
+        [skeleton]="skeleton"
+        [showSelectionColumn]="showSelectionColumn"
+        [enableSingleSelect]="enableSingleSelect"
+        (rowClick)="onRowClick($event)"
+        [sortable]="sortable"
+        [stickyHeader]="stickyHeader"
+        [striped]="striped"
+        [isDataGrid]="isDataGrid"
+        (sort)="simpleSort($event)">
+        <ng-content></ng-content>
+    </ibm-table>
+
+</ibm-table-container>
