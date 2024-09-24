@@ -13,6 +13,7 @@ import { NgxsStoragePluginModule, StorageOption } from '@ngxs/storage-plugin';
 import { NoDataComponent } from './components/no-data/no-data.component';
 import { ToastrModule } from 'ngx-toastr';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { LocationPaymentState } from './store/payment-location';
 @NgModule({
   imports: [
     CommonModule,
@@ -29,7 +30,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
         RoomState,
         LocataireState,
         LocationState,
-        AuthTokenState
+        AuthTokenState,
+        LocationPaymentState
       ]),
       NgxsStoragePluginModule.forRoot({
         key:"auth_token",

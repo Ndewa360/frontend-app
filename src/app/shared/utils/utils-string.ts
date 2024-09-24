@@ -1,4 +1,5 @@
 import { Currency, RoomType } from "src/app/shared/store"
+import { LocationPaymentType } from "../store/payment-location";
 
 export class UtilsString
 {
@@ -16,6 +17,19 @@ export class UtilsString
                 return "Appartement meublé";
             default:
                 return "Chambre";
+        }
+    }
+
+    static getStringOfLocationPaymentType(paymentType:LocationPaymentType)
+    {
+        switch(paymentType)
+        {
+            case LocationPaymentType.CAUTION:
+                return "Paiement de Caution";
+            case LocationPaymentType.LOCATION:
+                return "Paiement classique";
+            default:
+                return "Paiement classique";
         }
     }
 

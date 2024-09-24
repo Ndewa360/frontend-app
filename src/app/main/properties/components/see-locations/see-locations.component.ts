@@ -5,6 +5,7 @@ import { TableHeaderItem, TableItem, TableModel, TableRowSize } from 'carbon-com
 import { LocataireState, LocataireModel, PropertyState, LocationState, RoomState } from 'src/app/shared/store';
 import { RemoveLocataireRoomComponent } from '../remove-locataire-room/remove-locataire-room.component';
 import { MatDialog } from '@angular/material/dialog';
+import { AddPaymentComponent } from 'src/app/main/location-payment/components/add-payment/add-payment.component';
 
 function sort(model, index: number) {
   if (model.header[index].sorted) {
@@ -146,6 +147,19 @@ export class SeeLocationsComponent {
   removeAssignLocationRoom(location)
   {
     this.dialog.open(RemoveLocataireRoomComponent, {
+      viewContainerRef:null,
+      disableClose: true,
+      role: 'alertdialog',
+      width: '500px',
+      data:{
+        location:location
+      }
+    })
+  }
+
+  addLocationPayment(location)
+  {
+    this.dialog.open(AddPaymentComponent, {
       viewContainerRef:null,
       disableClose: true,
       role: 'alertdialog',

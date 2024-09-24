@@ -61,7 +61,7 @@
                     <!-- <youpez-ibm-icon class="location-icon text-bleu cursor-pointer " iconName="view" iconSize="20"></youpez-ibm-icon>   -->
                     <mat-icon svgIcon="person_remove_alt_1" class="text-red"></mat-icon>
                 </div>
-                <div class="app-mini-sidebar__list__item__pill"  container="body" ngbTooltip="Ajouter un paiement">
+                <div class="app-mini-sidebar__list__item__pill" (click)="addLocationPayment(data.location)" container="body" ngbTooltip="Ajouter un paiement">
                     <youpez-ibm-icon class="location-icon text-green cursor-pointer " iconName="money" iconSize="20"></youpez-ibm-icon>  
                 </div>
             </div>
