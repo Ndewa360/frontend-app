@@ -1,4 +1,4 @@
-import {Component, OnInit, Input, Output} from '@angular/core'
+import {Component, OnInit, Input, Output, ViewEncapsulation} from '@angular/core'
 import {AppTab} from "../../../"
 import {Router} from "@angular/router"
 
@@ -8,7 +8,8 @@ export declare type TabType = 'navigation' | 'sm'
 @Component({
   selector: 'youpez-content-tabs',
   templateUrl: './app-content-tabs.component.html',
-  styleUrls: ['./app-content-tabs.component.scss']
+  styleUrls: ['./app-content-tabs.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class AppContentTabsComponent implements OnInit {
 

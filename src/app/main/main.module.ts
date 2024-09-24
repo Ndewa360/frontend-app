@@ -32,6 +32,7 @@ import { AssignLocationStepperComponent } from './properties/components/assign-l
 import { AssignLocationListClientComponent } from './properties/components/assign-location-list-client/assign-location-list-client.component';
 import { RemoveLocataireRoomComponent } from './properties/components/remove-locataire-room/remove-locataire-room.component'
 import { LocationPaymentModule } from './location-payment/location-payment.module'
+import { LocatairesModule } from './locataires/locataires.module'
 
 
 @NgModule({
@@ -68,7 +69,8 @@ import { LocationPaymentModule } from './location-payment/location-payment.modul
     ChartsModule,
     LocationPaymentModule,
     AgGridModule,
-    LocatairePropertyModule
+    LocatairePropertyModule,
+    LocatairesModule
   ]
 })
 export class MainModule {

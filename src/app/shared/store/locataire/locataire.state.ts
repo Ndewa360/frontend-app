@@ -82,14 +82,16 @@ export class LocataireState{
                         loadingLocataire:false,
                         locataires:data
                     })
-                    // this._toastrService.success(`Profil utilisateur modifié avec success`, 'Locataire');
+                    this._toastrService.success(`Profil locataire modifié avec success`, 'Ndiye');
                 }
             ),
-            catchError((error) => {
-                // this._toastrService.error(error?.error?.message, 'Erreur');
+            catchError((error) => {               
                 ctx.patchState({
                     loadingLocataire: false
                 })
+                let message = error?.error?.message;
+                if(!message) message = "Une erreur c'est produite! Réessayez plus tard"
+                this._toastrService.error(message, 'Ndiye');
                 return throwError(error);
                 
             })

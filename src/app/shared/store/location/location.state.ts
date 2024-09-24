@@ -49,7 +49,16 @@ export class LocationState{
     static selectStateLocation(locationId)
     {
         return createSelector([LocationState],(state)=>{
-            let data=state.locations.find((u)=>u.id==locationId)
+            let data=state.locations.find((u)=>u._id==locationId)
+            if(data) return data
+            return null;
+        })
+    }
+
+    static selectStateLocationByRoomAndLocataireId(locataireId:string,roomId)
+    {
+        return createSelector([LocationState],(state)=>{
+            let data=state.locations.find((u)=>u.locataire==locataireId && u.room==roomId)
             if(data) return data
             return null;
         })

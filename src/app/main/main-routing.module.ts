@@ -71,6 +71,13 @@ const routes: Routes = [
         ]
       },
       {
+        path: 'locataires',
+        loadChildren: () => import('./locataires/locataires.module').then(m => m.LocatairesModule),
+        data: {
+          breadcrumb: 'Locataires'
+        },
+      },
+      {
         path: 'properties',
         data: {
           breadcrumb: 'Biens'
@@ -147,11 +154,11 @@ const routes: Routes = [
           breadcrumb: 'Welcome'
         },
       },
-      {
-        path: '**',
-        redirectTo: '/app/welcome',
-        pathMatch: 'full',
-      },
+      // {
+      //   path: '**',
+      //   redirectTo: '/app/welcome',
+      //   pathMatch: 'full',
+      // },
     ],
   },
 ]

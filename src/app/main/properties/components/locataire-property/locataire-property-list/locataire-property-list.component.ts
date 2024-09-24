@@ -1,7 +1,9 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Select, Store } from '@ngxs/store';
 import { TableModel, TableHeaderItem, TableItem, TableRowSize } from 'carbon-components-angular';
 import { getDummyModel } from 'src/@youpez/data/dummy';
+import { AddPaymentComponent } from 'src/app/main/location-payment/components/add-payment/add-payment.component';
 import { LocataireModel, LocataireState, RoomState } from 'src/app/shared/store';
 
 function getRandomArbitrary(min, max) {
@@ -25,7 +27,8 @@ export class LocatairePropertyListComponent implements OnInit, OnChanges {
 
 
 
-  constructor(private _store:Store) {
+  constructor(
+    private _store:Store) {
   }
   ngOnChanges(changes: SimpleChanges): void {
     if(changes['propertyId'].currentValue) 
@@ -73,10 +76,12 @@ export class LocatairePropertyListComponent implements OnInit, OnChanges {
         new TableItem({data: locataire.phoneNumber}),
         new TableItem({data: locataire.email}),
         new TableItem({data: locataire.room}),
-        new TableItem({data: ""})
+        new TableItem({data: locataire})
       ])
     });
     return model;
   }
+
+  
 
 }

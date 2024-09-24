@@ -1,8 +1,10 @@
 import { Component, Input, OnInit, SimpleChanges, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngxs/store';
 import { TableHeaderItem, TableItem, TableModel, TableRowSize } from 'carbon-components-angular';
 import { getDummyModel } from 'src/@youpez/data/dummy';
-import { RoomState } from 'src/app/shared/store';
+import { AddPaymentComponent } from 'src/app/main/location-payment/components/add-payment/add-payment.component';
+import { LocationState, RoomState } from 'src/app/shared/store';
 
 
 class CustomHeaderItem extends TableHeaderItem {
@@ -55,7 +57,9 @@ export class LocatairePropertyTableComponent implements OnInit {
   @ViewChild("propertyTemplate", {static: true}) propertyTemplate: TemplateRef<any>
 
   constructor(
-    private _store:Store
+    private _store:Store,
+    private dialog: MatDialog,
+
   ){}
   ngOnInit() {
     // this.model.header[3]= new CustomHeaderItem({
@@ -100,6 +104,26 @@ export class LocatairePropertyTableComponent implements OnInit {
   getRoomById(roomId)
   {
     return this._store.select(RoomState.selectStateRoom(roomId))
+  }
+
+  getLocation(locataire)
+  {
+    return this._store.select(LocationState.selectStateLocationByRoomAndLocataireId(locataire._id,locataire.room))
+  }
+  
+
+  addLocationPayment(location)
+  {
+    if(!location) return;
+    this.dialog.open(AddPaymentComponent, {
+      viewContainerRef:null,
+      disableClose: true,
+      role: 'alertdialog',
+      width: '500px',
+      data:{
+        location
+      }
+    })
   }
 
   simpleSort(index: number) {
