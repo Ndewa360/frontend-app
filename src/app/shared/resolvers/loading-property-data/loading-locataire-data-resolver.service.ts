@@ -10,7 +10,7 @@ import { HistoryLocationPaymentAction } from "../../store/history-payment-locati
 @Injectable({
     providedIn:"root"
 })
-export class LoadingPropertyDataResolver implements Resolve<any>
+export class LoadingLocataireDataResolver implements Resolve<any>
 {
     
     /**
@@ -30,11 +30,10 @@ export class LoadingPropertyDataResolver implements Resolve<any>
      */
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any>
     {
-        let propertyId:any= route.paramMap.get("id")
+        let locataireID:any= route.paramMap.get("locataireID")
         this._store.dispatch([
-            new LocataireAction.FetchLocatairesByPropertyId(propertyId),
-            new RoomAction.FetchRoomsByPropertyID(propertyId),
-            new LocationAction.FetchLocationsByPropertyId(propertyId),
+            new LocataireAction.FetchLocataire(locataireID),
+            new HistoryLocationPaymentAction.FetchHistoryLocationByLocataireId(locataireID)
         ])
 
         // combineLatest(

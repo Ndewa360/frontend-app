@@ -37,6 +37,11 @@ import ArrowUp24 from '@carbon/icons/es/arrow--up/24';
 import ArrowUp20 from '@carbon/icons/es/arrow--up/20';
 import Arrowup16 from '@carbon/icons/es/arrow--up/16';
 
+import DocumentAttachment32 from '@carbon/icons/es/document--attachment/32';
+import DocumentAttachment24 from '@carbon/icons/es/document--attachment/24';
+import DocumentAttachment20 from '@carbon/icons/es/document--attachment/20';
+import DocumentAttachment16 from '@carbon/icons/es/document--attachment/16';
+
 import ArrowDown32 from '@carbon/icons/es/arrow--down/32';
 import ArrowDown24 from '@carbon/icons/es/arrow--down/24';
 import ArrowDown20 from '@carbon/icons/es/arrow--down/20';
@@ -240,6 +245,12 @@ export class IbmIconModule {
     private _matIconRegistry: MatIconRegistry
   ) {
     iconService.registerAll([
+
+      DocumentAttachment32,
+			DocumentAttachment24,
+			DocumentAttachment20,
+			DocumentAttachment16,
+
 			FaceActived32,
 			FaceActived24,
 			FaceActived20,

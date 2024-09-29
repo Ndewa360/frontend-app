@@ -1,0 +1,66 @@
+<div fxLayout="row wrap">
+    <div fxFlex="100%" fxFlex.gt-md="60%">
+        <div fxLayout="row wrap">
+            <div fxFlex="100%" fxFlex.gt-md="100%">
+                <div fxFlex="100%" fxFlex.gt-md="100%">
+                    <div class="app-productive-heading-03 mb-2 mt-4">Historique de paiement</div>
+                    <div class="app-card app-card--m-0 ">
+                        <div class="app-card__content">
+                        <div class="app-timeline px-5 py-5">
+                            <div class="flex">
+                            <div class="app-timeline" style="max-width:800px">
+                                <ng-container *ngFor="let event of dataHistory">
+                                <div class="app-timeline__group" fxLayout="row wrap">
+                                    <div class="app-timeline__time " fxFlex="100%" fxFlex.gt-sm="105px"
+                                        ngClass.lt-sm="app-timeline__time--collapse">
+                                        <span class="app-helper-text-01" *ngIf="event.contentType=='payment_year'; else dateShowHistory">{{event.time}}</span>
+                                        <ng-template #dateShowHistory>
+                                            <div class="app-helper-text-01">{{event.time | date: 'mediumDate'}}</div>
+                                        </ng-template>
+                                    </div>
+                                    <div fxFlex class="app-timeline__item app-timeline__item--circle pb-5"
+                                        [class]="getClassForEvent(event)">
+                                    <div class="app-timeline__item__content">
+                                        <div class="app-productive-heading-02 mb-2 leading-4">{{event.title}}</div>
+                                        <ng-container *ngIf="event.content">
+                                            <div class="flex mb-3 app-body-short-01">
+                                                <!-- <a class="app-link mr-2">Online</a>  -->
+                                                <span>{{event.content}}</span> 
+                                                <a class="app-link ml-4 contrat-bail-link flex" *ngIf="event.contentType=='contrat'">
+                                                    <span class="mr-1">Contrat de bail </span>
+                                                    <youpez-ibm-icon iconSize="20" iconName="document" class="mr-2 contact-btn"></youpez-ibm-icon>
+                                                </a>                                          
+                                            </div>
+                                        </ng-container>            
+                                    </div>
+                                    <ng-container *ngIf="event.children.length">
+                                        <div class="app-timeline">
+                                        <ng-container *ngFor="let event of event.children">
+                                            <div class="app-timeline__item app-timeline__item--circle app-timeline__item--level2"
+                                                [class]="getClassForEvent(event)">
+                                                <div class="app-timeline__item__content">
+                                                    <div class="app-label-01 leading-4 flex">
+                                                        <span>{{event.content}} </span>
+                                                        <a class="app-link ml-4 flex">
+                                                            <span class="mr-1">Reçus  de paiement </span>
+                                                            <youpez-ibm-icon iconSize="20" iconName="documentAttachment" class="mr-2 contact-btn"></youpez-ibm-icon>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </ng-container>
+                                        </div>
+                                    </ng-container>
+                                    </div>
+                                </div>
+                                </ng-container>
+                            </div>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+</div>

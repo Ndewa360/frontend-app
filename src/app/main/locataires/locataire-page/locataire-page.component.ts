@@ -2,7 +2,7 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { AppTab } from 'src/@youpez';
-import { LocataireModel, LocataireState } from 'src/app/shared/store';
+import { LocataireAction, LocataireModel, LocataireState } from 'src/app/shared/store';
 
 @Component({
   selector: 'locataire-page',
@@ -23,6 +23,11 @@ export class LocatairePageComponent implements OnInit{
   ngOnInit(): void {
     let locataireID = this._activatedRoute.snapshot.paramMap.get('locataireID');
     this._store.select(LocataireState.selectStateLocataire(locataireID)).subscribe((locataire)=>{
+      if(!locataire) return;
+      // {
+        // this._store.dispatch(new LocataireAction.FetchLocataire(locataireID));
+      //   return;
+      // }
       this.locataire = locataire;
       this.title = `Locataire ${locataire.fullName}`
     });
@@ -32,14 +37,9 @@ export class LocatairePageComponent implements OnInit{
         url: `/app/locataires/${locataireID}/profil`,
       },
       {
-        name: 'Chambre',
-        url: `/app/locataires/${locataireID}/rooms`,
-      },
-      {
-        name: 'Finances',
-        url: `/app/locataires/${locataireID}/setting`,
-      },     
-      
+        name: 'Historique',
+        url: `/app/locataires/${locataireID}/history`,
+      },      
     ]
     // if(!propertyId)  {
     //   this._router.navigateByUrl('/app/properties/list');;

@@ -17,7 +17,7 @@ export class AuthGuard implements CanActivate {
     private _toastrService:ToastrService,
     private _store:Store, private router: Router) {}
 
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot){
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot){ 
     return this._store.select(AuthTokenState.selectStateAuthToken).pipe(
       map((authToken)=>{
         if(authToken) return true;

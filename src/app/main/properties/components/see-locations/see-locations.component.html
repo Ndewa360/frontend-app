@@ -54,10 +54,10 @@
 
         <ng-template #actionTemplate let-data="data" >
             <div class="flex">
-                <div class="app-mini-sidebar__list__item__pill mr-2"  container="body" ngbTooltip="Voir les details du locataire">
+                <div class="app-mini-sidebar__list__item__pill mr-2" [routerLink]="'/app/locataires/'+data.location.locataire" container="body" ngbTooltip="Voir les details du locataire">
                     <youpez-ibm-icon class="location-icon text-bleu cursor-pointer " iconName="view" iconSize="20"></youpez-ibm-icon>  
                 </div>
-                <div class="app-mini-sidebar__list__item__pill mr-2" (click)="removeAssignLocationRoom(data.location)"  container="body" ngbTooltip="Mettre fin à la location">
+                <div class="app-mini-sidebar__list__item__pill mr-2"  (click)="removeAssignLocationRoom(data.location)"  container="body" ngbTooltip="Mettre fin à la location">
                     <!-- <youpez-ibm-icon class="location-icon text-bleu cursor-pointer " iconName="view" iconSize="20"></youpez-ibm-icon>   -->
                     <mat-icon svgIcon="person_remove_alt_1" class="text-red"></mat-icon>
                 </div>
