@@ -15,6 +15,7 @@ import { ToastrModule } from 'ngx-toastr';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LocationPaymentState } from './store/payment-location';
 import { HistoryLocationPaymentState } from './store/history-payment-location';
+import { LocalizedDatePipe } from './pipes/localized-date.pipe';
 @NgModule({
   imports: [
     CommonModule,
@@ -50,7 +51,8 @@ import { HistoryLocationPaymentState } from './store/history-payment-location';
     DummyTablePaginationComponent,
     DummyTableExpansionComponent,
     DummyTableAdvancedComponent,
-    NoDataComponent
+    NoDataComponent,
+    LocalizedDatePipe
   ],
   exports: [
     YoupezModule,
@@ -64,8 +66,9 @@ import { HistoryLocationPaymentState } from './store/history-payment-location';
     RouterModule,
     ToastrModule,
     FormsModule,
-    ReactiveFormsModule
-  ]
+    ReactiveFormsModule,
+    LocalizedDatePipe
+  ],
 })
 export class SharedModule {
   constructor() {

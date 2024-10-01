@@ -46,6 +46,11 @@ export class RoomService
         return this._httpClient.get<ApiResultFormat<RoomModel[]>>(`${environment.apiUrl}/room/property/${propertyID}`)
     }
 
+    getRoomsByLocataireID(locataireID):Observable<ApiResultFormat<RoomModel[]>>
+    {       
+        return this._httpClient.get<ApiResultFormat<RoomModel[]>>(`${environment.apiUrl}/room/locataire/${locataireID}`)
+    }
+
     getRooms():Observable<ApiResultFormat<RoomModel[]>>
     {       
         return this._httpClient.get<ApiResultFormat<RoomModel[]>>(`${environment.apiUrl}/room`)

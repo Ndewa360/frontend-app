@@ -189,6 +189,31 @@ export class RoomState{
         )
     }
 
+    @Action(RoomAction.FetchRoomsByLocataireID)
+    fetchRoomByLocataireID(ctx:StateContext<RoomStateModel>,{locataireID}:RoomAction.FetchRoomsByLocataireID)
+    {
+        const state = ctx.getState();
+        let index = state.rooms.findIndex((u)=>u.locataire==locataireID);
+
+        if(index>-1) return of(true);
+        
+        ctx.patchState({
+            loadingRoom:true,
+            initLoadingState:"LOADING"
+        })
+        return this._roomsService.getRoomsByLocataireID(locataireID).pipe(
+            tap(
+                result => {
+                    ctx.patchState({
+                        loadingRoom:false,
+                        rooms:[...state.rooms, ...result.data],
+                        initLoadingState:"LOADED"
+                    })
+                }
+            )
+        )
+    }
+
     @Action(RoomAction.CreateRoom)
     createRoom(ctx:StateContext<RoomStateModel>,{room,propertyId,locataireId}:RoomAction.CreateRoom,)
     {

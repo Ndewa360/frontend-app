@@ -2,14 +2,14 @@ import { Injectable } from "@angular/core";
 import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot } from "@angular/router";
 import { Store } from "@ngxs/store";
 import { Observable, of} from "rxjs";
-import { LocataireAction, LocationAction, RoomAction } from "../../store";
+import { LocataireAction } from "../../store";
 import { HistoryLocationPaymentAction } from "../../store/history-payment-location";
 
 
 @Injectable({
     providedIn:"root"
 })
-export class LoadingLocataireDataResolver implements Resolve<any>
+export class LoadingBillingDataResolver implements Resolve<any>
 {
     
     /**
@@ -32,9 +32,7 @@ export class LoadingLocataireDataResolver implements Resolve<any>
         let locataireID:any= route.paramMap.get("locataireID")
         this._store.dispatch([
             new LocataireAction.FetchLocataire(locataireID),
-            new HistoryLocationPaymentAction.FetchHistoryLocationByLocataireId(locataireID),
-            new LocationAction.FetchLocationsByLocataireId(locataireID),
-            new RoomAction.FetchRoomsByLocataireID(locataireID)
+            new HistoryLocationPaymentAction.FetchHistoryLocationByLocataireId(locataireID)
         ])
 
         // combineLatest(

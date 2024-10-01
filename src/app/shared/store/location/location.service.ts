@@ -41,6 +41,12 @@ export class LocationService
 
     }
 
+    getLocationByLocataireId(locataireID):Observable<ApiResultFormat<LocationModel[]>>
+    {
+        return this._httpClient.get<ApiResultFormat<LocationModel[]>>(`${environment.apiUrl}/location/locataire/${locataireID}`)
+
+    }
+
     removeAssignationLocation(locationId,description):Observable<ApiResultFormat<LocationModel>>
     {
         let bodyToSend = {};

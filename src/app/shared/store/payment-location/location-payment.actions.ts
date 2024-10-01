@@ -42,6 +42,11 @@ export namespace LocationPaymentAction
         constructor(public propertyId:string){}
     }
 
+    export class SetLocationPayments
+    {
+        static readonly type = '[LocationPayment] Set LocationPayments'
+        constructor(public payementLocations:LocationPaymentModel[]){}
+    }
     
     //Set LocationPayment
     export class SetLocationPayment

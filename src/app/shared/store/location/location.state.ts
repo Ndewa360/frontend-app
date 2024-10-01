@@ -62,7 +62,11 @@ export class LocationState{
             if(data) return data
             return null;
         })
-    
+    }
+
+    static selectStateLocationByLocataireId(locataireId:string)
+    {
+        return createSelector([LocationState],(state)=> state.locations.filter((location)=>location.locataire==locataireId))
     }
 
     static selectStateLocationByPropertyId(propertyID)
@@ -116,6 +120,29 @@ export class LocationState{
     }
 
    
+
+    @Action(LocationAction.FetchLocationsByLocataireId)
+    fetchLocationByLocataireID(ctx:StateContext<LocationStateModel>,{locataireId}:LocationAction.FetchLocationsByLocataireId)
+    {
+        const state = ctx.getState();
+        let index = state.locations.findIndex((u)=>u.locataire==locataireId);
+
+        if(index>-1) return of(true);
+
+        ctx.patchState({
+            loadingLocation:true
+        })
+        return this._locationsService.getLocationByLocataireId(locataireId).pipe(
+            tap(
+                result => {
+                    ctx.patchState({
+                        loadingLocation:false,
+                        locations:[...state.locations, ...result.data]
+                    })
+                }
+            )
+        )
+    }
 
     @Action(LocationAction.FetchLocation)
     fetchLocation(ctx:StateContext<LocationStateModel>,{locationId}:LocationAction.FetchLocation)

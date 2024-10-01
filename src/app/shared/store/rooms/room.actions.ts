@@ -29,6 +29,12 @@ export namespace RoomAction
         constructor(public propertyID:string){}
     }
 
+    export class FetchRoomsByLocataireID
+    {
+        static readonly type = '[Room] Fectch Rooms By LocataireID'
+        constructor(public locataireID:string){}
+    }
+
    
     //Set room profil
     export class SetRoom

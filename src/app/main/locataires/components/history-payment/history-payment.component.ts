@@ -21,90 +21,20 @@ export class HistoryPaymentComponent implements OnInit{
     children: []
     }
   ];
+  locataireID:string="";
 
   constructor(
     private _store:Store,
     private _activatedRoute: ActivatedRoute,
   ){}
-  ngOnInit(): void {
-    let locataireID = this._activatedRoute.snapshot.parent.paramMap.get('locataireID');
 
-    this._store.select(HistoryLocationPaymentState.selectStateHistoryLocationPaymentByLocataireId(locataireID)).subscribe((data)=>{
+  ngOnInit(): void {
+    this.locataireID = this._activatedRoute.snapshot.parent.paramMap.get('locataireID');
+
+    this._store.select(HistoryLocationPaymentState.selectStateHistoryLocationPaymentByLocataireId(this.locataireID)).subscribe((data)=>{
       this.structureAndShowData(data)
     })
   }
-  // public events = [
-  //   {
-  //     time: '',
-  //     type: '',
-  //     title: 'Aujourdhui',
-  //     content: ``,
-  //     children: []
-  //   },
-  //   {
-  //     time: '2024',
-  //     type: 'warning',
-  //     title: 'Paiement 2024',
-  //     content: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua`,
-  //     children: [
-  //       {
-  //         time: '10:31pm',
-  //         content: '11 user logged in',
-  //         type: 'success',
-  //       },
-  //       {
-  //         time: '10:31pm',
-  //         content: '3 user logged in',
-  //         type: 'success',
-  //       },
-  //       {
-  //         time: '10:31pm',
-  //         content: 'Load balancer overloaded',
-  //         type: 'success',
-  //       },
-  //       {
-  //         time: '10:31pm',
-  //         content: '11 user logged in',
-  //         type: 'success',
-  //       },       
-  //     ]
-  //   },
-  //   {
-  //     time: '2023',
-  //     type: 'warning',
-  //     title: 'Paiement 2023',
-  //     content: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua`,
-  //     children: [
-  //       {
-  //         time: '10:31pm',
-  //         content: '11 user logged in',
-  //         type: 'success',
-  //       },
-  //       {
-  //         time: '10:31pm',
-  //         content: '3 user logged in',
-  //         type: 'success',
-  //       },
-  //       {
-  //         time: '10:31pm',
-  //         content: 'Load balancer overloaded',
-  //         type: 'success',
-  //       },
-  //       {
-  //         time: '10:31pm',
-  //         content: '11 user logged in',
-  //         type: 'success',
-  //       },       
-  //     ]
-  //   },
-  //   {
-  //     time: '1er Janvier 2023',
-  //     type: '',
-  //     title: 'Nouveau contrat',
-  //     content: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua`,
-  //     children: []
-  //   },
-  // ]
 
   structureAndShowData(data:HistoryLocationPaymentModel[])
   {
@@ -126,6 +56,8 @@ export class HistoryPaymentComponent implements OnInit{
           title: 'Nouveau contrat',
           content: `Contrat de location sur le bien #${historyData.room.code} depuis ${new Date(historyData.location.startedAt).toDateString()}`,
           pulse: true,
+          roomCode:historyData.room.code,
+          startedLocationAt:new Date(historyData.location.startedAt),
           contentType:"contrat",
           children: []
         },
@@ -138,7 +70,7 @@ export class HistoryPaymentComponent implements OnInit{
           type: 'warning',
           title: `Paiement ${yearFound}`,
           contentType:"payment_year",
-          content: `Paiement de frais de location`,
+          content: `Paiement de frais de location de l'année ${yearFound}`,
           pulse:false,
           children: []
         });
@@ -146,11 +78,15 @@ export class HistoryPaymentComponent implements OnInit{
         {
           historyItem[historyItem.length-1].children.push({
             time: new Date(transaction.createdAt),
+            locationPaymentPrice:transaction.locationPaymentPrice,
+            datePayment:transaction.datePayment,
             pulse:transaction.paymentLocationType==LocationPaymentType.CAUTION,
             type: transaction.paymentLocationType==LocationPaymentType.CAUTION?"danger":"success",
             title: `Versement de ${transaction.locationPaymentPrice} FCFA le ${new Date(transaction.datePayment).toDateString()}`,
-            content: `Versement de ${transaction.locationPaymentPrice} FCFA le ${new Date(transaction.datePayment).toDateString()} pour ${UtilsString.getStringOfLocationPaymentType(transaction.paymentLocationType)}`,
-            children: []
+            content: ``,
+            contentType:"payment",
+            children: [],
+            data:transaction.billingRef
           })
         }
       }

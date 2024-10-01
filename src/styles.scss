@@ -51,3 +51,34 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 {
     width: 100%;
 }
+
+@media print {
+    /* Cache les éléments non nécessaires à l'impression */
+    .no-print {
+      display: none !important;
+    }
+  
+    /* Personnalisez les marges pour éviter des coupures */
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    
+    /* Stylisez le contenu imprimé comme vous le souhaitez */
+    #content {
+      margin: 0;
+      padding: 10px;
+    }
+    table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+    
+      
+      .table_print_border tr.to-border {
+        border-bottom: 2px solid rgb(82, 79, 79) !important; /* Forcer les bordures noires */
+      }
+    @page { size: auto; margin: 0mm; }
+  }
+
+  

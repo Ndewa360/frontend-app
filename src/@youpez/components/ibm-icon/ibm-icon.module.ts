@@ -167,6 +167,11 @@ import TrashCan24 from '@carbon/icons/es/trash-can/24';
 import TrashCan20 from '@carbon/icons/es/trash-can/20';
 import TrashCan16 from '@carbon/icons/es/trash-can/16';
 
+import Printer32 from '@carbon/icons/es/printer/32';
+import Printer24 from '@carbon/icons/es/printer/24';
+import Printer20 from '@carbon/icons/es/printer/20';
+import Printer16 from '@carbon/icons/es/printer/16';
+
 import UserIdentification32 from '@carbon/icons/es/user--identification/32';
 import UserIdentification24 from '@carbon/icons/es/user--identification/24';
 import UserIdentification20 from '@carbon/icons/es/user--identification/20';
@@ -245,6 +250,11 @@ export class IbmIconModule {
     private _matIconRegistry: MatIconRegistry
   ) {
     iconService.registerAll([
+
+      Printer32,
+			Printer24,
+			Printer20,
+			Printer16,
 
       DocumentAttachment32,
 			DocumentAttachment24,

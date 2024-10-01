@@ -6,6 +6,7 @@ import { HistoryLocationPaymentService } from "./history-location-payment.servic
 import { of, throwError } from "rxjs";
 import { catchError, tap } from "rxjs/operators";
 import { HistoryLocationPaymentModel } from "./history-location-payment.model";
+import { LocationPaymentAction } from "../payment-location";
 
 export class HistoryLocationPaymentStateModel {
     historyLocationPayments:HistoryLocationPaymentModel[]
@@ -80,7 +81,7 @@ export class HistoryLocationPaymentState{
                     ctx.patchState({
                         loadingHistoryLocationPayment:false,
                         historyLocationPayments:[...state.historyLocationPayments, ...result.data]
-                    })
+                    })                    
                 }
             )
         )
@@ -105,6 +106,7 @@ export class HistoryLocationPaymentState{
                         historyLocationPayments:[...state.historyLocationPayments,...result.data],
                         initLoadingState:"LOADED"
                     })
+                    ctx.dispatch(new LocationPaymentAction.SetLocationPayments(result.data.map((data)=>data.transactions).reduce((acc,curr)=>([...acc,...curr]),[])))
                 }
             ),
             catchError((error)=>{

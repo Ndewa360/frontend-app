@@ -61,6 +61,29 @@ export class LocationPaymentState{
         return createSelector([LocationPaymentState],(state)=> state.locationPayments.filter((locationPayment)=>locationPayment.property==propertyID))
     }
 
+    static selectStateLocationPaymentByBillingRef(billingRef)
+    {
+        return createSelector([LocationPaymentState],(state)=>{
+            let data=state.locationPayments.find((u:LocationPaymentModel)=>u.billingRef==billingRef)
+            if(data) return data
+            return null;
+        })
+    }
+
+    @Action(LocationPaymentAction.SetLocationPayments)
+    setLocationPayment(ctx:StateContext<LocationPaymentStateModel>, {payementLocations}:LocationPaymentAction.SetLocationPayments)
+    {
+        const state = ctx.getState();
+        const data = [...state.locationPayments]
+        payementLocations.forEach((payement)=>{
+            let index = data.findIndex((u)=>u._id==payement._id);
+            if(index==-1) data.push(payement);            
+        })
+        ctx.patchState({
+            locationPayments:data
+        })
+    }
+
     @Action(LocationPaymentAction.UpdateLocationPayment)
     updateLocationPayment(ctx:StateContext<LocationPaymentStateModel>, {locationPayment,id}:LocationPaymentAction.UpdateLocationPayment)
     {

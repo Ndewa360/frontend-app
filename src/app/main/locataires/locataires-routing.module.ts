@@ -5,6 +5,8 @@ import { LocataireProfilComponent } from './components/locataire-profil/locatair
 import { LocataireRoomListComponent } from './components/locataire-room-list/locataire-room-list.component';
 import { HistoryPaymentComponent } from './components/history-payment/history-payment.component';
 import { LoadingLocataireDataResolver } from 'src/app/shared/resolvers/loading-property-data/loading-locataire-data-resolver.service';
+import { HistoryRoomComponent } from './components/history-room/history-room.component';
+import { HistoryComponent } from './components/history/history.component';
 
 const routes: Routes = [
   { path: ':locataireID', 
@@ -14,8 +16,8 @@ const routes: Routes = [
     },
     children: [
       { path: 'profil', component: LocataireProfilComponent },
-      { path: 'history', component: HistoryPaymentComponent },
-      { path: '**', redirectTo: 'profil', pathMatch: 'full' }
+      { path: 'history', component: HistoryComponent },
+      // { path: '**', redirectTo: 'profil', pathMatch: 'full' }
     ]
   },
 ];

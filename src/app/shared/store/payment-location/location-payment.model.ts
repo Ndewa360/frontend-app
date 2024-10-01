@@ -7,6 +7,8 @@ export enum LocationPaymentType {
 export interface LocationPaymentModel {
     _id?: string;
 
+    billingRef:string;
+    
     locataire?: string;
 
     location?: string;

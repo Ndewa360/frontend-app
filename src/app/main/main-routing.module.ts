@@ -78,6 +78,13 @@ const routes: Routes = [
         },
       },
       {
+        path: 'facturation',
+        loadChildren: () => import('./biiling/biiling.module').then(m => m.BiilingModule),
+        data: {
+          breadcrumb: 'Facturation'
+        },
+      },
+      {
         path: 'properties',
         data: {
           breadcrumb: 'Biens'
@@ -154,11 +161,11 @@ const routes: Routes = [
           breadcrumb: 'Welcome'
         },
       },
-      // {
-      //   path: '**',
-      //   redirectTo: '/app/welcome',
-      //   pathMatch: 'full',
-      // },
+      {
+        path: '**',
+        redirectTo: '/app/welcome',
+        pathMatch: 'full',
+      },
     ],
   },
 ]

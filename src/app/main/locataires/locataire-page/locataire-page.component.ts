@@ -39,7 +39,7 @@ export class LocatairePageComponent implements OnInit{
       {
         name: 'Historique',
         url: `/app/locataires/${locataireID}/history`,
-      },      
+      },       
     ]
     // if(!propertyId)  {
     //   this._router.navigateByUrl('/app/properties/list');;
