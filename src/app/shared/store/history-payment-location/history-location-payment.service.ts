@@ -19,8 +19,13 @@ export class HistoryLocationPaymentService
     )
     {}
 
-    getHistoryLocationPayments(locataireID:string):Observable<ApiResultFormat<HistoryLocationPaymentModel[]>>
+    getHistoryLocationPaymentsByProperty(propertyID:string):Observable<ApiResultFormat<HistoryLocationPaymentModel[]>>
     {       
-        return this._httpClient.get<ApiResultFormat<HistoryLocationPaymentModel[]>>(`${environment.apiUrl}/history-location-payment/${locataireID}`)
+        return this._httpClient.get<ApiResultFormat<HistoryLocationPaymentModel[]>>(`${environment.apiUrl}/history-location-payment/property/${propertyID}`)
+    }
+
+    getHistoryLocationPaymentsByLocataire(locataireID:string):Observable<ApiResultFormat<HistoryLocationPaymentModel[]>>
+    {       
+        return this._httpClient.get<ApiResultFormat<HistoryLocationPaymentModel[]>>(`${environment.apiUrl}/history-location-payment/locataire/${locataireID}`)
     }
 }

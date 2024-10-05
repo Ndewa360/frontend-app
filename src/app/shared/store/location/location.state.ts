@@ -63,6 +63,8 @@ export class LocationState{
             return null;
         })
     }
+    
+    
 
     static selectStateLocationByLocataireId(locataireId:string)
     {

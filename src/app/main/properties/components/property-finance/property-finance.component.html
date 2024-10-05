@@ -1,112 +1,60 @@
 <div class="app-a-box app-scrollbar-fix">
-    <ng-scrollbar>
-      <!-- 
+  <ng-scrollbar>
+    <!-- 
       <div class="app-content app-content--default z-0">
         <ng-content></ng-content>
       </div> -->
-      <div class="p-4">
-        <div fxLayout="row wrap">
-            <div fxFlex="100%" fxFlex.gt-md="50%">
-              <div class="app-productive-heading-02 mb-2">VISUALISATIONS DE VOS FINANCES</div>
-              <div class="app-body-long-02 mb-4">
-                Ce tableau est une visualisation de vos finances sur un biens immaobilités en particulier
-              </div>
-              <!-- <div class="app-body-long-01 p-4 app-bg-container mb-5">
+    <div class="p-4">
+      <div fxLayout="row wrap">
+        <div fxFlex="100%" fxFlex.gt-md="50%">
+          <div class="app-productive-heading-02 mb-2">VISUALISATIONS DE VOS FINANCES</div>
+          <div class="app-body-long-02 mb-4">
+            Ce tableau est une visualisation de vos finances sur un biens immaobilités en particulier
+          </div>
+          <!-- <div class="app-body-long-01 p-4 app-bg-container mb-5">
                 ECharts: A Declarative Framework for Rapid Construction of Web-based Visualization
                 <br/><br/>
                 <a href="https://echarts.apache.org/en/index.html" target="_blank">Official homepage</a> <br/>
                 <a href="https://echarts.apache.org/en/api.html#echarts" target="_blank">Documentations</a> <br/>
                 <a href="https://echarts.apache.org/examples/en/index.html" target="_blank">Examples</a>
               </div> -->
-            </div>
-            <div fxFlex="100%" fxFlex.gt-md="100%">
-                <div fxLayout="row wrap" class="app-card-row-holder">
-                    <div fxFlex="100%" fxFlex.gt-lg="100%">
-                      <div fxFlex fxLayout="row wrap">
-                        <div fxFlex="16.66%" fxFlex.gt-md="16.66%">
-                            <div class="app-card app-card--bt-warning">
-                              <div class="app-card__header ">
-                                <div class="app-expressive-heading-03 mb-8">Percu</div>
-                                <!-- <div class="app-label-01">Current</div> -->
-                                <div>
-                                  <span class="app-expressive-heading-06 mr-2">566 </span>{{getMoney()}}
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                          <div fxFlex="16.66%" fxFlex.gt-md="16.66%">
-                            <div class="app-card app-card--bt-warning">
-                              <div class="app-card__header">
-                                <div class="app-expressive-heading-03 mb-8">A percevoir</div>
-                                <div>
-                                  <span class="app-expressive-heading-06 mr-2">11,122</span>{{getMoney()}}
-                                </div>
-                              </div>
-                            </div>
-                          </div>                    
-                          
-                          <div fxFlex="16.66%" fxFlex.gt-md="16.66%">
-                              <div class="app-card app-card--bt-warning">
-                                  <div class="app-card__header">
-                                  <div class="app-expressive-heading-03 mb-8">Evaluation des travaux</div>
-                                  <div>
-                                      <span class="app-expressive-heading-06 mr-2">234,122</span>{{getMoney()}}
-                                  </div>
-                                  </div>
-                              </div>
-                          </div>
-    
-                        <div fxFlex="16.66%" fxFlex.gt-md="16.66%">
-                          <div class="app-card">
-                            <div class="app-card__header">
-                              <div class="app-expressive-heading-03 mb-8">Locataire</div>
-                              <!-- <div class="app-label-01">Current</div> -->
-                              <div>
-                                <span class="app-expressive-heading-06 mr-2">222</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div fxFlex="16.66%" fxFlex.gt-md="16.66%">
-                            <div class="app-card">
-                              <div class="app-card__header">
-                                <div class="app-expressive-heading-03 mb-8">Chambres</div>
-                                <div>
-                                  <span class="app-expressive-heading-06 mr-2">234,122</span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                          <div fxFlex="16.66%" fxFlex.gt-md="16.66%">
-                            <div class="app-card ">
-                              <div class="app-card__header">
-                                <div class="app-expressive-heading-03 mb-8">Traveaux</div>
-                                <div>
-                                  <span class="app-expressive-heading-06 mr-2">234,122</span>
-                                </div>
-                              </div>
-                            </div>
-                        </div>
-                      </div>
-                    </div>
+        </div>
+        <div fxFlex="100%" fxFlex.gt-md="100%">
+          <div fxLayout="row wrap" class="app-card-row-holder">
+            <div fxFlex="100%" fxFlex.gt-lg="100%">
+              <div fxFlex fxLayout="row wrap">
+                <div fxFlex="100%" fxFlex.gt-md="16.66%">
+                  <chart-nombre-locataire [nbreLocataireTotal]="locataireCount.locataireCountTotal" [nbreLocataireActif]="locataireCount.locataireCountForPropertyId"></chart-nombre-locataire>
                 </div>
-              <div fxLayout="row wrap" class="mb-6 app-card-row">
-                <ng-container *ngFor="let chart of charts">
-                  <div fxFlex="100%" fxFlex.gt-md="50%" class="">
-                    <div class="app-card p-2">
-                      <youpez-echarts-container>
-                        <youpez-echarts [options]="chart" class="app-echarts-component"
-                                     style="height: 400px;"></youpez-echarts>
-                      </youpez-echarts-container>
-                    </div>
-                  </div>
-                </ng-container>
-              </div>
-              <div class="app-card">
-                <app-financial-history></app-financial-history>
+                <div fxFlex="100%" fxFlex.gt-md="83.34%">
+                  <!-- <chart-finance-room></chart-finance-room> -->
+                  <chart-finance-payement-location [propertyID]="propertyId"></chart-finance-payement-location>
+                </div>
+                
               </div>
             </div>
           </div>
+          <div fxLayout="row wrap" class="app-card-row-holder">
+            <div fxFlex="100%" fxFlex.gt-lg="100%">
+              <div fxFlex fxLayout="row wrap">
+                <div fxFlex="100%" fxFlex.gt-md="16.66%">
+                  <chart-nombre-room [nbreRoomTotal]="roomCount.nbreRoomTotal" [nbreRoomActif]="roomCount.nbreRoomActif"></chart-nombre-room>
+                </div>
+                <div fxFlex="100%" fxFlex.gt-md="83.34%">
+                  <payment-list-type-property [propertyID]="propertyId"></payment-list-type-property>
+                </div>
+                
+              </div>
+            </div>
+          </div>
+          <div class="app-card">
+            <chart-finance-payement-annee [propertyID]="propertyId"></chart-finance-payement-annee>
+          </div>
+          <div  >
+            <payment-list-recap-total [propertyID]="propertyId"></payment-list-recap-total>
+          </div>
+        </div>
+      </div>
     </div>
-    </ng-scrollbar>
-  </div>
+  </ng-scrollbar>
+</div>

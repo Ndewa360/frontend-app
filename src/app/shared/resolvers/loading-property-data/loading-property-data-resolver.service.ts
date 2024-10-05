@@ -3,7 +3,7 @@ import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot } from "@angular/r
 import { Actions, Store } from "@ngxs/store";
 import { Observable, combineLatest, of} from "rxjs";
 import { mergeMap, skipWhile, tap } from "rxjs/operators";
-import { LocataireAction, LocationAction, PropertyAction, RoomAction, UserProfileAction } from "../../store";
+import { LocataireAction, LocationAction, LocationPaymentAction, PropertyAction, RoomAction, StatisticAction, UserProfileAction } from "../../store";
 import { HistoryLocationPaymentAction } from "../../store/history-payment-location";
 
 
@@ -35,6 +35,11 @@ export class LoadingPropertyDataResolver implements Resolve<any>
             new LocataireAction.FetchLocatairesByPropertyId(propertyId),
             new RoomAction.FetchRoomsByPropertyID(propertyId),
             new LocationAction.FetchLocationsByPropertyId(propertyId),
+            new LocationPaymentAction.FetchLocationPaymentsByPropertyId(propertyId),
+            new HistoryLocationPaymentAction.FetchHistoryLocationPaymentsByPropertyId(propertyId),
+            new StatisticAction.FetchStaticRoomDataByPropertyIdAndYear(propertyId,`${new Date().getFullYear()}`),
+            new StatisticAction.FetchStaticLocataireDataByPropertyIdAndYear(propertyId,`${new Date().getFullYear()}`),
+            new StatisticAction.FetchStaticAllPaymentLocataireDataByPropertyIdAndYear(propertyId,`${new Date().getFullYear()}`)
         ])
 
         // combineLatest(

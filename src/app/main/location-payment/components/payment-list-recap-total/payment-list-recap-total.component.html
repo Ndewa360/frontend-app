@@ -1,0 +1,37 @@
+<div class="app-card payment-list-locataire">
+    <div class="app-card__header">
+      <div class="app-expressive-heading-03 text-center mb-4">{{title}}</div>
+      <div>     
+          <ibm-table-container class="">
+              <ng-template #locataireTemplate let-data="data">
+                  {{data.fullName}}
+              </ng-template>
+
+              <ng-template #payementSumTemplate let-data="data">
+                <div *ngIf="data.isSum; else isNotSum" class="color-td-cel">{{data.data}}</div>
+                <ng-template #isNotSum>{{data.data}}</ng-template>
+              </ng-template>
+      
+              <ibm-table
+                  [model]="model"
+                  [size]="size"
+                  [skeleton]="skeleton"
+                  [showSelectionColumn]="showSelectionColumn"
+                  [enableSingleSelect]="enableSingleSelect"
+                  (rowClick)="onRowClick($event)"
+                  [sortable]="sortable"
+                  [stickyHeader]="stickyHeader"
+                  [striped]="striped"
+                  [isDataGrid]="isDataGrid"
+                  (sort)="simpleSort($event)">
+                  <ng-content></ng-content>
+              </ibm-table>
+          
+          
+              <ng-template #customTrigger>
+                  <svg ibmIconSettings size="16"></svg>
+              </ng-template>
+          </ibm-table-container>
+      </div>
+    </div>
+  </div>

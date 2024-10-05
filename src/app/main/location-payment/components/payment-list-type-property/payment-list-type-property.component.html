@@ -1,0 +1,48 @@
+<div class="app-card">
+    <div class="app-card__header">
+      <div class="app-expressive-heading-03 text-center mb-4">{{title}}</div>
+      <div>     
+          <ibm-table-container class="">
+              <ng-template #locataireTemplate let-data="data">
+                  <ng-container *ngIf="(getLocataireById(data) | async ) as locataireData">
+                      {{locataireData["fullName"]}}
+                  </ng-container>
+              </ng-template>
+      
+              <ng-template #datePaymentTemplate let-data="data">
+                  {{data | date:'mediumDate'}}
+              </ng-template>
+      
+              <ng-template #roomTemplate let-data="data">
+                  <ng-container *ngIf="( getRoomById(data) | async )as roomData">
+                      <ng-container [ngSwitch]="roomData.type">
+                          <span *ngSwitchCase="'room'">Chambre {{roomData["code"]}}</span>
+                          <span *ngSwitchCase="'studio'">Studio #{{roomData["code"]}}</span>
+                          <span *ngSwitchCase="'simple_apartment'">Apartement #{{roomData["code"]}}</span>
+                          <span *ngSwitchCase="'furnished_apartment'">Apartement Meublé #{{roomData["code"]}}</span>
+                      </ng-container>
+                  </ng-container>
+              </ng-template>
+              <ibm-table
+                  [model]="model"
+                  [size]="size"
+                  [skeleton]="skeleton"
+                  [showSelectionColumn]="showSelectionColumn"
+                  [enableSingleSelect]="enableSingleSelect"
+                  (rowClick)="onRowClick($event)"
+                  [sortable]="sortable"
+                  [stickyHeader]="stickyHeader"
+                  [striped]="striped"
+                  [isDataGrid]="isDataGrid"
+                  (sort)="simpleSort($event)">
+                  <ng-content></ng-content>
+              </ibm-table>
+          
+          
+              <ng-template #customTrigger>
+                  <svg ibmIconSettings size="16"></svg>
+              </ng-template>
+          </ibm-table-container>
+      </div>
+    </div>
+  </div>

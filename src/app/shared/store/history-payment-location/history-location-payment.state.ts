@@ -61,31 +61,10 @@ export class HistoryLocationPaymentState{
    
     static selectStateHistoryLocationPaymentByLocataireId(locataireID)
     {
-        return createSelector([HistoryLocationPaymentState],(state)=> state.historyLocationPayments.filter((historyLocationPayment)=>historyLocationPayment.location.locataire==locataireID))
+        return createSelector([HistoryLocationPaymentState],(state)=> state.historyLocationPayments.filter((historyLocationPayment)=>historyLocationPayment.locataire._id==locataireID))
     }   
 
-    @Action(HistoryLocationPaymentAction.FetchHistoryLocationPayment)
-    fetchHistoryLocationPayment(ctx:StateContext<HistoryLocationPaymentStateModel>,{historyLocationPaymentId}:HistoryLocationPaymentAction.FetchHistoryLocationPayment)
-    {
-        const state = ctx.getState();
-        let index = state.historyLocationPayments.findIndex((u)=>u._id==historyLocationPaymentId);
-
-        if(index>-1) return of(true);
-
-        ctx.patchState({
-            loadingHistoryLocationPayment:true
-        })
-        return this._historyLocationPaymentsService.getHistoryLocationPayments(historyLocationPaymentId).pipe(
-            tap(
-                result => {
-                    ctx.patchState({
-                        loadingHistoryLocationPayment:false,
-                        historyLocationPayments:[...state.historyLocationPayments, ...result.data]
-                    })                    
-                }
-            )
-        )
-    }
+   
 
     @Action(HistoryLocationPaymentAction.FetchHistoryLocationByLocataireId)
     fetchHistoryLocationPaymentsByLocataireId(ctx:StateContext<HistoryLocationPaymentStateModel>,{locataireID}:HistoryLocationPaymentAction.FetchHistoryLocationByLocataireId)
@@ -97,13 +76,16 @@ export class HistoryLocationPaymentState{
             loadingHistoryLocationPayment:true,
             initLoadingState:"LOADING"
         })
-        return this._historyLocationPaymentsService.getHistoryLocationPayments(locataireID).pipe(
+        return this._historyLocationPaymentsService.getHistoryLocationPaymentsByLocataire(locataireID).pipe(
             tap(
                 result => {
-                    console.log("Fetch HistoryLocationPayments ",result)
+                    let stateCopy = [...state.historyLocationPayments];
+                    result.data.forEach(element => {
+                        if(stateCopy.findIndex((item)=>item._id==element._id)==-1) stateCopy.push(element)
+                    });
                     ctx.patchState({
                         loadingHistoryLocationPayment:false,
-                        historyLocationPayments:[...state.historyLocationPayments,...result.data],
+                        historyLocationPayments:stateCopy,
                         initLoadingState:"LOADED"
                     })
                     ctx.dispatch(new LocationPaymentAction.SetLocationPayments(result.data.map((data)=>data.transactions).reduce((acc,curr)=>([...acc,...curr]),[])))
@@ -131,13 +113,17 @@ export class HistoryLocationPaymentState{
             loadingHistoryLocationPayment:true,
             initLoadingState:"LOADING"
         })
-        return this._historyLocationPaymentsService.getHistoryLocationPayments(propertyId).pipe(
+        return this._historyLocationPaymentsService.getHistoryLocationPaymentsByProperty(propertyId).pipe(
             tap(
                 result => {
-                    console.log("Fetch HistoryLocationPayments ",result)
+                    console.log("Payment History", result.data)
+                    let stateCopy = [...state.historyLocationPayments];
+                    result.data.forEach(element => {
+                        if(stateCopy.findIndex((item)=>item._id==element._id)>-1) stateCopy.push(element)
+                    });
                     ctx.patchState({
                         loadingHistoryLocationPayment:false,
-                        historyLocationPayments:[...state.historyLocationPayments,...result.data],
+                        historyLocationPayments:stateCopy,
                         initLoadingState:"LOADED"
                     })
                 }

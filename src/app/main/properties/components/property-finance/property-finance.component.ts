@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { Store } from '@ngxs/store';
+import { LocataireState, RoomState } from 'src/app/shared/store';
 import { UtilsString } from 'src/app/shared/utils';
 
 @Component({
@@ -7,6 +10,11 @@ import { UtilsString } from 'src/app/shared/utils';
   styleUrls: ['./property-finance.component.scss']
 })
 export class PropertyFinanceComponent implements OnInit {
+
+  locataireOpts = {};
+  propertyId=null;
+  roomCount = {nbreRoomActif:0,nbreRoomTotal:0}
+  locataireCount = {locataireCountForPropertyId:0,locataireCountTotal:0}
 
   public charts =[
     {
@@ -55,13 +63,29 @@ export class PropertyFinanceComponent implements OnInit {
     }]
   }
  ]
-  constructor() { }
+  constructor(
+    private _activatedRoute: ActivatedRoute,
+    private _store:Store,
+  ) { }
 
   ngOnInit(): void {
+    this.propertyId = this._activatedRoute.snapshot.parent.paramMap.get('id');
+    this._store.select(RoomState.selectStateCountRoomWithStateByPropertyId(this.propertyId))
+    .subscribe((value)=>{
+      this.roomCount={nbreRoomActif:value.roomFreeCount, nbreRoomTotal:value.roomCountTotal}
+    });
+
+    this._store.select(LocataireState.selectStateCountLocataireByPropertyId(this.propertyId)).subscribe((value)=>{
+      this.locataireCount={
+        locataireCountForPropertyId:value.countLocataireForPropertyId,
+        locataireCountTotal:value.countAllLocataire
+      }
+    })
   }
   
   getMoney()
   {
     return UtilsString.getDefaultCurrency();
   }
+
 }

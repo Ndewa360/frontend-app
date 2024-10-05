@@ -63,6 +63,14 @@ export class LocataireState{
     static selectStateFreeLocataireByPropertyId(propertyID: string) {
         return createSelector([LocataireState],(state)=> state.locataires.filter((locataire:LocataireModel)=>locataire.property==propertyID && locataire.room==null))
       }
+    
+      static selectStateCountLocataireByPropertyId(propertyID:string)
+    {
+        return createSelector([LocataireState],(state)=> ({
+            countLocataireForPropertyId:state.locataires.filter((location)=>location.property==propertyID).length,
+            countAllLocataire:state.locataires.length
+        }))
+    }
 
     @Action(LocataireAction.UpdateLocataire)
     updateLocataire(ctx:StateContext<LocataireStateModel>, {locataire,id}:LocataireAction.UpdateLocataire)

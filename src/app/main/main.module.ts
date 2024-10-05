@@ -33,6 +33,7 @@ import { AssignLocationListClientComponent } from './properties/components/assig
 import { RemoveLocataireRoomComponent } from './properties/components/remove-locataire-room/remove-locataire-room.component'
 import { LocationPaymentModule } from './location-payment/location-payment.module'
 import { LocatairesModule } from './locataires/locataires.module'
+import { StatisticsModule } from './statistics/statistics.module'
 
 
 @NgModule({
@@ -70,7 +71,8 @@ import { LocatairesModule } from './locataires/locataires.module'
     LocationPaymentModule,
     AgGridModule,
     LocatairePropertyModule,
-    LocatairesModule
+    LocatairesModule,
+    StatisticsModule
   ]
 })
 export class MainModule {

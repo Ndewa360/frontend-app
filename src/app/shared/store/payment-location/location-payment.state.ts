@@ -1,5 +1,5 @@
 import { Action, Selector, State, StateContext, createSelector } from "@ngxs/store";
-import { LocationPaymentModel } from "./location-payment.model";
+import { LocationPaymentModel, LocationPaymentType } from "./location-payment.model";
 import { Injectable } from "@angular/core";
 import { LocationPaymentAction } from "./location-payment.actions";
 import { LocationPaymentService } from "./location-payment.service";
@@ -59,6 +59,11 @@ export class LocationPaymentState{
     static selectStateLocationPaymentByPropertyId(propertyID)
     {
         return createSelector([LocationPaymentState],(state)=> state.locationPayments.filter((locationPayment)=>locationPayment.property==propertyID))
+    }
+
+    static selectStateLocationPaymentByPropertyIdAndPaymentType(propertyID:string,paymentType:LocationPaymentType)
+    {
+        return createSelector([LocationPaymentState],(state)=> state.locationPayments.filter((locationPayment:LocationPaymentModel)=>locationPayment.property==propertyID && locationPayment.paymentLocationType==paymentType))
     }
 
     static selectStateLocationPaymentByBillingRef(billingRef)

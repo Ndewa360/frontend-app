@@ -54,4 +54,16 @@ export class UtilsString
     {
         return UtilsString.getCurrencySymbol(Currency.XAF);
     }
+
+    static capitalizedFirstLetter(word:string)
+    {
+        if(!word) return word;
+        const firstLetter = word.charAt(0)
+        return `${firstLetter.toUpperCase()}${ word.slice(1)}`
+    }
+
+    static getListOfMonth()
+    {
+        return Array.from(Array(12).keys()).map((item)=>new Date(2024, item).toLocaleString('fr-FR', { month: 'long' })).map((month)=>this.capitalizedFirstLetter(month))
+    }
 }

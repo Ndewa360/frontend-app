@@ -30,7 +30,6 @@ export class HistoryPaymentComponent implements OnInit{
 
   ngOnInit(): void {
     this.locataireID = this._activatedRoute.snapshot.parent.paramMap.get('locataireID');
-
     this._store.select(HistoryLocationPaymentState.selectStateHistoryLocationPaymentByLocataireId(this.locataireID)).subscribe((data)=>{
       this.structureAndShowData(data)
     })
@@ -93,7 +92,6 @@ export class HistoryPaymentComponent implements OnInit{
       dataHistory.push(...historyItem.reverse());
     }
     this.dataHistory = [...dataHistory];
-    console.log("Data history ", dataHistory);
   }
   organiseDateViewByDate(transaction:LocationPaymentModel[])
   {

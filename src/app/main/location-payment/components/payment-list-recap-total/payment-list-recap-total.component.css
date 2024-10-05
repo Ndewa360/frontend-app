@@ -1,0 +1,6 @@
+
+.payment-list-locataire .cds--data-table tbody tr td:has(.color-td-cel)
+{
+    background-color: rgba(101, 163, 13,.8);
+    color: white;
+}
