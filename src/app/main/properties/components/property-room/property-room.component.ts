@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Store } from '@ngxs/store';
+import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { Currency, LocataireState, PropertyModel, PropertyState, RoomModel, RoomState } from 'src/app/shared/store';
 import { UtilsString } from 'src/app/shared/utils';
@@ -12,7 +12,7 @@ import { UtilsString } from 'src/app/shared/utils';
   encapsulation: ViewEncapsulation.None
 })
 export class PropertyRoomComponent implements OnInit {
-  loadingRoom = true;
+  @Select(RoomState.selectStateInitLoading) loadingRoom$:Observable<string>;
   roomFound:RoomModel[] = [];
   roomFound$:Observable<RoomModel[]>;
 
@@ -31,7 +31,6 @@ export class PropertyRoomComponent implements OnInit {
     this.roomFound$=this._store.select(RoomState.selectStateRoomByPropertyId(propertyId));
     this.roomFound$.subscribe((found)=>{
         this.roomFound = found;
-        this.loadingRoom = false;
     })
   }
 

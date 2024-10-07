@@ -38,7 +38,8 @@ export class AuthTokenInterceptor implements HttpInterceptor {
           if (err.status === 401) {
             this._store.dispatch(new AuthTokenAction.SetAuthToken(null));
             // this._router.navigate(["/auth/login"]);
-            this._toastrService.error("Session expiré", "Oups! Vous devez vous reconnecter vous actualiser votre session");
+            // this._toastrService.error("Session expiré", "Oups! Vous devez vous reconnecter vous actualiser votre session");
+            this._store.dispatch(new AuthTokenAction.SetAuthToken(null));
             this._router.parseUrl(`/auth/signin?returnUrl=${this._router.url}`)
 
           } else {

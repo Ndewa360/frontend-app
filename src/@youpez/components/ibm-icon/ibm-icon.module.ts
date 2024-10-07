@@ -37,6 +37,28 @@ import ArrowUp24 from '@carbon/icons/es/arrow--up/24';
 import ArrowUp20 from '@carbon/icons/es/arrow--up/20';
 import Arrowup16 from '@carbon/icons/es/arrow--up/16';
 
+import TriangleLeftSolid32 from '@carbon/icons/es/triangle--left--solid/32';
+import TriangleLeftSolid24 from '@carbon/icons/es/triangle--left--solid/24';
+import TriangleLeftSolid20 from '@carbon/icons/es/triangle--left--solid/20';
+import TriangleLeftSolid16 from '@carbon/icons/es/triangle--left--solid/16';
+
+import TriangleRightSolid32 from '@carbon/icons/es/triangle--right--solid/32';
+import TriangleRightSolid24 from '@carbon/icons/es/triangle--right--solid/24';
+import TriangleRightSolid20 from '@carbon/icons/es/triangle--right--solid/20';
+import TriangleRightSolid16 from '@carbon/icons/es/triangle--right--solid/16';
+
+import TriangleUpSolid32 from '@carbon/icons/es/triangle--solid/32';
+import TriangleUpSolid24 from '@carbon/icons/es/triangle--solid/24';
+import TriangleUpSolid20 from '@carbon/icons/es/triangle--solid/20';
+import TriangleUpSolid16 from '@carbon/icons/es/triangle--solid/16';
+
+import TriangleDownSolid32 from '@carbon/icons/es/triangle--down--solid/32';
+import TriangleDownSolid24 from '@carbon/icons/es/triangle--down--solid/24';
+import TriangleDownSolid20 from '@carbon/icons/es/triangle--down--solid/20';
+import TriangleDownSolid16 from '@carbon/icons/es/triangle--down--solid/16';
+
+
+
 import DocumentAttachment32 from '@carbon/icons/es/document--attachment/32';
 import DocumentAttachment24 from '@carbon/icons/es/document--attachment/24';
 import DocumentAttachment20 from '@carbon/icons/es/document--attachment/20';
@@ -250,6 +272,27 @@ export class IbmIconModule {
     private _matIconRegistry: MatIconRegistry
   ) {
     iconService.registerAll([
+      
+
+      TriangleDownSolid32,
+			TriangleDownSolid24,
+			TriangleDownSolid20,
+			TriangleDownSolid16,
+
+      TriangleUpSolid32,
+			TriangleUpSolid24,
+			TriangleUpSolid20,
+			TriangleUpSolid16,
+
+      TriangleLeftSolid32,
+			TriangleLeftSolid24,
+			TriangleLeftSolid20,
+			TriangleLeftSolid16,
+
+      TriangleRightSolid32,
+			TriangleRightSolid24,
+			TriangleRightSolid20,
+			TriangleRightSolid16,
 
       Printer32,
 			Printer24,

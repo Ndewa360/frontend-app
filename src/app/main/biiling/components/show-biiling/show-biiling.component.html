@@ -7,12 +7,12 @@
             <span class="btn-text">Pay</span>
             <youpez-ibm-icon iconClass="cds--btn__icon" iconName="money" iconSize="20" ></youpez-ibm-icon >
           </button> -->
-          <button ibmButton="primary" size="sm">
+          <button ibmButton="primary" size="sm" class="custom-primary-button">
             <span class="btn-text">Email</span>
             <youpez-ibm-icon iconClass="cds--btn__icon" iconName="email" iconSize="20" ></youpez-ibm-icon >
           </button>
         </div>
-        <button ibmButton="tertiary" size="sm" (click)="generatePDF()" class="cds--btn--icon-only">
+        <button ibmButton="tertiary" size="sm" (click)="generatePDF()" class="cds--btn--icon-only custom--btn--tertiary">
             <youpez-ibm-icon iconClass="cds--btn__icon" iconName="printer" iconSize="32" ></youpez-ibm-icon >
 
         </button>
@@ -22,7 +22,7 @@
           <div ngClass.gt-sm="p-10" ngClass.lt-sm="p-5" ngClass.sm="p-5" *ngIf="locationPayment">
             <div class="flex justify-between mb-20">
               <div>
-                <youpez-logo logoWidth="170px"></youpez-logo>
+                <youpez-logo logoWidth="170px" type="nobg-white"></youpez-logo>
               </div>
               <div class="text-right">
                 <div class="app-productive-heading-04 mb-1">RECUS</div>

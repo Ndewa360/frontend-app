@@ -1,0 +1,14 @@
+a.app-breadcrumb__item span:hover
+{
+    cursor: pointer;
+    text-decoration: underline;
+}
+a.app-breadcrumb__item  *
+{
+    vertical-align: middle;
+}
+
+a.app-breadcrumb__item svg
+{
+    fill: #0f62fe;
+}

@@ -55,6 +55,20 @@
     <svg [class]="iconClass" cdsIcon="arrow--right" [size]="iconSize"></svg>
   </ng-container>
 
+  <ng-container *ngSwitchCase="'triangleLeftSolid'">
+    <svg [class]="iconClass" cdsIcon="triangle--left--solid" [size]="iconSize"></svg>
+  </ng-container>
+
+  <ng-container *ngSwitchCase="'triangleRightSolid'">
+    <svg [class]="iconClass" cdsIcon="triangle--right--solid" [size]="iconSize"></svg>
+  </ng-container>
+  <ng-container *ngSwitchCase="'triangleUpSolid'">
+    <svg [class]="iconClass" cdsIcon="triangle--up--solid" [size]="iconSize"></svg>
+  </ng-container>
+  <ng-container *ngSwitchCase="'triangleDownSolid'">
+    <svg [class]="iconClass" cdsIcon="triangle--down--solid" [size]="iconSize"></svg>
+  </ng-container>
+
   <ng-container *ngSwitchCase="'cloudDataOps'">
     <svg [class]="iconClass" cdsIcon="cloudDataOps" [size]="iconSize"></svg>
   </ng-container>

@@ -37,6 +37,12 @@ export class RoomState{
     {
         return state.loadingRoom
     }
+
+    @Selector()
+    static selectStateInitLoading(state:RoomStateModel)
+    {
+        return state.initLoadingState
+    }
     @Selector() 
     static setlectStateRooms(state:RoomStateModel)
     {

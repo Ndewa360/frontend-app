@@ -10,10 +10,8 @@
                 <div class="app-timeline" style="max-width:800px">
                     <ng-container *ngFor="let event of dataHistory">
                         <div class="app-timeline__group" fxLayout="row wrap">
-                            <div class="app-timeline__time " fxFlex="100%" fxFlex.gt-sm="105px"
-                                ngClass.lt-sm="app-timeline__time--collapse">
-                                <span class="app-helper-text-01"
-                                    *ngIf="event.contentType=='payment_year'; else dateShowHistory">{{event.time}}</span>
+                            <div class="app-timeline__time " fxFlex="100%" fxFlex.gt-sm="105px" ngClass.lt-sm="app-timeline__time--collapse">
+                                <span class="app-helper-text-01" *ngIf="event.contentType=='payment_year'; else dateShowHistory">{{event.time}}</span>
                                 <ng-template #dateShowHistory>
                                     <div class="app-helper-text-01">{{event.time | date: 'longDate'}}</div>
                                 </ng-template>
@@ -46,7 +44,7 @@
                                     <div class="app-timeline">
                                         <ng-container *ngFor="let eventChild of event.children">
                                             <div class="app-timeline__item app-timeline__item--circle app-timeline__item--level2"
-                                                [class]="getClassForEvent(event)">
+                                                [class]="getClassForEvent(eventChild)">
                                                 <div class="app-timeline__item__content">
                                                     <div class="app-label-01 leading-4 flex">
                                                         <span>
