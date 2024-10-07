@@ -234,7 +234,7 @@ export class RoomState{
         return this._roomsService.createRoom(bodyToSend).pipe(
             tap(
                 result => {
-                    this._toastrService.success(`${UtilsString.getStringOfRoomType(room.type)} ajouté avec success!`, 'Ndiye');
+                    this._toastrService.success(`${UtilsString.getStringOfRoomType(room.type)} ajouté avec success!`, 'Ndewa360°');
                     ctx.patchState({
                         loadingRoom:false,
                         rooms:[...state.rooms, result.data]
@@ -244,7 +244,7 @@ export class RoomState{
             catchError((error)=>{
                 let message = error?.error?.message;
                 if(!message) message = "Une erreur c'est produite! Réessayez plus tard"
-                this._toastrService.error(message, 'Ndiye');
+                this._toastrService.error(message, 'Ndewa360°');
                   return error;
             })
         )

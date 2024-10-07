@@ -69,20 +69,20 @@ export class UserProfileState{
                         userProfile:result.data.user
                     })     
                         ctx.dispatch(new AuthTokenAction.SetAuthToken(result.data.access_token));          
-                    this._toastrService.success(`Bienvenue sur Ndiye! `, 'Ndiye');
+                    this._toastrService.success(`Bienvenue sur Ndewa360°! `, 'Ndewa360°');
                 }
             ),
             catchError((error) => {
                 switch(error.status)
                 {
                     case 401:
-                        this._toastrService.error(`Email ou mot de passe incorrect! `, 'Ndiye');
+                        this._toastrService.error(`Email ou mot de passe incorrect! `, 'Ndewa360°');
                         break;
                     case 406:
-                        this._toastrService.warning(`Compte innactivé! Veuillez valider ce compte a partir du lien fourni par mail! `, 'Ndiye');
+                        this._toastrService.warning(`Compte innactivé! Veuillez valider ce compte a partir du lien fourni par mail! `, 'Ndewa360°');
                         break;
                     default:
-                        this._toastrService.error(`Une erreur c'est produite! `, 'Ndiye');
+                        this._toastrService.error(`Une erreur c'est produite! `, 'Ndewa360°');
                 }
                 
                 // this._toastrService.error(error?.error?.message, 'Erreur');
@@ -99,7 +99,7 @@ export class UserProfileState{
     logoutUserProfileState(ctx:StateContext<UserProfileStateModel>)
     {
         ctx.dispatch(new Navigate(['/auth/signin']))
-        this._toastrService.success("Deconnexion avec success! ","Ndiye")
+        this._toastrService.success("Deconnexion avec success! ","Ndewa360°")
         ctx.dispatch(new AuthTokenAction.SetAuthToken(null));  
     }
 
@@ -118,7 +118,7 @@ export class UserProfileState{
                         loadingUserProfile:false,
                         userProfile:result.data
                     })
-                    this._toastrService.success("Compte créé avec success! ","Ndiye")
+                    this._toastrService.success("Compte créé avec success! ","Ndewa360°")
                 }
             ),
             catchError((error) => {
@@ -128,13 +128,13 @@ export class UserProfileState{
                 switch(error.status)
                 {
                     case 409:
-                        this._toastrService.error("Ce compete existe déjà! ","Ndiye");
+                        this._toastrService.error("Ce compete existe déjà! ","Ndewa360°");
                         break;
                     case 400:
-                        this._toastrService.error("Format de mot de passe incorrect! ","Ndiye");
+                        this._toastrService.error("Format de mot de passe incorrect! ","Ndewa360°");
                         break;
                     default:
-                        this._toastrService.error("Une erreur c'est produite! ","Ndiye");
+                        this._toastrService.error("Une erreur c'est produite! ","Ndewa360°");
                 }
                 
                 return throwError(error);

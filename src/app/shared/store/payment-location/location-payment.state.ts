@@ -173,7 +173,7 @@ export class LocationPaymentState{
                         loadingLocationPayment:false,
                         locationPayments:[...state.locationPayments, result.data]
                     })
-                    this._toastrService.success(`Paiement ajouté avec success!`, 'Ndiye');
+                    this._toastrService.success(`Paiement ajouté avec success!`, 'Ndewa360°');
                 }
             ),
             catchError((error)=>{
@@ -182,7 +182,7 @@ export class LocationPaymentState{
                 })
                 let message = error?.error?.message;
                 if(!message) message = "Une erreur c'est produite! Réessayez plus tard"
-                this._toastrService.error(message, 'Ndiye');
+                this._toastrService.error(message, 'Ndewa360°');
                 return throwError(error);
             })
         )
@@ -216,7 +216,7 @@ export class LocationPaymentState{
                 })
                 let message = error?.error?.message;
                 if(!message) message = "Une erreur c'est produite! Réessayez plus tard"
-                this._toastrService.error(message, 'Ndiye');
+                this._toastrService.error(message, 'Ndewa360°');
                 return throwError(error);
             })
         )

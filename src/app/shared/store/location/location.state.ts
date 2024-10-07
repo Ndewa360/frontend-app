@@ -185,7 +185,7 @@ export class LocationState{
                         loadingLocation:false,
                         locations:[...state.locations, result.data]
                     })
-                    this._toastrService.success(`Location ajouté avec success!`, 'Ndiye');
+                    this._toastrService.success(`Location ajouté avec success!`, 'Ndewa360°');
                     ctx.dispatch(new RoomAction.ChangeStatusRoom(result.data.room,false,result.data.locataire))
                     ctx.dispatch(new LocataireAction.UpdateLocataireRoom(result.data.locataire,result.data.room))
                 }
@@ -196,7 +196,7 @@ export class LocationState{
                 })
                 let message = error?.error?.message;
                 if(!message) message = "Une erreur c'est produite! Réessayez plus tard"
-                this._toastrService.error(message, 'Ndiye');
+                this._toastrService.error(message, 'Ndewa360°');
                 return throwError(error);
             })
         )
@@ -219,7 +219,7 @@ export class LocationState{
                         loadingLocation:false,
                         locations:data
                     })
-                    this._toastrService.success(`Location retiré avec success!`, 'Ndiye');
+                    this._toastrService.success(`Location retiré avec success!`, 'Ndewa360°');
                     ctx.dispatch(new RoomAction.ChangeStatusRoom(result.data.room,true,null))
                     ctx.dispatch(new LocataireAction.UpdateLocataireRoom(result.data.locataire,null))
                 }
@@ -230,7 +230,7 @@ export class LocationState{
                 })
                 let message = error?.error?.message;
                 if(!message) message = "Une erreur c'est produite! Réessayez plus tard"
-                this._toastrService.error(message, 'Ndiye');
+                this._toastrService.error(message, 'Ndewa360°');
                 return throwError(error);
             })
         )
@@ -264,7 +264,7 @@ export class LocationState{
                 })
                 let message = error?.error?.message;
                 if(!message) message = "Une erreur c'est produite! Réessayez plus tard"
-                this._toastrService.error(message, 'Ndiye');
+                this._toastrService.error(message, 'Ndewa360°');
                 return throwError(error);
             })
         )

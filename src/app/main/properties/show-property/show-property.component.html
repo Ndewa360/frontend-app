@@ -4,7 +4,7 @@
         {{getTitle()}}
       </youpez-header-title>
       <youpez-header-tools>
-        <button ibmButton="primary" size="sm" *ngIf="shoulShowAddProperty()" (click)="onCreate()">
+        <button ibmButton="primary" class="custom-primary-button" size="sm" *ngIf="shoulShowAddProperty()" (click)="onCreate()">
           {{showTitleOfBtn()}}
           <youpez-ibm-icon iconClass="cds--btn__icon" iconName="add" iconSize="20"></youpez-ibm-icon>
         </button>

@@ -47,7 +47,7 @@ export class ShowPropertyComponent implements OnInit {
     this.propertyFound$.subscribe((found)=>{
       if(!found){
         this._router.navigateByUrl('/app/properties/list');
-        this._toastService.error("Biens introuvable", "Ndiye");
+        this._toastService.error("Biens introuvable", "Ndewa360°");
       }
       else
       {

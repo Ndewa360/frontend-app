@@ -54,7 +54,7 @@
     </div>
     <div class="app-form__submit">
       <!--  -->
-      <button type="submit" size="md" class="app-ibm-btn-full" [disabled]="waittingResponse || formGroup.invalid" ibmButton="primary" >
+      <button type="submit" size="md" class="app-ibm-btn-full custom-primary-button" [disabled]="waittingResponse || formGroup.invalid" ibmButton="primary" >
         <ibm-loading *ngIf="waittingResponse; else noWaitingResponse"></ibm-loading>
         <ng-template #noWaitingResponse>
           <span class="btn-text">Connexion</span>

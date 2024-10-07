@@ -3,21 +3,20 @@
 // 	// CSS Grid has become the default grid system in v11
 // 	$use-flexbox-grid: true
 // );
-
 // @use "@carbon/styles";
-@forward '@carbon/styles/scss/config';
-@forward '@carbon/styles/scss/spacing';
-@forward '@carbon/styles/scss/colors' hide $white;
-@forward '@carbon/styles/scss/motion';
-@forward '@carbon/styles/scss/type';
-@forward '@carbon/styles/scss/themes';
-@forward '@carbon/styles/scss/theme';
+@use '@carbon/styles/scss/config';
+@use '@carbon/styles/scss/spacing';
+@use '@carbon/styles/scss/colors' ;
+@use '@carbon/styles/scss/motion';
+@use '@carbon/styles/scss/type';
+@use '@carbon/styles/scss/themes';
+@use '@carbon/styles/scss/theme';
 
-@forward '@carbon/styles/scss/fonts';
-@forward '@carbon/styles/scss/grid';
-@forward '@carbon/styles/scss/layer';
-@forward '@carbon/styles/scss/layout';
-@forward '@carbon/styles/scss/zone';
+@use '@carbon/styles/scss/fonts';
+@use '@carbon/styles/scss/grid';
+@use '@carbon/styles/scss/layer';
+@use '@carbon/styles/scss/layout';
+@use '@carbon/styles/scss/zone';
 @use '@carbon/styles/scss/components';
 
 
@@ -38,12 +37,18 @@
 // 	@include styles.theme(styles.$g100);
 // }
 
-
 // // Want to use only one theme? Add the css variables directly in root
 
 // body {
 // 	@include styles.theme(styles.$white);
-// }
+// // }
+
+
+
+:root {
+  @include theme.theme();
+}
+
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

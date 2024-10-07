@@ -87,6 +87,7 @@ import {NgbDropdownModule, NgbTooltipModule} from '@ng-bootstrap/ng-bootstrap'
 import {MatCardModule} from '@angular/material/card';
 import { YoupezAlertComponent } from './components/alert'
 import { ChartsModule } from './modules/charts/charts.module'
+import { AppLoaderComponent } from './components/app-loader/app-loader.component'
 // import { NgxMatIntlTelInputComponent } from "ngx-mat-intl-tel-input"
 
 
@@ -169,7 +170,8 @@ const Components = [
   AppContentSimpleComponent,
   AppLogoComponent,
   AppBreadcrumbComponent,
-  YoupezAlertComponent
+  YoupezAlertComponent,
+  AppLoaderComponent
 ]
 
 const Pipes = [

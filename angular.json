@@ -28,6 +28,7 @@
 							"src/assets"
 						],
 						"styles": [
+							"src/@youpez/styles/scss/theme/app-custom-theme.scss",
 							"src/styles.scss",
 							{
 								"input": "src/@youpez/styles/scss/theme/app.carbon.light.scss",

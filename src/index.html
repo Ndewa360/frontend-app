@@ -1,21 +1,23 @@
 <!doctype html>
 <html lang="en">
-<head>
-	<meta charset="utf-8">
-	<title>Ndiye | Gestion de location</title>
-	<base href="/">
 
-	<meta name="theme-color" content="#ffff00">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
- <link rel="preconnect" href="https://fonts.gstatic.com">
- <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
- <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
- <style type="text/css">
-    body, html {
+<head>
+  <meta charset="utf-8">
+  <title>Ndewa360° | Gestion de location</title>
+  <base href="/">
+
+  <meta name="theme-color" content="#ffff00">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style type="text/css">
+    body,
+    html {
       height: 100%;
     }
 
-    #app-loading-holder {
+    #app-loading-holder {  
       position: absolute;
       top: 0;
       right: 0;
@@ -35,49 +37,8 @@
 
     }
 
-    .app-loading .spinner {
-      height: 200px;
-      width: 200px;
-      animation: rotate 2s linear infinite;
-      transform-origin: center center;
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      margin: auto;
-    }
 
-    .app-loading .spinner .path {
-      stroke-dasharray: 1, 200;
-      stroke-dashoffset: 0;
-      animation: dash 1.5s ease-in-out infinite;
-      stroke-linecap: round;
-      stroke: #0047c3;
-    }
-
-    @keyframes rotate {
-      100% {
-        transform: rotate(360deg);
-      }
-    }
-
-    @keyframes dash {
-      0% {
-        stroke-dasharray: 1, 200;
-        stroke-dashoffset: 0;
-      }
-      50% {
-        stroke-dasharray: 89, 200;
-        stroke-dashoffset: -35px;
-      }
-      100% {
-        stroke-dasharray: 89, 200;
-        stroke-dashoffset: -124px;
-      }
-    }
-
-    .logo{
+    .logo {
       position: relative;
     }
 
@@ -90,79 +51,10 @@
       position: absolute;
       top: 0;
       right: 0;
-      left:0;
+      left: 0;
       width: 330px;
       height: 45px;
       overflow: hidden;
-    }
-
-    .loader .ball {
-      height: 15px;
-      width: 0;
-      background: #000;
-      position: relative;
-      margin: 0;
-    }
-
-    .loader .ball:nth-child(1) {
-      -webkit-animation: ball 2s ease-in-out infinite;
-      animation: ball 2s ease-in-out infinite;
-    }
-
-    .loader .ball:nth-child(2) {
-      -webkit-animation: ball 2s ease-in-out .1s infinite;
-      animation: ball 2s ease-in-out .1s infinite;
-    }
-
-    .loader .ball:nth-child(3) {
-      -webkit-animation: ball 2s ease-in-out .2s infinite;
-      animation: ball 2s ease-in-out .2s infinite;
-    }
-
-    @-webkit-keyframes ball {
-      0% {
-        left: 0;
-        width: 0px;
-      }
-      25% {
-        left: 0;
-        width: 300px;
-      }
-      50% {
-        left: 300px;
-        width: 0px;
-      }
-      75% {
-        left: 0;
-        width: 300px;
-      }
-      100% {
-        left: 0;
-        width: 0px;
-      }
-    }
-
-    @keyframes ball {
-      0% {
-        left: 0;
-        width: 0px;
-      }
-      25% {
-        left: 0;
-        width: 300px;
-      }
-      50% {
-        left: 300px;
-        width: 0px;
-      }
-      75% {
-        left: 0;
-        width: 300px;
-      }
-      100% {
-        left: 0;
-        width: 0px;
-      }
     }
   </style>
   <script>
@@ -174,21 +66,16 @@
     })((window));
   </script>
 </head>
+
 <body class="mat-typography">
-	<app-root>Loading...</app-root>
-	<div id="notificationHolder" style="position: absolute;z-index:100000"></div>
-	<div id="app-loading-holder">
-	<div class="app-loading">
-		<div class="logo">
-		<img src="assets/img/logo/logo-big-black.png"/>
-		<!-- <img src="assets/img/logo/logo_miniaturise.png"/> -->
-		<div class="loader">
-			<div class="ball"></div>
-			<div class="ball"></div>
-			<div class="ball"></div>
-		</div>
-		</div>
-	</div>
-	</div>
+  <app-root>Loading...</app-root>
+  <div id="app-loading-holder">
+    <div class="app-loading">
+      <div class="logo">
+        <img src="assets/img/logo/logo_big_blanc-removebg-preview.png" />        
+      </div>
+    </div>
+  </div>
 </body>
+
 </html>

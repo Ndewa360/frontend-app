@@ -42,6 +42,12 @@ export class PropertyState{
         return state.properties
     }
 
+    @Selector() 
+    static selectStateInitLoading(state:PropertyStateModel)
+    {
+        return state.initLoadingState
+    }
+
     static selectStateProperty(propertyId)
     {
         return createSelector([PropertyState],(state)=>{
@@ -80,7 +86,7 @@ export class PropertyState{
                         loadingProperty:false,
                         properties:data
                     })
-                    this._toastrService.success(`Propriété mise à jour avec success!`, 'Ndiye');
+                    this._toastrService.success(`Propriété mise à jour avec success!`, 'Ndewa360°');
                 }
             ),
             catchError((error) => {
@@ -89,7 +95,7 @@ export class PropertyState{
                 })
                 let message = error?.error?.message;
                 if(!message) message = "Une erreur c'est produite! Réessayez plus tard"
-                this._toastrService.error(message, 'Ndiye');
+                this._toastrService.error(message, 'Ndewa360°');
                 return throwError(error);
                 
             })
@@ -186,8 +192,8 @@ export class PropertyState{
         return this._propertysService.getProperties().pipe(
             tap(
                 result => {
-                    console.log("Result Property ",result)
-                    if(state.initLoadingState!="LOADED") ctx.patchState({initLoadingState:'LOADING'})
+                    console.log("Result Property ",result,state.initLoadingState)
+                    if(state.initLoadingState!="LOADED") ctx.patchState({initLoadingState:'LOADED'})
                     ctx.patchState({
                         loadingProperty:false,
                         properties:[...state.properties,...result.data],

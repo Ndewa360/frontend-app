@@ -6,7 +6,7 @@
         <div class="px-4 py-4 flex">
           <div class="app-productive-heading-03 font-bold">Ajouter un bien</div>
           <div class="flex-1 flex justify-end">
-            <button (click)="onClose()" ibmButton="ghost" size="sm" class="cds--btn--icon-only">
+            <button (click)="onClose()" ibmButton="ghost" size="sm" class="cds--btn--icon-only custom-ghost-close">
               <youpez-ibm-icon iconClass="cds--btn__icon" iconName="close" iconSize="32"></youpez-ibm-icon>
             </button>
           </div>
@@ -58,7 +58,7 @@
           <button (click)="onClose()" type="reset" ibmButton="secondary" size="md" class="mr-1 btn-annuler">
             Annuler
           </button>
-          <button ibmButton="primary" size="md" [disabled]="waittingResponse || formGroup.invalid" type="submit">
+          <button ibmButton="primary" class="custom-primary-button" size="md" [disabled]="waittingResponse || formGroup.invalid" type="submit">
             <ibm-loading *ngIf="waittingResponse; else noWaitingResponse"></ibm-loading>
             <ng-template #noWaitingResponse>
               <span class="btn-text">Ajouter</span>

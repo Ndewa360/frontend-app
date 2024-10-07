@@ -21,7 +21,7 @@ export class AuthGuard implements CanActivate {
     return this._store.select(AuthTokenState.selectStateAuthToken).pipe(
       map((authToken)=>{
         if(authToken) return true;
-        this._toastrService.warning("Veuillez vous authentifier", "Ndiye");
+        this._toastrService.warning("Veuillez vous authentifier", "Ndewa360°");
         return this.router.parseUrl(`/auth/signin?returnUrl=${state.url}`)
       })
     )    

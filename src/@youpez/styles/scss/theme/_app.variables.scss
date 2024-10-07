@@ -1,6 +1,8 @@
 @import './themes/app.light.2';
 @import "node_modules/carbon-components/scss/globals/scss/_colors";
 
+$default_app_color:rgb(204, 140, 10);
+$default_bg_color:rgba(204, 140, 10,.2);
 $__app_color_blue: rgb(39, 122, 252);
 $__app_on_color_blue: #fff;
 $__app_color_grey: rgb(239, 239, 239);
@@ -14,8 +16,8 @@ $theme-map-light: (
   '--theme-header-border': map-get($carbonThemeLight, 'ui-03'),
   '--theme-list-pill--hover-background': map-get($carbonThemeLight, 'hover-ui'),
   '--theme-list-pill--hover-color': map-get($carbonThemeLight, 'text-01'),
-  '--theme-list-pill--active-background': map-get($carbonThemeLight, 'highlight'),
-  '--theme-list-pill--active-color': map-get($carbonThemeLight, 'hover-primary-text'),
+  '--theme-list-pill--active-background': rgba(204, 140, 10,.2),//map-get($carbonThemeLight, 'highlight'),
+  '--theme-list-pill--active-color':  rgb(204, 140, 10),//;map-get($carbonThemeLight, 'hover-primary-text'),
   '--theme-appUIBg':map-get($carbonThemeLight, 'ui-background'),
   '--theme-appUIForegroundBg':map-get($carbonThemeLight, 'ui-01'),
   '--theme-appCardBg':map-get($carbonThemeLight, 'ui-01'),
@@ -30,9 +32,9 @@ $theme-map-light: (
   '--theme-appHoverText':map-get($carbonThemeLight, 'hover-primary-text'),
   '--theme-appFocusBorder':map-get($carbonThemeLight, 'focus'),
   '--theme-appColorLight':map-get($carbonThemeLight, 'ui-02'),
-  '--theme-appColorPrimary':map-get($carbonThemeLight, 'interactive-01'),
+  '--theme-appColorPrimary':$default_app_color,//map-get($carbonThemeLight, 'interactive-01'),
   '--theme-appColorDecorative':map-get($carbonThemeLight, 'ui-03'),
-  '--theme-appColorSecondary':map-get($carbonThemeLight, 'interactive-02'),
+  '--theme-appColorSecondary':$default_app_color,//map-get($carbonThemeLight, 'interactive-02'),
   '--theme-appColorSecondaryHover':map-get($carbonThemeLight, 'hover-secondary'),
   '--theme-appColorSuccess':map-get($carbonThemeLight, 'support-02'),
   '--theme-appColorDanger':map-get($carbonThemeLight, 'support-01'),
@@ -177,10 +179,10 @@ $theme-sidebar-6: (
 );
 
 $theme-header-1: (
-  '--theme-main-header--background':#19191e,
-  '--theme-main-header--color':#b7b7b8,
+  '--theme-main-header--background':#010101,//#19191e,
+  '--theme-main-header--color':#fff,
   '--theme-main-header--border-color':transparent,
-  '--theme-main-header--hover-background':#27272b,
+  '--theme-main-header--hover-background':#010101,//#27272b,
   '--theme-main-header--hover-color':#f6f6f7,
 );
 

@@ -90,7 +90,7 @@ export class LocataireState{
                         loadingLocataire:false,
                         locataires:data
                     })
-                    this._toastrService.success(`Profil locataire modifié avec success`, 'Ndiye');
+                    this._toastrService.success(`Profil locataire modifié avec success`, 'Ndewa360°');
                 }
             ),
             catchError((error) => {               
@@ -99,7 +99,7 @@ export class LocataireState{
                 })
                 let message = error?.error?.message;
                 if(!message) message = "Une erreur c'est produite! Réessayez plus tard"
-                this._toastrService.error(message, 'Ndiye');
+                this._toastrService.error(message, 'Ndewa360°');
                 return throwError(error);
                 
             })
@@ -175,7 +175,7 @@ export class LocataireState{
                         loadingLocataire:false,
                         locataires:[...state.locataires, result.data]
                     })
-                    this._toastrService.success(`Locataire ajouté avec success!`, 'Ndiye');
+                    this._toastrService.success(`Locataire ajouté avec success!`, 'Ndewa360°');
 
                 }
             ),
@@ -185,7 +185,7 @@ export class LocataireState{
                 })
                 let message = error?.error?.message;
                 if(!message) message = "Une erreur c'est produite! Réessayez plus tard"
-                this._toastrService.error(message, 'Ndiye');
+                this._toastrService.error(message, 'Ndewa360°');
                 return throwError(error);
             })
         )
@@ -218,7 +218,7 @@ export class LocataireState{
                 })
                 let message = error?.error?.message;
                 if(!message) message = "Une erreur c'est produite! Réessayez plus tard"
-                this._toastrService.error(message, 'Ndiye');
+                this._toastrService.error(message, 'Ndewa360°');
                 return throwError(error);
             })
         )

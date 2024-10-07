@@ -16,6 +16,8 @@ export class ListPropertyComponent implements OnInit {
 
 
   @Select(PropertyState.setlectStateProperties) properties$:Observable<PropertyModel[]>;
+  @Select(PropertyState.selectStateInitLoading) initLoading$:Observable<string>;
+
   private addPropertyDialogRef: MatDialogRef<AddPropertyComponent>;
 
   constructor(private dialog: MatDialog,private _store:Store) { }
