@@ -1,39 +1,10 @@
 <ng-scrollbar>
     <div fxFill fxLayout="column">
       <div fxFlex class="relative">
-        <div fxLayout="row wrap">
-          <div fxFlex="100%">
-
-            <div class="app-header-subheader app-header-subheader--transparent app-header-subheader--left-alt app-header-subheader--right-alt" style="height: 65px">
-              <!-- <button  ibmButton="ghost" size="sm" class="cds--btn--icon-only mr-2">
-                <svg class="cds--btn__icon" ibmIconOpenPanelLeft size="20"></svg>
-              </button> -->
-              <div class="app-expressive-heading-02">
-                <button ibmButton="tertiary" size="sm" class="cds--btn--icon-only">
-                  <youpez-ibm-icon iconClass="cds--btn__icon"  iconName="renew" iconSize="32"></youpez-ibm-icon>
-                </button>
-              </div>
-              <div class="ml-3" style="width:50%">
-                <ibm-search placeholder="Search..." theme="light" size="lg"></ibm-search>
-              </div>
-              <div class="flex-1 flex justify-end">
-                <button
-                  ibmButton="ghost" size="sm"
-                  class="cds--btn--icon-only cds--btn--remove-tooltip">
-                  <youpez-ibm-icon iconClass="cds--btn__icon"  iconName="settings" iconSize="32"></youpez-ibm-icon>
-                </button>
-                <button
-                  ibmButton="ghost" size="sm"
-                  class="cds--btn--icon-only cds--btn--remove-tooltip">
-                  <youpez-ibm-icon iconClass="cds--btn__icon"  iconName="tableOfContents" iconSize="32"></youpez-ibm-icon>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>                  
+               
         <div class="app-subtitle app-subtitle--cards mt-2"></div>
         <div fxLayout="row wrap" class="app-card-row-holder">
-          <ng-container *ngIf="loadingRoom==false">
+          <ng-container *ngIf="loadingRoom==false else isLoadingData">
             <ng-container *ngFor="let room of roomFound">
               <div fxFlex="100%" fxFlex.gt-md="20%" [routerLink]="['/app/properties',room._id]">
                 <div class="app-card app-card--select">
@@ -72,6 +43,11 @@
               <app-no-data-list textDescription="Aucun chambre trouvé" class="flex-auto"></app-no-data-list>
             </ng-container>
           </ng-container>
+          <ng-template #isLoadingData>
+            <div class="relative no-data-loader">
+              <youpez-loader></youpez-loader>
+            </div>
+          </ng-template>
           
         </div>
       </div>

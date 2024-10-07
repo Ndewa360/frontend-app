@@ -6,12 +6,12 @@
         <div class="px-4 py-4 flex">
           <div class="app-productive-heading-03 font-bold">Ajouter une chambre/studio/appartement</div>
           <div class="flex-1 flex justify-end">
-            <button (click)="onClose()" ibmButton="ghost" size="sm" class="cds--btn--icon-only">
+            <button (click)="onClose()" ibmButton="ghost" size="sm" class="cds--btn--icon-only custom-ghost-close">
               <youpez-ibm-icon iconClass="cds--btn__icon" iconName="close" iconSize="32" ></youpez-ibm-icon >
             </button>
           </div>
         </div>
-        <div fxFlex>
+        <div fxFlex> 
           <div class="app-content app-content--default">
             <div class="app-form">
                 <div fxLayout="row wrap" class="app-form__row">
@@ -80,7 +80,7 @@
                   class="mr-1">
             Annuler
           </button>
-          <button ibmButton="primary" size="md" [disabled]="waittingResponse || formGroup.invalid" type="submit">
+          <button ibmButton="primary" size="md" class="custom-primary-button" [disabled]="waittingResponse || formGroup.invalid" type="submit">
             <ibm-loading *ngIf="waittingResponse; else noWaitingResponse"></ibm-loading>
             <ng-template #noWaitingResponse>
               <span class="btn-text">Ajouter</span>

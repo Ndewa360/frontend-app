@@ -14,6 +14,7 @@ import { UpdatePropertyComponent } from '../components/update-property/update-pr
   selector: 'app-show-property',
   templateUrl: './show-property.component.html',
   styleUrls: ['./show-property.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class ShowPropertyComponent implements OnInit {
 
