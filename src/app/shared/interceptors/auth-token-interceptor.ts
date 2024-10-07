@@ -6,6 +6,7 @@ import { catchError, map, mergeMap, switchMap, take } from "rxjs/operators";
 import { Router, RouterStateSnapshot } from "@angular/router";
 import { of, throwError } from "rxjs";
 import { ToastrService } from "ngx-toastr";
+import { StoreHelper } from "../utils";
 
 
 @Injectable()
@@ -32,14 +33,11 @@ export class AuthTokenInterceptor implements HttpInterceptor {
     )
     .pipe(
       catchError((err: any) => {
-        console.log("Erreur ",err)
         if (err instanceof HttpErrorResponse) {
           // Handle HTTP errors
           if (err.status === 401) {
             this._store.dispatch(new AuthTokenAction.SetAuthToken(null));
-            // this._router.navigate(["/auth/login"]);
-            // this._toastrService.error("Session expiré", "Oups! Vous devez vous reconnecter vous actualiser votre session");
-            this._store.dispatch(new AuthTokenAction.SetAuthToken(null));
+            StoreHelper.resetAllState(this._store);
             this._router.parseUrl(`/auth/signin?returnUrl=${this._router.url}`)
 
           } else {
