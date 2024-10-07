@@ -39,6 +39,13 @@ export class LocataireState{
     {
         return state.loadingLocataire
     }
+
+    @Selector()
+    static selectStateInitLoading(state:LocataireStateModel)
+    {
+        return state.initLoadingState
+    }
+
     @Selector() 
     static setlectStateLocataires(state:LocataireStateModel)
     {

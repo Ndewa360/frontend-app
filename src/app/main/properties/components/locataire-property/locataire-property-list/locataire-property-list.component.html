@@ -1,18 +1,29 @@
-<ibm-table-container class="">
+<ng-container *ngIf="(loadingData$ | async )=='LOADED' else isLoading">
+  <ng-container *ngIf="hasNoData else hasData">
+    <app-no-data-list textDescription="Aucun bien trouvé" class="flex-auto"></app-no-data-list>                              
+  </ng-container>
+  <ng-template #hasData>
+    <ibm-table-container class="">
     
-    <app-locataire-property-table
-      [model]="model"
-      [size]="size"
-      [showSelectionColumn]="false"
-      [enableSingleSelect]="false"
-      [striped]="false"
-      [sortable]="true"
-      [skeleton]="false"
-      [stickyHeader]="true"
-      [isDataGrid]="true">
-    </app-locataire-property-table>
-    <ng-template #customTrigger>
-      <svg ibmIconSettings size="16"></svg>
-    </ng-template>
-  </ibm-table-container>
-  
+      <app-locataire-property-table
+        [model]="model"
+        [size]="size"
+        [showSelectionColumn]="false"
+        [enableSingleSelect]="false"
+        [striped]="false"
+        [sortable]="true"
+        [skeleton]="false"
+        [stickyHeader]="true"
+        [isDataGrid]="true">
+      </app-locataire-property-table>
+      <ng-template #customTrigger>
+        <svg ibmIconSettings size="16"></svg>
+      </ng-template>
+    </ibm-table-container>
+  </ng-template>  
+</ng-container>
+<ng-template #isLoading>
+  <div class="relative">
+    <youpez-loader></youpez-loader>
+  </div>
+</ng-template>

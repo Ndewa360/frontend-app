@@ -2,6 +2,7 @@ import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/cor
 import { MatDialog } from '@angular/material/dialog';
 import { Select, Store } from '@ngxs/store';
 import { TableModel, TableHeaderItem, TableItem, TableRowSize } from 'carbon-components-angular';
+import { Observable } from 'rxjs';
 import { getDummyModel } from 'src/@youpez/data/dummy';
 import { AddPaymentComponent } from 'src/app/main/location-payment/components/add-payment/add-payment.component';
 import { LocataireModel, LocataireState, RoomState } from 'src/app/shared/store';
@@ -19,6 +20,8 @@ function getRandomArbitrary(min, max) {
 })
 export class LocatairePropertyListComponent implements OnInit, OnChanges {
   @Input() public propertyId = null;
+  @Select(LocataireState.selectStateInitLoading) public loadingData$:Observable<string>;
+  hasNoData=true;
   public model = null;
   public searchModel
   public size:TableRowSize = 'md'
@@ -47,6 +50,7 @@ export class LocatairePropertyListComponent implements OnInit, OnChanges {
 
   generateLocataireDataModel(locataireList:LocataireModel[])
   { 
+    this.hasNoData = locataireList.length == 0;
     let  model= new TableModel()
      model.header = [
       new TableHeaderItem({
