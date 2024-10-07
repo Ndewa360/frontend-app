@@ -1,11 +1,12 @@
 import { Component, Input, SimpleChanges, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Store } from '@ngxs/store';
+import { Select, Store } from '@ngxs/store';
 import { TableHeaderItem, TableItem, TableModel, TableRowSize } from 'carbon-components-angular';
 import { LocataireState, LocataireModel, PropertyState, LocationState, RoomState } from 'src/app/shared/store';
 import { RemoveLocataireRoomComponent } from '../remove-locataire-room/remove-locataire-room.component';
 import { MatDialog } from '@angular/material/dialog';
 import { AddPaymentComponent } from 'src/app/main/location-payment/components/add-payment/add-payment.component';
+import { Observable } from 'rxjs';
 
 function sort(model, index: number) {
   if (model.header[index].sorted) {
@@ -22,6 +23,8 @@ function sort(model, index: number) {
   encapsulation:ViewEncapsulation.None
 })
 export class SeeLocationsComponent {
+  @Select(LocationState.selectStateInitLoading) public loadingData$:Observable<string>;
+  hasNoData=true;
   isAssignedOpened = false;
   propertyId = null;
   public leftSidebarVisibility: boolean = true
@@ -89,6 +92,7 @@ export class SeeLocationsComponent {
       this.property = value;
     })
     this._store.select(LocationState.selectStateLocationByPropertyId(propertyId)).subscribe((value)=>{
+      this.hasNoData=value.length==0;
       this.model.data = value.map((location)=> {
         return ([
           new TableItem({

@@ -12,25 +12,6 @@
     </youpez-sidenav>
 
     <ibm-table-container class="">
-        <ibm-table-toolbar [model]="model" [batchText]="batchText" [size]="size" #toolbar>
-            <ibm-table-toolbar-content>
-                <ibm-table-toolbar-search
-                ngDefaultControl
-                theme="light"
-                [expandable]="false">
-                </ibm-table-toolbar-search>  
-                <button ibmButton="primary" (click)="shouldOpenAssignedOpened()" class="assigner-chambre" size="sm">
-                    <span class="btn-text">Assigner une Chambre</span>
-                    <!-- <ibm-icon-add size="20" class="bx--btn__icon"></ibm-icon-add> -->
-                    <youpez-ibm-icon class="bx--btn__icon" iconName="task" iconSize="20"></youpez-ibm-icon>  
-                </button>   
-            </ibm-table-toolbar-content>
-        </ibm-table-toolbar>
-        
-        <!-- <ng-template #totalHeaderTemplate let-data="data">
-            <ng-container *ngIf="data=='actions' else toLestDataUser" ><div class="w-full text-right">{{data}}</div></ng-container>
-            <ng-template #toLestDataUser><div class="w-full text-left">{{data}}</div></ng-template>
-        </ng-template> -->
         <ng-template #locataireTemplate let-data="data">
             <ng-container *ngIf="(getLocataireById(data) | async ) as locataireData">
                 {{locataireData["fullName"]}}
@@ -67,21 +48,32 @@
             </div>
         </ng-template>
     
-    
-        <ibm-table
-            [model]="model"
-            [size]="size"
-            [skeleton]="skeleton"
-            [showSelectionColumn]="showSelectionColumn"
-            [enableSingleSelect]="enableSingleSelect"
-            (rowClick)="onRowClick($event)"
-            [sortable]="sortable"
-            [stickyHeader]="stickyHeader"
-            [striped]="striped"
-            [isDataGrid]="isDataGrid"
-            (sort)="simpleSort($event)">
-            <ng-content></ng-content>
-        </ibm-table>
+        <ng-container *ngIf="(loadingData$ | async )=='LOADED' else isLoading">
+            <ng-container *ngIf="hasNoData else hasData">
+              <app-no-data-list textDescription="contract de location" class="flex-auto"></app-no-data-list>                              
+            </ng-container>
+            <ng-template #hasData>
+                <ibm-table
+                    [model]="model"
+                    [size]="size"
+                    [skeleton]="skeleton"
+                    [showSelectionColumn]="showSelectionColumn"
+                    [enableSingleSelect]="enableSingleSelect"
+                    (rowClick)="onRowClick($event)"
+                    [sortable]="sortable"
+                    [stickyHeader]="stickyHeader"
+                    [striped]="striped"
+                    [isDataGrid]="isDataGrid"
+                    (sort)="simpleSort($event)">
+                    <ng-content></ng-content>
+                </ibm-table>
+            </ng-template>  
+        </ng-container>
+        <ng-template #isLoading>
+          <div class="relative">
+            <youpez-loader></youpez-loader>
+          </div>
+        </ng-template>
     
     
         <ng-template #customTrigger>

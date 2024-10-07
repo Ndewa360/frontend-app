@@ -30,7 +30,7 @@
                                                   <!-- <youpez-ibm-icon iconClass="cds--btn__icon" iconName="arrowRight" iconSize="20" ></youpez-ibm-icon > -->
                                                   <span class="btn-text">Annuler</span>
                                               </button>
-                                              <button ibmButton="primary" [disabled]="waittingResponse || !canSendingData" (click)="onSubmit()" size="md">
+                                              <button ibmButton="primary" class="custom-primary-button" [disabled]="waittingResponse || !canSendingData" (click)="onSubmit()" size="md">
                                                 <ibm-loading *ngIf="waittingResponse; else noWaitingResponse"></ibm-loading>
                                                 <ng-template #noWaitingResponse>
                                                   <span class="btn-text">Enregistrer</span>

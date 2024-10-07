@@ -18,7 +18,7 @@
                 <!-- <youpez-ibm-icon iconClass="cds--btn__icon" iconName="arrowRight" iconSize="20" ></youpez-ibm-icon > -->
                 <span class="btn-text">Annuler</span>
             </button>
-            <button ibmButton="primary" size="md" (click)="locationForm.submit();onGotoStep(1,locationForm.isFormValid());">
+            <button ibmButton="primary" class="custom-primary-button" size="md" (click)="locationForm.submit();onGotoStep(1,locationForm.isFormValid());">
               <span class="btn-text">Next</span>
               <youpez-ibm-icon iconClass="cds--btn__icon" iconName="arrowRight" iconSize="20" ></youpez-ibm-icon >
             </button>
@@ -36,7 +36,7 @@
                   <youpez-ibm-icon iconClass="cds--btn__icon" iconName="arrowLeft" iconSize="20" ></youpez-ibm-icon >
                   <span class="btn-text">Retour</span>
               </button>
-              <button ibmButton="primary" size="md" (click)="createLocation()">
+              <button ibmButton="primary" class="custom-primary-button" size="md" (click)="createLocation()">
                 <span class="btn-text">Next</span>
                 <youpez-ibm-icon iconClass="cds--btn__icon" iconName="save" iconSize="20" ></youpez-ibm-icon >
               </button>

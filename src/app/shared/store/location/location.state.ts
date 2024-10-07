@@ -40,6 +40,13 @@ export class LocationState{
     {
         return state.loadingLocation
     }
+
+    @Selector()
+    static selectStateInitLoading(state:LocationStateModel)
+    {
+        return state.initLoadingState
+    }
+
     @Selector() 
     static setlectStateLocations(state:LocationStateModel)
     {

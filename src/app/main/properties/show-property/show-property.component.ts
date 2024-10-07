@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
@@ -9,6 +9,7 @@ import { AddPropertyComponent } from '../add-property/add-property.component';
 import { AddPropertyLocataireComponent } from '../components/add-property-locataire/add-property-locataire.component';
 import { ToastrService } from 'ngx-toastr';
 import { UpdatePropertyComponent } from '../components/update-property/update-property.component';
+import { SeeLocationsComponent } from '../components/see-locations/see-locations.component';
 
 @Component({
   selector: 'app-show-property',
@@ -18,6 +19,7 @@ import { UpdatePropertyComponent } from '../components/update-property/update-pr
 })
 export class ShowPropertyComponent implements OnInit {
 
+  componentOnRouterOutlet:any=null;
 
   loadingProperty = true;
   propertyFound:PropertyModel = null;
@@ -62,6 +64,9 @@ export class ShowPropertyComponent implements OnInit {
     this.isDetailsOpened = false
   }
 
+  onSetRouterOutLetComponent(component: any) {
+    this.componentOnRouterOutlet = component
+  }
   getTitle() {
     switch (this._activatedRoute.snapshot.firstChild.data['breadcrumb']) {
       case 'locations':
@@ -83,6 +88,8 @@ export class ShowPropertyComponent implements OnInit {
         return "Ajouter un locataire"
       // case 'finances':
       //   return "Vos finances"
+      case 'locations':
+          return "Nouveau contrat de location"
       case 'chambres':
         return "Ajouter une chambre "
     }
@@ -91,10 +98,10 @@ export class ShowPropertyComponent implements OnInit {
   shoulShowAddProperty()
   {
     switch (this._activatedRoute.snapshot.firstChild.data['breadcrumb']) {
-      case 'locations':
       case 'finances':
         return false;
       case 'locataires':
+      case 'locations':
       case 'chambres':
         return true
     }
@@ -131,6 +138,10 @@ export class ShowPropertyComponent implements OnInit {
           }
         })
         return null
+      case 'locations':
+        console.log("location", this.componentOnRouterOutlet.isAssignedOpened);
+        this.componentOnRouterOutlet.isAssignedOpened = true;
+        return null;
       case 'finances':
         return "Vos finances"
       case 'chambres':

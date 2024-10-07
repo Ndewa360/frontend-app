@@ -1,6 +1,6 @@
 <ng-container *ngIf="(loadingData$ | async )=='LOADED' else isLoading">
   <ng-container *ngIf="hasNoData else hasData">
-    <app-no-data-list textDescription="Aucun bien trouvé" class="flex-auto"></app-no-data-list>                              
+    <app-no-data-list textDescription="locataire" class="flex-auto"></app-no-data-list>                              
   </ng-container>
   <ng-template #hasData>
     <ibm-table-container class="">
