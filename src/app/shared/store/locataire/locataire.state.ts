@@ -214,7 +214,7 @@ export class LocataireState{
                     console.log("Fetch Locataire ",result)
                     ctx.patchState({
                         loadingLocataire:false,
-                        locataires:[...state.locataires,...result.data],
+                        locataires:[...result.data],
                         initLoadingState:"LOADED"
                     })
                 }

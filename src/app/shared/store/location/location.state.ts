@@ -260,7 +260,7 @@ export class LocationState{
                     console.log("Fetch Locations ",result)
                     ctx.patchState({
                         loadingLocation:false,
-                        locations:[...state.locations,...result.data],
+                        locations:[...result.data],
                         initLoadingState:"LOADED"
                     })
                 }

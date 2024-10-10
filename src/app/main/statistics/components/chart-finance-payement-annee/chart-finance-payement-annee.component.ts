@@ -79,12 +79,12 @@ export class ChartFinancePayementAnneeComponent implements OnChanges{
       },
       visualMap: {
         min: 0,
-        max: 3,  // 0: Non payé, 1: Payé, 2: Paiement en attente, 3: Contrat rompu
+        max: 4,  // 0: Non payé, 1: Payé, 2: Paiement en attente, 3: Contrat rompu,4: Pas encore de contrat
         calculable: true,
         show: false,  // Ne pas afficher la légende visuelle
         inRange: {
-          color: ['rgb(220, 38, 38)', 'rgb(101, 163, 13)', 'rgb(203, 213, 225)',"rgb(41, 37, 36)"], // Rouge, Vert, Blanc,Gris
-          // Rouge pour "Non payé", Vert pour "Payé", Blanc pour "Paiement en attente", Gris pour "Contrat rompu"
+          color: ['rgb(220, 38, 38)', 'rgb(101, 163, 13)', 'rgb(203, 213, 225)',"rgb(41, 37, 36)","rgba(41, 37, 36,.8)"], // Rouge, Vert, Blanc,Gris
+          // Rouge pour "Non payé", Vert pour "Payé", Blanc pour "Paiement en attente", Gris pour "Contrat rompu",Gris leger pour "Aucun contrat"
         }
       },
       series: [{
@@ -121,12 +121,12 @@ export class ChartFinancePayementAnneeComponent implements OnChanges{
     }
   }
 
-  getNumberFromStatus(status) // 0: Non payé, 1: Payé, 2: Paiement en attente, 3: Contrat rompu
+  getNumberFromStatus(status) // 0: Non payé, 1: Payé, 2: Paiement en attente, 3: Contrat rompu, 4: Aucun contrat
   {
-      return status === "unpayed" ? 0 : status === "payed" ? 1 :  status === "waiting" ?2:3;
+      return status === "unpayed" ? 0 : status === "payed" ? 1 :  status === "waiting" ?2:  status === "endedContract" ?3:4;
   }
   getTextFromPaymentStatus(status){
-    return status === 0 ? 'Non payé' : status === 1 ? 'Payé' :  status === 2 ?'Paiement en attente':"Fin de contrat";
+    return status === 0 ? 'Non payé' : status === 1 ? 'Payé' :  status === 2 ?'Paiement en attente':status === 3 ?"Fin de contrat":"Aucun contrat";
   }
   // ngOnChanges(changes: SimpleChanges): void {
   //   if(changes['propertyID']) {

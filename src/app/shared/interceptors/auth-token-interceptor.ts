@@ -33,6 +33,7 @@ export class AuthTokenInterceptor implements HttpInterceptor {
     )
     .pipe(
       catchError((err: any) => {
+
         if (err instanceof HttpErrorResponse) {
           // Handle HTTP errors
           if (err.status === 401) {

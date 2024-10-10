@@ -1,4 +1,5 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core'
+import { Router } from '@angular/router'
 import { Select, Store } from '@ngxs/store'
 import { Observable } from 'rxjs'
 import { UserProfileState, UserProfileModel, UserProfileAction } from 'src/app/shared/store'
@@ -34,7 +35,8 @@ export class LayoutMiniSidebarComponent implements OnInit {
   public loading: boolean = false
 
   constructor(
-    private _store:Store
+    private _store:Store,
+    private _router:Router
   ) {
   }
 
@@ -55,5 +57,6 @@ export class LayoutMiniSidebarComponent implements OnInit {
   logout()
   {
     this._store.dispatch(new UserProfileAction.LogoutUserProfile(true))
+    this._router.navigate(['/auth/signin'])
   }
 }

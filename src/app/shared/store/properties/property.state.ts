@@ -184,7 +184,6 @@ export class PropertyState{
     {
         const state = ctx.getState();
         
-        
         ctx.patchState({
             loadingProperty:true,
             initLoadingState:"LOADING"
@@ -196,7 +195,7 @@ export class PropertyState{
                     if(state.initLoadingState!="LOADED") ctx.patchState({initLoadingState:'LOADED'})
                     ctx.patchState({
                         loadingProperty:false,
-                        properties:[...state.properties,...result.data],
+                        properties:[...result.data],
                     })
                 }
             )
