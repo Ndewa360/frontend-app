@@ -14,7 +14,7 @@ export namespace LocataireAction
         static readonly type = '[Locataire] Update Locataire';
         constructor(public locataire:LocataireModel, public id:string){}
     }
-
+    
     export class UpdateLocataireRoom
     {
         static readonly type = '[Locataire] Update Locataire Room';
