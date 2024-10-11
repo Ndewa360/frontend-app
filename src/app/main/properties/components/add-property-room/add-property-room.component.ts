@@ -37,6 +37,14 @@ export class AddPropertyRoomComponent implements OnInit {
       description: [null],
       type:[RoomType.ROOM,Validators.required],
       price:[5000,Validators.required],
+      specifity:this.formBuilder.group({
+        numberOfBathroom:[1,Validators.required],
+        numberOfLivingRoom:[2,Validators.required],
+        numberOfShower:[1,Validators.required],
+        isInternalShower:[false,Validators.required],
+        hasKitchen:[true,Validators.required],
+        isInternalKitchen:[false,Validators.required],
+      })
     })
     this.roomList= Object.values(RoomType).map((value)=>({content:UtilsString.getStringOfRoomType(value), valueType:value, selected:value==RoomType.ROOM}));
     
@@ -94,7 +102,8 @@ export class AddPropertyRoomComponent implements OnInit {
 
   onSelectedType(roomType)
   {
-    if(roomType.valueType!=RoomType.ROOM) this.formGroup.get('type').setValue(null);
-    else this.formGroup.get('type').setValue(roomType.valueType)
+    // if(roomType.valueType!=RoomType.ROOM) this.formGroup.get('type').setValue(null);
+    // else 
+    this.formGroup.get('type').setValue(roomType.valueType)
   }
 }
