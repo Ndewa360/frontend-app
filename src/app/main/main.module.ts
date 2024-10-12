@@ -33,6 +33,7 @@ import { RemoveLocataireRoomComponent } from './properties/components/remove-loc
 import { LocationPaymentModule } from './location-payment/location-payment.module'
 import { LocatairesModule } from './locataires/locataires.module'
 import { StatisticsModule } from './statistics/statistics.module'
+import { RoomModule } from './room/room.module'
 
 
 @NgModule({
@@ -70,6 +71,7 @@ import { StatisticsModule } from './statistics/statistics.module'
     AgGridModule,
     LocatairePropertyModule,
     LocatairesModule,
+    RoomModule,
     StatisticsModule
   ]
 })

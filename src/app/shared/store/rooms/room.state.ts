@@ -108,7 +108,8 @@ export class RoomState{
                         loadingRoom:false,
                         rooms:data
                     })
-                    // this._toastrService.success(`Profil utilisateur modifié avec success`, 'Room');
+                    this._toastrService.success(`Bien mise à jour avec success!`, 'Ndewa360°');
+
                 }
             ),
             catchError((error) => {
@@ -116,6 +117,9 @@ export class RoomState{
                 ctx.patchState({
                     loadingRoom: false
                 })
+                let message = error?.error?.message;
+                if(!message) message = "Une erreur c'est produite! Réessayez plus tard"
+                this._toastrService.error(message, 'Ndewa360°');
                 return throwError(error);
                 
             })

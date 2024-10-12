@@ -1,9 +1,11 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { Currency, LocataireState, PropertyModel, PropertyState, RoomModel, RoomState } from 'src/app/shared/store';
+import { Currency, LocataireState, RoomModel, RoomState } from 'src/app/shared/store';
 import { UtilsString } from 'src/app/shared/utils';
+import { UpdateRoomComponent } from 'src/app/main/room/components/update-room/update-room.component';
 
 @Component({
   selector: 'app-property-room',
@@ -19,7 +21,9 @@ export class PropertyRoomComponent implements OnInit {
   constructor(
     private _activatedRoute: ActivatedRoute,
     private _router:Router,
-    private _store:Store
+    private _store:Store,
+    private dialog: MatDialog,
+
   ) { }
 
   ngOnInit(): void {
@@ -47,6 +51,21 @@ export class PropertyRoomComponent implements OnInit {
   getRoomType(roomType)
   {
     return UtilsString.getStringOfRoomType(roomType)
+  }
+
+  openEditRoom(room:RoomModel)
+  {
+    // this._router.navigate(['/app/properties/edit-room',room._id])
+    console.log("Room ",room)
+    this.dialog.open(UpdateRoomComponent, {
+      viewContainerRef:null,
+      disableClose: true,
+      role: 'alertdialog',
+      width: '500px',
+      data:{
+        room
+      }
+    })
   }
 
 }

@@ -22,6 +22,11 @@ import User24 from '@carbon/icons/es/user/24';
 import User20 from '@carbon/icons/es/user/20';
 import User16 from '@carbon/icons/es/user/16';
 
+import Pen32 from '@carbon/icons/es/pen/32';
+import Pen24 from '@carbon/icons/es/pen/24';
+import Pen20 from '@carbon/icons/es/pen/20';
+import Pen16 from '@carbon/icons/es/pen/16';
+
 import ArrowRight32 from '@carbon/icons/es/arrow--right/32';
 import ArrowRight24 from '@carbon/icons/es/arrow--right/24';
 import ArrowRight20 from '@carbon/icons/es/arrow--right/20';
@@ -273,7 +278,11 @@ export class IbmIconModule {
   ) {
     iconService.registerAll([
       
-
+      Pen32,
+			Pen24,
+			Pen20,
+			Pen16,
+      
       TriangleDownSolid32,
 			TriangleDownSolid24,
 			TriangleDownSolid20,
