@@ -10,7 +10,7 @@ import { AssignLocationFormComponent } from '../assign-location-form/assign-loca
   styleUrls: ['./assign-location.component.css'],
   encapsulation:ViewEncapsulation.None
 })
-export class AssignLocationComponent implements OnChanges {
+export class AssignLocationComponent  {
 
   locataireForm:{
     locataire?: any,
@@ -25,32 +25,22 @@ export class AssignLocationComponent implements OnChanges {
   canSendingData: boolean = false;
   waittingResponse:boolean = false;
   public leftSidebarVisibility: boolean = true
-  roomList =[];
-  locataireList = [];
+  
 
   constructor(
     private _store: Store,
     private _ngxsAction:Actions,
 
   ){}
-  ngOnChanges(changes: SimpleChanges): void {
-    if(changes["property"] && changes["property"].currentValue != null)
-    {
-      this._store.select(RoomState.selectStateFreeRoomByPropertyId(this.property._id)).subscribe((roomList:RoomModel[])=>{
-        this.roomList = roomList.map((value)=>({content:value.code,valueType:value._id}));
-      });
-
-      this._store.select(LocataireState.selectStateFreeLocataireByPropertyId(this.property._id)).subscribe((locataireList:LocataireModel[])=>{
-        this.locataireList = locataireList.map((value)=>({content:value.fullName,valueType:value._id}));
-      });
-    }
-  }
+  
 
   ngOnInit()
   {    
     this._ngxsAction.pipe(ofActionSuccessful(LocationAction.CreateLocation)).subscribe((value)=>{
       this.waittingResponse=false;
+      // this.property={...this.property}
       this.closeSideNav()
+
     });
     this._ngxsAction.pipe(ofActionCompleted(LocationAction.CreateLocation)).subscribe(
       (value) => {
@@ -71,7 +61,7 @@ export class AssignLocationComponent implements OnChanges {
     this._store.dispatch(new LocationAction.CreateLocation({
       locataireId:this.locataireForm.locataire,
       roomId:this.locataireForm.room,
-      startedDate:this.locataireForm.entryDate,
+      startedAt:this.locataireForm.entryDate,
       propertyId:this.property._id,
     }))
   }

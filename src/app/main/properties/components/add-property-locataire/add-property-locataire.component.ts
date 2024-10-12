@@ -42,7 +42,12 @@ export class AddPropertyLocataireComponent implements OnInit {
       email: [null, [Validators.email]],
       phoneNumber:[null, [Validators.required, Validators.pattern('^(\\+\\d{1,3}\\s)?(\\d{2,3}[\\s.-]?){4}$')]],
       roomId:[null],
-      description:[null]
+      description:[null],
+      confirm:[false],
+      fullNameRef:[null,[]],
+      phoneNumberRef:[null, [Validators.pattern('^(\\+\\d{1,3}\\s)?(\\d{2,3}[\\s.-]?){4}$')]],
+      emailRef: [null, [Validators.email]],
+
     })
     this.roomListType= Object.values(RoomType).map((value)=>({content:UtilsString.getStringOfRoomType(value), valueType:value, selected:value==RoomType.ROOM}));
     this._ngxsAction.pipe(ofActionSuccessful(LocataireAction.CreateLocataire)).subscribe((value)=>{
@@ -77,7 +82,7 @@ export class AddPropertyLocataireComponent implements OnInit {
     this.formGroup.markAllAsTouched()
     if(this.formGroup.invalid) return;
     this.waittingResponse=true;
-    this._store.dispatch(new LocataireAction.CreateLocataire({...FormUtils.removeNullAttribut(this.formGroup.value),propertyId:this.data.property._id}));
+    this._store.dispatch(new LocataireAction.CreateLocataire({...FormUtils.removeNullAttribut({...this.formGroup.value,confirm:null}),propertyId:this.data.property._id}));
     
   }
 

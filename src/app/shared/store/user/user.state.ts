@@ -149,7 +149,7 @@ export class UserState{
                     if(state.initLoadingState!="LOADED") ctx.patchState({initLoadingState:'LOADING'})
                     ctx.patchState({
                         loadingUser:false,
-                        users:[...state.users,...result.data],
+                        users:[...result.data],
                     })
                 }
             )

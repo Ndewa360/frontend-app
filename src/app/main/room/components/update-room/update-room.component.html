@@ -1,0 +1,124 @@
+<ng-template #invalidText>
+    <img src="assets/img/avatar/avatar3.jpg" class="app-img-select__item w-8 rounded" />
+  </ng-template>
+  <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
+    <div fxFill fxLayout="column" class="app-bg-container overflow-hidden">
+      <div class="px-4 py-4 flex">
+        <div class="app-productive-heading-03 font-bold">Mettre à jour la chambre/studio/appartement</div>
+        <div class="flex-1 flex justify-end">
+          <button (click)="onClose()" ibmButton="ghost" size="sm" class="cds--btn--icon-only custom-ghost-close">
+            <youpez-ibm-icon iconClass="cds--btn__icon" iconName="close" iconSize="32"></youpez-ibm-icon>
+          </button>
+        </div>
+      </div>
+      <div fxFlex>
+        <div class="app-content app-content--default">
+          <div class="app-form">
+            <div fxLayout="row wrap" class="app-form__row">
+              <div fxFlex="100%" fxFlex.gt-md="50%" class="app-form__item">
+                <ibm-label helperText="Le numero de chambre sera généré si non fournis"> Numéro de chambre
+                  <input ibmText formControlName="code" size="md" theme="dark">
+                </ibm-label>
+              </div>
+              <div fxFlex="100%" fxFlex.gt-md="50%" class="app-form__item">
+                <ibm-label> Prix /mois ({{getMoney()}})<span class="text-red-600">*</span>
+                  <ibm-number class="mt-2" [helperText]="''" [theme]="'dark'" [min]="5000" [invalid]="false"
+                    [invalidText]="''" [size]="'md'" formControlName="price" [disabled]="false">
+                  </ibm-number>
+                </ibm-label>
+              </div>
+  
+            </div>
+            <div fxLayout="row wrap" class="app-form__row">
+              <div fxFlex="100%" fxFlex.gt-md="100%" class="app-form__item">
+                <ibm-label helperText="" class="type_bien_label" [invalid]="isValid('type')"
+                  [invalidText]="'Le type de biens est obligatoire'">
+                  Type de bien <span class="text-red-600">*</span>
+                  <ibm-combo-box class="mt-2" [items]="roomList"  (selected)="onSelectedType($event)" theme="dark"
+                    [invalid]="isValid('type')" size="md">
+                    <ibm-dropdown-list></ibm-dropdown-list>
+                  </ibm-combo-box>
+                </ibm-label>
+              </div>
+            </div>
+            <div class="sm:col-span-3 mb-6" *ngIf="formGroup.get('type').value=='furnished_apartment'">
+              <youpez-alert [appearance]="'outline'" [type]="'error'">
+                Ce type de bien n'est pas encore pris en compte! Veuillez selectionner un autre type.
+              </youpez-alert>
+            </div>
+            <!--  -->
+             <ng-container formGroupName="specifity">
+              <div fxLayout="row wrap" class="app-form__row" *ngIf="formGroup.get('type').value=='studio'">
+                <div fxFlex="100%" class="app-form__item" fxFlex.gt-md="50%">
+                  <ibm-toggle formControlName="isInternalKitchen" [label]="'Cuisine interne'" [onText]="'Oui'" [offText]="'Non'" [checked]="false" size="md">
+                  </ibm-toggle>
+                </div>
+                <div fxFlex="100%" class="app-form__item" fxFlex.gt-md="50%">
+                  <ibm-toggle formControlName="isInternalShower" [label]="'Douche interne'" [onText]="'Oui'" [offText]="'Non'" [checked]="false" size="md">
+                  </ibm-toggle>
+                </div>
+              </div>
+              <div *ngIf="formGroup.get('type').value=='simple_apartment'">
+                <div fxLayout="row wrap" class="app-form__row">
+                  <div fxFlex="100%" class="app-form__item" fxFlex.gt-md="33.33%">
+                    <ibm-toggle [label]="'Cuisine iterne'" formControlName="isInternalKitchen" [onText]="'Oui'" [offText]="'Non'" [checked]="false" size="md">
+                    </ibm-toggle>
+                  </div>
+                  <div fxFlex="100%" class="app-form__item" fxFlex.gt-md="33.33%">
+                    <ibm-toggle formControlName="isInternalShower" [label]="'Douche interne'" [onText]="'Oui'" [offText]="'Non'" [checked]="false" size="md">
+                    </ibm-toggle>
+                  </div>
+                  <div fxFlex="100%" fxFlex.gt-md="33.33%" class="app-form__item">
+                    <ibm-label> Nombre de douche<span class="text-red-600">*</span>
+                      <ibm-number class="mt-2" [helperText]="''" [theme]="'dark'" [min]="1" [invalid]="false"
+                        [invalidText]="''" [size]="'md'" formControlName="numberOfShower" [disabled]="false">
+                      </ibm-number>
+                    </ibm-label>
+                  </div>
+                </div>
+                <div fxLayout="row wrap" class="app-form__row">
+                  <div fxFlex="100%" fxFlex.gt-md="50%" class="app-form__item">
+                    <ibm-label> Nombre de chambre<span class="text-red-600">*</span>
+                      <ibm-number class="mt-2" [helperText]="''" [theme]="'dark'" [min]="2" [invalid]="false"
+                        [invalidText]="''" [size]="'md'" formControlName="numberOfBathroom" [disabled]="false">
+                      </ibm-number>
+                    </ibm-label>
+                  </div>
+                  <div fxFlex="100%" fxFlex.gt-md="50%" class="app-form__item">
+                    <ibm-label> Nombre de salon<span class="text-red-600">*</span>
+                      <ibm-number class="mt-2" [helperText]="''" [theme]="'dark'" [min]="2" [invalid]="false"
+                        [invalidText]="''" [size]="'md'" formControlName="numberOfLivingRoom" [disabled]="false">
+                      </ibm-number>
+                    </ibm-label>
+                  </div>
+                </div>              
+              </div>
+             </ng-container>
+            
+            <div class="">
+              <ibm-label [helperText]="''">
+                Description
+                <textarea ibmTextArea formControlName="description" class="textarea-field" theme="dark" [rows]="3"
+                  [cols]="3" aria-label="textarea"></textarea>
+              </ibm-label>
+            </div>
+          </div>
+  
+        </div>
+      </div>
+      <div class="px-4 py-4 flex justify-end app-border-t">
+        <button (click)="onClose()" ibmButton="secondary" size="md" class="mr-1">
+          Annuler
+        </button>
+        <button ibmButton="primary" size="md" class="custom-primary-button"
+          [disabled]="waittingResponse || formGroup.invalid || formGroup.get('type').value=='furnished_apartment'" type="submit">
+          <ibm-loading *ngIf="waittingResponse; else noWaitingResponse"></ibm-loading>
+          <ng-template #noWaitingResponse>
+            <span class="btn-text">Ajouter</span>
+            <youpez-ibm-icon iconClass="cds--btn__icon" iconName="add" iconSize="20"></youpez-ibm-icon>
+          </ng-template>
+        </button>
+      </div>
+    </div>
+  
+  </form>

@@ -98,7 +98,6 @@ export class UserProfileState{
     @Action(UserProfileAction.LogoutUserProfile)
     logoutUserProfileState(ctx:StateContext<UserProfileStateModel>)
     {
-        ctx.dispatch(new Navigate(['/auth/signin']))
         this._toastrService.success("Deconnexion avec success! ","Ndewa360°")
         ctx.dispatch(new AuthTokenAction.SetAuthToken(null));  
     }

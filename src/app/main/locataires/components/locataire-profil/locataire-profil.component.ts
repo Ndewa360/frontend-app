@@ -12,7 +12,9 @@ import { FormUtils } from 'src/app/shared/utils';
 })
 export class LocataireProfilComponent implements OnInit{
   public formGroup: FormGroup;
+  formGroupRef:FormGroup;
   waittingResponse = false;
+  waittingResponseRef = false;
   title = 'Locataire'
   locataire:LocataireModel=null;
 
@@ -51,6 +53,12 @@ export class LocataireProfilComponent implements OnInit{
       (value) => {
         this.waittingResponse=false;
       })
+
+      this.formGroupRef = this.formBuilder.group({
+        fullNameRef:[this.locataire?.fullNameRef,[Validators.required]],
+        emailRef: [this.locataire?.emailRef, [Validators.email]],
+        phoneNumberRef:[this.locataire?.phoneNumberRef, [Validators.required, Validators.pattern('^(\\+\\d{1,3}\\s)?(\\d{2,3}[\\s.-]?){4}$')]],
+      })
   }
   isValid(name) {
     const instance = this.formGroup.get(name)
@@ -62,7 +70,18 @@ export class LocataireProfilComponent implements OnInit{
     if(this.formGroup.invalid) return;
     this.waittingResponse=true;
     this._store.dispatch(new LocataireAction.UpdateLocataire({...FormUtils.removeNullAttribut(this.formGroup.value)},this.locataire._id));
-    
+  }
+
+  isValidRef(name) {
+    const instance = this.formGroupRef.get(name)
+    return instance.invalid && (instance.dirty || instance.touched)
+  }
+
+  onSubmitUpdateLocataireRef() {
+    this.formGroupRef.markAllAsTouched()
+    if(this.formGroupRef.invalid) return;
+    this.waittingResponseRef=true;
+    this._store.dispatch(new LocataireAction.UpdateLocataire({...FormUtils.removeNullAttribut(this.formGroupRef.value)},this.locataire._id));
   }
 
 }

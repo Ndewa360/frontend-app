@@ -101,7 +101,7 @@ const routes: Routes = [
             path: ':id',
             component: ShowPropertyComponent,
             resolve:{
-              "propertyResolver":LoadingPropertyDataResolver
+              "propertyDataResolver":LoadingPropertyDataResolver
             },
             // pathMatch:'full',
             children:[

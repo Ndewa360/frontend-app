@@ -28,12 +28,12 @@ import { UpdatePropertyComponent } from './properties/components/update-property
 import { SeeLocationsComponent } from './properties/components/see-locations/see-locations.component';
 import { AssignLocationComponent } from './properties/components/assign-location/assign-location.component';
 import { AssignLocationFormComponent } from './properties/components/assign-location-form/assign-location-form.component';
-import { AssignLocationStepperComponent } from './properties/components/assign-location-stepper/assign-location-stepper.component';
 import { AssignLocationListClientComponent } from './properties/components/assign-location-list-client/assign-location-list-client.component';
 import { RemoveLocataireRoomComponent } from './properties/components/remove-locataire-room/remove-locataire-room.component'
 import { LocationPaymentModule } from './location-payment/location-payment.module'
 import { LocatairesModule } from './locataires/locataires.module'
 import { StatisticsModule } from './statistics/statistics.module'
+import { RoomModule } from './room/room.module'
 
 
 @NgModule({
@@ -57,7 +57,6 @@ import { StatisticsModule } from './statistics/statistics.module'
     SeeLocationsComponent,
     AssignLocationComponent,
     AssignLocationFormComponent,
-    AssignLocationStepperComponent,
     AssignLocationListClientComponent,
     RemoveLocataireRoomComponent,
     
@@ -72,6 +71,7 @@ import { StatisticsModule } from './statistics/statistics.module'
     AgGridModule,
     LocatairePropertyModule,
     LocatairesModule,
+    RoomModule,
     StatisticsModule
   ]
 })

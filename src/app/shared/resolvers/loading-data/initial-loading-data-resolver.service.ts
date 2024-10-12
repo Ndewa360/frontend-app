@@ -33,10 +33,12 @@ export class InitialLoadingDataResolver implements Resolve<any>
             this._store.select((state)=>state.auth_token.authToken)
             .pipe(
                 skipWhile((x)=>x==null),
-                tap((value)=>this._store.dispatch([
+                tap((value)=>{
+                    if(!value) return null;
+                    return this._store.dispatch([
                         new UserProfileAction.FetchUserProfile(),
                         new PropertyAction.FetchProperties()
-                    ])
+                    ])}
                 ),
             ),
             this._store.select((state)=>state.userprofile.initLoadingState).pipe(skipWhile((initLoadingState)=>initLoadingState!="LOADED")),
