@@ -3,7 +3,7 @@
       <div class="app-expressive-heading-03 text-center">{{title}}</div>
       <div>
         <youpez-echarts-container>
-          <youpez-echarts [options]="charsOpts" class="app-echarts-component"  style="min-height: 240px;">                            
+          <youpez-echarts [options]="charsOpts" class="app-echarts-component"  [ngStyle]="{'min-height': (currentPayementData.length*80)+'px;'}">                            
           </youpez-echarts>
         </youpez-echarts-container>
         <!-- <span class="app-expressive-heading-03 text-center">Locataires</span> -->

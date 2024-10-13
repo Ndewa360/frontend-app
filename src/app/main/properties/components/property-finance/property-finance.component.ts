@@ -72,7 +72,7 @@ export class PropertyFinanceComponent implements OnInit {
     this.propertyId = this._activatedRoute.snapshot.parent.paramMap.get('id');
     this._store.select(RoomState.selectStateCountRoomWithStateByPropertyId(this.propertyId))
     .subscribe((value)=>{
-      this.roomCount={nbreRoomActif:value.roomFreeCount, nbreRoomTotal:value.roomCountTotal}
+      this.roomCount={nbreRoomActif:value.noFreeRoomCount, nbreRoomTotal:value.roomCountTotal}
     });
 
     this._store.select(LocataireState.selectStateCountLocataireByPropertyId(this.propertyId)).subscribe((value)=>{

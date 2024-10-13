@@ -90,7 +90,7 @@ export class ChartPieNomnbreComponent implements OnInit{
           }
         },
         data: [{
-          value: ((3*this.nbreTotal/4) * this.nbreActif) / this.nbreTotal 
+          value: ((3*this.nbreTotal/4) * this.nbreActif) / this.nbreTotal ,
         }, {
           value: this.nbreTotal - (((3*this.nbreTotal/4) * this.nbreActif) / this.nbreTotal)
         }]

@@ -28,7 +28,8 @@ export interface StatisticPaymentState
     month:number,
     year:string,
     state:StatisticPaymentStateType,
-    price:number
+    price:number,
+    unitLocationPaymentPrice?:number
   }
 
 export interface StatisticAllPaymentLocataireYearModel {

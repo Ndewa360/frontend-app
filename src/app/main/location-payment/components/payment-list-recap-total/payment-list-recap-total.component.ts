@@ -87,7 +87,7 @@ export class PaymentListRecapTotalComponent implements OnChanges, OnInit{
           }),
           ...payment.paymentState.map((pay)=>new TableItem({
             data: {
-              data: `${pay.state==StatisticPaymentStateType.PAYED?pay.price:0}`,
+              data: `${pay.state==StatisticPaymentStateType.PAYED?pay.unitLocationPaymentPrice:0}`,
               isSum: false
             },
             template:this.payementSumTemplate,
@@ -95,7 +95,7 @@ export class PaymentListRecapTotalComponent implements OnChanges, OnInit{
           })),
           new TableItem({
             data: {
-              data:payment.paymentState.map(pay=>pay.state==StatisticPaymentStateType.PAYED?pay.price:0).reduce((acc,curr)=>acc+curr,0),
+              data:payment.paymentState.map(pay=>pay.state==StatisticPaymentStateType.PAYED?pay.unitLocationPaymentPrice:0).reduce((acc,curr)=>acc+curr,0),
               isSum:true},
             className: "items-center",
             template:this.payementSumTemplate,
@@ -108,7 +108,7 @@ export class PaymentListRecapTotalComponent implements OnChanges, OnInit{
         className: "items-center"
         }),
         ...Array(12).fill(null).map((_, month)=>{
-          let sumPaymentByMonth = data.map((pay)=>pay.paymentState[month].state==StatisticPaymentStateType.PAYED?pay.paymentState[month].price:0).reduce((acc, curr)=>acc+curr, 0)
+          let sumPaymentByMonth = data.map((pay)=>pay.paymentState[month].state==StatisticPaymentStateType.PAYED?pay.paymentState[month].unitLocationPaymentPrice:0).reduce((acc, curr)=>acc+curr, 0)
           allSum+=sumPaymentByMonth;
           return new TableItem({
             data:  {

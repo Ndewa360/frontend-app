@@ -31,11 +31,11 @@ export class ChartFinancePayementLocationComponent implements OnChanges{
   }
 
   getChart(data:StatisticLocataireYearModel[]) {
-    console.log("Data ",data)
     let legendData=[], dataSeriees=[]
 
     data.forEach((item)=>{
       legendData.push(item.locataire.fullName);
+      console.log("Data Chart Finance",item.paymentValue)
       dataSeriees.push({
         name: item.locataire.fullName,
         type: 'line',

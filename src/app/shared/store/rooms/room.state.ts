@@ -66,7 +66,7 @@ export class RoomState{
 
     static selectStateCountRoomWithStateByPropertyId(propertyId: any) {
         return createSelector([RoomState],(state)=> ({
-            roomFreeCount: state.rooms.filter((room)=>room.property==propertyId && room.isFree==true).length,
+            noFreeRoomCount: state.rooms.filter((room)=>room.property==propertyId && room.isFree!=true).length,
             roomCountTotal:state.rooms.length
         }))
     };

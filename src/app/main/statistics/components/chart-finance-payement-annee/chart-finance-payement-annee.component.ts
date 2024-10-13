@@ -25,7 +25,6 @@ export class ChartFinancePayementAnneeComponent implements OnChanges{
 
   ngOnChanges(changes: SimpleChanges): void {
     if(changes['propertyID']) {
-      console.log("PropertyID",changes["propertyID"].currentValue)
       this._store.select(StatisticState.selectStateStatisticAllPaymentLocataireByPropertyIdAndYear(changes['propertyID'].currentValue))
       .subscribe((value)=>this.charsOpts = this.getChart(value))
     }
@@ -56,7 +55,9 @@ export class ChartFinancePayementAnneeComponent implements OnChanges{
       grid: {
         height: '60%',
         top: '10%', 
-        right:'1%'
+        right:'1%',
+        // borderWidth:20,
+        // borderColor:'#fff'
       },
       xAxis: {
         type: 'category',
