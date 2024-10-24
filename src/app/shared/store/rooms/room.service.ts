@@ -30,6 +30,14 @@ export class RoomService
     /**
      * Update room
      */
+    updateActiveForSouscriptionRoom(room:{isActiveForSouscription},id:string): Observable<ApiResultFormat<RoomModel>>
+    {
+        return this._httpClient.put<ApiResultFormat<RoomModel>>(`${environment.apiUrl}/room/update-souscription/${id}`, room)
+    }
+
+    /**
+     * Update room
+     */
     updateRoom(room:RoomModel,id:string): Observable<ApiResultFormat<RoomModel>>
     {
         return this._httpClient.put<ApiResultFormat<RoomModel>>(`${environment.apiUrl}/room/${id}`, room)

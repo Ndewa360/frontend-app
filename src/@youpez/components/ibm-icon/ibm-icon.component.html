@@ -78,7 +78,10 @@
   </ng-container>
 
   <ng-container *ngSwitchCase="'checkMarkOutline'">
-    <svg [class]="iconClass" cdsIcon="checkMarkOutline" [size]="iconSize"></svg>
+    <svg [class]="iconClass" cdsIcon="checkmark--outline" [size]="iconSize"></svg>
+  </ng-container>
+  <ng-container *ngSwitchCase="'warningMarkOutline'">
+    <svg [class]="iconClass" cdsIcon="warning" [size]="iconSize"></svg>
   </ng-container>
 
   <ng-container *ngSwitchCase="'checkmark'">

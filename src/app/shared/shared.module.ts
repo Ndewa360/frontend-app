@@ -6,7 +6,7 @@ import { DummyTablePaginationComponent } from './components/dummy-table-paginati
 import { DummyTableExpansionComponent } from './components/dummy-table-expansion/dummy-table-expansion.component'
 import { DummyTableAdvancedComponent } from './components/dummy-table-advanced/dummy-table-advanced.component'
 import { NgxsModule } from '@ngxs/store';
-import { UserProfileState, UserState, PropertyState, RoomState, LocataireState, AuthTokenState, LocationState, StatisticState } from './store';
+import { UserProfileState, UserState, PropertyState, RoomState, LocataireState, AuthTokenState, LocationState, StatisticState, SouscriptionState, SouscriptionPeriodState } from './store';
 import { NgxsRouterPluginModule } from '@ngxs/router-plugin';
 import { RouterModule } from '@angular/router';
 import { NgxsStoragePluginModule, StorageOption } from '@ngxs/storage-plugin';
@@ -36,6 +36,8 @@ import { LocalizedDatePipe } from './pipes/localized-date.pipe';
         LocationPaymentState,
         HistoryLocationPaymentState,
         StatisticState,
+        SouscriptionState,
+        SouscriptionPeriodState
       ]),
       NgxsStoragePluginModule.forRoot({
         key:"auth_token",

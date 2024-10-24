@@ -2,8 +2,8 @@ import { Injectable } from "@angular/core";
 import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot } from "@angular/router";
 import { Actions, Store } from "@ngxs/store";
 import { Observable, combineLatest, of} from "rxjs";
-import { mergeMap, skipWhile, tap } from "rxjs/operators";
-import { PropertyAction, UserProfileAction } from "../../store";
+import { map, mergeMap, skipWhile, tap } from "rxjs/operators";
+import { LocataireAction, LocationAction, LocationPaymentAction, PropertyAction, RoomAction, UserProfileAction } from "../../store";
 
 
 @Injectable({
@@ -42,8 +42,15 @@ export class InitialLoadingDataResolver implements Resolve<any>
                 ),
             ),
             this._store.select((state)=>state.userprofile.initLoadingState).pipe(skipWhile((initLoadingState)=>initLoadingState!="LOADED")),
+            this._store.select((state)=>state.properties.initLoadingState).pipe(skipWhile((initLoadingState)=>initLoadingState!="LOADED")),
         ).pipe(
-            tap((error)=> of(true))
+            mergeMap((value)=> this._store.select((state)=>state.properties.properties) ),
+            map((value)=>this._store.dispatch(value.map((prop)=>[
+                new LocataireAction.FetchLocatairesByPropertyId(prop._id),
+                new RoomAction.FetchRoomsByPropertyID(prop._id),
+                new LocationAction.FetchLocationsByPropertyId(prop._id),
+                new LocationPaymentAction.FetchLocationPaymentsByPropertyId(prop._id),
+            ]).reduce((acc,curr)=>[...acc,...curr],[]))),
         ).subscribe((error)=>{
             console.log("Error ",error)
         })

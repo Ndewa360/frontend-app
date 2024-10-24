@@ -97,7 +97,7 @@
           </div>
           <div class="app-list__item__content mr-4">
             <div>
-              <div class="app-helper-text-01">Signed in as</div>
+              <div class="app-helper-text-01">Connecté en tant que</div>
               <div class="app-expressive-heading-02" *ngIf="userProfil$ | async as userProfil">{{userProfil.name}}</div>
             </div>
           </div>
@@ -105,23 +105,23 @@
         <div class="app-list__divider"></div>
         <div class="app-list__item" ngbDropdownItem routerLink="/app/profile">
           <div class="app-list__item__content">
-            Profile
+            Profil
           </div>
         </div>
-        <div class="app-list__item" ngbDropdownItem routerLink="/app/pricing/modern">
+        <!-- <div class="app-list__item" ngbDropdownItem routerLink="/app/facturation/choix-plan">
           <div class="app-list__item__content">
-            Plan & Upgrade
+            Plan
           </div>
-        </div>
+        </div> -->
         <div class="app-list__item" ngbDropdownItem routerLink="/app/user/settings">
           <div class="app-list__item__content">
-            Settings
+            Parametre
           </div>
         </div>
         <div class="app-list__divider"></div>
         <div class="app-list__item mb-2" ngbDropdownItem (click)="logout()">
           <div class="app-list__item__content">
-            Logout
+            Deconnexion
           </div>
         </div>
       </div>

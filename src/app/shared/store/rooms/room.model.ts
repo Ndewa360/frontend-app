@@ -38,4 +38,5 @@ export interface RoomModel {
     property:string;
     locataire?:string;
     isFree:boolean;
+    isActiveForSouscription?:boolean;
 }

@@ -57,6 +57,11 @@ export namespace RoomAction
         constructor(public roomId:any,public status:boolean,public locataire:string=null){}
     }
 
+    export class ChangeStatusActivatedForSouscriptionRoom
+    {
+        static readonly type = '[Room] Change Room Status'
+        constructor(public roomId:any,public isActiveForSouscription:boolean){}
+    }
 
     //Change loading state
     export class updateLoadingRoomState

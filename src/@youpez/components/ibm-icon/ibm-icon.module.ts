@@ -204,6 +204,17 @@ import UserIdentification24 from '@carbon/icons/es/user--identification/24';
 import UserIdentification20 from '@carbon/icons/es/user--identification/20';
 import UserIdentification16 from '@carbon/icons/es/user--identification/16';
 
+import CheckMarkOutline32 from '@carbon/icons/es/checkmark--outline/32';
+import CheckMarkOutline24 from '@carbon/icons/es/checkmark--outline/24';
+import CheckMarkOutline20 from '@carbon/icons/es/checkmark--outline/20';
+import CheckMarkOutline16 from '@carbon/icons/es/checkmark--outline/16';
+
+import warningMarkOutline32 from '@carbon/icons/es/warning/32';
+import warningMarkOutline24 from '@carbon/icons/es/warning/24';
+import warningMarkOutline20 from '@carbon/icons/es/warning/20';
+import warningMarkOutline16 from '@carbon/icons/es/warning/16';
+
+
 import Save32 from '@carbon/icons/es/save/32';
 import Save24 from '@carbon/icons/es/save/24';
 import Save20 from '@carbon/icons/es/save/20';
@@ -343,6 +354,17 @@ export class IbmIconModule {
 			UserIdentification20,
 			UserIdentification16,
 
+      CheckMarkOutline32,
+			CheckMarkOutline24,
+			CheckMarkOutline20,
+			CheckMarkOutline16,
+
+      warningMarkOutline32,
+			warningMarkOutline24,
+			warningMarkOutline20,
+			warningMarkOutline16,
+
+      
       Download32,
 			Download24,
 			Download20,

@@ -9,3 +9,5 @@ export * from "./location"
 export * from "./auth-token"
 export * from "./statistic-data"
 export * from "./payment-location"
+export * from './souscription'
+export * from './souscription-period'

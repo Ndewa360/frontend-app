@@ -71,6 +71,16 @@ export class RoomState{
         }))
     };
 
+    @Selector()
+    static selectStateCountRoomActive(state:RoomStateModel) {
+        return state.rooms.filter((room)=>room.isActiveForSouscription==true).length
+    }
+
+    static selectStatePriceRoomActive(state:RoomStateModel) {
+        console.log("All  Price ",state.rooms.filter((room)=>room.isActiveForSouscription==true).map((r)=>r.price).reduce((acc,curr)=>acc+curr,0))
+        return state.rooms.filter((room)=>room.isActiveForSouscription==true).map((r)=>r.price).reduce((acc,curr)=>acc+curr,0)
+    }
+
     static selectStateRoomByRoomName(name=null)
     {
         return createSelector([RoomState],(state)=> state.rooms.filter((room)=>{
@@ -184,7 +194,6 @@ export class RoomState{
         const state = ctx.getState();
         let index = state.rooms.findIndex((u)=>u.property==propertyID);
 
-        console.log("Index ", index)
         if(index>-1) return of(true);
         
         ctx.patchState({
@@ -227,6 +236,42 @@ export class RoomState{
                     })
                 }
             )
+        )
+    }
+
+    @Action(RoomAction.ChangeStatusActivatedForSouscriptionRoom)
+    setRoomActiveForSouscription(ctx:StateContext<RoomStateModel>,{roomId,isActiveForSouscription}:RoomAction.ChangeStatusActivatedForSouscriptionRoom)
+    {        
+        ctx.patchState({
+            loadingRoom:true,
+            initLoadingState:"LOADING"
+        })
+        return this._roomsService.updateActiveForSouscriptionRoom({isActiveForSouscription},roomId).pipe(
+            tap(
+                result => {
+                    const state = ctx.getState();
+                    let index = state.rooms.findIndex((u)=>u._id==roomId);
+                    if(index>-1) {
+                        const data = [...state.rooms];
+                        data[index]={...data[index],isActiveForSouscription}
+                        ctx.patchState({
+                            rooms:data
+                        })
+                    }
+                    ctx.patchState({
+                        loadingRoom:false,
+                        initLoadingState:"LOADED"
+                    })
+                    let status = isActiveForSouscription?"activé":"désactivé";
+                    this._toastrService.success(`La souscription à été ${status} avec success!`, 'Ndewa360°');
+                }
+            ),
+            catchError((error)=>{
+                let message = error?.error?.message;
+                if(!message) message = "Une erreur c'est produite! Réessayez plus tard"
+                this._toastrService.error(message, 'Ndewa360°');
+                  return error;
+            })
         )
     }
 
