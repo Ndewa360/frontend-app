@@ -1,7 +1,7 @@
-import { Component, TemplateRef, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, TemplateRef, ViewChild } from '@angular/core';
 import { Actions, ofActionCompleted, ofActionErrored, ofActionSuccessful, Select, Selector, Store } from '@ngxs/store';
 import { TableModel, TableRowSize, TableHeaderItem, TableItem } from 'carbon-components-angular';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { sort } from 'src/@youpez';
 import { SouscriptionState, SouscriptionModel, SouscriptionPeriodModel, SouscriptionPeriodState, RoomState, RoomModel, LocataireState, PropertyState, RoomAction } from 'src/app/shared/store';
 import { UtilsString } from 'src/app/shared/utils';
@@ -16,6 +16,8 @@ export class ShowFactureCurrentComponent {
   @Select(RoomState.selectStateCountRoomActive) roomCount$:Observable<number>
   @Select(RoomState.selectStatePriceRoomActive) roomPrice$:Observable<number>
   @Select(RoomState.setlectStateRooms) roomList$:Observable<RoomModel[]>;
+  roomsValueChangeStatus:{isLoading:BehaviorSubject<boolean>,roomId:string, value:BehaviorSubject<boolean>,room:RoomModel}[]=[];
+
   currentPeriod:SouscriptionPeriodModel=null;
   waittingResponse=false;
   isAssignedOpened = false;
@@ -46,23 +48,32 @@ export class ShowFactureCurrentComponent {
   constructor(
     private _store:Store,
     private _ngxsAction:Actions,
-    
+    private cdr: ChangeDetectorRef
   ){}
   ngOnInit() {
     this._ngxsAction.pipe(ofActionSuccessful(RoomAction.ChangeStatusActivatedForSouscriptionRoom)).subscribe((value)=>{
       // Navigate to the parent
-      this.waittingResponse=false;
+      let foundRoom = this.roomsValueChangeStatus.find((u)=>u.roomId==value.roomId);
+      foundRoom.value.next(value.isActiveForSouscription);      
+      this.cdr.detectChanges()
       }
     );
     this._ngxsAction.pipe(ofActionCompleted(RoomAction.ChangeStatusActivatedForSouscriptionRoom)).subscribe(
       (value) => {
-        this.waittingResponse=false;
+        // this.waittingResponse=false;
+        let foundRoom = this.roomsValueChangeStatus.find((u)=>u.roomId==value.action.roomId);
+        foundRoom.isLoading.next(false);
+      this.cdr.detectChanges()
+
       }
     )
 
     this._ngxsAction.pipe(ofActionErrored(RoomAction.ChangeStatusActivatedForSouscriptionRoom)).subscribe(
       (value) => {
-        this.waittingResponse=false;        
+        let foundRoom = this.roomsValueChangeStatus.find((u)=>u.roomId==value.roomId);
+        foundRoom.value.next(value.isActiveForSouscription);     
+      this.cdr.detectChanges()
+
       })  
 
     this.souscription$.subscribe((value)=>{
@@ -75,6 +86,7 @@ export class ShowFactureCurrentComponent {
 
     this.roomList$.subscribe((roomList)=>{
       let newModel = new TableModel()
+      
       newModel.header = [
         new TableHeaderItem({
           data: "Code",
@@ -91,6 +103,13 @@ export class ShowFactureCurrentComponent {
       ]
 
       newModel.data = roomList.map((room)=> {
+        let dataForLoading = {
+          roomId:room._id,
+          room,
+          isLoading: new BehaviorSubject(false),
+          value:new BehaviorSubject(room.isActiveForSouscription)
+        }
+        this.roomsValueChangeStatus.push(dataForLoading);
         return ([
           new TableItem({
             data: room,
@@ -103,7 +122,7 @@ export class ShowFactureCurrentComponent {
             className: "items-center"
           }),
           new TableItem({
-            data: room,
+            data: dataForLoading,
             template: this.actionTemplate,
             className: "items-center"
           })
@@ -140,11 +159,15 @@ export class ShowFactureCurrentComponent {
   shouldOpenAssignedOpened() {
     this.isAssignedOpened = true;
   }
-  // getRoomById(roomId)
-  // {
-  //   return this._store.select(RoomState.selectStateRoom(roomId))
-  // }
 
+
+  changeStatusRoom(event,roomId)
+  {
+    let foundRoom = this.roomsValueChangeStatus.find((u)=>u.roomId==roomId);
+    foundRoom.isLoading.next(true)
+    this._store.dispatch(new RoomAction.ChangeStatusActivatedForSouscriptionRoom(roomId,event))
+
+  }
   changeSouscriptionOfRoom(roomId,status)
   {
     this.waittingResponse=true;

@@ -137,19 +137,20 @@
                 </ng-template>
         
                 <ng-template #actionTemplate let-data="data" >
-                    <div class="flex">
+                    <div class="flex" *ngIf="data.room.isFree">
                         <div fxLayout="row wrap" class="app-form__row" >
-                            <div fxFlex="100%" class="app-form__item" fxFlex.gt-md="50%">
-                              <ibm-toggle    [onText]="'Oui'" [offText]="'Non'" [checked]="false" size="md">
+                            <div fxFlex="80%" class="app-form__item">
+                              <ibm-toggle (checkedChange)="changeStatusRoom($event,data.roomId)" [disabled]="data.isLoading | async"    [onText]="'Actif'" [offText]="'Inactif'" [checked]="data.value | async" size="md">
                               </ibm-toggle>
                             </div>
+                            <div *ngIf="data.isLoading | async" fxFlex="20%" class="app-form__item align-middle pt-4 pl-3" >
+                                <img src="./../../../../../assets/img/utils/loading-gif.gif" width="20" alt="" srcset="">
+                              </div>
                           </div>
                         <!-- formControlName="isInternalKitchen"  <div class="app-mini-sidebar__list__item__pill mr-2"  (click)="removeAssignLocationRoom(data.location)"  container="body" ngbTooltip="Mettre fin à la location">
                             <mat-icon svgIcon="person_remove_alt_1" class="text-red"></mat-icon>
                         </div> -->
-                        <!-- <div class="app-mini-sidebar__list__item__pill " container="body" ngbTooltip="Ajouter un paiement">
-                            <youpez-ibm-icon class="location-icon text-green cursor-pointer " iconName="money" iconSize="20"></youpez-ibm-icon>  
-                        </div>  -->
+                        <!--   -->
                     </div>
                 </ng-template>
             
@@ -188,7 +189,10 @@
             <div fxFlex="100%" fxFlex.gt-md="50%" class="app-card__block">
                 <div class="flex justify-end">
                     <div>
-                        <div class="app-productive-heading-03 fond-extrabold ">5000 FCFA</div>
+                        <div class="app-productive-heading-03 fond-extrabold ">
+                            <span *ngIf="(roomCount$ | async)==0 else hasMoney2">0</span>
+                            <ng-template #hasMoney2>{{roomPrice$ | async}} </ng-template> {{getDefaultCurrency()}}
+                        </div>
                     </div>
                 </div>
             </div>

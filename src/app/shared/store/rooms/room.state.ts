@@ -49,6 +49,7 @@ export class RoomState{
         return state.rooms
     }
 
+    
     static selectStateRoom(roomId)
     {
         return createSelector([RoomState],(state)=>{
@@ -76,8 +77,8 @@ export class RoomState{
         return state.rooms.filter((room)=>room.isActiveForSouscription==true).length
     }
 
+    @Selector()
     static selectStatePriceRoomActive(state:RoomStateModel) {
-        console.log("All  Price ",state.rooms.filter((room)=>room.isActiveForSouscription==true).map((r)=>r.price).reduce((acc,curr)=>acc+curr,0))
         return state.rooms.filter((room)=>room.isActiveForSouscription==true).map((r)=>r.price).reduce((acc,curr)=>acc+curr,0)
     }
 
@@ -143,7 +144,7 @@ export class RoomState{
         let index = state.rooms.findIndex((u)=>u._id==roomId);
         if(index>-1) {
             const data = [...state.rooms];
-            data[index]={...data[index],isFree:status,locataire:locataire}
+            data[index]={...data[index],isActiveForSouscription:status,locataire:locataire}
             ctx.patchState({
                 rooms:data
             })

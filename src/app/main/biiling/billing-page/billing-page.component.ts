@@ -25,7 +25,7 @@ export class BillingPageComponent {
         },
         {
           name: 'Abonements',
-          path: 'plan-list'
+          // path: 'plan-list'
         },
       ]
     },
