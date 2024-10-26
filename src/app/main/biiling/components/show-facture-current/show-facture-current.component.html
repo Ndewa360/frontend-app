@@ -1,0 +1,202 @@
+<div fxLayout="column">
+
+    <div fxFlex="100%" class="w-full shadow-md app-card row" *ngIf="currentPeriod">
+        <div class="app-card__header header-footer-billing">
+            <div class="app-row app-row--center  p-2">
+                <div>
+                    <div class="app-expressive-heading-03 font-bold mb-2">Récapitulatif de la facture Ndewa360 estimée </div>
+                    <div class="app-label-01">Montant total des frais et d'informations de paiement</div>
+                </div>
+            </div>
+        </div>
+    
+        <div fxLayout="row wrap" class="app-card__blocks app-border-t p-2">
+            <div fxFlex="100%" fxFlex.gt-md="33.33%" class="app-card__block">
+                <div class="flex justify-between">
+                    <div>
+                        <div class="app-productive-heading-03 mb-2">ID Facture</div>
+                        <div class="app-label-01">{{currentPeriod.billingRef}}</div>
+                    </div>   
+                </div>
+            </div>
+            <div fxFlex="100%" fxFlex.gt-md="33.33%" class="app-card__block">
+                <div class="flex justify-between">
+                    <div>
+                        <div class="app-productive-heading-03 mb-2">Période de facturation</div>
+                        <div class="app-label-01">{{currentPeriod.startedAt | date:'d MMMM'}} - {{currentPeriod.endedAt | date:'d MMMM YYYY'}}</div>
+                    </div>
+                </div>
+            </div>
+            <div fxFlex="100%" fxFlex.gt-md="33.33%" class="app-card__block">
+                <div class="flex justify-between">
+                    <div>
+                        <div class="app-productive-heading-03">Status de la facture</div>
+                    </div>
+                    <!-- <div class="app-row app-row--center app-color-success">
+                        <span class="mr-1">Payé</span>
+                        <youpez-ibm-icon iconName="checkMarkOutline" iconSize="32"></youpez-ibm-icon>
+                    </div> -->
+                    <div class="app-row app-row--center ">
+                        <span class="mr-1">Inconnu</span>
+                        <youpez-ibm-icon iconName="warningMarkOutline" iconSize="32"></youpez-ibm-icon>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div fxLayout="row wrap" class="app-card__blocks app-border-t p-2">
+            <div fxFlex="100%" fxFlex.gt-md="50%" class="app-card__block">
+                <div class="flex justify-end">
+                    <div>
+                        <div class="app-label-01 mb-2">Fournisseur de services</div>
+                        <div class="app-productive-heading-05 fond-bold ">Ndewa360</div>
+                    </div>   
+                </div>
+            </div>
+            <div fxFlex="100%" fxFlex.gt-md="50%" class="app-card__block">
+                <div class="flex justify-end">
+                    <div>
+                        <div class="app-label-01 mb-2">Total en FCFA</div>
+                        <div class="app-productive-heading-03 fond-extrabold ">
+                            <span *ngIf="(roomCount$ | async)==0 else hasMoney">0</span>
+                            <ng-template #hasMoney>{{roomPrice$ | async}} </ng-template> {{getDefaultCurrency()}}
+                        </div>
+    
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <div fxLayout="row wrap" class="app-card__blocks app-border-t p-2 header-footer-billing">
+            <div fxFlex="100%"  class="app-card__block">
+                <div class="flex justify-end">
+                    <div>
+                        <button type="submit" size="lg" disabled class="custom-primary-button" ibmButton="primary" >
+                            <!-- <ibm-loading *ngIf="waittingResponse; else noWaitingResponse"></ibm-loading> -->
+                            <!-- <ng-template #noWaitingResponse> -->
+                              <span class="btn-text">Régler la facture</span>
+                              <youpez-ibm-icon iconClass="cds--btn__icon" iconName="money" iconSize="20" ></youpez-ibm-icon >
+                            <!-- </ng-template> -->
+                          </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div fxFlex="100%" class="w-full shadow-md app-card row mt-4">
+        <div class="app-card__header header-footer-billing">
+            <div class="app-row app-row--center  p-2">
+                <div>
+                    <div class="app-expressive-heading-03 font-bold mb-2">Ndewa360 frais de service </div>
+                    <!-- <div class="app-label-01">Montant total des frais et d'informations de paiement</div> -->
+                </div>
+            </div>
+        </div>
+    
+        <div fxLayout="row wrap" class="app-card__blocks app-border-t p-2">
+            <div fxFlex="100%" fxFlex.gt-md="50%" class="">
+                <div class="flex justify-between app-card__block">
+                    <div>
+                        <div class="app-label-04 mb-2">Total de bien actif</div>
+                        <div class="app-productive-heading-03 font-bold" >{{roomCount$ | async}}</div>
+                    </div>   
+                </div>
+            </div>
+            <div fxFlex="100%" fxFlex.gt-md="50%" class="app-card__block">
+                <div class="flex justify-end">
+                    <div>
+                        <div class="app-label-03 mb-2">Total des frais de services hors taxes en {{getDefaultCurrency()}}</div>
+                        <div class="app-productive-heading-03 font-bold text-end">
+                            <span *ngIf="(roomCount$ | async)==0 else hasMoney">0</span>
+                            <ng-template #hasMoney>{{roomPrice$ | async}} </ng-template> {{getDefaultCurrency()}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div fxLayout="row wrap" class="app-card__blocks app-border-t p-2">
+            <ibm-table-container class="w-full">
+                        
+                <ng-template #dateEntryTemplate let-data="data">
+                    {{data | date:'mediumDate'}}
+                </ng-template>
+        
+                <ng-template #roomTemplate let-data="data">
+                        <ng-container [ngSwitch]="data.type">
+                            <span *ngSwitchCase="'room'">Chambre {{data["code"]}}</span>
+                            <span *ngSwitchCase="'studio'">Studio #{{data["code"]}}</span>
+                            <span *ngSwitchCase="'simple_apartment'">Apartement #{{data["code"]}}</span>
+                            <span *ngSwitchCase="'furnished_apartment'">Apartement Meublé #{{data["code"]}}</span>
+                        </ng-container>
+                </ng-template>
+
+                <ng-template #propertyTemplate let-data="data">
+                    <ng-container *ngIf="(getPropertyById(data) | async ) as propertyData">
+                        {{propertyData["name"]}}
+                    </ng-container>
+                </ng-template>
+        
+                <ng-template #actionTemplate let-data="data" >
+                    <div class="flex" *ngIf="data.room.isFree">
+                        <div fxLayout="row wrap" class="app-form__row" >
+                            <div fxFlex="80%" class="app-form__item">
+                              <ibm-toggle (checkedChange)="changeStatusRoom($event,data.roomId)" [disabled]="data.isLoading | async"    [onText]="'Actif'" [offText]="'Inactif'" [checked]="data.value | async" size="md">
+                              </ibm-toggle>
+                            </div>
+                            <div *ngIf="data.isLoading | async" fxFlex="20%" class="app-form__item align-middle pt-4 pl-3" >
+                                <img src="./../../../../../assets/img/utils/loading-gif.gif" width="20" alt="" srcset="">
+                              </div>
+                          </div>
+                        <!-- formControlName="isInternalKitchen"  <div class="app-mini-sidebar__list__item__pill mr-2"  (click)="removeAssignLocationRoom(data.location)"  container="body" ngbTooltip="Mettre fin à la location">
+                            <mat-icon svgIcon="person_remove_alt_1" class="text-red"></mat-icon>
+                        </div> -->
+                        <!--   -->
+                    </div>
+                </ng-template>
+            
+                <div >
+                    <ibm-table
+                    class="w-full"
+                    [model]="model"
+                    [size]="size"
+                    [skeleton]="skeleton"
+                    [showSelectionColumn]="false"
+                    [enableSingleSelect]="false"
+                    (rowClick)="onRowClick($event)"
+                    [sortable]="sortable"
+                    [stickyHeader]="stickyHeader"
+                    [striped]="striped"
+                    [isDataGrid]="isDataGrid"
+                    (sort)="simpleSort($event)">
+                    <ng-content></ng-content>
+                </ibm-table>
+                </div>
+            
+                <ng-template #customTrigger>
+                    <svg ibmIconSettings size="16"></svg>
+                </ng-template>
+            </ibm-table-container>
+        </div>
+    
+        <div fxLayout="row wrap" class="app-card__blocks app-border-t p-2 header-footer-billing">
+            <div fxFlex="100%" fxFlex.gt-md="50%" >
+                <div class="flex justify-between app-card__block">
+                    <div>
+                        <div class="app-productive-heading-03 fond-extrabold">Total des taxes</div>
+                    </div>   
+                </div>
+            </div>
+            <div fxFlex="100%" fxFlex.gt-md="50%" class="app-card__block">
+                <div class="flex justify-end">
+                    <div>
+                        <div class="app-productive-heading-03 fond-extrabold ">
+                            <span *ngIf="(roomCount$ | async)==0 else hasMoney2">0</span>
+                            <ng-template #hasMoney2>{{roomPrice$ | async}} </ng-template> {{getDefaultCurrency()}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

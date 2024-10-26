@@ -103,7 +103,6 @@ const routes: Routes = [
             resolve:{
               "propertyDataResolver":LoadingPropertyDataResolver
             },
-            // pathMatch:'full',
             children:[
               {
                 path: 'rooms',
@@ -111,12 +110,6 @@ const routes: Routes = [
                 data: {
                   breadcrumb: 'chambres'
                 },
-                // children:[
-                //   {
-                //     path:'idRoom',
-                //     component:ShowRoomComponent
-                //   }
-                // ]
               },
               {
                 path: 'locations',
@@ -135,9 +128,6 @@ const routes: Routes = [
               {
                 path: 'tenants',
                 component: PropertyLocataireComponent,
-                // resolve:{
-                //   "locataireResolver":LoadingLocataireResolver
-                // },
                 data: {
                   breadcrumb: 'locataires'
                 },
@@ -152,7 +142,12 @@ const routes: Routes = [
             //   breadcrumb: 'Getting started'
             // },
           },
-        ]
+          {
+            path: '**',
+            redirectTo: '/app/properties/list',
+            pathMatch: 'full',
+          },
+        ],
       },
       {
         path: 'welcome',
