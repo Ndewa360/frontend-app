@@ -65,6 +65,15 @@ export class HistoryLocationPaymentState{
     }   
 
    
+    @Action(HistoryLocationPaymentAction.ResetAllState)
+    resetAllState(ctx:StateContext<HistoryLocationPaymentStateModel>)
+    {
+        ctx.setState({
+            loadingHistoryLocationPayment:false,
+            initLoadingState:"NO_LOADED",
+            historyLocationPayments:[]
+        })
+    }
 
     @Action(HistoryLocationPaymentAction.FetchHistoryLocationByLocataireId)
     fetchHistoryLocationPaymentsByLocataireId(ctx:StateContext<HistoryLocationPaymentStateModel>,{locataireID}:HistoryLocationPaymentAction.FetchHistoryLocationByLocataireId)

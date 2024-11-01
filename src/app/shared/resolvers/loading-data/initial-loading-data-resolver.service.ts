@@ -33,7 +33,7 @@ export class InitialLoadingDataResolver implements Resolve<any>
             this._store.select((state)=>state.auth_token.authToken)
             .pipe(
                 skipWhile((x)=>x==null),
-                tap((value)=>{
+                map((value)=>{
                     if(!value) return null;
                     return this._store.dispatch([
                         new UserProfileAction.FetchUserProfile(),
@@ -51,8 +51,8 @@ export class InitialLoadingDataResolver implements Resolve<any>
                 new LocationAction.FetchLocationsByPropertyId(prop._id),
                 new LocationPaymentAction.FetchLocationPaymentsByPropertyId(prop._id),
             ]).reduce((acc,curr)=>[...acc,...curr],[]))),
-        ).subscribe((error)=>{
-            console.log("Error ",error)
+        ).subscribe((value)=>{
+            console.log("Value in init resolver",value)
         })
 
         return of(true);

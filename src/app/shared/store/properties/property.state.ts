@@ -102,6 +102,16 @@ export class PropertyState{
         )
     }
 
+    @Action(PropertyAction.ResetAllState)
+    resetAllState(ctx:StateContext<PropertyStateModel>)
+    {
+        ctx.setState({
+            loadingProperty:false,
+            properties:[],
+            initLoadingState:'NO_LOADED',
+        })
+    }
+
     
     @Action(PropertyAction.updateLoadingPropertyState)
     updateLoadingPropertyState(ctx:StateContext<PropertyStateModel>,{status}:PropertyAction.updateLoadingPropertyState)

@@ -86,6 +86,14 @@ export class SouscriptionState{
         })
     }
    
+    resetAllState(ctx:StateContext<SouscriptionStateModel>)
+    {
+        ctx.setState({
+            loadingSouscription:false,
+            souscription:[],
+            initLoadingState:'NO_LOADED',
+        })
+    }
 
     @Action(SouscriptionAction.FetchSouscriptionsByUserId)
     fetchSouscriptionByUserID(ctx:StateContext<SouscriptionStateModel>,{userId}:SouscriptionAction.FetchSouscriptionsByUserId)

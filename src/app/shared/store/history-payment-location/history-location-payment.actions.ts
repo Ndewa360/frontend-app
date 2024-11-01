@@ -20,4 +20,9 @@ export namespace HistoryLocationPaymentAction
         static readonly type = '[HistoryLocationPayment] Fectch FetchHistoryLocationByLocataireId'
         constructor(public locataireID:string){}
     }
+
+    export class ResetAllState 
+    {
+        static readonly type = '[HistoryLocationPayment] ResetAllState'
+    }
 }

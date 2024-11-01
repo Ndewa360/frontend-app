@@ -39,7 +39,7 @@ export class AuthSignupComponent implements OnInit {
     this._ngxsAction.pipe(ofActionSuccessful(UserProfileAction.SignupSimpleUserProfile)).subscribe((value)=>{
       // Navigate to the parent
       this.waittingResponse=false;
-      this.router.navigate(['/auth/signin']);
+      this.router.navigate(['/auth/askto-valid-email']);
       }
     );
     this._ngxsAction.pipe(ofActionCompleted(UserProfileAction.SignupSimpleUserProfile)).subscribe(
@@ -50,7 +50,9 @@ export class AuthSignupComponent implements OnInit {
 
     this._ngxsAction.pipe(ofActionErrored(UserProfileAction.SignupSimpleUserProfile)).subscribe(
       (value) => {
-        this.waittingResponse=false;        
+        this.waittingResponse=false; 
+        // if()
+        this.router.navigate(["/auth/confirmation"])
       })
   }
 

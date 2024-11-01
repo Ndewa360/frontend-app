@@ -12,4 +12,9 @@ export class AuthWelcomeScreenComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  getCurrentYear()
+  {
+    return new Date().getFullYear()
+  }
+
 }

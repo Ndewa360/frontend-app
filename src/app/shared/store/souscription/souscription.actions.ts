@@ -16,6 +16,11 @@ export namespace SouscriptionAction
         constructor(public souscriptionId:string){}
     }
     
+    export class ResetAllState
+    {
+        static readonly type = '[Souscription] Reset All State'
+    }
+    
     //Fetch  Souscription
     export class FetchSouscriptionsByUserId
     {

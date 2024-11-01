@@ -60,4 +60,8 @@ export class ShowBiilingComponent implements OnInit{
     this.printService.print(customPrintOptions)
     }
 
+    getCurrentYear()
+    {
+      return new Date().getFullYear()
+    }
 }

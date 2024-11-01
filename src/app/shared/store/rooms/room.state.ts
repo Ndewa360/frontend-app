@@ -79,7 +79,8 @@ export class RoomState{
 
     @Selector()
     static selectStatePriceRoomActive(state:RoomStateModel) {
-        return state.rooms.filter((room)=>room.isActiveForSouscription==true).map((r)=>r.price).reduce((acc,curr)=>acc+curr,0)
+        let price = state.rooms.filter((room)=>room.isActiveForSouscription==true).map((r)=>r.price).reduce((acc,curr)=>acc+curr,0);
+        return Math.floor((price *2) /100)
     }
 
     static selectStateRoomByRoomName(name=null)
@@ -99,6 +100,16 @@ export class RoomState{
     static selectStateNumberOfRoomByPropertyId(id)
     {
         return createSelector([RoomState],(state)=> state.rooms.filter((room)=>room.property==id).length);    
+    }
+
+    @Action(RoomAction.ResetAllState)
+    resetAllState(ctx:StateContext<RoomStateModel>)
+    {
+        ctx.setState({
+            loadingRoom:false,
+            rooms:[],
+            initLoadingState:'NO_LOADED',
+        })
     }
 
     @Action(RoomAction.UpdateRoom)
@@ -204,7 +215,7 @@ export class RoomState{
         return this._roomsService.getRoomsByProprertyID(propertyID).pipe(
             tap(
                 result => {
-                    console.log("Room Fectch ",result)
+                    console.log("Room Fectch ",[...state.rooms, ...result.data])
                     ctx.patchState({
                         loadingRoom:false,
                         rooms:[...state.rooms, ...result.data],

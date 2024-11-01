@@ -82,7 +82,9 @@ export class UserProfileState{
                         this._toastrService.warning(`Compte innactivé! Veuillez valider ce compte a partir du lien fourni par mail! `, 'Ndewa360°');
                         break;
                     default:
-                        this._toastrService.error(`Une erreur c'est produite! `, 'Ndewa360°');
+                        let message = error?.error?.message;
+                        if(!message) message = "Une erreur c'est produite! Réessayez plus tard"
+                        this._toastrService.error(message, 'Ndewa360°');
                 }
                 
                 // this._toastrService.error(error?.error?.message, 'Erreur');
@@ -133,7 +135,9 @@ export class UserProfileState{
                         this._toastrService.error("Format de mot de passe incorrect! ","Ndewa360°");
                         break;
                     default:
-                        this._toastrService.error("Une erreur c'est produite! ","Ndewa360°");
+                        let message = error?.error?.message;
+                        if(!message) message = "Une erreur c'est produite! Réessayez plus tard"
+                        this._toastrService.error(message, 'Ndewa360°');
                 }
                 
                 return throwError(error);
@@ -142,7 +146,132 @@ export class UserProfileState{
         )
     }
 
-    
+    @Action(UserProfileAction.ValidateUserProfileWithToken)
+    validateUserProfileWithTokenState(ctx:StateContext<UserProfileStateModel>,{token}:UserProfileAction.ValidateUserProfileWithToken)
+    {
+        // ctx.dispatch(new AuthTokenAction.SetAuthToken(token));
+        return this._authService.validateEmailWithToken(token).pipe(
+            tap(
+                (result)=>{   
+                        // ctx.dispatch(new AuthTokenAction.SetAuthToken(null));          
+                    this._toastrService.success(`Email activé avec succés°! `, 'Ndewa360°');
+                }
+            ),
+            catchError((error) => {
+                switch(error.status)
+                {
+                    case 404:
+                        this._toastrService.error(`Compte introuvable! `, 'Ndewa360°');
+                        break;
+                    case 403:
+                        this._toastrService.warning(`Compte déjà activé!! `, 'Ndewa360°');
+                        break;
+                    default:
+                        this._toastrService.error(`Une erreur c'est produite! `, 'Ndewa360°');
+                }
+                // ctx.dispatch(new AuthTokenAction.SetAuthToken(null))
+                return throwError(error);
+                
+            })
+        )
+    }
+
+    @Action(UserProfileAction.ResentLinkForUserProfilePassWord)
+    resendEmailLinkForActivateUserProfile(ctx:StateContext<UserProfileStateModel>,{email}:UserProfileAction.ResentLinkForUserProfilePassWord)
+    {
+        return this._authService.resendEmailLinkForActiveAccound(email).pipe(
+            tap(
+                (result)=>{   
+                    this._toastrService.success(`Email envoyé avec succés! `, 'Ndewa360°');
+                }
+            ),
+            catchError((error) => {
+                switch(error.status)
+                {
+                    case 404:
+                        this._toastrService.error(`Compte introuvable! `, 'Ndewa360°');
+                        break;
+                    case 403:
+                        this._toastrService.warning(`Compte déjà activé!! `, 'Ndewa360°');
+                        break;
+                    default:
+                        let message = error?.error?.message;
+                        if(!message) message = "Une erreur c'est produite! Réessayez plus tard"
+                        this._toastrService.error(message, 'Ndewa360°');
+                }
+                return throwError(error);
+                
+            })
+        )
+    }
+
+    @Action(UserProfileAction.ResetAllState)
+    resetAllState(ctx:StateContext<UserProfileStateModel>)
+    {
+        ctx.setState({
+            initLoadingState:'NO_LOADED',
+            loadingUserProfile:false,
+            userProfile:null
+        })
+    }
+
+    @Action(UserProfileAction.ResetPasswordForUserProfile)
+    resetPasswordForUserProfile(ctx:StateContext<UserProfileStateModel>,{password,token}:UserProfileAction.ResetPasswordForUserProfile)
+    {
+        // ctx.dispatch(new AuthTokenAction.SetAuthToken(token))
+        return this._authService.resetPassword(password,token).pipe(
+            tap(
+                (result)=>{   
+                    this._toastrService.success(`Mot de passe modifié avec succés! `, 'Ndewa360°');
+                    // ctx.dispatch(new AuthTokenAction.SetAuthToken(null))
+                }
+            ),
+            catchError((error) => {
+                switch(error.status)
+                {
+                    case 404:
+                        this._toastrService.error(`Compte introuvable! `, 'Ndewa360°');
+                        break;
+                    case 403:
+                        this._toastrService.warning(`Token invalide! `, 'Ndewa360°');
+                        break;
+                    default:
+                        let message = error?.error?.message;
+                        if(!message) message = "Une erreur c'est produite! Réessayez plus tard"
+                        this._toastrService.error(message, 'Ndewa360°');
+                }
+                // ctx.dispatch(new AuthTokenAction.SetAuthToken(null))
+                return throwError(error);
+                
+            })
+        )
+    }
+
+    @Action(UserProfileAction.ForgotPasswordUserProfile)
+    resendEmailLinkForResetPasswordUserProfile(ctx:StateContext<UserProfileStateModel>,{email}:UserProfileAction.ForgotPasswordUserProfile)
+    {
+        return this._authService.resendEmailLinkForResetPassword(email).pipe(
+            tap(
+                (result)=>{   
+                    this._toastrService.success(`Email envoyé avec succés! `, 'Ndewa360°');
+                }
+            ),
+            catchError((error) => {
+                switch(error.status)
+                {
+                    case 404:
+                        this._toastrService.error(`Compte introuvable! `, 'Ndewa360°');
+                        break;
+                    default:
+                        let message = error?.error?.message;
+                        if(!message) message = "Une erreur c'est produite! Réessayez plus tard"
+                        this._toastrService.error(message, 'Ndewa360°');
+                }
+                return throwError(error);
+                
+            })
+        )
+    }
 
     @Action(UserProfileAction.UpdateUserProfile)
     updateUserProfile(ctx:StateContext<UserProfileStateModel>, {userProfile,id}:UserProfileAction.UpdateUserProfile)
@@ -167,6 +296,9 @@ export class UserProfileState{
                 ctx.patchState({
                     loadingUserProfile: false
                 })
+                let message = error?.error?.message;
+                if(!message) message = "Une erreur c'est produite! Réessayez plus tard"
+                this._toastrService.error(message, 'Ndewa360°');
                 return throwError(error);
                 
             })
@@ -213,6 +345,9 @@ export class UserProfileState{
                     loadingUserProfile: false,
                     initLoadingState:"LOADED"
                 })
+                let message = error?.error?.message;
+                if(!message) message = "Une erreur c'est produite! Réessayez plus tard"
+                this._toastrService.error(message, 'Ndewa360°');
                 return throwError(error);
                 
             })

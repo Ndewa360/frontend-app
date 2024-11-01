@@ -19,4 +19,9 @@ export namespace StatisticAction
         static readonly type = '[Locataire] Fectch Statics All Payement Locataire By PropertyID'
         constructor(public propertyID:string,public year:string){}
     }
+
+    export class ResetAllState
+    {
+        static readonly type = '[Statistic] Reset All State'
+    }
 }

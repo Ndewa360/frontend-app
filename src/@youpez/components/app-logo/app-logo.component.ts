@@ -7,7 +7,7 @@ import {Component, OnInit, Input} from '@angular/core'
 })
 export class AppLogoComponent implements OnInit {
 
-  @Input() type: string = ''
+  @Input() type: string = 'white'
   @Input() logoWidth: string = ''
 
   constructor() {

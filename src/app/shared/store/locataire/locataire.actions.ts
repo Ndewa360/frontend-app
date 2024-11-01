@@ -49,6 +49,11 @@ export namespace LocataireAction
         constructor(public locataire:any){}
     }
 
+    export class ResetAllState
+    {
+        static readonly type = '[Locataire] Reset All State';
+    }
+
     //Change loading state
     export class updateLoadingLocataireState
     {

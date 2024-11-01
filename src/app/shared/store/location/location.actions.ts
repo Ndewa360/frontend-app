@@ -23,6 +23,11 @@ export namespace LocationAction
         constructor(public locationId:string){}
     }
 
+    export class ResetAllState
+    {
+        static readonly type = '[Location] Reset All State'
+    }
+
     export class RemoveAssignationLocation
     {
         static readonly type = '[Location] Remove assignation Location'

@@ -15,6 +15,11 @@ export namespace UserAction
         constructor(public userId:string){}
     }
 
+    export class ResetAllState
+    {
+        static readonly type = '[User] Reset All State'
+    }
+
     //Fetch  User profil
     export class FetchUsers
     {
