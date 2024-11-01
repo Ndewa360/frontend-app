@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, from } from 'rxjs';
 import { UserProfileModel } from './user-profile.model';
 import { ApiResultFormat } from '../global';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -29,8 +29,22 @@ export class AuthService {
 
   }
 
-  async resetPassword(email: string) {
- 
+  resetPassword(password: string,token:string) {
+    return this._httpClient.put<ApiResultFormat<null>>(`${environment.apiUrl}/user/auth/reset-password`,{password},{headers:{ Authorization: `Bearer ${token}`} });
+  }
+
+  resendEmailLinkForActiveAccound(email:string)
+  {
+    return this._httpClient.post<ApiResultFormat<null>>(`${environment.apiUrl}/email/send-confirmation`,{email});
+  }
+
+  resendEmailLinkForResetPassword(email:string)
+  {
+    return this._httpClient.post<ApiResultFormat<null>>(`${environment.apiUrl}/user/auth/reset-password-link`,{email});
+  }
+
+  validateEmailWithToken(token:string):Observable<ApiResultFormat<null>> {
+    return this._httpClient.post<ApiResultFormat<null>>(`${environment.apiUrl}/email/confirm`,{},{headers:{ Authorization: `Bearer ${token}`} });
   }
 
   async logout() {

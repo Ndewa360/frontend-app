@@ -1,5 +1,5 @@
-<div fxLayout="column">
-
+    <div fxLayout="column">
+    
     <div fxFlex="100%" class="w-full shadow-md app-card row" *ngIf="currentPeriod">
         <div class="app-card__header header-footer-billing">
             <div class="app-row app-row--center  p-2">
@@ -175,6 +175,7 @@
                 <ng-template #customTrigger>
                     <svg ibmIconSettings size="16"></svg>
                 </ng-template>
+                <ibm-pagination [model]="model" (selectPage)="selectPage($event)"></ibm-pagination>
             </ibm-table-container>
         </div>
     
@@ -198,5 +199,6 @@
             </div>
         </div>
     </div>
+    
 
 </div>

@@ -9,6 +9,11 @@ export namespace RoomAction
         constructor(public room:RoomModel, public id:string){}
     }
 
+    export class ResetAllState
+    {
+        static readonly type = '[Room] Reset All State';
+    }
+
     //Fetch  Room profil
     export class FetchRoom
     {

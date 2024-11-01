@@ -51,6 +51,28 @@ export namespace UserProfileAction
         constructor(public status:boolean){}
     }
 
+    export class ResetPasswordForUserProfile
+    {
+        static readonly type = '[UserProfile] Reset password for UserProfile'
+        constructor(public password:string,public token:string){}
+    }
+
+    export class ResentLinkForUserProfilePassWord
+    {
+        static readonly type = '[UserProfile] Resend link for UserProfile'
+        constructor(public email:string){}
+    }
+
+    export class ResetAllState
+    {
+        static readonly type = '[UserProfile] Reset All State'
+    }
+    export class ValidateUserProfileWithToken
+    {
+        static readonly type = '[UserProfile] Validate Token UserProfile'
+        constructor(public token:string){}
+    }
+
     //Change loading state
     export class updateLoadingUserProfileState
     {

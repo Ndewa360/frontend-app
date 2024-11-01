@@ -23,6 +23,10 @@ export namespace LocationPaymentAction
         constructor(public locationPaymentId:string){}
     }
 
+    export class ResetAllState
+    {
+        static readonly type = '[LocationPayment] Reset All State'
+    }
     export class RemoveAssignationLocationPayment
     {
         static readonly type = '[LocationPayment] Remove assignation LocationPayment'

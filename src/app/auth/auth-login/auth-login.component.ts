@@ -40,9 +40,6 @@ export class AuthLoginComponent implements OnInit {
 
 
     this._ngxsAction.pipe(ofActionSuccessful(UserProfileAction.LoginUserProfile)).subscribe((value)=>{
-      // Navigate to the parent
-      // console.log("Valide Resulst",this.route.snapshot.queryParamMap.has("returnUrl"))
-      this.waittingResponse=false;
       if(this.route.snapshot.queryParamMap.has("returnUrl")) this.router.navigate([this.route.snapshot.queryParamMap.get("returnUrl")]); 
       else this.router.navigate(["app/welcome"])
       // 
@@ -51,6 +48,7 @@ export class AuthLoginComponent implements OnInit {
     this._ngxsAction.pipe(ofActionCompleted(UserProfileAction.LoginUserProfile)).subscribe(
       (value) => {
         this.waittingResponse=false;
+        if(value?.result?.error?.['status']==406) this.router.navigate(['/auth/confirmation',this.formGroup.value.email]);
       }
     )
 

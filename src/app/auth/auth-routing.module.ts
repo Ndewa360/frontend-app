@@ -9,6 +9,8 @@ import {AuthSignupComponent} from "./auth-signup/auth-signup.component"
 import {AuthForgotPasswordComponent} from "./auth-forgot-password/auth-forgot-password.component"
 import {AuthResetPasswordComponent} from "./auth-reset-password/auth-reset-password.component"
 import {AuthConfirmationComponent} from "./auth-confirmation/auth-confirmation.component"
+import { AuthAsktoValidEmailComponent } from './auth-askto-valid-email/auth-askto-valid-email.component'
+import { AuthValidatingAccountComponent } from './auth-validating-account/auth-validating-account.component'
 
 const routes: Routes = [
   
@@ -33,8 +35,16 @@ const routes: Routes = [
         component: AuthForgotPasswordComponent,
       },
       {
-        path: 'confirmation',
+        path: 'confirmation/:email',
         component: AuthConfirmationComponent,
+      },
+      {
+        path: 'link-receive',
+        component: AuthValidatingAccountComponent,
+      },
+      {
+        path: 'askto-valid-email',
+        component: AuthAsktoValidEmailComponent,
       },
       {
         path: '**',

@@ -85,6 +85,18 @@ export class StatisticState{
         )
     }
 
+    @Action(StatisticAction.ResetAllState)
+    resetAllState(ctx:StateContext<StatisticStateModel>)
+    {
+        ctx.setState({
+            loadingStatistic:false,
+            roomStatistic:[],
+            locataireStatistic:[],
+            allLocatairePayementByYear:[]
+            // initLoadingState:'NO_LOADED',
+        })
+    }
+
     @Action(StatisticAction.FetchStaticLocataireDataByPropertyIdAndYear)
     fetchLocataireStatisticByPropertyAndYear(ctx:StateContext<StatisticStateModel>,{propertyID,year}:StatisticAction.FetchStaticLocataireDataByPropertyIdAndYear)
     {

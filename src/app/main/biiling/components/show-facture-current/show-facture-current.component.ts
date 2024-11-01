@@ -25,6 +25,7 @@ export class ShowFactureCurrentComponent {
   public leftSidebarVisibility: boolean = true
   
   public property= null;
+  public fullModelData=[]
   public model = new TableModel();
   
   public searchModel
@@ -44,6 +45,7 @@ export class ShowFactureCurrentComponent {
   @ViewChild("roomTemplate", {static: true}) roomTemplate: TemplateRef<any>
   @ViewChild("actionTemplate", {static: true}) actionTemplate: TemplateRef<any>
   @ViewChild("propertyTemplate", {static: true}) propertyTemplate: TemplateRef<any>
+  @ViewChild("paginationTableItemTemplate", {static: true}) paginationTableItemTemplate: TemplateRef<any>
 
   constructor(
     private _store:Store,
@@ -101,38 +103,63 @@ export class ShowFactureCurrentComponent {
           className: "items-center",
         }),
       ]
-
-      newModel.data = roomList.map((room)=> {
-        let dataForLoading = {
-          roomId:room._id,
-          room,
-          isLoading: new BehaviorSubject(false),
-          value:new BehaviorSubject(room.isActiveForSouscription)
-        }
-        this.roomsValueChangeStatus.push(dataForLoading);
-        return ([
-          new TableItem({
-            data: room,
-            template: this.roomTemplate,
-            className: "items-center"
-          }),
-          new TableItem({
-            data: room.property,
-            template: this.propertyTemplate,
-            className: "items-center"
-          }),
-          new TableItem({
-            data: dataForLoading,
-            template: this.actionTemplate,
-            className: "items-center"
-          })
-        ])
-      });
+      this.fullModelData = [...roomList];
+      newModel.data = [[]];
+      newModel.pageLength=10;
+      newModel.totalDataLength=roomList.length;
       this.model = newModel;
+      this.selectPage(1);
+
     })
 
   }
 
+  getPage(page: number)
+  {
+    let end = page * this.model.pageLength;
+    let start = end - this.model.pageLength;
+
+    return new Promise(resolve => {
+      setTimeout(() => resolve(this.fullModelData.slice(start,end)), 150)
+    })
+  }
+
+  prepareData(roomList) {
+    return roomList.map((room)=> {
+      let dataForLoading = {
+        roomId:room._id,
+        room,
+        isLoading: new BehaviorSubject(false),
+        value:new BehaviorSubject(room.isActiveForSouscription)
+      }
+      this.roomsValueChangeStatus.push(dataForLoading);
+      return ([
+        new TableItem({
+          data: room,
+          template: this.roomTemplate,
+          className: "items-center"
+        }),
+        new TableItem({
+          data: room.property,
+          template: this.propertyTemplate,
+          className: "items-center"
+        }),
+        new TableItem({
+          data: dataForLoading,
+          template: this.actionTemplate,
+          className: "items-center"
+        })
+      ])
+    })
+  }
+
+  selectPage(page) {
+    this.getPage(page).then((data: Array<Array<any>>) => {
+      // set the data and update page
+      this.model.data = this.prepareData(data)
+      this.model.currentPage = page
+    })
+  }
 
 
   onRowClick(index: number) {

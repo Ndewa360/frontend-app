@@ -16,6 +16,11 @@ export namespace PropertyAction
         constructor(public propertyId:string){}
     }
 
+    export class ResetAllState
+    {
+        static readonly type = '[Property] Reset All State'
+    }
+    
     //Fetch  Property profil
     export class FetchProperties
     {

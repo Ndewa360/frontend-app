@@ -7,13 +7,15 @@
     </div>
 </ng-container>
 <ng-template #dataToShow>
+    <ng-scrollbar>
+
     <div fxFill fxLayout="row wrap">
         <div class="flex flex-col" fxFlex="100%" fxFlex.gt-md="20%">
             <div class=" ml-10">
                 <div class="app-content pl-6 pt-2">
                     <div class="pt-5">
                         <!-- <youpez-logo class="cursor-pointer" logoWidth="200px"></youpez-logo> -->
-                        <youpez-logo class="cursor-pointer" type="nobg-white" logoWidth="200px"></youpez-logo>
+                        <youpez-logo class="cursor-pointer" type="white" logoWidth="200px"></youpez-logo>
                     </div>
                 </div>
             </div>
@@ -79,11 +81,11 @@
         <div fxFlex="100%" fxFlex.gt-md="70%" class="app-content app-content--default mt-10 ml-5 w-full">
 
             <!-- <div class="sm:col-span-3 mb-6">
-                <youpez-alert [appearance]="'outline'" [type]="'warning'">
-                    Veuillez activer le plan Pro pour bénéficier de l'ensemble des fonctionnalités de l'application. <a
-                        [routerLink]="'/app/facturation/choix-plan'">Cliquez ici pour activer</a>
-                </youpez-alert>
-            </div> -->
+                    <youpez-alert [appearance]="'outline'" [type]="'warning'">
+                        Veuillez activer le plan Pro pour bénéficier de l'ensemble des fonctionnalités de l'application. <a
+                            [routerLink]="'/app/facturation/choix-plan'">Cliquez ici pour activer</a>
+                    </youpez-alert>
+                </div> -->
 
             <div class="app-main-header__inner">
                 <div class="text-4xl fond-bold app-main-header__text">
@@ -94,6 +96,9 @@
             <div class="mt-5">
                 <router-outlet></router-outlet>
             </div>
+
         </div>
     </div>
+</ng-scrollbar>
+
 </ng-template>

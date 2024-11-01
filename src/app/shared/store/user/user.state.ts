@@ -128,6 +128,16 @@ export class UserState{
         )
     }
 
+    @Action(UserAction.ResetAllState)
+    resetAllState(ctx:StateContext<UserStateModel>)
+    {
+        ctx.setState({
+            loadingUser:false,
+            users:[],
+            initLoadingState:'NO_LOADED',
+        })
+    }
+
     @Action(UserAction.FetchUsers)
     fetchUsers(ctx:StateContext<UserStateModel>,{usersId}:UserAction.FetchUsers)
     {

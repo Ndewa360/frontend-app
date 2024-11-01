@@ -61,6 +61,7 @@ export class LocataireState{
         })
     
     }
+    
 
     static selectStateLocataireByPropertyId(propertyID)
     {
@@ -78,6 +79,17 @@ export class LocataireState{
             countAllLocataire:state.locataires.length
         }))
     }
+
+    @Action(LocataireAction.ResetAllState)
+    resetAllState(ctx:StateContext<LocataireStateModel>)
+    {
+        ctx.setState({
+            loadingLocataire:false,
+            locataires:[],
+            initLoadingState:'NO_LOADED',
+        })
+    }
+
 
     @Action(LocataireAction.UpdateLocataire)
     updateLocataire(ctx:StateContext<LocataireStateModel>, {locataire,id}:LocataireAction.UpdateLocataire)

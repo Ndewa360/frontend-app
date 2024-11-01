@@ -1,12 +1,20 @@
 <div class="mb-8" fxHide fxShow.lt-md>
-  <youpez-logo class="cursor-pointer" logoWidth="130px"></youpez-logo>
+  <youpez-logo class="cursor-pointer" type="white" logoWidth="130px"></youpez-logo>
 </div>
-<h1 class="app-expressive-heading-06 mb-8">Confirmation required</h1>
+<h1 class="app-expressive-heading-06 mb-8">Confirmation du conpte requise</h1>
 <p class="app-body-long-02">
-  A confirmation mail with instructions has been sent to your email address. Follow those instructions to confirm your
-  email address and activate your account.
+  Un mail contenant les instructions de confirmation de compte vous a été envoyé par voter adresse email.  
 </p>
+<p>Suivez ces instructions pour confirmer votre email et activer votre compte</p>
+
+<button (click)="onResendEmailConfirmation()" cdsButton size="md" class="app-ibm-btn-full custom-primary-button" [disabled]="waittingResponse" ibmButton="primary" >
+  <ibm-loading *ngIf="waittingResponse; else noWaitingResponse"></ibm-loading>
+  <ng-template #noWaitingResponse>
+    <span class="btn-text"> ou Renvoyer le mail</span>
+    <youpez-ibm-icon iconClass="cds--btn__icon" iconName="arrowRight" iconSize="20" ></youpez-ibm-icon >
+  </ng-template>
+</button>
 <div class="mt-8">
-  Return to <a class="app-link" routerLink="../signin">Sign In</a>
+  Retournez sur <a class="app-link" routerLink=".../../signin">Connexion</a>
 </div>
 

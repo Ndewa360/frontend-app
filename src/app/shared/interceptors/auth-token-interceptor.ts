@@ -21,10 +21,13 @@ export class AuthTokenInterceptor implements HttpInterceptor {
 
   intercept(req: HttpRequest<any>, next: HttpHandler) {
     // Get the auth token from the service.
+
     return this._store.select(AuthTokenState.selectStateAuthToken)
     .pipe(
         take(1),
         mergeMap((token)=> {
+          console.warn("Dans l'intercepteur",token)
+
             if(token) return next.handle(req.clone({
                 setHeaders: { Authorization: `Bearer ${token}`}
               }))

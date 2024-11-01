@@ -1,0 +1,35 @@
+<div class="mb-8" fxHide fxShow.lt-md>
+    <youpez-logo class="cursor-pointer" type="white" logoWidth="130px"></youpez-logo>
+  </div>
+  <ng-container *ngIf="resultState=='loading'">
+    <h1 class="app-expressive-heading-06 mb-8">Activation du compte...</h1>
+    <div class="app-body-long-02 mb-8 pl-10" >
+      <img src="./../../../assets/img/utils/loading-gif.gif" width="120" alt="" srcset="">
+    </div>
+  </ng-container>
+  <ng-container *ngIf="resultState=='success'">
+    <h1 class="app-expressive-heading-06 mb-8">Compte activé avec succés</h1>
+    <div class="app-body-long-02 mb-8 pl-10 ml-10 mt-5" >
+      <img src="./../../../assets/img/utils/success-state.jpg" width="120" alt="" srcset="">
+    </div>
+  </ng-container>
+  <ng-container *ngIf="resultState=='error'">
+    <h1 class="app-expressive-heading-06 mb-8">Error dans l'activation du compte</h1>
+    <div class="app-body-long-02 mb-8 pl-10 ml-10" >
+      <img src="./../../../assets/img/utils/error-close.webp" width="120" alt="" srcset="">
+    </div>
+    <p class="pb-2 text-center text-red-600">Actualiser la page pour réessayer</p>
+
+  </ng-container>
+
+
+  <!-- <button type="submit" size="md" class="app-ibm-btn-full custom-primary-button" ibmButton="primary" >
+    Reset my password
+    <youpez-ibm-icon iconClass="cds--btn__icon" iconName="arrowRight" iconSize="20" ></youpez-ibm-icon >
+    
+  </button> -->
+
+  <div class="mt-15" *ngIf="resultState!='loading'">
+    Retourner sur <a class="app-link" routerLink="../signin">Connexion</a>
+  </div>
+  
