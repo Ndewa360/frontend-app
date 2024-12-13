@@ -34,7 +34,7 @@ export class UserState{
         return state.loadingUser
     }
     @Selector() 
-    static setlectStateUsers(state:UserStateModel)
+    static selectStateUsers(state:UserStateModel)
     {
         return state.users
     }
@@ -156,6 +156,30 @@ export class UserState{
         return this._usersService.getUsers(usersId.length>0?notFounds:[]).pipe(
             tap(
                 result => {
+                    if(state.initLoadingState!="LOADED") ctx.patchState({initLoadingState:'LOADING'})
+                    ctx.patchState({
+                        loadingUser:false,
+                        users:[...result.data],
+                    })
+                }
+            )
+        )
+    }
+
+    @Action(UserAction.FetchAllUsers)
+    fetchAllUsers(ctx:StateContext<UserStateModel>)
+    {
+        const state = ctx.getState(); 
+        if(state.users.length>0 && state.initLoadingState=="LOADED") return of(true);
+        
+        ctx.patchState({
+            loadingUser:true,
+            initLoadingState:"LOADING"
+        })
+        return this._usersService.getAllUsers().pipe(
+            tap(
+                result => {
+                    console.log("Fetch All Users",result)
                     if(state.initLoadingState!="LOADED") ctx.patchState({initLoadingState:'LOADING'})
                     ctx.patchState({
                         loadingUser:false,

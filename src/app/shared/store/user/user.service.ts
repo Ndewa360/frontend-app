@@ -4,7 +4,7 @@ import { UserModel } from "./user.model";
 import { HttpClient } from "@angular/common/http";
 import { Observable, combineLatest, of, } from "rxjs";
 import { ApiResultFormat } from "../global";
-import { switchMap } from "rxjs/operators";
+import { environment } from "src/environments/environment";
 
 @Injectable({
     providedIn:'root'
@@ -14,7 +14,9 @@ export class UserService
     /**
      * Constructor
      */
-    constructor( )
+    constructor(
+        private _httpClient: HttpClient
+    )
     {}
 
 
@@ -23,16 +25,12 @@ export class UserService
      */
     updateUser(contact:UserModel,id:string): Observable<ApiResultFormat<UserModel>>
     {
-        return null;
-
-        // return this._httpClient.put<ApiResultFormat<UserModel>>(`${environment.apiUrl}/user/profile/${id}`, contact)
+        return this._httpClient.post<ApiResultFormat<UserModel>>(`${environment.apiUrl}/users/`, {})
     }
 
-    getAllUSer(): Observable<any[]> {
-        return null;
-        // this.api.collectionDataQuery(
-        //   'user', this.api.whereQuery('uid', '!=', this.currentUserId)
-        // );
+    getAllUsers(): Observable<ApiResultFormat<UserModel[]>>
+    {
+        return this._httpClient.get<ApiResultFormat<UserModel[]>>(`${environment.apiUrl}/users/`, {})
     }
 
     getUser(userId):Observable<ApiResultFormat<UserModel[]>>

@@ -2,6 +2,7 @@
 export interface UserModel {
 
     fullName?:string;
+    name?:string;
 
     email?:string;
 
@@ -14,4 +15,8 @@ export interface UserModel {
     location?:string;
 
     _id?:string;
+
+    isDisabled?:boolean;
+
+    createdAt?:Date;
 }

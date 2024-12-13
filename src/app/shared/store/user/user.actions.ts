@@ -27,6 +27,13 @@ export namespace UserAction
         constructor(public usersId:string[]=[]){}
     }
 
+    //Fetch All user
+    export class FetchAllUsers
+    {
+        static readonly type = '[User] Fectch All Users'
+        constructor(){}
+    }
+
     //Login Action
     export class LoginUser
     {
