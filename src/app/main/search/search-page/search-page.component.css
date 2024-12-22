@@ -1,0 +1,9 @@
+.filter-item {
+    display:flex;
+    flex-direction: column;
+}
+
+.filter-item > *
+{
+    margin-top: 5px;
+}

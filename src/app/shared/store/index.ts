@@ -11,3 +11,5 @@ export * from "./statistic-data"
 export * from "./payment-location"
 export * from './souscription'
 export * from './souscription-period'
+export * from "./city"
+export * from "./country"

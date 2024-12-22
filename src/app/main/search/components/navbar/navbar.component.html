@@ -1,0 +1,46 @@
+<!--
+  This example requires updating your template:
+
+  ```
+  <html class="h-full bg-gray-100">
+  <body class="h-full">
+  ```
+-->
+<!-- <div class="min-h-full"> -->
+    <nav class="bg-gray-800" >
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="flex h-16 items-center justify-between">
+          <div class="flex items-center">
+            <div class="shrink-0">
+              <!-- <youpez-logo type="nobg-white-sidebar" logoWidth="55px"></youpez-logo> -->
+                <span class="text-white">Ndewa360°</span>
+              <!-- <img class="size-8" src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=500" alt="Your Company"> -->
+            </div>
+            <div class="hidden md:block">
+              <div class="ml-10 flex  items-center md:ml-6">
+                <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
+                <a [routerLink]="'/home'" class="rounded-md px-3 py-2 text-sm font-medium "  #rlaAcceuil="routerLinkActive" [ngClass]="rlaAcceuil.isActive ? 'text-white bg-gray-900' : 'text-gray-300 hover:bg-gray-700 hover:text-white'"  [routerLinkActive]="['text-white bg-gray-900']" >Acceuil</a>
+                <a [routerLink]="'/team'" class="rounded-md px-3 py-2 text-sm font-medium" #rlaEquipe="routerLinkActive" [ngClass]="rlaEquipe.isActive ? 'text-white bg-gray-900' : 'text-gray-300 hover:bg-gray-700 hover:text-white'" [routerLinkActive]="['text-white bg-gray-900']">Equipe</a>
+                <a [routerLink]="'/projet'" class="rounded-md px-3 py-2 text-sm font-medium" #rlaProject="routerLinkActive" [ngClass]="rlaProject.isActive ? 'text-white bg-gray-900' : 'text-gray-300 hover:bg-gray-700 hover:text-white'" [routerLinkActive]="['text-white bg-gray-900']">Projects</a>
+                <a [routerLink]="'/search'" class="rounded-md px-3 py-2 text-sm font-medium" #rlaFoundProperties="routerLinkActive" [ngClass]="rlaFoundProperties.isActive ? 'text-white bg-gray-900' : 'text-gray-300 hover:bg-gray-700 hover:text-white'" [routerLinkActive]="['text-white bg-gray-900']">Trouver un bien</a>
+                <a [routerLink]="'/about-us'" class="rounded-md px-3 py-2 text-sm font-medium" #rlaAboutUs="routerLinkActive" [ngClass]="rlaAboutUs.isActive ? 'text-white bg-gray-900' : 'text-gray-300 hover:bg-gray-700 hover:text-white'" [routerLinkActive]="['text-white bg-gray-900']">A propos de nous</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Mobile menu, show/hide based on menu state. -->
+      <div class="md:hidden" id="mobile-menu">
+        <div class="space-y-1 px-2 pb-3 pt-2 sm:px-3">
+            <a [routerLink]="'/home'" class="rounded-md px-3 py-2 text-sm font-medium "  #rlaAcceuil="routerLinkActive" [ngClass]="rlaAcceuil.isActive ? 'text-white bg-gray-900' : 'text-gray-300 hover:bg-gray-700 hover:text-white'"  [routerLinkActive]="['text-white bg-gray-900']" >Acceuil</a>
+            <a [routerLink]="'/team'" class="rounded-md px-3 py-2 text-sm font-medium" #rlaEquipe="routerLinkActive" [ngClass]="rlaEquipe.isActive ? 'text-white bg-gray-900' : 'text-gray-300 hover:bg-gray-700 hover:text-white'" [routerLinkActive]="['text-white bg-gray-900']">Equipe</a>
+            <a [routerLink]="'/projet'" class="rounded-md px-3 py-2 text-sm font-medium" #rlaProject="routerLinkActive" [ngClass]="rlaProject.isActive ? 'text-white bg-gray-900' : 'text-gray-300 hover:bg-gray-700 hover:text-white'" [routerLinkActive]="['text-white bg-gray-900']">Projects</a>
+            <a [routerLink]="'/search'" class="rounded-md px-3 py-2 text-sm font-medium" #rlaFoundProperties="routerLinkActive" [ngClass]="rlaFoundProperties.isActive ? 'text-white bg-gray-900' : 'text-gray-300 hover:bg-gray-700 hover:text-white'" [routerLinkActive]="['text-white bg-gray-900']">Trouver un bien</a>
+            <a [routerLink]="'/about-us'" class="rounded-md px-3 py-2 text-sm font-medium" #rlaAboutUs="routerLinkActive" [ngClass]="rlaAboutUs.isActive ? 'text-white bg-gray-900' : 'text-gray-300 hover:bg-gray-700 hover:text-white'" [routerLinkActive]="['text-white bg-gray-900']">A propos de nous</a>
+        </div>
+      </div>
+    </nav>
+  
+  <!-- </div> -->
+  

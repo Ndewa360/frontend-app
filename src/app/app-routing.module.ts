@@ -2,6 +2,8 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { InitialLoadingDataResolver } from './shared/resolvers';
 import { AuthGuard } from './shared/guard';
+import { LayoutComponent } from './layout/default/layout.component';
+import { LoadingAdminDataResolver } from './shared/resolvers/loading-admin-data';
 
 const routes: Routes = [
 	{
@@ -16,12 +18,32 @@ const routes: Routes = [
 		loadChildren: () => import('./main/main.module').then(m => m.MainModule)
 	},
 	{
+		path: 'search',
+		// canActivate:[AuthGuard],
+		data:{
+			breadcrumb: 'Acceuil'
+		},
+		loadChildren: () => import('./main/search/search.module').then(m => m.SearchModule)
+	},
+	{
+		path: 'admin',
+		canActivate:[AuthGuard],
+		component: LayoutComponent,		
+		data:{
+			breadcrumb: 'Acceuil'
+		},
+		resolve:{
+			"initialData":LoadingAdminDataResolver
+		},
+		loadChildren: () => import('./main/admin/admin.module').then(m => m.AdminModule),
+	},
+	{
 		path: 'auth',
 		loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)
 	  },
 	  {
 		path: '**',
-		redirectTo: '/auth/signin',
+		redirectTo: '/search/index',
 		pathMatch: 'full',
 	  },
 ];

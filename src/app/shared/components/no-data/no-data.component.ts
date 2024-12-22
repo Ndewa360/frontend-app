@@ -9,6 +9,7 @@ import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
 export class NoDataComponent implements OnInit {
 
   @Input() textDescription:string=""
+  @Input() isTextDescriptionForFilter:boolean=false
   constructor() { }
 
   ngOnInit(): void {

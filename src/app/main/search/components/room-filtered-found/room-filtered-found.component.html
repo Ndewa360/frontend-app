@@ -1,0 +1,62 @@
+<ng-scrollbar>
+    <div fxFill fxLayout="column">
+      <div fxFlex class="relative">
+               
+        <div class="app-subtitle app-subtitle--cards mt-2"></div>
+        <div fxLayout="row wrap" class="app-card-row-holder">
+          <ng-container *ngIf="(loadingRoom$ | async)=='LOADED' else isLoadingData">
+            <ng-container *ngFor="let room of roomFound">
+              <!-- [routerLink]="['/app/properties',room._id]" -->
+              <div fxFlex="100%" fxFlex.gt-md="20%" >
+                <div class="app-card app-card--select">
+                  <button (click)="openShowRoom(room)"  class="float-right btn-text-edit top-2 mt-4 mr-4 bg-slate-700 rounded-md">
+                    <youpez-ibm-icon iconName="pen" iconSize="24" ></youpez-ibm-icon>
+                  </button>
+                  <div class="app-card__content__alt">
+                    <div class="">                  
+                      <div class="px-10 py-10 text-center app-bg-decorative mb-2" [ngClass]="{'border-color': room.isFree?'rgb(220, 38, 38)':'rgb(22, 163, 74)'}">
+                        <!-- <youpez-ibm-icon iconName="home" iconSize="32" ></youpez-ibm-icon> -->
+                        <img src="assets/img/utils/room.png" alt="" width="100" srcset="">
+
+                      </div>
+                      <div>                        
+
+                        <div class="app-expressive-heading-01 truncate">#{{room.code}}</div>
+                        <div class="app-helper-text-01 mb-3 italic">{{getRoomType(room.type)}}</div>
+                        <div class="grid grid-cols-10">
+                          <div class="app-label-01 col-span-6 text-muted"> 
+                            <ng-container *ngIf="!room.isFree else noFreeRoom">
+                              <youpez-ibm-icon class="location-icon text-green"  iconName="user" iconSize="16"></youpez-ibm-icon>
+                              <span>{{(getRoomLocataire(room.locataire) | async)?.fullName}}</span>
+                            </ng-container>
+                            <ng-template #noFreeRoom>
+                              <youpez-ibm-icon class="location-icon text-red"  iconName="error" iconSize="16"></youpez-ibm-icon>
+                              <span class="text-red">Libre</span>
+                            </ng-template>
+                              <!-- <span class="location-zone ml-1">{{property.location}}</span> -->
+                          </div>
+                          <div class="app-label-01 col-span-4 col-end-auto  text-muted ">           
+                            <span class="mr-1">{{room.price}} {{getMoney()}}</span>
+                              <youpez-ibm-icon class="location-icon" iconName="money" iconSize="16"></youpez-ibm-icon>
+                          </div>
+                      </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="roomFound.length==0">
+                <app-no-data-list [isTextDescriptionForFilter]="true" class="flex-auto"></app-no-data-list>                            
+            </ng-container>
+          </ng-container>
+          <ng-template #isLoadingData>
+            <div class="relative no-data-loader">
+              <youpez-loader></youpez-loader>
+            </div>
+          </ng-template>
+          
+        </div>
+      </div>
+    </div>
+  </ng-scrollbar>
