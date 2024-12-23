@@ -19,6 +19,7 @@ import {
   SouscriptionPeriodState,
   CityState,
   CountryState,
+  SearchState,
 
 } from './store';
 
@@ -55,6 +56,7 @@ import { LocalizedDatePipe } from './pipes/localized-date.pipe';
         SouscriptionPeriodState,
         CityState,
         CountryState,
+        SearchState
       ]),
       NgxsStoragePluginModule.forRoot({
         key:"auth_token",

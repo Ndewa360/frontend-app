@@ -1,11 +1,13 @@
+import { CityModel } from "../city";
+import { CountryModel } from "../country";
 
 export interface PropertyModel {
 
     name:string;
     location:string;
-    geolocation?: {lat:number,lng:number}
+    geolocationCountry:CountryModel;
+    geolocationCity:CityModel
     description?:string;
-    country? :string
     image?:string;
     createdAt?: Date,
     updatedAt?: Date,

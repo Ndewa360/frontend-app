@@ -1,3 +1,12 @@
 .bg-navbar {
     background-color: #161616;;
 }
+
+.custom-connexion-button
+{
+    max-width:16px
+}
+
+.menu-item {
+    /* margin-right: 10px; */
+}

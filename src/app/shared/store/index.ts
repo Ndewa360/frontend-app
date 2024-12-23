@@ -13,3 +13,4 @@ export * from './souscription'
 export * from './souscription-period'
 export * from "./city"
 export * from "./country"
+export * from "./search"

@@ -6,7 +6,6 @@ import { CityService } from "./city.service";
 // import { ToastrService } from "ngx-toastr";
 import { of, throwError } from "rxjs";
 import { catchError, tap } from "rxjs/operators";
-import { NotificationService } from "carbon-components-angular";
 import { ToastrService } from "ngx-toastr";
 
 export class CityStateModel {
