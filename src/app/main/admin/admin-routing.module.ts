@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { AdminComponent } from './admin/admin.component';
 import { LoadingAdminDataResolver } from 'src/app/shared/resolvers/loading-admin-data';
 import { UsersListComponent } from './components/users-list/users-list.component';
+import { CountryCityComponent } from './components/country-city/country-city.component';
 
 const routes: Routes = [
   {
@@ -15,6 +16,10 @@ const routes: Routes = [
        {
         path: 'users',
         component: UsersListComponent
+       },
+       {
+        path: 'country',
+        component: CountryCityComponent
        },
        {
         path: '**',

@@ -38,7 +38,7 @@ export class CountryState{
         return state.loadingCountry
     }
     @Selector() 
-    static setlectStateCountries(state:CountryStateModel)
+    static selectStateCountries(state:CountryStateModel)
     {
         return state.countries
     }
@@ -79,7 +79,6 @@ export class CountryState{
         return this._countrysService.updateCountry(country,id).pipe(
             tap(
                 (result)=>{
-                    console.log("Result ",result)
                     const data = [...state.countries]
                     let index = data.findIndex((u)=>u._id==id);
                     if(index>-1) data[index]=result.data;
@@ -87,7 +86,7 @@ export class CountryState{
                         loadingCountry:false,
                         countries:data
                     })
-                    this._toastrService.success(`Propriété mise à jour avec success!`, 'Ndewa360°');
+                    this._toastrService.success(`Pays mise à jour avec success!`, 'Ndewa360°');
                 }
             ),
             catchError((error) => {
@@ -101,6 +100,19 @@ export class CountryState{
                 
             })
         )
+    }
+
+    @Action(CountryAction.AddCity)
+    updateCityCountry(ctx:StateContext<CountryStateModel>, {city,countryID}:CountryAction.AddCity)
+    {
+        const state = ctx.getState();
+
+        const data = [...state.countries]
+        let index = data.findIndex((u)=>u._id==countryID);
+        if(index>-1) data[index]={...data[index],cities:[...data[index].cities,city]};
+        ctx.patchState({
+            countries:data
+        })
     }
 
     @Action(CountryAction.ResetAllState)
@@ -168,10 +180,17 @@ export class CountryState{
                         loadingCountry:false,
                         countries:[...state.countries, result.data]
                     });       
+                    this._toastrService.success(`Pays crée avec success!`, 'Ndewa360°');
                 }
             ),
             catchError((error)=>{
-                  return error;
+                ctx.patchState({
+                    loadingCountry: false
+                })
+                let message = error?.error?.message;
+                if(!message) message = "Une erreur c'est produite! Réessayez plus tard"
+                this._toastrService.error(message, 'Ndewa360°');
+                return throwError(error);
             })
         )
     }
@@ -188,8 +207,7 @@ export class CountryState{
         return this._countrysService.getCountries().pipe(
             tap(
                 result => {
-                    console.log("Result Country ",result,state.initLoadingState)
-
+                    console.log("Fetch Country Result ",result )
                     let cities = result.data.map((r)=>r.cities).reduce((acc,curr)=>[...acc,...curr],[])                    
                     if(cities.length>0)  ctx.dispatch(new CityAction.AddCityFromLoadedCountry(cities))
                         

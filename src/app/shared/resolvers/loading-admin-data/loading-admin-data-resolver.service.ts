@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot } from "@angular/router";
 import { Store } from "@ngxs/store";
 import { combineLatest, Observable, of, skipWhile, tap} from "rxjs";
-import { UserAction } from "../../store";
+import { CountryAction, UserAction } from "../../store";
 
 
 @Injectable({
@@ -37,7 +37,8 @@ export class LoadingAdminDataResolver implements Resolve<any>
 
         combineLatest(
             this._store.dispatch([
-                new UserAction.FetchAllUsers()
+                new UserAction.FetchAllUsers(),
+                new CountryAction.FetchCountries()
             ]),
             this._store.select((state)=>state.userlist.initLoadingState).pipe(skipWhile((initLoadingState)=>initLoadingState!="LOADED")),
         ).pipe(

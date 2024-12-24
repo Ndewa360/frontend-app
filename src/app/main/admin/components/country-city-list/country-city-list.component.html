@@ -1,0 +1,89 @@
+<ng-template #deleteGroupTemplate let-tooltip="tooltip" let-groupIndex="groupIndex">
+  <p>Supprimer le pays?</p>
+  <div class="bx--tooltip__footer">
+    <button ibmButton="danger" size="sm" (click)="tooltip.doClose();onDeleteGroup(deletableTaskGroupIndex)">Delete
+    </button>
+    <button ibmButton="ghost" size="sm" (click)="tooltip.doClose();">Cancel</button>
+  </div>
+</ng-template>
+<div cdkDropList [cdkDropListData]="countriesData" (cdkDropListDropped)="dropGroup($event)">
+  <ng-container *ngFor="let country of countriesData;trackBy: trackByFn;let countryIndex=index">
+    <div cdkDropListGroup cdkDrag [cdkDragData]="country" class="opacity-75" [ngClass]="{'app-bg-container app-list--border-over':!transparent}"
+      class="app-list app-list--todo mb-3">
+      <div class="app-list__group">
+        <ng-container *ngIf="country.country.cities.length">
+          <div class="app-progress app-progress--x-small">
+            <div class="app-progress__bar app-bg-success-lt-20" [style.width]="'100%'"></div>
+          </div>
+        </ng-container>
+        <div>
+          <div class="app-list__item">
+            <div>
+              <button (click)="onToggleCountry(countryIndex)" ibmButton="ghost" size="sm" class="bx--btn--icon-only">
+                <ng-container *ngIf="country.opened">
+                  <youpez-ibm-icon iconClass="cds--btn__icon" iconName="chevronDown" iconSize="32"></youpez-ibm-icon>
+                </ng-container>
+                <ng-container *ngIf="!country.opened">
+                  <youpez-ibm-icon iconClass="cds--btn__icon" iconName="chevronUp" iconSize="32"></youpez-ibm-icon>
+                </ng-container>
+              </button>
+            </div>
+            <div class="app-list__item__content line-through">
+              <ng-container *ngIf="countryFocusId === country.country._id">
+                <input cdkTrapFocus cdkTrapFocusAutoCapture placeholder="Nouveau Pays..."
+                  class="flex-1 app-list__item__input app-expressive-heading-02" disabled type="text"
+                  [value]="country.country.fullName" />
+              </ng-container>
+              <ng-container *ngIf="countryFocusId !== country.country._id">
+                <input class="flex-1 app-list__item__input app-expressive-heading-02" disabled type="text"
+                  placeholder="Nouveau Pays..." [value]="country.country.fullName" />
+              </ng-container>
+            </div>
+            <div class="flex items-center">
+              <button (click)="onSelectedDeletableGroup(countryIndex)" ibmButton="ghost" size="sm"
+                class="bx--btn--icon-only bx--btn--remove-tooltip">
+                <youpez-ibm-icon iconClass="cds--btn__icon" iconName="trashCan" iconSize="32"></youpez-ibm-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div cdkDropList id={{country.country._id}} [cdkDropListData]="country.country.cities" (cdkDropListDropped)="drop($event)"
+          [cdkDropListConnectedTo]="getConnectedList()" [ngClass]="{'hidden':!country.opened}"
+          class="app-list__group__children">
+          <ng-container
+            *ngFor="let city of country.country.cities| inputTypeAdvanced:'description':_filterText;trackBy: trackByFn;let cityIndex=index">
+            <div cdkDrag [cdkDragData]="city" class="app-list__item opacity-75" >
+              <div class="mr-3">
+                <youpez-ibm-icon iconClass="cds--btn__icon" iconName="map" iconSize="16"></youpez-ibm-icon>
+              </div>
+              <ng-container >
+                <div class="app-list__item__content">
+                  <ng-container *ngIf="cityFocusId=== city._id">
+                    <input class="flex-1 app-list__item__input app-body-short-01" disabled placeholder="Ville..."
+                      cdkTrapFocus cdkTrapFocusAutoCapture type="text" [value]="city.fullName" />
+                  </ng-container>
+                  <ng-container *ngIf="cityFocusId!== city._id">
+                    <input class="flex-1 app-list__item__input app-body-short-01" placeholder="Ville..."
+                      type="text" [value]="city.fullName" disabled />
+                  </ng-container>
+                </div>
+              </ng-container>
+              <button (click)="onDeleteTask(countryIndex,cityIndex)" ibmButton="ghost" size="sm"
+                class="bx--btn--icon-only bx--btn--remove-tooltip">
+                <youpez-ibm-icon iconClass="cds--btn__icon" iconName="trashCan" iconSize="32"></youpez-ibm-icon>
+              </button>
+            </div>
+          </ng-container>
+          <div class="app-list__add-btn">
+            <ng-container *ngIf="_filterText === ''">
+              <button (click)="onAddCity(countryIndex)" class="custom--btn--tertiary " ibmButton="tertiary" size="sm">
+                Ajouter une ville
+                <youpez-ibm-icon iconClass="cds--btn__icon" iconName="add" iconSize="20"></youpez-ibm-icon>
+              </button>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>

@@ -109,7 +109,7 @@
   </ng-container>
 
   <ng-container *ngSwitchCase="'minimize'">
-    <svg [class]="iconClass" cdsIcon="alarm" [size]="iconSize"></svg>
+    <svg [class]="iconClass" cdsIcon="minimize" [size]="iconSize"></svg>
   </ng-container>
 
   <ng-container *ngSwitchCase="'cloudDownload'">
@@ -271,20 +271,30 @@
     <svg [class]="iconClass" cdsIcon="home" [size]="iconSize"></svg>
   </ng-container>
 
-  <ng-container *ngSwitchCase="'chevronDown'">
+  <ng-container *ngSwitchCase="'time'">
     <svg [class]="iconClass" cdsIcon="home" [size]="iconSize"></svg>
+  </ng-container>
+
+  <ng-container *ngSwitchCase="'map'">
+    <svg [class]="iconClass" cdsIcon="map" [size]="iconSize"></svg>
+  </ng-container>
+
+ 
+
+  <ng-container *ngSwitchCase="'chevronDown'">
+    <svg [class]="iconClass" cdsIcon="chevron--down" [size]="iconSize"></svg>
   </ng-container>
 
   <ng-container *ngSwitchCase="'chevronUp'">
-    <svg [class]="iconClass" cdsIcon="home" [size]="iconSize"></svg>
+    <svg [class]="iconClass" cdsIcon="chevron--up" [size]="iconSize"></svg>
   </ng-container>
 
   <ng-container *ngSwitchCase="'chevronLeft'">
-    <svg [class]="iconClass" cdsIcon="home" [size]="iconSize"></svg>
+    <svg [class]="iconClass" cdsIcon="chevron--left" [size]="iconSize"></svg>
   </ng-container>
 
   <ng-container *ngSwitchCase="'chevronRight'">
-    <svg [class]="iconClass" cdsIcon="notification"  [size]="iconSize"></svg>
+    <svg [class]="iconClass" cdsIcon="chevron--right"  [size]="iconSize"></svg>
   </ng-container>
 
   <ng-container *ngSwitchCase="'draggable'">
@@ -296,7 +306,7 @@
   </ng-container>
 
   <ng-container *ngSwitchCase="'maximize'">
-    <svg [class]="iconClass" cdsIcon="home" [size]="iconSize"></svg>
+    <svg [class]="iconClass" cdsIcon="maximize" [size]="iconSize"></svg>
   </ng-container>
 
   <ng-container *ngSwitchCase="'star'">

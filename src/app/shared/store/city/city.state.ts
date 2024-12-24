@@ -3,7 +3,7 @@ import { CityModel } from "./city.model";
 import { Injectable } from "@angular/core";
 import { CityAction } from "./city.actions";
 import { CityService } from "./city.service";
-// import { ToastrService } from "ngx-toastr";
+import { CountryAction } from "./../country/country.actions"
 import { of, throwError } from "rxjs";
 import { catchError, tap } from "rxjs/operators";
 import { ToastrService } from "ngx-toastr";
@@ -98,7 +98,7 @@ export class CityState{
                         loadingCity:false,
                         cities:data
                     })
-                    this._toastrService.success(`Profil city modifié avec success`, 'Ndewa360°');
+                    this._toastrService.success(`City modifié avec success`, 'Ndewa360°');
                 }
             ),
             catchError((error) => {               
@@ -159,7 +159,7 @@ export class CityState{
                         cities:[...state.cities, result.data]
                     })
                     this._toastrService.success(`City ajouté avec success!`, 'Ndewa360°');
-
+                    ctx.dispatch(new CountryAction.AddCity(result.data, result.data.country))
                 }
             ),
             catchError((error)=>{

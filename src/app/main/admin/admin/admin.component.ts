@@ -59,8 +59,20 @@ export class AdminComponent {
           // path: 'plan-list'
         },
       ]
+    },
+    {
+      name: 'Localisation',
+      children: [
+        {
+          name: 'Pays/ville',
+          path: 'country',
+        },
+      ]
     }
+
   ]
+
+
 
   public opened: boolean = false
 

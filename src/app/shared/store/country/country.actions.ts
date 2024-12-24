@@ -1,3 +1,4 @@
+import { CityModel } from "../city";
 import { CountryModel } from "./country.model";
 
 export namespace CountryAction
@@ -42,5 +43,11 @@ export namespace CountryAction
     {
         static readonly type = '[Country] Loading state Country'
         constructor(public status:boolean){}
+    }
+
+    export class AddCity 
+    {
+        static readonly type = '[Country] Add City'
+        constructor(public city:CityModel, public countryID:string){}
     }
 }

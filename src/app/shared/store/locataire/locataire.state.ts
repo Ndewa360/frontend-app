@@ -169,7 +169,6 @@ export class LocataireState{
         return this._locatairesService.getLocataire(locataireId).pipe(
             tap(
                 result => {
-                    console.log("Get Locataire ",result)
                     ctx.patchState({
                         loadingLocataire:false,
                         locataires:[...state.locataires, result.data]

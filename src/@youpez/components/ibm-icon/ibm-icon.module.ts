@@ -257,8 +257,40 @@ import Close24 from '@carbon/icons/es/close/24';
 import Close20 from '@carbon/icons/es/close/20';
 import Close16 from '@carbon/icons/es/close/16';
 
+import Minimize32 from '@carbon/icons/es/minimize/32';
+import Minimize24 from '@carbon/icons/es/minimize/24';
+import Minimize20 from '@carbon/icons/es/minimize/20';
+import Minimize16 from '@carbon/icons/es/minimize/16';
 
+import Maximize32 from '@carbon/icons/es/maximize/32';
+import Maximize24 from '@carbon/icons/es/maximize/24';
+import Maximize20 from '@carbon/icons/es/maximize/20';
+import Maximize16 from '@carbon/icons/es/minimize/16';
 
+import ChevronUp32 from '@carbon/icons/es/chevron--up/32';
+import ChevronUp24 from '@carbon/icons/es/chevron--up/24';
+import ChevronUp20 from '@carbon/icons/es/chevron--up/20';
+import ChevronUp16 from '@carbon/icons/es/chevron--up/16';
+
+import ChevronDown32 from '@carbon/icons/es/chevron--down/32';
+import ChevronDown24 from '@carbon/icons/es/chevron--down/24';
+import ChevronDown20 from '@carbon/icons/es/chevron--down/20';
+import ChevronDown16 from '@carbon/icons/es/chevron--down/16';
+
+import ChevronLeft32 from '@carbon/icons/es/chevron--left/32';
+import ChevronLeft24 from '@carbon/icons/es/chevron--left/24';
+import ChevronLeft20 from '@carbon/icons/es/chevron--left/20';
+import ChevronLeft16 from '@carbon/icons/es/chevron--left/16';
+
+import ChevronRight32 from '@carbon/icons/es/chevron--right/32';
+import ChevronRight24 from '@carbon/icons/es/chevron--right/24';
+import ChevronRight20 from '@carbon/icons/es/chevron--right/20';
+import ChevronRight16 from '@carbon/icons/es/chevron--right/16';
+
+import Map32 from '@carbon/icons/es/map/32';
+import Map24 from '@carbon/icons/es/map/24';
+import Map20 from '@carbon/icons/es/map/20';
+import Map16 from '@carbon/icons/es/map/16';
 
 
 
@@ -288,7 +320,41 @@ export class IbmIconModule {
     private _matIconRegistry: MatIconRegistry
   ) {
     iconService.registerAll([
-      
+		ChevronUp32,
+		ChevronUp24,
+		ChevronUp20,
+		ChevronUp16,
+
+		ChevronDown32,
+		ChevronDown24,
+		ChevronDown20,
+		ChevronDown16,
+
+		ChevronLeft32,
+		ChevronLeft24,
+		ChevronLeft20,
+		ChevronLeft16,
+
+		ChevronRight32,
+		ChevronRight24,
+		ChevronRight20,
+		ChevronRight16,
+		
+		Map32,
+		Map24,
+		Map20,
+		Map16,
+
+		Minimize32,
+		Minimize24,
+		Minimize20,
+		Minimize16,
+
+		Maximize32,
+		Maximize24,
+		Maximize20,
+		Maximize16,
+
       Pen32,
 			Pen24,
 			Pen20,
