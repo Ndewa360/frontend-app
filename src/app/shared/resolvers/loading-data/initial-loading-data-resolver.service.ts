@@ -3,7 +3,7 @@ import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot } from "@angular/r
 import { Actions, Store } from "@ngxs/store";
 import { Observable, combineLatest, of} from "rxjs";
 import { map, mergeMap, skipWhile, tap } from "rxjs/operators";
-import { LocataireAction, LocationAction, LocationPaymentAction, PropertyAction, RoomAction, UserProfileAction } from "../../store";
+import { LocataireAction, LocationAction, LocationPaymentAction, PropertyAction, RoomAction, UserProfileAction,CountryAction } from "../../store";
 
 
 @Injectable({
@@ -37,7 +37,9 @@ export class InitialLoadingDataResolver implements Resolve<any>
                     if(!value) return null;
                     return this._store.dispatch([
                         new UserProfileAction.FetchUserProfile(),
-                        new PropertyAction.FetchProperties()
+                        new PropertyAction.FetchProperties(),
+                        new CountryAction.FetchCountries()
+                        
                     ])}
                 ),
             ),

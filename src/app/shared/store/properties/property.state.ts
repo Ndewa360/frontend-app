@@ -165,26 +165,18 @@ export class PropertyState{
                         loadingProperty:false,
                         properties:[...state.properties, result.data]
                     });                    
-                    // this.notificationService.showToast({
-                    //     type: "success",
-                    //     title: "Biens Immobilier",
-                    //     subtitle: "Bien crée avec success!",
-                    //     target: "#notificationHolder",
-                    //     message: "message",
-                    //     duration: 2000,
-                    // })
+                    this._toastrService.success(`Propriété ajouté avec success!`, 'Ndewa360°');
+
                 }
             ),
             catchError((error)=>{
-                // this.notificationService.showToast({
-                //     type: "error",
-                //     title: "Biens Immobilier",
-                //     subtitle: "Une erreur c'est produite ",
-                //     target: "#notificationHolder",
-                //     message: "message",
-                //     duration: 2000,
-                //   });
-                  return error;
+                ctx.patchState({
+                    loadingProperty: false
+                })
+                let message = error?.error?.message;
+                if(!message) message = "Une erreur c'est produite! Réessayez plus tard"
+                this._toastrService.error(message, 'Ndewa360°');
+                return throwError(error);
             })
         )
     }
@@ -201,7 +193,6 @@ export class PropertyState{
         return this._propertysService.getProperties().pipe(
             tap(
                 result => {
-                    console.log("Result Property ",result,state.initLoadingState)
                     if(state.initLoadingState!="LOADED") ctx.patchState({initLoadingState:'LOADED'})
                     ctx.patchState({
                         loadingProperty:false,

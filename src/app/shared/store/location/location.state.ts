@@ -101,16 +101,17 @@ export class LocationState{
                         loadingLocation:false,
                         locations:data
                     })
-                    // this._toastrService.success(`Profil utilisateur modifié avec success`, 'Location');
+                    this._toastrService.success(`Location modifié avec success`, 'Location');
                 }
             ),
             catchError((error) => {
-                // this._toastrService.error(error?.error?.message, 'Erreur');
                 ctx.patchState({
                     loadingLocation: false
                 })
+                let message = error?.error?.message;
+                if(!message) message = "Une erreur c'est produite! Réessayez plus tard"
+                this._toastrService.error(message, 'Ndewa360°');
                 return throwError(error);
-                
             })
         )
     }

@@ -45,6 +45,8 @@ export class SearchPageComponent implements OnInit {
         isInternalShower:[false,Validators.required],
         hasKitchen:[true,Validators.required],
         isInternalKitchen:[false,Validators.required],
+        hasClosure:[true,Validators.required],
+        hasParking:[false,Validators.required],
       })
     })
     this.roomListType= Object.values(RoomType).map((value)=>({content:UtilsString.getStringOfRoomType(value), valueType:value, selected:value==RoomType.ROOM}));
