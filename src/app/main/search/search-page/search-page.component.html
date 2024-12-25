@@ -1,169 +1,30 @@
 <!-- <ng-scrollbar> -->
-<form [formGroup]="formGroup">
 
   <div fxFill fxLayout="row wrap">
-    <div class="flex flex-col" fxFlex="100%" fxFlex.gt-md="20%">
-      <div fxFlex="100%">
-        <div
-          class=" ml-10 mt-20 app-docs-list-holder app-sidenav-v2 app-sidenav-v2--solid-border app-sidenav-v2--rendered app-sidenav-v2--opened app-sidenav-v2--left app-sidenav-v2--hoverAble"
-          style="" [ngClass.lt-lg]="{'app-bg-container':true,'app-docs-list-holder--opened app-border-r':opened}">
-          <div class=" app-bg-container app-border-b app-card bg-white  app-a-box app-scrollbar-fix">
-            <div class=" app-nav-list app-content ">
-              <!-- app-content--default mt-24-->
-              <div class="app-border-b flex items-center p-4 ">
-                <div class="mr-4">
-                  <div>
-                    <div class="app-expressive-heading-02">Filtre de recherche</div>
-                  </div>
-                </div>
-              </div>
-              <div class="p-4">
-                <div class="app-nav-list__item ">
-                  <div class="app-nav-list__item__group filter-title">Type de bien</div>
-                  <div class="app-nav-list__children">
-                    <div class="app-nav-list__item filter-item">
-                      <ibm-combo-box class="mt-2" [items]="roomListType" (selected)="onSelectedType($event)"
-                        theme="dark" size="md">
-                        <ibm-dropdown-list></ibm-dropdown-list>
-                      </ibm-combo-box>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="app-nav-list__item ">
-                  <div class="app-nav-list__item__group filter-title">Spécificité</div>
-                  <div class="app-nav-list__children">
-                    <div class="app-nav-list__item filter-item">
-                      <ng-container formGroupName="specifity">
-                        <div fxLayout="row wrap" class="app-form__row" >
-                          <div fxFlex="100%" class="app-form__item" fxFlex.gt-md="50%">
-                            <ibm-toggle formControlName="hasClosure" [label]="'Est dans une bariére'" [onText]="'Oui'" [offText]="'Non'" [checked]="false" size="md">
-                            </ibm-toggle>
-                          </div>
-                          <div fxFlex="100%" class="app-form__item" fxFlex.gt-md="50%">
-                            <ibm-toggle formControlName="hasParking" [label]="'Posséde un parking'" [onText]="'Oui'" [offText]="'Non'" [checked]="false" size="md">
-                            </ibm-toggle>
-                          </div>
-                        </div>
-
-                        <div fxLayout="row wrap" class="app-form__row" *ngIf="formGroup.get('type').value=='studio'">
-                          <div fxFlex="100%" class="app-form__item" fxFlex.gt-md="50%">
-                            <ibm-toggle formControlName="isInternalKitchen" [label]="'Cuisine interne'" [onText]="'Oui'"
-                              [offText]="'Non'" [checked]="false" size="md">
-                            </ibm-toggle>
-                          </div>
-                          <div fxFlex="100%" class="app-form__item" fxFlex.gt-md="50%">
-                            <ibm-toggle formControlName="isInternalShower" [label]="'Douche interne'" [onText]="'Oui'"
-                              [offText]="'Non'" [checked]="false" size="md">
-                            </ibm-toggle>
-                          </div>
-                        </div>
-                        <div *ngIf="formGroup.get('type').value=='simple_apartment'">
-                          <div fxLayout="row wrap" class="app-form__row">
-                            <div fxFlex="100%" class="app-form__item" fxFlex.gt-md="50%">
-                              <ibm-toggle [label]="'Cuisine iterne'" formControlName="isInternalKitchen"
-                                [onText]="'Oui'" [offText]="'Non'" [checked]="false" size="md">
-                              </ibm-toggle>
-                            </div>
-                            <div fxFlex="100%" class="app-form__item" fxFlex.gt-md="50%">
-                              <ibm-toggle formControlName="isInternalShower" [label]="'Douche interne'" [onText]="'Oui'"
-                                [offText]="'Non'" [checked]="false" size="md">
-                              </ibm-toggle>
-                            </div>
-                            <div fxFlex="100%" class="app-form__item">
-                              <ibm-label> Nombre de douche<span class="text-red-600">*</span>
-                                <ibm-number class="mt-2" [helperText]="''" [theme]="'dark'" [min]="1" [invalid]="false"
-                                  [invalidText]="''" [size]="'md'" formControlName="numberOfShower" [disabled]="false">
-                                </ibm-number>
-                              </ibm-label>
-                            </div>
-                          </div>
-                          <div fxLayout="row wrap" class="app-form__row">
-                            <div fxFlex="100%" class="app-form__item">
-                              <ibm-label> Nombre de chambre<span class="text-red-600">*</span>
-                                <ibm-number class="mt-2" [helperText]="''" [theme]="'dark'" [min]="2" [invalid]="false"
-                                  [invalidText]="''" [size]="'md'" formControlName="numberOfBathroom"
-                                  [disabled]="false">
-                                </ibm-number>
-                              </ibm-label>
-                            </div>
-                            <div fxFlex="100%" class="app-form__item">
-                              <ibm-label> Nombre de salon<span class="text-red-600">*</span>
-                                <ibm-number class="mt-2" [helperText]="''" [theme]="'dark'" [min]="2" [invalid]="false"
-                                  [invalidText]="''" [size]="'md'" formControlName="numberOfLivingRoom"
-                                  [disabled]="false">
-                                </ibm-number>
-                              </ibm-label>
-                            </div>
-                          </div>
-                        </div>
-                      </ng-container>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="app-nav-list__item ">
-                  <div class="app-nav-list__item__group filter-title">Localisation</div>
-                  <div class="app-nav-list__children">
-                    <div class="app-nav-list__item filter-item">
-                      <span>Ville</span>
-                      <ibm-combo-box [disabled]="false" [invalid]="false" [size]="'lg'" [appendInline]="false"
-                        [invalidText]="''" [helperText]="''" [items]="villeList" [theme]="'dark'">
-                        <ibm-dropdown-list></ibm-dropdown-list>
-                      </ibm-combo-box>
-                    </div>
-                    <div class="app-nav-list__item filter-item">
-                      <span>Zone</span>
-                      <ibm-combo-box [disabled]="false" [invalid]="false" [size]="'lg'" [appendInline]="false"
-                        [invalidText]="''" [helperText]="''" [items]="villeList" [theme]="'dark'">
-                        <ibm-dropdown-list></ibm-dropdown-list>
-                      </ibm-combo-box>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="app-nav-list__item mt-30 ">
-                  <div class="app-nav-list__item__group filter-title ">Plage de prix (FCFA)</div>
-                  <div class="app-nav-list__children">
-                    <div class="app-nav-list__item filter-item">
-                      <!-- <span>Min</span> -->
-                      <ibm-slider [min]="5000" [max]="500000" [step]="5000" [value]="0" [shiftMultiplier]="4"
-                        [disabled]="false">
-                        <span minLabel>0</span>
-                        <span maxLabel>500.000</span>
-                      </ibm-slider>
-                    </div>
-                  </div>
-                </div>
-
-
+    
+      <div class="flex flex-col" fxFlex="100%" fxFlex.gt-md="20%">
+        <filter-zone></filter-zone>
+      </div>
+    
+      <div fxFlex="100%" fxFlex.gt-md="70%" class="app-content app-content--default mt-10 ml-5 w-full">
+        <div class="mt-1">
+          <div fxFlex="100%" class="w-full shadow-md app-card row mt-4">
+            <div fxLayout="row wrap" class="app-card__blocks app-border-t p-2">
+              <div fxFlex="100%">
+                <ibm-table-toolbar-search formControlName="formControlSearch" theme="dark" ngDefaultControl
+                  [expandable]="false">
+                </ibm-table-toolbar-search>
               </div>
             </div>
           </div>
         </div>
 
-      </div>
-    </div>
-    <div fxFlex="100%" fxFlex.gt-md="70%" class="app-content app-content--default mt-10 ml-5 w-full">
-      <div class="mt-1">
-        <div fxFlex="100%" class="w-full shadow-md app-card row mt-4">
-          <div fxLayout="row wrap" class="app-card__blocks app-border-t p-2">
-            <div fxFlex="100%">
-              <ibm-table-toolbar-search formControlName="formControlSearch" theme="dark" ngDefaultControl
-                [expandable]="false">
-              </ibm-table-toolbar-search>
-            </div>
-          </div>
+        <div>
+          <room-filtered-found></room-filtered-found>
         </div>
       </div>
-
-      <div>
-        <room-filtered-found></room-filtered-found>
-      </div>
-    </div>
   </div>
 
-</form>
 
 <!-- </ng-scrollbar> -->
 

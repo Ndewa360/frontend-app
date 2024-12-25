@@ -27,10 +27,10 @@ export class RoomFilteredFoundComponent {
     ) { }
   
     ngOnInit(): void {
-      this.roomFound$.subscribe((found)=>{
-          this.roomFound = found;
-          this.roomFoundFiltered = [...this.roomFound]
-      })
+      // this.roomFound$.subscribe((found)=>{
+      //     this.roomFound = found;
+      //     this.roomFoundFiltered = [...this.roomFound]
+      // })
     }
   
     getRoomLocataire(locataireId)
