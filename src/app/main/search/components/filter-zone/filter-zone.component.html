@@ -49,19 +49,18 @@
                                 <div class="app-nav-list__item__group filter-title ">Plage de prix (FCFA)</div>
                                 <div class="app-nav-list__children">
                                     <div class="app-nav-list__item filter-item">
-                                            <cds-slider
-                                            [min]="0"
-                                            [max]="300000"
-                                            [step]="5000"
-                                            [value]="[minPrice,maxPrice]"
-                                            (valueChange)="valueChangePrice($event)">
-                                            <span minLabel>{{minPrice}}</span>
-                                            <span maxLabel>{{maxPrice}}</span><br>
-                                            <!-- <div class="flex">
-                                                <input class="cds--text-input--light "/>
-                                                <input class="cds--text-input--light"/>
-                                            </div> -->
-                                        </cds-slider>
+                                        <div fxLayout="row wrap" class=" flex justify-between">
+                                            <div fxFlex="100%" fxFlex.gt-md="45%">
+                                                <ibm-label> Min 
+                                                    <input ibmText formControlName="minPrice" size="md" theme="dark">
+                                                  </ibm-label>
+                                            </div>
+                                            <div fxFlex="100%" fxFlex.gt-md="45%" >
+                                              <ibm-label> Max
+                                                <input ibmText formControlName="maxPrice" size="md" theme="dark">
+                                              </ibm-label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

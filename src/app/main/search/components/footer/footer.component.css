@@ -1,0 +1,21 @@
+li a, .text-appname {
+    color: inherit;
+    text-decoration: inherit;
+  }
+
+  .text-appname {
+    font-size:14px;
+    color:rgb(204, 140, 10);
+  }
+
+  .text-appname:hover{
+    text-decoration: underline;
+  }
+
+.svg-fcb:hover {
+    fill:#475993
+  }
+
+  .svg-ytube:hover {
+    fill:#F61C0D;
+  }

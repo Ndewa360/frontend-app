@@ -15,8 +15,7 @@ export class FilterZoneComponent implements OnInit{
   @Select(CityState.setlectStateCities) cities:Observable<CityModel[]>
   public formGroup: FormGroup;
 
-  minPrice=0
-  maxPrice=100000;
+ 
   currentCityChoise=null;
 
   waittingResponse:boolean = false;
@@ -53,6 +52,8 @@ export class FilterZoneComponent implements OnInit{
       type:[null,Validators.required],
       formControlSearch:[],
       ville:[null,[Validators.required]],
+      minPrice:[0],
+      maxPrice:[100000],
       specifity:this.formBuilder.group({
         numberOfBathroom:[1,Validators.required],
         numberOfLivingRoom:[2,Validators.required],
@@ -97,12 +98,6 @@ export class FilterZoneComponent implements OnInit{
     }
   }
 
-  valueChangePrice(event)
-  {
-    if(!(event instanceof Array)) return;
-    this.minPrice=event[0]
-    this.maxPrice=event[1]
-  }
   onSelectedType(roomType)
   {
     this.formGroup.get('type').setValue(roomType.valueType)
@@ -133,7 +128,7 @@ export class FilterZoneComponent implements OnInit{
 
   callToSubmitSearch()
   {
-    let filterToApply = {...this.formGroup.value, minPrice:this.minPrice, maxPrice:this.maxPrice,ville:this.formGroup.value.ville.valueType}
+    let filterToApply = {...this.formGroup.value, ville:this.formGroup.value.ville.valueType}
     if(!this.showFilteredSpecificityForm) delete filterToApply.specifity;
     console.log("Form Val", FormUtils.removeNullAttribut(filterToApply),this.formGroup.value.ville.valueType==this.currentCityChoise);
 
