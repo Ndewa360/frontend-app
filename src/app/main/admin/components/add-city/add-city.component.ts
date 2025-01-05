@@ -28,7 +28,9 @@ export class AddCityComponent {
     
       ngOnInit(): void {
         this.formGroup = this.formBuilder.group({
-          fullName: [null, [Validators.required,]]
+          fullName: [null, [Validators.required,]],
+          long: [0, [Validators.required]],
+          lat: [0, [Validators.required]],
         })
     
         this._ngxsAction.pipe(ofActionSuccessful(CityAction.CreateCity)).subscribe((value)=>{

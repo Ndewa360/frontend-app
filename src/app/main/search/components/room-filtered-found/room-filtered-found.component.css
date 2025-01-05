@@ -1,0 +1,16 @@
+.no-data-loader
+{
+    padding-left: 37%;
+}
+
+.spec-home{
+    font-size: 14px;
+}
+
+
+@media only screen and (max-width: 600px) {
+    .no-data-loader
+    {
+        padding-left: 15%;
+    }
+}

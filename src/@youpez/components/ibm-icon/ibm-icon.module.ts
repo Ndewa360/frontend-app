@@ -12,6 +12,16 @@ import Notification24 from '@carbon/icons/es/notification/24';
 import Notification20 from '@carbon/icons/es/notification/20';
 import Notification16 from '@carbon/icons/es/notification/16';
 
+import AddAlt32 from '@carbon/icons/es/add--alt/32';
+import AddAlt24 from '@carbon/icons/es/add--alt/24';
+import AddAlt20 from '@carbon/icons/es/add--alt/20';
+import AddAlt16 from '@carbon/icons/es/add--alt/16';
+
+import Hotel32 from '@carbon/icons/es/hotel/32';
+import Hotel24 from '@carbon/icons/es/hotel/24';
+import Hotel20 from '@carbon/icons/es/hotel/20';
+import Hotel16 from '@carbon/icons/es/hotel/16';
+
 import UserAvatar32 from '@carbon/icons/es/user--avatar/32';
 import UserAvatar24 from '@carbon/icons/es/user--avatar/24';
 import UserAvatar20 from '@carbon/icons/es/user--avatar/20';
@@ -209,6 +219,11 @@ import CheckMarkOutline24 from '@carbon/icons/es/checkmark--outline/24';
 import CheckMarkOutline20 from '@carbon/icons/es/checkmark--outline/20';
 import CheckMarkOutline16 from '@carbon/icons/es/checkmark--outline/16';
 
+import CheckMark32 from '@carbon/icons/es/checkmark/32';
+import CheckMark24 from '@carbon/icons/es/checkmark/24';
+import CheckMark20 from '@carbon/icons/es/checkmark/20';
+import CheckMark16 from '@carbon/icons/es/checkmark/16';
+
 import warningMarkOutline32 from '@carbon/icons/es/warning/32';
 import warningMarkOutline24 from '@carbon/icons/es/warning/24';
 import warningMarkOutline20 from '@carbon/icons/es/warning/20';
@@ -257,6 +272,11 @@ import Close24 from '@carbon/icons/es/close/24';
 import Close20 from '@carbon/icons/es/close/20';
 import Close16 from '@carbon/icons/es/close/16';
 
+import CloseOutline32 from '@carbon/icons/es/close--outline/32';
+import CloseOutline24 from '@carbon/icons/es/close--outline/24';
+import CloseOutline20 from '@carbon/icons/es/close--outline/20';
+import CloseOutline16 from '@carbon/icons/es/close--outline/16';
+
 import Minimize32 from '@carbon/icons/es/minimize/32';
 import Minimize24 from '@carbon/icons/es/minimize/24';
 import Minimize20 from '@carbon/icons/es/minimize/20';
@@ -276,6 +296,16 @@ import ChevronDown32 from '@carbon/icons/es/chevron--down/32';
 import ChevronDown24 from '@carbon/icons/es/chevron--down/24';
 import ChevronDown20 from '@carbon/icons/es/chevron--down/20';
 import ChevronDown16 from '@carbon/icons/es/chevron--down/16';
+
+import ChevronDownOutline32 from '@carbon/icons/es/chevron--down--outline/32';
+import ChevronDownOutline24 from '@carbon/icons/es/chevron--down--outline/24';
+import ChevronDownOutline20 from '@carbon/icons/es/chevron--down--outline/20';
+import ChevronDownOutline16 from '@carbon/icons/es/chevron--down--outline/16';
+
+import ChevronUpdOutline32 from '@carbon/icons/es/chevron--up--outline/32';
+import ChevronUpdOutline24 from '@carbon/icons/es/chevron--up--outline/24';
+import ChevronUpdOutline20 from '@carbon/icons/es/chevron--up--outline/20';
+import ChevronUpdOutline16 from '@carbon/icons/es/chevron--up--outline/16';
 
 import ChevronLeft32 from '@carbon/icons/es/chevron--left/32';
 import ChevronLeft24 from '@carbon/icons/es/chevron--left/24';
@@ -298,18 +328,17 @@ import {IbmIconComponent} from './ibm-icon.component'
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 
-
 @NgModule({
   imports: [
     CommonModule,
-    IconModule
+    IconModule,
   ],
   declarations: [
     IbmIconComponent
   ],
   exports: [
     IbmIconComponent,
-    IconModule
+    IconModule,
   ],
   
 })
@@ -320,6 +349,32 @@ export class IbmIconModule {
     private _matIconRegistry: MatIconRegistry
   ) {
     iconService.registerAll([
+		
+		ChevronUpdOutline32,
+		ChevronUpdOutline24,
+		ChevronUpdOutline20,
+		ChevronUpdOutline16,
+
+		CloseOutline32,
+		CloseOutline24,
+		CloseOutline20,
+		CloseOutline16,
+		
+		AddAlt32,
+		AddAlt24,
+		AddAlt20,
+		AddAlt16,
+
+		Hotel32,
+		Hotel24,
+		Hotel20,
+		Hotel16,
+
+		ChevronDownOutline32,
+		ChevronDownOutline24,
+		ChevronDownOutline20,
+		ChevronDownOutline16,
+
 		ChevronUp32,
 		ChevronUp24,
 		ChevronUp20,
@@ -424,6 +479,11 @@ export class IbmIconModule {
 			CheckMarkOutline24,
 			CheckMarkOutline20,
 			CheckMarkOutline16,
+
+		CheckMark32,
+		CheckMark24,
+		CheckMark20,
+		CheckMark16,
 
       warningMarkOutline32,
 			warningMarkOutline24,

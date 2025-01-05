@@ -78,7 +78,7 @@ export class PropertyState{
         return this._propertysService.updateProperty(property,id).pipe(
             tap(
                 (result)=>{
-                    console.log("Result ",result)
+                    console.log("Result update Property ",result)
                     const data = [...state.properties]
                     let index = data.findIndex((u)=>u._id==id);
                     if(index>-1) data[index]=result.data;
@@ -193,6 +193,7 @@ export class PropertyState{
         return this._propertysService.getProperties().pipe(
             tap(
                 result => {
+                    console.log("Fetch Properties ",result)
                     if(state.initLoadingState!="LOADED") ctx.patchState({initLoadingState:'LOADED'})
                     ctx.patchState({
                         loadingProperty:false,

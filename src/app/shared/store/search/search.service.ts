@@ -20,9 +20,9 @@ export class SearchService
     {}
    
 
-    getSearch(city:string):Observable<ApiResultFormat<SearchPropertyModel>>
+    getSearch(city:string):Observable<ApiResultFormat<SearchPropertyModel[]>>
     {
-        return this._httpClient.get<ApiResultFormat<SearchPropertyModel>>(`${environment.apiUrl}/search/by-city/${city}`)
+        return this._httpClient.get<ApiResultFormat<SearchPropertyModel[]>>(`${environment.apiUrl}/search/by-city/${city}`)
 
     }
 }

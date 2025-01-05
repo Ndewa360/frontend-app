@@ -2,8 +2,9 @@ import { Component, Inject, ViewEncapsulation } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { Store, Actions, ofActionSuccessful, ofActionCompleted, ofActionErrored } from '@ngxs/store';
-import { PropertyAction, PropertyModel } from 'src/app/shared/store';
+import { Store, Actions, ofActionSuccessful, ofActionCompleted, ofActionErrored, Select } from '@ngxs/store';
+import { Observable } from 'rxjs';
+import { CityModel, CountryModel, CountryState, PropertyAction, PropertyModel } from 'src/app/shared/store';
 import { FormUtils } from 'src/app/shared/utils';
 
 @Component({
@@ -14,8 +15,13 @@ import { FormUtils } from 'src/app/shared/utils';
 })
 export class UpdatePropertyComponent {
   public formGroup: FormGroup;
+  @Select(CountryState.selectStateCountries) countries$:Observable<CountryModel[]>;
+  
 
   waittingResponse = false;
+  countriesList=[];
+  citiesList:CityModel[]=[];
+  selectedCitiesList=[]
 
   constructor(
     private dialogRef: MatDialogRef<UpdatePropertyComponent>,
@@ -29,7 +35,11 @@ export class UpdatePropertyComponent {
     this.formGroup = this.formBuilder.group({
       name: [this.data.property.name, [Validators.required,]],
       location: [this.data.property.location, [Validators.required, ]],
-      description: [this.data.property.description?this.data.property.description:"", ],
+      description: [this.data.property.description?this.data.property.description:null, ],
+      geolocationCountry: [null, [Validators.required]],
+      geolocationCity: [null, [Validators.required]],
+      hasClosure:[this.data.property.hasClosure,Validators.required],
+      hasParking:[this.data.property.hasParking,Validators.required],
     })
 
     this._ngxsAction.pipe(ofActionSuccessful(PropertyAction.UpdateProperty)).subscribe((value)=>{
@@ -38,6 +48,28 @@ export class UpdatePropertyComponent {
       this.onClose()
       }
     );
+    this.countries$.subscribe((countries:CountryModel[])=>{
+      this.citiesList = countries.map((country)=>country.cities).reduce((acc,curr)=>[...acc,...curr],[])
+
+      let selectedCountry= null;
+      this.countriesList=countries.map((country)=>{
+        if(country._id==this.data.property.geolocationCountry?._id) selectedCountry = country;
+        return {content:country.fullName,valueType:country._id,selected:country._id==this.data.property.geolocationCountry?._id}
+      });
+      if(selectedCountry) {
+          this.selectedCitiesList=this.citiesList.filter((city)=>city.country==selectedCountry._id).map((city)=>({content:city.fullName, valueType:city._id,selected:city._id==this.data.property.geolocationCity?._id}));
+      }
+    // console.log("Cities",this.selectedCitiesList,this.countriesList)
+
+    });
+
+    
+    this.formGroup.get("geolocationCountry").valueChanges.subscribe((value)=>{
+      if(!value) return
+      this.selectedCitiesList=this.citiesList.filter((city)=>city.country==value.valueType).map((city)=>({content:city.fullName, valueType:city._id}));
+    })
+
+
     this._ngxsAction.pipe(ofActionCompleted(PropertyAction.UpdateProperty)).subscribe(
       (value) => {
         this.waittingResponse=false;
@@ -64,7 +96,14 @@ export class UpdatePropertyComponent {
   onSubmit() {
     this.formGroup.markAllAsTouched()
     this.waittingResponse=true;
-    this._store.dispatch(new PropertyAction.UpdateProperty(FormUtils.removeNullAttribut(this.formGroup.value),this.data.property._id));
+   
+    this._store.dispatch(new PropertyAction.UpdateProperty({
+      ...FormUtils.removeNullAttribut(this.formGroup.value),
+      geolocationCity:this.formGroup.value.geolocationCity.valueType,
+      geolocationCountry:this.formGroup.value.geolocationCountry.valueType
+    }, 
+    this.data.property._id)
+    );
     
   }
 }

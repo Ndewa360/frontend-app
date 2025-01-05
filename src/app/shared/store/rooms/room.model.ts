@@ -16,6 +16,7 @@ export enum Currency
     XAF = "FCFA"
 }
 
+type PropertType = PropertyModel | string 
 export interface RoomModel {
 
     type:RoomType;
@@ -27,6 +28,7 @@ export interface RoomModel {
         isInternalShower?:boolean,
         hasKitchen?:boolean,
         isInternalKitchen?:boolean,
+        numberOfKitchen?:boolean
     }
     description?:string;
     country? :string
@@ -35,7 +37,7 @@ export interface RoomModel {
     updatedAt?: Date,
     code:string;
     _id:string;
-    property:string;
+    property:any;
     locataire?:string;
     isFree:boolean;
     isActiveForSouscription?:boolean;

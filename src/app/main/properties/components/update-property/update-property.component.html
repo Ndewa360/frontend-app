@@ -6,7 +6,7 @@
         <div class="px-4 py-4 flex">
           <div class="app-productive-heading-03 font-bold">Mise à jour du bien #{{data.property.code}}</div>
           <div class="flex-1 flex justify-end">
-            <button (click)="onClose()" ibmButton="ghost" size="sm" class="cds--btn--icon-only custom-ghost-close">
+            <button (click)="onClose()" type="reset" ibmButton="ghost" size="sm" class="cds--btn--icon-only custom-ghost-close">
               <youpez-ibm-icon iconClass="cds--btn__icon" iconName="close" iconSize="32"></youpez-ibm-icon>
             </button>
           </div>
@@ -26,6 +26,44 @@
                 </ibm-label>
               </div>
               
+              <div fxLayout="row wrap" class="app-form__row">
+                <div fxFlex="100%" fxFlex.gt-md="50%" class="app-form__item">
+                  <ibm-label [invalid]="isValid('geolocationCountry')" [invalidText]="'Vous devez choisir un pays'">
+                    Choisissez le pays 
+                        <ibm-combo-box class="mt-2"
+                            [items]="countriesList"
+                            formControlName="geolocationCountry"
+                            theme="dark"
+                            size="lg">
+                            <ibm-dropdown-list></ibm-dropdown-list>
+                        </ibm-combo-box>   
+                    </ibm-label>
+                </div>
+                <div fxFlex="100%" fxFlex.gt-md="50%" class="app-form__item">
+                  <ibm-label [invalid]="isValid('geolocationCity')" [invalidText]="'Vous devez choisir une ville'">
+                    Choisissez la ville 
+                        <ibm-combo-box class="mt-2"
+                            [items]="selectedCitiesList"
+                            formControlName="geolocationCity"
+                            theme="dark"
+                            size="lg">
+                            <ibm-dropdown-list></ibm-dropdown-list>
+                        </ibm-combo-box>   
+                    </ibm-label>
+                </div>    
+              </div>
+
+              <div fxLayout="row wrap" class="app-form__row" >
+                <div fxFlex="100%" class="app-form__item" fxFlex.gt-md="50%">
+                  <ibm-toggle formControlName="hasClosure" [label]="'Posséde une bariére'" [onText]="'Oui'" [offText]="'Non'" [checked]="false" size="md">
+                  </ibm-toggle>
+                </div>
+                <div fxFlex="100%" class="app-form__item" fxFlex.gt-md="50%">
+                  <ibm-toggle formControlName="hasParking" [label]="'Posséde un parking'" [onText]="'Oui'" [offText]="'Non'" [checked]="false" size="md">
+                  </ibm-toggle>
+                </div>
+              </div>
+
               <div class="app-form__item">
                     <ibm-label helperText="" [invalid]="isValid('location')"
                     [invalidText]="'Localisation du bien obligatoire'">
@@ -61,7 +99,7 @@
           <button ibmButton="primary" size="md" [disabled]="waittingResponse || formGroup.invalid" class="custom-primary-button" type="submit">
             <ibm-loading *ngIf="waittingResponse; else noWaitingResponse"></ibm-loading>
             <ng-template #noWaitingResponse>
-              <span class="btn-text">Ajouter</span>
+              <span class="btn-text">Mettre à jour</span>
               <youpez-ibm-icon iconClass="cds--btn__icon" iconName="add" iconSize="20"></youpez-ibm-icon>
 
             </ng-template>

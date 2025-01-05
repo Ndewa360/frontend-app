@@ -46,7 +46,7 @@ export class CityState{
     }
 
     @Selector() 
-    static setlectStateCitys(state:CityStateModel)
+    static setlectStateCities(state:CityStateModel)
     {
         return state.cities
     }

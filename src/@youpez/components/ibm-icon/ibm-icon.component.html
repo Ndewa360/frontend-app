@@ -15,6 +15,10 @@
     <svg [class]="iconClass" cdsIcon="add" [size]="iconSize"></svg>
   </ng-container>
 
+  <ng-container *ngSwitchCase="'addAlt'">
+    <svg [class]="iconClass" cdsIcon="add--alt" [size]="iconSize"></svg>
+  </ng-container>
+
   <ng-container *ngSwitchCase="'aperture'">
     <svg [class]="iconClass" cdsIcon="aperture" [size]="iconSize"></svg>
   </ng-container>
@@ -89,7 +93,7 @@
   </ng-container>
 
   <ng-container *ngSwitchCase="'checkmarkFilled'">
-    <svg [class]="iconClass" cdsIcon="checkmarkFilled" [size]="iconSize"></svg>
+    <svg [class]="iconClass" cdsIcon="checkmark--filled" [size]="iconSize"></svg>
   </ng-container>
 
   <ng-container *ngSwitchCase="'caretRight'">
@@ -106,6 +110,10 @@
 
   <ng-container *ngSwitchCase="'alarm'">
     <svg [class]="iconClass" cdsIcon="home" [size]="iconSize"></svg>
+  </ng-container>
+
+  <ng-container *ngSwitchCase="'hotel'">
+    <svg [class]="iconClass" cdsIcon="hotel" [size]="iconSize"></svg>
   </ng-container>
 
   <ng-container *ngSwitchCase="'minimize'">
@@ -289,6 +297,14 @@
     <svg [class]="iconClass" cdsIcon="chevron--up" [size]="iconSize"></svg>
   </ng-container>
 
+  <ng-container *ngSwitchCase="'chevronDownOutline'">
+    <svg [class]="iconClass" cdsIcon="chevron--down--outline" [size]="iconSize"></svg>
+  </ng-container>
+
+  <ng-container *ngSwitchCase="'chevronUpOutline'">
+    <svg [class]="iconClass" cdsIcon="chevron--up--outline" [size]="iconSize"></svg>
+  </ng-container>
+
   <ng-container *ngSwitchCase="'chevronLeft'">
     <svg [class]="iconClass" cdsIcon="chevron--left" [size]="iconSize"></svg>
   </ng-container>
@@ -463,6 +479,10 @@
 
   <ng-container *ngSwitchCase="'close'">
     <svg [class]="iconClass" cdsIcon="close" [size]="iconSize"></svg>
+  </ng-container>
+
+  <ng-container *ngSwitchCase="'closeOutline'">
+    <svg [class]="iconClass" cdsIcon="close--outline" [size]="iconSize"></svg>
   </ng-container>
 
   <ng-container *ngSwitchCase="'view'">

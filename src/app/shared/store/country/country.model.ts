@@ -9,4 +9,6 @@ export interface CountryModel {
     shortName:string;
 
     phoneCode:string;
+    long:number;
+    lat:number;
 }

@@ -29,6 +29,8 @@ export class AddCountryComponent {
         fullName: [null, [Validators.required,]],
         shortName: [null, [Validators.required, ]],
         phoneCode: [null, [Validators.required]],
+        long: [0, [Validators.required]],
+        lat: [0, [Validators.required]],
       })
   
       this._ngxsAction.pipe(ofActionSuccessful(CountryAction.CreateCountry)).subscribe((value)=>{

@@ -2,9 +2,9 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
+import { TableModel } from 'carbon-components-angular';
 import { Observable } from 'rxjs';
-import { UpdateRoomComponent } from 'src/app/main/room/components/update-room/update-room.component';
-import { RoomState, RoomModel, LocataireState, Currency } from 'src/app/shared/store';
+import { LocataireState, Currency, SearchState, SearchPropertyModel } from 'src/app/shared/store';
 import { UtilsString } from 'src/app/shared/utils';
 
 @Component({
@@ -13,10 +13,16 @@ import { UtilsString } from 'src/app/shared/utils';
   styleUrls: ['./room-filtered-found.component.css']
 })
 export class RoomFilteredFoundComponent {
-    @Select(RoomState.selectStateInitLoading) loadingRoom$:Observable<string>;
-    roomFound:RoomModel[] = [];
-    roomFoundFiltered:RoomModel[] = [];
-    @Select(RoomState.selectStateRoom) roomFound$:Observable<RoomModel[]>;
+    @Select(SearchState.selectStateLoading) loadingRoom$:Observable<string>;
+    roomFound:SearchPropertyModel[] = [];
+    @Select(SearchState.setlectStateFilteredProperty) roomFoundFiltered$:Observable<SearchPropertyModel[]>;
+    public model = new TableModel();
+    allRoomData=[]
+    currentDataToShow=[]
+    translationsPaginationButton={
+      PREVIOUS:'Précédent',
+      NEXT:'Suivant',      
+    }
   
     constructor(
       private _activatedRoute: ActivatedRoute,
@@ -31,7 +37,38 @@ export class RoomFilteredFoundComponent {
       //     this.roomFound = found;
       //     this.roomFoundFiltered = [...this.roomFound]
       // })
+      this.roomFoundFiltered$.subscribe((found)=>{
+        if(found.length==0) return;
+        let newModel = new TableModel()
+
+        this.allRoomData=[...found]
+        newModel.data = [];
+        newModel.pageLength=9;
+        newModel.totalDataLength=Math.ceil(found.length/9);
+        this.model = newModel;
+        this.selectPage(1);
+
+      })
     }
+
+    selectPage(page) {
+      this.getPage(page).then((data: Array<any>) => {
+        // set the data and update page
+        this.model.data = data
+        this.currentDataToShow=[...data]
+        this.model.currentPage = page
+      })
+    }
+
+    getPage(page: number)
+  {
+    let end = page * this.model.pageLength;
+    let start = end - this.model.pageLength;
+
+    return new Promise(resolve => {
+      setTimeout(() => resolve(this.allRoomData.slice(start,end)), 150)
+    })
+  }
   
     getRoomLocataire(locataireId)
     {
@@ -46,20 +83,5 @@ export class RoomFilteredFoundComponent {
     getRoomType(roomType)
     {
       return UtilsString.getStringOfRoomType(roomType)
-    }
-  
-    openShowRoom(room:RoomModel)
-    {
-      // this._router.navigate(['/app/properties/edit-room',room._id])
-      console.log("Room ",room)
-      this.dialog.open(UpdateRoomComponent, {
-        viewContainerRef:null,
-        disableClose: true,
-        role: 'alertdialog',
-        width: '500px',
-        data:{
-          room
-        }
-      })
     }
 }

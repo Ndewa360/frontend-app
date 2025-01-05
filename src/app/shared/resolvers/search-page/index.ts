@@ -1,0 +1,1 @@
+export * from "./search-page-data-resolver.service"

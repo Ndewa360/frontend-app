@@ -36,7 +36,7 @@
               </ng-container>
               <ng-container *ngIf="countryFocusId !== country.country._id">
                 <input class="flex-1 app-list__item__input app-expressive-heading-02" disabled type="text"
-                  placeholder="Nouveau Pays..." [value]="country.country.fullName" />
+                  placeholder="Nouveau Pays..." [value]="country.country.fullName +' ('+country.country.shortName+' )'" />
               </ng-container>
             </div>
             <div class="flex items-center">

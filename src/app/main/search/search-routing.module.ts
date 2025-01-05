@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LayoutComponent } from './components/layout/layout.component';
 import { SearchPageComponent } from './search-page/search-page.component';
+import { SearchPageDataResolver } from 'src/app/shared/resolvers';
 
 const routes: Routes = [
   {
@@ -10,7 +11,10 @@ const routes: Routes = [
     children: [
       {
         path: 'index',
-        component:SearchPageComponent
+        component:SearchPageComponent,
+        resolve: {
+          data: SearchPageDataResolver
+        }
       }
     ]
   },
