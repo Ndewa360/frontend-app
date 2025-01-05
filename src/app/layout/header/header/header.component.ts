@@ -14,12 +14,13 @@ export class HeaderComponent implements OnInit {
 
   @Output() menuClick: EventEmitter<boolean> = new EventEmitter()
   @Output() itemClick: EventEmitter<any> = new EventEmitter()
-  
+  isAdmin=false;
 
   constructor( private _store:Store) {
   }
 
   ngOnInit(): void {
+    this.userProfil$.subscribe((user)=>this.isAdmin=user.email=='contact@ndewa-360.com')
   }
 
   onSideBarToggle($event) {

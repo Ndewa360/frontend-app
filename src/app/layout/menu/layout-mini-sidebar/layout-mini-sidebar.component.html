@@ -30,7 +30,7 @@
               <youpez-ibm-icon iconName="dashboardReference" iconSize="24"></youpez-ibm-icon>
             </div>
           </div>
-          <div [routerLink]="'/admin'" [routerLinkActive]="['app-mini-sidebar__list__item__active']"
+          <div *ngIf="isAdmin" [routerLink]="'/admin'" [routerLinkActive]="['app-mini-sidebar__list__item__active']"
             class="app-mini-sidebar__list__item app-mini-sidebar__list__item__highlight">
             <div class="app-mini-sidebar__list__item__pill" placement="right" container="body" ngbTooltip="Administration">
               <youpez-ibm-icon iconName="settings" iconSize="24"></youpez-ibm-icon>

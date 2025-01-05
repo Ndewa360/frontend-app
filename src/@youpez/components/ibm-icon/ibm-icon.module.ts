@@ -317,6 +317,11 @@ import ChevronRight24 from '@carbon/icons/es/chevron--right/24';
 import ChevronRight20 from '@carbon/icons/es/chevron--right/20';
 import ChevronRight16 from '@carbon/icons/es/chevron--right/16';
 
+import SettingsAdjust32 from '@carbon/icons/es/settings--adjust/32';
+import SettingsAdjust24 from '@carbon/icons/es/settings--adjust/24';
+import SettingsAdjust20 from '@carbon/icons/es/settings--adjust/20';
+import SettingsAdjust16 from '@carbon/icons/es/settings--adjust/16';
+
 import Map32 from '@carbon/icons/es/map/32';
 import Map24 from '@carbon/icons/es/map/24';
 import Map20 from '@carbon/icons/es/map/20';
@@ -349,7 +354,11 @@ export class IbmIconModule {
     private _matIconRegistry: MatIconRegistry
   ) {
     iconService.registerAll([
-		
+		SettingsAdjust32,
+		SettingsAdjust24,
+		SettingsAdjust20,
+		SettingsAdjust16,
+
 		ChevronUpdOutline32,
 		ChevronUpdOutline24,
 		ChevronUpdOutline20,

@@ -1,0 +1,5 @@
+.app-layout__header__tools button.app-mini-sidebar__list__item__active
+{
+    border-bottom: 3px solid rgb(204, 140, 10);
+    background-color: rgba(204, 140, 10,0.3);
+}

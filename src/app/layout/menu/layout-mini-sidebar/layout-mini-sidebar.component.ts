@@ -13,6 +13,7 @@ export class LayoutMiniSidebarComponent implements OnInit {
 
   @Output() itemClick: EventEmitter<any> = new EventEmitter()
   @Select(UserProfileState.selectStateUserProfile) userProfile$:Observable<UserProfileModel>
+  isAdmin=false;
 
   public notifications = [
     // {
@@ -41,6 +42,8 @@ export class LayoutMiniSidebarComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.userProfile$.subscribe((user)=>this.isAdmin=user.email=='contact@ndewa-360.com')
+
   }
 
   onItemClick(event) {
