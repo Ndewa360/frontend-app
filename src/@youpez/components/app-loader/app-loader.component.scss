@@ -480,3 +480,10 @@ main {
 		--shade4: #686e7e;
 	}
 }
+
+@media only screen and (max-width: 600px) {
+	main {
+		margin-top: 0px !important;
+		margin-bottom: 20px;
+	}
+}

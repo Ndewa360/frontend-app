@@ -7,3 +7,9 @@
 {
     margin-top: 5px;
 }
+
+@media only screen and (max-width: 600px) {
+    .app-content.app-content--default {
+        padding: 0px !important;
+    }
+}

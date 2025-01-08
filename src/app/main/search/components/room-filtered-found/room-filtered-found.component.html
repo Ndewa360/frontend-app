@@ -2,21 +2,21 @@
 <div fxFill fxLayout="column">
   <div fxFlex class="relative">
     <div class="app-subtitle app-subtitle--cards mt-2"></div>
-    <div fxLayout="row wrap" class="app-card-row-holder mb-2">
+    <div fxLayout="row wrap" class="app-card-row-holder app-card-row-room-container mb-2">
       <div *ngIf="(loadingRoom$ | async) else isLoadingData" class="relative no-data-loader ">
         <youpez-loader></youpez-loader>
       </div>
       <ng-template #isLoadingData>
         <ng-container>
           <ng-container *ngIf="(roomFoundFiltered$ | async).length>0 else noData">
-            <div class="app-expressive-heading-02 mb-4 ml-1" fxFlex="100%">
+            <div class="app-expressive-heading-02 mb-4 ml-4" fxFlex="100%">
               <span>{{(roomFoundFiltered$ | async).length}} Biens trouvés</span>
             </div>
 
             <ng-container *ngFor="let room of currentDataToShow">
               <!-- [routerLink]="['/app/properties',room._id]" -->
               <div fxFlex="100%" fxFlex.gt-md="33.33%">
-                <div class="app-card app-card--select">
+                <div class="app-card app-card--select app-card-room">
                   <!-- <button (click)="openShowRoom(room)"
                     class="float-right btn-text-edit top-2 mt-4 mr-4 bg-slate-700 rounded-md">
                     <youpez-ibm-icon iconName="pen" iconSize="24"></youpez-ibm-icon>
@@ -70,14 +70,14 @@
                 </div>
               </div>
             </ng-container>
-            <div class="w-full flex mt-2 justify-end">
+            <div class="w-full flex mt-2 justify-end mb-2">
               <cds-pagination-nav [translations]="translationsPaginationButton" [model]="model" (selectPage)="selectPage($event)"></cds-pagination-nav>
             </div>
           </ng-container>          
           
           
           <ng-template #noData>
-            <app-no-data-list [isTextDescriptionForFilter]="true" class="flex-auto"></app-no-data-list>
+            <app-no-data-list [isTextDescriptionForFilter]="true" class="flex-auto mb-2"></app-no-data-list>
           </ng-template>
         </ng-container>
       </ng-template>

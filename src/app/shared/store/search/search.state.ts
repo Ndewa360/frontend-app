@@ -38,7 +38,7 @@ export class SearchStateModel {
 @State<SearchStateModel>({
     name: "searchlist",
     defaults:{
-        loadingSearch:false,
+        loadingSearch:true,
         searchProperties:[],
         filteredSearchedProperties:[],
         initLoadingState:'NO_LOADED',
