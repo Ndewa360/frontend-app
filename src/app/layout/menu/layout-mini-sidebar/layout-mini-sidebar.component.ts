@@ -42,7 +42,7 @@ export class LayoutMiniSidebarComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.userProfile$.subscribe((user)=>this.isAdmin=user.email=='contact@ndewa-360.com')
+    this.userProfile$.subscribe((user)=>{ if(user) this.isAdmin=user.email=='contact@ndewa-360.com'})
 
   }
 

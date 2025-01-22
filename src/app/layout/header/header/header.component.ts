@@ -20,7 +20,7 @@ export class HeaderComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.userProfil$.subscribe((user)=>this.isAdmin=user.email=='contact@ndewa-360.com')
+    this.userProfil$.subscribe((user)=>{if(user) this.isAdmin=user.email=='contact@ndewa-360.com'})
   }
 
   onSideBarToggle($event) {

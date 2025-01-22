@@ -38,7 +38,10 @@
   <ng-container *ngSwitchCase="'user'">
     <svg [class]="iconClass" cdsIcon="user" [size]="iconSize"></svg>
   </ng-container>
-
+  <ng-container *ngSwitchCase="'userAccessUnlocked'">
+    <svg [class]="iconClass" cdsIcon="user--access-unlocked" [size]="iconSize"></svg>
+  </ng-container>
+  
   <ng-container *ngSwitchCase="'tools'">
     <svg [class]="iconClass" cdsIcon="tools" [size]="iconSize"></svg>
   </ng-container>
@@ -346,7 +349,7 @@
   </ng-container>
 
   <ng-container *ngSwitchCase="'upload'">
-    <svg [class]="iconClass" cdsIcon="home" [size]="iconSize"></svg>
+    <svg [class]="iconClass" cdsIcon="cloud--upload" [size]="iconSize"></svg>
   </ng-container>
 
   <ng-container *ngSwitchCase="'package'">
@@ -416,6 +419,11 @@
   <ng-container *ngSwitchCase="'phone'">
     <svg [class]="iconClass" cdsIcon="home" [size]="iconSize"></svg>
   </ng-container>
+
+  <ng-container *ngSwitchCase="'dropPhoto'">
+    <svg [class]="iconClass" cdsIcon="drop-photo" [size]="iconSize"></svg>
+  </ng-container>
+
 
   <ng-container *ngSwitchCase="'subtract'">
     <svg [class]="iconClass" cdsIcon="home" [size]="iconSize"></svg>

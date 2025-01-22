@@ -102,6 +102,19 @@ export class RoomState{
         return createSelector([RoomState],(state)=> state.rooms.filter((room)=>room.property==id).length);    
     }
 
+    @Action(RoomAction.SetRoom)
+    uploadLocalRoomState(ctx:StateContext<RoomStateModel>, {room}:RoomAction.UpdateRoom) 
+    {
+        const state = ctx.getState();
+
+        const data = [...state.rooms]
+        let index = data.findIndex((u)=>u._id==room._id);
+        if(index>-1) data[index]=room;
+        ctx.patchState({
+            rooms:data
+        })
+    }
+
     @Action(RoomAction.ResetAllState)
     resetAllState(ctx:StateContext<RoomStateModel>)
     {

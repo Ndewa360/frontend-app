@@ -1,4 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Select } from '@ngxs/store';
+import { Observable } from 'rxjs';
+import { UserProfileModel, UserProfileState,AuthTokenState } from 'src/app/shared/store';
 
 @Component({
   selector: 'app-navbar',
@@ -6,9 +9,15 @@ import { Component } from '@angular/core';
   styleUrls: ['./navbar.component.css']
 
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnInit {
   isMenuOpen=false;
+  @Select(UserProfileState.selectStateUserProfile) userProfil$:Observable<UserProfileModel>
+  @Select(AuthTokenState.selectStateUserIsLogin)  isLogin$:Observable<boolean>
 
+  constructor() { }
+  
+  ngOnInit(): void {
+  }
   toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;
   }

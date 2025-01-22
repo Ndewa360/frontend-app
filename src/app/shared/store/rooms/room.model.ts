@@ -41,4 +41,5 @@ export interface RoomModel {
     locataire?:string;
     isFree:boolean;
     isActiveForSouscription?:boolean;
+    medias:string[]
 }

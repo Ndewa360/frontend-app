@@ -88,6 +88,7 @@ import {MatCardModule} from '@angular/material/card';
 import { YoupezAlertComponent } from './components/alert'
 import { ChartsModule } from './modules/charts/charts.module'
 import { AppLoaderComponent } from './components/app-loader/app-loader.component'
+import { AppProgressBarComponent } from './components/app-progress-bar/app-progress-bar.component'
 // import { NgxMatIntlTelInputComponent } from "ngx-mat-intl-tel-input"
 
 
@@ -171,7 +172,8 @@ const Components = [
   AppLogoComponent,
   AppBreadcrumbComponent,
   YoupezAlertComponent,
-  AppLoaderComponent
+  AppLoaderComponent,
+  AppProgressBarComponent,
 ]
 
 const Pipes = [

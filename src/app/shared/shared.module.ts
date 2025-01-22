@@ -32,6 +32,13 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LocationPaymentState } from './store/payment-location';
 import { HistoryLocationPaymentState } from './store/history-payment-location';
 import { LocalizedDatePipe } from './pipes/localized-date.pipe';
+import { FileUploadComponent } from './components/file-upload/file-upload.component';
+import { UploadFilesState } from './store/files-upload';
+import { GaleryImageComponent } from './components/galery-image/galery-image.component';
+import { GaleryVideoComponent } from './components/galery-video/galery-video.component';
+import { GaleryVideo360Component } from './components/galery-video360/galery-video360.component';
+import { GaleryVideo360ItemComponent } from './components/galery-video360-item/galery-video360-item.component';
+
 @NgModule({
   imports: [
     CommonModule,
@@ -56,7 +63,8 @@ import { LocalizedDatePipe } from './pipes/localized-date.pipe';
         SouscriptionPeriodState,
         CityState,
         CountryState,
-        SearchState
+        SearchState,
+        UploadFilesState
       ]),
       NgxsStoragePluginModule.forRoot({
         key:"auth_token",
@@ -74,7 +82,12 @@ import { LocalizedDatePipe } from './pipes/localized-date.pipe';
     DummyTableExpansionComponent,
     DummyTableAdvancedComponent,
     NoDataComponent,
-    LocalizedDatePipe
+    LocalizedDatePipe,
+    FileUploadComponent,
+    GaleryImageComponent,
+    GaleryVideoComponent,
+    GaleryVideo360Component,
+    GaleryVideo360ItemComponent
   ],
   exports: [
     YoupezModule,
@@ -89,7 +102,12 @@ import { LocalizedDatePipe } from './pipes/localized-date.pipe';
     ToastrModule,
     FormsModule,
     ReactiveFormsModule,
-    LocalizedDatePipe
+    LocalizedDatePipe,
+    FileUploadComponent,
+    GaleryImageComponent,
+    GaleryVideoComponent,
+    GaleryVideo360Component
+
   ],
 })
 export class SharedModule {

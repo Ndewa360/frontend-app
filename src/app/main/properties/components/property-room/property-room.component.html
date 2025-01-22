@@ -9,9 +9,15 @@
               <!-- [routerLink]="['/app/properties',room._id]" -->
               <div fxFlex="100%" fxFlex.gt-md="20%" >
                 <div class="app-card app-card--select">
-                  <button (click)="openEditRoom(room)"  class="float-right btn-text-edit top-2 mt-4 mr-4 bg-slate-700 rounded-md">
-                    <youpez-ibm-icon iconName="pen" iconSize="24" ></youpez-ibm-icon>
-                  </button>
+                  <div class="relative">
+                    <button (click)="openEditRoom(room)"  class="absolute  float-right btn-text-edit top-2 right-0 mt-5 mr-5 bg-slate-700 rounded-md">
+                      <youpez-ibm-icon iconName="pen" iconSize="24" ></youpez-ibm-icon>
+                    </button>
+                    <button (click)="openEditPhoto(room)"  class="absolute  float-right btn-text-edit top-2 right-0 mt-16 mr-5 bg-slate-700 rounded-md">
+                      <youpez-ibm-icon iconName="dropPhoto" iconSize="24" ></youpez-ibm-icon>
+                    </button>
+                  </div>
+                  
                   <div class="app-card__content__alt">
                     <div class="">                  
                       <div class="px-10 py-10 text-center app-bg-decorative mb-2" [ngClass]="{'border-color': room.isFree?'rgb(220, 38, 38)':'rgb(22, 163, 74)'}">

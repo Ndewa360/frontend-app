@@ -1,6 +1,6 @@
 @import '../../../@youpez/styles/scss/theme/app.variables.scss';
 @import '../../../@youpez/styles/scss/theme/app.helpers';
-
+@import '../../../../node_modules/@photo-sphere-viewer/core/index.css';
 
 // LAYOUT THEMES
 :root.app-theme--light {

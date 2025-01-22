@@ -39,9 +39,12 @@
           </a>
         </li>
         <li>
-          <button type="reset" [routerLink]="'/auth/login'"  class="custom-primary-button app-ibm-btn-full" ibmButton="primary" size="md">
-            Connectez-vous
-          </button>
+          <header-profil-data *ngIf="(isLogin$ | async) else showHeaderBtnCxn"></header-profil-data>
+          <ng-template #showHeaderBtnCxn>
+            <button type="reset"  [routerLink]="'/auth/login'"  class="custom-primary-button app-ibm-btn-full" ibmButton="primary" size="md">
+              Connectez-vous
+            </button>
+          </ng-template>
         </li>
       </ul>
     </div>

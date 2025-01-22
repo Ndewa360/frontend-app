@@ -7,6 +7,12 @@ export namespace SearchAction
         constructor(public city:string){}
     }
 
+    export class FetchSearchByIdRoom
+    {
+        static readonly type = '[Search] Fectch Search By Room'
+        constructor(public idRoom:string){}
+    }
+
     export class ApplyFilter
     {
         static readonly type = '[Search] Apply Filter'

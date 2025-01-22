@@ -2,7 +2,8 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LayoutComponent } from './components/layout/layout.component';
 import { SearchPageComponent } from './search-page/search-page.component';
-import { SearchPageDataResolver } from 'src/app/shared/resolvers';
+import { SearchPageDataResolver, SearchRoomDataResolver } from 'src/app/shared/resolvers';
+import { RoomPageOverviewComponent } from './components/room-page-overview/room-page-overview.component';
 
 const routes: Routes = [
   {
@@ -15,6 +16,15 @@ const routes: Routes = [
         resolve: {
           data: SearchPageDataResolver
         }
+      },
+      {
+        path: 'room/:roomID',
+        component:RoomPageOverviewComponent,
+        resolve: {
+          dataRoomItem: SearchRoomDataResolver,
+          dataRoomList: SearchPageDataResolver
+        },
+        runGuardsAndResolvers: "always",
       }
     ]
   },
@@ -26,7 +36,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(routes)],
+  imports: [RouterModule.forChild(routes,)],
   exports: [RouterModule]
 })
 export class SearchRoutingModule { }

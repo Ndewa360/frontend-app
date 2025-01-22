@@ -1,0 +1,21 @@
+<div class="app-a-box app-scrollbar-fix app-bg-decorative pb-2 mt-10 pt-2">
+    <ng-scrollbar  track="vertical">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4  " *ngIf="urlList.length>0 else noDataToShow">
+            <div class="grid gap-4"  *ngFor="let urlListItemListIndex of getColoneSizeArray()" >
+                <div class="app-card app-card--select" *ngFor="let urlListItem of getElementOfColone(urlListItemListIndex)">
+                    <div class="app-card__content__alt">
+                        <div class="cursor-pointer border-4 border-orange-800" >
+                            <img class="h-auto max-w-full rounded-lg inset-0  object-center transition duration-200 group-hover:scale-110"
+                                [src]="urlListItem" alt="">
+                        </div>      
+                    </div>
+                </div>          
+            </div>
+        </div>
+        <ng-template #noDataToShow>
+            <app-no-data-list textDescription="élément" class="flex-auto"></app-no-data-list> 
+        </ng-template>                           
+
+    </ng-scrollbar>
+</div>
+<!--  -->

@@ -41,6 +41,8 @@ export class RoomFilteredFoundComponent {
         if(found.length==0) return;
         let newModel = new TableModel()
 
+        console.log("Room Found ",found)
+
         this.allRoomData=[...found]
         newModel.data = [];
         newModel.pageLength=9;

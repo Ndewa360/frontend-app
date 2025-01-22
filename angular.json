@@ -44,7 +44,8 @@
 							"src/@youpez/styles/scss/theme/app.scss",
 							"node_modules/ngx-toastr/toastr.css",
 							"src/app/shared/styles/app.themes.scss",
-							"src/assets/tailwind/tailwind.scss"
+							"src/assets/tailwind/tailwind.scss",
+							"node_modules/@photo-sphere-viewer/core/index.css"
 						],
 						"scripts": [],
 						"vendorChunk": true,

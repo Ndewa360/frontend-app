@@ -20,7 +20,7 @@ export class HistoryRoomComponent implements OnInit{
   ){}
 
   ngOnInit(): void {
-    let locataireID = this._activatedRoute.snapshot.parent.paramMap.get('locataireID');
+    let locataireID = this._activatedRoute.snapshot.parent.paramMap.get('roomID');
     this.locations$ = this._store.select(LocationState.selectStateLocationByLocataireId(locataireID));
     this.locations$.subscribe((data)=>console.log("Location list",data))
   }

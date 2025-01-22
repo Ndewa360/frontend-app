@@ -25,4 +25,11 @@ export class SearchService
         return this._httpClient.get<ApiResultFormat<SearchPropertyModel[]>>(`${environment.apiUrl}/search/by-city/${city}`)
 
     }
+
+    getSearchByIdRoom(idRoom:string):Observable<ApiResultFormat<SearchPropertyModel>>
+    {
+        return this._httpClient.get<ApiResultFormat<SearchPropertyModel>>(`${environment.apiUrl}/search/by-idroom/${idRoom}`)
+
+    }
+
 }

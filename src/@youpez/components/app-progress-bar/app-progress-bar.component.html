@@ -1,0 +1,7 @@
+<div class="flex justify-between mb-1">
+    <span [ngClass]="{'text-blue-700':progressState=='IN_PROGRESS','text-green-700':progressState=='DONE'}" class="text-base font-medium  dark:text-white">{{progressName}}</span>
+    <span [ngClass]="{'text-blue-700':progressState=='IN_PROGRESS','text-green-700':progressState=='DONE'}"  class="text-sm font-medium  dark:text-white">{{progressValue}}%</span>
+</div>
+<div class="w-full bg-gray-200 rounded-full dark:bg-gray-700">
+    <div [ngClass]="{'bg-blue-600':progressState=='IN_PROGRESS','bg-green-600':progressState=='DONE'}" class="text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full" style="width: {{progressValue}}%"> {{progressValue}}%</div>
+  </div>

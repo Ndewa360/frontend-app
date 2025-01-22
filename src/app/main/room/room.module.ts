@@ -4,11 +4,13 @@ import { CommonModule } from '@angular/common';
 import { RoomRoutingModule } from './room-routing.module';
 import { UpdateRoomComponent } from './components/update-room/update-room.component';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { GaleryComponent } from './components/galery/galery.component';
 
 
 @NgModule({
   declarations: [
-    UpdateRoomComponent
+    UpdateRoomComponent,
+    GaleryComponent
   ],
   imports: [
     SharedModule,
@@ -16,7 +18,8 @@ import { SharedModule } from 'src/app/shared/shared.module';
     RoomRoutingModule
   ],
   exports:[
-    UpdateRoomComponent
+    UpdateRoomComponent,
+    GaleryComponent
   ]
 })
 export class RoomModule { }

@@ -322,11 +322,27 @@ import SettingsAdjust24 from '@carbon/icons/es/settings--adjust/24';
 import SettingsAdjust20 from '@carbon/icons/es/settings--adjust/20';
 import SettingsAdjust16 from '@carbon/icons/es/settings--adjust/16';
 
+import UserAccessUnlock32 from '@carbon/icons/es/user--access-unlocked/32';
+import UserAccessUnlock24 from '@carbon/icons/es/user--access-unlocked/24';
+import UserAccessUnlock20 from '@carbon/icons/es/user--access-unlocked/20';
+import UserAccessUnlock16 from '@carbon/icons/es/user--access-unlocked/16';
+
+import DropPhoto32 from '@carbon/icons/es/drop-photo/32';
+import DropPhoto24 from '@carbon/icons/es/drop-photo/24';
+import DropPhoto20 from '@carbon/icons/es/drop-photo/20';
+import DropPhoto16 from '@carbon/icons/es/drop-photo/16';
+
+
+
 import Map32 from '@carbon/icons/es/map/32';
 import Map24 from '@carbon/icons/es/map/24';
 import Map20 from '@carbon/icons/es/map/20';
 import Map16 from '@carbon/icons/es/map/16';
 
+import CloudUpload32 from '@carbon/icons/es/cloud--upload/32';
+import CloudUpload24 from '@carbon/icons/es/cloud--upload/24';
+import CloudUpload20 from '@carbon/icons/es/cloud--upload/20';
+import CloudUpload16 from '@carbon/icons/es/cloud--upload/16';
 
 
 import {IbmIconComponent} from './ibm-icon.component'
@@ -358,6 +374,21 @@ export class IbmIconModule {
 		SettingsAdjust24,
 		SettingsAdjust20,
 		SettingsAdjust16,
+
+		CloudUpload32,
+		CloudUpload24,
+		CloudUpload20,
+		CloudUpload16,
+
+		UserAccessUnlock32,
+		UserAccessUnlock24,
+		UserAccessUnlock20,
+		UserAccessUnlock16,
+
+		DropPhoto32,
+		DropPhoto24,
+		DropPhoto20,
+		DropPhoto16,
 
 		ChevronUpdOutline32,
 		ChevronUpdOutline24,

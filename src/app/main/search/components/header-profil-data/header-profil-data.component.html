@@ -1,0 +1,50 @@
+<div ngbDropdown
+       placement="bottom-right"
+       container="body">
+    <a class="app-layout__header__btn app-layout__header__btn--icon cursor-pointer " ngbDropdownToggle>
+      <img class="w-10 h-10 shadow hover:shadow-xl rounded-full" src="assets/img/avatar/avatarinit.png"/>
+    </a>
+
+    <div ngbDropdownMenu>
+      <div class="app-list app-list--hover app-list--select app-list--no-border app-list--p">
+        <div class="app-list__item app-list__item--no-p" ngbDropdownItem>
+          <div class="px-2">
+            <img class="w-10 h-10 rounded-full" src="assets/img/avatar/avatarinit.png"/>
+          </div>
+          <div class="app-list__item__content mr-4">
+            <div>
+              <div class="app-helper-text-01">Connecté en tant que</div>
+              <div class="app-expressive-heading-02" *ngIf="userProfil$ | async as userProfil">{{userProfil.name}}</div>
+            </div>
+          </div>
+        </div>
+        <div class="app-list__divider"></div>
+        <div class="app-list__item" ngbDropdownItem routerLink="/app/welcome">
+          <div class="app-list__item__content">
+            Espace membre
+          </div>
+        </div>
+        <div class="app-list__item" ngbDropdownItem routerLink="/app/user/settings">
+            <div class="app-list__item__content">
+                Profil
+            </div>
+          </div>
+        <!-- <div class="app-list__item" ngbDropdownItem routerLink="/app/facturation/choix-plan">
+          <div class="app-list__item__content">
+            Plan
+          </div>
+        </div> -->
+        <div class="app-list__item" ngbDropdownItem routerLink="/app/user/settings">
+          <div class="app-list__item__content">
+            Parametre
+          </div>
+        </div>
+        <div class="app-list__divider"></div>
+        <div class="app-list__item mb-2" ngbDropdownItem (click)="logout()">
+          <div class="app-list__item__content">
+            Deconnexion
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

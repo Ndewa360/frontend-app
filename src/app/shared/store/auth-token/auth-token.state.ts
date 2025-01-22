@@ -33,10 +33,15 @@ export class AuthTokenState{
     {
         ctx.patchState( { authToken:token } )
         return of(true)
-        
     }
 
-   
+
+   @Selector()
+    static selectStateUserIsLogin(state:AuthTokenStateModel)
+    {
+        console.log("Login ",state.authToken)
+        return state.authToken!=null;
+    }
    
 
 }
