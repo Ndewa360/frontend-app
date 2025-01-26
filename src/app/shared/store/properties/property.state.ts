@@ -78,7 +78,6 @@ export class PropertyState{
         return this._propertysService.updateProperty(property,id).pipe(
             tap(
                 (result)=>{
-                    console.log("Result update Property ",result)
                     const data = [...state.properties]
                     let index = data.findIndex((u)=>u._id==id);
                     if(index>-1) data[index]=result.data;
@@ -125,6 +124,18 @@ export class PropertyState{
         return of(true)
     }
 
+    @Action(PropertyAction.SetProperty)
+    uploadLocalRoomState(ctx:StateContext<PropertyStateModel>, {property}:PropertyAction.SetProperty) 
+    {
+        const state = ctx.getState();
+
+        const data = [...state.properties]
+        let index = data.findIndex((u)=>u._id==property._id);
+        if(index>-1) data[index]=property;
+        ctx.patchState({
+            properties:data
+        })
+    }
    
 
     @Action(PropertyAction.FetchProperty)

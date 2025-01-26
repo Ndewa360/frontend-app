@@ -1,0 +1,12 @@
+.btn-text-edit-nav.btn-slider {
+    border-width: 2px;
+    border-color: white;
+}
+
+.btn-text-edit-nav.btn-slider.active {
+    background-color: rgba(204, 140, 10,.9);
+}
+
+.btn-close svg {
+    fill: white !important;
+}

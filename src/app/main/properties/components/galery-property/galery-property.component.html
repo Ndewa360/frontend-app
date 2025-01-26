@@ -1,0 +1,76 @@
+<div fxFill fxLayout="column" class="app-bg-container overflow-hidden">
+    <div class="px-4 py-4 flex">
+        <div class="app-productive-heading-03 font-bold">Mise à jour du bien </div>
+        <div class="flex-1 flex justify-end">
+            <button (click)="close()" type="reset" ibmButton="ghost" size="sm"
+                class="cds--btn--icon-only custom-ghost-close">
+                <youpez-ibm-icon iconClass="cds--btn__icon" iconName="close" iconSize="32"></youpez-ibm-icon>
+            </button>
+        </div>
+    </div>
+    <div fxFlex>
+        <div class="app-content app-content--default h-full">
+            <cds-tabs
+            [type]="'line'"
+            [followFocus]="false"
+            [isNavigation]="false"
+            [cacheActive]="false">
+            <cds-tab heading="Images" [tabContent]="galeryImage"></cds-tab>
+            <cds-tab heading="Vidéos"  [tabContent]="galeryVideo"></cds-tab>
+            <cds-tab heading="Vidéo360" [tabContent]="galeryVideo360"></cds-tab>
+            <cds-tab heading="Importer" [tabContent]="importer"></cds-tab>
+        </cds-tabs>
+
+        <!-- Use templates if you would like to have lifecycle hooks called when cacheActive is false -->
+        
+        <ng-template #galeryImage>
+            <galery-image [urlList]="propertySelectedImages"></galery-image>
+        </ng-template>
+        <ng-template #galeryVideo>
+            <galery-video [urlList]="propertySelectedVideos"></galery-video>
+        </ng-template>
+        <ng-template #galeryVideo360>
+            <galery-video360 [urlList]="propertySelectedImages360"></galery-video360>
+        </ng-template>
+
+        <ng-template #importer>
+            <app-file-upload [isMultiple]="true" [shouldResetFiles]="shouldResetFiles" [acceptedFileType]="'image/*,video/*'" (uploadFileEvent)="updateFileListToUpdate($event)"></app-file-upload>
+
+            <div class="w-full flex justify-center ">
+                <!-- <button  class="absolute  float-right btn-text-edit top-2 right-0 mt-5 mr-5 bg-slate-700 rounded-md">
+                    <youpez-ibm-icon iconName="pen" iconSize="24" ></youpez-ibm-icon>
+                  </button> -->
+                <button *ngIf="files.length>0 && waitingForUploaded==false" class="upload-btn text-center mt-4 custom-primary-button" (click)="uploadedFile()" ibmButton="primary" size="md" type="submit">
+                    <span class="btn-text mr-1">Uploader</span>
+                    <youpez-ibm-icon iconClass="cds--btn__icon" iconName="upload" iconSize="20"></youpez-ibm-icon>
+                </button>                
+            </div>
+            <div class="w-full mt-10">
+                <ng-container *ngIf="(files$ | async) as files ">
+                    <div fxFill fxLayout="column" class="mt-5" *ngFor="let file of files">
+                        <app-progress-bar  [progressValue]="file.state.progress" [progressName]="file.name" [progressState]="file.state.state" class="w-full"></app-progress-bar>
+                    </div>
+                </ng-container>
+                <!-- <div fxFill fxLayout="column" class="mt-5" *ngFor="let file of filesUploaded">
+                    <app-progress-bar  [progressValue]="file.state.progress" [progressName]="file.name" [progressState]="file.state.state" class="w-full"></app-progress-bar>
+                </div> -->
+                
+            </div>
+
+
+        </ng-template>
+
+        </div>
+    </div>
+    <div class="px-4 py-4 flex justify-end app-border-t">
+        <button (click)="close()" type="reset" ibmButton="secondary" size="md" class="mr-1 btn-annuler">
+            Terminer
+        </button>
+        <!-- <button ibmButton="primary" size="md" 
+            class="custom-primary-button" type="submit">
+                <span class="btn-text">Mettre à jour</span>
+                <youpez-ibm-icon iconClass="cds--btn__icon" iconName="add" iconSize="20"></youpez-ibm-icon>
+
+        </button> -->
+    </div>
+</div>

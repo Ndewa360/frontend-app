@@ -1,0 +1,41 @@
+.main-img 
+{
+    height: 40em;
+}
+
+.btn-text-edit-nav {
+    background-color: rgba(0, 0, 0, 0.7);
+    cursor: pointer;
+}
+
+.btn-text-edit-nav:hover 
+{
+    background-color: rgba(0, 0, 0, 0.9);
+
+}
+.image-thumbnail {
+    border: 1.5px solid rgba(237, 242, 247, 0.4);
+    background-color: white;
+}
+.image-thumbnail:hover {
+    border-color:rgba(204, 140, 10, 0.8);
+}
+.image-thumbnail.active {
+    border: 2px solid rgba(204, 140, 10, 0.8);
+}
+
+.btn-text-edit
+{
+    background-color: rgb(204, 140, 10);
+    cursor: pointer;
+}
+
+.btn-text-edit:hover
+{
+    background-color: rgba(204, 140, 10,.8);
+}
+
+.btn-text-edit svg
+{
+    fill: #fff;
+}

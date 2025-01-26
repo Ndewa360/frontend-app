@@ -47,7 +47,9 @@
 							"src/assets/tailwind/tailwind.scss",
 							"node_modules/@photo-sphere-viewer/core/index.css"
 						],
-						"scripts": [],
+						"scripts": [
+							"node_modules/flowbite/dist/flowbite.min.js"
+						],
 						"vendorChunk": true,
 						"extractLicenses": false,
 						"buildOptimizer": false,

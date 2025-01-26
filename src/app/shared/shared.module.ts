@@ -38,6 +38,9 @@ import { GaleryImageComponent } from './components/galery-image/galery-image.com
 import { GaleryVideoComponent } from './components/galery-video/galery-video.component';
 import { GaleryVideo360Component } from './components/galery-video360/galery-video360.component';
 import { GaleryVideo360ItemComponent } from './components/galery-video360-item/galery-video360-item.component';
+import { SliderComponentGaleryComponent } from './components/slider-component-galery/slider-component-galery.component';
+import { FullScreenGaleryComponent } from './components/full-screen-galery/full-screen-galery.component';
+import { SinglePageScreenGaleryComponent } from './components/single-page-screen-galery/single-page-screen-galery.component';
 
 @NgModule({
   imports: [
@@ -87,14 +90,13 @@ import { GaleryVideo360ItemComponent } from './components/galery-video360-item/g
     GaleryImageComponent,
     GaleryVideoComponent,
     GaleryVideo360Component,
-    GaleryVideo360ItemComponent
+    GaleryVideo360ItemComponent,
+    SliderComponentGaleryComponent,
+    FullScreenGaleryComponent,
+    SinglePageScreenGaleryComponent
   ],
   exports: [
     YoupezModule,
-    // DummyTableRichComponent,
-    // DummyTablePaginationComponent,
-    // DummyTableExpansionComponent,
-    // DummyTableAdvancedComponent,
     NgxsRouterPluginModule,
     NoDataComponent,
     NgxsModule,
@@ -106,7 +108,11 @@ import { GaleryVideo360ItemComponent } from './components/galery-video360-item/g
     FileUploadComponent,
     GaleryImageComponent,
     GaleryVideoComponent,
-    GaleryVideo360Component
+    GaleryVideo360Component,
+    SliderComponentGaleryComponent,
+    FullScreenGaleryComponent,
+    SinglePageScreenGaleryComponent
+
 
   ],
 })

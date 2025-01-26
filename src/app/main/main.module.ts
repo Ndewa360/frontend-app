@@ -33,7 +33,8 @@ import { RemoveLocataireRoomComponent } from './properties/components/remove-loc
 import { LocationPaymentModule } from './location-payment/location-payment.module'
 import { LocatairesModule } from './locataires/locataires.module'
 import { StatisticsModule } from './statistics/statistics.module'
-import { RoomModule } from './room/room.module'
+import { RoomModule } from './room/room.module';
+import { GaleryPropertyComponent } from './properties/components/galery-property/galery-property.component'
 
 
 @NgModule({
@@ -59,6 +60,7 @@ import { RoomModule } from './room/room.module'
     AssignLocationFormComponent,
     AssignLocationListClientComponent,
     RemoveLocataireRoomComponent,
+    GaleryPropertyComponent,
     
   ],
   imports: [

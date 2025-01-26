@@ -67,8 +67,9 @@ const themes = {
 const config = {
     darkMode   : 'class',
     content    : [
-        './src/**/*.{html,scss,ts}',
-        "./node_modules/tw-elements/dist/js/**/*.js"
+        './src/**/*.{html,css,scss,ts}',
+        "./node_modules/tw-elements/dist/js/**/*.js",
+        "./node_modules/flowbite/**/*.js"
     ],
     important  : true,
     theme      : {
@@ -97,8 +98,17 @@ const config = {
         },
         extend  : {
             animation               : {
-                'spin-slow': 'spin 3s linear infinite'
+                'spin-slow': 'spin 3s linear infinite',
+                bounce: 'bounce 1s infinite',
+                spin: 'spin 1s linear infinite',
             },
+            keyframes: {
+                // Définir des keyframes personnalisés
+                bounce: {
+                  '0%, 100%': { transform: 'translateY(-25%)', animationTimingFunction: 'cubic-bezier(0.8,0,1,1)' },
+                  '50%': { transform: 'none', animationTimingFunction: 'cubic-bezier(0,0,0.2,1)' },
+                },
+              },
             colors                  : {
                 gray: colors.slate
             },
@@ -293,6 +303,7 @@ const config = {
         // Other third party and/or custom plugins
         require('@tailwindcss/typography')({modifiers: ['sm', 'lg']}),
         require('@tailwindcss/line-clamp'),
+        require('flowbite/plugin')
         // require("tw-elements/dist/plugin.cjs")
     ]
 };

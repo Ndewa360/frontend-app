@@ -11,13 +11,12 @@ import { getHttpOfProxyUrl } from '../../utils';
 export class GaleryVideo360ItemComponent implements AfterViewInit {
   
   @Input() urlFile:string=""
+  @Input() isFullScreen=false;
   @ViewChild('viewerContainer', { static: true }) viewerContainer!: ElementRef;
   private viewer: any;
 
   ngAfterViewInit(): void {
-    console.log("Viewer Ref ",this.viewerContainer)
     if(this.urlFile) {
-      console.log("Url file  Datas",this.urlFile)
       this.viewer = new Viewer({
         container: this.viewerContainer.nativeElement,//'viewer',
         panorama: getHttpOfProxyUrl(this.urlFile),
@@ -30,14 +29,6 @@ export class GaleryVideo360ItemComponent implements AfterViewInit {
           'fullscreen',
           'caption',
         ],
-      });
-
-      this.viewer.on('load', () => {
-        console.log('Panorama chargé avec succès!');
-      });
-      
-      this.viewer.on('error', (error) => {
-        console.error('Erreur lors du chargement du panorama:', error);
       });
     }
   }

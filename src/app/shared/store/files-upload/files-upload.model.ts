@@ -4,6 +4,10 @@ export enum FileUploadContentType {
     FOR_ROOM_FILE="for_room_file"
 }
 
+export enum ContentUploadRoomType {
+    FOR_ROOM="for_room",
+    FOR_PROPERTY="for_property"
+}
 
 export interface UploadFilesModel {
 
@@ -12,4 +16,7 @@ export interface UploadFilesModel {
     contentID:string;
 
     file:File
+
+    contentRoomType: ContentUploadRoomType
 }
+

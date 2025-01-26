@@ -18,6 +18,7 @@ export class PropertyRoomComponent implements OnInit {
   @Select(RoomState.selectStateInitLoading) loadingRoom$:Observable<string>;
   roomFound:RoomModel[] = [];
   roomFound$:Observable<RoomModel[]>;
+  
 
   constructor(
     private _activatedRoute: ActivatedRoute,

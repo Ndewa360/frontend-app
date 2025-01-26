@@ -20,15 +20,22 @@
                         <div class="app-subtitle app-subtitle--cards mt-2">Biens ({{properties.length}})</div>
                         <div fxLayout="row wrap" class="app-card-row-holder">                        
                           <ng-container *ngFor="let property of properties">
+
                             <div [routerLink]="['/app/properties',property._id]" fxFlex="100%" fxFlex.gt-md="20%">
                               <div class="app-card app-card--select">
+                                <div class="relative">
+                                  <button (click)="updateProperty(property,$event)"  class="absolute  float-right btn-text-edit top-2 right-0 mt-5 mr-5 bg-slate-700 rounded-md">
+                                    <youpez-ibm-icon iconName="pen" iconSize="24" ></youpez-ibm-icon>
+                                  </button>
+                                  <button (click)="openEditPhoto(property,$event)"  class="absolute  float-right btn-text-edit top-2 right-0 mt-16 mr-5 bg-slate-700 rounded-md">
+                                    <youpez-ibm-icon iconName="dropPhoto" iconSize="24" ></youpez-ibm-icon>
+                                  </button>
+                                </div>
                                 <div class="app-card__content__alt">
                                   <div class=""> 
-                                    <div class="px-10 py-10 text-center app-bg-decorative mb-2">
-                                      <!-- <youpez-ibm-icon iconName="buildingInsights1" iconSize="32"></youpez-ibm-icon> -->
-                                      <!-- <ibm-icon-building-insights-1 size="32" innerClass="inner-class" class="host-class"></ibm-icon-building-insights-1> -->
-                                       <img src="assets/img/utils/house.png" alt="" width="150" srcset="">
-                                    </div>
+                                    <div class="text-center app-bg-decorative mb-2">
+                                       <slider-component-galery [images]="property.medias"></slider-component-galery>
+                                    </div> 
                                     <div>
                                       <div class="app-expressive-heading-01 truncate">{{property.name}}</div>
                                       <div class="app-helper-text-01 mb-2">#{{property.code}}</div>

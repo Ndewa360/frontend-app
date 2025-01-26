@@ -7,9 +7,9 @@
           <ng-container *ngIf="(loadingRoom$ | async)=='LOADED' else isLoadingData">
             <ng-container *ngFor="let room of roomFound">
               <!-- [routerLink]="['/app/properties',room._id]" -->
-              <div fxFlex="100%" fxFlex.gt-md="20%" >
-                <div class="app-card app-card--select">
-                  <div class="relative">
+              <div fxFlex="100%" fxFlex.gt-md="20%" class="" >
+                <div class="app-card app-card--select group">
+                  <div class="relative btn-edit-wih">
                     <button (click)="openEditRoom(room)"  class="absolute  float-right btn-text-edit top-2 right-0 mt-5 mr-5 bg-slate-700 rounded-md">
                       <youpez-ibm-icon iconName="pen" iconSize="24" ></youpez-ibm-icon>
                     </button>
@@ -20,9 +20,11 @@
                   
                   <div class="app-card__content__alt">
                     <div class="">                  
-                      <div class="px-10 py-10 text-center app-bg-decorative mb-2" [ngClass]="{'border-color': room.isFree?'rgb(220, 38, 38)':'rgb(22, 163, 74)'}">
+                      <div  class="text-center app-bg-decorative mb-2" [ngClass]="{'border-color': room.isFree?'rgb(220, 38, 38)':'rgb(22, 163, 74)'}">
                         <!-- <youpez-ibm-icon iconName="home" iconSize="32" ></youpez-ibm-icon> -->
-                        <img src="assets/img/utils/room.png" alt="" width="100" srcset="">
+                        <!-- <img src="assets/img/utils/room.png" alt="" width="100" srcset=""> -->
+                        <slider-component-galery [images]="room.medias"></slider-component-galery>
+
 
                       </div>
                       <div>                        

@@ -7,6 +7,21 @@
     font-size: 14px;
 }
 
+.btn-text-edit
+{
+    background-color: rgb(204, 140, 10);
+    cursor: pointer;
+}
+
+.btn-text-edit:hover
+{
+    background-color: rgba(204, 140, 10,.8);
+}
+
+.btn-text-edit svg
+{
+    fill: #fff;
+}
 
 @media only screen and (max-width: 600px) {
     .no-data-loader

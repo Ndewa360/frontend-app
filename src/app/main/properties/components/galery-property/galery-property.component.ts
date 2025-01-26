@@ -1,37 +1,36 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, Inject, ViewEncapsulation } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Store, Actions, ofActionErrored, ofActionSuccessful, Select, ofActionCompleted } from '@ngxs/store';
+import { Store, Actions, ofActionSuccessful, ofActionCompleted, ofActionErrored, Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { ApiUploadFileStateFormat, RoomModel, RoomState } from 'src/app/shared/store';
-import { FileUploadContentType, UploadFilesAction, UploadFilesState,ContentUploadRoomType  } from 'src/app/shared/store/files-upload';
+import { ApiUploadFileStateFormat, PropertyModel, PropertyState } from 'src/app/shared/store';
+import { UploadFilesState, UploadFilesAction, FileUploadContentType, ContentUploadRoomType} from 'src/app/shared/store/files-upload';
 import { MediaUtil } from 'src/app/shared/utils';
 
 @Component({
-  selector: 'galery',
-  templateUrl: './galery.component.html',
-  styleUrls: ['./galery.component.css'],
-  encapsulation:ViewEncapsulation.None,
-  // changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'galery-property',
+  templateUrl: './galery-property.component.html',
+  styleUrls: ['./galery-property.component.css'],
+  encapsulation: ViewEncapsulation.None
 })
-export class GaleryComponent implements OnInit, OnDestroy {
+export class GaleryPropertyComponent {
   waitingForUploaded=false;
   shouldResetFiles=false;
   files:File[]=[];
   filesUploaded:{name:string,state:ApiUploadFileStateFormat<any>}[]=[]
   mapFilesUploaded:Map<string,ApiUploadFileStateFormat<any>>=new Map<string,ApiUploadFileStateFormat<any>>();
   @Select(UploadFilesState.selectStateUploadedFiles) files$:Observable<{name:string,state:ApiUploadFileStateFormat<any>}[]>;
-  // @Select(RoomState) room$:Observable<RoomModel>;
-  roomSelectedImages =[];
-  roomSelectedImages360=[];
-  roomSelectedVideos=[]
+  // @Select(PropertyState) property$:Observable<PropertyModel>;
+  propertySelectedImages =[];
+  propertySelectedImages360=[];
+  propertySelectedVideos=[]
   
   constructor(
-    private dialogRef: MatDialogRef<GaleryComponent>,
+    private dialogRef: MatDialogRef<GaleryPropertyComponent>,
     protected formBuilder: FormBuilder,
     private _store:Store,
     private _ngxsAction:Actions,
-    @Inject(MAT_DIALOG_DATA) public data:{room:RoomModel},
+    @Inject(MAT_DIALOG_DATA) public data:{property:PropertyModel},
     // private _changeDetectorRef: ChangeDetectorRef,
     
   ){}
@@ -39,12 +38,12 @@ export class GaleryComponent implements OnInit, OnDestroy {
   
   ngOnInit(): void {
 
-    this._store.select(RoomState.selectStateRoom(this.data.room._id)).subscribe(async (value)=>{
+    this._store.select(PropertyState.selectStateProperty(this.data.property._id)).subscribe(async (value)=>{
       let data = await MediaUtil.getStructMedia(value.medias)
-      this.roomSelectedImages360=data.images360;
-      this.roomSelectedVideos=data.videos;
-      this.roomSelectedImages=data.images;
-      // this.roomSelectedImages=value.medias;
+      this.propertySelectedImages360=data.images360;
+      this.propertySelectedVideos=data.videos;
+      this.propertySelectedImages=data.images;
+      // this.propertySelectedImages=value.medias;
     })
 
     this.files$.subscribe((value)=>{
@@ -95,15 +94,16 @@ export class GaleryComponent implements OnInit, OnDestroy {
     this.waitingForUploaded=true;
     this.files.forEach((file)=>this._store.dispatch(new UploadFilesAction.UploadFiles({
       file:file,
-      contentID: this.data.room._id,
+      contentID: this.data.property._id,
       contentType: FileUploadContentType.FOR_ROOM_FILE,
-      contentRoomType: ContentUploadRoomType.FOR_ROOM
-
+      contentRoomType: ContentUploadRoomType.FOR_PROPERTY
     })))
   }
+
 
   ngOnDestroy(): void {
     if(this.shouldResetFiles) {
     }
   }
+  
 }

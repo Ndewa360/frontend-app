@@ -15,11 +15,11 @@
                         </button> -->
                         <div class="app-card__content__alt">
                           <div class="">
-                            <div class="px-10 py-10 text-center app-bg-decorative mb-2"
-                              [ngClass]="{'border-color': room.isFree?'rgb(220, 38, 38)':'rgb(22, 163, 74)'}">
+                            <div class="text-center app-bg-decorative mb-2" [ngClass]="{'border-color': room.isFree?'rgb(220, 38, 38)':'rgb(22, 163, 74)'}">
                               <!-- <youpez-ibm-icon iconName="home" iconSize="32" ></youpez-ibm-icon> -->
-                              <img src="assets/img/utils/room.png" alt="" width="100" srcset="">
-        
+                              <!-- <img src="assets/img/utils/room.png" alt="" width="100" srcset=""> -->
+                              <slider-component-galery [images]="room.medias"></slider-component-galery>
+                              
                             </div>
                             <div>
                               <div class="grid grid-cols-10 mt-2 mb-2 ">

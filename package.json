@@ -54,6 +54,7 @@
     "core-js": "^3.9.1",
     "echarts": "^5.5.1",
     "flatpickr": "^4.6.13",
+    "flowbite": "^2.5.2",
     "html2canvas": "^1.4.1",
     "jspdf": "^2.5.2",
     "jspdf-autotable": "^3.8.3",

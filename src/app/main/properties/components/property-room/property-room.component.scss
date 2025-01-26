@@ -31,3 +31,12 @@
 {
     background-color: rgba(204, 140, 10,.8);
 }
+
+.app-card.app-card--select:hover .nav-button-change-slider,
+.app-card.app-card--select:hover .nav-button-change-fullscreen
+{
+    visibility: visible;
+}
+.btn-text-edit {
+    z-index:1000 !important;
+}

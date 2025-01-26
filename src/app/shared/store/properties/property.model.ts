@@ -9,6 +9,7 @@ export interface PropertyModel {
     geolocationCity:CityModel
     description?:string;
     image?:string;
+    medias?:string[];
     createdAt?: Date,
     updatedAt?: Date,
     hasClosure?:boolean,

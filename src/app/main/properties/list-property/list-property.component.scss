@@ -11,3 +11,24 @@
 .home-romm svg{
     fill: rgba(204, 140, 10,.9)
 }
+
+
+.btn-text-edit svg
+{
+    fill: #fff;
+}
+
+.btn-text-edit
+{
+    background-color: rgb(204, 140, 10);
+    cursor: pointer;
+}
+
+.btn-text-edit:hover
+{
+    background-color: rgba(204, 140, 10,.8);
+}
+
+.btn-text-edit {
+    z-index:1000 !important;
+}

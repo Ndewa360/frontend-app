@@ -1,16 +1,18 @@
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { TableModel } from 'carbon-components-angular';
 import { Observable } from 'rxjs';
+import { FullScreenGaleryComponent } from 'src/app/shared/components/full-screen-galery/full-screen-galery.component';
 import { LocataireState, Currency, SearchState, SearchPropertyModel } from 'src/app/shared/store';
 import { UtilsString } from 'src/app/shared/utils';
 
 @Component({
   selector: 'room-filtered-found',
   templateUrl: './room-filtered-found.component.html',
-  styleUrls: ['./room-filtered-found.component.css']
+  styleUrls: ['./room-filtered-found.component.css'],
+  encapsulation:ViewEncapsulation.None
 })
 export class RoomFilteredFoundComponent {
     @Select(SearchState.selectStateLoading) loadingRoom$:Observable<string>;
@@ -86,4 +88,19 @@ export class RoomFilteredFoundComponent {
     {
       return UtilsString.getStringOfRoomType(roomType)
     }
+
+    showFullScreenViewer(images,e)
+      {
+        e.stopPropagation()
+        this.dialog.open(FullScreenGaleryComponent, {
+          viewContainerRef:null,
+          disableClose: true,
+          role: 'dialog',
+          height: '100%',
+          width: '100%',
+          data:{
+            medias:images
+          }
+        })
+      }
 }

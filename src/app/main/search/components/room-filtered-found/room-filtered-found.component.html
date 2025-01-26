@@ -20,12 +20,20 @@
                     class="float-right btn-text-edit top-2 mt-4 mr-4 bg-slate-700 rounded-md">
                     <youpez-ibm-icon iconName="pen" iconSize="24"></youpez-ibm-icon>
                   </button> -->
+                  <div class="relative btn-text-edit" *ngIf="room.medias.length>0">
+                    <button (click)="showFullScreenViewer(room.medias,$event)"  class="absolute z-30 float-right btn-text-edit top-2 right-0 mt-5 mr-5 bg-slate-700 rounded-md">
+                      <i class="fa-solid fa-expand fa-2x text-white"></i>
+                    </button>
+                  </div>
+                  
                   <div class="app-card__content__alt">
                     <div class="">
-                      <div class="px-10 py-10 text-center app-bg-decorative mb-2"
+                      <div class="text-center app-bg-decorative mb-2"
                         [ngClass]="{'border-color': room.isFree?'rgb(220, 38, 38)':'rgb(22, 163, 74)'}">
                         <!-- <youpez-ibm-icon iconName="home" iconSize="32" ></youpez-ibm-icon> -->
-                        <img src="assets/img/utils/room.png" alt="" width="100" srcset="">
+                        <!-- <img src="assets/img/utils/room.png" alt="" width="100" srcset=""> -->
+                        <slider-component-galery [images]="room.medias"></slider-component-galery>
+
   
                       </div>
                       <div>

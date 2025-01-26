@@ -1,7 +1,7 @@
 <div class="mb-6">
     <ng-container *ngIf="!loading else loadingData">
         <div class="mt-5 relative">
-            <nav class="mx-auto w-full mt-4 mb-4 max-w-[1200px] px-5">
+            <nav class="mx-auto w-full mt-10 mb-4 ml-10 max-w-[1200px] px-5">
                 <ul class="flex items-center">
                     <li class="cursor-pointer">
                         <a href="/search/index">
@@ -23,34 +23,7 @@
         </div>
         <section fxLayout="row wrap">
             <div fxFlex="100%" fxFlex.gt-md="55%">
-                <div class="grid gap-4 justify-center">
-                    <div>
-                        <img class="h-auto max-w-full rounded-lg"
-                            src="https://flowbite.s3.amazonaws.com/docs/gallery/featured/image.jpg" alt="">
-                    </div>
-                    <div class="grid grid-cols-5 gap-4">
-                        <div>
-                            <img class="h-auto max-w-full rounded-lg"
-                                src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-1.jpg" alt="">
-                        </div>
-                        <div>
-                            <img class="h-auto max-w-full rounded-lg"
-                                src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-2.jpg" alt="">
-                        </div>
-                        <div>
-                            <img class="h-auto max-w-full rounded-lg"
-                                src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-3.jpg" alt="">
-                        </div>
-                        <div>
-                            <img class="h-auto max-w-full rounded-lg"
-                                src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-4.jpg" alt="">
-                        </div>
-                        <div>
-                            <img class="h-auto max-w-full rounded-lg"
-                                src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-5.jpg" alt="">
-                        </div>
-                    </div>
-                </div>
+                <single-page-screen-galery [images]="roomDataSearch.medias"></single-page-screen-galery>
             </div>
 
 

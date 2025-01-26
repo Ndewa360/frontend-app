@@ -9,6 +9,9 @@ import { calculateState, UtilsString } from "../../utils";
 import { ToastrService } from "ngx-toastr";
 import { ApiResultFormat, ApiUploadFileStateFormat } from "../global";
 import { RoomAction, RoomModel } from "../rooms";
+import { PropertyAction } from "../properties";
+
+import { ContentUploadRoomType } from "./files-upload.model";
 
 export class UploadFilesStateModel {
     loadingUploadFiles:boolean
@@ -77,7 +80,8 @@ export class UploadFilesState{
 
                     if(result.data) 
                     {
-                        ctx.dispatch(new RoomAction.SetRoom(result.data.data))
+                        if(uploadFiles.contentRoomType==ContentUploadRoomType.FOR_ROOM) ctx.dispatch(new RoomAction.SetRoom(result.data.data))
+                        else ctx.dispatch(new PropertyAction.SetProperty(result.data.data))
                         this._toastrService.success(`Image '${uploadFiles.file.name}' envoyé avec succés!`, 'Ndewa360°');                                             
                     }
                     const data = [...ctx.getState().filesState]

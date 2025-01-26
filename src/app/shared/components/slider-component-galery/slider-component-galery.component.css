@@ -1,0 +1,23 @@
+.nav-button-change-slider button {
+    top:45%;
+}
+.nav-button-change-fullscreen 
+{
+    background-color: rgba(0, 0, 0, 0.5);
+   
+}
+
+.nav-button-change-fullscreen button {
+    bottom: 1px;
+    left: 45%;
+}
+
+.btn-text-edit-nav {
+    background-color: rgba(0, 0, 0, 0.7);
+    border-width: 0px;
+}
+
+.btn-text-edit-nav:hover {
+    background-color: rgba(0, 0, 0, 0.5);
+    
+}
