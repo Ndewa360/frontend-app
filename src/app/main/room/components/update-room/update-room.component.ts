@@ -45,7 +45,8 @@ export class UpdateRoomComponent {
         isInternalShower:[this.data.room.specifity?.isInternalShower?this.data.room.specifity.isInternalShower:false,Validators.required],
         hasKitchen:[this.data.room.specifity?.hasKitchen?this.data.room.specifity.hasKitchen:true,Validators.required],
         isInternalKitchen:[this.data.room.specifity?.isInternalKitchen?this.data.room.specifity.isInternalKitchen:false,Validators.required],
-      })
+      }),
+      isShowToPublic:[true,Validators.required]
     })
     this.roomList= Object.values(RoomType).map((value)=>({content:UtilsString.getStringOfRoomType(value), valueType:value, selected:value==this.data.room.type}));
     // setTimeout(()=>this.onSelectedType(this.data.room.type));

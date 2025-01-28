@@ -44,7 +44,8 @@ export class AddPropertyRoomComponent implements OnInit {
         isInternalShower:[false,Validators.required],
         hasKitchen:[true,Validators.required],
         isInternalKitchen:[false,Validators.required],
-      })
+      }),
+      isShowToPublic:[true,Validators.required]
     })
     this.roomList= Object.values(RoomType).map((value)=>({content:UtilsString.getStringOfRoomType(value), valueType:value, selected:value==RoomType.ROOM}));
     
