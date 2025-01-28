@@ -93,9 +93,6 @@ export class CountryState{
                 ctx.patchState({
                     loadingCountry: false
                 })
-                let message = error?.error?.message;
-                if(!message) message = "Une erreur c'est produite! Réessayez plus tard"
-                this._toastrService.error(message, 'Ndewa360°');
                 return throwError(error);
                 
             })
@@ -187,9 +184,6 @@ export class CountryState{
                 ctx.patchState({
                     loadingCountry: false
                 })
-                let message = error?.error?.message;
-                if(!message) message = "Une erreur c'est produite! Réessayez plus tard"
-                this._toastrService.error(message, 'Ndewa360°');
                 return throwError(error);
             })
         )

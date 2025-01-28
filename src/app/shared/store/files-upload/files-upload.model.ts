@@ -20,3 +20,14 @@ export interface UploadFilesModel {
     contentRoomType: ContentUploadRoomType
 }
 
+export interface RemovedUploadFileModel {
+
+    contentType: FileUploadContentType
+
+    contentID:string;
+
+    fileUrl:string
+
+    contentRoomType: ContentUploadRoomType
+}
+

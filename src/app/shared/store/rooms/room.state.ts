@@ -115,6 +115,29 @@ export class RoomState{
         })
     }
 
+    
+    @Action(RoomAction.RemoveImageRoom)
+    removeRoomImageState(ctx:StateContext<RoomStateModel>, {fileUrl,roomId}:RoomAction.RemoveImageRoom) 
+    {
+        const state = ctx.getState();
+
+        const data = [...state.rooms]
+        let index = data.findIndex((u)=>u._id==roomId);
+        if(index>-1) {
+            let room = data[index];
+            let indexFile = room.medias.findIndex((u)=>u==fileUrl);
+            if(indexFile>-1) {
+                let medias = [...room.medias]
+                medias.splice(indexFile,1)
+                room.medias=[...medias];
+            }
+            data[index]=room;
+            ctx.patchState({
+                rooms:data
+            })
+        }
+    }
+
     @Action(RoomAction.ResetAllState)
     resetAllState(ctx:StateContext<RoomStateModel>)
     {
@@ -152,9 +175,6 @@ export class RoomState{
                 ctx.patchState({
                     loadingRoom: false
                 })
-                let message = error?.error?.message;
-                if(!message) message = "Une erreur c'est produite! Réessayez plus tard"
-                this._toastrService.error(message, 'Ndewa360°');
                 return throwError(error);
                 
             })
@@ -292,9 +312,6 @@ export class RoomState{
                 }
             ),
             catchError((error)=>{
-                let message = error?.error?.message;
-                if(!message) message = "Une erreur c'est produite! Réessayez plus tard"
-                this._toastrService.error(message, 'Ndewa360°');
                   return error;
             })
         )
@@ -322,9 +339,6 @@ export class RoomState{
                 }
             ),
             catchError((error)=>{
-                let message = error?.error?.message;
-                if(!message) message = "Une erreur c'est produite! Réessayez plus tard"
-                this._toastrService.error(message, 'Ndewa360°');
                   return error;
             })
         )

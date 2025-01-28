@@ -36,6 +36,12 @@ export namespace PropertyAction
         constructor(public property:any){}
     }
 
+    export class RemoveFile
+    {
+        static readonly type = '[Property] Remove File'
+        constructor(public fileUrl:string,public propertyID:string){}
+    }
+
     //Create property
     export class CreateProperty
     {

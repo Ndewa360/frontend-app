@@ -1,7 +1,7 @@
 <div class="app-a-box app-scrollbar-fix app-bg-decorative pb-2 mt-10 pt-2">
     <ng-scrollbar track="vertical">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4" *ngIf="urlList.length>0 else noDataToShow">
-            <galery-video360-item *ngFor="let video of urlList" [urlFile]="video"></galery-video360-item>
+            <galery-video360-item (onDeleteFileEvent)="deleteFile($event)" *ngFor="let video of urlList" [urlFile]="video"></galery-video360-item>
         </div>
 
         <ng-template #noDataToShow>

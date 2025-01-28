@@ -13,6 +13,7 @@ import { Store } from '@ngxs/store';
 })
 export class SliderComponentGaleryComponent implements OnChanges {
   @Input() images: string[] = [];
+  @Input() showNavSlider=true;
   currentIndex: number = 0;
   shouldShowNavSlider=false;
   shouldshowFullScreen=false;

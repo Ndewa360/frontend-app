@@ -34,7 +34,7 @@
                                 <div class="app-card__content__alt">
                                   <div class=""> 
                                     <div class="text-center app-bg-decorative mb-2">
-                                       <slider-component-galery [images]="property.medias"></slider-component-galery>
+                                       <slider-component-galery [showNavSlider]='false' [images]="property.medias"></slider-component-galery>
                                     </div> 
                                     <div>
                                       <div class="app-expressive-heading-01 truncate">{{property.name}}</div>
@@ -45,7 +45,8 @@
                                               <span class="location-zone ml-1">{{property.location}}</span>
                                           </div>
                                           <div class="app-label-01 text-muted col-end-auto">                                            
-                                              <span class="mr-1">{{getNumberOfRoom(property._id) | async}}</span>
+                                              <!-- <span class="mr-1">{{getNumberOfRoom(property._id) | async}}</span> -->
+                                              <span class="mr-1">{{property.roomLength}}</span>
                                               <youpez-ibm-icon class="location-icon home-romm" iconName="home" iconSize="16"></youpez-ibm-icon>
                                           </div>
                                       </div>

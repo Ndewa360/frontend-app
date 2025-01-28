@@ -1,4 +1,4 @@
-import { UploadFilesModel } from "./files-upload.model";
+import { RemovedUploadFileModel, UploadFilesModel } from "./files-upload.model";
 
 
 export namespace UploadFilesAction
@@ -15,4 +15,11 @@ export namespace UploadFilesAction
         static readonly type = '[FilesUpload] Rest Files upload';
         constructor(){}
     }
+
+    export class RemoveUploadedFile 
+    {
+        static readonly type = '[FilesUpload] Remove Uploaded File';
+        constructor(public removedUploadFile:RemovedUploadFileModel){}
+    }
+    
 }

@@ -79,6 +79,17 @@ export class GaleryPropertyComponent {
     this.dialogRef.close();
   }
 
+  deleteFile(urlFile)
+  {
+    console.log("Item ",urlFile)
+
+    this._store.dispatch(new UploadFilesAction.RemoveUploadedFile({
+      fileUrl:urlFile,
+      contentID:this.data.property._id,
+      contentType: FileUploadContentType.FOR_ROOM_FILE,
+      contentRoomType: ContentUploadRoomType.FOR_PROPERTY
+    }))
+  }
   updateFileListToUpdate(files)
   {
     this.files=files

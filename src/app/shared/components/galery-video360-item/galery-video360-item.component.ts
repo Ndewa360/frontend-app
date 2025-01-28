@@ -1,6 +1,9 @@
-import { AfterViewInit, Component,ElementRef,Input, ViewChild } from '@angular/core';
+import { AfterViewInit, Component,ElementRef,EventEmitter,Input, OnInit, Output, ViewChild } from '@angular/core';
 import { Viewer } from '@photo-sphere-viewer/core';
 import { getHttpOfProxyUrl } from '../../utils';
+import { Observable } from 'rxjs';
+import { UploadFilesState } from '../../store/files-upload';
+import { Select } from '@ngxs/store';
 // import { getHttpOfProxyUrl } from "src/app/shared"
 
 @Component({
@@ -8,12 +11,22 @@ import { getHttpOfProxyUrl } from '../../utils';
   templateUrl: './galery-video360-item.component.html',
   styleUrls: ['./galery-video360-item.component.css']
 })
-export class GaleryVideo360ItemComponent implements AfterViewInit {
+export class GaleryVideo360ItemComponent implements AfterViewInit, OnInit {
+ 
   
   @Input() urlFile:string=""
   @Input() isFullScreen=false;
   @ViewChild('viewerContainer', { static: true }) viewerContainer!: ElementRef;
+  @Output() onDeleteFileEvent:EventEmitter<string> = new EventEmitter<string>()
   private viewer: any;
+  @Select(UploadFilesState.selectStateLoading) waittingResponse$:Observable<boolean>
+  waittingResponse=false;
+
+  ngOnInit(): void {
+    this.waittingResponse$.subscribe((value)=>{
+      this.waittingResponse=value;
+    })
+  }
 
   ngAfterViewInit(): void {
     if(this.urlFile) {
@@ -31,6 +44,11 @@ export class GaleryVideo360ItemComponent implements AfterViewInit {
         ],
       });
     }
+  }
+
+  deleteFile()
+  {
+    this.onDeleteFileEvent.emit(this.urlFile)
   }
 
   ngOnDestroy(): void {

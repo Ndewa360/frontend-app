@@ -92,9 +92,6 @@ export class PropertyState{
                 ctx.patchState({
                     loadingProperty: false
                 })
-                let message = error?.error?.message;
-                if(!message) message = "Une erreur c'est produite! Réessayez plus tard"
-                this._toastrService.error(message, 'Ndewa360°');
                 return throwError(error);
                 
             })
@@ -161,6 +158,31 @@ export class PropertyState{
         )
     }
 
+
+    @Action(PropertyAction.RemoveFile)
+    removeRoomImageState(ctx:StateContext<PropertyStateModel>, {fileUrl,propertyID}:PropertyAction.RemoveFile) 
+    {
+        const state = ctx.getState();
+
+        const data = [...state.properties]
+        let index = data.findIndex((u)=>u._id==propertyID);
+        if(index>-1) {
+            let property = {...data[index]};
+            let indexFile = property.medias.findIndex((u)=>u==fileUrl);
+
+            if(indexFile>-1) {
+                let medias = [...property.medias]
+                medias.splice(indexFile,1)
+                property.medias=[...medias];
+            }
+            data[index]=property;
+            ctx.patchState({
+                properties:data
+            })
+        }
+    }
+
+
     @Action(PropertyAction.CreateProperty)
     createProperty(ctx:StateContext<PropertyStateModel>,{property}:PropertyAction.CreateProperty)
     {
@@ -184,9 +206,6 @@ export class PropertyState{
                 ctx.patchState({
                     loadingProperty: false
                 })
-                let message = error?.error?.message;
-                if(!message) message = "Une erreur c'est produite! Réessayez plus tard"
-                this._toastrService.error(message, 'Ndewa360°');
                 return throwError(error);
             })
         )

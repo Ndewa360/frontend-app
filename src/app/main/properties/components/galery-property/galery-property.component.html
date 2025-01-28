@@ -24,13 +24,13 @@
         <!-- Use templates if you would like to have lifecycle hooks called when cacheActive is false -->
         
         <ng-template #galeryImage>
-            <galery-image [urlList]="propertySelectedImages"></galery-image>
+            <galery-image (onDeleteFileEvent)="deleteFile($event)" [urlList]="propertySelectedImages"></galery-image>
         </ng-template>
         <ng-template #galeryVideo>
-            <galery-video [urlList]="propertySelectedVideos"></galery-video>
+            <galery-video (onDeleteFileEvent)="deleteFile($event)" [urlList]="propertySelectedVideos"></galery-video>
         </ng-template>
         <ng-template #galeryVideo360>
-            <galery-video360 [urlList]="propertySelectedImages360"></galery-video360>
+            <galery-video360  (onDeleteFileEvent)="deleteFile($event)" [urlList]="propertySelectedImages360"></galery-video360>
         </ng-template>
 
         <ng-template #importer>

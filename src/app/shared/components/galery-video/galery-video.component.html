@@ -3,6 +3,12 @@
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4  " *ngIf="urlList.length>0 else noDataToShow">
             <div class="grid gap-4"  *ngFor="let urlListItemListIndex of getColoneSizeArray()" >
                 <div class="app-card app-card--select" *ngFor="let urlListItem of getElementOfColone(urlListItemListIndex)">
+                    <button  [disabled]="waittingResponse"  class="absolute  float-right btn-text-edit top-2 right-0 mt-5 mr-5 bg-slate-700 rounded-md" (click)="deleteFile(urlListItem)">
+                        <ibm-loading *ngIf="waittingResponse; else noWaitingResponse" ></ibm-loading>
+                        <ng-template #noWaitingResponse>
+                            <i class="fa fa-trash trash-icon-delete"></i>  
+                        </ng-template>
+                    </button>
                     <div class="app-card__content__alt">
                         <div class="cursor-pointer border-4 border-orange-800" >
                             <video class="h-auto max-w-full rounded-lg inset-0  object-center transition duration-200 group-hover:scale-110"  loop muted>

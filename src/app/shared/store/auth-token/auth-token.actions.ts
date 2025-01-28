@@ -6,4 +6,10 @@ export namespace AuthTokenAction
         constructor(public token:string){}
     }
 
+    export class SetRefreshToken
+    {
+        static readonly type = '[AuthToken] Set AuthToken'
+        constructor(public token:string){}
+    }
+
 }

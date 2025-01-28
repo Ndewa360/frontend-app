@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Select, Store } from '@ngxs/store';
+import { combineLatest, combineLatestAll, Observable } from 'rxjs';
 import { PropertyAction, PropertyModel, PropertyState } from 'src/app/shared/store';
 import { AddPropertyRoomComponent } from '../components/add-property-room/add-property-room.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -21,10 +21,11 @@ export class ShowPropertyComponent implements OnInit {
 
   componentOnRouterOutlet:any=null;
 
+  @Select(PropertyState.selectStateLoading) loadingProperty$:Observable<boolean>
   loadingProperty = true;
   propertyFound:PropertyModel = null;
   propertyFound$:Observable<PropertyModel>;
-  waittingResponseDeleteProperty = false;
+  waittingResponseDeleteProperty = false; 
   private addPropertyRoomDialogRef: MatDialogRef<AddPropertyRoomComponent | AddPropertyLocataireComponent>;
   
   public isDetailsOpened: boolean = false
@@ -47,16 +48,18 @@ export class ShowPropertyComponent implements OnInit {
       return;
     }
     this.propertyFound$=this._store.select(PropertyState.selectStateProperty(propertyId));
-    this.propertyFound$.subscribe((found)=>{
-      if(!found){
-        this._router.navigateByUrl('/app/properties/list');
-        this._toastService.error("Biens introuvable", "Ndewa360°");
+    combineLatest([this.propertyFound$,this.loadingProperty$]).subscribe(([property, loading])=>{
+      if(!loading) {
+        if(!property){
+          this._router.navigateByUrl('/app/properties/list');
+          this._toastService.error("Biens introuvable", "Ndewa360°");
+        } else
+        {
+          this.propertyFound = property;
+          this.loadingProperty = false;
+        }
       }
-      else
-      {
-        this.propertyFound = found;
-        this.loadingProperty = false;
-      }
+      // if(property && !loading) this.propertyFound = property;
     })
   }
 

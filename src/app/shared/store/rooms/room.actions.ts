@@ -21,6 +21,12 @@ export namespace RoomAction
         constructor(public roomId:string){}
     }
 
+    export class RemoveImageRoom
+    {
+        static readonly type = '[Room] Update Image Room'
+        constructor(public fileUrl:string, public roomId:string){}
+    }
+
     //Fetch  Room profil
     export class FetchRooms
     {

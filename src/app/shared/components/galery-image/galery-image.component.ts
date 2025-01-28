@@ -1,16 +1,30 @@
-import { Component, Input, OnChanges, SimpleChanges, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnChanges, Output, SimpleChanges, ViewEncapsulation,EventEmitter, OnInit } from '@angular/core';
+import { Select } from '@ngxs/store';
+import { UploadFilesState } from '../../store/files-upload';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'galery-image',
   templateUrl: './galery-image.component.html',
   styleUrls: ['./galery-image.component.css'],
+  encapsulation:ViewEncapsulation.None
 })
-export class GaleryImageComponent implements OnChanges{
+export class GaleryImageComponent implements OnChanges, OnInit{
   @Input() urlList:string[]=[ ]
+  @Output() onDeleteFileEvent:EventEmitter<string> = new EventEmitter<string>()
+  @Select(UploadFilesState.selectStateLoading) waittingResponse$:Observable<boolean>
+  waittingResponse=false;
   urlsQuadricUrlList:string[][]=[];
   constructor() {
     
   }
+  ngOnInit(): void {
+    this.waittingResponse$.subscribe((value)=>{
+      this.waittingResponse=value;
+    })
+  }
+
+  
 
   ngOnChanges(changes: SimpleChanges): void {
     if(changes['urlList'])
@@ -24,6 +38,11 @@ export class GaleryImageComponent implements OnChanges{
       }, []);
 
     }
+  }
+
+  deleteFile(urlItem)
+  {
+    this.onDeleteFileEvent.emit(urlItem)
   }
 
   getColoneSizeArray()

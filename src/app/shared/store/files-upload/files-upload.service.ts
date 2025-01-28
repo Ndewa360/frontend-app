@@ -3,7 +3,7 @@ import { environment } from 'src/environments/environment';
 import { HttpClient, HttpEvent } from "@angular/common/http";
 import { Observable,  } from "rxjs";
 import { ApiResultFormat, ApiUploadFileStateFormat } from "../global";
-import { UploadFilesModel } from "./files-upload.model";
+import { RemovedUploadFileModel, UploadFilesModel } from "./files-upload.model";
 
 @Injectable({
     providedIn:'root'
@@ -31,6 +31,11 @@ export class UploadFilesService
                 observe: 'events'
             }
         )
+    }
+
+    removeUploadedFile(removedUploadFile:RemovedUploadFileModel):Observable<ApiResultFormat<null>>
+    {
+        return this._httpClient.put<ApiResultFormat<null>>(`${environment.apiUrl}/upload/remove`, removedUploadFile)
     }
 
     

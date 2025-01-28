@@ -8,23 +8,42 @@ import { NotificationService } from "carbon-components-angular";
 
 export class AuthTokenStateModel {
     authToken:string ;
+    refreshToken:string;
 }
 
 
 @State<AuthTokenStateModel>({
     name: "auth_token",
     defaults:{
-        authToken:null
+        authToken:null,
+        refreshToken:null
     }
 })
 @Injectable()
 export class AuthTokenState{
    
+    @Selector()
+    static selectStateToken(state:AuthTokenStateModel)
+    {
+        return {accessToken:state.authToken,refreshToken:state.refreshToken}
+    }
 
     @Selector()
     static selectStateAuthToken(state:AuthTokenStateModel)
     {
         return state.authToken
+    }
+
+    @Selector()
+    static selectStateRefreshToken(state:AuthTokenStateModel)
+    {
+        return state.refreshToken
+    }
+
+    @Selector()
+    static selectStateUserIsLogin(state:AuthTokenStateModel)
+    {
+        return state.authToken!=null;
     }
 
     
@@ -35,13 +54,11 @@ export class AuthTokenState{
         return of(true)
     }
 
-
-   @Selector()
-    static selectStateUserIsLogin(state:AuthTokenStateModel)
+    @Action(AuthTokenAction.SetRefreshToken)
+    setRefreshToken(ctx:StateContext<AuthTokenStateModel>,{token}:AuthTokenAction.SetRefreshToken)
     {
-        console.log("Login ",state.authToken)
-        return state.authToken!=null;
-    }
-   
+        ctx.patchState( { refreshToken:token } )
+        return of(true)
+    }  
 
 }

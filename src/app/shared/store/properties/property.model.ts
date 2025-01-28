@@ -17,4 +17,5 @@ export interface PropertyModel {
     _id:string;
     hasParking?:boolean;
     owner?:string;
+    roomLength?:number;
 }

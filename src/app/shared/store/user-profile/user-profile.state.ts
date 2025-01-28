@@ -72,21 +72,7 @@ export class UserProfileState{
                     this._toastrService.success(`Bienvenue sur Ndewa360°! `, 'Ndewa360°');
                 }
             ),
-            catchError((error) => {
-                switch(error.status)
-                {
-                    case 401:
-                        this._toastrService.error(`Email ou mot de passe incorrect! `, 'Ndewa360°');
-                        break;
-                    case 406:
-                        this._toastrService.warning(`Compte innactivé! Veuillez valider ce compte a partir du lien fourni par mail! `, 'Ndewa360°');
-                        break;
-                    default:
-                        let message = error?.error?.message;
-                        if(!message) message = "Une erreur c'est produite! Réessayez plus tard"
-                        this._toastrService.error(message, 'Ndewa360°');
-                }
-                
+            catchError((error) => {               
                 // this._toastrService.error(error?.error?.message, 'Erreur');
                 ctx.patchState({
                     loadingUserProfile: false

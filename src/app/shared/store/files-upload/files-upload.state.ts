@@ -82,7 +82,7 @@ export class UploadFilesState{
                     {
                         if(uploadFiles.contentRoomType==ContentUploadRoomType.FOR_ROOM) ctx.dispatch(new RoomAction.SetRoom(result.data.data))
                         else ctx.dispatch(new PropertyAction.SetProperty(result.data.data))
-                        this._toastrService.success(`Image '${uploadFiles.file.name}' envoyé avec succés!`, 'Ndewa360°');                                             
+                        this._toastrService.success(`Le fichier '${uploadFiles.file.name}' envoyé avec succés!`, 'Ndewa360°');                                             
                     }
                     const data = [...ctx.getState().filesState]
                     let index = data.findIndex((u)=>u.name==uploadFiles.file.name);
@@ -97,9 +97,45 @@ export class UploadFilesState{
                 ctx.patchState({
                     loadingUploadFiles: false
                 })
-                let message = error?.error?.message;
-                if(!message) message = "Une erreur c'est produite! Réessayez plus tard"
-                this._toastrService.error(message, 'Ndewa360°');
+                return throwError(error);
+                
+            })
+        )
+    }
+
+    @Action(UploadFilesAction.RemoveUploadedFile)
+    removedUploadFiles(ctx:StateContext<UploadFilesStateModel>, {removedUploadFile}:UploadFilesAction.RemoveUploadedFile)
+    {
+        const state = ctx.getState();
+
+        console.log("File Upload ",removedUploadFile,state.filesState)
+
+        
+        // let fileFound = state.filesState.findIndex((f)=>f.name==removedUploadFile.fileUrl);
+        // if(fileFound<0) return this._toastrService.warning(`Le fichier ${removedUploadFile.fileUrl} n'existant!`, 'Ndewa360°');
+
+        ctx.patchState({
+            loadingUploadFiles:true
+        })
+
+        return this._updateFilesService.removeUploadedFile(removedUploadFile).pipe(
+            tap(
+                (result)=>{
+
+                    if(removedUploadFile.contentRoomType==ContentUploadRoomType.FOR_ROOM) ctx.dispatch(new RoomAction.RemoveImageRoom(removedUploadFile.fileUrl,removedUploadFile.contentID))
+                    else ctx.dispatch(new PropertyAction.RemoveFile(removedUploadFile.fileUrl,removedUploadFile.contentID))
+                    this._toastrService.success(`Fichier '${removedUploadFile.fileUrl}' envoyé avec succés!`, 'Ndewa360°');
+                    
+                    ctx.patchState({
+                        loadingUploadFiles: false,
+                    })
+
+                }
+            ),
+            catchError((error) => {
+                ctx.patchState({
+                    loadingUploadFiles: false
+                })
                 return throwError(error);
                 
             })

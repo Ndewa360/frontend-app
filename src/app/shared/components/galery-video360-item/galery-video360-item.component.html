@@ -1,1 +1,9 @@
+<div class="relative">
+    <button  [disabled]="waittingResponse"  class="absolute  float-right btn-text-edit top-2 right-0 mt-5 mr-5 bg-slate-700 rounded-md" (click)="deleteFile()">
+        <ibm-loading *ngIf="waittingResponse; else noWaitingResponse" ></ibm-loading>
+        <ng-template #noWaitingResponse>
+            <i class="fa fa-trash trash-icon-delete"></i>  
+        </ng-template>
+    </button>
+</div>
 <div #viewerContainer class="viewer-container w-full h-full panorama-container"  style="width: 100%;" [ngStyle]="{'height': isFullScreen==false?'400px':'100%'}"></div>

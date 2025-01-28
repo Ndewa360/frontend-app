@@ -1,0 +1,11 @@
+.trash-icon-delete svg {
+    fill: white;
+}
+
+
+.cds--loading
+{
+    width: 20px !important;
+    height: 20px !important;
+    display: inline-block;    
+}

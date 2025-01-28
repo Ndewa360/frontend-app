@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'galery-video360',
@@ -7,7 +7,12 @@ import { Component, Input } from '@angular/core';
 })
 export class GaleryVideo360Component {
   @Input() urlList:string[]=[]
+    @Output() onDeleteFileEvent:EventEmitter<string> = new EventEmitter<string>()
+  
 
-
+    deleteFile(url)
+    {
+      this.onDeleteFileEvent.emit(url)
+    }
 
 }
