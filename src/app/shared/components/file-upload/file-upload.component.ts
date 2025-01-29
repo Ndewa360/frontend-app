@@ -12,7 +12,7 @@ export class FileUploadComponent implements OnInit,AfterViewInit, OnChanges {
   @ViewChild("dropzone") dropzoneHtml:ElementRef;
   @ViewChild("inputDropzone") inputDropzone:ElementRef;
   @Input() isMultiple:boolean=false;
-  @Input() acceptedFile = "PDF, WORD, PPTX or PNG (MAX. 800x400px)"
+  @Input() acceptedFile = "IMAGE, VIDEO, PANORAMA IMAGE"
   @Input() acceptedFileType ="image/*,video/*,audio/*,.pdf,.doc,.docx,.pptx,.xls,.xlsx"
   @Input() shouldResetFiles:boolean=false
   
