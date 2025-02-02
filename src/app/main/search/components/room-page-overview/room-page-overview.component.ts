@@ -1,7 +1,8 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { ViewportScroller } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
-import { combineLatest, Observable } from 'rxjs';
+import { combineLatest, Observable, switchMap } from 'rxjs';
 import { Currency, RoomState, SearchPropertyModel, SearchState } from 'src/app/shared/store';
 import { UtilsString } from 'src/app/shared/utils';
 import { ContactProprietaireComponent } from '../contact-proprietaire/contact-proprietaire.component';
@@ -23,13 +24,25 @@ export class RoomPageOverviewComponent implements OnInit {
       private _store:Store,
       private _activatedRoute: ActivatedRoute,
       private dialog: MatDialog,
+      private viewportScroller: ViewportScroller
     ){}
     
   ngOnInit(): void {
-    let roomID = this._activatedRoute.snapshot.paramMap.get('roomID');
-    console.log("Room ID Found ",roomID)
-    this._store.select(SearchState.selectStateSearch(roomID)).subscribe((value)=>this.roomDataSearch=value);
-    combineLatest(this.loading$,this.loadingItem$).subscribe(([load,loadItem])=>this.loading = load || loadItem)
+    this._activatedRoute.paramMap.pipe(
+      switchMap(params => {
+        let roomID = params.get('roomID');
+        // window.scrollTo(0, 0);
+        // this.viewportScroller.scrollToPosition([0, 0])
+
+        return this._store.select(SearchState.selectStateSearch(roomID));
+      })
+    ).subscribe((value)=>{
+      this.roomDataSearch=value;
+    combineLatest(this.loading$,this.loadingItem$).subscribe(([load,loadItem])=>{
+      this.loading = load || loadItem
+    })
+
+    });
   }
 
   getRoomType(roomType)

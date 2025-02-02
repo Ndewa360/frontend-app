@@ -25,7 +25,6 @@ export class FullScreenGaleryComponent {
       data.medias.forEach(async (url)=>{
         let type= await MediaUtil.classifyUrl(url);
         this.imagesFound.push({url,type})
-        console.log("Images Found ",this.imagesFound)
       }) 
       // this.recursivlySlider();
     }
@@ -45,7 +44,6 @@ export class FullScreenGaleryComponent {
     recursivlySlider()
     {
       setInterval(()=>{
-        console.log("Slider")
         this.nextSlide(null)
       },3000)
     }

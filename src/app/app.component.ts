@@ -1,7 +1,8 @@
-import {Component, OnInit} from '@angular/core'
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core'
 import {Router, ActivatedRoute, NavigationStart, NavigationEnd, NavigationCancel} from "@angular/router"
 import {environment} from "../environments/environment"
 import {SettingsService} from "src/@youpez/services/settings.service"
+import { interval, switchMap, of, filter, take } from 'rxjs'
 
 const getSessionStorage = (key) => {
   return sessionStorage.getItem(key)
@@ -14,6 +15,9 @@ const getSessionStorage = (key) => {
 })
 export class AppComponent implements OnInit {
   private appLoaded: boolean = false
+  
+
+@ViewChild('topScroll') topScroll: ElementRef;
 
   constructor(private settingsService: SettingsService,
               private router: Router,
@@ -60,4 +64,9 @@ export class AppComponent implements OnInit {
       }
     })
   }
+
+  ngAfterViewInit()
+{
+  this.topScroll.nativeElement.scrollTop = 0;
+ }
 }

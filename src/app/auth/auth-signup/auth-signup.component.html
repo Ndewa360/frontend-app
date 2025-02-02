@@ -42,6 +42,22 @@
           [autocomplete]="true">
       </ibm-label>
     </div>
+    <div class="app-form__item">
+      <ibm-label
+        [helperText]="''"
+        [invalid]="isValid('phoneNumber')"
+        [invalidText]="'Téléphone obligatoire'">
+        Tél
+        <input
+          formControlName="phoneNumber"
+          ibmText
+          size="md"
+          [invalid]="isValid('phoneNumber')"
+          [disabled]="false"
+          theme="dark"
+          [placeholder]="'Numéro de téléphone'" >
+      </ibm-label>
+    </div>
     <!-- <div class="app-form__item">
       <ibm-label
         [helperText]="''"

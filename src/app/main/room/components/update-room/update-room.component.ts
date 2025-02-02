@@ -40,13 +40,14 @@ export class UpdateRoomComponent {
       price:[this.data.room.price,Validators.required],
       specifity:this.formBuilder.group({
         numberOfBathroom:[this.data.room.specifity?.numberOfBathroom?this.data.room.specifity.numberOfBathroom:1,Validators.required],
-        numberOfLivingRoom:[this.data.room.specifity?.numberOfLivingRoom?this.data.room.specifity.numberOfLivingRoom:2,Validators.required],
+        numberOfLivingRoom:[this.data.room.specifity?.numberOfLivingRoom?this.data.room.specifity.numberOfLivingRoom:1,Validators.required],
         numberOfShower:[this.data.room.specifity?.numberOfShower?this.data.room.specifity.numberOfShower:1,Validators.required],
         isInternalShower:[this.data.room.specifity?.isInternalShower?this.data.room.specifity.isInternalShower:false,Validators.required],
         hasKitchen:[this.data.room.specifity?.hasKitchen?this.data.room.specifity.hasKitchen:true,Validators.required],
         isInternalKitchen:[this.data.room.specifity?.isInternalKitchen?this.data.room.specifity.isInternalKitchen:false,Validators.required],
       }),
-      isShowToPublic:[true,Validators.required]
+      isShowToPublic:[true,Validators.required],
+      shouldPayCaution:[true,Validators.required]
     })
     this.roomList= Object.values(RoomType).map((value)=>({content:UtilsString.getStringOfRoomType(value), valueType:value, selected:value==this.data.room.type}));
     // setTimeout(()=>this.onSelectedType(this.data.room.type));

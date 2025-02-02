@@ -14,7 +14,7 @@
     </button>
 
     <!-- Carousel wrapper relative h-full overflow-hidden absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2-->
-    <div class="flex transition-transform duration-500 ease-in-out h-full" [ngStyle]="{ transform: 'translateX(' + (-currentIndex * 100) + '%)' }">
+    <div class="flex image-list transition-transform duration-500 ease-in-out h-full" [ngStyle]="{ transform: 'translateX(' + (-currentIndex * 100) + '%)' }">
          <!-- Item 1 -->
         <div class=" h-full w-full flex-shrink-0" *ngFor="let image of imagesFound">
             <img [src]="image.url" class="md:h-full block w-full " alt="..." *ngIf="image.type=='image'">

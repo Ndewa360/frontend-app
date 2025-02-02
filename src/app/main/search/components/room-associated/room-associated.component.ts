@@ -33,7 +33,6 @@ export class RoomAssociatedComponent implements OnChanges{
           ...this.selectedFoundRoom.specifity
         }
       },this.selectedFoundRoom._id)).subscribe((value)=>{
-        console.log("Found Related Value ",value)
         this.relatedFoundRooms = value
       })
 
@@ -61,6 +60,7 @@ export class RoomAssociatedComponent implements OnChanges{
 
   goToRoom(room)
   {
+    
     this.router.navigateByUrl( `/search/room/${room._id}`)
   }
 

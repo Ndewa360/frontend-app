@@ -26,15 +26,23 @@ export class SinglePageScreenGaleryComponent implements OnChanges{
       this.currentStartIndex + this.thumbnailsPerPage
     );
   }
+  initIndex()
+  {
+    this.currentIndex = 0; // Image principale actuellement affichée
+    this.currentStartIndex = 0; // Index de début des miniatures visibles
+    this.thumbnailsPerPage = 5; //
+    this.imagesFound = [];
+
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if(changes['images'].currentValue.length==0) this.images = ["assets/img/utils/house.png"]
       
     if(changes['images']) {
+      this.initIndex();
       this.images.forEach(async (url)=>{
               let type= await MediaUtil.classifyUrl(url);
               this.imagesFound.push({url,type})
-              console.log("Images Found ",this.imagesFound)
             }) 
     }
   }

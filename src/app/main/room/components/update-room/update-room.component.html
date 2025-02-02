@@ -30,7 +30,7 @@
   
             </div>
             <div fxLayout="row wrap" class="app-form__row">
-              <div fxFlex="100%" fxFlex.gt-md="50%" class="app-form__item">
+              <div fxFlex="100%"  class="app-form__item">
                 <ibm-label helperText="" class="type_bien_label" [invalid]="isValid('type')"
                   [invalidText]="'Le type de biens est obligatoire'">
                   Type de bien <span class="text-red-600">*</span>
@@ -39,6 +39,12 @@
                     <ibm-dropdown-list></ibm-dropdown-list>
                   </ibm-combo-box>
                 </ibm-label>
+              </div>
+            </div>
+            <div fxLayout="row wrap" class="app-form__row">              
+              <div fxFlex="100%" fxFlex.gt-md="50%" class="app-form__item">
+                <ibm-toggle formControlName="shouldPayCaution" [label]="'Caution Obligatoire'" [onText]="'Oui'" [offText]="'Non'" [checked]="false" size="md">
+                </ibm-toggle>
               </div>
               <div fxFlex="100%" fxFlex.gt-md="50%" class="app-form__item">
                 <ibm-toggle formControlName="isShowToPublic" [label]="'Disponible au public'" [onText]="'Oui'" [offText]="'Non'" [checked]="false" size="md">

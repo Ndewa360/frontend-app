@@ -1,4 +1,4 @@
-<div class="flex flex-col gap-4 ml-16 ">
+<div class="flex flex-col gap-4 md:ml-16 ">
     <!-- Image principale -->
     <div>
         <div class="relative">
@@ -7,12 +7,16 @@
                 <i class="fa-solid fa-expand fa-2x text-white"></i>
             </button>
           </div>
-      <img [src]="imagesFound[currentIndex].url" class="main-img block w-full " alt="..." *ngIf="imagesFound[currentIndex].type=='image'">
+          <ng-container *ngIf="imagesFound.length>0">
+            <img [src]="imagesFound[currentIndex].url" class="main-img block w-full " alt="..." *ngIf="imagesFound[currentIndex].type=='image'">
             <video *ngIf="imagesFound[currentIndex].type=='video'" class="main-img w-full"  loop muted controls>
                 <source [src]="imagesFound[currentIndex].url"  />
             </video>
             <galery-video360-item [isFullScreen]='true' class="main-img block" [urlFile]="imagesFound[currentIndex].url" *ngIf="imagesFound[currentIndex].type=='panorama'"></galery-video360-item>
-    </div>
+   
+
+          </ng-container>
+        </div>
     
   
     <!-- Miniatures avec navigation -->

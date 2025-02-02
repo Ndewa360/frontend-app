@@ -32,7 +32,7 @@ export class AuthSignupComponent implements OnInit {
       fullName: ['', [Validators.required,]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
-
+      phoneNumber:[null, [Validators.required, Validators.pattern('^(\\+\\d{1,3}\\s)?(\\d{2,3}[\\s.-]?){4}$')]],
       condition: [true],
     })
 

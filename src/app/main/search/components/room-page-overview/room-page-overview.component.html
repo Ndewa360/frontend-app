@@ -1,10 +1,10 @@
 <div class="mb-6">
     <ng-container *ngIf="!loading else loadingData">
         <div class="mt-5 relative">
-            <nav class="mx-auto w-full mt-10 mb-4 ml-10 max-w-[1200px] px-5">
+            <nav class="mx-auto w-full mt-10 mb-4  md:ml-10 max-w-[1200px] px-5">
                 <ul class="flex items-center">
                     <li class="cursor-pointer">
-                        <a href="/search/index">
+                        <a [routerLink]="'/search/index'">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-5 w-5 home-icon">
                                 <path
                                     d="M11.47 3.84a.75.75 0 011.06 0l8.69 8.69a.75.75 0 101.06-1.06l-8.689-8.69a2.25 2.25 0 00-3.182 0l-8.69 8.69a.75.75 0 001.061 1.06l8.69-8.69z" />
@@ -43,13 +43,21 @@
                         {{roomDataSearch.specifity.numberOfBathroom}}
                     </span> chambre(s)
                 </p>
-                <p class="font-bold"><span class="font-normal">
+                <p class="font-bold" *ngIf="roomDataSearch.type!='room'">
+                    <span class="font-normal">
                         <i class="fa fa-bath text-muted me-1 mr-3 spec-home"></i>
-                        {{roomDataSearch.specifity.numberOfShower}}</span> Douche(s)</p>
-                <p class="font-bold">
+                        {{roomDataSearch.specifity.numberOfShower}}</span> Douche(s)
+                        <ng-container *ngIf="roomDataSearch.specifity.isInternalShower else externalShower">interne</ng-container>
+                            <ng-template #externalShower>externe</ng-template>
+                    </p>
+                <p class="font-bold" *ngIf="roomDataSearch.type!='room'  && roomDataSearch.type!='studio'">
                     <i class="fa fa-couch text-muted me-1 mr-3 spec-home"></i>
                     <span class="font-normal">{{roomDataSearch.specifity.numberOfLivingRoom}}</span> Salon(s)
                 </p>
+                <!-- <p class="font-bold">
+                    <i class="fa fa-couch text-muted me-1 mr-3 spec-home"></i>
+                    <span class="font-normal">Caution Obligatoire</span>
+                </p> -->
                 <p class="font-bold">
                     <span class="font-normal">
                         <svg class="text-muted me-1 mr-2" xmlns="http://www.w3.org/2000/svg" height="16" width="18"

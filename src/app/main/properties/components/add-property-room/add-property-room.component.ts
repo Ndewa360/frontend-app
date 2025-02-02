@@ -39,7 +39,7 @@ export class AddPropertyRoomComponent implements OnInit {
       price:[5000,Validators.required],
       specifity:this.formBuilder.group({
         numberOfBathroom:[1,Validators.required],
-        numberOfLivingRoom:[2,Validators.required],
+        numberOfLivingRoom:[1,Validators.required],
         numberOfShower:[1,Validators.required],
         isInternalShower:[false,Validators.required],
         hasKitchen:[true,Validators.required],

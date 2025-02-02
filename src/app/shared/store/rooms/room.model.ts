@@ -43,4 +43,5 @@ export interface RoomModel {
     isActiveForSouscription?:boolean;
     medias:string[];
     isShowToPublic?:boolean;
+    shouldPayCaution?:boolean;
 }

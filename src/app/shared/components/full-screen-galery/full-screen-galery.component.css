@@ -10,3 +10,16 @@
 .btn-close svg {
     fill: white !important;
 }
+
+@media only screen and (max-width: 600px) {
+    .image-list{
+        padding-top: 45%;
+    }
+  }
+
+  @media screen and (max-width: 900px) and (min-width: 600px) {
+    .image-list{
+        padding-top: 10%;
+    }
+  }
+
