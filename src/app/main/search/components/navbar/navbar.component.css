@@ -46,9 +46,17 @@ li:not(.active):hover span::before {
     color: rgb(204, 140, 10);
   }
   
+  .header-profil-user {
+    margin-left: 70%;
+  }
+
   @media only screen and (max-width: 600px) {
     youpez-logo {
       margin-top:10px;
       margin-left: 15px;
+    }
+
+    .header-profil-user {
+      margin-left: 40%;
     }
   }

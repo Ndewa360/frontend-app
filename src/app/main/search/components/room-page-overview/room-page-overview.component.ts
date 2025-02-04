@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ViewportScroller } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
@@ -26,6 +26,7 @@ export class RoomPageOverviewComponent implements OnInit {
       private dialog: MatDialog,
       private viewportScroller: ViewportScroller
     ){}
+  
     
   ngOnInit(): void {
     this._activatedRoute.paramMap.pipe(
@@ -33,17 +34,25 @@ export class RoomPageOverviewComponent implements OnInit {
         let roomID = params.get('roomID');
         // window.scrollTo(0, 0);
         // this.viewportScroller.scrollToPosition([0, 0])
-
+        window.scroll({ 
+          top: 0, 
+          left: 0, 
+        });
         return this._store.select(SearchState.selectStateSearch(roomID));
       })
     ).subscribe((value)=>{
       this.roomDataSearch=value;
+      
+    console.log("AfterView Init ")
+
     combineLatest(this.loading$,this.loadingItem$).subscribe(([load,loadItem])=>{
       this.loading = load || loadItem
     })
 
     });
   }
+
+ 
 
   getRoomType(roomType)
   {

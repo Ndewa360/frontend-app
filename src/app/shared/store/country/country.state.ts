@@ -192,6 +192,7 @@ export class CountryState{
     @Action(CountryAction.FetchCountries)
     fetchCountries(ctx:StateContext<CountryStateModel>)
     {
+        if(ctx.getState().initLoadingState=="LOADED") return of(true);
         const state = ctx.getState();
         
         ctx.patchState({
