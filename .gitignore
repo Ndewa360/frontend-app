@@ -3,6 +3,7 @@
 # compiled output
 /dist
 /tmp
+/android
 
 # dependencies
 /node_modules

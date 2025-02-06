@@ -74,11 +74,11 @@
           
         </li>
       </ul>
-      <ng-template #showHeaderBtnCxn>
-        <button type="reset" [routerLink]="'/auth/login'"  class="custom-primary-button app-ibm-btn-full" ibmButton="tertiary" size="md">
+      <!-- <ng-template #showHeaderBtnCxn> -->
+        <button type="reset" *ngIf="!(isLogin$ | async)" [routerLink]="'/auth/login'"  class="custom-primary-button app-ibm-btn-full" ibmButton="tertiary" size="md">
           Connectez-vous
         </button>
-      </ng-template>      
+      <!-- </ng-template>       -->
     </div>
   </div>
   

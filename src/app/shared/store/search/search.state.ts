@@ -100,6 +100,7 @@ export class SearchState{
     {
         return createSelector([SearchState],(state)=> {
             return state.searchProperties
+            .filter((prop:SearchPropertyModel)=>prop._id!=propFoundId)
             .map((prop:SearchPropertyModel)=>({room:prop,priority:this.getPriority(filter,prop,propFoundId)}))
             .sort((prop1,prop2)=>prop1.priority-prop2.priority)
             .slice(0,4)

@@ -24,26 +24,19 @@ export class RoomPageOverviewComponent implements OnInit {
       private _store:Store,
       private _activatedRoute: ActivatedRoute,
       private dialog: MatDialog,
-      private viewportScroller: ViewportScroller
+      // private viewportScroller: ViewportScroller
     ){}
   
     
   ngOnInit(): void {
+
     this._activatedRoute.paramMap.pipe(
       switchMap(params => {
         let roomID = params.get('roomID');
-        // window.scrollTo(0, 0);
-        // this.viewportScroller.scrollToPosition([0, 0])
-        window.scroll({ 
-          top: 0, 
-          left: 0, 
-        });
         return this._store.select(SearchState.selectStateSearch(roomID));
       })
     ).subscribe((value)=>{
       this.roomDataSearch=value;
-      
-    console.log("AfterView Init ")
 
     combineLatest(this.loading$,this.loadingItem$).subscribe(([load,loadItem])=>{
       this.loading = load || loadItem
@@ -57,6 +50,11 @@ export class RoomPageOverviewComponent implements OnInit {
   getRoomType(roomType)
   {
     return UtilsString.getStringOfRoomType(roomType)
+  }
+
+  getAllImages(room:SearchPropertyModel)
+  {
+    return [...room.medias] //,...room.property.medias
   }
 
   getContactInfos()

@@ -89,6 +89,11 @@ export class RoomFilteredFoundComponent {
       return UtilsString.getStringOfRoomType(roomType)
     }
 
+    getAllImages(room:SearchPropertyModel)
+    {
+      return [...room.medias] //,...room.property.medias
+    }
+
     showFullScreenViewer(images,e)
       {
         e.stopPropagation()
