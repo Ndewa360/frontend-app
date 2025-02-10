@@ -1,4 +1,4 @@
-import {NgModule} from '@angular/core'
+import {CUSTOM_ELEMENTS_SCHEMA, NgModule} from '@angular/core'
 import {CommonModule} from '@angular/common'
 import {YoupezModule} from "../../@youpez/youpez.module"
 import { DummyTableRichComponent } from "./components/dummy-table-rich/dummy-table-rich.component";
@@ -41,6 +41,11 @@ import { GaleryVideo360ItemComponent } from './components/galery-video360-item/g
 import { SliderComponentGaleryComponent } from './components/slider-component-galery/slider-component-galery.component';
 import { FullScreenGaleryComponent } from './components/full-screen-galery/full-screen-galery.component';
 import { SinglePageScreenGaleryComponent } from './components/single-page-screen-galery/single-page-screen-galery.component';
+import { SwiperDirective } from './directives';
+import { BrowserModule } from '@angular/platform-browser';
+
+
+
 
 @NgModule({
   imports: [
@@ -93,7 +98,8 @@ import { SinglePageScreenGaleryComponent } from './components/single-page-screen
     GaleryVideo360ItemComponent,
     SliderComponentGaleryComponent,
     FullScreenGaleryComponent,
-    SinglePageScreenGaleryComponent
+    SinglePageScreenGaleryComponent,
+    SwiperDirective
   ],
   exports: [
     YoupezModule,
@@ -112,9 +118,10 @@ import { SinglePageScreenGaleryComponent } from './components/single-page-screen
     SliderComponentGaleryComponent,
     FullScreenGaleryComponent,
     SinglePageScreenGaleryComponent
-
-
   ],
+  schemas: [
+      CUSTOM_ELEMENTS_SCHEMA
+      ],
 })
 export class SharedModule {
   constructor() {

@@ -1,36 +1,41 @@
-import { Component, Input, OnChanges, SimpleChanges, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnChanges, SimpleChanges, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MediaUtil } from '../../utils';
 import { FullScreenGaleryComponent } from '../full-screen-galery/full-screen-galery.component';
 import { MatDialog } from '@angular/material/dialog';
+import { SwiperContainer } from 'swiper/element';
 
 @Component({
   selector: 'single-page-screen-galery',
   templateUrl: './single-page-screen-galery.component.html',
   styleUrls: ['./single-page-screen-galery.component.css'],
 })
-export class SinglePageScreenGaleryComponent implements OnChanges{
+export class SinglePageScreenGaleryComponent implements AfterViewInit, OnChanges{
 
   @Input() images:string[]=[]
   imagesFound: {url:string,type:'image'|'video'|'panorama'|'unknown'}[] = [];
+  @ViewChild('swiper') swiper!: ElementRef<SwiperContainer>;
+  @ViewChild('swiperThumbs') swiperThumbs!: ElementRef<SwiperContainer>;
 
-  currentIndex: number = 0; // Image principale actuellement affichée
-  currentStartIndex: number = 0; // Index de début des miniatures visibles
-  thumbnailsPerPage: number = 5; // Nombre maximum de miniatures visibles
+  index = 0;
 
+  // Swiper
+  swiperConfig = {
+    spaceBetween: 10,
+    navigation: true,
+  };
+
+  swiperThumbsConfig = {
+    spaceBetween: 10,
+    slidesPerView: 4,
+    freeMode: true,
+    watchSlidesProgress: true,
+  };
+  
     constructor(private dialog: MatDialog) { }
   
-  // Renvoie les miniatures visibles
-  get visibleThumbnails(): {url:string,type:'image'|'video'|'panorama'|'unknown'}[] {
-    return this.imagesFound.slice(
-      this.currentStartIndex,
-      this.currentStartIndex + this.thumbnailsPerPage
-    );
-  }
+
   initIndex()
   {
-    this.currentIndex = 0; // Image principale actuellement affichée
-    this.currentStartIndex = 0; // Index de début des miniatures visibles
-    this.thumbnailsPerPage = 5; //
     this.imagesFound = [];
 
   }
@@ -46,21 +51,6 @@ export class SinglePageScreenGaleryComponent implements OnChanges{
             }) 
     }
   }
-  // Sélectionner une image depuis les miniatures
-  selectImage(index: number): void {
-    this.currentIndex = index;
-  }
-
-  // Naviguer vers les miniatures précédentes
-  prevThumbnails(): void {
-    if(this.currentStartIndex!=0) this.currentStartIndex--;
-  }
-
-  // Naviguer vers les miniatures suivantes
-  nextThumbnails(): void {
-    this.currentStartIndex = (this.currentStartIndex+1)%this.images.length
-    
-  }
 
   showFullScreenViewer()
   {
@@ -74,5 +64,14 @@ export class SinglePageScreenGaleryComponent implements OnChanges{
         medias:this.images
       }
     })
+  }
+
+  ngAfterViewInit() {
+    this.swiper.nativeElement.swiper.activeIndex = this.index;
+    this.swiperThumbs.nativeElement.swiper.activeIndex = this.index;
+  }
+
+  slideChange(swiper: any) {
+    this.index = swiper.detail[0].activeIndex;
   }
 }

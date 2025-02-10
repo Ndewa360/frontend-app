@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { LOCALE_ID, NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, LOCALE_ID, NgModule } from '@angular/core';
 import localeFr from '@angular/common/locales/fr';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -16,6 +16,9 @@ import { environment } from 'src/environments/environment';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AuthTokenInterceptor } from './shared/interceptors';
 import { registerLocaleData } from '@angular/common';
+
+
+  
 
 registerLocaleData(localeFr);
 
@@ -48,7 +51,11 @@ registerLocaleData(localeFr);
 		// 	deps: [SettingsService],      //some service handling global settings
 		// 	useFactory: (settingsService) => settingsService.getLanguage()  //returns locale string
 		// }
+		
 	],
+	schemas: [
+		CUSTOM_ELEMENTS_SCHEMA
+	  ],
 	bootstrap: [AppComponent]
 })
 export class AppModule {

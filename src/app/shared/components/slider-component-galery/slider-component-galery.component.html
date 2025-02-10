@@ -1,22 +1,14 @@
-<div class="relative w-full overflow-hidden  overflow-hidden rounded-lg">
-    <!-- Carousel wrapper -->
-    <div 
+<!-- <div class="relative w-full overflow-hidden  overflow-hidden rounded-lg">
+    <div   (swipeleft)="nextSlide()" (swiperight)="prevSlide()"
       class="flex transition-transform duration-500 ease-in-out" [ngStyle]="{ transform: 'translateX(' + (-currentIndex * 100) + '%)' }"
     >
-      <div  *ngFor="let image of images; let i = index"  class="w-full flex-shrink-0" [ngClass]="{'px-10 py-10':!shouldshowFullScreen}">
-        <!-- <img src="assets/img/utils/house.png" alt="" width="150" srcset=""> -->
+      <div  *ngFor="let image of images; let i = index" (swipeleft)="swipe(i, 'swipeleft',$event)" (swiperight)="swipe(i,'swiperight',$event)"   class="w-full flex-shrink-0" [ngClass]="{'px-10 py-10':!shouldshowFullScreen}">
 
         <img [src]="image" width="150"  alt="Image {{ i + 1 }}" class="w-full h-full object-cover" />
       </div>
     </div>
   
-    <div class="nav-button-change-fullscreen w-full block invisible" *ngIf="shouldshowFullScreen">
-      <button  class="absolute btn-text-edit  transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full hover:bg-gray-300 focus:outline-none transition"
-        (click)="showFullScreenViewer($event)" >
-        <i class="fa-solid fa-expand"></i>
-      </button>
-    </div>
-    <!-- Navigation buttons -->
+    
      <div class="nav-button-change-slider invisible group-hover:visible " *ngIf="shouldShowNavSlider && showNavSlider">
       <button type="button" class="flex btn-text-edit absolute top-1/2 left-3 z-40 items-center justify-center w-10 h-10 bg-gray-200/50 rounded-full hover:bg-gray-300 focus:outline-none transition"
           data-carousel-prev (click)="prevSlide($event)">
@@ -35,7 +27,6 @@
      </div>
     
   
-    <!-- Indicators -->
     <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
       <span 
         *ngFor="let _ of images; let i = index" 
@@ -47,4 +38,23 @@
       ></span>
     </div>
   </div>
-  
+   -->
+
+<div class="relative w-full overflow-hidden  overflow-hidden rounded-lg">
+  <div class="nav-button-change-fullscreen w-full block invisible" *ngIf="shouldshowFullScreen">
+    <button  class="absolute btn-text-edit  transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full hover:bg-gray-300 focus:outline-none transition"
+      (click)="showFullScreenViewer($event)" >
+      <i class="fa-solid fa-expand"></i>
+    </button>
+  </div>
+  <swiper-container appSwiper #swiper [config]="swiperConfig" thumbs-swiper=".mySwiper2" (slidechange)="slideChange($event)">
+    <swiper-slide *ngFor="let item of images">
+      <!-- <div class="ratio ratio-4x3" [ngStyle]="{background: 'url(' + item +') no-repeat top center / contain'}"></div> -->
+      <img [src]="item" width="50"  class="w-full h-full object-cover" />
+
+    </swiper-slide>
+  </swiper-container>
+  <!-- /image -->
+
+
+</div>

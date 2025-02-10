@@ -1,8 +1,6 @@
-<div class="flex flex-col gap-4 md:ml-16 ">
-    <!-- Image principale -->
+<!-- <div class="flex flex-col gap-4 md:ml-16 ">
     <div>
         <div class="relative">
-            <!--  -->
             <button (click)="showFullScreenViewer()"  class="absolute  float-right btn-text-edit top-0 right-0 mt-10 mr-5 bg-slate-700 rounded-md z-10">
                 <i class="fa-solid fa-expand fa-2x text-white"></i>
             </button>
@@ -13,15 +11,13 @@
                 <source [src]="imagesFound[currentIndex].url"  />
             </video>
             <galery-video360-item [isFullScreen]='true' class="main-img block" [urlFile]="imagesFound[currentIndex].url" *ngIf="imagesFound[currentIndex].type=='panorama'"></galery-video360-item>
-   
-
+  
           </ng-container>
         </div>
     
   
-    <!-- Miniatures avec navigation -->
+
     <div class="relative">
-      <!-- Bouton de navigation gauche -->
       <button 
         class="absolute btn-text-edit-nav rounded-full left-0 top-1/2 mt-12 transform -translate-y-1/2 text-white border-0 p-2 rounded-full  z-10"
         (click)="prevThumbnails()"
@@ -32,7 +28,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
         </svg>
       </button>
-      <!-- Bouton de navigation droite -->
+
       <button 
         class="absolute btn-text-edit-nav rounded-full right-0 top-1/2 mt-12 transform -translate-y-1/2 text-white p-2 rounded-full  z-10"
         (click)="nextThumbnails()"
@@ -43,7 +39,7 @@
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
   </svg>
       </button>
-      <!-- Miniatures défilantes -->
+
       <div class="grid grid-cols-5 gap-4 overflow-hidden">
         <div 
           *ngFor="let img of visibleThumbnails; let i = index"
@@ -66,4 +62,33 @@
       
     </div>
   </div>
+   -->
+
+   <div class="relative w-full overflow-hidden  overflow-hidden rounded-lg">
+    <div class="relative">
+      <!-- (click)="showFullScreenViewer()" -->
+      <button   class="absolute  float-right btn-text-edit top-0 right-0 mt-10 mr-5 bg-slate-700 rounded-md z-10">
+          <i class="fa-solid fa-expand fa-2x text-white"></i>
+      </button>
+    </div>
+    <swiper-container appSwiper #swiper [config]="swiperConfig" thumbs-swiper=".mySwiper2" (slidechange)="slideChange($event)">     
+      <swiper-slide *ngFor="let item of imagesFound">
+        <img [src]="item.url"  width="150"  class="main-img block w-full top center " alt="..." *ngIf="item.type=='image'" />
+        <video *ngIf="item.type=='video'" class="main-img w-full"  loop muted controls>
+          <source [src]="item.url"  />
+      </video>
+      <galery-video360-item [isFullScreen]='true' class="main-img block" [urlFile]="item.url" *ngIf="item.type=='panorama'"></galery-video360-item>
+      </swiper-slide>
+    </swiper-container>
+    <!-- /image -->
   
+    <!-- thumbnails -->
+    <swiper-container appSwiper #swiperThumbs [config]="swiperThumbsConfig" class="mySwiper2" *ngIf="images.length > 1">
+      <swiper-slide *ngFor="let item of images">
+        <!-- <div class="ratio ratio-4x3" role="button" [ngStyle]="{background: 'url(' + item +') center / cover'}"></div> -->
+        <img [src]="item"   class="w-full h-full object-cover" />
+  
+      </swiper-slide>
+    </swiper-container>
+  
+  </div>

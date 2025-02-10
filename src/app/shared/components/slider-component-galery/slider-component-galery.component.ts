@@ -1,7 +1,8 @@
-import { Component,Input, OnChanges, SimpleChanges, ViewEncapsulation } from '@angular/core';
+import { Component,Input, OnChanges, SimpleChanges, ViewEncapsulation,AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import { FullScreenGaleryComponent } from '../full-screen-galery/full-screen-galery.component';
-import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngxs/store';
+import { SwiperContainer,SwiperSlide } from 'swiper/element';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'slider-component-galery',
@@ -11,47 +12,30 @@ import { Store } from '@ngxs/store';
 
   // encapsulation: 
 })
-export class SliderComponentGaleryComponent implements OnChanges {
+export class SliderComponentGaleryComponent implements AfterViewInit {
   @Input() images: string[] = [];
   @Input() showNavSlider=true;
-  currentIndex: number = 0;
-  shouldShowNavSlider=false;
-  shouldshowFullScreen=false;
+  shouldshowFullScreen:boolean = false;
+  @ViewChild('swiper') swiper!: ElementRef<SwiperContainer>;
+  @ViewChild('swiperThumbs') swiperThumbs!: ElementRef<SwiperContainer>;
+  SWIPE_ACTION = { LEFT: 'swipeleft', RIGHT: 'swiperight' };
+
 
   constructor(private dialog: MatDialog,private _store:Store) { }
 
-  nextSlide(e): void {
-    if(e) e.stopPropagation()
-    this.currentIndex = (this.currentIndex + 1) % this.images.length;
-  }
 
-  prevSlide(e): void {
-    e.stopPropagation()
 
-    this.currentIndex =
-      (this.currentIndex - 1 + this.images.length) % this.images.length;
-  }
-
-  recursivlySlider()
-  {
-    setInterval(()=>{
-      this.nextSlide(null)
-    },3000)
-  }
 
   ngOnChanges(changes: SimpleChanges): void {
       if(changes['images'].currentValue.length==0) this.images = ["assets/img/utils/house.png"]
         
-      if(changes['images'].currentValue.length<2) this.shouldShowNavSlider=false;
-      else this.shouldShowNavSlider=true;
+      // if(changes['images'].currentValue.length<2) this.shouldShowNavSlider=false;
+      // else this.shouldShowNavSlider=true;
 
       if(changes['images'].currentValue.length>0) this.shouldshowFullScreen=true;
-      this.recursivlySlider()
+      // this.recursivlySlider()
   }
 
-  goToSlide(index: number): void {
-    this.currentIndex = index;
-  }
 
   showFullScreenViewer(e)
   {
@@ -66,5 +50,29 @@ export class SliderComponentGaleryComponent implements OnChanges {
         medias:this.images
       }
     })
+  }
+
+index = 0;
+
+  // Swiper
+  swiperConfig = {
+    spaceBetween: 10,
+    navigation: true,
+  };
+
+  swiperThumbsConfig = {
+    spaceBetween: 10,
+    slidesPerView: 4,
+    freeMode: true,
+    watchSlidesProgress: true,
+  };
+
+  ngAfterViewInit() {
+    this.swiper.nativeElement.swiper.activeIndex = this.index;
+    this.swiperThumbs.nativeElement.swiper.activeIndex = this.index;
+  }
+
+  slideChange(swiper: any) {
+    this.index = swiper.detail[0].activeIndex;
   }
 }
