@@ -57,6 +57,7 @@
     "carbon-components-angular": "^5.15.0",
     "chroma-js": "^2.6.0",
     "core-js": "^3.9.1",
+    "driver.js": "^1.3.5",
     "echarts": "^5.5.1",
     "flatpickr": "^4.6.13",
     "flowbite": "^2.5.2",

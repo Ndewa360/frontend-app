@@ -29,6 +29,7 @@
 						],
 						"styles": [
 							"src/@youpez/styles/scss/theme/app-custom-theme.scss",
+							"driver.js/dist/driver.css",
 							"src/styles.scss",
 							{
 								"input": "src/@youpez/styles/scss/theme/app.carbon.light.scss",

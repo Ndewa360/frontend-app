@@ -3,6 +3,7 @@ import {Router, ActivatedRoute, NavigationStart, NavigationEnd, NavigationCancel
 import {environment} from "../environments/environment"
 import {SettingsService} from "src/@youpez/services/settings.service"
 import { interval, switchMap, of, filter, take } from 'rxjs'
+import { TutorialsService } from './shared/services/tutorials/tutorials.service'
 
 const getSessionStorage = (key) => {
   return sessionStorage.getItem(key)
@@ -21,11 +22,15 @@ export class AppComponent implements OnInit {
 
   constructor(private settingsService: SettingsService,
               private router: Router,
-              private route: ActivatedRoute,) {
+              private route: ActivatedRoute,
+              private tutorialService: TutorialsService
+            ) {
 
   }
 
   ngOnInit(): void {
+    // this.tutorialService.startTour();
+
     this.route.queryParams
       .subscribe((queryParams) => {
         if (queryParams['theme']) {

@@ -17,14 +17,10 @@ export class SliderComponentGaleryComponent implements AfterViewInit {
   @Input() showNavSlider=true;
   shouldshowFullScreen:boolean = false;
   @ViewChild('swiper') swiper!: ElementRef<SwiperContainer>;
-  @ViewChild('swiperThumbs') swiperThumbs!: ElementRef<SwiperContainer>;
+  // @ViewChild('swiperThumbs') swiperThumbs!: ElementRef<SwiperContainer>;
   SWIPE_ACTION = { LEFT: 'swipeleft', RIGHT: 'swiperight' };
 
-
   constructor(private dialog: MatDialog,private _store:Store) { }
-
-
-
 
   ngOnChanges(changes: SimpleChanges): void {
       if(changes['images'].currentValue.length==0) this.images = ["assets/img/utils/house.png"]
@@ -69,7 +65,7 @@ index = 0;
 
   ngAfterViewInit() {
     this.swiper.nativeElement.swiper.activeIndex = this.index;
-    this.swiperThumbs.nativeElement.swiper.activeIndex = this.index;
+    // this.swiperThumbs.nativeElement.swiper.activeIndex = this.index;
   }
 
   slideChange(swiper: any) {
