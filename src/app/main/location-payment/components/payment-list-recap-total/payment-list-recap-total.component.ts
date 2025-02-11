@@ -13,6 +13,7 @@ import { UtilsString } from 'src/app/shared/utils';
 })
 export class PaymentListRecapTotalComponent implements OnChanges, OnInit{
   @Input() propertyID:string;
+  @Input() selectedYear
   title=`Montant percus année ${new Date().getFullYear()}`;
 
   isAssignedOpened = false;
@@ -44,9 +45,9 @@ export class PaymentListRecapTotalComponent implements OnChanges, OnInit{
   ngOnInit() {}
 
   ngOnChanges(changes: SimpleChanges): void {
-    if(changes['propertyID']) {
-      console.log("PropertyID",changes["propertyID"].currentValue)
-      this._store.select(StatisticState.selectStateStatisticAllPaymentLocataireByPropertyIdAndYear(changes['propertyID'].currentValue))
+    if(changes['propertyID'] || changes["selectedYear"]) {
+      this.title=`Montant percus année ${this.selectedYear}`;
+      this._store.select(StatisticState.selectStateStatisticAllPaymentLocataireByPropertyIdAndYear(this.propertyID,this.selectedYear))
       .subscribe((value)=>this.model=this.updateData(value))
     }
   }

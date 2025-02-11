@@ -11,13 +11,13 @@ export namespace StatisticAction
     export class FetchStaticLocataireDataByPropertyIdAndYear
     {
         static readonly type = '[Locataire] Fectch Statics Locataire By PropertyID'
-        constructor(public propertyID:string,public year:string){}
+        constructor(public propertyID:string,public year:string|number){}
     }
 
     export class FetchStaticAllPaymentLocataireDataByPropertyIdAndYear
     {
         static readonly type = '[Locataire] Fectch Statics All Payement Locataire By PropertyID'
-        constructor(public propertyID:string,public year:string){}
+        constructor(public propertyID:string,public year:string|number){}
     }
 
     export class ResetAllState

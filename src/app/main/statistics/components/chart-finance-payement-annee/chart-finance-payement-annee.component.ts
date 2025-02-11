@@ -13,6 +13,7 @@ export class ChartFinancePayementAnneeComponent implements OnChanges{
   @Input() label:string=''
   @Input() title:string=`Paiment de locataire ${this.currentDate.getFullYear()}`
   @Input() propertyID:string=''
+  @Input() selectedYear
   currentPayementData:StatisticAllPaymentLocataireYearModel[]=[];
 
   charsOpts: any={};
@@ -24,8 +25,8 @@ export class ChartFinancePayementAnneeComponent implements OnChanges{
   ngOnInit(): void {}
 
   ngOnChanges(changes: SimpleChanges): void {
-    if(changes['propertyID']) {
-      this._store.select(StatisticState.selectStateStatisticAllPaymentLocataireByPropertyIdAndYear(changes['propertyID'].currentValue))
+    if(changes['propertyID'] || changes['selectedYear']) {
+      this._store.select(StatisticState.selectStateStatisticAllPaymentLocataireByPropertyIdAndYear(this.propertyID,this.selectedYear))
       .subscribe((value)=>this.charsOpts = this.getChart(value))
     }
   }

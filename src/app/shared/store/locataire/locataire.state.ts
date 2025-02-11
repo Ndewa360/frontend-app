@@ -72,7 +72,7 @@ export class LocataireState{
         return createSelector([LocataireState],(state)=> state.locataires.filter((locataire:LocataireModel)=>locataire.property==propertyID && locataire.room==null))
       }
     
-      static selectStateCountLocataireByPropertyId(propertyID:string)
+      static selectStateCountLocataireByPropertyId(propertyID:string,year:string|number)
     {
         return createSelector([LocataireState],(state)=> ({
             countLocataireForPropertyId:state.locataires.filter((location)=>location.property==propertyID).length,

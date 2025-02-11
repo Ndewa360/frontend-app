@@ -10,10 +10,14 @@ import { ToastrService } from "ngx-toastr";
 import { StatisticAllPaymentLocataireYearModel, StatisticLocataireYearModel, StatisticRoomYearModel } from "./statistic.model";
 
 export class StatisticStateModel {
-    roomStatistic:StatisticRoomYearModel[]
-    locataireStatistic:StatisticLocataireYearModel[]
-    allLocatairePayementByYear:StatisticAllPaymentLocataireYearModel[]
+    roomStatistic:StatisticRoomYearModel[] //statistic de chambre
+    locataireStatistic:StatisticLocataireYearModel[] //statistic de locataire
+    allLocatairePayementByYear:StatisticAllPaymentLocataireYearModel[] //statistique de paiement
+
     loadingStatistic:boolean
+    loadingRoomStatistic:boolean
+    locataireStatisticLoading:boolean
+    allLocatairePayementByYearLoading:boolean
 }
 
 
@@ -21,6 +25,9 @@ export class StatisticStateModel {
     name: "statistics",
     defaults:{
         loadingStatistic:false,
+        loadingRoomStatistic:false,
+        locataireStatisticLoading:false,
+        allLocatairePayementByYearLoading:false,
         roomStatistic:[],
         locataireStatistic:[],
         allLocatairePayementByYear:[]
@@ -40,6 +47,25 @@ export class StatisticState{
     {
         return state.loadingStatistic
     }
+
+    @Selector()
+    static selectStateLocataireStatisticLoading(state:StatisticStateModel)
+    {
+        return state.locataireStatisticLoading
+    }
+
+    @Selector()
+    static selectStateLocatairePaymentStatisticLoading(state:StatisticStateModel)
+    {
+        return state.allLocatairePayementByYearLoading
+    }
+
+
+    @Selector()
+    static selectStateRoomStatisticLoading(state:StatisticStateModel)
+    {
+        return state.loadingRoomStatistic
+    }
    
 
     static selectStateStatisticByRoom(roomId)
@@ -54,10 +80,13 @@ export class StatisticState{
 
     static selectStateStatisticLocataireByPropertyIdAndYear(propertyID,year:number=new Date().getFullYear())
     {
-        return createSelector([StatisticState],(state)=> state.locataireStatistic.filter((u)=>u.locataire.property==propertyID && u.year==year))    
+        return createSelector([StatisticState],(state)=> {
+            console.log("Locataire Statistic Found",state.locataireStatistic)
+            return state.locataireStatistic.filter((u)=>u.locataire.property==propertyID && u.year==year)
+        })    
     }
 
-    static selectStateStatisticAllPaymentLocataireByPropertyIdAndYear(propertyID,year:number=new Date().getFullYear())
+    static selectStateStatisticAllPaymentLocataireByPropertyIdAndYear(propertyID,year:number|string=new Date().getFullYear())
     {
         return createSelector([StatisticState],(state)=> state.allLocatairePayementByYear.filter((u)=>u.locataire.property==propertyID && u.year==year))    
     }
@@ -66,18 +95,20 @@ export class StatisticState{
     fetchRoomStatisticByPropertyAndYear(ctx:StateContext<StatisticStateModel>,{propertyID,year}:StatisticAction.FetchStaticRoomDataByPropertyIdAndYear)
     {
         const state = ctx.getState();
-        let index = state.roomStatistic.findIndex((u)=>u.room.property==propertyID);
+        let index = state.roomStatistic.findIndex((u)=>u.room.property==propertyID && year==u.year);
         // console.log("Index Static", index,propertyID,state.roomStatistic)
         if(index>-1) return of(true);
 
         ctx.patchState({
-            loadingStatistic:true
+            loadingStatistic:true,
+            loadingRoomStatistic:true
         })
         return this._statisticsService.getStatisticRoomDataByYear(propertyID,year).pipe(
             tap(
                 result => {
                     ctx.patchState({
                         loadingStatistic:false,
+                        loadingRoomStatistic:false,
                         roomStatistic:[...state.roomStatistic, ...result.data]
                     })
                 }
@@ -88,8 +119,11 @@ export class StatisticState{
     @Action(StatisticAction.ResetAllState)
     resetAllState(ctx:StateContext<StatisticStateModel>)
     {
-        ctx.setState({
+        ctx.patchState({
             loadingStatistic:false,
+            loadingRoomStatistic:false,
+            locataireStatisticLoading:false,
+            allLocatairePayementByYearLoading:false,
             roomStatistic:[],
             locataireStatistic:[],
             allLocatairePayementByYear:[]
@@ -101,18 +135,21 @@ export class StatisticState{
     fetchLocataireStatisticByPropertyAndYear(ctx:StateContext<StatisticStateModel>,{propertyID,year}:StatisticAction.FetchStaticLocataireDataByPropertyIdAndYear)
     {
         const state = ctx.getState();
-        let index = state.locataireStatistic.findIndex((u)=>u.locataire.property==propertyID);
+        let index = state.locataireStatistic.findIndex((u)=>u.locataire.property==propertyID && u.year==year);
         // console.log("Index Static", index,propertyID,state.roomStatistic)
         if(index>-1) return of(true);
 
         ctx.patchState({
-            loadingStatistic:true
+            loadingStatistic:true,
+            locataireStatisticLoading:true
         })
         return this._statisticsService.getStatisticLocataireDataByYear(propertyID,year).pipe(
             tap(
                 result => {
+                    console.log("Result Locataire data",result)
                     ctx.patchState({
                         loadingStatistic:false,
+                        locataireStatisticLoading:false,
                         locataireStatistic:[...state.locataireStatistic, ...result.data]
                     })
                 }
@@ -124,12 +161,14 @@ export class StatisticState{
     fetchAllPayementLocataireStatisticByPropertyAndYear(ctx:StateContext<StatisticStateModel>,{propertyID,year}:StatisticAction.FetchStaticAllPaymentLocataireDataByPropertyIdAndYear)
     {
         const state = ctx.getState();
-        let index = state.allLocatairePayementByYear.findIndex((u)=>u.locataire.property==propertyID);
+        let index = state.allLocatairePayementByYear.findIndex((u)=>u.locataire.property==propertyID && year==u.year);
         // console.log("Index Static", index,propertyID,state.roomStatistic)
         if(index>-1) return of(true);
 
         ctx.patchState({
-            loadingStatistic:true
+            loadingStatistic:true,
+            allLocatairePayementByYearLoading:true
+            
         })
         return this._statisticsService.getAllPaymentLocataireStatisticDataByYear(propertyID,year).pipe(
             tap(
@@ -137,6 +176,7 @@ export class StatisticState{
                     console.log("Result Locataire Statistic",result)
                     ctx.patchState({
                         loadingStatistic:false,
+                        allLocatairePayementByYearLoading:false,
                         allLocatairePayementByYear:[...state.allLocatairePayementByYear, ...result.data]
                     })
                 }

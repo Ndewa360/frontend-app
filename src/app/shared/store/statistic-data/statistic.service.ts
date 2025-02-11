@@ -21,17 +21,17 @@ export class StatisticService
 
    
 
-    getStatisticRoomDataByYear(propertyID:string,year:string):Observable<ApiResultFormat<StatisticRoomYearModel[]>>
+    getStatisticRoomDataByYear(propertyID:string,year:string|number):Observable<ApiResultFormat<StatisticRoomYearModel[]>>
     {    
         return this._httpClient.get<ApiResultFormat<StatisticRoomYearModel[]>>(`${environment.apiUrl}/statistic-location-payment/statistic-payement/${propertyID}/${year}/`)
     }
 
-    getStatisticLocataireDataByYear(propertyID:string,year:string):Observable<ApiResultFormat<StatisticLocataireYearModel[]>>
+    getStatisticLocataireDataByYear(propertyID:string,year:string|number):Observable<ApiResultFormat<StatisticLocataireYearModel[]>>
     {    
         return this._httpClient.get<ApiResultFormat<StatisticLocataireYearModel[]>>(`${environment.apiUrl}/statistic-location-payment/statistic-payement-by-locataire/${propertyID}/${year}/`)
     }
 
-    getAllPaymentLocataireStatisticDataByYear(propertyID:string,year:string):Observable<ApiResultFormat<StatisticAllPaymentLocataireYearModel[]>>
+    getAllPaymentLocataireStatisticDataByYear(propertyID:string,year:string|number):Observable<ApiResultFormat<StatisticAllPaymentLocataireYearModel[]>>
     {    
         return this._httpClient.get<ApiResultFormat<StatisticAllPaymentLocataireYearModel[]>>(`${environment.apiUrl}/statistic-location-payment/statistic-payement-all-inyear/${propertyID}/${year}/`)
     }

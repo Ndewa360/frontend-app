@@ -13,7 +13,8 @@ export class ChartFinancePayementLocationComponent implements OnChanges{
   @Input() label:string=''
   @Input() title:string=`Paiment de locataire ${new Date().getFullYear()}`
   @Input() propertyID:string=''
-
+  @Input() selectedYear:number;
+  subscription=null;
   charsOpts: any={};
 
   constructor(
@@ -23,10 +24,14 @@ export class ChartFinancePayementLocationComponent implements OnChanges{
   ngOnInit(): void {}
 
   ngOnChanges(changes: SimpleChanges): void {
-    if(changes['propertyID']) {
-      console.log("PropertyID",changes["propertyID"].currentValue)
-      this._store.select(StatisticState.selectStateStatisticLocataireByPropertyIdAndYear(changes['propertyID'].currentValue))
-      .subscribe((value)=>this.charsOpts = this.getChart(value))
+    if(changes['propertyID'] || changes['selectedYear']) {
+      this.title = `Paiment de locataire ${this.selectedYear}`
+      if(this.subscription) this.subscription.unsubscribe();
+      this.subscription= this._store.select(StatisticState.selectStateStatisticLocataireByPropertyIdAndYear(this.propertyID,this.selectedYear))
+      this.subscription.subscribe((value)=>{
+        console.log("Value Locataire Statistic ",value)
+        this.charsOpts = this.getChart(value)
+      })
     }
   }
 

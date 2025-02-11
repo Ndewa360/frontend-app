@@ -6,29 +6,35 @@
       </div> -->
     <div class="p-4">
       <div fxLayout="row wrap">
-        <div fxFlex="100%" fxFlex.gt-md="50%">
-          <div class="app-productive-heading-02 mb-2">VISUALISATIONS DE VOS FINANCES</div>
-          <div class="app-body-long-02 mb-4">
-            Ce tableau est une visualisation de vos finances sur un biens immaobilités en particulier
+        <div fxFlex="100%">
+          <div fxFlex fxLayout="row wrap">
+            <div   fxFlex.gt-sm="85%" fxFlex.gt-md="90%">
+              <div class="app-productive-heading-02 mb-2">VISUALISATIONS DE VOS FINANCES</div>
+              <div class="app-body-long-02 mb-4">
+                Ce tableau est une visualisation de vos finances sur un biens immaobilités en particulier
+              </div>
+            </div>
+            <div  fxFlex.gt-sm="15%" fxFlex.gt-md="10%">
+              <!-- <chart-finance-room></chart-finance-room> -->
+              <ibm-label helperText="" class="type_bien_label">
+              <ibm-combo-box class="mt-2" [items]="yearsList" (selected)="onSelectedYear($event)" theme="dark"  size="md">
+                <ibm-dropdown-list></ibm-dropdown-list>
+              </ibm-combo-box>
+            </ibm-label>
+            </div>
+            
           </div>
-          <!-- <div class="app-body-long-01 p-4 app-bg-container mb-5">
-                ECharts: A Declarative Framework for Rapid Construction of Web-based Visualization
-                <br/><br/>
-                <a href="https://echarts.apache.org/en/index.html" target="_blank">Official homepage</a> <br/>
-                <a href="https://echarts.apache.org/en/api.html#echarts" target="_blank">Documentations</a> <br/>
-                <a href="https://echarts.apache.org/examples/en/index.html" target="_blank">Examples</a>
-              </div> -->
         </div>
-        <div fxFlex="100%" fxFlex.gt-md="100%">
+        <div fxFlex="100%" fxFlex.gt-md="100%" *ngIf="!isLoading else isLoadingTmp">
           <div fxLayout="row wrap" class="app-card-row-holder">
             <div fxFlex="100%" fxFlex.gt-lg="100%">
               <div fxFlex fxLayout="row wrap">
                 <div fxFlex="100%" fxFlex.gt-md="16.66%">
-                  <chart-nombre-locataire [nbreLocataireTotal]="locataireCount.locataireCountTotal" [nbreLocataireActif]="locataireCount.locataireCountForPropertyId"></chart-nombre-locataire>
+                  <chart-nombre-locataire [nbreLocataireTotal]="locataireCount.locataireCountTotal"  [nbreLocataireActif]="locataireCount.locataireCountForPropertyId"></chart-nombre-locataire>
                 </div>
                 <div fxFlex="100%" fxFlex.gt-md="83.34%">
                   <!-- <chart-finance-room></chart-finance-room> -->
-                  <chart-finance-payement-location [propertyID]="propertyId"></chart-finance-payement-location>
+                  <chart-finance-payement-location [propertyID]="propertyId" [selectedYear]="selectedYear"></chart-finance-payement-location>
                 </div>
                 
               </div>
@@ -41,19 +47,24 @@
                   <chart-nombre-room [nbreRoomTotal]="roomCount.nbreRoomTotal" [nbreRoomActif]="roomCount.nbreRoomActif"></chart-nombre-room>
                 </div>
                 <div fxFlex="100%" fxFlex.gt-md="83.34%">
-                  <payment-list-type-property [propertyID]="propertyId"></payment-list-type-property>
+                  <payment-list-type-property [propertyID]="propertyId" ></payment-list-type-property>
                 </div>
                 
               </div>
             </div>
           </div>
           <div class="app-card">
-            <chart-finance-payement-annee [propertyID]="propertyId"></chart-finance-payement-annee>
+            <chart-finance-payement-annee [propertyID]="propertyId" [selectedYear]="selectedYear"></chart-finance-payement-annee>
           </div>
           <div  >
-            <payment-list-recap-total [propertyID]="propertyId"></payment-list-recap-total>
+            <payment-list-recap-total [propertyID]="propertyId" [selectedYear]="selectedYear"></payment-list-recap-total>
           </div>
         </div>
+        <ng-template #isLoadingTmp>
+          <div class="relative loader-youpez">
+            <youpez-loader></youpez-loader>
+          </div>
+        </ng-template>
       </div>
     </div>
   </ng-scrollbar>

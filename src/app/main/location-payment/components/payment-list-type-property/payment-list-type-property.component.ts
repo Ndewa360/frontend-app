@@ -13,6 +13,7 @@ import { UtilsString } from 'src/app/shared/utils';
 })
 export class PaymentListTypePropertyComponent implements OnChanges, OnInit{  
   @Input() propertyID:string;
+  @Input() selectedYear;
   title="Caution retenu remboursable";
 
   isAssignedOpened = false;
