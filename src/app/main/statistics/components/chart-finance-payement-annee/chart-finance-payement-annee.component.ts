@@ -26,6 +26,7 @@ export class ChartFinancePayementAnneeComponent implements OnChanges{
 
   ngOnChanges(changes: SimpleChanges): void {
     if(changes['propertyID'] || changes['selectedYear']) {
+      this.title=`Paiment de locataire ${this.selectedYear}`
       this._store.select(StatisticState.selectStateStatisticAllPaymentLocataireByPropertyIdAndYear(this.propertyID,this.selectedYear))
       .subscribe((value)=>this.charsOpts = this.getChart(value))
     }
@@ -46,7 +47,7 @@ export class ChartFinancePayementAnneeComponent implements OnChanges{
           let room = this.getRoomInfosByUserName(params.data[1])
           return `
             ${params.seriesName}<br/>Locataire: ${params.data[1]}<br/>
-            Mois: ${UtilsString.capitalizedFirstLetter(new Date(this.currentDate.getFullYear(),params.data[0]).toLocaleDateString("fr-FR",{month:'long'}))}<br/>
+            Mois: ${UtilsString.capitalizedFirstLetter(new Date(this.selectedYear,params.data[0]).toLocaleDateString("fr-FR",{month:'long'}))}<br/>
             Montant: ${room.price}<br/>
             ${room.roomStringTYpe}: ${room.roomCode}<br/>
             Status: ${statusText}
