@@ -1,4 +1,17 @@
 <youpez-content-tabs [tabs]="tabs" [contentTitle]="title">
-    <router-outlet></router-outlet>
-  </youpez-content-tabs>
+  <div class="flex justify-between mb-4" (click)="goBack()">
+    <!-- <div></div> -->
+      <button ibmButton="tertiary" size="sm"  class="cds--btn--icon-only custom--btn--tertiary">
+        <youpez-ibm-icon iconClass="cds--btn__icon" iconName="arrowLeft" iconSize="32" ></youpez-ibm-icon >
+      </button>
+  </div>
+    <ng-container *ngIf="!loading else loadingData">
+      <router-outlet></router-outlet>
+    </ng-container>
+    <ng-template #loadingData>
+      <div class="relative no-data-loader ">
+          <youpez-loader title="Chargment de données du locataire"></youpez-loader>
+      </div>
+    </ng-template>
+</youpez-content-tabs>
   

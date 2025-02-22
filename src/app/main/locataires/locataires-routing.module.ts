@@ -7,6 +7,7 @@ import { HistoryPaymentComponent } from './components/history-payment/history-pa
 import { LoadingLocataireDataResolver } from 'src/app/shared/resolvers/loading-property-data/loading-locataire-data-resolver.service';
 import { HistoryRoomComponent } from './components/history-room/history-room.component';
 import { HistoryComponent } from './components/history/history.component';
+import { ShowContractComponent } from '../contract/components/show-contract/show-contract.component';
 
 const routes: Routes = [
   { path: ':locataireID', 
@@ -17,6 +18,7 @@ const routes: Routes = [
     children: [
       { path: 'profil', component: LocataireProfilComponent },
       { path: 'history', component: HistoryComponent },
+      // {  path: 'contract/:locationID', component: ShowContractComponent }
       // { path: '**', redirectTo: 'profil', pathMatch: 'full' }
     ]
   },

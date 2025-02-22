@@ -78,6 +78,13 @@ const routes: Routes = [
         },
       },
       {
+        path: 'contract',
+        loadChildren: () => import('./contract/contract.module').then(m => m.ContractModule),
+        data: {
+          breadcrumb: 'Contrat'
+        },
+      },
+      {
         path: 'facturation',
         loadChildren: () => import('./biiling/biiling.module').then(m => m.BiilingModule),
         data: {

@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, Input, ViewEncapsulation } from '@angular/core';
 
 @Component({
   selector: 'youpez-loader',
@@ -7,5 +7,5 @@ import { Component, ViewEncapsulation } from '@angular/core';
   // encapsulation: ViewEncapsulation.None
 })
 export class AppLoaderComponent {
-
+  @Input() title="Chargement des données"
 }

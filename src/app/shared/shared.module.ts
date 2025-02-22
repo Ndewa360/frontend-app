@@ -20,6 +20,7 @@ import {
   CityState,
   CountryState,
   SearchState,
+  ContractState,
 
 } from './store';
 
@@ -72,7 +73,8 @@ import { BrowserModule } from '@angular/platform-browser';
         CityState,
         CountryState,
         SearchState,
-        UploadFilesState
+        UploadFilesState,
+        ContractState
       ]),
       NgxsStoragePluginModule.forRoot({
         key:"auth_token",

@@ -7,7 +7,7 @@
     <div class="app-card__content">
         <div class="app-timeline px-5 py-5">
             <div class="flex">
-                <div class="app-timeline" style="max-width:800px">
+                <div class="app-timeline" style="max-width:800px">                    
                     <ng-container *ngFor="let event of dataHistory">
                         <div class="app-timeline__group" fxLayout="row wrap">
                             <div class="app-timeline__time " fxFlex="100%" fxFlex.gt-sm="105px" ngClass.lt-sm="app-timeline__time--collapse">
@@ -30,7 +30,7 @@
                                             <ng-template #isNoContract>
                                                 <span>Contrat de location sur le bien {{event.roomCode}} depuis le
                                                     {{event.startedLocationAt | date :"fullDate"}}</span>
-                                                <a class="app-link ml-4 contrat-bail-link flex">
+                                                <a class="app-link ml-4 contrat-bail-link flex" [routerLink]="'/app/contract/location/'+event.id+'/locataire/'+locataireID"> 
                                                     <span class="mr-1">Contrat de bail </span>
                                                     <youpez-ibm-icon iconSize="20" iconName="document"
                                                         class="mr-2 contact-btn"></youpez-ibm-icon>
@@ -66,7 +66,7 @@
                                 </ng-container>
                             </div>
                         </div>
-                    </ng-container>
+                    </ng-container>                    
                 </div>
             </div>
         </div>

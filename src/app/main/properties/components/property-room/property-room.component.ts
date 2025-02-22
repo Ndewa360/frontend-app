@@ -12,7 +12,7 @@ import { GaleryComponent } from 'src/app/main/room/components/galery/galery.comp
   selector: 'app-property-room',
   templateUrl: './property-room.component.html',
   styleUrls: ['./property-room.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  // encapsulation: ViewEncapsulation.None
 })
 export class PropertyRoomComponent implements OnInit {
   @Select(RoomState.selectStateInitLoading) loadingRoom$:Observable<string>;

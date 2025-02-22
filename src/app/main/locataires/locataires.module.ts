@@ -9,6 +9,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { HistoryPaymentComponent } from './components/history-payment/history-payment.component';
 import { HistoryRoomComponent } from './components/history-room/history-room.component';
 import { HistoryComponent } from './components/history/history.component';
+import { ContractModule } from '../contract/contract.module';
 
 
 @NgModule({
@@ -23,7 +24,7 @@ import { HistoryComponent } from './components/history/history.component';
   imports: [
     CommonModule,
     LocatairesRoutingModule,
-    SharedModule
+    SharedModule,
   ]
 })
 export class LocatairesModule { }

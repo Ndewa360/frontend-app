@@ -18,10 +18,12 @@ export class HistoryPaymentComponent implements OnInit{
     type: '',
     title: 'Aujourdhui',
     content: ``,
+    id:'',
     children: []
     }
   ];
   locataireID:string="";
+  
 
   constructor(
     private _store:Store,
@@ -41,6 +43,7 @@ export class HistoryPaymentComponent implements OnInit{
       {
       time: '',
       type: '',
+      id:'',
       title: 'Aujourdhui',
       content: ``,
       children: []
@@ -58,6 +61,7 @@ export class HistoryPaymentComponent implements OnInit{
           roomCode:historyData.room.code,
           startedLocationAt:new Date(historyData.location.startedAt),
           contentType:"contrat",
+          id:historyData.location._id,
           children: []
         },
       ];
