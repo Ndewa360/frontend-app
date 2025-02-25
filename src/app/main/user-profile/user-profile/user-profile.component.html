@@ -1,0 +1,12 @@
+<youpez-content-tabs [tabs]="tabs" [contentTitle]="title">
+   
+      <ng-container *ngIf="!(profileStateLoading$ | async) else loadingData">
+        <router-outlet></router-outlet>
+      </ng-container>
+      <ng-template #loadingData>
+        <div class="relative no-data-loader ">
+            <youpez-loader title="Chargment de information de profile"></youpez-loader>
+        </div>
+      </ng-template>
+  </youpez-content-tabs>
+    

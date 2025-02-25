@@ -29,7 +29,7 @@ export class UserProfileService
      */
     updateUserProfile(contact:UserProfileModel,id:string): Observable<ApiResultFormat<UserProfileModel>>
     {
-        return this._httpClient.put<ApiResultFormat<UserProfileModel>>(`${environment.apiUrl}/user/profile/${id}`, contact)
+        return this._httpClient.put<ApiResultFormat<UserProfileModel>>(`${environment.apiUrl}/user/profil/${id}`, contact)
     }
 
 }

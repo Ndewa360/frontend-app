@@ -58,10 +58,10 @@ export class RoomAssociatedComponent implements OnChanges{
     return Currency.XAF
   }
 
-  goToRoom(room)
+  goToRoom(event,room)
   {
-    
-    this.router.navigateByUrl( `/search/room/${room._id}`)
+    if(event.target.nodeName=="SWIPER-CONTAINER") return
+    else this.router.navigateByUrl( `/search/room/${room._id}`)
   }
 
 }

@@ -1,6 +1,8 @@
 
 export interface UserProfileModel {
 
+    _id?:string;
+
     name?:string;
 
     email?:string;
@@ -14,4 +16,8 @@ export interface UserProfileModel {
     location?:string;
 
     uid?:string;
+
+    bio?:string;
+
+    
 }

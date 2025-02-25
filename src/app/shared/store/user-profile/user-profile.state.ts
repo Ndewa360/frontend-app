@@ -16,6 +16,7 @@ export class UserProfileStateModel {
     userProfile:UserProfileModel;
     initLoadingState:'NO_LOADED'|'LOADING'|'LOADED';
     loadingUserProfile:boolean
+    waitingForUserProfilSaved:boolean
 }
 
 
@@ -24,6 +25,7 @@ export class UserProfileStateModel {
     defaults:{
     initLoadingState:'NO_LOADED',
     loadingUserProfile:false,
+    waitingForUserProfilSaved:false,
     userProfile:null
     }
 })
@@ -40,6 +42,12 @@ export class UserProfileState{
     static selectStateLoading(state:UserProfileStateModel)
     {
         return state.loadingUserProfile
+    }
+
+    @Selector()
+    static selectStateSavedLoading(state:UserProfileStateModel)
+    {
+        return state.waitingForUserProfilSaved
     }
 
     @Selector()
@@ -197,6 +205,7 @@ export class UserProfileState{
         ctx.setState({
             initLoadingState:'NO_LOADED',
             loadingUserProfile:false,
+            waitingForUserProfilSaved:false,
             userProfile:null
         })
     }
@@ -264,23 +273,23 @@ export class UserProfileState{
     {
         const state = ctx.getState();
         ctx.patchState({
-            loadingUserProfile: true
+            waitingForUserProfilSaved: true
         })
 
         return this._userProfilesService.updateUserProfile(userProfile,id).pipe(
             tap(
                 (result)=>{
                     ctx.patchState({
-                        loadingUserProfile:false,
+                        waitingForUserProfilSaved:false,
                         userProfile,
                     })
-                    // this._toastrService.success(`Profil utilisateur modifié avec success`, 'UserProfile');
+                    this._toastrService.success(`Profil utilisateur modifié avec success`, 'UserProfile');
                 }
             ),
             catchError((error) => {
                 // this._toastrService.error(error?.error?.message, 'Erreur');
                 ctx.patchState({
-                    loadingUserProfile: false
+                    waitingForUserProfilSaved: false
                 })
                 let message = error?.error?.message;
                 if(!message) message = "Une erreur c'est produite! Réessayez plus tard"
@@ -319,7 +328,7 @@ export class UserProfileState{
             tap(
                 result => {
                     console.log("Result ",result)
-                    ctx.setState({
+                    ctx.patchState({
                         loadingUserProfile:false,
                         userProfile:result.data,
                         initLoadingState:'LOADED'

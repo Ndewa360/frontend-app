@@ -94,6 +94,14 @@ export class RoomFilteredFoundComponent {
       return [...room.medias] //,...room.property.medias
     }
 
+    goToRoom(event,room)
+    {
+      if(event.target.nodeName=="SWIPER-CONTAINER") return
+      else this._router.navigateByUrl( `/search/room/${room._id}`)
+
+    }
+
+
     showFullScreenViewer(images,e)
       {
         e.stopPropagation()

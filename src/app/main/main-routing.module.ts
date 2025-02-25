@@ -92,6 +92,13 @@ const routes: Routes = [
         },
       },
       {
+        path: 'profile',
+        loadChildren: () => import('./user-profile/user-profile.module').then(m => m.UserProfileModule),
+        data: {
+          breadcrumb: 'Profil utilisateur'
+        },
+      },
+      {
         path: 'properties',
         data: {
           breadcrumb: 'Biens'

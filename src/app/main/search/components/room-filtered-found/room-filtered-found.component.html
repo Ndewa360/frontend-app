@@ -14,7 +14,7 @@
             </div>
 
             <ng-container *ngFor="let room of currentDataToShow">
-              <div fxFlex="100%" fxFlex.gt-md="33.33%" [routerLink]="['/search/room',room._id]">
+              <div fxFlex="100%" fxFlex.gt-md="33.33%" (click)="goToRoom($event,room)">
                 <div class="app-card app-card--select app-card-room">
                   <!-- <button (click)="openShowRoom(room)"
                     class="float-right btn-text-edit top-2 mt-4 mr-4 bg-slate-700 rounded-md">
