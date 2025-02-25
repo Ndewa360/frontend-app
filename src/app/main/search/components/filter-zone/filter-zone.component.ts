@@ -119,8 +119,9 @@ export class FilterZoneComponent implements OnInit{
   {
     let filterToApply = {...this.formGroup.value, ville:this.formGroup.value.ville.valueType}
     if(!this.showFilteredSpecificityForm) delete filterToApply.specifity;
-    console.log("Form Val", FormUtils.removeNullAttribut(filterToApply),this.formGroup.value.ville.valueType==this.currentCityChoise);
+    filterToApply = {...FormUtils.removeNullAttribut(filterToApply)}
+    if(this.formGroup.value.minPrice==0) filterToApply["minPrice"]=0;
 
-    this._store.dispatch(new SearchAction.ApplyFilter(FormUtils.removeNullAttribut(filterToApply),this.formGroup.value.ville.valueType!=this.currentCityChoise));
+    this._store.dispatch(new SearchAction.ApplyFilter(filterToApply,this.formGroup.value.ville.valueType!=this.currentCityChoise));
   }
 }

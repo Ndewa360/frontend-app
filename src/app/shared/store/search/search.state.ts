@@ -156,13 +156,17 @@ export class SearchState{
     {
         let state = ctx.getState();
         let dataRooms = [...state.searchProperties];
+        console.log("Filter ",filter,isNewLocation)
         if(!isNewLocation)
         {
+            dataRooms.forEach((data)=>console.log('Filte in action ',data.price))
+
             dataRooms= dataRooms.filter((room)=> (
                 room.property.geolocationCity?._id==filter.ville &&
                 room.price>=filter.minPrice && 
                 room.price<=filter.maxPrice 
             ));
+
             if(filter.specifity?.hasClosure) dataRooms = dataRooms.filter((room)=>filter.specifity.hasClosure==room.property.hasClosure)
             if(filter.specifity?.hasParking) dataRooms = dataRooms.filter((room)=>filter.specifity.hasParking==room.property.hasParking)
 
