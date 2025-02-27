@@ -124,7 +124,7 @@ export class RoomState{
         const data = [...state.rooms]
         let index = data.findIndex((u)=>u._id==roomId);
         if(index>-1) {
-            let room = data[index];
+            let room = {...data[index]};
             let indexFile = room.medias.findIndex((u)=>u==fileUrl);
             if(indexFile>-1) {
                 let medias = [...room.medias]

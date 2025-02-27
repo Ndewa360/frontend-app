@@ -3,6 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { Store } from '@ngxs/store';
 import { isFormItemValid } from 'src/@youpez';
 import { LocataireModel, LocataireState, RoomModel, RoomState } from 'src/app/shared/store';
+import { UtilsString } from 'src/app/shared/utils';
 
 @Component({
   selector: 'assign-location-form',
@@ -17,6 +18,23 @@ export class AssignLocationFormComponent  implements OnInit, OnChanges{
 
   roomList = [];
   locataireList = [];
+  fiancialStateList = [
+    {
+      content:"Initial",
+      valueType:"initial",
+      selected:true
+    },
+    {
+      content:"En avance",
+      valueType:"en_avance",
+      selected:false
+    },
+    {
+      content:"Avec Arriéré",
+      valueType:"avec_arriere",
+      selected:false
+    },
+  ]
   @Output() onSendLocationData:EventEmitter<
     {
       locataire?: any,
@@ -35,11 +53,36 @@ export class AssignLocationFormComponent  implements OnInit, OnChanges{
       roomId: [null, [Validators.required]],
       locataireId: [null, [Validators.required]],
       startedDate: [null, [Validators.required]],
+      isKnowExactDateEntry:[true,Validators.required],
+      initialFinancialState:[null, [Validators.required]],
+      initialSolde:[0,[Validators.required]]
     })
     this.formGroup.valueChanges.subscribe(() => {
       this.isFormValid();
     })
     this.askForUpdate()
+
+    this.formGroup.controls["isKnowExactDateEntry"].valueChanges.subscribe((value)=>{
+      if(value) {
+        this.formGroup.controls["startedDate"].setValidators([Validators.required])
+        this.formGroup.controls["startedDate"].enable()
+      }
+      else {
+        this.formGroup.controls["startedDate"].setValidators(null)
+        this.formGroup.controls["startedDate"].disable()
+      }
+    })
+
+    this.formGroup.controls["initialFinancialState"].valueChanges.subscribe((value)=>{
+      if(value.valueType == "initial") {
+        this.formGroup.controls["initialSolde"].setValidators(null)
+        this.formGroup.controls["initialSolde"].disable()
+      }
+      else {
+        this.formGroup.controls["initialSolde"].setValidators([Validators.required])
+        this.formGroup.controls["initialSolde"].enable()
+      }
+    })
 
   }
 
@@ -49,7 +92,6 @@ export class AssignLocationFormComponent  implements OnInit, OnChanges{
 
   askForUpdate()
   {
-    console.log("askToUpdate ",this.propertyID)
     if(!this.propertyID) return;
     this._store.select(RoomState.selectStateFreeRoomByPropertyId(this.propertyID)).subscribe((roomList:RoomModel[])=>{
       this.roomList = roomList.map((value)=>({content:value.code,valueType:value._id}));
@@ -58,6 +100,7 @@ export class AssignLocationFormComponent  implements OnInit, OnChanges{
     this._store.select(LocataireState.selectStateFreeLocataireByPropertyId(this.propertyID)).subscribe((locataireList:LocataireModel[])=>{
       this.locataireList = locataireList.map((value)=>({content:value.fullName,valueType:value._id}));
     });
+
   }
 
 
@@ -82,12 +125,23 @@ export class AssignLocationFormComponent  implements OnInit, OnChanges{
     if (!this.formGroup.valid) {
       return false
     }
-    this.onSendLocationData.emit({
+    let dataToEmit = {
       locataire:this.formGroup.value.locataireId.valueType, 
       room:this.formGroup.value.roomId.valueType,
-      entryDate:this.formGroup.value.startedDate[0]
-    })
+      isKnowExactDateEntry: this.formGroup.value.isKnowExactDateEntry,
+      initialFinancialState: this.formGroup.value.initialFinancialState.valueType,
+      initialSolde: this.formGroup.value.initialSolde
+    }
+    if(this.formGroup.value.isKnowExactDateEntry) dataToEmit["entryDate"]=this.formGroup.value.startedDate[0];
+    
+
+    this.onSendLocationData.emit(dataToEmit)
     return true
+  }
+
+  getMoney()
+  {
+    return UtilsString.getDefaultCurrency()
   }
 
 }

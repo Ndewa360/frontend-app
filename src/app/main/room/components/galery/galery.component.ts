@@ -76,6 +76,18 @@ export class GaleryComponent implements OnInit, OnDestroy {
 
   }
 
+  deleteFile(urlFile)
+  {
+    console.log("Item ",urlFile)
+
+    this._store.dispatch(new UploadFilesAction.RemoveUploadedFile({
+      fileUrl:urlFile,
+      contentID:this.data.room._id,
+      contentType: FileUploadContentType.FOR_ROOM_FILE,
+      contentRoomType: ContentUploadRoomType.FOR_ROOM
+    }))
+  }
+
   close(){
     this.dialogRef.close();
   }
