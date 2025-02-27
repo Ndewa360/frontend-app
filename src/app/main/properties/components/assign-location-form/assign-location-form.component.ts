@@ -52,10 +52,10 @@ export class AssignLocationFormComponent  implements OnInit, OnChanges{
     this.formGroup = this.formBuilder.group({
       roomId: [null, [Validators.required]],
       locataireId: [null, [Validators.required]],
-      startedDate: [null, [Validators.required]],
-      isKnowExactDateEntry:[true,Validators.required],
+      startedDate: [null,[Validators.required]],
+      isKnowExactDateEntry:[false],
       initialFinancialState:[null, [Validators.required]],
-      initialSolde:[0,[Validators.required]]
+      initialSolde:[0]
     })
     this.formGroup.valueChanges.subscribe(() => {
       this.isFormValid();
@@ -64,16 +64,18 @@ export class AssignLocationFormComponent  implements OnInit, OnChanges{
 
     this.formGroup.controls["isKnowExactDateEntry"].valueChanges.subscribe((value)=>{
       if(value) {
-        this.formGroup.controls["startedDate"].setValidators([Validators.required])
         this.formGroup.controls["startedDate"].enable()
+        this.formGroup.controls["startedDate"].setValidators([Validators.required])
       }
       else {
-        this.formGroup.controls["startedDate"].setValidators(null)
         this.formGroup.controls["startedDate"].disable()
+        this.formGroup.controls["startedDate"].setValidators(null)
       }
+      this.formGroup.controls["startedDate"].updateValueAndValidity()
     })
 
     this.formGroup.controls["initialFinancialState"].valueChanges.subscribe((value)=>{
+      if(value==null) return
       if(value.valueType == "initial") {
         this.formGroup.controls["initialSolde"].setValidators(null)
         this.formGroup.controls["initialSolde"].disable()
@@ -82,6 +84,8 @@ export class AssignLocationFormComponent  implements OnInit, OnChanges{
         this.formGroup.controls["initialSolde"].setValidators([Validators.required])
         this.formGroup.controls["initialSolde"].enable()
       }
+      this.formGroup.controls["initialSolde"].updateValueAndValidity()
+
     })
 
   }
@@ -122,6 +126,7 @@ export class AssignLocationFormComponent  implements OnInit, OnChanges{
   }
 
   isFormValid() {
+    
     if (!this.formGroup.valid) {
       return false
     }
