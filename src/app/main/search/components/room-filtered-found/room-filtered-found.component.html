@@ -43,7 +43,7 @@
                             <!-- <span class="location-zone ml-1">{{property.location}}</span> -->
                           </div>
                           <div class="app-expressive-heading-01 col-span-3 col-end-auto text-right  text-muted ">
-                            <span class="mr-1">{{room.price}} {{getMoney()}}</span>
+                            <span class="mr-1">{{room.price | currency : getMoney(): 'symbol' : '1.0-0'}}</span>
                           </div>
                         </div>
 

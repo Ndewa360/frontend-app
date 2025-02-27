@@ -1,6 +1,7 @@
+import { CurrencyPipe } from '@angular/common';
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Store } from '@ngxs/store';
-import { StatisticAllPaymentLocataireYearModel, StatisticState } from 'src/app/shared/store';
+import { Currency, StatisticAllPaymentLocataireYearModel, StatisticState } from 'src/app/shared/store';
 import { UtilsString } from 'src/app/shared/utils';
 
 @Component({
@@ -19,7 +20,8 @@ export class ChartFinancePayementAnneeComponent implements OnChanges{
   charsOpts: any={};
 
   constructor(
-    private _store:Store
+    private _store:Store,
+    private currencyPipe:CurrencyPipe
   ){}
 
   ngOnInit(): void {}
@@ -118,7 +120,7 @@ export class ChartFinancePayementAnneeComponent implements OnChanges{
     let room = this.currentPayementData.find((item)=>item.locataire.fullName === userName).room
     if(!room) return null;
     return {
-      price:`${room.price} ${UtilsString.getDefaultCurrency()}`, 
+      price:` ${this.currencyPipe.transform(room.price,Currency.XAF,'symbol', '1.0-0')}`, 
       roomCode:room.code,
       roomStringTYpe:UtilsString.getStringOfRoomType(room.type)
     }
@@ -131,61 +133,4 @@ export class ChartFinancePayementAnneeComponent implements OnChanges{
   getTextFromPaymentStatus(status){
     return status === 0 ? 'Non payé' : status === 1 ? 'Payé' :  status === 2 ?'Paiement en attente':status === 3 ?"Fin de contrat":"Aucun contrat";
   }
-  // ngOnChanges(changes: SimpleChanges): void {
-  //   if(changes['propertyID']) {
-  //     console.log("PropertyID",changes["propertyID"].currentValue)
-  //     this._store.select(StatisticState.selectStateStatisticLocataireByPropertyIdAndYear(changes['propertyID'].currentValue))
-  //     .subscribe((value)=>this.charsOpts = this.getChart(value))
-  //   }
-  // }
-
-  // getChart(data:StatisticLocataireYearModel[]) {
-  //   console.log("Data ",data)
-  //   let legendData=[], dataSeriees=[]
-
-  //   data.forEach((item)=>{
-  //     legendData.push(item.locataire.fullName);
-  //     dataSeriees.push({
-  //       name: item.locataire.fullName,
-  //       type: 'line',
-  //       stack: 'Total',
-  //       data: item.paymentValue
-  //     })
-  //   })
-  //   console.log(legendData, dataSeriees)
-
-  //   return {
-  //       title: {
-  //         // text: `Revenue `
-  //       },
-  //       tooltip: {
-  //         trigger: 'axis'
-  //       },
-  //       legend: {
-  //         data: legendData
-  //       },
-  //       grid: {
-  //         left: '3%',
-  //         right: '4%',
-  //         bottom: '3%',
-  //         containLabel: true
-  //       },
-  //       toolbox: {
-  //         feature: {
-  //           saveAsImage: {}
-  //         }
-  //       },
-  //       xAxis: {
-  //         type: 'category',
-  //         name:'Mois',
-  //         boundaryGap: false,
-  //         data: ['Janvier', 'Fevrier', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet','Aout','Septembre','Octobre','Novembre','Decembre']
-  //       },
-  //       yAxis: {
-  //         type: 'value',
-  //         name:'Montant (FCFA)'
-  //       },
-  //       series: dataSeriees
-  //   }
-  // }
 }

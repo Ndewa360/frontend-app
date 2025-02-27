@@ -40,22 +40,21 @@ export class ChartFinancePayementLocationComponent implements OnChanges{
 
     data.forEach((item)=>{
       legendData.push(item.locataire.fullName);
-      console.log("Data Chart Finance",item.paymentValue)
       dataSeriees.push({
         name: item.locataire.fullName,
         type: 'line',
         stack: 'Total',
-        data: item.paymentValue
+        data: item.paymentValue,
+        
       })
     })
-    console.log(legendData, dataSeriees)
 
     return {
         title: {
           // text: `Revenue `
         },
         tooltip: {
-          trigger: 'axis'
+          trigger: 'axis',
         },
         legend: {
           data: legendData

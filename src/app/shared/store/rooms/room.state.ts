@@ -236,8 +236,7 @@ export class RoomState{
     @Action(RoomAction.FetchRoomsByPropertyID)
     fetchRoomByPropertyID(ctx:StateContext<RoomStateModel>,{propertyID}:RoomAction.FetchRoomsByPropertyID)
     {
-        const state = ctx.getState();
-        let index = state.rooms.findIndex((u)=>u.property==propertyID);
+        let index = ctx.getState().rooms.findIndex((u)=>u.property==propertyID);
 
         if(index>-1) return of(true);
         
@@ -248,10 +247,9 @@ export class RoomState{
         return this._roomsService.getRoomsByProprertyID(propertyID).pipe(
             tap(
                 result => {
-                    console.log("Room Fectch ",[...state.rooms, ...result.data])
                     ctx.patchState({
                         loadingRoom:false,
-                        rooms:[...state.rooms, ...result.data],
+                        rooms:[...ctx.getState().rooms, ...result.data],
                         initLoadingState:"LOADED"
                     })
                 }

@@ -38,8 +38,7 @@ export class InitialLoadingDataResolver implements Resolve<any>
                     return this._store.dispatch([
                         new UserProfileAction.FetchUserProfile(),
                         new PropertyAction.FetchProperties(),
-                        new CountryAction.FetchCountries()
-                        
+                        new CountryAction.FetchCountries()                        
                     ])}
                 ),
             ),

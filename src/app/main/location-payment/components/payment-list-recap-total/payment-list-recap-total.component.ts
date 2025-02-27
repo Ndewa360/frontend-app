@@ -1,8 +1,9 @@
+import { CurrencyPipe } from '@angular/common';
 import { Component, Input, OnChanges, OnInit, SimpleChanges, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { TableModel, TableRowSize, TableHeaderItem, TableItem } from 'carbon-components-angular';
 import { sort } from 'src/@youpez';
-import { LocationPaymentState, LocationPaymentType, LocationPaymentModel, RoomState, LocataireState, StatisticState, StatisticAllPaymentLocataireYearModel, StatisticPaymentStateType } from 'src/app/shared/store';
+import { LocationPaymentState, LocationPaymentType, LocationPaymentModel, RoomState, LocataireState, StatisticState, StatisticAllPaymentLocataireYearModel, StatisticPaymentStateType, Currency } from 'src/app/shared/store';
 import { UtilsString } from 'src/app/shared/utils';
 
 @Component({
@@ -40,7 +41,11 @@ export class PaymentListRecapTotalComponent implements OnChanges, OnInit{
   @ViewChild("payementSumTemplate", {static: true}) payementSumTemplate: TemplateRef<any>
   @ViewChild("locataireTemplate", {static: true}) locataireTemplate: TemplateRef<any>
 
-  constructor(private _store:Store){}
+  constructor(
+    private _store:Store,
+    private currencyPipe:CurrencyPipe
+    
+  ){}
 
   ngOnInit() {}
 
@@ -88,7 +93,7 @@ export class PaymentListRecapTotalComponent implements OnChanges, OnInit{
           }),
           ...payment.paymentState.map((pay)=>new TableItem({
             data: {
-              data: `${pay.state==StatisticPaymentStateType.PAYED?pay.unitLocationPaymentPrice:0}`,
+              data: `${pay.state==StatisticPaymentStateType.PAYED?this.currencyPipe.transform(pay.unitLocationPaymentPrice,Currency.XAF,'', '1.0-0'):0}`,
               isSum: false
             },
             template:this.payementSumTemplate,
@@ -96,7 +101,7 @@ export class PaymentListRecapTotalComponent implements OnChanges, OnInit{
           })),
           new TableItem({
             data: {
-              data:payment.paymentState.map(pay=>pay.state==StatisticPaymentStateType.PAYED?pay.unitLocationPaymentPrice:0).reduce((acc,curr)=>acc+curr,0),
+              data:this.currencyPipe.transform(payment.paymentState.map(pay=>pay.state==StatisticPaymentStateType.PAYED?pay.unitLocationPaymentPrice:0).reduce((acc,curr)=>acc+curr,0),Currency.XAF,'', '1.0-0'),
               isSum:true},
             className: "items-center",
             template:this.payementSumTemplate,
@@ -113,7 +118,7 @@ export class PaymentListRecapTotalComponent implements OnChanges, OnInit{
           allSum+=sumPaymentByMonth;
           return new TableItem({
             data:  {
-              data: sumPaymentByMonth,
+              data: this.currencyPipe.transform(sumPaymentByMonth,Currency.XAF,'', '1.0-0'),
               isSum: true
             },
             className: "bg-lime-400 ",
@@ -121,7 +126,7 @@ export class PaymentListRecapTotalComponent implements OnChanges, OnInit{
           })
         }),
         new TableItem({
-          data: {data:allSum,isSum:true},
+          data: {data:this.currencyPipe.transform(allSum,Currency.XAF,'', '1.0-0'),isSum:true},
           template:this.payementSumTemplate,
           className: "items-center"
         })

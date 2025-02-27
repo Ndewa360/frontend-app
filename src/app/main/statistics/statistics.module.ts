@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, CurrencyPipe } from '@angular/common';
 
 import { StatisticsRoutingModule } from './statistics-routing.module';
 import { ChartNombreLocataireComponent } from './components/chart-nombre-locataire/chart-nombre-locataire.component';
@@ -33,6 +33,7 @@ import { ChartFinancePayementAnneeComponent } from './components/chart-finance-p
     ChartFinanceRoomComponent,
     ChartFinancePayementLocationComponent,
     ChartFinancePayementAnneeComponent
-  ]
+  ],
+  providers:    [ CurrencyPipe ]
 })
 export class StatisticsModule { }

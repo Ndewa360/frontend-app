@@ -58,7 +58,7 @@
                         <div class="app-label-01 mb-2">Total en FCFA</div>
                         <div class="app-productive-heading-03 fond-extrabold ">
                             <span *ngIf="(roomCount$ | async)==0 else hasMoney">0</span>
-                            <ng-template #hasMoney>{{roomPrice$ | async}} </ng-template> {{getDefaultCurrency()}}
+                            <ng-template #hasMoney>{{roomPrice$ | async | currency : getDefaultCurrency(): 'symbol' : '1.0-0' }} </ng-template>
                         </div>
     
                     </div>
@@ -108,7 +108,7 @@
                         <div class="app-label-03 mb-2">Total des frais de services hors taxes en {{getDefaultCurrency()}}</div>
                         <div class="app-productive-heading-03 font-bold text-end">
                             <span *ngIf="(roomCount$ | async)==0 else hasMoney">0</span>
-                            <ng-template #hasMoney>{{roomPrice$ | async}} </ng-template> {{getDefaultCurrency()}}
+                            <ng-template #hasMoney>{{roomPrice$ | async | currency : getDefaultCurrency(): 'symbol' : '1.0-0'}} </ng-template>
                         </div>
                     </div>
                 </div>
@@ -192,7 +192,7 @@
                     <div>
                         <div class="app-productive-heading-03 fond-extrabold ">
                             <span *ngIf="(roomCount$ | async)==0 else hasMoney2">0</span>
-                            <ng-template #hasMoney2>{{roomPrice$ | async}} </ng-template> {{getDefaultCurrency()}}
+                            <ng-template #hasMoney2>{{roomPrice$ | async | currency : getDefaultCurrency(): 'symbol' : '1.0-0'}} </ng-template>
                         </div>
                     </div>
                 </div>
