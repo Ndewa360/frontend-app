@@ -19,7 +19,7 @@ export class LayoutComponent implements AfterViewInit{
       filter(() => !!this.scrollable),
       tap((event: NavigationEnd) => this.scrollable.scrollTo({ top: 0, duration: 500 }))
     ).subscribe((e)=>{
-      console.log(e, "Event end");
+      //console.log(e, "Event end");
     });
   }
   

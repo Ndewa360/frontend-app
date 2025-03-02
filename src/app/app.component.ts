@@ -4,6 +4,8 @@ import {environment} from "../environments/environment"
 import {SettingsService} from "src/@youpez/services/settings.service"
 import { interval, switchMap, of, filter, take } from 'rxjs'
 import { TutorialsService } from './shared/services/tutorials/tutorials.service'
+import { Currency, LOCAL_LANGUAGE } from 'src/app/shared/store'
+import * as moment from 'moment';
 
 const getSessionStorage = (key) => {
   return sessionStorage.getItem(key)
@@ -30,7 +32,7 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     // this.tutorialService.startTour();
-
+    moment.locale(LOCAL_LANGUAGE.FR.toString())
     this.route.queryParams
       .subscribe((queryParams) => {
         if (queryParams['theme']) {

@@ -108,7 +108,7 @@ export class UploadFilesState{
     {
         const state = ctx.getState();
 
-        console.log("File Upload ",removedUploadFile,state.filesState)
+        //console.log("File Upload ",removedUploadFile,state.filesState)
 
         
         // let fileFound = state.filesState.findIndex((f)=>f.name==removedUploadFile.fileUrl);

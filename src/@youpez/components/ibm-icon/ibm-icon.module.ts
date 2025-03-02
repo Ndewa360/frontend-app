@@ -37,6 +37,16 @@ import Pen24 from '@carbon/icons/es/pen/24';
 import Pen20 from '@carbon/icons/es/pen/20';
 import Pen16 from '@carbon/icons/es/pen/16';
 
+// import assetMovement32 from '@carbon/icons/es/asset-movement/32';
+// import assetMovement24 from '@carbon/icons/es/asset-movement/24';
+// import assetMovement20 from '@carbon/icons/es/asset-movement/20';
+// import assetMovement16 from '@carbon/icons/es/asset-movement/16';
+
+import Catalog32 from '@carbon/icons/es/catalog/32';
+import Catalog24 from '@carbon/icons/es/catalog/24';
+import Catalog20 from '@carbon/icons/es/catalog/20';
+import Catalog16 from '@carbon/icons/es/catalog/16';
+
 import ArrowRight32 from '@carbon/icons/es/arrow--right/32';
 import ArrowRight24 from '@carbon/icons/es/arrow--right/24';
 import ArrowRight20 from '@carbon/icons/es/arrow--right/20';
@@ -409,6 +419,16 @@ export class IbmIconModule {
 		Hotel24,
 		Hotel20,
 		Hotel16,
+
+		// assetMovement32,
+		// assetMovement24,
+		// assetMovement20,
+		// assetMovement16,
+
+		Catalog32,
+		Catalog24,
+		Catalog20,
+		Catalog16,
 
 		ChevronDownOutline32,
 		ChevronDownOutline24,

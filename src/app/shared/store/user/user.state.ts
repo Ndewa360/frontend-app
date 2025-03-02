@@ -179,7 +179,7 @@ export class UserState{
         return this._usersService.getAllUsers().pipe(
             tap(
                 result => {
-                    console.log("Fetch All Users",result)
+                    //console.log("Fetch All Users",result)
                     if(state.initLoadingState!="LOADED") ctx.patchState({initLoadingState:'LOADING'})
                     ctx.patchState({
                         loadingUser:false,

@@ -24,6 +24,7 @@ import { ListPropertyComponent } from './properties/list-property/list-property.
 import { ShowPropertyComponent } from './properties/show-property/show-property.component'
 import { LocatairePropertyModule } from './properties/components/locataire-property/locataire-property.module'
 import { AgGridModule } from '@ag-grid-community/angular';
+
 import { UpdatePropertyComponent } from './properties/components/update-property/update-property.component';
 import { SeeLocationsComponent } from './properties/components/see-locations/see-locations.component';
 import { AssignLocationComponent } from './properties/components/assign-location/assign-location.component';
@@ -35,7 +36,13 @@ import { LocatairesModule } from './locataires/locataires.module'
 import { StatisticsModule } from './statistics/statistics.module'
 import { RoomModule } from './room/room.module';
 import { GaleryPropertyComponent } from './properties/components/galery-property/galery-property.component'
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model'
+import { ModuleRegistry } from '@ag-grid-community/core'
+import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model'
+import { FilterModule } from '@ag-grid-community/core/dist/types/src/filter/filterModule';
+import { CustomHistoryFinanceCellActionComponent } from './properties/components/custom-history-finance-cell-action/custom-history-finance-cell-action.component';
 
+ModuleRegistry.registerModules([ClientSideRowModelModule, InfiniteRowModelModule ]);
 
 @NgModule({
   declarations: [
@@ -61,6 +68,7 @@ import { GaleryPropertyComponent } from './properties/components/galery-property
     AssignLocationListClientComponent,
     RemoveLocataireRoomComponent,
     GaleryPropertyComponent,
+    CustomHistoryFinanceCellActionComponent,
     
   ],
   imports: [

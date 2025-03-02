@@ -1,0 +1,26 @@
+.edit-btn, 
+.delete-btn
+{
+    cursor: pointer;
+    vertical-align: middle !important;
+
+}
+
+.edit-btn {
+    margin-right:10px;
+}
+
+.delete-btn  svg
+{
+    fill: red;
+}
+
+.delete-btn:hover  svg
+{
+    fill:rgba(255, 0 , 0, 0.6)
+}
+
+.edit-btn:hover svg 
+{
+    fill: rgba(0, 0, 0, 0.5);
+}

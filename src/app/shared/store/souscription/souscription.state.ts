@@ -109,7 +109,7 @@ export class SouscriptionState{
         return this._souscriptionService.getSouscriptions(userId).pipe(
             tap(
                 result => {
-                    console.log("Souscription data ",result)
+                    //console.log("Souscription data ",result)
                     ctx.patchState({
                         loadingSouscription:false,
                         souscription:[...state.souscription, ...result.data],

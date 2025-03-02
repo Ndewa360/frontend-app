@@ -89,7 +89,7 @@ export class ContractState{
         return this._contractsService.getContract(locationId).pipe(
             tap(
                 result => {
-                    // console.log("Retourn pdf ",result)
+                    // //console.log("Retourn pdf ",result)
                     ctx.patchState({
                         loadingContract:false,
                         contracts:[...state.contracts, {pdf:result.data,locationId}]

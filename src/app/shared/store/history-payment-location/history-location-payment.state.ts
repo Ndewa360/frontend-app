@@ -55,7 +55,10 @@ export class HistoryLocationPaymentState{
 
     static selectStateHistoryLocationPaymentByPropertyId(propertyID)
     {
-        return createSelector([HistoryLocationPaymentState],(state)=> state.historyLocationPayments.filter((historyLocationPayment)=>historyLocationPayment.property._id==propertyID))
+        return createSelector([HistoryLocationPaymentState],(state)=> state.historyLocationPayments.filter((historyLocationPayment)=>{
+            //console.log("History ",historyLocationPayment,historyLocationPayment.property._id,propertyID)
+            return historyLocationPayment.property._id==propertyID
+        }))
     }
 
    
@@ -122,11 +125,10 @@ export class HistoryLocationPaymentState{
         return this._historyLocationPaymentsService.getHistoryLocationPaymentsByProperty(propertyId).pipe(
             tap(
                 result => {
-                    console.log("Payment History", result.data)
-                    let stateCopy = [...state.historyLocationPayments];
-                    result.data.forEach(element => {
-                        if(stateCopy.findIndex((item)=>item._id==element._id)>-1) stateCopy.push(element)
-                    });
+                    let stateCopy = [...state.historyLocationPayments,...result.data];
+                    // result.data.forEach(element => {
+                    //     if(stateCopy.findIndex((item)=>item.location._id==element._id)>-1) stateCopy.push(element)
+                    // });
                     ctx.patchState({
                         loadingHistoryLocationPayment:false,
                         historyLocationPayments:stateCopy,

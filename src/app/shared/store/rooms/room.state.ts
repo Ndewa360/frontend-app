@@ -284,7 +284,8 @@ export class RoomState{
 
     @Action(RoomAction.ChangeStatusActivatedForSouscriptionRoom)
     setRoomActiveForSouscription(ctx:StateContext<RoomStateModel>,{roomId,isActiveForSouscription}:RoomAction.ChangeStatusActivatedForSouscriptionRoom)
-    {        
+    {    
+           
         ctx.patchState({
             loadingRoom:true,
             initLoadingState:"LOADING"

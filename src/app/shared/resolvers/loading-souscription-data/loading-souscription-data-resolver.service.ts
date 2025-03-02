@@ -44,7 +44,7 @@ export class LoadingSouscriptionDataResolver implements Resolve<any>
         ).pipe(
             tap((error)=> of(true))
         ).subscribe((error)=>{
-            console.log("Error ",error)
+            //console.log("Error ",error)
         })
 
         return of(true);

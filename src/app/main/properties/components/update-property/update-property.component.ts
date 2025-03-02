@@ -59,7 +59,7 @@ export class UpdatePropertyComponent {
       if(selectedCountry) {
           this.selectedCitiesList=this.citiesList.filter((city)=>city.country==selectedCountry._id).map((city)=>({content:city.fullName, valueType:city._id,selected:city._id==this.data.property.geolocationCity?._id}));
       }
-    // console.log("Cities",this.selectedCitiesList,this.countriesList)
+    // //console.log("Cities",this.selectedCitiesList,this.countriesList)
 
     });
 

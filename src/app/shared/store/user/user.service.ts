@@ -43,12 +43,12 @@ export class UserService
     getUsers(userId:string[]):Observable<ApiResultFormat<UserModel[]>>
     {
         return null;
-        // console.log("User ID ", userId)
+        // //console.log("User ID ", userId)
         // if(userId.length===0)
         // {
         //     return this.api.collectionDataQuery( 'user', )
         //     .pipe( switchMap(data => {
-        //         console.log("Data ",data)
+        //         //console.log("Data ",data)
         //         return of({statusCode:200,data})
         //     }));
         // }

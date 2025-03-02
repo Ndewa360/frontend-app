@@ -30,7 +30,7 @@ export class LoadingContractDataResolver implements Resolve<any>
     {
         let locationId:any= route.paramMap.get("locationID")
         // let locataireID:any= 
-        console.log("locationId ", locationId, "locataireID ",route.params )
+        //console.log("locationId ", locationId, "locataireID ",route.params )
         this._store.dispatch([
             new ContractAction.FetchContract(locationId),
             new LocataireAction.FetchLocataire(route.params["locataireID"])
@@ -46,7 +46,7 @@ export class LoadingContractDataResolver implements Resolve<any>
         // ).pipe(
         //     tap((error)=> of(true))
         // ).subscribe((error)=>{
-        //     console.log("Error ",error)
+        //     //console.log("Error ",error)
         // })
 
         return of(true);

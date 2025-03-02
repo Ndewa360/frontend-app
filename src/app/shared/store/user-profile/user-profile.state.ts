@@ -327,7 +327,7 @@ export class UserProfileState{
         return this._userProfilesService.getUserProfile().pipe(
             tap(
                 result => {
-                    console.log("Result ",result)
+                    //console.log("Result ",result)
                     ctx.patchState({
                         loadingUserProfile:false,
                         userProfile:result.data,

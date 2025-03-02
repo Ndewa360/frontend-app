@@ -15,6 +15,12 @@
     <svg [class]="iconClass" cdsIcon="add" [size]="iconSize"></svg>
   </ng-container>
 
+  <ng-container *ngSwitchCase="'assetMovement'">
+    <svg [class]="iconClass" cdsIcon="asset-movement" [size]="iconSize"></svg>
+  </ng-container>
+
+  
+
   <ng-container *ngSwitchCase="'addAlt'">
     <svg [class]="iconClass" cdsIcon="add--alt" [size]="iconSize"></svg>
   </ng-container>
@@ -148,7 +154,7 @@
   </ng-container>
 
   <ng-container *ngSwitchCase="'catalog'">
-    <svg [class]="iconClass" cdsIcon="home" [size]="iconSize"></svg>
+    <svg [class]="iconClass" cdsIcon="catalog" [size]="iconSize"></svg>
   </ng-container>
 
   <ng-container *ngSwitchCase="'document'">

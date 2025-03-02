@@ -53,7 +53,7 @@ export class InitialLoadingDataResolver implements Resolve<any>
                 new LocationPaymentAction.FetchLocationPaymentsByPropertyId(prop._id),
             ]).reduce((acc,curr)=>[...acc,...curr],[]))),
         ).subscribe((value)=>{
-            console.log("Value in init resolver",value)
+            //console.log("Value in init resolver",value)
         })
 
         return of(true);

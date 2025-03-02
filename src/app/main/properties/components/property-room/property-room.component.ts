@@ -58,7 +58,7 @@ export class PropertyRoomComponent implements OnInit {
   openEditPhoto(room:RoomModel)
   {
     // this._router.navigate(['/app/properties/edit-room',room._id])
-    console.log("Room ",room)
+    //console.log("Room ",room)
     this.dialog.open(GaleryComponent, { 
       viewContainerRef:null,
       disableClose: true,
@@ -74,7 +74,7 @@ export class PropertyRoomComponent implements OnInit {
   openEditRoom(room:RoomModel)
   {
     // this._router.navigate(['/app/properties/edit-room',room._id])
-    console.log("Room ",room)
+    //console.log("Room ",room)
     this.dialog.open(UpdateRoomComponent, {
       viewContainerRef:null,
       disableClose: true,

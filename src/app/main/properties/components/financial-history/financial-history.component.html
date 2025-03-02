@@ -2,22 +2,27 @@
     <div class="app-header app-header--carbon">
       <div class="app-productive-heading-04">Historique des paiements</div>
     </div>
-    <div class="pt-2 px-4">
+    <!-- <div class="pt-2 px-4">
       <ibm-tag type="magenta">Editable</ibm-tag>
       <ibm-tag type="magenta">Custom cellrenders</ibm-tag>
       <ibm-tag type="magenta">Column pinned</ibm-tag>
       <ibm-tag type="warm-gray">Multiple selection</ibm-tag>
       <ibm-tag type="warm-gray">Horizontal scrollable</ibm-tag>
       <ibm-tag type="warm-gray">Pagination</ibm-tag>
-    </div>
+    </div> -->
     <div fxFlex class="financial-grid relative px-4 pb-4 pt-2">
-      <ng-container *ngIf="!loading">
-        <ag-grid-angular
-          class="app-ag-grid app-border-all"
-          [modules]="modules"
-          [gridOptions]="gridOptions">
+      <ng-container *ngIf="!loading else loadingData">
+        <ag-grid-angular *ngIf="hasData else noDataToShow"  #agGrid class="ag-theme-balham app-ag-grid app-border-all" [gridOptions]="gridOptions" >
         </ag-grid-angular>
+        <ng-template #noDataToShow>
+          <app-no-data-list textDescription="paiement" class="flex-auto"></app-no-data-list>                            
+        </ng-template>
       </ng-container>
+      <ng-template #loadingData>
+        <div class="relative">
+          <youpez-loader></youpez-loader>
+        </div>                     
+      </ng-template>
     </div>
   </div>
   

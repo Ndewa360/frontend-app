@@ -36,7 +36,7 @@ export class RoomAssociatedComponent implements OnChanges{
         this.relatedFoundRooms = value
       })
 
-      // console.log("Filter ",{property: this.selectedFoundRoom.property._id,
+      // //console.log("Filter ",{property: this.selectedFoundRoom.property._id,
       //   type: this.selectedFoundRoom.type,
       //   geolocationCountry: this.selectedFoundRoom.property.geolocationCountry._id,
       //   geolocationCity: this.selectedFoundRoom.property.geolocationCity._id,

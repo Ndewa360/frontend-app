@@ -21,6 +21,7 @@ import {
   CountryState,
   SearchState,
   ContractState,
+  HistoryLocationPaymentState,
 
 } from './store';
 
@@ -31,7 +32,6 @@ import { NoDataComponent } from './components/no-data/no-data.component';
 import { ToastrModule } from 'ngx-toastr';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LocationPaymentState } from './store/payment-location';
-import { HistoryLocationPaymentState } from './store/history-payment-location';
 import { LocalizedDatePipe } from './pipes/localized-date.pipe';
 import { FileUploadComponent } from './components/file-upload/file-upload.component';
 import { UploadFilesState } from './store/files-upload';

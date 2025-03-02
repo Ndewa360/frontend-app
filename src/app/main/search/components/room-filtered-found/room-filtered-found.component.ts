@@ -43,7 +43,7 @@ export class RoomFilteredFoundComponent {
         if(found.length==0) return;
         let newModel = new TableModel()
 
-        console.log("Room Found ",found)
+        //console.log("Room Found ",found)
 
         this.allRoomData=[...found]
         newModel.data = [];
@@ -57,7 +57,7 @@ export class RoomFilteredFoundComponent {
 
     selectPage(page) {
       this.getPage(page).then((data: Array<any>) => {
-        console.log("Page Foud ",data)
+        //console.log("Page Foud ",data)
         // set the data and update page
         this.model.data = data
         this.currentDataToShow=[...data]

@@ -51,7 +51,7 @@ export class ShowContractComponent implements OnInit{
     })
 
     combineLatest(contractLocataire$, locataireLoading$, this.loadingPDF$).subscribe(([contractLocataire,locataireLoading,loadingPDF])=>{
-      console.log(loadingPDF, locataireLoading, contractLocataire)
+      //console.log(loadingPDF, locataireLoading, contractLocataire)
       this.loading = loadingPDF && locataireLoading && contractLocataire
       if(this.loading) {
         this.titlePage = `Contrat de ${locataireLoading.fullName}`

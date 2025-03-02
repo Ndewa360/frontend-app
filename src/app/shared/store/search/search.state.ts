@@ -142,7 +142,7 @@ export class SearchState{
         if(prop.property.numberOfBathroom==filter.specifity?.numberOfBathroom) priority++;
         if(prop.property.numberOfLivingRoom==filter.specifity?.numberOfLivingRoom) priority++;
         if(prop.property.numberOfShower==filter.specifity?.isInternalKitchen) priority++;
-        console.log("Prop => priority ", prop,priority)
+        //console.log("Prop => priority ", prop,priority)
         return priority;
     }
 
@@ -156,11 +156,9 @@ export class SearchState{
     {
         let state = ctx.getState();
         let dataRooms = [...state.searchProperties];
-        console.log("Filter ",filter,isNewLocation)
+        //console.log("Filter ",filter,isNewLocation)
         if(!isNewLocation)
         {
-            dataRooms.forEach((data)=>console.log('Filte in action ',data.price))
-
             dataRooms= dataRooms.filter((room)=> (
                 room.property.geolocationCity?._id==filter.ville &&
                 room.price>=filter.minPrice && 
@@ -247,7 +245,7 @@ export class SearchState{
         return this._searchPropertiesService.getSearchByIdRoom(idRoom).pipe(
             tap(
                 result => {
-                    console.log("result ",result.data)
+                    //console.log("result ",result.data)
                     ctx.patchState({
                         loadingSearchItem:false,
                         searchProperties:[...state.searchProperties, result.data]

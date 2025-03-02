@@ -75,15 +75,15 @@ export class FilterZoneComponent implements OnInit{
   }
 
   getLocation(): void{
-    console.log("Navigateor ",navigator.geolocation)
+    //console.log("Navigateor ",navigator.geolocation)
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition((position)=>{
           const longitude = position.coords.longitude;
           const latitude = position.coords.latitude;
-          console.log("Geo Position ",position);
+          //console.log("Geo Position ",position);
         });
     } else {
-       console.log("No support for geolocation")
+       //console.log("No support for geolocation")
     }
   }
 

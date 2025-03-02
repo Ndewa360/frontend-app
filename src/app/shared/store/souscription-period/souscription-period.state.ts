@@ -110,7 +110,7 @@ export class SouscriptionPeriodState{
         return this._souscriptionPeriodService.getSouscriptionPeriod(souscriptionPeriodId).pipe(
             tap(
                 result => {
-                    console.log("Souscription period",result)
+                    //console.log("Souscription period",result)
                     ctx.patchState({
                         loadingSouscriptionPeriod:false,
                         souscriptionPeriod:[...state.souscriptionPeriod, result.data]

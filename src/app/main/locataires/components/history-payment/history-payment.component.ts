@@ -118,7 +118,7 @@ export class HistoryPaymentComponent implements OnInit{
     if (event.pulse) {
       classes.push('app-timeline__item--pulse')
     }
-    console.log("Event ",event)
+    //console.log("Event ",event)
     switch (event.type) {
       case 'success':
         classes.push('app-timeline__item--success')

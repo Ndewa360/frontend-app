@@ -43,7 +43,7 @@ export class ChartFinancePayementAnneeComponent implements OnChanges{
       tooltip: {
         position: 'top',
         formatter: (params)=> {
-          // console.log("Here PAras",params);
+          // //console.log("Here PAras",params);
           let status = params.data[2];  // Statut du paiement 
           let statusText = this.getTextFromPaymentStatus(status);
           let room = this.getRoomInfosByUserName(params.data[1])

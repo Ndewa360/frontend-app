@@ -202,7 +202,7 @@ export class CountryState{
         return this._countrysService.getCountries().pipe(
             tap(
                 result => {
-                    console.log("Fetch Country Result ",result )
+                    //console.log("Fetch Country Result ",result )
                     let cities = result.data.map((r)=>r.cities).reduce((acc,curr)=>[...acc,...curr],[])                    
                     if(cities.length>0)  ctx.dispatch(new CityAction.AddCityFromLoadedCountry(cities))
                         

@@ -15,7 +15,7 @@ registerSwiperElements();
 // Uncomment the following lines to activate the service worker
 // if (navigator.serviceWorker) {
 // 	navigator.serviceWorker.register('sw.js').then(() => {
-// 		console.log('Service worker installed')
+// 		//console.log('Service worker installed')
 // 	}, err => {
 // 		console.error('Service worker error:', err);
 // 	});

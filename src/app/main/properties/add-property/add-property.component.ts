@@ -83,11 +83,7 @@ export class AddPropertyComponent implements OnInit {
 
   onSubmit() {
     this.formGroup.markAllAsTouched()
-    console.log("Value to send ",{
-      ...FormUtils.removeNullAttribut(this.formGroup.value),
-      geolocationCity:this.formGroup.value.geolocationCity.valueType,
-      geolocationCountry:this.formGroup.value.geolocationCountry.valueType
-    })
+
     this.waittingResponse=true;
     this._store.dispatch(new PropertyAction.CreateProperty({
       ...FormUtils.removeNullAttribut(this.formGroup.value),

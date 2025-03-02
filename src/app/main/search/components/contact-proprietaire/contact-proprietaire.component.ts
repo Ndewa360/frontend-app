@@ -29,7 +29,7 @@ export class ContactProprietaireComponent {
     ) { }
   
     ngOnInit(): void {
-      console.log("Data found ",this.data) 
+      //console.log("Data found ",this.data) 
     }
   
     onClose() {

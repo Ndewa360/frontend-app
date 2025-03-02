@@ -20,13 +20,13 @@ export class RefreshTokenService {
   refreshAccessToken(accessToken,refreshToken): Observable<any> {
     if (!this.isRefreshing) {
       this.isRefreshing = true;
-    console.log("Token ",accessToken,refreshToken)
+    //console.log("Token ",accessToken,refreshToken)
 
       // Envoyer la requête pour rafraîchir le token
       return new Observable(observer => {
         this.http.get<ApiResultFormat<{access_token:string, refresh_token:string}>>(`${environment.apiUrl}/user/auth/refresh`).subscribe({
           next: (response) => {
-            console.log("Response ",response)
+            //console.log("Response ",response)
             this._store.dispatch(new AuthTokenAction.SetAuthToken(response.data.access_token));
             this._store.dispatch(new AuthTokenAction.SetRefreshToken(response.data.refresh_token));
 
@@ -36,7 +36,7 @@ export class RefreshTokenService {
             observer.complete();
           },
           error: (err) => {
-            console.log("Error Token ",err)
+            //console.log("Error Token ",err)
             this._store.dispatch(new AuthTokenAction.SetAuthToken(null));
             this._store.dispatch(new AuthTokenAction.SetRefreshToken(null));
             this.isRefreshing = false;

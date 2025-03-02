@@ -36,11 +36,11 @@ export class LocatairePageComponent implements OnInit{
     // this._router.events.pipe(
     //   filter((e: Event | RouterEvent): e is RouterEvent => e instanceof RouterEvent)
     // ).subscribe((event)=>{
-    //   console.log("event ", event.url)
+    //   //console.log("event ", event.url)
     //   if(event.url.indexOf("history")>-1) this.isProfilPage=false
     //   else this.isProfilPage=true
     // })
-    // console.log("router ",this._router.url)
+    // //console.log("router ",this._router.url)
     combineLatest([this.loadingHistoryPaymentState$,this.loadingLocationState$,this.loadingLocataireState$]).subscribe(([loadingHistoryPaymentState, loadingLocationState,loadingLocataireState])=>{
       this.loading = loadingHistoryPaymentState || loadingLocationState || loadingLocataireState;
     })

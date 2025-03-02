@@ -22,7 +22,7 @@ export class ChartPieNomnbreComponent implements OnInit{
 
     
   getGauge() {
-    console.log("getGauge",((3*this.nbreTotal/4) * this.nbreActif) / this.nbreTotal ,this.nbreTotal - (((3*this.nbreTotal/4) * this.nbreActif) / this.nbreTotal))
+    //console.log("getGauge",((3*this.nbreTotal/4) * this.nbreActif) / this.nbreTotal ,this.nbreTotal - (((3*this.nbreTotal/4) * this.nbreActif) / this.nbreTotal))
     let colorStops = [{
       offset: 0,
       color: this.chartColorBegin // 0%

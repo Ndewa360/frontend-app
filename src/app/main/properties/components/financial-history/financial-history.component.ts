@@ -1,220 +1,215 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { GridOptions, ColDef } from '@ag-grid-community/core';
-import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
-import { HttpClient } from '@angular/common/http';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core'
+import {ColDef, GridOptions } from "@ag-grid-community/core"
+import {InfiniteRowModelModule} from "@ag-grid-community/infinite-row-model"
+import {ClientSideRowModelModule} from "@ag-grid-community/client-side-row-model"
+import {HttpClient} from "@angular/common/http"
+import { AgGridAngular } from '@ag-grid-community/angular'
+import { ActivatedRoute, Router } from '@angular/router'
+import { Select, Store } from '@ngxs/store'
+import { HistoryLocationPaymentState } from 'src/app/shared/store/history-payment-location'
+import { BehaviorSubject, combineLatest, Observable } from 'rxjs'
+import { CurrencyPipe } from '@angular/common'
+import { Currency } from 'src/app/shared/store'
+import * as moment from 'moment';
+import { CustomHistoryFinanceCellActionComponent } from '../custom-history-finance-cell-action/custom-history-finance-cell-action.component'
 
-const categories = {
-  'Utilities': '#edb879',
-  'Technology Services': '#1979a9',
-  'Transportation': '#e07b39',
-  'Retail Trade': '#80391e',
-  'Producer Manufacturing': '#042f66',
-  'Health Technology': '#042f66',
-  'Health Services': '#521799',
-  'Finance': '#991717',
-  'Energy Minerals': '#805C33',
-  'Electronic Technology': '#003A52',
-  'Consumer Services': '#008580',
-  'Consumer Non-Durables': '#D1C400',
-  'Consumer Durables': '#850200',
-  'Communications': '#001FD1',
-}
-
-const companyCellRenderer = (params) => {
+const locataireCellRenderer = (params) => {
   const {value} = params
-  const split = value.split('|')
-
   return `
     <div class="app-row app-row--center overflow-hidden">
       <div class="app-symbol app-symbol--default mr-2 rounded">
-        <div class="app-symbol__label w-6 h-6 app-color-info font-bold ">${split[0][0]}${split[0][1]}</div>
+        
       </div>
       <div>
-        <div class="app-expressive-heading-01">${split[0]}</div>
-        <div class="text-overflow-ellipsis app-caption-01">${split[1]}</div>
+        <div class="app-expressive-heading-01">${value}</div>
       </div>
     </div>
   `
 }
 
-const sectorCellRenderer = (params) => {
-  const {value} = params
-  const color = categories[value]
-
-  return `
-    <div class="flex">
-    <div style="width:4px;height:16px;background: ${color};margin-right:5px;"></div>
-      ${value}
-    </div>
-  `
-}
-
-const numberCellRenderer = function (params) {
-  const value = params.value
-  const sign = value.charAt(0)
-
-  if (isNaN(sign)) {
-    return `
-    <span class="app-color-danger">${value}</span>
-  `
-  }
-  return `
-    <span class="app-color-success">${value}</span>
-  `
-}
-
-const rateClassRenderer = (params) => {
-  const value = params.value
-  return value === 'Strong Sell' ? {backgroundColor: 'rgba(255, 212, 219, 1)'}
-  : (value === 'Sell' ? {backgroundColor: 'rgba(255, 212, 219, .5)'}
-  : (value === 'Strong Buy' ? {backgroundColor: 'rgba(227, 255, 223, 1)'}
-  : {backgroundColor: 'rgba(227, 255, 223, .5)'}))
-}
-
-const createRowHelper = (_1, _2, _3, _4, _5, _6, _7, _8, _9) => {
-  return {
-    company: _1,
-    last: _2,
-    chg_: _3,
-    chg: _4,
-    rating: _5,
-    vol: _6,
-    mkt_cap: _7,
-    employees: _8,
-    sector: _9,
-  }
-}
-
-const parseCSV = (csv) => {
-  return csv.split('\n').map(row => row.split(',')).filter(row => row[0])
-}
 
 @Component({
   selector: 'app-financial-history',
   templateUrl: './financial-history.component.html',
   styleUrls: ['./financial-history.component.scss'],
-  // changeDetection: ChangeDetectionStrategy.OnPush
-  encapsulation:ViewEncapsulation.None
 
 })
 export class FinancialHistoryComponent implements OnInit {
 
-  public modules = [InfiniteRowModelModule, ClientSideRowModelModule]
-  public gridOptions = null;
-  public loading: boolean = false
+  @ViewChild('agGrid') agGrid!: AgGridAngular;
+  @Select(HistoryLocationPaymentState.selectStateLoading) historyLocationPaymentLoading$!: Observable<boolean>;
+  propertyId=null;
+  columnDefs:Array<ColDef>=[]
+  hasData:boolean=false
+  public gridOptions: GridOptions = {}
+  public loading: boolean = true
+  public loadingProcess:BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
   public defaultColDef = {}
+  public modules = [InfiniteRowModelModule, ClientSideRowModelModule]
 
-  constructor(private http: HttpClient, 
-    // private _changeDetectorRef: ChangeDetectorRef,
-  ) {
+  constructor(
+      private _activatedRoute: ActivatedRoute,
+      private _router:Router,
+      private _store:Store,
+      private http: HttpClient,
+      private currencyPipe:CurrencyPipe
+    
+    ) {
   }
 
   ngOnInit(): void {
+    this.propertyId = this._activatedRoute.parent.snapshot.paramMap.get('id');
+    if(!this.propertyId)  {
+      this._router.navigateByUrl('/app/properties/list');;
+      return;
+    }
     this.createTable()
-    // Mark for check
-    // this._changeDetectorRef.markForCheck();
+
+    this._store.select(HistoryLocationPaymentState.selectStateHistoryLocationPaymentByPropertyId(this.propertyId)).subscribe((value)=>{
+      if(value.length>0) this.updateTableData(value)
+    })
+    combineLatest(this._store.select(HistoryLocationPaymentState.selectStateLoading),this.loadingProcess) .subscribe(([loadingHisto,loadingProcess])=>{
+      this.loading = loadingHisto && loadingProcess;
+    })
   }
 
   createTable() {
-    this.loading = true
-    const columnDefs: Array<ColDef> = [
+    this.columnDefs= [
       {
         headerName: 'Locataire',
-        field: 'company',
+        field: 'locataire',
         cellClass: 'cell-flex-middle overflow-hidden',
-        cellRenderer: companyCellRenderer,
+        cellRenderer: locataireCellRenderer,
         width: 350,
         pinned: true,
-        checkboxSelection: false,
-        headerCheckboxSelection: false,
+        filter: 'agTextColumnFilter'
       },
       {
         headerName: 'Bien',
-        field: 'sector',
-        headerClass: 'cell-flex-center',
-        cellClass: 'cell-flex-middle',
-        cellRenderer: sectorCellRenderer,
+        field: 'bien',
+        headerClass: 'cell-flex-right',
+        cellClass: 'cell-flex-middle cell-flex-right',
+        filter: false,
+      },
+      {
+        headerName: 'Chambre',
+        field: 'chambre',
+        headerClass: 'cell-flex-right',
+        cellClass: 'cell-flex-middle cell-flex-right',
+        filter: 'agTextColumnFilter'
+      },
+      {
+        headerName: 'Date de paiement',
+        field: 'date_paiement',
+        headerClass: 'cell-flex-right',
+        cellClass: 'cell-flex-middle cell-flex-right',
+        filter: 'agDateColumnFilter'
       },
       {
         headerName: 'Montant',
-        field: 'last',
+        field: 'price',
         headerClass: 'cell-flex-right',
-        cellClass: 'cell-flex-middle cell-flex-right font-bold'
+        cellClass: 'cell-flex-middle cell-flex-right font-bold',
+        filter: 'agNumberColumnFilter'
       },
       {
-        headerName: 'Dette',
-        field: 'chg_',
+        headerName: 'Action',
+        field: 'action',
         headerClass: 'cell-flex-right',
-        cellClass: 'cell-flex-middle cell-flex-right',
-        cellRenderer: numberCellRenderer,
+        cellClass: 'cell-flex-middle cell-flex-right font-bold',
+        cellRenderer: CustomHistoryFinanceCellActionComponent, // Utilisation du composant personnalisé
+        cellRendererParams: {
+          // onEdit: this.onEdit.bind(this),
+          // onDelete: this.onDelete.bind(this)
+        },
+        filter: false,
       },
-      
-      {
-        headerName: 'Etat',
-        field: 'rating',
-        headerClass: 'cell-flex-center',
-        cellClass: 'cell-flex-middle',
-        cellStyle: rateClassRenderer,
-      },
-      // {
-      //   headerName: 'Volume',
-      //   field: 'vol',
-      //   headerClass: 'cell-flex-right',
-      //   cellClass: 'cell-flex-middle cell-flex-right'
-      // },
-      
-      {
-        headerName: 'Actions',
-        field: 'employees',
-        headerClass: 'cell-flex-right',
-        cellClass: 'cell-flex-middle cell-flex-right',
-        cellRenderer:this.renderActionRow,
-      },      
     ]
-    this.http.get('assets/data/stocks.csv', {responseType: 'text'})
-      .subscribe((response) => {
-        const rowData = parseCSV(response).map(row => createRowHelper(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[9], row[10]))
-        this.gridOptions = {
-          columnDefs: columnDefs,
-          rowData: rowData,
-          rowHeight: 40,
-          headerHeight: 40,
-          rowSelection: 'multiple',
-          defaultColDef: {
-            editable: false,
-            sortable: true,
-            resizable: true,
-          },
-          pagination: true,
-          paginationPageSize: 15,
-          groupSelectsChildren: false,
-        }
-        this.loading = false
-        setTimeout(() => {
-          try {
-            this.gridOptions.api.sizeColumnsToFit()
-          } catch (error) {
-
-          }
-
-        }, 10)
-      })
   }
-  renderActionRow(param)
+
+  updateTableData(data)
   {
-    return `
-      <div>
-                <svg class="cds--btn__icon" ibmIconArrowRight size="20"></svg>
-        
-        <div class="app-mini-sidebar__list__item__pill mr-2"  container="body" ngbTooltip="Voir les details du locataire">
-          <youpez-ibm-icon class="location-icon text-bleu cursor-pointer " iconName="view" iconSize="20"></youpez-ibm-icon>  
-        </div>
-        <div class="app-mini-sidebar__list__item__pill"  container="body" ngbTooltip="Ajouter un paiement">
-          <youpez-ibm-icon class="location-icon text-green cursor-pointer " iconName="money" iconSize="20"></youpez-ibm-icon>  
-        </div>
-      </div>
-      `
+    this.hasData=true
+    let rowData = data.map((item)=> item.transactions.map((transaction)=>({
+      locataire:item.locataire.fullName,
+      bien:item.property.name,
+      chambre:this.getRoomString(item.room),
+      date_paiement:moment(transaction.datePayment).format('LL') ,
+      price:this.currencyPipe.transform(transaction.locationPaymentPrice,Currency.XAF,'symbol', '1.0-0'),
+      date:transaction.datePayment,
+      history:item
+      
+    }))).reduce((acc,curr)=>[...acc,...curr],[])
+
+    rowData.sort((a,b)=>a.date<b.date);
+    
+    this.gridOptions = {
+      columnDefs: [...this.columnDefs],
+      rowData: rowData,
+      rowHeight: 40,
+      headerHeight: 40,
+      rowSelection: 'multiple',
+      defaultColDef: {
+        filter:true,
+        floatingFilter: true,
+        sortable: true,
+        resizable: true,        
+      },
+      enableBrowserTooltips:false,
+      pagination: true,
+      paginationPageSize: 30,
+      groupSelectsChildren: true,
+      context: { componentParent: this }
+    }
+    this.loadingProcess.next(false)
+    setTimeout(() => {
+      try {
+       this.agGrid.api.refreshCells()
+
+        this.agGrid.api.sizeColumnsToFit()
+      } catch (error) { }
+    })
+
+  }
+  onEdit(row: any) {
+    console.log('Modifier:', row);
+  }
+
+  onDelete(row: any) {
+    // this.rowData = this.rowData.filter(item => item.id !== row.id);
+    console.log("Row Data",row)
+  }
+
+
+  getRoomString(room)
+  {
+    let str="";
+    switch (room.type) {
+      case 'room':
+        str= `Chambre #${room.code}`
+        break;
+      case 'studio':
+        str = `Studio #${room.code}`
+        break;
+      case 'simple_apartment':
+        str = `Apartement #${room.code}`
+        break;
+      case 'furnished_apartment':
+        str = `Apartement Meublé #${room.code}`
+        break;    
+      default:
+        break;
+    }
+    return str;
+  }
+
+  actionRender(data)
+  {
+    console.log("Data", data)
   }
 
 }
+
+
+
+

@@ -223,7 +223,7 @@ export class PropertyState{
         return this._propertysService.getProperties().pipe(
             tap(
                 result => {
-                    console.log("Fetch Properties ",result)
+                    //console.log("Fetch Properties ",result)
                     if(state.initLoadingState!="LOADED") ctx.patchState({initLoadingState:'LOADED'})
                     ctx.patchState({
                         loadingProperty:false,

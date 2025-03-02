@@ -80,8 +80,8 @@ export class AdminComponent {
   }
 
   ngOnInit(): void {
-    // this.hasLoading$.subscribe((value)=>console.log("HasLoading ",value))
-    // this.souscription$.subscribe((value)=>console.log("Souscription ", value))
+    // this.hasLoading$.subscribe((value)=>//console.log("HasLoading ",value))
+    // this.souscription$.subscribe((value)=>//console.log("Souscription ", value))
   }
 
   onToggle() {

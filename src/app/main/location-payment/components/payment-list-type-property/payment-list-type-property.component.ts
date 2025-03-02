@@ -49,7 +49,7 @@ export class PaymentListTypePropertyComponent implements OnChanges, OnInit{
 
   ngOnChanges(changes: SimpleChanges): void {
     if(changes['propertyID']) {
-      console.log("PropertyID",changes["propertyID"].currentValue)
+      //console.log("PropertyID",changes["propertyID"].currentValue)
       this._store.select(LocationPaymentState.selectStateLocationPaymentByPropertyIdAndPaymentType(changes['propertyID'].currentValue,LocationPaymentType.CAUTION))
       .subscribe((value)=>this.model=this.updateData(value))
     }
@@ -78,7 +78,7 @@ export class PaymentListTypePropertyComponent implements OnChanges, OnInit{
  
   updateData(data:LocationPaymentModel[])
   {
-    console.log("Data Location", data)
+    //console.log("Data Location", data)
     let model = new TableModel();
     model.header = this.getHeader();
     model.data = data.map((payment)=> {

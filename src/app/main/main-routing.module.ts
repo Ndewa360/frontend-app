@@ -17,6 +17,7 @@ import { PropertyRoomComponent } from './properties/components/property-room/pro
 import { ListPropertyComponent } from './properties/list-property/list-property.component'
 import { ShowPropertyComponent } from './properties/show-property/show-property.component'
 import { SeeLocationsComponent } from './properties/components/see-locations/see-locations.component'
+import { FinancialHistoryComponent } from './properties/components/financial-history/financial-history.component'
 
 
 
@@ -144,6 +145,13 @@ const routes: Routes = [
                 component: PropertyLocataireComponent,
                 data: {
                   breadcrumb: 'locataires'
+                },
+              },
+              {
+                path: 'history-finance',
+                component: FinancialHistoryComponent,
+                data: {
+                  breadcrumb: 'Historique des paiements'
                 },
               },
               {

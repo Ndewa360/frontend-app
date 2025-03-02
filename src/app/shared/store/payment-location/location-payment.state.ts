@@ -177,7 +177,7 @@ export class LocationPaymentState{
         return this._locationPaymentsService.createLocationPayment(locationPayment).pipe(
             tap(
                 result => {
-                    console.log("LocationPayment Created ",result);
+                    //console.log("LocationPayment Created ",result);
                     ctx.patchState({
                         loadingLocationPayment:false,
                         locationPayments:[...state.locationPayments, result.data]
@@ -208,7 +208,7 @@ export class LocationPaymentState{
         return this._locationPaymentsService.getLocationPayments(propertyId).pipe(
             tap(
                 result => {
-                    console.log("Fetch LocationPayments ",result)
+                    //console.log("Fetch LocationPayments ",result)
                     ctx.patchState({
                         loadingLocationPayment:false,
                         locationPayments:[...state.locationPayments,...result.data],

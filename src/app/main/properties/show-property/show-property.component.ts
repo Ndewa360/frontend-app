@@ -80,6 +80,8 @@ export class ShowPropertyComponent implements OnInit {
         return "Vos finances"
       case 'chambres':
         return "Vos Chambres / Studios / Appartements"
+      case 'history-finance':
+        return "Historique des paiements"
     }
     return ""
   }
@@ -142,7 +144,7 @@ export class ShowPropertyComponent implements OnInit {
         })
         return null
       case 'locations':
-        console.log("location", this.componentOnRouterOutlet.isAssignedOpened);
+        //console.log("location", this.componentOnRouterOutlet.isAssignedOpened);
         this.componentOnRouterOutlet.isAssignedOpened = true;
         return null;
       case 'finances':

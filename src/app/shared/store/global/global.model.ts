@@ -3,3 +3,7 @@ export interface GlobalModel {
     notifications:string[],
     isConnectedToWhatsapp:boolean
 }
+
+export enum LOCAL_LANGUAGE {
+    FR="fr"
+}

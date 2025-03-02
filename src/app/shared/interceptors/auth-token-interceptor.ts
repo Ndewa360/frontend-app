@@ -52,7 +52,7 @@ export class AuthTokenInterceptor implements HttpInterceptor {
             
             return this.refreshTokenService.refreshAccessToken(tokenFounded.accessToken,tokenFounded.refreshToken).pipe(
               switchMap((newToken: string) => {
-                console.log("New Token ",newToken)
+                //console.log("New Token ",newToken)
                 req = req.clone({
                   setHeaders: {
                     Authorization: `Bearer ${newToken}`
@@ -61,7 +61,7 @@ export class AuthTokenInterceptor implements HttpInterceptor {
                 return next.handle(req);
               }),
               catchError((err) => {
-                console.log("Auth interceptor ",err)
+                //console.log("Auth interceptor ",err)
                 // En cas d'erreur de rafraîchissement, rediriger l'utilisateur
                 this._store.dispatch(new AuthTokenAction.SetAuthToken(null));
                 this._store.dispatch(new AuthTokenAction.SetRefreshToken(null));
