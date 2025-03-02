@@ -3,7 +3,7 @@ import { Component, ViewEncapsulation } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DeletePaymentComponent } from 'src/app/main/location-payment/components/delete-payment/delete-payment.component';
 import { UpdatePaymentComponent } from 'src/app/main/location-payment/components/update-payment/update-payment.component';
-import { HistoryLocationPaymentModel } from 'src/app/shared/store';
+import { HistoryLocationPaymentModel, LocationPaymentModel } from 'src/app/shared/store';
 
 @Component({
   selector: 'custom-history-finance-cell-action',
@@ -15,11 +15,13 @@ export class CustomHistoryFinanceCellActionComponent implements ICellRendererAng
 
   constructor(private dialog: MatDialog){}
   params: any;
-  payementHistory:HistoryLocationPaymentModel 
+  payementHistory:HistoryLocationPaymentModel
+  transaction:LocationPaymentModel
 
   agInit(params: any): void {
     this.params = params;
     this.payementHistory = params.data.history;
+    this.transaction = params.data.transaction
   }
 
   refresh(): boolean {
@@ -33,7 +35,8 @@ export class CustomHistoryFinanceCellActionComponent implements ICellRendererAng
       role: 'alertdialog',
       width: '500px',
       data:{
-        history:this.payementHistory
+        history:this.payementHistory,
+        transaction:this.transaction
       }
     })
   }
@@ -45,7 +48,9 @@ export class CustomHistoryFinanceCellActionComponent implements ICellRendererAng
       role: 'alertdialog',
       width: '500px',
       data:{
-        history:this.payementHistory
+        history:this.payementHistory,
+        transaction:this.transaction
+
       }
     })
   }

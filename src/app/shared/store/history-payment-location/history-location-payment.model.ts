@@ -6,7 +6,7 @@ import { RoomModel } from "../rooms";
 
 
 export interface HistoryLocationPaymentModel {
-    _id?: string;
+    // _id?: string;
 
     locataire: LocataireModel;
 

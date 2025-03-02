@@ -40,6 +40,7 @@ export class FinancialHistoryComponent implements OnInit {
   @Select(HistoryLocationPaymentState.selectStateLoading) historyLocationPaymentLoading$!: Observable<boolean>;
   propertyId=null;
   columnDefs:Array<ColDef>=[]
+  dataFound = []
   hasData:boolean=false
   public gridOptions: GridOptions = {}
   public loading: boolean = true
@@ -129,6 +130,7 @@ export class FinancialHistoryComponent implements OnInit {
 
   updateTableData(data)
   {
+    console.log("Update ",data)
     this.hasData=true
     let rowData = data.map((item)=> item.transactions.map((transaction)=>({
       locataire:item.locataire.fullName,
@@ -137,7 +139,8 @@ export class FinancialHistoryComponent implements OnInit {
       date_paiement:moment(transaction.datePayment).format('LL') ,
       price:this.currencyPipe.transform(transaction.locationPaymentPrice,Currency.XAF,'symbol', '1.0-0'),
       date:transaction.datePayment,
-      history:item
+      history:item,
+      transaction
       
     }))).reduce((acc,curr)=>[...acc,...curr],[])
 
@@ -162,13 +165,12 @@ export class FinancialHistoryComponent implements OnInit {
       context: { componentParent: this }
     }
     this.loadingProcess.next(false)
+    this.dataFound = [...rowData]
     setTimeout(() => {
-      try {
-       this.agGrid.api.refreshCells()
-
-        this.agGrid.api.sizeColumnsToFit()
-      } catch (error) { }
-    })
+      this.agGrid.api.refreshCells({force:true})
+      this.agGrid.api.purgeInfiniteCache()
+      this.agGrid.api.sizeColumnsToFit()
+    });
 
   }
   onEdit(row: any) {

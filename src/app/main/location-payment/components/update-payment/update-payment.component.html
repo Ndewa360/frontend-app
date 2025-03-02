@@ -20,7 +20,7 @@
                           <input
                             ibmText
                             disabled
-                            [value]="'#'+(room$ | async)?.code"
+                            [value]="'#'+room?.code"
                             size="md"
                             theme="dark">
                         </ibm-label>        
@@ -29,7 +29,7 @@
                         <ibm-label> Locataire
                           <input
                             ibmText
-                            [value]="(locataire$ | async)?.fullName"
+                            [value]="locataire?.fullName"
                             disabled
                             size="md"
                             theme="dark">

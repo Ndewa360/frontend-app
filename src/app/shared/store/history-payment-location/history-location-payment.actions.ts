@@ -1,3 +1,4 @@
+import { LocationPaymentModel } from "../payment-location"
 
 
 export namespace HistoryLocationPaymentAction
@@ -24,5 +25,17 @@ export namespace HistoryLocationPaymentAction
     export class ResetAllState 
     {
         static readonly type = '[HistoryLocationPayment] ResetAllState'
+    }
+
+    export class UpdateHistoryLocationPaymentTransaction
+    {
+        static readonly type = '[HistoryLocationPayment] Update HistoryLocationPaymentTransaction'
+        constructor(public transactionId:string,public locataireID:string,public transactionModel:LocationPaymentModel){}
+    }
+
+    export class DeleteHistoryLocationPaymentTransaction
+    {
+        static readonly type = '[HistoryLocationPayment] Delete HistoryLocationPaymentTransaction'
+        constructor(public transactionId:string,public locataireID:string){}
     }
 }

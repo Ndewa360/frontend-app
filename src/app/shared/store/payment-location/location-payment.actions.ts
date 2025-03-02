@@ -13,7 +13,7 @@ export namespace LocationPaymentAction
     export class UpdateLocationPayment
     {
         static readonly type = '[LocationPayment] Update LocationPayment';
-        constructor(public locationPayment:LocationPaymentModel, public id:string){}
+        constructor(public locationPayment:LocationPaymentModel, public id:string,public locataireID:string){}
     }
 
     //Fetch  LocationPayment
@@ -21,6 +21,12 @@ export namespace LocationPaymentAction
     {
         static readonly type = '[LocationPayment] Fectch LocationPayment'
         constructor(public locationPaymentId:string){}
+    }
+
+    export class DeletehLocationPayment
+    {
+        static readonly type = '[LocationPayment] Delete LocationPayment'
+        constructor(public locationPaymentId:string, public locataireId:string){}
     }
 
     export class ResetAllState

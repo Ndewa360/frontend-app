@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { Store, Actions, ofActionSuccessful, ofActionCompleted, ofActionErrored } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { RemoveLocataireRoomComponent } from 'src/app/main/properties/components/remove-locataire-room/remove-locataire-room.component';
-import { LocataireModel, RoomModel, LocationModel, LocationPaymentType, LocataireState, RoomState, LocationPaymentAction, HistoryLocationPaymentModel } from 'src/app/shared/store';
+import { LocataireModel, RoomModel, LocationModel, LocationPaymentType, LocataireState, RoomState, LocationPaymentAction, HistoryLocationPaymentModel, LocationPaymentModel } from 'src/app/shared/store';
 import { UtilsString, FormUtils } from 'src/app/shared/utils';
 
 @Component({
@@ -18,49 +18,51 @@ export class UpdatePaymentComponent {
   public formGroup: FormGroup;
     layout: string = 'horizontal'
     theme: string = 'light'
-    locataire$:Observable<LocataireModel>
-    room$:Observable<RoomModel>;
+    locataire:LocataireModel
+    room:RoomModel;
   
     paymentTypeList=[]
     waittingResponse = false;
   
     constructor(
-      private dialogRef: MatDialogRef<RemoveLocataireRoomComponent>,
+      private dialogRef: MatDialogRef<UpdatePaymentComponent>,
       protected formBuilder: FormBuilder,
       private router: Router,
     private _store:Store,
     private _ngxsAction:Actions,
-    @Inject(MAT_DIALOG_DATA) public data: {history: HistoryLocationPaymentModel}
+    @Inject(MAT_DIALOG_DATA) public data: {history: HistoryLocationPaymentModel, transaction:LocationPaymentModel}
     
   ) { }
   
     ngOnInit(): void {
+      this.room = this.data.history.room;
+      this.locataire = this.data.history.locataire;
+      console.warn("Histo ",this.data.history)
       this.formGroup = this.formBuilder.group({
-        paymentLocationType:[LocationPaymentType.LOCATION,[Validators.required]],
-        locationPaymentPrice:[5000,[Validators.required,Validators.min(1000)]],
-        datePayment:[null,[Validators.required]],
-        reason:[null]
+        paymentLocationType:[this.data.transaction.paymentLocationType,[Validators.required]],
+        locationPaymentPrice:[this.data.transaction.locationPaymentPrice,[Validators.required,Validators.min(1000)]],
+        datePayment:[this.data.transaction.datePayment,[Validators.required]],
+        reason:[this.data.transaction.reason]
       })
       this.paymentTypeList= Object.values(LocationPaymentType).map((value)=>({content:UtilsString.getStringOfLocationPaymentType(value), valueType:value, selected:value==LocationPaymentType.LOCATION}));
 
-      this._ngxsAction.pipe(ofActionSuccessful(LocationPaymentAction.CreateLocationPayment)).subscribe((value)=>{
+      this._ngxsAction.pipe(ofActionSuccessful(LocationPaymentAction.UpdateLocationPayment)).subscribe((value)=>{
         // Navigate to the parent
         this.waittingResponse=false;
         this.onClose()
         }
       );
-      this._ngxsAction.pipe(ofActionCompleted(LocationPaymentAction.CreateLocationPayment)).subscribe(
+      this._ngxsAction.pipe(ofActionCompleted(LocationPaymentAction.UpdateLocationPayment)).subscribe(
         (value) => {
           this.waittingResponse=false;        
         }
       )
   
-      this._ngxsAction.pipe(ofActionErrored(LocationPaymentAction.CreateLocationPayment)).subscribe(
+      this._ngxsAction.pipe(ofActionErrored(LocationPaymentAction.UpdateLocationPayment)).subscribe(
         (value) => {
           this.waittingResponse=false;
         })
 
-        console.log("History ",history)
     }
   
     onClose() {
@@ -78,14 +80,10 @@ export class UpdatePaymentComponent {
       if(this.formGroup.invalid) return;
       let bodyToSend = FormUtils.removeNullAttribut({...this.formGroup.value})
       this.waittingResponse=true;
-      // this._store.dispatch(new LocationPaymentAction.CreateLocationPayment({
-      //   ...bodyToSend,
-      //   datePayment:bodyToSend.datePayment[0],
-      //   locataireId:this.data.location.locataire,
-      //   locationId:this.data.location._id,
-      //   roomId:this.data.location.room,
-      //   propertyId:this.data.location.property
-      // }));
+      this._store.dispatch(new LocationPaymentAction.UpdateLocationPayment({
+        ...bodyToSend,
+        datePayment:bodyToSend.datePayment[0],
+      },this.data.transaction._id,this.locataire._id));
       
     }
   

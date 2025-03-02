@@ -78,6 +78,50 @@ export class HistoryLocationPaymentState{
         })
     }
 
+    @Action(HistoryLocationPaymentAction.UpdateHistoryLocationPaymentTransaction)
+    updateHistoryLocationPayementTransaction(ctx:StateContext<HistoryLocationPaymentStateModel>,{transactionId,transactionModel,locataireID}:HistoryLocationPaymentAction.UpdateHistoryLocationPaymentTransaction)
+    {
+        const state = ctx.getState();
+        let historyLocationPayments = JSON.parse(JSON.stringify([...state.historyLocationPayments]));
+
+        let historyLocationPaymentIndex = historyLocationPayments.findIndex((u)=>u.locataire._id==locataireID);
+        if(historyLocationPaymentIndex<0) return of(true)
+        
+        let historyFoud = {...state.historyLocationPayments[historyLocationPaymentIndex]};
+        let transactionIndex = historyFoud.transactions.findIndex((u)=>u._id==transactionId);
+
+        if(transactionIndex<0) return of(true);
+        historyFoud.transactions = [...historyFoud.transactions];
+        historyFoud.transactions[transactionIndex] = transactionModel;
+        historyLocationPayments[historyLocationPaymentIndex] = historyFoud;
+        ctx.patchState({
+            historyLocationPayments:historyLocationPayments
+        })
+        return of(true)
+    }
+
+    @Action(HistoryLocationPaymentAction.DeleteHistoryLocationPaymentTransaction)
+    deleteHistoryLocationPayementTransaction(ctx:StateContext<HistoryLocationPaymentStateModel>,{transactionId,locataireID}:HistoryLocationPaymentAction.DeleteHistoryLocationPaymentTransaction)
+    {
+        const state = ctx.getState();
+        let historyLocationPayments = JSON.parse(JSON.stringify([...state.historyLocationPayments]));
+
+        let historyLocationPaymentIndex = historyLocationPayments.findIndex((u)=>u.locataire._id==locataireID);
+        if(historyLocationPaymentIndex<0) return of(true)
+        
+        let historyFoud = {...state.historyLocationPayments[historyLocationPaymentIndex]};
+        let transactionIndex = historyFoud.transactions.findIndex((u)=>u._id==transactionId);
+
+        if(transactionIndex<0) return of(true);
+        historyFoud.transactions = [...historyFoud.transactions];
+        historyFoud.transactions.splice(transactionIndex, 1);
+        historyLocationPayments[historyLocationPaymentIndex] = historyFoud;
+        ctx.patchState({
+            historyLocationPayments:historyLocationPayments
+        })
+        return of(true)
+    }
+
     @Action(HistoryLocationPaymentAction.FetchHistoryLocationByLocataireId)
     fetchHistoryLocationPaymentsByLocataireId(ctx:StateContext<HistoryLocationPaymentStateModel>,{locataireID}:HistoryLocationPaymentAction.FetchHistoryLocationByLocataireId)
     {
@@ -92,9 +136,9 @@ export class HistoryLocationPaymentState{
             tap(
                 result => {
                     let stateCopy = [...state.historyLocationPayments];
-                    result.data.forEach(element => {
-                        if(stateCopy.findIndex((item)=>item._id==element._id)==-1) stateCopy.push(element)
-                    });
+                    // result.data.forEach(element => {
+                    //     if(stateCopy.findIndex((item)=>item._id==element._id)==-1) stateCopy.push(element)
+                    // });
                     ctx.patchState({
                         loadingHistoryLocationPayment:false,
                         historyLocationPayments:stateCopy,

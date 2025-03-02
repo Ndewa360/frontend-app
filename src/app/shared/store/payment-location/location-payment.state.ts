@@ -10,6 +10,7 @@ import { NotificationService } from "carbon-components-angular";
 import { ToastrService } from "ngx-toastr";
 import { RoomAction } from "../rooms";
 import { LocataireAction } from "../locataire";
+import { HistoryLocationPaymentAction } from "../history-payment-location";
 
 export class LocationPaymentStateModel {
     locationPayments:LocationPaymentModel[]
@@ -98,17 +99,54 @@ export class LocationPaymentState{
         })
     }
 
-    @Action(LocationPaymentAction.UpdateLocationPayment)
-    updateLocationPayment(ctx:StateContext<LocationPaymentStateModel>, {locationPayment,id}:LocationPaymentAction.UpdateLocationPayment)
+    @Action(LocationPaymentAction.DeletehLocationPayment)
+    deleteLocationPayment(ctx:StateContext<LocationPaymentStateModel>, {locationPaymentId,locataireId}:LocationPaymentAction.DeletehLocationPayment)
     {
         const state = ctx.getState();
         ctx.patchState({
             loadingLocationPayment: true
         })
 
+
+        return this._locationPaymentsService.deleteLocationPayment(locationPaymentId).pipe(
+            tap(
+                (result)=>{
+                    console.log("Result update location payment ",result)
+                    const data = [...state.locationPayments]
+                    let index = data.findIndex((u)=>u._id==locationPaymentId);
+                    if(index>-1) data.splice(index,1);
+                    ctx.patchState({
+                        loadingLocationPayment:false,
+                        locationPayments:data
+                    })
+                    this._toastrService.success(`Paiement supprimer avec success!`, 'Ndewa360°');
+
+                    ctx.dispatch(new HistoryLocationPaymentAction.DeleteHistoryLocationPaymentTransaction(locationPaymentId,locataireId))
+                }
+            ),
+            catchError((error) => {
+                ctx.patchState({
+                    loadingLocationPayment: false
+                })
+                return throwError(error);
+                
+            })
+        )
+    }
+
+    @Action(LocationPaymentAction.UpdateLocationPayment)
+    updateLocationPayment(ctx:StateContext<LocationPaymentStateModel>, {locationPayment,id,locataireID}:LocationPaymentAction.UpdateLocationPayment)
+    {
+        const state = ctx.getState();
+        ctx.patchState({
+            loadingLocationPayment: true
+        })
+
+
         return this._locationPaymentsService.updateLocationPayment(locationPayment,id).pipe(
             tap(
                 (result)=>{
+                    console.log("Result update location payment ",result)
                     const data = [...state.locationPayments]
                     let index = data.findIndex((u)=>u._id==id);
                     if(index>-1) data[index]=result.data;
@@ -116,6 +154,9 @@ export class LocationPaymentState{
                         loadingLocationPayment:false,
                         locationPayments:data
                     })
+                    this._toastrService.success(`Paiement mise à jour avec success!`, 'Ndewa360°');
+
+                    ctx.dispatch(new HistoryLocationPaymentAction.UpdateHistoryLocationPaymentTransaction(id,locataireID,result.data))
                 }
             ),
             catchError((error) => {

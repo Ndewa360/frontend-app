@@ -27,6 +27,11 @@ export class LocationPaymentService
         return this._httpClient.post<ApiResultFormat<LocationPaymentModel>>(`${environment.apiUrl}/location-payment`, locationPayment)
     }
 
+    deleteLocationPayment(locationPaymentID:string): Observable<ApiResultFormat<LocationPaymentModel>>
+    {
+        return this._httpClient.delete<ApiResultFormat<LocationPaymentModel>>(`${environment.apiUrl}/location-payment/${locationPaymentID}`,)
+    }
+
     /**
      * Update locationPayment
      */

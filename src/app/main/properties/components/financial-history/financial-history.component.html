@@ -12,7 +12,7 @@
     </div> -->
     <div fxFlex class="financial-grid relative px-4 pb-4 pt-2">
       <ng-container *ngIf="!loading else loadingData">
-        <ag-grid-angular *ngIf="hasData else noDataToShow"  #agGrid class="ag-theme-balham app-ag-grid app-border-all" [gridOptions]="gridOptions" >
+        <ag-grid-angular *ngIf="hasData else noDataToShow" [rowData]="dataFound"  #agGrid class="ag-theme-balham app-ag-grid app-border-all" [gridOptions]="gridOptions" >
         </ag-grid-angular>
         <ng-template #noDataToShow>
           <app-no-data-list textDescription="paiement" class="flex-auto"></app-no-data-list>                            
