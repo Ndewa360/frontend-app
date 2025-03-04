@@ -81,9 +81,12 @@ export class AddPaymentComponent {
     if(this.formGroup.invalid) return;
     let bodyToSend = FormUtils.removeNullAttribut({...this.formGroup.value})
     this.waittingResponse=true;
+    let datePayment = bodyToSend.datePayment[0];
+    datePayment.setHours(6)
+
     this._store.dispatch(new LocationPaymentAction.CreateLocationPayment({
       ...bodyToSend,
-      datePayment:bodyToSend.datePayment[0],
+      datePayment:datePayment.toISOString().split("T")[0],
       locataireId:this.data.location.locataire,
       locationId:this.data.location._id,
       roomId:this.data.location.room,
