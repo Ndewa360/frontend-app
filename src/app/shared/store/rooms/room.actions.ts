@@ -65,12 +65,12 @@ export namespace RoomAction
     export class ChangeStatusRoom
     {
         static readonly type = '[Room] Change Room Status'
-        constructor(public roomId:any,public status:boolean,public locataire:string=null){}
+        constructor(public roomId:string,public status:boolean,public locataire:string=null){}
     }
 
     export class ChangeStatusActivatedForSouscriptionRoom
     {
-        static readonly type = '[Room] Change Room Status'
+        static readonly type = '[Room] Change Room Status for souscription'
         constructor(public roomId:any,public isActiveForSouscription:boolean){}
     }
 

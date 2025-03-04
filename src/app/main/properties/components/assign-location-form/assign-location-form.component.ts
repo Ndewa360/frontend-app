@@ -52,15 +52,16 @@ export class AssignLocationFormComponent  implements OnInit, OnChanges{
     this.formGroup = this.formBuilder.group({
       roomId: [null, [Validators.required]],
       locataireId: [null, [Validators.required]],
-      startedDate: [null,[Validators.required]],
+      startedDate: [null],
       isKnowExactDateEntry:[false],
-      initialFinancialState:[null, [Validators.required]],
+      initialFinancialState:[this.fiancialStateList[0], [Validators.required]],
       initialSolde:[0]
     })
-    this.formGroup.valueChanges.subscribe(() => {
+    this.formGroup.valueChanges.subscribe(() => {      
       this.isFormValid();
     })
     this.askForUpdate()
+    this.formGroup.controls["initialSolde"].disable()
 
     this.formGroup.controls["isKnowExactDateEntry"].valueChanges.subscribe((value)=>{
       if(value) {
@@ -69,7 +70,7 @@ export class AssignLocationFormComponent  implements OnInit, OnChanges{
       }
       else {
         this.formGroup.controls["startedDate"].disable()
-        this.formGroup.controls["startedDate"].setValidators(null)
+        this.formGroup.controls["startedDate"].clearValidators()
       }
       this.formGroup.controls["startedDate"].updateValueAndValidity()
     })
@@ -77,7 +78,7 @@ export class AssignLocationFormComponent  implements OnInit, OnChanges{
     this.formGroup.controls["initialFinancialState"].valueChanges.subscribe((value)=>{
       if(value==null) return
       if(value.valueType == "initial") {
-        this.formGroup.controls["initialSolde"].setValidators(null)
+        this.formGroup.controls["initialSolde"].clearValidators()
         this.formGroup.controls["initialSolde"].disable()
       }
       else {
@@ -126,7 +127,6 @@ export class AssignLocationFormComponent  implements OnInit, OnChanges{
   }
 
   isFormValid() {
-    
     if (!this.formGroup.valid) {
       return false
     }
@@ -137,7 +137,10 @@ export class AssignLocationFormComponent  implements OnInit, OnChanges{
       initialFinancialState: this.formGroup.value.initialFinancialState.valueType,
       initialSolde: this.formGroup.value.initialSolde
     }
-    if(this.formGroup.value.isKnowExactDateEntry) dataToEmit["entryDate"]=this.formGroup.value.startedDate[0];
+    if(this.formGroup.value.isKnowExactDateEntry) {
+      if(this.formGroup.value.startedDate == null) return false;
+      dataToEmit["entryDate"]=this.formGroup.value.startedDate[0];
+    }
     
 
     this.onSendLocationData.emit(dataToEmit)

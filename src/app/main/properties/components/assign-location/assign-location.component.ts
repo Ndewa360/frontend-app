@@ -3,6 +3,7 @@ import { Actions, ofActionCompleted, ofActionErrored, ofActionSuccessful, Store 
 import { AppSidenavContainerComponent } from 'src/@youpez/components/app-sidenav/app-sidenav-container/app-sidenav-container.component';
 import { INITIAL_LOCATION_FINANCIAL_STATE, LocataireModel, LocataireState, LocationAction, PropertyModel, RoomModel, RoomState } from 'src/app/shared/store';
 import { AssignLocationFormComponent } from '../assign-location-form/assign-location-form.component';
+import * as moment from 'moment';
 
 @Component({
   selector: 'assign-location',
@@ -60,11 +61,11 @@ export class AssignLocationComponent  {
   onSubmit()
   {
     this.waittingResponse=true;
-
+    this.locataireForm.entryDate.setHours(6)
     this._store.dispatch(new LocationAction.CreateLocation({
       locataireId:this.locataireForm.locataire,
       roomId:this.locataireForm.room,
-      startedAt:this.locataireForm.entryDate,
+      startedAt:this.locataireForm.entryDate.toISOString().split("T")[0],
       propertyId:this.property._id,
       isKnowExactDateEntry:this.locataireForm.isKnowExactDateEntry,
       initialFinancialState: this.locataireForm.initialFinancialState,
@@ -74,7 +75,12 @@ export class AssignLocationComponent  {
 
   onSetLocataireFormData(locataireFormData)
   {
-    if(locataireFormData.locataire && locataireFormData.room && locataireFormData.entryDate) this.canSendingData=true;
+    if(
+      locataireFormData.locataire && 
+      locataireFormData.room && 
+      ( (locataireFormData.isKnowExactDateEntry && locataireFormData.entryDate) || 
+        (!locataireFormData.isKnowExactDateEntry)
+    )) this.canSendingData=true;
     else this.canSendingData=false;
     this.locataireForm = locataireFormData;
   }

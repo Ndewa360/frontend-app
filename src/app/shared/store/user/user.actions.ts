@@ -11,7 +11,7 @@ export namespace UserAction
     //Fetch  User profil
     export class FetchUser
     {
-        static readonly type = '[User] Fectch User'
+        static readonly type = '[User] Fetch User'
         constructor(public userId:string){}
     }
 
@@ -23,14 +23,14 @@ export namespace UserAction
     //Fetch  User profil
     export class FetchUsers
     {
-        static readonly type = '[User] Fectch Users'
+        static readonly type = '[User] Fetch Users'
         constructor(public usersId:string[]=[]){}
     }
 
     //Fetch All user
     export class FetchAllUsers
     {
-        static readonly type = '[User] Fectch All Users'
+        static readonly type = '[User] Fetch All Users'
         constructor(){}
     }
 

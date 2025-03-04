@@ -195,7 +195,7 @@ export class LocationState{
         return this._locationsService.createLocation(location).pipe(
             tap(
                 result => {
-                    //console.log("Location Created ",result);
+                    // console.log("Location Created ",result);
                     ctx.patchState({
                         loadingLocation:false,
                         locations:[...state.locations, result.data]

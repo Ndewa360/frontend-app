@@ -8,7 +8,7 @@ export namespace AuthTokenAction
 
     export class SetRefreshToken
     {
-        static readonly type = '[AuthToken] Set AuthToken'
+        static readonly type = '[AuthToken] Set RefreshToken'
         constructor(public token:string){}
     }
 

@@ -24,7 +24,7 @@ export namespace PropertyAction
     //Fetch  Property profil
     export class FetchProperties
     {
-        static readonly type = '[Property] Fectch Propertys'
+        static readonly type = '[Property] Fectch Properties'
         constructor(public propertiesId:string[]=[]){}
     }
 

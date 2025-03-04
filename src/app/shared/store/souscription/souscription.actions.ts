@@ -12,7 +12,7 @@ export namespace SouscriptionAction
     //Fetch  Souscription
     export class FetchSouscription
     {
-        static readonly type = '[Souscription] Fectch Souscription'
+        static readonly type = '[Souscription] Fetch Souscription'
         constructor(public souscriptionId:string){}
     }
     
@@ -24,7 +24,7 @@ export namespace SouscriptionAction
     //Fetch  Souscription
     export class FetchSouscriptionsByUserId
     {
-        static readonly type = '[Souscription] Fectch Souscriptions'
+        static readonly type = '[Souscription] Fetch Souscriptions'
         constructor(public userId:string){}
     }
 

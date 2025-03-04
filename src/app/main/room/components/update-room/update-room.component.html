@@ -124,7 +124,7 @@
           [disabled]="waittingResponse || formGroup.invalid || formGroup.get('type').value=='furnished_apartment'" type="submit">
           <ibm-loading *ngIf="waittingResponse; else noWaitingResponse"></ibm-loading>
           <ng-template #noWaitingResponse>
-            <span class="btn-text">Ajouter</span>
+            <span class="btn-text">Mettre à jour</span>
             <youpez-ibm-icon iconClass="cds--btn__icon" iconName="add" iconSize="20"></youpez-ibm-icon>
           </ng-template>
         </button>

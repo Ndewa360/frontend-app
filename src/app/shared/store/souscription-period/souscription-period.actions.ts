@@ -20,14 +20,14 @@ export namespace SouscriptionPeriodAction
     //Fetch  SouscriptionPeriod
     export class FetchSouscriptionPeriod
     {
-        static readonly type = '[SouscriptionPeriod] Fectch SouscriptionPeriod'
+        static readonly type = '[SouscriptionPeriod] Fetch SouscriptionPeriod'
         constructor(public souscriptionPeriodId:string){}
     }
     
     //Fetch  SouscriptionPeriod
     export class FetchSouscriptionPeriodsByUserId
     {
-        static readonly type = '[SouscriptionPeriod] Fectch SouscriptionPeriods'
+        static readonly type = '[SouscriptionPeriod] Fetch SouscriptionPeriods'
         constructor(public userId:string){}
     }
 

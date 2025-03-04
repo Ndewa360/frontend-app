@@ -37,7 +37,7 @@ export namespace LocataireAction
 
     export class FetchLocatairesByPropertyId
     {
-        static readonly type = '[Locataire] Fectch Locataires'
+        static readonly type = '[Locataire] Fectch Locataires by propertyID'
         constructor(public propertyId:string){}
     }
 
