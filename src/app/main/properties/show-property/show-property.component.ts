@@ -44,14 +44,14 @@ export class ShowPropertyComponent implements OnInit {
   ngOnInit(): void {
     let propertyId = this._activatedRoute.snapshot.paramMap.get('id');
     if(!propertyId)  {
-      this._router.navigateByUrl('/app/properties/list');;
+      this._router.navigateByUrl('/app/properties/home');;
       return;
     }
     this.propertyFound$=this._store.select(PropertyState.selectStateProperty(propertyId));
     combineLatest([this.propertyFound$,this.loadingProperty$]).subscribe(([property, loading])=>{
       if(!loading) {
         if(!property){
-          this._router.navigateByUrl('/app/properties/list');
+          this._router.navigateByUrl('/app/properties/home');
           this._toastService.error("Biens introuvable", "Ndewa360°");
         } else
         {

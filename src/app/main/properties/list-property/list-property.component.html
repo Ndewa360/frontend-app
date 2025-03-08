@@ -1,75 +1,86 @@
 <div fxFill fxLayout="column">
-    <youpez-header>
-      <youpez-header-title>
-        Vos biens immobiliés
-      </youpez-header-title>
-      <youpez-header-tools>
-        <button ibmButton="primary" class="custom-primary-button" size="sm" (click)="onCreate()">
-          Nouveau
-          <youpez-ibm-icon iconClass="cds--btn__icon" iconName="add" iconSize="20" ></youpez-ibm-icon >
-        </button>
-      </youpez-header-tools>
-    </youpez-header>
-      <div fxFlex class="relative">
-        <youpez-sidenav-container panel="solid">
-            <div class="app-a-box app-scrollbar-fix">
-                <ng-scrollbar>
-                  <div fxFill fxLayout="column">
-                    <div fxFlex class="relative" *ngIf="(initLoading$ | async)=='LOADED' else isLoadingTemp">
-                      <ng-container *ngIf="properties$ | async as properties">
-                        <div class="app-subtitle app-subtitle--cards mt-2">Biens ({{properties.length}})</div>
-                        <div fxLayout="row wrap" class="app-card-row-holder">                        
-                          <ng-container *ngFor="let property of properties">
-
-                            <div [routerLink]="['/app/properties',property._id]" fxFlex="100%" fxFlex.gt-md="20%">
-                              <div class="app-card app-card--select">
-                                <div class="relative">
-                                  <button (click)="updateProperty(property,$event)"  class="absolute  float-right btn-text-edit top-2 right-0 mt-5 mr-5 bg-slate-700 rounded-md">
-                                    <youpez-ibm-icon iconName="pen" iconSize="24" ></youpez-ibm-icon>
-                                  </button>
-                                  <button (click)="openEditPhoto(property,$event)"  class="absolute  float-right btn-text-edit top-2 right-0 mt-16 mr-5 bg-slate-700 rounded-md">
-                                    <youpez-ibm-icon iconName="dropPhoto" iconSize="24" ></youpez-ibm-icon>
-                                  </button>
-                                </div>
-                                <div class="app-card__content__alt">
-                                  <div class=""> 
-                                    <div class="text-center app-bg-decorative mb-2">
-                                       <slider-component-galery [showNavSlider]='false' [images]="property.medias"></slider-component-galery>
-                                    </div> 
-                                    <div>
-                                      <div class="app-expressive-heading-01 truncate">{{property.name}}</div>
-                                      <div class="app-helper-text-01 mb-2">#{{property.code}}</div>
-                                      <div class="grid grid-cols-8">
-                                          <div class="app-label-01 col-span-7  text-muted">
-                                              <youpez-ibm-icon class="location-icon location-home"  iconName="location" iconSize="16"></youpez-ibm-icon>
-                                              <span class="location-zone ml-1">{{property.location}}</span>
-                                          </div>
-                                          <div class="app-label-01 text-muted col-end-auto">                                            
-                                              <!-- <span class="mr-1">{{getNumberOfRoom(property._id) | async}}</span> -->
-                                              <span class="mr-1">{{property.roomLength}}</span>
-                                              <youpez-ibm-icon class="location-icon home-romm" iconName="home" iconSize="16"></youpez-ibm-icon>
-                                          </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </ng-container>                          
+  <div class="app-a-box app-scrollbar-fix">
+    <ng-scrollbar>
+      <div fxFill fxLayout="column">
+        <div fxFlex class="relative" *ngIf="(initLoading$ | async) == 'LOADED'; else isLoadingTemp">
+          <ng-container *ngIf="properties$ | async as properties">
+            <div class="app-subtitle app-subtitle--cards mt-2">
+              Biens ({{ properties.length }})
+            </div>
+            <div fxLayout="row wrap" class="app-card-row-holder">
+              <ng-container *ngFor="let property of properties">
+                <div [routerLink]="[
+										'/app/properties',
+										property._id
+									]" fxFlex="100%" fxFlex.gt-md="20%">
+                  <div class="app-card app-card--select">
+                    <div class="relative">
+                      <button (click)="
+													updateProperty(
+														property,
+														$event
+													)
+												" class="absolute float-right btn-text-edit top-2 right-0 mt-5 mr-5 bg-slate-700 rounded-md">
+                        <youpez-ibm-icon iconName="pen" iconSize="24"></youpez-ibm-icon>
+                      </button>
+                      <button (click)="
+													openEditPhoto(
+														property,
+														$event
+													)
+												" class="absolute float-right btn-text-edit top-2 right-0 mt-16 mr-5 bg-slate-700 rounded-md">
+                        <youpez-ibm-icon iconName="dropPhoto" iconSize="24"></youpez-ibm-icon>
+                      </button>
+                    </div>
+                    <div class="app-card__content__alt">
+                      <div class="">
+                        <div class="text-center app-bg-decorative mb-2">
+                          <slider-component-galery [showNavSlider]="false" [images]="
+															property.medias
+														"></slider-component-galery>
                         </div>
-                      </ng-container>      
-                      <ng-container *ngIf="(properties$ | async).length==0" > 
-                        <app-no-data-list textDescription="bien" class="flex-auto"></app-no-data-list>                            
-                      </ng-container>                
-                    </div>  
-                    <ng-template #isLoadingTemp>
-                      <div class="relative">
-                        <youpez-loader></youpez-loader>
+                        <div>
+                          <div class="app-expressive-heading-01 truncate">
+                            {{ property.name }}
+                          </div>
+                          <div class="app-helper-text-01 mb-2">
+                            #{{ property.code }}
+                          </div>
+                          <div class="grid grid-cols-8">
+                            <div class="app-label-01 col-span-7 text-muted">
+                              <youpez-ibm-icon class="location-icon location-home" iconName="location"
+                                iconSize="16"></youpez-ibm-icon>
+                              <span class="location-zone ml-1">{{
+                                property.location
+                                }}</span>
+                            </div>
+                            <div class="app-label-01 text-muted col-end-auto">
+                              <!-- <span class="mr-1">{{getNumberOfRoom(property._id) | async}}</span> -->
+                              <span class="mr-1">{{
+                                property.roomLength
+                                }}</span>
+                              <youpez-ibm-icon class="location-icon home-romm" iconName="home"
+                                iconSize="16"></youpez-ibm-icon>
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                    </ng-template>
+                    </div>
                   </div>
-                </ng-scrollbar>
-              </div>
-        </youpez-sidenav-container>
+                </div>
+              </ng-container>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="(properties$ | async).length == 0">
+            <app-no-data-list textDescription="bien" class="flex-auto"></app-no-data-list>
+          </ng-container>
+        </div>
+        <ng-template #isLoadingTemp>
+          <div class="relative">
+            <youpez-loader></youpez-loader>
+          </div>
+        </ng-template>
       </div>
+    </ng-scrollbar>
+  </div>
 </div>

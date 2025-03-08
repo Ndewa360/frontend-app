@@ -1,0 +1,18 @@
+.financial-grid .ag-root-wrapper-body.ag-layout-normal
+{
+    height: auto;
+}
+
+ag-grid-angular {
+    height: 80vh;
+    width: 100%;
+  }
+
+.loader-recap .preloader {
+    margin-top: 0px !important;
+    margin-bottom: 2em !important;
+}
+
+.choix-annee-recap-finance .cds--list-box__selection {
+    display: none;
+}

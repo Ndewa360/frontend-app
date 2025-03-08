@@ -22,7 +22,7 @@ export class AppHeaderComponent implements OnInit {
 
   shoulShowBackToBtn()
   {
-    return this._router.url!="/app/properties/list"
+    return this._router.url!="/app/properties/home"
     
   }
 

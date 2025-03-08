@@ -2,18 +2,20 @@
     <div class="app-header app-header--carbon">
       <div class="app-productive-heading-04">Historique des paiements</div>
     </div>
-    <!-- <div class="pt-2 px-4">
-      <ibm-tag type="magenta">Editable</ibm-tag>
-      <ibm-tag type="magenta">Custom cellrenders</ibm-tag>
-      <ibm-tag type="magenta">Column pinned</ibm-tag>
-      <ibm-tag type="warm-gray">Multiple selection</ibm-tag>
-      <ibm-tag type="warm-gray">Horizontal scrollable</ibm-tag>
-      <ibm-tag type="warm-gray">Pagination</ibm-tag>
-    </div> -->
-    <div fxFlex class="financial-grid relative px-4 pb-4 pt-2">
+    <div  class="financial-grid relative px-4 pb-4 pt-2">
+      
       <ng-container *ngIf="!loading else loadingData">
+        <div class="flex justify-end">
+          <div class="pagination-bar">
+            <button ibmButton="tertiary" size="md" class="custom--btn--tertiary ml-2 mt-2 mb-2" (click)="exportToCSV()">
+              <span class="btn-text">Exporter CSV</span>
+              <youpez-ibm-icon iconClass="cds--btn__icon" iconName="download" iconSize="20"></youpez-ibm-icon>
+            </button>
+          </div>
+        </div>
+        
         <ag-grid-angular *ngIf="hasData else noDataToShow" [rowData]="dataFound"  #agGrid class="ag-theme-balham app-ag-grid app-border-all" [gridOptions]="gridOptions" >
-        </ag-grid-angular>
+        </ag-grid-angular>        
         <ng-template #noDataToShow>
           <app-no-data-list textDescription="paiement" class="flex-auto"></app-no-data-list>                            
         </ng-template>

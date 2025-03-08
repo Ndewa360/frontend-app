@@ -17,7 +17,7 @@ export class PropertyLocataireComponent implements OnInit {
   ngOnInit(): void {
     this.propertyId = this._activatedRoute.parent.snapshot.paramMap.get('id');
     if(!this.propertyId)  {
-      this._router.navigateByUrl('/app/properties/list');;
+      this._router.navigateByUrl('/app/properties/home');;
       return;
     }
   }

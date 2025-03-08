@@ -3,7 +3,7 @@ import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot } from "@angular/r
 import { Actions, Store } from "@ngxs/store";
 import { Observable, combineLatest, of} from "rxjs";
 import { map, mergeMap, skipWhile, tap } from "rxjs/operators";
-import { LocataireAction, LocationAction, LocationPaymentAction, PropertyAction, RoomAction, UserProfileAction,CountryAction } from "../../store";
+import { LocataireAction, LocationAction, LocationPaymentAction, PropertyAction, RoomAction, UserProfileAction,CountryAction, StatisticAction } from "../../store";
 
 
 @Injectable({
@@ -38,7 +38,9 @@ export class InitialLoadingDataResolver implements Resolve<any>
                     return this._store.dispatch([
                         new UserProfileAction.FetchUserProfile(),
                         new PropertyAction.FetchProperties(),
-                        new CountryAction.FetchCountries()                        
+                        new CountryAction.FetchCountries(),
+                        new StatisticAction.FetchStatisticPaymentRecapitulationAccountOfAllPropertyByYear(new Date().getFullYear()),
+
                     ])}
                 ),
             ),
@@ -51,6 +53,7 @@ export class InitialLoadingDataResolver implements Resolve<any>
                 new RoomAction.FetchRoomsByPropertyID(prop._id),
                 new LocationAction.FetchLocationsByPropertyId(prop._id),
                 new LocationPaymentAction.FetchLocationPaymentsByPropertyId(prop._id),
+
             ]).reduce((acc,curr)=>[...acc,...curr],[]))),
         ).subscribe((value)=>{
             //console.log("Value in init resolver",value)

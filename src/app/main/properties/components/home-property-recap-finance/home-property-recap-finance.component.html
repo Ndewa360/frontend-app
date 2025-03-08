@@ -1,0 +1,52 @@
+<div fxFill fxLayout="column">
+
+  <div fxFill fxLayout="row wrap">
+    <div fxFlex="100%">      
+  
+      <!--  -->
+      <div fxFlex fxLayout="row wrap" *ngIf="!(paymentRecapitulationLoading$ | async)">
+        <div fxFlex.gt-sm="68%" fxFlex.gt-md="78%">
+          <button ibmButton="tertiary" size="md" class="custom--btn--tertiary ml-2 mt-2" (click)="exportToCSV()">
+              <span class="btn-text">Exporter CSV</span>
+              <youpez-ibm-icon iconClass="cds--btn__icon" iconName="download" iconSize="20"></youpez-ibm-icon>
+          </button>
+        </div>
+        <div  fxFlex.gt-sm="15%" fxFlex.gt-md="10%" class="mr-2">
+          <ibm-label helperText="" class="choix-annee-recap-finance">
+            <ibm-combo-box  class="mt-2" [items]="yearsList" (selected)="onSelectedYear($event)" theme="dark"  size="md">
+              <ibm-dropdown-list></ibm-dropdown-list>
+            </ibm-combo-box>
+          </ibm-label>
+        </div>
+        <div  fxFlex.gt-sm="15%" fxFlex.gt-md="10%">
+          <ibm-label helperText="" class="type_bien_label">
+            <ibm-combo-box placeholder="Mois" class="mt-2" [items]="monthList" (selected)="onSelectedMonth($event)" theme="dark"  size="md">
+              <ibm-dropdown-list></ibm-dropdown-list>
+            </ibm-combo-box>
+          </ibm-label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <div fxFlex class="financial-grid relative px-4 pb-4 pt-2">
+      <ng-container *ngIf="!(paymentRecapitulationLoading$ | async) else loadingData">
+        <!-- <ng-container *ngIf="hasData else noDataToShow"> -->
+          <home-property-recap-finance-year [dataFound]="dataFound" *ngIf="isYearSelectedView else isMonthSelectedView"></home-property-recap-finance-year>
+          <ng-template #isMonthSelectedView>
+            <home-property-recap-finance-month [dataFound]="dataMonthFound" ></home-property-recap-finance-month>
+          </ng-template>
+        <!-- </ng-container> -->
+        
+        <!-- <ng-template #noDataToShow>
+           <app-no-data-list textDescription="paiement" class="flex-auto"></app-no-data-list>                      
+        </ng-template> -->
+      </ng-container>
+      <ng-template #loadingData>
+        <div class="relative loader-recap">
+          <youpez-loader></youpez-loader>
+        </div>                     
+      </ng-template>
+    </div>
+  </div>
+  

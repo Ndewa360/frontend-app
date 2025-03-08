@@ -67,7 +67,7 @@ export class LocatairePageComponent implements OnInit{
       },       
     ]
     // if(!propertyId)  {
-    //   this._router.navigateByUrl('/app/properties/list');;
+    //   this._router.navigateByUrl('/app/properties/home');;
     //   return;
     // }
   }

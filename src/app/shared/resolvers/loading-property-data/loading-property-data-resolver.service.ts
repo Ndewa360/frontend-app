@@ -39,7 +39,7 @@ export class LoadingPropertyDataResolver implements Resolve<any>
             new HistoryLocationPaymentAction.FetchHistoryLocationPaymentsByPropertyId(propertyId),
             // new StatisticAction.FetchStaticRoomDataByPropertyIdAndYear(propertyId,`${new Date().getFullYear()}`),
             new StatisticAction.FetchStaticLocataireDataByPropertyIdAndYear(propertyId,`${new Date().getFullYear()}`),
-            new StatisticAction.FetchStaticAllPaymentLocataireDataByPropertyIdAndYear(propertyId,`${new Date().getFullYear()}`)
+            new StatisticAction.FetchStaticAllPaymentLocataireDataByPropertyIdAndYear(propertyId,`${new Date().getFullYear()}`),
         ])
  
         // combineLatest(

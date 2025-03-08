@@ -18,6 +18,7 @@ import { ListPropertyComponent } from './properties/list-property/list-property.
 import { ShowPropertyComponent } from './properties/show-property/show-property.component'
 import { SeeLocationsComponent } from './properties/components/see-locations/see-locations.component'
 import { FinancialHistoryComponent } from './properties/components/financial-history/financial-history.component'
+import { HomePropertyComponent } from './properties/home-property/home-property.component'
 
 
 
@@ -106,6 +107,13 @@ const routes: Routes = [
         },  
         children: [      
           {
+            path: 'home',
+            component: HomePropertyComponent,
+            // data: {
+            //   breadcrumb: 'Getting started'
+            // },
+          },
+          {
             path: 'list',
             component: ListPropertyComponent,
             // data: {
@@ -166,7 +174,7 @@ const routes: Routes = [
           },
           {
             path: '**',
-            redirectTo: '/app/properties/list',
+            redirectTo: '/app/properties/home',
             pathMatch: 'full',
           },
         ],

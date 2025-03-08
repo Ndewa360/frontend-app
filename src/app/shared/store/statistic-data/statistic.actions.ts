@@ -20,6 +20,12 @@ export namespace StatisticAction
         constructor(public propertyID:string,public year:string|number){}
     }
 
+    export class FetchStatisticPaymentRecapitulationAccountOfAllPropertyByYear
+    {
+        static readonly type = '[Locataire] Fetch Statics of account Of all property recapitulation by year recap'
+        constructor(public year:string|number){}
+    }
+
     export class ResetAllState
     {
         static readonly type = '[Statistic] Reset All State'

@@ -46,6 +46,9 @@
 								"bundleName": "theme-dark",
 								"inject": false
 							  },
+							  "node_modules/@ag-grid-community/all-modules/dist/styles/ag-grid.css",
+							  "node_modules/@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css",
+
 							"@angular/material/prebuilt-themes/pink-bluegrey.css",
 							"src/@youpez/styles/scss/theme/app.scss",
 							"node_modules/ngx-toastr/toastr.css",

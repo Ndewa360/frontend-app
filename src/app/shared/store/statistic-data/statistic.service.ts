@@ -4,7 +4,7 @@ import { HttpClient } from "@angular/common/http";
 import { Observable, combineLatest, of, } from "rxjs";
 import { ApiResultFormat } from "../global";
 import { switchMap } from "rxjs/operators";
-import { StatisticAllPaymentLocataireYearModel, StatisticLocataireYearModel, StatisticRoomYearModel } from "./statistic.model";
+import { StatisticAllPaymentLocataireYearModel, StatisticLocataireYearModel, StatisticPaymentOfAllPropertyByYear, StatisticRoomYearModel } from "./statistic.model";
 
 @Injectable({
     providedIn:'root'
@@ -34,5 +34,11 @@ export class StatisticService
     getAllPaymentLocataireStatisticDataByYear(propertyID:string,year:string|number):Observable<ApiResultFormat<StatisticAllPaymentLocataireYearModel[]>>
     {    
         return this._httpClient.get<ApiResultFormat<StatisticAllPaymentLocataireYearModel[]>>(`${environment.apiUrl}/statistic-location-payment/statistic-payement-all-inyear/${propertyID}/${year}/`)
+    }
+
+    
+    getPaymentRecapitulationAccountOfAllPropertyByYear(year:string|number):Observable<ApiResultFormat<StatisticPaymentOfAllPropertyByYear>>
+    {    
+        return this._httpClient.get<ApiResultFormat<StatisticPaymentOfAllPropertyByYear>>(`${environment.apiUrl}/statistic-location-payment/statistic-payement-recapitulation-inyear/${year}/`)
     }
 }

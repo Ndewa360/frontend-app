@@ -1,0 +1,50 @@
+<youpez-sidenav-container panel="panel">
+  
+    <youpez-sidenav-container panel="panel">
+        <div fxFill fxLayout="column" class="relative">
+            <youpez-header >
+              <youpez-header-title>
+                Vos biens immobiliés
+              </youpez-header-title>
+              <youpez-header-tools>
+                <button ibmButton="primary" class="custom-primary-button" size="sm" (click)="onCreate()">
+                    Nouveau
+                    <youpez-ibm-icon iconClass="cds--btn__icon" iconName="add" iconSize="20" ></youpez-ibm-icon >
+                  </button>
+              </youpez-header-tools>
+            </youpez-header>
+            <div fxFlex class="relative">
+                <youpez-sidenav-container panel="solid">
+                    <app-list-property></app-list-property>
+                </youpez-sidenav-container>
+            </div>        
+        </div>
+
+      <youpez-sidenav
+        [breakpoint]="'md'"
+        [direction]="'bottom'"
+        [opened]="true"
+        [hoverAble]="true"
+        [mode]="'side'"
+        initWidth="370"
+        [toggleableBtn]="true"
+        [size]="'sideBar1'">
+        <div fxFill fxLayout="column" class="app-bg-container relative">
+          <div class="home-tabs-financial sticky top-0 z-10">
+            <cds-tabs type="contained">
+                <cds-tab heading="Finance" [tabContent]="financeCmpt"></cds-tab>
+            </cds-tabs>
+        
+            <ng-template #financeCmpt>
+              <home-property-recap-finance></home-property-recap-finance>
+            </ng-template>
+          </div>
+        </div>
+      </youpez-sidenav>
+  
+      
+    </youpez-sidenav-container>
+  
+  </youpez-sidenav-container>
+  
+  

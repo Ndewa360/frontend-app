@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core'
+import {Component, ElementRef, OnInit, ViewChild, ViewEncapsulation} from '@angular/core'
 import {ColDef, GridOptions } from "@ag-grid-community/core"
 import {InfiniteRowModelModule} from "@ag-grid-community/infinite-row-model"
 import {ClientSideRowModelModule} from "@ag-grid-community/client-side-row-model"
@@ -32,11 +32,13 @@ const locataireCellRenderer = (params) => {
   selector: 'app-financial-history',
   templateUrl: './financial-history.component.html',
   styleUrls: ['./financial-history.component.scss'],
-
+  encapsulation: ViewEncapsulation.None
 })
 export class FinancialHistoryComponent implements OnInit {
 
   @ViewChild('agGrid') agGrid!: AgGridAngular;
+  @ViewChild('paginationPanel', { static: true }) paginationPanel!: ElementRef;
+  
   @Select(HistoryLocationPaymentState.selectStateLoading) historyLocationPaymentLoading$!: Observable<boolean>;
   propertyId=null;
   columnDefs:Array<ColDef>=[]
@@ -61,7 +63,7 @@ export class FinancialHistoryComponent implements OnInit {
   ngOnInit(): void {
     this.propertyId = this._activatedRoute.parent.snapshot.paramMap.get('id');
     if(!this.propertyId)  {
-      this._router.navigateByUrl('/app/properties/list');;
+      this._router.navigateByUrl('/app/properties/home');;
       return;
     }
     this.createTable()
@@ -76,6 +78,14 @@ export class FinancialHistoryComponent implements OnInit {
 
   createTable() {
     this.columnDefs= [
+      {
+        headerName: '#', 
+        valueGetter: 'node.rowIndex + 1', 
+        width: 70,
+        pinned: 'left',
+        filter: false,
+        // cellClass: 'cell-flex-middle'
+      },
       {
         headerName: 'Locataire',
         field: 'locataire',
@@ -151,25 +161,25 @@ export class FinancialHistoryComponent implements OnInit {
       rowData: rowData,
       rowHeight: 40,
       headerHeight: 40,
-      rowSelection: 'multiple',
+      rowSelection: 'single',
       defaultColDef: {
         filter:true,
         floatingFilter: true,
         sortable: true,
-        resizable: true,        
+        // resizable: true,        
       },
-      enableBrowserTooltips:false,
       pagination: true,
-      paginationPageSize: 30,
-      groupSelectsChildren: true,
-      context: { componentParent: this }
+      paginationPageSize: 15,
+      domLayout: "autoHeight",
     }
     this.loadingProcess.next(false)
     this.dataFound = [...rowData]
     setTimeout(() => {
-      this.agGrid.api.refreshCells({force:true})
-      this.agGrid.api.purgeInfiniteCache()
-      this.agGrid.api.sizeColumnsToFit()
+      if(this.agGrid) {
+        // this.agGrid.api.redrawRows()
+        // this.agGrid.api.purgeInfiniteCache()
+        this.agGrid.api.sizeColumnsToFit()
+      }
     });
 
   }
@@ -182,6 +192,12 @@ export class FinancialHistoryComponent implements OnInit {
     console.log("Row Data",row)
   }
 
+  exportToCSV()
+  {
+    this.agGrid.api.exportDataAsCsv({
+      fileName: `Historique des paiements`
+    })
+  }
 
   getRoomString(room)
   {

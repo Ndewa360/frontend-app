@@ -7,7 +7,7 @@ import { of, throwError } from "rxjs";
 import { catchError, tap } from "rxjs/operators";
 import { UtilsString } from "../../utils";
 import { ToastrService } from "ngx-toastr";
-import { StatisticAllPaymentLocataireYearModel, StatisticLocataireYearModel, StatisticRoomYearModel } from "./statistic.model";
+import { StatisticAllPaymentLocataireYearModel, StatisticLocataireYearModel, StatisticPaymentOfAllPropertyByYear, StatisticRoomYearModel } from "./statistic.model";
 
 export class StatisticStateModel {
     roomStatistic:StatisticRoomYearModel[] //statistic de chambre
@@ -18,6 +18,8 @@ export class StatisticStateModel {
     loadingRoomStatistic:boolean
     locataireStatisticLoading:boolean
     allLocatairePayementByYearLoading:boolean
+    loadingStatisticRecaptilationLoading:boolean
+    statisticRecapitulationPayment:StatisticPaymentOfAllPropertyByYear[] //statistique de recaptiulation de paiement par ans
 }
 
 
@@ -27,10 +29,12 @@ export class StatisticStateModel {
         loadingStatistic:false,
         loadingRoomStatistic:false,
         locataireStatisticLoading:false,
+        loadingStatisticRecaptilationLoading:false,
         allLocatairePayementByYearLoading:false,
         roomStatistic:[],
         locataireStatistic:[],
-        allLocatairePayementByYear:[]
+        allLocatairePayementByYear:[],
+        statisticRecapitulationPayment:[],
         // initLoadingState:'NO_LOADED',
     }
 })
@@ -66,6 +70,12 @@ export class StatisticState{
     {
         return state.loadingRoomStatistic
     }
+
+    @Selector()
+    static selectPaymentRecapitulationStatisticLoading(state:StatisticStateModel)
+    {
+        return state.loadingStatisticRecaptilationLoading
+    }
    
 
     static selectStateStatisticByRoom(roomId)
@@ -78,12 +88,14 @@ export class StatisticState{
         })
     }
 
+    static selectStateStatisticRecapitulationPaymentBydYear(year:number=new Date().getFullYear())
+    {
+        return createSelector([StatisticState],(state)=> state.statisticRecapitulationPayment.filter((u)=> u.year==year))    
+    }
+
     static selectStateStatisticLocataireByPropertyIdAndYear(propertyID,year:number=new Date().getFullYear())
     {
-        return createSelector([StatisticState],(state)=> {
-            //console.log("Locataire Statistic Found",state.locataireStatistic)
-            return state.locataireStatistic.filter((u)=>u.locataire.property==propertyID && u.year==year)
-        })    
+        return createSelector([StatisticState],(state)=> state.locataireStatistic.filter((u)=>u.locataire.property==propertyID && u.year==year))    
     }
 
     static selectStateStatisticAllPaymentLocataireByPropertyIdAndYear(propertyID,year:number|string=new Date().getFullYear())
@@ -110,6 +122,31 @@ export class StatisticState{
                         loadingStatistic:false,
                         loadingRoomStatistic:false,
                         roomStatistic:[...state.roomStatistic, ...result.data]
+                    })
+                }
+            )
+        )
+    }
+
+    @Action(StatisticAction.FetchStatisticPaymentRecapitulationAccountOfAllPropertyByYear)
+    fetchPaymentRecapitulationByYear(ctx:StateContext<StatisticStateModel>,{year}:StatisticAction.FetchStatisticPaymentRecapitulationAccountOfAllPropertyByYear)
+    {
+        const state = ctx.getState();
+        let index = state.statisticRecapitulationPayment.findIndex((u)=>u.year==year);
+        console.log("Index Static", index, year, state.statisticRecapitulationPayment)
+        // //console.log("Index Static", index,propertyID,state.roomStatistic)
+        if(index>-1) return of(true);
+
+        ctx.patchState({
+            loadingStatisticRecaptilationLoading:true
+        })
+        return this._statisticsService.getPaymentRecapitulationAccountOfAllPropertyByYear(year).pipe(
+            tap(
+                result => {
+                    console.log("FetchStatisticPaymentRecapitulationAccountOfAllPropertyByYear ",result)
+                    ctx.patchState({
+                        loadingStatisticRecaptilationLoading:false,
+                        statisticRecapitulationPayment:[...state.statisticRecapitulationPayment, result.data]
                     })
                 }
             )

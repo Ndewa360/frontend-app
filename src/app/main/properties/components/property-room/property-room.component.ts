@@ -31,7 +31,7 @@ export class PropertyRoomComponent implements OnInit {
   ngOnInit(): void {
     let propertyId = this._activatedRoute.parent.snapshot.paramMap.get('id');
     if(!propertyId)  {
-      this._router.navigateByUrl('/app/properties/list');;
+      this._router.navigateByUrl('/app/properties/home');;
       return;
     }
     this.roomFound$=this._store.select(RoomState.selectStateRoomByPropertyId(propertyId));

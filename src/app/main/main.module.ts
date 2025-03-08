@@ -38,11 +38,21 @@ import { RoomModule } from './room/room.module';
 import { GaleryPropertyComponent } from './properties/components/galery-property/galery-property.component'
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model'
 import { ModuleRegistry } from '@ag-grid-community/core'
+import { CsvExportModule } from '@ag-grid-community/csv-export';
 import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model'
 import { FilterModule } from '@ag-grid-community/core/dist/types/src/filter/filterModule';
 import { CustomHistoryFinanceCellActionComponent } from './properties/components/custom-history-finance-cell-action/custom-history-finance-cell-action.component';
+import { HomePropertyComponent } from './properties/home-property/home-property.component';
+import { HomePropertyRecapFinanceComponent } from './properties/components/home-property-recap-finance/home-property-recap-finance.component';
+import { HomePropertyRecapFinanceYearComponent } from './properties/components/home-property-recap-finance-year/home-property-recap-finance-year.component';
+import { HomePropertyRecapFinanceMonthComponent } from './properties/components/home-property-recap-finance-month/home-property-recap-finance-month.component'
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, InfiniteRowModelModule ]);
+ModuleRegistry.registerModules([
+  ClientSideRowModelModule, 
+  InfiniteRowModelModule, 
+  CsvExportModule
+  // ExcelExportModule
+]);
 
 @NgModule({
   declarations: [
@@ -69,6 +79,10 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, InfiniteRowModelModule
     RemoveLocataireRoomComponent,
     GaleryPropertyComponent,
     CustomHistoryFinanceCellActionComponent,
+    HomePropertyComponent,
+    HomePropertyRecapFinanceComponent,
+    HomePropertyRecapFinanceYearComponent,
+    HomePropertyRecapFinanceMonthComponent,
     
   ],
   imports: [

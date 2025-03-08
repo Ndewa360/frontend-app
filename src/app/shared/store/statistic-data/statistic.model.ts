@@ -15,6 +15,20 @@ export interface StatisticLocataireYearModel {
     year:string;
 }
 
+export interface StatisticPaymentOfAllPropertyByYear {
+    year: string;
+    paymentProperty: {
+        property:PropertyModel, 
+        amountMonth:{totalAmountRelicat:number,totalAmountReceived:number,totalAmountToBeReceveid:number,month:number}[],
+        amountProperty:{totalAmountRelicat:number,totalAmountReceived:number,totalAmountToBeReceveid:number}
+    }[],
+    paymentYear:{
+        totalAmountRelicat:number,
+        totalAmountReceived:number,
+        totalAmountToBeReceveid:number
+    }
+}
+
 export enum StatisticPaymentStateType
 {   
     ENDED_CONTRACT="payed",
