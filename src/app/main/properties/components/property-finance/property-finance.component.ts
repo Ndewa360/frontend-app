@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { combineLatest, Observable } from 'rxjs';
@@ -8,7 +8,8 @@ import { UtilsString } from 'src/app/shared/utils';
 @Component({
   selector: 'app-property-finance',
   templateUrl: './property-finance.component.html',
-  styleUrls: ['./property-finance.component.scss']
+  styleUrls: ['./property-finance.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class PropertyFinanceComponent implements OnInit {
 

@@ -1,7 +1,7 @@
 import { CurrencyPipe } from '@angular/common';
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Store } from '@ngxs/store';
-import { Currency, StatisticAllPaymentLocataireYearModel, StatisticState } from 'src/app/shared/store';
+import { Currency, StatisticAllPaymentLocataireYearModel, StatisticPaymentStateType, StatisticState } from 'src/app/shared/store';
 import { UtilsString } from 'src/app/shared/utils';
 
 @Component({
@@ -46,7 +46,7 @@ export class ChartFinancePayementAnneeComponent implements OnChanges{
           // //console.log("Here PAras",params);
           let status = params.data[2];  // Statut du paiement 
           let statusText = this.getTextFromPaymentStatus(status);
-          let room = this.getRoomInfosByUserName(params.data[1])
+          let room = this.getRoomInfosByUserName(params.data[1], params.data[0])
           return `
             ${params.seriesName}<br/>Locataire: ${params.data[1]}<br/>
             Mois: ${UtilsString.capitalizedFirstLetter(new Date(this.selectedYear,params.data[0]).toLocaleDateString("fr-FR",{month:'long'}))}<br/>
@@ -84,12 +84,12 @@ export class ChartFinancePayementAnneeComponent implements OnChanges{
       },
       visualMap: {
         min: 0,
-        max: 4,  // 0: Non payé, 1: Payé, 2: Paiement en attente, 3: Contrat rompu,4: Pas encore de contrat
+        max: 5,  // 0: Non payé, 1: Payé, 2: Paiement en attente, 3: Contrat rompu,4:Paiement partiel 5: Pas encore de contrat
         calculable: true,
         show: false,  // Ne pas afficher la légende visuelle
         inRange: {
-          color: ['rgb(220, 38, 38)', 'rgb(101, 163, 13)', 'rgb(203, 213, 225)',"rgb(41, 37, 36)","rgba(41, 37, 36,.8)"], // Rouge, Vert, Blanc,Gris
-          // Rouge pour "Non payé", Vert pour "Payé", Blanc pour "Paiement en attente", Gris pour "Contrat rompu",Gris leger pour "Aucun contrat"
+          color: ['rgb(220, 38, 38)', 'rgb(101, 163, 13)', 'rgb(203, 213, 225)',"rgb(41, 37, 36)",'rgba(100, 163, 13, 0.6)',"rgba(41, 37, 36,.8)"], // Rouge, Vert, Blanc,vert transparent,Gris
+          // Rouge pour "Non payé", Vert pour "Payé", Blanc pour "Paiement en attente", Gris pour "Contrat rompu","Vert légerement transparent pour paiement partiel",Gris leger pour "Aucun contrat"
         }
       },
       series: [{
@@ -99,7 +99,7 @@ export class ChartFinancePayementAnneeComponent implements OnChanges{
         label: {
           show: true,
           formatter: (params)=>{
-            let room = this.getRoomInfosByUserName(params.data[1])
+            let room = this.getRoomInfosByUserName(params.data[1], params.data[0])
             let status = params.data[2];
             return `${this.getTextFromPaymentStatus(status)}`;
           }
@@ -115,22 +115,25 @@ export class ChartFinancePayementAnneeComponent implements OnChanges{
     
   }
 
-  getRoomInfosByUserName(userName)
+  getRoomInfosByUserName(userName, monthData)
   {
-    let room = this.currentPayementData.find((item)=>item.locataire.fullName === userName).room
+    let detailInfos =this.currentPayementData.find((item)=>item.locataire.fullName === userName)
+    let room = detailInfos.room
+    let priceItem = detailInfos.paymentState.find((item)=>item.month === monthData)
+    // console.log("Room", room, price)
     if(!room) return null;
     return {
-      price:` ${this.currencyPipe.transform(room.price,Currency.XAF,'symbol', '1.0-0')}`, 
+      price: priceItem.state==StatisticPaymentStateType.PARTIAL_PAYMENT?this.currencyPipe.transform(priceItem.price,Currency.XAF,'symbol', '1.0-0'):`${this.currencyPipe.transform(room.price,Currency.XAF,'symbol', '1.0-0')}`, 
       roomCode:room.code,
       roomStringTYpe:UtilsString.getStringOfRoomType(room.type)
     }
   }
 
-  getNumberFromStatus(status) // 0: Non payé, 1: Payé, 2: Paiement en attente, 3: Contrat rompu, 4: Aucun contrat
+  getNumberFromStatus(status) // 0: Non payé, 1: Payé, 2: Paiement en attente, 3: Contrat rompu, 4: Paiment partiel, 5: Aucun contrat
   {
-      return status === "unpayed" ? 0 : status === "payed" ? 1 :  status === "waiting" ?2:  status === "endedContract" ?3:4;
+      return status == StatisticPaymentStateType.UNPAYED ? 0 : status ==StatisticPaymentStateType.PAYED ? 1 :  status == StatisticPaymentStateType.WAITING ?2:  status == StatisticPaymentStateType.ENDED_CONTRACT ?3: status == StatisticPaymentStateType.PARTIAL_PAYMENT ?4:5;
   }
   getTextFromPaymentStatus(status){
-    return status === 0 ? 'Non payé' : status === 1 ? 'Payé' :  status === 2 ?'Paiement en attente':status === 3 ?"Fin de contrat":"Aucun contrat";
+    return status === 0 ? 'Non payé' : status === 1 ? 'Payé' :  status === 2 ?'Paiement en attente':status === 3 ?"Fin de contrat":status === 4 ?"Paiement partiel":"Aucun contrat";
   }
 }

@@ -31,10 +31,12 @@ export interface StatisticPaymentOfAllPropertyByYear {
 
 export enum StatisticPaymentStateType
 {   
-    ENDED_CONTRACT="payed",
+    ENDED_CONTRACT="endedContract",
     PAYED="payed",
     UNPAYED="unpayed",
-    WAITING="waiting"
+    WAITING="waiting",
+    PARTIAL_PAYMENT="partialPayment",
+    NO_CONTRACT="noContract"
 }
 
 export interface StatisticPaymentState

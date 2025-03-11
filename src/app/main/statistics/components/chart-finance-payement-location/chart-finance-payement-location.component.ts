@@ -29,7 +29,6 @@ export class ChartFinancePayementLocationComponent implements OnChanges{
       if(this.subscription) this.subscription.unsubscribe();
       this.subscription= this._store.select(StatisticState.selectStateStatisticLocataireByPropertyIdAndYear(this.propertyID,this.selectedYear))
       this.subscription.subscribe((value)=>{
-        //console.log("Value Locataire Statistic ",value)
         this.charsOpts = this.getChart(value)
       })
     }
@@ -37,7 +36,7 @@ export class ChartFinancePayementLocationComponent implements OnChanges{
 
   getChart(data:StatisticLocataireYearModel[]) {
     let legendData=[], dataSeriees=[]
-
+    console.log("Data Serie", data)
     data.forEach((item)=>{
       legendData.push(item.locataire.fullName);
       dataSeriees.push({
