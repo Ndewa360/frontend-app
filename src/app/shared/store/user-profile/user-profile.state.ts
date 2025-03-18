@@ -76,7 +76,9 @@ export class UserProfileState{
                         loadingUserProfile:false,
                         userProfile:result.data.user
                     })     
-                        ctx.dispatch(new AuthTokenAction.SetAuthToken(result.data.access_token));          
+                    console.log("Result Data ",result.data)
+                    
+                        ctx.dispatch(new AuthTokenAction.SetToken(result.data.access_token,result.data.refresh_token));          
                     this._toastrService.success(`Bienvenue sur Ndewa360°! `, 'Ndewa360°');
                 }
             ),
@@ -318,11 +320,14 @@ export class UserProfileState{
     @Action(UserProfileAction.FetchUserProfile)
     fetchUserProfile(ctx:StateContext<UserProfileStateModel>)
     {
+        if(ctx.getState().initLoadingState=="LOADED") return of(true);
+        
         const state = ctx.getState();
-        if(state.userProfile) return of(true);
 
+        
         ctx.patchState({
-            loadingUserProfile:true
+            loadingUserProfile:true,
+            initLoadingState:"LOADING"
         })
         return this._userProfilesService.getUserProfile().pipe(
             tap(
@@ -338,7 +343,7 @@ export class UserProfileState{
             catchError((error) => {
                 ctx.patchState({
                     loadingUserProfile: false,
-                    initLoadingState:"LOADED"
+                    initLoadingState:"NO_LOADED"
                 })
                 let message = error?.error?.message;
                 if(!message) message = "Une erreur c'est produite! Réessayez plus tard"

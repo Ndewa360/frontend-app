@@ -149,6 +149,7 @@ export class PropertyState{
         return this._propertysService.getProperty(propertyId).pipe(
             tap(
                 result => {
+                    console.warn("Property Found ",result)
                     ctx.patchState({
                         loadingProperty:false,
                         properties:[...state.properties, result.data]
@@ -214,8 +215,9 @@ export class PropertyState{
     @Action(PropertyAction.FetchProperties)
     fetchProperties(ctx:StateContext<PropertyStateModel>)
     {
+        if(ctx.getState().initLoadingState=="LOADED") return of(true);
+
         const state = ctx.getState();
-        
         ctx.patchState({
             loadingProperty:true,
             initLoadingState:"LOADING"
@@ -223,7 +225,7 @@ export class PropertyState{
         return this._propertysService.getProperties().pipe(
             tap(
                 result => {
-                    //console.log("Fetch Properties ",result)
+                    console.log("Fetch Properties ",result)
                     if(state.initLoadingState!="LOADED") ctx.patchState({initLoadingState:'LOADED'})
                     ctx.patchState({
                         loadingProperty:false,

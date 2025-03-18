@@ -19,13 +19,18 @@ export class ListPropertyComponent implements OnInit {
 
   @Select(PropertyState.setlectStateProperties) properties$:Observable<PropertyModel[]>;
   @Select(PropertyState.selectStateInitLoading) initLoading$:Observable<string>;
-
+ 
  
 
   constructor(private dialog: MatDialog,private _store:Store) { }
 
   ngOnInit(): void {
-
+    this.initLoading$.subscribe((value)=>{
+      console.log("Init Loading Property ",value)
+    })
+    this.properties$.subscribe((value)=>{
+      console.log("Value Property ",value)
+    })
   }
 
 

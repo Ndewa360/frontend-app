@@ -61,4 +61,18 @@ export class AuthTokenState{
         return of(true)
     }  
 
+    @Action(AuthTokenAction.SetToken)
+    setToken(ctx:StateContext<AuthTokenStateModel>,{authToken,refreshToken}:AuthTokenAction.SetToken)
+    {
+        ctx.patchState( { authToken,refreshToken } )
+        return of(true)
+    }
+
+    @Action(AuthTokenAction.Logout)
+    logout(ctx:StateContext<AuthTokenStateModel>)
+    {
+        ctx.patchState( { authToken:null,refreshToken:null } )
+        return of(true)
+    }
+
 }

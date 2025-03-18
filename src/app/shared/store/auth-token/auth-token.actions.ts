@@ -12,4 +12,18 @@ export namespace AuthTokenAction
         constructor(public token:string){}
     }
 
+    export class SetToken
+    {
+        static readonly type = '[AuthToken] Set AuthToken & RefreshToken'
+        constructor(public authToken:string,public refreshToken:string){}
+    }
+
+    export class Logout
+    {
+        static readonly type = '[Token] Logout'
+        constructor(){}
+    }
+
+    
+
 }
