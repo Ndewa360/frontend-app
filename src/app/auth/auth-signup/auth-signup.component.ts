@@ -31,7 +31,7 @@ export class AuthSignupComponent implements OnInit {
     this.formGroup = this.formBuilder.group({
       fullName: ['', [Validators.required,]],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required],
+      password: ['', Validators.required, Validators.minLength(8)],
       phoneNumber:[null, [Validators.required, Validators.pattern('^(\\+\\d{1,3}\\s)?(\\d{2,3}[\\s.-]?){4}$')]],
       condition: [true],
     })
@@ -52,14 +52,14 @@ export class AuthSignupComponent implements OnInit {
       (value) => {
         this.waittingResponse=false; 
         // if()
-        this.router.navigate(["/auth/confirmation"])
+        // this.router.navigate(["/auth/confirmation"])
       })
   }
 
   onSubmit() {
     this.formGroup.markAllAsTouched()
     this.waittingResponse=true;
-    this._store.dispatch(new UserProfileAction.SignupSimpleUserProfile(this.formGroup.value.email,this.formGroup.value.password,this.formGroup.value.fullName));
+    this._store.dispatch(new UserProfileAction.SignupSimpleUserProfile(this.formGroup.value.email,this.formGroup.value.password,this.formGroup.value.fullName,this.formGroup.value.phoneNumber));
     
   }
 

@@ -88,6 +88,7 @@ export class AuthTokenInterceptor implements HttpInterceptor {
           case 401:
               this._toastrService.error(`Email ou mot de passe incorrect! `, 'Ndewa360°');
               break;
+              
           case 406:
               this._toastrService.warning(`Compte innactivé! Veuillez valider ce compte a partir du lien fourni par mail! `, 'Ndewa360°');
               break;

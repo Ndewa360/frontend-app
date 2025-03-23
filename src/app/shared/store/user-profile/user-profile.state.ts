@@ -101,14 +101,14 @@ export class UserProfileState{
     }
 
     @Action(UserProfileAction.SignupSimpleUserProfile)
-    signupSimpleUserProfileState(ctx:StateContext<UserProfileStateModel>,{email,password,username}:UserProfileAction.SignupSimpleUserProfile)
+    signupSimpleUserProfileState(ctx:StateContext<UserProfileStateModel>,{email,password,username,phoneNumber}:UserProfileAction.SignupSimpleUserProfile)
     {
         const state = ctx.getState();
         ctx.patchState({
             loadingUserProfile: true
         })
 
-        return this._authService.register(email,password,username).pipe(
+        return this._authService.register(email,password,username,phoneNumber).pipe(
             tap(
                 (result)=>{
                     ctx.patchState({
@@ -122,19 +122,19 @@ export class UserProfileState{
                 ctx.patchState({
                     loadingUserProfile: false
                 })
-                switch(error.status)
-                {
-                    case 409:
-                        this._toastrService.error("Ce compete existe déjà! ","Ndewa360°");
-                        break;
-                    case 400:
-                        this._toastrService.error("Format de mot de passe incorrect! ","Ndewa360°");
-                        break;
-                    default:
-                        let message = error?.error?.message;
-                        if(!message) message = "Une erreur c'est produite! Réessayez plus tard"
-                        this._toastrService.error(message, 'Ndewa360°');
-                }
+                // switch(error.status)
+                // {
+                //     case 409:
+                //         this._toastrService.error("Ce compete existe déjà! ","Ndewa360°");
+                //         break;
+                //     case 400:
+                //         this._toastrService.error("Format de mot de passe incorrect! ","Ndewa360°");
+                //         break;
+                //     default:
+                //         let message = error?.error?.message;
+                //         if(!message) message = "Une erreur c'est produite! Réessayez plus tard"
+                //         this._toastrService.error(message, 'Ndewa360°');
+                // }
                 
                 return throwError(error);
                 

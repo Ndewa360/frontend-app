@@ -24,8 +24,8 @@ export class AuthService {
   }
 
 
-  register(email: string, password: string,username:string):Observable<ApiResultFormat<UserProfileModel>> {
-    return this._httpClient.post<ApiResultFormat<UserProfileModel>>(`${environment.apiUrl}/user/auth/register`,{email,password,name:username});
+  register(email: string, password: string,username:string, phoneNumber:string):Observable<ApiResultFormat<UserProfileModel>> {
+    return this._httpClient.post<ApiResultFormat<UserProfileModel>>(`${environment.apiUrl}/user/auth/register`,{email,password,name:username,phoneNumber});
 
   }
 
