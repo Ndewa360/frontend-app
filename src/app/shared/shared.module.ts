@@ -77,8 +77,9 @@ import { BrowserModule } from '@angular/platform-browser';
         ContractState
       ]),
       NgxsStoragePluginModule.forRoot({
-        key:"auth_token",
-        storage:StorageOption.SessionStorage
+        key:["auth_token"]
+        // key:"auth_token",
+        // storage:StorageOption.SessionStorage
       }),
       NgxsRouterPluginModule.forRoot(),
       ToastrModule.forRoot({
