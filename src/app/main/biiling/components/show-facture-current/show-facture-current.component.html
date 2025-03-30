@@ -28,14 +28,24 @@
                 </div>
             </div>
             <div fxFlex="100%" fxFlex.gt-md="33.33%" class="app-card__block">
-                <div class="flex justify-between">
+                <div class="flex justify-between state-billing">
                     <div>
                         <div class="app-productive-heading-03">Status de la facture</div>
                     </div>
-                    <!-- <div class="app-row app-row--center app-color-success">
-                        <span class="mr-1">Payé</span>
-                        <youpez-ibm-icon iconName="checkMarkOutline" iconSize="32"></youpez-ibm-icon>
-                    </div> -->
+                    <!-- <ng-container [ngSwitch]="currentPeriod.state">
+                        <div *ngSwitchCase="'payed'" class="app-row app-row--center app-color-success">
+                            <span class="mr-1">Payé</span>
+                            <youpez-ibm-icon iconName="checkMarkOutline" iconSize="32"></youpez-ibm-icon>
+                        </div>
+                        <div  *ngSwitchCase="'waiting'" class="app-row app-row--center ">
+                            <span class="mr-1">En attente de paiement</span>
+                            <youpez-ibm-icon iconName="warningMarkOutline" iconSize="32"></youpez-ibm-icon>
+                        </div>
+                        <div  *ngSwitchCase="'unpaid'" class="app-row app-row--center app-color-danger">
+                            <span class="mr-1">Non payé</span>
+                            <youpez-ibm-icon iconName="closeOutline" iconSize="32"></youpez-ibm-icon>
+                        </div>
+                    </ng-container> -->
                     <div class="app-row app-row--center ">
                         <span class="mr-1">Inconnu</span>
                         <youpez-ibm-icon iconName="warningMarkOutline" iconSize="32"></youpez-ibm-icon>

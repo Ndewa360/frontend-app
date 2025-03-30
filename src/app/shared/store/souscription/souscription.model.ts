@@ -1,3 +1,5 @@
+import { SouscriptionPeriodModel } from "../souscription-period";
+
 export enum SouscriptionPayementState 
 {
     WAITING="waiting",
@@ -26,7 +28,7 @@ export interface SouscriptionModel {
 
     unPayReminderId:string;
     
-    periods:string[];
+    periods:SouscriptionPeriodModel[];
 
     currentPeriod:string;
 

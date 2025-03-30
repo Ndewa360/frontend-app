@@ -109,14 +109,17 @@ export class SouscriptionState{
         return this._souscriptionService.getSouscriptions(userId).pipe(
             tap(
                 result => {
-                    //console.log("Souscription data ",result)
+                    console.log("Souscription data ",result.data)
                     ctx.patchState({
                         loadingSouscription:false,
                         souscription:[...state.souscription, ...result.data],
                         initLoadingState:"LOADED"
                     })
                     result.data.forEach(element => {
-                        ctx.dispatch(new SouscriptionPeriodAction.FetchSouscriptionPeriod(element.currentPeriod));
+                        element.periods.forEach((u)=>{
+                            ctx.dispatch(new SouscriptionPeriodAction.SetSouscriptionPeriod(u))
+                        })
+                        // ctx.dispatch(new SouscriptionPeriodAction.FetchSouscriptionPeriod(element.currentPeriod));
                     });
                     if(result.data.length==0) ctx.dispatch(new SouscriptionPeriodAction.SetInitLoading("LOADED"))
                 }
