@@ -14,6 +14,7 @@ import { PropertyVedetteComponent } from './components/property-vedette/property
 import { ContactUsComponent } from './components/contact-us/contact-us.component';
 import { TarifsListComponent } from './components/tarifs-list/tarifs-list.component';
 import { SloganTextComponent } from './components/slogan-text/slogan-text.component';
+import { ScrollToTopComponent } from './components/scroll-to-top/scroll-to-top.component';
 
 
 @NgModule({
@@ -28,7 +29,8 @@ import { SloganTextComponent } from './components/slogan-text/slogan-text.compon
     PropertyVedetteComponent,
     ContactUsComponent,
     TarifsListComponent,
-    SloganTextComponent
+    SloganTextComponent,
+    ScrollToTopComponent
   ],
   imports: [
     CommonModule,
