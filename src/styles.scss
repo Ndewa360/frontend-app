@@ -92,7 +92,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   
   [appScrollReveal] {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(40px);
     transition: all 0.8s ease-out;
   }
   
@@ -100,3 +100,14 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     opacity: 1;
     transform: translateY(0);
   }
+
+.fade-left { transform: translateX(-30px); }
+.fade-right { transform: translateX(30px); }
+.zoom-in { transform: scale(0.8); }
+
+.revealed.fade-left,
+.revealed.fade-right,
+.revealed.zoom-in {
+  transform: none;
+  opacity: 1;
+}

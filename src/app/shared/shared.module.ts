@@ -44,6 +44,8 @@ import { FullScreenGaleryComponent } from './components/full-screen-galery/full-
 import { SinglePageScreenGaleryComponent } from './components/single-page-screen-galery/single-page-screen-galery.component';
 import { SwiperDirective } from './directives';
 import { BrowserModule } from '@angular/platform-browser';
+import { ScrollRevealDirective } from './directives/scroll-reveal/scroll-reveal.directive';
+import { CountUpDirective } from './directives/counter-up/counter-up.directive';
 
 
 
@@ -102,7 +104,9 @@ import { BrowserModule } from '@angular/platform-browser';
     SliderComponentGaleryComponent,
     FullScreenGaleryComponent,
     SinglePageScreenGaleryComponent,
-    SwiperDirective
+    SwiperDirective,
+    ScrollRevealDirective,
+    CountUpDirective
   ],
   exports: [
     YoupezModule,
@@ -120,7 +124,9 @@ import { BrowserModule } from '@angular/platform-browser';
     GaleryVideo360Component,
     SliderComponentGaleryComponent,
     FullScreenGaleryComponent,
-    SinglePageScreenGaleryComponent
+    SinglePageScreenGaleryComponent,
+    ScrollRevealDirective,
+    CountUpDirective
   ],
   schemas: [
       CUSTOM_ELEMENTS_SCHEMA
