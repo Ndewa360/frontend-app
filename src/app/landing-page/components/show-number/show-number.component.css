@@ -1,0 +1,53 @@
+.show-number {
+    background-color: #BB8910;
+    color: white;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    padding-left: 13%;
+}
+
+.show-number .show-number-value {
+    margin-left: 4px;
+}
+
+.show-number .show-number-value {
+    font-weight: bolder;
+    font-size: 40px;
+}
+
+.show-number  .show-number-img
+{
+    width: 50px;
+}
+
+.show-number .show-number-list .sub-text {
+    font-size: 18px;
+}
+
+.show-number .show-number-value,
+.show-number  .show-number-img
+{
+    vertical-align: middle;
+}
+
+@media only screen and (max-width: 900px) {
+    .show-number {
+        padding-left: 0; 
+    }
+    .list-number.first,
+    .list-number.second {
+        margin-bottom: 35px;
+    }
+
+    .show-number-list {
+        margin:10px;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    .list-number.first,
+    .list-number.second,
+    .list-number.third {
+        margin-bottom: 35px;
+    }
+}

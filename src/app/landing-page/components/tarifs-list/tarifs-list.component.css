@@ -1,0 +1,112 @@
+.text-header  h1{
+    font-size: 35px;
+    font-weight: bold;
+    font-family: 'Inter';
+}
+
+.text-header  span{
+    font-size: 20px;
+}
+
+.tarifs-list{
+    padding-top:40px;
+    padding-bottom: 40px;
+}
+
+.list-func-section  {
+    margin-left: 27%;
+}
+
+.tarif-plan
+{
+    border-radius: 10px;
+    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4);
+    padding: 30px;
+    background-color: white;
+}
+
+
+
+.plan-type {
+    font-size: 16px;
+    margin-bottom: 10px;
+    font-weight:500;
+}
+
+.plan-price 
+{
+    font-size: 35px;
+    font-weight: bold;
+    margin-bottom: 30px;
+}
+
+.plan-pro-type {
+    font-size: 35px;
+    margin-bottom: 30px;
+}
+
+
+.tarif-free {
+    padding-top: 80px;
+}
+.tarif-btn {
+    box-shadow: 1px 1px 1px rgba(204, 140, 10,.4);
+    border-radius: 6px;
+}
+
+.app-btn-start-free-tarif 
+{
+    margin-top:130px
+}
+
+.special-mention-for-pro {
+    display:flex;
+    justify-content: space-between;
+    margin-bottom: 25px;
+}
+
+.special-mention-for-pro span
+{
+    padding: 10px 25px 4px 25px;
+    background-color: #BB8910;
+    color: white;
+    font-size: 20px;
+    border-radius: 20px;
+    vertical-align: middle;
+}
+.special-mention-for-pro img{
+    width: 40px;
+}
+/* .tarif-plan ul {
+    list-style-image: url("/assets/landing/Checkmark.svg");
+} */
+
+.tarif-plan ul li {
+    margin-top: 15px;
+    font-size: 15px;
+}
+
+.tarif-plan ul li > * {
+    vertical-align: middle;
+} 
+
+.tarif-plan ul li img {
+    margin-top: 5px;
+    width: 30px;
+    margin-right: 10px;
+}
+
+@media only screen and (max-width: 900px) {
+    .list-func-section  {
+        margin-left: 5%;
+    }
+
+    .tarif-plan:first-child {
+        margin-bottom: 20px;
+    }
+
+    .app-btn-start-free-tarif {
+        margin-top: 35px;
+    }
+}
+

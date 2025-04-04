@@ -42,10 +42,14 @@ const routes: Routes = [
 		loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)
 	  },
 	  {
-		path: '**',
-		redirectTo: '/search/index',
-		pathMatch: 'full',
-	  },
+		path: '',
+		loadChildren: () => import('./landing-page/landing-page.module').then(m => m.LandingPageModule)
+	  }
+	//   {
+	// 	path: '**',
+	// 	redirectTo: '/search/index',
+	// 	pathMatch: 'full',
+	//   },
 ];
 
 @NgModule({

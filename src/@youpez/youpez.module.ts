@@ -89,6 +89,10 @@ import { YoupezAlertComponent } from './components/alert'
 import { ChartsModule } from './modules/charts/charts.module'
 import { AppLoaderComponent } from './components/app-loader/app-loader.component'
 import { AppProgressBarComponent } from './components/app-progress-bar/app-progress-bar.component'
+import { LandingFooterComponent } from './layout/landing/landing-footer/landing-footer.component'
+import { LandingHeaderComponent } from './layout/landing/landing-header/landing-header.component'
+import { LandingHeaderProfilDataComponent } from './layout/landing/landing-header-profil-data/landing-header-profil-data.component'
+import { LandingLayoutComponent } from './layout/landing/landing-layout/landing-layout.component'
 // import { NgxMatIntlTelInputComponent } from "ngx-mat-intl-tel-input"
 
 
@@ -174,6 +178,11 @@ const Components = [
   YoupezAlertComponent,
   AppLoaderComponent,
   AppProgressBarComponent,
+
+  LandingFooterComponent,
+  LandingHeaderComponent,
+  LandingHeaderProfilDataComponent,
+  LandingLayoutComponent
 ]
 
 const Pipes = [

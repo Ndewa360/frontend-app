@@ -1,14 +1,15 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { LayoutComponent } from './components/layout/layout.component';
 import { SearchPageComponent } from './search-page/search-page.component';
 import { SearchPageDataResolver, SearchRoomDataResolver } from 'src/app/shared/resolvers';
 import { RoomPageOverviewComponent } from './components/room-page-overview/room-page-overview.component';
+import { LandingLayoutComponent } from 'src/@youpez/layout/landing/landing-layout/landing-layout.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: LayoutComponent,
+    // component: LayoutComponent,
+    component: LandingLayoutComponent,
     children: [
       {
         path: 'index',

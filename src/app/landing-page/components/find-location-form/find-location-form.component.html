@@ -1,0 +1,91 @@
+  <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
+    <div fxFlex>
+
+    <div class="app-form form-find-location">
+        <div fxLayout="row wrap" class="app-form__row">
+            <div class="app-form__item" fxFlex="100%" fxFlex.gt-md="33.33%">
+                <ibm-label
+                  [helperText]="''"
+                  [invalid]="isValid('location')"
+                  [invalidText]="'Ce champ est obligatoire'">
+                  <span class="find-location-text-label">Localisation</span>
+                  
+                  <div class="custom-input-wrapper">
+                    <img src="assets/landing/Location.svg" alt="Location" class="input-icon">
+                    <input
+                      formControlName="location"
+                      ibmText
+                      [invalid]="isValid('location')"
+                      [disabled]="false"
+                      theme="light"
+                      [placeholder]="'Où souhaitez-vous habiter'"
+                      [autocomplete]="true">
+                  </div>
+                  
+                </ibm-label>
+              </div>
+
+              <div class="app-form__item" fxFlex="100%" fxFlex.gt-md="33.33%">
+                <ibm-label
+                  [helperText]="''"
+                  [invalid]="isValid('propertyType')"
+                  [invalidText]="'Ce champ est obligatoire'">
+                  <span class="find-location-text-label">Type de bien</span>
+                  
+                  <div class="custom-input-wrapper">
+                    <img src="assets/landing/Keypad.svg" alt="Location" class="input-icon">
+                    <input
+                      formControlName="propertyType"
+                      ibmText
+                      [invalid]="isValid('propertyType')"
+                      [disabled]="false"
+                      theme="light"
+                      [placeholder]="'Type de logement'"
+                      [autocomplete]="true">
+                  </div>
+                  
+                </ibm-label>
+              </div>
+              <div class="app-form__item" fxFlex="100%" fxFlex.gt-md="33.33%">
+                <ibm-label
+                  [helperText]="''"
+                  [invalid]="isValid('price')"
+                  [invalidText]="'Ce champ est obligatoire'">
+                  <span class="find-location-text-label">Budget</span>
+                  
+                  <div class="custom-input-wrapper">
+                    <img src="assets/landing/Dollar_Bag.svg" alt="Budget" class="input-icon">
+                    <input
+                      formControlName="price"
+                      ibmText
+                      [invalid]="isValid('price')"
+                      [disabled]="false"
+                      theme="light"
+                      [placeholder]="'Budget max'"
+                      [autocomplete]="true">
+                  </div>
+                  
+                </ibm-label>
+              </div>
+        </div>
+      
+
+      <div class="app-form__submit text-center">
+        <!--  -->
+        <button type="submit" cdsButton size="lg" class="custom-found-btn custom-primary-button" ibmButton="primary" >
+          <!-- <ibm-loading *ngIf="waittingResponse; else noWaitingResponse"></ibm-loading> -->
+          <!-- <ng-template #noWaitingResponse> -->
+            <div class="content-butom-found">
+                <span class="btn-text">Rechercher</span>
+                <youpez-ibm-icon iconClass="cds--btn__icon" iconName="arrowRight" iconSize="16" ></youpez-ibm-icon >
+            </div>
+            
+          <!-- </ng-template> -->
+        </button>
+      </div>
+    </div>
+    </div>
+  </form>
+  
+  
+  

@@ -1,0 +1,73 @@
+.custom-found-btn {
+    border-radius: 6px;
+}
+
+.content-butom-found  {
+    margin-left: 10px;
+    margin-right: 10px;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.content-butom-found .btn-text, 
+.content-butom-found .cds--btn__icon
+{
+    vertical-align: middle;
+}
+
+.content-butom-found .cds--btn__icon {
+    margin-top: 10px;
+}
+
+.find-location-text-label {
+    text-align: center;
+    font-weight: bolder;
+    font-size: 24px;
+}
+
+.form-find-location .app-form__item {
+    text-align: center;
+}
+
+.form-find-location .cds--label{
+    width: 100%;
+}
+
+.form-find-location input
+{
+    border-width: 2px;
+    outline: 2px solid rgba(0,0,0,0.3);
+    border-block-end:none;
+    box-shadow: 0.2px 0.2px rgba(0,0,0,0.3);
+    border-radius: 6px;
+    height: 75px;
+    margin-top: 10px;
+    padding-left: 60px;
+    font-size:20px;
+}
+
+.form-find-location input:focus
+{
+    outline: 2px solid #BB8910;
+}
+.custom-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .input-icon {
+    position: absolute;
+    left: 10px;
+    width: 40px;  /* Ajuste la taille selon ton besoin */
+    height: auto;
+    pointer-events: none; /* Empêche l'icône d'être cliquable */
+  }
+
+  @media only screen and (max-width: 600px) {
+    .find-location-text-label {
+        text-align: left;
+    }
+    
+  }

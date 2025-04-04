@@ -1,0 +1,153 @@
+.text-header  h1{
+    font-size: 35px;
+    font-weight: bold;
+    font-family: 'Inter';
+}
+
+.text-header  span{
+    font-size: 20px;
+}
+
+.show-solution-complete{
+    padding-top:40px;
+    padding-bottom: 40px;
+}
+
+
+.functionnality-show-list .list-func-item.first
+{
+    padding-left: 10%;
+}
+
+.functionnality-show-list .list-func-item.second
+{
+    padding-left: 7%;
+}
+
+.functionnality-show-list .list-func-item.third {
+    padding-right: 7%;
+}
+
+.functionnality-show-list .list-func-item.third .title_img img {
+    width: 100px;
+}
+
+
+.functionnality-show-list  ul{
+    margin-left: 75px;
+}
+
+/* .functionnality-show-list ul {
+    list-style-image: url("/assets/landing/Checkmark.svg");
+} */
+
+.functionnality-show-list ul li {
+    margin-top: 15px;
+    font-size: 15px;
+}
+
+.functionnality-show-list ul li > * {
+    vertical-align: middle;
+} 
+
+.functionnality-show-list ul li img {
+    margin-top: 5px;
+    width: 30px;
+    margin-right: 10px;
+}
+
+.title_img img{
+    background-color: rgba(187, 137, 16,0.1);
+    border-radius: 10px;
+}
+
+.second .title_img img,
+.third .title_img img {
+    padding: 15px;
+}
+
+.functionnality-show-list .text-title {
+    font-weight: bold;
+    font-size: 19px;
+}
+
+.functionnality-show-list .second ul
+{
+    padding-left: 35px;
+}
+
+.functionnality-show-list .third ul 
+{
+    padding-left: 25px;
+}
+
+@media only screen and (max-width: 1500px) {
+    .functionnality-show-list .list-func-item.first
+    {
+        padding-left: 4%;
+    }
+
+    .functionnality-show-list  ul{
+        margin-left: 45px;
+    }
+
+    .functionnality-show-list .list-func-item.second
+    {
+        padding-left: 1%;
+    }
+
+    .functionnality-show-list .list-func-item.third {
+        padding-right: 2%;
+    }
+
+    .functionnality-show-list .third ul 
+    {
+        padding-left: 15px;
+    }
+}
+
+@media only screen and (max-width: 900px) {
+    .functionnality-show-list
+    {
+        margin-top: 0px;
+    }
+
+    .functionnality-show-list .list-func-item
+    {
+        padding-left: 5%;
+        margin-top: 60px;
+    }
+
+    .functionnality-show-list ul
+    {
+        margin-left: 27%;
+    }
+
+    .show-solution-complete {
+        padding: 15px;
+        padding-bottom: 20px;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+
+
+    .functionnality-show-list .list-func-item
+    {
+        padding-left: 5%;
+    }
+
+    .functionnality-show-list .third ul,
+    
+    .functionnality-show-list .list-func-item.second,
+    .functionnality-show-list .list-func-item.first,
+    .functionnality-show-list ul 
+    {
+        margin-left: 0px;
+    }
+
+    .functionnality-show-list .list-func-item.second
+    {
+        padding-left: 0px;
+    }
+}

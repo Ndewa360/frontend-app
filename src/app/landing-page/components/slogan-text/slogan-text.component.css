@@ -1,0 +1,49 @@
+.slogan-text {
+    background-color: black;
+    color: white;
+    font-size: 30px;
+
+    text-shadow: 
+    0 0 5px rgba(255, 255, 255, 0.6),
+    0 0 10px rgba(255, 255, 255, 0.5),
+    0 0 15px rgba(255, 255, 255, 0.4);
+}
+
+.cercles {
+    display: flex;
+    margin-right: 20px;
+    position: absolute;
+  }
+  
+  .cercle:first-child {
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    background-color: white;
+    margin-top: 40px;
+    margin-left: -15px;
+  }
+
+  .cercle:last-child {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background-color: white;
+    margin-top: 20px;
+    margin-left: -10px;
+  }
+
+  @media only screen and (max-width: 600px) {
+    .cercle:first-child {
+      width: 30px;
+      height: 30px;
+      margin-top: 10px;
+    }
+
+    .cercle:last-child {
+      width: 15px;
+      height: 15px;
+      margin-top: 5px;
+      margin-left: -5px;
+    }
+}

@@ -1,0 +1,43 @@
+<div class="find-and-manage app-card">
+    <div class="app-card__content">
+        <div class="">
+            <cds-tabs
+            [type]="'line'"
+            [followFocus]="false"
+            [isNavigation]="false"
+            [cacheActive]="false">
+            <cds-tab heading="Louer" [tabContent]="louer"></cds-tab>
+            <cds-tab heading="Gerer"  [tabContent]="gerer"></cds-tab>
+        </cds-tabs>
+
+        <!-- Use templates if you would like to have lifecycle hooks called when cacheActive is false -->
+        
+        <ng-template #louer>
+            <find-location-form></find-location-form>
+        </ng-template>
+        <ng-template #gerer>
+           <div class="text-gerer leading-normal">
+            <div class="titre-principal">
+                Commencez à gérer vos biens immobiliers
+            </div>
+            <div class="text-secondaire">
+                Ajoutez votre premier bien immobilier pour commencer à profiter de nos outils de gestion. 
+                <br>Suivez vos revenus, gérez vos locataires et émettez des factures en quelques clics.
+            </div>
+            <div>
+                <button type="submit"  size="lg" class="custom-found-btn-gerer custom-primary-button plus-landing-btn"  >
+                      <div class="content-butom-found p-2">
+                        <img src="/assets/landing/Svgimages/Plus.svg" alt="Budget" class="btn-icon">
+
+                        <!-- <youpez-ibm-icon iconClass="cds--btn__icon" iconName="arrowRight" iconSize="16" ></youpez-ibm-icon > -->
+                          <span class="btn-text ml-2">Ajouter mon premier biens</span>
+                      </div>
+                      
+                  </button>
+            </div>
+           </div> 
+        </ng-template>
+ 
+        </div>
+    </div> 
+</div>

@@ -1,0 +1,186 @@
+
+.contact-us .text-header  h1{
+    font-size: 35px;
+    font-weight: bold;
+    font-family: 'Inter';
+}
+
+.contact-us .contact-us-second-sub-title
+{
+    font-size: 20px;
+}
+
+.text-header  span{
+    font-size: 20px;
+}
+.contact-us{
+    padding-top:40px;
+    padding-bottom: 40px;
+    background-color: #FFFFFF;
+}
+
+.contact-form-section
+{
+    background-color: #F2F2F2;
+    margin-left:15%;
+    overflow: hidden;
+    position: relative;
+}
+
+.contact-infos-section 
+{
+    padding: 60px;
+}
+.contact-us-sub-title{
+    color: #0E2A46;
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.section-basic-ndewa-infos{
+    background-color: white;
+    position: relative;
+    z-index: 100;
+}
+
+.section-basic-ndewa-infos img{
+    background-color: rgba(187, 137, 16,0.1);
+    border-radius: 50%;
+    padding: 10px;
+    width: 40px;
+    height: 40px;
+}
+
+.section-basic-ndewa-infos li{
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 25px;
+}
+
+.section-basic-ndewa-infos li  div {
+    display: flex;
+    flex-direction: column;
+    margin-left: 15px;
+    justify-content:space-between;
+}
+.section-basic-ndewa-infos li  div span 
+{
+    font-size: 16px;
+}
+
+.section-basic-ndewa-infos li  div span:first-child {
+    margin-bottom: 5px;
+    color:#4D5756;
+}
+
+.section-basic-ndewa-infos li  div span:last-child {
+    font-weight: bold;
+    color: #0E2A46;
+}
+
+.social-network-contact a
+{
+    color: #BB8910 !important;
+    padding: 5px;
+    padding-bottom: 1px;
+    background-color: white;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.social-network-contact a:hover
+{
+    color: rgba(187, 137, 16,0.2);
+    background-color: rgba(255 , 255, 255, 0.1);
+}
+
+ibm-label span {
+    color: #0E2A46;
+    font-size: 16px;
+}
+.contact-infos-form  input
+{
+    border-block-end:none;
+    height: 45px;
+    outline: none;
+    margin-top: 5px;
+}
+
+.contact-infos-form  textarea
+{
+    border-block-end:none;
+    height: 75px;
+    outline: none;
+    margin-top: 5px;
+    width: 100%;
+}
+
+.contact-infos-form  input:focus
+{
+    outline: 2px solid #BB8910;
+}
+
+.contact-btn {
+    border-radius: 3px;
+}
+
+
+
+.backgroun-for-design {
+    position: absolute;
+    background-color: #BB8910;
+    width: 400px;
+    height: 220px;
+    z-index: 0;
+    margin-left: -200px;
+    transform: rotate(50deg);
+    border-radius: 10px;
+
+}
+
+@media only screen and (max-width: 1500px) {
+    .contact-form-section {
+        margin-left:10%;
+        max-width: 80% !important;
+
+    }
+}
+
+@media only screen and (max-width: 900px) {
+    .contact-form-section
+    {
+        margin-left:1%;
+        max-width: 99% !important;
+
+    }
+    
+}
+
+@media only screen and (max-width: 600px) {
+    .contact-form-section
+    {
+        margin-left:5px;
+    }
+
+    .contact-infos-section 
+    {
+        padding-left: 10px;
+        margin-right: 10px;
+        padding-right: 6px;
+    }
+    .section-basic-ndewa-infos{
+        /* padding-left: 2px; */
+        width:99%;
+    }
+
+    .contact-infos-form{
+        background-color:rgba(0, 0, 0, 0.15);
+        z-index: 100;
+    }
+
+    .social-network-contact {
+        padding-left: 150px;
+        margin-top:5px;
+    }
+    
+}

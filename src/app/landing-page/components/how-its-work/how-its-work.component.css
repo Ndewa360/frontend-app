@@ -1,0 +1,92 @@
+.text-header  h1{
+    font-size: 35px;
+    font-weight: bold;
+    font-family: 'Inter';
+}
+
+.text-header  span{
+    font-size: 20px;
+}
+
+.how-its-work{
+    padding-top:40px;
+    padding-bottom: 40px;
+    background-color: #FFFFFF;
+}
+
+
+.how-its-work-show-list .list-func-item.first
+{
+    padding-left: 10%;
+}
+
+.how-its-work-show-list .list-func-item.second
+{
+    padding-left: 4%;
+}
+
+
+
+.how-its-work-show-list .list-func-item.third .title_img
+{
+    background-color: white;
+    
+}
+.how-its-work-show-list  .title_img img {
+    width: 100px;
+}
+
+
+.title_img .internal-div {
+    display: inline-block;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    padding:10px;
+    border-radius: 50%;
+    padding-bottom: 5px;
+}
+
+
+.title_img img{
+    background-color: rgba(187, 137, 16,0.1);
+    border-radius: 50%;  
+}
+
+.second .title_img img,
+.third .title_img img {
+    padding: 15px;
+}
+
+.how-its-work-show-list .text-title {
+    font-weight: bold;
+    font-size: 19px;
+}
+
+@media only screen and (max-width: 900px) {
+    .how-its-work-show-list .list-func-item.first,
+    .how-its-work-show-list .list-func-item.second
+    {
+        margin-bottom: 30px;
+    }
+
+    .how-its-work-show-list .list-func-item.third
+    {
+        padding-left: 10%;
+    }
+
+    .how-its-work-show-list .list-func-item.quartor
+    {
+        padding-left: 4%;
+    }
+}
+@media only screen and (max-width: 900px) {
+    .how-its-work-show-list .list-func-item.third,
+    .how-its-work-show-list .list-func-item.quartor
+    {
+        padding-left: 4%;
+    }
+
+    .how-its-work-show-list .list-func-item.third
+    {
+        margin-bottom: 30px;
+    }
+}
