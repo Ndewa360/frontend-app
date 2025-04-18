@@ -1,202 +1,270 @@
 {
-	"$schema": "./node_modules/@angular/cli/lib/config/schema.json",
-	"cli": {
-		"analytics": false,
-		"schematicCollections": [
-			"@cypress/schematic",
-			"@schematics/angular"
-		]
-	},
-	"version": 1,
-	"newProjectRoot": "projects",
-	"projects": {
-		"theme": {
-			"root": "",
-			"sourceRoot": "src",
-			"projectType": "application",
-			"architect": {
-				"build": {
-					"builder": "@angular-devkit/build-angular:browser",
-					"options": {
-						"outputPath": "dist",
-						"index": "src/index.html",
-						"main": "src/main.ts",
-						"tsConfig": "./tsconfig.app.json",
-						"polyfills": "src/polyfills.ts",
-						"assets": [
-							"src/favicon.ico",
-							"src/assets",
-							{
-								"glob": "**/*",
-								"input": "node_modules/ngx-extended-pdf-viewer/assets/",
-								"output": "/assets/"
-							  }
-						],
-						"styles": [
-							"src/@youpez/styles/scss/theme/app-custom-theme.scss",
-							"driver.js/dist/driver.css",
-							"src/styles.scss",
-							{
-								"input": "src/@youpez/styles/scss/theme/app.carbon.light.scss",
-								"bundleName": "theme-light",
-								"inject": false
-							  },
-							  {
-								"input": "src/@youpez/styles/scss/theme/app.carbon.dark.scss",
-								"bundleName": "theme-dark",
-								"inject": false
-							  },
-							  "node_modules/@ag-grid-community/all-modules/dist/styles/ag-grid.css",
-							  "node_modules/@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css",
-
-							"@angular/material/prebuilt-themes/pink-bluegrey.css",
-							"src/@youpez/styles/scss/theme/app.scss",
-							"node_modules/ngx-toastr/toastr.css",
-							"src/app/shared/styles/app.themes.scss",
-							"src/assets/tailwind/tailwind.scss",
-							"node_modules/@photo-sphere-viewer/core/index.css"
-						],
-						"scripts": [
-							"node_modules/flowbite/dist/flowbite.min.js"
-						],
-						"vendorChunk": true,
-						"extractLicenses": false,
-						"buildOptimizer": false,
-						"sourceMap": true,
-						"optimization": false,
-						"namedChunks": true
-					},
-					"configurations": {
-						"production": {
-							"optimization": true,
-							"outputHashing": "all",
-							"sourceMap": false,
-							"namedChunks": false,
-							"extractLicenses": true,
-							"vendorChunk": false,
-							"buildOptimizer": true,
-							"fileReplacements": [
-								{
-									"replace": "src/environments/environment.ts",
-									"with": "src/environments/environment.prod.ts"
-								}
-							],
-							"budgets": [
-								{
-									"type": "initial",
-									"maximumWarning": "3mb",
-									"maximumError": "6mb"
-								  },
-								  {
-									"type": "anyComponentStyle",
-									"maximumWarning": "1mb",
-									"maximumError": "6mb"
-								  }
-							]
-						},
-						"hmr": {
-							"fileReplacements": [
-								{
-								"replace": "src/environments/environment.ts",
-								"with": "src/environments/environment.hmr.ts"
-								}
-							]
-						},
-						"development": {
-							"buildOptimizer": false,
-							"optimization": false,
-							"vendorChunk": true,
-							"extractLicenses": false,
-							"sourceMap": true,
-							"namedChunks": true
-						}
-					},
-					"defaultConfiguration": "development"
-				},
-				"serve": {
-					"builder": "@angular-devkit/build-angular:dev-server",
-					"options": {
-						"browserTarget": "theme:build"
-					},
-					"configurations": {
-						"production": {
-							"browserTarget": "theme:build:production"
-						},
-						"hmr": {
-							"hmr": true,
-							"browserTarget": "theme:build:hmr"
-						}
-					}
-				},
-				"extract-i18n": {
-					"builder": "@angular-devkit/build-angular:extract-i18n",
-					"options": {
-						"browserTarget": "theme:build"
-					}
-				},
-				"e2e": {
-					"builder": "@cypress/schematic:cypress",
-					"options": {
-						"devServerTarget": "theme:serve",
-						"watch": true,
-						"headless": false
-					},
-					"configurations": {
-						"production": {
-							"devServerTarget": "theme:serve:production"
-						}
-					}
-				}
-			}
-		},
-		"carbon-angular-starter-e2e": {
-			"root": "e2e",
-			"sourceRoot": "e2e",
-			"projectType": "application",
-			"architect": {
-				"e2e": {
-					"builder": "@cypress/schematic:cypress",
-					"options": {
-						"devServerTarget": "carbon-angular-starter-e2e:serve",
-						"watch": true,
-						"headless": false
-					},
-					"configurations": {
-						"production": {
-							"devServerTarget": "carbon-angular-starter-e2e:serve:production"
-						}
-					}
-				},
-				"cypress-run": {
-					"builder": "@cypress/schematic:cypress",
-					"options": {
-						"devServerTarget": "carbon-angular-starter-e2e:serve",
-						"configFile": "e2e/cypress.config.ts"
-					},
-					"configurations": {
-						"production": {
-							"devServerTarget": "carbon-angular-starter-e2e:serve:production"
-						}
-					}
-				},
-				"cypress-open": {
-					"builder": "@cypress/schematic:cypress",
-					"options": {
-						"watch": true,
-						"headless": false,
-						"configFile": "e2e/cypress.config.ts"
-					}
-				}
-			}
-		}
-	},
-	"schematics": {
-		"@schematics/angular:component": {
-			"prefix": "app",
-			"style": "scss"
-		},
-		"@schematics/angular:directive": {
-			"prefix": "app"
-		}
-	}
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "cli": {
+    "analytics": false,
+    "schematicCollections": [
+      "@cypress/schematic",
+      "@schematics/angular",
+      "@ionic/angular-toolkit"
+    ]
+  },
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "app": {
+      "root": "",
+      "sourceRoot": "src",
+      "projectType": "application",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist",
+            "index": "src/index.html",
+            "main": "src/main.ts",
+            "tsConfig": "./tsconfig.app.json",
+            "polyfills": "src/polyfills.ts",
+            "assets": [
+              "src/favicon.ico",
+              "src/assets",
+              {
+                "glob": "**/*",
+                "input": "node_modules/ngx-extended-pdf-viewer/assets/",
+                "output": "/assets/"
+              },
+              {
+                "glob": "**/*.svg",
+                "input": "node_modules/ionicons/dist/ionicons/svg",
+                "output": "./svg"
+              }
+            ],
+            "styles": [
+              "src/@youpez/styles/scss/theme/app-custom-theme.scss",
+              "driver.js/dist/driver.css",
+              "src/styles.scss",
+              {
+                "input": "src/@youpez/styles/scss/theme/app.carbon.light.scss",
+                "bundleName": "theme-light",
+                "inject": false
+              },
+              {
+                "input": "src/@youpez/styles/scss/theme/app.carbon.dark.scss",
+                "bundleName": "theme-dark",
+                "inject": false
+              },
+              "node_modules/@ag-grid-community/all-modules/dist/styles/ag-grid.css",
+              "node_modules/@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css",
+              "@angular/material/prebuilt-themes/pink-bluegrey.css",
+              "src/@youpez/styles/scss/theme/app.scss",
+              "node_modules/ngx-toastr/toastr.css",
+              "src/app/shared/styles/app.themes.scss",
+              "src/assets/tailwind/tailwind.scss",
+              "node_modules/@photo-sphere-viewer/core/index.css",
+              {
+                "input": "node_modules/@ionic/angular/css/core.css"
+              },
+              {
+                "input": "node_modules/@ionic/angular/css/normalize.css"
+              },
+              {
+                "input": "node_modules/@ionic/angular/css/structure.css"
+              },
+              {
+                "input": "node_modules/@ionic/angular/css/typography.css"
+              },
+              {
+                "input": "node_modules/@ionic/angular/css/display.css"
+              },
+              {
+                "input": "node_modules/@ionic/angular/css/padding.css"
+              },
+              {
+                "input": "node_modules/@ionic/angular/css/float-elements.css"
+              },
+              {
+                "input": "node_modules/@ionic/angular/css/text-alignment.css"
+              },
+              {
+                "input": "node_modules/@ionic/angular/css/text-transformation.css"
+              },
+              {
+                "input": "node_modules/@ionic/angular/css/flex-utils.css"
+              },
+              {
+                "input": "src/theme/variables.css"
+              }
+            ],
+            "scripts": [
+              "node_modules/flowbite/dist/flowbite.min.js"
+            ],
+            "vendorChunk": true,
+            "extractLicenses": false,
+            "buildOptimizer": false,
+            "sourceMap": true,
+            "optimization": false,
+            "namedChunks": true
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ],
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "3mb",
+                  "maximumError": "6mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "1mb",
+                  "maximumError": "6mb"
+                }
+              ]
+            },
+            "hmr": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.hmr.ts"
+                }
+              ]
+            },
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "app:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "app:build:production"
+            },
+            "hmr": {
+              "hmr": true,
+              "browserTarget": "app:build:hmr"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "app:build"
+          }
+        },
+        "e2e": {
+          "builder": "@cypress/schematic:cypress",
+          "options": {
+            "devServerTarget": "app:serve",
+            "watch": true,
+            "headless": false
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "app:serve:production"
+            }
+          }
+        },
+        "ionic-cordova-serve": {
+          "builder": "@ionic/angular-toolkit:cordova-serve",
+          "options": {
+            "cordovaBuildTarget": "app:ionic-cordova-build",
+            "devServerTarget": "app:serve"
+          },
+          "configurations": {
+            "production": {
+              "cordovaBuildTarget": "app:ionic-cordova-build:production",
+              "devServerTarget": "app:serve:production"
+            }
+          }
+        },
+        "ionic-cordova-build": {
+          "builder": "@ionic/angular-toolkit:cordova-build",
+          "options": {
+            "browserTarget": "app:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "app:build:production"
+            }
+          }
+        }
+      }
+    },
+    "carbon-angular-starter-e2e": {
+      "root": "e2e",
+      "sourceRoot": "e2e",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@cypress/schematic:cypress",
+          "options": {
+            "devServerTarget": "carbon-angular-starter-e2e:serve",
+            "watch": true,
+            "headless": false
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "carbon-angular-starter-e2e:serve:production"
+            }
+          }
+        },
+        "cypress-run": {
+          "builder": "@cypress/schematic:cypress",
+          "options": {
+            "devServerTarget": "carbon-angular-starter-e2e:serve",
+            "configFile": "e2e/cypress.config.ts"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "carbon-angular-starter-e2e:serve:production"
+            }
+          }
+        },
+        "cypress-open": {
+          "builder": "@cypress/schematic:cypress",
+          "options": {
+            "watch": true,
+            "headless": false,
+            "configFile": "e2e/cypress.config.ts"
+          }
+        }
+      }
+    }
+  },
+  "schematics": {
+    "@schematics/angular:component": {
+      "prefix": "app",
+      "style": "scss"
+    },
+    "@schematics/angular:directive": {
+      "prefix": "app"
+    },
+    "@ionic/angular-toolkit:component": {
+      "styleext": "scss"
+    },
+    "@ionic/angular-toolkit:page": {
+      "styleext": "scss"
+    }
+  }
 }

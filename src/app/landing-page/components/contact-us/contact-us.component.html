@@ -73,14 +73,14 @@
                           <div class="app-form__item">
                             <ibm-label
                               [helperText]="''"
-                              [invalid]="isValid('fullName')"
+                              [invalid]="isValid('name')"
                               [invalidText]="'Ce champs est obligatoire'">
                               <span>Nom</span>
                               <input
-                                formControlName="fullName"
+                                formControlName="name"
                                 ibmText
                                 size="md"
-                                [invalid]="isValid('fullName')"
+                                [invalid]="isValid('name')"
                                 [disabled]="false"
                                 theme="light"
                                 [placeholder]="'Votre nom'"
@@ -107,14 +107,14 @@
                           <div class="app-form__item">
                             <ibm-label
                               [helperText]="''"
-                              [invalid]="isValid('phoneNumber')"
+                              [invalid]="isValid('tel')"
                               [invalidText]="'Téléphone obligatoire'">
                               <span>Tél</span>
                               <input
-                                formControlName="phoneNumber"
+                                formControlName="tel"
                                 ibmText
                                 size="md"
-                                [invalid]="isValid('phoneNumber')"
+                                [invalid]="isValid('tel')"
                                 [disabled]="false"
                                 theme="light"
                                 [placeholder]="'Numéro de téléphone'" >
@@ -141,13 +141,13 @@
                           <div class="app-form__item">
                             <ibm-label
                               [helperText]="''"
-                              [invalid]="isValid('msg')">
+                              [invalid]="isValid('message')">
                               <span>Message</span>
                               <textarea
-                                formControlName="msg"                                
+                                formControlName="message"                                
                                 cdsTextArea 
                                 size="md"
-                                [invalid]="isValid('msg')"
+                                [invalid]="isValid('message')"
                                 [disabled]="false"
                                 theme="light"
                                 [autocomplete]="true">
@@ -157,13 +157,13 @@
                       
                           <div class="app-form__submit mb-10">
                             <!--  -->
-                            <button type="submit" cdsButton size="md" class=" text-center custom-primary-button contact-btn " ibmButton="primary" >
-                              <!-- <ibm-loading *ngIf="waittingResponse; else noWaitingResponse"></ibm-loading> pt-4 pb-4-->
-                              <!-- [disabled]="waittingResponse || formGroup.invalid"  -->
-                              <!-- <ng-template #noWaitingResponse> -->
+                            <button type="submit" cdsButton size="md" [disabled]="waittingResponse || formGroup.invalid" class=" text-center custom-primary-button contact-btn " ibmButton="primary" >
+                              <ibm-loading *ngIf="waittingResponse; else noWaitingResponse" ></ibm-loading> 
+                              <!-- pt-4 pb-4 -->
+                              <ng-template #noWaitingResponse>
                                 <span class="btn-text">Envoyer</span>
                                 <youpez-ibm-icon class="mt-6" iconClass="cds--btn__icon" iconName="arrowRight" iconSize="32" ></youpez-ibm-icon >
-                              <!-- </ng-template> -->
+                              </ng-template>
                             </button>
                           </div>
                         </div>

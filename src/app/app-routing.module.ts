@@ -4,6 +4,7 @@ import { InitialLoadingDataResolver } from './shared/resolvers';
 import { AuthGuard } from './shared/guard';
 import { LayoutComponent } from './layout/default/layout.component';
 import { LoadingAdminDataResolver } from './shared/resolvers/loading-admin-data';
+import { IonicModule } from '@ionic/angular';
 
 const routes: Routes = [
 	{
@@ -53,7 +54,9 @@ const routes: Routes = [
 ];
 
 @NgModule({
-	imports: [RouterModule.forRoot(routes, {
+	imports: [
+		IonicModule.forRoot(),
+		RouterModule.forRoot(routes, {
 		anchorScrolling: 'enabled',
 		scrollOffset: [0, 64],
 	})],

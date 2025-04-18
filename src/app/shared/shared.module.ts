@@ -46,6 +46,7 @@ import { SwiperDirective } from './directives';
 import { BrowserModule } from '@angular/platform-browser';
 import { ScrollRevealDirective } from './directives/scroll-reveal/scroll-reveal.directive';
 import { CountUpDirective } from './directives/counter-up/counter-up.directive';
+import { ProspectionState } from './store/prospection/prospection.state';
 
 
 
@@ -76,7 +77,8 @@ import { CountUpDirective } from './directives/counter-up/counter-up.directive';
         CountryState,
         SearchState,
         UploadFilesState,
-        ContractState
+        ContractState,
+        ProspectionState
       ]),
       NgxsStoragePluginModule.forRoot({
         key:["auth_token"]
@@ -126,7 +128,8 @@ import { CountUpDirective } from './directives/counter-up/counter-up.directive';
     FullScreenGaleryComponent,
     SinglePageScreenGaleryComponent,
     ScrollRevealDirective,
-    CountUpDirective
+    CountUpDirective,
+
   ],
   schemas: [
       CUSTOM_ELEMENTS_SCHEMA

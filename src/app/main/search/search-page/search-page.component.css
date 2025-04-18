@@ -1,3 +1,6 @@
+.search-page {
+    background-color: #F2F2F2;
+}
 .filter-item {
     display:flex;
     flex-direction: column;
