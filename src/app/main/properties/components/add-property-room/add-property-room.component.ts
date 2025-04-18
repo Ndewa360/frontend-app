@@ -45,7 +45,9 @@ export class AddPropertyRoomComponent implements OnInit {
         hasKitchen:[true,Validators.required],
         isInternalKitchen:[false,Validators.required],
       }),
-      isShowToPublic:[true,Validators.required]
+      isShowToPublic:[true,Validators.required],
+      shouldPayCaution:[false,Validators.required],
+      cautionPrice:[null],
     })
     this.roomList= Object.values(RoomType).map((value)=>({content:UtilsString.getStringOfRoomType(value), valueType:value, selected:value==RoomType.ROOM}));
     
@@ -83,7 +85,7 @@ export class AddPropertyRoomComponent implements OnInit {
     if(this.formGroup.invalid) return;
     let bodyToSend = FormUtils.removeNullAttribut({...this.formGroup.value})
     this.waittingResponse=true;
-    this._store.dispatch(new RoomAction.CreateRoom(bodyToSend,this.data.property._id));
+    this._store.dispatch(new RoomAction.CreateRoom({...bodyToSend,isShowToPublic:this.formGroup.value.isShowToPublic,shouldPayCaution:this.formGroup.value.shouldPayCaution},this.data.property._id));
     
   }
 
