@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { UserProfileState, UserProfileModel, AuthTokenState } from 'src/app/shared/store';
@@ -13,11 +14,22 @@ export class LandingHeaderComponent implements OnInit {
   @Select(UserProfileState.selectStateUserProfile) userProfil$:Observable<UserProfileModel>
   @Select(AuthTokenState.selectStateUserIsLogin)  isLogin$:Observable<boolean>
 
-  constructor() { }
+  constructor(
+    private router:Router
+  ) { }
   
   ngOnInit(): void {
   }
   toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;
+  }
+
+  navigateToSearchPage()
+  {
+    // 
+    this.router.navigate(
+      ['/search/index'],
+      { queryParams: { minPrice: 0,maxPrix:100000,  ville:"Bangangté"} }
+    );
   }
 }

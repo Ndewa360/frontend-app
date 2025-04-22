@@ -20,6 +20,8 @@ export class UtilsString
         }
     }
 
+    
+
     static getStringOfLocationPaymentType(paymentType:LocationPaymentType)
     {
         switch(paymentType)

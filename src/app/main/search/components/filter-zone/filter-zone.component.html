@@ -24,8 +24,7 @@
                                 <div class="app-nav-list__item__group filter-title">Type de bien</div>
                                 <div class="app-nav-list__children">
                                     <div class="app-nav-list__item filter-item">
-                                        <ibm-combo-box class="mt-2" [items]="roomListType"
-                                            (selected)="onSelectedType($event)" theme="dark" size="md">
+                                        <ibm-combo-box class="mt-2" [items]="roomListType" formControlName="type" (selected)="onSelectedType($event)" theme="dark" size="md">
                                             <ibm-dropdown-list></ibm-dropdown-list>
                                         </ibm-combo-box>
                                     </div>
