@@ -12,7 +12,6 @@ import { UtilsString } from 'src/app/shared/utils';
   selector: 'room-filtered-found',
   templateUrl: './room-filtered-found.component.html',
   styleUrls: ['./room-filtered-found.component.css'],
-  encapsulation:ViewEncapsulation.None
 })
 export class RoomFilteredFoundComponent {
     @Select(SearchState.selectStateLoading) loadingRoom$:Observable<string>;

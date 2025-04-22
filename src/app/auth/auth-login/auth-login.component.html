@@ -67,7 +67,7 @@
   </div>
 </form>
 <div class="mt-4">
-  <h1 class="app-expressive-heading-06 mb-1"><a ibmLink routerLink="/search/index">
+  <h1 class="app-expressive-heading-06 mb-1"><a ibmLink  routerLink="/search/index" [queryParams]="{ minPrice: 0,maxPrix:100000,ville:'Bangangté' }">
     <youpez-ibm-icon iconClass="cds--btn__icon" iconName="arrowLeft" iconSize="20" ></youpez-ibm-icon >
       Retour à la page de recherche</a></h1>
 

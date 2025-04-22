@@ -1,5 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
+import { RoomType } from 'src/app/shared/store';
+import { UtilsString } from 'src/app/shared/utils';
 
 @Component({
   selector: 'find-location-form',
@@ -8,7 +10,9 @@ import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
   encapsulation: ViewEncapsulation.None
 })
 export class FindLocationFormComponent implements OnInit {
-    public formGroup: UntypedFormGroup
+    public formGroup: UntypedFormGroup;
+    roomListType =[];
+
   
    constructor(protected formBuilder: UntypedFormBuilder){} 
    
@@ -18,6 +22,13 @@ export class FindLocationFormComponent implements OnInit {
           propertyType: [''],
           price: [''],
         })
+
+        //Room Type
+      this.roomListType= Object.values(RoomType).map((valueRoomType)=>({
+        content:UtilsString.getStringOfRoomType(valueRoomType), 
+        valueType:valueRoomType,
+        selected:false
+      }));
   }
   
   isValid(name) {

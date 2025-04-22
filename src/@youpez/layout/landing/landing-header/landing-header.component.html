@@ -41,14 +41,20 @@
               <span>Contact</span> 
             </a>
           </li>
-          <li>
-            <landing-header-profil-data *ngIf="(isLogin$ | async) else showHeaderBtnCxn"></landing-header-profil-data>
-            <ng-template #showHeaderBtnCxn>
-              <button type="reset"  [routerLink]="'/auth/login'"  class="custom-primary-button app-ibm-btn-full" ibmButton="primary" size="md">
-                Connectez-vous
-              </button>
-            </ng-template>
+          <li *ngIf="(isLogin$ | async)">
+            <landing-header-profil-data ></landing-header-profil-data>
           </li>
+          <li *ngIf="!(isLogin$ | async)">
+            <button type="reset"  [routerLink]="'/auth/signin'"  class="custom--btn--tertiary app-ibm-btn-full rounded-xl" ibmButton="tertiary" size="sm">
+              Se connecter
+            </button>
+          </li>
+          <li *ngIf="!(isLogin$ | async)">
+              <button type="reset"  [routerLink]="'/auth/signup'"  class="custom-primary-button app-ibm-btn-full rounded-xl" ibmButton="primary" size="sm">
+                S'inscrire
+              </button>
+          </li>
+          
         </ul>
       </div>
   
@@ -75,8 +81,11 @@
           </li>
         </ul>
         <!-- <ng-template #showHeaderBtnCxn> -->
-          <button type="reset" *ngIf="!(isLogin$ | async)" [routerLink]="'/auth/login'"  class="custom-primary-button app-ibm-btn-full" ibmButton="tertiary" size="md">
-            Connectez-vous
+          <button type="reset" *ngIf="!(isLogin$ | async)" [routerLink]="'/auth/signin'"  class="custom--btn--tertiary app-ibm-btn-full" ibmButton="tertiary" size="md">
+            Se connecter
+          </button>
+          <button type="reset" *ngIf="!(isLogin$ | async)" [routerLink]="'/auth/signup'"  class="custom-primary-button app-ibm-btn-full" ibmButton="primary" size="md">
+            S'inscrire
           </button>
         <!-- </ng-template>       -->
       </div>

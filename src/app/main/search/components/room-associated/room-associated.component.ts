@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { Currency, SearchPropertyModel, SearchState } from 'src/app/shared/store';
@@ -7,7 +7,9 @@ import { UtilsString } from 'src/app/shared/utils';
 @Component({
   selector: 'room-associated',
   templateUrl: './room-associated.component.html',
-  styleUrls: ['./room-associated.component.css']
+  styleUrls: ['./room-associated.component.css'],
+  encapsulation:ViewEncapsulation.None
+
 })
 export class RoomAssociatedComponent implements OnChanges{
   

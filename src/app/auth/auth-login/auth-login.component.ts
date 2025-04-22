@@ -71,4 +71,9 @@ export class AuthLoginComponent implements OnInit {
     const instance = this.formGroup.get(name)
     return instance.invalid && (instance.dirty || instance.touched)
   }
+
+  goToSearchPage()
+  {
+    this.router.navigateByUrl("/search/index?minPrice=0&maxPrix=100000&ville=Bangangté")
+  }
 }

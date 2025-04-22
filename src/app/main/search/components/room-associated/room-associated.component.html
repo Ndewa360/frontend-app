@@ -7,8 +7,8 @@
               <ng-container>
  
                   <ng-container *ngFor="let room of relatedFoundRooms">
-                    <div fxFlex="100%" fxFlex.gt-md="25%" (click)="goToRoom($event,room)">
-                      <div class="app-card app-card--select app-card-room">
+                    <div fxFlex="100%" fxFlex.gt-md="25%" (click)="goToRoom($event,room)" >
+                      <div class="app-card app-card--select app-card-room  room-associated">
                         <!-- <button (click)="openShowRoom(room)"
                           class="float-right btn-text-edit top-2 mt-4 mr-4 bg-slate-700 rounded-md">
                           <youpez-ibm-icon iconName="pen" iconSize="24"></youpez-ibm-icon>

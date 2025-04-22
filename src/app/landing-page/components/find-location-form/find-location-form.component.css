@@ -33,7 +33,8 @@
     width: 100%;
 }
 
-.form-find-location input
+.form-find-location input,
+.form-find-location ibm-combo-box
 {
     border-width: 2px;
     outline: 2px solid rgba(0,0,0,0.3);
@@ -46,16 +47,33 @@
     font-size:20px;
 }
 
+ .form-find-location ibm-combo-box
+{
+    border-width: none;
+    border-block-end:none;
+} 
+
+.form-find-location ibm-combo-box input{
+    border-width: none;
+    border-block-end:none;
+    height: 75px;
+    padding-left: 60px;
+    font-size:20px;
+    width:100%;
+}
+
 .form-find-location input:focus
 {
     outline: 2px solid #BB8910;
 }
-.custom-input-wrapper {
+.custom-input-wrapper ,
+.custom-input-wrapper ibm-combo-box{
     position: relative;
     display: flex;
     align-items: center;
     width: 100%;
   }
+  
   
   .input-icon {
     position: absolute;
