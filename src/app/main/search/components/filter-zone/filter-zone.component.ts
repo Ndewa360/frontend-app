@@ -184,6 +184,6 @@ export class FilterZoneComponent implements OnInit{
     if(this.formGroup.value.type) filterToApply = {...filterToApply,type:this.formGroup.value.type.valueType}
 
     this.router.navigateByUrl(`/search/index?${queryString}`)
-    this._store.dispatch(new SearchAction.ApplyFilter(filterToApply,findNewCity));
+    this._store.dispatch(new SearchAction.ApplyFilter(filterToApply,findNewCity)); 
   }
 }
