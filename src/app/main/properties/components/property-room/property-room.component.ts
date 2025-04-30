@@ -7,12 +7,13 @@ import { Currency, LocataireState, RoomModel, RoomState } from 'src/app/shared/s
 import { UtilsString } from 'src/app/shared/utils';
 import { UpdateRoomComponent } from 'src/app/main/room/components/update-room/update-room.component';
 import { GaleryComponent } from 'src/app/main/room/components/galery/galery.component';
+import { DeleteRoomComponent } from 'src/app/main/room/components/delete-room/delete-room.component';
 
 @Component({
   selector: 'app-property-room',
   templateUrl: './property-room.component.html',
   styleUrls: ['./property-room.component.scss'],
-  // encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None
 })
 export class PropertyRoomComponent implements OnInit {
   @Select(RoomState.selectStateInitLoading) loadingRoom$:Observable<string>;
@@ -76,6 +77,20 @@ export class PropertyRoomComponent implements OnInit {
     // this._router.navigate(['/app/properties/edit-room',room._id])
     //console.log("Room ",room)
     this.dialog.open(UpdateRoomComponent, {
+      viewContainerRef:null,
+      disableClose: true,
+      role: 'alertdialog',
+      width: '500px',
+      data:{
+        room
+      }
+    })
+  }
+
+  deleteRoom(room:RoomModel)
+  {
+    // this._store.dispatch(new RoomAction.DeleteRoom(room._id))
+    this.dialog.open(DeleteRoomComponent, {
       viewContainerRef:null,
       disableClose: true,
       role: 'alertdialog',

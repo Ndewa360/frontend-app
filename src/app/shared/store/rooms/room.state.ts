@@ -8,6 +8,7 @@ import { of, throwError } from "rxjs";
 import { catchError, tap } from "rxjs/operators";
 import { UtilsString } from "../../utils";
 import { ToastrService } from "ngx-toastr";
+import { PropertyAction } from "../properties";
 
 export class RoomStateModel {
     rooms:RoomModel[]
@@ -58,7 +59,6 @@ export class RoomState{
             if(data) return data
             return null;
         })
-    
     }
 
     static selectStateFreeRoomByPropertyId(propertyId: any) {
@@ -227,6 +227,34 @@ export class RoomState{
                     ctx.patchState({
                         loadingRoom:false,
                         rooms:[...state.rooms, result.data]
+                    })
+                }
+            )
+        )
+    }
+
+    @Action(RoomAction.DeleteRoom)
+    deleteRoom(ctx:StateContext<RoomStateModel>,{roomId}:RoomAction.DeleteRoom)
+    {
+        const state = ctx.getState();
+        let index = state.rooms.findIndex((u)=>u._id==roomId);
+
+        if(index<-1) return of(true);
+
+        ctx.patchState({
+            loadingRoom:true
+        })
+        return this._roomsService.deleteRoom(roomId).pipe(
+            tap(
+                result => {
+                    let roomState = [...state.rooms];
+                    console.log("Prop ",roomState[index].property)
+                    ctx.dispatch(new PropertyAction.ChangePropertyRoomLength(roomState[index].property));
+                    roomState.splice(index, 1)
+                    this._toastrService.success(`Bien supprimé avec success!`, 'Ndewa360°');
+                    ctx.patchState({
+                        loadingRoom:false,
+                        rooms:roomState
                     })
                 }
             )

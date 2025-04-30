@@ -40,8 +40,10 @@ export interface RoomModel {
     property:any;
     locataire?:string;
     isFree:boolean;
+    isDeleted?:boolean;
     isActiveForSouscription?:boolean;
     medias:string[];
     isShowToPublic?:boolean;
     shouldPayCaution?:boolean;
+    cautionPrice?:number;
 }

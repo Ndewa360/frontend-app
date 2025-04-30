@@ -108,7 +108,21 @@ export class PropertyState{
         })
     }
 
-    
+    @Action(PropertyAction.ChangePropertyRoomLength)
+    changePropertyRoomLength(ctx:StateContext<PropertyStateModel>, {propertyID}:PropertyAction.ChangePropertyRoomLength)
+    {
+        const state = ctx.getState();
+        const data = [...state.properties]
+        let index = data.findIndex((u)=>u._id==propertyID);
+        if(index>-1) {
+            let property = {...data[index]};
+            property.roomLength--;
+            data[index]=property;
+            ctx.patchState({
+                properties:data
+            })
+        }
+    }
     @Action(PropertyAction.updateLoadingPropertyState)
     updateLoadingPropertyState(ctx:StateContext<PropertyStateModel>,{status}:PropertyAction.updateLoadingPropertyState)
     {

@@ -5,12 +5,14 @@ import { RoomRoutingModule } from './room-routing.module';
 import { UpdateRoomComponent } from './components/update-room/update-room.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { GaleryComponent } from './components/galery/galery.component';
+import { DeleteRoomComponent } from './components/delete-room/delete-room.component';
 
 
 @NgModule({
   declarations: [
     UpdateRoomComponent,
-    GaleryComponent
+    GaleryComponent,
+    DeleteRoomComponent
   ],
   imports: [
     SharedModule,
@@ -19,7 +21,9 @@ import { GaleryComponent } from './components/galery/galery.component';
   ],
   exports:[
     UpdateRoomComponent,
-    GaleryComponent
+    GaleryComponent,
+    DeleteRoomComponent
+
   ]
 })
 export class RoomModule { }

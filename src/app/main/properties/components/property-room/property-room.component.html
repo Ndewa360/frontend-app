@@ -7,15 +7,29 @@
           <ng-container *ngIf="(loadingRoom$ | async)=='LOADED' else isLoadingData">
             <ng-container *ngFor="let room of roomFound">
               <!-- [routerLink]="['/app/properties',room._id]" -->
-              <div fxFlex="100%" fxFlex.gt-md="20%" class="" >
+              <div fxFlex="100%" fxFlex.gt-md="20%" class="" *ngIf="!room.isDeleted">
                 <div class="app-card app-card--select group">
                   <div class="relative btn-edit-wih">
-                    <button (click)="openEditRoom(room)"  class="absolute  float-right btn-text-edit top-2 right-0 mt-5 mr-5 bg-slate-700 rounded-md">
-                      <youpez-ibm-icon iconName="pen" iconSize="24" ></youpez-ibm-icon>
-                    </button>
-                    <button (click)="openEditPhoto(room)"  class="absolute  float-right btn-text-edit top-2 right-0 mt-16 mr-5 bg-slate-700 rounded-md">
-                      <youpez-ibm-icon iconName="dropPhoto" iconSize="24" ></youpez-ibm-icon>
-                    </button>
+                    <ng-container *ngIf="room.isFree else noToDelete">
+                      <button (click)="deleteRoom(room)"   class="absolute isFree float-right btn-text-remove top-2 text-white right-0 mt-5 mr-5 bg-red-600 rounded-md">
+                        <youpez-ibm-icon iconName="close" iconSize="24" ></youpez-ibm-icon>
+                      </button>
+                      <button (click)="openEditPhoto(room)"  class="absolute isFree  float-right btn-text-image top-2 right-0 mt-16 mr-5 bg-slate-700 rounded-md">
+                        <youpez-ibm-icon iconName="dropPhoto" iconSize="24" ></youpez-ibm-icon>
+                      </button>
+                      <button (click)="openEditPhoto(room)"  class="absolute isFree float-right btn-text-edit  right-0 mt-28 mr-5 bg-slate-700 rounded-md">
+                        <youpez-ibm-icon iconName="pen" iconSize="24" ></youpez-ibm-icon>
+                      </button>
+                    </ng-container>
+                    <ng-template #noToDelete>
+                      <button (click)="openEditPhoto(room)"  class="absolute  float-right btn-text-edit  right-0 mt-5 mr-5 bg-slate-700 rounded-md">
+                        <youpez-ibm-icon iconName="pen" iconSize="24" ></youpez-ibm-icon>
+                      </button>
+                      <button (click)="openEditPhoto(room)"  class="absolute  float-right btn-text-image top-2 right-0 mt-16 mr-5 bg-slate-700 rounded-md">
+                        <youpez-ibm-icon iconName="dropPhoto" iconSize="24" ></youpez-ibm-icon>
+                      </button>                      
+                    </ng-template>
+                    
                   </div>
                   
                   <div class="app-card__content__alt">

@@ -16,20 +16,35 @@
     margin-left: 38%;
 }
 
-.btn-text-edit svg
+.btn-text-edit svg,
+.btn-text-remove  svg,
+.btn-text-image svg
 {
     fill: #fff;
 }
 
-.btn-text-edit
-{
-    background-color: rgb(204, 140, 10);
-    cursor: pointer;
+
+.btn-text-edit.isFree {
+    margin-top: 7.9em;
 }
 
-.btn-text-edit:hover
+.btn-text-edit,
+.btn-text-image
 {
-    background-color: rgba(204, 140, 10,.8);
+    background-color: rgb(204, 140, 10);
+}
+
+.btn-text-edit:hover,
+.btn-text-image:hover,
+.btn-text-remove:hover
+{
+    border-width: 2px;
+    border-color: #fff;
+    border-style: double;
+}
+
+.btn-text-remove:hover{
+    border-color: red;
 }
 
 .app-card.app-card--select:hover .nav-button-change-slider,
@@ -37,6 +52,12 @@
 {
     visibility: visible;
 }
-.btn-text-edit {
+
+.btn-text-edit,
+.btn-text-image,
+.btn-text-remove {
     z-index:1000 !important;
+    border-color: #fff;
+    cursor: pointer;
+    border-width: 0px;
 }

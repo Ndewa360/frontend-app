@@ -9,6 +9,12 @@ export namespace RoomAction
         constructor(public room:RoomModel, public id:string){}
     }
 
+    export class DeleteRoom
+    {
+        static readonly type = '[Room] Delete Room';
+        constructor(public roomId:string){}
+    }
+
     export class ResetAllState
     {
         static readonly type = '[Room] Reset All State';

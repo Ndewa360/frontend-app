@@ -49,6 +49,12 @@ export class RoomService
 
     }
 
+    deleteRoom(roomId):Observable<ApiResultFormat<RoomModel>>
+    {
+        return this._httpClient.delete<ApiResultFormat<RoomModel>>(`${environment.apiUrl}/room/${roomId}`)
+
+    }
+
     getRoomsByProprertyID(propertyID):Observable<ApiResultFormat<RoomModel[]>>
     {       
         return this._httpClient.get<ApiResultFormat<RoomModel[]>>(`${environment.apiUrl}/room/property/${propertyID}`)

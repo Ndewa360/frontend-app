@@ -33,6 +33,7 @@ export class UpdateRoomComponent {
   ) { }
 
   ngOnInit(): void {
+    console.log("Rootm ",this.data.room)
     this.formGroup = this.formBuilder.group({
       code:[this.data.room.code],
       description: [this.data.room.description],
@@ -46,8 +47,10 @@ export class UpdateRoomComponent {
         hasKitchen:[this.data.room.specifity?.hasKitchen?this.data.room.specifity.hasKitchen:true,Validators.required],
         isInternalKitchen:[this.data.room.specifity?.isInternalKitchen?this.data.room.specifity.isInternalKitchen:false,Validators.required],
       }),
-      isShowToPublic:[true,Validators.required],
-      shouldPayCaution:[true,Validators.required]
+      isShowToPublic:[this.data.room.isShowToPublic,Validators.required],
+      shouldPayCaution:[this.data.room.shouldPayCaution,Validators.required],
+      cautionPrice:[this.data.room.cautionPrice],
+
     })
     this.roomList= Object.values(RoomType).map((value)=>({content:UtilsString.getStringOfRoomType(value), valueType:value, selected:value==this.data.room.type}));
     // setTimeout(()=>this.onSelectedType(this.data.room.type));

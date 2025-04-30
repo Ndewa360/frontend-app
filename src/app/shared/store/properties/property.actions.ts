@@ -49,6 +49,12 @@ export namespace PropertyAction
         constructor(public property:any){}
     }
 
+    //Delete room
+    export class ChangePropertyRoomLength
+    {
+        static readonly type = '[Property] Update room length Property'
+        constructor(public propertyID:any){}
+    }
 
     //Change loading state
     export class updateLoadingPropertyState
