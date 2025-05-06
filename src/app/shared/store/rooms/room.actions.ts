@@ -68,10 +68,10 @@ export namespace RoomAction
     }
 
     //Change Room usable
-    export class ChangeStatusRoom
+    export class UpdateLocalRoomInfos
     {
-        static readonly type = '[Room] Change Room Status'
-        constructor(public roomId:string,public status:boolean,public locataire:string=null){}
+        static readonly type = '[Room] Change Room local infos'
+        constructor(public roomId:string,public data:any){}
     }
 
     export class ChangeStatusActivatedForSouscriptionRoom

@@ -3,7 +3,9 @@ import { Actions, ofActionCompleted, ofActionErrored, ofActionSuccessful, Store 
 import { AppSidenavContainerComponent } from 'src/@youpez/components/app-sidenav/app-sidenav-container/app-sidenav-container.component';
 import { INITIAL_LOCATION_FINANCIAL_STATE, LocataireModel, LocataireState, LocationAction, PropertyModel, RoomModel, RoomState } from 'src/app/shared/store';
 import { AssignLocationFormComponent } from '../assign-location-form/assign-location-form.component';
+import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
+
 
 @Component({
   selector: 'assign-location',
@@ -11,7 +13,7 @@ import * as moment from 'moment';
   styleUrls: ['./assign-location.component.css'],
   encapsulation:ViewEncapsulation.None
 })
-export class AssignLocationComponent  {
+export class AssignLocationComponent  implements OnChanges{
 
   locataireForm:{
     locataire?: any,
@@ -34,16 +36,19 @@ export class AssignLocationComponent  {
   constructor(
     private _store: Store,
     private _ngxsAction:Actions,
-
+    private router:Router
   ){}
   
 
   ngOnInit()
   {    
+    console.log("On NgOnInit AssignLocation")
     this._ngxsAction.pipe(ofActionSuccessful(LocationAction.CreateLocation)).subscribe((value)=>{
       this.waittingResponse=false;
       // this.property={...this.property}
       this.closeSideNav()
+      // this.router.navigateByUrl(this.router.url,{ skipLocationChange: true });
+
 
     });
     this._ngxsAction.pipe(ofActionCompleted(LocationAction.CreateLocation)).subscribe(
@@ -57,20 +62,26 @@ export class AssignLocationComponent  {
         this.waittingResponse=false;        
       })
   }
+  ngOnChanges(changes: SimpleChanges): void {
+    if(changes["isAssignedOpened"] && changes["isAssignedOpened"].currentValue && this.sideNavBarElement)this.assignLocationForm.refreshComponent() 
+  }
 
   onSubmit()
   {
     this.waittingResponse=true;
-    this.locataireForm.entryDate.setHours(6)
-    this._store.dispatch(new LocationAction.CreateLocation({
+    
+    if(this.locataireForm.isKnowExactDateEntry) this.locataireForm.entryDate.setHours(6)
+    let bodyToSend = {
       locataireId:this.locataireForm.locataire,
       roomId:this.locataireForm.room,
-      startedAt:this.locataireForm.entryDate.toISOString().split("T")[0],
       propertyId:this.property._id,
       isKnowExactDateEntry:this.locataireForm.isKnowExactDateEntry,
       initialFinancialState: this.locataireForm.initialFinancialState,
       initialSolde:this.locataireForm.initialSolde
-    }))
+    }
+    if(this.locataireForm.isKnowExactDateEntry) bodyToSend["startedAt"]=this.locataireForm.entryDate.toISOString().split("T")[0]
+    else bodyToSend["startedAt"]= new Date().toISOString().split("T")[0]
+    this._store.dispatch(new LocationAction.CreateLocation(bodyToSend))
   }
 
   onSetLocataireFormData(locataireFormData)
@@ -97,6 +108,7 @@ export class AssignLocationComponent  {
       if(this.sideNavBarElement) {
         this.sideNavBarElement.onCloseAll();
         this.assignLocationForm.reset();
+        // this.assignLocationForm.onDestroy()
       }
     }
 }

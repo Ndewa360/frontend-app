@@ -181,16 +181,16 @@ export class RoomState{
         )
     }
 
-    @Action(RoomAction.ChangeStatusRoom)
-    updateRoomStatus(ctx:StateContext<RoomStateModel>, {roomId,status,locataire}:RoomAction.ChangeStatusRoom)
+    @Action(RoomAction.UpdateLocalRoomInfos)
+    updateRoomStatus(ctx:StateContext<RoomStateModel>, {roomId,data}:RoomAction.UpdateLocalRoomInfos)
     {
         const state = ctx.getState();
         let index = state.rooms.findIndex((u)=>u._id==roomId);
         if(index>-1) {
-            const data = [...state.rooms];
-            data[index]={...data[index],isActiveForSouscription:status,locataire:locataire}
+            const roomData = [...state.rooms];
+            roomData[index]={...roomData[index],...data}
             ctx.patchState({
-                rooms:data
+                rooms:roomData
             })
         }
     }

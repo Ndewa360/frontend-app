@@ -88,7 +88,7 @@ export class UpdateRoomComponent {
     if(this.formGroup.invalid) return;
     let bodyToSend = FormUtils.removeNullAttribut({...this.formGroup.value})
     this.waittingResponse=true;
-    this._store.dispatch(new RoomAction.UpdateRoom(bodyToSend,this.data.room._id));
+    this._store.dispatch(new RoomAction.UpdateRoom({...bodyToSend,isShowToPublic:this.formGroup.value.isShowToPublic,shouldPayCaution:this.formGroup.value.shouldPayCaution},this.data.room._id));
     
   }
 

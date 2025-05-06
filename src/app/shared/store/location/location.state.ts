@@ -195,13 +195,13 @@ export class LocationState{
         return this._locationsService.createLocation(location).pipe(
             tap(
                 result => {
-                    // console.log("Location Created ",result);
+                    console.log("Location Created ",result);
                     ctx.patchState({
                         loadingLocation:false,
                         locations:[...state.locations, result.data]
                     })
                     this._toastrService.success(`Location ajouté avec success!`, 'Ndewa360°');
-                    ctx.dispatch(new RoomAction.ChangeStatusRoom(result.data.room,false,result.data.locataire))
+                    ctx.dispatch(new RoomAction.UpdateLocalRoomInfos(result.data.room,{isActiveForSouscription:true,isFree:false,locataire:result.data.locataire}))
                     ctx.dispatch(new LocataireAction.UpdateLocataireRoom(result.data.locataire,result.data.room))
                 }
             ),
@@ -232,7 +232,7 @@ export class LocationState{
                         locations:data
                     })
                     this._toastrService.success(`Location retiré avec success!`, 'Ndewa360°');
-                    ctx.dispatch(new RoomAction.ChangeStatusRoom(result.data.room,true,null))
+                    ctx.dispatch(new RoomAction.UpdateLocalRoomInfos(result.data.room,{isActiveForSouscription:false,isFree:true,locataire:null}))
                     ctx.dispatch(new LocataireAction.UpdateLocataireRoom(result.data.locataire,null))
                 }
             ),
@@ -258,11 +258,16 @@ export class LocationState{
         })
         return this._locationsService.getLocations(propertyId).pipe(
             tap(
-                result => {
-                    //console.log("Fetch Locations ",result)
+                (result:any) => {
+                    // console.log("Fetch Locations ",result)
+                    let locationFound=[...state.locations];
+                    result.data.forEach((location:LocationModel)=>{
+                        if(locationFound.findIndex((u)=>u._id==location._id)==-1) locationFound.push(location)
+                    })
+
                     ctx.patchState({
                         loadingLocation:false,
-                        locations:[...result.data],
+                        locations:locationFound,
                         initLoadingState:"LOADED"
                     })
                 }

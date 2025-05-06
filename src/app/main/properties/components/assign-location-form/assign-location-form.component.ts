@@ -9,7 +9,8 @@ import { UtilsString } from 'src/app/shared/utils';
   selector: 'assign-location-form',
   templateUrl: './assign-location-form.component.html',
   styleUrls: ['./assign-location-form.component.css'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+
 })
 export class AssignLocationFormComponent  implements OnInit, OnChanges{
   public formGroup = null;
@@ -49,6 +50,8 @@ export class AssignLocationFormComponent  implements OnInit, OnChanges{
   ){}
 
   ngOnInit(): void {
+    console.log("On NgOnInit AssignLocation Form")
+
     this.formGroup = this.formBuilder.group({
       roomId: [null, [Validators.required]],
       locataireId: [null, [Validators.required]],
@@ -60,7 +63,6 @@ export class AssignLocationFormComponent  implements OnInit, OnChanges{
     this.formGroup.valueChanges.subscribe(() => {      
       this.isFormValid();
     })
-    this.askForUpdate()
     this.formGroup.controls["initialSolde"].disable()
 
     this.formGroup.controls["isKnowExactDateEntry"].valueChanges.subscribe((value)=>{
@@ -99,13 +101,22 @@ export class AssignLocationFormComponent  implements OnInit, OnChanges{
   {
     if(!this.propertyID) return;
     this._store.select(RoomState.selectStateFreeRoomByPropertyId(this.propertyID)).subscribe((roomList:RoomModel[])=>{
-      this.roomList = roomList.map((value)=>({content:value.code,valueType:value._id}));
+      this.roomList = roomList.map((value)=>({content:value.code,valueType:value._id,selected:false}));
     });
 
     this._store.select(LocataireState.selectStateFreeLocataireByPropertyId(this.propertyID)).subscribe((locataireList:LocataireModel[])=>{
-      this.locataireList = locataireList.map((value)=>({content:value.fullName,valueType:value._id}));
+      this.locataireList = locataireList.map((value)=>({content:value.fullName,valueType:value._id,selected:false}));
     });
+  }
 
+  refreshComponent(){
+    // window.location.reload()
+    this.roomList = []
+    this.locataireList = [];
+    this.ngOnInit();
+    this.askForUpdate();
+    // console.log("Property ID ",this.propertyID)
+    
   }
 
 

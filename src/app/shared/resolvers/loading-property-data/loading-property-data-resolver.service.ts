@@ -41,7 +41,7 @@ export class LoadingPropertyDataResolver implements Resolve<any>
             new StatisticAction.FetchStaticLocataireDataByPropertyIdAndYear(propertyId,`${new Date().getFullYear()}`),
             new StatisticAction.FetchStaticAllPaymentLocataireDataByPropertyIdAndYear(propertyId,`${new Date().getFullYear()}`),
         ])
- 
+        console.log("Resolver Data ")
         // combineLatest(
         //     this._store.select((state)=>state.auth_token.authToken)
         //     .pipe(

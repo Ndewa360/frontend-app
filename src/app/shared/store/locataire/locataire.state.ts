@@ -123,9 +123,9 @@ export class LocataireState{
     }
 
     @Action(LocataireAction.UpdateLocataireRoom)
-    updateLocataireRoom(ctx:StateContext<LocataireStateModel>, {roomId,locataireId}:LocataireAction.UpdateLocataireRoom)
+    updateLocataireRoom(ctx:StateContext<LocataireStateModel>, {locataireId,roomId}:LocataireAction.UpdateLocataireRoom)
     {
-        const state = ctx.getState();
+        const state = ctx.getState(); 
         let index = state.locataires.findIndex((u)=>u._id==locataireId);
         if(index>-1) {
             const data = [...state.locataires];
@@ -215,11 +215,15 @@ export class LocataireState{
         })
         return this._locatairesService.getLocataires(propertyId).pipe(
             tap(
-                result => {
-                    //console.log("Fetch Locataire ",result)
+                (result:any) => {
+                    let locataireFound=[...state.locataires];
+                    result.data.forEach((locataire:LocataireModel)=>{
+                        if(locataireFound.findIndex((u)=>u._id==locataire._id)==-1) locataireFound.push(locataire)
+                    })
+                    // let locatiresResult = 
                     ctx.patchState({
                         loadingLocataire:false,
-                        locataires:[...result.data],
+                        locataires:locataireFound,
                         initLoadingState:"LOADED"
                     })
                 }
