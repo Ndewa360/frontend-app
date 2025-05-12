@@ -4,7 +4,7 @@
   <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
     <div fxFill fxLayout="column" class="app-bg-container overflow-hidden">
       <div class="px-4 py-4 flex">
-        <div class="app-productive-heading-03 font-bold">Mettre à jour la chambre/studio/appartement</div>
+        <div class="app-productive-heading-03 font-bold">Mettre à jour l'unité</div>
         <div class="flex-1 flex justify-end">
           <button (click)="onClose()" ibmButton="ghost" size="sm" class="cds--btn--icon-only custom-ghost-close">
             <youpez-ibm-icon iconClass="cds--btn__icon" iconName="close" iconSize="32"></youpez-ibm-icon>
@@ -16,7 +16,7 @@
           <div class="app-form">
             <div fxLayout="row wrap" class="app-form__row">
               <div fxFlex="100%" fxFlex.gt-md="50%" class="app-form__item">
-                <ibm-label helperText="Le numero de chambre sera généré si non fournis"> Numéro de chambre
+                <ibm-label helperText="Le numero de l'unité sera généré si non fournis"> Numéro de l'unité
                   <input ibmText formControlName="code" size="md" theme="dark">
                 </ibm-label>
               </div>

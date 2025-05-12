@@ -82,8 +82,8 @@ export class AppComponent implements OnInit {
     //Meta Tag
     this.titleService.setTitle('Ndewa360 - Location Immobilière en 360° au Cameroun');
     this.meta.addTags([
-      { name: 'description', content: 'Explorez des logements en 360°, trouvez des chambres et appartements à louer facilement. Ndewa360 simplifie la recherche et la gestion immobilière.' },
-      { name: 'keywords', content: 'location, logement, immobilier, Cameroun, 360°, étudiants, chambres à louer, propriétaires, gestion immobilière' },
+      { name: 'description', content: 'Explorez des logements en 360°, trouvez des chambres,studios et appartements à louer facilement. Ndewa360 simplifie la recherche et la gestion immobilière.' },
+      { name: 'keywords', content: 'location, logement, immobilier, Cameroun, 360°, étudiants, unités à louer, propriétaires, gestion immobilière' },
       { name: 'author', content: 'Ndewa360' },
       { property: 'og:title', content: 'Ndewa360 - Location Immobilière en 360°' },
       { property: 'og:description', content: 'Trouvez ou gérez des logements facilement au Cameroun grâce à Ndewa360. Visite virtuelle, gestion simplifiée, 100% digital.' },

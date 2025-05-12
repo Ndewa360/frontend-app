@@ -78,8 +78,8 @@ export class ShowPropertyComponent implements OnInit {
         return "Locataires de biens"
       case 'finances':
         return "Vos finances"
-      case 'chambres':
-        return "Vos Chambres / Studios / Appartements"
+      case 'unités':
+        return "Vos Unités locatives"
       case 'history-finance':
         return "Historique des paiements"
     }
@@ -95,8 +95,8 @@ export class ShowPropertyComponent implements OnInit {
       //   return "Vos finances"
       case 'locations':
           return "Nouveau contrat de location"
-      case 'chambres':
-        return "Ajouter une chambre "
+      case 'unités':
+        return "Ajouter une unité "
     }
     return ""
   }
@@ -107,7 +107,7 @@ export class ShowPropertyComponent implements OnInit {
         return false;
       case 'locataires':
       case 'locations':
-      case 'chambres':
+      case 'unités':
         return true
     }
     return false
@@ -149,7 +149,7 @@ export class ShowPropertyComponent implements OnInit {
         return null;
       case 'finances':
         return "Vos finances"
-      case 'chambres':
+      case 'unités':
         this.addPropertyRoomDialogRef = this.dialog.open(AddPropertyRoomComponent, {
           viewContainerRef:null,
           disableClose: true,

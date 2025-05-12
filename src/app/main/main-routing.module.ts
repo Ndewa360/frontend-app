@@ -131,7 +131,7 @@ const routes: Routes = [
                 path: 'rooms',
                 component: PropertyRoomComponent,
                 data: {
-                  breadcrumb: 'chambres'
+                  breadcrumb: 'unités'
                 },
               },
               {
