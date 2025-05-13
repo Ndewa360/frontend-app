@@ -71,7 +71,7 @@ export class SeeLocationsComponent {
         className: "items-center font-bold"
       }),
       new TableHeaderItem({
-        data: "Chambre/Studio/Appart",
+        data: "Unité",
         className: "items-center"
       }),
       new TableHeaderItem({

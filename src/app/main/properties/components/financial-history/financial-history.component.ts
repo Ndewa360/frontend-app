@@ -103,7 +103,7 @@ export class FinancialHistoryComponent implements OnInit {
         filter: false,
       },
       {
-        headerName: 'Chambre',
+        headerName: 'Unité',
         field: 'chambre',
         headerClass: 'cell-flex-right',
         cellClass: 'cell-flex-middle cell-flex-right',

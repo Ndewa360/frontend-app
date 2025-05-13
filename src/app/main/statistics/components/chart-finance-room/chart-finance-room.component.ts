@@ -8,7 +8,7 @@ import { Component, Input, OnInit } from '@angular/core';
 export class ChartFinanceRoomComponent  implements OnInit{
 
   @Input() label:string=''
-  @Input() title:string='Révenu Chambre/Studio/Appartement'
+  @Input() title:string='Révenu unité'
 
   charsOpts: any={};
 
