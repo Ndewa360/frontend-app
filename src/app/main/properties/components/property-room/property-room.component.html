@@ -1,3 +1,16 @@
+<youpez-sidenav-container #panelLocation panel="panel">
+    <youpez-sidenav
+          [breakpoint]="'lg'"
+          [direction]="'right'"
+          [opened]="isAssignedOpened"
+          (visibleChange)="isAssignedOpened=$event"
+          [mode]="'over'"
+          [toggleableBtn]="true"
+          (close)="onClose($event)"
+          [size]="'lg'">
+        <assign-location [roomSelected]="roomSelected" [sideNavBarElement]="panelLocation" [isAssignedOpened]="isAssignedOpened" [property]="property"></assign-location>
+    </youpez-sidenav>
+
 <ng-scrollbar>
     <div fxFill fxLayout="column">
       <div fxFlex class="relative">
@@ -6,9 +19,9 @@
         <div fxLayout="row wrap" class="app-card-row-holder">
           <ng-container *ngIf="(loadingRoom$ | async)=='LOADED' else isLoadingData">
             <ng-container *ngFor="let room of roomFound">
-              <!-- [routerLink]="['/app/properties',room._id]" -->
+              <!-- [routerLink]="['/app/properties',room._id]" app-card--select-->
               <div fxFlex="100%" fxFlex.gt-md="20%" class="" *ngIf="!room.isDeleted">
-                <div class="app-card app-card--select group">
+                <div class="app-card  group">
                   <div class="relative btn-edit-wih">
                     <ng-container *ngIf="room.isFree else noToDelete">
                       <button (click)="deleteRoom(room)"   class="absolute isFree float-right btn-text-remove top-2 text-white right-0 mt-5 mr-5 bg-red-600 rounded-md">
@@ -19,6 +32,9 @@
                       </button>
                       <button (click)="openEditRoom(room)"  class="absolute isFree float-right btn-text-edit  right-0 mt-28 mr-5 bg-slate-700 rounded-md">
                         <youpez-ibm-icon iconName="pen" iconSize="24" ></youpez-ibm-icon>
+                      </button>
+                      <button (click)="openEditAddLocataire(room)"  class="absolute isFree float-right btn-text-add-locataire  right-0 mt-28 mr-5 bg-slate-700 rounded-md">
+                        <youpez-ibm-icon iconName="userAdd" iconSize="24" ></youpez-ibm-icon>
                       </button>
                     </ng-container>
                     <ng-template #noToDelete>
@@ -81,4 +97,5 @@
         </div>
       </div>
     </div>
-  </ng-scrollbar>
+</ng-scrollbar>
+</youpez-sidenav-container>

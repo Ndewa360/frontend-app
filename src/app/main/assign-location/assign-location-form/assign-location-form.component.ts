@@ -16,6 +16,8 @@ export class AssignLocationFormComponent  implements OnInit, OnChanges{
   public formGroup = null;
 
   @Input() propertyID:string=null;
+  @Input() roomSelected:RoomModel = null;
+  @Input() locataireSelected:LocataireModel=null  
 
   roomList = [];
   locataireList = [];
@@ -50,7 +52,6 @@ export class AssignLocationFormComponent  implements OnInit, OnChanges{
   ){}
 
   ngOnInit(): void {
-    console.log("On NgOnInit AssignLocation Form")
 
     this.formGroup = this.formBuilder.group({
       roomId: [null, [Validators.required]],
@@ -94,18 +95,25 @@ export class AssignLocationFormComponent  implements OnInit, OnChanges{
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if(changes["propertyID"] && changes["propertyID"].currentValue != null) this.askForUpdate()
+    if( (changes["propertyID"] && changes["propertyID"].currentValue != null) ||
+        (changes["roomSelected"] && changes["roomSelected"].currentValue != null) ||
+      (changes["locataireSelected"] && changes["locataireSelected"].currentValue != null) 
+    ) this.askForUpdate()
   }
 
   askForUpdate()
   {
     if(!this.propertyID) return;
     this._store.select(RoomState.selectStateFreeRoomByPropertyId(this.propertyID)).subscribe((roomList:RoomModel[])=>{
-      this.roomList = roomList.map((value)=>({content:value.code,valueType:value._id,selected:false}));
+      this.roomList = roomList.map((value)=>({content:value.code,valueType:value._id,selected:(this.roomSelected && this.roomSelected._id==value._id)?true:false}));
+      if(this.roomSelected) this.formGroup.get("roomId").setValue({content:this.roomSelected.code, valueType:this.roomSelected._id})
+      // console.log("RoomList ",this.roomList)
     });
 
     this._store.select(LocataireState.selectStateFreeLocataireByPropertyId(this.propertyID)).subscribe((locataireList:LocataireModel[])=>{
-      this.locataireList = locataireList.map((value)=>({content:value.fullName,valueType:value._id,selected:false}));
+      this.locataireList = locataireList.map((value)=>({content:value.fullName,valueType:value._id,selected:(this.locataireSelected && this.locataireSelected._id==value._id)?true:false}));
+      if(this.locataireSelected) this.formGroup.get("locataireId").setValue({content:this.locataireSelected._id, valueType:this.locataireSelected._id})
+
     });
   }
 

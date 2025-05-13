@@ -1,10 +1,10 @@
-import { Component, Input, OnInit, SimpleChanges, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngxs/store';
 import { TableHeaderItem, TableItem, TableModel, TableRowSize } from 'carbon-components-angular';
 import { getDummyModel } from 'src/@youpez/data/dummy';
 import { AddPaymentComponent } from 'src/app/main/location-payment/components/add-payment/add-payment.component';
-import { LocationState, RoomState } from 'src/app/shared/store';
+import { LocataireModel, LocationState, PropertyModel, RoomState } from 'src/app/shared/store';
 
 
 class CustomHeaderItem extends TableHeaderItem {
@@ -51,6 +51,9 @@ export class LocatairePropertyTableComponent implements OnInit {
   @Input() noData = false
   @Input() stickyHeader = false
   @Input() skeleton = false
+  @Input() property:PropertyModel;
+  @Output()selectedLocataireEvent:EventEmitter<LocataireModel>=new EventEmitter();
+
 
   @ViewChild("totalHeaderTemplate", {static: true}) totalHeaderTemplate: TemplateRef<any>
   @ViewChild("actionTemplate", {static: true}) actionTemplate: TemplateRef<any>
@@ -72,7 +75,9 @@ export class LocatairePropertyTableComponent implements OnInit {
 
   updateDataAfterChanges()
   {
-    this.model.data.map(data => {      
+    this.model.data.map(data => {  
+      // console.log("Data ",data[3].data)
+
       data[3] = new TableItem({
         data: data[3].data,
         template: this.propertyTemplate,
@@ -110,6 +115,13 @@ export class LocatairePropertyTableComponent implements OnInit {
   {
     return this._store.select(LocationState.selectStateLocationByRoomAndLocataireId(locataire._id,locataire.room))
   }
+
+  assignNewLocation(locataire) 
+  {
+    this.selectedLocataireEvent.emit(locataire)
+  }
+
+  
   
 
   addLocationPayment(location)

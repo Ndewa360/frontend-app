@@ -48,6 +48,11 @@
     <svg [class]="iconClass" cdsIcon="user--access-unlocked" [size]="iconSize"></svg>
   </ng-container>
   
+<ng-container *ngSwitchCase="'userAdd'">
+    <svg [class]="iconClass" cdsIcon="user--follow" [size]="iconSize"></svg>
+  </ng-container>
+  
+
   <ng-container *ngSwitchCase="'tools'">
     <svg [class]="iconClass" cdsIcon="tools" [size]="iconSize"></svg>
   </ng-container>
@@ -123,6 +128,10 @@
 
   <ng-container *ngSwitchCase="'hotel'">
     <svg [class]="iconClass" cdsIcon="hotel" [size]="iconSize"></svg>
+  </ng-container>
+
+  <ng-container *ngSwitchCase="'hospital'">
+    <svg [class]="iconClass" cdsIcon="hospital" [size]="iconSize"></svg>
   </ng-container>
 
   <ng-container *ngSwitchCase="'minimize'">

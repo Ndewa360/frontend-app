@@ -27,6 +27,10 @@ export class AssignLocationComponent  implements OnChanges{
   @Input() isAssignedOpened: boolean = false
   @Input() property: PropertyModel = null;
   @Input() sideNavBarElement: AppSidenavContainerComponent = null
+  @Input() roomSelected:RoomModel = null;
+  @Input() locataireSelected:LocataireModel = null;
+  
+
   @ViewChild('locationForm') assignLocationForm:AssignLocationFormComponent;
   canSendingData: boolean = false;
   waittingResponse:boolean = false;

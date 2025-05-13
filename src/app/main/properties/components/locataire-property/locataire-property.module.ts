@@ -6,6 +6,7 @@ import {LayoutModule} from "src/app/layout/layout.module"
 import {ChartsModule} from 'src/@youpez'
 import { LocatairePropertyListComponent } from './locataire-property-list/locataire-property-list.component';
 import { LocatairePropertyTableComponent } from './locataire-property-table/locataire-property-table.component';
+import { AssignLocationModule } from 'src/app/main/assign-location/assign-location.module';
 
 
 
@@ -17,6 +18,7 @@ import { LocatairePropertyTableComponent } from './locataire-property-table/loca
     SharedModule,
     ChartsModule,
     AgGridModule,
+    AssignLocationModule
   ],
   exports:[LocatairePropertyListComponent, LocatairePropertyTableComponent]
 })

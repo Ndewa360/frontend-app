@@ -83,6 +83,11 @@ export class LocationState{
         return createSelector([LocationState],(state)=> state.locations.filter((location)=>location.property==propertyID))
     }
 
+    static selectStateCountLocationByPropertyId(propertyID)
+    {
+        return createSelector([LocationState],(state)=> state.locations.filter((location)=>location.property==propertyID).length)
+    }
+
     @Action(LocationAction.UpdateLocation)
     updateLocation(ctx:StateContext<LocationStateModel>, {location,id}:LocationAction.UpdateLocation)
     {

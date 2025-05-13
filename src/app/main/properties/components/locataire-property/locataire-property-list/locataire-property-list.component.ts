@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Select, Store } from '@ngxs/store';
 import { TableModel, TableHeaderItem, TableItem, TableRowSize } from 'carbon-components-angular';
@@ -19,7 +19,13 @@ function getRandomArbitrary(min, max) {
   styleUrls: ['./locataire-property-list.component.scss']
 })
 export class LocatairePropertyListComponent implements OnInit, OnChanges {
+
   @Input() public propertyId = null;
+  @Input() public property = null;
+  @Output()selectedLocataireEvent:EventEmitter<LocataireModel>=new EventEmitter();
+  
+  
+
   @Select(LocataireState.selectStateInitLoading) public loadingData$:Observable<string>;
   hasNoData=true;
   public model = null;
@@ -86,6 +92,12 @@ export class LocatairePropertyListComponent implements OnInit, OnChanges {
     return model;
   }
 
+  
+  onSelectedLocataire(locataire:LocataireModel)
+  {
+    this.selectedLocataireEvent.emit(locataire)
+  }
+  
   
 
 }

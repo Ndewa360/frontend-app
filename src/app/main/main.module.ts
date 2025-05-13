@@ -27,8 +27,8 @@ import { AgGridModule } from '@ag-grid-community/angular';
 
 import { UpdatePropertyComponent } from './properties/components/update-property/update-property.component';
 import { SeeLocationsComponent } from './properties/components/see-locations/see-locations.component';
-import { AssignLocationComponent } from './properties/components/assign-location/assign-location.component';
-import { AssignLocationFormComponent } from './properties/components/assign-location-form/assign-location-form.component';
+// import { AssignLocationComponent } from './assign-location/assign-location/assign-location.component';
+// import { AssignLocationFormComponent } from './assign-location/assign-location-form/assign-location-form.component';
 import { AssignLocationListClientComponent } from './properties/components/assign-location-list-client/assign-location-list-client.component';
 import { RemoveLocataireRoomComponent } from './properties/components/remove-locataire-room/remove-locataire-room.component'
 import { LocationPaymentModule } from './location-payment/location-payment.module'
@@ -46,6 +46,7 @@ import { HomePropertyComponent } from './properties/home-property/home-property.
 import { HomePropertyRecapFinanceComponent } from './properties/components/home-property-recap-finance/home-property-recap-finance.component';
 import { HomePropertyRecapFinanceYearComponent } from './properties/components/home-property-recap-finance-year/home-property-recap-finance-year.component';
 import { HomePropertyRecapFinanceMonthComponent } from './properties/components/home-property-recap-finance-month/home-property-recap-finance-month.component'
+import { AssignLocationModule } from './assign-location/assign-location.module'
 
 ModuleRegistry.registerModules([
   ClientSideRowModelModule, 
@@ -73,8 +74,8 @@ ModuleRegistry.registerModules([
     FinancialHistoryComponent,
     UpdatePropertyComponent,
     SeeLocationsComponent,
-    AssignLocationComponent,
-    AssignLocationFormComponent,
+    // AssignLocationComponent,
+    // AssignLocationFormComponent,
     AssignLocationListClientComponent,
     RemoveLocataireRoomComponent,
     GaleryPropertyComponent,
@@ -96,7 +97,8 @@ ModuleRegistry.registerModules([
     LocatairePropertyModule,
     LocatairesModule,
     RoomModule,
-    StatisticsModule
+    StatisticsModule,
+    AssignLocationModule
   ]
 })
 export class MainModule {

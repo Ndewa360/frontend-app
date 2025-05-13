@@ -32,6 +32,12 @@ import User24 from '@carbon/icons/es/user/24';
 import User20 from '@carbon/icons/es/user/20';
 import User16 from '@carbon/icons/es/user/16';
 
+import UserAdd32 from '@carbon/icons/es/user--follow/32';
+import UserAdd24 from '@carbon/icons/es/user--follow/24';
+import UserAdd20 from '@carbon/icons/es/user--follow/20';
+import UserAdd16 from '@carbon/icons/es/user--follow/16';
+
+
 import Pen32 from '@carbon/icons/es/pen/32';
 import Pen24 from '@carbon/icons/es/pen/24';
 import Pen20 from '@carbon/icons/es/pen/20';
@@ -354,6 +360,11 @@ import CloudUpload24 from '@carbon/icons/es/cloud--upload/24';
 import CloudUpload20 from '@carbon/icons/es/cloud--upload/20';
 import CloudUpload16 from '@carbon/icons/es/cloud--upload/16';
 
+import Hospital32 from '@carbon/icons/es/hospital/32';
+import Hospital24 from '@carbon/icons/es/hospital/24';
+import Hospital20 from '@carbon/icons/es/hospital/20';
+import Hospital16 from '@carbon/icons/es/hospital/16';
+
 
 import {IbmIconComponent} from './ibm-icon.component'
 import { MatIconRegistry } from '@angular/material/icon';
@@ -385,6 +396,11 @@ export class IbmIconModule {
 		SettingsAdjust20,
 		SettingsAdjust16,
 
+		Hospital32,
+		Hospital24,
+		Hospital20,
+		Hospital16,
+
 		CloudUpload32,
 		CloudUpload24,
 		CloudUpload20,
@@ -394,6 +410,11 @@ export class IbmIconModule {
 		UserAccessUnlock24,
 		UserAccessUnlock20,
 		UserAccessUnlock16,
+
+		UserAdd32,
+		UserAdd24,
+		UserAdd20,
+		UserAdd16,
 
 		DropPhoto32,
 		DropPhoto24,

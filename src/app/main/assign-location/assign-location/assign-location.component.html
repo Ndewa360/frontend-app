@@ -24,7 +24,7 @@
                                           <div class="">
                                             <!-- <app-dummy-form-billing #billingForm [theme]="formTheme" [layout]="formLayout"></app-dummy-form-billing> -->
                                              <!--  -->
-                                              <assign-location-form (onSendLocationData)="onSetLocataireFormData($event)" #locationForm [propertyID]="property?._id" ></assign-location-form>
+                                              <assign-location-form (onSendLocationData)="onSetLocataireFormData($event)" #locationForm [propertyID]="property?._id" [roomSelected]="roomSelected" [locataireSelected]="locataireSelected"></assign-location-form>
                                             <div class="mt-1 flex justify-between">
                                               <button ibmButton="secondary" size="md" [disabled]="waittingResponse" (click)="closeSideNav()">
                                                   <!-- <youpez-ibm-icon iconClass="cds--btn__icon" iconName="arrowRight" iconSize="20" ></youpez-ibm-icon > -->

@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { combineLatest, combineLatestAll, Observable } from 'rxjs';
-import { PropertyAction, PropertyModel, PropertyState } from 'src/app/shared/store';
+import { LocataireState, LocationState, PropertyAction, PropertyModel, PropertyState, RoomState } from 'src/app/shared/store';
 import { AddPropertyRoomComponent } from '../components/add-property-room/add-property-room.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { AddPropertyComponent } from '../add-property/add-property.component';
@@ -27,6 +27,10 @@ export class ShowPropertyComponent implements OnInit {
   propertyFound$:Observable<PropertyModel>;
   waittingResponseDeleteProperty = false; 
   private addPropertyRoomDialogRef: MatDialogRef<AddPropertyRoomComponent | AddPropertyLocataireComponent>;
+
+  roomNumber = 0;
+  locataireNumber =0;
+  locationNumber = 0;
   
   public isDetailsOpened: boolean = false
   public leftSidebarVisibility: boolean = true
@@ -47,7 +51,12 @@ export class ShowPropertyComponent implements OnInit {
       this._router.navigateByUrl('/app/properties/home');;
       return;
     }
+    
     this.propertyFound$=this._store.select(PropertyState.selectStateProperty(propertyId));
+    this._store.select(RoomState.selectStateCountRoomWithStateByPropertyId(propertyId)).subscribe((value)=>this.roomNumber=value.roomCountTotal)
+    this._store.select(LocataireState.selectStateLocataireCountByPropertyId(propertyId)).subscribe((value)=>this.locataireNumber=value)
+    this._store.select(LocationState.selectStateCountLocationByPropertyId(propertyId)).subscribe((value)=>this.locationNumber=value)
+
     combineLatest([this.propertyFound$,this.loadingProperty$]).subscribe(([property, loading])=>{
       if(!loading) {
         if(!property){

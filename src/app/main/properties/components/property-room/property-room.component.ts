@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { Currency, LocataireState, RoomModel, RoomState } from 'src/app/shared/store';
+import { Currency, LocataireState, PropertyState, RoomModel, RoomState } from 'src/app/shared/store';
 import { UtilsString } from 'src/app/shared/utils';
 import { UpdateRoomComponent } from 'src/app/main/room/components/update-room/update-room.component';
 import { GaleryComponent } from 'src/app/main/room/components/galery/galery.component';
@@ -19,7 +19,9 @@ export class PropertyRoomComponent implements OnInit {
   @Select(RoomState.selectStateInitLoading) loadingRoom$:Observable<string>;
   roomFound:RoomModel[] = [];
   roomFound$:Observable<RoomModel[]>;
-  
+  isAssignedOpened = false;
+  public property= null;
+  roomSelected:RoomModel=null;
 
   constructor(
     private _activatedRoute: ActivatedRoute,
@@ -35,6 +37,10 @@ export class PropertyRoomComponent implements OnInit {
       this._router.navigateByUrl('/app/properties/home');;
       return;
     }
+    this._store.select(PropertyState.selectStateProperty(propertyId)).subscribe((value)=>{
+          this.property = value;
+        })
+        
     this.roomFound$=this._store.select(RoomState.selectStateRoomByPropertyId(propertyId));
     this.roomFound$.subscribe((found)=>{
         this.roomFound = found;
@@ -49,6 +55,10 @@ export class PropertyRoomComponent implements OnInit {
   getMoney()
   {
     return Currency.XAF
+  }
+  onClose(event) {
+    this.isAssignedOpened = false;
+    this.roomSelected = null;
   }
 
   getRoomType(roomType)
@@ -99,6 +109,12 @@ export class PropertyRoomComponent implements OnInit {
         room
       }
     })
+  }
+
+  openEditAddLocataire(room:RoomModel)
+  {
+    this.isAssignedOpened = true;
+    this.roomSelected = room;
   }
 
 }
