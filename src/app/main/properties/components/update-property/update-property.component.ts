@@ -57,7 +57,12 @@ export class UpdatePropertyComponent {
         return {content:country.fullName,valueType:country._id,selected:country._id==this.data.property.geolocationCountry?._id}
       });
       if(selectedCountry) {
-          this.selectedCitiesList=this.citiesList.filter((city)=>city.country==selectedCountry._id).map((city)=>({content:city.fullName, valueType:city._id,selected:city._id==this.data.property.geolocationCity?._id}));
+        this.formGroup.get("geolocationCountry").setValue({content:selectedCountry.fullName,valueType:selectedCountry._id})
+
+        this.selectedCitiesList=this.citiesList.filter((city)=>city.country==selectedCountry._id).map((city)=>{
+          if(city._id==this.data.property.geolocationCity?._id) this.formGroup.get("geolocationCity").setValue({content:city.fullName, valueType:city._id})
+          return {content:city.fullName, valueType:city._id,selected:city._id==this.data.property.geolocationCity?._id}
+      });
       }
     // //console.log("Cities",this.selectedCitiesList,this.countriesList)
 

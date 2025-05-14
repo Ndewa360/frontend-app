@@ -3,6 +3,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Store, Actions, ofActionCompleted, ofActionErrored, ofActionSuccessful, Select } from '@ngxs/store';
+import { has } from 'cypress/types/lodash';
 import { Observable } from 'rxjs';
 import { CityModel, CountryModel, CountryState, PropertyAction } from 'src/app/shared/store';
 import { FormUtils } from 'src/app/shared/utils';
@@ -85,10 +86,13 @@ export class AddPropertyComponent implements OnInit {
     this.formGroup.markAllAsTouched()
 
     this.waittingResponse=true;
+
     this._store.dispatch(new PropertyAction.CreateProperty({
       ...FormUtils.removeNullAttribut(this.formGroup.value),
       geolocationCity:this.formGroup.value.geolocationCity.valueType,
-      geolocationCountry:this.formGroup.value.geolocationCountry.valueType
+      geolocationCountry:this.formGroup.value.geolocationCountry.valueType,
+      hasClosure:this.formGroup.value.hasClosure?true:false,
+      hasParking:this.formGroup.value.hasParking?true:false
     }));
     
   }
