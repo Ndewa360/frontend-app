@@ -50,7 +50,7 @@ export class RoomState{
         return state.rooms
     }
 
-    
+     
     static selectStateRoom(roomId)
     {
         return createSelector([RoomState],(state)=>{
@@ -65,12 +65,15 @@ export class RoomState{
         return createSelector([RoomState],(state)=> state.rooms.filter((room)=>room.property==propertyId && room.isFree==true));    
       }
 
+    static selectStateCountRoomWByPropertyId(propertyId: any) {
+        return createSelector([RoomState],(state)=> (state.rooms.filter((room)=>room.property==propertyId).length))
+    }
     static selectStateCountRoomWithStateByPropertyId(propertyId: any) {
         return createSelector([RoomState],(state)=> ({
             noFreeRoomCount: state.rooms.filter((room)=>room.property==propertyId && room.isFree!=true).length,
             roomCountTotal:state.rooms.length
         }))
-    };
+    }
 
     @Selector()
     static selectStateCountRoomActive(state:RoomStateModel) {

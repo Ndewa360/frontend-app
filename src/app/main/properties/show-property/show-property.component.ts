@@ -53,7 +53,7 @@ export class ShowPropertyComponent implements OnInit {
     }
     
     this.propertyFound$=this._store.select(PropertyState.selectStateProperty(propertyId));
-    this._store.select(RoomState.selectStateCountRoomWithStateByPropertyId(propertyId)).subscribe((value)=>this.roomNumber=value.roomCountTotal)
+    this._store.select(RoomState.selectStateCountRoomWByPropertyId(propertyId)).subscribe((value)=>this.roomNumber=value)
     this._store.select(LocataireState.selectStateLocataireCountByPropertyId(propertyId)).subscribe((value)=>this.locataireNumber=value)
     this._store.select(LocationState.selectStateCountLocationByPropertyId(propertyId)).subscribe((value)=>this.locationNumber=value)
 
