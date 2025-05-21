@@ -5,21 +5,19 @@
       <ng-scrollbar track="all">
         <div fxLayout="row" fxLayoutAlign="start start">
           <div fxFlex="90%" fxFlex.gt-md="80%" fxFlex.gt-lg="70%" class="app-content app-content--default">
-            <div class="mt-8 mb-12">
+            <div class="mt-8 mb-8" [routerLink]="routingLink">
               <youpez-logo class="cursor-pointer" logoWidth="200px"></youpez-logo>
             </div>
             <div class="">
-              <button routerLink="/app/application/welcome" ibmButton="ghost" size="sm"
-                      class="cds--btn__icon--left -ml-2">
-                <svg class="cds--btn__icon" ibmIconArrowLeft size="20"></svg>
-                Back to dashboard screen
+              <button [routerLink]="routingLink" ibmButton="ghost" size="sm" class="cds--btn__icon--left -ml-2">
+                <youpez-ibm-icon iconName="arrowLeft" iconClass="cds--btn__icon" size="20"></youpez-ibm-icon>
+                Retour à l'acceuil
               </button>
             </div>
             <div class="app-productive-heading-06 mb-4">
-              Getting started
+              Guide de démarrage
             </div>
-            <p class="app-body-short-01 mb-8">Experience Youpez platform by using guided walkthroughs &
-              videos</p>
+            <p class="app-body-short-01 mb-8">Découvrez la plate-forme Ndewa360 en utilisant des visites guidées et des vidéos</p>
             <div fxLayout="row">
               <ng-container *ngFor="let video of videos;trackBy:trackByFn">
                 <div fxFlex="350px" class="mr-4">
@@ -31,7 +29,7 @@
                       </ng-container>
                     </div>
                     <div class="app-card__content app-border-b">
-                      <div class="app-subtitle mb-1">TOPIC</div>
+                      <div class="app-subtitle mb-1">SUJET</div>
                       <div class="app-productive-heading-02">{{video.topic}}</div>
                     </div>
                     <div class="app-card__content app-border-b">
@@ -55,7 +53,7 @@
                       <div class="app-productive-heading-02">{{video.page}}</div>
                     </div>
                     <div class="app-card__content">
-                      <div class="app-subtitle mb-1">more info</div>
+                      <div class="app-subtitle mb-1">Détails</div>
                       <div class="app-body-short-01">{{video.info}}</div>
                     </div>
                   </div>

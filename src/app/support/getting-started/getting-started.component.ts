@@ -1,5 +1,8 @@
 import {Component, OnInit} from '@angular/core'
 import {DomSanitizer} from '@angular/platform-browser'
+import { Observable } from 'rxjs'
+import { Select, Store } from '@ngxs/store'
+import { UserProfileAction, UserProfileModel, UserProfileState } from 'src/app/shared/store'
 
 @Component({
   selector: 'app-getting-started',
@@ -7,99 +10,112 @@ import {DomSanitizer} from '@angular/platform-browser'
   styleUrls: ['./getting-started.component.css']
 })
 export class GettingStartedComponent implements OnInit {
+  @Select(UserProfileState.selectStateUserProfile) userProfil$:Observable<UserProfileModel>
+  routingLink="/support/home"
 
   public videos = [
     {
-      title: 'App Introduction',
-      topic: 'video tutorials',
-      url: 'https://www.youtube.com/embed/PH-2FfFD2PU',
+      title: 'Introduction à Ndewa360',
+      topic: 'tutoriels vidéo',
+      url: 'https://www.youtube.com/embed/F4xu5FXW62k',
       seen: true,
       steps: [
-        'Click \'Sign Up\'',
-        'Fill the form',
-        'Accept terms & condition',
-        'Submit form',
-        'Check your email',
-        'Login to your account',
       ],
-      page: 'App authentication',
-      info: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin id tincidunt dui. Maecenas elementum eros id imperdiet molestie. Vestibulum semper tempus turpis.',
+      page: 'Présentation général',
+      info: 'Présentation général de l\'application.',
     },
     {
-      title: 'Introduction to Youpez',
-      topic: 'app tutorials',
-      url: 'https://www.youtube.com/embed/WwQ62OyCNz4',
+      title: 'Creation de compte',
+      topic: 'Gestion du profil',
+      url: 'https://www.youtube.com/embed/gyin31wzg4Q',
       seen: true,
       steps: [
-        'Click \'Sign Up\'',
-        'Fill the form',
-        'Accept terms & condition',
-        'Submit form',
-        'Check your email',
-        'Login to your account',
+        'Cliquer sur \'S\'inscrire\'',
+        'Remplir le formulaire',
+        'Accepter les conditions générales',
+        'Soumettre le formulaire',
+        'Vérifiez votre email',
+        'Connectez-vous à votre compte',
       ],
-      page: 'Cloud format',
-      info: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin id tincidunt dui. Maecenas elementum eros id imperdiet molestie. Vestibulum semper tempus turpis.',
+      page: 'Création de compte & Connexion',
+      info: 'Processus complet de création de compte avec confirmation de l\'adresse email',
     },
     {
-      title: 'Advanced Topics',
-      topic: '5min explanation',
-      url: 'https://www.youtube.com/embed/OmphHSaO1sE',
+      title: 'Ajout de bien immobilier',
+      topic: 'Gestion de bien',
+      url: 'https://www.youtube.com/embed/WBhNszyc_Ks',
       steps: [
-        'Click \'Sign Up\'',
-        'Fill the form',
-        'Accept terms & condition',
-        'Submit form',
-        'Check your email',
-        'Login to your account',
+        'Connectez-vous à votre compte',
+        'Cliquer sur \'Bien immobilier\'',
+        'Cliquer sur  \'Nouveau\'',
+        'Remplir le formulaire',
+        'Soumettre le formulaire',
+        'Acceder au panel de gestion du bien',
       ],
-      page: 'Dashboard',
-      info: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin id tincidunt dui. Maecenas elementum eros id imperdiet molestie. Vestibulum semper tempus turpis.',
+      page: 'Bien immobilier',
+      info: 'Processus de création d\'un bien immobiliér dans un localité précise en tenant compte de la ville et du pays.',
     },
     {
-      title: 'Packaging and Deploy',
-      topic: 'cloud environment',
+      title: 'Ajout d\'une unité locative',
+      topic: 'Gestion d\'unité locative',
       url: 'https://www.youtube.com/embed/7rkeORD4jSw',
       steps: [
-        'Click \'Sign Up\'',
-        'Fill the form',
-        'Accept terms & condition',
-        'Submit form',
-        'Check your email',
-        'Login to your account',
+        'Connectez-vous à votre compte',
+        'Cliquer sur \'Bien immobilier\'',
+        'Cliquer sur \'Unité\'',
+        'Cliquer sur \'Ajouter une unité\'',
+        'Remplir le formulaire',
+        'Soumettre le formulaire',
+        'Voir l\'unité nouvellement créée',
       ],
-      page: 'Emails',
-      info: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin id tincidunt dui. Maecenas elementum eros id imperdiet molestie. Vestibulum semper tempus turpis.',
+      page: 'Unités',
+      info: 'Processus de création d\'une unité locative (chambre, studio ou appartement) à l\'intérieur d\'un bien immobilier.',
     },
     {
-      title: 'Serverless on Youpez',
-      topic: 'statistics',
+      title: 'Ajout d\'un locataire',
+      topic: 'Gestion de locataire',
       url: 'https://www.youtube.com/embed/Bsq5cKkS33I',
       steps: [
-        'Click \'Sign Up\'',
-        'Fill the form',
-        'Accept terms & condition',
-        'Submit form',
-        'Check your email',
-        'Login to your account',
+        'Connectez-vous à votre compte',
+        'Cliquer sur \'Bien immobilier\'',
+        'Cliquer sur \'Locataires\'',
+        'Cliquer sur \'Ajouter un locataire\'',
+        'Remplir le formulaire',
+        'Soumettre le formulaire',
+        'Voir le locataire nouvellement créée',
       ],
-      page: 'File manager',
-      info: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin id tincidunt dui. Maecenas elementum eros id imperdiet molestie. Vestibulum semper tempus turpis.',
+      page: 'Locataires',
+      info: 'Processus de création d\'un locataire appartenant à un bien immobilier.',
     },
     {
-      title: 'Youpez administration',
-      topic: 'video tutorials',
+      title: 'Assigner un locataire à une unité',
+      topic: 'Gestion de location',
       url: 'https://www.youtube.com/embed/PH-2FfFD2PU',
       steps: [
-        'Click \'Sign Up\'',
-        'Fill the form',
-        'Accept terms & condition',
-        'Submit form',
-        'Check your email',
-        'Login to your account',
+        'Connectez-vous à votre compte',
+        'Cliquer sur \'Bien immobilier\'',
+        'Cliquer sur \'Voir locations\'',
+        'Cliquer sur \'Nouveau contrat de location\'',
+        'Remplir le formulaire',
+        'Soumettre le formulaire',
+        'Voir l\'assignation nouvellement effectué',
       ],
-      page: 'Invoices',
-      info: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin id tincidunt dui. Maecenas elementum eros id imperdiet molestie. Vestibulum semper tempus turpis.',
+      page: 'Location',
+      info: 'Processus d\'assignation d\'un locataire à une unité locative. Elle à pour conséquence de générer un contrat de location entre les deux parties et de les envoyer par mail.',
+    },
+    {
+      title: 'Analyse financière d\'un bien',
+      topic: 'Gestion financière',
+      url: 'https://www.youtube.com/embed/PH-2FfFD2PU',
+      steps: [
+        'Connectez-vous à votre compte',
+        'Cliquer sur \'Bien immobilier\'',
+        'Cliquer sur \'Finances\'',
+        'Choisir l\'année',
+        'Consulter les états de paiements de l\'année choisie',
+      ],
+      page: 'Finnace',
+      info: 'Processus d\'analyse des états financiers d\'un bien immobilier en fonction d\'une année d\'activité',
     }
   ]
 
@@ -107,6 +123,7 @@ export class GettingStartedComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.userProfil$.subscribe((user)=>{if(user) this.routingLink="/app/welcome"})
   }
 
   getUrl(url) {
