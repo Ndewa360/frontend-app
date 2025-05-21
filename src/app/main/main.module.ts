@@ -7,12 +7,12 @@ import {ChartsModule} from '../../@youpez'
 import {MainRoutingModule} from './main-routing.module'
 
 
-import {FaqComponent} from './application/faq/faq.component'
-import {ManualComponent} from './application/manual/manual.component'
-import {SupportComponent} from './application/support/support.component'
-import {ChangelogComponent} from './application/changelog/changelog.component'
+// import {FaqComponent} from './application/faq/faq.component'
+// import {ManualComponent} from './application/manual/manual.component'
+// import {SupportComponent} from './application/support/support.component'
+// import {ChangelogComponent} from './application/changelog/changelog.component'
 import {WelcomeComponent} from './welcome/welcome.component'
-import {GettingStartedComponent} from './application/getting-started/getting-started.component'
+// import {GettingStartedComponent} from './application/getting-started/getting-started.component'
 import { AddPropertyComponent } from './properties/add-property/add-property.component'
 import { AddPropertyLocataireComponent } from './properties/components/add-property-locataire/add-property-locataire.component'
 import { AddPropertyRoomComponent } from './properties/components/add-property-room/add-property-room.component'
@@ -57,11 +57,11 @@ ModuleRegistry.registerModules([
 
 @NgModule({
   declarations: [
-    ChangelogComponent,
-    FaqComponent,
-    GettingStartedComponent,
-    ManualComponent,
-    SupportComponent,
+    // ChangelogComponent,
+    // FaqComponent,
+    // GettingStartedComponent,
+    // ManualComponent,
+    // SupportComponent,
     WelcomeComponent,
     ListPropertyComponent,
     ShowPropertyComponent,
@@ -84,7 +84,6 @@ ModuleRegistry.registerModules([
     HomePropertyRecapFinanceComponent,
     HomePropertyRecapFinanceYearComponent,
     HomePropertyRecapFinanceMonthComponent,
-    
   ],
   imports: [
     CommonModule,

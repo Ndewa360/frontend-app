@@ -14,7 +14,7 @@ import { AssignLocationModule } from 'src/app/main/assign-location/assign-locati
   declarations: [LocatairePropertyListComponent, LocatairePropertyTableComponent],
   imports: [
     CommonModule,
-    LayoutModule,
+    // LayoutModule,
     SharedModule,
     ChartsModule,
     AgGridModule,

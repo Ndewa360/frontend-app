@@ -3,40 +3,40 @@
     <div class="app-a-box app-scrollbar-fix">
       <ng-scrollbar>
         <div class="app-mini-sidebar__list">
-          <div class="app-mini-sidebar__list__item app-mini-sidebar__list__item__highlight"
-            [routerLink]="'/app/welcome'">
+          <div class="app-mini-sidebar__list__item app-mini-sidebar__list__item__highlight" [routerLink]="routerLinkRoute">
             <div class="app-mini-sidebar__list__item__pill" placement="right" container="body">
               <!-- <youpez-ibm-icon iconName="search" iconSize="24"></youpez-ibm-icon> -->
               <youpez-logo type="nobg-white-sidebar" logoWidth="55px"></youpez-logo>
             </div>
           </div>
-          <div  (click)="onItemClick({key:'search'})"
-            class="app-mini-sidebar__list__item app-mini-sidebar__list__item__highlight">
-            <div class="app-mini-sidebar__list__item__pill" placement="right" container="body"
-              ngbTooltip="Recherche globale">
-              <youpez-ibm-icon id="search-menu-btn" iconName="search" iconSize="24"></youpez-ibm-icon>
+
+          <ng-container  *ngIf="userProfile$ | async">
+            <div  (click)="onItemClick({key:'search'})" class="app-mini-sidebar__list__item app-mini-sidebar__list__item__highlight">
+              <div class="app-mini-sidebar__list__item__pill" placement="right" container="body"
+                ngbTooltip="Recherche globale">
+                <youpez-ibm-icon id="search-menu-btn" iconName="search" iconSize="24"></youpez-ibm-icon>
+              </div>
             </div>
-          </div>
-          <div [routerLink]="'/app/properties'" [routerLinkActive]="['app-mini-sidebar__list__item__active']"
-            class="app-mini-sidebar__list__item app-mini-sidebar__list__item__highlight">
-            <div class="app-mini-sidebar__list__item__pill" placement="right" container="body"
-              ngbTooltip="Bien immobilier">
-              <youpez-ibm-icon id="home-menu-btn" iconName="home" iconSize="24"></youpez-ibm-icon>
+            <div [routerLink]="'/app/properties'" [routerLinkActive]="['app-mini-sidebar__list__item__active']"
+              class="app-mini-sidebar__list__item app-mini-sidebar__list__item__highlight">
+              <div class="app-mini-sidebar__list__item__pill" placement="right" container="body"
+                ngbTooltip="Bien immobilier">
+                <youpez-ibm-icon id="home-menu-btn" iconName="home" iconSize="24"></youpez-ibm-icon>
+              </div>
             </div>
-          </div>
-          <div [routerLink]="'/app/facturation/plan'" [routerLinkActive]="['app-mini-sidebar__list__item__active']"
-            class="app-mini-sidebar__list__item app-mini-sidebar__list__item__highlight">
-            <div class="app-mini-sidebar__list__item__pill" placement="right" container="body" ngbTooltip="Facturation">
-              <youpez-ibm-icon id="billing-menu-btn" iconName="dashboardReference" iconSize="24"></youpez-ibm-icon>
+            <div [routerLink]="'/app/facturation/plan'" [routerLinkActive]="['app-mini-sidebar__list__item__active']"
+              class="app-mini-sidebar__list__item app-mini-sidebar__list__item__highlight">
+              <div class="app-mini-sidebar__list__item__pill" placement="right" container="body" ngbTooltip="Facturation">
+                <youpez-ibm-icon id="billing-menu-btn" iconName="dashboardReference" iconSize="24"></youpez-ibm-icon>
+              </div>
             </div>
-          </div>
-          <div *ngIf="isAdmin" [routerLink]="'/admin'" [routerLinkActive]="['app-mini-sidebar__list__item__active']"
-            class="app-mini-sidebar__list__item app-mini-sidebar__list__item__highlight">
-            <div class="app-mini-sidebar__list__item__pill" placement="right" container="body" ngbTooltip="Administration">
-              <youpez-ibm-icon iconName="settings" iconSize="24"></youpez-ibm-icon>
+            <div *ngIf="isAdmin" [routerLink]="'/admin'" [routerLinkActive]="['app-mini-sidebar__list__item__active']"
+              class="app-mini-sidebar__list__item app-mini-sidebar__list__item__highlight">
+              <div class="app-mini-sidebar__list__item__pill" placement="right" container="body" ngbTooltip="Administration">
+                <youpez-ibm-icon iconName="settings" iconSize="24"></youpez-ibm-icon>
+              </div>
             </div>
-          </div>
-          
+          </ng-container>
         </div>
       </ng-scrollbar>
     </div>
@@ -92,7 +92,7 @@
         </div>
       </div>
     </div>
-    <div class="app-mini-sidebar__list__item" ngbDropdown container="body">
+    <div class="app-mini-sidebar__list__item" ngbDropdown container="body" *ngIf="userProfile$ | async">
       <div class="app-mini-sidebar__list__item__pill" (click)="onFakeLoading()" placement="right" container="body"
         ngbTooltip="Notifications" ngbDropdownToggle>
         <youpez-ibm-icon iconName="notification" iconSize="24"></youpez-ibm-icon>
@@ -154,7 +154,7 @@
         </div>
       </div>
     </div>
-    <div class="app-mini-sidebar__list__item" ngbDropdown container="body">
+    <div class="app-mini-sidebar__list__item" ngbDropdown container="body" *ngIf="userProfile$ | async">
       <div class="app-mini-sidebar__list__item__pill" (click)="onFakeLoading()" placement="right" container="body"
         ngbTooltip="Messages" ngbDropdownToggle>
         <youpez-ibm-icon iconName="chat" iconSize="24"></youpez-ibm-icon>
@@ -218,46 +218,63 @@
         <youpez-ibm-icon iconName="user" iconSize="24"></youpez-ibm-icon>
       </div>
       <div ngbDropdownMenu>
-        <div class="app-list app-list--hover app-list--select app-list--no-border app-list--p">
-          <div class="app-list__item app-list__item--no-p" ngbDropdownItem>
-            <div class="px-2">
-              <img class="w-10 h-10 rounded-full" src="assets/img/avatar/avatarinit.png" />
-            </div>
-            <div class="app-list__item__content mr-4">
-              <div>
-                <div class="app-helper-text-01">Connecté en tant que</div>
-                <div class="app-expressive-heading-02" *ngIf="userProfile$ | async as userProfil">{{userProfil.name}}
+        <div class=" app-list app-list--hover app-list--select app-list--no-border app-list--p">
+          
+              <ng-container *ngIf="(userProfile$ | async) else noConnected">
+                <div class="app-list__item app-list__item--no-p mt-2" ngbDropdownItem >
+                  <div class="px-2">
+                    <img class="w-10 h-10 rounded-full" src="assets/img/avatar/avatarinit.png" />
+                  </div>
+                  <div class="app-list__item__content mr-4">
+                    <div>
+                      <div class="app-helper-text-01">Connecté en tant que</div>
+                      <div class="app-expressive-heading-02" *ngIf="userProfile$ | async as userProfil">{{userProfil.name}}</div>
+                    </div>
+                  </div>
                 </div>
+              </ng-container>
+              <ng-template #noConnected>
+                <div class="app-list__item app-list__item--no-p mt-2" ngbDropdownItem [routerLink]="'/auth/signin'">
+                  <div class="px-2">
+                    <img class="w-10 h-10 rounded-full" src="assets/img/avatar/avatarinit.png" />
+                  </div>
+                  <div class="app-list__item__content mr-4">
+                    <div>
+                      <div class="app-helper-text-01">Connectez-vous</div>
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+            <div class="app-list__divider"></div>
+            <div class="app-list__item" ngbDropdownItem routerLink="/app/profile" *ngIf="userProfile$ | async">
+              <div class="app-list__item__content">
+                Profil
               </div>
             </div>
-          </div>
-          <div class="app-list__divider"></div>
-          <div class="app-list__item" ngbDropdownItem routerLink="/app/profile">
-            <div class="app-list__item__content">
-              Profil
-            </div>
-          </div>
+          
           <!-- <div class="app-list__item" ngbDropdownItem routerLink="/app/facturation/choix-plan">
             <div class="app-list__item__content">
               Plan 
             </div>
           </div> -->
-          <div class="app-list__item" ngbDropdownItem routerLink="/search/index">
+          <div class="app-list__item" ngbDropdownItem routerLink="/">
+            <div class="app-list__item__content">
+              Acceuil
+            </div>
+          </div>
+          <div class="app-list__item" ngbDropdownItem (click)="goToSearchPage()">
             <div class="app-list__item__content">
               Espace de recherche
             </div>
-          </div>
-          <div class="app-list__item" ngbDropdownItem routerLink="/app/user/settings">
-            <div class="app-list__item__content">
-              Parametre
+          </div>          
+          <ng-container  *ngIf="(userProfile$ | async)">
+            <div class="app-list__divider"></div>
+            <div class="app-list__item mb-2" ngbDropdownItem (click)="logout()">
+              <div class="app-list__item__content">
+                Deconnexion
+              </div>
             </div>
-          </div>
-          <div class="app-list__divider"></div>
-          <div class="app-list__item mb-2" ngbDropdownItem (click)="logout()">
-            <div class="app-list__item__content">
-              Deconnexion
-            </div>
-          </div>
+          </ng-container>          
         </div>
       </div>
     </div>

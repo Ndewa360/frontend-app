@@ -27,6 +27,14 @@ const routes: Routes = [
 		loadChildren: () => import('./main/search/search.module').then(m => m.SearchModule)
 	},
 	{
+		path: 'support',
+		// canActivate:[AuthGuard],
+		data:{
+			breadcrumb: 'Support'
+		},
+		loadChildren: () => import('./support/support.module').then(m => m.SupportModule)
+	},
+	{
 		path: 'admin',
 		canActivate:[AuthGuard],
 		component: LayoutComponent,		

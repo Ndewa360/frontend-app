@@ -14,6 +14,7 @@ export class LayoutMiniSidebarComponent implements OnInit {
   @Output() itemClick: EventEmitter<any> = new EventEmitter()
   @Select(UserProfileState.selectStateUserProfile) userProfile$:Observable<UserProfileModel>
   isAdmin=false;
+  routerLinkRoute="/support/home"
 
   public notifications = [
     // {
@@ -42,7 +43,14 @@ export class LayoutMiniSidebarComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.userProfile$.subscribe((user)=>{ if(user) this.isAdmin=user.email=='contact@ndewa-360.com'})
+    this.userProfile$.subscribe((user)=>{ 
+      
+      if(user) {
+        this.isAdmin=user.email=='contact@ndewa-360.com';
+       
+        this.routerLinkRoute="/app/welcome"
+      }
+    })
 
   }
 
@@ -61,5 +69,12 @@ export class LayoutMiniSidebarComponent implements OnInit {
   {
     this._store.dispatch(new UserProfileAction.LogoutUserProfile(true))
     this._router.navigate(['/auth/signin'])
+  }
+  goToSearchPage()
+  {
+    this._router.navigate(
+      ['/search/index'],
+      { queryParams: { minPrice: 0,maxPrix:100000,  ville:"Bangangté"} }
+    );
   }
 }
