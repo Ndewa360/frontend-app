@@ -6,13 +6,13 @@
           <youpez-logo class="cursor-pointer" logoWidth="200px"></youpez-logo>
         </div>
         <div class="">
-          <button routerLink="/app/application/welcome" ibmButton="ghost" size="sm" class="cds--btn__icon--left -ml-2">
-            <svg class="cds--btn__icon" ibmIconArrowLeft size="20"></svg>
-            Back to dashboard screen
+          <button [routerLink]="routingLink" ibmButton="ghost" size="sm" class="cds--btn__icon--left -ml-2">
+            <youpez-ibm-icon iconName="arrowLeft" iconClass="cds--btn__icon" size="20"></youpez-ibm-icon>
+            Retour à l'acceuil
           </button>
         </div>
         <div class="app-productive-heading-06 mb-8">
-          Frequently Asked Questions
+          Questions Fréquemment Posées
         </div>
         <ng-container *ngFor="let group of faq">
           <div class="mb-6">
@@ -22,7 +22,7 @@
                 <ibm-accordion>
                   <ng-container *ngFor="let question of group.children">
                     <ibm-accordion-item [title]="question.title">
-                      <div class="app-body-short-01">{{question.content}}</div>
+                      <div class="app-body-short-01" [innerHTML]="question.content"></div>
                     </ibm-accordion-item>
                   </ng-container>
                 </ibm-accordion>

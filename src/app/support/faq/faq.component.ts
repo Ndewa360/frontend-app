@@ -1,4 +1,7 @@
 import {Component, OnInit} from '@angular/core'
+import { Select } from '@ngxs/store'
+import { Observable } from 'rxjs'
+import { UserProfileState, UserProfileModel } from 'src/app/shared/store'
 
 @Component({
   selector: 'app-faq',
@@ -7,140 +10,112 @@ import {Component, OnInit} from '@angular/core'
 })
 export class FaqComponent implements OnInit {
 
+  @Select(UserProfileState.selectStateUserProfile) userProfil$:Observable<UserProfileModel>
+  routingLink="/support/home"
+  
   public faq = [
     {
-      groupName: 'Overview',
+      groupName: 'Général',
       children: [
         {
-          title: 'What is Youpez platform?',
-          content: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.',
+          title: 'Qu’est-ce que Ndewa360 ?',
+          content: 'Ndewa360 est une plateforme de gestion et de location de biens immobiliers, spécialement conçue pour faciliter les recherches de logements étudiants avec une expérience de visite en 360°. Elle permet aussi aux propriétaires de gérer les loyers, les locataires et les finances.',
         },
         {
-          title: 'What can I do with Youpez platform?',
-          content: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.',
+          title: 'Est-ce que l’utilisation de Ndewa360 est gratuite ?',
+          content: ' L’inscription est gratuite. Toutes les fonctionnalités sont gratuite en dessous de un bien avec au plus 10 unités locative. A la onzieme unité, il faut payer 2% du loyer de chaque unité locative activé par mois.',
         },
         {
-          title: 'How can I get started with Youpez platform?',
-          content: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.',
-        },
-        {
-          title: 'Why am I asked to verify my phone number when signing up for Youpez platform?',
-          content: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.',
-        },
-        {
-          title: 'What can developers now do that they could not before?',
-          content: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.',
-        },
-        {
-          title: 'How do I run systems in the Youpez platform environment?',
-          content: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.',
-        },
-        {
-          title: 'How quickly will systems be running?',
-          content: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.',
-        },
-        {
-          title: 'How do I load and store my systems with Youpez platform?',
-          content: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.',
-        },
-        {
-          title: 'How do I access my systems?',
-          content: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.',
-        },
-        {
-          title: 'How many instances can I run in Youpez platform?',
-          content: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.',
+          title: 'Où puis-je trouver les vidéos de formation ?',
+          content: 'Toutes les vidéos sont disponibles sur notre chaîne YouTube officielle : https://www.youtube.com/channel/UCUoWr4IOAJnjOq-kvb-yueA.',
         },
       ]
     },
     {
-      groupName: 'Computing instances',
+      groupName: 'Pour les propriétaires',
       children: [
         {
-          title: 'What are Accelerated Computing instances?',
-          content: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.',
+          title: 'Comment m’inscrire en tant que propriétaire ?',
+          content: ' Vous pouvez vous inscrire en quelques clics via la page d\'accueil. Une fois inscrit, vous recevrez un email de confirmation. <br/><br/> Voir la vidéo : "Comment s\'inscrire sur Ndewa360 ?" ➜ <a href="https://www.youtube.com/watch?v=gyin31wzg4Q">https://www.youtube.com/watch?v=gyin31wzg4Q</a>',
         },
         {
-          title: 'When should I use GPU Graphics and Compute instances?',
-          content: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.',
+          title: ' Comment créer une propriété ?',
+          content: 'Allez dans le menu « Bien immobilier » et cliquez sur « Nouveau + ». Renseignez les informations demandées. <br/><br/> Voir la vidéo : "Ajouter un bien immobilier sur Ndewa360 – Guide pour débuter" ➜ <a href="https://youtu.be/WBhNszyc_Ks?si=SM9WUHKc6TV16E6L">https://youtu.be/WBhNszyc_Ks?si=SM9WUHKc6TV16E6L</a>.',
         },
         {
-          title: 'What applications can benefit from P4d?',
-          content: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.',
+          title: 'Quelle est la différence entre propriété et unité ?',
+          content: 'Une propriété est un immeuble ou bâtiment. Une unité est une chambre, un studio ou un appartement à l’intérieur de cette propriété.',
         },
         {
-          title: 'What are platform UltraClusters and how can I get access?',
-          content: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.',
+          title: ' Comment ajouter une unité (chambre, studio...) ?',
+          content: 'Une fois la propriété créée, cliquez sur « Ajouter une unité » pour y ajouter vos logements. <br/><br/> Voir la vidéo : "Créer une chambre dans un bien sur Ndewa360 – Guide pour débuter" ➜ <a href="https://youtu.be/-xTYP8uuKgk">https://youtu.be/-xTYP8uuKgk</a>.',
         },
         {
-          title: 'What can developers now do that they could not before?',
-          content: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.',
+          title: 'Puis-je ajouter une visite 360° moi-même ?',
+          content: 'Oui, si vous disposez d\'une vidéo ou d\'une photo 360°. Sinon, vous pouvez contacter notre équipe pour assistance..',
         },
         {
-          title: 'What are the benefits of NVIDIA Volta GV100 GPUs?',
-          content: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.',
+          title: 'Comment ajouter un locataire ?',
+          content: 'Rendez-vous sur l’unité concernée, puis cliquez sur le menu «Locataires» ensuite sur le bouton « Ajouter un locataire ».',
         },
         {
-          title: 'Who will benefit from P3 instances?',
-          content: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.',
+          title: 'Comment enregistrer un paiement ?',
+          content: 'Choisissez le bien concerné puis allez sur la liste des locataires à partir du menu « Locataires »   ou sur la liste des unités du menu « Unités », ensuite sur le locataire ou l\'unité concernée, puis cliquez sur « Ajouter un paiement ». Vous pouvez y préciser la période, le montant, et autre. <br/><br/> Voir la vidéo : "Ajouter un paiement – Guide pour débuter" ➜ <a href="https://youtu.be/-xTYP8uuKgk">https://youtu.be/-xTYP8uuKgk</a>.',
         },
         {
-          title: 'What are FPGAs and why do I need them?',
-          content: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.',
+          title: 'Est-ce que le locataire reçoit une notification ?',
+          content: 'Oui, un email de confirmation est automatiquement envoyé au locataire une fois le paiement enregistré.',
         },
         {
-          title: 'How do I access my systems?',
-          content: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.',
+          title: 'Où puis-je suivre mes revenus mensuels ?',
+          content: 'Le tableau de bord financier vous affiche tous les paiements, répartis par mois et par propriété. Un recapitulatif des biens de propriétés est tout dabord disponible sur l\'espace de l\'ensemble des biens (menu « Biens immobilier »), mais un tableau de bord financier complet est disponible sur le menu « Finances » de chaque bien immobilier',
         },
         {
-          title: 'What is available with F1 instances?',
-          content: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.',
+          title: 'Est-ce que je peux télécharger un contrat ou une facture ?',
+          content: 'Oui. Vous pouvez générer automatiquement les contrats et les factures à partir du profil du locataire',
         },
       ]
     },
     {
-      groupName: 'Platform',
+      groupName: 'Pour les locataires',
       children: [
         {
-          title: 'How do I use this service?',
-          content: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.',
+          title: 'Comment chercher un logement sur Ndewa360 ?',
+          content: 'Depuis la page d’accueil, et à partir du menu « Recherche de biens » utilisez le moteur de recherche. Filtrez par ville, type de logement, prix, etc.',
         },
         {
-          title: 'What are the key benefits of using this service?',
-          content: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.',
+          title: 'Qu’est-ce qu’une visite 360° ?',
+          content: 'C’est une vue immersive du logement. Vous pouvez vous déplacer virtuellement à l’intérieur comme si vous y étiez.',
         },
         {
-          title: 'Which instance types are supported for this service?',
-          content: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.',
+          title: 'Est-ce que je dois payer pour voir la visite 360° ?',
+          content: 'Non, la visite immersive est entiérement gratuite',
         },
         {
-          title: 'How isolated are Availability Zones from one another?',
-          content: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.',
+          title: 'Comment contacter le propriétaire ?',
+          content: 'Contre un paiement, vous aurez accès à ses coordonnées (téléphone, WhatsApp ou email)',
         },
         {
-          title: 'What can developers now do that they could not before?',
-          content: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.',
+          title: 'Comment savoir si un logement est encore disponible ?',
+          content: 'Seuls les logements non encore loués apparaissent dans les résultats de recherche.',
+        },
+      ]
+    },
+    {
+      groupName: 'Problèmes techniques / Contact support',
+      children: [
+        {
+          title: 'Je ne reçois pas d’email, que faire ?',
+          content: 'Vérifiez dans vos spams. Sinon, utilisez le formulaire de contact ou réessayez avec un autre email.',
         },
         {
-          title: 'What are the benefits of NVIDIA Volta GV100 GPUs?',
-          content: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.',
+          title: ' J’ai fait un paiement mais je n’ai pas accès au coordonées du propriétaire. Que faire?',
+          content: ' Contactez notre support avec la preuve de paiement. Nous activerons votre accès manuellement si nécessaire.',
         },
         {
-          title: 'What kind of network performance can I expect when I launch instances in cluster placement group?',
-          content: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.',
-        },
-        {
-          title: 'What are FPGAs and why do I need them?',
-          content: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.',
-        },
-        {
-          title: 'How do I access my systems?',
-          content: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.',
-        },
-        {
-          title: 'What is available with F1 instances?',
-          content: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.',
-        },
+          title: 'Comment contacter l’assistance ?',
+          content: ' Via le formulaire dans la page "Support", ou par email à <a href="mailto:contact@ndewa-360.com">contact@ndewa-360.com</a>.',
+        }
       ]
     }
 
@@ -150,6 +125,8 @@ export class FaqComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.userProfil$.subscribe((user)=>{if(user) this.routingLink="/app/welcome"})
+
   }
 
 }
