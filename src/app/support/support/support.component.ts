@@ -1,82 +1,64 @@
-import { Component, OnInit } from '@angular/core';
-import { ListItem } from 'carbon-components-angular';
+import { Component, OnInit,ViewEncapsulation } from '@angular/core';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { Store, Actions, ofActionCompleted, ofActionSuccessful,Select } from '@ngxs/store';
+import { Observable } from 'rxjs';
+import { ProspectionState, ProspectionAction,UserProfileState,UserProfileModel } from 'src/app/shared/store';
+import { FormUtils } from 'src/app/shared/utils';
+
 
 @Component({
   selector: 'app-support',
   templateUrl: './support.component.html',
-  styleUrls: ['./support.component.scss']
+  styleUrls: ['./support.component.scss'],
+  encapsulation: ViewEncapsulation.None
+
 })
 export class SupportComponent implements OnInit {
+  waittingResponse = false;
+  public formGroup: UntypedFormGroup  
+  @Select(ProspectionState.selectStateLoadingProspection) prospectionLoading:Observable<boolean>;
+  @Select(UserProfileState.selectStateUserProfile) userProfil$:Observable<UserProfileModel>
 
-  public products: ListItem[]= [
-    {
-      content: "On Prem",
-      id: "1",
-      selected: true
-    },
-    {
-      content: "Private cloud", 
-      id: "2",
-      selected: false
-    },
-    {
-      content: "Hybrid cloud", 
-      id: "3",
-      selected: false
-    },
-    {
-      content: "Platform trial", 
-      id: "4",
-      selected: false
-    },
-  ]
+  routingLink="/support/home"
 
-  public purchased:ListItem[] = [
-    {
-      content: "Store 1", id: "1",
-      selected: true
-    },
-    {
-      content: "Store 2", id: "2",
-      selected: false
-    },
-    {
-      content: "Store 3", id: "3",
-      selected: false
-    },
-    {
-      content: "Store 4", id: "4",
-      selected: false
-    },
-  ]
+  constructor(
+    protected formBuilder: UntypedFormBuilder,
+    private router: Router,
+    private _store:Store,
+    private _ngxsAction:Actions
 
-  public server:ListItem[] = [
-    {
-      content: "full l", id: "1",
-      selected: false
-    },
-    {
-      content: "full 2", id: "2",
-      selected: false
-    },
-    {
-      content: "normal", id: "3",
-      selected: false
-    },
-    {
-      content: "basic", id: "4",
-      selected: false
-    },
-  ]
-
-  public countries = [
-
-  ]
-  public usStates = []
-
-  constructor() { }
+  ) { }
 
   ngOnInit(): void {
+    this.formGroup = this.formBuilder.group({
+      name: ['', [Validators.required,]],
+      email: ['', [Validators.required, Validators.email]],
+      object: ['', Validators.required],
+      tel:[null, [Validators.required, Validators.pattern('^(\\+\\d{1,3}\\s)?(\\d{2,3}[\\s.-]?){4}$')]],
+      message: ['', Validators.required],
+    })
+
+    this._ngxsAction.pipe(ofActionCompleted(ProspectionAction.CreateNewProspection)).subscribe((value)=>{
+      this.waittingResponse =false;
+    });
+
+    this._ngxsAction.pipe(ofActionSuccessful(ProspectionAction.CreateNewProspection)).subscribe((value)=>{
+      this.formGroup.reset();
+    });
+    this.userProfil$.subscribe((user)=>{if(user) this.routingLink="/app/welcome"})
+
   }
+
+  onSubmit() {
+      this.formGroup.markAllAsTouched()
+      this.waittingResponse=true;
+      this._store.dispatch(new ProspectionAction.CreateNewProspection({...FormUtils.removeNullAttribut(this.formGroup.value)}));
+    }
+  
+    isValid(name) {
+      const instance = this.formGroup.get(name)
+      return instance.invalid && (instance.dirty || instance.touched)
+    }
 
 }

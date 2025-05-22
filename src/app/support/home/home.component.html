@@ -117,8 +117,8 @@
             <div fxFlex="100%" fxFlex.gt-md="25%">
               <div fxFlex fxLayout="column" fxLayoutGap="1px">
                 <div fxFlex>
-                  <!-- routerLink="/app/application/support" -->
-                  <div fxFlex class="app-card app-card--m-0 app-card--select app-welcome-mini-tile">
+                  <!--  -->
+                  <div fxFlex class="app-card app-card--m-0 app-card--select app-welcome-mini-tile" routerLink="/support/support">
                     <div class="app-card__content">
 
                       <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"
@@ -151,7 +151,9 @@
                         </g>
                       </svg>
                       <div class="absolute bottom-0 right-0 left-0 app-card__content">
-                        <div class="app-productive-heading-03 mb-4">Créer un bien
+                        <div class="app-productive-heading-03 mb-4">
+                          <ng-container *ngIf="(userProfil$ | async) else startNow">Créer un bien</ng-container> 
+                          <ng-template #startNow>Lancez-vous</ng-template>
                         </div>
                         <p class="app-body-short-01">Créez votre premier bien et gérez vos finances</p>
                       </div>

@@ -41,6 +41,11 @@
               <span>Contact</span> 
             </a>
           </li>
+          <li>
+            <a [routerLink]="['/support/home']" fragment="support" class="block py-2 px-3 text-gray-900 md:hover:bg-transparent md:border-0  md:p-0 dark:hover:text-white md:dark:hover:bg-transparent">
+              <span>Support</span> 
+            </a>
+          </li>
           <li *ngIf="(isLogin$ | async)">
             <landing-header-profil-data ></landing-header-profil-data>
           </li>
@@ -75,6 +80,9 @@
           </li>
           <li>
             <a href="#" class="block py-2 px-3 text-gray-900 md:hover:bg-transparent md:border-0  md:p-0 dark:hover:text-white md:dark:hover:bg-transparent">Contact</a>
+          </li>
+          <li [routerLink]="'/support/home'">
+            <a  class="block py-2 px-3 text-gray-900 md:hover:bg-transparent md:border-0  md:p-0 dark:hover:text-white md:dark:hover:bg-transparent">Support</a>
           </li>
           <li>
             

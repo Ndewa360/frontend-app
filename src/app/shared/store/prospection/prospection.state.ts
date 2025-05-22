@@ -45,7 +45,7 @@ export class ProspectionState{
                     ctx.patchState({
                         loadingProspection:false
                     })
-                    this._toastrService.success(`Votre demande a été transférée avec succès!`, 'Ndewa360°');
+                    this._toastrService.success(`Votre demande a été transférée avec succès! Vous serez contactez par mail au plus tôt`, 'Ndewa360°');
                 }
             ),
             catchError((error)=>{

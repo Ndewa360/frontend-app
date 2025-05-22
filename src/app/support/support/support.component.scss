@@ -1,0 +1,20 @@
+.support textarea
+{
+    width: 100%;
+}
+
+.cds--loading__stroke
+{
+    stroke: white !important;
+}
+.cds--loading
+{
+    width: 20px !important;
+    height: 20px !important;
+    display: inline-block;    
+    margin-left: 20px;
+}
+
+.btn-text, .cds--loading{
+    vertical-align: center;
+}
