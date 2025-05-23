@@ -1,6 +1,7 @@
 import { Component, OnInit,ViewEncapsulation } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Location } from '@angular/common';
 import { Store, Actions, ofActionCompleted, ofActionSuccessful,Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { ProspectionState, ProspectionAction,UserProfileState,UserProfileModel } from 'src/app/shared/store';
@@ -20,14 +21,14 @@ export class SupportComponent implements OnInit {
   @Select(ProspectionState.selectStateLoadingProspection) prospectionLoading:Observable<boolean>;
   @Select(UserProfileState.selectStateUserProfile) userProfil$:Observable<UserProfileModel>
 
-  routingLink="/support/home"
+
 
   constructor(
     protected formBuilder: UntypedFormBuilder,
     private router: Router,
     private _store:Store,
-    private _ngxsAction:Actions
-
+    private _ngxsAction:Actions,
+    private location: Location
   ) { }
 
   ngOnInit(): void {
@@ -46,7 +47,7 @@ export class SupportComponent implements OnInit {
     this._ngxsAction.pipe(ofActionSuccessful(ProspectionAction.CreateNewProspection)).subscribe((value)=>{
       this.formGroup.reset();
     });
-    this.userProfil$.subscribe((user)=>{if(user) this.routingLink="/app/welcome"})
+    // this.userProfil$.subscribe((user)=>{if(user) this.routingLink="/app/welcome"})
 
   }
 
@@ -61,4 +62,8 @@ export class SupportComponent implements OnInit {
       return instance.invalid && (instance.dirty || instance.touched)
     }
 
+    goBack()
+    {
+      this.location.back();
+    }
 }

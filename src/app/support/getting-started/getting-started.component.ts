@@ -3,6 +3,7 @@ import {DomSanitizer} from '@angular/platform-browser'
 import { Observable } from 'rxjs'
 import { Select, Store } from '@ngxs/store'
 import { UserProfileAction, UserProfileModel, UserProfileState } from 'src/app/shared/store'
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-getting-started',
@@ -11,7 +12,6 @@ import { UserProfileAction, UserProfileModel, UserProfileState } from 'src/app/s
 })
 export class GettingStartedComponent implements OnInit {
   @Select(UserProfileState.selectStateUserProfile) userProfil$:Observable<UserProfileModel>
-  routingLink="/support/home"
 
   public videos = [
     {
@@ -119,11 +119,13 @@ export class GettingStartedComponent implements OnInit {
     }
   ]
 
-  constructor(private sanitizer: DomSanitizer) {
+  constructor(
+    private sanitizer: DomSanitizer,
+    private location: Location
+  ) {
   }
 
   ngOnInit(): void {
-    this.userProfil$.subscribe((user)=>{if(user) this.routingLink="/app/welcome"})
   }
 
   getUrl(url) {
@@ -134,4 +136,8 @@ export class GettingStartedComponent implements OnInit {
     return row.title
   }
 
+  goBack()
+    {
+      this.location.back();
+    }
 }

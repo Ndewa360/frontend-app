@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core'
 import { Select } from '@ngxs/store'
 import { Observable } from 'rxjs'
 import { UserProfileState, UserProfileModel } from 'src/app/shared/store'
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-faq',
@@ -11,7 +12,6 @@ import { UserProfileState, UserProfileModel } from 'src/app/shared/store'
 export class FaqComponent implements OnInit {
 
   @Select(UserProfileState.selectStateUserProfile) userProfil$:Observable<UserProfileModel>
-  routingLink="/support/home"
   
   public faq = [
     {
@@ -121,12 +121,17 @@ export class FaqComponent implements OnInit {
 
   ]
 
-  constructor() {
+  constructor(
+    private location: Location
+  ) {
   }
 
   ngOnInit(): void {
-    this.userProfil$.subscribe((user)=>{if(user) this.routingLink="/app/welcome"})
 
   }
 
+  goBack()
+  {
+    this.location.back();
+  }
 }

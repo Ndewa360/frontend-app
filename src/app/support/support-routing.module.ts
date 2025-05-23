@@ -58,7 +58,7 @@ const routes: Routes = [
         },
       },
       {
-        path: 'home',
+        path: 'welcome',
         component: HomeComponent,
         data: {
           breadcrumb: 'Home'
