@@ -20,6 +20,11 @@ export namespace RoomAction
         static readonly type = '[Room] Reset All State';
     }
 
+    export class Logout
+    {
+        static readonly type = '[Room] Logout';
+    }
+
     //Fetch  Room profil
     export class FetchRoom
     {

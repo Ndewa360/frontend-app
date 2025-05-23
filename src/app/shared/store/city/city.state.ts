@@ -69,7 +69,15 @@ export class CityState{
         return createSelector([CityState],(state)=> state.cities.filter((city)=>city.country==countryID))
     }
 
-    
+    @Action(CityAction.Logout)
+    logout(ctx:StateContext<CityStateModel>)
+    {
+        ctx.setState({
+            loadingCity:false,
+            cities:[],
+            initLoadingState:'NO_LOADED',
+        })
+    }
 
     @Action(CityAction.ResetAllState)
     resetAllState(ctx:StateContext<CityStateModel>)

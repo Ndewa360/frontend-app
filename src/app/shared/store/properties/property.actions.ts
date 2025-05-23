@@ -20,6 +20,11 @@ export namespace PropertyAction
     {
         static readonly type = '[Property] Reset All State'
     }
+
+    export class Logout
+    {
+        static readonly type = '[Property] Logout'
+    }
     
     //Fetch  Property profil
     export class FetchProperties

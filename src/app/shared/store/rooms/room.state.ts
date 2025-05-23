@@ -151,6 +151,16 @@ export class RoomState{
         })
     }
 
+    @Action(RoomAction.Logout)
+    logout(ctx:StateContext<RoomStateModel>)
+    {
+        ctx.setState({
+            loadingRoom:false,
+            rooms:[],
+            initLoadingState:'NO_LOADED',
+        })
+    }
+
     @Action(RoomAction.UpdateRoom)
     updateRoom(ctx:StateContext<RoomStateModel>, {room,id}:RoomAction.UpdateRoom)
     {

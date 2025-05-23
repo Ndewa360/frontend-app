@@ -78,6 +78,16 @@ export class HistoryLocationPaymentState{
         })
     }
 
+    @Action(HistoryLocationPaymentAction.Logout)
+    logout(ctx:StateContext<HistoryLocationPaymentStateModel>)
+    {
+        ctx.setState({
+            loadingHistoryLocationPayment:false,
+            initLoadingState:"NO_LOADED",
+            historyLocationPayments:[]
+        })
+    }
+
     @Action(HistoryLocationPaymentAction.UpdateHistoryLocationPaymentTransaction)
     updateHistoryLocationPayementTransaction(ctx:StateContext<HistoryLocationPaymentStateModel>,{transactionId,transactionModel,locataireID}:HistoryLocationPaymentAction.UpdateHistoryLocationPaymentTransaction)
     {

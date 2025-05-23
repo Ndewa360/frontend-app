@@ -21,6 +21,11 @@ export namespace CountryAction
     {
         static readonly type = '[Country] Reset All State'
     }
+
+    export class Logout
+    {
+        static readonly type = '[Country] Logout'
+    }
     
     //Fetch  Country profil
     export class FetchCountries

@@ -168,6 +168,21 @@ export class StatisticState{
         })
     }
 
+    @Action(StatisticAction.Logout)
+    logout(ctx:StateContext<StatisticStateModel>)
+    {
+        ctx.patchState({
+            loadingStatistic:false,
+            loadingRoomStatistic:false,
+            locataireStatisticLoading:false,
+            allLocatairePayementByYearLoading:false,
+            roomStatistic:[],
+            locataireStatistic:[],
+            allLocatairePayementByYear:[],
+            // initLoadingState:'NO_LOADED',
+        })
+    }
+
     @Action(StatisticAction.FetchStaticLocataireDataByPropertyIdAndYear)
     fetchLocataireStatisticByPropertyAndYear(ctx:StateContext<StatisticStateModel>,{propertyID,year}:StatisticAction.FetchStaticLocataireDataByPropertyIdAndYear)
     {

@@ -4,6 +4,7 @@ import { Actions, Store } from "@ngxs/store";
 import { Observable, combineLatest, of} from "rxjs";
 import { map, mergeMap, skipWhile, tap } from "rxjs/operators";
 import { LocataireAction, LocationAction, LocationPaymentAction, PropertyAction, RoomAction, UserProfileAction,CountryAction, StatisticAction } from "../../store";
+import { valuesIn } from "cypress/types/lodash";
 
 
 @Injectable({
@@ -29,10 +30,11 @@ export class InitialLoadingDataResolver implements Resolve<any>
      */
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any>
     {
+        console.log("Rout ",route.toString())
         combineLatest(
-            this._store.select((state)=>state.auth_token.authToken)
+            this._store.select((state)=>state.ndewa360_auth_token.authToken)
             .pipe(
-                skipWhile((x)=>x==null),
+                skipWhile((x)=>x==null || x==undefined),
                 map((value)=>{
                     if(!value) return null;
                     return this._store.dispatch([
@@ -40,7 +42,6 @@ export class InitialLoadingDataResolver implements Resolve<any>
                         new PropertyAction.FetchProperties(),
                         new CountryAction.FetchCountries(),
                         new StatisticAction.FetchStatisticPaymentRecapitulationAccountOfAllPropertyByYear(new Date().getFullYear()),
-
                     ])}
                 ),
             ),

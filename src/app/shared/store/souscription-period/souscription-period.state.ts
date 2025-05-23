@@ -74,6 +74,16 @@ export class SouscriptionPeriodState{
         })
     }
 
+    @Action(SouscriptionPeriodAction.Logout)
+    logout(ctx:StateContext<SouscriptionPeriodStateModel>)
+    {
+        ctx.setState({
+            loadingSouscriptionPeriod:false,
+            souscriptionPeriod:[],
+            initLoadingState:'NO_LOADED',
+        })
+    }
+
     @Action(SouscriptionPeriodAction.SetSouscriptionPeriod)
     setSouscriptionPeriod(ctx:StateContext<SouscriptionPeriodStateModel>,{souscriptionPeriod}:SouscriptionPeriodAction.SetSouscriptionPeriod)
     {

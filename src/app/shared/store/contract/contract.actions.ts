@@ -14,4 +14,11 @@ export namespace ContractAction
         static readonly type = '[Contract] Reset All State'
     }
 
+    export class Logout
+    {
+        static readonly type = '[Contract] logout'
+    }
+
+
+
 }

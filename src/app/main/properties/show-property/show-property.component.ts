@@ -61,7 +61,7 @@ export class ShowPropertyComponent implements OnInit {
       if(!loading) {
         if(!property){
           this._router.navigateByUrl('/app/properties/home');
-          this._toastService.error("Biens introuvable", "Ndewa360°");
+          // this._toastService.error("Biens introuvable", "Ndewa360°");
         } else
         {
           this.propertyFound = property;

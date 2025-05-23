@@ -33,6 +33,11 @@ export namespace LocationPaymentAction
     {
         static readonly type = '[LocationPayment] Reset All State'
     }
+
+    export class Logout
+    {
+        static readonly type = '[LocationPayment] Logout'
+    }
     export class RemoveAssignationLocationPayment
     {
         static readonly type = '[LocationPayment] Remove assignation LocationPayment'

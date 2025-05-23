@@ -1,7 +1,8 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core'
-import { Select, Store } from '@ngxs/store'
 import { Observable } from 'rxjs'
+import {Router} from "@angular/router"
 import { UserProfileAction, UserProfileModel, UserProfileState } from 'src/app/shared/store'
+import { Actions,Select, ofActionCompleted, ofActionErrored, ofActionSuccessful, Store } from '@ngxs/store'
 
 @Component({
   selector: 'app-main-header',
@@ -16,11 +17,19 @@ export class HeaderComponent implements OnInit {
   @Output() itemClick: EventEmitter<any> = new EventEmitter()
   isAdmin=false;
 
-  constructor( private _store:Store) {
+  constructor( 
+    private _store:Store,
+    private _ngxsAction:Actions,
+    private router: Router,
+  ) {
   }
 
   ngOnInit(): void {
     this.userProfil$.subscribe((user)=>{if(user) this.isAdmin=user.email=='contact@ndewa-360.com'})
+    this._ngxsAction.pipe(ofActionSuccessful(UserProfileAction.LogoutUserProfile)).subscribe((value)=>{
+      this.router.navigate(['/auth/signin']);
+      }
+    );
   }
 
   onSideBarToggle($event) {

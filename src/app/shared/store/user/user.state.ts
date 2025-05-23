@@ -138,6 +138,16 @@ export class UserState{
         })
     }
 
+    @Action(UserAction.Logout)
+    logout(ctx:StateContext<UserStateModel>)
+    {
+        ctx.setState({
+            loadingUser:false,
+            users:[],
+            initLoadingState:'NO_LOADED',
+        })
+    }
+
     @Action(UserAction.FetchUsers)
     fetchUsers(ctx:StateContext<UserStateModel>,{usersId}:UserAction.FetchUsers)
     {

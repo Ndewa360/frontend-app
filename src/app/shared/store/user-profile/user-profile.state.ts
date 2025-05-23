@@ -1,6 +1,7 @@
 import { Action, Selector, State, StateContext, createSelector } from "@ngxs/store";
 import { UserProfileModel } from "./user-profile.model";
 import { Injectable } from "@angular/core";
+import { Router } from "@angular/router";
 import { UserProfileAction } from "./user-profile.actions";
 import { UserProfileService } from "./user-profile.service";
 // import { ToastrService } from "ngx-toastr";
@@ -11,6 +12,7 @@ import { NotificationService } from "carbon-components-angular";
 import { AuthTokenAction } from "../auth-token";
 import { Navigate } from '@ngxs/router-plugin';
 import { ToastrService } from "ngx-toastr";
+import { DisconnexionService } from "./disconnection.service";
 
 export class UserProfileStateModel {
     userProfile:UserProfileModel;
@@ -35,6 +37,8 @@ export class UserProfileState{
         private _userProfilesService:UserProfileService,
         private _toastrService:ToastrService,
         private _authService:AuthService,
+        private _router:Router,
+        private disconnetionService:DisconnexionService
             //   private notificationService: NotificationService,
     ){}
 
@@ -96,8 +100,9 @@ export class UserProfileState{
     @Action(UserProfileAction.LogoutUserProfile)
     logoutUserProfileState(ctx:StateContext<UserProfileStateModel>)
     {
+        this.disconnetionService.logout()
         this._toastrService.success("Deconnexion avec success! ","Ndewa360°")
-        ctx.dispatch(new AuthTokenAction.SetAuthToken(null));  
+        return of(true)
     }
 
     @Action(UserProfileAction.SignupSimpleUserProfile)
@@ -201,8 +206,8 @@ export class UserProfileState{
         )
     }
 
-    @Action(UserProfileAction.ResetAllState)
-    resetAllState(ctx:StateContext<UserProfileStateModel>)
+    @Action(UserProfileAction.Logout)
+    logout(ctx:StateContext<UserProfileStateModel>)
     {
         ctx.setState({
             initLoadingState:'NO_LOADED',

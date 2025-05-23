@@ -81,7 +81,7 @@ import { ProspectionState } from './store/prospection/prospection.state';
         ProspectionState
       ]),
       NgxsStoragePluginModule.forRoot({
-        key:["auth_token"]
+        key:["ndewa360_auth_token"]
         // key:"auth_token",
         // storage:StorageOption.SessionStorage
       }),

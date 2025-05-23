@@ -21,6 +21,9 @@ const routes: Routes = [
 	{
 		path: 'search',
 		// canActivate:[AuthGuard],
+		resolve:{
+			"initialData":InitialLoadingDataResolver
+		},
 		data:{
 			breadcrumb: 'Acceuil'
 		},
@@ -29,6 +32,9 @@ const routes: Routes = [
 	{
 		path: 'support',
 		// canActivate:[AuthGuard],
+		resolve:{
+			"initialData":InitialLoadingDataResolver
+		},
 		data:{
 			breadcrumb: 'Support'
 		},
@@ -52,6 +58,9 @@ const routes: Routes = [
 	  },
 	  {
 		path: '',
+		resolve:{
+			"initialData":InitialLoadingDataResolver
+		},
 		loadChildren: () => import('./landing-page/landing-page.module').then(m => m.LandingPageModule)
 	  }
 	//   {

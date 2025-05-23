@@ -54,6 +54,11 @@ export namespace LocataireAction
         static readonly type = '[Locataire] Reset All State';
     }
 
+    export class Logout
+    {
+        static readonly type = '[Locataire] Logout';
+    }
+
     //Change loading state
     export class updateLoadingLocataireState
     {

@@ -56,6 +56,16 @@ export class UploadFilesState{
         })
     }
 
+    @Action(UploadFilesAction.Logout)
+    logout(ctx:StateContext<UploadFilesStateModel>)
+    {
+        ctx.patchState({
+            filesState: [],
+            loadingUploadFiles:false,
+            initLoadingState:'NO_LOADED',
+        })
+    }
+
     @Action(UploadFilesAction.UploadFiles)
     uploadFiles(ctx:StateContext<UploadFilesStateModel>, {uploadFiles}:UploadFilesAction.UploadFiles)
     {

@@ -85,6 +85,16 @@ export class LocationPaymentState{
         }) 
     }
 
+    @Action(LocationPaymentAction.Logout)
+    logout(ctx:StateContext<LocationPaymentStateModel>)
+    {
+        ctx.setState({
+            loadingLocationPayment:false,
+            locationPayments:[],
+            initLoadingState:'NO_LOADED',
+        }) 
+    }
+
     @Action(LocationPaymentAction.SetLocationPayments)
     setLocationPayment(ctx:StateContext<LocationPaymentStateModel>, {payementLocations}:LocationPaymentAction.SetLocationPayments)
     {

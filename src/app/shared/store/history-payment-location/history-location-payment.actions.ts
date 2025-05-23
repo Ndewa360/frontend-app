@@ -27,6 +27,11 @@ export namespace HistoryLocationPaymentAction
         static readonly type = '[HistoryLocationPayment] ResetAllState'
     }
 
+    export class Logout 
+    {
+        static readonly type = '[HistoryLocationPayment] Logout'
+    }
+
     export class UpdateHistoryLocationPaymentTransaction
     {
         static readonly type = '[HistoryLocationPayment] Update HistoryLocationPaymentTransaction'

@@ -108,6 +108,16 @@ export class PropertyState{
         })
     }
 
+    @Action(PropertyAction.Logout)
+    logout(ctx:StateContext<PropertyStateModel>)
+    {
+        ctx.setState({
+            loadingProperty:false,
+            properties:[],
+            initLoadingState:'NO_LOADED',
+        })
+    }
+
     @Action(PropertyAction.ChangePropertyRoomLength)
     changePropertyRoomLength(ctx:StateContext<PropertyStateModel>, {propertyID}:PropertyAction.ChangePropertyRoomLength)
     {

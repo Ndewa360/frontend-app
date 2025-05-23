@@ -13,7 +13,7 @@ export class AuthTokenStateModel {
 
 
 @State<AuthTokenStateModel>({
-    name: "auth_token",
+    name: "ndewa360_auth_token",
     defaults:{
         authToken:null,
         refreshToken:null

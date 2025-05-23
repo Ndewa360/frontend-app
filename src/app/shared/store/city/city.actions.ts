@@ -62,4 +62,9 @@ export namespace CityAction
         static readonly type = '[City] create City'
         constructor(public city){}
     }
+
+    export class Logout
+    {
+        static readonly type = '[City] logout'
+    }
 }

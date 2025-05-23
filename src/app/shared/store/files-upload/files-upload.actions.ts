@@ -21,5 +21,9 @@ export namespace UploadFilesAction
         static readonly type = '[FilesUpload] Remove Uploaded File';
         constructor(public removedUploadFile:RemovedUploadFileModel){}
     }
-    
+    export class Logout
+    {
+        static readonly type = '[FilesUpload] Logout';
+        constructor(){}
+    }
 }

@@ -20,6 +20,11 @@ export namespace SouscriptionAction
     {
         static readonly type = '[Souscription] Reset All State'
     }
+
+    export class Logout
+    {
+        static readonly type = '[Souscription] Logout'
+    }
     
     //Fetch  Souscription
     export class FetchSouscriptionsByUserId

@@ -112,6 +112,16 @@ export class CountryState{
         })
     }
 
+    @Action(CountryAction.Logout)
+    logout(ctx:StateContext<CountryStateModel>)
+    {
+        ctx.setState({
+            loadingCountry:false,
+            countries:[],
+            initLoadingState:'NO_LOADED',
+        })
+    }
+
     @Action(CountryAction.ResetAllState)
     resetAllState(ctx:StateContext<CountryStateModel>)
     {

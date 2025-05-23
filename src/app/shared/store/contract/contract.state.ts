@@ -62,6 +62,16 @@ export class ContractState{
     }
 
 
+    @Action(ContractAction.Logout)
+    logout(ctx:StateContext<ContractStateModel>)
+    {
+        ctx.setState({
+            loadingContract:false,
+            contracts:[],
+            initLoadingState:'NO_LOADED',
+        })
+    }
+    
     @Action(ContractAction.ResetAllState)
     resetAllState(ctx:StateContext<ContractStateModel>)
     {

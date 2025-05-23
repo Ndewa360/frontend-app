@@ -28,6 +28,11 @@ export namespace LocationAction
         static readonly type = '[Location] Reset All State'
     }
 
+    export class Logout
+    {
+        static readonly type = '[Location] Logout'
+    }
+
     export class RemoveAssignationLocation
     {
         static readonly type = '[Location] Remove assignation Location'

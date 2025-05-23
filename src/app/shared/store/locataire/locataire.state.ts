@@ -95,6 +95,15 @@ export class LocataireState{
         })
     }
 
+    @Action(LocataireAction.Logout)
+    logout(ctx:StateContext<LocataireStateModel>)
+    {
+        ctx.setState({
+            loadingLocataire:false,
+            locataires:[],
+            initLoadingState:'NO_LOADED',
+        })
+    }
 
     @Action(LocataireAction.UpdateLocataire)
     updateLocataire(ctx:StateContext<LocataireStateModel>, {locataire,id}:LocataireAction.UpdateLocataire)

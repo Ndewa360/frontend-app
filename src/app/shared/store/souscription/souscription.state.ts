@@ -86,7 +86,8 @@ export class SouscriptionState{
         })
     }
    
-    resetAllState(ctx:StateContext<SouscriptionStateModel>)
+    @Action(SouscriptionAction.Logout)
+    logout(ctx:StateContext<SouscriptionStateModel>)
     {
         ctx.setState({
             loadingSouscription:false,

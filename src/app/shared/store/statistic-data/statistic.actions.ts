@@ -30,4 +30,9 @@ export namespace StatisticAction
     {
         static readonly type = '[Statistic] Reset All State'
     }
+
+    export class Logout
+    {
+        static readonly type = '[Statistic] Logout'
+    }
 }

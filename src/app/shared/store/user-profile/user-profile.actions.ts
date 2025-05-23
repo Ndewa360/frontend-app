@@ -51,6 +51,12 @@ export namespace UserProfileAction
         constructor(public status:boolean){}
     }
 
+    export class Logout
+    {
+        static readonly type = '[UserProfile] Logout'
+        constructor(){}
+    }
+
     export class ResetPasswordForUserProfile
     {
         static readonly type = '[UserProfile] Reset password for UserProfile'

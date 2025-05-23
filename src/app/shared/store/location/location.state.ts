@@ -166,6 +166,16 @@ export class LocationState{
         })
     }
 
+    @Action(LocationAction.Logout)
+    logout(ctx:StateContext<LocationStateModel>)
+    {
+        ctx.setState({
+            loadingLocation:false,
+            locations:[],
+            initLoadingState:'NO_LOADED',
+        })
+    }
+
     @Action(LocationAction.FetchLocation)
     fetchLocation(ctx:StateContext<LocationStateModel>,{locationId}:LocationAction.FetchLocation)
     {

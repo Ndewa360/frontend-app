@@ -69,6 +69,12 @@ export namespace UserAction
         constructor(public status:boolean){}
     }
 
+    export class Logout
+    {
+        static readonly type = '[User] Logout'
+        constructor(){}
+    }
+
     //Change loading state
     export class updateLoadingUserState
     {
