@@ -6,9 +6,9 @@
       </button>
     </div>
     <swiper-container appSwiper #swiper [config]="swiperConfig" thumbs-swiper=".mySwiper2" (slidechange)="slideChange($event)">     
-      <swiper-slide *ngFor="let item of imagesFound">
-        <img [src]="item.url"  width="150"  class="main-img block w-full top center " alt="..." *ngIf="item.type=='image'" />
-        <video *ngIf="item.type=='video'" class="main-img w-full"  loop muted controls>
+      <swiper-slide *ngFor="let item of imagesFound"  class="flex justify-center items-center bg-black">
+        <img [src]="item.url"   class="main-img max-h-[40em] w-auto object-contain" alt="..." *ngIf="item.type=='image'" />
+        <video *ngIf="item.type=='video'" class="main-img max-h-[40em] w-auto object-contain bg-black"  loop muted controls>
           <source [src]="item.url"  />
       </video>
       <galery-video360-item [isFullScreen]='true' class="main-img block" [urlFile]="item.url" *ngIf="item.type=='panorama'"></galery-video360-item>

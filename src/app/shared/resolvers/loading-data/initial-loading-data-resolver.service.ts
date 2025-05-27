@@ -47,16 +47,18 @@ export class InitialLoadingDataResolver implements Resolve<any>
             ),
             this._store.select((state)=>state.userprofile.initLoadingState).pipe(skipWhile((initLoadingState)=>initLoadingState!="LOADED")),
             this._store.select((state)=>state.properties.initLoadingState).pipe(skipWhile((initLoadingState)=>initLoadingState!="LOADED")),
-        ).pipe(
-            mergeMap((value)=> this._store.select((state)=>state.properties.properties) ),
-            map((value)=>this._store.dispatch(value.map((prop)=>[
-                new LocataireAction.FetchLocatairesByPropertyId(prop._id),
-                new RoomAction.FetchRoomsByPropertyID(prop._id),
-                new LocationAction.FetchLocationsByPropertyId(prop._id),
-                new LocationPaymentAction.FetchLocationPaymentsByPropertyId(prop._id),
+        )
+        // .pipe(
+        //     mergeMap((value)=> this._store.select((state)=>state.properties.properties) ),
+        //     map((value)=>this._store.dispatch(value.map((prop)=>[
+        //         new LocataireAction.FetchLocatairesByPropertyId(prop._id),
+        //         new RoomAction.FetchRoomsByPropertyID(prop._id),
+        //         new LocationAction.FetchLocationsByPropertyId(prop._id),
+        //         new LocationPaymentAction.FetchLocationPaymentsByPropertyId(prop._id),
 
-            ]).reduce((acc,curr)=>[...acc,...curr],[]))),
-        ).subscribe((value)=>{
+        //     ]).reduce((acc,curr)=>[...acc,...curr],[]))),
+        // )
+        .subscribe((value)=>{
             //console.log("Value in init resolver",value)
         })
 

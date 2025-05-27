@@ -230,7 +230,7 @@ export class RoomState{
         let index = state.rooms.findIndex((u)=>u._id==roomId);
 
         if(index>-1) return of(true);
-
+        console.log("Load Room")
         ctx.patchState({
             loadingRoom:true
         })

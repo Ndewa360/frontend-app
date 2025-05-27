@@ -1,6 +1,10 @@
 .main-img 
 {
-    height: 40em;
+    /* height: 40em; */
+    max-height: 40em; /* ou 100% si tu veux la hauteur du conteneur */
+  width: auto;       /* pour conserver le ratio */
+  object-fit: contain; /* très important */
+  background-color: black;
 }
 
 .btn-text-edit-nav {
