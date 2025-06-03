@@ -43,4 +43,18 @@ export namespace HistoryLocationPaymentAction
         static readonly type = '[HistoryLocationPayment] Delete HistoryLocationPaymentTransaction'
         constructor(public transactionId:string,public locataireID:string){}
     }
+
+    export class AddHistoryLocationPaymentTransaction
+    {
+        static readonly type = '[HistoryLocationPayment] Add Local HistoryLocationPaymentTransaction'
+        constructor(public locataireID:string,public transactionData:any){}
+    }
+
+    
+    export class RefreshHistoryLocationPaymentsByPropertyId
+    {
+         static readonly type = '[HistoryLocationPayment] Refresh HistoryLocationPaymentById'
+        constructor(public propertyId:string){}
+    }
+
 }

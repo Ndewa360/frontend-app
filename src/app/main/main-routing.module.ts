@@ -14,6 +14,7 @@ import { ShowPropertyComponent } from './properties/show-property/show-property.
 import { SeeLocationsComponent } from './properties/components/see-locations/see-locations.component'
 import { FinancialHistoryComponent } from './properties/components/financial-history/financial-history.component'
 import { HomePropertyComponent } from './properties/home-property/home-property.component'
+import { LayoutListComponent } from './room/components/layout-list/layout-list.component'
 
 
 
@@ -80,6 +81,13 @@ const routes: Routes = [
             },
             children:[
               {
+                path: 'rooms/:idRoom',
+                component: LayoutListComponent,
+                data: {
+                  breadcrumb: 'unités'
+                },
+              },
+              {
                 path: 'rooms',
                 component: PropertyRoomComponent,
                 data: {
@@ -114,10 +122,11 @@ const routes: Routes = [
                   breadcrumb: 'Historique des paiements'
                 },
               },
+              
               {
                 path: '**',
                 redirectTo: 'rooms'
-              },
+              },              
             ]
     
             // data: {

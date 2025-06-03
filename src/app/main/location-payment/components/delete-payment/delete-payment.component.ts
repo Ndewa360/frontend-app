@@ -52,7 +52,7 @@ export class DeletePaymentComponent {
 
   onSubmit() {
     this.waittingResponse=true;
-    this._store.dispatch(new LocationPaymentAction.DeletehLocationPayment(this.data.transaction._id,this.data.history.locataire._id));
+    this._store.dispatch(new LocationPaymentAction.DeletehLocationPayment(this.data.transaction._id,this.data.history.locataire._id,this.data.transaction.property));
   }
 
 }

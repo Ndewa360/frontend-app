@@ -34,7 +34,6 @@ import { RemoveLocataireRoomComponent } from './properties/components/remove-loc
 import { LocationPaymentModule } from './location-payment/location-payment.module'
 import { LocatairesModule } from './locataires/locataires.module'
 import { StatisticsModule } from './statistics/statistics.module'
-import { RoomModule } from './room/room.module';
 import { GaleryPropertyComponent } from './properties/components/galery-property/galery-property.component'
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model'
 import { ModuleRegistry } from '@ag-grid-community/core'
@@ -47,6 +46,14 @@ import { HomePropertyRecapFinanceComponent } from './properties/components/home-
 import { HomePropertyRecapFinanceYearComponent } from './properties/components/home-property-recap-finance-year/home-property-recap-finance-year.component';
 import { HomePropertyRecapFinanceMonthComponent } from './properties/components/home-property-recap-finance-month/home-property-recap-finance-month.component'
 import { AssignLocationModule } from './assign-location/assign-location.module'
+import { LayoutComponent } from '../layout/default/layout.component'
+import { LayoutComponent as RoomLayout } from './room/components/layout/layout.component'
+// import { HomeComponent as SupportHome} from '../support/home/home.component'
+import { DeleteRoomComponent } from './room/components/delete-room/delete-room.component'
+import { GaleryComponent } from './room/components/galery/galery.component'
+import { LayoutListComponent } from './room/components/layout-list/layout-list.component'
+import { UpdateRoomComponent } from './room/components/update-room/update-room.component';
+import { DetailsRoomComponent } from './room/components/details-room/details-room.component'
 
 ModuleRegistry.registerModules([
   ClientSideRowModelModule, 
@@ -84,6 +91,13 @@ ModuleRegistry.registerModules([
     HomePropertyRecapFinanceComponent,
     HomePropertyRecapFinanceYearComponent,
     HomePropertyRecapFinanceMonthComponent,
+    UpdateRoomComponent,
+    GaleryComponent,
+    DeleteRoomComponent,
+    // SupportHome,
+    RoomLayout,
+    LayoutListComponent,
+    DetailsRoomComponent
   ],
   imports: [
     CommonModule,
@@ -95,7 +109,6 @@ ModuleRegistry.registerModules([
     AgGridModule,
     LocatairePropertyModule,
     LocatairesModule,
-    RoomModule,
     StatisticsModule,
     AssignLocationModule
   ]

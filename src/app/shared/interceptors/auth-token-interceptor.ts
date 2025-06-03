@@ -1,6 +1,6 @@
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpErrorResponse, HttpEvent } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { AuthTokenAction, AuthTokenState } from "../store";
+import { AuthTokenAction, AuthTokenState, GlobalAction } from "../store";
 import { Store } from "@ngxs/store";
 import { catchError, filter, map, mergeMap, switchMap, take } from "rxjs/operators";
 import { Router, RouterStateSnapshot } from "@angular/router";
@@ -35,6 +35,8 @@ export class AuthTokenInterceptor implements HttpInterceptor {
         if (error instanceof HttpErrorResponse && error.status === 401 && !req.url.includes('user/auth/refresh') && !req.url.includes('user/auth/login') ){
           return this.handle401Error(req, next);
         } else {
+          // if(error.status==0) this.showErrorMessage()
+          // else 
           this.showErrorMessage(error);
           return throwError(() => error);
         }
@@ -100,9 +102,18 @@ export class AuthTokenInterceptor implements HttpInterceptor {
     }
     else 
     {
-      let message = error?.error?.message;
-      if(!message) message = "Une erreur c'est produite! Réessayez plus tard"
-      this._toastrService.error(message, 'Ndewa360°');
+      switch(error.status)
+      {
+          case 0:
+              this._toastrService.error(`Aucun connexion internet activé. Vérifiez votre connexion internet et réessayez! `, 'Ndewa360°');
+              this._store.dispatch(new GlobalAction.SetConnexionInternetState(false))
+              break;
+              
+          default:
+              let message = error?.error?.message;
+              if(!message) message = "Une erreur c'est produite! Réessayez plus tard"
+              this._toastrService.error(message, 'Ndewa360°');
+      }
     }
     
   }

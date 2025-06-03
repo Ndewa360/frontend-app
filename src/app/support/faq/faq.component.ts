@@ -109,7 +109,7 @@ export class FaqComponent implements OnInit {
           content: 'Vérifiez dans vos spams. Sinon, utilisez le formulaire de contact ou réessayez avec un autre email.',
         },
         {
-          title: ' J’ai fait un paiement mais je n’ai pas accès au coordonées du propriétaire. Que faire?',
+          title: ' J’ai fait un paiement mais je n’ai pas accès au mon espace membre. Que faire?',
           content: ' Contactez notre support avec la preuve de paiement. Nous activerons votre accès manuellement si nécessaire.',
         },
         {

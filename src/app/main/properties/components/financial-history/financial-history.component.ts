@@ -140,7 +140,6 @@ export class FinancialHistoryComponent implements OnInit {
 
   updateTableData(data)
   {
-    console.log("Update ",data)
     this.hasData=true
     let rowData = data.map((item)=> item.transactions.map((transaction)=>({
       locataire:item.locataire.fullName,
@@ -148,13 +147,14 @@ export class FinancialHistoryComponent implements OnInit {
       chambre:this.getRoomString(item.room),
       date_paiement:moment(transaction.datePayment).format('LL') ,
       price:this.currencyPipe.transform(transaction.locationPaymentPrice,Currency.XAF,'symbol', '1.0-0'),
-      date:transaction.datePayment,
+      date:new Date(transaction.datePayment),
       history:item,
       transaction
       
     }))).reduce((acc,curr)=>[...acc,...curr],[])
+    console.log(" rowData ",rowData)
 
-    rowData.sort((a,b)=>a.date<b.date);
+    rowData.sort((a,b)=> b.date - a.date);
     
     this.gridOptions = {
       columnDefs: [...this.columnDefs],

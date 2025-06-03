@@ -8,6 +8,7 @@ import { UtilsString } from 'src/app/shared/utils';
 import { UpdateRoomComponent } from 'src/app/main/room/components/update-room/update-room.component';
 import { GaleryComponent } from 'src/app/main/room/components/galery/galery.component';
 import { DeleteRoomComponent } from 'src/app/main/room/components/delete-room/delete-room.component';
+import { LayoutComponent } from 'src/app/main/room/components/layout/layout.component';
 
 @Component({
   selector: 'app-property-room',
@@ -21,6 +22,7 @@ export class PropertyRoomComponent implements OnInit {
   roomFound$:Observable<RoomModel[]>;
   isAssignedOpened = false;
   public property= null;
+  propertyId = null;
   roomSelected:RoomModel=null;
 
   constructor(
@@ -32,16 +34,17 @@ export class PropertyRoomComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    let propertyId = this._activatedRoute.parent.snapshot.paramMap.get('id');
-    if(!propertyId)  {
+    this.propertyId  = this._activatedRoute.parent.snapshot.paramMap.get('id');
+
+    if(!this.propertyId)  {
       this._router.navigateByUrl('/app/properties/home');;
       return;
     }
-    this._store.select(PropertyState.selectStateProperty(propertyId)).subscribe((value)=>{
+    this._store.select(PropertyState.selectStateProperty(this.propertyId)).subscribe((value)=>{
           this.property = value;
         })
         
-    this.roomFound$=this._store.select(RoomState.selectStateRoomByPropertyId(propertyId));
+    this.roomFound$=this._store.select(RoomState.selectStateRoomByPropertyId(this.propertyId));
     this.roomFound$.subscribe((found)=>{
         this.roomFound = found;
     })
@@ -71,6 +74,20 @@ export class PropertyRoomComponent implements OnInit {
     // this._router.navigate(['/app/properties/edit-room',room._id])
     //console.log("Room ",room)
     this.dialog.open(GaleryComponent, { 
+      viewContainerRef:null,
+      disableClose: true,
+      role: 'dialog',
+      height: '100%',
+      width: '100%',
+      data:{
+        room
+      }
+    })
+  }
+
+  openRoomInfos(room)
+  {
+    this.dialog.open(LayoutComponent, { 
       viewContainerRef:null,
       disableClose: true,
       role: 'dialog',

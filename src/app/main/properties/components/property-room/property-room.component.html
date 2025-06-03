@@ -19,9 +19,9 @@
         <div fxLayout="row wrap" class="app-card-row-holder">
           <ng-container *ngIf="(loadingRoom$ | async)=='LOADED' else isLoadingData">
             <ng-container *ngFor="let room of roomFound">
-              <!-- [routerLink]="['/app/properties',room._id]" app-card--select-->
-              <div fxFlex="100%" fxFlex.gt-md="20%" class="" *ngIf="!room.isDeleted">
-                <div class="app-card  group">
+              <!-- [routerLink]="[',room._id]" -->
+              <div fxFlex="100%" fxFlex.gt-md="20%" [routerLink]="['../rooms',room._id]" class="" *ngIf="!room.isDeleted">
+                <div class="app-card app-card--select  group" >
                   <div class="relative btn-edit-wih">
                     <ng-container *ngIf="room.isFree else noToDelete">
                       <button (click)="deleteRoom(room)"   class="absolute isFree float-right btn-text-remove top-2 text-white right-0 mt-5 mr-5 bg-red-600 rounded-md">

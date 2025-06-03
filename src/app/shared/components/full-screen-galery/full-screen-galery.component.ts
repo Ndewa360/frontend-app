@@ -117,7 +117,7 @@ export class FullScreenGaleryComponent implements OnInit, OnDestroy, AfterViewIn
 
   nextSlide(e: MouseEvent | null): void {
     if (e) e.stopPropagation();
-     this.isLoading = true;
+    //  this.isLoading = true;
     this.currentIndex = (this.currentIndex + 1) % this.images.length;
     this.loadPanoramaIfNeeded();
   }

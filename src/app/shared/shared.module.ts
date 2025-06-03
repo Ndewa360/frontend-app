@@ -22,6 +22,7 @@ import {
   SearchState,
   ContractState,
   HistoryLocationPaymentState,
+  GlobalState,
 
 } from './store';
 
@@ -61,6 +62,7 @@ import { ProspectionState } from './store/prospection/prospection.state';
     //Ngxs module
     NgxsModule.forFeature(
       [
+        GlobalState,
         UserProfileState,
         UserState,
         PropertyState,

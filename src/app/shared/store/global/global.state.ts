@@ -9,7 +9,8 @@ import { of } from "rxjs";
     defaults:{
         isLoading:false,
         isConnectedToWhatsapp:false,
-        notifications:[]
+        notifications:[],
+        hasInternetConnexion:true
     }
 })
 @Injectable()
@@ -28,6 +29,12 @@ export class GlobalState{
         return state.isConnectedToWhatsapp
     }
 
+    @Selector()
+    static selectStateHasConnexionInternet(state:GlobalModel)
+    {
+        return state.hasInternetConnexion
+    }
+
 
     @Action(GlobalAction.AddNotification)
     addNewGlobalNotification(ctx:StateContext<GlobalModel>,action:GlobalAction.AddNotification)
@@ -41,14 +48,13 @@ export class GlobalState{
             ctx.patchState({notifications:notifs})
         },10000);
     }
-    /**
-     * 
-     *this._ngxsAction.pipe
-            (
-                takeUntil(this._unsubscribeAll),
-                ofActionSuccessful(UserProfileAction.FetchUserProfile)
-            ),
-     */
+
+    @Action(GlobalAction.SetConnexionInternetState)
+    setInternetConnexionState(ctx:StateContext<GlobalModel>,{isConnected}:GlobalAction.SetConnexionInternetState)
+    {
+        ctx.patchState({hasInternetConnexion:isConnected});
+    }
+  
 
     @Action(GlobalAction.StartLoadData)
     loadDataConnectedAppStatus(ctx:StateContext<GlobalModel>,)

@@ -80,7 +80,10 @@ export class UpdatePaymentComponent {
       if(this.formGroup.invalid) return;
       let bodyToSend = FormUtils.removeNullAttribut({...this.formGroup.value})
       this.waittingResponse=true;
-      let datePayment = bodyToSend.datePayment[0];
+      console.log("Body to send ", bodyToSend)
+      let datePayment = null;
+      if(bodyToSend.datePayment instanceof Array) datePayment = bodyToSend.datePayment[0];
+      else datePayment = new Date(bodyToSend.datePayment)
       datePayment.setHours(6)
 
       this._store.dispatch(new LocationPaymentAction.UpdateLocationPayment({

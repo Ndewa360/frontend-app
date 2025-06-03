@@ -26,7 +26,7 @@ export namespace LocationPaymentAction
     export class DeletehLocationPayment
     {
         static readonly type = '[LocationPayment] Delete LocationPayment'
-        constructor(public locationPaymentId:string, public locataireId:string){}
+        constructor(public locationPaymentId:string, public locataireId:string, public propertyID:string){}
     }
 
     export class ResetAllState

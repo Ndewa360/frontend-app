@@ -11,6 +11,8 @@ import { ToastrService } from "ngx-toastr";
 import { RoomAction } from "../rooms";
 import { LocataireAction } from "../locataire";
 import { HistoryLocationPaymentAction } from "../history-payment-location";
+import { StatisticAction } from "../statistic-data";
+// import { RefreshHistoryLocationPaymentsByPropertyId }
 
 export class LocationPaymentStateModel {
     locationPayments:LocationPaymentModel[]
@@ -110,7 +112,7 @@ export class LocationPaymentState{
     }
 
     @Action(LocationPaymentAction.DeletehLocationPayment)
-    deleteLocationPayment(ctx:StateContext<LocationPaymentStateModel>, {locationPaymentId,locataireId}:LocationPaymentAction.DeletehLocationPayment)
+    deleteLocationPayment(ctx:StateContext<LocationPaymentStateModel>, {locationPaymentId,locataireId,propertyID}:LocationPaymentAction.DeletehLocationPayment)
     {
         const state = ctx.getState();
         ctx.patchState({
@@ -121,7 +123,6 @@ export class LocationPaymentState{
         return this._locationPaymentsService.deleteLocationPayment(locationPaymentId).pipe(
             tap(
                 (result)=>{
-                    console.log("Result update location payment ",result)
                     const data = [...state.locationPayments]
                     let index = data.findIndex((u)=>u._id==locationPaymentId);
                     if(index>-1) data.splice(index,1);
@@ -132,6 +133,7 @@ export class LocationPaymentState{
                     this._toastrService.success(`Paiement supprimer avec success!`, 'Ndewa360°');
 
                     ctx.dispatch(new HistoryLocationPaymentAction.DeleteHistoryLocationPaymentTransaction(locationPaymentId,locataireId))
+                    ctx.dispatch(new StatisticAction.RefreshStaticLocataireDataByPropertyIdAndYear(propertyID,`${new Date().getFullYear()}`))
                 }
             ),
             catchError((error) => {
@@ -156,7 +158,6 @@ export class LocationPaymentState{
         return this._locationPaymentsService.updateLocationPayment(locationPayment,id).pipe(
             tap(
                 (result)=>{
-                    console.log("Result update location payment ",result)
                     const data = [...state.locationPayments]
                     let index = data.findIndex((u)=>u._id==id);
                     if(index>-1) data[index]=result.data;
@@ -167,6 +168,7 @@ export class LocationPaymentState{
                     this._toastrService.success(`Paiement mise à jour avec success!`, 'Ndewa360°');
 
                     ctx.dispatch(new HistoryLocationPaymentAction.UpdateHistoryLocationPaymentTransaction(id,locataireID,result.data))
+                    ctx.dispatch(new StatisticAction.RefreshStaticLocataireDataByPropertyIdAndYear(locationPayment.property,`${new Date().getFullYear()}`))
                 }
             ),
             catchError((error) => {
@@ -228,12 +230,14 @@ export class LocationPaymentState{
         return this._locationPaymentsService.createLocationPayment(locationPayment).pipe(
             tap(
                 result => {
-                    //console.log("LocationPayment Created ",result);
                     ctx.patchState({
                         loadingLocationPayment:false,
                         locationPayments:[...state.locationPayments, result.data]
                     })
+                    ctx.dispatch(new HistoryLocationPaymentAction.AddHistoryLocationPaymentTransaction(locationPayment.locataireId,result.data))
+                    ctx.dispatch(new StatisticAction.RefreshStaticLocataireDataByPropertyIdAndYear(locationPayment.property,`${new Date().getFullYear()}`))
                     this._toastrService.success(`Paiement ajouté avec success!`, 'Ndewa360°');
+                    
                 }
             ),
             catchError((error)=>{

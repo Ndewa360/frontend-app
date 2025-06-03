@@ -8,6 +8,12 @@ export namespace GlobalAction
         constructor(public notification:string){}
     }
 
+     export class SetConnexionInternetState
+    {
+        static readonly type = '[Global-ConnexionInternet] set connexion';
+        constructor(public isConnected:boolean){}
+    }
+
     //Fetch All Global
     export class ChangeLoading
     {

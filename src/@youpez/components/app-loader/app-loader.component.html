@@ -1,9 +1,14 @@
 <main>
-	<div class="preloader ">
-		<div class="preloader__square"></div>
-		<div class="preloader__square"></div>
-		<div class="preloader__square"></div>
-		<div class="preloader__square"></div>
-	</div>
-	<div class="status font-mono text-lg">{{title}}<span class="status__dot">.</span><span class="status__dot">.</span><span class="status__dot">.</span></div>
+	<ng-container *ngIf="(hasInternetConnexionState$ | async) else showNoConnexionError">
+		<div class="preloader ">
+			<div class="preloader__square"></div>
+			<div class="preloader__square"></div>
+			<div class="preloader__square"></div>
+			<div class="preloader__square"></div>
+		</div>
+		<div class="status font-mono text-lg">{{title}}<span class="status__dot">.</span><span class="status__dot">.</span><span class="status__dot">.</span></div>
+	</ng-container>
+	<ng-template #showNoConnexionError>
+		Vous n'avez pas accés à internet
+	</ng-template>
 </main>

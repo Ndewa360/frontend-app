@@ -188,8 +188,10 @@ export class StatisticState{
     {
         const state = ctx.getState();
         let index = state.locataireStatistic.findIndex((u)=>u.locataire.property==propertyID && u.year==year);
-        // //console.log("Index Static", index,propertyID,state.roomStatistic)
-        if(index>-1) return of(true);
+        let locataireStatisticNewState = [...state.locataireStatistic]
+        if(index>-1) locataireStatisticNewState.splice(index,1);
+
+        // if(index>-1) return of(true);
 
         ctx.patchState({
             loadingStatistic:true,
@@ -202,7 +204,7 @@ export class StatisticState{
                     ctx.patchState({
                         loadingStatistic:false,
                         locataireStatisticLoading:false,
-                        locataireStatistic:[...state.locataireStatistic, ...result.data]
+                        locataireStatistic:[...locataireStatisticNewState, ...result.data]
                     })
                 }
             )
@@ -214,14 +216,16 @@ export class StatisticState{
     {
         const state = ctx.getState();
         let index = state.allLocatairePayementByYear.findIndex((u)=>u.locataire.property==propertyID && year==u.year);
-        // //console.log("Index Static", index,propertyID,state.roomStatistic)
-        if(index>-1) return of(true);
+        let allLocatairePayementByYearNewState = [...state.allLocatairePayementByYear]
+        if(index>-1) allLocatairePayementByYearNewState.splice(index,1);
+
+        // if(index>-1) return of(true);
 
         ctx.patchState({
             loadingStatistic:true,
-            allLocatairePayementByYearLoading:true
-            
+            allLocatairePayementByYearLoading:true            
         })
+
         return this._statisticsService.getAllPaymentLocataireStatisticDataByYear(propertyID,year).pipe(
             tap(
                 result => {
@@ -229,10 +233,36 @@ export class StatisticState{
                     ctx.patchState({
                         loadingStatistic:false,
                         allLocatairePayementByYearLoading:false,
-                        allLocatairePayementByYear:[...state.allLocatairePayementByYear, ...result.data]
+                        allLocatairePayementByYear:[...allLocatairePayementByYearNewState, ...result.data]
                     })
                 }
             )
         )
-    }   
+    }  
+    
+    @Action(StatisticAction.RefreshStaticLocataireDataByPropertyIdAndYear)
+    refretchAStatisticByPropertyAndYear(ctx:StateContext<StatisticStateModel>,{propertyID,year}:StatisticAction.RefreshStaticLocataireDataByPropertyIdAndYear)
+    {
+
+        const state = ctx.getState();
+        let newStateLocataireStatistic = [...state.locataireStatistic];
+        let indexNewStateLocataireStatistic = state.locataireStatistic.findIndex((u)=>u.locataire.property==propertyID && u.year==year);
+        if(indexNewStateLocataireStatistic>-1) newStateLocataireStatistic.splice(indexNewStateLocataireStatistic,1);
+
+        let newallLocatairePayementByYear = [...state.allLocatairePayementByYear];
+        let indexAllLocatairePayementByYear = state.allLocatairePayementByYear.findIndex((u)=>u.locataire.property==propertyID && u.year==year);
+        if(indexAllLocatairePayementByYear>-1) newallLocatairePayementByYear.splice(indexAllLocatairePayementByYear,1);
+
+
+        ctx.patchState({
+            locataireStatistic:newStateLocataireStatistic,
+            allLocatairePayementByYear:newallLocatairePayementByYear            
+        })
+        
+        return ctx.dispatch([
+            new StatisticAction.FetchStaticAllPaymentLocataireDataByPropertyIdAndYear(propertyID,year),
+            new StatisticAction.FetchStaticLocataireDataByPropertyIdAndYear(propertyID,year)
+        ])
+    } 
+
 }

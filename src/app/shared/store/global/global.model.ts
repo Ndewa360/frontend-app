@@ -1,7 +1,8 @@
 export interface GlobalModel {
     isLoading:boolean,
     notifications:string[],
-    isConnectedToWhatsapp:boolean
+    isConnectedToWhatsapp:boolean,
+    hasInternetConnexion:boolean
 }
 
 export enum LOCAL_LANGUAGE {
