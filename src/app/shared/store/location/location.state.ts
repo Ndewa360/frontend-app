@@ -274,12 +274,10 @@ export class LocationState{
         return this._locationsService.getLocations(propertyId).pipe(
             tap(
                 (result:any) => {
-                    // console.log("Fetch Locations ",result)
                     let locationFound=[...state.locations];
                     result.data.forEach((location:LocationModel)=>{
                         if(locationFound.findIndex((u)=>u._id==location._id)==-1) locationFound.push(location)
                     })
-
                     ctx.patchState({
                         loadingLocation:false,
                         locations:locationFound,

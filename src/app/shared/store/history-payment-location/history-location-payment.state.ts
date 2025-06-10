@@ -61,6 +61,14 @@ export class HistoryLocationPaymentState{
         }))
     }
 
+    static selectStateHistoryLocationPaymentByRoomId(roomID)
+    {
+        return createSelector([HistoryLocationPaymentState],(state)=> state.historyLocationPayments.filter((historyLocationPayment)=>{
+            //console.log("History ",historyLocationPayment,historyLocationPayment.property._id,propertyID)
+            return historyLocationPayment.room._id==roomID
+        }))
+    }
+
    
     static selectStateHistoryLocationPaymentByLocataireId(locataireID)
     {

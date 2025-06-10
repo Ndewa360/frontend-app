@@ -1,8 +1,8 @@
-import { Component, Inject, Input, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, Output, ViewEncapsulation } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store, Actions } from '@ngxs/store';
-import { RoomModel } from 'src/app/shared/store';
+import { LocataireModel, LocationModel, RoomModel } from 'src/app/shared/store';
 import { UtilsString } from 'src/app/shared/utils';
 
 @Component({
@@ -13,6 +13,10 @@ import { UtilsString } from 'src/app/shared/utils';
 })
 export class LayoutComponent {
   @Input() room:RoomModel;
+  @Input() locataire:LocataireModel;
+  @Input() location:LocationModel;
+  @Input() historyLocationPayments: any[] = [];
+  @Output() onOpenAssignedRoom:EventEmitter<boolean> = new EventEmitter<boolean>();
 
    constructor(
     // private dialogRef: MatDialogRef<LayoutComponent>,
@@ -25,6 +29,10 @@ export class LayoutComponent {
 
   close(){
     // this.dialogRef.close();
+  }
+
+  openAssignedRoom(event) {
+    this.onOpenAssignedRoom.emit(event);
   }
 
   getRoomType(roomType)

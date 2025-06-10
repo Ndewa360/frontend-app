@@ -1,103 +1,18 @@
-<!-- <div class="mx-8 " fxFlex="100%" fxFlex.gt-md="33.33%">
-
-    <p class="mt-5 font-bold">
-
-        <span class="text-green-600" *ngIf="room.isFree else noFreeRoom"> Bien Libre</span>
-        <ng-template #noFreeRoom>
-            <span class="text-red-600">Non disponible</span>
-        </ng-template>
-    </p>
-    <p class="font-bold">
-        <span class="font-normal">
-            <i class="fa fa-bed  text-muted me-1 mr-2 spec-home"></i>
-            {{room.specifity.numberOfBathroom}}
-        </span> chambre(s)
-    </p>
-    <p class="font-bold" *ngIf="room.type!='room'">
-        <span class="font-normal">
-            <i class="fa fa-bath text-muted me-1 mr-3 spec-home"></i>
-            {{room.specifity.numberOfShower}}</span> Douche(s)
-        <ng-container *ngIf="room.specifity.isInternalShower else externalShower">interne</ng-container>
-        <ng-template #externalShower>externe</ng-template>
-    </p>
-    <p class="font-bold" *ngIf="room.type!='room'  && room.type!='studio'">
-        <i class="fa fa-couch text-muted me-1 mr-3 spec-home"></i>
-        <span class="font-normal">{{room.specifity.numberOfLivingRoom}}</span> Salon(s)
-    </p>
-    <p class="font-bold">
-        <span class="font-normal">
-            <svg class="text-muted me-1 mr-2" xmlns="http://www.w3.org/2000/svg" height="16" width="18"
-                viewBox="0 0 576 512">
-                <path opacity="1" fill="currentColor"
-                    d="M240 144A96 96 0 1 0 48 144a96 96 0 1 0 192 0zm44.4 32C269.9 240.1 212.5 288 144 288C64.5 288 0 223.5 0 144S64.5 0 144 0c68.5 0 125.9 47.9 140.4 112h71.8c8.8-9.8 21.6-16 35.8-16H496c26.5 0 48 21.5 48 48s-21.5 48-48 48H392c-14.2 0-27-6.2-35.8-16H284.4zM144 80a64 64 0 1 1 0 128 64 64 0 1 1 0-128zM400 240c13.3 0 24 10.7 24 24v8h96c13.3 0 24 10.7 24 24s-10.7 24-24 24H280c-13.3 0-24-10.7-24-24s10.7-24 24-24h96v-8c0-13.3 10.7-24 24-24zM288 464V352H512V464c0 26.5-21.5 48-48 48H336c-26.5 0-48-21.5-48-48zM48 320h80 16 32c26.5 0 48 21.5 48 48s-21.5 48-48 48H160c0 17.7-14.3 32-32 32H64c-17.7 0-32-14.3-32-32V336c0-8.8 7.2-16 16-16zm128 64c8.8 0 16-7.2 16-16s-7.2-16-16-16H160v32h16zM24 464H200c13.3 0 24 10.7 24 24s-10.7 24-24 24H24c-13.3 0-24-10.7-24-24s10.7-24 24-24z">
-                </path>
-            </svg>
-            <ng-container *ngIf="room.specifity.hasKitchen else noKitchen">
-                {{room.specifity.numberOfKitchen}} Cuisine (s)
-                <ng-container *ngIf="room.specifity.isInternalKitchen else externalKitchen">interne</ng-container>
-                <ng-template #externalKitchen>externe</ng-template>
-            </ng-container>
-            <ng-template #noKitchen>Pas de cusine</ng-template>
-        </span>
-    </p>
-    <p class="font-bold">
-        <ng-container *ngIf="room.property.hasClosure else hasNoClosure">
-            <i class="fa fa-door-open text-muted me-1 mr-3 spec-home"></i>
-            <span class="font-normal"></span>Posséde une barriére
-        </ng-container>
-        <ng-template #hasNoClosure>
-            <i class="fa fa-door-closed text-muted me-1 mr-3 spec-home"></i>
-            <span class="font-normal"></span>Ne posséde pas barriére
-        </ng-template>
-    </p>
-
-    <p class="font-bold">
-        <ng-container *ngIf="room.property.hasParking">
-            <i class="fa fa-square-parking text-muted me-1 mr-4 spec-home"></i>
-            <span class="font-normal"></span>Posséde un parking
-        </ng-container>
-    </p>
-
-    <p class="font-bold">
-        <ng-container>
-            <i class="fa fa-location-dot text-muted me-1 mr-4 spec-home"></i>
-            <span class="font-normal"></span>{{room.property.location}}
-        </ng-container>
-    </p>
-
-    <p class="mt-4 text-4xl font-bold text-violet-900">
-        {{room.price | currency : getMoney(): 'symbol' : '1.0-0' }} <span class="text-sm text-gray-800">/mois</span>
-    </p>
-
-    <div class="pt-3 leading-5 text-gray-800" *ngIf="hasDescription(room.description)">
-        <div class="text-gray-800 mb-2 ">
-            <p>
-                <span
-                    class="border-for-custom-color-theme border-b-4 pb-1 px-1 border-amber-400 border-solid">Description</span>
-            </p>
-        </div>
-
-        <p>
-            {{room.description}}
-        </p>
-    </div>
-</div> -->
-
 <div class="bg-white p-6 rounded-lg shadow border">
     <div class="flex items-center justify-end mb-4">
        
     </div>
 
     <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 text-gray-700 mb-6">
-      <div><span class="font-semibold">🏢 {{getRoomType(room.type)}}</span></div>
+      <div><span class="font-semibold">🏢 {{getRoomType(room?.type)}}</span></div>
       <div>
         <span class="font-semibold">
             <youpez-ibm-icon class="location-icon" iconName="money" iconSize="16"></youpez-ibm-icon>
-            {{room.price | currency : getMoney(): 'symbol' : '1.0-0' }} <span class="text-sm text-gray-800">/mois</span>
+            {{room?.price | currency : getMoney(): 'symbol' : '1.0-0' }} <span class="text-sm text-gray-800">/mois</span>
         </span>
         </div>
          <div>
-            <span class="px-2 py-1 text-sm rounded-full bg-green-100 text-green-700" *ngIf="room.isFree else noFreeRoom">Disponible</span>
+            <span class="px-2 py-1 text-sm rounded-full bg-green-100 text-green-700" *ngIf="room?.isFree else noFreeRoom">Disponible</span>
             <ng-template #noFreeRoom>
                 <span class="px-2 py-1 text-sm rounded-full bg-red-100 text-red-700">Non disponible</span>
             </ng-template>
@@ -108,17 +23,17 @@
     <h3 class="text-lg font-semibold mb-2">Équipements</h3>
     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 text-gray-700">
         
-      <div class="flex items-center gap-2" *ngIf="room.type!='room'">
+      <div class="flex items-center gap-2" *ngIf="room?.type!='room'">
         <span>🚿</span> 
-        <span>{{room.specifity.numberOfShower}}</span> Douche(s)
-        <ng-container *ngIf="room.specifity.isInternalShower else externalShower">interne</ng-container>
+        <span>{{room?.specifity.numberOfShower}}</span> Douche(s)
+        <ng-container *ngIf="room?.specifity.isInternalShower else externalShower">interne</ng-container>
         <ng-template #externalShower>externe</ng-template>
       </div>
-      <div class="flex items-center gap-2"><span>🛏️</span> {{room.specifity.numberOfBathroom}} Chambre(s)</div>
-      <div class="flex items-center gap-2" *ngIf="room.type!='room'  && room.type!='studio'"><span>🛋️</span> {{room.specifity.numberOfLivingRoom}} Salon(s)</div>
+      <div class="flex items-center gap-2"><span>🛏️</span> {{room?.specifity.numberOfBathroom}} Chambre(s)</div>
+      <div class="flex items-center gap-2" *ngIf="room?.type!='room'  && room?.type!='studio'"><span>🛋️</span> {{room?.specifity.numberOfLivingRoom}} Salon(s)</div>
       <div class="flex items-center gap-2">
         <span>🌐</span> 
-        <ng-container *ngIf="room.property.hasClosure else hasNoClosure">
+        <ng-container *ngIf="room?.property.hasClosure else hasNoClosure">
             <span class="font-normal"></span>Posséde une barriére
         </ng-container>
         <ng-template #hasNoClosure>
@@ -127,14 +42,14 @@
       </div>
       <div class="flex items-center gap-2">
         <span>🍳</span> 
-        <ng-container *ngIf="room.specifity.hasKitchen else noKitchen">
-            {{room.specifity.numberOfKitchen}} Cuisine (s)
+        <ng-container *ngIf="room?.specifity.hasKitchen else noKitchen">
+            {{room?.specifity.numberOfKitchen}} Cuisine (s)
             <ng-container *ngIf="room.specifity.isInternalKitchen else externalKitchen">interne</ng-container>
             <ng-template #externalKitchen>externe</ng-template>
         </ng-container>
         <ng-template #noKitchen>Pas de cusine</ng-template>
     </div>
-      <div class="flex items-center gap-2" *ngIf="room.property.hasParking">
+      <div class="flex items-center gap-2" *ngIf="room?.property.hasParking">
         <span>🅿️</span> 
         <ng-container >
             <i class="fa fa-square-parking text-muted me-1 mr-4 spec-home"></i>

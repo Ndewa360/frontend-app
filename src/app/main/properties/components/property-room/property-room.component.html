@@ -24,24 +24,24 @@
                 <div class="app-card app-card--select  group" >
                   <div class="relative btn-edit-wih">
                     <ng-container *ngIf="room.isFree else noToDelete">
-                      <button (click)="deleteRoom(room)"   class="absolute isFree float-right btn-text-remove top-2 text-white right-0 mt-5 mr-5 bg-red-600 rounded-md">
+                      <button (click)="deleteRoom(room,$event)"   class="absolute isFree float-right btn-text-remove top-2 text-white right-0 mt-5 mr-5 bg-red-600 rounded-md">
                         <youpez-ibm-icon iconName="close" iconSize="24" ></youpez-ibm-icon>
                       </button>
-                      <button (click)="openEditPhoto(room)"  class="absolute isFree  float-right btn-text-image top-2 right-0 mt-16 mr-5 bg-slate-700 rounded-md">
+                      <button (click)="openEditPhoto(room,$event)"  class="absolute isFree  float-right btn-text-image top-2 right-0 mt-16 mr-5 bg-slate-700 rounded-md">
                         <youpez-ibm-icon iconName="dropPhoto" iconSize="24" ></youpez-ibm-icon>
                       </button>
-                      <button (click)="openEditRoom(room)"  class="absolute isFree float-right btn-text-edit  right-0 mt-28 mr-5 bg-slate-700 rounded-md">
+                      <button (click)="openEditRoom(room,$event)"  class="absolute isFree float-right btn-text-edit  right-0 mt-28 mr-5 bg-slate-700 rounded-md">
                         <youpez-ibm-icon iconName="pen" iconSize="24" ></youpez-ibm-icon>
                       </button>
-                      <button (click)="openEditAddLocataire(room)"  class="absolute isFree float-right btn-text-add-locataire  right-0 mt-28 mr-5 bg-slate-700 rounded-md">
+                      <button (click)="openEditAddLocataire(room,$event)"  class="absolute isFree float-right btn-text-add-locataire  right-0 mt-28 mr-5 bg-slate-700 rounded-md">
                         <youpez-ibm-icon iconName="userAdd" iconSize="24" ></youpez-ibm-icon>
                       </button>
                     </ng-container>
                     <ng-template #noToDelete>
-                      <button (click)="openEditRoom(room)"  class="absolute  float-right btn-text-edit  right-0 mt-5 mr-5 bg-slate-700 rounded-md">
+                      <button (click)="openEditRoom(room,$event)"  class="absolute  float-right btn-text-edit  right-0 mt-5 mr-5 bg-slate-700 rounded-md">
                         <youpez-ibm-icon iconName="pen" iconSize="24" ></youpez-ibm-icon>
                       </button>
-                      <button (click)="openEditPhoto(room)"  class="absolute  float-right btn-text-image top-2 right-0 mt-16 mr-5 bg-slate-700 rounded-md">
+                      <button (click)="openEditPhoto(room,$event)"  class="absolute  float-right btn-text-image top-2 right-0 mt-16 mr-5 bg-slate-700 rounded-md">
                         <youpez-ibm-icon iconName="dropPhoto" iconSize="24" ></youpez-ibm-icon>
                       </button>                      
                     </ng-template>

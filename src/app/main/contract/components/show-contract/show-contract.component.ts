@@ -1,10 +1,11 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, Inject, OnInit, ViewEncapsulation } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { NgxPrintService, PrintOptions } from 'ngx-print';
 import { combineLatest, Observable } from 'rxjs';
 
-import { LocationPaymentModel, UserProfileState, UserProfileModel, LocataireModel, RoomModel, LocataireState, LocationPaymentState, RoomAction, RoomState, ContractState } from 'src/app/shared/store';
+import { LocationPaymentModel, UserProfileState, UserProfileModel, LocataireModel, RoomModel, LocataireState, LocationPaymentState, RoomAction, RoomState, ContractState, LocationModel } from 'src/app/shared/store';
 import { UtilsString } from 'src/app/shared/utils';
 
 @Component({
@@ -30,12 +31,14 @@ export class ShowContractComponent implements OnInit{
     private _store:Store,
     private printService: NgxPrintService,
     private _activatedRoute: ActivatedRoute,
+    @Inject(MAT_DIALOG_DATA) public data:{location:LocationModel},
+    private dialogRef: MatDialogRef<ShowContractComponent>,
+    
   ) { }
 
 
   ngOnInit(): void {
-    let locationId = this._activatedRoute.snapshot.paramMap.get("locationID");
-    let contractLocataire$ = this._store.select(ContractState.selectStateContractByLocationId(locationId))
+    let contractLocataire$ = this._store.select(ContractState.selectStateContractByLocationId(this.data.location._id));
     
     contractLocataire$.subscribe((result)=>{
       if(result){
@@ -44,7 +47,7 @@ export class ShowContractComponent implements OnInit{
       }
     })
 
-    let locataireLoading$ = this._store.select(LocataireState.selectStateLocataire(this._activatedRoute.snapshot.params['locataireID']));
+    let locataireLoading$ = this._store.select(LocataireState.selectStateLocataire(this.data.location.locataire));
     locataireLoading$.subscribe((result)=>{
       this.locataire = result
 
@@ -75,4 +78,7 @@ export class ShowContractComponent implements OnInit{
     {
       return new Date().getFullYear()
     }
+    onClose() {
+    this.dialogRef.close(false)
+  }
 }

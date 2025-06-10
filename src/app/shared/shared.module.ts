@@ -126,6 +126,7 @@ import { ProspectionState } from './store/prospection/prospection.state';
     GaleryImageComponent,
     GaleryVideoComponent,
     GaleryVideo360Component,
+    GaleryVideo360ItemComponent,
     SliderComponentGaleryComponent,
     FullScreenGaleryComponent,
     SinglePageScreenGaleryComponent,

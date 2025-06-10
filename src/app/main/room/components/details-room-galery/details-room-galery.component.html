@@ -1,0 +1,44 @@
+<div class="app-bg-decorative pb-2 pt-2">
+   <button ibmButton="primary" (click)="openEditGalery()" class="custom-primary-button absolute top-2 right-2 rounded  transition duration-200 shadow-md z-10" size="md" >   
+              <span class="btn-text">Modifier la galérie</span>
+              <youpez-ibm-icon iconClass="cds--btn__icon" iconName="edit" iconSize="24" ></youpez-ibm-icon >
+          </button>
+     <!-- <button 
+          class="">
+    ✏️ Modifier la galerie
+  </button> -->
+
+  <div *ngIf="urlsQuadricUrlList.length > 0; else noDataToShow"
+       class="masonry-wrapper">
+
+    <div *ngFor="let item of urlsQuadricUrlList"
+         class="app-card masonry-item max-w-[250px] w-full rounded overflow-hidden border border-orange-800 shadow transition-transform duration-300 ease-in-out hover:scale-105">
+
+      <div class="app-card__content__alt">
+
+        <!-- Image -->
+        <img *ngIf="item.type === 'image'" 
+             [src]="item.url" 
+             alt="Image"
+             class="w-full h-auto object-cover rounded">
+
+        <!-- Vidéo -->
+        <video *ngIf="item.type === 'video'" 
+               [src]="item.url" 
+               class="w-full h-auto object-cover rounded"
+               muted loop controls></video>
+
+        <!-- 360 -->
+        <galery-video360-item *ngIf="item.type === '360'" 
+                              [urlFile]="item.url" 
+                              (onDeleteFileEvent)="deleteFile($event)">
+        </galery-video360-item>
+
+      </div>
+    </div>
+  </div>
+
+  <ng-template #noDataToShow>
+    <app-no-data-list textDescription="élément" class="flex-auto"></app-no-data-list>
+  </ng-template>
+</div>

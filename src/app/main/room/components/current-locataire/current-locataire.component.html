@@ -1,0 +1,86 @@
+<div class="p-6 bg-white rounded-xl shadow-md" *ngIf="room.isFree else noFree">
+  <div class="text-center">
+    <div class="mb-4">
+    <h2 class="text-xl font-semibold">Aucun locataire assigné</h2>
+  </div>
+   <button ibmButton="primary" (click)="openEditAddLocataire()" class="custom-primary-button" size="md" type="submit">   
+        <span class="btn-text">Assigner un locataire</span>
+        <youpez-ibm-icon iconClass="cds--btn__icon" iconName="userIdentification" iconSize="24" ></youpez-ibm-icon >
+    </button>
+  </div>
+
+  <!-- <div class="mt-6">
+    <h3 class="text-md font-medium mb-2">Historique des locataires</h3>
+    <table class="w-full text-left border border-gray-200 rounded-md overflow-hidden">
+      <thead class="bg-gray-100 text-sm text-gray-600">
+        <tr>
+          <th class="p-3">Nom</th>
+          <th class="p-3">Date d'entrée</th>
+          <th class="p-3">Date de sortie</th>
+          <th class="p-3">Statut</th>
+        </tr>
+      </thead>
+      <tbody class="text-sm">
+        <tr class="border-t">
+          <td class="p-3 font-medium">Jean Dupont</td>
+          <td class="p-3">1 mars 2023</td>
+          <td class="p-3">28 février 2024</td>
+          <td class="p-3">
+            <span class="inline-block px-2 py-1 text-green-700 bg-green-100 rounded-full text-xs">Sain</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div> -->
+</div>
+
+<ng-template #noFree>
+  <div class="p-6 bg-white rounded-xl shadow-md" *ngIf="locataire">
+    <div class="flex items-center justify-between mb-4">
+      <div class="flex items-center space-x-4">
+        <div class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
+          <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" stroke-width="2"
+            viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M5.121 17.804A13.937 13.937 0 0112 15c2.28 0 4.418.51 6.38 1.418M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+        </div>
+        <div>
+          <p class="font-semibold">{{locataire?.fullName}}</p>
+          <p class="text-sm text-gray-900">{{locataire?.phoneNumber}}</p>
+          <p class="text-sm text-gray-900">{{locataire?.email}}</p>
+          <p class="text-sm text-gray-900">Locataire depuis le {{location?.startedAt | date: 'mediumDate'}}</p>
+          <ng-container *ngIf="locataire?.fullNameRef || locataire?.emailRef || locataire?.phoneNumberRef">
+            <p class="text-sm text-gray-700">Contact du référent</p>
+            <p class="text-sm text-gray-900">{{locataire?.fullNameRef}}</p>
+            <p class="text-sm text-gray-900">{{locataire?.emailRef}}</p>
+            <p class="text-sm text-gray-900">{{locataire?.phoneNumberRef}}</p>
+          </ng-container>          
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-6 flex items-center justify-between current-locataire-btn-action">
+          <div>
+            <button ibmButton="tertiary" (click)="seeContract()" class="custom--btn--tertiary" size="md" >   
+              <span class="btn-text">Voir le contrat</span>
+              <youpez-ibm-icon iconClass="cds--btn__icon" iconName="document" iconSize="24" ></youpez-ibm-icon >
+          </button>
+          </div>
+          <div>
+            <button ibmButton="primary" (click)="updateLocataire()" class="custom-primary-button" size="md" >   
+              <span class="btn-text">Modifier le locataire</span>
+              <youpez-ibm-icon iconClass="cds--btn__icon" iconName="edit" iconSize="24" ></youpez-ibm-icon >
+          </button>
+          </div>
+          <div>
+            <button ibmButton="danger" (click)="rompreLocation()" class="" size="md" >   
+            <span class="btn-text">Rompre la location</span>
+            <youpez-ibm-icon iconClass="cds--btn__icon" iconName="close" iconSize="24" ></youpez-ibm-icon >
+          </button>
+          </div>
+      </div>
+  </div>
+</ng-template>
+
+

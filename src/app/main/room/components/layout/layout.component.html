@@ -39,7 +39,7 @@
         <div class="app-header-subheader" style="height: 40px">
             <div class="flex justify-between flex-1 items-center">
                 <div class="app-productive-heading-02">{{getRoomType(room?.type)}} #{{room?.code}}</div>
-                <ibm-tag type="warm-gray">work</ibm-tag>
+                <!-- <ibm-tag type="warm-gray">work</ibm-tag> -->
             </div>
         </div>
         <div class="app-card app-card--alone">
@@ -48,7 +48,7 @@
                     <div class="app-content app-content--default h-full">
                         <cds-tabs [type]="'line'" [followFocus]="false" [isNavigation]="false" [cacheActive]="false">
                             <cds-tab heading="Details" [tabContent]="details"></cds-tab>
-                            <cds-tab heading="Locataire" [tabContent]="locataire"></cds-tab>
+                            <cds-tab heading="Locataire" [tabContent]="locataireTab"></cds-tab>
                             <cds-tab heading="Paiement" [tabContent]="paiement"></cds-tab>
                             <cds-tab heading="Galerie" [tabContent]="galerie"></cds-tab>
                         </cds-tabs>
@@ -56,15 +56,16 @@
                         <ng-template #details>
                             <details-room [room]="room"></details-room>
                         </ng-template>
-                        <ng-template #locataire>
-                            2
+                        <ng-template #locataireTab>
+                            <current-locataire [room]="room" [locataire]="locataire" [location]="location" (onOpenAssignedRoom)="openAssignedRoom($event)"></current-locataire>
                         </ng-template>
                         <ng-template #paiement>
-                            3
+                            <!--  -->
+                             <details-payment-room [room]="room"  [historyLocationPayments]="historyLocationPayments"> </details-payment-room>
                         </ng-template>
 
                         <ng-template #galerie>
-                            4
+                            <details-room-galery [room]="room"></details-room-galery>
                         </ng-template>
 
                     </div>

@@ -10,6 +10,7 @@ import { HistoryPaymentComponent } from './components/history-payment/history-pa
 import { HistoryRoomComponent } from './components/history-room/history-room.component';
 import { HistoryComponent } from './components/history/history.component';
 import { ContractModule } from '../contract/contract.module';
+import { UpdateLocataireComponent } from './components/update-locataire/update-locataire.component';
 
 
 @NgModule({
@@ -19,12 +20,16 @@ import { ContractModule } from '../contract/contract.module';
     LocataireRoomListComponent,
     HistoryPaymentComponent,
     HistoryRoomComponent,
-    HistoryComponent
+    HistoryComponent,
+    UpdateLocataireComponent
   ],
   imports: [
     CommonModule,
     LocatairesRoutingModule,
     SharedModule,
+  ],
+  exports:[
+    UpdateLocataireComponent
   ]
 })
 export class LocatairesModule { }

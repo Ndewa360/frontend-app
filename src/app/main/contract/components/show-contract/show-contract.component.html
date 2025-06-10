@@ -1,34 +1,32 @@
-<youpez-content-simple [mainTitle]="titlePage">
+<div fxFill fxLayout="column" class="app-bg-container overflow-hidden">
+  <div class="px-4 py-4 flex">
+    <div class="app-productive-heading-03 font-bold">Contrat de location</div>
+    <div class="flex-1 flex justify-end">
+      <button (click)="onClose()" ibmButton="ghost" size="sm" class="cds--btn--icon-only custom-ghost-close">
+        <youpez-ibm-icon iconClass="cds--btn__icon" iconName="close" iconSize="32"></youpez-ibm-icon>
+      </button>
+    </div>
+  </div>
+  <div fxFlex>
     <div fxLayout="row wrap">
       <div fxFlex="100%" *ngIf="loading==false else showLoadingComponent">
-        <div class="flex justify-between pb-4">
-          <div>
-            <!-- <button ibmButton="primary" size="sm" class="mr-2">
-              <span class="btn-text">Pay</span>
-              <youpez-ibm-icon iconClass="cds--btn__icon" iconName="money" iconSize="20" ></youpez-ibm-icon >
-            </button> -->
-            <div class="align-middle" [routerLink]="retourPathLink">
-              <button ibmButton="tertiary" size="sm"  class="cds--btn--icon-only custom--btn--tertiary">
-                <youpez-ibm-icon iconClass="cds--btn__icon" iconName="arrowLeft" iconSize="32" ></youpez-ibm-icon >
-              </button>
-            </div>
-
-          </div>
+        <!-- <div class="flex justify-between pb-4">
           <button ibmButton="primary" size="sm" class="custom-primary-button">
             <span class="btn-text">Email</span>
-            <youpez-ibm-icon iconClass="cds--btn__icon" iconName="email" iconSize="20" ></youpez-ibm-icon >
+            <youpez-ibm-icon iconClass="cds--btn__icon" iconName="email" iconSize="20"></youpez-ibm-icon>
           </button>
-          
-        </div>
+
+        </div> -->
         <div id="print-section" class="app-card app-card--m-0 app-card--p-0" #billingRef>
           <div class="app-card__content">
             <!-- <div ngClass.gt-sm="p-10" ngClass.lt-sm="p-5" ngClass.sm="p-5" > -->
-              
-              <!-- *ngIf="locationPayment"<pdf-viewer [src]="pdfSrc" [render-text]="true" [original-size]="false" style="width: 400px; height: 500px"></pdf-viewer> -->
-              <ngx-extended-pdf-viewer useBrowserLocale="true" [src]="pdfSrc" [filenameForDownload]="'Public Domain.pdf'"></ngx-extended-pdf-viewer>
+
+            <!-- *ngIf="locationPayment"<pdf-viewer [src]="pdfSrc" [render-text]="true" [original-size]="false" style="width: 400px; height: 500px"></pdf-viewer> -->
+            <ngx-extended-pdf-viewer useBrowserLocale="true" [src]="pdfSrc"
+              [filenameForDownload]="'Public Domain.pdf'"></ngx-extended-pdf-viewer>
             <!-- </div> -->
           </div>
-        </div> 
+        </div>
       </div>
 
       <ng-template #showLoadingComponent>
@@ -37,9 +35,13 @@
             <youpez-loader title="Génération du contrat"></youpez-loader>
           </div>
         </div>
-        
+
       </ng-template>
     </div>
-  
-  </youpez-content-simple>
-  
+  </div>
+  <!-- <div class="px-4 py-4 flex justify-end app-border-t">
+    <button (click)="onClose()" ibmButton="secondary" size="md" class="mr-1">
+      Valider
+    </button>
+  </div> -->
+</div>

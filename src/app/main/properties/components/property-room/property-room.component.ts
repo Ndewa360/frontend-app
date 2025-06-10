@@ -69,8 +69,10 @@ export class PropertyRoomComponent implements OnInit {
     return UtilsString.getStringOfRoomType(roomType)
   }
 
-  openEditPhoto(room:RoomModel)
+  openEditPhoto(room:RoomModel,event)
   {
+    event.stopPropagation();
+
     // this._router.navigate(['/app/properties/edit-room',room._id])
     //console.log("Room ",room)
     this.dialog.open(GaleryComponent, { 
@@ -85,8 +87,10 @@ export class PropertyRoomComponent implements OnInit {
     })
   }
 
-  openRoomInfos(room)
+  openRoomInfos(room,event)
   {
+    event.stopPropagation();
+
     this.dialog.open(LayoutComponent, { 
       viewContainerRef:null,
       disableClose: true,
@@ -99,8 +103,10 @@ export class PropertyRoomComponent implements OnInit {
     })
   }
 
-  openEditRoom(room:RoomModel)
+  openEditRoom(room:RoomModel,event)
   {
+    event.stopPropagation();
+
     // this._router.navigate(['/app/properties/edit-room',room._id])
     //console.log("Room ",room)
     this.dialog.open(UpdateRoomComponent, {
@@ -114,8 +120,9 @@ export class PropertyRoomComponent implements OnInit {
     })
   }
 
-  deleteRoom(room:RoomModel)
+  deleteRoom(room:RoomModel,event)
   {
+    event.stopPropagation();
     // this._store.dispatch(new RoomAction.DeleteRoom(room._id))
     this.dialog.open(DeleteRoomComponent, {
       viewContainerRef:null,
@@ -128,8 +135,9 @@ export class PropertyRoomComponent implements OnInit {
     })
   }
 
-  openEditAddLocataire(room:RoomModel)
+  openEditAddLocataire(room:RoomModel,$event)
   {
+    event.stopPropagation();
     this.isAssignedOpened = true;
     this.roomSelected = room;
   }

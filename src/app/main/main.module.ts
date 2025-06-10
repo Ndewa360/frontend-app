@@ -53,7 +53,10 @@ import { DeleteRoomComponent } from './room/components/delete-room/delete-room.c
 import { GaleryComponent } from './room/components/galery/galery.component'
 import { LayoutListComponent } from './room/components/layout-list/layout-list.component'
 import { UpdateRoomComponent } from './room/components/update-room/update-room.component';
-import { DetailsRoomComponent } from './room/components/details-room/details-room.component'
+import { DetailsRoomComponent } from './room/components/details-room/details-room.component';
+import { CurrentLocataireComponent } from './room/components/current-locataire/current-locataire.component';
+import { DetailsPaymentRoomComponent } from './room/components/details-payment-room/details-payment-room.component';
+import { DetailsRoomGaleryComponent } from './room/components/details-room-galery/details-room-galery.component'
 
 ModuleRegistry.registerModules([
   ClientSideRowModelModule, 
@@ -97,7 +100,10 @@ ModuleRegistry.registerModules([
     // SupportHome,
     RoomLayout,
     LayoutListComponent,
-    DetailsRoomComponent
+    DetailsRoomComponent,
+    CurrentLocataireComponent,
+    DetailsPaymentRoomComponent,
+    DetailsRoomGaleryComponent
   ],
   imports: [
     CommonModule,

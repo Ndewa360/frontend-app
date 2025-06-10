@@ -1,109 +1,129 @@
-<div fxFill fxLayout="column">
+<youpez-sidenav-container #panelLocation panel="panel">
+    <youpez-sidenav
+          [breakpoint]="'lg'"
+          [direction]="'right'"
+          [opened]="isAssignedOpened"
+          (visibleChange)="isAssignedOpened=$event"
+          [mode]="'over'"
+          [toggleableBtn]="true"
+          (close)="onClose($event)"
+          [size]="'lg'">
+        <assign-location [roomSelected]="selectedRoom" [sideNavBarElement]="panelLocation" [isAssignedOpened]="isAssignedOpened" [property]="property"></assign-location>
+    </youpez-sidenav>
     
-    <div fxFlex class="relative">
-        <youpez-sidenav-container panel="solid">
-            <youpez-sidenav [breakpoint]="'md'" [direction]="'left'" [opened]="sidebarVisible"
-                (visibleChange)="sidebarVisible=$event" [hoverAble]="true" [mode]="'side'" [toggleableBtn]="true" [size]="'mail'">
+    <div fxFill fxLayout="column">
+        
+     
+        <div fxFlex class="relative" *ngIf="(loadingRoom$ | async) else isLoadingTemp">
+            <youpez-sidenav-container panel="solid">
+                <youpez-sidenav [breakpoint]="'md'" [direction]="'left'" [opened]="sidebarVisible"
+                    (visibleChange)="sidebarVisible=$event" [hoverAble]="true" [mode]="'side'" [toggleableBtn]="true" [size]="'mail'">
 
-                <div class="app-mini-sidebar-alt-holder">
-                    <div fxFill fxLayout="column" class="app-bg-container">
-                        <div>
-                            <ibm-search placeholder="Search..." size="md" theme="light"></ibm-search>
-                        </div>
-                        <div fxFlex class="relative">
-                            <div class="app-a-box app-scrollbar-fix">
-                                <ng-scrollbar>
-                                    <div class="app-list app-list--hover app-list--select-alt">
-                                        <ng-container *ngFor="let room of roomFounds">
-                                            <ng-container *ngIf="room.sep">
-                                                <div class="app-list-header-title">
-                                                    <div class="flex justify-between items-center  overflow-hidden mb-2">
-                                                        <div class="flex-1 overflow-hidden truncate">
-                                                            <span class=" mr-2">{{room.sep}}</span>
+                    <div class="app-mini-sidebar-alt-holder">
+                        <div fxFill fxLayout="column" class="app-bg-container">
+                            <div>
+                                <ibm-search placeholder="Search..." (valueChange)="searchRoom($event)" size="md" theme="light"></ibm-search>
+                            </div>
+                            <div fxFlex class="relative">
+                                <div class="app-a-box app-scrollbar-fix">
+                                    <ng-scrollbar>
+                                        <div class="app-list app-list--hover app-list--select-alt">
+                                            <ng-container *ngFor="let room of roomFoundsFiltered">
+                                                <ng-container *ngIf="room.sep">
+                                                    <div class="app-list-header-title">
+                                                        <div class="flex justify-between items-center  overflow-hidden mb-2">
+                                                            <div class="flex-1 overflow-hidden truncate">
+                                                                <span class=" mr-2">{{room.sep}}</span>
+                                                            </div>
+                                                            <div class="whitespace-no-wrap app-label-01 text-muted ml-1 font-bold ">
+                                                                {{getRoomByAllLength(room.sep)}}
+                                                            </div>
                                                         </div>
-                                                        <div class="whitespace-no-wrap app-label-01 text-muted ml-1 font-bold ">
-                                                            {{getRoomByAllLength(room.sep)}}
-                                                        </div>
+                                                    
                                                     </div>
-                                                
-                                                </div>
-                                            </ng-container>
-                                            <ng-container *ngIf="!room.sep">
-                                                <div (click)="onSelect(room)" [ngClass]="{'app-list__item--active':room._id === selectedRoomId}"
-                                                    class="app-list__item app-list__item--align-top">
-                                                    <div class="app-list__item__prefix w-6 text-center">
-                                                        <div style="padding-top:47px">
-                                                            <!-- <ng-container *ngIf="!mail.read">
-                                                                <div class="mb-4">
-                                                                    <span
-                                                                        class="w-2 h-2 rounded-full inline-block app-bg-info"></span>
-                                                                </div>
-                                                            </ng-container> -->
-                                                            <!-- <ng-container >
-                                                                <div class="mb-2 app-color-warning">
-                                                                    <youpez-ibm-icon iconName="flagFilled" iconSize="16"></youpez-ibm-icon>
-                                                                </div>
-                                                            </ng-container> -->
+                                                </ng-container>
+                                                <ng-container *ngIf="!room.sep">
+                                                    <div (click)="onSelect(room)" [ngClass]="{'app-list__item--active':room._id === selectedRoomId}"
+                                                        class="app-list__item app-list__item--align-top">
+                                                        <div class="app-list__item__prefix w-6 text-center">
+                                                            <div style="padding-top:47px">
+                                                                <!-- <ng-container *ngIf="!mail.read">
+                                                                    <div class="mb-4">
+                                                                        <span
+                                                                            class="w-2 h-2 rounded-full inline-block app-bg-info"></span>
+                                                                    </div>
+                                                                </ng-container> -->
+                                                                <!-- <ng-container >
+                                                                    <div class="mb-2 app-color-warning">
+                                                                        <youpez-ibm-icon iconName="flagFilled" iconSize="16"></youpez-ibm-icon>
+                                                                    </div>
+                                                                </ng-container> -->
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="app-list__item__content w-full">
-                                                        <div class="mr-4 min-w-0 w-full">
-                                                            <div class="flex justify-between items-center  overflow-hidden mb-2">
-                                                                <div class="app-symbol mr-1">
-                                                                    <div class="app-symbol__label app-bg-primary-lt-40 app-color-contrast rounded-full h-6 w-6 app-text-contrast">
-                                                                        {{getRoomType(room.type)[0]}}
+                                                        <div class="app-list__item__content w-full">
+                                                            <div class="mr-4 min-w-0 w-full">
+                                                                <div class="flex justify-between items-center  overflow-hidden mb-2">
+                                                                    <div class="app-symbol mr-1">
+                                                                        <div class="app-symbol__label app-bg-primary-lt-40 app-color-contrast rounded-full h-6 w-6 app-text-contrast">
+                                                                            {{getRoomType(room.type)[0]}}
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="flex-1 overflow-hidden truncate">
+                                                                        <span class=" mr-2">{{getRoomType(room.type)}}</span>
+                                                                    </div>
+                                                                    <div class="whitespace-no-wrap app-label-01 text-muted ml-1">
+                                                                        {{room.price | currency : getMoney(): 'symbol' : '1.0-0'}}
                                                                     </div>
                                                                 </div>
-                                                                <div class="flex-1 overflow-hidden truncate">
-                                                                    <span class=" mr-2">{{getRoomType(room.type)}}</span>
+                                                                <div class="app-productive-heading-02 mb-1">
+                                                                    #{{room.code}}
                                                                 </div>
-                                                                <div class="whitespace-no-wrap app-label-01 text-muted ml-1">
-                                                                    {{room.price | currency : getMoney(): 'symbol' : '1.0-0'}}
-                                                                </div>
-                                                            </div>
-                                                            <div class="app-productive-heading-02 mb-1">
-                                                                #{{room.code}}
-                                                            </div>
-                                                            <div class="app-body-long-01" *ngIf="room.description">{{room.description | slice:0:110}}...</div>
-                                                            <div class="flex justify-end items-centerd  overflow-hidden mb-2">
-                                                                <div class="app-label-01 col-span-6 text-muted"> 
-                                                                    <ng-container *ngIf="!room.isFree else noFreeRoom">
-                                                                        <span class="text-green">{{(getRoomLocataire(room.locataire) | async)?.fullName}}</span>
-                                                                        <youpez-ibm-icon class="location-icon text-green"  iconName="user" iconSize="16"></youpez-ibm-icon>
-                                                                    </ng-container>
-                                                                    <ng-template #noFreeRoom>
-                                                                        <div class="bg-red flex items-center ">
-                                                                            <youpez-ibm-icon class="location-icon text-red mr-2"  iconName="error" iconSize="16"></youpez-ibm-icon>
-                                                                            <span class="text-red">Libre</span>
-                                                                        </div>
-                                                                    </ng-template>
-                                                                    <!-- <span class="location-zone ml-1">{{property.location}}</span> -->
+                                                                <div class="app-body-long-01" *ngIf="room.description">{{room.description | slice:0:110}}...</div>
+                                                                <div class="flex justify-end items-centerd  overflow-hidden mb-2">
+                                                                    <div class="app-label-01 col-span-6 text-muted"> 
+                                                                        <ng-container *ngIf="!room.isFree else noFreeRoom">
+                                                                            <span class="text-green">{{(getRoomLocataire(room.locataire) | async)?.fullName}}</span>
+                                                                            <youpez-ibm-icon class="location-icon text-green"  iconName="user" iconSize="16"></youpez-ibm-icon>
+                                                                        </ng-container>
+                                                                        <ng-template #noFreeRoom>
+                                                                            <div class="bg-red flex items-center ">
+                                                                                <youpez-ibm-icon class="location-icon text-red mr-2"  iconName="error" iconSize="16"></youpez-ibm-icon>
+                                                                                <span class="text-red">Libre</span>
+                                                                            </div>
+                                                                        </ng-template>
+                                                                        <!-- <span class="location-zone ml-1">{{property.location}}</span> -->
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                </ng-container>
                                             </ng-container>
-                                        </ng-container>
-                                    </div>
-                                </ng-scrollbar>
+                                        </div>
+                                    </ng-scrollbar>
+                                </div>
                             </div>
-                        </div>
-                        <div class=" app-header-subheader app-border-t">
-                            <div class="flex flex-1 items-center justify-between">
-                                <div></div>
-                                <div class="flex items-center">
-                                    <div class="app-helper-text-01">{{getAllRoomLength()}} Unités locatives</div>                                    
+                            <div class=" app-header-subheader app-border-t">
+                                <div class="flex flex-1 items-center justify-between">
+                                    <div></div>
+                                    <div class="flex items-center">
+                                        <div class="app-helper-text-01">{{getAllRoomLength()}} Unités locatives</div>                                    
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </youpez-sidenav>
+                </youpez-sidenav>
 
-            <div fxFill fxLayout="column" class="relative">
-                <layout-room [room]="selectedRoom"></layout-room>
-            </div>
-        </youpez-sidenav-container>
+                <div fxFill fxLayout="column" class="relative">
+                    <layout-room [room]="selectedRoom" [locataire]="selectedLocataire" [historyLocationPayments]="historyLocationPaymentsSelected" [location]="selectedLocation" (onOpenAssignedRoom)="changeAssignedOpend($event)"></layout-room>
+                </div>
+            </youpez-sidenav-container>
+        </div>
+        <ng-template #isLoadingTemp>
+          <div class="relative">
+            <youpez-loader></youpez-loader>
+          </div>
+        </ng-template>
     </div>
-</div>
+</youpez-sidenav-container>

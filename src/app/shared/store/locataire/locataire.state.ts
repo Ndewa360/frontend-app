@@ -62,6 +62,10 @@ export class LocataireState{
     
     }
     
+    static selectStateLocatairesByPropertyId(propertyID)
+    {
+        return createSelector([LocataireState],(state)=> state.locataires.filter((locataire)=>locataire.property==propertyID))
+    }
 
     static selectStateLocataireByPropertyId(propertyID)
     {
