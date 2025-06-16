@@ -10,6 +10,7 @@ import { SettingsService } from 'src/@youpez';
 import { TutorialsService } from './shared/services/tutorials/tutorials.service';
 import * as moment from 'moment';
 import { takeUntil, debounceTime, filter, take, catchError, retry, switchMap } from 'rxjs/operators';
+import { SeoService } from './shared/services/seo/seo.service';
 
 const getSessionStorage = (key, defaultValue = null) => {
   try {
@@ -48,7 +49,8 @@ export class AppComponent implements OnInit, OnDestroy {
     private tutorialService: TutorialsService,
     private activatedRoute: ActivatedRoute,
     private titleService: Title, 
-    private meta: Meta
+    private meta: Meta,
+    private seoService: SeoService
   ) {
     // Fallback pour l'écran de chargement au cas où la navigation ne se termine jamais
     this.loadingTimeout = setTimeout(() => {
@@ -103,6 +105,9 @@ export class AppComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(event => {
         if (event instanceof NavigationEnd) {
+          // Gérer les métadonnées en fonction de la route
+          this.seoService.updateMetaTagsForRoute(event.urlAfterRedirects);
+          
           if (!this.appLoaded) {
             try {
               if (typeof window['appBootstrap'] === 'function') {
@@ -140,8 +145,6 @@ export class AppComponent implements OnInit, OnDestroy {
         }
       });
 
-    // Configurer les métadonnées SEO
-    this.setupMetaTags();
 
     // Configurer la vérification du token avec un mécanisme de backoff
     this.setupTokenCheck();
@@ -155,61 +158,17 @@ export class AppComponent implements OnInit, OnDestroy {
     // Charger le profil utilisateur au démarrage si connecté
     this.loadUserProfileIfLoggedIn();
   }
-
-  private setupMetaTags(): void {
-    this.titleService.setTitle('Ndewa360 - Location Immobilière en 360° au Cameroun');
-    this.meta.addTags([
-      { name: 'description', content: 'Explorez des logements en 360°, trouvez des chambres, studios et appartements à louer facilement. Ndewa360 simplifie la recherche et la gestion immobilière.' },
-      { name: 'keywords', content: 'location, logement, immobilier, Cameroun, 360°, étudiants, unités à louer, propriétaires, gestion immobilière' },
-      { name: 'author', content: 'Ndewa360' },
-      { property: 'og:title', content: 'Ndewa360 - Location Immobilière en 360°' },
-      { property: 'og:description', content: 'Trouvez ou gérez des logements facilement au Cameroun grâce à Ndewa360. Visite virtuelle, gestion simplifiée, 100% digital.' },
-      { property: 'og:url', content: 'https://ndewa-360.com' },
-      { property: 'og:type', content: 'website' },
-      { property: 'og:image', content: 'https://ndewa-360.com/assets/img/logo/logo-basic.png' },
-      { name: 'twitter:card', content: 'summary_large_image' },
-      { name: 'twitter:title', content: 'Ndewa360 - Location Immobilière en 360°' },
-      { name: 'twitter:description', content: 'Explorez et gérez vos logements facilement au Cameroun.' },
-      { name: 'twitter:image', content: 'https://ndewa-360.com/assets/img/logo/logo-basic.png' }
-    ]);
-  }
-
+  
   private setupTokenCheck(): void {
-    // Vérifier le token toutes les 5 minutes, avec un délai progressif en cas d'échec
+    // Vérifier le token toutes les 5 minutes
     this.tokenCheckInterval = interval(5 * 60 * 1000)
       .pipe(
         takeUntil(this.destroy$),
-        switchMap(() => {
-          const isLoggedIn = this.store.selectSnapshot(AuthTokenState.selectStateUserIsLogin);
-          if (isLoggedIn) {
-            // Vérifier si le token expire bientôt (dans les 10 minutes)
-            const tokenExpiration = this.refreshTokenService.getTokenExpiration();
-            const now = Math.floor(Date.now() / 1000);
-            
-            if (tokenExpiration && tokenExpiration - now < 600 && !this.tokenExpirationWarningShown) {
-              // Afficher un avertissement si le token expire bientôt
-              console.warn('Le token expire bientôt, rafraîchissement préventif');
-              this.tokenExpirationWarningShown = true;
-              
-              // Réinitialiser l'avertissement après 5 minutes
-              setTimeout(() => {
-                this.tokenExpirationWarningShown = false;
-              }, 5 * 60 * 1000);
-              
-              return this.refreshTokenService.checkTokenExpiration().pipe(
-                retry(3),
-                catchError(err => {
-                  console.error('Échec du rafraîchissement du token:', err);
-                  return of(null);
-                })
-              );
-            }
-            return this.refreshTokenService.checkTokenExpiration();
-          }
-          return of(null);
-        })
+        filter(() => this.store.selectSnapshot(AuthTokenState.selectStateUserIsLogin))
       )
-      .subscribe();
+      .subscribe(() => {
+        this.refreshTokenService.checkTokenExpiration().subscribe();
+      });
   }
 
   private setupUserProfileCheck(): void {
@@ -233,24 +192,16 @@ export class AppComponent implements OnInit, OnDestroy {
 
   private setupUserActivityListener(): void {
     // Écouter les événements d'activité utilisateur pour rafraîchir le token si nécessaire
-    const userActivity$ = merge(
+    merge(
       fromEvent(document, 'click'),
       fromEvent(document, 'keypress'),
       fromEvent(document, 'scroll')
     ).pipe(
       takeUntil(this.destroy$),
-      debounceTime(30000), // Attendre 30 secondes d'inactivité
+      debounceTime(30000),
       filter(() => this.store.selectSnapshot(AuthTokenState.selectStateUserIsLogin))
-    );
-
-    userActivity$.subscribe(() => {
-      const tokenExpiration = this.refreshTokenService.getTokenExpiration();
-      const now = Math.floor(Date.now() / 1000);
-      
-      // Si le token expire dans moins de 10 minutes, le rafraîchir
-      if (tokenExpiration && tokenExpiration - now < 600) {
-        this.refreshTokenService.checkTokenExpiration().subscribe();
-      }
+    ).subscribe(() => {
+      this.refreshTokenService.checkTokenExpiration().subscribe();
     });
   }
 
