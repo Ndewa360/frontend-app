@@ -32,7 +32,6 @@ import { SeeLocationsComponent } from './properties/components/see-locations/see
 import { AssignLocationListClientComponent } from './properties/components/assign-location-list-client/assign-location-list-client.component';
 import { RemoveLocataireRoomComponent } from './properties/components/remove-locataire-room/remove-locataire-room.component'
 import { LocationPaymentModule } from './location-payment/location-payment.module'
-import { LocatairesModule } from './locataires/locataires.module'
 import { StatisticsModule } from './statistics/statistics.module'
 import { GaleryPropertyComponent } from './properties/components/galery-property/galery-property.component'
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model'
@@ -46,7 +45,6 @@ import { HomePropertyRecapFinanceComponent } from './properties/components/home-
 import { HomePropertyRecapFinanceYearComponent } from './properties/components/home-property-recap-finance-year/home-property-recap-finance-year.component';
 import { HomePropertyRecapFinanceMonthComponent } from './properties/components/home-property-recap-finance-month/home-property-recap-finance-month.component'
 import { AssignLocationModule } from './assign-location/assign-location.module'
-import { LayoutComponent } from '../layout/default/layout.component'
 import { LayoutComponent as RoomLayout } from './room/components/layout/layout.component'
 // import { HomeComponent as SupportHome} from '../support/home/home.component'
 import { DeleteRoomComponent } from './room/components/delete-room/delete-room.component'
@@ -57,6 +55,17 @@ import { DetailsRoomComponent } from './room/components/details-room/details-roo
 import { CurrentLocataireComponent } from './room/components/current-locataire/current-locataire.component';
 import { DetailsPaymentRoomComponent } from './room/components/details-payment-room/details-payment-room.component';
 import { DetailsRoomGaleryComponent } from './room/components/details-room-galery/details-room-galery.component'
+import { HistoryPaymentComponent } from './locataires/components/history-payment/history-payment.component'
+import { HistoryRoomComponent } from './locataires/components/history-room/history-room.component'
+import { HistoryComponent } from './locataires/components/history/history.component'
+import { LocataireProfilComponent } from './locataires/components/locataire-profil/locataire-profil.component'
+import { LocataireRoomListComponent } from './locataires/components/locataire-room-list/locataire-room-list.component'
+import { UpdateLocataireComponent } from './locataires/components/update-locataire/update-locataire.component'
+import { LocatairePageComponent } from './locataires/locataire-page/locataire-page.component'
+import { LayoutListComponent as LayoutLocataireListComponent } from './locataires/components/layout-list/layout-list.component';
+import { LayoutComponent as LayoutLocataireComponent } from './locataires/components/layout/layout.component';
+
+
 
 ModuleRegistry.registerModules([
   ClientSideRowModelModule, 
@@ -103,7 +112,18 @@ ModuleRegistry.registerModules([
     DetailsRoomComponent,
     CurrentLocataireComponent,
     DetailsPaymentRoomComponent,
-    DetailsRoomGaleryComponent
+    DetailsRoomGaleryComponent,
+
+    LocatairePageComponent,
+    LocataireProfilComponent,
+    LocataireRoomListComponent,
+    HistoryPaymentComponent,
+    HistoryRoomComponent,
+    HistoryComponent,
+    UpdateLocataireComponent,
+    LayoutLocataireListComponent,
+    LayoutLocataireComponent
+    
   ],
   imports: [
     CommonModule,
@@ -114,7 +134,6 @@ ModuleRegistry.registerModules([
     LocationPaymentModule,
     AgGridModule,
     LocatairePropertyModule,
-    LocatairesModule,
     StatisticsModule,
     AssignLocationModule
   ]

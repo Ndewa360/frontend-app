@@ -15,6 +15,9 @@ import { SeeLocationsComponent } from './properties/components/see-locations/see
 import { FinancialHistoryComponent } from './properties/components/financial-history/financial-history.component'
 import { HomePropertyComponent } from './properties/home-property/home-property.component'
 import { LayoutListComponent } from './room/components/layout-list/layout-list.component'
+import { LayoutListComponent as LayoutLocataireListComponent } from './locataires/components/layout-list/layout-list.component'
+
+
 
 
 
@@ -25,13 +28,13 @@ const routes: Routes = [
     path: '',
     component: LayoutComponent,
     children: [      
-      {
-        path: 'locataires',
-        loadChildren: () => import('./locataires/locataires.module').then(m => m.LocatairesModule),
-        data: {
-          breadcrumb: 'Locataires'
-        },
-      },
+      // {
+      //   path: 'locataires',
+      //   loadChildren: () => import('./locataires/locataires.module').then(m => m.LocatairesModule),
+      //   data: {
+      //     breadcrumb: 'Locataires'
+      //   },
+      // },
       {
         path: 'contract',
         loadChildren: () => import('./contract/contract.module').then(m => m.ContractModule),
@@ -106,6 +109,13 @@ const routes: Routes = [
                 component: PropertyFinanceComponent,
                 data: {
                   breadcrumb: 'finances'
+                },
+              },
+              {
+                path: 'tenants/:idLocataire',
+                component: LayoutLocataireListComponent,
+                data: {
+                  breadcrumb: 'locataires'
                 },
               },
               {

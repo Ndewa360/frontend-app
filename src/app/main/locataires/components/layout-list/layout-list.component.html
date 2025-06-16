@@ -1,0 +1,112 @@
+<youpez-sidenav-container #panelLocation panel="panel">
+    <youpez-sidenav
+          [breakpoint]="'lg'"
+          [direction]="'right'"
+          [opened]="isAssignedOpened"
+          (visibleChange)="isAssignedOpened=$event"
+          [mode]="'over'"
+          [toggleableBtn]="true"
+          (close)="onClose($event)"
+          [size]="'lg'">
+        <!-- <assign-location [roomSelected]="selectedRoom" [sideNavBarElement]="panelLocation" [isAssignedOpened]="isAssignedOpened" [property]="property"></assign-location> -->
+    </youpez-sidenav>
+    
+    <div fxFill fxLayout="column">
+        
+     
+        <div fxFlex class="relative" *ngIf="(loadingLocataire$ | async) else isLoadingTemp">
+            <youpez-sidenav-container panel="solid">
+                <youpez-sidenav [breakpoint]="'md'" [direction]="'left'" [opened]="sidebarVisible"
+                    (visibleChange)="sidebarVisible=$event" [hoverAble]="true" [mode]="'side'" [toggleableBtn]="true" [size]="'mail'">
+
+                    <div class="app-mini-sidebar-alt-holder">
+                        <div fxFill fxLayout="column" class="app-bg-container">
+                            <div>
+                                <ibm-search placeholder="Search..." (valueChange)="searchLocataire($event)" size="md" theme="light"></ibm-search>
+                            </div>
+                            <div fxFlex class="relative">
+                                <div class="app-a-box app-scrollbar-fix">
+                                    <ng-scrollbar>
+                                        <div class="app-list app-list--hover app-list--select-alt">
+                                            <ng-container *ngFor="let locataire of locataireFiltered">
+                                                <ng-container *ngIf="locataire.sep">
+                                                    <div class="app-list-header-title">
+                                                        <div class="flex justify-between items-center  overflow-hidden mb-2">
+                                                            <div class="flex-1 overflow-hidden truncate">
+                                                                <span class=" mr-2">{{locataire.sep}}</span>
+                                                            </div>
+                                                            <div class="whitespace-no-wrap app-label-01 text-muted ml-1 font-bold ">
+                                                                {{getLocataireByAllLength(locataire.sep)}}
+                                                            </div>
+                                                        </div>
+                                                    
+                                                    </div>
+                                                </ng-container>
+                                                <ng-container *ngIf="!locataire.sep">
+                                                    <div (click)="onSelect(locataire)" [ngClass]="{'app-list__item--active':locataire._id === selectedLocataireId}"
+                                                        class="app-list__item app-list__item--align-top">
+                                                        <div class="app-list__item__prefix w-6 text-center">
+                                                            <div style="padding-top:47px">
+                                                            </div>
+                                                        </div>
+                                                        <div class="app-list__item__content w-full">
+                                                            <div class="mr-4 min-w-0 w-full">
+                                                                <div class="flex justify-between items-center  overflow-hidden mb-2">
+                                                                    <div class="app-symbol mr-1">
+                                                                    </div>
+                                                                    <div class="flex-1 overflow-hidden truncate">
+                                                                    </div>
+                                                                    <div class="whitespace-no-wrap app-label-01 text-muted ml-1">
+                                                                        {{(geLocataireRoom(locataire.room) | async)?.price | currency : getMoney(): 'symbol' : '1.0-0'}}
+                                                                    </div>
+                                                                </div>
+                                                                <div class="app-productive-heading-02 mb-1">
+                                                                    {{locataire.fullName}}
+                                                                </div>
+                                                                <div class="app-body-long-01" >{{locataire.phoneNumber}}</div>
+                                                                <div class="flex justify-end items-centerd  overflow-hidden mb-2">
+                                                                    <div class="app-label-01 col-span-6 text-muted"> 
+                                                                        <ng-container *ngIf="locataire.room else hasNoRoom">
+                                                                            <span class="text-green">{{getRoomType((geLocataireRoom(locataire.room) | async)?.type)}} #{{(geLocataireRoom(locataire.room) | async)?.code}}</span>
+                                                                        </ng-container>
+                                                                        <ng-template #hasNoRoom>
+                                                                            <div class="bg-red flex items-center ">
+                                                                                <youpez-ibm-icon class="location-icon text-red mr-2"  iconName="error" iconSize="16"></youpez-ibm-icon>
+                                                                                <span class="text-red">Libre</span>
+                                                                            </div>
+                                                                        </ng-template>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </ng-container>
+                                            </ng-container>
+                                        </div>
+                                    </ng-scrollbar>
+                                </div>
+                            </div>
+                            <div class=" app-header-subheader app-border-t">
+                                <div class="flex flex-1 items-center justify-between">
+                                    <div></div>
+                                    <div class="flex items-center">
+                                        <div class="app-helper-text-01">{{getAllLocataireLength()}} Unités locatives</div>                                    
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </youpez-sidenav>
+
+                <div fxFill fxLayout="column" class="relative">
+                    <!-- <layout-room [room]="selectedRoom" [locataire]="selectedLocataire" [historyLocationPayments]="historyLocationPaymentsSelected" [location]="selectedLocation" (onOpenAssignedRoom)="changeAssignedOpend($event)"></layout-room> -->
+                </div>
+            </youpez-sidenav-container>
+        </div>
+        <ng-template #isLoadingTemp>
+          <div class="relative">
+            <youpez-loader></youpez-loader>
+          </div>
+        </ng-template>
+    </div>
+</youpez-sidenav-container>

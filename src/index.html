@@ -14,6 +14,15 @@
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  
+  <!-- Préchargement des styles critiques -->
+  <link rel="preload" href="theme-light.css" as="style">
+  <link rel="preload" href="styles.css" as="style">
+  
+  <!-- Chargement des styles -->
+  <link rel="stylesheet" href="theme-light.css">
+  <link rel="stylesheet" href="styles.css">
+  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/js/all.min.js" integrity="sha512-b+nQTCdtTBIRIbraqNEwsjB6UvL3UEMkXnhzd8awtCYh0Kcsjl9uEgwVFVbhoj3uu1DO1ZMacNvLoyJJiNfcvg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="https://unpkg.com/flowbite@1.4.0/dist/flowbite.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-element-bundle.min.js"></script>
@@ -59,13 +68,14 @@
     }
 
     #app-loading-holder {  
-      position: absolute;
+      position: fixed;
       top: 0;
       right: 0;
       left: 0;
       bottom: 0;
-      z-index: 11111;
+      z-index: 99999;
       background: #f4f4f4;
+      transition: opacity 0.3s ease-out;
     }
 
     .app-loading {
@@ -75,9 +85,7 @@
       align-items: center;
       justify-content: center;
       height: 100%;
-
     }
-
 
     .logo {
       position: relative;
@@ -102,9 +110,18 @@
     (function (global) {
       // main.ts call this function once the app is boostrapped
       global.appBootstrap = function () {
-        document.getElementById("app-loading-holder").remove();
+        var loader = document.getElementById("app-loading-holder");
+        if (loader) {
+          // Ajouter une transition pour une disparition en douceur
+          loader.style.opacity = "0";
+          setTimeout(function() {
+            if (loader && loader.parentNode) {
+              loader.parentNode.removeChild(loader);
+            }
+          }, 300);
+        }
       };
-    })((window));
+    })(window);
   </script>
 </head>
 

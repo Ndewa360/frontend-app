@@ -1,12 +1,14 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core'
-import {Router, ActivatedRoute, NavigationStart, NavigationEnd, NavigationCancel} from "@angular/router"
-import {environment} from "../environments/environment"
-import {SettingsService} from "src/@youpez/services/settings.service"
-import { interval, switchMap, of, filter, take } from 'rxjs'
-import { TutorialsService } from './shared/services/tutorials/tutorials.service'
-import { Currency, LOCAL_LANGUAGE } from 'src/app/shared/store'
+import { Component, OnInit, OnDestroy, Renderer2, ViewChild, ElementRef } from '@angular/core';
+import { Store } from '@ngxs/store';
+import { RefreshTokenService } from './shared/store/auth-token/refresh-token.service';
+import { AuthTokenState } from './shared/store/auth-token';
+import { interval, Subscription } from 'rxjs';
+import { LOCAL_LANGUAGE, UserProfileAction } from './shared/store';
+import { Title, Meta } from '@angular/platform-browser';
+import { Router, ActivatedRoute, NavigationCancel, NavigationEnd, NavigationStart } from '@angular/router';
+import { SettingsService } from 'src/@youpez';
+import { TutorialsService } from './shared/services/tutorials/tutorials.service';
 import * as moment from 'moment';
-import { Title, Meta } from '@angular/platform-browser'
 
 const getSessionStorage = (key) => {
   return sessionStorage.getItem(key)
@@ -15,28 +17,31 @@ const getSessionStorage = (key) => {
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
+  styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
+  private tokenCheckInterval: Subscription;
+  private userProfileCheckInterval: Subscription;
   private appLoaded: boolean = false
   
 
-@ViewChild('topScroll') topScroll: ElementRef;
+  @ViewChild('topScroll') topScroll: ElementRef;
 
-  constructor(private settingsService: SettingsService,
-              private router: Router,
-              private route: ActivatedRoute,
-              private tutorialService: TutorialsService,
-              private activatedRoute: ActivatedRoute,
-              private titleService: Title, 
-              private meta: Meta
-            ) {
-
-  }
+  constructor(
+    private store: Store,
+    private refreshTokenService: RefreshTokenService,
+    private renderer: Renderer2,
+    private settingsService: SettingsService,
+    private router: Router,
+    private route: ActivatedRoute,
+    private tutorialService: TutorialsService,
+    private activatedRoute: ActivatedRoute,
+    private titleService: Title, 
+    private meta: Meta
+  ) {}
 
   ngOnInit(): void {
-    // this.tutorialService.startTour();
-    this.activatedRoute.fragment.subscribe((fragment: string | null) => {
+     this.activatedRoute.fragment.subscribe((fragment: string | null) => {
       if (fragment) this.jumpToSection(fragment);
     });
 
@@ -95,6 +100,28 @@ export class AppComponent implements OnInit {
       { name: 'twitter:description', content: 'Explorez et gérez vos logements facilement au Cameroun.' },
       { name: 'twitter:image', content: 'https://ndewa-360.com/assets/img/logo/logo-basic.png' }
     ]);
+
+    // Vérifier l'état du token toutes les 5 minutes
+    this.tokenCheckInterval = interval(5 * 60 * 1000).subscribe(() => {
+      const isLoggedIn = this.store.selectSnapshot(AuthTokenState.selectStateUserIsLogin);
+      if (isLoggedIn) {
+        this.refreshTokenService.checkTokenExpiration();
+      }
+    });
+
+    // Vérifier si le profil utilisateur est chargé toutes les 30 secondes
+    this.userProfileCheckInterval = interval(30 * 1000).subscribe(() => {
+      const isLoggedIn = this.store.selectSnapshot(AuthTokenState.selectStateUserIsLogin);
+      if (isLoggedIn) {
+        this.store.dispatch(new UserProfileAction.FetchUserProfile());
+      }
+    });
+
+    // Charger le profil utilisateur au démarrage de l'application
+    const isLoggedIn = this.store.selectSnapshot(AuthTokenState.selectStateUserIsLogin);
+    if (isLoggedIn) {
+      this.store.dispatch(new UserProfileAction.FetchUserProfile());
+    }
   }
 
   jumpToSection(section: string | null) {
@@ -102,8 +129,14 @@ export class AppComponent implements OnInit {
     if (section) document.getElementById(section)?.scrollIntoView({ behavior: 'smooth' });
   }
 
-  ngAfterViewInit()
-  {
-    // this.topScroll.nativeElement.scrollTop = 0;
+
+  ngOnDestroy(): void {
+    // Nettoyer les abonnements pour éviter les fuites de mémoire
+    if (this.tokenCheckInterval) {
+      this.tokenCheckInterval.unsubscribe();
+    }
+    if (this.userProfileCheckInterval) {
+      this.userProfileCheckInterval.unsubscribe();
+    }
   }
 }

@@ -12,13 +12,36 @@ if (environment.production) {
 import { register as registerSwiperElements } from 'swiper/element/bundle'
 
 registerSwiperElements();
-// Uncomment the following lines to activate the service worker
-// if (navigator.serviceWorker) {
-// 	navigator.serviceWorker.register('sw.js').then(() => {
-// 		//console.log('Service worker installed')
-// 	}, err => {
-// 		console.error('Service worker error:', err);
-// 	});
+
+// // Fonction pour charger un style CSS
+// function loadStyle(href: string): Promise<Event> {
+//   return new Promise((resolve, reject) => {
+//     const link = document.createElement('link');
+//     link.rel = 'stylesheet';
+//     link.href = href;
+//     link.onload = resolve;
+//     link.onerror = reject;
+//     document.head.appendChild(link);
+//   });
 // }
+
+// Charger les styles essentiels avant le démarrage de l'application
+
+
+// Promise.all([
+//   loadStyle('theme-light.css'),
+//   loadStyle('styles.css')
+// ])
+// .then(() => {
+//   // Démarrer l'application une fois les styles chargés
+//   return platformBrowserDynamic().bootstrapModule(AppModule);
+// })
+// .then(() => {
+//   // Masquer l'écran de chargement
+//   if (typeof window['appBootstrap'] === 'function') {
+//     window['appBootstrap']();
+//   }
+// })
+// .catch(err => console.error(err));
 
 platformBrowserDynamic().bootstrapModule(AppModule).catch(err => console.error(err));
