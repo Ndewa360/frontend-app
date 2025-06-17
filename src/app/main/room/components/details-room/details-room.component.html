@@ -1,67 +1,71 @@
-<div class="bg-white p-6 rounded-lg shadow border">
+<div class="border ">
+  <div class="bg-white rounded-xl shadow p-6">
     <div class="flex items-center justify-end mb-4">
-       
+
     </div>
 
     <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 text-gray-700 mb-6">
       <div><span class="font-semibold">🏢 {{getRoomType(room?.type)}}</span></div>
       <div>
         <span class="font-semibold">
-            <youpez-ibm-icon class="location-icon" iconName="money" iconSize="16"></youpez-ibm-icon>
-            {{room?.price | currency : getMoney(): 'symbol' : '1.0-0' }} <span class="text-sm text-gray-800">/mois</span>
+          <youpez-ibm-icon class="location-icon" iconName="money" iconSize="16"></youpez-ibm-icon>
+          {{room?.price | currency : getMoney(): 'symbol' : '1.0-0' }} <span class="text-sm text-gray-800">/mois</span>
         </span>
-        </div>
-         <div>
-            <span class="px-2 py-1 text-sm rounded-full bg-green-100 text-green-700" *ngIf="room?.isFree else noFreeRoom">Disponible</span>
-            <ng-template #noFreeRoom>
-                <span class="px-2 py-1 text-sm rounded-full bg-red-100 text-red-700">Non disponible</span>
-            </ng-template>
-        </div>
+      </div>
+      <div>
+        <span class="px-2 py-1 text-sm rounded-full bg-green-100 text-green-700"
+          *ngIf="room?.isFree else noFreeRoom">Disponible</span>
+        <ng-template #noFreeRoom>
+          <span class="px-2 py-1 text-sm rounded-full bg-red-100 text-red-700">Non disponible</span>
+        </ng-template>
+      </div>
       <!-- <div><span class="font-semibold">{{}}</span></div> -->
     </div>
 
     <h3 class="text-lg font-semibold mb-2">Équipements</h3>
     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 text-gray-700">
-        
+
       <div class="flex items-center gap-2" *ngIf="room?.type!='room'">
-        <span>🚿</span> 
+        <span>🚿</span>
         <span>{{room?.specifity.numberOfShower}}</span> Douche(s)
         <ng-container *ngIf="room?.specifity.isInternalShower else externalShower">interne</ng-container>
         <ng-template #externalShower>externe</ng-template>
       </div>
       <div class="flex items-center gap-2"><span>🛏️</span> {{room?.specifity.numberOfBathroom}} Chambre(s)</div>
-      <div class="flex items-center gap-2" *ngIf="room?.type!='room'  && room?.type!='studio'"><span>🛋️</span> {{room?.specifity.numberOfLivingRoom}} Salon(s)</div>
+      <div class="flex items-center gap-2" *ngIf="room?.type!='room'  && room?.type!='studio'"><span>🛋️</span>
+        {{room?.specifity.numberOfLivingRoom}} Salon(s)</div>
       <div class="flex items-center gap-2">
-        <span>🌐</span> 
+        <span>🌐</span>
         <ng-container *ngIf="room?.property.hasClosure else hasNoClosure">
-            <span class="font-normal"></span>Posséde une barriére
+          <span class="font-normal"></span>Posséde une barriére
         </ng-container>
         <ng-template #hasNoClosure>
-            <span class="font-normal"></span>Ne posséde pas barriére
+          <span class="font-normal"></span>Ne posséde pas barriére
         </ng-template>
       </div>
       <div class="flex items-center gap-2">
-        <span>🍳</span> 
+        <span>🍳</span>
         <ng-container *ngIf="room?.specifity.hasKitchen else noKitchen">
-            {{room?.specifity.numberOfKitchen}} Cuisine (s)
-            <ng-container *ngIf="room.specifity.isInternalKitchen else externalKitchen">interne</ng-container>
-            <ng-template #externalKitchen>externe</ng-template>
+          {{room?.specifity.numberOfKitchen}} Cuisine (s)
+          <ng-container *ngIf="room.specifity.isInternalKitchen else externalKitchen">interne</ng-container>
+          <ng-template #externalKitchen>externe</ng-template>
         </ng-container>
         <ng-template #noKitchen>Pas de cusine</ng-template>
-    </div>
+      </div>
       <div class="flex items-center gap-2" *ngIf="room?.property.hasParking">
-        <span>🅿️</span> 
-        <ng-container >
-            <i class="fa fa-square-parking text-muted me-1 mr-4 spec-home"></i>
-            <span class="font-normal"></span>Posséde un parking
+        <span>🅿️</span>
+        <ng-container>
+          <i class="fa fa-square-parking text-muted me-1 mr-4 spec-home"></i>
+          <span class="font-normal"></span>Posséde un parking
         </ng-container>
       </div>
     </div>
-
-    <div class="mt-6 flex items-center justify-end">
-      <button ibmButton="primary" (click)="openEditRoom(room)" class="custom-primary-button" size="md" type="submit">   
-            <span class="btn-text">Modifier l'unité</span>
-            <youpez-ibm-icon iconClass="cds--btn__icon" iconName="edit" iconSize="24" ></youpez-ibm-icon >
-        </button>
-    </div>
   </div>
+
+  <div class="mt-6 flex items-center justify-end">
+    <button ibmButton="primary" (click)="openEditRoom(room)" class="custom-primary-button" size="md" type="submit">
+      <span class="btn-text">Modifier l'unité</span>
+      <youpez-ibm-icon iconClass="cds--btn__icon" iconName="edit" iconSize="24"></youpez-ibm-icon>
+    </button>
+  </div>
+</div>

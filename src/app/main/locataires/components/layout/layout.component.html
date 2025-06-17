@@ -1,1 +1,60 @@
-<p>layout works!</p>
+<div class="app-a-box app-scrollbar-fix">
+    <ng-scrollbar>
+        <div class="app-header-subheader app-header-subheader--left-alt app-header-subheader--right-alt">
+            <div class="flex flex-1 items-center">
+            </div>
+            <div class="flex-1 flex items-center justify-end" fxHide fxShow.gt-sm>
+            </div>
+        </div>
+        <div class="app-header-subheader" style="height: 50px">
+          <div class="flex justify-between flex-1 items-center">
+                <!-- <div class="app-productive-heading-02">{{getRoomType(room?.type)}} #{{room?.code}}</div> -->
+            <div class="flex items-center py-3">
+              <div class="pr-2">
+                <img class="w-10 h-10 rounded-full" src="assets/img/avatar/avatarinit.png"/>
+              </div>
+              <div class="mr-4">
+                <div>
+                  <div class="app-helper-text-01"> </div>
+                  <div class="app-expressive-heading-02" >{{locataire.fullName}}</div>
+                </div>
+              </div>
+            </div>
+                <!-- <ibm-tag type="warm-gray">work</ibm-tag> -->
+          </div>
+        </div>
+        <div class="app-card app-card--alone">
+            <div class="app-card__content">
+                <div fxFlex>
+                    <div class="app-content app-content--default h-full">
+                        <cds-tabs [type]="'line'" [followFocus]="false" [isNavigation]="false" [cacheActive]="false">
+                            <cds-tab heading="Détails" [tabContent]="details"></cds-tab>
+                            <cds-tab heading="Logement" [tabContent]="locataireTab"></cds-tab>
+                            <cds-tab heading="Paiement" [tabContent]="paiement"></cds-tab>
+                            <cds-tab heading="Documents" [tabContent]="galerie"></cds-tab>
+                        </cds-tabs>
+
+                        <ng-template #details>
+                            <details-locataire [locataire]="locataire"></details-locataire>
+                        </ng-template>
+                        <ng-template #locataireTab>
+                            <!-- <current-locataire [room]="room" [locataire]="locataire" [location]="location" (onOpenAssignedRoom)="openAssignedRoom($event)"></current-locataire> -->
+                        </ng-template>
+                        <ng-template #paiement>
+                            <!--  -->
+                             <!-- <details-payment-room [room]="room"  [historyLocationPayments]="historyLocationPayments"> </details-payment-room> -->
+                        </ng-template>
+
+                        <ng-template #galerie>
+                            <!-- <details-room-galery [room]="room"></details-room-galery> -->
+                        </ng-template>
+
+                    </div>
+                </div> 
+            </div>
+        </div>
+    </ng-scrollbar>
+</div>
+
+
+

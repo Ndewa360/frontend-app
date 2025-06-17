@@ -64,6 +64,7 @@ import { UpdateLocataireComponent } from './locataires/components/update-locatai
 import { LocatairePageComponent } from './locataires/locataire-page/locataire-page.component'
 import { LayoutListComponent as LayoutLocataireListComponent } from './locataires/components/layout-list/layout-list.component';
 import { LayoutComponent as LayoutLocataireComponent } from './locataires/components/layout/layout.component';
+import { DetailsLocataireComponent } from './locataires/components/details-locataire/details-locataire.component';
 
 
 
@@ -122,7 +123,8 @@ ModuleRegistry.registerModules([
     HistoryComponent,
     UpdateLocataireComponent,
     LayoutLocataireListComponent,
-    LayoutLocataireComponent
+    LayoutLocataireComponent,
+    DetailsLocataireComponent
     
   ],
   imports: [
