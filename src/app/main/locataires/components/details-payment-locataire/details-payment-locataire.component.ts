@@ -1,47 +1,32 @@
-import {Component, ElementRef, OnInit, ViewChild, ViewEncapsulation} from '@angular/core'
-import {ColDef, GridOptions } from "@ag-grid-community/core"
-import {InfiniteRowModelModule} from "@ag-grid-community/infinite-row-model"
-import {ClientSideRowModelModule} from "@ag-grid-community/client-side-row-model"
-import {HttpClient} from "@angular/common/http"
-import { AgGridAngular } from '@ag-grid-community/angular'
-import { ActivatedRoute, Router } from '@angular/router'
-import { Select, Store } from '@ngxs/store'
-import { HistoryLocationPaymentState } from 'src/app/shared/store/history-payment-location'
-import { BehaviorSubject, combineLatest, Observable } from 'rxjs'
-import { CurrencyPipe } from '@angular/common'
-import { Currency } from 'src/app/shared/store'
+import { AgGridAngular } from '@ag-grid-community/angular';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ColDef, GridOptions } from '@ag-grid-community/core';
+import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
+import { CurrencyPipe } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild, ViewEncapsulation } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Select, Store } from '@ngxs/store';
 import * as moment from 'moment';
-import { CustomHistoryFinanceCellActionComponent } from '../custom-history-finance-cell-action/custom-history-finance-cell-action.component'
-
-const locataireCellRenderer = (params) => {
-  const {value} = params
-  return `
-    <div class="app-row app-row--center overflow-hidden">
-      <div class="app-symbol app-symbol--default mr-2 rounded">
-        
-      </div>
-      <div>
-        <div class="app-expressive-heading-01">${value}</div>
-      </div>
-    </div>
-  `
-}
+import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
+import { CustomHistoryFinanceCellActionComponent } from 'src/app/main/properties/components/custom-history-finance-cell-action/custom-history-finance-cell-action.component';
+import { HistoryLocationPaymentState, Currency, RoomModel, LocataireModel } from 'src/app/shared/store';
 
 
 @Component({
-  selector: 'app-financial-history',
-  templateUrl: './financial-history.component.html',
-  styleUrls: ['./financial-history.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  selector: 'details-payment-locataire',
+  templateUrl: './details-payment-locataire.component.html',
+  styleUrls: ['./details-payment-locataire.component.css']
 })
-export class FinancialHistoryComponent implements OnInit {
-
-  @ViewChild('agGrid') agGrid!: AgGridAngular;
+export class DetailsPaymentLocataireComponent {
+  @ViewChild('agGridForDetailsPayment') agGrid!: AgGridAngular;
   @ViewChild('paginationPanel', { static: true }) paginationPanel!: ElementRef;
-  
+  @Input() locataire:LocataireModel=null;
+  @Input() historyLocationPayments = [];
+      
   @Select(HistoryLocationPaymentState.selectStateLoading) historyLocationPaymentLoading$!: Observable<boolean>;
   propertyId=null;
-  columnDefs:Array<ColDef>=[]
+  columnDefs=[]
   dataFound = []
   hasData:boolean=false
   public gridOptions: GridOptions = {}
@@ -59,23 +44,21 @@ export class FinancialHistoryComponent implements OnInit {
     
     ) {
   }
-
+    
+    
   ngOnInit(): void {
-    this.propertyId = this._activatedRoute.parent.snapshot.paramMap.get('id');
-    if(!this.propertyId)  {
-      this._router.navigateByUrl('/app/properties/home');;
-      return;
-    }
-    this.createTable()
-
-    this._store.select(HistoryLocationPaymentState.selectStateHistoryLocationPaymentByPropertyId(this.propertyId)).subscribe((value)=>{
-      if(value.length>0) this.updateTableData(value)
-    })
-    combineLatest(this._store.select(HistoryLocationPaymentState.selectStateLoading),this.loadingProcess) .subscribe(([loadingHisto,loadingProcess])=>{
-      this.loading = loadingHisto && loadingProcess;
-    })
+    
   }
-
+  
+  ngOnChanges(changes: SimpleChanges): void {
+    if(changes['historyLocationPayments'] && changes['historyLocationPayments'].currentValue) {
+    this.createTable()
+      console.log("Changes History Location Payments", changes['historyLocationPayments'].currentValue)
+      this.updateTableData(changes['historyLocationPayments'].currentValue);
+    }
+  }
+      
+    
   createTable() {
     this.columnDefs= [
       {
@@ -85,22 +68,6 @@ export class FinancialHistoryComponent implements OnInit {
         pinned: 'left',
         filter: false,
         // cellClass: 'cell-flex-middle'
-      },
-      {
-        headerName: 'Locataire',
-        field: 'locataire',
-        cellClass: 'cell-flex-middle overflow-hidden',
-        cellRenderer: locataireCellRenderer,
-        width: 350,
-        pinned: true,
-        filter: 'agTextColumnFilter'
-      },
-      {
-        headerName: 'Bien',
-        field: 'bien',
-        headerClass: 'cell-flex-right',
-        cellClass: 'cell-flex-middle cell-flex-right',
-        filter: false,
       },
       {
         headerName: 'Unité',
@@ -129,21 +96,15 @@ export class FinancialHistoryComponent implements OnInit {
         headerClass: 'cell-flex-right',
         cellClass: 'cell-flex-middle cell-flex-right font-bold',
         cellRenderer: CustomHistoryFinanceCellActionComponent, // Utilisation du composant personnalisé
-        cellRendererParams: {
-          // onEdit: this.onEdit.bind(this),
-          // onDelete: this.onDelete.bind(this)
-        },
         filter: false,
       },
     ]
   }
-
+    
   updateTableData(data)
   {
     this.hasData=true
     let rowData = data.map((item)=> item.transactions.map((transaction)=>({
-      locataire:item.locataire.fullName,
-      bien:item.property.name,
       chambre:this.getRoomString(item.room),
       date_paiement:moment(transaction.datePayment).format('LL') ,
       price:this.currencyPipe.transform(transaction.locationPaymentPrice,Currency.XAF,'symbol', '1.0-0'),
@@ -152,12 +113,14 @@ export class FinancialHistoryComponent implements OnInit {
       transaction
       
     }))).reduce((acc,curr)=>[...acc,...curr],[])
+        console.log(" rowData ",rowData, data)
+
 
     rowData.sort((a,b)=> b.date - a.date);
     
     this.gridOptions = {
       columnDefs: [...this.columnDefs],
-      rowData: rowData,
+      // rowData: rowData,
       rowHeight: 40,
       headerHeight: 40,
       rowSelection: 'single',
@@ -173,11 +136,16 @@ export class FinancialHistoryComponent implements OnInit {
     }
     this.loadingProcess.next(false)
     this.dataFound = [...rowData]
+    // setTimeout(() => {
+    //   if(this.agGrid) {
+    //     // this.agGrid.api.redrawRows()
+    //     // this.agGrid.api.purgeInfiniteCache()
+    //     this.agGrid.api.sizeColumnsToFit()
+    //   }
+    // });
     setTimeout(() => {
-      if(this.agGrid) {
-        // this.agGrid.api.redrawRows()
-        // this.agGrid.api.purgeInfiniteCache()
-        this.agGrid.api.sizeColumnsToFit()
+      if (this.agGrid && this.agGrid.api) {
+        // this.agGrid.api.sizeColumnsToFit();
       }
     });
 
@@ -197,7 +165,7 @@ export class FinancialHistoryComponent implements OnInit {
       fileName: `Historique des paiements`
     })
   }
-
+    
   getRoomString(room)
   {
     let str="";
@@ -224,9 +192,4 @@ export class FinancialHistoryComponent implements OnInit {
   {
     console.log("Data", data)
   }
-
 }
-
-
-
-

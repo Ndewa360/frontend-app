@@ -9,7 +9,7 @@ import { LocationPaymentModel, UserProfileState, UserProfileModel, LocataireMode
 import { UtilsString } from 'src/app/shared/utils';
 
 @Component({
-  selector: 'show-contract',
+  selector: 'show-contract', 
   templateUrl: './show-contract.component.html',
   styleUrls: ['./show-contract.component.css'],
   // encapsulation: ViewEncapsulation.None
@@ -42,6 +42,7 @@ export class ShowContractComponent implements OnInit{
     
     contractLocataire$.subscribe((result)=>{
       if(result){
+      
         // const fileURL = URL.createObjectURL();
         this.pdfSrc = `data:application/pdf;base64,${result.pdf}`;
       }
@@ -53,8 +54,8 @@ export class ShowContractComponent implements OnInit{
 
     })
 
-    combineLatest(contractLocataire$, locataireLoading$, this.loadingPDF$).subscribe(([contractLocataire,locataireLoading,loadingPDF])=>{
-      //console.log(loadingPDF, locataireLoading, contractLocataire)
+    combineLatest([contractLocataire$, locataireLoading$, this.loadingPDF$]).subscribe(([contractLocataire,locataireLoading,loadingPDF])=>{
+      console.log("Voir contract ",loadingPDF, locataireLoading, contractLocataire,loadingPDF && locataireLoading && contractLocataire)
       this.loading = loadingPDF && locataireLoading && contractLocataire
       if(this.loading) {
         this.titlePage = `Contrat de ${locataireLoading.fullName}`

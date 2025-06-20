@@ -16,7 +16,7 @@
               <div class="mr-4">
                 <div>
                   <div class="app-helper-text-01"> </div>
-                  <div class="app-expressive-heading-02" >{{locataire.fullName}}</div>
+                  <div class="app-expressive-heading-02" >{{locataire?.fullName}}</div>
                 </div>
               </div>
             </div>
@@ -31,24 +31,17 @@
                             <cds-tab heading="Détails" [tabContent]="details"></cds-tab>
                             <cds-tab heading="Logement" [tabContent]="locataireTab"></cds-tab>
                             <cds-tab heading="Paiement" [tabContent]="paiement"></cds-tab>
-                            <cds-tab heading="Documents" [tabContent]="galerie"></cds-tab>
                         </cds-tabs>
 
                         <ng-template #details>
                             <details-locataire [locataire]="locataire"></details-locataire>
                         </ng-template>
                         <ng-template #locataireTab>
-                            <!-- <current-locataire [room]="room" [locataire]="locataire" [location]="location" (onOpenAssignedRoom)="openAssignedRoom($event)"></current-locataire> -->
+                            <current-room [room]="room" [locataire]="locataire" [location]="location" (onOpenAssignedRoom)="openAssignedRoom($event)"></current-room>
                         </ng-template>
                         <ng-template #paiement>
-                            <!--  -->
-                             <!-- <details-payment-room [room]="room"  [historyLocationPayments]="historyLocationPayments"> </details-payment-room> -->
+                             <details-payment-locataire [locataire]="locataire"  [historyLocationPayments]="historyLocationPayments"> </details-payment-locataire>
                         </ng-template>
-
-                        <ng-template #galerie>
-                            <!-- <details-room-galery [room]="room"></details-room-galery> -->
-                        </ng-template>
-
                     </div>
                 </div> 
             </div>

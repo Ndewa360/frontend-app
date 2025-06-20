@@ -47,7 +47,6 @@ export class LayoutListComponent {
     this.propertyId  = this._activatedRoute.parent.snapshot.paramMap.get('id');
     this.selectedLocataireId = this._activatedRoute.snapshot.paramMap.get("idLocataire");
 
-
     if(!this.propertyId)  {
       this._router.navigateByUrl('/app/properties/home');;
       return;
@@ -87,21 +86,23 @@ export class LayoutListComponent {
 
   applyFilterToHistoryPayment()
   {
-    if(!this.selectedRoom) {
+    if(!this.selectedLocataire) {
       this.historyLocationPaymentsSelected = [...this.historyLocationPayments];
       return;
     }
-    this.historyLocationPaymentsSelected = this.historyLocationPayments.filter((payment)=>payment.room._id == this.selectedRoom._id);
+    this.historyLocationPaymentsSelected = this.historyLocationPayments.filter((payment)=>payment.locataire._id == this.selectedLocataire._id);
   }
+
   applyFilterToLocataire(locataireList:LocataireModel[],reset:boolean)
   {
     let newMapLocataire = new Map<string,LocataireModel[]>();
+    let locataireSelected = null;
       newMapLocataire.set("Actifs",[]);
       newMapLocataire.set("Archivé", []);
 
       locataireList.forEach((locataire)=>{
-        if(locataire.room) newMapLocataire.get("Actifs").push(locataire); 
-        else if(locataire.isDisabled)  newMapLocataire.get("Archivé").push(locataire);
+        if(!locataire.isDisabled) newMapLocataire.get("Actifs").push(locataire); 
+        else  newMapLocataire.get("Archivé").push(locataire); //if(locataire.isDisabled) 
       })
         let newLocataireFounds:any = [
           {
@@ -111,7 +112,7 @@ export class LayoutListComponent {
         ]
         let orderedLocataire = [];
        if(reset){
-         let locataireSelected = newMapLocataire.get("Actifs").find((r)=>r._id==this.selectedLocataireId)
+        locataireSelected = newMapLocataire.get("Actifs").find((r)=>r._id==this.selectedLocataireId)
           if(locataireSelected){
             orderedLocataire.push(locataireSelected);
             this.selectedLocataire = locataireSelected;
@@ -131,7 +132,22 @@ export class LayoutListComponent {
         newLocataireFounds.push({
             sep: 'Archivé'
           })
-        newLocataireFounds.push(...newMapLocataire.get("Archivé"))
+        let archivedLocataire = []
+        if(!locataireSelected) {
+            locataireSelected = newMapLocataire.get("Archivé").find((r)=>r._id==this.selectedLocataireId)
+            console.log("Selected Archived ",locataireSelected)
+            if(locataireSelected){
+              archivedLocataire.push(locataireSelected);
+              this.selectedLocataire = locataireSelected;
+              this.selectedRoom = this.rooms.get(locataireSelected.room);
+              this.selectedLocation = this.locations.get(locataireSelected._id);
+            }
+            newMapLocataire.get("Archivé").forEach((eachLocataire)=>{
+            if(locataireSelected._id!=eachLocataire._id) archivedLocataire.push(eachLocataire)
+          })
+        }
+        newLocataireFounds.push(...archivedLocataire)
+
       
       if(reset)
       {
@@ -154,7 +170,7 @@ export class LayoutListComponent {
 
   getAllLocataireLength()
   {
-    return this.mapLocataireFiltered.length-2
+    return this.mapLocataireFiltered.get("Actifs").length + this.mapLocataireFiltered.get("Archivé").length;
   }
   onSelect(locataire: any) {
     this._router.navigate(['/app/properties',this.propertyId,'tenants',locataire._id]);

@@ -8,7 +8,7 @@
           [toggleableBtn]="true"
           (close)="onClose($event)"
           [size]="'lg'">
-        <!-- <assign-location [roomSelected]="selectedRoom" [sideNavBarElement]="panelLocation" [isAssignedOpened]="isAssignedOpened" [property]="property"></assign-location> -->
+        <assign-location [locataireSelected]="selectedLocataire" [sideNavBarElement]="panelLocation" [isAssignedOpened]="isAssignedOpened" [property]="property"></assign-location>
     </youpez-sidenav>
     
     <div fxFill fxLayout="column">
@@ -90,7 +90,7 @@
                                 <div class="flex flex-1 items-center justify-between">
                                     <div></div>
                                     <div class="flex items-center">
-                                        <div class="app-helper-text-01">{{getAllLocataireLength()}} Unités locatives</div>                                    
+                                        <div class="app-helper-text-01">{{getAllLocataireLength()}} Locataires</div>                                    
                                     </div>
                                 </div>
                             </div>
@@ -99,7 +99,7 @@
                 </youpez-sidenav>
 
                 <div fxFill fxLayout="column" class="relative">
-                    <layout-locataire [room]="selectedRoom" [locataire]="selectedLocataire" [historyLocationPayments]="historyLocationPaymentsSelected" [location]="selectedLocation" (onOpenAssignedRoom)="changeAssignedOpend($event)"></layout-locataire>
+                    <layout-locataire [room]="selectedRoom" [locataire]="selectedLocataire" [location]="selectedLocation" [historyLocationPayments]="historyLocationPaymentsSelected" [location]="selectedLocation" (onOpenAssignedRoom)="changeAssignedOpend($event)"></layout-locataire>
                 </div>
             </youpez-sidenav-container>
         </div>

@@ -4,31 +4,31 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
             <div>
                 <p class="text-gray-500">Nom complet</p>
-                <p class="font-medium text-gray-800">{{locataire.fullName}}</p>
+                <p class="font-medium text-gray-800">{{locataire?.fullName}}</p>
             </div>
             <div>
                 <p class="text-gray-500">Adresse e-mail</p>
-                <p class="font-medium text-gray-800">{{locataire.email}}</p>
+                <p class="font-medium text-gray-800">{{locataire?.email}}</p>
             </div>
             <div>
                 <p class="text-gray-500">Téléphone</p>
-                <p class="font-medium text-gray-800">{{locataire.phoneNumber}}</p>
+                <p class="font-medium text-gray-800">{{locataire?.phoneNumber}}</p>
             </div>
         </div>
-        <div class="mt-4" *ngif="locataire.fullNameRef || locataire.emailRef || locataire.phoneNumberRef">
+        <div class="mt-4" *ngif="locataire?.fullNameRef || locataire?.emailRef || locataire?.phoneNumberRef">
              <h2 class="text-lg font-semibold mb-4">Informations du référent</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                 <div>
                     <p class="text-gray-500">Nom complet</p>
-                    <p class="font-medium text-gray-800">{{locataire.fullNameRef}}</p>
+                    <p class="font-medium text-gray-800">{{locataire?.fullNameRef}}</p>
                 </div>
                 <div>
                     <p class="text-gray-500">Adresse e-mail</p>
-                    <p class="font-medium text-gray-800">{{locataire.emailRef}}</p>
+                    <p class="font-medium text-gray-800">{{locataire?.emailRef}}</p>
                 </div>
                 <div>
                     <p class="text-gray-500">Téléphone</p>
-                    <p class="font-medium text-gray-800">{{locataire.phoneNumberRef}}</p>
+                    <p class="font-medium text-gray-800">{{locataire?.phoneNumberRef}}</p>
                 </div>
             </div>
         </div>
