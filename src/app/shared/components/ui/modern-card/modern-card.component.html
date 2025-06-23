@@ -1,0 +1,65 @@
+<!-- Carte moderne réutilisable -->
+<div [ngClass]="getCardClasses()" 
+     (click)="onCardClick($event)"
+     [attr.role]="clickable ? 'button' : null"
+     [attr.tabindex]="clickable ? '0' : null">
+  
+  <!-- Header de la carte -->
+  <div *ngIf="hasHeader" [ngClass]="getHeaderClasses()">
+    
+    <!-- Titre et sous-titre -->
+    <div class="flex-1 min-w-0">
+      <h3 *ngIf="title" [ngClass]="getTitleClasses()">{{ title }}</h3>
+      <p *ngIf="subtitle" [ngClass]="getSubtitleClasses()">{{ subtitle }}</p>
+    </div>
+    
+    <!-- Actions du header -->
+    <div *ngIf="hasHeaderActions" class="flex items-center space-x-2">
+      <ng-content select="[slot=header-actions]"></ng-content>
+    </div>
+    
+    <!-- Badge de statut -->
+    <div *ngIf="status" [ngClass]="getStatusBadgeClasses()">
+      {{ status }}
+    </div>
+  </div>
+  
+  <!-- Image de la carte -->
+  <div *ngIf="imageUrl" class="relative overflow-hidden">
+    <img [src]="imageUrl" 
+         [alt]="imageAlt || title || 'Image'"
+         [ngClass]="getImageClasses()"
+         (error)="onImageError($event)">
+    
+    <!-- Overlay sur l'image -->
+    <div *ngIf="imageOverlay" class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+      <ng-content select="[slot=image-overlay]"></ng-content>
+    </div>
+    
+    <!-- Badge sur l'image -->
+    <div *ngIf="imageBadge" class="absolute top-3 left-3">
+      <span [ngClass]="getImageBadgeClasses()">{{ imageBadge }}</span>
+    </div>
+  </div>
+  
+  <!-- Contenu principal -->
+  <div [ngClass]="getContentClasses()">
+    <ng-content></ng-content>
+  </div>
+  
+  <!-- Footer de la carte -->
+  <div *ngIf="hasFooter" [ngClass]="getFooterClasses()">
+    <ng-content select="[slot=footer]"></ng-content>
+  </div>
+  
+  <!-- Indicateur de chargement -->
+  <div *ngIf="loading" class="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center">
+    <div class="flex flex-col items-center">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      <span class="mt-2 text-sm text-gray-600">{{ loadingText || 'Chargement...' }}</span>
+    </div>
+  </div>
+  
+  <!-- Overlay d'interaction -->
+  <div *ngIf="clickable" class="absolute inset-0 bg-blue-600 opacity-0 hover:opacity-5 transition-opacity duration-200"></div>
+</div>

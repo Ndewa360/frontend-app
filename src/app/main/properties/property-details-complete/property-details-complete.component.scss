@@ -1,0 +1,137 @@
+// Styles pour la page de détails de propriété complète
+
+.property-details-complete {
+  // Animations d'entrée
+  .fade-in {
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  .slide-up {
+    animation: slideUp 0.4s ease-out;
+  }
+
+  // Onglets personnalisés
+  .tab-button {
+    position: relative;
+    transition: all 0.2s ease;
+
+    &:hover {
+      transform: translateY(-1px);
+    }
+
+    &.active {
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, #3B82F6, #1D4ED8);
+        border-radius: 1px;
+      }
+    }
+  }
+
+  // Métriques avec effets visuels
+  .metric-card {
+    transition: all 0.3s ease;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    .metric-icon {
+      transition: transform 0.2s ease;
+    }
+
+    &:hover .metric-icon {
+      transform: scale(1.1);
+    }
+  }
+
+  // Graphiques placeholder avec style moderne
+  .chart-placeholder {
+    background: linear-gradient(135deg, #F8FAFC 0%, #E2E8F0 100%);
+    border: 2px dashed #CBD5E1;
+    transition: all 0.3s ease;
+
+    &:hover {
+      border-color: #3B82F6;
+      background: linear-gradient(135deg, #EBF4FF 0%, #DBEAFE 100%);
+    }
+  }
+
+  // Équipements avec style moderne
+  .amenity-tag {
+    background: linear-gradient(135deg, #EBF4FF 0%, #DBEAFE 100%);
+    border: 1px solid #BFDBFE;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%);
+      transform: translateY(-1px);
+    }
+  }
+}
+
+// Animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .property-details-complete {
+    .metric-card {
+      margin-bottom: 1rem;
+    }
+
+    .tab-button {
+      font-size: 0.875rem;
+      padding: 0.5rem 0.75rem;
+    }
+  }
+}
+
+// Mode sombre
+@media (prefers-color-scheme: dark) {
+  .property-details-complete {
+    .chart-placeholder {
+      background: linear-gradient(135deg, #1F2937 0%, #374151 100%);
+      border-color: #4B5563;
+
+      &:hover {
+        border-color: #60A5FA;
+        background: linear-gradient(135deg, #1E3A8A 0%, #1E40AF 100%);
+      }
+    }
+
+    .amenity-tag {
+      background: linear-gradient(135deg, #1E3A8A 0%, #1E40AF 100%);
+      border-color: #3B82F6;
+      color: #DBEAFE;
+
+      &:hover {
+        background: linear-gradient(135deg, #1E40AF 0%, #1D4ED8 100%);
+      }
+    }
+  }
+}

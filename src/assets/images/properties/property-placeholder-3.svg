@@ -1,0 +1,33 @@
+<svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="300" fill="#FEF3C7"/>
+  
+  <!-- Villa/House -->
+  <rect x="100" y="120" width="200" height="120" fill="#FDE68A" stroke="#F59E0B" stroke-width="2"/>
+  
+  <!-- Roof -->
+  <polygon points="80,120 200,60 320,120" fill="#DC2626"/>
+  
+  <!-- Chimney -->
+  <rect x="250" y="70" width="15" height="30" fill="#7F1D1D"/>
+  
+  <!-- Windows -->
+  <rect x="120" y="140" width="35" height="30" fill="#1D4ED8" opacity="0.7"/>
+  <rect x="245" y="140" width="35" height="30" fill="#1D4ED8" opacity="0.7"/>
+  
+  <!-- Door -->
+  <rect x="175" y="180" width="50" height="60" fill="#92400E"/>
+  <circle cx="215" cy="210" r="3" fill="#FEF3C7"/>
+  
+  <!-- Garden -->
+  <ellipse cx="200" cy="260" rx="150" ry="20" fill="#16A34A" opacity="0.4"/>
+  
+  <!-- Trees -->
+  <circle cx="80" cy="200" r="25" fill="#15803D"/>
+  <rect x="75" y="220" width="10" height="20" fill="#92400E"/>
+  
+  <circle cx="320" cy="190" r="20" fill="#15803D"/>
+  <rect x="315" y="205" width="10" height="15" fill="#92400E"/>
+  
+  <!-- Text -->
+  <text x="200" y="285" text-anchor="middle" fill="#92400E" font-family="Arial, sans-serif" font-size="14">Villa Résidentielle</text>
+</svg>

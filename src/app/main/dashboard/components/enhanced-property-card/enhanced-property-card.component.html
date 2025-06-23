@@ -1,0 +1,178 @@
+<!-- Carte de propriété améliorée pour la gestion immobilière -->
+<div class="enhanced-property-card" (click)="onCardClick()" [ngClass]="getCardStatusClass()">
+  <!-- Image de la propriété -->
+  <div class="property-image">
+    <img [src]="property.imageUrl || '/assets/images/property-placeholder.jpg'" 
+         [alt]="property.name"
+         class="property-img">
+    
+    <!-- Badge de statut -->
+    <div class="status-badge" [ngClass]="getStatusBadgeClass()">
+      {{ getStatusText() }}
+    </div>
+    
+    <!-- Actions rapides overlay -->
+    <div class="quick-actions-overlay">
+      <button ibmButton="ghost" size="sm" 
+              class="action-btn"
+              [ngbTooltip]="'Voir les détails'"
+              placement="bottom"
+              (click)="onViewDetails($event)">
+        <youpez-ibm-icon iconName="view" iconSize="16"></youpez-ibm-icon>
+      </button>
+      
+      <button ibmButton="ghost" size="sm" 
+              class="action-btn"
+              [ngbTooltip]="'Modifier'"
+              placement="bottom"
+              (click)="onEdit($event)">
+        <youpez-ibm-icon iconName="edit" iconSize="16"></youpez-ibm-icon>
+      </button>
+      
+      <button ibmButton="ghost" size="sm" 
+              class="action-btn"
+              [ngbTooltip]="'Plus d'actions'"
+              placement="bottom"
+              (click)="onMoreActions($event)">
+        <youpez-ibm-icon iconName="overflow-menu--horizontal" iconSize="16"></youpez-ibm-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Contenu de la carte -->
+  <div class="card-content">
+    <!-- En-tête avec nom et localisation -->
+    <div class="property-header">
+      <div class="property-info">
+        <h3 class="property-name">{{ property.name }}</h3>
+        <p class="property-location">
+          <youpez-ibm-icon iconName="location" iconSize="14" class="location-icon"></youpez-ibm-icon>
+          {{ property.address || property.location }}
+        </p>
+      </div>
+      
+      <!-- Indicateur de performance -->
+      <div class="performance-indicator" [ngClass]="getPerformanceClass()">
+        <div class="performance-dot"></div>
+      </div>
+    </div>
+
+    <!-- Métriques principales -->
+    <div class="main-metrics">
+      <div class="metric-row">
+        <!-- Taux d'occupation -->
+        <div class="metric-item">
+          <div class="metric-header">
+            <youpez-ibm-icon iconName="home" iconSize="16" class="metric-icon"></youpez-ibm-icon>
+            <span class="metric-label">Occupation</span>
+          </div>
+          <div class="metric-value" [ngClass]="getOccupancyClass()">
+            {{ metrics.occupancyRate }}%
+          </div>
+          <div class="metric-detail">
+            {{ metrics.occupiedRooms }}/{{ metrics.totalRooms }} chambres
+          </div>
+        </div>
+
+        <!-- Revenus mensuels -->
+        <div class="metric-item">
+          <div class="metric-header">
+            <youpez-ibm-icon iconName="currency--dollar" iconSize="16" class="metric-icon"></youpez-ibm-icon>
+            <span class="metric-label">Revenus</span>
+          </div>
+          <div class="metric-value text-green-600">
+            {{ metrics.monthlyRevenue | currency:'XAF':'symbol':'1.0-0' }}
+          </div>
+          <div class="metric-detail" [ngClass]="getRevenueGrowthClass()">
+            {{ metrics.revenueGrowth > 0 ? '+' : '' }}{{ metrics.revenueGrowth }}% ce mois
+          </div>
+        </div>
+      </div>
+
+      <div class="metric-row">
+        <!-- Paiements en retard -->
+        <div class="metric-item">
+          <div class="metric-header">
+            <youpez-ibm-icon iconName="warning" iconSize="16" class="metric-icon"></youpez-ibm-icon>
+            <span class="metric-label">Retards</span>
+          </div>
+          <div class="metric-value" [ngClass]="getOverdueClass()">
+            {{ metrics.overduePayments }}
+          </div>
+          <div class="metric-detail">
+            {{ metrics.overdueAmount | currency:'XAF':'symbol':'1.0-0' }}
+          </div>
+        </div>
+
+        <!-- Maintenance -->
+        <div class="metric-item">
+          <div class="metric-header">
+            <youpez-ibm-icon iconName="tools" iconSize="16" class="metric-icon"></youpez-ibm-icon>
+            <span class="metric-label">Maintenance</span>
+          </div>
+          <div class="metric-value" [ngClass]="getMaintenanceClass()">
+            {{ metrics.maintenanceRequests }}
+          </div>
+          <div class="metric-detail">
+            {{ metrics.urgentMaintenance }} urgentes
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alertes importantes -->
+    <div *ngIf="hasAlerts" class="alerts-section">
+      <div class="alert-header">
+        <youpez-ibm-icon iconName="warning--filled" iconSize="16" class="alert-icon"></youpez-ibm-icon>
+        <span class="alert-title">{{ alerts.length }} alerte(s)</span>
+      </div>
+      
+      <div class="alerts-list">
+        <div *ngFor="let alert of alerts.slice(0, 2)" 
+             class="alert-item" 
+             [ngClass]="getAlertClass(alert)"
+             (click)="onAlertClick(alert, $event)">
+          <div class="alert-content">
+            <span class="alert-message">{{ alert.message }}</span>
+            <youpez-ibm-icon iconName="arrow--right" iconSize="14" class="alert-arrow"></youpez-ibm-icon>
+          </div>
+        </div>
+        
+        <div *ngIf="alerts.length > 2" class="more-alerts">
+          <button class="more-alerts-btn" (click)="onViewAllAlerts($event)">
+            +{{ alerts.length - 2 }} autres alertes
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions rapides -->
+    <div class="quick-actions">
+      <button ibmButton="tertiary" size="sm" 
+              class="action-button"
+              (click)="onAddTenant($event)">
+        <youpez-ibm-icon iconName="user--plus" iconSize="16" class="action-icon"></youpez-ibm-icon>
+        Nouveau locataire
+      </button>
+      
+      <button ibmButton="tertiary" size="sm" 
+              class="action-button"
+              (click)="onRecordPayment($event)">
+        <youpez-ibm-icon iconName="receipt" iconSize="16" class="action-icon"></youpez-ibm-icon>
+        Paiement
+      </button>
+      
+      <button ibmButton="tertiary" size="sm" 
+              class="action-button"
+              (click)="onViewFinances($event)">
+        <youpez-ibm-icon iconName="chart--line" iconSize="16" class="action-icon"></youpez-ibm-icon>
+        Finances
+      </button>
+    </div>
+  </div>
+
+  <!-- Indicateur de chargement -->
+  <div *ngIf="loading" class="loading-overlay">
+    <ibm-loading size="sm"></ibm-loading>
+  </div>
+</div>

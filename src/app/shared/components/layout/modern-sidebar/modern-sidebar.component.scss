@@ -1,0 +1,289 @@
+// Sidebar moderne avec Tailwind CSS
+.sidebar-modern {
+  @apply bg-white border-r border-gray-200 shadow-lg;
+  
+  // Header du sidebar
+  .sidebar-header {
+    @apply border-b border-gray-100;
+  }
+  
+  // Navigation
+  .sidebar-nav {
+    @apply custom-scrollbar;
+    
+    .nav-section {
+      @apply mb-6;
+      
+      .nav-section-title {
+        @apply px-3 mb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider;
+      }
+      
+      .nav-items {
+        @apply space-y-1;
+      }
+    }
+    
+    .nav-item {
+      @apply flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-lg transition-all duration-200;
+      @apply hover:bg-gray-100 hover:text-gray-900;
+      
+      &.nav-item-active {
+        @apply bg-blue-50 text-blue-700 border-r-2 border-blue-600;
+      }
+      
+      .nav-item-icon {
+        @apply flex-shrink-0 mr-3;
+      }
+      
+      .nav-item-label {
+        @apply flex-1 truncate;
+      }
+      
+      .nav-item-badge {
+        @apply ml-2 px-2 py-0.5 text-xs font-medium bg-gray-200 text-gray-700 rounded-full;
+      }
+      
+      .nav-item-arrow {
+        @apply ml-2 flex-shrink-0;
+      }
+    }
+    
+    .nav-subitems {
+      @apply ml-8 mt-1 space-y-1;
+      
+      .nav-subitem {
+        @apply flex items-center px-3 py-1.5 text-sm text-gray-600 rounded-md transition-colors duration-200;
+        @apply hover:bg-gray-50 hover:text-gray-900;
+        
+        &.nav-subitem-active {
+          @apply bg-blue-50 text-blue-700;
+        }
+        
+        .nav-subitem-label {
+          @apply flex-1 truncate;
+        }
+        
+        .nav-subitem-badge {
+          @apply ml-2 px-1.5 py-0.5 text-xs font-medium bg-gray-200 text-gray-700 rounded-full;
+        }
+      }
+    }
+  }
+  
+  // Footer du sidebar
+  .sidebar-footer {
+    @apply mt-auto;
+    
+    .user-profile {
+      @apply transition-all duration-200;
+      
+      &.user-profile-collapsed {
+        @apply justify-center;
+      }
+    }
+    
+    .user-menu-dropdown {
+      @apply absolute bottom-full left-4 right-4 mb-2 bg-white border border-gray-200 rounded-lg shadow-lg;
+      @apply animate-in slide-in-from-bottom-2 duration-200;
+      
+      .user-menu-item {
+        @apply flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-200;
+        @apply first:rounded-t-lg last:rounded-b-lg;
+        
+        svg {
+          @apply mr-3 flex-shrink-0;
+        }
+      }
+    }
+  }
+  
+  // États du sidebar
+  &.sidebar-collapsed {
+    .nav-section-title {
+      @apply hidden;
+    }
+    
+    .nav-item {
+      @apply justify-center px-2;
+      
+      .nav-item-icon {
+        @apply mr-0;
+      }
+    }
+    
+    .nav-subitems {
+      @apply hidden;
+    }
+  }
+  
+  &.sidebar-mobile-open {
+    @apply transform translate-x-0;
+  }
+}
+
+// Overlay mobile
+.sidebar-overlay {
+  @apply fixed inset-0 bg-black bg-opacity-50 z-40;
+  @apply animate-in fade-in duration-200;
+}
+
+// Scrollbar personnalisée
+.custom-scrollbar {
+  &::-webkit-scrollbar {
+    @apply w-1;
+  }
+  
+  &::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 rounded-full;
+    
+    &:hover {
+      @apply bg-gray-400;
+    }
+  }
+}
+
+// Animations
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.nav-item {
+  animation: slideIn 0.2s ease-out;
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .sidebar-modern {
+    @apply w-64;
+    
+    &:not(.sidebar-mobile-open) {
+      @apply transform -translate-x-full;
+    }
+  }
+}
+
+// Mode sombre
+@media (prefers-color-scheme: dark) {
+  .sidebar-modern {
+    @apply bg-gray-900 border-gray-700;
+    
+    .sidebar-header {
+      @apply border-gray-700;
+    }
+    
+    .nav-section-title {
+      @apply text-gray-400;
+    }
+    
+    .nav-item {
+      @apply text-gray-300 hover:bg-gray-800 hover:text-white;
+      
+      &.nav-item-active {
+        @apply bg-blue-900 text-blue-300;
+      }
+      
+      .nav-item-badge {
+        @apply bg-gray-700 text-gray-300;
+      }
+    }
+    
+    .nav-subitem {
+      @apply text-gray-400 hover:bg-gray-800 hover:text-gray-300;
+      
+      &.nav-subitem-active {
+        @apply bg-blue-900 text-blue-300;
+      }
+      
+      .nav-subitem-badge {
+        @apply bg-gray-700 text-gray-300;
+      }
+    }
+    
+    .sidebar-footer {
+      @apply border-gray-700;
+      
+      .user-menu-dropdown {
+        @apply bg-gray-800 border-gray-700;
+        
+        .user-menu-item {
+          @apply text-gray-300 hover:bg-gray-700;
+        }
+      }
+    }
+  }
+}
+
+// Effets de survol améliorés
+.nav-item {
+  @apply relative;
+  
+  &::before {
+    content: '';
+    @apply absolute left-0 top-0 bottom-0 w-1 bg-blue-600 transform scale-y-0 transition-transform duration-200;
+  }
+  
+  &:hover::before {
+    @apply transform scale-y-100;
+  }
+  
+  &.nav-item-active::before {
+    @apply transform scale-y-100;
+  }
+}
+
+// Tooltips pour le mode collapsed
+.sidebar-collapsed {
+  .nav-item {
+    @apply relative;
+    
+    &:hover {
+      &::after {
+        content: attr(title);
+        @apply absolute left-full top-1/2 transform -translate-y-1/2 ml-2 px-2 py-1;
+        @apply bg-gray-900 text-white text-xs rounded whitespace-nowrap z-50;
+        @apply animate-in fade-in duration-200;
+      }
+    }
+  }
+}
+
+// Transitions fluides
+* {
+  @apply transition-colors duration-200;
+}
+
+// États de focus améliorés
+.nav-item:focus,
+.nav-subitem:focus,
+.user-menu-item:focus {
+  @apply outline-none ring-2 ring-blue-500 ring-offset-2;
+}
+
+// Indicateurs visuels
+.nav-item-badge {
+  @apply animate-pulse;
+  
+  &:hover {
+    @apply animate-none;
+  }
+}

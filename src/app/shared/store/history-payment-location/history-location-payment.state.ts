@@ -37,8 +37,8 @@ export class HistoryLocationPaymentState{
     {
         return state.loadingHistoryLocationPayment
     }
-    @Selector() 
-    static setlectStateHistoryLocationPayments(state:HistoryLocationPaymentStateModel)
+    @Selector()
+    static selectStateHistoryLocationPayments(state:HistoryLocationPaymentStateModel)
     {
         return state.historyLocationPayments
     }

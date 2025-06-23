@@ -30,7 +30,7 @@ export class FilterZoneComponent implements OnInit{
     hasParking:false,
   }
 
-  @Select(CityState.setlectStateCities) cities:Observable<CityModel[]>
+  @Select(CityState.selectStateCities) cities:Observable<CityModel[]>
   public formGroup: FormGroup;
 
  

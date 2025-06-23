@@ -15,7 +15,7 @@ export class ShowFactureCurrentComponent {
   @Select(SouscriptionState.selectStatePeriodDefaultWithRunningState) souscription$:Observable<SouscriptionModel>
   @Select(RoomState.selectStateCountRoomActive) roomCount$:Observable<number>
   @Select(RoomState.selectStatePriceRoomActive) roomPrice$:Observable<number>
-  @Select(RoomState.setlectStateRooms) roomList$:Observable<RoomModel[]>;
+  @Select(RoomState.selectStateRooms) roomList$:Observable<RoomModel[]>;
   roomsValueChangeStatus:{isLoading:BehaviorSubject<boolean>,roomId:string, value:BehaviorSubject<boolean>,room:RoomModel}[]=[];
 
   currentPeriod:SouscriptionPeriodModel=null;

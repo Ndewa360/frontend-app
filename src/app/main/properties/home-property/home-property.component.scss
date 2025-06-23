@@ -1,0 +1,235 @@
+// Import des styles Carbon
+@import '../../../../assets/styles/carbon-utilities.scss';
+
+// Container principal - Thème clair
+.property-management-container {
+  min-height: 100vh;
+  background-color: #ffffff; // Fond blanc pur
+}
+
+// Header principal - Thème clair
+.main-header {
+  background-color: #f8f9fa; // Gris très clair
+  border-bottom: 1px solid #e0e0e0; // Bordure claire
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); // Ombre très légère
+
+  .header-content {
+    .header-info {
+      h1 {
+        color: #161616; // Texte sombre sur fond clair
+        font-weight: 700;
+        background: linear-gradient(135deg, rgb(204, 140, 10), #fadc4d);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      p {
+        color: #525252; // Gris moyen pour la description
+        font-weight: 400;
+      }
+    }
+
+    .header-actions {
+      .custom-primary-button {
+        transition: all 0.3s ease;
+
+        &:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(204, 140, 10, 0.3);
+        }
+      }
+    }
+  }
+
+  // Navigation par onglets
+  .tab-navigation {
+    border-top: 1px solid #e0e0e0; // Bordure claire
+
+    nav {
+      .tab-button {
+        @apply px-6 py-4 text-sm font-medium border-b-2 border-transparent transition-all duration-300 ease-in-out;
+        color: #525252; // Gris moyen pour le texte
+        background: transparent;
+        display: flex;
+        align-items: center;
+        position: relative;
+
+        &:hover {
+          color: #161616; // Texte sombre sur fond clair
+          background-color: #f0f0f0; // Fond gris très clair au hover
+        }
+
+        &.active {
+          color: rgb(204, 140, 10); // Couleur principale
+          border-bottom-color: rgb(204, 140, 10);
+          background-color: #ffffff; // Fond blanc pour l'onglet actif
+
+          &::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--carbon-primary-60), var(--carbon-primary-40));
+          }
+        }
+
+        &:focus {
+          outline: 2px solid var(--carbon-focus);
+          outline-offset: -2px;
+        }
+
+        svg {
+          transition: transform 0.3s ease;
+        }
+
+        &:hover svg {
+          transform: scale(1.1);
+        }
+
+        .property-count {
+          @apply ml-2 px-2 py-1 text-xs rounded-full;
+          background-color: var(--carbon-primary-10);
+          color: var(--carbon-primary-70);
+          font-weight: 600;
+        }
+      }
+    }
+  }
+}
+
+// Contenu principal
+.main-content {
+  .view-container {
+    opacity: 1;
+    transform: translateY(0);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &.hidden {
+      opacity: 0;
+      transform: translateY(20px);
+      pointer-events: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+    }
+
+    &.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+      position: relative;
+    }
+  }
+}
+
+// Animations d'entrée
+@keyframes slideInFromTop {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.property-management-container {
+  animation: fadeIn 0.6s ease-out;
+}
+
+.main-header {
+  animation: slideInFromTop 0.8s ease-out;
+}
+
+.view-container.active {
+  animation: fadeIn 0.5s ease-out;
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .main-header {
+    .header-content {
+      padding: 1rem 0;
+
+      .flex {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+
+      .header-info {
+        h1 {
+          font-size: 1.875rem;
+        }
+
+        p {
+          font-size: 1rem;
+        }
+      }
+    }
+
+    .tab-navigation {
+      nav {
+        .tab-button {
+          padding: 0.75rem 1rem;
+          font-size: 0.875rem;
+
+          svg {
+            width: 1rem;
+            height: 1rem;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .main-header {
+    .tab-navigation {
+      nav {
+        flex-direction: column;
+
+        .tab-button {
+          width: 100%;
+          justify-content: flex-start;
+          border-bottom: 1px solid #e0e0e0; // Bordure claire
+          border-right: none;
+
+          &.active {
+            border-bottom-color: #e0e0e0;
+            border-left: 3px solid rgb(204, 140, 10); // Couleur principale
+
+            &::after {
+              display: none;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Thème clair forcé (pas de mode sombre)
+.property-management-container {
+  background-color: #ffffff !important; // Fond blanc forcé
+}
+
+.main-header {
+  background-color: #f4f4f4 !important; // Gris très clair forcé
+  border-bottom-color: #e0e0e0 !important; // Bordure claire forcée
+}

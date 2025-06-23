@@ -1,0 +1,241 @@
+<!-- Tableau moderne des propriétés -->
+<div class="enhanced-property-table">
+  <ibm-table-container>
+    <ibm-table 
+      [model]="tableModel" 
+      [showSelectionColumn]="true"
+      [striped]="false"
+      [sortable]="true"
+      (sort)="onSort($event)"
+      (rowClick)="onRowClick($event)">
+      
+      <!-- Header du tableau -->
+      <ibm-table-header>
+        <ibm-table-header-item 
+          *ngFor="let column of tableModel.header" 
+          [sortable]="column.sortable"
+          [sorted]="column.sorted"
+          [ascending]="column.ascending"
+          [style.width]="column.width">
+          {{ column.data }}
+        </ibm-table-header-item>
+      </ibm-table-header>
+
+      <!-- Corps du tableau -->
+      <ibm-table-row 
+        *ngFor="let row of tableModel.data; trackBy: trackByPropertyId"
+        [ngClass]="getRowClass(row)"
+        (click)="onPropertyClick(row.property)">
+        
+        <!-- Checkbox de sélection -->
+        <ibm-table-data>
+          <ibm-checkbox 
+            [checked]="row.selected"
+            (checkedChange)="onRowSelect(row, $event)"
+            (click)="$event.stopPropagation()">
+          </ibm-checkbox>
+        </ibm-table-data>
+
+        <!-- Image et nom de la propriété -->
+        <ibm-table-data class="property-info-cell">
+          <div class="property-info">
+            <div class="property-image">
+              <img [src]="row.property.imageUrl || '/assets/images/property-placeholder.jpg'" 
+                   [alt]="row.property.name"
+                   class="property-thumbnail">
+              <div class="status-indicator" [ngClass]="getStatusClass(row.property)"></div>
+            </div>
+            <div class="property-details">
+              <div class="property-name">{{ row.property.name }}</div>
+              <div class="property-location">
+                <youpez-ibm-icon iconName="location" iconSize="14" class="location-icon"></youpez-ibm-icon>
+                {{ row.property.address || row.property.location }}
+              </div>
+            </div>
+          </div>
+        </ibm-table-data>
+
+        <!-- Type et caractéristiques -->
+        <ibm-table-data class="property-type-cell">
+          <div class="property-type">
+            <div class="type-badge" [ngClass]="getTypeBadgeClass(row.property.type)">
+              {{ getPropertyTypeLabel(row.property.type) }}
+            </div>
+            <div class="property-specs">
+              <span class="spec-item">
+                <youpez-ibm-icon iconName="home" iconSize="12"></youpez-ibm-icon>
+                {{ row.property.roomLength || 0 }} chambres
+              </span>
+            </div>
+          </div>
+        </ibm-table-data>
+
+        <!-- Taux d'occupation -->
+        <ibm-table-data class="occupancy-cell">
+          <div class="occupancy-info">
+            <div class="occupancy-bar">
+              <div class="occupancy-progress" 
+                   [style.width.%]="getOccupancyRate(row.property)"
+                   [ngClass]="getOccupancyBarClass(getOccupancyRate(row.property))">
+              </div>
+            </div>
+            <div class="occupancy-text">
+              <span class="occupancy-rate" [ngClass]="getOccupancyTextClass(getOccupancyRate(row.property))">
+                {{ getOccupancyRate(row.property) }}%
+              </span>
+              <span class="occupancy-detail">
+                {{ getOccupiedRooms(row.property) }}/{{ row.property.roomLength || 0 }}
+              </span>
+            </div>
+          </div>
+        </ibm-table-data>
+
+        <!-- Revenus mensuels -->
+        <ibm-table-data class="revenue-cell">
+          <div class="revenue-info">
+            <div class="revenue-amount">
+              {{ getMonthlyRevenue(row.property) | currency:'XAF':'symbol':'1.0-0' }}
+            </div>
+            <div class="revenue-trend" [ngClass]="getRevenueTrendClass(row.property)">
+              <youpez-ibm-icon [iconName]="getRevenueTrendIcon(row.property)" iconSize="12"></youpez-ibm-icon>
+              <span>{{ getRevenueGrowth(row.property) }}%</span>
+            </div>
+          </div>
+        </ibm-table-data>
+
+        <!-- Paiements en retard -->
+        <ibm-table-data class="overdue-cell">
+          <div class="overdue-info">
+            <div class="overdue-count" [ngClass]="getOverdueCountClass(row.property)">
+              {{ getOverduePayments(row.property) }}
+            </div>
+            <div class="overdue-amount" *ngIf="getOverdueAmount(row.property) > 0">
+              {{ getOverdueAmount(row.property) | currency:'XAF':'symbol':'1.0-0' }}
+            </div>
+          </div>
+        </ibm-table-data>
+
+        <!-- Maintenance -->
+        <ibm-table-data class="maintenance-cell">
+          <div class="maintenance-info">
+            <div class="maintenance-badge" [ngClass]="getMaintenanceBadgeClass(row.property)">
+              {{ getMaintenanceRequests(row.property) }}
+            </div>
+            <div class="maintenance-urgent" *ngIf="getUrgentMaintenance(row.property) > 0">
+              <youpez-ibm-icon iconName="warning--filled" iconSize="12" class="urgent-icon"></youpez-ibm-icon>
+              {{ getUrgentMaintenance(row.property) }} urgentes
+            </div>
+          </div>
+        </ibm-table-data>
+
+        <!-- Performance globale -->
+        <ibm-table-data class="performance-cell">
+          <div class="performance-indicator" [ngClass]="getPerformanceClass(row.property)">
+            <div class="performance-score">{{ getPerformanceScore(row.property) }}</div>
+            <div class="performance-label">{{ getPerformanceLabel(row.property) }}</div>
+          </div>
+        </ibm-table-data>
+
+        <!-- Actions -->
+        <ibm-table-data class="actions-cell">
+          <div class="table-actions">
+            <button ibmButton="ghost" size="sm" 
+                    [ngbTooltip]="'Voir les détails'"
+                    placement="top"
+                    (click)="onViewDetails(row.property, $event)">
+              <youpez-ibm-icon iconName="view" iconSize="16"></youpez-ibm-icon>
+            </button>
+            
+            <button ibmButton="ghost" size="sm" 
+                    [ngbTooltip]="'Modifier'"
+                    placement="top"
+                    (click)="onEdit(row.property, $event)">
+              <youpez-ibm-icon iconName="edit" iconSize="16"></youpez-ibm-icon>
+            </button>
+            
+            <ibm-overflow-menu 
+              [flip]="true" 
+              placement="bottom"
+              (click)="$event.stopPropagation()">
+              <ibm-overflow-menu-option (click)="onAddTenant(row.property)">
+                <youpez-ibm-icon iconName="user--plus" iconSize="16" class="mr-2"></youpez-ibm-icon>
+                Nouveau locataire
+              </ibm-overflow-menu-option>
+              
+              <ibm-overflow-menu-option (click)="onRecordPayment(row.property)">
+                <youpez-ibm-icon iconName="receipt" iconSize="16" class="mr-2"></youpez-ibm-icon>
+                Enregistrer paiement
+              </ibm-overflow-menu-option>
+              
+              <ibm-overflow-menu-option (click)="onViewFinances(row.property)">
+                <youpez-ibm-icon iconName="chart--line" iconSize="16" class="mr-2"></youpez-ibm-icon>
+                Voir finances
+              </ibm-overflow-menu-option>
+              
+              <ibm-overflow-menu-option (click)="onScheduleMaintenance(row.property)">
+                <youpez-ibm-icon iconName="tools" iconSize="16" class="mr-2"></youpez-ibm-icon>
+                Programmer maintenance
+              </ibm-overflow-menu-option>
+              
+              <ibm-overflow-menu-option 
+                type="danger" 
+                (click)="onArchive(row.property)">
+                <youpez-ibm-icon iconName="archive" iconSize="16" class="mr-2"></youpez-ibm-icon>
+                Archiver
+              </ibm-overflow-menu-option>
+            </ibm-overflow-menu>
+          </div>
+        </ibm-table-data>
+      </ibm-table-row>
+    </ibm-table>
+
+    <!-- État vide -->
+    <div *ngIf="tableModel.data.length === 0 && !loading" class="empty-table-state">
+      <div class="empty-content">
+        <youpez-ibm-icon iconName="home" iconSize="48" class="empty-icon"></youpez-ibm-icon>
+        <h3 class="empty-title">Aucune propriété trouvée</h3>
+        <p class="empty-message">Commencez par ajouter votre première propriété</p>
+        <button ibmButton="primary" size="md" (click)="onAddProperty()" class="mt-4">
+          <youpez-ibm-icon iconName="add" iconSize="16" class="mr-2"></youpez-ibm-icon>
+          Ajouter une propriété
+        </button>
+      </div>
+    </div>
+
+    <!-- Chargement -->
+    <div *ngIf="loading" class="table-loading">
+      <ibm-loading size="lg"></ibm-loading>
+      <p class="loading-text">Chargement des propriétés...</p>
+    </div>
+  </ibm-table-container>
+
+  <!-- Actions en lot -->
+  <div class="bulk-actions" *ngIf="selectedProperties.length > 0">
+    <div class="bulk-actions-content">
+      <div class="selection-info">
+        <span class="selection-count">{{ selectedProperties.length }} propriété(s) sélectionnée(s)</span>
+      </div>
+      
+      <div class="bulk-actions-buttons">
+        <button ibmButton="tertiary" size="sm" (click)="onBulkExport()">
+          <youpez-ibm-icon iconName="download" iconSize="16" class="mr-2"></youpez-ibm-icon>
+          Exporter
+        </button>
+        
+        <button ibmButton="tertiary" size="sm" (click)="onBulkEdit()">
+          <youpez-ibm-icon iconName="edit" iconSize="16" class="mr-2"></youpez-ibm-icon>
+          Modifier
+        </button>
+        
+        <button ibmButton="danger--tertiary" size="sm" (click)="onBulkArchive()">
+          <youpez-ibm-icon iconName="archive" iconSize="16" class="mr-2"></youpez-ibm-icon>
+          Archiver
+        </button>
+        
+        <button ibmButton="ghost" size="sm" (click)="clearSelection()">
+          Annuler
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

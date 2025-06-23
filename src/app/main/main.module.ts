@@ -67,6 +67,15 @@ import { LayoutComponent as LayoutLocataireComponent } from './locataires/compon
 import { DetailsLocataireComponent } from './locataires/components/details-locataire/details-locataire.component';
 import { CurrentRoomComponent } from './locataires/components/current-room/current-room.component';
 import { DetailsPaymentLocataireComponent } from './locataires/components/details-payment-locataire/details-payment-locataire.component';
+import { PropertyOverviewCardComponent } from './dashboard/components/property-overview-card/property-overview-card.component'
+
+// Nouveaux composants modernes
+import { PropertyDetailsCompleteComponent } from './properties/property-details-complete/property-details-complete.component'
+import { PropertyUnitsComponent } from './properties/components/property-units/property-units.component'
+import { PropertyTenantsComponent } from './properties/components/property-tenants/property-tenants.component'
+import { PropertyHistoryComponent } from './properties/components/property-history/property-history.component'
+import { PropertyFinancesComponent } from './properties/components/property-finances/property-finances.component'
+import { ModernFinancialDashboardComponent } from './properties/components/modern-financial-dashboard/modern-financial-dashboard.component';
 
 
 
@@ -128,8 +137,17 @@ ModuleRegistry.registerModules([
     LayoutLocataireComponent,
     DetailsLocataireComponent,
     CurrentRoomComponent,
-    DetailsPaymentLocataireComponent
-    
+    DetailsPaymentLocataireComponent,
+    PropertyOverviewCardComponent,
+
+    // Nouveaux composants modernes
+    PropertyDetailsCompleteComponent,
+    PropertyUnitsComponent,
+    PropertyTenantsComponent,
+    PropertyHistoryComponent,
+    PropertyFinancesComponent,
+    ModernFinancialDashboardComponent
+
   ],
   imports: [
     CommonModule,

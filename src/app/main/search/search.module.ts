@@ -9,6 +9,8 @@ import { RoomFilteredFoundComponent } from './components/room-filtered-found/roo
 import { RoomPageOverviewComponent } from './components/room-page-overview/room-page-overview.component';
 import { ContactProprietaireComponent } from './components/contact-proprietaire/contact-proprietaire.component';
 import { RoomAssociatedComponent } from './components/room-associated/room-associated.component';
+import { AdvancedSearchFiltersComponent } from './components/advanced-search-filters/advanced-search-filters.component';
+import { SearchResultsWrapperComponent } from './components/search-results-wrapper/search-results-wrapper.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +19,9 @@ import { RoomAssociatedComponent } from './components/room-associated/room-assoc
     RoomFilteredFoundComponent,
     RoomPageOverviewComponent,
     ContactProprietaireComponent,
-    RoomAssociatedComponent
+    RoomAssociatedComponent,
+    AdvancedSearchFiltersComponent,
+    SearchResultsWrapperComponent
   ],
   imports: [
     CommonModule,

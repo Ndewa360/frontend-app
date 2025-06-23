@@ -1,0 +1,334 @@
+// Styles pour le composant d'historique de propriété
+
+.property-history-container {
+  // Timeline avec style moderne
+  .timeline {
+    .timeline-item {
+      transition: all 0.3s ease;
+      
+      &:hover {
+        transform: translateX(4px);
+      }
+    }
+
+    .timeline-icon {
+      transition: all 0.3s ease;
+      box-shadow: 0 0 0 8px rgba(255, 255, 255, 1);
+
+      &.payment {
+        background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+        box-shadow: 0 0 0 8px rgba(255, 255, 255, 1), 0 4px 15px -3px rgba(16, 185, 129, 0.4);
+      }
+
+      &.maintenance {
+        background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+        box-shadow: 0 0 0 8px rgba(255, 255, 255, 1), 0 4px 15px -3px rgba(59, 130, 246, 0.4);
+      }
+
+      &.tenant_move_in {
+        background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+        box-shadow: 0 0 0 8px rgba(255, 255, 255, 1), 0 4px 15px -3px rgba(139, 92, 246, 0.4);
+      }
+
+      &.tenant_move_out {
+        background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+        box-shadow: 0 0 0 8px rgba(255, 255, 255, 1), 0 4px 15px -3px rgba(239, 68, 68, 0.4);
+      }
+
+      &.contract_renewal {
+        background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+        box-shadow: 0 0 0 8px rgba(255, 255, 255, 1), 0 4px 15px -3px rgba(245, 158, 11, 0.4);
+      }
+
+      &:hover {
+        transform: scale(1.1);
+      }
+    }
+
+    .timeline-content {
+      background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%);
+      border: 1px solid #E2E8F0;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+        box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.1);
+      }
+    }
+
+    .timeline-line {
+      background: linear-gradient(to bottom, #E2E8F0 0%, #CBD5E1 100%);
+    }
+  }
+
+  // Badges de type d'événement
+  .event-badge {
+    transition: all 0.2s ease;
+
+    &.payment {
+      background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+      color: #065F46;
+      border: 1px solid #A7F3D0;
+    }
+
+    &.maintenance {
+      background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%);
+      color: #1E40AF;
+      border: 1px solid #BFDBFE;
+    }
+
+    &.tenant_move_in {
+      background: linear-gradient(135deg, #E9D5FF 0%, #DDD6FE 100%);
+      color: #6B21A8;
+      border: 1px solid #DDD6FE;
+    }
+
+    &.tenant_move_out {
+      background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+      color: #991B1B;
+      border: 1px solid #FECACA;
+    }
+
+    &.contract_renewal {
+      background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+      color: #92400E;
+      border: 1px solid #FDE68A;
+    }
+
+    &:hover {
+      transform: translateY(-1px);
+    }
+  }
+
+  // Statistiques avec effets visuels
+  .stat-card {
+    transition: all 0.3s ease;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-icon {
+      transition: transform 0.2s ease;
+    }
+
+    &:hover .stat-icon {
+      transform: scale(1.1);
+    }
+  }
+
+  // Montants avec couleurs
+  .amount {
+    &.positive {
+      color: #059669;
+      font-weight: 600;
+    }
+
+    &.negative {
+      color: #DC2626;
+      font-weight: 600;
+    }
+  }
+
+  // Filtres avec style moderne
+  .filter-section {
+    background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%);
+    border: 1px solid #E2E8F0;
+
+    .filter-select {
+      transition: all 0.2s ease;
+
+      &:focus {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 15px -3px rgba(59, 130, 246, 0.2);
+      }
+    }
+  }
+
+  // Métadonnées des événements
+  .event-metadata {
+    .metadata-item {
+      transition: all 0.2s ease;
+
+      &:hover {
+        color: #3B82F6;
+      }
+
+      svg {
+        transition: transform 0.2s ease;
+      }
+
+      &:hover svg {
+        transform: scale(1.1);
+      }
+    }
+  }
+}
+
+// Animations
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+// Application des animations
+.property-history-container {
+  .timeline-item {
+    animation: slideInLeft 0.4s ease-out;
+    
+    &:nth-child(1) { animation-delay: 0.1s; }
+    &:nth-child(2) { animation-delay: 0.2s; }
+    &:nth-child(3) { animation-delay: 0.3s; }
+    &:nth-child(4) { animation-delay: 0.4s; }
+    &:nth-child(5) { animation-delay: 0.5s; }
+  }
+
+  .stat-card {
+    animation: scaleIn 0.3s ease-out;
+    
+    &:nth-child(1) { animation-delay: 0.1s; }
+    &:nth-child(2) { animation-delay: 0.2s; }
+    &:nth-child(3) { animation-delay: 0.3s; }
+    &:nth-child(4) { animation-delay: 0.4s; }
+  }
+
+  .filter-section {
+    animation: fadeIn 0.4s ease-out 0.2s both;
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .property-history-container {
+    .timeline {
+      .timeline-content {
+        margin-left: 0;
+        padding: 1rem;
+      }
+
+      .timeline-icon {
+        width: 2rem;
+        height: 2rem;
+        left: 0.5rem;
+      }
+
+      .timeline-line {
+        left: 1rem;
+      }
+    }
+
+    .stat-card {
+      margin-bottom: 0.75rem;
+    }
+
+    .event-metadata {
+      .grid {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+      }
+    }
+  }
+}
+
+// Mode sombre
+@media (prefers-color-scheme: dark) {
+  .property-history-container {
+    .timeline {
+      .timeline-content {
+        background: linear-gradient(135deg, #1F2937 0%, #374151 100%);
+        border-color: #4B5563;
+
+        &:hover {
+          background: linear-gradient(135deg, #374151 0%, #4B5563 100%);
+        }
+      }
+
+      .timeline-line {
+        background: linear-gradient(to bottom, #4B5563 0%, #6B7280 100%);
+      }
+
+      .timeline-icon {
+        box-shadow: 0 0 0 8px rgba(31, 41, 55, 1);
+
+        &.payment {
+          box-shadow: 0 0 0 8px rgba(31, 41, 55, 1), 0 4px 15px -3px rgba(16, 185, 129, 0.4);
+        }
+
+        &.maintenance {
+          box-shadow: 0 0 0 8px rgba(31, 41, 55, 1), 0 4px 15px -3px rgba(59, 130, 246, 0.4);
+        }
+
+        &.tenant_move_in {
+          box-shadow: 0 0 0 8px rgba(31, 41, 55, 1), 0 4px 15px -3px rgba(139, 92, 246, 0.4);
+        }
+
+        &.tenant_move_out {
+          box-shadow: 0 0 0 8px rgba(31, 41, 55, 1), 0 4px 15px -3px rgba(239, 68, 68, 0.4);
+        }
+
+        &.contract_renewal {
+          box-shadow: 0 0 0 8px rgba(31, 41, 55, 1), 0 4px 15px -3px rgba(245, 158, 11, 0.4);
+        }
+      }
+    }
+
+    .filter-section {
+      background: linear-gradient(135deg, #1F2937 0%, #374151 100%);
+      border-color: #4B5563;
+    }
+
+    .event-badge {
+      &.payment {
+        background: linear-gradient(135deg, #065F46 0%, #047857 100%);
+        color: #A7F3D0;
+      }
+
+      &.maintenance {
+        background: linear-gradient(135deg, #1E40AF 0%, #1D4ED8 100%);
+        color: #BFDBFE;
+      }
+
+      &.tenant_move_in {
+        background: linear-gradient(135deg, #6B21A8 0%, #7C3AED 100%);
+        color: #DDD6FE;
+      }
+
+      &.tenant_move_out {
+        background: linear-gradient(135deg, #991B1B 0%, #DC2626 100%);
+        color: #FECACA;
+      }
+
+      &.contract_renewal {
+        background: linear-gradient(135deg, #92400E 0%, #D97706 100%);
+        color: #FDE68A;
+      }
+    }
+  }
+}

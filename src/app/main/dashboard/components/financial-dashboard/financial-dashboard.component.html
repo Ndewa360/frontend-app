@@ -1,0 +1,252 @@
+<!-- Dashboard financier moderne pour la gestion immobilière -->
+<div class="financial-dashboard">
+  <!-- Header financier -->
+  <div class="financial-header">
+    <div class="header-content">
+      <div class="header-title">
+        <h1 class="app-productive-heading-05">Tableau de bord financier</h1>
+        <p class="app-body-short-01 text-gray-600">Suivi des revenus et performances de votre portefeuille</p>
+      </div>
+      
+      <div class="header-controls">
+        <div class="period-selector">
+          <ibm-combo-box
+            placeholder="Période"
+            [items]="periodOptions"
+            (selected)="onPeriodChange($event)"
+            size="md"
+            theme="light">
+            <ibm-dropdown-list></ibm-dropdown-list>
+          </ibm-combo-box>
+        </div>
+        
+        <button ibmButton="tertiary" size="md" (click)="exportData()">
+          <youpez-ibm-icon iconName="download" iconSize="16" class="mr-2"></youpez-ibm-icon>
+          Exporter
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Métriques financières principales -->
+  <div class="financial-metrics">
+    <div class="metrics-grid">
+      <!-- Revenus totaux -->
+      <div class="financial-card revenue-card">
+        <div class="card-header">
+          <div class="card-icon revenue-icon">
+            <youpez-ibm-icon iconName="currency--dollar" iconSize="32"></youpez-ibm-icon>
+          </div>
+          <div class="card-trend" [ngClass]="getRevenueTrendClass()">
+            <span class="trend-value">{{ revenueGrowth > 0 ? '+' : '' }}{{ revenueGrowth }}%</span>
+            <youpez-ibm-icon [iconName]="revenueGrowth > 0 ? 'trending--up' : 'trending--down'" iconSize="20"></youpez-ibm-icon>
+          </div>
+        </div>
+        <div class="card-content">
+          <div class="main-value">{{ totalRevenue | currency:'XAF':'symbol':'1.0-0' }}</div>
+          <div class="main-label">Revenus totaux</div>
+          <div class="sub-metrics">
+            <div class="sub-metric">
+              <span class="sub-label">Ce mois:</span>
+              <span class="sub-value">{{ currentMonthRevenue | currency:'XAF':'symbol':'1.0-0' }}</span>
+            </div>
+            <div class="sub-metric">
+              <span class="sub-label">Mois dernier:</span>
+              <span class="sub-value">{{ lastMonthRevenue | currency:'XAF':'symbol':'1.0-0' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Paiements en attente -->
+      <div class="financial-card pending-card">
+        <div class="card-header">
+          <div class="card-icon pending-icon">
+            <youpez-ibm-icon iconName="time" iconSize="32"></youpez-ibm-icon>
+          </div>
+          <div class="card-badge" [ngClass]="getPendingBadgeClass()">
+            {{ pendingPayments }}
+          </div>
+        </div>
+        <div class="card-content">
+          <div class="main-value">{{ pendingAmount | currency:'XAF':'symbol':'1.0-0' }}</div>
+          <div class="main-label">Paiements en attente</div>
+          <div class="sub-metrics">
+            <div class="sub-metric">
+              <span class="sub-label">En retard:</span>
+              <span class="sub-value text-red-600">{{ overduePayments }}</span>
+            </div>
+            <div class="sub-metric">
+              <span class="sub-label">À venir:</span>
+              <span class="sub-value text-blue-600">{{ upcomingPayments }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Taux de recouvrement -->
+      <div class="financial-card collection-card">
+        <div class="card-header">
+          <div class="card-icon collection-icon">
+            <youpez-ibm-icon iconName="chart--pie" iconSize="32"></youpez-ibm-icon>
+          </div>
+          <div class="collection-ring">
+            <svg class="ring-chart" viewBox="0 0 36 36">
+              <path class="ring-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+              <path class="ring-progress" [attr.stroke-dasharray]="getCollectionDashArray()" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+            </svg>
+            <div class="ring-text">{{ collectionRate }}%</div>
+          </div>
+        </div>
+        <div class="card-content">
+          <div class="main-value">{{ collectionRate }}%</div>
+          <div class="main-label">Taux de recouvrement</div>
+          <div class="sub-metrics">
+            <div class="sub-metric">
+              <span class="sub-label">Collecté:</span>
+              <span class="sub-value text-green-600">{{ collectedAmount | currency:'XAF':'symbol':'1.0-0' }}</span>
+            </div>
+            <div class="sub-metric">
+              <span class="sub-label">Attendu:</span>
+              <span class="sub-value">{{ expectedAmount | currency:'XAF':'symbol':'1.0-0' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charges et dépenses -->
+      <div class="financial-card expenses-card">
+        <div class="card-header">
+          <div class="card-icon expenses-icon">
+            <youpez-ibm-icon iconName="subtract" iconSize="32"></youpez-ibm-icon>
+          </div>
+          <div class="card-trend" [ngClass]="getExpensesTrendClass()">
+            <span class="trend-value">{{ expensesGrowth > 0 ? '+' : '' }}{{ expensesGrowth }}%</span>
+            <youpez-ibm-icon [iconName]="expensesGrowth > 0 ? 'trending--up' : 'trending--down'" iconSize="20"></youpez-ibm-icon>
+          </div>
+        </div>
+        <div class="card-content">
+          <div class="main-value">{{ totalExpenses | currency:'XAF':'symbol':'1.0-0' }}</div>
+          <div class="main-label">Charges totales</div>
+          <div class="sub-metrics">
+            <div class="sub-metric">
+              <span class="sub-label">Maintenance:</span>
+              <span class="sub-value">{{ maintenanceExpenses | currency:'XAF':'symbol':'1.0-0' }}</span>
+            </div>
+            <div class="sub-metric">
+              <span class="sub-label">Autres:</span>
+              <span class="sub-value">{{ otherExpenses | currency:'XAF':'symbol':'1.0-0' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Graphiques et analyses -->
+  <div class="financial-charts">
+    <div class="charts-grid">
+      <!-- Évolution des revenus -->
+      <div class="chart-card revenue-evolution">
+        <div class="chart-header">
+          <h3 class="chart-title">Évolution des revenus</h3>
+          <div class="chart-controls">
+            <ibm-content-switcher (selected)="onRevenueChartPeriodChange($event)">
+              <ibm-content-switcher-option value="month" [selected]="revenueChartPeriod === 'month'">
+                Mois
+              </ibm-content-switcher-option>
+              <ibm-content-switcher-option value="quarter" [selected]="revenueChartPeriod === 'quarter'">
+                Trimestre
+              </ibm-content-switcher-option>
+              <ibm-content-switcher-option value="year" [selected]="revenueChartPeriod === 'year'">
+                Année
+              </ibm-content-switcher-option>
+            </ibm-content-switcher>
+          </div>
+        </div>
+        <div class="chart-content">
+          <app-revenue-chart
+            [data]="revenueChartData"
+            [period]="revenueChartPeriod"
+            [loading]="revenueChartLoading">
+          </app-revenue-chart>
+        </div>
+      </div>
+
+      <!-- Répartition des paiements -->
+      <div class="chart-card payments-breakdown">
+        <div class="chart-header">
+          <h3 class="chart-title">Répartition des paiements</h3>
+        </div>
+        <div class="chart-content">
+          <app-payments-pie-chart
+            [data]="paymentsBreakdownData"
+            [loading]="paymentsChartLoading">
+          </app-payments-pie-chart>
+        </div>
+      </div>
+
+      <!-- Performance par propriété -->
+      <div class="chart-card property-performance">
+        <div class="chart-header">
+          <h3 class="chart-title">Performance par propriété</h3>
+          <button ibmButton="ghost" size="sm" (click)="viewDetailedPerformance()">
+            Voir détails
+            <youpez-ibm-icon iconName="arrow--right" iconSize="16" class="ml-2"></youpez-ibm-icon>
+          </button>
+        </div>
+        <div class="chart-content">
+          <app-property-performance-chart
+            [data]="propertyPerformanceData"
+            [loading]="propertyChartLoading">
+          </app-property-performance-chart>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Transactions récentes -->
+  <div class="recent-transactions">
+    <div class="transactions-header">
+      <h3 class="section-title">Transactions récentes</h3>
+      <button ibmButton="tertiary" size="sm" (click)="viewAllTransactions()">
+        Voir tout
+        <youpez-ibm-icon iconName="arrow--right" iconSize="16" class="ml-2"></youpez-ibm-icon>
+      </button>
+    </div>
+    
+    <div class="transactions-content">
+      <app-financial-transactions-table
+        [transactions]="recentTransactions"
+        [loading]="transactionsLoading"
+        [compact]="true"
+        (transactionClicked)="onTransactionClick($event)">
+      </app-financial-transactions-table>
+    </div>
+  </div>
+
+  <!-- Alertes financières -->
+  <div class="financial-alerts" *ngIf="financialAlerts.length > 0">
+    <div class="alerts-header">
+      <h3 class="section-title">Alertes financières</h3>
+    </div>
+    
+    <div class="alerts-content">
+      <div *ngFor="let alert of financialAlerts" 
+           class="alert-item" 
+           [ngClass]="getAlertClass(alert)"
+           (click)="onAlertClick(alert)">
+        <div class="alert-icon">
+          <youpez-ibm-icon [iconName]="getAlertIcon(alert)" iconSize="20"></youpez-ibm-icon>
+        </div>
+        <div class="alert-content">
+          <div class="alert-title">{{ alert.title }}</div>
+          <div class="alert-message">{{ alert.message }}</div>
+        </div>
+        <div class="alert-action">
+          <youpez-ibm-icon iconName="arrow--right" iconSize="16"></youpez-ibm-icon>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -16,7 +16,7 @@ import { UtilsString } from 'src/app/shared/utils';
 export class RoomFilteredFoundComponent {
     @Select(SearchState.selectStateLoading) loadingRoom$:Observable<string>;
     roomFound:SearchPropertyModel[] = [];
-    @Select(SearchState.setlectStateFilteredProperty) roomFoundFiltered$:Observable<SearchPropertyModel[]>;
+    @Select(SearchState.selectStateFilteredProperty) roomFoundFiltered$:Observable<SearchPropertyModel[]>;
     public model = new TableModel();
     allRoomData=[]
     currentDataToShow=[]

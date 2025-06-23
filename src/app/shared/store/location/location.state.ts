@@ -47,8 +47,8 @@ export class LocationState{
         return state.initLoadingState
     }
 
-    @Selector() 
-    static setlectStateLocations(state:LocationStateModel)
+    @Selector()
+    static selectStateLocations(state:LocationStateModel)
     {
         return state.locations
     }

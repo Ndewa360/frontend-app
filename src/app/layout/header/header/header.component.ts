@@ -1,47 +1,80 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core'
 import { Observable } from 'rxjs'
+import { takeUntil } from 'rxjs/operators'
 import {Router} from "@angular/router"
 import { UserProfileAction, UserProfileModel, UserProfileState } from 'src/app/shared/store'
 import { Actions,Select, ofActionCompleted, ofActionErrored, ofActionSuccessful, Store } from '@ngxs/store'
+import { BaseComponent } from 'src/app/shared/utils/base-component'
+import { NotificationManagerService } from 'src/app/shared/services/notification-manager.service'
 
 @Component({
   selector: 'app-main-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent extends BaseComponent implements OnInit {
 
   @Select(UserProfileState.selectStateUserProfile) userProfil$:Observable<UserProfileModel>
 
   @Output() menuClick: EventEmitter<boolean> = new EventEmitter()
   @Output() itemClick: EventEmitter<any> = new EventEmitter()
-  isAdmin=false;
 
-  constructor( 
+  isAdmin = false;
+  showNotifications = false;
+  unreadNotificationsCount = 0;
+
+  constructor(
     private _store:Store,
     private _ngxsAction:Actions,
     private router: Router,
+    private notificationManager: NotificationManagerService
   ) {
+    super();
   }
 
   ngOnInit(): void {
-    this.userProfil$.subscribe((user)=>{if(user) this.isAdmin=user.email=='contact@ndewa-360.com'})
-    this._ngxsAction.pipe(ofActionSuccessful(UserProfileAction.LogoutUserProfile)).subscribe((value)=>{
-      this.router.navigate(['/auth/signin']);
-      }
-    );
+    // Surveiller le profil utilisateur
+    this.userProfil$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((user) => {
+        if (user) this.isAdmin = user.email === 'contact@ndewa-360.com';
+      });
+
+    // Surveiller les actions de déconnexion
+    this._ngxsAction
+      .pipe(
+        ofActionSuccessful(UserProfileAction.LogoutUserProfile),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(() => {
+        this.router.navigate(['/auth/signin']);
+      });
+
+    // Surveiller le nombre de notifications non lues
+    this.notificationManager.getUnreadCount()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(count => {
+        this.unreadNotificationsCount = count;
+      });
   }
 
-  onSideBarToggle($event) {
-    this.menuClick.next(true)
+  onSideBarToggle($event: any): void {
+    this.menuClick.next(true);
   }
 
-  onItemClick(event) {
-    this.itemClick.next(event)
+  onItemClick(event: any): void {
+    this.itemClick.next(event);
   }
 
-  logout()
-  {
-    this._store.dispatch(new UserProfileAction.LogoutUserProfile(true))
+  toggleNotifications(): void {
+    this.showNotifications = !this.showNotifications;
+  }
+
+  closeNotifications(): void {
+    this.showNotifications = false;
+  }
+
+  logout(): void {
+    this._store.dispatch(new UserProfileAction.LogoutUserProfile(true));
   }
 }

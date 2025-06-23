@@ -1,0 +1,240 @@
+// Page de recherche moderne avec Tailwind CSS
+// Styles personnalisés pour améliorer l'intégration avec les composants existants
+
+// Amélioration du composant room-filtered-found existant
+room-filtered-found {
+  ::ng-deep {
+    // Container principal des cartes
+    .app-card-row-room-container {
+      @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6;
+    }
+    
+    // Cartes individuelles
+    .app-card-room {
+      @apply bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-gray-300 hover:-translate-y-1;
+      
+      .app-card__content__alt {
+        @apply p-6;
+      }
+      
+      // Section image
+      .app-bg-decorative {
+        @apply relative rounded-t-xl overflow-hidden mb-4;
+        height: 200px;
+        
+        slider-component-galery {
+          @apply block w-full h-full object-cover;
+        }
+        
+        // Badge de statut sur l'image
+        &::before {
+          content: 'Disponible';
+          @apply absolute top-3 left-3 px-2 py-1 bg-green-500 text-white text-xs font-medium rounded-full z-10;
+        }
+      }
+      
+      // Titre et prix
+      .grid.grid-cols-10 {
+        @apply flex items-center justify-between mb-4;
+        
+        .app-expressive-heading-02 {
+          @apply text-lg font-semibold text-gray-900 flex-1 truncate;
+        }
+        
+        .app-expressive-heading-01 {
+          @apply text-xl font-bold text-blue-600;
+        }
+      }
+      
+      // Spécifications et localisation
+      .grid.grid-cols-10.mt-4 {
+        @apply flex items-center justify-between;
+        
+        .app-label-01 {
+          @apply flex items-center space-x-3 text-gray-600;
+          
+          .spec-home {
+            @apply text-gray-500 text-sm;
+          }
+        }
+        
+        // Localisation
+        .text-muted {
+          @apply flex items-center text-gray-500 text-sm;
+          
+          .location-zone {
+            @apply text-gray-600 font-medium;
+          }
+        }
+      }
+      
+      // Bouton d'expansion d'image
+      .btn-text-edit {
+        @apply bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg transition-colors duration-200 shadow-sm;
+      }
+      
+      // Amélioration des icônes et badges
+      .app-label-01 {
+        @apply flex items-center space-x-2;
+        
+        youpez-ibm-icon {
+          @apply text-gray-400;
+        }
+      }
+    }
+    
+    // Pagination
+    .w-full.flex.mt-2.justify-end.mb-2 {
+      @apply mt-8 flex justify-center;
+      
+      cds-pagination-nav {
+        ::ng-deep {
+          .bx--pagination-nav {
+            @apply flex items-center space-x-2;
+          }
+          
+          .bx--pagination-nav__page {
+            @apply px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors;
+            
+            &.bx--pagination-nav__page--active {
+              @apply bg-blue-600 text-white border-blue-600;
+            }
+          }
+          
+          .bx--pagination-nav__page--direction {
+            @apply flex items-center justify-center w-10 h-10;
+          }
+        }
+      }
+    }
+    
+    // Message "aucun résultat"
+    .no-data-loader {
+      @apply flex flex-col items-center justify-center py-16 text-center;
+      
+      youpez-loader {
+        @apply mb-4;
+      }
+      
+      // Ajout d'un message personnalisé
+      &::after {
+        content: 'Aucun logement ne correspond à vos critères';
+        @apply text-gray-500 text-lg font-medium mt-4;
+      }
+    }
+  }
+}
+
+// Animations personnalisées
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.app-card-room {
+  animation: slideInUp 0.3s ease-out;
+}
+
+// Responsive design pour mobile
+@media (max-width: 768px) {
+  room-filtered-found {
+    ::ng-deep {
+      .app-card-row-room-container {
+        @apply grid-cols-1 gap-4 p-4;
+      }
+      
+      .app-card-room {
+        .app-card__content__alt {
+          @apply p-4;
+        }
+        
+        .app-bg-decorative {
+          height: 160px;
+        }
+        
+        .grid.grid-cols-10 {
+          @apply flex-col items-start space-y-2;
+          
+          .app-expressive-heading-02 {
+            @apply text-base;
+          }
+          
+          .app-expressive-heading-01 {
+            @apply text-lg;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Mode sombre
+@media (prefers-color-scheme: dark) {
+  room-filtered-found {
+    ::ng-deep {
+      .app-card-room {
+        @apply bg-gray-800 border-gray-700;
+        
+        .app-expressive-heading-02 {
+          @apply text-white;
+        }
+        
+        .app-expressive-heading-01 {
+          @apply text-blue-400;
+        }
+        
+        .location-zone {
+          @apply text-gray-300;
+        }
+        
+        .spec-home {
+          @apply text-gray-400;
+        }
+        
+        .btn-text-edit {
+          @apply bg-blue-500 hover:bg-blue-600;
+        }
+      }
+    }
+  }
+}
+
+// Styles pour les filtres rapides
+.filter-checkbox {
+  @apply w-5 h-5 border-2 border-gray-300 rounded transition-colors;
+  
+  &.checked {
+    @apply bg-blue-600 border-blue-600;
+    
+    &::after {
+      content: '✓';
+      @apply text-white text-xs flex items-center justify-center;
+    }
+  }
+}
+
+// Amélioration des transitions
+* {
+  transition: all 0.2s ease;
+}
+
+// Styles pour les états de chargement
+.loading-skeleton {
+  @apply animate-pulse bg-gray-200 rounded;
+}

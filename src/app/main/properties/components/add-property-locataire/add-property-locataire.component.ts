@@ -7,6 +7,9 @@ import { NotificationService } from 'carbon-components-angular';
 import { RoomType, RoomAction, LocataireAction, PropertyModel, RoomState, RoomModel } from 'src/app/shared/store';
 import { FormUtils, UtilsString } from 'src/app/shared/utils';
 import { AddPropertyRoomComponent } from '../add-property-room/add-property-room.component';
+import { BaseComponent } from 'src/app/shared/utils/base-component';
+import { phoneValidator } from 'src/app/shared/validators/phone-validator';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-add-property-locataire',
@@ -14,7 +17,7 @@ import { AddPropertyRoomComponent } from '../add-property-room/add-property-room
   styleUrls: ['./add-property-locataire.component.scss'],
   encapsulation:ViewEncapsulation.None
 })
-export class AddPropertyLocataireComponent implements OnInit {
+export class AddPropertyLocataireComponent extends BaseComponent implements OnInit {
 
   public formGroup: FormGroup;
   layout: string = 'horizontal'
@@ -31,41 +34,53 @@ export class AddPropertyLocataireComponent implements OnInit {
     private _store:Store,
     @Inject(MAT_DIALOG_DATA) public data:{property:PropertyModel},
     private _ngxsAction:Actions
-) { }
+) {
+    super();
+  }
 
   ngOnInit(): void {
-    this._store.select(RoomState.selectStateRoomByPropertyId(this.data.property._id)).subscribe((roomList:RoomModel[])=>{
-      this.roomList = roomList.map((value)=>({content:value.code,valueType:value._id}))
-    });
+    // Utilisation de takeUntil pour éviter les fuites mémoire
+    this._store.select(RoomState.selectStateRoomByPropertyId(this.data.property._id))
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((roomList:RoomModel[])=>{
+        this.roomList = roomList.map((value)=>({content:value.code,valueType:value._id}))
+      });
+
     this.formGroup = this.formBuilder.group({
       fullName:[null,[Validators.required]],
       email: [null, [Validators.email]],
-      phoneNumber:[null, [Validators.required, Validators.pattern('^(\\+\\d{1,3}\\s)?(\\d{2,3}[\\s.-]?){4}$')]],
+      phoneNumber:[null, [Validators.required, phoneValidator('CM')]], // Nouvelle validation
       roomId:[null],
       description:[null],
       confirm:[false],
       fullNameRef:[null,[]],
-      phoneNumberRef:[null, [Validators.pattern('^(\\+\\d{1,3}\\s)?(\\d{2,3}[\\s.-]?){4}$')]],
+      phoneNumberRef:[null, [phoneValidator('CM')]], // Nouvelle validation
       emailRef: [null, [Validators.email]],
-
     })
     this.roomListType= Object.values(RoomType).map((value)=>({content:UtilsString.getStringOfRoomType(value), valueType:value, selected:value==RoomType.ROOM}));
-    this._ngxsAction.pipe(ofActionSuccessful(LocataireAction.CreateLocataire)).subscribe((value)=>{
-      // Navigate to the parent
-      this.waittingResponse=false;
-      this.onClose()    
-      }
-    );
-    this._ngxsAction.pipe(ofActionCompleted(LocataireAction.CreateLocataire)).subscribe(
-      (value) => {
-        this.waittingResponse=false;        
-      }
-    )
 
-    this._ngxsAction.pipe(ofActionErrored(LocataireAction.CreateLocataire)).subscribe(
-      (value) => {
-        this.waittingResponse=false;
-      })
+    // Utilisation de takeUntil pour éviter les fuites mémoire
+    this._ngxsAction.pipe(
+      ofActionSuccessful(LocataireAction.CreateLocataire),
+      takeUntil(this.destroy$)
+    ).subscribe((value)=>{
+      this.waittingResponse=false;
+      this.onClose()
+    });
+
+    this._ngxsAction.pipe(
+      ofActionCompleted(LocataireAction.CreateLocataire),
+      takeUntil(this.destroy$)
+    ).subscribe((value) => {
+      this.waittingResponse=false;
+    });
+
+    this._ngxsAction.pipe(
+      ofActionErrored(LocataireAction.CreateLocataire),
+      takeUntil(this.destroy$)
+    ).subscribe((value) => {
+      this.waittingResponse=false;
+    });
   }
 
   onClose() {

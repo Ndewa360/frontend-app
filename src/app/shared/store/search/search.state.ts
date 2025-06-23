@@ -75,14 +75,14 @@ export class SearchState{
         return state.initLoadingState
     }
 
-    @Selector() 
-    static setlectStateSearchs(state:SearchStateModel)
+    @Selector()
+    static selectStateSearchs(state:SearchStateModel)
     {
         return state.searchProperties
     }
 
-    @Selector() 
-    static setlectStateFilteredProperty(state:SearchStateModel)
+    @Selector()
+    static selectStateFilteredProperty(state:SearchStateModel)
     {
         return state.filteredSearchedProperties
     }

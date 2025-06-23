@@ -49,8 +49,8 @@ export class SouscriptionPeriodState{
         return state.initLoadingState
     }
 
-    @Selector() 
-    static setlectStateSouscriptionPeriods(state:SouscriptionPeriodStateModel)
+    @Selector()
+    static selectStateSouscriptionPeriods(state:SouscriptionPeriodStateModel)
     {
         return state.souscriptionPeriod
     }

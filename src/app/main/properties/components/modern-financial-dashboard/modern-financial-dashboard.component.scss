@@ -1,0 +1,328 @@
+// Import des styles Carbon
+@import '../../../../../assets/styles/carbon-utilities.scss';
+
+.modern-financial-dashboard {
+  min-height: 100vh;
+  background-color: #ffffff; // Fond blanc forcé pour le thème clair
+  
+  // En-tête du dashboard
+  .dashboard-header {
+    .header-content {
+      h2 {
+        background: linear-gradient(135deg, var(--carbon-primary-60), var(--carbon-primary-40));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+    }
+
+    .header-controls {
+      .control-group {
+        label {
+          font-weight: 500;
+        }
+      }
+    }
+  }
+
+  // Métriques principales
+  .financial-metrics {
+    .metric-card {
+      border-radius: 0; // Carbon style
+      border-left: 4px solid var(--carbon-primary-60);
+      
+      &:hover {
+        border-left-color: var(--carbon-primary-70);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      }
+
+      .metric-header {
+        .metric-icon {
+          transition: all 0.3s ease;
+          
+          svg {
+            transition: transform 0.3s ease;
+          }
+        }
+
+        .metric-change {
+          font-size: 0.875rem;
+          
+          svg {
+            transition: transform 0.3s ease;
+          }
+        }
+      }
+
+      .metric-content {
+        .metric-value {
+          font-family: 'IBM Plex Mono', monospace;
+          letter-spacing: -0.02em;
+        }
+
+        .metric-label {
+          font-weight: 500;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+        }
+      }
+
+      &:hover {
+        .metric-icon svg {
+          transform: scale(1.1);
+        }
+
+        .metric-change svg {
+          transform: translateX(2px);
+        }
+      }
+    }
+  }
+
+  // Graphiques
+  .financial-charts {
+    .chart-card {
+      border-radius: 0; // Carbon style
+      
+      .chart-header {
+        border-bottom: 1px solid var(--carbon-border-subtle-01);
+        padding-bottom: 1rem;
+        margin-bottom: 1.5rem;
+
+        h3 {
+          color: var(--carbon-text-primary);
+          font-weight: 600;
+        }
+
+        p {
+          color: var(--carbon-text-secondary);
+          font-size: 0.875rem;
+        }
+      }
+
+      .chart-content {
+        // Barres de revenus
+        .revenue-bars {
+          .revenue-bar-item {
+            .progress-bar {
+              background-color: var(--carbon-layer-02);
+              
+              .progress-fill {
+                background: linear-gradient(90deg, var(--carbon-primary-60), var(--carbon-primary-40));
+                transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+              }
+            }
+          }
+        }
+
+        // Anneaux de collection
+        .collection-rings {
+          .collection-item {
+            .ring-container {
+              .ring-chart {
+                .ring-bg {
+                  stroke: var(--carbon-gray-20);
+                  stroke-width: 3;
+                }
+
+                .ring-progress {
+                  stroke-width: 3;
+                  stroke-linecap: round;
+                  transition: stroke-dasharray 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+                }
+              }
+
+              .ring-text {
+                font-family: 'IBM Plex Mono', monospace;
+                font-weight: 700;
+              }
+            }
+
+            .item-info {
+              .text-sm {
+                font-weight: 500;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Résumé des propriétés
+  .properties-summary {
+    .summary-header {
+      h3 {
+        color: var(--carbon-text-primary);
+        font-weight: 600;
+      }
+
+      p {
+        color: var(--carbon-text-secondary);
+      }
+    }
+
+    .properties-grid {
+      .property-card {
+        border-radius: 0; // Carbon style
+        border-top: 3px solid var(--carbon-primary-60);
+        transition: all 0.3s ease;
+        
+        &:hover {
+          border-top-color: var(--carbon-primary-70);
+          box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+          transform: translateY(-4px) scale(1.02);
+        }
+
+        .property-header {
+          h4 {
+            color: var(--carbon-text-primary);
+            font-weight: 600;
+            margin-bottom: 1rem;
+          }
+
+          .property-metrics {
+            .metric {
+              text-align: center;
+              
+              .text-xl {
+                font-family: 'IBM Plex Mono', monospace;
+                font-weight: 700;
+                letter-spacing: -0.02em;
+              }
+
+              .text-xs {
+                font-weight: 500;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+              }
+            }
+          }
+        }
+
+        .property-progress {
+          .progress-bar {
+            background-color: var(--carbon-layer-02);
+            
+            .progress-fill {
+              transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+          }
+        }
+
+        .property-actions {
+          button {
+            transition: all 0.3s ease;
+            
+            &:hover {
+              transform: translateY(-1px);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // État de chargement
+  .loading-overlay {
+    backdrop-filter: blur(4px);
+    
+    .loading-content {
+      border-radius: 0; // Carbon style
+      border: 1px solid var(--carbon-border-subtle-01);
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  // Animations
+  @keyframes slideInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .metric-card,
+  .chart-card,
+  .property-card {
+    animation: slideInUp 0.6s ease-out;
+  }
+
+  .financial-metrics .metric-card {
+    &:nth-child(1) { animation-delay: 0.1s; }
+    &:nth-child(2) { animation-delay: 0.2s; }
+    &:nth-child(3) { animation-delay: 0.3s; }
+    &:nth-child(4) { animation-delay: 0.4s; }
+  }
+
+  .financial-charts .chart-card {
+    &:nth-child(1) { animation-delay: 0.5s; }
+    &:nth-child(2) { animation-delay: 0.6s; }
+  }
+
+  .properties-grid .property-card {
+    animation: fadeIn 0.8s ease-out;
+    
+    &:nth-child(1) { animation-delay: 0.7s; }
+    &:nth-child(2) { animation-delay: 0.8s; }
+    &:nth-child(3) { animation-delay: 0.9s; }
+  }
+
+  // Responsive design
+  @media (max-width: 768px) {
+    padding: 1rem;
+
+    .dashboard-header {
+      .header-controls {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+
+        .control-group {
+          width: 100%;
+        }
+      }
+    }
+
+    .financial-metrics {
+      .metric-card {
+        padding: 1rem;
+      }
+    }
+
+    .financial-charts {
+      .chart-card {
+        padding: 1rem;
+      }
+    }
+
+    .properties-summary {
+      .properties-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+
+  // Thème clair forcé pour le dashboard
+  background-color: #ffffff !important; // Fond blanc forcé
+
+  .metric-card,
+  .chart-card,
+  .property-card {
+    background-color: #ffffff !important; // Cartes blanches
+    border-color: #e0e0e0 !important; // Bordures claires
+  }
+}

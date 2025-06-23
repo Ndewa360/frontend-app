@@ -1,0 +1,249 @@
+// IBM Carbon Design System inspired theme
+// Colors based on Carbon Design System v11
+
+:root {
+  // Primary colors (Custom Brand - rgb(204, 140, 10))
+  --carbon-primary-10: #fef9e6;
+  --carbon-primary-20: #fdf0b3;
+  --carbon-primary-30: #fce680;
+  --carbon-primary-40: #fadc4d;
+  --carbon-primary-50: #f9d21a;
+  --carbon-primary-60: rgb(204, 140, 10); // Couleur principale
+  --carbon-primary-70: #b8a009;
+  --carbon-primary-80: #8c7807;
+  --carbon-primary-90: #605005;
+  --carbon-primary-100: #342803;
+
+  // Blue colors (secondary)
+  --carbon-blue-10: #f4f9ff;
+  --carbon-blue-20: #d0e2ff;
+  --carbon-blue-30: #a6c8ff;
+  --carbon-blue-40: #78a9ff;
+  --carbon-blue-50: #4589ff;
+  --carbon-blue-60: #0f62fe;
+  --carbon-blue-70: #0043ce;
+  --carbon-blue-80: #002d9c;
+  --carbon-blue-90: #001d6c;
+  --carbon-blue-100: #001141;
+
+  // Gray scale
+  --carbon-gray-10: #f4f4f4;
+  --carbon-gray-20: #e0e0e0;
+  --carbon-gray-30: #c6c6c6;
+  --carbon-gray-40: #a8a8a8;
+  --carbon-gray-50: #8d8d8d;
+  --carbon-gray-60: #6f6f6f;
+  --carbon-gray-70: #525252;
+  --carbon-gray-80: #393939;
+  --carbon-gray-90: #262626;
+  --carbon-gray-100: #161616;
+
+  // Support colors
+  --carbon-red-50: #fa4d56;
+  --carbon-red-60: #da1e28;
+  --carbon-red-70: #a2191f;
+  
+  --carbon-green-50: #24a148;
+  --carbon-green-60: #198038;
+  --carbon-green-70: #0e6027;
+  
+  --carbon-yellow-50: #f1c21b;
+  --carbon-yellow-60: #d2a106;
+  --carbon-yellow-70: #b28600;
+  
+  --carbon-orange-50: #ff832b;
+  --carbon-orange-60: #eb6200;
+  --carbon-orange-70: #cc5500;
+  
+  --carbon-purple-50: #8a3ffc;
+  --carbon-purple-60: #6929c4;
+  --carbon-purple-70: #491d8b;
+  
+  --carbon-cyan-50: #1192e8;
+  --carbon-cyan-60: #0072c3;
+  --carbon-cyan-70: #00539a;
+
+  // Semantic colors - Thème clair forcé
+  --carbon-background: #ffffff;
+  --carbon-background-hover: #f8f9fa;
+  --carbon-background-active: #e9ecef;
+  --carbon-background-selected: #f0f0f0;
+  --carbon-background-inverse: #393939;
+
+  --carbon-layer-01: #ffffff; // Blanc pur pour le fond principal
+  --carbon-layer-02: #f8f9fa; // Gris très clair pour les éléments surélevés
+  --carbon-layer-03: #f0f0f0; // Gris clair pour les conteneurs
+  --carbon-layer-hover-01: #e0e0e0;
+  --carbon-layer-hover-02: #f4f4f4;
+  --carbon-layer-hover-03: #e0e0e0;
+  --carbon-layer-active-01: #c6c6c6;
+  --carbon-layer-active-02: #e0e0e0;
+  --carbon-layer-active-03: #c6c6c6;
+  
+  --carbon-field-01: #f4f4f4;
+  --carbon-field-02: #ffffff;
+  --carbon-field-03: #f4f4f4;
+  --carbon-field-hover-01: #e0e0e0;
+  --carbon-field-hover-02: #f4f4f4;
+  --carbon-field-hover-03: #e0e0e0;
+  
+  --carbon-border-interactive: var(--carbon-primary-60);
+  --carbon-border-subtle-00: #e0e0e0;
+  --carbon-border-subtle-01: #c6c6c6;
+  --carbon-border-subtle-02: #e0e0e0;
+  --carbon-border-subtle-03: #c6c6c6;
+  --carbon-border-strong-01: #8d8d8d;
+  --carbon-border-strong-02: #6f6f6f;
+  --carbon-border-strong-03: #8d8d8d;
+  --carbon-border-inverse: #393939;
+  
+  --carbon-text-primary: #161616;
+  --carbon-text-secondary: #525252;
+  --carbon-text-placeholder: #a8a8a8;
+  --carbon-text-helper: #6f6f6f;
+  --carbon-text-error: #da1e28;
+  --carbon-text-inverse: #ffffff;
+  --carbon-text-on-color: #ffffff;
+  --carbon-text-on-color-disabled: #8d8d8d;
+  
+  --carbon-link-primary: var(--carbon-primary-60);
+  --carbon-link-primary-hover: var(--carbon-primary-70);
+  --carbon-link-secondary: var(--carbon-primary-70);
+  --carbon-link-visited: var(--carbon-primary-80);
+  --carbon-link-inverse: var(--carbon-primary-40);
+  
+  --carbon-icon-primary: #161616;
+  --carbon-icon-secondary: #525252;
+  --carbon-icon-on-color: #ffffff;
+  --carbon-icon-on-color-disabled: #8d8d8d;
+  --carbon-icon-interactive: var(--carbon-primary-60);
+  --carbon-icon-inverse: #ffffff;
+  
+  --carbon-button-primary: var(--carbon-primary-60);
+  --carbon-button-primary-hover: var(--carbon-primary-70);
+  --carbon-button-primary-active: var(--carbon-primary-80);
+  --carbon-button-secondary: #393939;
+  --carbon-button-secondary-hover: #4c4c4c;
+  --carbon-button-secondary-active: #6f6f6f;
+  --carbon-button-tertiary: var(--carbon-primary-60);
+  --carbon-button-tertiary-hover: var(--carbon-primary-70);
+  --carbon-button-tertiary-active: var(--carbon-primary-80);
+  --carbon-button-danger-primary: #da1e28;
+  --carbon-button-danger-secondary: #da1e28;
+  --carbon-button-danger-hover: #b81921;
+  --carbon-button-danger-active: #750e13;
+  
+  --carbon-support-error: #da1e28;
+  --carbon-support-success: #24a148;
+  --carbon-support-warning: #f1c21b;
+  --carbon-support-info: #0043ce;
+  --carbon-support-error-inverse: #fa4d56;
+  --carbon-support-success-inverse: #42be65;
+  --carbon-support-warning-inverse: #f1c21b;
+  --carbon-support-info-inverse: #4589ff;
+  
+  // Focus
+  --carbon-focus: var(--carbon-primary-60);
+  --carbon-focus-inset: #ffffff;
+  --carbon-focus-inverse: #ffffff;
+  
+  // Interactive states
+  --carbon-interactive-01: var(--carbon-primary-60);
+  --carbon-interactive-02: #393939;
+  --carbon-interactive-03: var(--carbon-primary-60);
+  --carbon-interactive-04: var(--carbon-primary-70);
+  
+  // Hover states
+  --carbon-hover-primary: #0043ce;
+  --carbon-hover-primary-text: #0043ce;
+  --carbon-hover-secondary: #4c4c4c;
+  --carbon-hover-tertiary: #0043ce;
+  --carbon-hover-ui: #e0e0e0;
+  --carbon-hover-light-ui: #f4f4f4;
+  --carbon-hover-selected-ui: #cacaca;
+  --carbon-hover-danger: #b81921;
+  --carbon-hover-row: #e0e0e0;
+  
+  // Active states
+  --carbon-active-primary: #002d9c;
+  --carbon-active-secondary: #6f6f6f;
+  --carbon-active-tertiary: #002d9c;
+  --carbon-active-ui: #c6c6c6;
+  --carbon-active-light-ui: #e0e0e0;
+  --carbon-active-danger: #750e13;
+  
+  // Selected states
+  --carbon-selected-ui: #e0e0e0;
+  --carbon-selected-light-ui: #f4f4f4;
+  
+  // Highlight
+  --carbon-highlight: #d0e2ff;
+  
+  // Skeleton
+  --carbon-skeleton-01: #e0e0e0;
+  --carbon-skeleton-02: #c6c6c6;
+  
+  // Spacing (in rem)
+  --carbon-spacing-01: 0.125rem;  // 2px
+  --carbon-spacing-02: 0.25rem;   // 4px
+  --carbon-spacing-03: 0.5rem;    // 8px
+  --carbon-spacing-04: 0.75rem;   // 12px
+  --carbon-spacing-05: 1rem;      // 16px
+  --carbon-spacing-06: 1.5rem;    // 24px
+  --carbon-spacing-07: 2rem;      // 32px
+  --carbon-spacing-08: 2.5rem;    // 40px
+  --carbon-spacing-09: 3rem;      // 48px
+  --carbon-spacing-10: 4rem;      // 64px
+  --carbon-spacing-11: 5rem;      // 80px
+  --carbon-spacing-12: 6rem;      // 96px
+  --carbon-spacing-13: 10rem;     // 160px
+  
+  // Layout
+  --carbon-layout-01: 1rem;       // 16px
+  --carbon-layout-02: 1.5rem;     // 24px
+  --carbon-layout-03: 2rem;       // 32px
+  --carbon-layout-04: 3rem;       // 48px
+  --carbon-layout-05: 4rem;       // 64px
+  --carbon-layout-06: 6rem;       // 96px
+  --carbon-layout-07: 10rem;      // 160px
+  
+  // Fluid spacing
+  --carbon-fluid-spacing-01: 0;
+  --carbon-fluid-spacing-02: 2vw;
+  --carbon-fluid-spacing-03: 5vw;
+  --carbon-fluid-spacing-04: 10vw;
+  
+  // Container sizes
+  --carbon-container-01: 1.5rem;  // 24px
+  --carbon-container-02: 2rem;    // 32px
+  --carbon-container-03: 2.5rem;  // 40px
+  --carbon-container-04: 3rem;    // 48px
+  --carbon-container-05: 4rem;    // 64px
+  
+  // Icon sizes
+  --carbon-icon-size-01: 1rem;    // 16px
+  --carbon-icon-size-02: 1.25rem; // 20px
+  
+  // Typography
+  --carbon-productive-heading-01: 0.875rem; // 14px
+  --carbon-productive-heading-02: 1rem;     // 16px
+  --carbon-productive-heading-03: 1.25rem;  // 20px
+  --carbon-productive-heading-04: 1.75rem;  // 28px
+  --carbon-productive-heading-05: 2rem;     // 32px
+  --carbon-productive-heading-06: 2.625rem; // 42px
+  --carbon-productive-heading-07: 3.375rem; // 54px
+  
+  --carbon-body-compact-01: 0.875rem; // 14px
+  --carbon-body-compact-02: 1rem;     // 16px
+  --carbon-body-01: 0.875rem;         // 14px
+  --carbon-body-02: 1rem;             // 16px
+  
+  --carbon-code-01: 0.75rem;          // 12px
+  --carbon-code-02: 0.875rem;         // 14px
+  
+  --carbon-label-01: 0.75rem;         // 12px
+  --carbon-label-02: 0.875rem;        // 14px
+  
+  --carbon-helper-text-01: 0.75rem;   // 12px
+  --carbon-helper-text-02: 0.875rem;  // 14px
+}

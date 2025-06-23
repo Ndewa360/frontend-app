@@ -1,0 +1,66 @@
+.smart-notifications {
+  @apply fixed top-0 right-0 h-full w-96 bg-white shadow-2xl transform translate-x-full transition-transform duration-300 z-50;
+}
+
+.smart-notifications.open {
+  @apply translate-x-0;
+}
+
+.notifications-overlay {
+  @apply fixed inset-0 bg-black bg-opacity-25 z-40;
+}
+
+.notification-item {
+  @apply flex items-start p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors relative;
+}
+
+.notification-item.unread {
+  @apply bg-blue-50 border-l-4 border-l-blue-500;
+}
+
+.notification-item.critical {
+  @apply border-l-red-500;
+}
+
+.notification-item.high {
+  @apply border-l-orange-500;
+}
+
+.notification-item.medium {
+  @apply border-l-yellow-500;
+}
+
+.notification-item.low {
+  @apply border-l-green-500;
+}
+
+.priority-indicator {
+  @apply absolute left-0 top-0 bottom-0 w-1;
+}
+
+.notification-icon {
+  @apply mr-3 mt-1;
+}
+
+.notification-actions {
+  @apply flex flex-col space-y-1 ml-2;
+}
+
+.notifications-filters button {
+  @apply px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50 transition-colors;
+}
+
+.notifications-filters button.active {
+  @apply bg-blue-500 text-white border-blue-500;
+}
+
+.empty-state {
+  @apply flex flex-col items-center justify-center min-h-64;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .smart-notifications {
+    @apply w-full;
+  }
+}

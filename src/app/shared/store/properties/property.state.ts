@@ -36,8 +36,8 @@ export class PropertyState{
     {
         return state.loadingProperty
     }
-    @Selector() 
-    static setlectStateProperties(state:PropertyStateModel)
+    @Selector()
+    static selectStateProperties(state:PropertyStateModel)
     {
         return state.properties
     }

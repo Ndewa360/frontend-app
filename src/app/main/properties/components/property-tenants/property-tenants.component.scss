@@ -1,0 +1,299 @@
+// Styles pour le composant de gestion des locataires
+
+.property-tenants-container {
+  // Animations d'entrée
+  .tenant-card {
+    transition: all 0.3s ease;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  // Avatar avec gradient personnalisé
+  .tenant-avatar {
+    background: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%);
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 25px -5px rgba(59, 130, 246, 0.4);
+    }
+  }
+
+  // Badges de statut avec styles personnalisés
+  .status-badge {
+    &.active {
+      background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+      color: #065F46;
+      border: 1px solid #A7F3D0;
+    }
+
+    &.pending {
+      background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+      color: #92400E;
+      border: 1px solid #FDE68A;
+    }
+
+    &.expired {
+      background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+      color: #991B1B;
+      border: 1px solid #FECACA;
+    }
+  }
+
+  // Badge d'expiration de bail
+  .lease-expiring-badge {
+    background: linear-gradient(135deg, #FDBA74 0%, #FB923C 100%);
+    color: #9A3412;
+    border: 1px solid #FB923C;
+    animation: pulse 2s infinite;
+  }
+
+  // Informations du bail avec style moderne
+  .lease-info {
+    background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+    border: 1px solid #E2E8F0;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: linear-gradient(135deg, #F1F5F9 0%, #E2E8F0 100%);
+    }
+  }
+
+  // Statistiques avec effets visuels
+  .stat-card {
+    transition: all 0.3s ease;
+    
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-icon {
+      transition: transform 0.2s ease;
+    }
+
+    &:hover .stat-icon {
+      transform: scale(1.1);
+    }
+  }
+
+  // Boutons d'action avec couleurs spécifiques
+  .action-button {
+    transition: all 0.2s ease;
+
+    &:hover {
+      transform: translateY(-1px);
+    }
+
+    &.view {
+      color: #6B7280;
+      &:hover {
+        color: #374151;
+        background-color: #F3F4F6;
+      }
+    }
+
+    &.edit {
+      color: #6B7280;
+      &:hover {
+        color: #374151;
+        background-color: #F3F4F6;
+      }
+    }
+
+    &.payment {
+      color: #059669;
+      &:hover {
+        color: #047857;
+        background-color: #D1FAE5;
+      }
+    }
+  }
+
+  // Menu contextuel avec style moderne
+  .context-menu {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+    .menu-item {
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+        transform: translateX(2px);
+      }
+
+      &.danger:hover {
+        background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
+        color: #DC2626;
+      }
+    }
+  }
+
+  // Filtres avec style moderne
+  .filter-section {
+    background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%);
+    border: 1px solid #E2E8F0;
+
+    .filter-input {
+      transition: all 0.2s ease;
+
+      &:focus {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 15px -3px rgba(59, 130, 246, 0.2);
+      }
+    }
+  }
+
+  // Icônes de contact avec couleurs
+  .contact-icon {
+    &.email {
+      color: #3B82F6;
+    }
+
+    &.phone {
+      color: #059669;
+    }
+
+    &.unit {
+      color: #8B5CF6;
+    }
+
+    &.rent {
+      color: #F59E0B;
+    }
+  }
+}
+
+// Animations
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// Application des animations
+.property-tenants-container {
+  .tenant-card {
+    animation: slideInUp 0.3s ease-out;
+    
+    &:nth-child(1) { animation-delay: 0.1s; }
+    &:nth-child(2) { animation-delay: 0.2s; }
+    &:nth-child(3) { animation-delay: 0.3s; }
+    &:nth-child(4) { animation-delay: 0.4s; }
+  }
+
+  .stat-card {
+    animation: fadeIn 0.4s ease-out;
+    
+    &:nth-child(1) { animation-delay: 0.1s; }
+    &:nth-child(2) { animation-delay: 0.2s; }
+    &:nth-child(3) { animation-delay: 0.3s; }
+    &:nth-child(4) { animation-delay: 0.4s; }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .property-tenants-container {
+    .tenant-card {
+      margin-bottom: 1rem;
+    }
+
+    .stat-card {
+      margin-bottom: 0.75rem;
+    }
+
+    .context-menu {
+      width: 100%;
+      max-width: none;
+    }
+
+    .lease-info {
+      .grid {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+      }
+    }
+  }
+}
+
+// Mode sombre
+@media (prefers-color-scheme: dark) {
+  .property-tenants-container {
+    .lease-info {
+      background: linear-gradient(135deg, #374151 0%, #4B5563 100%);
+      border-color: #6B7280;
+
+      &:hover {
+        background: linear-gradient(135deg, #4B5563 0%, #6B7280 100%);
+      }
+    }
+
+    .context-menu {
+      background: rgba(31, 41, 55, 0.95);
+      border-color: rgba(255, 255, 255, 0.1);
+
+      .menu-item {
+        &:hover {
+          background: linear-gradient(135deg, #374151 0%, #4B5563 100%);
+        }
+
+        &.danger:hover {
+          background: linear-gradient(135deg, #7F1D1D 0%, #991B1B 100%);
+          color: #FCA5A5;
+        }
+      }
+    }
+
+    .filter-section {
+      background: linear-gradient(135deg, #1F2937 0%, #374151 100%);
+      border-color: #4B5563;
+    }
+
+    .status-badge {
+      &.active {
+        background: linear-gradient(135deg, #065F46 0%, #047857 100%);
+        color: #A7F3D0;
+      }
+
+      &.pending {
+        background: linear-gradient(135deg, #92400E 0%, #B45309 100%);
+        color: #FDE68A;
+      }
+
+      &.expired {
+        background: linear-gradient(135deg, #991B1B 0%, #B91C1C 100%);
+        color: #FECACA;
+      }
+    }
+  }
+}

@@ -1,0 +1,20 @@
+// Import des styles Carbon
+@import '../../../../../assets/styles/carbon-utilities.scss';
+
+// Styles pour PropertyOverviewCard avec thème Carbon
+.property-overview-card {
+  // Styles personnalisés si nécessaire
+  border-radius: 0; // Carbon utilise des coins carrés
+
+  // Animation de hover améliorée
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  }
+
+  // Focus state pour l'accessibilité
+  &:focus-within {
+    outline: 2px solid var(--carbon-focus);
+    outline-offset: 2px;
+  }
+}

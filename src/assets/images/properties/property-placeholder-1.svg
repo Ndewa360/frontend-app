@@ -1,0 +1,32 @@
+<svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="300" fill="#F3F4F6"/>
+  
+  <!-- Building outline -->
+  <rect x="80" y="80" width="240" height="160" fill="#E5E7EB" stroke="#9CA3AF" stroke-width="2"/>
+  
+  <!-- Roof -->
+  <polygon points="70,80 200,40 330,80" fill="#6B7280"/>
+  
+  <!-- Windows -->
+  <rect x="100" y="100" width="30" height="25" fill="#3B82F6" opacity="0.7"/>
+  <rect x="140" y="100" width="30" height="25" fill="#3B82F6" opacity="0.7"/>
+  <rect x="180" y="100" width="30" height="25" fill="#3B82F6" opacity="0.7"/>
+  <rect x="220" y="100" width="30" height="25" fill="#3B82F6" opacity="0.7"/>
+  <rect x="260" y="100" width="30" height="25" fill="#3B82F6" opacity="0.7"/>
+  
+  <rect x="100" y="140" width="30" height="25" fill="#3B82F6" opacity="0.7"/>
+  <rect x="140" y="140" width="30" height="25" fill="#3B82F6" opacity="0.7"/>
+  <rect x="180" y="140" width="30" height="25" fill="#3B82F6" opacity="0.7"/>
+  <rect x="220" y="140" width="30" height="25" fill="#3B82F6" opacity="0.7"/>
+  <rect x="260" y="140" width="30" height="25" fill="#3B82F6" opacity="0.7"/>
+  
+  <!-- Door -->
+  <rect x="180" y="190" width="40" height="50" fill="#8B5CF6"/>
+  <circle cx="210" cy="215" r="2" fill="#F3F4F6"/>
+  
+  <!-- Ground -->
+  <rect x="0" y="240" width="400" height="60" fill="#10B981" opacity="0.3"/>
+  
+  <!-- Text -->
+  <text x="200" y="280" text-anchor="middle" fill="#6B7280" font-family="Arial, sans-serif" font-size="14">Propriété</text>
+</svg>

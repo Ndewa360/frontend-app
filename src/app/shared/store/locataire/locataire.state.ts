@@ -46,8 +46,8 @@ export class LocataireState{
         return state.initLoadingState
     }
 
-    @Selector() 
-    static setlectStateLocataires(state:LocataireStateModel)
+    @Selector()
+    static selectStateLocataires(state:LocataireStateModel)
     {
         return state.locataires
     }

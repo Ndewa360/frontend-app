@@ -16,6 +16,7 @@ import { FinancialHistoryComponent } from './properties/components/financial-his
 import { HomePropertyComponent } from './properties/home-property/home-property.component'
 import { LayoutListComponent } from './room/components/layout-list/layout-list.component'
 import { LayoutListComponent as LayoutLocataireListComponent } from './locataires/components/layout-list/layout-list.component'
+import { PropertyDetailsCompleteComponent } from './properties/property-details-complete/property-details-complete.component'
 
 
 
@@ -75,6 +76,13 @@ const routes: Routes = [
             // data: {
             //   breadcrumb: 'Getting started'
             // },
+          },
+          {
+            path: 'details/:id',
+            component: PropertyDetailsCompleteComponent,
+            data: {
+              breadcrumb: 'Détails complets'
+            },
           },
           {
             path: ':id',

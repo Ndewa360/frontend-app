@@ -43,8 +43,8 @@ export class LocationPaymentState{
     {
         return state.loadingLocationPayment
     }
-    @Selector() 
-    static setlectStateLocationPayments(state:LocationPaymentStateModel)
+    @Selector()
+    static selectStateLocationPayments(state:LocationPaymentStateModel)
     {
         return state.locationPayments
     }

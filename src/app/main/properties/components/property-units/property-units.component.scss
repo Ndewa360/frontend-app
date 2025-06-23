@@ -1,0 +1,235 @@
+// Styles pour le composant de gestion des unités
+
+.property-units-container {
+  // Animations d'entrée
+  .unit-card {
+    transition: all 0.3s ease;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  // Statistiques avec effets visuels
+  .stat-card {
+    transition: all 0.3s ease;
+    
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-icon {
+      transition: transform 0.2s ease;
+    }
+
+    &:hover .stat-icon {
+      transform: scale(1.1);
+    }
+  }
+
+  // Badges de statut avec couleurs personnalisées
+  .status-badge {
+    &.occupied {
+      background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+      color: #065F46;
+      border: 1px solid #A7F3D0;
+    }
+
+    &.available {
+      background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%);
+      color: #1E40AF;
+      border: 1px solid #BFDBFE;
+    }
+
+    &.maintenance {
+      background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+      color: #92400E;
+      border: 1px solid #FDE68A;
+    }
+  }
+
+  // Informations du locataire avec style moderne
+  .tenant-info {
+    background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+    border: 1px solid #E2E8F0;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: linear-gradient(135deg, #F1F5F9 0%, #E2E8F0 100%);
+    }
+
+    .tenant-avatar {
+      background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+      transition: transform 0.2s ease;
+
+      &:hover {
+        transform: scale(1.05);
+      }
+    }
+  }
+
+  // Menu contextuel avec style moderne
+  .context-menu {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+    .menu-item {
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+        transform: translateX(2px);
+      }
+
+      &.danger:hover {
+        background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
+        color: #DC2626;
+      }
+    }
+  }
+
+  // Boutons d'action avec effets
+  .action-button {
+    transition: all 0.2s ease;
+
+    &:hover {
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+    &.primary {
+      background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+      box-shadow: 0 4px 15px -3px rgba(59, 130, 246, 0.4);
+
+      &:hover {
+        box-shadow: 0 6px 20px -3px rgba(59, 130, 246, 0.5);
+      }
+    }
+
+    &.secondary {
+      background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+      border: 1px solid #E2E8F0;
+
+      &:hover {
+        background: linear-gradient(135deg, #F1F5F9 0%, #E2E8F0 100%);
+      }
+    }
+  }
+
+  // Filtres avec style moderne
+  .filter-section {
+    background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%);
+    border: 1px solid #E2E8F0;
+
+    .filter-input {
+      transition: all 0.2s ease;
+
+      &:focus {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 15px -3px rgba(59, 130, 246, 0.2);
+      }
+    }
+  }
+}
+
+// Animations
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// Application des animations
+.property-units-container {
+  .unit-card {
+    animation: slideInUp 0.3s ease-out;
+    
+    &:nth-child(1) { animation-delay: 0.1s; }
+    &:nth-child(2) { animation-delay: 0.2s; }
+    &:nth-child(3) { animation-delay: 0.3s; }
+    &:nth-child(4) { animation-delay: 0.4s; }
+  }
+
+  .stat-card {
+    animation: fadeIn 0.4s ease-out;
+    
+    &:nth-child(1) { animation-delay: 0.1s; }
+    &:nth-child(2) { animation-delay: 0.2s; }
+    &:nth-child(3) { animation-delay: 0.3s; }
+    &:nth-child(4) { animation-delay: 0.4s; }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .property-units-container {
+    .unit-card {
+      margin-bottom: 1rem;
+    }
+
+    .stat-card {
+      margin-bottom: 0.75rem;
+    }
+
+    .context-menu {
+      width: 100%;
+      max-width: none;
+    }
+  }
+}
+
+// Mode sombre
+@media (prefers-color-scheme: dark) {
+  .property-units-container {
+    .tenant-info {
+      background: linear-gradient(135deg, #374151 0%, #4B5563 100%);
+      border-color: #6B7280;
+
+      &:hover {
+        background: linear-gradient(135deg, #4B5563 0%, #6B7280 100%);
+      }
+    }
+
+    .context-menu {
+      background: rgba(31, 41, 55, 0.95);
+      border-color: rgba(255, 255, 255, 0.1);
+
+      .menu-item {
+        &:hover {
+          background: linear-gradient(135deg, #374151 0%, #4B5563 100%);
+        }
+
+        &.danger:hover {
+          background: linear-gradient(135deg, #7F1D1D 0%, #991B1B 100%);
+          color: #FCA5A5;
+        }
+      }
+    }
+
+    .filter-section {
+      background: linear-gradient(135deg, #1F2937 0%, #374151 100%);
+      border-color: #4B5563;
+    }
+  }
+}

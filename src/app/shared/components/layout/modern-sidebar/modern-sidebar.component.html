@@ -1,0 +1,180 @@
+<!-- Sidebar moderne -->
+<div [ngClass]="getSidebarClasses()" 
+     [class.sidebar-collapsed]="collapsed"
+     [class.sidebar-mobile-open]="mobileOpen">
+  
+  <!-- Header du sidebar -->
+  <div class="sidebar-header">
+    <div class="flex items-center justify-between p-4">
+      
+      <!-- Logo et titre -->
+      <div class="flex items-center space-x-3" [class.hidden]="collapsed">
+        <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H9m0 0H5m0 0h4M9 21v-4a2 2 0 012-2h2a2 2 0 012 2v4M9 21h6"></path>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-lg font-semibold text-gray-900">{{ appTitle }}</h1>
+          <p class="text-xs text-gray-500">{{ appSubtitle }}</p>
+        </div>
+      </div>
+      
+      <!-- Bouton collapse (desktop) -->
+      <button *ngIf="!isMobile" 
+              (click)="toggleCollapse()"
+              class="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                [attr.d]="collapsed ? 'M9 5l7 7-7 7' : 'M15 19l-7-7 7-7'"></path>
+        </svg>
+      </button>
+      
+      <!-- Bouton fermer (mobile) -->
+      <button *ngIf="isMobile" 
+              (click)="closeMobile()"
+              class="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+  
+  <!-- Navigation principale -->
+  <nav class="sidebar-nav flex-1 px-4 pb-4 space-y-1 overflow-y-auto">
+    
+    <!-- Section principale -->
+    <div class="nav-section">
+      <h3 *ngIf="!collapsed" class="nav-section-title">Principal</h3>
+      
+      <div class="nav-items">
+        <a *ngFor="let item of mainNavItems; trackBy: trackByNavItem"
+           [routerLink]="item.route"
+           routerLinkActive="nav-item-active"
+           [ngClass]="getNavItemClasses(item)"
+           [title]="collapsed ? item.label : ''"
+           (click)="onNavItemClick(item)">
+          
+          <div class="nav-item-icon">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="item.icon"></path>
+            </svg>
+          </div>
+          
+          <span *ngIf="!collapsed" class="nav-item-label">{{ item.label }}</span>
+          
+          <div *ngIf="item.badge && !collapsed" class="nav-item-badge">
+            {{ item.badge }}
+          </div>
+          
+          <div *ngIf="item.children && !collapsed" class="nav-item-arrow">
+            <svg class="w-4 h-4 transition-transform" 
+                 [class.rotate-90]="item.expanded"
+                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+          </div>
+        </a>
+        
+        <!-- Sous-éléments -->
+        <div *ngIf="item.children && item.expanded && !collapsed" 
+             class="nav-subitems">
+          <a *ngFor="let subItem of item.children"
+             [routerLink]="subItem.route"
+             routerLinkActive="nav-subitem-active"
+             class="nav-subitem"
+             (click)="onNavItemClick(subItem)">
+            <span class="nav-subitem-label">{{ subItem.label }}</span>
+            <div *ngIf="subItem.badge" class="nav-subitem-badge">
+              {{ subItem.badge }}
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Section gestion -->
+    <div class="nav-section" *ngIf="managementNavItems.length > 0">
+      <h3 *ngIf="!collapsed" class="nav-section-title">Gestion</h3>
+      
+      <div class="nav-items">
+        <a *ngFor="let item of managementNavItems" 
+           [routerLink]="item.route"
+           routerLinkActive="nav-item-active"
+           [ngClass]="getNavItemClasses(item)"
+           [title]="collapsed ? item.label : ''"
+           (click)="onNavItemClick(item)">
+          
+          <div class="nav-item-icon">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="item.icon"></path>
+            </svg>
+          </div>
+          
+          <span *ngIf="!collapsed" class="nav-item-label">{{ item.label }}</span>
+          
+          <div *ngIf="item.badge && !collapsed" class="nav-item-badge">
+            {{ item.badge }}
+          </div>
+        </a>
+      </div>
+    </div>
+  </nav>
+  
+  <!-- Footer du sidebar -->
+  <div class="sidebar-footer border-t border-gray-200 p-4">
+    
+    <!-- Profil utilisateur -->
+    <div class="user-profile" [class.user-profile-collapsed]="collapsed">
+      <div class="flex items-center space-x-3">
+        <div class="user-avatar">
+          <img *ngIf="userAvatar; else defaultAvatar" 
+               [src]="userAvatar" 
+               [alt]="userName"
+               class="w-8 h-8 rounded-full object-cover">
+          <ng-template #defaultAvatar>
+            <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+              <span class="text-white text-sm font-medium">{{ getUserInitials() }}</span>
+            </div>
+          </ng-template>
+        </div>
+        
+        <div *ngIf="!collapsed" class="flex-1 min-w-0">
+          <p class="text-sm font-medium text-gray-900 truncate">{{ userName }}</p>
+          <p class="text-xs text-gray-500 truncate">{{ userRole }}</p>
+        </div>
+        
+        <div *ngIf="!collapsed" class="user-menu">
+          <button (click)="toggleUserMenu()" 
+                  class="p-1 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Menu utilisateur -->
+    <div *ngIf="userMenuOpen && !collapsed" class="user-menu-dropdown">
+      <div class="py-2">
+        <a *ngFor="let item of userMenuItems" 
+           [routerLink]="item.route"
+           (click)="onUserMenuClick(item)"
+           class="user-menu-item">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="item.icon"></path>
+          </svg>
+          <span>{{ item.label }}</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Overlay mobile -->
+<div *ngIf="isMobile && mobileOpen" 
+     class="sidebar-overlay"
+     (click)="closeMobile()">
+</div>

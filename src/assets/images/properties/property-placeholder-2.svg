@@ -1,0 +1,35 @@
+<svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="300" fill="#F9FAFB"/>
+  
+  <!-- Modern building -->
+  <rect x="60" y="60" width="280" height="180" fill="#F3F4F6" stroke="#D1D5DB" stroke-width="2"/>
+  
+  <!-- Building sections -->
+  <rect x="60" y="60" width="140" height="180" fill="#E5E7EB"/>
+  <rect x="200" y="60" width="140" height="180" fill="#F3F4F6"/>
+  
+  <!-- Windows pattern -->
+  <rect x="80" y="80" width="25" height="30" fill="#1E40AF" opacity="0.6"/>
+  <rect x="115" y="80" width="25" height="30" fill="#1E40AF" opacity="0.6"/>
+  <rect x="80" y="120" width="25" height="30" fill="#1E40AF" opacity="0.6"/>
+  <rect x="115" y="120" width="25" height="30" fill="#1E40AF" opacity="0.6"/>
+  <rect x="80" y="160" width="25" height="30" fill="#1E40AF" opacity="0.6"/>
+  <rect x="115" y="160" width="25" height="30" fill="#1E40AF" opacity="0.6"/>
+  
+  <rect x="220" y="80" width="25" height="30" fill="#7C3AED" opacity="0.6"/>
+  <rect x="255" y="80" width="25" height="30" fill="#7C3AED" opacity="0.6"/>
+  <rect x="290" y="80" width="25" height="30" fill="#7C3AED" opacity="0.6"/>
+  <rect x="220" y="120" width="25" height="30" fill="#7C3AED" opacity="0.6"/>
+  <rect x="255" y="120" width="25" height="30" fill="#7C3AED" opacity="0.6"/>
+  <rect x="290" y="120" width="25" height="30" fill="#7C3AED" opacity="0.6"/>
+  
+  <!-- Entrance -->
+  <rect x="160" y="190" width="80" height="50" fill="#059669"/>
+  <rect x="170" y="200" width="60" height="40" fill="#10B981"/>
+  
+  <!-- Ground -->
+  <rect x="0" y="240" width="400" height="60" fill="#34D399" opacity="0.2"/>
+  
+  <!-- Text -->
+  <text x="200" y="280" text-anchor="middle" fill="#6B7280" font-family="Arial, sans-serif" font-size="14">Immeuble Moderne</text>
+</svg>

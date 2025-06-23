@@ -1,0 +1,200 @@
+<!-- Dashboard moderne pour la gestion immobilière -->
+<div class="modern-property-dashboard">
+  <!-- Header avec métriques globales -->
+  <div class="dashboard-header">
+    <div class="header-content">
+      <div class="header-title">
+        <h1 class="app-productive-heading-05">Tableau de bord</h1>
+        <p class="app-body-short-01 text-gray-600">Vue d'ensemble de votre portefeuille immobilier</p>
+      </div>
+      
+      <div class="header-actions">
+        <button ibmButton="tertiary" size="md" class="mr-3">
+          <youpez-ibm-icon iconName="download" iconSize="16" class="mr-2"></youpez-ibm-icon>
+          Exporter
+        </button>
+        <button ibmButton="primary" size="md" (click)="addProperty()">
+          <youpez-ibm-icon iconName="add" iconSize="16" class="mr-2"></youpez-ibm-icon>
+          Nouveau bien
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Métriques globales -->
+  <div class="global-metrics">
+    <div class="metrics-grid">
+      <!-- Revenus totaux -->
+      <div class="metric-card revenue-card">
+        <div class="metric-header">
+          <div class="metric-icon revenue-icon">
+            <youpez-ibm-icon iconName="currency--dollar" iconSize="24"></youpez-ibm-icon>
+          </div>
+          <div class="metric-trend" [ngClass]="getRevenueTrendClass()">
+            <span class="trend-value">{{ revenueGrowth > 0 ? '+' : '' }}{{ revenueGrowth }}%</span>
+            <youpez-ibm-icon [iconName]="revenueGrowth > 0 ? 'trending--up' : 'trending--down'" iconSize="16"></youpez-ibm-icon>
+          </div>
+        </div>
+        <div class="metric-content">
+          <div class="metric-value">{{ totalRevenue | currency:'XAF':'symbol':'1.0-0' }}</div>
+          <div class="metric-label">Revenus mensuels</div>
+          <div class="metric-sublabel">{{ lastMonthRevenue | currency:'XAF':'symbol':'1.0-0' }} le mois dernier</div>
+        </div>
+      </div>
+
+      <!-- Taux d'occupation -->
+      <div class="metric-card occupancy-card">
+        <div class="metric-header">
+          <div class="metric-icon occupancy-icon">
+            <youpez-ibm-icon iconName="home" iconSize="24"></youpez-ibm-icon>
+          </div>
+          <div class="occupancy-ring">
+            <svg class="ring-chart" viewBox="0 0 36 36">
+              <path class="ring-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+              <path class="ring-progress" [attr.stroke-dasharray]="getOccupancyDashArray()" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+            </svg>
+            <div class="ring-text">{{ globalOccupancyRate }}%</div>
+          </div>
+        </div>
+        <div class="metric-content">
+          <div class="metric-value">{{ occupiedRooms }}/{{ totalRooms }}</div>
+          <div class="metric-label">Taux d'occupation</div>
+          <div class="metric-sublabel">{{ freeRooms }} chambres libres</div>
+        </div>
+      </div>
+
+      <!-- Paiements en retard -->
+      <div class="metric-card payments-card">
+        <div class="metric-header">
+          <div class="metric-icon payments-icon" [ngClass]="getPaymentsIconClass()">
+            <youpez-ibm-icon iconName="warning" iconSize="24"></youpez-ibm-icon>
+          </div>
+          <div class="metric-badge" [ngClass]="getPaymentsBadgeClass()">
+            {{ overduePayments }}
+          </div>
+        </div>
+        <div class="metric-content">
+          <div class="metric-value" [ngClass]="getPaymentsValueClass()">{{ overdueAmount | currency:'XAF':'symbol':'1.0-0' }}</div>
+          <div class="metric-label">Paiements en retard</div>
+          <div class="metric-sublabel">{{ overduePayments }} locataires concernés</div>
+        </div>
+      </div>
+
+      <!-- Maintenance -->
+      <div class="metric-card maintenance-card">
+        <div class="metric-header">
+          <div class="metric-icon maintenance-icon">
+            <youpez-ibm-icon iconName="tools" iconSize="24"></youpez-ibm-icon>
+          </div>
+          <div class="metric-status" [ngClass]="getMaintenanceStatusClass()">
+            {{ maintenanceRequests }}
+          </div>
+        </div>
+        <div class="metric-content">
+          <div class="metric-value">{{ maintenanceRequests }}</div>
+          <div class="metric-label">Demandes maintenance</div>
+          <div class="metric-sublabel">{{ urgentMaintenance }} urgentes</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenu principal avec filtres et liste -->
+  <div class="dashboard-content">
+    <!-- Barre de filtres et recherche -->
+    <div class="content-toolbar">
+      <div class="toolbar-left">
+        <div class="search-container">
+          <ibm-search 
+            placeholder="Rechercher un bien..." 
+            (valueChange)="onSearchChange($event)"
+            size="md" 
+            theme="light">
+          </ibm-search>
+        </div>
+        
+        <div class="filter-container">
+          <ibm-combo-box
+            placeholder="Filtrer par ville"
+            [items]="cities"
+            (selected)="onCityFilter($event)"
+            size="md"
+            theme="light">
+            <ibm-dropdown-list></ibm-dropdown-list>
+          </ibm-combo-box>
+        </div>
+
+        <div class="filter-container">
+          <ibm-combo-box
+            placeholder="Statut d'occupation"
+            [items]="occupancyFilters"
+            (selected)="onOccupancyFilter($event)"
+            size="md"
+            theme="light">
+            <ibm-dropdown-list></ibm-dropdown-list>
+          </ibm-combo-box>
+        </div>
+      </div>
+
+      <div class="toolbar-right">
+        <div class="view-toggle">
+          <ibm-content-switcher (selected)="onViewChange($event)">
+            <ibm-content-switcher-option value="grid" [selected]="currentView === 'grid'">
+              <youpez-ibm-icon iconName="grid" iconSize="16"></youpez-ibm-icon>
+              Grille
+            </ibm-content-switcher-option>
+            <ibm-content-switcher-option value="list" [selected]="currentView === 'list'">
+              <youpez-ibm-icon iconName="list" iconSize="16"></youpez-ibm-icon>
+              Liste
+            </ibm-content-switcher-option>
+          </ibm-content-switcher>
+        </div>
+
+        <button ibmButton="ghost" size="md" [ngbTooltip]="'Actualiser'" placement="bottom">
+          <youpez-ibm-icon iconName="renew" iconSize="16"></youpez-ibm-icon>
+        </button>
+      </div>
+    </div>
+
+    <!-- Liste/Grille des propriétés -->
+    <div class="properties-container" [ngClass]="'view-' + currentView">
+      <ng-container *ngIf="currentView === 'grid'">
+        <div class="properties-grid">
+          <ng-container *ngFor="let property of filteredProperties; trackBy: trackByPropertyId">
+            <app-enhanced-property-card
+              [property]="property"
+              [metrics]="getPropertyMetrics(property._id)"
+              [alerts]="getPropertyAlerts(property._id)"
+              (propertyClicked)="onPropertyClick($event)"
+              (actionClicked)="onPropertyAction($event)">
+            </app-enhanced-property-card>
+          </ng-container>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="currentView === 'list'">
+        <div class="properties-list">
+          <app-enhanced-property-table
+            [properties]="filteredProperties"
+            [loading]="loading"
+            (propertyClicked)="onPropertyClick($event)"
+            (actionClicked)="onPropertyAction($event)">
+          </app-enhanced-property-table>
+        </div>
+      </ng-container>
+
+      <!-- État vide -->
+      <div *ngIf="filteredProperties.length === 0 && !loading" class="empty-state">
+        <div class="empty-state-content">
+          <youpez-ibm-icon iconName="home" iconSize="48" class="empty-icon"></youpez-ibm-icon>
+          <h3 class="app-productive-heading-03">Aucun bien trouvé</h3>
+          <p class="app-body-short-01">Commencez par ajouter votre premier bien immobilier</p>
+          <button ibmButton="primary" size="md" (click)="addProperty()" class="mt-4">
+            <youpez-ibm-icon iconName="add" iconSize="16" class="mr-2"></youpez-ibm-icon>
+            Ajouter un bien
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

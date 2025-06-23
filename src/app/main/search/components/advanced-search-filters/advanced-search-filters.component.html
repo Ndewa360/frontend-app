@@ -1,0 +1,262 @@
+<!-- Filtres de recherche modernes -->
+<div class="modern-search-filters">
+
+  <!-- Header des filtres -->
+  <div class="filters-header mb-6">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center space-x-2">
+        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.707A1 1 0 013 7V4z"></path>
+        </svg>
+        <h3 class="text-lg font-semibold text-gray-900">Filtres de recherche</h3>
+      </div>
+      <button (click)="resetFilters()"
+              class="text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors">
+        Réinitialiser tout
+      </button>
+    </div>
+  </div>
+
+  <!-- Filtres rapides -->
+  <div class="quick-filters mb-6">
+    <h4 class="text-sm font-medium text-gray-700 mb-3">Filtres rapides</h4>
+    <div class="flex flex-wrap gap-2">
+      <button *ngFor="let filter of quickFilters"
+              [ngClass]="filter.active ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
+              (click)="applyQuickFilter(filter)"
+              class="px-3 py-1.5 text-sm font-medium rounded-full transition-colors">
+        {{ filter.label }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Localisation -->
+  <div class="filter-section mb-6">
+    <h4 class="text-sm font-medium text-gray-700 mb-3 flex items-center">
+      <svg class="w-4 h-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+      </svg>
+      Localisation
+    </h4>
+    <div class="space-y-3">
+      <div>
+        <label class="block text-xs text-gray-500 mb-1">Ville</label>
+        <select [(ngModel)]="filters.city"
+                (ngModelChange)="onLocationChange()"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+          <option value="">Toutes les villes</option>
+          <option value="douala">Douala</option>
+          <option value="yaounde">Yaoundé</option>
+          <option value="bafoussam">Bafoussam</option>
+          <option value="bamenda">Bamenda</option>
+          <option value="limbe">Limbé</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs text-gray-500 mb-1">Quartier</label>
+        <select [(ngModel)]="filters.district"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+          <option value="">Tous les quartiers</option>
+          <option *ngFor="let district of getDistrictsByCity(filters.city)" [value]="district.value">
+            {{ district.label }}
+          </option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Budget -->
+  <div class="filter-section mb-6">
+    <h4 class="text-sm font-medium text-gray-700 mb-3 flex items-center">
+      <svg class="w-4 h-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+      </svg>
+      Budget mensuel (FCFA)
+    </h4>
+    <div class="space-y-4">
+      <!-- Slider de prix -->
+      <div class="price-slider">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-sm text-gray-500">{{ formatPrice(priceRange.min) }}</span>
+          <span class="text-sm text-gray-500">{{ formatPrice(priceRange.max) }}</span>
+        </div>
+        <div class="relative h-2 bg-gray-200 rounded-full">
+          <div class="absolute h-2 bg-blue-600 rounded-full"
+               [style.left.%]="getPricePercentage(filters.priceMin)"
+               [style.width.%]="getPricePercentage(filters.priceMax) - getPricePercentage(filters.priceMin)">
+          </div>
+          <input type="range"
+                 [min]="priceRange.min"
+                 [max]="priceRange.max"
+                 [step]="10000"
+                 [(ngModel)]="filters.priceMin"
+                 (ngModelChange)="onPriceChange()"
+                 class="absolute w-full h-2 opacity-0 cursor-pointer">
+          <input type="range"
+                 [min]="priceRange.min"
+                 [max]="priceRange.max"
+                 [step]="10000"
+                 [(ngModel)]="filters.priceMax"
+                 (ngModelChange)="onPriceChange()"
+                 class="absolute w-full h-2 opacity-0 cursor-pointer">
+        </div>
+      </div>
+
+      <!-- Inputs de prix -->
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs text-gray-500 mb-1">Minimum</label>
+          <div class="relative">
+            <input type="number"
+                   [(ngModel)]="filters.priceMin"
+                   (ngModelChange)="onPriceChange()"
+                   placeholder="0"
+                   class="w-full pl-3 pr-12 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <span class="absolute right-3 top-2 text-xs text-gray-500">FCFA</span>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs text-gray-500 mb-1">Maximum</label>
+          <div class="relative">
+            <input type="number"
+                   [(ngModel)]="filters.priceMax"
+                   (ngModelChange)="onPriceChange()"
+                   placeholder="∞"
+                   class="w-full pl-3 pr-12 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <span class="absolute right-3 top-2 text-xs text-gray-500">FCFA</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Suggestions de prix -->
+      <div class="flex flex-wrap gap-2">
+        <button *ngFor="let suggestion of priceSuggestions"
+                (click)="setPriceSuggestion(suggestion)"
+                class="px-3 py-1 text-xs bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-colors">
+          {{ suggestion.label }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Type de logement -->
+  <div class="filter-section mb-6">
+    <h4 class="text-sm font-medium text-gray-700 mb-3 flex items-center">
+      <svg class="w-4 h-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H9m0 0H5m0 0h4M9 21v-4a2 2 0 012-2h2a2 2 0 012 2v4M9 21h6"></path>
+      </svg>
+      Type de logement
+    </h4>
+    <div class="grid grid-cols-2 gap-2">
+      <button *ngFor="let type of propertyTypes"
+              [ngClass]="filters.propertyType === type.value ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'"
+              (click)="setPropertyType(type.value)"
+              class="flex items-center justify-center p-3 border rounded-lg text-sm font-medium transition-colors">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="type.icon"></path>
+        </svg>
+        {{ type.label }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Nombre de chambres -->
+  <div class="filter-section mb-6">
+    <h4 class="text-sm font-medium text-gray-700 mb-3 flex items-center">
+      <svg class="w-4 h-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
+      </svg>
+      Nombre de chambres
+    </h4>
+    <div class="flex flex-wrap gap-2">
+      <button *ngFor="let num of roomNumbers"
+              [ngClass]="filters.rooms === num ? 'bg-blue-600 text-white' : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'"
+              (click)="setRoomFilter(num)"
+              class="w-12 h-12 flex items-center justify-center rounded-lg text-sm font-medium transition-colors">
+        {{ num }}{{ num === 5 ? '+' : '' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Équipements -->
+  <div class="filter-section mb-6">
+    <h4 class="text-sm font-medium text-gray-700 mb-3 flex items-center">
+      <svg class="w-4 h-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+      Équipements
+    </h4>
+    <div class="space-y-2">
+      <label *ngFor="let amenity of amenitiesList"
+             class="flex items-center p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
+        <input type="checkbox"
+               [checked]="filters.amenities.includes(amenity.value)"
+               (change)="toggleAmenity(amenity.value)"
+               class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+        <div class="ml-3 flex items-center">
+          <svg class="w-4 h-4 text-gray-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="amenity.icon"></path>
+          </svg>
+          <span class="text-sm text-gray-700">{{ amenity.label }}</span>
+        </div>
+      </label>
+    </div>
+  </div>
+
+  <!-- Préférences -->
+  <div class="filter-section mb-6">
+    <h4 class="text-sm font-medium text-gray-700 mb-3 flex items-center">
+      <svg class="w-4 h-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+      </svg>
+      Préférences
+    </h4>
+    <div class="space-y-2">
+      <label *ngFor="let preference of preferencesList"
+             class="flex items-center p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
+        <input type="checkbox"
+               [checked]="filters.preferences.includes(preference.value)"
+               (change)="togglePreference(preference.value)"
+               class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+        <div class="ml-3 flex items-center">
+          <svg class="w-4 h-4 text-gray-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="preference.icon"></path>
+          </svg>
+          <span class="text-sm text-gray-700">{{ preference.label }}</span>
+        </div>
+      </label>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="filter-actions pt-4 border-t border-gray-200">
+    <div class="flex space-x-3">
+      <button (click)="applyFilters()"
+              class="flex-1 bg-blue-600 text-white py-2.5 px-4 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+        Rechercher
+      </button>
+      <button (click)="saveSearch()"
+              *ngIf="canSaveSearch"
+              class="px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Résultats en temps réel -->
+  <div class="results-preview mt-4 p-3 bg-blue-50 rounded-lg">
+    <div class="flex items-center justify-between">
+      <span class="text-sm text-blue-700 font-medium">{{ resultCount }} logements trouvés</span>
+      <button class="text-xs text-blue-600 hover:text-blue-800 font-medium transition-colors">
+        Voir les résultats
+      </button>
+    </div>
+  </div>
+
+</div>

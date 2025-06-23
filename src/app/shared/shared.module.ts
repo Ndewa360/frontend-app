@@ -30,10 +30,12 @@ import { NgxsRouterPluginModule } from '@ngxs/router-plugin';
 import { RouterModule } from '@angular/router';
 import { NgxsStoragePluginModule, StorageOption } from '@ngxs/storage-plugin';
 import { NoDataComponent } from './components/no-data/no-data.component';
+import { SmartNotificationsComponent } from './components/smart-notifications/smart-notifications.component';
 import { ToastrModule } from 'ngx-toastr';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LocationPaymentState } from './store/payment-location';
 import { LocalizedDatePipe } from './pipes/localized-date.pipe';
+import { MaxPipe } from './pipes/max.pipe';
 import { FileUploadComponent } from './components/file-upload/file-upload.component';
 import { UploadFilesState } from './store/files-upload';
 import { GaleryImageComponent } from './components/galery-image/galery-image.component';
@@ -100,6 +102,7 @@ import { ProspectionState } from './store/prospection/prospection.state';
     DummyTableAdvancedComponent,
     NoDataComponent,
     LocalizedDatePipe,
+    MaxPipe,
     FileUploadComponent,
     GaleryImageComponent,
     GaleryVideoComponent,
@@ -110,7 +113,8 @@ import { ProspectionState } from './store/prospection/prospection.state';
     SinglePageScreenGaleryComponent,
     SwiperDirective,
     ScrollRevealDirective,
-    CountUpDirective
+    CountUpDirective,
+    SmartNotificationsComponent
   ],
   exports: [
     YoupezModule,
@@ -122,6 +126,7 @@ import { ProspectionState } from './store/prospection/prospection.state';
     FormsModule,
     ReactiveFormsModule,
     LocalizedDatePipe,
+    MaxPipe,
     FileUploadComponent,
     GaleryImageComponent,
     GaleryVideoComponent,
@@ -132,7 +137,12 @@ import { ProspectionState } from './store/prospection/prospection.state';
     SinglePageScreenGaleryComponent,
     ScrollRevealDirective,
     CountUpDirective,
-
+    SmartNotificationsComponent
+  ],
+  providers: [
+    // Nouveaux services ajoutés
+    // ErrorHandlerService est déjà fourni via providedIn: 'root'
+    // NotificationManagerService sera ajouté plus tard
   ],
   schemas: [
       CUSTOM_ELEMENTS_SCHEMA

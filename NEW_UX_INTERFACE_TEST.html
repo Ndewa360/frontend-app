@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nouvelle Interface UX - Gestion Immobilière</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        /* Variables CSS pour la démonstration */
+        :root {
+            --carbon-primary-60: rgb(204, 140, 10);
+            --carbon-primary-70: #b8a009;
+            --carbon-primary-40: #fadc4d;
+            --carbon-primary-10: #fef9e6;
+            --carbon-layer-01: #ffffff;
+            --carbon-layer-02: #f4f4f4;
+            --carbon-layer-hover-01: #e8e8e8;
+            --carbon-text-primary: #161616;
+            --carbon-text-secondary: #525252;
+            --carbon-border-subtle-01: #e0e0e0;
+            --carbon-focus: rgb(204, 140, 10);
+        }
+        
+        .property-management-container {
+            min-height: 100vh;
+            background-color: var(--carbon-layer-01);
+        }
+        
+        .main-header {
+            background-color: var(--carbon-layer-02);
+            border-bottom: 1px solid var(--carbon-border-subtle-01);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tab-button {
+            padding: 1rem 1.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+            color: var(--carbon-text-secondary);
+            background: transparent;
+            display: flex;
+            align-items: center;
+            position: relative;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .tab-button:hover {
+            color: var(--carbon-text-primary);
+            background-color: var(--carbon-layer-hover-01);
+        }
+        
+        .tab-button.active {
+            color: var(--carbon-primary-60);
+            border-bottom-color: var(--carbon-primary-60);
+            background-color: var(--carbon-layer-01);
+        }
+        
+        .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--carbon-primary-60), var(--carbon-primary-40));
+        }
+        
+        .tab-button:focus {
+            outline: 2px solid var(--carbon-focus);
+            outline-offset: -2px;
+        }
+        
+        .property-count {
+            margin-left: 0.5rem;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            border-radius: 9999px;
+            background-color: var(--carbon-primary-10);
+            color: var(--carbon-primary-70);
+            font-weight: 600;
+        }
+        
+        .custom-primary-button {
+            background-color: var(--carbon-primary-60);
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .custom-primary-button:hover {
+            background-color: var(--carbon-primary-70);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(204, 140, 10, 0.3);
+        }
+        
+        .view-container {
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 2rem;
+        }
+        
+        .view-container.hidden {
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+        }
+        
+        .view-container.active {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+            position: relative;
+        }
+        
+        .demo-content {
+            background: white;
+            border: 1px solid var(--carbon-border-subtle-01);
+            border-radius: 8px;
+            padding: 2rem;
+            margin: 1rem 0;
+        }
+        
+        .success-banner {
+            background: linear-gradient(135deg, #defbe6, #a7f3d0);
+            border: 1px solid #10b981;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        
+        @keyframes slideInFromTop {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        
+        .property-management-container {
+            animation: fadeIn 0.6s ease-out;
+        }
+        
+        .main-header {
+            animation: slideInFromTop 0.8s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="property-management-container">
+        
+        <!-- Header principal avec navigation par onglets -->
+        <div class="main-header">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <!-- Titre et description -->
+                <div class="py-6">
+                    <div class="flex items-center justify-between">
+                        <div class="header-info">
+                            <h1 class="text-3xl font-bold mb-2" style="color: var(--carbon-text-primary);">
+                                Gestion Immobilière
+                            </h1>
+                            <p class="text-lg" style="color: var(--carbon-text-secondary);">
+                                Gérez vos propriétés et analysez vos performances financières
+                            </p>
+                        </div>
+                        
+                        <!-- Actions rapides -->
+                        <div class="header-actions" id="headerActions">
+                            <button class="custom-primary-button" onclick="showAlert('Nouvelle propriété')">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                </svg>
+                                Nouvelle Propriété
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation par onglets -->
+                <div class="tab-navigation" style="border-top: 1px solid var(--carbon-border-subtle-01);">
+                    <nav class="flex space-x-8" aria-label="Navigation principale">
+                        <button
+                            class="tab-button active"
+                            onclick="switchView('properties')"
+                            id="propertiesTab"
+                            type="button">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                      d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H9m0 0H5m0 0h4M9 21v-4a2 2 0 012-2h2a2 2 0 012 2v4M9 21h6"></path>
+                            </svg>
+                            Mes Propriétés
+                            <span class="property-count">24</span>
+                        </button>
+                        
+                        <button
+                            class="tab-button"
+                            onclick="switchView('dashboard')"
+                            id="dashboardTab"
+                            type="button">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                      d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                            Dashboard Financier
+                        </button>
+                    </nav>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenu principal -->
+        <div class="main-content">
+            <!-- Vue Liste des Propriétés -->
+            <div class="view-container active" id="propertiesView">
+                <div class="demo-content">
+                    <h2 class="text-2xl font-bold mb-4" style="color: var(--carbon-text-primary);">
+                        📋 Liste des Propriétés
+                    </h2>
+                    <p style="color: var(--carbon-text-secondary);" class="mb-4">
+                        Cette vue affiche la liste complète de vos propriétés avec toutes les fonctionnalités de gestion.
+                    </p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div class="bg-gray-50 p-4 rounded border">
+                            <h3 class="font-semibold">Villa Moderne Douala</h3>
+                            <p class="text-sm text-gray-600">5 chambres • 95% occupation</p>
+                            <p class="text-lg font-bold" style="color: var(--carbon-primary-60);">850 000 XAF/mois</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded border">
+                            <h3 class="font-semibold">Immeuble Centre-Ville</h3>
+                            <p class="text-sm text-gray-600">12 unités • 92% occupation</p>
+                            <p class="text-lg font-bold" style="color: var(--carbon-primary-60);">1 200 000 XAF/mois</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded border">
+                            <h3 class="font-semibold">Résidence Étudiante</h3>
+                            <p class="text-sm text-gray-600">8 chambres • 80% occupation</p>
+                            <p class="text-lg font-bold" style="color: var(--carbon-primary-60);">400 000 XAF/mois</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Vue Dashboard Financier -->
+            <div class="view-container hidden" id="dashboardView">
+                <div class="demo-content">
+                    <h2 class="text-2xl font-bold mb-4" style="color: var(--carbon-text-primary);">
+                        📊 Dashboard Financier Moderne
+                    </h2>
+                    <p style="color: var(--carbon-text-secondary);" class="mb-4">
+                        Interface moderne avec métriques visuelles, graphiques interactifs et analyses financières.
+                    </p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                        <div class="bg-green-50 p-4 rounded border border-green-200">
+                            <h3 class="text-sm font-medium text-green-800">Revenus Totaux</h3>
+                            <p class="text-2xl font-bold text-green-900">2 450 000 XAF</p>
+                            <p class="text-sm text-green-600">+12.5% ce mois</p>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded border border-blue-200">
+                            <h3 class="text-sm font-medium text-blue-800">Taux de Recouvrement</h3>
+                            <p class="text-2xl font-bold text-blue-900">87.3%</p>
+                            <p class="text-sm text-blue-600">-2.1% ce mois</p>
+                        </div>
+                        <div class="bg-purple-50 p-4 rounded border border-purple-200">
+                            <h3 class="text-sm font-medium text-purple-800">Propriétés Actives</h3>
+                            <p class="text-2xl font-bold text-purple-900">24</p>
+                            <p class="text-sm text-purple-600">Stable</p>
+                        </div>
+                        <div class="p-4 rounded border" style="background-color: var(--carbon-primary-10); border-color: var(--carbon-primary-60);">
+                            <h3 class="text-sm font-medium" style="color: var(--carbon-primary-70);">Bénéfice Net</h3>
+                            <p class="text-2xl font-bold" style="color: var(--carbon-primary-60);">1 890 000 XAF</p>
+                            <p class="text-sm" style="color: var(--carbon-primary-70);">+8.7% ce mois</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded border">
+                        <h3 class="text-lg font-semibold mb-4">Graphiques et Analyses</h3>
+                        <p class="text-gray-600">
+                            • Graphiques de revenus par propriété<br>
+                            • Taux de recouvrement avec anneaux de performance<br>
+                            • Analyses mensuelles et annuelles<br>
+                            • Export des données financières
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bannière de succès -->
+        <div class="success-banner mx-4 mb-4">
+            <div class="flex items-center">
+                <svg class="w-6 h-6 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <div>
+                    <h4 class="text-lg font-semibold text-green-800">🎉 Nouvelle Interface UX Implémentée avec Succès !</h4>
+                    <p class="text-green-700 mt-1">
+                        <strong>Fini la division horizontale !</strong> L'interface utilise maintenant des onglets plein écran 
+                        pour une meilleure expérience utilisateur. Navigation fluide entre la liste des propriétés et le dashboard financier.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentView = 'properties';
+
+        function switchView(view) {
+            // Mettre à jour la variable
+            currentView = view;
+            
+            // Mettre à jour les onglets
+            document.getElementById('propertiesTab').classList.toggle('active', view === 'properties');
+            document.getElementById('dashboardTab').classList.toggle('active', view === 'dashboard');
+            
+            // Mettre à jour les vues
+            document.getElementById('propertiesView').classList.toggle('active', view === 'properties');
+            document.getElementById('propertiesView').classList.toggle('hidden', view !== 'properties');
+            
+            document.getElementById('dashboardView').classList.toggle('active', view === 'dashboard');
+            document.getElementById('dashboardView').classList.toggle('hidden', view !== 'dashboard');
+            
+            // Mettre à jour les actions du header
+            document.getElementById('headerActions').style.display = view === 'properties' ? 'block' : 'none';
+            
+            console.log('Vue basculée vers:', view);
+        }
+
+        function showAlert(message) {
+            alert('Action: ' + message);
+        }
+
+        // Animation d'entrée
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Interface UX moderne chargée avec succès !');
+        });
+    </script>
+</body>
+</html>

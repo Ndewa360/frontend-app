@@ -1,0 +1,346 @@
+// IBM Carbon Design System utilities for Tailwind CSS
+
+// Import Carbon theme variables
+@import './carbon-theme.scss';
+
+// Custom primary button class compatible with existing codebase
+.custom-primary-button {
+  @apply px-4 py-2 text-sm font-medium border-0 transition-all duration-200 ease-in-out;
+  background-color: var(--carbon-primary-60) !important;
+  color: white !important;
+
+  &:hover:not(:disabled) {
+    background-color: var(--carbon-primary-70) !important;
+  }
+
+  &:active:not(:disabled) {
+    background-color: var(--carbon-primary-80) !important;
+  }
+
+  &:focus {
+    outline: 2px solid var(--carbon-focus) !important;
+    outline-offset: -2px;
+    border-color: var(--carbon-primary-60) !important;
+    box-shadow: inset 0 0 0 1px var(--carbon-primary-60), inset 0 0 0 2px var(--cds-background, #ffffff) !important;
+  }
+
+  &:disabled {
+    background-color: var(--carbon-gray-30) !important;
+    color: var(--carbon-text-on-color-disabled) !important;
+    cursor: not-allowed;
+  }
+}
+
+// Button styles inspired by Carbon with custom primary color
+.btn-carbon-primary {
+  @apply px-4 py-2 text-sm font-medium rounded-none border-0 transition-all duration-200 ease-in-out;
+  background-color: var(--carbon-button-primary);
+  color: var(--carbon-text-on-color);
+  
+  &:hover:not(:disabled) {
+    background-color: var(--carbon-button-primary-hover);
+  }
+  
+  &:active:not(:disabled) {
+    background-color: var(--carbon-button-primary-active);
+  }
+  
+  &:focus {
+    outline: 2px solid var(--carbon-focus);
+    outline-offset: -2px;
+  }
+  
+  &:disabled {
+    background-color: var(--carbon-gray-30);
+    color: var(--carbon-text-on-color-disabled);
+    cursor: not-allowed;
+  }
+}
+
+.btn-carbon-secondary {
+  @apply px-4 py-2 text-sm font-medium rounded-none transition-all duration-200 ease-in-out;
+  background-color: var(--carbon-button-secondary);
+  color: var(--carbon-text-on-color);
+  border: 1px solid var(--carbon-button-secondary);
+  
+  &:hover:not(:disabled) {
+    background-color: var(--carbon-button-secondary-hover);
+  }
+  
+  &:active:not(:disabled) {
+    background-color: var(--carbon-button-secondary-active);
+  }
+  
+  &:focus {
+    outline: 2px solid var(--carbon-focus);
+    outline-offset: -2px;
+  }
+  
+  &:disabled {
+    background-color: var(--carbon-gray-30);
+    color: var(--carbon-text-on-color-disabled);
+    cursor: not-allowed;
+  }
+}
+
+.btn-carbon-tertiary {
+  @apply px-4 py-2 text-sm font-medium rounded-none border transition-all duration-200 ease-in-out;
+  background-color: transparent;
+  color: var(--carbon-button-tertiary);
+  border-color: var(--carbon-button-tertiary);
+  
+  &:hover:not(:disabled) {
+    background-color: var(--carbon-button-tertiary-hover);
+    color: var(--carbon-text-on-color);
+  }
+  
+  &:active:not(:disabled) {
+    background-color: var(--carbon-button-tertiary-active);
+    color: var(--carbon-text-on-color);
+  }
+  
+  &:focus {
+    outline: 2px solid var(--carbon-focus);
+    outline-offset: -2px;
+  }
+  
+  &:disabled {
+    border-color: var(--carbon-gray-30);
+    color: var(--carbon-gray-30);
+    cursor: not-allowed;
+  }
+}
+
+.btn-carbon-danger {
+  @apply px-4 py-2 text-sm font-medium rounded-none border-0 transition-all duration-200 ease-in-out;
+  background-color: var(--carbon-button-danger-primary);
+  color: var(--carbon-text-on-color);
+  
+  &:hover:not(:disabled) {
+    background-color: var(--carbon-button-danger-hover);
+  }
+  
+  &:active:not(:disabled) {
+    background-color: var(--carbon-button-danger-active);
+  }
+  
+  &:focus {
+    outline: 2px solid var(--carbon-focus);
+    outline-offset: -2px;
+  }
+  
+  &:disabled {
+    background-color: var(--carbon-gray-30);
+    color: var(--carbon-text-on-color-disabled);
+    cursor: not-allowed;
+  }
+}
+
+// Card styles inspired by Carbon
+.card-carbon {
+  background-color: var(--carbon-layer-01);
+  border: 1px solid var(--carbon-border-subtle-01);
+  @apply transition-all duration-200 ease-in-out;
+  
+  &:hover {
+    background-color: var(--carbon-layer-hover-01);
+    border-color: var(--carbon-border-subtle-02);
+  }
+}
+
+.card-carbon-elevated {
+  background-color: var(--carbon-layer-02);
+  border: 1px solid var(--carbon-border-subtle-01);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  @apply transition-all duration-200 ease-in-out;
+  
+  &:hover {
+    background-color: var(--carbon-layer-hover-02);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+}
+
+// Input styles inspired by Carbon
+.input-carbon {
+  @apply w-full px-4 py-2 text-sm border-0 border-b-2 bg-transparent transition-all duration-200 ease-in-out;
+  border-bottom-color: var(--carbon-border-strong-01);
+  color: var(--carbon-text-primary);
+  
+  &::placeholder {
+    color: var(--carbon-text-placeholder);
+  }
+  
+  &:focus {
+    outline: none;
+    border-bottom-color: var(--carbon-focus);
+  }
+  
+  &:invalid {
+    border-bottom-color: var(--carbon-support-error);
+  }
+  
+  &:disabled {
+    color: var(--carbon-text-placeholder);
+    border-bottom-color: var(--carbon-border-subtle-01);
+    cursor: not-allowed;
+  }
+}
+
+// Badge/Tag styles inspired by Carbon
+.badge-carbon {
+  @apply inline-flex items-center px-2 py-1 text-xs font-medium rounded-full;
+  background-color: var(--carbon-gray-20);
+  color: var(--carbon-text-primary);
+}
+
+.badge-carbon-info {
+  background-color: var(--carbon-blue-20);
+  color: var(--carbon-blue-70);
+}
+
+.badge-carbon-success {
+  background-color: var(--carbon-green-20);
+  color: var(--carbon-green-70);
+}
+
+.badge-carbon-warning {
+  background-color: var(--carbon-yellow-20);
+  color: var(--carbon-yellow-70);
+}
+
+.badge-carbon-error {
+  background-color: var(--carbon-red-20);
+  color: var(--carbon-red-70);
+}
+
+// Text styles inspired by Carbon
+.text-carbon-primary {
+  color: var(--carbon-text-primary);
+}
+
+.text-carbon-secondary {
+  color: var(--carbon-text-secondary);
+}
+
+.text-carbon-helper {
+  color: var(--carbon-text-helper);
+}
+
+.text-carbon-placeholder {
+  color: var(--carbon-text-placeholder);
+}
+
+.text-carbon-error {
+  color: var(--carbon-text-error);
+}
+
+.text-carbon-link {
+  color: var(--carbon-link-primary);
+  
+  &:hover {
+    color: var(--carbon-link-primary-hover);
+  }
+}
+
+// Background styles inspired by Carbon
+.bg-carbon-layer-01 {
+  background-color: var(--carbon-layer-01);
+}
+
+.bg-carbon-layer-02 {
+  background-color: var(--carbon-layer-02);
+}
+
+.bg-carbon-layer-03 {
+  background-color: var(--carbon-layer-03);
+}
+
+.bg-carbon-field-01 {
+  background-color: var(--carbon-field-01);
+}
+
+.bg-carbon-field-02 {
+  background-color: var(--carbon-field-02);
+}
+
+// Border styles inspired by Carbon
+.border-carbon-subtle {
+  border-color: var(--carbon-border-subtle-01);
+}
+
+.border-carbon-strong {
+  border-color: var(--carbon-border-strong-01);
+}
+
+.border-carbon-interactive {
+  border-color: var(--carbon-border-interactive);
+}
+
+// Focus styles inspired by Carbon
+.focus-carbon {
+  &:focus {
+    outline: 2px solid var(--carbon-focus);
+    outline-offset: -2px;
+  }
+}
+
+// Notification styles inspired by Carbon
+.notification-carbon {
+  @apply p-4 border-l-4;
+  background-color: var(--carbon-layer-01);
+}
+
+.notification-carbon-info {
+  border-left-color: var(--carbon-support-info);
+  background-color: var(--carbon-blue-10);
+}
+
+.notification-carbon-success {
+  border-left-color: var(--carbon-support-success);
+  background-color: var(--carbon-green-10);
+}
+
+.notification-carbon-warning {
+  border-left-color: var(--carbon-support-warning);
+  background-color: var(--carbon-yellow-10);
+}
+
+.notification-carbon-error {
+  border-left-color: var(--carbon-support-error);
+  background-color: var(--carbon-red-10);
+}
+
+// Loading skeleton inspired by Carbon
+.skeleton-carbon {
+  background: linear-gradient(90deg, var(--carbon-skeleton-01) 25%, var(--carbon-skeleton-02) 50%, var(--carbon-skeleton-01) 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+// Spacing utilities based on Carbon
+.space-carbon-01 { margin: var(--carbon-spacing-01); }
+.space-carbon-02 { margin: var(--carbon-spacing-02); }
+.space-carbon-03 { margin: var(--carbon-spacing-03); }
+.space-carbon-04 { margin: var(--carbon-spacing-04); }
+.space-carbon-05 { margin: var(--carbon-spacing-05); }
+.space-carbon-06 { margin: var(--carbon-spacing-06); }
+.space-carbon-07 { margin: var(--carbon-spacing-07); }
+.space-carbon-08 { margin: var(--carbon-spacing-08); }
+
+.p-carbon-01 { padding: var(--carbon-spacing-01); }
+.p-carbon-02 { padding: var(--carbon-spacing-02); }
+.p-carbon-03 { padding: var(--carbon-spacing-03); }
+.p-carbon-04 { padding: var(--carbon-spacing-04); }
+.p-carbon-05 { padding: var(--carbon-spacing-05); }
+.p-carbon-06 { padding: var(--carbon-spacing-06); }
+.p-carbon-07 { padding: var(--carbon-spacing-07); }
+.p-carbon-08 { padding: var(--carbon-spacing-08); }

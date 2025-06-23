@@ -44,8 +44,8 @@ export class RoomState{
     {
         return state.initLoadingState
     }
-    @Selector() 
-    static setlectStateRooms(state:RoomStateModel)
+    @Selector()
+    static selectStateRooms(state:RoomStateModel)
     {
         return state.rooms
     }

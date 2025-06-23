@@ -17,11 +17,22 @@
     <youpez-ibm-icon iconName="dashboardReference" iconSize="24"></youpez-ibm-icon>
   </button>
 
+  <!-- Bouton notifications -->
+  <button class="app-layout__header__btn app-layout__header__btn--icon notification-btn"
+          (click)="toggleNotifications()"
+          [class.has-notifications]="unreadNotificationsCount > 0">
+    <youpez-ibm-icon iconName="notification" iconSize="24"></youpez-ibm-icon>
+    <span *ngIf="unreadNotificationsCount > 0"
+          class="notification-badge">
+      {{ unreadNotificationsCount > 99 ? '99+' : unreadNotificationsCount }}
+    </span>
+  </button>
+
   <button *ngIf="isAdmin"  class="app-layout__header__btn app-layout__header__btn--icon" [routerLink]="'/admin'" [routerLinkActive]="['app-mini-sidebar__list__item__active']">
     <youpez-ibm-icon iconName="settings" iconSize="24"></youpez-ibm-icon>
   </button>
-  
-  
+
+
   <div ngbDropdown
        placement="bottom-right"
        container="body">
@@ -72,3 +83,9 @@
     </div>
   </div>
 </div>
+
+<!-- Panneau de notifications -->
+<app-smart-notifications
+  [isOpen]="showNotifications"
+  (closeRequested)="closeNotifications()">
+</app-smart-notifications>

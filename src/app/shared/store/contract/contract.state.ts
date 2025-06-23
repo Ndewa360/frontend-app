@@ -43,8 +43,8 @@ export class ContractState{
     {
         return state.initLoadingState
     }
-    @Selector() 
-    static setlectStateContracts(state:ContractStateModel)
+    @Selector()
+    static selectStateContracts(state:ContractStateModel)
     {
         return state.contracts
     }

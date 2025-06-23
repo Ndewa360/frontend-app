@@ -121,7 +121,7 @@ export class UserState{
                 result => {
                     ctx.patchState({
                         loadingUser:false,
-                        users:[...state.users,...result.data]
+                        users:[...state.users,result.data]
                     })
                 }
             )

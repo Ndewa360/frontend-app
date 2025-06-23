@@ -1,0 +1,265 @@
+// Styles pour les filtres de recherche avancés
+.advanced-search-filters {
+  @apply bg-white rounded-lg shadow-sm border border-gray-200 p-6;
+  max-height: 80vh;
+  overflow-y: auto;
+
+  // Scrollbar personnalisée
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    @apply bg-gray-100 rounded;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    @apply bg-gray-400 rounded;
+
+    &:hover {
+      @apply bg-gray-500;
+    }
+  }
+}
+
+.filter-section {
+  @apply pb-6 border-b border-gray-100 last:border-b-0;
+  
+  &:last-child {
+    @apply pb-0;
+  }
+
+  h3 {
+    @apply mb-4 text-gray-800 font-semibold;
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      width: 30px;
+      height: 2px;
+      background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+      border-radius: 1px;
+    }
+  }
+}
+
+// Styles pour les contrôles de formulaire
+.filter-section {
+  ibm-combo-box,
+  input[ibmText],
+  ibm-number {
+    width: 100%;
+    
+    &:focus-within {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+      transition: all 0.2s ease;
+    }
+  }
+
+  ibm-checkbox {
+    @apply transition-all duration-200;
+
+    &:hover {
+      transform: translateX(2px);
+    }
+
+    .bx--checkbox-label {
+      @apply text-gray-700 font-medium;
+    }
+  }
+}
+
+// Slider personnalisé
+ibm-slider {
+  .bx--slider {
+    .bx--slider__track {
+      @apply bg-gray-200;
+    }
+
+    .bx--slider__filled-track {
+      background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+    }
+
+    .bx--slider__thumb {
+      @apply bg-white border-2 border-blue-500;
+      box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+
+      &:hover {
+        transform: scale(1.1);
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+      }
+    }
+  }
+}
+
+// Grille responsive
+.grid {
+  gap: 1rem;
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Actions du footer
+.filter-actions {
+  @apply bg-gray-50 -mx-6 -mb-6 px-6 py-4 rounded-b-lg;
+  border-top: 1px solid #e5e7eb;
+
+  button {
+    @apply transition-all duration-200;
+
+    &:hover {
+      transform: translateY(-1px);
+    }
+
+    &[ibmButton="primary"] {
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      
+      &:hover {
+        background: linear-gradient(135deg, #2563eb, #1e40af);
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+      }
+
+      &:disabled {
+        background: #9ca3af;
+        cursor: not-allowed;
+        transform: none;
+      }
+    }
+
+    &[ibmButton="secondary"] {
+      @apply border-blue-500 text-blue-600;
+
+      &:hover {
+        @apply bg-blue-50;
+      }
+    }
+
+    &[ibmButton="ghost"] {
+      @apply text-gray-600;
+
+      &:hover {
+        @apply bg-gray-100 text-gray-800;
+      }
+    }
+  }
+}
+
+// Types de chambres - style en grille
+.grid-cols-2,
+.grid-cols-3,
+.grid-cols-4 {
+  ibm-checkbox {
+    @apply p-3 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50;
+    transition: all 0.2s ease;
+
+    &.bx--checkbox-wrapper--checked {
+      @apply border-blue-500 bg-blue-50;
+    }
+
+    .flex {
+      @apply items-center justify-center text-center;
+    }
+  }
+}
+
+// Animations
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.advanced-search-filters {
+  animation: slideInRight 0.3s ease-out;
+}
+
+.filter-section {
+  animation: fadeInUp 0.4s ease-out;
+  animation-fill-mode: both;
+
+  @for $i from 1 through 10 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 0.1}s;
+    }
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// États de chargement
+.loading {
+  .filter-section {
+    @apply opacity-50 pointer-events-none;
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .advanced-search-filters {
+    @apply p-4 rounded-none;
+    max-height: 100vh;
+  }
+  
+  .filter-actions {
+    @apply -mx-4 -mb-4 px-4;
+    
+    .flex {
+      @apply flex-col space-y-2;
+      
+      &.justify-between {
+        @apply items-stretch;
+      }
+    }
+  }
+
+  .grid-cols-2 {
+    @apply grid-cols-1;
+  }
+
+  .grid-cols-3 {
+    @apply grid-cols-2;
+  }
+
+  .grid-cols-4 {
+    @apply grid-cols-2;
+  }
+}
+
+// Mode sombre
+@media (prefers-color-scheme: dark) {
+  .advanced-search-filters {
+    @apply bg-gray-800 border-gray-700;
+  }
+
+  .filter-section {
+    @apply border-gray-700;
+
+    h3 {
+      @apply text-gray-200;
+    }
+  }
+
+  .filter-actions {
+    @apply bg-gray-700;
+  }
+}

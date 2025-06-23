@@ -47,8 +47,8 @@ export class CityState{
         return state.initLoadingState
     }
 
-    @Selector() 
-    static setlectStateCities(state:CityStateModel)
+    @Selector()
+    static selectStateCities(state:CityStateModel)
     {
         return state.cities
     }

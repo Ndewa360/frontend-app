@@ -1,0 +1,274 @@
+<!-- Dashboard Financier Moderne -->
+<div class="modern-financial-dashboard bg-white p-6">
+  
+  <!-- En-tête avec contrôles -->
+  <div class="dashboard-header mb-6">
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+      
+      <!-- Titre et description -->
+      <div class="header-content">
+        <h2 class="text-2xl font-bold text-carbon-primary mb-2">
+          Tableau de Bord Financier
+        </h2>
+        <p class="text-carbon-secondary">
+          Vue d'ensemble de vos revenus et performances financières
+        </p>
+      </div>
+
+      <!-- Contrôles -->
+      <div class="header-controls flex items-center gap-4">
+        <!-- Sélecteur d'année -->
+        <div class="control-group">
+          <label class="text-sm text-carbon-secondary mb-1 block">Année</label>
+          <select 
+            class="input-carbon px-3 py-2 text-sm min-w-[120px]"
+            [value]="selectedYear"
+            (change)="onYearChange($event)">
+            <option *ngFor="let year of yearOptions" [value]="year.value">
+              {{ year.label }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Sélecteur de période -->
+        <div class="control-group">
+          <label class="text-sm text-carbon-secondary mb-1 block">Période</label>
+          <select 
+            class="input-carbon px-3 py-2 text-sm min-w-[120px]"
+            [value]="selectedPeriod"
+            (change)="onPeriodChange($event)">
+            <option *ngFor="let period of periodOptions" [value]="period.value">
+              {{ period.label }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Bouton d'export -->
+        <button 
+          class="btn-carbon-tertiary inline-flex items-center focus-carbon"
+          (click)="exportData()">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                  d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+            </path>
+          </svg>
+          Exporter
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Métriques principales -->
+  <div class="financial-metrics mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div 
+        *ngFor="let metric of financialMetrics"
+        class="metric-card card-carbon-elevated p-6 hover:scale-105 transition-transform duration-200">
+        
+        <!-- En-tête de la métrique -->
+        <div class="metric-header flex items-center justify-between mb-4">
+          <div class="metric-icon p-3 rounded-full" [ngClass]="getMetricColorClass(metric)">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <!-- Icône dynamique basée sur metric.icon -->
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+            </svg>
+          </div>
+          
+          <!-- Indicateur de changement -->
+          <div class="metric-change flex items-center" [ngClass]="getChangeColorClass(metric.changeType)">
+            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+            </svg>
+            <span class="text-sm font-medium">
+              {{ metric.change > 0 ? '+' : '' }}{{ metric.change }}%
+            </span>
+          </div>
+        </div>
+
+        <!-- Valeur et label -->
+        <div class="metric-content">
+          <div class="metric-value text-2xl font-bold text-carbon-primary mb-1">
+            <ng-container *ngIf="metric.label.includes('Taux'); else currencyValue">
+              {{ metric.value }}%
+            </ng-container>
+            <ng-template #currencyValue>
+              {{ metric.value | currency:'XAF':'symbol':'1.0-0' }}
+            </ng-template>
+          </div>
+          <div class="metric-label text-sm text-carbon-secondary">
+            {{ metric.label }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Graphiques et analyses -->
+  <div class="financial-charts mb-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      
+      <!-- Graphique des revenus par propriété -->
+      <div class="chart-card card-carbon-elevated p-6">
+        <div class="chart-header mb-6">
+          <h3 class="text-lg font-semibold text-carbon-primary mb-2">
+            Revenus par Propriété
+          </h3>
+          <p class="text-sm text-carbon-secondary">
+            Répartition des revenus collectés par propriété
+          </p>
+        </div>
+        
+        <div class="chart-content">
+          <!-- Graphique en barres simple -->
+          <div class="revenue-bars space-y-3">
+            <div *ngFor="let item of revenueChartData" class="revenue-bar-item">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-sm font-medium text-carbon-primary">{{ item.name }}</span>
+                <span class="text-sm text-carbon-secondary">{{ item.value | currency:'XAF':'symbol':'1.0-0' }}</span>
+              </div>
+              <div class="progress-bar bg-carbon-gray-20 h-2 rounded-full overflow-hidden">
+                <div
+                  class="progress-fill h-full bg-gradient-to-r from-carbon-primary-60 to-carbon-primary-40 transition-all duration-500"
+                  [style.width.%]="getProgressWidth(item.value)">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Taux de recouvrement -->
+      <div class="chart-card card-carbon-elevated p-6">
+        <div class="chart-header mb-6">
+          <h3 class="text-lg font-semibold text-carbon-primary mb-2">
+            Taux de Recouvrement
+          </h3>
+          <p class="text-sm text-carbon-secondary">
+            Performance de collecte par propriété
+          </p>
+        </div>
+        
+        <div class="chart-content">
+          <!-- Graphique en anneaux -->
+          <div class="collection-rings space-y-4">
+            <div *ngFor="let item of collectionRateData" class="collection-item flex items-center">
+              <div class="ring-container relative w-16 h-16 mr-4">
+                <svg class="ring-chart w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                  <path class="ring-bg" 
+                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                        fill="none" 
+                        stroke="var(--carbon-gray-20)" 
+                        stroke-width="3"/>
+                  <path class="ring-progress" 
+                        [attr.stroke-dasharray]="item.value + ', 100'"
+                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                        fill="none" 
+                        [attr.stroke]="item.value >= 90 ? 'var(--carbon-green-60)' : item.value >= 70 ? 'var(--carbon-primary-60)' : 'var(--carbon-red-60)'"
+                        stroke-width="3"/>
+                </svg>
+                <div class="ring-text absolute inset-0 flex items-center justify-center">
+                  <span class="text-xs font-bold text-carbon-primary">{{ item.value }}%</span>
+                </div>
+              </div>
+              <div class="item-info flex-1">
+                <div class="text-sm font-medium text-carbon-primary">{{ item.name }}</div>
+                <div class="text-xs text-carbon-secondary">
+                  <span [ngClass]="{
+                    'text-carbon-green-70': item.value >= 90,
+                    'text-carbon-primary-70': item.value >= 70 && item.value < 90,
+                    'text-carbon-red-70': item.value < 70
+                  }">
+                    {{ item.value >= 90 ? 'Excellent' : item.value >= 70 ? 'Bon' : 'À améliorer' }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Liste des propriétés -->
+  <div class="properties-summary">
+    <div class="summary-header mb-6">
+      <h3 class="text-lg font-semibold text-carbon-primary mb-2">
+        Résumé par Propriété
+      </h3>
+      <p class="text-sm text-carbon-secondary">
+        Performance détaillée de chaque propriété
+      </p>
+    </div>
+
+    <div class="properties-grid grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+      <div 
+        *ngFor="let property of propertiesSummary"
+        class="property-card card-carbon-elevated p-6 cursor-pointer hover:scale-105 transition-transform duration-200"
+        (click)="onPropertyClick(property)">
+        
+        <!-- En-tête de la propriété -->
+        <div class="property-header mb-4">
+          <h4 class="text-lg font-semibold text-carbon-primary mb-2">
+            {{ property.propertyName }}
+          </h4>
+          <div class="property-metrics grid grid-cols-2 gap-4">
+            <div class="metric">
+              <div class="text-xl font-bold text-carbon-primary">
+                {{ property.totalRevenue | currency:'XAF':'symbol':'1.0-0' }}
+              </div>
+              <div class="text-xs text-carbon-secondary">Revenus collectés</div>
+            </div>
+            <div class="metric">
+              <div class="text-xl font-bold" [ngClass]="{
+                'text-carbon-green-70': property.collectionRate >= 90,
+                'text-carbon-primary-70': property.collectionRate >= 70 && property.collectionRate < 90,
+                'text-carbon-red-70': property.collectionRate < 70
+              }">
+                {{ property.collectionRate }}%
+              </div>
+              <div class="text-xs text-carbon-secondary">Taux de recouvrement</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Barre de progression -->
+        <div class="property-progress mb-4">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs text-carbon-secondary">Objectif</span>
+            <span class="text-xs text-carbon-secondary">
+              {{ property.expectedRevenue | currency:'XAF':'symbol':'1.0-0' }}
+            </span>
+          </div>
+          <div class="progress-bar bg-carbon-gray-20 h-2 rounded-full overflow-hidden">
+            <div 
+              class="progress-fill h-full transition-all duration-500"
+              [ngClass]="{
+                'bg-carbon-green-60': property.collectionRate >= 90,
+                'bg-carbon-primary-60': property.collectionRate >= 70 && property.collectionRate < 90,
+                'bg-carbon-red-60': property.collectionRate < 70
+              }"
+              [style.width.%]="property.collectionRate">
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="property-actions">
+          <button class="btn-carbon-tertiary w-full text-sm">
+            Voir détails
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- État de chargement -->
+  <div *ngIf="loading$ | async" class="loading-overlay fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
+    <div class="loading-content bg-white p-8 rounded-lg border border-gray-200 shadow-lg">
+      <div class="skeleton-carbon h-4 w-48 mb-4"></div>
+      <div class="skeleton-carbon h-4 w-32"></div>
+    </div>
+  </div>
+</div>

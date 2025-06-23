@@ -1,0 +1,121 @@
+<!-- Input moderne réutilisable -->
+<div [ngClass]="getContainerClasses()">
+  
+  <!-- Label -->
+  <label *ngIf="label" 
+         [for]="inputId" 
+         [ngClass]="getLabelClasses()">
+    {{ label }}
+    <span *ngIf="required" class="text-red-500 ml-1">*</span>
+  </label>
+  
+  <!-- Description -->
+  <p *ngIf="description" [ngClass]="getDescriptionClasses()">
+    {{ description }}
+  </p>
+  
+  <!-- Container de l'input -->
+  <div class="relative" [ngClass]="getInputContainerClasses()">
+    
+    <!-- Icône de gauche -->
+    <div *ngIf="leftIcon" class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+      <svg [ngClass]="getIconClasses()" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="leftIcon"></path>
+      </svg>
+    </div>
+    
+    <!-- Input principal -->
+    <input *ngIf="type !== 'textarea'"
+           [id]="inputId"
+           [type]="getInputType()"
+           [placeholder]="placeholder"
+           [value]="value"
+           [disabled]="disabled"
+           [readonly]="readonly"
+           [required]="required"
+           [min]="min"
+           [max]="max"
+           [step]="step"
+           [maxlength]="maxlength"
+           [pattern]="pattern"
+           [autocomplete]="autocomplete"
+           [ngClass]="getInputClasses()"
+           (input)="onInput($event)"
+           (focus)="onFocus($event)"
+           (blur)="onBlur($event)"
+           (keydown)="onKeydown($event)">
+    
+    <!-- Textarea -->
+    <textarea *ngIf="type === 'textarea'"
+              [id]="inputId"
+              [placeholder]="placeholder"
+              [value]="value"
+              [disabled]="disabled"
+              [readonly]="readonly"
+              [required]="required"
+              [maxlength]="maxlength"
+              [rows]="rows"
+              [ngClass]="getTextareaClasses()"
+              (input)="onInput($event)"
+              (focus)="onFocus($event)"
+              (blur)="onBlur($event)">
+    </textarea>
+    
+    <!-- Icône de droite / Actions -->
+    <div *ngIf="rightIcon || showPasswordToggle || clearable" 
+         class="absolute inset-y-0 right-0 flex items-center">
+      
+      <!-- Bouton clear -->
+      <button *ngIf="clearable && value && !disabled" 
+              type="button"
+              class="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+              (click)="onClear()">
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+      
+      <!-- Toggle password -->
+      <button *ngIf="showPasswordToggle" 
+              type="button"
+              class="p-1 text-gray-400 hover:text-gray-600 transition-colors mr-3"
+              (click)="togglePasswordVisibility()">
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path *ngIf="!passwordVisible" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          <path *ngIf="!passwordVisible" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+          <path *ngIf="passwordVisible" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"></path>
+        </svg>
+      </button>
+      
+      <!-- Icône de droite -->
+      <div *ngIf="rightIcon" class="pr-3 flex items-center pointer-events-none">
+        <svg [ngClass]="getIconClasses()" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="rightIcon"></path>
+        </svg>
+      </div>
+    </div>
+    
+    <!-- Indicateur de chargement -->
+    <div *ngIf="loading" class="absolute inset-y-0 right-0 pr-3 flex items-center">
+      <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+    </div>
+  </div>
+  
+  <!-- Compteur de caractères -->
+  <div *ngIf="maxlength && showCharCount" class="flex justify-between items-center mt-1">
+    <span></span>
+    <span [ngClass]="getCharCountClasses()">
+      {{ (value || '').length }}/{{ maxlength }}
+    </span>
+  </div>
+  
+  <!-- Message d'erreur -->
+  <p *ngIf="error && touched" [ngClass]="getErrorClasses()">
+    {{ error }}
+  </p>
+  
+  <!-- Message d'aide -->
+  <p *ngIf="helpText && !error" [ngClass]="getHelpClasses()">
+    {{ helpText }}
+  </p>
+</div>

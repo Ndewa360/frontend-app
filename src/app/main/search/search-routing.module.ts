@@ -25,7 +25,7 @@ const routes: Routes = [
           dataRoomItem: SearchRoomDataResolver,
           dataRoomList: SearchPageDataResolver
         },
-        runGuardsAndResolvers: "always",
+        // runGuardsAndResolvers: "always",
       }
     ]
   },

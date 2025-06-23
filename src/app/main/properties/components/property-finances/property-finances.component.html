@@ -1,0 +1,226 @@
+<!-- Finances de la propriété -->
+<div class="property-finances-container">
+  
+  <!-- Header avec actions -->
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
+      
+      <!-- Titre -->
+      <div>
+        <h2 class="text-2xl font-bold text-gray-900">Finances</h2>
+        <p class="text-gray-600">Analysez la performance financière de votre propriété</p>
+      </div>
+      
+      <!-- Actions -->
+      <div class="flex items-center space-x-3">
+        <select [(ngModel)]="selectedPeriod" 
+                (ngModelChange)="updatePeriod()"
+                class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+          <option value="current_month">Mois actuel</option>
+          <option value="last_month">Mois dernier</option>
+          <option value="last_3_months">3 derniers mois</option>
+          <option value="last_6_months">6 derniers mois</option>
+          <option value="current_year">Année actuelle</option>
+          <option value="last_year">Année dernière</option>
+        </select>
+        
+        <button (click)="generateReport()" 
+                class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2-2V7a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 002 2h2a2 2 0 012-2V7a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 00-2 2h-2a2 2 0 00-2 2v6a2 2 0 01-2 2H9z"></path>
+          </svg>
+          Rapport
+        </button>
+        
+        <button (click)="exportFinances()" 
+                class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+          Exporter
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Métriques principales -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    
+    <!-- Revenus -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <div class="flex items-center">
+        <div class="p-3 bg-green-100 rounded-lg">
+          <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+          </svg>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm font-medium text-gray-600">Revenus totaux</p>
+          <p class="text-2xl font-bold text-gray-900">{{ finances?.monthlyRevenue | currency:'XAF':'symbol':'1.0-0' }}</p>
+          <p class="text-sm text-green-600">+12% vs mois dernier</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dépenses -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <div class="flex items-center">
+        <div class="p-3 bg-red-100 rounded-lg">
+          <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path>
+          </svg>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm font-medium text-gray-600">Dépenses</p>
+          <p class="text-2xl font-bold text-gray-900">{{ finances?.expenses | currency:'XAF':'symbol':'1.0-0' }}</p>
+          <p class="text-sm text-red-600">+5% vs mois dernier</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bénéfice net -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <div class="flex items-center">
+        <div class="p-3 bg-blue-100 rounded-lg">
+          <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+          </svg>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm font-medium text-gray-600">Bénéfice net</p>
+          <p class="text-2xl font-bold text-gray-900">{{ finances?.netIncome | currency:'XAF':'symbol':'1.0-0' }}</p>
+          <p class="text-sm" [ngClass]="getNetIncomeGrowth() >= 0 ? 'text-green-600' : 'text-red-600'">
+            {{ getNetIncomeGrowth() >= 0 ? '+' : '' }}{{ getNetIncomeGrowth() }}% vs mois dernier
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROI -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <div class="flex items-center">
+        <div class="p-3 bg-purple-100 rounded-lg">
+          <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2-2V7a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 002 2h2a2 2 0 012-2V7a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 00-2 2h-2a2 2 0 00-2 2v6a2 2 0 01-2 2H9z"></path>
+          </svg>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm font-medium text-gray-600">ROI annuel</p>
+          <p class="text-2xl font-bold text-gray-900">{{ getROI() }}%</p>
+          <p class="text-sm text-purple-600">Retour sur investissement</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Graphiques et analyses -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+    
+    <!-- Graphique des revenus -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-lg font-semibold text-gray-900">Évolution des revenus</h3>
+        <div class="flex items-center space-x-2">
+          <span class="text-sm text-gray-500">Période:</span>
+          <span class="text-sm font-medium text-gray-900">{{ getPeriodLabel() }}</span>
+        </div>
+      </div>
+      
+      <!-- Placeholder pour graphique -->
+      <div class="h-64 bg-gray-50 rounded-lg flex items-center justify-center">
+        <div class="text-center">
+          <svg class="w-12 h-12 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2-2V7a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 002 2h2a2 2 0 012-2V7a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 00-2 2h-2a2 2 0 00-2 2v6a2 2 0 01-2 2H9z"></path>
+          </svg>
+          <p class="text-gray-500">Graphique des revenus</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Répartition des dépenses -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-6">Répartition des dépenses</h3>
+      
+      <div class="space-y-4">
+        <div *ngFor="let category of finances?.expenseCategories" class="flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <div class="w-3 h-3 rounded-full" [style.background-color]="getCategoryColor(category.category)"></div>
+            <span class="text-sm font-medium text-gray-700">{{ category.category }}</span>
+          </div>
+          <div class="text-right">
+            <div class="text-sm font-semibold text-gray-900">{{ category.amount | currency:'XAF':'symbol':'1.0-0' }}</div>
+            <div class="text-xs text-gray-500">{{ getCategoryPercentage(category.amount) }}%</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Graphique en secteurs placeholder -->
+      <div class="mt-6 h-32 bg-gray-50 rounded-lg flex items-center justify-center">
+        <div class="text-center">
+          <svg class="w-8 h-8 text-gray-400 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path>
+          </svg>
+          <p class="text-xs text-gray-500">Graphique en secteurs</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tableau détaillé des transactions -->
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <div class="flex items-center justify-between">
+        <h3 class="text-lg font-medium text-gray-900">Transactions récentes</h3>
+        <button class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+          Voir tout
+        </button>
+      </div>
+    </div>
+    
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Unité</th>
+            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Montant</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <tr *ngFor="let transaction of getRecentTransactions(); trackBy: trackByTransactionId" 
+              class="hover:bg-gray-50">
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              {{ transaction.date | date:'dd/MM/yyyy' }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm font-medium text-gray-900">{{ transaction.description }}</div>
+              <div class="text-sm text-gray-500">{{ transaction.reference }}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                    [ngClass]="{
+                      'bg-green-100 text-green-800': transaction.type === 'income',
+                      'bg-red-100 text-red-800': transaction.type === 'expense'
+                    }">
+                {{ transaction.type === 'income' ? 'Revenu' : 'Dépense' }}
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              {{ transaction.unitName || '-' }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"
+                [ngClass]="{
+                  'text-green-600': transaction.type === 'income',
+                  'text-red-600': transaction.type === 'expense'
+                }">
+              {{ transaction.type === 'income' ? '+' : '-' }}{{ transaction.amount | currency:'XAF':'symbol':'1.0-0' }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
