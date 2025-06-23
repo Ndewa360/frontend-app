@@ -1,10 +1,13 @@
 // Import des styles Carbon
 @import '../../../../assets/styles/carbon-utilities.scss';
 
-// Container principal - Thème clair
+// Container principal - Thème clair avec scroll
 .property-management-container {
-  min-height: 100vh;
+  height: 100vh; // Hauteur fixe pour permettre le scroll
   background-color: #ffffff; // Fond blanc pur
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; // Empêcher le scroll sur le container principal
 }
 
 // Header principal - Thème clair
@@ -100,12 +103,19 @@
   }
 }
 
-// Contenu principal
+// Contenu principal avec scroll
 .main-content {
+  flex: 1; // Prendre tout l'espace restant
+  overflow: hidden; // Empêcher le scroll sur le container
+  position: relative;
+
   .view-container {
     opacity: 1;
     transform: translateY(0);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    height: 100%; // Hauteur complète
+    overflow-y: auto; // Permettre le scroll vertical
+    overflow-x: hidden; // Empêcher le scroll horizontal
 
     &.hidden {
       opacity: 0;
@@ -115,6 +125,7 @@
       top: 0;
       left: 0;
       right: 0;
+      bottom: 0; // Ajouté pour couvrir toute la hauteur
     }
 
     &.active {
@@ -122,6 +133,7 @@
       transform: translateY(0);
       pointer-events: auto;
       position: relative;
+      height: 100%; // Hauteur complète pour le scroll
     }
   }
 }
@@ -159,9 +171,27 @@
   animation: fadeIn 0.5s ease-out;
 }
 
-// Responsive design
+// Responsive design avec scroll amélioré
 @media (max-width: 768px) {
+  .property-management-container {
+    height: 100vh; // Hauteur fixe sur mobile
+    overflow: hidden;
+  }
+
+  .main-content {
+    .view-container {
+      // Scroll amélioré sur mobile
+      -webkit-overflow-scrolling: touch; // Scroll fluide sur iOS
+
+      &.active {
+        height: calc(100vh - 200px); // Ajuster selon la hauteur du header
+      }
+    }
+  }
+
   .main-header {
+    flex-shrink: 0; // Empêcher la compression du header
+
     .header-content {
       padding: 1rem 0;
 
@@ -232,4 +262,30 @@
 .main-header {
   background-color: #f4f4f4 !important; // Gris très clair forcé
   border-bottom-color: #e0e0e0 !important; // Bordure claire forcée
+}
+
+// Styles de scrollbar personnalisés
+.view-container {
+  // Webkit scrollbar (Chrome, Safari, Edge)
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+
+    &:hover {
+      background: #a8a8a8;
+    }
+  }
+
+  // Firefox scrollbar
+  scrollbar-width: thin;
+  scrollbar-color: #c1c1c1 #f1f1f1;
 }

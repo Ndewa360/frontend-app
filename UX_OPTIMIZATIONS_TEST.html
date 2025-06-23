@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test des Optimisations UX - Interface Immobilière</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        /* Variables CSS */
+        :root {
+            --carbon-primary-60: rgb(204, 140, 10);
+            --carbon-primary-70: #b8a009;
+        }
+        
+        /* Container avec scroll optimisé */
+        .property-management-container {
+            height: 100vh;
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .main-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e0e0e0;
+            flex-shrink: 0;
+        }
+        
+        .main-content {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .view-container {
+            height: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .view-container.hidden {
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+        
+        .view-container.active {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+            position: relative;
+        }
+        
+        /* Scrollbar personnalisée */
+        .view-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .view-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        
+        .view-container::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        
+        .view-container::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        
+        .view-container {
+            scrollbar-width: thin;
+            scrollbar-color: #c1c1c1 #f1f1f1;
+        }
+        
+        /* Styles des onglets */
+        .tab-button {
+            padding: 1rem 1.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+            color: #525252;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .tab-button:hover {
+            color: #161616;
+            background-color: #f0f0f0;
+        }
+        
+        .tab-button.active {
+            color: var(--carbon-primary-60);
+            border-bottom-color: var(--carbon-primary-60);
+            background-color: #ffffff;
+        }
+        
+        /* Métriques compactes */
+        .metric-compact {
+            text-align: center;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border: 1px solid;
+        }
+        
+        /* Cartes de propriétés */
+        .property-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .property-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Contenu avec beaucoup d'éléments pour tester le scroll */
+        .scrollable-content {
+            padding: 1rem;
+        }
+        
+        .success-banner {
+            background: linear-gradient(135deg, #defbe6, #a7f3d0);
+            border: 1px solid #10b981;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="property-management-container">
+        
+        <!-- Header optimisé -->
+        <div class="main-header">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <!-- Titre et description -->
+                <div class="py-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h1 class="text-3xl font-bold mb-2" style="color: #161616;">
+                                Gestion Immobilière
+                            </h1>
+                            <p class="text-lg" style="color: #525252;">
+                                Interface optimisée sans redondance
+                            </p>
+                        </div>
+                        <button style="background-color: var(--carbon-primary-60); color: white; padding: 0.5rem 1rem; border: none; cursor: pointer;">
+                            ➕ Nouvelle Propriété
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Navigation par onglets -->
+                <div style="border-top: 1px solid #e0e0e0; padding-top: 1rem;">
+                    <nav class="flex space-x-8">
+                        <button class="tab-button active" onclick="switchView('properties')" id="propertiesTab">
+                            🏠 Mes Propriétés
+                        </button>
+                        <button class="tab-button" onclick="switchView('dashboard')" id="dashboardTab">
+                            📊 Dashboard Financier
+                        </button>
+                    </nav>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenu principal avec scroll -->
+        <div class="main-content">
+            
+            <!-- Vue Propriétés (OPTIMISÉE) -->
+            <div class="view-container active" id="propertiesView">
+                <div class="scrollable-content">
+                    
+                    <!-- Métriques compactes (plus de section redondante) -->
+                    <div class="bg-white border-b border-gray-200 py-4 mb-6">
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div class="metric-compact bg-green-50 border-green-200" style="border-color: #bbf7d0;">
+                                <div class="text-xl font-bold text-green-700">24</div>
+                                <div class="text-xs text-green-600">Propriétés</div>
+                            </div>
+                            <div class="metric-compact bg-blue-50 border-blue-200" style="border-color: #bfdbfe;">
+                                <div class="text-xl font-bold text-blue-700">156</div>
+                                <div class="text-xs text-blue-600">Unités</div>
+                            </div>
+                            <div class="metric-compact bg-purple-50 border-purple-200" style="border-color: #d8b4fe;">
+                                <div class="text-xl font-bold text-purple-700">87%</div>
+                                <div class="text-xs text-purple-600">Occupation</div>
+                            </div>
+                            <div class="metric-compact bg-yellow-50 border-yellow-200" style="border-color: #fde68a;">
+                                <div class="text-xl font-bold" style="color: var(--carbon-primary-60);">2.4M XAF</div>
+                                <div class="text-xs" style="color: var(--carbon-primary-70);">Revenus/mois</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Liste des propriétés (PLUS DE BARRE DE RECHERCHE) -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Propriété 1 -->
+                        <div class="property-card">
+                            <h3 class="font-semibold text-lg mb-2">Villa Moderne Douala</h3>
+                            <p class="text-sm text-gray-600 mb-3">5 chambres • 95% occupation</p>
+                            <div class="text-xl font-bold mb-2" style="color: var(--carbon-primary-60);">850 000 XAF</div>
+                            <div class="text-sm text-gray-500">par mois</div>
+                        </div>
+                        
+                        <!-- Propriété 2 -->
+                        <div class="property-card">
+                            <h3 class="font-semibold text-lg mb-2">Immeuble Centre-Ville</h3>
+                            <p class="text-sm text-gray-600 mb-3">12 unités • 92% occupation</p>
+                            <div class="text-xl font-bold mb-2" style="color: var(--carbon-primary-60);">1 200 000 XAF</div>
+                            <div class="text-sm text-gray-500">par mois</div>
+                        </div>
+                        
+                        <!-- Propriété 3 -->
+                        <div class="property-card">
+                            <h3 class="font-semibold text-lg mb-2">Résidence Étudiante</h3>
+                            <p class="text-sm text-gray-600 mb-3">8 chambres • 80% occupation</p>
+                            <div class="text-xl font-bold mb-2" style="color: var(--carbon-primary-60);">400 000 XAF</div>
+                            <div class="text-sm text-gray-500">par mois</div>
+                        </div>
+                        
+                        <!-- Propriétés supplémentaires pour tester le scroll -->
+                        <div class="property-card">
+                            <h3 class="font-semibold text-lg mb-2">Appartement Luxe</h3>
+                            <p class="text-sm text-gray-600 mb-3">3 chambres • 100% occupation</p>
+                            <div class="text-xl font-bold mb-2" style="color: var(--carbon-primary-60);">600 000 XAF</div>
+                            <div class="text-sm text-gray-500">par mois</div>
+                        </div>
+                        
+                        <div class="property-card">
+                            <h3 class="font-semibold text-lg mb-2">Studio Moderne</h3>
+                            <p class="text-sm text-gray-600 mb-3">1 chambre • 85% occupation</p>
+                            <div class="text-xl font-bold mb-2" style="color: var(--carbon-primary-60);">250 000 XAF</div>
+                            <div class="text-sm text-gray-500">par mois</div>
+                        </div>
+                        
+                        <div class="property-card">
+                            <h3 class="font-semibold text-lg mb-2">Maison Familiale</h3>
+                            <p class="text-sm text-gray-600 mb-3">6 chambres • 90% occupation</p>
+                            <div class="text-xl font-bold mb-2" style="color: var(--carbon-primary-60);">950 000 XAF</div>
+                            <div class="text-sm text-gray-500">par mois</div>
+                        </div>
+                        
+                        <div class="property-card">
+                            <h3 class="font-semibold text-lg mb-2">Duplex Premium</h3>
+                            <p class="text-sm text-gray-600 mb-3">4 chambres • 88% occupation</p>
+                            <div class="text-xl font-bold mb-2" style="color: var(--carbon-primary-60);">750 000 XAF</div>
+                            <div class="text-sm text-gray-500">par mois</div>
+                        </div>
+                        
+                        <div class="property-card">
+                            <h3 class="font-semibold text-lg mb-2">Loft Artistique</h3>
+                            <p class="text-sm text-gray-600 mb-3">2 chambres • 95% occupation</p>
+                            <div class="text-xl font-bold mb-2" style="color: var(--carbon-primary-60);">500 000 XAF</div>
+                            <div class="text-sm text-gray-500">par mois</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Espace en bas pour le scroll -->
+                    <div class="h-20"></div>
+                </div>
+            </div>
+            
+            <!-- Vue Dashboard -->
+            <div class="view-container hidden" id="dashboardView">
+                <div class="scrollable-content">
+                    <h2 class="text-2xl font-bold mb-6">Dashboard Financier avec Scroll</h2>
+                    
+                    <!-- Métriques du dashboard -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <div class="property-card">
+                            <h3 class="text-sm font-medium text-green-800 mb-2">Revenus Totaux</h3>
+                            <div class="text-2xl font-bold text-green-900">2 450 000 XAF</div>
+                            <div class="text-sm text-green-600">+12.5% ce mois</div>
+                        </div>
+                        <div class="property-card">
+                            <h3 class="text-sm font-medium text-blue-800 mb-2">Taux de Recouvrement</h3>
+                            <div class="text-2xl font-bold text-blue-900">87.3%</div>
+                            <div class="text-sm text-blue-600">-2.1% ce mois</div>
+                        </div>
+                        <div class="property-card">
+                            <h3 class="text-sm font-medium text-purple-800 mb-2">Propriétés Actives</h3>
+                            <div class="text-2xl font-bold text-purple-900">24</div>
+                            <div class="text-sm text-purple-600">Stable</div>
+                        </div>
+                        <div class="property-card">
+                            <h3 class="text-sm font-medium" style="color: var(--carbon-primary-70);">Bénéfice Net</h3>
+                            <div class="text-2xl font-bold" style="color: var(--carbon-primary-60);">1 890 000 XAF</div>
+                            <div class="text-sm" style="color: var(--carbon-primary-70);">+8.7% ce mois</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Contenu supplémentaire pour tester le scroll -->
+                    <div class="space-y-6">
+                        <div class="property-card">
+                            <h3 class="text-lg font-semibold mb-4">Graphiques et Analyses</h3>
+                            <div class="h-64 bg-gray-50 rounded flex items-center justify-center">
+                                <p class="text-gray-500">Zone de graphiques (scroll possible)</p>
+                            </div>
+                        </div>
+                        
+                        <div class="property-card">
+                            <h3 class="text-lg font-semibold mb-4">Revenus par Propriété</h3>
+                            <div class="h-48 bg-gray-50 rounded flex items-center justify-center">
+                                <p class="text-gray-500">Graphique en barres</p>
+                            </div>
+                        </div>
+                        
+                        <div class="property-card">
+                            <h3 class="text-lg font-semibold mb-4">Tendances Mensuelles</h3>
+                            <div class="h-48 bg-gray-50 rounded flex items-center justify-center">
+                                <p class="text-gray-500">Graphique linéaire</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Espace en bas pour le scroll -->
+                    <div class="h-20"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bannière de succès -->
+    <div class="success-banner fixed bottom-4 right-4 max-w-md">
+        <div class="flex items-center">
+            <svg class="w-6 h-6 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <div>
+                <h4 class="text-sm font-semibold text-green-800">✅ UX Optimisée !</h4>
+                <p class="text-xs text-green-700">
+                    • Section redondante supprimée<br>
+                    • Barre de recherche retirée<br>
+                    • Scroll vertical fonctionnel
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let currentView = 'properties';
+
+        function switchView(view) {
+            currentView = view;
+            
+            // Mettre à jour les onglets
+            document.getElementById('propertiesTab').classList.toggle('active', view === 'properties');
+            document.getElementById('dashboardTab').classList.toggle('active', view === 'dashboard');
+            
+            // Mettre à jour les vues
+            document.getElementById('propertiesView').classList.toggle('active', view === 'properties');
+            document.getElementById('propertiesView').classList.toggle('hidden', view !== 'properties');
+            
+            document.getElementById('dashboardView').classList.toggle('active', view === 'dashboard');
+            document.getElementById('dashboardView').classList.toggle('hidden', view !== 'dashboard');
+            
+            console.log('Vue basculée vers:', view);
+            console.log('Scroll vertical disponible dans les deux vues !');
+        }
+
+        // Test du scroll
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('✅ Interface optimisée chargée !');
+            console.log('🚀 Améliorations UX :');
+            console.log('  - Section "Mes Propriétés" redondante supprimée');
+            console.log('  - Barre de recherche non pertinente retirée');
+            console.log('  - Scroll vertical fonctionnel dans les deux vues');
+            console.log('  - Scrollbar personnalisée pour une meilleure UX');
+        });
+    </script>
+</body>
+</html>

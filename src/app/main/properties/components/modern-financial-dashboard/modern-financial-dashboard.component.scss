@@ -2,8 +2,11 @@
 @import '../../../../../assets/styles/carbon-utilities.scss';
 
 .modern-financial-dashboard {
-  min-height: 100vh;
+  height: 100%; // Hauteur complète pour permettre le scroll
   background-color: #ffffff; // Fond blanc forcé pour le thème clair
+  overflow-y: auto; // Permettre le scroll vertical
+  overflow-x: hidden; // Empêcher le scroll horizontal
+  padding-bottom: 2rem; // Espace en bas pour le scroll
   
   // En-tête du dashboard
   .dashboard-header {
@@ -325,4 +328,27 @@
     background-color: #ffffff !important; // Cartes blanches
     border-color: #e0e0e0 !important; // Bordures claires
   }
+
+  // Styles de scrollbar personnalisés pour le dashboard
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+
+    &:hover {
+      background: #a8a8a8;
+    }
+  }
+
+  // Firefox scrollbar
+  scrollbar-width: thin;
+  scrollbar-color: #c1c1c1 #f1f1f1;
 }

@@ -111,9 +111,27 @@ export class ListPropertyComponent implements OnInit {
   }
 
   getRevenueGrowth(propertyId: string): number {
-    // Calculer la croissance des revenus par rapport au mois précédent
-    // Logique simplifiée - à adapter selon vos besoins
-    return Math.floor(Math.random() * 20) - 10; // Valeur temporaire
+    // Calculer la croissance des revenus basée sur les paiements récents
+    const payments = this._store.selectSnapshot(LocationPaymentState.selectStateLocationPaymentByPropertyId(propertyId));
+    if (!payments || payments.length < 2) return 0;
+
+    const now = new Date();
+    const currentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+
+    const currentMonthPayments = payments.filter(payment => {
+      const paymentDate = new Date(payment.createdAt || payment.datePayment);
+      return paymentDate >= currentMonth && payment.isPaid;
+    }).reduce((sum, payment) => sum + (payment.amount || 0), 0);
+
+    const lastMonthPayments = payments.filter(payment => {
+      const paymentDate = new Date(payment.createdAt || payment.datePayment);
+      return paymentDate >= lastMonth && paymentDate < currentMonth && payment.isPaid;
+    }).reduce((sum, payment) => sum + (payment.amount || 0), 0);
+
+    if (lastMonthPayments === 0) return currentMonthPayments > 0 ? 100 : 0;
+
+    return Math.round(((currentMonthPayments - lastMonthPayments) / lastMonthPayments) * 100);
   }
 
   getOverduePayments(propertyId: string): number {
@@ -197,13 +215,13 @@ export class ListPropertyComponent implements OnInit {
 
   // Nouvelles méthodes pour la navigation et les actions
   onViewPropertyDetails(property: PropertyModel): void {
-    // Naviguer vers la page de détails complète
+    // Naviguer vers la page de détails complète (nouvelle route)
     this.router.navigate(['/app/properties/details', property._id]);
   }
 
   onEditProperty(property: PropertyModel): void {
-    // Naviguer vers la page d'édition
-    this.router.navigate(['/app/properties/update', property._id]);
+    // Ouvrir le dialog d'édition au lieu de naviguer
+    this.updateProperty(property, new Event('click'));
   }
 
   onToggleFavorite(property: PropertyModel): void {
@@ -219,8 +237,15 @@ export class ListPropertyComponent implements OnInit {
   }
 
   onAddProperty(): void {
-    // Naviguer vers la page d'ajout de propriété
-    this.router.navigate(['/app/properties/add']);
+    // Ouvrir le dialog d'ajout de propriété
+    this.dialog.open(AddPropertyComponent, {
+      viewContainerRef: null,
+      disableClose: true,
+      role: 'alertdialog',
+      width: '500px',
+      maxWidth: '90vw',
+      maxHeight: '90vh'
+    });
   }
 
   // Méthodes pour les métriques globales du header

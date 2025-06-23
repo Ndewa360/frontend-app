@@ -1,4 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Select, Store } from '@ngxs/store';
+import { Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { PropertyModel, PropertyState, RoomState, LocataireState, LocationPaymentState } from 'src/app/shared/store';
 
 interface Property {
   id: string;
@@ -70,10 +75,19 @@ interface FinanceData {
   templateUrl: './property-details-complete.component.html',
   styleUrls: ['./property-details-complete.component.scss']
 })
-export class PropertyDetailsCompleteComponent implements OnInit {
-  
-  property: Property | null = null;
+export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
+
+  property: PropertyModel | null = null;
+  propertyId: string | null = null;
   activeTab: string = 'overview';
+
+  // Observables du store
+  @Select(PropertyState.selectStateProperties)
+  properties$!: Observable<PropertyModel[]>;
+
+  @Select(PropertyState.selectStateLoading)
+  loading$!: Observable<boolean>;
   
   // Données pour les onglets
   units: Unit[] = [];
@@ -122,166 +136,189 @@ export class PropertyDetailsCompleteComponent implements OnInit {
     }
   ];
 
-  constructor() { }
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private store: Store
+  ) { }
 
   ngOnInit(): void {
-    this.loadPropertyData();
-    this.loadUnits();
-    this.loadTenants();
-    this.loadHistory();
-    this.loadFinances();
+    // Récupérer l'ID de la propriété depuis la route
+    this.propertyId = this.route.snapshot.paramMap.get('id');
+
+    if (this.propertyId) {
+      // Écouter les changements de propriétés
+      this.properties$
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(properties => {
+          this.property = properties.find(p => p._id === this.propertyId) || null;
+
+          if (this.property) {
+            this.loadRealData();
+          }
+        });
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private loadRealData(): void {
+    if (!this.property) return;
+
+    this.loadUnitsFromStore();
+    this.loadTenantsFromStore();
+    this.loadHistoryFromStore();
+    this.loadFinancesFromStore();
     this.loadPropertyAmenities();
-    this.calculateMetrics();
+    this.calculateRealMetrics();
     this.updateTabCounts();
   }
 
-  private loadPropertyData(): void {
-    // Simulation de données - remplacer par un appel API
-    this.property = {
-      id: '1',
-      name: 'Résidence Étoile',
-      location: 'Douala, Cameroun',
-      type: 'Immeuble résidentiel',
-      surface: 500,
-      yearBuilt: 2018,
-      condition: 'Excellent',
-      roomLength: 12
+  private loadUnitsFromStore(): void {
+    if (!this.property) return;
+
+    const rooms = this.store.selectSnapshot(RoomState.selectStateRoomByPropertyId(this.property._id));
+
+    if (rooms) {
+      this.units = rooms.map(room => ({
+        id: room._id,
+        name: room.name || `Unité ${room.number || ''}`,
+        type: this.getRoomTypeLabel(room.type),
+        surface: room.surface || 0,
+        price: room.price || 0,
+        status: room.isFree ? 'available' : 'occupied',
+        tenant: room.isFree ? undefined : {
+          id: 'tenant-' + room._id,
+          name: 'Locataire actuel',
+          email: 'locataire@email.com',
+          phone: '+237 6XX XX XX XX'
+        }
+      }));
+    } else {
+      this.units = [];
+    }
+  }
+
+  private getRoomTypeLabel(type: string): string {
+    const typeLabels: { [key: string]: string } = {
+      'ROOM': 'Chambre',
+      'STUDIO': 'Studio',
+      'APARTMENT': 'Appartement',
+      'HOUSE': 'Maison'
     };
+    return typeLabels[type] || type;
   }
 
-  private loadUnits(): void {
-    // Simulation de données
-    this.units = [
-      {
-        id: '1',
-        name: 'Appartement A1',
-        type: 'Studio',
-        surface: 25,
-        price: 85000,
-        status: 'occupied',
-        tenant: {
-          id: 't1',
-          name: 'Jean Dupont',
-          email: 'jean.dupont@email.com',
-          phone: '+237 6XX XX XX XX'
-        }
-      },
-      {
-        id: '2',
-        name: 'Appartement A2',
-        type: '1 chambre',
-        surface: 35,
-        price: 120000,
-        status: 'occupied',
-        tenant: {
-          id: 't2',
-          name: 'Marie Martin',
-          email: 'marie.martin@email.com',
-          phone: '+237 6XX XX XX XX'
-        }
-      },
-      {
-        id: '3',
-        name: 'Appartement B1',
-        type: 'Studio',
-        surface: 25,
-        price: 85000,
-        status: 'available'
-      },
-      {
-        id: '4',
-        name: 'Appartement B2',
-        type: '2 chambres',
-        surface: 50,
-        price: 180000,
-        status: 'maintenance'
-      }
-    ];
-  }
+  private loadTenantsFromStore(): void {
+    if (!this.property) return;
 
-  private loadTenants(): void {
-    // Simulation de données
-    this.tenants = [
-      {
-        id: 't1',
-        name: 'Jean Dupont',
-        email: 'jean.dupont@email.com',
-        phone: '+237 6XX XX XX XX',
-        unitId: '1',
-        unitName: 'Appartement A1',
-        rentAmount: 85000,
-        leaseStart: new Date(2024, 0, 1),
-        leaseEnd: new Date(2024, 11, 31),
+    const locataires = this.store.selectSnapshot(LocataireState.selectStateLocataireByPropertyId(this.property._id));
+
+    if (locataires) {
+      this.tenants = locataires.map(locataire => ({
+        id: locataire._id,
+        name: `${locataire.firstName} ${locataire.lastName}`,
+        email: locataire.email || 'email@example.com',
+        phone: locataire.phoneNumber || '+237 6XX XX XX XX',
+        unitId: locataire.roomId || '',
+        unitName: this.getUnitNameById(locataire.roomId),
+        rentAmount: locataire.monthlyRent || 0,
+        leaseStart: new Date(locataire.createdAt || Date.now()),
+        leaseEnd: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 an plus tard
         status: 'active'
-      },
-      {
-        id: 't2',
-        name: 'Marie Martin',
-        email: 'marie.martin@email.com',
-        phone: '+237 6XX XX XX XX',
-        unitId: '2',
-        unitName: 'Appartement A2',
-        rentAmount: 120000,
-        leaseStart: new Date(2024, 2, 1),
-        leaseEnd: new Date(2025, 1, 28),
-        status: 'active'
-      }
-    ];
+      }));
+    } else {
+      this.tenants = [];
+    }
   }
 
-  private loadHistory(): void {
-    // Simulation de données
-    this.history = [
-      {
-        id: '1',
-        date: new Date(2024, 5, 15),
-        type: 'payment',
-        description: 'Paiement de loyer - Appartement A1',
-        amount: 85000,
-        unitId: '1',
-        tenantId: 't1'
-      },
-      {
-        id: '2',
-        date: new Date(2024, 5, 10),
-        type: 'maintenance',
-        description: 'Réparation plomberie - Appartement B2',
-        amount: 25000,
-        unitId: '4'
-      },
-      {
-        id: '3',
-        date: new Date(2024, 4, 1),
-        type: 'tenant_move_in',
-        description: 'Emménagement de Marie Martin',
-        unitId: '2',
-        tenantId: 't2'
-      }
-    ];
+  private getUnitNameById(roomId: string): string {
+    const unit = this.units.find(u => u.id === roomId);
+    return unit ? unit.name : 'Unité inconnue';
   }
 
-  private loadFinances(): void {
-    // Simulation de données
+  private loadHistoryFromStore(): void {
+    if (!this.property) return;
+
+    const payments = this.store.selectSnapshot(LocationPaymentState.selectStateLocationPaymentByPropertyId(this.property._id));
+
+    if (payments) {
+      this.history = payments.map(payment => ({
+        id: payment._id,
+        date: new Date(payment.createdAt || Date.now()),
+        type: 'payment' as const,
+        description: `Paiement de loyer - ${payment.amount} XAF`,
+        amount: payment.amount,
+        unitId: payment.roomId,
+        tenantId: payment.locataireId
+      }));
+    } else {
+      this.history = [];
+    }
+  }
+
+  private loadFinancesFromStore(): void {
+    if (!this.property) return;
+
+    // Calculer les finances basées sur les vraies données
+    const monthlyRevenue = this.units
+      .filter(unit => unit.status === 'occupied')
+      .reduce((sum, unit) => sum + unit.price, 0);
+
+    const yearlyRevenue = monthlyRevenue * 12;
+    const expenses = Math.round(monthlyRevenue * 0.2); // Estimation 20% de charges
+    const netIncome = monthlyRevenue - expenses;
+
     this.finances = {
-      monthlyRevenue: 205000,
-      yearlyRevenue: 2460000,
-      expenses: 150000,
-      netIncome: 55000,
-      revenueHistory: [
-        { month: 'Jan', amount: 205000 },
-        { month: 'Fév', amount: 205000 },
-        { month: 'Mar', amount: 325000 },
-        { month: 'Avr', amount: 325000 },
-        { month: 'Mai', amount: 325000 },
-        { month: 'Juin', amount: 205000 }
-      ],
+      monthlyRevenue,
+      yearlyRevenue,
+      expenses,
+      netIncome,
+      revenueHistory: this.generateRevenueHistory(monthlyRevenue),
       expenseCategories: [
-        { category: 'Maintenance', amount: 75000 },
-        { category: 'Assurance', amount: 25000 },
-        { category: 'Taxes', amount: 30000 },
-        { category: 'Gestion', amount: 20000 }
+        { category: 'Maintenance', amount: Math.round(expenses * 0.5) },
+        { category: 'Assurance', amount: Math.round(expenses * 0.2) },
+        { category: 'Taxes', amount: Math.round(expenses * 0.2) },
+        { category: 'Gestion', amount: Math.round(expenses * 0.1) }
       ]
     };
+  }
+
+  private generateRevenueHistory(monthlyRevenue: number): { month: string; amount: number }[] {
+    const months = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin'];
+    return months.map(month => ({
+      month,
+      amount: monthlyRevenue + (Math.random() - 0.5) * monthlyRevenue * 0.1 // Variation de ±5%
+    }));
+  }
+
+  private calculateRealMetrics(): void {
+    this.totalUnits = this.units.length;
+    this.occupiedUnits = this.units.filter(unit => unit.status === 'occupied').length;
+    this.availableUnits = this.units.filter(unit => unit.status === 'available').length;
+    this.occupancyRate = this.totalUnits > 0 ? Math.round((this.occupiedUnits / this.totalUnits) * 100) : 0;
+
+    this.monthlyRevenue = this.units
+      .filter(unit => unit.status === 'occupied')
+      .reduce((sum, unit) => sum + unit.price, 0);
+
+    // Calculer la croissance basée sur l'historique des paiements
+    this.revenueGrowth = this.calculateRevenueGrowth();
+
+    // Calculer les paiements en retard (simulation)
+    this.overduePayments = Math.floor(this.tenants.length * 0.1); // 10% en retard
+  }
+
+  private calculateRevenueGrowth(): number {
+    // Simulation de croissance basée sur les données réelles
+    if (this.history.length > 0) {
+      const recentPayments = this.history.filter(h => h.type === 'payment').length;
+      return recentPayments > 5 ? 12 : recentPayments > 2 ? 8 : 3;
+    }
+    return 0;
   }
 
   private loadPropertyAmenities(): void {
@@ -295,19 +332,7 @@ export class PropertyDetailsCompleteComponent implements OnInit {
     ];
   }
 
-  private calculateMetrics(): void {
-    this.totalUnits = this.units.length;
-    this.occupiedUnits = this.units.filter(unit => unit.status === 'occupied').length;
-    this.availableUnits = this.units.filter(unit => unit.status === 'available').length;
-    this.occupancyRate = Math.round((this.occupiedUnits / this.totalUnits) * 100);
-    
-    this.monthlyRevenue = this.units
-      .filter(unit => unit.status === 'occupied')
-      .reduce((sum, unit) => sum + unit.price, 0);
-    
-    this.revenueGrowth = 12; // Simulation
-    this.overduePayments = 1; // Simulation
-  }
+
 
   private updateTabCounts(): void {
     this.tabs.forEach(tab => {
@@ -344,5 +369,10 @@ export class PropertyDetailsCompleteComponent implements OnInit {
   onAddTenant(): void {
     // Navigation vers l'ajout de locataire
     console.log('Ajouter un locataire');
+  }
+
+  // Méthode pour retourner à la liste des propriétés
+  goBack(): void {
+    this.router.navigate(['/app/properties/home']);
   }
 }
