@@ -5,16 +5,7 @@ import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { PropertyModel, PropertyState, RoomState, LocataireState, LocationPaymentState } from 'src/app/shared/store';
 
-interface Property {
-  id: string;
-  name: string;
-  location: string;
-  type: string;
-  surface: number;
-  yearBuilt: number;
-  condition: string;
-  roomLength: number;
-}
+// Interface Property supprimée car nous utilisons PropertyModel du store
 
 interface Tab {
   id: string;
@@ -354,12 +345,7 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
     this.activeTab = tabId;
   }
 
-  getPropertyStatus(): string {
-    if (this.occupancyRate >= 90) return 'Excellent';
-    if (this.occupancyRate >= 70) return 'Bon';
-    if (this.occupancyRate >= 50) return 'Moyen';
-    return 'Faible';
-  }
+  // Méthode supprimée car dupliquée plus bas
 
   onEditProperty(): void {
     // Navigation vers la page d'édition
@@ -374,5 +360,155 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
   // Méthode pour retourner à la liste des propriétés
   goBack(): void {
     this.router.navigate(['/app/properties/home']);
+  }
+
+  // Méthode pour obtenir le statut de la propriété
+  getPropertyStatus(): string {
+    if (!this.property) return 'Inconnu';
+
+    if (this.occupancyRate >= 95) return 'Excellent';
+    if (this.occupancyRate >= 80) return 'Très bon';
+    if (this.occupancyRate >= 60) return 'Bon';
+    if (this.occupancyRate >= 40) return 'Moyen';
+    return 'À améliorer';
+  }
+
+  // Méthode pour obtenir la couleur du statut
+  getStatusColor(): string {
+    const status = this.getPropertyStatus();
+    switch (status) {
+      case 'Excellent': return 'green';
+      case 'Très bon': return 'blue';
+      case 'Bon': return 'indigo';
+      case 'Moyen': return 'yellow';
+      default: return 'red';
+    }
+  }
+
+  // Méthode pour calculer le revenu par unité
+  getRevenuePerUnit(): number {
+    return this.totalUnits > 0 ? this.monthlyRevenue / this.totalUnits : 0;
+  }
+
+  // Méthode pour obtenir la prochaine date de paiement (simulation)
+  getNextPaymentDate(): Date {
+    const nextMonth = new Date();
+    nextMonth.setMonth(nextMonth.getMonth() + 1);
+    nextMonth.setDate(1);
+    return nextMonth;
+  }
+
+  // Méthode pour obtenir le statut de performance
+  getPerformanceStatus(): string {
+    if (this.occupancyRate >= 95) return 'Excellente';
+    if (this.occupancyRate >= 85) return 'Très bonne';
+    if (this.occupancyRate >= 70) return 'Bonne';
+    if (this.occupancyRate >= 50) return 'Moyenne';
+    return 'À améliorer';
+  }
+
+  // Méthode pour obtenir la couleur de performance
+  getPerformanceColor(): string {
+    if (this.occupancyRate >= 95) return 'text-green-600';
+    if (this.occupancyRate >= 85) return 'text-blue-600';
+    if (this.occupancyRate >= 70) return 'text-indigo-600';
+    if (this.occupancyRate >= 50) return 'text-yellow-600';
+    return 'text-red-600';
+  }
+
+  // Méthodes pour le résumé financier détaillé
+  getCurrentDate(): Date {
+    return new Date();
+  }
+
+  getSecurityDeposits(): number {
+    // Calcul basé sur 2 mois de loyer par unité occupée
+    return this.occupiedUnits * (this.getRevenuePerUnit() * 2);
+  }
+
+  getMonthlyExpenses(): number {
+    // Estimation des charges mensuelles (électricité, eau, entretien général)
+    return this.totalUnits * 25000; // 25,000 XAF par unité
+  }
+
+  getManagementFees(): number {
+    // 5% des revenus mensuels pour frais de gestion
+    return this.monthlyRevenue * 0.05;
+  }
+
+  getMaintenanceCosts(): number {
+    // Estimation maintenance/réparations (3% des revenus annuels / 12)
+    return (this.monthlyRevenue * 12 * 0.03) / 12;
+  }
+
+  getInsuranceCosts(): number {
+    // Estimation assurances (1% des revenus annuels / 12)
+    return (this.monthlyRevenue * 12 * 0.01) / 12;
+  }
+
+  getNetProfit(): number {
+    // Bénéfice net = Revenus - Charges - Frais de gestion - Maintenance - Assurances
+    return this.monthlyRevenue - this.getMonthlyExpenses() - this.getManagementFees() - this.getMaintenanceCosts() - this.getInsuranceCosts();
+  }
+
+  getNetProfitMargin(): number {
+    // Marge bénéficiaire en pourcentage
+    if (this.monthlyRevenue === 0) return 0;
+    return Math.round((this.getNetProfit() / this.monthlyRevenue) * 100);
+  }
+
+  getAnnualYield(): number {
+    // Rendement annuel estimé (basé sur une valeur de propriété estimée)
+    const estimatedPropertyValue = this.monthlyRevenue * 12 * 15; // 15 ans de revenus
+    if (estimatedPropertyValue === 0) return 0;
+    return Math.round(((this.getNetProfit() * 12) / estimatedPropertyValue) * 100 * 10) / 10;
+  }
+
+  getPropertyValue(): number {
+    // Valeur estimée de la propriété (15 ans de revenus nets)
+    return this.getNetProfit() * 12 * 15;
+  }
+
+  // Méthodes pour les informations détaillées de la propriété
+  getPropertyType(): string {
+    // Détermine le type de propriété basé sur le nombre d'unités
+    if (!this.totalUnits) return 'Non spécifié';
+    if (this.totalUnits === 1) return 'Maison individuelle';
+    if (this.totalUnits <= 4) return 'Petit immeuble';
+    if (this.totalUnits <= 10) return 'Immeuble résidentiel';
+    return 'Grand complexe';
+  }
+
+  getEstimatedSurface(): string {
+    // Surface estimée basée sur le nombre d'unités (moyenne 60m² par unité)
+    const estimatedSurface = this.totalUnits * 60;
+    return estimatedSurface.toLocaleString();
+  }
+
+  getPropertyAge(): string {
+    // Calcule l'âge de la propriété
+    if (!this.property?.createdAt) return 'Non spécifié';
+    const createdDate = new Date(this.property.createdAt);
+    const now = new Date();
+    const diffTime = Math.abs(now.getTime() - createdDate.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays < 30) return `${diffDays} jours`;
+    if (diffDays < 365) return `${Math.floor(diffDays / 30)} mois`;
+    return `${Math.floor(diffDays / 365)} ans`;
+  }
+
+  getLastInspectionDate(): Date {
+    // Simulation de la dernière inspection (3 mois avant aujourd'hui)
+    const lastInspection = new Date();
+    lastInspection.setMonth(lastInspection.getMonth() - 3);
+    return lastInspection;
+  }
+
+  getNextMaintenanceDate(): Date {
+    // Simulation de la prochaine maintenance (2 mois après aujourd'hui)
+    const nextMaintenance = new Date();
+    nextMaintenance.setMonth(nextMaintenance.getMonth() + 2);
+    return nextMaintenance;
   }
 }
