@@ -85,24 +85,45 @@ room-filtered-found {
     
     // Pagination
     .w-full.flex.mt-2.justify-end.mb-2 {
-      @apply mt-8 flex justify-center;
+      margin-top: 2rem;
+      display: flex;
+      justify-content: center;
       
       cds-pagination-nav {
         ::ng-deep {
           .bx--pagination-nav {
-            @apply flex items-center space-x-2;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
           }
-          
+
           .bx--pagination-nav__page {
-            @apply px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors;
-            
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+            background-color: white;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            transition: background-color 0.2s;
+
+            &:hover {
+              background-color: #f9fafb;
+            }
+
             &.bx--pagination-nav__page--active {
-              @apply bg-blue-600 text-white border-blue-600;
+              background-color: #2563eb;
+              color: white;
+              border-color: #2563eb;
             }
           }
-          
+
           .bx--pagination-nav__page--direction {
-            @apply flex items-center justify-center w-10 h-10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
           }
         }
       }
@@ -110,16 +131,24 @@ room-filtered-found {
     
     // Message "aucun résultat"
     .no-data-loader {
-      @apply flex flex-col items-center justify-center py-16 text-center;
-      
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem 0;
+      text-align: center;
+
       youpez-loader {
-        @apply mb-4;
+        margin-bottom: 1rem;
       }
-      
+
       // Ajout d'un message personnalisé
       &::after {
         content: 'Aucun logement ne correspond à vos critères';
-        @apply text-gray-500 text-lg font-medium mt-4;
+        color: #6b7280;
+        font-size: 1.125rem;
+        font-weight: 500;
+        margin-top: 1rem;
       }
     }
   }
@@ -151,32 +180,36 @@ room-filtered-found {
   animation: slideInUp 0.3s ease-out;
 }
 
-// Responsive design pour mobile
+// Responsive design pour mobile - simplifié
 @media (max-width: 768px) {
   room-filtered-found {
     ::ng-deep {
       .app-card-row-room-container {
-        @apply grid-cols-1 gap-4 p-4;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 1rem;
       }
-      
+
       .app-card-room {
         .app-card__content__alt {
-          @apply p-4;
+          padding: 1rem;
         }
-        
+
         .app-bg-decorative {
           height: 160px;
         }
-        
+
         .grid.grid-cols-10 {
-          @apply flex-col items-start space-y-2;
-          
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.5rem;
+
           .app-expressive-heading-02 {
-            @apply text-base;
+            font-size: 1rem;
           }
-          
+
           .app-expressive-heading-01 {
-            @apply text-lg;
+            font-size: 1.125rem;
           }
         }
       }
@@ -184,57 +217,9 @@ room-filtered-found {
   }
 }
 
-// Mode sombre
-@media (prefers-color-scheme: dark) {
-  room-filtered-found {
-    ::ng-deep {
-      .app-card-room {
-        @apply bg-gray-800 border-gray-700;
-        
-        .app-expressive-heading-02 {
-          @apply text-white;
-        }
-        
-        .app-expressive-heading-01 {
-          @apply text-blue-400;
-        }
-        
-        .location-zone {
-          @apply text-gray-300;
-        }
-        
-        .spec-home {
-          @apply text-gray-400;
-        }
-        
-        .btn-text-edit {
-          @apply bg-blue-500 hover:bg-blue-600;
-        }
-      }
-    }
-  }
-}
-
-// Styles pour les filtres rapides
-.filter-checkbox {
-  @apply w-5 h-5 border-2 border-gray-300 rounded transition-colors;
-  
-  &.checked {
-    @apply bg-blue-600 border-blue-600;
-    
-    &::after {
-      content: '✓';
-      @apply text-white text-xs flex items-center justify-center;
-    }
-  }
-}
+// Sections avec @apply supprimées pour éviter les dépendances circulaires
 
 // Amélioration des transitions
 * {
   transition: all 0.2s ease;
-}
-
-// Styles pour les états de chargement
-.loading-skeleton {
-  @apply animate-pulse bg-gray-200 rounded;
 }

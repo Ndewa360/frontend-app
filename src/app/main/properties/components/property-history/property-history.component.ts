@@ -18,6 +18,7 @@ interface HistoryItem {
 export class PropertyHistoryComponent implements OnInit {
   @Input() propertyId: string = '';
   @Input() history: HistoryItem[] = [];
+  @Input() loading: boolean = false;
 
   filteredHistory: HistoryItem[] = [];
   typeFilter: string = '';

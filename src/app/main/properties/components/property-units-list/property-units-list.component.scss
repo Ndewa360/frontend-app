@@ -1,0 +1,322 @@
+// Variables de couleurs du thème
+$primary-color: rgb(204, 140, 10);
+$primary-light: rgba(204, 140, 10, 0.1);
+$primary-dark: rgb(184, 126, 9);
+
+// En-tête des unités
+.units-header {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid #e2e8f0;
+  
+  .stat-card {
+    @apply flex items-center p-4 bg-white rounded-lg border border-gray-100 shadow-sm;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      @apply shadow-md border-gray-200;
+      transform: translateY(-1px);
+    }
+    
+    .stat-icon {
+      @apply w-12 h-12 rounded-lg flex items-center justify-center mr-4;
+    }
+    
+    .stat-content {
+      .stat-value {
+        @apply text-2xl font-bold text-gray-900;
+      }
+      
+      .stat-label {
+        @apply text-sm text-gray-500 font-medium;
+      }
+    }
+  }
+}
+
+// Contrôles de filtrage
+.sort-direction-btn,
+.view-toggle-btn {
+  @apply w-10 h-10 flex items-center justify-center;
+  
+  &:hover {
+    background-color: $primary-light;
+  }
+}
+
+// Container des unités
+.units-container {
+  .loading-state {
+    .unit-card-skeleton {
+      @apply bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden;
+    }
+  }
+  
+  .no-units-state {
+    @apply bg-white rounded-lg shadow-sm border border-gray-200 p-8;
+  }
+}
+
+// Cartes d'unités
+.unit-card {
+  transition: all 0.3s ease;
+  position: relative;
+  
+  &:hover {
+    @apply shadow-lg;
+    transform: translateY(-2px);
+    
+    .unit-image {
+      .absolute.top-3.right-3 {
+        opacity: 1;
+      }
+    }
+  }
+  
+  .unit-image {
+    position: relative;
+    overflow: hidden;
+    
+    img {
+      transition: transform 0.3s ease;
+    }
+    
+    &:hover img {
+      transform: scale(1.05);
+    }
+    
+    .status-badge {
+      @apply px-2 py-1 rounded-full text-xs font-medium border;
+      backdrop-filter: blur(8px);
+      
+      &.bg-green-100 {
+        background: rgba(34, 197, 94, 0.9);
+        @apply text-white border-green-300;
+      }
+      
+      &.bg-blue-100 {
+        background: rgba(59, 130, 246, 0.9);
+        @apply text-white border-blue-300;
+      }
+      
+      &.bg-yellow-100 {
+        background: rgba(245, 158, 11, 0.9);
+        @apply text-white border-yellow-300;
+      }
+    }
+  }
+  
+  .unit-content {
+    .amenity-tag {
+      @apply inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-700;
+    }
+  }
+}
+
+// Vue liste (à ajouter si nécessaire)
+.list-view {
+  .unit-item {
+    @apply bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-4;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      @apply shadow-md border-gray-300;
+    }
+    
+    .unit-row {
+      @apply flex items-center justify-between;
+      
+      .unit-info {
+        @apply flex items-center space-x-4;
+        
+        .unit-image-small {
+          @apply w-16 h-16 rounded-lg bg-gray-100 flex-shrink-0 overflow-hidden;
+          
+          img {
+            @apply w-full h-full object-cover;
+          }
+        }
+        
+        .unit-details {
+          .unit-name {
+            @apply font-semibold text-gray-900;
+          }
+          
+          .unit-meta {
+            @apply text-sm text-gray-500 space-x-2;
+          }
+        }
+      }
+      
+      .unit-actions {
+        @apply flex items-center space-x-2;
+      }
+    }
+  }
+}
+
+// Animations
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.unit-card {
+  animation: fadeInUp 0.3s ease-out;
+  animation-fill-mode: both;
+  
+  @for $i from 1 through 12 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 0.05}s;
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .units-header {
+    @apply p-4;
+    
+    .stat-card {
+      @apply p-3;
+      
+      .stat-icon {
+        @apply w-10 h-10 mr-3;
+      }
+      
+      .stat-content {
+        .stat-value {
+          @apply text-xl;
+        }
+      }
+    }
+  }
+  
+  .unit-card {
+    .unit-content {
+      @apply p-3;
+      
+      .flex.gap-2 {
+        flex-direction: column;
+        gap: 0.5rem;
+
+        button {
+          width: 100%;
+        }
+      }
+    }
+  }
+}
+
+// États de chargement
+.loading-state {
+  .animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: .5;
+  }
+}
+
+// Boutons personnalisés avec le thème
+button[ibmButton="primary"] {
+  background: linear-gradient(135deg, $primary-color, $primary-dark);
+  border-color: $primary-color;
+  
+  &:hover {
+    background: linear-gradient(135deg, $primary-dark, darken($primary-dark, 10%));
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(204, 140, 10, 0.3);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+button[ibmButton="secondary"] {
+  border-color: $primary-color;
+  color: $primary-color;
+  
+  &:hover {
+    background-color: $primary-light;
+    border-color: $primary-dark;
+  }
+}
+
+// Dropdowns et inputs avec le thème
+ibm-dropdown,
+input[ibmText] {
+  &:focus-within {
+    border-color: $primary-color;
+    box-shadow: 0 0 0 3px $primary-light;
+  }
+}
+
+// Badges de statut améliorés
+.status-badge {
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 8px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    transform: translateY(-50%);
+  }
+  
+  &.bg-green-100::before {
+    background-color: #10b981;
+  }
+  
+  &.bg-blue-100::before {
+    background-color: #3b82f6;
+  }
+  
+  &.bg-yellow-100::before {
+    background-color: #f59e0b;
+  }
+  
+  youpez-ibm-icon {
+    margin-left: 8px;
+  }
+}
+
+// Amélioration des tooltips et interactions
+.unit-card {
+  &:hover {
+    .amenity-tag {
+      background-color: #e5e7eb;
+    }
+  }
+}
+
+// Grille responsive améliorée
+.grid {
+  gap: 1.5rem;
+  
+  @media (min-width: 1280px) {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  }
+}
+
+// Transitions fluides
+* {
+  transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}

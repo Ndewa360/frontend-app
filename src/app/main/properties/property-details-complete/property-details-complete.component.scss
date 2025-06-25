@@ -1,9 +1,163 @@
-// Styles optimisés pour la page de détails de propriété
+// Import des styles Carbon et thème
+@import '../../../../assets/styles/carbon-utilities.scss';
+
+// Variables de couleurs du thème
+$primary-color: rgb(204, 140, 10);
+$primary-light: rgba(204, 140, 10, 0.1);
+$primary-dark: rgb(184, 126, 9);
+
+// Styles optimisés pour la page de détails de propriété - Style identique à la page de liste
 :host {
   display: block;
   height: 100vh;
-  background-color: #f9fafb;
+  background-color: #ffffff; // Fond blanc pur
   overflow: hidden;
+}
+
+// Container principal - Style identique à home-property
+.property-management-container {
+  height: 100vh;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  max-width: 100vw; // Empêche le débordement horizontal
+}
+
+// Header principal - Style identique à home-property
+.main-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  flex-shrink: 0;
+
+  .header-content {
+    .header-info {
+      h1 {
+        color: #161616;
+        font-weight: 700;
+        background: linear-gradient(135deg, rgb(204, 140, 10), #fadc4d);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      p {
+        color: #525252;
+        font-weight: 400;
+      }
+    }
+
+    .header-actions {
+      .custom-primary-button {
+        transition: all 0.3s ease;
+
+        &:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(204, 140, 10, 0.3);
+        }
+      }
+    }
+  }
+}
+
+// Métriques rapides - Style identique à la page de liste
+.quick-metrics {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid #e2e8f0;
+
+  .grid > div {
+    transition: all 0.2s ease;
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+  }
+}
+
+// Styles pour éviter le scroll horizontal
+.tab-content {
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-width: 100%;
+
+  .max-w-7xl {
+    max-width: 100%;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+// Styles pour les sections bien délimitées
+.property-overview {
+  .modern-dashboard {
+    max-width: 100%;
+    overflow-x: hidden;
+
+    > * {
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+  }
+
+  // Délimitation claire des sections
+  .quick-metrics,
+  .dashboard-header,
+  .info-card,
+  .occupation-card,
+  .finance-card,
+  .performance-chart,
+  .quick-summary,
+  .property-details-section {
+    border: 2px solid #f1f5f9;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    margin-bottom: 1.5rem;
+
+    &:hover {
+      border-color: #e2e8f0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  // Grilles responsives
+  .grid {
+    display: grid;
+    gap: 1rem;
+
+    &.grid-cols-1 {
+      grid-template-columns: 1fr;
+    }
+
+    &.grid-cols-2 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    &.grid-cols-3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    &.grid-cols-4 {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    // Responsive breakpoints
+    @media (max-width: 768px) {
+      &.md\\:grid-cols-2 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      &.md\\:grid-cols-4 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (min-width: 1280px) {
+      &.xl\\:grid-cols-3 {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+  }
 }
 
 // Variables CSS pour le thème de l'application
@@ -25,6 +179,28 @@
 // Classes pour les effets de survol avec couleur primaire
 .hover\:border-primary-500:hover { border-color: var(--primary-500) !important; }
 .hover\:text-primary-600:hover { color: var(--primary-600) !important; }
+
+// Classes spécifiques au thème de l'application
+.custom-primary-button {
+  background-color: $primary-color !important;
+  border-color: $primary-color !important;
+
+  &:hover {
+    background-color: $primary-dark !important;
+    border-color: $primary-dark !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(204, 140, 10, 0.3);
+  }
+}
+
+.custom-hover-primary:hover {
+  color: $primary-color !important;
+}
+
+// Titre de propriété avec couleur subtile
+.property-title {
+  color: #374151; // Gris foncé subtil
+}
 
 // Styles simplifiés pour une meilleure lisibilité
 
@@ -168,32 +344,104 @@
   }
 }
 
-// Styles pour les onglets avec thème de l'application
-.tab-button {
+// Styles pour les onglets avec thème de l'application (style identique à la liste des biens)
+.property-tab-button {
+  @apply px-6 py-4 text-sm font-medium border-b-2 border-transparent transition-all duration-300 ease-in-out;
+  color: #525252; // Gris moyen pour le texte
+  background: transparent;
+  display: flex;
+  align-items: center;
   position: relative;
-  color: #6b7280;
-  border-bottom: 2px solid transparent;
-  transition: all 0.3s ease;
+  border-radius: 8px 8px 0 0; // Coins arrondis en haut
 
   &:hover {
-    color: #374151;
-    background-color: #f9fafb;
+    color: #161616; // Texte sombre sur fond clair
+    background-color: rgba(255, 255, 255, 0.7); // Fond blanc semi-transparent au hover
   }
 
   &.active {
-    color: var(--primary-600);
-    border-bottom-color: var(--primary-500);
-    background-color: var(--primary-50);
+    color: $primary-color !important; // Couleur principale
+    border-bottom-color: $primary-color !important;
+    background-color: #ffffff; // Fond blanc pour l'onglet actif
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1); // Ombre subtile
 
-    &::before {
+    &::after {
       content: '';
       position: absolute;
-      top: 0;
+      bottom: -2px;
       left: 0;
       right: 0;
       height: 3px;
-      background: linear-gradient(90deg, var(--primary-500), var(--primary-600));
-      border-radius: 0 0 2px 2px;
+      background: linear-gradient(90deg, $primary-color, #fadc4d);
+      border-radius: 2px 2px 0 0;
+    }
+
+    .tab-count {
+      background-color: $primary-color !important;
+      color: white !important;
+    }
+  }
+}
+
+// Zone de navigation des onglets
+.tabs-navigation {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border-bottom: 1px solid #cbd5e1;
+}
+
+// Styles globaux pour tous les boutons IBM dans les détails de propriété
+.property-details-page {
+  // Boutons primaires
+  button[ibmButton="primary"],
+  .cds--btn--primary {
+    background-color: $primary-color !important;
+    border-color: $primary-color !important;
+
+    &:hover {
+      background-color: $primary-dark !important;
+      border-color: $primary-dark !important;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(204, 140, 10, 0.3);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  // Boutons secondaires
+  button[ibmButton="secondary"],
+  .cds--btn--secondary {
+    border-color: $primary-color !important;
+    color: $primary-color !important;
+
+    &:hover {
+      background-color: $primary-light !important;
+      border-color: $primary-dark !important;
+      color: $primary-dark !important;
+    }
+  }
+
+  // Boutons ghost
+  button[ibmButton="ghost"],
+  .cds--btn--ghost {
+    color: #6b7280;
+
+    &:hover {
+      background-color: $primary-light !important;
+      color: $primary-color !important;
+    }
+  }
+
+  // Boutons danger
+  button[ibmButton="danger"],
+  .cds--btn--danger {
+    background-color: #dc2626 !important;
+    border-color: #dc2626 !important;
+
+    &:hover {
+      background-color: #b91c1c !important;
+      border-color: #b91c1c !important;
     }
   }
 }

@@ -1,0 +1,625 @@
+<!-- Vue d'ensemble de la propriété -->
+<div class="property-overview w-full" *ngIf="!loading && property">
+
+  <!-- Dashboard moderne avec cartes compactes -->
+  <div class="modern-dashboard space-y-6 w-full">
+
+    <!-- Métriques rapides déplacées -->
+    <div class="quick-metrics bg-white rounded-xl shadow-lg border-2 border-blue-100 p-5">
+      <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+        <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center mr-3">
+          <youpez-ibm-icon iconName="analytics" iconSize="16" class="text-white"></youpez-ibm-icon>
+        </div>
+        Métriques clés de performance
+      </h3>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="text-center p-4 bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-200 rounded-xl hover:shadow-lg transition-all duration-300">
+          <div class="text-2xl font-bold text-blue-600">{{ metrics?.totalUnits || 0 }}</div>
+          <div class="text-sm font-medium text-blue-700">Unités totales</div>
+        </div>
+        <div class="text-center p-4 bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-200 rounded-xl hover:shadow-lg transition-all duration-300">
+          <div class="text-2xl font-bold text-green-600">{{ metrics?.occupiedUnits || 0 }}</div>
+          <div class="text-sm font-medium text-green-700">Occupées</div>
+        </div>
+        <div class="text-center p-4 bg-gradient-to-br from-purple-50 to-purple-100 border-2 border-purple-200 rounded-xl hover:shadow-lg transition-all duration-300">
+          <div class="text-2xl font-bold text-purple-600">{{ formatPercentage(metrics?.occupancyRate ?? 0) }}</div>
+          <div class="text-sm font-medium text-purple-700">Taux d'occupation</div>
+        </div>
+        <div class="text-center p-4 bg-gradient-to-br from-yellow-50 to-orange-100 border-2 rounded-xl hover:shadow-lg transition-all duration-300" style="border-color: rgba(204, 140, 10, 0.3);">
+          <div class="text-2xl font-bold" style="color: rgb(204, 140, 10);">{{ formatPrice(metrics?.monthlyRevenue || 0) }}</div>
+          <div class="text-sm font-medium" style="color: rgb(164, 112, 8);">Revenus mensuels</div>
+        </div>
+      </div>
+    </div>
+
+
+
+    <!-- Grille de cartes compactes -->
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 w-full">
+
+      <!-- Carte Informations complètes de la propriété -->
+      <div class="property-details-card bg-white rounded-xl shadow-lg border-2 border-green-100 p-5 hover:shadow-xl hover:border-green-200 transition-all duration-300">
+        <div class="flex items-center justify-between mb-5">
+          <h3 class="text-lg font-bold text-gray-800 flex items-center">
+            <div class="w-10 h-10 bg-gradient-to-r from-green-400 to-green-600 rounded-xl flex items-center justify-center mr-3">
+              <youpez-ibm-icon iconName="building" iconSize="20" class="text-white"></youpez-ibm-icon>
+            </div>
+            Détails de la propriété
+          </h3>
+          <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold bg-green-100 text-green-800 border border-green-200">
+            {{ performanceStatus?.status }}
+          </span>
+        </div>
+
+        <!-- Informations principales avec données réelles -->
+        <div class="space-y-4">
+          <!-- Informations de base -->
+          <div class="p-3 bg-green-50 rounded-lg border border-green-200">
+            <h6 class="font-semibold text-green-800 mb-2">Informations de base</h6>
+            <div class="grid grid-cols-1 gap-2">
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-600">Code :</span>
+                <span class="font-medium text-gray-900">{{ property.code }}</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-600">Type :</span>
+                <span class="font-medium text-gray-900">{{ getPropertyType() }}</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-600">Surface :</span>
+                <span class="font-medium text-gray-900">{{ getEstimatedSurface() }} m²</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-600">Âge :</span>
+                <span class="font-medium text-gray-900">{{ getPropertyAge() }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Localisation -->
+          <div class="p-3 bg-blue-50 rounded-lg border border-blue-200">
+            <h6 class="font-semibold text-blue-800 mb-2">Localisation</h6>
+            <div class="grid grid-cols-1 gap-2">
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-600">Pays :</span>
+                <span class="font-medium text-gray-900">{{ property.geolocationCountry?.fullName || 'Non spécifié' }}</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-600">Ville :</span>
+                <span class="font-medium text-gray-900">{{ property.geolocationCity?.fullName || 'Non spécifiée' }}</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-600">Adresse :</span>
+                <span class="font-medium text-gray-900">{{ property.location }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Caractéristiques et équipements -->
+          <div class="p-3 bg-purple-50 rounded-lg border border-purple-200">
+            <h6 class="font-semibold text-purple-800 mb-2">Caractéristiques</h6>
+            <div class="grid grid-cols-1 gap-2">
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-600">Unités :</span>
+                <span class="font-medium text-gray-900">{{ property.roomLength || metrics?.totalUnits || 0 }}</span>
+              </div>
+              <div class="flex justify-between text-sm" *ngIf="property.floors">
+                <span class="text-gray-600">Étages :</span>
+                <span class="font-medium text-gray-900">{{ property.floors }}</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-600">État :</span>
+                <span class="font-medium text-gray-900">{{ getPropertyCondition() }}</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-600">Statut :</span>
+                <span class="font-medium text-gray-900">{{ getAvailabilityStatus() }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Équipements disponibles -->
+          <div class="p-3 bg-orange-50 rounded-lg border border-orange-200">
+            <h6 class="font-semibold text-orange-800 mb-2">Équipements</h6>
+            <div class="grid grid-cols-2 gap-2 text-sm">
+              <div class="flex items-center">
+                <youpez-ibm-icon [iconName]="property.hasParking ? 'checkmark' : 'close'"
+                                 iconSize="16"
+                                 [class]="property.hasParking ? 'text-green-500 mr-2' : 'text-red-500 mr-2'"></youpez-ibm-icon>
+                <span>Parking</span>
+              </div>
+              <div class="flex items-center">
+                <youpez-ibm-icon [iconName]="property.hasClosure ? 'checkmark' : 'close'"
+                                 iconSize="16"
+                                 [class]="property.hasClosure ? 'text-green-500 mr-2' : 'text-red-500 mr-2'"></youpez-ibm-icon>
+                <span>Clôture</span>
+              </div>
+              <div class="flex items-center" *ngIf="property.hasElevator !== undefined">
+                <youpez-ibm-icon [iconName]="property.hasElevator ? 'checkmark' : 'close'"
+                                 iconSize="16"
+                                 [class]="property.hasElevator ? 'text-green-500 mr-2' : 'text-red-500 mr-2'"></youpez-ibm-icon>
+                <span>Ascenseur</span>
+              </div>
+              <div class="flex items-center" *ngIf="property.hasSecurity !== undefined">
+                <youpez-ibm-icon [iconName]="property.hasSecurity ? 'checkmark' : 'close'"
+                                 iconSize="16"
+                                 [class]="property.hasSecurity ? 'text-green-500 mr-2' : 'text-red-500 mr-2'"></youpez-ibm-icon>
+                <span>Sécurité</span>
+              </div>
+              <div class="flex items-center" *ngIf="property.hasGenerator !== undefined">
+                <youpez-ibm-icon [iconName]="property.hasGenerator ? 'checkmark' : 'close'"
+                                 iconSize="16"
+                                 [class]="property.hasGenerator ? 'text-green-500 mr-2' : 'text-red-500 mr-2'"></youpez-ibm-icon>
+                <span>Générateur</span>
+              </div>
+              <div class="flex items-center" *ngIf="property.hasWater !== undefined">
+                <youpez-ibm-icon [iconName]="property.hasWater ? 'checkmark' : 'close'"
+                                 iconSize="16"
+                                 [class]="property.hasWater ? 'text-green-500 mr-2' : 'text-red-500 mr-2'"></youpez-ibm-icon>
+                <span>Eau courante</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Carte Occupation -->
+      <div class="occupation-card bg-white rounded-xl shadow-lg border-2 border-purple-100 p-5 hover:shadow-xl hover:border-purple-200 transition-all duration-300">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-bold text-gray-800 flex items-center">
+            <div class="w-10 h-10 bg-gradient-to-r from-purple-400 to-purple-600 rounded-xl flex items-center justify-center mr-3">
+              <youpez-ibm-icon iconName="user" iconSize="20" class="text-white"></youpez-ibm-icon>
+            </div>
+            Occupation
+          </h3>
+          <div class="text-right">
+            <div class="text-2xl font-bold text-purple-600">{{ formatPercentage(metrics?.occupancyRate ?? 0) }}</div>
+            <div class="text-sm font-medium text-gray-600">Taux global</div>
+          </div>
+        </div>
+
+        <!-- Barre de progression -->
+        <div class="mb-3">
+          <div class="w-full bg-gray-200 rounded-full h-2">
+            <div class="bg-gradient-to-r from-purple-400 to-purple-600 h-2 rounded-full transition-all duration-500"
+                 [style.width.%]="metrics?.occupancyRate || 0"></div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div class="text-center p-2 bg-green-50 rounded-lg">
+            <div class="text-lg font-bold text-green-600">{{ metrics?.occupiedUnits || 0 }}</div>
+            <div class="text-xs text-green-600">Occupées</div>
+          </div>
+          <div class="text-center p-2 bg-orange-50 rounded-lg">
+            <div class="text-lg font-bold text-orange-600">{{ metrics?.availableUnits || 0 }}</div>
+            <div class="text-xs text-orange-600">Libres</div>
+          </div>
+        </div>
+
+        <div class="mt-3 pt-3 border-t border-gray-100">
+          <div class="flex justify-between text-sm">
+            <span class="text-gray-600">Locataires actifs :</span>
+            <span class="font-medium text-gray-900">{{ (tenants || []).length }}</span>
+          </div>
+          <div class="flex justify-between text-sm">
+            <span class="text-gray-600">Loyer moyen :</span>
+            <span class="font-medium text-gray-900">{{ formatPrice(metrics?.averageRent || 0) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Carte Finances -->
+      <div class="finance-card bg-white rounded-xl shadow-lg border-2 p-5 hover:shadow-xl transition-all duration-300" style="border-color: rgba(204, 140, 10, 0.3);">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-bold text-gray-800 flex items-center">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center mr-3" style="background: linear-gradient(135deg, rgb(204, 140, 10), #fadc4d);">
+              <youpez-ibm-icon iconName="money" iconSize="20" class="text-white"></youpez-ibm-icon>
+            </div>
+            Finances
+          </h3>
+          <div class="flex items-center text-sm" style="color: rgb(164, 112, 8);">
+            <youpez-ibm-icon [iconName]="getTrendIcon()" iconSize="16" class="mr-1"></youpez-ibm-icon>
+            <span class="font-semibold">{{ metrics?.revenueGrowth ?? 0 }}%</span>
+          </div>
+        </div>
+
+        <!-- Revenus principaux -->
+        <div class="mb-4">
+          <div class="text-center p-4 rounded-lg" style="background: linear-gradient(135deg, rgba(204, 140, 10, 0.1), rgba(250, 220, 77, 0.1));">
+            <div class="text-2xl font-bold" style="color: rgb(164, 112, 8);">{{ formatPrice(metrics?.monthlyRevenue || 0) }}</div>
+            <div class="text-sm text-gray-600">Revenus mensuels actuels</div>
+          </div>
+        </div>
+
+        <!-- Informations financières détaillées -->
+        <div class="space-y-3">
+          <!-- Valeurs de la propriété -->
+          <div class="p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+            <h6 class="font-semibold text-yellow-800 mb-2">Valeurs</h6>
+            <div class="space-y-1">
+              <div class="flex justify-between text-sm" *ngIf="property.acquisitionPrice">
+                <span class="text-gray-600">Prix d'acquisition :</span>
+                <span class="font-medium text-gray-900">{{ formatPrice(property.acquisitionPrice) }}</span>
+              </div>
+              <div class="flex justify-between text-sm" *ngIf="property.currentValue">
+                <span class="text-gray-600">Valeur actuelle :</span>
+                <span class="font-medium text-gray-900">{{ formatPrice(property.currentValue) }}</span>
+              </div>
+              <div class="flex justify-between text-sm" *ngIf="property.rentRange">
+                <span class="text-gray-600">Fourchette loyers :</span>
+                <span class="font-medium text-gray-900">{{ formatPrice(property.rentRange.min) }} - {{ formatPrice(property.rentRange.max) }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Charges et frais -->
+          <div class="p-3 bg-orange-50 rounded-lg border border-orange-200">
+            <h6 class="font-semibold text-orange-800 mb-2">Charges mensuelles</h6>
+            <div class="space-y-1">
+              <div class="flex justify-between text-sm" *ngIf="property.monthlyCharges">
+                <span class="text-gray-600">Charges :</span>
+                <span class="font-medium text-gray-900">{{ formatPrice(property.monthlyCharges) }}</span>
+              </div>
+              <div class="flex justify-between text-sm" *ngIf="property.managementFees">
+                <span class="text-gray-600">Gestion :</span>
+                <span class="font-medium text-gray-900">{{ formatPrice(property.managementFees) }}</span>
+              </div>
+              <div class="flex justify-between text-sm" *ngIf="property.propertyTax">
+                <span class="text-gray-600">Taxe foncière/an :</span>
+                <span class="font-medium text-gray-900">{{ formatPrice(property.propertyTax) }}</span>
+              </div>
+              <div class="flex justify-between text-sm" *ngIf="property.insuranceCost">
+                <span class="text-gray-600">Assurance/an :</span>
+                <span class="font-medium text-gray-900">{{ formatPrice(property.insuranceCost) }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Performance -->
+          <div class="p-3 bg-green-50 rounded-lg border border-green-200">
+            <h6 class="font-semibold text-green-800 mb-2">Performance</h6>
+            <div class="space-y-1">
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-600">Revenus annuels :</span>
+                <span class="font-medium text-gray-900">{{ formatPrice((metrics?.monthlyRevenue || 0) * 12) }}</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-600">Bénéfice net :</span>
+                <span class="font-medium text-gray-900">{{ formatPrice(financialSummary?.netProfit || 0) }}</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-600">Marge :</span>
+                <span class="font-medium text-gray-900">{{ financialSummary?.netProfitMargin || 0 }}%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section de métriques visuelles -->
+    <div class="visual-metrics grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+
+      <!-- Graphique de performance -->
+      <div class="performance-chart bg-white rounded-xl shadow-md border border-gray-100 p-4">
+        <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
+          <div class="w-6 h-6 bg-gradient-to-r from-blue-400 to-blue-600 rounded-lg flex items-center justify-center mr-2">
+            <youpez-ibm-icon iconName="analytics" iconSize="16" class="text-white"></youpez-ibm-icon>
+          </div>
+          Performance
+        </h4>
+
+        <div class="space-y-3">
+          <!-- Occupation -->
+          <div>
+            <div class="flex justify-between text-sm mb-1">
+              <span class="text-gray-600">Occupation</span>
+              <span class="font-medium">{{ formatPercentage(metrics?.occupancyRate ?? 0) }}</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+              <div class="bg-gradient-to-r from-blue-400 to-blue-600 h-2 rounded-full"
+                   [style.width.%]="metrics?.occupancyRate || 0"></div>
+            </div>
+          </div>
+
+          <!-- Rentabilité -->
+          <div>
+            <div class="flex justify-between text-sm mb-1">
+              <span class="text-gray-600">Rentabilité</span>
+              <span class="font-medium">{{ financialSummary?.netProfitMargin || 0 }}%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+              <div class="bg-gradient-to-r from-green-400 to-green-600 h-2 rounded-full"
+                   [style.width.%]="(financialSummary?.netProfitMargin || 0) > 100 ? 100 : (financialSummary?.netProfitMargin || 0)"></div>
+            </div>
+          </div>
+
+          <!-- Croissance -->
+          <div>
+            <div class="flex justify-between text-sm mb-1">
+              <span class="text-gray-600">Croissance</span>
+              <span class="font-medium">{{ metrics?.revenueGrowth ?? 0 }}%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+              <div class="h-2 rounded-full"
+                   [style.width.%]="Math.abs(metrics?.revenueGrowth || 0) > 100 ? 100 : Math.abs(metrics?.revenueGrowth || 0)"
+                   [ngClass]="(metrics?.revenueGrowth || 0) >= 0 ? 'bg-gradient-to-r from-green-400 to-green-600' : 'bg-gradient-to-r from-red-400 to-red-600'"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Résumé rapide -->
+      <div class="quick-summary bg-white rounded-xl shadow-md border border-gray-100 p-4">
+        <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
+          <div class="w-6 h-6 bg-gradient-to-r from-indigo-400 to-indigo-600 rounded-lg flex items-center justify-center mr-2">
+            <youpez-ibm-icon iconName="dashboard" iconSize="16" class="text-white"></youpez-ibm-icon>
+          </div>
+          Résumé
+        </h4>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div class="text-center p-2 bg-blue-50 rounded-lg">
+            <div class="text-lg font-bold text-blue-600">{{ metrics?.totalUnits || 0 }}</div>
+            <div class="text-xs text-blue-600">Unités</div>
+          </div>
+          <div class="text-center p-2 bg-green-50 rounded-lg">
+            <div class="text-lg font-bold text-green-600">{{ (tenants || []).length }}</div>
+            <div class="text-xs text-green-600">Locataires</div>
+          </div>
+          <div class="text-center p-2 bg-purple-50 rounded-lg">
+            <div class="text-lg font-bold text-purple-600">{{ formatPrice(metrics?.averageRent || 0) }}</div>
+            <div class="text-xs text-purple-600">Loyer moyen</div>
+          </div>
+          <div class="text-center p-2 rounded-lg" style="background-color: rgba(204, 140, 10, 0.1);">
+            <div class="text-lg font-bold" style="color: rgb(164, 112, 8);">{{ formatPrice(financialSummary?.netProfit || 0) }}</div>
+            <div class="text-xs" style="color: rgb(164, 112, 8);">Bénéfice</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section complète des équipements et informations détaillées -->
+    <div class="property-details-section bg-white rounded-xl shadow-xl border-4 border-teal-100 p-8 w-full">
+      <div class="border-b-2 border-teal-100 pb-4 mb-8">
+        <h4 class="text-2xl font-bold text-gray-800 flex items-center">
+          <div class="w-12 h-12 bg-gradient-to-r from-teal-400 to-teal-600 rounded-xl flex items-center justify-center mr-4">
+            <youpez-ibm-icon iconName="settings" iconSize="24" class="text-white"></youpez-ibm-icon>
+          </div>
+          Équipements et caractéristiques complètes
+        </h4>
+        <p class="text-gray-600 mt-2 ml-16">Informations détaillées sur tous les équipements et caractéristiques de la propriété</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 w-full">
+
+        <!-- Équipements et commodités complets -->
+        <div class="equipment-section bg-gradient-to-br from-teal-50 to-cyan-50 rounded-xl p-6 border-2 border-teal-200 shadow-lg">
+          <h5 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+            <div class="w-8 h-8 bg-teal-500 rounded-xl flex items-center justify-center mr-3">
+              <youpez-ibm-icon iconName="settings" iconSize="20" class="text-white"></youpez-ibm-icon>
+            </div>
+            Équipements et commodités
+          </h5>
+
+          <!-- Équipements de base -->
+          <div class="mb-6">
+            <h6 class="font-semibold text-teal-800 mb-3">Équipements de base</h6>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+              <div class="flex items-center p-3 bg-white border border-teal-200 rounded-lg">
+                <youpez-ibm-icon [iconName]="property.hasParking ? 'checkmark' : 'close'"
+                                 iconSize="16"
+                                 [class]="property.hasParking ? 'text-green-500 mr-2' : 'text-red-500 mr-2'"></youpez-ibm-icon>
+                <span class="text-sm font-medium">Parking</span>
+              </div>
+              <div class="flex items-center p-3 bg-white border border-teal-200 rounded-lg">
+                <youpez-ibm-icon [iconName]="property.hasClosure ? 'checkmark' : 'close'"
+                                 iconSize="16"
+                                 [class]="property.hasClosure ? 'text-green-500 mr-2' : 'text-red-500 mr-2'"></youpez-ibm-icon>
+                <span class="text-sm font-medium">Clôture</span>
+              </div>
+              <div class="flex items-center p-3 bg-white border border-teal-200 rounded-lg" *ngIf="property.hasElevator !== undefined">
+                <youpez-ibm-icon [iconName]="property.hasElevator ? 'checkmark' : 'close'"
+                                 iconSize="16"
+                                 [class]="property.hasElevator ? 'text-green-500 mr-2' : 'text-red-500 mr-2'"></youpez-ibm-icon>
+                <span class="text-sm font-medium">Ascenseur</span>
+              </div>
+              <div class="flex items-center p-3 bg-white border border-teal-200 rounded-lg" *ngIf="property.hasWater !== undefined">
+                <youpez-ibm-icon [iconName]="property.hasWater ? 'checkmark' : 'close'"
+                                 iconSize="16"
+                                 [class]="property.hasWater ? 'text-green-500 mr-2' : 'text-red-500 mr-2'"></youpez-ibm-icon>
+                <span class="text-sm font-medium">Eau courante</span>
+              </div>
+              <div class="flex items-center p-3 bg-white border border-teal-200 rounded-lg" *ngIf="property.hasInternet !== undefined">
+                <youpez-ibm-icon [iconName]="property.hasInternet ? 'checkmark' : 'close'"
+                                 iconSize="16"
+                                 [class]="property.hasInternet ? 'text-green-500 mr-2' : 'text-red-500 mr-2'"></youpez-ibm-icon>
+                <span class="text-sm font-medium">Internet</span>
+              </div>
+              <div class="flex items-center p-3 bg-white border border-teal-200 rounded-lg" *ngIf="property.hasGenerator !== undefined">
+                <youpez-ibm-icon [iconName]="property.hasGenerator ? 'checkmark' : 'close'"
+                                 iconSize="16"
+                                 [class]="property.hasGenerator ? 'text-green-500 mr-2' : 'text-red-500 mr-2'"></youpez-ibm-icon>
+                <span class="text-sm font-medium">Générateur</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Équipements de loisirs -->
+          <div class="mb-6" *ngIf="property.hasPool || property.hasGym || property.hasGarden">
+            <h6 class="font-semibold text-teal-800 mb-3">Loisirs et bien-être</h6>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+              <div class="flex items-center p-3 bg-white border border-teal-200 rounded-lg" *ngIf="property.hasPool !== undefined">
+                <youpez-ibm-icon [iconName]="property.hasPool ? 'checkmark' : 'close'"
+                                 iconSize="16"
+                                 [class]="property.hasPool ? 'text-green-500 mr-2' : 'text-red-500 mr-2'"></youpez-ibm-icon>
+                <span class="text-sm font-medium">Piscine</span>
+              </div>
+              <div class="flex items-center p-3 bg-white border border-teal-200 rounded-lg" *ngIf="property.hasGym !== undefined">
+                <youpez-ibm-icon [iconName]="property.hasGym ? 'checkmark' : 'close'"
+                                 iconSize="16"
+                                 [class]="property.hasGym ? 'text-green-500 mr-2' : 'text-red-500 mr-2'"></youpez-ibm-icon>
+                <span class="text-sm font-medium">Salle de sport</span>
+              </div>
+              <div class="flex items-center p-3 bg-white border border-teal-200 rounded-lg" *ngIf="property.hasGarden !== undefined">
+                <youpez-ibm-icon [iconName]="property.hasGarden ? 'checkmark' : 'close'"
+                                 iconSize="16"
+                                 [class]="property.hasGarden ? 'text-green-500 mr-2' : 'text-red-500 mr-2'"></youpez-ibm-icon>
+                <span class="text-sm font-medium">Jardin</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sécurité -->
+          <div *ngIf="property.hasSecurity !== undefined">
+            <h6 class="font-semibold text-teal-800 mb-3">Sécurité</h6>
+            <div class="grid grid-cols-1 gap-3">
+              <div class="flex items-center p-3 bg-white border border-teal-200 rounded-lg">
+                <youpez-ibm-icon [iconName]="property.hasSecurity ? 'checkmark' : 'close'"
+                                 iconSize="16"
+                                 [class]="property.hasSecurity ? 'text-green-500 mr-2' : 'text-red-500 mr-2'"></youpez-ibm-icon>
+                <span class="text-sm font-medium">Sécurité 24h/24</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Informations détaillées -->
+        <div class="detailed-info-section bg-gradient-to-br from-indigo-50 to-blue-50 rounded-xl p-6 border-2 border-indigo-200 shadow-lg">
+          <h5 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+            <div class="w-8 h-8 bg-indigo-500 rounded-xl flex items-center justify-center mr-3">
+              <youpez-ibm-icon iconName="information" iconSize="20" class="text-white"></youpez-ibm-icon>
+            </div>
+            Informations détaillées
+          </h5>
+
+          <div class="space-y-5">
+            <!-- Description -->
+            <div class="info-block p-5 bg-white rounded-xl border-2 border-indigo-200 shadow-md hover:shadow-lg transition-all duration-300" *ngIf="property.description">
+              <h6 class="font-bold text-gray-800 mb-3 flex items-center">
+                <div class="w-6 h-6 bg-indigo-500 rounded-lg flex items-center justify-center mr-2">
+                  <youpez-ibm-icon iconName="document" iconSize="16" class="text-white"></youpez-ibm-icon>
+                </div>
+                Description
+              </h6>
+              <p class="text-sm text-gray-700 leading-relaxed bg-indigo-50 p-3 rounded-lg">{{ property.description }}</p>
+            </div>
+
+            <!-- Caractéristiques techniques -->
+            <div class="info-block p-5 bg-white rounded-xl border-2 border-indigo-200 shadow-md hover:shadow-lg transition-all duration-300">
+              <h6 class="font-bold text-gray-800 mb-4 flex items-center">
+                <div class="w-6 h-6 bg-indigo-500 rounded-lg flex items-center justify-center mr-2">
+                  <youpez-ibm-icon iconName="settings" iconSize="16" class="text-white"></youpez-ibm-icon>
+                </div>
+                Caractéristiques techniques
+              </h6>
+              <div class="space-y-3">
+                <div class="flex justify-between items-center p-2 bg-indigo-50 rounded-lg" *ngIf="property.buildingYear">
+                  <span class="text-gray-600 font-medium">Année de construction :</span>
+                  <span class="font-semibold text-gray-900">{{ property.buildingYear }}</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-indigo-50 rounded-lg" *ngIf="property.floors">
+                  <span class="text-gray-600 font-medium">Nombre d'étages :</span>
+                  <span class="font-semibold text-gray-900">{{ property.floors }}</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-indigo-50 rounded-lg" *ngIf="property.totalSurface">
+                  <span class="text-gray-600 font-medium">Surface totale :</span>
+                  <span class="font-semibold text-gray-900">{{ property.totalSurface }} m²</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-indigo-50 rounded-lg">
+                  <span class="text-gray-600 font-medium">État du bien :</span>
+                  <span class="font-semibold text-gray-900">{{ getPropertyCondition() }}</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-indigo-50 rounded-lg">
+                  <span class="text-gray-600 font-medium">Statut meublé :</span>
+                  <span class="font-semibold text-gray-900">{{ getFurnishingStatus() }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Localisation complète -->
+            <div class="info-block p-5 bg-white rounded-xl border-2 border-indigo-200 shadow-md hover:shadow-lg transition-all duration-300">
+              <h6 class="font-bold text-gray-800 mb-4 flex items-center">
+                <div class="w-6 h-6 bg-indigo-500 rounded-lg flex items-center justify-center mr-2">
+                  <youpez-ibm-icon iconName="location" iconSize="16" class="text-white"></youpez-ibm-icon>
+                </div>
+                Localisation complète
+              </h6>
+              <div class="space-y-3">
+                <div class="flex justify-between items-center p-2 bg-indigo-50 rounded-lg">
+                  <span class="text-gray-600 font-medium">Adresse :</span>
+                  <span class="font-semibold text-gray-900">{{ property.location }}</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-indigo-50 rounded-lg">
+                  <span class="text-gray-600 font-medium">Ville :</span>
+                  <span class="font-semibold text-gray-900">{{ property.geolocationCity?.fullName || 'Non spécifiée' }}</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-indigo-50 rounded-lg">
+                  <span class="text-gray-600 font-medium">Pays :</span>
+                  <span class="font-semibold text-gray-900">{{ property.geolocationCountry?.fullName || 'Non spécifié' }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Médias -->
+            <div class="info-block p-4 bg-gray-50 rounded-lg border border-gray-200" *ngIf="property.medias && property.medias.length > 0">
+              <h6 class="font-medium text-gray-700 mb-3 flex items-center">
+                <youpez-ibm-icon iconName="image" iconSize="16" class="mr-2 text-indigo-500"></youpez-ibm-icon>
+                Médias ({{ property.medias.length }})
+              </h6>
+              <div class="grid grid-cols-3 gap-2">
+                <div *ngFor="let media of property.medias.slice(0, 6)"
+                     class="aspect-square bg-gray-200 rounded-lg overflow-hidden">
+                  <img [src]="media"
+                       [alt]="property.name"
+                       class="w-full h-full object-cover hover:scale-105 transition-transform cursor-pointer"
+                       (error)="onImageError($event)">
+                </div>
+              </div>
+              <p class="text-xs text-gray-500 mt-2" *ngIf="property.medias.length > 6">
+                +{{ property.medias.length - 6 }} autres médias
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+
+<!-- État de chargement -->
+<div *ngIf="loading" class="loading-overview">
+  <div class="space-y-6">
+    <!-- Skeleton pour l'en-tête -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div class="animate-pulse">
+        <div class="flex items-start gap-4">
+          <div class="w-24 h-24 bg-gray-200 rounded-lg"></div>
+          <div class="flex-1 space-y-3">
+            <div class="h-6 bg-gray-200 rounded w-1/3"></div>
+            <div class="h-4 bg-gray-200 rounded w-1/2"></div>
+            <div class="h-4 bg-gray-200 rounded w-2/3"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Skeleton pour les métriques -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div *ngFor="let i of [1,2,3,4]" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="animate-pulse">
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 bg-gray-200 rounded-lg"></div>
+            <div class="text-right space-y-2">
+              <div class="h-6 bg-gray-200 rounded w-20"></div>
+              <div class="h-4 bg-gray-200 rounded w-16"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

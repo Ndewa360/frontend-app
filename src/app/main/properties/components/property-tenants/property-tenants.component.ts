@@ -21,6 +21,8 @@ interface Tenant {
 export class PropertyTenantsComponent implements OnInit, OnDestroy {
   @Input() propertyId: string = '';
   @Input() tenants: Tenant[] = [];
+  @Input() units: any[] = [];
+  @Input() loading: boolean = false;
 
   filteredTenants: Tenant[] = [];
   searchTerm: string = '';

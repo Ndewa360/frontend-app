@@ -1,0 +1,269 @@
+<!-- En-tête avec statistiques et contrôles -->
+<div class="units-header bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+  <!-- Statistiques rapides -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+    <div class="stat-card">
+      <div class="stat-icon bg-blue-100">
+        <youpez-ibm-icon iconName="home" iconSize="24" class="text-blue-600"></youpez-ibm-icon>
+      </div>
+      <div class="stat-content">
+        <div class="stat-value">{{ units.length }}</div>
+        <div class="stat-label">Total unités</div>
+      </div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-icon bg-green-100">
+        <youpez-ibm-icon iconName="user" iconSize="24" class="text-green-600"></youpez-ibm-icon>
+      </div>
+      <div class="stat-content">
+        <div class="stat-value">{{ getOccupancyRate() }}%</div>
+        <div class="stat-label">Taux d'occupation</div>
+      </div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-icon bg-yellow-100">
+        <youpez-ibm-icon iconName="money" iconSize="24" class="text-yellow-600"></youpez-ibm-icon>
+      </div>
+      <div class="stat-content">
+        <div class="stat-value">{{ formatPrice(getTotalRevenue()) }}</div>
+        <div class="stat-label">Revenus mensuels</div>
+      </div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-icon bg-purple-100">
+        <youpez-ibm-icon iconName="analytics" iconSize="24" class="text-purple-600"></youpez-ibm-icon>
+      </div>
+      <div class="stat-content">
+        <div class="stat-value">{{ formatPrice(getAverageRent()) }}</div>
+        <div class="stat-label">Loyer moyen</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contrôles de filtrage et recherche -->
+  <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+    <!-- Recherche -->
+    <div class="flex-1 max-w-md">
+      <ibm-label>
+        <input ibmText 
+               [(ngModel)]="searchTerm"
+               (ngModelChange)="onSearchChange()"
+               placeholder="Rechercher une unité..."
+               size="md"
+               theme="light">
+        <youpez-ibm-icon iconName="search" iconSize="16" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></youpez-ibm-icon>
+      </ibm-label>
+    </div>
+
+    <!-- Filtres -->
+    <div class="flex flex-wrap gap-3">
+      <!-- Filtre par statut -->
+      <select class="form-select border border-gray-300 rounded-md px-3 py-2 text-sm"
+              [(ngModel)]="statusFilter"
+              (ngModelChange)="onStatusFilterChange()">
+        <option value="">Tous les statuts</option>
+        <option *ngFor="let option of statusOptions" [value]="option.value">
+          {{ option.label }}
+        </option>
+      </select>
+
+      <!-- Filtre par type -->
+      <select class="form-select border border-gray-300 rounded-md px-3 py-2 text-sm"
+              [(ngModel)]="typeFilter"
+              (ngModelChange)="onTypeFilterChange()">
+        <option value="">Tous les types</option>
+        <option *ngFor="let option of typeOptions" [value]="option.value">
+          {{ option.label }}
+        </option>
+      </select>
+
+      <!-- Tri -->
+      <div class="flex items-center gap-2">
+        <select class="form-select border border-gray-300 rounded-md px-3 py-2 text-sm"
+                [(ngModel)]="sortBy"
+                (ngModelChange)="onSortChange()">
+          <option value="">Trier par</option>
+          <option *ngFor="let option of sortOptions" [value]="option.value">
+            {{ option.label }}
+          </option>
+        </select>
+        
+        <button ibmButton="ghost" 
+                size="md"
+                (click)="toggleSortDirection()"
+                class="sort-direction-btn">
+          <youpez-ibm-icon 
+            [iconName]="sortDirection === 'asc' ? 'arrowUp' : 'arrowDown'" 
+            iconSize="16">
+          </youpez-ibm-icon>
+        </button>
+      </div>
+
+      <!-- Basculer vue -->
+      <button ibmButton="ghost" 
+              size="md"
+              (click)="toggleViewMode()"
+              class="view-toggle-btn">
+        <youpez-ibm-icon 
+          [iconName]="viewMode === 'grid' ? 'list' : 'grid'" 
+          iconSize="16">
+        </youpez-ibm-icon>
+      </button>
+
+      <!-- Ajouter unité -->
+      <button ibmButton="primary" 
+              size="md"
+              (click)="onAddUnit()">
+        <youpez-ibm-icon iconName="add" iconSize="16" class="mr-2"></youpez-ibm-icon>
+        Ajouter unité
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Liste des unités -->
+<div class="units-container">
+  <!-- État de chargement -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div *ngFor="let i of [1,2,3,4,5,6]" class="unit-card-skeleton">
+        <div class="animate-pulse">
+          <div class="h-48 bg-gray-200 rounded-t-lg"></div>
+          <div class="p-4 space-y-3">
+            <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+            <div class="h-3 bg-gray-200 rounded w-1/2"></div>
+            <div class="h-3 bg-gray-200 rounded w-2/3"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Aucune unité trouvée -->
+  <div *ngIf="!loading && filteredUnits.length === 0" class="no-units-state">
+    <div class="text-center py-12">
+      <youpez-ibm-icon iconName="home" iconSize="32" class="text-gray-300 mx-auto mb-4"></youpez-ibm-icon>
+      <h3 class="text-lg font-medium text-gray-900 mb-2">
+        {{ units.length === 0 ? 'Aucune unité' : 'Aucun résultat' }}
+      </h3>
+      <p class="text-gray-500 mb-6">
+        {{ units.length === 0 
+          ? 'Commencez par ajouter des unités locatives à cette propriété.' 
+          : 'Essayez de modifier vos critères de recherche.' }}
+      </p>
+      <button *ngIf="units.length === 0" 
+              ibmButton="primary" 
+              (click)="onAddUnit()">
+        <youpez-ibm-icon iconName="add" iconSize="16" class="mr-2"></youpez-ibm-icon>
+        Ajouter la première unité
+      </button>
+    </div>
+  </div>
+
+  <!-- Vue grille -->
+  <div *ngIf="!loading && filteredUnits.length > 0 && viewMode === 'grid'" 
+       class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div *ngFor="let unit of filteredUnits; trackBy: trackByUnitId" 
+         class="unit-card bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-200">
+      
+      <!-- Image de l'unité -->
+      <div class="unit-image relative h-48 bg-gray-100">
+        <img [src]="unit.image ?? getDefaultImage()"
+             [alt]="unit.name"
+             class="w-full h-full object-cover"
+             (error)="$any($event.target).src = getDefaultImage()">
+        
+        <!-- Badge de statut -->
+        <div class="absolute top-3 left-3">
+          <span class="status-badge" [ngClass]="getUnitStatusClass(unit.status)">
+            <youpez-ibm-icon [iconName]="getUnitStatusIcon(unit.status)" iconSize="16" class="mr-1"></youpez-ibm-icon>
+            {{ getUnitStatusLabel(unit.status) }}
+          </span>
+        </div>
+
+        <!-- Actions rapides -->
+        <div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+          <button ibmButton="ghost"
+                  size="sm"
+                  class="bg-white/90 backdrop-blur-sm"
+                  (click)="onViewUnit(unit)">
+            <youpez-ibm-icon iconName="view" iconSize="16"></youpez-ibm-icon>
+          </button>
+        </div>
+      </div>
+
+      <!-- Contenu de la carte -->
+      <div class="unit-content p-4">
+        <!-- En-tête -->
+        <div class="flex items-start justify-between mb-3">
+          <div>
+            <h3 class="font-semibold text-gray-900 text-lg">{{ unit.name }}</h3>
+            <p class="text-sm text-gray-500">{{ unit.type }}</p>
+          </div>
+          <div class="text-right">
+            <div class="font-bold text-lg text-gray-900">{{ formatPrice(unit.price) }}</div>
+            <div class="text-xs text-gray-500">par mois</div>
+          </div>
+        </div>
+
+        <!-- Détails -->
+        <div class="space-y-2 mb-4">
+          <div class="flex items-center text-sm text-gray-600">
+            <youpez-ibm-icon iconName="code" iconSize="16" class="mr-2"></youpez-ibm-icon>
+            Code: {{ unit.code }}
+          </div>
+
+          <div class="flex items-center text-sm text-gray-600" *ngIf="unit.surface">
+            <youpez-ibm-icon iconName="ruler" iconSize="16" class="mr-2"></youpez-ibm-icon>
+            {{ unit.surface }}
+          </div>
+
+          <!-- Locataire actuel -->
+          <div *ngIf="unit.tenant" class="flex items-center text-sm text-gray-600">
+            <youpez-ibm-icon iconName="user" iconSize="16" class="mr-2"></youpez-ibm-icon>
+            {{ unit.tenant.name }}
+          </div>
+        </div>
+
+        <!-- Équipements -->
+        <div class="flex flex-wrap gap-1 mb-4" *ngIf="unit.hasKitchen || unit.isInternalShower">
+          <span *ngIf="unit.hasKitchen" class="amenity-tag">
+            <youpez-ibm-icon iconName="restaurant" iconSize="16" class="mr-1"></youpez-ibm-icon>
+            Cuisine
+          </span>
+          <span *ngIf="unit.isInternalShower" class="amenity-tag">
+            <youpez-ibm-icon iconName="shower" iconSize="16" class="mr-1"></youpez-ibm-icon>
+            Douche
+          </span>
+        </div>
+
+        <!-- Actions principales -->
+        <div class="flex gap-2">
+          <button ibmButton="secondary" 
+                  size="sm" 
+                  class="flex-1"
+                  (click)="onViewUnit(unit)">
+            Voir détails
+          </button>
+          
+          <button *ngIf="canAssignTenant(unit)" 
+                  ibmButton="primary" 
+                  size="sm"
+                  (click)="onAssignTenant(unit)">
+            Assigner
+          </button>
+          
+          <button *ngIf="canTerminateLease(unit)" 
+                  ibmButton="danger" 
+                  size="sm"
+                  (click)="onTerminateLease(unit)">
+            Résilier
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

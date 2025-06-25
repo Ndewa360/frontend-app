@@ -26,6 +26,11 @@ interface Transaction {
 })
 export class PropertyFinancesComponent implements OnInit {
   @Input() propertyId: string = '';
+  @Input() property: any = null;
+  @Input() units: any[] = [];
+  @Input() tenants: any[] = [];
+  @Input() history: any[] = [];
+  @Input() loading: boolean = false;
   @Input() finances: FinanceData | null = null;
 
   selectedPeriod: string = 'current_month';
