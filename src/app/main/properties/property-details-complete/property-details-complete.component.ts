@@ -3,7 +3,13 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { PropertyModel, RoomAction } from 'src/app/shared/store';
+import {
+  PropertyModel,
+  RoomModel,
+  RoomAction,
+  HistoryLocationPaymentAction,
+  HistoryLocationPaymentState
+} from 'src/app/shared/store';
 import { PropertyDataService, Unit, Tenant, HistoryItem } from '../services/property-data.service';
 import { UnitAction } from '../components/property-units-list/property-units-list.component';
 
@@ -120,6 +126,10 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
 
     // Charger les données via les actions du store
     this.store.dispatch(new RoomAction.FetchRoomsByPropertyID(this.propertyId));
+
+    // Charger l'historique des paiements pour cette propriété
+    this.store.dispatch(new HistoryLocationPaymentAction.FetchHistoryLocationPaymentsByPropertyId(this.propertyId));
+
     // TODO: Ajouter les actions pour charger les locataires et l'historique
 
     // Initialiser les observables avec les services
@@ -188,22 +198,22 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
   onUnitAction(action: UnitAction): void {
     switch (action.type) {
       case 'view':
-        this.onViewUnit(action.unit);
+        this.onViewUnit(action.room);
         break;
       case 'edit':
-        this.onEditUnit(action.unit);
+        this.onEditUnit(action.room);
         break;
       case 'assign_tenant':
-        this.onAssignTenant(action.unit);
+        this.onAssignTenant(action.room);
         break;
       case 'terminate_lease':
-        this.onTerminateLease(action.unit);
+        this.onTerminateLease(action.room);
         break;
       case 'manage_media':
-        this.onManageMedia(action.unit);
+        this.onManageMedia(action.room);
         break;
       case 'toggle_status':
-        this.onToggleStatus(action.unit);
+        this.onToggleStatus(action.room);
         break;
     }
   }
@@ -215,33 +225,33 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
   }
 
   // Actions sur les unités
-  private onViewUnit(unit: Unit): void {
-    console.log('Voir les détails de l\'unité:', unit);
-    this.router.navigate(['/main/rooms', unit.id]);
+  private onViewUnit(room: RoomModel): void {
+    console.log('Voir les détails de l\'unité:', room);
+    this.router.navigate(['/main/rooms', room._id]);
   }
 
-  private onEditUnit(unit: Unit): void {
-    console.log('Modifier l\'unité:', unit);
+  private onEditUnit(room: RoomModel): void {
+    console.log('Modifier l\'unité:', room);
     // TODO: Navigation vers le formulaire d'édition
   }
 
-  private onAssignTenant(unit: Unit): void {
-    console.log('Assigner un locataire à l\'unité:', unit);
+  private onAssignTenant(room: RoomModel): void {
+    console.log('Assigner un locataire à l\'unité:', room);
     // TODO: Ouvrir le modal d'assignation de locataire
   }
 
-  private onTerminateLease(unit: Unit): void {
-    console.log('Résilier le contrat de l\'unité:', unit);
+  private onTerminateLease(room: RoomModel): void {
+    console.log('Résilier le contrat de l\'unité:', room);
     // TODO: Ouvrir le modal de résiliation
   }
 
-  private onManageMedia(unit: Unit): void {
-    console.log('Gérer les médias de l\'unité:', unit);
+  private onManageMedia(room: RoomModel): void {
+    console.log('Gérer les médias de l\'unité:', room);
     // TODO: Ouvrir le gestionnaire de médias
   }
 
-  private onToggleStatus(unit: Unit): void {
-    console.log('Changer le statut de l\'unité:', unit);
+  private onToggleStatus(room: RoomModel): void {
+    console.log('Changer le statut de l\'unité:', room);
     // TODO: Implémenter le changement de statut
   }
 

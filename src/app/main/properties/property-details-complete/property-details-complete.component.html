@@ -110,8 +110,6 @@
       <!-- Onglet Unités locatives -->
       <div *ngIf="activeTab === 'units'" class="tab-panel">
         <app-property-units-list
-          [units]="(units$ | async) ?? []"
-          [loading]="(loadingStates$ | async)?.units ?? false"
           [propertyId]="propertyId"
           (unitAction)="onUnitAction($event)"
           (addUnit)="onAddUnit()">

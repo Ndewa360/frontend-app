@@ -1,0 +1,165 @@
+.unit-gallery-tab {
+  .media-item {
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+    
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+    }
+  }
+
+  .media-overlay {
+    backdrop-filter: blur(4px);
+  }
+
+  .action-button {
+    transition: all 0.2s ease-in-out;
+    
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+
+  .filter-button {
+    transition: all 0.2s ease-in-out;
+    
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+  }
+
+  .stats-card {
+    transition: all 0.2s ease-in-out;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  // Animations pour les médias
+  .media-grid {
+    .media-item {
+      animation: fadeInUp 0.4s ease-out;
+      animation-fill-mode: both;
+    }
+
+    .media-item:nth-child(1) { animation-delay: 0.1s; }
+    .media-item:nth-child(2) { animation-delay: 0.2s; }
+    .media-item:nth-child(3) { animation-delay: 0.3s; }
+    .media-item:nth-child(4) { animation-delay: 0.4s; }
+    .media-item:nth-child(n+5) { animation-delay: 0.5s; }
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  // Effet de survol pour les vidéos
+  .video-overlay {
+    transition: all 0.3s ease-in-out;
+    
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.5);
+      
+      svg {
+        transform: scale(1.2);
+      }
+    }
+  }
+
+  // Badge de type de média
+  .media-type-badge {
+    backdrop-filter: blur(8px);
+    background-color: rgba(255, 255, 255, 0.9);
+    transition: all 0.2s ease-in-out;
+    
+    &:hover {
+      background-color: rgba(255, 255, 255, 1);
+      transform: scale(1.05);
+    }
+  }
+
+  // Responsive
+  @media (max-width: 1024px) {
+    .media-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .media-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+
+    .stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .filter-buttons {
+      flex-direction: column;
+      
+      button {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  }
+
+  @media (max-width: 480px) {
+    .media-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .stats-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .header-actions {
+      flex-direction: column;
+      gap: 0.5rem;
+      
+      button {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  }
+
+  // Styles spéciaux pour les vidéos 360°
+  .video-360-container {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    
+    &:hover {
+      background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    }
+  }
+
+  // Loading states
+  .media-loading {
+    .skeleton {
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 200% 100%;
+      animation: loading 1.5s infinite;
+    }
+  }
+
+  @keyframes loading {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
+  }
+}

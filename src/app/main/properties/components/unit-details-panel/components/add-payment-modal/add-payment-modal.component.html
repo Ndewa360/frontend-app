@@ -1,0 +1,61 @@
+<!-- Modal d'ajout de paiement -->
+<div *ngIf="isOpen" class="fixed inset-0 z-50 overflow-y-auto">
+  <!-- Overlay -->
+  <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity duration-300" (click)="closeModal()"></div>
+  
+  <!-- Modal content -->
+  <div class="flex min-h-full items-center justify-center p-4">
+    <div class="relative w-full max-w-2xl bg-white rounded-xl shadow-2xl transform transition-all duration-300">
+      <!-- Header du modal -->
+      <div class="flex items-center justify-between p-6 border-b border-gray-200">
+        <div class="flex items-center">
+          <div class="p-2 bg-green-100 rounded-lg mr-3">
+            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+            </svg>
+          </div>
+          <div>
+            <h2 class="text-xl font-bold text-gray-900">Ajouter un paiement</h2>
+            <p class="text-sm text-gray-600">{{ getRoomInfo() }}</p>
+          </div>
+        </div>
+        
+        <button (click)="closeModal()" 
+                class="p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+          <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Contenu du modal -->
+      <div class="p-6">
+        <div *ngIf="getLocationForPayment(); else noLocationError">
+          <app-add-payment
+            [room]="room"
+            [tenant]="tenant"
+            [location]="getLocationForPayment()"
+            (paymentAdded)="onPaymentAdded($event)"
+            (cancel)="closeModal()">
+          </app-add-payment>
+        </div>
+
+        <ng-template #noLocationError>
+          <div class="text-center py-8">
+            <div class="p-4 bg-red-100 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+              <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+              </svg>
+            </div>
+            <h4 class="text-lg font-medium text-gray-900 mb-2">Impossible d'ajouter un paiement</h4>
+            <p class="text-sm text-gray-600 mb-4">Cette unité n'a pas de locataire assigné ou les données sont incomplètes.</p>
+            <button (click)="closeModal()"
+                    class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors duration-200">
+              Fermer
+            </button>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</div>

@@ -79,6 +79,23 @@ import { PropertyOverviewComponent } from './properties/components/property-over
 import { PropertyUnitsListComponent } from './properties/components/property-units-list/property-units-list.component'
 import { ModernFinancialDashboardComponent } from './properties/components/modern-financial-dashboard/modern-financial-dashboard.component';
 
+// Composants du modal de détails d'unité
+import { UnitDetailsModalComponent } from './properties/components/unit-details-modal/unit-details-modal.component';
+import { UnitDetailsTabComponent } from './properties/components/unit-details-modal/tabs/unit-details-tab/unit-details-tab.component';
+import { UnitTenantTabComponent } from './properties/components/unit-details-modal/tabs/unit-tenant-tab/unit-tenant-tab.component';
+import { UnitPaymentHistoryTabComponent } from './properties/components/unit-details-modal/tabs/unit-payment-history-tab/unit-payment-history-tab.component';
+import { UnitGalleryTabComponent } from './properties/components/unit-details-modal/tabs/unit-gallery-tab/unit-gallery-tab.component';
+
+// Composant panneau latéral
+import { UnitDetailsPanelComponent } from './properties/components/unit-details-panel/unit-details-panel.component';
+
+// Nouveaux composants modulaires
+import { UnitHeaderComponent } from './properties/components/unit-details-panel/components/unit-header/unit-header.component';
+import { UnitPaymentsTabComponent } from './properties/components/unit-details-panel/components/unit-payments-tab/unit-payments-tab.component';
+import { AddPaymentModalComponent } from './properties/components/unit-details-panel/components/add-payment-modal/add-payment-modal.component';
+
+// Import du module de paiement (déjà importé plus haut)
+
 
 
 ModuleRegistry.registerModules([
@@ -150,7 +167,22 @@ ModuleRegistry.registerModules([
     PropertyFinancesComponent,
     PropertyOverviewComponent,
     PropertyUnitsListComponent,
-    ModernFinancialDashboardComponent
+    ModernFinancialDashboardComponent,
+
+    // Composants du modal de détails d'unité
+    UnitDetailsModalComponent,
+    UnitDetailsTabComponent,
+    UnitTenantTabComponent,
+    UnitPaymentHistoryTabComponent,
+    UnitGalleryTabComponent,
+
+    // Composant panneau latéral
+    UnitDetailsPanelComponent,
+
+    // Nouveaux composants modulaires
+    UnitHeaderComponent,
+    UnitPaymentsTabComponent,
+    AddPaymentModalComponent
 
   ],
   imports: [

@@ -1,0 +1,107 @@
+// Styles pour l'onglet des paiements amélioré
+.payments-tab {
+  .payment-row {
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+      background: linear-gradient(135deg, #f9fafb 0%, #f0fdf4 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+  }
+
+  .action-button {
+    transition: all 0.15s ease-in-out;
+
+    &:hover {
+      transform: scale(1.05);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+  }
+
+  .summary-card {
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  // Animations pour les badges de type de paiement
+  .payment-type-badge {
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+      transform: scale(1.05);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  // Animation pour les montants
+  .payment-amount {
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+      transform: scale(1.02);
+    }
+  }
+
+  // Effet de survol pour les lignes de paiement
+  .group:hover {
+    .opacity-0 {
+      opacity: 1;
+    }
+  }
+
+  // Animation pour les icônes d'action
+  .action-icon {
+    transition: all 0.15s ease-in-out;
+
+    &:hover {
+      transform: rotate(5deg) scale(1.1);
+    }
+  }
+
+  // Gradient pour les états de paiement
+  .payment-status-recent {
+    background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+  }
+
+  .payment-status-month {
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  }
+
+  .payment-status-old {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  }
+}
+
+// Animations d'entrée pour les éléments
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.payment-item {
+  animation: slideInUp 0.3s ease-out;
+}
+
+.payment-header {
+  animation: fadeIn 0.5s ease-out;
+}

@@ -1,0 +1,21 @@
+// Styles pour le header du panneau d'unité
+.unit-header {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  
+  .status-badge {
+    transition: all 0.2s ease-in-out;
+    
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+  
+  .close-button {
+    transition: all 0.2s ease-in-out;
+    
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.1);
+      transform: scale(1.1);
+    }
+  }
+}

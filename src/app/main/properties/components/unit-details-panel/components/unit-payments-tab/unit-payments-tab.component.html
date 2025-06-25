@@ -1,0 +1,225 @@
+<!-- Onglet Paiements -->
+<div class="space-y-4">
+  <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-5 rounded-xl border border-green-200">
+    <h3 class="font-bold mb-4 text-green-900 flex items-center">
+      <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+      </svg>
+      Historique des paiements
+      <span *ngIf="loading" class="ml-2">
+        <svg class="animate-spin w-4 h-4 text-green-600" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+      </span>
+    </h3>
+    
+    <!-- Résumé financier -->
+    <div class="grid grid-cols-2 gap-4 mb-4">
+      <div class="bg-white p-4 rounded-lg border border-green-100">
+        <div class="text-center">
+          <div class="text-2xl font-bold text-green-600">{{ formatPrice(unitData?.room?.price || 0) }}</div>
+          <div class="text-sm text-green-700">Loyer mensuel</div>
+        </div>
+      </div>
+      <div class="bg-white p-4 rounded-lg border border-green-100">
+        <div class="text-center">
+          <div class="text-2xl font-bold text-blue-600">{{ getPaymentCount() }}</div>
+          <div class="text-sm text-blue-700">Paiements reçus</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Total des paiements -->
+    <div class="bg-white p-4 rounded-lg border border-green-100 mb-4">
+      <div class="text-center">
+        <div class="text-xl font-bold" style="color: rgb(204, 140, 10);">{{ formatPrice(getTotalPayments()) }}</div>
+        <div class="text-sm text-gray-600">Total des paiements reçus</div>
+      </div>
+    </div>
+
+    <!-- Liste des paiements améliorée -->
+    <div class="bg-white rounded-xl shadow-sm border border-green-100 overflow-hidden" *ngIf="getFormattedPayments().length > 0; else noPayments">
+      <!-- Header du tableau avec design amélioré -->
+      <div class="bg-gradient-to-r from-green-50 to-emerald-50 border-b border-green-200 px-6 py-4">
+        <div class="flex items-center justify-between">
+          <h4 class="text-sm font-bold text-green-900 flex items-center">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+            </svg>
+            Transactions ({{ getFormattedPayments().length }})
+          </h4>
+          <div class="text-xs text-green-700 bg-green-100 px-2 py-1 rounded-full">
+            Total: {{ formatPrice(getTotalPayments()) }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Corps du tableau avec design moderne -->
+      <div class="divide-y divide-gray-100">
+        <div *ngFor="let payment of getFormattedPayments(); trackBy: trackByPaymentId; let i = index"
+             class="group hover:bg-gradient-to-r hover:from-gray-50 hover:to-green-25 transition-all duration-200 ease-in-out">
+
+          <!-- Ligne principale du paiement -->
+          <div class="px-6 py-4">
+            <div class="flex items-center justify-between">
+              <!-- Informations principales -->
+              <div class="flex items-center space-x-4 flex-1">
+                <!-- Badge numéro -->
+                <div class="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-green-100 to-emerald-100 rounded-full flex items-center justify-center">
+                  <span class="text-xs font-bold text-green-700">#{{ i + 1 }}</span>
+                </div>
+
+                <!-- Détails du paiement -->
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center space-x-3">
+                    <!-- Date avec icône -->
+                    <div class="flex items-center space-x-2">
+                      <div class="p-1.5 bg-blue-100 rounded-lg">
+                        <svg class="w-3 h-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                      </div>
+                      <div>
+                        <div class="text-sm font-medium text-gray-900">{{ formatShortDate(payment.transaction.datePayment) }}</div>
+                        <div class="text-xs text-gray-500">{{ formatPaymentTime(payment.transaction.datePayment) }}</div>
+                      </div>
+                    </div>
+
+                    <!-- Séparateur -->
+                    <div class="h-8 w-px bg-gray-200"></div>
+
+                    <!-- Type de paiement avec badge -->
+                    <div class="flex items-center space-x-2">
+                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                            [class.bg-green-100]="payment.transaction.paymentLocationType === 'LOCATION'"
+                            [class.text-green-800]="payment.transaction.paymentLocationType === 'LOCATION'"
+                            [class.bg-blue-100]="payment.transaction.paymentLocationType === 'CAUTION'"
+                            [class.text-blue-800]="payment.transaction.paymentLocationType === 'CAUTION'"
+                            [class.bg-purple-100]="payment.transaction.paymentLocationType !== 'LOCATION' && payment.transaction.paymentLocationType !== 'CAUTION'"
+                            [class.text-purple-800]="payment.transaction.paymentLocationType !== 'LOCATION' && payment.transaction.paymentLocationType !== 'CAUTION'">
+                        <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                          <circle cx="10" cy="10" r="3"></circle>
+                        </svg>
+                        {{ getPaymentTypeLabel(payment.transaction.paymentLocationType) }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- Informations supplémentaires -->
+                  <div *ngIf="payment.transaction.reason || payment.transaction.billingRef" class="mt-2 flex items-center space-x-4 text-xs text-gray-600">
+                    <div *ngIf="payment.transaction.reason" class="flex items-center space-x-1">
+                      <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path>
+                      </svg>
+                      <span>{{ payment.transaction.reason }}</span>
+                    </div>
+                    <div *ngIf="payment.transaction.billingRef" class="flex items-center space-x-1">
+                      <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2h4a1 1 0 011 1v1a1 1 0 01-1 1h-1v12a2 2 0 01-2 2H6a2 2 0 01-2-2V7H3a1 1 0 01-1-1V5a1 1 0 011-1h4z"></path>
+                      </svg>
+                      <span>Réf: {{ payment.transaction.billingRef }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Montant et actions -->
+              <div class="flex items-center space-x-4">
+                <!-- Montant avec design amélioré -->
+                <div class="text-right">
+                  <div class="text-lg font-bold" style="color: rgb(204, 140, 10);">
+                    {{ payment.price }}
+                  </div>
+                  <div class="text-xs text-gray-500">
+                    {{ getPaymentStatus(payment.transaction.datePayment) }}
+                  </div>
+                </div>
+
+                <!-- Actions avec design moderne -->
+                <div class="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  <button (click)="viewPaymentDetails(payment)"
+                          class="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-100 rounded-lg transition-all duration-150 transform hover:scale-105"
+                          title="Voir les détails">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                    </svg>
+                  </button>
+
+                  <button (click)="editPayment(payment)"
+                          class="p-2 text-green-600 hover:text-green-800 hover:bg-green-100 rounded-lg transition-all duration-150 transform hover:scale-105"
+                          title="Modifier">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                    </svg>
+                  </button>
+
+                  <button (click)="deletePayment(payment)"
+                          class="p-2 text-red-600 hover:text-red-800 hover:bg-red-100 rounded-lg transition-all duration-150 transform hover:scale-105"
+                          title="Supprimer">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer avec statistiques -->
+      <div class="bg-gray-50 border-t border-gray-200 px-6 py-3" *ngIf="getFormattedPayments().length > 5">
+        <div class="flex items-center justify-between text-sm text-gray-600">
+          <div class="flex items-center space-x-4">
+            <span>{{ getFormattedPayments().length }} transaction(s)</span>
+            <span class="text-gray-400">•</span>
+            <span>Dernière mise à jour: {{ getLastUpdateTime() }}</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <span class="text-xs">Moyenne par mois:</span>
+            <span class="font-medium" style="color: rgb(204, 140, 10);">{{ formatPrice(getAveragePayment()) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noPayments>
+      <div class="bg-white rounded-lg border border-green-100 p-8 text-center">
+        <div class="p-4 bg-gray-100 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+          <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+          </svg>
+        </div>
+        <h4 class="text-lg font-medium text-gray-900 mb-2">Aucun paiement enregistré</h4>
+        <p class="text-sm text-gray-600 mb-6">Cette unité n'a pas encore d'historique de paiements.</p>
+        <div class="text-xs text-gray-500 bg-gray-50 p-3 rounded-lg">
+          <p>💡 <strong>Astuce :</strong> Les paiements apparaîtront ici une fois qu'un locataire sera assigné et commencera à payer son loyer.</p>
+        </div>
+      </div>
+    </ng-template>
+
+    <!-- Actions paiements -->
+    <div class="mt-4 pt-4 border-t border-green-200 space-y-3">
+      <div class="flex space-x-2">
+        <button (click)="onAddPayment()"
+                class="flex-1 px-4 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-all duration-200 flex items-center justify-center">
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+          </svg>
+          Ajouter
+        </button>
+        
+        <button (click)="exportPaymentsToCSV()" 
+                class="px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-all duration-200 flex items-center justify-center"
+                *ngIf="getFormattedPayments().length > 0">
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+          CSV
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

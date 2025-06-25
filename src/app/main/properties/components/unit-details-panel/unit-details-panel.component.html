@@ -1,0 +1,249 @@
+<!-- Panneau latéral des détails d'unité refactorisé -->
+<div class="unit-details-panel h-full flex flex-col bg-white border-l border-gray-200"
+     [@slideIn]="isOpen">
+
+  <!-- Header du panneau -->
+  <app-unit-header
+    [unitData]="unitData"
+    (close)="closePanel()">
+  </app-unit-header>
+
+  <!-- Actions rapides -->
+  <div class="flex-shrink-0 px-4 py-3 border-b border-gray-200 bg-white">
+    <div class="flex flex-wrap gap-2">
+      <button (click)="onEditRoom()" 
+              class="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded text-sm font-medium transition-colors duration-200">
+        <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+        </svg>
+        Modifier
+      </button>
+      
+      <button *ngIf="getRoomStatus() === 'available'" 
+              (click)="onAssignTenant()" 
+              class="px-3 py-1 text-white rounded text-sm font-medium transition-colors duration-200"
+              style="background-color: rgb(204, 140, 10);">
+        <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+        </svg>
+        Assigner
+      </button>
+      
+      <button *ngIf="getRoomStatus() === 'occupied'" 
+              (click)="onAddPayment()" 
+              class="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm font-medium transition-colors duration-200">
+        <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+        </svg>
+        Paiement
+      </button>
+      
+      <button *ngIf="getRoomStatus() === 'occupied'" 
+              (click)="onViewContract()" 
+              class="px-3 py-1 bg-purple-600 hover:bg-purple-700 text-white rounded text-sm font-medium transition-colors duration-200">
+        <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        </svg>
+        Contrat
+      </button>
+    </div>
+  </div>
+
+  <!-- Navigation des onglets -->
+  <div class="flex-shrink-0 px-4 py-2 border-b border-gray-200 bg-white">
+    <nav class="flex space-x-4">
+      <button *ngFor="let tab of tabs" 
+              (click)="activeTab = tab.id"
+              [class.text-primary-600]="activeTab === tab.id"
+              [class.border-primary-500]="activeTab === tab.id"
+              [class.text-gray-500]="activeTab !== tab.id"
+              [class.border-transparent]="activeTab !== tab.id"
+              class="pb-2 px-1 border-b-2 font-medium text-sm transition-colors duration-200"
+              [style.border-color]="activeTab === tab.id ? 'rgb(204, 140, 10)' : ''"
+              [style.color]="activeTab === tab.id ? 'rgb(204, 140, 10)' : ''">
+        {{ tab.label }}
+      </button>
+    </nav>
+  </div>
+
+  <!-- Contenu scrollable -->
+  <div class="flex-1 overflow-y-auto">
+    <div class="p-4">
+      <!-- Onglet Détails -->
+      <div *ngIf="activeTab === 'details'">
+        <div class="space-y-4">
+          <div class="grid grid-cols-1 gap-3">
+            <div class="bg-gray-50 p-3 rounded-lg border">
+              <label class="block text-xs font-medium text-gray-600 mb-1">Code de l'unité</label>
+              <p class="text-sm font-semibold text-gray-900">{{ room?.code || 'N/A' }}</p>
+            </div>
+            
+            <div class="bg-gray-50 p-3 rounded-lg border">
+              <label class="block text-xs font-medium text-gray-600 mb-1">Type</label>
+              <p class="text-sm font-semibold text-gray-900">{{ getRoomTypeLabel() }}</p>
+            </div>
+            
+            <div class="bg-gray-50 p-3 rounded-lg border">
+              <label class="block text-xs font-medium text-gray-600 mb-1">Prix mensuel</label>
+              <p class="text-sm font-semibold" style="color: rgb(204, 140, 10);">{{ formatPrice(room?.price || 0) }}</p>
+            </div>
+          </div>
+
+          <!-- Caractéristiques -->
+          <div class="mt-6">
+            <h4 class="text-sm font-bold text-gray-900 mb-3">Caractéristiques</h4>
+            <div class="space-y-2">
+              <div class="flex items-center justify-between p-2 bg-gray-50 rounded">
+                <span class="text-xs text-gray-600">Cuisine</span>
+                <span class="text-xs font-medium" 
+                      [class.text-green-600]="room?.specifity?.hasKitchen"
+                      [class.text-gray-400]="!room?.specifity?.hasKitchen">
+                  {{ room?.specifity?.hasKitchen ? 'Oui' : 'Non' }}
+                </span>
+              </div>
+              
+              <div class="flex items-center justify-between p-2 bg-gray-50 rounded">
+                <span class="text-xs text-gray-600">Douche privée</span>
+                <span class="text-xs font-medium"
+                      [class.text-green-600]="room?.specifity?.isInternalShower"
+                      [class.text-gray-400]="!room?.specifity?.isInternalShower">
+                  {{ room?.specifity?.isInternalShower ? 'Oui' : 'Non' }}
+                </span>
+              </div>
+              
+              <div class="flex items-center justify-between p-2 bg-gray-50 rounded" 
+                   *ngIf="room?.specifity?.numberOfBathroom">
+                <span class="text-xs text-gray-600">Salles de bain</span>
+                <span class="text-xs font-medium text-gray-900">{{ room.specifity.numberOfBathroom }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Onglet Locataire -->
+      <div *ngIf="activeTab === 'tenant'">
+        <div *ngIf="unitData?.tenant; else noTenant">
+          <div class="space-y-4">
+            <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+              <h4 class="text-sm font-bold text-blue-900 mb-3">Informations du locataire</h4>
+              <div class="space-y-3">
+                <div>
+                  <label class="block text-xs font-medium text-blue-700 mb-1">Nom complet</label>
+                  <p class="text-sm font-semibold text-blue-900">{{ unitData?.tenant?.fullName || unitData?.tenant?.name || 'N/A' }}</p>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-medium text-blue-700 mb-1">Email</label>
+                  <p class="text-sm text-blue-800">{{ unitData?.tenant?.email || 'N/A' }}</p>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-medium text-blue-700 mb-1">Téléphone</label>
+                  <p class="text-sm text-blue-800">{{ unitData?.tenant?.phoneNumber || 'N/A' }}</p>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-medium text-blue-700 mb-1">Date d'entrée</label>
+                  <p class="text-sm text-blue-800">{{ formatDate(unitData?.tenant?.createdAt) }}</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Actions locataire -->
+            <div class="flex flex-col gap-2">
+              <button class="w-full px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm font-medium transition-colors duration-200">
+                Contacter le locataire
+              </button>
+              <button class="w-full px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded text-sm font-medium transition-colors duration-200">
+                Résilier le contrat
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <ng-template #noTenant>
+          <div class="text-center py-8">
+            <div class="p-3 bg-gray-100 rounded-full w-12 h-12 mx-auto mb-3 flex items-center justify-center">
+              <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+              </svg>
+            </div>
+            <h4 class="text-sm font-medium text-gray-900 mb-2">Aucun locataire</h4>
+            <p class="text-xs text-gray-600 mb-4">Cette unité est disponible</p>
+            <button (click)="onAssignTenant()" 
+                    class="px-4 py-2 text-white rounded text-sm font-medium"
+                    style="background-color: rgb(204, 140, 10);">
+              Assigner un locataire
+            </button>
+          </div>
+        </ng-template>
+      </div>
+
+      <!-- Onglet Paiements -->
+      <div *ngIf="activeTab === 'payments'">
+        <app-unit-payments-tab
+          [unitData]="unitData"
+          [loading]="false"
+          (paymentAction)="onPaymentAction($event)">
+        </app-unit-payments-tab>
+      </div>
+
+      <!-- Onglet Galerie -->
+      <div *ngIf="activeTab === 'gallery'">
+        <div *ngIf="room?.medias && room.medias.length > 0; else noMedia">
+          <div class="grid grid-cols-1 gap-3">
+            <div *ngFor="let media of room.medias" class="relative">
+              <img [src]="media" 
+                   [alt]="'Image de ' + getRoomName()" 
+                   class="w-full h-32 object-cover rounded-lg border hover:opacity-90 transition-opacity duration-200 cursor-pointer"
+                   (click)="openImageViewer(media)">
+              <div class="absolute top-2 right-2">
+                <button class="p-1 bg-black bg-opacity-50 rounded text-white hover:bg-opacity-70 transition-all duration-200">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <button class="w-full mt-4 px-3 py-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-gray-400 hover:text-gray-700 transition-colors duration-200">
+            <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+            </svg>
+            Ajouter des images
+          </button>
+        </div>
+        
+        <ng-template #noMedia>
+          <div class="text-center py-8">
+            <div class="p-3 bg-gray-100 rounded-full w-12 h-12 mx-auto mb-3 flex items-center justify-center">
+              <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+              </svg>
+            </div>
+            <h4 class="text-sm font-medium text-gray-900 mb-2">Aucune image</h4>
+            <p class="text-xs text-gray-600 mb-4">Ajoutez des images pour présenter cette unité</p>
+            <button class="px-4 py-2 text-white rounded text-sm font-medium"
+                    style="background-color: rgb(204, 140, 10);">
+              Ajouter des images
+            </button>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal d'ajout de paiement -->
+  <app-add-payment-modal
+    [isOpen]="showAddPaymentModal"
+    [room]="unitData?.room || null"
+    [tenant]="unitData?.tenant || null"
+    [location]="unitData?.location || null"
+    [propertyId]="propertyId"
+    (close)="closeAddPaymentModal()"
+    (paymentAdded)="onPaymentAdded($event)">
+  </app-add-payment-modal>
+</div>

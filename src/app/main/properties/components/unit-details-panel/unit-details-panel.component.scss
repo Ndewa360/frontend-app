@@ -1,0 +1,189 @@
+.unit-details-panel {
+  // Styles pour le panneau latéral
+  box-shadow: -4px 0 12px rgba(0, 0, 0, 0.1);
+  
+  // Animation d'entrée
+  &.ng-enter {
+    transform: translateX(100%);
+  }
+  
+  &.ng-enter-active {
+    transform: translateX(0);
+    transition: transform 300ms ease-in-out;
+  }
+  
+  &.ng-leave {
+    transform: translateX(0);
+  }
+  
+  &.ng-leave-active {
+    transform: translateX(100%);
+    transition: transform 300ms ease-in-out;
+  }
+
+  // Scrollbar personnalisée
+  .overflow-y-auto {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+    
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background-color: rgba(156, 163, 175, 0.5);
+      border-radius: 3px;
+      
+      &:hover {
+        background-color: rgba(156, 163, 175, 0.7);
+      }
+    }
+  }
+
+  // Styles pour les onglets
+  .tab-button {
+    position: relative;
+    
+    &.active {
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background-color: rgb(204, 140, 10);
+        border-radius: 1px;
+      }
+    }
+  }
+
+  // Styles pour les cartes d'information
+  .info-card {
+    transition: all 0.2s ease-in-out;
+    
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  // Styles pour les boutons d'action
+  .action-button {
+    transition: all 0.2s ease-in-out;
+    
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+    
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  // Styles pour les images de la galerie
+  .gallery-image {
+    transition: all 0.2s ease-in-out;
+    
+    &:hover {
+      transform: scale(1.02);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+  }
+
+  // Responsive
+  @media (max-width: 768px) {
+    // Sur mobile, le panneau prend tout l'écran
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 50;
+    width: 100vw;
+    
+    .header {
+      padding: 1rem;
+    }
+    
+    .actions {
+      flex-direction: column;
+      gap: 0.5rem;
+      
+      button {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  }
+
+  @media (min-width: 769px) and (max-width: 1024px) {
+    // Sur tablet, panneau plus large
+    width: 50%;
+    min-width: 400px;
+  }
+
+  @media (min-width: 1025px) {
+    // Sur desktop, panneau fixe
+    width: 384px; // w-96
+    min-width: 384px;
+  }
+
+  // États de chargement
+  .loading-skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+  }
+
+  @keyframes loading {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
+  }
+
+  // Styles pour les badges de statut
+  .status-badge {
+    &.available {
+      background-color: #dcfce7;
+      color: #166534;
+      border-color: #bbf7d0;
+    }
+    
+    &.occupied {
+      background-color: #fef2f2;
+      color: #991b1b;
+      border-color: #fecaca;
+    }
+    
+    &.maintenance {
+      background-color: #fefce8;
+      color: #a16207;
+      border-color: #fde68a;
+    }
+  }
+
+  // Animation pour les changements d'onglet
+  .tab-content {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
