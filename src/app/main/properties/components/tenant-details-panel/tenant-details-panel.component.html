@@ -1,0 +1,665 @@
+<!-- Overlay de fond -->
+<div *ngIf="isOpen"
+     class="overlay-backdrop fade-in"
+     (click)="onClosePanel()">
+</div>
+
+<!-- Panneau latéral des détails de locataire - Interface avec onglets -->
+<div class="tenant-details-panel flex flex-col bg-carbon-layer-01 shadow-2xl border-l border-carbon-subtle"
+     [@slideIn]="isOpen"
+     style="width: 1400px; max-width: 90vw;"
+     (click)="$event.stopPropagation()"
+     *ngIf="isOpen || isContentVisible">
+
+  <!-- Header avec informations du locataire -->
+  <div class="flex-shrink-0 bg-carbon-layer-02 border-b border-carbon-subtle">
+    <!-- Barre de statut avec couleur thème -->
+    <div class="h-1 w-full bg-gradient-to-r from-custom-primary to-custom-primary-dark"></div>
+    
+    <!-- Header content -->
+    <div class="px-8 py-6">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+          <!-- Icône du locataire avec couleur thème -->
+          <div class="p-3 rounded-xl bg-custom-primary-light">
+            <svg class="w-7 h-7 text-custom-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+            </svg>
+          </div>
+          
+          <!-- Titre et informations -->
+          <div>
+            <h2 class="text-xl font-bold text-carbon-primary">{{ getTenantName() }}</h2>
+            <div class="flex items-center space-x-3 mt-1">
+              <span class="text-sm text-carbon-secondary">{{ getTenantEmail() }}</span>
+              <span class="text-carbon-tertiary">•</span>
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium"
+                    [class.bg-green-100]="getTenantStatus() === 'active'"
+                    [class.text-green-800]="getTenantStatus() === 'active'"
+                    [class.bg-red-100]="getTenantStatus() === 'inactive'"
+                    [class.text-red-800]="getTenantStatus() === 'inactive'"
+                    [class.bg-yellow-100]="getTenantStatus() === 'pending'"
+                    [class.text-yellow-800]="getTenantStatus() === 'pending'">
+                <div class="w-2 h-2 rounded-full mr-2"
+                     [class.bg-green-500]="getTenantStatus() === 'active'"
+                     [class.bg-red-500]="getTenantStatus() === 'inactive'"
+                     [class.bg-yellow-500]="getTenantStatus() === 'pending'"></div>
+                {{ getTenantStatusLabel() }}
+              </span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Bouton fermer -->
+        <button (click)="onClosePanel()" 
+                class="p-2 rounded-lg hover:bg-carbon-layer-03 transition-colors duration-200 focus-carbon">
+          <svg class="w-6 h-6 text-carbon-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation par onglets -->
+  <div class="flex-shrink-0 bg-carbon-layer-02 border-b border-carbon-subtle">
+    <nav class="flex space-x-0" aria-label="Tabs">
+      <button *ngFor="let tab of tabs; let i = index"
+              (click)="setActiveTab(i)"
+              [class.border-custom-primary]="activeTabIndex === i"
+              [class.text-custom-primary]="activeTabIndex === i"
+              [class.bg-carbon-layer-01]="activeTabIndex === i"
+              [class.text-carbon-secondary]="activeTabIndex !== i"
+              [class.hover:text-carbon-primary]="activeTabIndex !== i"
+              class="flex-1 py-3 px-4 text-center text-sm font-medium border-b-2 border-transparent transition-all duration-200 hover:bg-carbon-layer-03 focus-carbon">
+        <div class="flex items-center justify-center space-x-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="tab.icon"></path>
+          </svg>
+          <span>{{ tab.label }}</span>
+        </div>
+      </button>
+    </nav>
+  </div>
+
+  <!-- Contenu des onglets -->
+  <div class="flex-1 overflow-y-auto bg-carbon-layer-01"
+       [@contentFade]
+       *ngIf="isContentVisible">
+
+    <!-- Onglet 1: Vue d'ensemble -->
+    <div *ngIf="activeTabIndex === 0" class="p-8">
+      <div class="space-y-6">
+
+        <!-- Header de section avec avatar -->
+        <div class="bg-carbon-layer-02 rounded-lg overflow-hidden border border-carbon-subtle">
+          <!-- Avatar du locataire -->
+          <div class="h-48 bg-gradient-to-br from-gray-100 to-gray-200 relative overflow-hidden">
+            <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-custom-primary-light to-custom-primary">
+              <div class="text-center text-custom-primary">
+                <div class="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                  <span class="text-3xl font-bold text-custom-primary">
+                    {{ getTenantName().charAt(0).toUpperCase() }}
+                  </span>
+                </div>
+                <p class="text-lg font-semibold opacity-90">{{ getTenantName() }}</p>
+              </div>
+            </div>
+
+            <!-- Overlay avec statut -->
+            <div class="absolute top-4 right-4">
+              <span class="inline-flex items-center px-3 py-2 rounded-full text-sm font-semibold shadow-lg"
+                    [class.bg-green-100]="getTenantStatus() === 'active'"
+                    [class.text-green-800]="getTenantStatus() === 'active'"
+                    [class.bg-red-100]="getTenantStatus() === 'inactive'"
+                    [class.text-red-800]="getTenantStatus() === 'inactive'"
+                    [class.bg-yellow-100]="getTenantStatus() === 'pending'"
+                    [class.text-yellow-800]="getTenantStatus() === 'pending'">
+                <div class="w-2 h-2 rounded-full mr-2"
+                     [class.bg-green-500]="getTenantStatus() === 'active'"
+                     [class.bg-red-500]="getTenantStatus() === 'inactive'"
+                     [class.bg-yellow-500]="getTenantStatus() === 'pending'">
+                </div>
+                {{ getTenantStatusLabel() }}
+              </span>
+            </div>
+
+            <!-- Bouton modifier en overlay -->
+            <div class="absolute top-4 left-4">
+              <button (click)="onEditTenant()"
+                      class="flex items-center space-x-2 px-3 py-2 bg-white bg-opacity-90 hover:bg-opacity-100 text-gray-800 rounded-lg font-medium transition-all duration-200 hover:shadow-lg backdrop-blur-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2-2H7a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                </svg>
+                <span>Modifier</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Informations principales -->
+          <div class="p-8">
+            <div class="flex items-center justify-between mb-6">
+              <div>
+                <h3 class="text-2xl font-bold text-carbon-primary">{{ getTenantName() }}</h3>
+                <p class="text-lg text-carbon-secondary">{{ hasAssignedRoom() ? getCurrentRoomName() : 'Aucune chambre assignée' }}</p>
+              </div>
+              <div class="text-right" *ngIf="hasAssignedRoom() && currentRoom">
+                <div class="text-3xl font-bold text-custom-primary">{{ formatPrice(currentRoom.price || 0) }}</div>
+                <div class="text-sm text-carbon-secondary">par mois</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Informations personnelles détaillées -->
+        <div class="bg-carbon-layer-02 rounded-lg p-8 border border-carbon-subtle">
+          <h4 class="text-lg font-semibold text-carbon-primary mb-4 flex items-center">
+            <svg class="w-5 h-5 mr-2 text-custom-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+            </svg>
+            Informations personnelles
+          </h4>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Informations de contact -->
+            <div class="space-y-4">
+              <div class="bg-carbon-layer-01 p-4 rounded-lg border border-carbon-subtle">
+                <label class="block text-xs font-medium text-carbon-secondary mb-1">Email</label>
+                <p class="text-sm font-medium text-carbon-primary">{{ getTenantEmail() }}</p>
+              </div>
+
+              <div class="bg-carbon-layer-01 p-4 rounded-lg border border-carbon-subtle">
+                <label class="block text-xs font-medium text-carbon-secondary mb-1">Téléphone</label>
+                <p class="text-sm font-medium text-carbon-primary">{{ getTenantPhone() }}</p>
+              </div>
+
+              <div class="bg-carbon-layer-01 p-4 rounded-lg border border-carbon-subtle" *ngIf="tenant?.createdAt">
+                <label class="block text-xs font-medium text-carbon-secondary mb-1">Date d'inscription</label>
+                <p class="text-sm font-medium text-carbon-primary">{{ formatDate(tenant.createdAt) }}</p>
+              </div>
+            </div>
+
+            <!-- Informations du référent si disponible -->
+            <div class="space-y-4" *ngIf="tenant?.fullNameRef || tenant?.emailRef || tenant?.phoneNumberRef">
+              <h5 class="text-sm font-semibold text-carbon-primary flex items-center">
+                <svg class="w-4 h-4 mr-2 text-custom-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                </svg>
+                Référent
+              </h5>
+
+              <div class="bg-carbon-layer-01 p-4 rounded-lg border border-carbon-subtle" *ngIf="tenant?.fullNameRef">
+                <label class="block text-xs font-medium text-carbon-secondary mb-1">Nom du référent</label>
+                <p class="text-sm font-medium text-carbon-primary">{{ tenant.fullNameRef }}</p>
+              </div>
+
+              <div class="bg-carbon-layer-01 p-4 rounded-lg border border-carbon-subtle" *ngIf="tenant?.emailRef">
+                <label class="block text-xs font-medium text-carbon-secondary mb-1">Email du référent</label>
+                <p class="text-sm font-medium text-carbon-primary">{{ tenant.emailRef }}</p>
+              </div>
+
+              <div class="bg-carbon-layer-01 p-4 rounded-lg border border-carbon-subtle" *ngIf="tenant?.phoneNumberRef">
+                <label class="block text-xs font-medium text-carbon-secondary mb-1">Téléphone du référent</label>
+                <p class="text-sm font-medium text-carbon-primary">{{ tenant.phoneNumberRef }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Informations administratives -->
+        <div class="bg-carbon-layer-02 rounded-lg p-8 border border-carbon-subtle">
+          <h4 class="text-lg font-semibold text-carbon-primary mb-4 flex items-center">
+            <svg class="w-5 h-5 mr-2 text-custom-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            Informations administratives
+          </h4>
+
+          <div class="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+            <div class="bg-carbon-layer-01 p-4 rounded-lg border border-carbon-subtle">
+              <label class="block text-xs font-medium text-carbon-secondary mb-1">ID Locataire</label>
+              <p class="text-sm font-mono text-carbon-primary">{{ tenant?._id?.substring(0, 8) }}...</p>
+            </div>
+
+            <div class="bg-carbon-layer-01 p-4 rounded-lg border border-carbon-subtle">
+              <label class="block text-xs font-medium text-carbon-secondary mb-1">Statut</label>
+              <p class="text-sm font-medium"
+                 [class.text-green-600]="getTenantStatus() === 'active'"
+                 [class.text-red-600]="getTenantStatus() === 'inactive'"
+                 [class.text-yellow-600]="getTenantStatus() === 'pending'">
+                {{ getTenantStatusLabel() }}
+              </p>
+            </div>
+
+            <div class="bg-carbon-layer-01 p-4 rounded-lg border border-carbon-subtle" *ngIf="currentLocation?.startedAt">
+              <label class="block text-xs font-medium text-carbon-secondary mb-1">Date d'entrée</label>
+              <p class="text-sm text-carbon-primary">{{ formatDate(currentLocation.startedAt) }}</p>
+            </div>
+
+            <div class="bg-carbon-layer-01 p-4 rounded-lg border border-carbon-subtle" *ngIf="tenant?.createdAt">
+              <label class="block text-xs font-medium text-carbon-secondary mb-1">Date de création</label>
+              <p class="text-sm text-carbon-primary">{{ formatDate(tenant.createdAt) }}</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Onglet 2: Chambre occupée -->
+    <div *ngIf="activeTabIndex === 1" class="p-8">
+      <div class="space-y-6">
+
+        <!-- Cas 1: Locataire avec chambre assignée -->
+        <div *ngIf="hasAssignedRoom() && currentRoom" class="bg-carbon-layer-02 rounded-lg border border-carbon-subtle overflow-hidden">
+          <!-- Header avec statut occupé -->
+          <div class="bg-gradient-to-r from-green-50 to-green-100 px-8 py-5 border-b border-green-200">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <div class="p-2 bg-green-100 rounded-lg">
+                  <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                  </svg>
+                </div>
+                <div>
+                  <h3 class="text-lg font-semibold text-green-800">Chambre assignée</h3>
+                  <p class="text-sm text-green-600">{{ getCurrentRoomName() }} - {{ getCurrentRoomType() }}</p>
+                </div>
+              </div>
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                Occupée
+              </span>
+            </div>
+          </div>
+
+          <!-- Informations de la chambre -->
+          <div class="p-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <!-- Informations de base -->
+              <div class="space-y-4">
+                <h4 class="text-sm font-semibold text-carbon-primary mb-3 flex items-center">
+                  <svg class="w-4 h-4 mr-2 text-custom-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                  </svg>
+                  Informations de la chambre
+                </h4>
+
+                <div class="space-y-3">
+                  <div class="flex items-center justify-between py-2 border-b border-carbon-subtle">
+                    <span class="text-sm text-carbon-secondary">Code chambre</span>
+                    <span class="text-sm font-medium text-carbon-primary">{{ currentRoom.code }}</span>
+                  </div>
+                  <div class="flex items-center justify-between py-2 border-b border-carbon-subtle">
+                    <span class="text-sm text-carbon-secondary">Type</span>
+                    <span class="text-sm font-medium text-carbon-primary">{{ getCurrentRoomType() }}</span>
+                  </div>
+                  <div class="flex items-center justify-between py-2 border-b border-carbon-subtle">
+                    <span class="text-sm text-carbon-secondary">Loyer mensuel</span>
+                    <span class="text-sm font-bold text-custom-primary">{{ formatPrice(currentRoom.price || 0) }}</span>
+                  </div>
+                  <div class="flex items-center justify-between py-2 border-b border-carbon-subtle">
+                    <span class="text-sm text-carbon-secondary">Caution</span>
+                    <span class="text-sm font-medium text-carbon-primary">{{ formatPrice(currentRoom.cautionPrice || 0) }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Caractéristiques de la chambre -->
+              <div class="space-y-4">
+                <h4 class="text-sm font-semibold text-carbon-primary mb-3 flex items-center">
+                  <svg class="w-4 h-4 mr-2 text-custom-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                  </svg>
+                  Caractéristiques
+                </h4>
+
+                <div class="grid grid-cols-2 gap-3">
+                  <div class="bg-carbon-layer-01 p-3 rounded-lg border border-carbon-subtle text-center">
+                    <div class="text-lg font-bold text-blue-600">{{ currentRoom.specifity?.numberOfBathroom || 1 }}</div>
+                    <div class="text-xs text-carbon-secondary">Chambre(s)</div>
+                  </div>
+
+                  <div class="bg-carbon-layer-01 p-3 rounded-lg border border-carbon-subtle text-center">
+                    <div class="text-lg font-bold"
+                         [class.text-green-600]="currentRoom.specifity?.hasKitchen"
+                         [class.text-red-600]="!currentRoom.specifity?.hasKitchen">
+                      {{ currentRoom.specifity?.hasKitchen ? 'Oui' : 'Non' }}
+                    </div>
+                    <div class="text-xs text-carbon-secondary">Cuisine</div>
+                  </div>
+
+                  <div class="bg-carbon-layer-01 p-3 rounded-lg border border-carbon-subtle text-center">
+                    <div class="text-lg font-bold text-purple-600">{{ currentRoom.specifity?.numberOfShower || 0 }}</div>
+                    <div class="text-xs text-carbon-secondary">Douche(s)</div>
+                  </div>
+
+                  <div class="bg-carbon-layer-01 p-3 rounded-lg border border-carbon-subtle text-center">
+                    <div class="text-lg font-bold"
+                         [class.text-green-600]="currentRoom.isShowToPublic"
+                         [class.text-gray-600]="!currentRoom.isShowToPublic">
+                      {{ currentRoom.isShowToPublic ? 'Visible' : 'Masquée' }}
+                    </div>
+                    <div class="text-xs text-carbon-secondary">Visibilité</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Actions pour chambre occupée -->
+            <div class="mt-6 pt-6 border-t border-carbon-subtle">
+              <div class="flex flex-wrap gap-3">
+                <button (click)="onViewContract()"
+                        class="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium transition-all duration-200 hover:bg-blue-700 hover:shadow-lg">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                  </svg>
+                  <span>Voir le contrat</span>
+                </button>
+
+                <button (click)="onCancelContract()"
+                        class="flex items-center space-x-2 px-4 py-2 bg-red-600 text-white rounded-lg font-medium transition-all duration-200 hover:bg-red-700 hover:shadow-lg">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                  </svg>
+                  <span>Résilier le contrat</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cas 2: Locataire sans chambre assignée -->
+        <div *ngIf="!hasAssignedRoom()" class="bg-carbon-layer-02 rounded-lg border border-carbon-subtle overflow-hidden">
+          <!-- Header avec statut libre -->
+          <div class="bg-gradient-to-r from-orange-50 to-orange-100 px-8 py-5 border-b border-orange-200">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <div class="p-2 bg-orange-100 rounded-lg">
+                  <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                </div>
+                <div>
+                  <h3 class="text-lg font-semibold text-orange-800">Aucune chambre assignée</h3>
+                  <p class="text-sm text-orange-600">Ce locataire n'a pas encore de chambre</p>
+                </div>
+              </div>
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                <div class="w-2 h-2 bg-orange-500 rounded-full mr-2"></div>
+                Sans chambre
+              </span>
+            </div>
+          </div>
+
+          <!-- Contenu pour locataire sans chambre -->
+          <div class="p-8 text-center">
+            <div class="max-w-md mx-auto">
+              <div class="mb-6">
+                <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg class="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                  </svg>
+                </div>
+                <h4 class="text-lg font-semibold text-carbon-primary mb-2">Prêt pour assignation</h4>
+                <p class="text-carbon-secondary">Ce locataire peut être assigné à une chambre disponible dans cette propriété.</p>
+              </div>
+
+              <!-- Action d'assignation -->
+              <button (click)="onAssignRoom()"
+                      class="w-full flex items-center justify-center space-x-2 px-6 py-3 custom-primary-button text-white rounded-lg font-medium transition-all duration-200 hover:shadow-lg transform hover:scale-105">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                <span>Assigner une chambre</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Onglet 3: Historique des paiements -->
+    <div *ngIf="activeTabIndex === 2" class="p-8">
+      <div class="space-y-6">
+
+        <!-- Header avec métriques financières -->
+        <div class="bg-carbon-layer-02 rounded-lg p-8 border border-carbon-subtle">
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center space-x-3">
+              <div class="p-2 rounded-lg bg-custom-primary-light">
+                <svg class="w-5 h-5 text-custom-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold text-carbon-primary">Historique des paiements</h3>
+                <p class="text-sm text-carbon-secondary">Suivi complet des transactions pour ce locataire</p>
+              </div>
+            </div>
+
+            <!-- Bouton ajouter paiement (si locataire actif) -->
+            <button *ngIf="getTenantStatus() === 'active'"
+                    (click)="onAddPayment()"
+                    class="flex items-center space-x-2 px-4 py-2 custom-primary-button text-white rounded-lg font-medium transition-all duration-200 hover:shadow-lg">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+              </svg>
+              <span>Ajouter un paiement</span>
+            </button>
+          </div>
+
+          <!-- Métriques financières -->
+          <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+            <div class="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-lg border border-green-200">
+              <div class="flex items-center space-x-3">
+                <div class="p-2 bg-green-100 rounded-lg">
+                  <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                  </svg>
+                </div>
+                <div>
+                  <div class="text-lg font-bold text-green-800">{{ formatPrice(getTotalPayments()) }}</div>
+                  <div class="text-xs text-green-600">Total payé</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-lg border border-blue-200">
+              <div class="flex items-center space-x-3">
+                <div class="p-2 bg-blue-100 rounded-lg">
+                  <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                  </svg>
+                </div>
+                <div>
+                  <div class="text-lg font-bold text-blue-800">{{ getPaymentCount() }}</div>
+                  <div class="text-xs text-blue-600">Transactions</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-lg border border-purple-200">
+              <div class="flex items-center space-x-3">
+                <div class="p-2 bg-purple-100 rounded-lg">
+                  <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                  </svg>
+                </div>
+                <div>
+                  <div class="text-lg font-bold text-purple-800">{{ formatPrice(getAveragePayment()) }}</div>
+                  <div class="text-xs text-purple-600">Moyenne</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-orange-50 to-orange-100 p-4 rounded-lg border border-orange-200">
+              <div class="flex items-center space-x-3">
+                <div class="p-2 bg-orange-100 rounded-lg">
+                  <svg class="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                </div>
+                <div>
+                  <div class="text-lg font-bold text-orange-800">{{ formatDate(getLastPaymentDate()) }}</div>
+                  <div class="text-xs text-orange-600">Dernier paiement</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Debug info (à supprimer en production) -->
+        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4" *ngIf="false">
+          <h4 class="text-sm font-semibold text-yellow-800 mb-2">Debug Info:</h4>
+          <p class="text-xs text-yellow-700">Locataire ID: {{ tenant?._id }}</p>
+          <p class="text-xs text-yellow-700">Property ID: {{ propertyId }}</p>
+          <p class="text-xs text-yellow-700">Nombre de paiements trouvés: {{ tenantPayments.length }}</p>
+          <p class="text-xs text-yellow-700">Groupes de paiements: {{ getPaymentsByRoom().length }}</p>
+          <div class="mt-2" *ngIf="tenantPayments.length > 0">
+            <p class="text-xs text-yellow-700 font-semibold">Détails des paiements:</p>
+            <div class="max-h-32 overflow-y-auto">
+              <div *ngFor="let payment of tenantPayments" class="text-xs text-yellow-600">
+                • {{ formatPrice(payment.locationPaymentPrice) }} - {{ formatDate(payment.datePayment) }} - {{ payment.paymentLocationType }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Liste des paiements groupés par chambre -->
+        <div *ngIf="getPaymentsByRoom().length > 0; else noPayments" class="space-y-4">
+          <div *ngFor="let roomGroup of getPaymentsByRoom(); trackBy: trackByRoomId"
+               class="bg-carbon-layer-02 rounded-lg border border-carbon-subtle overflow-hidden">
+
+            <!-- Header du groupe chambre -->
+            <div class="bg-gradient-to-r from-gray-50 to-gray-100 px-8 py-5 border-b border-gray-200">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                  <div class="w-10 h-10 bg-custom-primary-light rounded-full flex items-center justify-center">
+                    <svg class="w-5 h-5 text-custom-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 class="font-semibold text-carbon-primary">{{ roomGroup.roomName }}</h4>
+                    <p class="text-sm text-carbon-secondary">
+                      {{ roomGroup.payments.length }} paiement(s) •
+                      {{ formatDate(roomGroup.dateRange.start) }} - {{ formatDate(roomGroup.dateRange.end) }}
+                    </p>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <div class="text-lg font-bold text-custom-primary">{{ formatPrice(roomGroup.total) }}</div>
+                  <div class="text-xs text-carbon-secondary">Total payé</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Liste des paiements de la chambre -->
+            <div class="p-8">
+              <div class="space-y-3">
+                <div *ngFor="let payment of roomGroup.payments; trackBy: trackByPaymentId"
+                     class="flex items-center justify-between p-4 bg-carbon-layer-01 rounded-lg border border-carbon-subtle hover:shadow-md transition-all duration-200">
+
+                  <div class="flex items-center space-x-4">
+                    <div class="p-2 rounded-lg"
+                         [class.bg-green-100]="payment.paymentLocationType === 'LOCATION'"
+                         [class.bg-blue-100]="payment.paymentLocationType === 'CAUTION'">
+                      <svg class="w-4 h-4"
+                           [class.text-green-600]="payment.paymentLocationType === 'LOCATION'"
+                           [class.text-blue-600]="payment.paymentLocationType === 'CAUTION'"
+                           fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                      </svg>
+                    </div>
+
+                    <div>
+                      <div class="flex items-center space-x-2">
+                        <span class="font-medium text-carbon-primary">{{ formatPrice(payment.locationPaymentPrice || 0) }}</span>
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
+                              [class.bg-green-100]="payment.paymentLocationType === 'LOCATION'"
+                              [class.text-green-800]="payment.paymentLocationType === 'LOCATION'"
+                              [class.bg-blue-100]="payment.paymentLocationType === 'CAUTION'"
+                              [class.text-blue-800]="payment.paymentLocationType === 'CAUTION'">
+                          {{ payment.paymentLocationType === 'LOCATION' ? 'Loyer' : 'Caution' }}
+                        </span>
+                      </div>
+                      <div class="text-sm text-carbon-secondary">
+                        {{ formatDate(payment.datePayment) }}
+                        <span *ngIf="payment.reason" class="ml-2">• {{ payment.reason }}</span>
+                      </div>
+                      <div class="text-xs text-carbon-tertiary">
+                        <span class="font-mono bg-gray-100 px-2 py-1 rounded">ID: {{ payment._id?.substring(0, 8) }}...</span>
+                        <span class="ml-2 font-mono px-2 py-1 rounded"
+                              [class.bg-blue-50]="!isDuplicateRef(payment)"
+                              [class.text-blue-700]="!isDuplicateRef(payment)"
+                              [class.bg-red-50]="isDuplicateRef(payment)"
+                              [class.text-red-700]="isDuplicateRef(payment)">
+                          Réf: {{ getPaymentDisplayRef(payment) }}
+                          <span *ngIf="isDuplicateRef(payment)" class="ml-1" title="Référence dupliquée">⚠️</span>
+                        </span>
+                        <span *ngIf="payment.createdAt" class="ml-2 text-gray-500">Créé: {{ formatDate(payment.createdAt) }}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Actions sur le paiement -->
+                  <div class="flex items-center space-x-2">
+                    <button class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200"
+                            title="Voir les détails">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                      </svg>
+                    </button>
+
+                    <button class="p-2 text-custom-primary hover:bg-custom-primary-light rounded-lg transition-colors duration-200"
+                            title="Modifier">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                      </svg>
+                    </button>
+
+                    <button class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200"
+                            title="Supprimer">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- État vide -->
+        <ng-template #noPayments>
+          <div class="bg-carbon-layer-02 rounded-lg p-12 border border-carbon-subtle text-center">
+            <div class="max-w-md mx-auto">
+              <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                </svg>
+              </div>
+              <h4 class="text-lg font-semibold text-carbon-primary mb-2">Aucun paiement enregistré</h4>
+              <p class="text-carbon-secondary mb-6">Ce locataire n'a pas encore d'historique de paiements.</p>
+
+              <button *ngIf="getTenantStatus() === 'active'"
+                      (click)="onAddPayment()"
+                      class="inline-flex items-center space-x-2 px-6 py-3 custom-primary-button text-white rounded-lg font-medium transition-all duration-200 hover:shadow-lg">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                <span>Enregistrer le premier paiement</span>
+              </button>
+            </div>
+          </div>
+        </ng-template>
+
+      </div>
+    </div>
+
+  </div>
+</div>

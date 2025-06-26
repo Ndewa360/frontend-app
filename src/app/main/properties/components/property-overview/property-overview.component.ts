@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges } from '@angular/core';
-import { PropertyModel } from 'src/app/shared/store';
+import { PropertyModel, RoomModel, LocataireModel } from 'src/app/shared/store';
 import { PropertyMetrics, FinancialSummary } from '../../services/property-metrics.service';
-import { Unit, Tenant, HistoryItem } from '../../services/property-data.service';
+import { HistoryItem } from '../../services/property-data.service';
 
 @Component({
   selector: 'app-property-overview',
@@ -10,8 +10,8 @@ import { Unit, Tenant, HistoryItem } from '../../services/property-data.service'
 })
 export class PropertyOverviewComponent implements OnInit, OnChanges {
   @Input() property: PropertyModel | null = null;
-  @Input() units: Unit[] = [];
-  @Input() tenants: Tenant[] = [];
+  @Input() units: RoomModel[] = [];
+  @Input() tenants: LocataireModel[] = [];
   @Input() history: HistoryItem[] = [];
   @Input() loading: boolean = false;
 
@@ -59,12 +59,12 @@ export class PropertyOverviewComponent implements OnInit, OnChanges {
 
   private calculateMetrics(): void {
     const totalUnits = this.units?.length || this.property?.roomLength || 0;
-    const occupiedUnits = this.units?.filter(unit => unit.status === 'occupied').length || 0;
+    const occupiedUnits = this.units?.filter(unit => !unit.isFree).length || 0;
     const availableUnits = totalUnits - occupiedUnits;
     const occupancyRate = totalUnits > 0 ? (occupiedUnits / totalUnits) * 100 : 0;
 
     const monthlyRevenue = this.units?.reduce((total, unit) => {
-      return total + (unit.status === 'occupied' ? (unit.price || 0) : 0);
+      return total + (!unit.isFree ? (unit.price || 0) : 0);
     }, 0) || 0;
 
     const averageRent = occupiedUnits > 0 ? monthlyRevenue / occupiedUnits : 0;
@@ -134,11 +134,11 @@ export class PropertyOverviewComponent implements OnInit, OnChanges {
     amenities.add('Eau courante');
     
     // Équipements basés sur les unités
-    if (this.units.some(unit => unit.hasKitchen)) {
+    if (this.units.some(unit => unit.specifity?.hasKitchen)) {
       amenities.add('Cuisines équipées');
     }
-    
-    if (this.units.some(unit => unit.isInternalShower)) {
+
+    if (this.units.some(unit => unit.specifity?.isInternalShower)) {
       amenities.add('Douches privées');
     }
     
@@ -363,7 +363,7 @@ export class PropertyOverviewComponent implements OnInit, OnChanges {
     }
 
     return this.units
-      .filter(unit => unit.status === 'occupied')
+      .filter(unit => !unit.isFree)
       .reduce((total, unit) => total + (unit.price || 0), 0);
   }
 
@@ -381,13 +381,13 @@ export class PropertyOverviewComponent implements OnInit, OnChanges {
       return 0;
     }
 
-    const occupiedUnits = this.units.filter(unit => unit.status === 'occupied').length;
+    const occupiedUnits = this.units.filter(unit => !unit.isFree).length;
     return Math.round((occupiedUnits / this.units.length) * 100);
   }
 
   getOccupiedUnitsCount(): number {
     if (!this.units) return 0;
-    return this.units.filter(unit => unit.status === 'occupied').length;
+    return this.units.filter(unit => !unit.isFree).length;
   }
 
   getTotalUnitsCount(): number {

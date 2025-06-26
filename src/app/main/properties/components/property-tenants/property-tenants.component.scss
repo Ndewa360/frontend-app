@@ -1,299 +1,149 @@
-// Styles pour le composant de gestion des locataires
+// Styles pour l'interface moderne des locataires
+.tenants-modern-interface {
 
-.property-tenants-container {
-  // Animations d'entrée
+  // Animation pour les cartes de locataires
   .tenant-card {
-    transition: all 0.3s ease;
-    
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
     &:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+    &:active {
+      transform: translateY(0);
     }
   }
 
-  // Avatar avec gradient personnalisé
-  .tenant-avatar {
-    background: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%);
-    transition: all 0.3s ease;
-
-    &:hover {
-      transform: scale(1.05);
-      box-shadow: 0 8px 25px -5px rgba(59, 130, 246, 0.4);
-    }
-  }
-
-  // Badges de statut avec styles personnalisés
-  .status-badge {
-    &.active {
-      background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
-      color: #065F46;
-      border: 1px solid #A7F3D0;
-    }
-
-    &.pending {
-      background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
-      color: #92400E;
-      border: 1px solid #FDE68A;
-    }
-
-    &.expired {
-      background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
-      color: #991B1B;
-      border: 1px solid #FECACA;
-    }
-  }
-
-  // Badge d'expiration de bail
-  .lease-expiring-badge {
-    background: linear-gradient(135deg, #FDBA74 0%, #FB923C 100%);
-    color: #9A3412;
-    border: 1px solid #FB923C;
-    animation: pulse 2s infinite;
-  }
-
-  // Informations du bail avec style moderne
-  .lease-info {
-    background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
-    border: 1px solid #E2E8F0;
-    transition: all 0.2s ease;
-
-    &:hover {
-      background: linear-gradient(135deg, #F1F5F9 0%, #E2E8F0 100%);
-    }
-  }
-
-  // Statistiques avec effets visuels
-  .stat-card {
-    transition: all 0.3s ease;
-    
-    &:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.1);
-    }
-
-    .stat-icon {
-      transition: transform 0.2s ease;
-    }
-
-    &:hover .stat-icon {
-      transform: scale(1.1);
-    }
-  }
-
-  // Boutons d'action avec couleurs spécifiques
+  // Boutons d'action avec effets hover
   .action-button {
     transition: all 0.2s ease;
 
     &:hover {
       transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
+  }
 
-    &.view {
-      color: #6B7280;
-      &:hover {
-        color: #374151;
-        background-color: #F3F4F6;
+  // Barre de progression animée
+  .progress-bar {
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  // Responsive design
+  @media (max-width: 768px) {
+    .tenant-card {
+      .p-6 {
+        padding: 1rem;
+      }
+
+      .flex-1 {
+        .grid-cols-2 {
+          grid-template-columns: 1fr;
+        }
       }
     }
 
-    &.edit {
-      color: #6B7280;
-      &:hover {
-        color: #374151;
-        background-color: #F3F4F6;
-      }
+    .stats-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
     }
 
-    &.payment {
-      color: #059669;
-      &:hover {
-        color: #047857;
-        background-color: #D1FAE5;
+    .filters-container {
+      flex-direction: column;
+      gap: 1rem;
+
+      .search-input {
+        max-width: none;
       }
     }
   }
 
-  // Menu contextuel avec style moderne
-  .context-menu {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  @media (max-width: 480px) {
+    .stats-grid {
+      grid-template-columns: 1fr;
+    }
 
-    .menu-item {
-      transition: all 0.2s ease;
-
-      &:hover {
-        background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
-        transform: translateX(2px);
+    .tenant-card {
+      .w-16 {
+        width: 3rem;
+        height: 3rem;
+        font-size: 0.875rem;
       }
-
-      &.danger:hover {
-        background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
-        color: #DC2626;
-      }
-    }
-  }
-
-  // Filtres avec style moderne
-  .filter-section {
-    background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%);
-    border: 1px solid #E2E8F0;
-
-    .filter-input {
-      transition: all 0.2s ease;
-
-      &:focus {
-        transform: translateY(-1px);
-        box-shadow: 0 4px 15px -3px rgba(59, 130, 246, 0.2);
-      }
-    }
-  }
-
-  // Icônes de contact avec couleurs
-  .contact-icon {
-    &.email {
-      color: #3B82F6;
-    }
-
-    &.phone {
-      color: #059669;
-    }
-
-    &.unit {
-      color: #8B5CF6;
-    }
-
-    &.rent {
-      color: #F59E0B;
     }
   }
 }
 
-// Animations
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.7;
-  }
-}
+// Styles pour les boutons personnalisés
+.custom-primary-button {
+  background: linear-gradient(135deg, rgb(204, 140, 10) 0%, rgb(184, 120, 0) 100%);
+  color: white;
+  border: none;
+  transition: all 0.3s ease;
 
-@keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
+  &:hover {
+    background: linear-gradient(135deg, rgb(184, 120, 0) 0%, rgb(164, 100, 0) 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 25px rgba(204, 140, 10, 0.3);
   }
-  to {
-    opacity: 1;
+
+  &:active {
     transform: translateY(0);
   }
-}
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(204, 140, 10, 0.3);
   }
 }
 
-// Application des animations
-.property-tenants-container {
-  .tenant-card {
-    animation: slideInUp 0.3s ease-out;
-    
-    &:nth-child(1) { animation-delay: 0.1s; }
-    &:nth-child(2) { animation-delay: 0.2s; }
-    &:nth-child(3) { animation-delay: 0.3s; }
-    &:nth-child(4) { animation-delay: 0.4s; }
+// Couleurs personnalisées pour les classes utilitaires
+.custom-primary-light {
+  background-color: rgba(204, 140, 10, 0.1);
+}
+
+.text-custom-primary {
+  color: rgb(204, 140, 10);
+}
+
+.border-custom-primary {
+  border-color: rgb(204, 140, 10);
+}
+
+.ring-custom-primary-light {
+  --tw-ring-color: rgba(204, 140, 10, 0.3);
+}
+
+// Amélioration des focus states
+.focus\:border-custom-primary:focus {
+  border-color: rgb(204, 140, 10);
+}
+
+.focus\:ring-custom-primary-light:focus {
+  --tw-ring-color: rgba(204, 140, 10, 0.3);
+}
+
+// Scrollbar personnalisée
+.tenants-modern-interface {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(204, 140, 10, 0.3) transparent;
+
+  &::-webkit-scrollbar {
+    width: 6px;
   }
 
-  .stat-card {
-    animation: fadeIn 0.4s ease-out;
-    
-    &:nth-child(1) { animation-delay: 0.1s; }
-    &:nth-child(2) { animation-delay: 0.2s; }
-    &:nth-child(3) { animation-delay: 0.3s; }
-    &:nth-child(4) { animation-delay: 0.4s; }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(204, 140, 10, 0.3);
+    border-radius: 3px;
+
+    &:hover {
+      background: rgba(204, 140, 10, 0.5);
+    }
   }
 }
 
-// Responsive design
-@media (max-width: 768px) {
-  .property-tenants-container {
-    .tenant-card {
-      margin-bottom: 1rem;
-    }
 
-    .stat-card {
-      margin-bottom: 0.75rem;
-    }
-
-    .context-menu {
-      width: 100%;
-      max-width: none;
-    }
-
-    .lease-info {
-      .grid {
-        grid-template-columns: 1fr;
-        gap: 0.5rem;
-      }
-    }
-  }
-}
-
-// Mode sombre
-@media (prefers-color-scheme: dark) {
-  .property-tenants-container {
-    .lease-info {
-      background: linear-gradient(135deg, #374151 0%, #4B5563 100%);
-      border-color: #6B7280;
-
-      &:hover {
-        background: linear-gradient(135deg, #4B5563 0%, #6B7280 100%);
-      }
-    }
-
-    .context-menu {
-      background: rgba(31, 41, 55, 0.95);
-      border-color: rgba(255, 255, 255, 0.1);
-
-      .menu-item {
-        &:hover {
-          background: linear-gradient(135deg, #374151 0%, #4B5563 100%);
-        }
-
-        &.danger:hover {
-          background: linear-gradient(135deg, #7F1D1D 0%, #991B1B 100%);
-          color: #FCA5A5;
-        }
-      }
-    }
-
-    .filter-section {
-      background: linear-gradient(135deg, #1F2937 0%, #374151 100%);
-      border-color: #4B5563;
-    }
-
-    .status-badge {
-      &.active {
-        background: linear-gradient(135deg, #065F46 0%, #047857 100%);
-        color: #A7F3D0;
-      }
-
-      &.pending {
-        background: linear-gradient(135deg, #92400E 0%, #B45309 100%);
-        color: #FDE68A;
-      }
-
-      &.expired {
-        background: linear-gradient(135deg, #991B1B 0%, #B91C1C 100%);
-        color: #FECACA;
-      }
-    }
-  }
-}

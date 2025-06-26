@@ -7,6 +7,9 @@ import {
   PropertyModel,
   RoomModel,
   RoomAction,
+  RoomState,
+  LocataireModel,
+  LocataireState,
   HistoryLocationPaymentAction,
   HistoryLocationPaymentState
 } from 'src/app/shared/store';
@@ -38,10 +41,10 @@ interface PropertyMetrics {
 export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
-  // Données principales via les services
+  // Données principales via le store
   property$: Observable<PropertyModel | null>;
-  units$: Observable<Unit[]>;
-  tenants$: Observable<Tenant[]>;
+  units$: Observable<RoomModel[]>;
+  tenants$: Observable<LocataireModel[]>;
   history$: Observable<HistoryItem[]>;
   loadingStates$: Observable<{
     property: boolean;
@@ -133,10 +136,10 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
     // Les données sont déjà disponibles dans le store grâce au resolver
     // On peut directement s'abonner aux observables
 
-    // Initialiser les observables avec les services
+    // Initialiser les observables avec le store
     this.property$ = this.propertyDataService.getProperty(this.propertyId);
-    this.units$ = this.propertyDataService.getPropertyUnits(this.propertyId);
-    this.tenants$ = this.propertyDataService.getPropertyTenants(this.propertyId);
+    this.units$ = this.store.select(RoomState.selectStateRoomByPropertyId(this.propertyId));
+    this.tenants$ = this.store.select(LocataireState.selectStateLocataireByPropertyId(this.propertyId));
     this.history$ = this.propertyDataService.getPropertyHistory(this.propertyId);
     this.loadingStates$ = this.propertyDataService.getLoadingStates();
 
@@ -165,15 +168,15 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
     });
   }
 
-  private calculateMetrics(units: Unit[]): void {
+  private calculateMetrics(units: RoomModel[]): void {
     const totalUnits = units.length;
-    const occupiedUnits = units.filter(unit => unit.status === 'occupied').length;
+    const occupiedUnits = units.filter(unit => !unit.isFree).length;
     const availableUnits = totalUnits - occupiedUnits;
     const occupancyRate = totalUnits > 0 ? (occupiedUnits / totalUnits) * 100 : 0;
 
     // Calculer le revenu mensuel total
     const monthlyRevenue = units.reduce((total, unit) => {
-      return total + (unit.status === 'occupied' ? (unit.price || 0) : 0);
+      return total + (!unit.isFree ? (unit.price || 0) : 0);
     }, 0);
 
     // Calculer le loyer moyen

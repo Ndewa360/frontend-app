@@ -1,7 +1,15 @@
+<!-- Overlay de fond -->
+<div *ngIf="isOpen"
+     class="overlay-backdrop fade-in"
+     (click)="closePanel()">
+</div>
+
 <!-- Panneau latéral des détails d'unité - Interface avec onglets -->
-<div class="unit-details-panel h-full flex flex-col bg-carbon-layer-01 shadow-2xl border-l border-carbon-subtle"
+<div class="unit-details-panel flex flex-col bg-carbon-layer-01 shadow-2xl border-l border-carbon-subtle"
      [@slideIn]="isOpen"
-     style="width: 1400px; max-width: 90vw;">
+     style="width: 1400px; max-width: 90vw;"
+     (click)="$event.stopPropagation()"
+     *ngIf="isOpen || isContentVisible">
 
   <!-- Header avec informations de l'unité -->
   <div class="flex-shrink-0 bg-carbon-layer-02 border-b border-carbon-subtle">

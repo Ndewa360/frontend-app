@@ -76,6 +76,7 @@ import { PropertyTenantsComponent } from './properties/components/property-tenan
 import { PropertyHistoryComponent } from './properties/components/property-history/property-history.component'
 import { PropertyFinancesComponent } from './properties/components/property-finances/property-finances.component'
 import { PropertyOverviewComponent } from './properties/components/property-overview/property-overview.component'
+import { TenantDetailsPanelComponent } from './properties/components/tenant-details-panel/tenant-details-panel.component'
 import { PropertyUnitsListComponent } from './properties/components/property-units-list/property-units-list.component'
 import { ModernFinancialDashboardComponent } from './properties/components/modern-financial-dashboard/modern-financial-dashboard.component';
 
@@ -169,6 +170,7 @@ ModuleRegistry.registerModules([
     PropertyOverviewComponent,
     PropertyUnitsListComponent,
     ModernFinancialDashboardComponent,
+    TenantDetailsPanelComponent,
 
     // Composants du modal de détails d'unité
     UnitDetailsModalComponent,

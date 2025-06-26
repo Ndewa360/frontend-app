@@ -26,26 +26,20 @@ export interface UnitPanelAction {
   styleUrls: ['./unit-details-panel.component.scss'],
   animations: [
     trigger('slideIn', [
-      state('true', style({
-        transform: 'translateX(0)',
-        opacity: 1,
-        visibility: 'visible'
-      })),
       state('false', style({
         transform: 'translateX(100%)',
-        opacity: 0,
         visibility: 'hidden'
       })),
+      state('true', style({
+        transform: 'translateX(0)',
+        visibility: 'visible'
+      })),
       transition('false => true', [
-        style({ transform: 'translateX(100%)', opacity: 0, visibility: 'visible' }),
-        animate('400ms cubic-bezier(0.25, 0.8, 0.25, 1)',
-          style({ transform: 'translateX(0)', opacity: 1 })
-        )
+        style({ visibility: 'visible' }),
+        animate('300ms cubic-bezier(0.4, 0, 0.2, 1)')
       ]),
       transition('true => false', [
-        animate('300ms cubic-bezier(0.4, 0.0, 0.2, 1)',
-          style({ transform: 'translateX(100%)', opacity: 0 })
-        ),
+        animate('300ms cubic-bezier(0.4, 0, 0.2, 1)'),
         style({ visibility: 'hidden' })
       ])
     ]),
@@ -120,6 +114,21 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
       }
     }
 
+    // Gestion du scroll du body
+    if (changes['isOpen']) {
+      if (this.isOpen) {
+        // Empêcher le scroll du body
+        document.body.style.overflow = 'hidden';
+        setTimeout(() => {
+          this.isContentVisible = true;
+        }, 100);
+      } else {
+        // Restaurer le scroll du body
+        document.body.style.overflow = 'auto';
+        this.isContentVisible = false;
+      }
+    }
+
     // Charger les données si la room ou propertyId change
     if ((changes['room'] || changes['propertyId']) && this.room && this.propertyId) {
       this.loadUnitData();
@@ -127,12 +136,14 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnDestroy(): void {
+    // Restaurer le scroll du body au cas où le composant serait détruit avec le panneau ouvert
+    document.body.style.overflow = 'auto';
     this.destroy$.next();
     this.destroy$.complete();
   }
 
   @HostListener('document:keydown.escape', ['$event'])
-  onEscapeKey(event: KeyboardEvent): void {
+  onEscapeKey(_event: KeyboardEvent): void {
     if (this.isOpen) {
       this.closePanel();
     }

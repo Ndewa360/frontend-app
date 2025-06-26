@@ -1,4 +1,11 @@
 .unit-details-panel {
+  // Positionnement fixe
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  z-index: 1000;
+
   // Styles pour le panneau latéral moderne
   box-shadow: -8px 0 32px rgba(0, 0, 0, 0.12);
   backdrop-filter: blur(8px);
@@ -156,13 +163,10 @@
 
   // Responsive design amélioré
   @media (max-width: 768px) {
-    position: fixed;
-    top: 0;
+    width: 100vw !important;
+    max-width: 100vw !important;
     left: 0;
     right: 0;
-    bottom: 0;
-    z-index: 50;
-    width: 100vw;
     
     .header-section {
       padding: 1.5rem 1rem;
@@ -282,5 +286,26 @@
     .text-gray-600 {
       color: #d1d5db;
     }
+  }
+}
+
+// Styles pour l'overlay de fond
+.overlay-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  backdrop-filter: blur(2px);
+  transition: opacity 0.3s ease;
+
+  &.fade-in {
+    opacity: 1;
+  }
+
+  &.fade-out {
+    opacity: 0;
   }
 }
