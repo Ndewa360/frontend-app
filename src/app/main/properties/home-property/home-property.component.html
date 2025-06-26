@@ -1,5 +1,14 @@
 <!-- Nouvelle interface intégrée avec onglets -->
-<div class="property-management-container bg-carbon-layer-01 min-h-screen">
+<div class="property-management-container bg-carbon-layer-01 min-h-screen relative">
+
+  <!-- Overlay de chargement global -->
+  <app-loading-overlay
+    [loadingState$]="globalLoadingState$"
+    [showOverlay]="true"
+    [showProgress]="true"
+    customMessage="Chargement des données de l'application..."
+    size="large">
+  </app-loading-overlay>
 
   <!-- Header principal avec navigation par onglets -->
   <div class="main-header bg-carbon-layer-02 border-b border-carbon-subtle shadow-sm">

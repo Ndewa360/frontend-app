@@ -88,6 +88,7 @@ import { UnitGalleryTabComponent } from './properties/components/unit-details-mo
 
 // Composant panneau latéral
 import { UnitDetailsPanelComponent } from './properties/components/unit-details-panel/unit-details-panel.component';
+import { ModernUnitDetailsPanelComponent } from './properties/components/modern-unit-details-panel/modern-unit-details-panel.component';
 
 // Nouveaux composants modulaires
 import { UnitHeaderComponent } from './properties/components/unit-details-panel/components/unit-header/unit-header.component';
@@ -178,6 +179,7 @@ ModuleRegistry.registerModules([
 
     // Composant panneau latéral
     UnitDetailsPanelComponent,
+    ModernUnitDetailsPanelComponent,
 
     // Nouveaux composants modulaires
     UnitHeaderComponent,

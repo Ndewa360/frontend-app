@@ -3,6 +3,10 @@ import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
 import { map, filter } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
 import { ToastrService } from 'ngx-toastr';
+import { RoomState, LocationState, LocationPaymentState } from '../store';
+import { RoomModel } from '../store/rooms/room.model';
+import { LocationModel } from '../store/location/location.model';
+import { LocationPaymentModel } from '../store/payment-location/location-payment.model';
 
 export interface SmartNotification {
   id: string;
@@ -60,35 +64,45 @@ export class NotificationManagerService {
 
   /**
    * Surveille les paiements en retard
+   * Note: Cette fonctionnalité nécessiterait une logique métier plus complexe
+   * pour déterminer les paiements en retard basée sur les dates d'échéance
    */
   private monitorOverduePayments(): void {
-    // Logique pour détecter les paiements en retard
-    // Cette méthode serait appelée périodiquement ou en réponse à des changements d'état
-    
+    // Pour l'instant, on surveille les locations actives sans paiements récents
     combineLatest([
-      this.store.select(state => state.locationPayments),
-      this.store.select(state => state.locations)
+      this.store.select(LocationPaymentState.selectStateLocationPayments),
+      this.store.select(LocationState.selectStateLocations)
     ]).pipe(
+      filter(([payments, locations]) => Array.isArray(payments) && Array.isArray(locations)),
       map(([payments, locations]) => {
         const today = new Date();
-        const overduePayments = payments.filter(payment => {
-          const dueDate = new Date(payment.dueDate);
-          return dueDate < today && !payment.isPaid;
+        const thirtyDaysAgo = new Date(today.getTime() - (30 * 24 * 60 * 60 * 1000));
+
+        // Trouver les locations actives sans paiements récents
+        const locationsWithoutRecentPayments = locations.filter(location => {
+          if (!location.isRunning) return false;
+
+          const recentPayments = payments.filter(payment =>
+            payment.location === location._id &&
+            new Date(payment.datePayment) > thirtyDaysAgo
+          );
+
+          return recentPayments.length === 0;
         });
-        
-        return overduePayments;
+
+        return locationsWithoutRecentPayments;
       }),
-      filter(overduePayments => overduePayments.length > 0)
-    ).subscribe(overduePayments => {
-      overduePayments.forEach(payment => {
+      filter(overdueLocations => overdueLocations.length > 0)
+    ).subscribe(overdueLocations => {
+      overdueLocations.forEach(location => {
         this.createNotification({
           type: 'payment_overdue',
-          priority: this.getPaymentOverduePriority(payment),
-          title: 'Paiement en retard',
-          message: `Le loyer de ${payment.tenantName} est en retard de ${this.getDaysOverdue(payment)} jours`,
+          priority: 'high',
+          title: 'Paiement potentiellement en retard',
+          message: `Aucun paiement reçu depuis 30 jours pour cette location`,
           actionLabel: 'Voir détails',
-          actionRoute: `/app/properties/${payment.propertyId}/payments`,
-          data: { paymentId: payment.id, tenantId: payment.tenantId }
+          actionRoute: `/app/properties/${location.property}/payments`,
+          data: { locationId: location._id, propertyId: location.property }
         });
       });
     });
@@ -98,29 +112,31 @@ export class NotificationManagerService {
    * Surveille les baux qui expirent bientôt
    */
   private monitorLeaseExpirations(): void {
-    this.store.select(state => state.locations).pipe(
+    this.store.select(state => state.locations?.locations || []).pipe(
+      filter(locations => Array.isArray(locations) && locations.length > 0),
       map(locations => {
         const today = new Date();
         const thirtyDaysFromNow = new Date(today.getTime() + (30 * 24 * 60 * 60 * 1000));
-        
-        return locations.filter(location => {
+
+        return locations.filter((location: LocationModel) => {
+          if (!location.endedAt || !location.isRunning) return false;
           const endDate = new Date(location.endedAt);
-          return endDate <= thirtyDaysFromNow && endDate > today && location.isRunning;
+          return endDate <= thirtyDaysFromNow && endDate > today;
         });
       }),
       filter(expiringLeases => expiringLeases.length > 0)
     ).subscribe(expiringLeases => {
-      expiringLeases.forEach(lease => {
-        const daysUntilExpiry = this.getDaysUntilDate(lease.endedAt);
-        
+      expiringLeases.forEach((lease: LocationModel) => {
+        const daysUntilExpiry = this.getDaysUntilDate(lease.endedAt!.toString());
+
         this.createNotification({
           type: 'lease_expiring',
           priority: daysUntilExpiry <= 7 ? 'high' : 'medium',
           title: 'Bail bientôt expiré',
-          message: `Le bail de ${lease.tenantName} expire dans ${daysUntilExpiry} jours`,
-          actionLabel: 'Renouveler',
-          actionRoute: `/app/contracts/${lease.id}/renew`,
-          data: { leaseId: lease.id, tenantId: lease.tenantId }
+          message: `Un bail expire dans ${daysUntilExpiry} jours`,
+          actionLabel: 'Voir détails',
+          actionRoute: `/app/properties/${lease.property}/locations`,
+          data: { leaseId: lease._id, locataireId: lease.locataire }
         });
       });
     });
@@ -130,30 +146,26 @@ export class NotificationManagerService {
    * Surveille les chambres vacantes depuis longtemps
    */
   private monitorVacancies(): void {
-    this.store.select(state => state.rooms).pipe(
+    this.store.select(state => state.rooms?.rooms || []).pipe(
+      filter(rooms => Array.isArray(rooms) && rooms.length > 0),
       map(rooms => {
-        const today = new Date();
-        const thirtyDaysAgo = new Date(today.getTime() - (30 * 24 * 60 * 60 * 1000));
-        
-        return rooms.filter(room => {
-          return room.isFree && 
-                 room.lastOccupiedDate && 
-                 new Date(room.lastOccupiedDate) < thirtyDaysAgo;
+        return rooms.filter((room: RoomModel) => {
+          // Pour l'instant, on considère les chambres libres
+          // Note: lastOccupiedDate n'existe pas dans le modèle actuel
+          return room.isFree;
         });
       }),
       filter(longVacantRooms => longVacantRooms.length > 0)
     ).subscribe(longVacantRooms => {
-      longVacantRooms.forEach(room => {
-        const daysVacant = this.getDaysSinceDate(room.lastOccupiedDate);
-        
+      longVacantRooms.forEach((room: RoomModel) => {
         this.createNotification({
           type: 'vacancy_alert',
-          priority: daysVacant > 60 ? 'high' : 'medium',
-          title: 'Chambre vacante depuis longtemps',
-          message: `${room.code} est libre depuis ${daysVacant} jours`,
-          actionLabel: 'Promouvoir',
-          actionRoute: `/app/properties/${room.propertyId}/rooms/${room.id}/promote`,
-          data: { roomId: room.id, propertyId: room.propertyId }
+          priority: 'medium',
+          title: 'Unité disponible',
+          message: `L'unité ${room.code} est actuellement libre`,
+          actionLabel: 'Voir détails',
+          actionRoute: `/app/properties/${room.property}/rooms`,
+          data: { roomId: room._id, propertyId: room.property }
         });
       });
     });
@@ -288,32 +300,12 @@ export class NotificationManagerService {
 
   // Méthodes utilitaires
   private generateId(): string {
-    return Date.now().toString(36) + Math.random().toString(36).substr(2);
-  }
-
-  private getDaysOverdue(payment: any): number {
-    const today = new Date();
-    const dueDate = new Date(payment.dueDate);
-    return Math.floor((today.getTime() - dueDate.getTime()) / (1000 * 60 * 60 * 24));
+    return Date.now().toString(36) + Math.random().toString(36).substring(2);
   }
 
   private getDaysUntilDate(date: string): number {
     const today = new Date();
     const targetDate = new Date(date);
     return Math.ceil((targetDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-  }
-
-  private getDaysSinceDate(date: string): number {
-    const today = new Date();
-    const pastDate = new Date(date);
-    return Math.floor((today.getTime() - pastDate.getTime()) / (1000 * 60 * 60 * 24));
-  }
-
-  private getPaymentOverduePriority(payment: any): 'low' | 'medium' | 'high' | 'critical' {
-    const daysOverdue = this.getDaysOverdue(payment);
-    if (daysOverdue > 30) return 'critical';
-    if (daysOverdue > 15) return 'high';
-    if (daysOverdue > 7) return 'medium';
-    return 'low';
   }
 }

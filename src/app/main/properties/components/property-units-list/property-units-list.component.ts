@@ -5,6 +5,7 @@ import { takeUntil } from 'rxjs/operators';
 import {
   RoomModel,
   LocataireModel,
+  LocataireAction,
   PropertyModel,
   RoomState,
   LocataireState,
@@ -35,10 +36,10 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
   @Output() addUnit = new EventEmitter<void>();
 
   // Données du store
-  rooms$: Observable<RoomModel[]>;
-  locataires$: Observable<LocataireModel[]>;
-  property$: Observable<PropertyModel>;
-  loading$: Observable<boolean>;
+  rooms$: Observable<RoomModel[]> | undefined;
+  locataires$: Observable<LocataireModel[]> | undefined;
+  property$: Observable<PropertyModel> | undefined;
+  loading$: Observable<boolean> | undefined;
 
   // États locaux
   rooms: RoomModel[] = [];
@@ -49,8 +50,8 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
   // États du composant
   filteredRooms: RoomModel[] = [];
   searchTerm: string = '';
-  statusFilter: string = 'all';
-  typeFilter: string = 'all';
+  statusFilter: string = '';
+  typeFilter: string = '';
   sortBy: string = 'code';
   sortDirection: 'asc' | 'desc' = 'asc';
   viewMode: 'grid' | 'list' = 'grid';
@@ -112,27 +113,30 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     if (!this.propertyId) return;
 
+    // Les locataires sont déjà chargés par LoadingPropertyDataResolver
     // Initialiser les observables
     this.rooms$ = this.store.select(RoomState.selectStateRoomByPropertyId(this.propertyId));
-    this.locataires$ = this.store.select(LocataireState.selectStateLocataireByPropertyId(this.propertyId));
+    this.locataires$ = this.store.select(LocataireState.selectStateLocataireByPropertyId(this.propertyId)); // Tous les locataires
     this.property$ = this.store.select(PropertyState.selectStateProperty(this.propertyId));
     this.loading$ = this.store.select(RoomState.selectStateLoading);
 
     // S'abonner aux données
-    combineLatest([
-      this.rooms$,
-      this.locataires$,
-      this.property$,
-      this.loading$
-    ]).pipe(
-      takeUntil(this.destroy$)
-    ).subscribe(([rooms, locataires, property, loading]) => {
-      this.rooms = rooms || [];
-      this.locataires = locataires || [];
-      this.property = property;
-      this.loading = loading;
-      this.updateFilters();
-    });
+    if (this.rooms$ && this.locataires$ && this.property$ && this.loading$) {
+      combineLatest([
+        this.rooms$,
+        this.locataires$,
+        this.property$,
+        this.loading$
+      ]).pipe(
+        takeUntil(this.destroy$)
+      ).subscribe(([rooms, locataires, property, loading]) => {
+        this.rooms = rooms || [];
+        this.locataires = locataires || [];
+        this.property = property;
+        this.loading = loading;
+        this.updateFilters();
+      });
+    }
 
     // Charger l'historique des paiements pour la propriété
     this.loadPaymentHistory();
@@ -186,7 +190,7 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
     }
 
     // Filtre par statut
-    if (this.statusFilter !== 'all') {
+    if (this.statusFilter && this.statusFilter !== '') {
       if (this.statusFilter === 'available') {
         filtered = filtered.filter(room => room.isFree === true);
       } else if (this.statusFilter === 'occupied') {
@@ -197,7 +201,7 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
     }
 
     // Filtre par type
-    if (this.typeFilter !== 'all') {
+    if (this.typeFilter && this.typeFilter !== '') {
       filtered = filtered.filter(room => room.type === this.typeFilter);
     }
 
@@ -290,12 +294,14 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
   getTenantName(room: RoomModel): string {
     if (!room.locataire) return '';
 
-    // Chercher le locataire par son ID dans le store
+    // Chercher le locataire par son ID dans le store (déjà chargé par le resolver)
     const locataire = this.locataires.find(l => l._id === room.locataire);
     if (locataire) {
       return locataire.fullName || locataire.name || 'Locataire';
     }
-    return 'Locataire non trouvé';
+    
+    // Si le locataire n'est pas trouvé, c'est probablement une erreur de données
+    return 'Locataire introuvable';
   }
 
   getTenantStartDate(room: RoomModel): string {
@@ -918,6 +924,34 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
       setTimeout(() => {
         this.updateRoomPayments();
       }, 1000);
+    }
+  }
+
+  // Méthode pour gérer les actions du nouveau panneau moderne
+  onModernUnitAction(action: any): void {
+    console.log('Action depuis le panneau moderne:', action);
+    switch (action.type) {
+      case 'edit':
+        this.onEditUnit(action.room);
+        break;
+      case 'assign_tenant':
+        this.onAssignTenant(action.room);
+        break;
+      case 'terminate_lease':
+        this.onTerminateLease(action.room);
+        break;
+      case 'add_payment':
+        console.log('Ajouter un paiement pour:', action.room);
+        break;
+      case 'view_contract':
+        console.log('Voir le contrat pour:', action.room);
+        break;
+      case 'manage_media':
+        this.onManageMedia(action.room);
+        break;
+      case 'view_image':
+        console.log('Voir l\'image:', action.data?.imageUrl);
+        break;
     }
   }
 }

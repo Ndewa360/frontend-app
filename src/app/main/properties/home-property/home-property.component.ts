@@ -6,6 +6,7 @@ import { takeUntil } from 'rxjs/operators';
 import { AddPropertyComponent } from '../add-property/add-property.component';
 import { PropertyState, PropertyAction } from 'src/app/shared/store';
 import { PropertyModel } from 'src/app/shared/store/properties/property.model';
+import { LoadingStateService, LoadingState } from 'src/app/shared/services/loading-state.service';
 
 type ViewType = 'properties' | 'dashboard';
 
@@ -32,11 +33,22 @@ export class HomePropertyComponent implements OnInit, OnDestroy {
   @Select(PropertyState.selectStateLoading)
   loading$!: Observable<boolean>;
 
-  constructor(private dialog: MatDialog, private _store: Store) { }
+  // État de chargement global
+  globalLoadingState$: Observable<LoadingState>;
+
+  constructor(
+    private dialog: MatDialog,
+    private _store: Store,
+    private loadingStateService: LoadingStateService
+  ) { }
 
   ngOnInit(): void {
-    // Charger les propriétés au démarrage
-    this._store.dispatch(new PropertyAction.FetchProperties());
+    // Les données sont déjà chargées par InitialLoadingDataResolver
+    // On n'a plus besoin de dispatcher l'action ici
+    console.log('🏠 HomePropertyComponent - Les données sont déjà chargées par le resolver');
+
+    // Observer l'état de chargement global
+    this.globalLoadingState$ = this.loadingStateService.getGlobalLoadingState();
 
     // Écouter les changements du nombre de propriétés
     this.properties$

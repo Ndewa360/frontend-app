@@ -48,6 +48,7 @@ import { SinglePageScreenGaleryComponent } from './components/single-page-screen
 import { SwiperDirective } from './directives';
 import { BrowserModule } from '@angular/platform-browser';
 import { ScrollRevealDirective } from './directives/scroll-reveal/scroll-reveal.directive';
+import { LoadingOverlayComponent } from './components/loading-overlay/loading-overlay.component';
 import { CountUpDirective } from './directives/counter-up/counter-up.directive';
 import { ProspectionState } from './store/prospection/prospection.state';
 
@@ -114,7 +115,8 @@ import { ProspectionState } from './store/prospection/prospection.state';
     SwiperDirective,
     ScrollRevealDirective,
     CountUpDirective,
-    SmartNotificationsComponent
+    SmartNotificationsComponent,
+    LoadingOverlayComponent
   ],
   exports: [
     YoupezModule,
@@ -137,7 +139,8 @@ import { ProspectionState } from './store/prospection/prospection.state';
     SinglePageScreenGaleryComponent,
     ScrollRevealDirective,
     CountUpDirective,
-    SmartNotificationsComponent
+    SmartNotificationsComponent,
+    LoadingOverlayComponent
   ],
   providers: [
     // Nouveaux services ajoutés

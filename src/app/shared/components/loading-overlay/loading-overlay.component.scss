@@ -1,0 +1,45 @@
+.loading-overlay {
+  min-height: 200px;
+  
+  &.absolute {
+    backdrop-filter: blur(2px);
+  }
+}
+
+// Animation personnalisée pour les points
+@keyframes pulse-delay {
+  0%, 80%, 100% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-pulse-delay-1 {
+  animation: pulse-delay 1.5s infinite;
+  animation-delay: 0ms;
+}
+
+.animate-pulse-delay-2 {
+  animation: pulse-delay 1.5s infinite;
+  animation-delay: 150ms;
+}
+
+.animate-pulse-delay-3 {
+  animation: pulse-delay 1.5s infinite;
+  animation-delay: 300ms;
+}
+
+// Responsive
+@media (max-width: 640px) {
+  .loading-overlay {
+    min-height: 150px;
+    
+    .w-64 {
+      width: 200px;
+    }
+  }
+}

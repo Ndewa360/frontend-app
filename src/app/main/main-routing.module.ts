@@ -6,6 +6,7 @@ import {LayoutComponent} from '../layout/default/layout.component'
 
 import {WelcomeComponent} from "./welcome/welcome.component"
 import { LoadingPropertyDataResolver } from '../shared/resolvers'
+import { PropertyDetailsResolver } from '../shared/resolvers/loading-property-data/property-details-resolver.service'
 import { PropertyFinanceComponent } from './properties/components/property-finance/property-finance.component'
 import { PropertyLocataireComponent } from './properties/components/property-locataire/property-locataire.component'
 import { PropertyRoomComponent } from './properties/components/property-room/property-room.component'
@@ -80,6 +81,9 @@ const routes: Routes = [
           {
             path: 'details/:id',
             component: PropertyDetailsCompleteComponent,
+            resolve: {
+              "propertyDetailsData": PropertyDetailsResolver
+            },
             data: {
               breadcrumb: 'Détails complets'
             },

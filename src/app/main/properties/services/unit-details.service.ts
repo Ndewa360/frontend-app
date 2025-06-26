@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { takeUntil, map } from 'rxjs/operators';
+import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
+import { takeUntil, map, switchMap } from 'rxjs/operators';
 import { 
   RoomModel, 
   LocataireModel, 
   LocataireState,
+  LocataireAction,
   HistoryLocationPaymentState,
   HistoryLocationPaymentAction,
   LocationPaymentModel,
@@ -33,53 +34,43 @@ export class UnitDetailsService {
 
   /**
    * Charge toutes les données nécessaires pour une unité
+   * Les données sont déjà chargées par LoadingPropertyDataResolver
    */
   loadUnitDetails(room: RoomModel, propertyId: string): Observable<UnitDetailsData> {
-    // Charger l'historique des paiements si pas déjà fait
-    this.store.dispatch(new HistoryLocationPaymentAction.FetchHistoryLocationPaymentsByPropertyId(propertyId));
-
-    return new Observable(observer => {
-      const unitData: UnitDetailsData = {
-        room,
-        tenant: null,
-        payments: [],
-        paymentHistory: null,
-        location: null
-      };
-
-      // Charger le locataire si présent
-      if (room.locataire) {
-        this.store.select(LocataireState.selectStateLocataire(room.locataire))
-          .subscribe(tenant => {
-            unitData.tenant = tenant;
-            this.updateCurrentUnit(unitData);
-          });
-      }
-
-      // Charger l'historique des paiements
-      this.store.select(HistoryLocationPaymentState.selectStateHistoryLocationPayments)
-        .subscribe(allPaymentHistory => {
-          const roomPaymentHistory = allPaymentHistory.find(history => 
-            history.room._id === room._id
-          );
-          
-          unitData.paymentHistory = roomPaymentHistory || null;
-          unitData.payments = roomPaymentHistory?.transactions || [];
-          this.updateCurrentUnit(unitData);
-        });
-
-      // Charger la location si elle existe
+    // Les données sont déjà chargées par le resolver, on les récupère directement
+    return combineLatest([
+      this.store.select(LocataireState.selectStateLocataires),
+      this.store.select(HistoryLocationPaymentState.selectStateHistoryLocationPayments),
       this.store.select(LocationState.selectStateLocations)
-        .pipe(
-          map(locations => locations.find(loc => loc.room === room._id))
-        )
-        .subscribe(location => {
-          unitData.location = location || null;
-          this.updateCurrentUnit(unitData);
-        });
+    ]).pipe(
+      map(([locataires, paymentHistory, locations]) => {
+        const unitData: UnitDetailsData = {
+          room,
+          tenant: null,
+          payments: [],
+          paymentHistory: null,
+          location: null
+        };
 
-      observer.next(unitData);
-    });
+        // Trouver le locataire associé à cette chambre
+        if (room.locataire) {
+          unitData.tenant = locataires.find(l => l._id === room.locataire) || null;
+        }
+
+        // Trouver l'historique des paiements pour cette chambre
+        const roomPaymentHistory = paymentHistory.find(history => 
+          history.room._id === room._id
+        );
+        unitData.paymentHistory = roomPaymentHistory || null;
+        unitData.payments = roomPaymentHistory?.transactions || [];
+
+        // Trouver la location associée
+        unitData.location = locations.find(loc => loc.room === room._id) || null;
+
+        this.updateCurrentUnit(unitData);
+        return unitData;
+      })
+    );
   }
 
   private updateCurrentUnit(unitData: UnitDetailsData): void {

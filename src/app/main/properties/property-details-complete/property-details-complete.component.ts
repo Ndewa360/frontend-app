@@ -112,7 +112,10 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
     this.propertyId = this.route.snapshot.paramMap.get('id');
 
     if (this.propertyId) {
-      this.initializeData();
+      // Les données sont déjà chargées par PropertyDetailsResolver
+      // On n'a plus besoin de les charger ici
+      console.log(`🏢 PropertyDetailsComplete - Les données de la propriété ${this.propertyId} sont déjà chargées par le resolver`);
+      this.initializeSubscriptions();
     }
   }
 
@@ -121,16 +124,14 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  private initializeData(): void {
+  private initializeSubscriptions(): void {
     if (!this.propertyId) return;
 
-    // Charger les données via les actions du store
-    this.store.dispatch(new RoomAction.FetchRoomsByPropertyID(this.propertyId));
+    // S'abonner aux données déjà chargées par le resolver
+    console.log('📊 Initialisation des abonnements aux données');
 
-    // Charger l'historique des paiements pour cette propriété
-    this.store.dispatch(new HistoryLocationPaymentAction.FetchHistoryLocationPaymentsByPropertyId(this.propertyId));
-
-    // TODO: Ajouter les actions pour charger les locataires et l'historique
+    // Les données sont déjà disponibles dans le store grâce au resolver
+    // On peut directement s'abonner aux observables
 
     // Initialiser les observables avec les services
     this.property$ = this.propertyDataService.getProperty(this.propertyId);
@@ -340,7 +341,7 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
   // Méthodes pour le rechargement des données
   refreshData(): void {
     if (this.propertyId) {
-      this.initializeData();
+      this.initializeSubscriptions();
     }
   }
 

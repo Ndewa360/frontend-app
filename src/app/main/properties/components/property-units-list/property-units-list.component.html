@@ -43,10 +43,12 @@
                  [value]="searchTerm"
                  (input)="searchTerm = $any($event.target).value; onSearchChange()"
                  placeholder="Rechercher une unité (nom, code, locataire...)"
-                 class="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200">
-          <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-          </svg>
+                 class="w-full pl-11 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:border-custom-primary focus:ring-2 focus:ring-custom-primary-light transition-all duration-200 bg-white">
+          <div class="absolute inset-y-0 right-0 mr-4 pl-3 flex items-center pointer-events-none z-10">
+            <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+          </div>
         </div>
       </div>
 
@@ -57,7 +59,7 @@
           <label class="text-xs font-medium text-gray-600 mb-1">Statut</label>
           <select [value]="statusFilter"
                   (change)="statusFilter = $any($event.target).value; onStatusFilterChange()"
-                  class="px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 text-sm">
+                  class="px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-custom-primary focus:ring-2 focus:ring-custom-primary-light transition-all duration-200 text-sm bg-white">
             <option value="">Tous</option>
             <option value="occupied">Occupées</option>
             <option value="available">Disponibles</option>
@@ -70,12 +72,12 @@
           <label class="text-xs font-medium text-gray-600 mb-1">Type</label>
           <select [value]="typeFilter"
                   (change)="typeFilter = $any($event.target).value; onTypeFilterChange()"
-                  class="px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 text-sm">
+                  class="px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-custom-primary focus:ring-2 focus:ring-custom-primary-light transition-all duration-200 text-sm bg-white">
             <option value="">Tous</option>
-            <option value="STUDIO">Studio</option>
-            <option value="ROOM">Chambre</option>
-            <option value="SIMPLE_APARTMENT">Appartement simple</option>
-            <option value="FURNISHED_APARTMENT">Appartement meublé</option>
+            <option value="studio">Studio</option>
+            <option value="room">Chambre</option>
+            <option value="simple_apartment">Appartement simple</option>
+            <option value="furnished_apartment">Appartement meublé</option>
           </select>
         </div>
 
@@ -85,7 +87,7 @@
           <div class="flex items-center gap-2">
             <select [value]="sortBy"
                     (change)="sortBy = $any($event.target).value; onSortChange()"
-                    class="px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 text-sm">
+                    class="px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-custom-primary focus:ring-2 focus:ring-custom-primary-light transition-all duration-200 text-sm bg-white">
               <option value="name">Nom</option>
               <option value="price">Prix</option>
               <option value="type">Type</option>
@@ -373,6 +375,116 @@
       </div>
     </div>
   </div>
+
+  <!-- Vue liste modernisée -->
+  <div *ngIf="!loading && filteredRooms.length > 0 && viewMode === 'list'"
+       class="space-y-4">
+    <div *ngFor="let room of filteredRooms; trackBy: trackByRoomId"
+         class="unit-list-item bg-white rounded-xl shadow-lg border-2 border-gray-200 overflow-hidden hover:shadow-xl hover:border-custom-primary transition-all duration-300">
+
+      <div class="flex items-center p-6">
+        <!-- Image de l'unité -->
+        <div class="flex-shrink-0 w-24 h-24 rounded-lg overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
+          <img [src]="getRoomImage(room)"
+               [alt]="getRoomName(room)"
+               class="w-full h-full object-cover"
+               (error)="$any($event.target).src = getDefaultImage()"
+               loading="lazy">
+        </div>
+
+        <!-- Informations principales -->
+        <div class="flex-1 ml-6">
+          <div class="flex items-start justify-between">
+            <div>
+              <h3 class="text-xl font-bold text-gray-900 mb-1">{{ getRoomName(room) }}</h3>
+              <p class="text-gray-600 mb-2">{{ getRoomTypeLabel(room.type) }}</p>
+
+              <!-- Badge de statut -->
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold"
+                    [class.bg-green-100]="getRoomStatus(room) === 'available'"
+                    [class.text-green-800]="getRoomStatus(room) === 'available'"
+                    [class.bg-red-100]="getRoomStatus(room) === 'occupied'"
+                    [class.text-red-800]="getRoomStatus(room) === 'occupied'"
+                    [class.bg-yellow-100]="getRoomStatus(room) === 'maintenance'"
+                    [class.text-yellow-800]="getRoomStatus(room) === 'maintenance'">
+                <div class="w-2 h-2 rounded-full mr-2"
+                     [class.bg-green-500]="getRoomStatus(room) === 'available'"
+                     [class.bg-red-500]="getRoomStatus(room) === 'occupied'"
+                     [class.bg-yellow-500]="getRoomStatus(room) === 'maintenance'"></div>
+                {{ getRoomStatusLabel(room) }}
+              </span>
+            </div>
+
+            <!-- Prix -->
+            <div class="text-right">
+              <div class="text-2xl font-bold text-custom-primary">{{ formatPrice(room.price) }}</div>
+              <div class="text-sm text-gray-500">par mois</div>
+            </div>
+          </div>
+
+          <!-- Caractéristiques en ligne -->
+          <div class="flex items-center space-x-6 mt-4 text-sm text-gray-600">
+            <div class="flex items-center" *ngIf="getRoomSurface(room)">
+              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+              </svg>
+              {{ getRoomSurface(room) }}
+            </div>
+            <div class="flex items-center" *ngIf="getRoomBathrooms(room)">
+              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"></path>
+              </svg>
+              {{ getRoomBathrooms(room) }} SDB
+            </div>
+            <div class="flex items-center" *ngIf="hasKitchen(room)">
+              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+              </svg>
+              Cuisine
+            </div>
+            <div class="flex items-center" *ngIf="hasInternalShower(room)">
+              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"></path>
+              </svg>
+              Douche privée
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex-shrink-0 ml-6">
+          <div class="flex space-x-2">
+            <button (click)="onViewUnit(room)"
+                    class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition-all duration-200 flex items-center">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+              </svg>
+              Voir
+            </button>
+
+            <button *ngIf="getRoomStatus(room) === 'available'"
+                    (click)="onAssignTenant(room)"
+                    class="px-4 py-2 text-white rounded-lg font-medium transition-all duration-200 flex items-center custom-primary-button">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+              </svg>
+              Assigner
+            </button>
+
+            <button *ngIf="getRoomStatus(room) === 'occupied'"
+                    (click)="onTerminateLease(room)"
+                    class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-all duration-200 flex items-center">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+              Résilier
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- Modals pour les actions -->
@@ -456,8 +568,19 @@
     </div>
   </div>
 
-  <!-- Panneau latéral pour desktop -->
-  <div *ngIf="viewService.isOpen() && viewService.getViewMode() === 'sidebar'"
+  <!-- Panneau latéral avec nouvelle interface professionnelle -->
+  <app-unit-details-panel
+    *ngIf="viewService.isOpen() && viewService.getViewMode() === 'sidebar'"
+    [room]="viewService.getSelectedRoom()"
+    [propertyId]="propertyId"
+    [isOpen]="viewService.isOpen()"
+    (close)="viewService.closeUnitDetails()"
+    (action)="onUnitPanelAction($event)"
+    class="fixed top-0 right-0 h-full z-40">
+  </app-unit-details-panel>
+
+  <!-- Ancien panneau (gardé pour référence mais caché) -->
+  <div *ngIf="false && viewService.isOpen() && viewService.getViewMode() === 'sidebar'"
        class="fixed top-0 right-0 w-[480px] h-full bg-white border-l border-gray-300 shadow-2xl flex flex-col z-40"
        style="box-shadow: -8px 0 32px rgba(0, 0, 0, 0.12);">
 

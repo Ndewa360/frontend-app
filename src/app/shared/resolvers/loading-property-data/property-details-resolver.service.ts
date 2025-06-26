@@ -2,61 +2,55 @@ import { Injectable } from "@angular/core";
 import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot } from "@angular/router";
 import { Store } from "@ngxs/store";
 import { Observable, combineLatest, of } from "rxjs";
-import { map, skipWhile, tap, catchError, take } from "rxjs/operators";
-import { LocataireAction, LocationAction, LocationPaymentAction, RoomAction, StatisticAction } from "../../store";
-import { HistoryLocationPaymentAction } from "../../store/history-payment-location";
+import { map, skipWhile, tap, catchError, switchMap, take } from "rxjs/operators";
+import { 
+    PropertyAction, 
+    RoomAction, 
+    LocataireAction, 
+    LocationAction, 
+    LocationPaymentAction,
+    HistoryLocationPaymentAction 
+} from "../../store";
 
 @Injectable({
     providedIn: "root"
 })
-export class LoadingPropertyDataResolver implements Resolve<any> {
-
-    /**
-     * Constructor
-     */
+export class PropertyDetailsResolver implements Resolve<any> {
+    
     constructor(private _store: Store) {}
 
-    // -----------------------------------------------------------------------------------------------------
-    // @ Public methods
-    // -----------------------------------------------------------------------------------------------------
-
     /**
-     * Charge toutes les données nécessaires pour une propriété spécifique
-     * Inclut : locataires, chambres, locations, paiements, historique et statistiques
-     *
-     * @param route
-     * @param state
+     * Charge toutes les données nécessaires pour les détails d'une propriété
+     * Inclut : chambres, locataires, locations, paiements, historique
      */
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any> {
-        const propertyId: string = route.paramMap.get("id");
-
+        const propertyId = route.paramMap.get('id');
+        
         if (!propertyId) {
-            console.error("❌ LoadingPropertyDataResolver: Aucun ID de propriété fourni");
+            console.error("❌ PropertyDetailsResolver: Aucun ID de propriété fourni");
             return of(false);
         }
 
-        console.log(`🔄 LoadingPropertyDataResolver - Chargement des données pour la propriété ${propertyId}`);
+        console.log(`🔄 PropertyDetailsResolver - Chargement des données pour la propriété ${propertyId}`);
 
         // Dispatcher toutes les actions nécessaires
         this._store.dispatch([
-            new LocataireAction.FetchLocatairesByPropertyId(propertyId),
             new RoomAction.FetchRoomsByPropertyID(propertyId),
+            new LocataireAction.FetchLocatairesByPropertyId(propertyId),
             new LocationAction.FetchLocationsByPropertyId(propertyId),
             new LocationPaymentAction.FetchLocationPaymentsByPropertyId(propertyId),
-            new HistoryLocationPaymentAction.FetchHistoryLocationPaymentsByPropertyId(propertyId),
-            new StatisticAction.FetchStaticLocataireDataByPropertyIdAndYear(propertyId, `${new Date().getFullYear()}`),
-            new StatisticAction.FetchStaticAllPaymentLocataireDataByPropertyIdAndYear(propertyId, `${new Date().getFullYear()}`),
+            new HistoryLocationPaymentAction.FetchHistoryLocationPaymentsByPropertyId(propertyId)
         ]);
 
-        // Attendre que toutes les données critiques soient chargées
+        // Attendre que toutes les données soient chargées
         return combineLatest([
-            this._store.select((state) => state.locataires.initLoadingState).pipe(
-                skipWhile((state) => state === "LOADING"),
-                tap(() => console.log("✅ Locataires chargés"))
-            ),
             this._store.select((state) => state.rooms.initLoadingState).pipe(
                 skipWhile((state) => state === "LOADING"),
                 tap(() => console.log("✅ Chambres chargées"))
+            ),
+            this._store.select((state) => state.locataires.initLoadingState).pipe(
+                skipWhile((state) => state === "LOADING"),
+                tap(() => console.log("✅ Locataires chargés"))
             ),
             this._store.select((state) => state.locations.initLoadingState).pipe(
                 skipWhile((state) => state === "LOADING"),
@@ -64,7 +58,7 @@ export class LoadingPropertyDataResolver implements Resolve<any> {
             ),
             this._store.select((state) => state.locationPayments.initLoadingState).pipe(
                 skipWhile((state) => state === "LOADING"),
-                tap(() => console.log("✅ Paiements chargés"))
+                tap(() => console.log("✅ Paiements de location chargés"))
             ),
             this._store.select((state) => state.historyLocationPayments.initLoadingState).pipe(
                 skipWhile((state) => state === "LOADING"),
