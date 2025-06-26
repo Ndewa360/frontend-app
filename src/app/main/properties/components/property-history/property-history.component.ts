@@ -1,13 +1,55 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
+import { Store } from '@ngxs/store';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import {
+  LocationPaymentModel,
+  LocationPaymentState,
+  LocationPaymentType,
+  LocataireModel,
+  LocataireState,
+  RoomModel,
+  RoomState
+} from 'src/app/shared/store';
 
-interface HistoryItem {
+interface PaymentHistoryItem {
   id: string;
   date: Date;
-  type: 'payment' | 'maintenance' | 'tenant_move_in' | 'tenant_move_out' | 'contract_renewal';
-  description: string;
-  amount?: number;
-  unitId?: string;
-  tenantId?: string;
+  type: LocationPaymentType;
+  amount: number;
+  tenant: LocataireModel | null;
+  room: RoomModel | null;
+  reference: string;
+  reason?: string;
+  createdAt: Date;
+  rawPayment: LocationPaymentModel;
+}
+
+interface FilterOptions {
+  type: LocationPaymentType | 'ALL';
+  tenantId: string;
+  roomId: string;
+  dateRange: {
+    start: Date | null;
+    end: Date | null;
+  };
+  period: 'all' | 'today' | 'week' | 'month' | 'quarter' | 'year' | 'custom';
+  amountRange: {
+    min: number | null;
+    max: number | null;
+  };
+}
+
+interface PaymentStats {
+  totalPayments: number;
+  totalAmount: number;
+  averageAmount: number;
+  locationPayments: number;
+  cautionPayments: number;
+  locationAmount: number;
+  cautionAmount: number;
+  uniqueTenants: number;
+  uniqueRooms: number;
 }
 
 @Component({
@@ -15,88 +57,326 @@ interface HistoryItem {
   templateUrl: './property-history.component.html',
   styleUrls: ['./property-history.component.scss']
 })
-export class PropertyHistoryComponent implements OnInit {
+export class PropertyHistoryComponent implements OnInit, OnDestroy, OnChanges {
   @Input() propertyId: string = '';
-  @Input() history: HistoryItem[] = [];
+  @Input() history: any[] = []; // Garde pour compatibilité mais on n'utilise pas
   @Input() loading: boolean = false;
 
-  filteredHistory: HistoryItem[] = [];
-  typeFilter: string = '';
-  periodFilter: string = 'all';
+  // Données
+  allPayments: LocationPaymentModel[] = [];
+  paymentHistory: PaymentHistoryItem[] = [];
+  filteredHistory: PaymentHistoryItem[] = [];
+  tenants: LocataireModel[] = [];
+  rooms: RoomModel[] = [];
 
-  constructor() { }
+  // Filtres
+  filters: FilterOptions = {
+    type: 'ALL',
+    tenantId: '',
+    roomId: '',
+    dateRange: {
+      start: null,
+      end: null
+    },
+    period: 'all',
+    amountRange: {
+      min: null,
+      max: null
+    }
+  };
+
+  // État
+  isFiltersExpanded: boolean = false;
+  viewMode: 'list' | 'grid' | 'timeline' = 'list';
+  sortBy: 'date' | 'amount' | 'tenant' | 'room' = 'date';
+  sortOrder: 'asc' | 'desc' = 'desc';
+
+  // Statistiques
+  stats: PaymentStats = {
+    totalPayments: 0,
+    totalAmount: 0,
+    averageAmount: 0,
+    locationPayments: 0,
+    cautionPayments: 0,
+    locationAmount: 0,
+    cautionAmount: 0,
+    uniqueTenants: 0,
+    uniqueRooms: 0
+  };
+
+  // Pagination
+  currentPage: number = 1;
+  itemsPerPage: number = 20;
+  totalPages: number = 1;
+
+  private destroy$ = new Subject<void>();
+
+  // Propriété Math pour les templates
+  Math = Math;
+
+  constructor(private store: Store) { }
 
   ngOnInit(): void {
-    this.filteredHistory = [...this.history];
-    this.sortHistory();
+    this.loadData();
   }
 
-  filterHistory(): void {
-    this.filteredHistory = this.history.filter(item => {
-      const matchesType = !this.typeFilter || item.type === this.typeFilter;
-      const matchesPeriod = this.matchesPeriodFilter(item.date);
-      
-      return matchesType && matchesPeriod;
-    });
-    
-    this.sortHistory();
-  }
-
-  private matchesPeriodFilter(date: Date): boolean {
-    if (this.periodFilter === 'all') return true;
-    
-    const now = new Date();
-    const itemDate = new Date(date);
-    
-    switch (this.periodFilter) {
-      case 'last_month':
-        const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
-        return itemDate >= lastMonth;
-      case 'last_3_months':
-        const last3Months = new Date(now.getFullYear(), now.getMonth() - 3, now.getDate());
-        return itemDate >= last3Months;
-      case 'last_6_months':
-        const last6Months = new Date(now.getFullYear(), now.getMonth() - 6, now.getDate());
-        return itemDate >= last6Months;
-      case 'last_year':
-        const lastYear = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
-        return itemDate >= lastYear;
-      default:
-        return true;
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['propertyId'] && this.propertyId) {
+      this.loadData();
     }
   }
 
-  private sortHistory(): void {
-    this.filteredHistory.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
-  clearFilters(): void {
-    this.typeFilter = '';
-    this.periodFilter = 'all';
-    this.filterHistory();
+  // === MÉTHODES DE CHARGEMENT DES DONNÉES ===
+
+  private loadData(): void {
+    if (!this.propertyId) return;
+
+    // Charger les paiements
+    this.store.select(LocationPaymentState.selectStateLocationPaymentByPropertyId(this.propertyId))
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((payments: LocationPaymentModel[]) => {
+        this.allPayments = payments || [];
+        this.buildPaymentHistory();
+      });
+
+    // Charger les locataires
+    this.store.select(LocataireState.selectStateLocataireByPropertyId(this.propertyId))
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((tenants: LocataireModel[]) => {
+        this.tenants = tenants || [];
+        this.buildPaymentHistory();
+      });
+
+    // Charger les chambres
+    this.store.select(RoomState.selectStateRoomByPropertyId(this.propertyId))
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((rooms: RoomModel[]) => {
+        this.rooms = rooms || [];
+        this.buildPaymentHistory();
+      });
   }
 
-  trackByHistoryId(index: number, item: HistoryItem): string {
-    return item.id;
+  private buildPaymentHistory(): void {
+    if (!this.allPayments.length) {
+      this.paymentHistory = [];
+      this.applyFilters();
+      return;
+    }
+
+    this.paymentHistory = this.allPayments.map(payment => {
+      const tenant = this.tenants.find(t => t._id === payment.locataire) || null;
+      const room = this.rooms.find(r => r._id === payment.room) || null;
+
+      return {
+        id: payment._id || '',
+        date: new Date(payment.datePayment),
+        type: payment.paymentLocationType,
+        amount: payment.locationPaymentPrice || 0,
+        tenant,
+        room,
+        reference: payment.billingRef || '',
+        reason: payment.reason,
+        createdAt: new Date(payment.createdAt || payment.datePayment),
+        rawPayment: payment
+      };
+    });
+
+    this.applyFilters();
+    this.calculateStats();
   }
 
-  // Méthodes de statistiques
-  getPaymentCount(): number {
-    return this.filteredHistory.filter(item => item.type === 'payment').length;
+  // === MÉTHODES DE FILTRAGE ===
+
+  applyFilters(): void {
+    let filtered = [...this.paymentHistory];
+
+    // Filtre par type
+    if (this.filters.type !== 'ALL') {
+      filtered = filtered.filter(item => item.type === this.filters.type);
+    }
+
+    // Filtre par locataire
+    if (this.filters.tenantId) {
+      filtered = filtered.filter(item => item.tenant?._id === this.filters.tenantId);
+    }
+
+    // Filtre par chambre
+    if (this.filters.roomId) {
+      filtered = filtered.filter(item => item.room?._id === this.filters.roomId);
+    }
+
+    // Filtre par période
+    filtered = this.applyPeriodFilter(filtered);
+
+    // Filtre par plage de dates personnalisée
+    if (this.filters.dateRange.start) {
+      filtered = filtered.filter(item => item.date >= this.filters.dateRange.start!);
+    }
+    if (this.filters.dateRange.end) {
+      filtered = filtered.filter(item => item.date <= this.filters.dateRange.end!);
+    }
+
+    // Filtre par montant
+    if (this.filters.amountRange.min !== null) {
+      filtered = filtered.filter(item => item.amount >= this.filters.amountRange.min!);
+    }
+    if (this.filters.amountRange.max !== null) {
+      filtered = filtered.filter(item => item.amount <= this.filters.amountRange.max!);
+    }
+
+    this.filteredHistory = filtered;
+    this.applySorting();
+    this.updatePagination();
+    this.calculateStats();
   }
 
-  getMaintenanceCount(): number {
-    return this.filteredHistory.filter(item => item.type === 'maintenance').length;
+  private applyPeriodFilter(items: PaymentHistoryItem[]): PaymentHistoryItem[] {
+    if (this.filters.period === 'all' || this.filters.period === 'custom') {
+      return items;
+    }
+
+    const now = new Date();
+    let startDate: Date;
+
+    switch (this.filters.period) {
+      case 'today':
+        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        break;
+      case 'week':
+        startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        break;
+      case 'month':
+        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+        break;
+      case 'quarter':
+        const quarterStart = Math.floor(now.getMonth() / 3) * 3;
+        startDate = new Date(now.getFullYear(), quarterStart, 1);
+        break;
+      case 'year':
+        startDate = new Date(now.getFullYear(), 0, 1);
+        break;
+      default:
+        return items;
+    }
+
+    return items.filter(item => item.date >= startDate);
   }
 
-  getTenantMovementCount(): number {
-    return this.filteredHistory.filter(item => 
-      item.type === 'tenant_move_in' || item.type === 'tenant_move_out'
-    ).length;
+  private applySorting(): void {
+    this.filteredHistory.sort((a, b) => {
+      let comparison = 0;
+
+      switch (this.sortBy) {
+        case 'date':
+          comparison = a.date.getTime() - b.date.getTime();
+          break;
+        case 'amount':
+          comparison = a.amount - b.amount;
+          break;
+        case 'tenant':
+          const tenantA = a.tenant?.fullName || '';
+          const tenantB = b.tenant?.fullName || '';
+          comparison = tenantA.localeCompare(tenantB);
+          break;
+        case 'room':
+          const roomA = a.room?.code || '';
+          const roomB = b.room?.code || '';
+          comparison = roomA.localeCompare(roomB);
+          break;
+      }
+
+      return this.sortOrder === 'desc' ? -comparison : comparison;
+    });
   }
 
-  getContractCount(): number {
-    return this.filteredHistory.filter(item => item.type === 'contract_renewal').length;
+  private updatePagination(): void {
+    this.totalPages = Math.ceil(this.filteredHistory.length / this.itemsPerPage);
+    if (this.currentPage > this.totalPages) {
+      this.currentPage = 1;
+    }
+  }
+
+  private calculateStats(): void {
+    const locationPayments = this.filteredHistory.filter(item => item.type === 'LOCATION');
+    const cautionPayments = this.filteredHistory.filter(item => item.type === 'CAUTION');
+
+    this.stats = {
+      totalPayments: this.filteredHistory.length,
+      totalAmount: this.filteredHistory.reduce((sum, item) => sum + item.amount, 0),
+      averageAmount: this.filteredHistory.length > 0
+        ? this.filteredHistory.reduce((sum, item) => sum + item.amount, 0) / this.filteredHistory.length
+        : 0,
+      locationPayments: locationPayments.length,
+      cautionPayments: cautionPayments.length,
+      locationAmount: locationPayments.reduce((sum, item) => sum + item.amount, 0),
+      cautionAmount: cautionPayments.reduce((sum, item) => sum + item.amount, 0),
+      uniqueTenants: new Set(this.filteredHistory.map(item => item.tenant?._id).filter(Boolean)).size,
+      uniqueRooms: new Set(this.filteredHistory.map(item => item.room?._id).filter(Boolean)).size
+    };
+  }
+
+  // === MÉTHODES D'ACTIONS ===
+
+  onFilterChange(): void {
+    this.currentPage = 1;
+    this.applyFilters();
+  }
+
+  onSortChange(sortBy: 'date' | 'amount' | 'tenant' | 'room'): void {
+    if (this.sortBy === sortBy) {
+      this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortBy = sortBy;
+      this.sortOrder = 'desc';
+    }
+    this.applySorting();
+  }
+
+  onViewModeChange(mode: 'list' | 'grid' | 'timeline'): void {
+    this.viewMode = mode;
+  }
+
+  onPageChange(page: number): void {
+    this.currentPage = page;
+  }
+
+  onItemsPerPageChange(itemsPerPage: number): void {
+    this.itemsPerPage = itemsPerPage;
+    this.currentPage = 1;
+    this.updatePagination();
+  }
+
+  clearAllFilters(): void {
+    this.filters = {
+      type: 'ALL',
+      tenantId: '',
+      roomId: '',
+      dateRange: {
+        start: null,
+        end: null
+      },
+      period: 'all',
+      amountRange: {
+        min: null,
+        max: null
+      }
+    };
+    this.currentPage = 1;
+    this.applyFilters();
+  }
+
+  toggleFiltersExpanded(): void {
+    this.isFiltersExpanded = !this.isFiltersExpanded;
+  }
+
+  exportData(): void {
+    // TODO: Implémenter l'export des données
+    console.log('Export des données:', this.filteredHistory);
   }
 
   // Méthodes utilitaires
@@ -132,6 +412,146 @@ export class PropertyHistoryComponent implements OnInit {
     // Cette méthode devrait récupérer le nom du locataire depuis le store ou un service
     // Pour l'instant, on retourne un nom générique
     return `Locataire ${tenantId.slice(-4)}`;
+  }
+
+  // === MÉTHODES UTILITAIRES ===
+
+  formatPrice(price: number | null | undefined): string {
+    if (!price) return '0 FCFA';
+    return new Intl.NumberFormat('fr-CM', {
+      style: 'currency',
+      currency: 'XAF',
+      minimumFractionDigits: 0
+    }).format(price);
+  }
+
+  formatDate(date: Date | string | null | undefined): string {
+    if (!date) return 'N/A';
+    return new Date(date).toLocaleDateString('fr-FR', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  }
+
+  formatDateTime(date: Date | string | null | undefined): string {
+    if (!date) return 'N/A';
+    return new Date(date).toLocaleString('fr-FR', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+
+  getTypeLabel(type: LocationPaymentType): string {
+    switch (type) {
+      case 'LOCATION': return 'Loyer';
+      case 'CAUTION': return 'Caution';
+      default: return type;
+    }
+  }
+
+  getTypeColor(type: LocationPaymentType): string {
+    switch (type) {
+      case 'LOCATION': return 'bg-green-100 text-green-800';
+      case 'CAUTION': return 'bg-blue-100 text-blue-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  }
+
+  getTypeIcon(type: LocationPaymentType): string {
+    switch (type) {
+      case 'LOCATION': return 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4';
+      case 'CAUTION': return 'M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z';
+      default: return 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1';
+    }
+  }
+
+  getPaginatedItems(): PaymentHistoryItem[] {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    return this.filteredHistory.slice(startIndex, endIndex);
+  }
+
+  getPageNumbers(): number[] {
+    const pages: number[] = [];
+    const maxVisiblePages = 5;
+    const halfVisible = Math.floor(maxVisiblePages / 2);
+
+    let startPage = Math.max(1, this.currentPage - halfVisible);
+    let endPage = Math.min(this.totalPages, startPage + maxVisiblePages - 1);
+
+    if (endPage - startPage < maxVisiblePages - 1) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+
+    return pages;
+  }
+
+  trackByPaymentId(_: number, item: PaymentHistoryItem): string {
+    return item.id;
+  }
+
+  trackByTenantId(_: number, tenant: LocataireModel): string {
+    return tenant._id || '';
+  }
+
+  trackByRoomId(_: number, room: RoomModel): string {
+    return room._id || '';
+  }
+
+  hasActiveFilters(): boolean {
+    return this.filters.type !== 'ALL' ||
+           this.filters.tenantId !== '' ||
+           this.filters.roomId !== '' ||
+           this.filters.period !== 'all' ||
+           this.filters.dateRange.start !== null ||
+           this.filters.dateRange.end !== null ||
+           this.filters.amountRange.min !== null ||
+           this.filters.amountRange.max !== null;
+  }
+
+  getActiveFiltersCount(): number {
+    let count = 0;
+    if (this.filters.type !== 'ALL') count++;
+    if (this.filters.tenantId) count++;
+    if (this.filters.roomId) count++;
+    if (this.filters.period !== 'all') count++;
+    if (this.filters.dateRange.start || this.filters.dateRange.end) count++;
+    if (this.filters.amountRange.min !== null || this.filters.amountRange.max !== null) count++;
+    return count;
+  }
+
+  getRoomDisplayName(room: RoomModel): string {
+    if (!room) return 'Unité inconnue';
+
+    // Utiliser le code de l'unité du modèle RoomModel
+    const code = room.code || room._id?.substring(0, 8) || 'N/A';
+
+    // Ajouter le type d'unité pour plus de clarté
+    let prefix = 'Unité';
+    switch (room.type) {
+      case 'room':
+        prefix = 'Chambre';
+        break;
+      case 'studio':
+        prefix = 'Studio';
+        break;
+      case 'simple_apartment':
+        prefix = 'Appartement';
+        break;
+      case 'furnished_apartment':
+        prefix = 'App. Meublé';
+        break;
+    }
+
+    return `${prefix} ${code}`;
   }
 
   // Export
