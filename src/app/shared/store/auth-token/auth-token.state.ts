@@ -10,6 +10,10 @@ export class AuthTokenStateModel {
     authToken: string;
     refreshToken: string;
     tokenExpiration: number; // Timestamp d'expiration du token
+    isActivityMonitoring: boolean; // État de la surveillance d'activité
+    activityState: string; // État d'activité utilisateur (ACTIVE, INACTIVE, CRITICAL_INACTIVE)
+    lastRefreshAttempt: number; // Timestamp de la dernière tentative de refresh
+    refreshInProgress: boolean; // Indique si un refresh est en cours
 }
 
 @State<AuthTokenStateModel>({
@@ -17,7 +21,11 @@ export class AuthTokenStateModel {
     defaults: {
         authToken: null,
         refreshToken: null,
-        tokenExpiration: null
+        tokenExpiration: null,
+        isActivityMonitoring: false,
+        activityState: 'ACTIVE',
+        lastRefreshAttempt: null,
+        refreshInProgress: false
     }
 })
 @Injectable()
@@ -49,6 +57,26 @@ export class AuthTokenState {
         return state.tokenExpiration;
     }
 
+    @Selector()
+    static selectStateActivityMonitoring(state: AuthTokenStateModel) {
+        return state.isActivityMonitoring;
+    }
+
+    @Selector()
+    static selectStateActivityState(state: AuthTokenStateModel) {
+        return state.activityState;
+    }
+
+    @Selector()
+    static selectStateRefreshInProgress(state: AuthTokenStateModel) {
+        return state.refreshInProgress;
+    }
+
+    @Selector()
+    static selectStateLastRefreshAttempt(state: AuthTokenStateModel) {
+        return state.lastRefreshAttempt;
+    }
+
     @Action(AuthTokenAction.SetAuthToken)
     setAuthToken(ctx: StateContext<AuthTokenStateModel>, { token }: AuthTokenAction.SetAuthToken) {
         const expiration = this.getTokenExpiration(token);
@@ -67,9 +95,15 @@ export class AuthTokenState {
 
     @Action(AuthTokenAction.SetToken)
     setToken(ctx: StateContext<AuthTokenStateModel>, { authToken, refreshToken }: AuthTokenAction.SetToken) {
+        console.log('🔍 Setting tokens in state:');
+        console.log('  - Access token length:', authToken?.length);
+        console.log('  - Refresh token length:', refreshToken?.length);
+        console.log('  - Access token preview:', authToken?.substring(0, 50) + '...');
+        console.log('  - Refresh token preview:', refreshToken?.substring(0, 50) + '...');
+
         const expiration = this.getTokenExpiration(authToken);
-        ctx.patchState({ 
-            authToken, 
+        ctx.patchState({
+            authToken,
             refreshToken,
             tokenExpiration: expiration
         });
@@ -77,13 +111,67 @@ export class AuthTokenState {
     }
 
     @Action(AuthTokenAction.Logout)
-    logout(ctx: StateContext<AuthTokenStateModel>) {
+    logout(ctx: StateContext<AuthTokenStateModel>, { reason }: AuthTokenAction.Logout) {
         ctx.setState({
             authToken: null,
             refreshToken: null,
-            tokenExpiration: null
+            tokenExpiration: null,
+            isActivityMonitoring: false,
+            activityState: 'ACTIVE',
+            lastRefreshAttempt: null,
+            refreshInProgress: false
+        });
+
+        if (reason) {
+            console.log(`🔴 Déconnexion: ${reason}`);
+        }
+
+        return of(true);
+    }
+
+    @Action(AuthTokenAction.StartActivityMonitoring)
+    startActivityMonitoring(ctx: StateContext<AuthTokenStateModel>) {
+        ctx.patchState({ isActivityMonitoring: true });
+        return of(true);
+    }
+
+    @Action(AuthTokenAction.StopActivityMonitoring)
+    stopActivityMonitoring(ctx: StateContext<AuthTokenStateModel>) {
+        ctx.patchState({
+            isActivityMonitoring: false,
+            activityState: 'ACTIVE'
         });
         return of(true);
+    }
+
+    @Action(AuthTokenAction.UpdateActivityState)
+    updateActivityState(ctx: StateContext<AuthTokenStateModel>, { activityState }: AuthTokenAction.UpdateActivityState) {
+        ctx.patchState({ activityState });
+        return of(true);
+    }
+
+    @Action(AuthTokenAction.RefreshTokenSuccess)
+    refreshTokenSuccess(ctx: StateContext<AuthTokenStateModel>, { accessToken, refreshToken }: AuthTokenAction.RefreshTokenSuccess) {
+        const expiration = this.getTokenExpiration(accessToken);
+        ctx.patchState({
+            authToken: accessToken,
+            refreshToken,
+            tokenExpiration: expiration,
+            refreshInProgress: false,
+            lastRefreshAttempt: Date.now()
+        });
+        return of(true);
+    }
+
+    @Action(AuthTokenAction.RefreshTokenFailure)
+    refreshTokenFailure(ctx: StateContext<AuthTokenStateModel>, { error }: AuthTokenAction.RefreshTokenFailure) {
+        ctx.patchState({
+            refreshInProgress: false,
+            lastRefreshAttempt: Date.now()
+        });
+
+        console.error('❌ Échec du refresh token:', error);
+        return of(false);
     }
 
     // Fonction utilitaire pour extraire la date d'expiration du token JWT

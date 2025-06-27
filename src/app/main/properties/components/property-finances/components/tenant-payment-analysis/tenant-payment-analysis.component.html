@@ -1,0 +1,200 @@
+<!-- Analyse des paiements des locataires -->
+<div class="tenant-payment-analysis-container p-8">
+  
+  <!-- Header avec actions -->
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h2 class="text-2xl font-bold text-gray-900">Analyse des locataires</h2>
+      <p class="text-gray-600 mt-1">Suivi des performances de paiement par locataire pour {{ selectedYear }}</p>
+    </div>
+    
+    <div class="flex items-center space-x-3">
+      <button (click)="onExportTenantAnalysis()"
+              class="flex items-center space-x-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors duration-200">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        </svg>
+        <span>Exporter</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Statistiques globales -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+    
+    <!-- Total des locataires -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <div class="text-center">
+        <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-3">
+          <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+          </svg>
+        </div>
+        <p class="text-2xl font-bold text-gray-900">{{ globalStats.totalTenants }}</p>
+        <p class="text-sm text-gray-600">Total locataires</p>
+      </div>
+    </div>
+
+    <!-- Excellents payeurs -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <div class="text-center">
+        <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mx-auto mb-3">
+          <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
+        <p class="text-2xl font-bold text-green-600">{{ globalStats.excellentTenants }}</p>
+        <p class="text-sm text-gray-600">Excellents</p>
+      </div>
+    </div>
+
+    <!-- Bons payeurs -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <div class="text-center">
+        <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-3">
+          <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"></path>
+          </svg>
+        </div>
+        <p class="text-2xl font-bold text-blue-600">{{ globalStats.goodTenants }}</p>
+        <p class="text-sm text-gray-600">Bons</p>
+      </div>
+    </div>
+
+    <!-- À surveiller -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <div class="text-center">
+        <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center mx-auto mb-3">
+          <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+          </svg>
+        </div>
+        <p class="text-2xl font-bold text-yellow-600">{{ globalStats.warningTenants }}</p>
+        <p class="text-sm text-gray-600">Attention</p>
+      </div>
+    </div>
+
+    <!-- Critiques -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <div class="text-center">
+        <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center mx-auto mb-3">
+          <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
+        <p class="text-2xl font-bold text-red-600">{{ globalStats.criticalTenants }}</p>
+        <p class="text-sm text-gray-600">Critiques</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtres et recherche -->
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
+      
+      <!-- Filtres par statut -->
+      <div class="flex items-center space-x-4">
+        <label class="text-sm font-medium text-gray-700">Filtrer par statut:</label>
+        <select [(ngModel)]="statusFilter" 
+                (ngModelChange)="onStatusFilterChange()"
+                class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-custom-primary focus:border-custom-primary">
+          <option value="all">Tous les statuts</option>
+          <option value="excellent">Excellents</option>
+          <option value="good">Bons</option>
+          <option value="warning">Attention</option>
+          <option value="critical">Critiques</option>
+        </select>
+      </div>
+
+      <!-- Recherche -->
+      <div class="flex items-center space-x-2">
+        <label class="text-sm font-medium text-gray-700">Rechercher:</label>
+        <input type="text" 
+               [(ngModel)]="searchTerm"
+               (ngModelChange)="onSearchChange()"
+               placeholder="Nom locataire ou code chambre..."
+               class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-custom-primary focus:border-custom-primary">
+      </div>
+    </div>
+  </div>
+
+  <!-- Liste des locataires -->
+  <div class="space-y-4">
+    <div *ngFor="let tenant of filteredSummaries; trackBy: trackByTenantId" 
+         class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      
+      <!-- Header du locataire -->
+      <div class="px-6 py-4 border-b border-gray-200">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-4">
+            <div>
+              <h3 class="text-lg font-semibold text-gray-900">{{ tenant.tenantName }}</h3>
+              <p class="text-sm text-gray-600">Chambre {{ tenant.roomCode }}</p>
+            </div>
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium"
+                  [ngClass]="getStatusColor(tenant.status)">
+              {{ getStatusLabel(tenant.status) }}
+            </span>
+          </div>
+          
+          <div class="text-right">
+            <p class="text-lg font-bold text-gray-900">{{ formatPercentage(tenant.overallRate) }}</p>
+            <p class="text-sm text-gray-600">Taux de paiement</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Détails des paiements mensuels -->
+      <div class="px-6 py-4">
+        <div class="grid grid-cols-12 gap-2">
+          <div *ngFor="let month of tenant.monthlyPayments" 
+               class="text-center">
+            <div class="text-xs font-medium text-gray-600 mb-1">{{ month.monthName.substring(0, 3) }}</div>
+            <div class="w-full h-8 rounded-lg flex items-center justify-center text-xs font-medium"
+                 [ngClass]="getPaymentStateColor(month.state)">
+              {{ formatPercentage(month.paymentRate) }}
+            </div>
+            <div class="text-xs text-gray-500 mt-1">{{ formatPrice(month.receivedAmount) }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Résumé financier -->
+      <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">
+        <div class="grid grid-cols-3 gap-4 text-center">
+          <div>
+            <p class="text-sm font-medium text-gray-600">Total attendu</p>
+            <p class="text-lg font-bold text-gray-900">{{ formatPrice(tenant.totalExpected) }}</p>
+          </div>
+          <div>
+            <p class="text-sm font-medium text-gray-600">Total reçu</p>
+            <p class="text-lg font-bold text-green-600">{{ formatPrice(tenant.totalReceived) }}</p>
+          </div>
+          <div>
+            <p class="text-sm font-medium text-gray-600">Manque à gagner</p>
+            <p class="text-lg font-bold text-red-600">{{ formatPrice(tenant.totalExpected - tenant.totalReceived) }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- État vide -->
+  <div *ngIf="filteredSummaries.length === 0" class="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
+    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+      <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+      </svg>
+    </div>
+    <h3 class="text-lg font-semibold text-gray-900 mb-2">Aucun locataire trouvé</h3>
+    <p class="text-gray-600">Aucun locataire ne correspond à vos critères de filtrage.</p>
+  </div>
+
+  <!-- Indicateur de chargement -->
+  <div *ngIf="isLoading" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg p-6 flex items-center space-x-3">
+      <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-custom-primary"></div>
+      <span class="text-gray-700">Chargement de l'analyse des locataires...</span>
+    </div>
+  </div>
+</div>

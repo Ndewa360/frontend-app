@@ -1,0 +1,502 @@
+// ==================== GLOBAL DIALOG STYLES ====================
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+  font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+// Styles pour le conteneur de la modal MatDialog
+::ng-deep .error-details-dialog {
+  .mat-mdc-dialog-container {
+    padding: 0 !important;
+    overflow: hidden !important;
+    border-radius: 8px !important;
+    background: var(--theme-appUIBg, #ffffff) !important;
+    box-shadow:
+      0 24px 80px rgba(0, 0, 0, 0.4),
+      0 0 0 1px rgba(0, 0, 0, 0.1) !important;
+    max-width: none !important;
+    max-height: none !important;
+  }
+
+  .mat-mdc-dialog-content {
+    margin: 0 !important;
+    padding: 0 !important;
+    max-height: none !important;
+    overflow: hidden !important;
+  }
+
+  .mat-mdc-dialog-surface {
+    overflow: hidden !important;
+  }
+
+  // Supprimer les scrollbars par défaut
+  .mdc-dialog__content {
+    overflow: hidden !important;
+  }
+}
+
+// ==================== DIALOG HEADER ====================
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+  background: var(--theme-appColorPrimary, rgb(204, 140, 10));
+  color: white;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+
+  .header-info {
+    flex: 1;
+
+    h2 {
+      margin: 0 0 4px 0;
+      color: white;
+      font-size: 20px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'IBM Plex Sans', sans-serif;
+    }
+
+    .error-id {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.8);
+      font-family: 'IBM Plex Mono', 'Courier New', monospace;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 2px 8px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+  }
+
+  .close-btn {
+    color: white;
+    width: 48px;
+    height: 48px;
+    border-radius: 0;
+    transition: all 70ms cubic-bezier(0.2, 0, 0.38, 0.9);
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    &:focus {
+      outline: 2px solid rgba(255, 255, 255, 0.5);
+      outline-offset: -2px;
+    }
+  }
+}
+
+// ==================== DIALOG CONTENT ====================
+.dialog-content {
+  max-height: calc(90vh - 120px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 24px;
+  background: var(--theme-appUIBg, #f4f4f4);
+
+  // Scrollbar personnalisée pour WebKit
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--theme-appUIForegroundBg, #ffffff);
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--theme-appColorDecorative, #c6c6c6);
+    border-radius: 4px;
+
+    &:hover {
+      background: var(--theme-appTextSecondary, #525252);
+    }
+  }
+
+  // Scrollbar pour Firefox
+  scrollbar-width: thin;
+  scrollbar-color: var(--theme-appColorDecorative, #c6c6c6) var(--theme-appUIForegroundBg, #ffffff);
+
+  // ==================== ERROR SUMMARY ====================
+  .error-summary {
+    margin-bottom: 32px;
+    background: var(--theme-appUIForegroundBg, #ffffff);
+    border: 1px solid var(--theme-appColorDecorative, #e0e0e0);
+    border-radius: 8px;
+    padding: 24px;
+
+    .error-message-main {
+      margin-bottom: 20px;
+
+      h4 {
+        margin: 0 0 16px 0;
+        color: var(--theme-appText, #161616);
+        font-size: 18px;
+        font-weight: 600;
+        font-family: 'IBM Plex Sans', sans-serif;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .message-content {
+        background: #fff1f0;
+        border: 1px solid #ffccc7;
+        border-left: 4px solid var(--theme-appColorDanger, #da1e28);
+        border-radius: 4px;
+        padding: 16px;
+        color: #a8071a;
+        font-weight: 400;
+        line-height: 1.6;
+        font-family: 'IBM Plex Sans', sans-serif;
+        word-break: break-word;
+      }
+    }
+    
+    .error-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+
+      .badge {
+        padding: 6px 16px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.32px;
+        font-family: 'IBM Plex Sans', sans-serif;
+        border: 1px solid transparent;
+
+        &.badge-level {
+          &.level-low {
+            background: #d4edda;
+            color: #155724;
+            border-color: #c3e6cb;
+          }
+          &.level-medium {
+            background: #fff3cd;
+            color: #856404;
+            border-color: #ffeaa7;
+          }
+          &.level-high {
+            background: #f8d7da;
+            color: #721c24;
+            border-color: #f5c6cb;
+          }
+          &.level-critical {
+            background: #f5c6cb;
+            color: #721c24;
+            border-color: #f1b0b7;
+          }
+        }
+
+        &.badge-source {
+          background: #e1f5fe;
+          color: #01579b;
+          border-color: #b3e5fc;
+        }
+
+        &.badge-status {
+          &.status-new {
+            background: #e2e3e5;
+            color: #383d41;
+            border-color: #d6d8db;
+          }
+          &.status-acknowledged {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-color: #bee5eb;
+          }
+          &.status-in-progress {
+            background: #fff3cd;
+            color: #856404;
+            border-color: #ffeaa7;
+          }
+          &.status-resolved {
+            background: #d4edda;
+            color: #155724;
+            border-color: #c3e6cb;
+          }
+          &.status-ignored {
+            background: #e2e3e5;
+            color: #383d41;
+            border-color: #d6d8db;
+          }
+        }
+
+        &.badge-count {
+          background: #e3f2fd;
+          color: #1565c0;
+          border-color: #bbdefb;
+        }
+      }
+    }
+  }
+
+  // ==================== INFO GRID ====================
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+    margin-bottom: 32px;
+
+    .info-card {
+      background: var(--theme-appUIForegroundBg, #ffffff);
+      border: 1px solid var(--theme-appColorDecorative, #e0e0e0);
+      border-radius: 8px;
+      padding: 24px;
+      transition: all 70ms cubic-bezier(0.2, 0, 0.38, 0.9);
+
+      &:hover {
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        border-color: var(--theme-appColorPrimary, rgb(204, 140, 10));
+      }
+
+      h5 {
+        margin: 0 0 20px 0;
+        color: var(--theme-appText, #161616);
+        font-size: 16px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid var(--theme-appColorDecorative, #e0e0e0);
+        font-family: 'IBM Plex Sans', sans-serif;
+      }
+      
+      .info-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 16px;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--theme-appUIBg, #f4f4f4);
+
+        &:last-child {
+          margin-bottom: 0;
+          border-bottom: none;
+        }
+
+        .label {
+          font-weight: 600;
+          color: var(--theme-appTextSecondary, #525252);
+          font-size: 12px;
+          text-transform: uppercase;
+          letter-spacing: 0.32px;
+          min-width: 100px;
+          margin-right: 16px;
+          font-family: 'IBM Plex Sans', sans-serif;
+        }
+
+        .value {
+          color: var(--theme-appText, #161616);
+          font-size: 14px;
+          word-break: break-word;
+          text-align: right;
+          flex: 1;
+          font-family: 'IBM Plex Sans', sans-serif;
+
+          &.url {
+            font-family: 'IBM Plex Mono', 'Courier New', monospace;
+            font-size: 12px;
+            background: var(--theme-appUIBg, #f4f4f4);
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid var(--theme-appColorDecorative, #e0e0e0);
+          }
+
+          &.method {
+            background: var(--theme-appColorPrimary, rgb(204, 140, 10));
+            color: white;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+          }
+
+          &.code {
+            font-family: 'IBM Plex Mono', 'Courier New', monospace;
+            font-size: 12px;
+            background: var(--theme-appUIBg, #f4f4f4);
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid var(--theme-appColorDecorative, #e0e0e0);
+          }
+
+          &.browser {
+            font-size: 12px;
+            color: var(--theme-appTextSecondary, #525252);
+            font-style: italic;
+          }
+        }
+      }
+    }
+  }
+
+  // ==================== TECHNICAL SECTIONS ====================
+  .stack-trace-section,
+  .technical-data {
+    margin-bottom: 32px;
+    background: var(--theme-appUIForegroundBg, #ffffff);
+    border: 1px solid var(--theme-appColorDecorative, #e0e0e0);
+    border-radius: 8px;
+    padding: 24px;
+
+    h5 {
+      margin: 0 0 20px 0;
+      color: var(--theme-appText, #161616);
+      font-size: 16px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'IBM Plex Sans', sans-serif;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--theme-appColorDecorative, #e0e0e0);
+    }
+
+    .code-block {
+      background: #161616;
+      color: #f4f4f4;
+      border-radius: 4px;
+      padding: 20px;
+      font-family: 'IBM Plex Mono', 'Courier New', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-word;
+      max-height: 400px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      border: 1px solid var(--theme-appColorDecorative, #e0e0e0);
+
+      // Scrollbar personnalisée pour les blocs de code
+      &::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: #262626;
+        border-radius: 3px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: #525252;
+        border-radius: 3px;
+
+        &:hover {
+          background: #6f6f6f;
+        }
+      }
+    }
+  }
+
+  .technical-data {
+    .data-tabs {
+      display: grid;
+      gap: 24px;
+
+      .data-tab {
+        background: var(--theme-appUIBg, #f4f4f4);
+        border: 1px solid var(--theme-appColorDecorative, #e0e0e0);
+        border-radius: 4px;
+        padding: 16px;
+
+        h6 {
+          margin: 0 0 12px 0;
+          color: var(--theme-appText, #161616);
+          font-size: 14px;
+          font-weight: 600;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-family: 'IBM Plex Sans', sans-serif;
+          padding-bottom: 8px;
+          border-bottom: 1px solid var(--theme-appColorDecorative, #e0e0e0);
+        }
+
+        .code-block {
+          max-height: 300px;
+          margin: 0;
+
+          &.request {
+            background: #0f3460;
+            color: #a6c8ff;
+            border: 1px solid #1f70c1;
+          }
+
+          &.response {
+            background: #5d2d00;
+            color: #ffb784;
+            border: 1px solid #ba6f00;
+          }
+
+          &.additional {
+            background: #31135e;
+            color: #d4bbff;
+            border: 1px solid #6929c4;
+          }
+        }
+      }
+    }
+  }
+}
+
+// ==================== DIALOG ACTIONS ====================
+.dialog-actions {
+  background: var(--theme-appUIForegroundBg, #ffffff);
+  border: 1px solid var(--theme-appColorDecorative, #e0e0e0);
+  border-radius: 8px;
+  padding: 24px;
+  margin-top: 32px;
+
+  h5 {
+    margin: 0 0 20px 0;
+    color: var(--theme-appText, #161616);
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--theme-appColorDecorative, #e0e0e0);
+  }
+
+  .action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+
+    button {
+      min-height: 48px;
+      font-weight: 500;
+      font-family: 'IBM Plex Sans', sans-serif;
+      text-transform: none;
+      border-radius: 0;
+      padding: 0 24px;
+      transition: all 70ms cubic-bezier(0.2, 0, 0.38, 0.9);
+
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      }
+
+      &:focus {
+        outline: 2px solid var(--theme-appColorPrimary, rgb(204, 140, 10));
+        outline-offset: 2px;
+      }
+    }
+  }
+}

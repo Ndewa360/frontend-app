@@ -74,8 +74,19 @@ import { PropertyDetailsCompleteComponent } from './properties/property-details-
 import { PropertyUnitsComponent } from './properties/components/property-units/property-units.component'
 import { PropertyTenantsComponent } from './properties/components/property-tenants/property-tenants.component'
 import { PropertyHistoryComponent } from './properties/components/property-history/property-history.component'
+// import { PropertyFinancesComponent } from './properties/components/property-finances/property-finances.component'
 import { PropertyFinancesComponent } from './properties/components/property-finances/property-finances.component'
 import { PropertyOverviewComponent } from './properties/components/property-overview/property-overview.component'
+
+// Sous-composants de PropertyFinances
+import { FinancialOverviewComponent } from './properties/components/property-finances/components/financial-overview/financial-overview.component'
+import { TenantPaymentAnalysisComponent } from './properties/components/property-finances/components/tenant-payment-analysis/tenant-payment-analysis.component'
+import { DepositsSummaryComponent } from './properties/components/property-finances/components/deposits-summary/deposits-summary.component'
+import { MonthlyRevenueAnalysisComponent } from './properties/components/property-finances/components/monthly-revenue-analysis/monthly-revenue-analysis.component'
+
+import { TenantPaymentTrackingComponent } from './properties/components/property-finances/components/tenant-payment-tracking/tenant-payment-tracking.component'
+import { ActualRevenueAnalysisComponent } from './properties/components/property-finances/components/actual-revenue-analysis/actual-revenue-analysis.component'
+import { AdvancedFinancialDashboardComponent } from './properties/components/property-finances/components/advanced-financial-dashboard/advanced-financial-dashboard.component'
 import { TenantDetailsPanelComponent } from './properties/components/tenant-details-panel/tenant-details-panel.component'
 import { PropertyUnitsListComponent } from './properties/components/property-units-list/property-units-list.component'
 import { ModernFinancialDashboardComponent } from './properties/components/modern-financial-dashboard/modern-financial-dashboard.component';
@@ -171,6 +182,15 @@ ModuleRegistry.registerModules([
     PropertyUnitsListComponent,
     ModernFinancialDashboardComponent,
     TenantDetailsPanelComponent,
+
+    // Sous-composants de PropertyFinances
+    FinancialOverviewComponent,
+    TenantPaymentAnalysisComponent,
+    DepositsSummaryComponent,
+    MonthlyRevenueAnalysisComponent,
+    TenantPaymentTrackingComponent,
+    ActualRevenueAnalysisComponent,
+    AdvancedFinancialDashboardComponent,
 
     // Composants du modal de détails d'unité
     UnitDetailsModalComponent,

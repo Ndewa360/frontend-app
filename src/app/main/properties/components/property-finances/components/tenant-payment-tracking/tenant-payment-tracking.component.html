@@ -1,0 +1,238 @@
+<!-- Suivi des paiements par locataire -->
+<div class="tenant-payment-tracking">
+
+  <!-- Header avec gradient thème -->
+  <div class="header-section">
+    <div class="flex items-center justify-between mb-4">
+      <div class="header-content">
+        <h3>Suivi des paiements par locataire</h3>
+        <p>Analyse détaillée des paiements pour {{ selectedYear }}</p>
+      </div>
+
+      <!-- Actions d'export -->
+      <div class="header-actions">
+        <button (click)="exportToExcel()"
+                [disabled]="isLoading"
+                class="btn-export">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+          <span>Excel</span>
+        </button>
+
+        <button (click)="exportToCSV()"
+                [disabled]="isLoading"
+                class="btn-export">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+          <span>CSV</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- </div> -->
+
+  <!-- Section métriques avec design moderne -->
+  <div class="metrics-section">
+    <div class="metrics-grid">
+      <div class="metric-card info">
+        <div class="metric-value">{{ paymentSummary.totalTenants }}</div>
+        <div class="metric-label">Total locataires</div>
+      </div>
+
+      <div class="metric-card success">
+        <div class="metric-value">{{ paymentSummary.upToDateTenants }}</div>
+        <div class="metric-label">À jour</div>
+      </div>
+
+      <div class="metric-card warning">
+        <div class="metric-value">{{ paymentSummary.partialPaymentTenants }}</div>
+        <div class="metric-label">Paiement partiel</div>
+      </div>
+
+      <div class="metric-card danger">
+        <div class="metric-value">{{ paymentSummary.lateTenants }}</div>
+        <div class="metric-label">En retard</div>
+      </div>
+
+      <div class="metric-card secondary">
+        <div class="metric-value">{{ paymentSummary.noContractTenants }}</div>
+        <div class="metric-label">Sans contrat</div>
+      </div>
+
+      <div class="metric-card primary">
+        <div class="metric-value">{{ paymentSummary.globalPaymentRate | number:'1.1-1' }}%</div>
+        <div class="metric-label">Taux global</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtres et recherche -->
+  <div class="filters-section">
+    <div class="filters-container">
+
+      <!-- Recherche -->
+      <div class="search-container">
+        <input type="text"
+               [(ngModel)]="searchTerm"
+               (ngModelChange)="onFilterChange()"
+               placeholder="Rechercher par nom ou unité...">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+      </div>
+
+      <!-- Filtres -->
+      <div class="filters-group">
+        <select [(ngModel)]="selectedStatus"
+                (ngModelChange)="onFilterChange()">
+          <option value="all">Tous les statuts</option>
+          <option value="up_to_date">À jour</option>
+          <option value="partial">Paiement partiel</option>
+          <option value="late">En retard</option>
+          <option value="no_contract">Sans contrat</option>
+          <option value="ended_contract">Contrat terminé</option>
+        </select>
+
+        <select [(ngModel)]="selectedPeriod"
+                (ngModelChange)="onFilterChange()">
+          <option value="all">Toute l'année</option>
+          <option value="last_2_months">2 derniers mois</option>
+          <option value="current_month">Mois actuel</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenu principal -->
+  <div class="content-section">
+
+    <!-- Tableau des locataires -->
+    <div *ngIf="!isLoading && getPaginatedTenants().length > 0" class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Locataire</th>
+            <th>Unité</th>
+            <th>Loyer mensuel</th>
+            <th>Total attendu</th>
+            <th>Total reçu</th>
+            <th>En attente</th>
+            <th>Taux</th>
+            <th>Statut</th>
+            <th>Dernier paiement</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let tenant of getPaginatedTenants(); trackBy: trackByTenantId"
+              (click)="selectTenant(tenant)">
+
+            <!-- Nom du locataire -->
+            <td>
+              <div class="flex items-center gap-3">
+                <div class="tenant-avatar">
+                  {{ tenant.tenantName.charAt(0).toUpperCase() }}
+                </div>
+                <div class="tenant-info">
+                  <div class="tenant-name">{{ tenant.tenantName }}</div>
+                  <div class="tenant-id">ID: {{ tenant.tenantId }}</div>
+                </div>
+              </div>
+            </td>
+
+            <!-- Unité -->
+            <td>
+              <div class="font-medium text-gray-900">{{ tenant.roomCode }}</div>
+            </td>
+
+            <!-- Loyer mensuel -->
+            <td>
+              <div class="text-gray-900">{{ tenant.monthlyRent | currency:'XAF':'symbol':'1.0-0' }}</div>
+            </td>
+
+            <!-- Total attendu -->
+            <td>
+              <div class="text-gray-900">{{ tenant.totalExpected | currency:'XAF':'symbol':'1.0-0' }}</div>
+            </td>
+
+            <!-- Total reçu -->
+            <td>
+              <div class="font-medium text-green-600">{{ tenant.totalReceived | currency:'XAF':'symbol':'1.0-0' }}</div>
+            </td>
+
+            <!-- En attente -->
+            <td>
+              <div class="text-red-600" *ngIf="tenant.totalPending > 0">
+                {{ tenant.totalPending | currency:'XAF':'symbol':'1.0-0' }}
+              </div>
+              <div class="text-gray-400" *ngIf="tenant.totalPending <= 0">-</div>
+            </td>
+
+            <!-- Taux de paiement -->
+            <td>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" [style.width.%]="tenant.paymentRate"></div>
+                </div>
+                <span class="progress-text">{{ tenant.paymentRate | number:'1.1-1' }}%</span>
+              </div>
+            </td>
+
+            <!-- Statut -->
+            <td>
+              <span [ngClass]="getStatusColor(tenant.status)"
+                    class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium">
+                {{ getStatusLabel(tenant.status) }}
+              </span>
+            </td>
+
+            <!-- Dernier paiement -->
+            <td>
+              <div class="text-gray-900" *ngIf="tenant.lastPaymentDate">
+                {{ tenant.lastPaymentDate | date:'dd/MM/yyyy' }}
+              </div>
+              <div class="text-gray-400" *ngIf="!tenant.lastPaymentDate">Aucun</div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="!isLoading && totalPages > 1" class="pagination-container">
+      <div class="pagination-info">
+        Affichage de {{ (currentPage - 1) * itemsPerPage + 1 }} à
+        {{ Math.min(currentPage * itemsPerPage, getFilteredTenants().length) }}
+        sur {{ getFilteredTenants().length }} résultats
+      </div>
+
+      <div class="pagination-controls">
+        <button (click)="goToPage(currentPage - 1)"
+                [disabled]="currentPage <= 1">
+          Précédent
+        </button>
+
+        <span class="page-info">
+          Page {{ currentPage }} sur {{ totalPages }}
+        </span>
+
+        <button (click)="goToPage(currentPage + 1)"
+                [disabled]="currentPage >= totalPages">
+          Suivant
+        </button>
+      </div>
+    </div>
+
+    <!-- Aucune donnée -->
+    <div *ngIf="!isLoading && getPaginatedTenants().length === 0" class="empty-state">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+      </svg>
+      <h3>Aucun locataire trouvé</h3>
+      <p>Aucun locataire ne correspond aux critères de recherche sélectionnés.</p>
+    </div>
+
+  </div>
+</div>

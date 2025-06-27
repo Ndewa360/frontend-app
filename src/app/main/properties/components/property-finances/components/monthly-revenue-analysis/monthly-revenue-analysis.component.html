@@ -1,0 +1,257 @@
+<!-- Analyse des revenus mensuels -->
+<div class="monthly-revenue-analysis">
+
+  <!-- Header avec gradient thème -->
+  <div class="header-section">
+    <div class="header-content">
+      <div class="header-text">
+        <h3 class="header-title">Analyse des revenus mensuels</h3>
+        <p class="header-subtitle">Évolution des paiements par mois pour {{ selectedYear }}</p>
+      </div>
+
+      <!-- Actions d'export -->
+      <div class="header-actions">
+        <button (click)="exportToExcel()"
+                [disabled]="isLoading"
+                class="btn-export">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+          <span>Excel</span>
+        </button>
+
+        <button (click)="exportToCSV()"
+                [disabled]="isLoading"
+                class="btn-export">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+          <span>CSV</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- État de chargement -->
+  <div *ngIf="isLoading" class="loading-overlay">
+    <div class="loading-content">
+      <div class="loading-spinner"></div>
+      <span class="loading-text">Chargement des données mensuelles...</span>
+    </div>
+  </div>
+
+  <!-- Section contenu principal -->
+  <div *ngIf="!isLoading && monthlyData.length > 0" class="content-section">
+
+    <!-- Section métriques avec design moderne -->
+    <div class="metrics-section">
+      <div class="metrics-grid">
+
+        <!-- Total annuel -->
+        <div class="metric-card primary">
+          <div class="metric-content">
+            <div class="metric-icon">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 00-2-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+              </svg>
+            </div>
+            <div class="metric-info">
+              <p class="metric-label">Total annuel</p>
+              <p class="metric-value">{{ getTotalRevenue() | currency:'XAF':'symbol':'1.0-0' }}</p>
+              <p class="metric-description">Revenus collectés en {{ selectedYear }}</p>
+              <div class="metric-trend">
+                <svg class="trend-icon positive" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                </svg>
+                <span class="trend-text">Performance annuelle</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Moyenne mensuelle -->
+        <div class="metric-card success">
+          <div class="metric-content">
+            <div class="metric-icon">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+              </svg>
+            </div>
+            <div class="metric-info">
+              <p class="metric-label">Moyenne mensuelle</p>
+              <p class="metric-value">{{ getAverageMonthlyRevenue() | currency:'XAF':'symbol':'1.0-0' }}</p>
+              <p class="metric-description">Revenus moyens par mois</p>
+              <div class="metric-progress">
+                <div class="progress-bar">
+                  <div class="progress-fill" [style.width.%]="(getAverageMonthlyRevenue() / getTotalRevenue() * 12 * 100)"></div>
+                </div>
+                <span class="progress-text">{{ monthlyData.length }} mois</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Meilleur mois -->
+        <div class="metric-card info">
+          <div class="metric-content">
+            <div class="metric-icon">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+              </svg>
+            </div>
+            <div class="metric-info">
+              <p class="metric-label">Meilleur mois</p>
+              <p class="metric-value">{{ getBestMonth() }}</p>
+              <p class="metric-description">Mois avec le plus de revenus</p>
+              <div class="metric-status">
+                <span class="status-badge status-excellent">
+                  Performance maximale
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Taux de collecte global -->
+        <div class="metric-card secondary" [ngClass]="{
+          'success': yearlyStats.averageCollectionRate >= 90,
+          'warning': yearlyStats.averageCollectionRate >= 70 && yearlyStats.averageCollectionRate < 90,
+          'danger': yearlyStats.averageCollectionRate < 70
+        }">
+          <div class="metric-content">
+            <div class="metric-icon">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 00-2-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+              </svg>
+            </div>
+            <div class="metric-info">
+              <p class="metric-label">Taux de collecte</p>
+              <p class="metric-value">{{ formatPercentage(yearlyStats.averageCollectionRate) }}</p>
+              <p class="metric-description">Performance de recouvrement</p>
+              <div class="metric-progress">
+                <div class="progress-bar">
+                  <div class="progress-fill" [style.width.%]="yearlyStats.averageCollectionRate"></div>
+                </div>
+                <span class="progress-text">{{ formatPrice(yearlyStats.totalReceived) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tableau des données mensuelles -->
+    <div class="table-section">
+      <div class="table-header">
+        <h4 class="table-title">Détail mensuel</h4>
+        <div class="table-summary">
+          <span class="summary-text">{{ monthlyData.length }} mois analysés</span>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Mois</th>
+              <th>Revenus</th>
+              <th>Unités actives</th>
+              <th>Évolution</th>
+              <th>Performance</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let month of monthlyData; let i = index"
+                [style.animation-delay.ms]="i * 100">
+
+              <!-- Mois -->
+              <td>
+                <div class="month-info">
+                  <div class="month-name">{{ month.monthName }}</div>
+                  <div class="month-year">{{ selectedYear }}</div>
+                  <div class="month-indicator">
+                    <span class="month-number">{{ (month.month + 1).toString().padStart(2, '0') }}</span>
+                  </div>
+                </div>
+              </td>
+
+              <!-- Revenus -->
+              <td>
+                <div class="revenue-info">
+                  <div class="revenue-amount">{{ month.totalRevenue | currency:'XAF':'symbol':'1.0-0' }}</div>
+                  <div class="revenue-details">
+                    <span class="payments-count">{{ month.paymentsCount }} paiements</span>
+                    <span class="collection-rate">{{ formatPercentage(month.collectionRate) }}</span>
+                  </div>
+                </div>
+              </td>
+
+              <!-- Unités actives -->
+              <td>
+                <div class="units-info">
+                  <div class="units-count">{{ month.activeUnits }}</div>
+                  <div class="units-label">unités actives</div>
+                </div>
+              </td>
+
+              <!-- Évolution -->
+              <td>
+                <div class="growth-container">
+                  <span class="growth-badge" [ngClass]="{
+                    'growth-positive': month.growth > 0,
+                    'growth-negative': month.growth < 0,
+                    'growth-stable': month.growth === 0
+                  }">
+                    <svg class="growth-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path *ngIf="month.growth > 0" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                      <path *ngIf="month.growth < 0" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path>
+                      <path *ngIf="month.growth === 0" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14"></path>
+                    </svg>
+                    <span *ngIf="month.growth > 0">+{{ month.growth }}%</span>
+                    <span *ngIf="month.growth < 0">{{ month.growth }}%</span>
+                    <span *ngIf="month.growth === 0">Stable</span>
+                  </span>
+                </div>
+              </td>
+
+              <!-- Performance -->
+              <td>
+                <div class="performance-container">
+                  <div class="progress-bar">
+                    <div class="progress-fill"
+                         [style.width.%]="month.performancePercentage"
+                         [ngClass]="{
+                           'excellent': month.performancePercentage >= 90,
+                           'good': month.performancePercentage >= 70 && month.performancePercentage < 90,
+                           'poor': month.performancePercentage < 70
+                         }">
+                      <div class="progress-shine"></div>
+                    </div>
+                  </div>
+                  <span class="progress-text">{{ month.performancePercentage }}%</span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- État vide -->
+  <div *ngIf="!isLoading && monthlyData.length === 0" class="empty-state">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 00-2-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+    </svg>
+    <h3>Aucune donnée disponible</h3>
+    <p>Aucune donnée de revenus mensuels trouvée pour {{ selectedYear }}.</p>
+    <div class="empty-actions">
+      <button (click)="exportToExcel()" class="btn-secondary">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+        </svg>
+        Actualiser les données
+      </button>
+    </div>
+  </div>
+</div>

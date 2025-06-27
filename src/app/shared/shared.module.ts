@@ -5,6 +5,7 @@ import { DummyTableRichComponent } from "./components/dummy-table-rich/dummy-tab
 import { DummyTablePaginationComponent } from './components/dummy-table-pagination/dummy-table-pagination.component'
 import { DummyTableExpansionComponent } from './components/dummy-table-expansion/dummy-table-expansion.component'
 import { DummyTableAdvancedComponent } from './components/dummy-table-advanced/dummy-table-advanced.component'
+import { DebugTokenPanelComponent } from './components/debug-token-panel/debug-token-panel.component'
 import { NgxsModule } from '@ngxs/store';
 import { 
   UserProfileState, 
@@ -116,7 +117,8 @@ import { ProspectionState } from './store/prospection/prospection.state';
     ScrollRevealDirective,
     CountUpDirective,
     SmartNotificationsComponent,
-    LoadingOverlayComponent
+    LoadingOverlayComponent,
+    DebugTokenPanelComponent
   ],
   exports: [
     YoupezModule,
@@ -140,7 +142,8 @@ import { ProspectionState } from './store/prospection/prospection.state';
     ScrollRevealDirective,
     CountUpDirective,
     SmartNotificationsComponent,
-    LoadingOverlayComponent
+    LoadingOverlayComponent,
+    DebugTokenPanelComponent
   ],
   providers: [
     // Nouveaux services ajoutés

@@ -1,0 +1,304 @@
+<!-- Vue d'ensemble financière -->
+<div class="financial-overview-container">
+  
+  <!-- Header avec actions -->
+  <div class="overview-header">
+    <div class="header-content">
+      <div class="header-text">
+        <h2 class="header-title">Vue d'ensemble financière</h2>
+        <p class="header-subtitle">Analyse des performances financières pour {{ selectedYear }}</p>
+      </div>
+
+      <div class="header-actions">
+        <button (click)="onExportOverview()" class="btn-export">
+          <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+          <span>Exporter Vue d'ensemble</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Métriques principales -->
+  <div class="metrics-grid">
+
+    <!-- Revenus totaux -->
+    <div class="metric-card primary">
+      <div class="metric-content">
+        <div class="metric-icon">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="getMetricIcon('revenue')"></path>
+          </svg>
+        </div>
+        <div class="metric-info">
+          <p class="metric-label">Revenus reçus</p>
+          <p class="metric-value">{{ formatPrice(metrics.totalRevenue) }}</p>
+          <p class="metric-description">sur {{ formatPrice(metrics.totalExpected) }} attendus</p>
+          <div class="metric-progress">
+            <div class="progress-bar">
+              <div class="progress-fill" [style.width.%]="metrics.collectionRate"></div>
+            </div>
+            <span class="progress-text">{{ formatPercentage(metrics.collectionRate) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Taux de recouvrement -->
+    <div class="metric-card success" [ngClass]="{
+      'success': metrics.collectionRate >= 90,
+      'warning': metrics.collectionRate >= 70 && metrics.collectionRate < 90,
+      'danger': metrics.collectionRate < 70
+    }">
+      <div class="metric-content">
+        <div class="metric-icon">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="getMetricIcon('collection')"></path>
+          </svg>
+        </div>
+        <div class="metric-info">
+          <p class="metric-label">Taux de recouvrement</p>
+          <p class="metric-value">{{ formatPercentage(metrics.collectionRate) }}</p>
+          <p class="metric-description">Performance de collecte</p>
+          <div class="metric-status">
+            <span class="status-badge" [ngClass]="{
+              'status-excellent': metrics.collectionRate >= 90,
+              'status-good': metrics.collectionRate >= 70 && metrics.collectionRate < 90,
+              'status-poor': metrics.collectionRate < 70
+            }">
+              {{ metrics.collectionRate >= 90 ? 'Excellent' : metrics.collectionRate >= 70 ? 'Bon' : 'À améliorer' }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Taux d'occupation -->
+    <div class="metric-card info" [ngClass]="{
+      'success': metrics.occupancyRate >= 85,
+      'warning': metrics.occupancyRate >= 70 && metrics.occupancyRate < 85,
+      'danger': metrics.occupancyRate < 70
+    }">
+      <div class="metric-content">
+        <div class="metric-icon">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="getMetricIcon('occupancy')"></path>
+          </svg>
+        </div>
+        <div class="metric-info">
+          <p class="metric-label">Taux d'occupation</p>
+          <p class="metric-value">{{ formatPercentage(metrics.occupancyRate) }}</p>
+          <p class="metric-description">{{ metrics.occupiedRooms }}/{{ metrics.totalRooms }} unités occupées</p>
+          <div class="metric-progress">
+            <div class="progress-bar">
+              <div class="progress-fill" [style.width.%]="metrics.occupancyRate"></div>
+            </div>
+            <span class="progress-text">{{ metrics.occupiedRooms }} unités</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loyer moyen -->
+    <div class="metric-card secondary">
+      <div class="metric-content">
+        <div class="metric-icon">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="getMetricIcon('average')"></path>
+          </svg>
+        </div>
+        <div class="metric-info">
+          <p class="metric-label">Loyer moyen</p>
+          <p class="metric-value">{{ formatPrice(metrics.averageRent) }}</p>
+          <p class="metric-description">Par unité/mois</p>
+          <div class="metric-trend">
+            <svg class="trend-icon positive" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+            </svg>
+            <span class="trend-text">+5.8% vs année précédente</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Graphique mensuel et détails -->
+  <div class="content-grid">
+
+    <!-- Évolution mensuelle -->
+    <div class="monthly-evolution-card">
+      <div class="card-header">
+        <div class="header-info">
+          <h3 class="card-title">Évolution mensuelle</h3>
+          <p class="card-subtitle">Comparaison revenus attendus vs reçus</p>
+        </div>
+        <button (click)="onExportMonthlyData()" class="btn-export-small">
+          <svg class="btn-icon-small" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+          <span>Exporter</span>
+        </button>
+      </div>
+
+      <!-- Graphique amélioré avec barres -->
+      <div class="monthly-chart">
+        <div *ngFor="let month of monthlyData; let i = index"
+             class="month-row"
+             [style.animation-delay.ms]="i * 100">
+
+          <div class="month-label">
+            <span class="month-name">{{ month.month.substring(0, 3) }}</span>
+            <span class="month-index">{{ (i + 1).toString().padStart(2, '0') }}</span>
+          </div>
+
+          <div class="progress-container">
+            <!-- Barre de fond (attendu) -->
+            <div class="progress-track">
+              <!-- Barre de progression (reçu) -->
+              <div class="progress-bar-fill"
+                   [style.width.%]="month.rate"
+                   [ngClass]="{
+                     'excellent': month.rate >= 90,
+                     'good': month.rate >= 70 && month.rate < 90,
+                     'poor': month.rate < 70
+                   }">
+                <div class="progress-shine"></div>
+              </div>
+            </div>
+
+            <!-- Valeurs avec meilleur design -->
+            <div class="progress-values">
+              <div class="value-received">
+                <span class="value-label">Reçu</span>
+                <span class="value-amount">{{ formatPrice(month.received) }}</span>
+              </div>
+              <div class="value-expected">
+                <span class="value-label">Attendu</span>
+                <span class="value-amount">{{ formatPrice(month.expected) }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="rate-display">
+            <span class="rate-percentage"
+                  [ngClass]="{
+                    'rate-excellent': month.rate >= 90,
+                    'rate-good': month.rate >= 70 && month.rate < 90,
+                    'rate-poor': month.rate < 70
+                  }">
+              {{ formatPercentage(month.rate) }}
+            </span>
+            <div class="rate-indicator"
+                 [ngClass]="{
+                   'indicator-excellent': month.rate >= 90,
+                   'indicator-good': month.rate >= 70 && month.rate < 90,
+                   'indicator-poor': month.rate < 70
+                 }">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Résumé financier -->
+    <div class="financial-summary-card">
+      <div class="summary-header">
+        <h3 class="summary-title">Résumé financier</h3>
+        <div class="summary-badge">
+          <span class="badge-text">{{ selectedYear }}</span>
+        </div>
+      </div>
+
+      <div class="summary-content">
+        <!-- Total des cautions -->
+        <div class="summary-item deposits">
+          <div class="item-icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+            </svg>
+          </div>
+          <div class="item-content">
+            <div class="item-info">
+              <p class="item-label">Total des cautions</p>
+              <p class="item-description">Montant sécurisé</p>
+            </div>
+            <div class="item-value">
+              <p class="value-amount">{{ formatPrice(metrics.totalDeposits) }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Performance globale -->
+        <div class="summary-item performance">
+          <div class="item-icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+            </svg>
+          </div>
+          <div class="item-content">
+            <div class="item-info">
+              <p class="item-label">Performance globale</p>
+              <p class="item-description">Taux de recouvrement</p>
+            </div>
+            <div class="item-value">
+              <p class="value-amount">{{ formatPercentage(metrics.collectionRate) }}</p>
+              <div class="performance-bar">
+                <div class="bar-track"></div>
+                <div class="bar-fill" [style.width.%]="metrics.collectionRate"></div>
+                <div class="bar-indicator" [style.left.%]="metrics.collectionRate"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Manque à gagner -->
+        <div class="summary-item loss">
+          <div class="item-icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+            </svg>
+          </div>
+          <div class="item-content">
+            <div class="item-info">
+              <p class="item-label">Manque à gagner</p>
+              <p class="item-description">Revenus non perçus</p>
+            </div>
+            <div class="item-value">
+              <p class="value-amount">{{ formatPrice(metrics.totalExpected - metrics.totalRevenue) }}</p>
+              <div class="loss-percentage">
+                <span class="loss-rate">{{ formatPercentage(100 - metrics.collectionRate) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Projection annuelle -->
+        <div class="summary-item projection">
+          <div class="item-icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+            </svg>
+          </div>
+          <div class="item-content">
+            <div class="item-info">
+              <p class="item-label">Projection annuelle</p>
+              <p class="item-description">Potentiel maximum</p>
+            </div>
+            <div class="item-value">
+              <p class="value-amount">{{ formatPrice(metrics.totalExpected) }}</p>
+              <div class="projection-trend">
+                <svg class="trend-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"></path>
+                </svg>
+                <span class="trend-label">Objectif {{ selectedYear }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Les données de chargement sont gérées par le composant parent -->
+</div>

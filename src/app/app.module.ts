@@ -16,6 +16,7 @@ import { NgxsModule } from '@ngxs/store';
 import { environment } from 'src/environments/environment';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AuthTokenInterceptor } from './shared/interceptors';
+import { MonitoringInterceptor } from './shared/interceptors/monitoring-interceptor';
 import { registerLocaleData } from '@angular/common';
 
 // Fonction pour s'assurer que les styles sont chargés
@@ -67,6 +68,7 @@ registerLocaleData(localeFr);
 	],
 	providers: [
 		{ provide: HTTP_INTERCEPTORS, useClass: AuthTokenInterceptor, multi: true },
+		{ provide: HTTP_INTERCEPTORS, useClass: MonitoringInterceptor, multi: true },
 		{ provide: LOCALE_ID, useValue: "fr-FR" },
 		// S'assurer que les styles sont chargés avant l'initialisation de l'application
 		{

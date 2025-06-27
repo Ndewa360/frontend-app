@@ -1,0 +1,202 @@
+<!-- Récapitulatif financier annuel -->
+<div class="annual-financial-recap bg-white rounded-lg shadow-sm border border-gray-200">
+  
+  <!-- Header -->
+  <div class="px-6 py-4 border-b border-gray-200">
+    <div class="flex items-center justify-between">
+      <div>
+        <h3 class="text-lg font-semibold text-gray-900">Récapitulatif financier annuel</h3>
+        <p class="text-sm text-gray-600 mt-1">Analyse complète des performances financières pour {{ selectedYear }}</p>
+      </div>
+      
+      <!-- Actions -->
+      <div class="flex items-center space-x-2">
+        <button (click)="exportToExcel()"
+                [disabled]="isLoading"
+                class="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200 disabled:opacity-50">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+          <span>Excel</span>
+        </button>
+        
+        <button (click)="exportToCSV()"
+                [disabled]="isLoading"
+                class="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200 disabled:opacity-50">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+          <span>CSV</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenu -->
+  <div class="p-6">
+    
+    <!-- État de chargement -->
+    <div *ngIf="isLoading" class="flex items-center justify-center py-12">
+      <div class="text-center">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-custom-primary mx-auto mb-4"></div>
+        <p class="text-gray-600">Chargement du récapitulatif annuel...</p>
+      </div>
+    </div>
+
+    <!-- Données disponibles -->
+    <div *ngIf="!isLoading && annualSummary">
+      
+      <!-- Métriques principales -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg p-6 text-white">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+              </svg>
+            </div>
+            <div class="ml-4">
+              <p class="text-blue-100">Revenus totaux</p>
+              <p class="text-2xl font-bold">{{ annualSummary.totalRevenue | currency:'XAF':'symbol':'1.0-0' }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-gradient-to-r from-green-500 to-green-600 rounded-lg p-6 text-white">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 00-2-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+              </svg>
+            </div>
+            <div class="ml-4">
+              <p class="text-green-100">Taux d'occupation</p>
+              <p class="text-2xl font-bold">{{ annualSummary.occupancyRate }}%</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg p-6 text-white">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+              </svg>
+            </div>
+            <div class="ml-4">
+              <p class="text-purple-100">Dépôts de garantie</p>
+              <p class="text-2xl font-bold">{{ annualSummary.totalDeposits | currency:'XAF':'symbol':'1.0-0' }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg p-6 text-white">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+              </svg>
+            </div>
+            <div class="ml-4">
+              <p class="text-orange-100">Performance</p>
+              <p class="text-2xl font-bold">{{ annualSummary.performanceScore }}%</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Analyse détaillée par unité -->
+      <div class="mb-8">
+        <h4 class="text-lg font-semibold text-gray-900 mb-4">Performance par unité</h4>
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Unité</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Loyer mensuel</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Revenus reçus</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Taux de collecte</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr *ngFor="let unit of annualSummary.unitBreakdown" class="hover:bg-gray-50">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900">{{ unit.unitCode }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-900">{{ unit.unitType }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-900">{{ unit.monthlyRent | currency:'XAF':'symbol':'1.0-0' }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-900">{{ unit.totalReceived | currency:'XAF':'symbol':'1.0-0' }}</div>
+                  <div class="text-sm text-gray-500">sur {{ unit.totalExpected | currency:'XAF':'symbol':'1.0-0' }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <div class="flex-1 bg-gray-200 rounded-full h-2 mr-2">
+                      <div class="bg-custom-primary h-2 rounded-full" [style.width.%]="unit.collectionRate"></div>
+                    </div>
+                    <span class="text-sm text-gray-600">{{ unit.collectionRate }}%</span>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span [ngClass]="{
+                    'bg-green-100 text-green-800': unit.collectionRate >= 90,
+                    'bg-yellow-100 text-yellow-800': unit.collectionRate >= 70 && unit.collectionRate < 90,
+                    'bg-red-100 text-red-800': unit.collectionRate < 70
+                  }" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
+                    {{ unit.collectionRate >= 90 ? 'Excellent' : unit.collectionRate >= 70 ? 'Bon' : 'À améliorer' }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Évolution mensuelle -->
+      <div *ngIf="annualSummary.monthlyBreakdown && annualSummary.monthlyBreakdown.length > 0">
+        <h4 class="text-lg font-semibold text-gray-900 mb-4">Évolution mensuelle</h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <div *ngFor="let month of annualSummary.monthlyBreakdown" 
+               class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+            <div class="flex items-center justify-between mb-2">
+              <h5 class="text-sm font-medium text-gray-900">{{ month.monthName }}</h5>
+              <span [ngClass]="{
+                'text-green-600': month.performance >= 90,
+                'text-yellow-600': month.performance >= 70 && month.performance < 90,
+                'text-red-600': month.performance < 70
+              }" class="text-xs font-medium">
+                {{ month.performance }}%
+              </span>
+            </div>
+            <div class="space-y-1">
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-600">Revenus:</span>
+                <span class="font-medium">{{ month.revenue | currency:'XAF':'symbol':'1.0-0' }}</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-600">Paiements:</span>
+                <span class="font-medium">{{ month.paymentsCount }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Aucune donnée -->
+    <div *ngIf="!isLoading && !annualSummary" class="text-center py-12">
+      <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 00-2-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+      </svg>
+      <h3 class="mt-2 text-sm font-medium text-gray-900">Aucune donnée disponible</h3>
+      <p class="mt-1 text-sm text-gray-500">Aucun récapitulatif financier trouvé pour {{ selectedYear }}.</p>
+    </div>
+
+  </div>
+</div>

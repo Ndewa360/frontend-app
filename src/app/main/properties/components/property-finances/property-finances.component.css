@@ -1,0 +1,40 @@
+/* Styles pour le composant PropertyFinances */
+
+.property-finances {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* État de chargement comme dans modern-financial-dashboard */
+.loading-overlay {
+  backdrop-filter: blur(4px);
+}
+
+.loading-content {
+  border-radius: 0; /* Carbon style */
+  border: 1px solid var(--carbon-border-subtle-01);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
+}
+
+/* Animations pour les transitions */
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .loading-content {
+    margin: 1rem;
+    padding: 1.5rem !important;
+  }
+}

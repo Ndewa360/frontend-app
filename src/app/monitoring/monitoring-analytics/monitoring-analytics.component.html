@@ -1,0 +1,287 @@
+<div class="app-a-box app-scrollbar-fix">
+  <ng-scrollbar>
+    <div class="monitoring-analytics">
+  <!-- Header avec contrôles -->
+  <div class="analytics-header">
+    <div class="header-left">
+      <h2>📈 Analytics & Insights</h2>
+      <p class="subtitle">Analyse approfondie des performances et erreurs</p>
+    </div>
+    
+    <div class="header-controls">
+      <select 
+        class="period-select" 
+        [(ngModel)]="selectedPeriod" 
+        (change)="onPeriodChange()">
+        <option *ngFor="let option of periodOptions" [value]="option.value">
+          {{ option.label }}
+        </option>
+      </select>
+      
+      <button 
+        class="refresh-btn" 
+        (click)="refreshAnalytics()"
+        [disabled]="isLoading">
+        <span class="icon">🔄</span>
+        Actualiser
+      </button>
+    </div>
+  </div>
+
+  <!-- Métriques clés -->
+  <div class="key-metrics">
+    <h3>🎯 Métriques Clés</h3>
+    
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-icon">📊</div>
+        <div class="metric-content">
+          <div class="metric-value" [ngClass]="getErrorRateClass()">
+            {{ formatPercentage(errorRate) }}
+          </div>
+          <div class="metric-label">Taux d'erreur</div>
+          <div class="metric-description">Erreurs récentes / Total</div>
+        </div>
+      </div>
+      
+      <div class="metric-card">
+        <div class="metric-icon">✅</div>
+        <div class="metric-content">
+          <div class="metric-value" [ngClass]="getResolutionRateClass()">
+            {{ formatPercentage(resolutionRate) }}
+          </div>
+          <div class="metric-label">Taux de résolution</div>
+          <div class="metric-description">Erreurs résolues / Total</div>
+        </div>
+      </div>
+      
+      <div class="metric-card">
+        <div class="metric-icon">🚨</div>
+        <div class="metric-content">
+          <div class="metric-value" [class.critical]="criticalErrorsCount > 0">
+            {{ criticalErrorsCount }}
+          </div>
+          <div class="metric-label">Erreurs critiques</div>
+          <div class="metric-description">Nécessitent une attention immédiate</div>
+        </div>
+      </div>
+      
+      <div class="metric-card">
+        <div class="metric-icon">🏥</div>
+        <div class="metric-content">
+          <div class="metric-value" [ngClass]="getHealthScore() >= 90 ? 'metric-good' : getHealthScore() >= 70 ? 'metric-warning' : 'metric-critical'">
+            {{ getHealthScore() }}%
+          </div>
+          <div class="metric-label">Score de santé</div>
+          <div class="metric-description">État global du système</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Graphiques d'analyse -->
+  <div class="analytics-charts">
+    <h3>📊 Analyses Graphiques</h3>
+    
+    <div class="charts-grid">
+      <!-- Distribution des erreurs par niveau -->
+      <div class="chart-card" *ngIf="errorDistributionData.length > 0">
+        <h4>🎯 Distribution par Niveau</h4>
+        <div class="chart-container">
+          <div class="simple-pie-chart">
+            <div class="pie-legend">
+              <div *ngFor="let item of errorDistributionData" class="legend-item">
+                <div class="legend-color" [style.background-color]="getColorForLevel(item.level)"></div>
+                <span class="legend-label">{{ item.name }}: {{ item.value }}</span>
+              </div>
+            </div>
+            <div class="pie-visual">
+              <div *ngFor="let item of errorDistributionData; let i = index"
+                   class="pie-segment"
+                   [style.background-color]="getColorForLevel(item.level)"
+                   [style.height.%]="(item.value / getTotalErrors()) * 100">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Statut de résolution -->
+      <div class="chart-card" *ngIf="errorResolutionData.length > 0">
+        <h4>📋 Statut de Résolution</h4>
+        <div class="chart-container">
+          <div class="simple-bar-chart">
+            <div *ngFor="let item of errorResolutionData" class="bar-item">
+              <div class="bar-label">{{ item.name }}</div>
+              <div class="bar-container">
+                <div class="bar-fill"
+                     [style.width.%]="(item.value / getTotalErrors()) * 100"
+                     [style.background-color]="getColorForStatus(item.status)">
+                </div>
+                <span class="bar-value">{{ item.value }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top des erreurs -->
+      <div class="chart-card" *ngIf="topErrorsData.length > 0">
+        <h4>🔥 Top des Erreurs</h4>
+        <div class="chart-container">
+          <div class="simple-horizontal-bar-chart">
+            <div *ngFor="let item of topErrorsData" class="horizontal-bar-item">
+              <div class="horizontal-bar-label">{{ item.name }}</div>
+              <div class="horizontal-bar-container">
+                <div class="horizontal-bar-fill"
+                     [style.width.%]="(item.value / getMaxTopErrorValue()) * 100"
+                     [style.background-color]="getColorForLevel(item.level)">
+                </div>
+                <span class="horizontal-bar-value">{{ item.value }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Performance des services -->
+      <div class="chart-card" *ngIf="systemPerformanceData.length > 0">
+        <h4>⚡ Performance des Services</h4>
+        <div class="chart-container">
+          <div class="simple-bar-chart">
+            <div *ngFor="let item of systemPerformanceData" class="bar-item">
+              <div class="bar-label">{{ item.name }}</div>
+              <div class="bar-container">
+                <div class="bar-fill"
+                     [style.height.%]="(item.value / getMaxPerformanceValue()) * 100"
+                     [style.background-color]="getColorForPerformance(item.value)">
+                </div>
+                <span class="bar-value">{{ item.value }}ms</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Insights et recommandations -->
+  <div class="insights-section">
+    <div class="insights-grid">
+      <!-- Insights -->
+      <div class="insights-card">
+        <h3>💡 Insights</h3>
+        <div class="insights-list">
+          <div *ngFor="let insight of getInsights()" class="insight-item">
+            <span class="insight-text">{{ insight }}</span>
+          </div>
+          
+          <div *ngIf="getInsights().length === 0" class="no-insights">
+            <span class="no-data-icon">📭</span>
+            <span class="no-data-text">Aucun insight disponible pour le moment</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recommandations -->
+      <div class="recommendations-card">
+        <h3>🎯 Recommandations</h3>
+        <div class="recommendations-list">
+          <div *ngFor="let recommendation of getRecommendations()" class="recommendation-item">
+            <span class="recommendation-text">{{ recommendation }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Statistiques détaillées -->
+  <div class="detailed-stats" *ngIf="errorStats">
+    <h3>📋 Statistiques Détaillées</h3>
+    
+    <div class="stats-grid">
+      <!-- Erreurs par niveau -->
+      <div class="stats-card">
+        <h4>📊 Répartition par Niveau</h4>
+        <div class="stats-list">
+          <div class="stat-item" *ngFor="let item of errorDistributionData">
+            <div class="stat-label">{{ item.name }}</div>
+            <div class="stat-value">{{ item.value }}</div>
+            <div class="stat-bar">
+              <div class="stat-fill" 
+                   [style.width.%]="(item.value / errorStats.totalErrors) * 100">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Erreurs par source -->
+      <div class="stats-card">
+        <h4>🎯 Répartition par Source</h4>
+        <div class="stats-list">
+          <div class="stat-item" *ngFor="let source of Object.keys(errorStats.errorsBySource)">
+            <div class="stat-label">{{ source }}</div>
+            <div class="stat-value">{{ errorStats.errorsBySource[source] }}</div>
+            <div class="stat-bar">
+              <div class="stat-fill" 
+                   [style.width.%]="(errorStats.errorsBySource[source] / errorStats.totalErrors) * 100">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Erreurs par statut -->
+      <div class="stats-card">
+        <h4>📋 Répartition par Statut</h4>
+        <div class="stats-list">
+          <div class="stat-item" *ngFor="let status of Object.keys(errorStats.errorsByStatus)">
+            <div class="stat-label">{{ getStatusLabel(status) }}</div>
+            <div class="stat-value">{{ errorStats.errorsByStatus[status] }}</div>
+            <div class="stat-bar">
+              <div class="stat-fill" 
+                   [style.width.%]="(errorStats.errorsByStatus[status] / errorStats.totalErrors) * 100">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top erreurs détaillé -->
+      <div class="stats-card">
+        <h4>🔥 Top Erreurs Détaillé</h4>
+        <div class="top-errors-list">
+          <div class="top-error-item" *ngFor="let error of errorStats.topErrors; let i = index">
+            <div class="error-rank">{{ i + 1 }}</div>
+            <div class="error-content">
+              <div class="error-message" [title]="error.message">
+                {{ truncateText(error.message, 60) }}
+              </div>
+              <div class="error-meta">
+                <span class="error-count">{{ error.count }} occurrences</span>
+                <span class="error-level" [class]="'level-' + error.level.toLowerCase()">
+                  {{ getErrorLevelLabel(error.level) }}
+                </span>
+              </div>
+            </div>
+          </div>
+          
+          <div *ngIf="errorStats.topErrors.length === 0" class="no-top-errors">
+            <span class="no-data-text">Aucune erreur fréquente détectée</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading overlay -->
+  <div *ngIf="isLoading" class="loading-overlay">
+    <div class="loading-spinner">
+      <div class="spinner"></div>
+      <div class="loading-text">Analyse en cours...</div>
+    </div>
+  </div>
+    </div>
+  </ng-scrollbar>
+</div>

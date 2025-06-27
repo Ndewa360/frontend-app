@@ -38,6 +38,10 @@ export class AuthService {
     return this._httpClient.post<ApiResultFormat<null>>(`${environment.apiUrl}/email/send-confirmation`,{email});
   }
 
+  logout(): Observable<ApiResultFormat<null>> {
+    return this._httpClient.post<ApiResultFormat<null>>(`${environment.apiUrl}/user/auth/logout`, {});
+  }
+
   resendEmailLinkForResetPassword(email:string)
   {
     return this._httpClient.post<ApiResultFormat<null>>(`${environment.apiUrl}/user/auth/reset-password-link`,{email});
@@ -47,8 +51,6 @@ export class AuthService {
     return this._httpClient.post<ApiResultFormat<null>>(`${environment.apiUrl}/email/confirm`,{},{headers:{ Authorization: `Bearer ${token}`} });
   }
 
-  async logout() {
-    return null;
-  }
+
   
 }

@@ -27,9 +27,9 @@ export class AuthLoginComponent implements OnInit, OnDestroy {
   constructor(
     protected formBuilder: UntypedFormBuilder,
     private router: Router,
+    private route: ActivatedRoute,
     private _store: Store,
     private _ngxsAction: Actions,
-    private route: ActivatedRoute,
     private _toastrService: ToastrService
   ) {}
 
@@ -43,14 +43,43 @@ export class AuthLoginComponent implements OnInit, OnDestroy {
     const successSub = this._ngxsAction.pipe(
       ofActionSuccessful(UserProfileAction.LoginUserProfile)
     ).subscribe((value) => {
-      // Redirection après connexion réussie
-      if (this.route.snapshot.queryParamMap.has("returnUrl")) {
-        this.router.navigate([this.route.snapshot.queryParamMap.get("returnUrl")]);
-      } else {
-        this.router.navigate(
-          ['/search/index'],
-          { queryParams: { minPrice: 0, maxPrix: 100000, ville: "Bangangté" } }
+      // Récupérer les paramètres de requête
+      const returnUrl = this.route.snapshot.queryParams['returnUrl'];
+      const reason = this.route.snapshot.queryParams['reason'];
+
+      // Message spécifique selon la raison de la reconnexion
+      if (reason === 'inactive') {
+        this._toastrService.success(
+          '✅ Reconnexion réussie ! Vous reprenez votre session là où vous l\'aviez laissée.',
+          'Ndewa360° - Session restaurée',
+          { timeOut: 6000, extendedTimeOut: 2000 }
         );
+      } else if (reason === 'critical_inactive') {
+        this._toastrService.success(
+          '🔒 Reconnexion sécurisée réussie ! Vos données sont protégées.',
+          'Ndewa360° - Sécurité',
+          { timeOut: 6000, extendedTimeOut: 2000 }
+        );
+      } else if (reason === 'token_expired') {
+        this._toastrService.success(
+          '🔑 Session renouvelée avec succès ! Vous pouvez continuer.',
+          'Ndewa360° - Authentification',
+          { timeOut: 5000, extendedTimeOut: 2000 }
+        );
+      } else {
+        this._toastrService.success(
+          '🎉 Bienvenue sur Ndewa360° ! Votre session est active.',
+          'Ndewa360°',
+          { timeOut: 4000, extendedTimeOut: 1000 }
+        );
+      }
+
+      // Redirection après connexion réussie
+      if (returnUrl) {
+        this.router.navigateByUrl(decodeURIComponent(returnUrl));
+      } else {
+        // Redirection par défaut vers les propriétés pour les utilisateurs connectés
+        this.router.navigate(['/app/properties']);
       }
     });
     this.subscriptions.push(successSub);

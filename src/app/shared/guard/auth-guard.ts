@@ -17,14 +17,20 @@ export class AuthGuard implements CanActivate {
     private _toastrService:ToastrService,
     private _store:Store, private router: Router) {}
 
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot){ 
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot){
     return this._store.select(AuthTokenState.selectStateAuthToken).pipe(
       map((authToken)=>{
         if(authToken) return true;
+
+        // Éviter la redirection infinie si on est déjà sur la page d'auth
+        if (state.url.includes('/auth/signin') || state.url.includes('/auth/signup')) {
+          return this.router.parseUrl('/auth/signin');
+        }
+
         this._toastrService.warning("Veuillez vous authentifier", "Ndewa360°");
-        return this.router.parseUrl(`/auth/signin?returnUrl=${state.url}`)
+        return this.router.parseUrl(`/auth/signin?returnUrl=${encodeURIComponent(state.url)}`)
       })
-    )    
-    
+    )
+
   }
 }

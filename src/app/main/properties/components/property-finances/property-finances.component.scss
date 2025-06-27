@@ -390,3 +390,403 @@
     }
   }
 }
+
+// === NOUVEAUX STYLES POUR LA NAVIGATION AMÉLIORÉE ===
+
+// Variables du thème
+$primary-color: rgb(204, 140, 10);
+$primary-light: rgba(204, 140, 10, 0.1);
+$primary-medium: rgba(204, 140, 10, 0.2);
+
+// Styles pour les finances avec header moderne
+.property-finances-container {
+  // Header moderne style unités
+  .finances-header {
+    background: white;
+    border: 4px solid #d1d5db;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    transition: all 0.3s ease;
+
+    &:hover {
+      border-color: rgba(204, 140, 10, 0.3);
+      box-shadow: 0 25px 50px -12px rgba(204, 140, 10, 0.15);
+    }
+
+    h2 {
+      background: linear-gradient(135deg, rgb(204, 140, 10), #fadc4d);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+  }
+
+  // Personnalisation des tabs IBM Carbon
+  ::ng-deep {
+    .cds--tabs {
+      border-bottom: none;
+      min-height: auto;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .cds--tabs__nav {
+      padding: 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .cds--tabs__nav-item {
+      background: transparent;
+      border: none;
+      margin-right: 0;
+      position: relative;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background-color: #f9fafb;
+
+        .cds--tabs__nav-link {
+          color: #374151;
+        }
+      }
+
+      &.cds--tabs__nav-item--selected {
+        background-color: rgba(204, 140, 10, 0.08);
+        border-bottom: 3px solid rgb(204, 140, 10);
+
+        .cds--tabs__nav-link {
+          color: rgb(204, 140, 10);
+          border-bottom: none;
+          font-weight: 600;
+        }
+
+        &::after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          height: 3px;
+          background: linear-gradient(90deg, rgb(204, 140, 10), rgba(204, 140, 10, 0.7));
+          border-radius: 2px 2px 0 0;
+        }
+      }
+    }
+
+    .cds--tabs__nav-link {
+      padding: 1rem 1.25rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #6b7280;
+      border-bottom: none;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      position: relative;
+      white-space: nowrap;
+
+      &:hover {
+        color: #374151;
+        text-decoration: none;
+      }
+
+      &:focus {
+        outline: 2px solid rgba(204, 140, 10, 0.5);
+        outline-offset: -2px;
+        border-radius: 4px;
+      }
+
+      // Effet de survol subtil
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(204, 140, 10, 0.05);
+        opacity: 0;
+        transition: opacity 0.2s ease;
+        border-radius: 4px 4px 0 0;
+      }
+
+      &:hover::before {
+        opacity: 1;
+      }
+    }
+
+    // Responsive
+    @media (max-width: 768px) {
+      .cds--tabs__nav-link {
+        padding: 0.75rem 1rem;
+        font-size: 0.8rem;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .cds--tabs__nav {
+        overflow-x: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+
+        &::-webkit-scrollbar {
+          display: none;
+        }
+      }
+
+      .cds--tabs__nav-link {
+        padding: 0.75rem 0.875rem;
+        font-size: 0.75rem;
+        min-width: max-content;
+      }
+    }
+  }
+
+  // Responsive pour le header
+  @media (max-width: 1024px) {
+    .finances-header {
+      .flex.items-center.justify-between {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+
+        .flex.items-center.space-x-4 {
+          flex-wrap: wrap;
+          gap: 0.75rem;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    .finances-header {
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+
+      h2 {
+        font-size: 1.5rem;
+      }
+
+      .flex.items-center.justify-between {
+        .flex.items-center.space-x-4 {
+          flex-direction: column;
+          align-items: flex-start;
+          width: 100%;
+        }
+      }
+
+      // Tabs en pleine largeur sur mobile
+      .flex.items-center.justify-between:last-child {
+        .flex-1 {
+          width: 100%;
+          overflow-x: auto;
+        }
+      }
+    }
+  }
+}
+
+  // Amélioration de l'état vide
+  .empty-state {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border: 2px dashed #cbd5e1;
+    transition: all 0.3s ease;
+
+    &:hover {
+      border-color: rgba(204, 140, 10, 0.5);
+      background: linear-gradient(135deg, #fefcf3 0%, #fef7e0 100%);
+    }
+  }
+
+  // Animation pour les boutons
+  .action-button {
+    transition: all 0.2s ease;
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(204, 140, 10, 0.3);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+
+// Responsive pour la navigation
+@media (max-width: 1024px) {
+  .financial-nav-pill {
+    padding: 0.625rem 1rem;
+    font-size: 0.8125rem;
+
+    span {
+      display: none;
+    }
+
+    youpez-ibm-icon {
+      margin-right: 0 !important;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .financial-nav-pill {
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+  }
+
+  .financial-breadcrumb {
+    padding: 0.75rem 1rem;
+
+    .breadcrumb-content {
+      flex-direction: column;
+      gap: 0.75rem;
+      align-items: flex-start;
+
+      .level-indicator {
+        align-self: flex-end;
+      }
+    }
+  }
+
+  .section-indicator {
+    .section-info {
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.25rem;
+
+      .section-label {
+        font-size: 0.75rem;
+      }
+    }
+
+    .section-progress {
+      width: 80px;
+    }
+  }
+}
+
+// Breadcrumb amélioré
+.financial-breadcrumb {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-bottom: 1px solid #e5e7eb;
+  padding: 1rem 2rem;
+
+  .breadcrumb-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+
+    .breadcrumb-path {
+      display: flex;
+      align-items: center;
+
+      .breadcrumb-item {
+        display: flex;
+        align-items: center;
+        font-size: 0.875rem;
+        color: #6b7280;
+        font-weight: 500;
+
+        &.active {
+          color: $primary-color;
+          font-weight: 600;
+        }
+      }
+
+      .breadcrumb-separator {
+        margin: 0 0.75rem;
+        color: #9ca3af;
+      }
+    }
+
+    .level-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+
+      .level-badge {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: $primary-color;
+        background: rgba($primary-color, 0.1);
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        border: 1px solid rgba($primary-color, 0.2);
+      }
+
+      .level-dots {
+        display: flex;
+        gap: 0.25rem;
+
+        .dot {
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background: #d1d5db;
+          transition: all 0.2s ease;
+
+          &.active {
+            background: $primary-color;
+            transform: scale(1.2);
+          }
+        }
+      }
+    }
+  }
+}
+
+// Indicateur de section avec progression
+.section-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+
+  .section-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    .section-counter {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: $primary-color;
+      background: rgba($primary-color, 0.1);
+      padding: 0.25rem 0.75rem;
+      border-radius: 12px;
+      border: 1px solid rgba($primary-color, 0.2);
+    }
+
+    .section-label {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #374151;
+    }
+  }
+
+  .section-progress {
+    width: 120px;
+    height: 4px;
+    background: #e5e7eb;
+    border-radius: 2px;
+    overflow: hidden;
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, $primary-color, lighten($primary-color, 10%));
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+  }
+}
+
+// Amélioration du container principal
+.property-finances-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #f8fafc;
+}

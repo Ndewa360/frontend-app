@@ -138,11 +138,7 @@
       <!-- Onglet Finances -->
       <div *ngIf="activeTab === 'finances'" class="tab-panel">
         <app-property-finances
-          [property]="property$ | async"
-          [units]="(units$ | async) ?? []"
-          [tenants]="(tenants$ | async) ?? []"
-          [history]="(history$ | async) ?? []"
-          [loading]="(loadingStates$ | async)?.property ?? false">
+          [propertyId]="propertyId">
         </app-property-finances>
       </div>
 

@@ -1,0 +1,155 @@
+<!-- Header de la modal -->
+<div class="dialog-header">
+  <div class="header-info">
+    <h2>🔍 Détails de l'erreur</h2>
+    <div class="error-id">ID: {{ error._id }}</div>
+  </div>
+  <button mat-icon-button (click)="close()" class="close-btn" title="Fermer">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<!-- Contenu de la modal -->
+<div class="dialog-content">
+  <!-- Message d'erreur principal -->
+  <div class="error-summary">
+    <div class="error-message-main">
+      <h4>💥 Message d'erreur</h4>
+      <div class="message-content">{{ error.message }}</div>
+    </div>
+    
+    <div class="error-badges">
+      <span class="badge badge-level" [ngClass]="getErrorLevelClass(error.level)">
+        {{ getErrorLevelLabel(error.level) }}
+      </span>
+      <span class="badge badge-source">
+        {{ getErrorSourceLabel(error.source) }}
+      </span>
+      <span class="badge badge-status" [ngClass]="getErrorStatusClass(error.status)">
+        {{ getErrorStatusLabel(error.status) }}
+      </span>
+      <span class="badge badge-count">
+        {{ error.occurrenceCount || 1 }} occurrence(s)
+      </span>
+    </div>
+  </div>
+
+  <!-- Informations techniques -->
+  <div class="info-grid">
+    <div class="info-card">
+      <h5>🌐 Contexte Web</h5>
+      <div class="info-item">
+        <span class="label">URL:</span>
+        <span class="value url">{{ error.url || 'Non spécifiée' }}</span>
+      </div>
+      <div class="info-item">
+        <span class="label">Méthode:</span>
+        <span class="value method">{{ error.method || 'N/A' }}</span>
+      </div>
+      <div class="info-item">
+        <span class="label">IP:</span>
+        <span class="value">{{ error.ipAddress || 'Non disponible' }}</span>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <h5>🔧 Composant</h5>
+      <div class="info-item">
+        <span class="label">Composant:</span>
+        <span class="value">{{ error.component || 'Non spécifié' }}</span>
+      </div>
+      <div class="info-item">
+        <span class="label">Feature:</span>
+        <span class="value">{{ error.feature || 'Non spécifiée' }}</span>
+      </div>
+      <div class="info-item">
+        <span class="label">ID:</span>
+        <span class="value code">{{ error._id }}</span>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <h5>👤 Utilisateur</h5>
+      <div class="info-item">
+        <span class="label">User ID:</span>
+        <span class="value">{{ error.userId || 'Anonyme' }}</span>
+      </div>
+      <div class="info-item">
+        <span class="label">Session:</span>
+        <span class="value code">{{ error.sessionId || 'Non disponible' }}</span>
+      </div>
+      <div class="info-item">
+        <span class="label">Navigateur:</span>
+        <span class="value browser">{{ error.userAgent || 'Non disponible' }}</span>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <h5>⏰ Temporalité</h5>
+      <div class="info-item">
+        <span class="label">Créée le:</span>
+        <span class="value">{{ formatDate(error.createdAt) }}</span>
+      </div>
+      <div class="info-item">
+        <span class="label">Mise à jour:</span>
+        <span class="value">{{ formatDate(error.updatedAt) }}</span>
+      </div>
+      <div class="info-item" *ngIf="error.firstOccurrence">
+        <span class="label">Première fois:</span>
+        <span class="value">{{ formatDate(error.firstOccurrence) }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stack Trace -->
+  <div class="stack-trace-section" *ngIf="error.stackTrace">
+    <h5>📚 Stack Trace</h5>
+    <div class="code-block">
+      <pre class="stack-trace">{{ formatStackTrace(error.stackTrace) }}</pre>
+    </div>
+  </div>
+
+  <!-- Données techniques -->
+  <div class="technical-data" *ngIf="error.requestBody || error.requestHeaders || error.responseData || error.additionalData">
+    <h5>🔧 Données techniques</h5>
+    
+    <div class="data-tabs">
+      <div class="data-tab" *ngIf="error.requestBody">
+        <h6>📤 Requête</h6>
+        <pre class="code-block request">{{ formatJson(error.requestBody) }}</pre>
+      </div>
+      
+      <div class="data-tab" *ngIf="error.responseData">
+        <h6>📥 Réponse</h6>
+        <pre class="code-block response">{{ formatJson(error.responseData) }}</pre>
+      </div>
+      
+      <div class="data-tab" *ngIf="error.additionalData">
+        <h6>📊 Données supplémentaires</h6>
+        <pre class="code-block additional">{{ formatJson(error.additionalData) }}</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Actions -->
+<div class="dialog-actions">
+  <h5>⚡ Actions disponibles</h5>
+  <div class="action-buttons">
+    <button mat-raised-button color="primary" (click)="updateStatus(ErrorStatus.ACKNOWLEDGED)">
+      ✅ Acquitter
+    </button>
+    <button mat-raised-button color="accent" (click)="updateStatus(ErrorStatus.IN_PROGRESS)">
+      🔄 En cours
+    </button>
+    <button mat-raised-button color="primary" (click)="updateStatus(ErrorStatus.RESOLVED)">
+      ✅ Résoudre
+    </button>
+    <button mat-raised-button (click)="updateStatus(ErrorStatus.IGNORED)">
+      🙈 Ignorer
+    </button>
+    <button mat-raised-button color="warn" (click)="deleteError()">
+      🗑️ Supprimer
+    </button>
+  </div>
+</div>

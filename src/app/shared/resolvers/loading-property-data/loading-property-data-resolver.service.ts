@@ -31,24 +31,30 @@ export class LoadingPropertyDataResolver implements Resolve<any> {
         const propertyId: string = route.paramMap.get("id");
 
         if (!propertyId) {
-            console.error("❌ LoadingPropertyDataResolver: Aucun ID de propriété fourni");
+            console.error("❌ LoadingPropertyDataReso Revenus Totaux 2025lver: Aucun ID de propriété fourni");
             return of(false);
         }
 
         console.log(`🔄 LoadingPropertyDataResolver - Chargement des données pour la propriété ${propertyId}`);
 
-        // Dispatcher toutes les actions nécessaires
+        const currentYear = new Date().getFullYear();
+
+        // Dispatcher toutes les actions nécessaires, y compris les données financières
         this._store.dispatch([
             new LocataireAction.FetchLocatairesByPropertyId(propertyId),
             new RoomAction.FetchRoomsByPropertyID(propertyId),
             new LocationAction.FetchLocationsByPropertyId(propertyId),
             new LocationPaymentAction.FetchLocationPaymentsByPropertyId(propertyId),
             new HistoryLocationPaymentAction.FetchHistoryLocationPaymentsByPropertyId(propertyId),
-            new StatisticAction.FetchStaticLocataireDataByPropertyIdAndYear(propertyId, `${new Date().getFullYear()}`),
-            new StatisticAction.FetchStaticAllPaymentLocataireDataByPropertyIdAndYear(propertyId, `${new Date().getFullYear()}`),
+
+            // Données financières pour l'année courante
+            new StatisticAction.FetchStaticRoomDataByPropertyIdAndYear(propertyId, currentYear.toString()),
+            new StatisticAction.FetchStaticLocataireDataByPropertyIdAndYear(propertyId, currentYear),
+            new StatisticAction.FetchStaticAllPaymentLocataireDataByPropertyIdAndYear(propertyId, currentYear),
+            new StatisticAction.FetchStatisticPaymentRecapitulationAccountOfAllPropertyByYear(currentYear),
         ]);
 
-        // Attendre que toutes les données critiques soient chargées
+        // Attendre que toutes les données critiques soient chargées, y compris les données financières
         return combineLatest([
             this._store.select((state) => state.locataires.initLoadingState).pipe(
                 skipWhile((state) => state === "LOADING"),
@@ -69,6 +75,23 @@ export class LoadingPropertyDataResolver implements Resolve<any> {
             this._store.select((state) => state.historyLocationPayments.initLoadingState).pipe(
                 skipWhile((state) => state === "LOADING"),
                 tap(() => console.log("✅ Historique des paiements chargé"))
+            ),
+            // Données financières
+            this._store.select((state) => state.statisticData.loadingRoomStatistic).pipe(
+                skipWhile((loading) => loading === true),
+                tap(() => console.log("✅ Statistiques des chambres chargées"))
+            ),
+            this._store.select((state) => state.statisticData.locataireStatisticLoading).pipe(
+                skipWhile((loading) => loading === true),
+                tap(() => console.log("✅ Statistiques des locataires chargées"))
+            ),
+            this._store.select((state) => state.statisticData.allLocatairePayementByYearLoading).pipe(
+                skipWhile((loading) => loading === true),
+                tap(() => console.log("✅ Statistiques des paiements chargées"))
+            ),
+            this._store.select((state) => state.statisticData.loadingStatisticRecaptilationLoading).pipe(
+                skipWhile((loading) => loading === true),
+                tap(() => console.log("✅ Récapitulatif des paiements chargé"))
             )
         ]).pipe(
             take(1),

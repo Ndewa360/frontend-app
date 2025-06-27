@@ -1,0 +1,237 @@
+<div class="app-a-box app-scrollbar-fix">
+  <ng-scrollbar>
+    <div class="monitoring-dashboard">
+  <!-- Header avec contrôles -->
+  <div class="dashboard-header">
+    <div class="header-left">
+      <h1>📊 Monitoring Dashboard</h1>
+      <p class="subtitle">Surveillance en temps réel de Ndewa360°</p>
+    </div>
+    
+    <div class="header-controls">
+      <button 
+        class="control-btn" 
+        [class.active]="autoRefresh"
+        (click)="toggleAutoRefresh()"
+        title="Auto-refresh">
+        <span class="icon">🔄</span>
+        Auto-refresh
+      </button>
+      
+      <select 
+        class="control-select" 
+        [(ngModel)]="refreshInterval" 
+        (change)="changeRefreshInterval(refreshInterval)">
+        <option value="10000">10s</option>
+        <option value="30000">30s</option>
+        <option value="60000">1min</option>
+        <option value="300000">5min</option>
+      </select>
+      
+      <button 
+        class="control-btn refresh-btn" 
+        (click)="refreshData()"
+        [disabled]="isLoading">
+        <span class="icon">↻</span>
+        Actualiser
+      </button>
+    </div>
+  </div>
+
+  <!-- Alertes en temps réel -->
+  <div class="alerts-section" *ngIf="(alerts$ | async)?.length">
+    <div class="alerts-header">
+      <h3>🚨 Alertes Actives</h3>
+      <button class="clear-alerts-btn" (click)="clearAllAlerts()">
+        Effacer tout
+      </button>
+    </div>
+    
+    <div class="alerts-container">
+      <div 
+        *ngFor="let alert of alerts$ | async" 
+        class="alert-item"
+        [ngClass]="'alert-' + alert.type">
+        <div class="alert-content">
+          <div class="alert-title">{{ alert.title }}</div>
+          <div class="alert-message">{{ alert.message }}</div>
+          <div class="alert-time">{{ formatDate(alert.timestamp) }}</div>
+        </div>
+        <button class="alert-dismiss" (click)="dismissAlert(alert.id)">×</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation par onglets -->
+  <div class="dashboard-tabs">
+    <button
+      class="tab-btn"
+      [class.active]="selectedTab === 'overview'"
+      (click)="selectTab('overview')">
+      📊 Vue d'ensemble
+    </button>
+    <button
+      class="tab-btn"
+      [class.active]="selectedTab === 'errors'"
+      (click)="selectTab('errors')">
+      🚨 Erreurs
+    </button>
+    <button
+      class="tab-btn"
+      [class.active]="selectedTab === 'system'"
+      (click)="selectTab('system')">
+      🔧 Système
+    </button>
+    <button
+      class="tab-btn"
+      [class.active]="selectedTab === 'analytics'"
+      (click)="selectTab('analytics')">
+      📈 Analytics
+    </button>
+  </div>
+
+
+
+  <!-- Contenu principal -->
+  <div class="dashboard-content" [class.loading]="isLoading">
+
+    <!-- Onglet Vue d'ensemble -->
+    <div *ngIf="selectedTab === 'overview'" class="tab-content overview-tab">
+
+      <!-- Métriques principales -->
+      <div class="metrics-grid">
+        <div class="metric-card" *ngIf="dashboardData$ | async as data">
+          <div class="metric-icon">🚨</div>
+          <div class="metric-content">
+            <div class="metric-value">{{ data.errorStats?.totalErrors || 0 }}</div>
+            <div class="metric-label">Erreurs totales</div>
+          </div>
+        </div>
+        
+        <div class="metric-card" *ngIf="dashboardData$ | async as data">
+          <div class="metric-icon">⚡</div>
+          <div class="metric-content">
+            <div class="metric-value">{{ data.errorStats?.recentErrors || 0 }}</div>
+            <div class="metric-label">Erreurs récentes (24h)</div>
+          </div>
+        </div>
+        
+        <div class="metric-card" *ngIf="dashboardData$ | async as data">
+          <div class="metric-icon" [ngClass]="getServiceStatusClass(data.systemHealth?.overallStatus)">
+            {{ getStatusIcon(data.systemHealth?.overallStatus) }}
+          </div>
+          <div class="metric-content">
+            <div class="metric-value">{{ getStatusLabel(data.systemHealth?.overallStatus) }}</div>
+            <div class="metric-label">État système</div>
+          </div>
+        </div>
+        
+        <div class="metric-card" *ngIf="dashboardData$ | async as data">
+          <div class="metric-icon">💾</div>
+          <div class="metric-content">
+            <div class="metric-value">{{ data.systemHealth?.systemMetrics?.memoryUsage || 0 }}%</div>
+            <div class="metric-label">Utilisation mémoire</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Graphiques de synthèse -->
+      <div class="charts-grid">
+        <!-- Graphique des niveaux d'erreur -->
+        <div class="chart-card">
+          <h3>📊 Erreurs par niveau</h3>
+          <div class="chart-container">
+            <div class="simple-pie-chart">
+              <div class="pie-legend">
+                <div *ngFor="let item of errorLevelData" class="legend-item">
+                  <div class="legend-color" [style.background-color]="getColorForLevel(item.level)"></div>
+                  <span class="legend-label">{{ item.name }}: {{ item.value }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Graphique des sources d'erreur -->
+        <div class="chart-card">
+          <h3>🎯 Erreurs par source</h3>
+          <div class="chart-container">
+            <div class="simple-bar-chart">
+              <div *ngFor="let item of errorSourceData" class="bar-item">
+                <div class="bar-label">{{ item.name }}</div>
+                <div class="bar-container">
+                  <div class="bar-fill"
+                       [style.width.%]="(item.value / getMaxSourceValue()) * 100"
+                       [style.background-color]="getColorForSource(item.source)">
+                  </div>
+                  <span class="bar-value">{{ item.value }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Services système -->
+      <div class="services-section" *ngIf="dashboardData$ | async as data">
+        <h3>🔧 État des services</h3>
+        <div class="services-grid">
+          <div 
+            *ngFor="let service of getServicesArray(data.systemHealth?.services)"
+            class="service-card"
+            [ngClass]="getServiceStatusClass(service.status)">
+            <div class="service-header">
+              <div class="service-name">{{ service.name }}</div>
+              <div class="service-status">{{ getStatusLabel(service.status) }}</div>
+            </div>
+            <div class="service-details">
+              <div class="service-message">{{ service.message }}</div>
+              <div class="service-time" *ngIf="service.responseTime">
+                Temps de réponse: {{ service.responseTime }}ms
+              </div>
+              <div class="service-check">
+                Dernière vérification: {{ formatDate(service.lastCheck) }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Onglet Erreurs -->
+    <div *ngIf="selectedTab === 'errors'" class="tab-content errors-tab">
+      <app-error-management
+        [errors]="recentErrors$ | async"
+        (errorUpdated)="loadRecentErrors()"
+        (errorDeleted)="loadRecentErrors()">
+      </app-error-management>
+    </div>
+
+    <!-- Onglet Système -->
+    <div *ngIf="selectedTab === 'system'" class="tab-content system-tab">
+      <app-system-health
+        [systemHealth]="(dashboardData$ | async)?.systemHealth"
+        [healthHistory]="systemHealthHistory">
+      </app-system-health>
+    </div>
+
+    <!-- Onglet Analytics -->
+    <div *ngIf="selectedTab === 'analytics'" class="tab-content analytics-tab">
+      <app-monitoring-analytics
+        [errorStats]="(dashboardData$ | async)?.errorStats"
+        [systemHealth]="(dashboardData$ | async)?.systemHealth">
+      </app-monitoring-analytics>
+    </div>
+
+  </div>
+
+  <!-- Loading overlay -->
+  <div *ngIf="isLoading" class="loading-overlay">
+    <div class="loading-spinner">
+      <div class="spinner"></div>
+      <div class="loading-text">Chargement des données...</div>
+    </div>
+  </div>
+    </div>
+  </ng-scrollbar>
+</div>

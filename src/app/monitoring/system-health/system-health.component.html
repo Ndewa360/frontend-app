@@ -1,0 +1,312 @@
+<div class="app-a-box app-scrollbar-fix">
+  <ng-scrollbar>
+    <div class="system-health">
+  <!-- Header avec statut global -->
+  <div class="health-header">
+    <div class="overall-status" [ngClass]="getOverallStatusClass()">
+      <div class="status-icon">
+        {{ getStatusIcon(systemHealth?.overallStatus) }}
+      </div>
+      <div class="status-content">
+        <div class="status-title">État Global du Système</div>
+        <div class="status-label">{{ getStatusLabel(systemHealth?.overallStatus) }}</div>
+        <div class="status-timestamp" *ngIf="systemHealth">
+          Dernière vérification: {{ formatDate(systemHealth.timestamp) }}
+        </div>
+      </div>
+    </div>
+    
+    <div class="health-score">
+      <div class="score-circle" [ngClass]="getHealthScoreClass()">
+        <div class="score-value">{{ getHealthScore() }}%</div>
+        <div class="score-label">Score de santé</div>
+      </div>
+    </div>
+    
+    <div class="refresh-controls">
+      <button class="refresh-btn" (click)="refreshHealthData()" [disabled]="isLoading">
+        <span class="icon">🔄</span>
+        Actualiser
+      </button>
+    </div>
+  </div>
+
+  <!-- Alertes système -->
+  <div class="alerts-section" *ngIf="hasAlerts()">
+    <h3>🚨 Alertes Système</h3>
+    
+    <div class="alerts-grid">
+      <!-- Alertes critiques -->
+      <div class="alert-group critical" *ngIf="getCriticalAlerts().length > 0">
+        <h4>🚨 Critiques</h4>
+        <div class="alert-list">
+          <div *ngFor="let alert of getCriticalAlerts()" class="alert-item critical">
+            {{ alert }}
+          </div>
+        </div>
+      </div>
+      
+      <!-- Alertes d'avertissement -->
+      <div class="alert-group warning" *ngIf="getWarningAlerts().length > 0">
+        <h4>⚠️ Avertissements</h4>
+        <div class="alert-list">
+          <div *ngFor="let alert of getWarningAlerts()" class="alert-item warning">
+            {{ alert }}
+          </div>
+        </div>
+      </div>
+      
+      <!-- Alertes d'information -->
+      <div class="alert-group info" *ngIf="getInfoAlerts().length > 0">
+        <h4>ℹ️ Informations</h4>
+        <div class="alert-list">
+          <div *ngFor="let alert of getInfoAlerts()" class="alert-item info">
+            {{ alert }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Métriques système -->
+  <div class="metrics-section" *ngIf="systemHealth?.systemMetrics">
+    <h3>📊 Métriques Système</h3>
+    
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-header">
+          <span class="metric-icon">💾</span>
+          <span class="metric-title">Utilisation Mémoire</span>
+        </div>
+        <div class="metric-content">
+          <div class="metric-value" [ngClass]="getMemoryUsageClass(systemHealth.systemMetrics.memoryUsage)">
+            {{ systemHealth.systemMetrics.memoryUsage || 0 }}%
+          </div>
+          <div class="metric-bar">
+            <div class="metric-fill" 
+                 [style.width.%]="systemHealth.systemMetrics.memoryUsage"
+                 [ngClass]="getMemoryUsageClass(systemHealth.systemMetrics.memoryUsage)">
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="metric-card" *ngIf="systemHealth.systemMetrics.uptime">
+        <div class="metric-header">
+          <span class="metric-icon">⏱️</span>
+          <span class="metric-title">Temps de fonctionnement</span>
+        </div>
+        <div class="metric-content">
+          <div class="metric-value">
+            {{ formatUptime(systemHealth.systemMetrics.uptime) }}
+          </div>
+        </div>
+      </div>
+      
+      <div class="metric-card" *ngIf="systemHealth.applicationMetrics?.activeUsers">
+        <div class="metric-header">
+          <span class="metric-icon">👥</span>
+          <span class="metric-title">Utilisateurs actifs</span>
+        </div>
+        <div class="metric-content">
+          <div class="metric-value">
+            {{ systemHealth.applicationMetrics.activeUsers }}
+          </div>
+        </div>
+      </div>
+      
+      <div class="metric-card" *ngIf="systemHealth.applicationMetrics?.recentErrors !== undefined">
+        <div class="metric-header">
+          <span class="metric-icon">🚨</span>
+          <span class="metric-title">Erreurs récentes</span>
+        </div>
+        <div class="metric-content">
+          <div class="metric-value" [class.error-count]="systemHealth.applicationMetrics.recentErrors > 0">
+            {{ systemHealth.applicationMetrics.recentErrors }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Services système -->
+  <div class="services-section">
+    <h3>🔧 État des Services</h3>
+    
+    <div class="services-grid">
+      <div 
+        *ngFor="let service of getServicesArray()"
+        class="service-card"
+        [ngClass]="getServiceStatusClass(service.status)"
+        (click)="showServiceDetails(service)">
+        
+        <div class="service-header">
+          <div class="service-icon">
+            {{ getStatusIcon(service.status) }}
+          </div>
+          <div class="service-info">
+            <div class="service-name">{{ service.name }}</div>
+            <div class="service-status">{{ getStatusLabel(service.status) }}</div>
+          </div>
+        </div>
+        
+        <div class="service-details">
+          <div class="service-message">{{ service.message }}</div>
+          
+          <div class="service-metrics" *ngIf="service.responseTime">
+            <div class="metric-item">
+              <span class="metric-label">Temps de réponse:</span>
+              <span class="metric-value" [ngClass]="getResponseTimeClass(service.responseTime)">
+                {{ service.responseTime }}ms
+              </span>
+            </div>
+          </div>
+          
+          <div class="service-timestamp">
+            Dernière vérification: {{ formatDate(service.lastCheck) }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Graphiques de tendances -->
+  <div class="charts-section" *ngIf="healthHistory.length > 0">
+    <h3>📈 Tendances</h3>
+    
+    <div class="charts-grid">
+      <!-- Graphique d'utilisation mémoire -->
+      <div class="chart-card" *ngIf="memoryUsageData.length > 0">
+        <h4>💾 Utilisation Mémoire (24h)</h4>
+        <div class="chart-container">
+          <div class="simple-line-chart">
+            <div class="chart-header">
+              <span class="chart-label">Utilisation (%)</span>
+            </div>
+            <div class="line-chart-area">
+              <div *ngFor="let point of memoryUsageData; let i = index"
+                   class="chart-point"
+                   [style.left.%]="(i / (memoryUsageData.length - 1)) * 100"
+                   [style.bottom.%]="point.value"
+                   [title]="point.name + ': ' + point.value + '%'">
+              </div>
+            </div>
+            <div class="chart-footer">
+              <span class="chart-label">Temps (24h)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Graphique des temps de réponse -->
+      <div class="chart-card" *ngIf="responseTimeData.length > 0">
+        <h4>⚡ Temps de Réponse (24h)</h4>
+        <div class="chart-container">
+          <div class="simple-line-chart">
+            <div class="chart-header">
+              <span class="chart-label">Temps (ms)</span>
+            </div>
+            <div class="line-chart-area">
+              <div *ngFor="let point of responseTimeData; let i = index"
+                   class="chart-point response-time"
+                   [style.left.%]="(i / (responseTimeData.length - 1)) * 100"
+                   [style.bottom.%]="(point.value / getMaxResponseTime()) * 100"
+                   [title]="point.name + ': ' + point.value + 'ms'">
+              </div>
+            </div>
+            <div class="chart-footer">
+              <span class="chart-label">Temps (24h)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Informations système -->
+  <div class="system-info-section" *ngIf="systemHealth">
+    <h3>ℹ️ Informations Système</h3>
+    
+    <div class="info-grid">
+      <div class="info-item">
+        <label>Environnement:</label>
+        <span class="env-badge" [ngClass]="systemHealth.environment">
+          {{ systemHealth.environment }}
+        </span>
+      </div>
+      
+      <div class="info-item">
+        <label>Version:</label>
+        <span>{{ systemHealth.version }}</span>
+      </div>
+      
+      <div class="info-item" *ngIf="systemHealth.systemMetrics?.nodeVersion">
+        <label>Node.js:</label>
+        <span>{{ systemHealth.systemMetrics.nodeVersion }}</span>
+      </div>
+      
+      <div class="info-item" *ngIf="systemHealth.systemMetrics?.platform">
+        <label>Plateforme:</label>
+        <span>{{ systemHealth.systemMetrics.platform }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading overlay -->
+  <div *ngIf="isLoading" class="loading-overlay">
+    <div class="loading-spinner">
+      <div class="spinner"></div>
+      <div class="loading-text">Actualisation...</div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de détails de service -->
+<div *ngIf="showServiceDetailsModal && selectedService" class="service-details-modal">
+  <div class="modal-backdrop" (click)="closeServiceDetails()"></div>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>🔍 Détails du Service: {{ selectedService.name }}</h3>
+      <button class="close-btn" (click)="closeServiceDetails()">×</button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="detail-section">
+        <h4>État</h4>
+        <div class="status-detail" [ngClass]="getServiceStatusClass(selectedService.status)">
+          <span class="status-icon">{{ getStatusIcon(selectedService.status) }}</span>
+          <span class="status-text">{{ getStatusLabel(selectedService.status) }}</span>
+        </div>
+      </div>
+      
+      <div class="detail-section">
+        <h4>Message</h4>
+        <p>{{ selectedService.message }}</p>
+      </div>
+      
+      <div class="detail-section" *ngIf="selectedService.responseTime">
+        <h4>Performance</h4>
+        <div class="performance-metrics">
+          <div class="metric">
+            <label>Temps de réponse:</label>
+            <span [ngClass]="getResponseTimeClass(selectedService.responseTime)">
+              {{ selectedService.responseTime }}ms
+            </span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="detail-section">
+        <h4>Dernière vérification</h4>
+        <p>{{ formatDate(selectedService.lastCheck) }}</p>
+      </div>
+      
+      <div class="detail-section" *ngIf="selectedService.details">
+        <h4>Détails techniques</h4>
+        <pre class="technical-details">{{ selectedService.details | json }}</pre>
+      </div>
+    </div>
+  </div>
+    </div>
+  </ng-scrollbar>
+</div>

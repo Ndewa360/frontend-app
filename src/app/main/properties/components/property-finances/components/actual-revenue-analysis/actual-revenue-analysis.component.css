@@ -1,0 +1,188 @@
+/* Styles pour le composant d'analyse des revenus effectifs */
+
+.actual-revenue-analysis {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Animation pour les lignes du tableau */
+.actual-revenue-analysis tbody tr {
+  transition: all 0.2s ease-in-out;
+}
+
+.actual-revenue-analysis tbody tr:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Styles pour les métriques de résumé */
+.actual-revenue-analysis .metric-card {
+  transition: transform 0.2s ease-in-out;
+}
+
+.actual-revenue-analysis .metric-card:hover {
+  transform: translateY(-2px);
+}
+
+/* Styles pour les barres de performance */
+.actual-revenue-analysis .performance-bar {
+  transition: width 0.3s ease-in-out;
+}
+
+/* Styles pour les indicateurs de différence */
+.actual-revenue-analysis .difference-positive {
+  color: #059669;
+}
+
+.actual-revenue-analysis .difference-negative {
+  color: #dc2626;
+}
+
+.actual-revenue-analysis .difference-neutral {
+  color: #6b7280;
+}
+
+/* Animation de chargement */
+.actual-revenue-analysis .loading-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Styles pour les boutons de tri */
+.actual-revenue-analysis .sort-button {
+  transition: all 0.2s ease-in-out;
+}
+
+.actual-revenue-analysis .sort-button:hover {
+  transform: translateY(-1px);
+}
+
+.actual-revenue-analysis .sort-button.active {
+  box-shadow: 0 2px 8px rgba(204, 140, 10, 0.3);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .actual-revenue-analysis .table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .actual-revenue-analysis .metric-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+  
+  .actual-revenue-analysis .filter-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .actual-revenue-analysis .filter-container > * {
+    margin-bottom: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .actual-revenue-analysis .metric-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .actual-revenue-analysis .sort-buttons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .actual-revenue-analysis .sort-buttons button {
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* Styles pour l'accessibilité */
+.actual-revenue-analysis button:focus,
+.actual-revenue-analysis select:focus {
+  outline: 2px solid rgb(204, 140, 10);
+  outline-offset: 2px;
+}
+
+/* Styles pour les états désactivés */
+.actual-revenue-analysis button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Styles pour les animations d'entrée */
+.actual-revenue-analysis .fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Styles pour les badges de type d'unité */
+.actual-revenue-analysis .unit-type-badge {
+  font-weight: 500;
+  letter-spacing: 0.025em;
+}
+
+/* Styles pour les icônes de différence */
+.actual-revenue-analysis .difference-icon {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+/* Styles pour les barres de progression personnalisées */
+.actual-revenue-analysis .custom-progress-bar {
+  background: linear-gradient(90deg, #f3f4f6 0%, #e5e7eb 100%);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.actual-revenue-analysis .custom-progress-fill {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.5s ease-in-out;
+}
+
+.actual-revenue-analysis .custom-progress-fill.positive {
+  background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+}
+
+.actual-revenue-analysis .custom-progress-fill.negative {
+  background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
+}
+
+/* Styles pour les tooltips */
+.actual-revenue-analysis .tooltip {
+  position: relative;
+}
+
+.actual-revenue-analysis .tooltip:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  z-index: 10;
+}

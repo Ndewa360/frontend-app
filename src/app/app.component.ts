@@ -1,6 +1,9 @@
 import { Component, OnInit, OnDestroy, Renderer2, ViewChild, ElementRef } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { RefreshTokenService } from './shared/store/auth-token/refresh-token.service';
+import { UserActivityService } from './shared/store/auth-token/user-activity.service';
+import { environment } from '../environments/environment';
+import { MonitoringService } from './shared/services/monitoring.service';
 import { AuthTokenState } from './shared/store/auth-token';
 import { interval, Subscription, Subject, fromEvent, merge, of, timer } from 'rxjs';
 import { LOCAL_LANGUAGE, UserProfileAction } from './shared/store';
@@ -28,6 +31,7 @@ const getSessionStorage = (key, defaultValue = null) => {
 })
 export class AppComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
+  isProduction = environment.production;
   private tokenCheckInterval: Subscription;
   private userProfileCheckInterval: Subscription;
   private routerSubscription: Subscription;
@@ -42,6 +46,7 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(
     private store: Store,
     private refreshTokenService: RefreshTokenService,
+    private userActivityService: UserActivityService,
     private renderer: Renderer2,
     private settingsService: SettingsService,
     private router: Router,
@@ -50,7 +55,8 @@ export class AppComponent implements OnInit, OnDestroy {
     private activatedRoute: ActivatedRoute,
     private titleService: Title, 
     private meta: Meta,
-    private seoService: SeoService
+    private seoService: SeoService,
+    private monitoringService: MonitoringService
   ) {
     // Fallback pour l'écran de chargement au cas où la navigation ne se termine jamais
     this.loadingTimeout = setTimeout(() => {
@@ -69,6 +75,9 @@ export class AppComponent implements OnInit, OnDestroy {
     } catch (e) {
       console.warn('Erreur lors de l\'initialisation de moment.js:', e);
     }
+
+    // Initialiser la capture automatique des erreurs pour le monitoring
+    this.monitoringService.initializeErrorCapture();
 
     // Gérer les fragments d'URL pour le défilement
     this.fragmentSubscription = this.activatedRoute.fragment
@@ -191,18 +200,17 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   private setupUserActivityListener(): void {
-    // Écouter les événements d'activité utilisateur pour rafraîchir le token si nécessaire
-    merge(
-      fromEvent(document, 'click'),
-      fromEvent(document, 'keypress'),
-      fromEvent(document, 'scroll')
-    ).pipe(
-      takeUntil(this.destroy$),
-      debounceTime(30000),
-      filter(() => this.store.selectSnapshot(AuthTokenState.selectStateUserIsLogin))
-    ).subscribe(() => {
-      this.refreshTokenService.checkTokenExpiration().subscribe();
-    });
+    // La surveillance d'activité est maintenant gérée par le UserActivityService
+    // qui est automatiquement démarré lors de la connexion
+    console.log('🟢 Configuration de la surveillance d\'activité utilisateur');
+
+    // Écouter les changements d'état d'activité pour des actions spécifiques si nécessaire
+    this.userActivityService.getActivityState()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(state => {
+        console.log(`🔄 État d'activité changé: ${state}`);
+        // Ici on peut ajouter des actions spécifiques selon l'état
+      });
   }
 
   private loadUserProfileIfLoggedIn(): void {

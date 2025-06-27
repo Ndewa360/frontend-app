@@ -76,7 +76,51 @@ export class StatisticState{
     {
         return state.loadingStatisticRecaptilationLoading
     }
-   
+
+    // Data selectors
+    @Selector()
+    static selectStateRoomStatistic(state:StatisticStateModel)
+    {
+        return state.roomStatistic
+    }
+
+    @Selector()
+    static selectStateLocataireStatistic(state:StatisticStateModel)
+    {
+        return state.locataireStatistic
+    }
+
+    @Selector()
+    static selectStateAllLocatairePayementByYear(state:StatisticStateModel)
+    {
+        return state.allLocatairePayementByYear
+    }
+
+    @Selector()
+    static selectStateStatisticRecapitulationPayment(state:StatisticStateModel)
+    {
+        return state.statisticRecapitulationPayment
+    }
+
+    // Loading state selectors for combined loading states
+    @Selector()
+    static selectStateLoadingRoomStatistic(state:StatisticStateModel)
+    {
+        return state.loadingRoomStatistic
+    }
+
+    @Selector()
+    static selectStateAllLocatairePayementByYearLoading(state:StatisticStateModel)
+    {
+        return state.allLocatairePayementByYearLoading
+    }
+
+    @Selector()
+    static selectStateLoadingStatisticRecaptilationLoading(state:StatisticStateModel)
+    {
+        return state.loadingStatisticRecaptilationLoading
+    }
+
 
     static selectStateStatisticByRoom(roomId)
     {
@@ -100,7 +144,12 @@ export class StatisticState{
 
     static selectStateStatisticAllPaymentLocataireByPropertyIdAndYear(propertyID,year:number|string=new Date().getFullYear())
     {
-        return createSelector([StatisticState],(state)=> state.allLocatairePayementByYear.filter((u)=>u.locataire.property==propertyID && u.year==year))    
+        return createSelector([StatisticState],(state)=> state.allLocatairePayementByYear.filter((u)=>u.locataire.property==propertyID && u.year==year))
+    }
+
+    static selectStateStatisticRoomByPropertyIdAndYear(propertyID,year:number=new Date().getFullYear())
+    {
+        return createSelector([StatisticState],(state)=> state.roomStatistic.filter((u)=>u.room.property==propertyID && u.year==year))
     }
 
     @Action(StatisticAction.FetchStaticRoomDataByPropertyIdAndYear)

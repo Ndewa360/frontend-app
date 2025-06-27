@@ -12,6 +12,7 @@ import { AuthTokenAction } from "../auth-token";
 import { Navigate } from '@ngxs/router-plugin';
 import { ToastrService } from "ngx-toastr";
 import { DisconnexionService } from "./disconnection.service";
+import { RefreshTokenService } from "../auth-token/refresh-token.service";
 
 export class UserProfileStateModel {
     userProfile: UserProfileModel;
@@ -39,7 +40,8 @@ export class UserProfileState {
         private _authService: AuthService,
         private _router: Router,
         private _store:Store,
-        private disconnetionService: DisconnexionService
+        private disconnetionService: DisconnexionService,
+        private refreshTokenService: RefreshTokenService
     ) {}
 
     @Selector()
@@ -97,6 +99,11 @@ export class UserProfileState {
 
                 // Stocker les tokens
                 ctx.dispatch(new AuthTokenAction.SetToken(result.data.access_token, result.data.refresh_token));
+
+                // Démarrer la surveillance d'activité
+                ctx.dispatch(new AuthTokenAction.StartActivityMonitoring());
+                this.refreshTokenService.startActivityMonitoring();
+
                 this._toastrService.success(`Bienvenue sur Ndewa360°! `, 'Ndewa360°');
             }),
             catchError((error) => {
@@ -111,6 +118,13 @@ export class UserProfileState {
 
     @Action(UserProfileAction.LogoutUserProfile)
     logoutUserProfileState(ctx: StateContext<UserProfileStateModel>) {
+        // Arrêter la surveillance d'activité
+        ctx.dispatch(new AuthTokenAction.StopActivityMonitoring());
+        this.refreshTokenService.stopActivityMonitoring();
+
+        // Nettoyer les ressources du service de refresh
+        this.refreshTokenService.cleanup();
+
         this.disconnetionService.logout();
         this._toastrService.success("Déconnexion avec succès! ", "Ndewa360°");
         return of(true);

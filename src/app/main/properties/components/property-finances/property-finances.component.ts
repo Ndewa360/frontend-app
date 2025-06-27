@@ -1,22 +1,28 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
+import { Store } from '@ngxs/store';
+import { Subject, Observable, combineLatest } from 'rxjs';
+import { takeUntil, map } from 'rxjs/operators';
+import {
+  StatisticState,
+  StatisticAction,
+  StatisticRoomYearModel,
+  StatisticLocataireYearModel,
+  StatisticAllPaymentLocataireYearModel,
+  StatisticPaymentOfAllPropertyByYear,
+  StatisticPaymentStateType
+} from 'src/app/shared/store';
 
-interface FinanceData {
-  monthlyRevenue: number;
-  yearlyRevenue: number;
-  expenses: number;
-  netIncome: number;
-  revenueHistory: { month: string; amount: number }[];
-  expenseCategories: { category: string; amount: number }[];
+export interface FinancialAnalysisData {
+  yearlyStats: StatisticRoomYearModel[];
+  tenantStats: StatisticLocataireYearModel[];
+  paymentStats: StatisticAllPaymentLocataireYearModel[];
+  recapitulation: StatisticPaymentOfAllPropertyByYear | null;
 }
 
-interface Transaction {
-  id: string;
-  date: Date;
-  description: string;
-  reference: string;
-  type: 'income' | 'expense';
-  amount: number;
-  unitName?: string;
+export interface ExportData {
+  type: 'excel' | 'csv';
+  data: any[];
+  filename: string;
 }
 
 @Component({
@@ -24,147 +30,293 @@ interface Transaction {
   templateUrl: './property-finances.component.html',
   styleUrls: ['./property-finances.component.scss']
 })
-export class PropertyFinancesComponent implements OnInit {
+export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
   @Input() propertyId: string = '';
-  @Input() property: any = null;
-  @Input() units: any[] = [];
-  @Input() tenants: any[] = [];
-  @Input() history: any[] = [];
-  @Input() loading: boolean = false;
-  @Input() finances: FinanceData | null = null;
+  @Input() finances: any = null; // Garde pour compatibilité
 
-  selectedPeriod: string = 'current_month';
-  recentTransactions: Transaction[] = [];
+  // État local
+  selectedYear: number = new Date().getFullYear();
+  activeSection: 'dashboard' | 'overview' | 'tenants' | 'deposits' | 'monthly' = 'dashboard';
+  isLoading: boolean = false;
 
-  // Couleurs pour les catégories de dépenses
-  private categoryColors = [
-    '#3B82F6', // blue
-    '#EF4444', // red
-    '#10B981', // green
-    '#F59E0B', // yellow
-    '#8B5CF6', // purple
-    '#F97316', // orange
-    '#06B6D4', // cyan
-    '#84CC16'  // lime
-  ];
+  // Données financières
+  financialData: FinancialAnalysisData = {
+    yearlyStats: [],
+    tenantStats: [],
+    paymentStats: [],
+    recapitulation: null
+  };
 
-  constructor() { }
+  // Observables du store
+  roomStatistics$: Observable<StatisticRoomYearModel[]>;
+  tenantStatistics$: Observable<StatisticLocataireYearModel[]>;
+  paymentStatistics$: Observable<StatisticAllPaymentLocataireYearModel[]>;
+  recapitulation$: Observable<StatisticPaymentOfAllPropertyByYear[]>;
+  loadingStates$: Observable<{
+    room: boolean;
+    tenant: boolean;
+    payment: boolean;
+    recap: boolean;
+  }>;
+
+  private destroy$ = new Subject<void>();
+
+  constructor(private store: Store) {
+    // Les observables seront initialisés dans ngOnInit quand propertyId sera disponible
+    this.loadingStates$ = combineLatest([
+      this.store.select(StatisticState.selectStateLoadingRoomStatistic),
+      this.store.select(StatisticState.selectStateLocataireStatisticLoading),
+      this.store.select(StatisticState.selectStateAllLocatairePayementByYearLoading),
+      this.store.select(StatisticState.selectStateLoadingStatisticRecaptilationLoading)
+    ]).pipe(
+      map(([room, tenant, payment, recap]) => ({
+        room: Boolean(room),
+        tenant: Boolean(tenant),
+        payment: Boolean(payment),
+        recap: Boolean(recap)
+      }))
+    );
+  }
 
   ngOnInit(): void {
-    this.loadRecentTransactions();
+    this.initializeObservables();
+    this.setupDataSubscriptions();
+    // Les données sont déjà chargées par le resolver, pas besoin de les recharger
+    console.log('🎯 PropertyFinances - Initialisation avec données du resolver');
   }
 
-  private loadRecentTransactions(): void {
-    // Simulation de données - remplacer par un appel API
-    this.recentTransactions = [
-      {
-        id: '1',
-        date: new Date(2024, 5, 15),
-        description: 'Loyer mensuel',
-        reference: 'LOY-2024-001',
-        type: 'income',
-        amount: 85000,
-        unitName: 'Appartement A1'
-      },
-      {
-        id: '2',
-        date: new Date(2024, 5, 10),
-        description: 'Réparation plomberie',
-        reference: 'REP-2024-005',
-        type: 'expense',
-        amount: 25000,
-        unitName: 'Appartement B2'
-      },
-      {
-        id: '3',
-        date: new Date(2024, 5, 8),
-        description: 'Loyer mensuel',
-        reference: 'LOY-2024-002',
-        type: 'income',
-        amount: 120000,
-        unitName: 'Appartement A2'
-      },
-      {
-        id: '4',
-        date: new Date(2024, 5, 5),
-        description: 'Assurance propriété',
-        reference: 'ASS-2024-001',
-        type: 'expense',
-        amount: 15000
-      },
-      {
-        id: '5',
-        date: new Date(2024, 5, 1),
-        description: 'Frais de gestion',
-        reference: 'GES-2024-001',
-        type: 'expense',
-        amount: 10000
-      }
-    ];
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['propertyId'] && this.propertyId) {
+      // Réinitialiser les observables avec le nouveau propertyId
+      this.initializeObservables();
+      console.log('🔄 PropertyFinances - Changement de propriété, observables réinitialisés');
+    }
   }
 
-  updatePeriod(): void {
-    console.log('Période mise à jour:', this.selectedPeriod);
-    // Ici, vous pourriez recharger les données financières pour la nouvelle période
+  private initializeObservables(): void {
+    if (!this.propertyId) {
+      console.warn('⚠️ PropertyId non défini, impossible d\'initialiser les observables');
+      return;
+    }
+
+    console.log(`🔧 Initialisation des observables pour la propriété: ${this.propertyId}`);
+
+    // Utiliser les sélecteurs qui filtrent par propriété ET par année
+    this.roomStatistics$ = this.store.select(StatisticState.selectStateStatisticRoomByPropertyIdAndYear(this.propertyId, this.selectedYear));
+    this.tenantStatistics$ = this.store.select(StatisticState.selectStateStatisticLocataireByPropertyIdAndYear(this.propertyId, this.selectedYear));
+    this.paymentStatistics$ = this.store.select(StatisticState.selectStateStatisticAllPaymentLocataireByPropertyIdAndYear(this.propertyId, this.selectedYear));
+    this.recapitulation$ = this.store.select(StatisticState.selectStateStatisticRecapitulationPaymentBydYear(this.selectedYear));
   }
 
-  getPeriodLabel(): string {
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  // === MÉTHODES DE CHARGEMENT DES DONNÉES ===
+
+  private setupDataSubscriptions(): void {
+    // Combiner toutes les données financières
+    combineLatest([
+      this.roomStatistics$,
+      this.tenantStatistics$,
+      this.paymentStatistics$,
+      this.recapitulation$
+    ]).pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(([roomStats, tenantStats, paymentStats, recapStats]) => {
+      this.financialData = {
+        yearlyStats: roomStats || [],
+        tenantStats: tenantStats || [],
+        paymentStats: paymentStats || [],
+        recapitulation: this.findRecapForYear(recapStats)
+      };
+
+      console.log('📊 Données financières mises à jour:', {
+        yearlyStats: this.financialData.yearlyStats.length,
+        tenantStats: this.financialData.tenantStats.length,
+        paymentStats: this.financialData.paymentStats.length,
+        propertyId: this.propertyId,
+        year: this.selectedYear
+      });
+    });
+
+    // Surveiller les états de chargement
+    this.loadingStates$.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(states => {
+      this.isLoading = Object.values(states).some(loading => loading);
+    });
+  }
+
+  private loadFinancialDataForYear(year: number): void {
+    if (!this.propertyId) return;
+
+    console.log(`🔄 Chargement des données financières pour l'année ${year}`);
+
+    // Charger les statistiques pour l'année sélectionnée
+    this.store.dispatch([
+      new StatisticAction.FetchStaticRoomDataByPropertyIdAndYear(this.propertyId, year.toString()),
+      new StatisticAction.FetchStaticLocataireDataByPropertyIdAndYear(this.propertyId, year),
+      new StatisticAction.FetchStaticAllPaymentLocataireDataByPropertyIdAndYear(this.propertyId, year),
+      new StatisticAction.FetchStatisticPaymentRecapitulationAccountOfAllPropertyByYear(year)
+    ]);
+  }
+
+
+
+  private findRecapForYear(recapStats: StatisticPaymentOfAllPropertyByYear[] | null | undefined): StatisticPaymentOfAllPropertyByYear | null {
+    if (!recapStats || !Array.isArray(recapStats)) {
+      return null;
+    }
+    return recapStats.find(recap =>
+      recap && recap.year && recap.year.toString() === this.selectedYear.toString()
+    ) || null;
+  }
+
+  // === MÉTHODES D'ACTIONS ===
+
+  onYearChange(year: number): void {
+    this.selectedYear = year;
+    // Réinitialiser les observables avec la nouvelle année
+    this.initializeObservables();
+    this.loadFinancialDataForYear(year);
+  }
+
+  /**
+   * Vérifie s'il y a des données financières disponibles pour l'année sélectionnée
+   */
+  hasFinancialData(): boolean {
+    return this.financialData.yearlyStats.length > 0 ||
+           this.financialData.tenantStats.length > 0 ||
+           this.financialData.paymentStats.length > 0 ||
+           this.financialData.recapitulation !== null;
+  }
+
+  /**
+   * Vérifie s'il y a au moins quelques données (pour affichage conditionnel)
+   */
+  hasPartialData(): boolean {
+    return this.hasFinancialData();
+  }
+
+  /**
+   * Vérifie si l'année est complètement vide (aucune donnée du tout)
+   */
+  isYearCompletelyEmpty(): boolean {
+    return !this.hasFinancialData() && !this.isLoading;
+  }
+
+  /**
+   * Retourne l'année actuelle
+   */
+  getCurrentYear(): number {
+    return new Date().getFullYear();
+  }
+
+  /**
+   * Navigue vers l'année actuelle
+   */
+  goToCurrentYear(): void {
+    this.onYearChange(this.getCurrentYear());
+  }
+
+  onSectionChange(section: 'dashboard' | 'overview' | 'tenants' | 'deposits' | 'monthly'): void {
+    this.activeSection = section;
+  }
+
+  getSectionLabel(section: string): string {
     const labels = {
-      'current_month': 'Mois actuel',
-      'last_month': 'Mois dernier',
-      'last_3_months': '3 derniers mois',
-      'last_6_months': '6 derniers mois',
-      'current_year': 'Année actuelle',
-      'last_year': 'Année dernière'
+      'dashboard': 'Tableau de Bord',
+      'overview': 'Vue d\'ensemble',
+      'tenants': 'Locataires',
+      'deposits': 'Cautions',
+      'monthly': 'Revenus'
     };
-    return labels[this.selectedPeriod as keyof typeof labels] || 'Période sélectionnée';
+    return labels[section as keyof typeof labels] || section;
   }
 
-  getNetIncomeGrowth(): number {
-    // Simulation de la croissance - à remplacer par un calcul réel
-    return 15;
+  getCurrentSectionIndex(): number {
+    const sections = ['dashboard', 'overview', 'tenants', 'deposits', 'monthly'];
+    return sections.indexOf(this.activeSection);
   }
 
-  getROI(): number {
-    if (!this.finances) return 0;
-    
-    // Calcul simplifié du ROI annuel
-    const annualNetIncome = this.finances.netIncome * 12;
-    const propertyValue = 50000000; // Valeur estimée de la propriété - à récupérer depuis les données
-    
-    return Math.round((annualNetIncome / propertyValue) * 100);
+  getTotalSections(): number {
+    return 5; // Nombre total de sections
   }
 
-  getCategoryColor(category: string): string {
-    if (!this.finances) return this.categoryColors[0];
-    
-    const index = this.finances.expenseCategories.findIndex(cat => cat.category === category);
-    return this.categoryColors[index % this.categoryColors.length];
+  getSectionProgress(): number {
+    const currentIndex = this.getCurrentSectionIndex();
+    const totalSections = this.getTotalSections();
+    return ((currentIndex + 1) / totalSections) * 100;
   }
 
-  getCategoryPercentage(amount: number): number {
-    if (!this.finances) return 0;
-    
-    const totalExpenses = this.finances.expenseCategories.reduce((sum, cat) => sum + cat.amount, 0);
-    return totalExpenses > 0 ? Math.round((amount / totalExpenses) * 100) : 0;
+  onExportData(exportData: ExportData): void {
+    // TODO: Implémenter l'export des données
+    console.log('Export des données:', exportData);
   }
 
-  getRecentTransactions(): Transaction[] {
-    return this.recentTransactions.slice(0, 5); // Afficher les 5 dernières transactions
+  refreshData(): void {
+    if (this.propertyId) {
+      this.store.dispatch(
+        new StatisticAction.RefreshStaticLocataireDataByPropertyIdAndYear(this.propertyId, this.selectedYear)
+      );
+    }
   }
 
-  trackByTransactionId(index: number, transaction: Transaction): string {
-    return transaction.id;
+  // === MÉTHODES UTILITAIRES ===
+
+  getAvailableYears(): number[] {
+    const currentYear = new Date().getFullYear();
+    const years: number[] = [];
+    for (let i = currentYear - 5; i <= currentYear + 1; i++) {
+      years.push(i);
+    }
+    return years;
   }
 
-  // Actions
-  generateReport(): void {
-    console.log('Générer rapport financier');
-    // Implémentation de la génération de rapport
+  formatPrice(price: number | null | undefined): string {
+    if (!price) return '0 FCFA';
+    return new Intl.NumberFormat('fr-CM', {
+      style: 'currency',
+      currency: 'XAF',
+      minimumFractionDigits: 0
+    }).format(price);
   }
 
-  exportFinances(): void {
-    console.log('Exporter données financières');
-    // Implémentation de l'export
+  formatPercentage(value: number): string {
+    return `${value.toFixed(1)}%`;
+  }
+
+  getMonthName(monthIndex: number): string {
+    const months = [
+      'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+      'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+    ];
+    return months[monthIndex] || 'Mois inconnu';
+  }
+
+  getPaymentStateLabel(state: StatisticPaymentStateType): string {
+    switch (state) {
+      case StatisticPaymentStateType.PAYED: return 'Payé';
+      case StatisticPaymentStateType.UNPAYED: return 'Non payé';
+      case StatisticPaymentStateType.PARTIAL_PAYMENT: return 'Paiement partiel';
+      case StatisticPaymentStateType.WAITING: return 'En attente';
+      case StatisticPaymentStateType.ENDED_CONTRACT: return 'Contrat terminé';
+      case StatisticPaymentStateType.NO_CONTRACT: return 'Pas de contrat';
+      default: return 'Inconnu';
+    }
+  }
+
+  getPaymentStateColor(state: StatisticPaymentStateType): string {
+    switch (state) {
+      case StatisticPaymentStateType.PAYED: return 'bg-green-100 text-green-800';
+      case StatisticPaymentStateType.UNPAYED: return 'bg-red-100 text-red-800';
+      case StatisticPaymentStateType.PARTIAL_PAYMENT: return 'bg-yellow-100 text-yellow-800';
+      case StatisticPaymentStateType.WAITING: return 'bg-blue-100 text-blue-800';
+      case StatisticPaymentStateType.ENDED_CONTRACT: return 'bg-gray-100 text-gray-800';
+      case StatisticPaymentStateType.NO_CONTRACT: return 'bg-purple-100 text-purple-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
   }
 }

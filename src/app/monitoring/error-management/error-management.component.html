@@ -1,0 +1,255 @@
+<div class="app-a-box app-scrollbar-fix">
+  <ng-scrollbar>
+    <div class="error-management">
+  <!-- Header avec contrôles -->
+  <div class="management-header">
+    <div class="header-left">
+      <h2>🚨 Gestion des Erreurs</h2>
+      <p class="subtitle">{{ totalErrors }} erreur(s) au total</p>
+    </div>
+    
+    <div class="header-controls">
+      <div class="search-container">
+        <input 
+          type="text" 
+          class="search-input"
+          placeholder="Rechercher des erreurs..."
+          [(ngModel)]="searchTerm"
+          (input)="onSearch($event)">
+        <button 
+          *ngIf="searchTerm" 
+          class="clear-search-btn"
+          (click)="clearSearch()">
+          ×
+        </button>
+      </div>
+
+
+
+
+
+      <button
+        class="filter-btn"
+        [class.active]="showFilters"
+        (click)="showFilters = !showFilters">
+        🔍 Filtres
+      </button>
+    </div>
+  </div>
+
+  <!-- Panel de filtres -->
+  <div class="filters-panel" [class.show]="showFilters">
+    <div class="filters-content">
+      <div class="filter-group">
+        <label>Niveau:</label>
+        <select [(ngModel)]="filters.level">
+          <option value="">Tous</option>
+          <option *ngFor="let level of levelOptions" [value]="level">
+            {{ getErrorLevelLabel(level) }}
+          </option>
+        </select>
+      </div>
+      
+      <div class="filter-group">
+        <label>Source:</label>
+        <select [(ngModel)]="filters.source">
+          <option value="">Toutes</option>
+          <option *ngFor="let source of sourceOptions" [value]="source">
+            {{ getErrorSourceLabel(source) }}
+          </option>
+        </select>
+      </div>
+      
+      <div class="filter-group">
+        <label>Statut:</label>
+        <select [(ngModel)]="filters.status">
+          <option value="">Tous</option>
+          <option *ngFor="let status of statusOptions" [value]="status">
+            {{ getErrorStatusLabel(status) }}
+          </option>
+        </select>
+      </div>
+      
+      <div class="filter-group">
+        <label>Date début:</label>
+        <input type="datetime-local" [(ngModel)]="filters.startDate">
+      </div>
+      
+      <div class="filter-group">
+        <label>Date fin:</label>
+        <input type="datetime-local" [(ngModel)]="filters.endDate">
+      </div>
+      
+      <div class="filter-actions">
+        <button class="apply-btn" (click)="applyFilters()">Appliquer</button>
+        <button class="clear-btn" (click)="clearFilters()">Effacer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Actions en lot -->
+  <div class="bulk-actions" *ngIf="getSelectedCount() > 0">
+    <div class="selection-info">
+      {{ getSelectedCount() }} erreur(s) sélectionnée(s)
+    </div>
+    
+    <div class="bulk-buttons">
+      <button 
+        class="bulk-btn status-btn"
+        (click)="bulkUpdateStatus(ErrorStatus.ACKNOWLEDGED)">
+        ✓ Marquer comme reconnues
+      </button>
+      
+      <button 
+        class="bulk-btn status-btn"
+        (click)="bulkUpdateStatus(ErrorStatus.RESOLVED)">
+        ✅ Marquer comme résolues
+      </button>
+      
+      <button 
+        class="bulk-btn status-btn"
+        (click)="bulkUpdateStatus(ErrorStatus.IGNORED)">
+        🚫 Ignorer
+      </button>
+      
+      <button 
+        class="bulk-btn delete-btn"
+        (click)="bulkDelete()">
+        🗑️ Supprimer
+      </button>
+    </div>
+  </div>
+
+  <!-- Table des erreurs -->
+  <div class="errors-table-container">
+    <table class="errors-table">
+      <thead>
+        <tr>
+          <th class="checkbox-col">
+            <input 
+              type="checkbox" 
+              [checked]="selectedErrors.size === errors.length && errors.length > 0"
+              (change)="selectAllErrors()">
+          </th>
+          <th>Niveau</th>
+          <th>Message</th>
+          <th>Source</th>
+          <th>Statut</th>
+          <th>Occurrences</th>
+          <th>Dernière occurrence</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let error of errors" class="error-row">
+          <td class="checkbox-col">
+            <input 
+              type="checkbox" 
+              [checked]="isErrorSelected(error._id)"
+              (change)="toggleErrorSelection(error._id)">
+          </td>
+          
+          <td class="level-col">
+            <span class="level-badge" [ngClass]="getErrorLevelClass(error.level)">
+              {{ getErrorLevelLabel(error.level) }}
+            </span>
+          </td>
+          
+          <td class="message-col">
+            <div class="message-content">
+              <div class="message-text" [title]="error.message">
+                {{ truncateText(error.message, 80) }}
+              </div>
+              <div class="message-meta" *ngIf="error.component">
+                {{ error.component }}
+              </div>
+            </div>
+          </td>
+          
+          <td class="source-col">
+            <span class="source-badge">
+              {{ getErrorSourceLabel(error.source) }}
+            </span>
+          </td>
+          
+          <td class="status-col">
+            <select 
+              class="status-select"
+              [ngClass]="getErrorStatusClass(error.status)"
+              [value]="error.status"
+              (change)="updateErrorStatus(error._id, $any($event.target).value)">
+              <option *ngFor="let status of statusOptions" [value]="status">
+                {{ getErrorStatusLabel(status) }}
+              </option>
+            </select>
+          </td>
+          
+          <td class="count-col">
+            <span class="count-badge">{{ error.occurrenceCount }}</span>
+          </td>
+          
+          <td class="date-col">
+            {{ formatDate(error.lastOccurrence || error.createdAt) }}
+          </td>
+          
+          <td class="actions-col">
+            <button 
+              class="action-btn details-btn"
+              (click)="showDetails(error)"
+              title="Voir les détails">
+              👁️
+            </button>
+            
+            <button 
+              class="action-btn delete-btn"
+              (click)="deleteError(error._id)"
+              title="Supprimer">
+              🗑️
+            </button>
+          </td>
+        </tr>
+        
+        <tr *ngIf="errors.length === 0 && !isLoading" class="no-data-row">
+          <td colspan="8" class="no-data">
+            <div class="no-data-content">
+              <div class="no-data-icon">✅</div>
+              <div class="no-data-text">Aucune erreur détectée</div>
+              <div class="no-data-subtitle">Le système fonctionne correctement. Toutes les erreurs ont été résolues ou aucune erreur n'a été enregistrée.</div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination" *ngIf="getTotalPages() > 1">
+    <button 
+      class="page-btn"
+      [disabled]="currentPage === 1"
+      (click)="onPageChange(currentPage - 1)">
+      ← Précédent
+    </button>
+    
+    <span class="page-info">
+      Page {{ currentPage }} sur {{ getTotalPages() }}
+    </span>
+    
+    <button 
+      class="page-btn"
+      [disabled]="currentPage === getTotalPages()"
+      (click)="onPageChange(currentPage + 1)">
+      Suivant →
+    </button>
+  </div>
+
+  <!-- Loading overlay -->
+  <div *ngIf="isLoading" class="loading-overlay">
+    <div class="loading-spinner">
+      <div class="spinner"></div>
+      <div class="loading-text">Chargement...</div>
+    </div>
+  </div>
+</div>
+
+

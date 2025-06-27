@@ -1,0 +1,291 @@
+<!-- Récapitulatif des cautions -->
+<div class="deposits-summary-container">
+
+  <!-- Header avec gradient thème -->
+  <div class="header-section">
+    <div class="header-content">
+      <div class="header-text">
+        <h2 class="header-title">Récapitulatif des cautions</h2>
+        <p class="header-subtitle">Suivi des cautions versées par unité pour {{ selectedYear }}</p>
+      </div>
+
+      <div class="header-actions">
+        <button (click)="onExportDepositSummary()" class="btn-export">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+          <span>Exporter Cautions</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section métriques avec design moderne -->
+  <div class="metrics-section">
+    <div class="metrics-grid">
+
+      <!-- Total des cautions attendues -->
+      <div class="metric-card info">
+        <div class="metric-content">
+          <div class="metric-icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+            </svg>
+          </div>
+          <div class="metric-info">
+            <p class="metric-label">Cautions attendues</p>
+            <p class="metric-value">{{ formatPrice(globalStats.totalExpectedDeposits) }}</p>
+            <p class="metric-description">{{ globalStats.totalRooms }} unité(s) au total</p>
+            <div class="metric-trend">
+              <svg class="trend-icon neutral" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+              </svg>
+              <span class="trend-text">Objectif {{ selectedYear }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Total des cautions reçues -->
+      <div class="metric-card success">
+        <div class="metric-content">
+          <div class="metric-icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <div class="metric-info">
+            <p class="metric-label">Cautions reçues</p>
+            <p class="metric-value">{{ formatPrice(globalStats.totalReceivedDeposits) }}</p>
+            <p class="metric-description">{{ globalStats.completeDeposits }} complète(s)</p>
+            <div class="metric-progress">
+              <div class="progress-bar">
+                <div class="progress-fill" [style.width.%]="globalStats.averageDepositRate"></div>
+              </div>
+              <span class="progress-text">{{ formatPercentage(globalStats.averageDepositRate) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Taux de collecte -->
+      <div class="metric-card primary" [ngClass]="{
+        'success': globalStats.averageDepositRate >= 90,
+        'warning': globalStats.averageDepositRate >= 70 && globalStats.averageDepositRate < 90,
+        'danger': globalStats.averageDepositRate < 70
+      }">
+        <div class="metric-content">
+          <div class="metric-icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2-2V7a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 002 2h2a2 2 0 012-2V7a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 00-2 2h-2a2 2 0 00-2 2v6a2 2 0 01-2 2H9z"></path>
+            </svg>
+          </div>
+          <div class="metric-info">
+            <p class="metric-label">Taux de collecte</p>
+            <p class="metric-value">{{ formatPercentage(globalStats.averageDepositRate) }}</p>
+            <p class="metric-description">Performance moyenne</p>
+            <div class="metric-status">
+              <span class="status-badge" [ngClass]="{
+                'status-excellent': globalStats.averageDepositRate >= 90,
+                'status-good': globalStats.averageDepositRate >= 70 && globalStats.averageDepositRate < 90,
+                'status-poor': globalStats.averageDepositRate < 70
+              }">
+                {{ globalStats.averageDepositRate >= 90 ? 'Excellent' : globalStats.averageDepositRate >= 70 ? 'Bon' : 'À améliorer' }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cautions manquantes -->
+      <div class="metric-card danger">
+        <div class="metric-content">
+          <div class="metric-icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+            </svg>
+          </div>
+          <div class="metric-info">
+            <p class="metric-label">Cautions manquantes</p>
+            <p class="metric-value">{{ formatPrice(globalStats.totalExpectedDeposits - globalStats.totalReceivedDeposits) }}</p>
+            <p class="metric-description">{{ globalStats.missingDeposits + globalStats.partialDeposits }} unité(s) concernées</p>
+            <div class="metric-breakdown">
+              <div class="breakdown-item">
+                <span class="breakdown-label">Manquantes:</span>
+                <span class="breakdown-value">{{ globalStats.missingDeposits }}</span>
+              </div>
+              <div class="breakdown-item">
+                <span class="breakdown-label">Partielles:</span>
+                <span class="breakdown-value">{{ globalStats.partialDeposits }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section filtres et recherche -->
+  <div class="filters-section">
+    <div class="filters-container">
+
+      <!-- Filtres par statut -->
+      <div class="filters-group">
+        <label class="filter-label">Filtrer par statut:</label>
+        <select [(ngModel)]="statusFilter"
+                (ngModelChange)="onStatusFilterChange()"
+                class="filter-select">
+          <option value="all">Tous les statuts</option>
+          <option value="complete">Complètes</option>
+          <option value="partial">Partielles</option>
+          <option value="missing">Manquantes</option>
+          <option value="no_tenant">Sans locataire</option>
+        </select>
+      </div>
+
+      <!-- Recherche -->
+      <div class="search-container">
+        <input type="text"
+               [(ngModel)]="searchTerm"
+               (ngModelChange)="onSearchChange()"
+               placeholder="Code chambre ou nom locataire..."
+               class="search-input">
+        <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section contenu principal -->
+  <div class="content-section">
+
+    <!-- Header du tableau -->
+    <div class="table-header">
+      <h3 class="table-title">Détail par unité</h3>
+      <div class="table-summary">
+        <span class="summary-text">{{ filteredSummaries.length }} unité(s) affichée(s)</span>
+      </div>
+    </div>
+
+    <!-- Tableau amélioré -->
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Unité</th>
+            <th>Type</th>
+            <th>Loyer</th>
+            <th>Caution attendue</th>
+            <th>Caution reçue</th>
+            <th>Taux</th>
+            <th>Locataire</th>
+            <th>Statut</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let deposit of filteredSummaries; trackBy: trackByRoomId; let i = index"
+              [style.animation-delay.ms]="i * 50">
+
+            <!-- Code de l'unité -->
+            <td>
+              <div class="unit-info">
+                <div class="unit-code">{{ deposit.roomCode }}</div>
+                <div class="unit-id">ID: {{ deposit.roomId.substring(0, 8) }}...</div>
+              </div>
+            </td>
+
+            <!-- Type d'unité -->
+            <td>
+              <div class="unit-type">
+                <span class="type-badge">{{ deposit.roomType }}</span>
+              </div>
+            </td>
+
+            <!-- Loyer mensuel -->
+            <td>
+              <div class="price-info">
+                <span class="price-amount">{{ formatPrice(deposit.roomPrice) }}</span>
+                <span class="price-label">/ mois</span>
+              </div>
+            </td>
+
+            <!-- Caution attendue -->
+            <td>
+              <div class="expected-amount">{{ formatPrice(deposit.expectedDeposit) }}</div>
+            </td>
+
+            <!-- Caution reçue -->
+            <td>
+              <div class="received-amount">{{ formatPrice(deposit.receivedDeposit) }}</div>
+            </td>
+
+            <!-- Taux de caution -->
+            <td>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill"
+                       [style.width.%]="Math.min(deposit.depositRate, 100)"
+                       [ngClass]="{
+                         'excellent': deposit.depositRate >= 100,
+                         'good': deposit.depositRate >= 50 && deposit.depositRate < 100,
+                         'poor': deposit.depositRate < 50
+                       }">
+                    <div class="progress-shine"></div>
+                  </div>
+                </div>
+                <span class="progress-text">{{ formatPercentage(deposit.depositRate) }}</span>
+              </div>
+            </td>
+
+            <!-- Locataire -->
+            <td>
+              <div class="tenant-info">
+                <div class="tenant-avatar" *ngIf="deposit.tenantName">
+                  {{ deposit.tenantName.charAt(0).toUpperCase() }}
+                </div>
+                <div class="tenant-details">
+                  <span class="tenant-name">{{ deposit.tenantName || 'Aucun locataire' }}</span>
+                  <span class="tenant-status" *ngIf="!deposit.tenantName">Unité libre</span>
+                </div>
+              </div>
+            </td>
+
+            <!-- Statut -->
+            <td>
+              <span class="status-badge" [ngClass]="getStatusColor(deposit.status)">
+                <svg class="status-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="getStatusIcon(deposit.status)"></path>
+                </svg>
+                {{ getStatusLabel(deposit.status) }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- État vide -->
+    <div *ngIf="filteredSummaries.length === 0 && !isLoading" class="empty-state">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+      </svg>
+      <h3>Aucune caution trouvée</h3>
+      <p>Aucune caution ne correspond à vos critères de filtrage.</p>
+      <button (click)="statusFilter = 'all'; searchTerm = ''; applyFilters()" class="btn-reset">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+        </svg>
+        Réinitialiser les filtres
+      </button>
+    </div>
+  </div>
+
+  <!-- Indicateur de chargement -->
+  <div *ngIf="isLoading" class="loading-overlay">
+    <div class="loading-content">
+      <div class="loading-spinner"></div>
+      <span class="loading-text">Chargement des données de caution...</span>
+    </div>
+  </div>
+</div>
