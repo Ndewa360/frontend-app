@@ -52,6 +52,14 @@ import { ScrollRevealDirective } from './directives/scroll-reveal/scroll-reveal.
 import { LoadingOverlayComponent } from './components/loading-overlay/loading-overlay.component';
 import { CountUpDirective } from './directives/counter-up/counter-up.directive';
 import { ProspectionState } from './store/prospection/prospection.state';
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { HttpClient } from '@angular/common/http';
+
+// Factory function pour le loader de traduction
+export function HttpLoaderFactory(http: HttpClient) {
+  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+}
 
 
 
@@ -96,6 +104,13 @@ import { ProspectionState } from './store/prospection/prospection.state';
         progressBar:true,
         closeButton:true
       }),
+      TranslateModule.forRoot({
+        loader: {
+          provide: TranslateLoader,
+          useFactory: HttpLoaderFactory,
+          deps: [HttpClient]
+        }
+      }),
   ],
   declarations: [
     DummyTableRichComponent,
@@ -129,6 +144,7 @@ import { ProspectionState } from './store/prospection/prospection.state';
     ToastrModule,
     FormsModule,
     ReactiveFormsModule,
+    TranslateModule,
     LocalizedDatePipe,
     MaxPipe,
     FileUploadComponent,

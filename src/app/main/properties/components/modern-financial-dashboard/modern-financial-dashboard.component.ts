@@ -175,16 +175,21 @@ export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
         const monthNames = Object.values(MONTH);
         const monthName = monthNames[monthData.month - 1] || `Mois ${monthData.month}`;
 
+        // Calculer les dépenses basées sur un pourcentage du revenu (plus réaliste)
+        const revenue = monthData.totalAmountReceived || 0;
+        const estimatedExpenses = revenue * 0.15; // 15% du revenu en dépenses estimées
+
         monthlyData.push({
           month: monthName,
-          revenue: monthData.totalAmountReceived || 0,
-          expenses: Math.random() * 20000 + 5000, // Estimation des dépenses
-          profit: (monthData.totalAmountReceived || 0) - (Math.random() * 20000 + 5000)
+          revenue: revenue,
+          expenses: estimatedExpenses,
+          profit: revenue - estimatedExpenses
         });
       });
     } else {
-      // Données simulées si pas de données réelles
-      return this.generateMockMonthlyData();
+      // Retourner un tableau vide si pas de données réelles
+      console.warn('⚠️ Aucune donnée de paiement disponible pour cette propriété');
+      return [];
     }
 
     return monthlyData;
@@ -222,33 +227,9 @@ export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
   }
 
   private generateMockData(): void {
-    // Générer des données simulées pour la démonstration
-    this.propertiesSummary = [
-      {
-        propertyId: '1',
-        propertyName: 'Villa Moderne Douala',
-        totalRevenue: 850000,
-        expectedRevenue: 950000,
-        collectionRate: 89,
-        monthlyData: this.generateMockMonthlyData()
-      },
-      {
-        propertyId: '2',
-        propertyName: 'Immeuble Centre-Ville',
-        totalRevenue: 1200000,
-        expectedRevenue: 1300000,
-        collectionRate: 92,
-        monthlyData: this.generateMockMonthlyData()
-      },
-      {
-        propertyId: '3',
-        propertyName: 'Résidence Étudiante',
-        totalRevenue: 400000,
-        expectedRevenue: 500000,
-        collectionRate: 80,
-        monthlyData: this.generateMockMonthlyData()
-      }
-    ];
+    // ⚠️ MÉTHODE DÉPRÉCIÉE - Ne plus utiliser de données simulées
+    console.warn('⚠️ generateMockData() est déprécié. Utilisez les vraies données du store.');
+    this.propertiesSummary = [];
   }
 
   private generateMockMonthlyData(): MonthlyData[] {

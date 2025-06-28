@@ -349,4 +349,118 @@ export class UserProfileState {
             })
         );
     }
+
+    @Action(UserProfileAction.UpdateUserLanguagePreference)
+    updateUserLanguagePreference(ctx: StateContext<UserProfileStateModel>, { languageCode }: UserProfileAction.UpdateUserLanguagePreference) {
+        const state = ctx.getState();
+        const currentUserProfile = state.userProfile;
+
+        if (!currentUserProfile) {
+            console.warn('Aucun profil utilisateur trouvé pour mettre à jour la préférence de langue');
+            return of(null);
+        }
+
+        const updatedProfile = {
+            ...currentUserProfile,
+            preferredLanguage: languageCode
+        };
+
+        ctx.patchState({
+            waitingForUserProfilSaved: true
+        });
+
+        return this._userProfilesService.updateUserProfile(updatedProfile, currentUserProfile._id).pipe(
+            tap((result) => {
+                ctx.patchState({
+                    waitingForUserProfilSaved: false,
+                    userProfile: updatedProfile,
+                });
+                this._toastrService.success(`Langue mise à jour avec succès`, 'Ndewa360°');
+            }),
+            catchError((error) => {
+                ctx.patchState({
+                    waitingForUserProfilSaved: false,
+                    lastError: error?.error?.message || "Erreur lors de la mise à jour de la langue"
+                });
+                this._toastrService.error('Erreur lors de la mise à jour de la langue', 'Ndewa360°');
+                return throwError(() => error);
+            })
+        );
+    }
+
+    @Action(UserProfileAction.UpdateUserCurrencyPreference)
+    updateUserCurrencyPreference(ctx: StateContext<UserProfileStateModel>, { currencyCode }: UserProfileAction.UpdateUserCurrencyPreference) {
+        const state = ctx.getState();
+        const currentUserProfile = state.userProfile;
+
+        if (!currentUserProfile) {
+            console.warn('Aucun profil utilisateur trouvé pour mettre à jour la préférence de devise');
+            return of(null);
+        }
+
+        const updatedProfile = {
+            ...currentUserProfile,
+            preferredCurrency: currencyCode
+        };
+
+        ctx.patchState({
+            waitingForUserProfilSaved: true
+        });
+
+        return this._userProfilesService.updateUserProfile(updatedProfile, currentUserProfile._id).pipe(
+            tap((result) => {
+                ctx.patchState({
+                    waitingForUserProfilSaved: false,
+                    userProfile: updatedProfile,
+                });
+                this._toastrService.success(`Devise mise à jour avec succès`, 'Ndewa360°');
+            }),
+            catchError((error) => {
+                ctx.patchState({
+                    waitingForUserProfilSaved: false,
+                    lastError: error?.error?.message || "Erreur lors de la mise à jour de la devise"
+                });
+                this._toastrService.error('Erreur lors de la mise à jour de la devise', 'Ndewa360°');
+                return throwError(() => error);
+            })
+        );
+    }
+
+    @Action(UserProfileAction.UpdateUserLocalizationPreferences)
+    updateUserLocalizationPreferences(ctx: StateContext<UserProfileStateModel>, { preferences }: UserProfileAction.UpdateUserLocalizationPreferences) {
+        const state = ctx.getState();
+        const currentUserProfile = state.userProfile;
+
+        if (!currentUserProfile) {
+            console.warn('Aucun profil utilisateur trouvé pour mettre à jour les préférences de localisation');
+            return of(null);
+        }
+
+        const updatedProfile = {
+            ...currentUserProfile,
+            ...preferences
+        };
+
+        ctx.patchState({
+            waitingForUserProfilSaved: true
+        });
+
+        return this._userProfilesService.updateUserProfile(updatedProfile, currentUserProfile._id).pipe(
+            tap((result) => {
+                ctx.patchState({
+                    waitingForUserProfilSaved: false,
+                    userProfile: updatedProfile,
+                });
+                this._toastrService.success(`Préférences de localisation mises à jour avec succès`, 'Ndewa360°');
+            }),
+            catchError((error) => {
+                ctx.patchState({
+                    waitingForUserProfilSaved: false,
+                    lastError: error?.error?.message || "Erreur lors de la mise à jour des préférences"
+                });
+                this._toastrService.error('Erreur lors de la mise à jour des préférences', 'Ndewa360°');
+                return throwError(() => error);
+            })
+        );
+    }
 }

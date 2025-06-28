@@ -1,0 +1,134 @@
+<div class="export-dialog">
+  <div class="dialog-header">
+    <h2 mat-dialog-title>Exporter les données</h2>
+    <button 
+      mat-icon-button 
+      (click)="onCancel()"
+      class="close-button"
+      aria-label="Fermer">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </div>
+
+  <div mat-dialog-content class="dialog-content">
+    <form [formGroup]="exportForm" class="export-form">
+      
+      <!-- Title -->
+      <div class="form-field">
+        <label for="title">Titre du document</label>
+        <input 
+          id="title"
+          type="text" 
+          formControlName="title"
+          class="form-input"
+          placeholder="Entrez le titre du document">
+        <div class="field-error" *ngIf="exportForm.get('title')?.invalid && exportForm.get('title')?.touched">
+          Le titre est requis
+        </div>
+      </div>
+
+      <!-- Filename -->
+      <div class="form-field">
+        <label for="filename">Nom du fichier</label>
+        <input 
+          id="filename"
+          type="text" 
+          formControlName="filename"
+          class="form-input"
+          placeholder="Entrez le nom du fichier">
+        <div class="field-error" *ngIf="exportForm.get('filename')?.invalid && exportForm.get('filename')?.touched">
+          Le nom du fichier est requis
+        </div>
+      </div>
+
+      <!-- Format Selection -->
+      <div class="form-field">
+        <label>Format d'export</label>
+        <div class="format-options">
+          <div 
+            *ngFor="let format of formatOptions" 
+            class="format-option"
+            [class.selected]="exportForm.get('format')?.value === format.value"
+            [class.disabled]="format.disabled"
+            (click)="!format.disabled && selectFormat(format.value)">
+            
+            <div class="format-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            
+            <div class="format-info">
+              <div class="format-label">{{ format.label }}</div>
+              <div class="format-description">{{ format.description }}</div>
+            </div>
+            
+            <div class="format-radio">
+              <input 
+                type="radio" 
+                [value]="format.value" 
+                formControlName="format"
+                [disabled]="format.disabled"
+                (change)="onFormatChange()">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Export Options -->
+      <div class="form-field">
+        <label>Options d'export</label>
+        <div class="export-options">
+          <label class="checkbox-label">
+            <input 
+              type="checkbox" 
+              formControlName="includeData"
+              class="checkbox-input">
+            <span class="checkbox-custom"></span>
+            Inclure les données tabulaires
+          </label>
+          
+          <label class="checkbox-label" [class.disabled]="true">
+            <input
+              type="checkbox"
+              formControlName="includeCharts"
+              class="checkbox-input"
+              [disabled]="true">
+            <span class="checkbox-custom"></span>
+            Inclure les graphiques (bientôt disponible)
+          </label>
+        </div>
+      </div>
+
+    </form>
+  </div>
+
+  <div mat-dialog-actions class="dialog-actions">
+    <button 
+      type="button"
+      mat-button 
+      (click)="onCancel()"
+      class="cancel-button">
+      Annuler
+    </button>
+    
+    <button 
+      type="button"
+      mat-raised-button 
+      color="primary"
+      (click)="onExport()"
+      [disabled]="exportForm.invalid || isExporting"
+      class="export-button">
+      <span *ngIf="!isExporting">Exporter</span>
+      <span *ngIf="isExporting" class="loading-content">
+        <svg class="spinner" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Export en cours...
+      </span>
+    </button>
+  </div>
+</div>

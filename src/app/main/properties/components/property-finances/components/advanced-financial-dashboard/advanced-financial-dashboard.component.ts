@@ -146,15 +146,18 @@ export class AdvancedFinancialDashboardComponent implements OnInit, OnChanges {
   }
 
   private buildFinancialMetrics(): void {
-    const previousYearRevenue = this.totalRevenue * 0.9; // Simulation
-    const revenueChange = previousYearRevenue > 0 ? ((this.totalRevenue - previousYearRevenue) / previousYearRevenue) * 100 : 0;
+    // Calculer les changements réels par rapport aux données disponibles
+    const revenueChange = this.calculateRevenueChange();
+    const collectionRateChange = this.calculateCollectionRateChange();
+    const occupancyRateChange = this.calculateOccupancyRateChange();
+    const averageRentChange = this.calculateAverageRentChange();
 
     this.financialMetrics = [
       {
         label: 'Revenus Totaux',
         value: this.totalRevenue,
-        change: revenueChange,
-        changeType: revenueChange >= 0 ? 'increase' : 'decrease',
+        change: revenueChange.value,
+        changeType: revenueChange.type,
         icon: 'currency--dollar',
         color: this.successColor,
         description: 'Revenus collectés cette année'
@@ -162,8 +165,8 @@ export class AdvancedFinancialDashboardComponent implements OnInit, OnChanges {
       {
         label: 'Taux de Recouvrement',
         value: this.collectionRate,
-        change: 2.5,
-        changeType: 'increase',
+        change: collectionRateChange.value,
+        changeType: collectionRateChange.type,
         icon: 'chart--pie',
         color: this.primaryColor,
         description: 'Pourcentage des loyers collectés'
@@ -171,8 +174,8 @@ export class AdvancedFinancialDashboardComponent implements OnInit, OnChanges {
       {
         label: 'Taux d\'Occupation',
         value: this.occupancyRate,
-        change: -1.2,
-        changeType: 'decrease',
+        change: occupancyRateChange.value,
+        changeType: occupancyRateChange.type,
         icon: 'home',
         color: this.infoColor,
         description: 'Pourcentage d\'unités occupées'
@@ -180,8 +183,8 @@ export class AdvancedFinancialDashboardComponent implements OnInit, OnChanges {
       {
         label: 'Loyer Moyen',
         value: this.averageRent,
-        change: 5.8,
-        changeType: 'increase',
+        change: averageRentChange.value,
+        changeType: averageRentChange.type,
         icon: 'money',
         color: this.warningColor,
         description: 'Loyer moyen par unité'
@@ -646,6 +649,64 @@ export class AdvancedFinancialDashboardComponent implements OnInit, OnChanges {
     this.occupancyRate = 0;
     this.totalProperties = 0;
     this.financialMetrics = [];
+  }
+
+  // Méthodes de calcul des changements réels
+  private calculateRevenueChange(): { value: number, type: 'increase' | 'decrease' | 'neutral' } {
+    // Calculer la différence entre les revenus attendus et reçus
+    const expectedVsReceived = this.totalExpected > 0 ?
+      ((this.totalRevenue - this.totalExpected) / this.totalExpected) * 100 : 0;
+
+    return {
+      value: Math.abs(expectedVsReceived),
+      type: expectedVsReceived > 0 ? 'increase' : expectedVsReceived < 0 ? 'decrease' : 'neutral'
+    };
+  }
+
+  private calculateCollectionRateChange(): { value: number, type: 'increase' | 'decrease' | 'neutral' } {
+    // Comparer avec un taux de référence (85% est considéré comme bon)
+    const referenceRate = 85;
+    const difference = this.collectionRate - referenceRate;
+
+    return {
+      value: Math.abs(difference),
+      type: difference > 0 ? 'increase' : difference < 0 ? 'decrease' : 'neutral'
+    };
+  }
+
+  private calculateOccupancyRateChange(): { value: number, type: 'increase' | 'decrease' | 'neutral' } {
+    // Comparer avec un taux d'occupation de référence (90% est considéré comme excellent)
+    const referenceRate = 90;
+    const difference = this.occupancyRate - referenceRate;
+
+    return {
+      value: Math.abs(difference),
+      type: difference > 0 ? 'increase' : difference < 0 ? 'decrease' : 'neutral'
+    };
+  }
+
+  private calculateAverageRentChange(): { value: number, type: 'increase' | 'decrease' | 'neutral' } {
+    // Calculer la variation par rapport à la médiane des loyers
+    if (this.yearlyStats.length === 0) {
+      return { value: 0, type: 'neutral' };
+    }
+
+    const rents = this.yearlyStats.map(stat => stat.room?.price || 0).filter(price => price > 0);
+    if (rents.length === 0) {
+      return { value: 0, type: 'neutral' };
+    }
+
+    rents.sort((a, b) => a - b);
+    const median = rents.length % 2 === 0 ?
+      (rents[rents.length / 2 - 1] + rents[rents.length / 2]) / 2 :
+      rents[Math.floor(rents.length / 2)];
+
+    const difference = this.averageRent > 0 ? ((this.averageRent - median) / median) * 100 : 0;
+
+    return {
+      value: Math.abs(difference),
+      type: difference > 0 ? 'increase' : difference < 0 ? 'decrease' : 'neutral'
+    };
   }
 
   // Méthodes utilitaires

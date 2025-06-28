@@ -61,3 +61,6 @@ import 'zone.js';  // Included with Angular CLI.
 /***************************************************************************************************
  * APPLICATION IMPORTS
  */
+
+// Import pour le support d'i18n
+import '@angular/localize/init';

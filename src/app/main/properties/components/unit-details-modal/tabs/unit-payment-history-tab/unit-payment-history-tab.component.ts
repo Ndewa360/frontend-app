@@ -54,29 +54,16 @@ export class UnitPaymentHistoryTabComponent implements OnInit, OnDestroy {
   }
 
   private generateMockPayments(): PaymentRecord[] {
-    if (!this.tenant || !this.room) return [];
+    // ⚠️ MÉTHODE DÉPRÉCIÉE - Ne plus utiliser de données simulées
+    console.warn('⚠️ generateMockPayments() est déprécié. Utilisez les vraies données de paiement.');
 
-    const payments: PaymentRecord[] = [];
-    const currentDate = new Date();
-    const monthlyRent = this.room.price || 0;
-
-    // Générer 12 mois de paiements simulés
-    for (let i = 0; i < 12; i++) {
-      const paymentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 5);
-      const periodDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1);
-      
-      payments.push({
-        id: `payment-${i}`,
-        date: paymentDate,
-        period: this.formatPeriod(periodDate),
-        amount: monthlyRent,
-        status: i < 2 ? 'paid' : (i === 2 ? 'pending' : 'paid'),
-        method: i % 3 === 0 ? 'Virement' : (i % 3 === 1 ? 'Espèces' : 'Mobile Money'),
-        reference: `REF-${Date.now()}-${i}`
-      });
+    if (!this.tenant || !this.room) {
+      return [];
     }
 
-    return payments.sort((a, b) => b.date.getTime() - a.date.getTime());
+    // Retourner un tableau vide et afficher un message approprié
+    // Les vraies données doivent venir du store ou d'un service
+    return [];
   }
 
   private generateAvailableYears(): void {

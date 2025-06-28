@@ -53,8 +53,15 @@
               </div>
             </div>
           </div>
-          <div class="app-card">
-            <chart-finance-payement-annee [propertyID]="propertyId" [selectedYear]="selectedYear"></chart-finance-payement-annee>
+          <div fxLayout="row wrap" class="app-card-row-holder">
+            <div fxFlex="100%" fxFlex.gt-lg="50%">
+              <chart-finance-room [propertyID]="propertyId" [selectedYear]="selectedYear"></chart-finance-room>
+            </div>
+            <div fxFlex="100%" fxFlex.gt-lg="50%">
+              <div class="app-card">
+                <chart-finance-payement-annee [propertyID]="propertyId" [selectedYear]="selectedYear"></chart-finance-payement-annee>
+              </div>
+            </div>
           </div>
           <div  >
             <payment-list-recap-total [propertyID]="propertyId" [selectedYear]="selectedYear"></payment-list-recap-total>

@@ -1,0 +1,161 @@
+<div class="performance-alerts">
+  <!-- Alert Toggle Button -->
+  <div class="alerts-header">
+    <button 
+      type="button" 
+      class="alerts-toggle"
+      (click)="toggleExpanded()"
+      [class.expanded]="isExpanded"
+      [class.has-alerts]="unreadCount > 0">
+      
+      <div class="toggle-content">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path [attr.d]="getAlertIcon('warning')" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        
+        <span>Alertes de performance</span>
+        
+        <div class="alert-badge" *ngIf="unreadCount > 0">
+          {{ unreadCount }}
+        </div>
+      </div>
+      
+      <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
+    <div class="alerts-actions" *ngIf="isExpanded">
+      <button 
+        type="button" 
+        class="action-button"
+        (click)="toggleSettings()"
+        title="Paramètres des alertes">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+          <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1" stroke="currentColor" stroke-width="2"/>
+        </svg>
+      </button>
+      
+      <button 
+        type="button" 
+        class="action-button"
+        (click)="onClearAll()"
+        title="Effacer toutes les alertes"
+        *ngIf="alerts.length > 0">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Alerts Panel -->
+  <div class="alerts-panel" [class.expanded]="isExpanded">
+    
+    <!-- Settings Panel -->
+    <div class="settings-panel" *ngIf="showSettings">
+      <div class="settings-header">
+        <h4>Paramètres des seuils d'alerte</h4>
+        <button type="button" class="close-settings" (click)="toggleSettings()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+      
+      <div class="settings-content">
+        <div class="threshold-field">
+          <label>Taux d'occupation minimum (%)</label>
+          <input type="number" [(ngModel)]="thresholds.lowOccupancyRate" min="0" max="100">
+        </div>
+        
+        <div class="threshold-field">
+          <label>Taux d'arriérés maximum (%)</label>
+          <input type="number" [(ngModel)]="thresholds.highArrearsRate" min="0" max="100">
+        </div>
+        
+        <div class="threshold-field">
+          <label>Taux de recouvrement minimum (%)</label>
+          <input type="number" [(ngModel)]="thresholds.lowCollectionRate" min="0" max="100">
+        </div>
+        
+        <div class="settings-actions">
+          <button type="button" class="reset-button" (click)="onResetThresholds()">
+            Réinitialiser
+          </button>
+          <button type="button" class="save-button" (click)="onUpdateThresholds()">
+            Sauvegarder
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alerts List -->
+    <div class="alerts-content" *ngIf="!showSettings">
+      <div class="alerts-list" *ngIf="alerts.length > 0; else noAlerts">
+        <div
+          *ngFor="let alert of alerts"
+          class="alert-item"
+          [class]="'alert-' + alert.type"
+          [class.unread]="!alert.isRead"
+          [class.action-required]="alert.actionRequired"
+          (click)="onAlertClick(alert)">
+          
+          <div class="alert-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path 
+                [attr.d]="getAlertIcon(alert.type)" 
+                [attr.stroke]="getAlertColor(alert.type)" 
+                stroke-width="2" 
+                stroke-linecap="round" 
+                stroke-linejoin="round"/>
+            </svg>
+          </div>
+          
+          <div class="alert-content">
+            <div class="alert-header">
+              <h5 class="alert-title">{{ alert.title }}</h5>
+              <span class="alert-timestamp">{{ formatTimestamp(alert.timestamp) }}</span>
+            </div>
+            
+            <p class="alert-message">{{ alert.message }}</p>
+            
+            <div class="alert-details" *ngIf="alert.value !== undefined || alert.propertyName">
+              <span class="alert-property" *ngIf="alert.propertyName">
+                📍 {{ alert.propertyName }}
+              </span>
+              <span class="alert-value" *ngIf="alert.value !== undefined && alert.threshold !== undefined">
+                {{ alert.value | number:'1.1-1' }}% / {{ alert.threshold }}%
+              </span>
+            </div>
+          </div>
+          
+          <div class="alert-actions">
+            <button 
+              type="button" 
+              class="remove-alert"
+              (click)="onRemoveAlert(alert, $event)"
+              title="Supprimer l'alerte">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #noAlerts>
+        <div class="no-alerts">
+          <div class="no-alerts-icon">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="#059669" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h4>Aucune alerte</h4>
+          <p>Toutes vos métriques de performance sont dans les seuils acceptables.</p>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>

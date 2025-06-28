@@ -85,4 +85,29 @@ export namespace UserProfileAction
         static readonly type = '[UserProfile] Loading state UserProfile'
         constructor(public status:boolean){}
     }
+
+    // Actions pour les préférences de localisation
+    export class UpdateUserLanguagePreference
+    {
+        static readonly type = '[UserProfile] Update User Language Preference'
+        constructor(public languageCode: string){}
+    }
+
+    export class UpdateUserCurrencyPreference
+    {
+        static readonly type = '[UserProfile] Update User Currency Preference'
+        constructor(public currencyCode: string){}
+    }
+
+    export class UpdateUserLocalizationPreferences
+    {
+        static readonly type = '[UserProfile] Update User Localization Preferences'
+        constructor(public preferences: {
+            preferredLanguage?: string;
+            preferredCurrency?: string;
+            timezone?: string;
+            dateFormat?: string;
+            numberFormat?: string;
+        }){}
+    }
 }

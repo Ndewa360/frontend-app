@@ -1,0 +1,37 @@
+<div class="app-card chart-skeleton">
+  <div class="app-card__header">
+    <!-- Title skeleton -->
+    <div *ngIf="showTitle" class="skeleton-title"></div>
+    
+    <!-- Chart area skeleton -->
+    <div class="skeleton-chart" [style.height]="height">
+      <div class="skeleton-chart-content">
+        <!-- Y-axis skeleton -->
+        <div class="skeleton-y-axis">
+          <div class="skeleton-line" *ngFor="let item of [1,2,3,4,5]"></div>
+        </div>
+        
+        <!-- Chart bars/lines skeleton -->
+        <div class="skeleton-chart-bars">
+          <div class="skeleton-bar" 
+               *ngFor="let item of [1,2,3,4,5,6,7,8,9,10,11,12]"
+               [style.height.%]="getRandomHeight()">
+          </div>
+        </div>
+      </div>
+      
+      <!-- X-axis skeleton -->
+      <div class="skeleton-x-axis">
+        <div class="skeleton-label" *ngFor="let item of [1,2,3,4,5,6]"></div>
+      </div>
+    </div>
+    
+    <!-- Legend skeleton -->
+    <div *ngIf="showLegend" class="skeleton-legend">
+      <div class="skeleton-legend-item" *ngFor="let item of [1,2,3]">
+        <div class="skeleton-legend-color"></div>
+        <div class="skeleton-legend-text"></div>
+      </div>
+    </div>
+  </div>
+</div>

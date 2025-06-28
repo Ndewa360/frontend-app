@@ -1,12 +1,29 @@
-<div class="app-card">
-    <div class="app-card__header">
-      <div class="app-expressive-heading-03 text-center">{{title}}</div>
-      <div>
-        <youpez-echarts-container>
-          <youpez-echarts [options]="charsOpts" class="app-echarts-component"  style="height: 240px;">                            
-          </youpez-echarts>
-        </youpez-echarts-container>
-        <!-- <span class="app-expressive-heading-03 text-center">Locataires</span> -->
-      </div>
+<!-- Loading state -->
+<chart-skeleton
+  *ngIf="isLoading"
+  [height]="'240px'"
+  [showTitle]="true"
+  [showLegend]="true">
+</chart-skeleton>
+
+<!-- Error state -->
+<chart-error
+  *ngIf="!isLoading && error"
+  [error]="error"
+  [height]="'240px'"
+  [title]="title"
+  (retry)="onRetry()">
+</chart-error>
+
+<!-- Success state -->
+<div class="app-card" *ngIf="!isLoading && !error">
+  <div class="app-card__header">
+    <div class="app-expressive-heading-03 text-center">{{title}}</div>
+    <div>
+      <youpez-echarts-container>
+        <youpez-echarts [options]="charsOpts" class="app-echarts-component" style="height: 240px;">
+        </youpez-echarts>
+      </youpez-echarts-container>
     </div>
   </div>
+</div>

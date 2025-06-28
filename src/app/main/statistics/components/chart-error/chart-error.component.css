@@ -1,0 +1,129 @@
+.chart-error {
+  position: relative;
+}
+
+.error-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fafafa;
+  border-radius: 8px;
+  border: 2px dashed #e5e5e5;
+}
+
+.error-content {
+  text-align: center;
+  padding: 32px;
+  max-width: 400px;
+}
+
+.error-icon {
+  margin-bottom: 16px;
+  opacity: 0.8;
+}
+
+.error-icon svg {
+  filter: drop-shadow(0 2px 4px rgba(220, 38, 38, 0.1));
+}
+
+.error-message {
+  margin-bottom: 24px;
+}
+
+.error-message h4 {
+  color: #dc2626;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+}
+
+.error-message p {
+  color: #6b7280;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0 0 8px 0;
+}
+
+.error-code {
+  color: #9ca3af;
+  font-size: 12px;
+  font-family: 'Courier New', monospace;
+  background: #f3f4f6;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.retry-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: #dc2626;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.retry-button:hover {
+  background: #b91c1c;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(220, 38, 38, 0.2);
+}
+
+.retry-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(220, 38, 38, 0.2);
+}
+
+.retry-button svg {
+  animation: none;
+}
+
+.retry-button:hover svg {
+  animation: spin 0.5s ease-in-out;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Dark theme support */
+@media (prefers-color-scheme: dark) {
+  .error-container {
+    background: #1a1a1a;
+    border-color: #374151;
+  }
+  
+  .error-message p {
+    color: #9ca3af;
+  }
+  
+  .error-code {
+    background: #374151;
+    color: #d1d5db;
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .error-content {
+    padding: 24px 16px;
+  }
+  
+  .error-message h4 {
+    font-size: 16px;
+  }
+  
+  .error-message p {
+    font-size: 13px;
+  }
+}

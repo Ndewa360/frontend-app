@@ -4,6 +4,8 @@ import { RefreshTokenService } from './shared/store/auth-token/refresh-token.ser
 import { UserActivityService } from './shared/store/auth-token/user-activity.service';
 import { environment } from '../environments/environment';
 import { MonitoringService } from './shared/services/monitoring.service';
+import { LocalizationService } from './shared/services/localization/localization.service';
+import { TranslationService } from './shared/services/localization/translation.service';
 import { AuthTokenState } from './shared/store/auth-token';
 import { interval, Subscription, Subject, fromEvent, merge, of, timer } from 'rxjs';
 import { LOCAL_LANGUAGE, UserProfileAction } from './shared/store';
@@ -56,7 +58,9 @@ export class AppComponent implements OnInit, OnDestroy {
     private titleService: Title, 
     private meta: Meta,
     private seoService: SeoService,
-    private monitoringService: MonitoringService
+    private monitoringService: MonitoringService,
+    private localizationService: LocalizationService,
+    private translationService: TranslationService
   ) {
     // Fallback pour l'écran de chargement au cas où la navigation ne se termine jamais
     this.loadingTimeout = setTimeout(() => {
@@ -69,7 +73,12 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // Initialiser moment.js avec la locale française
+    // Initialiser les services de localisation
+    // Note: Les services sont automatiquement initialisés via leurs constructeurs
+    // mais nous nous assurons qu'ils sont bien injectés
+    console.log('Services de localisation initialisés');
+
+    // Initialiser moment.js avec la locale française (sera remplacé par le système de localisation)
     try {
       moment.locale(LOCAL_LANGUAGE.FR.toString());
     } catch (e) {

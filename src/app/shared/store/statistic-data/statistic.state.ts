@@ -9,6 +9,12 @@ import { UtilsString } from "../../utils";
 import { ToastrService } from "ngx-toastr";
 import { StatisticAllPaymentLocataireYearModel, StatisticLocataireYearModel, StatisticPaymentOfAllPropertyByYear, StatisticRoomYearModel } from "./statistic.model";
 
+export interface StatisticError {
+    message: string;
+    code?: string;
+    timestamp: Date;
+}
+
 export class StatisticStateModel {
     roomStatistic:StatisticRoomYearModel[] //statistic de chambre
     locataireStatistic:StatisticLocataireYearModel[] //statistic de locataire
@@ -20,6 +26,20 @@ export class StatisticStateModel {
     allLocatairePayementByYearLoading:boolean
     loadingStatisticRecaptilationLoading:boolean
     statisticRecapitulationPayment:StatisticPaymentOfAllPropertyByYear[] //statistique de recaptiulation de paiement par ans
+
+    // Error handling
+    error: StatisticError | null
+    roomStatisticError: StatisticError | null
+    locataireStatisticError: StatisticError | null
+    allLocatairePayementByYearError: StatisticError | null
+    statisticRecapitulationPaymentError: StatisticError | null
+
+    // Last update timestamps for cache management
+    lastUpdated: Date | null
+    roomStatisticLastUpdated: Date | null
+    locataireStatisticLastUpdated: Date | null
+    allLocatairePayementByYearLastUpdated: Date | null
+    statisticRecapitulationPaymentLastUpdated: Date | null
 }
 
 
@@ -35,7 +55,20 @@ export class StatisticStateModel {
         locataireStatistic:[],
         allLocatairePayementByYear:[],
         statisticRecapitulationPayment:[],
-        // initLoadingState:'NO_LOADED',
+
+        // Error states
+        error: null,
+        roomStatisticError: null,
+        locataireStatisticError: null,
+        allLocatairePayementByYearError: null,
+        statisticRecapitulationPaymentError: null,
+
+        // Timestamps
+        lastUpdated: null,
+        roomStatisticLastUpdated: null,
+        locataireStatisticLastUpdated: null,
+        allLocatairePayementByYearLastUpdated: null,
+        statisticRecapitulationPaymentLastUpdated: null
     }
 })
 @Injectable()
@@ -75,6 +108,39 @@ export class StatisticState{
     static selectPaymentRecapitulationStatisticLoading(state:StatisticStateModel)
     {
         return state.loadingStatisticRecaptilationLoading
+    }
+
+    // Error selectors
+    @Selector()
+    static selectError(state: StatisticStateModel) {
+        return state.error;
+    }
+
+    @Selector()
+    static selectRoomStatisticError(state: StatisticStateModel) {
+        return state.roomStatisticError;
+    }
+
+    @Selector()
+    static selectLocataireStatisticError(state: StatisticStateModel) {
+        return state.locataireStatisticError;
+    }
+
+    @Selector()
+    static selectAllLocatairePayementByYearError(state: StatisticStateModel) {
+        return state.allLocatairePayementByYearError;
+    }
+
+    @Selector()
+    static selectStatisticRecapitulationPaymentError(state: StatisticStateModel) {
+        return state.statisticRecapitulationPaymentError;
+    }
+
+    // Combined error selector - returns true if any error exists
+    @Selector()
+    static selectHasAnyError(state: StatisticStateModel) {
+        return !!(state.error || state.roomStatisticError || state.locataireStatisticError ||
+                 state.allLocatairePayementByYearError || state.statisticRecapitulationPaymentError);
     }
 
     // Data selectors
@@ -157,23 +223,45 @@ export class StatisticState{
     {
         const state = ctx.getState();
         let index = state.roomStatistic.findIndex((u)=>u.room.property==propertyID && year==u.year);
-        // //console.log("Index Static", index,propertyID,state.roomStatistic)
+
         if(index>-1) return of(true);
 
         ctx.patchState({
             loadingStatistic:true,
-            loadingRoomStatistic:true
+            loadingRoomStatistic:true,
+            roomStatisticError: null // Clear previous errors
         })
+
         return this._statisticsService.getStatisticRoomDataByYear(propertyID,year).pipe(
             tap(
                 result => {
+                    console.log('✅ Room statistics loaded successfully', result);
                     ctx.patchState({
                         loadingStatistic:false,
                         loadingRoomStatistic:false,
-                        roomStatistic:[...state.roomStatistic, ...result.data]
+                        roomStatistic:[...state.roomStatistic, ...result.data],
+                        roomStatisticLastUpdated: new Date(),
+                        roomStatisticError: null
                     })
                 }
-            )
+            ),
+            catchError(error => {
+                console.error('❌ Error loading room statistics:', error);
+                const errorObj: StatisticError = {
+                    message: error.error?.message || 'Erreur lors du chargement des statistiques des chambres',
+                    code: error.error?.error || 'ROOM_STATS_ERROR',
+                    timestamp: new Date()
+                };
+
+                ctx.patchState({
+                    loadingStatistic:false,
+                    loadingRoomStatistic:false,
+                    roomStatisticError: errorObj
+                });
+
+                this._toastrService.error(errorObj.message, 'Erreur');
+                return throwError(error);
+            })
         )
     }
 

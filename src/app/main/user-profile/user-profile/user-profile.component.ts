@@ -31,7 +31,11 @@ export class UserProfileComponent implements OnInit{
       {
         name: 'Profil',
         url: `/app/profile/infos`,
-      },       
+      },
+      {
+        name: 'Langue & Devise',
+        url: `/app/profile/localization`,
+      },
     ]
   }
 
