@@ -40,6 +40,7 @@ export class UpdatePropertyComponent {
       geolocationCity: [null, [Validators.required]],
       hasClosure:[this.data.property.hasClosure,Validators.required],
       hasParking:[this.data.property.hasParking,Validators.required],
+      contractTemplate: [this.data.property.contractTemplate || null], // Modèle de contrat
     })
 
     this._ngxsAction.pipe(ofActionSuccessful(PropertyAction.UpdateProperty)).subscribe((value)=>{
@@ -105,8 +106,9 @@ export class UpdatePropertyComponent {
     this._store.dispatch(new PropertyAction.UpdateProperty({
       ...FormUtils.removeNullAttribut(this.formGroup.value),
       geolocationCity:this.formGroup.value.geolocationCity.valueType,
-      geolocationCountry:this.formGroup.value.geolocationCountry.valueType
-    }, 
+      geolocationCountry:this.formGroup.value.geolocationCountry.valueType,
+      contractTemplate: this.formGroup.value.contractTemplate
+    },
     this.data.property._id)
     );
     

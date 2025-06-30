@@ -1,0 +1,587 @@
+<!-- Assistant d'assignation de locataire -->
+<div class="assignation-assistant" *ngIf="isVisible">
+  <!-- Overlay -->
+  <div class="assistant-overlay" (click)="fermerAssistant()"></div>
+  
+  <!-- Contenu principal -->
+  <div class="assistant-container">
+    
+    <!-- En-tête -->
+    <div class="assistant-header">
+      <div class="header-content">
+        <div class="header-title">
+          <youpez-ibm-icon iconName="user-follow" iconSize="24"></youpez-ibm-icon>
+          <h2>Assistant d'assignation de locataire</h2>
+        </div>
+        <button 
+          class="close-button"
+          (click)="fermerAssistant()"
+          type="button">
+          <youpez-ibm-icon iconName="close" iconSize="20"></youpez-ibm-icon>
+        </button>
+      </div>
+      
+      <!-- Indicateur de progression -->
+      <div class="progress-indicator">
+        <div class="progress-steps">
+          <div 
+            *ngFor="let etape of etapes; let i = index"
+            class="progress-step"
+            [class.active]="isEtapeActive(etape.id)"
+            [class.completed]="isEtapeCompletee(etape.id)"
+            [class.clickable]="isEtapeCompletee(etape.id)"
+            (click)="allerEtape(etape.id)">
+            
+            <div class="step-circle">
+              <youpez-ibm-icon 
+                *ngIf="isEtapeCompletee(etape.id)" 
+                iconName="checkmark" 
+                iconSize="16">
+              </youpez-ibm-icon>
+              <span *ngIf="!isEtapeCompletee(etape.id)">{{ i + 1 }}</span>
+            </div>
+            
+            <div class="step-info">
+              <span class="step-label">{{ etape.label }}</span>
+              <span class="step-description">{{ etape.description }}</span>
+            </div>
+            
+            <!-- Ligne de connexion -->
+            <div 
+              *ngIf="i < etapes.length - 1" 
+              class="step-connector"
+              [class.completed]="isEtapeCompletee(etapes[i + 1].id)">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contenu des étapes -->
+    <div class="assistant-content">
+      
+      <!-- Étape 1: Sélection du type -->
+      <div *ngIf="isEtapeActive(EtapeAssistant.SELECTION_TYPE)" class="step-content">
+        <div class="step-header">
+          <h3>Type d'assignation</h3>
+          <p>Choisissez le type de locataire que vous souhaitez assigner</p>
+        </div>
+        
+        <form [formGroup]="typeForm" class="step-form">
+          <div class="type-options">
+            <label class="type-option" [class.selected]="typeForm.get('typeLocataire').value === TypeLocataire.NOUVEAU">
+              <input 
+                type="radio" 
+                [value]="TypeLocataire.NOUVEAU" 
+                formControlName="typeLocataire">
+              <div class="option-content">
+                <div class="option-icon">
+                  <youpez-ibm-icon iconName="user-plus" iconSize="32"></youpez-ibm-icon>
+                </div>
+                <div class="option-info">
+                  <h4>Nouveau locataire</h4>
+                  <p>Première assignation d'un locataire existant dans l'application. Gestion automatique des cautions et paiements.</p>
+                  <ul class="option-features">
+                    <li>Gestion automatique de la caution</li>
+                    <li>Création de 2 transactions si caution définie</li>
+                    <li>Transaction unique si pas de caution</li>
+                  </ul>
+                </div>
+              </div>
+            </label>
+
+            <label class="type-option" [class.selected]="typeForm.get('typeLocataire').value === TypeLocataire.EXISTANT">
+              <input 
+                type="radio" 
+                [value]="TypeLocataire.EXISTANT" 
+                formControlName="typeLocataire">
+              <div class="option-content">
+                <div class="option-icon">
+                  <youpez-ibm-icon iconName="user" iconSize="32"></youpez-ibm-icon>
+                </div>
+                <div class="option-info">
+                  <h4>Locataire existant</h4>
+                  <p>Réassignation d'un locataire avec historique. Gestion intelligente des cautions et arriérés.</p>
+                  <ul class="option-features">
+                    <li>Transfert automatique de la caution si versée</li>
+                    <li>Prise en compte des arriérés dans l'état financier</li>
+                    <li>Transfert des avances comme paiements de loyer</li>
+                  </ul>
+                </div>
+              </div>
+            </label>
+
+            <label class="type-option" [class.selected]="typeForm.get('typeLocataire').value === TypeLocataire.MIGRATION">
+              <input 
+                type="radio" 
+                [value]="TypeLocataire.MIGRATION" 
+                formControlName="typeLocataire">
+              <div class="option-content">
+                <div class="option-icon">
+                  <youpez-ibm-icon iconName="migrate" iconSize="32"></youpez-ibm-icon>
+                </div>
+                <div class="option-info">
+                  <h4>Migration de données</h4>
+                  <p>Intégration d'un bien existant avec locataires déjà en place.</p>
+                  <ul class="option-features">
+                    <li>Import de données existantes</li>
+                    <li>Ajustements de soldes</li>
+                    <li>Historique préservé</li>
+                  </ul>
+                </div>
+              </div>
+            </label>
+          </div>
+
+          <!-- Note importante -->
+          <div class="info-note">
+            <div class="note-icon">
+              <youpez-ibm-icon iconName="information" iconSize="20"></youpez-ibm-icon>
+            </div>
+            <div class="note-content">
+              <h5>Important</h5>
+              <p>Tous les locataires doivent être créés dans l'application avant l'assignation.
+              Utilisez la section "Locataires" pour créer un nouveau locataire si nécessaire.</p>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Étape 2: Sélection du locataire -->
+      <div *ngIf="isEtapeActive(EtapeAssistant.SELECTION_LOCATAIRE)" class="step-content">
+        <div class="step-header">
+          <h3>Sélection du locataire</h3>
+          <p>Choisissez le locataire à assigner dans la liste des locataires existants</p>
+        </div>
+
+        <form [formGroup]="locataireForm" class="step-form">
+          <div class="form-section">
+            <div class="form-field">
+              <label class="field-label">Locataire</label>
+              <select formControlName="locataireId" class="field-input">
+                <option value="">Sélectionner un locataire</option>
+                <option
+                  *ngFor="let locataire of locatairesList"
+                  [value]="locataire._id">
+                  {{ locataire.fullName }} - {{ locataire.phoneNumber }}
+                </option>
+              </select>
+            </div>
+
+            <!-- Message d'aide -->
+            <div class="help-message" *ngIf="locatairesList.length === 0">
+              <youpez-ibm-icon iconName="information" iconSize="16"></youpez-ibm-icon>
+              <p>Aucun locataire disponible. Veuillez d'abord créer un locataire dans la section "Locataires".</p>
+            </div>
+
+            <div class="help-message" *ngIf="locatairesList.length > 0">
+              <youpez-ibm-icon iconName="checkmark" iconSize="16"></youpez-ibm-icon>
+              <p>{{ locatairesList.length }} locataire(s) disponible(s) pour assignation.</p>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Étape 3: Sélection de la chambre -->
+      <div *ngIf="isEtapeActive(EtapeAssistant.SELECTION_CHAMBRE)" class="step-content">
+        <div class="step-header">
+          <h3>Sélection de la chambre</h3>
+          <p>Choisissez la chambre à assigner au locataire</p>
+        </div>
+        
+        <form [formGroup]="chambreForm" class="step-form">
+          <div class="rooms-grid">
+            <label 
+              *ngFor="let room of roomsList" 
+              class="room-option"
+              [class.selected]="chambreForm.get('chambreId').value === room._id">
+              <input 
+                type="radio" 
+                [value]="room._id" 
+                formControlName="chambreId">
+              <div class="room-content">
+                <div class="room-header">
+                  <h4>{{ room.code }}</h4>
+                  <span class="room-price">{{ room.price | currency:'XAF':'symbol':'1.0-0' }}</span>
+                </div>
+                <div class="room-details">
+                  <p class="room-type">{{ room.type }}</p>
+                  <div class="room-features">
+                    <span class="feature" *ngIf="room.shouldPayCaution">
+                      Caution: {{ room.cautionPrice | currency:'XAF':'symbol':'1.0-0' }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </label>
+          </div>
+        </form>
+      </div>
+
+      <!-- Étape 4: Configuration financière -->
+      <div *ngIf="isEtapeActive(EtapeAssistant.CONFIGURATION_FINANCIERE)" class="step-content">
+        <div class="step-header">
+          <h3>Configuration financière</h3>
+          <p>Configurez les aspects financiers de l'assignation</p>
+        </div>
+        
+        <form [formGroup]="configFinanciereForm" class="step-form">
+          <!-- Configuration pour nouveau locataire -->
+          <div *ngIf="typeForm.get('typeLocataire').value === TypeLocataire.NOUVEAU" class="config-section">
+            <h4>Nouveau locataire</h4>
+
+            <!-- Gestion de la caution de la chambre -->
+            <div class="caution-section" *ngIf="selectedRoom">
+              <div class="caution-info-card">
+                <div class="caution-header">
+                  <div class="caution-title">
+                    <youpez-ibm-icon iconName="security" iconSize="20"></youpez-ibm-icon>
+                    <h5>Caution de l'unité locative</h5>
+                  </div>
+                  <div class="caution-amount">
+                    <span class="amount-label">Montant défini :</span>
+                    <span class="amount-value" *ngIf="selectedRoom.cautionPrice > 0">
+                      {{ selectedRoom.cautionPrice | currency:'XAF':'symbol':'1.0-0' }}
+                    </span>
+                    <span class="amount-value no-caution" *ngIf="!selectedRoom.cautionPrice || selectedRoom.cautionPrice === 0">
+                      Aucune caution
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Switcher pour activer/désactiver la caution -->
+                <div class="caution-control" *ngIf="selectedRoom.cautionPrice > 0">
+                  <div class="switch-container">
+                    <label class="switch-label">
+                      <input
+                        type="checkbox"
+                        formControlName="prendreEnCompteCaution"
+                        class="switch-input">
+                      <span class="switch-slider"></span>
+                    </label>
+                    <div class="switch-text">
+                      <span class="switch-title">Prendre en compte la caution</span>
+                      <span class="switch-description">
+                        {{ configFinanciereForm.get('prendreEnCompteCaution')?.value ?
+                           'La caution sera incluse dans les calculs' :
+                           'La caution sera ignorée pour cette assignation' }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Message si pas de caution définie -->
+                <div class="no-caution-message" *ngIf="!selectedRoom.cautionPrice || selectedRoom.cautionPrice === 0">
+                  <youpez-ibm-icon iconName="information" iconSize="16"></youpez-ibm-icon>
+                  <p>Aucune caution n'est définie pour cette unité locative.
+                  Vous pouvez en définir une lors de la modification de l'unité.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Paiement effectivement perçu -->
+            <div class="form-field">
+              <label class="field-label">Montant effectivement perçu *</label>
+              <input
+                type="number"
+                formControlName="paiementMontant"
+                class="field-input"
+                placeholder="0"
+                min="0">
+              <div class="field-help">
+                Montant total reçu du locataire lors de l'assignation
+              </div>
+            </div>
+
+            <!-- Type de paiement automatique -->
+            <div class="form-field" *ngIf="selectedRoom">
+              <label class="field-label">Type de paiement</label>
+              <div class="readonly-field">
+                <span *ngIf="isCautionActive()">
+                  <strong>Paiement + Caution</strong> -
+                  Création automatique de 2 transactions (caution: {{ selectedRoom.cautionPrice | currency:'XAF':'symbol':'1.0-0' }})
+                </span>
+                <span *ngIf="!isCautionActive()">
+                  <strong>Paiement unique</strong> -
+                  Création d'une seule transaction
+                </span>
+              </div>
+            </div>
+
+            <!-- Répartition automatique si caution active -->
+            <div class="repartition-info" *ngIf="isCautionActive() && configFinanciereForm.get('paiementMontant').value > 0">
+              <h5>Répartition automatique</h5>
+              <div class="repartition-details">
+                <div class="repartition-item">
+                  <span class="label">Caution (unité locative) :</span>
+                  <span class="value">{{ getActiveCautionAmount() | currency:'XAF':'symbol':'1.0-0' }}</span>
+                </div>
+                <div class="repartition-item">
+                  <span class="label">Reste pour loyer :</span>
+                  <span class="value">{{ calculateRemainingAmount() | currency:'XAF':'symbol':'1.0-0' }}</span>
+                </div>
+                <div class="repartition-item total" *ngIf="configFinanciereForm.get('paiementMontant').value < getActiveCautionAmount()">
+                  <span class="label">⚠️ Attention :</span>
+                  <span class="value warning">Le montant perçu est inférieur à la caution</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Configuration pour locataire existant -->
+          <div *ngIf="typeForm.get('typeLocataire').value === TypeLocataire.EXISTANT" class="config-section">
+            <h4>Locataire existant</h4>
+
+            <!-- Information sur la logique -->
+            <div class="info-note">
+              <div class="note-icon">
+                <youpez-ibm-icon iconName="information" iconSize="20"></youpez-ibm-icon>
+              </div>
+              <div class="note-content">
+                <h5>Logique de transfert</h5>
+                <p>Les avances seront transférées comme paiements de loyer. Les arriérés seront pris en compte dans l'état financier initial.</p>
+              </div>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-field">
+                <label class="field-label">Solde actuel *</label>
+                <input
+                  type="number"
+                  formControlName="soldeActuel"
+                  class="field-input"
+                  placeholder="0"
+                  step="0.01">
+                <div class="field-help">
+                  Montant positif = avances, montant négatif = arriérés
+                </div>
+              </div>
+
+              <div class="form-field">
+                <label class="field-label">Caution déjà versée</label>
+                <input
+                  type="number"
+                  formControlName="cautionVersee"
+                  class="field-input"
+                  placeholder="0"
+                  min="0"
+                  step="0.01">
+                <div class="field-help">
+                  Montant de la caution déjà payée par le locataire
+                </div>
+              </div>
+            </div>
+
+            <!-- Switcher pour caution existante -->
+            <div class="caution-control" *ngIf="configFinanciereForm.get('cautionVersee').value > 0">
+              <div class="switch-container">
+                <label class="switch-label">
+                  <input
+                    type="checkbox"
+                    formControlName="cautionExistanteActive"
+                    class="switch-input">
+                  <span class="switch-slider"></span>
+                </label>
+                <div class="switch-text">
+                  <span class="switch-title">Transférer la caution existante</span>
+                  <span class="switch-description">
+                    {{ configFinanciereForm.get('cautionExistanteActive')?.value ?
+                       'La caution sera transférée vers la nouvelle assignation' :
+                       'La caution ne sera pas prise en compte' }}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Information sur la caution de l'unité -->
+            <div class="unit-caution-info" *ngIf="selectedRoom">
+              <div class="info-note">
+                <div class="note-icon">
+                  <youpez-ibm-icon iconName="information" iconSize="16"></youpez-ibm-icon>
+                </div>
+                <div class="note-content">
+                  <h5>Caution de l'unité locative</h5>
+                  <p *ngIf="selectedRoom.cautionPrice > 0">
+                    Cette unité a une caution définie de <strong>{{ selectedRoom.cautionPrice | currency:'XAF':'symbol':'1.0-0' }}</strong>.
+                    Si le locataire n'a pas encore versé cette caution, vous pouvez l'ajouter ci-dessus.
+                  </p>
+                  <p *ngIf="!selectedRoom.cautionPrice || selectedRoom.cautionPrice === 0">
+                    Aucune caution n'est définie pour cette unité locative.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-grid">
+            </div>
+
+            <!-- Résumé du transfert -->
+            <div class="transfer-summary" *ngIf="configFinanciereForm.get('soldeActuel').value !== 0">
+              <h5>Résumé du transfert</h5>
+              <div class="summary-details">
+                <div class="summary-item" *ngIf="configFinanciereForm.get('soldeActuel').value > 0">
+                  <span class="label">Avances à transférer :</span>
+                  <span class="value positive">{{ configFinanciereForm.get('soldeActuel').value | currency:'XAF':'symbol':'1.0-0' }}</span>
+                </div>
+                <div class="summary-item" *ngIf="configFinanciereForm.get('soldeActuel').value < 0">
+                  <span class="label">Arriérés à reporter :</span>
+                  <span class="value negative">{{ configFinanciereForm.get('soldeActuel').value | currency:'XAF':'symbol':'1.0-0' }}</span>
+                </div>
+                <div class="summary-item" *ngIf="configFinanciereForm.get('cautionVersee').value > 0">
+                  <span class="label">Caution à transférer :</span>
+                  <span class="value">{{ configFinanciereForm.get('cautionVersee').value | currency:'XAF':'symbol':'1.0-0' }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Champs communs -->
+          <div class="form-grid">
+            <div class="form-field">
+              <label class="field-label">Date d'entrée *</label>
+              <input 
+                type="date" 
+                formControlName="dateEntree" 
+                class="field-input">
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label class="field-label">Commentaire</label>
+            <textarea 
+              formControlName="commentaire" 
+              class="field-input field-textarea"
+              rows="3"
+              placeholder="Commentaire optionnel..."></textarea>
+          </div>
+        </form>
+      </div>
+
+      <!-- Autres étapes à implémenter... -->
+      <div *ngIf="isEtapeActive(EtapeAssistant.PREVIEW_ECRITURES)" class="step-content">
+        <div class="step-header">
+          <h3>Aperçu des écritures comptables</h3>
+          <p>Vérifiez les écritures qui seront générées</p>
+        </div>
+
+        <div class="step-form" *ngIf="ecrituresPrevisionnelles.length > 0">
+          <!-- Résumé des totaux -->
+          <div class="ecritures-summary" *ngIf="resumeEcritures">
+            <div class="summary-item">
+              <span class="label">Total débits :</span>
+              <span class="value debit">{{ resumeEcritures.totalDebits | currency:'XAF':'symbol':'1.0-0' }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="label">Total crédits :</span>
+              <span class="value credit">{{ resumeEcritures.totalCredits | currency:'XAF':'symbol':'1.0-0' }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="label">Équilibre :</span>
+              <span class="value" [class.equilibre]="resumeEcritures.equilibre" [class.desequilibre]="!resumeEcritures.equilibre">
+                {{ resumeEcritures.equilibre ? 'Équilibré' : 'Déséquilibré' }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Tableau des écritures -->
+          <div class="ecritures-table">
+            <div class="table-header">
+              <div class="col-libelle">Libellé</div>
+              <div class="col-compte">Compte</div>
+              <div class="col-debit">Débit</div>
+              <div class="col-credit">Crédit</div>
+            </div>
+
+            <div class="table-body">
+              <div class="table-row" *ngFor="let ecriture of ecrituresPrevisionnelles">
+                <div class="col-libelle">
+                  <div class="ecriture-libelle">{{ ecriture.libelle }}</div>
+                  <div class="ecriture-description">{{ ecriture.description }}</div>
+                </div>
+                <div class="col-compte">{{ ecriture.compte }}</div>
+                <div class="col-debit">
+                  <span *ngIf="ecriture.sens === 'DEBIT'" class="montant debit">
+                    {{ ecriture.montant | currency:'XAF':'symbol':'1.0-0' }}
+                  </span>
+                </div>
+                <div class="col-credit">
+                  <span *ngIf="ecriture.sens === 'CREDIT'" class="montant credit">
+                    {{ ecriture.montant | currency:'XAF':'symbol':'1.0-0' }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="no-ecritures" *ngIf="ecrituresPrevisionnelles.length === 0">
+          <p>Aucune écriture comptable à afficher. Veuillez compléter la configuration financière.</p>
+        </div>
+      </div>
+
+      <div *ngIf="isEtapeActive(EtapeAssistant.CONFIRMATION)" class="step-content">
+        <div class="step-header">
+          <h3>Confirmation</h3>
+          <p>Confirmez l'assignation du locataire</p>
+        </div>
+        <!-- TODO: Implémenter la confirmation -->
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="assistant-actions">
+      <!-- Affichage des erreurs -->
+      <div class="validation-errors" *ngIf="Object.keys(assistantState.erreurs).length > 0">
+        <div class="error-list">
+          <div
+            *ngFor="let error of Object.values(assistantState.erreurs)"
+            class="error-item">
+            <youpez-ibm-icon iconName="warning" iconSize="16"></youpez-ibm-icon>
+            <span>{{ error }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="navigation-actions">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="allerEtapePrecedente()"
+          [disabled]="assistantState.etapeActuelle === EtapeAssistant.SELECTION_TYPE">
+          <youpez-ibm-icon iconName="arrow-left" iconSize="16"></youpez-ibm-icon>
+          Précédent
+        </button>
+
+        <div class="actions-right">
+        <button 
+          type="button" 
+          class="btn btn-secondary"
+          (click)="fermerAssistant()">
+          Annuler
+        </button>
+
+        <button 
+          *ngIf="assistantState.etapeActuelle !== EtapeAssistant.CONFIRMATION"
+          type="button" 
+          class="btn btn-primary"
+          (click)="allerEtapeSuivante()"
+          [disabled]="!assistantState.canProceed">
+          Suivant
+          <youpez-ibm-icon iconName="arrow-right" iconSize="16"></youpez-ibm-icon>
+        </button>
+
+        <button 
+          *ngIf="assistantState.etapeActuelle === EtapeAssistant.CONFIRMATION"
+          type="button" 
+          class="btn btn-primary"
+          (click)="confirmerAssignation()"
+          [disabled]="assistantState.isLoading">
+          <div class="spinner" *ngIf="assistantState.isLoading"></div>
+          <youpez-ibm-icon iconName="checkmark" iconSize="16" *ngIf="!assistantState.isLoading"></youpez-ibm-icon>
+          {{ assistantState.isLoading ? 'Création...' : 'Confirmer l\'assignation' }}
+        </button>
+      </div>
+      </div> <!-- Fermeture navigation-actions -->
+    </div>
+  </div>
+</div>

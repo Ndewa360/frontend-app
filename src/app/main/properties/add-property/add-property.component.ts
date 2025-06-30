@@ -40,6 +40,7 @@ export class AddPropertyComponent implements OnInit {
       hasParking:[false,Validators.required],
       location: [null, [Validators.required, ]],
       description: [null, ],
+      contractTemplate: [null], // Modèle de contrat (optionnel)
     })
 
     this.countries$.subscribe((countries:CountryModel[])=>{
@@ -92,7 +93,8 @@ export class AddPropertyComponent implements OnInit {
       geolocationCity:this.formGroup.value.geolocationCity.valueType,
       geolocationCountry:this.formGroup.value.geolocationCountry.valueType,
       hasClosure:this.formGroup.value.hasClosure?true:false,
-      hasParking:this.formGroup.value.hasParking?true:false
+      hasParking:this.formGroup.value.hasParking?true:false,
+      contractTemplate: this.formGroup.value.contractTemplate
     }));
     
   }

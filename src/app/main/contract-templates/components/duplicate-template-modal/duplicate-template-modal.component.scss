@@ -1,0 +1,305 @@
+// Modal de duplication avec le thème de l'application
+.duplicate-modal {
+  --modal-primary: rgb(204, 140, 10);
+  --modal-primary-light: rgba(204, 140, 10, 0.1);
+  --modal-primary-medium: rgba(204, 140, 10, 0.2);
+  --modal-primary-dark: rgb(163, 112, 8);
+
+  width: 600px;
+  max-width: 90vw;
+  background: var(--theme-appCardBg);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+
+  // En-tête du modal
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    background: var(--theme-appUIForegroundBg);
+    border-bottom: 1px solid var(--theme-appBorderColor);
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--modal-primary);
+    }
+
+    .modal-title {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--theme-appText);
+
+      i {
+        color: var(--modal-primary);
+      }
+    }
+
+    .close-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 2rem;
+      height: 2rem;
+      border: none;
+      background: transparent;
+      color: var(--theme-appText);
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover:not(:disabled) {
+        background: var(--theme-appHoverBg);
+        color: var(--modal-primary);
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  // Contenu du modal
+  .modal-content {
+    padding: 2rem;
+    max-height: 70vh;
+    overflow-y: auto;
+
+    h3 {
+      margin: 0 0 1rem 0;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--theme-appText);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      &::before {
+        content: '';
+        width: 4px;
+        height: 16px;
+        background: var(--modal-primary);
+        border-radius: 2px;
+      }
+    }
+
+    // Informations du template source
+    .source-template-info {
+      margin-bottom: 2rem;
+
+      .template-card {
+        display: flex;
+        gap: 1rem;
+        padding: 1rem;
+        background: var(--theme-appUIForegroundBg);
+        border: 1px solid var(--theme-appBorderColor);
+        border-radius: 0.5rem;
+        margin-top: 0.75rem;
+
+        .template-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 3rem;
+          height: 3rem;
+          background: var(--modal-primary);
+          color: white;
+          border-radius: 0.5rem;
+          font-size: 1.25rem;
+        }
+
+        .template-details {
+          flex: 1;
+
+          h4 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--theme-appText);
+          }
+
+          p {
+            margin: 0 0 0.75rem 0;
+            font-size: 0.875rem;
+            color: var(--theme-appText);
+            opacity: 0.8;
+          }
+
+          .template-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+
+            .template-type-badge {
+              padding: 0.25rem 0.75rem;
+              border-radius: 0.375rem;
+              font-size: 0.75rem;
+              font-weight: 500;
+              text-transform: uppercase;
+
+              &.type-default {
+                background: var(--modal-primary-light);
+                color: var(--modal-primary);
+                border: 1px solid var(--modal-primary-medium);
+              }
+
+              &.type-custom {
+                background: rgba(5, 150, 105, 0.1);
+                color: var(--theme-appColorSuccess);
+                border: 1px solid rgba(5, 150, 105, 0.2);
+              }
+
+              &.type-duplicated {
+                background: rgba(139, 92, 246, 0.1);
+                color: #8b5cf6;
+                border: 1px solid rgba(139, 92, 246, 0.2);
+              }
+            }
+
+            .template-date {
+              font-size: 0.75rem;
+              color: var(--theme-appText);
+              opacity: 0.6;
+            }
+          }
+        }
+      }
+    }
+
+    // Formulaire de duplication
+    .duplicate-form {
+      .form-group {
+        margin-bottom: 1.5rem;
+
+        label {
+          display: block;
+          margin-bottom: 0.5rem;
+          font-size: 0.875rem;
+          font-weight: 500;
+          color: var(--theme-appText);
+
+          .required {
+            color: var(--theme-appColorDanger);
+          }
+        }
+
+        .form-control {
+          width: 100%;
+          padding: 0.75rem;
+          border: 1px solid var(--theme-appBorderColor);
+          border-radius: 0.375rem;
+          background: var(--theme-appUIForegroundBg);
+          color: var(--theme-appText);
+          font-size: 0.875rem;
+          transition: all 0.2s ease;
+
+          &:focus {
+            outline: none;
+            border-color: var(--modal-primary);
+            background: var(--theme-appCardBg);
+            box-shadow: 0 0 0 3px rgba(204, 140, 10, 0.1);
+          }
+
+          &.error {
+            border-color: var(--theme-appColorDanger);
+          }
+
+          &:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+          }
+        }
+
+        .error-message {
+          margin-top: 0.5rem;
+          font-size: 0.75rem;
+          color: var(--theme-appColorDanger);
+        }
+
+        .character-count {
+          margin-top: 0.25rem;
+          font-size: 0.75rem;
+          color: var(--theme-appText);
+          opacity: 0.6;
+          text-align: right;
+        }
+      }
+    }
+  }
+
+  // Actions du modal
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    padding: 1.5rem 2rem;
+    background: var(--theme-appUIForegroundBg);
+    border-top: 1px solid var(--theme-appBorderColor);
+
+    .btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      border: 1px solid var(--theme-appBorderColor);
+      cursor: pointer;
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      &.secondary {
+        background: var(--theme-appUIForegroundBg);
+        color: var(--theme-appText);
+
+        &:hover:not(:disabled) {
+          background: var(--theme-appHoverBg);
+          border-color: var(--modal-primary);
+          color: var(--modal-primary);
+        }
+      }
+
+      &.primary {
+        background: var(--modal-primary);
+        color: white;
+        border-color: var(--modal-primary);
+
+        &:hover:not(:disabled) {
+          background: var(--modal-primary-dark);
+          transform: translateY(-1px);
+        }
+
+        &:disabled {
+          background: var(--theme-appBorderColor);
+          border-color: var(--theme-appBorderColor);
+        }
+      }
+
+      .loading-spinner {
+        animation: spin 1s linear infinite;
+      }
+    }
+  }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

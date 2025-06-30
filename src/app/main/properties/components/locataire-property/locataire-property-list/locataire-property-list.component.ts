@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { TableModel, TableHeaderItem, TableItem, TableRowSize } from 'carbon-components-angular';
 import { Observable } from 'rxjs';
@@ -39,7 +40,8 @@ export class LocatairePropertyListComponent implements OnInit, OnChanges {
 
 
   constructor(
-    private _store: Store
+    private _store: Store,
+    private _router: Router
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -322,8 +324,18 @@ export class LocatairePropertyListComponent implements OnInit, OnChanges {
 
   onAssignUnit(tenant: LocataireModel, event: Event): void {
     event.stopPropagation();
-    // Logique pour assigner une unité
-    console.log('Assigner unité:', tenant);
+
+    // Naviguer vers l'assistant d'assignation avec le locataire pré-sélectionné
+    this._router.navigate(['/app/assign-location'], {
+      queryParams: {
+        propertyId: this.propertyId,
+        locataireId: tenant._id,
+        assistant: true,
+        returnUrl: this._router.url
+      }
+    });
   }
+
+
 
 }

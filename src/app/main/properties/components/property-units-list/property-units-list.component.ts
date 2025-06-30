@@ -1,4 +1,5 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { Observable, Subject, combineLatest } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -107,7 +108,8 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
 
   constructor(
     private store: Store,
-    public viewService: UnitDetailsViewService
+    public viewService: UnitDetailsViewService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -389,11 +391,15 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
 
   // Méthodes pour les modals
   onAssignTenant(room: RoomModel): void {
-    this.selectedRoom = room;
-    this.selectedTenantId = '';
-    this.leaseStartDate = '';
-    this.showAssignTenantModal = true;
-    this.loadAvailableTenants();
+    // Naviguer vers l'assistant d'assignation avec la chambre pré-sélectionnée
+    this.router.navigate(['/app/assign-location'], {
+      queryParams: {
+        propertyId: this.propertyId,
+        roomId: room._id,
+        assistant: true,
+        returnUrl: this.router.url
+      }
+    });
   }
 
   onTerminateLease(room: RoomModel): void {

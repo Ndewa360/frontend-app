@@ -110,4 +110,18 @@ export namespace UserProfileAction
             numberFormat?: string;
         }){}
     }
+
+    // Action pour l'upload de photo de profil
+    export class UploadProfilePhoto
+    {
+        static readonly type = '[UserProfile] Upload Profile Photo'
+        constructor(public file: File, public userId: string){}
+    }
+
+    // Action pour mettre à jour l'URL de la photo de profil
+    export class UpdateProfilePhoto
+    {
+        static readonly type = '[UserProfile] Update Profile Photo'
+        constructor(public photoUrl: string){}
+    }
 }

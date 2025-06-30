@@ -142,4 +142,6 @@ export class PropertyRoomComponent implements OnInit {
     this.roomSelected = room;
   }
 
+
+
 }

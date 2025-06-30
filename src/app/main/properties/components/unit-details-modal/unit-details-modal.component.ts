@@ -1,4 +1,5 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -39,7 +40,10 @@ export class UnitDetailsModalComponent implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
-  constructor(private store: Store) {}
+  constructor(
+    private store: Store,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.loadTenantData();
@@ -103,9 +107,14 @@ export class UnitDetailsModalComponent implements OnInit, OnDestroy {
 
   onAssignTenant(): void {
     if (this.room) {
-      this.action.emit({
-        type: 'assign_tenant',
-        room: this.room
+      // Naviguer vers l'assistant d'assignation avec la chambre pré-sélectionnée
+      this.router.navigate(['/app/assign-location'], {
+        queryParams: {
+          propertyId: this.room.property,
+          roomId: this.room._id,
+          assistant: true,
+          returnUrl: this.router.url
+        }
       });
     }
   }

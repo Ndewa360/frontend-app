@@ -45,6 +45,13 @@ const routes: Routes = [
         },
       },
       {
+        path: 'contract-templates',
+        loadChildren: () => import('./contract-templates/contract-templates.module').then(m => m.ContractTemplatesModule),
+        data: {
+          breadcrumb: 'Modèles de contrats'
+        },
+      },
+      {
         path: 'facturation',
         loadChildren: () => import('./biiling/biiling.module').then(m => m.BiilingModule),
         data: {
@@ -56,6 +63,13 @@ const routes: Routes = [
         loadChildren: () => import('./user-profile/user-profile.module').then(m => m.UserProfileModule),
         data: {
           breadcrumb: 'Profil utilisateur'
+        },
+      },
+      {
+        path: 'assign-location',
+        loadChildren: () => import('./assign-location/assign-location.module').then(m => m.AssignLocationModule),
+        data: {
+          breadcrumb: 'Assignation de locataire'
         },
       },
       {

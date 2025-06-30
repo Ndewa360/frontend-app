@@ -88,6 +88,20 @@ export class LayoutComponent implements OnInit, OnDestroy {
         },
       ]
     },
+    {
+      groupName: 'GESTION',
+      opened: true,
+      children: [
+        {
+          name: 'Modèles de contrats',
+          prefix: {
+            type: 'ibm-icon',
+            name: 'document'
+          },
+          url: '/app/contract-templates',
+        },
+      ]
+    },
   ]
 
   constructor(private settingsService: SettingsService,

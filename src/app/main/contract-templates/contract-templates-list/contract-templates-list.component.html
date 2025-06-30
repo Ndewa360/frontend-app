@@ -1,0 +1,360 @@
+<!-- Liste moderne des modèles de contrats -->
+<div class="contract-templates-list">
+  <!-- En-tête moderne -->
+  <div class="modern-header">
+  <div class="header-content">
+    <div class="header-left">
+      <button class="back-btn" (click)="goBack()">
+        <i class="fas fa-arrow-left"></i>
+        <span>Retour</span>
+      </button>
+      <div class="header-info">
+        <h1 class="page-title">
+          {{ isDuplicateMode ? 'Sélectionner un modèle à dupliquer' : 'Modèles de contrats' }}
+        </h1>
+        <p class="page-subtitle" *ngIf="pagination$ | async as pagination">
+          {{ isDuplicateMode ? 'Cliquez sur un modèle pour le dupliquer' : pagination.total + ' modèle(s) trouvé(s)' }}
+        </p>
+      </div>
+    </div>
+    
+    <div class="header-actions">
+      <button class="action-btn secondary" (click)="exportTemplates()">
+        <i class="fas fa-download"></i>
+        <span>Exporter</span>
+      </button>
+      <button class="action-btn primary" (click)="createNewTemplate()">
+        <i class="fas fa-plus"></i>
+        <span>Nouveau modèle</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Barre de recherche et filtres -->
+<div class="search-filters-section">
+  <div class="search-bar">
+    <div class="search-input-wrapper">
+      <i class="fas fa-search search-icon"></i>
+      <input 
+        type="text" 
+        class="search-input"
+        placeholder="Rechercher un modèle..."
+        [(ngModel)]="searchQuery"
+        (input)="onSearchChange($event)">
+      <button class="clear-search" *ngIf="searchQuery" (click)="clearSearch()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  </div>
+  
+  <div class="filters-bar">
+    <div class="filters-left">
+      <!-- Filtres rapides -->
+      <div class="quick-filters">
+        <button 
+          class="filter-chip"
+          [class.active]="selectedType === ''"
+          (click)="setTypeFilter('')">
+          Tous
+        </button>
+        <button
+          class="filter-chip"
+          [class.active]="selectedType === ContractTemplateType.CUSTOM"
+          (click)="setTypeFilter(ContractTemplateType.CUSTOM)">
+          Personnalisés
+        </button>
+        <button
+          class="filter-chip"
+          [class.active]="selectedType === ContractTemplateType.DEFAULT"
+          (click)="setTypeFilter(ContractTemplateType.DEFAULT)">
+          Par défaut
+        </button>
+      </div>
+      
+      <!-- Bouton filtres avancés -->
+      <button 
+        class="advanced-filters-btn"
+        [class.active]="showAdvancedFilters"
+        (click)="toggleAdvancedFilters()">
+        <i class="fas fa-filter"></i>
+        <span>Filtres</span>
+        <i class="fas fa-chevron-down toggle-icon" [class.rotated]="showAdvancedFilters"></i>
+      </button>
+    </div>
+    
+    <div class="filters-right">
+      <!-- Vue et tri -->
+      <div class="view-controls">
+        <button 
+          class="view-btn"
+          [class.active]="viewMode === 'grid'"
+          (click)="setViewMode('grid')"
+          title="Vue grille">
+          <i class="fas fa-th"></i>
+        </button>
+        <button 
+          class="view-btn"
+          [class.active]="viewMode === 'list'"
+          (click)="setViewMode('list')"
+          title="Vue liste">
+          <i class="fas fa-list"></i>
+        </button>
+      </div>
+      
+      <div class="sort-controls">
+        <select class="sort-select" [(ngModel)]="sortBy" (change)="onSortChange()">
+          <option value="updatedAt">Date de modification</option>
+          <option value="createdAt">Date de création</option>
+          <option value="name">Nom</option>
+          <option value="usageCount">Utilisations</option>
+        </select>
+        <button class="sort-order-btn" (click)="toggleSortOrder()">
+          <i [class]="'fas ' + (sortOrder === 'asc' ? 'fa-sort-up' : 'fa-sort-down')"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Filtres avancés (collapsible) -->
+  <div class="advanced-filters" *ngIf="showAdvancedFilters">
+    <div class="advanced-filters-content">
+      <div class="filter-group">
+        <label>Type de modèle</label>
+        <select [(ngModel)]="selectedType" (change)="applyFilters()">
+          <option value="">Tous les types</option>
+          <option [value]="ContractTemplateType.DEFAULT">Par défaut</option>
+          <option [value]="ContractTemplateType.CUSTOM">Personnalisé</option>
+          <option [value]="ContractTemplateType.DUPLICATED">Dupliqué</option>
+        </select>
+      </div>
+      
+      <div class="filter-group">
+        <label>Statut</label>
+        <select [(ngModel)]="selectedStatus" (change)="applyFilters()">
+          <option value="">Tous les statuts</option>
+          <option [value]="ContractTemplateStatus.ACTIVE">Actif</option>
+          <option [value]="ContractTemplateStatus.INACTIVE">Inactif</option>
+          <option [value]="ContractTemplateStatus.ARCHIVED">Archivé</option>
+        </select>
+      </div>
+      
+      <div class="filter-actions">
+        <button class="reset-btn" (click)="resetFilters()">
+          <i class="fas fa-undo"></i>
+          <span>Réinitialiser</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Contenu principal -->
+<div class="main-content">
+  <div class="templates-content">
+  <!-- Loading state -->
+  <div class="loading-state" *ngIf="loading$ | async">
+    <div class="loading-spinner">
+      <i class="fas fa-spinner fa-spin"></i>
+    </div>
+    <p>Chargement des modèles...</p>
+  </div>
+  
+  <!-- Vue grille moderne -->
+  <div class="templates-grid-modern" *ngIf="viewMode === 'grid' && !(loading$ | async) && (templates$ | async) as templates">
+    <div class="template-card-modern" *ngFor="let template of templates; trackBy: trackByTemplate">
+      <!-- Badge de statut -->
+      <div class="card-status-badge" [ngClass]="getStatusBadgeClass(template.status)">
+        {{ getStatusLabel(template.status) }}
+      </div>
+      
+      <!-- En-tête de la carte -->
+      <div class="card-header">
+        <div class="card-icon" [ngClass]="getTypeIconClass(template.type)">
+          <i class="fas fa-file-contract"></i>
+        </div>
+        <div class="card-menu">
+          <button class="menu-btn" (click)="toggleCardMenu(template._id)">
+            <i class="fas fa-ellipsis-v"></i>
+          </button>
+        </div>
+      </div>
+      
+      <!-- Contenu de la carte -->
+      <div class="card-content" (click)="viewTemplate(template)">
+        <h3 class="card-title">{{ template.name }}</h3>
+        <p class="card-description">{{ template.description || 'Aucune description disponible' }}</p>
+        
+        <!-- Badges de type -->
+        <div class="card-badges">
+          <span class="type-badge" [ngClass]="getTypeBadgeClass(template.type)">
+            {{ getTemplateTypeLabel(template.type) }}
+          </span>
+        </div>
+      </div>
+      
+      <!-- Métadonnées -->
+      <div class="card-meta">
+        <div class="meta-item">
+          <i class="fas fa-chart-line"></i>
+          <span>{{ template.usageCount }} utilisations</span>
+        </div>
+        <div class="meta-item">
+          <i class="fas fa-calendar"></i>
+          <span>{{ template.updatedAt | date:'dd/MM/yyyy' }}</span>
+        </div>
+      </div>
+      
+      <!-- Actions -->
+      <div class="card-actions">
+        <button 
+          class="action-btn-small primary"
+          (click)="editTemplate(template)"
+          [disabled]="template.isSystemDefault">
+          <i class="fas fa-edit"></i>
+          <span>Modifier</span>
+        </button>
+        <button
+          class="action-btn-small secondary"
+          (click)="duplicateTemplate(template)">
+          <i class="fas fa-copy"></i>
+          <span>{{ isDuplicateMode ? 'Sélectionner' : 'Dupliquer' }}</span>
+        </button>
+        <button
+          class="action-btn-small danger"
+          (click)="deleteTemplate(template)"
+          [disabled]="template.isSystemDefault"
+          *ngIf="!template.isSystemDefault">
+          <i class="fas fa-trash"></i>
+          <span>Supprimer</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Vue liste moderne -->
+  <div class="templates-list-modern" *ngIf="viewMode === 'list' && !(loading$ | async) && (templates$ | async) as templates">
+    <div class="list-header">
+      <div class="col-name">Nom</div>
+      <div class="col-type">Type</div>
+      <div class="col-status">Statut</div>
+      <div class="col-usage">Utilisations</div>
+      <div class="col-date">Modifié</div>
+      <div class="col-actions">Actions</div>
+    </div>
+    
+    <div class="list-item" *ngFor="let template of templates; trackBy: trackByTemplate">
+      <div class="col-name" (click)="viewTemplate(template)">
+        <div class="template-info">
+          <div class="template-icon" [ngClass]="getTypeIconClass(template.type)">
+            <i class="fas fa-file-contract"></i>
+          </div>
+          <div class="template-details">
+            <h4 class="template-name">{{ template.name }}</h4>
+            <p class="template-desc">{{ template.description || 'Aucune description' }}</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-type">
+        <span class="type-badge" [ngClass]="getTypeBadgeClass(template.type)">
+          {{ getTemplateTypeLabel(template.type) }}
+        </span>
+      </div>
+      
+      <div class="col-status">
+        <span class="status-badge" [ngClass]="getStatusBadgeClass(template.status)">
+          {{ getStatusLabel(template.status) }}
+        </span>
+      </div>
+      
+      <div class="col-usage">
+        <span class="usage-count">{{ template.usageCount }}</span>
+      </div>
+      
+      <div class="col-date">
+        <span class="date-text">{{ template.updatedAt | date:'dd/MM/yyyy' }}</span>
+      </div>
+      
+      <div class="col-actions">
+        <button 
+          class="action-btn-icon"
+          (click)="editTemplate(template)"
+          [disabled]="template.isSystemDefault"
+          title="Modifier">
+          <i class="fas fa-edit"></i>
+        </button>
+        <button
+          class="action-btn-icon"
+          (click)="duplicateTemplate(template)"
+          title="Dupliquer">
+          <i class="fas fa-copy"></i>
+        </button>
+        <button
+          class="action-btn-icon danger"
+          (click)="deleteTemplate(template)"
+          [disabled]="template.isSystemDefault"
+          *ngIf="!template.isSystemDefault"
+          title="Supprimer">
+          <i class="fas fa-trash"></i>
+        </button>
+        <button
+          class="action-btn-icon"
+          (click)="toggleCardMenu(template._id)"
+          title="Plus d'options">
+          <i class="fas fa-ellipsis-v"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- État vide -->
+  <div class="empty-state" *ngIf="!(loading$ | async) && !(templates$ | async)?.length">
+    <div class="empty-icon">
+      <i class="fas fa-file-contract"></i>
+    </div>
+    <h3 class="empty-title">Aucun modèle trouvé</h3>
+    <p class="empty-description">
+      {{ searchQuery ? 'Aucun modèle ne correspond à votre recherche.' : 'Commencez par créer votre premier modèle de contrat.' }}
+    </p>
+    <button class="action-btn primary" (click)="createNewTemplate()" *ngIf="!searchQuery">
+      <i class="fas fa-plus"></i>
+      <span>Créer un modèle</span>
+    </button>
+  </div>
+</div>
+
+<!-- Pagination -->
+<div class="pagination-section" *ngIf="(pagination$ | async) as pagination">
+  <div class="pagination-info">
+    <span>{{ getPaginationText(pagination) }}</span>
+  </div>
+  
+  <div class="pagination-controls">
+    <button 
+      class="page-btn"
+      [disabled]="pagination.page === 1"
+      (click)="goToPage(pagination.page - 1)">
+      <i class="fas fa-chevron-left"></i>
+    </button>
+    
+    <div class="page-numbers">
+      <button 
+        class="page-number"
+        *ngFor="let page of getPageNumbers(pagination)"
+        [class.active]="page === pagination.page"
+        (click)="goToPage(page)">
+        {{ page }}
+      </button>
+    </div>
+    
+    <button 
+      class="page-btn"
+      [disabled]="pagination.page === pagination.totalPages"
+      (click)="goToPage(pagination.page + 1)">
+      <i class="fas fa-chevron-right"></i>
+    </button>
+  </div>
+</div>
+</div> <!-- Fin main-content -->
+</div> <!-- Fin contract-templates-list -->

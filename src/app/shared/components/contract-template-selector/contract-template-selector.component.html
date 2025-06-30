@@ -1,0 +1,147 @@
+<div class="contract-template-selector" [class.disabled]="disabled">
+  <!-- Label -->
+  <label class="selector-label" *ngIf="label">
+    {{ label }}
+    <span class="required-indicator" *ngIf="required">*</span>
+  </label>
+
+  <!-- Sélecteur principal -->
+  <div class="selector-container" [class.open]="isOpen">
+    <div class="selector-trigger" (click)="toggleOpen()">
+      <!-- Template sélectionné -->
+      <div class="selected-template" *ngIf="selectedTemplate">
+        <div class="template-icon" [class]="getTemplateClass(selectedTemplate)">
+          <youpez-ibm-icon [iconName]="getTemplateIcon(selectedTemplate)" iconSize="16"></youpez-ibm-icon>
+        </div>
+        <div class="template-info">
+          <span class="template-name">{{ selectedTemplate.name }}</span>
+          <span class="template-description" *ngIf="selectedTemplate.description">
+            {{ selectedTemplate.description }}
+          </span>
+        </div>
+        <div class="template-badges">
+          <span class="badge default" *ngIf="selectedTemplate.isDefault">Par défaut</span>
+          <span class="badge system" *ngIf="selectedTemplate.isSystemDefault">Système</span>
+        </div>
+      </div>
+
+      <!-- Placeholder -->
+      <div class="placeholder" *ngIf="!selectedTemplate">
+        <youpez-ibm-icon iconName="document" iconSize="16"></youpez-ibm-icon>
+        <span>{{ placeholder }}</span>
+      </div>
+
+      <!-- Icône de dropdown -->
+      <div class="dropdown-icon">
+        <youpez-ibm-icon 
+          [iconName]="isOpen ? 'chevron-up' : 'chevron-down'" 
+          iconSize="16">
+        </youpez-ibm-icon>
+      </div>
+    </div>
+
+    <!-- Dropdown -->
+    <div class="selector-dropdown" *ngIf="isOpen">
+      <!-- Recherche -->
+      <div class="search-container">
+        <div class="search-input">
+          <youpez-ibm-icon iconName="search" iconSize="16"></youpez-ibm-icon>
+          <input 
+            type="text" 
+            [(ngModel)]="searchTerm"
+            placeholder="Rechercher un modèle..."
+            (click)="$event.stopPropagation()">
+        </div>
+      </div>
+
+      <!-- Liste des modèles -->
+      <div class="templates-list" *ngIf="!isLoading">
+        <!-- Option "Aucun modèle" -->
+        <div 
+          class="template-option no-template"
+          [class.selected]="!selectedTemplate"
+          (click)="selectTemplate(null)">
+          <div class="template-icon">
+            <youpez-ibm-icon iconName="close" iconSize="16"></youpez-ibm-icon>
+          </div>
+          <div class="template-info">
+            <span class="template-name">Aucun modèle</span>
+            <span class="template-description">Utiliser le modèle par défaut du système</span>
+          </div>
+        </div>
+
+        <!-- Modèles disponibles -->
+        <div 
+          class="template-option"
+          *ngFor="let template of filteredTemplates"
+          [class.selected]="selectedTemplate?._id === template._id"
+          [class]="getTemplateClass(template)"
+          (click)="selectTemplate(template)">
+          
+          <div class="template-icon" [class]="getTemplateClass(template)">
+            <youpez-ibm-icon [iconName]="getTemplateIcon(template)" iconSize="16"></youpez-ibm-icon>
+          </div>
+          
+          <div class="template-info">
+            <span class="template-name">{{ template.name }}</span>
+            <span class="template-description" *ngIf="template.description">
+              {{ template.description }}
+            </span>
+            <div class="template-meta">
+              <span class="meta-item">
+                <youpez-ibm-icon iconName="analytics" iconSize="16"></youpez-ibm-icon>
+                {{ template.usageCount }} utilisation(s)
+              </span>
+              <span class="meta-item">
+                <youpez-ibm-icon iconName="calendar" iconSize="16"></youpez-ibm-icon>
+                {{ template.updatedAt | date:'dd/MM/yyyy' }}
+              </span>
+            </div>
+          </div>
+          
+          <div class="template-badges">
+            <span class="badge default" *ngIf="template.isDefault">Par défaut</span>
+            <span class="badge system" *ngIf="template.isSystemDefault">Système</span>
+          </div>
+        </div>
+
+        <!-- Message si aucun résultat -->
+        <div class="no-results" *ngIf="filteredTemplates.length === 0 && searchTerm">
+          <youpez-ibm-icon iconName="search" iconSize="24"></youpez-ibm-icon>
+          <p>Aucun modèle trouvé pour "{{ searchTerm }}"</p>
+        </div>
+      </div>
+
+      <!-- État de chargement -->
+      <div class="loading-state" *ngIf="isLoading">
+        <youpez-ibm-icon iconName="loading" iconSize="24"></youpez-ibm-icon>
+        <p>Chargement des modèles...</p>
+      </div>
+
+      <!-- Actions -->
+      <div class="dropdown-actions" *ngIf="showCreateButton">
+        <button 
+          type="button"
+          class="btn btn-primary btn-sm"
+          (click)="onCreateTemplate()">
+          <youpez-ibm-icon iconName="add" iconSize="16"></youpez-ibm-icon>
+          Créer un nouveau modèle
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Aperçu du modèle sélectionné -->
+  <div class="template-preview" *ngIf="showPreview && selectedTemplate && selectedTemplate.preview">
+    <div class="preview-header">
+      <youpez-ibm-icon iconName="view" iconSize="16"></youpez-ibm-icon>
+      <span>Aperçu</span>
+    </div>
+    <div class="preview-content">
+      {{ selectedTemplate.preview }}
+    </div>
+  </div>
+</div>
+
+<!-- Overlay pour fermer le dropdown -->
+<div class="selector-overlay" *ngIf="isOpen" (click)="close()"></div>

@@ -22,13 +22,29 @@
                                       <div >
                                         <ng-container >
                                           <div class="">
-                                            <!-- <app-dummy-form-billing #billingForm [theme]="formTheme" [layout]="formLayout"></app-dummy-form-billing> -->
-                                             <!--  -->
-                                              <assign-location-form (onSendLocationData)="onSetLocataireFormData($event)" #locationForm [propertyID]="property?._id" [roomSelected]="roomSelected" [locataireSelected]="locataireSelected"></assign-location-form>
+                                            <!-- Nouveau assistant d'assignation -->
+                                            <div class="assignment-options">
+                                              <button
+                                                type="button"
+                                                class="btn btn-primary btn-assistant"
+                                                (click)="ouvrirAssistant()">
+                                                <youpez-ibm-icon iconName="user-follow" iconSize="20"></youpez-ibm-icon>
+                                                Assistant d'assignation
+                                              </button>
+
+                                              <div class="divider">
+                                                <span>ou</span>
+                                              </div>
+
+                                              <div class="legacy-form">
+                                                <h4>Assignation rapide</h4>
+                                                <assign-location-form (onSendLocationData)="onSetLocataireFormData($event)" #locationForm [propertyID]="property?._id" [roomSelected]="roomSelected" [locataireSelected]="locataireSelected"></assign-location-form>
+                                              </div>
+                                            </div>
                                             <div class="mt-1 flex justify-between">
-                                              <button ibmButton="secondary" size="md" [disabled]="waittingResponse" (click)="closeSideNav()">
-                                                  <!-- <youpez-ibm-icon iconClass="cds--btn__icon" iconName="arrowRight" iconSize="20" ></youpez-ibm-icon > -->
-                                                  <span class="btn-text">Annuler</span>
+                                              <button ibmButton="secondary" size="md" [disabled]="waittingResponse" (click)="navigateBack()">
+                                                  <youpez-ibm-icon iconClass="cds--btn__icon" iconName="arrow-left" iconSize="20" ></youpez-ibm-icon >
+                                                  <span class="btn-text">Retour</span>
                                               </button>
                                               <button ibmButton="primary" class="custom-primary-button" [disabled]="waittingResponse || !canSendingData" (click)="onSubmit()" size="md">
                                                 <ibm-loading *ngIf="waittingResponse; else noWaitingResponse"></ibm-loading>
@@ -73,3 +89,13 @@
               </div>
             </div> -->
           </div>
+
+<!-- Assistant d'assignation -->
+<assignation-assistant
+  [isVisible]="assistantVisible"
+  [property]="property"
+  [preselectedRoom]="roomSelected"
+  [preselectedLocataire]="locataireSelected"
+  (onClose)="fermerAssistant()"
+  (onSuccess)="onAssignationSuccess($event)">
+</assignation-assistant>

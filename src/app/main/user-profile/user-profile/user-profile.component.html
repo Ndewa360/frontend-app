@@ -1,12 +1,43 @@
-<youpez-content-tabs [tabs]="tabs" [contentTitle]="title">
-   
-      <ng-container *ngIf="!(profileStateLoading$ | async) else loadingData">
-        <router-outlet></router-outlet>
-      </ng-container>
-      <ng-template #loadingData>
-        <div class="relative no-data-loader ">
-            <youpez-loader title="Chargment de information de profile"></youpez-loader>
-        </div>
-      </ng-template>
-  </youpez-content-tabs>
+<!-- Interface moderne de profil intégrée au thème -->
+<div class="profile-layout">
+  <!-- En-tête avec navigation -->
+  <div class="profile-header">
+    <div class="profile-header-content">
+      <h1 class="profile-title">{{ 'PROFILE.TITLE' | translate }}</h1>
+      <p class="profile-subtitle">{{ 'PROFILE.SUBTITLE' | translate }}</p>
+    </div>
+  </div>
+
+  <!-- Navigation par sections -->
+  <div class="profile-navigation">
+    <div class="nav-container">
+      <button
+        *ngFor="let section of profileSections; trackBy: trackBySection"
+        class="nav-item"
+        [class.active]="activeSection === section.id"
+        (click)="scrollToSection(section.id)">
+        <youpez-ibm-icon [iconName]="section.icon" iconSize="16"></youpez-ibm-icon>
+        <span>{{ section.labelKey | translate }}</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Contenu principal avec scroll -->
+  <div class="profile-main" #profileContent *ngIf="!(profileStateLoading$ | async) else loadingData">
+    <div class="profile-container">
+      <!-- Interface unifiée de profil -->
+      <user-profile-infos
+        [activeSection]="activeSection"
+        (sectionChange)="onSectionChange($event)">
+      </user-profile-infos>
+    </div>
+  </div>
+
+  <!-- État de chargement -->
+  <ng-template #loadingData>
+    <div class="loading-state">
+      <youpez-loader title="Chargement des informations de profil"></youpez-loader>
+    </div>
+  </ng-template>
+</div>
     

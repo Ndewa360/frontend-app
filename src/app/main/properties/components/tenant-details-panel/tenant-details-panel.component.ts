@@ -1,5 +1,6 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
 import { trigger, state, style, transition, animate } from '@angular/animations';
+import { Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -92,7 +93,10 @@ export class TenantDetailsPanelComponent implements OnInit, OnDestroy, OnChanges
     }
   ];
 
-  constructor(private store: Store) {}
+  constructor(
+    private store: Store,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.loadTenantData();
@@ -292,7 +296,15 @@ export class TenantDetailsPanelComponent implements OnInit, OnDestroy, OnChanges
 
   onAssignRoom(): void {
     if (this.tenant) {
-      this.assignRoom.emit(this.tenant);
+      // Naviguer vers l'assistant d'assignation avec le locataire pré-sélectionné
+      this.router.navigate(['/app/assign-location'], {
+        queryParams: {
+          propertyId: this.propertyId,
+          locataireId: this.tenant._id,
+          assistant: true,
+          returnUrl: this.router.url
+        }
+      });
     }
   }
 

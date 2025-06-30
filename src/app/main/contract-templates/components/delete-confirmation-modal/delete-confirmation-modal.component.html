@@ -1,0 +1,42 @@
+<!-- Modal de confirmation de suppression -->
+<div class="delete-confirmation-modal" [attr.data-theme]="'light'">
+  <!-- En-tête -->
+  <div class="modal-header">
+    <div class="header-content">
+      <div class="icon-container danger">
+        <i class="fas fa-exclamation-triangle"></i>
+      </div>
+      <div class="header-text">
+        <h2 class="modal-title">{{ data.title }}</h2>
+        <p class="modal-subtitle">Action irréversible</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenu -->
+  <div class="modal-content">
+    <p class="message">{{ data.message }}</p>
+    
+    <div class="warning-box" *ngIf="data.warning">
+      <div class="warning-icon">
+        <i class="fas fa-exclamation-circle"></i>
+      </div>
+      <p class="warning-text">{{ data.warning }}</p>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="modal-actions">
+    <button 
+      class="action-btn secondary"
+      (click)="cancel()">
+      {{ data.cancelText }}
+    </button>
+    <button 
+      class="action-btn danger"
+      (click)="confirm()">
+      <i class="fas fa-trash mr-2"></i>
+      {{ data.confirmText }}
+    </button>
+  </div>
+</div>

@@ -78,4 +78,10 @@ export namespace LocationAction
         static readonly type = '[Location] create Location'
         constructor(public location:any){}
     }
+
+    export class CreateAssignationWithAssistant
+    {
+        static readonly type = '[Location] Create Assignation With Assistant'
+        constructor(public assignationConfig:any){}
+    }
 }

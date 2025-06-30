@@ -1,0 +1,106 @@
+<!-- Modal de duplication de template -->
+<div class="duplicate-modal">
+  <!-- En-tête du modal -->
+  <div class="modal-header">
+    <h2 class="modal-title">
+      <i class="fas fa-copy"></i>
+      Dupliquer le modèle
+    </h2>
+    <button 
+      type="button" 
+      class="close-btn"
+      (click)="onCancel()"
+      [disabled]="loading">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <!-- Contenu du modal -->
+  <div class="modal-content">
+    <!-- Informations du template source -->
+    <div class="source-template-info">
+      <h3>Modèle source</h3>
+      <div class="template-card">
+        <div class="template-icon">
+          <i class="fas fa-file-contract"></i>
+        </div>
+        <div class="template-details">
+          <h4>{{ data.template.name }}</h4>
+          <p *ngIf="data.template.description">{{ data.template.description }}</p>
+          <div class="template-meta">
+            <span class="template-type-badge" [ngClass]="'type-' + data.template.type.toLowerCase()">
+              {{ getTemplateTypeLabel(data.template.type) }}
+            </span>
+            <span class="template-date">
+              Créé le {{ data.template.createdAt | date:'dd/MM/yyyy' }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulaire de duplication -->
+    <form [formGroup]="duplicateForm" (ngSubmit)="onDuplicate()" class="duplicate-form">
+      <h3>Nouveau modèle</h3>
+      
+      <!-- Nom du nouveau template -->
+      <div class="form-group">
+        <label for="name">
+          Nom du modèle <span class="required">*</span>
+        </label>
+        <input
+          id="name"
+          type="text"
+          formControlName="name"
+          class="form-control"
+          [class.error]="nameErrors"
+          placeholder="Entrez le nom du nouveau modèle"
+          [disabled]="loading">
+        <div class="error-message" *ngIf="nameErrors">
+          {{ nameErrors }}
+        </div>
+      </div>
+
+      <!-- Description du nouveau template -->
+      <div class="form-group">
+        <label for="description">Description (optionnelle)</label>
+        <textarea
+          id="description"
+          formControlName="description"
+          class="form-control"
+          [class.error]="descriptionErrors"
+          placeholder="Entrez une description pour le nouveau modèle"
+          rows="3"
+          [disabled]="loading"></textarea>
+        <div class="error-message" *ngIf="descriptionErrors">
+          {{ descriptionErrors }}
+        </div>
+        <div class="character-count">
+          {{ duplicateForm.get('description')?.value?.length || 0 }}/500 caractères
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Actions du modal -->
+  <div class="modal-actions">
+    <button 
+      type="button" 
+      class="btn secondary"
+      (click)="onCancel()"
+      [disabled]="loading">
+      Annuler
+    </button>
+    <button 
+      type="button" 
+      class="btn primary"
+      (click)="onDuplicate()"
+      [disabled]="!duplicateForm.valid || loading">
+      <span *ngIf="loading" class="loading-spinner">
+        <i class="fas fa-spinner fa-spin"></i>
+      </span>
+      <i *ngIf="!loading" class="fas fa-copy"></i>
+      {{ loading ? 'Duplication...' : 'Dupliquer' }}
+    </button>
+  </div>
+</div>

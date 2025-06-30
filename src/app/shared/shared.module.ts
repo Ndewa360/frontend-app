@@ -24,6 +24,7 @@ import {
   ContractState,
   HistoryLocationPaymentState,
   GlobalState,
+  ContractTemplateState
 
 } from './store';
 
@@ -34,6 +35,7 @@ import { NoDataComponent } from './components/no-data/no-data.component';
 import { SmartNotificationsComponent } from './components/smart-notifications/smart-notifications.component';
 import { ToastrModule } from 'ngx-toastr';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatDialogModule } from '@angular/material/dialog';
 import { LocationPaymentState } from './store/payment-location';
 import { LocalizedDatePipe } from './pipes/localized-date.pipe';
 import { MaxPipe } from './pipes/max.pipe';
@@ -48,6 +50,7 @@ import { FullScreenGaleryComponent } from './components/full-screen-galery/full-
 import { SinglePageScreenGaleryComponent } from './components/single-page-screen-galery/single-page-screen-galery.component';
 import { SwiperDirective } from './directives';
 import { BrowserModule } from '@angular/platform-browser';
+import { ContractTemplateSelectorComponent } from './components/contract-template-selector/contract-template-selector.component';
 import { ScrollRevealDirective } from './directives/scroll-reveal/scroll-reveal.directive';
 import { LoadingOverlayComponent } from './components/loading-overlay/loading-overlay.component';
 import { CountUpDirective } from './directives/counter-up/counter-up.directive';
@@ -68,7 +71,8 @@ export function HttpLoaderFactory(http: HttpClient) {
   imports: [
     CommonModule,
     YoupezModule,
-    
+    MatDialogModule,
+
     FormsModule,
     ReactiveFormsModule,
     //Ngxs module
@@ -92,7 +96,8 @@ export function HttpLoaderFactory(http: HttpClient) {
         SearchState,
         UploadFilesState,
         ContractState,
-        ProspectionState
+        ProspectionState,
+        ContractTemplateState
       ]),
       NgxsStoragePluginModule.forRoot({
         key:["ndewa360_auth_token"]
@@ -133,7 +138,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     CountUpDirective,
     SmartNotificationsComponent,
     LoadingOverlayComponent,
-    DebugTokenPanelComponent
+    DebugTokenPanelComponent,
+    ContractTemplateSelectorComponent
   ],
   exports: [
     YoupezModule,
@@ -142,6 +148,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     NgxsModule,
     RouterModule,
     ToastrModule,
+    MatDialogModule,
     FormsModule,
     ReactiveFormsModule,
     TranslateModule,
@@ -159,7 +166,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     CountUpDirective,
     SmartNotificationsComponent,
     LoadingOverlayComponent,
-    DebugTokenPanelComponent
+    DebugTokenPanelComponent,
+    ContractTemplateSelectorComponent
   ],
   providers: [
     // Nouveaux services ajoutés

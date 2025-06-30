@@ -104,10 +104,14 @@
     "CURRENCY_EXAMPLE": "Currency Example",
     "DATE_EXAMPLE": "Date Example",
     "PREFERENCES_INFO_TITLE": "Important Information",
-    "PREFERENCES_INFO_DESC": "These settings will be saved to your profile and applied to all your sessions."
+    "PREFERENCES_INFO_DESC": "These settings will be saved to your profile and applied to all your sessions.",
+    "ADVANCED_SETTINGS": "Advanced Settings",
+    "CURRENT_LANGUAGE": "Current Language",
+    "CURRENT_CURRENCY": "Current Currency"
   },
   "PROFILE": {
     "TITLE": "User Profile",
+    "SUBTITLE": "Manage your personal information and preferences",
     "PERSONAL_INFO": "Personal Information",
     "FULL_NAME": "Full Name",
     "PHONE_NUMBER": "Phone Number",
@@ -116,7 +120,14 @@
     "BIO": "Biography",
     "PHOTO": "Profile Photo",
     "UPDATE_PROFILE": "Update Profile",
-    "PROFILE_UPDATED": "Profile updated successfully"
+    "PROFILE_UPDATED": "Profile updated successfully",
+    "SECTIONS": {
+      "PERSONAL": "Personal Information",
+      "CONTACT": "Contacts & Networks",
+      "LOCATION": "Location",
+      "LOCALIZATION": "Language & Currency",
+      "DISPLAY": "Display"
+    }
   },
   "VALIDATION": {
     "REQUIRED": "This field is required",

@@ -1,199 +1,281 @@
-<div fxLayout="row wrap">
-    <div fxFlex="100%" fxFlex.gt-md="50%">
-  
-      <div class="mb-8">
-        <div class="mb-4">
-          <div class="app-productive-heading-03 font-bold">Photo de profil</div>
-          <div class="app-body-short-01">Mettez à jour votre photo de profil</div>
-        </div>
-        <div class="app-cards-vertical-merge">
-          <div class="app-card">
-            <div class="app-card__content">
-              <div class="flex items-center">
-                <img class="w-24 h-24 rounded-full mr-4" src="assets/img/avatar/avatarinit.png"/>
-                <div class="">
-                  <button ibmButton="tertiary" size="sm" class="custom--btn--tertiary">
-                    Mettre à jour la photo de profile
-                  </button>
-                  <div class="mt-2 app-body-short-01">
-                    Peut-être au format JPEG, PNG, ou GIF et ne pas exéder 5MB.
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-  
-      <div class="mb-8">
-        <div class="mb-4">
-          <div class="app-productive-heading-03 font-bold">Information sur votre compte</div>
-          <div class="app-body-short-01">Modifier les informations de votre compte</div>
-        </div>
-        <form [formGroup]="formGroup" (ngSubmit)="onSubmitUpdateUserInfos()">
-          <div class="app-cards-vertical-merge">
-            <div class="app-card">
-              <div class="app-card__content">
-                <div fxLayout="row wrap">
-                  <div fxFlex="100%" fxFlex.gt-md="30%">
-                    <div class="app-productive-heading-02">E-mail</div>
-                  </div>
-                  <div fxFlex="100%" fxFlex.gt-md="70%">
-                    <ibm-label [disabled]="true" [invalid]="false" helperText="" >
-                      <input
-                        [disabled]="true"
-                        [invalid]="false"
-                        ibmText
-                        [value]="this.userProfile?.email"
-                        size="md"
-                        theme="dark">
-                    </ibm-label>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="app-card">
-              <div class="app-card__content">
-                <div fxLayout="row wrap">
-                  <div fxFlex="100%" fxFlex.gt-md="30%">
-                    <div class="app-productive-heading-02">Nom & Prénom</div>
-                  </div>
-                  <div fxFlex="100%" fxFlex.gt-md="70%">
-                    <ibm-label  [invalid]="isValid('name')" [invalidText]="'Nom complet du locataire réquis'">
-                      <input
-                        ibmText
-                        formControlName="name"
-                        size="md"
-                        theme="dark">
-                    </ibm-label>
-                  </div>
-                </div>
-              </div>
-            </div>
+<!-- Interface de profil avec sections organisées et thème intégré -->
+<div class="profile-sections-container">
+  <form [formGroup]="formGroup" (ngSubmit)="onSubmitUpdateUserInfos()" class="profile-form">
     
-            <div class="app-card">
-              <div class="app-card__content">
-                <div fxLayout="row wrap">
-                  <div fxFlex="100%" fxFlex.gt-md="30%">
-                    <div class="app-productive-heading-02">Téléphone</div>
-                  </div>
-                  <div fxFlex="100%" fxFlex.gt-md="70%">
-                    <ibm-label helperText="Ex: +237 6xx xx xx xx" [invalid]="isValid('phoneNumber')" [invalidText]="'Format invalide. Ex: +237 6xx xx xx xx'">
-                      <input 
-                          helperText="Ex: +237 6xx xx xx xx" 
-                          formControlName="phoneNumber" ibmText size="md" 
-                          theme="dark" [placeholder]="'Numéro de téléphone'"
-                          [autocomplete]="true">
-                    </ibm-label>
-                  </div>  
-                </div>
+    <!-- Section Photo de profil et informations personnelles -->
+    <section id="section-personal" class="profile-section">
+      <div class="section-header">
+        <div class="section-icon">
+          <youpez-ibm-icon iconName="user" iconSize="24"></youpez-ibm-icon>
+        </div>
+        <div class="section-title-group">
+          <h2 class="section-title">Informations personnelles</h2>
+          <p class="section-description">Gérez votre photo de profil et vos informations de base</p>
+        </div>
+      </div>
+
+      <div class="section-content">
+        <!-- Photo de profil -->
+        <div class="profile-photo-card">
+          <div class="photo-section">
+            <div class="avatar-container" [class.uploading]="isUploadingPhoto">
+              <img 
+                [src]="getProfilePhotoUrl()" 
+                [alt]="userProfile?.name || 'Photo de profil'"
+                class="profile-avatar"
+                (error)="onImageError($event)">
+              
+              <!-- Overlay d'upload -->
+              <div class="avatar-overlay" (click)="triggerPhotoUpload()">
+                <youpez-ibm-icon iconName="camera" iconSize="24"></youpez-ibm-icon>
+                <span>{{ isUploadingPhoto ? 'Upload...' : 'Modifier' }}</span>
+              </div>
+              
+              <!-- Indicateur de progression -->
+              <div class="upload-progress" *ngIf="uploadProgress > 0 && uploadProgress < 100">
+                <div class="progress-bar" [style.width.%]="uploadProgress"></div>
               </div>
             </div>
-
-            <div class="app-card">
-                <div class="app-card__content">
-                  <div fxLayout="row wrap">
-                    <div fxFlex="100%" fxFlex.gt-md="30%">
-                      <div class="app-productive-heading-02">Addresse</div>
-                    </div>
-                    <div fxFlex="100%" fxFlex.gt-md="70%">
-                      <ibm-label [invalidText]="'Votre addresse'" [invalid]="isValid('location')" >
-                        <input 
-                            formControlName="location" ibmText size="md" 
-                            theme="dark" [placeholder]="'Votre localisation'"
-                            [autocomplete]="true">
-                      </ibm-label>
-                    </div>  
-                  </div>
-                </div>
-              </div>
             
-            <div class="app-card">
-              <div class="app-card__content">
-                <div fxLayout="row wrap">
-                  <div fxFlex="100%" fxFlex.gt-md="30%">
-                    <div class="app-productive-heading-02">Bio</div>
-                  </div>
-                  <div fxFlex="100%" fxFlex.gt-md="70%">
-                      <textarea
-                        ibmTextArea
-                        [invalid]="isValid('bio')"
-                        theme="dark"
-                        class="textarea-field"
-                        formControlName="bio"
-                        [cols]="3"
-                        [rows]="4"
-                        aria-label="textarea"></textarea>
-                  </div>
-                </div>
-              </div>
+            <!-- Input file caché -->
+            <input 
+              #fileInput 
+              type="file" 
+              accept="image/jpeg,image/jpg,image/png,image/gif"
+              (change)="onPhotoSelected($event)"
+              style="display: none;">
+          </div>
+          
+          <div class="photo-info">
+            <h3 class="user-name">{{ userProfile?.name || 'Nom d\'utilisateur' }}</h3>
+            <p class="user-email">{{ userProfile?.email || 'email@exemple.com' }}</p>
+            <div class="user-badges">
+              <span class="badge badge-verified" *ngIf="userProfile?.emailConfirmed">
+                <youpez-ibm-icon iconName="checkmark" iconSize="16"></youpez-ibm-icon>
+                Email vérifié
+              </span>
+              <span class="badge badge-location" *ngIf="userProfile?.location">
+                <youpez-ibm-icon iconName="location" iconSize="16"></youpez-ibm-icon>
+                {{ userProfile?.location }}
+              </span>
             </div>
-            <div class="app-card">
-              <div class="app-card__content flex justify-end">
-                <button ibmButton="primary" class="custom-primary-button" size="md" [disabled]="waittingResponse || formGroup.invalid" type="submit">   
-                  <ibm-loading *ngIf="waittingResponse; else noWaitingResponse"></ibm-loading>
-                  <ng-template #noWaitingResponse>
-                    <span class="btn-text">Mettre à jour</span>
-                    <youpez-ibm-icon iconClass="cds--btn__icon" iconName="save" iconSize="24" ></youpez-ibm-icon >
-                  </ng-template>                
-                </button>
-              </div>
+            <div class="photo-guidelines">
+              <p class="guidelines-text">
+                <youpez-ibm-icon iconName="information" iconSize="16"></youpez-ibm-icon>
+                Formats acceptés : JPEG, PNG, GIF • Taille max : 5MB
+              </p>
             </div>
           </div>
-        </form>
+        </div>
+
+        <!-- Informations personnelles -->
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="name" class="field-label">Nom complet *</label>
+            <input 
+              id="name"
+              type="text" 
+              formControlName="name"
+              class="field-input"
+              [class.error]="isValid('name')"
+              placeholder="Votre nom complet">
+            <div class="field-error" *ngIf="isValid('name')">
+              Le nom est requis (minimum 2 caractères)
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label for="phoneNumber" class="field-label">Téléphone</label>
+            <input 
+              id="phoneNumber"
+              type="tel" 
+              formControlName="phoneNumber"
+              class="field-input"
+              [class.error]="isValid('phoneNumber')"
+              placeholder="+237 6XX XXX XXX">
+            <div class="field-error" *ngIf="isValid('phoneNumber')">
+              Format de téléphone invalide
+            </div>
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label for="bio" class="field-label">Biographie</label>
+          <textarea 
+            id="bio"
+            formControlName="bio"
+            class="field-input field-textarea"
+            rows="4"
+            placeholder="Parlez-nous de vous..."></textarea>
+          <div class="field-hint">{{ formGroup.get('bio')?.value?.length || 0 }}/500 caractères</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section Contacts et réseaux -->
+    <section id="section-contact" class="profile-section">
+      <div class="section-header">
+        <div class="section-icon">
+          <youpez-ibm-icon iconName="phone" iconSize="24"></youpez-ibm-icon>
+        </div>
+        <div class="section-title-group">
+          <h2 class="section-title">Contacts & Réseaux</h2>
+          <p class="section-description">Ajoutez vos moyens de contact supplémentaires</p>
+        </div>
       </div>
 
-      <div class="mb-8">
-        <div class="app-cards-vertical-merge">
-  
-            <div class="app-card">
-              <div class="app-card__content">
-                <div fxLayout="row wrap">
-                    <div fxFlex="100%" fxFlex.gt-md="50%">
-                      <div class="app-productive-heading-02">Modification de mot de passe</div>
-                      <div class="mt-2 app-caption-01">Vous recevrez un lien de modification de mot de passe</div>
-        
-                    </div>
-                    <div fxFlex="100%" fxFlex.gt-md="50%" class="flex justify-end">
-                      <button ibmButton="secondary" size="md" disabled>
-                        <span class="btn-text">Changer mon mot de passe</span>
-                        <youpez-ibm-icon iconClass="cds--btn__icon" iconName="edit" iconSize="24" ></youpez-ibm-icon >
-                      </button>
-                    </div>
-                  </div>
-              </div>
-            </div>
+      <div class="section-content">
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="whatsappContact" class="field-label">WhatsApp</label>
+            <input 
+              id="whatsappContact"
+              type="tel" 
+              formControlName="whatsappContact"
+              class="field-input"
+              placeholder="+237 6XX XXX XXX">
+          </div>
+
+          <div class="form-field">
+            <label for="skype" class="field-label">Skype</label>
+            <input 
+              id="skype"
+              type="text" 
+              formControlName="skype"
+              class="field-input"
+              placeholder="nom.utilisateur">
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label for="websiteLink" class="field-label">Site Web</label>
+          <input 
+            id="websiteLink"
+            type="url" 
+            formControlName="websiteLink"
+            class="field-input"
+            placeholder="https://monsite.com">
         </div>
       </div>
-  
-      <div class="mb-8">
-        <!-- <div class="mb-4">
-          <div class="app-productive-heading-03 font-bold">Gestion de compte</div>
-          <div class="app-body-short-01">Visibilité du compte</div>
-        </div> -->
-        <div class="app-cards-vertical-merge">
-  
-          <div class="app-card">
-            <div class="app-card__content">
-              <div fxLayout="row wrap">
-                <div fxFlex="100%" fxFlex.gt-md="50%">
-                  <div class="app-productive-heading-02">Suppression de compte</div>
-                  <div class="mt-2 app-caption-01">Pour supprimer de façon irréversible les informations d'un locataire</div>
-  
-                </div>
-                <div fxFlex="100%" fxFlex.gt-md="50%" class="flex justify-end">
-                  <button ibmButton="danger" size="md" disabled>
-                    <span class="btn-text">Suppression</span>
-                    <youpez-ibm-icon iconClass="cds--btn__icon" iconName="trashCan" iconSize="24" ></youpez-ibm-icon >
-                  </button>
-                </div>
-              </div>
-            </div>
+    </section>
+
+    <!-- Section Localisation -->
+    <section id="section-location" class="profile-section">
+      <div class="section-header">
+        <div class="section-icon">
+          <youpez-ibm-icon iconName="location" iconSize="24"></youpez-ibm-icon>
+        </div>
+        <div class="section-title-group">
+          <h2 class="section-title">Localisation</h2>
+          <p class="section-description">Indiquez votre localisation géographique</p>
+        </div>
+      </div>
+
+      <div class="section-content">
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="location" class="field-label">Ville</label>
+            <input 
+              id="location"
+              type="text" 
+              formControlName="location"
+              class="field-input"
+              placeholder="Douala, Yaoundé...">
+          </div>
+
+          <div class="form-field">
+            <label for="country" class="field-label">Pays</label>
+            <input 
+              id="country"
+              type="text" 
+              formControlName="country"
+              class="field-input"
+              placeholder="Cameroun">
           </div>
         </div>
       </div>
-  
+    </section>
+
+    <!-- Composant de paramètres de localisation avancé -->
+    <app-localization-settings
+      [parentFormGroup]="formGroup"
+      (formChange)="onLocalizationChange($event)">
+    </app-localization-settings>
+
+    <!-- Section Affichage -->
+    <section id="section-display" class="profile-section">
+      <div class="section-header">
+        <div class="section-icon">
+          <youpez-ibm-icon iconName="view" iconSize="24"></youpez-ibm-icon>
+        </div>
+        <div class="section-title-group">
+          <h2 class="section-title">Préférences d'affichage</h2>
+          <p class="section-description">Personnalisez l'apparence de l'interface</p>
+        </div>
+      </div>
+
+      <div class="section-content">
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="theme" class="field-label">Thème</label>
+            <select 
+              id="theme"
+              formControlName="theme"
+              class="field-input">
+              <option value="">Thème par défaut</option>
+              <option value="light">Clair</option>
+              <option value="dark">Sombre</option>
+              <option value="auto">Automatique</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="numberFormat" class="field-label">Format des nombres</label>
+            <select 
+              id="numberFormat"
+              formControlName="numberFormat"
+              class="field-input">
+              <option value="fr-FR">Français (1 234,56)</option>
+              <option value="en-US">Anglais US (1,234.56)</option>
+              <option value="en-GB">Anglais UK (1,234.56)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-field">
+          <div class="checkbox-field">
+            <input 
+              id="isEnglishTimeFormat"
+              type="checkbox" 
+              formControlName="isEnglishTimeFormat"
+              class="checkbox-input">
+            <label for="isEnglishTimeFormat" class="checkbox-label">
+              Utiliser le format d'heure anglais (12h AM/PM)
+            </label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Actions du formulaire -->
+    <div class="form-actions">
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="formGroup.reset()">
+        <youpez-ibm-icon iconName="reset" iconSize="16"></youpez-ibm-icon>
+        Annuler
+      </button>
+
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="formGroup.invalid || waittingResponse"
+        [class.loading]="waittingResponse">
+        <youpez-ibm-icon iconName="checkmark" iconSize="16" *ngIf="!waittingResponse"></youpez-ibm-icon>
+        <div class="spinner" *ngIf="waittingResponse"></div>
+        {{ waittingResponse ? 'Enregistrement...' : 'Enregistrer les modifications' }}
+      </button>
     </div>
-  </div>
-  
-  
+  </form>
+</div>

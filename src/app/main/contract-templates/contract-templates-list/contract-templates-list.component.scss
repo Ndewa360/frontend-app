@@ -1,0 +1,1170 @@
+// Utilisation du thème de l'application
+.contract-templates-list {
+  // Variables basées sur le thème de l'application
+  --app-primary: rgb(204, 140, 10);
+  --app-primary-light: rgba(204, 140, 10, 0.1);
+  --app-primary-medium: rgba(204, 140, 10, 0.2);
+  --app-primary-dark: rgb(163, 112, 8);
+
+  // Utilisation des variables du thème existant
+  background: var(--theme-appUIBg);
+  min-height: 100vh;
+}
+
+// En-tête avec le thème de l'application
+.modern-header {
+  background: var(--theme-appCardBg);
+  border-bottom: 1px solid var(--theme-appBorderColor);
+  padding: 1.5rem 2rem;
+  position: relative;
+
+  // Barre de couleur primaire en haut
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--app-primary);
+  }
+
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .back-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    background: var(--theme-appUIForegroundBg);
+    border: 1px solid var(--theme-appBorderColor);
+    border-radius: 0.5rem;
+    color: var(--theme-appText);
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    cursor: pointer;
+
+    &:hover {
+      background: var(--app-primary);
+      color: white;
+      border-color: var(--app-primary);
+      transform: translateY(-1px);
+    }
+  }
+
+  .header-info {
+    .page-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--theme-appText);
+      margin: 0;
+    }
+
+    .page-subtitle {
+      font-size: 0.875rem;
+      color: var(--theme-appText);
+      opacity: 0.7;
+      margin: 0.25rem 0 0 0;
+    }
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 0.75rem;
+  }
+}
+
+// Boutons d'action avec le thème de l'application
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+
+  &.primary {
+    background: var(--app-primary);
+    color: white;
+
+    &:hover {
+      background: var(--app-primary-dark);
+      transform: translateY(-1px);
+    }
+  }
+
+  &.secondary {
+    background: var(--theme-appUIForegroundBg);
+    color: var(--theme-appText);
+    border: 1px solid var(--theme-appBorderColor);
+
+    &:hover {
+      background: var(--theme-appHoverBg);
+      border-color: var(--app-primary);
+      color: var(--app-primary);
+    }
+  }
+
+  &.danger {
+    background: #fee2e2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+
+    &:hover {
+      background: #fecaca;
+      border-color: #f87171;
+      color: #b91c1c;
+    }
+
+    &:active {
+      background: #f87171;
+      color: #991b1b;
+    }
+  }
+}
+
+// Section de recherche et filtres avec le thème de l'application
+.search-filters-section {
+  background: var(--theme-appCardBg);
+  border-bottom: 1px solid var(--theme-appBorderColor);
+  padding: 1.5rem 2rem;
+
+  .search-bar {
+    margin-bottom: 1.5rem;
+
+    .search-input-wrapper {
+      position: relative;
+      max-width: 500px;
+
+      .search-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--app-primary);
+        font-size: 0.875rem;
+      }
+
+      .search-input {
+        width: 100%;
+        padding: 0.75rem 1rem 0.75rem 2.5rem;
+        border: 1px solid var(--theme-appBorderColor);
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        background: var(--theme-appUIForegroundBg);
+        color: var(--theme-appText);
+        transition: all 0.2s ease;
+
+        &:focus {
+          outline: none;
+          border-color: var(--app-primary);
+          background: var(--theme-appCardBg);
+        }
+
+        &::placeholder {
+          color: var(--theme-appText);
+          opacity: 0.6;
+        }
+      }
+
+      .clear-search {
+        position: absolute;
+        right: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: var(--theme-appText);
+        opacity: 0.6;
+        cursor: pointer;
+        padding: 0.25rem;
+        border-radius: 50%;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background: var(--theme-appColorDanger);
+          color: white;
+          opacity: 1;
+        }
+      }
+    }
+  }
+  
+  .filters-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    
+    .filters-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .filters-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+  }
+  
+  // Filtres rapides avec le thème de l'application
+  .quick-filters {
+    display: flex;
+    gap: 0.75rem;
+
+    .filter-chip {
+      padding: 0.5rem 1rem;
+      border: 1px solid var(--theme-appBorderColor);
+      border-radius: 0.5rem;
+      background: var(--theme-appUIForegroundBg);
+      color: var(--theme-appText);
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      cursor: pointer;
+
+      &:hover {
+        border-color: var(--app-primary);
+        color: var(--app-primary);
+        background: var(--app-primary-light);
+      }
+
+      &.active {
+        background: var(--app-primary);
+        border-color: var(--app-primary);
+        color: white;
+      }
+    }
+  }
+  
+  // Bouton filtres avancés
+  .advanced-filters-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background: white;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    
+    .toggle-icon {
+      transition: transform 0.2s ease;
+      
+      &.rotated {
+        transform: rotate(180deg);
+      }
+    }
+    
+    &:hover, &.active {
+      border-color: var(--primary-color);
+      color: var(--primary-color);
+    }
+  }
+  
+  // Contrôles de vue
+  .view-controls {
+    display: flex;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    
+    .view-btn {
+      padding: 0.5rem 0.75rem;
+      background: white;
+      border: none;
+      color: var(--text-secondary);
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background: var(--background-color);
+      }
+      
+      &.active {
+        background: var(--primary-color);
+        color: white;
+      }
+      
+      &:not(:last-child) {
+        border-right: 1px solid var(--border-color);
+      }
+    }
+  }
+  
+  // Contrôles de tri
+  .sort-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    
+    .sort-select {
+      padding: 0.5rem 0.75rem;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      background: white;
+      font-size: 0.875rem;
+      
+      &:focus {
+        outline: none;
+        border-color: var(--primary-color);
+      }
+    }
+    
+    .sort-order-btn {
+      padding: 0.5rem;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      background: white;
+      color: var(--text-secondary);
+      transition: all 0.2s ease;
+      
+      &:hover {
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+      }
+    }
+  }
+  
+  // Filtres avancés
+  .advanced-filters {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+    
+    .advanced-filters-content {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-end;
+      
+      .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        
+        label {
+          font-size: 0.875rem;
+          font-weight: 500;
+          color: var(--text-primary);
+        }
+        
+        select {
+          padding: 0.5rem 0.75rem;
+          border: 1px solid var(--border-color);
+          border-radius: var(--radius-md);
+          background: white;
+          font-size: 0.875rem;
+          
+          &:focus {
+            outline: none;
+            border-color: var(--primary-color);
+          }
+        }
+      }
+      
+      .filter-actions {
+        .reset-btn {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.5rem 1rem;
+          background: transparent;
+          border: 1px solid var(--border-color);
+          border-radius: var(--radius-md);
+          color: var(--text-secondary);
+          font-size: 0.875rem;
+          transition: all 0.2s ease;
+          
+          &:hover {
+            border-color: var(--danger-color);
+            color: var(--danger-color);
+          }
+        }
+      }
+    }
+  }
+}
+
+// Contenu principal
+.templates-content {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: 60vh;
+}
+
+// État de chargement
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+
+  .loading-spinner {
+    font-size: 2rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+  }
+
+  p {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+  }
+}
+
+// Contenu principal avec le thème de l'application
+.main-content {
+  padding: 1.5rem 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  background: var(--theme-appUIBg);
+  min-height: calc(100vh - 200px);
+}
+
+// Vue grille avec le thème de l'application
+.templates-grid-modern {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+  padding: 1.5rem 0;
+
+  .template-card-modern {
+    position: relative;
+    background: var(--theme-appCardBg);
+    border: 1px solid var(--theme-appBorderColor);
+    border-radius: 0.5rem;
+    overflow: hidden;
+    transition: all 0.2s ease;
+
+    // Barre de couleur en haut
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--app-primary);
+      transform: scaleX(0);
+      transition: transform 0.2s ease;
+    }
+
+    &:hover {
+      transform: translateY(-2px);
+      border-color: var(--app-primary);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+      &::before {
+        transform: scaleX(1);
+      }
+    }
+
+    // Badge de statut avec le thème de l'application
+    .card-status-badge {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 0.375rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      z-index: 2;
+
+      &.status-active {
+        background: rgba(5, 150, 105, 0.1);
+        color: var(--theme-appColorSuccess);
+        border: 1px solid rgba(5, 150, 105, 0.2);
+      }
+
+      &.status-inactive {
+        background: rgba(217, 119, 6, 0.1);
+        color: var(--theme-appColorWarning);
+        border: 1px solid rgba(217, 119, 6, 0.2);
+      }
+
+      &.status-archived {
+        background: rgba(220, 38, 38, 0.1);
+        color: var(--theme-appColorDanger);
+        border: 1px solid rgba(220, 38, 38, 0.2);
+      }
+    }
+
+    // En-tête de la carte
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 1.5rem 1rem 1.5rem;
+
+      .card-icon {
+        width: 3rem;
+        height: 3rem;
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        color: white;
+
+        &.icon-default {
+          background: var(--app-primary);
+        }
+
+        &.icon-custom {
+          background: var(--theme-appColorSuccess);
+        }
+
+        &.icon-duplicated {
+          background: var(--theme-appColorSecondary);
+        }
+      }
+
+      .card-menu {
+        .menu-btn {
+          width: 2rem;
+          height: 2rem;
+          border-radius: 50%;
+          background: transparent;
+          border: none;
+          color: var(--text-secondary);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.2s ease;
+
+          &:hover {
+            background: var(--background-color);
+            color: var(--text-primary);
+          }
+        }
+      }
+    }
+
+    // Contenu de la carte
+    .card-content {
+      padding: 0 1.5rem 1rem 1.5rem;
+      cursor: pointer;
+
+      .card-title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0 0 0.5rem 0;
+        line-height: 1.4;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .card-description {
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+        line-height: 1.5;
+        margin: 0 0 1rem 0;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .card-badges {
+        display: flex;
+        gap: 0.5rem;
+
+        .type-badge {
+          padding: 0.25rem 0.75rem;
+          border-radius: var(--radius-lg);
+          font-size: 0.75rem;
+          font-weight: 500;
+
+          &.type-default {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--primary-color);
+          }
+
+          &.type-custom {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success-color);
+          }
+
+          &.type-duplicated {
+            background: rgba(139, 92, 246, 0.1);
+            color: #8b5cf6;
+          }
+        }
+      }
+    }
+
+    // Métadonnées avec le thème de l'application
+    .card-meta {
+      display: flex;
+      justify-content: space-between;
+      padding: 1rem 1.5rem;
+      background: var(--theme-appUIForegroundBg);
+      border-top: 1px solid var(--theme-appBorderColor);
+
+      .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+        color: var(--theme-appText);
+        opacity: 0.7;
+
+        i {
+          width: 1rem;
+          text-align: center;
+          color: var(--app-primary);
+        }
+      }
+    }
+
+    // Actions avec le thème de l'application
+    .card-actions {
+      display: flex;
+      gap: 0.75rem;
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--theme-appBorderColor);
+      background: var(--theme-appCardBg);
+
+      .action-btn-small {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        border: none;
+        cursor: pointer;
+
+        &.primary {
+          background: var(--app-primary);
+          color: white;
+
+          &:hover:not(:disabled) {
+            background: var(--app-primary-dark);
+            transform: translateY(-1px);
+          }
+
+          &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+          }
+        }
+
+        &.secondary {
+          background: var(--theme-appUIForegroundBg);
+          color: var(--theme-appText);
+          border: 1px solid var(--theme-appBorderColor);
+
+          &:hover {
+            background: var(--theme-appHoverBg);
+            border-color: var(--app-primary);
+            color: var(--app-primary);
+            transform: translateY(-1px);
+          }
+        }
+
+        &.danger {
+          background: #fee2e2;
+          color: #dc2626;
+          border: 1px solid #fecaca;
+
+          &:hover {
+            background: #fecaca;
+            border-color: #f87171;
+            color: #b91c1c;
+            transform: translateY(-1px);
+          }
+
+          &:active {
+            background: #f87171;
+            color: #991b1b;
+          }
+
+          &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Vue liste moderne
+.templates-list-modern {
+  background: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+
+  .list-header {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    background: var(--background-color);
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+
+    .col-name { grid-column: 1; }
+    .col-type { grid-column: 2; }
+    .col-status { grid-column: 3; }
+    .col-usage { grid-column: 4; }
+    .col-date { grid-column: 5; }
+    .col-actions { grid-column: 6; text-align: center; }
+  }
+
+  .list-item {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    transition: all 0.2s ease;
+    align-items: center;
+
+    &:hover {
+      background: var(--background-color);
+    }
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .col-name {
+      grid-column: 1;
+
+      .template-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        cursor: pointer;
+
+        .template-icon {
+          width: 2.5rem;
+          height: 2.5rem;
+          border-radius: var(--radius-md);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-size: 1rem;
+
+          &.icon-default {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+          }
+
+          &.icon-custom {
+            background: linear-gradient(135deg, var(--success-color), #059669);
+          }
+
+          &.icon-duplicated {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+          }
+        }
+
+        .template-details {
+          .template-name {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0 0 0.25rem 0;
+          }
+
+          .template-desc {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin: 0;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+          }
+        }
+      }
+    }
+
+    .col-type {
+      grid-column: 2;
+
+      .type-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: var(--radius-lg);
+        font-size: 0.75rem;
+        font-weight: 500;
+
+        &.type-default {
+          background: rgba(59, 130, 246, 0.1);
+          color: var(--primary-color);
+        }
+
+        &.type-custom {
+          background: rgba(16, 185, 129, 0.1);
+          color: var(--success-color);
+        }
+
+        &.type-duplicated {
+          background: rgba(139, 92, 246, 0.1);
+          color: #8b5cf6;
+        }
+      }
+    }
+
+    .col-status {
+      grid-column: 3;
+
+      .status-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: var(--radius-lg);
+        font-size: 0.75rem;
+        font-weight: 500;
+
+        &.status-active {
+          background: rgba(16, 185, 129, 0.1);
+          color: var(--success-color);
+        }
+
+        &.status-inactive {
+          background: rgba(245, 158, 11, 0.1);
+          color: var(--warning-color);
+        }
+
+        &.status-archived {
+          background: rgba(239, 68, 68, 0.1);
+          color: var(--danger-color);
+        }
+      }
+    }
+
+    .col-usage {
+      grid-column: 4;
+
+      .usage-count {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+    }
+
+    .col-date {
+      grid-column: 5;
+
+      .date-text {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+      }
+    }
+
+    .col-actions {
+      grid-column: 6;
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+
+      .action-btn-icon {
+        width: 2rem;
+        height: 2rem;
+        border-radius: 50%;
+        background: transparent;
+        border: 1px solid var(--border-color);
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        font-size: 0.75rem;
+
+        &:hover:not(:disabled) {
+          border-color: var(--primary-color);
+          color: var(--primary-color);
+          background: rgba(59, 130, 246, 0.05);
+        }
+
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+}
+
+// État vide
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+
+  .empty-icon {
+    font-size: 4rem;
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    opacity: 0.5;
+  }
+
+  .empty-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 0.5rem 0;
+  }
+
+  .empty-description {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin: 0 0 2rem 0;
+    max-width: 400px;
+    line-height: 1.5;
+  }
+}
+
+// Pagination
+.pagination-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem 0;
+  border-top: 1px solid var(--border-color);
+  margin-top: 2rem;
+
+  .pagination-info {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+  }
+
+  .pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    .page-btn {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: var(--radius-md);
+      background: white;
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+
+      &:hover:not(:disabled) {
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+
+    .page-numbers {
+      display: flex;
+      gap: 0.25rem;
+      margin: 0 0.5rem;
+
+      .page-number {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: var(--radius-md);
+        background: white;
+        border: 1px solid var(--border-color);
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.875rem;
+        transition: all 0.2s ease;
+
+        &:hover {
+          border-color: var(--primary-color);
+          color: var(--primary-color);
+        }
+
+        &.active {
+          background: var(--primary-color);
+          border-color: var(--primary-color);
+          color: white;
+        }
+      }
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 1200px) {
+  .templates-grid-modern {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .modern-header {
+    padding: 1rem;
+
+    .header-content {
+      flex-direction: column;
+      gap: 1rem;
+      align-items: stretch;
+    }
+
+    .header-actions {
+      justify-content: center;
+    }
+  }
+
+  .search-filters-section {
+    padding: 1rem;
+
+    .filters-bar {
+      flex-direction: column;
+      gap: 1rem;
+      align-items: stretch;
+    }
+  }
+
+  .templates-content {
+    padding: 1rem;
+  }
+
+  .templates-grid-modern {
+    grid-template-columns: 1fr;
+  }
+
+  .templates-list-modern {
+    .list-header,
+    .list-item {
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+
+      .col-name { grid-column: 1; }
+      .col-type,
+      .col-status,
+      .col-usage,
+      .col-date { display: none; }
+      .col-actions { grid-column: 1; justify-self: end; }
+    }
+  }
+
+  .pagination-section {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+
+// Badges avec le thème de l'application
+.template-type-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+
+  &.type-default {
+    background: rgba(204, 140, 10, 0.1);
+    color: var(--app-primary);
+    border: 1px solid rgba(204, 140, 10, 0.2);
+  }
+
+  &.type-custom {
+    background: rgba(5, 150, 105, 0.1);
+    color: var(--theme-appColorSuccess);
+    border: 1px solid rgba(5, 150, 105, 0.2);
+  }
+
+  &.type-duplicated {
+    background: rgba(139, 92, 246, 0.1);
+    color: #8b5cf6;
+    border: 1px solid rgba(139, 92, 246, 0.2);
+  }
+}
+
+.template-status-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+
+  &.status-active {
+    background: rgba(5, 150, 105, 0.1);
+    color: var(--theme-appColorSuccess);
+    border: 1px solid rgba(5, 150, 105, 0.2);
+  }
+
+  &.status-inactive {
+    background: rgba(217, 119, 6, 0.1);
+    color: var(--theme-appColorWarning);
+    border: 1px solid rgba(217, 119, 6, 0.2);
+  }
+
+  &.status-archived {
+    background: rgba(220, 38, 38, 0.1);
+    color: var(--theme-appColorDanger);
+    border: 1px solid rgba(220, 38, 38, 0.2);
+  }
+}
+
+// Styles globaux pour le modal de confirmation de suppression
+::ng-deep {
+  .delete-confirmation-dialog {
+    .mat-dialog-container {
+      background: white !important;
+      color: #374151 !important;
+      padding: 0 !important;
+      border-radius: 12px !important;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+      overflow: hidden !important;
+      max-width: 500px !important;
+    }
+
+    .mat-dialog-content {
+      background: white !important;
+      color: #374151 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      max-height: none !important;
+    }
+  }
+
+  .delete-confirmation-backdrop {
+    background: rgba(0, 0, 0, 0.5) !important;
+  }
+}

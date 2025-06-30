@@ -28,6 +28,14 @@ export class LocationService
     }
 
     /**
+     * Create assignation with assistant
+     */
+    createAssignationWithAssistant(assignationConfig:any): Observable<ApiResultFormat<any>>
+    {
+        return this._httpClient.post<ApiResultFormat<any>>(`${environment.apiUrl}/location/assistant`, assignationConfig)
+    }
+
+    /**
      * Update location
      */
     updateLocation(location:LocationModel,id:string): Observable<ApiResultFormat<LocationModel>>

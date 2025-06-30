@@ -1,0 +1,423 @@
+// Dashboard moderne pour la gestion des modèles de contrats
+// Utilise les variables CSS de l'application et les classes Tailwind
+
+// Animations
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+// Hero Section
+.hero-section {
+  @apply bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-12;
+  background: linear-gradient(135deg, var(--theme-appUIBg) 0%, var(--theme-appUIForegroundBg) 100%);
+  
+  .hero-content {
+    @apply max-w-7xl mx-auto flex items-center justify-between;
+    animation: fadeInUp 0.8s ease-out;
+    
+    .hero-text {
+      @apply flex-1 pr-8;
+      
+      h1 {
+        @apply mb-4;
+        color: var(--theme-appText);
+      }
+      
+      p {
+        @apply max-w-2xl;
+        color: var(--theme-appTextSecondary);
+      }
+    }
+    
+    .hero-actions {
+      @apply flex items-center space-x-4;
+      animation: slideInRight 0.8s ease-out 0.2s both;
+    }
+  }
+  
+  .hero-visual {
+    @apply flex-shrink-0;
+    
+    .hero-illustration {
+      @apply w-32 h-32 flex items-center justify-center rounded-full;
+      background: var(--theme-appColorPrimary);
+      color: white;
+      animation: pulse 2s infinite;
+    }
+  }
+}
+
+// Métriques
+.metrics-section {
+  @apply px-6 py-8;
+  
+  .metrics-grid {
+    @apply max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6;
+  }
+}
+
+.metric-card {
+  @apply bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg transition-all duration-300;
+  background: var(--theme-appCardBg);
+  border-color: var(--theme-appColorDecorative);
+  animation: fadeInUp 0.6s ease-out;
+  
+  &:nth-child(1) { animation-delay: 0.1s; }
+  &:nth-child(2) { animation-delay: 0.2s; }
+  &:nth-child(3) { animation-delay: 0.3s; }
+  &:nth-child(4) { animation-delay: 0.4s; }
+  
+  .metric-header {
+    @apply flex items-center justify-between mb-4;
+    
+    .metric-icon {
+      @apply w-12 h-12 rounded-lg flex items-center justify-center;
+    }
+    
+    .metric-trend {
+      @apply flex items-center space-x-1 text-sm font-medium;
+      
+      &.positive {
+        color: var(--theme-appColorSuccess);
+      }
+      
+      &.negative {
+        color: var(--theme-appColorDanger);
+      }
+    }
+  }
+  
+  .metric-content {
+    .metric-value {
+      @apply text-3xl font-bold mb-1;
+      color: var(--theme-appText);
+    }
+    
+    .metric-label {
+      @apply text-sm font-medium mb-1;
+      color: var(--theme-appText);
+    }
+    
+    .metric-description {
+      @apply text-xs;
+      color: var(--theme-appTextSecondary);
+    }
+  }
+  
+  &.primary-metric .metric-icon {
+    background: var(--theme-appColorPrimary);
+    color: white;
+  }
+  
+  &.success-metric .metric-icon {
+    background: var(--theme-appColorSuccess);
+    color: white;
+  }
+  
+  &.info-metric .metric-icon {
+    background: var(--theme-appColorInfo);
+    color: white;
+  }
+  
+  &.warning-metric .metric-icon {
+    background: var(--theme-appColorWarning);
+    color: white;
+  }
+}
+
+// Sections
+.quick-actions-section,
+.recent-templates-section,
+.tips-section {
+  @apply px-6 py-8;
+  
+  .section-header {
+    @apply max-w-7xl mx-auto flex items-center justify-between mb-6;
+    
+    h2 {
+      color: var(--theme-appText);
+    }
+    
+    p {
+      color: var(--theme-appTextSecondary);
+    }
+  }
+}
+
+// Actions rapides
+.quick-actions-grid {
+  @apply max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4;
+}
+
+.action-card {
+  @apply bg-white rounded-lg border border-gray-200 p-6 cursor-pointer hover:shadow-lg hover:border-blue-300 transition-all duration-300;
+  background: var(--theme-appCardBg);
+  border-color: var(--theme-appColorDecorative);
+  
+  &:hover {
+    border-color: var(--theme-appColorPrimary);
+    transform: translateY(-2px);
+  }
+  
+  .action-icon {
+    @apply w-12 h-12 rounded-lg flex items-center justify-center mb-4;
+    background: var(--theme-appColorPrimary);
+    color: white;
+  }
+  
+  .action-content {
+    @apply mb-4;
+    
+    h3 {
+      @apply mb-2;
+      color: var(--theme-appText);
+    }
+    
+    p {
+      color: var(--theme-appTextSecondary);
+    }
+  }
+  
+  .action-arrow {
+    @apply flex justify-end;
+    color: var(--theme-appColorPrimary);
+  }
+}
+
+// Modèles récents
+.recent-templates-grid {
+  @apply max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+}
+
+.template-card {
+  @apply bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg transition-all duration-300;
+  background: var(--theme-appCardBg);
+  border-color: var(--theme-appColorDecorative);
+  
+  &:hover {
+    transform: translateY(-2px);
+  }
+  
+  .template-header {
+    @apply flex items-center justify-between mb-4;
+  }
+  
+  .template-content {
+    @apply mb-4;
+    
+    h3 {
+      @apply mb-2;
+      color: var(--theme-appText);
+    }
+    
+    p {
+      color: var(--theme-appTextSecondary);
+    }
+  }
+  
+  .template-meta {
+    @apply flex items-center justify-between text-sm mb-4;
+    color: var(--theme-appTextSecondary);
+    
+    .template-usage,
+    .template-date {
+      @apply flex items-center space-x-1;
+    }
+  }
+  
+  .template-actions {
+    @apply flex items-center space-x-2;
+  }
+}
+
+// État vide
+.empty-state {
+  @apply max-w-7xl mx-auto text-center py-12;
+  
+  .empty-icon {
+    @apply mb-4;
+    color: var(--theme-appTextSecondary);
+  }
+  
+  h3 {
+    @apply mb-2;
+    color: var(--theme-appText);
+  }
+  
+  p {
+    @apply mb-6;
+    color: var(--theme-appTextSecondary);
+  }
+}
+
+// Conseils
+.tips-grid {
+  @apply max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6;
+}
+
+.tip-card {
+  @apply bg-white rounded-lg border border-gray-200 p-6;
+  background: var(--theme-appCardBg);
+  border-color: var(--theme-appColorDecorative);
+  
+  .tip-icon {
+    @apply w-12 h-12 rounded-lg flex items-center justify-center mb-4;
+    background: var(--theme-appColorInfo);
+    color: white;
+  }
+  
+  .tip-content {
+    h4 {
+      @apply mb-2;
+      color: var(--theme-appText);
+    }
+    
+    p {
+      color: var(--theme-appTextSecondary);
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .hero-content {
+    @apply flex-col text-center;
+    
+    .hero-text {
+      @apply pr-0 mb-8;
+    }
+  }
+  
+  .metrics-grid {
+    @apply grid-cols-1;
+  }
+  
+  .quick-actions-grid {
+    @apply grid-cols-1;
+  }
+  
+  .recent-templates-grid {
+    @apply grid-cols-1;
+  }
+  
+  .tips-grid {
+    @apply grid-cols-1;
+  }
+}
+
+// Styles pour les badges de type avec design moderne
+.template-type-badge {
+  padding: 0.375rem 1rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+  }
+
+  &:hover::before {
+    left: 100%;
+  }
+
+  &.type-default {
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.15) 0%, rgba(99, 102, 241, 0.15) 100%);
+    color: #4f46e5;
+    border: 1px solid rgba(79, 70, 229, 0.2);
+  }
+
+  &.type-custom {
+    background: linear-gradient(135deg, rgba(5, 150, 105, 0.15) 0%, rgba(16, 185, 129, 0.15) 100%);
+    color: #059669;
+    border: 1px solid rgba(5, 150, 105, 0.2);
+  }
+
+  &.type-duplicated {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(168, 85, 247, 0.15) 100%);
+    color: #8b5cf6;
+    border: 1px solid rgba(139, 92, 246, 0.2);
+  }
+}
+
+// Styles pour les badges de statut avec design moderne
+.template-status-badge {
+  padding: 0.375rem 1rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+  }
+
+  &:hover::before {
+    left: 100%;
+  }
+
+  &.status-active {
+    background: linear-gradient(135deg, rgba(5, 150, 105, 0.15) 0%, rgba(16, 185, 129, 0.15) 100%);
+    color: #059669;
+    border: 1px solid rgba(5, 150, 105, 0.2);
+  }
+
+  &.status-inactive {
+    background: linear-gradient(135deg, rgba(217, 119, 6, 0.15) 0%, rgba(245, 158, 11, 0.15) 100%);
+    color: #d97706;
+    border: 1px solid rgba(217, 119, 6, 0.2);
+  }
+
+  &.status-archived {
+    background: linear-gradient(135deg, rgba(220, 38, 38, 0.15) 0%, rgba(239, 68, 68, 0.15) 100%);
+    color: #dc2626;
+    border: 1px solid rgba(220, 38, 38, 0.2);
+  }
+}

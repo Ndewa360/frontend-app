@@ -1,0 +1,267 @@
+<!-- Dashboard moderne pour la gestion des modèles de contrats -->
+<div class="app-a-box app-scrollbar-fix">
+  <ng-scrollbar>
+    <!-- Hero Section -->
+    <div class="hero-section">
+      <div class="hero-content">
+        <div class="hero-text">
+          <h1 class="app-productive-heading-05">Gestion des Modèles de Contrats</h1>
+          <p class="app-body-long-01">Créez, gérez et personnalisez vos modèles de contrats de location avec une interface moderne et intuitive.</p>
+        </div>
+        <div class="hero-actions">
+          <button ibmButton="primary" size="lg" (click)="createNewTemplate()">
+            <i class="fas fa-plus mr-2"></i>
+            Nouveau modèle
+          </button>
+          <button ibmButton="secondary" size="lg" (click)="reindexTemplates()">
+            <i class="fas fa-sync mr-2"></i>
+            Réindexer
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Métriques principales -->
+    <div class="metrics-section" *ngIf="statistics$ | async as statistics">
+      <div class="metrics-grid">
+        <!-- Total des modèles -->
+        <div class="metric-card primary-metric">
+          <div class="metric-header">
+            <div class="metric-icon">
+              <i class="fas fa-file-contract text-2xl"></i>
+            </div>
+            <div class="metric-trend positive" *ngIf="statistics.activeTemplates > 0">
+              <span>{{ getActivePercentage(statistics) }}%</span>
+              <i class="fas fa-check text-sm"></i>
+            </div>
+          </div>
+          <div class="metric-content">
+            <div class="metric-value">{{ statistics.totalTemplates }}</div>
+            <div class="metric-label">Modèles total</div>
+            <div class="metric-description">{{ statistics.activeTemplates }} actifs</div>
+          </div>
+        </div>
+
+        <!-- Modèles actifs -->
+        <div class="metric-card success-metric">
+          <div class="metric-header">
+            <div class="metric-icon">
+              <i class="fas fa-check-circle text-2xl"></i>
+            </div>
+          </div>
+          <div class="metric-content">
+            <div class="metric-value">{{ statistics.activeTemplates }}</div>
+            <div class="metric-label">Modèles actifs</div>
+            <div class="metric-description">{{ getActivePercentage(statistics) }}% du total</div>
+          </div>
+        </div>
+
+        <!-- Utilisations ce mois -->
+        <div class="metric-card info-metric">
+          <div class="metric-header">
+            <div class="metric-icon">
+              <i class="fas fa-chart-line text-2xl"></i>
+            </div>
+            <div class="metric-trend positive" *ngIf="statistics.totalUsage > 0">
+              <span>{{ statistics.totalUsage }}</span>
+              <i class="fas fa-trending-up text-sm"></i>
+            </div>
+          </div>
+          <div class="metric-content">
+            <div class="metric-value">{{ statistics.totalUsage }}</div>
+            <div class="metric-label">Utilisations totales</div>
+            <div class="metric-description">Toutes les utilisations</div>
+          </div>
+        </div>
+
+        <!-- Modèles personnalisés -->
+        <div class="metric-card warning-metric">
+          <div class="metric-header">
+            <div class="metric-icon">
+              <i class="fas fa-edit text-2xl"></i>
+            </div>
+          </div>
+          <div class="metric-content">
+            <div class="metric-value">{{ statistics.customTemplates }}</div>
+            <div class="metric-label">Modèles personnalisés</div>
+            <div class="metric-description">{{ statistics.defaultTemplates }} par défaut</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions rapides -->
+    <div class="quick-actions-section">
+      <div class="section-header">
+        <h2 class="app-productive-heading-04">Actions rapides</h2>
+        <p class="app-body-short-01">Accédez rapidement aux fonctionnalités principales</p>
+      </div>
+      
+      <div class="quick-actions-grid">
+        <div class="action-card" (click)="createNewTemplate()">
+          <div class="action-icon">
+            <i class="fas fa-plus text-xl"></i>
+          </div>
+          <div class="action-content">
+            <h3 class="app-productive-heading-03">Créer un modèle</h3>
+            <p class="app-body-short-01">Créez un nouveau modèle de contrat personnalisé</p>
+          </div>
+          <div class="action-arrow">
+            <i class="fas fa-arrow-right text-sm"></i>
+          </div>
+        </div>
+
+        <div class="action-card" (click)="browseTemplates()">
+          <div class="action-icon">
+            <i class="fas fa-eye text-xl"></i>
+          </div>
+          <div class="action-content">
+            <h3 class="app-productive-heading-03">Parcourir les modèles</h3>
+            <p class="app-body-short-01">Consultez et gérez vos modèles existants</p>
+          </div>
+          <div class="action-arrow">
+            <i class="fas fa-arrow-right text-sm"></i>
+          </div>
+        </div>
+
+        <div class="action-card" (click)="duplicateTemplate()">
+          <div class="action-icon">
+            <i class="fas fa-copy text-xl"></i>
+          </div>
+          <div class="action-content">
+            <h3 class="app-productive-heading-03">Dupliquer un modèle</h3>
+            <p class="app-body-short-01">Créez une copie d'un modèle existant</p>
+          </div>
+          <div class="action-arrow">
+            <i class="fas fa-arrow-right text-sm"></i>
+          </div>
+        </div>
+
+        <div class="action-card" (click)="reindexTemplates()">
+          <div class="action-icon">
+            <i class="fas fa-sync text-xl"></i>
+          </div>
+          <div class="action-content">
+            <h3 class="app-productive-heading-03">Réindexer les templates</h3>
+            <p class="app-body-short-01">Synchroniser avec Google Cloud Storage</p>
+          </div>
+          <div class="action-arrow">
+            <i class="fas fa-arrow-right text-sm"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modèles récents -->
+    <div class="recent-templates-section">
+      <div class="section-header">
+        <h2 class="app-productive-heading-04">Modèles récents</h2>
+        <button ibmButton="ghost" size="sm" (click)="viewAllTemplates()">
+          Voir tout
+          <i class="fas fa-arrow-right text-sm ml-2"></i>
+        </button>
+      </div>
+
+      <div class="recent-templates-grid" *ngIf="(recentTemplates$ | async) as recentTemplates">
+        <div class="template-card" *ngFor="let template of recentTemplates; trackBy: trackByTemplate">
+          <div class="template-header">
+            <div class="template-type">
+              <span class="template-type-badge" [ngClass]="getTypeBadgeClass(template.type)">
+                {{ getTemplateTypeLabel(template.type) }}
+              </span>
+            </div>
+            <div class="template-status">
+              <span class="template-status-badge" [ngClass]="getStatusBadgeClass(template.status)">
+                {{ getStatusLabel(template.status) }}
+              </span>
+            </div>
+          </div>
+          
+          <div class="template-content">
+            <h3 class="app-productive-heading-03">{{ template.name }}</h3>
+            <p class="app-body-short-01">{{ template.description || 'Aucune description' }}</p>
+          </div>
+
+          <div class="template-meta">
+            <div class="template-usage">
+              <i class="fas fa-chart-line text-sm mr-1"></i>
+              <span>{{ template.usageCount }} utilisations</span>
+            </div>
+            <div class="template-date">
+              <i class="fas fa-calendar text-sm mr-1"></i>
+              <span>{{ template.updatedAt | date:'dd/MM/yyyy' }}</span>
+            </div>
+          </div>
+
+          <div class="template-actions">
+            <button
+              ibmButton="ghost"
+              size="sm"
+              (click)="editTemplate(template)"
+              *ngIf="!template.isSystemDefault">
+              <i class="fas fa-edit text-sm mr-1"></i>
+              Modifier
+            </button>
+            <button ibmButton="ghost" size="sm" (click)="viewTemplate(template)">
+              <i class="fas fa-eye text-sm mr-1"></i>
+              Voir
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- État vide -->
+      <div class="empty-state" *ngIf="!(recentTemplates$ | async)?.length">
+        <div class="empty-icon">
+          <i class="fas fa-file-contract text-3xl"></i>
+        </div>
+        <h3 class="app-productive-heading-03">Aucun modèle récent</h3>
+        <p class="app-body-short-01">Commencez par créer votre premier modèle de contrat</p>
+        <button ibmButton="primary" (click)="createNewTemplate()">
+          <i class="fas fa-plus text-sm mr-2"></i>
+          Créer un modèle
+        </button>
+      </div>
+    </div>
+
+    <!-- Conseils et astuces -->
+    <div class="tips-section">
+      <div class="section-header">
+        <h2 class="app-productive-heading-04">Conseils et astuces</h2>
+      </div>
+      
+      <div class="tips-grid">
+        <div class="tip-card">
+          <div class="tip-icon">
+            <i class="fas fa-lightbulb text-xl"></i>
+          </div>
+          <div class="tip-content">
+            <h4 class="app-productive-heading-03">Variables dynamiques</h4>
+            <p class="app-body-short-01">Utilisez des variables pour personnaliser automatiquement vos contrats.</p>
+          </div>
+        </div>
+
+        <div class="tip-card">
+          <div class="tip-icon">
+            <i class="fas fa-copy text-xl"></i>
+          </div>
+          <div class="tip-content">
+            <h4 class="app-productive-heading-03">Duplication intelligente</h4>
+            <p class="app-body-short-01">Dupliquez vos modèles existants pour créer rapidement de nouvelles variantes.</p>
+          </div>
+        </div>
+
+        <div class="tip-card">
+          <div class="tip-icon">
+            <i class="fas fa-save text-xl"></i>
+          </div>
+          <div class="tip-content">
+            <h4 class="app-productive-heading-03">Sauvegarde automatique</h4>
+            <p class="app-body-short-01">Vos modifications sont automatiquement sauvegardées pendant l'édition.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </ng-scrollbar>
+</div>

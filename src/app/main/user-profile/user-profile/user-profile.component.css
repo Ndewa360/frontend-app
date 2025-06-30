@@ -1,0 +1,231 @@
+/* Interface de profil intégrée au thème Carbon */
+.profile-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: var(--theme-appUIBg);
+  overflow: hidden;
+}
+
+/* En-tête avec thème de l'application */
+.profile-header {
+  background: var(--theme-appUIForegroundBg);
+  border-bottom: 1px solid var(--theme-appColorDecorative);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  position: relative;
+}
+
+.profile-header-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.profile-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--theme-appText);
+  margin: 0;
+  background: linear-gradient(135deg, rgb(204, 140, 10) 0%, rgb(184, 126, 9) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.profile-subtitle {
+  font-size: 1rem;
+  color: var(--theme-appTextSecondary);
+  margin: 0;
+  opacity: 0.8;
+}
+
+/* Navigation par sections */
+.profile-navigation {
+  background: var(--theme-appUIForegroundBg);
+  border-bottom: 1px solid var(--theme-appColorDecorative);
+  padding: 0 2rem;
+  overflow-x: auto;
+  flex-shrink: 0;
+}
+
+.nav-container {
+  display: flex;
+  gap: 0;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 1.5rem;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: var(--theme-appText);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  position: relative;
+}
+
+.nav-item:hover {
+  background: var(--theme-appUIBg);
+  color: var(--theme-appColorPrimary);
+}
+
+.nav-item.active {
+  color: rgb(204, 140, 10);
+  border-bottom-color: rgb(204, 140, 10);
+  background: linear-gradient(135deg, rgba(204, 140, 10, 0.1) 0%, rgba(204, 140, 10, 0.05) 100%);
+  font-weight: 600;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(204, 140, 10, 0.2);
+
+  /* Animation de pulsation subtile pour indiquer l'état actif */
+  animation: activeGlow 2s ease-in-out infinite alternate;
+}
+
+.nav-item span {
+  font-weight: inherit;
+}
+
+/* Contenu principal avec scroll */
+.profile-main {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: var(--theme-appUIBg);
+}
+
+.profile-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0;
+}
+
+/* État de chargement */
+.loading-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  background: var(--theme-appUIForegroundBg);
+}
+
+/* Scrollbar personnalisée pour le thème */
+.profile-main::-webkit-scrollbar {
+  width: 8px;
+}
+
+.profile-main::-webkit-scrollbar-track {
+  background: var(--theme-appUIBg);
+}
+
+.profile-main::-webkit-scrollbar-thumb {
+  background: var(--theme-appColorDecorative);
+  border-radius: 4px;
+}
+
+.profile-main::-webkit-scrollbar-thumb:hover {
+  background: var(--theme-appColorPrimary);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .profile-header-content {
+    padding: 1rem;
+  }
+
+  .profile-navigation {
+    padding: 0 1rem;
+  }
+
+  .nav-item {
+    padding: 0.75rem 1rem;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .profile-header-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .profile-title {
+    font-size: 1.25rem;
+  }
+
+  .nav-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .nav-item {
+    padding: 0.75rem;
+    min-width: max-content;
+  }
+
+  .nav-item span {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .back-button span {
+    display: none;
+  }
+
+  .profile-header-content {
+    padding: 0.75rem;
+  }
+}
+
+/* Animations pour la navigation active */
+@keyframes activeGlow {
+  0% {
+    box-shadow: 0 2px 8px rgba(204, 140, 10, 0.2);
+  }
+  100% {
+    box-shadow: 0 2px 12px rgba(204, 140, 10, 0.4);
+  }
+}
+
+/* Animation de transition pour le changement de section active */
+.nav-item {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-item.active {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 2s ease-in-out;
+}
+
+/* Indicateur visuel de scroll automatique */
+.nav-item.scrolling {
+  opacity: 0.7;
+  transform: scale(0.98);
+}
+
+/* Amélioration de l'accessibilité */
+.nav-item:focus {
+  outline: 2px solid rgba(204, 140, 10, 0.5);
+  outline-offset: 2px;
+}
+
+/* Optimisation mobile pour les animations */
+@media (max-width: 768px) {
+  .nav-item.active {
+    animation: none;
+    box-shadow: 0 1px 4px rgba(204, 140, 10, 0.3);
+  }
+}

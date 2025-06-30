@@ -1,0 +1,188 @@
+<!-- Éditeur moderne de modèles de contrats -->
+<div class="contract-template-editor">
+    <!-- En-tête moderne avec actions -->
+    <div class="editor-header">
+      <div class="header-left">
+        <button ibmButton="ghost" size="sm" (click)="goBack()">
+          <i class="fas fa-arrow-left text-sm mr-2"></i>
+          Retour
+        </button>
+
+        <div class="header-info">
+          <h1 class="app-productive-heading-03">{{ isEditMode ? 'Modifier le modèle' : 'Nouveau modèle' }}</h1>
+          <div class="header-meta">
+            <span class="app-body-short-01" *ngIf="templateName">{{ templateName }}</span>
+            <div class="status-indicators">
+              <div class="save-status" [ngClass]="getSaveStatusClass()">
+                <i [class]="'fas ' + getSaveStatusIcon() + ' text-sm mr-1'"></i>
+                <span>{{ getSaveStatusText() }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <div class="view-toggle">
+          <button
+            ibmButton="ghost"
+            size="sm"
+            [class.active]="viewMode === 'edit'"
+            (click)="setViewMode('edit')">
+            <i class="fas fa-edit text-sm mr-2"></i>
+            Édition
+          </button>
+          <button
+            ibmButton="ghost"
+            size="sm"
+            [class.active]="viewMode === 'preview'"
+            (click)="setViewMode('preview')">
+            <i class="fas fa-eye text-sm mr-2"></i>
+            Aperçu
+          </button>
+        </div>
+
+        <div class="action-buttons">
+          <button ibmButton="secondary" size="sm" (click)="exportTemplate()">
+            <i class="fas fa-download text-sm mr-2"></i>
+            Exporter
+          </button>
+
+          <button
+            ibmButton="primary"
+            size="sm"
+            (click)="saveTemplate()"
+            [disabled]="isSaving || !hasChanges()">
+            <i [class]="'fas ' + (isSaving ? 'fa-spinner fa-spin' : 'fa-save') + ' text-sm mr-2'"></i>
+            {{ isSaving ? 'Sauvegarde...' : 'Sauvegarder' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contenu principal -->
+    <div class="editor-content" [ngClass]="'view-mode-' + viewMode">
+      
+      <!-- Mode édition -->
+      <div class="edit-panel" *ngIf="viewMode === 'edit'">
+        <!-- Sidebar avec métadonnées -->
+        <div class="editor-sidebar">
+          <div class="sidebar-section">
+            <h3 class="app-productive-heading-04">Informations générales</h3>
+            
+            <div class="form-group">
+              <label class="app-label-01">Nom du modèle *</label>
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="templateName"
+                placeholder="Ex: Contrat de location standard"
+                (ngModelChange)="onTemplateChange()"
+                required>
+            </div>
+
+            <div class="form-group">
+              <label class="app-label-01">Description</label>
+              <textarea
+                class="form-control"
+                [(ngModel)]="templateDescription"
+                placeholder="Description du modèle..."
+                (ngModelChange)="onTemplateChange()"
+                rows="3">
+              </textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="app-label-01">Type</label>
+              <ibm-combo-box
+                placeholder="Sélectionner"
+                [items]="templateTypeOptions"
+                (selected)="onTypeChange($event)"
+                size="md">
+                <ibm-dropdown-list></ibm-dropdown-list>
+              </ibm-combo-box>
+            </div>
+
+            <div class="form-group">
+              <label class="app-label-01">Statut</label>
+              <ibm-combo-box
+                placeholder="Sélectionner"
+                [items]="statusOptions"
+                (selected)="onStatusChange($event)"
+                size="md">
+                <ibm-dropdown-list></ibm-dropdown-list>
+              </ibm-combo-box>
+            </div>
+          </div>
+
+          <!-- Variables disponibles -->
+          <div class="sidebar-section">
+            <h3 class="app-productive-heading-04">Variables</h3>
+            <p class="app-helper-text-01">Cliquez pour insérer</p>
+            
+            <div class="variables-list">
+              <div class="variable-category" *ngFor="let category of variableCategories">
+                <h4 class="app-productive-heading-05">{{ category.name }}</h4>
+                <div class="variable-items">
+                  <button
+                    class="variable-item"
+                    *ngFor="let variable of category.variables"
+                    (click)="insertVariable(variable)"
+                    [title]="variable.description">
+                    <i class="fas fa-plus text-sm mr-2"></i>
+                    <span>{{ variable.label }}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Zone d'édition principale -->
+        <div class="editor-main">
+          <div class="editor-area">
+            <editor
+              [apiKey]="apiKey"
+              [init]="editorConfig"
+              [(ngModel)]="templateContent"
+              (ngModelChange)="onContentChange($event)"
+              [disabled]="isSaving">
+            </editor>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mode aperçu -->
+      <div class="preview-panel" *ngIf="viewMode === 'preview'">
+        <div class="preview-header">
+          <h3 class="app-productive-heading-04">Aperçu du contrat</h3>
+          <div class="preview-actions">
+            <button ibmButton="ghost" size="sm" (click)="printPreview()">
+              <i class="fas fa-print text-sm mr-2"></i>
+              Imprimer
+            </button>
+            <button ibmButton="ghost" size="sm" (click)="exportPDF()">
+              <i class="fas fa-file-pdf text-sm mr-2"></i>
+              PDF
+            </button>
+          </div>
+        </div>
+
+        <div class="preview-content">
+          <div class="contract-preview" [innerHTML]="getPreviewContent()"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Barre de statut -->
+    <div class="editor-status-bar">
+      <div class="status-left">
+        <span class="app-helper-text-01">{{ getWordCount() }} mots</span>
+        <span class="app-helper-text-01">{{ getCharacterCount() }} caractères</span>
+      </div>
+      
+      <div class="status-right">
+        <span class="app-helper-text-01">Dernière sauvegarde : {{ getLastSaveTime() }}</span>
+      </div>
+    </div>
+</div> <!-- Fin contract-template-editor -->

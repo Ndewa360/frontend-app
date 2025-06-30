@@ -1,0 +1,149 @@
+<!-- Page de vue d'un template avec design professionnel -->
+<div class="template-view-container">
+  <!-- En-tête avec navigation et actions -->
+  <div class="template-header">
+    <div class="header-navigation">
+      <button class="back-button" (click)="goBack()">
+        <i class="fas fa-arrow-left"></i>
+        <span>Retour</span>
+      </button>
+
+      <div class="breadcrumb">
+        <span class="breadcrumb-item">Modèles de contrats</span>
+        <i class="fas fa-chevron-right breadcrumb-separator"></i>
+        <span class="breadcrumb-current" *ngIf="template$ | async as template">
+          {{ template.name }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Actions du template -->
+    <div class="header-actions" *ngIf="template$ | async as template">
+      <button
+        class="action-btn secondary"
+        (click)="duplicateTemplate()"
+        title="Dupliquer ce modèle">
+        <i class="fas fa-copy"></i>
+        <span>Dupliquer</span>
+      </button>
+
+      <button
+        class="action-btn primary"
+        (click)="editTemplate()"
+        [disabled]="template.isSystemDefault"
+        [title]="template.isSystemDefault ? 'Le modèle système ne peut pas être modifié' : 'Modifier ce modèle'">
+        <i class="fas fa-edit"></i>
+        <span>{{ template.isSystemDefault ? 'Lecture seule' : 'Modifier' }}</span>
+      </button>
+      <button
+        class="action-btn danger"
+        (click)="deleteTemplate()"
+        *ngIf="!template.isSystemDefault"
+        title="Supprimer ce modèle">
+        <i class="fas fa-trash"></i>
+        <span>Supprimer</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Contenu principal avec sidebar -->
+  <div class="template-main" *ngIf="template$ | async as template; else loadingView">
+    <!-- Sidebar avec informations du template -->
+    <div class="template-sidebar">
+      <!-- Informations générales -->
+      <div class="sidebar-section">
+        <h3>Informations générales</h3>
+        <div class="info-group">
+          <div class="info-item">
+            <label>Nom du modèle</label>
+            <span>{{ template.name }}</span>
+          </div>
+          <div class="info-item">
+            <label>Description</label>
+            <span>{{ template.description || 'Aucune description' }}</span>
+          </div>
+          <div class="info-item">
+            <label>Type</label>
+            <span class="type-badge" [ngClass]="'type-' + template.type.toLowerCase()">
+              {{ getTemplateTypeLabel(template.type) }}
+            </span>
+          </div>
+          <div class="info-item">
+            <label>Statut</label>
+            <span class="status-badge" [ngClass]="'status-' + template.status.toLowerCase()">
+              {{ getStatusLabel(template.status) }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Métadonnées -->
+      <div class="sidebar-section">
+        <h3>Métadonnées</h3>
+        <div class="info-group">
+          <div class="info-item">
+            <label>Créé le</label>
+            <span>{{ template.createdAt | date:'dd/MM/yyyy à HH:mm' }}</span>
+          </div>
+          <div class="info-item">
+            <label>Modifié le</label>
+            <span>{{ template.updatedAt | date:'dd/MM/yyyy à HH:mm' }}</span>
+          </div>
+          <div class="info-item">
+            <label>Utilisations</label>
+            <span>{{ template.usageCount || 0 }} fois</span>
+          </div>
+          <div class="info-item">
+            <label>Version</label>
+            <span>{{ template.version || 1 }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions rapides -->
+      <div class="sidebar-section">
+        <h3>Actions rapides</h3>
+        <div class="quick-actions">
+          <button class="action-button" (click)="duplicateTemplate()">
+            <i class="fas fa-copy"></i>
+            <span>Dupliquer</span>
+          </button>
+          <button class="action-button" (click)="exportPDF()">
+            <i class="fas fa-file-pdf"></i>
+            <span>Exporter PDF</span>
+          </button>
+          <button class="action-button" (click)="printTemplate()">
+            <i class="fas fa-print"></i>
+            <span>Imprimer</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Zone de contenu principal -->
+    <div class="template-content">
+      <!-- Contenu du template -->
+      <div class="template-preview">
+        <div class="preview-header">
+          <h2>Aperçu du modèle</h2>
+          <div class="preview-actions">
+            <button class="preview-btn" (click)="printTemplate()">
+              <i class="fas fa-print"></i>
+              <span>Imprimer</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="preview-content" [innerHTML]="content"></div>
+      </div>
+    </div>
+</div>
+<!-- Template de chargement -->
+  <ng-template #loadingView>
+    <div class="loading-container">
+      <div class="loading-spinner">
+        <i class="fas fa-spinner fa-spin"></i>
+      </div>
+      <p>Chargement du modèle...</p>
+    </div>
+  </ng-template>

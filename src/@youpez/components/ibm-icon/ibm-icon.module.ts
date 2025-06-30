@@ -365,6 +365,136 @@ import Hospital24 from '@carbon/icons/es/hospital/24';
 import Hospital20 from '@carbon/icons/es/hospital/20';
 import Hospital16 from '@carbon/icons/es/hospital/16';
 
+// Icônes pour la localisation et les préférences
+import Globe32 from '@carbon/icons/es/globe/32';
+import Globe24 from '@carbon/icons/es/globe/24';
+import Globe20 from '@carbon/icons/es/globe/20';
+import Globe16 from '@carbon/icons/es/globe/16';
+
+import Language32 from '@carbon/icons/es/language/32';
+import Language24 from '@carbon/icons/es/language/24';
+import Language20 from '@carbon/icons/es/language/20';
+import Language16 from '@carbon/icons/es/language/16';
+
+import CurrencyDollar32 from '@carbon/icons/es/currency--dollar/32';
+import CurrencyDollar24 from '@carbon/icons/es/currency--dollar/24';
+import CurrencyDollar20 from '@carbon/icons/es/currency--dollar/20';
+import CurrencyDollar16 from '@carbon/icons/es/currency--dollar/16';
+
+import Time32 from '@carbon/icons/es/time/32';
+import Time24 from '@carbon/icons/es/time/24';
+import Time20 from '@carbon/icons/es/time/20';
+import Time16 from '@carbon/icons/es/time/16';
+
+import Calendar32 from '@carbon/icons/es/calendar/32';
+import Calendar24 from '@carbon/icons/es/calendar/24';
+import Calendar20 from '@carbon/icons/es/calendar/20';
+import Calendar16 from '@carbon/icons/es/calendar/16';
+
+import Phone32 from '@carbon/icons/es/phone/32';
+import Phone24 from '@carbon/icons/es/phone/24';
+import Phone20 from '@carbon/icons/es/phone/20';
+import Phone16 from '@carbon/icons/es/phone/16';
+
+import Camera32 from '@carbon/icons/es/camera/32';
+import Camera24 from '@carbon/icons/es/camera/24';
+import Camera20 from '@carbon/icons/es/camera/20';
+import Camera16 from '@carbon/icons/es/camera/16';
+
+import Information32 from '@carbon/icons/es/information/32';
+import Information24 from '@carbon/icons/es/information/24';
+import Information20 from '@carbon/icons/es/information/20';
+import Information16 from '@carbon/icons/es/information/16';
+
+import Reset32 from '@carbon/icons/es/reset/32';
+import Reset24 from '@carbon/icons/es/reset/24';
+import Reset20 from '@carbon/icons/es/reset/20';
+import Reset16 from '@carbon/icons/es/reset/16';
+
+import ViewOff32 from '@carbon/icons/es/view--off/32';
+import ViewOff24 from '@carbon/icons/es/view--off/24';
+import ViewOff20 from '@carbon/icons/es/view--off/20';
+import ViewOff16 from '@carbon/icons/es/view--off/16';
+
+import Grid32 from '@carbon/icons/es/grid/32';
+import Grid24 from '@carbon/icons/es/grid/24';
+import Grid20 from '@carbon/icons/es/grid/20';
+import Grid16 from '@carbon/icons/es/grid/16';
+
+import List32 from '@carbon/icons/es/list/32';
+import List24 from '@carbon/icons/es/list/24';
+import List20 from '@carbon/icons/es/list/20';
+import List16 from '@carbon/icons/es/list/16';
+
+// Utilisation d'icônes alternatives pour les tendances
+import TrendingUp32 from '@carbon/icons/es/arrow--up/32';
+import TrendingUp24 from '@carbon/icons/es/arrow--up/24';
+import TrendingUp20 from '@carbon/icons/es/arrow--up/20';
+import TrendingUp16 from '@carbon/icons/es/arrow--up/16';
+
+import TrendingDown32 from '@carbon/icons/es/arrow--down/32';
+import TrendingDown24 from '@carbon/icons/es/arrow--down/24';
+import TrendingDown20 from '@carbon/icons/es/arrow--down/20';
+import TrendingDown16 from '@carbon/icons/es/arrow--down/16';
+
+import TrendingFlat32 from '@carbon/icons/es/arrow--right/32';
+import TrendingFlat24 from '@carbon/icons/es/arrow--right/24';
+import TrendingFlat20 from '@carbon/icons/es/arrow--right/20';
+import TrendingFlat16 from '@carbon/icons/es/arrow--right/16';
+
+import Subtract32 from '@carbon/icons/es/subtract/32';
+import Subtract24 from '@carbon/icons/es/subtract/24';
+import Subtract20 from '@carbon/icons/es/subtract/20';
+import Subtract16 from '@carbon/icons/es/subtract/16';
+
+// Utilisation d'une icône alternative pour les graphiques
+import ChartLine32 from '@carbon/icons/es/analytics/32';
+import ChartLine24 from '@carbon/icons/es/analytics/24';
+import ChartLine20 from '@carbon/icons/es/analytics/20';
+import ChartLine16 from '@carbon/icons/es/analytics/16';
+
+import Tools32 from '@carbon/icons/es/tools/32';
+import Tools24 from '@carbon/icons/es/tools/24';
+import Tools20 from '@carbon/icons/es/tools/20';
+import Tools16 from '@carbon/icons/es/tools/16';
+
+// Icônes manquantes ou incorrectes
+import Alarm32 from '@carbon/icons/es/alarm/32';
+import Alarm24 from '@carbon/icons/es/alarm/24';
+import Alarm20 from '@carbon/icons/es/alarm/20';
+import Alarm16 from '@carbon/icons/es/alarm/16';
+
+import Warning32 from '@carbon/icons/es/warning/32';
+import Warning24 from '@carbon/icons/es/warning/24';
+import Warning20 from '@carbon/icons/es/warning/20';
+import Warning16 from '@carbon/icons/es/warning/16';
+
+import WarningAlt32 from '@carbon/icons/es/warning--alt/32';
+import WarningAlt24 from '@carbon/icons/es/warning--alt/24';
+import WarningAlt20 from '@carbon/icons/es/warning--alt/20';
+import WarningAlt16 from '@carbon/icons/es/warning--alt/16';
+
+import WarningFilled32 from '@carbon/icons/es/warning--filled/32';
+import WarningFilled24 from '@carbon/icons/es/warning--filled/24';
+import WarningFilled20 from '@carbon/icons/es/warning--filled/20';
+import WarningFilled16 from '@carbon/icons/es/warning--filled/16';
+
+import WarningAltFilled32 from '@carbon/icons/es/warning--alt--filled/32';
+import WarningAltFilled24 from '@carbon/icons/es/warning--alt--filled/24';
+import WarningAltFilled20 from '@carbon/icons/es/warning--alt--filled/20';
+import WarningAltFilled16 from '@carbon/icons/es/warning--alt--filled/16';
+
+import InformationFilled32 from '@carbon/icons/es/information--filled/32';
+import InformationFilled24 from '@carbon/icons/es/information--filled/24';
+import InformationFilled20 from '@carbon/icons/es/information--filled/20';
+import InformationFilled16 from '@carbon/icons/es/information--filled/16';
+
+// Utilisation d'une icône alternative pour hashtag
+import Hashtag32 from '@carbon/icons/es/text--creation/32';
+import Hashtag24 from '@carbon/icons/es/text--creation/24';
+import Hashtag20 from '@carbon/icons/es/text--creation/20';
+import Hashtag16 from '@carbon/icons/es/text--creation/16';
+
 
 import {IbmIconComponent} from './ibm-icon.component'
 import { MatIconRegistry } from '@angular/material/icon';
@@ -405,6 +535,102 @@ export class IbmIconModule {
 		CloudUpload24,
 		CloudUpload20,
 		CloudUpload16,
+
+		// Nouvelles icônes pour la localisation et l'interface
+		Globe32,
+		Globe24,
+		Globe20,
+		Globe16,
+
+		Language32,
+		Language24,
+		Language20,
+		Language16,
+
+		CurrencyDollar32,
+		CurrencyDollar24,
+		CurrencyDollar20,
+		CurrencyDollar16,
+
+		Time32,
+		Time24,
+		Time20,
+		Time16,
+
+		Calendar32,
+		Calendar24,
+		Calendar20,
+		Calendar16,
+
+		Phone32,
+		Phone24,
+		Phone20,
+		Phone16,
+
+		Camera32,
+		Camera24,
+		Camera20,
+		Camera16,
+
+		Information32,
+		Information24,
+		Information20,
+		Information16,
+
+		Reset32,
+		Reset24,
+		Reset20,
+		Reset16,
+
+		ViewOff32,
+		ViewOff24,
+		ViewOff20,
+		ViewOff16,
+
+		TrashCan32,
+		TrashCan24,
+		TrashCan20,
+		TrashCan16,
+
+		Grid32,
+		Grid24,
+		Grid20,
+		Grid16,
+
+		List32,
+		List24,
+		List20,
+		List16,
+
+		TrendingUp32,
+		TrendingUp24,
+		TrendingUp20,
+		TrendingUp16,
+
+		TrendingDown32,
+		TrendingDown24,
+		TrendingDown20,
+		TrendingDown16,
+
+		TrendingFlat32,
+		TrendingFlat24,
+		TrendingFlat20,
+		TrendingFlat16,
+
+		Subtract32,
+		Subtract24,
+		Subtract20,
+		Subtract16,
+
+		ChartLine32,
+		ChartLine24,
+		ChartLine20,
+		ChartLine16,
+
+		Tools32,
+		Tools24,
+		Tools20,
+		Tools16,
 
 		UserAccessUnlock32,
 		UserAccessUnlock24,
@@ -741,6 +967,42 @@ export class IbmIconModule {
       SendAlt24,
       SendAlt20,
       SendAlt16,
+
+      // Icônes manquantes ou incorrectes
+      Alarm32,
+      Alarm24,
+      Alarm20,
+      Alarm16,
+
+      Warning32,
+      Warning24,
+      Warning20,
+      Warning16,
+
+      WarningAlt32,
+      WarningAlt24,
+      WarningAlt20,
+      WarningAlt16,
+
+      WarningFilled32,
+      WarningFilled24,
+      WarningFilled20,
+      WarningFilled16,
+
+      WarningAltFilled32,
+      WarningAltFilled24,
+      WarningAltFilled20,
+      WarningAltFilled16,
+
+      InformationFilled32,
+      InformationFilled24,
+      InformationFilled20,
+      InformationFilled16,
+
+      Hashtag32,
+      Hashtag24,
+      Hashtag20,
+      Hashtag16,
 
 		]);
 

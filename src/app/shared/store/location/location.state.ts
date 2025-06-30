@@ -229,6 +229,39 @@ export class LocationState{
         )
     }
 
+    @Action(LocationAction.CreateAssignationWithAssistant)
+    createAssignationWithAssistant(ctx:StateContext<LocationStateModel>,{assignationConfig}:LocationAction.CreateAssignationWithAssistant)
+    {
+        const state = ctx.getState();
+
+        ctx.patchState({
+            loadingLocation:true
+        })
+        return this._locationsService.createAssignationWithAssistant(assignationConfig).pipe(
+            tap(
+                result => {
+                    console.log("Assignation Created with Assistant ",result);
+                    ctx.patchState({
+                        loadingLocation:false,
+                        locations:[...state.locations, result.data.location]
+                    })
+                    this._toastrService.success(`Assignation créée avec succès via l'assistant!`, 'Ndewa360°');
+                    // Mettre à jour les stores liés
+                    if (result.data.location) {
+                        ctx.dispatch(new RoomAction.UpdateLocalRoomInfos(result.data.location.room,{isActiveForSouscription:true,isFree:false,locataire:result.data.location.locataire}))
+                        ctx.dispatch(new LocataireAction.UpdateLocataireRoom(result.data.location.locataire,result.data.location.room))
+                    }
+                }
+            ),
+            catchError((error)=>{
+                ctx.patchState({
+                    loadingLocation: false
+                })
+                return throwError(error);
+            })
+        )
+    }
+
     @Action(LocationAction.RemoveAssignationLocation)
     removeAssignationLocation(ctx:StateContext<LocationStateModel>,{locationId,description}:LocationAction.RemoveAssignationLocation)
     {

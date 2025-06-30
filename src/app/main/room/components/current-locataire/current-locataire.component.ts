@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { ShowContractComponent } from 'src/app/main/contract/components/show-contract/show-contract.component';
 import { UpdateLocataireComponent } from 'src/app/main/locataires/components/update-locataire/update-locataire.component';
@@ -23,6 +24,7 @@ export class CurrentLocataireComponent implements OnInit {
   constructor(
     private _store:Store,
     private dialog: MatDialog,
+    private router: Router
 
   ) {}
 
@@ -40,8 +42,15 @@ export class CurrentLocataireComponent implements OnInit {
 
   openEditAddLocataire()
   {
-    this.isAssignedOpened = true;
-    this.onOpenAssignedRoom.emit(this.isAssignedOpened);
+    // Naviguer vers l'assistant d'assignation avec la chambre pré-sélectionnée
+    this.router.navigate(['/app/assign-location'], {
+      queryParams: {
+        propertyId: this.room?.property?._id,
+        roomId: this.room?._id,
+        assistant: true,
+        returnUrl: this.router.url
+      }
+    });
   }
 
   rompreLocation()

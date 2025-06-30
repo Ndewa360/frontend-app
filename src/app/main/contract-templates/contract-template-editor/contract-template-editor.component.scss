@@ -1,0 +1,976 @@
+// Animations
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+// Éditeur moderne de modèles de contrats
+// Utilise les variables CSS de l'application et les classes Tailwind
+
+// Wrapper principal pour l'éditeur avec le thème de l'application
+.contract-template-editor {
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: var(--theme-appUIBg);
+
+  // Variables pour le thème de l'éditeur
+  --editor-primary: rgb(204, 140, 10);
+  --editor-primary-light: rgba(204, 140, 10, 0.1);
+  --editor-primary-medium: rgba(204, 140, 10, 0.2);
+  --editor-primary-dark: rgb(163, 112, 8);
+}
+
+// Animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+// En-tête de l'éditeur avec le thème de l'application
+.editor-header {
+  @apply px-6 py-4 border-b flex items-center justify-between;
+  background: var(--theme-appCardBg);
+  border-color: var(--theme-appBorderColor);
+  flex-shrink: 0; // Empêche la compression
+  z-index: 10;
+  position: relative;
+
+  // Barre de couleur primaire en haut
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--editor-primary);
+  }
+  
+  .header-left {
+    @apply flex items-center gap-4;
+
+    .header-info {
+      h1 {
+        color: var(--theme-appText);
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 0;
+      }
+
+      .header-meta {
+        @apply flex items-center gap-4 mt-1;
+
+        span {
+          color: var(--theme-appText);
+          opacity: 0.7;
+          font-size: 0.875rem;
+        }
+
+        .status-indicators {
+          @apply flex items-center gap-2;
+
+          .save-status {
+            @apply flex items-center gap-1 text-sm;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+
+            &.save-status--saved {
+              background: rgba(5, 150, 105, 0.1);
+              color: var(--theme-appColorSuccess);
+              border: 1px solid rgba(5, 150, 105, 0.2);
+            }
+
+            &.save-status--saving {
+              background: var(--editor-primary-light);
+              color: var(--editor-primary);
+              border: 1px solid var(--editor-primary-medium);
+              animation: pulse 1s infinite;
+            }
+
+            &.save-status--error {
+              background: rgba(220, 38, 38, 0.1);
+              color: var(--theme-appColorDanger);
+              border: 1px solid rgba(220, 38, 38, 0.2);
+            }
+
+            &.save-status--unsaved {
+              background: rgba(217, 119, 6, 0.1);
+              color: var(--theme-appColorWarning);
+              border: 1px solid rgba(217, 119, 6, 0.2);
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  .header-actions {
+    @apply flex items-center gap-4;
+    
+    .view-toggle {
+      @apply flex items-center gap-1 bg-gray-100 rounded-lg p-1;
+      background: var(--theme-appUIForegroundBg);
+      
+      button {
+        @apply px-3 py-2 rounded-md transition-all duration-200;
+        
+        &.active {
+          background: var(--theme-appColorPrimary);
+          color: white;
+        }
+      }
+    }
+    
+    .action-buttons {
+      @apply flex items-center gap-2;
+    }
+  }
+}
+
+// Contenu de l'éditeur - prend le reste de l'espace
+.editor-content {
+  @apply flex;
+  flex: 1;
+  overflow: hidden;
+  
+  &.view-mode-edit {
+    .edit-panel {
+      @apply flex w-full;
+    }
+    
+    .preview-panel {
+      @apply hidden;
+    }
+  }
+  
+  &.view-mode-preview {
+    .edit-panel {
+      @apply hidden;
+    }
+    
+    .preview-panel {
+      @apply flex flex-col w-full;
+    }
+  }
+}
+
+// Panneau d'édition
+.edit-panel {
+  display: flex;
+  width: 100%;
+  height: calc(100vh - 80px); // Hauteur totale moins l'en-tête
+  @apply flex w-full;
+  
+  // Sidebar avec le thème de l'application
+  .editor-sidebar {
+    width: 320px;
+    flex-shrink: 0;
+    border-right: 1px solid #e5e7eb;
+    padding: 0;
+    background: linear-gradient(180deg, #ffffff 0%, #fafbfc 100%);
+    height: 100%; // Prendre la hauteur du conteneur parent, pas de la viewport
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    position: relative;
+
+    // Animation d'entrée
+    animation: slideInLeft 0.3s ease-out;
+
+    // Scrollbar personnalisée
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+
+      &:hover {
+        background: #94a3b8;
+      }
+    }
+    
+    .sidebar-section {
+      border-bottom: 1px solid #f3f4f6;
+      animation: fadeIn 0.4s ease-out;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      h3 {
+        margin: 0;
+        padding: 1.5rem 1.5rem 1rem 1.5rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #6b7280;
+        background: linear-gradient(135deg, #f9fafb 0%, #f1f5f9 100%);
+        border-bottom: 1px solid #f3f4f6;
+        position: relative;
+
+        &::before {
+          content: '';
+          position: absolute;
+          left: 1.5rem;
+          bottom: 0;
+          width: 30px;
+          height: 2px;
+          background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+          border-radius: 1px;
+        }
+        border-bottom: 2px solid var(--theme-appBorderColor);
+
+        &::before {
+          content: '';
+          width: 4px;
+          height: 16px;
+          background: var(--editor-primary);
+          border-radius: 2px;
+        }
+      }
+
+      .form-group {
+        padding: 1.5rem;
+        margin: 0;
+        border-bottom: 1px solid #f3f4f6;
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        label {
+          display: block;
+          margin-bottom: 0.5rem;
+          font-size: 0.875rem;
+          font-weight: 500;
+          color: #374151;
+        }
+
+        .form-control {
+          width: 100%;
+          padding: 0.75rem 1rem;
+          border: 1px solid #d1d5db;
+          border-radius: 0.5rem;
+          font-size: 0.875rem;
+          line-height: 1.5;
+          background-color: #ffffff;
+          transition: all 0.2s ease-in-out;
+          box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+
+          &:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+          }
+
+          &:hover:not(:focus) {
+            border-color: #9ca3af;
+          }
+
+          &::placeholder {
+            color: #9ca3af;
+            font-style: italic;
+          }
+        }
+
+        textarea.form-control {
+          resize: vertical;
+          min-height: 100px;
+          font-family: inherit;
+        }
+
+        input.form-control {
+          height: 44px;
+        }
+
+        // Styles pour les combo-box IBM Carbon
+        ibm-combo-box {
+          width: 100%;
+
+          ::ng-deep .bx--list-box {
+            background-color: #ffffff;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease-in-out;
+
+            &:hover {
+              border-color: #9ca3af;
+            }
+
+            &.bx--list-box--expanded {
+              border-color: #3b82f6;
+              box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            }
+          }
+
+          ::ng-deep .bx--list-box__field {
+            height: 44px;
+            padding: 0 1rem;
+          }
+
+          ::ng-deep .bx--list-box__label {
+            font-size: 0.875rem;
+            color: #374151;
+          }
+        }
+      }
+
+      // Section des variables avec design professionnel
+      .variables-list {
+        padding: 1.5rem;
+
+        .variable-category {
+          margin-bottom: 1.5rem;
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+
+          h4 {
+            margin: 0 0 0.75rem 0;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #6b7280;
+          }
+
+          .variable-items {
+            display: grid;
+            gap: 0.5rem;
+
+            .variable-item {
+              display: flex;
+              align-items: center;
+              padding: 0.75rem 1rem;
+              background: #f9fafb;
+              border: 1px solid #e5e7eb;
+              border-radius: 0.5rem;
+              font-size: 0.875rem;
+              color: #374151;
+              cursor: pointer;
+              transition: all 0.2s ease-in-out;
+              text-align: left;
+              width: 100%;
+
+              &:hover {
+                background: #f3f4f6;
+                border-color: #d1d5db;
+                transform: translateY(-1px);
+                box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+              }
+
+              &:active {
+                transform: translateY(0);
+                box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+              }
+
+              i {
+                color: #3b82f6;
+                margin-right: 0.5rem;
+                font-size: 0.75rem;
+              }
+
+              span {
+                font-weight: 500;
+              }
+            }
+          }
+        }
+      }
+
+      // Helper text styling
+      .app-helper-text-01 {
+        padding: 0 1.5rem 1rem 1.5rem;
+        margin: 0;
+        font-size: 0.75rem;
+        color: #6b7280;
+        font-style: italic;
+      }
+
+        // Styles pour les inputs du thème
+        input, textarea, select {
+          width: 100%;
+          padding: 0.75rem;
+          border: 1px solid var(--theme-appBorderColor);
+          border-radius: 0.375rem;
+          background: var(--theme-appUIForegroundBg);
+          color: var(--theme-appText);
+          font-size: 0.875rem;
+          transition: all 0.2s ease;
+
+          &:focus {
+            outline: none;
+            border-color: var(--editor-primary);
+            background: var(--theme-appCardBg);
+            box-shadow: 0 0 0 3px rgba(204, 140, 10, 0.1);
+          }
+
+          &::placeholder {
+            color: var(--theme-appText);
+            opacity: 0.6;
+          }
+        }
+      }
+
+      // Section des informations générales - fixe
+      &:first-child {
+        flex-shrink: 0; // Ne se compresse pas
+      }
+
+      // Section des variables - scrollable
+      &:last-child {
+        flex: 1; // Prend l'espace restant
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        margin-bottom: 1rem; // Marge en bas
+
+        h3 {
+          flex-shrink: 0; // Le titre reste fixe
+        }
+
+        p {
+          flex-shrink: 0; // Le sous-titre reste fixe
+          margin-bottom: 1rem; // Marge après le sous-titre
+        }
+      }
+
+      // Variables avec scroll
+      .variables-list {
+        flex: 1;
+        overflow-y: auto;
+        padding-right: 0.5rem; // Espace pour la scrollbar
+        padding-bottom: 1rem; // Marge en bas de la liste
+
+        // Style de la scrollbar
+        &::-webkit-scrollbar {
+          width: 6px;
+        }
+
+        &::-webkit-scrollbar-track {
+          background: var(--theme-appUIForegroundBg);
+          border-radius: 3px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background: var(--theme-appColorDecorative);
+          border-radius: 3px;
+
+          &:hover {
+            background: var(--theme-appColorSecondary);
+          }
+        }
+        .variable-category {
+          margin-bottom: 1.5rem;
+
+          h4 {
+            margin-bottom: 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--theme-appText);
+            padding: 0.5rem 0;
+            border-bottom: 2px solid var(--theme-appBorderColor);
+
+            &::before {
+              content: '';
+              width: 4px;
+              height: 16px;
+              background: var(--editor-primary);
+              border-radius: 2px;
+            }
+          }
+
+          .variable-items {
+            margin-top: 0.75rem;
+
+            .variable-item {
+              width: 100%;
+              display: flex;
+              align-items: center;
+              gap: 0.75rem;
+              padding: 0.75rem;
+              text-align: left;
+              font-size: 0.875rem;
+              border-radius: 0.5rem;
+              transition: all 0.2s ease;
+              background: var(--theme-appUIForegroundBg);
+              border: 1px solid var(--theme-appBorderColor);
+              color: var(--theme-appText);
+              margin-bottom: 0.5rem;
+              cursor: pointer;
+
+              &:hover {
+                background: var(--theme-appCardBg);
+                border-color: var(--editor-primary);
+                transform: translateY(-1px);
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+              }
+
+              &:active {
+                transform: translateY(0);
+              }
+
+              span {
+                flex: 1;
+                font-weight: 500;
+              }
+
+              code {
+                font-size: 0.75rem;
+                padding: 0.25rem 0.5rem;
+                border-radius: 0.375rem;
+                font-family: monospace;
+                background: var(--editor-primary-light);
+                color: var(--editor-primary);
+                border: 1px solid var(--editor-primary-medium);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  // Zone d'édition principale avec le thème de l'application
+  .editor-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%; // Prend toute la hauteur disponible
+    overflow: hidden;
+    background: var(--theme-appUIBg);
+    
+    // Barre d'outils
+    .editor-toolbar {
+      @apply flex items-center gap-1 p-3 bg-white border-b;
+      background: var(--theme-appCardBg);
+      border-color: var(--theme-appColorDecorative);
+      
+      .toolbar-group {
+        @apply flex items-center gap-1 pr-3 mr-3 border-r;
+        border-color: var(--theme-appColorDecorative);
+        
+        &:last-child {
+          @apply border-r-0 pr-0 mr-0;
+        }
+        
+        button {
+          @apply p-2 rounded-md hover:bg-gray-100 transition-colors duration-200;
+          
+          &:hover {
+            background: var(--theme-appUIForegroundBg);
+          }
+          
+          &.active {
+            background: var(--theme-appColorPrimary);
+            color: white;
+          }
+        }
+      }
+    }
+    
+    // Zone d'édition avec le thème de l'application
+    .editor-area {
+      flex: 1;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      height: 100%; // Prend toute la hauteur disponible
+      background: #ffffff;
+
+      // TinyMCE container
+      ::ng-deep .tox-tinymce {
+        height: 100% !important;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.5rem;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+      }
+
+      ::ng-deep .tox-edit-area {
+        height: calc(100vh - 250px) !important;
+      }
+
+      ::ng-deep .tox-edit-area__iframe {
+        height: 100% !important;
+      }
+
+      .content-editor {
+        width: 100%;
+        padding: 1rem;
+        border: 1px solid var(--theme-appBorderColor);
+        border-radius: 0.5rem;
+        background: var(--theme-appUIForegroundBg);
+        color: var(--theme-appText);
+        font-family: 'Times New Roman', serif;
+        line-height: 1.6;
+        flex: 1; // Prend toute la hauteur disponible
+        min-height: 400px; // Hauteur minimale pour l'éditeur
+        resize: none; // Empêche le redimensionnement manuel
+        transition: all 0.2s ease;
+
+        &:focus {
+          outline: none;
+          border-color: var(--editor-primary);
+          box-shadow: 0 0 0 3px rgba(204, 140, 10, 0.1);
+        }
+        
+        &:focus {
+          border-color: var(--theme-appColorPrimary);
+        }
+        
+        &[contenteditable]:empty:before {
+          content: attr(placeholder);
+          color: var(--theme-appTextSecondary);
+          font-style: italic;
+        }
+        
+        // Styles pour le contenu
+        p {
+          @apply mb-4;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+          @apply font-bold mb-3;
+        }
+        
+        h1 { @apply text-2xl; }
+        h2 { @apply text-xl; }
+        h3 { @apply text-lg; }
+        
+        ul, ol {
+          @apply ml-6 mb-4;
+        }
+        
+        ul {
+          @apply list-disc;
+        }
+        
+        ol {
+          @apply list-decimal;
+        }
+        
+        li {
+          @apply mb-1;
+        }
+        
+        strong {
+          @apply font-bold;
+        }
+        
+        em {
+          @apply italic;
+        }
+        
+        u {
+          @apply underline;
+        }
+        
+        table {
+          @apply w-full border-collapse border mb-4;
+          border-color: var(--theme-appColorDecorative);
+          
+          th, td {
+            @apply border p-2;
+            border-color: var(--theme-appColorDecorative);
+          }
+          
+          th {
+            @apply bg-gray-50 font-medium;
+            background: var(--theme-appUIForegroundBg);
+          }
+        }
+      }
+    }
+  }
+
+// Panneau d'aperçu
+.preview-panel {
+  @apply flex flex-col w-full;
+  
+  .preview-header {
+    @apply flex items-center justify-between p-4 bg-white border-b;
+    background: var(--theme-appCardBg);
+    border-color: var(--theme-appColorDecorative);
+    
+    h3 {
+      color: var(--theme-appText);
+    }
+    
+    .preview-actions {
+      @apply flex items-center gap-2;
+    }
+  }
+  
+  .preview-content {
+    @apply flex-1 p-8 bg-white overflow-y-auto;
+    background: white;
+    
+    .contract-preview {
+      @apply max-w-4xl mx-auto;
+      font-family: 'Times New Roman', serif;
+      line-height: 1.6;
+      color: #000;
+      
+      // Styles d'impression
+      @media print {
+        @apply p-0 m-0;
+        
+        .preview-header {
+          @apply hidden;
+        }
+      }
+      
+      // Styles pour le contenu du contrat
+      p {
+        @apply mb-4;
+      }
+      
+      h1, h2, h3, h4, h5, h6 {
+        @apply font-bold mb-3;
+      }
+      
+      h1 { @apply text-2xl text-center; }
+      h2 { @apply text-xl; }
+      h3 { @apply text-lg; }
+      
+      ul, ol {
+        @apply ml-6 mb-4;
+      }
+      
+      ul {
+        @apply list-disc;
+      }
+      
+      ol {
+        @apply list-decimal;
+      }
+      
+      li {
+        @apply mb-1;
+      }
+      
+      table {
+        @apply w-full border-collapse border mb-4;
+        
+        th, td {
+          @apply border p-2;
+          border-color: #000;
+        }
+        
+        th {
+          @apply bg-gray-100 font-medium;
+        }
+      }
+      
+      // Variables non remplacées
+      [data-variable] {
+        @apply bg-yellow-100 px-1 rounded;
+        border: 1px dashed #fbbf24;
+      }
+    }
+  }
+}
+
+// Barre de statut
+.editor-status-bar {
+  @apply flex items-center justify-between px-6 py-2 bg-gray-50 border-t text-sm;
+  background: var(--theme-appUIForegroundBg);
+  border-color: var(--theme-appColorDecorative);
+  color: var(--theme-appTextSecondary);
+  
+  .status-left {
+    @apply flex items-center gap-4;
+  }
+  
+  .status-right {
+    @apply flex items-center gap-4;
+  }
+}
+
+// Responsive
+@media (max-width: 1024px) {
+  .editor-content {
+    &.view-mode-split {
+      .edit-panel {
+        @apply flex-col;
+        
+        .editor-sidebar {
+          @apply w-full h-auto max-h-64;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .editor-header {
+    @apply flex-col gap-4 items-start;
+    
+    .header-actions {
+      @apply w-full justify-between;
+      
+      .view-toggle {
+        @apply flex-1 justify-center;
+      }
+    }
+  }
+  
+  .edit-panel {
+    @apply flex-col;
+    
+    .editor-sidebar {
+      @apply w-full h-auto max-h-48 overflow-y-auto;
+    }
+  }
+  
+  .preview-content {
+    @apply p-4;
+  }
+}
+
+// Styles spécifiques pour TinyMCE avec le thème de l'application
+:host ::ng-deep {
+  .tox-tinymce {
+    height: 500px !important; // Hauteur fixe visible
+    min-height: 400px !important; // Hauteur minimale
+    border-radius: 0.5rem !important;
+    border: 1px solid var(--theme-appBorderColor) !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+  }
+
+  .tox-edit-area {
+    height: calc(100% - 50px) !important; // Moins la toolbar
+    min-height: 350px !important; // Hauteur minimale pour la zone d'édition
+  }
+
+  .tox-edit-area__iframe {
+    height: 100% !important;
+    min-height: 350px !important;
+  }
+
+  // Personnalisation de la toolbar TinyMCE avec le thème
+  .tox-toolbar-overlord {
+    background: var(--theme-appCardBg) !important;
+    border-bottom: 1px solid var(--theme-appBorderColor) !important;
+  }
+
+  .tox-toolbar__primary {
+    background: transparent !important;
+  }
+
+  // Boutons de la toolbar avec le thème
+  .tox-tbtn {
+    border-radius: 0.25rem !important;
+
+    &:hover {
+      background: var(--theme-appHoverBg) !important;
+    }
+
+    &--enabled {
+      background: var(--editor-primary-light) !important;
+      color: var(--editor-primary) !important;
+    }
+  }
+
+  // Personnalisation du contenu de l'éditeur
+  .tox-edit-area__iframe {
+    background: var(--theme-appUIForegroundBg) !important;
+  }
+
+  // Scrollbar personnalisée pour l'éditeur
+  .tox-edit-area__iframe::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .tox-edit-area__iframe::-webkit-scrollbar-track {
+    background: var(--theme-appUIForegroundBg);
+    border-radius: 4px;
+  }
+
+  .tox-edit-area__iframe::-webkit-scrollbar-thumb {
+    background: var(--theme-appBorderColor);
+    border-radius: 4px;
+
+    &:hover {
+      background: var(--editor-primary);
+    }
+  }
+
+  // Menus et dropdowns avec le thème
+  .tox-menu {
+    background: var(--theme-appCardBg) !important;
+    border: 1px solid var(--theme-appBorderColor) !important;
+    border-radius: 0.375rem !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  .tox-collection__item {
+    color: var(--theme-appText) !important;
+
+    &:hover {
+      background: var(--theme-appHoverBg) !important;
+    }
+
+    &--enabled {
+      background: var(--editor-primary-light) !important;
+      color: var(--editor-primary) !important;
+    }
+  }
+}

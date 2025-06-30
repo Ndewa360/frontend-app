@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AssignLocationComponent } from './assign-location/assign-location.component';
 import { AssignLocationFormComponent } from './assign-location-form/assign-location-form.component';
+import { AssignationAssistantComponent } from './components/assignation-assistant/assignation-assistant.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { AssignLocationRoutingModule } from './assig-location-routing.module';
 
@@ -9,7 +10,8 @@ import { AssignLocationRoutingModule } from './assig-location-routing.module';
 @NgModule({
   declarations: [
     AssignLocationComponent,
-    AssignLocationFormComponent
+    AssignLocationFormComponent,
+    AssignationAssistantComponent
   ],
   imports: [
     SharedModule,
@@ -18,7 +20,8 @@ import { AssignLocationRoutingModule } from './assig-location-routing.module';
   ],
   exports:[
     AssignLocationComponent,
-    AssignLocationFormComponent
+    AssignLocationFormComponent,
+    AssignationAssistantComponent
   ]
 })
 export class AssignLocationModule { }

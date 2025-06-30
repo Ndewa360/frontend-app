@@ -88,6 +88,18 @@
                     aria-label="textarea"></textarea>
                 </ibm-label>
               </div>
+
+              <!-- Sélecteur de modèle de contrat -->
+              <div class="app-form__item">
+                <app-contract-template-selector
+                  formControlName="contractTemplate"
+                  label="Modèle de contrat"
+                  placeholder="Sélectionner un modèle de contrat (optionnel)"
+                  [required]="false"
+                  [showCreateButton]="true"
+                  [showPreview]="true">
+                </app-contract-template-selector>
+              </div>
             </div>
       
           </div>
