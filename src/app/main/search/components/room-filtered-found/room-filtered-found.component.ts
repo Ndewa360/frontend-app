@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
@@ -11,7 +11,7 @@ import { UtilsString } from 'src/app/shared/utils';
 @Component({
   selector: 'room-filtered-found',
   templateUrl: './room-filtered-found.component.html',
-  styleUrls: ['./room-filtered-found.component.css'],
+  styleUrls: ['./room-filtered-found-modern.component.scss'],
 })
 export class RoomFilteredFoundComponent {
     @Select(SearchState.selectStateLoading) loadingRoom$:Observable<string>;
@@ -20,9 +20,13 @@ export class RoomFilteredFoundComponent {
     public model = new TableModel();
     allRoomData=[]
     currentDataToShow=[]
+
+    // Nouvelles propriétés pour le design moderne
+    @Input() viewMode: 'grid' | 'list' = 'grid';
+
     translationsPaginationButton={
       PREVIOUS:'Précédent',
-      NEXT:'Suivant',      
+      NEXT:'Suivant',
     }
   
     constructor(
@@ -116,4 +120,36 @@ export class RoomFilteredFoundComponent {
           }
         })
       }
+
+    // Nouvelles méthodes pour le design moderne
+    trackByRoomId(index: number, room: SearchPropertyModel): string {
+      return room._id;
+    }
+
+
+
+    isFavorite(room: SearchPropertyModel): boolean {
+      return (room as any).isFavorite || false;
+    }
+
+    toggleFavorite(room: SearchPropertyModel, event: Event): void {
+      event.stopPropagation();
+      // TODO: Implémenter la logique des favoris
+      // Créer une propriété locale pour gérer les favoris
+      if (!(room as any).isFavorite) {
+        (room as any).isFavorite = false;
+      }
+      (room as any).isFavorite = !(room as any).isFavorite;
+    }
+
+    getRoomTypeLabel(roomType: string): string {
+      return UtilsString.getStringOfRoomType(roomType as any);
+    }
+
+
+
+    resetFilters(): void {
+      // TODO: Implémenter la réinitialisation des filtres
+      console.log('Reset filters');
+    }
 }

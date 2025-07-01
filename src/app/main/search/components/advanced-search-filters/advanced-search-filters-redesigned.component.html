@@ -1,0 +1,350 @@
+<!-- Filtres de recherche avancés redesignés -->
+<div class="advanced-filters-modern">
+  
+  <!-- Section Localisation -->
+  <div class="filter-section">
+    <div class="section-header">
+      <div class="section-icon">
+        <i class="fas fa-map-marker-alt"></i>
+      </div>
+      <h4 class="section-title">Localisation</h4>
+    </div>
+    
+    <div class="section-content">
+      <div class="form-group">
+        <label class="form-label">Ville</label>
+        <div class="select-wrapper">
+          <select 
+            [(ngModel)]="filters.city"
+            (ngModelChange)="onLocationChange()"
+            class="form-select">
+            <option value="">Toutes les villes</option>
+            <option *ngFor="let city of availableCities" [value]="city.value">
+              {{ city.label }}
+            </option>
+          </select>
+          <i class="fas fa-chevron-down select-icon"></i>
+        </div>
+      </div>
+
+      <div class="form-group" *ngIf="filters.city">
+        <label class="form-label">Quartier</label>
+        <div class="select-wrapper">
+          <select 
+            [(ngModel)]="filters.district"
+            (ngModelChange)="onDistrictChange()"
+            class="form-select">
+            <option value="">Tous les quartiers</option>
+            <option *ngFor="let district of getDistrictsByCity(filters.city)" [value]="district.value">
+              {{ district.label }}
+            </option>
+          </select>
+          <i class="fas fa-chevron-down select-icon"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section Budget -->
+  <div class="filter-section">
+    <div class="section-header">
+      <div class="section-icon">
+        <i class="fas fa-coins"></i>
+      </div>
+      <h4 class="section-title">Budget mensuel</h4>
+    </div>
+    
+    <div class="section-content">
+      <!-- Slider de prix moderne -->
+      <div class="price-range-container">
+        <div class="price-range-header">
+          <div class="price-display">
+            <span class="price-value">{{ formatPrice(filters.priceMin || priceRange.min) }}</span>
+            <span class="price-separator">-</span>
+            <span class="price-value">{{ formatPrice(filters.priceMax || priceRange.max) }}</span>
+          </div>
+        </div>
+
+        <div class="dual-range-slider">
+          <div class="slider-track">
+            <div class="slider-range" 
+                 [style.left.%]="getPricePercentage(filters.priceMin || priceRange.min)"
+                 [style.width.%]="getPricePercentage(filters.priceMax || priceRange.max) - getPricePercentage(filters.priceMin || priceRange.min)">
+            </div>
+          </div>
+          
+          <input type="range"
+                 class="slider-input slider-min"
+                 [min]="priceRange.min"
+                 [max]="priceRange.max"
+                 [step]="priceRange.step"
+                 [(ngModel)]="filters.priceMin"
+                 (ngModelChange)="onPriceChange()">
+          
+          <input type="range"
+                 class="slider-input slider-max"
+                 [min]="priceRange.min"
+                 [max]="priceRange.max"
+                 [step]="priceRange.step"
+                 [(ngModel)]="filters.priceMax"
+                 (ngModelChange)="onPriceChange()">
+        </div>
+      </div>
+
+      <!-- Suggestions de prix -->
+      <div class="price-suggestions">
+        <button 
+          *ngFor="let suggestion of priceSuggestions"
+          class="price-suggestion-btn"
+          [class.active]="isPriceSuggestionActive(suggestion)"
+          (click)="applyPriceSuggestion(suggestion)">
+          {{ suggestion.label }}
+        </button>
+      </div>
+
+      <!-- Inputs manuels -->
+      <div class="price-inputs-row">
+        <div class="price-input-group">
+          <label class="input-label">Minimum</label>
+          <div class="input-wrapper">
+            <input 
+              type="number"
+              [(ngModel)]="filters.priceMin"
+              (ngModelChange)="onPriceChange()"
+              [placeholder]="priceRange.min.toString()"
+              class="price-input">
+            <span class="input-suffix">FCFA</span>
+          </div>
+        </div>
+        
+        <div class="price-input-group">
+          <label class="input-label">Maximum</label>
+          <div class="input-wrapper">
+            <input 
+              type="number"
+              [(ngModel)]="filters.priceMax"
+              (ngModelChange)="onPriceChange()"
+              [placeholder]="priceRange.max.toString()"
+              class="price-input">
+            <span class="input-suffix">FCFA</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section Type de logement -->
+  <div class="filter-section">
+    <div class="section-header">
+      <div class="section-icon">
+        <i class="fas fa-home"></i>
+      </div>
+      <h4 class="section-title">Type de logement</h4>
+    </div>
+    
+    <div class="section-content">
+      <div class="property-types-grid">
+        <div 
+          *ngFor="let type of propertyTypes"
+          class="property-type-card"
+          [class.selected]="filters.propertyType === type.value"
+          (click)="selectPropertyType(type.value)">
+          <div class="type-icon">
+            <i [class]="type.icon"></i>
+          </div>
+          <div class="type-info">
+            <div class="type-name">{{ type.label }}</div>
+            <div class="type-count">{{ type.count }} disponibles</div>
+          </div>
+          <div class="type-selector">
+            <div class="radio-button" [class.checked]="filters.propertyType === type.value">
+              <i class="fas fa-check" *ngIf="filters.propertyType === type.value"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section Caractéristiques -->
+  <div class="filter-section">
+    <div class="section-header">
+      <div class="section-icon">
+        <i class="fas fa-bed"></i>
+      </div>
+      <h4 class="section-title">Caractéristiques</h4>
+    </div>
+    
+    <div class="section-content">
+      <!-- Nombre de chambres -->
+      <div class="characteristic-group">
+        <label class="characteristic-label">Nombre de chambres</label>
+        <div class="number-selector">
+          <button 
+            *ngFor="let num of roomNumbers"
+            class="number-btn"
+            [class.active]="filters.rooms === num"
+            (click)="setRoomCount(num)">
+            {{ num }}{{ num === roomNumbers[roomNumbers.length - 1] ? '+' : '' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Superficie -->
+      <div class="characteristic-group">
+        <label class="characteristic-label">Superficie minimum (m²)</label>
+        <div class="area-input-wrapper">
+          <input 
+            type="number"
+            [(ngModel)]="filters.minArea"
+            (ngModelChange)="onAreaChange()"
+            placeholder="Ex: 25"
+            class="area-input">
+          <span class="input-suffix">m²</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section Équipements -->
+  <div class="filter-section">
+    <div class="section-header">
+      <div class="section-icon">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <h4 class="section-title">Équipements</h4>
+    </div>
+    
+    <div class="section-content">
+      <div class="amenities-grid">
+        <label 
+          *ngFor="let amenity of amenitiesList"
+          class="amenity-item"
+          [class.selected]="isAmenitySelected(amenity.value)">
+          <input 
+            type="checkbox"
+            [checked]="isAmenitySelected(amenity.value)"
+            (change)="toggleAmenity(amenity.value)"
+            class="amenity-checkbox">
+          
+          <div class="amenity-content">
+            <div class="amenity-icon">
+              <i [class]="amenity.icon"></i>
+            </div>
+            <div class="amenity-info">
+              <div class="amenity-name">{{ amenity.label }}</div>
+              <div class="amenity-description">{{ amenity.description }}</div>
+            </div>
+          </div>
+          
+          <div class="amenity-check">
+            <i class="fas fa-check"></i>
+          </div>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section Préférences -->
+  <div class="filter-section">
+    <div class="section-header">
+      <div class="section-icon">
+        <i class="fas fa-heart"></i>
+      </div>
+      <h4 class="section-title">Préférences</h4>
+    </div>
+    
+    <div class="section-content">
+      <div class="preferences-list">
+        <label 
+          *ngFor="let preference of preferencesList"
+          class="preference-item">
+          <input 
+            type="checkbox"
+            [checked]="isPreferenceSelected(preference.value)"
+            (change)="togglePreference(preference.value)"
+            class="preference-checkbox">
+          
+          <div class="preference-content">
+            <div class="preference-icon">
+              <i [class]="preference.icon"></i>
+            </div>
+            <div class="preference-text">{{ preference.label }}</div>
+          </div>
+          
+          <div class="preference-toggle">
+            <div class="toggle-switch" [class.active]="isPreferenceSelected(preference.value)">
+              <div class="toggle-slider"></div>
+            </div>
+          </div>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section Actions -->
+  <div class="filter-actions">
+    <div class="actions-header">
+      <div class="results-preview">
+        <span class="results-count">{{ resultCount }}</span>
+        <span class="results-text">logements trouvés</span>
+      </div>
+    </div>
+    
+    <div class="actions-buttons">
+      <button 
+        class="action-btn secondary"
+        (click)="resetAllFilters()">
+        <i class="fas fa-undo"></i>
+        <span>Réinitialiser</span>
+      </button>
+      
+      <button 
+        class="action-btn primary"
+        (click)="applyFilters()">
+        <i class="fas fa-search"></i>
+        <span>Rechercher</span>
+      </button>
+    </div>
+
+    <!-- Sauvegarde de recherche -->
+    <div class="save-search-section" *ngIf="canSaveSearch && hasActiveFilters">
+      <button 
+        class="save-search-btn"
+        (click)="saveCurrentSearch()">
+        <i class="fas fa-bookmark"></i>
+        <span>Sauvegarder cette recherche</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Recherches sauvegardées -->
+  <div class="saved-searches-section" *ngIf="savedSearches.length > 0">
+    <div class="section-header">
+      <div class="section-icon">
+        <i class="fas fa-bookmark"></i>
+      </div>
+      <h4 class="section-title">Recherches sauvegardées</h4>
+    </div>
+    
+    <div class="section-content">
+      <div class="saved-searches-list">
+        <div 
+          *ngFor="let search of savedSearches"
+          class="saved-search-item"
+          (click)="loadSavedSearch(search)">
+          <div class="search-info">
+            <div class="search-name">{{ search.name }}</div>
+            <div class="search-criteria">{{ getSearchCriteriaSummary(search.filters) }}</div>
+            <div class="search-date">{{ search.createdAt | date:'dd/MM/yyyy' }}</div>
+          </div>
+          <button 
+            class="delete-search-btn"
+            (click)="deleteSavedSearch(search, $event)">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

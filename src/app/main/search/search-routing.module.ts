@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { SearchPageComponent } from './search-page/search-page.component';
+import { SearchPageComponent, SearchPageRedesignedComponent } from './search-page';
 import { SearchPageDataResolver, SearchRoomDataResolver } from 'src/app/shared/resolvers';
 import { RoomPageOverviewComponent } from './components/room-page-overview/room-page-overview.component';
 import { LandingLayoutComponent } from 'src/@youpez/layout/landing/landing-layout/landing-layout.component';
@@ -13,7 +13,14 @@ const routes: Routes = [
     children: [
       {
         path: 'index',
-        component:SearchPageComponent,
+        component: SearchPageRedesignedComponent,
+        resolve: {
+          data: SearchPageDataResolver
+        }
+      },
+      {
+        path: 'legacy',
+        component: SearchPageComponent,
         resolve: {
           data: SearchPageDataResolver
         }

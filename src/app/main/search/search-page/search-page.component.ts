@@ -30,7 +30,7 @@ export interface SortOption {
 @Component({
   selector: 'search-page',
   templateUrl: './search-page.component.html',
-  styleUrls: ['./search-page-new.component.scss']
+  styleUrls: ['./search-page-modern.component.scss']
 })
 export class SearchPageComponent implements OnInit {
   @Select(CityState.selectStateCities) cities: Observable<CityModel[]>;
@@ -44,6 +44,12 @@ export class SearchPageComponent implements OnInit {
   // Nouvelles propriétés pour la recherche moderne
   savedSearches: SavedSearch[] = [];
   activeFilters: ActiveFilter[] = [];
+  quickFilters = {
+    kitchen: false,
+    privateShower: false,
+    parking: false
+  };
+
   sortOptions = [
     { content: 'Prix croissant', value: 'price_asc', selected: false },
     { content: 'Prix décroissant', value: 'price_desc', selected: false },
@@ -207,6 +213,36 @@ export class SearchPageComponent implements OnInit {
   onMainSearchChange(value: string): void {
     // Logique de recherche principale
     console.log('Main search:', value);
+  }
+
+  toggleQuickFilter(filterKey: string): void {
+    this.quickFilters[filterKey] = !this.quickFilters[filterKey];
+
+    // Mettre à jour les filtres principaux
+    if (filterKey === 'kitchen') {
+      this.updateAmenityFilter('kitchen', this.quickFilters.kitchen);
+    } else if (filterKey === 'privateShower') {
+      this.updateAmenityFilter('private_shower', this.quickFilters.privateShower);
+    } else if (filterKey === 'parking') {
+      this.updateAmenityFilter('parking', this.quickFilters.parking);
+    }
+
+    // Appliquer les filtres
+    this.onSearchRequested(this.currentFilters);
+  }
+
+  private updateAmenityFilter(amenity: string, enabled: boolean): void {
+    if (!this.currentFilters.amenities) {
+      this.currentFilters.amenities = [];
+    }
+
+    if (enabled) {
+      if (!this.currentFilters.amenities.includes(amenity)) {
+        this.currentFilters.amenities.push(amenity);
+      }
+    } else {
+      this.currentFilters.amenities = this.currentFilters.amenities.filter(a => a !== amenity);
+    }
   }
 
   loadSavedSearch(search: SavedSearch): void {

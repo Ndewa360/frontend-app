@@ -1,95 +1,140 @@
-<!-- <ng-scrollbar> -->
-<div fxFill fxLayout="column">
-  <div fxFlex class="relative">
-    <div class="app-subtitle app-subtitle--cards mt-2"></div>
-    <div fxLayout="row wrap" class="app-card-row-holder app-card-row-room-container mb-2">
-      <div *ngIf="(loadingRoom$ | async) else isLoadingData" class="relative no-data-loader ">
-        <youpez-loader></youpez-loader>
+<!-- Composant moderne pour afficher les résultats de recherche -->
+<div class="search-results-modern">
+  <!-- Chargement -->
+  <div *ngIf="(loadingRoom$ | async)" class="results-loading">
+    <div class="loading-container">
+      <div class="loading-spinner">
+        <i class="fas fa-spinner fa-spin"></i>
       </div>
-      <ng-template #isLoadingData>
-        <ng-container>
-          <ng-container *ngIf="(roomFoundFiltered$ | async).length>0 else noData">
-            <div class="app-expressive-heading-02 mb-4 ml-4" fxFlex="100%">
-              <span>{{(roomFoundFiltered$ | async).length}} Biens trouvés</span>
-            </div>
-
-            <ng-container *ngFor="let room of currentDataToShow">
-              <div fxFlex="100%" fxFlex.gt-md="33.33%" (click)="goToRoom($event,room)">
-                <div class="app-card app-card--select app-card-room bg-white">
-                  <!-- <button (click)="openShowRoom(room)"
-                    class="float-right btn-text-edit top-2 mt-4 mr-4 bg-slate-700 rounded-md">
-                    <youpez-ibm-icon iconName="pen" iconSize="24"></youpez-ibm-icon>
-                  </button> -->
-                  <div class="relative btn-text-edit" *ngIf="room.medias.length>0">
-                    <button (click)="showFullScreenViewer(room.medias,$event)"  class="absolute z-30 float-right btn-text-edit top-2 right-0 mt-5 mr-5 bg-slate-700 rounded-md">
-                      <i class="fa-solid fa-expand fa-2x text-white"></i>
-                    </button>
-                  </div>
-                  
-                  <div class="app-card__content__alt">
-                    <div class="">
-                      <div class="text-center app-bg-decorative mb-2"
-                        [ngClass]="{'border-color': room.isFree?'rgb(220, 38, 38)':'rgb(22, 163, 74)'}">
-                        <!-- <youpez-ibm-icon iconName="home" iconSize="32" ></youpez-ibm-icon> -->
-                        <!-- <img src="assets/img/utils/room.png" alt="" width="100" srcset=""> -->
-                        <slider-component-galery [images]="getAllImages(room)"></slider-component-galery>
-
-  
-                      </div>
-                      <div>
-                        <div class="grid grid-cols-10 mt-2 mb-2 ">
-                          <div class=" app-expressive-heading-02 col-span-7 text-muted">
-                              <span >{{getRoomType(room.type)}}</span>
-                            <!-- <span class="location-zone ml-1">{{property.location}}</span> -->
-                          </div>
-                          <div class="app-expressive-heading-01 col-span-3 col-end-auto text-right  text-muted ">
-                            <span class="mr-1">{{room.price | currency : getMoney(): 'symbol' : '1.0-0'}}</span>
-                          </div>
-                        </div>
-
-                        <div class="grid grid-cols-10 mt-4 mb-2 ">
-                          <div class="app-label-01 app-expressive-heading-02 col-span-4 text-muted">
-                              <span >
-                                <i class="fa fa-bed  text-muted me-1 mr-1 spec-home"></i>
-                                  {{room.specifity.numberOfBathroom}}
-                              </span>
-                              <span *ngIf="room.specifity.hasKitchen" class="ml-2">
-                                <svg class="text-muted me-1 mr-1" xmlns="http://www.w3.org/2000/svg" height="16" width="18" viewBox="0 0 576 512"><path opacity="1" fill="currentColor" d="M240 144A96 96 0 1 0 48 144a96 96 0 1 0 192 0zm44.4 32C269.9 240.1 212.5 288 144 288C64.5 288 0 223.5 0 144S64.5 0 144 0c68.5 0 125.9 47.9 140.4 112h71.8c8.8-9.8 21.6-16 35.8-16H496c26.5 0 48 21.5 48 48s-21.5 48-48 48H392c-14.2 0-27-6.2-35.8-16H284.4zM144 80a64 64 0 1 1 0 128 64 64 0 1 1 0-128zM400 240c13.3 0 24 10.7 24 24v8h96c13.3 0 24 10.7 24 24s-10.7 24-24 24H280c-13.3 0-24-10.7-24-24s10.7-24 24-24h96v-8c0-13.3 10.7-24 24-24zM288 464V352H512V464c0 26.5-21.5 48-48 48H336c-26.5 0-48-21.5-48-48zM48 320h80 16 32c26.5 0 48 21.5 48 48s-21.5 48-48 48H160c0 17.7-14.3 32-32 32H64c-17.7 0-32-14.3-32-32V336c0-8.8 7.2-16 16-16zm128 64c8.8 0 16-7.2 16-16s-7.2-16-16-16H160v32h16zM24 464H200c13.3 0 24 10.7 24 24s-10.7 24-24 24H24c-13.3 0-24-10.7-24-24s10.7-24 24-24z"></path></svg>                                
-                              </span>
-                              <span class="ml-2">
-                                <i class="fa fa-bath text-muted me-1 mr-1 spec-home"></i>
-                                {{room.specifity.numberOfShower}}
-                              </span> 
-                          </div>
-
-                          <div class=" text-muted items-center  col-span-6 col-end-auto text-right">
-                          
-                            <youpez-ibm-icon iconName="location" iconSize="16"></youpez-ibm-icon>
-  
-                            <span class="location-zone ml-1">{{room.property.location}}</span>
-  
-                          </div>
-                        </div>                        
-
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </ng-container>
-            <div class="w-full flex mt-2 justify-end mb-2">
-              <cds-pagination-nav [translations]="translationsPaginationButton" [model]="model" (selectPage)="selectPage($event)"></cds-pagination-nav>
-            </div>
-          </ng-container>          
-          
-          
-          <ng-template #noData>
-            <app-no-data-list [isTextDescriptionForFilter]="true" class="flex-auto mb-2"></app-no-data-list>
-          </ng-template>
-        </ng-container>
-      </ng-template>
-
+      <p class="loading-text">Recherche en cours...</p>
     </div>
+  </div>
+
+  <!-- Résultats -->
+  <div *ngIf="!(loadingRoom$ | async)" class="results-wrapper">
+    <div *ngIf="(roomFoundFiltered$ | async)?.length > 0; else noData"
+         class="results-container"
+         [class.grid-view]="viewMode === 'grid'"
+         [class.list-view]="viewMode === 'list'">
+
+      <div *ngFor="let room of currentDataToShow; trackBy: trackByRoomId"
+           class="room-card-modern"
+           (click)="goToRoom($event, room)">
+
+        <!-- Image de la chambre -->
+        <div class="room-image-section">
+          <img [src]="room.medias?.[0]?.url || '/assets/images/default-room.jpg'"
+               [alt]="room.name"
+               class="room-image"
+               loading="lazy">
+
+          <!-- Overlay avec badges -->
+          <div class="room-image-overlay">
+            <!-- Badge de statut -->
+            <div class="room-status-badge" [ngClass]="room.isFree ? 'status-available' : 'status-occupied'">
+              {{ room.isFree ? 'Disponible' : 'Occupé' }}
+            </div>
+
+            <!-- Actions rapides -->
+            <div class="room-quick-actions">
+              <button class="quick-action-btn" (click)="toggleFavorite(room, $event)" title="Ajouter aux favoris">
+                <i class="fas fa-heart" [class.active]="isFavorite(room)"></i>
+              </button>
+              <button class="quick-action-btn"
+                      (click)="showFullScreenViewer(room.medias, $event)"
+                      title="Voir en plein écran"
+                      *ngIf="room.medias?.length > 0">
+                <i class="fas fa-expand"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Prix -->
+          <div class="room-price-badge">
+            {{ room.price | currency:'XAF':'symbol':'1.0-0' }}<span class="price-period">/mois</span>
+          </div>
+        </div>
+
+        <!-- Contenu de la carte -->
+        <div class="room-content-section">
+          <!-- En-tête de la carte -->
+          <div class="room-header">
+            <h3 class="room-title">{{ getRoomTypeLabel(room.type) }} #{{ room.code }}</h3>
+            <div class="room-location">
+              <i class="fas fa-map-marker-alt"></i>
+              <span>{{ room.property?.location || 'Localisation non spécifiée' }}</span>
+            </div>
+          </div>
+
+          <!-- Caractéristiques -->
+          <div class="room-features">
+            <div class="feature-item" *ngIf="room.price">
+              <i class="fas fa-coins"></i>
+              <span>{{ room.price | currency:'XAF':'symbol':'1.0-0' }}</span>
+            </div>
+            <div class="feature-item" *ngIf="room.specifity?.numberOfBathroom">
+              <i class="fas fa-bath"></i>
+              <span>{{ room.specifity.numberOfBathroom }} salle(s) de bain</span>
+            </div>
+            <div class="feature-item" *ngIf="room.specifity?.numberOfShower">
+              <i class="fas fa-shower"></i>
+              <span>{{ room.specifity.numberOfShower }} douche(s)</span>
+            </div>
+          </div>
+
+          <!-- Équipements -->
+          <div class="room-amenities">
+            <div class="amenity-tag" *ngIf="room.specifity?.hasKitchen">
+              Cuisine
+            </div>
+            <div class="amenity-tag" *ngIf="room.specifity?.isInternalShower">
+              Douche privée
+            </div>
+            <div class="amenity-tag" *ngIf="room.property?.hasParking">
+              Parking
+            </div>
+          </div>
+
+          <!-- Footer de la carte -->
+          <div class="room-footer">
+            <div class="room-availability">
+              <span class="availability-text" [ngClass]="room.isFree ? 'available' : 'occupied'">
+                {{ room.isFree ? 'Disponible' : 'Occupé' }}
+              </span>
+            </div>
+            <button class="room-cta-btn" (click)="goToRoom($event, room)">
+              Voir détails
+              <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div class="results-pagination" *ngIf="currentDataToShow?.length > 0">
+        <cds-pagination-nav
+          [translations]="translationsPaginationButton"
+          [model]="model"
+          (selectPage)="selectPage($event)">
+        </cds-pagination-nav>
+      </div>
+    </div>
+
+    <!-- État vide -->
+    <ng-template #noData>
+      <div class="no-results-state">
+        <div class="no-results-icon">
+          <i class="fas fa-search"></i>
+        </div>
+        <h3 class="no-results-title">Aucun logement trouvé</h3>
+        <p class="no-results-message">
+          Essayez de modifier vos critères de recherche pour obtenir plus de résultats.
+        </p>
+        <button class="no-results-cta" (click)="resetFilters()">
+          Réinitialiser les filtres
+        </button>
+      </div>
+    </ng-template>
   </div>
 </div>
 <!-- </ng-scrollbar> -->

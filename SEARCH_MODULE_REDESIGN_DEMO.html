@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module de Recherche Redesigné - Ndiye</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Variables CSS pour le thème Carbon Design System */
+        :root {
+            --cds-background: #f4f4f4;
+            --cds-ui-background: #ffffff;
+            --cds-ui-01: #ffffff;
+            --cds-ui-02: #f4f4f4;
+            --cds-ui-03: #e0e0e0;
+            --cds-ui-04: #c6c6c6;
+            --cds-ui-05: #a8a8a8;
+            --cds-text-01: #161616;
+            --cds-text-02: #525252;
+            --cds-text-03: #a8a8a8;
+            --cds-interactive-01: #0f62fe;
+            --cds-interactive-01-hover: #0353e9;
+            --cds-interactive-02: #393939;
+            --cds-interactive-03: #0f62fe;
+            --cds-support-01: #da1e28;
+            --cds-support-02: #24a148;
+            --cds-support-03: #f1c21b;
+            --cds-support-04: #4589ff;
+            --cds-field-01: #f4f4f4;
+            --cds-inverse-01: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--cds-background);
+            color: var(--cds-text-01);
+            line-height: 1.6;
+        }
+
+        .demo-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .demo-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: var(--cds-ui-01);
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .demo-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--cds-interactive-01);
+            margin-bottom: 1rem;
+        }
+
+        .demo-subtitle {
+            font-size: 1.25rem;
+            color: var(--cds-text-02);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .demo-section {
+            margin-bottom: 3rem;
+            background: var(--cds-ui-01);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-header {
+            padding: 1.5rem 2rem;
+            background: var(--cds-interactive-01);
+            color: white;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .section-description {
+            opacity: 0.9;
+        }
+
+        .section-content {
+            padding: 2rem;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .feature-card {
+            padding: 1.5rem;
+            background: var(--cds-ui-02);
+            border-radius: 8px;
+            border-left: 4px solid var(--cds-interactive-01);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            color: var(--cds-interactive-01);
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-description {
+            color: var(--cds-text-02);
+            font-size: 0.875rem;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.875rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        .highlight {
+            color: var(--cds-support-02);
+            font-weight: 600;
+        }
+
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .tech-badge {
+            padding: 0.5rem 1rem;
+            background: var(--cds-interactive-01);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .improvement-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .improvement-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--cds-ui-03);
+        }
+
+        .improvement-item:last-child {
+            border-bottom: none;
+        }
+
+        .improvement-icon {
+            color: var(--cds-support-02);
+            font-size: 1.25rem;
+            margin-top: 0.25rem;
+        }
+
+        .improvement-content {
+            flex: 1;
+        }
+
+        .improvement-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .improvement-description {
+            color: var(--cds-text-02);
+            font-size: 0.875rem;
+        }
+
+        .demo-footer {
+            text-align: center;
+            padding: 2rem;
+            background: var(--cds-ui-02);
+            border-radius: 12px;
+            margin-top: 3rem;
+        }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            background: var(--cds-interactive-01);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .cta-button:hover {
+            background: var(--cds-interactive-01-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(15, 98, 254, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .demo-container {
+                padding: 1rem;
+            }
+
+            .demo-title {
+                font-size: 2rem;
+            }
+
+            .section-content {
+                padding: 1rem;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <!-- Header -->
+        <div class="demo-header">
+            <h1 class="demo-title">
+                <i class="fas fa-search"></i>
+                Module de Recherche Redesigné
+            </h1>
+            <p class="demo-subtitle">
+                Une expérience utilisateur moderne et intuitive pour la recherche d'unités locatives
+            </p>
+        </div>
+
+        <!-- Vue d'ensemble -->
+        <div class="demo-section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-eye"></i>
+                    Vue d'ensemble du redesign
+                </h2>
+                <p class="section-description">
+                    Transformation complète du module de recherche avec une approche UX moderne
+                </p>
+            </div>
+            <div class="section-content">
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-magic"></i>
+                        </div>
+                        <h3 class="feature-title">Interface Héroïque</h3>
+                        <p class="feature-description">
+                            Section hero avec recherche principale, statistiques en temps réel et suggestions populaires
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-sliders-h"></i>
+                        </div>
+                        <h3 class="feature-title">Filtres Intelligents</h3>
+                        <p class="feature-description">
+                            Sidebar collapsible avec filtres avancés, slider de prix moderne et sélection intuitive
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-th"></i>
+                        </div>
+                        <h3 class="feature-title">Résultats Modernes</h3>
+                        <p class="feature-description">
+                            Cartes de logements redesignées avec galerie d'images, visite 360° et actions rapides
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <h3 class="feature-title">Mobile First</h3>
+                        <p class="feature-description">
+                            Design responsive optimisé pour mobile avec navigation tactile et filtres en overlay
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Améliorations UX -->
+        <div class="demo-section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-rocket"></i>
+                    Améliorations UX Principales
+                </h2>
+                <p class="section-description">
+                    Optimisations basées sur les meilleures pratiques UX/UI modernes
+                </p>
+            </div>
+            <div class="section-content">
+                <ul class="improvement-list">
+                    <li class="improvement-item">
+                        <div class="improvement-icon">
+                            <i class="fas fa-search-plus"></i>
+                        </div>
+                        <div class="improvement-content">
+                            <div class="improvement-title">Recherche Contextuelle</div>
+                            <div class="improvement-description">
+                                Barre de recherche principale avec suggestions automatiques et recherches populaires
+                            </div>
+                        </div>
+                    </li>
+                    <li class="improvement-item">
+                        <div class="improvement-icon">
+                            <i class="fas fa-filter"></i>
+                        </div>
+                        <div class="improvement-content">
+                            <div class="improvement-title">Filtres Rapides</div>
+                            <div class="improvement-description">
+                                Chips de filtres rapides avec compteurs en temps réel pour une sélection immédiate
+                            </div>
+                        </div>
+                    </li>
+                    <li class="improvement-item">
+                        <div class="improvement-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="improvement-content">
+                            <div class="improvement-title">Feedback Visuel</div>
+                            <div class="improvement-description">
+                                Indicateurs visuels du nombre de résultats, filtres actifs et suggestions personnalisées
+                            </div>
+                        </div>
+                    </li>
+                    <li class="improvement-item">
+                        <div class="improvement-icon">
+                            <i class="fas fa-bookmark"></i>
+                        </div>
+                        <div class="improvement-content">
+                            <div class="improvement-title">Recherches Sauvegardées</div>
+                            <div class="improvement-description">
+                                Possibilité de sauvegarder et réutiliser des critères de recherche complexes
+                            </div>
+                        </div>
+                    </li>
+                    <li class="improvement-item">
+                        <div class="improvement-icon">
+                            <i class="fas fa-images"></i>
+                        </div>
+                        <div class="improvement-content">
+                            <div class="improvement-title">Galerie Immersive</div>
+                            <div class="improvement-description">
+                                Cartes avec galerie d'images, visite virtuelle 360° et actions rapides (favoris, contact)
+                            </div>
+                        </div>
+                    </li>
+                    <li class="improvement-item">
+                        <div class="improvement-icon">
+                            <i class="fas fa-sort"></i>
+                        </div>
+                        <div class="improvement-content">
+                            <div class="improvement-title">Tri Intelligent</div>
+                            <div class="improvement-description">
+                                Options de tri avancées avec vue grille/liste et pagination optimisée
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Technologies utilisées -->
+        <div class="demo-section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-code"></i>
+                    Stack Technique
+                </h2>
+                <p class="section-description">
+                    Technologies modernes pour une performance optimale
+                </p>
+            </div>
+            <div class="section-content">
+                <div class="tech-stack">
+                    <span class="tech-badge">Angular 16</span>
+                    <span class="tech-badge">Carbon Design System</span>
+                    <span class="tech-badge">NGXS State Management</span>
+                    <span class="tech-badge">SCSS Modules</span>
+                    <span class="tech-badge">TypeScript</span>
+                    <span class="tech-badge">Responsive Design</span>
+                    <span class="tech-badge">PWA Ready</span>
+                    <span class="tech-badge">Accessibility (WCAG)</span>
+                </div>
+
+                <h3 style="margin: 2rem 0 1rem 0; color: var(--cds-interactive-01);">
+                    <i class="fas fa-file-code"></i>
+                    Fichiers créés
+                </h3>
+                <div class="code-block">
+frontend-v2/src/app/main/search/
+├── search-page/
+│   ├── search-page-redesigned.component.html
+│   ├── search-page-redesigned.component.scss
+│   └── search-page-redesigned.component.ts
+└── components/advanced-search-filters/
+    ├── advanced-search-filters-redesigned.component.html
+    ├── advanced-search-filters-redesigned.component.scss
+    └── advanced-search-filters-redesigned.component.ts
+                </div>
+            </div>
+        </div>
+
+        <!-- Fonctionnalités clés -->
+        <div class="demo-section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-star"></i>
+                    Fonctionnalités Clés
+                </h2>
+                <p class="section-description">
+                    Nouvelles fonctionnalités pour une expérience utilisateur exceptionnelle
+                </p>
+            </div>
+            <div class="section-content">
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-search-location"></i>
+                        </div>
+                        <h3 class="feature-title">Recherche Géolocalisée</h3>
+                        <p class="feature-description">
+                            Recherche par ville et quartier avec suggestions automatiques
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        <h3 class="feature-title">Slider de Prix Avancé</h3>
+                        <p class="feature-description">
+                            Double slider avec suggestions de gammes de prix populaires
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-home"></i>
+                        </div>
+                        <h3 class="feature-title">Sélection de Type</h3>
+                        <p class="feature-description">
+                            Interface visuelle pour choisir le type de logement avec compteurs
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h3 class="feature-title">Équipements Visuels</h3>
+                        <p class="feature-description">
+                            Sélection d'équipements avec icônes et descriptions détaillées
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <h3 class="feature-title">Système de Favoris</h3>
+                        <p class="feature-description">
+                            Sauvegarde de logements favoris avec accès rapide
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-vr-cardboard"></i>
+                        </div>
+                        <h3 class="feature-title">Visite Virtuelle 360°</h3>
+                        <p class="feature-description">
+                            Intégration de visites virtuelles immersives
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance et Accessibilité -->
+        <div class="demo-section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Performance & Accessibilité
+                </h2>
+                <p class="section-description">
+                    Optimisations pour une expérience fluide et inclusive
+                </p>
+            </div>
+            <div class="section-content">
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <h3 class="feature-title">Chargement Optimisé</h3>
+                        <p class="feature-description">
+                            Lazy loading des images, pagination intelligente et cache des résultats
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-universal-access"></i>
+                        </div>
+                        <h3 class="feature-title">Accessibilité WCAG</h3>
+                        <p class="feature-description">
+                            Navigation au clavier, lecteurs d'écran et contrastes optimisés
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <h3 class="feature-title">Mobile Optimisé</h3>
+                        <p class="feature-description">
+                            Interface tactile, gestes intuitifs et performance mobile
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-sync-alt"></i>
+                        </div>
+                        <h3 class="feature-title">Temps Réel</h3>
+                        <p class="feature-description">
+                            Mise à jour automatique des résultats et synchronisation des filtres
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="demo-footer">
+            <h3 style="margin-bottom: 1rem; color: var(--cds-interactive-01);">
+                Prêt à implémenter le nouveau design ?
+            </h3>
+            <p style="margin-bottom: 2rem; color: var(--cds-text-02);">
+                Tous les fichiers sont créés et prêts à être intégrés dans votre application Angular.
+            </p>
+            <a href="#" class="cta-button">
+                <i class="fas fa-rocket"></i>
+                Commencer l'intégration
+            </a>
+        </div>
+    </div>
+</body>
+</html>

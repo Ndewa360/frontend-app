@@ -1,39 +1,24 @@
-<!-- Page de recherche moderne avec Tailwind CSS -->
-<div class="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-  <!-- Header Hero Section -->
-  <div class="relative bg-white shadow-sm border-b border-gray-100">
-    <div class="absolute inset-0 bg-gradient-to-r from-blue-600/5 to-purple-600/5"></div>
-    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
-        <!-- Title Section -->
-        <div class="flex-1">
-          <div class="flex items-center space-x-3 mb-2">
-            <div class="p-2 bg-blue-100 rounded-lg">
-              <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-              </svg>
-            </div>
-            <h1 class="text-3xl font-bold text-gray-900">Recherche de logements</h1>
-          </div>
-          <p class="text-lg text-gray-600 max-w-2xl">
-            Découvrez votre prochain chez-vous parmi notre sélection de propriétés exceptionnelles
-          </p>
+<!-- Page de recherche professionnelle -->
+<div class="search-page">
+  <!-- Header épuré -->
+  <div class="search-header">
+    <div class="container">
+      <div class="search-header-content">
+        <div class="search-title-area">
+          <h1 class="page-title">Unités locatives disponibles</h1>
+          <p class="page-subtitle">Trouvez l'unité parfaite parmi {{ (searchResults$ | async)?.length || 0 }} logements disponibles</p>
         </div>
 
-        <!-- Stats Section -->
-        <div class="mt-6 lg:mt-0 lg:ml-8">
-          <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <div class="flex items-center space-x-4">
-              <div class="p-3 bg-green-100 rounded-lg">
-                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
-                </svg>
-              </div>
-              <div>
-                <div class="text-2xl font-bold text-gray-900">{{ (searchResults$ | async)?.length || 0 }}</div>
-                <div class="text-sm text-gray-500">Logements disponibles</div>
-              </div>
-            </div>
+        <!-- Barre de recherche principale -->
+        <div class="main-search-bar">
+          <div class="search-input-group">
+            <i class="search-icon fas fa-search"></i>
+            <input
+              #searchInput
+              type="text"
+              placeholder="Rechercher par ville, quartier ou type de logement..."
+              class="search-input"
+              (input)="onMainSearchChange(searchInput.value)">
           </div>
         </div>
       </div>
@@ -41,183 +26,121 @@
   </div>
 
   <!-- Contenu principal -->
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <div class="lg:grid lg:grid-cols-4 lg:gap-8">
+  <div class="search-content">
+    <div class="container">
+      <div class="search-layout">
 
-      <!-- Sidebar avec filtres -->
-      <div class="lg:col-span-1">
-        <div class="sticky top-8 space-y-6">
+        <!-- Sidebar filtres -->
+        <aside class="filters-sidebar">
+          <div class="filters-container">
 
-          <!-- Barre de recherche principale -->
-          <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <div class="flex items-center space-x-2 mb-4">
-              <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-              </svg>
-              <h3 class="text-lg font-semibold text-gray-900">Recherche</h3>
-            </div>
-
-            <div class="relative">
-              <input
-                #searchInput
-                type="text"
-                placeholder="Ville, quartier, adresse..."
-                class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                (input)="onMainSearchChange(searchInput.value)">
-              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          <!-- Filtres rapides -->
-          <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Filtres rapides</h3>
-            <div class="space-y-3">
-              <button class="w-full flex items-center justify-between p-3 text-left border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                <span class="text-sm font-medium text-gray-700">Avec cuisine</span>
-                <div class="w-5 h-5 border-2 border-gray-300 rounded"></div>
-              </button>
-              <button class="w-full flex items-center justify-between p-3 text-left border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                <span class="text-sm font-medium text-gray-700">Douche privée</span>
-                <div class="w-5 h-5 border-2 border-gray-300 rounded"></div>
-              </button>
-              <button class="w-full flex items-center justify-between p-3 text-left border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                <span class="text-sm font-medium text-gray-700">Parking</span>
-                <div class="w-5 h-5 border-2 border-gray-300 rounded"></div>
-              </button>
-            </div>
-          </div>
-
-          <!-- Filtres avancés -->
-          <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <app-advanced-search-filters
-              [initialFilters]="currentFilters"
-              [resultCount]="(searchResults$ | async)?.length || 0"
-              [canSaveSearch]="true"
-              (filtersChanged)="onFiltersChanged($event)"
-              (searchRequested)="onSearchRequested($event)"
-              (saveSearchRequested)="onSaveSearch($event)"
-              (resetRequested)="onResetFilters()">
-            </app-advanced-search-filters>
-          </div>
-
-          <!-- Recherches sauvegardées -->
-          <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6" *ngIf="savedSearches.length > 0">
-            <div class="flex items-center space-x-2 mb-4">
-              <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
-              </svg>
-              <h3 class="text-lg font-semibold text-gray-900">Recherches sauvées</h3>
-            </div>
-
-            <div class="space-y-2">
-              <div *ngFor="let search of savedSearches"
-                   class="group flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
-                   (click)="loadSavedSearch(search)">
-                <div class="flex-1 min-w-0">
-                  <div class="text-sm font-medium text-gray-900 truncate">{{ search.name }}</div>
-                  <div class="text-xs text-gray-500 truncate">{{ search.criteria }}</div>
-                </div>
-                <button class="opacity-0 group-hover:opacity-100 p-1 text-gray-400 hover:text-red-500 transition-all"
-                        (click)="deleteSavedSearch(search, $event)">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                  </svg>
+            <!-- Filtres rapides -->
+            <div class="filter-section">
+              <h3 class="filter-title">Filtres rapides</h3>
+              <div class="quick-filters">
+                <button
+                  class="quick-filter-btn"
+                  [class.active]="quickFilters.kitchen"
+                  (click)="toggleQuickFilter('kitchen')">
+                  <i class="fas fa-utensils"></i>
+                  <span>Cuisine</span>
+                </button>
+                <button
+                  class="quick-filter-btn"
+                  [class.active]="quickFilters.privateShower"
+                  (click)="toggleQuickFilter('privateShower')">
+                  <i class="fas fa-shower"></i>
+                  <span>Douche privée</span>
+                </button>
+                <button
+                  class="quick-filter-btn"
+                  [class.active]="quickFilters.parking"
+                  (click)="toggleQuickFilter('parking')">
+                  <i class="fas fa-parking"></i>
+                  <span>Parking</span>
                 </button>
               </div>
             </div>
+
+            <!-- Filtres avancés -->
+            <div class="filter-section">
+              <app-advanced-search-filters
+                [initialFilters]="currentFilters"
+                [resultCount]="(searchResults$ | async)?.length || 0"
+                [canSaveSearch]="true"
+                (filtersChanged)="onFiltersChanged($event)"
+                (searchRequested)="onSearchRequested($event)"
+                (saveSearchRequested)="onSaveSearch($event)"
+                (resetRequested)="onResetFilters()">
+              </app-advanced-search-filters>
+            </div>
+
           </div>
+        </aside>
 
-        </div>
-      </div>
+        <!-- Zone des résultats -->
+        <main class="results-main">
 
-      <!-- Zone des résultats -->
-      <div class="lg:col-span-3">
-
-        <!-- Toolbar des résultats -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
-          <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
-
-            <!-- Résultats et filtres actifs -->
-            <div class="flex-1">
-              <div class="flex items-center space-x-4 mb-3">
-                <h2 class="text-xl font-semibold text-gray-900">
-                  {{ (searchResults$ | async)?.length || 0 }} logements trouvés
-                </h2>
-                <div class="px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full">
-                  Mis à jour
-                </div>
-              </div>
+          <!-- Toolbar des résultats -->
+          <div class="results-toolbar">
+            <div class="results-info">
+              <h2 class="results-count">{{ (searchResults$ | async)?.length || 0 }} unités disponibles</h2>
 
               <!-- Filtres actifs -->
-              <div class="flex flex-wrap gap-2" *ngIf="activeFilters.length > 0">
-                <div *ngFor="let filter of activeFilters"
-                     class="inline-flex items-center space-x-2 px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full">
-                  <span>{{ filter.label }}</span>
-                  <button (click)="removeFilter(filter)"
-                          class="text-gray-400 hover:text-gray-600 transition-colors">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                  </button>
+              <div class="active-filters" *ngIf="activeFilters.length > 0">
+                <span class="active-filters-label">Filtres actifs :</span>
+                <div class="filter-tags">
+                  <span *ngFor="let filter of activeFilters" class="filter-tag">
+                    {{ filter.label }}
+                    <button (click)="removeFilter(filter)" class="remove-filter">
+                      <i class="fas fa-times"></i>
+                    </button>
+                  </span>
                 </div>
-                <button (click)="clearAllFilters()"
-                        class="text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors">
-                  Effacer tout
+                <button (click)="clearAllFilters()" class="clear-filters">
+                  Tout effacer
                 </button>
               </div>
             </div>
 
-            <!-- Actions et vues -->
-            <div class="flex items-center space-x-4">
+            <div class="results-controls">
               <!-- Tri -->
-              <div class="relative">
-                <select class="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        (change)="onSortChange($event)">
+              <div class="sort-control">
+                <select class="sort-select" (change)="onSortChange($event)">
                   <option value="">Trier par</option>
                   <option *ngFor="let option of sortOptions" [value]="option.value">
                     {{ option.content }}
                   </option>
                 </select>
-                <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                  <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                  </svg>
-                </div>
+                <i class="fas fa-chevron-down sort-icon"></i>
               </div>
 
-              <!-- Toggle vue -->
-              <div class="flex bg-gray-100 rounded-lg p-1">
-                <button (click)="onViewChange('grid')"
-                        [ngClass]="currentView === 'grid' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'"
-                        class="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-all">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
-                  </svg>
-                  <span class="hidden sm:inline">Grille</span>
+              <!-- Vue -->
+              <div class="view-toggle">
+                <button
+                  (click)="onViewChange('grid')"
+                  [class.active]="currentView === 'grid'"
+                  class="view-btn"
+                  title="Vue grille">
+                  <i class="fas fa-th"></i>
                 </button>
-                <button (click)="onViewChange('list')"
-                        [ngClass]="currentView === 'list' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'"
-                        class="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-all">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
-                  </svg>
-                  <span class="hidden sm:inline">Liste</span>
+                <button
+                  (click)="onViewChange('list')"
+                  [class.active]="currentView === 'list'"
+                  class="view-btn"
+                  title="Vue liste">
+                  <i class="fas fa-list"></i>
                 </button>
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- Résultats -->
-        <div class="space-y-6">
-          <room-filtered-found></room-filtered-found>
-        </div>
+          <!-- Résultats -->
+          <div class="results-container">
+            <room-filtered-found [viewMode]="currentView"></room-filtered-found>
+          </div>
 
+        </main>
       </div>
     </div>
   </div>

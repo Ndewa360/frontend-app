@@ -27,12 +27,14 @@ interface PropertyType {
   value: string;
   label: string;
   icon: string;
+  iconClass: string;
 }
 
 interface Amenity {
   value: string;
   label: string;
   icon: string;
+  iconClass: string;
 }
 
 interface PriceSuggestion {
@@ -44,7 +46,7 @@ interface PriceSuggestion {
 @Component({
   selector: 'app-advanced-search-filters',
   templateUrl: './advanced-search-filters.component.html',
-  styleUrls: ['./advanced-search-filters.component.scss']
+  styleUrls: ['./advanced-search-filters-modern.component.scss']
 })
 export class AdvancedSearchFiltersComponent extends BaseComponent implements OnInit {
   @Select(CityState.selectStateCities) cities$: Observable<CityModel[]>;
@@ -78,26 +80,26 @@ export class AdvancedSearchFiltersComponent extends BaseComponent implements OnI
   ];
 
   propertyTypes: PropertyType[] = [
-    { value: 'studio', label: 'Studio', icon: 'M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z' },
-    { value: 'apartment', label: 'Appartement', icon: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H9m0 0H5m0 0h4M9 21v-4a2 2 0 012-2h2a2 2 0 012 2v4M9 21h6' },
-    { value: 'house', label: 'Maison', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
-    { value: 'villa', label: 'Villa', icon: 'M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z' }
+    { value: 'studio', label: 'Studio', icon: 'M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z', iconClass: 'fas fa-door-open' },
+    { value: 'apartment', label: 'Appartement', icon: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H9m0 0H5m0 0h4M9 21v-4a2 2 0 012-2h2a2 2 0 012 2v4M9 21h6', iconClass: 'fas fa-building' },
+    { value: 'house', label: 'Maison', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6', iconClass: 'fas fa-home' },
+    { value: 'villa', label: 'Villa', icon: 'M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z', iconClass: 'fas fa-house-user' }
   ];
 
   amenitiesList: Amenity[] = [
-    { value: 'parking', label: 'Parking', icon: 'M19 7h3v12h-3V7zM5 7H2v12h3V7zm7-5h2v2h-2V2zm0 17h2v2h-2v-2z' },
-    { value: 'security', label: 'Sécurité 24h/24', icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z' },
-    { value: 'wifi', label: 'Internet/WiFi', icon: 'M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0' },
-    { value: 'water', label: 'Eau courante', icon: 'M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547A1.998 1.998 0 004 17.658V18a2 2 0 002 2h12a2 2 0 002-2v-.342a1.998 1.998 0 00-.572-1.415z' },
-    { value: 'generator', label: 'Générateur', icon: 'M13 10V3L4 14h7v7l9-11h-7z' },
-    { value: 'kitchen', label: 'Cuisine équipée', icon: 'M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16l3-3m-3 3l-3-3' }
+    { value: 'parking', label: 'Parking', icon: 'M19 7h3v12h-3V7zM5 7H2v12h3V7zm7-5h2v2h-2V2zm0 17h2v2h-2v-2z', iconClass: 'fas fa-parking' },
+    { value: 'security', label: 'Sécurité 24h/24', icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z', iconClass: 'fas fa-shield-alt' },
+    { value: 'wifi', label: 'Internet/WiFi', icon: 'M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0', iconClass: 'fas fa-wifi' },
+    { value: 'water', label: 'Eau courante', icon: 'M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547A1.998 1.998 0 004 17.658V18a2 2 0 002 2h12a2 2 0 002-2v-.342a1.998 1.998 0 00-.572-1.415z', iconClass: 'fas fa-tint' },
+    { value: 'generator', label: 'Générateur', icon: 'M13 10V3L4 14h7v7l9-11h-7z', iconClass: 'fas fa-bolt' },
+    { value: 'kitchen', label: 'Cuisine équipée', icon: 'M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16l3-3m-3 3l-3-3', iconClass: 'fas fa-utensils' }
   ];
 
   preferencesList: Amenity[] = [
-    { value: 'pets', label: 'Animaux acceptés', icon: 'M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z' },
-    { value: 'students', label: 'Étudiants bienvenus', icon: 'M12 14l9-5-9-5-9 5 9 5z M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z' },
-    { value: 'furnished', label: 'Meublé', icon: 'M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z' },
-    { value: 'short_term', label: 'Location courte durée', icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' }
+    { value: 'pets', label: 'Animaux acceptés', icon: 'M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z', iconClass: 'fas fa-paw' },
+    { value: 'students', label: 'Étudiants bienvenus', icon: 'M12 14l9-5-9-5-9 5 9 5z M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z', iconClass: 'fas fa-graduation-cap' },
+    { value: 'furnished', label: 'Meublé', icon: 'M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z', iconClass: 'fas fa-couch' },
+    { value: 'short_term', label: 'Location courte durée', icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z', iconClass: 'fas fa-clock' }
   ];
 
   priceSuggestions: PriceSuggestion[] = [

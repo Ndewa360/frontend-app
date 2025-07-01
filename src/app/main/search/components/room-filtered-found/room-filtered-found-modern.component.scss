@@ -1,0 +1,538 @@
+// Design moderne pour les résultats de recherche
+
+.search-results-modern {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+// État de chargement
+.results-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  background: var(--theme-appUIForegroundBg);
+  border-radius: 16px;
+  border: 1px solid var(--theme-appBorderColor);
+
+  .loading-container {
+    text-align: center;
+
+    .loading-spinner {
+      font-size: 2rem;
+      color: var(--app-primary);
+      margin-bottom: 1rem;
+
+      i {
+        animation: spin 1s linear infinite;
+      }
+    }
+
+    .loading-text {
+      margin: 0;
+      font-size: 1rem;
+      color: var(--theme-appTextSecondary);
+      font-weight: 500;
+    }
+  }
+}
+
+// Container des résultats
+.results-wrapper {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.results-container {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+
+  // Scrollbar personnalisée
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--theme-appUIBackground);
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--theme-appBorderColor);
+    border-radius: 3px;
+
+    &:hover {
+      background: var(--theme-appBorderColorHover);
+    }
+  }
+
+  // Vue grille
+  &.grid-view {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem 0;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+  }
+
+  // Vue liste
+  &.list-view {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem 0;
+
+    .room-card-modern {
+      display: flex;
+      flex-direction: row;
+      max-width: none;
+
+      .room-image-section {
+        width: 280px;
+        flex-shrink: 0;
+      }
+
+      .room-content-section {
+        flex: 1;
+        padding: 1.5rem;
+      }
+    }
+  }
+}
+
+// Carte de logement moderne
+.room-card-modern {
+  background: var(--theme-appUIForegroundBg);
+  border: 1px solid var(--theme-appBorderColor);
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+  max-width: 100%;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px 0 rgba(0, 0, 0, 0.15);
+    border-color: var(--app-primary);
+
+    .room-image {
+      transform: scale(1.05);
+    }
+
+    .room-quick-actions {
+      opacity: 1;
+    }
+
+    .room-cta-btn {
+      background: var(--app-primary);
+      color: white;
+
+      i {
+        transform: translateX(4px);
+      }
+    }
+  }
+
+  // Section image
+  .room-image-section {
+    position: relative;
+    width: 100%;
+    height: 220px;
+    overflow: hidden;
+
+    .room-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+
+    .room-image-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.3) 0%,
+        transparent 30%,
+        transparent 70%,
+        rgba(0, 0, 0, 0.3) 100%
+      );
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 1rem;
+    }
+
+    .room-status-badge {
+      padding: 0.375rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+
+      &.status-available {
+        background: rgba(34, 197, 94, 0.9);
+        color: white;
+      }
+
+      &.status-occupied {
+        background: rgba(239, 68, 68, 0.9);
+        color: white;
+      }
+
+      &.status-maintenance {
+        background: rgba(245, 158, 11, 0.9);
+        color: white;
+      }
+
+      &.status-reserved {
+        background: rgba(59, 130, 246, 0.9);
+        color: white;
+      }
+    }
+
+    .room-quick-actions {
+      display: flex;
+      gap: 0.5rem;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+
+      .quick-action-btn {
+        width: 36px;
+        height: 36px;
+        background: rgba(255, 255, 255, 0.9);
+        border: none;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        color: var(--theme-appText);
+
+        &:hover {
+          background: white;
+          transform: scale(1.1);
+        }
+
+        i {
+          font-size: 0.875rem;
+
+          &.active {
+            color: #ef4444;
+          }
+        }
+      }
+    }
+
+    .room-price-badge {
+      position: absolute;
+      bottom: 1rem;
+      right: 1rem;
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 0.5rem 0.75rem;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.875rem;
+
+      .price-period {
+        font-size: 0.75rem;
+        opacity: 0.8;
+      }
+    }
+  }
+
+  // Section contenu
+  .room-content-section {
+    padding: 1.25rem;
+
+    .room-header {
+      margin-bottom: 1rem;
+
+      .room-title {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: var(--theme-appText);
+        line-height: 1.4;
+      }
+
+      .room-location {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--theme-appTextSecondary);
+        font-size: 0.875rem;
+
+        i {
+          font-size: 0.75rem;
+          color: var(--app-primary);
+        }
+      }
+    }
+
+    .room-features {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+
+      .feature-item {
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+        color: var(--theme-appTextSecondary);
+        font-size: 0.875rem;
+
+        i {
+          font-size: 0.75rem;
+          color: var(--app-primary);
+        }
+      }
+    }
+
+    .room-amenities {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+
+      .amenity-tag {
+        padding: 0.25rem 0.5rem;
+        background: var(--theme-appUIBackground);
+        border: 1px solid var(--theme-appBorderColor);
+        border-radius: 12px;
+        font-size: 0.75rem;
+        color: var(--theme-appText);
+        font-weight: 500;
+      }
+
+      .amenity-more {
+        padding: 0.25rem 0.5rem;
+        background: var(--app-primary);
+        color: white;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+    }
+
+    .room-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 1rem;
+
+      .room-availability {
+        .availability-text {
+          font-size: 0.875rem;
+          font-weight: 600;
+
+          &.available {
+            color: #22c55e;
+          }
+
+          &.occupied {
+            color: #ef4444;
+          }
+        }
+      }
+
+      .room-cta-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background: var(--theme-appUIBackground);
+        border: 1px solid var(--theme-appBorderColor);
+        border-radius: 8px;
+        color: var(--theme-appText);
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        i {
+          font-size: 0.75rem;
+          transition: transform 0.2s ease;
+        }
+
+        &:hover {
+          background: var(--app-primary);
+          color: white;
+          border-color: var(--app-primary);
+        }
+      }
+    }
+  }
+}
+
+// Pagination
+.results-pagination {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--theme-appBorderColor);
+  display: flex;
+  justify-content: center;
+
+  ::ng-deep {
+    cds-pagination-nav {
+      .bx--pagination-nav {
+        background: transparent;
+
+        .bx--pagination-nav__page {
+          background: var(--theme-appUIBackground);
+          border: 1px solid var(--theme-appBorderColor);
+          color: var(--theme-appText);
+          margin: 0 0.25rem;
+          border-radius: 8px;
+          transition: all 0.2s ease;
+
+          &:hover {
+            background: var(--theme-appHoverBg);
+            border-color: var(--app-primary);
+          }
+
+          &.bx--pagination-nav__page--active {
+            background: var(--app-primary);
+            border-color: var(--app-primary);
+            color: white;
+          }
+        }
+
+        .bx--pagination-nav__accessibility-label {
+          color: var(--theme-appTextSecondary);
+        }
+      }
+    }
+  }
+}
+
+// État vide
+.no-results-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  padding: 3rem 2rem;
+  text-align: center;
+  background: var(--theme-appUIForegroundBg);
+  border-radius: 16px;
+  border: 1px solid var(--theme-appBorderColor);
+
+  .no-results-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--app-primary) 0%, var(--app-primary-dark) 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    opacity: 0.8;
+
+    i {
+      font-size: 2rem;
+      color: white;
+    }
+  }
+
+  .no-results-title {
+    margin: 0 0 1rem 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--theme-appText);
+  }
+
+  .no-results-message {
+    margin: 0 0 2rem 0;
+    font-size: 1rem;
+    color: var(--theme-appTextSecondary);
+    line-height: 1.6;
+    max-width: 400px;
+  }
+
+  .no-results-cta {
+    padding: 0.75rem 1.5rem;
+    background: var(--app-primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: var(--app-primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px 0 rgba(59, 130, 246, 0.3);
+    }
+  }
+}
+
+// Animation de rotation pour le spinner
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .room-card-modern {
+    .room-content-section {
+      padding: 1rem;
+
+      .room-features {
+        gap: 0.75rem;
+      }
+
+      .room-footer {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+
+        .room-cta-btn {
+          justify-content: center;
+        }
+      }
+    }
+  }
+
+  .no-results-state {
+    padding: 2rem 1rem;
+
+    .no-results-icon {
+      width: 60px;
+      height: 60px;
+
+      i {
+        font-size: 1.5rem;
+      }
+    }
+
+    .no-results-title {
+      font-size: 1.25rem;
+    }
+  }
+}
