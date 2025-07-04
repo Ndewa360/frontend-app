@@ -4,7 +4,7 @@ export namespace SearchAction
     export class FetchSearch
     {
         static readonly type = '[Search] Fectch Search'
-        constructor(public city:string){}
+        constructor(public city:string, public page:number = 1, public pageSize:number = 12){}
     }
 
     export class FetchSearchByIdRoom

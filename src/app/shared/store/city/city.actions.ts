@@ -29,6 +29,20 @@ export namespace CityAction
         constructor(public cityId:string,public roomId:string){}
     }
 
+    // Load all cities for search
+    export class LoadAllCities
+    {
+        static readonly type = '[City] Load All Cities';
+        constructor(){}
+    }
+
+    // Load cities by country
+    export class LoadCitiesByCountry
+    {
+        static readonly type = '[City] Load Cities By Country';
+        constructor(public countryId: string){}
+    }
+
     //Fetch  City profil
     export class FetchCity
     {

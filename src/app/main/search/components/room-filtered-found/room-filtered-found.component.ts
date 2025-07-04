@@ -7,6 +7,8 @@ import { Observable } from 'rxjs';
 import { FullScreenGaleryComponent } from 'src/app/shared/components/full-screen-galery/full-screen-galery.component';
 import { LocataireState, Currency, SearchState, SearchPropertyModel } from 'src/app/shared/store';
 import { UtilsString } from 'src/app/shared/utils';
+import { SearchAction } from 'src/app/shared/store/search/search.actions';
+import { debounceTime, catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'room-filtered-found',
@@ -29,43 +31,45 @@ export class RoomFilteredFoundComponent {
       NEXT:'Suivant',
     }
   
+    totalResults = 0;
+    pageSize = 12;
+    currentPage = 1;
+    errorMessage: string = '';
     constructor(
       private _activatedRoute: ActivatedRoute,
       private _router:Router,
       private _store:Store,
       private dialog: MatDialog,
-  
     ) { }
-  
+
     ngOnInit(): void {
-      // this.roomFound$.subscribe((found)=>{
-      //     this.roomFound = found;
-      //     this.roomFoundFiltered = [...this.roomFound]
-      // })
       this.roomFoundFiltered$.subscribe((found)=>{
         if(found.length==0) return;
-        let newModel = new TableModel()
-
-        //console.log("Room Found ",found)
-
         this.allRoomData=[...found]
-        newModel.data = [];
-        newModel.pageLength=9;
-        newModel.totalDataLength=Math.ceil(found.length/9);
-        this.model = newModel;
+        this.totalResults = found.length;
         this.selectPage(1);
-
       })
     }
 
+    getCurrentCity() {
+      let city = null;
+      this._activatedRoute.queryParams.subscribe(params => {
+        if(params['ville']) city = params['ville'];
+      });
+      return city;
+    }
+
     selectPage(page) {
-      this.getPage(page).then((data: Array<any>) => {
-        //console.log("Page Foud ",data)
-        // set the data and update page
-        this.model.data = data
-        this.currentDataToShow=[...data]
-        this.model.currentPage = page
-      })
+      this.currentPage = page;
+      const city = this.getCurrentCity();
+      if(city) {
+        this._store.dispatch(new SearchAction.FetchSearch(city, page, this.pageSize)).pipe(
+          catchError((err) => {
+            this.errorMessage = 'Erreur lors de la récupération des résultats. Veuillez réessayer.';
+            return [];
+          })
+        ).subscribe();
+      }
     }
 
     getPage(page: number)

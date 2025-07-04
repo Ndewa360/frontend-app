@@ -11,6 +11,7 @@ import { ContactProprietaireComponent } from './components/contact-proprietaire/
 import { RoomAssociatedComponent } from './components/room-associated/room-associated.component';
 import { AdvancedSearchFiltersComponent, AdvancedSearchFiltersRedesignedComponent } from './components/advanced-search-filters';
 import { SearchResultsWrapperComponent } from './components/search-results-wrapper/search-results-wrapper.component';
+import { ModernSearchComponent } from './components/modern-search/modern-search.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { SearchResultsWrapperComponent } from './components/search-results-wrapp
     RoomAssociatedComponent,
     AdvancedSearchFiltersComponent,
     AdvancedSearchFiltersRedesignedComponent,
-    SearchResultsWrapperComponent
+    SearchResultsWrapperComponent,
+    ModernSearchComponent
   ],
   imports: [
     CommonModule,

@@ -201,23 +201,23 @@ export class SearchState{
 
 
     @Action(SearchAction.FetchSearch)
-    fetchSearch(ctx:StateContext<SearchStateModel>,{city}:SearchAction.FetchSearch)
+    fetchSearch(ctx:StateContext<SearchStateModel>,{city, page = 1, pageSize = 12}:SearchAction.FetchSearch)
     {
         const state = ctx.getState();
 
         let searchProperties = state.searchProperties.findIndex((prop)=>prop.property.geolocationCity?._id==city);
-        if(searchProperties>-1) return of(true);
+        if(searchProperties>-1 && page === 1) return of(true);
 
         ctx.patchState({
             loadingSearch:true
         })
-        return this._searchPropertiesService.getSearch(city).pipe(
+        return this._searchPropertiesService.getSearch(city, page, pageSize).pipe(
             tap(
                 result => {
                     ctx.patchState({
                         loadingSearch:false,
                         loadingSearchItem:false,
-                        searchProperties:[...state.searchProperties, ...result.data]
+                        searchProperties:[...state.searchProperties, ...(Array.isArray(result.data?.data) ? result.data.data : Array.isArray(result.data) ? result.data : [])]
                     })
                     // this.applyFilter(ctx,{ville:city})
                     if(!state.criteriaFinder) ctx.dispatch(new SearchAction.ApplyFilter({

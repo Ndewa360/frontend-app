@@ -44,7 +44,9 @@ export class ContractTemplateEditorComponent implements OnInit {
     language: 'fr_FR',
     branding: false,
     resize: false,
-    statusbar: false
+    statusbar: false,
+    valid_elements: '*[*]',
+    extended_valid_elements: '*[*]'
   };
 
   // Options for dropdowns

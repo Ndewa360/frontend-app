@@ -85,6 +85,13 @@ export class AuthTokenInterceptor implements HttpInterceptor {
    * Gère les erreurs HTTP avec logique améliorée
    */
   private handleHttpError(error: HttpErrorResponse, originalRequest: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    // Éviter les boucles infinies en marquant les requêtes déjà traitées
+    if (originalRequest.headers.has('X-Retry-Request')) {
+      console.error('🔴 Erreur après retry, arrêt du processus:', error);
+      this._store.dispatch(new AuthTokenAction.Logout());
+      return throwError(() => error);
+    }
+
     // Gestion spécifique des erreurs 401
     if (error.status === 401 && !originalRequest.url.includes('user/auth/refresh') && !originalRequest.url.includes('user/auth/login')) {
       return this.handle401Error(originalRequest, next);

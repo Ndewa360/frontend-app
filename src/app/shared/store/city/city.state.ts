@@ -184,4 +184,54 @@ export class CityState{
         )
     }
 
+    @Action(CityAction.LoadAllCities)
+    loadAllCities(ctx: StateContext<CityStateModel>)
+    {
+        ctx.patchState({
+            loadingCity: true
+        });
+
+        return this._citiesService.getAllCities().pipe(
+            tap((result: any) => {
+                ctx.patchState({
+                    cities: result.data || [],
+                    loadingCity: false,
+                    initLoadingState: 'LOADED'
+                });
+            }),
+            catchError((error) => {
+                ctx.patchState({
+                    loadingCity: false
+                });
+                this._toastrService.error('Erreur lors du chargement des villes');
+                return throwError(error);
+            })
+        );
+    }
+
+    @Action(CityAction.LoadCitiesByCountry)
+    loadCitiesByCountry(ctx: StateContext<CityStateModel>, {countryId}: CityAction.LoadCitiesByCountry)
+    {
+        ctx.patchState({
+            loadingCity: true
+        });
+
+        return this._citiesService.getCitiesByCountry(countryId).pipe(
+            tap((result: any) => {
+                ctx.patchState({
+                    cities: result.data || [],
+                    loadingCity: false,
+                    initLoadingState: 'LOADED'
+                });
+            }),
+            catchError((error) => {
+                ctx.patchState({
+                    loadingCity: false
+                });
+                this._toastrService.error('Erreur lors du chargement des villes');
+                return throwError(error);
+            })
+        );
+    }
+
 }

@@ -4,6 +4,8 @@ import { Subject, Observable } from 'rxjs';
 import { takeUntil, filter } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
 import { MatDialog } from '@angular/material/dialog';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+
 import {
   ContractTemplateModel,
   ContractTemplateType,
@@ -29,7 +31,7 @@ export class ContractTemplateViewComponent implements OnInit, OnDestroy {
   
   // État local
   templateId: string = '';
-  content: string = '';
+  content ;
   isLoadingContent = false;
   isDefaultTemplate = false;
 
@@ -42,7 +44,8 @@ export class ContractTemplateViewComponent implements OnInit, OnDestroy {
     private router: Router,
     private store: Store,
     private dialog: MatDialog,
-    private contractTemplateService: ContractTemplateService
+    private contractTemplateService: ContractTemplateService,
+    private sanitizer: DomSanitizer
   ) {
     // Initialiser les observables
     this.template$ = this.store.select(ContractTemplateState.selectStateCurrentTemplate);
@@ -95,7 +98,7 @@ export class ContractTemplateViewComponent implements OnInit, OnDestroy {
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             next: (response) => {
-              this.content = response.content;
+              this.content = this.sanitizer.bypassSecurityTrustHtml(response.content);
               this.isLoadingContent = false;
             },
             error: (error) => {

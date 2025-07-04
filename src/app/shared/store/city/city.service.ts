@@ -38,6 +38,39 @@ export class CityService
     getCity(cityId):Observable<ApiResultFormat<CityModel>>
     {
         return this._httpClient.get<ApiResultFormat<CityModel>>(`${environment.apiUrl}/localisation/city/${cityId}`)
+    }
 
+    /**
+     * Get cities by country
+     */
+    getCitiesByCountry(countryId: string): Observable<ApiResultFormat<CityModel[]>>
+    {
+        return this._httpClient.get<ApiResultFormat<CityModel[]>>(`${environment.apiUrl}/localisation/city/country/${countryId}`)
+    }
+
+    /**
+     * Get all cities (for search purposes)
+     * First get countries, find Cameroon, then get its cities
+     */
+    getAllCities(): Observable<ApiResultFormat<CityModel[]>>
+    {
+        // D'abord récupérer la liste des pays pour trouver l'ID du Cameroun
+        return this._httpClient.get<any>(`${environment.apiUrl}/localisation/country`).pipe(
+            switchMap((countriesResponse) => {
+                // Trouver le Cameroun dans la liste des pays
+                const cameroon = countriesResponse.data?.find((country: any) =>
+                    country.fullName?.toLowerCase().includes('cameroun') ||
+                    country.fullName?.toLowerCase().includes('cameroon')
+                );
+
+                if (cameroon) {
+                    // Si on trouve le Cameroun, récupérer ses villes
+                    return this.getCitiesByCountry(cameroon._id);
+                } else {
+                    // Si pas de Cameroun trouvé, retourner une liste vide
+                    return of({ data: [], statusCode: 200, message: 'No cities found' } as ApiResultFormat<CityModel[]>);
+                }
+            })
+        );
     }
 }

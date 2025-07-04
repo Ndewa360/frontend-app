@@ -145,5 +145,14 @@
     "OPERATION_ERROR": "Erreur lors de l'opération",
     "CONFIRM_DELETE": "Êtes-vous sûr de vouloir supprimer cet élément ?",
     "ITEM_DELETED": "Élément supprimé avec succès"
+  },
+  "ROOM_TYPES": {
+    "ROOM": "Chambre",
+    "STUDIO": "Studio",
+    "SIMPLE_APARTMENT": "Appartement",
+    "FURNISHED_APARTMENT": "Appartement meublé",
+    "APARTMENT": "Appartement",
+    "HOUSE": "Maison",
+    "VILLA": "Villa"
   }
 }

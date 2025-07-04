@@ -1,0 +1,36 @@
+// Styles pour le composant d'icône étendu
+:host {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Styles pour les icônes Font Awesome
+i {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+
+  // Styles pour Font Awesome
+  &.fas,
+  &.far,
+  &.fab {
+    font-family: 'Font Awesome 5 Free', 'Font Awesome 5 Brands';
+    font-weight: 900;
+
+    &.far {
+      font-weight: 400;
+    }
+
+    &.fab {
+      font-weight: 400;
+    }
+  }
+}
+
+// Assurer la cohérence avec les icônes Carbon
+svg, i {
+  color: inherit;
+  transition: color 0.2s ease;
+}

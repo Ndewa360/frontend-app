@@ -4,6 +4,7 @@ import { SearchPageComponent, SearchPageRedesignedComponent } from './search-pag
 import { SearchPageDataResolver, SearchRoomDataResolver } from 'src/app/shared/resolvers';
 import { RoomPageOverviewComponent } from './components/room-page-overview/room-page-overview.component';
 import { LandingLayoutComponent } from 'src/@youpez/layout/landing/landing-layout/landing-layout.component';
+import { ModernSearchComponent } from './components/modern-search/modern-search.component';
 
 const routes: Routes = [
   {
@@ -13,6 +14,13 @@ const routes: Routes = [
     children: [
       {
         path: 'index',
+        component: ModernSearchComponent,
+        resolve: {
+          data: SearchPageDataResolver
+        }
+      },
+      {
+        path: 'redesigned',
         component: SearchPageRedesignedComponent,
         resolve: {
           data: SearchPageDataResolver

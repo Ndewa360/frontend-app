@@ -2,7 +2,8 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
-import { combineLatest, Observable } from 'rxjs';
+import { combineLatest, Observable, Subject } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 import { CityModel, CityState, RoomType, SearchAction } from 'src/app/shared/store';
 import { FormUtils, UtilsString, DefaultCoordCity, DefaultCoordCountry } from 'src/app/shared/utils';
 
@@ -115,7 +116,12 @@ export class FilterZoneComponent implements OnInit{
     // this.formGroup.get("ville").valueChanges.subscribe((value)=>{
     //   if(value.content!=this.currentCityChoise) this.currentCityChoise = value.content;
     // })
+    this.searchSubmit$.pipe(debounceTime(400)).subscribe(() => {
+      this._callToSubmitSearchInternal();
+    });
   }
+
+  private searchSubmit$ = new Subject<void>();
 
   getLocation(): void{
     //console.log("Navigateor ",navigator.geolocation)
@@ -158,31 +164,26 @@ export class FilterZoneComponent implements OnInit{
     return instance.invalid && (instance.dirty || instance.touched)
   }
 
-  callToSubmitSearch()
-  {
+  callToSubmitSearch() {
+    this.searchSubmit$.next();
+  }
+
+  private _callToSubmitSearchInternal() {
     let filterToApply = {...FormUtils.removeNullAttribut(this.formGroup.value)}
-    // console.log("Filter Toi  ",filterToApply)
-
     if(!this.showFilteredSpecificityForm) delete filterToApply.specifity;
-
-    // filterToApply = {...FormUtils.removeNullAttribut({...filterToApply, ville:this.formGroup.value.ville.content})}
-
     if(this.formGroup.value.minPrice==0) filterToApply["minPrice"]=0;
-
     const queryString = Object.keys(filterToApply).map(key => {
       if(key=="specifity") return Object.keys(filterToApply[key]).map(specKey => `${encodeURIComponent(specKey)}=${encodeURIComponent(filterToApply[key][specKey])}`).join('&')
       else if(key=="type" ) return  `${encodeURIComponent(key)}=${encodeURIComponent(filterToApply[key].valueType)}`
       else if(key=="ville" ) return  `${encodeURIComponent(key)}=${encodeURIComponent(filterToApply[key].content)}`
       return `${encodeURIComponent(key)}=${encodeURIComponent(filterToApply[key])}`
     }).join('&'); 
-
     let findNewCity=false;
     if(this.formGroup.value.ville) {
       filterToApply = {...filterToApply,ville:this.formGroup.value.ville.valueType}
       findNewCity = this.formGroup.value.ville.valueType!=this.currentCityChoise
     }
     if(this.formGroup.value.type) filterToApply = {...filterToApply,type:this.formGroup.value.type.valueType}
-
     this.router.navigateByUrl(`/search/index?${queryString}`)
     this._store.dispatch(new SearchAction.ApplyFilter(filterToApply,findNewCity)); 
   }

@@ -54,6 +54,7 @@ import { ContractTemplateSelectorComponent } from './components/contract-templat
 import { ScrollRevealDirective } from './directives/scroll-reveal/scroll-reveal.directive';
 import { LoadingOverlayComponent } from './components/loading-overlay/loading-overlay.component';
 import { CountUpDirective } from './directives/counter-up/counter-up.directive';
+
 import { ProspectionState } from './store/prospection/prospection.state';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
