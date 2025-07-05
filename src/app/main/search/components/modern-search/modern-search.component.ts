@@ -1,16 +1,19 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
-import { takeUntil, map } from 'rxjs/operators';
+import { takeUntil, map, filter, take } from 'rxjs/operators';
+
 
 // Services et modèles
 import { SearchService, AdvancedSearchFilters } from 'src/app/shared/store/search/search.service';
-import { CityModel, CityState, CityAction, SearchPropertyModel, SearchState } from 'src/app/shared/store';
+import { CityModel, CityState, CityAction, SearchPropertyModel, SearchState, CountryAction } from 'src/app/shared/store';
 
 import { GeolocationService, LocationInfo } from 'src/app/shared/services/geolocation/geolocation.service';
 import { TranslationService } from 'src/app/shared/services/localization/translation.service';
+import { UnitDetailDialogComponent } from '../unit-detail-dialog/unit-detail-dialog.component';
 
 // Interfaces locales
 export interface QuickFilter {
@@ -63,6 +66,10 @@ export class ModernSearchComponent implements OnInit, OnDestroy {
   // Gestion du slider d'images
   currentImageIndexes: { [cardIndex: number]: number } = {};
 
+  // Gestion du modal de détails d'unité
+  selectedUnit: SearchPropertyModel | null = null;
+  isUnitDetailVisible = false;
+
   // Protection contre les recherches en boucle
   private isPerformingSearch = false;
   
@@ -73,6 +80,13 @@ export class ModernSearchComponent implements OnInit, OnDestroy {
   quickFilters: QuickFilter[] = [];
   currentFilters: AdvancedSearchFilters = {};
 
+  // Pagination
+  readonly ITEMS_PER_PAGE = 12; // 12 unités par page (entre 10-15)
+  currentPage = 1;
+  totalPages = 1;
+  totalResults = 0;
+  paginatedResults: SearchPropertyModel[] = [];
+
   // Gestion des favoris (stockage local)
   favoriteIds: Set<string> = new Set();
 
@@ -82,11 +96,7 @@ export class ModernSearchComponent implements OnInit, OnDestroy {
   locationDetected = false;
   isFromUrl = false; // Indique si la localisation provient de l'URL
 
-  // Pagination
-  currentPage = 1;
-  totalPages = 1;
-  totalResults = 0;
-  itemsPerPage = 12;
+
 
   // Loading states
   isLoading = false;
@@ -94,6 +104,9 @@ export class ModernSearchComponent implements OnInit, OnDestroy {
 
   // Utilitaires pour le template
   Object = Object;
+  Math = Math;
+
+
 
   constructor(
     private fb: FormBuilder,
@@ -103,7 +116,8 @@ export class ModernSearchComponent implements OnInit, OnDestroy {
     private searchService: SearchService,
     private cdr: ChangeDetectorRef,
     private geolocationService: GeolocationService,
-    private translationService: TranslationService
+    private translationService: TranslationService,
+    private dialog: MatDialog
   ) {
     this.initializeForm();
     this.initializeQuickFilters();
@@ -111,6 +125,7 @@ export class ModernSearchComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.setupSearchSubscriptions();
+    this.setupUrlSubscriptions(); // Écouter les changements d'URL
     this.loadInitialData();
     this.loadFavorites();
     this.loadCities();
@@ -121,12 +136,18 @@ export class ModernSearchComponent implements OnInit, OnDestroy {
       if (!this.currentFilters.city) {
         this.detectUserLocation();
       }
+
+      // Vérifier si une unité doit être ouverte depuis l'URL
+      this.checkForUnitInUrl();
     });
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+
+    // Restaurer le scroll au cas où
+    this.unblockPageScroll();
   }
 
   private initializeForm(): void {
@@ -167,6 +188,102 @@ export class ModernSearchComponent implements OnInit, OnDestroy {
       sortBy: ['createdAt'], // price, createdAt, area
       sortOrder: ['desc'] // asc, desc
     });
+
+    // Écouter les changements du formulaire pour application automatique
+    this.setupFormAutoApply();
+  }
+
+  /**
+   * Configure l'application automatique des filtres
+   */
+  private setupFormAutoApply(): void {
+    // Appliquer automatiquement les filtres avec un délai pour éviter trop de requêtes
+    this.searchForm.valueChanges
+      .pipe(
+        debounceTime(500), // Attendre 500ms après le dernier changement
+        distinctUntilChanged((prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(formValues => {
+        console.log('🔄 Application automatique des filtres:', formValues);
+
+        // Mettre à jour les filtres actuels
+        this.currentFilters = {
+          ...this.currentFilters,
+          ...formValues
+        };
+
+        // Réinitialiser la pagination
+        this.currentPage = 1;
+
+        // Effectuer la recherche et mettre à jour l'URL
+        this.performSearch();
+        this.updateUrl();
+      });
+  }
+
+  /**
+   * Configure l'écoute des changements d'URL pour recharger les données
+   */
+  private setupUrlSubscriptions(): void {
+    // Écouter les changements de paramètres d'URL
+    this.route.queryParams
+      .pipe(
+        debounceTime(300), // Éviter les rechargements trop fréquents
+        takeUntil(this.destroy$)
+      )
+      .subscribe(params => {
+        console.log('🔗 Changement des paramètres URL:', params);
+
+        // Vérifier si les paramètres ont vraiment changé
+        const hasChanged = this.hasUrlParamsChanged(params);
+
+        if (hasChanged) {
+          console.log('🔄 Rechargement des données suite au changement d\'URL');
+          // Recharger les filtres depuis l'URL et effectuer une nouvelle recherche
+          this.loadFiltersFromUrl(params);
+        }
+      });
+  }
+
+  /**
+   * Vérifie si les paramètres URL ont changé
+   */
+  private hasUrlParamsChanged(newParams: any): boolean {
+    const currentParams = this.route.snapshot.queryParams;
+    return JSON.stringify(currentParams) !== JSON.stringify(newParams);
+  }
+
+  /**
+   * Charge les filtres depuis les paramètres URL
+   */
+  private loadFiltersFromUrl(params: any): void {
+    // Mettre à jour les filtres depuis l'URL
+    this.currentFilters = {
+      ...this.currentFilters,
+      city: params['ville'] || params['city'] || '',
+      district: params['district'] || '',
+      roomType: params['roomType'] || '',
+      priceMin: params['priceMin'] ? parseInt(params['priceMin']) : 0,
+      priceMax: params['priceMax'] ? parseInt(params['priceMax']) : 500000,
+      minArea: params['minArea'] ? parseInt(params['minArea']) : 0,
+      hasKitchen: params['hasKitchen'] === 'true',
+      isInternalKitchen: params['isInternalKitchen'] === 'true',
+      isInternalShower: params['isInternalShower'] === 'true',
+      hasParking: params['hasParking'] === 'true',
+      hasClosure: params['hasClosure'] === 'true',
+      sortBy: params['sortBy'] || 'createdAt',
+      sortOrder: params['sortOrder'] || 'desc'
+    };
+
+    // Mettre à jour la pagination
+    this.currentPage = params['page'] ? parseInt(params['page']) : 1;
+
+    // Mettre à jour le formulaire
+    this.searchForm.patchValue(this.currentFilters, { emitEvent: false });
+
+    // Effectuer la recherche
+    this.performSearch();
   }
 
   private initializeQuickFilters(): void {
@@ -246,9 +363,27 @@ export class ModernSearchComponent implements OnInit, OnDestroy {
    * Charge la liste des villes depuis le backend
    */
   private loadCities(): void {
-    // Pour le Cameroun, on peut utiliser un ID spécifique ou charger toutes les villes
-    // Ici on charge toutes les villes disponibles
+    console.log('🏙️ Chargement des villes...');
+
+    // D'abord charger les pays (qui contiennent les villes)
+    this.store.dispatch(new CountryAction.FetchCountries());
+
+    // Puis charger spécifiquement les villes
     this.store.dispatch(new CityAction.LoadAllCities());
+
+    // Debug: écouter les changements de villes
+    this.cities$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(cities => {
+        console.log('🏙️ Villes chargées:', cities?.length || 0, cities);
+        if (!cities || cities.length === 0) {
+          console.warn('⚠️ Aucune ville chargée, tentative de rechargement...');
+          // Retry après 2 secondes
+          setTimeout(() => {
+            this.store.dispatch(new CountryAction.FetchCountries());
+          }, 2000);
+        }
+      });
   }
 
   private handleRouteParams(): Promise<void> {
@@ -413,6 +548,13 @@ export class ModernSearchComponent implements OnInit, OnDestroy {
 
   toggleFilters(): void {
     this.showFilters = !this.showFilters;
+    console.log('🔧 Toggle filters:', this.showFilters);
+
+    if (this.showFilters) {
+      this.blockPageScroll();
+    } else {
+      this.unblockPageScroll();
+    }
   }
 
   toggleView(): void {
@@ -425,6 +567,10 @@ export class ModernSearchComponent implements OnInit, OnDestroy {
     this.quickFilters.forEach(f => f.active = false);
     this.currentFilters = {};
     this.searchResults = [];
+    this.paginatedResults = [];
+    this.currentPage = 1;
+    this.totalPages = 1;
+    this.totalResults = 0;
     this.hasSearched = false; // Réinitialiser l'état de recherche
   }
 
@@ -452,7 +598,7 @@ export class ModernSearchComponent implements OnInit, OnDestroy {
     const filters: AdvancedSearchFilters = {
       ...this.currentFilters,
       page: this.currentPage,
-      limit: this.itemsPerPage
+      limit: this.ITEMS_PER_PAGE
     };
 
     this.searchService.advancedSearch(filters)
@@ -462,12 +608,10 @@ export class ModernSearchComponent implements OnInit, OnDestroy {
           if (response.statusCode === 200) {
             // Vérification de la structure des données
             const data = response.data?.data || response.data || [];
-            const pagination: any = response.data?.pagination || {};
 
             this.searchResults = Array.isArray(data) ? data : [];
-            this.totalResults = pagination.total || 0;
-            this.totalPages = pagination.totalPages || 1;
-            this.currentPage = pagination.page || 1;
+            this.totalResults = this.searchResults.length; // Total des résultats reçus
+            this.updatePagination(); // Calculer la pagination côté client
 
             // Réinitialiser les index d'images pour les nouvelles cartes
             this.currentImageIndexes = {};
@@ -501,36 +645,7 @@ export class ModernSearchComponent implements OnInit, OnDestroy {
       });
   }
 
-  loadMore(): void {
-    if (this.currentPage < this.totalPages && !this.isLoadingMore) {
-      this.isLoadingMore = true;
-      this.currentPage++;
 
-      const filters: AdvancedSearchFilters = {
-        ...this.currentFilters,
-        page: this.currentPage,
-        limit: this.itemsPerPage
-      };
-
-      this.searchService.advancedSearch(filters)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            if (response.statusCode === 200) {
-              const data = response.data?.data || response.data || [];
-              const newResults = Array.isArray(data) ? data : [];
-              this.searchResults = [...this.searchResults, ...newResults];
-            }
-            this.isLoadingMore = false;
-          },
-          error: (error) => {
-            console.error('Erreur de chargement:', error);
-            this.isLoadingMore = false;
-            this.currentPage--; // Revenir à la page précédente en cas d'erreur
-          }
-        });
-    }
-  }
 
   /**
    * Obtient les initiales du propriétaire pour l'avatar
@@ -669,7 +784,7 @@ export class ModernSearchComponent implements OnInit, OnDestroy {
         this.currentFilters = {
           city: cityId,
           page: 1,
-          limit: this.itemsPerPage
+          limit: this.ITEMS_PER_PAGE
         };
 
         this.currentPage = 1;
@@ -714,7 +829,7 @@ export class ModernSearchComponent implements OnInit, OnDestroy {
         const filters: AdvancedSearchFilters = {
           ...this.currentFilters,
           page: this.currentPage,
-          limit: this.itemsPerPage
+          limit: this.ITEMS_PER_PAGE
         };
 
         this.searchService.advancedSearch(filters)
@@ -724,12 +839,10 @@ export class ModernSearchComponent implements OnInit, OnDestroy {
           if (response.statusCode === 200) {
             // Vérification de la structure des données
             const data = response.data?.data || response.data || [];
-            const pagination: any = response.data?.pagination || {};
 
             this.searchResults = Array.isArray(data) ? data : [];
-            this.totalResults = pagination.total || 0;
-            this.totalPages = pagination.totalPages || 1;
-            this.currentPage = pagination.page || 1;
+            this.totalResults = this.searchResults.length;
+            this.updatePagination();
 
             // Réinitialiser les index d'images pour les nouvelles cartes
             this.currentImageIndexes = {};
@@ -766,24 +879,64 @@ export class ModernSearchComponent implements OnInit, OnDestroy {
    */
   closeFilters(): void {
     this.showFilters = false;
+    this.unblockPageScroll();
   }
 
   /**
-   * Applique les filtres et ferme le panneau
+   * Bloque le scroll de la page
+   */
+  private blockPageScroll(): void {
+    // Sauvegarder la position actuelle du scroll
+    const scrollY = window.scrollY;
+
+    // Appliquer les styles pour bloquer le scroll
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+    document.body.style.overflow = 'hidden';
+    document.body.style.width = '100%';
+
+    // Bloquer aussi le scroll sur l'élément html
+    document.documentElement.style.overflow = 'hidden';
+
+    // Sauvegarder la position pour la restaurer plus tard
+    document.body.setAttribute('data-scroll-y', scrollY.toString());
+  }
+
+  /**
+   * Débloque le scroll de la page
+   */
+  private unblockPageScroll(): void {
+    // Récupérer la position sauvegardée
+    const scrollY = document.body.getAttribute('data-scroll-y');
+
+    // Restaurer les styles
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
+    document.body.style.overflow = '';
+    document.body.style.width = '';
+
+    // Restaurer le scroll sur l'élément html
+    document.documentElement.style.overflow = '';
+
+    // Restaurer la position du scroll
+    if (scrollY) {
+      window.scrollTo(0, parseInt(scrollY, 10));
+      document.body.removeAttribute('data-scroll-y');
+    }
+  }
+
+
+
+  /**
+   * Ferme le panneau de filtres (les filtres s'appliquent automatiquement)
    */
   applyFilters(): void {
-    // Mettre à jour les filtres depuis le formulaire
-    const formValues = this.searchForm.value;
-    console.log('🔧 Application manuelle des filtres:', formValues);
-
-    this.currentFilters = {
-      ...this.currentFilters,
-      ...formValues
-    };
-
-    this.performSearch();
+    console.log('🔧 Fermeture du panneau de filtres');
     this.closeFilters();
-    this.updateUrl();
   }
 
   /**
@@ -968,6 +1121,82 @@ export class ModernSearchComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Met à jour la pagination côté client
+   */
+  private updatePagination(): void {
+    this.totalPages = Math.ceil(this.totalResults / this.ITEMS_PER_PAGE);
+    this.updatePaginatedResults();
+  }
+
+  /**
+   * Met à jour les résultats paginés pour la page actuelle
+   */
+  private updatePaginatedResults(): void {
+    const startIndex = (this.currentPage - 1) * this.ITEMS_PER_PAGE;
+    const endIndex = startIndex + this.ITEMS_PER_PAGE;
+    this.paginatedResults = this.searchResults.slice(startIndex, endIndex);
+  }
+
+  /**
+   * Navigue vers une page spécifique
+   */
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages && page !== this.currentPage) {
+      this.currentPage = page;
+      this.updatePaginatedResults();
+
+      // Scroll vers le haut des résultats
+      const resultsElement = document.querySelector('.results-grid');
+      if (resultsElement) {
+        resultsElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  }
+
+  /**
+   * Page précédente
+   */
+  previousPage(): void {
+    if (this.currentPage > 1) {
+      this.goToPage(this.currentPage - 1);
+    }
+  }
+
+  /**
+   * Page suivante
+   */
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.goToPage(this.currentPage + 1);
+    }
+  }
+
+  /**
+   * Obtient les numéros de pages à afficher dans la pagination
+   */
+  getPageNumbers(): number[] {
+    const pages: number[] = [];
+    const maxPagesToShow = 5;
+
+    if (this.totalPages <= maxPagesToShow) {
+      // Afficher toutes les pages si elles sont peu nombreuses
+      for (let i = 1; i <= this.totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      // Logique pour afficher les pages autour de la page actuelle
+      const startPage = Math.max(1, this.currentPage - 2);
+      const endPage = Math.min(this.totalPages, startPage + maxPagesToShow - 1);
+
+      for (let i = startPage; i <= endPage; i++) {
+        pages.push(i);
+      }
+    }
+
+    return pages;
+  }
+
+  /**
    * Traduit le type de logement selon la langue actuelle
    */
   getRoomTypeLabel(type: string): string {
@@ -1092,4 +1321,100 @@ export class ModernSearchComponent implements OnInit, OnDestroy {
       replaceUrl: true // Remplace l'URL actuelle au lieu d'ajouter une nouvelle entrée
     });
   }
+
+  // === GESTION DU MODAL DE DÉTAILS D'UNITÉ ===
+
+  /**
+   * Ouvre le dialog de détails pour une unité avec MatDialog
+   */
+  openUnitDetail(unit: SearchPropertyModel): void {
+    const currentIndex = this.searchResults.findIndex(u => u._id === unit._id);
+
+    const dialogRef = this.dialog.open(UnitDetailDialogComponent, {
+      data: {
+        unit: unit,
+        allUnits: this.searchResults,
+        currentIndex: currentIndex
+      },
+      width: '100vw',
+      height: '100vh',
+      maxWidth: '100vw',
+      maxHeight: '100vh',
+      panelClass: 'unit-detail-dialog-container',
+      disableClose: false,
+      hasBackdrop: false // Pas de backdrop car on occupe tout l'écran
+    });
+
+    // Écouter la fermeture du dialog
+    dialogRef.afterClosed().subscribe(() => {
+      // Ne pas affecter les données de recherche lors de la fermeture
+      this.selectedUnit = null;
+      this.isUnitDetailVisible = false;
+
+      // Pas de manipulation des searchResults ici pour éviter de vider la liste
+      // Les données restent intactes
+    });
+  }
+
+
+
+  /**
+   * Gère le changement d'unité dans le modal
+   */
+  onUnitChanged(unit: SearchPropertyModel): void {
+    this.selectedUnit = unit;
+  }
+
+  /**
+   * Gère le contact avec le propriétaire
+   */
+  onContactOwner(unit: SearchPropertyModel): void {
+    console.log('🏠 Contact propriétaire pour:', unit.code || unit._id);
+    // TODO: Implémenter la logique de contact
+    // Peut ouvrir un modal de contact ou rediriger vers une page de contact
+  }
+
+  /**
+   * Vérifie si une unité doit être ouverte depuis l'URL
+   */
+  private checkForUnitInUrl(): void {
+    const unitId = this.route.snapshot.queryParams['unit'];
+    if (unitId) {
+      // Si les résultats sont déjà chargés, ouvrir directement
+      if (this.searchResults && this.searchResults.length > 0) {
+        const unit = this.searchResults.find(u => u._id === unitId);
+        if (unit) {
+          setTimeout(() => this.openUnitDetail(unit), 100); // Petit délai pour s'assurer que tout est initialisé
+        }
+      } else {
+        // Sinon, attendre que les résultats soient chargés
+        this.waitForSearchResultsAndOpenUnit(unitId);
+      }
+    }
+  }
+
+  /**
+   * Attend que les résultats de recherche soient chargés puis ouvre l'unité
+   */
+  private waitForSearchResultsAndOpenUnit(unitId: string): void {
+    const subscription = this.searchResults$.pipe(
+      filter((results: SearchPropertyModel[] | null) => results !== null && results.length > 0),
+      take(1)
+    ).subscribe((results: SearchPropertyModel[]) => {
+      const unit = results.find((u: SearchPropertyModel) => u._id === unitId);
+      if (unit) {
+        setTimeout(() => this.openUnitDetail(unit), 200);
+      }
+      subscription.unsubscribe();
+    });
+
+    // Timeout de sécurité après 10 secondes
+    setTimeout(() => {
+      if (!subscription.closed) {
+        subscription.unsubscribe();
+      }
+    }, 10000);
+  }
+
+
 }

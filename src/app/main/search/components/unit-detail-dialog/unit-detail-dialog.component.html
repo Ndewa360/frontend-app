@@ -1,0 +1,348 @@
+<!-- Dialog Plein Écran avec Layout LinkedIn -->
+<div class="unit-detail-dialog">
+  
+  <!-- Header Fixe -->
+  <header class="dialog-header">
+    <div class="header-content">
+      <button (click)="closeDialog()" class="close-button" mat-icon-button>
+        <i class="fas fa-times"></i>
+      </button>
+      
+      <div class="navigation-section" *ngIf="allUnits.length > 1">
+        <button
+          *ngIf="canNavigatePrevious"
+          (click)="navigateToPrevious()"
+          class="nav-button"
+          mat-icon-button>
+          <i class="fas fa-chevron-left"></i>
+        </button>
+
+        <div class="unit-counter">
+          <span class="current">{{ currentUnitIndex + 1 }}</span>
+          <span class="separator">/</span>
+          <span class="total">{{ allUnits.length }}</span>
+        </div>
+
+        <button
+          *ngIf="canNavigateNext"
+          (click)="navigateToNext()"
+          class="nav-button"
+          mat-icon-button>
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+      
+      <div class="header-actions">
+        <button class="action-button favorite-button" mat-button>
+          <i class="far fa-heart"></i>
+          <span>Sauvegarder</span>
+        </button>
+        <button class="action-button share-button" mat-button>
+          <i class="fas fa-share-alt"></i>
+          <span>Partager</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Contenu Principal -->
+  <main class="dialog-content">
+    
+    <!-- Section Images (Côté Gauche) -->
+    <section class="images-section">
+      <div class="main-image-container">
+        <img 
+          [src]="getUnitImages()[currentImageIndex]" 
+          [alt]="'Photo ' + (currentImageIndex + 1) + ' de la propriété'"
+          class="property-image"
+          (click)="openImageGallery()">
+        
+        <!-- Overlay avec Contrôles -->
+        <div class="image-overlay">
+          <!-- Navigation d'Images -->
+          <div *ngIf="getUnitImages().length > 1" class="image-navigation">
+            <button (click)="previousImage()" class="image-nav-button" mat-icon-button>
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            <button (click)="nextImage()" class="image-nav-button" mat-icon-button>
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+
+          <!-- Compteur d'Images -->
+          <div class="image-counter" *ngIf="getUnitImages().length > 1">
+            <i class="fas fa-camera"></i>
+            <span>{{ currentImageIndex + 1 }} / {{ getUnitImages().length }}</span>
+          </div>
+
+          <!-- Bouton Plein Écran -->
+          <button (click)="openImageGallery()" class="fullscreen-button" mat-icon-button>
+            <i class="fas fa-expand"></i>
+          </button>
+        </div>
+      </div>
+      
+      <!-- Miniatures -->
+      <div *ngIf="getUnitImages().length > 1" class="thumbnails-section">
+        <div class="thumbnails-wrapper">
+          <div 
+            *ngFor="let image of getUnitImages(); let i = index" 
+            (click)="goToImage(i)"
+            class="thumbnail-item"
+            [class.active]="i === currentImageIndex">
+            <img [src]="image" [alt]="'Miniature ' + (i + 1)">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section Détails (Côté Droit avec Scroll) -->
+    <section class="details-section">
+      
+      <!-- Contenu Scrollable -->
+      <div class="details-content">
+        
+        <!-- En-tête de la Propriété -->
+        <div class="property-header">
+          <div class="property-info">
+            <h1 class="property-title">{{ unit.property?.name || unit.code || 'Propriété Premium' }}</h1>
+            <div class="property-location">
+              <i class="fas fa-map-marker-alt"></i>
+              <span>{{ unit.property?.location || 'Localisation premium' }}</span>
+            </div>
+          </div>
+          
+          <div class="price-display">
+            <div class="price-amount">{{ formatPrice(unit.price) }}</div>
+            <div class="price-frequency">/ mois</div>
+          </div>
+        </div>
+
+        <!-- Caractéristiques Principales -->
+        <div class="property-features">
+          <h2 class="section-heading">
+            <i class="fas fa-home"></i>
+            <span>Caractéristiques</span>
+          </h2>
+
+          <div class="features-grid">
+            <div class="feature-card">
+              <i class="fas fa-building"></i>
+              <div class="feature-content">
+                <span class="feature-label">Type</span>
+                <span class="feature-value">{{ unit.type || 'Studio moderne' }}</span>
+              </div>
+            </div>
+
+            <div class="feature-card" *ngIf="unit.property?.totalSurface">
+              <i class="fas fa-ruler-combined"></i>
+              <div class="feature-content">
+                <span class="feature-label">Surface</span>
+                <span class="feature-value">{{ unit.property.totalSurface }} m²</span>
+              </div>
+            </div>
+
+            <div class="feature-card" *ngIf="unit.specifity?.numberOfBathroom">
+              <i class="fas fa-bath"></i>
+              <div class="feature-content">
+                <span class="feature-label">Salles de bain</span>
+                <span class="feature-value">{{ unit.specifity.numberOfBathroom }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Équipements -->
+        <div class="amenities-section">
+          <h2 class="section-heading">
+            <i class="fas fa-star"></i>
+            <span>Équipements inclus</span>
+          </h2>
+
+          <div class="amenities-list">
+            <div *ngIf="hasAmenity('kitchen')" class="amenity-item">
+              <i class="fas fa-utensils"></i>
+              <span>Cuisine équipée</span>
+              <i class="fas fa-check-circle check-icon"></i>
+            </div>
+
+            <div *ngIf="hasAmenity('privateShower')" class="amenity-item">
+              <i class="fas fa-shower"></i>
+              <span>Salle de bain privée</span>
+              <i class="fas fa-check-circle check-icon"></i>
+            </div>
+
+            <div *ngIf="hasAmenity('parking')" class="amenity-item">
+              <i class="fas fa-parking"></i>
+              <span>Place de parking</span>
+              <i class="fas fa-check-circle check-icon"></i>
+            </div>
+
+            <div *ngIf="hasAmenity('security')" class="amenity-item">
+              <i class="fas fa-shield-alt"></i>
+              <span>Sécurité 24h/24</span>
+              <i class="fas fa-check-circle check-icon"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div *ngIf="unit.description || unit.property?.description" class="description-section">
+          <h2 class="section-heading">
+            <i class="fas fa-align-left"></i>
+            <span>À propos</span>
+          </h2>
+          <div class="description-content">
+            <p>{{ unit.description || unit.property?.description || 'Magnifique propriété située dans un quartier calme et résidentiel.' }}</p>
+          </div>
+        </div>
+
+        <!-- Propriétaire -->
+        <div class="landlord-section">
+          <h2 class="section-heading">
+            <i class="fas fa-user"></i>
+            <span>Propriétaire</span>
+          </h2>
+          <div class="landlord-card">
+            <div class="landlord-avatar">
+              <span>{{ getOwnerInitials(unit.property?.owner) }}</span>
+            </div>
+            <div class="landlord-info">
+              <div class="landlord-name">{{ unit.property?.owner?.fullName || 'Propriétaire Certifié' }}</div>
+              <div class="landlord-badge">
+                <i class="fas fa-check-circle"></i>
+                <span>Vérifié</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section Informations Premium (après paiement) -->
+        <div class="premium-info-section" *ngIf="hasPremiumAccess">
+          <h2 class="section-heading">
+            <i class="fas fa-crown"></i>
+            <span>Informations de contact</span>
+          </h2>
+
+          <div class="premium-content">
+            <div class="contact-card">
+              <div class="contact-header">
+                <i class="fas fa-phone-alt"></i>
+                <h3>Contact direct</h3>
+              </div>
+              <div class="contact-details">
+                <div class="contact-item">
+                  <i class="fas fa-mobile-alt"></i>
+                  <span>{{ unit.property?.landlord?.phone || '+237 6XX XXX XXX' }}</span>
+                  <button class="copy-button" mat-icon-button>
+                    <i class="fas fa-copy"></i>
+                  </button>
+                </div>
+                <div class="contact-item">
+                  <i class="fas fa-envelope"></i>
+                  <span>{{ unit.property?.landlord?.email || 'contact@example.com' }}</span>
+                  <button class="copy-button" mat-icon-button>
+                    <i class="fas fa-copy"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="location-card">
+              <div class="location-header">
+                <i class="fas fa-map-marked-alt"></i>
+                <h3>Localisation précise</h3>
+              </div>
+              <div class="location-details">
+                <div class="address-item">
+                  <i class="fas fa-map-marker-alt"></i>
+                  <span>{{ unit.property?.fullAddress || 'Adresse complète disponible' }}</span>
+                </div>
+                <div class="coordinates-item">
+                  <i class="fas fa-crosshairs"></i>
+                  <span>Coordonnées GPS disponibles</span>
+                  <button class="view-map-button" mat-stroked-button>
+                    <i class="fas fa-map"></i>
+                    <span>Voir sur la carte</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section Paiement pour accès premium -->
+        <div class="payment-section" *ngIf="!hasPremiumAccess">
+          <h2 class="section-heading">
+            <i class="fas fa-lock"></i>
+            <span>Accès premium</span>
+          </h2>
+
+          <div class="payment-card">
+            <div class="payment-header">
+              <i class="fas fa-star"></i>
+              <h3>Débloquez les informations de contact</h3>
+              <p>Accédez aux coordonnées du propriétaire et à la localisation précise</p>
+            </div>
+
+            <div class="payment-features">
+              <div class="feature-item">
+                <i class="fas fa-check"></i>
+                <span>Numéro de téléphone direct</span>
+              </div>
+              <div class="feature-item">
+                <i class="fas fa-check"></i>
+                <span>Adresse email de contact</span>
+              </div>
+              <div class="feature-item">
+                <i class="fas fa-check"></i>
+                <span>Adresse complète et GPS</span>
+              </div>
+              <div class="feature-item">
+                <i class="fas fa-check"></i>
+                <span>Accès valable 7 jours</span>
+              </div>
+            </div>
+
+            <div class="payment-price">
+              <span class="price">500 FCFA</span>
+              <span class="duration">pour 7 jours</span>
+            </div>
+
+            <button (click)="onPurchasePremiumAccess()" class="premium-button" mat-raised-button>
+              <i class="fas fa-crown"></i>
+              <span>Débloquer maintenant</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Footer Intégré (Style LinkedIn) -->
+      <footer class="details-footer">
+        <div class="footer-content">
+          <div class="price-summary">
+            <span class="price-label">À partir de</span>
+            <span class="price-amount">{{ formatPrice(unit.price) }}</span>
+            <span class="price-period">/ mois</span>
+          </div>
+          
+          <div class="action-buttons">
+            <button (click)="onContactOwner()" class="primary-button" mat-raised-button color="primary">
+              <i class="fas fa-comments"></i>
+              <span>Contacter</span>
+            </button>
+
+            <button class="secondary-button" mat-stroked-button>
+              <i class="fas fa-phone"></i>
+              <span>Appeler</span>
+            </button>
+
+            <button class="icon-button" mat-icon-button>
+              <i class="fas fa-calendar-alt"></i>
+            </button>
+          </div>
+        </div>
+      </footer>
+    </section>
+  </main>
+</div>

@@ -410,31 +410,6 @@
     }
   }
 }
-         font-size: 0.75rem;
-          color: var(--theme-appTextSecondary);
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-      }
-
-      .saved-search-delete {
-        opacity: 0;
-        padding: 0.25rem;
-        color: var(--theme-appTextSecondary);
-        transition: all 0.2s ease-in-out;
-
-        &:hover {
-          color: #dc2626;
-        }
-
-        i {
-          font-size: 0.75rem;
-        }
-      }
-    }
-  }
-}
 
 // Zone des résultats
 .search-results-area {

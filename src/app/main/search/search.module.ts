@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { OverlayModule } from '@angular/cdk/overlay';
 
 import { SearchRoutingModule } from './search-routing.module';
 import { SearchPageComponent, SearchPageRedesignedComponent } from './search-page';
@@ -12,6 +13,8 @@ import { RoomAssociatedComponent } from './components/room-associated/room-assoc
 import { AdvancedSearchFiltersComponent, AdvancedSearchFiltersRedesignedComponent } from './components/advanced-search-filters';
 import { SearchResultsWrapperComponent } from './components/search-results-wrapper/search-results-wrapper.component';
 import { ModernSearchComponent } from './components/modern-search/modern-search.component';
+import { UnitDetailModalComponent } from './components/unit-detail-modal/unit-detail-modal.component';
+import { UnitDetailDialogComponent } from './components/unit-detail-dialog/unit-detail-dialog.component';
 
 @NgModule({
   declarations: [
@@ -25,12 +28,15 @@ import { ModernSearchComponent } from './components/modern-search/modern-search.
     AdvancedSearchFiltersComponent,
     AdvancedSearchFiltersRedesignedComponent,
     SearchResultsWrapperComponent,
-    ModernSearchComponent
+    ModernSearchComponent,
+    UnitDetailModalComponent,
+    UnitDetailDialogComponent
   ],
   imports: [
     CommonModule,
     SharedModule,
-    SearchRoutingModule
+    SearchRoutingModule,
+    OverlayModule
   ]
 })
 export class SearchModule { }
