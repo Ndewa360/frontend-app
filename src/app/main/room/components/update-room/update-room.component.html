@@ -103,8 +103,7 @@
                   </div>
                   <div fxFlex="100%" fxFlex.gt-md="50%" class="app-form__item">
                     <ibm-label> Nombre de salon<span class="text-red-600">*</span>
-                      <ibm-number class="mt-2" [helperText]="''" [theme]="'dark'" [min]="2" [invalid]="false"
-                        [invalidText]="''" [size]="'md'" formControlName="numberOfLivingRoom" [disabled]="false">
+                      <ibm-number class="mt-2" formControlName="numberOfLivingRoom">
                       </ibm-number>
                     </ibm-label>
                   </div>
@@ -113,7 +112,7 @@
              </ng-container>
             
             <div class="">
-              <ibm-label [helperText]="''">
+              <ibm-label>
                 Description
                 <textarea ibmTextArea formControlName="description" class="textarea-field" theme="dark" [rows]="3"
                   [cols]="3" aria-label="textarea"></textarea>
@@ -129,7 +128,7 @@
         </button>
         <button ibmButton="primary" size="md" class="custom-primary-button"
           [disabled]="waittingResponse || formGroup.invalid || formGroup.get('type').value=='furnished_apartment'" type="submit">
-          <ibm-loading *ngIf="waittingResponse; else noWaitingResponse"></ibm-loading>
+          <youpez-loader *ngIf="waittingResponse; else noWaitingResponse"></youpez-loader>
           <ng-template #noWaitingResponse>
             <span class="btn-text">Mettre à jour</span>
             <youpez-ibm-icon iconClass="cds--btn__icon" iconName="add" iconSize="20"></youpez-ibm-icon>

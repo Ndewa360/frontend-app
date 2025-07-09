@@ -1,0 +1,244 @@
+// Variables de couleurs du thème
+$primary-color: rgb(204, 140, 10);
+$primary-light: rgba(204, 140, 10, 0.1);
+$primary-dark: rgb(184, 126, 9);
+$success-color: #28a745;
+$warning-color: #ffc107;
+$danger-color: #dc3545;
+$info-color: #17a2b8;
+
+.subscription-widget {
+  background: white;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid #ddd;
+  transition: all 0.3s ease;
+
+  &.blue {
+    border-left-color: $info-color;
+  }
+
+  &.gold {
+    border-left-color: $primary-color;
+  }
+
+  &.red {
+    border-left-color: $danger-color;
+  }
+
+  &.gray {
+    border-left-color: #6c757d;
+  }
+
+  .widget-loading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 0;
+    justify-content: center;
+    color: #666;
+    font-size: 0.9rem;
+  }
+
+  .widget-error {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 0;
+    color: $danger-color;
+    font-size: 0.9rem;
+
+    .retry-btn {
+      background: none;
+      border: none;
+      color: $danger-color;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 4px;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background: rgba($danger-color, 0.1);
+      }
+    }
+  }
+
+  .widget-content {
+    .widget-header {
+      margin-bottom: 16px;
+
+      .status-info {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+
+        .status-badge {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-weight: 600;
+          font-size: 0.95rem;
+
+          &.blue {
+            color: $info-color;
+          }
+
+          &.gold {
+            color: $primary-color;
+          }
+
+          &.red {
+            color: $danger-color;
+          }
+
+          &.gray {
+            color: #6c757d;
+          }
+        }
+
+        .payment-alert {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          color: $danger-color;
+          font-size: 0.85rem;
+          font-weight: 500;
+        }
+      }
+    }
+
+    .progress-section {
+      margin-bottom: 16px;
+
+      .progress-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+
+        .progress-label {
+          color: #666;
+        }
+
+        .progress-value {
+          font-weight: 600;
+          color: #333;
+        }
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 6px;
+        background: #e9ecef;
+        border-radius: 3px;
+        overflow: hidden;
+        margin-bottom: 8px;
+
+        .progress-fill {
+          height: 100%;
+          transition: width 0.3s ease, background-color 0.3s ease;
+          border-radius: 3px;
+        }
+      }
+
+      .progress-warning {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: $warning-color;
+        font-size: 0.8rem;
+        font-weight: 500;
+      }
+    }
+
+    .premium-info {
+      margin-bottom: 16px;
+
+      .premium-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 4px 0;
+        font-size: 0.9rem;
+
+        .label {
+          color: #666;
+        }
+
+        .value {
+          font-weight: 600;
+          color: $primary-color;
+        }
+      }
+    }
+
+    .widget-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
+      .action-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border: none;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        width: 100%;
+
+        &.upgrade-btn {
+          background: linear-gradient(135deg, $primary-color, $primary-dark);
+          color: white;
+
+          &:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba($primary-color, 0.3);
+          }
+        }
+
+        &.payment-btn {
+          background: $danger-color;
+          color: white;
+
+          &:hover {
+            background: darken($danger-color, 10%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba($danger-color, 0.3);
+          }
+        }
+
+        &.calculate-btn {
+          background: #6c757d;
+          color: white;
+
+          &:hover {
+            background: darken(#6c757d, 10%);
+          }
+        }
+      }
+    }
+  }
+
+  // Responsive
+  @media (max-width: 768px) {
+    padding: 12px;
+
+    .widget-content {
+      .widget-header {
+        margin-bottom: 12px;
+      }
+
+      .progress-section,
+      .premium-info {
+        margin-bottom: 12px;
+      }
+    }
+  }
+}

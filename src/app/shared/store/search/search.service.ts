@@ -24,15 +24,31 @@ export interface AdvancedSearchFilters {
     numberOfShower?: string;
     numberOfLivingRoom?: string;
 
-    // Équipements de la propriété
+    // Équipements de la propriété existants
     hasPrivateShower?: boolean; // Gardé pour compatibilité
     hasParking?: boolean;
     hasClosure?: boolean;
 
+    // Nouveaux équipements de propriété
+    hasElevator?: boolean;
+    hasGarden?: boolean;
+    hasPool?: boolean;
+    hasGym?: boolean;
+    hasSecurity?: boolean;
+    hasGenerator?: boolean;
+    hasWater?: boolean;
+    hasInternet?: boolean;
+    condition?: 'NEW' | 'EXCELLENT' | 'GOOD' | 'FAIR' | 'POOR';
+    furnishingStatus?: 'FURNISHED' | 'SEMI_FURNISHED' | 'UNFURNISHED';
+    buildingYearMin?: number;
+    buildingYearMax?: number;
+    totalSurfaceMin?: number;
+    totalSurfaceMax?: number;
+
     // Pagination et tri
     page?: number;
     limit?: number;
-    sortBy?: 'price' | 'createdAt' | 'area';
+    sortBy?: 'price' | 'createdAt' | 'area' | 'totalSurface' | 'buildingYear';
     sortOrder?: 'asc' | 'desc';
 }
 

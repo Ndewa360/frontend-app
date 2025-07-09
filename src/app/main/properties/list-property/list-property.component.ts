@@ -8,7 +8,7 @@ import { AddPropertyComponent } from '../add-property/add-property.component';
 import { Store } from '@ngxs/store';
 import { GaleryPropertyComponent } from '../components/galery-property/galery-property.component';
 import { UpdatePropertyComponent } from '../components/update-property/update-property.component';
-import { PropertyAlert } from '../../dashboard/components/property-overview-card/property-overview-card.component';
+import { PropertyAlert } from '../components/property-overview-card/property-overview-card.component';
 import { AddPropertyLocataireComponent } from '../components/add-property-locataire/add-property-locataire.component';
 
 @Component({

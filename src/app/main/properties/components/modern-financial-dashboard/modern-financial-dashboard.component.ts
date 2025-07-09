@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { createFinalStoragePluginOptions } from '@ngxs/storage-plugin/src/internals/final-options';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -13,6 +14,7 @@ interface FinancialMetric {
   changeType: 'increase' | 'decrease' | 'neutral';
   icon: string;
   color: string;
+  isMoney:boolean
 }
 
 interface MonthlyData {
@@ -55,7 +57,8 @@ export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
       change: 12.5,
       changeType: 'increase',
       icon: 'currency--dollar',
-      color: 'success'
+      color: 'success',
+      isMoney:true
     },
     {
       label: 'Taux de Recouvrement',
@@ -63,7 +66,8 @@ export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
       change: -2.1,
       changeType: 'decrease',
       icon: 'chart--pie',
-      color: 'warning'
+      color: 'warning',
+      isMoney:false
     },
     {
       label: 'Propriétés Actives',
@@ -71,7 +75,8 @@ export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
       change: 0,
       changeType: 'neutral',
       icon: 'home',
-      color: 'info'
+      color: 'info',
+      isMoney:false
     },
     {
       label: 'Bénéfice Net',
@@ -79,7 +84,9 @@ export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
       change: 8.7,
       changeType: 'increase',
       icon: 'trending--up',
-      color: 'primary'
+      color: 'primary',
+      isMoney:true
+
     }
   ];
 

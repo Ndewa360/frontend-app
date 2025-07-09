@@ -1,123 +1,395 @@
-<ng-template #invalidText>
-    <img src="assets/img/avatar/avatar3.jpg" class="app-img-select__item w-8 rounded"/>
-  </ng-template>
-  <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
-    <div fxFill fxLayout="column" class="app-bg-container overflow-hidden">
-        <div class="px-4 py-4 flex">
-          <div class="app-productive-heading-03 font-bold">Ajouter un bien</div>
-          <div class="flex-1 flex justify-end">
-            <button (click)="onClose()" ibmButton="ghost" size="sm" class="cds--btn--icon-only custom-ghost-close">
-              <youpez-ibm-icon iconClass="cds--btn__icon" iconName="close" iconSize="32"></youpez-ibm-icon>
-            </button>
-          </div>
+<!-- Formulaire d'ajout de propriété moderne -->
+<form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
+  <div class="property-form-container">
+
+    <!-- Header -->
+    <div class="property-form-header">
+      <div class="header-content">
+        <div class="header-title">
+          <youpez-ibm-icon iconName="home" iconSize="24" class="text-primary-600 mr-3"></youpez-ibm-icon>
+          <h1 class="text-2xl font-bold text-gray-900">Ajouter un nouveau bien</h1>
         </div>
-        <div fxFlex>
-          <div class="app-content app-content--default">
-            <div class="app-form">
-              <div class="app-form__item">
-                <ibm-label helperText="" [invalid]="isValid('name')"
-                [invalidText]="'Nom du bien obligatoire'">
-                  Nom du bien <span class="text-red-600">*</span>
-                  <input
-                    formControlName="name"
-                    ibmText
-                    size="md"
-                    theme="dark">
-                </ibm-label>
-              </div>
+        <button (click)="onClose()" type="button" class="close-button">
+          <youpez-ibm-icon iconName="close" iconSize="20"></youpez-ibm-icon>
+        </button>
+      </div>
 
-              <div fxLayout="row wrap" class="app-form__row">
-                <div fxFlex="100%" fxFlex.gt-md="50%" class="app-form__item">
-                  <ibm-label [invalid]="isValid('geolocationCountry')" [invalidText]="'Vous devez choisir un pays'">
-                    Choisissez le pays 
-                        <ibm-combo-box class="mt-2"
-                            [items]="countriesList"
-                            formControlName="geolocationCountry"
-                            theme="dark"
-                            size="lg">
-                            <ibm-dropdown-list></ibm-dropdown-list>
-                        </ibm-combo-box>   
-                    </ibm-label>
-                </div>
-                <div fxFlex="100%" fxFlex.gt-md="50%" class="app-form__item">
-                  <ibm-label [invalid]="isValid('geolocationCity')" [invalidText]="'Vous devez choisir une ville'">
-                    Choisissez la ville 
-                        <ibm-combo-box class="mt-2"
-                            [items]="selectedCitiesList"
-                            formControlName="geolocationCity"
-                            theme="dark"
-                            size="lg">
-                            <ibm-dropdown-list></ibm-dropdown-list>
-                        </ibm-combo-box>   
-                    </ibm-label>
-                </div>    
-              </div>
+      <!-- Progress indicator -->
+      <div class="progress-indicator">
+        <div class="progress-step" [class.active]="currentStep >= 1" [class.completed]="currentStep > 1">
+          <div class="step-number">1</div>
+          <span class="step-label">Informations générales</span>
+        </div>
+        <div class="progress-line" [class.completed]="currentStep > 1"></div>
+        <div class="progress-step" [class.active]="currentStep >= 2" [class.completed]="currentStep > 2">
+          <div class="step-number">2</div>
+          <span class="step-label">Caractéristiques</span>
+        </div>
+        <div class="progress-line" [class.completed]="currentStep > 2"></div>
+        <div class="progress-step" [class.active]="currentStep >= 3" [class.completed]="currentStep > 3">
+          <div class="step-number">3</div>
+          <span class="step-label">Finances</span>
+        </div>
+      </div>
+    </div>
+    <!-- Form Content -->
+    <div class="property-form-content">
 
-              <div fxLayout="row wrap" class="app-form__row" >
-                <div fxFlex="100%" class="app-form__item" fxFlex.gt-md="50%">
-                  <ibm-toggle formControlName="hasClosure" [label]="'Posséde une bariére'" [onText]="'Oui'" [offText]="'Non'" [checked]="false" size="md">
-                  </ibm-toggle>
-                </div>
-                <div fxFlex="100%" class="app-form__item" fxFlex.gt-md="50%">
-                  <ibm-toggle formControlName="hasParking" [label]="'Posséde un parking'" [onText]="'Oui'" [offText]="'Non'" [checked]="false" size="md">
-                  </ibm-toggle>
-                </div>
-              </div>
-              
-              <div class="app-form__item">
-                    <ibm-label helperText="" [invalid]="isValid('location')"
-                    [invalidText]="'Localisation du bien obligatoire'">
-                      Localisation <span class="text-red-600">*</span>
-                      <input
-                        ibmText
-                        formControlName="location"
-                        size="md"
-                        theme="dark">
-                    </ibm-label>            
-              </div>
-              <div class="">
-                <ibm-label
-                  [helperText]="''">
-                  Description
-                  <textarea
-                    ibmTextArea
-                    formControlName="description"
-                    theme="dark"
-                    [rows]="3"
-                    class="textarea-field"
-                    aria-label="textarea"></textarea>
-                </ibm-label>
-              </div>
+      <!-- Step 1: Informations générales -->
+      <div class="form-step" *ngIf="currentStep === 1">
+        <div class="step-header">
+          <h2 class="step-title">Informations générales</h2>
+          <p class="step-description">Renseignez les informations de base de votre propriété</p>
+        </div>
 
-              <!-- Sélecteur de modèle de contrat -->
-              <div class="app-form__item">
-                <app-contract-template-selector
-                  formControlName="contractTemplate"
-                  label="Modèle de contrat"
-                  placeholder="Sélectionner un modèle de contrat (optionnel)"
-                  [required]="false"
-                  [showCreateButton]="true"
-                  [showPreview]="true">
-                </app-contract-template-selector>
-              </div>
+        <div class="form-grid">
+          <!-- Nom du bien -->
+          <div class="form-group col-span-2">
+            <label class="form-label required">Nom du bien</label>
+            <input
+              formControlName="name"
+              type="text"
+              class="form-input"
+              [class.error]="isValid('name')"
+              placeholder="Ex: Résidence Les Palmiers">
+            <div class="form-error" *ngIf="isValid('name')">
+              Le nom du bien est obligatoire
             </div>
-      
+          </div>
+
+          <!-- Type de propriété -->
+          <div class="form-group">
+            <label class="form-label required">Type de propriété</label>
+            <select formControlName="propertyType" class="form-select" [class.error]="isValid('propertyType')">
+              <option value="">Sélectionner un type</option>
+              <option value="APARTMENT">Appartement</option>
+              <option value="HOUSE">Maison</option>
+              <option value="COMMERCIAL">Commercial</option>
+              <option value="MIXED">Mixte</option>
+              <option value="LAND">Terrain</option>
+            </select>
+            <div class="form-error" *ngIf="isValid('propertyType')">
+              Le type de propriété est obligatoire
+            </div>
+          </div>
+
+          <!-- Surface totale -->
+          <div class="form-group">
+            <label class="form-label">Surface totale (m²)</label>
+            <input
+              formControlName="totalSurface"
+              type="number"
+              class="form-input"
+              placeholder="Ex: 150">
+          </div>
+
+          <!-- Pays -->
+          <div class="form-group">
+            <label class="form-label required">Pays</label>
+            <ibm-combo-box
+              [items]="countriesList"
+              formControlName="geolocationCountry"
+              placeholder="Sélectionner un pays"
+              [class.error]="isValid('geolocationCountry')">
+              <ibm-dropdown-list></ibm-dropdown-list>
+            </ibm-combo-box>
+            <div class="form-error" *ngIf="isValid('geolocationCountry')">
+              Le pays est obligatoire
+            </div>
+          </div>
+
+          <!-- Ville -->
+          <div class="form-group">
+            <label class="form-label required">Ville</label>
+            <ibm-combo-box
+              [items]="selectedCitiesList"
+              formControlName="geolocationCity"
+              placeholder="Sélectionner une ville"
+              [class.error]="isValid('geolocationCity')">
+              <ibm-dropdown-list></ibm-dropdown-list>
+            </ibm-combo-box>
+            <div class="form-error" *ngIf="isValid('geolocationCity')">
+              La ville est obligatoire
+            </div>
+          </div>
+
+          <!-- Adresse -->
+          <div class="form-group col-span-2">
+            <label class="form-label required">Adresse complète</label>
+            <input
+              formControlName="location"
+              type="text"
+              class="form-input"
+              [class.error]="isValid('location')"
+              placeholder="Ex: 123 Avenue de la Liberté, Quartier Bonanjo">
+            <div class="form-error" *ngIf="isValid('location')">
+              L'adresse est obligatoire
+            </div>
+          </div>
+
+          <!-- Année de construction -->
+          <div class="form-group">
+            <label class="form-label">Année de construction</label>
+            <input
+              formControlName="buildingYear"
+              type="number"
+              class="form-input"
+              [min]="1900"
+              [max]="currentYear"
+              placeholder="Ex: 2020">
+          </div>
+
+          <!-- Nombre d'étages -->
+          <div class="form-group">
+            <label class="form-label">Nombre d'étages</label>
+            <input
+              formControlName="floors"
+              type="number"
+              class="form-input"
+              [min]="1"
+              placeholder="Ex: 3">
+          </div>
+
+          <!-- Description -->
+          <div class="form-group col-span-2">
+            <label class="form-label">Description</label>
+            <textarea
+              formControlName="description"
+              class="form-textarea"
+              rows="4"
+              placeholder="Décrivez votre propriété, ses atouts, son environnement..."></textarea>
           </div>
         </div>
-        <div class="px-4 py-4 flex justify-end app-border-t">
-          <button (click)="onClose()" type="reset" ibmButton="secondary" size="md" class="mr-1 btn-annuler">
+      </div>
+
+      <!-- Step 2: Caractéristiques -->
+      <div class="form-step" *ngIf="currentStep === 2">
+        <div class="step-header">
+          <h2 class="step-title">Caractéristiques et équipements</h2>
+          <p class="step-description">Détaillez les équipements et l'état de votre propriété</p>
+        </div>
+
+        <div class="form-grid">
+          <!-- État du bien -->
+          <div class="form-group">
+            <label class="form-label">État du bien</label>
+            <select formControlName="condition" class="form-select">
+              <option value="NEW">Neuf</option>
+              <option value="EXCELLENT">Excellent</option>
+              <option value="GOOD">Bon</option>
+              <option value="FAIR">Correct</option>
+              <option value="POOR">À rénover</option>
+            </select>
+          </div>
+
+          <!-- Statut d'ameublement -->
+          <div class="form-group">
+            <label class="form-label">Ameublement</label>
+            <select formControlName="furnishingStatus" class="form-select">
+              <option value="UNFURNISHED">Non meublé</option>
+              <option value="SEMI_FURNISHED">Semi-meublé</option>
+              <option value="FURNISHED">Meublé</option>
+            </select>
+          </div>
+
+          <!-- Équipements de base -->
+          <div class="form-group col-span-2">
+            <label class="form-label">Équipements de base</label>
+            <div class="checkbox-grid">
+              <label class="checkbox-item">
+                <input type="checkbox" formControlName="hasClosure">
+                <span class="checkbox-label">Clôture/Barrière</span>
+              </label>
+              <label class="checkbox-item">
+                <input type="checkbox" formControlName="hasParking">
+                <span class="checkbox-label">Parking</span>
+              </label>
+              <label class="checkbox-item">
+                <input type="checkbox" formControlName="hasElevator">
+                <span class="checkbox-label">Ascenseur</span>
+              </label>
+              <label class="checkbox-item">
+                <input type="checkbox" formControlName="hasWater">
+                <span class="checkbox-label">Eau courante</span>
+              </label>
+              <label class="checkbox-item">
+                <input type="checkbox" formControlName="hasInternet">
+                <span class="checkbox-label">Internet</span>
+              </label>
+              <label class="checkbox-item">
+                <input type="checkbox" formControlName="hasGenerator">
+                <span class="checkbox-label">Générateur</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Équipements de confort -->
+          <div class="form-group col-span-2">
+            <label class="form-label">Équipements de confort</label>
+            <div class="checkbox-grid">
+              <label class="checkbox-item">
+                <input type="checkbox" formControlName="hasGarden">
+                <span class="checkbox-label">Jardin</span>
+              </label>
+              <label class="checkbox-item">
+                <input type="checkbox" formControlName="hasPool">
+                <span class="checkbox-label">Piscine</span>
+              </label>
+              <label class="checkbox-item">
+                <input type="checkbox" formControlName="hasGym">
+                <span class="checkbox-label">Salle de sport</span>
+              </label>
+              <label class="checkbox-item">
+                <input type="checkbox" formControlName="hasSecurity">
+                <span class="checkbox-label">Sécurité 24h/24</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Step 3: Finances -->
+      <div class="form-step" *ngIf="currentStep === 3">
+        <div class="step-header">
+          <h2 class="step-title">Informations financières</h2>
+          <p class="step-description">Renseignez les aspects financiers de votre propriété</p>
+        </div>
+
+        <div class="form-grid">
+          <!-- Prix d'acquisition -->
+          <div class="form-group">
+            <label class="form-label">Prix d'acquisition (FCFA)</label>
+            <input
+              formControlName="acquisitionPrice"
+              type="number"
+              class="form-input"
+              placeholder="Ex: 50000000">
+          </div>
+
+          <!-- Valeur actuelle -->
+          <div class="form-group">
+            <label class="form-label">Valeur actuelle estimée (FCFA)</label>
+            <input
+              formControlName="currentValue"
+              type="number"
+              class="form-input"
+              placeholder="Ex: 55000000">
+          </div>
+
+          <!-- Fourchette de loyers -->
+          <div class="form-group">
+            <label class="form-label">Loyer minimum (FCFA)</label>
+            <input
+              formControlName="rentMin"
+              type="number"
+              class="form-input"
+              placeholder="Ex: 150000">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Loyer maximum (FCFA)</label>
+            <input
+              formControlName="rentMax"
+              type="number"
+              class="form-input"
+              placeholder="Ex: 300000">
+          </div>
+
+          <!-- Charges et frais -->
+          <div class="form-group">
+            <label class="form-label">Charges mensuelles (FCFA)</label>
+            <input
+              formControlName="monthlyCharges"
+              type="number"
+              class="form-input"
+              placeholder="Ex: 25000">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Frais de gestion mensuels (FCFA)</label>
+            <input
+              formControlName="managementFees"
+              type="number"
+              class="form-input"
+              placeholder="Ex: 15000">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Taxe foncière annuelle (FCFA)</label>
+            <input
+              formControlName="propertyTax"
+              type="number"
+              class="form-input"
+              placeholder="Ex: 500000">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Coût d'assurance annuel (FCFA)</label>
+            <input
+              formControlName="insuranceCost"
+              type="number"
+              class="form-input"
+              placeholder="Ex: 200000">
+          </div>
+
+          <!-- Modèle de contrat -->
+          <div class="form-group col-span-2">
+            <label class="form-label">Modèle de contrat</label>
+            <app-contract-template-selector
+              formControlName="contractTemplate"
+              placeholder="Sélectionner un modèle de contrat (optionnel)"
+              [required]="false"
+              [showCreateButton]="true"
+              [showPreview]="true">
+            </app-contract-template-selector>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form Navigation -->
+    <div class="property-form-footer">
+      <div class="footer-content">
+        <div class="footer-left">
+          <button
+            type="button"
+            (click)="onClose()"
+            class="btn btn-secondary">
             Annuler
           </button>
-          <button ibmButton="primary" class="custom-primary-button" size="md" [disabled]="waittingResponse || formGroup.invalid" type="submit">
-            <ibm-loading *ngIf="waittingResponse; else noWaitingResponse"></ibm-loading>
-            <ng-template #noWaitingResponse>
-              <span class="btn-text">Ajouter</span>
-              <youpez-ibm-icon iconClass="cds--btn__icon" iconName="add" iconSize="20"></youpez-ibm-icon>
+        </div>
 
-            </ng-template>
+        <div class="footer-right">
+          <button
+            type="button"
+            (click)="previousStep()"
+            class="btn btn-secondary"
+            *ngIf="currentStep > 1">
+            <youpez-ibm-icon iconName="arrow-left" iconSize="16" class="mr-2"></youpez-ibm-icon>
+            Précédent
+          </button>
+
+          <button
+            type="button"
+            (click)="nextStep()"
+            class="btn btn-primary"
+            *ngIf="currentStep < 3"
+            [disabled]="!isStepValid(currentStep)">
+            Suivant
+            <youpez-ibm-icon iconName="arrow-right" iconSize="16" class="ml-2"></youpez-ibm-icon>
+          </button>
+
+          <button
+            type="submit"
+            class="btn btn-primary"
+            *ngIf="currentStep === 3"
+            [disabled]="waittingResponse || formGroup.invalid">
+            <span *ngIf="waittingResponse" class="loading-spinner"></span>
+            <youpez-ibm-icon *ngIf="!waittingResponse" iconName="add" iconSize="16" class="mr-2"></youpez-ibm-icon>
+            {{ waittingResponse ? 'Création...' : 'Créer le bien' }}
           </button>
         </div>
       </div>
-      
-  </form>
+    </div>
+  </div>
+</form>
  

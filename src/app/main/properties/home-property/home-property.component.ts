@@ -99,9 +99,11 @@ export class HomePropertyComponent implements OnInit, OnDestroy {
       viewContainerRef: null,
       disableClose: true,
       role: 'alertdialog',
-      width: '500px',
-      maxWidth: '90vw',
-      maxHeight: '90vh'
+      width: '900px',
+      maxWidth: '95vw',
+      height: '90vh',
+      maxHeight: '90vh',
+      panelClass: 'property-form-dialog'
     });
 
     // Après création, revenir à la vue propriétés

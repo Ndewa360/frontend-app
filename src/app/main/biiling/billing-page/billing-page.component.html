@@ -80,6 +80,27 @@
         </div>
         <div fxFlex="100%" fxFlex.gt-md="70%" class="app-content app-content--default mt-10 sm:ml-5 w-full">
 
+            <!-- Widget de statut de souscription -->
+            <div class="mb-6">
+                <app-subscription-status-widget></app-subscription-status-widget>
+            </div>
+
+            <!-- Alertes pour factures impayées -->
+            <div class="mb-6" *ngIf="unpaidInvoices$ | async as unpaidInvoices">
+                <div *ngIf="unpaidInvoices.length > 0" class="bg-red-50 border border-red-200 rounded-lg p-4">
+                    <div class="flex items-center">
+                        <youpez-ibm-icon iconName="warning" iconSize="20" class="text-red-600 mr-3"></youpez-ibm-icon>
+                        <div>
+                            <h3 class="text-lg font-semibold text-red-800">Factures impayées</h3>
+                            <p class="text-red-600">
+                                Vous avez {{ unpaidInvoices.length }} facture(s) impayée(s)
+                                pour un montant total de {{ (totalUnpaidAmount$ | async) || 0 }} FCFA
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- <div class="sm:col-span-3 mb-6">
                     <youpez-alert [appearance]="'outline'" [type]="'warning'">
                         Veuillez activer le plan Pro pour bénéficier de l'ensemble des fonctionnalités de l'application. <a

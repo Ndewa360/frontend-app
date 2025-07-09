@@ -7,16 +7,16 @@ import { DummyTableExpansionComponent } from './components/dummy-table-expansion
 import { DummyTableAdvancedComponent } from './components/dummy-table-advanced/dummy-table-advanced.component'
 import { DebugTokenPanelComponent } from './components/debug-token-panel/debug-token-panel.component'
 import { NgxsModule } from '@ngxs/store';
-import { 
-  UserProfileState, 
-  UserState, 
-  PropertyState, 
-  RoomState, 
-  LocataireState, 
-  AuthTokenState, 
-  LocationState, 
-  StatisticState, 
-  SouscriptionState, 
+import {
+  UserProfileState,
+  UserState,
+  PropertyState,
+  RoomState,
+  LocataireState,
+  AuthTokenState,
+  LocationState,
+  StatisticState,
+  SouscriptionState,
   SouscriptionPeriodState,
   CityState,
   CountryState,
@@ -24,7 +24,9 @@ import {
   ContractState,
   HistoryLocationPaymentState,
   GlobalState,
-  ContractTemplateState
+  ContractTemplateState,
+  SubscriptionLimitState,
+  SubscriptionPaymentState
 
 } from './store';
 
@@ -54,6 +56,8 @@ import { ContractTemplateSelectorComponent } from './components/contract-templat
 import { ScrollRevealDirective } from './directives/scroll-reveal/scroll-reveal.directive';
 import { LoadingOverlayComponent } from './components/loading-overlay/loading-overlay.component';
 import { CountUpDirective } from './directives/counter-up/counter-up.directive';
+import { SubscriptionLimitModalComponent } from './components/subscription-limit-modal/subscription-limit-modal.component';
+import { SubscriptionStatusWidgetComponent } from './components/subscription-status-widget/subscription-status-widget.component';
 
 import { ProspectionState } from './store/prospection/prospection.state';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
@@ -98,7 +102,9 @@ export function HttpLoaderFactory(http: HttpClient) {
         UploadFilesState,
         ContractState,
         ProspectionState,
-        ContractTemplateState
+        ContractTemplateState,
+        SubscriptionLimitState,
+        SubscriptionPaymentState
       ]),
       NgxsStoragePluginModule.forRoot({
         key:["ndewa360_auth_token"]
@@ -140,7 +146,9 @@ export function HttpLoaderFactory(http: HttpClient) {
     SmartNotificationsComponent,
     LoadingOverlayComponent,
     DebugTokenPanelComponent,
-    ContractTemplateSelectorComponent
+    ContractTemplateSelectorComponent,
+    SubscriptionLimitModalComponent,
+    SubscriptionStatusWidgetComponent
   ],
   exports: [
     YoupezModule,
@@ -168,7 +176,9 @@ export function HttpLoaderFactory(http: HttpClient) {
     SmartNotificationsComponent,
     LoadingOverlayComponent,
     DebugTokenPanelComponent,
-    ContractTemplateSelectorComponent
+    ContractTemplateSelectorComponent,
+    SubscriptionLimitModalComponent,
+    SubscriptionStatusWidgetComponent
   ],
   providers: [
     // Nouveaux services ajoutés

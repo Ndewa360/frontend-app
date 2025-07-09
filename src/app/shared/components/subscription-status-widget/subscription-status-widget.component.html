@@ -1,0 +1,109 @@
+<!-- Widget de statut de souscription -->
+<div class="subscription-widget" [ngClass]="statusColor">
+  
+  <!-- Loading state -->
+  <div *ngIf="loading" class="widget-loading">
+    <youpez-loader size="small"></youpez-loader>
+    <span>Chargement...</span>
+  </div>
+
+  <!-- Error state -->
+  <div *ngIf="error && !loading" class="widget-error">
+    <youpez-ibm-icon iconName="warning" iconSize="16"></youpez-ibm-icon>
+    <span>Erreur de chargement</span>
+    <button class="retry-btn" (click)="loadSubscriptionData()">
+      <youpez-ibm-icon iconName="renew" iconSize="16"></youpez-ibm-icon>
+    </button>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="!loading && !error && subscriptionStatus" class="widget-content">
+    
+    <!-- Header -->
+    <div class="widget-header">
+      <div class="status-info">
+        <div class="status-badge" [ngClass]="statusColor">
+          <youpez-ibm-icon 
+            [iconName]="subscriptionStatus.plan === 'premium' ? 'star' : 'user'"
+            iconSize="16">
+          </youpez-ibm-icon>
+          <span>{{ statusText }}</span>
+        </div>
+        
+        <div *ngIf="paymentStatus?.hasUnpaidInvoices" class="payment-alert">
+          <youpez-ibm-icon iconName="warning" iconSize="16"></youpez-ibm-icon>
+          <span>{{ paymentStatus.totalUnpaidAmount }} FCFA impayés</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Progress bar pour forfait gratuit -->
+    <div *ngIf="subscriptionStatus.plan === 'free'" class="progress-section">
+      <div class="progress-info">
+        <span class="progress-label">Biens créés</span>
+        <span class="progress-value">
+          {{ subscriptionStatus.propertyCount }} / {{ subscriptionStatus.propertyLimit }}
+        </span>
+      </div>
+      
+      <div class="progress-bar">
+        <div 
+          class="progress-fill" 
+          [style.width.%]="progressPercentage"
+          [style.background-color]="progressColor">
+        </div>
+      </div>
+      
+      <div *ngIf="progressPercentage >= 80" class="progress-warning">
+        <youpez-ibm-icon iconName="warning" iconSize="16"></youpez-ibm-icon>
+        <span>Limite bientôt atteinte</span>
+      </div>
+    </div>
+
+    <!-- Informations Premium -->
+    <div *ngIf="subscriptionStatus.plan === 'premium'" class="premium-info">
+      <div class="premium-item">
+        <span class="label">Montant mensuel :</span>
+        <span class="value">{{ subscriptionStatus.monthlyAmount }} FCFA</span>
+      </div>
+      <div class="premium-item">
+        <span class="label">Biens créés :</span>
+        <span class="value">{{ subscriptionStatus.propertyCount }}</span>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="widget-actions">
+      
+      <!-- Bouton Upgrade -->
+      <button 
+        *ngIf="showUpgradeButton"
+        class="action-btn upgrade-btn"
+        (click)="openUpgradeModal()">
+        <youpez-ibm-icon iconName="arrow-up" iconSize="16"></youpez-ibm-icon>
+        <span>Passer au Premium</span>
+      </button>
+
+      <!-- Bouton Paiement -->
+      <button 
+        *ngIf="showPaymentButton"
+        class="action-btn payment-btn"
+        (click)="openPaymentModal()">
+        <youpez-ibm-icon iconName="warning" iconSize="16"></youpez-ibm-icon>
+        <span>Régler les impayés</span>
+      </button>
+
+      <!-- Bouton Calculer (Premium) -->
+      <button 
+        *ngIf="subscriptionStatus.plan === 'premium'"
+        class="action-btn calculate-btn"
+        (click)="calculateMonthlyAmount()">
+        <youpez-ibm-icon iconName="calculator" iconSize="16"></youpez-ibm-icon>
+        <span>Calculer</span>
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
