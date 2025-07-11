@@ -5,6 +5,17 @@ import { SouscriptionModel, SouscriptionState } from 'src/app/shared/store';
 import { SubscriptionLimitState, SubscriptionLimitAction, SubscriptionStatus } from 'src/app/shared/store/subscription-limit';
 import { SubscriptionPaymentState, SubscriptionPaymentAction, PaymentHistory, UnpaidInvoice } from 'src/app/shared/store/subscription-payment';
 
+interface MenuSection {
+  name: string;
+  children: MenuChild[];
+}
+
+interface MenuChild {
+  name: string;
+  path?: string;
+  selected?: boolean;
+}
+
 @Component({
   selector: 'billing-page',
   templateUrl: './billing-page.component.html',
@@ -19,32 +30,35 @@ export class BillingPageComponent implements OnInit {
   @Select(SubscriptionPaymentState.selectPaymentHistory) paymentHistory$: Observable<PaymentHistory | null>
   @Select(SubscriptionPaymentState.selectUnpaidInvoices) unpaidInvoices$: Observable<UnpaidInvoice[]>
   @Select(SubscriptionPaymentState.selectTotalUnpaidAmount) totalUnpaidAmount$: Observable<number>
-  public sections =  [
+  public sections: MenuSection[] = [
     {
       name: 'Facturation & Paiement',
       children: [
         {
-          name: 'Factures',
-          path: 'facture',
+          name: 'Dashboard',
+          path: 'dashboard',
           selected: true,
         },
         {
-          name: 'Paiement'
+          name: 'Factures',
+          path: 'facture',
         },
         {
-          name: 'Abonements',
-          // path: 'plan-list'
+          name: 'Abonnements',
+          path: 'plan-list'
         },
       ]
     },
     {
-      name: 'Methode de paiement',
+      name: 'Historique & Paiements',
       children: [
         {
-          name: 'Methode de paiement'
+          name: 'Historique des transactions',
+          path: undefined // Pas encore implémenté
         },
         {
-          name: 'Historique'
+          name: 'Méthodes de paiement',
+          path: undefined // Pas encore implémenté
         }
       ]
     },

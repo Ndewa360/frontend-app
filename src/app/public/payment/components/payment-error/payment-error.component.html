@@ -1,0 +1,66 @@
+<!-- Page d'erreur de paiement -->
+<div class="payment-error-page">
+  <!-- Header -->
+  <div class="payment-header">
+    <div class="container">
+      <div class="brand-section">
+        <div class="logo">
+          <i class="fa fa-home"></i>
+          <span>Ndewa360°</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenu principal -->
+  <div class="payment-content">
+    <div class="container">
+      <div class="error-section">
+        <div class="error-card">
+          
+          <!-- Animation d'erreur -->
+          <div class="error-animation">
+            <div class="error-circle">
+              <div class="error-icon">
+                <i class="fa fa-times"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contenu d'erreur -->
+          <div class="error-content">
+            <h1>Paiement annulé</h1>
+            <p class="error-message">{{ errorMessage }}</p>
+
+            <!-- Actions -->
+            <div class="error-actions">
+              <button class="btn-retry" (click)="retryPayment()">
+                <i class="fa fa-refresh"></i>
+                Réessayer le paiement
+              </button>
+              
+              <div class="contact-info">
+                <p>
+                  <i class="fa fa-info-circle"></i>
+                  En cas de problème persistant, contactez votre propriétaire ou notre support client.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="payment-footer">
+    <div class="container">
+      <p>&copy; 2024 Ndewa360°. Tous droits réservés.</p>
+      <div class="footer-links">
+        <a href="#">Conditions d'utilisation</a>
+        <a href="#">Politique de confidentialité</a>
+        <a href="#">Support</a>
+      </div>
+    </div>
+  </div>
+</div>

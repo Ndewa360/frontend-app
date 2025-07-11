@@ -115,3 +115,116 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   transform: none;
   opacity: 1;
 }
+
+/* Styles pour le modal de galerie */
+.gallery-modal-dialog {
+  .mat-dialog-container {
+    padding: 0 !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    max-width: 95vw !important;
+    max-height: 90vh !important;
+  }
+
+  .mat-dialog-content {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-height: none !important;
+  }
+}
+
+/* Styles pour les modals de paiement ultra-professionnels */
+.payment-modal-dialog,
+.delete-payment-modal-dialog,
+.generate-payment-link-modal-dialog {
+  .mat-dialog-container {
+    padding: 0 !important;
+    border-radius: 16px !important;
+    overflow: hidden !important;
+    max-width: 95vw !important;
+    max-height: 90vh !important;
+    box-shadow:
+      0 25px 50px -12px rgba(0, 0, 0, 0.25) !important,
+      0 0 0 1px rgba(255, 255, 255, 0.05) !important;
+    backdrop-filter: blur(20px) !important;
+  }
+
+  .mat-dialog-content {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-height: none !important;
+    overflow: hidden !important;
+  }
+}
+
+/* Styles spécifiques pour le modal d'ajout de paiement */
+.payment-modal-dialog {
+  .mat-dialog-container {
+    width: 600px !important;
+    height: auto !important;
+    max-height: 90vh !important;
+  }
+}
+
+/* Styles spécifiques pour le modal de suppression */
+.delete-payment-modal-dialog {
+  .mat-dialog-container {
+    width: 500px !important;
+    height: auto !important;
+    max-height: 85vh !important;
+  }
+}
+
+/* Styles spécifiques pour le modal de génération de lien */
+.generate-payment-link-modal-dialog {
+  .mat-dialog-container {
+    width: 800px !important;
+    height: auto !important;
+    max-height: 90vh !important;
+  }
+}
+
+/* Animation d'entrée pour les modals */
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.payment-modal-dialog .mat-dialog-container,
+.delete-payment-modal-dialog .mat-dialog-container {
+  animation: modalFadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Responsive pour les modals */
+@media (max-width: 768px) {
+  .payment-modal-dialog,
+  .delete-payment-modal-dialog {
+    .mat-dialog-container {
+      width: 95vw !important;
+      max-width: 95vw !important;
+      height: auto !important;
+      max-height: 95vh !important;
+      margin: 8px !important;
+      border-radius: 16px !important;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .payment-modal-dialog,
+  .delete-payment-modal-dialog {
+    .mat-dialog-container {
+      width: 100vw !important;
+      height: 100vh !important;
+      max-height: 100vh !important;
+      margin: 0 !important;
+      border-radius: 0 !important;
+    }
+  }
+}

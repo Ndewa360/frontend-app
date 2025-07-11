@@ -1,76 +1,252 @@
-<div fxFill fxLayout="column" class="app-bg-container overflow-hidden galery-image-dialog">
-    <div class="px-4 py-4 flex">
-        <div class="app-productive-heading-03 font-bold">Mise à jour du bien </div>
-        <div class="flex-1 flex justify-end">
-            <button (click)="close()" type="reset" ibmButton="ghost" size="sm"
-                class="cds--btn--icon-only custom-ghost-close">
-                <youpez-ibm-icon iconClass="cds--btn__icon" iconName="close" iconSize="32"></youpez-ibm-icon>
+<!-- Modal Container avec design moderne -->
+<div class="gallery-modal-container" fxFill fxLayout="column">
+    <!-- Header avec navigation moderne -->
+    <div class="gallery-header">
+        <div class="header-content">
+            <div class="header-left">
+                <h2 class="gallery-title">
+                    <i class="fa fa-images mr-2"></i>
+                    Galerie Média
+                </h2>
+                <p class="gallery-subtitle">{{ data.room.code }} - Gestion des médias</p>
+            </div>
+
+            <!-- Navigation des vues -->
+            <div class="view-switcher">
+                <button
+                    class="view-btn"
+                    [class.active]="currentView === 'gallery'"
+                    (click)="switchView('gallery')">
+                    <i class="fa fa-th-large"></i>
+                    <span>Galerie</span>
+                </button>
+                <button
+                    class="view-btn"
+                    [class.active]="currentView === 'upload'"
+                    (click)="switchView('upload')">
+                    <i class="fa fa-cloud-upload-alt"></i>
+                    <span>Importer</span>
+                </button>
+            </div>
+
+            <button (click)="close()" class="close-btn">
+                <i class="fa fa-times"></i>
             </button>
         </div>
     </div>
-    <div fxFlex>
-        <div class="app-content app-content--default h-full">
-            <cds-tabs
-            [type]="'line'"
-            [followFocus]="false"
-            [isNavigation]="false"
-            [cacheActive]="false">
-            <cds-tab heading="Images" [tabContent]="galeryImage"></cds-tab>
-            <cds-tab heading="Vidéos"  [tabContent]="galeryVideo"></cds-tab>
-            <cds-tab heading="Vidéo360" [tabContent]="galeryVideo360"></cds-tab>
-            <cds-tab heading="Importer" [tabContent]="importer"></cds-tab>
-        </cds-tabs>
+    <!-- Contenu principal -->
+    <div class="gallery-content" fxFlex>
 
-        <!-- Use templates if you would like to have lifecycle hooks called when cacheActive is false -->
-        
-        <ng-template #galeryImage>
-            <galery-image [urlList]="roomSelectedImages" (onDeleteFileEvent)="deleteFile($event)"></galery-image>
-        </ng-template>
-        <ng-template #galeryVideo>
-            <galery-video [urlList]="roomSelectedVideos" (onDeleteFileEvent)="deleteFile($event)"></galery-video>
-        </ng-template>
-        <ng-template #galeryVideo360>
-            <galery-video360 [urlList]="roomSelectedImages360" (onDeleteFileEvent)="deleteFile($event)"></galery-video360>
-        </ng-template>
-
-        <ng-template #importer>
-            <app-file-upload [isMultiple]="true" [shouldResetFiles]="shouldResetFiles" [acceptedFileType]="'image/*,video/*'" (uploadFileEvent)="updateFileListToUpdate($event)"></app-file-upload>
-
-            <div class="w-full flex justify-center ">
-                <!-- <button  class="absolute  float-right btn-text-edit top-2 right-0 mt-5 mr-5 bg-slate-700 rounded-md">
-                    <youpez-ibm-icon iconName="pen" iconSize="24" ></youpez-ibm-icon>
-                  </button> -->
-                <button *ngIf="files.length>0 && waitingForUploaded==false" class="upload-btn text-center mt-4 custom-primary-button" (click)="uploadedFile()" ibmButton="primary" size="md" type="submit">
-                    <span class="btn-text mr-1">Uploader</span>
-                    <youpez-ibm-icon iconClass="cds--btn__icon" iconName="upload" iconSize="20"></youpez-ibm-icon>
-                </button>                
+        <!-- Vue Galerie -->
+        <div *ngIf="currentView === 'gallery'" class="gallery-view">
+            <!-- Onglets de type de média -->
+            <div class="media-tabs">
+                <button
+                    class="media-tab"
+                    [class.active]="selectedTab === 'images'"
+                    (click)="switchTab('images')">
+                    <i class="fa fa-image"></i>
+                    <span>Images</span>
+                    <span class="count">{{ roomSelectedImages.length }}</span>
+                </button>
+                <button
+                    class="media-tab"
+                    [class.active]="selectedTab === 'videos'"
+                    (click)="switchTab('videos')">
+                    <i class="fa fa-video"></i>
+                    <span>Vidéos</span>
+                    <span class="count">{{ roomSelectedVideos.length }}</span>
+                </button>
+                <button
+                    class="media-tab"
+                    [class.active]="selectedTab === '360'"
+                    (click)="switchTab('360')">
+                    <i class="fa fa-globe"></i>
+                    <span>360°</span>
+                    <span class="count">{{ roomSelectedImages360.length }}</span>
+                </button>
             </div>
-            <div class="w-full mt-10">
-                <ng-container *ngIf="(files$ | async) as files ">
-                    <div fxFill fxLayout="column" class="mt-5" *ngFor="let file of files">
-                        <app-progress-bar  [progressValue]="file.state.progress" [progressName]="file.name" [progressState]="file.state.state" class="w-full"></app-progress-bar>
+
+            <!-- Contenu de la galerie selon l'onglet sélectionné -->
+            <div class="media-content">
+                <!-- Affichage des images -->
+                <div *ngIf="selectedTab === 'images'" class="media-grid">
+                    <div *ngIf="roomSelectedImages.length === 0" class="empty-state">
+                        <i class="fa fa-image fa-3x"></i>
+                        <p>Aucune image disponible</p>
+                        <button class="add-media-btn" (click)="switchView('upload')">
+                            <i class="fa fa-plus"></i> Ajouter des images
+                        </button>
                     </div>
-                </ng-container>
-                <!-- <div fxFill fxLayout="column" class="mt-5" *ngFor="let file of filesUploaded">
-                    <app-progress-bar  [progressValue]="file.state.progress" [progressName]="file.name" [progressState]="file.state.state" class="w-full"></app-progress-bar>
-                </div> -->
-                
+
+                    <div *ngIf="roomSelectedImages.length > 0" class="media-items">
+                        <div *ngFor="let imageUrl of roomSelectedImages" class="media-item">
+                            <div class="media-preview">
+                                <img [src]="imageUrl" alt="Image" class="preview-image">
+                                <div class="media-overlay">
+                                    <button class="action-btn view-btn" title="Voir en plein écran">
+                                        <i class="fa fa-search-plus"></i>
+                                    </button>
+                                    <button class="action-btn delete-btn" (click)="deleteFile(imageUrl)" title="Supprimer">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Affichage des vidéos -->
+                <div *ngIf="selectedTab === 'videos'" class="media-grid">
+                    <div *ngIf="roomSelectedVideos.length === 0" class="empty-state">
+                        <i class="fa fa-video fa-3x"></i>
+                        <p>Aucune vidéo disponible</p>
+                        <button class="add-media-btn" (click)="switchView('upload')">
+                            <i class="fa fa-plus"></i> Ajouter des vidéos
+                        </button>
+                    </div>
+
+                    <div *ngIf="roomSelectedVideos.length > 0" class="media-items">
+                        <div *ngFor="let videoUrl of roomSelectedVideos" class="media-item">
+                            <div class="media-preview">
+                                <video [src]="videoUrl" controls class="preview-video"></video>
+                                <div class="media-overlay">
+                                    <button class="action-btn delete-btn" (click)="deleteFile(videoUrl)" title="Supprimer">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Affichage des 360 -->
+                <div *ngIf="selectedTab === '360'" class="media-grid">
+                    <div *ngIf="roomSelectedImages360.length === 0" class="empty-state">
+                        <i class="fa fa-globe fa-3x"></i>
+                        <p>Aucune image 360° disponible</p>
+                        <button class="add-media-btn" (click)="switchView('upload')">
+                            <i class="fa fa-plus"></i> Ajouter des images 360°
+                        </button>
+                    </div>
+
+                    <div *ngIf="roomSelectedImages360.length > 0" class="media-items">
+                        <div *ngFor="let image360Url of roomSelectedImages360" class="media-item">
+                            <div class="media-preview">
+                                <galery-video360-item [urlFile]="image360Url" (onDeleteFileEvent)="deleteFile($event)"></galery-video360-item>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
+        </div>
 
+        <!-- Vue Upload -->
+        <div *ngIf="currentView === 'upload'" class="upload-view">
+            <div class="upload-container">
+                <h3 class="upload-title">
+                    <i class="fa fa-cloud-upload-alt mr-2"></i>
+                    Importer des médias
+                </h3>
 
-        </ng-template>
+                <app-file-upload
+                    [isMultiple]="true"
+                    [shouldResetFiles]="shouldResetFiles"
+                    [acceptedFileType]="'image/*,video/*'"
+                    (uploadFileEvent)="updateFileListToUpdate($event)">
+                </app-file-upload>
 
+                <!-- Liste des fichiers en attente -->
+                <div class="upload-queue" *ngIf="uploadQueue.length > 0">
+                    <h4 class="queue-title">
+                        <i class="fa fa-list mr-2"></i>
+                        Files à télécharger ({{ uploadQueue.length }})
+                    </h4>
+
+                    <div class="queue-items">
+                        <div *ngFor="let item of uploadQueue" class="queue-item">
+                            <div class="item-info">
+                                <i class="fa"
+                                   [class.fa-image]="item.file.type.includes('image')"
+                                   [class.fa-video]="item.file.type.includes('video')"
+                                   [class.fa-file]="!item.file.type.includes('image') && !item.file.type.includes('video')">
+                                </i>
+                                <span class="item-name">{{ item.file.name }}</span>
+                                <span class="item-size">{{ item.file.size | fileSize }}</span>
+                            </div>
+
+                            <div class="item-status">
+                                <div *ngIf="item.status === 'pending'" class="status pending">En attente</div>
+                                <div *ngIf="item.status === 'uploading'" class="status uploading">
+                                    <div class="progress-bar">
+                                        <div class="progress" [style.width.%]="item.progress"></div>
+                                    </div>
+                                    <span>{{ item.progress }}%</span>
+                                </div>
+                                <div *ngIf="item.status === 'success'" class="status success">
+                                    <i class="fa fa-check-circle"></i> Terminé
+                                </div>
+                                <div *ngIf="item.status === 'error'" class="status error">
+                                    <i class="fa fa-exclamation-circle"></i> Erreur
+                                    <button class="retry-btn" (click)="retryFailedUpload(item)">
+                                        <i class="fa fa-redo"></i> Réessayer
+                                    </button>
+                                </div>
+                                <div *ngIf="item.status === 'retrying'" class="status retrying">
+                                    <i class="fa fa-sync fa-spin"></i> Nouvelle tentative...
+                                </div>
+
+                                <button *ngIf="item.status === 'pending'" class="remove-btn" (click)="removeFromQueue(item)">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Boutons d'action -->
+                <div class="upload-actions">
+                    <button
+                        class="cancel-btn"
+                        (click)="switchView('gallery')">
+                        <i class="fa fa-arrow-left mr-2"></i>
+                        Retour à la galerie
+                    </button>
+
+                    <button
+                        class="upload-btn"
+                        [disabled]="files.length === 0 || isUploading"
+                        (click)="uploadFiles()">
+                        <i class="fa fa-cloud-upload-alt mr-2"></i>
+                        {{ isUploading ? 'Téléchargement en cours...' : 'Télécharger les fichiers' }}
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="px-4 py-4 flex justify-end app-border-t">
-        <button (click)="close()" type="reset" ibmButton="secondary" size="md" class="mr-1 btn-annuler">
-            Terminer
-        </button>
-        <!-- <button ibmButton="primary" size="md" 
-            class="custom-primary-button" type="submit">
-                <span class="btn-text">Mettre à jour</span>
-                <youpez-ibm-icon iconClass="cds--btn__icon" iconName="add" iconSize="20"></youpez-ibm-icon>
 
-        </button> -->
+    <!-- Footer avec statistiques -->
+    <div class="gallery-footer">
+        <div class="footer-stats">
+            <div class="stat-item">
+                <i class="fa fa-image"></i>
+                <span>{{ roomSelectedImages.length }} Images</span>
+            </div>
+            <div class="stat-item">
+                <i class="fa fa-video"></i>
+                <span>{{ roomSelectedVideos.length }} Vidéos</span>
+            </div>
+            <div class="stat-item">
+                <i class="fa fa-globe"></i>
+                <span>{{ roomSelectedImages360.length }} 360°</span>
+            </div>
+        </div>
+
+        <div class="footer-actions">
+            <button class="footer-btn secondary" (click)="close()">
+                <i class="fa fa-times mr-2"></i>
+                Fermer
+            </button>
+        </div>
     </div>
 </div>

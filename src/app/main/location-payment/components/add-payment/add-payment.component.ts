@@ -40,10 +40,13 @@ export class AddPaymentComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    // Initialiser le formulaire avec la date d'aujourd'hui
+    const today = new Date().toISOString().split('T')[0];
+
     this.formGroup = this.formBuilder.group({
       paymentLocationType: [LocationPaymentType.LOCATION, [Validators.required]],
       locationPaymentPrice: [5000, [Validators.required, Validators.min(1000)]],
-      datePayment: [null, [Validators.required]],
+      datePayment: [today, [Validators.required]],
       reason: [null]
     });
 
@@ -65,7 +68,13 @@ export class AddPaymentComponent implements OnInit {
     this._ngxsAction.pipe(ofActionSuccessful(LocationPaymentAction.CreateLocationPayment)).subscribe((action) => {
       this.waittingResponse = false;
       this.paymentAdded.emit(action);
-      this.onClose();
+
+      // Fermer le dialog avec succès si utilisé en modal
+      if (this.dialogRef) {
+        this.dialogRef.close(true);
+      } else {
+        this.onClose();
+      }
     });
 
     this._ngxsAction.pipe(ofActionCompleted(LocationPaymentAction.CreateLocationPayment)).subscribe(() => {
@@ -98,8 +107,14 @@ export class AddPaymentComponent implements OnInit {
 
     let bodyToSend = FormUtils.removeNullAttribut({...this.formGroup.value});
     this.waittingResponse = true;
-    let datePayment = bodyToSend.datePayment[0];
-    datePayment.setHours(6);
+
+    // Gérer la date selon le format (string ou array)
+    let datePayment = bodyToSend.datePayment;
+    if (Array.isArray(datePayment)) {
+      datePayment = datePayment[0];
+      datePayment.setHours(6);
+      datePayment = datePayment.toISOString().split("T")[0];
+    }
 
     // Utiliser la location appropriée
     const targetLocation = this.location || this.data?.location;
@@ -112,7 +127,7 @@ export class AddPaymentComponent implements OnInit {
 
     this._store.dispatch(new LocationPaymentAction.CreateLocationPayment({
       ...bodyToSend,
-      datePayment: datePayment.toISOString().split("T")[0],
+      datePayment: datePayment,
       locataireId: targetLocation.locataire,
       locationId: targetLocation._id,
       roomId: targetLocation.room,
@@ -133,5 +148,23 @@ export class AddPaymentComponent implements OnInit {
 
   getMoney(): string {
     return UtilsString.getDefaultCurrency();
+  }
+
+  getRoomDisplayInfo(): string {
+    const roomCode = this.getRoomCode();
+    const tenantName = this.getTenantName();
+    return `Unité #${roomCode} - ${tenantName}`;
+  }
+
+  getRoomCode(): string {
+    if (this.room?.code) return this.room.code;
+    if (this.data?.location?.room) return this.data.location.room;
+    return 'N/A';
+  }
+
+  getTenantName(): string {
+    if (this.tenant?.fullName) return this.tenant.fullName;
+    if (this.tenant?.name) return this.tenant.name;
+    return 'Aucun locataire assigné';
   }
 }

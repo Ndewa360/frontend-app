@@ -17,6 +17,9 @@ export class SouscriptionStateModel {
     souscription:SouscriptionModel[]
     loadingSouscription:boolean
     initLoadingState:'NO_LOADED'|'LOADING'|'LOADED';
+    currentSubscription:SouscriptionModel | null;
+    subscriptionHistory:SouscriptionModel[];
+    loadingHistory:boolean;
 }
 
 
@@ -26,6 +29,9 @@ export class SouscriptionStateModel {
         loadingSouscription:false,
         souscription:[],
         initLoadingState:'NO_LOADED',
+        currentSubscription:null,
+        subscriptionHistory:[],
+        loadingHistory:false,
     }
 })
 @Injectable()
@@ -68,6 +74,24 @@ export class SouscriptionState{
         return souscription ? souscription : null
     }
 
+    @Selector()
+    static selectCurrentSubscription(state:SouscriptionStateModel)
+    {
+        return state.currentSubscription
+    }
+
+    @Selector()
+    static selectSubscriptionHistory(state:SouscriptionStateModel)
+    {
+        return state.subscriptionHistory
+    }
+
+    @Selector()
+    static selectLoadingHistory(state:SouscriptionStateModel)
+    {
+        return state.loadingHistory
+    }
+
     static selectStateSouscription(souscriptionId)
     {
         return createSelector([SouscriptionState],(state)=>{
@@ -93,6 +117,9 @@ export class SouscriptionState{
             loadingSouscription:false,
             souscription:[],
             initLoadingState:'NO_LOADED',
+            currentSubscription:null,
+            subscriptionHistory:[],
+            loadingHistory:false,
         })
     }
 
@@ -208,6 +235,58 @@ export class SouscriptionState{
                     loadingSouscription: false
                 })
                 return throwError(error);
+            })
+        )
+    }
+
+    @Action(SouscriptionAction.FetchCurrentSubscription)
+    fetchCurrentSubscription(ctx:StateContext<SouscriptionStateModel>)
+    {
+        ctx.patchState({
+            loadingSouscription:true
+        })
+        return this._souscriptionService.getCurrentSubscription().pipe(
+            tap(
+                result => {
+                    ctx.patchState({
+                        loadingSouscription:false,
+                        currentSubscription: result.data
+                    })
+                }
+            ),
+            catchError((error)=>{
+                ctx.patchState({
+                    loadingSouscription: false,
+                    currentSubscription: null
+                })
+                // Ne pas propager l'erreur pour éviter les toasts
+                return of(null);
+            })
+        )
+    }
+
+    @Action(SouscriptionAction.FetchSubscriptionHistory)
+    fetchSubscriptionHistory(ctx:StateContext<SouscriptionStateModel>)
+    {
+        ctx.patchState({
+            loadingHistory:true
+        })
+        return this._souscriptionService.getSubscriptionHistory().pipe(
+            tap(
+                result => {
+                    ctx.patchState({
+                        loadingHistory:false,
+                        subscriptionHistory: result.data || []
+                    })
+                }
+            ),
+            catchError((error)=>{
+                ctx.patchState({
+                    loadingHistory: false,
+                    subscriptionHistory: []
+                })
+                // Ne pas propager l'erreur pour éviter les toasts
+                return of([]);
             })
         )
     }

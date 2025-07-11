@@ -9,6 +9,7 @@ import { ShowBillingContractComponent } from './components/show-billing-contract
 import { BillingPageComponent } from './billing-page/billing-page.component';
 import { ShowFactureCurrentComponent } from './components/show-facture-current/show-facture-current.component';
 import { PlanListComponent } from './components/plan-list/plan-list.component';
+import { SubscriptionDashboardComponent } from './components/subscription-dashboard/subscription-dashboard.component';
 
 
 @NgModule({
@@ -18,7 +19,8 @@ import { PlanListComponent } from './components/plan-list/plan-list.component';
     ShowBillingContractComponent,
     BillingPageComponent,
     ShowFactureCurrentComponent,
-    PlanListComponent
+    PlanListComponent,
+    SubscriptionDashboardComponent
   ],
   imports: [
     CommonModule,

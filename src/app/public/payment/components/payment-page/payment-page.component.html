@@ -1,0 +1,152 @@
+<div class="payment-page">
+  
+  <!-- Header simplifié -->
+  <header class="payment-header">
+    <div class="header-container">
+      <div class="logo-section">
+        <img src="assets/img/logo/logo-basic-nobg.png" alt="Ndewa360°" class="logo">
+      </div>
+      <div class="security-badge">
+        <i class="fa fa-shield-alt"></i>
+        <span>Paiement sécurisé</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Contenu principal -->
+  <main class="payment-main" *ngIf="!loading">
+    
+    <!-- Erreur -->
+    <div *ngIf="error" class="error-section">
+      <div class="error-card">
+        <i class="fa fa-exclamation-triangle"></i>
+        <h3>Erreur de paiement</h3>
+        <p>{{ error }}</p>
+        <button (click)="error = null" class="retry-btn">Réessayer</button>
+      </div>
+    </div>
+
+    <!-- Formulaire de paiement -->
+    <div *ngIf="!error && paymentDetails" class="payment-container">
+      
+      <!-- Titre -->
+      <div class="payment-title">
+        <h1>{{ paymentDetails.description || 'Paiement de location' }}</h1>
+        <div class="payment-badge">Lien permanent</div>
+      </div>
+
+      <!-- Formulaire compact -->
+      <div class="payment-form">
+        
+        <!-- Section montant -->
+        <div class="amount-section">
+          <label class="amount-label">
+            <i class="fa fa-money-bill-wave"></i>
+            Montant à payer (FCFA)
+          </label>
+          
+          <div class="amount-input-group">
+            <input
+              type="number"
+              #amountInput
+              class="amount-input"
+              placeholder="Saisissez le montant"
+              min="1000"
+              step="100"
+              (input)="onAmountChange(+amountInput.value)"
+              [class.error]="amountError">
+            <span class="currency-suffix">FCFA</span>
+          </div>
+          
+          <!-- Montants rapides -->
+          <div class="quick-amounts">
+            <button
+              type="button"
+              class="quick-btn"
+              *ngFor="let amount of quickAmounts.slice(0, 6)"
+              (click)="setQuickAmount(amount, amountInput)">
+              {{ (amount / 1000) }}k
+            </button>
+          </div>
+
+          <!-- Message d'erreur -->
+          <div *ngIf="amountError" class="error-message">
+            <i class="fa fa-exclamation-triangle"></i>
+            {{ amountError }}
+          </div>
+        </div>
+
+        <!-- Informations de paiement -->
+        <div class="payment-info">
+          <div class="info-row">
+            <div class="payment-methods">
+              <i class="fab fa-cc-visa"></i>
+              <i class="fab fa-cc-mastercard"></i>
+              <i class="fab fa-cc-amex"></i>
+              <span>Cartes acceptées</span>
+            </div>
+            <div class="security-info">
+              <i class="fa fa-lock"></i>
+              <span>Sécurisé SSL</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Détection automatique -->
+        <div class="auto-detection">
+          <div class="detection-header">
+            <i class="fa fa-magic"></i>
+            <span>Détection automatique du type de paiement</span>
+          </div>
+          <div class="detection-items">
+            <div class="detection-item">
+              <i class="fa fa-shield"></i>
+              <span>Caution déduite automatiquement</span>
+            </div>
+            <div class="detection-item">
+              <i class="fa fa-home"></i>
+              <span>Reste appliqué au loyer</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bouton de paiement -->
+        <button
+          class="pay-button"
+          [disabled]="processing || !isAmountValid(+amountInput.value)"
+          (click)="processPayment(+amountInput.value)">
+          <div class="button-content">
+            <i *ngIf="processing" class="fa fa-spinner fa-spin"></i>
+            <i *ngIf="!processing" class="fab fa-stripe"></i>
+            <span>{{ processing ? 'Traitement en cours...' : 'Payer avec Stripe' }}</span>
+            <span *ngIf="!processing && amountInput.value" class="amount-display">
+              {{ formatAmount(+amountInput.value) }}
+            </span>
+          </div>
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-section">
+    <div class="loading-content">
+      <!-- <i class="fa fa-spinner fa-spin"></i>
+      <h3>Chargement...</h3> -->
+      <app-payment-loading></app-payment-loading>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="payment-footer">
+    <div class="footer-content">
+      <span>&copy; 2024 Ndewa360°</span>
+      <div class="footer-links">
+        <a href="#">Conditions</a>
+        <a href="#">Confidentialité</a>
+        <a href="#">Support</a>
+      </div>
+    </div>
+  </footer>
+
+</div>

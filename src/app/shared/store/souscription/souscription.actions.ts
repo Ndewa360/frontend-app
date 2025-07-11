@@ -44,4 +44,16 @@ export namespace SouscriptionAction
         constructor(public souscriptionId:string){}
     }
 
+    //Fetch Current Subscription
+    export class FetchCurrentSubscription
+    {
+        static readonly type = '[Souscription] Fetch Current Subscription'
+    }
+
+    //Fetch Subscription History
+    export class FetchSubscriptionHistory
+    {
+        static readonly type = '[Souscription] Fetch Subscription History'
+    }
+
 }

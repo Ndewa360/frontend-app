@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngxs/store';
+import { MatDialog } from '@angular/material/dialog';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
@@ -15,6 +16,8 @@ import {
 } from 'src/app/shared/store';
 import { PropertyDataService, Unit, Tenant, HistoryItem } from '../services/property-data.service';
 import { UnitAction } from '../components/property-units-list/property-units-list.component';
+import { UpdatePropertyComponent, UpdatePropertyDialogData } from '../update-property/update-property.component';
+import { GaleryComponent } from '../../room/components/galery/galery.component';
 
 interface Tab {
   id: string;
@@ -100,7 +103,8 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private store: Store,
-    private propertyDataService: PropertyDataService
+    private propertyDataService: PropertyDataService,
+    private dialog: MatDialog
   ) {
     // Initialiser les observables vides
     this.property$ = new Observable();
@@ -219,6 +223,9 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
       case 'toggle_status':
         this.onToggleStatus(action.room);
         break;
+      case 'edit_galery':
+        this.onEditGaleryUnit(action.room);
+        break;
     }
   }
 
@@ -259,10 +266,46 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
     // TODO: Implémenter le changement de statut
   }
 
+  private onEditGaleryUnit(room:RoomModel): void {
+    console.log("On Edit Gaeleyr")
+    const dialogRef = this.dialog.open(GaleryComponent, {
+          width: '900px',
+          maxWidth: '95vw',
+          height: '90vh',
+          maxHeight: '90vh',
+          panelClass: 'property-form-dialog',
+          disableClose: true,
+          data: {room}
+        });
+  }
+
   // Actions générales
   onEditProperty(): void {
-    console.log('Éditer la propriété');
-    // TODO: Navigation vers l'édition de propriété
+    this.property$.pipe(takeUntil(this.destroy$)).subscribe(property => {
+      if (property) {
+        const dialogData: UpdatePropertyDialogData = {
+          property: property
+        };
+
+        const dialogRef = this.dialog.open(UpdatePropertyComponent, {
+          width: '900px',
+          maxWidth: '95vw',
+          height: '90vh',
+          maxHeight: '90vh',
+          panelClass: 'property-form-dialog',
+          disableClose: true,
+          data: dialogData
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+          if (result) {
+            console.log('Propriété mise à jour avec succès');
+            // Recharger les données pour refléter les changements
+            this.refreshData();
+          }
+        });
+      }
+    });
   }
 
   onAddTenant(): void {

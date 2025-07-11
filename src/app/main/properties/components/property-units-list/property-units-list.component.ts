@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngxs/store';
+import { MatDialog } from '@angular/material/dialog';
 import { Observable, Subject, combineLatest } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
@@ -9,19 +10,25 @@ import {
   LocataireAction,
   PropertyModel,
   RoomState,
+  RoomAction,
   LocataireState,
   PropertyState,
   RoomType,
   HistoryLocationPaymentState,
   HistoryLocationPaymentAction,
   LocationPaymentModel,
-  HistoryLocationPaymentModel
+  HistoryLocationPaymentModel,
+  LocationModel
 } from 'src/app/shared/store';
 import { UtilsString } from 'src/app/shared/utils';
 import { UnitDetailsViewService } from '../../services/unit-details-view.service';
+import { GaleryComponent } from '../../../room/components/galery/galery.component';
+import { AddPaymentComponent } from '../../../location-payment/components/add-payment/add-payment.component';
+import { DeletePaymentComponent } from '../../../location-payment/components/delete-payment/delete-payment.component';
+import { GeneratePaymentLinkModalComponent } from '../generate-payment-link-modal/generate-payment-link-modal.component';
 
 export interface UnitAction {
-  type: 'view' | 'edit' | 'assign_tenant' | 'terminate_lease' | 'manage_media' | 'toggle_status';
+  type: 'view' | 'edit' | 'assign_tenant' | 'terminate_lease' | 'manage_media' | 'toggle_status' | 'edit_galery';
   room: RoomModel;
   data?: any;
 }
@@ -109,7 +116,8 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
   constructor(
     private store: Store,
     public viewService: UnitDetailsViewService,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog
   ) { }
 
   ngOnInit(): void {
@@ -375,6 +383,146 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
     this.addUnit.emit();
   }
 
+  onEditGaleryUnit(room: RoomModel): void {
+    const dialogRef = this.dialog.open(GaleryComponent, {
+      width: '900px',
+      maxWidth: '95vw',
+      height: '90vh',
+      maxHeight: '90vh',
+      panelClass: 'gallery-modal-dialog',
+      disableClose: true,
+      data: { room }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.mediaUpdated) {
+        console.log('🔄 Médias mis à jour, rechargement des données de l\'unité');
+        // Recharger les données de l'unité pour synchroniser les médias
+        this.refreshUnitData(room._id);
+      }
+    });
+  }
+
+  private refreshUnitData(roomId: string): void {
+    // Recharger les données de l'unité depuis le store
+    this.store.dispatch(new RoomAction.FetchRoom(roomId));
+  }
+
+  // Méthodes pour les modals de paiement
+  openAddPaymentModal(room: RoomModel): void {
+    console.log('🚀 Ouverture du modal AddPayment pour la room:', room);
+
+    // Vérifier si la chambre est libre
+    if (!room || room.isFree === true) {
+      alert('Impossible d\'ajouter un paiement : cette unité est libre et n\'a pas de locataire assigné.');
+      return;
+    }
+
+    // Récupérer les données du locataire et de la location
+    const tenant = this.getTenantForRoom(room);
+    const location = this.getLocationForRoom(room);
+
+    console.log('📊 Données pour le modal:', { room, tenant, location });
+
+    // Ouvrir le modal même sans tenant pour tester
+    const dialogRef = this.dialog.open(AddPaymentComponent, {
+      width: '600px',
+      maxWidth: '95vw',
+      maxHeight: '90vh',
+      panelClass: 'payment-modal-dialog',
+      disableClose: true,
+      data: {
+        room: room,
+        tenant: tenant,
+        location: location
+      }
+    });
+
+    console.log('✅ Modal ouvert, dialogRef:', dialogRef);
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('🔄 Modal fermé avec résultat:', result);
+      if (result) {
+        console.log('💰 Paiement ajouté avec succès');
+        // Recharger les données de l'unité
+        this.refreshUnitData(room._id);
+      }
+    });
+  }
+
+  openDeletePaymentModal(paymentData: any): void {
+    if (!paymentData?.transaction || !paymentData?.history) {
+      console.error('Données de paiement manquantes pour la suppression');
+      return;
+    }
+
+    const dialogRef = this.dialog.open(DeletePaymentComponent, {
+      width: '500px',
+      maxWidth: '95vw',
+      panelClass: 'delete-payment-modal-dialog',
+      disableClose: true,
+      data: {
+        transaction: paymentData.transaction,
+        history: paymentData.history
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        console.log('🗑️ Paiement supprimé avec succès');
+        // Recharger les données de l'unité
+        if (paymentData.transaction?.roomId) {
+          this.refreshUnitData(paymentData.transaction.roomId);
+        }
+      }
+    });
+  }
+
+  openGeneratePaymentLinkModal(room: RoomModel, data: any): void {
+    console.log('🔗 Ouverture du modal GeneratePaymentLink pour la room:', room, 'data:', data);
+
+    const dialogRef = this.dialog.open(GeneratePaymentLinkModalComponent, {
+      width: '800px',
+      maxWidth: '95vw',
+      maxHeight: '90vh',
+      panelClass: 'generate-payment-link-modal-dialog',
+      disableClose: true,
+      data: {
+        room: room,
+        tenant: data?.tenant,
+        location: data?.location
+      }
+    });
+
+    console.log('✅ Modal GeneratePaymentLink ouvert, dialogRef:', dialogRef);
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('🔄 Modal GeneratePaymentLink fermé avec résultat:', result);
+      if (result) {
+        console.log('🔗 Lien de paiement généré avec succès');
+        // Optionnel: Recharger les données si nécessaire
+      }
+    });
+  }
+
+  private getTenantForRoom(room: RoomModel): LocataireModel | null {
+    // Essayer de récupérer depuis le service de vue
+    const selectedTenant = this.getSelectedTenant();
+    if (selectedTenant && this.viewService.getSelectedRoom()?._id === room._id) {
+      return selectedTenant;
+    }
+
+    // Pour l'instant, retourner null - peut être amélioré selon la structure des données
+    // room.locataire est un string (ID), pas un objet LocataireModel
+    return null;
+  }
+
+  private getLocationForRoom(_room: RoomModel): LocationModel | null {
+    // Pour l'instant, retourner null - peut être amélioré selon la structure des données
+    // RoomModel n'a pas de propriété location directe
+    return null;
+  }
+
   // Méthodes pour les statistiques basées sur RoomModel
   getOccupiedUnitsCount(): number {
     return this.rooms.filter(room => room.isFree === false).length;
@@ -448,7 +596,7 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
   }
 
   onUnitPanelAction(action: { type: string; room: RoomModel; data?: any }): void {
-    console.log('Action depuis le panneau de détails:', action);
+    console.log('🎯 PropertyUnitsList: Action reçue depuis le panneau de détails:', action);
     // Gérer les actions depuis le panneau de détails
     switch (action.type) {
       case 'edit':
@@ -460,10 +608,6 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
       case 'terminate_lease':
         this.onTerminateLease(action.room);
         break;
-      case 'add_payment':
-        console.log('Ajouter un paiement pour:', action.room);
-        // TODO: Implémenter l'ajout de paiement
-        break;
       case 'view_contract':
         console.log('Voir le contrat pour:', action.room);
         // TODO: Implémenter la visualisation du contrat
@@ -472,8 +616,24 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
         console.log('Voir l\'image:', action.data?.imageUrl);
         // TODO: Implémenter le visualiseur d'image
         break;
+      case 'edit_gallery':
+        console.log('🎨 PropertyUnitsList: Cas edit_gallery détecté, ouverture du modal');
+        this.onEditGaleryUnit(action.room);
+        break;
+      case 'add_payment':
+        this.openAddPaymentModal(action.room);
+        break;
+      case 'delete_payment':
+        this.openDeletePaymentModal(action.data);
+        break;
+      case 'generate_payment_link':
+        console.log('🔗 PropertyUnitsList: Cas generate_payment_link détecté, ouverture du modal');
+        this.openGeneratePaymentLinkModal(action.room, action.data);
+        break;
     }
   }
+
+
 
   // Méthodes pour le panneau simplifié
   getSelectedRoomName(): string {
@@ -933,31 +1093,4 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Méthode pour gérer les actions du nouveau panneau moderne
-  onModernUnitAction(action: any): void {
-    console.log('Action depuis le panneau moderne:', action);
-    switch (action.type) {
-      case 'edit':
-        this.onEditUnit(action.room);
-        break;
-      case 'assign_tenant':
-        this.onAssignTenant(action.room);
-        break;
-      case 'terminate_lease':
-        this.onTerminateLease(action.room);
-        break;
-      case 'add_payment':
-        console.log('Ajouter un paiement pour:', action.room);
-        break;
-      case 'view_contract':
-        console.log('Voir le contrat pour:', action.room);
-        break;
-      case 'manage_media':
-        this.onManageMedia(action.room);
-        break;
-      case 'view_image':
-        console.log('Voir l\'image:', action.data?.imageUrl);
-        break;
-    }
-  }
 }

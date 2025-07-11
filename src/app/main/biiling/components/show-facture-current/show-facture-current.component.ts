@@ -3,7 +3,7 @@ import { Actions, ofActionCompleted, ofActionErrored, ofActionSuccessful, Select
 import { TableModel, TableRowSize, TableHeaderItem, TableItem } from 'carbon-components-angular';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { sort } from 'src/@youpez';
-import { SouscriptionState, SouscriptionModel, SouscriptionPeriodModel, SouscriptionPeriodState, RoomState, RoomModel, LocataireState, PropertyState, RoomAction } from 'src/app/shared/store';
+import { SouscriptionState, SouscriptionModel, SouscriptionPeriodModel, SouscriptionPeriodState, SouscriptionPeriodService, SouscriptionPeriodAction, RoomModel, RoomType, RoomAction, LocataireState, PropertyState } from 'src/app/shared/store';
 import { UtilsString } from 'src/app/shared/utils';
 
 @Component({
@@ -13,9 +13,8 @@ import { UtilsString } from 'src/app/shared/utils';
 })
 export class ShowFactureCurrentComponent {
   @Select(SouscriptionState.selectStatePeriodDefaultWithRunningState) souscription$:Observable<SouscriptionModel>
-  @Select(RoomState.selectStateCountRoomActive) roomCount$:Observable<number>
-  @Select(RoomState.selectStatePriceRoomActive) roomPrice$:Observable<number>
-  @Select(RoomState.selectStateRooms) roomList$:Observable<RoomModel[]>;
+  @Select(SouscriptionPeriodState.selectCurrentPeriodWithDetails) currentPeriodWithDetails$: Observable<SouscriptionPeriodModel>;
+  @Select(SouscriptionPeriodState.selectLoadingCurrentPeriod) loadingCurrentPeriod$: Observable<boolean>;
   roomsValueChangeStatus:{isLoading:BehaviorSubject<boolean>,roomId:string, value:BehaviorSubject<boolean>,room:RoomModel}[]=[];
 
   currentPeriod:SouscriptionPeriodModel=null;
@@ -50,13 +49,26 @@ export class ShowFactureCurrentComponent {
   constructor(
     private _store:Store,
     private _ngxsAction:Actions,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private _souscriptionPeriodService: SouscriptionPeriodService
   ){}
   ngOnInit() {
+    // Charger la période actuelle avec les détails des unités via le store
+    this._store.dispatch(new SouscriptionPeriodAction.FetchCurrentPeriodWithDetails());
+
+    // S'abonner aux changements de la période actuelle
+    this.currentPeriodWithDetails$.subscribe((period) => {
+      if (period) {
+        this.currentPeriod = period;
+        this.setupUnitsTable();
+        this.cdr.detectChanges();
+      }
+    });
+
     this._ngxsAction.pipe(ofActionSuccessful(RoomAction.ChangeStatusActivatedForSouscriptionRoom)).subscribe((value)=>{
       // Navigate to the parent
       let foundRoom = this.roomsValueChangeStatus.find((u)=>u.roomId==value.roomId);
-      foundRoom.value.next(value.isActiveForSouscription);      
+      foundRoom.value.next(value.isActiveForSouscription);
       this.cdr.detectChanges()
       }
     );
@@ -83,34 +95,11 @@ export class ShowFactureCurrentComponent {
       this._store.select(SouscriptionPeriodState.selectStateSouscriptionPeriod(value.currentPeriod)).subscribe((value)=>{
         if(!value) return;
         this.currentPeriod=value;
+        this.setupUnitsTable(); // Utiliser la nouvelle méthode
       })
     })
 
-    this.roomList$.subscribe((roomList)=>{
-      let newModel = new TableModel()
-      
-      newModel.header = [
-        new TableHeaderItem({
-          data: "Code",
-          className: "items-center font-bold"
-        }),
-        new TableHeaderItem({
-          data: "Bien",
-          className: "items-center"
-        }),
-        new TableHeaderItem({
-          data: "Etat",
-          className: "items-center",
-        }),
-      ]
-      this.fullModelData = [...roomList];
-      newModel.data = [[]];
-      newModel.pageLength=10;
-      newModel.totalDataLength=roomList.length;
-      this.model = newModel;
-      this.selectPage(1);
-
-    })
+    // Ne plus utiliser roomList$ - les données viennent maintenant du backend
 
   }
 
@@ -124,25 +113,49 @@ export class ShowFactureCurrentComponent {
     })
   }
 
-  prepareData(roomList) {
-    return roomList.map((room)=> {
+  prepareData(unitsList) {
+    return unitsList.map((unit)=> {
       let dataForLoading = {
-        roomId:room._id,
-        room,
+        roomId: unit.unitId,
+        room: {
+          _id: unit.unitId,
+          code: unit.unitCode,
+          price: unit.unitPrice,
+          isFree: !unit.isEligible,
+          isActiveForSouscription: unit.isActiveForSouscription,
+          type: RoomType.ROOM,
+          property: null,
+          medias: []
+        } as RoomModel,
+        unit,
         isLoading: new BehaviorSubject(false),
-        value:new BehaviorSubject(room.isActiveForSouscription)
+        value: new BehaviorSubject(unit.isActiveForSouscription)
       }
       this.roomsValueChangeStatus.push(dataForLoading);
       return ([
         new TableItem({
-          data: room,
-          template: this.roomTemplate,
+          data: unit.unitCode,
+          className: "items-center font-bold"
+        }),
+        new TableItem({
+          data: unit.propertyName,
           className: "items-center"
         }),
         new TableItem({
-          data: room.property,
-          template: this.propertyTemplate,
+          data: this.getDefaultCurrency() + ' ' + unit.unitPrice.toLocaleString(),
           className: "items-center"
+        }),
+        new TableItem({
+          data: unit.occupiedDays + ' jours',
+          className: "items-center"
+        }),
+        new TableItem({
+          data: unit.isEligible ? 'Oui' : 'Non',
+          className: "items-center " + (unit.isEligible ? 'text-green-600' : 'text-red-600')
+        }),
+        new TableItem({
+          data: this.getDefaultCurrency() + ' ' + unit.revenue.toLocaleString(),
+          className: "items-center font-bold " + (unit.revenue > 0 ? 'text-green-600' : 'text-gray-500')
         }),
         new TableItem({
           data: dataForLoading,
@@ -188,12 +201,28 @@ export class ShowFactureCurrentComponent {
   }
 
 
-  changeStatusRoom(event,roomId)
+  changeStatusRoom(event, roomId)
   {
     let foundRoom = this.roomsValueChangeStatus.find((u)=>u.roomId==roomId);
-    foundRoom.isLoading.next(true)
-    this._store.dispatch(new RoomAction.ChangeStatusActivatedForSouscriptionRoom(roomId,event))
+    foundRoom.isLoading.next(true);
 
+    // Utiliser le nouveau service pour mettre à jour le statut
+    this._souscriptionPeriodService.toggleUnitStatus(roomId, event).subscribe({
+      next: (result) => {
+        foundRoom.isLoading.next(false);
+        foundRoom.value.next(event);
+        // Recharger la période actuelle pour avoir les données mises à jour
+        this.loadCurrentPeriodWithDetails();
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Erreur lors de la mise à jour du statut:', error);
+        foundRoom.isLoading.next(false);
+        // Remettre l'ancien état en cas d'erreur
+        foundRoom.value.next(!event);
+        this.cdr.detectChanges();
+      }
+    });
   }
   changeSouscriptionOfRoom(roomId,status)
   {
@@ -208,5 +237,124 @@ export class ShowFactureCurrentComponent {
   getDefaultCurrency()
   {
     return UtilsString.getDefaultCurrency()
+  }
+
+  public loadCurrentPeriodWithDetails(): void {
+    this._souscriptionPeriodService.getCurrentPeriodWithDetails().subscribe({
+      next: (result) => {
+        if (result.data) {
+          this.currentPeriod = result.data;
+          this.setupUnitsTable();
+          this.cdr.detectChanges();
+        }
+      },
+      error: (error) => {
+        console.error('Erreur lors du chargement de la période actuelle:', error);
+      }
+    });
+  }
+
+  private setupUnitsTable(): void {
+    // Utiliser unitsDetails (nom du backend) ou unitDetails (alias frontend)
+    const unitsData = this.currentPeriod?.unitsDetails || this.currentPeriod?.unitDetails;
+
+    if (!unitsData || unitsData.length === 0) {
+      return;
+    }
+    let newModel = new TableModel()
+
+    newModel.header = [
+      new TableHeaderItem({
+        data: "Code",
+        className: "items-center font-bold"
+      }),
+      new TableHeaderItem({
+        data: "Propriété",
+        className: "items-center"
+      }),
+      new TableHeaderItem({
+        data: "Prix",
+        className: "items-center"
+      }),
+      new TableHeaderItem({
+        data: "Jours occupés",
+        className: "items-center",
+      }),
+      new TableHeaderItem({
+        data: "Éligible",
+        className: "items-center",
+      }),
+      new TableHeaderItem({
+        data: "Montant",
+        className: "items-center",
+      }),
+      new TableHeaderItem({
+        data: "Statut",
+        className: "items-center",
+      }),
+    ]
+
+    // Préparer les données directement
+    const preparedData = this.prepareData(unitsData);
+
+    this.fullModelData = [...unitsData];
+    newModel.data = preparedData;
+    newModel.pageLength=10;
+    newModel.totalDataLength=unitsData.length;
+    this.model = newModel;
+  }
+
+  formatPeriodDates(): string {
+    if (!this.currentPeriod) return 'Période non définie';
+
+    const start = new Date(this.currentPeriod.startedAt).toLocaleDateString('fr-FR');
+    const end = new Date(this.currentPeriod.endedAt).toLocaleDateString('fr-FR');
+    return `${start} - ${end}`;
+  }
+
+  getPeriodStatus(): string {
+    if (!this.currentPeriod) return 'N/A';
+
+    switch (this.currentPeriod.state) {
+      case 'payed': return 'Payée';
+      case 'waiting': return 'En attente de paiement';
+      case 'unpaid': return 'Impayée';
+      default: return 'Statut inconnu';
+    }
+  }
+
+  getPeriodStatusColor(): string {
+    if (!this.currentPeriod) return 'secondary';
+
+    switch (this.currentPeriod.state) {
+      case 'payed': return 'success';
+      case 'waiting': return 'warning';
+      case 'unpaid': return 'danger';
+      default: return 'secondary';
+    }
+  }
+
+  // Méthodes pour calculer les totaux
+  getTotalRevenue(): number {
+    return this.currentPeriod?.totalUnitsRevenue || 0;
+  }
+
+  getTotalServiceFees(): number {
+    return this.currentPeriod?.calculatedAmount || 0;
+  }
+
+  getOccupiedUnitsCount(): number {
+    return this.currentPeriod?.occupiedUnitsCount || 0;
+  }
+
+  getTotalUnitsCount(): number {
+    const unitsData = this.currentPeriod?.unitsDetails || this.currentPeriod?.unitDetails;
+    return unitsData?.length || 0;
+  }
+
+  getTotalTaxes(): number {
+    // Calcul des taxes (18% sur les frais de service)
+    const serviceFees = this.getTotalServiceFees();
+    return serviceFees * 0.18;
   }
 }

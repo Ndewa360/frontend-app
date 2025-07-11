@@ -1,0 +1,251 @@
+<!-- Dashboard de souscription -->
+<div class="subscription-dashboard">
+  
+  <!-- Loading state -->
+  <div *ngIf="loading" class="loading-container">
+    <youpez-loader size="large"></youpez-loader>
+    <p class="loading-text">Chargement de vos informations de souscription...</p>
+  </div>
+
+  <!-- Main content -->
+  <div *ngIf="!loading" class="dashboard-content">
+    
+    <!-- Header avec actions -->
+    <div class="dashboard-header">
+      <div class="header-content">
+        <h1 class="dashboard-title">
+          <i class="fas fa-receipt title-icon"></i>
+          Gestion de votre souscription
+        </h1>
+        <button (click)="refreshData()" class="refresh-btn" [disabled]="loading">
+          <i class="fas fa-sync-alt"></i>
+          Actualiser
+        </button>
+      </div>
+    </div>
+
+    <!-- Souscription actuelle -->
+    <div class="current-subscription-section">
+      <h2 class="section-title">Souscription actuelle</h2>
+      
+      <div *ngIf="currentSubscription" class="subscription-card current">
+        <div class="card-header">
+          <div class="subscription-info">
+            <h3 class="subscription-plan">
+              Plan {{ getPlanLabel(currentSubscription.plan) }}
+              <span class="status-badge" [ngClass]="getAccountStatusColor(currentSubscription.accountStatus)">
+                {{ getAccountStatusLabel(currentSubscription.accountStatus) }}
+              </span>
+            </h3>
+            <p class="subscription-dates">
+              Actif depuis le {{ formatDate(currentSubscription.startedAt) }}
+            </p>
+          </div>
+          <div class="subscription-actions">
+            <button *ngIf="currentSubscription.plan === 'free'"
+                    (click)="upgradeToPremium()"
+                    class="btn btn-primary">
+              <i class="fas fa-arrow-up"></i>
+              Passer au Premium
+            </button>
+            <span *ngIf="currentSubscription.plan === 'premium'" class="premium-badge">
+              <i class="fas fa-check"></i>
+              Plan Premium Actif
+            </span>
+          </div>
+        </div>
+
+        <!-- Période actuelle -->
+        <div *ngIf="currentPeriod" class="current-period">
+          <div class="period-header">
+            <h4 class="period-title">Période actuelle</h4>
+            <span class="period-status" [ngClass]="getPeriodStatusColor(currentPeriod)">
+              {{ getPeriodStatusLabel(currentPeriod) }}
+            </span>
+          </div>
+
+          <div class="period-details">
+            <div class="period-info">
+              <div class="info-item">
+                <label>Période</label>
+                <span>{{ formatDateShort(currentPeriod.startedAt) }} - {{ formatDateShort(currentPeriod.endedAt) }}</span>
+              </div>
+              <div class="info-item">
+                <label>Montant</label>
+                <span class="amount">{{ formatCurrency(currentPeriod?.calculatedAmount) }}</span>
+              </div>
+              <div class="info-item">
+                <label>Propriétés facturées</label>
+                <span>{{ currentSubscription.propertyCount || 0 }}</span>
+              </div>
+            </div>
+
+            <!-- Barre de progression -->
+            <div class="progress-section">
+              <div class="progress-header">
+                <span>Progression de la période</span>
+                <span class="progress-percentage">{{ getProgressPercentage().toFixed(0) }}%</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" [style.width.%]="getProgressPercentage()"></div>
+              </div>
+              <div class="progress-info">
+                <span *ngIf="getDaysUntilDue() > 0" class="days-remaining">
+                  {{ getDaysUntilDue() }} jours restants
+                </span>
+                <span *ngIf="getDaysUntilDue() <= 0" class="overdue">
+                  Période expirée
+                </span>
+              </div>
+            </div>
+
+            <!-- Actions de paiement -->
+            <div *ngIf="currentPeriod?.state !== 'payed' && currentPeriod?.calculatedAmount > 0" class="payment-actions">
+              <button (click)="payCurrentPeriod()" class="btn btn-success">
+                <i class="fas fa-credit-card"></i>
+                Payer maintenant ({{ formatCurrency(currentPeriod?.calculatedAmount) }})
+              </button>
+              <button (click)="downloadInvoice(currentPeriod._id)" class="btn btn-secondary">
+                <i class="fas fa-download"></i>
+                Télécharger la facture
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Statistiques -->
+        <div class="subscription-stats">
+          <div class="stat-item">
+            <div class="stat-value">{{ currentSubscription.propertyCount || 0 }}</div>
+            <div class="stat-label">Propriétés</div>
+          </div>
+          <div class="stat-item" *ngIf="currentSubscription.plan === 'free'">
+            <div class="stat-value">{{ currentSubscription.propertyLimit || 1 }}</div>
+            <div class="stat-label">Limite (Plan Gratuit)</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">
+              <span *ngIf="currentSubscription.plan === 'free'">Gratuit</span>
+              <span *ngIf="currentSubscription.plan === 'premium'">{{ formatCurrency(currentSubscription.monthlyAmount) }}</span>
+            </div>
+            <div class="stat-label">
+              <span *ngIf="currentSubscription.plan === 'free'">Plan Gratuit</span>
+              <span *ngIf="currentSubscription.plan === 'premium'">Montant mensuel</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Aucune souscription -->
+      <div *ngIf="!currentSubscription" class="no-subscription">
+        <i class="fas fa-exclamation-triangle warning-icon"></i>
+        <h3>Aucune souscription active</h3>
+        <p>Vous n'avez pas encore de souscription. Souscrivez au plan Premium pour débloquer toutes les fonctionnalités.</p>
+        <button (click)="upgradeToPremium()" class="btn btn-primary">
+          <i class="fas fa-plus"></i>
+          Souscrire au plan Premium
+        </button>
+      </div>
+    </div>
+
+    <!-- Résumé des impayés -->
+    <div *ngIf="getUnpaidPeriodsCount() > 0" class="unpaid-summary">
+      <div class="summary-card warning">
+        <div class="summary-icon">
+          <i class="fas fa-exclamation-circle"></i>
+        </div>
+        <div class="summary-content">
+          <h3>Factures impayées</h3>
+          <p>Vous avez {{ getUnpaidPeriodsCount() }} facture(s) impayée(s) pour un montant total de {{ formatCurrency(getTotalUnpaidAmount()) }}</p>
+        </div>
+        <div class="summary-action">
+          <button class="btn btn-warning">
+            Voir les détails
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Historique des souscriptions -->
+    <div class="subscription-history-section">
+      <div class="section-header">
+        <h2 class="section-title">Historique des souscriptions</h2>
+        <div class="section-actions">
+          <button *ngIf="loadingHistory" disabled class="btn btn-secondary">
+            <youpez-loader size="small"></youpez-loader>
+            Chargement...
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="subscriptionHistory.length > 0" class="history-list">
+        <div *ngFor="let subscription of subscriptionHistory" class="subscription-card history">
+          <div class="card-header">
+            <div class="subscription-info">
+              <h3 class="subscription-plan">
+                Plan {{ getPlanLabel(subscription.plan) }}
+                <span class="status-badge" [ngClass]="getAccountStatusColor(subscription.accountStatus)">
+                  {{ getAccountStatusLabel(subscription.accountStatus) }}
+                </span>
+              </h3>
+              <p class="subscription-dates">
+                {{ formatDate(subscription.startedAt) }} 
+                <span *ngIf="subscription.endedAt"> - {{ formatDate(subscription.endedAt) }}</span>
+                <span *ngIf="!subscription.endedAt && subscription.isRunning"> - En cours</span>
+              </p>
+            </div>
+            <div class="subscription-summary">
+              <div class="summary-item">
+                <span class="label">Périodes:</span>
+                <span class="value">{{ subscription.periods?.length || 0 }}</span>
+              </div>
+              <div class="summary-item">
+                <span class="label">Propriétés:</span>
+                <span class="value">{{ subscription.propertyCount || 0 }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Périodes de cette souscription -->
+          <div *ngIf="subscription.periods?.length > 0" class="periods-list">
+            <h4 class="periods-title">Périodes de facturation</h4>
+            <div class="periods-grid">
+              <div *ngFor="let period of subscription.periods" class="period-item">
+                <div class="period-info">
+                  <div class="period-dates">{{ formatDateShort(period.startedAt) }} - {{ formatDateShort(period.endedAt) }}</div>
+                  <div class="period-amount">{{ formatCurrency(period.calculatedAmount) }}</div>
+                </div>
+                <div class="period-status">
+                  <span class="status-badge" [ngClass]="getPeriodStatusColor(period)">
+                    {{ getPeriodStatusLabel(period) }}
+                  </span>
+                </div>
+                <div class="period-actions">
+                  <button *ngIf="period.state === 'payed'"
+                          (click)="downloadInvoice(period._id)"
+                          class="btn-icon"
+                          title="Télécharger la facture">
+                    <i class="fas fa-download"></i>
+                  </button>
+                  <button *ngIf="period.state !== 'payed'"
+                          (click)="payCurrentPeriod()"
+                          class="btn-icon pay"
+                          title="Payer maintenant">
+                    <i class="fas fa-credit-card"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Aucun historique -->
+      <div *ngIf="subscriptionHistory.length === 0 && !loadingHistory" class="no-history">
+        <i class="fas fa-file-alt empty-icon"></i>
+        <h3>Aucun historique</h3>
+        <p>Votre historique de souscriptions apparaîtra ici.</p>
+      </div>
+    </div>
+  </div>
+</div>

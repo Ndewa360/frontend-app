@@ -21,7 +21,7 @@ import { ListPropertyComponent } from './properties/list-property/list-property.
 import { LocatairePropertyModule } from './properties/components/locataire-property/locataire-property.module'
 import { AgGridModule } from '@ag-grid-community/angular';
 
-import { UpdatePropertyComponent } from './properties/components/update-property/update-property.component';
+import { UpdatePropertyComponent } from './properties/update-property/update-property.component';
 // import { AssignLocationComponent } from './assign-location/assign-location/assign-location.component';
 // import { AssignLocationFormComponent } from './assign-location/assign-location-form/assign-location-form.component';
 import { RemoveLocataireRoomComponent } from './properties/components/remove-locataire-room/remove-locataire-room.component'
@@ -90,6 +90,7 @@ import { ModernUnitDetailsPanelComponent } from './properties/components/modern-
 import { UnitHeaderComponent } from './properties/components/unit-details-panel/components/unit-header/unit-header.component';
 import { UnitPaymentsTabComponent } from './properties/components/unit-details-panel/components/unit-payments-tab/unit-payments-tab.component';
 import { AddPaymentModalComponent } from './properties/components/unit-details-panel/components/add-payment-modal/add-payment-modal.component';
+import { GeneratePaymentLinkModalComponent } from './properties/components/generate-payment-link-modal/generate-payment-link-modal.component';
 
 // Import du module de paiement (déjà importé plus haut)
 
@@ -174,7 +175,8 @@ ModuleRegistry.registerModules([
     // Nouveaux composants modulaires
     UnitHeaderComponent,
     UnitPaymentsTabComponent,
-    AddPaymentModalComponent
+    AddPaymentModalComponent,
+    GeneratePaymentLinkModalComponent
 
   ],
   imports: [

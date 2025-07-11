@@ -1,0 +1,10 @@
+/* Styles pour les éléments de navigation désactivés */
+.app-nav-list__item__text.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.app-nav-list__item__text.disabled:hover {
+  background-color: transparent;
+}

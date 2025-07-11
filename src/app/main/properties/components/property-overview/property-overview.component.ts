@@ -124,16 +124,54 @@ export class PropertyOverviewComponent implements OnInit, OnChanges {
   }
 
   private loadPropertyAmenities(): void {
-    // Équipements basés sur les unités
+    // Équipements basés sur les propriétés réelles
     const amenities = new Set<string>();
-    
-    // Équipements de base
-    amenities.add('Parking');
-    amenities.add('Sécurité 24h/24');
-    amenities.add('Générateur');
-    amenities.add('Eau courante');
-    
-    // Équipements basés sur les unités
+
+    if (!this.property) return;
+
+    // Équipements de base basés sur les nouvelles propriétés
+    if (this.property.hasParking) {
+      amenities.add('Parking');
+    }
+
+    if (this.property.hasClosure) {
+      amenities.add('Clôture/Barrière');
+    }
+
+    if (this.property.hasElevator) {
+      amenities.add('Ascenseur');
+    }
+
+    if (this.property.hasWater !== false) { // true par défaut
+      amenities.add('Eau courante');
+    }
+
+    if (this.property.hasInternet) {
+      amenities.add('Internet');
+    }
+
+    if (this.property.hasGenerator) {
+      amenities.add('Générateur');
+    }
+
+    if (this.property.hasSecurity) {
+      amenities.add('Sécurité 24h/24');
+    }
+
+    // Équipements de confort
+    if (this.property.hasGarden) {
+      amenities.add('Jardin');
+    }
+
+    if (this.property.hasPool) {
+      amenities.add('Piscine');
+    }
+
+    if (this.property.hasGym) {
+      amenities.add('Salle de sport');
+    }
+
+    // Équipements basés sur les unités (complément)
     if (this.units.some(unit => unit.specifity?.hasKitchen)) {
       amenities.add('Cuisines équipées');
     }
@@ -141,12 +179,11 @@ export class PropertyOverviewComponent implements OnInit, OnChanges {
     if (this.units.some(unit => unit.specifity?.isInternalShower)) {
       amenities.add('Douches privées');
     }
-    
-    if (this.units.length > 5) {
-      amenities.add('Ascenseur');
+
+    // Si aucun équipement spécifique, ajouter des équipements de base
+    if (amenities.size === 0) {
+      amenities.add('Électricité');
     }
-    
-    amenities.add('Internet');
     
     this.propertyAmenities = Array.from(amenities);
   }
@@ -449,6 +486,7 @@ export class PropertyOverviewComponent implements OnInit, OnChanges {
   }
 
   formatDate(date: Date | string | undefined): string {
+
     if (!date) return 'Non spécifiée';
 
     try {
@@ -657,4 +695,37 @@ export class PropertyOverviewComponent implements OnInit, OnChanges {
       difference: Math.abs(difference)
     };
   }
+
+  // Méthodes utilitaires pour les nouvelles propriétés
+  getPropertyTypeLabel(type: string): string {
+    const labels = {
+      'APARTMENT': 'Appartement',
+      'HOUSE': 'Maison',
+      'COMMERCIAL': 'Commercial',
+      'MIXED': 'Mixte',
+      'LAND': 'Terrain'
+    };
+    return labels[type] || type;
+  }
+
+  getConditionLabel(condition: string): string {
+    const labels = {
+      'NEW': 'Neuf',
+      'EXCELLENT': 'Excellent',
+      'GOOD': 'Bon',
+      'FAIR': 'Correct',
+      'POOR': 'À rénover'
+    };
+    return labels[condition] || condition;
+  }
+
+  getFurnishingLabel(status: string): string {
+    const labels = {
+      'FURNISHED': 'Meublé',
+      'SEMI_FURNISHED': 'Semi-meublé',
+      'UNFURNISHED': 'Non meublé'
+    };
+    return labels[status] || status;
+  }
+
 }

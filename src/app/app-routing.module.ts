@@ -68,6 +68,10 @@ const routes: Routes = [
 		loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)
 	  },
 	  {
+		path: 'payment',
+		loadChildren: () => import('./public/payment/payment.module').then(m => m.PaymentModule)
+	  },
+	  {
 		path: '**',
 		resolve:{
 			"initialData":InitialLoadingDataResolver

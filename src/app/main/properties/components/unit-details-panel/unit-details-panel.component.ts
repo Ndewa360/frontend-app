@@ -15,7 +15,7 @@ import { PaymentAction } from './components/unit-payments-tab/unit-payments-tab.
 
 export interface UnitPanelAction {
   type: 'edit' | 'assign_tenant' | 'terminate_lease' | 'add_payment' | 'view_contract' | 'view_image' |
-        'view_payment' | 'edit_payment' | 'edit_gallery' | 'view_media' | 'delete_media';
+        'view_payment' | 'edit_payment' | 'delete_payment' | 'generate_payment_link' | 'edit_gallery' | 'view_media' | 'delete_media';
   room: RoomModel;
   data?: any;
 }
@@ -307,7 +307,9 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   onEditGallery(): void {
+    console.log('🎨 UnitDetailsPanel: onEditGallery appelé', this.room);
     if (this.room) {
+      console.log('🎨 UnitDetailsPanel: Émission de l\'action edit_gallery');
       this.action.emit({
         type: 'edit_gallery',
         room: this.room
@@ -336,11 +338,28 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   onDeletePayment(payment: any): void {
+    console.log('🗑️ UnitDetailsPanel: onDeletePayment appelé', payment);
     if (this.room) {
+      console.log('🗑️ UnitDetailsPanel: Émission de l\'action delete_payment');
       this.action.emit({
-        type: 'edit_payment',
+        type: 'delete_payment',
         room: this.room,
-        data: { payment, action: 'delete' }
+        data: payment
+      });
+    }
+  }
+
+  onGeneratePaymentLink(): void {
+    console.log('🔗 UnitDetailsPanel: onGeneratePaymentLink appelé', this.room);
+    if (this.room) {
+      console.log('🔗 UnitDetailsPanel: Émission de l\'action generate_payment_link');
+      this.action.emit({
+        type: 'generate_payment_link',
+        room: this.room,
+        data: {
+          tenant: this.unitData?.tenant,
+          location: this.unitData?.location
+        }
       });
     }
   }
@@ -366,7 +385,7 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
         // TODO: Implémenter la modification du paiement
         break;
       case 'delete':
-        this.confirmDeletePayment(paymentAction.data);
+        this.onDeletePayment(paymentAction.data);
         break;
       case 'export':
         console.log('Export CSV effectué');
@@ -374,13 +393,7 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  private confirmDeletePayment(payment: any): void {
-    if (confirm(`Êtes-vous sûr de vouloir supprimer ce paiement de ${payment.price} ?`)) {
-      console.log('Supprimer le paiement:', payment);
-      // TODO: Implémenter la suppression du paiement
-      // this.store.dispatch(new LocationPaymentAction.DeleteLocationPayment(payment.transaction._id));
-    }
-  }
+
 
   onPaymentAdded(payment: any): void {
     console.log('Paiement ajouté:', payment);

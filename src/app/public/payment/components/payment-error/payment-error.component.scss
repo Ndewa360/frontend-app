@@ -1,0 +1,258 @@
+/* Page d'erreur ultra-moderne */
+.payment-error-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  display: flex;
+  flex-direction: column;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Header */
+.payment-header {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 16px 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.brand-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 700;
+  
+  i {
+    font-size: 2rem;
+    color: rgb(204, 140, 10);
+  }
+}
+
+/* Content */
+.payment-content {
+  flex: 1;
+  padding: 40px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Error Section */
+.error-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 500px;
+}
+
+.error-card {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(248, 249, 250, 0.9));
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 48px;
+  text-align: center;
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+  max-width: 600px;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Animation d'erreur */
+.error-animation {
+  position: relative;
+  margin-bottom: 32px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.error-circle {
+  width: 100px;
+  height: 100px;
+  background: linear-gradient(145deg, #ef4444, #dc2626);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: errorShake 2s ease-in-out infinite;
+  box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+  position: relative;
+  z-index: 2;
+}
+
+.error-icon {
+  i {
+    font-size: 2.5rem;
+    color: white;
+    animation: iconAppear 0.8s ease-out 0.3s both;
+  }
+}
+
+@keyframes errorShake {
+  0%, 100% {
+    transform: translateX(0);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-2px);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(2px);
+  }
+  50% {
+    box-shadow: 0 0 0 20px rgba(239, 68, 68, 0);
+  }
+}
+
+@keyframes iconAppear {
+  0% {
+    transform: scale(0) rotate(45deg);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2) rotate(45deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+/* Contenu d'erreur */
+.error-content {
+  h1 {
+    color: #1f2937;
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin: 0 0 16px 0;
+    letter-spacing: -0.025em;
+  }
+  
+  .error-message {
+    color: #4b5563;
+    font-size: 1.125rem;
+    margin: 0 0 40px 0;
+    line-height: 1.6;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* Actions d'erreur */
+.error-actions {
+  .btn-retry {
+    background: linear-gradient(145deg, rgb(204, 140, 10), rgb(184, 126, 9));
+    color: white;
+    border: none;
+    padding: 16px 32px;
+    border-radius: 12px;
+    font-size: 1.125rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 auto 24px;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(204, 140, 10, 0.4);
+    }
+  }
+  
+  .contact-info {
+    p {
+      color: #6b7280;
+      font-size: 0.9375rem;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      
+      i {
+        color: #3b82f6;
+      }
+    }
+  }
+}
+
+/* Footer */
+.payment-footer {
+  background: rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 24px 0;
+  
+  .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.875rem;
+  }
+  
+  .footer-links {
+    display: flex;
+    gap: 24px;
+    
+    a {
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      transition: color 0.3s ease;
+      
+      &:hover {
+        color: white;
+      }
+    }
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .payment-content {
+    padding: 20px 0;
+  }
+  
+  .error-card {
+    padding: 32px 24px;
+  }
+  
+  .error-content h1 {
+    font-size: 2rem;
+  }
+  
+  .btn-retry {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .container .footer-links {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+}

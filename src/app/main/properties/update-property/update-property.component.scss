@@ -1,0 +1,58 @@
+// Import des styles du composant d'ajout
+@import '../add-property/add-property.component.scss';
+
+// Styles spécifiques au composant de mise à jour
+.property-form-header {
+  .header-title {
+    h1 {
+      color: #1f2937; // Couleur légèrement différente pour la mise à jour
+    }
+  }
+}
+
+// Indicateur visuel pour la mise à jour
+.form-step {
+  .step-header {
+    .step-title {
+      &::before {
+        content: "✏️ ";
+        margin-right: 0.5rem;
+      }
+    }
+  }
+}
+
+// Bouton de mise à jour avec style spécifique
+.btn.btn-primary[type="submit"] {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  border-color: #059669;
+  
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, #047857 0%, #065f46 100%);
+    border-color: #047857;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+  }
+  
+  &:focus {
+    box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.25);
+  }
+}
+
+// Animation pour les champs modifiés
+.form-input:not(:placeholder-shown),
+.form-select:not([value=""]),
+.form-textarea:not(:placeholder-shown) {
+  border-left: 3px solid #059669;
+  background-color: rgba(5, 150, 105, 0.02);
+}
+
+// Styles pour les checkboxes cochées
+.checkbox-item input[type="checkbox"]:checked + .checkbox-label {
+  color: #059669;
+  font-weight: 600;
+}
+
+.checkbox-item input[type="checkbox"]:checked {
+  accent-color: #059669;
+}

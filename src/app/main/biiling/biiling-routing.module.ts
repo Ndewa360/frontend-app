@@ -6,6 +6,7 @@ import { ChoisePlanComponent } from './components/choise-plan/choise-plan.compon
 import { BillingPageComponent } from './billing-page/billing-page.component';
 import { ShowFactureCurrentComponent } from './components/show-facture-current/show-facture-current.component';
 import { PlanListComponent } from './components/plan-list/plan-list.component';
+import { SubscriptionDashboardComponent } from './components/subscription-dashboard/subscription-dashboard.component';
 
 const routes: Routes = [
   {
@@ -21,11 +22,15 @@ const routes: Routes = [
       },
       {
         path: 'plan-list',
-        component: PlanListComponent,        
+        component: PlanListComponent,
+      },
+      {
+        path: 'dashboard',
+        component: SubscriptionDashboardComponent,
       },
       {
         path: '',
-        redirectTo: 'facture',
+        redirectTo: 'dashboard',
         pathMatch: 'full'
       }
     ]

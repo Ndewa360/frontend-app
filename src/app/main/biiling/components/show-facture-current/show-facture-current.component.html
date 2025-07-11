@@ -4,8 +4,10 @@
         <div class="app-card__header header-footer-billing">
             <div class="app-row app-row--center  p-2">
                 <div>
-                    <div class="app-expressive-heading-03 font-bold mb-2">Récapitulatif de la facture Ndewa360 estimée </div>
-                    <div class="app-label-01">Montant total des frais et d'informations de paiement</div>
+                    <div class="app-expressive-heading-03 font-bold mb-2">Facture de la période actuelle</div>
+                    <div class="app-label-01">{{ currentPeriod?.billingRef || 'Référence non disponible' }} - {{ formatPeriodDates() }}</div>
+
+
                 </div>
             </div>
         </div>
@@ -67,8 +69,8 @@
                     <div>
                         <div class="app-label-01 mb-2">Total en FCFA</div>
                         <div class="app-productive-heading-03 fond-extrabold ">
-                            <span *ngIf="(roomCount$ | async)==0 else hasMoney">0</span>
-                            <ng-template #hasMoney>{{roomPrice$ | async | currency : getDefaultCurrency(): 'symbol' : '1.0-0' }} </ng-template>
+                            <span *ngIf="getTotalServiceFees() === 0; else hasMoney">0</span>
+                            <ng-template #hasMoney>{{ getTotalServiceFees() | currency : getDefaultCurrency(): 'symbol' : '1.0-0' }} </ng-template>
                         </div>
     
                     </div>
@@ -108,7 +110,7 @@
                 <div class="flex justify-between app-card__block">
                     <div>
                         <div class="app-label-04 mb-2">Total de bien actif</div>
-                        <div class="app-productive-heading-03 font-bold" >{{roomCount$ | async}}</div>
+                        <div class="app-productive-heading-03 font-bold" >{{ getOccupiedUnitsCount() }} / {{ getTotalUnitsCount() }}</div>
                     </div>   
                 </div>
             </div>
@@ -117,8 +119,8 @@
                     <div>
                         <div class="app-label-03 mb-2">Total des frais de services hors taxes en {{getDefaultCurrency()}}</div>
                         <div class="app-productive-heading-03 font-bold text-end">
-                            <span *ngIf="(roomCount$ | async)==0 else hasMoney">0</span>
-                            <ng-template #hasMoney>{{roomPrice$ | async | currency : getDefaultCurrency(): 'symbol' : '1.0-0'}} </ng-template>
+                            <span *ngIf="getTotalServiceFees() === 0; else hasMoneyService">0</span>
+                            <ng-template #hasMoneyService>{{ getTotalServiceFees() | currency : getDefaultCurrency(): 'symbol' : '1.0-0' }} </ng-template>
                         </div>
                     </div>
                 </div>
@@ -201,8 +203,8 @@
                 <div class="flex md:justify-end">
                     <div>
                         <div class="app-productive-heading-03 fond-extrabold ">
-                            <span *ngIf="(roomCount$ | async)==0 else hasMoney2">0</span>
-                            <ng-template #hasMoney2>{{roomPrice$ | async | currency : getDefaultCurrency(): 'symbol' : '1.0-0'}} </ng-template>
+                            <span *ngIf="getTotalTaxes() === 0; else hasMoney2">0</span>
+                            <ng-template #hasMoney2>{{ getTotalTaxes() | currency : getDefaultCurrency(): 'symbol' : '1.0-0' }} </ng-template>
                         </div>
                     </div>
                 </div>

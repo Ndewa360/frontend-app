@@ -233,7 +233,32 @@
 
               <div class="flex items-center justify-between p-3 bg-teal-50 rounded-lg">
                 <span class="text-sm font-medium text-gray-700">Surface totale</span>
-                <span class="font-bold text-teal-700">{{ getEstimatedSurface() }} m²</span>
+                <span class="font-bold text-teal-700">{{ property?.totalSurface || getEstimatedSurface() }} m²</span>
+              </div>
+
+              <div class="flex items-center justify-between p-3 bg-purple-50 rounded-lg" *ngIf="property?.propertyType">
+                <span class="text-sm font-medium text-gray-700">Type de bien</span>
+                <span class="font-bold text-purple-700">{{ getPropertyTypeLabel(property?.propertyType) }}</span>
+              </div>
+
+              <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg" *ngIf="property?.buildingYear">
+                <span class="text-sm font-medium text-gray-700">Année de construction</span>
+                <span class="font-bold text-green-700">{{ property?.buildingYear }}</span>
+              </div>
+
+              <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg" *ngIf="property?.floors">
+                <span class="text-sm font-medium text-gray-700">Nombre d'étages</span>
+                <span class="font-bold text-blue-700">{{ property?.floors }}</span>
+              </div>
+
+              <div class="flex items-center justify-between p-3 bg-yellow-50 rounded-lg" *ngIf="property?.condition">
+                <span class="text-sm font-medium text-gray-700">État du bien</span>
+                <span class="font-bold text-yellow-700">{{ getConditionLabel(property?.condition) }}</span>
+              </div>
+
+              <div class="flex items-center justify-between p-3 bg-pink-50 rounded-lg" *ngIf="property?.furnishingStatus">
+                <span class="text-sm font-medium text-gray-700">Ameublement</span>
+                <span class="font-bold text-pink-700">{{ getFurnishingLabel(property?.furnishingStatus) }}</span>
               </div>
             </div>
           </div>

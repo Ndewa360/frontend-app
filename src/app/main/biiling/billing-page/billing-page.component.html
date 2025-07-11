@@ -41,8 +41,10 @@
                                         <div class="app-nav-list__item__group">{{section.name}}</div>
                                         <div class="app-nav-list__children">
                                             <ng-container *ngFor="let section of section.children">
-                                                <div class="app-nav-list__item__text" [routerLink]="section.path"
-                                                    [routerLinkActive]="'app-nav-list__item__text--selected'">
+                                                <div class="app-nav-list__item__text"
+                                                    [routerLink]="section.path || null"
+                                                    [routerLinkActive]="'app-nav-list__item__text--selected'"
+                                                    [class.disabled]="!section.path">
                                                     {{section.name}}</div>
                                             </ng-container>
                                         </div>

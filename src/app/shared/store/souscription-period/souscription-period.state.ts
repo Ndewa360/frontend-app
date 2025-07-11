@@ -17,6 +17,8 @@ export class SouscriptionPeriodStateModel {
     souscriptionPeriod:SouscriptionPeriodModel[]
     loadingSouscriptionPeriod:boolean
     initLoadingState: LoaderTypeState;
+    currentPeriodWithDetails: SouscriptionPeriodModel | null;
+    loadingCurrentPeriod: boolean;
 }
 
 
@@ -26,6 +28,8 @@ export class SouscriptionPeriodStateModel {
         loadingSouscriptionPeriod:false,
         souscriptionPeriod:[],
         initLoadingState:'NO_LOADED',
+        currentPeriodWithDetails: null,
+        loadingCurrentPeriod: false,
     }
 })
 @Injectable()
@@ -64,6 +68,18 @@ export class SouscriptionPeriodState{
         })
     }
 
+    @Selector()
+    static selectCurrentPeriodWithDetails(state:SouscriptionPeriodStateModel)
+    {
+        return state.currentPeriodWithDetails
+    }
+
+    @Selector()
+    static selectLoadingCurrentPeriod(state:SouscriptionPeriodStateModel)
+    {
+        return state.loadingCurrentPeriod
+    }
+
     @Action(SouscriptionPeriodAction.ResetAllState)
     resetAllState(ctx:StateContext<SouscriptionPeriodStateModel>)
     {
@@ -71,6 +87,8 @@ export class SouscriptionPeriodState{
             loadingSouscriptionPeriod:false,
             souscriptionPeriod:[],
             initLoadingState:'NO_LOADED',
+            currentPeriodWithDetails: null,
+            loadingCurrentPeriod: false,
         })
     }
 
@@ -81,6 +99,8 @@ export class SouscriptionPeriodState{
             loadingSouscriptionPeriod:false,
             souscriptionPeriod:[],
             initLoadingState:'NO_LOADED',
+            currentPeriodWithDetails: null,
+            loadingCurrentPeriod: false,
         })
     }
 
@@ -126,6 +146,32 @@ export class SouscriptionPeriodState{
                     })
                 }
             )
+        )
+    }
+
+    @Action(SouscriptionPeriodAction.FetchCurrentPeriodWithDetails)
+    fetchCurrentPeriodWithDetails(ctx: StateContext<SouscriptionPeriodStateModel>)
+    {
+        ctx.patchState({
+            loadingCurrentPeriod: true
+        })
+
+        return this._souscriptionPeriodService.getCurrentPeriodWithDetails().pipe(
+            tap(
+                result => {
+                    ctx.patchState({
+                        loadingCurrentPeriod: false,
+                        currentPeriodWithDetails: result.data
+                    })
+                }
+            ),
+            catchError((error) => {
+                ctx.patchState({
+                    loadingCurrentPeriod: false,
+                    currentPeriodWithDetails: null
+                })
+                return of(null);
+            })
         )
     }
 }

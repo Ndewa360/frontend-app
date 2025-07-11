@@ -1,0 +1,683 @@
+// Variables de couleurs de l'application (utilisation des couleurs de l'app)
+$primary-color: rgb(204, 140, 10); // Couleur primaire de l'application
+$primary-hover: #b8a009;
+$success-color: #24a148;
+$warning-color: #f1c21b;
+$danger-color: #da1e28;
+$secondary-color: #6f6f6f;
+$background-color: #f4f4f4;
+$card-background: #ffffff;
+$border-color: #e0e0e0;
+$text-primary: #161616;
+$text-secondary: #525252;
+
+.subscription-dashboard {
+  padding: 2rem;
+  background-color: $background-color;
+  min-height: 100vh;
+
+  // Loading state
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    text-align: center;
+
+    .loading-text {
+      margin-top: 1rem;
+      color: $text-secondary;
+      font-size: 1.1rem;
+    }
+  }
+
+  // Header
+  .dashboard-header {
+    margin-bottom: 2rem;
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .dashboard-title {
+      display: flex;
+      align-items: center;
+      font-size: 2rem;
+      font-weight: 600;
+      color: $text-primary;
+      margin: 0;
+
+      .title-icon {
+        margin-right: 0.75rem;
+        color: $primary-color;
+        font-size: 2rem;
+      }
+    }
+
+    .refresh-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      background: $card-background;
+      border: 1px solid $border-color;
+      border-radius: 8px;
+      color: $text-primary;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover:not(:disabled) {
+        background: #f8f8f8;
+        border-color: $primary-color;
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  // Section titles
+  .section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: $text-primary;
+    margin-bottom: 1.5rem;
+  }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
+  // Cards
+  .subscription-card {
+    background: $card-background;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+
+    &.current {
+      border-left: 4px solid $primary-color;
+    }
+
+    &.history {
+      border-left: 4px solid $secondary-color;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 1.5rem;
+      border-bottom: 1px solid $border-color;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .subscription-info {
+      flex: 1;
+
+      .subscription-plan {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: $text-primary;
+        margin: 0 0 0.5rem 0;
+        flex-wrap: wrap;
+      }
+
+      .subscription-dates {
+        color: $text-secondary;
+        margin: 0;
+      }
+    }
+
+    .subscription-actions {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      align-items: center;
+
+      .premium-badge {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background: linear-gradient(135deg, #24a148 0%, #1e8e3e 100%);
+        color: white;
+        border-radius: 20px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        box-shadow: 0 2px 8px rgba(36, 161, 72, 0.3);
+      }
+    }
+
+    .subscription-summary {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+
+      .summary-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+
+        .label {
+          font-size: 0.875rem;
+          color: $text-secondary;
+        }
+
+        .value {
+          font-weight: 600;
+          color: $text-primary;
+        }
+      }
+    }
+  }
+
+  // Status badges
+  .status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+
+    &.success {
+      background: rgba($success-color, 0.1);
+      color: $success-color;
+    }
+
+    &.warning {
+      background: rgba($warning-color, 0.1);
+      color: #8a6b00;
+    }
+
+    &.danger {
+      background: rgba($danger-color, 0.1);
+      color: $danger-color;
+    }
+
+    &.secondary {
+      background: rgba($secondary-color, 0.1);
+      color: $secondary-color;
+    }
+  }
+
+  // Current period
+  .current-period {
+    padding: 1.5rem;
+    background: #f8f9fa;
+
+    .period-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+
+      .period-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: $text-primary;
+        margin: 0;
+      }
+    }
+
+    .period-details {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .period-info {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+
+      .info-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+
+        label {
+          font-size: 0.875rem;
+          color: $text-secondary;
+          font-weight: 500;
+        }
+
+        span {
+          font-weight: 600;
+          color: $text-primary;
+
+          &.amount {
+            color: $success-color;
+            font-size: 1.1rem;
+          }
+        }
+      }
+    }
+
+    .progress-section {
+      .progress-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+        font-size: 0.875rem;
+        color: $text-secondary;
+
+        .progress-percentage {
+          font-weight: 600;
+          color: $primary-color;
+        }
+      }
+
+      .progress-bar {
+        height: 8px;
+        background: $border-color;
+        border-radius: 4px;
+        overflow: hidden;
+
+        .progress-fill {
+          height: 100%;
+          background: linear-gradient(90deg, $primary-color, $primary-hover);
+          transition: width 0.3s ease;
+        }
+      }
+
+      .progress-info {
+        margin-top: 0.5rem;
+        font-size: 0.875rem;
+
+        .days-remaining {
+          color: $success-color;
+          font-weight: 500;
+        }
+
+        .overdue {
+          color: $danger-color;
+          font-weight: 500;
+        }
+      }
+    }
+
+    .payment-actions {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+  }
+
+  // Subscription stats
+  .subscription-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1rem;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+
+    .stat-item {
+      text-align: center;
+
+      .stat-value {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: $primary-color;
+        margin-bottom: 0.25rem;
+      }
+
+      .stat-label {
+        font-size: 0.875rem;
+        color: $text-secondary;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+    }
+  }
+
+  // No subscription state
+  .no-subscription {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: $card-background;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    .warning-icon {
+      color: $warning-color;
+      margin-bottom: 1rem;
+    }
+
+    h3 {
+      font-size: 1.5rem;
+      color: $text-primary;
+      margin-bottom: 0.75rem;
+    }
+
+    p {
+      color: $text-secondary;
+      margin-bottom: 2rem;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+
+  // Unpaid summary
+  .unpaid-summary {
+    margin-bottom: 2rem;
+
+    .summary-card {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.5rem;
+      background: $card-background;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+      &.warning {
+        border-left: 4px solid $warning-color;
+        background: rgba($warning-color, 0.02);
+      }
+
+      .summary-icon {
+        color: $warning-color;
+        flex-shrink: 0;
+      }
+
+      .summary-content {
+        flex: 1;
+
+        h3 {
+          font-size: 1.1rem;
+          font-weight: 600;
+          color: $text-primary;
+          margin: 0 0 0.5rem 0;
+        }
+
+        p {
+          color: $text-secondary;
+          margin: 0;
+        }
+      }
+
+      .summary-action {
+        flex-shrink: 0;
+      }
+    }
+  }
+
+  // History
+  .history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .periods-list {
+    padding: 1.5rem;
+    background: #f8f9fa;
+
+    .periods-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: $text-primary;
+      margin: 0 0 1rem 0;
+    }
+
+    .periods-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .period-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem;
+      background: $card-background;
+      border-radius: 8px;
+      border: 1px solid $border-color;
+
+      .period-info {
+        flex: 1;
+
+        .period-dates {
+          font-size: 0.875rem;
+          color: $text-secondary;
+          margin-bottom: 0.25rem;
+        }
+
+        .period-amount {
+          font-weight: 600;
+          color: $success-color;
+        }
+      }
+
+      .period-status {
+        margin: 0 1rem;
+      }
+
+      .period-actions {
+        display: flex;
+        gap: 0.5rem;
+
+        .btn-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 36px;
+          height: 36px;
+          border: 1px solid $border-color;
+          background: $card-background;
+          border-radius: 6px;
+          cursor: pointer;
+          transition: all 0.2s ease;
+
+          &:hover {
+            background: #f8f8f8;
+            border-color: $primary-color;
+          }
+
+          &.pay {
+            border-color: $success-color;
+            color: $success-color;
+
+            &:hover {
+              background: rgba($success-color, 0.1);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // No history state
+  .no-history {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: $card-background;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    .empty-icon {
+      color: $secondary-color;
+      margin-bottom: 1rem;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      color: $text-primary;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      color: $text-secondary;
+      margin: 0;
+    }
+  }
+
+  // Buttons
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.875rem;
+
+    &.btn-primary {
+      background: $primary-color;
+      color: white;
+
+      &:hover:not(:disabled) {
+        background: $primary-hover;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba($primary-color, 0.3);
+      }
+    }
+
+    &.btn-success {
+      background: $success-color;
+      color: white;
+
+      &:hover:not(:disabled) {
+        background: #1e8e3e;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba($success-color, 0.3);
+      }
+    }
+
+    &.btn-warning {
+      background: $warning-color;
+      color: #8a6b00;
+
+      &:hover:not(:disabled) {
+        background: #d4a90a;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba($warning-color, 0.3);
+      }
+    }
+
+    &.btn-secondary {
+      background: $card-background;
+      color: $text-primary;
+      border: 1px solid $border-color;
+
+      &:hover:not(:disabled) {
+        background: #f8f8f8;
+        border-color: $primary-color;
+      }
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+  }
+
+  // Responsive design
+  @media (max-width: 768px) {
+    padding: 1rem;
+
+    .dashboard-header {
+      .header-content {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .dashboard-title {
+        font-size: 1.5rem;
+      }
+    }
+
+    .subscription-card {
+      .card-header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .subscription-actions {
+        justify-content: stretch;
+
+        .btn {
+          flex: 1;
+          justify-content: center;
+        }
+      }
+    }
+
+    .current-period {
+      .period-info {
+        grid-template-columns: 1fr;
+      }
+
+      .payment-actions {
+        flex-direction: column;
+
+        .btn {
+          justify-content: center;
+        }
+      }
+    }
+
+    .subscription-stats {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .period-item {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 1rem;
+
+      .period-actions {
+        justify-content: center;
+      }
+    }
+  }
+}
+
+// Styles pour les icônes Font Awesome
+i.fas, i.far, i.fab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn i {
+  margin-right: 0.5rem;
+}
+
+.premium-badge i {
+  margin-right: 0.5rem;
+}
+
+.warning-icon {
+  font-size: 2rem !important;
+}
+
+.empty-icon {
+  font-size: 2rem !important;
+}

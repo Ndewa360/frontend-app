@@ -1,123 +1,148 @@
-<ng-template #invalidText>
-  <img src="assets/img/avatar/avatar3.jpg" class="app-img-select__item w-8 rounded"/>
-</ng-template>
-<form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
-  <div fxFill fxLayout="column" class="app-bg-container overflow-hidden">
-      <div class="px-4 py-4 flex">
-        <div class="app-productive-heading-03 font-bold">Faire un paiement</div>
-        <div class="flex-1 flex justify-end">
-          <button (click)="onClose()" ibmButton="ghost" size="sm" class="cds--btn--icon-only custom-ghost-close">
-            <youpez-ibm-icon iconClass="cds--btn__icon" iconName="close" iconSize="32" ></youpez-ibm-icon >
-          </button>
-        </div>
+<!-- Modal moderne pour ajout de paiement -->
+<div class="modern-payment-modal">
+  <!-- Header du modal -->
+  <div class="modal-header">
+    <div class="header-content">
+      <div class="header-icon">
+        <i class="fa fa-credit-card"></i>
       </div>
-      <div fxFlex>
-        <div class="app-content app-content--default">
-          <div class="app-form">
-              <div fxLayout="row wrap" class="app-form__row">
-                  <div fxFlex="100%" fxFlex.gt-md="50%" class="app-form__item">
-                      <ibm-label> Numéro de l'unité
-                        <input
-                          ibmText
-                          disabled
-                          [value]="'#'+(room$ | async)?.code"
-                          size="md"
-                          theme="dark">
-                      </ibm-label>        
-                  </div>
-                  <div fxFlex="100%" fxFlex.gt-md="50%" class="app-form__item">
-                      <ibm-label> Locataire
-                        <input
-                          ibmText
-                          [value]="(locataire$ | async)?.fullName"
-                          disabled
-                          size="md"
-                          theme="dark">
-                      </ibm-label>        
-                  </div>                    
-              </div>
-              <div fxLayout="row wrap" class="app-form__row">
-                <div fxFlex="100%" fxFlex.gt-md="50%" class="app-form__item">                      
-                  <ibm-label helperText=""   [invalid]="isValid('paymentLocationType')" [invalidText]="'Le type de paiement'">
-                    Type de paiement <span class="text-red-600">*</span>
-                    <ibm-combo-box class="mt-2"
-                      [items]="paymentTypeList"
-                      (selected)="onSelectedType($event)"
-                      theme="dark"
-                      [invalid]="isValid('paymentLocationType')"
-                      size="md">
-                      <ibm-dropdown-list></ibm-dropdown-list>
-                  </ibm-combo-box>   
-                  </ibm-label>
-                </div>   
-                <div fxFlex="100%" fxFlex.gt-md="50%" class="app-form__item">                      
-                  <ibm-label helperText=""   [invalid]="isValid('locationPaymentPrice')" [invalidText]="'Le montant payé doit être au moins de 1000 FCFA'">
-                    Montant payé (FCFA) <span class="text-red-600">*</span>
-                    <ibm-number
-                      [theme]="'dark'"
-                      [invalid]="isValid('locationPaymentPrice')"
-                      [invalidText]="''"
-                      formControlName="locationPaymentPrice"
-                      [size]="'md'">
-                    </ibm-number>
-                  </ibm-label>
-                </div>                   
-              </div>
-              <div fxLayout="row wrap" class="app-form__row">                
-                <div fxFlex="100%"  class="app-form__item">                      
-                  <ibm-label helperText="" class="type_bien_label"  [invalid]="isValid('datePayment')" [invalidText]="'La date de versement n\'est pas valide'">
-                    Date de versement<span class="text-red-600">*</span>
-                  <ibm-date-picker
-                        formControlName="datePayment"
-                      [placeholder]="'dd/mm/yyyy'"
-                      [language]="'fr'"
-                      [size]="'md'"
-                      [theme]="'dark'"
-                      [invalid]="isValid('datePayment')"
-                      [invalidText]="''"
-                      [dateFormat]="'d/m/Y'">
-                    </ibm-date-picker>
-                  </ibm-label>
-                </div>                    
-              </div>              
-              <div fxLayout="row wrap" class="app-form__row">
-                  <div fxFlex="100%" class="app-form__item">
-                      <ibm-label
-                      [helperText]="''">
-                      Commentaire sur le paiement
-                      <textarea
-                          ibmTextArea
-                          formControlName="reason"
-                          class="textarea-field"
-                          theme="dark"
-                          [rows]="3"
-                          [cols]="3"
-                          aria-label="textarea"></textarea>
-                      </ibm-label>
-                  </div>
-              </div>      
-              
-          </div>
-    
-        </div>
-      </div>
-      <div class="px-4 py-4 flex justify-end app-border-t">
-        <button (click)="onClose()"
-                ibmButton="secondary"
-                size="md"
-                class="mr-1">
-          Annuler
-        </button>
-        <button class="custom-primary-button" ibmButton="primary" size="md" [disabled]="waittingResponse || formGroup.invalid" type="submit">
-          <ibm-loading *ngIf="waittingResponse; else noWaitingResponse"></ibm-loading>
-          <ng-template #noWaitingResponse>
-            <span class="btn-text">Valider</span>
-            <!-- <mat-icon svgIcon="save" ></mat-icon> -->
-
-            <youpez-ibm-icon iconClass="cds--btn__icon" iconName="save" iconSize="20" ></youpez-ibm-icon >
-          </ng-template>
-        </button>
+      <div class="header-text">
+        <h2 class="modal-title">Ajouter un paiement</h2>
+        <p class="modal-subtitle">{{ getRoomDisplayInfo() }}</p>
       </div>
     </div>
-    
-</form>
+    <button class="close-btn" (click)="onClose()" type="button">
+      <i class="fa fa-times"></i>
+    </button>
+  </div>
+
+  <!-- Contenu du modal -->
+  <form [formGroup]="formGroup" (ngSubmit)="onSubmit()" class="modal-form" id="payment-form">
+    <div class="modal-body">
+      <!-- Informations de l'unité -->
+      <div class="info-section">
+        <h3 class="section-title">
+          <i class="fa fa-info-circle mr-2"></i>
+          Informations de l'unité
+        </h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <label class="info-label">Numéro de l'unité</label>
+            <div class="info-value">
+              <i class="fa fa-home mr-2"></i>
+              #{{ getRoomCode() }}
+            </div>
+          </div>
+          <div class="info-item">
+            <label class="info-label">Locataire</label>
+            <div class="info-value">
+              <i class="fa fa-user mr-2"></i>
+              {{ getTenantName() }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Formulaire de paiement -->
+      <div class="form-section">
+        <h3 class="section-title">
+          <i class="fa fa-credit-card mr-2"></i>
+          Détails du paiement
+        </h3>
+        <div class="form-grid">
+          <!-- Type de paiement -->
+          <div class="form-group">
+            <label class="form-label">
+              <i class="fa fa-tag"></i>
+              Type de paiement <span class="required">*</span>
+            </label>
+            <div class="custom-select-wrapper">
+              <select class="custom-select" formControlName="paymentLocationType">
+                <option value="" disabled>Choisir le type de paiement</option>
+                <option *ngFor="let type of paymentTypeList" [value]="type.valueType">
+                  {{ type.content }}
+                </option>
+              </select>
+              <i class="fa fa-chevron-down select-arrow"></i>
+            </div>
+            <div *ngIf="formGroup.get('paymentLocationType')?.invalid && formGroup.get('paymentLocationType')?.touched"
+                 class="error-message">
+              <i class="fa fa-exclamation-circle"></i>
+              Veuillez choisir le type de paiement
+            </div>
+          </div>
+
+          <!-- Montant -->
+          <div class="form-group">
+            <label class="form-label">
+              <i class="fa fa-money-bill-wave"></i>
+              Montant payé <span class="required">*</span>
+            </label>
+            <div class="input-wrapper">
+              <input
+                type="number"
+                class="custom-input"
+                formControlName="locationPaymentPrice"
+                placeholder="Entrer le montant"
+                min="1000">
+              <span class="input-suffix">FCFA</span>
+            </div>
+            <div *ngIf="formGroup.get('locationPaymentPrice')?.invalid && formGroup.get('locationPaymentPrice')?.touched"
+                 class="error-message">
+              <i class="fa fa-exclamation-circle"></i>
+              Le montant doit être au moins de 1000 FCFA
+            </div>
+          </div>
+
+          <!-- Date de versement -->
+          <div class="form-group">
+            <label class="form-label">
+              <i class="fa fa-calendar"></i>
+              Date de versement <span class="required">*</span>
+            </label>
+            <div class="input-wrapper">
+              <input
+                type="date"
+                class="custom-input"
+                formControlName="datePayment"
+                placeholder="Sélectionner la date">
+            </div>
+            <div *ngIf="formGroup.get('datePayment')?.invalid && formGroup.get('datePayment')?.touched"
+                 class="error-message">
+              <i class="fa fa-exclamation-circle"></i>
+              La date de versement est requise
+            </div>
+          </div>
+
+          <!-- Commentaire -->
+          <div class="form-group">
+            <label class="form-label">
+              <i class="fa fa-comment"></i>
+              Commentaire sur le paiement
+            </label>
+            <div class="textarea-wrapper">
+              <textarea
+                class="custom-textarea"
+                formControlName="reason"
+                placeholder="Ajouter un commentaire (optionnel)"
+                rows="3"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <!-- Footer du modal -->
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="onClose()">
+      <i class="fa fa-times"></i>
+      Annuler
+    </button>
+    <button type="button" class="btn btn-primary" [disabled]="waittingResponse || formGroup.invalid" (click)="onSubmit()">
+      <i *ngIf="waittingResponse" class="fa fa-spinner fa-spin"></i>
+      <i *ngIf="!waittingResponse" class="fa fa-save"></i>
+      {{ waittingResponse ? 'Traitement...' : 'Ajouter le paiement' }}
+    </button>
+  </div>
+</div>

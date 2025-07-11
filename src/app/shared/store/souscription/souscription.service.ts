@@ -42,4 +42,20 @@ export class SouscriptionService
     removeAssignationSouscription(souscriptionId: string) {
         return this._httpClient.delete<ApiResultFormat<SouscriptionModel[]>>(`${environment.apiUrl}/souscription/${souscriptionId}`)
     }
+
+    /**
+     * Get current subscription
+     */
+    getCurrentSubscription(): Observable<ApiResultFormat<SouscriptionModel>>
+    {
+        return this._httpClient.get<ApiResultFormat<SouscriptionModel>>(`${environment.apiUrl}/souscription/current`)
+    }
+
+    /**
+     * Get subscription history
+     */
+    getSubscriptionHistory(): Observable<ApiResultFormat<SouscriptionModel[]>>
+    {
+        return this._httpClient.get<ApiResultFormat<SouscriptionModel[]>>(`${environment.apiUrl}/souscription/history`)
+    }
 }

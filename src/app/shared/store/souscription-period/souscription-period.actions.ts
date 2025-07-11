@@ -28,6 +28,12 @@ export namespace SouscriptionPeriodAction
         static readonly type = '[SouscriptionPeriod] Fetch SouscriptionPeriod'
         constructor(public souscriptionPeriodId:string){}
     }
+
+    //Fetch Current Period With Details
+    export class FetchCurrentPeriodWithDetails
+    {
+        static readonly type = '[SouscriptionPeriod] Fetch Current Period With Details'
+    }
     
     //Fetch  SouscriptionPeriod
     export class FetchSouscriptionPeriodsByUserId

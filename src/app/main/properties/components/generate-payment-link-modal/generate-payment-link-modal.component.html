@@ -1,0 +1,182 @@
+<!-- Modal de génération de lien de paiement permanent -->
+<div class="generate-link-modal">
+  <!-- Header -->
+  <div class="modal-header">
+    <div class="header-content">
+      <div class="header-icon">
+        <i class="fa fa-link"></i>
+      </div>
+      <div class="header-text">
+        <h2>Lien de paiement permanent</h2>
+        <p>Générer un lien réutilisable pour ce contrat de location</p>
+      </div>
+    </div>
+    <button class="close-btn" (click)="onClose()">
+      <i class="fa fa-times"></i>
+    </button>
+  </div>
+
+  <!-- Body -->
+  <div class="modal-body">
+    
+    <!-- Informations du contrat -->
+    <div class="contract-info-section">
+      <h3 class="section-title">
+        <i class="fa fa-file-contract"></i>
+        Informations du contrat
+      </h3>
+      
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="info-label">
+            <i class="fa fa-building"></i>
+            Propriété
+          </div>
+          <div class="info-value">{{ data.room?.property?.name || 'N/A' }}</div>
+        </div>
+
+        <div class="info-item">
+          <div class="info-label">
+            <i class="fa fa-door-open"></i>
+            Unité
+          </div>
+          <div class="info-value">{{ data.room?.code || 'N/A' }}</div>
+        </div>
+
+        <div class="info-item">
+          <div class="info-label">
+            <i class="fa fa-user"></i>
+            Locataire
+          </div>
+          <div class="info-value">{{ data.tenant?.fullName || 'N/A' }}</div>
+        </div>
+
+        <div class="info-item">
+          <div class="info-label">
+            <i class="fa fa-money-bill-wave"></i>
+            Loyer mensuel
+          </div>
+          <div class="info-value">{{ formatAmount(data.room?.price || 0) }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Configuration du lien -->
+    <div class="link-config-section" *ngIf="!generatedLink">
+      <h3 class="section-title">
+        <i class="fa fa-cog"></i>
+        Configuration du lien
+      </h3>
+
+      <form [formGroup]="formGroup" (ngSubmit)="onSubmit()" class="config-form">
+
+        <!-- Description du lien -->
+        <div class="form-group">
+          <label class="form-label">
+            <i class="fa fa-tag"></i>
+            Description du lien
+          </label>
+          <input
+            type="text"
+            class="custom-input"
+            formControlName="description"
+            placeholder="Ex: Lien de paiement pour l'appartement A1">
+        </div>
+
+        <!-- Note explicative -->
+        <div class="info-note">
+          <i class="fa fa-info-circle"></i>
+          <div>
+            <strong>Lien universel :</strong> Ce lien sera valide tant que le contrat de location est actif.
+            Le locataire pourra l'utiliser pour tous ses paiements (loyer, caution, etc.).
+            Le système détectera automatiquement le type de paiement selon le contexte.
+          </div>
+        </div>
+
+        <!-- Fonctionnement automatique -->
+        <div class="auto-detection-info">
+          <h4>
+            <i class="fa fa-magic"></i>
+            Détection automatique
+          </h4>
+          <ul>
+            <li><strong>Caution :</strong> Si non payée, sera déduite automatiquement du montant versé</li>
+            <li><strong>Loyer :</strong> Le reste du montant sera considéré comme paiement de loyer</li>
+            <li><strong>Flexible :</strong> Le locataire peut saisir n'importe quel montant</li>
+          </ul>
+        </div>
+      </form>
+    </div>
+
+    <!-- Lien généré -->
+    <div class="generated-link-section" *ngIf="generatedLink">
+      <h3 class="section-title success">
+        <i class="fa fa-check-circle"></i>
+        Lien de paiement généré avec succès
+      </h3>
+
+      <div class="link-display">
+        <div class="link-container">
+          <div class="link-text">{{ generatedLink }}</div>
+          <div class="link-actions">
+            <button class="btn-copy" (click)="copyToClipboard()" [class.copied]="copied">
+              <i class="fa" [class.fa-copy]="!copied" [class.fa-check]="copied"></i>
+              {{ copied ? 'Copié !' : 'Copier' }}
+            </button>
+            <button class="btn-open" (click)="openLink()">
+              <i class="fa fa-external-link-alt"></i>
+              Ouvrir
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="link-info">
+        <div class="info-item">
+          <i class="fa fa-calendar"></i>
+          <span>Créé le {{ getCurrentDate() | date:'dd/MM/yyyy à HH:mm' }}</span>
+        </div>
+        <div class="info-item">
+          <i class="fa fa-infinity"></i>
+          <span>Valide tant que le contrat est actif</span>
+        </div>
+        <div class="info-item">
+          <i class="fa fa-sync-alt"></i>
+          <span>Réutilisable pour tous les paiements</span>
+        </div>
+      </div>
+
+      <!-- Instructions d'utilisation -->
+      <div class="usage-instructions">
+        <h4>
+          <i class="fa fa-question-circle"></i>
+          Comment utiliser ce lien ?
+        </h4>
+        <ul>
+          <li>Partagez ce lien avec votre locataire par email, SMS ou WhatsApp</li>
+          <li>Le locataire peut utiliser ce lien chaque mois pour payer son loyer</li>
+          <li>Chaque paiement sera automatiquement enregistré dans votre système</li>
+          <li>Vous recevrez une notification à chaque paiement effectué</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="onClose()">
+      <i class="fa fa-times"></i>
+      {{ generatedLink ? 'Fermer' : 'Annuler' }}
+    </button>
+    <button 
+      *ngIf="!generatedLink"
+      type="button" 
+      class="btn btn-primary" 
+      [disabled]="loading || formGroup.invalid" 
+      (click)="onSubmit()">
+      <i *ngIf="loading" class="fa fa-spinner fa-spin"></i>
+      <i *ngIf="!loading" class="fa fa-link"></i>
+      {{ loading ? 'Génération...' : 'Générer le lien' }}
+    </button>
+  </div>
+</div>

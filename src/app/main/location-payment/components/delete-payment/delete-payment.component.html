@@ -1,42 +1,78 @@
-<ng-template #invalidText>
-    <img src="assets/img/avatar/avatar3.jpg" class="app-img-select__item w-8 rounded"/>
-  </ng-template>
-  <form >
-    <div fxFill fxLayout="column" class="app-bg-container overflow-hidden">
-        <div class="px-4 py-4 flex">
-          <div class="app-productive-heading-03 font-bold">Supprimer la transaction</div>
-          <div class="flex-1 flex justify-end">
-            <button (click)="onClose()" ibmButton="ghost" size="sm" class="cds--btn--icon-only custom-ghost-close">
-              <youpez-ibm-icon iconClass="cds--btn__icon" iconName="close" iconSize="32" ></youpez-ibm-icon >
-            </button>
-          </div>
+<!-- Modal moderne pour suppression de paiement -->
+<div class="modern-delete-modal">
+  <!-- Header du modal -->
+  <div class="modal-header">
+    <div class="header-content">
+      <div class="header-icon">
+        <i class="fa fa-exclamation-triangle"></i>
+      </div>
+      <div class="header-text">
+        <h2 class="modal-title">Supprimer le paiement</h2>
+        <p class="modal-subtitle">Cette action est irréversible</p>
+      </div>
+    </div>
+    <button class="close-btn" (click)="onClose()" type="button">
+      <i class="fa fa-times"></i>
+    </button>
+  </div>
+
+  <!-- Contenu du modal -->
+  <div class="modal-body">
+    <div class="warning-section">
+      <div class="warning-icon">
+        <i class="fa fa-trash-alt"></i>
+      </div>
+
+      <div class="warning-content">
+        <h3 class="warning-title">Confirmer la suppression</h3>
+        <p class="warning-message">
+          Êtes-vous sûr de vouloir supprimer cette transaction de paiement ?
+        </p>
+        <p class="warning-note">
+          <i class="fa fa-info-circle"></i>
+          Cette action ne peut pas être annulée. Le paiement sera définitivement supprimé du système.
+        </p>
+      </div>
+    </div>
+
+    <!-- Détails du paiement à supprimer -->
+    <div class="payment-details" *ngIf="payment">
+      <h4 class="details-title">
+        <i class="fa fa-receipt"></i>
+        Détails du paiement
+      </h4>
+      <div class="details-grid">
+        <div class="detail-item">
+          <span class="detail-label">Montant :</span>
+          <span class="detail-value">{{ payment.locationPaymentPrice | currency:'XAF':'symbol':'1.0-0' }}</span>
         </div>
-        <div fxFlex>
-          <div class="app-content app-content--default">
-            <div class="app-form text-center">
-                <svg class="text-red-400 text-center dark:text-red-500 trash-icon-svg mb-3.5 mx-auto" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
-                <p class="mb-1 text-gray-800 ">Voulez-vous vraiment supprimer cette transaction?</p>
-                <!-- <p class="mb-1 text-gray-800">Cette opération est irréversible</p> -->
-            </div>
-      
-          </div>
+        <div class="detail-item">
+          <span class="detail-label">Date :</span>
+          <span class="detail-value">{{ payment.datePayment | date:'dd/MM/yyyy' }}</span>
         </div>
-        <div class="px-4 py-4 flex justify-end app-border-t">
-          <button (click)="onClose()"
-                  ibmButton="secondary"
-                  size="md"
-                  class="mr-1">
-            Annuler
-          </button>
-          <button  ibmButton="danger--ghost" size="md" (click)="onSubmit()" [disabled]="waittingResponse " type="submit">
-            <ibm-loading *ngIf="waittingResponse; else noWaitingResponse"></ibm-loading>
-            <ng-template #noWaitingResponse>
-              <span class="btn-text">Valider</span>  
-              <youpez-ibm-icon iconClass="cds--btn__icon" iconName="save" iconSize="20" ></youpez-ibm-icon >
-            </ng-template>
-          </button>
+        <div class="detail-item">
+          <span class="detail-label">Type :</span>
+          <span class="detail-value">{{ getPaymentTypeLabel() }}</span>
+        </div>
+        <div class="detail-item" *ngIf="payment.reason">
+          <span class="detail-label">Commentaire :</span>
+          <span class="detail-value">{{ payment.reason }}</span>
         </div>
       </div>
-      
-  </form>
+    </div>
+  </div>
+
+  <!-- Footer du modal -->
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="onClose()">
+      <i class="fa fa-times"></i>
+      Annuler
+    </button>
+    <button type="button" class="btn btn-danger" (click)="onSubmit()" [disabled]="waittingResponse">
+      <i *ngIf="waittingResponse" class="fa fa-spinner fa-spin"></i>
+      <i *ngIf="!waittingResponse" class="fa fa-trash"></i>
+      {{ waittingResponse ? 'Suppression...' : 'Supprimer définitivement' }}
+    </button>
+  </div>
+</div>
   
