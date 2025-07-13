@@ -77,4 +77,34 @@ export interface SubscriptionPaymentStateModel {
   totalUnpaidAmount: number;
   loading: boolean;
   error: string | null;
+
+  // Nouveaux champs Stripe
+  stripeLoading: boolean;
+  stripeError: string | null;
+  stripeSession: StripeSessionModel | null;
+  paymentMethods: PaymentMethodsModel | null;
+}
+
+export interface StripeSessionModel {
+  sessionId: string;
+  sessionUrl: string;
+  periodId: string;
+  amount: number;
+  billingRef: string;
+  status?: string;
+}
+
+export interface PaymentMethodsModel {
+  stripe: {
+    enabled: boolean;
+    methods: string[];
+    currencies: string[];
+    description: string;
+  };
+  mobileMoney: {
+    enabled: boolean;
+    methods: string[];
+    currencies: string[];
+    description: string;
+  };
 }

@@ -2,6 +2,8 @@ import { Component, Input, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { MatDialog } from '@angular/material/dialog';
+import { ToastrService } from 'ngx-toastr';
 import {
   LocationPaymentModel,
   LocationPaymentState,
@@ -9,8 +11,12 @@ import {
   LocataireModel,
   LocataireState,
   RoomModel,
-  RoomState
+  RoomState,
+  HistoryLocationPaymentState,
+  HistoryLocationPaymentModel
 } from 'src/app/shared/store';
+import { UpdatePaymentComponent } from 'src/app/main/location-payment/components/update-payment/update-payment.component';
+import { DeletePaymentComponent } from 'src/app/main/location-payment/components/delete-payment/delete-payment.component';
 
 interface PaymentHistoryItem {
   id: string;
@@ -114,7 +120,11 @@ export class PropertyHistoryComponent implements OnInit, OnDestroy, OnChanges {
   // Propriété Math pour les templates
   Math = Math;
 
-  constructor(private store: Store) { }
+  constructor(
+    private store: Store,
+    private dialog: MatDialog,
+    private toastr: ToastrService
+  ) { }
 
   ngOnInit(): void {
     this.loadData();
@@ -558,5 +568,168 @@ export class PropertyHistoryComponent implements OnInit, OnDestroy, OnChanges {
   exportHistory(): void {
     console.log('Exporter l\'historique');
     // Implémentation de l'export
+  }
+
+  // === MÉTHODES POUR LES MODALS DE PAIEMENT ===
+
+  /**
+   * Construit les données de paiement nécessaires pour les modals
+   */
+  private buildPaymentModalData(payment: PaymentHistoryItem): {transaction: any, history: any} {
+    // Construire l'objet history avec les données nécessaires
+    const history = {
+      _id: `history_${payment.tenant?._id || 'unknown'}`,
+      locataire: payment.tenant,
+      room: payment.room,
+      property: { _id: this.propertyId },
+      transactions: [payment.rawPayment]
+    };
+
+    return {
+      transaction: payment.rawPayment,
+      history: history
+    };
+  }
+
+  /**
+   * Ouvre le modal de modification d'un paiement
+   */
+  onEditPayment(payment: PaymentHistoryItem): void {
+    console.log('🔧 PropertyHistory: onEditPayment appelé', payment);
+
+    if (!payment?.rawPayment || !payment?.tenant) {
+      console.error('❌ Données de paiement manquantes pour la modification');
+      this.toastr.error('Données de paiement manquantes', 'Erreur');
+      return;
+    }
+
+    if (!this.dialog) {
+      console.error('❌ Service MatDialog non disponible !');
+      return;
+    }
+
+    // Construire les données nécessaires pour le modal
+    const paymentData = this.buildPaymentModalData(payment);
+
+    console.log('📝 Ouverture du modal UpdatePaymentComponent...');
+
+    try {
+      const dialogRef = this.dialog.open(UpdatePaymentComponent, {
+        width: '100%',
+        maxWidth: '800px',
+        disableClose: true,
+        data: {
+          transaction: paymentData.transaction,
+          history: paymentData.history
+        }
+      });
+
+      console.log('✅ Modal UpdatePayment ouvert, dialogRef:', dialogRef);
+
+      dialogRef.afterClosed().subscribe(result => {
+        console.log('🔄 Modal UpdatePayment fermé avec résultat:', result);
+        if (result) {
+          console.log('✅ Paiement modifié avec succès');
+          this.toastr.success('Paiement modifié avec succès', 'Succès');
+          // Recharger les données
+          this.loadData();
+        }
+      });
+    } catch (error) {
+      console.error('❌ Erreur lors de l\'ouverture du modal UpdatePayment:', error);
+      this.toastr.error('Erreur lors de l\'ouverture du modal', 'Erreur');
+    }
+  }
+
+  /**
+   * Ouvre le modal de suppression d'un paiement
+   */
+  onDeletePayment(payment: PaymentHistoryItem): void {
+    console.log('🗑️ PropertyHistory: onDeletePayment appelé', payment);
+
+    if (!payment?.rawPayment || !payment?.tenant) {
+      console.error('❌ Données de paiement manquantes pour la suppression');
+      this.toastr.error('Données de paiement manquantes', 'Erreur');
+      return;
+    }
+
+    if (!this.dialog) {
+      console.error('❌ Service MatDialog non disponible !');
+      return;
+    }
+
+    // Construire les données nécessaires pour le modal
+    const paymentData = this.buildPaymentModalData(payment);
+
+    console.log('🗑️ Ouverture du modal DeletePaymentComponent...');
+
+    try {
+      const dialogRef = this.dialog.open(DeletePaymentComponent, {
+        width: '500px',
+        maxWidth: '95vw',
+        panelClass: 'delete-payment-modal-dialog',
+        disableClose: true,
+        data: {
+          transaction: paymentData.transaction,
+          history: paymentData.history
+        }
+      });
+
+      console.log('✅ Modal DeletePayment ouvert, dialogRef:', dialogRef);
+
+      dialogRef.afterClosed().subscribe(result => {
+        console.log('🔄 Modal DeletePayment fermé avec résultat:', result);
+        if (result) {
+          console.log('✅ Paiement supprimé avec succès');
+          this.toastr.success('Paiement supprimé avec succès', 'Succès');
+          // Recharger les données
+          this.loadData();
+        }
+      });
+    } catch (error) {
+      console.error('❌ Erreur lors de l\'ouverture du modal DeletePayment:', error);
+      this.toastr.error('Erreur lors de l\'ouverture du modal', 'Erreur');
+    }
+  }
+
+  // === MÉTHODES UTILITAIRES ===
+
+  formatCurrency(amount: number): string {
+    return new Intl.NumberFormat('fr-CM', {
+      style: 'currency',
+      currency: 'XAF',
+      minimumFractionDigits: 0
+    }).format(amount);
+  }
+
+
+
+  formatTime(date: Date): string {
+    return date.toLocaleTimeString('fr-FR', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+
+  getPaymentTypeLabel(type: LocationPaymentType): string {
+    switch (type) {
+      case LocationPaymentType.LOCATION:
+        return 'Loyer';
+      case LocationPaymentType.CAUTION:
+        return 'Caution';
+      default:
+        return 'Autre';
+    }
+  }
+
+  getPaymentTypeColor(type: LocationPaymentType): string {
+    switch (type) {
+      case LocationPaymentType.LOCATION:
+        return 'text-green-600 bg-green-100';
+      case LocationPaymentType.CAUTION:
+        return 'text-blue-600 bg-blue-100';
+      default:
+        return 'text-gray-600 bg-gray-100';
+    }
   }
 }

@@ -3,16 +3,20 @@ import { Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { 
-  RoomModel, 
-  LocataireModel, 
+import {
+  RoomModel,
+  LocataireModel,
   LocataireState,
-  RoomType 
+  RoomType
 } from 'src/app/shared/store';
 import { UtilsString } from 'src/app/shared/utils';
+import { AssignLocationModalService } from 'src/app/main/assign-location/services/assign-location-modal.service';
+import { ToastrService } from 'ngx-toastr';
+import { MatDialog } from '@angular/material/dialog';
+import { UpdateRoomComponent } from 'src/app/main/room/components/update-room/update-room.component';
 
 export interface UnitDetailsAction {
-  type: 'edit' | 'assign_tenant' | 'terminate_lease' | 'media_updated' | 'add_payment' | 'view_contract';
+  type: 'edit' | 'assign_tenant' | 'terminate_lease' | 'media_updated' | 'add_payment' | 'view_contract' | 'data_updated';
   room: RoomModel;
   data?: any;
 }
@@ -42,7 +46,10 @@ export class UnitDetailsModalComponent implements OnInit, OnDestroy {
 
   constructor(
     private store: Store,
-    private router: Router
+    private router: Router,
+    private assignLocationModalService: AssignLocationModalService,
+    private toastr: ToastrService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -98,22 +105,48 @@ export class UnitDetailsModalComponent implements OnInit, OnDestroy {
 
   onEditRoom(): void {
     if (this.room) {
-      this.action.emit({
-        type: 'edit',
-        room: this.room
+      const dialogRef = this.dialog.open(UpdateRoomComponent, {
+        width: '100%',
+        maxWidth: '900px',
+        disableClose: true,
+        data: {
+          room: this.room
+        }
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          // Recharger les données de la chambre après modification
+          this.loadTenantData();
+          this.toastr.success('Unité modifiée avec succès', 'Succès');
+          // Émettre un événement pour informer le parent de recharger les données
+          this.action.emit({
+            type: 'data_updated',
+            room: this.room
+          });
+        }
       });
     }
   }
 
   onAssignTenant(): void {
     if (this.room) {
-      // Naviguer vers l'assistant d'assignation avec la chambre pré-sélectionnée
-      this.router.navigate(['/app/assign-location'], {
-        queryParams: {
-          propertyId: this.room.property,
-          roomId: this.room._id,
-          assistant: true,
-          returnUrl: this.router.url
+      // Ouvrir le modal d'assignation avec la chambre pré-sélectionnée
+      this.assignLocationModalService.openAssignLocationModal({
+        propertyId: this.room.property,
+        roomId: this.room._id,
+        assistant: true,
+        returnUrl: this.router.url
+      }).subscribe(result => {
+        if (result && result.success) {
+          // Recharger les données de la chambre après succès
+          this.loadTenantData();
+          this.toastr.success('Assignation réalisée avec succès', 'Succès');
+          // Émettre un événement pour informer le parent de recharger les données
+          this.action.emit({
+            type: 'data_updated',
+            room: this.room
+          });
         }
       });
     }

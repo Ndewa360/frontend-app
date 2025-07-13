@@ -5,6 +5,7 @@ import { AssignLocationFormComponent } from './assign-location-form/assign-locat
 import { AssignationAssistantComponent } from './components/assignation-assistant/assignation-assistant.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { AssignLocationRoutingModule } from './assig-location-routing.module';
+import { AssignLocationModalService } from './services/assign-location-modal.service';
 
 
 @NgModule({
@@ -22,6 +23,9 @@ import { AssignLocationRoutingModule } from './assig-location-routing.module';
     AssignLocationComponent,
     AssignLocationFormComponent,
     AssignationAssistantComponent
+  ],
+  providers: [
+    AssignLocationModalService
   ]
 })
 export class AssignLocationModule { }

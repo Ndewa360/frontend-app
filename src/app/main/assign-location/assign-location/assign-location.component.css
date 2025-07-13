@@ -98,3 +98,78 @@
     font-size: 0.875rem;
   }
 }
+
+/* Styles pour le modal */
+.assign-location-modal-content {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: var(--theme-appUIForegroundBg);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid var(--theme-appUIBorder);
+  background: var(--theme-appUIForegroundBg);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.modal-title {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--theme-appUITextPrimary);
+}
+
+.modal-close-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--theme-appUITextSecondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modal-close-btn:hover {
+  background: var(--theme-appUIHover);
+  color: var(--theme-appUITextPrimary);
+}
+
+.modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2rem;
+}
+
+.modal-card {
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* Styles globaux pour le modal */
+::ng-deep .assign-location-modal-container {
+  padding: 0 !important;
+}
+
+::ng-deep .assign-location-modal-container .mat-dialog-container {
+  padding: 0 !important;
+  border-radius: 0 !important;
+  max-width: 100vw !important;
+  max-height: 100vh !important;
+}
+
+::ng-deep .assign-location-modal-backdrop {
+  background: rgba(0, 0, 0, 0.6) !important;
+}

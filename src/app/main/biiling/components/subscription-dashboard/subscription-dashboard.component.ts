@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store, Select } from '@ngxs/store';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
@@ -12,6 +12,7 @@ import {
   SouscriptionPlan,
   SouscriptionPayementState
 } from 'src/app/shared/store';
+import { SubscriptionPaymentState, SubscriptionPaymentAction } from 'src/app/shared/store/subscription-payment';
 
 @Component({
   selector: 'app-subscription-dashboard',
@@ -27,20 +28,32 @@ export class SubscriptionDashboardComponent implements OnInit, OnDestroy {
   @Select(SouscriptionState.selectLoadingHistory) loadingHistory$: Observable<boolean>;
   @Select(SouscriptionState.selectStateLoading) loading$: Observable<boolean>;
 
+  // Sélecteurs pour les paiements Stripe
+  @Select(SubscriptionPaymentState.selectStripeLoading) stripeLoading$: Observable<boolean>;
+  @Select(SubscriptionPaymentState.selectStripeError) stripeError$: Observable<string | null>;
+  @Select(SubscriptionPaymentState.selectStripeSession) stripeSession$: Observable<any>;
+
   currentSubscription: SouscriptionModel | null = null;
   subscriptionHistory: SouscriptionModel[] = [];
   currentPeriod: SouscriptionPeriodModel | null = null;
   loading = true;
   loadingHistory = false;
 
+  // Variables pour Stripe
+  stripeLoading = false;
+  stripeError: string | null = null;
+  stripeSession: any = null;
+
   constructor(
     private store: Store,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
     this.setupSubscriptions();
     this.loadData();
+    this.handleStripeCallback();
   }
 
   ngOnDestroy(): void {
@@ -69,6 +82,23 @@ export class SubscriptionDashboardComponent implements OnInit, OnDestroy {
 
     this.loadingHistory$.pipe(takeUntil(this.destroy$)).subscribe(loading => {
       this.loadingHistory = loading;
+    });
+
+    // Observer les états Stripe
+    this.stripeLoading$.pipe(takeUntil(this.destroy$)).subscribe(loading => {
+      this.stripeLoading = loading;
+    });
+
+    this.stripeError$.pipe(takeUntil(this.destroy$)).subscribe(error => {
+      this.stripeError = error;
+    });
+
+    this.stripeSession$.pipe(takeUntil(this.destroy$)).subscribe(session => {
+      this.stripeSession = session;
+      if (session?.sessionUrl) {
+        // Rediriger vers Stripe Checkout
+        window.location.href = session.sessionUrl;
+      }
     });
   }
 
@@ -166,10 +196,70 @@ export class SubscriptionDashboardComponent implements OnInit, OnDestroy {
   }
 
   payCurrentPeriod(): void {
-    if (this.currentPeriod) {
-      // TODO: Implémenter le paiement
-      console.log('Payer la période:', this.currentPeriod._id);
+    if (this.currentPeriod && !this.stripeLoading) {
+      this.initiateStripePayment(this.currentPeriod._id);
     }
+  }
+
+  /**
+   * Initie un paiement Stripe pour une période
+   */
+  initiateStripePayment(periodId: string): void {
+    const currentUrl = window.location.origin + window.location.pathname;
+    const successUrl = `${currentUrl}?payment=success&session_id={CHECKOUT_SESSION_ID}`;
+    const cancelUrl = `${currentUrl}?payment=cancelled`;
+
+    const payload = {
+      periodId,
+      successUrl,
+      cancelUrl,
+      metadata: {
+        source: 'subscription_dashboard',
+        timestamp: new Date().toISOString()
+      }
+    };
+
+    this.store.dispatch(new SubscriptionPaymentAction.CreateStripeSession(payload));
+  }
+
+  /**
+   * Gère les callbacks de retour de Stripe
+   */
+  private handleStripeCallback(): void {
+    this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe(params => {
+      if (params['payment'] === 'success' && params['session_id']) {
+        // Paiement réussi - confirmer avec le backend
+        this.confirmStripePayment(params['session_id']);
+        // Nettoyer l'URL
+        this.router.navigate([], {
+          relativeTo: this.route,
+          queryParams: {},
+          replaceUrl: true
+        });
+      } else if (params['payment'] === 'cancelled') {
+        // Paiement annulé
+        this.stripeError = 'Paiement annulé par l\'utilisateur';
+        // Nettoyer l'URL
+        this.router.navigate([], {
+          relativeTo: this.route,
+          queryParams: {},
+          replaceUrl: true
+        });
+      }
+    });
+  }
+
+  /**
+   * Confirme un paiement Stripe après succès
+   */
+  private confirmStripePayment(sessionId: string): void {
+    // Note: Le paymentIntentId sera récupéré côté backend via l'API Stripe
+    const payload = {
+      sessionId,
+      paymentIntentId: '' // Sera rempli côté backend
+    };
+
+    this.store.dispatch(new SubscriptionPaymentAction.ConfirmStripePayment(payload));
   }
 
   upgradeToPremium(): void {

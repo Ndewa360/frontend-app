@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, ViewChild, ViewEncapsulation, Inject, OnInit, Optional } from '@angular/core';
 import { Actions, ofActionCompleted, ofActionErrored, ofActionSuccessful, Store } from '@ngxs/store';
 import { AppSidenavContainerComponent } from 'src/@youpez/components/app-sidenav/app-sidenav-container/app-sidenav-container.component';
 import { INITIAL_LOCATION_FINANCIAL_STATE, LocataireModel, LocataireState, LocationAction, PropertyModel, PropertyState, RoomModel, RoomState } from 'src/app/shared/store';
@@ -8,6 +8,8 @@ import { ToastrService } from 'ngx-toastr';
 import { AssignationConfig } from 'src/app/shared/models/assignation-assistant.model';
 import { filter } from 'rxjs/operators';
 import * as moment from 'moment';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { AssignLocationModalData, AssignLocationModalResult } from '../services/assign-location-modal.service';
 
 
 @Component({
@@ -16,7 +18,7 @@ import * as moment from 'moment';
   styleUrls: ['./assign-location.component.css'],
   encapsulation:ViewEncapsulation.None
 })
-export class AssignLocationComponent  implements OnChanges{
+export class AssignLocationComponent implements OnInit, OnChanges {
 
   locataireForm:{
     locataire?: any,
@@ -46,47 +48,48 @@ export class AssignLocationComponent  implements OnChanges{
   previousUrl: string = null;
   
 
+  // Mode modal
+  isModalMode: boolean = false;
+
   constructor(
     private _store: Store,
-    private _ngxsAction:Actions,
-    private router:Router,
+    private _ngxsAction: Actions,
+    private router: Router,
     private activatedRoute: ActivatedRoute,
-    private toastr: ToastrService
-  ){}
+    private toastr: ToastrService,
+    @Optional() @Inject(MAT_DIALOG_DATA) public modalData: AssignLocationModalData | null,
+    @Optional() public dialogRef: MatDialogRef<AssignLocationComponent, AssignLocationModalResult> | null
+  ) {
+    // Déterminer si on est en mode modal
+    this.isModalMode = !!this.modalData && !!this.dialogRef;
+  }
   
 
-  ngOnInit()
-  {
-    console.log("On NgOnInit AssignLocation")
+  ngOnInit() {
+    console.log("On NgOnInit AssignLocation", { isModalMode: this.isModalMode, modalData: this.modalData });
 
-    // Enregistrer l'URL précédente depuis les query params
-    this.previousUrl = this.activatedRoute.snapshot.queryParams['returnUrl'] || null;
+    if (this.isModalMode && this.modalData) {
+      // Mode modal : utiliser les données du modal
+      this.loadDataFromModalData();
+    } else {
+      // Mode page : utiliser les query params
+      this.previousUrl = this.activatedRoute.snapshot.queryParams['returnUrl'] || null;
+      this.loadDataFromQueryParams();
 
-    // Récupérer les données depuis les query params si pas d'inputs
-    this.loadDataFromQueryParams();
-
-    // Vérifier si l'assistant doit être ouvert automatiquement
-    if (this.activatedRoute.snapshot.queryParams['assistant'] === 'true') {
-      this.assistantVisible = true;
+      // Vérifier si l'assistant doit être ouvert automatiquement
+      if (this.activatedRoute.snapshot.queryParams['assistant'] === 'true') {
+        this.assistantVisible = true;
+      }
     }
 
     this._ngxsAction.pipe(ofActionSuccessful(LocationAction.CreateLocation)).subscribe((value)=>{
       this.waittingResponse=false;
-      // this.property={...this.property}
-      this.closeSideNav()
-      // Rediriger vers la liste des locations si on est sur une page autonome
-      if (!this.sideNavBarElement && this.property) {
-        this.router.navigate(['/app/properties', this.property._id, 'locations']);
-      }
+      this.handleAssignationSuccess(value);
     });
 
     this._ngxsAction.pipe(ofActionSuccessful(LocationAction.CreateAssignationWithAssistant)).subscribe((value)=>{
       this.waittingResponse=false;
-      this.closeSideNav()
-      // Rediriger vers la liste des locations si on est sur une page autonome
-      if (!this.sideNavBarElement && this.property) {
-        this.router.navigate(['/app/properties', this.property._id, 'locations']);
-      }
+      this.handleAssignationSuccess(value);
     });
 
     this._ngxsAction.pipe(ofActionCompleted(LocationAction.CreateLocation)).subscribe(
@@ -212,20 +215,27 @@ export class AssignLocationComponent  implements OnChanges{
   }
 
   closeSideNav() {
-      if(this.sideNavBarElement) {
-        this.sideNavBarElement.onCloseAll();
-        this.assignLocationForm.reset();
-        // this.assignLocationForm.onDestroy()
-      } else {
-        // Mode page autonome : naviguer vers la page précédente
-        this.navigateBack();
-      }
+    if (this.isModalMode) {
+      // Mode modal : fermer le modal avec succès
+      this.closeModal(true);
+    } else if (this.sideNavBarElement) {
+      this.sideNavBarElement.onCloseAll();
+      this.assignLocationForm.reset();
+    } else {
+      // Mode page autonome : naviguer vers la page précédente
+      this.navigateBack();
     }
+  }
 
   /**
    * Naviguer vers la page précédente
    */
   navigateBack(): void {
+    if (this.isModalMode) {
+      this.closeModal(false);
+      return;
+    }
+
     if (this.previousUrl) {
       this.router.navigateByUrl(this.previousUrl);
     } else if (this.property) {
@@ -234,6 +244,68 @@ export class AssignLocationComponent  implements OnChanges{
     } else {
       // Fallback vers la liste des propriétés
       this.router.navigate(['/app/properties/list']);
+    }
+  }
+
+  /**
+   * Charger les données depuis les données du modal
+   */
+  private loadDataFromModalData(): void {
+    if (!this.modalData) return;
+
+    // Charger la propriété
+    if (this.modalData.property) {
+      this.property = this.modalData.property;
+    } else if (this.modalData.propertyId) {
+      // Charger la propriété depuis le store
+      this.property = this._store.selectSnapshot(PropertyState.selectStateProperty(this.modalData.propertyId));
+    }
+
+    // Pré-sélectionner la chambre
+    if (this.modalData.roomSelected) {
+      this.roomSelected = this.modalData.roomSelected;
+    } else if (this.modalData.roomId) {
+      this.roomSelected = this._store.selectSnapshot(RoomState.selectStateRoom(this.modalData.roomId));
+    }
+
+    // Pré-sélectionner le locataire
+    if (this.modalData.locataireSelected) {
+      this.locataireSelected = this.modalData.locataireSelected;
+    } else if (this.modalData.locataireId) {
+      this.locataireSelected = this._store.selectSnapshot(LocataireState.selectStateLocataire(this.modalData.locataireId));
+    }
+
+    // Ouvrir l'assistant si demandé
+    if (this.modalData.assistant) {
+      this.assistantVisible = true;
+    }
+  }
+
+  /**
+   * Gérer le succès de l'assignation
+   */
+  private handleAssignationSuccess(value: any): void {
+    if (this.isModalMode) {
+      this.closeModal(true, value);
+    } else {
+      this.closeSideNav();
+      // Rediriger vers la liste des locations si on est sur une page autonome
+      if (!this.sideNavBarElement && this.property) {
+        this.router.navigate(['/app/properties', this.property._id, 'locations']);
+      }
+    }
+  }
+
+  /**
+   * Fermer le modal
+   */
+  private closeModal(success: boolean, data?: any): void {
+    if (this.dialogRef) {
+      const result: AssignLocationModalResult = {
+        success,
+        data
+      };
+      this.dialogRef.close(result);
     }
   }
 }

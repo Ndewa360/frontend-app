@@ -16,7 +16,11 @@ import { SubscriptionPaymentService } from '../../services/subscription-payment.
     currentInvoice: null,
     totalUnpaidAmount: 0,
     loading: false,
-    error: null
+    error: null,
+    stripeLoading: false,
+    stripeError: null,
+    stripeSession: null,
+    paymentMethods: null
   }
 })
 @Injectable()
@@ -65,6 +69,28 @@ export class SubscriptionPaymentState {
   @Selector()
   static selectHasUnpaidInvoices(state: SubscriptionPaymentStateModel): boolean {
     return state.paymentStatus?.hasUnpaidInvoices || false;
+  }
+
+  // ==================== NOUVEAUX SÉLECTEURS STRIPE ====================
+
+  @Selector()
+  static selectStripeLoading(state: SubscriptionPaymentStateModel): boolean {
+    return state.stripeLoading;
+  }
+
+  @Selector()
+  static selectStripeError(state: SubscriptionPaymentStateModel): string | null {
+    return state.stripeError;
+  }
+
+  @Selector()
+  static selectStripeSession(state: SubscriptionPaymentStateModel): any {
+    return state.stripeSession;
+  }
+
+  @Selector()
+  static selectPaymentMethods(state: SubscriptionPaymentStateModel): any {
+    return state.paymentMethods;
   }
 
   @Action(SubscriptionPaymentAction.ProcessPayment)
@@ -257,5 +283,111 @@ export class SubscriptionPaymentState {
     ctx.patchState({
       error: action.error
     });
+  }
+
+  // ==================== NOUVELLES ACTIONS STRIPE ====================
+
+  @Action(SubscriptionPaymentAction.CreateStripeSession)
+  createStripeSession(ctx: StateContext<SubscriptionPaymentStateModel>, action: SubscriptionPaymentAction.CreateStripeSession) {
+    ctx.patchState({ stripeLoading: true, stripeError: null });
+
+    return this.subscriptionPaymentService.createStripeSession(action.payload).pipe(
+      tap((response: any) => {
+        ctx.patchState({
+          stripeLoading: false,
+          stripeSession: response.data
+        });
+      }),
+      catchError((error: any) => {
+        ctx.patchState({
+          stripeLoading: false,
+          stripeError: error.error?.message || 'Erreur lors de la création de la session Stripe'
+        });
+        this.toastrService.error('Erreur lors de la création de la session de paiement');
+        return throwError(error);
+      })
+    );
+  }
+
+  @Action(SubscriptionPaymentAction.ConfirmStripePayment)
+  confirmStripePayment(ctx: StateContext<SubscriptionPaymentStateModel>, action: SubscriptionPaymentAction.ConfirmStripePayment) {
+    ctx.patchState({ stripeLoading: true, stripeError: null });
+
+    return this.subscriptionPaymentService.confirmStripePayment(action.payload).pipe(
+      tap((response: any) => {
+        ctx.patchState({
+          stripeLoading: false,
+          stripeSession: null
+        });
+        this.toastrService.success('Paiement confirmé avec succès');
+        // Recharger les données de paiement
+        ctx.dispatch(new SubscriptionPaymentAction.GetPaymentHistory());
+        ctx.dispatch(new SubscriptionPaymentAction.GetUnpaidInvoices());
+      }),
+      catchError((error: any) => {
+        ctx.patchState({
+          stripeLoading: false,
+          stripeError: error.error?.message || 'Erreur lors de la confirmation du paiement'
+        });
+        this.toastrService.error('Erreur lors de la confirmation du paiement');
+        return throwError(error);
+      })
+    );
+  }
+
+  @Action(SubscriptionPaymentAction.GetStripeSessionStatus)
+  getStripeSessionStatus(ctx: StateContext<SubscriptionPaymentStateModel>, action: SubscriptionPaymentAction.GetStripeSessionStatus) {
+    ctx.patchState({ stripeLoading: true, stripeError: null });
+
+    return this.subscriptionPaymentService.checkStripeSessionStatus(action.sessionId).pipe(
+      tap((response: any) => {
+        ctx.patchState({
+          stripeLoading: false
+        });
+      }),
+      catchError((error: any) => {
+        ctx.patchState({
+          stripeLoading: false,
+          stripeError: error.error?.message || 'Erreur lors de la récupération du statut'
+        });
+        return throwError(error);
+      })
+    );
+  }
+
+  @Action(SubscriptionPaymentAction.GetPaymentMethods)
+  getPaymentMethods(ctx: StateContext<SubscriptionPaymentStateModel>) {
+    ctx.patchState({ stripeLoading: true, stripeError: null });
+
+    return this.subscriptionPaymentService.getPaymentMethods().pipe(
+      tap((response: any) => {
+        ctx.patchState({
+          stripeLoading: false,
+          paymentMethods: response.data
+        });
+      }),
+      catchError((error: any) => {
+        ctx.patchState({
+          stripeLoading: false,
+          stripeError: error.error?.message || 'Erreur lors de la récupération des méthodes de paiement'
+        });
+        return throwError(error);
+      })
+    );
+  }
+
+  @Action(SubscriptionPaymentAction.SetStripeLoading)
+  setStripeLoading(ctx: StateContext<SubscriptionPaymentStateModel>, action: SubscriptionPaymentAction.SetStripeLoading) {
+    ctx.patchState({ stripeLoading: action.loading });
+  }
+
+  @Action(SubscriptionPaymentAction.SetStripeError)
+  setStripeError(ctx: StateContext<SubscriptionPaymentStateModel>, action: SubscriptionPaymentAction.SetStripeError) {
+    ctx.patchState({ stripeError: action.error });
+  }
+
+  @Action(SubscriptionPaymentAction.ClearStripeError)
+  clearStripeError(ctx: StateContext<SubscriptionPaymentStateModel>) {
+    ctx.patchState({ stripeError: null });
   }
 }

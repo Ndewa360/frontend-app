@@ -63,13 +63,47 @@
     <!-- Contenu principal -->
     <div class="editor-content" [ngClass]="'view-mode-' + viewMode">
       
+      <!-- Loader principal -->
+      <div class="loading-container" *ngIf="isLoading">
+        <div class="loading-content">
+          <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+          </div>
+          <p class="loading-text">Chargement du modèle de contrat...</p>
+        </div>
+      </div>
+
+      <!-- Erreur de chargement -->
+      <div class="error-container" *ngIf="loadingError && !isLoading">
+        <div class="error-content">
+          <i class="fas fa-exclamation-triangle error-icon"></i>
+          <h3>Erreur de chargement</h3>
+          <p>{{ loadingError }}</p>
+          <button ibmButton="primary" size="sm" (click)="retryLoading()">
+            <i class="fas fa-redo mr-2"></i>
+            Réessayer
+          </button>
+        </div>
+      </div>
+
       <!-- Mode édition -->
-      <div class="edit-panel" *ngIf="viewMode === 'edit'">
+      <div class="edit-panel" *ngIf="viewMode === 'edit' && !isLoading && !loadingError">
         <!-- Sidebar avec métadonnées -->
         <div class="editor-sidebar">
-          <div class="sidebar-section">
+          <!-- Skeleton pour les informations générales -->
+          <div class="sidebar-section" *ngIf="isContentLoading">
+            <div class="skeleton-loader">
+              <div class="skeleton-title"></div>
+              <div class="skeleton-input"></div>
+              <div class="skeleton-input"></div>
+              <div class="skeleton-textarea"></div>
+            </div>
+          </div>
+
+          <!-- Contenu normal -->
+          <div class="sidebar-section" *ngIf="!isContentLoading">
             <h3 class="app-productive-heading-04">Informations générales</h3>
-            
+
             <div class="form-group">
               <label class="app-label-01">Nom du modèle *</label>
               <input
@@ -115,11 +149,26 @@
             </div>
           </div>
 
+          <!-- Outils d'édition avancés -->
+          <div class="sidebar-section" *ngIf="!isContentLoading">
+            <h3 class="app-productive-heading-04">Outils d'édition</h3>
+            <div class="editor-tools">
+              <button ibmButton="ghost" size="sm" (click)="openSourceCode()" title="Éditer le code HTML">
+                <i class="fas fa-code mr-2"></i>
+                Code HTML
+              </button>
+              <button ibmButton="ghost" size="sm" (click)="insertHtmlCode()" title="Insérer du HTML">
+                <i class="fas fa-plus-circle mr-2"></i>
+                Insérer HTML
+              </button>
+            </div>
+          </div>
+
           <!-- Variables disponibles -->
-          <div class="sidebar-section">
+          <div class="sidebar-section" *ngIf="!isContentLoading">
             <h3 class="app-productive-heading-04">Variables</h3>
             <p class="app-helper-text-01">Cliquez pour insérer</p>
-            
+
             <div class="variables-list">
               <div class="variable-category" *ngFor="let category of variableCategories">
                 <h4 class="app-productive-heading-05">{{ category.name }}</h4>
@@ -140,7 +189,14 @@
 
         <!-- Zone d'édition principale -->
         <div class="editor-main">
-          <div class="editor-area">
+          <!-- Skeleton pour l'éditeur -->
+          <div class="editor-skeleton" *ngIf="isContentLoading">
+            <div class="skeleton-editor-toolbar"></div>
+            <div class="skeleton-editor-content"></div>
+          </div>
+
+          <!-- Éditeur TinyMCE -->
+          <div class="editor-area" *ngIf="!isContentLoading">
             <editor
               [apiKey]="apiKey"
               [init]="editorConfig"

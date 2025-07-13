@@ -134,7 +134,45 @@
           </div>
         </div>
 
-        <div class="preview-content" [innerHTML]="content"></div>
+        <!-- Loader pour le contenu -->
+        <div class="content-loading" *ngIf="isLoadingContent">
+          <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+          </div>
+          <p>Chargement du contenu...</p>
+        </div>
+
+        <!-- Erreur de chargement du contenu -->
+        <div class="content-error" *ngIf="loadingError && !isLoadingContent">
+          <div class="error-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+          </div>
+          <h3>Erreur de chargement</h3>
+          <p>{{ loadingError }}</p>
+          <button class="retry-btn" (click)="loadContent(templateId)">
+            <i class="fas fa-redo"></i>
+            Réessayer
+          </button>
+        </div>
+
+        <!-- Contenu du template -->
+        <div class="preview-content"
+             *ngIf="!isLoadingContent && !loadingError && content"
+             [innerHTML]="content">
+        </div>
+
+        <!-- Message si pas de contenu -->
+        <div class="no-content" *ngIf="!isLoadingContent && !loadingError && !content">
+          <div class="no-content-icon">
+            <i class="fas fa-file-alt"></i>
+          </div>
+          <h3>Aucun contenu</h3>
+          <p>Ce modèle ne contient pas encore de contenu.</p>
+          <button class="edit-btn" (click)="editTemplate()" *ngIf="!(template$ | async)?.isSystemDefault">
+            <i class="fas fa-edit"></i>
+            Ajouter du contenu
+          </button>
+        </div>
       </div>
     </div>
 </div>

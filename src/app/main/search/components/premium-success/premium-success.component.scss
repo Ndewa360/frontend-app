@@ -1,0 +1,416 @@
+/* Premium Success Page - Design professionnel */
+
+// Variables de couleurs de l'application
+$primary-color: rgb(204, 140, 10);
+$primary-dark: rgb(184, 126, 9);
+$primary-light: rgba(204, 140, 10, 0.1);
+$text-dark: #1f2937;
+$text-light: #6b7280;
+$bg-light: #f8fafc;
+$border-light: #e2e8f0;
+$success-color: #10b981;
+$error-color: #ef4444;
+$premium-color: #8b5cf6;
+
+/* Page principale */
+.premium-success-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, $bg-light 0%, #ffffff 100%);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.success-header {
+  background: linear-gradient(135deg, $primary-color, $primary-dark);
+  padding: 1rem 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  
+  .header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+  
+  .logo {
+    height: 40px;
+    width: auto;
+  }
+}
+
+/* Contenu principal */
+.success-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
+
+.success-container {
+  max-width: 600px;
+  width: 100%;
+  text-align: center;
+}
+
+/* Animation de succès */
+.success-animation {
+  margin-bottom: 2rem;
+  
+  .success-circle {
+    width: 120px;
+    height: 120px;
+    background: linear-gradient(135deg, $success-color, #059669);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    animation: successPulse 2s ease-in-out infinite;
+    box-shadow: 0 8px 32px rgba($success-color, 0.3);
+    
+    i {
+      font-size: 3rem;
+      color: #fbbf24;
+      animation: crownSpin 3s ease-in-out infinite;
+    }
+  }
+}
+
+@keyframes successPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes crownSpin {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-10deg); }
+  75% { transform: rotate(10deg); }
+}
+
+/* Contenu */
+.success-content {
+  h1 {
+    color: $text-dark;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, $primary-color, $premium-color);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .success-message {
+    color: $text-light;
+    font-size: 1.125rem;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+  }
+}
+
+/* Récapitulatif */
+.access-summary {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border: 1px solid $border-light;
+  
+  h3 {
+    color: $text-dark;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    text-align: left;
+  }
+}
+
+.summary-items {
+  display: grid;
+  gap: 1rem;
+  
+  .summary-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: $bg-light;
+    border-radius: 12px;
+    border: 1px solid $border-light;
+    
+    &.highlight {
+      background: linear-gradient(135deg, rgba($premium-color, 0.1), rgba($success-color, 0.1));
+      border-color: $premium-color;
+    }
+    
+    .item-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: $text-light;
+      font-weight: 500;
+      
+      i {
+        color: $primary-color;
+        font-size: 1.125rem;
+      }
+    }
+    
+    .item-value {
+      color: $text-dark;
+      font-weight: 600;
+    }
+  }
+}
+
+/* Avantages débloqués */
+.unlocked-features {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border: 1px solid $border-light;
+  
+  h3 {
+    color: $text-dark;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    text-align: left;
+  }
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  
+  .feature-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.5rem 1rem;
+    background: linear-gradient(135deg, rgba($premium-color, 0.05), rgba($success-color, 0.05));
+    border-radius: 12px;
+    border: 1px solid rgba($premium-color, 0.2);
+    
+    i {
+      font-size: 2rem;
+      color: $premium-color;
+    }
+    
+    span {
+      color: $text-dark;
+      font-weight: 600;
+      text-align: center;
+      font-size: 0.875rem;
+    }
+  }
+}
+
+/* Actions */
+.success-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+  
+  .action-btn {
+    padding: 0.875rem 2rem;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: none;
+    
+    &.primary {
+      background: linear-gradient(135deg, $primary-color, $primary-dark);
+      color: white;
+      box-shadow: 0 4px 12px rgba($primary-color, 0.3);
+      
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba($primary-color, 0.4);
+      }
+    }
+    
+    &.secondary {
+      background: white;
+      color: $primary-color;
+      border: 2px solid $primary-color;
+      
+      &:hover {
+        background: $primary-color;
+        color: white;
+        transform: translateY(-2px);
+      }
+    }
+    
+    i {
+      font-size: 1rem;
+    }
+  }
+}
+
+/* Message d'information */
+.info-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: rgba($primary-color, 0.1);
+  border-radius: 12px;
+  border: 1px solid rgba($primary-color, 0.2);
+  color: $text-light;
+  font-size: 0.875rem;
+  
+  i {
+    color: $primary-color;
+    font-size: 1rem;
+  }
+}
+
+/* Loading */
+.loading-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  .loading-content {
+    text-align: center;
+    
+    i {
+      font-size: 3rem;
+      color: $primary-color;
+      margin-bottom: 1rem;
+    }
+    
+    h3 {
+      color: $text-dark;
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+  }
+}
+
+/* Error */
+.error-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  .error-card {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba($error-color, 0.2);
+    
+    i {
+      font-size: 3rem;
+      color: $error-color;
+      margin-bottom: 1rem;
+    }
+    
+    h3 {
+      color: $text-dark;
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    
+    p {
+      color: $text-light;
+      margin-bottom: 1.5rem;
+    }
+    
+    .retry-btn {
+      background: $error-color;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        background: darken($error-color, 10%);
+        transform: translateY(-1px);
+      }
+    }
+  }
+}
+
+/* Footer */
+.success-footer {
+  background: white;
+  border-top: 1px solid $border-light;
+  padding: 1rem 0;
+  
+  .footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    span {
+      color: $text-light;
+      font-size: 0.875rem;
+    }
+    
+    .footer-links {
+      display: flex;
+      gap: 1.5rem;
+      
+      a {
+        color: $text-light;
+        text-decoration: none;
+        font-size: 0.875rem;
+        transition: color 0.3s ease;
+        
+        &:hover {
+          color: $primary-color;
+        }
+      }
+    }
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .success-content h1 {
+    font-size: 2rem;
+  }
+  
+  .success-actions {
+    flex-direction: column;
+    align-items: center;
+    
+    .action-btn {
+      width: 100%;
+      max-width: 300px;
+    }
+  }
+  
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .footer-content {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+}

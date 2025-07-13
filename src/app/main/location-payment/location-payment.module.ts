@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MatDialogModule } from '@angular/material/dialog';
 
 import { LocationPaymentRoutingModule } from './location-payment-routing.module';
 import { AddPaymentComponent } from './components/add-payment/add-payment.component';
@@ -27,6 +28,7 @@ import { UpdatePaymentComponent } from './components/update-payment/update-payme
     ChartsModule,
     YoupezModule,
     AgGridModule,
+    MatDialogModule,
     LocationPaymentRoutingModule
   ],
   exports: [

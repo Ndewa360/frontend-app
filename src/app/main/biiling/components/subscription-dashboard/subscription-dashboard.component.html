@@ -101,14 +101,24 @@
 
             <!-- Actions de paiement -->
             <div *ngIf="currentPeriod?.state !== 'payed' && currentPeriod?.calculatedAmount > 0" class="payment-actions">
-              <button (click)="payCurrentPeriod()" class="btn btn-success">
-                <i class="fas fa-credit-card"></i>
-                Payer maintenant ({{ formatCurrency(currentPeriod?.calculatedAmount) }})
+              <button (click)="payCurrentPeriod()"
+                      class="btn btn-success"
+                      [disabled]="stripeLoading">
+                <i class="fas fa-credit-card" *ngIf="!stripeLoading"></i>
+                <i class="fas fa-spinner fa-spin" *ngIf="stripeLoading"></i>
+                <span *ngIf="!stripeLoading">Payer maintenant ({{ formatCurrency(currentPeriod?.calculatedAmount) }})</span>
+                <span *ngIf="stripeLoading">Redirection vers Stripe...</span>
               </button>
               <button (click)="downloadInvoice(currentPeriod._id)" class="btn btn-secondary">
                 <i class="fas fa-download"></i>
                 Télécharger la facture
               </button>
+            </div>
+
+            <!-- Erreur Stripe -->
+            <div *ngIf="stripeError" class="alert alert-danger mt-3">
+              <i class="fas fa-exclamation-triangle"></i>
+              {{ stripeError }}
             </div>
           </div>
         </div>
@@ -228,10 +238,12 @@
                     <i class="fas fa-download"></i>
                   </button>
                   <button *ngIf="period.state !== 'payed'"
-                          (click)="payCurrentPeriod()"
+                          (click)="initiateStripePayment(period._id)"
                           class="btn-icon pay"
+                          [disabled]="stripeLoading"
                           title="Payer maintenant">
-                    <i class="fas fa-credit-card"></i>
+                    <i class="fas fa-credit-card" *ngIf="!stripeLoading"></i>
+                    <i class="fas fa-spinner fa-spin" *ngIf="stripeLoading"></i>
                   </button>
                 </div>
               </div>

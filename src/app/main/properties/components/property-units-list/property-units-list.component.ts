@@ -2,6 +2,12 @@ import { Component, Input, Output, EventEmitter, OnInit, OnDestroy } from '@angu
 import { Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { MatDialog } from '@angular/material/dialog';
+import { AssignLocationModalService } from 'src/app/main/assign-location/services/assign-location-modal.service';
+import { ToastrService } from 'ngx-toastr';
+import { AddPropertyRoomComponent } from 'src/app/main/properties/components/add-property-room/add-property-room.component';
+import { UpdatePaymentComponent } from 'src/app/main/location-payment/components/update-payment/update-payment.component';
+import { RemoveLocataireRoomComponent } from '../remove-locataire-room/remove-locataire-room.component';
+import { ContractViewerModalComponent } from '../contract-viewer-modal/contract-viewer-modal.component';
 import { Observable, Subject, combineLatest } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
@@ -18,7 +24,8 @@ import {
   HistoryLocationPaymentAction,
   LocationPaymentModel,
   HistoryLocationPaymentModel,
-  LocationModel
+  LocationModel,
+  LocationState
 } from 'src/app/shared/store';
 import { UtilsString } from 'src/app/shared/utils';
 import { UnitDetailsViewService } from '../../services/unit-details-view.service';
@@ -26,9 +33,10 @@ import { GaleryComponent } from '../../../room/components/galery/galery.componen
 import { AddPaymentComponent } from '../../../location-payment/components/add-payment/add-payment.component';
 import { DeletePaymentComponent } from '../../../location-payment/components/delete-payment/delete-payment.component';
 import { GeneratePaymentLinkModalComponent } from '../generate-payment-link-modal/generate-payment-link-modal.component';
+import { UpdateLocataireComponent } from 'src/app/main/locataires/components/update-locataire/update-locataire.component';
 
 export interface UnitAction {
-  type: 'view' | 'edit' | 'assign_tenant' | 'terminate_lease' | 'manage_media' | 'toggle_status' | 'edit_galery';
+  type: 'view' | 'edit' | 'assign_tenant' | 'terminate_lease' | 'manage_media' | 'toggle_status' | 'edit_galery' | 'edit_tenant';
   room: RoomModel;
   data?: any;
 }
@@ -117,7 +125,9 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
     private store: Store,
     public viewService: UnitDetailsViewService,
     private router: Router,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private assignLocationModalService: AssignLocationModalService,
+    private toastr: ToastrService
   ) { }
 
   ngOnInit(): void {
@@ -379,9 +389,7 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
     this.unitAction.emit({ type: 'toggle_status', room });
   }
 
-  onAddUnit(): void {
-    this.addUnit.emit();
-  }
+
 
   onEditGaleryUnit(room: RoomModel): void {
     const dialogRef = this.dialog.open(GaleryComponent, {
@@ -539,22 +547,136 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
 
   // Méthodes pour les modals
   onAssignTenant(room: RoomModel): void {
-    // Naviguer vers l'assistant d'assignation avec la chambre pré-sélectionnée
-    this.router.navigate(['/app/assign-location'], {
-      queryParams: {
-        propertyId: this.propertyId,
-        roomId: room._id,
-        assistant: true,
-        returnUrl: this.router.url
+    // Ouvrir le modal d'assignation avec la chambre pré-sélectionnée
+    this.assignLocationModalService.openAssignLocationModal({
+      propertyId: this.propertyId,
+      roomId: room._id,
+      assistant: true,
+      returnUrl: this.router.url
+    }).subscribe(result => {
+      if (result && result.success) {
+        // Recharger les données après succès
+        this.reloadData();
+        this.toastr.success('Assignation réalisée avec succès', 'Succès');
+      }
+    });
+  }
+  // Méthodes pour les modals
+  onEditenant(tenant: LocataireModel): void {
+    // Ouvrir le modal d'assignation avec la chambre pré-sélectionnée
+    this.dialog.open(UpdateLocataireComponent, {
+      width: '100%',
+      maxWidth: '800px',
+      disableClose: true,
+      data: {
+        locataire: tenant
+      }
+    }).afterClosed().subscribe(result => {
+      if (result) {
+        // Recharger les données après modification
+        this.reloadData();
+        this.toastr.success('Locataire modifié avec succès', 'Succès');
       }
     });
   }
 
   onTerminateLease(room: RoomModel): void {
-    this.selectedRoom = room;
-    this.leaseEndDate = '';
-    this.terminationReason = '';
-    this.showTerminateLeaseModal = true;
+    console.log('🔧 PropertyUnitsList: onTerminateLease appelé pour:', room);
+
+    if (!this.dialog) {
+      console.error('❌ Service MatDialog non disponible !');
+      return;
+    }
+
+    // Récupérer la location active pour cette chambre depuis le store
+    const locations = this.store.selectSnapshot(LocationState.selectStateLocations) as LocationModel[];
+    const location = locations?.find((loc: LocationModel) => loc.room === room._id && loc.isRunning);
+
+    if (!location) {
+      console.error('❌ Aucune location active trouvée pour cette unité');
+      this.toastr.error('Aucune location active trouvée pour cette unité', 'Erreur');
+      return;
+    }
+
+    console.log('📝 Ouverture du modal RemoveLocataireRoomComponent...');
+
+    try {
+      const dialogRef = this.dialog.open(RemoveLocataireRoomComponent, {
+        width: '500px',
+        maxWidth: '95vw',
+        disableClose: true,
+        data: {
+          location: location
+        }
+      });
+
+      console.log('✅ Modal RemoveLocataireRoom ouvert, dialogRef:', dialogRef);
+
+      dialogRef.afterClosed().subscribe(result => {
+        console.log('🔄 Modal RemoveLocataireRoom fermé avec résultat:', result);
+        if (result) {
+          console.log('✅ Contrat résilié avec succès');
+          // Recharger les données
+          this.reloadData();
+          this.toastr.success('Contrat résilié avec succès', 'Succès');
+        }
+      });
+    } catch (error) {
+      console.error('❌ Erreur lors de l\'ouverture du modal RemoveLocataireRoom:', error);
+    }
+  }
+
+  /**
+   * Ouvre le modal de visualisation du contrat
+   */
+  onViewContract(room: RoomModel): void {
+    console.log('🔍 PropertyUnitsList: onViewContract appelé pour:', room);
+
+    if (!this.dialog) {
+      console.error('❌ Service MatDialog non disponible !');
+      return;
+    }
+
+    // Récupérer la location active pour cette chambre depuis le store
+    const locations = this.store.selectSnapshot(LocationState.selectStateLocations) as LocationModel[];
+    const location = locations?.find((loc: LocationModel) => loc.room === room._id && loc.isRunning);
+
+    if (!location) {
+      console.error('❌ Aucune location active trouvée pour cette unité');
+      this.toastr.error('Aucune location active trouvée pour cette unité', 'Erreur');
+      return;
+    }
+
+    // Récupérer le locataire
+    const tenants = this.store.selectSnapshot(LocataireState.selectStateLocataires) as LocataireModel[];
+    const tenant = tenants?.find((t: LocataireModel) => t._id === location.locataire);
+
+    console.log('📄 Ouverture du modal ContractViewerModal...');
+
+    try {
+      const dialogRef = this.dialog.open(ContractViewerModalComponent, {
+        width: '90vw',
+        height: '90vh',
+        maxWidth: '1400px',
+        maxHeight: '900px',
+        disableClose: false,
+        panelClass: 'contract-viewer-dialog',
+        data: {
+          room: room,
+          location: location,
+          tenant: tenant
+        }
+      });
+
+      console.log('✅ Modal ContractViewer ouvert, dialogRef:', dialogRef);
+
+      dialogRef.afterClosed().subscribe(result => {
+        console.log('🔄 Modal ContractViewer fermé');
+      });
+    } catch (error) {
+      console.error('❌ Erreur lors de l\'ouverture du modal ContractViewer:', error);
+      this.toastr.error('Erreur lors de l\'ouverture du contrat', 'Erreur');
+    }
   }
 
   closeAssignTenantModal(): void {
@@ -564,12 +686,6 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
     this.leaseStartDate = '';
   }
 
-  closeTerminateLeaseModal(): void {
-    this.showTerminateLeaseModal = false;
-    this.selectedRoom = null;
-    this.leaseEndDate = '';
-    this.terminationReason = '';
-  }
 
   closeUnitDetailsModal(): void {
     this.showUnitDetailsModal = false;
@@ -605,12 +721,14 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
       case 'assign_tenant':
         this.onAssignTenant(action.room);
         break;
+      case 'edit_tenant':
+        this.onEditenant(action.data.tenant);
+        break;
       case 'terminate_lease':
         this.onTerminateLease(action.room);
         break;
       case 'view_contract':
-        console.log('Voir le contrat pour:', action.room);
-        // TODO: Implémenter la visualisation du contrat
+        this.onViewContract(action.room);
         break;
       case 'view_image':
         console.log('Voir l\'image:', action.data?.imageUrl);
@@ -888,8 +1006,38 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
   }
 
   editPayment(payment: any): void {
-    console.log('Modifier le paiement:', payment);
-    // TODO: Implémenter la modification du paiement
+    console.log('🔧 editPayment appelé:', payment);
+    console.log('🔧 Dialog service:', this.dialog);
+
+    if (!payment?.transaction || !payment?.history) {
+      console.error('❌ Données de paiement manquantes pour la modification');
+      return;
+    }
+
+    console.log('📝 Ouverture du modal UpdatePaymentComponent...');
+
+    const dialogRef = this.dialog.open(UpdatePaymentComponent, {
+      width: '100%',
+      maxWidth: '800px',
+      disableClose: true,
+      data: {
+        transaction: payment.transaction,
+        history: payment.history
+      }
+    });
+
+    console.log('✅ Modal UpdatePayment ouvert, dialogRef:', dialogRef);
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('🔄 Modal UpdatePayment fermé avec résultat:', result);
+      if (result) {
+        console.log('💰 Paiement modifié avec succès');
+        // Recharger les données de l'unité
+        if (payment.transaction?.roomId) {
+          this.refreshUnitData(payment.transaction.roomId);
+        }
+      }
+    });
   }
 
   // Export CSV comme dans le composant existant
@@ -949,19 +1097,7 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
     }
   }
 
-  confirmTerminateLease(): void {
-    if (this.selectedRoom && this.leaseEndDate) {
-      this.unitAction.emit({
-        type: 'terminate_lease',
-        room: this.selectedRoom,
-        data: {
-          endDate: this.leaseEndDate,
-          reason: this.terminationReason
-        }
-      });
-      this.closeTerminateLeaseModal();
-    }
-  }
+
 
   loadAvailableTenants(): void {
     // Charger les locataires disponibles depuis le store
@@ -1043,10 +1179,10 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
         console.log('Voir les détails du paiement:', action.data);
         break;
       case 'edit':
-        console.log('Modifier le paiement:', action.data);
+        this.editPayment(action.data);
         break;
       case 'delete':
-        console.log('Supprimer le paiement:', action.data);
+        this.openDeletePaymentModal(action.data);
         break;
       case 'export':
         console.log('Export CSV effectué');
@@ -1090,6 +1226,71 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
       setTimeout(() => {
         this.updateRoomPayments();
       }, 1000);
+    }
+  }
+
+  /**
+   * Recharger les données après une assignation réussie
+   */
+  private reloadData(): void {
+    if (this.propertyId) {
+      // Recharger les chambres
+      this.store.dispatch(new RoomAction.FetchRoomsByPropertyID(this.propertyId));
+
+      // Recharger les locataires
+      this.store.dispatch(new LocataireAction.FetchLocatairesByPropertyId(this.propertyId));
+
+      // Recharger les paiements
+      this.store.dispatch(new HistoryLocationPaymentAction.FetchHistoryLocationPaymentsByPropertyId(this.propertyId));
+
+      // Mettre à jour les données après un délai
+      setTimeout(() => {
+        this.updateRoomPayments();
+      }, 1000);
+    }
+  }
+
+  /**
+   * Ouvrir le modal d'ajout d'une nouvelle unité
+   */
+  onAddUnit(): void {
+    console.log('🔧 onAddUnit appelé', { propertyId: this.propertyId, dialog: this.dialog });
+
+    if (!this.dialog) {
+      console.error('❌ Service MatDialog non disponible !');
+      return;
+    }
+
+    if (this.propertyId) {
+      console.log('📝 Ouverture du modal AddPropertyRoomComponent...');
+
+      try {
+        const dialogRef = this.dialog.open(AddPropertyRoomComponent, {
+          width: '100%',
+          maxWidth: '900px',
+          disableClose: true,
+          data: {
+            property: { _id: this.propertyId }
+          }
+        });
+
+        console.log('✅ Modal ouvert, dialogRef:', dialogRef);
+        console.log('✅ DialogRef id:', dialogRef.id);
+        console.log('✅ DialogRef componentInstance:', dialogRef.componentInstance);
+
+        dialogRef.afterClosed().subscribe(result => {
+          console.log('🔄 Modal fermé avec résultat:', result);
+          if (result) {
+            // Recharger les données après création
+            this.reloadData();
+            this.toastr.success('Unité créée avec succès', 'Succès');
+          }
+        });
+      } catch (error) {
+        console.error('❌ Erreur lors de l\'ouverture du modal:', error);
+      }
+    } else {
+      console.error('❌ PropertyId manquant pour ajouter une unité');
     }
   }
 

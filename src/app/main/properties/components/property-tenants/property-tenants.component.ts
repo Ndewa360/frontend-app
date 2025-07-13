@@ -1,7 +1,17 @@
 import { Component, Input, OnInit, OnDestroy, OnChanges } from '@angular/core';
-import { LocataireModel, RoomModel, LocationModel, LocationState } from 'src/app/shared/store';
+import { LocataireModel, RoomModel, LocationModel, LocationState, LocataireState, HistoryLocationPaymentState, PropertyState } from 'src/app/shared/store';
 import { LocationPaymentAction } from 'src/app/shared/store/payment-location';
+import { HistoryLocationPaymentAction } from 'src/app/shared/store/history-payment-location';
 import { Store } from '@ngxs/store';
+import { MatDialog } from '@angular/material/dialog';
+import { ToastrService } from 'ngx-toastr';
+import { AddPropertyLocataireComponent } from '../add-property-locataire/add-property-locataire.component';
+import { ContractViewerModalComponent } from '../contract-viewer-modal/contract-viewer-modal.component';
+import { RemoveLocataireRoomComponent } from '../remove-locataire-room/remove-locataire-room.component';
+import { AddPaymentComponent } from 'src/app/main/location-payment/components/add-payment/add-payment.component';
+import { UpdatePaymentComponent } from 'src/app/main/location-payment/components/update-payment/update-payment.component';
+import { DeletePaymentComponent } from 'src/app/main/location-payment/components/delete-payment/delete-payment.component';
+import { UpdateLocataireComponent } from 'src/app/main/locataires/components/update-locataire/update-locataire.component';
 
 @Component({
   selector: 'app-property-tenants',
@@ -26,7 +36,11 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
   // Locataire sélectionné pour le panneau de détails
   selectedTenant: LocataireModel | null = null;
 
-  constructor(private store: Store) {}
+  constructor(
+    private store: Store,
+    private dialog: MatDialog,
+    private toastr: ToastrService
+  ) {}
 
   ngOnInit(): void {
     this.filteredTenants = [...this.tenants];
@@ -271,8 +285,48 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
   // === MÉTHODES D'ACTIONS ===
 
   addTenant(): void {
-    console.log('Ajouter un nouveau locataire');
-    // Implémentation de l'ajout de locataire
+    console.log('🏠 PropertyTenants: addTenant appelé');
+
+    if (!this.dialog) {
+      console.error('❌ Service MatDialog non disponible !');
+      return;
+    }
+
+    // Récupérer les données de la propriété depuis le store
+    const property = this.store.selectSnapshot(PropertyState.selectStateProperty(this.propertyId));
+
+    if (!property) {
+      console.error('❌ Propriété non trouvée');
+      this.toastr.error('Propriété non trouvée', 'Erreur');
+      return;
+    }
+
+    console.log('📝 Ouverture du modal AddPropertyLocataireComponent...');
+
+    try {
+      const dialogRef = this.dialog.open(AddPropertyLocataireComponent, {
+        width: '600px',
+        maxWidth: '95vw',
+        disableClose: true,
+        data: {
+          property: property
+        }
+      });
+
+      console.log('✅ Modal AddPropertyLocataire ouvert, dialogRef:', dialogRef);
+
+      dialogRef.afterClosed().subscribe(result => {
+        console.log('🔄 Modal AddPropertyLocataire fermé avec résultat:', result);
+        if (result) {
+          console.log('✅ Locataire ajouté avec succès');
+          this.toastr.success('Locataire ajouté avec succès', 'Succès');
+          // Les données seront automatiquement mises à jour via les observables
+        }
+      });
+    } catch (error) {
+      console.error('❌ Erreur lors de l\'ouverture du modal AddPropertyLocataire:', error);
+      this.toastr.error('Erreur lors de l\'ouverture du modal', 'Erreur');
+    }
   }
 
   onTenantClick(tenant: LocataireModel): void {
@@ -286,14 +340,80 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
 
   onEditTenant(tenant: LocataireModel, event: Event): void {
     event.stopPropagation();
-    console.log('Modifier:', tenant);
-    // Logique pour modifier le locataire
+    console.log('✏️ PropertyTenants: onEditTenant appelé pour:', tenant);
+
+    if (!this.dialog) {
+      console.error('❌ Service MatDialog non disponible !');
+      return;
+    }
+
+    console.log('📝 Ouverture du modal UpdateLocataireComponent...');
+
+    try {
+      const dialogRef = this.dialog.open(UpdateLocataireComponent, {
+        width: '600px',
+        maxWidth: '95vw',
+        disableClose: true,
+        data: {
+          locataire: tenant
+        }
+      });
+
+      console.log('✅ Modal UpdateLocataire ouvert, dialogRef:', dialogRef);
+
+      dialogRef.afterClosed().subscribe(result => {
+        console.log('🔄 Modal UpdateLocataire fermé avec résultat:', result);
+        if (result) {
+          console.log('✅ Locataire modifié avec succès');
+          this.toastr.success('Locataire modifié avec succès', 'Succès');
+          // Les données seront automatiquement mises à jour via les observables
+        }
+      });
+    } catch (error) {
+      console.error('❌ Erreur lors de l\'ouverture du modal UpdateLocataire:', error);
+      this.toastr.error('Erreur lors de l\'ouverture du modal', 'Erreur');
+    }
   }
 
   onAddPayment(tenant: LocataireModel, event: Event): void {
     event.stopPropagation();
-    console.log('Ajouter paiement:', tenant);
-    // Logique pour ajouter un paiement
+    console.log('💰 PropertyTenants: onAddPayment appelé pour:', tenant);
+
+    if (!this.dialog) {
+      console.error('❌ Service MatDialog non disponible !');
+      return;
+    }
+
+    // Charger les données nécessaires
+    this.loadPaymentDataForTenant(tenant)
+      .then(({ location, room }) => {
+        console.log('📝 Ouverture du modal AddPaymentComponent...');
+
+        const dialogRef = this.dialog.open(AddPaymentComponent, {
+          width: '100%',
+          maxWidth: '800px',
+          disableClose: true,
+          data: {
+            room: room,
+            tenant: tenant,
+            location: location
+          }
+        });
+
+        console.log('✅ Modal AddPayment ouvert, dialogRef:', dialogRef);
+
+        dialogRef.afterClosed().subscribe(result => {
+          console.log('🔄 Modal AddPayment fermé avec résultat:', result);
+          if (result) {
+            console.log('✅ Paiement ajouté avec succès');
+            this.toastr.success('Paiement ajouté avec succès', 'Succès');
+          }
+        });
+      })
+      .catch(error => {
+        console.error('❌ Erreur:', error);
+        this.toastr.error(error, 'Erreur');
+      });
   }
 
   onAssignUnit(tenant: LocataireModel, event: Event): void {
@@ -309,10 +429,40 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   onEditTenantFromPanel(tenant: LocataireModel): void {
-    console.log('Modifier locataire depuis panneau:', tenant);
-    // Fermer le panneau et ouvrir le modal d'édition
-    this.selectedTenant = null;
-    // TODO: Ouvrir modal d'édition
+    console.log('✏️ PropertyTenants: onEditTenantFromPanel appelé pour:', tenant);
+
+    if (!this.dialog) {
+      console.error('❌ Service MatDialog non disponible !');
+      return;
+    }
+
+    console.log('📝 Ouverture du modal UpdateLocataireComponent...');
+
+    try {
+      const dialogRef = this.dialog.open(UpdateLocataireComponent, {
+        width: '600px',
+        maxWidth: '95vw',
+        disableClose: true,
+        data: {
+          locataire: tenant
+        }
+      });
+
+      console.log('✅ Modal UpdateLocataire ouvert, dialogRef:', dialogRef);
+
+      dialogRef.afterClosed().subscribe(result => {
+        console.log('🔄 Modal UpdateLocataire fermé avec résultat:', result);
+        if (result) {
+          console.log('✅ Locataire modifié avec succès');
+          this.toastr.success('Locataire modifié avec succès', 'Succès');
+        }
+        this.selectedTenant = null;
+      });
+    } catch (error) {
+      console.error('❌ Erreur lors de l\'ouverture du modal UpdateLocataire:', error);
+      this.toastr.error('Erreur lors de l\'ouverture du modal', 'Erreur');
+      this.selectedTenant = null;
+    }
   }
 
   onAssignRoomFromPanel(tenant: LocataireModel): void {
@@ -323,22 +473,282 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   onViewContractFromPanel(tenant: LocataireModel): void {
-    console.log('Voir contrat depuis panneau:', tenant);
-    // TODO: Ouvrir modal de visualisation du contrat
-  }
+    console.log('📄 PropertyTenants: onViewContractFromPanel appelé pour:', tenant);
 
-  onCancelContractFromPanel(tenant: LocataireModel): void {
-    if (confirm(`Êtes-vous sûr de vouloir résilier le contrat de "${tenant.fullName}" ?`)) {
-      console.log('Résilier contrat depuis panneau:', tenant);
-      // TODO: Logique de résiliation du contrat
-      this.selectedTenant = null;
+    if (!this.dialog) {
+      console.error('❌ Service MatDialog non disponible !');
+      return;
+    }
+
+    // Récupérer l'unité du locataire
+    const room = this.units.find(r => r._id === tenant.room);
+    if (!room) {
+      console.error('❌ Unité non trouvée pour ce locataire');
+      this.toastr.error('Unité non trouvée pour ce locataire', 'Erreur');
+      return;
+    }
+
+    // Récupérer la location active
+    const location = this.locations.find(loc =>
+      loc.locataire === tenant._id &&
+      loc.room === tenant.room &&
+      loc.isRunning === true
+    );
+
+    if (!location) {
+      console.error('❌ Aucune location active trouvée pour ce locataire');
+      this.toastr.error('Aucune location active trouvée pour ce locataire', 'Erreur');
+      return;
+    }
+
+    console.log('📄 Ouverture du modal ContractViewerModal...');
+
+    try {
+      const dialogRef = this.dialog.open(ContractViewerModalComponent, {
+        width: '90vw',
+        height: '90vh',
+        maxWidth: '1400px',
+        maxHeight: '900px',
+        disableClose: false,
+        panelClass: 'contract-viewer-dialog',
+        data: {
+          room: room,
+          location: location,
+          tenant: tenant
+        }
+      });
+
+      console.log('✅ Modal ContractViewer ouvert, dialogRef:', dialogRef);
+
+      dialogRef.afterClosed().subscribe(() => {
+        console.log('🔄 Modal ContractViewer fermé');
+      });
+    } catch (error) {
+      console.error('❌ Erreur lors de l\'ouverture du modal ContractViewer:', error);
+      this.toastr.error('Erreur lors de l\'ouverture du contrat', 'Erreur');
     }
   }
 
+  onCancelContractFromPanel(tenant: LocataireModel): void {
+    console.log('🚫 PropertyTenants: onCancelContractFromPanel appelé pour:', tenant);
+
+    if (!this.dialog) {
+      console.error('❌ Service MatDialog non disponible !');
+      return;
+    }
+
+    // Récupérer la location active pour ce locataire
+    const location = this.locations.find(loc =>
+      loc.locataire === tenant._id &&
+      loc.room === tenant.room &&
+      loc.isRunning === true
+    );
+
+    if (!location) {
+      console.error('❌ Aucune location active trouvée pour ce locataire');
+      this.toastr.error('Aucune location active trouvée pour ce locataire', 'Erreur');
+      return;
+    }
+
+    console.log('🚫 Ouverture du modal RemoveLocataireRoomComponent...');
+
+    try {
+      const dialogRef = this.dialog.open(RemoveLocataireRoomComponent, {
+        width: '500px',
+        maxWidth: '95vw',
+        disableClose: true,
+        data: {
+          location: location
+        }
+      });
+
+      console.log('✅ Modal RemoveLocataireRoom ouvert, dialogRef:', dialogRef);
+
+      dialogRef.afterClosed().subscribe(result => {
+        console.log('🔄 Modal RemoveLocataireRoom fermé avec résultat:', result);
+        if (result) {
+          console.log('✅ Contrat résilié avec succès');
+          this.toastr.success('Contrat résilié avec succès', 'Succès');
+          this.selectedTenant = null;
+          // Les données seront automatiquement mises à jour via les observables
+        }
+      });
+    } catch (error) {
+      console.error('❌ Erreur lors de l\'ouverture du modal RemoveLocataireRoom:', error);
+      this.toastr.error('Erreur lors de la résiliation du contrat', 'Erreur');
+    }
+  }
+
+  /**
+   * Charge les données de paiement nécessaires pour un locataire
+   */
+  private loadPaymentDataForTenant(tenant: LocataireModel): Promise<{location: LocationModel, room: RoomModel}> {
+    return new Promise((resolve, reject) => {
+      // Récupérer l'unité du locataire
+      const room = this.units.find(r => r._id === tenant.room);
+      if (!room) {
+        reject('Unité non trouvée pour ce locataire');
+        return;
+      }
+
+      // Récupérer la location active
+      const location = this.locations.find(loc =>
+        loc.locataire === tenant._id &&
+        loc.room === tenant.room &&
+        loc.isRunning === true
+      );
+
+      if (!location) {
+        reject('Aucune location active trouvée pour ce locataire');
+        return;
+      }
+
+      // Charger l'historique des paiements pour ce locataire
+      this.store.dispatch(new HistoryLocationPaymentAction.FetchHistoryLocationByLocataireId(tenant._id))
+        .subscribe({
+          next: () => {
+            console.log('✅ Historique des paiements chargé pour:', tenant.fullName);
+            resolve({ location, room });
+          },
+          error: (error) => {
+            console.error('❌ Erreur lors du chargement de l\'historique:', error);
+            reject('Erreur lors du chargement des données de paiement');
+          }
+        });
+    });
+  }
+
   onAddPaymentFromPanel(tenant: LocataireModel): void {
-    console.log('Ajouter paiement depuis panneau:', tenant);
-    // Fermer le panneau et ouvrir le modal de paiement
-    this.selectedTenant = null;
-    // TODO: Ouvrir modal d'ajout de paiement
+    console.log('💰 PropertyTenants: onAddPaymentFromPanel appelé pour:', tenant);
+
+    if (!this.dialog) {
+      console.error('❌ Service MatDialog non disponible !');
+      return;
+    }
+
+    // Charger les données nécessaires
+    this.loadPaymentDataForTenant(tenant)
+      .then(({ location, room }) => {
+        console.log('📝 Ouverture du modal AddPaymentComponent...');
+
+        const dialogRef = this.dialog.open(AddPaymentComponent, {
+          width: '100%',
+          maxWidth: '800px',
+          disableClose: true,
+          data: {
+            room: room,
+            tenant: tenant,
+            location: location
+          }
+        });
+
+        console.log('✅ Modal AddPayment ouvert, dialogRef:', dialogRef);
+
+        dialogRef.afterClosed().subscribe(result => {
+          console.log('🔄 Modal AddPayment fermé avec résultat:', result);
+          if (result) {
+            console.log('✅ Paiement ajouté avec succès');
+            this.toastr.success('Paiement ajouté avec succès', 'Succès');
+          }
+          this.selectedTenant = null;
+        });
+      })
+      .catch(error => {
+        console.error('❌ Erreur:', error);
+        this.toastr.error(error, 'Erreur');
+      });
+  }
+
+
+
+  /**
+   * Ouvre le modal de modification d'un paiement
+   */
+  onEditPayment(payment: any): void {
+    console.log('🔧 PropertyTenants: onEditPayment appelé', payment);
+
+    if (!payment?.transaction || !payment?.history) {
+      console.error('❌ Données de paiement manquantes pour la modification');
+      this.toastr.error('Données de paiement manquantes', 'Erreur');
+      return;
+    }
+
+    if (!this.dialog) {
+      console.error('❌ Service MatDialog non disponible !');
+      return;
+    }
+
+    console.log('📝 Ouverture du modal UpdatePaymentComponent...');
+
+    try {
+      const dialogRef = this.dialog.open(UpdatePaymentComponent, {
+        width: '100%',
+        maxWidth: '800px',
+        disableClose: true,
+        data: {
+          transaction: payment.transaction,
+          history: payment.history
+        }
+      });
+
+      console.log('✅ Modal UpdatePayment ouvert, dialogRef:', dialogRef);
+
+      dialogRef.afterClosed().subscribe(result => {
+        console.log('🔄 Modal UpdatePayment fermé avec résultat:', result);
+        if (result) {
+          console.log('✅ Paiement modifié avec succès');
+          this.toastr.success('Paiement modifié avec succès', 'Succès');
+        }
+      });
+    } catch (error) {
+      console.error('❌ Erreur lors de l\'ouverture du modal UpdatePayment:', error);
+      this.toastr.error('Erreur lors de l\'ouverture du modal', 'Erreur');
+    }
+  }
+
+  /**
+   * Ouvre le modal de suppression d'un paiement
+   */
+  onDeletePayment(payment: any): void {
+    console.log('🗑️ PropertyTenants: onDeletePayment appelé', payment);
+
+    if (!payment?.transaction || !payment?.history) {
+      console.error('❌ Données de paiement manquantes pour la suppression');
+      this.toastr.error('Données de paiement manquantes', 'Erreur');
+      return;
+    }
+
+    if (!this.dialog) {
+      console.error('❌ Service MatDialog non disponible !');
+      return;
+    }
+
+    console.log('🗑️ Ouverture du modal DeletePaymentComponent...');
+
+    try {
+      const dialogRef = this.dialog.open(DeletePaymentComponent, {
+        width: '500px',
+        maxWidth: '95vw',
+        panelClass: 'delete-payment-modal-dialog',
+        disableClose: true,
+        data: {
+          transaction: payment.transaction,
+          history: payment.history
+        }
+      });
+
+      console.log('✅ Modal DeletePayment ouvert, dialogRef:', dialogRef);
+
+      dialogRef.afterClosed().subscribe(result => {
+        console.log('🔄 Modal DeletePayment fermé avec résultat:', result);
+        if (result) {
+          console.log('✅ Paiement supprimé avec succès');
+          this.toastr.success('Paiement supprimé avec succès', 'Succès');
+        }
+      });
+    } catch (error) {
+      console.error('❌ Erreur lors de l\'ouverture du modal DeletePayment:', error);
+      this.toastr.error('Erreur lors de l\'ouverture du modal', 'Erreur');
+    }
   }
 }

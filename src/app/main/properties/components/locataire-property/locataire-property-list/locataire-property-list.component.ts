@@ -4,6 +4,11 @@ import { Select, Store } from '@ngxs/store';
 import { TableModel, TableHeaderItem, TableItem, TableRowSize } from 'carbon-components-angular';
 import { Observable } from 'rxjs';
 import { LocataireModel, LocataireState, RoomState, RoomModel, PropertyModel } from 'src/app/shared/store';
+import { AssignLocationModalService } from 'src/app/main/assign-location/services/assign-location-modal.service';
+import { ToastrService } from 'ngx-toastr';
+import { MatDialog } from '@angular/material/dialog';
+import { UpdateLocataireComponent } from 'src/app/main/locataires/components/update-locataire/update-locataire.component';
+import { AddLocataireComponent } from 'src/app/main/locataires/components/add-locataire/add-locataire.component';
 
 @Component({
   selector: 'app-locataire-property-list',
@@ -41,7 +46,10 @@ export class LocatairePropertyListComponent implements OnInit, OnChanges {
 
   constructor(
     private _store: Store,
-    private _router: Router
+    private _router: Router,
+    private assignLocationModalService: AssignLocationModalService,
+    private toastr: ToastrService,
+    private dialog: MatDialog
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -65,6 +73,26 @@ export class LocatairePropertyListComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     // Initialisation si nécessaire
+  }
+
+  /**
+   * Recharger les données après une assignation réussie
+   */
+  private reloadData(): void {
+    if (this.propertyId) {
+      // Recharger les locataires
+      this._store.select(LocataireState.selectStateLocataireByPropertyId(this.propertyId))
+        .subscribe((data: LocataireModel[]) => {
+          this.tenants = data || [];
+          this.generateLocataireDataModel(this.tenants);
+        });
+
+      // Recharger les chambres
+      this._store.select(RoomState.selectStateRoomByPropertyId(this.propertyId))
+        .subscribe((rooms: RoomModel[]) => {
+          this.rooms = rooms || [];
+        });
+    }
   }
 
   generateLocataireDataModel(locataireList:LocataireModel[])
@@ -310,12 +338,6 @@ export class LocatairePropertyListComponent implements OnInit, OnChanges {
     console.log('Voir détails:', tenant);
   }
 
-  onEditTenant(tenant: LocataireModel, event: Event): void {
-    event.stopPropagation();
-    // Logique pour modifier le locataire
-    console.log('Modifier:', tenant);
-  }
-
   onAddPayment(tenant: LocataireModel, event: Event): void {
     event.stopPropagation();
     // Logique pour ajouter un paiement
@@ -325,17 +347,65 @@ export class LocatairePropertyListComponent implements OnInit, OnChanges {
   onAssignUnit(tenant: LocataireModel, event: Event): void {
     event.stopPropagation();
 
-    // Naviguer vers l'assistant d'assignation avec le locataire pré-sélectionné
-    this._router.navigate(['/app/assign-location'], {
-      queryParams: {
-        propertyId: this.propertyId,
-        locataireId: tenant._id,
-        assistant: true,
-        returnUrl: this._router.url
+    // Ouvrir le modal d'assignation avec le locataire pré-sélectionné
+    this.assignLocationModalService.openAssignLocationModal({
+      propertyId: this.propertyId,
+      locataireId: tenant._id,
+      assistant: true,
+      returnUrl: this._router.url
+    }).subscribe(result => {
+      if (result && result.success) {
+        // Recharger les données après succès
+        this.reloadData();
+        this.toastr.success('Assignation réalisée avec succès', 'Succès');
       }
     });
   }
 
+  /**
+   * Ouvrir le modal de modification d'un locataire
+   */
+  onEditTenant(tenant: LocataireModel, event: Event): void {
+    event.stopPropagation();
 
+    const dialogRef = this.dialog.open(UpdateLocataireComponent, {
+      width: '100%',
+      maxWidth: '800px',
+      disableClose: true,
+      data: {
+        locataire: tenant
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Recharger les données après modification
+        this.reloadData();
+        this.toastr.success('Locataire modifié avec succès', 'Succès');
+      }
+    });
+  }
+
+  /**
+   * Ajouter un nouveau locataire
+   */
+  onAddTenant(): void {
+    const dialogRef = this.dialog.open(AddLocataireComponent, {
+      width: '100%',
+      maxWidth: '800px',
+      disableClose: true,
+      data: {
+        propertyId: this.propertyId
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Recharger les données après création
+        this.reloadData();
+        this.toastr.success('Locataire créé avec succès', 'Succès');
+      }
+    });
+  }
 
 }

@@ -1,5 +1,17 @@
 // Design professionnel pour la page de vue d'un template avec sidebar
 
+// ==================== ANIMATIONS ====================
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 :host {
   display: block;
   width: 100%;
@@ -850,6 +862,95 @@
         .variables-grid {
           grid-template-columns: 1fr;
         }
+      }
+    }
+  }
+
+  // ==================== NOUVEAUX STYLES POUR CHARGEMENT ET ERREURS ====================
+
+  .content-loading,
+  .content-error,
+  .no-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2rem;
+    text-align: center;
+    min-height: 300px;
+    animation: fadeIn 0.3s ease-in-out;
+
+    .loading-spinner,
+    .error-icon,
+    .no-content-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .loading-spinner i {
+      color: rgb(204, 140, 10);
+      animation: spin 1s linear infinite;
+    }
+
+    .error-icon i {
+      color: #dc3545;
+    }
+
+    .no-content-icon i {
+      color: #6c757d;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #1f2937;
+    }
+
+    p {
+      color: #6b7280;
+      margin-bottom: 1.5rem;
+      font-size: 0.95rem;
+    }
+
+    .retry-btn,
+    .edit-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      background: rgb(204, 140, 10);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: rgb(163, 112, 8);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(204, 140, 10, 0.3);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+
+      i {
+        font-size: 0.85rem;
+      }
+    }
+  }
+
+  .content-error {
+    .retry-btn {
+      background: #dc3545;
+
+      &:hover {
+        background: #c82333;
+        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
       }
     }
   }

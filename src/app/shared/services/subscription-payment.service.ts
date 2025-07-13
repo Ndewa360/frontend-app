@@ -11,6 +11,26 @@ export interface PaymentData {
   paymentMethod?: string;
 }
 
+export interface StripeSessionPayload {
+  periodId: string;
+  successUrl: string;
+  cancelUrl: string;
+  metadata?: any;
+}
+
+export interface StripeSessionResponse {
+  sessionId: string;
+  sessionUrl: string;
+  periodId: string;
+  amount: number;
+  billingRef: string;
+}
+
+export interface StripeConfirmPayload {
+  sessionId: string;
+  paymentIntentId: string;
+}
+
 export interface Invoice {
   invoiceNumber: string;
   subscriptionId: string;
@@ -144,6 +164,46 @@ export class SubscriptionPaymentService {
   getCurrentPeriodInvoice(): Observable<ApiResultFormat<Invoice>> {
     return this.http.get<ApiResultFormat<Invoice>>(
       `${environment.apiUrl}/subscription-payment/current-period-invoice`
+    );
+  }
+
+  // ==================== MÉTHODES STRIPE ====================
+
+  /**
+   * Crée une session de paiement Stripe pour une période de souscription
+   */
+  createStripeSession(payload: StripeSessionPayload): Observable<ApiResultFormat<StripeSessionResponse>> {
+    return this.http.post<ApiResultFormat<StripeSessionResponse>>(
+      `${environment.apiUrl}/subscription-payment/stripe/create-session`,
+      payload
+    );
+  }
+
+  /**
+   * Confirme un paiement Stripe après succès
+   */
+  confirmStripePayment(payload: StripeConfirmPayload): Observable<ApiResultFormat<any>> {
+    return this.http.post<ApiResultFormat<any>>(
+      `${environment.apiUrl}/subscription-payment/stripe/confirm-payment`,
+      payload
+    );
+  }
+
+  /**
+   * Récupère les méthodes de paiement disponibles
+   */
+  getPaymentMethods(): Observable<ApiResultFormat<any>> {
+    return this.http.get<ApiResultFormat<any>>(
+      `${environment.apiUrl}/subscription-payment/payment-methods`
+    );
+  }
+
+  /**
+   * Vérifie le statut d'une session Stripe
+   */
+  checkStripeSessionStatus(sessionId: string): Observable<ApiResultFormat<any>> {
+    return this.http.get<ApiResultFormat<any>>(
+      `${environment.apiUrl}/subscription-payment/stripe/session-status/${sessionId}`
     );
   }
 }

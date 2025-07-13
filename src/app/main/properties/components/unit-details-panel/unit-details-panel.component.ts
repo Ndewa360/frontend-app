@@ -3,6 +3,8 @@ import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { trigger, state, style, transition, animate, keyframes } from '@angular/animations';
+import { MatDialog } from '@angular/material/dialog';
+import { ToastrService } from 'ngx-toastr';
 import {
   RoomModel,
   LocataireModel,
@@ -12,9 +14,11 @@ import {
 import { UtilsString } from 'src/app/shared/utils';
 import { UnitDetailsService, UnitDetailsData } from '../../services/unit-details.service';
 import { PaymentAction } from './components/unit-payments-tab/unit-payments-tab.component';
+import { UpdatePaymentComponent } from 'src/app/main/location-payment/components/update-payment/update-payment.component';
+import { DeletePaymentComponent } from 'src/app/main/location-payment/components/delete-payment/delete-payment.component';
 
 export interface UnitPanelAction {
-  type: 'edit' | 'assign_tenant' | 'terminate_lease' | 'add_payment' | 'view_contract' | 'view_image' |
+  type: 'edit' | 'assign_tenant' | 'terminate_lease' | 'add_payment' | 'view_contract' | 'view_image' | 'edit_tenant' |
         'view_payment' | 'edit_payment' | 'delete_payment' | 'generate_payment_link' | 'edit_gallery' | 'view_media' | 'delete_media';
   room: RoomModel;
   data?: any;
@@ -95,7 +99,9 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
 
   constructor(
     private store: Store,
-    private unitDetailsService: UnitDetailsService
+    private unitDetailsService: UnitDetailsService,
+    private dialog: MatDialog,
+    private toastr: ToastrService
   ) {}
 
   ngOnInit(): void {
@@ -248,7 +254,7 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
   onEditTenant(): void {
     if (this.room && this.unitData?.tenant) {
       this.action.emit({
-        type: 'edit',
+        type: 'edit_tenant',
         room: this.room,
         data: { tenant: this.unitData.tenant }
       });
@@ -296,15 +302,7 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  onEditPayment(event: any): void {
-    if (this.room) {
-      this.action.emit({
-        type: 'edit_payment',
-        room: this.room,
-        data: event
-      });
-    }
-  }
+
 
   onEditGallery(): void {
     console.log('🎨 UnitDetailsPanel: onEditGallery appelé', this.room);
@@ -368,7 +366,206 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
     return payment._id || payment.billingRef || index.toString();
   }
 
-  // Méthode supprimée - dupliquée plus bas
+  /**
+   * Construit les données de paiement nécessaires pour les modals
+   */
+  private buildPaymentModalData(payment: any): {transaction: any, history: any} {
+    console.log('🔧 buildPaymentModalData appelé avec:', payment);
+    console.log('🔧 unitData:', this.unitData);
+    console.log('🔧 unitData.tenant:', this.unitData?.tenant);
+
+    // Récupérer le locataire depuis les données de l'unité ou depuis le paiement
+    const tenant = this.unitData?.tenant || payment.locataire || null;
+
+    if (!tenant) {
+      console.error('❌ Aucun locataire trouvé pour construire les données de paiement');
+      throw new Error('Aucun locataire trouvé pour ce paiement');
+    }
+
+    // Construire l'objet history avec les données nécessaires
+    const history = {
+      _id: `history_${tenant._id || 'unknown'}`,
+      locataire: tenant,
+      room: this.room,
+      property: { _id: this.propertyId },
+      transactions: [payment]
+    };
+
+    console.log('✅ Données construites:', { transaction: payment, history });
+
+    return {
+      transaction: payment,
+      history: history
+    };
+  }
+
+  /**
+   * Ouvrir le modal de modification d'un paiement
+   */
+  onEditPayment(payment: any): void {
+    console.log('🔧 UnitDetailsPanel: onEditPayment appelé', payment);
+
+    // Vérifier si les données ont la structure correcte
+    if (!payment) {
+      console.error('❌ Aucune donnée de paiement fournie');
+      this.toastr.error('Aucune donnée de paiement fournie', 'Erreur');
+      return;
+    }
+
+    // Si les données ont déjà la structure {transaction, history}
+    if (payment.transaction && payment.history) {
+      console.log('✅ Structure {transaction, history} détectée');
+      this.openUpdatePaymentModal(payment.transaction, payment.history);
+      return;
+    }
+
+    // Si c'est un objet LocationPaymentModel direct, construire la structure
+    if (payment._id || payment.locationPaymentPrice) {
+      console.log('✅ Structure LocationPaymentModel détectée, construction des données...');
+
+      try {
+        const paymentData = this.buildPaymentModalData(payment);
+        this.openUpdatePaymentModal(paymentData.transaction, paymentData.history);
+        return;
+      } catch (error) {
+        console.error('❌ Erreur lors de la construction des données:', error);
+        this.toastr.error('Impossible de construire les données de paiement: ' + error.message, 'Erreur');
+        return;
+      }
+    }
+
+    console.error('❌ Structure de données de paiement non reconnue:', payment);
+    this.toastr.error('Structure de données de paiement non reconnue', 'Erreur');
+  }
+
+  /**
+   * Méthode utilitaire pour ouvrir le modal de modification
+   */
+  private openUpdatePaymentModal(transaction: any, history: any): void {
+    if (!this.dialog) {
+      console.error('❌ Service MatDialog non disponible !');
+      return;
+    }
+
+    console.log('📝 Ouverture du modal UpdatePaymentComponent...');
+
+    try {
+      const dialogRef = this.dialog.open(UpdatePaymentComponent, {
+        width: '100%',
+        maxWidth: '800px',
+        disableClose: true,
+        data: {
+          transaction: transaction,
+          history: history
+        }
+      });
+
+      console.log('✅ Modal UpdatePayment ouvert, dialogRef:', dialogRef);
+
+      dialogRef.afterClosed().subscribe(result => {
+        console.log('🔄 Modal UpdatePayment fermé avec résultat:', result);
+        if (result) {
+          console.log('✅ Paiement modifié avec succès');
+          this.toastr.success('Paiement modifié avec succès', 'Succès');
+          // Recharger les données de l'unité
+          this.loadUnitData();
+        }
+      });
+    } catch (error) {
+      console.error('❌ Erreur lors de l\'ouverture du modal UpdatePayment:', error);
+      this.toastr.error('Erreur lors de l\'ouverture du modal', 'Erreur');
+    }
+  }
+
+  /**
+   * Ouvrir le modal de suppression d'un paiement
+   */
+  onDeletePaymentModal(payment: any): void {
+    console.log('🗑️ UnitDetailsPanel: onDeletePaymentModal appelé avec:', payment);
+    console.log('🔍 Type de payment:', typeof payment);
+    console.log('🔍 Clés de payment:', payment ? Object.keys(payment) : 'null');
+
+    // Vérifier si les données ont la structure correcte
+    if (!payment) {
+      console.error('❌ Aucune donnée de paiement fournie');
+      this.toastr.error('Aucune donnée de paiement fournie', 'Erreur');
+      return;
+    }
+
+    // Si les données ont déjà la structure {transaction, history}
+    console.log('🔍 Vérification payment.transaction:', !!payment.transaction);
+    console.log('🔍 Vérification payment.history:', !!payment.history);
+
+    if (payment.transaction && payment.history) {
+      console.log('✅ Structure {transaction, history} détectée');
+      console.log('🔍 Transaction:', payment.transaction);
+      console.log('🔍 History:', payment.history);
+      this.openDeletePaymentModal(payment.transaction, payment.history);
+      return;
+    }
+
+    // Si c'est un objet LocationPaymentModel direct, construire la structure
+    if (payment._id || payment.locationPaymentPrice) {
+      console.log('✅ Structure LocationPaymentModel détectée, construction des données...');
+      console.log('🔍 Payment ID:', payment._id);
+      console.log('🔍 Payment Price:', payment.locationPaymentPrice);
+
+      try {
+        const paymentData = this.buildPaymentModalData(payment);
+        console.log('🔍 PaymentData construit:', paymentData);
+        this.openDeletePaymentModal(paymentData.transaction, paymentData.history);
+        return;
+      } catch (error) {
+        console.error('❌ Erreur lors de la construction des données:', error);
+        this.toastr.error('Impossible de construire les données de paiement: ' + error.message, 'Erreur');
+        return;
+      }
+    }
+
+    console.error('❌ Structure de données de paiement non reconnue:', payment);
+    console.log('🔍 Propriétés disponibles:', payment ? Object.keys(payment) : 'aucune');
+    this.toastr.error('Structure de données de paiement non reconnue', 'Erreur');
+  }
+
+  /**
+   * Méthode utilitaire pour ouvrir le modal de suppression
+   */
+  private openDeletePaymentModal(transaction: any, history: any): void {
+    if (!this.dialog) {
+      console.error('❌ Service MatDialog non disponible !');
+      return;
+    }
+
+    console.log('🗑️ Ouverture du modal DeletePaymentComponent...');
+
+    try {
+      const dialogRef = this.dialog.open(DeletePaymentComponent, {
+        width: '500px',
+        maxWidth: '95vw',
+        panelClass: 'delete-payment-modal-dialog',
+        disableClose: true,
+        data: {
+          transaction: transaction,
+          history: history
+        }
+      });
+
+      console.log('✅ Modal DeletePayment ouvert, dialogRef:', dialogRef);
+
+      dialogRef.afterClosed().subscribe(result => {
+        console.log('🔄 Modal DeletePayment fermé avec résultat:', result);
+        if (result) {
+          console.log('✅ Paiement supprimé avec succès');
+          this.toastr.success('Paiement supprimé avec succès', 'Succès');
+          // Recharger les données de l'unité
+          this.loadUnitData();
+        }
+      });
+    } catch (error) {
+      console.error('❌ Erreur lors de l\'ouverture du modal DeletePayment:', error);
+      this.toastr.error('Erreur lors de l\'ouverture du modal', 'Erreur');
+    }
+  }
 
   // Nouvelle méthode pour gérer les actions de paiement
   onPaymentAction(paymentAction: PaymentAction): void {
@@ -381,11 +578,11 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
         // TODO: Implémenter la visualisation des détails du paiement
         break;
       case 'edit':
-        console.log('Modifier le paiement:', paymentAction.data);
-        // TODO: Implémenter la modification du paiement
+        console.log("Edit payment ",paymentAction)
+        this.onEditPayment(paymentAction.data);
         break;
       case 'delete':
-        this.onDeletePayment(paymentAction.data);
+        this.onDeletePaymentModal(paymentAction.data);
         break;
       case 'export':
         console.log('Export CSV effectué');

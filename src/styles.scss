@@ -228,3 +228,16 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     }
   }
 }
+
+/* Styles globaux pour le modal de visualisation de contrat */
+.contract-viewer-dialog {
+  .mat-mdc-dialog-container {
+    padding: 0 !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+  }
+
+  .mat-mdc-dialog-surface {
+    border-radius: 12px !important;
+  }
+}

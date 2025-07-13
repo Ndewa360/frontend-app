@@ -1,5 +1,7 @@
 import {NgModule} from '@angular/core'
 import {CommonModule} from '@angular/common'
+import { MatDialogModule } from '@angular/material/dialog'
+import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer'
 
 import {SharedModule} from "../shared/shared.module"
 import {LayoutModule} from "../layout/layout.module"
@@ -47,7 +49,7 @@ import { HistoryRoomComponent } from './locataires/components/history-room/histo
 import { HistoryComponent } from './locataires/components/history/history.component'
 import { LocataireProfilComponent } from './locataires/components/locataire-profil/locataire-profil.component'
 import { LocataireRoomListComponent } from './locataires/components/locataire-room-list/locataire-room-list.component'
-import { UpdateLocataireComponent } from './locataires/components/update-locataire/update-locataire.component'
+
 import { LocatairePageComponent } from './locataires/locataire-page/locataire-page.component'
 import { DetailsLocataireComponent } from './locataires/components/details-locataire/details-locataire.component';
 import { CurrentRoomComponent } from './locataires/components/current-room/current-room.component';
@@ -91,6 +93,7 @@ import { UnitHeaderComponent } from './properties/components/unit-details-panel/
 import { UnitPaymentsTabComponent } from './properties/components/unit-details-panel/components/unit-payments-tab/unit-payments-tab.component';
 import { AddPaymentModalComponent } from './properties/components/unit-details-panel/components/add-payment-modal/add-payment-modal.component';
 import { GeneratePaymentLinkModalComponent } from './properties/components/generate-payment-link-modal/generate-payment-link-modal.component';
+import { ContractViewerModalComponent } from './properties/components/contract-viewer-modal/contract-viewer-modal.component';
 
 // Import du module de paiement (déjà importé plus haut)
 
@@ -136,7 +139,6 @@ ModuleRegistry.registerModules([
     HistoryPaymentComponent,
     HistoryRoomComponent,
     HistoryComponent,
-    UpdateLocataireComponent,
     DetailsLocataireComponent,
     CurrentRoomComponent,
     PropertyOverviewCardComponent,
@@ -176,7 +178,8 @@ ModuleRegistry.registerModules([
     UnitHeaderComponent,
     UnitPaymentsTabComponent,
     AddPaymentModalComponent,
-    GeneratePaymentLinkModalComponent
+    GeneratePaymentLinkModalComponent,
+    ContractViewerModalComponent
 
   ],
   imports: [
@@ -185,6 +188,8 @@ ModuleRegistry.registerModules([
     LayoutModule,
     SharedModule,
     ChartsModule,
+    MatDialogModule,
+    NgxExtendedPdfViewerModule,
     LocationPaymentModule,
     AgGridModule,
     LocatairePropertyModule,

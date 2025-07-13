@@ -4,7 +4,11 @@ import { Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { LocataireModel, RoomModel, LocationModel, LocationState, RoomState, LocationPaymentModel, LocationPaymentState } from 'src/app/shared/store';
+import { MatDialog } from '@angular/material/dialog';
+import { ToastrService } from 'ngx-toastr';
+import { LocataireModel, RoomModel, LocationModel, LocationState, RoomState, LocationPaymentModel, LocationPaymentState, HistoryLocationPaymentState } from 'src/app/shared/store';
+import { UpdatePaymentComponent } from 'src/app/main/location-payment/components/update-payment/update-payment.component';
+import { DeletePaymentComponent } from 'src/app/main/location-payment/components/delete-payment/delete-payment.component';
 
 interface Tab {
   label: string;
@@ -95,7 +99,9 @@ export class TenantDetailsPanelComponent implements OnInit, OnDestroy, OnChanges
 
   constructor(
     private store: Store,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog,
+    private toastr: ToastrService
   ) {}
 
   ngOnInit(): void {
@@ -428,5 +434,128 @@ export class TenantDetailsPanelComponent implements OnInit, OnDestroy, OnChanges
     // Vérifier si cette référence apparaît plusieurs fois
     const sameRefCount = this.tenantPayments.filter(p => p.billingRef === payment.billingRef).length;
     return sameRefCount > 1;
+  }
+
+  // === MÉTHODES POUR LES MODALS DE PAIEMENT ===
+
+  /**
+   * Construit les données de paiement nécessaires pour les modals
+   */
+  private buildPaymentModalData(payment: LocationPaymentModel): {transaction: any, history: any} {
+    // Récupérer l'unité du locataire
+    const room = this.store.selectSnapshot(RoomState.selectStateRoom(payment.room));
+
+    // Construire l'objet history avec les données nécessaires
+    const history = {
+      _id: `history_${this.tenant?._id || 'unknown'}`,
+      locataire: this.tenant,
+      room: room,
+      property: { _id: this.propertyId },
+      transactions: [payment]
+    };
+
+    return {
+      transaction: payment,
+      history: history
+    };
+  }
+
+  /**
+   * Ouvre le modal de modification d'un paiement
+   */
+  onEditPayment(payment: LocationPaymentModel): void {
+    console.log('🔧 TenantDetailsPanel: onEditPayment appelé', payment);
+
+    if (!payment || !this.tenant) {
+      console.error('❌ Données de paiement manquantes pour la modification');
+      this.toastr.error('Données de paiement manquantes', 'Erreur');
+      return;
+    }
+
+    if (!this.dialog) {
+      console.error('❌ Service MatDialog non disponible !');
+      return;
+    }
+
+    // Construire les données nécessaires pour le modal
+    const paymentData = this.buildPaymentModalData(payment);
+
+    console.log('📝 Ouverture du modal UpdatePaymentComponent...');
+
+    try {
+      const dialogRef = this.dialog.open(UpdatePaymentComponent, {
+        width: '100%',
+        maxWidth: '800px',
+        disableClose: true,
+        data: {
+          transaction: paymentData.transaction,
+          history: paymentData.history
+        }
+      });
+
+      console.log('✅ Modal UpdatePayment ouvert, dialogRef:', dialogRef);
+
+      dialogRef.afterClosed().subscribe(result => {
+        console.log('🔄 Modal UpdatePayment fermé avec résultat:', result);
+        if (result) {
+          console.log('✅ Paiement modifié avec succès');
+          this.toastr.success('Paiement modifié avec succès', 'Succès');
+          // Les données seront automatiquement mises à jour via les observables
+        }
+      });
+    } catch (error) {
+      console.error('❌ Erreur lors de l\'ouverture du modal UpdatePayment:', error);
+      this.toastr.error('Erreur lors de l\'ouverture du modal', 'Erreur');
+    }
+  }
+
+  /**
+   * Ouvre le modal de suppression d'un paiement
+   */
+  onDeletePayment(payment: LocationPaymentModel): void {
+    console.log('🗑️ TenantDetailsPanel: onDeletePayment appelé', payment);
+
+    if (!payment || !this.tenant) {
+      console.error('❌ Données de paiement manquantes pour la suppression');
+      this.toastr.error('Données de paiement manquantes', 'Erreur');
+      return;
+    }
+
+    if (!this.dialog) {
+      console.error('❌ Service MatDialog non disponible !');
+      return;
+    }
+
+    // Construire les données nécessaires pour le modal
+    const paymentData = this.buildPaymentModalData(payment);
+
+    console.log('🗑️ Ouverture du modal DeletePaymentComponent...');
+
+    try {
+      const dialogRef = this.dialog.open(DeletePaymentComponent, {
+        width: '500px',
+        maxWidth: '95vw',
+        panelClass: 'delete-payment-modal-dialog',
+        disableClose: true,
+        data: {
+          transaction: paymentData.transaction,
+          history: paymentData.history
+        }
+      });
+
+      console.log('✅ Modal DeletePayment ouvert, dialogRef:', dialogRef);
+
+      dialogRef.afterClosed().subscribe(result => {
+        console.log('🔄 Modal DeletePayment fermé avec résultat:', result);
+        if (result) {
+          console.log('✅ Paiement supprimé avec succès');
+          this.toastr.success('Paiement supprimé avec succès', 'Succès');
+          // Les données seront automatiquement mises à jour via les observables
+        }
+      });
+    } catch (error) {
+      console.error('❌ Erreur lors de l\'ouverture du modal DeletePayment:', error);
+      this.toastr.error('Erreur lors de l\'ouverture du modal', 'Erreur');
+    }
   }
 }

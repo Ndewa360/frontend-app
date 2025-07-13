@@ -26,7 +26,8 @@ import {
   GlobalState,
   ContractTemplateState,
   SubscriptionLimitState,
-  SubscriptionPaymentState
+  SubscriptionPaymentState,
+  PremiumAccessState
 
 } from './store';
 
@@ -105,7 +106,8 @@ export function HttpLoaderFactory(http: HttpClient) {
         ProspectionState,
         ContractTemplateState,
         SubscriptionLimitState,
-        SubscriptionPaymentState
+        SubscriptionPaymentState,
+        PremiumAccessState
       ]),
       NgxsStoragePluginModule.forRoot({
         key:["ndewa360_auth_token"]

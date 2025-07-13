@@ -60,4 +60,47 @@ export namespace SubscriptionPaymentAction {
     static readonly type = '[SubscriptionPayment] Set Error';
     constructor(public error: string | null) {}
   }
+
+  // ==================== NOUVELLES ACTIONS STRIPE ====================
+
+  export class CreateStripeSession {
+    static readonly type = '[SubscriptionPayment] Create Stripe Session';
+    constructor(public payload: {
+      periodId: string;
+      successUrl: string;
+      cancelUrl: string;
+      metadata?: any;
+    }) { }
+  }
+
+  export class ConfirmStripePayment {
+    static readonly type = '[SubscriptionPayment] Confirm Stripe Payment';
+    constructor(public payload: {
+      sessionId: string;
+      paymentIntentId: string;
+    }) { }
+  }
+
+  export class GetStripeSessionStatus {
+    static readonly type = '[SubscriptionPayment] Get Stripe Session Status';
+    constructor(public sessionId: string) { }
+  }
+
+  export class GetPaymentMethods {
+    static readonly type = '[SubscriptionPayment] Get Payment Methods';
+  }
+
+  export class SetStripeLoading {
+    static readonly type = '[SubscriptionPayment] Set Stripe Loading';
+    constructor(public loading: boolean) { }
+  }
+
+  export class SetStripeError {
+    static readonly type = '[SubscriptionPayment] Set Stripe Error';
+    constructor(public error: string | null) { }
+  }
+
+  export class ClearStripeError {
+    static readonly type = '[SubscriptionPayment] Clear Stripe Error';
+  }
 }

@@ -10,14 +10,14 @@
     <div class="assistant-header">
       <div class="header-content">
         <div class="header-title">
-          <youpez-ibm-icon iconName="user-follow" iconSize="24"></youpez-ibm-icon>
+          <i class="fas fa-user-plus" style="font-size: 24px;"></i>
           <h2>Assistant d'assignation de locataire</h2>
         </div>
-        <button 
+        <button
           class="close-button"
           (click)="fermerAssistant()"
           type="button">
-          <youpez-ibm-icon iconName="close" iconSize="20"></youpez-ibm-icon>
+          <i class="fas fa-times" style="font-size: 20px;"></i>
         </button>
       </div>
       
@@ -33,11 +33,10 @@
             (click)="allerEtape(etape.id)">
             
             <div class="step-circle">
-              <youpez-ibm-icon 
-                *ngIf="isEtapeCompletee(etape.id)" 
-                iconName="checkmark" 
-                iconSize="16">
-              </youpez-ibm-icon>
+              <i class="fas fa-check"
+                *ngIf="isEtapeCompletee(etape.id)"
+                style="font-size: 16px;">
+              </i>
               <span *ngIf="!isEtapeCompletee(etape.id)">{{ i + 1 }}</span>
             </div>
             
@@ -76,7 +75,7 @@
                 formControlName="typeLocataire">
               <div class="option-content">
                 <div class="option-icon">
-                  <youpez-ibm-icon iconName="user-plus" iconSize="32"></youpez-ibm-icon>
+                  <i class="fas fa-user-plus" style="font-size: 32px;"></i>
                 </div>
                 <div class="option-info">
                   <h4>Nouveau locataire</h4>
@@ -97,7 +96,7 @@
                 formControlName="typeLocataire">
               <div class="option-content">
                 <div class="option-icon">
-                  <youpez-ibm-icon iconName="user" iconSize="32"></youpez-ibm-icon>
+                  <i class="fas fa-user" style="font-size: 32px;"></i>
                 </div>
                 <div class="option-info">
                   <h4>Locataire existant</h4>
@@ -118,7 +117,7 @@
                 formControlName="typeLocataire">
               <div class="option-content">
                 <div class="option-icon">
-                  <youpez-ibm-icon iconName="migrate" iconSize="32"></youpez-ibm-icon>
+                  <i class="fas fa-exchange-alt" style="font-size: 32px;"></i>
                 </div>
                 <div class="option-info">
                   <h4>Migration de données</h4>
@@ -136,7 +135,7 @@
           <!-- Note importante -->
           <div class="info-note">
             <div class="note-icon">
-              <youpez-ibm-icon iconName="information" iconSize="20"></youpez-ibm-icon>
+              <i class="fas fa-info-circle" style="font-size: 20px;"></i>
             </div>
             <div class="note-content">
               <h5>Important</h5>
@@ -170,12 +169,12 @@
 
             <!-- Message d'aide -->
             <div class="help-message" *ngIf="locatairesList.length === 0">
-              <youpez-ibm-icon iconName="information" iconSize="16"></youpez-ibm-icon>
+              <i class="fas fa-info-circle" style="font-size: 16px;"></i>
               <p>Aucun locataire disponible. Veuillez d'abord créer un locataire dans la section "Locataires".</p>
             </div>
 
             <div class="help-message" *ngIf="locatairesList.length > 0">
-              <youpez-ibm-icon iconName="checkmark" iconSize="16"></youpez-ibm-icon>
+              <i class="fas fa-check" style="font-size: 16px;"></i>
               <p>{{ locatairesList.length }} locataire(s) disponible(s) pour assignation.</p>
             </div>
           </div>
@@ -235,7 +234,7 @@
               <div class="caution-info-card">
                 <div class="caution-header">
                   <div class="caution-title">
-                    <youpez-ibm-icon iconName="security" iconSize="20"></youpez-ibm-icon>
+                    <i class="fas fa-shield-alt" style="font-size: 20px;"></i>
                     <h5>Caution de l'unité locative</h5>
                   </div>
                   <div class="caution-amount">
@@ -272,7 +271,7 @@
 
                 <!-- Message si pas de caution définie -->
                 <div class="no-caution-message" *ngIf="!selectedRoom.cautionPrice || selectedRoom.cautionPrice === 0">
-                  <youpez-ibm-icon iconName="information" iconSize="16"></youpez-ibm-icon>
+                  <i class="fas fa-info-circle" style="font-size: 16px;"></i>
                   <p>Aucune caution n'est définie pour cette unité locative.
                   Vous pouvez en définir une lors de la modification de l'unité.</p>
                 </div>
@@ -335,7 +334,7 @@
             <!-- Information sur la logique -->
             <div class="info-note">
               <div class="note-icon">
-                <youpez-ibm-icon iconName="information" iconSize="20"></youpez-ibm-icon>
+                <i class="fas fa-info-circle" style="font-size: 20px;"></i>
               </div>
               <div class="note-content">
                 <h5>Logique de transfert</h5>
@@ -397,7 +396,7 @@
             <div class="unit-caution-info" *ngIf="selectedRoom">
               <div class="info-note">
                 <div class="note-icon">
-                  <youpez-ibm-icon iconName="information" iconSize="16"></youpez-ibm-icon>
+                  <i class="fas fa-info-circle" style="font-size: 16px;"></i>
                 </div>
                 <div class="note-content">
                   <h5>Caution de l'unité locative</h5>
@@ -536,7 +535,7 @@
           <div
             *ngFor="let error of Object.values(assistantState.erreurs)"
             class="error-item">
-            <youpez-ibm-icon iconName="warning" iconSize="16"></youpez-ibm-icon>
+            <i class="fas fa-exclamation-triangle" style="font-size: 16px;"></i>
             <span>{{ error }}</span>
           </div>
         </div>
@@ -548,7 +547,7 @@
           class="btn btn-secondary"
           (click)="allerEtapePrecedente()"
           [disabled]="assistantState.etapeActuelle === EtapeAssistant.SELECTION_TYPE">
-          <youpez-ibm-icon iconName="arrow-left" iconSize="16"></youpez-ibm-icon>
+          <i class="fas fa-arrow-left" style="font-size: 16px;"></i>
           Précédent
         </button>
 
@@ -560,24 +559,24 @@
           Annuler
         </button>
 
-        <button 
+        <button
           *ngIf="assistantState.etapeActuelle !== EtapeAssistant.CONFIRMATION"
-          type="button" 
+          type="button"
           class="btn btn-primary"
           (click)="allerEtapeSuivante()"
           [disabled]="!assistantState.canProceed">
           Suivant
-          <youpez-ibm-icon iconName="arrow-right" iconSize="16"></youpez-ibm-icon>
+          <i class="fas fa-arrow-right" style="font-size: 16px;"></i>
         </button>
 
-        <button 
+        <button
           *ngIf="assistantState.etapeActuelle === EtapeAssistant.CONFIRMATION"
-          type="button" 
+          type="button"
           class="btn btn-primary"
           (click)="confirmerAssignation()"
           [disabled]="assistantState.isLoading">
           <div class="spinner" *ngIf="assistantState.isLoading"></div>
-          <youpez-ibm-icon iconName="checkmark" iconSize="16" *ngIf="!assistantState.isLoading"></youpez-ibm-icon>
+          <i class="fas fa-check" style="font-size: 16px;" *ngIf="!assistantState.isLoading"></i>
           {{ assistantState.isLoading ? 'Création...' : 'Confirmer l\'assignation' }}
         </button>
       </div>

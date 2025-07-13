@@ -85,9 +85,23 @@ export class ContractTemplateService {
    * Obtenir un modèle par ID
    */
   getTemplateById(templateId: string): Observable<ContractTemplateModel> {
+    console.log('Fetching template by ID:', templateId);
+    console.log('API URL:', `${this.apiUrl}/${templateId}`);
+
     return this.http.get<ContractTemplateModel>(`${this.apiUrl}/${templateId}`).pipe(
       tap(template => {
+        console.log('Template fetched:', template);
         this.currentTemplateSubject.next(template);
+      }),
+      catchError(error => {
+        console.error('Error fetching template:', error);
+        console.error('Error details:', {
+          status: error.status,
+          statusText: error.statusText,
+          url: error.url,
+          message: error.message
+        });
+        throw error;
       })
     );
   }
@@ -96,7 +110,24 @@ export class ContractTemplateService {
    * Obtenir le contenu d'un modèle
    */
   getTemplateContent(templateId: string): Observable<{ content: string }> {
-    return this.http.get<{ content: string }>(`${this.apiUrl}/${templateId}/content`);
+    console.log('Fetching template content for ID:', templateId);
+    console.log('API URL:', `${this.apiUrl}/${templateId}/content`);
+
+    return this.http.get<{ content: string }>(`${this.apiUrl}/${templateId}/content`).pipe(
+      tap(response => {
+        console.log('Template content response:', response);
+      }),
+      catchError(error => {
+        console.error('Error fetching template content:', error);
+        console.error('Error details:', {
+          status: error.status,
+          statusText: error.statusText,
+          url: error.url,
+          message: error.message
+        });
+        throw error;
+      })
+    );
   }
 
   /**

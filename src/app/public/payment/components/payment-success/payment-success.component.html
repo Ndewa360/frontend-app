@@ -1,150 +1,133 @@
-<!-- Page de succès de paiement ultra-moderne -->
-<div class="payment-success-page">
-  <!-- Header -->
-  <div class="payment-header">
-    <div class="container">
-      <div class="brand-section">
-        <div class="logo">
-          <img src="assets/img/logo/ndewa_barre_blanche.png" alt="Ndewa360°" class="logo-image">
+<div class="success-page">
+
+  <!-- Header simplifié -->
+  <header class="success-header">
+    <div class="header-container">
+      <div class="logo-section">
+        <img src="assets/img/logo/ndewa_barre_blanche.png" alt="Ndewa360°" class="logo">
+      </div>
+    </div>
+  </header>
+
+  <!-- Contenu principal -->
+  <main class="success-main" *ngIf="!loading">
+
+    <!-- Erreur -->
+    <div *ngIf="error" class="error-section">
+      <div class="error-card">
+        <i class="fa fa-exclamation-triangle"></i>
+        <h3>Erreur de confirmation</h3>
+        <p>{{ error }}</p>
+      </div>
+    </div>
+
+    <!-- Succès -->
+    <div *ngIf="!error" class="success-section">
+      <div class="success-container">
+
+        <!-- Animation de succès -->
+        <div class="success-animation">
+          <div class="success-circle">
+            <i class="fa fa-check"></i>
+          </div>
+        </div>
+
+        <!-- Contenu -->
+        <div class="success-content">
+          <h1>Paiement réussi !</h1>
+          <p class="success-message">
+            Votre paiement a été traité avec succès. Vous recevrez une confirmation par email.
+          </p>
+
+          <!-- Récapitulatif -->
+          <div *ngIf="paymentDetails" class="payment-summary">
+            <h3>Récapitulatif du paiement</h3>
+
+            <div class="summary-items">
+              <div class="summary-item highlight">
+                <div class="item-label">
+                  <i class="fa fa-money-bill-wave"></i>
+                  Montant payé
+                </div>
+                <div class="item-value">{{ formatAmount(paymentDetails.amount) }}</div>
+              </div>
+
+              <div class="summary-item">
+                <div class="item-label">
+                  <i class="fa fa-tag"></i>
+                  Type de paiement
+                </div>
+                <div class="item-value">{{ getPaymentTypeLabel() }}</div>
+              </div>
+
+              <div class="summary-item">
+                <div class="item-label">
+                  <i class="fa fa-building"></i>
+                  Propriété
+                </div>
+                <div class="item-value">{{ paymentDetails.property?.name || 'N/A' }}</div>
+              </div>
+
+              <div class="summary-item">
+                <div class="item-label">
+                  <i class="fa fa-door-open"></i>
+                  Unité
+                </div>
+                <div class="item-value">{{ paymentDetails.room?.code || 'N/A' }}</div>
+              </div>
+
+              <div class="summary-item">
+                <div class="item-label">
+                  <i class="fa fa-clock"></i>
+                  Date de paiement
+                </div>
+                <div class="item-value">{{ getCurrentDate() | date:'dd/MM/yyyy à HH:mm' }}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="success-actions">
+            <button class="action-btn primary" onclick="window.print()">
+              <i class="fa fa-print"></i>
+              <span>Imprimer le reçu</span>
+            </button>
+
+            <button class="action-btn secondary" (click)="downloadReceipt()">
+              <i class="fa fa-download"></i>
+              <span>Télécharger</span>
+            </button>
+          </div>
+
+          <!-- Information -->
+          <div class="info-message">
+            <i class="fa fa-info-circle"></i>
+            <span>En cas de question, contactez votre propriétaire ou notre support.</span>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </main>
 
-  <!-- Contenu principal -->
-  <div class="payment-content">
-    <div class="container">
-      
-      <!-- Loading State -->
-      <div *ngIf="loading" class="loading-section">
-        <app-payment-loading></app-payment-loading>
-      </div>
-
-      <!-- Error State -->
-      <div *ngIf="error && !loading" class="error-section">
-        <div class="error-card">
-          <div class="error-icon">
-            <i class="fa fa-exclamation-triangle"></i>
-          </div>
-          <h2>Erreur de confirmation</h2>
-          <p>{{ error }}</p>
-        </div>
-      </div>
-
-      <!-- Success State -->
-      <div *ngIf="!loading && !error" class="success-section">
-        <div class="success-card">
-          
-          <!-- Animation de succès -->
-          <div class="success-animation">
-            <div class="success-circle">
-              <div class="success-checkmark">
-                <i class="fa fa-check"></i>
-              </div>
-            </div>
-            <div class="success-particles">
-              <div class="particle" *ngFor="let i of [1,2,3,4,5,6,7,8]"></div>
-            </div>
-          </div>
-
-          <!-- Contenu de succès -->
-          <div class="success-content">
-            <h1>Paiement réussi !</h1>
-            <p class="success-message">
-              Votre paiement a été traité avec succès. Vous devriez recevoir une confirmation par email sous peu.
-            </p>
-
-            <!-- Détails du paiement -->
-            <div *ngIf="paymentDetails" class="payment-summary">
-              <h3>Récapitulatif du paiement</h3>
-              
-              <div class="summary-grid">
-                <div class="summary-item">
-                  <div class="summary-label">
-                    <i class="fa fa-tag"></i>
-                    Type de paiement
-                  </div>
-                  <div class="summary-value">{{ getPaymentTypeLabel() }}</div>
-                </div>
-
-                <div class="summary-item">
-                  <div class="summary-label">
-                    <i class="fa fa-money-bill-wave"></i>
-                    Montant payé
-                  </div>
-                  <div class="summary-value amount">{{ formatAmount(paymentDetails.amount) }}</div>
-                </div>
-
-                <div class="summary-item">
-                  <div class="summary-label">
-                    <i class="fa fa-building"></i>
-                    Propriété
-                  </div>
-                  <div class="summary-value">{{ paymentDetails.property?.name || 'N/A' }}</div>
-                </div>
-
-                <div class="summary-item">
-                  <div class="summary-label">
-                    <i class="fa fa-door-open"></i>
-                    Unité
-                  </div>
-                  <div class="summary-value">{{ paymentDetails.room?.code || 'N/A' }}</div>
-                </div>
-
-                <div class="summary-item">
-                  <div class="summary-label">
-                    <i class="fa fa-user"></i>
-                    Locataire
-                  </div>
-                  <div class="summary-value">{{ paymentDetails.locataire?.fullName || 'N/A' }}</div>
-                </div>
-
-                <div class="summary-item">
-                  <div class="summary-label">
-                    <i class="fa fa-clock"></i>
-                    Date de paiement
-                  </div>
-                  <div class="summary-value">{{ getCurrentDate() | date:'dd/MM/yyyy à HH:mm' }}</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Actions -->
-            <div class="success-actions">
-              <div class="action-buttons">
-                <button class="btn-print" onclick="window.print()">
-                  <i class="fa fa-print"></i>
-                  Imprimer le reçu
-                </button>
-                
-                <button class="btn-download" (click)="downloadReceipt()">
-                  <i class="fa fa-download"></i>
-                  Télécharger le reçu
-                </button>
-              </div>
-
-              <div class="contact-info">
-                <p>
-                  <i class="fa fa-info-circle"></i>
-                  En cas de question, contactez votre propriétaire ou notre support client.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-section">
+    <div class="loading-content">
+      <i class="fa fa-spinner fa-spin"></i>
+      <h3>Confirmation en cours...</h3>
     </div>
   </div>
 
   <!-- Footer -->
-  <div class="payment-footer">
-    <div class="container">
-      <p>&copy; 2024 Ndewa360°. Tous droits réservés.</p>
+  <footer class="success-footer">
+    <div class="footer-content">
+      <span>&copy; 2024 Ndewa360°</span>
       <div class="footer-links">
-        <a href="#">Conditions d'utilisation</a>
-        <a href="#">Politique de confidentialité</a>
+        <a href="#">Conditions</a>
+        <a href="#">Confidentialité</a>
         <a href="#">Support</a>
       </div>
     </div>
-  </div>
+  </footer>
+
 </div>
+

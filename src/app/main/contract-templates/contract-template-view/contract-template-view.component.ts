@@ -31,9 +31,10 @@ export class ContractTemplateViewComponent implements OnInit, OnDestroy {
   
   // État local
   templateId: string = '';
-  content ;
+  content: SafeHtml | string = '';
   isLoadingContent = false;
   isDefaultTemplate = false;
+  loadingError: string | null = null;
 
   // Énumérations pour le template
   ContractTemplateType = ContractTemplateType;
@@ -70,58 +71,71 @@ export class ContractTemplateViewComponent implements OnInit, OnDestroy {
    * Charger le modèle et son contenu
    */
   loadTemplate(templateId: string): void {
+    console.log('Loading template with ID:', templateId);
     this.isDefaultTemplate = templateId === 'default';
+    this.loadingError = null;
 
     if (this.isDefaultTemplate) {
       // Charger le template par défaut
+      console.log('Loading default template');
       this.store.dispatch(new ContractTemplateAction.LoadDefaultTemplate());
     } else {
       // Charger un template utilisateur
+      console.log('Loading user template:', templateId);
       this.store.dispatch(new ContractTemplateAction.FetchTemplate(templateId));
     }
 
-    // Charger le contenu
-    this.loadContent(templateId);
+    // Charger le contenu après un délai pour s'assurer que le template est chargé
+    setTimeout(() => {
+      this.loadContent(templateId);
+    }, 500);
   }
 
   /**
    * Charger le contenu du modèle
    */
   loadContent(templateId: string): void {
+    console.log('Loading content for template:', templateId);
     this.isLoadingContent = true;
+    this.loadingError = null;
 
-    // Attendre que le template soit chargé pour obtenir son vrai ID
-    this.template$.pipe(takeUntil(this.destroy$)).subscribe(template => {
-      if (template) {
-        // Utiliser l'ID réel du template (le backend gère automatiquement les templates système)
-        this.contractTemplateService.getTemplateContent(template._id)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe({
-            next: (response) => {
-              this.content = this.sanitizer.bypassSecurityTrustHtml(response.content);
-              this.isLoadingContent = false;
-            },
-            error: (error) => {
-              console.error('Erreur lors du chargement du contenu:', error);
-              this.isLoadingContent = false;
-            }
-          });
-      } else if (templateId === 'default') {
-        // Cas où on accède directement via /view/default - utiliser l'ID spécial
-        this.contractTemplateService.getTemplateContent('default-template')
-          .pipe(takeUntil(this.destroy$))
-          .subscribe({
-            next: (response) => {
-              this.content = response.content;
-              this.isLoadingContent = false;
-            },
-            error: (error) => {
-              console.error('Erreur lors du chargement du contenu:', error);
-              this.isLoadingContent = false;
-            }
-          });
-      }
-    });
+    if (this.isDefaultTemplate) {
+      // Pour le template par défaut, utiliser directement l'ID spécial
+      console.log('Loading default template content');
+      this.contractTemplateService.getTemplateContent('default')
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            console.log('Default template content loaded:', response);
+            this.content = this.sanitizer.bypassSecurityTrustHtml(response.content || '<p>Aucun contenu disponible</p>');
+            this.isLoadingContent = false;
+          },
+          error: (error) => {
+            console.error('Erreur lors du chargement du contenu par défaut:', error);
+            this.loadingError = 'Impossible de charger le contenu du modèle par défaut';
+            this.content = '<p>Erreur lors du chargement du contenu</p>';
+            this.isLoadingContent = false;
+          }
+        });
+    } else {
+      // Pour les templates utilisateur, utiliser directement l'ID fourni
+      console.log('Loading user template content for ID:', templateId);
+      this.contractTemplateService.getTemplateContent(templateId)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            console.log('User template content loaded:', response);
+            this.content = this.sanitizer.bypassSecurityTrustHtml(response.content || '<p>Aucun contenu disponible</p>');
+            this.isLoadingContent = false;
+          },
+          error: (error) => {
+            console.error('Erreur lors du chargement du contenu utilisateur:', error);
+            this.loadingError = 'Impossible de charger le contenu du modèle';
+            this.content = '<p>Erreur lors du chargement du contenu</p>';
+            this.isLoadingContent = false;
+          }
+        });
+    }
   }
 
   /**
@@ -163,7 +177,7 @@ export class ContractTemplateViewComponent implements OnInit, OnDestroy {
             ).subscribe((newTemplate: ContractTemplateModel | null) => {
               if (newTemplate) {
                 console.log('Redirection vers le nouveau template:', newTemplate._id);
-                this.router.navigate(['../view', newTemplate._id], { relativeTo: this.route });
+                this.router.navigate(['/contract-templates/view', newTemplate._id]);
               }
             });
           }
@@ -176,7 +190,7 @@ export class ContractTemplateViewComponent implements OnInit, OnDestroy {
    * Retour à la liste
    */
   goBack(): void {
-    this.router.navigate(['/app/contract-templates']);
+    this.router.navigate(['/contract-templates']);
   }
 
   /**
@@ -271,8 +285,7 @@ export class ContractTemplateViewComponent implements OnInit, OnDestroy {
    * Exporter en PDF
    */
   exportPDF(): void {
-    // TODO: Implémenter l'export PDF
-    console.log('Export PDF');
+    this.printTemplate();
   }
 
   /**
@@ -303,7 +316,7 @@ export class ContractTemplateViewComponent implements OnInit, OnDestroy {
             this.store.dispatch(new ContractTemplateAction.DeleteTemplate(template._id));
 
             // Rediriger vers la liste après suppression
-            this.router.navigate(['../'], { relativeTo: this.route });
+            this.router.navigate(['/contract-templates']);
           }
         });
       }

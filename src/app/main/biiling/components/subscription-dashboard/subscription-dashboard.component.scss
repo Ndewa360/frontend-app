@@ -319,6 +319,26 @@ $text-secondary: #525252;
       gap: 0.75rem;
       flex-wrap: wrap;
     }
+
+    // Alertes pour les erreurs Stripe
+    .alert {
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+
+      &.alert-danger {
+        background: rgba($danger-color, 0.1);
+        color: $danger-color;
+        border: 1px solid rgba($danger-color, 0.2);
+      }
+
+      i {
+        font-size: 1rem;
+      }
+    }
   }
 
   // Subscription stats
@@ -565,6 +585,14 @@ $text-secondary: #525252;
         background: #1e8e3e;
         transform: translateY(-1px);
         box-shadow: 0 4px 12px rgba($success-color, 0.3);
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+        background: #ccc;
       }
     }
 

@@ -1,0 +1,85 @@
+<div class="premium-access-section">
+  
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-state">
+    <i class="fa fa-spinner fa-spin"></i>
+    <span>Vérification de l'accès...</span>
+  </div>
+
+  <!-- Has Active Access -->
+  <div *ngIf="!loading && hasActiveAccess" class="active-access">
+    <div class="access-badge">
+      <i class="fa fa-crown"></i>
+      <span>Accès Premium Actif</span>
+    </div>
+    <button class="view-info-btn" (click)="openModal()">
+      <i class="fa fa-eye"></i>
+      <span>Voir les informations</span>
+    </button>
+    <div class="expiry-info">
+      <i class="fa fa-clock"></i>
+      <span>{{ getRemainingDaysText() }}</span>
+    </div>
+  </div>
+
+  <!-- No Access -->
+  <div *ngIf="!loading && !hasActiveAccess" class="no-access">
+    <div class="premium-offer">
+      <div class="offer-header">
+        <div class="premium-icon">
+          <i class="fa fa-crown"></i>
+        </div>
+        <div class="offer-text">
+          <h4>Forfait Premium Global</h4>
+          <p>Accès à tous les propriétaires</p>
+        </div>
+      </div>
+      
+      <div class="offer-benefits">
+        <div class="benefit">
+          <i class="fa fa-phone"></i>
+          <span>Téléphone</span>
+        </div>
+        <div class="benefit">
+          <i class="fa fa-envelope"></i>
+          <span>Email</span>
+        </div>
+        <div class="benefit">
+          <i class="fab fa-whatsapp"></i>
+          <span>WhatsApp</span>
+        </div>
+      </div>
+      
+      <div class="pricing">
+        <div class="price">
+          <span class="amount">{{ premiumPrice | number }}</span>
+          <span class="currency">FCFA</span>
+        </div>
+        <div class="duration">3 jours d'accès global</div>
+      </div>
+      
+      <button class="premium-btn" (click)="openModal()">
+        <i class="fa fa-crown"></i>
+        <span>Forfait Premium</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="error && !loading" class="error-state">
+    <i class="fa fa-exclamation-triangle"></i>
+    <span>{{ error }}</span>
+    <button class="retry-btn" (click)="checkAccess()">Réessayer</button>
+  </div>
+
+</div>
+
+<!-- Modal -->
+<app-premium-access-modal
+  *ngIf="showModal"
+  [isOpen]="showModal"
+  [ownerId]="ownerId"
+  [userId]="userId"
+  [userEmail]="userEmail"
+  (close)="closeModal()">
+</app-premium-access-modal>

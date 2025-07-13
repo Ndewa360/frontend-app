@@ -4,6 +4,9 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { SearchPropertyModel } from 'src/app/shared/store';
+import { Store } from '@ngxs/store';
+import { PremiumAccessState, PremiumAccessAction, OwnerInfoModel } from 'src/app/shared/store/premium-access';
+import { PremiumAccessService } from 'src/app/shared/services/premium-access/premium-access.service';
 
 export interface UnitDetailDialogData {
   unit: SearchPropertyModel;
@@ -33,13 +36,20 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
   canNavigateNext = false;
 
   // Accès premium
-  hasPremiumAccess = false; // À gérer selon la logique métier
+  hasPremiumAccess = false;
+  premiumLoading = false;
+  premiumError: string | null = null;
+  ownerInfo: OwnerInfoModel | null = null;
+  showPremiumModal = false;
+  premiumPrice = 500;
 
   constructor(
     public dialogRef: MatDialogRef<UnitDetailDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: UnitDetailDialogData,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private store: Store,
+    private premiumAccessService: PremiumAccessService
   ) {
     this.unit = data.unit;
     this.allUnits = data.allUnits;
@@ -50,6 +60,8 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
     this.updateNavigationState();
     this.setupKeyboardNavigation();
     this.updateUrlWithUnit();
+    this.checkPremiumAccess();
+    this.subscribeToPremiumStore();
   }
 
   ngOnDestroy(): void {
@@ -338,16 +350,118 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Vérifier l'accès premium de l'utilisateur
+   */
+  private checkPremiumAccess(): void {
+    // TODO: Récupérer l'ID utilisateur depuis le service d'authentification
+    const userId = 'current-user-id'; // À remplacer par la vraie logique
+
+    this.store.dispatch(new PremiumAccessAction.CheckActiveAccess(userId));
+  }
+
+  /**
+   * S'abonner aux changements du store premium
+   */
+  private subscribeToPremiumStore(): void {
+    // S'abonner aux sélecteurs NGXS
+    this.store.select(PremiumAccessState.loading)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(loading => this.premiumLoading = loading);
+
+    this.store.select(PremiumAccessState.error)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(error => this.premiumError = error);
+
+    this.store.select(PremiumAccessState.hasActiveAccess)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(hasAccess => this.hasPremiumAccess = hasAccess);
+
+    this.store.select(PremiumAccessState.ownerInfo)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(ownerInfo => this.ownerInfo = ownerInfo);
+  }
+
+  /**
    * Gère l'achat de l'accès premium
    */
   onPurchasePremiumAccess(): void {
-    // Logique pour déclencher le paiement
-    console.log('Purchase premium access for unit:', this.unit);
+    this.showPremiumModal = true;
+  }
 
-    // Ici vous pouvez intégrer votre système de paiement
-    // Par exemple : ouvrir un modal de paiement, rediriger vers une page de paiement, etc.
+  /**
+   * Fermer le modal premium
+   */
+  closePremiumModal(): void {
+    this.showPremiumModal = false;
+  }
 
-    // Simulation d'un paiement réussi (à remplacer par la vraie logique)
-    // this.hasPremiumAccess = true;
+  /**
+   * Voir les informations du propriétaire
+   */
+  viewOwnerInfo(): void {
+    if (!this.hasPremiumAccess) {
+      this.onPurchasePremiumAccess();
+      return;
+    }
+
+    // TODO: Récupérer l'ID utilisateur et propriétaire
+    const userId = 'current-user-id'; // À remplacer
+    const ownerId = this.unit.property?.owner?.id || 'owner-id'; // À adapter selon votre modèle
+
+    this.store.dispatch(new PremiumAccessAction.GetOwnerInfo(userId, ownerId));
+  }
+
+  /**
+   * Formater le montant premium
+   */
+  formatPremiumAmount(amount: number): string {
+    return this.premiumAccessService.formatAmount(amount);
+  }
+
+  /**
+   * Obtenir le texte des jours restants
+   */
+  getRemainingDaysText(): string {
+    if (!this.ownerInfo?.access) return '';
+
+    const remainingDays = this.ownerInfo.access.remainingDays;
+    if (remainingDays <= 0) {
+      return 'Accès expiré';
+    } else if (remainingDays === 1) {
+      return '1 jour restant';
+    } else {
+      return `${remainingDays} jours restants`;
+    }
+  }
+
+  /**
+   * Obtenir le lien WhatsApp
+   */
+  getWhatsAppLink(): string {
+    if (!this.ownerInfo?.owner.whatsapp) return '#';
+
+    const phone = this.ownerInfo.owner.whatsapp.replace(/\s+/g, '');
+    const message = encodeURIComponent('Bonjour, je suis intéressé par votre propriété sur Ndewa360°.');
+    return `https://wa.me/${phone}?text=${message}`;
+  }
+
+  /**
+   * Appeler le propriétaire
+   */
+  callOwner(): void {
+    if (this.ownerInfo?.owner.phone) {
+      window.location.href = `tel:${this.ownerInfo.owner.phone}`;
+    }
+  }
+
+  /**
+   * Envoyer un email au propriétaire
+   */
+  emailOwner(): void {
+    if (this.ownerInfo?.owner.email) {
+      const subject = encodeURIComponent('Demande d\'information - Ndewa360°');
+      const body = encodeURIComponent('Bonjour,\n\nJe suis intéressé par votre propriété sur Ndewa360°.\n\nCordialement');
+      window.location.href = `mailto:${this.ownerInfo.owner.email}?subject=${subject}&body=${body}`;
+    }
   }
 }

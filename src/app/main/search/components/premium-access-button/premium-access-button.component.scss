@@ -1,0 +1,320 @@
+/* Premium Access Button - Design professionnel */
+
+// Variables de couleurs de l'application
+$primary-color: rgb(204, 140, 10);
+$primary-dark: rgb(184, 126, 9);
+$primary-light: rgba(204, 140, 10, 0.1);
+$text-dark: #1f2937;
+$text-light: #6b7280;
+$bg-light: #f8fafc;
+$border-light: #e2e8f0;
+$success-color: #10b981;
+$error-color: #ef4444;
+$premium-color: #8b5cf6;
+
+/* Section principale */
+.premium-access-section {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid $border-light;
+  overflow: hidden;
+}
+
+/* Loading */
+.loading-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  color: $text-light;
+  
+  i {
+    font-size: 1.125rem;
+    color: $primary-color;
+  }
+  
+  span {
+    font-weight: 500;
+  }
+}
+
+/* Accès actif */
+.active-access {
+  padding: 1.5rem;
+  text-align: center;
+  
+  .access-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, $premium-color, #7c3aed);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+    
+    i {
+      color: #fbbf24;
+      font-size: 1rem;
+    }
+  }
+  
+  .view-info-btn {
+    width: 100%;
+    background: linear-gradient(135deg, $success-color, #059669);
+    color: white;
+    border: none;
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba($success-color, 0.4);
+    }
+    
+    i {
+      font-size: 1rem;
+    }
+  }
+  
+  .expiry-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: $text-light;
+    font-size: 0.8125rem;
+    
+    i {
+      font-size: 0.875rem;
+    }
+  }
+}
+
+/* Pas d'accès */
+.no-access {
+  .premium-offer {
+    padding: 1.5rem;
+  }
+  
+  .offer-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    
+    .premium-icon {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, $premium-color, #7c3aed);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      
+      i {
+        font-size: 1.5rem;
+        color: #fbbf24;
+      }
+    }
+    
+    .offer-text {
+      flex: 1;
+      
+      h4 {
+        color: $text-dark;
+        font-size: 1.125rem;
+        font-weight: 700;
+        margin: 0 0 0.25rem 0;
+      }
+      
+      p {
+        color: $text-light;
+        font-size: 0.875rem;
+        margin: 0;
+      }
+    }
+  }
+  
+  .offer-benefits {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: rgba($premium-color, 0.05);
+    border-radius: 12px;
+    border: 1px solid rgba($premium-color, 0.1);
+    
+    .benefit {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      
+      i {
+        color: $premium-color;
+        font-size: 1.25rem;
+      }
+      
+      span {
+        color: $text-dark;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+    }
+  }
+  
+  .pricing {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    
+    .price {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 0.25rem;
+      
+      .amount {
+        color: $primary-color;
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+      
+      .currency {
+        color: $primary-color;
+        font-size: 1rem;
+        font-weight: 600;
+      }
+    }
+    
+    .duration {
+      color: $text-light;
+      font-size: 0.8125rem;
+      font-weight: 500;
+    }
+  }
+  
+  .premium-btn {
+    width: 100%;
+    background: linear-gradient(135deg, $primary-color, $primary-dark);
+    color: white;
+    border: none;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    box-shadow: 0 4px 12px rgba($primary-color, 0.3);
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba($primary-color, 0.4);
+    }
+    
+    &:active {
+      transform: translateY(-1px);
+    }
+    
+    i {
+      font-size: 1.125rem;
+      color: #fbbf24;
+    }
+    
+    span {
+      font-size: 1rem;
+    }
+  }
+}
+
+/* Error */
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  text-align: center;
+  
+  i {
+    font-size: 2rem;
+    color: $error-color;
+  }
+  
+  span {
+    color: $text-light;
+    font-size: 0.875rem;
+  }
+  
+  .retry-btn {
+    background: $primary-color;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      background: $primary-dark;
+      transform: translateY(-1px);
+    }
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .offer-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.75rem;
+    
+    .premium-icon {
+      width: 40px;
+      height: 40px;
+      
+      i {
+        font-size: 1.25rem;
+      }
+    }
+  }
+  
+  .offer-benefits {
+    .benefit {
+      i {
+        font-size: 1rem;
+      }
+      
+      span {
+        font-size: 0.6875rem;
+      }
+    }
+  }
+  
+  .pricing .price {
+    .amount {
+      font-size: 1.25rem;
+    }
+    
+    .currency {
+      font-size: 0.875rem;
+    }
+  }
+}

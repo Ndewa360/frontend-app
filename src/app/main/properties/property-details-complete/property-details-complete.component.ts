@@ -6,11 +6,15 @@ import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
   PropertyModel,
+  PropertyAction,
+  PropertyState,
   RoomModel,
   RoomAction,
   RoomState,
   LocataireModel,
   LocataireState,
+  LocationAction,
+  LocationState,
   HistoryLocationPaymentAction,
   HistoryLocationPaymentState
 } from 'src/app/shared/store';
@@ -18,6 +22,11 @@ import { PropertyDataService, Unit, Tenant, HistoryItem } from '../services/prop
 import { UnitAction } from '../components/property-units-list/property-units-list.component';
 import { UpdatePropertyComponent, UpdatePropertyDialogData } from '../update-property/update-property.component';
 import { GaleryComponent } from '../../room/components/galery/galery.component';
+import { AddPropertyRoomComponent } from '../components/add-property-room/add-property-room.component';
+import { AddLocataireComponent } from '../../locataires/components/add-locataire/add-locataire.component';
+import { UpdateRoomComponent } from '../../room/components/update-room/update-room.component';
+import { AssignLocationModalService } from '../../assign-location/services/assign-location-modal.service';
+import { RemoveLocataireRoomComponent } from '../components/remove-locataire-room/remove-locataire-room.component';
 
 interface Tab {
   id: string;
@@ -80,7 +89,7 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
     {
       id: 'units',
       label: 'Unités locatives',
-      icon: 'building'
+      icon: 'balcony'
     },
     {
       id: 'tenants',
@@ -89,7 +98,7 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
     },
     {
       id: 'history',
-      label: 'Historique',
+      label: 'Historique', 
       icon: 'time'
     },
     {
@@ -104,7 +113,8 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
     private router: Router,
     private store: Store,
     private propertyDataService: PropertyDataService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private assignLocationModalService: AssignLocationModalService
   ) {
     // Initialiser les observables vides
     this.property$ = new Observable();
@@ -230,9 +240,44 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
   }
 
   onAddUnit(): void {
-    console.log('Ajouter une nouvelle unité');
-    // TODO: Implémenter l'ajout d'unité
-    // Navigation vers le formulaire d'ajout ou ouverture d'un modal
+    console.log('🔧 PropertyDetailsComplete: onAddUnit appelé');
+    console.log('🔧 PropertyId:', this.propertyId);
+    console.log('🔧 Dialog service:', this.dialog);
+
+    if (!this.dialog) {
+      console.error('❌ Service MatDialog non disponible dans PropertyDetailsComplete !');
+      return;
+    }
+
+    if (this.propertyId) {
+      console.log('📝 Ouverture du modal AddPropertyRoomComponent depuis PropertyDetailsComplete...');
+
+      try {
+        const dialogRef = this.dialog.open(AddPropertyRoomComponent, {
+          width: '100%',
+          maxWidth: '900px',
+          disableClose: true,
+          data: {
+            property: { _id: this.propertyId }
+          }
+        });
+
+        console.log('✅ Modal ouvert depuis PropertyDetailsComplete, dialogRef:', dialogRef);
+
+        dialogRef.afterClosed().subscribe(result => {
+          console.log('🔄 Modal fermé avec résultat:', result);
+          if (result) {
+            console.log('✅ Nouvelle unité ajoutée avec succès');
+            // Recharger les données de la propriété
+            this.reloadPropertyData();
+          }
+        });
+      } catch (error) {
+        console.error('❌ Erreur lors de l\'ouverture du modal depuis PropertyDetailsComplete:', error);
+      }
+    } else {
+      console.error('❌ PropertyId manquant pour ajouter une unité');
+    }
   }
 
   // Actions sur les unités
@@ -242,18 +287,100 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
   }
 
   private onEditUnit(room: RoomModel): void {
-    console.log('Modifier l\'unité:', room);
-    // TODO: Navigation vers le formulaire d'édition
+    console.log('🔧 PropertyDetailsComplete: onEditUnit appelé pour:', room);
+
+    if (!this.dialog) {
+      console.error('❌ Service MatDialog non disponible !');
+      return;
+    }
+
+    console.log('📝 Ouverture du modal UpdateRoomComponent...');
+
+    try {
+      const dialogRef = this.dialog.open(UpdateRoomComponent, {
+        width: '100%',
+        maxWidth: '900px',
+        disableClose: true,
+        data: {
+          room: room
+        }
+      });
+
+      console.log('✅ Modal UpdateRoom ouvert, dialogRef:', dialogRef);
+
+      dialogRef.afterClosed().subscribe(result => {
+        console.log('🔄 Modal UpdateRoom fermé avec résultat:', result);
+        if (result) {
+          console.log('✅ Unité modifiée avec succès');
+          // Recharger les données
+          this.reloadPropertyData();
+        }
+      });
+    } catch (error) {
+      console.error('❌ Erreur lors de l\'ouverture du modal UpdateRoom:', error);
+    }
   }
 
   private onAssignTenant(room: RoomModel): void {
-    console.log('Assigner un locataire à l\'unité:', room);
-    // TODO: Ouvrir le modal d'assignation de locataire
+    console.log('🔧 PropertyDetailsComplete: onAssignTenant appelé pour:', room);
+
+    // Utiliser le service d'assignation de locataire
+    this.assignLocationModalService.openAssignLocationModal({
+      propertyId: this.propertyId,
+      roomId: room._id,
+      assistant: true,
+      returnUrl: this.router.url
+    }).subscribe(result => {
+      if (result && result.success) {
+        console.log('✅ Locataire assigné avec succès');
+        // Recharger les données
+        this.reloadPropertyData();
+      }
+    });
   }
 
   private onTerminateLease(room: RoomModel): void {
-    console.log('Résilier le contrat de l\'unité:', room);
-    // TODO: Ouvrir le modal de résiliation
+    console.log('🔧 PropertyDetailsComplete: onTerminateLease appelé pour:', room);
+
+    if (!this.dialog) {
+      console.error('❌ Service MatDialog non disponible !');
+      return;
+    }
+
+    // Récupérer la location active pour cette chambre depuis le store
+    const locations = this.store.selectSnapshot(LocationState.selectStateLocations);
+    const location = locations?.find(loc => loc.room === room._id && loc.isRunning);
+
+    if (!location) {
+      console.error('❌ Aucune location active trouvée pour cette unité');
+      return;
+    }
+
+    console.log('📝 Ouverture du modal RemoveLocataireRoomComponent...');
+
+    try {
+      const dialogRef = this.dialog.open(RemoveLocataireRoomComponent, {
+        width: '500px',
+        maxWidth: '95vw',
+        disableClose: true,
+        data: {
+          location: location
+        }
+      });
+
+      console.log('✅ Modal RemoveLocataireRoom ouvert, dialogRef:', dialogRef);
+
+      dialogRef.afterClosed().subscribe(result => {
+        console.log('🔄 Modal RemoveLocataireRoom fermé avec résultat:', result);
+        if (result) {
+          console.log('✅ Contrat résilié avec succès');
+          // Recharger les données
+          this.reloadPropertyData();
+        }
+      });
+    } catch (error) {
+      console.error('❌ Erreur lors de l\'ouverture du modal RemoveLocataireRoom:', error);
+    }
   }
 
   private onManageMedia(room: RoomModel): void {
@@ -309,8 +436,38 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
   }
 
   onAddTenant(): void {
-    console.log('Ajouter un locataire');
-    // TODO: Navigation vers l'ajout de locataire
+    console.log('🔧 PropertyDetailsComplete: onAddTenant appelé');
+
+    if (!this.dialog) {
+      console.error('❌ Service MatDialog non disponible !');
+      return;
+    }
+
+    console.log('📝 Ouverture du modal AddLocataireComponent...');
+
+    try {
+      const dialogRef = this.dialog.open(AddLocataireComponent, {
+        width: '100%',
+        maxWidth: '800px',
+        disableClose: true,
+        data: {
+          propertyId: this.propertyId
+        }
+      });
+
+      console.log('✅ Modal AddLocataire ouvert, dialogRef:', dialogRef);
+
+      dialogRef.afterClosed().subscribe(result => {
+        console.log('🔄 Modal AddLocataire fermé avec résultat:', result);
+        if (result) {
+          console.log('✅ Nouveau locataire ajouté avec succès');
+          // Recharger les données
+          this.reloadPropertyData();
+        }
+      });
+    } catch (error) {
+      console.error('❌ Erreur lors de l\'ouverture du modal AddLocataire:', error);
+    }
   }
 
   goBack(): void {
@@ -388,6 +545,18 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
   refreshData(): void {
     if (this.propertyId) {
       this.initializeSubscriptions();
+    }
+  }
+
+  /**
+   * Recharge les données de la propriété après ajout d'une unité
+   */
+  reloadPropertyData(): void {
+    if (this.propertyId) {
+      // Recharger les données via le store
+      this.store.dispatch(new PropertyAction.FetchProperty(this.propertyId));
+      this.store.dispatch(new RoomAction.FetchRoomsByPropertyID(this.propertyId));
+      this.store.dispatch(new LocationAction.FetchLocationsByPropertyId(this.propertyId));
     }
   }
 

@@ -24,29 +24,188 @@ export class ContractTemplateEditorComponent implements OnInit {
   // UI state
   viewMode: 'edit' | 'preview' = 'edit';
   isSaving = false;
+  isLoading = false;
+  isContentLoading = false;
   lastSaveTime: Date | null = null;
+  loadingError: string | null = null;
+  hasUnsavedChanges = false;
 
-  // TinyMCE configuration
+  // TinyMCE configuration avancée
   editorConfig = {
     height: 'calc(100vh - 200px)', // Hauteur dynamique basée sur la viewport
-    menubar: false,
+    menubar: 'file edit view insert format tools table help',
     plugins: [
       'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
       'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-      'insertdatetime', 'media', 'table', 'help', 'wordcount'
+      'insertdatetime', 'media', 'table', 'help', 'wordcount', 'template',
+      'paste', 'textcolor', 'colorpicker', 'textpattern', 'codesample',
+      'hr', 'pagebreak', 'nonbreaking', 'toc', 'imagetools', 'emoticons'
     ],
-    toolbar: 'undo redo | blocks | ' +
-      'bold italic forecolor | alignleft aligncenter ' +
-      'alignright alignjustify | bullist numlist outdent indent | ' +
-      'removeformat | help',
-    content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif; font-size: 14px; direction: ltr; }',
+    toolbar1: 'undo redo | cut copy paste | bold italic underline strikethrough | ' +
+      'fontselect fontsizeselect | forecolor backcolor | removeformat',
+    toolbar2: 'alignleft aligncenter alignright alignjustify | ' +
+      'bullist numlist outdent indent | blockquote hr pagebreak | ' +
+      'link unlink anchor | image media table | code codesample',
+    toolbar3: 'searchreplace | visualblocks visualchars | ' +
+      'insertdatetime nonbreaking | template | preview fullscreen help',
+
+    // Configuration des couleurs
+    color_map: [
+      "000000", "Noir",
+      "993300", "Marron foncé",
+      "333300", "Vert olive foncé",
+      "003300", "Vert foncé",
+      "003366", "Bleu marine foncé",
+      "000080", "Bleu marine",
+      "333399", "Indigo",
+      "333333", "Gris très foncé",
+      "800000", "Marron",
+      "FF6600", "Orange",
+      "808000", "Olive",
+      "008000", "Vert",
+      "008080", "Sarcelle",
+      "0000FF", "Bleu",
+      "666699", "Gris bleu",
+      "808080", "Gris",
+      "FF0000", "Rouge",
+      "FF9900", "Ambre",
+      "99CC00", "Vert jaune",
+      "339966", "Vert de mer",
+      "33CCCC", "Turquoise",
+      "3366FF", "Bleu royal",
+      "800080", "Violet",
+      "999999", "Gris moyen",
+      "FF00FF", "Magenta",
+      "FFCC00", "Or",
+      "FFFF00", "Jaune",
+      "00FF00", "Lime",
+      "00FFFF", "Aqua",
+      "00CCFF", "Bleu ciel",
+      "993366", "Rouge brun",
+      "C0C0C0", "Argent",
+      "FF99CC", "Rose",
+      "FFCC99", "Pêche",
+      "FFFF99", "Jaune clair",
+      "CCFFCC", "Vert clair",
+      "CCFFFF", "Cyan clair",
+      "99CCFF", "Bleu clair",
+      "CC99FF", "Lavande",
+      "FFFFFF", "Blanc"
+    ],
+
+    // Configuration avancée
+    content_style: `
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        font-size: 14px;
+        line-height: 1.6;
+        color: #333;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .highlight { background-color: #ffff00; }
+      .contract-header { text-align: center; margin-bottom: 30px; }
+      .contract-section { margin: 20px 0; }
+      .signature-block { margin-top: 50px; border-top: 1px solid #ccc; padding-top: 20px; }
+    `,
+
+    // Configuration des styles
+    style_formats: [
+      { title: 'En-têtes', items: [
+        { title: 'Titre principal', format: 'h1' },
+        { title: 'Titre secondaire', format: 'h2' },
+        { title: 'Sous-titre', format: 'h3' }
+      ]},
+      { title: 'Styles de contrat', items: [
+        { title: 'En-tête de contrat', block: 'div', classes: 'contract-header' },
+        { title: 'Section de contrat', block: 'div', classes: 'contract-section' },
+        { title: 'Bloc de signature', block: 'div', classes: 'signature-block' },
+        { title: 'Texte surligné', inline: 'span', classes: 'highlight' }
+      ]},
+      { title: 'Formatage', items: [
+        { title: 'Gras', inline: 'strong' },
+        { title: 'Italique', inline: 'em' },
+        { title: 'Code', inline: 'code' },
+        { title: 'Citation', block: 'blockquote' }
+      ]}
+    ],
+
     directionality: 'ltr' as 'ltr',
     language: 'fr_FR',
     branding: false,
-    resize: false,
-    statusbar: false,
+    resize: true,
+    statusbar: true,
+    elementpath: true,
     valid_elements: '*[*]',
-    extended_valid_elements: '*[*]'
+    extended_valid_elements: '*[*]',
+
+    // Configuration du code HTML
+    code_dialog_height: 400,
+    code_dialog_width: 800,
+
+    // Configuration des images
+    image_advtab: true,
+    image_caption: true,
+    image_title: true,
+
+    // Configuration des tableaux
+    table_default_attributes: {
+      border: '1'
+    },
+    table_default_styles: {
+      'border-collapse': 'collapse'
+    },
+
+    // Configuration de la paste
+    paste_as_text: false,
+    paste_auto_cleanup_on_paste: true,
+    paste_remove_styles_if_webkit: true,
+
+    // Templates prédéfinis
+    templates: [
+      {
+        title: 'Contrat de location standard',
+        description: 'Modèle de base pour un contrat de location',
+        content: `
+          <div class="contract-header">
+            <h1>CONTRAT DE LOCATION</h1>
+            <p><strong>Entre les soussignés :</strong></p>
+          </div>
+
+          <div class="contract-section">
+            <h2>Article 1 - Désignation du bailleur</h2>
+            <p>{{OWNER_FIRSTNAME}} {{OWNER_NAME}}, demeurant {{OWNER_ADDRESS}}</p>
+          </div>
+
+          <div class="contract-section">
+            <h2>Article 2 - Désignation du locataire</h2>
+            <p>{{TENANT_FIRSTNAME}} {{TENANT_NAME}}, demeurant {{TENANT_ADDRESS}}</p>
+          </div>
+
+          <div class="contract-section">
+            <h2>Article 3 - Désignation du bien loué</h2>
+            <p>Le bien situé {{PROPERTY_ADDRESS}}, d'une surface de {{PROPERTY_SURFACE}} m²</p>
+          </div>
+
+          <div class="signature-block">
+            <p>Fait à _______, le {{CURRENT_DATE}}</p>
+            <table style="width: 100%; margin-top: 30px;">
+              <tr>
+                <td style="text-align: center; width: 50%;">
+                  <strong>Le Bailleur</strong><br><br><br>
+                  _________________
+                </td>
+                <td style="text-align: center; width: 50%;">
+                  <strong>Le Locataire</strong><br><br><br>
+                  _________________
+                </td>
+              </tr>
+            </table>
+          </div>
+        `
+      }
+    ]
   };
 
   // Options for dropdowns
@@ -127,6 +286,12 @@ export class ContractTemplateEditorComponent implements OnInit {
     this.templateId = this.route.snapshot.paramMap.get('id');
     this.isEditMode = !!this.templateId;
 
+    console.log('ContractTemplateEditor initialized:', {
+      templateId: this.templateId,
+      isEditMode: this.isEditMode,
+      route: this.route.snapshot.url
+    });
+
     if (this.isEditMode) {
       this.loadTemplate();
     } else {
@@ -134,6 +299,11 @@ export class ContractTemplateEditorComponent implements OnInit {
       this.templateName = 'Nouveau modèle de contrat';
       this.templateDescription = '';
       this.templateContent = '<p>Commencez à rédiger votre modèle de contrat...</p>';
+
+      // Initialiser l'éditeur après un délai
+      setTimeout(() => {
+        this.updateEditorContent();
+      }, 1000);
     }
   }
 
@@ -142,20 +312,36 @@ export class ContractTemplateEditorComponent implements OnInit {
 
     console.log('Loading template:', this.templateId);
 
+    // Activer les états de chargement
+    this.isLoading = true;
+    this.isContentLoading = true;
+    this.loadingError = null;
+
     // Charger les informations du template
     this.contractTemplateService.getTemplateById(this.templateId).subscribe({
       next: (template: any) => {
+        console.log('Template loaded:', template);
         this.templateName = template.name;
         this.templateDescription = template.description || '';
+        this.isLoading = false;
 
         // Charger le contenu du template
         this.contractTemplateService.getTemplateContent(this.templateId!).subscribe({
           next: (response) => {
-            this.templateContent = response.content;
+            console.log('Template content loaded:', response);
+            this.templateContent = response.content || '<p>Commencez à rédiger votre contrat...</p>';
+            this.isContentLoading = false;
+
+            // Forcer la mise à jour de l'éditeur TinyMCE
+            setTimeout(() => {
+              this.updateEditorContent();
+            }, 100);
           },
           error: (error) => {
             console.error('Erreur lors du chargement du contenu:', error);
-            this.templateContent = '<p>Erreur lors du chargement du contenu...</p>';
+            this.templateContent = '<p>Erreur lors du chargement du contenu. Veuillez réessayer.</p>';
+            this.isContentLoading = false;
+            this.loadingError = 'Impossible de charger le contenu du modèle';
           }
         });
       },
@@ -163,9 +349,46 @@ export class ContractTemplateEditorComponent implements OnInit {
         console.error('Erreur lors du chargement du template:', error);
         this.templateName = 'Erreur de chargement';
         this.templateDescription = '';
-        this.templateContent = '<p>Erreur lors du chargement...</p>';
+        this.templateContent = '<p>Erreur lors du chargement du modèle. Veuillez réessayer.</p>';
+        this.isLoading = false;
+        this.isContentLoading = false;
+        this.loadingError = 'Impossible de charger le modèle de contrat';
       }
     });
+  }
+
+  /**
+   * Force la mise à jour du contenu de l'éditeur TinyMCE
+   */
+  private updateEditorContent(): void {
+    console.log('Updating editor content:', this.templateContent);
+
+    // Méthode plus robuste pour mettre à jour TinyMCE
+    const updateEditor = () => {
+      if ((window as any).tinymce) {
+        const editor = (window as any).tinymce.activeEditor;
+        if (editor && editor.initialized) {
+          console.log('Setting content in TinyMCE editor');
+          editor.setContent(this.templateContent || '<p>Commencez à rédiger...</p>');
+          editor.focus();
+        } else {
+          console.log('Editor not ready, retrying...');
+          setTimeout(updateEditor, 200);
+        }
+      } else {
+        console.log('TinyMCE not loaded, retrying...');
+        setTimeout(updateEditor, 200);
+      }
+    };
+
+    updateEditor();
+  }
+
+  /**
+   * Réessayer le chargement du template
+   */
+  retryLoading(): void {
+    this.loadTemplate();
   }
 
   // Navigation methods
@@ -235,8 +458,8 @@ export class ContractTemplateEditorComponent implements OnInit {
           this.isSaving = false;
           this.lastSaveTime = new Date();
           console.log('Template créé avec succès');
-          // Rediriger vers la liste ou la vue du template créé
-          this.router.navigate(['../list'], { relativeTo: this.route });
+          // Rediriger vers la vue du template créé
+          this.router.navigate(['/contract-templates/view', response._id]);
         },
         error: (error) => {
           this.isSaving = false;
@@ -248,19 +471,35 @@ export class ContractTemplateEditorComponent implements OnInit {
   }
 
   exportTemplate(): void {
-    // TODO: Implémenter l'export
-    console.log('Exporting template');
+    if (this.templateContent) {
+      const blob = new Blob([this.templateContent], { type: 'text/html' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${this.templateName || 'template'}.html`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    }
   }
 
   hasChanges(): boolean {
-    // TODO: Vérifier s'il y a des changements
-    return true;
+    if (!this.isEditMode) {
+      // Nouveau template - vérifier si du contenu a été ajouté
+      return this.templateName !== 'Nouveau modèle de contrat' ||
+             this.templateDescription !== '' ||
+             this.templateContent !== '<p>Commencez à rédiger votre modèle de contrat...</p>';
+    }
+
+    // Mode édition - comparer avec les valeurs originales
+    return this.hasUnsavedChanges;
   }
 
   // Template change handlers
   onTemplateChange(): void {
-    // TODO: Marquer comme modifié
-    console.log('Template changed');
+    this.hasUnsavedChanges = true;
+    this.lastSaveTime = null;
   }
 
   onTypeChange(event: any): void {
@@ -297,24 +536,143 @@ export class ContractTemplateEditorComponent implements OnInit {
   }
 
   onPaste(event: any): void {
-    // TODO: Gérer le collage de contenu
-    console.log('Paste event:', event);
+    // Marquer comme modifié lors du collage
+    this.onTemplateChange();
+
+    // Nettoyer le contenu collé si nécessaire
+    setTimeout(() => {
+      if ((window as any).tinymce) {
+        const editor = (window as any).tinymce.activeEditor;
+        if (editor) {
+          // Nettoyer les styles indésirables
+          const content = editor.getContent();
+          const cleanContent = content.replace(/style="[^"]*"/g, '');
+          if (content !== cleanContent) {
+            editor.setContent(cleanContent);
+          }
+        }
+      }
+    }, 100);
   }
 
   // Preview methods
   getPreviewContent(): string {
-    // TODO: Générer le contenu de prévisualisation avec les variables remplacées
-    return this.templateContent || '<p>Aucun contenu à prévisualiser</p>';
+    if (!this.templateContent) {
+      return '<p>Aucun contenu à prévisualiser</p>';
+    }
+
+    // Remplacer les variables par des exemples pour la prévisualisation
+    let previewContent = this.templateContent;
+
+    // Variables du propriétaire
+    previewContent = previewContent.replace(/\{\{OWNER_FIRSTNAME\}\}/g, 'Jean');
+    previewContent = previewContent.replace(/\{\{OWNER_NAME\}\}/g, 'DUPONT');
+    previewContent = previewContent.replace(/\{\{OWNER_ADDRESS\}\}/g, '123 Rue de la Paix, 75001 Paris');
+
+    // Variables du locataire
+    previewContent = previewContent.replace(/\{\{TENANT_FIRSTNAME\}\}/g, 'Marie');
+    previewContent = previewContent.replace(/\{\{TENANT_NAME\}\}/g, 'MARTIN');
+    previewContent = previewContent.replace(/\{\{TENANT_ADDRESS\}\}/g, '456 Avenue des Champs, 75008 Paris');
+
+    // Variables de la propriété
+    previewContent = previewContent.replace(/\{\{PROPERTY_ADDRESS\}\}/g, '789 Boulevard Saint-Germain, 75007 Paris');
+    previewContent = previewContent.replace(/\{\{PROPERTY_SURFACE\}\}/g, '65');
+    previewContent = previewContent.replace(/\{\{PROPERTY_ROOMS\}\}/g, '3');
+    previewContent = previewContent.replace(/\{\{MONTHLY_RENT\}\}/g, '1 200 €');
+    previewContent = previewContent.replace(/\{\{CHARGES\}\}/g, '150 €');
+    previewContent = previewContent.replace(/\{\{SECURITY_DEPOSIT\}\}/g, '2 400 €');
+
+    // Variables de dates
+    const today = new Date();
+    previewContent = previewContent.replace(/\{\{CURRENT_DATE\}\}/g, today.toLocaleDateString('fr-FR'));
+    previewContent = previewContent.replace(/\{\{START_DATE\}\}/g, '01/01/2024');
+    previewContent = previewContent.replace(/\{\{END_DATE\}\}/g, '31/12/2024');
+    previewContent = previewContent.replace(/\{\{SIGNATURE_DATE\}\}/g, today.toLocaleDateString('fr-FR'));
+
+    return previewContent;
   }
 
   printPreview(): void {
-    // TODO: Imprimer la prévisualisation
-    console.log('Print preview');
+    const previewContent = this.getPreviewContent();
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>Aperçu - ${this.templateName}</title>
+            <style>
+              body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
+              .contract-header { text-align: center; margin-bottom: 30px; }
+              .contract-section { margin: 20px 0; }
+              .signature-block { margin-top: 50px; border-top: 1px solid #ccc; padding-top: 20px; }
+              table { border-collapse: collapse; width: 100%; }
+              td { padding: 10px; border: 1px solid #ccc; }
+            </style>
+          </head>
+          <body>${previewContent}</body>
+        </html>
+      `);
+      printWindow.document.close();
+      printWindow.print();
+    }
   }
 
   exportPDF(): void {
-    // TODO: Exporter en PDF
-    console.log('Export PDF');
+    // Pour l'export PDF, on utilise la fonction d'impression du navigateur
+    // qui permet de sauvegarder en PDF
+    this.printPreview();
+  }
+
+  /**
+   * Insérer du code HTML directement dans l'éditeur
+   */
+  insertHtmlCode(): void {
+    const htmlCode = prompt('Entrez votre code HTML:');
+    if (htmlCode && (window as any).tinymce) {
+      const editor = (window as any).tinymce.activeEditor;
+      if (editor) {
+        editor.insertContent(htmlCode);
+      }
+    }
+  }
+
+  /**
+   * Ouvrir la boîte de dialogue de code source
+   */
+  openSourceCode(): void {
+    if ((window as any).tinymce) {
+      const editor = (window as any).tinymce.activeEditor;
+      if (editor) {
+        editor.execCommand('mceCodeEditor');
+      }
+    }
+  }
+
+  /**
+   * Insérer une variable de template (nouvelle méthode)
+   */
+  insertVariableCode(variableCode: string): void {
+    if ((window as any).tinymce) {
+      const editor = (window as any).tinymce.activeEditor;
+      if (editor) {
+        editor.insertContent(`<span class="template-variable" style="background-color: #e3f2fd; padding: 2px 4px; border-radius: 3px; font-weight: bold;">${variableCode}</span>&nbsp;`);
+      }
+    }
+  }
+
+  /**
+   * Appliquer un style prédéfini
+   */
+  applyStyle(styleClass: string): void {
+    if ((window as any).tinymce) {
+      const editor = (window as any).tinymce.activeEditor;
+      if (editor) {
+        const selectedContent = editor.selection.getContent();
+        if (selectedContent) {
+          editor.selection.setContent(`<span class="${styleClass}">${selectedContent}</span>`);
+        }
+      }
+    }
   }
 
   // Statistics methods
@@ -335,11 +693,7 @@ export class ContractTemplateEditorComponent implements OnInit {
   }
 
   onSave(): void {
-    if (this.templateForm.valid) {
-      // TODO: Sauvegarder le template
-      console.log('Saving template:', this.templateForm.value);
-      this.router.navigate(['/contract-templates']);
-    }
+    this.saveTemplate();
   }
 
   onCancel(): void {

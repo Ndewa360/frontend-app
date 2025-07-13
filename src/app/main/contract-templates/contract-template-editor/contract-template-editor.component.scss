@@ -30,6 +30,24 @@
   }
 }
 
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 // Éditeur moderne de modèles de contrats
 // Utilise les variables CSS de l'application et les classes Tailwind
 
@@ -46,6 +64,121 @@
   --editor-primary-light: rgba(204, 140, 10, 0.1);
   --editor-primary-medium: rgba(204, 140, 10, 0.2);
   --editor-primary-dark: rgb(163, 112, 8);
+
+  // ==================== LOADING STATES ====================
+
+  .loading-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: calc(100vh - 200px);
+    background: var(--theme-appUIBg);
+
+    .loading-content {
+      text-align: center;
+      padding: 2rem;
+
+      .loading-spinner {
+        font-size: 2rem;
+        color: var(--editor-primary);
+        margin-bottom: 1rem;
+
+        i {
+          animation: spin 1s linear infinite;
+        }
+      }
+
+      .loading-text {
+        color: var(--theme-textSecondary);
+        font-size: 1rem;
+        margin: 0;
+      }
+    }
+  }
+
+  .error-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: calc(100vh - 200px);
+    background: var(--theme-appUIBg);
+
+    .error-content {
+      text-align: center;
+      padding: 2rem;
+      max-width: 400px;
+
+      .error-icon {
+        font-size: 3rem;
+        color: #da1e28;
+        margin-bottom: 1rem;
+      }
+
+      h3 {
+        color: var(--theme-textPrimary);
+        margin-bottom: 0.5rem;
+        font-size: 1.25rem;
+      }
+
+      p {
+        color: var(--theme-textSecondary);
+        margin-bottom: 1.5rem;
+      }
+    }
+  }
+
+  // ==================== SKELETON LOADERS ====================
+
+  .skeleton-loader {
+    padding: 1rem;
+
+    .skeleton-title,
+    .skeleton-input,
+    .skeleton-textarea {
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 200px 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+    }
+
+    .skeleton-title {
+      height: 24px;
+      width: 60%;
+    }
+
+    .skeleton-input {
+      height: 40px;
+      width: 100%;
+    }
+
+    .skeleton-textarea {
+      height: 80px;
+      width: 100%;
+    }
+  }
+
+  .editor-skeleton {
+    padding: 1rem;
+    height: calc(100vh - 200px);
+
+    .skeleton-editor-toolbar {
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 200px 100%;
+      animation: shimmer 1.5s infinite;
+      height: 60px;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+    }
+
+    .skeleton-editor-content {
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 200px 100%;
+      animation: shimmer 1.5s infinite;
+      height: calc(100% - 80px);
+      border-radius: 4px;
+    }
+  }
 }
 
 // Animations
@@ -534,6 +667,29 @@
               height: 16px;
               background: var(--editor-primary);
               border-radius: 2px;
+            }
+          }
+
+          // Outils d'édition avancés
+          .editor-tools {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+
+            button {
+              width: 100%;
+              justify-content: flex-start;
+              text-align: left;
+
+              &:hover {
+                background: var(--editor-primary-light);
+                border-color: var(--editor-primary);
+              }
+
+              i {
+                color: var(--editor-primary);
+              }
             }
           }
 

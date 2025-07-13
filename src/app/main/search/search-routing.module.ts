@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { SearchPageDataResolver, SearchRoomDataResolver } from 'src/app/shared/resolvers';
 import { LandingLayoutComponent } from 'src/@youpez/layout/landing/landing-layout/landing-layout.component';
 import { SearchPageComponent } from './search-page';
+import { PremiumSuccessComponent } from './components/premium-success/premium-success.component';
 
 const routes: Routes = [
   {
@@ -16,7 +17,11 @@ const routes: Routes = [
         resolve: {
           data: SearchPageDataResolver
         }
-      }      
+      },
+      {
+        path: 'premium-success',
+        component: PremiumSuccessComponent
+      }
     ]
   },
   {

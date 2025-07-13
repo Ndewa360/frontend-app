@@ -9,7 +9,7 @@ export const environment = {
   // apiUrl:'http://192.168.1.212:3000',
 	url: 'http://localhost:4200',
 	production: false,
-	stripePublicKey: 'pk_test_your_stripe_public_key_here' // TODO: Remplacer par votre vraie clé publique Stripe
+	stripePublicKey: 'pk_test_51RjAHg4JUiFvn520cM9NGTm5AGVYS2LkhY8YwZIqhWN3mPLP6rHG6uMdpwUt88cc87Ba3eKbPfVZEldyyobx9LBo00lRhoHxee' // TODO: Remplacer par votre vraie clé publique Stripe
   }
   
   /*
