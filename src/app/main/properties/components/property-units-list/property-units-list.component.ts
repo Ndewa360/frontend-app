@@ -4,9 +4,14 @@ import { Store } from '@ngxs/store';
 import { MatDialog } from '@angular/material/dialog';
 import { AssignLocationModalService } from 'src/app/main/assign-location/services/assign-location-modal.service';
 import { ToastrService } from 'ngx-toastr';
-import { AddPropertyRoomComponent } from 'src/app/main/properties/components/add-property-room/add-property-room.component';
-import { UpdatePaymentComponent } from 'src/app/main/location-payment/components/update-payment/update-payment.component';
-import { RemoveLocataireRoomComponent } from '../remove-locataire-room/remove-locataire-room.component';
+// Nouveaux modals modernes
+import { ModernTenantModalComponent } from '../modern-tenant-modal/modern-tenant-modal.component';
+import { ModernUnitModalComponent } from '../modern-unit-modal/modern-unit-modal.component';
+import { ModernPaymentModalComponent } from '../modern-payment-modal/modern-payment-modal.component';
+import { ModernDeletePaymentModalComponent } from '../modern-delete-payment-modal/modern-delete-payment-modal.component';
+import { ModernContractTerminationModalComponent } from '../modern-contract-termination-modal/modern-contract-termination-modal.component';
+
+// Anciens modals (à garder temporairement pour certaines fonctionnalités)
 import { ContractViewerModalComponent } from '../contract-viewer-modal/contract-viewer-modal.component';
 import { Observable, Subject, combineLatest } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -30,10 +35,7 @@ import {
 import { UtilsString } from 'src/app/shared/utils';
 import { UnitDetailsViewService } from '../../services/unit-details-view.service';
 import { GaleryComponent } from '../../../room/components/galery/galery.component';
-import { AddPaymentComponent } from '../../../location-payment/components/add-payment/add-payment.component';
-import { DeletePaymentComponent } from '../../../location-payment/components/delete-payment/delete-payment.component';
 import { GeneratePaymentLinkModalComponent } from '../generate-payment-link-modal/generate-payment-link-modal.component';
-import { UpdateLocataireComponent } from 'src/app/main/locataires/components/update-locataire/update-locataire.component';
 
 export interface UnitAction {
   type: 'view' | 'edit' | 'assign_tenant' | 'terminate_lease' | 'manage_media' | 'toggle_status' | 'edit_galery' | 'edit_tenant';
@@ -432,14 +434,13 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
 
     console.log('📊 Données pour le modal:', { room, tenant, location });
 
-    // Ouvrir le modal même sans tenant pour tester
-    const dialogRef = this.dialog.open(AddPaymentComponent, {
-      width: '600px',
-      maxWidth: '95vw',
-      maxHeight: '90vh',
-      panelClass: 'payment-modal-dialog',
+    // Ouvrir le nouveau modal moderne de paiement
+    const dialogRef = this.dialog.open(ModernPaymentModalComponent, {
+      width: '100%',
+      maxWidth: '700px',
       disableClose: true,
       data: {
+        mode: 'create',
         room: room,
         tenant: tenant,
         location: location
@@ -464,10 +465,9 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const dialogRef = this.dialog.open(DeletePaymentComponent, {
-      width: '500px',
-      maxWidth: '95vw',
-      panelClass: 'delete-payment-modal-dialog',
+    const dialogRef = this.dialog.open(ModernDeletePaymentModalComponent, {
+      width: '100%',
+      maxWidth: '600px',
       disableClose: true,
       data: {
         transaction: paymentData.transaction,
@@ -563,13 +563,22 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
   }
   // Méthodes pour les modals
   onEditenant(tenant: LocataireModel): void {
-    // Ouvrir le modal d'assignation avec la chambre pré-sélectionnée
-    this.dialog.open(UpdateLocataireComponent, {
+    // Trouver la propriété et la chambre du locataire
+    const property = this.property;
+    if (!property) {
+      this.toastr.error('Propriété non trouvée', 'Erreur');
+      return;
+    }
+
+    // Ouvrir le nouveau modal moderne de modification de locataire
+    this.dialog.open(ModernTenantModalComponent, {
       width: '100%',
       maxWidth: '800px',
       disableClose: true,
       data: {
-        locataire: tenant
+        mode: 'edit',
+        property: property,
+        tenant: tenant
       }
     }).afterClosed().subscribe(result => {
       if (result) {
@@ -598,22 +607,27 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
       return;
     }
 
-    console.log('📝 Ouverture du modal RemoveLocataireRoomComponent...');
+    console.log('📝 Ouverture du modal ModernContractTerminationModalComponent...');
+
+    // Récupérer le locataire pour cette location
+    const tenant = this.getTenantForRoom(room);
 
     try {
-      const dialogRef = this.dialog.open(RemoveLocataireRoomComponent, {
-        width: '500px',
-        maxWidth: '95vw',
+      const dialogRef = this.dialog.open(ModernContractTerminationModalComponent, {
+        width: '100%',
+        maxWidth: '900px',
         disableClose: true,
         data: {
-          location: location
+          location: location,
+          tenant: tenant,
+          room: room
         }
       });
 
-      console.log('✅ Modal RemoveLocataireRoom ouvert, dialogRef:', dialogRef);
+      console.log('✅ Modal ModernContractTermination ouvert, dialogRef:', dialogRef);
 
       dialogRef.afterClosed().subscribe(result => {
-        console.log('🔄 Modal RemoveLocataireRoom fermé avec résultat:', result);
+        console.log('🔄 Modal ModernContractTermination fermé avec résultat:', result);
         if (result) {
           console.log('✅ Contrat résilié avec succès');
           // Recharger les données
@@ -622,7 +636,7 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
         }
       });
     } catch (error) {
-      console.error('❌ Erreur lors de l\'ouverture du modal RemoveLocataireRoom:', error);
+      console.error('❌ Erreur lors de l\'ouverture du modal ModernContractTermination:', error);
     }
   }
 
@@ -1014,15 +1028,23 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
       return;
     }
 
-    console.log('📝 Ouverture du modal UpdatePaymentComponent...');
+    console.log('📝 Ouverture du modal ModernPaymentModalComponent...');
 
-    const dialogRef = this.dialog.open(UpdatePaymentComponent, {
+    // Récupérer les données nécessaires
+    const room = this.rooms.find(r => r._id === payment.transaction.room);
+    const tenant = payment.history?.locataire;
+    const location = this.getLocationForRoom(room);
+
+    const dialogRef = this.dialog.open(ModernPaymentModalComponent, {
       width: '100%',
-      maxWidth: '800px',
+      maxWidth: '700px',
       disableClose: true,
       data: {
-        transaction: payment.transaction,
-        history: payment.history
+        mode: 'edit',
+        room: room,
+        tenant: tenant,
+        location: location,
+        transaction: payment.transaction
       }
     });
 
@@ -1262,15 +1284,16 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
     }
 
     if (this.propertyId) {
-      console.log('📝 Ouverture du modal AddPropertyRoomComponent...');
+      console.log('📝 Ouverture du modal ModernUnitModalComponent...');
 
       try {
-        const dialogRef = this.dialog.open(AddPropertyRoomComponent, {
+        const dialogRef = this.dialog.open(ModernUnitModalComponent, {
           width: '100%',
           maxWidth: '900px',
           disableClose: true,
           data: {
-            property: { _id: this.propertyId }
+            mode: 'create',
+            property: this.property || { _id: this.propertyId }
           }
         });
 

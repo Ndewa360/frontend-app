@@ -3,7 +3,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Store, Actions, ofActionSuccessful, ofActionCompleted, ofActionErrored } from '@ngxs/store';
-import { AddPropertyRoomComponent } from 'src/app/main/properties/components/add-property-room/add-property-room.component';
+import { ModernUnitModalComponent } from 'src/app/main/properties/components/modern-unit-modal/modern-unit-modal.component';
 import { PropertyModel, RoomAction, RoomModel, RoomType } from 'src/app/shared/store';
 import { UtilsString, FormUtils } from 'src/app/shared/utils';
 
@@ -23,7 +23,7 @@ export class UpdateRoomComponent {
   waittingResponse = false;
 
   constructor(
-    private dialogRef: MatDialogRef<AddPropertyRoomComponent>,
+    private dialogRef: MatDialogRef<ModernUnitModalComponent>,
     protected formBuilder: FormBuilder,
     private router: Router,
     private _store:Store,

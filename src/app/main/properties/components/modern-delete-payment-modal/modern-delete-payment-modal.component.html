@@ -1,0 +1,171 @@
+<!-- Modal moderne de suppression de paiement -->
+<div class="modern-delete-payment-modal">
+  <!-- Header -->
+  <div class="modal-header">
+    <div class="header-content">
+      <div class="header-icon">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+        </svg>
+      </div>
+      <div class="header-text">
+        <h2 class="modal-title">Supprimer le Paiement</h2>
+        <p class="modal-subtitle">Cette action est irréversible</p>
+      </div>
+    </div>
+    <button class="close-btn" (click)="onCancel()" type="button">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Body -->
+  <div class="modal-body">
+    
+    <!-- Warning message -->
+    <div class="warning-section">
+      <div class="warning-icon">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+        </svg>
+      </div>
+      <div class="warning-content">
+        <h3 class="warning-title">Attention !</h3>
+        <p class="warning-message">
+          Vous êtes sur le point de supprimer définitivement ce paiement. 
+          Cette action ne peut pas être annulée et toutes les données associées seront perdues.
+        </p>
+      </div>
+    </div>
+
+    <!-- Payment details -->
+    <div class="payment-details">
+      <h3 class="details-title">Détails du paiement à supprimer</h3>
+      
+      <div class="details-grid">
+        
+        <!-- Locataire et unité -->
+        <div class="detail-card tenant-room-card">
+          <div class="card-header">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+            </svg>
+            <span>Locataire & Unité</span>
+          </div>
+          <div class="card-content">
+            <p class="primary-info">{{ getTenantName() }}</p>
+            <p class="secondary-info">Unité: {{ getRoomCode() }}</p>
+          </div>
+        </div>
+
+        <!-- Montant et type -->
+        <div class="detail-card amount-card">
+          <div class="card-header">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+            </svg>
+            <span>Montant & Type</span>
+          </div>
+          <div class="card-content">
+            <p class="primary-info amount">{{ getPaymentAmount() }}</p>
+            <div class="payment-type-badge" [class]="getPaymentTypeColor()">
+              <svg *ngIf="getPaymentTypeIcon() === 'home'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+              </svg>
+              <svg *ngIf="getPaymentTypeIcon() === 'shield'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+              </svg>
+              <span>{{ getPaymentType() }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Date et méthode -->
+        <div class="detail-card date-method-card">
+          <div class="card-header">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+            <span>Date & Méthode</span>
+          </div>
+          <div class="card-content">
+            <p class="primary-info">{{ getPaymentDate() }}</p>
+            <p class="secondary-info">{{ getPaymentMethod() }}</p>
+          </div>
+        </div>
+
+        <!-- Référence et motif -->
+        <div class="detail-card reference-card">
+          <div class="card-header">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+            </svg>
+            <span>Référence & Motif</span>
+          </div>
+          <div class="card-content">
+            <p class="primary-info reference">{{ getBillingRef() }}</p>
+            <p class="secondary-info">{{ getReason() }}</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Consequences -->
+    <div class="consequences-section">
+      <h3 class="consequences-title">Conséquences de la suppression</h3>
+      <ul class="consequences-list">
+        <li class="consequence-item">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+          <span>Le paiement sera définitivement supprimé de l'historique</span>
+        </li>
+        <li class="consequence-item">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+          <span>Les rapports financiers seront mis à jour automatiquement</span>
+        </li>
+        <li class="consequence-item">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+          <span>Cette action ne peut pas être annulée</span>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="onCancel()" [disabled]="isLoading">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+      Annuler
+    </button>
+    
+    <button type="button" 
+            class="btn btn-danger" 
+            (click)="onConfirmDelete()"
+            [disabled]="isLoading">
+      <svg *ngIf="isLoading" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      <svg *ngIf="!isLoading" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+      </svg>
+      {{ isLoading ? 'Suppression...' : 'Supprimer définitivement' }}
+    </button>
+  </div>
+</div>

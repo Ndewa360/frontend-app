@@ -7,8 +7,8 @@ import { takeUntil } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
 import { LocataireModel, RoomModel, LocationModel, LocationState, RoomState, LocationPaymentModel, LocationPaymentState, HistoryLocationPaymentState } from 'src/app/shared/store';
-import { UpdatePaymentComponent } from 'src/app/main/location-payment/components/update-payment/update-payment.component';
-import { DeletePaymentComponent } from 'src/app/main/location-payment/components/delete-payment/delete-payment.component';
+import { ModernPaymentModalComponent } from '../modern-payment-modal/modern-payment-modal.component';
+import { ModernDeletePaymentModalComponent } from '../modern-delete-payment-modal/modern-delete-payment-modal.component';
 
 interface Tab {
   label: string;
@@ -480,10 +480,10 @@ export class TenantDetailsPanelComponent implements OnInit, OnDestroy, OnChanges
     // Construire les données nécessaires pour le modal
     const paymentData = this.buildPaymentModalData(payment);
 
-    console.log('📝 Ouverture du modal UpdatePaymentComponent...');
+    console.log('📝 Ouverture du modal ModernPaymentModalComponent...');
 
     try {
-      const dialogRef = this.dialog.open(UpdatePaymentComponent, {
+      const dialogRef = this.dialog.open(ModernPaymentModalComponent, {
         width: '100%',
         maxWidth: '800px',
         disableClose: true,
@@ -529,10 +529,10 @@ export class TenantDetailsPanelComponent implements OnInit, OnDestroy, OnChanges
     // Construire les données nécessaires pour le modal
     const paymentData = this.buildPaymentModalData(payment);
 
-    console.log('🗑️ Ouverture du modal DeletePaymentComponent...');
+    console.log('🗑️ Ouverture du modal ModernDeletePaymentModalComponent...');
 
     try {
-      const dialogRef = this.dialog.open(DeletePaymentComponent, {
+      const dialogRef = this.dialog.open(ModernDeletePaymentModalComponent, {
         width: '500px',
         maxWidth: '95vw',
         panelClass: 'delete-payment-modal-dialog',

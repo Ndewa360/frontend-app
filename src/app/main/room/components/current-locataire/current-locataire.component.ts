@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { ShowContractComponent } from 'src/app/main/contract/components/show-contract/show-contract.component';
 import { UpdateLocataireComponent } from 'src/app/main/locataires/components/update-locataire/update-locataire.component';
-import { RemoveLocataireRoomComponent } from 'src/app/main/properties/components/remove-locataire-room/remove-locataire-room.component';
+import { ModernContractTerminationModalComponent } from 'src/app/main/properties/components/modern-contract-termination-modal/modern-contract-termination-modal.component';
 import { LocataireModel, LocataireState, LocationModel, RoomModel } from 'src/app/shared/store';
 
 @Component({
@@ -55,13 +55,14 @@ export class CurrentLocataireComponent implements OnInit {
 
   rompreLocation()
   {
-    this.dialog.open(RemoveLocataireRoomComponent, {
-      viewContainerRef:null,
+    this.dialog.open(ModernContractTerminationModalComponent, {
+      width: '100%',
+      maxWidth: '900px',
       disableClose: true,
-      role: 'alertdialog',
-      width: '500px',
       data:{
-        location:this.location
+        location: this.location,
+        tenant: this.locataire,
+        room: this.room
       }
     })
   }

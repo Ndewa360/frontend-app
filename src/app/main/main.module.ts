@@ -16,8 +16,6 @@ import {MainRoutingModule} from './main-routing.module'
 import {WelcomeComponent} from './welcome/welcome.component'
 // import {GettingStartedComponent} from './application/getting-started/getting-started.component'
 import { AddPropertyComponent } from './properties/add-property/add-property.component'
-import { AddPropertyLocataireComponent } from './properties/components/add-property-locataire/add-property-locataire.component'
-import { AddPropertyRoomComponent } from './properties/components/add-property-room/add-property-room.component'
 import { PropertyFinanceComponent } from './properties/components/property-finance/property-finance.component'
 import { ListPropertyComponent } from './properties/list-property/list-property.component'
 import { LocatairePropertyModule } from './properties/components/locataire-property/locataire-property.module'
@@ -26,9 +24,10 @@ import { AgGridModule } from '@ag-grid-community/angular';
 import { UpdatePropertyComponent } from './properties/update-property/update-property.component';
 // import { AssignLocationComponent } from './assign-location/assign-location/assign-location.component';
 // import { AssignLocationFormComponent } from './assign-location/assign-location-form/assign-location-form.component';
-import { RemoveLocataireRoomComponent } from './properties/components/remove-locataire-room/remove-locataire-room.component'
+// Anciens modals supprimés - remplacés par les modals modernes
 import { LocationPaymentModule } from './location-payment/location-payment.module'
 import { StatisticsModule } from './statistics/statistics.module'
+import { ModernModalsModule } from './properties/components/modern-modals/modern-modals.module'
 import { GaleryPropertyComponent } from './properties/components/galery-property/galery-property.component'
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model'
 import { ModuleRegistry } from '@ag-grid-community/core'
@@ -94,6 +93,7 @@ import { UnitPaymentsTabComponent } from './properties/components/unit-details-p
 import { AddPaymentModalComponent } from './properties/components/unit-details-panel/components/add-payment-modal/add-payment-modal.component';
 import { GeneratePaymentLinkModalComponent } from './properties/components/generate-payment-link-modal/generate-payment-link-modal.component';
 import { ContractViewerModalComponent } from './properties/components/contract-viewer-modal/contract-viewer-modal.component';
+import { PropertiesSharedModule } from './properties/properties-shared.module'
 
 // Import du module de paiement (déjà importé plus haut)
 
@@ -117,12 +117,10 @@ ModuleRegistry.registerModules([
     ListPropertyComponent,
     AddPropertyComponent,
     PropertyFinanceComponent,
-    AddPropertyRoomComponent,
-    AddPropertyLocataireComponent,
     UpdatePropertyComponent,
     // AssignLocationComponent,
     // AssignLocationFormComponent,
-    RemoveLocataireRoomComponent,
+    // RemoveLocataireRoomComponent, // Supprimé - remplacé par ModernContractTerminationModalComponent
     GaleryPropertyComponent,
     HomePropertyComponent,
     UpdateRoomComponent,
@@ -194,7 +192,9 @@ ModuleRegistry.registerModules([
     AgGridModule,
     LocatairePropertyModule,
     StatisticsModule,
-    AssignLocationModule
+    AssignLocationModule,
+    PropertiesSharedModule,
+    ModernModalsModule
   ]
 })
 export class MainModule {

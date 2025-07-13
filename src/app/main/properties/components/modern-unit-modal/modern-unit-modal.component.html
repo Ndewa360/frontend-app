@@ -1,0 +1,321 @@
+<!-- Modal moderne pour unité -->
+<div class="modern-unit-modal">
+  <!-- Header -->
+  <div class="modal-header">
+    <div class="header-content">
+      <div class="header-icon">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+        </svg>
+      </div>
+      <div class="header-text">
+        <h2 class="modal-title">{{ getTitle() }}</h2>
+        <p class="modal-subtitle">{{ data.property.name }}</p>
+      </div>
+    </div>
+    <button class="close-btn" (click)="onCancel()" type="button">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Body -->
+  <div class="modal-body">
+    <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
+      
+      <!-- Images section -->
+      <div class="images-section">
+        <h3 class="section-title">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+          </svg>
+          Photos de l'unité
+        </h3>
+        
+        <div class="images-container">
+          <div class="images-grid">
+            <div *ngFor="let preview of imagePreviews; let i = index" class="image-item">
+              <img [src]="preview" alt="Image {{ i + 1 }}" class="image-preview">
+              <button type="button" class="remove-image-btn" (click)="removeImage(i)">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+              </button>
+            </div>
+            
+            <div class="add-image-item">
+              <input type="file" id="imagesInput" multiple accept="image/*" (change)="onImagesSelected($event)" style="display: none;">
+              <button type="button" class="add-image-btn" (click)="triggerImagesInput()">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                <span>Ajouter des photos</span>
+              </button>
+            </div>
+          </div>
+          <p class="images-info">JPG, PNG ou GIF (max. 5MB par image)</p>
+        </div>
+      </div>
+
+      <!-- Sections du formulaire -->
+      <div class="form-sections">
+        
+        <!-- Informations de base -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            Informations de base
+          </h3>
+          
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Code de l'unité *</label>
+              <input type="text" 
+                     formControlName="code"
+                     class="form-input"
+                     [class.error]="code?.invalid && code?.touched"
+                     placeholder="Ex: A101, B205">
+              <div *ngIf="code?.invalid && code?.touched" class="error-message">
+                <span *ngIf="code?.errors?.['required']">Le code est requis</span>
+                <span *ngIf="code?.errors?.['minlength']">Le code doit contenir au moins 2 caractères</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Type d'unité *</label>
+              <select formControlName="type" class="form-select" [class.error]="type?.invalid && type?.touched">
+                <option *ngFor="let roomType of roomTypes" [value]="roomType.value">
+                  {{ roomType.label }}
+                </option>
+              </select>
+              <div *ngIf="type?.invalid && type?.touched" class="error-message">
+                <span *ngIf="type?.errors?.['required']">Le type est requis</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Prix mensuel (FCFA) *</label>
+              <input type="number" 
+                     formControlName="price"
+                     class="form-input"
+                     [class.error]="price?.invalid && price?.touched"
+                     placeholder="Ex: 50000"
+                     min="1000">
+              <div *ngIf="price?.invalid && price?.touched" class="error-message">
+                <span *ngIf="price?.errors?.['required']">Le prix est requis</span>
+                <span *ngIf="price?.errors?.['min']">Le prix minimum est de 1 000 FCFA</span>
+              </div>
+              <div *ngIf="formGroup.get('price')?.value > 0" class="price-preview">
+                {{ formatPrice(formGroup.get('price')?.value) }}
+              </div>
+            </div>
+
+            <div class="form-group full-width">
+              <label class="form-label">Description</label>
+              <textarea formControlName="description"
+                        class="form-textarea"
+                        rows="3"
+                        placeholder="Description détaillée de l'unité..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Spécificités -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+            </svg>
+            Spécificités de l'unité
+          </h3>
+          
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Nombre de salles de bain</label>
+              <input type="number" 
+                     formControlName="numberOfBathroom"
+                     class="form-input"
+                     min="0"
+                     placeholder="1">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Nombre de salons</label>
+              <input type="number" 
+                     formControlName="numberOfLivingRoom"
+                     class="form-input"
+                     min="0"
+                     placeholder="0">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Nombre de douches</label>
+              <input type="number" 
+                     formControlName="numberOfShower"
+                     class="form-input"
+                     min="0"
+                     placeholder="1">
+            </div>
+
+            <div class="form-group">
+              <div class="checkbox-group">
+                <label class="checkbox-label">
+                  <input type="checkbox" 
+                         formControlName="isInternalShower"
+                         class="checkbox-input">
+                  <span class="checkbox-custom"></span>
+                  <span class="checkbox-text">Douche interne</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="checkbox-group">
+                <label class="checkbox-label">
+                  <input type="checkbox" 
+                         formControlName="hasKitchen"
+                         class="checkbox-input">
+                  <span class="checkbox-custom"></span>
+                  <span class="checkbox-text">Possède une cuisine</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group" *ngIf="hasKitchen()">
+              <label class="form-label">Nombre de cuisines</label>
+              <input type="number" 
+                     formControlName="numberOfKitchen"
+                     class="form-input"
+                     min="1"
+                     placeholder="1">
+            </div>
+
+            <div class="form-group" *ngIf="hasKitchen()">
+              <div class="checkbox-group">
+                <label class="checkbox-label">
+                  <input type="checkbox" 
+                         formControlName="isInternalKitchen"
+                         class="checkbox-input">
+                  <span class="checkbox-custom"></span>
+                  <span class="checkbox-text">Cuisine interne</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Caution -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+            </svg>
+            Caution et garantie
+          </h3>
+          
+          <div class="form-grid">
+            <div class="form-group">
+              <div class="checkbox-group">
+                <label class="checkbox-label">
+                  <input type="checkbox" 
+                         formControlName="shouldPayCaution"
+                         class="checkbox-input">
+                  <span class="checkbox-custom"></span>
+                  <span class="checkbox-text">Caution requise</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group" *ngIf="shouldPayCaution()">
+              <label class="form-label">Montant de la caution (FCFA)</label>
+              <input type="number" 
+                     formControlName="cautionPrice"
+                     class="form-input"
+                     [class.error]="cautionPrice?.invalid && cautionPrice?.touched"
+                     placeholder="Ex: 100000"
+                     min="0">
+              <div *ngIf="cautionPrice?.invalid && cautionPrice?.touched" class="error-message">
+                <span *ngIf="cautionPrice?.errors?.['min']">Le montant ne peut pas être négatif</span>
+              </div>
+              <div *ngIf="formGroup.get('cautionPrice')?.value > 0" class="price-preview">
+                {{ formatPrice(formGroup.get('cautionPrice')?.value) }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Visibilité et disponibilité -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+            </svg>
+            Visibilité et disponibilité
+          </h3>
+          
+          <div class="form-grid">
+            <div class="form-group">
+              <div class="checkbox-group">
+                <label class="checkbox-label">
+                  <input type="checkbox" 
+                         formControlName="isActiveForSouscription"
+                         class="checkbox-input">
+                  <span class="checkbox-custom"></span>
+                  <span class="checkbox-text">Active pour souscription</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="checkbox-group">
+                <label class="checkbox-label">
+                  <input type="checkbox" 
+                         formControlName="isShowToPublic"
+                         class="checkbox-input">
+                  <span class="checkbox-custom"></span>
+                  <span class="checkbox-text">Visible au public</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </form>
+  </div>
+
+  <!-- Footer -->
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="onCancel()" [disabled]="isLoading">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+      Annuler
+    </button>
+    
+    <button type="submit" 
+            class="btn btn-primary" 
+            (click)="onSubmit()"
+            [disabled]="formGroup.invalid || isLoading">
+      <svg *ngIf="isLoading" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      <svg *ngIf="!isLoading" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+      </svg>
+      {{ getSubmitText() }}
+    </button>
+  </div>
+</div>

@@ -5,13 +5,14 @@ import { HistoryLocationPaymentAction } from 'src/app/shared/store/history-payme
 import { Store } from '@ngxs/store';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
-import { AddPropertyLocataireComponent } from '../add-property-locataire/add-property-locataire.component';
+// Nouveaux modals modernes
+import { ModernTenantModalComponent } from '../modern-tenant-modal/modern-tenant-modal.component';
+import { ModernPaymentModalComponent } from '../modern-payment-modal/modern-payment-modal.component';
+import { ModernDeletePaymentModalComponent } from '../modern-delete-payment-modal/modern-delete-payment-modal.component';
+import { ModernContractTerminationModalComponent } from '../modern-contract-termination-modal/modern-contract-termination-modal.component';
+
+// Anciens modals (à garder temporairement)
 import { ContractViewerModalComponent } from '../contract-viewer-modal/contract-viewer-modal.component';
-import { RemoveLocataireRoomComponent } from '../remove-locataire-room/remove-locataire-room.component';
-import { AddPaymentComponent } from 'src/app/main/location-payment/components/add-payment/add-payment.component';
-import { UpdatePaymentComponent } from 'src/app/main/location-payment/components/update-payment/update-payment.component';
-import { DeletePaymentComponent } from 'src/app/main/location-payment/components/delete-payment/delete-payment.component';
-import { UpdateLocataireComponent } from 'src/app/main/locataires/components/update-locataire/update-locataire.component';
 
 @Component({
   selector: 'app-property-tenants',
@@ -301,22 +302,23 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
       return;
     }
 
-    console.log('📝 Ouverture du modal AddPropertyLocataireComponent...');
+    console.log('📝 Ouverture du modal ModernTenantModalComponent...');
 
     try {
-      const dialogRef = this.dialog.open(AddPropertyLocataireComponent, {
-        width: '600px',
-        maxWidth: '95vw',
+      const dialogRef = this.dialog.open(ModernTenantModalComponent, {
+        width: '100%',
+        maxWidth: '800px',
         disableClose: true,
         data: {
+          mode: 'create',
           property: property
         }
       });
 
-      console.log('✅ Modal AddPropertyLocataire ouvert, dialogRef:', dialogRef);
+      console.log('✅ Modal ModernTenant ouvert, dialogRef:', dialogRef);
 
       dialogRef.afterClosed().subscribe(result => {
-        console.log('🔄 Modal AddPropertyLocataire fermé avec résultat:', result);
+        console.log('🔄 Modal ModernTenant fermé avec résultat:', result);
         if (result) {
           console.log('✅ Locataire ajouté avec succès');
           this.toastr.success('Locataire ajouté avec succès', 'Succès');
@@ -324,7 +326,7 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
         }
       });
     } catch (error) {
-      console.error('❌ Erreur lors de l\'ouverture du modal AddPropertyLocataire:', error);
+      console.error('❌ Erreur lors de l\'ouverture du modal ModernTenant:', error);
       this.toastr.error('Erreur lors de l\'ouverture du modal', 'Erreur');
     }
   }
@@ -347,15 +349,20 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
       return;
     }
 
-    console.log('📝 Ouverture du modal UpdateLocataireComponent...');
+    console.log('📝 Ouverture du modal ModernTenantModalComponent...');
+
+    // Récupérer la propriété via l'ID
+    const property = { _id: this.propertyId };
 
     try {
-      const dialogRef = this.dialog.open(UpdateLocataireComponent, {
-        width: '600px',
-        maxWidth: '95vw',
+      const dialogRef = this.dialog.open(ModernTenantModalComponent, {
+        width: '100%',
+        maxWidth: '800px',
         disableClose: true,
         data: {
-          locataire: tenant
+          mode: 'edit',
+          property: property,
+          tenant: tenant
         }
       });
 
@@ -387,13 +394,14 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
     // Charger les données nécessaires
     this.loadPaymentDataForTenant(tenant)
       .then(({ location, room }) => {
-        console.log('📝 Ouverture du modal AddPaymentComponent...');
+        console.log('📝 Ouverture du modal ModernPaymentModalComponent...');
 
-        const dialogRef = this.dialog.open(AddPaymentComponent, {
+        const dialogRef = this.dialog.open(ModernPaymentModalComponent, {
           width: '100%',
-          maxWidth: '800px',
+          maxWidth: '700px',
           disableClose: true,
           data: {
+            mode: 'create',
             room: room,
             tenant: tenant,
             location: location
@@ -436,15 +444,20 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
       return;
     }
 
-    console.log('📝 Ouverture du modal UpdateLocataireComponent...');
+    console.log('📝 Ouverture du modal ModernTenantModalComponent...');
+
+    // Récupérer la propriété via l'ID
+    const property = { _id: this.propertyId };
 
     try {
-      const dialogRef = this.dialog.open(UpdateLocataireComponent, {
-        width: '600px',
-        maxWidth: '95vw',
+      const dialogRef = this.dialog.open(ModernTenantModalComponent, {
+        width: '100%',
+        maxWidth: '800px',
         disableClose: true,
         data: {
-          locataire: tenant
+          mode: 'edit',
+          property: property,
+          tenant: tenant
         }
       });
 
@@ -550,22 +563,27 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
       return;
     }
 
-    console.log('🚫 Ouverture du modal RemoveLocataireRoomComponent...');
+    console.log('🚫 Ouverture du modal ModernContractTerminationModalComponent...');
+
+    // Récupérer la chambre pour ce locataire via la location
+    const room = location.room ? { _id: location.room } : null;
 
     try {
-      const dialogRef = this.dialog.open(RemoveLocataireRoomComponent, {
-        width: '500px',
-        maxWidth: '95vw',
+      const dialogRef = this.dialog.open(ModernContractTerminationModalComponent, {
+        width: '100%',
+        maxWidth: '900px',
         disableClose: true,
         data: {
-          location: location
+          location: location,
+          tenant: tenant,
+          room: room
         }
       });
 
-      console.log('✅ Modal RemoveLocataireRoom ouvert, dialogRef:', dialogRef);
+      console.log('✅ Modal ModernContractTermination ouvert, dialogRef:', dialogRef);
 
       dialogRef.afterClosed().subscribe(result => {
-        console.log('🔄 Modal RemoveLocataireRoom fermé avec résultat:', result);
+        console.log('🔄 Modal ModernContractTermination fermé avec résultat:', result);
         if (result) {
           console.log('✅ Contrat résilié avec succès');
           this.toastr.success('Contrat résilié avec succès', 'Succès');
@@ -574,7 +592,7 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
         }
       });
     } catch (error) {
-      console.error('❌ Erreur lors de l\'ouverture du modal RemoveLocataireRoom:', error);
+      console.error('❌ Erreur lors de l\'ouverture du modal ModernContractTermination:', error);
       this.toastr.error('Erreur lors de la résiliation du contrat', 'Erreur');
     }
   }
@@ -629,13 +647,14 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
     // Charger les données nécessaires
     this.loadPaymentDataForTenant(tenant)
       .then(({ location, room }) => {
-        console.log('📝 Ouverture du modal AddPaymentComponent...');
+        console.log('📝 Ouverture du modal ModernPaymentModalComponent...');
 
-        const dialogRef = this.dialog.open(AddPaymentComponent, {
+        const dialogRef = this.dialog.open(ModernPaymentModalComponent, {
           width: '100%',
-          maxWidth: '800px',
+          maxWidth: '700px',
           disableClose: true,
           data: {
+            mode: 'create',
             room: room,
             tenant: tenant,
             location: location
@@ -678,16 +697,24 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
       return;
     }
 
-    console.log('📝 Ouverture du modal UpdatePaymentComponent...');
+    console.log('📝 Ouverture du modal ModernPaymentModalComponent...');
+
+    // Récupérer les données nécessaires
+    const room = payment.history?.room;
+    const tenant = payment.history?.locataire;
+    const location = payment.history?.location;
 
     try {
-      const dialogRef = this.dialog.open(UpdatePaymentComponent, {
+      const dialogRef = this.dialog.open(ModernPaymentModalComponent, {
         width: '100%',
-        maxWidth: '800px',
+        maxWidth: '700px',
         disableClose: true,
         data: {
-          transaction: payment.transaction,
-          history: payment.history
+          mode: 'edit',
+          room: room,
+          tenant: tenant,
+          location: location,
+          transaction: payment.transaction
         }
       });
 
@@ -723,13 +750,12 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
       return;
     }
 
-    console.log('🗑️ Ouverture du modal DeletePaymentComponent...');
+    console.log('🗑️ Ouverture du modal ModernDeletePaymentModalComponent...');
 
     try {
-      const dialogRef = this.dialog.open(DeletePaymentComponent, {
-        width: '500px',
-        maxWidth: '95vw',
-        panelClass: 'delete-payment-modal-dialog',
+      const dialogRef = this.dialog.open(ModernDeletePaymentModalComponent, {
+        width: '100%',
+        maxWidth: '600px',
         disableClose: true,
         data: {
           transaction: payment.transaction,
@@ -737,17 +763,17 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
         }
       });
 
-      console.log('✅ Modal DeletePayment ouvert, dialogRef:', dialogRef);
+      console.log('✅ Modal ModernDeletePayment ouvert, dialogRef:', dialogRef);
 
       dialogRef.afterClosed().subscribe(result => {
-        console.log('🔄 Modal DeletePayment fermé avec résultat:', result);
+        console.log('🔄 Modal ModernDeletePayment fermé avec résultat:', result);
         if (result) {
           console.log('✅ Paiement supprimé avec succès');
           this.toastr.success('Paiement supprimé avec succès', 'Succès');
         }
       });
     } catch (error) {
-      console.error('❌ Erreur lors de l\'ouverture du modal DeletePayment:', error);
+      console.error('❌ Erreur lors de l\'ouverture du modal ModernDeletePayment:', error);
       this.toastr.error('Erreur lors de l\'ouverture du modal', 'Erreur');
     }
   }

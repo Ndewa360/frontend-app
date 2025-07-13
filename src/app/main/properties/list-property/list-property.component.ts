@@ -9,7 +9,7 @@ import { Store } from '@ngxs/store';
 import { GaleryPropertyComponent } from '../components/galery-property/galery-property.component';
 import { UpdatePropertyComponent } from '../update-property/update-property.component';
 import { PropertyAlert } from '../components/property-overview-card/property-overview-card.component';
-import { AddPropertyLocataireComponent } from '../components/add-property-locataire/add-property-locataire.component';
+import { ModernTenantModalComponent } from '../components/modern-tenant-modal/modern-tenant-modal.component';
 
 @Component({
   selector: 'app-list-property',
@@ -186,12 +186,14 @@ export class ListPropertyComponent implements OnInit {
 
   // Gestionnaires d'événements pour le nouveau composant
   onAddTenant(property: PropertyModel): void {
-    this.dialog.open(AddPropertyLocataireComponent, {
-      viewContainerRef: null,
+    this.dialog.open(ModernTenantModalComponent, {
+      width: '100%',
+      maxWidth: '800px',
       disableClose: true,
-      role: 'alertdialog',
-      width: '500px',
-      data: { property }
+      data: {
+        property: property,
+        mode: 'add'
+      }
     });
   }
 

@@ -1,0 +1,280 @@
+<!-- Modal moderne pour locataire -->
+<div class="modern-tenant-modal">
+  <!-- Header -->
+  <div class="modal-header">
+    <div class="header-content">
+      <div class="header-icon">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+        </svg>
+      </div>
+      <div class="header-text">
+        <h2 class="modal-title">{{ getTitle() }}</h2>
+        <p class="modal-subtitle">{{ data.property.name }}</p>
+      </div>
+    </div>
+    <button class="close-btn" (click)="onCancel()" type="button">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Body -->
+  <div class="modal-body">
+    <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
+      
+      <!-- Photo de profil -->
+      <div class="photo-section">
+        <div class="photo-container">
+          <div class="photo-preview" [class.has-photo]="photoPreview">
+            <img *ngIf="photoPreview" [src]="photoPreview" alt="Photo de profil" class="photo-image">
+            <div *ngIf="!photoPreview" class="photo-placeholder">
+              <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+              </svg>
+            </div>
+            <div class="photo-overlay">
+              <button type="button" class="photo-btn" (click)="triggerPhotoInput()">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                        d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+              </button>
+              <button *ngIf="photoPreview" type="button" class="photo-btn remove" (click)="removePhoto()">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <input type="file" id="photoInput" accept="image/*" (change)="onPhotoSelected($event)" style="display: none;">
+        </div>
+        <div class="photo-info">
+          <p class="photo-title">Photo de profil</p>
+          <p class="photo-subtitle">JPG, PNG ou GIF (max. 5MB)</p>
+        </div>
+      </div>
+
+      <!-- Sections du formulaire -->
+      <div class="form-sections">
+        
+        <!-- Informations personnelles -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+            </svg>
+            Informations personnelles
+          </h3>
+          
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Nom complet *</label>
+              <input type="text" 
+                     formControlName="fullName"
+                     class="form-input"
+                     [class.error]="fullName?.invalid && fullName?.touched"
+                     placeholder="Ex: Jean Dupont">
+              <div *ngIf="fullName?.invalid && fullName?.touched" class="error-message">
+                <span *ngIf="fullName?.errors?.['required']">Le nom complet est requis</span>
+                <span *ngIf="fullName?.errors?.['minlength']">Le nom doit contenir au moins 2 caractères</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Email</label>
+              <input type="email" 
+                     formControlName="email"
+                     class="form-input"
+                     [class.error]="email?.invalid && email?.touched"
+                     placeholder="Ex: jean.dupont@email.com">
+              <div *ngIf="email?.invalid && email?.touched" class="error-message">
+                <span *ngIf="email?.errors?.['email']">Format d'email invalide</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Téléphone *</label>
+              <input type="tel" 
+                     formControlName="phoneNumber"
+                     class="form-input"
+                     [class.error]="phoneNumber?.invalid && phoneNumber?.touched"
+                     placeholder="Ex: +237 6XX XX XX XX">
+              <div *ngIf="phoneNumber?.invalid && phoneNumber?.touched" class="error-message">
+                <span *ngIf="phoneNumber?.errors?.['required']">Le numéro de téléphone est requis</span>
+                <span *ngIf="phoneNumber?.errors?.['phoneInvalid']">Format de téléphone invalide</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Localisation</label>
+              <input type="text" 
+                     formControlName="location"
+                     class="form-input"
+                     placeholder="Ex: Douala, Akwa">
+            </div>
+          </div>
+        </div>
+
+        <!-- Informations d'identité -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    d="M10 2v20M14 2v20M4 7h16M4 17h16"></path>
+            </svg>
+            Pièce d'identité
+          </h3>
+          
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Type de pièce *</label>
+              <select formControlName="idCardType" class="form-select">
+                <option value="CNI">Carte Nationale d'Identité</option>
+                <option value="PASSPORT">Passeport</option>
+                <option value="PERMIS">Permis de conduire</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Numéro de pièce *</label>
+              <input type="text" 
+                     formControlName="idCardNumber"
+                     class="form-input"
+                     [class.error]="idCardNumber?.invalid && idCardNumber?.touched"
+                     placeholder="Ex: 123456789">
+              <div *ngIf="idCardNumber?.invalid && idCardNumber?.touched" class="error-message">
+                <span *ngIf="idCardNumber?.errors?.['required']">Le numéro de pièce est requis</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact de référence -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+            </svg>
+            Contact de référence (optionnel)
+          </h3>
+          
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Nom de référence</label>
+              <input type="text" 
+                     formControlName="fullNameRef"
+                     class="form-input"
+                     placeholder="Ex: Marie Dupont">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Téléphone de référence</label>
+              <input type="tel" 
+                     formControlName="phoneNumberRef"
+                     class="form-input"
+                     [class.error]="phoneNumberRef?.invalid && phoneNumberRef?.touched"
+                     placeholder="Ex: +237 6XX XX XX XX">
+              <div *ngIf="phoneNumberRef?.invalid && phoneNumberRef?.touched" class="error-message">
+                <span *ngIf="phoneNumberRef?.errors?.['phoneInvalid']">Format de téléphone invalide</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Email de référence</label>
+              <input type="email" 
+                     formControlName="emailRef"
+                     class="form-input"
+                     [class.error]="emailRef?.invalid && emailRef?.touched"
+                     placeholder="Ex: marie.dupont@email.com">
+              <div *ngIf="emailRef?.invalid && emailRef?.touched" class="error-message">
+                <span *ngIf="emailRef?.errors?.['email']">Format d'email invalide</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Informations de location -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+            </svg>
+            Informations de location
+          </h3>
+          
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Unité à attribuer</label>
+              <select formControlName="roomId" class="form-select">
+                <option value="">Sélectionner une unité</option>
+                <option *ngFor="let room of availableRooms" [value]="room.valueType">
+                  {{ room.content }}
+                </option>
+              </select>
+            </div>
+
+            <div class="form-group full-width">
+              <label class="form-label">Description / Notes</label>
+              <textarea formControlName="description"
+                        class="form-textarea"
+                        rows="3"
+                        placeholder="Informations supplémentaires sur le locataire..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Confirmation -->
+        <div class="form-section">
+          <div class="checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" 
+                     formControlName="confirm"
+                     class="checkbox-input"
+                     [class.error]="confirm?.invalid && confirm?.touched">
+              <span class="checkbox-custom"></span>
+              <span class="checkbox-text">
+                Je confirme que toutes les informations saisies sont exactes et que j'ai l'autorisation d'enregistrer ce locataire.
+              </span>
+            </label>
+            <div *ngIf="confirm?.invalid && confirm?.touched" class="error-message">
+              <span>Vous devez confirmer les informations</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </form>
+  </div>
+
+  <!-- Footer -->
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="onCancel()" [disabled]="isLoading">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+      Annuler
+    </button>
+    
+    <button type="submit" 
+            class="btn btn-primary" 
+            (click)="onSubmit()"
+            [disabled]="formGroup.invalid || isLoading">
+      <svg *ngIf="isLoading" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      <svg *ngIf="!isLoading" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+      </svg>
+      {{ getSubmitText() }}
+    </button>
+  </div>
+</div>

@@ -1,7 +1,7 @@
 import { Component, Input,EventEmitter, OnInit, Output, ViewEncapsulation, OnChanges, SimpleChanges } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ShowContractComponent } from 'src/app/main/contract/components/show-contract/show-contract.component';
-import { RemoveLocataireRoomComponent } from 'src/app/main/properties/components/remove-locataire-room/remove-locataire-room.component';
+import { ModernContractTerminationModalComponent } from 'src/app/main/properties/components/modern-contract-termination-modal/modern-contract-termination-modal.component';
 import { UpdateRoomComponent } from 'src/app/main/room/components/update-room/update-room.component';
 import { Currency, LocataireModel, LocationModel, RoomModel } from 'src/app/shared/store';
 import { UtilsString } from 'src/app/shared/utils';
@@ -65,13 +65,14 @@ export class CurrentRoomComponent implements OnChanges{
 
   rompreLocation()
     {
-      this.dialog.open(RemoveLocataireRoomComponent, {
-        viewContainerRef:null,
+      this.dialog.open(ModernContractTerminationModalComponent, {
+        width: '100%',
+        maxWidth: '900px',
         disableClose: true,
-        role: 'alertdialog',
-        width: '500px',
         data:{
-          location:this.location
+          location: this.location,
+          tenant: this.locataire,
+          room: this.room
         }
       })
     }

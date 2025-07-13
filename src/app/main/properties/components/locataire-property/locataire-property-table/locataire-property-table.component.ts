@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngxs/store';
 import { TableHeaderItem, TableItem, TableModel, TableRowSize } from 'carbon-components-angular';
 import { getDummyModel } from 'src/@youpez/data/dummy';
-import { AddPaymentComponent } from 'src/app/main/location-payment/components/add-payment/add-payment.component';
+import { ModernPaymentModalComponent } from '../../modern-payment-modal/modern-payment-modal.component';
 import { LocataireModel, LocationState, PropertyModel, RoomState } from 'src/app/shared/store';
 
 
@@ -127,13 +127,13 @@ export class LocatairePropertyTableComponent implements OnInit {
   addLocationPayment(location)
   {
     if(!location) return;
-    this.dialog.open(AddPaymentComponent, {
-      viewContainerRef:null,
+    this.dialog.open(ModernPaymentModalComponent, {
+      width: '100%',
+      maxWidth: '800px',
       disableClose: true,
-      role: 'alertdialog',
-      width: '500px',
       data:{
-        location
+        location: location,
+        mode: 'add'
       }
     })
   }

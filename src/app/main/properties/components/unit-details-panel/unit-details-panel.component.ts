@@ -14,8 +14,8 @@ import {
 import { UtilsString } from 'src/app/shared/utils';
 import { UnitDetailsService, UnitDetailsData } from '../../services/unit-details.service';
 import { PaymentAction } from './components/unit-payments-tab/unit-payments-tab.component';
-import { UpdatePaymentComponent } from 'src/app/main/location-payment/components/update-payment/update-payment.component';
-import { DeletePaymentComponent } from 'src/app/main/location-payment/components/delete-payment/delete-payment.component';
+import { ModernPaymentModalComponent } from '../modern-payment-modal/modern-payment-modal.component';
+import { ModernDeletePaymentModalComponent } from '../modern-delete-payment-modal/modern-delete-payment-modal.component';
 
 export interface UnitPanelAction {
   type: 'edit' | 'assign_tenant' | 'terminate_lease' | 'add_payment' | 'view_contract' | 'view_image' | 'edit_tenant' |
@@ -447,10 +447,10 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
       return;
     }
 
-    console.log('📝 Ouverture du modal UpdatePaymentComponent...');
+    console.log('📝 Ouverture du modal ModernPaymentModalComponent...');
 
     try {
-      const dialogRef = this.dialog.open(UpdatePaymentComponent, {
+      const dialogRef = this.dialog.open(ModernPaymentModalComponent, {
         width: '100%',
         maxWidth: '800px',
         disableClose: true,
@@ -536,10 +536,10 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
       return;
     }
 
-    console.log('🗑️ Ouverture du modal DeletePaymentComponent...');
+    console.log('🗑️ Ouverture du modal ModernDeletePaymentModalComponent...');
 
     try {
-      const dialogRef = this.dialog.open(DeletePaymentComponent, {
+      const dialogRef = this.dialog.open(ModernDeletePaymentModalComponent, {
         width: '500px',
         maxWidth: '95vw',
         panelClass: 'delete-payment-modal-dialog',

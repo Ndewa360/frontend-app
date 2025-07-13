@@ -22,11 +22,11 @@ import { PropertyDataService, Unit, Tenant, HistoryItem } from '../services/prop
 import { UnitAction } from '../components/property-units-list/property-units-list.component';
 import { UpdatePropertyComponent, UpdatePropertyDialogData } from '../update-property/update-property.component';
 import { GaleryComponent } from '../../room/components/galery/galery.component';
-import { AddPropertyRoomComponent } from '../components/add-property-room/add-property-room.component';
+import { ModernUnitModalComponent } from '../components/modern-unit-modal/modern-unit-modal.component';
 import { AddLocataireComponent } from '../../locataires/components/add-locataire/add-locataire.component';
 import { UpdateRoomComponent } from '../../room/components/update-room/update-room.component';
 import { AssignLocationModalService } from '../../assign-location/services/assign-location-modal.service';
-import { RemoveLocataireRoomComponent } from '../components/remove-locataire-room/remove-locataire-room.component';
+import { ModernContractTerminationModalComponent } from '../components/modern-contract-termination-modal/modern-contract-termination-modal.component';
 
 interface Tab {
   id: string;
@@ -253,7 +253,7 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
       console.log('📝 Ouverture du modal AddPropertyRoomComponent depuis PropertyDetailsComplete...');
 
       try {
-        const dialogRef = this.dialog.open(AddPropertyRoomComponent, {
+        const dialogRef = this.dialog.open(ModernUnitModalComponent, {
           width: '100%',
           maxWidth: '900px',
           disableClose: true,
@@ -356,22 +356,30 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
       return;
     }
 
-    console.log('📝 Ouverture du modal RemoveLocataireRoomComponent...');
+    console.log('📝 Ouverture du modal ModernContractTerminationModalComponent...');
+
+    // Récupérer les données nécessaires depuis le store
+    const rooms = this.store.selectSnapshot(RoomState.selectStateRooms);
+    const tenants = this.store.selectSnapshot(LocataireState.selectStateLocataires);
+    const roomData = rooms?.find(r => r._id === location.room);
+    const tenant = tenants?.find(l => l._id === location.locataire);
 
     try {
-      const dialogRef = this.dialog.open(RemoveLocataireRoomComponent, {
-        width: '500px',
-        maxWidth: '95vw',
+      const dialogRef = this.dialog.open(ModernContractTerminationModalComponent, {
+        width: '100%',
+        maxWidth: '900px',
         disableClose: true,
         data: {
-          location: location
+          location: location,
+          tenant: tenant,
+          room: roomData || room // Utiliser roomData si disponible, sinon room du paramètre
         }
       });
 
-      console.log('✅ Modal RemoveLocataireRoom ouvert, dialogRef:', dialogRef);
+      console.log('✅ Modal ModernContractTermination ouvert, dialogRef:', dialogRef);
 
       dialogRef.afterClosed().subscribe(result => {
-        console.log('🔄 Modal RemoveLocataireRoom fermé avec résultat:', result);
+        console.log('🔄 Modal ModernContractTermination fermé avec résultat:', result);
         if (result) {
           console.log('✅ Contrat résilié avec succès');
           // Recharger les données
@@ -379,7 +387,7 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
         }
       });
     } catch (error) {
-      console.error('❌ Erreur lors de l\'ouverture du modal RemoveLocataireRoom:', error);
+      console.error('❌ Erreur lors de l\'ouverture du modal ModernContractTermination:', error);
     }
   }
 

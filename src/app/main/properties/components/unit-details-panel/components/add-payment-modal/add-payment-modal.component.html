@@ -31,13 +31,19 @@
       <!-- Contenu du modal -->
       <div class="p-6">
         <div *ngIf="getLocationForPayment(); else noLocationError">
-          <app-add-payment
-            [room]="room"
-            [tenant]="tenant"
-            [location]="getLocationForPayment()"
-            (paymentAdded)="onPaymentAdded($event)"
-            (cancel)="closeModal()">
-          </app-add-payment>
+          <!-- Utilisation du nouveau modal moderne intégré -->
+          <div class="modern-payment-form">
+            <p class="text-sm text-gray-600 mb-4">
+              Veuillez utiliser le nouveau modal de paiement moderne pour une meilleure expérience.
+            </p>
+            <button (click)="openModernPaymentModal()"
+                    class="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors duration-200">
+              <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+              </svg>
+              Ouvrir le modal de paiement moderne
+            </button>
+          </div>
         </div>
 
         <ng-template #noLocationError>

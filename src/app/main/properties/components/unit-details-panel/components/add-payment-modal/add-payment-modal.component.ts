@@ -1,6 +1,8 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { RoomModel, LocataireModel, LocationModel } from 'src/app/shared/store';
 import { UtilsString } from 'src/app/shared/utils';
+import { ModernPaymentModalComponent } from '../../../modern-payment-modal/modern-payment-modal.component';
 
 @Component({
   selector: 'app-add-payment-modal',
@@ -18,6 +20,8 @@ export class AddPaymentModalComponent implements OnInit {
 
   // Location temporaire pour le composant AddPayment
   tempLocation: LocationModel | null = null;
+
+  constructor(private dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.createTempLocationIfNeeded();
@@ -63,5 +67,32 @@ export class AddPaymentModalComponent implements OnInit {
   onPaymentAdded(payment: any): void {
     this.paymentAdded.emit(payment);
     this.closeModal();
+  }
+
+  openModernPaymentModal(): void {
+    const location = this.getLocationForPayment();
+
+    if (!location) {
+      console.error('Aucune location disponible pour le paiement');
+      return;
+    }
+
+    const dialogRef = this.dialog.open(ModernPaymentModalComponent, {
+      width: '100%',
+      maxWidth: '800px',
+      disableClose: true,
+      data: {
+        mode: 'create',
+        room: this.room,
+        tenant: this.tenant,
+        location: location
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.onPaymentAdded(result);
+      }
+    });
   }
 }
