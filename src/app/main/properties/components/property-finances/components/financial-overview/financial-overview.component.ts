@@ -4,6 +4,7 @@ import {
   StatisticPaymentOfAllPropertyByYear
 } from 'src/app/shared/store';
 import { ExportData } from '../../property-finances.component';
+import { FinancialCalculationsService, FinancialMetrics, MonthlyFinancialData } from 'src/app/shared/services/financial-calculations.service';
 
 export interface OverviewMetrics {
   totalRevenue: number;
@@ -29,7 +30,7 @@ export class FinancialOverviewComponent implements OnInit {
 
   @Output() exportData = new EventEmitter<ExportData>();
 
-  metrics: OverviewMetrics = {
+  metrics: FinancialMetrics = {
     totalRevenue: 0,
     totalExpected: 0,
     collectionRate: 0,
@@ -37,152 +38,42 @@ export class FinancialOverviewComponent implements OnInit {
     occupiedRooms: 0,
     occupancyRate: 0,
     averageRent: 0,
-    totalDeposits: 0
+    totalDeposits: 0,
+    netProfit: 0,
+    profitMargin: 0
   };
 
-  monthlyData: Array<{
-    month: string;
-    monthIndex: number;
-    expected: number;
-    received: number;
-    rate: number;
-  }> = [];
+  monthlyData: MonthlyFinancialData[] = [];
+
+  constructor(private financialCalculationsService: FinancialCalculationsService) {}
 
   ngOnInit(): void {
-    this.calculateMetrics();
-    this.buildMonthlyData();
+    this.updateFinancialData();
   }
 
   ngOnChanges(): void {
-    // Calculer les métriques seulement si nous avons des données
-    if (this.yearlyStats && this.yearlyStats.length > 0) {
-      this.calculateMetrics();
-    } else {
-      this.resetMetrics();
-    }
-
-    // Construire les données mensuelles (avec vérifications de sécurité intégrées)
-    this.buildMonthlyData();
+    this.updateFinancialData();
   }
 
-  private calculateMetrics(): void {
-    if (!this.yearlyStats.length) {
-      this.resetMetrics();
-      return;
-    }
+  private updateFinancialData(): void {
+    // Utiliser le service centralisé pour les calculs
+    this.metrics = this.financialCalculationsService.calculateFinancialMetrics(
+      this.yearlyStats,
+      this.recapitulation
+    );
 
-    // Calculer les métriques à partir des statistiques des chambres
-    let totalRevenue = 0;
-    let totalExpected = 0;
-    let totalRooms = this.yearlyStats.length;
-    let occupiedRooms = 0;
-    let totalRentSum = 0;
-    let totalDeposits = 0;
+    this.monthlyData = this.financialCalculationsService.buildMonthlyData(
+      this.yearlyStats,
+      this.recapitulation
+    );
 
-    this.yearlyStats.forEach(roomStat => {
-      const monthlyPayments = roomStat.paymentValue || [];
-      const receivedForRoom = monthlyPayments.reduce((sum, payment) => sum + (payment || 0), 0);
-      const roomPrice = roomStat.room?.price || 0;
-      const expectedForYear = roomPrice * 12;
-
-      // Revenus reçus
-      totalRevenue += receivedForRoom;
-
-      // Revenus attendus
-      totalExpected += expectedForYear;
-
-      // Chambres occupées (si des paiements ont été reçus)
-      if (receivedForRoom > 0) {
-        occupiedRooms++;
-      }
-
-      // Somme des loyers pour calculer la moyenne
-      totalRentSum += roomPrice;
-
-      // Total des cautions (estimation: 2 mois de loyer)
-      totalDeposits += roomPrice * 2;
-    });
-
-    this.metrics = {
-      totalRevenue,
-      totalExpected,
-      collectionRate: totalExpected > 0 ? (totalRevenue / totalExpected) * 100 : 0,
-      totalRooms,
-      occupiedRooms,
-      occupancyRate: totalRooms > 0 ? (occupiedRooms / totalRooms) * 100 : 0,
-      averageRent: totalRooms > 0 ? totalRentSum / totalRooms : 0,
-      totalDeposits
-    };
-  }
-
-  private resetMetrics(): void {
-    this.metrics = {
-      totalRevenue: 0,
-      totalExpected: 0,
-      collectionRate: 0,
-      totalRooms: 0,
-      occupiedRooms: 0,
-      occupancyRate: 0,
-      averageRent: 0,
-      totalDeposits: 0
-    };
-  }
-
-  private buildMonthlyData(): void {
-    this.monthlyData = [];
-
-    // Vérification de sécurité pour éviter les erreurs
-    if (!this.recapitulation?.paymentProperty || !Array.isArray(this.recapitulation.paymentProperty)) {
-      // Créer des données vides pour les 12 mois
-      for (let i = 0; i < 12; i++) {
-        this.monthlyData.push({
-          month: this.getMonthName(i),
-          monthIndex: i,
-          expected: 0,
-          received: 0,
-          rate: 0
-        });
-      }
-      return;
-    }
-
-    // Construire les données mensuelles à partir de la structure réelle
-    const monthlyAggregated: { [key: number]: { expected: number, received: number } } = {};
-
-    // Initialiser les 12 mois
-    for (let i = 0; i < 12; i++) {
-      monthlyAggregated[i] = { expected: 0, received: 0 };
-    }
-
-    // Agréger les données de toutes les propriétés avec vérifications de sécurité
-    this.recapitulation.paymentProperty.forEach(propertyData => {
-      if (propertyData?.amountMonth && Array.isArray(propertyData.amountMonth)) {
-        propertyData.amountMonth.forEach(monthData => {
-          if (monthData && typeof monthData.month === 'number') {
-            const monthIndex = (monthData.month - 1) % 12; // Convertir 1-12 en 0-11
-            if (monthIndex >= 0 && monthIndex < 12) {
-              monthlyAggregated[monthIndex].expected += monthData.totalAmountToBeReceveid || 0;
-              monthlyAggregated[monthIndex].received += monthData.totalAmountReceived || 0;
-            }
-          }
-        });
-      }
-    });
-
-    // Convertir en format attendu
-    Object.keys(monthlyAggregated).forEach(monthKey => {
-      const monthIndex = parseInt(monthKey);
-      const data = monthlyAggregated[monthIndex];
-
-      this.monthlyData.push({
-        month: this.getMonthName(monthIndex),
-        monthIndex,
-        expected: data.expected,
-        received: data.received,
-        rate: data.expected > 0 ? (data.received / data.expected) * 100 : 0
-      });
+    console.log('📊 FinancialOverview - Données mises à jour:', {
+      metrics: this.metrics,
+      monthlyDataLength: this.monthlyData.length
     });
   }
+
+  // Méthodes supprimées - maintenant gérées par FinancialCalculationsService
 
   // === MÉTHODES D'EXPORT ===
 
@@ -190,43 +81,53 @@ export class FinancialOverviewComponent implements OnInit {
     const exportData = [
       {
         'Métrique': 'Revenus totaux reçus',
-        'Valeur': this.metrics.totalRevenue,
-        'Unité': 'FCFA'
+        'Valeur': this.financialCalculationsService.formatCurrency(this.metrics.totalRevenue),
+        'Valeur numérique': this.metrics.totalRevenue
       },
       {
         'Métrique': 'Revenus attendus',
-        'Valeur': this.metrics.totalExpected,
-        'Unité': 'FCFA'
+        'Valeur': this.financialCalculationsService.formatCurrency(this.metrics.totalExpected),
+        'Valeur numérique': this.metrics.totalExpected
       },
       {
         'Métrique': 'Taux de recouvrement',
-        'Valeur': this.metrics.collectionRate,
-        'Unité': '%'
+        'Valeur': this.financialCalculationsService.formatPercentage(this.metrics.collectionRate),
+        'Valeur numérique': this.metrics.collectionRate
       },
       {
         'Métrique': 'Nombre total de chambres',
         'Valeur': this.metrics.totalRooms,
-        'Unité': 'unités'
+        'Valeur numérique': this.metrics.totalRooms
       },
       {
         'Métrique': 'Chambres occupées',
         'Valeur': this.metrics.occupiedRooms,
-        'Unité': 'unités'
+        'Valeur numérique': this.metrics.occupiedRooms
       },
       {
         'Métrique': 'Taux d\'occupation',
-        'Valeur': this.metrics.occupancyRate,
-        'Unité': '%'
+        'Valeur': this.financialCalculationsService.formatPercentage(this.metrics.occupancyRate),
+        'Valeur numérique': this.metrics.occupancyRate
       },
       {
         'Métrique': 'Loyer moyen',
-        'Valeur': this.metrics.averageRent,
-        'Unité': 'FCFA'
+        'Valeur': this.financialCalculationsService.formatCurrency(this.metrics.averageRent),
+        'Valeur numérique': this.metrics.averageRent
       },
       {
         'Métrique': 'Total des cautions',
-        'Valeur': this.metrics.totalDeposits,
-        'Unité': 'FCFA'
+        'Valeur': this.financialCalculationsService.formatCurrency(this.metrics.totalDeposits),
+        'Valeur numérique': this.metrics.totalDeposits
+      },
+      {
+        'Métrique': 'Profit net estimé',
+        'Valeur': this.financialCalculationsService.formatCurrency(this.metrics.netProfit),
+        'Valeur numérique': this.metrics.netProfit
+      },
+      {
+        'Métrique': 'Marge bénéficiaire',
+        'Valeur': this.financialCalculationsService.formatPercentage(this.metrics.profitMargin),
+        'Valeur numérique': this.metrics.profitMargin
       }
     ];
 

@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { InitialLoadingDataResolver } from './shared/resolvers';
+import { InitialLoadingDataResolver, PublicDataResolver } from './shared/resolvers';
 import { AuthGuard } from './shared/guard';
 import { LayoutComponent } from './layout/default/layout.component';
 import { LoadingAdminDataResolver } from './shared/resolvers/loading-admin-data';
@@ -20,12 +20,12 @@ const routes: Routes = [
 	},
 	{
 		path: 'search',
-		// canActivate:[AuthGuard],
+		// canActivate:[AuthGuard], // Page publique
 		resolve:{
-			"initialData":InitialLoadingDataResolver
+			"publicData": PublicDataResolver
 		},
 		data:{
-			breadcrumb: 'Acceuil'
+			breadcrumb: 'Recherche'
 		},
 		loadChildren: () => import('./main/search/search.module').then(m => m.SearchModule)
 	},
@@ -42,9 +42,9 @@ const routes: Routes = [
 	},
 	{
 		path: 'support',
-		// canActivate:[AuthGuard],
+		// canActivate:[AuthGuard], // Page publique
 		resolve:{
-			"initialData":InitialLoadingDataResolver
+			"publicData": PublicDataResolver
 		},
 		data:{
 			breadcrumb: 'Support'
@@ -74,7 +74,7 @@ const routes: Routes = [
 	  {
 		path: '**',
 		resolve:{
-			"initialData":InitialLoadingDataResolver
+			"publicData": PublicDataResolver
 		},
 		loadChildren: () => import('./landing-page/landing-page.module').then(m => m.LandingPageModule)
 	  }

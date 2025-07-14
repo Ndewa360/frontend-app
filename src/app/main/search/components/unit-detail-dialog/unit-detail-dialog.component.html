@@ -3,11 +3,12 @@
   
   <!-- Header Fixe -->
   <header class="dialog-header">
-    <div class="header-content">
+    <!-- Version Desktop -->
+    <div class="header-content desktop-header">
       <button (click)="closeDialog()" class="close-button" mat-icon-button>
         <i class="fas fa-times"></i>
       </button>
-      
+
       <div class="navigation-section" *ngIf="allUnits.length > 1">
         <button
           *ngIf="canNavigatePrevious"
@@ -31,13 +32,59 @@
           <i class="fas fa-chevron-right"></i>
         </button>
       </div>
-      
+
       <div class="header-actions">
         <button class="action-button favorite-button" mat-button>
           <i class="far fa-heart"></i>
           <span>Sauvegarder</span>
         </button>
         <button class="action-button share-button" mat-button>
+          <i class="fas fa-share-alt"></i>
+          <span>Partager</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Version Mobile -->
+    <div class="header-content mobile-header">
+      <!-- Première ligne : Fermeture et Navigation -->
+      <div class="mobile-header-row mobile-header-top">
+        <button (click)="closeDialog()" class="mobile-close-button" mat-icon-button>
+          <i class="fas fa-times"></i>
+        </button>
+
+        <div class="mobile-navigation" *ngIf="allUnits.length > 1">
+          <button
+            *ngIf="canNavigatePrevious"
+            (click)="navigateToPrevious()"
+            class="mobile-nav-button"
+            mat-icon-button>
+            <i class="fas fa-chevron-left"></i>
+          </button>
+
+          <div class="mobile-unit-counter">
+            <span class="current">{{ currentUnitIndex + 1 }}</span>
+            <span class="separator">/</span>
+            <span class="total">{{ allUnits.length }}</span>
+          </div>
+
+          <button
+            *ngIf="canNavigateNext"
+            (click)="navigateToNext()"
+            class="mobile-nav-button"
+            mat-icon-button>
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Deuxième ligne : Actions -->
+      <div class="mobile-header-row mobile-header-actions">
+        <button class="mobile-action-button mobile-favorite-button" mat-button>
+          <i class="far fa-heart"></i>
+          <span>Sauvegarder</span>
+        </button>
+        <button class="mobile-action-button mobile-share-button" mat-button>
           <i class="fas fa-share-alt"></i>
           <span>Partager</span>
         </button>

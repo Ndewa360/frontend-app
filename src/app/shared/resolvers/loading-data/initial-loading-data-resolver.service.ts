@@ -31,11 +31,14 @@ export class InitialLoadingDataResolver implements Resolve<any> {
 
         return this._store.select((state) => state.ndewa360_auth_token.authToken)
             .pipe(
-                skipWhile((token) => token == null || token == undefined),
                 switchMap((token) => {
                     if (!token) {
-                        console.log("❌ Pas de token d'authentification");
-                        return of(false);
+                        console.log("❌ Pas de token d'authentification - chargement minimal");
+                        // Charger uniquement les données publiques de base
+                        this._store.dispatch([
+                            new CountryAction.FetchCountries(),
+                        ]);
+                        return of(true);
                     }
 
                     console.log("✅ Token trouvé, chargement des données de base...");
