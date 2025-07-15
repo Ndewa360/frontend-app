@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Renderer2, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, Renderer2, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { RefreshTokenService } from './shared/store/auth-token/refresh-token.service';
 import { UserActivityService } from './shared/store/auth-token/user-activity.service';
@@ -16,6 +16,7 @@ import { TutorialsService } from './shared/services/tutorials/tutorials.service'
 import * as moment from 'moment';
 import { takeUntil, debounceTime, filter, take, catchError, retry, switchMap } from 'rxjs/operators';
 import { SeoService } from './shared/services/seo/seo.service';
+import { DeviceDetectionService } from './shared/services/device-detection.service';
 
 const getSessionStorage = (key, defaultValue = null) => {
   try {
@@ -55,12 +56,13 @@ export class AppComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private tutorialService: TutorialsService,
     private activatedRoute: ActivatedRoute,
-    private titleService: Title, 
+    private titleService: Title,
     private meta: Meta,
     private seoService: SeoService,
     private monitoringService: MonitoringService,
     private localizationService: LocalizationService,
-    private translationService: TranslationService
+    private translationService: TranslationService,
+    private deviceService: DeviceDetectionService
   ) {
     // Fallback pour l'écran de chargement au cas où la navigation ne se termine jamais
     this.loadingTimeout = setTimeout(() => {
@@ -73,6 +75,10 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    // Initialiser la détection d'appareil et redirection automatique
+    console.log('🔍 Initialisation de la détection d\'appareil...');
+    this.deviceService.redirectWithUserPreference();
+
     // Initialiser les services de localisation
     // Note: Les services sont automatiquement initialisés via leurs constructeurs
     // mais nous nous assurons qu'ils sont bien injectés
@@ -290,7 +296,15 @@ export class AppComponent implements OnInit, OnDestroy {
     if (this.queryParamsSubscription) {
       this.queryParamsSubscription.unsubscribe();
     }
-    
+
     clearTimeout(this.loadingTimeout);
+  }
+
+  /**
+   * Gérer les changements de taille d'écran
+   */
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any): void {
+    this.deviceService.onResize();
   }
 }

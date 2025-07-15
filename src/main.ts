@@ -44,4 +44,60 @@ registerSwiperElements();
 // })
 // .catch(err => console.error(err));
 
-platformBrowserDynamic().bootstrapModule(AppModule).catch(err => console.error(err));
+// Fonction pour masquer le loader
+function hideLoader() {
+  console.log('🔧 Tentative de masquage du loader...');
+
+  const loader = document.getElementById('app-loading-holder');
+  if (loader) {
+    console.log('✅ Loader trouvé, masquage en cours...');
+    loader.style.transition = 'opacity 0.3s ease-out';
+    loader.style.opacity = '0';
+
+    setTimeout(() => {
+      if (loader && loader.parentNode) {
+        loader.parentNode.removeChild(loader);
+        console.log('✅ Loader supprimé avec succès');
+      }
+    }, 300);
+  } else {
+    console.log('ℹ️ Loader déjà supprimé ou non trouvé');
+  }
+}
+
+// Démarrer l'application
+console.log('🚀 Démarrage de l\'application Ndiye...');
+
+platformBrowserDynamic().bootstrapModule(AppModule)
+  .then(() => {
+    console.log('✅ Application Angular démarrée avec succès');
+
+    // Attendre un peu pour que les composants se chargent
+    setTimeout(() => {
+      // Essayer d'abord la fonction globale
+      if (typeof (window as any)['appBootstrap'] === 'function') {
+        console.log('🔧 Utilisation de appBootstrap()');
+        (window as any)['appBootstrap']();
+      } else {
+        console.log('🔧 appBootstrap() non disponible, masquage manuel');
+        hideLoader();
+      }
+    }, 100);
+
+    // Sécurité : forcer le masquage après 3 secondes
+    setTimeout(() => {
+      const loader = document.getElementById('app-loading-holder');
+      if (loader) {
+        console.log('⚠️ Loader encore présent après 3s, suppression forcée');
+        hideLoader();
+      }
+    }, 3000);
+  })
+  .catch(err => {
+    console.error('❌ Erreur critique lors du démarrage:', err);
+
+    // Même en cas d'erreur, masquer le loader
+    setTimeout(() => {
+      hideLoader();
+    }, 1000);
+  });

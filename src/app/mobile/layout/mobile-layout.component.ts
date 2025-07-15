@@ -4,9 +4,9 @@ import { Platform } from '@ionic/angular';
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { takeUntil, filter, map } from 'rxjs/operators';
-import { MobileSyncService } from '../shared/services/mobile-sync.service';
-import { MobileNotificationService } from '../shared/services/mobile-notification.service';
 import { UserProfileState } from '../../shared/store';
+import { MobileDebugService } from '../shared/services/mobile-debug.service';
+import { NetworkStatusService } from '../../shared/services/network-status.service';
 
 @Component({
   selector: 'app-mobile-layout',
@@ -25,8 +25,8 @@ export class MobileLayoutComponent implements OnInit, OnDestroy {
     private router: Router,
     private platform: Platform,
     private store: Store,
-    private syncService: MobileSyncService,
-    private notificationService: MobileNotificationService
+    private debugService: MobileDebugService,
+    private networkService: NetworkStatusService
   ) {
     this.initializeApp();
   }
@@ -35,7 +35,7 @@ export class MobileLayoutComponent implements OnInit, OnDestroy {
     this.setupRouteTracking();
     this.setupAuthTracking();
     this.setupNetworkTracking();
-    this.setupSyncTracking();
+    console.log('✅ Layout mobile initialisé');
   }
 
   ngOnDestroy(): void {
@@ -47,13 +47,20 @@ export class MobileLayoutComponent implements OnInit, OnDestroy {
    * Initialiser l'application mobile
    */
   private async initializeApp(): Promise<void> {
-    await this.platform.ready();
-    
-    // Initialiser les services mobiles
-    await this.syncService.initialize();
-    await this.notificationService.initialize();
-    
-    console.log('📱 Application mobile initialisée');
+    try {
+      await this.platform.ready();
+
+      // Initialiser le debug
+      this.debugService.initializeMobileDebug();
+      this.debugService.showDebugInfo();
+
+      console.log('📱 Application mobile initialisée');
+    } catch (error) {
+      console.error('❌ Erreur lors de l\'initialisation mobile:', error);
+
+      // Forcer la suppression du loader en cas d'erreur
+      this.debugService.forceRemoveLoader();
+    }
   }
 
   /**
@@ -81,14 +88,7 @@ export class MobileLayoutComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(isAuth => {
         this.isAuthenticated = isAuth;
-        
-        if (isAuth) {
-          // Démarrer la synchronisation automatique
-          this.syncService.startAutoSync();
-        } else {
-          // Arrêter la synchronisation
-          this.syncService.stopAutoSync();
-        }
+        console.log('🔐 État d\'authentification:', isAuth ? 'Connecté' : 'Déconnecté');
       });
   }
 
@@ -96,49 +96,16 @@ export class MobileLayoutComponent implements OnInit, OnDestroy {
    * Suivre l'état du réseau
    */
   private setupNetworkTracking(): void {
-    // Écouter les changements de connectivité
-    window.addEventListener('online', () => {
-      this.isOnline = true;
-      this.onNetworkStatusChange(true);
-    });
-
-    window.addEventListener('offline', () => {
-      this.isOnline = false;
-      this.onNetworkStatusChange(false);
-    });
-
-    // État initial
-    this.isOnline = navigator.onLine;
-  }
-
-  /**
-   * Suivre l'état de synchronisation
-   */
-  private setupSyncTracking(): void {
-    this.syncService.syncInProgress$
+    // Utiliser le service de statut réseau
+    this.networkService.networkStatus$
       .pipe(takeUntil(this.destroy$))
-      .subscribe(inProgress => {
-        this.syncInProgress = inProgress;
+      .subscribe(status => {
+        this.isOnline = status.isOnline && status.isBackendReachable;
+        console.log('🌐 Statut réseau mobile:', status);
       });
   }
 
-  /**
-   * Gérer les changements d'état réseau
-   */
-  private onNetworkStatusChange(isOnline: boolean): void {
-    if (isOnline) {
-      console.log('🌐 Connexion rétablie');
-      this.notificationService.showToast('Connexion rétablie', 'success');
-      
-      // Démarrer la synchronisation si authentifié
-      if (this.isAuthenticated) {
-        this.syncService.syncNow();
-      }
-    } else {
-      console.log('📴 Connexion perdue');
-      this.notificationService.showToast('Mode hors ligne', 'warning');
-    }
-  }
+
 
   /**
    * Vérifier si une route est active
@@ -148,28 +115,16 @@ export class MobileLayoutComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Obtenir l'icône d'état de synchronisation
+   * Obtenir l'icône d'état de connexion
    */
-  getSyncIcon(): string {
-    if (this.syncInProgress) {
-      return 'sync';
-    } else if (!this.isOnline) {
-      return 'cloud-offline';
-    } else {
-      return 'cloud-done';
-    }
+  getConnectionIcon(): string {
+    return this.isOnline ? 'wifi' : 'wifi-off';
   }
 
   /**
-   * Obtenir la couleur d'état de synchronisation
+   * Obtenir la couleur d'état de connexion
    */
-  getSyncColor(): string {
-    if (this.syncInProgress) {
-      return 'warning';
-    } else if (!this.isOnline) {
-      return 'danger';
-    } else {
-      return 'success';
-    }
+  getConnectionColor(): string {
+    return this.isOnline ? 'success' : 'danger';
   }
 }

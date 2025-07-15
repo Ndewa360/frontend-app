@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { InitialLoadingDataResolver, PublicDataResolver } from './shared/resolvers';
 import { AuthGuard } from './shared/guard';
 import { MobileDashboardGuard } from './shared/guard/mobile-dashboard.guard';
+import { DeviceRedirectGuard } from './shared/guard/device-redirect.guard';
 import { LayoutComponent } from './layout/default/layout.component';
 import { LoadingAdminDataResolver } from './shared/resolvers/loading-admin-data';
 import { IonicModule } from '@ionic/angular';
@@ -21,7 +22,7 @@ const routes: Routes = [
 	},
 	{
 		path: 'search',
-		// canActivate:[AuthGuard], // Page publique
+		canActivate: [DeviceRedirectGuard], // Redirection automatique selon l'appareil
 		resolve:{
 			"publicData": PublicDataResolver
 		},
@@ -75,6 +76,11 @@ const routes: Routes = [
 	  {
 		path: 'payment',
 		loadChildren: () => import('./public/payment/payment.module').then(m => m.PaymentModule)
+	  },
+	  {
+		path: '',
+		canActivate: [DeviceRedirectGuard],
+		children: []
 	  },
 	  {
 		path: '**',
