@@ -1,0 +1,56 @@
+.mobile-loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 2rem;
+
+  &.size-small {
+    gap: 0.5rem;
+    padding: 1rem;
+
+    .loading-spinner {
+      width: 24px;
+      height: 24px;
+    }
+
+    .loading-message {
+      font-size: 0.875rem;
+    }
+  }
+
+  &.size-default {
+    gap: 1rem;
+    padding: 2rem;
+
+    .loading-spinner {
+      width: 32px;
+      height: 32px;
+    }
+
+    .loading-message {
+      font-size: 1rem;
+    }
+  }
+
+  &.size-large {
+    gap: 1.5rem;
+    padding: 3rem;
+
+    .loading-spinner {
+      width: 48px;
+      height: 48px;
+    }
+
+    .loading-message {
+      font-size: 1.125rem;
+    }
+  }
+
+  .loading-message {
+    text-align: center;
+    font-weight: 500;
+    opacity: 0.8;
+  }
+}

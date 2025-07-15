@@ -1,0 +1,138 @@
+.billing-dashboard {
+  padding: 1rem;
+  padding-bottom: 2rem;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  padding: 2rem;
+}
+
+.subscription-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--ion-color-step-200);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  h2 {
+    margin: 0 0 1rem 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--ion-color-dark);
+  }
+
+  .subscription-status {
+    margin-bottom: 1rem;
+
+    ion-badge {
+      font-size: 0.875rem;
+      font-weight: 600;
+      padding: 0.5rem 1rem;
+    }
+  }
+
+  .subscription-details {
+    p {
+      margin: 0.5rem 0;
+      font-size: 0.875rem;
+      color: var(--ion-color-dark);
+
+      strong {
+        color: var(--ion-color-medium);
+      }
+    }
+  }
+
+  .no-subscription {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 2rem 1rem;
+
+    ion-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      margin: 0 0 1.5rem 0;
+      color: var(--ion-color-medium);
+    }
+
+    ion-button {
+      --border-radius: 12px;
+    }
+  }
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem 1rem;
+  background: white;
+  border-radius: 12px;
+  border: 1px solid var(--ion-color-step-200);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  .stat-icon {
+    margin-bottom: 1rem;
+
+    ion-icon {
+      font-size: 2rem;
+    }
+  }
+
+  .stat-content {
+    text-align: center;
+
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--ion-color-dark);
+      line-height: 1;
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--ion-color-medium);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  }
+}
+
+.actions-section {
+  h3 {
+    margin: 0 0 1rem 0;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--ion-color-dark);
+  }
+
+  .actions-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+
+    ion-button {
+      --border-radius: 12px;
+      height: 48px;
+      justify-content: flex-start;
+    }
+  }
+}

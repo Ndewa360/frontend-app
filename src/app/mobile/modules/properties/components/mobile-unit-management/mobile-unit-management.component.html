@@ -1,0 +1,62 @@
+<div class="unit-management">
+  <div class="management-header">
+    <h3>Gestion des unités</h3>
+    <ion-button fill="clear" size="small" (click)="addUnit()">
+      <ion-icon name="add" slot="start"></ion-icon>
+      Ajouter
+    </ion-button>
+  </div>
+
+  <div class="units-summary">
+    <div class="summary-card">
+      <div class="summary-value">{{ getTotalUnits() }}</div>
+      <div class="summary-label">Total</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-value">{{ getAvailableUnits() }}</div>
+      <div class="summary-label">Disponibles</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-value">{{ getOccupiedUnits() }}</div>
+      <div class="summary-label">Occupées</div>
+    </div>
+  </div>
+
+  <div class="units-list" *ngIf="getUnits().length > 0; else emptyState">
+    <div class="unit-item" *ngFor="let unit of getUnits(); trackBy: trackByUnitId">
+      <div class="unit-info">
+        <div class="unit-name">{{ unit.name || 'Unité ' + unit.number }}</div>
+        <div class="unit-details">
+          <span class="unit-type">{{ unit.type || 'Chambre' }}</span>
+          <span class="unit-price">{{ formatPrice(unit.price) }}</span>
+        </div>
+      </div>
+      
+      <div class="unit-status">
+        <ion-badge [color]="getStatusColor(unit.status)" class="status-badge">
+          {{ getStatusLabel(unit.status) }}
+        </ion-badge>
+      </div>
+      
+      <div class="unit-actions">
+        <ion-button fill="clear" size="small" (click)="editUnit(unit)">
+          <ion-icon name="create"></ion-icon>
+        </ion-button>
+        <ion-button fill="clear" size="small" color="danger" (click)="deleteUnit(unit)">
+          <ion-icon name="trash"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #emptyState>
+    <div class="empty-units">
+      <ion-icon name="home" color="medium"></ion-icon>
+      <p>Aucune unité configurée</p>
+      <ion-button fill="outline" (click)="addUnit()">
+        <ion-icon name="add" slot="start"></ion-icon>
+        Ajouter la première unité
+      </ion-button>
+    </div>
+  </ng-template>
+</div>

@@ -1,9 +1,9 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.ndewa360.app',
-  appName: 'Ndewa360',
-  webDir: 'dist'
+  appId: 'com.ndiye.app',
+  appName: 'ndiye',
+  webDir: 'www'
 };
 
 export default config;

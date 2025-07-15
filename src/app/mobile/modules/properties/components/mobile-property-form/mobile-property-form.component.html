@@ -1,0 +1,59 @@
+<form class="property-form" [formGroup]="propertyForm" (ngSubmit)="onSubmit()">
+  <div class="form-section">
+    <h3>Informations générales</h3>
+    
+    <ion-item>
+      <ion-label position="stacked">Nom de la propriété *</ion-label>
+      <ion-input formControlName="name" placeholder="Ex: Résidence Premium"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Description</ion-label>
+      <ion-textarea formControlName="description" placeholder="Description de la propriété" rows="3"></ion-textarea>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Adresse *</ion-label>
+      <ion-input formControlName="address" placeholder="Adresse complète"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Ville *</ion-label>
+      <ion-select formControlName="cityId" placeholder="Sélectionner une ville">
+        <ion-select-option *ngFor="let city of cities$ | async" [value]="city._id">
+          {{ city.fullName }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+  </div>
+
+  <div class="form-section">
+    <h3>Détails</h3>
+    
+    <ion-item>
+      <ion-label position="stacked">Nombre de chambres</ion-label>
+      <ion-input type="number" formControlName="numberOfRooms" placeholder="0"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Type de propriété</ion-label>
+      <ion-select formControlName="type" placeholder="Sélectionner le type">
+        <ion-select-option value="APARTMENT">Appartement</ion-select-option>
+        <ion-select-option value="HOUSE">Maison</ion-select-option>
+        <ion-select-option value="STUDIO">Studio</ion-select-option>
+        <ion-select-option value="ROOM">Chambre</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </div>
+
+  <div class="form-actions">
+    <ion-button expand="block" type="submit" [disabled]="!propertyForm.valid || isLoading">
+      <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
+      <span *ngIf="!isLoading">{{ property ? 'Modifier' : 'Créer' }}</span>
+    </ion-button>
+    
+    <ion-button expand="block" fill="outline" type="button" (click)="onCancel()">
+      Annuler
+    </ion-button>
+  </div>
+</form>

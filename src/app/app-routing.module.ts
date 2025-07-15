@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { InitialLoadingDataResolver, PublicDataResolver } from './shared/resolvers';
 import { AuthGuard } from './shared/guard';
+import { MobileDashboardGuard } from './shared/guard/mobile-dashboard.guard';
 import { LayoutComponent } from './layout/default/layout.component';
 import { LoadingAdminDataResolver } from './shared/resolvers/loading-admin-data';
 import { IonicModule } from '@ionic/angular';
@@ -52,9 +53,13 @@ const routes: Routes = [
 		loadChildren: () => import('./support/support.module').then(m => m.SupportModule)
 	},
 	{
+		path: 'mobile',
+		loadChildren: () => import('./mobile/mobile.module').then(m => m.MobileModule)
+	},
+	{
 		path: 'admin',
-		canActivate:[AuthGuard],
-		component: LayoutComponent,		
+		canActivate:[AuthGuard, MobileDashboardGuard],
+		component: LayoutComponent,
 		data:{
 			breadcrumb: 'Acceuil'
 		},

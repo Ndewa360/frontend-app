@@ -1,0 +1,129 @@
+.unit-management {
+  padding: 1rem;
+}
+
+.management-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+
+  h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--ion-color-dark);
+  }
+}
+
+.units-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.summary-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  background: var(--ion-color-light);
+  border-radius: 12px;
+  border: 1px solid var(--ion-color-step-200);
+
+  .summary-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--ion-color-primary);
+    line-height: 1;
+  }
+
+  .summary-label {
+    font-size: 0.875rem;
+    color: var(--ion-color-medium);
+    margin-top: 0.25rem;
+  }
+}
+
+.units-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.unit-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--ion-color-light);
+  border-radius: 12px;
+  border: 1px solid var(--ion-color-step-200);
+
+  .unit-info {
+    flex: 1;
+
+    .unit-name {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--ion-color-dark);
+      margin-bottom: 0.25rem;
+    }
+
+    .unit-details {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.875rem;
+
+      .unit-type {
+        color: var(--ion-color-medium);
+      }
+
+      .unit-price {
+        color: var(--ion-color-success);
+        font-weight: 500;
+      }
+    }
+  }
+
+  .unit-status {
+    .status-badge {
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+  }
+
+  .unit-actions {
+    display: flex;
+    gap: 0.25rem;
+
+    ion-button {
+      --padding-start: 8px;
+      --padding-end: 8px;
+    }
+  }
+}
+
+.empty-units {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2rem;
+  text-align: center;
+
+  ion-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  p {
+    margin: 0 0 1.5rem 0;
+    color: var(--ion-color-medium);
+  }
+
+  ion-button {
+    --border-radius: 12px;
+  }
+}

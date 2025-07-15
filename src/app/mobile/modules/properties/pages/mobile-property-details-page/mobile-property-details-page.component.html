@@ -1,0 +1,89 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Détails de la propriété</ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="editProperty()">
+        <ion-icon name="create"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="property-details" *ngIf="property; else loadingState">
+    <!-- Image principale -->
+    <div class="property-image">
+      <img [src]="getMainImage()" [alt]="property.name" loading="lazy">
+      <div class="image-overlay">
+        <ion-badge color="primary" class="rooms-badge">
+          {{ property.numberOfRooms }} logement{{ property.numberOfRooms > 1 ? 's' : '' }}
+        </ion-badge>
+      </div>
+    </div>
+
+    <!-- Informations principales -->
+    <div class="property-info">
+      <h1>{{ property.name }}</h1>
+      <div class="location">
+        <ion-icon name="location" color="medium"></ion-icon>
+        <span>{{ getLocation() }}</span>
+      </div>
+      
+      <p class="description" *ngIf="property.description">
+        {{ property.description }}
+      </p>
+    </div>
+
+    <!-- Statistiques rapides -->
+    <div class="quick-stats">
+      <div class="stat-item">
+        <ion-icon name="home" color="success"></ion-icon>
+        <div class="stat-content">
+          <div class="stat-value">{{ getAvailableRooms() }}</div>
+          <div class="stat-label">Disponibles</div>
+        </div>
+      </div>
+      
+      <div class="stat-item">
+        <ion-icon name="people" color="primary"></ion-icon>
+        <div class="stat-content">
+          <div class="stat-value">{{ getOccupiedRooms() }}</div>
+          <div class="stat-label">Occupées</div>
+        </div>
+      </div>
+      
+      <div class="stat-item">
+        <ion-icon name="cash" color="success"></ion-icon>
+        <div class="stat-content">
+          <div class="stat-value">{{ formatRevenue(getMonthlyRevenue()) }}</div>
+          <div class="stat-label">Revenus/mois</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="property-actions">
+      <ion-button expand="block" (click)="viewUnits()">
+        <ion-icon name="list" slot="start"></ion-icon>
+        Voir les unités
+      </ion-button>
+      
+      <ion-button expand="block" fill="outline" (click)="viewStats()">
+        <ion-icon name="stats-chart" slot="start"></ion-icon>
+        Statistiques détaillées
+      </ion-button>
+      
+      <ion-button expand="block" fill="outline" (click)="manageMedia()">
+        <ion-icon name="images" slot="start"></ion-icon>
+        Gérer les photos
+      </ion-button>
+    </div>
+  </div>
+
+  <ng-template #loadingState>
+    <app-mobile-loading message="Chargement des détails..."></app-mobile-loading>
+  </ng-template>
+</ion-content>

@@ -1,0 +1,30 @@
+<ion-app>
+  <!-- Header Mobile -->
+  <app-mobile-header 
+    [currentRoute]="currentRoute"
+    [isAuthenticated]="isAuthenticated"
+    [isOnline]="isOnline"
+    [syncInProgress]="syncInProgress">
+  </app-mobile-header>
+
+  <!-- Contenu Principal -->
+  <ion-router-outlet id="main-content"></ion-router-outlet>
+
+  <!-- Indicateur de synchronisation -->
+  <div class="sync-indicator" *ngIf="syncInProgress">
+    <ion-icon [name]="getSyncIcon()" [color]="getSyncColor()"></ion-icon>
+    <span>Synchronisation...</span>
+  </div>
+
+  <!-- Indicateur hors ligne -->
+  <div class="offline-indicator" *ngIf="!isOnline">
+    <ion-icon name="cloud-offline" color="danger"></ion-icon>
+    <span>Mode hors ligne</span>
+  </div>
+
+  <!-- Navigation en bas -->
+  <app-mobile-tabs 
+    [currentRoute]="currentRoute"
+    [isAuthenticated]="isAuthenticated">
+  </app-mobile-tabs>
+</ion-app>

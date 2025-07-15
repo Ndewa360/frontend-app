@@ -1,0 +1,84 @@
+<ion-header class="mobile-header">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <!-- Bouton retour (si applicable) -->
+      <ion-button 
+        *ngIf="canGoBack()" 
+        (click)="goBack()"
+        fill="clear">
+        <ion-icon name="chevron-back" slot="icon-only"></ion-icon>
+      </ion-button>
+      
+      <!-- Logo/Icône de l'app (si pas de retour) -->
+      <ion-button 
+        *ngIf="!canGoBack()" 
+        fill="clear"
+        disabled>
+        <ion-icon name="home" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <!-- Titre de la page -->
+    <ion-title class="header-title">
+      {{ getPageTitle() }}
+    </ion-title>
+
+    <ion-buttons slot="end">
+      <!-- Indicateur de connexion -->
+      <ion-button 
+        fill="clear" 
+        class="connection-indicator"
+        [class.syncing]="syncInProgress">
+        <ion-icon 
+          [name]="getConnectionIcon()" 
+          [color]="getConnectionColor()"
+          slot="icon-only">
+        </ion-icon>
+      </ion-button>
+
+      <!-- Notifications (si authentifié) -->
+      <ion-button 
+        *ngIf="isAuthenticated"
+        (click)="showNotifications()"
+        fill="clear">
+        <ion-icon name="notifications" slot="icon-only"></ion-icon>
+        <!-- Badge pour notifications non lues -->
+        <ion-badge color="danger" class="notification-badge">3</ion-badge>
+      </ion-button>
+
+      <!-- Avatar utilisateur / Bouton connexion -->
+      <ion-button 
+        (click)="goToProfile()"
+        fill="clear"
+        class="profile-button">
+        
+        <!-- Avatar si authentifié -->
+        <div 
+          *ngIf="isAuthenticated && (userProfile$ | async) as userProfile"
+          class="user-avatar">
+          
+          <!-- Image avatar si disponible -->
+          <img 
+            *ngIf="getUserAvatar(userProfile)"
+            [src]="getUserAvatar(userProfile)"
+            [alt]="userProfile.name || 'Utilisateur'"
+            class="avatar-image">
+          
+          <!-- Initiales si pas d'image -->
+          <div 
+            *ngIf="!getUserAvatar(userProfile)"
+            class="avatar-initials">
+            {{ getUserInitials(userProfile) }}
+          </div>
+        </div>
+
+        <!-- Icône de connexion si non authentifié -->
+        <ion-icon 
+          *ngIf="!isAuthenticated"
+          name="person-circle" 
+          slot="icon-only">
+        </ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>

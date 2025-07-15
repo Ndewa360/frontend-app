@@ -1,0 +1,100 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Contrats</ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="addContract()">
+        <ion-icon name="add"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- Pull to refresh -->
+  <ion-refresher slot="fixed" (ionRefresh)="onRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- Filtres rapides -->
+  <div class="filters-section">
+    <ion-segment [(ngModel)]="selectedFilter" (ionChange)="onFilterChange($event)">
+      <ion-segment-button value="all">
+        <ion-label>Tous</ion-label>
+        <ion-badge *ngIf="getTotalContracts() > 0">{{ getTotalContracts() }}</ion-badge>
+      </ion-segment-button>
+      <ion-segment-button value="active">
+        <ion-label>Actifs</ion-label>
+        <ion-badge *ngIf="getActiveContracts() > 0" color="success">{{ getActiveContracts() }}</ion-badge>
+      </ion-segment-button>
+      <ion-segment-button value="pending">
+        <ion-label>En attente</ion-label>
+        <ion-badge *ngIf="getPendingContracts() > 0" color="warning">{{ getPendingContracts() }}</ion-badge>
+      </ion-segment-button>
+      <ion-segment-button value="expired">
+        <ion-label>Expirés</ion-label>
+        <ion-badge *ngIf="getExpiredContracts() > 0" color="danger">{{ getExpiredContracts() }}</ion-badge>
+      </ion-segment-button>
+    </ion-segment>
+  </div>
+
+  <!-- Loading state -->
+  <div *ngIf="isLoading$ | async" class="loading-container">
+    <app-mobile-loading message="Chargement des contrats..."></app-mobile-loading>
+  </div>
+
+  <!-- Empty state -->
+  <div *ngIf="!(isLoading$ | async) && filteredContracts.length === 0" class="empty-state">
+    <app-mobile-empty-state
+      icon="document-text"
+      title="Aucun contrat"
+      message="Aucun contrat ne correspond à vos critères"
+      buttonText="Ajouter un contrat"
+      buttonIcon="add"
+      (buttonClick)="addContract()">
+    </app-mobile-empty-state>
+  </div>
+
+  <!-- Contracts list -->
+  <div *ngIf="!(isLoading$ | async) && filteredContracts.length > 0" class="contracts-list">
+    <div class="contract-item" *ngFor="let contract of filteredContracts; trackBy: trackByContractId">
+      <div class="contract-header">
+        <div class="contract-info">
+          <h3>{{ contract.tenant?.firstName }} {{ contract.tenant?.lastName }}</h3>
+          <p>{{ contract.property?.name }} - {{ contract.unit?.name }}</p>
+        </div>
+        <ion-badge [color]="getStatusColor(contract.status)" class="status-badge">
+          {{ getStatusLabel(contract.status) }}
+        </ion-badge>
+      </div>
+
+      <div class="contract-details">
+        <div class="detail-item">
+          <ion-icon name="calendar" color="medium"></ion-icon>
+          <span>{{ formatDate(contract.startDate) }} - {{ formatDate(contract.endDate) }}</span>
+        </div>
+        
+        <div class="detail-item">
+          <ion-icon name="cash" color="medium"></ion-icon>
+          <span>{{ formatPrice(contract.monthlyRent) }}/mois</span>
+        </div>
+      </div>
+
+      <div class="contract-actions">
+        <ion-button fill="clear" size="small" (click)="viewContract(contract)">
+          <ion-icon name="eye" slot="start"></ion-icon>
+          Voir
+        </ion-button>
+        
+        <ion-button fill="clear" size="small" (click)="editContract(contract)" *ngIf="canEdit(contract)">
+          <ion-icon name="create" slot="start"></ion-icon>
+          Modifier
+        </ion-button>
+        
+        <ion-button fill="clear" size="small" color="primary" (click)="renewContract(contract)" *ngIf="canRenew(contract)">
+          <ion-icon name="refresh" slot="start"></ion-icon>
+          Renouveler
+        </ion-button>
+      </div>
+    </div>
+  </div>
+</ion-content>

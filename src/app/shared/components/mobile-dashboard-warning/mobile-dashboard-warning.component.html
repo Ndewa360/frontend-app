@@ -1,0 +1,79 @@
+<div class="mobile-warning-container">
+  <!-- Header avec icône -->
+  <div class="warning-header">
+    <div class="platform-icon">
+      <i [class]="getPlatformIcon()"></i>
+    </div>
+    <h2>Expérience optimisée disponible</h2>
+  </div>
+
+  <!-- Contenu principal -->
+  <div class="warning-content">
+    <div class="message">
+      <p class="primary-message">
+        Le tableau de bord est optimisé pour les ordinateurs et offre une meilleure expérience sur grand écran.
+      </p>
+      
+      <p class="secondary-message">
+        Pour une expérience mobile optimale, nous recommandons de télécharger notre application {{ getPlatformName() }}.
+      </p>
+    </div>
+
+    <!-- Avantages de l'app -->
+    <div class="app-benefits">
+      <h3>Avantages de l'application mobile :</h3>
+      <ul>
+        <li>
+          <i class="fas fa-mobile-alt"></i>
+          Interface optimisée pour mobile
+        </li>
+        <li>
+          <i class="fas fa-bolt"></i>
+          Performance améliorée
+        </li>
+        <li>
+          <i class="fas fa-bell"></i>
+          Notifications push
+        </li>
+        <li>
+          <i class="fas fa-wifi"></i>
+          Fonctionnement hors ligne
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="warning-actions">
+    <!-- Bouton principal : Télécharger l'app -->
+    <button 
+      class="download-btn primary-btn"
+      (click)="downloadApp()">
+      <i class="fas fa-download"></i>
+      <span>Télécharger l'application</span>
+    </button>
+
+    <!-- Boutons secondaires -->
+    <div class="secondary-actions">
+      <button 
+        class="continue-btn secondary-btn"
+        (click)="continueOnWeb()">
+        <i class="fas fa-desktop"></i>
+        <span>Continuer sur le web</span>
+      </button>
+
+      <button 
+        class="home-btn tertiary-btn"
+        (click)="goHome()">
+        <i class="fas fa-home"></i>
+        <span>Retour à l'accueil</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Note informative -->
+  <div class="info-note">
+    <i class="fas fa-info-circle"></i>
+    <span>Vous pouvez également utiliser un ordinateur pour accéder au tableau de bord complet.</span>
+  </div>
+</div>

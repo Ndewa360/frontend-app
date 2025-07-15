@@ -1,0 +1,11 @@
+<div class="mobile-loading-container" [class]="'size-' + size">
+  <ion-spinner 
+    [name]="spinner" 
+    [color]="color"
+    class="loading-spinner">
+  </ion-spinner>
+  
+  <ion-text [color]="color" class="loading-message">
+    {{ message }}
+  </ion-text>
+</div>

@@ -1,0 +1,56 @@
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { IonicModule } from '@ionic/angular';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
+// Routing
+import { MobileRoutingModule } from './mobile-routing.module';
+
+// Layout
+import { MobileLayoutComponent } from './layout/mobile-layout.component';
+import { MobileTabsComponent } from './layout/components/mobile-tabs/mobile-tabs.component';
+import { MobileHeaderComponent } from './layout/components/mobile-header/mobile-header.component';
+
+// Shared Mobile Components
+import { MobileLoadingComponent } from './shared/components/mobile-loading/mobile-loading.component';
+import { MobileErrorComponent } from './shared/components/mobile-error/mobile-error.component';
+import { MobileEmptyStateComponent } from './shared/components/mobile-empty-state/mobile-empty-state.component';
+
+// Services
+import { MobileCacheService } from './shared/services/mobile-cache.service';
+import { MobileSyncService } from './shared/services/mobile-sync.service';
+import { MobileNotificationService } from './shared/services/mobile-notification.service';
+
+@NgModule({
+  declarations: [
+    // Layout
+    MobileLayoutComponent,
+    MobileTabsComponent,
+    MobileHeaderComponent,
+
+    // Shared Components
+    MobileLoadingComponent,
+    MobileErrorComponent,
+    MobileEmptyStateComponent
+  ],
+  imports: [
+    CommonModule,
+    IonicModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MobileRoutingModule
+  ],
+  providers: [
+    MobileCacheService,
+    MobileSyncService,
+    MobileNotificationService
+  ],
+  exports: [
+    // Export shared components for use in child modules
+    MobileLoadingComponent,
+    MobileErrorComponent,
+    MobileEmptyStateComponent
+  ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+})
+export class MobileModule { }
