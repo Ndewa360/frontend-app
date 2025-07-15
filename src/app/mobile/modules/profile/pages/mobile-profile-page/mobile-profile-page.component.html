@@ -1,0 +1,211 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Mon Profil</ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="editProfile()">
+        <ion-icon name="create"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="profile-content">
+  
+  <!-- Pull to refresh -->
+  <ion-refresher slot="fixed" (ionRefresh)="onRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- Loading state -->
+  <div *ngIf="isLoading" class="loading-container">
+    <app-mobile-loading message="Chargement du profil..."></app-mobile-loading>
+  </div>
+
+  <!-- Profile content -->
+  <div *ngIf="!isLoading" class="profile-container">
+    
+    <!-- Header avec avatar et infos principales -->
+    <div class="profile-header">
+      <div class="avatar-container">
+        <div class="avatar-circle">
+          <span class="avatar-initials">{{ getUserInitials() }}</span>
+        </div>
+        <ion-button 
+          fill="clear" 
+          size="small" 
+          class="edit-avatar-btn"
+          (click)="editProfile()">
+          <ion-icon name="camera"></ion-icon>
+        </ion-button>
+      </div>
+      
+      <div class="user-info">
+        <h2 class="user-name">{{ userProfile?.name || 'Utilisateur' }}</h2>
+        <p class="user-email">{{ getUserEmail() }}</p>
+        <p class="user-phone">{{ getUserPhone() }}</p>
+      </div>
+    </div>
+
+    <!-- Statistiques rapides -->
+    <div class="stats-section">
+      <h3>Mes statistiques</h3>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <ion-icon name="home" color="primary"></ion-icon>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value">{{ getUserStats().properties }}</div>
+            <div class="stat-label">Propriétés</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <ion-icon name="document-text" color="success"></ion-icon>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value">{{ getUserStats().contracts }}</div>
+            <div class="stat-label">Contrats</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <ion-icon name="card" color="warning"></ion-icon>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value">{{ getUserStats().payments }}</div>
+            <div class="stat-label">Paiements</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Menu principal -->
+    <div class="menu-section">
+      <h3>Mon compte</h3>
+      
+      <ion-list class="profile-menu">
+        
+        <ion-item button (click)="editProfile()" class="menu-item">
+          <ion-icon name="person" slot="start" color="primary"></ion-icon>
+          <ion-label>
+            <h3>Modifier le profil</h3>
+            <p>Informations personnelles</p>
+          </ion-label>
+          <ion-icon name="chevron-forward" slot="end" color="medium"></ion-icon>
+        </ion-item>
+
+        <ion-item button (click)="goToNotifications()" class="menu-item">
+          <ion-icon name="notifications" slot="start" color="warning"></ion-icon>
+          <ion-label>
+            <h3>Notifications</h3>
+            <p>Gérer les notifications</p>
+          </ion-label>
+          <ion-icon name="chevron-forward" slot="end" color="medium"></ion-icon>
+        </ion-item>
+
+        <ion-item button (click)="goToSettings()" class="menu-item">
+          <ion-icon name="settings" slot="start" color="medium"></ion-icon>
+          <ion-label>
+            <h3>Paramètres</h3>
+            <p>Préférences de l'app</p>
+          </ion-label>
+          <ion-icon name="chevron-forward" slot="end" color="medium"></ion-icon>
+        </ion-item>
+
+      </ion-list>
+    </div>
+
+    <!-- Menu support -->
+    <div class="menu-section">
+      <h3>Support</h3>
+      
+      <ion-list class="profile-menu">
+        
+        <ion-item button (click)="goToHelp()" class="menu-item">
+          <ion-icon name="help-circle" slot="start" color="success"></ion-icon>
+          <ion-label>
+            <h3>Aide</h3>
+            <p>FAQ et support</p>
+          </ion-label>
+          <ion-icon name="chevron-forward" slot="end" color="medium"></ion-icon>
+        </ion-item>
+
+        <ion-item button (click)="contactSupport()" class="menu-item">
+          <ion-icon name="mail" slot="start" color="tertiary"></ion-icon>
+          <ion-label>
+            <h3>Contacter le support</h3>
+            <p>Besoin d'aide ?</p>
+          </ion-label>
+          <ion-icon name="chevron-forward" slot="end" color="medium"></ion-icon>
+        </ion-item>
+
+        <ion-item button (click)="shareApp()" class="menu-item">
+          <ion-icon name="share" slot="start" color="secondary"></ion-icon>
+          <ion-label>
+            <h3>Partager l'app</h3>
+            <p>Recommander à un ami</p>
+          </ion-label>
+          <ion-icon name="chevron-forward" slot="end" color="medium"></ion-icon>
+        </ion-item>
+
+        <ion-item button (click)="rateApp()" class="menu-item">
+          <ion-icon name="star" slot="start" color="warning"></ion-icon>
+          <ion-label>
+            <h3>Noter l'app</h3>
+            <p>Donnez votre avis</p>
+          </ion-label>
+          <ion-icon name="chevron-forward" slot="end" color="medium"></ion-icon>
+        </ion-item>
+
+      </ion-list>
+    </div>
+
+    <!-- Menu légal -->
+    <div class="menu-section">
+      <h3>Informations légales</h3>
+      
+      <ion-list class="profile-menu">
+        
+        <ion-item button (click)="goToTerms()" class="menu-item">
+          <ion-icon name="document" slot="start" color="dark"></ion-icon>
+          <ion-label>
+            <h3>Conditions d'utilisation</h3>
+          </ion-label>
+          <ion-icon name="chevron-forward" slot="end" color="medium"></ion-icon>
+        </ion-item>
+
+        <ion-item button (click)="goToPrivacy()" class="menu-item">
+          <ion-icon name="shield-checkmark" slot="start" color="dark"></ion-icon>
+          <ion-label>
+            <h3>Politique de confidentialité</h3>
+          </ion-label>
+          <ion-icon name="chevron-forward" slot="end" color="medium"></ion-icon>
+        </ion-item>
+
+      </ion-list>
+    </div>
+
+    <!-- Bouton de déconnexion -->
+    <div class="logout-section">
+      <ion-button 
+        expand="block" 
+        fill="outline" 
+        color="danger"
+        (click)="logout()"
+        class="logout-button">
+        <ion-icon name="log-out" slot="start"></ion-icon>
+        Se déconnecter
+      </ion-button>
+    </div>
+
+    <!-- Version de l'app -->
+    <div class="app-version">
+      <p>Ndiye Mobile v1.0.0</p>
+      <p class="copyright">© 2024 Ndiye. Tous droits réservés.</p>
+    </div>
+
+  </div>
+</ion-content>

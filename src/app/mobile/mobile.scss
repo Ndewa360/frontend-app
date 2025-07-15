@@ -1,0 +1,444 @@
+/**
+ * Styles globaux pour le module mobile Ndiye
+ * Harmonisation avec le design system de l'application principale
+ */
+
+// Import du thème mobile
+@import './shared/styles/mobile-theme.scss';
+
+// Styles globaux pour l'application mobile
+.mobile-app {
+  font-family: var(--ndiye-font-family);
+  color: var(--ndiye-text-primary);
+  background-color: var(--ndiye-bg-secondary);
+}
+
+// Styles pour les pages mobiles
+.mobile-page {
+  min-height: 100vh;
+  background-color: var(--ndiye-bg-secondary);
+
+  ion-content {
+    --background: var(--ndiye-bg-secondary);
+    --color: var(--ndiye-text-primary);
+  }
+
+  ion-header {
+    ion-toolbar {
+      --background: var(--ndiye-white);
+      --color: var(--ndiye-text-primary);
+      --border-color: var(--ndiye-border-light);
+      box-shadow: var(--ndiye-shadow-light);
+    }
+  }
+}
+
+// Styles pour les cartes
+.mobile-card {
+  background: var(--ndiye-white);
+  border-radius: var(--ndiye-radius-large);
+  box-shadow: var(--ndiye-shadow-medium);
+  border: 1px solid var(--ndiye-border-light);
+  margin-bottom: var(--ndiye-spacing-md);
+  overflow: hidden;
+  transition: all var(--ndiye-transition-normal);
+
+  &:hover {
+    box-shadow: var(--ndiye-shadow-heavy);
+    transform: translateY(-2px);
+  }
+
+  .card-header {
+    padding: var(--ndiye-spacing-lg);
+    border-bottom: 1px solid var(--ndiye-border-light);
+    background: var(--ndiye-bg-primary);
+
+    h2, h3 {
+      margin: 0;
+      color: var(--ndiye-text-primary);
+      font-weight: var(--ndiye-font-weight-semibold);
+    }
+
+    p {
+      margin: var(--ndiye-spacing-xs) 0 0 0;
+      color: var(--ndiye-text-secondary);
+      font-size: var(--ndiye-font-size-sm);
+    }
+  }
+
+  .card-content {
+    padding: var(--ndiye-spacing-lg);
+  }
+
+  .card-footer {
+    padding: var(--ndiye-spacing-md) var(--ndiye-spacing-lg);
+    border-top: 1px solid var(--ndiye-border-light);
+    background: var(--ndiye-bg-secondary);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+// Styles pour les boutons
+.mobile-button {
+  --border-radius: var(--ndiye-radius-large);
+  --padding-start: var(--ndiye-spacing-lg);
+  --padding-end: var(--ndiye-spacing-lg);
+  --padding-top: var(--ndiye-spacing-md);
+  --padding-bottom: var(--ndiye-spacing-md);
+  font-weight: var(--ndiye-font-weight-semibold);
+  transition: all var(--ndiye-transition-fast);
+
+  &.button-primary {
+    --background: var(--ndiye-primary);
+    --color: var(--ndiye-white);
+    --background-hover: var(--ndiye-primary-dark);
+    --background-activated: var(--ndiye-primary-dark);
+  }
+
+  &.button-secondary {
+    --background: transparent;
+    --color: var(--ndiye-primary);
+    --border-color: var(--ndiye-primary);
+    --border-width: 2px;
+    --background-hover: var(--ndiye-primary-light);
+    --background-activated: var(--ndiye-primary-light);
+  }
+
+  &.button-success {
+    --background: var(--ndiye-success);
+    --color: var(--ndiye-white);
+  }
+
+  &.button-warning {
+    --background: var(--ndiye-warning);
+    --color: var(--ndiye-dark);
+  }
+
+  &.button-danger {
+    --background: var(--ndiye-danger);
+    --color: var(--ndiye-white);
+  }
+}
+
+// Styles pour les formulaires
+.mobile-form {
+  .form-section {
+    margin-bottom: var(--ndiye-spacing-xl);
+
+    h3 {
+      margin: 0 0 var(--ndiye-spacing-md) 0;
+      color: var(--ndiye-text-primary);
+      font-size: var(--ndiye-font-size-lg);
+      font-weight: var(--ndiye-font-weight-semibold);
+    }
+  }
+
+  ion-item {
+    --background: var(--ndiye-white);
+    --border-color: var(--ndiye-border-light);
+    --border-radius: var(--ndiye-radius-medium);
+    --padding-start: var(--ndiye-spacing-md);
+    --padding-end: var(--ndiye-spacing-md);
+    margin-bottom: var(--ndiye-spacing-sm);
+
+    &.item-has-focus {
+      --border-color: var(--ndiye-primary);
+      --border-width: 2px;
+    }
+
+    &.item-has-error {
+      --border-color: var(--ndiye-danger);
+      --border-width: 2px;
+    }
+
+    ion-label {
+      color: var(--ndiye-text-primary);
+      font-weight: var(--ndiye-font-weight-medium);
+    }
+
+    ion-input, ion-textarea {
+      --color: var(--ndiye-text-primary);
+      --placeholder-color: var(--ndiye-text-placeholder);
+    }
+  }
+
+  .error-message {
+    color: var(--ndiye-danger);
+    font-size: var(--ndiye-font-size-xs);
+    margin: var(--ndiye-spacing-xs) 0 var(--ndiye-spacing-sm) var(--ndiye-spacing-sm);
+    font-weight: var(--ndiye-font-weight-medium);
+  }
+}
+
+// Styles pour les listes
+.mobile-list {
+  background: var(--ndiye-white);
+  border-radius: var(--ndiye-radius-large);
+  box-shadow: var(--ndiye-shadow-medium);
+  border: 1px solid var(--ndiye-border-light);
+  overflow: hidden;
+
+  ion-item {
+    --background: transparent;
+    --border-color: var(--ndiye-border-light);
+    --padding-start: var(--ndiye-spacing-lg);
+    --padding-end: var(--ndiye-spacing-lg);
+    --min-height: 60px;
+
+    &:hover {
+      --background: var(--ndiye-bg-secondary);
+    }
+
+    &:last-child {
+      --border-width: 0;
+    }
+
+    ion-label {
+      h2, h3 {
+        color: var(--ndiye-text-primary);
+        font-weight: var(--ndiye-font-weight-medium);
+        margin: 0;
+      }
+
+      p {
+        color: var(--ndiye-text-secondary);
+        font-size: var(--ndiye-font-size-sm);
+        margin: var(--ndiye-spacing-xs) 0 0 0;
+      }
+    }
+
+    ion-icon {
+      color: var(--ndiye-medium);
+      font-size: 1.25rem;
+
+      &[slot="start"] {
+        margin-right: var(--ndiye-spacing-md);
+      }
+
+      &[slot="end"] {
+        margin-left: var(--ndiye-spacing-md);
+      }
+    }
+  }
+}
+
+// Styles pour les badges
+.mobile-badge {
+  --background: var(--ndiye-primary);
+  --color: var(--ndiye-white);
+  --padding-start: var(--ndiye-spacing-sm);
+  --padding-end: var(--ndiye-spacing-sm);
+  --padding-top: var(--ndiye-spacing-xs);
+  --padding-bottom: var(--ndiye-spacing-xs);
+  border-radius: var(--ndiye-radius-large);
+  font-size: var(--ndiye-font-size-xs);
+  font-weight: var(--ndiye-font-weight-semibold);
+
+  &.badge-success {
+    --background: var(--ndiye-success);
+  }
+
+  &.badge-warning {
+    --background: var(--ndiye-warning);
+    --color: var(--ndiye-dark);
+  }
+
+  &.badge-danger {
+    --background: var(--ndiye-danger);
+  }
+
+  &.badge-secondary {
+    --background: var(--ndiye-secondary);
+  }
+}
+
+// Styles pour les états de chargement
+.mobile-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--ndiye-spacing-xxl);
+  color: var(--ndiye-text-secondary);
+
+  ion-spinner {
+    margin-bottom: var(--ndiye-spacing-md);
+    --color: var(--ndiye-primary);
+  }
+
+  p {
+    margin: 0;
+    font-size: var(--ndiye-font-size-sm);
+    text-align: center;
+  }
+}
+
+// Styles pour les états vides
+.mobile-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--ndiye-spacing-xxl);
+  text-align: center;
+  color: var(--ndiye-text-secondary);
+
+  ion-icon {
+    font-size: 4rem;
+    margin-bottom: var(--ndiye-spacing-lg);
+    color: var(--ndiye-medium);
+  }
+
+  h3 {
+    margin: 0 0 var(--ndiye-spacing-sm) 0;
+    color: var(--ndiye-text-primary);
+    font-size: var(--ndiye-font-size-lg);
+    font-weight: var(--ndiye-font-weight-semibold);
+  }
+
+  p {
+    margin: 0 0 var(--ndiye-spacing-lg) 0;
+    font-size: var(--ndiye-font-size-sm);
+    line-height: var(--ndiye-line-height-relaxed);
+  }
+}
+
+// Styles pour les tabs
+.mobile-tabs {
+  ion-tab-bar {
+    --background: var(--ndiye-white);
+    --border: 1px solid var(--ndiye-border-light);
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+
+    ion-tab-button {
+      --color: var(--ndiye-medium);
+      --color-selected: var(--ndiye-primary);
+      --ripple-color: var(--ndiye-primary-light);
+
+      &.tab-selected {
+        --color: var(--ndiye-primary);
+        
+        .active-indicator {
+          background: var(--ndiye-primary);
+        }
+      }
+
+      ion-icon {
+        font-size: 1.5rem;
+      }
+
+      ion-label {
+        font-size: var(--ndiye-font-size-xs);
+        font-weight: var(--ndiye-font-weight-medium);
+        margin-top: var(--ndiye-spacing-xs);
+      }
+    }
+  }
+}
+
+// Animations et transitions
+@keyframes slideInUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.slide-in-up {
+  animation: slideInUp var(--ndiye-transition-normal);
+}
+
+.fade-in {
+  animation: fadeIn var(--ndiye-transition-normal);
+}
+
+// Classes utilitaires pour application rapide du thème
+.ndiye-themed-page {
+  @extend .mobile-page;
+}
+
+.ndiye-themed-card {
+  @extend .mobile-card;
+}
+
+.ndiye-themed-form {
+  @extend .mobile-form;
+}
+
+.ndiye-themed-list {
+  @extend .mobile-list;
+}
+
+.ndiye-themed-button {
+  @extend .mobile-button;
+}
+
+// Classes pour les couleurs de statut
+.status-active { color: var(--ndiye-success) !important; }
+.status-pending { color: var(--ndiye-warning) !important; }
+.status-expired { color: var(--ndiye-danger) !important; }
+.status-available { color: var(--ndiye-success) !important; }
+.status-occupied { color: var(--ndiye-primary) !important; }
+.status-maintenance { color: var(--ndiye-warning) !important; }
+
+// Classes pour les badges de statut
+.badge-status-active {
+  background: var(--ndiye-success) !important;
+  color: var(--ndiye-white) !important;
+}
+.badge-status-pending {
+  background: var(--ndiye-warning) !important;
+  color: var(--ndiye-dark) !important;
+}
+.badge-status-expired {
+  background: var(--ndiye-danger) !important;
+  color: var(--ndiye-white) !important;
+}
+.badge-status-available {
+  background: var(--ndiye-success) !important;
+  color: var(--ndiye-white) !important;
+}
+.badge-status-occupied {
+  background: var(--ndiye-primary) !important;
+  color: var(--ndiye-white) !important;
+}
+.badge-status-maintenance {
+  background: var(--ndiye-warning) !important;
+  color: var(--ndiye-dark) !important;
+}
+
+// Responsive design
+@media (max-width: 480px) {
+  .mobile-card {
+    margin: 0 var(--ndiye-spacing-sm) var(--ndiye-spacing-md) var(--ndiye-spacing-sm);
+    border-radius: var(--ndiye-radius-medium);
+
+    .card-header, .card-content, .card-footer {
+      padding: var(--ndiye-spacing-md);
+    }
+  }
+
+  .mobile-form {
+    padding: 0 var(--ndiye-spacing-sm);
+  }
+
+  .mobile-list {
+    margin: 0 var(--ndiye-spacing-sm);
+    border-radius: var(--ndiye-radius-medium);
+  }
+}

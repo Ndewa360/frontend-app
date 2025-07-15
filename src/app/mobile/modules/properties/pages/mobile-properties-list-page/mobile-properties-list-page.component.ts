@@ -307,16 +307,31 @@ export class MobilePropertiesListPageComponent implements OnInit, OnDestroy {
    * Obtenir le nombre d'unités occupées
    */
   getOccupiedUnitsCount(property: any): number {
-    // Simulation - à remplacer par la vraie logique
-    return Math.floor((property.numberOfRooms || 0) * 0.3);
+    // Utiliser les données réelles si disponibles, sinon estimation
+    if (property.units && Array.isArray(property.units)) {
+      return property.units.filter(unit => unit.status === 'OCCUPIED').length;
+    }
+
+    // Estimation basée sur les statistiques de la propriété
+    if (property.occupancyRate) {
+      return Math.floor((property.numberOfRooms || 0) * (property.occupancyRate / 100));
+    }
+
+    // Estimation par défaut (70% d'occupation)
+    return Math.floor((property.numberOfRooms || 0) * 0.7);
   }
 
   /**
    * Obtenir le nombre d'unités en maintenance
    */
   getMaintenanceUnitsCount(property: any): number {
-    // Simulation - à remplacer par la vraie logique
-    return Math.floor((property.numberOfRooms || 0) * 0.1);
+    // Utiliser les données réelles si disponibles
+    if (property.units && Array.isArray(property.units)) {
+      return property.units.filter(unit => unit.status === 'MAINTENANCE').length;
+    }
+
+    // Estimation par défaut (5% en maintenance)
+    return Math.floor((property.numberOfRooms || 0) * 0.05);
   }
 
   /**

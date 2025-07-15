@@ -173,12 +173,10 @@ export class MobileLoginPageComponent implements OnInit, OnDestroy {
   async loginWithGoogle(): Promise<void> {
     try {
       await this.notificationService.showLoading('Connexion avec Google...');
-      
-      // Dispatcher l'action de connexion Google
-      // TODO: Implémenter l'action LoginWithGoogle
-      // this.store.dispatch(new UserProfileAction.LoginWithGoogle());
-      console.log('Connexion Google - à implémenter');
-      
+
+      // Simuler une connexion Google (à remplacer par la vraie implémentation)
+      await this.simulateSocialLogin('Google');
+
     } catch (error) {
       await this.notificationService.hideLoading();
       await this.notificationService.showError('Erreur lors de la connexion Google');
@@ -192,17 +190,29 @@ export class MobileLoginPageComponent implements OnInit, OnDestroy {
   async loginWithFacebook(): Promise<void> {
     try {
       await this.notificationService.showLoading('Connexion avec Facebook...');
-      
-      // Dispatcher l'action de connexion Facebook
-      // TODO: Implémenter l'action LoginWithFacebook
-      // this.store.dispatch(new UserProfileAction.LoginWithFacebook());
-      console.log('Connexion Facebook - à implémenter');
-      
+
+      // Simuler une connexion Facebook (à remplacer par la vraie implémentation)
+      await this.simulateSocialLogin('Facebook');
+
     } catch (error) {
       await this.notificationService.hideLoading();
       await this.notificationService.showError('Erreur lors de la connexion Facebook');
       console.error('Erreur connexion Facebook:', error);
     }
+  }
+
+  /**
+   * Simuler une connexion sociale (temporaire)
+   */
+  private async simulateSocialLogin(provider: string): Promise<void> {
+    // Simulation d'un délai de connexion
+    await new Promise(resolve => setTimeout(resolve, 1500));
+
+    await this.notificationService.hideLoading();
+    await this.notificationService.showInfo(`Connexion ${provider} sera disponible prochainement`);
+
+    // TODO: Remplacer par la vraie implémentation OAuth
+    console.log(`Connexion ${provider} simulée`);
   }
 
   /**

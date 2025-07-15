@@ -6,8 +6,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 // Routing
 import { MobileProfileRoutingModule } from './mobile-profile-routing.module';
 
-// Pages - Temporairement commentées
-// import { MobileProfilePageComponent } from './pages/mobile-profile-page/mobile-profile-page.component';
+// Pages
+import { MobileProfilePageComponent } from './pages/mobile-profile-page/mobile-profile-page.component';
 // import { MobileEditProfilePageComponent } from './pages/mobile-edit-profile-page/mobile-edit-profile-page.component';
 // import { MobileSettingsPageComponent } from './pages/mobile-settings-page/mobile-settings-page.component';
 // import { MobileNotificationsPageComponent } from './pages/mobile-notifications-page/mobile-notifications-page.component';
@@ -23,13 +23,13 @@ import { MobileModule } from '../../mobile.module';
 
 @NgModule({
   declarations: [
-    // Pages - Temporairement vides
-    // MobileProfilePageComponent,
+    // Pages
+    MobileProfilePageComponent,
     // MobileEditProfilePageComponent,
     // MobileSettingsPageComponent,
     // MobileNotificationsPageComponent,
 
-    // Components - Temporairement vides
+    // Components - À implémenter plus tard
     // MobileProfileHeaderComponent,
     // MobileProfileStatsComponent,
     // MobileProfileMenuComponent,

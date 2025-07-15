@@ -180,10 +180,72 @@ export class MobileSearchPageComponent implements OnInit, OnDestroy {
   /**
    * Recherche à proximité
    */
-  private searchNearby(latitude: number, longitude: number): void {
-    // Pour l'instant, utilisons une recherche par ville par défaut
-    // TODO: Implémenter la recherche par géolocalisation
-    this.store.dispatch(new SearchAction.FetchSearch('Bangangté', 1));
+  private async searchNearby(latitude: number, longitude: number): Promise<void> {
+    try {
+      // Essayer de déterminer la ville à partir des coordonnées
+      const city = await this.getCityFromCoordinates(latitude, longitude);
+
+      if (city) {
+        console.log(`📍 Ville détectée: ${city}`);
+        this.store.dispatch(new SearchAction.FetchSearch(city, 1));
+        this.currentCity = city;
+      } else {
+        // Fallback vers Bangangté si impossible de déterminer la ville
+        console.log('📍 Impossible de déterminer la ville, utilisation de Bangangté par défaut');
+        this.store.dispatch(new SearchAction.FetchSearch('Bangangté', 1));
+        this.currentCity = 'Bangangté';
+      }
+    } catch (error) {
+      console.error('Erreur lors de la recherche par géolocalisation:', error);
+      // Fallback vers Bangangté en cas d'erreur
+      this.store.dispatch(new SearchAction.FetchSearch('Bangangté', 1));
+      this.currentCity = 'Bangangté';
+    }
+  }
+
+  /**
+   * Obtenir la ville à partir des coordonnées GPS
+   */
+  private async getCityFromCoordinates(latitude: number, longitude: number): Promise<string | null> {
+    try {
+      // Utiliser l'API de géocodage inverse (exemple avec OpenStreetMap Nominatim)
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10&addressdetails=1`
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        const city = data.address?.city ||
+                    data.address?.town ||
+                    data.address?.village ||
+                    data.address?.municipality;
+
+        // Vérifier si la ville est dans nos villes supportées
+        if (city && this.isSupportedCity(city)) {
+          return city;
+        }
+      }
+
+      return null;
+    } catch (error) {
+      console.error('Erreur géocodage inverse:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Vérifier si une ville est supportée par l'application
+   */
+  private isSupportedCity(city: string): boolean {
+    const supportedCities = [
+      'Bangangté', 'Douala', 'Yaoundé', 'Bafoussam', 'Bamenda',
+      'Garoua', 'Maroua', 'Ngaoundéré', 'Bertoua', 'Ebolowa'
+    ];
+
+    return supportedCities.some(supportedCity =>
+      city.toLowerCase().includes(supportedCity.toLowerCase()) ||
+      supportedCity.toLowerCase().includes(city.toLowerCase())
+    );
   }
 
   /**

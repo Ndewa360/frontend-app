@@ -25,6 +25,9 @@
 // Import des styles Carbon personnalisés
 @import './assets/styles/carbon-theme.scss';
 @import './assets/styles/carbon-utilities.scss';
+
+// Import des styles mobile Ndiye
+@import './app/mobile/mobile.scss';
 // @use '@ag-grid-community/styles/ag-grid.css';
 // @use '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
 // @use '@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css';

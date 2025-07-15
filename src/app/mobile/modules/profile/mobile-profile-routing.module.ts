@@ -1,18 +1,17 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-// Composants temporairement commentés
-// import { MobileProfilePageComponent } from './pages/mobile-profile-page/mobile-profile-page.component';
+// Composants
+import { MobileProfilePageComponent } from './pages/mobile-profile-page/mobile-profile-page.component';
 // import { MobileEditProfilePageComponent } from './pages/mobile-edit-profile-page/mobile-edit-profile-page.component';
 // import { MobileSettingsPageComponent } from './pages/mobile-settings-page/mobile-settings-page.component';
 // import { MobileNotificationsPageComponent } from './pages/mobile-notifications-page/mobile-notifications-page.component';
 
 const routes: Routes = [
-  // Routes temporairement vides - à implémenter
-  // {
-  //   path: '',
-  //   component: MobileProfilePageComponent
-  // },
+  {
+    path: '',
+    component: MobileProfilePageComponent
+  },
   // {
   //   path: 'edit',
   //   component: MobileEditProfilePageComponent

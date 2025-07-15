@@ -4,6 +4,7 @@
 /dist
 /tmp
 /android
+/ios
 
 # dependencies
 /node_modules
