@@ -3,6 +3,7 @@ import { ModalController } from '@ionic/angular';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Store } from '@ngxs/store';
 import { CityState } from '../../../../../shared/store';
+import { SmartFiltersService } from '../../../../../shared/services/smart-filters.service';
 
 export interface SearchFilters {
   city?: string;
@@ -54,7 +55,8 @@ export class MobileSearchFiltersComponent implements OnInit {
   constructor(
     private modalController: ModalController,
     private formBuilder: FormBuilder,
-    private store: Store
+    private store: Store,
+    private smartFiltersService: SmartFiltersService
   ) {
     this.filterForm = this.createForm();
   }
@@ -62,6 +64,9 @@ export class MobileSearchFiltersComponent implements OnInit {
   ngOnInit(): void {
     // Charger les villes si pas déjà fait
     this.loadCities();
+
+    // Initialiser les filtres intelligents
+    this.initializeSmartFilters();
   }
 
   /**
@@ -92,33 +97,73 @@ export class MobileSearchFiltersComponent implements OnInit {
   }
 
   /**
+   * Initialiser les filtres intelligents
+   */
+  private initializeSmartFilters(): void {
+    const defaultFilters = {
+      city: '',
+      minPrice: null,
+      maxPrice: null,
+      roomType: '',
+      hasWifi: false,
+      hasAirConditioner: false,
+      hasKitchen: false,
+      hasParking: false,
+      hasBalcony: false,
+      hasSecurity: false,
+      sortBy: 'price_asc'
+    };
+
+    this.smartFiltersService.initializeFilters(defaultFilters);
+
+    // Écouter les changements du formulaire
+    this.filterForm.valueChanges.subscribe(formValue => {
+      Object.keys(formValue).forEach(key => {
+        this.smartFiltersService.updateFilter(key, formValue[key]);
+      });
+    });
+  }
+
+  /**
    * Appliquer les filtres
    */
   applyFilters(): void {
-    const formValue = this.filterForm.value;
+    // Utiliser les filtres intelligents pour obtenir seulement les filtres actifs
+    const activeFilters = this.smartFiltersService.getActiveFilters();
     const filters: SearchFilters = {};
 
-    // Traiter les valeurs du formulaire
-    if (formValue.city) filters.city = formValue.city;
-    if (formValue.minPrice) filters.minPrice = formValue.minPrice;
-    if (formValue.maxPrice) filters.maxPrice = formValue.maxPrice;
-    if (formValue.roomType) filters.roomType = formValue.roomType;
-    
-    // Équipements
-    if (formValue.hasWifi) filters.hasWifi = true;
-    if (formValue.hasAirConditioner) filters.hasAirConditioner = true;
-    if (formValue.hasKitchen) filters.hasKitchen = true;
-    if (formValue.hasParking) filters.hasParking = true;
-    if (formValue.hasBalcony) filters.hasBalcony = true;
-    if (formValue.hasSecurity) filters.hasSecurity = true;
+    // Traiter les filtres actifs
+    Object.keys(activeFilters).forEach(key => {
+      const value = activeFilters[key];
 
-    // Tri
-    if (formValue.sortBy) {
-      const [sortBy, sortOrder] = formValue.sortBy.split('_');
-      filters.sortBy = sortBy;
-      filters.sortOrder = sortOrder as 'asc' | 'desc';
-    }
+      switch (key) {
+        case 'city':
+        case 'roomType':
+          if (value) filters[key] = value;
+          break;
+        case 'minPrice':
+        case 'maxPrice':
+          if (value !== null && value !== undefined) filters[key] = value;
+          break;
+        case 'hasWifi':
+        case 'hasAirConditioner':
+        case 'hasKitchen':
+        case 'hasParking':
+        case 'hasBalcony':
+        case 'hasSecurity':
+          if (value === true) filters[key] = true;
+          break;
+        case 'sortBy':
+          if (value) {
+            const [sortBy, sortOrder] = value.split('_');
+            filters.sortBy = sortBy;
+            filters.sortOrder = sortOrder as 'asc' | 'desc';
+          }
+          break;
+      }
+    });
 
+    console.log('📱 Filtres mobiles appliqués:', filters);
     this.modalController.dismiss(filters);
   }
 
@@ -126,12 +171,11 @@ export class MobileSearchFiltersComponent implements OnInit {
    * Réinitialiser les filtres
    */
   resetFilters(): void {
-    this.filterForm.reset();
-    this.filterForm.patchValue({
-      city: '',
-      roomType: '',
-      sortBy: 'price_asc'
-    });
+    this.smartFiltersService.resetFilters();
+
+    // Mettre à jour le formulaire avec les valeurs par défaut
+    const defaultValues = this.smartFiltersService.getAllFilters();
+    this.filterForm.patchValue(defaultValues);
   }
 
   /**

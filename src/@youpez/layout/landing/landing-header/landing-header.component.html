@@ -6,19 +6,21 @@
       <div class="header-profil-user block md:hidden" *ngIf="(isLogin$ | async)">
         <landing-header-profil-data ></landing-header-profil-data>
       </div>
-      <button (click)="toggleMenu()" data-collapse-toggle="navbar-default" type="button" class="inline-flex toggle-menu-btn items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-default" aria-expanded="false">
-          <span class="sr-only">Open main menu</span>
-          <svg *ngIf="!isMenuOpen else showCloseBtn" class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
-              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
-          </svg>
-         <ng-template #showCloseBtn>
-          <!-- <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
-            <path d="M 10,10 L 30,30 M 30,10 L 10,30" stroke="black" stroke-width="2" />
-          </svg> -->
-          <youpez-ibm-icon iconClass="cds--btn__icon" iconName="close" iconSize="32" ></youpez-ibm-icon >
-          
-         </ng-template>
+      <button
+        (click)="toggleMenu()"
+        type="button"
+        class="hamburger-menu-btn md:hidden"
+        [class.active]="isMenuOpen"
+        aria-controls="navbar-default"
+        [attr.aria-expanded]="isMenuOpen">
+        <span class="sr-only">{{ isMenuOpen ? 'Fermer le menu' : 'Ouvrir le menu' }}</span>
+        <div class="hamburger-icon">
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </div>
       </button>
+      <!-- Menu desktop -->
       <div class="hidden w-full md:block md:w-auto">
         <ul class="font-medium flex items-center flex-col p-4 md:p-0 mt-4 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white ">
           <li [routerLink]="'/home'" [routerLinkActive]="['active']">
@@ -31,7 +33,7 @@
               <span>Equipe</span>
             </a>
           </li>
-          <li (click)="navigateToSearchPage()" [routerLinkActive]="['active']">
+          <li [routerLink]="'/search/index'" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{ exact: false }">
             <a  class="block py-2 px-3 text-gray-900 md:hover:bg-transparent md:border-0  md:p-0 dark:hover:text-white md:dark:hover:bg-transparent">
               <span>Recherche de biens</span>
             </a>
@@ -97,8 +99,91 @@
           </button>
         <!-- </ng-template>       -->
       </div>
+
+      <!-- Menu mobile -->
+      <div class="mobile-menu" [class.open]="isMenuOpen">
+        <div class="mobile-menu-content">
+          <!-- Header du menu mobile -->
+          <div class="mobile-menu-header">
+            <youpez-logo class="cursor-pointer" type="white" logoWidth="60px"></youpez-logo>
+            <button (click)="toggleMenu()" class="mobile-menu-close">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+
+          <!-- Navigation mobile -->
+          <nav class="mobile-nav">
+            <ul class="mobile-nav-list">
+              <li [routerLink]="'/home'" [routerLinkActive]="['active']" (click)="toggleMenu()">
+                <a class="mobile-nav-link">
+                  <i class="fas fa-home"></i>
+                  <span>Accueil</span>
+                </a>
+              </li>
+              <li [routerLink]="'/search/index'" [routerLinkActive]="['active']" (click)="toggleMenu()">
+                <a class="mobile-nav-link">
+                  <i class="fas fa-search"></i>
+                  <span>Recherche de biens</span>
+                </a>
+              </li>
+              <li (click)="toggleMenu()">
+                <a href="#" class="mobile-nav-link">
+                  <i class="fas fa-users"></i>
+                  <span>Équipe</span>
+                </a>
+              </li>
+              <li (click)="toggleMenu()">
+                <a href="#" class="mobile-nav-link">
+                  <i class="fas fa-tag"></i>
+                  <span>Pricing</span>
+                </a>
+              </li>
+              <li (click)="toggleMenu()">
+                <a href="#" class="mobile-nav-link">
+                  <i class="fas fa-envelope"></i>
+                  <span>Contact</span>
+                </a>
+              </li>
+              <li [routerLink]="'/support/welcome'" (click)="toggleMenu()">
+                <a class="mobile-nav-link">
+                  <i class="fas fa-life-ring"></i>
+                  <span>Support</span>
+                </a>
+              </li>
+            </ul>
+          </nav>
+
+          <!-- Boutons d'authentification mobile -->
+          <div class="mobile-auth-buttons" *ngIf="!(isLogin$ | async)">
+            <button
+              type="button"
+              [routerLink]="'/auth/signin'"
+              (click)="toggleMenu()"
+              class="mobile-auth-btn mobile-auth-btn--secondary">
+              <i class="fas fa-sign-in-alt"></i>
+              Se connecter
+            </button>
+            <button
+              type="button"
+              [routerLink]="'/auth/signup'"
+              (click)="toggleMenu()"
+              class="mobile-auth-btn mobile-auth-btn--primary">
+              <i class="fas fa-user-plus"></i>
+              S'inscrire
+            </button>
+          </div>
+
+          <!-- Profil utilisateur mobile -->
+          <div class="mobile-user-profile" *ngIf="(isLogin$ | async)">
+            <landing-header-profil-data></landing-header-profil-data>
+          </div>
+        </div>
+      </div>
+
+      <!-- Overlay pour fermer le menu -->
+      <div class="mobile-menu-overlay" [class.active]="isMenuOpen" (click)="toggleMenu()"></div>
     </div>
-    
+
   </nav>
   
   

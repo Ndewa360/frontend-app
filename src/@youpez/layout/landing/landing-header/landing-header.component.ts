@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
@@ -24,12 +24,21 @@ export class LandingHeaderComponent implements OnInit {
     this.isMenuOpen = !this.isMenuOpen;
   }
 
+  /**
+   * Fermer le menu mobile quand on redimensionne vers desktop
+   */
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    if (event.target.innerWidth >= 768 && this.isMenuOpen) {
+      this.isMenuOpen = false;
+    }
+  }
+
   navigateToSearchPage()
   {
-    // 
     this.router.navigate(
       ['/search/index'],
-      { queryParams: { minPrice: 0,maxPrix:100000,  ville:"Bangangté"} }
+      { queryParams: { ville:"Bangangté"} }
     );
   }
 }

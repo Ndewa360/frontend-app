@@ -65,7 +65,7 @@ export class CityService
 
                 if (cameroon) {
                     // Si on trouve le Cameroun, récupérer ses villes
-                    return this.getCitiesByCountry(cameroon._id);
+                    return of({data: cameroon.cities, statusCode: 200, message: 'No cities found'} as ApiResultFormat<CityModel[]>);
                 } else {
                     // Si pas de Cameroun trouvé, retourner une liste vide
                     return of({ data: [], statusCode: 200, message: 'No cities found' } as ApiResultFormat<CityModel[]>);

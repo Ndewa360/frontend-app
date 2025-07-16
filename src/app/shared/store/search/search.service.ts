@@ -122,14 +122,6 @@ export class SearchService
     }
 
     /**
-     * Obtenir les suggestions de recherche populaires
-     */
-    getPopularSearches(): Observable<ApiResultFormat<any[]>>
-    {
-        return this._httpClient.get<ApiResultFormat<any[]>>(`${environment.apiUrl}/search/popular`);
-    }
-
-    /**
      * Obtenir les statistiques de recherche pour les filtres
      */
     getSearchStats(city?: string): Observable<ApiResultFormat<any>>
@@ -141,6 +133,54 @@ export class SearchService
 
         return this._httpClient.get<ApiResultFormat<any>>(
             `${environment.apiUrl}/search/stats`,
+            { params }
+        );
+    }
+
+    /**
+     * Obtenir les recherches populaires
+     */
+    getPopularSearches(limit?: number): Observable<ApiResultFormat<any>>
+    {
+        let params = new HttpParams();
+        if (limit) {
+            params = params.set('limit', limit.toString());
+        }
+
+        return this._httpClient.get<ApiResultFormat<any>>(
+            `${environment.apiUrl}/search-stats/popular`,
+            { params }
+        );
+    }
+
+    /**
+     * Obtenir les recherches populaires par ville
+     */
+    getPopularSearchesByCity(cityId: string, limit?: number): Observable<ApiResultFormat<any>>
+    {
+        let params = new HttpParams().set('cityId', cityId);
+        if (limit) {
+            params = params.set('limit', limit.toString());
+        }
+
+        return this._httpClient.get<ApiResultFormat<any>>(
+            `${environment.apiUrl}/search-stats/popular-by-city`,
+            { params }
+        );
+    }
+
+    /**
+     * Obtenir les villes les plus recherchées
+     */
+    getTopSearchedCities(limit?: number): Observable<ApiResultFormat<any>>
+    {
+        let params = new HttpParams();
+        if (limit) {
+            params = params.set('limit', limit.toString());
+        }
+
+        return this._httpClient.get<ApiResultFormat<any>>(
+            `${environment.apiUrl}/search-stats/top-cities`,
             { params }
         );
     }

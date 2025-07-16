@@ -2,9 +2,13 @@ import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NgxsModule } from '@ngxs/store';
 
 // Routing
 import { MobileSearchRoutingModule } from './mobile-search-routing.module';
+
+// Store
+import { SearchState, CityState } from '../../../shared/store';
 
 // Components
 import { MobileSearchPageComponent } from './pages/mobile-search-page/mobile-search-page.component';
@@ -15,6 +19,9 @@ import { MobileMapViewComponent } from './components/mobile-map-view/mobile-map-
 
 // Shared Mobile Components
 import { MobileModule } from '../../mobile.module';
+
+// Services
+import { MobileSearchStatsService } from '../../shared/services/mobile-search-stats.service';
 
 @NgModule({
   declarations: [
@@ -29,8 +36,12 @@ import { MobileModule } from '../../mobile.module';
     IonicModule,
     FormsModule,
     ReactiveFormsModule,
+    NgxsModule.forFeature([SearchState, CityState]),
     MobileSearchRoutingModule,
     MobileModule
+  ],
+  providers: [
+    MobileSearchStatsService
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

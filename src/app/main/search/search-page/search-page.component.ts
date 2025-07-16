@@ -4,7 +4,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
-import { takeUntil, map, filter, take } from 'rxjs/operators';
+import { takeUntil, map, filter, take, switchMap } from 'rxjs/operators';
 
 
 // Services et modèles
@@ -13,6 +13,8 @@ import { CityModel, CityState, CityAction, SearchPropertyModel, SearchState, Cou
 
 import { GeolocationService, LocationInfo } from 'src/app/shared/services/geolocation/geolocation.service';
 import { TranslationService } from 'src/app/shared/services/localization/translation.service';
+import { CityResolverService } from 'src/app/shared/services/city-resolver.service';
+import { SmartFiltersService } from 'src/app/shared/services/smart-filters.service';
 import { UnitDetailDialogComponent } from '../components/unit-detail-dialog/unit-detail-dialog.component';
 
 // Interfaces locales
@@ -117,13 +119,16 @@ export class SearchPageComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     private geolocationService: GeolocationService,
     private translationService: TranslationService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private cityResolver: CityResolverService,
+    private smartFiltersService: SmartFiltersService
   ) {
     this.initializeForm();
     this.initializeQuickFilters();
   }
 
   ngOnInit(): void {
+    this.initializeSmartFilters();
     this.setupSearchSubscriptions();
     this.setupUrlSubscriptions(); // Écouter les changements d'URL
     this.loadInitialData();
@@ -207,11 +212,28 @@ export class SearchPageComponent implements OnInit, OnDestroy {
       .subscribe(formValues => {
         console.log('🔄 Application automatique des filtres:', formValues);
 
-        // Mettre à jour les filtres actuels
+        // La valeur city du formulaire est déjà un ID (pas un nom)
+        // car le dropdown utilise [value]="city._id"
         this.currentFilters = {
           ...this.currentFilters,
           ...formValues
         };
+
+        // Mettre à jour les filtres intelligents avec synchronisation forcée
+        Object.keys(formValues).forEach(key => {
+          this.smartFiltersService.updateFilter(key, formValues[key]);
+          if (formValues[key] !== null && formValues[key] !== undefined && formValues[key] !== '') {
+            this.smartFiltersService.markFieldAsModified(key);
+          }
+        });
+
+        console.log('🔄 Filtres après mise à jour:', {
+          currentFilters: this.currentFilters,
+          smartFilters: this.smartFiltersService.getActiveFilters()
+        });
+
+        // Marquer qu'une recherche va être effectuée
+        this.hasSearched = true;
 
         // Réinitialiser la pagination
         this.currentPage = 1;
@@ -258,10 +280,55 @@ export class SearchPageComponent implements OnInit, OnDestroy {
    * Charge les filtres depuis les paramètres URL
    */
   private loadFiltersFromUrl(params: any): void {
-    // Mettre à jour les filtres depuis l'URL
-    this.currentFilters = {
-      ...this.currentFilters,
-      city: params['ville'] || params['city'] || '',
+    const cityParam = params['ville'] || params['city'] || '';
+
+    console.log('🔗 Chargement des filtres depuis URL:', params);
+    console.log('🏙️ Paramètre ville:', cityParam);
+
+    // Gérer le paramètre ville (peut être un nom ou un ID)
+    if (cityParam) {
+      // Attendre que les villes soient chargées avant de traiter
+      this.cities$.pipe(
+        filter(cities => cities && cities.length > 0),
+        take(1)
+      ).subscribe(cities => {
+        let finalCityId = cityParam;
+
+        // Vérifier si c'est déjà un ID valide
+        const isValidId = this.cityResolver.isObjectId(cityParam);
+        const cityExists = cities.find(city => city._id === cityParam);
+
+        if (isValidId && cityExists) {
+          // C'est déjà un ID valide
+          console.log('🏙️ Paramètre URL est déjà un ID valide:', cityParam);
+          finalCityId = cityParam;
+          this.processCityFilters(finalCityId, params);
+        } else {
+          // C'est un nom, il faut le convertir en ID
+          console.log('🏙️ Conversion nom -> ID pour:', cityParam);
+          this.cityResolver.getCityIdByName(cityParam).subscribe(cityId => {
+            if (cityId) {
+              console.log('✅ Ville convertie:', cityParam, '->', cityId);
+              this.processCityFilters(cityId, params);
+            } else {
+              console.warn('🏙️ Ville non trouvée dans l\'URL:', cityParam);
+              this.processCityFilters(cityParam, params);
+            }
+          });
+        }
+      });
+    } else {
+      // Pas de ville dans l'URL, utiliser les autres paramètres
+      this.processCityFilters('', params);
+    }
+  }
+
+  /**
+   * Traiter les filtres avec l'ID de ville
+   */
+  private processCityFilters(cityId: string, params: any): void {
+    const urlFilters = {
+      city: cityId,
       district: params['district'] || '',
       roomType: params['roomType'] || '',
       priceMin: params['priceMin'] ? parseInt(params['priceMin']) : 0,
@@ -269,12 +336,18 @@ export class SearchPageComponent implements OnInit, OnDestroy {
       minArea: params['minArea'] ? parseInt(params['minArea']) : 0,
       hasKitchen: params['hasKitchen'] === 'true',
       isInternalKitchen: params['isInternalKitchen'] === 'true',
-      isInternalShower: params['isInternalShower'] === 'true',
+      hasPrivateShower: params['hasPrivateShower'] === 'true',
       hasParking: params['hasParking'] === 'true',
-      hasClosure: params['hasClosure'] === 'true',
+      furnished: params['furnished'] === 'true',
       sortBy: params['sortBy'] || 'createdAt',
       sortOrder: params['sortOrder'] || 'desc'
     };
+
+    // Charger les filtres dans le service intelligent
+    this.smartFiltersService.loadFiltersFromUrl(urlFilters);
+
+    // Mettre à jour les filtres actuels pour compatibilité
+    this.currentFilters = { ...this.currentFilters, ...urlFilters };
 
     // Mettre à jour la pagination
     this.currentPage = params['page'] ? parseInt(params['page']) : 1;
@@ -284,6 +357,41 @@ export class SearchPageComponent implements OnInit, OnDestroy {
 
     // Effectuer la recherche
     this.performSearch();
+  }
+
+  /**
+   * Initialiser les filtres intelligents
+   */
+  private initializeSmartFilters(): void {
+    const defaultFilters = {
+      city: '',
+      district: '',
+      roomType: '',
+      priceMin: 0,
+      priceMax: 500000,
+      minArea: 0,
+      hasKitchen: false,
+      isInternalKitchen: false,
+      hasPrivateShower: false,
+      hasParking: false,
+      furnished: false,
+      sortBy: 'createdAt',
+      sortOrder: 'desc'
+    };
+
+    this.smartFiltersService.initializeFilters(defaultFilters);
+
+    // Écouter les changements du formulaire
+    this.searchForm.valueChanges
+      .pipe(
+        takeUntil(this.destroy$),
+        debounceTime(300)
+      )
+      .subscribe(formValue => {
+        Object.keys(formValue).forEach(key => {
+          this.smartFiltersService.updateFilter(key, formValue[key]);
+        });
+      });
   }
 
   private initializeQuickFilters(): void {
@@ -371,17 +479,41 @@ export class SearchPageComponent implements OnInit, OnDestroy {
     // Puis charger spécifiquement les villes
     this.store.dispatch(new CityAction.LoadAllCities());
 
-    // Debug: écouter les changements de villes
+    // Debug: écouter les changements de villes avec retry automatique
     this.cities$
       .pipe(takeUntil(this.destroy$))
       .subscribe(cities => {
         console.log('🏙️ Villes chargées:', cities?.length || 0, cities);
+
         if (!cities || cities.length === 0) {
           console.warn('⚠️ Aucune ville chargée, tentative de rechargement...');
-          // Retry après 2 secondes
-          setTimeout(() => {
-            this.store.dispatch(new CountryAction.FetchCountries());
+
+          // Retry après 2 secondes avec un maximum de 3 tentatives
+          let retryCount = 0;
+          const maxRetries = 3;
+
+          const retryInterval = setInterval(() => {
+            if (retryCount < maxRetries) {
+              console.log(`🔄 Tentative ${retryCount + 1}/${maxRetries} de rechargement des villes`);
+              this.store.dispatch(new CountryAction.FetchCountries());
+              this.store.dispatch(new CityAction.LoadAllCities());
+              retryCount++;
+            } else {
+              console.error('❌ Impossible de charger les villes après', maxRetries, 'tentatives');
+              clearInterval(retryInterval);
+            }
           }, 2000);
+
+          // Nettoyer l'interval si les villes sont finalement chargées
+          this.cities$.pipe(
+            filter(cities => cities && cities.length > 0),
+            take(1)
+          ).subscribe(() => {
+            console.log('✅ Villes chargées avec succès après retry');
+            clearInterval(retryInterval);
+          });
+        } else {
+          console.log('✅ Villes disponibles dans le dropdown:', cities.map(c => c.fullName));
         }
       });
   }
@@ -466,6 +598,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
         takeUntil(this.destroy$)
       )
       .subscribe(filteredCities => {
+        console.log("citys",filteredCities)
         this.suggestions = [
           ...filteredCities.map(city => ({
             type: 'city' as const,
@@ -479,22 +612,100 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   }
 
   private loadPopularSearches(): void {
-    // Données mockées - à remplacer par un appel API
+    this.searchService.getPopularSearches(3).subscribe({
+      next: (response) => {
+        if (response.statusCode === 200 && response.data) {
+          this.popularSearches = response.data.map((search: any) => ({
+            label: this.buildSearchLabel(search),
+            filters: this.buildSearchFilters(search),
+            count: search.searchCount
+          }));
+          console.log('✅ Recherches populaires chargées:', this.popularSearches);
+        } else {
+          console.warn('⚠️ Aucune recherche populaire trouvée, utilisation des données par défaut');
+          this.loadDefaultPopularSearches();
+        }
+      },
+      error: (error) => {
+        console.error('❌ Erreur lors du chargement des recherches populaires:', error);
+        this.loadDefaultPopularSearches();
+      }
+    });
+  }
+
+  /**
+   * Construire le label d'une recherche populaire
+   */
+  private buildSearchLabel(search: any): string {
+    let label = '';
+
+    if (search.roomType) {
+      const roomTypeLabel = search.roomType === 'STUDIO' ? 'Studios' :
+                           search.roomType === 'ROOM' ? 'Chambres' : 'Logements';
+      label += roomTypeLabel;
+    } else {
+      label += 'Logements';
+    }
+
+    if (search.cityName) {
+      label += ` à ${search.cityName}`;
+    }
+
+    if (search.features && search.features.length > 0) {
+      label += ` (${search.features.join(', ')})`;
+    }
+
+    return label;
+  }
+
+  /**
+   * Construire les filtres d'une recherche populaire
+   */
+  private buildSearchFilters(search: any): any {
+    const filters: any = {};
+
+    if (search.cityId) filters.city = search.cityId;
+    if (search.roomType) filters.roomType = search.roomType;
+    if (search.priceMin) filters.priceMin = search.priceMin;
+    if (search.priceMax) filters.priceMax = search.priceMax;
+    if (search.hasKitchen) filters.hasKitchen = search.hasKitchen;
+    if (search.hasParking) filters.hasParking = search.hasParking;
+    if (search.hasPrivateShower) filters.hasPrivateShower = search.hasPrivateShower;
+    // Note: furnished n'est pas encore dans AdvancedSearchFilters
+    // if (search.furnished) filters.furnished = search.furnished;
+
+    return filters;
+  }
+
+  /**
+   * Charge les recherches populaires par défaut en cas d'erreur
+   */
+  private loadDefaultPopularSearches(): void {
     this.popularSearches = [
       {
         label: 'Studios à Douala',
-        filters: { city: 'douala', roomType: 'STUDIO' },
+        filters: { roomType: 'STUDIO' },
         count: 45
       },
       {
-        label: 'Appartements meublés',
-        filters: { roomType: 'FURNISHED_APARTMENT' },
+        label: 'Chambres à Bangangté',
+        filters: { roomType: 'ROOM' },
+        count: 38
+      },
+      {
+        label: 'Logements avec cuisine',
+        filters: { hasKitchen: true },
         count: 32
       },
       {
-        label: 'Chambres avec cuisine',
-        filters: { hasKitchen: true },
+        label: 'Logements avec parking',
+        filters: { hasParking: true },
         count: 28
+      },
+      {
+        label: 'Studios meublés',
+        filters: { roomType: 'STUDIO', hasKitchen: true },
+        count: 24
       }
     ];
   }
@@ -540,8 +751,41 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   }
 
   onPopularSearchClick(popularSearch: PopularSearch): void {
-    this.searchForm.patchValue(popularSearch.filters);
+    console.log('🔥 Clic sur recherche populaire:', popularSearch);
+
+    // Mettre à jour les filtres actuels
+    this.currentFilters = {
+      ...this.currentFilters,
+      ...popularSearch.filters
+    };
+
+    // Mettre à jour le formulaire
+    this.searchForm.patchValue(popularSearch.filters, { emitEvent: false });
+
+    // Mettre à jour les filtres intelligents
+    Object.keys(popularSearch.filters).forEach(key => {
+      this.smartFiltersService.updateFilter(key, popularSearch.filters[key]);
+      if (popularSearch.filters[key] !== null && popularSearch.filters[key] !== undefined && popularSearch.filters[key] !== '') {
+        this.smartFiltersService.markFieldAsModified(key);
+      }
+    });
+
+    // Marquer qu'une recherche va être effectuée
+    this.hasSearched = true;
+
+    // Réinitialiser la pagination
+    this.currentPage = 1;
+
+    console.log('🔥 Filtres appliqués:', {
+      currentFilters: this.currentFilters,
+      smartFilters: this.smartFiltersService.getActiveFilters()
+    });
+
+    // Effectuer la recherche
     this.performSearch();
+
+    // Mettre à jour l'URL
+    this.updateUrl();
   }
 
 
@@ -575,28 +819,42 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   }
 
   private performSearch(): void {
-    if (!this.currentFilters.city && !this.searchControl.value) {
-      return;
-    }
-
     // Protection contre les recherches en boucle
     if (this.isPerformingSearch) {
       console.log('🔄 Recherche déjà en cours, ignorée');
       return;
     }
 
+    // Utiliser les filtres intelligents pour obtenir seulement les filtres actifs
+    const activeFilters = this.smartFiltersService.getActiveFilters();
+
+    // Fallback sur currentFilters si les filtres intelligents sont vides
+    const filtersToUse = Object.keys(activeFilters).length > 0 ? activeFilters : this.currentFilters;
+
     console.log('🔍 Début de performSearch:', {
+      activeFilters: activeFilters,
       currentFilters: this.currentFilters,
+      filtersToUse: filtersToUse,
       searchControlValue: this.searchControl.value,
       isLoading: this.isLoading,
       hasSearched: this.hasSearched
     });
 
+    // Si aucun filtre et pas de recherche textuelle, ne pas effectuer de recherche
+    if (Object.keys(filtersToUse).length === 0 && !this.searchControl.value) {
+      console.log('🚫 Aucun filtre actif et pas de recherche textuelle');
+      return;
+    }
+
     this.isPerformingSearch = true;
     this.isLoading = true;
     this.hasSearched = true; // Marquer qu'une recherche a été effectuée
+
+    console.log('🔍 Recherche démarrée - hasSearched:', this.hasSearched);
+
+    // Utiliser les filtres déterminés
     const filters: AdvancedSearchFilters = {
-      ...this.currentFilters,
+      ...filtersToUse,
       page: this.currentPage,
       limit: this.ITEMS_PER_PAGE
     };
@@ -618,14 +876,16 @@ export class SearchPageComponent implements OnInit, OnDestroy {
 
             console.log('✅ Recherche terminée avec succès:', {
               resultCount: this.searchResults.length,
-              totalResults: this.totalResults
+              totalResults: this.totalResults,
+              hasSearched: this.hasSearched,
+              filters: filters
             });
 
-            // Si aucun résultat et que ce n'est pas déjà Bangangté, essayer Bangangté
-            if (this.searchResults.length === 0 && filters.city !== 'Bangangté') {
-              console.log(`Aucun résultat trouvé pour ${filters.city}, recherche à Bangangté...`);
-              this.fallbackToBangangte();
-              return;
+            // Si aucun résultat, afficher l'état vide au lieu de faire un fallback automatique
+            if (this.searchResults.length === 0) {
+              console.log('📭 Aucun résultat trouvé - affichage de l\'état vide');
+              // Ne pas faire de fallback automatique, laisser l'utilisateur voir l'état vide
+              // this.fallbackToBangangte();
             }
           }
           this.isLoading = false;
@@ -770,31 +1030,31 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   private searchByUserLocation(): void {
     if (!this.userLocation) return;
 
-    // Trouver l'ID de la ville dans la liste des villes
-    this.cities$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(cities => {
-        const detectedCity = cities.find(city =>
-          city.fullName.toLowerCase().includes(this.userLocation!.city.toLowerCase())
-        );
+    console.log('📍 Recherche par géolocalisation:', this.userLocation.city);
 
-        // Utiliser l'ObjectId de la ville si trouvé, sinon le nom
-        const cityId = detectedCity ? detectedCity._id : this.userLocation!.city;
+    // Utiliser le service de résolution pour convertir le nom en ID
+    this.cityResolver.getCityIdByName(this.userLocation.city).subscribe(cityId => {
+      const finalCityId = cityId || this.userLocation!.city;
+      console.log('🏙️ Ville géolocalisée convertie:', this.userLocation!.city, '->', finalCityId);
 
-        this.currentFilters = {
-          city: cityId,
-          page: 1,
-          limit: this.ITEMS_PER_PAGE
-        };
+      this.currentFilters = {
+        city: finalCityId,
+        page: 1,
+        limit: this.ITEMS_PER_PAGE
+      };
 
-        this.currentPage = 1;
-        this.performSearch();
+      // Mettre à jour les filtres intelligents
+      this.smartFiltersService.updateFilter('city', finalCityId);
+      this.smartFiltersService.markFieldAsModified('city');
 
-        // Mettre à jour l'URL seulement si la localisation a été détectée automatiquement
-        if (this.locationDetected && !this.isFromUrl) {
-          this.updateUrl();
-        }
-      });
+      this.currentPage = 1;
+      this.performSearch();
+
+      // Mettre à jour l'URL seulement si la localisation a été détectée automatiquement
+      if (this.locationDetected && !this.isFromUrl) {
+        this.updateUrl();
+      }
+    });
   }
 
   /**
@@ -804,58 +1064,57 @@ export class SearchPageComponent implements OnInit, OnDestroy {
     const defaultLocation = this.geolocationService.getDefaultLocation();
     this.userLocation = defaultLocation;
 
-    // Trouver l'ID de Bangangté dans la liste des villes
-    this.cities$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(cities => {
-        const bangangteCity = cities.find(city =>
-          city.fullName.toLowerCase().includes('bangangté') ||
-          city.fullName.toLowerCase().includes('bangangte')
-        );
+    console.log('🔄 Fallback vers Bangangté');
 
-        // Utiliser l'ObjectId de la ville si trouvé, sinon le nom
-        const cityId = bangangteCity ? bangangteCity._id : defaultLocation.city;
+    // Utiliser le service de résolution pour obtenir l'ID de Bangangté
+    this.cityResolver.getDefaultCityId().subscribe(cityId => {
+      const finalCityId = cityId || defaultLocation.city;
+      console.log('🏙️ Ville par défaut (Bangangté):', finalCityId);
 
-        this.currentFilters = {
-          ...this.currentFilters,
-          city: cityId,
-          page: 1
-        };
+      this.currentFilters = {
+        ...this.currentFilters,
+        city: finalCityId,
+        page: 1
+      };
 
-        this.currentPage = 1;
+      // Mettre à jour les filtres intelligents
+      this.smartFiltersService.updateFilter('city', finalCityId);
+      this.smartFiltersService.markFieldAsModified('city');
 
-        console.log('Recherche de fallback à Bangangté avec ID:', cityId);
+      this.currentPage = 1;
 
-        const filters: AdvancedSearchFilters = {
-          ...this.currentFilters,
-          page: this.currentPage,
-          limit: this.ITEMS_PER_PAGE
-        };
+      console.log('Recherche de fallback à Bangangté avec ID:', finalCityId);
 
-        this.searchService.advancedSearch(filters)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          if (response.statusCode === 200) {
-            // Vérification de la structure des données
-            const data = response.data?.data || response.data || [];
+      const filters: AdvancedSearchFilters = {
+        ...this.currentFilters,
+        page: this.currentPage,
+        limit: this.ITEMS_PER_PAGE
+      };
 
-            this.searchResults = Array.isArray(data) ? data : [];
-            this.totalResults = this.searchResults.length;
-            this.updatePagination();
+      this.searchService.advancedSearch(filters)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (response.statusCode === 200) {
+              // Vérification de la structure des données
+              const data = response.data?.data || response.data || [];
 
-            // Réinitialiser les index d'images pour les nouvelles cartes
-            this.currentImageIndexes = {};
+              this.searchResults = Array.isArray(data) ? data : [];
+              this.totalResults = this.searchResults.length;
+              this.updatePagination();
+
+              // Réinitialiser les index d'images pour les nouvelles cartes
+              this.currentImageIndexes = {};
+            }
+            this.isLoading = false;
+          },
+          error: (error) => {
+            console.error('Erreur lors du fallback vers Bangangté:', error);
+            this.searchResults = [];
+            this.isLoading = false;
           }
-          this.isLoading = false;
-        },
-        error: (error) => {
-          console.error('Erreur lors du fallback vers Bangangté:', error);
-          this.searchResults = [];
-          this.isLoading = false;
-        }
-      });
-      });
+        });
+    });
   }
 
   /**
@@ -943,7 +1202,12 @@ export class SearchPageComponent implements OnInit, OnDestroy {
    * Réinitialise tous les filtres
    */
   resetFilters(): void {
-    this.searchForm.reset();
+    this.smartFiltersService.resetFilters();
+
+    // Mettre à jour le formulaire avec les valeurs par défaut
+    const defaultValues = this.smartFiltersService.getAllFilters();
+    this.searchForm.patchValue(defaultValues, { emitEvent: false });
+
     this.currentFilters = {};
     this.performSearch();
   }
@@ -954,7 +1218,16 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   toggleQuickFilter(filter: any): void {
     filter.active = !filter.active;
 
-    // Appliquer le filtre selon son type
+    // Mettre à jour le filtre intelligent
+    this.smartFiltersService.updateFilter(filter.key, filter.active);
+
+    // Marquer le champ comme modifié
+    this.smartFiltersService.markFieldAsModified(filter.key);
+
+    // Mettre à jour le formulaire
+    this.searchForm.patchValue({ [filter.key]: filter.active }, { emitEvent: false });
+
+    // Appliquer le filtre selon son type (pour compatibilité)
     switch (filter.key) {
       case 'hasKitchen':
         this.currentFilters.hasKitchen = filter.active;
@@ -964,6 +1237,10 @@ export class SearchPageComponent implements OnInit, OnDestroy {
         break;
       case 'hasPrivateShower':
         this.currentFilters.hasPrivateShower = filter.active;
+        break;
+      case 'furnished':
+        // Note: furnished n'est pas encore dans l'interface AdvancedSearchFilters
+        // this.currentFilters.furnished = filter.active;
         break;
       default:
         break;
@@ -1027,14 +1304,28 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   shouldShowEmptyState(): boolean {
     const hasResults = this.searchResults && this.searchResults.length > 0;
     const isCurrentlyLoading = this.isLoading || this.isLoadingMore || this.isPerformingSearch;
-    const hasSearchCriteria = !!(this.currentFilters?.city || this.searchControl?.value);
+
+    // Critères de recherche plus larges
+    const hasSearchCriteria = !!(
+      this.currentFilters?.city ||
+      this.searchControl?.value ||
+      Object.keys(this.currentFilters || {}).some(key =>
+        key !== 'page' && key !== 'limit' && this.currentFilters[key]
+      )
+    );
 
     // PROTECTION ABSOLUE: Si on a des résultats, ne jamais afficher l'état vide
     if (hasResults) {
       return false;
     }
 
-    const shouldShow = !isCurrentlyLoading && this.hasSearched && !hasResults && hasSearchCriteria;
+    // Afficher l'état vide si :
+    // 1. Pas de chargement en cours
+    // 2. Une recherche a été effectuée OU il y a des critères de recherche
+    // 3. Pas de résultats
+    const shouldShow = !isCurrentlyLoading &&
+                      (this.hasSearched || hasSearchCriteria) &&
+                      !hasResults;
 
     // Logs détaillés pour debugging
     console.log('🔍 Empty state check - DETAILED:', {
@@ -1061,6 +1352,60 @@ export class SearchPageComponent implements OnInit, OnDestroy {
     return shouldShow;
   }
 
+  // === MÉTHODES UTILITAIRES ===
+
+  /**
+   * TrackBy function pour les villes
+   */
+  trackByCity(_index: number, city: CityModel): string {
+    return city._id;
+  }
+
+  /**
+   * Recharger manuellement les villes
+   */
+  reloadCities(): void {
+    console.log('🔄 Rechargement manuel des villes...');
+    this.store.dispatch(new CountryAction.FetchCountries());
+    this.store.dispatch(new CityAction.LoadAllCities());
+  }
+
+  /**
+   * Debug: Afficher les informations du slider pour une carte
+   */
+  debugSlider(cardIndex: number): void {
+    const result = this.searchResults[cardIndex];
+    const medias = this.getMediasForCard(result);
+    const currentIndex = this.getCurrentImageIndex(cardIndex);
+
+    console.log(`🔍 Debug Slider Carte ${cardIndex}:`, {
+      result: result,
+      medias: medias,
+      mediasCount: medias.length,
+      currentIndex: currentIndex,
+      currentImageIndexes: this.currentImageIndexes
+    });
+  }
+
+  /**
+   * Debug: Tester la conversion de ville
+   */
+  debugCityConversion(): void {
+    this.cities$.pipe(take(1)).subscribe(cities => {
+      console.log('🏙️ Debug Conversion de Ville:');
+      console.log('Villes disponibles:', cities?.map(c => ({ id: c._id, name: c.fullName })));
+
+      if (cities && cities.length > 0) {
+        const testCity = cities[0];
+        console.log(`Test conversion: "${testCity.fullName}" -> ID`);
+
+        this.cityResolver.getCityIdByName(testCity.fullName).subscribe(id => {
+          console.log(`Résultat: "${testCity.fullName}" -> "${id}"`);
+        });
+      }
+    });
+  }
+
   // === MÉTHODES POUR LE SLIDER D'IMAGES ===
 
   /**
@@ -1074,8 +1419,23 @@ export class SearchPageComponent implements OnInit, OnDestroy {
    * Définit l'image actuelle pour une carte donnée
    */
   setCurrentImage(cardIndex: number, imageIndex: number): void {
-    console.log(`🖼️ Slider: Définir image ${imageIndex} pour carte ${cardIndex}`);
+    const result = this.searchResults[cardIndex];
+    if (!result) {
+      console.warn(`🖼️ Slider: Résultat non trouvé pour carte ${cardIndex}`);
+      return;
+    }
+
+    const medias = this.getMediasForCard(result);
+    if (imageIndex < 0 || imageIndex >= medias.length) {
+      console.warn(`🖼️ Slider: Index ${imageIndex} invalide pour carte ${cardIndex} (max: ${medias.length - 1})`);
+      return;
+    }
+
+    console.log(`🖼️ Slider: Définir image ${imageIndex} pour carte ${cardIndex} (${medias.length} images)`);
     this.currentImageIndexes[cardIndex] = imageIndex;
+
+    // Déclencher la détection de changement pour les animations
+    this.cdr.detectChanges();
   }
 
   /**
@@ -1083,14 +1443,20 @@ export class SearchPageComponent implements OnInit, OnDestroy {
    */
   nextImage(cardIndex: number): void {
     const result = this.searchResults[cardIndex];
-    if (!result || !result.medias || result.medias.length <= 1) {
-      console.log(`🖼️ Slider: Pas d'image suivante pour carte ${cardIndex}`);
+    if (!result) {
+      console.log(`🖼️ Slider: Résultat non trouvé pour carte ${cardIndex}`);
+      return;
+    }
+
+    const medias = this.getMediasForCard(result);
+    if (medias.length <= 1) {
+      console.log(`🖼️ Slider: Pas d'image suivante pour carte ${cardIndex} (${medias.length} image(s))`);
       return;
     }
 
     const currentIndex = this.getCurrentImageIndex(cardIndex);
-    const nextIndex = (currentIndex + 1) % result.medias.length;
-    console.log(`🖼️ Slider: Image suivante carte ${cardIndex}: ${currentIndex} → ${nextIndex}`);
+    const nextIndex = (currentIndex + 1) % medias.length;
+    console.log(`🖼️ Slider: Image suivante carte ${cardIndex}: ${currentIndex} → ${nextIndex} (total: ${medias.length})`);
     this.setCurrentImage(cardIndex, nextIndex);
   }
 
@@ -1099,14 +1465,20 @@ export class SearchPageComponent implements OnInit, OnDestroy {
    */
   previousImage(cardIndex: number): void {
     const result = this.searchResults[cardIndex];
-    if (!result || !result.medias || result.medias.length <= 1) {
-      console.log(`🖼️ Slider: Pas d'image précédente pour carte ${cardIndex}`);
+    if (!result) {
+      console.log(`🖼️ Slider: Résultat non trouvé pour carte ${cardIndex}`);
+      return;
+    }
+
+    const medias = this.getMediasForCard(result);
+    if (medias.length <= 1) {
+      console.log(`🖼️ Slider: Pas d'image précédente pour carte ${cardIndex} (${medias.length} image(s))`);
       return;
     }
 
     const currentIndex = this.getCurrentImageIndex(cardIndex);
-    const prevIndex = currentIndex === 0 ? result.medias.length - 1 : currentIndex - 1;
-    console.log(`🖼️ Slider: Image précédente carte ${cardIndex}: ${currentIndex} → ${prevIndex}`);
+    const prevIndex = currentIndex === 0 ? medias.length - 1 : currentIndex - 1;
+    console.log(`🖼️ Slider: Image précédente carte ${cardIndex}: ${currentIndex} → ${prevIndex} (total: ${medias.length})`);
     this.setCurrentImage(cardIndex, prevIndex);
   }
 
@@ -1114,10 +1486,33 @@ export class SearchPageComponent implements OnInit, OnDestroy {
    * Obtient la liste des médias pour une carte avec fallback
    */
   getMediasForCard(result: any): string[] {
-    if (result.medias && result.medias.length > 0) {
-      return result.medias;
+    const medias: string[] = [];
+
+    // Images de l'unité
+    if (result.medias && Array.isArray(result.medias) && result.medias.length > 0) {
+      medias.push(...result.medias);
     }
-    return ['/assets/images/placeholder-room.jpg'];
+
+    // Images de la propriété
+    if (result.property?.medias && Array.isArray(result.property.medias) && result.property.medias.length > 0) {
+      medias.push(...result.property.medias);
+    }
+
+    // Image principale de la propriété
+    if (result.property?.image) {
+      medias.push(result.property.image);
+    }
+
+    // Image principale de l'unité
+    if (result.image) {
+      medias.push(result.image);
+    }
+
+    // Supprimer les doublons et les valeurs nulles/undefined
+    const uniqueMedias = [...new Set(medias.filter(media => media && typeof media === 'string'))];
+
+    // Retourner les médias ou une image par défaut
+    return uniqueMedias.length > 0 ? uniqueMedias : ['/assets/images/placeholder-room.jpg'];
   }
 
   /**
@@ -1231,11 +1626,34 @@ export class SearchPageComponent implements OnInit, OnDestroy {
    * Met à jour l'URL avec les filtres actuels
    */
   private updateUrl(): void {
+    // Convertir l'ID de ville en nom pour l'URL si nécessaire
+    if (this.currentFilters.city) {
+      // Vérifier si c'est déjà un nom ou un ID
+      if (this.cityResolver.isObjectId(this.currentFilters.city)) {
+        // C'est un ID, le convertir en nom
+        this.cityResolver.getCityNameById(this.currentFilters.city).subscribe(cityName => {
+          console.log('🔗 Conversion ID -> nom pour URL:', this.currentFilters.city, '->', cityName);
+          this.buildAndNavigateUrl(cityName || this.currentFilters.city);
+        });
+      } else {
+        // C'est déjà un nom
+        console.log('🔗 Utilisation du nom tel quel pour URL:', this.currentFilters.city);
+        this.buildAndNavigateUrl(this.currentFilters.city);
+      }
+    } else {
+      this.buildAndNavigateUrl(null);
+    }
+  }
+
+  /**
+   * Construire et naviguer vers l'URL avec les paramètres
+   */
+  private buildAndNavigateUrl(cityName: string | null): void {
     const queryParams: any = {};
 
-    // Localisation
-    if (this.currentFilters.city) {
-      queryParams.ville = this.currentFilters.city; // Utiliser 'ville' pour la cohérence
+    // Localisation (utiliser le nom de la ville)
+    if (cityName) {
+      queryParams.ville = cityName; // Utiliser 'ville' pour la cohérence
     }
 
     if (this.currentFilters.district) {
@@ -1275,8 +1693,8 @@ export class SearchPageComponent implements OnInit, OnDestroy {
       queryParams.isInternalKitchen = this.currentFilters.isInternalKitchen;
     }
 
-    if (this.currentFilters.isInternalShower) {
-      queryParams.isInternalShower = this.currentFilters.isInternalShower;
+    if (this.currentFilters.hasPrivateShower) {
+      queryParams.hasPrivateShower = this.currentFilters.hasPrivateShower;
     }
 
     if (this.currentFilters.numberOfBathroom) {
@@ -1296,10 +1714,6 @@ export class SearchPageComponent implements OnInit, OnDestroy {
       queryParams.hasParking = this.currentFilters.hasParking;
     }
 
-    if (this.currentFilters.hasClosure) {
-      queryParams.hasClosure = this.currentFilters.hasClosure;
-    }
-
     // Tri
     if (this.currentFilters.sortBy && this.currentFilters.sortBy !== 'createdAt') {
       queryParams.sortBy = this.currentFilters.sortBy;
@@ -1313,6 +1727,8 @@ export class SearchPageComponent implements OnInit, OnDestroy {
     if (this.currentPage > 1) {
       queryParams.page = this.currentPage;
     }
+
+    console.log('🔗 Mise à jour URL avec paramètres:', queryParams);
 
     // Remplacer tous les paramètres pour éviter les duplications
     this.router.navigate([], {

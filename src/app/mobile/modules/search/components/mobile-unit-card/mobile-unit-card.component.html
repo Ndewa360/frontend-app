@@ -8,35 +8,70 @@
 
   <!-- Section Image -->
   <div class="image-section">
-    <img 
-      [src]="getMainImage()" 
-      [alt]="getRoomType() + ' - ' + getLocation()"
-      class="unit-image"
-      loading="lazy">
-    
+    <!-- Slider d'images -->
+    <div class="image-slider">
+      <div class="slider-container">
+        <div class="slider-track" [style.transform]="'translateX(-' + (currentImageIndex * 100) + '%)'">
+          <div *ngFor="let image of getAllImages()" class="slider-slide">
+            <img
+              [src]="image"
+              [alt]="getRoomType() + ' - ' + getLocation()"
+              class="unit-image"
+              loading="lazy">
+          </div>
+        </div>
+      </div>
+
+      <!-- Contrôles de navigation -->
+      <div *ngIf="getAllImages().length > 1" class="slider-controls">
+        <ion-button
+          (click)="previousImage($event)"
+          fill="clear"
+          class="slider-btn slider-btn-prev">
+          <ion-icon name="chevron-back"></ion-icon>
+        </ion-button>
+        <ion-button
+          (click)="nextImage($event)"
+          fill="clear"
+          class="slider-btn slider-btn-next">
+          <ion-icon name="chevron-forward"></ion-icon>
+        </ion-button>
+      </div>
+
+      <!-- Indicateurs de pagination -->
+      <div *ngIf="getAllImages().length > 1" class="slider-dots">
+        <span
+          *ngFor="let image of getAllImages(); let i = index"
+          (click)="goToImage(i, $event)"
+          class="slider-dot"
+          [class.active]="i === currentImageIndex">
+        </span>
+      </div>
+    </div>
+
     <!-- Overlay avec informations -->
     <div class="image-overlay">
       <!-- Badge de promotion -->
-      <ion-badge 
-        *ngIf="hasPromotion()" 
-        color="warning" 
+      <ion-badge
+        *ngIf="hasPromotion()"
+        color="warning"
         class="promotion-badge">
         {{ getPromotionText() }}
       </ion-badge>
-      
+
       <!-- Compteur d'images -->
-      <div class="image-counter" *ngIf="getImageCount() > 1">
+      <div class="image-counter" *ngIf="getAllImages().length > 1">
         <ion-icon name="images"></ion-icon>
-        <span>{{ getImageCount() }}</span>
+        <span>{{ currentImageIndex + 1 }}/{{ getAllImages().length }}</span>
       </div>
-      
+
       <!-- Bouton favori -->
-      <ion-button 
+      <ion-button
         (click)="onFavoriteClick($event)"
-        fill="clear" 
+        fill="clear"
         class="favorite-button"
         [class.is-favorite]="isFavorite">
-        <ion-icon 
+        <ion-icon
           [name]="isFavorite ? 'heart' : 'heart-outline'"
           [color]="isFavorite ? 'danger' : 'light'">
         </ion-icon>

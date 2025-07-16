@@ -9,6 +9,7 @@ export interface DeviceInfo {
   screenWidth: number;
   screenHeight: number;
   platform: string;
+  isNativeApp: boolean;
 }
 
 @Injectable({
@@ -29,19 +30,34 @@ export class DeviceDetectionService {
     const screenWidth = window.innerWidth;
     const screenHeight = window.innerHeight;
 
+    // Vérifier si on est dans une application native (Cordova/Capacitor)
+    const isNativeApp = !!(window as any).cordova || !!(window as any).Capacitor;
+
     // Détection basée sur l'User Agent
     const isMobileUA = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
     const isTabletUA = /ipad|android(?!.*mobile)|tablet/i.test(userAgent);
-    
+
     // Détection basée sur la taille d'écran
     const isMobileScreen = screenWidth <= 768;
     const isTabletScreen = screenWidth > 768 && screenWidth <= 1024;
     const isDesktopScreen = screenWidth > 1024;
 
-    // Combinaison des deux méthodes pour plus de précision
-    const isMobile = isMobileUA || (isMobileScreen && !isTabletUA);
-    const isTablet = isTabletUA || (isTabletScreen && !isMobileUA);
-    const isDesktop = !isMobile && !isTablet;
+    // LOGIQUE CORRIGÉE: Ne rediriger vers mobile que pour les vraies apps natives
+    let isMobile = false;
+    let isTablet = false;
+    let isDesktop = true; // Par défaut, considérer comme desktop (navigateur web)
+
+    // Seulement si c'est une application native, utiliser la détection mobile
+    if (isNativeApp) {
+      if (isMobileUA || (isMobileScreen && !isTabletUA)) {
+        isMobile = true;
+        isDesktop = false;
+      } else if (isTabletUA || (isTabletScreen && !isMobileUA)) {
+        isTablet = true;
+        isDesktop = false;
+      }
+    }
+    // Sinon, rester sur desktop même si l'écran est petit (responsive web)
 
     // Détection de la plateforme
     let platform = 'web';
@@ -64,10 +80,14 @@ export class DeviceDetectionService {
       userAgent,
       screenWidth,
       screenHeight,
-      platform
+      platform,
+      isNativeApp
     };
 
-    console.log('📱 Détection d\'appareil:', deviceInfo);
+    console.log('📱 Détection d\'appareil:', {
+      ...deviceInfo,
+      decision: isNativeApp ? 'App native détectée' : 'Navigateur web - pas de redirection mobile'
+    });
     return deviceInfo;
   }
 
@@ -193,7 +213,7 @@ export class DeviceDetectionService {
    */
   forceRedirectToWeb(): void {
     console.log('🖥️ Redirection forcée vers web');
-    this.router.navigate(['/search/index']);
+    this.router.navigate(['/home']);
   }
 
   /**

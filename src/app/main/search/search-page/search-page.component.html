@@ -161,17 +161,19 @@
           </div>
 
           <!-- Contrôles du slider -->
-          <div *ngIf="(result.medias?.length || 0) > 1" class="slider-controls">
+          <div *ngIf="getMediasForCard(result).length > 1" class="slider-controls">
             <button (click)="previousImage(i); $event.stopPropagation()" class="slider-btn slider-btn-prev" type="button">
-              <youpez-ibm-icon iconName="chevron_left" iconSize="16"></youpez-ibm-icon>
+              <i class="fas fa-chevron-left"></i>
             </button>
             <button (click)="nextImage(i); $event.stopPropagation()" class="slider-btn slider-btn-next" type="button">
-              <youpez-ibm-icon iconName="chevron_right" iconSize="16"></youpez-ibm-icon>
+              <i class="fas fa-chevron-right"></i>
             </button>
           </div>
 
+
+
           <!-- Indicateurs de pagination -->
-          <div *ngIf="(result.medias?.length || 0) > 1" class="slider-dots">
+          <div *ngIf="getMediasForCard(result).length > 1" class="slider-dots">
             <span *ngFor="let media of getMediasForCard(result); let dotIndex = index"
                   (click)="setCurrentImage(i, dotIndex); $event.stopPropagation()"
                   class="slider-dot"
@@ -414,15 +416,26 @@
         </h4>
         <div class="filter-row">
           <div class="filter-field">
-            <label class="field-label">Ville</label>
+            <label class="field-label">
+              Ville
+              <button
+                *ngIf="!(cities$ | async) || (cities$ | async)?.length === 0"
+                (click)="reloadCities()"
+                class="reload-cities-btn"
+                type="button"
+                title="Recharger les villes">
+                <i class="fas fa-sync-alt"></i>
+              </button>
+
+            </label>
             <select formControlName="city" class="field-select">
               <option value="">Toutes les villes</option>
-              <option *ngFor="let city of cities$ | async" [value]="city._id">
+              <option *ngFor="let city of cities$ | async; trackBy: trackByCity" [value]="city._id">
                 {{ city.fullName }}
               </option>
               <!-- Message si aucune ville n'est chargée -->
-              <option *ngIf="(cities$ | async)?.length === 0" value="" disabled>
-                Chargement des villes...
+              <option *ngIf="!(cities$ | async) || (cities$ | async)?.length === 0" value="" disabled>
+                {{ (cities$ | async) === null ? 'Chargement des villes...' : 'Aucune ville disponible' }}
               </option>
             </select>
           </div>

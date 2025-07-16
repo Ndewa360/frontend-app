@@ -1155,11 +1155,46 @@
       }
 
       .field-label {
-        display: block;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
         font-size: var(--carbon-label-01);
         font-weight: 500;
         color: var(--carbon-text-secondary);
         margin-bottom: var(--carbon-spacing-02);
+
+        .reload-cities-btn {
+          background: none;
+          border: none;
+          color: var(--carbon-text-secondary);
+          cursor: pointer;
+          padding: 0.25rem;
+          border-radius: 0.25rem;
+          transition: all 0.2s ease;
+          font-size: 0.75rem;
+
+          &:hover {
+            color: var(--carbon-text-primary);
+            background: var(--carbon-background-hover);
+          }
+
+          &:active {
+            transform: scale(0.95);
+          }
+
+          i {
+            animation: none;
+          }
+
+          &:hover i {
+            animation: spin 1s linear infinite;
+          }
+        }
+      }
+
+      @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
       }
 
       .field-input,
@@ -1499,7 +1534,8 @@
             display: flex;
             width: 100%;
             height: 100%;
-            transition: transform 0.3s ease;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform;
 
             .slider-slide {
               flex: 0 0 100%;
@@ -1525,10 +1561,11 @@
           display: flex;
           justify-content: space-between;
           padding: 0 0.5rem;
-          opacity: 0 !important; // ← Caché par défaut avec !important
-          visibility: hidden; // ← Double protection
+          opacity: 0;
+          visibility: hidden;
           transition: all 0.3s ease;
-          pointer-events: none; // ← Désactiver les clics quand caché
+          pointer-events: none;
+          z-index: 10;
 
           .slider-btn {
             background: rgba(0, 0, 0, 0.8);
@@ -1557,8 +1594,9 @@
 
             i {
               color: white;
-              font-size: 16px; // ← Icônes Font Awesome
+              font-size: 16px;
               line-height: 1;
+              font-weight: 600;
             }
           }
 
@@ -1577,14 +1615,17 @@
           left: 50%;
           transform: translateX(-50%);
           display: flex;
-          gap: 0.375rem; // ← Plus d'espace entre les dots
-          opacity: 0 !important; // ← Caché par défaut avec !important
-          visibility: hidden; // ← Double protection
+          gap: 0.375rem;
+          opacity: 0;
+          visibility: hidden;
           transition: all 0.3s ease;
-          background: rgba(0, 0, 0, 0.3); // ← Fond semi-transparent
-          padding: 0.25rem 0.5rem;
-          border-radius: 12px;
-          pointer-events: none; // ← Désactiver les clics quand caché
+          background: rgba(0, 0, 0, 0.4);
+          padding: 0.3rem 0.6rem;
+          border-radius: 16px;
+          pointer-events: none;
+          backdrop-filter: blur(8px);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          z-index: 10;
 
           .slider-dot {
             width: 10px; // ← Plus grands

@@ -193,6 +193,7 @@ export class CityState{
 
         return this._citiesService.getAllCities().pipe(
             tap((result: any) => {
+                console.warn("All cities loaded ",result.data)
                 ctx.patchState({
                     cities: result.data || [],
                     loadingCity: false,

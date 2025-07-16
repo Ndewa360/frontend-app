@@ -3,10 +3,10 @@ import { Routes, RouterModule } from '@angular/router';
 import { InitialLoadingDataResolver, PublicDataResolver } from './shared/resolvers';
 import { AuthGuard } from './shared/guard';
 import { MobileDashboardGuard } from './shared/guard/mobile-dashboard.guard';
-import { DeviceRedirectGuard } from './shared/guard/device-redirect.guard';
 import { LayoutComponent } from './layout/default/layout.component';
 import { LoadingAdminDataResolver } from './shared/resolvers/loading-admin-data';
 import { IonicModule } from '@ionic/angular';
+import { DeviceRedirectGuard } from './shared/guard/device-redirect.guard';
 
 const routes: Routes = [
 	{
@@ -77,11 +77,11 @@ const routes: Routes = [
 		path: 'payment',
 		loadChildren: () => import('./public/payment/payment.module').then(m => m.PaymentModule)
 	  },
-	  {
-		path: '',
-		canActivate: [DeviceRedirectGuard],
-		children: []
-	  },
+	//   {
+	// 	path: '',
+	// 	canActivate: [DeviceRedirectGuard],
+	// 	children: []
+	//   },
 	  {
 		path: '**',
 		resolve:{

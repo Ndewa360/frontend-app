@@ -7,9 +7,10 @@ import { takeUntil, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
 
 // Store
-import { SearchState, SearchAction } from '../../../../../shared/store';
+import { SearchState, SearchAction, CityState } from '../../../../../shared/store';
 import { MobileCacheService } from '../../../../shared/services/mobile-cache.service';
 import { MobileNotificationService } from '../../../../shared/services/mobile-notification.service';
+import { MobileSearchStatsService } from '../../../../shared/services/mobile-search-stats.service';
 import { MobileSearchFiltersComponent } from '../../components/mobile-search-filters/mobile-search-filters.component';
 
 @Component({
@@ -48,7 +49,8 @@ export class MobileSearchPageComponent implements OnInit, OnDestroy {
     private router: Router,
     private modalController: ModalController,
     private cacheService: MobileCacheService,
-    private notificationService: MobileNotificationService
+    private notificationService: MobileNotificationService,
+    private mobileSearchStats: MobileSearchStatsService
   ) {}
 
   ngOnInit(): void {
@@ -164,9 +166,38 @@ export class MobileSearchPageComponent implements OnInit, OnDestroy {
       page: 1
     };
 
+    // Dispatcher l'action de recherche
     this.store.dispatch(new SearchAction.FetchSearch(searchParams.city || '', searchParams.page || 1));
     this.currentPage = 1;
     this.hasMoreResults = true;
+
+    // Enregistrer les statistiques de recherche mobile
+    this.recordMobileSearchStats(searchParams);
+  }
+
+  /**
+   * Enregistrer les statistiques de recherche mobile
+   */
+  private recordMobileSearchStats(searchParams: any): void {
+    // Attendre un peu pour obtenir les résultats
+    setTimeout(() => {
+      this.store.select(SearchState.selectStateSearchs).pipe(
+        takeUntil(this.destroy$)
+      ).subscribe(results => {
+        if (results) {
+          const resultsCount = Array.isArray(results) ? results.length : 0;
+
+          // Convertir les paramètres en format API
+          const filters = this.mobileSearchStats.convertMobileFiltersToApi(
+            searchParams,
+            this.currentCity
+          );
+
+          // Enregistrer les statistiques
+          this.mobileSearchStats.recordSearchWithAutoIds(filters, resultsCount);
+        }
+      });
+    }, 1000); // Attendre 1 seconde pour que les résultats soient chargés
   }
 
   /**
@@ -175,6 +206,13 @@ export class MobileSearchPageComponent implements OnInit, OnDestroy {
   private performDefaultSearch(): void {
     this.currentCity = 'Bangangté';
     this.store.dispatch(new SearchAction.FetchSearch('Bangangté', 1));
+
+    // Enregistrer les statistiques pour la recherche par défaut
+    this.recordMobileSearchStats({
+      city: 'Bangangté',
+      query: '',
+      page: 1
+    });
   }
 
   /**
@@ -189,11 +227,27 @@ export class MobileSearchPageComponent implements OnInit, OnDestroy {
         console.log(`📍 Ville détectée: ${city}`);
         this.store.dispatch(new SearchAction.FetchSearch(city, 1));
         this.currentCity = city;
+
+        // Enregistrer les statistiques pour la recherche géolocalisée
+        this.recordMobileSearchStats({
+          city: city,
+          query: '',
+          page: 1,
+          geolocation: true
+        });
       } else {
         // Fallback vers Bangangté si impossible de déterminer la ville
         console.log('📍 Impossible de déterminer la ville, utilisation de Bangangté par défaut');
         this.store.dispatch(new SearchAction.FetchSearch('Bangangté', 1));
         this.currentCity = 'Bangangté';
+
+        // Enregistrer les statistiques pour le fallback
+        this.recordMobileSearchStats({
+          city: 'Bangangté',
+          query: '',
+          page: 1,
+          fallback: true
+        });
       }
     } catch (error) {
       console.error('Erreur lors de la recherche par géolocalisation:', error);

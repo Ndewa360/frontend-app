@@ -13,6 +13,8 @@ export class MobileUnitCardComponent {
   @Output() unitClick = new EventEmitter<any>();
   @Output() favoriteToggle = new EventEmitter<any>();
 
+  currentImageIndex = 0;
+
   /**
    * Gérer le clic sur la carte
    */
@@ -32,17 +34,81 @@ export class MobileUnitCardComponent {
    * Obtenir l'image principale de l'unité
    */
   getMainImage(): string {
+    const images = this.getAllImages();
+    return images[this.currentImageIndex] || images[0] || 'assets/images/placeholder-property.jpg';
+  }
+
+  /**
+   * Obtenir toutes les images de l'unité
+   */
+  getAllImages(): string[] {
+    const images: string[] = [];
+
+    // Images de l'unité
     if (this.unit.images && this.unit.images.length > 0) {
-      return this.unit.images[0];
+      images.push(...this.unit.images);
     }
-    return 'assets/images/placeholder-property.jpg';
+
+    // Images de la propriété
+    if (this.unit.property?.medias && this.unit.property.medias.length > 0) {
+      images.push(...this.unit.property.medias);
+    }
+
+    // Image principale de la propriété
+    if (this.unit.property?.image) {
+      images.push(this.unit.property.image);
+    }
+
+    // Image principale de l'unité
+    if (this.unit.image) {
+      images.push(this.unit.image);
+    }
+
+    // Supprimer les doublons
+    const uniqueImages = [...new Set(images)];
+
+    return uniqueImages.length > 0 ? uniqueImages : ['assets/images/placeholder-property.jpg'];
   }
 
   /**
    * Obtenir le nombre d'images
    */
   getImageCount(): number {
-    return this.unit.images ? this.unit.images.length : 0;
+    return this.getAllImages().length;
+  }
+
+  /**
+   * Navigation vers l'image précédente
+   */
+  previousImage(event: Event): void {
+    event.stopPropagation();
+    const images = this.getAllImages();
+    if (images.length > 1) {
+      this.currentImageIndex = this.currentImageIndex > 0
+        ? this.currentImageIndex - 1
+        : images.length - 1;
+    }
+  }
+
+  /**
+   * Navigation vers l'image suivante
+   */
+  nextImage(event: Event): void {
+    event.stopPropagation();
+    const images = this.getAllImages();
+    if (images.length > 1) {
+      this.currentImageIndex = this.currentImageIndex < images.length - 1
+        ? this.currentImageIndex + 1
+        : 0;
+    }
+  }
+
+  /**
+   * Aller à une image spécifique
+   */
+  goToImage(index: number, event: Event): void {
+    event.stopPropagation();
+    this.currentImageIndex = index;
   }
 
   /**
