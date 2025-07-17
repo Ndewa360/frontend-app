@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { take } from 'rxjs/operators';
 
 export interface CacheItem<T> {
   data: T;
@@ -268,7 +269,92 @@ export class MobileCacheService {
     const k = 1024;
     const sizes = ['B', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    
+
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  }
+
+  /**
+   * Sauvegarder les données critiques pour le mode hors ligne
+   */
+  async saveOfflineData(data: {
+    userProfile?: any;
+    properties?: any[];
+    contracts?: any[];
+    recentSearches?: any[];
+    favoriteUnits?: string[];
+  }): Promise<void> {
+    const offlineData = {
+      ...data,
+      timestamp: Date.now(),
+      version: '1.0'
+    };
+
+    await this.set('offline_critical_data', offlineData, 7 * 24 * 60 * 60 * 1000); // 7 jours
+    console.log('💾 Données critiques sauvegardées pour le mode hors ligne');
+  }
+
+  /**
+   * Récupérer les données hors ligne
+   */
+  async getOfflineData(): Promise<any | null> {
+    return await this.get('offline_critical_data');
+  }
+
+  /**
+   * Vérifier si l'application peut fonctionner hors ligne
+   */
+  async canWorkOffline(): Promise<boolean> {
+    const offlineData = await this.getOfflineData();
+    return offlineData !== null;
+  }
+
+  /**
+   * Synchroniser les données en cache avec le serveur
+   */
+  async syncWithServer(serverData: any): Promise<void> {
+    try {
+      // Comparer les timestamps et mettre à jour si nécessaire
+      const cachedData = await this.getOfflineData();
+
+      if (!cachedData || serverData.timestamp > cachedData.timestamp) {
+        await this.saveOfflineData(serverData);
+        console.log('🔄 Cache synchronisé avec le serveur');
+      }
+    } catch (error) {
+      console.error('❌ Erreur lors de la synchronisation:', error);
+    }
+  }
+
+  /**
+   * Précharger les données essentielles
+   */
+  async preloadEssentialData(userId: string): Promise<void> {
+    const essentialKeys = [
+      `user_profile_${userId}`,
+      `user_properties_${userId}`,
+      `user_contracts_${userId}`,
+      'cities_list',
+      'app_settings'
+    ];
+
+    console.log('⚡ Préchargement des données essentielles...');
+
+    // Marquer les données comme préchargées
+    await this.set('preload_status', {
+      userId,
+      timestamp: Date.now(),
+      keys: essentialKeys
+    }, 24 * 60 * 60 * 1000);
+  }
+
+  /**
+   * Obtenir les statistiques de cache (version Promise)
+   */
+  async getCacheStats(): Promise<CacheStats> {
+    return new Promise((resolve) => {
+      this.cacheStats$.pipe(take(1)).subscribe(stats => {
+        resolve(stats);
+      });
+    });
   }
 }

@@ -15,11 +15,16 @@ import { MobileHeaderComponent } from './layout/components/mobile-header/mobile-
 import { MobileLoadingComponent } from './shared/components/mobile-loading/mobile-loading.component';
 import { MobileErrorComponent } from './shared/components/mobile-error/mobile-error.component';
 import { MobileEmptyStateComponent } from './shared/components/mobile-empty-state/mobile-empty-state.component';
+import { MobileOfflineStatusComponent } from './shared/components/mobile-offline-status/mobile-offline-status.component';
 
 // Services
 import { MobileCacheService } from './shared/services/mobile-cache.service';
 import { MobileSyncService } from './shared/services/mobile-sync.service';
 import { MobileNotificationService } from './shared/services/mobile-notification.service';
+import { MobilePushNotificationsService } from './shared/services/mobile-push-notifications.service';
+import { MobileAuthStorageService } from './shared/services/mobile-auth-storage.service';
+import { MobileOfflineManagerService } from './shared/services/mobile-offline-manager.service';
+import { MobileSearchStatsService } from './shared/services/mobile-search-stats.service';
 
 @NgModule({
   declarations: [
@@ -31,7 +36,8 @@ import { MobileNotificationService } from './shared/services/mobile-notification
     // Shared Components
     MobileLoadingComponent,
     MobileErrorComponent,
-    MobileEmptyStateComponent
+    MobileEmptyStateComponent,
+    MobileOfflineStatusComponent
   ],
   imports: [
     CommonModule,
@@ -43,13 +49,18 @@ import { MobileNotificationService } from './shared/services/mobile-notification
   providers: [
     MobileCacheService,
     MobileSyncService,
-    MobileNotificationService
+    MobileNotificationService,
+    MobilePushNotificationsService,
+    MobileAuthStorageService,
+    MobileOfflineManagerService,
+    MobileSearchStatsService
   ],
   exports: [
     // Export shared components for use in child modules
     MobileLoadingComponent,
     MobileErrorComponent,
-    MobileEmptyStateComponent
+    MobileEmptyStateComponent,
+    MobileOfflineStatusComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

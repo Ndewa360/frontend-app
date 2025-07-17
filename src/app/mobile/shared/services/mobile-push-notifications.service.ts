@@ -1,9 +1,22 @@
 import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { PushNotifications, Token, PushNotificationSchema, ActionPerformed } from '@capacitor/push-notifications';
-import { LocalNotifications } from '@capacitor/local-notifications';
+import { LocalNotifications, LocalNotificationSchema } from '@capacitor/local-notifications';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject } from 'rxjs';
+
+// Import conditionnel pour Toast
+let Toast: any = null;
+
+// Tentative d'import dynamique
+(async () => {
+  try {
+    const toastModule = await import('@capacitor/toast');
+    Toast = toastModule.Toast;
+  } catch (error) {
+    console.warn('⚠️ @capacitor/toast non disponible, utilisation du fallback');
+  }
+})();
 
 import { environment } from '../../../../environments/environment';
 
@@ -286,5 +299,109 @@ export class MobilePushNotificationsService {
   private navigateToHome(): void {
     // Implémenter la navigation vers l'accueil
     console.log('Navigation vers accueil');
+  }
+
+  /**
+   * Programmer une notification de rappel de paiement
+   */
+  async schedulePaymentReminder(
+    contractId: string,
+    dueDate: Date,
+    amount: number,
+    tenantName: string
+  ): Promise<void> {
+    const notificationDate = new Date(dueDate.getTime() - 3 * 24 * 60 * 60 * 1000); // 3 jours avant
+
+    const notification: LocalNotificationSchema = {
+      title: '💰 Rappel de Paiement',
+      body: `Bonjour ${tenantName}, votre loyer de ${amount} FCFA est dû dans 3 jours.`,
+      id: parseInt(contractId.slice(-6), 16), // ID unique basé sur le contrat
+      schedule: { at: notificationDate },
+      sound: 'beep.wav',
+      attachments: undefined,
+      actionTypeId: 'payment_reminder',
+      extra: {
+        contractId,
+        type: 'payment_reminder',
+        amount,
+        dueDate: dueDate.toISOString()
+      }
+    };
+
+    await LocalNotifications.schedule({
+      notifications: [notification]
+    });
+
+    console.log(`📅 Rappel de paiement programmé pour le ${notificationDate.toLocaleDateString()}`);
+  }
+
+  /**
+   * Programmer une notification d'expiration d'abonnement
+   */
+  async scheduleSubscriptionExpiry(
+    userId: string,
+    expiryDate: Date,
+    planName: string
+  ): Promise<void> {
+    const reminderDate = new Date(expiryDate.getTime() - 7 * 24 * 60 * 60 * 1000); // 7 jours avant
+
+    const notification: LocalNotificationSchema = {
+      title: '⚠️ Abonnement Expirant',
+      body: `Votre abonnement ${planName} expire dans 7 jours. Renouvelez maintenant !`,
+      id: parseInt(userId.slice(-6), 16),
+      schedule: { at: reminderDate },
+      sound: 'beep.wav',
+      attachments: undefined,
+      actionTypeId: 'subscription_expiry',
+      extra: {
+        userId,
+        type: 'subscription_expiry',
+        planName,
+        expiryDate: expiryDate.toISOString()
+      }
+    };
+
+    await LocalNotifications.schedule({
+      notifications: [notification]
+    });
+
+    console.log(`📅 Rappel d'expiration programmé pour le ${reminderDate.toLocaleDateString()}`);
+  }
+
+  /**
+   * Annuler toutes les notifications programmées pour un utilisateur
+   */
+  async cancelUserNotifications(userId: string): Promise<void> {
+    const pending = await LocalNotifications.getPending();
+    const userNotifications = pending.notifications.filter(
+      n => n.extra?.userId === userId
+    );
+
+    if (userNotifications.length > 0) {
+      const ids = userNotifications.map(n => ({ id: n.id }));
+      await LocalNotifications.cancel({ notifications: ids });
+      console.log(`🗑️ ${userNotifications.length} notifications annulées pour l'utilisateur ${userId}`);
+    }
+  }
+
+  /**
+   * Afficher un toast de notification
+   */
+  async showToast(message: string, duration: 'short' | 'long' = 'short'): Promise<void> {
+    try {
+      if (Toast) {
+        await Toast.show({
+          text: message,
+          duration: duration,
+          position: 'bottom'
+        });
+      } else {
+        // Fallback : utiliser console.log si Toast n'est pas disponible
+        console.log(`📱 Toast: ${message}`);
+      }
+    } catch (error) {
+      console.error('❌ Erreur lors de l\'affichage du toast:', error);
+      console.log(`📱 Toast (fallback): ${message}`);
+    }
   }
 }

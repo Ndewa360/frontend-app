@@ -17,6 +17,7 @@ import * as moment from 'moment';
 import { takeUntil, debounceTime, filter, take, catchError, retry, switchMap } from 'rxjs/operators';
 import { SeoService } from './shared/services/seo/seo.service';
 import { DeviceDetectionService } from './shared/services/device-detection.service';
+import { Platform } from '@ionic/angular';
 
 const getSessionStorage = (key, defaultValue = null) => {
   try {
@@ -62,7 +63,8 @@ export class AppComponent implements OnInit, OnDestroy {
     private monitoringService: MonitoringService,
     private localizationService: LocalizationService,
     private translationService: TranslationService,
-    private deviceService: DeviceDetectionService
+    private deviceService: DeviceDetectionService,
+    private platform: Platform
   ) {
     // Fallback pour l'écran de chargement au cas où la navigation ne se termine jamais
     this.loadingTimeout = setTimeout(() => {

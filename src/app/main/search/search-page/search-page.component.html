@@ -13,7 +13,7 @@
           [formControl]="searchControl"
           (focus)="onSearchFocus()"
           (blur)="onSearchBlur()"
-          placeholder="Rechercher un logement..."
+          [placeholder]="'SEARCH.PLACEHOLDER' | translate"
           class="search-input">
         <button *ngIf="searchControl.value" (click)="clearSearch()" class="clear-btn" type="button">
           <youpez-ibm-icon iconName="close" iconSize="16"></youpez-ibm-icon>
@@ -24,7 +24,7 @@
       <div class="location-indicator">
         <div *ngIf="isDetectingLocation" class="location-status detecting">
           <div class="spinner"></div>
-          <span>GPS...</span>
+          <span>{{ 'COMMON.LOADING' | translate }}</span>
         </div>
         <div *ngIf="!isDetectingLocation && userLocation" class="location-status detected">
           <youpez-ibm-icon [iconName]="'location_on'" iconSize="16"></youpez-ibm-icon>
@@ -38,7 +38,7 @@
       <!-- Bouton filtres flottant -->
       <button (click)="toggleFilters()" class="filters-toggle-btn" [class.active]="showFilters" type="button">
         <youpez-ibm-icon iconName="tune" iconSize="20"></youpez-ibm-icon>
-        <span class="filters-text">Filtres</span>
+        <span class="filters-text">{{ 'SEARCH.FILTERS' | translate }}</span>
         <span *ngIf="getActiveFiltersCount() > 0" class="filters-badge">{{ getActiveFiltersCount() }}</span>
       </button>
     </div>
@@ -59,8 +59,8 @@
 <!-- Recherches populaires (affichées quand pas de recherche active) -->
 <div *ngIf="!isLoading && (searchResults?.length || 0) === 0 && (popularSearches?.length || 0) > 0" class="popular-searches-section">
   <div class="section-header">
-    <h3 class="section-title">Recherches populaires</h3>
-    <p class="section-subtitle">Découvrez les logements les plus recherchés</p>
+    <h3 class="section-title">{{ 'SEARCH.POPULAR_SEARCHES' | translate }}</h3>
+    <p class="section-subtitle">{{ 'SEARCH.DISCOVER_POPULAR' | translate }}</p>
   </div>
 
   <div class="popular-searches-grid">
@@ -478,15 +478,15 @@
       <div class="filter-group">
         <h4 class="filter-group-title">
           <youpez-ibm-icon iconName="payments" iconSize="20"></youpez-ibm-icon>
-          Budget
+          {{ 'SEARCH.BUDGET' | translate }}
         </h4>
         <div class="filter-row">
           <div class="filter-field">
-            <label class="field-label">Prix minimum (FCFA)</label>
+            <label class="field-label">{{ 'SEARCH.PRICE_MIN' | translate }} (FCFA)</label>
             <input type="number" formControlName="priceMin" placeholder="0" class="field-input">
           </div>
           <div class="filter-field">
-            <label class="field-label">Prix maximum (FCFA)</label>
+            <label class="field-label">{{ 'SEARCH.PRICE_MAX' | translate }} (FCFA)</label>
             <input type="number" formControlName="priceMax" placeholder="500000" class="field-input">
           </div>
         </div>
@@ -567,10 +567,10 @@
             <span>Cuisine interne</span>
           </label>
           <label class="amenity-checkbox">
-            <input type="checkbox" formControlName="isInternalShower">
+            <input type="checkbox" formControlName="hasPrivateShower">
             <span class="checkbox-custom"></span>
             <youpez-ibm-icon iconName="shower" iconSize="16"></youpez-ibm-icon>
-            <span>Douche interne</span>
+            <span>Douche privée</span>
           </label>
         </div>
       </div>

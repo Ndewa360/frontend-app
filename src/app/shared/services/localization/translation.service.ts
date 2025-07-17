@@ -2,8 +2,11 @@ import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { LocalizationService } from './localization.service';
-import { Store } from '@ngxs/store';
+import { Store, Select } from '@ngxs/store';
 import { UserProfileAction } from '../../store/user-profile/user-profile.actions';
+import { UserProfileState } from '../../store/user-profile/user-profile.state';
+import { Platform } from '@ionic/angular';
+import { take } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -11,11 +14,19 @@ import { UserProfileAction } from '../../store/user-profile/user-profile.actions
 export class TranslationService {
 
   private readonly currentLanguage$ = new BehaviorSubject<string>('fr');
+  private readonly supportedLanguages = [
+    { code: 'fr', name: 'Français', flag: '🇫🇷' },
+    { code: 'en', name: 'English', flag: '🇺🇸' }
+  ];
+
+  @Select(UserProfileState.selectStateUserProfile) userProfile$: Observable<any>;
+  userProfile:any;
 
   constructor(
     private translateService: TranslateService,
     private localizationService: LocalizationService,
-    private store: Store
+    private store: Store,
+    private platform: Platform
   ) {
     this.initializeTranslation();
   }
@@ -23,13 +34,22 @@ export class TranslationService {
   /**
    * Initialise le service de traduction
    */
-  private initializeTranslation(): void {
+  private async initializeTranslation(): Promise<void> {
     // Configurer les langues disponibles
-    const supportedLanguages = this.localizationService.getSupportedLanguages();
-    const languageCodes = supportedLanguages.map(lang => lang.code);
-    
+    const languageCodes = this.supportedLanguages.map(lang => lang.code);
+
     this.translateService.addLangs(languageCodes);
     this.translateService.setDefaultLang('fr');
+
+    // Déterminer la langue initiale
+    const initialLanguage = await this.determineInitialLanguage();
+
+    // Écouter les changements de profil utilisateur
+    this.userProfile$.subscribe(profile => {
+      if (profile?.preferredLanguage && profile.preferredLanguage !== this.currentLanguage$.value) {
+        this.changeLanguage(profile.preferredLanguage);
+      }
+    });
 
     // Écouter les changements de localisation
     this.localizationService.getLocalizationState().subscribe(state => {
@@ -38,9 +58,85 @@ export class TranslationService {
       }
     });
 
-    // Initialiser avec la langue actuelle
-    const currentLanguage = this.localizationService.getCurrentLanguage();
-    this.changeLanguage(currentLanguage);
+    //ecouter les evenements lié au profil
+    this.userProfile$.subscribe((user)=>this.userProfile=user);
+
+    // Initialiser avec la langue déterminée
+    this.changeLanguage(initialLanguage);
+  }
+
+  /**
+   * Détermine la langue initiale selon la plateforme
+   */
+  private async determineInitialLanguage(): Promise<string> {
+    try {
+      // 1. Vérifier si l'utilisateur a une préférence dans son profil
+      const userProfile = await this.userProfile$.pipe(take(1)).toPromise();
+      if (userProfile?.preferredLanguage) {
+        console.log('🌐 Langue du profil utilisateur:', userProfile.preferredLanguage);
+        return userProfile.preferredLanguage;
+      }
+
+      // 2. Pour mobile : utiliser la langue du système
+      if (this.platform.is('mobile') || this.platform.is('android') || this.platform.is('ios')) {
+        const deviceLanguage = await this.getDeviceLanguage();
+        if (deviceLanguage && this.isLanguageSupported(deviceLanguage)) {
+          console.log('📱 Langue du système mobile:', deviceLanguage);
+          return deviceLanguage;
+        }
+      }
+
+      // 3. Pour web : utiliser la langue du navigateur
+      if (this.platform.is('desktop') || this.platform.is('pwa')) {
+        const browserLanguage = this.getBrowserLanguage();
+        if (browserLanguage && this.isLanguageSupported(browserLanguage)) {
+          console.log('🌐 Langue du navigateur:', browserLanguage);
+          return browserLanguage;
+        }
+      }
+
+      // 4. Fallback : français par défaut
+      console.log('🌐 Langue par défaut: fr');
+      return 'fr';
+
+    } catch (error) {
+      console.error('❌ Erreur lors de la détermination de la langue:', error);
+      return 'fr';
+    }
+  }
+
+  /**
+   * Obtient la langue du système mobile
+   */
+  private async getDeviceLanguage(): Promise<string | null> {
+    try {
+      // Utiliser l'API Capacitor si disponible
+      if (this.platform.is('capacitor')) {
+        const { Device } = await import('@capacitor/device');
+        const info = await Device.getLanguageCode();
+        return info.value?.substring(0, 2) || null;
+      }
+
+      // Fallback sur navigator.language
+      return navigator.language?.substring(0, 2) || null;
+    } catch (error) {
+      console.warn('⚠️ Impossible de détecter la langue du système:', error);
+      return navigator.language?.substring(0, 2) || null;
+    }
+  }
+
+  /**
+   * Obtient la langue du navigateur
+   */
+  private getBrowserLanguage(): string | null {
+    return navigator.language?.substring(0, 2) || null;
+  }
+
+  /**
+   * Vérifie si une langue est supportée
+   */
+  private isLanguageSupported(languageCode: string): boolean {
+    return this.supportedLanguages.some(lang => lang.code === languageCode);
   }
 
   /**
@@ -97,12 +193,7 @@ export class TranslationService {
     return this.currentLanguage$.value;
   }
 
-  /**
-   * Vérifie si une langue est supportée
-   */
-  isLanguageSupported(languageCode: string): boolean {
-    return this.translateService.getLangs().includes(languageCode);
-  }
+  
 
   /**
    * Obtient toutes les langues supportées
@@ -180,5 +271,54 @@ export class TranslationService {
         day: 'numeric' 
       });
     }
+  }
+
+  /**
+   * Obtient les langues supportées avec leurs métadonnées
+   */
+  getSupportedLanguagesWithMetadata() {
+    return this.supportedLanguages;
+  }
+
+  /**
+   * Sauvegarde la préférence de langue dans le profil utilisateur
+   */
+  async saveLanguagePreference(languageCode: string): Promise<void> {
+    try {
+      // Mettre à jour le profil utilisateur avec la nouvelle langue
+
+      if(this.userProfile && this.userProfile._id) 
+      {
+        this.store.dispatch(new UserProfileAction.UpdateUserProfile({
+          preferredLanguage: languageCode
+        },this.userProfile._id));
+        console.log('💾 Préférence de langue sauvegardée:', languageCode);
+      }     
+
+    } catch (error) {
+      console.error('❌ Erreur lors de la sauvegarde de la préférence de langue:', error);
+    }
+  }
+
+  /**
+   * Obtient la langue formatée pour l'affichage
+   */
+  getLanguageDisplayName(languageCode: string): string {
+    const language = this.supportedLanguages.find(lang => lang.code === languageCode);
+    return language ? `${language.flag} ${language.name}` : languageCode;
+  }
+
+  /**
+   * Détecte si l'utilisateur est sur mobile
+   */
+  isMobilePlatform(): boolean {
+    return this.platform.is('mobile') || this.platform.is('android') || this.platform.is('ios');
+  }
+
+  /**
+   * Détecte si l'utilisateur est sur desktop
+   */
+  isDesktopPlatform(): boolean {
+    return this.platform.is('desktop') || this.platform.is('pwa');
   }
 }

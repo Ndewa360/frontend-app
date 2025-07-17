@@ -102,9 +102,34 @@ export class SearchService
         // Ajouter tous les filtres non vides aux paramètres
         Object.keys(filters).forEach(key => {
             const value = filters[key as keyof AdvancedSearchFilters];
-            if (value !== undefined && value !== null && value !== '') {
-                params = params.set(key, value.toString());
+
+            // Traitement spécial pour les différents types de valeurs
+            if (value !== undefined && value !== null) {
+                // Pour les booléens, toujours envoyer (même false)
+                if (typeof value === 'boolean') {
+                    params = params.set(key, value.toString());
+                }
+                // Pour les nombres, envoyer même 0 (sauf pour priceMin = 0 et priceMax = 500000 qui sont les valeurs par défaut)
+                else if (typeof value === 'number') {
+                    if (key === 'priceMin' && value > 0) {
+                        params = params.set(key, value.toString());
+                    } else if (key === 'priceMax' && value < 500000) {
+                        params = params.set(key, value.toString());
+                    } else if (key !== 'priceMin' && key !== 'priceMax') {
+                        params = params.set(key, value.toString());
+                    }
+                }
+                // Pour les strings, envoyer seulement si non vide
+                else if (typeof value === 'string' && value !== '') {
+                    params = params.set(key, value);
+                }
             }
+        });
+
+        console.log('🔍 Filtres envoyés à l\'API:', {
+            originalFilters: filters,
+            httpParams: params.toString(),
+            parsedParams: Object.fromEntries(params.keys().map(key => [key, params.get(key)]))
         });
 
         return this._httpClient.get<ApiResultFormat<PaginatedSearchResponse>>(

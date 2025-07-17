@@ -1,0 +1,55 @@
+<!-- Language Switcher - Visible seulement sur desktop et pas en mode responsive -->
+<div 
+  class="language-switcher" 
+  *ngIf="!isMobile"
+  [class.open]="isDropdownOpen"
+  (clickOutside)="onClickOutside()">
+  
+  <!-- Bouton principal -->
+  <button 
+    class="language-button"
+    (click)="toggleDropdown()"
+    [attr.aria-expanded]="isDropdownOpen"
+    aria-haspopup="true"
+    [title]="'LANGUAGE.CHANGE_LANGUAGE' | translate">
+    
+    <span class="current-language">
+      {{ getCurrentLanguageDisplay() }}
+    </span>
+    
+    <i class="dropdown-icon" [class.rotated]="isDropdownOpen">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+        <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </i>
+  </button>
+
+  <!-- Dropdown des langues -->
+  <div class="language-dropdown" *ngIf="isDropdownOpen">
+    <div class="dropdown-header">
+      <span class="dropdown-title">{{ 'LANGUAGE.SELECT_LANGUAGE' | translate }}</span>
+    </div>
+    
+    <div class="language-options">
+      <button
+        *ngFor="let language of supportedLanguages"
+        class="language-option"
+        [class.active]="language.code === currentLanguage"
+        (click)="changeLanguage(language.code)"
+        [disabled]="language.code === currentLanguage">
+        
+        <span class="language-flag">{{ language.flag }}</span>
+        <span class="language-name">{{ language.name }}</span>
+        
+        <i class="check-icon" *ngIf="language.code === currentLanguage">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M13.5 4.5L6 12L2.5 8.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Overlay pour fermer le dropdown -->
+  <div class="dropdown-overlay" *ngIf="isDropdownOpen" (click)="closeDropdown()"></div>
+</div>

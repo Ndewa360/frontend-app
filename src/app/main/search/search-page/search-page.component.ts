@@ -175,7 +175,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
       // Spécificités de la chambre (RoomSpecificity)
       hasKitchen: [false],
       isInternalKitchen: [false],
-      isInternalShower: [false], // Note: c'est isInternalShower pas hasPrivateShower
+      hasPrivateShower: [false], // Corrigé pour correspondre au backend
       numberOfBathroom: [''],
       numberOfLivingRoom: [''],
       numberOfShower: [''],
@@ -1283,7 +1283,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
     // Spécificités de la chambre (RoomSpecificity)
     if (formValues.hasKitchen) count++;
     if (formValues.isInternalKitchen) count++;
-    if (formValues.isInternalShower) count++;
+    if (formValues.hasPrivateShower) count++;
     if (formValues.numberOfBathroom) count++;
     if (formValues.numberOfShower) count++;
     if (formValues.numberOfLivingRoom) count++;

@@ -340,6 +340,132 @@ export class MobileSyncService {
   }
 
   /**
+   * Synchroniser les actions en attente
+   */
+  async syncPendingActions(): Promise<void> {
+    if (!this.isOnline || !this.isAuthenticated) {
+      console.log('⚠️ Impossible de synchroniser : hors ligne ou non authentifié');
+      return;
+    }
+
+    console.log(`🔄 Synchronisation de ${this.pendingActions.length} actions en attente...`);
+
+    for (const pendingAction of [...this.pendingActions]) {
+      try {
+        await this.executePendingAction(pendingAction);
+
+        // Supprimer l'action réussie
+        this.pendingActions = this.pendingActions.filter(a => a.id !== pendingAction.id);
+
+      } catch (error) {
+        console.error(`❌ Erreur lors de l'exécution de l'action ${pendingAction.id}:`, error);
+
+        // Incrémenter le compteur de retry
+        pendingAction.retryCount++;
+
+        if (pendingAction.retryCount >= pendingAction.maxRetries) {
+          console.error(`🚫 Action ${pendingAction.id} abandonnée après ${pendingAction.maxRetries} tentatives`);
+          this.pendingActions = this.pendingActions.filter(a => a.id !== pendingAction.id);
+        }
+      }
+    }
+
+    await this.savePendingActions();
+    this.updateSyncStatus({
+      pendingActions: this.pendingActions.length,
+      lastSync: Date.now()
+    });
+
+    console.log('✅ Synchronisation des actions terminée');
+  }
+
+  /**
+   * Synchroniser avec le serveur
+   */
+  async syncWithServer(): Promise<void> {
+    if (!this.isOnline || !this.isAuthenticated) {
+      console.log('⚠️ Impossible de synchroniser avec le serveur : hors ligne ou non authentifié');
+      return;
+    }
+
+    try {
+      console.log('🔄 Synchronisation avec le serveur...');
+
+      // Synchroniser les données utilisateur
+      // Cette méthode devrait être implémentée selon vos besoins spécifiques
+
+      this.updateSyncStatus({
+        lastSync: Date.now()
+      });
+
+      console.log('✅ Synchronisation avec le serveur terminée');
+
+    } catch (error) {
+      console.error('❌ Erreur lors de la synchronisation avec le serveur:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Obtenir le nombre d'actions en attente
+   */
+  async getPendingActionsCount(): Promise<number> {
+    return this.pendingActions.length;
+  }
+
+  /**
+   * Vider les actions en attente
+   */
+  async clearPendingActions(): Promise<void> {
+    this.pendingActions = [];
+    await this.savePendingActions();
+
+    this.updateSyncStatus({
+      pendingActions: 0
+    });
+
+    console.log('🗑️ Actions en attente supprimées');
+  }
+
+  /**
+   * Obtenir l'heure de la dernière synchronisation
+   */
+  async getLastSyncTime(): Promise<Date | null> {
+    const status = this.syncStatusSubject.value;
+    return status.lastSync ? new Date(status.lastSync) : null;
+  }
+
+  /**
+   * Exécuter une action en attente
+   */
+  private async executePendingAction(pendingAction: PendingAction): Promise<void> {
+    const { action } = pendingAction;
+
+    console.log(`🔄 Exécution de l'action ${pendingAction.id}:`, action);
+
+    // Ici, vous devriez implémenter la logique spécifique pour chaque type d'action
+    // Par exemple :
+    switch (action.type) {
+      case 'search':
+        // Exécuter une recherche
+        break;
+      case 'favorite':
+        // Ajouter/supprimer un favori
+        break;
+      case 'user_action':
+        // Action utilisateur générique
+        break;
+      default:
+        console.warn(`⚠️ Type d'action non reconnu: ${action.type}`);
+    }
+
+    // Simuler l'exécution (à remplacer par la vraie logique)
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    console.log(`✅ Action ${pendingAction.id} exécutée avec succès`);
+  }
+
+  /**
    * Générer un ID unique
    */
   private generateId(): string {

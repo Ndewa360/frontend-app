@@ -49,6 +49,7 @@ export interface UserProfileModel {
         isEnglishTimeFormat?: boolean;
     };
 
+
     // Métadonnées
     createdAt?: Date;
     isDeleted?: boolean;

@@ -6,6 +6,8 @@ import { DummyTablePaginationComponent } from './components/dummy-table-paginati
 import { DummyTableExpansionComponent } from './components/dummy-table-expansion/dummy-table-expansion.component'
 import { DummyTableAdvancedComponent } from './components/dummy-table-advanced/dummy-table-advanced.component'
 import { DebugTokenPanelComponent } from './components/debug-token-panel/debug-token-panel.component'
+import { LanguageSwitcherComponent } from './components/language-switcher/language-switcher.component'
+import { ClickOutsideDirective } from './directives/click-outside.directive'
 import { NgxsModule } from '@ngxs/store';
 import {
   UserProfileState,
@@ -152,7 +154,9 @@ export function HttpLoaderFactory(http: HttpClient) {
     DebugTokenPanelComponent,
     ContractTemplateSelectorComponent,
     SubscriptionLimitModalComponent,
-    SubscriptionStatusWidgetComponent
+    SubscriptionStatusWidgetComponent,
+    LanguageSwitcherComponent,
+    ClickOutsideDirective
   ],
   exports: [
     YoupezModule,
@@ -183,7 +187,9 @@ export function HttpLoaderFactory(http: HttpClient) {
     DebugTokenPanelComponent,
     ContractTemplateSelectorComponent,
     SubscriptionLimitModalComponent,
-    SubscriptionStatusWidgetComponent
+    SubscriptionStatusWidgetComponent,
+    LanguageSwitcherComponent,
+    ClickOutsideDirective
   ],
   providers: [
     // Nouveaux services ajoutés
