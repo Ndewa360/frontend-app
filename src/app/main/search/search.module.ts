@@ -22,7 +22,7 @@ import { PremiumSuccessComponent } from './components/premium-success/premium-su
     CommonModule,
     SharedModule,
     SearchRoutingModule,
-    OverlayModule
+    OverlayModule,
   ]
 })
 export class SearchModule { }

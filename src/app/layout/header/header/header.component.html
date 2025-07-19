@@ -33,7 +33,9 @@
   </button>
 
 
-  <div ngbDropdown
+  <!-- Dropdown utilisateur - visible seulement si connecté -->
+  <div *ngIf="authState$ | async as authState"
+       ngbDropdown
        placement="bottom-right"
        container="body">
     <button class="app-layout__header__btn app-layout__header__btn--icon" ngbDropdownToggle>
@@ -48,7 +50,7 @@
           <div class="app-list__item__content mr-4">
             <div>
               <div class="app-helper-text-01">Connecté en tant que</div>
-              <div class="app-expressive-heading-02" *ngIf="userProfil$ | async as userProfil">{{userProfil.name}}</div>
+              <div class="app-expressive-heading-02">{{authState.profile?.name || 'Utilisateur'}}</div>
             </div>
           </div>
         </div>
@@ -82,6 +84,14 @@
       </div>
     </div>
   </div>
+
+  <!-- Bouton de connexion pour les utilisateurs non connectés -->
+  <button *ngIf="!(isAuthenticated$ | async)"
+          class="app-layout__header__btn app-layout__header__btn--primary"
+          routerLink="/auth/signin">
+    <youpez-ibm-icon iconName="user" iconSize="16"></youpez-ibm-icon>
+    <span class="ml-2">Se connecter</span>
+  </button>
 </div>
 
 <!-- Panneau de notifications -->

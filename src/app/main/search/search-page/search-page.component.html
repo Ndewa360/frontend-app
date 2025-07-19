@@ -88,12 +88,12 @@
   <div class="results-header">
     <div class="results-info">
       <h3 class="results-title">
-        {{ totalResults }} logement{{ totalResults > 1 ? 's' : '' }} trouvé{{ totalResults > 1 ? 's' : '' }}
+        {{ 'SEARCH.RESULTS_FOUND' | translate: {count: totalResults} }}
       </h3>
       <div class="results-location">
         <youpez-ibm-icon iconName="location_on" iconSize="16"></youpez-ibm-icon>
         <span *ngIf="userLocation">{{ userLocation.city }}, {{ userLocation.country }}</span>
-        <span *ngIf="!userLocation">Toutes les villes</span>
+        <span *ngIf="!userLocation">{{ 'SEARCH.ALL_CITIES' | translate }}</span>
       </div>
 
       <!-- Message informatif pour Bangangté par défaut -->
@@ -102,10 +102,9 @@
           <div class="flex items-start gap-2">
             <youpez-ibm-icon iconName="info" iconSize="16" class="text-orange-600 mt-0.5"></youpez-ibm-icon>
             <div class="text-sm">
-              <p class="text-orange-800 font-medium">Résultats pour Bangangté</p>
+              <p class="text-orange-800 font-medium">{{ 'SEARCH.FALLBACK_TITLE' | translate }}</p>
               <p class="text-orange-700">
-                Nous n'avons pas pu détecter votre position ou votre ville n'est pas encore couverte.
-                Voici les logements disponibles à Bangangté.
+                {{ 'SEARCH.FALLBACK_MESSAGE' | translate }}
               </p>
             </div>
           </div>
@@ -127,9 +126,9 @@
     <div class="loading-header">
       <div class="loading-title">
         <div class="loading-spinner"></div>
-        <span>Recherche en cours...</span>
+        <span>{{ 'SEARCH.SEARCHING' | translate }}</span>
       </div>
-      <div class="loading-subtitle">Nous recherchons les meilleurs logements pour vous</div>
+      <div class="loading-subtitle">{{ 'SEARCH.SEARCHING_SUBTITLE' | translate }}</div>
     </div>
 
     <!-- Grille de skeleton -->
@@ -185,7 +184,7 @@
         <div class="card-overlay"></div>
         <div class="card-badges">
           <span class="badge badge-type">{{ getRoomTypeLabel(result.type) }}</span>
-          <span *ngIf="result.isFree" class="badge badge-available">Disponible</span>
+          <span *ngIf="result.isFree" class="badge badge-available">{{ 'SEARCH.AVAILABLE' | translate }}</span>
         </div>
         <div *ngIf="result.medias && (result.medias?.length || 0) > 1" class="image-gallery-indicator">
           <youpez-ibm-icon iconName="camera" iconSize="16"></youpez-ibm-icon>
@@ -198,7 +197,7 @@
           <h4 class="card-title">{{ result.code }}</h4>
           <div class="card-price">
             {{ result.price | currency:'XAF':'symbol':'1.0-0' }}
-            <span class="currency">/mois</span>
+            <span class="currency">{{ 'SEARCH.PER_MONTH' | translate }}</span>
           </div>
         </div>
 

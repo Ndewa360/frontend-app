@@ -5,6 +5,8 @@ import { Store, Actions, ofActionSuccessful, ofActionErrored } from '@ngxs/store
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
+import { ModalTranslationService } from '../../../../shared/services/modal-translation.service';
 import { 
   LocationModel, 
   LocationAction, 
@@ -27,16 +29,8 @@ export class ModernContractTerminationModalComponent implements OnInit, OnDestro
   formGroup: FormGroup;
   isLoading = false;
   
-  // Raisons de résiliation prédéfinies
-  terminationReasons = [
-    { value: 'END_OF_LEASE', label: 'Fin de bail', description: 'Le contrat arrive à échéance' },
-    { value: 'TENANT_REQUEST', label: 'Demande du locataire', description: 'Le locataire souhaite partir' },
-    { value: 'NON_PAYMENT', label: 'Non-paiement', description: 'Défaut de paiement du loyer' },
-    { value: 'BREACH_OF_CONTRACT', label: 'Violation du contrat', description: 'Non-respect des clauses contractuelles' },
-    { value: 'PROPERTY_SALE', label: 'Vente du bien', description: 'Le propriétaire vend le bien' },
-    { value: 'RENOVATION', label: 'Rénovation', description: 'Travaux de rénovation nécessaires' },
-    { value: 'OTHER', label: 'Autre', description: 'Autre raison à préciser' }
-  ];
+  // Raisons de résiliation prédéfinies (seront traduites dynamiquement)
+  terminationReasons: Array<{value: string, label: string, description: string}> = [];
   
   private destroy$ = new Subject<void>();
 
@@ -45,10 +39,13 @@ export class ModernContractTerminationModalComponent implements OnInit, OnDestro
     private store: Store,
     private actions: Actions,
     private toastr: ToastrService,
+    private translate: TranslateService,
+    private modalTranslation: ModalTranslationService,
     private dialogRef: MatDialogRef<ModernContractTerminationModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ContractTerminationModalData
   ) {
     this.initializeForm();
+    this.initializeTerminationReasons();
   }
 
   ngOnInit(): void {
@@ -58,6 +55,49 @@ export class ModernContractTerminationModalComponent implements OnInit, OnDestro
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  /**
+   * Initialise les raisons de résiliation traduites
+   */
+  private initializeTerminationReasons(): void {
+    this.terminationReasons = [
+      {
+        value: 'END_OF_LEASE',
+        label: this.translate.instant('MODALS.CONTRACT_TERMINATION.REASONS.END_OF_LEASE'),
+        description: this.translate.instant('MODALS.CONTRACT_TERMINATION.REASON_DESCRIPTIONS.END_OF_LEASE')
+      },
+      {
+        value: 'TENANT_REQUEST',
+        label: this.translate.instant('MODALS.CONTRACT_TERMINATION.REASONS.TENANT_REQUEST'),
+        description: this.translate.instant('MODALS.CONTRACT_TERMINATION.REASON_DESCRIPTIONS.TENANT_REQUEST')
+      },
+      {
+        value: 'NON_PAYMENT',
+        label: this.translate.instant('MODALS.CONTRACT_TERMINATION.REASONS.NON_PAYMENT'),
+        description: this.translate.instant('MODALS.CONTRACT_TERMINATION.REASON_DESCRIPTIONS.NON_PAYMENT')
+      },
+      {
+        value: 'BREACH_OF_CONTRACT',
+        label: this.translate.instant('MODALS.CONTRACT_TERMINATION.REASONS.BREACH_OF_CONTRACT'),
+        description: this.translate.instant('MODALS.CONTRACT_TERMINATION.REASON_DESCRIPTIONS.BREACH_OF_CONTRACT')
+      },
+      {
+        value: 'PROPERTY_SALE',
+        label: this.translate.instant('MODALS.CONTRACT_TERMINATION.REASONS.PROPERTY_SALE'),
+        description: this.translate.instant('MODALS.CONTRACT_TERMINATION.REASON_DESCRIPTIONS.PROPERTY_SALE')
+      },
+      {
+        value: 'RENOVATION',
+        label: this.translate.instant('MODALS.CONTRACT_TERMINATION.REASONS.RENOVATION'),
+        description: this.translate.instant('MODALS.CONTRACT_TERMINATION.REASON_DESCRIPTIONS.RENOVATION')
+      },
+      {
+        value: 'OTHER',
+        label: this.translate.instant('MODALS.CONTRACT_TERMINATION.REASONS.OTHER'),
+        description: this.translate.instant('MODALS.CONTRACT_TERMINATION.REASON_DESCRIPTIONS.OTHER')
+      }
+    ];
   }
 
   private initializeForm(): void {

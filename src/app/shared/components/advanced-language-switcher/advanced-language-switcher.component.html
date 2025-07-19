@@ -1,0 +1,101 @@
+<!-- Sélecteur de langue avancé -->
+<div class="advanced-language-switcher" 
+     [class.mobile]="isMobile"
+     [class.compact]="compact"
+     (clickOutside)="onClickOutside()">
+  
+  <!-- Bouton principal -->
+  <button 
+    type="button"
+    [ngClass]="getButtonClasses()"
+    (click)="toggleDropdown()"
+    (keydown)="onKeyDown($event)"
+    [attr.aria-expanded]="isDropdownOpen"
+    [attr.aria-haspopup]="true"
+    [attr.aria-label]="'SETTINGS.SELECT_LANGUAGE' | translate">
+    
+    <!-- Langue actuelle -->
+    <div class="current-language">
+      <span *ngIf="showFlags && getCurrentLanguageData()?.flag" 
+            class="language-flag">{{ getCurrentLanguageData()?.flag }}</span>
+      
+      <span class="language-name">
+        <span *ngIf="!compact">{{ getCurrentLanguageData()?.name }}</span>
+        <span *ngIf="compact">{{ getCurrentLanguageData()?.code?.toUpperCase() }}</span>
+      </span>
+      
+      <span *ngIf="showNativeNames && !compact && getCurrentLanguageData()?.nativeName" 
+            class="language-native">{{ getCurrentLanguageData()?.nativeName }}</span>
+    </div>
+    
+    <!-- Icône de dropdown -->
+    <svg class="dropdown-icon" 
+         [class.rotated]="isDropdownOpen"
+         width="16" 
+         height="16" 
+         viewBox="0 0 24 24" 
+         fill="none" 
+         stroke="currentColor" 
+         stroke-width="2">
+      <polyline points="6,9 12,15 18,9"></polyline>
+    </svg>
+  </button>
+  
+  <!-- Menu dropdown -->
+  <div [ngClass]="getDropdownClasses()" 
+       *ngIf="isDropdownOpen"
+       [@slideInOut]
+       role="menu"
+       [attr.aria-label]="'SETTINGS.LANGUAGE_SETTINGS' | translate">
+    
+    <!-- En-tête du menu (optionnel) -->
+    <div class="dropdown-header" *ngIf="!compact">
+      <span class="header-title">{{ 'SETTINGS.SELECT_LANGUAGE' | translate }}</span>
+    </div>
+    
+    <!-- Liste des langues -->
+    <div class="language-list">
+      <button 
+        type="button"
+        class="language-option"
+        *ngFor="let language of getOtherLanguages(); trackBy: trackByLanguageCode"
+        (click)="changeLanguage(language.code)"
+        [attr.aria-label]="language.name"
+        role="menuitem">
+        
+        <div class="option-content">
+          <span *ngIf="showFlags && language.flag" 
+                class="language-flag">{{ language.flag }}</span>
+          
+          <div class="language-info">
+            <span class="language-name">{{ language.name }}</span>
+            <span *ngIf="showNativeNames && language.nativeName && !compact" 
+                  class="language-native">{{ language.nativeName }}</span>
+          </div>
+        </div>
+        
+        <!-- Indicateur de sélection -->
+        <svg class="check-icon" 
+             *ngIf="language.code === currentLanguage"
+             width="16" 
+             height="16" 
+             viewBox="0 0 24 24" 
+             fill="none" 
+             stroke="currentColor" 
+             stroke-width="2">
+          <polyline points="20,6 9,17 4,12"></polyline>
+        </svg>
+      </button>
+    </div>
+    
+    <!-- Pied de page du menu (optionnel) -->
+    <div class="dropdown-footer" *ngIf="!compact">
+      <small class="footer-text">{{ supportedLanguages.length }} {{ 'SETTINGS.LANGUAGE' | translate }}s</small>
+    </div>
+  </div>
+  
+  <!-- Overlay pour mobile -->
+  <div class="dropdown-overlay" 
+       *ngIf="isDropdownOpen && isMobile"
+       (click)="closeDropdown()"></div>
+</div>

@@ -463,4 +463,83 @@ export class UserProfileState {
             })
         );
     }
+
+    @Action(UserProfileAction.FetchUserProfileConditional)
+    fetchUserProfileConditional(ctx: StateContext<UserProfileStateModel>, { forceRedirectOnError }: UserProfileAction.FetchUserProfileConditional) {
+        // Si déjà chargé, ne pas recharger
+        if (ctx.getState().initLoadingState === "LOADED" && ctx.getState().userProfile) {
+            return of(true);
+        }
+
+        // Vérifier d'abord si l'utilisateur est connecté
+        const authState = this._store.selectSnapshot(state => state.authtoken);
+        if (!authState?.token) {
+            // Pas de token, utilisateur non connecté - ne pas essayer de charger le profil
+            console.log('👤 Utilisateur non connecté, profil non chargé');
+            ctx.patchState({
+                loadingUserProfile: false,
+                initLoadingState: "NO_LOADED",
+                userProfile: null,
+                lastError: null
+            });
+            return of(false);
+        }
+
+        ctx.patchState({
+            loadingUserProfile: true,
+            initLoadingState: "LOADING",
+            lastError: null
+        });
+
+        return this._userProfilesService.getUserProfile().pipe(
+            // Réessayer 1 fois seulement pour éviter les boucles
+            retry({ count: 1, delay: 1000 }),
+            tap(result => {
+                if (!result || !result.data) {
+                    throw new Error("Réponse de profil utilisateur invalide");
+                }
+
+                ctx.patchState({
+                    loadingUserProfile: false,
+                    userProfile: result.data,
+                    initLoadingState: 'LOADED'
+                });
+            }),
+            catchError((error) => {
+                ctx.patchState({
+                    loadingUserProfile: false,
+                    initLoadingState: "ERROR",
+                    lastError: error?.error?.message || "Erreur lors du chargement du profil"
+                });
+
+                // Redirection conditionnelle selon le paramètre
+                if (error.status === 401) {
+                    if (forceRedirectOnError) {
+                        // Rediriger seulement si explicitement demandé
+                        this._store.dispatch(new AuthTokenAction.Logout());
+                        this._router.navigateByUrl('/auth/signin');
+                        this._toastrService.warning("Session expirée. Veuillez vous reconnecter.", 'Ndewa360°');
+                    } else {
+                        // Juste nettoyer l'état sans rediriger
+                        console.log('👤 Token invalide sur page publique, nettoyage silencieux');
+                        this._store.dispatch(new AuthTokenAction.Logout());
+                    }
+                } else if (forceRedirectOnError) {
+                    // Afficher l'erreur seulement si on est sur une page privée
+                    let message = error?.error?.message;
+                    if (!message) message = "Une erreur s'est produite! Réessayez plus tard";
+                    this._toastrService.error(message, 'Ndewa360°');
+                }
+
+                // Ne pas propager l'erreur pour éviter les problèmes sur les pages publiques
+                return of(false);
+            }),
+            // S'assurer que l'état de chargement est toujours réinitialisé
+            finalize(() => {
+                if (ctx.getState().loadingUserProfile) {
+                    ctx.patchState({ loadingUserProfile: false });
+                }
+            })
+        );
+    }
 }

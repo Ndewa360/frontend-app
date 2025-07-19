@@ -6,6 +6,8 @@ import { Observable } from "rxjs";
 import { ApiResultFormat } from "../global";
 import { environment } from "src/environments/environment";
 
+
+// super. maintenant, je veux que tu analyse completement le systéme de traduction. que tu le complete avec toutes les pages, les notifications les boutons. pourque le site intégre completement le 
 @Injectable({
     providedIn:'root'
 })

@@ -10,7 +10,7 @@
         <path d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" 
               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
-      Filtres avancés
+      {{ 'SEARCH.ADVANCED_FILTERS' | translate }}
       <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
@@ -34,17 +34,17 @@
       
       <!-- Period Selection -->
       <div class="filter-section">
-        <h4 class="section-title">Période</h4>
+        <h4 class="section-title">{{ 'FILTERS.PERIOD' | translate }}</h4>
         <div class="period-controls">
           <div class="year-selector">
-            <label>Année de début</label>
+            <label>{{ 'FILTERS.START_YEAR' | translate }}</label>
             <select formControlName="startYear" class="year-select">
               <option *ngFor="let year of availableYears" [value]="year">{{ year }}</option>
             </select>
           </div>
           
           <div class="year-selector" *ngIf="currentFilters.comparisonMode">
-            <label>Année de fin</label>
+            <label>{{ 'FILTERS.END_YEAR' | translate }}</label>
             <select formControlName="endYear" class="year-select">
               <option *ngFor="let year of availableYears" [value]="year">{{ year }}</option>
             </select>
@@ -65,7 +65,7 @@
 
       <!-- Property Selection -->
       <div class="filter-section" *ngIf="properties.length > 0">
-        <h4 class="section-title">Propriétés</h4>
+        <h4 class="section-title">{{ 'PROPERTIES.TITLE' | translate }}</h4>
         <div class="property-grid">
           <div 
             *ngFor="let property of properties" 

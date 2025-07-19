@@ -58,17 +58,14 @@ export class LanguageSwitcherComponent implements OnInit, OnDestroy {
   /**
    * Change la langue
    */
-  async changeLanguage(languageCode: string): Promise<void> {
+  changeLanguage(languageCode: string): void {
     if (languageCode !== this.currentLanguage) {
-      // Changer la langue
+      // Changer la langue (la sauvegarde est gérée automatiquement dans le service)
       this.translationService.changeLanguage(languageCode);
-      
-      // Sauvegarder la préférence
-      await this.translationService.saveLanguagePreference(languageCode);
-      
+
       // Fermer le dropdown
       this.closeDropdown();
-      
+
       console.log('🌐 Langue changée vers:', languageCode);
     }
   }

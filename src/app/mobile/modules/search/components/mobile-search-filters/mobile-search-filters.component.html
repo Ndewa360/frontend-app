@@ -16,16 +16,16 @@
     <div class="filter-section">
       <h3 class="section-title">
         <ion-icon name="location" color="primary"></ion-icon>
-        Localisation
+        {{ 'SEARCH.LOCATION' | translate }}
       </h3>
       
       <ion-item>
-        <ion-label position="stacked">Ville</ion-label>
-        <ion-select 
-          formControlName="city" 
-          placeholder="Sélectionner une ville"
+        <ion-label position="stacked">{{ 'SEARCH.CITY' | translate }}</ion-label>
+        <ion-select
+          formControlName="city"
+          [placeholder]="'SEARCH.SELECT_CITY' | translate"
           interface="popover">
-          <ion-select-option value="">Toutes les villes</ion-select-option>
+          <ion-select-option value="">{{ 'SEARCH.ALL_CITIES' | translate }}</ion-select-option>
           <ion-select-option 
             *ngFor="let city of cities$ | async" 
             [value]="city.fullName">
@@ -39,7 +39,7 @@
     <div class="filter-section">
       <h3 class="section-title">
         <ion-icon name="card" color="primary"></ion-icon>
-        Budget mensuel
+        {{ 'SEARCH.BUDGET' | translate }}
       </h3>
       
       <!-- Gammes de prix prédéfinies -->
@@ -79,7 +79,7 @@
     <div class="filter-section">
       <h3 class="section-title">
         <ion-icon name="home" color="primary"></ion-icon>
-        Type de logement
+        {{ 'SEARCH.ROOM_TYPE' | translate }}
       </h3>
       
       <ion-radio-group formControlName="roomType">
@@ -94,7 +94,7 @@
     <div class="filter-section">
       <h3 class="section-title">
         <ion-icon name="checkmark-circle" color="primary"></ion-icon>
-        Équipements
+        {{ 'SEARCH.AMENITIES' | translate }}
       </h3>
       
       <div class="amenities-grid">
@@ -103,7 +103,7 @@
           <ion-label>
             <div class="amenity-item">
               <ion-icon name="wifi" color="medium"></ion-icon>
-              <span>WiFi</span>
+              <span>{{ 'SEARCH.WIFI' | translate }}</span>
             </div>
           </ion-label>
         </ion-item>
@@ -113,7 +113,7 @@
           <ion-label>
             <div class="amenity-item">
               <ion-icon name="snow" color="medium"></ion-icon>
-              <span>Climatisation</span>
+              <span>{{ 'SEARCH.AIR_CONDITIONER' | translate }}</span>
             </div>
           </ion-label>
         </ion-item>
@@ -123,37 +123,37 @@
           <ion-label>
             <div class="amenity-item">
               <ion-icon name="restaurant" color="medium"></ion-icon>
-              <span>Cuisine</span>
+              <span>{{ 'SEARCH.KITCHEN' | translate }}</span>
             </div>
           </ion-label>
         </ion-item>
-        
+
         <ion-item>
           <ion-checkbox formControlName="hasParking" slot="start"></ion-checkbox>
           <ion-label>
             <div class="amenity-item">
               <ion-icon name="car" color="medium"></ion-icon>
-              <span>Parking</span>
+              <span>{{ 'SEARCH.PARKING' | translate }}</span>
             </div>
           </ion-label>
         </ion-item>
-        
+
         <ion-item>
           <ion-checkbox formControlName="hasBalcony" slot="start"></ion-checkbox>
           <ion-label>
             <div class="amenity-item">
               <ion-icon name="flower" color="medium"></ion-icon>
-              <span>Balcon</span>
+              <span>{{ 'SEARCH.BALCONY' | translate }}</span>
             </div>
           </ion-label>
         </ion-item>
-        
+
         <ion-item>
           <ion-checkbox formControlName="hasSecurity" slot="start"></ion-checkbox>
           <ion-label>
             <div class="amenity-item">
               <ion-icon name="shield-checkmark" color="medium"></ion-icon>
-              <span>Sécurité</span>
+              <span>{{ 'SEARCH.SECURITY' | translate }}</span>
             </div>
           </ion-label>
         </ion-item>
@@ -164,7 +164,7 @@
     <div class="filter-section">
       <h3 class="section-title">
         <ion-icon name="swap-vertical" color="primary"></ion-icon>
-        Trier par
+        {{ 'SEARCH.SORT_BY' | translate }}
       </h3>
       
       <ion-item>

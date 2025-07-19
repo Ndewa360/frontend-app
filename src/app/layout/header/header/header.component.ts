@@ -6,6 +6,7 @@ import { UserProfileAction, UserProfileModel, UserProfileState } from 'src/app/s
 import { Actions,Select, ofActionCompleted, ofActionErrored, ofActionSuccessful, Store } from '@ngxs/store'
 import { BaseComponent } from 'src/app/shared/utils/base-component'
 import { NotificationManagerService } from 'src/app/shared/services/notification-manager.service'
+import { AuthStateService } from 'src/app/shared/services/auth-state.service'
 
 @Component({
   selector: 'app-main-header',
@@ -22,12 +23,15 @@ export class HeaderComponent extends BaseComponent implements OnInit {
   isAdmin = false;
   showNotifications = false;
   unreadNotificationsCount = 0;
-
+  isAuthenticated$ = this.authStateService.isAuthenticated();
+  authState$ = this.authStateService.getAuthState();
+ 
   constructor(
     private _store:Store,
     private _ngxsAction:Actions,
     private router: Router,
-    private notificationManager: NotificationManagerService
+    private notificationManager: NotificationManagerService,
+    private authStateService: AuthStateService
   ) {
     super();
   }

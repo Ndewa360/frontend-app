@@ -5,6 +5,8 @@ import { Store, Actions, ofActionSuccessful, ofActionErrored } from '@ngxs/store
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
+import { ModalTranslationService } from '../../../../shared/services/modal-translation.service';
 import { 
   LocationPaymentModel, 
   LocationPaymentAction, 

@@ -15,8 +15,9 @@ export class TranslationService {
 
   private readonly currentLanguage$ = new BehaviorSubject<string>('fr');
   private readonly supportedLanguages = [
-    { code: 'fr', name: 'Français', flag: '🇫🇷' },
-    { code: 'en', name: 'English', flag: '🇺🇸' }
+    { code: 'fr', name: 'Français', flag: '🇫🇷', nativeName: 'Français' },
+    { code: 'en', name: 'English', flag: '🇺🇸', nativeName: 'English' },
+    { code: 'es', name: 'Español', flag: '🇪🇸', nativeName: 'Español' }
   ];
 
   @Select(UserProfileState.selectStateUserProfile) userProfile$: Observable<any>;
@@ -70,14 +71,21 @@ export class TranslationService {
    */
   private async determineInitialLanguage(): Promise<string> {
     try {
-      // 1. Vérifier si l'utilisateur a une préférence dans son profil
+      // 1. Vérifier si l'utilisateur a une préférence dans son profil (utilisateur connecté)
       const userProfile = await this.userProfile$.pipe(take(1)).toPromise();
       if (userProfile?.preferredLanguage) {
         console.log('🌐 Langue du profil utilisateur:', userProfile.preferredLanguage);
         return userProfile.preferredLanguage;
       }
 
-      // 2. Pour mobile : utiliser la langue du système
+      // 2. Vérifier le localStorage (utilisateur non connecté avec préférence sauvegardée)
+      const savedLanguage = this.getLanguageFromLocalStorage();
+      if (savedLanguage && this.isLanguageSupported(savedLanguage)) {
+        console.log('💾 Langue sauvegardée localement:', savedLanguage);
+        return savedLanguage;
+      }
+
+      // 3. Pour mobile : utiliser la langue du système
       if (this.platform.is('mobile') || this.platform.is('android') || this.platform.is('ios')) {
         const deviceLanguage = await this.getDeviceLanguage();
         if (deviceLanguage && this.isLanguageSupported(deviceLanguage)) {
@@ -86,7 +94,7 @@ export class TranslationService {
         }
       }
 
-      // 3. Pour web : utiliser la langue du navigateur
+      // 4. Pour web : utiliser la langue du navigateur
       if (this.platform.is('desktop') || this.platform.is('pwa')) {
         const browserLanguage = this.getBrowserLanguage();
         if (browserLanguage && this.isLanguageSupported(browserLanguage)) {
@@ -95,7 +103,7 @@ export class TranslationService {
         }
       }
 
-      // 4. Fallback : français par défaut
+      // 5. Fallback : français par défaut
       console.log('🌐 Langue par défaut: fr');
       return 'fr';
 
@@ -147,14 +155,21 @@ export class TranslationService {
       this.translateService.use(languageCode).subscribe({
         next: () => {
           this.currentLanguage$.next(languageCode);
-          console.log(`Langue changée vers: ${languageCode}`);
+
+          // Sauvegarder dans le localStorage pour les utilisateurs non connectés
+          this.saveLanguageToLocalStorage(languageCode);
+
+          // Sauvegarder dans le profil utilisateur si connecté
+          this.saveLanguagePreference(languageCode);
+
+          console.log(`🌐 Langue changée vers: ${languageCode}`);
         },
         error: (error) => {
-          console.error(`Erreur lors du changement de langue vers ${languageCode}:`, error);
+          console.error(`❌ Erreur lors du changement de langue vers ${languageCode}:`, error);
         }
       });
     } else {
-      console.warn(`Langue non supportée: ${languageCode}`);
+      console.warn(`⚠️ Langue non supportée: ${languageCode}`);
     }
   }
 
@@ -281,20 +296,43 @@ export class TranslationService {
   }
 
   /**
-   * Sauvegarde la préférence de langue dans le profil utilisateur
+   * Sauvegarde la préférence de langue dans le localStorage
    */
-  async saveLanguagePreference(languageCode: string): Promise<void> {
+  private saveLanguageToLocalStorage(languageCode: string): void {
     try {
-      // Mettre à jour le profil utilisateur avec la nouvelle langue
+      localStorage.setItem('ndiye-preferred-language', languageCode);
+      console.log('💾 Langue sauvegardée dans localStorage:', languageCode);
+    } catch (error) {
+      console.warn('⚠️ Impossible de sauvegarder dans localStorage:', error);
+    }
+  }
 
-      if(this.userProfile && this.userProfile._id) 
-      {
+  /**
+   * Récupère la préférence de langue du localStorage
+   */
+  private getLanguageFromLocalStorage(): string | null {
+    try {
+      return localStorage.getItem('ndiye-preferred-language');
+    } catch (error) {
+      console.warn('⚠️ Impossible de lire localStorage:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Sauvegarde la préférence de langue dans le profil utilisateur (seulement si connecté)
+   */
+  private async saveLanguagePreference(languageCode: string): Promise<void> {
+    try {
+      // Vérifier si l'utilisateur est connecté
+      if (this.userProfile && this.userProfile._id) {
         this.store.dispatch(new UserProfileAction.UpdateUserProfile({
           preferredLanguage: languageCode
-        },this.userProfile._id));
-        console.log('💾 Préférence de langue sauvegardée:', languageCode);
-      }     
-
+        }, this.userProfile._id));
+        console.log('💾 Préférence de langue sauvegardée dans le profil:', languageCode);
+      } else {
+        console.log('👤 Utilisateur non connecté, langue sauvegardée localement uniquement');
+      }
     } catch (error) {
       console.error('❌ Erreur lors de la sauvegarde de la préférence de langue:', error);
     }

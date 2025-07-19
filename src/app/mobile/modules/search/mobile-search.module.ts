@@ -4,6 +4,13 @@ import { IonicModule } from '@ionic/angular';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxsModule } from '@ngxs/store';
 
+// Translation
+import { TranslateModule } from '@ngx-translate/core';
+
+
+// Shared
+import { SharedModule } from '../../../shared/shared.module';
+
 // Routing
 import { MobileSearchRoutingModule } from './mobile-search-routing.module';
 
@@ -36,6 +43,8 @@ import { MobileSearchStatsService } from '../../shared/services/mobile-search-st
     IonicModule,
     FormsModule,
     ReactiveFormsModule,
+    SharedModule,
+    TranslateModule,
     NgxsModule.forFeature([SearchState, CityState]),
     MobileSearchRoutingModule,
     MobileModule

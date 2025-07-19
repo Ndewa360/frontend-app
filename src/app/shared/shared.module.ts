@@ -44,6 +44,8 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { LocationPaymentState } from './store/payment-location';
 import { LocalizedDatePipe } from './pipes/localized-date.pipe';
 import { MaxPipe } from './pipes/max.pipe';
+import { DynamicTranslatePipe } from './pipes/dynamic-translate.pipe';
+import { AuthStateService } from './services/auth-state.service';
 import { FileSizePipe } from './pipes/file-size.pipe';
 import { FileUploadComponent } from './components/file-upload/file-upload.component';
 import { UploadFilesState } from './store/files-upload';
@@ -137,6 +139,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     NoDataComponent,
     LocalizedDatePipe,
     MaxPipe,
+    DynamicTranslatePipe,
     FileSizePipe,
     FileUploadComponent,
     GaleryImageComponent,
@@ -171,6 +174,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     TranslateModule,
     LocalizedDatePipe,
     MaxPipe,
+    DynamicTranslatePipe,
     FileSizePipe,
     FileUploadComponent,
     GaleryImageComponent,

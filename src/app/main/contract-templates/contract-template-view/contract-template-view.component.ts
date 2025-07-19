@@ -190,7 +190,7 @@ export class ContractTemplateViewComponent implements OnInit, OnDestroy {
    * Retour à la liste
    */
   goBack(): void {
-    this.router.navigate(['/contract-templates']);
+    this.router.navigate(['/app/contract-templates']);
   }
 
   /**

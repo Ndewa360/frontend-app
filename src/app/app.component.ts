@@ -18,6 +18,7 @@ import { takeUntil, debounceTime, filter, take, catchError, retry, switchMap } f
 import { SeoService } from './shared/services/seo/seo.service';
 import { DeviceDetectionService } from './shared/services/device-detection.service';
 import { Platform } from '@ionic/angular';
+import { AuthStateService } from './shared/services/auth-state.service';
 
 const getSessionStorage = (key, defaultValue = null) => {
   try {
@@ -64,7 +65,8 @@ export class AppComponent implements OnInit, OnDestroy {
     private localizationService: LocalizationService,
     private translationService: TranslationService,
     private deviceService: DeviceDetectionService,
-    private platform: Platform
+    private platform: Platform,
+    private authStateService: AuthStateService
   ) {
     // Fallback pour l'écran de chargement au cas où la navigation ne se termine jamais
     this.loadingTimeout = setTimeout(() => {
@@ -231,17 +233,9 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   private loadUserProfileIfLoggedIn(): void {
-    const isLoggedIn = this.store.selectSnapshot(AuthTokenState.selectStateUserIsLogin);
-    if (isLoggedIn) {
-      this.store.dispatch(new UserProfileAction.FetchUserProfile())
-        .pipe(
-          catchError(err => {
-            console.error('Erreur lors du chargement initial du profil utilisateur:', err);
-            return of(null);
-          })
-        )
-        .subscribe();
-    }
+    // Utiliser le nouveau service pour charger le profil de manière conditionnelle
+    // Ne force pas la redirection sur les pages publiques
+    this.authStateService.loadUserProfileConditionally(false);
   }
 
   jumpToSection(section: string | null): void {

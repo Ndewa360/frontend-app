@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { Store } from '@ngxs/store';
 import { CityState } from '../../../../../shared/store';
 import { SmartFiltersService } from '../../../../../shared/services/smart-filters.service';
+import { TranslateService } from '@ngx-translate/core';
 
 export interface SearchFilters {
   city?: string;
@@ -29,36 +30,24 @@ export class MobileSearchFiltersComponent implements OnInit {
   filterForm: FormGroup;
   cities$ = this.store.select(CityState.selectStateCities);
   
-  roomTypes = [
-    { value: '', label: 'Tous les types' },
-    { value: 'STUDIO', label: 'Studio' },
-    { value: 'ROOM', label: 'Chambre' },
-    { value: 'APARTMENT', label: 'Appartement' },
-    { value: 'HOUSE', label: 'Maison' }
-  ];
+  // Types de logement (seront traduits dynamiquement)
+  roomTypes: Array<{value: string, label: string}> = [];
 
-  sortOptions = [
-    { value: 'price_asc', label: 'Prix croissant' },
-    { value: 'price_desc', label: 'Prix décroissant' },
-    { value: 'date_desc', label: 'Plus récents' },
-    { value: 'rating_desc', label: 'Mieux notés' }
-  ];
+  // Options de tri (seront traduites dynamiquement)
+  sortOptions: Array<{value: string, label: string}> = [];
 
-  priceRanges = [
-    { min: 0, max: 50000, label: 'Moins de 50 000 FCFA' },
-    { min: 50000, max: 100000, label: '50 000 - 100 000 FCFA' },
-    { min: 100000, max: 200000, label: '100 000 - 200 000 FCFA' },
-    { min: 200000, max: 500000, label: '200 000 - 500 000 FCFA' },
-    { min: 500000, max: 0, label: 'Plus de 500 000 FCFA' }
-  ];
+  // Gammes de prix prédéfinies (seront traduites dynamiquement)
+  priceRanges: Array<{min: number, max: number, label: string}> = [];
 
   constructor(
     private modalController: ModalController,
     private formBuilder: FormBuilder,
     private store: Store,
-    private smartFiltersService: SmartFiltersService
+    private smartFiltersService: SmartFiltersService,
+    private translate: TranslateService
   ) {
     this.filterForm = this.createForm();
+    this.initializeTranslatedOptions();
   }
 
   ngOnInit(): void {
@@ -67,6 +56,9 @@ export class MobileSearchFiltersComponent implements OnInit {
 
     // Initialiser les filtres intelligents
     this.initializeSmartFilters();
+
+    // Réinitialiser les options traduites si la langue change
+    this.initializeTranslatedOptions();
   }
 
   /**
@@ -234,5 +226,36 @@ export class MobileSearchFiltersComponent implements OnInit {
       minimumFractionDigits: 0,
       maximumFractionDigits: 0
     }).format(price);
+  }
+
+  /**
+   * Initialise les options traduites
+   */
+  private initializeTranslatedOptions(): void {
+    // Types de logement
+    this.roomTypes = [
+      { value: '', label: this.translate.instant('SEARCH.ALL_CITIES') },
+      { value: 'STUDIO', label: this.translate.instant('ROOM_TYPES.STUDIO') },
+      { value: 'ROOM', label: this.translate.instant('ROOM_TYPES.ROOM') },
+      { value: 'APARTMENT', label: this.translate.instant('ROOM_TYPES.APARTMENT') },
+      { value: 'HOUSE', label: this.translate.instant('ROOM_TYPES.HOUSE') }
+    ];
+
+    // Options de tri
+    this.sortOptions = [
+      { value: 'price_asc', label: this.translate.instant('SEARCH.SORT_PRICE_ASC') },
+      { value: 'price_desc', label: this.translate.instant('SEARCH.SORT_PRICE_DESC') },
+      { value: 'date_desc', label: this.translate.instant('SEARCH.SORT_NEWEST') },
+      { value: 'rating_desc', label: this.translate.instant('SORT.RELEVANCE') }
+    ];
+
+    // Gammes de prix
+    this.priceRanges = [
+      { min: 0, max: 50000, label: this.translate.instant('SEARCH.PRICE_RANGES.UNDER_50K') },
+      { min: 50000, max: 100000, label: this.translate.instant('SEARCH.PRICE_RANGES.50K_100K') },
+      { min: 100000, max: 200000, label: this.translate.instant('SEARCH.PRICE_RANGES.100K_200K') },
+      { min: 200000, max: 300000, label: this.translate.instant('SEARCH.PRICE_RANGES.200K_300K') },
+      { min: 300000, max: 0, label: this.translate.instant('SEARCH.PRICE_RANGES.OVER_300K') }
+    ];
   }
 }

@@ -5,6 +5,7 @@ import { Store, Actions, ofActionSuccessful, ofActionErrored } from '@ngxs/store
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 import { 
   LocataireModel, 
   LocataireAction, 
@@ -48,6 +49,7 @@ export class ModernTenantModalComponent implements OnInit, OnDestroy {
     private store: Store,
     private actions: Actions,
     private toastr: ToastrService,
+    private translate: TranslateService,
     private dialogRef: MatDialogRef<ModernTenantModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: TenantModalData
   ) {
@@ -150,10 +152,10 @@ export class ModernTenantModalComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy$)
     ).subscribe(() => {
       this.isLoading = false;
-      const message = this.data.mode === 'create' 
-        ? 'Locataire créé avec succès' 
-        : 'Locataire modifié avec succès';
-      this.toastr.success(message, 'Succès');
+      const messageKey = this.data.mode === 'create'
+        ? 'MODALS.TENANT.SUCCESS_CREATED'
+        : 'MODALS.TENANT.SUCCESS_UPDATED';
+      this.toastr.success(this.translate.instant(messageKey), this.translate.instant('NOTIFICATIONS.SUCCESS'));
       this.dialogRef.close(true);
     });
 
@@ -163,7 +165,10 @@ export class ModernTenantModalComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy$)
     ).subscribe(() => {
       this.isLoading = false;
-      this.toastr.error('Une erreur est survenue', 'Erreur');
+      const errorKey = this.data.mode === 'create'
+        ? 'MODALS.TENANT.ERROR_CREATE'
+        : 'MODALS.TENANT.ERROR_UPDATE';
+      this.toastr.error(this.translate.instant(errorKey), this.translate.instant('NOTIFICATIONS.ERROR'));
     });
   }
 
@@ -291,7 +296,10 @@ export class ModernTenantModalComponent implements OnInit, OnDestroy {
   get confirm() { return this.formGroup.get('confirm'); }
 
   getTitle(): string {
-    return this.data.mode === 'create' ? 'Nouveau Locataire' : 'Modifier le Locataire';
+    const titleKey = this.data.mode === 'create'
+      ? 'MODALS.TENANT.ADD_TITLE'
+      : 'MODALS.TENANT.EDIT_TITLE';
+    return this.translate.instant(titleKey);
   }
 
   getSubmitText(): string {

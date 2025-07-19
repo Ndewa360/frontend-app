@@ -29,7 +29,7 @@ export class MultilingualNotificationService {
    */
   async success(messageKey: string, titleKey?: string, options?: NotificationOptions): Promise<void> {
     const message = await this.getTranslation(messageKey, options?.translateParams);
-    const title = titleKey ? await this.getTranslation(titleKey, options?.translateParams) : 
+    const title = titleKey ? await this.getTranslation(titleKey, options?.translateParams) :
                   await this.getTranslation('NOTIFICATIONS.SUCCESS');
 
     this.toastr.success(message, title, {
@@ -38,6 +38,77 @@ export class MultilingualNotificationService {
       progressBar: options?.progressBar ?? true,
       positionClass: 'toast-top-right'
     });
+  }
+
+  /**
+   * Notifications spécifiques pour les modals
+   */
+  async tenantCreated(): Promise<void> {
+    await this.success('NOTIFICATIONS.TENANT_CREATED');
+  }
+
+  async tenantUpdated(): Promise<void> {
+    await this.success('NOTIFICATIONS.TENANT_UPDATED');
+  }
+
+  async tenantDeleted(): Promise<void> {
+    await this.success('NOTIFICATIONS.TENANT_DELETED');
+  }
+
+  async unitCreated(): Promise<void> {
+    await this.success('NOTIFICATIONS.UNIT_CREATED');
+  }
+
+  async unitUpdated(): Promise<void> {
+    await this.success('NOTIFICATIONS.UNIT_UPDATED');
+  }
+
+  async unitDeleted(): Promise<void> {
+    await this.success('NOTIFICATIONS.UNIT_DELETED');
+  }
+
+  async paymentCreated(): Promise<void> {
+    await this.success('NOTIFICATIONS.PAYMENT_CREATED');
+  }
+
+  async paymentUpdated(): Promise<void> {
+    await this.success('NOTIFICATIONS.PAYMENT_UPDATED');
+  }
+
+  async paymentDeleted(): Promise<void> {
+    await this.success('NOTIFICATIONS.PAYMENT_DELETED');
+  }
+
+  async contractTerminated(): Promise<void> {
+    await this.success('NOTIFICATIONS.CONTRACT_TERMINATED');
+  }
+
+  async operationFailed(): Promise<void> {
+    await this.error('NOTIFICATIONS.OPERATION_FAILED');
+  }
+
+  async networkError(): Promise<void> {
+    await this.error('NOTIFICATIONS.NETWORK_ERROR');
+  }
+
+  async validationError(): Promise<void> {
+    await this.error('NOTIFICATIONS.VALIDATION_ERROR');
+  }
+
+  async unauthorized(): Promise<void> {
+    await this.error('NOTIFICATIONS.UNAUTHORIZED');
+  }
+
+  async forbidden(): Promise<void> {
+    await this.error('NOTIFICATIONS.FORBIDDEN');
+  }
+
+  async notFound(): Promise<void> {
+    await this.error('NOTIFICATIONS.NOT_FOUND');
+  }
+
+  async serverError(): Promise<void> {
+    await this.error('NOTIFICATIONS.SERVER_ERROR');
   }
 
   /**

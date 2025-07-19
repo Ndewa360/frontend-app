@@ -160,76 +160,79 @@
     <p>Chargement des modèles...</p>
   </div>
   
-  <!-- Vue grille moderne -->
+  <!-- Vue grille moderne --> 
   <div class="templates-grid-modern" *ngIf="viewMode === 'grid' && !(loading$ | async) && (templates$ | async) as templates">
-    <div class="template-card-modern" *ngFor="let template of templates; trackBy: trackByTemplate">
-      <!-- Badge de statut -->
-      <div class="card-status-badge" [ngClass]="getStatusBadgeClass(template.status)">
-        {{ getStatusLabel(template.status) }}
-      </div>
-      
-      <!-- En-tête de la carte -->
-      <div class="card-header">
-        <div class="card-icon" [ngClass]="getTypeIconClass(template.type)">
-          <i class="fas fa-file-contract"></i>
+    <ng-scroolbar>
+      <div class="template-card-modern" *ngFor="let template of templates; trackBy: trackByTemplate">
+        <!-- Badge de statut -->
+        <div class="card-status-badge" [ngClass]="getStatusBadgeClass(template.status)">
+          {{ getStatusLabel(template.status) }}
         </div>
-        <div class="card-menu">
-          <button class="menu-btn" (click)="toggleCardMenu(template._id)">
-            <i class="fas fa-ellipsis-v"></i>
+        
+        <!-- En-tête de la carte -->
+        <div class="card-header">
+          <div class="card-icon" [ngClass]="getTypeIconClass(template.type)">
+            <i class="fas fa-file-contract"></i>
+          </div>
+          <div class="card-menu">
+            <button class="menu-btn" (click)="toggleCardMenu(template._id)">
+              <i class="fas fa-ellipsis-v"></i>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Contenu de la carte -->
+        <div class="card-content" (click)="viewTemplate(template)">
+          <h3 class="card-title">{{ template.name }}</h3>
+          <p class="card-description">{{ template.description || 'Aucune description disponible' }}</p>
+          
+          <!-- Badges de type -->
+          <div class="card-badges">
+            <span class="type-badge" [ngClass]="getTypeBadgeClass(template.type)">
+              {{ getTemplateTypeLabel(template.type) }}
+            </span>
+          </div>
+        </div>
+        
+        <!-- Métadonnées -->
+        <div class="card-meta">
+          <div class="meta-item">
+            <i class="fas fa-chart-line"></i>
+            <span>{{ template.usageCount }} utilisations</span>
+          </div>
+          <div class="meta-item">
+            <i class="fas fa-calendar"></i>
+            <span>{{ template.updatedAt | date:'dd/MM/yyyy' }}</span>
+          </div>
+        </div>
+        
+        <!-- Actions -->
+        <div class="card-actions">
+          <button 
+            class="action-btn-small primary"
+            (click)="editTemplate(template)"
+            [disabled]="template.isSystemDefault">
+            <i class="fas fa-edit"></i>
+            <span>Modifier</span>
+          </button>
+          <button
+            class="action-btn-small secondary"
+            (click)="duplicateTemplate(template)">
+            <i class="fas fa-copy"></i>
+            <span>{{ isDuplicateMode ? 'Sélectionner' : 'Dupliquer' }}</span>
+          </button>
+          <button
+            class="action-btn-small danger"
+            (click)="deleteTemplate(template)"
+            [disabled]="template.isSystemDefault"
+            *ngIf="!template.isSystemDefault">
+            <i class="fas fa-trash"></i>
+            <span>Supprimer</span>
           </button>
         </div>
       </div>
-      
-      <!-- Contenu de la carte -->
-      <div class="card-content" (click)="viewTemplate(template)">
-        <h3 class="card-title">{{ template.name }}</h3>
-        <p class="card-description">{{ template.description || 'Aucune description disponible' }}</p>
-        
-        <!-- Badges de type -->
-        <div class="card-badges">
-          <span class="type-badge" [ngClass]="getTypeBadgeClass(template.type)">
-            {{ getTemplateTypeLabel(template.type) }}
-          </span>
-        </div>
-      </div>
-      
-      <!-- Métadonnées -->
-      <div class="card-meta">
-        <div class="meta-item">
-          <i class="fas fa-chart-line"></i>
-          <span>{{ template.usageCount }} utilisations</span>
-        </div>
-        <div class="meta-item">
-          <i class="fas fa-calendar"></i>
-          <span>{{ template.updatedAt | date:'dd/MM/yyyy' }}</span>
-        </div>
-      </div>
-      
-      <!-- Actions -->
-      <div class="card-actions">
-        <button 
-          class="action-btn-small primary"
-          (click)="editTemplate(template)"
-          [disabled]="template.isSystemDefault">
-          <i class="fas fa-edit"></i>
-          <span>Modifier</span>
-        </button>
-        <button
-          class="action-btn-small secondary"
-          (click)="duplicateTemplate(template)">
-          <i class="fas fa-copy"></i>
-          <span>{{ isDuplicateMode ? 'Sélectionner' : 'Dupliquer' }}</span>
-        </button>
-        <button
-          class="action-btn-small danger"
-          (click)="deleteTemplate(template)"
-          [disabled]="template.isSystemDefault"
-          *ngIf="!template.isSystemDefault">
-          <i class="fas fa-trash"></i>
-          <span>Supprimer</span>
-        </button>
-      </div>
-    </div>
+    </ng-scroolbar>
+    
   </div>
   
   <!-- Vue liste moderne -->

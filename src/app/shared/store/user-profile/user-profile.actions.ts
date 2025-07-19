@@ -124,4 +124,11 @@ export namespace UserProfileAction
         static readonly type = '[UserProfile] Update Profile Photo'
         constructor(public photoUrl: string){}
     }
+
+    // Action pour charger le profil de manière conditionnelle (sans forcer la connexion)
+    export class FetchUserProfileConditional
+    {
+        static readonly type = '[UserProfile] Fetch UserProfile Conditional'
+        constructor(public forceRedirectOnError: boolean = false){}
+    }
 }

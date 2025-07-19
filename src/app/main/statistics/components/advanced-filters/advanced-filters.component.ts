@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { PropertyModel } from 'src/app/shared/store';
+import { TranslateService } from '@ngx-translate/core';
 
 export interface FilterOptions {
   startYear: number;
@@ -32,15 +33,14 @@ export class AdvancedFiltersComponent implements OnInit {
   isExpanded: boolean = false;
   
   availableYears: number[] = [];
-  dataTypeOptions = [
-    { value: 'revenue', label: 'Revenus', icon: 'currency--dollar' },
-    { value: 'occupancy', label: 'Taux d\'occupation', icon: 'home' },
-    { value: 'payments', label: 'Paiements', icon: 'receipt' },
-    { value: 'arrears', label: 'Arriérés', icon: 'warning' }
-  ];
+  dataTypeOptions: Array<{value: string, label: string, icon: string}> = [];
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private translate: TranslateService
+  ) {
     this.initializeYears();
+    this.initializeDataTypeOptions();
     this.createForm();
   }
 
@@ -53,6 +53,31 @@ export class AdvancedFiltersComponent implements OnInit {
     for (let year = currentYear - 5; year <= currentYear + 1; year++) {
       this.availableYears.push(year);
     }
+  }
+
+  private initializeDataTypeOptions(): void {
+    this.dataTypeOptions = [
+      {
+        value: 'revenue',
+        label: this.translate.instant('FILTERS.REVENUE'),
+        icon: 'currency--dollar'
+      },
+      {
+        value: 'occupancy',
+        label: this.translate.instant('FILTERS.OCCUPANCY'),
+        icon: 'home'
+      },
+      {
+        value: 'payments',
+        label: this.translate.instant('FILTERS.PAYMENTS'),
+        icon: 'receipt'
+      },
+      {
+        value: 'arrears',
+        label: this.translate.instant('FILTERS.ARREARS'),
+        icon: 'warning'
+      }
+    ];
   }
 
   private createForm(): void {

@@ -3,6 +3,12 @@ import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
+// Translation
+import { TranslateModule } from '@ngx-translate/core';
+
+// Shared
+import { SharedModule } from '../shared/shared.module';
+
 // Routing
 import { MobileRoutingModule } from './mobile-routing.module';
 
@@ -44,6 +50,8 @@ import { MobileSearchStatsService } from './shared/services/mobile-search-stats.
     IonicModule,
     FormsModule,
     ReactiveFormsModule,
+    SharedModule,
+    TranslateModule,
     MobileRoutingModule
   ],
   providers: [
@@ -60,7 +68,9 @@ import { MobileSearchStatsService } from './shared/services/mobile-search-stats.
     MobileLoadingComponent,
     MobileErrorComponent,
     MobileEmptyStateComponent,
-    MobileOfflineStatusComponent
+    MobileOfflineStatusComponent,
+    // Export TranslateModule for child modules
+    TranslateModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
