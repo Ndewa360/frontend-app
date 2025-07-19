@@ -107,8 +107,8 @@ export class UserProfileInfosComponent implements OnInit, OnDestroy {
       numberFormat: [this.userProfile?.numberFormat || 'fr-FR'],
 
       // Préférences d'affichage
-      theme: [this.userProfile?.userSetting?.theme || 'light'],
-      isEnglishTimeFormat: [this.userProfile?.userSetting?.isEnglishTimeFormat || false]
+      theme: [this.userProfile?.theme || 'light'],
+      isEnglishTimeFormat: [this.userProfile?.isEnglishTimeFormat || false]
     });
   }
 
@@ -137,8 +137,8 @@ export class UserProfileInfosComponent implements OnInit, OnDestroy {
         numberFormat: this.userProfile.numberFormat || 'fr-FR',
 
         // Préférences d'affichage
-        theme: this.userProfile.userSetting?.theme || 'light',
-        isEnglishTimeFormat: this.userProfile.userSetting?.isEnglishTimeFormat || false
+        theme: this.userProfile.theme || 'light',
+        isEnglishTimeFormat: this.userProfile.isEnglishTimeFormat || false
       });
     }
   }

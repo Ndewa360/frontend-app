@@ -48,7 +48,7 @@ import { LocalizationService } from '../../../../shared/services/localization/lo
                     {{ getLanguageDisplayName(language) }}
                   </option>
                 </select>
-                <youpez-ibm-icon iconName="chevron-down" iconSize="16" class="select-icon"></youpez-ibm-icon>
+                <youpez-ibm-icon iconName="chevronDown" iconSize="16" class="select-icon"></youpez-ibm-icon>
               </div>
               <div class="field-hint" *ngIf="getCurrentLanguageInfo()">
                 {{ 'SETTINGS.CURRENT_LANGUAGE' | translate }}: {{ getCurrentLanguageInfo()?.nativeName }}
@@ -73,7 +73,7 @@ import { LocalizationService } from '../../../../shared/services/localization/lo
                     {{ getCurrencyDisplayName(currency) }}
                   </option>
                 </select>
-                <youpez-ibm-icon iconName="chevron-down" iconSize="16" class="select-icon"></youpez-ibm-icon>
+                <youpez-ibm-icon iconName="chevronDown" iconSize="16" class="select-icon"></youpez-ibm-icon>
               </div>
               <div class="field-hint" *ngIf="getCurrentCurrencyInfo()">
                 {{ 'SETTINGS.CURRENT_CURRENCY' | translate }}: {{ getCurrentCurrencyInfo()?.name }}
@@ -86,7 +86,7 @@ import { LocalizationService } from '../../../../shared/services/localization/lo
             <div class="settings-toggle" (click)="toggleAdvancedSettings()">
               <span class="toggle-label">{{ 'SETTINGS.ADVANCED_SETTINGS' | translate }}</span>
               <youpez-ibm-icon 
-                [iconName]="showAdvancedSettings ? 'chevron-up' : 'chevron-down'" 
+                [iconName]="showAdvancedSettings ? 'chevronUp' : 'chevronDown'" 
                 iconSize="16" 
                 class="toggle-icon">
               </youpez-ibm-icon>
@@ -110,7 +110,7 @@ import { LocalizationService } from '../../../../shared/services/localization/lo
                       <option value="Asia/Tokyo">Asia/Tokyo (GMT+9)</option>
                       <option value="UTC">UTC (GMT+0)</option>
                     </select>
-                    <youpez-ibm-icon iconName="chevron-down" iconSize="16" class="select-icon"></youpez-ibm-icon>
+                    <youpez-ibm-icon iconName="chevronDown" iconSize="16" class="select-icon"></youpez-ibm-icon>
                   </div>
                 </div>
 
@@ -129,7 +129,7 @@ import { LocalizationService } from '../../../../shared/services/localization/lo
                       <option value="YYYY-MM-DD">YYYY-MM-DD (2024-12-31)</option>
                       <option value="DD-MM-YYYY">DD-MM-YYYY (31-12-2024)</option>
                     </select>
-                    <youpez-ibm-icon iconName="chevron-down" iconSize="16" class="select-icon"></youpez-ibm-icon>
+                    <youpez-ibm-icon iconName="chevronDown" iconSize="16" class="select-icon"></youpez-ibm-icon>
                   </div>
                 </div>
               </div>
@@ -150,7 +150,7 @@ import { LocalizationService } from '../../../../shared/services/localization/lo
                     <option value="de-DE">Deutsch (1.234.567,89)</option>
                     <option value="ar-SA">العربية (١٬٢٣٤٬٥٦٧٫٨٩)</option>
                   </select>
-                  <youpez-ibm-icon iconName="chevron-down" iconSize="16" class="select-icon"></youpez-ibm-icon>
+                  <youpez-ibm-icon iconName="chevronDown" iconSize="16" class="select-icon"></youpez-ibm-icon>
                 </div>
               </div>
             </div>
