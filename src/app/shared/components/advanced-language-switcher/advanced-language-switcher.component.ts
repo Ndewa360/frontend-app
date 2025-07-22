@@ -13,7 +13,7 @@ export interface LanguageOption {
 @Component({
   selector: 'app-advanced-language-switcher',
   templateUrl: './advanced-language-switcher.component.html',
-  styleUrls: ['./advanced-language-switcher.component.scss']
+  // styleUrls: ['./advanced-language-switcher.component.scss']
 })
 export class AdvancedLanguageSwitcherComponent implements OnInit, OnDestroy {
   

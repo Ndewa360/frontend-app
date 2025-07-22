@@ -3,6 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CUSTOM_ELEMENTS_SCHEMA, LOCALE_ID, NgModule, APP_INITIALIZER } from '@angular/core';
 import localeFr from '@angular/common/locales/fr';
+import { HttpClient } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -18,6 +19,9 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AuthTokenInterceptor } from './shared/interceptors';
 import { MonitoringInterceptor } from './shared/interceptors/monitoring-interceptor';
 import { registerLocaleData } from '@angular/common';
+
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
 // Fonction pour s'assurer que les styles sont chargés
 export function initStyles() {
@@ -48,6 +52,12 @@ export function initStyles() {
 
 registerLocaleData(localeFr);
 
+
+// Factory function pour le loader de traduction
+export function HttpLoaderFactory(http: HttpClient) {
+  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+}
+
 @NgModule({
 	declarations: [
 		AppComponent,
@@ -65,6 +75,13 @@ registerLocaleData(localeFr);
 			[] , {
 			  developmentMode: !environment.production
 			}),
+		TranslateModule.forRoot({
+			loader: {
+				provide: TranslateLoader,
+				useFactory: HttpLoaderFactory,
+				deps: [HttpClient]
+			}
+		}),
 	],
 	providers: [
 		{ provide: HTTP_INTERCEPTORS, useClass: AuthTokenInterceptor, multi: true },

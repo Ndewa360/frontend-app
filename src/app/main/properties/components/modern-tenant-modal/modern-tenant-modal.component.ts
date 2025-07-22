@@ -6,6 +6,8 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
+import { FormUtils } from 'src/app/shared/utils';
+
 import { 
   LocataireModel, 
   LocataireAction, 
@@ -119,24 +121,24 @@ export class ModernTenantModalComponent implements OnInit, OnDestroy {
     if (this.data.tenant) {
       const tenant = this.data.tenant;
       this.formGroup.patchValue({
-        fullName: tenant.fullName || '',
-        email: tenant.email || '',
-        phoneNumber: tenant.phoneNumber || '',
-        idCardNumber: '', // idCardNumber n'existe pas dans LocataireModel
-        idCardType: 'CNI', // idCardType n'existe pas dans LocataireModel
+        fullName: tenant.fullName || null,
+        email: tenant.email || null,
+        phoneNumber: tenant.phoneNumber || null,
+        idCardNumber: '', 
+        idCardType: 'CNI',
         country: tenant.country || 'Cameroun',
-        location: tenant.location || '',
-        fullNameRef: tenant.fullNameRef || '',
-        phoneNumberRef: tenant.phoneNumberRef || '',
+        location: tenant.location || null,
+        fullNameRef: tenant.fullNameRef || null,
+        phoneNumberRef: tenant.phoneNumberRef || null,
         emailRef: tenant.emailRef || '',
-        roomId: tenant.room || '',
-        description: tenant.description || '',
+        roomId: tenant.room || null,
+        description: tenant.description || null,
         confirm: true
       });
       
       // Charger la photo existante
-      if (tenant.photo) {
-        this.photoPreview = tenant.photo;
+      if (tenant.profilePicture) {
+        this.photoPreview = tenant.profilePicture;
       }
     }
   }
@@ -258,19 +260,20 @@ export class ModernTenantModalComponent implements OnInit, OnDestroy {
     
     try {
       // Upload de la photo si nécessaire
-      let photoUrl = this.data.tenant?.photo || null;
+      let photoUrl = this.data.tenant?.profilePicture || null;
       if (this.selectedPhoto) {
         photoUrl = await this.uploadPhoto();
       }
 
       const formData = this.formGroup.value;
-      const tenantData: LocataireModel = {
+      const tenantData = FormUtils.removeNullAttribut({
         ...formData,
-        photo: photoUrl,
-        property: this.data.property._id,
-        room: formData.roomId
-      };
+        profilePicture: photoUrl,
+        propertyId: this.data.property._id,
+        roomId: formData.roomId
+      });
 
+      delete tenantData.confirm;
       if (this.data.mode === 'create') {
         this.store.dispatch(new LocataireAction.CreateLocataire(tenantData));
       } else {

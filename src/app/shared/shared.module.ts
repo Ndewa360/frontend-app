@@ -7,6 +7,8 @@ import { DummyTableExpansionComponent } from './components/dummy-table-expansion
 import { DummyTableAdvancedComponent } from './components/dummy-table-advanced/dummy-table-advanced.component'
 import { DebugTokenPanelComponent } from './components/debug-token-panel/debug-token-panel.component'
 import { LanguageSwitcherComponent } from './components/language-switcher/language-switcher.component'
+import { AdvancedLanguageSwitcherComponent } from './components/advanced-language-switcher/advanced-language-switcher.component'
+
 import { ClickOutsideDirective } from './directives/click-outside.directive'
 import { NgxsModule } from '@ngxs/store';
 import {
@@ -70,13 +72,6 @@ import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { HttpClient } from '@angular/common/http';
 
-// Factory function pour le loader de traduction
-export function HttpLoaderFactory(http: HttpClient) {
-  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
-}
-
-
-
 
 @NgModule({
   imports: [
@@ -123,13 +118,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         progressBar:true,
         closeButton:true
       }),
-      TranslateModule.forRoot({
-        loader: {
-          provide: TranslateLoader,
-          useFactory: HttpLoaderFactory,
-          deps: [HttpClient]
-        }
-      }),
+      TranslateModule.forChild()
   ],
   declarations: [
     DummyTableRichComponent,
@@ -159,7 +148,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     SubscriptionLimitModalComponent,
     SubscriptionStatusWidgetComponent,
     LanguageSwitcherComponent,
-    ClickOutsideDirective
+    ClickOutsideDirective,
+    AdvancedLanguageSwitcherComponent
   ],
   exports: [
     YoupezModule,
@@ -193,7 +183,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     SubscriptionLimitModalComponent,
     SubscriptionStatusWidgetComponent,
     LanguageSwitcherComponent,
-    ClickOutsideDirective
+    ClickOutsideDirective,
+    // AdvancedLanguageSwitcherComponent
   ],
   providers: [
     // Nouveaux services ajoutés

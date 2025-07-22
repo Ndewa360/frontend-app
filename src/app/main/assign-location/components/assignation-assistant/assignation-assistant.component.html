@@ -158,7 +158,7 @@
             <div class="form-field">
               <label class="field-label">Locataire</label>
               <select formControlName="locataireId" class="field-input">
-                <option value="">Sélectionner un locataire</option>
+                <option [value]="null">Sélectionner un locataire</option>
                 <option
                   *ngFor="let locataire of locatairesList"
                   [value]="locataire._id">

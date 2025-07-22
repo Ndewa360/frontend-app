@@ -528,6 +528,9 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
       case 'schedule_maintenance':
         this.scheduleMaintenance();
         break;
+      case 'edit_property':
+        this.onEditProperty()
+        break;
       default:
         console.log('Action non reconnue:', actionType);
     }

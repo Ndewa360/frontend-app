@@ -647,6 +647,11 @@ export class PropertyOverviewComponent implements OnInit, OnChanges {
     ];
   }
 
+  onEditProperty()
+  {
+    this.quickAction.emit("edit_property")
+  }
+
   // Méthodes pour les tendances
   getRevenueTrend(): 'up' | 'down' | 'stable' {
     if (!this.metrics) return 'stable';

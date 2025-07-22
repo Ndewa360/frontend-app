@@ -8,7 +8,7 @@ export interface UserModel {
 
     phoneNumber?:string;
     
-    photo?:string;
+    profilePicture?:string;
 
     country?:string;
 
@@ -19,4 +19,8 @@ export interface UserModel {
     isDisabled?:boolean;
 
     createdAt?:Date;
+
+    idCardType?:string;
+
+    idCardNumber?:string;
 }

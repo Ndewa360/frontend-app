@@ -216,8 +216,8 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
       });
 
     // Écouter les changements des autres formulaires
-    this.locataireForm.get('locataireId')?.valueChanges
-      .pipe(takeUntil(this.destroy$))
+    this.locataireForm.get('locataireId').valueChanges
+      // .pipe(takeUntil(this.destroy$))
       .subscribe(locataireId => {
         this.assistantState.configuration.locataireId = locataireId;
         this.validateCurrentStep();
@@ -358,6 +358,7 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
 
       case EtapeAssistant.SELECTION_LOCATAIRE:
         isValid = this.locataireForm.valid && this.locatairesList.length > 0;
+        console.log("Valid ",isValid,this.locataireForm.valid,this.assistantState.configuration.locataireId)
         if (!this.locataireForm.valid) {
           errors.push('Veuillez sélectionner un locataire');
         }

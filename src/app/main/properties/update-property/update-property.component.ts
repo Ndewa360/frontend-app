@@ -110,21 +110,21 @@ export class UpdatePropertyComponent implements OnInit {
     this.formGroup.get('geolocationCountry')?.valueChanges
       .pipe(takeUntil(this.destroy$))
       .subscribe(country => {
+        console.log("Country cities ",country)
         if (country?.cities) {
           this.selectedCitiesList = country.cities.map(city => ({
-            content: city.name,
-            valueType: city._id
+            content: city.fullName,
+            valueType: city._id,
+            selected:this.data.property.geolocationCity?._id==city._id
           }));
           
           // Si la propriété a une ville, la sélectionner
           if (this.data.property.geolocationCity) {
-            const currentCity = country.cities.find(city => 
-              city._id === this.data.property.geolocationCity._id
-            );
+            const currentCity = country.cities.find(city => city._id === this.data.property.geolocationCity._id);
             if (currentCity) {
               this.formGroup.patchValue({
                 geolocationCity: {
-                  content: currentCity.name,
+                  content: currentCity.fullName,
                   valueType: currentCity._id
                 }
               });
@@ -140,14 +140,13 @@ export class UpdatePropertyComponent implements OnInit {
         this.countriesList = countries.map(country => ({
           content: country.fullName,
           valueType: country._id,
+          selected:country._id==this.data.property.geolocationCountry?._id,
           cities: country.cities
         }));
 
         // Sélectionner le pays actuel de la propriété
         if (this.data.property.geolocationCountry) {
-          const currentCountry = countries.find(country => 
-            country._id === this.data.property.geolocationCountry._id
-          );
+          const currentCountry = countries.find(country =>  country._id === this.data.property.geolocationCountry._id);
           if (currentCountry) {
             this.formGroup.patchValue({
               geolocationCountry: {

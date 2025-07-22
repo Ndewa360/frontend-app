@@ -45,7 +45,8 @@
           <!-- Actions de l'en-tête -->
           <div class="header-actions flex items-center space-x-3">
             <button ibmButton="primary"
-                    size="sm"
+                    size="md"
+                    class="custom-primary-button inline-flex items-center focus-carbon"
                     (click)="onEditProperty()">
               <youpez-ibm-icon iconName="edit" iconSize="16" class="mr-2"></youpez-ibm-icon>
               Modifier
@@ -74,7 +75,7 @@
                              class="mr-2"></youpez-ibm-icon>
             {{ tab.label }}
             <span *ngIf="tab.count !== undefined"
-                  class="ml-2 bg-gray-100 text-gray-900 py-0.5 px-2.5 rounded-full text-xs font-medium tab-count">
+                  class="ml-2 bg-gray-100 text-gray-900 py-1 px-2 rounded-full text-xs font-medium tab-count">
               {{ tab.count }}
             </span>
           </div>
@@ -95,7 +96,7 @@
           [tenants]="tenants$ | async"
           [history]="history$ | async"
           [loading]="(loadingStates$ | async)?.property || false"
-          (quickAction)="onQuickAction($event)">
+          (quickAction)="onQuickAction($event)"> 
         </app-property-overview>
       </div>
 

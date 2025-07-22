@@ -1,0 +1,14 @@
+- Revoir le modal de demande de téléchargement de l'app qui est à la route /admin car normalement c'est uniqmenet lorsque l'on essai d'acceder au dashbord a partir d'un mobile mais sur le navigateur qu'on doit obliger l'utilisateur a télécharger l'application
+- Revoir L'icone du choix du template pendant la création du bien
+- Ajouter le selecteur de modele de contrat avec selectionner par défaut le modéle qui a été associé pendans la modification d'une propriété
+
+- Améliorer les fonction simulé suivante dans le fichier property-details-complete : revoigetLastInspectionDate(),getNextMaintenanceDate(), getMarketComparison()
+- Dans la carte d'une unité, améliorer la valeur de "libre depuis..." qui est un champs simulé en remplacant par un la valeur calculer. si jamais occupé alors libre depuis, prend la valeur de la date de création. et si déjà eu a étre occupé, alors prend la valeur de la date de fin de la location de la derniere location 
+- Mettre un bouton d'edition sur la carte d'une unité et aussi dans le panel des details d'une unité. Ce bouton doit avoir pour objectif d'ouvrir le modal d'edition de l'unité
+- Dans le fichier modern-tenant-modal il faut revoir la logique pour uploader la photo du locataire
+- Le formulaire de selection du locataire dans le fichier assingation-assistant ne fonctionne pas normalement
+- Revoir la logique d'assignation d'une unité
+- Revoir la logique pour création d'un bien. principalement le plan. par défaut lors de la création d'un compte l'utilisateur doit-être associer automatiquement a un plan free. Ce plan free doit être crée par défaut avec comme caractéristique au plus 1 bien à créer avec au plus 8 unités locative associé. les périodes de facturation même pour le plan free doit être compté mais chanque fois le montant de la facture est 0 et aucun paiement n'est attendu
+-Intégrer le fait qu'une agence immobiliere vienne créer son compte et se connecter à l'application. dans ce cas, apres avoir valider le compte (lors de la premiere connexion), on lui demande quelle type de compte il s'agit. si c'est une agence immobiliere alors on lui demande des informations par rapport à l'agence. Dans ce cas, lors de la création d'un bien, on crée le compte propriétaire et on l'enregistre comme utilisateur qui peut egalement lui même venir uniquement consulter le compte lié et gérer par l'agence
+- Revoir process assignation d'un locataire a une unité locative. il faut revoir les selects de locataire et de chambre car il faut parfois faire 2 selections pour que ca prenne. la logique de calcul et d'assignation doit-être révue en frontend poet en backend avec une intégration complete
+- Le switcher de langue avancé n'a pas été complétment implémenté et intégré

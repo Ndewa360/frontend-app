@@ -154,11 +154,12 @@
       <h3 class="text-2xl font-bold text-gray-900 mb-3">
         {{ rooms.length === 0 ? 'Aucune unité locative' : 'Aucun résultat trouvé' }}
       </h3>
-      <p class="text-gray-600 mb-8 max-w-md mx-auto">
-        {{ rooms.length === 0
+      <div class="text-gray-600 mb-8 max-w-md mx-auto text-center">
+        <p>{{ rooms.length === 0
           ? 'Commencez par ajouter des unités locatives à cette propriété pour gérer vos locataires et revenus.'
           : 'Essayez de modifier vos critères de recherche ou de filtrage pour trouver les unités souhaitées.' }}
-      </p>
+        </p>
+      </div>
       <button *ngIf="rooms.length === 0"
               (click)="onAddUnit()"
               class="bg-primary-600 hover:bg-primary-700 text-white px-8 py-4 rounded-xl font-semibold transition-all duration-200 flex items-center mx-auto shadow-lg hover:shadow-xl"
@@ -488,46 +489,7 @@
 </div>
 
 <!-- Modals pour les actions -->
-<!-- Modal d'assignation de locataire -->
-<div *ngIf="showAssignTenantModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-  <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4">
-    <div class="p-6">
-      <h3 class="text-xl font-bold text-gray-900 mb-4">Assigner un locataire</h3>
-      <p class="text-gray-600 mb-6">Unité : {{ getRoomName(selectedRoom) }}</p>
 
-      <!-- Formulaire d'assignation -->
-      <div class="space-y-4">
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Sélectionner un locataire</label>
-          <select [value]="selectedTenantId" (change)="selectedTenantId = $any($event.target).value" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-            <option value="">Choisir un locataire...</option>
-            <option *ngFor="let tenant of availableTenants" [value]="tenant._id">
-              {{ tenant.fullName || tenant.name }} - {{ tenant.email }}
-            </option>
-          </select>
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Date de début</label>
-          <input type="date" [value]="leaseStartDate" (change)="leaseStartDate = $any($event.target).value" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-        </div>
-      </div>
-
-      <!-- Actions -->
-      <div class="flex gap-3 mt-6">
-        <button (click)="closeAssignTenantModal()"
-                class="flex-1 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition-all duration-200">
-          Annuler
-        </button>
-        <button (click)="confirmAssignTenant()"
-                [disabled]="!selectedTenantId || !leaseStartDate"
-                class="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-300 text-white rounded-lg font-medium transition-all duration-200">
-          Assigner
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
 
   <!-- Panneau latéral avec nouvelle interface professionnelle -->
   <app-unit-details-panel

@@ -50,45 +50,7 @@ export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
   selectedPeriod: 'month' | 'quarter' | 'year' = 'month';
   
   // Métriques principales
-  financialMetrics: FinancialMetric[] = [
-    {
-      label: 'Revenus Totaux',
-      value: 2450000,
-      change: 12.5,
-      changeType: 'increase',
-      icon: 'currency--dollar',
-      color: 'success',
-      isMoney:true
-    },
-    {
-      label: 'Taux de Recouvrement',
-      value: 87.3,
-      change: -2.1,
-      changeType: 'decrease',
-      icon: 'chart--pie',
-      color: 'warning',
-      isMoney:false
-    },
-    {
-      label: 'Propriétés Actives',
-      value: 24,
-      change: 0,
-      changeType: 'neutral',
-      icon: 'home',
-      color: 'info',
-      isMoney:false
-    },
-    {
-      label: 'Bénéfice Net',
-      value: 1890000,
-      change: 8.7,
-      changeType: 'increase',
-      icon: 'trending--up',
-      color: 'primary',
-      isMoney:true
-
-    }
-  ];
+  financialMetrics: FinancialMetric[] = [];
 
   // Données des propriétés
   propertiesSummary: PropertyFinancialSummary[] = [];
@@ -203,10 +165,7 @@ export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
   }
 
   private updateMetrics(): void {
-    if (this.propertiesSummary.length === 0) {
-      // Utiliser les données simulées si pas de données réelles
-      return;
-    }
+    
 
     const totalRevenue = this.propertiesSummary.reduce((sum, prop) => sum + prop.totalRevenue, 0);
     const totalExpected = this.propertiesSummary.reduce((sum, prop) => sum + prop.expectedRevenue, 0);

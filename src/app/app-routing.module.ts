@@ -59,7 +59,7 @@ const routes: Routes = [
 	},
 	{
 		path: 'admin',
-		canActivate:[AuthGuard, MobileDashboardGuard],
+		canActivate:[AuthGuard, ], //MobileDashboardGuard
 		component: LayoutComponent,
 		data:{
 			breadcrumb: 'Acceuil'

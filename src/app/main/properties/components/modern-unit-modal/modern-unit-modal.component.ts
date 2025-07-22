@@ -5,6 +5,8 @@ import { Store, Actions, ofActionSuccessful, ofActionErrored } from '@ngxs/store
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
+import { FormUtils } from 'src/app/shared/utils';
+
 import { 
   RoomModel, 
   RoomAction, 
@@ -74,7 +76,7 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
   private initializeForm(): void {
     this.formGroup = this.formBuilder.group({
       // Informations de base
-      code: ['', [Validators.required, Validators.minLength(2)]],
+      code: ['', [Validators.minLength(2)]],
       type: [RoomType.ROOM, [Validators.required]],
       price: [0, [Validators.required, Validators.min(1000)]],
       description: [''],
@@ -86,7 +88,7 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
       isInternalShower: [true],
       hasKitchen: [false],
       isInternalKitchen: [false],
-      numberOfKitchen: [0, [Validators.min(0)]],
+      numberOfKitchen: [0, [Validators.min(0)]], 
       
       // Caution
       shouldPayCaution: [false],
@@ -120,7 +122,7 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
     if (this.data.unit) {
       const unit = this.data.unit;
       this.formGroup.patchValue({
-        code: unit.code || '',
+        code: unit.code || null,
         type: unit.type || RoomType.ROOM,
         price: unit.price || 0,
         description: unit.description || '',
@@ -263,9 +265,8 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
       const mediaUrls = await this.uploadImages();
 
       const formData = this.formGroup.value;
-      const unitData: RoomModel = {
+      const unitData = {
         ...formData,
-        property: this.data.property._id,
         medias: mediaUrls,
         specifity: {
           numberOfBathroom: formData.numberOfBathroom,
@@ -275,21 +276,28 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
           hasKitchen: formData.hasKitchen,
           isInternalKitchen: formData.isInternalKitchen,
           numberOfKitchen: formData.numberOfKitchen
-        },
-        isFree: this.data.unit?.isFree ?? true,
-        _id: this.data.unit?._id || '',
-        createdAt: this.data.unit?.createdAt,
-        updatedAt: new Date()
+        }
       };
 
+      //suppression des properietés rédondantes
+      delete unitData.hasKitchen;
+      delete unitData.isInternalKitchen;
+      delete unitData.isInternalShower;
+      delete unitData.numberOfKitchen;
+      delete unitData.numberOfLivingRoom;
+      delete unitData.numberOfShower;
+      delete unitData.numberOfBathroom;
+
+
       if (this.data.mode === 'create') {
+        delete unitData.code;
         this.store.dispatch(new RoomAction.CreateRoom(unitData, this.data.property._id));
       } else {
         this.store.dispatch(new RoomAction.UpdateRoom(unitData, this.data.unit!._id));
       }
     } catch (error) {
       this.isLoading = false;
-      this.toastr.error('Une erreur est survenue', 'Erreur');
+      // this.toastr.error('Une erreur est survenue', 'Erreur');
     }
   }
 

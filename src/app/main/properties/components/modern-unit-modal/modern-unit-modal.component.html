@@ -1,7 +1,7 @@
 <!-- Modal moderne pour unité -->
 <div class="modern-unit-modal">
   <!-- Header -->
-  <div class="modal-header">
+  <div class="modal-header"> 
     <div class="header-content">
       <div class="header-icon">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -74,19 +74,7 @@
           </h3>
           
           <div class="form-grid">
-            <div class="form-group">
-              <label class="form-label">Code de l'unité *</label>
-              <input type="text" 
-                     formControlName="code"
-                     class="form-input"
-                     [class.error]="code?.invalid && code?.touched"
-                     placeholder="Ex: A101, B205">
-              <div *ngIf="code?.invalid && code?.touched" class="error-message">
-                <span *ngIf="code?.errors?.['required']">Le code est requis</span>
-                <span *ngIf="code?.errors?.['minlength']">Le code doit contenir au moins 2 caractères</span>
-              </div>
-            </div>
-
+            
             <div class="form-group">
               <label class="form-label">Type d'unité *</label>
               <select formControlName="type" class="form-select" [class.error]="type?.invalid && type?.touched">
@@ -116,6 +104,18 @@
               </div>
             </div>
 
+            <div class="form-group">
+              <label class="form-label">Code de l'unité </label>
+              <input type="text" 
+                     formControlName="code"
+                     class="form-input"
+                     [class.error]="code?.invalid && code?.touched"
+                     placeholder="Ex: A101, B205">
+              <div *ngIf="code?.invalid && code?.touched" class="error-message">
+                <span *ngIf="code?.errors?.['minlength']">Le code doit contenir au moins 2 caractères</span>
+              </div>
+            </div>
+
             <div class="form-group full-width">
               <label class="form-label">Description</label>
               <textarea formControlName="description"
@@ -138,9 +138,9 @@
           
           <div class="form-grid">
             <div class="form-group">
-              <label class="form-label">Nombre de salles de bain</label>
+              <label class="form-label">Nombre de douches</label>
               <input type="number" 
-                     formControlName="numberOfBathroom"
+                     formControlName="numberOfShower"
                      class="form-input"
                      min="0"
                      placeholder="1">
@@ -156,9 +156,9 @@
             </div>
 
             <div class="form-group">
-              <label class="form-label">Nombre de douches</label>
+              <label class="form-label">Nombre de chambres</label>
               <input type="number" 
-                     formControlName="numberOfShower"
+                     formControlName="numberOfBathroom"
                      class="form-input"
                      min="0"
                      placeholder="1">

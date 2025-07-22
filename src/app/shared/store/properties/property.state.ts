@@ -74,17 +74,19 @@ export class PropertyState{
         ctx.patchState({
             loadingProperty: true
         })
-
+        console.log("To update ",property,id)
         return this._propertysService.updateProperty(property,id).pipe(
             tap(
                 (result)=>{
                     const data = [...state.properties]
+                    console.log("Result ",result)
                     let index = data.findIndex((u)=>u._id==id);
                     if(index>-1) data[index]=result.data;
                     ctx.patchState({
                         loadingProperty:false,
                         properties:data
                     })
+                    
                     this._toastrService.success(`Propriété mise à jour avec success!`, 'Ndewa360°');
                 }
             ),
@@ -249,7 +251,6 @@ export class PropertyState{
         return this._propertysService.getProperties().pipe(
             tap(
                 result => {
-                    console.log("Fetch Properties ",result)
                     if(state.initLoadingState!="LOADED") ctx.patchState({initLoadingState:'LOADED'})
                     ctx.patchState({
                         loadingProperty:false,

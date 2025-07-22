@@ -103,7 +103,7 @@ export class AssignLocationFormComponent  implements OnInit, OnChanges{
 
   askForUpdate()
   {
-    if(!this.propertyID) return;
+    if(!this.propertyID || !this.formGroup) return;
     this._store.select(RoomState.selectStateFreeRoomByPropertyId(this.propertyID)).subscribe((roomList:RoomModel[])=>{
       this.roomList = roomList.map((value)=>({content:value.code,valueType:value._id,selected:(this.roomSelected && this.roomSelected._id==value._id)?true:false}));
       if(this.roomSelected) this.formGroup.get("roomId").setValue({content:this.roomSelected.code, valueType:this.roomSelected._id})
