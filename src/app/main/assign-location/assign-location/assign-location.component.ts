@@ -1,7 +1,7 @@
 import { Component, Input, OnChanges, SimpleChanges, ViewChild, ViewEncapsulation, Inject, OnInit, Optional } from '@angular/core';
 import { Actions, ofActionCompleted, ofActionErrored, ofActionSuccessful, Store } from '@ngxs/store';
 import { AppSidenavContainerComponent } from 'src/@youpez/components/app-sidenav/app-sidenav-container/app-sidenav-container.component';
-import { INITIAL_LOCATION_FINANCIAL_STATE, LocataireModel, LocataireState, LocationAction, PropertyModel, PropertyState, RoomModel, RoomState } from 'src/app/shared/store';
+import { INITIAL_LOCATION_FINANCIAL_STATE, LocataireModel, LocataireState, LocataireAction, LocationAction, PropertyModel, PropertyState, RoomModel, RoomState, RoomAction, LocationPaymentAction, HistoryLocationPaymentAction } from 'src/app/shared/store';
 import { AssignLocationFormComponent } from '../assign-location-form/assign-location-form.component';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -285,15 +285,39 @@ export class AssignLocationComponent implements OnInit, OnChanges {
    * Gérer le succès de l'assignation
    */
   private handleAssignationSuccess(value: any): void {
-    if (this.isModalMode) {
-      this.closeModal(true, value);
-    } else {
-      this.closeSideNav();
-      // Rediriger vers la liste des locations si on est sur une page autonome
-      if (!this.sideNavBarElement && this.property) {
-        this.router.navigate(['/app/properties', this.property._id, 'locations']);
-      }
+    console.log('🎉 Assignation réussie, rafraîchissement des données...', value);
+
+    // Rafraîchir toutes les données liées dans le store
+    if (this.property?._id) {
+      console.log('🔄 Rafraîchissement des données du store...');
+
+      // Rafraîchir les chambres
+      this._store.dispatch(new RoomAction.FetchRoomsByPropertyID(this.property._id));
+
+      // Rafraîchir les locations
+      this._store.dispatch(new LocationAction.FetchLocationsByPropertyId(this.property._id));
+
+      // Rafraîchir les locataires
+      this._store.dispatch(new LocataireAction.FetchLocatairesByPropertyId(this.property._id));
+
+      // Rafraichir les paiements et l'historique
+      console.log('💰 Rafraichissement des paiements et de l\'historique...');
+      this._store.dispatch(new LocationPaymentAction.FetchLocationPaymentsByPropertyId(this.property._id));
+      this._store.dispatch(new HistoryLocationPaymentAction.RefreshHistoryLocationPaymentsByPropertyId(this.property._id));
     }
+
+    // Attendre un peu pour que les données se rafraîchissent avant de fermer/naviguer
+    setTimeout(() => {
+      if (this.isModalMode) {
+        this.closeModal(true, value);
+      } else {
+        this.closeSideNav();
+        // Rediriger vers la liste des locations si on est sur une page autonome
+        if (!this.sideNavBarElement && this.property) {
+          this.router.navigate(['/app/properties', this.property._id, 'locations']);
+        }
+      }
+    }, 500); // Délai pour permettre le rafraîchissement
   }
 
   /**

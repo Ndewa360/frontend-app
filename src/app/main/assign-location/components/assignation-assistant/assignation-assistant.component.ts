@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject, Observable } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, distinctUntilChanged, debounceTime } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
 import { ToastrService } from 'ngx-toastr';
 
@@ -25,7 +25,8 @@ import {
   RoomState,
   LocataireState,
   LocataireAction,
-  RoomAction
+  RoomAction,
+  LocationAction
 } from 'src/app/shared/store';
 
 @Component({
@@ -72,6 +73,10 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
   roomsList: RoomModel[] = [];
   locatairesList: LocataireModel[] = [];
   selectedRoom: RoomModel | null = null;
+  selectedLocataire: LocataireModel | null = null;
+
+  // Utilitaires pour le template
+  Math = Math;
 
   // Écritures comptables
   ecrituresPrevisionnelles: EcritureComptablePreview[] = [];
@@ -133,16 +138,10 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
     this.loadData();
     this.setupFormSubscriptions();
 
-    // Pré-sélections si fournies
-    if (this.preselectedRoom) {
-      this.assistantState.configuration.chambreId = this.preselectedRoom._id;
-      this.chambreForm.patchValue({ chambreId: this.preselectedRoom._id });
-      this.selectedRoom = this.preselectedRoom;
-    }
-    if (this.preselectedLocataire) {
-      this.assistantState.configuration.locataireId = this.preselectedLocataire._id;
-      this.locataireForm.patchValue({ locataireId: this.preselectedLocataire._id });
-    }
+    // Pré-sélections si fournies (avec délai pour s'assurer que les données sont chargées)
+    setTimeout(() => {
+      this.applyPreselections();
+    }, 500);
   }
 
   private initializeSelectors(): void {
@@ -168,6 +167,9 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
       typeLocataire: [TypeLocataire.NOUVEAU, Validators.required]
     });
 
+    // Initialiser la configuration avec la valeur par défaut
+    this.assistantState.configuration.typeAssignation = TypeLocataire.NOUVEAU;
+
     // Formulaire de sélection du locataire
     this.locataireForm = this.formBuilder.group({
       locataireId: [null, Validators.required]
@@ -178,10 +180,12 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
       chambreId: [null, Validators.required]
     });
 
-    // Écouter les changements de sélection de chambre
-    this.chambreForm.get('chambreId')?.valueChanges.subscribe(() => {
-      this.updateSelectedRoom();
-    });
+    // Écouter les changements de sélection de chambre (avec gestion mémoire)
+    this.chambreForm.get('chambreId')?.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.updateSelectedRoom();
+      });
 
     // Formulaire de configuration financière
     this.configFinanciereForm = this.formBuilder.group({
@@ -217,15 +221,24 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
 
     // Écouter les changements des autres formulaires
     this.locataireForm.get('locataireId').valueChanges
-      // .pipe(takeUntil(this.destroy$))
+      .pipe(
+        takeUntil(this.destroy$),
+        distinctUntilChanged() // Éviter les doublons
+      )
       .subscribe(locataireId => {
+        console.log('🔄 Changement locataire sélectionné:', locataireId);
         this.assistantState.configuration.locataireId = locataireId;
+        this.updateSelectedLocataire();
         this.validateCurrentStep();
       });
 
     this.chambreForm.get('chambreId')?.valueChanges
-      .pipe(takeUntil(this.destroy$))
+      .pipe(
+        takeUntil(this.destroy$),
+        distinctUntilChanged() // Éviter les doublons
+      )
       .subscribe(chambreId => {
+        console.log('🔄 Changement chambre sélectionnée:', chambreId);
         this.assistantState.configuration.chambreId = chambreId;
         this.updateSelectedRoom();
         this.validateCurrentStep();
@@ -320,7 +333,10 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
 
       // Si on passe à l'étape de prévisualisation, calculer les écritures
       if (this.assistantState.etapeActuelle === EtapeAssistant.PREVIEW_ECRITURES) {
-        this.calculerEcrituresComptables();
+        console.log('📊 Passage à l\'étape de prévisualisation - Calcul des écritures...');
+        setTimeout(() => {
+          this.calculerEcrituresComptables();
+        }, 100);
       }
 
       this.validateCurrentStep();
@@ -378,27 +394,52 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
         break;
 
       case EtapeAssistant.CONFIGURATION_FINANCIERE:
-        isValid = this.configFinanciereForm.valid;
-        if (!isValid) {
-          const typeLocataire = this.typeForm.get('typeLocataire')?.value;
-          if (typeLocataire === TypeLocataire.NOUVEAU) {
-            const montantPercu = this.configFinanciereForm.get('paiementMontant')?.value;
-            if (!montantPercu || montantPercu < 0) {
-              errors.push('Veuillez saisir le montant effectivement perçu');
-            }
-          } else {
-            if (!this.configFinanciereForm.get('soldeActuel')?.valid) {
-              errors.push('Veuillez saisir le solde actuel du locataire');
-            }
+        isValid = true; // Commencer par true et invalider si nécessaire
+
+        // Vérification obligatoire de la date d'entrée pour tous les types
+        const dateEntree = this.configFinanciereForm.get('dateEntree')?.value;
+        if (!dateEntree) {
+          isValid = false;
+          errors.push('La date d\'entrée est obligatoire');
+        }
+
+        // Vérifications spécifiques selon le type de locataire
+        const typeLocataire = this.typeForm.get('typeLocataire')?.value;
+        if (typeLocataire === TypeLocataire.NOUVEAU) {
+          const montantPercu = this.configFinanciereForm.get('paiementMontant')?.value;
+          if (montantPercu === null || montantPercu === undefined || montantPercu < 0) {
+            isValid = false;
+            errors.push('Veuillez saisir le montant effectivement perçu (0 ou plus)');
+          }
+        } else {
+          // Pour locataire existant, vérifier le solde actuel
+          const soldeActuel = this.configFinanciereForm.get('soldeActuel')?.value;
+          if (soldeActuel === null || soldeActuel === undefined) {
+            isValid = false;
+            errors.push('Veuillez saisir le solde actuel du locataire');
           }
         }
+
+        console.log('🔍 Validation configuration financière:', {
+          dateEntree,
+          typeLocataire,
+          isValid,
+          errors
+        });
         break;
 
       case EtapeAssistant.PREVIEW_ECRITURES:
+        // Forcer le calcul des écritures si elles ne sont pas encore générées
+        if (this.ecrituresPrevisionnelles.length === 0) {
+          console.log('🔄 Forçage du calcul des écritures pour la prévisualisation...');
+          this.calculerEcrituresComptables();
+        }
+
         // Vérifier que les écritures ont été générées
         isValid = this.ecrituresPrevisionnelles.length > 0;
         if (!isValid) {
           errors.push('Impossible de générer les écritures comptables');
+          console.log('❌ Échec de la génération des écritures après forçage');
         }
         break;
 
@@ -421,35 +462,128 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
   }
 
   confirmerAssignation(): void {
-    // TODO: Implémenter la logique de confirmation
+    console.log('✅ Confirmation de l\'assignation...');
     this.assistantState.isLoading = true;
-    
-    // Construire la configuration finale
-    const config: AssignationConfig = {
-      locataireId: this.locataireForm.get('locataireId').value,
-      chambreId: this.chambreForm.get('chambreId').value,
+
+    // Vérifier que toutes les données sont présentes
+    if (!this.selectedRoom || !this.selectedLocataire) {
+      this.toastr.error('Veuillez sélectionner une chambre et un locataire', 'Erreur');
+      this.assistantState.isLoading = false;
+      return;
+    }
+
+    // Construire la configuration finale pour le backend
+    const assignationDTO = this.buildAssignationDTO();
+
+    console.log('📤 Envoi de l\'assignation au backend:', assignationDTO);
+
+    // Appeler le service backend
+    this.store.dispatch(new LocationAction.CreateAssignationWithAssistant(assignationDTO))
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result) => {
+          console.log('✅ Assignation créée avec succès:', result);
+          this.assistantState.isLoading = false;
+          this.toastr.success('Assignation créée avec succès', 'Succès');
+
+          // Émettre le succès avec la configuration
+          const config: AssignationConfig = {
+            locataireId: this.selectedLocataire._id,
+            chambreId: this.selectedRoom._id,
+            propertyId: this.property._id,
+            typeAssignation: this.typeForm.get('typeLocataire').value,
+            configurationFinanciere: this.buildConfigurationFinanciere(),
+            ecrituresPrevisionnelles: this.ecrituresPrevisionnelles,
+            dateEffet: this.configFinanciereForm.get('dateEntree').value,
+            statut: 'CONFIRME'
+          };
+
+          this.onSuccess.emit(config);
+        },
+        error: (error) => {
+          console.error('❌ Erreur lors de l\'assignation:', error);
+          this.assistantState.isLoading = false;
+          this.toastr.error(
+            error?.error?.message || 'Erreur lors de la création de l\'assignation',
+            'Erreur'
+          );
+        }
+      });
+  }
+
+  /**
+   * Construire le DTO pour l'assignation backend
+   */
+  private buildAssignationDTO(): any {
+    const typeAssignation = this.typeForm.get('typeLocataire').value;
+    const dateEffet = this.configFinanciereForm.get('dateEntree').value || new Date();
+
+    const baseDTO = {
+      locataireId: this.selectedLocataire._id,
+      chambreId: this.selectedRoom._id,
       propertyId: this.property._id,
-      typeAssignation: this.typeForm.get('typeLocataire').value,
-      configurationFinanciere: this.buildConfigurationFinanciere(),
-      ecrituresPrevisionnelles: [],
-      dateEffet: this.configFinanciereForm.get('dateEntree').value,
-      statut: 'CONFIRME'
+      typeAssignation: typeAssignation,
+      dateEffet: dateEffet,
+      statut: 'CONFIRME',
+      ecrituresPrevisionnelles: this.ecrituresPrevisionnelles || [],
+      codeReference: this.generateReferenceCode()
     };
 
-    // Émettre le succès
-    setTimeout(() => {
-      this.assistantState.isLoading = false;
-      this.onSuccess.emit(config);
-      this.toastr.success('Assignation créée avec succès', 'Succès');
-    }, 1000);
+    // Ajouter la configuration spécifique selon le type
+    if (typeAssignation === TypeLocataire.NOUVEAU) {
+      const montantPercu = this.configFinanciereForm.get('paiementMontant')?.value || 0;
+      const cautionActive = this.getActiveCautionAmount();
+
+      baseDTO['configurationNouveauLocataire'] = {
+        montantAvance: Math.max(0, montantPercu - cautionActive),
+        montantCaution: cautionActive,
+        paiementInitial: {
+          montant: montantPercu,
+          type: this.isCautionActive() ? 'AVANCE_PLUS_CAUTION' : 'AVANCE_SEULE',
+          repartition: {
+            avance: Math.max(0, montantPercu - cautionActive),
+            caution: Math.min(montantPercu, cautionActive)
+          }
+        },
+        dateEntree: dateEffet,
+        generateFacture: true,
+        commentaire: this.configFinanciereForm.get('commentaire')?.value || ''
+      };
+    } else {
+      // Configuration pour locataire existant - utiliser la même structure que buildConfigurationFinanciere
+      const config = this.buildConfigurationFinanciere();
+      if (config && 'situationActuelle' in config) {
+        baseDTO['configurationLocataireExistant'] = config;
+        console.log('📤 Configuration locataire existant envoyée:', config);
+      }
+    }
+
+    console.log('📤 DTO complet envoyé au backend:', baseDTO);
+    return baseDTO;
+  }
+
+  /**
+   * Générer un code de référence unique
+   */
+  private generateReferenceCode(): string {
+    const timestamp = Date.now().toString(36);
+    const random = Math.random().toString(36).substring(2, 7);
+    return `ASS-${timestamp}-${random}`.toUpperCase();
   }
 
   private buildConfigurationFinanciere(): NouveauLocataireConfig | LocataireExistantConfig {
-    const typeLocataire = this.typeForm.get('typeLocataire').value;
+    const typeLocataire = this.typeForm.get('typeLocataire')?.value;
+    console.log('🏗️ Construction configuration financière pour type:', typeLocataire);
 
     if (typeLocataire === TypeLocataire.NOUVEAU) {
       const montantPercu = this.configFinanciereForm.get('paiementMontant')?.value || 0;
       const cautionActive = this.getActiveCautionAmount();
+
+      console.log('💰 Données financières nouveau locataire:', {
+        montantPercu,
+        cautionActive,
+        isCautionActive: this.isCautionActive()
+      });
 
       // Déterminer le type de paiement selon l'état du switcher
       let typePaiement = TypePaiementInitial.AVANCE_SEULE;
@@ -457,34 +591,70 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
         typePaiement = TypePaiementInitial.AVANCE_PLUS_CAUTION;
       }
 
-      return {
+      const repartitionAvance = Math.max(0, montantPercu - cautionActive);
+      const repartitionCaution = Math.min(montantPercu, cautionActive);
+
+      console.log('📊 Répartition calculée:', {
+        typePaiement,
+        repartitionAvance,
+        repartitionCaution
+      });
+
+      const config: NouveauLocataireConfig = {
         montantAvance: 0, // Pas utilisé dans la nouvelle logique
         montantCaution: cautionActive,
         paiementInitial: {
           montant: montantPercu,
           type: typePaiement,
           repartition: {
-            avance: Math.max(0, montantPercu - cautionActive),
-            caution: Math.min(montantPercu, cautionActive)
+            avance: repartitionAvance,
+            caution: repartitionCaution
           }
         },
         dateEntree: this.configFinanciereForm.get('dateEntree')?.value || new Date(),
         generateFacture: true,
         commentaire: this.configFinanciereForm.get('commentaire')?.value || ''
-      } as NouveauLocataireConfig;
+      };
+
+      console.log('✅ Configuration nouveau locataire construite:', config);
+      return config;
     } else {
       // Pour locataire existant, ne prendre en compte la caution que si le switcher est activé
+      const soldeActuel = this.configFinanciereForm.get('soldeActuel')?.value || 0;
       const cautionVersee = this.configFinanciereForm.get('cautionVersee')?.value || 0;
       const cautionActive = this.configFinanciereForm.get('cautionExistanteActive')?.value;
+      const dateEntree = this.configFinanciereForm.get('dateEntree')?.value || new Date();
 
-      return {
-        situationActuelle: this.configFinanciereForm.get('situationActuelle')?.value || '',
-        soldeActuel: this.configFinanciereForm.get('soldeActuel')?.value || 0,
-        cautionVersee: cautionActive ? cautionVersee : 0, // Caution selon le switcher
-        dateEntree: this.configFinanciereForm.get('dateEntree')?.value || new Date(),
-        transfererHistorique: this.configFinanciereForm.get('transfererHistorique')?.value || true,
+      console.log('💰 Données financières locataire existant:', {
+        soldeActuel,
+        cautionVersee,
+        cautionActive,
+        dateEntree
+      });
+
+      // Déterminer la situation actuelle basée sur le solde
+      let situationActuelle = this.configFinanciereForm.get('situationActuelle')?.value;
+      if (!situationActuelle || situationActuelle === '') {
+        if (soldeActuel < 0) {
+          situationActuelle = 'EN_RETARD';
+        } else if (soldeActuel > 0) {
+          situationActuelle = 'EN_AVANCE';
+        } else {
+          situationActuelle = 'A_JOUR';
+        }
+      }
+
+      const config: LocataireExistantConfig = {
+        situationActuelle: situationActuelle,
+        soldeActuel: Number(soldeActuel) || 0,
+        cautionVersee: cautionActive ? Number(cautionVersee) || 0 : 0, // Caution selon le switcher
+        dateEntree: dateEntree,
+        transfererHistorique: Boolean(this.configFinanciereForm.get('transfererHistorique')?.value),
         commentaire: this.configFinanciereForm.get('commentaire')?.value || ''
-      } as LocataireExistantConfig;
+      };
+
+      console.log('✅ Configuration locataire existant construite:', config);
+      return config;
     }
   }
 
@@ -505,44 +675,88 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
    * Calculer les écritures comptables prévisionnelles
    */
   private calculerEcrituresComptables(): void {
+    console.log("🧮 Calcul des écritures comptables...");
+    console.log("Configuration actuelle:", this.assistantState.configuration);
+    console.log("Valeurs des formulaires:", {
+      typeLocataire: this.typeForm.get('typeLocataire')?.value,
+      locataireId: this.locataireForm.get('locataireId')?.value,
+      chambreId: this.chambreForm.get('chambreId')?.value,
+      dateEntree: this.configFinanciereForm.get('dateEntree')?.value
+    });
+
+    // Récupérer le type d'assignation directement du formulaire
+    const typeAssignation = this.typeForm.get('typeLocataire')?.value;
+
     // Vérifier que nous avons toutes les données nécessaires
     if (!this.assistantState.configuration.chambreId ||
         !this.assistantState.configuration.locataireId ||
-        !this.assistantState.configuration.typeAssignation) {
+        !typeAssignation) {
+      console.log("⚠️ Données manquantes pour le calcul des écritures:", {
+        chambreId: this.assistantState.configuration.chambreId,
+        locataireId: this.assistantState.configuration.locataireId,
+        typeAssignation: typeAssignation,
+        typeFromState: this.assistantState.configuration.typeAssignation
+      });
       this.ecrituresPrevisionnelles = [];
       this.resumeEcritures = null;
       return;
     }
 
-    // Récupérer la chambre sélectionnée
-    const chambre = this.roomsList.find(r => r._id === this.assistantState.configuration.chambreId);
-    if (!chambre) {
+    // Mettre à jour la configuration avec le type d'assignation
+    this.assistantState.configuration.typeAssignation = typeAssignation;
+
+    // Vérifier que les objets sélectionnés sont disponibles
+    if (!this.selectedRoom || !this.selectedLocataire) {
+      console.log("⚠️ Chambre ou locataire non sélectionné");
       this.ecrituresPrevisionnelles = [];
       this.resumeEcritures = null;
       return;
     }
 
-    // Construire la configuration d'assignation
-    const config: AssignationConfig = {
-      locataireId: this.assistantState.configuration.locataireId,
-      chambreId: this.assistantState.configuration.chambreId,
-      propertyId: this.property._id,
-      typeAssignation: this.assistantState.configuration.typeAssignation,
-      dateEffet: this.assistantState.configuration.dateEffet || new Date(),
-      configurationFinanciere: this.buildConfigurationFinanciere(),
-      ecrituresPrevisionnelles: [], // Sera rempli par le service
-      statut: 'BROUILLON'
-    };
+    // Utiliser la chambre déjà sélectionnée
+    const chambre = this.selectedRoom;
 
-    // Générer les écritures comptables
-    console.log('Configuration pour génération écritures:', config);
-    console.log('Chambre sélectionnée:', chambre);
+    try {
+      // Construire la configuration d'assignation
+      const configurationFinanciere = this.buildConfigurationFinanciere();
 
-    this.ecrituresPrevisionnelles = this.assistantService.genererEcrituresComptables(config, chambre);
-    this.resumeEcritures = this.assistantService.genererResumeEcritures(this.ecrituresPrevisionnelles);
+      const config: AssignationConfig = {
+        locataireId: this.assistantState.configuration.locataireId,
+        chambreId: this.assistantState.configuration.chambreId,
+        propertyId: this.property._id,
+        typeAssignation: typeAssignation, // Utiliser la valeur récupérée du formulaire
+        dateEffet: this.assistantState.configuration.dateEffet || new Date(),
+        configurationFinanciere: configurationFinanciere,
+        ecrituresPrevisionnelles: [], // Sera rempli par le service
+        statut: 'BROUILLON'
+      };
+
+      // Vérifications supplémentaires
+      if (!config.configurationFinanciere) {
+        throw new Error('Configuration financière manquante');
+      }
+
+      // Générer les écritures comptables
+      console.log('Configuration pour génération écritures:', config);
+      console.log('Chambre sélectionnée:', chambre);
+
+      this.ecrituresPrevisionnelles = this.assistantService.genererEcrituresComptables(config, chambre);
+      this.resumeEcritures = this.assistantService.genererResumeEcritures(this.ecrituresPrevisionnelles);
 
     console.log('Écritures comptables calculées:', this.ecrituresPrevisionnelles);
     console.log('Résumé des écritures:', this.resumeEcritures);
+
+    } catch (error) {
+      console.error('❌ Erreur lors du calcul des écritures:', error);
+      this.ecrituresPrevisionnelles = [];
+      this.resumeEcritures = null;
+
+      // Afficher l'erreur à l'utilisateur
+      this.toastr.error(
+        error.message || 'Impossible de générer les écritures comptables',
+        'Erreur de calcul'
+      );
+    }
   }
 
   // Calculer le montant restant après déduction de la caution
@@ -584,6 +798,296 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
   private updateSelectedRoom(): void {
     const roomId = this.chambreForm.get('chambreId')?.value;
     this.selectedRoom = this.roomsList.find(room => room._id === roomId) || null;
+    console.log('🏠 Chambre sélectionnée mise à jour:', this.selectedRoom);
+
+    // Recalculer les écritures si on a toutes les données
+    if (this.selectedRoom && this.assistantState.configuration.locataireId) {
+      this.calculerEcrituresComptables();
+    }
+  }
+
+  // Mettre à jour le locataire sélectionné
+  private updateSelectedLocataire(): void {
+    const locataireId = this.locataireForm.get('locataireId')?.value;
+    this.selectedLocataire = this.locatairesList.find(locataire => locataire._id === locataireId) || null;
+    console.log('👤 Locataire sélectionné mis à jour:', this.selectedLocataire);
+
+    // Recalculer les écritures si on a toutes les données
+    if (this.selectedLocataire && this.assistantState.configuration.chambreId) {
+      this.calculerEcrituresComptables();
+    }
+  }
+
+  /**
+   * Appliquer les pré-sélections
+   */
+  private applyPreselections(): void {
+    console.log('🎯 Application des pré-sélections...');
+
+    // Pré-sélection de la chambre
+    if (this.preselectedRoom) {
+      console.log('🏠 Pré-sélection chambre:', this.preselectedRoom);
+
+      // Vérifier que la chambre est dans la liste des chambres disponibles
+      const roomExists = this.roomsList.find(room => room._id === this.preselectedRoom._id);
+      if (roomExists) {
+        this.assistantState.configuration.chambreId = this.preselectedRoom._id;
+        this.chambreForm.patchValue({ chambreId: this.preselectedRoom._id }, { emitEvent: false });
+        this.selectedRoom = this.preselectedRoom;
+
+        // Forcer la mise à jour de l'affichage
+        setTimeout(() => {
+          this.chambreForm.patchValue({ chambreId: this.preselectedRoom._id }, { emitEvent: true });
+        }, 100);
+      } else {
+        console.warn('⚠️ Chambre pré-sélectionnée non trouvée dans la liste');
+      }
+    }
+
+    // Pré-sélection du locataire
+    if (this.preselectedLocataire) {
+      console.log('👤 Pré-sélection locataire:', this.preselectedLocataire);
+
+      // Vérifier que le locataire est dans la liste des locataires disponibles
+      const locataireExists = this.locatairesList.find(locataire => locataire._id === this.preselectedLocataire._id);
+      if (locataireExists) {
+        this.assistantState.configuration.locataireId = this.preselectedLocataire._id;
+        this.locataireForm.patchValue({ locataireId: this.preselectedLocataire._id }, { emitEvent: false });
+        this.selectedLocataire = this.preselectedLocataire;
+
+        // Forcer la mise à jour de l'affichage
+        setTimeout(() => {
+          this.locataireForm.patchValue({ locataireId: this.preselectedLocataire._id }, { emitEvent: true });
+        }, 100);
+      } else {
+        console.warn('⚠️ Locataire pré-sélectionné non trouvé dans la liste');
+      }
+    }
+
+    // Valider l'étape actuelle après les pré-sélections
+    setTimeout(() => {
+      this.validateCurrentStep();
+    }, 200);
+  }
+
+  /**
+   * Gestionnaire de clic sur une chambre
+   */
+  onRoomClick(room: RoomModel): void {
+    console.log('🏠 Clic sur chambre:', room);
+
+    // Forcer la sélection
+    this.chambreForm.patchValue({ chambreId: room._id }, { emitEvent: true });
+    this.selectedRoom = room;
+    this.assistantState.configuration.chambreId = room._id;
+
+    // Valider l'étape
+    setTimeout(() => {
+      this.validateCurrentStep();
+    }, 100);
+  }
+
+  /**
+   * Gestionnaire de changement de locataire
+   */
+  onLocataireChange(event: any): void {
+    const locataireId = event.target.value;
+    console.log('👤 Changement locataire:', locataireId);
+
+    if (locataireId && locataireId !== 'null') {
+      this.selectedLocataire = this.locatairesList.find(l => l._id === locataireId) || null;
+      this.assistantState.configuration.locataireId = locataireId;
+    } else {
+      this.selectedLocataire = null;
+      this.assistantState.configuration.locataireId = null;
+    }
+
+    // Valider l'étape
+    setTimeout(() => {
+      this.validateCurrentStep();
+    }, 100);
+  }
+
+  /**
+   * TrackBy functions pour optimiser les performances
+   */
+  trackByRoomId(_index: number, room: RoomModel): string {
+    return room._id;
+  }
+
+  trackByLocataireId(_index: number, locataire: LocataireModel): string {
+    return locataire._id;
+  }
+
+  /**
+   * Obtenir le label du type d'assignation
+   */
+  getTypeAssignationLabel(): string {
+    const type = this.typeForm.get('typeLocataire')?.value;
+    switch (type) {
+      case TypeLocataire.NOUVEAU:
+        return 'Nouveau locataire';
+      case TypeLocataire.EXISTANT:
+        return 'Locataire existant';
+      case TypeLocataire.MIGRATION:
+        return 'Migration de locataire';
+      default:
+        return 'Non défini';
+    }
+  }
+
+  /**
+   * Calculer le solde des écritures (Crédits - Débits)
+   */
+  getSoldeEcritures(): number {
+    if (!this.resumeEcritures) {
+      return 0;
+    }
+    return this.resumeEcritures.totalCredits - this.resumeEcritures.totalDebits;
+  }
+
+  /**
+   * Obtenir le statut financier détaillé
+   */
+  getStatutFinancier(): { statut: string, classe: string, icone: string, description: string } {
+    const solde = this.getSoldeEcritures();
+    const dateEntree = this.configFinanciereForm.get('dateEntree')?.value;
+    const typeLocataire = this.typeForm.get('typeLocataire')?.value;
+    const aujourdhui = new Date();
+
+    if (!dateEntree) {
+      return {
+        statut: 'Non défini',
+        classe: 'indefini',
+        icone: 'fa-question-circle',
+        description: 'Date d\'entrée non définie'
+      };
+    }
+
+    const dateEntreeObj = new Date(dateEntree);
+
+    // Pour les locataires existants, calculer le retard en mois
+    if (typeLocataire === TypeLocataire.EXISTANT) {
+      const moisRetard = this.getMoisRetard();
+
+      if (solde >= 0) {
+        return {
+          statut: 'À jour',
+          classe: 'a-jour',
+          icone: 'fa-check-circle',
+          description: moisRetard > 0 ? `En avance de ${moisRetard} mois` : 'Paiements à jour'
+        };
+      } else {
+        return {
+          statut: 'En retard',
+          classe: 'en-retard',
+          icone: 'fa-exclamation-triangle',
+          description: `En retard de ${Math.abs(moisRetard)} mois`
+        };
+      }
+    }
+
+    // Pour les nouveaux locataires
+    // Si la date d'entrée est dans le futur
+    if (dateEntreeObj > aujourdhui) {
+      if (solde > 0) {
+        return {
+          statut: 'Pré-payé',
+          classe: 'prepaye',
+          icone: 'fa-check-double',
+          description: 'Locataire en avance de paiement'
+        };
+      } else {
+        return {
+          statut: 'En attente',
+          classe: 'attente',
+          icone: 'fa-clock',
+          description: 'En attente d\'entrée'
+        };
+      }
+    }
+
+    // Si la date d'entrée est passée
+    if (solde >= 0) {
+      return {
+        statut: 'À jour',
+        classe: 'a-jour',
+        icone: 'fa-check-circle',
+        description: 'Paiements à jour'
+      };
+    } else {
+      return {
+        statut: 'En retard',
+        classe: 'en-retard',
+        icone: 'fa-exclamation-triangle',
+        description: 'Paiements en retard'
+      };
+    }
+  }
+
+  /**
+   * Calculer le nombre de mois couverts par l'avance (pour nouveaux locataires)
+   */
+  getMoisCouverts(): number {
+    if (!this.selectedRoom) return 0;
+
+    const typeLocataire = this.typeForm.get('typeLocataire')?.value;
+
+    if (typeLocataire === TypeLocataire.NOUVEAU) {
+      const montantPaye = this.configFinanciereForm.get('paiementMontant')?.value || 0;
+      const cautionActive = this.getActiveCautionAmount();
+      const montantPourLoyer = Math.max(0, montantPaye - cautionActive);
+
+      return Math.floor(montantPourLoyer / this.selectedRoom.price);
+    }
+
+    return 0;
+  }
+
+  /**
+   * Calculer le nombre de mois de retard/avance (pour locataires existants)
+   */
+  getMoisRetard(): number {
+    if (!this.selectedRoom) return 0;
+
+    const typeLocataire = this.typeForm.get('typeLocataire')?.value;
+
+    if (typeLocataire === TypeLocataire.EXISTANT) {
+      const soldeActuel = this.configFinanciereForm.get('soldeActuel')?.value || 0;
+
+      // Solde négatif = retard, solde positif = avance
+      // Calculer en mois
+      return Math.round(soldeActuel / this.selectedRoom.price);
+    }
+
+    return 0;
+  }
+
+  /**
+   * Obtenir le texte descriptif du retard/avance
+   */
+  getDescriptionRetard(): string {
+    const typeLocataire = this.typeForm.get('typeLocataire')?.value;
+
+    if (typeLocataire === TypeLocataire.NOUVEAU) {
+      const moisCouverts = this.getMoisCouverts();
+      if (moisCouverts > 0) {
+        return `${moisCouverts} mois couverts par l'avance`;
+      }
+      return 'Aucune avance';
+    }
+
+    if (typeLocataire === TypeLocataire.EXISTANT) {
+      const moisRetard = this.getMoisRetard();
+      if (moisRetard > 0) {
+        return `${moisRetard} mois d'avance`;
+      } else if (moisRetard < 0) {
+        return `${Math.abs(moisRetard)} mois de retard`;
+      }
+      return 'À jour';
+    }
+
+    return '';
   }
 
   // Méthodes utilitaires
@@ -593,5 +1097,6 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
     this.chambreForm.reset();
     this.configFinanciereForm.reset();
     this.selectedRoom = null;
+    this.selectedLocataire = null;
   }
 }

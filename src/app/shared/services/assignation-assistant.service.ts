@@ -289,21 +289,51 @@ export class AssignationAssistantService {
    * Générer les écritures comptables prévisionnelles
    */
   genererEcrituresComptables(config: AssignationConfig, chambre: RoomModel): EcritureComptablePreview[] {
-    const ecritures: EcritureComptablePreview[] = [];
+    console.log('🧮 Génération écritures comptables - Début:', { config, chambre });
 
-    switch (config.typeAssignation) {
-      case TypeLocataire.NOUVEAU:
-        ecritures.push(...this.genererEcrituresNouveauLocataire(config.configurationFinanciere as NouveauLocataireConfig, chambre));
-        break;
-      case TypeLocataire.EXISTANT:
-        ecritures.push(...this.genererEcrituresLocataireExistant(config.configurationFinanciere as LocataireExistantConfig, chambre));
-        break;
-      case TypeLocataire.MIGRATION:
-        ecritures.push(...this.genererEcrituresMigration(config.configurationFinanciere as LocataireExistantConfig, chambre));
-        break;
+    try {
+      const ecritures: EcritureComptablePreview[] = [];
+
+      // Vérifications de base
+      if (!config) {
+        throw new Error('Configuration d\'assignation manquante');
+      }
+
+      if (!config.configurationFinanciere) {
+        throw new Error('Configuration financière manquante');
+      }
+
+      if (!chambre) {
+        throw new Error('Chambre manquante');
+      }
+
+      console.log('📋 Type d\'assignation:', config.typeAssignation);
+      console.log('💰 Configuration financière:', config.configurationFinanciere);
+
+      switch (config.typeAssignation) {
+        case TypeLocataire.NOUVEAU:
+          console.log('👤 Traitement nouveau locataire...');
+          ecritures.push(...this.genererEcrituresNouveauLocataire(config.configurationFinanciere as NouveauLocataireConfig, chambre));
+          break;
+        case TypeLocataire.EXISTANT:
+          console.log('👤 Traitement locataire existant...');
+          ecritures.push(...this.genererEcrituresLocataireExistant(config.configurationFinanciere as LocataireExistantConfig, chambre));
+          break;
+        case TypeLocataire.MIGRATION:
+          console.log('👤 Traitement migration...');
+          ecritures.push(...this.genererEcrituresMigration(config.configurationFinanciere as LocataireExistantConfig, chambre));
+          break;
+        default:
+          throw new Error(`Type d'assignation non supporté: ${config.typeAssignation}`);
+      }
+
+      console.log('✅ Écritures générées avec succès:', ecritures);
+      return ecritures;
+
+    } catch (error) {
+      console.error('❌ Erreur lors de la génération des écritures:', error);
+      throw new Error(`Impossible de générer les écritures comptables: ${error.message}`);
     }
-
-    return ecritures;
   }
 
   /**
@@ -330,7 +360,72 @@ export class AssignationAssistantService {
    * Écritures pour un nouveau locataire
    */
   private genererEcrituresNouveauLocataire(config: NouveauLocataireConfig, chambre: RoomModel): EcritureComptablePreview[] {
+    console.log('🆕 Génération écritures nouveau locataire:', { config, chambre });
+
     const ecritures: EcritureComptablePreview[] = [];
+
+    // Vérifications de sécurité
+    if (!config) {
+      console.error('❌ Configuration manquante pour nouveau locataire');
+      throw new Error('Configuration manquante pour nouveau locataire');
+    }
+
+    if (!config.paiementInitial) {
+      console.error('❌ Paiement initial manquant dans la configuration:', config);
+      throw new Error('Paiement initial manquant dans la configuration');
+    }
+
+    if (!chambre) {
+      console.error('❌ Chambre manquante');
+      throw new Error('Chambre manquante pour la génération des écritures');
+    }
+
+    console.log('💰 Paiement initial:', config.paiementInitial);
+
+    // Calculer l'état financier selon la date d'entrée et les paiements
+    const dateEntree = new Date(config.dateEntree);
+    const aujourdhui = new Date();
+    const montantPaye = config.paiementInitial.montant;
+
+    // Calculer combien de mois sont couverts par le paiement (hors caution)
+    const montantCaution = chambre.shouldPayCaution ? chambre.cautionPrice : 0;
+    const montantPourLoyer = Math.max(0, montantPaye - montantCaution);
+    const moisCouverts = Math.floor(montantPourLoyer / chambre.price);
+
+    console.log('📊 Calcul financier:', {
+      dateEntree,
+      aujourdhui,
+      montantPaye,
+      montantCaution,
+      montantPourLoyer,
+      moisCouverts,
+      prixMensuel: chambre.price
+    });
+
+    // Pour un nouveau locataire, on crée seulement une transaction de paiement
+    // Les calculs de dette/crédit se feront automatiquement par le système de location
+    if (montantPourLoyer > 0) {
+      ecritures.push({
+        type: TypeEcritureComptable.PAIEMENT_AVANCE,
+        libelle: `Paiement initial - Avance de loyer`,
+        montant: montantPourLoyer,
+        sens: 'CREDIT',
+        compte: '512000', // Banque
+        description: `Paiement initial de ${montantPourLoyer} FCFA - Chambre ${chambre.code}`
+      });
+    }
+
+    // Gestion de la caution (seulement si payée)
+    if (chambre.shouldPayCaution && chambre.cautionPrice > 0 && montantPaye >= montantCaution && montantCaution > 0) {
+      ecritures.push({
+        type: TypeEcritureComptable.PAIEMENT_CAUTION,
+        libelle: 'Paiement caution',
+        montant: montantCaution,
+        sens: 'CREDIT',
+        compte: '512000', // Banque
+        description: `Caution payée - Chambre ${chambre.code}`
+      });
+    }
 
     // Paiement initial s'il y en a un
     if (config.paiementInitial.montant > 0) {
@@ -424,32 +519,74 @@ export class AssignationAssistantService {
    * Écritures pour un locataire existant
    */
   private genererEcrituresLocataireExistant(config: LocataireExistantConfig, chambre: RoomModel): EcritureComptablePreview[] {
+    console.log('🔄 Génération écritures locataire existant:', { config, chambre });
+
     const ecritures: EcritureComptablePreview[] = [];
+    const dateEntree = new Date(config.dateEntree);
+    const aujourdhui = new Date();
 
-    // Report de solde
-    if (config.soldeActuel !== 0) {
-      ecritures.push({
-        type: TypeEcritureComptable.REPORT_SOLDE,
-        libelle: config.soldeActuel > 0 ? 'Report solde créditeur' : 'Report solde débiteur',
-        montant: Math.abs(config.soldeActuel),
-        sens: config.soldeActuel > 0 ? 'CREDIT' : 'DEBIT',
-        compte: '411000',
-        description: `Report solde - Chambre ${chambre.code}`
-      });
-    }
+    // Calculer le nombre de mois écoulés depuis l'entrée
+    const moisEcoules = Math.ceil((aujourdhui.getTime() - dateEntree.getTime()) / (1000 * 60 * 60 * 24 * 30));
+    const montantDuTotal = moisEcoules * chambre.price;
 
-    // Caution si versée
-    if (config.cautionVersee > 0) {
+    console.log('📊 Calcul locataire existant:', {
+      dateEntree,
+      aujourdhui,
+      moisEcoules,
+      prixMensuel: chambre.price,
+      montantDuTotal,
+      soldeActuel: config.soldeActuel
+    });
+
+    // Dette totale pour les mois écoulés
+    ecritures.push({
+      type: TypeEcritureComptable.DETTE_AVANCE,
+      libelle: `Dette loyer (${moisEcoules} mois écoulés)`,
+      montant: montantDuTotal,
+      sens: 'DEBIT',
+      compte: 'DETTE_LOCATAIRE',
+      description: `Loyer dû depuis ${dateEntree.toLocaleDateString()} - Chambre ${chambre.code}`
+    });
+
+    // Paiements effectués (calculés à partir du solde)
+    const montantPaye = montantDuTotal + config.soldeActuel; // Si solde négatif, moins de paiements
+    if (montantPaye > 0) {
       ecritures.push({
-        type: TypeEcritureComptable.PAIEMENT_CAUTION,
-        libelle: 'Caution versée',
-        montant: config.cautionVersee,
+        type: TypeEcritureComptable.PAIEMENT_AVANCE,
+        libelle: 'Paiements effectués',
+        montant: montantPaye,
         sens: 'CREDIT',
-        compte: '165000',
-        description: `Caution existante - Chambre ${chambre.code}`
+        compte: '512000',
+        description: `Paiements cumulés - Chambre ${chambre.code}`
       });
     }
 
+    // Gestion de la caution
+    if (chambre.shouldPayCaution && chambre.cautionPrice > 0) {
+      // Dette de caution
+      ecritures.push({
+        type: TypeEcritureComptable.DETTE_CAUTION,
+        libelle: 'Dette caution',
+        montant: chambre.cautionPrice,
+        sens: 'DEBIT',
+        compte: 'DETTE_LOCATAIRE',
+        description: `Caution requise - Chambre ${chambre.code}`
+      });
+
+      // Caution versée si configurée
+      if (config.cautionVersee > 0) {
+        ecritures.push({
+          type: TypeEcritureComptable.PAIEMENT_CAUTION,
+          libelle: 'Caution versée',
+          montant: config.cautionVersee,
+          sens: 'CREDIT',
+          compte: '165000',
+          description: `Caution existante - Chambre ${chambre.code}`
+        });
+      }
+    }
+
+    console.log('✅ Écritures locataire existant générées:', ecritures);
     return ecritures;
   }
 

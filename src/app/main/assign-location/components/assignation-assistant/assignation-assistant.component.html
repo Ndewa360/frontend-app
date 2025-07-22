@@ -78,13 +78,17 @@
                   <i class="fas fa-user-plus" style="font-size: 32px;"></i>
                 </div>
                 <div class="option-info">
-                  <h4>Nouveau locataire</h4>
-                  <p>Première assignation d'un locataire existant dans l'application. Gestion automatique des cautions et paiements.</p>
+                  <h4>Nouveau locataire dans ce bien</h4>
+                  <p><strong>Le locataire n'a jamais occupé cette chambre.</strong> Il s'agit de sa première installation dans ce bien immobilier.</p>
                   <ul class="option-features">
-                    <li>Gestion automatique de la caution</li>
-                    <li>Création de 2 transactions si caution définie</li>
-                    <li>Transaction unique si pas de caution</li>
+                    <li>✅ Première fois dans cette propriété</li>
+                    <li>✅ Calcul automatique des dettes (loyer + caution)</li>
+                    <li>✅ Enregistrement des paiements d'installation</li>
+                    <li>✅ Création d'un nouveau contrat de location</li>
                   </ul>
+                  <div class="option-example">
+                    <strong>Exemple :</strong> Jean emménage pour la première fois dans la chambre A1
+                  </div>
                 </div>
               </div>
             </label>
@@ -99,34 +103,17 @@
                   <i class="fas fa-user" style="font-size: 32px;"></i>
                 </div>
                 <div class="option-info">
-                  <h4>Locataire existant</h4>
-                  <p>Réassignation d'un locataire avec historique. Gestion intelligente des cautions et arriérés.</p>
+                  <h4>Locataire déjà installé (Mise à jour)</h4>
+                  <p><strong>Le locataire occupe déjà cette chambre.</strong> Vous voulez juste enregistrer sa situation actuelle dans l'application.</p>
                   <ul class="option-features">
-                    <li>Transfert automatique de la caution si versée</li>
-                    <li>Prise en compte des arriérés dans l'état financier</li>
-                    <li>Transfert des avances comme paiements de loyer</li>
+                    <li>✅ Locataire déjà en place dans la chambre</li>
+                    <li>✅ Enregistrement de l'état financier actuel</li>
+                    <li>✅ Prise en compte des arriérés ou avances</li>
+                    <li>✅ Mise à jour du système avec la situation réelle</li>
                   </ul>
-                </div>
-              </div>
-            </label>
-
-            <label class="type-option" [class.selected]="typeForm.get('typeLocataire').value === TypeLocataire.MIGRATION">
-              <input 
-                type="radio" 
-                [value]="TypeLocataire.MIGRATION" 
-                formControlName="typeLocataire">
-              <div class="option-content">
-                <div class="option-icon">
-                  <i class="fas fa-exchange-alt" style="font-size: 32px;"></i>
-                </div>
-                <div class="option-info">
-                  <h4>Migration de données</h4>
-                  <p>Intégration d'un bien existant avec locataires déjà en place.</p>
-                  <ul class="option-features">
-                    <li>Import de données existantes</li>
-                    <li>Ajustements de soldes</li>
-                    <li>Historique préservé</li>
-                  </ul>
+                  <div class="option-example">
+                    <strong>Exemple :</strong> Marie occupe déjà la chambre B2 depuis 3 mois, vous voulez l'enregistrer dans l'application
+                  </div>
                 </div>
               </div>
             </label>
@@ -157,14 +144,25 @@
           <div class="form-section">
             <div class="form-field">
               <label class="field-label">Locataire</label>
-              <select formControlName="locataireId" class="field-input">
-                <option [value]="null">Sélectionner un locataire</option>
+              <select
+                formControlName="locataireId"
+                class="field-input"
+                [class.selected]="locataireForm.get('locataireId')?.value"
+                (change)="onLocataireChange($event)">
+                <option [value]="null" disabled>Sélectionner un locataire</option>
                 <option
-                  *ngFor="let locataire of locatairesList"
-                  [value]="locataire._id">
+                  *ngFor="let locataire of locatairesList; trackBy: trackByLocataireId"
+                  [value]="locataire._id"
+                  [selected]="locataireForm.get('locataireId')?.value === locataire._id">
                   {{ locataire.fullName }} - {{ locataire.phoneNumber }}
                 </option>
               </select>
+
+              <!-- Indicateur de sélection -->
+              <div class="selection-indicator" *ngIf="selectedLocataire">
+                <i class="fas fa-check-circle" style="color: green;"></i>
+                <span>{{ selectedLocataire.fullName }} sélectionné</span>
+              </div>
             </div>
 
             <!-- Message d'aide -->
@@ -190,14 +188,23 @@
         
         <form [formGroup]="chambreForm" class="step-form">
           <div class="rooms-grid">
-            <label 
-              *ngFor="let room of roomsList" 
+            <label
+              *ngFor="let room of roomsList; trackBy: trackByRoomId"
               class="room-option"
-              [class.selected]="chambreForm.get('chambreId').value === room._id">
-              <input 
-                type="radio" 
-                [value]="room._id" 
-                formControlName="chambreId">
+              [class.selected]="chambreForm.get('chambreId')?.value === room._id"
+              [class.highlighted]="selectedRoom?._id === room._id"
+              (click)="onRoomClick(room)">
+              <input
+                type="radio"
+                [value]="room._id"
+                formControlName="chambreId"
+                [checked]="chambreForm.get('chambreId')?.value === room._id">
+
+              <!-- Indicateur de sélection -->
+              <div class="selection-badge" *ngIf="selectedRoom?._id === room._id">
+                <i class="fas fa-check-circle"></i>
+              </div>
+
               <div class="room-content">
                 <div class="room-header">
                   <h4>{{ room.code }}</h4>
@@ -213,6 +220,12 @@
                 </div>
               </div>
             </label>
+          </div>
+
+          <!-- Message d'aide -->
+          <div class="help-message" *ngIf="roomsList.length === 0">
+            <i class="fas fa-info-circle" style="font-size: 16px;"></i>
+            <p>Aucune chambre libre disponible dans cette propriété.</p>
           </div>
         </form>
       </div>
@@ -438,10 +451,15 @@
           <div class="form-grid">
             <div class="form-field">
               <label class="field-label">Date d'entrée *</label>
-              <input 
-                type="date" 
-                formControlName="dateEntree" 
-                class="field-input">
+              <input
+                type="date"
+                formControlName="dateEntree"
+                class="field-input"
+                [class.error]="configFinanciereForm.get('dateEntree')?.invalid && configFinanciereForm.get('dateEntree')?.touched">
+              <div class="field-error" *ngIf="configFinanciereForm.get('dateEntree')?.invalid && configFinanciereForm.get('dateEntree')?.touched">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>La date d'entrée est obligatoire</span>
+              </div>
             </div>
           </div>
 
@@ -520,10 +538,184 @@
 
       <div *ngIf="isEtapeActive(EtapeAssistant.CONFIRMATION)" class="step-content">
         <div class="step-header">
-          <h3>Confirmation</h3>
-          <p>Confirmez l'assignation du locataire</p>
+          <h3>Confirmation de l'assignation</h3>
+          <p>Vérifiez les informations avant de confirmer l'assignation</p>
         </div>
-        <!-- TODO: Implémenter la confirmation -->
+
+        <div class="confirmation-summary">
+          <!-- Informations générales -->
+          <div class="summary-section">
+            <div class="section-header">
+              <i class="fas fa-info-circle"></i>
+              <h4>Informations générales</h4>
+            </div>
+            <div class="summary-grid">
+              <div class="summary-item">
+                <label>Type d'assignation</label>
+                <span class="value">{{ getTypeAssignationLabel() }}</span>
+              </div>
+              <div class="summary-item">
+                <label>Date d'entrée</label>
+                <span class="value">{{ configFinanciereForm.get('dateEntree')?.value | date:'dd/MM/yyyy' }}</span>
+              </div>
+              <div class="summary-item">
+                <label>Propriété</label>
+                <span class="value">{{ property?.name }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Informations locataire -->
+          <div class="summary-section">
+            <div class="section-header">
+              <i class="fas fa-user"></i>
+              <h4>Locataire</h4>
+            </div>
+            <div class="locataire-info" *ngIf="selectedLocataire">
+              <div class="locataire-avatar">
+                <i class="fas fa-user-circle"></i>
+              </div>
+              <div class="locataire-details">
+                <h5>{{ selectedLocataire.fullName }}</h5>
+                <p>{{ selectedLocataire.phoneNumber }}</p>
+                <p *ngIf="selectedLocataire.email">{{ selectedLocataire.email }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Informations chambre -->
+          <div class="summary-section">
+            <div class="section-header">
+              <i class="fas fa-home"></i>
+              <h4>Chambre</h4>
+            </div>
+            <div class="chambre-info" *ngIf="selectedRoom">
+              <div class="chambre-details">
+                <div class="chambre-header">
+                  <h5>{{ selectedRoom.code }}</h5>
+                  <span class="chambre-price">{{ selectedRoom.price | currency:'XAF':'symbol':'1.0-0' }}/mois</span>
+                </div>
+                <div class="chambre-features">
+                  <span class="feature">{{ selectedRoom.type }}</span>
+                  <span class="feature" *ngIf="selectedRoom.shouldPayCaution">
+                    Caution: {{ selectedRoom.cautionPrice | currency:'XAF':'symbol':'1.0-0' }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Configuration financière -->
+          <div class="summary-section">
+            <div class="section-header">
+              <i class="fas fa-calculator"></i>
+              <h4>Configuration financière</h4>
+            </div>
+            <div class="financial-summary">
+              <div class="financial-item" *ngIf="typeForm.get('typeLocataire')?.value === TypeLocataire.NOUVEAU">
+                <label>Montant perçu</label>
+                <span class="value amount">{{ configFinanciereForm.get('paiementMontant')?.value | currency:'XAF':'symbol':'1.0-0' }}</span>
+              </div>
+              <div class="financial-item" *ngIf="isCautionActive()">
+                <label>Caution active</label>
+                <span class="value amount">{{ getActiveCautionAmount() | currency:'XAF':'symbol':'1.0-0' }}</span>
+              </div>
+              <div class="financial-item" *ngIf="typeForm.get('typeLocataire')?.value === TypeLocataire.NOUVEAU">
+                <label>Montant pour avance</label>
+                <span class="value amount">{{ calculateRemainingAmount() | currency:'XAF':'symbol':'1.0-0' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- État de la location -->
+          <div class="summary-section">
+            <div class="section-header">
+              <i class="fas fa-chart-line"></i>
+              <h4>État de la location</h4>
+            </div>
+            <div class="location-status">
+              <div class="status-item">
+                <label>Statut financier</label>
+                <span class="value status" [ngClass]="getStatutFinancier().classe">
+                  <i class="fas" [ngClass]="getStatutFinancier().icone"></i>
+                  {{ getStatutFinancier().statut }}
+                </span>
+                <small class="status-description">{{ getStatutFinancier().description }}</small>
+              </div>
+
+              <!-- Pour nouveaux locataires : mois couverts -->
+              <div class="status-item" *ngIf="typeForm.get('typeLocataire')?.value === TypeLocataire.NOUVEAU && getMoisCouverts() > 0">
+                <label>Mois couverts par l'avance</label>
+                <span class="value amount positive">{{ getMoisCouverts() }} mois</span>
+              </div>
+
+              <!-- Pour locataires existants : retard/avance -->
+              <div class="status-item" *ngIf="typeForm.get('typeLocataire')?.value === TypeLocataire.EXISTANT">
+                <label>Situation financière</label>
+                <span class="value amount" [class.positive]="getMoisRetard() >= 0" [class.negative]="getMoisRetard() < 0">
+                  {{ getDescriptionRetard() }}
+                </span>
+              </div>
+
+              <div class="status-item">
+                <label>Solde financier</label>
+                <span class="value amount" [class.positive]="getSoldeEcritures() >= 0" [class.negative]="getSoldeEcritures() < 0">
+                  {{ getSoldeEcritures() | currency:'XAF':'symbol':'1.0-0' }}
+                </span>
+                <small class="status-description">
+                  {{ getSoldeEcritures() >= 0 ? 'Crédit (en avance)' : 'Débit (dû)' }}
+                </small>
+              </div>
+
+              <div class="status-item" *ngIf="selectedRoom">
+                <label>Loyer mensuel</label>
+                <span class="value amount">{{ selectedRoom.price | currency:'XAF':'symbol':'1.0-0' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Résumé des écritures -->
+          <div class="summary-section" *ngIf="resumeEcritures">
+            <div class="section-header">
+              <i class="fas fa-file-invoice"></i>
+              <h4>Résumé comptable</h4>
+            </div>
+            <div class="ecritures-resume">
+              <div class="resume-item">
+                <label>Total débits (Dettes)</label>
+                <span class="value amount debit">{{ resumeEcritures.totalDebits | currency:'XAF':'symbol':'1.0-0' }}</span>
+              </div>
+              <div class="resume-item">
+                <label>Total crédits (Paiements)</label>
+                <span class="value amount credit">{{ resumeEcritures.totalCredits | currency:'XAF':'symbol':'1.0-0' }}</span>
+              </div>
+              <div class="resume-item balance">
+                <label>Solde (Dettes - Paiements)</label>
+                <span class="value amount" [class.positive]="getSoldeEcritures() >= 0" [class.negative]="getSoldeEcritures() < 0">
+                  {{ getSoldeEcritures() | currency:'XAF':'symbol':'1.0-0' }}
+                </span>
+              </div>
+              <div class="resume-item">
+                <label>Équilibre comptable</label>
+                <span class="value" [class.equilibre]="resumeEcritures.equilibre">
+                  <i class="fas" [class.fa-check-circle]="resumeEcritures.equilibre" [class.fa-exclamation-triangle]="!resumeEcritures.equilibre"></i>
+                  {{ resumeEcritures.equilibre ? 'Équilibré' : 'Non équilibré' }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Commentaire -->
+          <div class="summary-section" *ngIf="configFinanciereForm.get('commentaire')?.value">
+            <div class="section-header">
+              <i class="fas fa-comment"></i>
+              <h4>Commentaire</h4>
+            </div>
+            <div class="commentaire-content">
+              <p>{{ configFinanciereForm.get('commentaire')?.value }}</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
