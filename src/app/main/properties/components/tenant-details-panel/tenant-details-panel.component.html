@@ -97,11 +97,26 @@
           <div class="h-48 bg-gradient-to-br from-gray-100 to-gray-200 relative overflow-hidden">
             <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-custom-primary-light to-custom-primary">
               <div class="text-center text-custom-primary">
-                <div class="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-                  <span class="text-3xl font-bold text-custom-primary">
-                    {{ getTenantName().charAt(0).toUpperCase() }}
-                  </span>
+
+                <!-- Avatar avec photo ou initiales -->
+                <div class="mb-4">
+                  <!-- Photo de profil si disponible -->
+                  <div class="w-24 h-24 bg-white rounded-full mx-auto shadow-lg overflow-hidden"
+                       *ngIf="tenant?.profilePicture">
+                    <img [src]="tenant.profilePicture"
+                         [alt]="getTenantName()"
+                         class="w-full h-full object-cover">
+                  </div>
+
+                  <!-- Initiales si pas de photo -->
+                  <div class="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto shadow-lg"
+                       *ngIf="!tenant?.profilePicture">
+                    <span class="text-3xl font-bold text-custom-primary">
+                      {{ getTenantName().charAt(0).toUpperCase() }}
+                    </span>
+                  </div>
                 </div>
+
                 <p class="text-lg font-semibold opacity-90">{{ getTenantName() }}</p>
               </div>
             </div>

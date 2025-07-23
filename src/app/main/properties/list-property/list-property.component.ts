@@ -6,7 +6,6 @@ import { Observable } from 'rxjs';
 import { PropertyModel, PropertyState, RoomState, LocationPaymentState, LocationState } from 'src/app/shared/store';
 import { AddPropertyComponent } from '../add-property/add-property.component';
 import { Store } from '@ngxs/store';
-import { GaleryPropertyComponent } from '../components/galery-property/galery-property.component';
 import { UpdatePropertyComponent } from '../update-property/update-property.component';
 import { PropertyAlert } from '../components/property-overview-card/property-overview-card.component';
 import { ModernTenantModalComponent } from '../components/modern-tenant-modal/modern-tenant-modal.component';
@@ -46,21 +45,7 @@ export class ListPropertyComponent implements OnInit {
     return this._store.select(RoomState.selectStateNumberOfRoomByPropertyId(propertyID))
   }
 
-  openEditPhoto(property:PropertyModel,event)
-    {
-      // this._router.navigate(['/app/properties/edit-room',room._id])
-      event.stopPropagation();
-      this.dialog.open(GaleryPropertyComponent, { 
-        viewContainerRef:null,
-        disableClose: true,
-        role: 'dialog',
-        height: '100%',
-        width: '100%',
-        data:{
-          property
-        }
-      })
-    }
+
 
     updateProperty(property,event)
       {

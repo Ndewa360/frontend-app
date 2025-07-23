@@ -107,6 +107,30 @@
         </div>
       </div>
 
+       <!-- Métrique Loyer Moyen -->
+      <div class="metric-card" [ngClass]="{
+        'success': collectionRate >= 90,
+        'warning': collectionRate >= 70 && collectionRate < 90,
+        'danger': collectionRate < 70
+      }">
+        <div class="metric-icon">
+          <youpez-ibm-icon iconName="chart--pie" iconSize="24"></youpez-ibm-icon>
+        </div>
+        <div class="metric-content">
+        
+          <div class="metric-value">{{ formatPercentage(collectionRate) }}</div>
+          <div class="metric-label">Taux de Recouvrement</div>
+          <div class="metric-trend" [ngClass]="{
+              'positive': collectionRate >= 85,
+              'negative': collectionRate < 85
+            }">
+            <youpez-ibm-icon [iconName]="collectionRate >= 85 ? 'trending--up' : 'trending--down'" iconSize="16"></youpez-ibm-icon>
+            <span>{{ collectionRate >= 85 ? '+' : '-' }}{{ Math.abs(collectionRate - 85) | number:'1.1-1' }}% {{ collectionRate >= 90 ? 'Excellent' : collectionRate >= 70 ? 'Bon' : 'À améliorer' }}</span>
+          </div>
+        </div>
+      </div>
+
+      
     </div>
   </div>
 
@@ -182,7 +206,7 @@
     </div>
 
     <!-- Graphique d'analyse des locataires -->
-    <div class="dashboard-item chart-item">
+    <!-- <div class="dashboard-item chart-item">
       <div class="chart-header">
         <h3 class="app-productive-heading-03">Analyse Locataires</h3>
         <p class="app-body-short-01">Répartition des locataires actifs</p>
@@ -196,32 +220,7 @@
           </youpez-echarts>
         </youpez-echarts-container>
       </div>
-    </div>
-
-    <!-- KPI Taux de Recouvrement -->
-    <div class="dashboard-item kpi-item" [ngClass]="{
-      'success': collectionRate >= 90,
-      'warning': collectionRate >= 70 && collectionRate < 90,
-      'danger': collectionRate < 70
-    }">
-      <div class="kpi-header">
-        <div class="kpi-icon">
-          <youpez-ibm-icon iconName="chart--pie" iconSize="24"></youpez-ibm-icon>
-        </div>
-        <div class="kpi-trend" [ngClass]="{
-          'positive': collectionRate >= 85,
-          'negative': collectionRate < 85
-        }">
-          <youpez-ibm-icon [iconName]="collectionRate >= 85 ? 'trending--up' : 'trending--down'" iconSize="16"></youpez-ibm-icon>
-          <span>{{ collectionRate >= 85 ? '+' : '-' }}{{ Math.abs(collectionRate - 85) | number:'1.1-1' }}%</span>
-        </div>
-      </div>
-      <div class="kpi-content">
-        <div class="kpi-value">{{ formatPercentage(collectionRate) }}</div>
-        <div class="kpi-label">Taux de Recouvrement</div>
-        <div class="kpi-description">{{ collectionRate >= 90 ? 'Excellent' : collectionRate >= 70 ? 'Bon' : 'À améliorer' }}</div>
-      </div>
-    </div>
+    </div> -->
 
   </div>
 

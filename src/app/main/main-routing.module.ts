@@ -7,7 +7,6 @@ import {LayoutComponent} from '../layout/default/layout.component'
 import {WelcomeComponent} from "./welcome/welcome.component"
 import { LoadingPropertyDataResolver } from '../shared/resolvers'
 import { PropertyDetailsResolver } from '../shared/resolvers/loading-property-data/property-details-resolver.service'
-import { PropertyFinanceComponent } from './properties/components/property-finance/property-finance.component'
 import { ListPropertyComponent } from './properties/list-property/list-property.component'
 import { HomePropertyComponent } from './properties/home-property/home-property.component'
 import { PropertyDetailsCompleteComponent } from './properties/property-details-complete/property-details-complete.component'

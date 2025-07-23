@@ -56,12 +56,14 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
   // Données du store
   rooms$: Observable<RoomModel[]> | undefined;
   locataires$: Observable<LocataireModel[]> | undefined;
+  locations$: Observable<LocationModel[]> | undefined;
   property$: Observable<PropertyModel> | undefined;
   loading$: Observable<boolean> | undefined;
 
   // États locaux
   rooms: RoomModel[] = [];
   locataires: LocataireModel[] = [];
+  locations: LocationModel[] = [];
   property: PropertyModel | null = null;
   loading: boolean = false;
 
@@ -139,21 +141,24 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
     // Initialiser les observables
     this.rooms$ = this.store.select(RoomState.selectStateRoomByPropertyId(this.propertyId));
     this.locataires$ = this.store.select(LocataireState.selectStateLocataireByPropertyId(this.propertyId)); // Tous les locataires
+    this.locations$ = this.store.select(LocationState.selectStateLocations);
     this.property$ = this.store.select(PropertyState.selectStateProperty(this.propertyId));
     this.loading$ = this.store.select(RoomState.selectStateLoading);
 
     // S'abonner aux données
-    if (this.rooms$ && this.locataires$ && this.property$ && this.loading$) {
+    if (this.rooms$ && this.locataires$ && this.locations$ && this.property$ && this.loading$) {
       combineLatest([
         this.rooms$,
         this.locataires$,
+        this.locations$,
         this.property$,
         this.loading$
       ]).pipe(
         takeUntil(this.destroy$)
-      ).subscribe(([rooms, locataires, property, loading]) => {
+      ).subscribe(([rooms, locataires, locations, property, loading]) => {
         this.rooms = rooms || [];
         this.locataires = locataires || [];
+        this.locations = locations || [];
         this.property = property;
         this.loading = loading;
         this.updateFilters();
@@ -540,9 +545,68 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
     return this.rooms.filter(room => room.isFree === true).length;
   }
 
-  getVacantSince(_room: RoomModel): string {
-    // Simulation - à remplacer par les vraies données
-    return '15/12/2023';
+  getVacantSince(room: RoomModel): string {
+    if (!room) return 'Date inconnue';
+
+    // Vérifier si l'unité est actuellement occupée
+    if (!room.isFree) {
+      // Unité occupée - chercher la location active
+      const activeLocation = this.locations.find(loc =>
+        loc.room === room._id && loc.isRunning === true
+      );
+
+      if (activeLocation && activeLocation.startedAt) {
+        return new Date(activeLocation.startedAt).toLocaleDateString('fr-FR');
+      }
+
+      // Fallback : chercher le locataire et sa date de création
+      const tenant = this.locataires.find(loc => loc.room === room._id);
+      if (tenant && tenant.createdAt) {
+        return new Date(tenant.createdAt).toLocaleDateString('fr-FR');
+      }
+
+      return 'Date inconnue';
+    }
+
+    // Unité libre - récupérer toutes les locations pour cette unité
+    const roomLocations = this.locations.filter(loc => loc.room === room._id);
+
+    if (roomLocations.length === 0) {
+      // Jamais occupé - utiliser la date de création de l'unité
+      if (room.createdAt) {
+        return new Date(room.createdAt).toLocaleDateString('fr-FR');
+      }
+      return 'Date inconnue';
+    }
+
+    // Trouver la dernière location terminée (endedAt défini)
+    const terminatedLocations = roomLocations
+      .filter(loc => loc.endedAt && !loc.isRunning)
+      .sort((a, b) => new Date(b.endedAt!).getTime() - new Date(a.endedAt!).getTime());
+
+    if (terminatedLocations.length > 0) {
+      // Utiliser la date de fin de la dernière location terminée
+      const lastEndDate = terminatedLocations[0].endedAt;
+      if (lastEndDate) {
+        return new Date(lastEndDate).toLocaleDateString('fr-FR');
+      }
+    }
+
+    // Si pas de location terminée mais des locations existent,
+    // utiliser la date de création de l'unité
+    if (room.createdAt) {
+      return new Date(room.createdAt).toLocaleDateString('fr-FR');
+    }
+
+    return 'Date inconnue';
+  }
+
+  /**
+   * Obtenir le libellé selon le statut de l'unité
+   */
+  getOccupancyLabel(room: RoomModel): string {
+    if (!room) return 'Depuis';
+    return room.isFree ? 'Libre depuis' : 'Occupé depuis';
   }
 
   // Méthodes pour les modals

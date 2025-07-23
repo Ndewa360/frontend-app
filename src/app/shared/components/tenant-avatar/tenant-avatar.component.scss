@@ -1,0 +1,63 @@
+:host {
+  display: inline-block;
+}
+
+.tenant-avatar {
+  position: relative;
+  display: inline-block;
+  
+  &.clickable {
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+}
+
+// Animation pour le chargement des images
+img {
+  transition: opacity 0.3s ease;
+  
+  &:not([src]) {
+    opacity: 0;
+  }
+}
+
+// Styles pour les différentes tailles
+.size-sm {
+  .status-indicator {
+    width: 8px;
+    height: 8px;
+    bottom: -2px;
+    right: -2px;
+  }
+}
+
+.size-md {
+  .status-indicator {
+    width: 12px;
+    height: 12px;
+    bottom: -2px;
+    right: -2px;
+  }
+}
+
+.size-lg {
+  .status-indicator {
+    width: 16px;
+    height: 16px;
+    bottom: -4px;
+    right: -4px;
+  }
+}
+
+.size-xl {
+  .status-indicator {
+    width: 20px;
+    height: 20px;
+    bottom: -4px;
+    right: -4px;
+  }
+}

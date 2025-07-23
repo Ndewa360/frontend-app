@@ -1,0 +1,29 @@
+<div class="relative inline-block">
+  <!-- Avatar principal -->
+  <div class="rounded-full shadow-md border-2 border-white overflow-hidden transition-all duration-200"
+       [class]="getSizeClasses()"
+       [class.cursor-pointer]="clickable"
+       [class.hover:shadow-lg]="clickable"
+       [style.background]="!avatarData?.hasPhoto ? avatarData?.backgroundColor : 'transparent'"
+       (click)="onAvatarClick()">
+    
+    <!-- Photo de profil -->
+    <img *ngIf="avatarData?.hasPhoto" 
+         [src]="avatarData.photoUrl" 
+         [alt]="tenant?.fullName || tenant?.name || 'Locataire'"
+         class="w-full h-full object-cover"
+         loading="lazy">
+    
+    <!-- Initiales si pas de photo -->
+    <div *ngIf="!avatarData?.hasPhoto" 
+         class="w-full h-full flex items-center justify-center text-white font-bold">
+      {{ avatarData?.initials }}
+    </div>
+  </div>
+  
+  <!-- Indicateur de statut -->
+  <div *ngIf="showStatus" 
+       class="absolute -bottom-1 -right-1 rounded-full border-2 border-white shadow-sm"
+       [class]="getStatusSize() + ' ' + getStatusClasses()">
+  </div>
+</div>

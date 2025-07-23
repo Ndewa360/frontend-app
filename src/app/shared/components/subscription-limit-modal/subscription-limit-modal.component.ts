@@ -6,10 +6,11 @@ import { takeUntil } from 'rxjs/operators';
 import { SubscriptionLimitState, SubscriptionLimitAction, SubscriptionStatus } from '../../store/subscription-limit';
 
 export interface SubscriptionLimitModalData {
-  type: 'limit_reached' | 'account_suspended' | 'upgrade_prompt';
+  type: 'limit_reached' | 'room_limit_reached' | 'account_suspended' | 'upgrade_prompt';
   currentLimit?: number;
   propertyCount?: number;
   suspensionDate?: Date;
+  limitType?: 'property' | 'room';
 }
 
 @Component({
@@ -96,7 +97,9 @@ export class SubscriptionLimitModalComponent implements OnInit, OnDestroy {
   get modalTitle(): string {
     switch (this.data.type) {
       case 'limit_reached':
-        return 'Limite de biens atteinte';
+        return this.data.limitType === 'room' ? 'Limite d\'unités atteinte' : 'Limite de biens atteinte';
+      case 'room_limit_reached':
+        return 'Limite d\'unités locatives atteinte';
       case 'account_suspended':
         return 'Compte suspendu';
       case 'upgrade_prompt':
@@ -109,18 +112,26 @@ export class SubscriptionLimitModalComponent implements OnInit, OnDestroy {
   get modalMessage(): string {
     switch (this.data.type) {
       case 'limit_reached':
-        return `Vous avez atteint la limite de ${this.data.currentLimit || 8} biens pour le forfait gratuit. Pour créer plus de biens, passez au forfait Premium.`;
+        if (this.data.limitType === 'room') {
+          return `Vous avez atteint la limite de ${this.data.currentLimit || 8} unités locatives par bien pour le forfait gratuit. Pour créer plus d'unités, passez au forfait Premium.`;
+        } else {
+          return `Vous avez atteint la limite de ${this.data.currentLimit || 1} bien pour le forfait gratuit. Pour créer plus de biens, passez au forfait Premium.`;
+        }
+      case 'room_limit_reached':
+        return `Vous avez atteint la limite de ${this.data.currentLimit || 8} unités locatives par bien pour le forfait gratuit. Pour créer plus d'unités, passez au forfait Premium.`;
       case 'account_suspended':
         return 'Votre compte est suspendu pour impayé. Veuillez régler vos factures pour réactiver votre compte.';
       case 'upgrade_prompt':
-        return 'Le forfait Premium vous permet de créer un nombre illimité de biens et vous ne payez que 2% du loyer des unités effectivement occupées.';
+        return 'Le forfait Premium vous permet de créer un nombre illimité de biens et d\'unités locatives. Vous ne payez que 2% du loyer des unités effectivement occupées.';
       default:
         return '';
     }
   }
 
   get showUpgradeButton(): boolean {
-    return this.data.type === 'limit_reached' || this.data.type === 'upgrade_prompt';
+    return this.data.type === 'limit_reached' ||
+           this.data.type === 'room_limit_reached' ||
+           this.data.type === 'upgrade_prompt';
   }
 
   get showReactivateButton(): boolean {

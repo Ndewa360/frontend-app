@@ -384,7 +384,9 @@ export class ContractTemplatesListComponent implements OnInit, OnDestroy {
       if (result) {
         // La duplication a été effectuée avec succès
         // Le store a déjà été mis à jour par l'action
-        console.log('Template dupliqué avec succès');
+         //TODO
+        //Doit rédiriger directement vers la page de modification du nouveau template
+        console.log('Template dupliqué avec succès',result);
       }
     });
   }

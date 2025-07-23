@@ -16,9 +16,7 @@ import {MainRoutingModule} from './main-routing.module'
 import {WelcomeComponent} from './welcome/welcome.component'
 // import {GettingStartedComponent} from './application/getting-started/getting-started.component'
 import { AddPropertyComponent } from './properties/add-property/add-property.component'
-import { PropertyFinanceComponent } from './properties/components/property-finance/property-finance.component'
 import { ListPropertyComponent } from './properties/list-property/list-property.component'
-import { LocatairePropertyModule } from './properties/components/locataire-property/locataire-property.module'
 import { AgGridModule } from '@ag-grid-community/angular';
 
 import { UpdatePropertyComponent } from './properties/update-property/update-property.component';
@@ -28,7 +26,6 @@ import { UpdatePropertyComponent } from './properties/update-property/update-pro
 import { LocationPaymentModule } from './location-payment/location-payment.module'
 import { StatisticsModule } from './statistics/statistics.module'
 import { ModernModalsModule } from './properties/components/modern-modals/modern-modals.module'
-import { GaleryPropertyComponent } from './properties/components/galery-property/galery-property.component'
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model'
 import { ModuleRegistry } from '@ag-grid-community/core'
 import { CsvExportModule } from '@ag-grid-community/csv-export';
@@ -37,26 +34,13 @@ import { FilterModule } from '@ag-grid-community/core/dist/types/src/filter/filt
 import { HomePropertyComponent } from './properties/home-property/home-property.component';
 import { AssignLocationModule } from './assign-location/assign-location.module'
 // import { HomeComponent as SupportHome} from '../support/home/home.component'
-import { DeleteRoomComponent } from './room/components/delete-room/delete-room.component'
 import { GaleryComponent } from './room/components/galery/galery.component'
-import { UpdateRoomComponent } from './room/components/update-room/update-room.component';
-import { DetailsRoomComponent } from './room/components/details-room/details-room.component';
-import { CurrentLocataireComponent } from './room/components/current-locataire/current-locataire.component';
 import { DetailsRoomGaleryComponent } from './room/components/details-room-galery/details-room-galery.component'
-import { HistoryPaymentComponent } from './locataires/components/history-payment/history-payment.component'
-import { HistoryRoomComponent } from './locataires/components/history-room/history-room.component'
-import { HistoryComponent } from './locataires/components/history/history.component'
-import { LocataireProfilComponent } from './locataires/components/locataire-profil/locataire-profil.component'
-import { LocataireRoomListComponent } from './locataires/components/locataire-room-list/locataire-room-list.component'
 
-import { LocatairePageComponent } from './locataires/locataire-page/locataire-page.component'
-import { DetailsLocataireComponent } from './locataires/components/details-locataire/details-locataire.component';
-import { CurrentRoomComponent } from './locataires/components/current-room/current-room.component';
 import { PropertyOverviewCardComponent } from './properties/components/property-overview-card/property-overview-card.component'
 
 // Nouveaux composants modernes
 import { PropertyDetailsCompleteComponent } from './properties/property-details-complete/property-details-complete.component'
-import { PropertyUnitsComponent } from './properties/components/property-units/property-units.component'
 import { PropertyTenantsComponent } from './properties/components/property-tenants/property-tenants.component'
 import { PropertyHistoryComponent } from './properties/components/property-history/property-history.component'
 // import { PropertyFinancesComponent } from './properties/components/property-finances/property-finances.component'
@@ -76,12 +60,7 @@ import { TenantDetailsPanelComponent } from './properties/components/tenant-deta
 import { PropertyUnitsListComponent } from './properties/components/property-units-list/property-units-list.component'
 import { ModernFinancialDashboardComponent } from './properties/components/modern-financial-dashboard/modern-financial-dashboard.component';
 
-// Composants du modal de détails d'unité
-import { UnitDetailsModalComponent } from './properties/components/unit-details-modal/unit-details-modal.component';
-import { UnitDetailsTabComponent } from './properties/components/unit-details-modal/tabs/unit-details-tab/unit-details-tab.component';
-import { UnitTenantTabComponent } from './properties/components/unit-details-modal/tabs/unit-tenant-tab/unit-tenant-tab.component';
-import { UnitPaymentHistoryTabComponent } from './properties/components/unit-details-modal/tabs/unit-payment-history-tab/unit-payment-history-tab.component';
-import { UnitGalleryTabComponent } from './properties/components/unit-details-modal/tabs/unit-gallery-tab/unit-gallery-tab.component';
+
 
 // Composant panneau latéral
 import { UnitDetailsPanelComponent } from './properties/components/unit-details-panel/unit-details-panel.component';
@@ -116,34 +95,19 @@ ModuleRegistry.registerModules([
     WelcomeComponent,
     ListPropertyComponent,
     AddPropertyComponent,
-    PropertyFinanceComponent,
     UpdatePropertyComponent,
     // AssignLocationComponent,
     // AssignLocationFormComponent,
     // RemoveLocataireRoomComponent, // Supprimé - remplacé par ModernContractTerminationModalComponent
-    GaleryPropertyComponent,
     HomePropertyComponent,
-    UpdateRoomComponent,
     GaleryComponent,
-    DeleteRoomComponent,
     // SupportHome,
-    DetailsRoomComponent,
-    CurrentLocataireComponent,
     DetailsRoomGaleryComponent,
 
-    LocatairePageComponent,
-    LocataireProfilComponent,
-    LocataireRoomListComponent,
-    HistoryPaymentComponent,
-    HistoryRoomComponent,
-    HistoryComponent,
-    DetailsLocataireComponent,
-    CurrentRoomComponent,
     PropertyOverviewCardComponent,
 
     // Nouveaux composants modernes
     PropertyDetailsCompleteComponent,
-    PropertyUnitsComponent,
     PropertyTenantsComponent,
     PropertyHistoryComponent,
     PropertyFinancesComponent,
@@ -161,12 +125,6 @@ ModuleRegistry.registerModules([
     ActualRevenueAnalysisComponent,
     AdvancedFinancialDashboardComponent,
 
-    // Composants du modal de détails d'unité
-    UnitDetailsModalComponent,
-    UnitDetailsTabComponent,
-    UnitTenantTabComponent,
-    UnitPaymentHistoryTabComponent,
-    UnitGalleryTabComponent,
 
     // Composant panneau latéral
     UnitDetailsPanelComponent,
@@ -190,7 +148,6 @@ ModuleRegistry.registerModules([
     NgxExtendedPdfViewerModule,
     LocationPaymentModule,
     AgGridModule,
-    LocatairePropertyModule,
     StatisticsModule,
     AssignLocationModule,
     PropertiesSharedModule,

@@ -132,9 +132,11 @@
             <!-- Nom du locataire -->
             <td>
               <div class="flex items-center gap-3">
+                <!-- Avatar avec initiales seulement (pas de photo pour TenantPaymentStatus) -->
                 <div class="tenant-avatar">
                   {{ tenant.tenantName.charAt(0).toUpperCase() }}
                 </div>
+
                 <div class="tenant-info">
                   <div class="tenant-name">{{ tenant.tenantName }}</div>
                   <div class="tenant-id">ID: {{ tenant.tenantId }}</div>

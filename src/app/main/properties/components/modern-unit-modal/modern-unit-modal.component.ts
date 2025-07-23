@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { Store, Actions, ofActionSuccessful, ofActionErrored } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -13,11 +13,19 @@ import {
   RoomType,
   PropertyModel 
 } from 'src/app/shared/store';
-import { 
-  UploadFilesAction, 
-  FileUploadContentType, 
-  ContentUploadRoomType 
+import {
+  UploadFilesAction,
+  FileUploadContentType,
+  ContentUploadRoomType
 } from 'src/app/shared/store/files-upload';
+import {
+  SubscriptionLimitAction,
+  SubscriptionLimitState
+} from 'src/app/shared/store/subscription-limit';
+import {
+  SubscriptionLimitModalComponent,
+  SubscriptionLimitModalData
+} from 'src/app/shared/components/subscription-limit-modal/subscription-limit-modal.component';
 
 export interface UnitModalData {
   mode: 'create' | 'edit';
@@ -54,6 +62,7 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
     private store: Store,
     private actions: Actions,
     private toastr: ToastrService,
+    private dialog: MatDialog,
     private dialogRef: MatDialogRef<ModernUnitModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: UnitModalData
   ) {
@@ -167,13 +176,26 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
       this.dialogRef.close(true);
     });
 
-    // Erreurs
+    // Erreurs de création
     this.actions.pipe(
-      ofActionErrored(RoomAction.CreateRoom, RoomAction.UpdateRoom),
+      ofActionErrored(RoomAction.CreateRoom),
       takeUntil(this.destroy$)
     ).subscribe(() => {
       this.isLoading = false;
-      this.toastr.error('Une erreur est survenue', 'Erreur');
+      console.log('🔍 Erreur de création interceptée');
+
+      // Pour l'instant, on affiche le modal de limite par défaut
+      // L'erreur spécifique sera gérée côté backend
+      this.showRoomLimitModal();
+    });
+
+    // Erreurs de modification
+    this.actions.pipe(
+      ofActionErrored(RoomAction.UpdateRoom),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.isLoading = false;
+      this.toastr.error('Une erreur est survenue lors de la modification', 'Erreur');
     });
   }
 
@@ -258,8 +280,26 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
       return;
     }
 
+    // Pour la création, vérifier les limites d'abord
+    if (this.data.mode === 'create') {
+      this.checkRoomLimits();
+      return;
+    }
+
+    // Pour l'édition, procéder directement
+    this.createOrUpdateRoom();
+  }
+
+  private checkRoomLimits(): void {
+    // Pour la création d'unités, on laisse le backend gérer la vérification
+    // et on intercepte l'erreur dans setupActionListeners
+    console.log('🔍 Tentative de création d\'unité - vérification côté backend');
+    this.createOrUpdateRoom();
+  }
+
+  private async createOrUpdateRoom(): Promise<void> {
     this.isLoading = true;
-    
+
     try {
       // Upload des images si nécessaire
       const mediaUrls = await this.uploadImages();
@@ -288,7 +328,6 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
       delete unitData.numberOfShower;
       delete unitData.numberOfBathroom;
 
-
       if (this.data.mode === 'create') {
         delete unitData.code;
         this.store.dispatch(new RoomAction.CreateRoom(unitData, this.data.property._id));
@@ -297,8 +336,49 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
       }
     } catch (error) {
       this.isLoading = false;
-      // this.toastr.error('Une erreur est survenue', 'Erreur');
+      console.error('Erreur lors de la création/modification:', error);
     }
+  }
+
+  private showRoomLimitModal(): void {
+    const modalData: SubscriptionLimitModalData = {
+      type: 'limit_reached',
+      currentLimit: 8,
+      limitType: 'room'
+    };
+
+    const dialogRef = this.dialog.open(SubscriptionLimitModalComponent, {
+      width: '600px',
+      disableClose: true,
+      data: modalData
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.upgraded) {
+        // L'utilisateur a upgradé, permettre la création
+        this.createOrUpdateRoom();
+      }
+      // Sinon, ne rien faire (l'utilisateur a annulé)
+    });
+  }
+
+  private showAccountSuspendedModal(): void {
+    const modalData: SubscriptionLimitModalData = {
+      type: 'account_suspended'
+    };
+
+    const dialogRef = this.dialog.open(SubscriptionLimitModalComponent, {
+      width: '600px',
+      disableClose: true,
+      data: modalData
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.reactivated) {
+        // Le compte a été réactivé, permettre la création
+        this.createOrUpdateRoom();
+      }
+    });
   }
 
   onCancel(): void {

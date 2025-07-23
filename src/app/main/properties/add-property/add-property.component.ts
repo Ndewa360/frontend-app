@@ -240,7 +240,8 @@ export class AddPropertyComponent implements OnInit {
   private showSubscriptionLimitModal(needsUpgrade: boolean): void {
     const modalData: SubscriptionLimitModalData = {
       type: needsUpgrade ? 'limit_reached' : 'upgrade_prompt',
-      currentLimit: 8
+      currentLimit: 1,
+      limitType: 'property'
     };
 
     const dialogRef = this.dialog.open(SubscriptionLimitModalComponent, {

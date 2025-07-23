@@ -11,7 +11,7 @@
       <!-- Template sélectionné -->
       <div class="selected-template" *ngIf="selectedTemplate">
         <div class="template-icon" [class]="getTemplateClass(selectedTemplate)">
-          <youpez-ibm-icon [iconName]="getTemplateIcon(selectedTemplate)" iconSize="16"></youpez-ibm-icon>
+          <i [class]="'fas fa-' + getTemplateIcon(selectedTemplate)"></i>
         </div>
         <div class="template-info">
           <span class="template-name">{{ selectedTemplate.name }}</span>
@@ -27,16 +27,13 @@
 
       <!-- Placeholder -->
       <div class="placeholder" *ngIf="!selectedTemplate">
-        <youpez-ibm-icon iconName="document" iconSize="16"></youpez-ibm-icon>
+        <i class="fas fa-file-contract"></i>
         <span>{{ placeholder }}</span>
       </div>
 
       <!-- Icône de dropdown -->
       <div class="dropdown-icon">
-        <youpez-ibm-icon 
-          [iconName]="isOpen ? 'chevron-up' : 'chevron-down'" 
-          iconSize="16">
-        </youpez-ibm-icon>
+        <i [class]="isOpen ? 'fas fa-chevron-up' : 'fas fa-chevron-down'"></i>
       </div>
     </div>
 
@@ -45,7 +42,7 @@
       <!-- Recherche -->
       <div class="search-container">
         <div class="search-input">
-          <youpez-ibm-icon iconName="search" iconSize="16"></youpez-ibm-icon>
+          <i class="fas fa-search"></i>
           <input 
             type="text" 
             [(ngModel)]="searchTerm"
@@ -62,7 +59,7 @@
           [class.selected]="!selectedTemplate"
           (click)="selectTemplate(null)">
           <div class="template-icon">
-            <youpez-ibm-icon iconName="close" iconSize="16"></youpez-ibm-icon>
+            <i class="fas fa-times"></i>
           </div>
           <div class="template-info">
             <span class="template-name">Aucun modèle</span>
@@ -79,7 +76,7 @@
           (click)="selectTemplate(template)">
           
           <div class="template-icon" [class]="getTemplateClass(template)">
-            <youpez-ibm-icon [iconName]="getTemplateIcon(template)" iconSize="16"></youpez-ibm-icon>
+            <i [class]="'fas fa-' + getTemplateIcon(template)"></i>
           </div>
           
           <div class="template-info">
@@ -89,11 +86,11 @@
             </span>
             <div class="template-meta">
               <span class="meta-item">
-                <youpez-ibm-icon iconName="analytics" iconSize="16"></youpez-ibm-icon>
+                <i class="fas fa-chart-bar"></i>
                 {{ template.usageCount }} utilisation(s)
               </span>
               <span class="meta-item">
-                <youpez-ibm-icon iconName="calendar" iconSize="16"></youpez-ibm-icon>
+                <i class="fas fa-calendar-alt"></i>
                 {{ template.updatedAt | date:'dd/MM/yyyy' }}
               </span>
             </div>
@@ -107,14 +104,14 @@
 
         <!-- Message si aucun résultat -->
         <div class="no-results" *ngIf="filteredTemplates.length === 0 && searchTerm">
-          <youpez-ibm-icon iconName="search" iconSize="24"></youpez-ibm-icon>
+          <i class="fas fa-search"></i>
           <p>Aucun modèle trouvé pour "{{ searchTerm }}"</p>
         </div>
       </div>
 
       <!-- État de chargement -->
       <div class="loading-state" *ngIf="isLoading">
-        <youpez-ibm-icon iconName="loading" iconSize="24"></youpez-ibm-icon>
+        <i class="fas fa-spinner fa-spin"></i>
         <p>Chargement des modèles...</p>
       </div>
 
@@ -124,7 +121,7 @@
           type="button"
           class="btn btn-primary btn-sm"
           (click)="onCreateTemplate()">
-          <youpez-ibm-icon iconName="add" iconSize="16"></youpez-ibm-icon>
+          <i class="fas fa-plus"></i>
           Créer un nouveau modèle
         </button>
       </div>
@@ -134,7 +131,7 @@
   <!-- Aperçu du modèle sélectionné -->
   <div class="template-preview" *ngIf="showPreview && selectedTemplate && selectedTemplate.preview">
     <div class="preview-header">
-      <youpez-ibm-icon iconName="view" iconSize="16"></youpez-ibm-icon>
+      <i class="fas fa-eye"></i>
       <span>Aperçu</span>
     </div>
     <div class="preview-content">

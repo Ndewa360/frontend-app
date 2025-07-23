@@ -5,7 +5,8 @@ import { ContractTemplateService } from '../../services/contract-template.servic
 import {
   ContractTemplateModel,
   ContractTemplateFilterDTO,
-  ContractTemplateStatus
+  ContractTemplateStatus,
+  ContractTemplateType
 } from '../../models/contract-template.model';
 
 @Component({
@@ -139,9 +140,20 @@ export class ContractTemplateSelectorComponent implements OnInit, OnDestroy, Con
    * Obtenir l'icône selon le type de modèle
    */
   getTemplateIcon(template: ContractTemplateModel): string {
-    if (template.isSystemDefault) return 'locked';
+    if (template.isSystemDefault) return 'shield-alt';
     if (template.isDefault) return 'star';
-    return 'document';
+
+    // Icônes selon le type de contrat
+    switch (template.type) {
+      case ContractTemplateType.DEFAULT:
+        return 'file-alt';
+      case ContractTemplateType.CUSTOM:
+        return 'file-edit';
+      case ContractTemplateType.DUPLICATED:
+        return 'copy';
+      default:
+        return 'file';
+    }
   }
 
   /**

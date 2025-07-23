@@ -332,6 +332,18 @@
                 class="form-input"
                 placeholder="Ex: 200000">
             </div>
+
+            <!-- Modèle de contrat -->
+            <div class="form-group col-span-2">
+              <label class="form-label">Modèle de contrat</label>
+              <app-contract-template-selector
+                formControlName="contractTemplate"
+                placeholder="Sélectionner un modèle de contrat (optionnel)"
+                [required]="false"
+                [showCreateButton]="false"
+                [showPreview]="true">
+              </app-contract-template-selector>
+            </div>
           </div>
         </div>
       </form>

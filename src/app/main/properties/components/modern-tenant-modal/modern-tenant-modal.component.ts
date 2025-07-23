@@ -2,11 +2,12 @@ import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store, Actions, ofActionSuccessful, ofActionErrored } from '@ngxs/store';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Subject, firstValueFrom } from 'rxjs';
+import { takeUntil, filter } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { FormUtils } from 'src/app/shared/utils';
+import { HttpEventType, HttpResponse } from '@angular/common/http';
 
 import { 
   LocataireModel, 
@@ -15,10 +16,11 @@ import {
   RoomState,
   PropertyModel 
 } from 'src/app/shared/store';
-import { 
-  UploadFilesAction, 
-  FileUploadContentType, 
-  ContentUploadRoomType 
+import {
+  UploadFilesAction,
+  FileUploadContentType,
+  ContentUploadRoomType,
+  UploadFilesService
 } from 'src/app/shared/store/files-upload';
 // import { phoneValidator } from 'src/app/shared/validators/phone.validator'; // Validator non trouvé
 
@@ -52,6 +54,7 @@ export class ModernTenantModalComponent implements OnInit, OnDestroy {
     private actions: Actions,
     private toastr: ToastrService,
     private translate: TranslateService,
+    private uploadService: UploadFilesService,
     private dialogRef: MatDialogRef<ModernTenantModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: TenantModalData
   ) {
@@ -124,8 +127,8 @@ export class ModernTenantModalComponent implements OnInit, OnDestroy {
         fullName: tenant.fullName || null,
         email: tenant.email || null,
         phoneNumber: tenant.phoneNumber || null,
-        idCardNumber: '', 
-        idCardType: 'CNI',
+        idCardNumber: tenant.idCardNumber, 
+        idCardType: tenant.idCardType,
         country: tenant.country || 'Cameroun',
         location: tenant.location || null,
         fullNameRef: tenant.fullNameRef || null,
@@ -144,33 +147,63 @@ export class ModernTenantModalComponent implements OnInit, OnDestroy {
   }
 
   private setupActionListeners(): void {
-    // Succès de création/modification
-    const successAction = this.data.mode === 'create' 
-      ? LocataireAction.CreateLocataire 
-      : LocataireAction.UpdateLocataire;
-      
+    // Succès de création
     this.actions.pipe(
-      ofActionSuccessful(successAction),
+      ofActionSuccessful(LocataireAction.CreateLocataire),
       takeUntil(this.destroy$)
-    ).subscribe(() => {
+    ).subscribe(async () => {
+      console.log('✅ Locataire créé avec succès');
+
+      // Si une photo est sélectionnée, essayer de l'uploader
+      if (this.selectedPhoto) {
+        console.log('📸 Tentative d\'upload de la photo...');
+
+        try {
+          // Pour l'instant, on utilise un ID temporaire
+          // Dans une vraie implémentation, il faudrait récupérer l'ID du locataire créé
+          const photoUrl = await this.uploadPhoto();
+
+          if (photoUrl) {
+            console.log('✅ Photo uploadée avec succès:', photoUrl);
+            // La photo sera associée au locataire côté backend
+          }
+        } catch (error) {
+          console.error('❌ Erreur lors de l\'upload de la photo:', error);
+          // Ne pas faire échouer la création pour autant
+        }
+      }
+
       this.isLoading = false;
-      const messageKey = this.data.mode === 'create'
-        ? 'MODALS.TENANT.SUCCESS_CREATED'
-        : 'MODALS.TENANT.SUCCESS_UPDATED';
-      this.toastr.success(this.translate.instant(messageKey), this.translate.instant('NOTIFICATIONS.SUCCESS'));
+      this.toastr.success(this.translate.instant('MODALS.TENANT.SUCCESS_CREATED'), this.translate.instant('NOTIFICATIONS.SUCCESS'));
       this.dialogRef.close(true);
     });
 
-    // Erreur
+    // Succès de modification
     this.actions.pipe(
-      ofActionErrored(successAction),
+      ofActionSuccessful(LocataireAction.UpdateLocataire),
       takeUntil(this.destroy$)
     ).subscribe(() => {
       this.isLoading = false;
-      const errorKey = this.data.mode === 'create'
-        ? 'MODALS.TENANT.ERROR_CREATE'
-        : 'MODALS.TENANT.ERROR_UPDATE';
-      this.toastr.error(this.translate.instant(errorKey), this.translate.instant('NOTIFICATIONS.ERROR'));
+      this.toastr.success(this.translate.instant('MODALS.TENANT.SUCCESS_UPDATED'), this.translate.instant('NOTIFICATIONS.SUCCESS'));
+      this.dialogRef.close(true);
+    });
+
+    // Erreurs de création
+    this.actions.pipe(
+      ofActionErrored(LocataireAction.CreateLocataire),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.isLoading = false;
+      this.toastr.error(this.translate.instant('MODALS.TENANT.ERROR_CREATE'), this.translate.instant('NOTIFICATIONS.ERROR'));
+    });
+
+    // Erreurs de modification
+    this.actions.pipe(
+      ofActionErrored(LocataireAction.UpdateLocataire),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.isLoading = false;
+      this.toastr.error(this.translate.instant('MODALS.TENANT.ERROR_UPDATE'), this.translate.instant('NOTIFICATIONS.ERROR'));
     });
   }
 
@@ -222,27 +255,41 @@ export class ModernTenantModalComponent implements OnInit, OnDestroy {
 
   private async uploadPhoto(): Promise<string | null> {
     if (!this.selectedPhoto) return null;
-    
+
     this.isUploadingPhoto = true;
-    
+    console.log('📤 Début de l\'upload de la photo de profil locataire');
+
     try {
-      // Utiliser le service d'upload existant
-      const uploadAction = new UploadFilesAction.UploadFiles({
+      // Générer un ID temporaire pour les nouveaux locataires
+      const contentID = this.data.tenant?._id || `temp-tenant-${Date.now()}`;
+
+      // Utiliser directement le service d'upload et filtrer pour obtenir la réponse finale
+      const uploadObservable = this.uploadService.uploadFiles({
         file: this.selectedPhoto,
-        contentID: this.data.tenant?._id || 'new-tenant',
-        contentType: FileUploadContentType.FOR_ROOM_FILE,
+        contentType: FileUploadContentType.FOR_USER_FILE,
+        contentID: contentID,
         contentRoomType: ContentUploadRoomType.FOR_ROOM
-      });
-      
-      // Dispatch l'action et attendre le résultat
-      await this.store.dispatch(uploadAction).toPromise();
-      
-      // Récupérer l'URL de l'image uploadée
-      // Note: Adapter selon la réponse de votre API
-      return this.selectedPhoto.name; // Temporaire
-      
+      }).pipe(
+        filter(event => event.type === HttpEventType.Response),
+        takeUntil(this.destroy$)
+      );
+
+      const uploadResult = await firstValueFrom(uploadObservable) as HttpResponse<any>;
+
+      console.log('✅ Upload réussi:', uploadResult);
+
+      // Extraire l'URL de la réponse
+      if (uploadResult && uploadResult.body && uploadResult.body.data && uploadResult.body.data.profilePicture) {
+        const photoUrl = uploadResult.body.data.profilePicture;
+        console.log('📸 URL de la photo récupérée:', photoUrl);
+        return photoUrl;
+      } else {
+        console.warn('⚠️ Pas d\'URL de photo dans la réponse:', uploadResult);
+        return null;
+      }
+
     } catch (error) {
-      console.error('Erreur lors de l\'upload de la photo:', error);
+      console.error('❌ Erreur lors de l\'upload de la photo:', error);
       this.toastr.error('Erreur lors de l\'upload de la photo', 'Erreur');
       return null;
     } finally {
@@ -257,26 +304,41 @@ export class ModernTenantModalComponent implements OnInit, OnDestroy {
     }
 
     this.isLoading = true;
-    
+
     try {
-      // Upload de la photo si nécessaire
-      let photoUrl = this.data.tenant?.profilePicture || null;
-      if (this.selectedPhoto) {
-        photoUrl = await this.uploadPhoto();
-      }
-
       const formData = this.formGroup.value;
-      const tenantData = FormUtils.removeNullAttribut({
-        ...formData,
-        profilePicture: photoUrl,
-        propertyId: this.data.property._id,
-        roomId: formData.roomId
-      });
 
-      delete tenantData.confirm;
       if (this.data.mode === 'create') {
+        // Pour un nouveau locataire, créer d'abord sans photo
+        const tenantData = FormUtils.removeNullAttribut({
+          ...formData,
+          profilePicture: null, // Sera ajoutée après création
+          propertyId: this.data.property._id,
+          roomId: formData.roomId
+        });
+
+        delete tenantData.confirm;
+        console.log('👤 Création du locataire sans photo...');
         this.store.dispatch(new LocataireAction.CreateLocataire(tenantData));
+
+        // La photo sera uploadée dans setupActionListeners après création réussie
+
       } else {
+        // Pour un locataire existant, uploader la photo d'abord si nécessaire
+        let photoUrl = this.data.tenant?.profilePicture || null;
+        if (this.selectedPhoto) {
+          console.log('📸 Upload de la photo pour locataire existant...');
+          photoUrl = await this.uploadPhoto();
+        }
+
+        const tenantData = FormUtils.removeNullAttribut({
+          ...formData,
+          profilePicture: photoUrl,
+          propertyId: this.data.property._id,
+          roomId: formData.roomId
+        });
+
+        delete tenantData.confirm;
         this.store.dispatch(new LocataireAction.UpdateLocataire(tenantData, this.data.tenant!._id!));
       }
     } catch (error) {

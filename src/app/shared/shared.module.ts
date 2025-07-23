@@ -8,6 +8,7 @@ import { DummyTableAdvancedComponent } from './components/dummy-table-advanced/d
 import { DebugTokenPanelComponent } from './components/debug-token-panel/debug-token-panel.component'
 import { LanguageSwitcherComponent } from './components/language-switcher/language-switcher.component'
 import { AdvancedLanguageSwitcherComponent } from './components/advanced-language-switcher/advanced-language-switcher.component'
+import { TenantAvatarComponent } from './components/tenant-avatar/tenant-avatar.component'
 
 import { ClickOutsideDirective } from './directives/click-outside.directive'
 import { NgxsModule } from '@ngxs/store';
@@ -149,7 +150,8 @@ import { HttpClient } from '@angular/common/http';
     SubscriptionStatusWidgetComponent,
     LanguageSwitcherComponent,
     ClickOutsideDirective,
-    AdvancedLanguageSwitcherComponent
+    AdvancedLanguageSwitcherComponent,
+    TenantAvatarComponent
   ],
   exports: [
     YoupezModule,

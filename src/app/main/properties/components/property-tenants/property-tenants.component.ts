@@ -14,6 +14,9 @@ import { ModernContractTerminationModalComponent } from '../modern-contract-term
 // Anciens modals (à garder temporairement)
 import { ContractViewerModalComponent } from '../contract-viewer-modal/contract-viewer-modal.component';
 
+// Services
+import { TenantAvatarService } from 'src/app/shared/services/tenant-avatar.service';
+
 @Component({
   selector: 'app-property-tenants',
   templateUrl: './property-tenants.component.html',
@@ -40,7 +43,8 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
   constructor(
     private store: Store,
     private dialog: MatDialog,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private tenantAvatarService: TenantAvatarService
   ) {}
 
   ngOnInit(): void {
@@ -169,31 +173,11 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   getTenantInitials(tenant: LocataireModel): string {
-    const name = tenant.fullName || 'Locataire';
-    return name.split(' ')
-      .map(word => word.charAt(0).toUpperCase())
-      .slice(0, 2)
-      .join('');
+    return this.tenantAvatarService.getTenantInitials(tenant);
   }
 
   getTenantAvatarColor(tenant: LocataireModel): string {
-    const colors = [
-      'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-      'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-      'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-      'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
-      'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
-      'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
-      'linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)',
-      'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)'
-    ];
-
-    const hash = (tenant._id || tenant.fullName || '').split('').reduce((a, b) => {
-      a = ((a << 5) - a) + b.charCodeAt(0);
-      return a & a;
-    }, 0);
-
-    return colors[Math.abs(hash) % colors.length];
+    return this.tenantAvatarService.getTenantAvatarColor(tenant);
   }
 
   getTenantStatus(tenant: LocataireModel): 'active' | 'inactive' | 'pending' {

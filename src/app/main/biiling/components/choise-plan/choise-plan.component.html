@@ -23,6 +23,78 @@
               </div>
               <div>
                 <div class="mb-8">
+                  <!-- Plan FREE -->
+                  <div fxLayout="row wrap" fxLayoutAlign="center" class="mb-6">
+                    <div fxFlex="100%" fxFlex.gt-md="100%">
+                      <div class="app-card" fxLayout="row wrap">
+                        <div fxFlex="100%" fxFlex.gt-md="300px">
+                          <div fxFlex
+                               class="p-12 text-center app-bg-info-lt-30 app-text-contrast">
+                            <div class="flex items-center justify-center">
+                              <span class="app-productive-heading-07 mr-1 font-bold">GRATUIT</span>
+                            </div>
+                            <div class="app-body-short-01 mt-1 mb-8">
+                              Plan automatique à l'inscription
+                            </div>
+                            <div class="">
+                              <button
+                                *ngIf="(currentSubscription$ | async)?.plan === 'FREE' || (currentSubscription$ | async)?.plan === 'free'; else currentPlan"
+                                disabled
+                                ibmButton="secondary"
+                                size="md"
+                                class="app-ibm-btn-full">
+                                Plan actuel
+                              </button>
+                              <ng-template #currentPlan>
+                                <button
+                                  disabled
+                                  ibmButton="tertiary"
+                                  size="md"
+                                  class="app-ibm-btn-full">
+                                  Plan de base
+                                </button>
+                              </ng-template>
+                            </div>
+                          </div>
+                        </div>
+                        <div fxLayout="row wrap" fxLayoutAlign=" center" fxFlex="100%" fxFlex.gt-md="">
+                          <div fxFlex class="px-12 py-8">
+                            <div class="app-productive-heading-03 mb-3 font-bold">Ndewa360 FREE</div>
+                            <div class="app-body-short-02">
+                              Commencez gratuitement avec les fonctionnalités de base pour gérer votre premier bien immobilier
+                            </div>
+                            <div class="app-separator app-separator--left mt-8 mb-4">
+                              <span class="app-label-01 font-bold">LIMITES DU PLAN FREE</span>
+                            </div>
+                            <div fxLayout="row wrap">
+                              <div fxFlex="100%" fxFlex.gt-md="50%">
+                                <div class="flex items-center app-body-short-01 mb-1">
+                                  <i class="fas fa-home app-color-info mr-2"></i>
+                                  Maximum 1 bien immobilier
+                                </div>
+                                <div class="flex items-center app-body-short-01">
+                                  <i class="fas fa-door-open app-color-info mr-2"></i>
+                                  Maximum 8 unités locatives
+                                </div>
+                              </div>
+                              <div fxFlex="100%" fxFlex.gt-md="50%">
+                                <div class="flex items-center app-body-short-01 mb-1">
+                                  <i class="fas fa-check-circle app-color-success mr-2"></i>
+                                  Gestion des finances
+                                </div>
+                                <div class="flex items-center app-body-short-01">
+                                  <i class="fas fa-check-circle app-color-success mr-2"></i>
+                                  Gestion des contrats
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Plan PREMIUM -->
                   <div fxLayout="row wrap" fxLayoutAlign="center">
                     <div fxFlex="100%" fxFlex.gt-md="100%">
                       <div class="app-card" fxLayout="row wrap">
@@ -35,33 +107,60 @@
                               <span class="app-productive-heading-02">/unité/mois</span>
                             </div>
                             <div class="app-body-short-01 mt-1 mb-8">
-                              Prendre la souscription
+                              Upgrade vers Premium
                             </div>
                             <div class="">
-                              <button (click)="showBillingContract()" ibmButton="primary" size="md" class="app-ibm-btn-full custom-primary-button" >
-                                Valider
+                              <button
+                                *ngIf="(currentSubscription$ | async)?.plan === 'FREE' || (currentSubscription$ | async)?.plan === 'free'; else alreadyPremium"
+                                (click)="showBillingContract()"
+                                [disabled]="isUpgrading$ | async"
+                                ibmButton="primary"
+                                size="md"
+                                class="app-ibm-btn-full custom-primary-button">
+                                <span *ngIf="!(isUpgrading$ | async)">Passer au Premium</span>
+                                <span *ngIf="isUpgrading$ | async">
+                                  <i class="fas fa-spinner fa-spin mr-2"></i>
+                                  Upgrade en cours...
+                                </span>
                               </button>
+                              <ng-template #alreadyPremium>
+                                <button
+                                  disabled
+                                  ibmButton="primary"
+                                  size="md"
+                                  class="app-ibm-btn-full">
+                                  Plan actuel
+                                </button>
+                              </ng-template>
                             </div>
                           </div>
                         </div>
                         <div fxLayout="row wrap" fxLayoutAlign=" center" fxFlex="100%" fxFlex.gt-md="">
                           <div fxFlex class="px-12 py-8">
-                            <div class="app-productive-heading-03 mb-3 font-bold">Ndewa360 Pro</div>
+                            <div class="app-productive-heading-03 mb-3 font-bold">Ndewa360 Premium</div>
                             <div class="app-body-short-02">
-                              Gérer plus de bien immobilier et débloqué toutes les fonctionnalités sur les unités à partir d'une souscription pro
+                              Gérez un nombre illimité de biens immobiliers et débloquez toutes les fonctionnalités avancées
                             </div>
                             <div class="app-separator app-separator--left mt-8 mb-4">
-                              <span class="app-label-01 font-bold">FONCTIONNALITES INTEGRES</span>
+                              <span class="app-label-01 font-bold">FONCTIONNALITES PREMIUM</span>
                             </div>
                             <div fxLayout="row wrap">
                               <div fxFlex="100%" fxFlex.gt-md="50%">
+                                <div class="flex items-center app-body-short-01 mb-1">
+                                  <i class="fas fa-infinity app-color-success mr-2"></i>
+                                  Biens immobiliers illimités
+                                </div>
+                                <div class="flex items-center app-body-short-01 mb-1">
+                                  <i class="fas fa-infinity app-color-success mr-2"></i>
+                                  Unités locatives illimitées
+                                </div>
                                 <div class="flex items-center app-body-short-01 mb-1">
                                   <i class="fas fa-check-circle app-color-success mr-2"></i>
                                   Gestion des finances
                                 </div>
                                 <div class="flex items-center app-body-short-01">
                                   <i class="fas fa-check-circle app-color-success mr-2"></i>
-                                  Gestion des contracts
+                                  Gestion des contrats
                                 </div>
                               </div>
                               <div fxFlex="100%" fxFlex.gt-md="50%">
@@ -69,9 +168,17 @@
                                   <i class="fas fa-check-circle app-color-success mr-2"></i>
                                   Notifications de non paiement
                                 </div>
-                                <div class="flex items-center app-body-short-01">
+                                <div class="flex items-center app-body-short-01 mb-1">
                                   <i class="fas fa-check-circle app-color-success mr-2"></i>
                                   Tableau de bord détaillé
+                                </div>
+                                <div class="flex items-center app-body-short-01 mb-1">
+                                  <i class="fas fa-check-circle app-color-success mr-2"></i>
+                                  Support prioritaire
+                                </div>
+                                <div class="flex items-center app-body-short-01">
+                                  <i class="fas fa-check-circle app-color-success mr-2"></i>
+                                  Rapports avancés
                                 </div>
                               </div>
                             </div>
