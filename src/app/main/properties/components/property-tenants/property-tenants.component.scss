@@ -1,3 +1,42 @@
+// Styles pour les boutons d'export
+.export-btn {
+  position: relative;
+  overflow: hidden;
+
+  &.export-btn-csv {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border: 2px solid #10b981;
+    color: white;
+
+    &:hover:not(:disabled) {
+      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      border-color: #059669;
+      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+    }
+  }
+
+  &.export-btn-excel {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    border: 2px solid #3b82f6;
+    color: white;
+
+    &:hover:not(:disabled) {
+      background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+      border-color: #1d4ed8;
+      box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+    }
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0) scale(0.98);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
+
 // Styles pour l'interface moderne des locataires
 .tenants-modern-interface {
 

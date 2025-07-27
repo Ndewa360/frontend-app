@@ -281,12 +281,20 @@
 
             <div class="text-center p-4 bg-gray-50 rounded-lg border border-gray-300">
               <div class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Dernière inspection</div>
-              <div class="text-sm font-bold text-gray-900">{{ formatDate(getLastInspectionDate()) }}</div>
+              <div class="text-sm font-bold"
+                   [class.text-gray-900]="getLastInspectionDate()"
+                   [class.text-gray-500]="!getLastInspectionDate()">
+                {{ getLastInspectionDate() ? formatDate(getLastInspectionDate()) : 'Aucune inspection' }}
+              </div>
             </div>
 
             <div class="text-center p-4 bg-gray-50 rounded-lg border border-gray-300">
               <div class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Prochaine maintenance</div>
-              <div class="text-sm font-bold text-gray-900">{{ formatDate(getNextMaintenanceDate()) }}</div>
+              <div class="text-sm font-bold"
+                   [class.text-gray-900]="getNextMaintenanceDate()"
+                   [class.text-gray-500]="!getNextMaintenanceDate()">
+                {{ getNextMaintenanceDate() ? formatDate(getNextMaintenanceDate()) : 'Aucune maintenance programmée' }}
+              </div>
             </div>
           </div>
         </div>

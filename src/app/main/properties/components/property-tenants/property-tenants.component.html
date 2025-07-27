@@ -15,14 +15,31 @@
         </div>
       </div>
 
-      <!-- Actions compactes -->
+      <!-- Actions compactes avec design du thème -->
       <div class="flex space-x-3">
-        <button class="px-4 py-2 border-2 border-amber-300 rounded-lg text-amber-700 bg-white hover:bg-amber-50 hover:border-amber-400 transition-all duration-200 flex items-center text-sm font-medium shadow-sm hover:shadow-md">
-          <i class="fas fa-download mr-2 text-amber-600"></i>
-          Exporter
+        <!-- Boutons d'export avec design amélioré -->
+        <button (click)="exportTenantsToCSV()"
+                class="export-btn export-btn-csv px-4 py-2 rounded-lg font-semibold transition-all duration-300 flex items-center shadow-md hover:shadow-lg text-sm hover:transform hover:-translate-y-1"
+                [disabled]="filteredTenants.length === 0"
+                [class.opacity-50]="filteredTenants.length === 0"
+                [class.cursor-not-allowed]="filteredTenants.length === 0"
+                title="Exporter en CSV ({{ filteredTenants.length }} locataires)">
+          <i class="fas fa-file-csv mr-2 text-white"></i>
+          <span class="text-white font-medium">CSV</span>
         </button>
+
+        <button (click)="exportTenantsToExcel()"
+                class="export-btn export-btn-excel px-4 py-2 rounded-lg font-semibold transition-all duration-300 flex items-center shadow-md hover:shadow-lg text-sm hover:transform hover:-translate-y-1"
+                [disabled]="filteredTenants.length === 0"
+                [class.opacity-50]="filteredTenants.length === 0"
+                [class.cursor-not-allowed]="filteredTenants.length === 0"
+                title="Exporter en Excel ({{ filteredTenants.length }} locataires)">
+          <i class="fas fa-file-excel mr-2 text-white"></i>
+          <span class="text-white font-medium">Excel</span>
+        </button>
+
         <button (click)="addTenant()"
-                class="custom-primary-button px-5 py-2 rounded-lg font-semibold transition-all duration-200 flex items-center shadow-md hover:shadow-lg text-sm">
+                class="custom-primary-button px-5 py-2 rounded-lg font-semibold transition-all duration-300 flex items-center shadow-md hover:shadow-lg text-sm hover:transform hover:-translate-y-1">
           <i class="fas fa-plus mr-2"></i>
           Nouveau
         </button>

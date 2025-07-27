@@ -911,4 +911,22 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
       room: this.room
     });
   }
+
+  /**
+   * Ouvrir le modal d'édition de l'unité
+   */
+  onEditUnit(): void {
+    if (!this.room) {
+      console.error('❌ Aucune unité sélectionnée pour l\'édition');
+      return;
+    }
+
+    console.log('🔧 UnitDetailsPanel: onEditUnit appelé', this.room);
+
+    this.action.emit({
+      type: 'edit',
+      room: this.room,
+      data: { action: 'edit_unit' }
+    });
+  }
 }

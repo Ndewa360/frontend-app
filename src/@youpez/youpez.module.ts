@@ -93,6 +93,8 @@ import { LandingFooterComponent } from './layout/landing/landing-footer/landing-
 import { LandingHeaderComponent } from './layout/landing/landing-header/landing-header.component'
 import { LandingHeaderProfilDataComponent } from './layout/landing/landing-header-profil-data/landing-header-profil-data.component'
 import { LandingLayoutComponent } from './layout/landing/landing-layout/landing-layout.component'
+
+
 // import { NgxMatIntlTelInputComponent } from "ngx-mat-intl-tel-input"
 
 
@@ -182,7 +184,9 @@ const Components = [
   LandingFooterComponent,
   LandingHeaderComponent,
   LandingHeaderProfilDataComponent,
-  LandingLayoutComponent
+  LandingLayoutComponent,
+
+
 ]
 
 const Pipes = [

@@ -147,12 +147,28 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
         isActiveForSouscription: unit.isActiveForSouscription ?? true,
         isShowToPublic: unit.isShowToPublic ?? false
       });
-      
+
+      // Désactiver le champ prix si l'unité est occupée
+      if (this.isUnitOccupied()) {
+        this.formGroup.get('price')?.disable();
+        console.log('💡 Champ prix désactivé car l\'unité est occupée');
+      }
+
       // Charger les images existantes
       if (unit.medias && unit.medias.length > 0) {
         this.imagePreviews = [...unit.medias];
       }
     }
+  }
+
+  /**
+   * Vérifier si l'unité est occupée
+   */
+  isUnitOccupied(): boolean {
+    if (!this.data.unit) return false;
+
+    // Une unité est considérée comme occupée si elle a un locataire actif
+    return this.data.unit.locataire && this.data.unit.locataire.length > 0;
   }
 
   private setupActionListeners(): void {
@@ -304,7 +320,8 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
       // Upload des images si nécessaire
       const mediaUrls = await this.uploadImages();
 
-      const formData = this.formGroup.value;
+      // Récupérer les données du formulaire, y compris les champs désactivés
+      const formData = this.formGroup.getRawValue(); // getRawValue() inclut les champs désactivés
       const unitData = {
         ...formData,
         medias: mediaUrls,

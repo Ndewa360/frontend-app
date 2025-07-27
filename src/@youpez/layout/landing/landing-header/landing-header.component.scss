@@ -52,6 +52,44 @@ li:not(.active):hover span::before {
     margin-left: 70%;
   }
 
+  // Styles pour le switcher de langue dans le header
+  .mobile-language-switcher {
+    padding: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 1rem 0;
+
+    ::ng-deep .language-switcher {
+      .language-button {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.2);
+        }
+      }
+
+      .language-dropdown {
+        background: #2d2d2d;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+
+        .language-option {
+          color: white;
+
+          &:hover {
+            background: rgba(255, 255, 255, 0.1);
+          }
+
+          &.active {
+            background: rgba(204, 140, 10, 0.2);
+            color: rgb(204, 140, 10);
+          }
+        }
+      }
+    }
+  }
+
   @media only screen and (max-width: 600px) {
     youpez-logo {
       margin-top:10px;

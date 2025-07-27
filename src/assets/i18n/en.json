@@ -343,6 +343,11 @@
     "FRENCH": "French",
     "ENGLISH": "English"
   },
+  "SETTINGS": {
+    "LANGUAGE": "Language",
+    "LANGUAGE_SETTINGS": "Language Settings",
+    "SELECT_LANGUAGE": "Select Language"
+  },
   "SEARCH": {
     "PLACEHOLDER": "Search for a property...",
     "NO_RESULTS": "No results found",
@@ -382,7 +387,9 @@
     "POPULAR_SEARCHES": "Popular Searches",
     "DISCOVER_POPULAR": "Discover the most searched accommodations",
     "MOBILE_PLACEHOLDER": "Search for accommodation...",
-    "RESULTS_FOUND": "{{count}} accommodation{{count > 1 ? 's' : ''}} found",
+    "RESULTS_FOUND": "{{count}} accommodation{{count === 1 ? '' : 's'}} found",
+    "RESULTS_FOUND_SINGULAR": "{{count}} accommodation found",
+    "RESULTS_FOUND_PLURAL": "{{count}} accommodations found",
     "SEARCHING": "Searching...",
     "SEARCHING_SUBTITLE": "We're finding the best accommodations for you",
     "ALL_CITIES": "All cities",

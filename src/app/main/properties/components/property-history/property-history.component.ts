@@ -13,10 +13,13 @@ import {
   RoomModel,
   RoomState,
   HistoryLocationPaymentState,
-  HistoryLocationPaymentModel
+  HistoryLocationPaymentModel,
+  PropertyModel,
+  PropertyState
 } from 'src/app/shared/store';
 import { ModernPaymentModalComponent } from '../modern-payment-modal/modern-payment-modal.component';
 import { ModernDeletePaymentModalComponent } from '../modern-delete-payment-modal/modern-delete-payment-modal.component';
+import { ExportService, ExportColumn } from '../../services/export.service';
 
 interface PaymentHistoryItem {
   id: string;
@@ -74,6 +77,7 @@ export class PropertyHistoryComponent implements OnInit, OnDestroy, OnChanges {
   filteredHistory: PaymentHistoryItem[] = [];
   tenants: LocataireModel[] = [];
   rooms: RoomModel[] = [];
+  property: PropertyModel | null = null;
 
   // Filtres
   filters: FilterOptions = {
@@ -123,11 +127,22 @@ export class PropertyHistoryComponent implements OnInit, OnDestroy, OnChanges {
   constructor(
     private store: Store,
     private dialog: MatDialog,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private exportService: ExportService
   ) { }
 
   ngOnInit(): void {
+    this.loadPropertyData();
     this.loadData();
+  }
+
+  /**
+   * Charger les données de la propriété
+   */
+  private loadPropertyData(): void {
+    if (this.propertyId) {
+      this.property = this.store.selectSnapshot(PropertyState.selectStateProperty(this.propertyId));
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -384,10 +399,7 @@ export class PropertyHistoryComponent implements OnInit, OnDestroy, OnChanges {
     this.isFiltersExpanded = !this.isFiltersExpanded;
   }
 
-  exportData(): void {
-    // TODO: Implémenter l'export des données
-    console.log('Export des données:', this.filteredHistory);
-  }
+
 
   // Méthodes utilitaires
   getEventTypeLabel(type: string): string {
@@ -576,9 +588,57 @@ export class PropertyHistoryComponent implements OnInit, OnDestroy, OnChanges {
 
   // Export
   exportHistory(): void {
-    console.log('Exporter l\'historique');
-    // Implémentation de l'export
+    this.exportHistoryToExcel();
   }
+
+  /**
+   * Exporter l'historique en CSV
+   */
+  exportHistoryToCSV(): void {
+    const columns: ExportColumn[] = [
+      { key: 'date', label: 'Date', formatter: ExportService.formatters.date },
+      { key: 'date', label: 'Heure', formatter: (value) => this.formatTime(value) },
+      { key: 'type', label: 'Type', formatter: (value) => this.getTypeLabel(value) },
+      { key: 'amount', label: 'Montant', formatter: ExportService.formatters.currency },
+      { key: 'reference', label: 'Référence' },
+      { key: 'tenant.name', label: 'Locataire' },
+      { key: 'room.code', label: 'Unité' },
+      { key: 'isPaid', label: 'Statut', formatter: (value) => value ? 'Payé' : 'En attente' }
+    ];
+
+    this.exportService.exportToCSV({
+      filename: 'Historique_Paiements',
+      propertyName: this.property?.name || `Propriete_${this.propertyId}`,
+      columns,
+      data: this.filteredHistory
+    });
+  }
+
+  /**
+   * Exporter l'historique en Excel
+   */
+  exportHistoryToExcel(): void {
+    const columns: ExportColumn[] = [
+      { key: 'date', label: 'Date', formatter: ExportService.formatters.date },
+      { key: 'date', label: 'Heure', formatter: (value) => this.formatTime(value) },
+      { key: 'type', label: 'Type', formatter: (value) => this.getTypeLabel(value) },
+      { key: 'amount', label: 'Montant', formatter: ExportService.formatters.currency },
+      { key: 'reference', label: 'Référence' },
+      { key: 'tenant.name', label: 'Locataire' },
+      { key: 'room.code', label: 'Unité' },
+      { key: 'isPaid', label: 'Statut', formatter: (value) => value ? 'Payé' : 'En attente' }
+    ];
+
+    this.exportService.exportToExcel({
+      filename: 'Historique_Paiements',
+      propertyName: this.property?.name || `Propriete_${this.propertyId}`,
+      columns,
+      data: this.filteredHistory
+    });
+  }
+
+
+
 
   // === MÉTHODES POUR LES MODALS DE PAIEMENT ===
 

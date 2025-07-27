@@ -343,12 +343,19 @@
     "FRENCH": "Français",
     "ENGLISH": "Anglais"
   },
+  "SETTINGS": {
+    "LANGUAGE": "Langue",
+    "LANGUAGE_SETTINGS": "Paramètres de langue",
+    "SELECT_LANGUAGE": "Sélectionner une langue"
+  },
   "SEARCH": {
     "PLACEHOLDER": "Rechercher une propriété, une ville, un quartier...",
     "MOBILE_PLACEHOLDER": "Rechercher un logement...",
     "NO_RESULTS": "Aucun résultat trouvé",
-    "RESULTS_COUNT": "{{count}} résultat{{count > 1 ? 's' : ''}} trouvé{{count > 1 ? 's' : ''}}",
-    "RESULTS_FOUND": "{{count}} logement{{count > 1 ? 's' : ''}} trouvé{{count > 1 ? 's' : ''}}",
+    "RESULTS_COUNT": "{{count}} résultat{{count === 1 ? '' : 's'}} trouvé{{count === 1 ? '' : 's'}}",
+    "RESULTS_FOUND": "{{count}} logement{{count === 1 ? '' : 's'}} trouvé{{count === 1 ? '' : 's'}}",
+    "RESULTS_FOUND_SINGULAR": "{{count}} logement trouvé",
+    "RESULTS_FOUND_PLURAL": "{{count}} logements trouvés",
     "FILTERS": "Filtres",
     "SORT_BY": "Trier par",
     "PRICE_RANGE": "Gamme de prix",

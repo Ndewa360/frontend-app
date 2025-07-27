@@ -1623,6 +1623,19 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Obtient le texte des résultats trouvés avec gestion correcte du singulier/pluriel
+   */
+  getResultsFoundText(count: number): string {
+    if (count === 0) {
+      return this.translationService.instant('SEARCH.NO_RESULTS');
+    } else if (count === 1) {
+      return this.translationService.instant('SEARCH.RESULTS_FOUND_SINGULAR', { count });
+    } else {
+      return this.translationService.instant('SEARCH.RESULTS_FOUND_PLURAL', { count });
+    }
+  }
+
+  /**
    * Met à jour l'URL avec les filtres actuels
    */
   private updateUrl(): void {

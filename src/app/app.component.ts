@@ -46,6 +46,9 @@ export class AppComponent implements OnInit, OnDestroy {
   private tokenExpirationWarningShown = false;
   private loadingTimeout: any;
 
+  // Propriété pour détecter si on est dans le front office
+  isInFrontOffice = false;
+
   @ViewChild('topScroll') topScroll: ElementRef;
 
   constructor(
@@ -87,6 +90,9 @@ export class AppComponent implements OnInit, OnDestroy {
     // Note: Les services sont automatiquement initialisés via leurs constructeurs
     // mais nous nous assurons qu'ils sont bien injectés
     console.log('Services de localisation initialisés');
+
+    // Détecter si on est dans le front office ou back office
+    this.initializeFrontOfficeDetection();
 
     // Initialiser moment.js avec la locale française (sera remplacé par le système de localisation)
     try {
@@ -294,6 +300,59 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     clearTimeout(this.loadingTimeout);
+  }
+
+  /**
+   * Initialise la détection du front office vs back office
+   */
+  private initializeFrontOfficeDetection(): void {
+    // Vérifier la route actuelle
+    this.checkIfFrontOffice(this.router.url);
+
+    // Écouter les changements de route
+    this.router.events
+      .pipe(
+        filter(event => event instanceof NavigationEnd),
+        takeUntil(this.destroy$)
+      )
+      .subscribe((event: NavigationEnd) => {
+        this.checkIfFrontOffice(event.url);
+      });
+  }
+
+  /**
+   * Vérifie si l'URL correspond au front office
+   */
+  private checkIfFrontOffice(url: string): void {
+    // Routes du front office (publiques)
+    const frontOfficeRoutes = [
+      '/search',
+      '/support',
+      '/payment',
+      '/mobile',
+      '/', // Landing page
+      '/index',
+      '/landing'
+    ];
+
+    // Routes du back office (privées/admin)
+    const backOfficeRoutes = [
+      '/app',
+      '/admin',
+      '/monitoring',
+      '/auth'
+    ];
+
+    // Vérifier si l'URL commence par une route de front office
+    this.isInFrontOffice = frontOfficeRoutes.some(route => {
+      if (route === '/') {
+        // Pour la route racine, vérifier si c'est exactement '/' ou si ça ne commence pas par une route de back office
+        return url === '/' || !backOfficeRoutes.some(backRoute => url.startsWith(backRoute));
+      }
+      return url.startsWith(route);
+    });
+
+    console.log('🌐 Route détectée:', url, '- Front Office:', this.isInFrontOffice);
   }
 
   /**

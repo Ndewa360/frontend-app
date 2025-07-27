@@ -186,7 +186,7 @@ import { HttpClient } from '@angular/common/http';
     SubscriptionStatusWidgetComponent,
     LanguageSwitcherComponent,
     ClickOutsideDirective,
-    // AdvancedLanguageSwitcherComponent
+    AdvancedLanguageSwitcherComponent
   ],
   providers: [
     // Nouveaux services ajoutés

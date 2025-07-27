@@ -88,7 +88,7 @@
   <div class="results-header">
     <div class="results-info">
       <h3 class="results-title">
-        {{ 'SEARCH.RESULTS_FOUND' | translate: {count: totalResults} }}
+        {{ getResultsFoundText(totalResults) }}
       </h3>
       <div class="results-location">
         <youpez-ibm-icon iconName="location_on" iconSize="16"></youpez-ibm-icon>

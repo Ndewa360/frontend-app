@@ -303,6 +303,38 @@ input[ibmText] {
       background-color: #e5e7eb;
     }
   }
+
+  // Styles pour le bouton de modification permanent
+  .unit-image {
+    position: relative;
+  }
+
+  // Container du bouton d'édition avec animation au hover
+  .edit-button-container {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    .edit-unit-btn {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+
+      &:hover {
+        background-color: white !important;
+        box-shadow: 0 6px 20px rgba(204, 140, 10, 0.3);
+        transform: scale(1.05);
+        border-color: rgb(184, 126, 9) !important;
+      }
+
+      &:hover svg {
+        color: rgb(184, 126, 9) !important;
+        transform: scale(1.1);
+      }
+
+      svg {
+        transition: all 0.2s ease;
+      }
+    }
+  }
 }
 
 // Grille responsive améliorée
@@ -311,6 +343,58 @@ input[ibmText] {
   
   @media (min-width: 1280px) {
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  }
+}
+
+// Animations pour le bouton d'édition
+@keyframes slideInFromTop {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3) rotate(-10deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05) rotate(2deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+// Styles pour les boutons d'export
+.btn-export-csv {
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+    border-color: #059669 !important;
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3) !important;
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0) scale(0.98) !important;
+  }
+}
+
+.btn-export-excel {
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%) !important;
+    border-color: #1d4ed8 !important;
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3) !important;
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0) scale(0.98) !important;
   }
 }
 

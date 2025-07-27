@@ -36,6 +36,7 @@ import { UtilsString } from 'src/app/shared/utils';
 import { UnitDetailsViewService } from '../../services/unit-details-view.service';
 import { GaleryComponent } from '../../../room/components/galery/galery.component';
 import { GeneratePaymentLinkModalComponent } from '../generate-payment-link-modal/generate-payment-link-modal.component';
+import { ExportService, ExportColumn } from '../../services/export.service';
 
 export interface UnitAction {
   type: 'view' | 'edit' | 'assign_tenant' | 'terminate_lease' | 'manage_media' | 'toggle_status' | 'edit_galery' | 'edit_tenant';
@@ -131,7 +132,8 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
     private router: Router,
     private dialog: MatDialog,
     private assignLocationModalService: AssignLocationModalService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private exportService: ExportService
   ) { }
 
   ngOnInit(): void {
@@ -385,6 +387,47 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
   }
 
   onEditUnit(room: RoomModel): void {
+    console.log('🔧 onEditUnit appelé', { room, propertyId: this.propertyId, dialog: this.dialog });
+
+    if (!this.dialog) {
+      console.error('❌ Service MatDialog non disponible !');
+      return;
+    }
+
+    if (!room) {
+      console.error('❌ Aucune unité fournie pour l\'édition');
+      return;
+    }
+
+    console.log('📝 Ouverture du modal ModernUnitModalComponent en mode édition...');
+
+    try {
+      const dialogRef = this.dialog.open(ModernUnitModalComponent, {
+        width: '100%',
+        maxWidth: '900px',
+        disableClose: true,
+        data: {
+          mode: 'edit',
+          property: this.property || { _id: this.propertyId },
+          unit: room
+        }
+      });
+
+      console.log('✅ Modal d\'édition ouvert, dialogRef:', dialogRef);
+
+      dialogRef.afterClosed().subscribe(result => {
+        console.log('🔄 Modal d\'édition fermé avec résultat:', result);
+        if (result) {
+          // Recharger les données après modification
+          this.reloadData();
+          this.toastr.success('Unité modifiée avec succès', 'Succès');
+        }
+      });
+    } catch (error) {
+      console.error('❌ Erreur lors de l\'ouverture du modal d\'édition:', error);
+    }
+
+    // Émettre l'événement pour compatibilité
     this.unitAction.emit({ type: 'edit', room });
   }
 
@@ -1379,6 +1422,60 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
     } else {
       console.error('❌ PropertyId manquant pour ajouter une unité');
     }
+  }
+
+  // === MÉTHODES D'EXPORT ===
+
+  /**
+   * Exporter la liste des unités en CSV
+   */
+  exportUnitsToCSV(): void {
+    const columns: ExportColumn[] = [
+      { key: 'code', label: 'Code' },
+      { key: 'type', label: 'Type', formatter: (value) => this.getRoomTypeLabel(value) },
+      { key: 'price', label: 'Prix', formatter: ExportService.formatters.currency },
+      { key: 'status', label: 'Statut', formatter: (value) => this.getRoomStatusLabel({ locataire: value === 'occupied' ? ['test'] : [] } as any) },
+      { key: 'description', label: 'Description' },
+      { key: 'specifity.numberOfBathroom', label: 'Salles de bain' },
+      { key: 'specifity.numberOfShower', label: 'Douches' },
+      { key: 'specifity.hasKitchen', label: 'Cuisine', formatter: ExportService.formatters.boolean },
+      { key: 'isActiveForSouscription', label: 'Actif pour location', formatter: ExportService.formatters.boolean },
+      { key: 'isShowToPublic', label: 'Visible au public', formatter: ExportService.formatters.boolean },
+      { key: 'createdAt', label: 'Date de création', formatter: ExportService.formatters.date }
+    ];
+
+    this.exportService.exportToCSV({
+      filename: 'Unites',
+      propertyName: this.property?.name || `Propriete_${this.propertyId}`,
+      columns,
+      data: this.filteredRooms
+    });
+  }
+
+  /**
+   * Exporter la liste des unités en Excel
+   */
+  exportUnitsToExcel(): void {
+    const columns: ExportColumn[] = [
+      { key: 'code', label: 'Code' },
+      { key: 'type', label: 'Type', formatter: (value) => this.getRoomTypeLabel(value) },
+      { key: 'price', label: 'Prix', formatter: ExportService.formatters.currency },
+      { key: 'status', label: 'Statut', formatter: (value) => this.getRoomStatusLabel({ locataire: value === 'occupied' ? ['test'] : [] } as any) },
+      { key: 'description', label: 'Description' },
+      { key: 'specifity.numberOfBathroom', label: 'Salles de bain' },
+      { key: 'specifity.numberOfShower', label: 'Douches' },
+      { key: 'specifity.hasKitchen', label: 'Cuisine', formatter: ExportService.formatters.boolean },
+      { key: 'isActiveForSouscription', label: 'Actif pour location', formatter: ExportService.formatters.boolean },
+      { key: 'isShowToPublic', label: 'Visible au public', formatter: ExportService.formatters.boolean },
+      { key: 'createdAt', label: 'Date de création', formatter: ExportService.formatters.date }
+    ];
+
+    this.exportService.exportToExcel({
+      filename: 'Unites',
+      propertyName: this.property?.name || `Propriete_${this.propertyId}`,
+      columns,
+      data: this.filteredRooms
+    });
   }
 
 }

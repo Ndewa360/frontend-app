@@ -245,13 +245,34 @@ export class AnnualFinancialRecapComponent implements OnInit, OnChanges {
   }
 
   private calculateYearComparison(): void {
-    // Simulation de comparaison avec l'année précédente
-    // Dans une vraie implémentation, il faudrait charger les données de l'année précédente
+    // Pas de données de comparaison disponibles - réinitialiser à zéro
+    // En production, cette fonctionnalité nécessiterait de charger les données de l'année précédente
     this.yearComparison = {
-      revenueGrowth: Math.random() * 20 - 10, // -10% à +10%
-      occupancyGrowth: Math.random() * 10 - 5, // -5% à +5%
-      collectionGrowth: Math.random() * 15 - 7.5 // -7.5% à +7.5%
+      revenueGrowth: 0, // Pas de données de comparaison
+      occupancyGrowth: 0, // Pas de données de comparaison
+      collectionGrowth: 0 // Pas de données de comparaison
     };
+
+    // TODO: Implémenter la vraie logique de comparaison quand les données historiques seront disponibles
+    /*
+    // Code à activer quand les données historiques seront disponibles :
+    const previousYearData = await this.statisticsService.getYearlyStats(this.selectedYear - 1);
+    if (previousYearData && previousYearData.length > 0) {
+      const previousYearSummary = this.calculateSummaryForYear(previousYearData);
+
+      this.yearComparison = {
+        revenueGrowth: this.calculateGrowthRate(previousYearSummary.totalRevenue, this.annualSummary.totalRevenue),
+        occupancyGrowth: this.calculateGrowthRate(previousYearSummary.occupancyRate, this.annualSummary.occupancyRate),
+        collectionGrowth: this.calculateGrowthRate(previousYearSummary.collectionRate, this.annualSummary.collectionRate)
+      };
+    }
+    */
+  }
+
+  // Méthode utilitaire pour calculer le taux de croissance
+  private calculateGrowthRate(previousValue: number, currentValue: number): number {
+    if (previousValue === 0) return currentValue > 0 ? 100 : 0;
+    return ((currentValue - previousValue) / previousValue) * 100;
   }
 
   // === MÉTHODES D'EXPORT ===

@@ -1,29 +1,35 @@
 - Revoir le modal de demande de téléchargement de l'app qui est à la route /admin car normalement c'est uniqmenet lorsque l'on essai d'acceder au dashbord a partir d'un mobile mais sur le navigateur qu'on doit obliger l'utilisateur a télécharger l'application
 
-- Améliorer les fonction simulé suivante dans le fichier property-details-complete : revoigetLastInspectionDate(),getNextMaintenanceDate(), getMarketComparison()
-- Améliorer les fonctions simulés dans property-overwiew
-- Améliorer les fonction simulé dans annual-financial-recap
-- Mettre un bouton d'edition sur la carte d'une unité et aussi dans le panel des details d'une unité. Ce bouton doit avoir pour objectif d'ouvrir le modal d'edition de l'unité. Le modal d'edition doit permettre l'édition d'une unité. lorsque l'unité est occupé, alors peut tout modifier sauf le prix. et si elle n'est pas occupé même le prix peut-être modifier. le modal d'édition doit resembler au modal d'ajout avec cette seule contrainte. 
+
 
 
 -Intégrer le fait qu'une agence immobiliere vienne créer son compte et se connecter à l'application. dans ce cas, apres avoir valider le compte (lors de la premiere connexion), on lui demande quelle type de compte il s'agit. si c'est une agence immobiliere alors on lui demande des informations par rapport à l'agence. Dans ce cas, lors de la création d'un bien, on crée le compte propriétaire et on l'enregistre comme utilisateur qui peut egalement lui même venir uniquement consulter le compte lié et gérer par l'agence
-- Le switcher de langue avancé n'a pas été complétment implémenté et intégré
+
 - Apres la duplication du template de contrat, il faut directement être rediriger vers la page de modification de cette page
 
 - Revoir tous les calculs de la partie finance
 
 - Dans l'onglet finance et dans le sous onglet "Locataires" le status doit representer l'etat actuel et c'est pas exactement sa. car j'ai fait une assignation de chambre de 15000 sans caution a un locataire et j'ai fait un montant de 90000 disant qu'il a occupé la chambre il y'a 2 semaine. dans le status de la table je vois "En retard" avec un paiement à 64.7%. je comprends que le taux ne soit pas de 100% mais normalement il devais être à 50% car pour une chambre de 15000 cela fait 6mois / 12 de loyer. et puis, il est en avance par rapport a l'heure actuel etant donné qu'il y est entré il y'a juste 2 semaines mais le tableau ne le calcucl pas bien
-- Revoir l'ajout d'un paiement
-- Export de l'historique dans la fonction exportHistory du fichier property-history
+
+
 
 *****En Cours*******
-- Revoir le design et les couleurs de l'onglet historique car trop fade
-
+- Revoir l'ajout d'un paiement, la modification et la suppression d'un paiement car il y'a encore des soucis et l'intégration entre frontend et backend pour l'ajout d'un paiement ne semble pas complete
 *****A Tester***********
 - Revoir la logique pour création d'un bien. principalement le plan. par défaut lors de la création d'un compte l'utilisateur doit-être associer automatiquement a un plan free. Ce plan free doit être crée par défaut avec comme caractéristique au plus 1 bien à créer avec au plus 8 unités locative associé. les périodes de facturation même pour le plan free doit être compté mais chanque fois le montant de la facture est 0 et aucun paiement n'est attendu (A tester)
 - Ajouter le selecteur de modele de contrat avec selectionner par défaut le modéle qui a été associé pendans la modification d'une propriété
+- Mettre un bouton d'edition sur la carte d'une unité et aussi dans le panel des details d'une unité. Ce bouton doit avoir pour objectif d'ouvrir le modal d'edition de l'unité. Le modal d'edition doit permettre l'édition d'une unité. lorsque l'unité est occupé, alors peut tout modifier sauf le prix. et si elle n'est pas occupé même le prix peut-être modifier. le modal d'édition doit resembler au modal d'ajout avec cette seule contrainte. 
+
 *****Ok*******
 - Revoir process assignation d'un locataire a une unité locative. il faut revoir les selects de locataire et de chambre car il faut parfois faire 2 selections pour que ca prenne. la logique de calcul et d'assignation doit-être révue en frontend poet en backend avec une intégration complete (OK)
 - Le formulaire de selection du locataire dans le fichier assingation-assistant ne fonctionne pas normalement
 - Revoir la logique d'assignation d'une unité
 - Dans le fichier modern-tenant-modal il faut revoir la logique pour uploader la photo du locataire
+- Revoir le design et les couleurs de l'onglet historique car trop fade
+- Améliorer les fonction simulé suivante dans le fichier property-details-complete : revoigetLastInspectionDate(),getNextMaintenanceDate(), getMarketComparison()
+- Améliorer les fonctions simulés dans property-overwiew
+- Améliorer les fonction simulé dans annual-financial-recap
+- Export de l'historique dans la fonction exportHistory du fichier property-history
+- Le switcher de langue avancé n'a pas été complétment implémenté et intégré
+- Revoir la traduction dans la page de recherche. 
+- Revoir la traduction dans la page de recherche car sa affiche ce texte directement dans la page: logement{{count > 1 ? 's' : ''}} trouvé{{count > 1 ? 's' : ''}} 

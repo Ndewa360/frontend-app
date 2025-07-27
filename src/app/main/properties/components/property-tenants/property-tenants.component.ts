@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, OnDestroy, OnChanges } from '@angular/core';
-import { LocataireModel, RoomModel, LocationModel, LocationState, LocataireState, HistoryLocationPaymentState, PropertyState } from 'src/app/shared/store';
+import { LocataireModel, RoomModel, LocationModel, LocationState, LocataireState, HistoryLocationPaymentState, PropertyState, PropertyModel } from 'src/app/shared/store';
 import { LocationPaymentAction } from 'src/app/shared/store/payment-location';
 import { HistoryLocationPaymentAction } from 'src/app/shared/store/history-payment-location';
 import { Store } from '@ngxs/store';
@@ -16,6 +16,9 @@ import { ContractViewerModalComponent } from '../contract-viewer-modal/contract-
 
 // Services
 import { TenantAvatarService } from 'src/app/shared/services/tenant-avatar.service';
+import { ExportService, ExportColumn } from '../../services/export.service';
+
+
 
 @Component({
   selector: 'app-property-tenants',
@@ -33,6 +36,7 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
   statusFilter: string = '';
   sortBy: string = 'name';
   activeTenantMenu: string | null = null;
+  property: PropertyModel | null = null;
 
   // Données de location pour récupérer les vraies dates d'entrée
   locations: LocationModel[] = [];
@@ -44,17 +48,28 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
     private store: Store,
     private dialog: MatDialog,
     private toastr: ToastrService,
-    private tenantAvatarService: TenantAvatarService
+    private tenantAvatarService: TenantAvatarService,
+    private exportService: ExportService
   ) {}
 
   ngOnInit(): void {
     this.filteredTenants = [...this.tenants];
     this.loadLocations();
+    this.loadPropertyData();
     this.filterTenants();
 
     // Charger les données de paiement pour cette propriété
     if (this.propertyId) {
       this.store.dispatch(new LocationPaymentAction.FetchLocationPaymentsByPropertyId(this.propertyId));
+    }
+  }
+
+  /**
+   * Charger les données de la propriété
+   */
+  private loadPropertyData(): void {
+    if (this.propertyId) {
+      this.property = this.store.selectSnapshot(PropertyState.selectStateProperty(this.propertyId));
     }
   }
 
@@ -760,5 +775,51 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
       console.error('❌ Erreur lors de l\'ouverture du modal ModernDeletePayment:', error);
       this.toastr.error('Erreur lors de l\'ouverture du modal', 'Erreur');
     }
+  }
+
+  // === MÉTHODES D'EXPORT ===
+
+  /**
+   * Exporter la liste des locataires en CSV
+   */
+  exportTenantsToCSV(): void {
+    const columns: ExportColumn[] = [
+      { key: 'fullName', label: 'Nom complet' },
+      { key: 'email', label: 'Email' },
+      { key: 'phoneNumber', label: 'Téléphone' },
+      { key: 'room.code', label: 'Unité occupée' },
+      { key: 'room.price', label: 'Loyer', formatter: ExportService.formatters.currency },
+      { key: 'createdAt', label: 'Date d\'ajout', formatter: ExportService.formatters.date },
+      { key: 'isActive', label: 'Statut', formatter: ExportService.formatters.boolean }
+    ];
+
+    this.exportService.exportToCSV({
+      filename: 'Locataires',
+      propertyName: this.property?.name || `Propriete_${this.propertyId}`,
+      columns,
+      data: this.filteredTenants
+    });
+  }
+
+  /**
+   * Exporter la liste des locataires en Excel
+   */
+  exportTenantsToExcel(): void {
+    const columns: ExportColumn[] = [
+      { key: 'fullName', label: 'Nom complet' },
+      { key: 'email', label: 'Email' },
+      { key: 'phoneNumber', label: 'Téléphone' },
+      { key: 'room.code', label: 'Unité occupée' },
+      { key: 'room.price', label: 'Loyer', formatter: ExportService.formatters.currency },
+      { key: 'createdAt', label: 'Date d\'ajout', formatter: ExportService.formatters.date },
+      { key: 'isActive', label: 'Statut', formatter: ExportService.formatters.boolean }
+    ];
+
+    this.exportService.exportToExcel({
+      filename: 'Locataires',
+      propertyName: this.property?.name || `Propriete_${this.propertyId}`,
+      columns,
+      data: this.filteredTenants
+    });
   }
 }

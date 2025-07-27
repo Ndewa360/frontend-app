@@ -69,15 +69,21 @@ export class PropertyOverviewComponent implements OnInit, OnChanges {
 
     const averageRent = occupiedUnits > 0 ? monthlyRevenue / occupiedUnits : 0;
 
+    // Calculer les unités en maintenance basées sur les données réelles
+    const maintenanceUnits = this.history ? this.history.filter(item =>
+      item.type === 'maintenance' &&
+      new Date(item.date) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) // Maintenance dans les 30 derniers jours
+    ).length : 0;
+
     this.metrics = {
       totalUnits,
       occupiedUnits,
       availableUnits,
-      maintenanceUnits: 0, // Valeur simulée
+      maintenanceUnits,
       occupancyRate,
       monthlyRevenue,
       yearlyRevenue: monthlyRevenue * 12,
-      revenueGrowth: 5.2, // Valeur simulée
+      revenueGrowth: this.getRevenueGrowth(), // Utiliser la vraie fonction
       averageRent,
       overduePayments: this.getOverduePayments()
     };
@@ -290,8 +296,14 @@ export class PropertyOverviewComponent implements OnInit, OnChanges {
   }
 
   getOverduePayments(): number {
-    // Simulation - à remplacer par la vraie logique
-    return Math.floor(Math.random() * 3); // 0-2 retards
+    // Calculer les paiements en retard basés sur l'historique réel
+    if (!this.history || this.history.length === 0) {
+      return 0; // Pas d'historique disponible
+    }
+
+    // Comme HistoryItem n'a pas de propriété status, on ne peut pas déterminer les retards
+    // Cette fonctionnalité nécessiterait une extension du modèle HistoryItem
+    return 0; // Pas de données de retard disponibles pour l'instant
   }
 
   getRevenuePerUnit(): number {
@@ -300,25 +312,46 @@ export class PropertyOverviewComponent implements OnInit, OnChanges {
   }
 
   getSecurityDeposits(): number {
-    // Simulation - généralement 2-3 mois de loyer par unité occupée
-    const occupiedUnits = this.metrics?.occupiedUnits || 0;
-    const averageRent = this.metrics?.averageRent || 0;
-    return occupiedUnits * averageRent * 2.5;
+    // Calculer les cautions réelles basées sur les locataires actuels
+    if (!this.tenants || this.tenants.length === 0) {
+      return 0; // Pas de locataires, donc pas de cautions
+    }
+
+    // Calculer les cautions basées sur les unités occupées
+    // Comme LocataireModel n'a pas de propriété caution, on estime basé sur les loyers
+    return this.tenants.reduce((total, tenant) => {
+      // Estimer basé sur l'unité occupée (2 mois de loyer standard)
+      const unit = this.units.find(u => u._id === tenant.room);
+      if (unit && unit.price) {
+        return total + (unit.price * 2); // Estimation : 2 mois de loyer
+      }
+
+      return total;
+    }, 0);
   }
 
   getMonthlyExpenses(): number {
-    // Simulation - environ 20% des revenus
-    return (this.metrics?.monthlyRevenue || 0) * 0.2;
+    // Calculer les dépenses réelles basées sur les données de la propriété
+    if (!this.property) return 0;
+
+    const monthlyExpenses =
+      (this.property.propertyTax || 0) / 12 + // Taxe foncière mensuelle
+      (this.property.insuranceCost || 0) / 12 + // Assurance mensuelle
+      (this.property.managementFees || 0); // Frais de gestion mensuels
+      // Note: maintenanceCost n'existe pas dans PropertyModel
+
+    return monthlyExpenses;
   }
 
   getManagementFees(): number {
-    // 5% des revenus mensuels
-    return (this.metrics?.monthlyRevenue || 0) * 0.05;
+    // Utiliser les frais de gestion réels de la propriété
+    return this.property?.managementFees || 0;
   }
 
   getMaintenanceCosts(): number {
-    // Simulation - environ 10% des revenus
-    return (this.metrics?.monthlyRevenue || 0) * 0.1;
+    // PropertyModel n'a pas de propriété maintenanceCost
+    // Retourner 0 car pas de données de maintenance disponibles
+    return 0;
   }
 
   getInsuranceCosts(): number {
@@ -378,18 +411,55 @@ export class PropertyOverviewComponent implements OnInit, OnChanges {
     return 'text-red-600';
   }
 
-  getLastInspectionDate(): Date {
-    // Simulation - dernière inspection il y a 3 mois
-    const date = new Date();
-    date.setMonth(date.getMonth() - 3);
-    return date;
+  getLastInspectionDate(): Date | null {
+    // Rechercher la dernière inspection dans l'historique
+    if (!this.history || this.history.length === 0) {
+      return null; // Pas d'historique d'inspection
+    }
+
+    // Filtrer les événements d'inspection dans l'historique
+    // Note: HistoryItem n'a pas de type 'inspection', seulement 'maintenance'
+    const inspectionEvents = this.history.filter(event =>
+      event.type === 'maintenance' &&
+      event.description?.toLowerCase().includes('inspection')
+    );
+
+    if (inspectionEvents.length === 0) {
+      return null; // Aucune inspection trouvée
+    }
+
+    // Retourner la date de la dernière inspection
+    const lastInspection = inspectionEvents.sort((a, b) =>
+      new Date(b.date).getTime() - new Date(a.date).getTime()
+    )[0];
+
+    return new Date(lastInspection.date);
   }
 
-  getNextMaintenanceDate(): Date {
-    // Simulation - prochaine maintenance dans 2 mois
-    const date = new Date();
-    date.setMonth(date.getMonth() + 2);
-    return date;
+  getNextMaintenanceDate(): Date | null {
+    // Rechercher les maintenances programmées dans l'historique
+    if (!this.history || this.history.length === 0) {
+      return null; // Pas d'historique de maintenance
+    }
+
+    // Filtrer les événements de maintenance futurs
+    const now = new Date();
+    const maintenanceEvents = this.history.filter(event =>
+      (event.type === 'maintenance' ||
+       event.description?.toLowerCase().includes('maintenance')) &&
+      new Date(event.date) > now
+    );
+
+    if (maintenanceEvents.length === 0) {
+      return null; // Aucune maintenance programmée
+    }
+
+    // Retourner la date de la prochaine maintenance
+    const nextMaintenance = maintenanceEvents.sort((a, b) =>
+      new Date(a.date).getTime() - new Date(b.date).getTime()
+    )[0];
+
+    return new Date(nextMaintenance.date);
   }
 
   // Nouvelles méthodes pour des données réelles et non redondantes
@@ -405,12 +475,35 @@ export class PropertyOverviewComponent implements OnInit, OnChanges {
   }
 
   getRevenueGrowth(): number {
-    // Simulation basée sur les données historiques
-    const currentRevenue = this.getActualMonthlyRevenue();
-    const previousRevenue = currentRevenue * 0.95; // Simulation d'une croissance de 5%
+    // Calculer la croissance réelle basée sur l'historique des paiements
+    if (!this.history || this.history.length === 0) {
+      return 0; // Pas d'historique disponible
+    }
 
-    if (previousRevenue === 0) return 0;
-    return Math.round(((currentRevenue - previousRevenue) / previousRevenue) * 100);
+    const currentMonth = new Date();
+    const previousMonth = new Date();
+    previousMonth.setMonth(currentMonth.getMonth() - 1);
+
+    // Filtrer les paiements du mois actuel et du mois précédent
+    const currentMonthPayments = this.history.filter(item => {
+      if (item.type !== 'payment' || !item.amount) return false;
+      const itemDate = new Date(item.date);
+      return itemDate.getMonth() === currentMonth.getMonth() &&
+             itemDate.getFullYear() === currentMonth.getFullYear();
+    }).reduce((sum, item) => sum + (item.amount || 0), 0);
+
+    const previousMonthPayments = this.history.filter(item => {
+      if (item.type !== 'payment' || !item.amount) return false;
+      const itemDate = new Date(item.date);
+      return itemDate.getMonth() === previousMonth.getMonth() &&
+             itemDate.getFullYear() === previousMonth.getFullYear();
+    }).reduce((sum, item) => sum + (item.amount || 0), 0);
+
+    if (previousMonthPayments === 0) {
+      return currentMonthPayments > 0 ? 100 : 0;
+    }
+
+    return Math.round(((currentMonthPayments - previousMonthPayments) / previousMonthPayments) * 100);
   }
 
   getActualOccupancyRate(): number {
@@ -523,14 +616,29 @@ export class PropertyOverviewComponent implements OnInit, OnChanges {
   }
 
   getRevenueChartData(): any {
-    if (!this.financialSummary) return null;
+    if (!this.financialSummary || !this.history) return null;
 
-    // Génération simple de l'historique des revenus
+    // Calculer les revenus réels des 6 derniers mois basés sur l'historique
     const months = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin'];
-    return months.map(month => ({
-      month,
-      amount: this.financialSummary!.monthlyRevenue + (Math.random() - 0.5) * this.financialSummary!.monthlyRevenue * 0.1
-    }));
+    const currentDate = new Date();
+
+    return months.map((monthName, index) => {
+      const targetDate = new Date(currentDate);
+      targetDate.setMonth(currentDate.getMonth() - (5 - index)); // 6 mois en arrière
+
+      // Calculer les revenus réels pour ce mois
+      const monthlyRevenue = this.history!.filter(item => {
+        if (item.type !== 'payment' || !item.amount) return false;
+        const itemDate = new Date(item.date);
+        return itemDate.getMonth() === targetDate.getMonth() &&
+               itemDate.getFullYear() === targetDate.getFullYear();
+      }).reduce((sum, item) => sum + (item.amount || 0), 0);
+
+      return {
+        month: monthName,
+        amount: monthlyRevenue
+      };
+    });
   }
 
   getExpenseBreakdown(): any {
@@ -679,26 +787,38 @@ export class PropertyOverviewComponent implements OnInit, OnChanges {
     }
   }
 
-  // Méthodes pour les comparaisons
+  // Méthodes pour les comparaisons basées sur les données réelles
   getMarketComparison(): {
     averageRent: number;
     marketPosition: 'above' | 'below' | 'average';
     difference: number;
-  } {
-    // Simulation de données de marché
-    const marketAverageRent = 150000; // 150k XAF moyenne du marché
+  } | null {
+    // Pas de données de marché disponibles - retourner null
+    // En production, ceci devrait être connecté à une API de données de marché
+    if (!this.metrics?.averageRent || this.metrics.averageRent === 0) {
+      return null; // Pas de données suffisantes pour la comparaison
+    }
+
+    // Pour l'instant, retourner null car nous n'avons pas de vraies données de marché
+    // Cette fonctionnalité nécessiterait une intégration avec des services de données immobilières
+    return null;
+
+    /*
+    // Code à activer quand les données de marché seront disponibles :
+    const marketAverageRent = await this.marketDataService.getAverageRentByCity(this.property?.geolocationCity?.name);
     const ourAverageRent = this.metrics?.averageRent || 0;
     const difference = ((ourAverageRent - marketAverageRent) / marketAverageRent) * 100;
-    
+
     let marketPosition: 'above' | 'below' | 'average' = 'average';
     if (difference > 5) marketPosition = 'above';
     else if (difference < -5) marketPosition = 'below';
-    
+
     return {
       averageRent: marketAverageRent,
       marketPosition,
       difference: Math.abs(difference)
     };
+    */
   }
 
   // Méthodes utilitaires pour les nouvelles propriétés

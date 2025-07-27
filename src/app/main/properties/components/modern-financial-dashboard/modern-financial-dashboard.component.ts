@@ -50,7 +50,44 @@ export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
   selectedPeriod: 'month' | 'quarter' | 'year' = 'month';
   
   // Métriques principales
-  financialMetrics: FinancialMetric[] = [];
+  financialMetrics: FinancialMetric[] = [
+    {
+      label: 'Revenus Totaux',
+      value: 0,
+      change: 0,
+      changeType: 'neutral',
+      icon: 'money',
+      color: 'success',
+      isMoney: true
+    },
+    {
+      label: 'Taux de Collecte',
+      value: 0,
+      change: 0,
+      changeType: 'neutral',
+      icon: 'percentage',
+      color: 'info',
+      isMoney: false
+    },
+    {
+      label: 'Propriétés Actives',
+      value: 0,
+      change: 0,
+      changeType: 'neutral',
+      icon: 'home',
+      color: 'primary',
+      isMoney: false
+    },
+    {
+      label: 'Bénéfice Net',
+      value: 0,
+      change: 0,
+      changeType: 'neutral',
+      icon: 'trending-up',
+      color: 'warning',
+      isMoney: true
+    }
+  ];
 
   // Données des propriétés
   propertiesSummary: PropertyFinancialSummary[] = [];
@@ -165,7 +202,11 @@ export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
   }
 
   private updateMetrics(): void {
-    
+    // Vérifier que le tableau financialMetrics est correctement initialisé
+    if (!this.financialMetrics || this.financialMetrics.length < 4) {
+      console.error('financialMetrics n\'est pas correctement initialisé');
+      return;
+    }
 
     const totalRevenue = this.propertiesSummary.reduce((sum, prop) => sum + prop.totalRevenue, 0);
     const totalExpected = this.propertiesSummary.reduce((sum, prop) => sum + prop.expectedRevenue, 0);
@@ -173,10 +214,19 @@ export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
       ? this.propertiesSummary.reduce((sum, prop) => sum + prop.collectionRate, 0) / this.propertiesSummary.length
       : 0;
 
-    this.financialMetrics[0].value = totalRevenue;
-    this.financialMetrics[1].value = Math.round(avgCollectionRate * 10) / 10; // Arrondir à 1 décimale
-    this.financialMetrics[2].value = this.propertiesSummary.length;
-    this.financialMetrics[3].value = Math.round(totalRevenue * 0.77); // Estimation du bénéfice net
+    // Mise à jour sécurisée des métriques
+    if (this.financialMetrics[0]) {
+      this.financialMetrics[0].value = totalRevenue;
+    }
+    if (this.financialMetrics[1]) {
+      this.financialMetrics[1].value = Math.round(avgCollectionRate * 10) / 10; // Arrondir à 1 décimale
+    }
+    if (this.financialMetrics[2]) {
+      this.financialMetrics[2].value = this.propertiesSummary.length;
+    }
+    if (this.financialMetrics[3]) {
+      this.financialMetrics[3].value = Math.round(totalRevenue * 0.77); // Estimation du bénéfice net
+    }
   }
 
   private updateChartData(): void {

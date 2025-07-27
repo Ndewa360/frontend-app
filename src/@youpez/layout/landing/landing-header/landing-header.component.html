@@ -6,6 +6,8 @@
       <div class="header-profil-user block md:hidden" *ngIf="(isLogin$ | async)">
         <landing-header-profil-data ></landing-header-profil-data>
       </div>
+
+
       <button
         (click)="toggleMenu()"
         type="button"
@@ -48,6 +50,10 @@
               <span>Support</span> 
             </a>
           </li>
+
+
+
+
           <li *ngIf="(isLogin$ | async)">
             <landing-header-profil-data ></landing-header-profil-data>
           </li>
@@ -172,6 +178,8 @@
               S'inscrire
             </button>
           </div>
+
+
 
           <!-- Profil utilisateur mobile -->
           <div class="mobile-user-profile" *ngIf="(isLogin$ | async)">
