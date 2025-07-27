@@ -157,6 +157,7 @@
           [paymentStats]="financialData.paymentStats"
           [recapitulation]="financialData.recapitulation"
           [selectedYear]="selectedYear"
+          [propertyId]="propertyId"
           [isLoading]="isLoading"
           (exportData)="onExportData($event)">
         </app-advanced-financial-dashboard>
@@ -168,6 +169,7 @@
           [yearlyStats]="financialData.yearlyStats"
           [recapitulation]="financialData.recapitulation"
           [selectedYear]="selectedYear"
+          [propertyId]="propertyId"
           [isLoading]="isLoading"
           (exportData)="onExportData($event)">
         </app-financial-overview>
@@ -179,6 +181,7 @@
           [tenantStats]="financialData.tenantStats"
           [paymentStats]="financialData.paymentStats"
           [selectedYear]="selectedYear"
+          [propertyId]="propertyId"
           [isLoading]="isLoading"
           (exportData)="onExportData($event)">
         </app-tenant-payment-tracking>
@@ -189,6 +192,7 @@
         <app-deposits-summary
           [yearlyStats]="financialData.yearlyStats"
           [selectedYear]="selectedYear"
+          [propertyId]="propertyId"
           [isLoading]="isLoading"
           (exportData)="onExportData($event)">
         </app-deposits-summary>

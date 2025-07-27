@@ -3,7 +3,8 @@ import {
   StatisticRoomYearModel,
   StatisticLocataireYearModel,
   StatisticAllPaymentLocataireYearModel,
-  StatisticPaymentOfAllPropertyByYear
+  StatisticPaymentOfAllPropertyByYear,
+  LocationModel
 } from '../store';
 
 export interface FinancialMetrics {
@@ -50,7 +51,9 @@ export class FinancialCalculationsService {
    */
   calculateFinancialMetrics(
     yearlyStats: StatisticRoomYearModel[],
-    recapitulation?: StatisticPaymentOfAllPropertyByYear | null
+    recapitulation?: StatisticPaymentOfAllPropertyByYear | null,
+    locations?: LocationModel[],
+    selectedYear?: number
   ): FinancialMetrics {
     console.log('🧮 Service - Calcul des métriques financières:', {
       yearlyStatsLength: yearlyStats.length,
@@ -73,7 +76,29 @@ export class FinancialCalculationsService {
       const monthlyPayments = roomStat.paymentValue || [];
       const receivedForRoom = monthlyPayments.reduce((sum, payment) => sum + (payment || 0), 0);
       const roomPrice = roomStat.room?.price || 0;
-      const expectedForYear = roomPrice * 12;
+
+      // Calculer l'attendu basé sur la date d'entrée réelle si disponible
+      let expectedForYear = roomPrice * 12; // Fallback
+
+      if (locations && selectedYear && roomStat.room?._id) {
+        const roomLocation = locations.find(loc =>
+          loc.room === roomStat.room._id &&
+          loc.isRunning === true
+        );
+
+        if (roomLocation && roomLocation.startedAt) {
+          const monthsOccupied = this.calculateMonthsOccupied(
+            new Date(roomLocation.startedAt),
+            new Date(),
+            selectedYear
+          );
+          expectedForYear = roomPrice * Math.ceil(monthsOccupied);
+        } else {
+          // Utiliser les mois où il y a eu des paiements
+          const monthsWithPayments = monthlyPayments.filter(payment => payment > 0).length;
+          expectedForYear = roomPrice * Math.max(monthsWithPayments, 1);
+        }
+      }
 
       // Debug pour chaque chambre
       console.log(`  Chambre ${index + 1}:`, {
@@ -95,9 +120,11 @@ export class FinancialCalculationsService {
         occupiedRooms++;
       }
 
-      // Calculer les cautions
-      const depositAmount = roomStat.room?.cautionPrice || (roomPrice * 2);
-      totalDeposits += depositAmount;
+      // Calculer les cautions seulement pour les chambres occupées
+      if (hasPayments || hasActiveContract) {
+        const depositAmount = roomStat.room?.cautionPrice || (roomPrice * 2);
+        totalDeposits += depositAmount;
+      }
     });
 
     // Calculer les métriques dérivées
@@ -363,5 +390,28 @@ export class FinancialCalculationsService {
     });
 
     return monthsWithPayments.size;
+  }
+
+  /**
+   * Calcule le nombre de mois réellement occupés
+   */
+  private calculateMonthsOccupied(entryDate: Date, currentDate: Date, selectedYear: number): number {
+    const yearStart = new Date(selectedYear, 0, 1);
+    const yearEnd = new Date(selectedYear, 11, 31);
+
+    // Utiliser la date d'entrée si elle est dans l'année sélectionnée
+    const startDate = entryDate > yearStart ? entryDate : yearStart;
+    const endDate = currentDate < yearEnd ? currentDate : yearEnd;
+
+    if (startDate > endDate) return 0;
+
+    // Calculer les mois complets + fraction du mois en cours
+    const monthsDiff = (endDate.getFullYear() - startDate.getFullYear()) * 12 +
+                      (endDate.getMonth() - startDate.getMonth());
+
+    // Ajouter la fraction du mois en cours
+    const daysFraction = endDate.getDate() / new Date(endDate.getFullYear(), endDate.getMonth() + 1, 0).getDate();
+
+    return Math.max(0, monthsDiff + daysFraction);
   }
 }

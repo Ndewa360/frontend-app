@@ -1,8 +1,11 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges } from '@angular/core';
 import {
   StatisticRoomYearModel,
-  StatisticPaymentOfAllPropertyByYear
+  StatisticPaymentOfAllPropertyByYear,
+  LocationModel,
+  LocationState
 } from 'src/app/shared/store';
+import { Store } from '@ngxs/store';
 import { ExportData } from '../../property-finances.component';
 import { FinancialCalculationsService, FinancialMetrics, MonthlyFinancialData } from 'src/app/shared/services/financial-calculations.service';
 
@@ -22,13 +25,17 @@ export interface OverviewMetrics {
   templateUrl: './financial-overview.component.html',
   styleUrls: ['./financial-overview.component.scss']
 })
-export class FinancialOverviewComponent implements OnInit {
+export class FinancialOverviewComponent implements OnInit, OnChanges {
   @Input() yearlyStats: StatisticRoomYearModel[] = [];
   @Input() recapitulation: StatisticPaymentOfAllPropertyByYear | null = null;
   @Input() selectedYear: number = new Date().getFullYear();
+  @Input() propertyId: string = ''; // Ajout pour récupérer les locations
   @Input() isLoading: boolean = false;
 
   @Output() exportData = new EventEmitter<ExportData>();
+
+  // Données des locations
+  locations: LocationModel[] = [];
 
   metrics: FinancialMetrics = {
     totalRevenue: 0,
@@ -45,21 +52,32 @@ export class FinancialOverviewComponent implements OnInit {
 
   monthlyData: MonthlyFinancialData[] = [];
 
-  constructor(private financialCalculationsService: FinancialCalculationsService) {}
+  constructor(
+    private financialCalculationsService: FinancialCalculationsService,
+    private store: Store
+  ) {}
 
   ngOnInit(): void {
-    this.updateFinancialData();
+    this.loadLocations();
   }
 
   ngOnChanges(): void {
+    this.loadLocations();
+  }
+
+  private loadLocations(): void {
+    // Récupérer les locations depuis le store
+    this.locations = this.store.selectSnapshot(LocationState.selectStateLocations) || [];
     this.updateFinancialData();
   }
 
   private updateFinancialData(): void {
-    // Utiliser le service centralisé pour les calculs
+    // Utiliser le service centralisé pour les calculs avec les locations
     this.metrics = this.financialCalculationsService.calculateFinancialMetrics(
       this.yearlyStats,
-      this.recapitulation
+      this.recapitulation,
+      this.locations,
+      this.selectedYear
     );
 
     this.monthlyData = this.financialCalculationsService.buildMonthlyData(

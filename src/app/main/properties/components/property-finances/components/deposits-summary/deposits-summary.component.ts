@@ -1,5 +1,15 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges } from '@angular/core';
-import { StatisticRoomYearModel } from 'src/app/shared/store';
+import {
+  StatisticRoomYearModel,
+  LocationModel,
+  LocationState,
+  LocataireModel,
+  LocataireState,
+  LocationPaymentModel,
+  LocationPaymentState,
+  LocationPaymentType
+} from 'src/app/shared/store';
+import { Store } from '@ngxs/store';
 import { ExportData } from '../../property-finances.component';
 
 export interface DepositSummary {
@@ -22,9 +32,15 @@ export interface DepositSummary {
 export class DepositsSummaryComponent implements OnInit, OnChanges {
   @Input() yearlyStats: StatisticRoomYearModel[] = [];
   @Input() selectedYear: number = new Date().getFullYear();
+  @Input() propertyId: string = ''; // Ajout pour récupérer les données
   @Input() isLoading: boolean = false;
 
   @Output() exportData = new EventEmitter<ExportData>();
+
+  // Données du store
+  locations: LocationModel[] = [];
+  tenants: LocataireModel[] = [];
+  payments: LocationPaymentModel[] = [];
 
   depositSummaries: DepositSummary[] = [];
   filteredSummaries: DepositSummary[] = [];
@@ -45,32 +61,55 @@ export class DepositsSummaryComponent implements OnInit, OnChanges {
     averageDepositRate: 0
   };
 
+  constructor(private store: Store) { }
+
   ngOnInit(): void {
-    this.processDepositData();
+    this.loadStoreData();
   }
 
   ngOnChanges(): void {
+    this.loadStoreData();
+  }
+
+  private loadStoreData(): void {
+    // Récupérer les données depuis le store
+    this.locations = this.store.selectSnapshot(LocationState.selectStateLocations) || [];
+    this.tenants = this.store.selectSnapshot(LocataireState.selectStateLocataires) || [];
+    this.payments = this.store.selectSnapshot(LocationPaymentState.selectStateLocationPayments) || [];
     this.processDepositData();
   }
 
   private processDepositData(): void {
     this.depositSummaries = this.yearlyStats.map(roomStat => {
       const roomPrice = roomStat.room?.price || 0;
-      const expectedDeposit = this.calculateExpectedDeposit(roomPrice);
-      // Estimation des cautions reçues (2 mois de loyer par défaut)
-      const receivedDeposit = roomPrice * 2; // Estimation
+      const roomId = roomStat.room?._id || '';
+
+      // Trouver la location active pour cette chambre
+      const activeLocation = this.locations.find(loc =>
+        loc.room === roomId &&
+        loc.isRunning === true
+      );
+
+      // Trouver le locataire actuel
+      const currentTenant = activeLocation ?
+        this.tenants.find(tenant => tenant._id === activeLocation.locataire) :
+        null;
+
+      // Calculer les cautions réelles
+      const expectedDeposit = this.calculateExpectedDeposit(roomPrice, roomStat.room);
+      const receivedDeposit = this.calculateReceivedDeposit(activeLocation, currentTenant, roomPrice);
       const depositRate = expectedDeposit > 0 ? (receivedDeposit / expectedDeposit) * 100 : 0;
 
       return {
-        roomId: roomStat.room?._id || '',
+        roomId,
         roomCode: roomStat.room?.code || 'N/A',
         roomType: this.getRoomTypeLabel(roomStat.room?.type),
         roomPrice,
         expectedDeposit,
         receivedDeposit,
         depositRate,
-        tenantName: this.getCurrentTenantName(roomStat),
-        status: this.determineDepositStatus(depositRate, this.getCurrentTenantName(roomStat))
+        tenantName: currentTenant?.fullName,
+        status: this.determineDepositStatus(depositRate, currentTenant?.fullName, activeLocation)
       };
     });
 
@@ -78,21 +117,44 @@ export class DepositsSummaryComponent implements OnInit, OnChanges {
     this.applyFilters();
   }
 
-  private calculateExpectedDeposit(roomPrice: number): number {
-    // Généralement, la caution = 2 mois de loyer
-    return roomPrice * 2;
+  private calculateExpectedDeposit(roomPrice: number, room: any): number {
+    // Utiliser la caution définie sur la chambre ou 2 mois de loyer par défaut
+    return room?.cautionPrice || (roomPrice * 2);
   }
 
-  private getCurrentTenantName(roomStat: any): string | undefined {
-    // Logique pour récupérer le nom du locataire actuel
-    // Cela dépendra de la structure des données disponibles
-    return undefined; // À implémenter selon les données disponibles
+  private calculateReceivedDeposit(location: LocationModel | undefined, tenant: LocataireModel | null, roomPrice: number): number {
+    if (!location || !tenant) return 0;
+
+    // Chercher les paiements de caution pour cette location
+    const cautionPayments = this.payments.filter(payment =>
+      payment.location === location._id &&
+      payment.paymentLocationType === LocationPaymentType.CAUTION
+    );
+
+    // Calculer le total des cautions reçues
+    const totalCautionReceived = cautionPayments.reduce((sum, payment) =>
+      sum + (payment.locationPaymentPrice || 0), 0
+    );
+
+    return totalCautionReceived;
   }
 
-  private determineDepositStatus(depositRate: number, tenantName?: string): DepositSummary['status'] {
-    if (!tenantName) return 'no_tenant';
+  private determineDepositStatus(
+    depositRate: number,
+    tenantName?: string,
+    location?: LocationModel
+  ): DepositSummary['status'] {
+    if (!tenantName || !location) return 'no_tenant';
+
+    // Si aucune caution n'a été reçue
+    if (depositRate === 0) return 'missing';
+
+    // Si la caution est complète (100% ou plus)
     if (depositRate >= 100) return 'complete';
+
+    // Si la caution est partielle
     if (depositRate > 0) return 'partial';
+
     return 'missing';
   }
 

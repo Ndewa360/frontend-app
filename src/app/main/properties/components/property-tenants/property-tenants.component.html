@@ -186,23 +186,10 @@
             <div class="flex items-center space-x-4 flex-1">
               <!-- Avatar compact -->
               <div class="relative">
-                <!-- Photo de profil si disponible, sinon initiales -->
-                <div class="w-16 h-16 rounded-full shadow-md border-2 border-white overflow-hidden"
-                     [style.background]="!tenant.profilePicture ? getTenantAvatarColor(tenant) : 'transparent'">
-
-                  <!-- Photo de profil -->
-                  <img *ngIf="tenant.profilePicture"
-                       [src]="tenant.profilePicture"
-                       [alt]="tenant.fullName || 'Locataire'"
-                       class="w-full h-full object-cover">
-
-                  <!-- Initiales si pas de photo -->
-                  <div *ngIf="!tenant.profilePicture"
-                       class="w-full h-full flex items-center justify-center text-white font-bold text-lg">
-                    {{ getTenantInitials(tenant) }}
-                  </div>
+                <div class="w-16 h-16 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-md border-2 border-white"
+                     [style.background]="getTenantAvatarColor(tenant)">
+                  {{ getTenantInitials(tenant) }}
                 </div>
-
                 <!-- Indicateur de statut simple -->
                 <div class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-white shadow-sm"
                      [class.bg-emerald-500]="getTenantStatus(tenant) === 'active'"

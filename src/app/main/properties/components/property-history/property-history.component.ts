@@ -444,6 +444,16 @@ export class PropertyHistoryComponent implements OnInit, OnDestroy, OnChanges {
     });
   }
 
+  formatTime(date: Date | string | null | undefined): string {
+    if (!date) return '';
+    return new Date(date).toLocaleTimeString('fr-FR', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+
+
+
   formatDateTime(date: Date | string | null | undefined): string {
     if (!date) return 'N/A';
     return new Date(date).toLocaleString('fr-FR', {
@@ -592,6 +602,23 @@ export class PropertyHistoryComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   /**
+   * Affiche les détails d'un paiement
+   */
+  onViewPayment(payment: PaymentHistoryItem): void {
+    console.log('👁️ PropertyHistory: onViewPayment appelé', payment);
+
+    if (!payment?.rawPayment) {
+      console.error('❌ Données de paiement manquantes pour la visualisation');
+      this.toastr.error('Données de paiement manquantes', 'Erreur');
+      return;
+    }
+
+    // Ici vous pouvez ouvrir un modal de détails ou naviguer vers une page de détails
+    // Pour l'instant, on affiche juste les informations dans la console
+    this.toastr.info(`Paiement de ${this.formatPrice(payment.amount)} - ${this.getTypeLabel(payment.type)}`, 'Détails du paiement');
+  }
+
+  /**
    * Ouvre le modal de modification d'un paiement
    */
   onEditPayment(payment: PaymentHistoryItem): void {
@@ -704,12 +731,7 @@ export class PropertyHistoryComponent implements OnInit, OnDestroy, OnChanges {
 
 
 
-  formatTime(date: Date): string {
-    return date.toLocaleTimeString('fr-FR', {
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  }
+
 
   getPaymentTypeLabel(type: LocationPaymentType): string {
     switch (type) {

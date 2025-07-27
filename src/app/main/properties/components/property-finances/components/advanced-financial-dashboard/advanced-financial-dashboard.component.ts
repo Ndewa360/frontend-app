@@ -1,12 +1,16 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges } from '@angular/core';
-import { 
+import {
   StatisticRoomYearModel,
   StatisticLocataireYearModel,
   StatisticAllPaymentLocataireYearModel,
   StatisticPaymentOfAllPropertyByYear,
-  StatisticPaymentStateType
+  StatisticPaymentStateType,
+  LocationModel,
+  LocationState
 } from 'src/app/shared/store';
+import { Store } from '@ngxs/store';
 import { ExportData } from '../../property-finances.component';
+import { TenantPaymentCalculatorService } from 'src/app/shared/services/tenant-payment-calculator.service';
 
 interface FinancialMetric {
   label: string;
@@ -37,9 +41,13 @@ export class AdvancedFinancialDashboardComponent implements OnInit, OnChanges {
   @Input() paymentStats: StatisticAllPaymentLocataireYearModel[] = [];
   @Input() recapitulation: StatisticPaymentOfAllPropertyByYear | null = null;
   @Input() selectedYear: number = new Date().getFullYear();
+  @Input() propertyId: string = ''; // Ajout pour récupérer les locations
   @Input() isLoading: boolean = false;
 
   @Output() exportData = new EventEmitter<ExportData>();
+
+  // Données des locations
+  locations: LocationModel[] = [];
 
   // Métriques principales
   financialMetrics: FinancialMetric[] = [];
@@ -72,8 +80,13 @@ export class AdvancedFinancialDashboardComponent implements OnInit, OnChanges {
   // Exposer Math pour le template
   Math = Math;
 
+  constructor(
+    private store: Store,
+    private tenantPaymentCalculator: TenantPaymentCalculatorService
+  ) { }
+
   ngOnInit(): void {
-    this.processFinancialData();
+    this.loadLocations();
   }
 
   ngOnChanges(): void {
@@ -94,6 +107,12 @@ export class AdvancedFinancialDashboardComponent implements OnInit, OnChanges {
       console.log('💰 Premier élément paymentStats:', this.paymentStats[0]);
     }
 
+    this.loadLocations();
+  }
+
+  private loadLocations(): void {
+    // Récupérer les locations depuis le store
+    this.locations = this.store.selectSnapshot(LocationState.selectStateLocations) || [];
     this.processFinancialData();
   }
 
@@ -111,35 +130,30 @@ export class AdvancedFinancialDashboardComponent implements OnInit, OnChanges {
       return;
     }
 
-    let totalRevenue = 0;
-    let totalExpected = 0;
-    let totalRooms = this.yearlyStats.length;
-    let occupiedRooms = 0;
-    let totalRentSum = 0;
+    // Utiliser le service corrigé pour calculer les métriques
+    const metrics = this.tenantPaymentCalculator.calculateFinancialMetrics(
+      this.yearlyStats,
+      this.locations,
+      this.selectedYear
+    );
 
-    // Calculer les métriques à partir des données des chambres
-    this.yearlyStats.forEach(roomStat => {
-      const monthlyPayments = roomStat.paymentValue || [];
-      const receivedForRoom = monthlyPayments.reduce((sum, payment) => sum + (payment || 0), 0);
-      const roomPrice = roomStat.room?.price || 0;
-      const expectedForYear = roomPrice * 12;
-
-      totalRevenue += receivedForRoom;
-      totalExpected += expectedForYear;
-      totalRentSum += roomPrice;
-
-      if (receivedForRoom > 0) {
-        occupiedRooms++;
-      }
-    });
-
-    // Calculer les taux
-    this.totalRevenue = totalRevenue;
-    this.totalExpected = totalExpected;
-    this.collectionRate = totalExpected > 0 ? (totalRevenue / totalExpected) * 100 : 0;
-    this.averageRent = totalRooms > 0 ? totalRentSum / totalRooms : 0;
-    this.occupancyRate = totalRooms > 0 ? (occupiedRooms / totalRooms) * 100 : 0;
+    // Assigner les valeurs calculées
+    this.totalRevenue = metrics.totalRevenue;
+    this.totalExpected = metrics.totalExpected;
+    this.collectionRate = metrics.collectionRate;
+    this.averageRent = metrics.averageRent;
+    this.occupancyRate = metrics.occupancyRate;
     this.totalProperties = this.getTotalProperties();
+
+    console.log('✅ Métriques calculées:', {
+      totalRevenue: this.totalRevenue,
+      totalExpected: this.totalExpected,
+      collectionRate: this.collectionRate,
+      occupancyRate: this.occupancyRate,
+      averageRent: this.averageRent,
+      occupiedRooms: metrics.occupiedRooms,
+      totalRooms: metrics.totalRooms
+    });
 
     // Construire les métriques pour l'affichage
     this.buildFinancialMetrics();

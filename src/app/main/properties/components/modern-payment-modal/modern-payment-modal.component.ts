@@ -217,7 +217,6 @@ export class ModernPaymentModalComponent implements OnInit, OnDestroy {
       locataire: this.data.tenant?._id || this.data.transaction?.locataire,
       property: this.data.room?.property || this.data.transaction?.property
     };
-
     if (this.data.mode === 'create') {
       // Utiliser la location appropriée
       const targetLocation = this.data.location;
