@@ -64,6 +64,7 @@ const routes: Routes = [
           breadcrumb: 'Assignation de locataire'
         },
       },
+       
       {
         path: 'properties',
         data: {

@@ -466,3 +466,34 @@
 .modern-payment-modal {
   animation: fadeIn 0.3s ease-out;
 }
+
+// Styles pour les champs readonly
+.readonly-input {
+  background-color: var(--carbon-layer-02, #f4f4f4) !important;
+  color: var(--carbon-text-secondary, #6f6f6f) !important;
+  cursor: not-allowed !important;
+
+  &:focus {
+    border-color: var(--carbon-border-subtle, #e0e0e0) !important;
+    box-shadow: none !important;
+  }
+}
+
+.readonly-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: var(--carbon-layer-02, #f4f4f4);
+  border: 1px solid var(--carbon-border-subtle, #e0e0e0);
+  border-radius: 6px;
+  color: var(--carbon-text-secondary, #6f6f6f);
+}
+
+.form-help {
+  font-size: 12px;
+  color: var(--carbon-text-helper, #6f6f6f);
+  margin-top: 4px;
+  font-style: italic;
+}

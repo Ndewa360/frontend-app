@@ -1,0 +1,231 @@
+<!-- Admin Dashboard -->
+<div class="admin-dashboard">
+  <!-- Loading State -->
+  <div *ngIf="isLoading$ | async" class="admin-dashboard-loading">
+    <div class="admin-spinner"></div>
+    <p>Chargement du tableau de bord...</p>
+  </div>
+
+  <!-- Dashboard Content -->
+  <div *ngIf="!(isLoading$ | async)" class="admin-dashboard-content">
+    <!-- Header Actions -->
+    <div class="admin-dashboard-header">
+      <div class="admin-dashboard-title">
+        <h2>Tableau de bord administrateur</h2>
+        <p class="admin-dashboard-subtitle">Vue d'ensemble du système Ndiye</p>
+      </div>
+      <div class="admin-dashboard-actions">
+        <button class="admin-btn admin-btn-secondary" (click)="onRefreshData()">
+          <svg width="16" height="16" viewBox="0 0 16 16">
+            <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z"/>
+            <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"/>
+          </svg>
+          Actualiser
+        </button>
+        <button class="admin-btn admin-btn-primary" (click)="onExportReport()">
+          <svg width="16" height="16" viewBox="0 0 16 16">
+            <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+            <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+          </svg>
+          Exporter
+        </button>
+      </div>
+    </div>
+
+    <!-- Overview Stats Cards -->
+    <div class="admin-stats-grid" *ngIf="dashboardStats$ | async as stats">
+      <div class="admin-stat-card">
+        <div class="admin-stat-icon users">
+          <svg width="24" height="24" viewBox="0 0 16 16">
+            <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
+          </svg>
+        </div>
+        <div class="admin-stat-content">
+          <h3>{{ stats.overview.totalUsers | number }}</h3>
+          <p>Utilisateurs totaux</p>
+          <span class="admin-stat-change positive" *ngIf="stats.users.growthRate > 0">
+            +{{ stats.users.growthRate }}%
+          </span>
+        </div>
+      </div>
+
+      <div class="admin-stat-card">
+        <div class="admin-stat-icon properties">
+          <svg width="24" height="24" viewBox="0 0 16 16">
+            <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5 5 5z"/>
+          </svg>
+        </div>
+        <div class="admin-stat-content">
+          <h3>{{ stats.overview.totalProperties | number }}</h3>
+          <p>Propriétés</p>
+          <span class="admin-stat-change">
+            {{ stats.properties.occupancyRate }}% occupées
+          </span>
+        </div>
+      </div>
+
+      <div class="admin-stat-card">
+        <div class="admin-stat-icon revenue">
+          <svg width="24" height="24" viewBox="0 0 16 16">
+            <path d="M4 10.781c.148 1.667 1.513 2.85 3.591 3.003V15h1.043v-1.216c2.27-.179 3.678-1.438 3.678-3.3 0-1.59-.947-2.51-2.956-3.028l-.722-.187V3.467c1.122.11 1.879.714 2.07 1.616h1.47c-.166-1.6-1.54-2.748-3.54-2.875V1H7.591v1.233c-1.939.23-3.27 1.472-3.27 3.156 0 1.454.966 2.483 2.661 2.917l.61.162v4.031c-1.149-.17-1.94-.8-2.131-1.718H4zm3.391-3.836c-1.043-.263-1.6-.825-1.6-1.616 0-.944.704-1.641 1.8-1.828v3.495l-.2-.05zm1.591 1.872c1.287.323 1.852.859 1.852 1.769 0 1.097-.826 1.828-2.2 1.939V8.73l.348.086z"/>
+          </svg>
+        </div>
+        <div class="admin-stat-content">
+          <h3>{{ stats.overview.totalRevenue | currency:'XAF':'symbol':'1.0-0' }}</h3>
+          <p>Revenus totaux</p>
+          <span class="admin-stat-change positive" *ngIf="stats.payments.revenueGrowth > 0">
+            +{{ stats.payments.revenueGrowth }}%
+          </span>
+        </div>
+      </div>
+
+      <div class="admin-stat-card">
+        <div class="admin-stat-icon health">
+          <svg width="24" height="24" viewBox="0 0 16 16">
+            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.061L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+          </svg>
+        </div>
+        <div class="admin-stat-content">
+          <h3>{{ stats.overview.systemHealth }}%</h3>
+          <p>Santé du système</p>
+          <span class="admin-stat-change"
+                [class.positive]="stats.overview.systemHealth >= 90"
+                [class.warning]="stats.overview.systemHealth >= 70 && stats.overview.systemHealth < 90"
+                [class.negative]="stats.overview.systemHealth < 70">
+            {{ stats.overview.systemHealth >= 90 ? 'Excellent' : stats.overview.systemHealth >= 70 ? 'Bon' : 'Attention' }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="admin-charts-section">
+      <div class="admin-charts-grid">
+        <!-- User Growth Chart -->
+        <div class="admin-chart-card">
+          <div class="admin-chart-header">
+            <h3>Croissance des utilisateurs</h3>
+            <select class="admin-chart-select">
+              <option value="7d">7 jours</option>
+              <option value="30d" selected>30 jours</option>
+              <option value="90d">90 jours</option>
+            </select>
+          </div>
+          <div class="admin-chart-content">
+            <!-- Chart component will go here -->
+            <div class="admin-chart-placeholder">
+              <p>Graphique de croissance des utilisateurs</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Revenue Chart -->
+        <div class="admin-chart-card">
+          <div class="admin-chart-header">
+            <h3>Évolution des revenus</h3>
+            <select class="admin-chart-select">
+              <option value="7d">7 jours</option>
+              <option value="30d" selected>30 jours</option>
+              <option value="90d">90 jours</option>
+            </select>
+          </div>
+          <div class="admin-chart-content">
+            <!-- Chart component will go here -->
+            <div class="admin-chart-placeholder">
+              <p>Graphique des revenus</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- System Health & Recent Activities -->
+    <div class="admin-bottom-section">
+      <div class="admin-bottom-grid">
+        <!-- System Health -->
+        <div class="admin-health-card" *ngIf="systemHealth$ | async as health">
+          <div class="admin-card-header">
+            <h3>État du système</h3>
+            <span class="admin-health-status" [class]="health.status">
+              {{ health.status === 'healthy' ? 'Sain' : health.status === 'warning' ? 'Attention' : 'Critique' }}
+            </span>
+          </div>
+          <div class="admin-health-content">
+            <div class="admin-health-services">
+              <div *ngFor="let service of health.services" class="admin-service-item">
+                <span class="admin-service-name">{{ service.name }}</span>
+                <span class="admin-service-status" [class]="service.status">
+                  {{ service.status === 'up' ? 'Actif' : service.status === 'down' ? 'Inactif' : 'Dégradé' }}
+                </span>
+                <span class="admin-service-time">{{ service.responseTime }}ms</span>
+              </div>
+            </div>
+            <div class="admin-health-alerts" *ngIf="health.alerts.length > 0">
+              <h4>Alertes récentes</h4>
+              <div *ngFor="let alert of getRecentAlerts(health.alerts)" class="admin-alert-item">
+                <span class="admin-alert-type" [class]="alert.type">{{ alert.type }}</span>
+                <span class="admin-alert-message">{{ alert.message }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Activities -->
+        <div class="admin-activities-card">
+          <div class="admin-card-header">
+            <h3>Activités récentes</h3>
+            <button ibmButton="ghost" size="sm" (click)="onViewDetails('activities')">
+              Voir tout
+            </button>
+          </div>
+          <div class="admin-activities-content">
+            <div *ngFor="let activity of recentActivities$ | async" class="admin-activity-item">
+              <div class="admin-activity-icon" [class]="activity.type">
+                <svg [ibmIcon]="getActivityIcon(activity.type)" size="16"></svg>
+              </div>
+              <div class="admin-activity-content">
+                <p class="admin-activity-description">{{ activity.description }}</p>
+                <div class="admin-activity-meta">
+                  <span class="admin-activity-user">{{ activity.user.name }}</span>
+                  <span class="admin-activity-time">{{ activity.timestamp | date:'short' }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="admin-quick-actions">
+      <h3>Actions rapides</h3>
+      <div class="admin-actions-grid">
+        <button class="admin-action-btn" (click)="onViewDetails('users')">
+          <svg width="20" height="20" viewBox="0 0 16 16">
+            <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
+          </svg>
+          Gérer les utilisateurs
+        </button>
+        <button class="admin-action-btn" (click)="onViewDetails('payments')">
+          <svg width="20" height="20" viewBox="0 0 16 16">
+            <path d="M4 10.781c.148 1.667 1.513 2.85 3.591 3.003V15h1.043v-1.216c2.27-.179 3.678-1.438 3.678-3.3 0-1.59-.947-2.51-2.956-3.028l-.722-.187V3.467c1.122.11 1.879.714 2.07 1.616h1.47c-.166-1.6-1.54-2.748-3.54-2.875V1H7.591v1.233c-1.939.23-3.27 1.472-3.27 3.156 0 1.454.966 2.483 2.661 2.917l.61.162v4.031c-1.149-.17-1.94-.8-2.131-1.718H4zm3.391-3.836c-1.043-.263-1.6-.825-1.6-1.616 0-.944.704-1.641 1.8-1.828v3.495l-.2-.05zm1.591 1.872c1.287.323 1.852.859 1.852 1.769 0 1.097-.826 1.828-2.2 1.939V8.73l.348.086z"/>
+          </svg>
+          Voir les paiements
+        </button>
+        <button class="admin-action-btn" (click)="onViewDetails('properties')">
+          <svg width="20" height="20" viewBox="0 0 16 16">
+            <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5 5 5z"/>
+          </svg>
+          Gérer les propriétés
+        </button>
+        <button class="admin-action-btn" routerLink="/admin/settings">
+          <svg width="20" height="20" viewBox="0 0 16 16">
+            <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"/>
+            <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.292-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.292c.415.764-.42 1.6-1.185 1.184l-.292-.159a1.873 1.873 0 0 0-2.692 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.693-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.292A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z"/>
+          </svg>
+          Paramètres système
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

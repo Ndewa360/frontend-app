@@ -1,0 +1,651 @@
+// Variables du thème Ndiye
+$ndiye-primary: rgb(204, 140, 10);
+$ndiye-primary-light: rgba(204, 140, 10, 0.1);
+$ndiye-primary-dark: rgb(184, 126, 9);
+$ndiye-secondary: rgb(39, 122, 252);
+$ndiye-success: #24a148;
+$ndiye-warning: #f1c21b;
+$ndiye-danger: #da1e28;
+$ndiye-info: #0f62fe;
+$ndiye-white: #ffffff;
+$ndiye-light: #f4f4f4;
+$ndiye-medium: #6f6f6f;
+$ndiye-dark: #161616;
+
+.admin-roles {
+  padding: 0;
+  background-color: $ndiye-light;
+  min-height: 100vh;
+
+  // Header
+  .admin-roles-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+    padding: 0 24px;
+
+    .admin-roles-title {
+      h2 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: $ndiye-dark;
+        margin: 0 0 8px;
+      }
+
+      .admin-roles-subtitle {
+        color: $ndiye-medium;
+        font-size: 0.875rem;
+        margin: 0;
+      }
+    }
+
+    .admin-roles-actions {
+      display: flex;
+      gap: 12px;
+
+      .admin-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &.admin-btn-primary {
+          background: $ndiye-primary;
+          color: $ndiye-white;
+
+          &:hover {
+            background: $ndiye-primary-dark;
+          }
+        }
+
+        &.admin-btn-secondary {
+          background: $ndiye-white;
+          color: $ndiye-dark;
+          border: 1px solid rgba($ndiye-primary, 0.2);
+
+          &:hover {
+            background: rgba($ndiye-primary, 0.05);
+            border-color: $ndiye-primary;
+          }
+        }
+
+        svg {
+          fill: currentColor;
+        }
+      }
+    }
+  }
+
+  // Stats Cards
+  .admin-roles-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+    padding: 0 24px;
+
+    .admin-stat-card {
+      background: $ndiye-white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba($ndiye-primary, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+
+      .admin-stat-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+
+        &.total {
+          background: rgba($ndiye-info, 0.1);
+          color: $ndiye-info;
+        }
+
+        &.active {
+          background: rgba($ndiye-success, 0.1);
+          color: $ndiye-success;
+        }
+
+        &.permissions {
+          background: rgba($ndiye-secondary, 0.1);
+          color: $ndiye-secondary;
+        }
+
+        &.custom {
+          background: rgba($ndiye-primary, 0.1);
+          color: $ndiye-primary;
+        }
+      }
+
+      .admin-stat-content {
+        h3 {
+          font-size: 1.5rem;
+          font-weight: 700;
+          color: $ndiye-dark;
+          margin: 0 0 4px;
+        }
+
+        p {
+          color: $ndiye-medium;
+          font-size: 0.75rem;
+          margin: 0;
+        }
+      }
+    }
+  }
+
+  // Tabs
+  .admin-roles-tabs {
+    background: $ndiye-white;
+    border-radius: 8px;
+    margin: 0 24px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba($ndiye-primary, 0.1);
+    overflow: hidden;
+
+    .admin-tabs-nav {
+      display: flex;
+      border-bottom: 1px solid rgba($ndiye-primary, 0.1);
+
+      .admin-tab-btn {
+        padding: 16px 24px;
+        border: none;
+        background: none;
+        color: $ndiye-medium;
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border-bottom: 3px solid transparent;
+
+        &:hover {
+          background: rgba($ndiye-primary, 0.05);
+          color: $ndiye-dark;
+        }
+
+        &.active {
+          color: $ndiye-primary-dark;
+          border-bottom-color: $ndiye-primary;
+          background: rgba($ndiye-primary, 0.02);
+        }
+      }
+    }
+
+    .admin-tab-content {
+      min-height: 400px;
+    }
+  }
+
+  // Table
+  .admin-roles-table {
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+
+      th, td {
+        padding: 12px 16px;
+        text-align: left;
+        border-bottom: 1px solid rgba($ndiye-primary, 0.1);
+      }
+
+      th {
+        background: rgba($ndiye-primary, 0.05);
+        font-weight: 600;
+        color: $ndiye-dark;
+        font-size: 0.875rem;
+      }
+
+      td {
+        font-size: 0.875rem;
+        color: $ndiye-dark;
+      }
+
+      tr:hover {
+        background: rgba($ndiye-primary, 0.02);
+      }
+    }
+
+    .admin-role-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      .admin-role-color {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        border: 2px solid rgba($ndiye-primary, 0.2);
+      }
+
+      .admin-role-details {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+
+        .admin-role-name {
+          font-weight: 500;
+          color: $ndiye-dark;
+          font-size: 0.875rem;
+        }
+
+        .admin-role-code {
+          font-size: 0.75rem;
+          color: $ndiye-medium;
+          font-family: monospace;
+        }
+
+        .admin-system-tag {
+          background: rgba($ndiye-info, 0.1);
+          color: $ndiye-info;
+          padding: 2px 6px;
+          border-radius: 4px;
+          font-size: 0.75rem;
+          font-weight: 500;
+        }
+      }
+    }
+
+    .admin-status-tag {
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+
+      &.status-active {
+        background: rgba($ndiye-success, 0.1);
+        color: $ndiye-success;
+      }
+
+      &.status-inactive {
+        background: rgba($ndiye-medium, 0.1);
+        color: $ndiye-medium;
+      }
+    }
+
+    .admin-actions-menu {
+      position: relative;
+
+      .admin-menu-trigger {
+        background: none;
+        border: none;
+        font-size: 1.2rem;
+        cursor: pointer;
+        padding: 4px 8px;
+        border-radius: 4px;
+        color: $ndiye-medium;
+
+        &:hover {
+          background: rgba($ndiye-primary, 0.1);
+          color: $ndiye-primary;
+        }
+      }
+
+      .admin-menu-dropdown {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background: $ndiye-white;
+        border: 1px solid rgba($ndiye-primary, 0.2);
+        border-radius: 4px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        z-index: 1000;
+        min-width: 180px;
+
+        button {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          width: 100%;
+          padding: 8px 12px;
+          border: none;
+          background: none;
+          text-align: left;
+          font-size: 0.875rem;
+          color: $ndiye-dark;
+          cursor: pointer;
+
+          &:hover:not(:disabled) {
+            background: rgba($ndiye-primary, 0.05);
+          }
+
+          &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+          }
+
+          &.admin-danger-option {
+            color: $ndiye-danger;
+
+            &:hover:not(:disabled) {
+              background: rgba($ndiye-danger, 0.05);
+            }
+          }
+
+          svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+          }
+        }
+      }
+    }
+
+    .admin-role-description {
+      color: $ndiye-medium;
+      font-size: 0.875rem;
+      max-width: 200px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .admin-permissions-count,
+    .admin-users-count {
+      color: $ndiye-medium;
+      font-size: 0.875rem;
+    }
+
+    .admin-danger-option {
+      color: $ndiye-danger !important;
+    }
+
+    // Loading State
+    .admin-table-loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px;
+      gap: 16px;
+
+      p {
+        color: $ndiye-medium;
+        font-size: 0.875rem;
+        margin: 0;
+      }
+    }
+
+    // Empty State
+    .admin-table-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px;
+      gap: 16px;
+      text-align: center;
+
+      svg {
+        color: $ndiye-medium;
+        opacity: 0.5;
+      }
+
+      h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: $ndiye-dark;
+        margin: 0;
+      }
+
+      p {
+        color: $ndiye-medium;
+        font-size: 0.875rem;
+        margin: 0 0 16px;
+      }
+    }
+  }
+
+  // Permissions Matrix
+  .admin-permissions-matrix {
+    padding: 24px;
+
+    .admin-matrix-table {
+      overflow-x: auto;
+      border-radius: 8px;
+      border: 1px solid rgba($ndiye-primary, 0.1);
+
+      .admin-matrix {
+        width: 100%;
+        border-collapse: collapse;
+        background: $ndiye-white;
+
+        th, td {
+          padding: 12px;
+          border: 1px solid rgba($ndiye-primary, 0.1);
+          text-align: left;
+          vertical-align: middle;
+        }
+
+        th {
+          background: rgba($ndiye-primary, 0.05);
+          font-weight: 600;
+          color: $ndiye-dark;
+          position: sticky;
+          top: 0;
+          z-index: 1;
+        }
+
+        .admin-matrix-corner {
+          background: rgba($ndiye-primary, 0.1);
+          font-weight: 700;
+          color: $ndiye-primary-dark;
+        }
+
+        .admin-matrix-role-header {
+          writing-mode: vertical-rl;
+          text-orientation: mixed;
+          min-width: 40px;
+          text-align: center;
+
+          .admin-role-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+
+            .admin-role-color {
+              width: 12px;
+              height: 12px;
+              border-radius: 50%;
+            }
+
+            span {
+              font-size: 0.75rem;
+              writing-mode: vertical-rl;
+              text-orientation: mixed;
+            }
+          }
+        }
+
+        .admin-matrix-permission {
+          background: rgba($ndiye-primary, 0.02);
+          min-width: 200px;
+
+          .admin-permission-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+
+            .admin-permission-name {
+              font-weight: 500;
+              color: $ndiye-dark;
+              font-size: 0.875rem;
+            }
+
+            .admin-permission-module {
+              font-size: 0.75rem;
+              color: $ndiye-medium;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+            }
+          }
+        }
+
+        .admin-matrix-cell {
+          text-align: center;
+          background: $ndiye-white;
+
+          &:hover {
+            background: rgba($ndiye-primary, 0.02);
+          }
+        }
+      }
+    }
+  }
+
+  // Permissions List
+  .admin-permissions-list {
+    padding: 24px;
+
+    .admin-permissions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+
+      .admin-permission-card {
+        background: $ndiye-white;
+        border-radius: 8px;
+        padding: 16px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba($ndiye-primary, 0.1);
+
+        .admin-permission-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          margin-bottom: 12px;
+
+          h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: $ndiye-dark;
+            margin: 0;
+          }
+        }
+
+        .admin-permission-details {
+          .admin-permission-description {
+            color: $ndiye-medium;
+            font-size: 0.875rem;
+            margin: 0 0 12px;
+            line-height: 1.4;
+          }
+
+          .admin-permission-meta {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+
+            span {
+              background: rgba($ndiye-primary, 0.1);
+              color: $ndiye-primary-dark;
+              padding: 2px 6px;
+              border-radius: 4px;
+              font-size: 0.75rem;
+              font-weight: 500;
+            }
+          }
+        }
+      }
+    }
+
+    // Empty State
+    .admin-permissions-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px;
+      gap: 16px;
+      text-align: center;
+
+      svg {
+        color: $ndiye-medium;
+        opacity: 0.5;
+      }
+
+      h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: $ndiye-dark;
+        margin: 0;
+      }
+
+      p {
+        color: $ndiye-medium;
+        font-size: 0.875rem;
+        margin: 0;
+      }
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 1024px) {
+  .admin-roles {
+    .admin-roles-stats {
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+
+    .admin-permissions-grid {
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-roles {
+    .admin-roles-header {
+      flex-direction: column;
+      gap: 16px;
+      align-items: stretch;
+
+      .admin-roles-actions {
+        justify-content: flex-end;
+      }
+    }
+
+    .admin-roles-stats {
+      grid-template-columns: 1fr;
+    }
+
+    .admin-permissions-grid {
+      grid-template-columns: 1fr;
+    }
+
+    // Hide some table columns on mobile
+    .admin-roles-table {
+      ibm-table-cell:nth-child(3),
+      ibm-table-cell:nth-child(4),
+      ibm-table-header-cell:nth-child(3),
+      ibm-table-header-cell:nth-child(4) {
+        display: none;
+      }
+    }
+
+    .admin-matrix-table {
+      .admin-matrix {
+        font-size: 0.75rem;
+
+        th, td {
+          padding: 8px;
+        }
+      }
+    }
+  }
+}

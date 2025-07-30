@@ -36,6 +36,7 @@ import {
 
 } from './store';
 
+
 import { NgxsRouterPluginModule } from '@ngxs/router-plugin';
 import { RouterModule } from '@angular/router';
 import { NgxsStoragePluginModule, StorageOption } from '@ngxs/storage-plugin';
@@ -107,7 +108,7 @@ import { HttpClient } from '@angular/common/http';
         ContractTemplateState,
         SubscriptionLimitState,
         SubscriptionPaymentState,
-        PremiumAccessState
+        PremiumAccessState,
       ]),
       NgxsStoragePluginModule.forRoot({
         key:["ndewa360_auth_token"]

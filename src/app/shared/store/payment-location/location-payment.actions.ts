@@ -9,6 +9,13 @@ export namespace LocationPaymentAction
         constructor(public locationPayment:LocationPaymentModel){}
     }
 
+    //Create LocationPayment (alias pour compatibilité)
+    export class CreateLocationPayment
+    {
+        static readonly type = '[LocationPayment] Create LocationPayment';
+        constructor(public locationPayment:LocationPaymentModel){}
+    }
+
     //Update LocationPayment
     export class UpdateLocationPayment
     {
@@ -23,9 +30,16 @@ export namespace LocationPaymentAction
         constructor(public locationPaymentId:string){}
     }
 
-    export class DeletehLocationPayment
+    export class DeleteLocationPayment
     {
         static readonly type = '[LocationPayment] Delete LocationPayment'
+        constructor(public locationPaymentId:string, public locataireId:string, public propertyID:string){}
+    }
+
+    // Alias pour compatibilité (à supprimer plus tard)
+    export class DeletehLocationPayment
+    {
+        static readonly type = '[LocationPayment] Delete LocationPayment Legacy'
         constructor(public locationPaymentId:string, public locataireId:string, public propertyID:string){}
     }
 
@@ -77,9 +91,5 @@ export namespace LocationPaymentAction
         constructor(public status:boolean){}
     }
 
-    export class CreateLocationPayment
-    {
-        static readonly type = '[LocationPayment] create LocationPayment'
-        constructor(public locationPayment:any){}
-    }
+
 }

@@ -50,8 +50,10 @@ import {
   FileUploaderModule, 
   ModalModule,
   LoadingModule,
-  ProgressIndicatorModule
-   
+  ProgressIndicatorModule,
+  UIShellModule,
+  StructuredListModule,
+  CodeSnippetModule
 } from 'carbon-components-angular'
 
 import {AppMenuComponent} from "./components/app-menu/app-menu/app-menu.component"
@@ -149,7 +151,12 @@ const CarbonModules = [
   ModalModule,
   LoadingModule,
   ProgressBarModule,
-  ProgressIndicatorModule
+  ProgressIndicatorModule,
+
+  UIShellModule,
+  StructuredListModule,
+  CodeSnippetModule,
+  InputModule
 ]
 
 const Components = [

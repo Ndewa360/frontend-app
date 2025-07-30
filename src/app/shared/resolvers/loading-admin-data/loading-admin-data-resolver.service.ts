@@ -1,8 +1,8 @@
 import { Injectable } from "@angular/core";
 import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot } from "@angular/router";
 import { Store } from "@ngxs/store";
-import { combineLatest, Observable, of, skipWhile, tap} from "rxjs";
-import { CountryAction, UserAction } from "../../store";
+import { combineLatest, Observable, of, skipWhile, map, catchError, timeout} from "rxjs";
+import { CountryAction, UserAction, UserProfileAction } from "../../store";
 
 
 @Injectable({
@@ -28,27 +28,26 @@ export class LoadingAdminDataResolver implements Resolve<any>
      */
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any>
     {
-        // let locataireID:any= route.paramMap.get("locataireID")
-        // this._store.dispatch([
-        //     new LocataireAction.FetchLocataire(locataireID),
-        //     new HistoryLocationPaymentAction.FetchHistoryLocationByLocataireId(locataireID)
-        // ])
-
-
-        combineLatest(
+        // Charger les données nécessaires pour l'administration
+        return combineLatest([
             this._store.dispatch([
                 new UserAction.FetchAllUsers(),
-                new CountryAction.FetchCountries()
+                new CountryAction.FetchCountries(),
+                new UserProfileAction.FetchUserProfile()
             ]),
-            this._store.select((state)=>state.userlist.initLoadingState).pipe(skipWhile((initLoadingState)=>initLoadingState!="LOADED")),
-        ).pipe(
-            tap((error)=> of(true))
-        ).subscribe((error)=>{
-            //console.log("Error ",error)
-        })
-
-        return of(true);
-
-        
+            // Vérifier que les données sont chargées avec timeout et gestion d'erreur
+            this._store.select((state) => state.userlist?.initLoadingState || 'LOADED')
+              .pipe(
+                skipWhile((initLoadingState) => initLoadingState !== "LOADED"),
+                timeout(10000), // Timeout de 10 secondes
+                catchError(() => of('LOADED')) // En cas d'erreur, continuer
+              )
+        ]).pipe(
+            map(() => true),
+            catchError((error) => {
+                console.warn('LoadingAdminDataResolver error:', error);
+                return of(true); // Continuer même en cas d'erreur
+            })
+        );
     }
 }

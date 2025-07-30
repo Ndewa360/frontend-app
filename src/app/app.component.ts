@@ -100,7 +100,6 @@ export class AppComponent implements OnInit, OnDestroy {
     } catch (e) {
       console.warn('Erreur lors de l\'initialisation de moment.js:', e);
     }
-
     // Initialiser la capture automatique des erreurs pour le monitoring
     this.monitoringService.initializeErrorCapture();
 

@@ -1,0 +1,403 @@
+<!-- Admin Payments Management -->
+<div class="admin-payments">
+  <!-- Header -->
+  <div class="admin-payments-header">
+    <div class="admin-payments-title">
+      <h2>Gestion des paiements</h2>
+      <p class="admin-payments-subtitle">Gérer les paiements, abonnements et coupons</p>
+    </div>
+    <div class="admin-payments-actions">
+      <button class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50" (click)="onProcessPendingPayments()">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h1m4 0h1m6-10V7a3 3 0 11-6 0V4a3 3 0 116 0v3M5 7a3 3 0 116 0v10a3 3 0 11-6 0V7z"></path>
+        </svg>
+        Traiter en attente
+      </button>
+      <button class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50" (click)="onRefreshData()">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+        </svg>
+        Actualiser
+      </button>
+      <button class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-yellow-600 border border-transparent rounded-md hover:bg-yellow-700" (click)="onCreateItem()" *ngIf="selectedTab === 'coupons'">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+        </svg>
+        Nouveau coupon
+      </button>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8" *ngIf="stats$ | async as stats">
+    <div class="bg-white rounded-lg shadow p-6 border border-gray-200">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+        </div>
+        <div class="ml-4">
+          <h3 class="text-2xl font-bold text-gray-900">{{ stats.overview.totalRevenue | currency:'XAF':'symbol':'1.0-0' }}</h3>
+          <p class="text-sm text-gray-500">Revenus totaux</p>
+        </div>
+      </div>
+    </div>
+    <div class="bg-white rounded-lg shadow p-6 border border-gray-200">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+          </div>
+        </div>
+        <div class="ml-4">
+          <h3 class="text-2xl font-bold text-gray-900">{{ stats.overview.totalPayments | number }}</h3>
+          <p class="text-sm text-gray-500">Paiements totaux</p>
+        </div>
+      </div>
+    </div>
+    <div class="bg-white rounded-lg shadow p-6 border border-gray-200">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+            </svg>
+          </div>
+        </div>
+        <div class="ml-4">
+          <h3 class="text-2xl font-bold text-gray-900">{{ stats.subscriptions.activeSubscriptions | number }}</h3>
+          <p class="text-sm text-gray-500">Abonnements actifs</p>
+        </div>
+      </div>
+    </div>
+    <div class="bg-white rounded-lg shadow p-6 border border-gray-200">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+        </div>
+        <div class="ml-4">
+          <h3 class="text-2xl font-bold text-gray-900">{{ stats.overview.successRate | number:'1.1-1' }}%</h3>
+          <p class="text-sm text-gray-500">Taux de succès</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="bg-white rounded-lg shadow border border-gray-200">
+    <div class="border-b border-gray-200">
+      <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+        <button
+          class="py-4 px-6 text-sm font-medium border-b-2 transition-colors duration-200"
+          [class]="selectedTab === 'payments' ? 'border-yellow-500 text-yellow-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+          (click)="onTabChange('payments')">
+          Paiements
+        </button>
+        <button
+          class="py-4 px-6 text-sm font-medium border-b-2 transition-colors duration-200"
+          [class]="selectedTab === 'subscriptions' ? 'border-yellow-500 text-yellow-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+          (click)="onTabChange('subscriptions')">
+          Abonnements
+        </button>
+        <button
+          class="py-4 px-6 text-sm font-medium border-b-2 transition-colors duration-200"
+          [class]="selectedTab === 'coupons' ? 'border-yellow-500 text-yellow-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+          (click)="onTabChange('coupons')">
+          Coupons
+        </button>
+      </nav>
+    </div>
+
+    <div class="p-6">
+      <!-- Payments Table -->
+      <div *ngIf="selectedTab === 'payments'">
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID Transaction</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Utilisateur</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Montant</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Méthode</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr *ngFor="let payment of payments$ | async; trackBy: trackByPaymentId" class="hover:bg-gray-50">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 font-mono">
+                    {{ payment.transactionId || payment._id.slice(-8) }}
+                  </span>
+                </td>
+
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex flex-col">
+                    <span class="text-sm font-medium text-gray-900">{{ payment.user.firstName }} {{ payment.user.lastName }}</span>
+                    <span class="text-sm text-gray-500">{{ payment.user.email }}</span>
+                  </div>
+                </td>
+
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="text-sm font-semibold text-gray-900">{{ payment.amount | currency:payment.currency:'symbol':'1.0-0' }}</span>
+                </td>
+
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex flex-col">
+                    <span class="text-sm font-medium text-gray-900">{{ payment.method }}</span>
+                    <span class="text-sm text-gray-500">{{ payment.provider }}</span>
+                  </div>
+                </td>
+
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                        [class]="getPaymentStatusClasses(payment.status)">
+                    {{ getPaymentStatusLabel(payment.status) }}
+                  </span>
+                </td>
+
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ payment.createdAt | date:'short' }}
+                </td>
+
+                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <div class="relative inline-block text-left">
+                    <button class="text-gray-400 hover:text-gray-600 focus:outline-none" (click)="togglePaymentMenu(payment._id)">
+                      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
+                      </svg>
+                    </button>
+                    <div *ngIf="openMenuId === payment._id" class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
+                      <div class="py-1">
+                        <button (click)="onEditItem(payment)" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left">
+                          <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                          </svg>
+                          Voir détails
+                        </button>
+                        <button (click)="onRefundPayment(payment)"
+                                [disabled]="payment.status !== 'completed'"
+                                class="flex items-center px-4 py-2 text-sm text-red-700 hover:bg-red-50 w-full text-left disabled:opacity-50 disabled:cursor-not-allowed">
+                          <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path>
+                          </svg>
+                          Rembourser
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Loading State -->
+          <div *ngIf="isLoading$ | async" class="flex flex-col items-center justify-center py-12">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-600"></div>
+            <p class="mt-4 text-sm text-gray-500">Chargement des paiements...</p>
+          </div>
+
+          <!-- Empty State -->
+          <div *ngIf="!(isLoading$ | async) && (payments$ | async)?.length === 0" class="flex flex-col items-center justify-center py-12">
+            <svg class="w-12 h-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">Aucun paiement trouvé</h3>
+            <p class="text-sm text-gray-500">Les paiements apparaîtront ici une fois effectués.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Subscriptions Table -->
+      <div *ngIf="selectedTab === 'subscriptions'">
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Utilisateur</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Plan</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Début</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fin</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Montant</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let subscription of subscriptions$ | async; trackBy: trackBySubscriptionId">
+                <td>
+                  <div class="admin-user-info">
+                    <span class="admin-user-name">{{ subscription.user.firstName }} {{ subscription.user.lastName }}</span>
+                    <span class="admin-user-email">{{ subscription.user.email }}</span>
+                  </div>
+                </td>
+
+                <td>
+                  <span
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                    [class]="subscription.plan === 'premium' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'">
+                    {{ subscription.plan === 'premium' ? 'Premium' : 'Gratuit' }}
+                  </span>
+                </td>
+
+                <td>
+                  <span
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                    [class]="getSubscriptionStatusColor(subscription.status)">
+                    {{ getSubscriptionStatusLabel(subscription.status) }}
+                  </span>
+                </td>
+
+                <td>
+                  {{ subscription.startDate | date:'short' }}
+                </td>
+
+                <td>
+                  {{ subscription.endDate | date:'short' }}
+                </td>
+
+                <td>
+                  <span class="admin-amount">{{ subscription.amount | currency:subscription.currency:'symbol':'1.0-0' }}</span>
+                </td>
+
+                <td>
+                  <div class="relative inline-block text-left">
+                    <button class="admin-menu-trigger" (click)="toggleSubscriptionMenu(subscription._id)">⋮</button>
+                    <div class="admin-menu-dropdown" *ngIf="openMenuId === subscription._id">
+                      <button (click)="onEditItem(subscription)">
+                        <svg width="16" height="16" viewBox="0 0 16 16">
+                          <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                        </svg>
+                        Voir détails
+                      </button>
+                      <button
+                        (click)="onCancelSubscription(subscription)"
+                        [disabled]="subscription.status !== 'active'">
+                        <svg width="16" height="16" viewBox="0 0 16 16">
+                          <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                        </svg>
+                        Annuler
+                      </button>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Loading State -->
+          <div *ngIf="isLoading$ | async" class="admin-table-loading">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-600"></div>
+            <p>Chargement des abonnements...</p>
+          </div>
+
+          <!-- Empty State -->
+          <div *ngIf="!(isLoading$ | async) && (subscriptions$ | async)?.length === 0" class="admin-table-empty">
+            <svg ibmIcon="user-subscription" size="48"></svg>
+            <h3>Aucun abonnement trouvé</h3>
+            <p>Les abonnements apparaîtront ici une fois créés.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Coupons Section -->
+      <div *ngIf="selectedTab === 'coupons'">
+        
+        <!-- Coupons Grid -->
+        <div class="admin-coupons-grid">
+          <div *ngFor="let coupon of coupons$ | async; trackBy: trackByCouponId" class="admin-coupon-card">
+            <div class="admin-coupon-header">
+              <div class="admin-coupon-code">
+                <code>{{ coupon.code }}</code>
+                <span
+                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                  [class]="coupon.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'">
+                  {{ coupon.isActive ? 'Actif' : 'Inactif' }}
+                </span>
+              </div>
+              <div class="relative inline-block text-left">
+                <button class="admin-menu-trigger" (click)="toggleCouponMenu(coupon._id)">⋮</button>
+                <div class="admin-menu-dropdown" *ngIf="openMenuId === coupon._id">
+                  <button (click)="onEditItem(coupon)">
+                    <svg width="16" height="16" viewBox="0 0 16 16">
+                      <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708L10.5 9.207l-3-3L12.146.146zM11.207 2L2 11.207V14h2.793L14 4.793 11.207 2z"/>
+                    </svg>
+                    Modifier
+                  </button>
+                  <button (click)="onToggleCouponStatus(coupon)">
+                    <svg width="16" height="16" viewBox="0 0 16 16">
+                      <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                    </svg>
+                    {{ coupon.isActive ? 'Désactiver' : 'Activer' }}
+                  </button>
+                  <button
+                    (click)="onDeleteItem(coupon)"
+                    class="admin-danger-option">
+                    <svg width="16" height="16" viewBox="0 0 16 16">
+                      <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                      <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                    </svg>
+                    Supprimer
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <div class="admin-coupon-details">
+              <h4>{{ coupon.name }}</h4>
+              <p class="admin-coupon-description">{{ coupon.description || 'Aucune description' }}</p>
+              
+              <div class="admin-coupon-value">
+                <span class="admin-discount">
+                  {{ coupon.type === 'percentage' ? coupon.value + '%' : (coupon.value | currency:coupon.currency:'symbol':'1.0-0') }}
+                </span>
+                <span class="admin-discount-type">{{ coupon.type === 'percentage' ? 'de réduction' : 'de remise' }}</span>
+              </div>
+              
+              <div class="admin-coupon-usage">
+                <div class="admin-usage-info">
+                  <span>{{ coupon.usageCount }} / {{ coupon.usageLimit || '∞' }} utilisations</span>
+                </div>
+                <div class="admin-usage-bar" *ngIf="coupon.usageLimit">
+                  <div class="admin-usage-progress" 
+                       [style.width.%]="(coupon.usageCount / coupon.usageLimit) * 100"></div>
+                </div>
+              </div>
+              
+              <div class="admin-coupon-dates" *ngIf="coupon.startDate || coupon.endDate">
+                <div *ngIf="coupon.startDate" class="admin-date">
+                  <span>Début: {{ coupon.startDate | date:'short' }}</span>
+                </div>
+                <div *ngIf="coupon.endDate" class="admin-date">
+                  <span>Fin: {{ coupon.endDate | date:'short' }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty State -->
+        <div *ngIf="!(isLoading$ | async) && (coupons$ | async)?.length === 0" class="admin-coupons-empty">
+          <svg ibmIcon="tag" size="48"></svg>
+          <h3>Aucun coupon trouvé</h3>
+          <p>Créez votre premier coupon de réduction.</p>
+          <button ibmButton="primary" (click)="onCreateItem()">
+            Créer un coupon
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

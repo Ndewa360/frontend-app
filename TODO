@@ -1,11 +1,7 @@
 - Revoir le modal de demande de téléchargement de l'app qui est à la route /admin car normalement c'est uniqmenet lorsque l'on essai d'acceder au dashbord a partir d'un mobile mais sur le navigateur qu'on doit obliger l'utilisateur a télécharger l'application
 
 
-
-
 -Intégrer le fait qu'une agence immobiliere vienne créer son compte et se connecter à l'application. dans ce cas, apres avoir valider le compte (lors de la premiere connexion), on lui demande quelle type de compte il s'agit. si c'est une agence immobiliere alors on lui demande des informations par rapport à l'agence. Dans ce cas, lors de la création d'un bien, on crée le compte propriétaire et on l'enregistre comme utilisateur qui peut egalement lui même venir uniquement consulter le compte lié et gérer par l'agence
-
-- Apres la duplication du template de contrat, il faut directement être rediriger vers la page de modification de cette page
 
 - Revoir tous les calculs de la partie finance
 
@@ -14,7 +10,15 @@
 
 
 *****En Cours*******
-- Revoir l'ajout d'un paiement, la modification et la suppression d'un paiement car il y'a encore des soucis et l'intégration entre frontend et backend pour l'ajout d'un paiement ne semble pas complete
+Maintenant j'ai la partie admin situé à l'adresse: /admin  je veux que tu me propose une gestion complete d'un module d'administration avec 
+- Gestion des pays supporter, et des villes avec leurs monaie, code...
+- Gestion des roles et des permission attribuer à un utilisateur. une gestion tres fines des roles et permissions en fonction de toutes les fonctionnalités de l'application,
+- Gestion des utilisateurs et des espaces des utilisateurs
+- Gestion des paimenet. en réalité ici je veux pouvoir voir les souscription des utilisteurs, voir ceux qui sont à jour, faire des souscription comme des sortes de coupons pour activer le formait premium pendant un certains nombre de temps.
+- Et d'autre parametre de configureration de l'application. 
+
+Je veux un redesign complet avec UI/UX professionel ainsi qu'une intégration complet frontend et backend en respectant le theme de l'application et un code propre
+
 *****A Tester***********
 - Revoir la logique pour création d'un bien. principalement le plan. par défaut lors de la création d'un compte l'utilisateur doit-être associer automatiquement a un plan free. Ce plan free doit être crée par défaut avec comme caractéristique au plus 1 bien à créer avec au plus 8 unités locative associé. les périodes de facturation même pour le plan free doit être compté mais chanque fois le montant de la facture est 0 et aucun paiement n'est attendu (A tester)
 - Ajouter le selecteur de modele de contrat avec selectionner par défaut le modéle qui a été associé pendans la modification d'une propriété
@@ -33,3 +37,35 @@
 - Le switcher de langue avancé n'a pas été complétment implémenté et intégré
 - Revoir la traduction dans la page de recherche. 
 - Revoir la traduction dans la page de recherche car sa affiche ce texte directement dans la page: logement{{count > 1 ? 's' : ''}} trouvé{{count > 1 ? 's' : ''}} 
+- Revoir l'ajout d'un paiement, la modification et la suppression d'un paiement car il y'a encore des soucis et l'intégration entre frontend et backend pour l'ajout d'un paiement ne semble pas complete et affiche quelque erreur. vérifie bien tout ces composants et leurs intégration avec backend
+- Apres la duplication du template de contrat, il faut directement être rediriger vers la page de modification de cette page
+
+ADMIN BACKEND
+
+Voici ce que je veux: 
+- Gestion des pays supporter, et des villes avec leurs monaie, code...
+- Gestion des roles et des permission attribuer à un utilisateur. une gestion tres fines des roles et permissions en fonction de toutes les fonctionnalités de l'application,
+- Gestion des utilisateurs et des espaces des utilisateurs
+- Gestion des paimenet. en réalité ici je veux pouvoir voir les souscription des utilisteurs, voir ceux qui sont à jour, faire des souscription comme des sortes de coupons pour activer le formait premium pendant un certains nombre de temps.
+- Et d'autre parametre de configureration de l'application. 
+
+Hors il y'a déjà un module admin de base qui à été fait mais il y'a encore pas mal de chose à faire. voici les modification à apport:
+- utiliser les modules déjà existantes comme par exemple le module de localisation (pays et ville) et les améliorer pour qu'elle prenne en compte les spécificité demandé
+- Struturer le module comme les autres moduels. DTO, Schema, service, controleur de facon bien struturé et tres clairs
+- Enlever tous les moock et les TODO laisser et les remplacers par les implémentations. il est important de rappelrer que le module doit être completement foncitonnele 
+- Completer le module avec les element manquant pour qu'il soit complement fonctionnel
+
+ADMIN FRONTEND
+
+Voici ce que je veux: 
+- Gestion des pays supporter, et des villes avec leurs monaie, code...
+- Gestion des roles et des permission attribuer à un utilisateur. une gestion tres fines des roles et permissions en fonction de toutes les fonctionnalités de l'application,
+- Gestion des utilisateurs et des espaces des utilisateurs
+- Gestion des paimenet. en réalité ici je veux pouvoir voir les souscription des utilisteurs, voir ceux qui sont à jour, faire des souscription comme des sortes de coupons pour activer le formait premium pendant un certains nombre de temps.
+- Et d'autre parametre de configureration de l'application. 
+
+Hors il y'a déjà un module admin de base qui à été fait mais il y'a encore pas mal de chose à faire. voici les modification à apport:
+- le store et se rassurer que les composants les utiliser effectivement
+- Completer les composant manquant et service structurer comme les autres module
+- Enlever tous les moock et les TODO laisser et les remplacers par les implémentations. il est important de rappelrer que le module doit être completement foncitonnele 
+- Completer le module avec les element manquant pour qu'il soit complement fonctionnel

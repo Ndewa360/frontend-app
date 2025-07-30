@@ -2,7 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store } from '@ngxs/store';
-import { ContractTemplateAction } from '../../../../shared/store/contract-templates';
+import { ContractTemplateAction, ContractTemplateState } from '../../../../shared/store/contract-templates';
 import { ContractTemplateModel, ContractTemplateType } from '../../../../shared/store/contract-templates/contract-template.model';
 
 export interface DuplicateTemplateData {
@@ -54,10 +54,13 @@ export class DuplicateTemplateModalComponent {
         .subscribe({
           next: () => {
             this.loading = false;
-            this.dialogRef.close(true);
+            // Récupérer le nouveau template depuis le store pour le retourner
+            const newTemplate = this.store.selectSnapshot(ContractTemplateState.selectStateCurrentTemplate);
+            this.dialogRef.close({ success: true, newTemplate });
           },
           error: () => {
             this.loading = false;
+            this.dialogRef.close({ success: false });
           }
         });
     }

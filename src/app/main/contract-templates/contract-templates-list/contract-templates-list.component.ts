@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, debounceTime, Observable } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, filter } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
 import { MatDialog } from '@angular/material/dialog';
 
@@ -381,12 +381,30 @@ export class ContractTemplatesListComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
+      if (result?.success && result?.newTemplate) {
         // La duplication a été effectuée avec succès
-        // Le store a déjà été mis à jour par l'action
-         //TODO
-        //Doit rédiriger directement vers la page de modification du nouveau template
-        console.log('Template dupliqué avec succès',result);
+        console.log('✅ Template dupliqué avec succès:', result.newTemplate);
+
+        // Rediriger directement vers la page d'édition du nouveau template
+        console.log('🔄 Redirection vers la page d\'édition du nouveau template:', result.newTemplate._id);
+        this.router.navigate(['../edit', result.newTemplate._id], { relativeTo: this.route });
+      } else if (result?.success) {
+        // Fallback : utiliser le store si le template n'est pas dans le résultat
+        console.log('⚠️ Template dupliqué mais non retourné, utilisation du store...');
+
+        this.store.select(ContractTemplateState.selectStateCurrentTemplate).pipe(
+          takeUntil(this.destroy$),
+          filter((newTemplate: ContractTemplateModel | null) =>
+            newTemplate && newTemplate._id !== template._id)
+        ).subscribe((newTemplate: ContractTemplateModel | null) => {
+          if (newTemplate) {
+            console.log('🔄 Redirection vers la page d\'édition du nouveau template:', newTemplate._id);
+            this.router.navigate(['../edit', newTemplate._id], { relativeTo: this.route });
+          } else {
+            console.warn('⚠️ Nouveau template non trouvé dans le store après duplication');
+            this.store.dispatch(new ContractTemplateAction.FetchTemplates());
+          }
+        });
       }
     });
   }

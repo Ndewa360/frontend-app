@@ -165,19 +165,28 @@ export class ContractTemplateViewComponent implements OnInit, OnDestroy {
         });
 
         dialogRef.afterClosed().subscribe(result => {
-          if (result) {
-            // La duplication a été effectuée avec succès via le store
-            console.log('Template dupliqué avec succès');
+          if (result?.success && result?.newTemplate) {
+            // La duplication a été effectuée avec succès
+            console.log('✅ Template dupliqué avec succès:', result.newTemplate);
 
-            // Récupérer le nouveau template depuis le store et rediriger
+            // Rediriger directement vers la page d'édition du nouveau template
+            console.log('🔄 Redirection vers la page d\'édition du nouveau template:', result.newTemplate._id);
+            this.router.navigate(['/contract-templates/edit', result.newTemplate._id]);
+          } else if (result?.success) {
+            // Fallback : utiliser le store si le template n'est pas dans le résultat
+            console.log('⚠️ Template dupliqué mais non retourné, utilisation du store...');
+
             this.store.select(ContractTemplateState.selectStateCurrentTemplate).pipe(
               takeUntil(this.destroy$),
               filter((newTemplate: ContractTemplateModel | null) =>
-                newTemplate && newTemplate._id !== template._id) // S'assurer que c'est le nouveau template
+                newTemplate && newTemplate._id !== template._id)
             ).subscribe((newTemplate: ContractTemplateModel | null) => {
               if (newTemplate) {
-                console.log('Redirection vers le nouveau template:', newTemplate._id);
-                this.router.navigate(['/contract-templates/view', newTemplate._id]);
+                console.log('🔄 Redirection vers la page d\'édition du nouveau template:', newTemplate._id);
+                this.router.navigate(['/contract-templates/edit', newTemplate._id]);
+              } else {
+                console.warn('⚠️ Nouveau template non trouvé dans le store après duplication');
+                this.router.navigate(['/contract-templates/list']);
               }
             });
           }

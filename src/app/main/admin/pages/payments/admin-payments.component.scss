@@ -1,0 +1,414 @@
+// Variables du thème Ndiye
+$ndiye-primary: rgb(204, 140, 10);
+$ndiye-primary-light: rgba(204, 140, 10, 0.1);
+$ndiye-primary-dark: rgb(184, 126, 9);
+$ndiye-secondary: rgb(39, 122, 252);
+$ndiye-success: #24a148;
+$ndiye-warning: #f1c21b;
+$ndiye-danger: #da1e28;
+$ndiye-info: #0f62fe;
+$ndiye-white: #ffffff;
+$ndiye-light: #f4f4f4;
+$ndiye-medium: #6f6f6f;
+$ndiye-dark: #161616;
+
+.admin-payments {
+  padding: 0;
+  background-color: $ndiye-light;
+  min-height: 100vh;
+
+  // Header
+  .admin-payments-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+    padding: 0 24px;
+
+    .admin-payments-title {
+      h2 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: $ndiye-dark;
+        margin: 0 0 8px;
+      }
+
+      .admin-payments-subtitle {
+        color: $ndiye-medium;
+        font-size: 0.875rem;
+        margin: 0;
+      }
+    }
+
+    .admin-payments-actions {
+      display: flex;
+      gap: 12px;
+    }
+  }
+
+  // Stats Cards
+  .admin-payments-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+    padding: 0 24px;
+
+    .admin-stat-card {
+      background: $ndiye-white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba($ndiye-primary, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+
+      .admin-stat-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+
+        &.revenue {
+          background: rgba($ndiye-primary, 0.1);
+          color: $ndiye-primary;
+        }
+
+        &.payments {
+          background: rgba($ndiye-info, 0.1);
+          color: $ndiye-info;
+        }
+
+        &.subscriptions {
+          background: rgba($ndiye-secondary, 0.1);
+          color: $ndiye-secondary;
+        }
+
+        &.success-rate {
+          background: rgba($ndiye-success, 0.1);
+          color: $ndiye-success;
+        }
+      }
+
+      .admin-stat-content {
+        h3 {
+          font-size: 1.5rem;
+          font-weight: 700;
+          color: $ndiye-dark;
+          margin: 0 0 4px;
+        }
+
+        p {
+          color: $ndiye-medium;
+          font-size: 0.75rem;
+          margin: 0;
+        }
+      }
+    }
+  }
+
+  // Tabs
+  .admin-payments-tabs {
+    background: $ndiye-white;
+    border-radius: 8px;
+    margin: 0 24px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba($ndiye-primary, 0.1);
+    overflow: hidden;
+  }
+
+  // Table
+  .admin-payments-table {
+    .admin-transaction-id {
+      background: rgba($ndiye-primary, 0.1);
+      color: $ndiye-primary-dark;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .admin-user-info {
+      display: flex;
+      flex-direction: column;
+
+      .admin-user-name {
+        font-weight: 500;
+        color: $ndiye-dark;
+        font-size: 0.875rem;
+      }
+
+      .admin-user-email {
+        font-size: 0.75rem;
+        color: $ndiye-medium;
+      }
+    }
+
+    .admin-amount {
+      font-weight: 600;
+      color: $ndiye-primary-dark;
+      font-size: 0.875rem;
+    }
+
+    .admin-payment-method {
+      display: flex;
+      flex-direction: column;
+
+      .admin-method {
+        font-weight: 500;
+        color: $ndiye-dark;
+        font-size: 0.875rem;
+        text-transform: capitalize;
+      }
+
+      .admin-provider {
+        font-size: 0.75rem;
+        color: $ndiye-medium;
+        text-transform: capitalize;
+      }
+    }
+
+    .admin-danger-option {
+      color: $ndiye-danger !important;
+    }
+
+    // Loading State
+    .admin-table-loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px;
+      gap: 16px;
+
+      p {
+        color: $ndiye-medium;
+        font-size: 0.875rem;
+        margin: 0;
+      }
+    }
+
+    // Empty State
+    .admin-table-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px;
+      gap: 16px;
+      text-align: center;
+
+      svg {
+        color: $ndiye-medium;
+        opacity: 0.5;
+      }
+
+      h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: $ndiye-dark;
+        margin: 0;
+      }
+
+      p {
+        color: $ndiye-medium;
+        font-size: 0.875rem;
+        margin: 0 0 16px;
+      }
+    }
+  }
+
+  // Coupons Grid
+  .admin-coupons-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+    padding: 24px;
+
+    .admin-coupon-card {
+      background: $ndiye-white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba($ndiye-primary, 0.1);
+      transition: all 0.3s ease;
+
+      &:hover {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        transform: translateY(-2px);
+      }
+
+      .admin-coupon-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 16px;
+
+        .admin-coupon-code {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+
+          code {
+            background: rgba($ndiye-primary, 0.1);
+            color: $ndiye-primary-dark;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+          }
+        }
+      }
+
+      .admin-coupon-details {
+        h4 {
+          font-size: 1.125rem;
+          font-weight: 600;
+          color: $ndiye-dark;
+          margin: 0 0 8px;
+        }
+
+        .admin-coupon-description {
+          color: $ndiye-medium;
+          font-size: 0.875rem;
+          margin: 0 0 16px;
+          line-height: 1.4;
+        }
+
+        .admin-coupon-value {
+          display: flex;
+          align-items: baseline;
+          gap: 8px;
+          margin-bottom: 16px;
+
+          .admin-discount {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: $ndiye-primary-dark;
+          }
+
+          .admin-discount-type {
+            font-size: 0.875rem;
+            color: $ndiye-medium;
+          }
+        }
+
+        .admin-coupon-usage {
+          margin-bottom: 16px;
+
+          .admin-usage-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 0.875rem;
+            color: $ndiye-medium;
+          }
+
+          .admin-usage-bar {
+            height: 4px;
+            background: rgba($ndiye-primary, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+
+            .admin-usage-progress {
+              height: 100%;
+              background: $ndiye-primary;
+              transition: width 0.3s ease;
+            }
+          }
+        }
+
+        .admin-coupon-dates {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+
+          .admin-date {
+            font-size: 0.75rem;
+            color: $ndiye-medium;
+          }
+        }
+      }
+    }
+  }
+
+  // Coupons Empty State
+  .admin-coupons-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    gap: 16px;
+    text-align: center;
+
+    svg {
+      color: $ndiye-medium;
+      opacity: 0.5;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: $ndiye-dark;
+      margin: 0;
+    }
+
+    p {
+      color: $ndiye-medium;
+      font-size: 0.875rem;
+      margin: 0 0 16px;
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 1024px) {
+  .admin-payments {
+    .admin-payments-stats {
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+
+    .admin-coupons-grid {
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-payments {
+    .admin-payments-header {
+      flex-direction: column;
+      gap: 16px;
+      align-items: stretch;
+
+      .admin-payments-actions {
+        justify-content: flex-end;
+      }
+    }
+
+    .admin-payments-stats {
+      grid-template-columns: 1fr;
+    }
+
+    .admin-coupons-grid {
+      grid-template-columns: 1fr;
+    }
+
+    // Hide some table columns on mobile
+    .admin-payments-table {
+      ibm-table-cell:nth-child(4),
+      ibm-table-cell:nth-child(6),
+      ibm-table-header-cell:nth-child(4),
+      ibm-table-header-cell:nth-child(6) {
+        display: none;
+      }
+    }
+  }
+}

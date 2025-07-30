@@ -7,10 +7,11 @@ import { takeUntil } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { ModalTranslationService } from '../../../../shared/services/modal-translation.service';
-import { 
-  LocationPaymentModel, 
-  LocationPaymentAction, 
+import {
+  LocationPaymentModel,
+  LocationPaymentAction,
   LocationPaymentType,
+  PaymentMethod,
   LocataireModel,
   RoomModel,
   LocationModel,
@@ -128,8 +129,8 @@ export class ModernPaymentModalComponent implements OnInit, OnDestroy {
         datePayment: datePayment,
         reason: transaction.reason || '',
         billingRef: transaction.billingRef || '',
-        paymentMethod: 'CASH', // Valeur par défaut car paymentMethod n'existe pas dans le modèle
-        notes: '' // Valeur par défaut car notes n'existe pas dans le modèle
+        paymentMethod: transaction.paymentMethod || 'CASH',
+        notes: transaction.notes || ''
       });
     }
   }
@@ -163,6 +164,7 @@ export class ModernPaymentModalComponent implements OnInit, OnDestroy {
       ofActionSuccessful(LocationPaymentAction.AddLocationPayment),
       takeUntil(this.destroy$)
     ).subscribe(() => {
+      console.log('✅ Paiement ajouté avec succès');
       this.isLoading = false;
       this.toastr.success('Paiement enregistré avec succès', 'Succès');
       this.dialogRef.close(true);
@@ -173,72 +175,180 @@ export class ModernPaymentModalComponent implements OnInit, OnDestroy {
       ofActionSuccessful(LocationPaymentAction.UpdateLocationPayment),
       takeUntil(this.destroy$)
     ).subscribe(() => {
+      console.log('✅ Paiement modifié avec succès');
       this.isLoading = false;
       this.toastr.success('Paiement modifié avec succès', 'Succès');
       this.dialogRef.close(true);
     });
 
-    // Erreurs
+    // Erreurs d'ajout
     this.actions.pipe(
-      ofActionErrored(LocationPaymentAction.AddLocationPayment, LocationPaymentAction.UpdateLocationPayment),
+      ofActionErrored(LocationPaymentAction.AddLocationPayment),
       takeUntil(this.destroy$)
-    ).subscribe(() => {
+    ).subscribe((ctx) => {
+      console.error('❌ Erreur lors de l\'ajout du paiement:', ctx);
       this.isLoading = false;
-      this.toastr.error('Une erreur est survenue', 'Erreur');
+      const errorMessage = this.getErrorMessage(ctx);
+      this.toastr.error(errorMessage, 'Erreur d\'ajout');
     });
+
+    // Erreurs de modification
+    this.actions.pipe(
+      ofActionErrored(LocationPaymentAction.UpdateLocationPayment),
+      takeUntil(this.destroy$)
+    ).subscribe((ctx) => {
+      console.error('❌ Erreur lors de la modification du paiement:', ctx);
+      this.isLoading = false;
+      const errorMessage = this.getErrorMessage(ctx);
+      this.toastr.error(errorMessage, 'Erreur de modification');
+    });
+  }
+
+  /**
+   * Extrait un message d'erreur lisible
+   */
+  private getErrorMessage(error: any): string {
+    if (error?.error?.message) {
+      return error.error.message;
+    }
+    if (error?.message) {
+      return error.message;
+    }
+    if (typeof error === 'string') {
+      return error;
+    }
+    return 'Une erreur inattendue est survenue';
   }
 
   onSubmit(): void {
     if (this.formGroup.invalid || this.isLoading) {
       this.formGroup.markAllAsTouched();
+      this.toastr.warning('Veuillez corriger les erreurs dans le formulaire', 'Formulaire invalide');
+      return;
+    }
+
+    // Validation des données requises
+    if (!this.validateRequiredData()) {
       return;
     }
 
     this.isLoading = true;
-    
-    const formData = FormUtils.removeNullAttribut({ ...this.formGroup.value });
-    
-    // Gérer la date selon le format (string ou array)
-    let datePayment = formData.datePayment;
-    if (Array.isArray(datePayment)) {
-      datePayment = datePayment[0];
-      datePayment.setHours(6);
-      datePayment = datePayment.toISOString().split("T")[0];
-    } else if (typeof datePayment === 'string') {
-      const date = new Date(datePayment);
-      date.setHours(6);
-      datePayment = date.toISOString().split("T")[0];
-    }
 
-    const paymentData: LocationPaymentModel = {
-      ...formData,
-      datePayment: datePayment,
-      room: this.data.room?._id || this.data.transaction?.room,
-      locataire: this.data.tenant?._id || this.data.transaction?.locataire,
-      property: this.data.room?.property || this.data.transaction?.property
-    };
-    if (this.data.mode === 'create') {
-      // Utiliser la location appropriée
-      const targetLocation = this.data.location;
-      
-      if (!targetLocation) {
-        console.error('Aucune location disponible pour créer le paiement');
-        this.isLoading = false;
-        this.toastr.error('Aucune location disponible', 'Erreur');
-        return;
+    try {
+      const formData = FormUtils.removeNullAttribut({ ...this.formGroup.value });
+
+      // Gérer la date selon le format (string ou array)
+      let datePayment = formData.datePayment;
+      if (Array.isArray(datePayment)) {
+        datePayment = datePayment[0];
+        datePayment.setHours(6);
+        datePayment = datePayment.toISOString().split("T")[0];
+      } else if (typeof datePayment === 'string') {
+        const date = new Date(datePayment);
+        if (isNaN(date.getTime())) {
+          throw new Error('Date de paiement invalide');
+        }
+        date.setHours(6);
+        datePayment = date.toISOString().split("T")[0];
       }
 
-      this.store.dispatch(new LocationPaymentAction.AddLocationPayment({
-        ...paymentData,
-        location: targetLocation._id
-      }));
-    } else {
-      this.store.dispatch(new LocationPaymentAction.UpdateLocationPayment(
-        paymentData,
-        this.data.transaction!._id!,
-        this.data.tenant!._id!
-      ));
+      // Préparer les données selon le format attendu par le backend DTO
+      const paymentData: any = {
+        locationPaymentPrice: formData.locationPaymentPrice,
+        paymentLocationType: formData.paymentLocationType,
+        datePayment: datePayment,
+        reason: formData.reason,
+        paymentMethod: formData.paymentMethod,
+        notes: formData.notes,
+        // IDs requis par le DTO backend
+        roomId: this.data.room?._id || this.data.transaction?.room,
+        locataireId: this.data.tenant?._id || this.data.transaction?.locataire,
+        propertyId: this.data.room?.property || this.data.transaction?.property
+        // Note: billingRef sera généré automatiquement côté backend et ne doit pas être envoyé
+      };
+
+      // Supprimer billingRef pour la création (généré automatiquement côté backend)
+      if (this.data.mode === 'create') {
+        delete paymentData.billingRef;
+      }
+
+      console.log('💰 Données de paiement préparées:', paymentData);
+      console.log('🔍 Validation des IDs:', {
+        roomId: paymentData.roomId,
+        locataireId: paymentData.locataireId,
+        propertyId: paymentData.propertyId,
+        locationId: this.data.location?._id
+      });
+
+      if (this.data.mode === 'create') {
+        // Utiliser la location appropriée
+        const targetLocation = this.data.location;
+
+        if (!targetLocation || !targetLocation._id) {
+          console.error('Aucune location disponible pour créer le paiement');
+          this.isLoading = false;
+          this.toastr.error('Aucune location disponible', 'Erreur');
+          return;
+        }
+
+        this.store.dispatch(new LocationPaymentAction.AddLocationPayment({
+          ...paymentData,
+          locationId: targetLocation._id
+        }));
+      } else {
+        if (!this.data.transaction?._id || !this.data.tenant?._id) {
+          console.error('Données de transaction manquantes pour la modification');
+          this.isLoading = false;
+          this.toastr.error('Données de transaction manquantes', 'Erreur');
+          return;
+        }
+
+        this.store.dispatch(new LocationPaymentAction.UpdateLocationPayment(
+          paymentData,
+          this.data.transaction._id,
+          this.data.tenant._id
+        ));
+      }
+    } catch (error) {
+      console.error('Erreur lors de la préparation des données:', error);
+      this.isLoading = false;
+      this.toastr.error('Erreur lors de la préparation des données', 'Erreur');
     }
+  }
+
+  /**
+   * Valide les données requises selon le mode
+   */
+  private validateRequiredData(): boolean {
+    if (this.data.mode === 'create') {
+      if (!this.data.room?._id) {
+        this.toastr.error('ID de chambre manquant', 'Erreur');
+        this.isLoading = false;
+        return false;
+      }
+      if (!this.data.tenant?._id) {
+        this.toastr.error('ID de locataire manquant', 'Erreur');
+        this.isLoading = false;
+        return false;
+      }
+      if (!this.data.location?._id) {
+        this.toastr.error('ID de location manquant', 'Erreur');
+        this.isLoading = false;
+        return false;
+      }
+      if (!this.data.room?.property) {
+        this.toastr.error('ID de propriété manquant', 'Erreur');
+        this.isLoading = false;
+        return false;
+      }
+    } else {
+      if (!this.data.transaction?._id) {
+        this.toastr.error('ID de transaction manquant', 'Erreur');
+        this.isLoading = false;
+        return false;
+      }
+    }
+    return true;
   }
 
   onCancel(): void {

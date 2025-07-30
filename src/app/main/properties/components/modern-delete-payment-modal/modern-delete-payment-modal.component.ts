@@ -48,35 +48,84 @@ export class ModernDeletePaymentModalComponent implements OnInit, OnDestroy {
   private setupActionListeners(): void {
     // Succès de suppression
     this.actions.pipe(
-      ofActionSuccessful(LocationPaymentAction.DeletehLocationPayment),
+      ofActionSuccessful(LocationPaymentAction.DeleteLocationPayment),
       takeUntil(this.destroy$)
     ).subscribe(() => {
+      console.log('✅ Paiement supprimé avec succès');
       this.isLoading = false;
       this.toastr.success('Paiement supprimé avec succès', 'Succès');
       this.dialogRef.close(true);
     });
 
-    // Erreur
+    // Erreur de suppression
     this.actions.pipe(
-      ofActionErrored(LocationPaymentAction.DeletehLocationPayment),
+      ofActionErrored(LocationPaymentAction.DeleteLocationPayment),
       takeUntil(this.destroy$)
-    ).subscribe(() => {
+    ).subscribe((ctx) => {
+      console.error('❌ Erreur lors de la suppression du paiement:', ctx);
       this.isLoading = false;
-      this.toastr.error('Une erreur est survenue lors de la suppression', 'Erreur');
+      const errorMessage = this.getErrorMessage(ctx);
+      this.toastr.error(errorMessage, 'Erreur de suppression');
     });
   }
 
   onConfirmDelete(): void {
     if (this.isLoading) return;
 
+    // Validation des données requises
+    if (!this.validateDeleteData()) {
+      return;
+    }
+
     this.isLoading = true;
-    
-    // Utiliser l'action de suppression existante
-    this.store.dispatch(new LocationPaymentAction.DeletehLocationPayment(
+
+    console.log('🗑️ Suppression du paiement:', {
+      transactionId: this.data.transaction._id,
+      tenantId: this.data.history.locataire._id,
+      propertyId: this.data.history.property._id
+    });
+
+    // Utiliser l'action de suppression corrigée
+    this.store.dispatch(new LocationPaymentAction.DeleteLocationPayment(
       this.data.transaction._id!,
       this.data.history.locataire._id!,
       this.data.history.property._id! // Ajouter le propertyID requis
     ));
+  }
+
+  /**
+   * Valide les données requises pour la suppression
+   */
+  private validateDeleteData(): boolean {
+    if (!this.data.transaction?._id) {
+      this.toastr.error('ID de transaction manquant', 'Erreur');
+      return false;
+    }
+    if (!this.data.history?.locataire?._id) {
+      this.toastr.error('ID de locataire manquant', 'Erreur');
+      return false;
+    }
+    if (!this.data.history?.property?._id) {
+      this.toastr.error('ID de propriété manquant', 'Erreur');
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * Extrait un message d'erreur lisible
+   */
+  private getErrorMessage(error: any): string {
+    if (error?.error?.message) {
+      return error.error.message;
+    }
+    if (error?.message) {
+      return error.message;
+    }
+    if (typeof error === 'string') {
+      return error;
+    }
+    return 'Une erreur inattendue est survenue lors de la suppression';
   }
 
   onCancel(): void {

@@ -1,0 +1,373 @@
+<!-- Admin Settings -->
+<div class="admin-settings">
+  <!-- Header -->
+  <div class="admin-settings-header">
+    <div class="admin-settings-title">
+      <h2>Paramètres système</h2>
+      <p class="admin-settings-subtitle">Configuration et maintenance de l'application</p>
+    </div>
+    <div class="admin-settings-actions">
+      <button class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50" (click)="onRefreshData()">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+        </svg>
+        Actualiser
+      </button>
+      <button
+        class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+        (click)="onResetForm()"
+        [disabled]="!hasUnsavedChanges">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path>
+        </svg>
+        Annuler
+      </button>
+      <button
+        class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-yellow-600 border border-transparent rounded-md hover:bg-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed"
+        (click)="onSaveSettings()"
+        [disabled]="!hasUnsavedChanges || settingsForm.invalid">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path>
+        </svg>
+        Sauvegarder
+      </button>
+    </div>
+  </div>
+
+  <!-- System Info Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8" *ngIf="systemInfo$ | async as systemInfo">
+    <div class="bg-white rounded-lg shadow p-6 border border-gray-200">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+        </div>
+        <div class="ml-4">
+          <h3 class="text-lg font-semibold text-gray-900">{{ systemInfo.version }}</h3>
+          <p class="text-sm text-gray-500">Version</p>
+        </div>
+      </div>
+    </div>
+    <div class="bg-white rounded-lg shadow p-6 border border-gray-200">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+        </div>
+        <div class="ml-4">
+          <h3 class="text-lg font-semibold text-gray-900">{{ systemInfo.uptime | number:'1.0-0' }}h</h3>
+          <p class="text-sm text-gray-500">Temps de fonctionnement</p>
+        </div>
+      </div>
+    </div>
+    <div class="bg-white rounded-lg shadow p-6 border border-gray-200">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path>
+            </svg>
+          </div>
+        </div>
+        <div class="ml-4">
+          <h3 class="text-lg font-semibold text-gray-900">{{ systemInfo.memoryUsage.percentage | number:'1.0-0' }}%</h3>
+          <p class="text-sm text-gray-500">Utilisation mémoire</p>
+        </div>
+      </div>
+    </div>
+    <div class="bg-white rounded-lg shadow p-6 border border-gray-200">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+            </svg>
+          </div>
+        </div>
+        <div class="ml-4">
+          <h3 class="text-lg font-semibold text-gray-900">{{ systemInfo.totalUsers | number }}</h3>
+          <p class="text-sm text-gray-500">Utilisateurs totaux</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Form -->
+  <div class="admin-settings-form">
+    <form [formGroup]="settingsForm" (ngSubmit)="onSaveSettings()">
+      <!-- Settings Navigation -->
+      <div class="bg-white rounded-lg shadow border border-gray-200 mb-6">
+        <div class="border-b border-gray-200">
+          <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+            <button
+              *ngFor="let section of settingsSections"
+              type="button"
+              class="py-4 px-6 text-sm font-medium border-b-2 transition-colors duration-200 flex items-center gap-2"
+              [class]="selectedTab === section.key ? 'border-yellow-500 text-yellow-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+              (click)="onTabChange(section.key)">
+              <svg class="w-5 h-5" [innerHTML]="getSectionIcon(section.icon)"></svg>
+              <span>{{ section.label }}</span>
+            </button>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Settings Content -->
+      <div class="admin-settings-content">
+        <!-- General Settings -->
+        <div class="admin-settings-section" *ngIf="selectedTab === 'general'">
+          <h3>Paramètres généraux</h3>
+          
+          <div class="admin-form-grid">
+            <div class="admin-form-group">
+              <label class="block text-sm font-medium text-gray-700 mb-2">Nom de l'application</label>
+              <input type="text" formControlName="appName" placeholder="Ndiye"
+                     class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500">
+            </div>
+
+            <div class="admin-form-group">
+              <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+              <textarea formControlName="appDescription" placeholder="Plateforme de location immobilière" rows="3"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500"></textarea>
+            </div>
+
+            <div class="admin-form-group">
+              <label class="block text-sm font-medium text-gray-700 mb-2">Email de support</label>
+              <input type="email" formControlName="supportEmail" placeholder="support@ndiye.com"
+                     class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500">
+            </div>
+
+            <div class="admin-form-group">
+              <label class="block text-sm font-medium text-gray-700 mb-2">Téléphone de support</label>
+              <input type="tel" formControlName="supportPhone" placeholder="+237 6XX XXX XXX"
+                     class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500">
+            </div>
+
+            <div class="admin-form-group">
+              <label class="block text-sm font-medium text-gray-700 mb-2">Langue par défaut</label>
+              <select formControlName="defaultLanguage"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500">
+                <option value="fr">Français</option>
+                <option value="en">English</option>
+              </select>
+            </div>
+
+            <div class="admin-form-group">
+              <label class="block text-sm font-medium text-gray-700 mb-2">Devise par défaut</label>
+              <select formControlName="defaultCurrency"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500">
+                <option value="XAF">XAF (Franc CFA)</option>
+                <option value="EUR">EUR (Euro)</option>
+                <option value="USD">USD (Dollar)</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="admin-form-toggles">
+            <div class="admin-toggle-group">
+              <div class="flex items-center justify-between">
+                <label class="text-sm font-medium text-gray-700">Autoriser les nouvelles inscriptions</label>
+                <button type="button"
+                        class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
+                        [class]="settingsForm.get('registrationEnabled')?.value ? 'bg-yellow-600' : 'bg-gray-200'"
+                        (click)="toggleSetting('registrationEnabled')">
+                  <span class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+                        [class]="settingsForm.get('registrationEnabled')?.value ? 'translate-x-5' : 'translate-x-0'"></span>
+                </button>
+              </div>
+            </div>
+
+            <div class="admin-toggle-group">
+              <div class="flex items-center justify-between">
+                <label class="text-sm font-medium text-gray-700">Vérification email obligatoire</label>
+                <button type="button"
+                        class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
+                        [class]="settingsForm.get('emailVerificationRequired')?.value ? 'bg-yellow-600' : 'bg-gray-200'"
+                        (click)="toggleSetting('emailVerificationRequired')">
+                  <span class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+                        [class]="settingsForm.get('emailVerificationRequired')?.value ? 'translate-x-5' : 'translate-x-0'"></span>
+                </button>
+              </div>
+            </div>
+
+            <div class="admin-toggle-group">
+              <div class="flex items-center justify-between">
+                <label class="text-sm font-medium text-gray-700">Mode maintenance</label>
+                <button type="button"
+                        class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
+                        [class]="settingsForm.get('maintenanceMode')?.value ? 'bg-yellow-600' : 'bg-gray-200'"
+                        (click)="toggleSetting('maintenanceMode')">
+                  <span class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+                        [class]="settingsForm.get('maintenanceMode')?.value ? 'translate-x-5' : 'translate-x-0'"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Email Settings -->
+        <div class="admin-settings-section" *ngIf="selectedTab === 'email'">
+          <h3>Configuration email</h3>
+          
+          <div class="admin-form-grid">
+            <div class="admin-form-group">
+              <label>Fournisseur email</label>
+              <select formControlName="emailProvider"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500">
+                <option value="smtp">SMTP</option>
+                <option value="sendgrid">SendGrid</option>
+                <option value="mailgun">Mailgun</option>
+              </select>
+            </div>
+            
+            <div class="admin-form-group" *ngIf="settingsForm.get('emailProvider')?.value === 'smtp'">
+              <label>Serveur SMTP</label>
+              <ibm-text-input formControlName="smtpHost" placeholder="smtp.gmail.com"></ibm-text-input>
+            </div>
+            
+            <div class="admin-form-group" *ngIf="settingsForm.get('emailProvider')?.value === 'smtp'">
+              <label>Port SMTP</label>
+              <ibm-number-input formControlName="smtpPort"></ibm-number-input>
+            </div>
+            
+            <div class="admin-form-group">
+              <label>Email expéditeur</label>
+              <ibm-text-input formControlName="fromEmail" placeholder="noreply@ndiye.com"></ibm-text-input>
+            </div>
+            
+            <div class="admin-form-group">
+              <label>Nom expéditeur</label>
+              <ibm-text-input formControlName="fromName" placeholder="Ndiye"></ibm-text-input>
+            </div>
+          </div>
+          
+          <div class="admin-form-actions">
+            <button type="button" ibmButton="secondary" (click)="onTestEmailConfiguration()">
+              <svg ibmIcon="email" size="16"></svg>
+              Tester la configuration
+            </button>
+          </div>
+        </div>
+
+        <!-- Security Settings -->
+        <div class="admin-settings-section" *ngIf="selectedTab === 'security'">
+          <h3>Paramètres de sécurité</h3>
+          
+          <div class="admin-form-grid">
+            <div class="admin-form-group">
+              <label class="block text-sm font-medium text-gray-700 mb-2">Longueur minimale du mot de passe</label>
+              <input type="number" formControlName="passwordMinLength" min="6" max="32"
+                     class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500">
+            </div>
+
+            <div class="admin-form-group">
+              <label class="block text-sm font-medium text-gray-700 mb-2">Timeout de session (secondes)</label>
+              <input type="number" formControlName="sessionTimeout"
+                     class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500">
+            </div>
+
+            <div class="admin-form-group">
+              <label class="block text-sm font-medium text-gray-700 mb-2">Tentatives de connexion max</label>
+              <input type="number" formControlName="maxLoginAttempts" min="3" max="10"
+                     class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500">
+            </div>
+            
+            <div class="admin-form-group">
+              <label>Durée de verrouillage (secondes)</label>
+              <ibm-number-input formControlName="lockoutDuration"></ibm-number-input>
+            </div>
+          </div>
+          
+          <div class="admin-form-toggles">
+            <div class="admin-toggle-group">
+              <ibm-toggle formControlName="passwordRequireUppercase">
+                <label>Majuscules obligatoires</label>
+              </ibm-toggle>
+            </div>
+            
+            <div class="admin-toggle-group">
+              <ibm-toggle formControlName="passwordRequireLowercase">
+                <label>Minuscules obligatoires</label>
+              </ibm-toggle>
+            </div>
+            
+            <div class="admin-toggle-group">
+              <ibm-toggle formControlName="passwordRequireNumbers">
+                <label>Chiffres obligatoires</label>
+              </ibm-toggle>
+            </div>
+            
+            <div class="admin-toggle-group">
+              <ibm-toggle formControlName="passwordRequireSymbols">
+                <label>Symboles obligatoires</label>
+              </ibm-toggle>
+            </div>
+            
+            <div class="admin-toggle-group">
+              <ibm-toggle formControlName="twoFactorRequired">
+                <label>Authentification à deux facteurs</label>
+              </ibm-toggle>
+            </div>
+          </div>
+        </div>
+
+        <!-- Maintenance Settings -->
+        <div class="admin-settings-section" *ngIf="selectedTab === 'maintenance'">
+          <h3>Maintenance et sauvegardes</h3>
+          
+          <div class="admin-form-grid">
+            <div class="admin-form-group">
+              <label class="block text-sm font-medium text-gray-700 mb-2">Fréquence des sauvegardes</label>
+              <select formControlName="backupFrequency"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500">
+                <option value="daily">Quotidienne</option>
+                <option value="weekly">Hebdomadaire</option>
+                <option value="monthly">Mensuelle</option>
+              </select>
+            </div>
+
+            <div class="admin-form-group">
+              <label class="block text-sm font-medium text-gray-700 mb-2">Rétention des sauvegardes (jours)</label>
+              <input type="number" formControlName="backupRetention" min="7" max="365"
+                     class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500">
+            </div>
+          </div>
+          
+          <div class="admin-form-toggles">
+            <div class="admin-toggle-group">
+              <ibm-toggle formControlName="backupsEnabled">
+                <label>Sauvegardes automatiques</label>
+              </ibm-toggle>
+            </div>
+          </div>
+          
+          <div class="admin-form-actions">
+            <button type="button" ibmButton="secondary" (click)="onCreateBackup()">
+              <svg ibmIcon="save" size="16"></svg>
+              Créer une sauvegarde
+            </button>
+            
+            <button type="button" ibmButton="secondary" (click)="onClearCache()">
+              <svg ibmIcon="clean" size="16"></svg>
+              Vider le cache
+            </button>
+            
+            <button 
+              type="button" 
+              ibmButton="danger" 
+              (click)="onToggleMaintenanceMode()">
+              <svg ibmIcon="warning" size="16"></svg>
+              {{ settingsForm.get('maintenanceMode')?.value ? 'Désactiver' : 'Activer' }} la maintenance
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

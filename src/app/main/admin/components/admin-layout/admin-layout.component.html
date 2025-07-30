@@ -1,0 +1,71 @@
+<!-- Admin Layout Container -->
+<div class="admin-layout">
+  <!-- Header -->
+  <ibm-header name="Ndiye Admin" class="admin-header">
+    <ibm-header-navigation>
+      <ibm-header-item>
+        <a routerLink="/admin/dashboard" class="admin-logo">
+          <i class="fas fa-tachometer-alt" style="font-size: 20px;"></i>
+          <span class="admin-logo-text">Ndiye Admin</span>
+        </a>
+      </ibm-header-item>
+    </ibm-header-navigation>
+
+    <ibm-header-global>
+      <!-- Header simplifié - Les notifications et profil sont dans la sidebar principale -->
+      <div class="admin-header-title">
+        <h1>Administration</h1>
+      </div>
+    </ibm-header-global>
+  </ibm-header>
+
+  <!-- Main Content Area -->
+  <div class="admin-content">
+    <!-- Sidebar Navigation -->
+    <nav class="admin-sidebar">
+      <div class="admin-sidebar-content">
+        <!-- Page Title -->
+        <div class="admin-page-header">
+          <h1 class="admin-page-title">{{ pageTitle }}</h1>
+          <ibm-breadcrumb class="admin-breadcrumb">
+            <ibm-breadcrumb-item *ngFor="let crumb of breadcrumbs">
+              {{ crumb }}
+            </ibm-breadcrumb-item>
+          </ibm-breadcrumb>
+        </div>
+
+        <!-- Navigation Menu -->
+        <div class="admin-nav-menu">
+          <div class="admin-nav-section">
+            <h3 class="admin-nav-section-title">Navigation</h3>
+            <ul class="admin-nav-list">
+              <li *ngFor="let item of menuItems" class="admin-nav-item">
+                <a [routerLink]="item.route" 
+                   class="admin-nav-link"
+                   [class.active]="isActiveRoute(item.route)"
+                   [title]="item.description">
+                  <i [class]="'fas fa-' + item.icon + ' admin-nav-icon'" style="font-size: 20px;"></i>
+                  <span class="admin-nav-label">{{ item.label }}</span>
+                  <span *ngIf="item.badge" class="admin-nav-badge">{{ item.badge }}</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+      <div class="admin-main-content">
+        <!-- Loading Indicator -->
+        <div class="admin-loading" *ngIf="false">
+          <ibm-loading></ibm-loading>
+        </div>
+
+        <!-- Router Outlet -->
+        <router-outlet></router-outlet>
+      </div>
+    </main>
+  </div>
+</div>

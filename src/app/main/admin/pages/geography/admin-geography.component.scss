@@ -1,0 +1,334 @@
+// Variables du thème Ndiye
+$ndiye-primary: rgb(204, 140, 10);
+$ndiye-primary-light: rgba(204, 140, 10, 0.1);
+$ndiye-primary-dark: rgb(184, 126, 9);
+$ndiye-secondary: rgb(39, 122, 252);
+$ndiye-success: #24a148;
+$ndiye-warning: #f1c21b;
+$ndiye-danger: #da1e28;
+$ndiye-info: #0f62fe;
+$ndiye-white: #ffffff;
+$ndiye-light: #f4f4f4;
+$ndiye-medium: #6f6f6f;
+$ndiye-dark: #161616;
+
+.admin-geography {
+  padding: 0;
+  background-color: $ndiye-light;
+  min-height: 100vh;
+
+  // Header
+  .admin-geography-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+    padding: 0 24px;
+
+    .admin-geography-title {
+      h2 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: $ndiye-dark;
+        margin: 0 0 8px;
+      }
+
+      .admin-geography-subtitle {
+        color: $ndiye-medium;
+        font-size: 0.875rem;
+        margin: 0;
+      }
+    }
+
+    .admin-geography-actions {
+      display: flex;
+      gap: 12px;
+    }
+  }
+
+  // Stats Cards
+  .admin-geography-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+    padding: 0 24px;
+
+    .admin-stat-card {
+      background: $ndiye-white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba($ndiye-primary, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+
+      .admin-stat-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+
+        &.countries {
+          background: rgba($ndiye-info, 0.1);
+          color: $ndiye-info;
+        }
+
+        &.cities {
+          background: rgba($ndiye-success, 0.1);
+          color: $ndiye-success;
+        }
+
+        &.currencies {
+          background: rgba($ndiye-primary, 0.1);
+          color: $ndiye-primary;
+        }
+
+        &.active {
+          background: rgba($ndiye-secondary, 0.1);
+          color: $ndiye-secondary;
+        }
+      }
+
+      .admin-stat-content {
+        h3 {
+          font-size: 1.5rem;
+          font-weight: 700;
+          color: $ndiye-dark;
+          margin: 0 0 4px;
+        }
+
+        p {
+          color: $ndiye-medium;
+          font-size: 0.75rem;
+          margin: 0;
+        }
+      }
+    }
+  }
+
+  // Tabs
+  .admin-geography-tabs {
+    background: $ndiye-white;
+    border-radius: 8px;
+    margin: 0 24px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba($ndiye-primary, 0.1);
+    overflow: hidden;
+  }
+
+  // Table
+  .admin-geography-table {
+    .admin-country-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .admin-country-flag {
+        font-size: 1.2rem;
+      }
+
+      .admin-country-name {
+        font-weight: 500;
+        color: $ndiye-dark;
+      }
+    }
+
+    .admin-country-code {
+      background: rgba($ndiye-primary, 0.1);
+      color: $ndiye-primary-dark;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .admin-country-currency,
+    .admin-city-name {
+      font-weight: 500;
+      color: $ndiye-dark;
+    }
+
+    .admin-count {
+      color: $ndiye-medium;
+      font-size: 0.875rem;
+    }
+
+    .admin-coordinates {
+      font-family: monospace;
+      font-size: 0.75rem;
+      color: $ndiye-medium;
+    }
+
+    .admin-no-data {
+      color: $ndiye-medium;
+      font-style: italic;
+      font-size: 0.75rem;
+    }
+
+    .admin-danger-option {
+      color: $ndiye-danger !important;
+    }
+
+    // Loading State
+    .admin-table-loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px;
+      gap: 16px;
+
+      p {
+        color: $ndiye-medium;
+        font-size: 0.875rem;
+        margin: 0;
+      }
+    }
+
+    // Empty State
+    .admin-table-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px;
+      gap: 16px;
+      text-align: center;
+
+      svg {
+        color: $ndiye-medium;
+        opacity: 0.5;
+      }
+
+      h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: $ndiye-dark;
+        margin: 0;
+      }
+
+      p {
+        color: $ndiye-medium;
+        font-size: 0.875rem;
+        margin: 0 0 16px;
+      }
+    }
+  }
+
+  // Currencies Grid
+  .admin-currencies-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    padding: 24px;
+
+    .admin-currency-card {
+      background: $ndiye-white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba($ndiye-primary, 0.1);
+
+      .admin-currency-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+
+        h4 {
+          font-size: 1.125rem;
+          font-weight: 600;
+          color: $ndiye-dark;
+          margin: 0;
+        }
+      }
+
+      .admin-currency-details {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+
+        .admin-currency-info {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+
+          .admin-currency-code {
+            background: rgba($ndiye-primary, 0.1);
+            color: $ndiye-primary-dark;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            font-weight: 600;
+          }
+
+          .admin-currency-symbol {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: $ndiye-dark;
+          }
+        }
+
+        .admin-currency-rate {
+          font-size: 0.875rem;
+          color: $ndiye-medium;
+        }
+
+        .admin-currency-status {
+          display: flex;
+          justify-content: flex-start;
+        }
+      }
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 1024px) {
+  .admin-geography {
+    .admin-geography-stats {
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+
+    .admin-currencies-grid {
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-geography {
+    .admin-geography-header {
+      flex-direction: column;
+      gap: 16px;
+      align-items: stretch;
+
+      .admin-geography-actions {
+        justify-content: flex-end;
+      }
+    }
+
+    .admin-geography-stats {
+      grid-template-columns: 1fr;
+    }
+
+    .admin-currencies-grid {
+      grid-template-columns: 1fr;
+    }
+
+    // Hide some table columns on mobile
+    .admin-geography-table {
+      ibm-table-cell:nth-child(3),
+      ibm-table-cell:nth-child(4),
+      ibm-table-header-cell:nth-child(3),
+      ibm-table-header-cell:nth-child(4) {
+        display: none;
+      }
+    }
+  }
+}
