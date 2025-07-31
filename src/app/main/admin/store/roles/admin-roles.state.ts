@@ -280,4 +280,42 @@ export class AdminRolesState {
       new AdminRolesAction.LoadPermissionsMatrix()
     ]);
   }
+
+  @Action(AdminRolesAction.ToggleRolePermission)
+  toggleRolePermission(ctx: StateContext<AdminRolesStateModel>, action: AdminRolesAction.ToggleRolePermission) {
+    return this.adminRolesService.toggleRolePermission(action.roleId, action.permissionCode, action.granted).pipe(
+      tap(updatedRole => {
+        ctx.dispatch(new AdminRolesAction.ToggleRolePermissionSuccess(updatedRole));
+      }),
+      catchError(error => {
+        ctx.dispatch(new AdminRolesAction.ToggleRolePermissionFailure(error));
+        return throwError(error);
+      })
+    );
+  }
+
+  @Action(AdminRolesAction.ToggleRolePermissionSuccess)
+  toggleRolePermissionSuccess(ctx: StateContext<AdminRolesStateModel>, action: AdminRolesAction.ToggleRolePermissionSuccess) {
+    const state = ctx.getState();
+
+    // Mettre à jour le rôle dans la liste des rôles
+    const updatedRoles = state.roles.map(role =>
+      role._id === action.updatedRole._id ? action.updatedRole : role
+    );
+
+    ctx.patchState({
+      roles: updatedRoles
+    });
+
+    // Recharger la matrice des permissions pour refléter les changements
+    ctx.dispatch(new AdminRolesAction.LoadPermissionsMatrix());
+  }
+
+  @Action(AdminRolesAction.ToggleRolePermissionFailure)
+  toggleRolePermissionFailure(ctx: StateContext<AdminRolesStateModel>, action: AdminRolesAction.ToggleRolePermissionFailure) {
+    ctx.patchState({
+      error: action.error,
+      loading: false
+    });
+  }
 }

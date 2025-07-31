@@ -1,3 +1,5 @@
+import { AdminRole } from './admin-roles.model';
+
 export namespace AdminRolesAction {
   
   // Load Roles
@@ -155,5 +157,21 @@ export namespace AdminRolesAction {
   // Refresh Data
   export class RefreshData {
     static readonly type = '[Admin Roles] Refresh Data';
+  }
+
+  // Toggle Role Permission
+  export class ToggleRolePermission {
+    static readonly type = '[Admin Roles] Toggle Role Permission';
+    constructor(public roleId: string, public permissionCode: string, public granted: boolean) {}
+  }
+
+  export class ToggleRolePermissionSuccess {
+    static readonly type = '[Admin Roles] Toggle Role Permission Success';
+    constructor(public updatedRole: AdminRole) {}
+  }
+
+  export class ToggleRolePermissionFailure {
+    static readonly type = '[Admin Roles] Toggle Role Permission Failure';
+    constructor(public error: any) {}
   }
 }

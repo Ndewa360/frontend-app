@@ -100,12 +100,27 @@ export class AdminGeographyState {
   @Action(AdminGeographyAction.LoadCountries)
   loadCountries(ctx: StateContext<AdminGeographyStateModel>, action: AdminGeographyAction.LoadCountries) {
     ctx.patchState({ loading: true, error: null });
-    
+
     return this.adminGeographyService.getCountries(action.filters).pipe(
       tap(response => {
-        ctx.dispatch(new AdminGeographyAction.LoadCountriesSuccess(response.countries, response.total));
+        console.log('🌍 Réponse backend countries:', response);
+        console.log('🌍 Type de response:', typeof response);
+        console.log('🌍 Clés de response:', Object.keys(response || {}));
+
+        // Vérifier si response.countries existe
+        if (response && response.countries) {
+          console.log('✅ response.countries trouvé:', response.countries.length, 'pays');
+          ctx.dispatch(new AdminGeographyAction.LoadCountriesSuccess(response.countries, response.total || response.countries.length));
+        } else if (Array.isArray(response)) {
+          console.log('✅ Response est un array direct:', response.length, 'pays');
+          ctx.dispatch(new AdminGeographyAction.LoadCountriesSuccess(response, response.length));
+        } else {
+          console.log('❌ Structure de response inattendue:', response);
+          ctx.dispatch(new AdminGeographyAction.LoadCountriesSuccess([], 0));
+        }
       }),
       catchError(error => {
+        console.error('❌ Erreur chargement countries:', error);
         ctx.dispatch(new AdminGeographyAction.LoadCountriesFailure(error));
         return throwError(error);
       })
@@ -140,12 +155,27 @@ export class AdminGeographyState {
   @Action(AdminGeographyAction.LoadCities)
   loadCities(ctx: StateContext<AdminGeographyStateModel>, action: AdminGeographyAction.LoadCities) {
     ctx.patchState({ loading: true, error: null });
-    
+
     return this.adminGeographyService.getCities(action.filters).pipe(
       tap(response => {
-        ctx.dispatch(new AdminGeographyAction.LoadCitiesSuccess(response.cities, response.total));
+        console.log('🏙️ Réponse backend cities:', response);
+        console.log('🏙️ Type de response:', typeof response);
+        console.log('🏙️ Clés de response:', Object.keys(response || {}));
+
+        // Vérifier si response.cities existe
+        if (response && response.cities) {
+          console.log('✅ response.cities trouvé:', response.cities.length, 'villes');
+          ctx.dispatch(new AdminGeographyAction.LoadCitiesSuccess(response.cities, response.total || response.cities.length));
+        } else if (Array.isArray(response)) {
+          console.log('✅ Response est un array direct:', response.length, 'villes');
+          ctx.dispatch(new AdminGeographyAction.LoadCitiesSuccess(response, response.length));
+        } else {
+          console.log('❌ Structure de response inattendue:', response);
+          ctx.dispatch(new AdminGeographyAction.LoadCitiesSuccess([], 0));
+        }
       }),
       catchError(error => {
+        console.error('❌ Erreur chargement cities:', error);
         ctx.dispatch(new AdminGeographyAction.LoadCitiesFailure(error));
         return throwError(error);
       })

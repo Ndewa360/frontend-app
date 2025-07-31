@@ -16,14 +16,19 @@ export interface AdminRole {
 export interface AdminPermission {
   _id: string;
   name: string;
-  displayName: string;
-  description?: string;
+  code?: string;
+  displayName?: string;
+  description: string;
   module: string;
-  action: string;
-  resource: string;
-  isSystem: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+  category?: string;
+  action?: string;
+  resource?: string;
+  isSystem?: boolean;
+  isSystemPermission?: boolean;
+  isDeleted?: boolean;
+  isDisabled?: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface RoleStats {
@@ -69,6 +74,18 @@ export interface PermissionsMatrix {
   roles: MatrixRole[];
   permissions: MatrixPermission[];
   matrix: { [roleId: string]: { [permissionId: string]: boolean } };
+  modules?: Array<{
+    name: string;
+    displayName: string;
+    permissions: Array<{
+      permission: MatrixPermission;
+      roles: Array<{
+        roleId: string;
+        roleName: string;
+        hasPermission: boolean;
+      }>;
+    }>;
+  }>;
 }
 
 export interface MatrixRole {
@@ -77,15 +94,23 @@ export interface MatrixRole {
   displayName: string;
   color: string;
   userCount: number;
+  isSystemRole?: boolean;
 }
 
 export interface MatrixPermission {
   _id: string;
   name: string;
+  code: string;
   displayName: string;
   module: string;
+  category: string;
   action: string;
   resource: string;
+  isSystem?: boolean;
+  isActive?: boolean;
+  isDeleted?: boolean;
+  isDisabled?: boolean;
+  description?: string;
 }
 
 export interface CreateRoleDto {

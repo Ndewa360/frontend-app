@@ -1,340 +1,945 @@
 <!-- Admin Geography Management -->
 <div class="admin-geography">
-  <!-- Header -->
-  <div class="admin-geography-header">
-    <div class="admin-geography-title">
-      <h2>Gestion géographique</h2>
-      <p class="admin-geography-subtitle">Gérer les pays, villes et devises</p>
-    </div>
-    <div class="admin-geography-actions">
-      <button class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" (click)="onRefreshData()">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-        </svg>
-        Actualiser
-      </button>
-      <button class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-yellow-600 border border-transparent rounded-md hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500" (click)="onCreateItem()">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-        </svg>
-        Ajouter
-      </button>
-    </div>
-  </div>
-
-  <!-- Stats Cards -->
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8" *ngIf="stats$ | async as stats">
-    <div class="bg-white rounded-lg shadow p-6 border border-gray-200">
-      <div class="flex items-center">
-        <div class="flex-shrink-0">
-          <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-            </svg>
+  <!-- Header moderne avec design avancé -->
+  <div class="geography-header-modern">
+    <div class="header-content">
+      <div class="header-left">
+        <div class="title-section">
+          <div class="title-with-icon">
+            <div class="title-icon">
+              <i class="fas fa-globe-americas"></i>
+            </div>
+            <div class="title-text">
+              <h2 class="geography-title">Gestion Géographique</h2>
+              <p class="geography-subtitle">Administration des pays, villes et devises de la plateforme</p>
+            </div>
           </div>
-        </div>
-        <div class="ml-4">
-          <h3 class="text-2xl font-bold text-gray-900">{{ stats.countries.total | number }}</h3>
-          <p class="text-sm text-gray-500">Pays</p>
+          <div class="stats-overview">
+            <div class="overview-badge countries-badge">
+              <i class="fas fa-flag"></i>
+              <span class="overview-number">{{ (countries$ | async)?.length || 0 }}</span>
+              <span class="overview-label">Pays</span>
+            </div>
+            <div class="overview-badge cities-badge">
+              <i class="fas fa-city"></i>
+              <span class="overview-number">{{ (cities$ | async)?.length || 0 }}</span>
+              <span class="overview-label">Villes</span>
+            </div>
+            <div class="overview-badge currencies-badge">
+              <i class="fas fa-coins"></i>
+              <span class="overview-number">{{ getTotalCurrenciesCount() }}</span>
+              <span class="overview-label">Devises</span>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="bg-white rounded-lg shadow p-6 border border-gray-200">
-      <div class="flex items-center">
-        <div class="flex-shrink-0">
-          <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-            </svg>
-          </div>
-        </div>
-        <div class="ml-4">
-          <h3 class="text-2xl font-bold text-gray-900">{{ stats.cities.total | number }}</h3>
-          <p class="text-sm text-gray-500">Villes</p>
-        </div>
-      </div>
-    </div>
-    <div class="bg-white rounded-lg shadow p-6 border border-gray-200">
-      <div class="flex items-center">
-        <div class="flex-shrink-0">
-          <div class="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center">
-            <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-          </div>
-        </div>
-        <div class="ml-4">
-          <h3 class="text-2xl font-bold text-gray-900">{{ stats.currencies.total | number }}</h3>
-          <p class="text-sm text-gray-500">Devises</p>
-        </div>
-      </div>
-    </div>
-    <div class="bg-white rounded-lg shadow p-6 border border-gray-200">
-      <div class="flex items-center">
-        <div class="flex-shrink-0">
-          <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-          </div>
-        </div>
-        <div class="ml-4">
-          <h3 class="text-2xl font-bold text-gray-900">{{ stats.countries.active | number }}</h3>
-          <p class="text-sm text-gray-500">Pays actifs</p>
+      <div class="header-right">
+        <div class="action-buttons">
+          <button class="btn-modern btn-refresh" 
+                  (click)="onRefreshData()"
+                  [disabled]="isRefreshing"
+                  title="Actualiser les données géographiques">
+            <i class="fas fa-sync-alt" [class.fa-spin]="isRefreshing"></i>
+            <span>Actualiser</span>
+          </button>
+          
+          <!-- Boutons spécifiques selon l'onglet actif -->
+          <button class="btn-modern btn-primary" 
+                  *ngIf="selectedTab === 'countries'"
+                  (click)="onCreateCountry()"
+                  title="Ajouter un nouveau pays">
+            <i class="fas fa-flag"></i>
+            <span>Nouveau Pays</span>
+          </button>
+          
+          <button class="btn-modern btn-primary" 
+                  *ngIf="selectedTab === 'cities'"
+                  (click)="onCreateCity()"
+                  title="Ajouter une nouvelle ville">
+            <i class="fas fa-city"></i>
+            <span>Nouvelle Ville</span>
+          </button>
+          
+          <button class="btn-modern btn-primary" 
+                  *ngIf="selectedTab === 'currencies'"
+                  (click)="onCreateCurrency()"
+                  title="Ajouter une nouvelle devise">
+            <i class="fas fa-coins"></i>
+            <span>Nouvelle Devise</span>
+          </button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Tabs -->
-  <div class="bg-white rounded-lg shadow border border-gray-200">
-    <div class="border-b border-gray-200">
-      <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+  <!-- Stats Cards modernes -->
+  <div class="geography-stats-modern">
+    <div class="stats-grid">
+      <!-- Carte Pays -->
+      <div class="stat-card countries-card">
+        <div class="card-header">
+          <div class="card-icon">
+            <i class="fas fa-flag"></i>
+          </div>
+          <div class="card-title">
+            <h3>Pays</h3>
+            <span class="card-subtitle">Gestion des pays</span>
+          </div>
+        </div>
+        <div class="card-content">
+          <div class="main-stat">
+            <span class="stat-number">{{ (countries$ | async)?.length || 0 | number }}</span>
+            <span class="stat-label">Total</span>
+          </div>
+          <div class="sub-stats">
+            <div class="sub-stat active">
+              <i class="fas fa-check-circle"></i>
+              <span>{{ getActiveCountriesCount() | number }} actifs</span>
+            </div>
+            <div class="sub-stat users">
+              <i class="fas fa-users"></i>
+              <span>{{ getCountriesWithUsersCount() | number }} avec utilisateurs</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-progress">
+          <div class="progress-bar">
+            <div class="progress-fill" [style.width.%]="getCountriesActivePercentage()"></div>
+          </div>
+          <span class="progress-text">{{ getCountriesActivePercentage() | number:'1.0-1' }}% actifs</span>
+        </div>
+      </div>
+
+      <!-- Carte Villes -->
+      <div class="stat-card cities-card">
+        <div class="card-header">
+          <div class="card-icon">
+            <i class="fas fa-city"></i>
+          </div>
+          <div class="card-title">
+            <h3>Villes</h3>
+            <span class="card-subtitle">Gestion des villes</span>
+          </div>
+        </div>
+        <div class="card-content">
+          <div class="main-stat">
+            <span class="stat-number">{{ (cities$ | async)?.length || 0 | number }}</span>
+            <span class="stat-label">Total</span>
+          </div>
+          <div class="sub-stats">
+            <div class="sub-stat active">
+              <i class="fas fa-check-circle"></i>
+              <span>{{ getActiveCitiesCount() | number }} actives</span>
+            </div>
+            <div class="sub-stat properties">
+              <i class="fas fa-home"></i>
+              <span>{{ getCitiesWithPropertiesCount() | number }} avec propriétés</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-progress">
+          <div class="progress-bar">
+            <div class="progress-fill" [style.width.%]="getCitiesActivePercentage()"></div>
+          </div>
+          <span class="progress-text">{{ getCitiesActivePercentage() | number:'1.0-1' }}% actives</span>
+        </div>
+      </div>
+
+      <!-- Carte Devises -->
+      <div class="stat-card currencies-card">
+        <div class="card-header">
+          <div class="card-icon">
+            <i class="fas fa-coins"></i>
+          </div>
+          <div class="card-title">
+            <h3>Devises</h3>
+            <span class="card-subtitle">Gestion des devises</span>
+          </div>
+        </div>
+        <div class="card-content">
+          <div class="main-stat">
+            <span class="stat-number">{{ getTotalCurrenciesCount() | number }}</span>
+            <span class="stat-label">Total</span>
+          </div>
+          <div class="sub-stats">
+            <div class="sub-stat active">
+              <i class="fas fa-check-circle"></i>
+              <span>{{ getActiveCurrenciesCount() | number }} actives</span>
+            </div>
+            <div class="sub-stat default">
+              <i class="fas fa-star"></i>
+              <span>{{ getDefaultCurrency() }} par défaut</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-progress">
+          <div class="progress-bar">
+            <div class="progress-fill" [style.width.%]="(getActiveCurrenciesCount() / getTotalCurrenciesCount()) * 100"></div>
+          </div>
+          <span class="progress-text">{{ ((getActiveCurrenciesCount() / getTotalCurrenciesCount()) * 100) | number:'1.0-1' }}% actives</span>
+        </div>
+      </div>
+
+      <!-- Carte Distribution -->
+      <div class="stat-card distribution-card">
+        <div class="card-header">
+          <div class="card-icon">
+            <i class="fas fa-chart-pie"></i>
+          </div>
+          <div class="card-title">
+            <h3>Distribution</h3>
+            <span class="card-subtitle">Répartition géographique</span>
+          </div>
+        </div>
+        <div class="card-content">
+          <div class="distribution-stats">
+            <div class="distribution-item">
+              <span class="distribution-label">Utilisateurs</span>
+              <span class="distribution-value">{{ getTotalUsers({}) | number }}</span>
+            </div>
+            <div class="distribution-item">
+              <span class="distribution-label">Propriétés</span>
+              <span class="distribution-value">{{ getTotalProperties({}) | number }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-action">
+          <button class="view-details-btn" (click)="onViewDistribution()">
+            <i class="fas fa-chart-bar"></i>
+            <span>Voir détails</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Onglets modernes -->
+  <div class="geography-tabs-modern">
+    <div class="tabs-container">
+      <div class="tabs-nav">
         <button
-          class="py-4 px-6 text-sm font-medium border-b-2 transition-colors duration-200"
-          [class]="selectedTab === 'countries' ? 'border-yellow-500 text-yellow-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+          class="tab-btn"
+          [class.active]="selectedTab === 'countries'"
           (click)="onTabChange('countries')">
-          Pays
+          <div class="tab-content">
+            <i class="fas fa-flag"></i>
+            <span class="tab-text">Pays</span>
+            <span class="tab-count">{{ (countries$ | async)?.length || 0 }}</span>
+          </div>
+          <div class="tab-indicator"></div>
         </button>
         <button
-          class="py-4 px-6 text-sm font-medium border-b-2 transition-colors duration-200"
-          [class]="selectedTab === 'cities' ? 'border-yellow-500 text-yellow-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+          class="tab-btn"
+          [class.active]="selectedTab === 'cities'"
           (click)="onTabChange('cities')">
-          Villes
+          <div class="tab-content">
+            <i class="fas fa-city"></i>
+            <span class="tab-text">Villes</span>
+            <span class="tab-count">{{ (cities$ | async)?.length || 0 }}</span>
+          </div>
+          <div class="tab-indicator"></div>
         </button>
         <button
-          class="py-4 px-6 text-sm font-medium border-b-2 transition-colors duration-200"
-          [class]="selectedTab === 'currencies' ? 'border-yellow-500 text-yellow-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+          class="tab-btn"
+          [class.active]="selectedTab === 'currencies'"
           (click)="onTabChange('currencies')">
-          Devises
+          <div class="tab-content">
+            <i class="fas fa-coins"></i>
+            <span class="tab-text">Devises</span>
+            <span class="tab-count">{{ getTotalCurrenciesCount() }}</span>
+          </div>
+          <div class="tab-indicator"></div>
         </button>
-      </nav>
+      </div>
     </div>
 
-    <div class="p-6">
-      <!-- Countries Table -->
-      <div *ngIf="selectedTab === 'countries'">
-        <div class="overflow-x-auto">
-          <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
+    <!-- Contenu des onglets moderne -->
+    <div class="tab-content-modern">
+      <!-- Tableau des Pays moderne -->
+      <div *ngIf="selectedTab === 'countries'" class="countries-section">
+        <div class="section-header">
+          <div class="section-title">
+            <h3>Gestion des Pays</h3>
+            <p>Administration des pays et leurs informations</p>
+          </div>
+          <div class="section-actions">
+            <div class="search-box">
+              <i class="fas fa-search"></i>
+              <input type="text" 
+                     placeholder="Rechercher un pays..." 
+                     [(ngModel)]="countrySearchTerm"
+                     (input)="onCountrySearch($event)"
+                     class="search-input">
+            </div>
+            <button class="filter-btn" (click)="onToggleCountryFilters()">
+              <i class="fas fa-filter"></i>
+              <span>Filtres</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table class="modern-table">
+            <thead>
               <tr>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pays</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Code</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Devise</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Villes</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Utilisateurs</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                <th>
+                  <div class="th-content">
+                    <i class="fas fa-flag"></i>
+                    <span>Pays</span>
+                  </div>
+                </th>
+                <th>
+                  <div class="th-content">
+                    <i class="fas fa-code"></i>
+                    <span>Code</span>
+                  </div>
+                </th>
+                <th>
+                  <div class="th-content">
+                    <i class="fas fa-coins"></i>
+                    <span>Devise</span>
+                  </div>
+                </th>
+                <th>
+                  <div class="th-content">
+                    <i class="fas fa-city"></i>
+                    <span>Villes</span>
+                  </div>
+                </th>
+                <th>
+                  <div class="th-content">
+                    <i class="fas fa-users"></i>
+                    <span>Utilisateurs</span>
+                  </div>
+                </th>
+                <th>
+                  <div class="th-content">
+                    <i class="fas fa-toggle-on"></i>
+                    <span>Statut</span>
+                  </div>
+                </th>
+                <th>
+                  <div class="th-content">
+                    <i class="fas fa-cog"></i>
+                    <span>Actions</span>
+                  </div>
+                </th>
               </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-              <tr *ngFor="let country of countries$ | async; trackBy: trackByCountryId" class="hover:bg-gray-50">
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="flex items-center">
-                    <span class="text-2xl mr-3" *ngIf="country.flag">{{ country.flag }}</span>
-                    <span class="text-sm font-medium text-gray-900">{{ country.name }}</span>
+            <tbody>
+              <tr *ngFor="let country of countries$ | async; trackBy: trackByCountryId" 
+                  class="table-row"
+                  [class.row-inactive]="!country.isActive">
+                <td class="country-cell">
+                  <div class="country-info">
+                    <div class="country-flag">
+                      <span *ngIf="country.flag">{{ country.flag }}</span>
+                      <i *ngIf="!country.flag" class="fas fa-flag"></i>
+                    </div>
+                    <div class="country-details">
+                      <span class="country-name">{{ country.name }}</span>
+                      <span class="country-code-small">{{ country.code }}</span>
+                    </div>
                   </div>
                 </td>
-
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                    {{ country.code }}
-                  </span>
+                <td class="code-cell">
+                  <div class="code-badge">
+                    <span class="code-text">{{ country.code }}</span>
+                  </div>
                 </td>
-
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {{ country.currency }}
+                <td class="currency-cell">
+                  <div class="currency-info" *ngIf="country.currency">
+                    <span class="currency-code">{{ country.currency }}</span>
+                  </div>
+                  <span class="no-currency" *ngIf="!country.currency">Non définie</span>
                 </td>
-
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ country.cityCount }} ville(s)
+                <td class="cities-cell">
+                  <div class="cities-count">
+                    <span class="count-number">{{ (country?.cityCount !== undefined && country?.cityCount !== null) ? country.cityCount : 0 }}</span>
+                    <span class="count-label">ville(s)</span>
+                  </div>
                 </td>
-
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ country.userCount }} utilisateur(s)
+                <td class="users-cell">
+                  <div class="users-count">
+                    <span class="count-number">{{ (country?.userCount !== undefined && country?.userCount !== null) ? country.userCount : 0 }}</span>
+                    <span class="count-label">utilisateur(s)</span>
+                  </div>
                 </td>
-
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-                        [class]="country.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'">
-                    {{ country.isActive ? 'Actif' : 'Inactif' }}
-                  </span>
-                </td>
-
-                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <div class="relative inline-block text-left">
-                    <button class="text-gray-400 hover:text-gray-600 focus:outline-none" (click)="toggleCountryMenu(country._id)">
-                      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
-                      </svg>
+                <td class="status-cell">
+                  <div class="status-toggle">
+                    <button class="toggle-btn" 
+                            [class.active]="country.isActive"
+                            (click)="onToggleCountryStatus(country)"
+                            title="{{ country.isActive ? 'Désactiver' : 'Activer' }} le pays">
+                      <i class="fas" [class.fa-toggle-on]="country.isActive" [class.fa-toggle-off]="!country.isActive"></i>
+                      <span>{{ country.isActive ? 'Actif' : 'Inactif' }}</span>
                     </button>
-                    <div *ngIf="openMenuId === country._id" class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
-                      <div class="py-1">
-                        <button (click)="onEditItem(country)" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left">
-                          <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                          </svg>
-                          Modifier
-                        </button>
-                        <button (click)="onDeleteItem(country)" class="flex items-center px-4 py-2 text-sm text-red-700 hover:bg-red-50 w-full text-left">
-                          <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                          </svg>
-                          Supprimer
-                        </button>
+                  </div>
+                </td>
+                <td class="actions-cell">
+                  <div class="action-buttons">
+                    <button class="action-btn view-btn" 
+                            (click)="onViewCountryDetails(country)"
+                            title="Voir les détails">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="action-btn edit-btn" 
+                            (click)="onEditCountry(country)"
+                            title="Modifier">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="action-btn delete-btn" 
+                            (click)="onDeleteCountry(country)"
+                            title="Supprimer">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Message si pas de données -->
+      <div *ngIf="selectedTab === 'countries' && !(countries$ | async)?.length" class="no-data">
+        <i class="fas fa-flag"></i>
+        <h3>Aucun pays trouvé</h3>
+        <p>Cliquez sur "Nouveau Pays" pour ajouter le premier pays.</p>
+      </div>
+
+      <!-- Tableau des Villes -->
+      <div *ngIf="selectedTab === 'cities'" class="cities-section">
+        <div class="section-header">
+          <div class="section-title">
+            <h3>Gestion des Villes</h3>
+            <p>Administration des villes et leurs informations</p>
+          </div>
+          <div class="section-actions">
+            <div class="search-box">
+              <i class="fas fa-search"></i>
+              <input type="text"
+                     placeholder="Rechercher une ville..."
+                     [(ngModel)]="citySearchTerm"
+                     (input)="onCitySearch($event)"
+                     class="search-input">
+            </div>
+            <button class="filter-btn" (click)="onToggleCityFilters()">
+              <i class="fas fa-filter"></i>
+              <span>Filtres</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="table-container" *ngIf="(cities$ | async)?.length; else noCities">
+          <table class="modern-table">
+            <thead>
+              <tr>
+                <th>
+                  <div class="th-content">
+                    <i class="fas fa-city"></i>
+                    <span>Ville</span>
+                  </div>
+                </th>
+                <th>
+                  <div class="th-content">
+                    <i class="fas fa-flag"></i>
+                    <span>Pays</span>
+                  </div>
+                </th>
+                <th>
+                  <div class="th-content">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Coordonnées</span>
+                  </div>
+                </th>
+                <th>
+                  <div class="th-content">
+                    <i class="fas fa-users"></i>
+                    <span>Utilisateurs</span>
+                  </div>
+                </th>
+                <th>
+                  <div class="th-content">
+                    <i class="fas fa-home"></i>
+                    <span>Propriétés</span>
+                  </div>
+                </th>
+                <th>
+                  <div class="th-content">
+                    <i class="fas fa-toggle-on"></i>
+                    <span>Statut</span>
+                  </div>
+                </th>
+                <th>
+                  <div class="th-content">
+                    <i class="fas fa-cog"></i>
+                    <span>Actions</span>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let city of cities$ | async; trackBy: trackByCityId"
+                  class="table-row"
+                  [class.row-inactive]="!city.isActive">
+                <td class="city-cell">
+                  <div class="city-info">
+                    <div class="city-icon">
+                      <i class="fas fa-city"></i>
+                    </div>
+                    <div class="city-details">
+                      <span class="city-name">{{ city.name || 'N/A' }}</span>
+                      <span class="city-timezone" *ngIf="city.timezone">{{ city.timezone }}</span>
+                    </div>
+                  </div>
+                </td>
+                <td class="country-cell">
+                  <div class="country-info">
+                    <div class="country-flag" *ngIf="city.country?.flag">
+                      <span>{{ city.country.flag }}</span>
+                    </div>
+                    <div class="country-details">
+                      <span class="country-name">{{ city.country?.name || 'N/A' }}</span>
+                      <span class="country-code">{{ city.country?.code || '' }}</span>
+                    </div>
+                  </div>
+                </td>
+                <td class="coordinates-cell">
+                  <div class="coordinates" *ngIf="city.coordinates?.latitude && city.coordinates?.longitude">
+                    <div class="coordinate-item">
+                      <i class="fas fa-map-pin"></i>
+                      <span>{{ city.coordinates.latitude | number:'1.4-4' }}, {{ city.coordinates.longitude | number:'1.4-4' }}</span>
+                    </div>
+                  </div>
+                  <span class="no-coordinates" *ngIf="!city.coordinates?.latitude || !city.coordinates?.longitude">
+                    <i class="fas fa-map-marker-slash"></i>
+                    Non définies
+                  </span>
+                </td>
+                <td class="users-cell">
+                  <div class="users-count">
+                    <span class="count-number">{{ city.userCount || 0 }}</span>
+                    <span class="count-label">utilisateur(s)</span>
+                  </div>
+                </td>
+                <td class="properties-cell">
+                  <div class="properties-count">
+                    <span class="count-number">{{ city.propertyCount || 0 }}</span>
+                    <span class="count-label">propriété(s)</span>
+                  </div>
+                </td>
+                <td class="status-cell">
+                  <div class="status-toggle">
+                    <button class="toggle-btn"
+                            [class.active]="city.isActive"
+                            (click)="onToggleCityStatus(city)"
+                            title="{{ city.isActive ? 'Désactiver' : 'Activer' }} la ville">
+                      <i class="fas" [class.fa-toggle-on]="city.isActive" [class.fa-toggle-off]="!city.isActive"></i>
+                      <span>{{ city.isActive ? 'Actif' : 'Inactif' }}</span>
+                    </button>
+                  </div>
+                </td>
+                <td class="actions-cell">
+                  <div class="action-buttons">
+                    <button class="action-btn view-btn"
+                            (click)="onViewCityDetails(city)"
+                            title="Voir les détails">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="action-btn edit-btn"
+                            (click)="onEditCity(city)"
+                            title="Modifier">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="action-btn delete-btn"
+                            (click)="onDeleteCity(city)"
+                            title="Supprimer">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <ng-template #noCities>
+          <div class="no-data">
+            <i class="fas fa-city"></i>
+            <h3>Aucune ville trouvée</h3>
+            <p>Cliquez sur "Nouvelle Ville" pour ajouter la première ville.</p>
+          </div>
+        </ng-template>
+      </div>
+
+      <!-- Section des Devises -->
+      <div *ngIf="selectedTab === 'currencies'" class="currencies-section">
+        <div class="section-header">
+          <div class="section-title">
+            <h3>Gestion des Devises</h3>
+            <p>Administration des devises et taux de change</p>
+          </div>
+          <div class="section-actions">
+            <div class="search-box">
+              <i class="fas fa-search"></i>
+              <input type="text"
+                     placeholder="Rechercher une devise..."
+                     [(ngModel)]="currencySearchTerm"
+                     (input)="onCurrencySearch($event)"
+                     class="search-input">
+            </div>
+            <button class="filter-btn" (click)="onToggleCurrencyFilters()">
+              <i class="fas fa-filter"></i>
+              <span>Filtres</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Vue en grille moderne pour les devises -->
+        <div class="currencies-grid" *ngIf="getCurrenciesData().length > 0; else noCurrencies">
+          <div class="currency-card"
+               *ngFor="let currency of getCurrenciesData(); trackBy: trackByCurrencyId"
+               [class.inactive]="!currency.isActive"
+               [class.default]="currency.isDefault">
+            <div class="card-header">
+              <div class="currency-main">
+                <div class="currency-icon">
+                  <i class="fas fa-coins"></i>
+                </div>
+                <div class="currency-info">
+                  <h4 class="currency-name">{{ currency.name }}</h4>
+                  <span class="currency-code">{{ currency.code }}</span>
+                </div>
+              </div>
+              <div class="currency-actions">
+                <button class="action-btn edit-btn"
+                        (click)="onEditCurrency(currency)"
+                        title="Modifier">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="action-btn delete-btn"
+                        (click)="onDeleteCurrency(currency)"
+                        title="Supprimer">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="card-content">
+              <div class="currency-symbol">
+                <span class="symbol-text">{{ currency.symbol || currency.code }}</span>
+              </div>
+
+              <div class="currency-rate" *ngIf="currency.rate && currency.rate !== 1">
+                <i class="fas fa-exchange-alt"></i>
+                <span>1 EUR = {{ currency.rate | number:'1.2-3' }} {{ currency.code }}</span>
+              </div>
+
+              <div class="currency-rate reference" *ngIf="currency.rate === 1 || currency.isDefault">
+                <i class="fas fa-star"></i>
+                <span>Devise de référence</span>
+              </div>
+
+              <div class="currency-meta">
+                <div class="meta-item">
+                  <i class="fas fa-calendar"></i>
+                  <span>{{ currency.createdAt | date:'dd/MM/yyyy' }}</span>
+                </div>
+                <div class="meta-item" *ngIf="currency.updatedAt !== currency.createdAt">
+                  <i class="fas fa-edit"></i>
+                  <span>{{ currency.updatedAt | date:'dd/MM/yyyy' }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-footer">
+              <div class="currency-status" [class.active]="currency.isActive">
+                <button class="status-toggle"
+                        (click)="onToggleCurrencyStatus(currency)"
+                        title="{{ currency.isActive ? 'Désactiver' : 'Activer' }} la devise">
+                  <i class="fas" [class.fa-toggle-on]="currency.isActive" [class.fa-toggle-off]="!currency.isActive"></i>
+                  <span>{{ currency.isActive ? 'Actif' : 'Inactif' }}</span>
+                </button>
+              </div>
+
+              <div class="default-badge" *ngIf="currency.isDefault">
+                <i class="fas fa-star"></i>
+                <span>Par défaut</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vue tableau alternative (optionnelle) -->
+        <div class="currencies-table-view" style="display: none;">
+          <div class="table-container">
+            <table class="modern-table">
+              <thead>
+                <tr>
+                  <th>
+                    <div class="th-content">
+                      <i class="fas fa-coins"></i>
+                      <span>Devise</span>
+                    </div>
+                  </th>
+                  <th>
+                    <div class="th-content">
+                      <i class="fas fa-code"></i>
+                      <span>Code</span>
+                    </div>
+                  </th>
+                  <th>
+                    <div class="th-content">
+                      <i class="fas fa-dollar-sign"></i>
+                      <span>Symbole</span>
+                    </div>
+                  </th>
+                  <th>
+                    <div class="th-content">
+                      <i class="fas fa-exchange-alt"></i>
+                      <span>Taux</span>
+                    </div>
+                  </th>
+                  <th>
+                    <div class="th-content">
+                      <i class="fas fa-toggle-on"></i>
+                      <span>Statut</span>
+                    </div>
+                  </th>
+                  <th>
+                    <div class="th-content">
+                      <i class="fas fa-cog"></i>
+                      <span>Actions</span>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let currency of getCurrenciesData(); trackBy: trackByCurrencyId"
+                    class="table-row"
+                    [class.row-inactive]="!currency.isActive"
+                    [class.row-default]="currency.isDefault">
+                  <td class="currency-cell">
+                    <div class="currency-info">
+                      <div class="currency-icon">
+                        <i class="fas fa-coins"></i>
+                      </div>
+                      <div class="currency-details">
+                        <span class="currency-name">{{ currency.name }}</span>
+                        <span class="currency-code-small">{{ currency.code }}</span>
                       </div>
                     </div>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-
-          <!-- Loading State -->
-          <div *ngIf="isLoading$ | async" class="admin-table-loading">
-            <ibm-loading></ibm-loading>
-            <p>Chargement des pays...</p>
-          </div>
-
-          <!-- Empty State -->
-          <div *ngIf="!(isLoading$ | async) && (countries$ | async)?.length === 0" class="admin-table-empty">
-            <svg ibmIcon="location" size="48"></svg>
-            <h3>Aucun pays trouvé</h3>
-            <p>Commencez par ajouter votre premier pays.</p>
-            <button ibmButton="primary" (click)="onCreateItem()">
-              Ajouter un pays
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Cities Section -->
-      <div *ngIf="selectedTab === 'cities'">
-        
-        <!-- Cities Table -->
-        <div class="admin-geography-table">
-          <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-              <tr>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ville</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pays</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Coordonnées</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Utilisateurs</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Propriétés</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-              </tr>
-            </thead>
-
-            <tbody class="bg-white divide-y divide-gray-200">
-              <tr *ngFor="let city of cities$ | async; trackBy: trackByCityId">
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <span class="admin-city-name">{{ city.name }}</span>
-                </td>
-
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="admin-country-info">
-                    <span class="admin-country-flag" *ngIf="city.country.flag">{{ city.country.flag }}</span>
-                    <span class="admin-country-name">{{ city.country.name }}</span>
-                  </div>
-                </td>
-
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <span *ngIf="city.coordinates" class="admin-coordinates">
-                    {{ city.coordinates.latitude }}, {{ city.coordinates.longitude }}
-                  </span>
-                  <span *ngIf="!city.coordinates" class="admin-no-data">Non défini</span>
-                </td>
-
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <span class="admin-count">{{ city.userCount }} utilisateur(s)</span>
-                </td>
-
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <span class="admin-count">{{ city.propertyCount }} propriété(s)</span>
-                </td>
-
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <span
-                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-                    [class]="city.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'">
-                    {{ city.isActive ? 'Actif' : 'Inactif' }}
-                  </span>
-                </td>
-
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="relative inline-block text-left">
-                    <button class="admin-menu-trigger" (click)="toggleCityMenu(city._id)">⋮</button>
-                    <div class="admin-menu-dropdown" *ngIf="openMenuId === city._id">
-                      <button (click)="onEditItem(city)">
-                        <svg width="16" height="16" viewBox="0 0 16 16">
-                          <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708L10.5 9.207l-3-3L12.146.146zM11.207 2L2 11.207V14h2.793L14 4.793 11.207 2z"/>
-                        </svg>
-                        Modifier
-                      </button>
-                      <button
-                        (click)="onDeleteItem(city)"
-                        class="admin-danger-option">
-                        <svg width="16" height="16" viewBox="0 0 16 16">
-                          <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-                          <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-                        </svg>
-                        Supprimer
+                  </td>
+                  <td class="code-cell">
+                    <div class="code-badge">
+                      <span class="code-text">{{ currency.code }}</span>
+                    </div>
+                  </td>
+                  <td class="symbol-cell">
+                    <div class="symbol-display">
+                      <span class="symbol-text">{{ currency.symbol || currency.code }}</span>
+                    </div>
+                  </td>
+                  <td class="rate-cell">
+                    <div class="rate-info" *ngIf="currency.rate && currency.rate !== 1">
+                      <span class="rate-value">{{ currency.rate | number:'1.2-3' }}</span>
+                    </div>
+                    <div class="rate-reference" *ngIf="currency.rate === 1 || currency.isDefault">
+                      <i class="fas fa-star"></i>
+                      <span>Référence</span>
+                    </div>
+                  </td>
+                  <td class="status-cell">
+                    <div class="status-toggle">
+                      <button class="toggle-btn"
+                              [class.active]="currency.isActive"
+                              (click)="onToggleCurrencyStatus(currency)">
+                        <i class="fas" [class.fa-toggle-on]="currency.isActive" [class.fa-toggle-off]="!currency.isActive"></i>
+                        <span>{{ currency.isActive ? 'Actif' : 'Inactif' }}</span>
                       </button>
                     </div>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-
-          <!-- Loading State -->
-          <div *ngIf="isLoading$ | async" class="admin-table-loading">
-            <ibm-loading></ibm-loading>
-            <p>Chargement des villes...</p>
-          </div>
-
-          <!-- Empty State -->
-          <div *ngIf="!(isLoading$ | async) && (cities$ | async)?.length === 0" class="admin-table-empty">
-            <svg ibmIcon="location-filled" size="48"></svg>
-            <h3>Aucune ville trouvée</h3>
-            <p>Commencez par ajouter votre première ville.</p>
-            <button ibmButton="primary" (click)="onCreateItem()">
-              Ajouter une ville
-            </button>
+                  </td>
+                  <td class="actions-cell">
+                    <div class="action-buttons">
+                      <button class="action-btn view-btn"
+                              (click)="onViewCurrencyDetails(currency)"
+                              title="Voir les détails">
+                        <i class="fas fa-eye"></i>
+                      </button>
+                      <button class="action-btn edit-btn"
+                              (click)="onEditCurrency(currency)"
+                              title="Modifier">
+                        <i class="fas fa-edit"></i>
+                      </button>
+                      <button class="action-btn delete-btn"
+                              (click)="onDeleteCurrency(currency)"
+                              title="Supprimer">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
+
+        <ng-template #noCurrencies>
+          <div class="no-data">
+            <i class="fas fa-coins"></i>
+            <h3>Aucune devise trouvée</h3>
+            <p>Cliquez sur "Nouvelle Devise" pour ajouter la première devise.</p>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modals de création et d'édition -->
+
+  <!-- Modal de création -->
+  <div class="modal-overlay" *ngIf="showCreateModal" (click)="onCloseModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3 class="modal-title">
+          <i class="fas"
+             [class.fa-flag]="selectedTab === 'countries'"
+             [class.fa-city]="selectedTab === 'cities'"
+             [class.fa-coins]="selectedTab === 'currencies'"></i>
+          <span>Nouveau {{ getModalTitle() }}</span>
+        </h3>
+        <button class="modal-close" (click)="onCloseModal()">
+          <i class="fas fa-times"></i>
+        </button>
       </div>
 
-      <!-- Currencies Section -->
-      <div *ngIf="selectedTab === 'currencies'">
-        
-        <!-- Currencies List -->
-        <div class="admin-currencies-grid">
-          <div *ngFor="let currency of currencies$ | async" class="admin-currency-card">
-            <div class="admin-currency-header">
-              <h4>{{ currency.name }}</h4>
-              <span *ngIf="currency.isDefault" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Par défaut</span>
+      <div class="modal-content">
+        <!-- Formulaire de création de pays -->
+        <form *ngIf="selectedTab === 'countries'" class="create-form" (ngSubmit)="onSubmitCountryForm()">
+          <div class="form-group">
+            <label for="countryName">Nom du pays *</label>
+            <input type="text" id="countryName" class="form-input"
+                   placeholder="Ex: Cameroun" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="countryCode">Code pays *</label>
+              <input type="text" id="countryCode" class="form-input"
+                     placeholder="Ex: CM" maxlength="2" required>
             </div>
-            <div class="admin-currency-details">
-              <div class="admin-currency-info">
-                <span class="admin-currency-code">{{ currency.code }}</span>
-                <span class="admin-currency-symbol">{{ currency.symbol }}</span>
-              </div>
-              <div class="admin-currency-rate">
-                <span>Taux: {{ currency.rate }}</span>
-              </div>
-              <div class="admin-currency-status">
-                <span
-                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-                  [class]="currency.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'">
-                  {{ currency.isActive ? 'Actif' : 'Inactif' }}
-                </span>
-              </div>
+            <div class="form-group">
+              <label for="countryFlag">Drapeau</label>
+              <input type="text" id="countryFlag" class="form-input"
+                     placeholder="🇨🇲">
             </div>
           </div>
-        </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="countryCurrency">Devise</label>
+              <input type="text" id="countryCurrency" class="form-input"
+                     placeholder="Ex: XAF">
+            </div>
+            <div class="form-group">
+              <label for="countryTimezone">Fuseau horaire</label>
+              <input type="text" id="countryTimezone" class="form-input"
+                     placeholder="Ex: Africa/Douala">
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn-cancel" (click)="onCloseModal()">
+              Annuler
+            </button>
+            <button type="submit" class="btn-submit">
+              <i class="fas fa-save"></i>
+              Créer le pays
+            </button>
+          </div>
+        </form>
+
+        <!-- Formulaire de création de ville -->
+        <form *ngIf="selectedTab === 'cities'" class="create-form" (ngSubmit)="onSubmitCityForm()">
+          <div class="form-group">
+            <label for="cityName">Nom de la ville *</label>
+            <input type="text" id="cityName" class="form-input"
+                   placeholder="Ex: Douala" required>
+          </div>
+
+          <div class="form-group">
+            <label for="cityCountry">Pays *</label>
+            <select id="cityCountry" class="form-select" required>
+              <option value="">Sélectionner un pays</option>
+              <option *ngFor="let country of countries$ | async" [value]="country._id">
+                {{ country.flag }} {{ country.name }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="cityLatitude">Latitude</label>
+              <input type="number" id="cityLatitude" class="form-input"
+                     placeholder="Ex: 4.0511" step="any">
+            </div>
+            <div class="form-group">
+              <label for="cityLongitude">Longitude</label>
+              <input type="number" id="cityLongitude" class="form-input"
+                     placeholder="Ex: 9.7679" step="any">
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn-cancel" (click)="onCloseModal()">
+              Annuler
+            </button>
+            <button type="submit" class="btn-submit">
+              <i class="fas fa-save"></i>
+              Créer la ville
+            </button>
+          </div>
+        </form>
+
+        <!-- Formulaire de création de devise -->
+        <form *ngIf="selectedTab === 'currencies'" class="create-form" (ngSubmit)="onSubmitCurrencyForm()">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="currencyName">Nom de la devise *</label>
+              <input type="text" id="currencyName" class="form-input"
+                     placeholder="Ex: Franc CFA" required>
+            </div>
+            <div class="form-group">
+              <label for="currencyCode">Code *</label>
+              <input type="text" id="currencyCode" class="form-input"
+                     placeholder="Ex: XAF" maxlength="3" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="currencySymbol">Symbole</label>
+              <input type="text" id="currencySymbol" class="form-input"
+                     placeholder="Ex: FCFA" maxlength="5">
+            </div>
+            <div class="form-group">
+              <label for="currencyRate">Taux de change</label>
+              <input type="number" id="currencyRate" class="form-input"
+                     placeholder="Ex: 655.957" step="any">
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn-cancel" (click)="onCloseModal()">
+              Annuler
+            </button>
+            <button type="submit" class="btn-submit">
+              <i class="fas fa-save"></i>
+              Créer la devise
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   </div>

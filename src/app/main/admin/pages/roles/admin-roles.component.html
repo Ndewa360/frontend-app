@@ -95,6 +95,12 @@
         (click)="onTabChange('permissions')">
         Permissions
       </button>
+      <button
+        class="admin-tab-btn"
+        [class.active]="selectedTab === 'geography'"
+        (click)="onTabChange('geography')">
+        Géographie
+      </button>
     </div>
 
     <div class="admin-tab-content">
@@ -210,80 +216,443 @@
       </div>
 
       <!-- Permissions Matrix -->
-      <div *ngIf="selectedTab === 'matrix'">
-        <div class="admin-permissions-matrix" *ngIf="permissionsMatrix$ | async as matrix">
-          <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-              <thead class="bg-gray-50">
-                <tr>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Permissions / Rôles</th>
-                  <th *ngFor="let role of matrix.roles" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    <div class="flex items-center justify-center">
-                      <div class="w-3 h-3 rounded-full mr-2" [style.background-color]="role.color"></div>
-                      <span>{{ role.displayName }}</span>
-                    </div>
-                  </th>
-                </tr>
-              </thead>
-              <tbody class="bg-white divide-y divide-gray-200">
-                <tr *ngFor="let permission of matrix.permissions" class="hover:bg-gray-50">
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="flex flex-col">
-                      <span class="text-sm font-medium text-gray-900">{{ permission.displayName }}</span>
-                      <span class="text-sm text-gray-500">{{ permission.module }}</span>
-                    </div>
-                  </td>
-                  <td *ngFor="let role of matrix.roles" class="px-6 py-4 whitespace-nowrap text-center">
-                    <input type="checkbox"
-                           [checked]="isPermissionGranted(matrix, role._id, permission._id)"
-                           [disabled]="true"
-                           class="h-4 w-4 text-yellow-600 focus:ring-yellow-500 border-gray-300 rounded disabled:opacity-50">
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+      <div class="matrix-optimized-container" *ngIf="selectedTab === 'matrix'">
+        <!-- Compact Header with Toolbar -->
+        <div class="matrix-compact-toolbar">
+          <div class="toolbar-left">
+            <h4 class="matrix-title">Matrice des Permissions</h4>
+            <div class="matrix-stats" *ngIf="permissionsMatrix$ | async as matrix">
+              <span class="stat-item">
+                <i class="fas fa-users"></i>
+                {{ matrix.roles?.length || 0 }} rôles
+              </span>
+              <span class="stat-item">
+                <i class="fas fa-shield-alt"></i>
+                {{ getFilteredPermissions(matrix.permissions).length }} permissions
+              </span>
+            </div>
           </div>
-        </div>
-      </div>
 
-      <!-- Permissions List -->
-      <div *ngIf="selectedTab === 'permissions'">
-        <div class="admin-permissions-list">
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div *ngFor="let permission of permissions$ | async; trackBy: trackByPermissionId"
-                 class="bg-white rounded-lg shadow p-6 border border-gray-200">
-              <div class="flex items-center justify-between mb-4">
-                <h4 class="text-lg font-medium text-gray-900">{{ permission.displayName }}</h4>
-                <span *ngIf="permission.isSystem" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                  Système
-                </span>
-              </div>
-              <div class="space-y-3">
-                <p class="text-sm text-gray-600">{{ permission.description || 'Aucune description' }}</p>
-                <div class="flex flex-wrap gap-2">
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                    {{ permission.module }}
-                  </span>
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                    {{ permission.action }}
-                  </span>
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                    {{ permission.resource }}
-                  </span>
-                </div>
+          <div class="toolbar-center">
+            <!-- Inline Filters -->
+            <div class="inline-filters" *ngIf="permissionsMatrix$ | async as matrix">
+              <select [(ngModel)]="selectedModule" (change)="onModuleFilter()" class="compact-select">
+                <option value="">Tous les modules</option>
+                <option *ngFor="let module of getUniqueModules(matrix.permissions)" [value]="module">
+                  {{ module | titlecase }}
+                </option>
+              </select>
+              <div class="search-compact">
+                <i class="fas fa-search"></i>
+                <input
+                  type="text"
+                  [(ngModel)]="permissionSearchTerm"
+                  (input)="onMatrixPermissionSearch()"
+                  placeholder="Rechercher..."
+                  class="search-input-compact">
               </div>
             </div>
           </div>
 
-          <!-- Empty State -->
-          <div *ngIf="shouldShowPermissionsEmptyState(permissions$ | async)" class="flex flex-col items-center justify-center py-12">
-            <svg class="w-12 h-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-            </svg>
-            <h3 class="text-lg font-medium text-gray-900 mb-2">Aucune permission trouvée</h3>
-            <p class="text-sm text-gray-500">Les permissions sont générées automatiquement par le système.</p>
+          <div class="toolbar-right">
+            <div class="matrix-actions">
+              <button class="btn-compact btn-secondary" (click)="onToggleEditMode()">
+                <i class="fas fa-edit"></i>
+                {{ isEditMode ? 'Annuler' : 'Modifier' }}
+              </button>
+              <button
+                *ngIf="isEditMode"
+                class="btn-compact btn-primary"
+                (click)="onSavePermissions()"
+                [disabled]="isSaving">
+                <i class="fas fa-save"></i>
+                {{ isSaving ? 'Sauvegarde...' : 'Sauvegarder' }}
+              </button>
+            </div>
           </div>
         </div>
+
+        <!-- Optimized Matrix Content -->
+        <div class="matrix-content-optimized" *ngIf="permissionsMatrix$ | async as matrix; else matrixLoading">
+          <!-- Compact Matrix Table -->
+          <div class="matrix-table-wrapper">
+            <table class="matrix-table-compact">
+              <!-- Sticky Header with Roles -->
+              <thead class="matrix-header-sticky">
+                <tr>
+                  <th class="permission-column-header">
+                    <div class="permission-header-content">
+                      <i class="fas fa-shield-alt"></i>
+                      <span>Permissions</span>
+                    </div>
+                  </th>
+                  <th *ngFor="let role of matrix.roles" class="role-column-header">
+                    <div class="role-header-compact">
+                      <div class="role-avatar-mini" [style.background-color]="role.color">
+                        {{ getInitials(role.displayName) }}
+                      </div>
+                      <div class="role-info-mini">
+                        <span class="role-name-mini">{{ role.displayName }}</span>
+                        <small class="role-count-mini">{{ role.userCount || 0 }}</small>
+                      </div>
+                      <button
+                        *ngIf="!role.isSystemRole"
+                        class="toggle-all-mini"
+                        (click)="onToggleAllPermissions(role._id)"
+                        [disabled]="isApplyingChange"
+                        [title]="'Basculer toutes les permissions pour ' + role.displayName">
+                        <i class="fas fa-toggle-on" *ngIf="hasAllPermissions(matrix, role._id) && !isApplyingChange"></i>
+                        <i class="fas fa-toggle-off" *ngIf="!hasAllPermissions(matrix, role._id) && !isApplyingChange"></i>
+                        <i class="fas fa-spinner fa-spin" *ngIf="isApplyingChange"></i>
+                      </button>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+              <!-- Compact Table Body -->
+              <tbody class="matrix-body-compact">
+                <ng-container *ngFor="let module of getGroupedPermissions(getFilteredPermissions(matrix.permissions)); let moduleIndex = index">
+                  <!-- Compact Module Separator -->
+                  <tr class="module-separator" *ngIf="moduleIndex > 0 || selectedModule === ''">
+                    <td class="module-separator-cell" [attr.colspan]="matrix.roles.length + 1">
+                      <div class="module-separator-content">
+                        <i class="fas fa-folder" [class]="getModuleIcon(module.name)"></i>
+                        <span>{{ module.name | titlecase }}</span>
+                        <small>({{ module.permissions.length }})</small>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <!-- Compact Permission Rows -->
+                  <tr *ngFor="let permission of module.permissions; let permIndex = index"
+                      class="permission-row-compact"
+                      [class.row-even]="permIndex % 2 === 0"
+                      [class.row-system]="permission.isSystem">
+
+                    <!-- Permission Info Column -->
+                    <td class="permission-info-compact">
+                      <div class="permission-details">
+                        <div class="permission-name-compact">
+                          {{ permission.displayName || permission.name }}
+                        </div>
+                        <div class="permission-meta-compact">
+                          <span class="permission-code-mini">{{ permission.code || permission.name }}</span>
+                          <span class="permission-category-mini" *ngIf="permission.category">{{ permission.category }}</span>
+                        </div>
+                      </div>
+                    </td>
+
+                    <!-- Role Permission Checkboxes -->
+                    <td *ngFor="let role of matrix.roles" class="checkbox-cell-compact">
+                      <div class="checkbox-wrapper-compact">
+                        <input
+                          type="checkbox"
+                          [id]="'perm-' + permission._id + '-role-' + role._id"
+                          [checked]="isPermissionGranted(matrix, role._id, permission._id)"
+                          [disabled]="role.isSystemRole || isApplyingChange"
+                          (change)="onPermissionToggle(role._id, permission._id, $event)"
+                          class="permission-checkbox-compact">
+                        <label
+                          [for]="'perm-' + permission._id + '-role-' + role._id"
+                          class="checkbox-label-compact"
+                          [class.disabled]="role.isSystemRole || isApplyingChange"
+                          [class.system-permission]="permission.isSystem">
+                          <i class="fas fa-check" *ngIf="!isApplyingChange"></i>
+                          <i class="fas fa-spinner fa-spin" *ngIf="isApplyingChange"></i>
+                        </label>
+                      </div>
+                    </td>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Quick Actions Footer -->
+          <div class="matrix-footer-compact" *ngIf="isEditMode && getPendingChangesCount() > 0">
+            <div class="footer-info">
+              <i class="fas fa-info-circle"></i>
+              <span>{{ getPendingChangesCount() }} modification(s) en attente</span>
+            </div>
+            <div class="footer-actions">
+              <button class="btn-compact btn-outline" (click)="onCancelChanges()">
+                <i class="fas fa-times"></i>
+                Annuler
+              </button>
+              <button class="btn-compact btn-primary" (click)="onSavePermissions()" [disabled]="isSaving">
+                <i class="fas fa-save"></i>
+                {{ isSaving ? 'Sauvegarde...' : 'Sauvegarder' }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Compact Loading State -->
+        <ng-template #matrixLoading>
+          <div class="matrix-loading-compact">
+            <div class="loading-spinner-compact"></div>
+            <p>Chargement de la matrice...</p>
+          </div>
+        </ng-template>
+      </div>
+
+      <!-- Permissions List -->
+      <div *ngIf="selectedTab === 'permissions'" class="permissions-standard-container">
+        <!-- Header moderne avec design amélioré -->
+        <div class="permissions-header-modern">
+          <div class="header-content">
+            <div class="header-left">
+              <div class="title-section">
+                <div class="title-with-icon">
+                  <div class="title-icon">
+                    <i class="fas fa-shield-alt"></i>
+                  </div>
+                  <div class="title-text">
+                    <h3 class="permissions-title">Gestion des Permissions</h3>
+                    <p class="permissions-subtitle">Contrôlez l'accès aux fonctionnalités de l'application</p>
+                  </div>
+                </div>
+                <div class="stats-badges">
+                  <div class="stat-badge total-badge">
+                    <i class="fas fa-list"></i>
+                    <span class="stat-number">{{ getTotalPermissionsCount() }}</span>
+                    <span class="stat-label">Total</span>
+                  </div>
+                  <div class="stat-badge system-badge">
+                    <i class="fas fa-cog"></i>
+                    <span class="stat-number">{{ getSystemPermissionsCount() }}</span>
+                    <span class="stat-label">Système</span>
+                  </div>
+                  <div class="stat-badge custom-badge">
+                    <i class="fas fa-user-cog"></i>
+                    <span class="stat-number">{{ getCustomPermissionsCount() }}</span>
+                    <span class="stat-label">Custom</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="header-right">
+              <div class="action-buttons">
+                <button class="btn-modern btn-refresh"
+                        (click)="onRefreshPermissions()"
+                        [disabled]="isRefreshing"
+                        title="Actualiser la liste des permissions">
+                  <div class="btn-content">
+                    <i class="fas fa-sync-alt" [class.fa-spin]="isRefreshing"></i>
+                    <span class="btn-text">Actualiser</span>
+                  </div>
+                  <div class="btn-ripple"></div>
+                </button>
+                <button class="btn-modern btn-primary"
+                        (click)="onCreatePermission()"
+                        title="Créer une nouvelle permission">
+                  <div class="btn-content">
+                    <i class="fas fa-plus"></i>
+                    <span class="btn-text">Nouvelle Permission</span>
+                  </div>
+                  <div class="btn-ripple"></div>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Barre de filtres standard -->
+        <div class="permissions-filters-bar">
+          <div class="filters-left">
+            <div class="filter-group">
+              <label>Rechercher :</label>
+              <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input
+                  type="text"
+                  [(ngModel)]="permissionSearchQuery"
+                  (input)="onPermissionSearch()"
+                  placeholder="Nom, description, module..."
+                  class="search-input">
+              </div>
+            </div>
+            <div class="filter-group">
+              <label>Module :</label>
+              <select [(ngModel)]="selectedPermissionModule" (change)="onPermissionModuleFilter()" class="filter-select">
+                <option value="">Tous</option>
+                <option *ngFor="let module of getPermissionModules()" [value]="module">
+                  {{ module | titlecase }}
+                </option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label>Type :</label>
+              <select [(ngModel)]="selectedPermissionType" (change)="onPermissionTypeFilter()" class="filter-select">
+                <option value="">Tous</option>
+                <option value="system">Système</option>
+                <option value="custom">Personnalisées</option>
+              </select>
+            </div>
+          </div>
+          <div class="filters-right">
+            <div class="results-info">
+              <span class="results-count">{{ getFilteredPermissionsList().length }} résultat(s)</span>
+              <button *ngIf="hasActiveFilters()" class="clear-filters" (click)="onClearFilters()">
+                <i class="fas fa-times"></i>
+                Effacer
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tableau des permissions standard -->
+        <div class="permissions-table-container" *ngIf="permissions$ | async as permissions; else permissionsLoading">
+          <table class="permissions-table">
+            <thead>
+              <tr>
+                <th class="col-name">
+                  <div class="th-content">
+                    <i class="fas fa-shield-alt"></i>
+                    Nom de la Permission
+                  </div>
+                </th>
+                <th class="col-module">
+                  <div class="th-content">
+                    <i class="fas fa-folder"></i>
+                    Module
+                  </div>
+                </th>
+                <th class="col-description">
+                  <div class="th-content">
+                    <i class="fas fa-info-circle"></i>
+                    Description
+                  </div>
+                </th>
+                <th class="col-type">
+                  <div class="th-content">
+                    <i class="fas fa-tag"></i>
+                    Type
+                  </div>
+                </th>
+                <th class="col-status">
+                  <div class="th-content">
+                    <i class="fas fa-circle"></i>
+                    Statut
+                  </div>
+                </th>
+                <th class="col-actions">
+                  <div class="th-content">
+                    <i class="fas fa-cogs"></i>
+                    Actions
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let permission of getFilteredPermissionsList(); trackBy: trackByPermissionId"
+                  class="permission-row"
+                  [class.system-permission]="isSystemPermission(permission)"
+                  [class.custom-permission]="!isSystemPermission(permission)"
+                  [class.disabled-permission]="permission.isDisabled">
+
+                <!-- Nom de la permission -->
+                <td class="col-name">
+                  <div class="permission-name-cell">
+                    <div class="permission-main-name">{{ getPermissionDisplayName(permission) }}</div>
+                    <div class="permission-code" *ngIf="permission.name">{{ permission.name }}</div>
+                  </div>
+                </td>
+
+                <!-- Module -->
+                <td class="col-module">
+                  <div class="module-cell">
+                    <div class="module-icon">
+                      <i [class]="getModuleIcon(permission.module)"></i>
+                    </div>
+                    <span class="module-name">{{ permission.module | titlecase }}</span>
+                  </div>
+                </td>
+
+                <!-- Description -->
+                <td class="col-description">
+                  <div class="description-cell">
+                    <span class="description-text">{{ permission.description || 'Aucune description' }}</span>
+                  </div>
+                </td>
+
+                <!-- Type -->
+                <td class="col-type">
+                  <div class="type-cell">
+                    <span class="type-badge system-badge" *ngIf="isSystemPermission(permission)">
+                      <i class="fas fa-cog"></i>
+                      Système
+                    </span>
+                    <span class="type-badge custom-badge" *ngIf="!isSystemPermission(permission)">
+                      <i class="fas fa-user-cog"></i>
+                      Personnalisée
+                    </span>
+                  </div>
+                </td>
+
+                <!-- Statut -->
+                <td class="col-status">
+                  <div class="status-cell">
+                    <span class="status-badge active-status" *ngIf="!permission.isDisabled">
+                      <i class="fas fa-check-circle"></i>
+                      Active
+                    </span>
+                    <span class="status-badge disabled-status" *ngIf="permission.isDisabled">
+                      <i class="fas fa-times-circle"></i>
+                      Désactivée
+                    </span>
+                  </div>
+                </td>
+
+                <!-- Actions -->
+                <td class="col-actions">
+                  <div class="actions-cell">
+                    <button class="action-btn view-btn"
+                            (click)="onViewPermission(permission)"
+                            title="Voir les détails">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="action-btn edit-btn"
+                            *ngIf="!isSystemPermission(permission)"
+                            (click)="onEditPermission(permission)"
+                            title="Modifier">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="action-btn delete-btn"
+                            *ngIf="!isSystemPermission(permission)"
+                            (click)="onDeletePermission(permission)"
+                            title="Supprimer">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- État vide -->
+          <div *ngIf="getFilteredPermissionsList().length === 0" class="empty-state-standard">
+            <div class="empty-content">
+              <i class="fas fa-shield-alt empty-icon"></i>
+              <h4>Aucune permission trouvée</h4>
+              <p>{{ getEmptyStateMessage() }}</p>
+              <button *ngIf="hasActiveFilters()" class="btn btn-primary" (click)="onClearFilters()">
+                <i class="fas fa-times"></i>
+                Effacer les filtres
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- État de chargement -->
+        <ng-template #permissionsLoading>
+          <div class="loading-state-standard">
+            <div class="loading-content">
+              <div class="loading-spinner"></div>
+              <p>Chargement des permissions...</p>
+            </div>
+          </div>
+        </ng-template>
       </div>
     </div>
   </div>

@@ -219,4 +219,17 @@ export class AdminRolesService {
       map(response => response.data)
     );
   }
+
+  /**
+   * Basculer une permission pour un rôle
+   * @param roleId - ID du rôle
+   * @param permissionCode - Code de la permission
+   * @param granted - Optionnel: true pour accorder, false pour retirer, undefined pour basculer
+   */
+  toggleRolePermission(roleId: string, permissionCode: string, granted?: boolean): Observable<AdminRole> {
+    const body = granted !== undefined ? { granted } : {};
+    return this.http.put<ApiResultFormat<AdminRole>>(`${this.apiUrl}/${roleId}/permissions/${permissionCode}/toggle`, body).pipe(
+      map(response => response.data)
+    );
+  }
 }
