@@ -441,15 +441,21 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
       locataireId: tenant._id,  // ← Correction: locataireId au lieu de tenantId
       assistant: true
     }).subscribe(result => {
+      console.log('🔄 Résultat du modal d\'assignation:', result);
+
       if (result && result.success) {
         console.log('✅ Assignation réussie, rechargement des données...');
         // Les données seront automatiquement mises à jour par le state
         this.toastr.success('Locataire assigné avec succès', 'Succès');
-      } else if (result && !result.success) {
-        console.error('❌ Assignation échouée');
+      } else if (result && result.success === false) {
+        // Erreur réelle d'assignation
+        console.error('❌ Assignation échouée:', result);
         this.toastr.error('Erreur lors de l\'assignation du locataire', 'Erreur');
+      } else {
+        // Annulation par l'utilisateur (result === null)
+        console.log('🚫 Assignation annulée par l\'utilisateur');
+        // Pas de message pour une annulation normale
       }
-      // Si result est null/undefined, l'utilisateur a fermé le modal sans action
     });
   }
 

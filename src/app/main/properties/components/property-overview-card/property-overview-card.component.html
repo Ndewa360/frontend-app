@@ -1,6 +1,15 @@
 <!-- Carte de propriété moderne avec thème Carbon -->
-<div class="property-overview-card group card-carbon-elevated overflow-hidden hover:-translate-y-1 cursor-pointer"
+<div class="property-overview-card group card-carbon-elevated overflow-hidden hover:-translate-y-1 cursor-pointer relative"
+     [class.loading]="isLoading"
      (click)="viewProperty()">
+
+  <!-- Overlay de chargement -->
+  <div *ngIf="isLoading" class="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center z-50">
+    <div class="flex flex-col items-center space-y-3">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      <span class="text-sm text-gray-600 font-medium">Chargement...</span>
+    </div>
+  </div>
 
   <!-- Image de la propriété -->
   <div class="relative h-48 bg-gray-200 overflow-hidden">

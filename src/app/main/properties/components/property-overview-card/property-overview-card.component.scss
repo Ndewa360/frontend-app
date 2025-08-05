@@ -7,9 +7,20 @@
   border-radius: 0; // Carbon utilise des coins carrés
 
   // Animation de hover améliorée
-  &:hover {
+  &:hover:not(.loading) {
     transform: translateY(-2px);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  }
+
+  // État de chargement
+  &.loading {
+    cursor: wait;
+    pointer-events: none;
+
+    &:hover {
+      transform: none;
+      box-shadow: none;
+    }
   }
 
   // Focus state pour l'accessibilité

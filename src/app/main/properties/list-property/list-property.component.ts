@@ -9,6 +9,7 @@ import { Store } from '@ngxs/store';
 import { UpdatePropertyComponent } from '../update-property/update-property.component';
 import { PropertyAlert } from '../components/property-overview-card/property-overview-card.component';
 import { ModernTenantModalComponent } from '../components/modern-tenant-modal/modern-tenant-modal.component';
+import { PropertyNavigationService } from '../services/property-navigation.service';
 
 @Component({
   selector: 'app-list-property',
@@ -21,13 +22,17 @@ export class ListPropertyComponent implements OnInit {
 
   @Select(PropertyState.selectStateProperties) properties$:Observable<PropertyModel[]>;
   @Select(PropertyState.selectStateInitLoading) initLoading$:Observable<string>;
+
+  // État de chargement pour la navigation
+  loadingProperties$: Observable<Set<string>>;
  
  
 
   constructor(
     private dialog: MatDialog,
     private _store: Store,
-    private router: Router
+    private router: Router,
+    private propertyNavigationService: PropertyNavigationService
   ) { }
 
   ngOnInit(): void {
@@ -37,6 +42,9 @@ export class ListPropertyComponent implements OnInit {
     this.properties$.subscribe((value)=>{
       console.log("Value Property ",value)
     })
+
+    // Initialiser l'observable de chargement de navigation
+    this.loadingProperties$ = this.propertyNavigationService.loading$;
   }
 
 
@@ -202,8 +210,13 @@ export class ListPropertyComponent implements OnInit {
 
   // Nouvelles méthodes pour la navigation et les actions
   onViewPropertyDetails(property: PropertyModel): void {
-    // Naviguer vers la page de détails complète (nouvelle route)
-    this.router.navigate(['/app/properties/details', property._id]);
+    // Utiliser le service de navigation avec protection contre les clics multiples
+    this.propertyNavigationService.navigateToPropertyDetails(property._id);
+  }
+
+  // Méthode helper pour vérifier si une propriété est en cours de chargement
+  isPropertyLoading(propertyId: string): boolean {
+    return this.propertyNavigationService.isPropertyLoading(propertyId);
   }
 
   onEditProperty(property: PropertyModel): void {

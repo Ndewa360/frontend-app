@@ -24,6 +24,7 @@ export class PropertyOverviewCardComponent extends BaseComponent implements OnIn
   @Input() totalRooms: number = 0;
   @Input() occupiedRooms: number = 0;
   @Input() alerts: PropertyAlert[] = [];
+  @Input() isLoading: boolean = false;
 
   @Output() addTenantClicked = new EventEmitter<PropertyModel>();
   @Output() recordPaymentClicked = new EventEmitter<PropertyModel>();
@@ -115,6 +116,12 @@ export class PropertyOverviewCardComponent extends BaseComponent implements OnIn
 
   // Nouvelles méthodes pour le design moderne
   viewProperty(): void {
+    // Empêcher les clics multiples si la propriété est en cours de chargement
+    if (this.isLoading) {
+      console.log(`⏳ Propriété ${this.property._id} déjà en cours de chargement, clic ignoré`);
+      return;
+    }
+
     this.propertyViewed.emit(this.property);
   }
 

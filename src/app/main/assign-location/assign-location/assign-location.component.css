@@ -170,6 +170,13 @@
   max-height: 100vh !important;
 }
 
+/* Backdrop normal quand l'assistant n'est pas ouvert */
 ::ng-deep .assign-location-modal-backdrop {
   background: rgba(0, 0, 0, 0.6) !important;
+  transition: background 0.3s ease;
+}
+
+/* Backdrop transparent quand l'assistant est ouvert */
+::ng-deep .assign-location-modal-backdrop.assistant-open {
+  background: transparent !important;
 }

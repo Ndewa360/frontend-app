@@ -1,6 +1,6 @@
 
 <!-- Mode modal -->
-<div *ngIf="isModalMode" class="assign-location-modal-content">
+<div *ngIf="isModalMode && !assistantVisible" class="assign-location-modal-content">
   <div class="modal-header">
     <h2 class="modal-title">
       <i class="fas fa-user-plus mr-3"></i>
@@ -17,7 +17,7 @@
 </div>
 
 <!-- Mode page normale -->
-<div *ngIf="!isModalMode" fxFill fxLayout="column">
+<div *ngIf="!isModalMode && !assistantVisible" fxFill fxLayout="column">
   <div fxFlex class="relative">
     <div class="app-a-box app-scrollbar-fix">
       <ng-scrollbar>

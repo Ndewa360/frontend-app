@@ -71,6 +71,16 @@ export class AssignLocationComponent implements OnInit, OnChanges {
     if (this.isModalMode && this.modalData) {
       // Mode modal : utiliser les données du modal
       this.loadDataFromModalData();
+
+      // Vérifier si l'assistant doit être ouvert automatiquement en mode modal
+      if (this.modalData.assistant === true) {
+        console.log('🚀 Ouverture automatique de l\'assistant en mode modal');
+        // Ouvrir l'assistant après un court délai pour laisser le temps au composant de s'initialiser
+        setTimeout(() => {
+          this.assistantVisible = true;
+          this.updateBackdropClass();
+        }, 100);
+      }
     } else {
       // Mode page : utiliser les query params
       this.previousUrl = this.activatedRoute.snapshot.queryParams['returnUrl'] || null;
@@ -155,17 +165,40 @@ export class AssignLocationComponent implements OnInit, OnChanges {
   // Méthodes pour l'assistant d'assignation
   ouvrirAssistant(): void {
     this.assistantVisible = true;
+    this.updateBackdropClass();
   }
 
   fermerAssistant(): void {
     this.assistantVisible = false;
+    this.updateBackdropClass();
+
+    // Si on est en mode modal et que l'assistant était ouvert automatiquement,
+    // fermer complètement le modal
+    if (this.isModalMode && this.modalData?.assistant === true) {
+      console.log('🔒 Fermeture du modal après fermeture de l\'assistant');
+      this.navigateBack();
+    }
   }
 
   onAssignationSuccess(config: AssignationConfig): void {
-    // Utiliser directement la nouvelle action pour l'assistant
+    console.log('✅ Assignation réussie, configuration:', config);
+
+    // Fermer l'assistant
+    this.fermerAssistant();
+
+    // Si on est en mode modal, retourner le résultat et fermer le modal
+    if (this.isModalMode && this.dialogRef) {
+      console.log('🎉 Retour du résultat de l\'assignation au modal');
+      this.dialogRef.close({
+        success: true,
+        data: config
+      });
+      return;
+    }
+
+    // Mode page normale : utiliser l'action store (comportement existant)
     this.waittingResponse = true;
     this._store.dispatch(new LocationAction.CreateAssignationWithAssistant(config));
-    this.fermerAssistant();
   }
 
   private mapTypeToFinancialState(typeAssignation: any): INITIAL_LOCATION_FINANCIAL_STATE {
@@ -232,7 +265,11 @@ export class AssignLocationComponent implements OnInit, OnChanges {
    */
   navigateBack(): void {
     if (this.isModalMode) {
-      this.closeModal(false);
+      // Fermer le modal sans résultat (annulation)
+      console.log('🚫 Modal fermé par annulation utilisateur');
+      if (this.dialogRef) {
+        this.dialogRef.close(null); // null = annulation, pas d'erreur
+      }
       return;
     }
 
@@ -331,5 +368,26 @@ export class AssignLocationComponent implements OnInit, OnChanges {
       };
       this.dialogRef.close(result);
     }
+  }
+
+  /**
+   * Met à jour la classe CSS du backdrop selon l'état de l'assistant
+   */
+  private updateBackdropClass(): void {
+    if (!this.isModalMode) return;
+
+    // Attendre un peu pour que le DOM soit mis à jour
+    setTimeout(() => {
+      const backdrop = document.querySelector('.assign-location-modal-backdrop');
+      if (backdrop) {
+        if (this.assistantVisible) {
+          backdrop.classList.add('assistant-open');
+          console.log('🎨 Backdrop rendu transparent (assistant ouvert)');
+        } else {
+          backdrop.classList.remove('assistant-open');
+          console.log('🎨 Backdrop restauré (assistant fermé)');
+        }
+      }
+    }, 50);
   }
 }
