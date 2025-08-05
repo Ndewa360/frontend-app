@@ -68,6 +68,7 @@ import { LoadingOverlayComponent } from './components/loading-overlay/loading-ov
 import { CountUpDirective } from './directives/counter-up/counter-up.directive';
 import { SubscriptionLimitModalComponent } from './components/subscription-limit-modal/subscription-limit-modal.component';
 import { SubscriptionStatusWidgetComponent } from './components/subscription-status-widget/subscription-status-widget.component';
+import { NavigationButtonComponent } from './components/navigation-button/navigation-button.component';
 
 import { ProspectionState } from './store/prospection/prospection.state';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
@@ -149,6 +150,7 @@ import { HttpClient } from '@angular/common/http';
     ContractTemplateSelectorComponent,
     SubscriptionLimitModalComponent,
     SubscriptionStatusWidgetComponent,
+    NavigationButtonComponent,
     LanguageSwitcherComponent,
     ClickOutsideDirective,
     AdvancedLanguageSwitcherComponent,
@@ -185,6 +187,7 @@ import { HttpClient } from '@angular/common/http';
     ContractTemplateSelectorComponent,
     SubscriptionLimitModalComponent,
     SubscriptionStatusWidgetComponent,
+    NavigationButtonComponent,
     LanguageSwitcherComponent,
     ClickOutsideDirective,
     AdvancedLanguageSwitcherComponent

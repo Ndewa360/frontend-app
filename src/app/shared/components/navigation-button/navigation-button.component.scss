@@ -1,0 +1,89 @@
+// Styles pour le bouton de navigation avec loader
+.nav-btn-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  .spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top: 2px solid #ffffff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+}
+
+.nav-btn-label {
+  margin-left: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.nav-btn-loading-text {
+  margin-left: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  opacity: 0.8;
+}
+
+// Animation du spinner
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// États du bouton
+button {
+  transition: all 0.3s ease;
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    
+    &:hover {
+      transform: none;
+    }
+  }
+  
+  &:not(:disabled):hover {
+    transform: translateY(-1px);
+  }
+}
+
+// Styles spécifiques pour différents contextes
+.admin-nav-button {
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.5s ease;
+  }
+  
+  &:hover::before {
+    left: 100%;
+  }
+}
+
+// Adaptation pour les différentes tailles d'écran
+@media (max-width: 768px) {
+  .nav-btn-label {
+    display: none;
+  }
+  
+  .nav-btn-loading-text {
+    display: none;
+  }
+  
+  .nav-btn-loader .spinner {
+    width: 14px;
+    height: 14px;
+  }
+}

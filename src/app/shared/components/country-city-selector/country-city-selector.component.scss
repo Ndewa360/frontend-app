@@ -1,16 +1,32 @@
+// Assure que le composant prend toute la place de son parent
 .country-city-selector {
   width: 100%;
+  height: 100%;
+  min-height: 0;
+  min-width: 0;
   font-family: 'IBM Plex Sans', sans-serif;
+
+  display: flex;
+  flex-direction: column;
+
+  // Tous les enfants directs prennent la largeur
+  > * {
+    width: 100%;
+    min-width: 0;
+  }
 
   // Conteneur des sélecteurs
   .selectors-container {
     display: flex;
-    gap: 16px;
+    gap: 0;
     align-items: flex-end;
+    width: 100%;
+    min-width: 0;
 
     .selector-wrapper {
-      flex: 1;
-      min-width: 0; // Pour permettre le shrinking
+      flex: 0 0 50%;
+      min-width: 0;
+      width: 50%;
 
       .selector-label {
         display: block;
@@ -69,11 +85,12 @@
       align-items: flex-end;
 
       .country-wrapper {
-        flex: 1.2; // Un peu plus d'espace pour le pays
+        flex: 0 0 50%;
+        width: 50%;
       }
-
       .city-wrapper {
-        flex: 1;
+        flex: 0 0 50%;
+        width: 50%;
       }
 
       .selector-separator {
@@ -87,37 +104,6 @@
     }
   }
 
-  // Actions
-  .actions-container {
-    margin-top: 16px;
-    display: flex;
-    justify-content: flex-end;
-
-    .clear-all-button {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 12px;
-      border: 1px solid #e0e0e0;
-      background: #ffffff;
-      color: #6f6f6f;
-      border-radius: 6px;
-      font-size: 12px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-
-      &:hover {
-        border-color: #da1e28;
-        color: #da1e28;
-        background: #fff1f1;
-      }
-
-      i {
-        font-size: 10px;
-      }
-    }
-  }
-
   // Informations de sélection
   .selection-info {
     margin-top: 16px;
@@ -125,6 +111,7 @@
     background: #f4f4f4;
     border-radius: 6px;
     border-left: 3px solid #0f62fe;
+    width: 100%;
 
     .info-item {
       display: flex;
@@ -206,6 +193,7 @@
   // Erreurs de validation
   .validation-errors {
     margin-top: 12px;
+    width: 100%;
 
     .error-item {
       display: flex;
@@ -274,15 +262,6 @@
   .country-city-selector {
     .selectors-container {
       gap: 12px;
-    }
-
-    .actions-container {
-      margin-top: 12px;
-
-      .clear-all-button {
-        font-size: 11px;
-        padding: 6px 10px;
-      }
     }
 
     .selection-info {

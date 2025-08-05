@@ -24,6 +24,7 @@ import { CountryDeleteModalComponent } from './components/country-delete-modal/c
 import { CountryViewModalComponent } from './components/country-view-modal/country-view-modal.component';
 import { CountryEditModalComponent } from './components/country-edit-modal/country-edit-modal.component';
 import { CitySelectionModalComponent } from './components/city-selection-modal/city-selection-modal.component';
+import { CityDeleteModalComponent } from './components/city-delete-modal/city-delete-modal.component';
 
 // Admin Stores
 import { AdminUsersState } from './store/users/admin-users.state';
@@ -59,7 +60,7 @@ import { AdminRoutingModule } from './admin-routing.module';
     CountryViewModalComponent,
     CountryEditModalComponent,
     CitySelectionModalComponent,
-    CitySelectionModalComponent
+    CityDeleteModalComponent
   ],
   imports: [
     CommonModule,

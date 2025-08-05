@@ -11,24 +11,15 @@
     <input
       type="text"
       class="selector-input"
-      [formControl]="searchControl"
-      [placeholder]="selectedCountry ? getDisplayText(selectedCountry) : placeholder"
+      [value]="selectedCountry ? getDisplayText(selectedCountry) : ''"
+      [placeholder]="placeholder"
       [disabled]="disabled"
       (focus)="onInputFocus()"
       (blur)="onInputBlur()"
+      (click)="toggleDropdown()"
       autocomplete="off"
-      readonly="true">
-    
-    <!-- Bouton clear -->
-    <button
-      type="button"
-      class="clear-button"
-      *ngIf="selectedCountry && !disabled"
-      (click)="clearSelection()"
-      tabindex="-1">
-      <i class="fas fa-times"></i>
-    </button>
-    
+      readonly>
+
     <!-- Icône dropdown -->
     <div class="dropdown-icon" (click)="toggleDropdown()">
       <i class="fas fa-chevron-down" [class.rotated]="isOpen"></i>
@@ -41,7 +32,12 @@
   </div>
 
   <!-- Dropdown avec liste des pays -->
-  <div class="dropdown-container" *ngIf="isOpen" [class.open]="isOpen">
+  <div
+    class="dropdown-container"
+    *ngIf="isOpen"
+    [class.open]="isOpen"
+    (mouseenter)="onDropdownMouseEnter()"
+    (mouseleave)="onDropdownMouseLeave()">
     
     <!-- Input de recherche dans le dropdown -->
     <div class="search-container">

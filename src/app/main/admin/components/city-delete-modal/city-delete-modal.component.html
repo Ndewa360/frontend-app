@@ -1,0 +1,158 @@
+<!-- Modal de confirmation de suppression de ville -->
+<div 
+  *ngIf="isOpen" 
+  class="modal-overlay"
+  (click)="onOverlayClick($event)"
+  (keydown)="onKeyDown($event)"
+  tabindex="0">
+  
+  <div class="modal-container" *ngIf="city">
+    <!-- En-tête du modal -->
+    <div class="modal-header">
+      <div class="modal-title-section">
+        <div class="modal-icon-container">
+          <i class="fas fa-trash-alt modal-icon"></i>
+        </div>
+        <div class="modal-title-content">
+          <h2 class="modal-title">Supprimer la ville</h2>
+          <p class="modal-subtitle">Cette action est irréversible</p>
+        </div>
+      </div>
+      
+      <button 
+        class="modal-close-btn"
+        (click)="onClose()"
+        [disabled]="isDeleting$ | async"
+        title="Fermer">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <!-- Corps du modal -->
+    <div class="modal-body">
+      <!-- Informations de la ville -->
+      <div class="city-info-card">
+        <div class="city-info-header">
+          <div class="city-icon">
+            <i class="fas fa-city"></i>
+          </div>
+          <div class="city-details">
+            <h3 class="city-name">{{ city.fullName }}</h3>
+            <p class="city-country" *ngIf="city.country">
+              <i class="fas fa-flag"></i>
+              {{ city.country.fullName }}
+            </p>
+          </div>
+          <div class="city-status">
+            <span 
+              class="status-badge"
+              [class.active]="city.isActive"
+              [class.inactive]="!city.isActive">
+              {{ city.isActive ? 'Active' : 'Inactive' }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Statistiques de la ville -->
+        <div class="city-stats" *ngIf="city.userCount || city.propertyCount || city.population">
+          <div class="stat-item" *ngIf="city.userCount">
+            <i class="fas fa-users stat-icon"></i>
+            <span class="stat-value">{{ city.userCount }}</span>
+            <span class="stat-label">Utilisateurs</span>
+          </div>
+          <div class="stat-item" *ngIf="city.propertyCount">
+            <i class="fas fa-home stat-icon"></i>
+            <span class="stat-value">{{ city.propertyCount }}</span>
+            <span class="stat-label">Propriétés</span>
+          </div>
+          <div class="stat-item" *ngIf="city.population">
+            <i class="fas fa-chart-bar stat-icon"></i>
+            <span class="stat-value">{{ city.population | number }}</span>
+            <span class="stat-label">Population</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Message d'avertissement -->
+      <div class="warning-section" [class]="getWarningClass()">
+        <div class="warning-icon">
+          <i [class]="getWarningIcon()"></i>
+        </div>
+        <div class="warning-content">
+          <h4 class="warning-title">Attention</h4>
+          <p class="warning-message">{{ getWarningMessage() }}</p>
+        </div>
+      </div>
+
+      <!-- Conséquences de la suppression -->
+      <div class="consequences-section">
+        <h4 class="consequences-title">
+          <i class="fas fa-list-ul"></i>
+          Conséquences de cette action :
+        </h4>
+        <ul class="consequences-list">
+          <li class="consequence-item">
+            <i class="fas fa-eye-slash"></i>
+            La ville sera marquée comme supprimée et ne sera plus visible
+          </li>
+          <li class="consequence-item">
+            <i class="fas fa-unlink"></i>
+            La ville sera retirée de la liste des villes du pays
+          </li>
+          <li class="consequence-item" *ngIf="city.isActive">
+            <i class="fas fa-ban"></i>
+            Les nouveaux utilisateurs ne pourront plus sélectionner cette ville
+          </li>
+          <li class="consequence-item" *ngIf="city.userCount && city.userCount > 0">
+            <i class="fas fa-users"></i>
+            Les {{ city.userCount }} utilisateur(s) existant(s) ne seront pas affectés
+          </li>
+        </ul>
+      </div>
+
+      <!-- Erreur de suppression -->
+      <div class="error-section" *ngIf="deleteError$ | async as error">
+        <div class="error-content">
+          <i class="fas fa-exclamation-triangle error-icon"></i>
+          <div class="error-message">
+            <h4>Erreur lors de la suppression</h4>
+            <p>{{ error }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pied du modal -->
+    <div class="modal-footer">
+      <div class="modal-actions">
+        <!-- Bouton Annuler -->
+        <button 
+          class="btn btn-secondary"
+          (click)="onCancel()"
+          [disabled]="isDeleting$ | async">
+          <i class="fas fa-times"></i>
+          <span>Annuler</span>
+        </button>
+
+        <!-- Bouton Supprimer -->
+        <button
+          class="btn btn-danger"
+          (click)="onConfirmDelete()"
+          [disabled]="isDeleting$ | async">
+
+          <!-- Loader pendant la suppression -->
+          <div class="btn-loader" *ngIf="isDeleting$ | async">
+            <div class="spinner"></div>
+            <span class="loading-text">Suppression en cours...</span>
+          </div>
+
+          <!-- Icône et texte normaux -->
+          <ng-container *ngIf="!(isDeleting$ | async)">
+            <i class="fas fa-trash-alt"></i>
+            <span>Supprimer définitivement</span>
+          </ng-container>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, forwardRef } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, OnChanges, SimpleChanges, forwardRef } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormControl } from '@angular/forms';
 import { Observable, Subject, BehaviorSubject, combineLatest } from 'rxjs';
 import { takeUntil, map, startWith, debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -30,7 +30,7 @@ import { CountryModel } from '../../store/country/country.model';
     }
   ]
 })
-export class CitySelectorComponent implements OnInit, OnDestroy, ControlValueAccessor {
+export class CitySelectorComponent implements OnInit, OnDestroy, OnChanges, ControlValueAccessor {
   private destroy$ = new Subject<void>();
   private onChange = (value: any) => {};
   private onTouched = () => {};
@@ -67,6 +67,13 @@ export class CitySelectorComponent implements OnInit, OnDestroy, ControlValueAcc
     this.initializeComponent();
     this.setupSearch();
     this.loadCities();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    // Réagir aux changements du filtre de pays
+    if (changes['countryFilter'] && !changes['countryFilter'].firstChange) {
+      this.updateCityFilter();
+    }
   }
 
   ngOnDestroy(): void {
@@ -124,6 +131,25 @@ export class CitySelectorComponent implements OnInit, OnDestroy, ControlValueAcc
       })
     ).subscribe(filtered => {
       this.filteredCities$.next(filtered);
+    });
+  }
+
+  /**
+   * Mettre à jour le filtre des villes quand le pays change
+   */
+  private updateCityFilter(): void {
+    this.cities$.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(cities => {
+      if (cities && cities.length > 0) {
+        const filteredCities = this.filterCitiesByCountry(cities);
+        this.filteredCities$.next(filteredCities);
+
+        // Si la ville sélectionnée n'est plus dans la liste filtrée, la désélectionner
+        if (this.selectedCity && !filteredCities.find(c => c._id === this.selectedCity!._id)) {
+          this.clearSelection();
+        }
+      }
     });
   }
 
@@ -217,6 +243,20 @@ export class CitySelectorComponent implements OnInit, OnDestroy, ControlValueAcc
   }
 
   /**
+   * Gérer l'entrée de la souris sur le dropdown
+   */
+  onDropdownMouseEnter(): void {
+    this.isDropdownHovered = true;
+  }
+
+  /**
+   * Gérer la sortie de la souris du dropdown
+   */
+  onDropdownMouseLeave(): void {
+    this.isDropdownHovered = false;
+  }
+
+  /**
    * Gérer le focus sur l'input
    */
   onInputFocus(): void {
@@ -230,11 +270,19 @@ export class CitySelectorComponent implements OnInit, OnDestroy, ControlValueAcc
    * Gérer la perte de focus
    */
   onInputBlur(): void {
-    // Délai pour permettre le clic sur une option
+    // Délai plus long pour permettre le clic sur une option
+    // et éviter la fermeture prématurée du dropdown
     setTimeout(() => {
-      this.closeDropdown();
-    }, 200);
+      if (!this.isDropdownHovered) {
+        this.closeDropdown();
+      }
+    }, 300);
   }
+
+  /**
+   * Propriété pour tracker si la souris est sur le dropdown
+   */
+  isDropdownHovered = false;
 
   /**
    * Obtenir le texte d'affichage pour une ville

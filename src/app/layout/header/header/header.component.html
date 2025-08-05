@@ -28,9 +28,15 @@
     </span>
   </button>
 
-  <button *ngIf="isAdmin"  class="app-layout__header__btn app-layout__header__btn--icon" [routerLink]="'/admin'" [routerLinkActive]="['app-mini-sidebar__list__item__active']">
-    <youpez-ibm-icon iconName="settings" iconSize="24"></youpez-ibm-icon>
-  </button>
+  <!-- Bouton Admin avec loader intégré -->
+  <app-navigation-button
+    *ngIf="isAdmin"
+    route="/admin/dashboard"
+    icon="settings"
+    tooltip="Administration"
+    buttonClass="app-layout__header__btn app-layout__header__btn--icon admin-nav-button"
+    iconSize="24">
+  </app-navigation-button>
 
 
   <!-- Dropdown utilisateur - visible seulement si connecté -->

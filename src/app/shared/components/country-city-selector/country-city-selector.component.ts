@@ -50,6 +50,11 @@ export class CountryCitySelectorComponent implements OnInit, OnDestroy, ControlV
   @Input() showCityPopulation: boolean = false;
   @Input() layout: 'horizontal' | 'vertical' = 'horizontal';
 
+  /**
+   * Contrôle l'affichage des erreurs de validation. Doit être passé par le parent (ex: après clic sur "Suivant").
+   */
+  @Input() showValidationErrors: boolean = false;
+
   // Valeurs présélectionnées
   @Input() preselectedCountryId: string | null = null;
   @Input() preselectedCityId: string | null = null;
@@ -120,17 +125,26 @@ export class CountryCitySelectorComponent implements OnInit, OnDestroy, ControlV
    */
   private onCountryChange(country: CountryModel | null): void {
     this.selectedCountry = country;
-    
-    // Réinitialiser la ville si le pays change
-    if (this.selectedCity && country) {
-      const cityCountryId = typeof this.selectedCity.country === 'string'
-        ? this.selectedCity.country
-        : this.selectedCity.country?._id;
-        
-      if (cityCountryId !== country._id) {
-        this.selectedCity = null;
-        this.selectorForm.get('city')?.setValue(null, { emitEvent: false });
+
+    // Toujours réinitialiser la ville quand le pays change
+    // pour forcer la mise à jour du sélecteur de ville
+    if (country) {
+      // Si on a une ville sélectionnée, vérifier si elle appartient au nouveau pays
+      if (this.selectedCity) {
+        const cityCountryId = typeof this.selectedCity.country === 'string'
+          ? this.selectedCity.country
+          : this.selectedCity.country?._id;
+
+        if (cityCountryId !== country._id) {
+          // La ville ne correspond pas au nouveau pays, la réinitialiser
+          this.selectedCity = null;
+          this.selectorForm.get('city')?.setValue(null, { emitEvent: false });
+        }
       }
+    } else {
+      // Pas de pays sélectionné, réinitialiser la ville
+      this.selectedCity = null;
+      this.selectorForm.get('city')?.setValue(null, { emitEvent: false });
     }
 
     this.updateCityState();
@@ -152,6 +166,13 @@ export class CountryCitySelectorComponent implements OnInit, OnDestroy, ControlV
    */
   private updateCityState(): void {
     this.isCityDisabled = !this.selectedCountry || this.disabled;
+
+    // Forcer la mise à jour du composant city-selector en changeant la référence
+    // Cela déclenche la détection de changement et la mise à jour de la liste des villes
+    if (this.selectedCountry) {
+      // Créer une nouvelle référence pour déclencher ngOnChanges dans city-selector
+      this.selectedCountry = { ...this.selectedCountry };
+    }
   }
 
   /**
@@ -221,15 +242,12 @@ export class CountryCitySelectorComponent implements OnInit, OnDestroy, ControlV
    */
   getValidationErrors(): string[] {
     const errors: string[] = [];
-    
     if (this.countryRequired && !this.selectedCountry) {
       errors.push('Le pays est obligatoire');
     }
-    
     if (this.cityRequired && !this.selectedCity) {
       errors.push('La ville est obligatoire');
     }
-    
     return errors;
   }
 

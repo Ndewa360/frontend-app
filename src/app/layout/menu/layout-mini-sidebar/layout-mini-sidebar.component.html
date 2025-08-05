@@ -36,10 +36,16 @@
                 <youpez-ibm-icon id="contract-model-menu-btn" iconName="document" iconSize="24"></youpez-ibm-icon>
               </div>
             </div>
-            <div *ngIf="isAdmin" [routerLink]="'/admin'" [routerLinkActive]="['app-mini-sidebar__list__item__active']"
-              class="app-mini-sidebar__list__item app-mini-sidebar__list__item__highlight">
+            <!-- Bouton Admin avec loader intégré -->
+            <div *ngIf="isAdmin" class="app-mini-sidebar__list__item app-mini-sidebar__list__item__highlight">
               <div class="app-mini-sidebar__list__item__pill" placement="right" container="body" ngbTooltip="Administration">
-                <youpez-ibm-icon iconName="settings" iconSize="24"></youpez-ibm-icon>
+                <app-navigation-button
+                  route="/admin/dashboard"
+                  icon="settings"
+                  tooltip="Administration"
+                  buttonClass="mini-sidebar-admin-btn"
+                  iconSize="24">
+                </app-navigation-button>
               </div>
             </div>
           </ng-container>

@@ -198,6 +198,20 @@ export class CountrySelectorComponent implements OnInit, OnDestroy, ControlValue
   }
 
   /**
+   * Gérer l'entrée de la souris sur le dropdown
+   */
+  onDropdownMouseEnter(): void {
+    this.isDropdownHovered = true;
+  }
+
+  /**
+   * Gérer la sortie de la souris du dropdown
+   */
+  onDropdownMouseLeave(): void {
+    this.isDropdownHovered = false;
+  }
+
+  /**
    * Gérer le focus sur l'input
    */
   onInputFocus(): void {
@@ -211,11 +225,19 @@ export class CountrySelectorComponent implements OnInit, OnDestroy, ControlValue
    * Gérer la perte de focus
    */
   onInputBlur(): void {
-    // Délai pour permettre le clic sur une option
+    // Délai plus long pour permettre le clic sur une option
+    // et éviter la fermeture prématurée du dropdown
     setTimeout(() => {
-      this.closeDropdown();
-    }, 200);
+      if (!this.isDropdownHovered) {
+        this.closeDropdown();
+      }
+    }, 300);
   }
+
+  /**
+   * Propriété pour tracker si la souris est sur le dropdown
+   */
+  isDropdownHovered = false;
 
   /**
    * Obtenir le texte d'affichage pour un pays

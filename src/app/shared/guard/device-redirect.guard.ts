@@ -34,6 +34,16 @@ export class DeviceRedirectGuard implements CanActivate {
       return false;
     }
 
+    // Éviter les redirections pour les routes d'administration et autres routes importantes
+    if (currentUrl.startsWith('/app/') ||
+        currentUrl.startsWith('/auth/') ||
+        currentUrl.startsWith('/admin/') ||
+        currentUrl.startsWith('/monitoring/') ||
+        currentUrl.startsWith('/payment/')) {
+      console.log('✅ Route protégée, pas de redirection:', currentUrl);
+      return true;
+    }
+
     // Vérifier si on doit rediriger selon l'appareil
     const deviceInfo = this.deviceService.getDeviceInfo();
     

@@ -74,6 +74,9 @@ export class SearchPageComponent implements OnInit, OnDestroy {
 
   // Protection contre les recherches en boucle
   private isPerformingSearch = false;
+
+  // Protection contre les rechargements répétitifs
+  private hasTriedReloading = false;
   
   // Données
   searchResults: SearchPropertyModel[] = [];
@@ -486,33 +489,24 @@ export class SearchPageComponent implements OnInit, OnDestroy {
         console.log('🏙️ Villes chargées:', cities?.length || 0, cities);
 
         if (!cities || cities.length === 0) {
-          console.warn('⚠️ Aucune ville chargée, tentative de rechargement...');
+          console.warn('⚠️ Aucune ville chargée, tentative de rechargement unique...');
 
-          // Retry après 2 secondes avec un maximum de 3 tentatives
-          let retryCount = 0;
-          const maxRetries = 3;
+          // Une seule tentative de rechargement, pas de setInterval répétitif
+          if (!this.hasTriedReloading) {
+            this.hasTriedReloading = true;
+            console.log('🔄 Tentative unique de rechargement des villes');
 
-          const retryInterval = setInterval(() => {
-            if (retryCount < maxRetries) {
-              console.log(`🔄 Tentative ${retryCount + 1}/${maxRetries} de rechargement des villes`);
+            // Attendre un peu avant de relancer pour éviter les conflits
+            setTimeout(() => {
               this.store.dispatch(new CountryAction.FetchCountries());
               this.store.dispatch(new CityAction.LoadAllCities());
-              retryCount++;
-            } else {
-              console.error('❌ Impossible de charger les villes après', maxRetries, 'tentatives');
-              clearInterval(retryInterval);
-            }
-          }, 2000);
-
-          // Nettoyer l'interval si les villes sont finalement chargées
-          this.cities$.pipe(
-            filter(cities => cities && cities.length > 0),
-            take(1)
-          ).subscribe(() => {
-            console.log('✅ Villes chargées avec succès après retry');
-            clearInterval(retryInterval);
-          });
+            }, 1000);
+          } else {
+            console.error('❌ Impossible de charger les villes après tentative de rechargement');
+          }
         } else {
+          // Réinitialiser le flag si les villes sont chargées
+          this.hasTriedReloading = false;
           console.log('✅ Villes disponibles dans le dropdown:', cities.map(c => c.fullName));
         }
       });

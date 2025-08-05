@@ -608,110 +608,101 @@
                 </div>
               </div>
 
-              <!-- Liste des villes - Design moderne avec cartes -->
+              <!-- Liste des villes - Design moderne cohérent avec les propriétés -->
               <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                 <div *ngFor="let city of getFilteredCities(cities); trackBy: trackByCityId"
-                     class="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden group">
+                     class="city-card group">
 
-                  <!-- En-tête de la carte -->
-                  <div class="px-6 py-4 border-b border-gray-100">
+                  <!-- En-tête de la carte - Style cohérent avec les propriétés -->
+                  <div class="city-card-header">
                     <div class="flex items-center justify-between">
-                      <div class="flex items-center space-x-3">
-                        <div class="flex-shrink-0">
-                          <div class="w-12 h-12 rounded-xl flex items-center justify-center shadow-sm transition-all duration-200"
-                               [class]="city.isActive ?
-                                 'bg-gradient-to-br from-green-400 to-emerald-500 text-white' :
-                                 'bg-gradient-to-br from-gray-300 to-gray-400 text-gray-600'">
-                            <i class="fas fa-city text-lg"></i>
+                      <div class="flex items-center space-x-4">
+                        <!-- Icône de la ville avec style Ndiye -->
+                        <div class="city-icon-container">
+                          <div class="city-icon" [class.active]="city.isActive">
+                            <i class="fas fa-city"></i>
                           </div>
                         </div>
-                        <div class="flex-1 min-w-0">
-                          <h3 class="text-lg font-semibold text-gray-900 truncate group-hover:text-yellow-700 transition-colors duration-200">
+
+                        <!-- Informations de la ville -->
+                        <div class="city-info">
+                          <h3 class="city-name">
                             {{ city.name }}
                           </h3>
-                          <div class="flex items-center mt-1">
-                            <i class="fas fa-flag text-blue-500 mr-2 text-sm"></i>
-                            <p class="text-sm text-gray-600 truncate">
-                              {{ city.country?.name || 'Pays non défini' }}
-                            </p>
+                          <div class="city-country">
+                            <i class="fas fa-flag"></i>
+                            <span>{{ city.country?.name || 'Pays non défini' }}</span>
                           </div>
                         </div>
                       </div>
 
-                      <!-- Badge de statut -->
-                      <div class="flex-shrink-0">
-                        <span [class]="city.isActive ?
-                          'bg-green-100 text-green-800 border-green-200' :
-                          'bg-red-100 text-red-800 border-red-200'"
-                          class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border">
-                          <span [class]="city.isActive ? 'bg-green-400' : 'bg-red-400'"
-                                class="w-2 h-2 rounded-full mr-2"></span>
-                          {{ city.isActive ? 'Active' : 'Inactive' }}
-                        </span>
+                      <!-- Badge de statut avec style Ndiye -->
+                      <div class="city-status-badge" [class.active]="city.isActive">
+                        <div class="status-indicator"></div>
+                        <span>{{ city.isActive ? 'Active' : 'Inactive' }}</span>
                       </div>
                     </div>
                   </div>
 
-                  <!-- Statistiques -->
-                  <div class="px-6 py-4">
-                    <div class="grid grid-cols-2 gap-4">
-                      <div class="text-center p-3 bg-blue-50 rounded-lg border border-blue-100">
-                        <div class="flex items-center justify-center mb-2">
-                          <i class="fas fa-users text-blue-600 text-lg"></i>
+                  <!-- Statistiques avec style Ndiye -->
+                  <div class="city-stats">
+                    <div class="stats-grid">
+                      <!-- Statistique Utilisateurs -->
+                      <div class="stat-item users">
+                        <div class="stat-icon">
+                          <i class="fas fa-users"></i>
                         </div>
-                        <p class="text-2xl font-bold text-blue-700">{{ city.userCount || 0 }}</p>
-                        <p class="text-xs text-blue-600 font-medium">Utilisateurs</p>
+                        <div class="stat-content">
+                          <div class="stat-number">{{ city.userCount || 0 }}</div>
+                          <div class="stat-label">Utilisateurs</div>
+                        </div>
                       </div>
-                      <div class="text-center p-3 bg-purple-50 rounded-lg border border-purple-100">
-                        <div class="flex items-center justify-center mb-2">
-                          <i class="fas fa-home text-purple-600 text-lg"></i>
+
+                      <!-- Statistique Propriétés -->
+                      <div class="stat-item properties">
+                        <div class="stat-icon">
+                          <i class="fas fa-home"></i>
                         </div>
-                        <p class="text-2xl font-bold text-purple-700">{{ city.propertyCount || 0 }}</p>
-                        <p class="text-xs text-purple-600 font-medium">Propriétés</p>
+                        <div class="stat-content">
+                          <div class="stat-number">{{ city.propertyCount || 0 }}</div>
+                          <div class="stat-label">Propriétés</div>
+                        </div>
                       </div>
                     </div>
                   </div>
 
-                  <!-- Actions -->
-                  <div class="px-6 py-4 bg-gray-50 border-t border-gray-100">
-                    <div class="flex items-center justify-between">
-                      <!-- Toggle statut -->
-                      <div class="flex items-center space-x-3">
-                        <span class="text-sm font-medium text-gray-700">Statut :</span>
-                        <button
-                          type="button"
-                          [class]="city.isActive ?
-                            'bg-green-500 hover:bg-green-600 focus:ring-green-500' :
-                            'bg-gray-300 hover:bg-gray-400 focus:ring-gray-500'"
-                          class="relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2"
-                          (click)="onToggleCityStatus(city)">
-                          <span class="sr-only">Activer/Désactiver la ville</span>
-                          <span
-                            [class]="city.isActive ? 'translate-x-5' : 'translate-x-0'"
-                            class="pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200">
-                          </span>
-                        </button>
+                  <!-- Actions avec style cohérent -->
+                  <div class="city-actions">
+                    <div class="actions-content">
+                      <!-- Toggle statut moderne -->
+                      <div class="status-toggle-section">
+                        <span class="toggle-label">Statut :</span>
+                        <div class="modern-toggle" [class.active]="city.isActive" (click)="onToggleCityStatus(city)">
+                          <div class="toggle-slider">
+                            <div class="toggle-handle"></div>
+                          </div>
+                        </div>
                       </div>
 
-                      <!-- Boutons d'action -->
-                      <div class="flex items-center space-x-2">
+                      <!-- Boutons d'action avec style Ndiye -->
+                      <div class="action-buttons">
                         <button
                           type="button"
-                          class="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200"
+                          class="action-btn view-btn"
                           (click)="onViewCity(city)"
                           title="Voir les détails">
                           <i class="fas fa-eye"></i>
                         </button>
                         <button
                           type="button"
-                          class="p-2 text-gray-400 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-all duration-200"
+                          class="action-btn edit-btn"
                           (click)="onEditCity(city)"
                           title="Modifier">
                           <i class="fas fa-edit"></i>
                         </button>
                         <button
                           type="button"
-                          class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200"
+                          class="action-btn delete-btn"
                           (click)="onDeleteCity(city)"
                           title="Supprimer">
                           <i class="fas fa-trash"></i>
@@ -801,4 +792,12 @@
       </div>
     </div>
   </div>
+
+  <!-- Modal de suppression de ville -->
+  <app-city-delete-modal
+    [isOpen]="showCityDeleteModal"
+    [city]="cityToDelete"
+    (closeModal)="onCloseCityDeleteModal()"
+    (cityDeleted)="onCityDeleted($event)">
+  </app-city-delete-modal>
 </div>

@@ -92,6 +92,36 @@ export namespace AdminGeographyAction {
     constructor(public error: any) {}
   }
 
+  export class UpdateCity {
+    static readonly type = '[Admin Geography] Update City';
+    constructor(public cityId: string, public cityData: any) {}
+  }
+
+  export class UpdateCitySuccess {
+    static readonly type = '[Admin Geography] Update City Success';
+    constructor(public city: any) {}
+  }
+
+  export class UpdateCityFailure {
+    static readonly type = '[Admin Geography] Update City Failure';
+    constructor(public error: any) {}
+  }
+
+  export class DeleteCity {
+    static readonly type = '[Admin Geography] Delete City';
+    constructor(public cityId: string) {}
+  }
+
+  export class DeleteCitySuccess {
+    static readonly type = '[Admin Geography] Delete City Success';
+    constructor(public cityId: string) {}
+  }
+
+  export class DeleteCityFailure {
+    static readonly type = '[Admin Geography] Delete City Failure';
+    constructor(public error: any) {}
+  }
+
   // Currencies
   export class LoadCurrencies {
     static readonly type = '[Admin Geography] Load Currencies';

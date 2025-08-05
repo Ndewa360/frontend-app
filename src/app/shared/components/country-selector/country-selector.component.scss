@@ -66,29 +66,6 @@
       }
     }
 
-    .clear-button {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 32px;
-      height: 32px;
-      border: none;
-      background: transparent;
-      color: #6f6f6f;
-      cursor: pointer;
-      border-radius: 4px;
-      transition: all 0.2s ease;
-
-      &:hover {
-        background: #f4f4f4;
-        color: #da1e28;
-      }
-
-      i {
-        font-size: 12px;
-      }
-    }
-
     .dropdown-icon {
       display: flex;
       align-items: center;

@@ -20,6 +20,7 @@ import { CountryDeleteModalComponent } from '../../components/country-delete-mod
 import { CountryViewModalComponent } from '../../components/country-view-modal/country-view-modal.component';
 import { CitySelectionModalComponent } from '../../components/city-selection-modal/city-selection-modal.component';
 import { CountryEditModalComponent } from '../../components/country-edit-modal/country-edit-modal.component';
+import { CityDeleteModalComponent, CityToDelete } from '../../components/city-delete-modal/city-delete-modal.component';
 
 // Services
 import { ExportService, ExportColumn } from '../../../properties/services/export.service';
@@ -72,6 +73,10 @@ export class AdminGeographyComponent implements OnInit, OnDestroy {
   activatedRegions: string[] = [];
   regionStats: any = {};
   loadingRegions: Set<string> = new Set();
+
+  // Modal de suppression de ville
+  showCityDeleteModal = false;
+  cityToDelete: CityToDelete | null = null;
 
   constructor(
     private store: Store,
@@ -339,13 +344,49 @@ export class AdminGeographyComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Supprimer une ville
+   * Supprimer une ville - Ouvrir le modal de confirmation
    */
   onDeleteCity(city: AdminCity): void {
-    if (confirm(`Êtes-vous sûr de vouloir supprimer la ville "${city.name}" ? Cette action est irréversible.`)) {
-      // TODO: Implémenter la suppression
-      console.log('Supprimer ville:', city.name);
-    }
+    // Préparer les données de la ville pour le modal
+    this.cityToDelete = {
+      _id: city._id,
+      fullName: city.name, // AdminCity utilise 'name' pas 'fullName'
+      country: city.country ? {
+        _id: city.country._id,
+        fullName: city.country.name || 'Pays inconnu'
+      } : undefined,
+      isActive: city.isActive,
+      population: undefined, // AdminCity n'a pas de propriété population
+      propertyCount: city.propertyCount || 0,
+      userCount: city.userCount || 0
+    };
+
+    // Ouvrir le modal
+    this.showCityDeleteModal = true;
+  }
+
+  /**
+   * Fermer le modal de suppression de ville
+   */
+  onCloseCityDeleteModal(): void {
+    this.showCityDeleteModal = false;
+    this.cityToDelete = null;
+  }
+
+  /**
+   * Confirmer la suppression de la ville
+   */
+  onCityDeleted(cityId: string): void {
+    this.toastr.success(
+      `La ville "${this.cityToDelete?.fullName}" a été supprimée avec succès`,
+      'Ville supprimée'
+    );
+
+    // Fermer le modal
+    this.onCloseCityDeleteModal();
+
+    // Recharger les données pour s'assurer de la cohérence
+    this.onRefreshData();
   }
 
   /**

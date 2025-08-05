@@ -1,0 +1,27 @@
+<!-- Bouton de navigation avec loader intégré -->
+<button 
+  [class]="buttonClass"
+  [disabled]="disabled || isLoading"
+  [title]="tooltip || label"
+  (click)="onNavigate()">
+  
+  <!-- Loader spinner -->
+  <div *ngIf="isLoading" class="nav-btn-loader">
+    <div class="spinner"></div>
+  </div>
+  
+  <!-- Icône normale -->
+  <youpez-ibm-icon 
+    *ngIf="!isLoading && icon" 
+    [iconName]="icon" 
+    [iconSize]="iconSize">
+  </youpez-ibm-icon> 
+  
+  <!-- Label (optionnel) -->
+  <span *ngIf="label && !isLoading" class="nav-btn-label">{{ label }}</span>
+  
+  <!-- Message de chargement -->
+  <span *ngIf="isLoading && label" class="nav-btn-loading-text">
+    Chargement...
+  </span>
+</button>

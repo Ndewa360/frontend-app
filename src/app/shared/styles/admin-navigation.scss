@@ -1,0 +1,247 @@
+// ========================================
+// STYLES POUR LES BOUTONS DE NAVIGATION ADMIN
+// ========================================
+
+// Variables de couleurs pour l'admin
+$admin-primary: rgb(204, 140, 10);
+$admin-primary-light: rgba(204, 140, 10, 0.1);
+$admin-primary-dark: rgb(184, 126, 9);
+$admin-secondary: #6b7280;
+$admin-success: #10b981;
+$admin-warning: #f59e0b;
+$admin-danger: #ef4444;
+
+// Styles pour le bouton admin dans le mini-sidebar
+.mini-sidebar-admin-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: inherit;
+
+  &:hover {
+    transform: scale(1.1);
+    color: $admin-primary;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  // Styles pour le loader dans le mini-sidebar
+  .nav-btn-loader {
+    .spinner {
+      border-color: rgba(255, 255, 255, 0.3);
+      border-top-color: $admin-primary;
+    }
+  }
+}
+
+// Styles pour le bouton admin dans le header
+.admin-nav-button {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: rgba($admin-primary, 0.1);
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  // Animation de brillance au survol
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+  }
+
+  &:hover::before {
+    left: 100%;
+  }
+
+  // Styles pour le loader dans le header
+  .nav-btn-loader {
+    .spinner {
+      border-color: rgba(107, 114, 128, 0.3);
+      border-top-color: $admin-primary;
+    }
+  }
+}
+
+// Styles globaux pour les loaders de navigation admin
+.nav-btn-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  .spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(107, 114, 128, 0.3);
+    border-top: 2px solid $admin-primary;
+    border-radius: 50%;
+    animation: adminSpinner 1s linear infinite;
+  }
+}
+
+// Animation personnalisée pour les spinners admin
+@keyframes adminSpinner {
+  0% { 
+    transform: rotate(0deg);
+    border-top-color: $admin-primary;
+  }
+  25% { 
+    border-top-color: $admin-warning;
+  }
+  50% { 
+    transform: rotate(180deg);
+    border-top-color: $admin-success;
+  }
+  75% { 
+    border-top-color: $admin-warning;
+  }
+  100% { 
+    transform: rotate(360deg);
+    border-top-color: $admin-primary;
+  }
+}
+
+// Styles pour les états de chargement
+.navigation-loading {
+  .admin-nav-button,
+  .mini-sidebar-admin-btn {
+    pointer-events: none;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(1px);
+    }
+  }
+}
+
+// Styles responsives
+@media (max-width: 768px) {
+  .admin-nav-button {
+    padding: 8px;
+    
+    .nav-btn-loader .spinner {
+      width: 14px;
+      height: 14px;
+    }
+  }
+  
+  .mini-sidebar-admin-btn {
+    .nav-btn-loader .spinner {
+      width: 14px;
+      height: 14px;
+    }
+  }
+}
+
+// Styles pour les tooltips admin
+.admin-tooltip {
+  background-color: $admin-primary-dark;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+// Styles pour les notifications de navigation
+.navigation-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: linear-gradient(135deg, $admin-primary, $admin-warning);
+  color: white;
+  padding: 12px 16px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 9999;
+  font-size: 0.875rem;
+  font-weight: 500;
+  animation: slideInRight 0.3s ease;
+
+  &.success {
+    background: linear-gradient(135deg, $admin-success, #059669);
+  }
+
+  &.error {
+    background: linear-gradient(135deg, $admin-danger, #dc2626);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+// Styles pour les indicateurs de progression
+.navigation-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: rgba($admin-primary, 0.2);
+  z-index: 9999;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: linear-gradient(90deg, $admin-primary, $admin-warning, $admin-primary);
+    animation: progressBar 2s ease-in-out infinite;
+  }
+}
+
+@keyframes progressBar {
+  0% {
+    width: 0%;
+    left: 0%;
+  }
+  50% {
+    width: 75%;
+    left: 0%;
+  }
+  100% {
+    width: 0%;
+    left: 100%;
+  }
+}

@@ -208,9 +208,9 @@ export class DeviceDetectionService {
       console.log('📱 Appareil mobile détecté -> /mobile/search');
       return '/mobile/search';
     } else {
-      // Sinon, aller vers la version web
-      console.log('🖥️ Appareil desktop détecté -> /search/index');
-      return '/search/index';
+      // Pour les desktops, aller vers l'app principale au lieu de search
+      console.log('🖥️ Appareil desktop détecté -> /app/welcome');
+      return '/app/welcome';
     }
   }
 

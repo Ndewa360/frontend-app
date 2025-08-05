@@ -7,6 +7,11 @@ $primary-color: rgb(204, 140, 10);
 $primary-light: rgba(204, 140, 10, 0.1);
 $primary-dark: rgb(184, 126, 9);
 
+// Couleurs secondaires pour les villes
+$city-active: #10b981;
+$city-inactive: #6b7280;
+$city-hover: #f59e0b;
+
 // Styles optimisés pour la page de géographie - Style identique aux détails de propriété
 :host {
   display: block;
@@ -1246,5 +1251,334 @@ $primary-dark: rgb(184, 126, 9);
 
   .action-btn span {
     display: none;
+  }
+}
+
+// ========================================
+// STYLES POUR LES CARTES DE VILLES - DESIGN COHÉRENT AVEC LES PROPRIÉTÉS
+// ========================================
+
+.city-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    border-color: $primary-color;
+  }
+
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, $primary-color, $city-hover);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  &:hover:before {
+    opacity: 1;
+  }
+}
+
+.city-card-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid #f3f4f6;
+  background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+}
+
+.city-icon-container {
+  position: relative;
+}
+
+.city-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg, #e5e7eb, #d1d5db);
+  color: #6b7280;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+  &.active {
+    background: linear-gradient(135deg, $primary-color, $city-hover);
+    color: #ffffff;
+    box-shadow: 0 8px 16px rgba(204, 140, 10, 0.3);
+  }
+
+  i {
+    transition: transform 0.3s ease;
+  }
+
+  &:hover i {
+    transform: scale(1.1);
+  }
+}
+
+.city-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.city-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 0.5rem;
+  transition: color 0.3s ease;
+
+  .group:hover & {
+    color: $primary-color;
+  }
+}
+
+.city-country {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #6b7280;
+  font-size: 0.875rem;
+  font-weight: 500;
+
+  i {
+    color: #3b82f6;
+    font-size: 0.75rem;
+  }
+}
+
+.city-status-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+
+  &.active {
+    background: #f0fdf4;
+    color: #16a34a;
+    border-color: #bbf7d0;
+  }
+
+  .status-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #dc2626;
+
+    .active & {
+      background: #16a34a;
+    }
+  }
+}
+
+.city-stats {
+  padding: 1.5rem;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+
+  &.users {
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    border: 1px solid #bfdbfe;
+
+    .stat-icon {
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      color: #ffffff;
+    }
+
+    .stat-number {
+      color: #1e40af;
+    }
+
+    .stat-label {
+      color: #3730a3;
+    }
+  }
+
+  &.properties {
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    border: 1px solid #fcd34d;
+
+    .stat-icon {
+      background: linear-gradient(135deg, $primary-color, $city-hover);
+      color: #ffffff;
+    }
+
+    .stat-number {
+      color: $primary-dark;
+    }
+
+    .stat-label {
+      color: #92400e;
+    }
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.stat-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.125rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.stat-content {
+  flex: 1;
+}
+
+.stat-number {
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.city-actions {
+  padding: 1.5rem;
+  background: #f9fafb;
+  border-top: 1px solid #f3f4f6;
+}
+
+.actions-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.status-toggle-section {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.toggle-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.modern-toggle {
+  width: 48px;
+  height: 24px;
+  background: #d1d5db;
+  border-radius: 12px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &.active {
+    background: linear-gradient(135deg, $city-active, #059669);
+  }
+
+  .toggle-slider {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    background: #ffffff;
+    border-radius: 10px;
+    transition: transform 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  &.active .toggle-slider {
+    transform: translateX(24px);
+  }
+
+  .toggle-handle {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: #ffffff;
+  }
+}
+
+.action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.action-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: #ffffff;
+  color: #6b7280;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  &.view-btn:hover {
+    background: #eff6ff;
+    color: #2563eb;
+  }
+
+  &.edit-btn:hover {
+    background: linear-gradient(135deg, $primary-light, rgba(245, 158, 11, 0.1));
+    color: $primary-color;
+  }
+
+  &.delete-btn:hover {
+    background: #fef2f2;
+    color: #dc2626;
   }
 }
