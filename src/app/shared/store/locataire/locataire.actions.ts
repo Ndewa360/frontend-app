@@ -71,4 +71,10 @@ export namespace LocataireAction
         static readonly type = '[Locataire] create Locataire'
         constructor(public locataire){}
     }
+
+    export class DeleteLocataire
+    {
+        static readonly type = '[Locataire] delete Locataire'
+        constructor(public locataireId: string){}
+    }
 }

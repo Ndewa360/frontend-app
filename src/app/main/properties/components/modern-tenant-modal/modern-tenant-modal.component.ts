@@ -9,12 +9,13 @@ import { TranslateService } from '@ngx-translate/core';
 import { FormUtils } from 'src/app/shared/utils';
 import { HttpEventType, HttpResponse } from '@angular/common/http';
 
-import { 
-  LocataireModel, 
-  LocataireAction, 
-  RoomModel, 
+import {
+  LocataireModel,
+  LocataireAction,
+  LocataireState,
+  RoomModel,
   RoomState,
-  PropertyModel 
+  PropertyModel
 } from 'src/app/shared/store';
 import {
   UploadFilesAction,
@@ -73,6 +74,15 @@ export class ModernTenantModalComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  /**
+   * Génère un ObjectId MongoDB valide
+   */
+  private generateObjectId(): string {
+    const timestamp = Math.floor(Date.now() / 1000).toString(16);
+    const randomBytes = Array.from({length: 16}, () => Math.floor(Math.random() * 16).toString(16)).join('');
+    return (timestamp + randomBytes).substring(0, 24);
   }
 
   private initializeForm(): void {
@@ -151,30 +161,42 @@ export class ModernTenantModalComponent implements OnInit, OnDestroy {
     this.actions.pipe(
       ofActionSuccessful(LocataireAction.CreateLocataire),
       takeUntil(this.destroy$)
-    ).subscribe(async () => {
+    ).subscribe(async (actionContext) => {
       console.log('✅ Locataire créé avec succès');
 
-      // Si une photo est sélectionnée, essayer de l'uploader
-      if (this.selectedPhoto) {
-        console.log('📸 Tentative d\'upload de la photo...');
+      // Récupérer l'ID du locataire créé depuis le state
+      const locataires = this.store.selectSnapshot(LocataireState.selectStateLocataires) as LocataireModel[];
+      const createdTenant = locataires?.find(l =>
+        l.email === this.formGroup.value.email &&
+        l.phoneNumber === this.formGroup.value.phoneNumber
+      );
+
+      // Si une photo est sélectionnée, essayer de l'uploader avec l'ID réel
+      if (this.selectedPhoto && createdTenant?._id) {
+        console.log('📸 Upload de la photo en cours...');
 
         try {
-          // Pour l'instant, on utilise un ID temporaire
-          // Dans une vraie implémentation, il faudrait récupérer l'ID du locataire créé
-          const photoUrl = await this.uploadPhoto();
+          const photoUrl = await this.uploadPhotoForTenant(createdTenant._id);
 
           if (photoUrl) {
             console.log('✅ Photo uploadée avec succès:', photoUrl);
-            // La photo sera associée au locataire côté backend
+            // Afficher un message spécifique pour la photo
+            this.toastr.success('Locataire créé avec photo de profil', this.translate.instant('NOTIFICATIONS.SUCCESS'));
+          } else {
+            // Pas de photo uploadée, message standard
+            this.toastr.success(this.translate.instant('MODALS.TENANT.SUCCESS_CREATED'), this.translate.instant('NOTIFICATIONS.SUCCESS'));
           }
         } catch (error) {
           console.error('❌ Erreur lors de l\'upload de la photo:', error);
-          // Ne pas faire échouer la création pour autant
+          // Afficher un message indiquant que le locataire est créé mais sans photo
+          this.toastr.warning('Locataire créé mais erreur lors de l\'upload de la photo', 'Attention');
         }
+      } else {
+        // Pas de photo sélectionnée, message standard
+        this.toastr.success(this.translate.instant('MODALS.TENANT.SUCCESS_CREATED'), this.translate.instant('NOTIFICATIONS.SUCCESS'));
       }
 
       this.isLoading = false;
-      this.toastr.success(this.translate.instant('MODALS.TENANT.SUCCESS_CREATED'), this.translate.instant('NOTIFICATIONS.SUCCESS'));
       this.dialogRef.close(true);
     });
 
@@ -253,6 +275,45 @@ export class ModernTenantModalComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Upload de la photo avec un ID de locataire spécifique
+   */
+  private async uploadPhotoForTenant(tenantId: string): Promise<string | null> {
+    if (!this.selectedPhoto) return null;
+
+    this.isUploadingPhoto = true;
+    console.log('📤 Upload de photo pour locataire avec ID réel:', tenantId);
+
+    try {
+      const uploadObservable = this.uploadService.uploadFiles({
+        file: this.selectedPhoto,
+        contentType: FileUploadContentType.FOR_USER_FILE,
+        contentID: tenantId,
+        contentRoomType: ContentUploadRoomType.FOR_ROOM
+      }).pipe(
+        filter(event => event.type === HttpEventType.Response),
+        takeUntil(this.destroy$)
+      );
+
+      const uploadResult = await firstValueFrom(uploadObservable) as HttpResponse<any>;
+      console.log('✅ Upload réussi avec ID réel:', uploadResult);
+
+      if (uploadResult && uploadResult.body && uploadResult.body.data && uploadResult.body.data.profilePicture) {
+        const photoUrl = uploadResult.body.data.profilePicture;
+        console.log('📸 URL de la photo récupérée:', photoUrl);
+        return photoUrl;
+      } else {
+        console.warn('⚠️ Réponse d\'upload inattendue:', uploadResult);
+        return null;
+      }
+    } catch (error) {
+      console.error('❌ Erreur lors de l\'upload de la photo:', error);
+      throw error;
+    } finally {
+      this.isUploadingPhoto = false;
+    }
+  }
+
   private async uploadPhoto(): Promise<string | null> {
     if (!this.selectedPhoto) return null;
 
@@ -260,8 +321,14 @@ export class ModernTenantModalComponent implements OnInit, OnDestroy {
     console.log('📤 Début de l\'upload de la photo de profil locataire');
 
     try {
-      // Générer un ID temporaire pour les nouveaux locataires
-      const contentID = this.data.tenant?._id || `temp-tenant-${Date.now()}`;
+      // Générer un ObjectId valide pour les nouveaux locataires
+      const contentID = this.data.tenant?._id || this.generateObjectId();
+
+      console.log('📤 Upload de photo pour locataire:', {
+        isNewTenant: !this.data.tenant?._id,
+        contentID,
+        fileSize: this.selectedPhoto.size
+      });
 
       // Utiliser directement le service d'upload et filtrer pour obtenir la réponse finale
       const uploadObservable = this.uploadService.uploadFiles({

@@ -42,7 +42,15 @@ export class LocataireService
     }
 
     getLocataires(propertyId:string):Observable<ApiResultFormat<LocataireModel[]>>
-    {       
+    {
         return this._httpClient.get<ApiResultFormat<LocataireModel[]>>(`${environment.apiUrl}/locataire/property/${propertyId}`)
+    }
+
+    /**
+     * Supprimer un locataire
+     */
+    deleteLocataire(locataireId: string): Observable<ApiResultFormat<any>>
+    {
+        return this._httpClient.delete<ApiResultFormat<any>>(`${environment.apiUrl}/locataire/${locataireId}`)
     }
 }

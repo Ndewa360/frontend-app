@@ -15,6 +15,8 @@ import { ModernUnitModalComponent } from '../modern-unit-modal/modern-unit-modal
 import { ModernPaymentModalComponent } from '../modern-payment-modal/modern-payment-modal.component';
 import { ModernDeletePaymentModalComponent } from '../modern-delete-payment-modal/modern-delete-payment-modal.component';
 import { ModernContractTerminationModalComponent } from '../modern-contract-termination-modal/modern-contract-termination-modal.component';
+import { ModernDeleteTenantModalComponent } from '../modern-delete-tenant-modal/modern-delete-tenant-modal.component';
+import { ModernDeleteUnitModalComponent } from '../modern-delete-unit-modal/modern-delete-unit-modal.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +24,9 @@ import { ModernContractTerminationModalComponent } from '../modern-contract-term
     ModernUnitModalComponent,
     ModernPaymentModalComponent,
     ModernDeletePaymentModalComponent,
-    ModernContractTerminationModalComponent
+    ModernContractTerminationModalComponent,
+    ModernDeleteTenantModalComponent,
+    ModernDeleteUnitModalComponent
   ],
   imports: [
     CommonModule,
@@ -40,7 +44,9 @@ import { ModernContractTerminationModalComponent } from '../modern-contract-term
     ModernUnitModalComponent,
     ModernPaymentModalComponent,
     ModernDeletePaymentModalComponent,
-    ModernContractTerminationModalComponent
+    ModernContractTerminationModalComponent,
+    ModernDeleteTenantModalComponent,
+    ModernDeleteUnitModalComponent
   ]
 })
 export class ModernModalsModule { }

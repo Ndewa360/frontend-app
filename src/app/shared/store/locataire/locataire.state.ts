@@ -208,7 +208,8 @@ export class LocataireState{
                         loadingLocataire:false,
                         locataires:[...state.locataires, result.data]
                     })
-                    this._toastrService.success(`Locataire ajouté avec success!`, 'Ndewa360°');
+                    // Message géré par le composant pour éviter les doublons
+                    // this._toastrService.success(`Locataire ajouté avec success!`, 'Ndewa360°');
 
                 }
             ),
@@ -254,5 +255,36 @@ export class LocataireState{
                 return throwError(error);
             })
         )
+    }
+
+    @Action(LocataireAction.DeleteLocataire)
+    deleteLocataire(ctx: StateContext<LocataireStateModel>, { locataireId }: LocataireAction.DeleteLocataire) {
+        const state = ctx.getState();
+
+        ctx.patchState({
+            loadingLocataire: true
+        });
+
+        return this._locatairesService.deleteLocataire(locataireId).pipe(
+            tap(
+                result => {
+                    // Supprimer le locataire de la liste
+                    const updatedLocataires = state.locataires.filter(l => l._id !== locataireId);
+
+                    ctx.patchState({
+                        loadingLocataire: false,
+                        locataires: updatedLocataires
+                    });
+
+                    console.log('✅ Locataire supprimé du state:', locataireId);
+                }
+            ),
+            catchError((error) => {
+                ctx.patchState({
+                    loadingLocataire: false
+                });
+                return throwError(error);
+            })
+        );
     }
 }

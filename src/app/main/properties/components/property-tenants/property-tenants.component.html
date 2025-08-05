@@ -201,13 +201,24 @@
           <div class="flex items-center justify-between">
             <!-- Informations principales du locataire -->
             <div class="flex items-center space-x-4 flex-1">
-              <!-- Avatar compact -->
+              <!-- Avatar avec photo ou initiales -->
               <div class="relative">
-                <div class="w-16 h-16 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-md border-2 border-white"
-                     [style.background]="getTenantAvatarColor(tenant)">
-                  {{ getTenantInitials(tenant) }}
+                <div class="w-16 h-16 rounded-full overflow-hidden shadow-md border-2 border-white">
+                  <!-- Photo de profil si elle existe -->
+                  <img *ngIf="tenant.profilePicture"
+                       [src]="tenant.profilePicture"
+                       [alt]="tenant.fullName || 'Locataire'"
+                       class="w-full h-full object-cover">
+
+                  <!-- Initiales si pas de photo -->
+                  <div *ngIf="!tenant.profilePicture"
+                       class="w-full h-full flex items-center justify-center text-white font-bold text-lg"
+                       [style.background]="getTenantAvatarColor(tenant)">
+                    {{ getTenantInitials(tenant) }}
+                  </div>
                 </div>
-                <!-- Indicateur de statut simple -->
+
+                <!-- Indicateur de statut -->
                 <div class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-white shadow-sm"
                      [class.bg-emerald-500]="getTenantStatus(tenant) === 'active'"
                      [class.bg-red-500]="getTenantStatus(tenant) === 'inactive'"
@@ -278,17 +289,28 @@
                       <i class="fas fa-edit"></i>
                     </button>
 
+                    <!-- Bouton Ajouter paiement - Visible seulement si assigné à une chambre -->
                     <button (click)="onAddPayment(tenant, $event)"
+                            *ngIf="getTenantUnit(tenant)"
                             class="p-2 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-100 rounded-lg transition-all duration-200 border border-emerald-200 hover:border-emerald-300"
                             title="Ajouter un paiement">
                       <i class="fas fa-coins"></i>
                     </button>
 
+                    <!-- Bouton Assigner unité - Visible seulement si pas encore assigné -->
                     <button (click)="onAssignUnit(tenant, $event)"
                             *ngIf="!getTenantUnit(tenant)"
                             class="p-2 text-purple-600 hover:text-purple-700 hover:bg-purple-100 rounded-lg transition-all duration-200 border border-purple-200 hover:border-purple-300"
                             title="Assigner une unité">
                       <i class="fas fa-home"></i>
+                    </button>
+
+                    <!-- Bouton Supprimer - Visible seulement si pas assigné à une chambre -->
+                    <button (click)="onDeleteTenant(tenant, $event)"
+                            *ngIf="!getTenantUnit(tenant)"
+                            class="p-2 text-red-600 hover:text-red-700 hover:bg-red-100 rounded-lg transition-all duration-200 border border-red-200 hover:border-red-300"
+                            title="Supprimer le locataire">
+                      <i class="fas fa-trash"></i>
                     </button>
                   </div>
                 </div>

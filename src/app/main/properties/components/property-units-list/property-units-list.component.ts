@@ -10,6 +10,7 @@ import { ModernUnitModalComponent } from '../modern-unit-modal/modern-unit-modal
 import { ModernPaymentModalComponent } from '../modern-payment-modal/modern-payment-modal.component';
 import { ModernDeletePaymentModalComponent } from '../modern-delete-payment-modal/modern-delete-payment-modal.component';
 import { ModernContractTerminationModalComponent } from '../modern-contract-termination-modal/modern-contract-termination-modal.component';
+import { ModernDeleteUnitModalComponent } from '../modern-delete-unit-modal/modern-delete-unit-modal.component';
 
 // Anciens modals (à garder temporairement pour certaines fonctionnalités)
 import { ContractViewerModalComponent } from '../contract-viewer-modal/contract-viewer-modal.component';
@@ -1475,6 +1476,46 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
       propertyName: this.property?.name || `Propriete_${this.propertyId}`,
       columns,
       data: this.filteredRooms
+    });
+  }
+
+  /**
+   * Supprimer une unité
+   */
+  onDeleteUnit(unit: RoomModel): void {
+    console.log('🗑️ PropertyUnitsList: onDeleteUnit appelé pour:', unit);
+    console.log('🔍 Unit isFree:', unit.isFree);
+    console.log('🔍 Event triggered successfully!');
+
+    if (!this.dialog) {
+      console.error('❌ Service MatDialog non disponible !');
+      return;
+    }
+
+    // Vérifier que l'unité n'est pas occupée
+    if (!unit.isFree) {
+      this.toastr.warning('Impossible de supprimer une unité occupée. Résiliez d\'abord le contrat du locataire.', 'Attention');
+      return;
+    }
+
+    console.log('🗑️ Ouverture du modal de suppression d\'unité...');
+
+    const dialogRef = this.dialog.open(ModernDeleteUnitModalComponent, {
+      width: '100%',
+      maxWidth: '600px',
+      disableClose: true,
+      data: {
+        unit: unit,
+        propertyName: this.property?.name
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        console.log('✅ Unité supprimée, rechargement des données...');
+        // Les données sont automatiquement mises à jour par le state
+        // Pas besoin de recharger manuellement
+      }
     });
   }
 

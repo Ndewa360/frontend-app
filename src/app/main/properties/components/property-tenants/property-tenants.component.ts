@@ -5,11 +5,13 @@ import { HistoryLocationPaymentAction } from 'src/app/shared/store/history-payme
 import { Store } from '@ngxs/store';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
+import { AssignLocationModalService } from 'src/app/main/assign-location/services/assign-location-modal.service';
 // Nouveaux modals modernes
 import { ModernTenantModalComponent } from '../modern-tenant-modal/modern-tenant-modal.component';
 import { ModernPaymentModalComponent } from '../modern-payment-modal/modern-payment-modal.component';
 import { ModernDeletePaymentModalComponent } from '../modern-delete-payment-modal/modern-delete-payment-modal.component';
 import { ModernContractTerminationModalComponent } from '../modern-contract-termination-modal/modern-contract-termination-modal.component';
+import { ModernDeleteTenantModalComponent } from '../modern-delete-tenant-modal/modern-delete-tenant-modal.component';
 
 // Anciens modals (à garder temporairement)
 import { ContractViewerModalComponent } from '../contract-viewer-modal/contract-viewer-modal.component';
@@ -49,7 +51,8 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
     private dialog: MatDialog,
     private toastr: ToastrService,
     private tenantAvatarService: TenantAvatarService,
-    private exportService: ExportService
+    private exportService: ExportService,
+    private assignLocationModalService: AssignLocationModalService
   ) {}
 
   ngOnInit(): void {
@@ -425,8 +428,29 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
 
   onAssignUnit(tenant: LocataireModel, event: Event): void {
     event.stopPropagation();
-    console.log('Assigner unité:', tenant);
-    // Logique pour assigner une unité
+    console.log('🏠 PropertyTenants: onAssignUnit appelé pour:', tenant);
+
+    if (!this.assignLocationModalService) {
+      console.error('❌ Service AssignLocationModalService non disponible !');
+      return;
+    }
+
+    // Ouvrir le modal d'assignation avec le locataire pré-sélectionné
+    this.assignLocationModalService.openAssignLocationModal({
+      propertyId: this.propertyId,
+      locataireId: tenant._id,  // ← Correction: locataireId au lieu de tenantId
+      assistant: true
+    }).subscribe(result => {
+      if (result && result.success) {
+        console.log('✅ Assignation réussie, rechargement des données...');
+        // Les données seront automatiquement mises à jour par le state
+        this.toastr.success('Locataire assigné avec succès', 'Succès');
+      } else if (result && !result.success) {
+        console.error('❌ Assignation échouée');
+        this.toastr.error('Erreur lors de l\'assignation du locataire', 'Erreur');
+      }
+      // Si result est null/undefined, l'utilisateur a fermé le modal sans action
+    });
   }
 
   // === MÉTHODES DE GESTION DU PANNEAU DE DÉTAILS ===
@@ -820,6 +844,45 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
       propertyName: this.property?.name || `Propriete_${this.propertyId}`,
       columns,
       data: this.filteredTenants
+    });
+  }
+
+  /**
+   * Supprimer un locataire
+   */
+  onDeleteTenant(tenant: LocataireModel, event: Event): void {
+    event.stopPropagation();
+    console.log('🗑️ PropertyTenants: onDeleteTenant appelé pour:', tenant);
+
+    if (!this.dialog) {
+      console.error('❌ Service MatDialog non disponible !');
+      return;
+    }
+
+    // Vérifier que le locataire n'est pas assigné à une unité
+    if (this.getTenantUnit(tenant)) {
+      this.toastr.warning('Impossible de supprimer un locataire assigné à une unité. Résiliez d\'abord son contrat.', 'Attention');
+      return;
+    }
+
+    console.log('🗑️ Ouverture du modal de suppression...');
+
+    const dialogRef = this.dialog.open(ModernDeleteTenantModalComponent, {
+      width: '100%',
+      maxWidth: '600px',
+      disableClose: true,
+      data: {
+        tenant: tenant,
+        propertyName: this.property?.name
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        console.log('✅ Locataire supprimé, rechargement des données...');
+        // Les données sont automatiquement mises à jour par le state
+        // Pas besoin de recharger manuellement
+      }
     });
   }
 }

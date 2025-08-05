@@ -34,6 +34,8 @@ export class TenantAvatarService {
     return !!(tenant?.profilePicture);
   }
 
+
+
   /**
    * Obtenir une couleur d'avatar basée sur l'ID du locataire
    */

@@ -1,0 +1,134 @@
+<!-- Modal moderne de suppression de locataire -->
+<div class="modern-delete-tenant-modal">
+  <!-- Header -->
+  <div class="modal-header">
+    <div class="header-content">
+      <div class="header-icon">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+        </svg>
+      </div>
+      <div class="header-text">
+        <h2 class="modal-title">Supprimer le locataire</h2>
+        <p class="modal-subtitle">{{ data.propertyName || 'Action irréversible' }}</p>
+      </div>
+    </div>
+    <button class="close-btn" (click)="onCancel()" type="button">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Body -->
+  <div class="modal-body">
+    <!-- Section d'avertissement principal -->
+    <div class="warning-section">
+      <div class="warning-icon">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+        </svg>
+      </div>
+      <div class="warning-content">
+        <h3 class="warning-title">Attention : Suppression définitive</h3>
+        <p class="warning-text">
+          Vous êtes sur le point de supprimer définitivement le locataire
+          <strong>{{ getTenantDisplayName() }}</strong>.
+        </p>
+      </div>
+    </div>
+
+    <!-- Informations du locataire -->
+    <div class="tenant-info-section">
+      <h4 class="section-title">Informations du locataire</h4>
+      <div class="tenant-details">
+        <div class="detail-item">
+          <span class="detail-label">Nom complet</span>
+          <span class="detail-value">{{ getTenantDisplayName() }}</span>
+        </div>
+        <div class="detail-item" *ngIf="data.tenant.email">
+          <span class="detail-label">Email</span>
+          <span class="detail-value">{{ data.tenant.email }}</span>
+        </div>
+        <div class="detail-item" *ngIf="data.tenant.phoneNumber">
+          <span class="detail-label">Téléphone</span>
+          <span class="detail-value">{{ data.tenant.phoneNumber }}</span>
+        </div>
+        <div class="detail-item" *ngIf="data.propertyName">
+          <span class="detail-label">Propriété</span>
+          <span class="detail-value">{{ data.propertyName }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Conséquences de la suppression -->
+    <div class="consequences-section">
+      <h4 class="section-title">Conséquences de cette action</h4>
+      <div class="consequences-list">
+        <div class="consequence-item danger">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+          <span>Suppression définitive du locataire de la base de données</span>
+        </div>
+        <div class="consequence-item danger">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+          <span>Suppression de toutes ses informations personnelles</span>
+        </div>
+        <div class="consequence-item warning">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+          </svg>
+          <span>Cette action ne peut pas être annulée</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Note informative -->
+    <div class="info-section">
+      <div class="info-icon">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+      </div>
+      <div class="info-content">
+        <h4 class="info-title">Note importante</h4>
+        <p class="info-text">
+          Ce locataire n'est actuellement assigné à aucune unité, c'est pourquoi la suppression est possible.
+          Si un locataire est assigné à une unité, vous devez d'abord résilier son contrat.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="modal-footer">
+    <button class="btn btn-secondary" (click)="onCancel()" type="button">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+      Annuler
+    </button>
+
+    <button class="btn btn-danger"
+            (click)="onConfirmDelete()"
+            [disabled]="isDeleting"
+            type="button">
+      <svg class="w-4 h-4" *ngIf="!isDeleting" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+      </svg>
+      <svg class="w-4 h-4 animate-spin" *ngIf="isDeleting" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      {{ isDeleting ? 'Suppression...' : 'Supprimer définitivement' }}
+    </button>
+  </div>
+</div>
