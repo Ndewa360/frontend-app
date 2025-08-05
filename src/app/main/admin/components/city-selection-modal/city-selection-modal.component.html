@@ -1,0 +1,201 @@
+<!-- Modal de sélection de ville -->
+<div class="city-selection-modal">
+  
+  <!-- En-tête -->
+  <div class="modal-header">
+    <div class="header-content">
+      <div class="step-indicator">
+        <div class="step" [class.active]="currentStep === 'country'" [class.completed]="currentStep === 'city'">
+          <div class="step-number">1</div>
+          <div class="step-label">Pays</div>
+        </div>
+        <div class="step-connector" [class.active]="currentStep === 'city'"></div>
+        <div class="step" [class.active]="currentStep === 'city'">
+          <div class="step-number">2</div>
+          <div class="step-label">Ville</div>
+        </div>
+      </div>
+      <button class="close-btn" (click)="onCancel()" [disabled]="isLoading$ | async">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Contenu -->
+  <div class="modal-content">
+    
+    <!-- Étape 1: Sélection du pays -->
+    <div class="step-content" *ngIf="currentStep === 'country'">
+      <div class="step-header">
+        <h2 class="step-title">
+          <i class="fas fa-flag mr-3"></i>
+          Sélectionnez un pays
+        </h2>
+        <p class="step-description">
+          Choisissez le pays pour lequel vous souhaitez ajouter une ville
+        </p>
+      </div>
+
+      <!-- Recherche de pays -->
+      <div class="search-section">
+        <div class="search-input-container">
+          <i class="fas fa-search search-icon"></i>
+          <input 
+            type="text" 
+            class="search-input"
+            placeholder="Rechercher un pays..."
+            [formControl]="countrySearchControl">
+        </div>
+      </div>
+
+      <!-- Liste des pays -->
+      <div class="countries-grid">
+        <div 
+          *ngFor="let country of getFilteredCountries(); trackBy: trackByCountryId" 
+          class="country-card"
+          (click)="onSelectCountry(country)"
+          [class.disabled]="isLoading$ | async">
+          <div class="country-flag">
+            <div class="flag-emoji" *ngIf="country.flag">{{ country.flag }}</div>
+            <div class="flag-placeholder" *ngIf="!country.flag">
+              <i class="fas fa-flag"></i>
+            </div>
+          </div>
+          <div class="country-info">
+            <h3 class="country-name">{{ country.name }}</h3>
+            <p class="country-details">{{ country.code }} • {{ country.currency }}</p>
+            <div class="country-stats">
+              <span class="stat-item">
+                <i class="fas fa-city"></i>
+                {{ country.cityCount || 0 }} villes
+              </span>
+            </div>
+          </div>
+          <div class="country-arrow">
+            <i class="fas fa-chevron-right"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- État vide -->
+      <div class="empty-state" *ngIf="getFilteredCountries().length === 0">
+        <div class="empty-icon">
+          <i class="fas fa-search"></i>
+        </div>
+        <h3>Aucun pays trouvé</h3>
+        <p>Essayez de modifier votre recherche</p>
+      </div>
+    </div>
+
+    <!-- Étape 2: Sélection de la ville -->
+    <div class="step-content" *ngIf="currentStep === 'city'">
+      <div class="step-header">
+        <h2 class="step-title">
+          <i class="fas fa-city mr-3"></i>
+          Sélectionnez une ville
+        </h2>
+        <p class="step-description">
+          Choisissez une ville de <strong>{{ selectedCountry?.name }}</strong> depuis Geonames
+        </p>
+      </div>
+
+      <!-- Recherche de ville -->
+      <div class="search-section">
+        <div class="search-input-container">
+          <i class="fas fa-search search-icon"></i>
+          <input 
+            type="text" 
+            class="search-input"
+            placeholder="Rechercher une ville..."
+            [formControl]="citySearchControl">
+        </div>
+      </div>
+
+      <!-- État de chargement -->
+      <div class="loading-state" *ngIf="isLoading$ | async">
+        <div class="loading-spinner">
+          <i class="fas fa-spinner fa-spin"></i>
+        </div>
+        <p>Chargement des villes depuis Geonames...</p>
+      </div>
+
+      <!-- Liste des villes -->
+      <div class="cities-grid" *ngIf="!(isLoading$ | async)">
+        <div 
+          *ngFor="let city of filteredCities; trackBy: trackByCityId" 
+          class="city-card"
+          [class.selected]="isCitySelected(city)"
+          (click)="onSelectCity(city)">
+          <div class="city-header">
+            <div class="city-icon">
+              <i class="fas fa-city" *ngIf="!city.isCapital"></i>
+              <i class="fas fa-crown" *ngIf="city.isCapital"></i>
+            </div>
+            <div class="city-info">
+              <h3 class="city-name">{{ city.name }}</h3>
+              <p class="city-details">
+                {{ city.region || 'Région inconnue' }}
+                <span class="capital-badge" *ngIf="city.isCapital">Capitale</span>
+              </p>
+            </div>
+          </div>
+          <div class="city-stats">
+            <div class="stat-item" *ngIf="city.population > 0">
+              <i class="fas fa-users"></i>
+              <span>{{ city.population | number:'1.0-0':'fr-FR' }}</span>
+            </div>
+            <div class="stat-item" *ngIf="city.elevation">
+              <i class="fas fa-mountain"></i>
+              <span>{{ city.elevation }}m</span>
+            </div>
+          </div>
+          <div class="selection-indicator" *ngIf="isCitySelected(city)">
+            <i class="fas fa-check"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- État vide pour les villes -->
+      <div class="empty-state" *ngIf="filteredCities.length === 0 && !(isLoading$ | async)">
+        <div class="empty-icon">
+          <i class="fas fa-city"></i>
+        </div>
+        <h3>Aucune ville trouvée</h3>
+        <p>Essayez de modifier votre recherche ou vérifiez la connexion à Geonames</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Actions -->
+  <div class="modal-actions">
+    <!-- Bouton retour (visible seulement à l'étape ville) -->
+    <button 
+      *ngIf="currentStep === 'city'"
+      class="action-btn secondary"
+      (click)="onBack()"
+      [disabled]="isLoading$ | async">
+      <i class="fas fa-arrow-left mr-2"></i>
+      Retour
+    </button>
+
+    <!-- Bouton annuler -->
+    <button 
+      class="action-btn secondary"
+      (click)="onCancel()"
+      [disabled]="isLoading$ | async">
+      Annuler
+    </button>
+
+    <!-- Bouton confirmer (visible seulement à l'étape ville) -->
+    <button 
+      *ngIf="currentStep === 'city'"
+      class="action-btn primary"
+      (click)="onConfirm()"
+      [disabled]="!canConfirm()">
+      <i class="fas fa-plus mr-2"></i>
+      <span>{{ getConfirmButtonText() }}</span>
+      <i class="fas fa-spinner fa-spin ml-2" *ngIf="isLoading$ | async"></i>
+    </button>
+  </div>
+</div>

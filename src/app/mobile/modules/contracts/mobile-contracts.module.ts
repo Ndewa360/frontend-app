@@ -19,7 +19,7 @@ import { MobileContractsListPageComponent } from './pages/mobile-contracts-list-
 // import { MobileTenantInfoComponent } from './components/mobile-tenant-info/mobile-tenant-info.component';
 
 // Shared Mobile Components
-import { MobileModule } from '../../mobile.module';
+
 
 @NgModule({
   declarations: [
@@ -40,8 +40,7 @@ import { MobileModule } from '../../mobile.module';
     IonicModule,
     FormsModule,
     ReactiveFormsModule,
-    MobileContractsRoutingModule,
-    MobileModule
+    MobileContractsRoutingModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

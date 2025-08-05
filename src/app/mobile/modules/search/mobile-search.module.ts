@@ -25,7 +25,7 @@ import { MobileUnitDetailsComponent } from './components/mobile-unit-details/mob
 import { MobileMapViewComponent } from './components/mobile-map-view/mobile-map-view.component';
 
 // Shared Mobile Components
-import { MobileModule } from '../../mobile.module';
+
 
 // Services
 import { MobileSearchStatsService } from '../../shared/services/mobile-search-stats.service';
@@ -46,8 +46,7 @@ import { MobileSearchStatsService } from '../../shared/services/mobile-search-st
     SharedModule,
     TranslateModule,
     NgxsModule.forFeature([SearchState, CityState]),
-    MobileSearchRoutingModule,
-    MobileModule
+    MobileSearchRoutingModule
   ],
   providers: [
     MobileSearchStatsService

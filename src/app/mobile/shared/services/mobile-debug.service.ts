@@ -89,22 +89,28 @@ export class MobileDebugService {
   }
 
   /**
-   * Initialiser le debug mobile
+   * Initialiser le debug mobile avec timeout de sécurité
    */
   initializeMobileDebug(): void {
     console.log('🚀 Initialisation du debug mobile...');
-    
+
     // Capturer les erreurs de démarrage
     if (!(window as any).startupErrors) {
       (window as any).startupErrors = [];
     }
-    
+
     const originalError = console.error;
     console.error = (...args: any[]) => {
       (window as any).startupErrors.push(args);
       originalError.apply(console, args);
     };
-    
+
+    // Timeout de sécurité : forcer la suppression du loader après 10 secondes
+    setTimeout(() => {
+      console.log('⚠️ Timeout de sécurité - Suppression forcée du loader');
+      this.forceRemoveLoader();
+    }, 10000);
+
     // Diagnostiquer après un délai
     setTimeout(() => {
       this.diagnoseStartupIssues();
@@ -150,5 +156,84 @@ export class MobileDebugService {
     } else {
       console.log('❌ ion-app non trouvé');
     }
+  }
+
+  /**
+   * Vérifier et corriger les problèmes de loader mobile
+   */
+  checkAndFixMobileLoader(): void {
+    console.log('🔧 Vérification du loader mobile...');
+
+    // Vérifier si le loader est toujours présent après 5 secondes
+    setTimeout(() => {
+      const loader = document.getElementById('app-loading-holder');
+      if (loader) {
+        console.log('⚠️ Loader encore présent après 5s - Diagnostic...');
+
+        // Vérifier l'état d'Angular
+        const ngZone = (window as any).ng?.getZone?.();
+        const hasAngularBootstrapped = !!document.querySelector('app-root ion-app');
+
+        console.log('État du diagnostic:', {
+          hasLoader: !!loader,
+          hasAngularZone: !!ngZone,
+          hasAngularBootstrapped,
+          currentUrl: window.location.href,
+          readyState: document.readyState
+        });
+
+        // Si Angular est démarré mais le loader est toujours là, le supprimer
+        if (hasAngularBootstrapped) {
+          console.log('✅ Angular démarré - Suppression du loader');
+          this.forceRemoveLoader();
+        } else {
+          console.log('❌ Angular non démarré - Problème de démarrage détecté');
+          // Essayer de redémarrer l'application
+          this.attemptAppRestart();
+        }
+      } else {
+        console.log('✅ Loader correctement supprimé');
+      }
+    }, 5000);
+  }
+
+  /**
+   * Tentative de redémarrage de l'application
+   */
+  private attemptAppRestart(): void {
+    console.log('🔄 Tentative de redémarrage de l\'application...');
+
+    // Supprimer le loader d'abord
+    this.forceRemoveLoader();
+
+    // Afficher un message d'erreur à l'utilisateur
+    const errorDiv = document.createElement('div');
+    errorDiv.innerHTML = `
+      <div style="
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        text-align: center;
+        z-index: 10000;
+        font-family: Arial, sans-serif;
+      ">
+        <h3 style="color: #e74c3c; margin-bottom: 10px;">Problème de chargement</h3>
+        <p style="margin-bottom: 15px;">L'application a rencontré un problème lors du démarrage.</p>
+        <button onclick="window.location.reload()" style="
+          background: #3498db;
+          color: white;
+          border: none;
+          padding: 10px 20px;
+          border-radius: 4px;
+          cursor: pointer;
+        ">Recharger l'application</button>
+      </div>
+    `;
+    document.body.appendChild(errorDiv);
   }
 }

@@ -1,0 +1,190 @@
+<!-- Modal de visualisation de pays -->
+<div class="country-view-modal">
+  
+  <!-- En-tête -->
+  <div class="modal-header">
+    <div class="header-content">
+      <div class="country-header">
+        <div class="country-flag">
+          <img [src]="data.country.flag" [alt]="data.country.name + ' flag'" *ngIf="data.country.flag">
+          <div class="flag-placeholder" *ngIf="!data.country.flag">
+            <i class="fas fa-flag"></i>
+          </div>
+        </div>
+        <div class="country-title">
+          <h2 class="country-name">{{ data.country.name }}</h2>
+          <p class="country-subtitle">{{ data.country.code }} • {{ data.country.currency || 'Aucune devise' }}</p>
+        </div>
+        <div class="country-status">
+          <span class="status-badge" [class]="getStatusClass()">
+            <i class="fas fa-circle"></i>
+            {{ getCountryStatus() }}
+          </span>
+        </div>
+      </div>
+      <button class="close-btn" (click)="onClose()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Contenu -->
+  <div class="modal-content">
+    
+    <!-- Statistiques rapides -->
+    <div class="stats-section">
+      <div class="stats-grid">
+        <div class="stat-card cities">
+          <div class="stat-icon">
+            <i class="fas fa-city"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number">{{ stats.totalCities }}</div>
+            <div class="stat-label">Villes</div>
+            <div class="stat-detail">{{ stats.activeCities }} actives</div>
+          </div>
+        </div>
+        
+        <div class="stat-card users">
+          <div class="stat-icon">
+            <i class="fas fa-users"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number">{{ stats.totalUsers }}</div>
+            <div class="stat-label">Utilisateurs</div>
+            <div class="stat-detail">{{ stats.activeUsers }} actifs</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Informations détaillées -->
+    <div class="details-section">
+      <h3 class="section-title">
+        <i class="fas fa-info-circle mr-2"></i>
+        Informations détaillées
+      </h3>
+      
+      <div class="details-grid">
+        <!-- Informations géographiques -->
+        <div class="detail-group">
+          <h4 class="group-title">Géographie</h4>
+          <div class="detail-items">
+            <div class="detail-item">
+              <span class="detail-label">Continent</span>
+              <span class="detail-value">{{ data.country.continent || 'Non disponible' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Région</span>
+              <span class="detail-value">{{ data.country.region || 'Non disponible' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Sous-région</span>
+              <span class="detail-value">{{ data.country.subregion || 'Non disponible' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Capitale</span>
+              <span class="detail-value">{{ data.country.capital || 'Non disponible' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Coordonnées</span>
+              <span class="detail-value">{{ getFormattedCoordinates() }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Informations démographiques -->
+        <div class="detail-group">
+          <h4 class="group-title">Démographie</h4>
+          <div class="detail-items">
+            <div class="detail-item">
+              <span class="detail-label">Population</span>
+              <span class="detail-value">{{ getFormattedPopulation() }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Superficie</span>
+              <span class="detail-value">{{ getFormattedArea() }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Langues</span>
+              <span class="detail-value">{{ getFormattedLanguages() }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Fuseau horaire</span>
+              <span class="detail-value">{{ data.country.timezone || 'Non disponible' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Informations système -->
+        <div class="detail-group">
+          <h4 class="group-title">Système</h4>
+          <div class="detail-items">
+            <div class="detail-item">
+              <span class="detail-label">Code téléphone</span>
+              <span class="detail-value">{{ data.country.phoneCode || 'Non disponible' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Créé le</span>
+              <span class="detail-value">{{ getFormattedCreatedAt() }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Modifié le</span>
+              <span class="detail-value">{{ getFormattedUpdatedAt() }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Liste des villes -->
+    <div class="cities-section" *ngIf="cities.length > 0">
+      <h3 class="section-title">
+        <i class="fas fa-city mr-2"></i>
+        Villes associées ({{ cities.length }})
+      </h3>
+      
+      <div class="cities-list">
+        <div 
+          *ngFor="let city of cities; trackBy: trackByCityId" 
+          class="city-item"
+          [class.inactive]="!city.isActive">
+          <div class="city-info">
+            <div class="city-name">{{ city.name }}</div>
+            <div class="city-details">
+              <span class="city-code">{{ city._id.slice(-6) }}</span>
+              <span class="city-status" [class]="city.isActive ? 'active' : 'inactive'">
+                {{ city.isActive ? 'Active' : 'Inactive' }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- État vide pour les villes -->
+    <div class="empty-cities" *ngIf="cities.length === 0 && !(isLoading$ | async)">
+      <div class="empty-icon">
+        <i class="fas fa-city"></i>
+      </div>
+      <h4>Aucune ville</h4>
+      <p>Ce pays n'a pas encore de villes configurées.</p>
+    </div>
+
+    <!-- État de chargement -->
+    <div class="loading-section" *ngIf="isLoading$ | async">
+      <div class="loading-spinner">
+        <i class="fas fa-spinner fa-spin"></i>
+      </div>
+      <p>Chargement des détails...</p>
+    </div>
+
+  </div>
+
+  <!-- Actions -->
+  <div class="modal-actions">
+    <button class="action-btn secondary" (click)="onClose()">
+      Fermer
+    </button>
+  </div>
+</div>

@@ -32,6 +32,8 @@ export class AdminPaymentsComponent implements OnInit, OnDestroy {
   showCreateModal = false;
   showEditModal = false;
   selectedItem: AdminPayment | AdminSubscription | AdminCoupon | null = null;
+  isProcessing = false;
+  isRefreshing = false;
 
   // Status options
   paymentStatusOptions = [
@@ -114,18 +116,54 @@ export class AdminPaymentsComponent implements OnInit, OnDestroy {
 
   onProcessPendingPayments(): void {
     if (confirm('Traiter tous les paiements en attente ?')) {
+      this.isProcessing = true;
       this.store.dispatch(new AdminPaymentsAction.ProcessPendingPayments());
+      // Simuler un délai pour l'UI
+      setTimeout(() => {
+        this.isProcessing = false;
+      }, 2000);
     }
   }
 
   onRefreshData(): void {
+    this.isRefreshing = true;
     this.store.dispatch(new AdminPaymentsAction.RefreshData());
+    // Simuler un délai pour l'UI
+    setTimeout(() => {
+      this.isRefreshing = false;
+    }, 1000);
   }
 
   onCloseModal(): void {
     this.showCreateModal = false;
     this.showEditModal = false;
     this.selectedItem = null;
+  }
+
+  onViewPaymentDetails(payment: AdminPayment): void {
+    // TODO: Implémenter la vue détaillée du paiement
+    console.log('Voir détails du paiement:', payment);
+  }
+
+  onViewSubscriptionDetails(subscription: AdminSubscription): void {
+    // TODO: Implémenter la vue détaillée de l'abonnement
+    console.log('Voir détails de l\'abonnement:', subscription);
+  }
+
+  onViewCouponDetails(coupon: AdminCoupon): void {
+    // TODO: Implémenter la vue détaillée du coupon
+    console.log('Voir détails du coupon:', coupon);
+  }
+
+  onEditCoupon(coupon: AdminCoupon): void {
+    this.selectedItem = coupon;
+    this.showEditModal = true;
+  }
+
+  onDeleteCoupon(coupon: AdminCoupon): void {
+    if (confirm(`Êtes-vous sûr de vouloir supprimer ce coupon "${coupon.code}" ?`)) {
+      this.store.dispatch(new AdminPaymentsAction.DeleteCoupon(coupon._id));
+    }
   }
 
   onItemCreated(): void {
@@ -175,15 +213,15 @@ export class AdminPaymentsComponent implements OnInit, OnDestroy {
   getSubscriptionStatusColor(status: string): string {
     switch (status) {
       case 'active':
-        return 'success';
+        return 'admin-badge-success';
       case 'inactive':
-        return 'secondary';
+        return 'admin-badge-secondary';
       case 'cancelled':
-        return 'warning';
+        return 'admin-badge-danger';
       case 'expired':
-        return 'danger';
+        return 'admin-badge-warning';
       default:
-        return 'secondary';
+        return 'admin-badge-secondary';
     }
   }
 
@@ -233,30 +271,32 @@ export class AdminPaymentsComponent implements OnInit, OnDestroy {
   getPaymentStatusClasses(status: string): string {
     switch (status) {
       case 'completed':
-        return 'bg-green-100 text-green-800';
+        return 'admin-badge-success';
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'admin-badge-warning';
       case 'failed':
-        return 'bg-red-100 text-red-800';
+        return 'admin-badge-danger';
       case 'cancelled':
-        return 'bg-gray-100 text-gray-800';
+        return 'admin-badge-secondary';
       case 'refunded':
-        return 'bg-blue-100 text-blue-800';
+        return 'admin-badge-info';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'admin-badge-secondary';
     }
   }
 
   getSubscriptionStatusClasses(status: string): string {
     switch (status) {
       case 'active':
-        return 'bg-green-100 text-green-800';
+        return 'admin-badge-success';
       case 'inactive':
-        return 'bg-gray-100 text-gray-800';
+        return 'admin-badge-secondary';
       case 'cancelled':
-        return 'bg-red-100 text-red-800';
+        return 'admin-badge-danger';
+      case 'expired':
+        return 'admin-badge-warning';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'admin-badge-secondary';
     }
   }
 }

@@ -20,7 +20,7 @@ import { MobilePropertyFormComponent } from './components/mobile-property-form/m
 import { MobileMediaGalleryComponent } from './components/mobile-media-gallery/mobile-media-gallery.component';
 
 // Shared Mobile Components
-import { MobileModule } from '../../mobile.module';
+
 
 @NgModule({
   declarations: [
@@ -42,8 +42,7 @@ import { MobileModule } from '../../mobile.module';
     IonicModule,
     FormsModule,
     ReactiveFormsModule,
-    MobilePropertiesRoutingModule,
-    MobileModule
+    MobilePropertiesRoutingModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

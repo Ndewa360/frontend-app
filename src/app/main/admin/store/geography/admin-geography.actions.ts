@@ -137,4 +137,70 @@ export namespace AdminGeographyAction {
   export class RefreshData {
     static readonly type = '[Admin Geography] Refresh Data';
   }
+
+  // === ACTIONS GEONAMES ===
+
+  // Load Country Cities from GeoNames
+  export class LoadCountryCitiesFromGeonames {
+    static readonly type = '[Admin Geography] Load Country Cities From GeoNames';
+    constructor(public countryId: string) {}
+  }
+
+  export class LoadCountryCitiesFromGeonamesSuccess {
+    static readonly type = '[Admin Geography] Load Country Cities From GeoNames Success';
+    constructor(public result: any) {}
+  }
+
+  export class LoadCountryCitiesFromGeonamesFailure {
+    static readonly type = '[Admin Geography] Load Country Cities From GeoNames Failure';
+    constructor(public error: any) {}
+  }
+
+  // Get Cities from GeoNames
+  export class GetCitiesFromGeonames {
+    static readonly type = '[Admin Geography] Get Cities From GeoNames';
+    constructor(public countryCode: string, public maxRows?: number) {}
+  }
+
+  export class GetCitiesFromGeonamesSuccess {
+    static readonly type = '[Admin Geography] Get Cities From GeoNames Success';
+    constructor(public cities: any[]) {}
+  }
+
+  export class GetCitiesFromGeonamesFailure {
+    static readonly type = '[Admin Geography] Get Cities From GeoNames Failure';
+    constructor(public error: any) {}
+  }
+
+  // Search Cities from GeoNames
+  export class SearchCitiesFromGeonames {
+    static readonly type = '[Admin Geography] Search Cities From GeoNames';
+    constructor(public name: string, public country?: string, public maxRows?: number) {}
+  }
+
+  export class SearchCitiesFromGeonamesSuccess {
+    static readonly type = '[Admin Geography] Search Cities From GeoNames Success';
+    constructor(public cities: any[]) {}
+  }
+
+  export class SearchCitiesFromGeonamesFailure {
+    static readonly type = '[Admin Geography] Search Cities From GeoNames Failure';
+    constructor(public error: any) {}
+  }
+
+  // Toggle City Status
+  export class ToggleCity {
+    static readonly type = '[Admin Geography] Toggle City';
+    constructor(public cityId: string, public isActive: boolean) {}
+  }
+
+  export class ToggleCitySuccess {
+    static readonly type = '[Admin Geography] Toggle City Success';
+    constructor(public city: any) {}
+  }
+
+  export class ToggleCityFailure {
+    static readonly type = '[Admin Geography] Toggle City Failure';
+    constructor(public error: any) {}
+  }
 }

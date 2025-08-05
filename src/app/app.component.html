@@ -1,11 +1,15 @@
 
-<!-- <ion-app> -->
+<!-- Version Mobile avec Ionic (routes /mobile/* OU application native) -->
+<ion-app *ngIf="getIsMobileRoute()">
 	<main #topScroll>
-		<!-- <ion-router-outlet></ion-router-outlet> -->
-	<router-outlet></router-outlet>
-
+		<ion-router-outlet></ion-router-outlet>
 	</main>
-<!-- </ion-app> -->
+</ion-app>
+
+<!-- Version Web classique (uniquement navigateur sur routes non-mobile) -->
+<main #topScroll *ngIf="!getIsMobileRoute()">
+	<router-outlet></router-outlet>
+</main>
 
 <!-- Debug Panel (only in development) -->
 <app-debug-token-panel *ngIf="!isProduction"></app-debug-token-panel>

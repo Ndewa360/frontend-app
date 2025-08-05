@@ -23,11 +23,12 @@ import { MobileErrorComponent } from './shared/components/mobile-error/mobile-er
 import { MobileEmptyStateComponent } from './shared/components/mobile-empty-state/mobile-empty-state.component';
 import { MobileOfflineStatusComponent } from './shared/components/mobile-offline-status/mobile-offline-status.component';
 
+
 // Services
 import { MobileCacheService } from './shared/services/mobile-cache.service';
 import { MobileSyncService } from './shared/services/mobile-sync.service';
 import { MobileNotificationService } from './shared/services/mobile-notification.service';
-import { MobilePushNotificationsService } from './shared/services/mobile-push-notifications.service';
+// import { MobilePushNotificationsService } from './shared/services/mobile-push-notifications.service';
 import { MobileAuthStorageService } from './shared/services/mobile-auth-storage.service';
 import { MobileOfflineManagerService } from './shared/services/mobile-offline-manager.service';
 import { MobileSearchStatsService } from './shared/services/mobile-search-stats.service';
@@ -58,7 +59,7 @@ import { MobileSearchStatsService } from './shared/services/mobile-search-stats.
     MobileCacheService,
     MobileSyncService,
     MobileNotificationService,
-    MobilePushNotificationsService,
+    // MobilePushNotificationsService,
     MobileAuthStorageService,
     MobileOfflineManagerService,
     MobileSearchStatsService

@@ -109,6 +109,15 @@ export class AdminGeographyService {
   }
 
   /**
+   * Obtenir les villes d'un pays
+   */
+  getCitiesByCountry(countryId: string): Observable<AdminCity[]> {
+    return this.http.get<ApiResultFormat<AdminCity[]>>(`${this.apiUrl}/countries/${countryId}/cities`).pipe(
+      map(response => response.data)
+    );
+  }
+
+  /**
    * Obtenir la liste des villes avec filtres
    */
   getCities(filters: GeographyFilters = {}): Observable<{ cities: AdminCity[], total: number }> {
@@ -276,6 +285,120 @@ export class AdminGeographyService {
       .set('format', format);
     
     return this.http.post<ApiResultFormat<{ downloadUrl: string }>>(`${this.apiUrl}/export`, {}, { params }).pipe(
+      map(response => response.data)
+    );
+  }
+
+  // ==================== NOUVELLES MÉTHODES - GESTION PAR RÉGION ====================
+
+  /**
+   * Obtenir les régions disponibles et leurs statistiques
+   */
+  getRegions(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/regions`).pipe(
+      map(response => response.data)
+    );
+  }
+
+  /**
+   * Activer une région (télécharger ses pays)
+   */
+  activateRegion(region: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/regions/${region}/activate`, {}).pipe(
+      map(response => response.data)
+    );
+  }
+
+  /**
+   * Toggle du statut d'un pays
+   */
+  toggleCountry(countryId: string, isActive: boolean): Observable<AdminCountry> {
+    return this.http.patch<any>(`${this.apiUrl}/countries/${countryId}/toggle`, { isActive }).pipe(
+      map(response => response.data)
+    );
+  }
+
+
+
+  /**
+   * Obtenir les villes d'un pays
+   */
+  getCountryCities(countryId: string, filters: any = {}): Observable<AdminCity[]> {
+    let params = new HttpParams();
+
+    if (filters.isActive !== undefined) {
+      params = params.set('isActive', filters.isActive.toString());
+    }
+    if (filters.search) {
+      params = params.set('search', filters.search);
+    }
+
+    return this.http.get<any>(`${this.apiUrl}/countries/${countryId}/cities`, { params }).pipe(
+      map(response => response.data)
+    );
+  }
+
+  // === MÉTHODES GEONAMES ===
+
+  /**
+   * Charger les villes d'un pays depuis GeoNames
+   */
+  loadCountryCities(countryId: string): Observable<any> {
+    return this.http.post<ApiResultFormat<any>>(`${this.apiUrl}/countries/${countryId}/load-cities`, {}).pipe(
+      map(response => response.data)
+    );
+  }
+
+  /**
+   * Obtenir les villes d'un pays depuis GeoNames
+   */
+  getCitiesFromGeonames(countryCode: string, maxRows: number = 50): Observable<any> {
+    const params = new HttpParams().set('maxRows', maxRows.toString());
+    return this.http.get<ApiResultFormat<any>>(`${this.apiUrl}/geonames/cities/${countryCode}`, { params }).pipe(
+      map(response => response.data)
+    );
+  }
+
+  /**
+   * Rechercher des villes par nom via GeoNames
+   */
+  searchCitiesFromGeonames(name: string, country?: string, maxRows: number = 20): Observable<any> {
+    let params = new HttpParams()
+      .set('name', name)
+      .set('maxRows', maxRows.toString());
+
+    if (country) {
+      params = params.set('country', country);
+    }
+
+    return this.http.get<ApiResultFormat<any>>(`${this.apiUrl}/geonames/search`, { params }).pipe(
+      map(response => response.data)
+    );
+  }
+
+  /**
+   * Obtenir les détails d'une ville depuis GeoNames
+   */
+  getCityDetailsFromGeonames(geonameId: number): Observable<any> {
+    return this.http.get<ApiResultFormat<any>>(`${this.apiUrl}/geonames/city/${geonameId}`).pipe(
+      map(response => response.data)
+    );
+  }
+
+  /**
+   * Activer/désactiver une ville
+   */
+  toggleCity(cityId: string, isActive: boolean): Observable<any> {
+    return this.http.patch<ApiResultFormat<any>>(`${this.apiUrl}/cities/${cityId}/toggle`, { isActive }).pipe(
+      map(response => response.data)
+    );
+  }
+
+  /**
+   * Créer une ville manuellement
+   */
+  createCityManually(cityData: CreateCityDto): Observable<any> {
+    return this.http.post<ApiResultFormat<any>>(`${this.apiUrl}/cities`, cityData).pipe(
       map(response => response.data)
     );
   }

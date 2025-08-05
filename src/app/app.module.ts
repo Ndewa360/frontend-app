@@ -23,29 +23,17 @@ import { registerLocaleData } from '@angular/common';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
-// Fonction pour s'assurer que les styles sont chargés
+// Fonction simplifiée pour l'initialisation
 export function initStyles() {
   return () => {
     return new Promise<void>((resolve) => {
-      // Vérifier si les styles sont chargés
-      const checkStyles = () => {
-        const styles = document.querySelectorAll('link[rel="stylesheet"]');
-        let allLoaded = true;
-        
-        styles.forEach(style => {
-          if (!(style as HTMLLinkElement).sheet) {
-            allLoaded = false;
-          }
-        });
-        
-        if (allLoaded) {
-          resolve();
-        } else {
-          setTimeout(checkStyles, 50);
-        }
-      };
-      
-      checkStyles();
+      console.log('🎨 Initialisation des styles...');
+
+      // Résoudre immédiatement pour éviter les blocages
+      setTimeout(() => {
+        console.log('✅ Styles initialisés (mode simplifié)');
+        resolve();
+      }, 100);
     });
   };
 }

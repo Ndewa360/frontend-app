@@ -19,6 +19,11 @@ import { AdminRolesComponent } from './pages/roles/admin-roles.component';
 import { AdminGeographyComponent } from './pages/geography/admin-geography.component';
 import { AdminPaymentsComponent } from './pages/payments/admin-payments.component';
 import { AdminSettingsComponent } from './pages/settings/admin-settings.component';
+import { CountrySelectionModalComponent } from './components/country-selection-modal/country-selection-modal.component';
+import { CountryDeleteModalComponent } from './components/country-delete-modal/country-delete-modal.component';
+import { CountryViewModalComponent } from './components/country-view-modal/country-view-modal.component';
+import { CountryEditModalComponent } from './components/country-edit-modal/country-edit-modal.component';
+import { CitySelectionModalComponent } from './components/city-selection-modal/city-selection-modal.component';
 
 // Admin Stores
 import { AdminUsersState } from './store/users/admin-users.state';
@@ -35,6 +40,7 @@ import { AdminGeographyService } from './services/admin-geography.service';
 import { AdminPaymentsService } from './services/admin-payments.service';
 import { AdminSettingsService } from './services/admin-settings.service';
 import { AdminDashboardService } from './services/admin-dashboard.service';
+import { RestCountriesService } from './services/rest-countries.service';
 
 // Admin Routing
 import { AdminRoutingModule } from './admin-routing.module';
@@ -47,7 +53,13 @@ import { AdminRoutingModule } from './admin-routing.module';
     AdminRolesComponent,
     AdminGeographyComponent,
     AdminPaymentsComponent,
-    AdminSettingsComponent
+    AdminSettingsComponent,
+    CountrySelectionModalComponent,
+    CountryDeleteModalComponent,
+    CountryViewModalComponent,
+    CountryEditModalComponent,
+    CitySelectionModalComponent,
+    CitySelectionModalComponent
   ],
   imports: [
     CommonModule,
@@ -74,7 +86,8 @@ import { AdminRoutingModule } from './admin-routing.module';
     AdminGeographyService,
     AdminPaymentsService,
     AdminSettingsService,
-    AdminDashboardService
+    AdminDashboardService,
+    RestCountriesService
   ]
 })
 export class AdminModule { }

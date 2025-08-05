@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { MobileDetectionService } from '../services/mobile-detection.service';
+import { DeviceDetectionService } from '../services/device-detection.service';
 import { MobileDashboardWarningComponent } from '../components/mobile-dashboard-warning/mobile-dashboard-warning.component';
 
 @Injectable({
@@ -10,7 +10,7 @@ import { MobileDashboardWarningComponent } from '../components/mobile-dashboard-
 export class MobileDashboardGuard implements CanActivate {
 
   constructor(
-    private mobileDetectionService: MobileDetectionService,
+    private deviceDetectionService: DeviceDetectionService,
     private router: Router,
     private dialog: MatDialog
   ) {}
@@ -20,12 +20,12 @@ export class MobileDashboardGuard implements CanActivate {
     state: RouterStateSnapshot
   ): boolean {
     // Si ce n'est pas un appareil mobile, autoriser l'accès
-    if (!this.mobileDetectionService.isMobile) {
+    if (!this.deviceDetectionService.isMobile()) {
       return true;
     }
 
     // Si c'est l'app native, autoriser l'accès
-    if (this.mobileDetectionService.isNativeApp) {
+    if (this.deviceDetectionService.getDeviceInfo().isNativeApp) {
       return true;
     }
 
@@ -44,13 +44,13 @@ export class MobileDashboardGuard implements CanActivate {
       disableClose: true,
       data: {
         attemptedUrl,
-        deviceInfo: this.mobileDetectionService.getDeviceInfo()
+        deviceInfo: this.deviceDetectionService.getDeviceInfo()
       }
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result === 'download') {
-        this.mobileDetectionService.redirectToAppDownload();
+        this.deviceDetectionService.redirectToAppDownload();
       } else if (result === 'continue') {
         // L'utilisateur insiste pour continuer sur mobile web
         // On peut soit rediriger vers une version mobile simplifiée

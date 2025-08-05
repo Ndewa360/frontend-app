@@ -1,0 +1,108 @@
+<!-- Modal de confirmation de suppression de pays -->
+<div class="country-delete-modal">
+  
+  <!-- En-tête -->
+  <div class="modal-header">
+    <div class="header-content">
+      <div class="icon-container danger">
+        <i class="fas fa-exclamation-triangle"></i>
+      </div>
+      <div class="header-text">
+        <h2 class="modal-title">Supprimer le pays</h2>
+        <p class="modal-subtitle">Action irréversible</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenu -->
+  <div class="modal-content">
+    
+    <!-- Informations du pays -->
+    <div class="country-info">
+      <div class="country-flag">
+        <img [src]="data.country.flag" [alt]="data.country.name + ' flag'" *ngIf="data.country.flag">
+        <div class="flag-placeholder" *ngIf="!data.country.flag">
+          <i class="fas fa-flag"></i>
+        </div>
+      </div>
+      <div class="country-details">
+        <h3 class="country-name">{{ data.country.name }}</h3>
+        <p class="country-code">{{ data.country.code }} • {{ data.country.currency || 'Aucune devise' }}</p>
+      </div>
+    </div>
+
+    <!-- Message principal -->
+    <div class="message-section">
+      <p class="main-message">
+        Êtes-vous sûr de vouloir supprimer définitivement le pays 
+        <strong>{{ data.country.name }}</strong> ?
+      </p>
+    </div>
+
+    <!-- Statistiques et avertissements -->
+    <div class="stats-section" *ngIf="!(isLoading$ | async)">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-icon cities">
+            <i class="fas fa-city"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number">{{ citiesCount }}</div>
+            <div class="stat-label">Ville{{ citiesCount > 1 ? 's' : '' }}</div>
+          </div>
+        </div>
+        
+        <div class="stat-item">
+          <div class="stat-icon users">
+            <i class="fas fa-users"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number">{{ usersCount }}</div>
+            <div class="stat-label">Utilisateur{{ usersCount > 1 ? 's' : '' }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Avertissement si données associées -->
+      <div class="warning-box" *ngIf="isDangerousDelete()">
+        <div class="warning-icon">
+          <i class="fas fa-exclamation-circle"></i>
+        </div>
+        <div class="warning-content">
+          <h4 class="warning-title">Attention !</h4>
+          <p class="warning-text">{{ getWarningMessage() }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- État de chargement -->
+    <div class="loading-section" *ngIf="isLoading$ | async">
+      <div class="loading-spinner">
+        <i class="fas fa-spinner fa-spin"></i>
+      </div>
+      <p>Vérification des données associées...</p>
+    </div>
+
+  </div>
+
+  <!-- Actions -->
+  <div class="modal-actions">
+    <button 
+      class="action-btn secondary"
+      (click)="onCancel()"
+      [disabled]="isLoading$ | async">
+      Annuler
+    </button>
+    <button 
+      class="action-btn danger"
+      (click)="onConfirm()"
+      [disabled]="isLoading$ | async">
+      <i class="fas fa-trash mr-2"></i>
+      <span *ngIf="!(isLoading$ | async)">Supprimer définitivement</span>
+      <span *ngIf="isLoading$ | async">
+        <i class="fas fa-spinner fa-spin mr-2"></i>
+        Suppression...
+      </span>
+    </button>
+  </div>
+</div>

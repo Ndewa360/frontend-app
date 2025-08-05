@@ -3,7 +3,7 @@ import { CityModel } from "./city.model";
 import { Injectable } from "@angular/core";
 import { CityAction } from "./city.actions";
 import { CityService } from "./city.service";
-import { CountryAction } from "./../country/country.actions"
+import { CountryAction } from "../country/country.actions"
 import { of, throwError } from "rxjs";
 import { catchError, tap } from "rxjs/operators";
 import { ToastrService } from "ngx-toastr";

@@ -3,10 +3,10 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-	apiUrl: 'http://localhost:3001',
+	// apiUrl: 'http://192.168.1.5:3001',
   // apiUrl: 'https://ndiye-backend.onrender.com',
 
-  // apiUrl:'http://192.168.1.212:3000',
+  apiUrl:'http://192.168.1.5:3001',
 	url: 'http://localhost:4200',
 	production: false,
 	stripePublicKey: 'pk_test_51RjAHg4JUiFvn520cM9NGTm5AGVYS2LkhY8YwZIqhWN3mPLP6rHG6uMdpwUt88cc87Ba3eKbPfVZEldyyobx9LBo00lRhoHxee', // TODO: Remplacer par votre vraie clé publique Stripe

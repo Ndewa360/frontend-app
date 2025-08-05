@@ -14,6 +14,10 @@ const routes: Routes = [
         pathMatch: 'full'
       },
       {
+        path: 'fallback',
+        loadChildren: () => import('./modules/fallback/mobile-fallback.module').then(m => m.MobileFallbackModule)
+      },
+      {
         path: 'search',
         loadChildren: () => import('./modules/search/mobile-search.module').then(m => m.MobileSearchModule)
       },

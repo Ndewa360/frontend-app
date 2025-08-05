@@ -1,0 +1,761 @@
+// ========================================
+// SYSTÈME DE DESIGN ADMIN MODERNE & ÉPURÉ
+// ========================================
+
+// Variables CSS Ndiye - Design moderne
+:root {
+  // Couleurs principales - Palette moderne
+  --ndiye-primary: #6366f1;
+  --ndiye-primary-light: #e0e7ff;
+  --ndiye-primary-dark: #4338ca;
+  --ndiye-secondary: #64748b;
+  --ndiye-success: #10b981;
+  --ndiye-warning: #f59e0b;
+  --ndiye-danger: #ef4444;
+  --ndiye-info: #3b82f6;
+  
+  // Couleurs système - Design épuré
+  --ndiye-white: #ffffff;
+  --ndiye-gray-50: #f8fafc;
+  --ndiye-gray-100: #f1f5f9;
+  --ndiye-gray-200: #e2e8f0;
+  --ndiye-gray-300: #cbd5e1;
+  --ndiye-gray-400: #94a3b8;
+  --ndiye-gray-500: #64748b;
+  --ndiye-gray-600: #475569;
+  --ndiye-gray-700: #334155;
+  --ndiye-gray-800: #1e293b;
+  --ndiye-gray-900: #0f172a;
+  --ndiye-dark: #0f172a;
+  
+  // Espacements - Système 8pt
+  --admin-spacing-xs: 0.25rem;   // 4px
+  --admin-spacing-sm: 0.5rem;    // 8px
+  --admin-spacing-md: 1rem;      // 16px
+  --admin-spacing-lg: 1.5rem;    // 24px
+  --admin-spacing-xl: 2rem;      // 32px
+  --admin-spacing-2xl: 3rem;     // 48px
+  --admin-spacing-3xl: 4rem;     // 64px
+  
+  // Bordures - Design moderne
+  --admin-border-radius-sm: 6px;
+  --admin-border-radius-md: 8px;
+  --admin-border-radius-lg: 12px;
+  --admin-border-radius-xl: 16px;
+  --admin-border-radius-2xl: 24px;
+  
+  // Ombres - Design subtil
+  --admin-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --admin-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --admin-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --admin-shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --admin-shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+  
+  // Transitions - Design fluide
+  --admin-transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --admin-transition-normal: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --admin-transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
+  
+  // Typographie - Design moderne
+  --admin-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --admin-font-size-xs: 0.75rem;    // 12px
+  --admin-font-size-sm: 0.875rem;   // 14px
+  --admin-font-size-base: 1rem;     // 16px
+  --admin-font-size-lg: 1.125rem;   // 18px
+  --admin-font-size-xl: 1.25rem;    // 20px
+  --admin-font-size-2xl: 1.5rem;    // 24px
+  --admin-font-size-3xl: 1.875rem;  // 30px
+  
+  // Font weights
+  --admin-font-weight-normal: 400;
+  --admin-font-weight-medium: 500;
+  --admin-font-weight-semibold: 600;
+  --admin-font-weight-bold: 700;
+}
+
+// ========================================
+// COMPOSANTS MODERNES & ÉPURÉS
+// ========================================
+
+// Boutons - Design moderne
+.admin-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--admin-spacing-sm);
+  padding: var(--admin-spacing-sm) var(--admin-spacing-lg);
+  border: none;
+  border-radius: var(--admin-border-radius-md);
+  font-family: var(--admin-font-family);
+  font-size: var(--admin-font-size-sm);
+  font-weight: var(--admin-font-weight-medium);
+  line-height: 1.5;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all var(--admin-transition-fast);
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+  
+  &:focus {
+    outline: 2px solid var(--ndiye-primary);
+    outline-offset: 2px;
+  }
+  
+  // Variantes modernes
+  &.admin-btn-primary {
+    background: var(--ndiye-primary);
+    color: var(--ndiye-white);
+    box-shadow: var(--admin-shadow-sm);
+    
+    &:hover:not(:disabled) {
+      background: var(--ndiye-primary-dark);
+      transform: translateY(-1px);
+      box-shadow: var(--admin-shadow-md);
+    }
+    
+    &:active {
+      transform: translateY(0);
+    }
+  }
+  
+  &.admin-btn-secondary {
+    background: var(--ndiye-white);
+    color: var(--ndiye-gray-700);
+    border: 1px solid var(--ndiye-gray-300);
+    box-shadow: var(--admin-shadow-sm);
+    
+    &:hover:not(:disabled) {
+      background: var(--ndiye-gray-50);
+      border-color: var(--ndiye-primary);
+      color: var(--ndiye-primary);
+      transform: translateY(-1px);
+    }
+  }
+  
+  &.admin-btn-success {
+    background: var(--ndiye-success);
+    color: var(--ndiye-white);
+    box-shadow: var(--admin-shadow-sm);
+    
+    &:hover:not(:disabled) {
+      background: #059669;
+      transform: translateY(-1px);
+      box-shadow: var(--admin-shadow-md);
+    }
+  }
+  
+  &.admin-btn-danger {
+    background: var(--ndiye-danger);
+    color: var(--ndiye-white);
+    box-shadow: var(--admin-shadow-sm);
+    
+    &:hover:not(:disabled) {
+      background: #dc2626;
+      transform: translateY(-1px);
+      box-shadow: var(--admin-shadow-md);
+    }
+  }
+  
+  &.admin-btn-warning {
+    background: var(--ndiye-warning);
+    color: var(--ndiye-white);
+    box-shadow: var(--admin-shadow-sm);
+    
+    &:hover:not(:disabled) {
+      background: #d97706;
+      transform: translateY(-1px);
+      box-shadow: var(--admin-shadow-md);
+    }
+  }
+  
+  &.admin-btn-ghost {
+    background: transparent;
+    color: var(--ndiye-gray-600);
+    border: 1px solid transparent;
+    
+    &:hover:not(:disabled) {
+      background: var(--ndiye-gray-100);
+      color: var(--ndiye-gray-900);
+    }
+  }
+  
+  // Tailles modernes
+  &.admin-btn-sm {
+    padding: var(--admin-spacing-xs) var(--admin-spacing-md);
+    font-size: var(--admin-font-size-xs);
+    border-radius: var(--admin-border-radius-sm);
+  }
+  
+  &.admin-btn-lg {
+    padding: var(--admin-spacing-md) var(--admin-spacing-xl);
+    font-size: var(--admin-font-size-base);
+    border-radius: var(--admin-border-radius-lg);
+  }
+  
+  // Icônes
+  svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+    transition: transform var(--admin-transition-fast);
+  }
+  
+  &:hover svg {
+    transform: scale(1.1);
+  }
+  
+  &.admin-btn-sm svg {
+    width: 14px;
+    height: 14px;
+  }
+  
+  &.admin-btn-lg svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+// Cartes - Design moderne et épuré
+.admin-card {
+  background: var(--ndiye-white);
+  border: 1px solid var(--ndiye-gray-200);
+  border-radius: var(--admin-border-radius-lg);
+  box-shadow: var(--admin-shadow-sm);
+  transition: all var(--admin-transition-normal);
+  overflow: hidden;
+  
+  &:hover {
+    box-shadow: var(--admin-shadow-md);
+    transform: translateY(-2px);
+  }
+  
+  .admin-card-header {
+    padding: var(--admin-spacing-lg);
+    border-bottom: 1px solid var(--ndiye-gray-200);
+    background: var(--ndiye-gray-50);
+    
+    .admin-card-title {
+      font-family: var(--admin-font-family);
+      font-size: var(--admin-font-size-lg);
+      font-weight: var(--admin-font-weight-semibold);
+      color: var(--ndiye-gray-900);
+      margin: 0;
+      line-height: 1.4;
+    }
+    
+    .admin-card-subtitle {
+      font-family: var(--admin-font-family);
+      font-size: var(--admin-font-size-sm);
+      color: var(--ndiye-gray-500);
+      margin: var(--admin-spacing-xs) 0 0 0;
+      line-height: 1.5;
+    }
+  }
+  
+  .admin-card-content {
+    padding: var(--admin-spacing-lg);
+  }
+  
+  .admin-card-footer {
+    padding: var(--admin-spacing-lg);
+    border-top: 1px solid var(--ndiye-gray-200);
+    background: var(--ndiye-gray-50);
+  }
+}
+
+// Tableaux - Design moderne et épuré
+.admin-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: var(--ndiye-white);
+  border-radius: var(--admin-border-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--admin-shadow-sm);
+  
+  th, td {
+    padding: var(--admin-spacing-md) var(--admin-spacing-lg);
+    text-align: left;
+    border-bottom: 1px solid var(--ndiye-gray-200);
+    font-family: var(--admin-font-family);
+    font-size: var(--admin-font-size-sm);
+    line-height: 1.5;
+  }
+  
+  th {
+    background: var(--ndiye-gray-50);
+    font-weight: var(--admin-font-weight-semibold);
+    color: var(--ndiye-gray-700);
+    font-size: var(--admin-font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  
+  tr {
+    transition: background-color var(--admin-transition-fast);
+    
+    &:hover {
+      background: var(--ndiye-primary-light);
+    }
+    
+    &:last-child td {
+      border-bottom: none;
+    }
+  }
+  
+  .admin-table-row-inactive {
+    opacity: 0.6;
+    
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+}
+
+// Badges - Design moderne
+.admin-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--admin-spacing-xs);
+  padding: var(--admin-spacing-xs) var(--admin-spacing-sm);
+  border-radius: var(--admin-border-radius-sm);
+  font-family: var(--admin-font-family);
+  font-size: var(--admin-font-size-xs);
+  font-weight: var(--admin-font-weight-medium);
+  line-height: 1;
+  
+  &.admin-badge-success {
+    background: #dcfce7;
+    color: #166534;
+  }
+  
+  &.admin-badge-warning {
+    background: #fef3c7;
+    color: #92400e;
+  }
+  
+  &.admin-badge-danger {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+  
+  &.admin-badge-info {
+    background: #dbeafe;
+    color: #1e40af;
+  }
+  
+  &.admin-badge-primary {
+    background: var(--ndiye-primary-light);
+    color: var(--ndiye-primary-dark);
+  }
+  
+  &.admin-badge-secondary {
+    background: var(--ndiye-gray-100);
+    color: var(--ndiye-gray-700);
+  }
+}
+
+// Formulaires - Design moderne
+.admin-form {
+  .admin-form-group {
+    margin-bottom: var(--admin-spacing-lg);
+    
+    label {
+      display: block;
+      font-family: var(--admin-font-family);
+      font-weight: var(--admin-font-weight-medium);
+      color: var(--ndiye-gray-700);
+      margin-bottom: var(--admin-spacing-xs);
+      font-size: var(--admin-font-size-sm);
+      line-height: 1.5;
+    }
+    
+    .admin-form-input {
+      width: 100%;
+      padding: var(--admin-spacing-sm) var(--admin-spacing-md);
+      border: 1px solid var(--ndiye-gray-300);
+      border-radius: var(--admin-border-radius-md);
+      font-family: var(--admin-font-family);
+      font-size: var(--admin-font-size-sm);
+      line-height: 1.5;
+      transition: all var(--admin-transition-fast);
+      background: var(--ndiye-white);
+      
+      &:focus {
+        outline: none;
+        border-color: var(--ndiye-primary);
+        box-shadow: 0 0 0 3px rgb(99 102 241 / 0.1);
+      }
+      
+      &:disabled {
+        background: var(--ndiye-gray-100);
+        cursor: not-allowed;
+        opacity: 0.6;
+      }
+      
+      &::placeholder {
+        color: var(--ndiye-gray-400);
+      }
+    }
+    
+    .admin-form-select {
+      @extend .admin-form-input;
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+      background-position: right 0.5rem center;
+      background-repeat: no-repeat;
+      background-size: 1.5em 1.5em;
+      padding-right: 2.5rem;
+      appearance: none;
+    }
+  }
+  
+  .admin-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--admin-spacing-lg);
+    
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+// Modales - Design moderne
+.admin-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgb(0 0 0 / 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: var(--admin-spacing-lg);
+  
+  .admin-modal-container {
+    background: var(--ndiye-white);
+    border-radius: var(--admin-border-radius-xl);
+    box-shadow: var(--admin-shadow-2xl);
+    max-width: 500px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: modalSlideIn 0.3s ease-out;
+    
+    .admin-modal-header {
+      padding: var(--admin-spacing-lg);
+      border-bottom: 1px solid var(--ndiye-gray-200);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      
+      .admin-modal-title {
+        font-family: var(--admin-font-family);
+        font-size: var(--admin-font-size-xl);
+        font-weight: var(--admin-font-weight-semibold);
+        color: var(--ndiye-gray-900);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: var(--admin-spacing-sm);
+      }
+      
+      .admin-modal-close {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: var(--ndiye-gray-400);
+        cursor: pointer;
+        padding: var(--admin-spacing-xs);
+        border-radius: var(--admin-border-radius-sm);
+        transition: all var(--admin-transition-fast);
+        
+        &:hover {
+          background: var(--ndiye-gray-100);
+          color: var(--ndiye-gray-600);
+        }
+      }
+    }
+    
+    .admin-modal-content {
+      padding: var(--admin-spacing-lg);
+    }
+    
+    .admin-modal-footer {
+      padding: var(--admin-spacing-lg);
+      border-top: 1px solid var(--ndiye-gray-200);
+      display: flex;
+      gap: var(--admin-spacing-md);
+      justify-content: flex-end;
+    }
+  }
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+// Loading - Design moderne
+.admin-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--ndiye-gray-200);
+  border-top: 3px solid var(--ndiye-primary);
+  border-radius: 50%;
+  animation: admin-spin 1s linear infinite;
+  
+  &.admin-spinner-sm {
+    width: 20px;
+    height: 20px;
+    border-width: 2px;
+  }
+  
+  &.admin-spinner-lg {
+    width: 48px;
+    height: 48px;
+    border-width: 4px;
+  }
+}
+
+@keyframes admin-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// États vides - Design moderne
+.admin-empty-state {
+  text-align: center;
+  padding: var(--admin-spacing-3xl);
+  color: var(--ndiye-gray-500);
+  
+  svg {
+    width: 64px;
+    height: 64px;
+    margin-bottom: var(--admin-spacing-lg);
+    color: var(--ndiye-gray-300);
+  }
+  
+  h3 {
+    font-family: var(--admin-font-family);
+    font-size: var(--admin-font-size-xl);
+    font-weight: var(--admin-font-weight-semibold);
+    color: var(--ndiye-gray-700);
+    margin: 0 0 var(--admin-spacing-sm) 0;
+    line-height: 1.4;
+  }
+  
+  p {
+    font-family: var(--admin-font-family);
+    font-size: var(--admin-font-size-sm);
+    margin: 0 0 var(--admin-spacing-lg) 0;
+    line-height: 1.5;
+  }
+}
+
+// ========================================
+// LAYOUTS MODERNES
+// ========================================
+
+// Grilles modernes
+.admin-grid {
+  display: grid;
+  gap: var(--admin-spacing-lg);
+  
+  &.admin-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  &.admin-grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  &.admin-grid-4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  
+  @media (max-width: 1024px) {
+    &.admin-grid-4 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  @media (max-width: 768px) {
+    &.admin-grid-2,
+    &.admin-grid-3,
+    &.admin-grid-4 {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+// Stats cards modernes
+.admin-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--admin-spacing-lg);
+  margin-bottom: var(--admin-spacing-xl);
+}
+
+.admin-stat-card {
+  background: var(--ndiye-white);
+  border: 1px solid var(--ndiye-gray-200);
+  border-radius: var(--admin-border-radius-lg);
+  padding: var(--admin-spacing-lg);
+  box-shadow: var(--admin-shadow-sm);
+  transition: all var(--admin-transition-normal);
+  
+  &:hover {
+    box-shadow: var(--admin-shadow-md);
+    transform: translateY(-2px);
+  }
+  
+  .admin-stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--admin-border-radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--admin-spacing-md);
+    
+    svg {
+      width: 24px;
+      height: 24px;
+      color: var(--ndiye-white);
+    }
+  }
+  
+  .admin-stat-content {
+    .admin-stat-number {
+      font-family: var(--admin-font-family);
+      font-size: var(--admin-font-size-2xl);
+      font-weight: var(--admin-font-weight-bold);
+      color: var(--ndiye-gray-900);
+      margin: 0 0 var(--admin-spacing-xs) 0;
+      line-height: 1.2;
+    }
+    
+    .admin-stat-label {
+      font-family: var(--admin-font-family);
+      font-size: var(--admin-font-size-sm);
+      color: var(--ndiye-gray-500);
+      margin: 0;
+      line-height: 1.4;
+    }
+  }
+}
+
+// ========================================
+// UTILITAIRES MODERNES
+// ========================================
+
+// Couleurs de texte
+.admin-text-primary { color: var(--ndiye-primary); }
+.admin-text-success { color: var(--ndiye-success); }
+.admin-text-warning { color: var(--ndiye-warning); }
+.admin-text-danger { color: var(--ndiye-danger); }
+.admin-text-info { color: var(--ndiye-info); }
+.admin-text-muted { color: var(--ndiye-gray-500); }
+
+// Couleurs de fond
+.admin-bg-primary { background: var(--ndiye-primary); }
+.admin-bg-success { background: var(--ndiye-success); }
+.admin-bg-warning { background: var(--ndiye-warning); }
+.admin-bg-danger { background: var(--ndiye-danger); }
+.admin-bg-info { background: var(--ndiye-info); }
+.admin-bg-light { background: var(--ndiye-gray-50); }
+
+// Bordures
+.admin-border-primary { border-color: var(--ndiye-primary); }
+.admin-border-success { border-color: var(--ndiye-success); }
+.admin-border-warning { border-color: var(--ndiye-warning); }
+.admin-border-danger { border-color: var(--ndiye-danger); }
+.admin-border-info { border-color: var(--ndiye-info); }
+
+// Espacements
+.admin-p-0 { padding: 0; }
+.admin-p-1 { padding: var(--admin-spacing-xs); }
+.admin-p-2 { padding: var(--admin-spacing-sm); }
+.admin-p-3 { padding: var(--admin-spacing-md); }
+.admin-p-4 { padding: var(--admin-spacing-lg); }
+.admin-p-5 { padding: var(--admin-spacing-xl); }
+
+.admin-m-0 { margin: 0; }
+.admin-m-1 { margin: var(--admin-spacing-xs); }
+.admin-m-2 { margin: var(--admin-spacing-sm); }
+.admin-m-3 { margin: var(--admin-spacing-md); }
+.admin-m-4 { margin: var(--admin-spacing-lg); }
+.admin-m-5 { margin: var(--admin-spacing-xl); }
+
+// Responsive moderne
+@media (max-width: 768px) {
+  .admin-btn {
+    padding: var(--admin-spacing-sm) var(--admin-spacing-md);
+    font-size: var(--admin-font-size-xs);
+  }
+  
+  .admin-table {
+    font-size: var(--admin-font-size-xs);
+    
+    th, td {
+      padding: var(--admin-spacing-sm);
+    }
+  }
+  
+  .admin-modal-container {
+    margin: var(--admin-spacing-md);
+    max-width: none;
+  }
+  
+  .admin-stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ========================================
+// ANIMATIONS MODERNES
+// ========================================
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.admin-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.admin-slide-in-up {
+  animation: slideInUp 0.3s ease-out;
+} 

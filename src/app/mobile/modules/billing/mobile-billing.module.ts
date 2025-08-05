@@ -20,7 +20,7 @@ import { MobileBillingDashboardPageComponent } from './pages/mobile-billing-dash
 // import { MobilePaymentMethodsComponent } from './components/mobile-payment-methods/mobile-payment-methods.component';
 
 // Shared Mobile Components
-import { MobileModule } from '../../mobile.module';
+
 
 @NgModule({
   declarations: [
@@ -42,8 +42,7 @@ import { MobileModule } from '../../mobile.module';
     IonicModule,
     FormsModule,
     ReactiveFormsModule,
-    MobileBillingRoutingModule,
-    MobileModule
+    MobileBillingRoutingModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

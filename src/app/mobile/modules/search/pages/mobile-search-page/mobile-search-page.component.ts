@@ -54,10 +54,33 @@ export class MobileSearchPageComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    console.log('🔍 Initialisation de la page de recherche mobile');
+    console.log('🔍 URL actuelle:', window.location.href);
+    console.log('🔍 Router URL:', this.router.url);
+    console.log('🔍 Composant MobileSearchPage ngOnInit appelé');
+
+    // Diagnostic DOM
+    setTimeout(() => {
+      console.log('🔍 Diagnostic DOM après timeout:');
+      console.log('  - ion-app:', !!document.querySelector('ion-app'));
+      console.log('  - ion-router-outlet:', !!document.querySelector('ion-router-outlet'));
+      console.log('  - router-outlet:', !!document.querySelector('router-outlet'));
+      console.log('  - mobile-search-page:', !!document.querySelector('app-mobile-search-page'));
+    }, 1000);
+
     this.initializeSearch();
     this.setupSearchSubscriptions();
     this.loadCachedData();
     this.detectUserLocation();
+
+    // Supprimer le loader une fois la page initialisée
+    this.removeAppLoader();
+
+    // Enregistrer l'ouverture de la page
+    this.recordMobileSearchStats({
+      action: 'page_opened',
+      timestamp: new Date().toISOString()
+    });
   }
 
   ngOnDestroy(): void {
@@ -131,7 +154,7 @@ export class MobileSearchPageComponent implements OnInit, OnDestroy {
   /**
    * Détecter la localisation de l'utilisateur
    */
-  private async detectUserLocation(): Promise<void> {
+  async detectUserLocation(): Promise<void> {
     try {
       if ('geolocation' in navigator) {
         navigator.geolocation.getCurrentPosition(
@@ -175,30 +198,7 @@ export class MobileSearchPageComponent implements OnInit, OnDestroy {
     this.recordMobileSearchStats(searchParams);
   }
 
-  /**
-   * Enregistrer les statistiques de recherche mobile
-   */
-  private recordMobileSearchStats(searchParams: any): void {
-    // Attendre un peu pour obtenir les résultats
-    setTimeout(() => {
-      this.store.select(SearchState.selectStateSearchs).pipe(
-        takeUntil(this.destroy$)
-      ).subscribe(results => {
-        if (results) {
-          const resultsCount = Array.isArray(results) ? results.length : 0;
 
-          // Convertir les paramètres en format API
-          const filters = this.mobileSearchStats.convertMobileFiltersToApi(
-            searchParams,
-            this.currentCity
-          );
-
-          // Enregistrer les statistiques
-          this.mobileSearchStats.recordSearchWithAutoIds(filters, resultsCount);
-        }
-      });
-    }, 1000); // Attendre 1 seconde pour que les résultats soient chargés
-  }
 
   /**
    * Recherche par défaut (Bangangté)
@@ -493,5 +493,45 @@ export class MobileSearchPageComponent implements OnInit, OnDestroy {
    */
   trackByUnitId(index: number, unit: any): string {
     return unit._id || index.toString();
+  }
+
+  /**
+   * Enregistrer les statistiques de recherche mobile
+   */
+  private recordMobileSearchStats(data: any): void {
+    try {
+      // Utiliser la méthode disponible dans le service
+      if (data.city && typeof data.resultsCount === 'number') {
+        const filters = this.mobileSearchStats.convertMobileFiltersToApi(data, data.city);
+        this.mobileSearchStats.recordSearchWithAutoIds(filters, data.resultsCount);
+      } else {
+        console.log('📊 Statistiques de recherche mobile:', data);
+      }
+    } catch (error) {
+      console.warn('⚠️ Erreur lors de l\'enregistrement des statistiques:', error);
+    }
+  }
+
+  /**
+   * Supprimer le loader de l'application
+   */
+  private removeAppLoader(): void {
+    try {
+      const loader = document.getElementById('app-loading-holder');
+      if (loader) {
+        console.log('🔄 Suppression du loader d\'application');
+        loader.style.transition = 'opacity 0.3s ease-out';
+        loader.style.opacity = '0';
+
+        setTimeout(() => {
+          if (loader && loader.parentNode) {
+            loader.parentNode.removeChild(loader);
+            console.log('✅ Loader supprimé avec succès');
+          }
+        }, 300);
+      }
+    } catch (error) {
+      console.warn('⚠️ Erreur lors de la suppression du loader:', error);
+    }
   }
 }

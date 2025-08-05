@@ -1,6 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MobileDetectionService } from '../../services/mobile-detection.service';
+import { DeviceDetectionService } from '../../services/device-detection.service';
 
 export interface MobileWarningData {
   attemptedUrl: string;
@@ -17,14 +17,14 @@ export class MobileDashboardWarningComponent {
   constructor(
     public dialogRef: MatDialogRef<MobileDashboardWarningComponent>,
     @Inject(MAT_DIALOG_DATA) public data: MobileWarningData,
-    private mobileDetectionService: MobileDetectionService
+    private deviceDetectionService: DeviceDetectionService
   ) {}
 
   /**
    * Télécharger l'application
    */
   downloadApp(): void {
-    this.mobileDetectionService.redirectToAppDownload();
+    this.deviceDetectionService.redirectToAppDownload();
     this.dialogRef.close('download');
   }
 

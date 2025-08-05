@@ -1,0 +1,321 @@
+// Variables de couleurs du thème
+$primary-color: rgb(204, 140, 10);
+$danger-color: #dc2626;
+$danger-light: rgba(220, 38, 38, 0.1);
+
+// Modal de suppression de pays
+.country-delete-modal {
+  width: 100%;
+  max-width: 500px;
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+// En-tête du modal
+.modal-header {
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border-bottom: 1px solid #fecaca;
+  padding: 2rem;
+
+  .header-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .icon-container {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      
+      &.danger {
+        background: $danger-light;
+        color: $danger-color;
+      }
+    }
+
+    .header-text {
+      .modal-title {
+        margin: 0 0 0.25rem 0;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #111827;
+      }
+
+      .modal-subtitle {
+        margin: 0;
+        font-size: 0.875rem;
+        color: #6b7280;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+// Contenu du modal
+.modal-content {
+  padding: 2rem;
+
+  // Informations du pays
+  .country-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: #f9fafb;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+
+    .country-flag {
+      width: 48px;
+      height: 32px;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .flag-placeholder {
+        width: 100%;
+        height: 100%;
+        background: #f3f4f6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #9ca3af;
+        font-size: 1rem;
+      }
+    }
+
+    .country-details {
+      flex: 1;
+
+      .country-name {
+        margin: 0 0 0.25rem 0;
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: #111827;
+      }
+
+      .country-code {
+        margin: 0;
+        font-size: 0.875rem;
+        color: #6b7280;
+      }
+    }
+  }
+
+  // Message principal
+  .message-section {
+    margin-bottom: 1.5rem;
+
+    .main-message {
+      margin: 0;
+      font-size: 1rem;
+      color: #374151;
+      line-height: 1.6;
+      text-align: center;
+
+      strong {
+        color: #111827;
+        font-weight: 600;
+      }
+    }
+  }
+
+  // Section statistiques
+  .stats-section {
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+
+      .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem;
+        background: #f9fafb;
+        border-radius: 8px;
+        border: 1px solid #e5e7eb;
+
+        .stat-icon {
+          width: 40px;
+          height: 40px;
+          border-radius: 8px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1rem;
+          color: white;
+
+          &.cities {
+            background: linear-gradient(135deg, #10b981, #059669);
+          }
+
+          &.users {
+            background: linear-gradient(135deg, $primary-color, rgb(184, 126, 9));
+          }
+        }
+
+        .stat-content {
+          .stat-number {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #111827;
+            line-height: 1;
+          }
+
+          .stat-label {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+          }
+        }
+      }
+    }
+
+    // Boîte d'avertissement
+    .warning-box {
+      display: flex;
+      gap: 0.75rem;
+      padding: 1rem;
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      border: 1px solid #f59e0b;
+      border-radius: 8px;
+
+      .warning-icon {
+        color: #d97706;
+        font-size: 1.25rem;
+        flex-shrink: 0;
+        margin-top: 0.125rem;
+      }
+
+      .warning-content {
+        .warning-title {
+          margin: 0 0 0.25rem 0;
+          font-size: 0.875rem;
+          font-weight: 600;
+          color: #92400e;
+        }
+
+        .warning-text {
+          margin: 0;
+          font-size: 0.875rem;
+          color: #b45309;
+          line-height: 1.5;
+        }
+      }
+    }
+  }
+
+  // Section de chargement
+  .loading-section {
+    text-align: center;
+    padding: 2rem;
+    color: #6b7280;
+
+    .loading-spinner {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: $primary-color;
+    }
+
+    p {
+      margin: 0;
+      font-size: 0.875rem;
+    }
+  }
+}
+
+// Actions du modal
+.modal-actions {
+  background: #f9fafb;
+  border-top: 1px solid #e5e7eb;
+  padding: 1.5rem 2rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+
+  .action-btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    border: none;
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    &.secondary {
+      background: white;
+      color: #374151;
+      border: 1px solid #d1d5db;
+
+      &:hover:not(:disabled) {
+        background: #f9fafb;
+        border-color: #9ca3af;
+      }
+    }
+
+    &.danger {
+      background: linear-gradient(135deg, $danger-color, #b91c1c);
+      color: white;
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+
+      &:hover:not(:disabled) {
+        background: linear-gradient(135deg, #b91c1c, $danger-color);
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(220, 38, 38, 0.4);
+      }
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 640px) {
+  .country-delete-modal {
+    max-width: 95vw;
+  }
+
+  .modal-header {
+    padding: 1.5rem;
+  }
+
+  .modal-content {
+    padding: 1.5rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+    
+    .action-btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}

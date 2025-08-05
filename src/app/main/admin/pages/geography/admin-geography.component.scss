@@ -1,1863 +1,1250 @@
-// Variables du thème Ndiye
-$ndiye-primary: rgb(204, 140, 10);
-$ndiye-primary-light: rgba(204, 140, 10, 0.1);
-$ndiye-primary-dark: rgb(184, 126, 9);
-$ndiye-secondary: rgb(39, 122, 252);
-$ndiye-success: #24a148;
-$ndiye-warning: #f1c21b;
-$ndiye-danger: #da1e28;
-$ndiye-info: #0f62fe;
-$ndiye-white: #ffffff;
-$ndiye-light: #f4f4f4;
-$ndiye-medium: #6f6f6f;
-$ndiye-dark: #161616;
+// ========================================
+// PAGE GÉOGRAPHIE - STYLE IDENTIQUE AUX PROPRIÉTÉS
+// ========================================
 
-.admin-geography {
-  padding: 0;
-  background-color: $ndiye-light;
-  min-height: 100vh;
+// Variables de couleurs du thème - Identiques aux propriétés
+$primary-color: rgb(204, 140, 10);
+$primary-light: rgba(204, 140, 10, 0.1);
+$primary-dark: rgb(184, 126, 9);
 
-  // ==================== HEADER MODERNE ====================
-  .geography-header-modern {
-    background: $ndiye-white;
-    border-bottom: 2px solid rgba($ndiye-primary, 0.15);
+// Styles optimisés pour la page de géographie - Style identique aux détails de propriété
+:host {
+  display: block;
+  height: 100vh;
+  background-color: #ffffff;
+  overflow: hidden;
+}
+
+// Container principal - Style identique aux propriétés
+.geography-admin-page {
+  height: 100vh;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  max-width: 100vw;
+}
+
+// Header principal - Style identique aux propriétés
+.main-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  flex-shrink: 0;
+
+  .header-content {
+    .header-info {
+      h1 {
+        color: #161616;
+        font-weight: 700;
+        background: linear-gradient(135deg, rgb(204, 140, 10), #fadc4d);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      p {
+        color: #525252;
+        font-weight: 400;
+      }
+    }
+  }
+}
+
+// Section métriques - Style moderne
+.metrics-section {
+  background-color: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+  flex-shrink: 0;
+
+  .metric-card {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: all 0.2s ease;
     position: relative;
     overflow: hidden;
 
-    // Effet de fond décoratif simplifié
-    &::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 4px;
-      height: 100%;
-      background: $ndiye-primary;
-      z-index: 1;
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
-    .header-content {
-      position: relative;
-      z-index: 2;
+    &.countries {
+      border-left: 4px solid #3b82f6;
+      background: linear-gradient(135deg, #ffffff 0%, #eff6ff 100%);
+    }
+
+    &.cities {
+      border-left: 4px solid #10b981;
+      background: linear-gradient(135deg, #ffffff 0%, #ecfdf5 100%);
+    }
+
+    &.currencies {
+      border-left: 4px solid #f59e0b;
+      background: linear-gradient(135deg, #ffffff 0%, #fffbeb 100%);
+    }
+
+    &.users {
+      border-left: 4px solid $primary-color;
+      background: linear-gradient(135deg, #ffffff 0%, $primary-light 100%);
+    }
+
+    .metric-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      padding: 2rem 2.5rem;
-      gap: 2rem;
+      justify-content: center;
+      margin-bottom: 1rem;
+      font-size: 1.25rem;
+      color: #ffffff;
+    }
 
-      .header-left {
-        flex: 1;
+    &.countries .metric-icon {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+    }
 
-        .title-section {
-          display: flex;
-          flex-direction: column;
-          gap: 1.5rem;
+    &.cities .metric-icon {
+      background: linear-gradient(135deg, #10b981, #059669);
+    }
 
-          .title-with-icon {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
+    &.currencies .metric-icon {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+    }
 
-            .title-icon {
-              width: 60px;
-              height: 60px;
-              background: $ndiye-primary;
-              border-radius: 12px;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              box-shadow: 0 4px 12px rgba($ndiye-primary, 0.25);
-              border: 2px solid rgba($ndiye-primary, 0.1);
+    &.users .metric-icon {
+      background: linear-gradient(135deg, $primary-color, $primary-dark);
+    }
 
-              i {
-                font-size: 1.8rem;
-                color: white;
-              }
-            }
-
-            .title-text {
-              .geography-title {
-                font-size: 2rem;
-                font-weight: 800;
-                color: $ndiye-dark;
-                margin: 0 0 0.5rem;
-              }
-
-              .geography-subtitle {
-                font-size: 1rem;
-                color: $ndiye-medium;
-                margin: 0;
-                font-weight: 400;
-                line-height: 1.4;
-              }
-            }
-          }
-
-          .stats-overview {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-
-            .overview-badge {
-              display: flex;
-              align-items: center;
-              gap: 0.5rem;
-              padding: 0.75rem 1rem;
-              border-radius: 10px;
-              border: 2px solid;
-              background: $ndiye-white;
-              transition: all 0.3s ease;
-              cursor: pointer;
-
-              i {
-                font-size: 0.9rem;
-                padding: 0.375rem;
-                border-radius: 6px;
-                color: white;
-              }
-
-              .overview-number {
-                font-size: 1.25rem;
-                font-weight: 700;
-              }
-
-              .overview-label {
-                font-size: 0.75rem;
-                font-weight: 500;
-                opacity: 0.8;
-              }
-
-              &:hover {
-                transform: translateY(-2px);
-              }
-
-              &.countries-badge {
-                border-color: rgba($ndiye-info, 0.3);
-                color: $ndiye-info;
-
-                i { background: $ndiye-info; }
-
-                &:hover {
-                  box-shadow: 0 6px 20px rgba($ndiye-info, 0.15);
-                }
-              }
-
-              &.cities-badge {
-                border-color: rgba($ndiye-success, 0.3);
-                color: $ndiye-success;
-
-                i { background: $ndiye-success; }
-
-                &:hover {
-                  box-shadow: 0 6px 20px rgba($ndiye-success, 0.15);
-                }
-              }
-
-              &.currencies-badge {
-                border-color: rgba($ndiye-warning, 0.3);
-                color: $ndiye-warning;
-
-                i { background: $ndiye-warning; }
-
-                &:hover {
-                  box-shadow: 0 6px 20px rgba($ndiye-warning, 0.15);
-                }
-              }
-            }
-          }
-        }
+    .metric-content {
+      .metric-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #161616;
+        line-height: 1;
+        margin-bottom: 0.5rem;
       }
 
-      .header-right {
-        .action-buttons {
-          display: flex;
-          gap: 1rem;
-          align-items: center;
-        }
+      .metric-label {
+        font-size: 0.875rem;
+        color: #525252;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+// Navigation par onglets - Style EXACT des détails de propriété
+.tabs-navigation {
+  background-color: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+  flex-shrink: 0;
+
+  nav {
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  .property-tab-button {
+    position: relative;
+    padding: 1rem 1.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #525252;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+
+    &:hover {
+      color: #161616;
+      background-color: #f4f4f4;
+    }
+
+    &.active {
+      color: $primary-color;
+      border-bottom-color: $primary-color;
+      background-color: #ffffff;
+      font-weight: 600;
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, $primary-color, #fadc4d);
+        border-radius: 2px 2px 0 0;
+      }
+    }
+
+    .tab-count {
+      background-color: #f4f4f4;
+      color: #525252;
+      padding: 0.25rem 0.5rem;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      min-width: 1.5rem;
+      text-align: center;
+    }
+
+    &.active .tab-count {
+      background-color: $primary-light;
+      color: $primary-color;
+    }
+  }
+}
+
+// Contenu des onglets - Style identique aux propriétés
+.tab-content {
+  flex: 1;
+  overflow-y: auto;
+  background-color: #f8f9fa;
+
+  // Animations d'entrée
+  > div {
+    animation: fadeInUp 0.3s ease-out;
+  }
+}
+
+// Animations
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .main-header {
+    .header-content {
+      .flex {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
       }
     }
   }
 
-  // ==================== BOUTONS MODERNES ====================
-  .btn-modern {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem 1.25rem;
-    border: 1px solid;
-    border-radius: 6px;
-    font-size: 0.875rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    background: $ndiye-white;
-    min-width: 120px;
-    justify-content: center;
-
-    .btn-content {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      position: relative;
-      z-index: 2;
-
-      .btn-text {
-        font-weight: 700;
-        transition: all 0.3s ease;
-      }
-
-      i {
-        font-size: 1rem;
-        transition: all 0.3s ease;
-      }
+  .metrics-section {
+    .grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
     }
+  }
 
+  .tabs-navigation {
+    .property-tab-button {
+      padding: 0.75rem 1rem;
+      font-size: 0.8rem;
 
-
-    &:active {
-      transform: scale(0.98);
-    }
-
-    &:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none !important;
-
-      .btn-ripple {
+      .tab-count {
         display: none;
       }
     }
+  }
+}
 
-    &.btn-refresh {
-      border-color: $ndiye-info;
-      color: $ndiye-info;
-      background: $ndiye-white;
-
-      &:hover:not(:disabled) {
-        background: rgba($ndiye-info, 0.08);
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba($ndiye-info, 0.2);
-
-        .btn-content i {
-          transform: rotate(180deg);
-        }
-      }
-
-      &:disabled {
-        opacity: 0.6;
-
-        .btn-content i.fa-spin {
-          animation: spin 1s linear infinite;
-        }
-      }
+@media (max-width: 640px) {
+  .metrics-section {
+    .grid {
+      grid-template-columns: 1fr;
     }
+  }
+}
 
-    &.btn-primary {
-      border-color: $ndiye-primary;
-      background: $ndiye-primary;
-      color: white;
-      box-shadow: 0 2px 8px rgba($ndiye-primary, 0.2);
+// ========================================
+// STYLES POUR LES BOUTONS D'ACTION MODERNES
+// ========================================
 
-      &:hover:not(:disabled) {
-        background: darken($ndiye-primary, 8%);
-        border-color: darken($ndiye-primary, 8%);
-        transform: translateY(-2px);
-        box-shadow: 0 4px 16px rgba($ndiye-primary, 0.3);
+// Boutons d'action principaux
+.action-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: 0.75rem;
+  color: white;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, $primary-color, $primary-dark);
+  transition: all 0.2s ease;
+  cursor: pointer;
 
-        .btn-content i {
-          transform: scale(1.1);
-        }
-      }
+  &:hover {
+    background: linear-gradient(135deg, $primary-dark, $primary-color);
+    transform: translateY(-1px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px $primary-light;
+  }
+}
+
+// Boutons d'action secondaires
+.action-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.625rem 1rem;
+  border: 1px solid #d1d5db;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 0.75rem;
+  color: #374151;
+  background: white;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+  cursor: pointer;
+
+  &:hover {
+    background: #f9fafb;
+    border-color: $primary-color;
+    color: $primary-color;
+    transform: translateY(-1px);
+  }
+
+  &.active {
+    background: $primary-light;
+    border-color: $primary-color;
+    color: $primary-color;
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(204, 140, 10, 0.1);
+  }
+}
+
+// Champ de recherche moderne
+.search-input {
+  &:focus {
+    box-shadow: 0 0 0 3px rgba(204, 140, 10, 0.1);
+  }
+}
+
+// ========================================
+// STYLES POUR LES FILTRES MODERNES
+// ========================================
+
+.filter-group {
+  .filter-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .filter-select {
+    display: block;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    background: white;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+      box-shadow: 0 0 0 3px rgba(204, 140, 10, 0.1);
+    }
+  }
+}
+
+.filter-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+
+  .filter-btn-reset {
+    width: 100%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.625rem 1rem;
+    border: 1px solid #d1d5db;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: 0.5rem;
+    color: #374151;
+    background: white;
+    transition: all 0.2s ease;
+    cursor: pointer;
+
+    &:hover {
+      background: #f9fafb;
     }
   }
 
-  // ==================== CARTES DE STATISTIQUES ====================
-  .geography-stats-modern {
-    padding: 2rem 2.5rem;
-    background: rgba($ndiye-primary, 0.01);
+  .filter-btn-apply {
+    width: 100%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.625rem 1rem;
+    border: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: 0.5rem;
+    color: white;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    background: linear-gradient(135deg, $primary-color, $primary-dark);
+    transition: all 0.2s ease;
+    cursor: pointer;
 
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 2rem;
-
-      .stat-card {
-        background: $ndiye-white;
-        border-radius: 16px;
-        padding: 2rem;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-        border: 1px solid rgba($ndiye-primary, 0.1);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        position: relative;
-        overflow: hidden;
-
-        &::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          height: 3px;
-          background: $ndiye-primary;
-        }
-
-        &:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-        }
-
-        .card-header {
-          display: flex;
-          align-items: center;
-          gap: 1rem;
-          margin-bottom: 1.5rem;
-
-          .card-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.2rem;
-          }
-
-          .card-title {
-            h3 {
-              font-size: 1.25rem;
-              font-weight: 700;
-              color: $ndiye-dark;
-              margin: 0 0 0.25rem;
-            }
-
-            .card-subtitle {
-              font-size: 0.85rem;
-              color: $ndiye-medium;
-              margin: 0;
-            }
-          }
-        }
-
-        .card-content {
-          margin-bottom: 1.5rem;
-
-          .main-stat {
-            display: flex;
-            align-items: baseline;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-
-            .stat-number {
-              font-size: 2.5rem;
-              font-weight: 800;
-              color: $ndiye-dark;
-              line-height: 1;
-            }
-
-            .stat-label {
-              font-size: 0.9rem;
-              color: $ndiye-medium;
-              font-weight: 500;
-            }
-          }
-
-          .sub-stats {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-
-            .sub-stat {
-              display: flex;
-              align-items: center;
-              gap: 0.5rem;
-              font-size: 0.85rem;
-              color: $ndiye-medium;
-
-              i {
-                font-size: 0.75rem;
-                width: 16px;
-              }
-
-              &.active i { color: $ndiye-success; }
-              &.users i { color: $ndiye-info; }
-              &.properties i { color: $ndiye-warning; }
-              &.default i { color: $ndiye-primary; }
-            }
-          }
-
-          .distribution-stats {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-
-            .distribution-item {
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-              padding: 0.75rem 0;
-              border-bottom: 1px solid rgba($ndiye-primary, 0.1);
-
-              .distribution-label {
-                font-size: 0.9rem;
-                color: $ndiye-medium;
-                font-weight: 500;
-              }
-
-              .distribution-value {
-                font-size: 1.1rem;
-                font-weight: 700;
-                color: $ndiye-dark;
-              }
-            }
-          }
-        }
-
-        .card-progress {
-          .progress-bar {
-            width: 100%;
-            height: 6px;
-            background: rgba($ndiye-primary, 0.1);
-            border-radius: 3px;
-            overflow: hidden;
-            margin-bottom: 0.5rem;
-
-            .progress-fill {
-              height: 100%;
-              background: $ndiye-primary;
-              border-radius: 3px;
-              transition: width 0.6s ease;
-            }
-          }
-
-          .progress-text {
-            font-size: 0.8rem;
-            color: $ndiye-medium;
-            font-weight: 500;
-          }
-        }
-
-        .card-action {
-          .view-details-btn {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1.25rem;
-            background: rgba($ndiye-primary, 0.1);
-            color: $ndiye-primary;
-            border: 1px solid rgba($ndiye-primary, 0.2);
-            border-radius: 8px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            width: 100%;
-            justify-content: center;
-
-            &:hover {
-              background: rgba($ndiye-primary, 0.15);
-              border-color: $ndiye-primary;
-              transform: translateY(-1px);
-            }
-
-            i {
-              font-size: 0.8rem;
-            }
-          }
-        }
-
-        // Couleurs spécifiques par type de carte
-        &.countries-card {
-          color: $ndiye-info;
-          .card-icon { background: $ndiye-info; }
-
-          &::before {
-            background: $ndiye-info;
-          }
-
-          .progress-fill {
-            background: $ndiye-info !important;
-          }
-
-          .view-details-btn {
-            background: rgba($ndiye-info, 0.1);
-            color: $ndiye-info;
-            border-color: rgba($ndiye-info, 0.3);
-
-            &:hover {
-              background: rgba($ndiye-info, 0.15);
-              border-color: $ndiye-info;
-            }
-          }
-        }
-
-        &.cities-card {
-          color: $ndiye-success;
-          .card-icon { background: $ndiye-success; }
-
-          &::before {
-            background: $ndiye-success;
-          }
-
-          .progress-fill {
-            background: $ndiye-success !important;
-          }
-
-          .view-details-btn {
-            background: rgba($ndiye-success, 0.1);
-            color: $ndiye-success;
-            border-color: rgba($ndiye-success, 0.3);
-
-            &:hover {
-              background: rgba($ndiye-success, 0.15);
-              border-color: $ndiye-success;
-            }
-          }
-        }
-
-        &.currencies-card {
-          color: $ndiye-warning;
-          .card-icon { background: $ndiye-warning; }
-
-          &::before {
-            background: $ndiye-warning;
-          }
-
-          .progress-fill {
-            background: $ndiye-warning !important;
-          }
-
-          .view-details-btn {
-            background: rgba($ndiye-warning, 0.1);
-            color: $ndiye-warning;
-            border-color: rgba($ndiye-warning, 0.3);
-
-            &:hover {
-              background: rgba($ndiye-warning, 0.15);
-              border-color: $ndiye-warning;
-            }
-          }
-        }
-
-        &.distribution-card {
-          color: $ndiye-primary;
-          .card-icon { background: $ndiye-primary; }
-
-          &::before {
-            background: $ndiye-primary;
-          }
-
-          .progress-fill {
-            background: $ndiye-primary !important;
-          }
-
-          .view-details-btn {
-            background: rgba($ndiye-primary, 0.1);
-            color: $ndiye-primary;
-            border-color: rgba($ndiye-primary, 0.3);
-
-            &:hover {
-              background: rgba($ndiye-primary, 0.15);
-              border-color: $ndiye-primary;
-            }
-          }
-        }
-      }
+    &:hover {
+      background: linear-gradient(135deg, $primary-dark, $primary-color);
+      transform: translateY(-1px);
     }
   }
+}
 
-  // ==================== ONGLETS MODERNES ====================
-  .geography-tabs-modern {
-    background: $ndiye-white;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    border: 1px solid rgba($ndiye-primary, 0.1);
-    margin: 2rem 2.5rem;
+// ========================================
+// STYLES POUR LE TABLEAU MODERNE
+// ========================================
 
-    .tabs-container {
-      .tabs-nav {
-        display: flex;
-        border-bottom: 1px solid rgba($ndiye-primary, 0.1);
-        padding: 0 1rem;
+.table-header-cell {
+  padding: 1rem 1.5rem;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: #f9fafb;
 
-        .tab-btn {
-          position: relative;
-          display: flex;
-          align-items: center;
-          padding: 1.25rem 2rem;
-          background: transparent;
-          border: none;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          border-bottom: 3px solid transparent;
+  &.sortable {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
 
-          .tab-content {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
+    &:hover {
+      background: #f3f4f6;
+    }
 
-            i {
-              font-size: 1rem;
-              color: $ndiye-medium;
-              transition: all 0.3s ease;
-            }
+    .sort-icon {
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
 
-            .tab-text {
-              font-size: 0.95rem;
-              font-weight: 600;
-              color: $ndiye-medium;
-              transition: all 0.3s ease;
-            }
-
-            .tab-count {
-              background: rgba($ndiye-medium, 0.1);
-              color: $ndiye-medium;
-              padding: 0.25rem 0.5rem;
-              border-radius: 12px;
-              font-size: 0.75rem;
-              font-weight: 700;
-              min-width: 24px;
-              text-align: center;
-              transition: all 0.3s ease;
-            }
-          }
-
-          .tab-indicator {
-            position: absolute;
-            bottom: -3px;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: $ndiye-primary;
-            transform: scaleX(0);
-            transition: transform 0.3s ease;
-          }
-
-          &:hover:not(.active) {
-            .tab-content {
-              i, .tab-text {
-                color: $ndiye-primary;
-              }
-
-              .tab-count {
-                background: rgba($ndiye-primary, 0.1);
-                color: $ndiye-primary;
-              }
-            }
-          }
-
-          &.active {
-            .tab-content {
-              i, .tab-text {
-                color: $ndiye-primary;
-              }
-
-              .tab-count {
-                background: $ndiye-primary;
-                color: white;
-              }
-            }
-
-            .tab-indicator {
-              transform: scaleX(1);
-            }
-          }
-        }
-      }
+    &:hover .sort-icon {
+      opacity: 1;
     }
   }
+}
 
-  // ==================== CONTENU DES ONGLETS ====================
-  .tab-content-modern {
-    padding: 2rem 2.5rem;
+.table-cell {
+  padding: 1rem 1.5rem;
+  white-space: nowrap;
+  font-size: 0.875rem;
+}
 
-    .countries-section {
-      .section-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        margin-bottom: 2rem;
-        gap: 2rem;
+.country-row {
+  transition: all 0.2s ease;
 
-        .section-title {
-          h3 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: $ndiye-dark;
-            margin: 0 0 0.5rem;
-          }
+  &:hover {
+    background: #f9fafb;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+}
 
-          p {
-            color: $ndiye-medium;
-            font-size: 0.9rem;
-            margin: 0;
-          }
-        }
+.country-avatar {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  font-size: 1.125rem;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+}
 
-        .section-actions {
-          display: flex;
-          gap: 1rem;
-          align-items: center;
-
-          .search-box {
-            position: relative;
-            display: flex;
-            align-items: center;
-
-            i {
-              position: absolute;
-              left: 1rem;
-              color: $ndiye-medium;
-              font-size: 0.9rem;
-            }
-
-            .search-input {
-              padding: 0.75rem 1rem 0.75rem 2.5rem;
-              border: 2px solid rgba($ndiye-primary, 0.2);
-              border-radius: 8px;
-              background: $ndiye-white;
-              color: $ndiye-dark;
-              font-size: 0.9rem;
-              min-width: 250px;
-              transition: all 0.3s ease;
-
-              &:focus {
-                outline: none;
-                border-color: $ndiye-primary;
-                box-shadow: 0 0 0 3px rgba($ndiye-primary, 0.1);
-                background: rgba($ndiye-primary, 0.02);
-              }
-
-              &::placeholder {
-                color: $ndiye-medium;
-              }
-            }
-          }
-
-          .filter-btn {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1.25rem;
-            background: transparent;
-            color: $ndiye-medium;
-            border: 2px solid rgba($ndiye-primary, 0.2);
-            border-radius: 8px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-
-            &:hover {
-              background: rgba($ndiye-primary, 0.05);
-              color: $ndiye-primary;
-              border-color: $ndiye-primary;
-            }
-
-            i {
-              font-size: 0.8rem;
-            }
-          }
-        }
-      }
-
-      .table-container {
-        background: $ndiye-white;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-        border: 1px solid rgba($ndiye-primary, 0.1);
-
-        .modern-table {
-          width: 100%;
-          border-collapse: collapse;
-
-          thead {
-            background: rgba($ndiye-primary, 0.06);
-            border-bottom: 2px solid rgba($ndiye-primary, 0.2);
-
-            th {
-              padding: 1.25rem 1.5rem;
-              text-align: left;
-              font-weight: 700;
-              color: $ndiye-dark;
-              border-right: 1px solid rgba($ndiye-primary, 0.1);
-
-              &:last-child {
-                border-right: none;
-              }
-
-              .th-content {
-                display: flex;
-                align-items: center;
-                gap: 0.75rem;
-                font-size: 0.85rem;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-
-                i {
-                  color: $ndiye-primary;
-                  font-size: 0.9rem;
-                  padding: 0.25rem;
-                  background: rgba($ndiye-primary, 0.15);
-                  border-radius: 50%;
-                }
-              }
-            }
-          }
-
-          tbody {
-            .table-row {
-              transition: all 0.3s ease;
-              border-bottom: 1px solid rgba($ndiye-primary, 0.08);
-
-              &:hover {
-                background: rgba($ndiye-primary, 0.03);
-                transform: translateX(3px);
-                box-shadow: 0 2px 8px rgba($ndiye-primary, 0.1);
-              }
-
-              &.row-inactive {
-                opacity: 0.6;
-                background: rgba($ndiye-medium, 0.05);
-              }
-
-              td {
-                padding: 1.25rem 1.5rem;
-                vertical-align: middle;
-                border-right: 1px solid rgba($ndiye-primary, 0.05);
-
-                &:last-child {
-                  border-right: none;
-                }
-              }
-
-              .country-cell {
-                .country-info {
-                  display: flex;
-                  align-items: center;
-                  gap: 1rem;
-
-                  .country-flag {
-                    width: 32px;
-                    height: 24px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    font-size: 1.2rem;
-                    border-radius: 4px;
-                    border: 1px solid rgba($ndiye-primary, 0.1);
-                    background: rgba($ndiye-primary, 0.02);
-
-                    i {
-                      color: $ndiye-medium;
-                    }
-                  }
-
-                  .country-details {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 0.25rem;
-
-                    .country-name {
-                      font-size: 1rem;
-                      font-weight: 600;
-                      color: $ndiye-dark;
-                    }
-
-                    .country-code-small {
-                      font-size: 0.75rem;
-                      color: $ndiye-medium;
-                      font-weight: 500;
-                      text-transform: uppercase;
-                    }
-                  }
-                }
-              }
-
-              .code-cell {
-                .code-badge {
-                  display: inline-block;
-                  background: rgba($ndiye-primary, 0.1);
-                  color: $ndiye-primary;
-                  padding: 0.375rem 0.75rem;
-                  border-radius: 6px;
-                  font-size: 0.8rem;
-                  font-weight: 700;
-                  text-transform: uppercase;
-                  letter-spacing: 0.5px;
-                  border: 1px solid rgba($ndiye-primary, 0.2);
-                }
-              }
-
-              .currency-cell {
-                .currency-info {
-                  display: flex;
-                  align-items: center;
-                  gap: 0.5rem;
-
-                  .currency-code {
-                    font-size: 0.9rem;
-                    font-weight: 600;
-                    color: $ndiye-dark;
-                  }
-                }
-
-                .no-currency {
-                  color: $ndiye-medium;
-                  font-style: italic;
-                  font-size: 0.85rem;
-                }
-              }
-
-              .cities-cell,
-              .users-cell {
-                .cities-count,
-                .users-count {
-                  display: flex;
-                  align-items: center;
-                  gap: 0.5rem;
-
-                  .count-number {
-                    font-size: 1.1rem;
-                    font-weight: 700;
-                    color: $ndiye-primary;
-                  }
-
-                  .count-label {
-                    font-size: 0.8rem;
-                    color: $ndiye-medium;
-                  }
-                }
-              }
-
-              .status-cell {
-                .status-toggle {
-                  .toggle-btn {
-                    display: flex;
-                    align-items: center;
-                    gap: 0.5rem;
-                    padding: 0.5rem 0.75rem;
-                    border: 1px solid;
-                    border-radius: 6px;
-                    background: transparent;
-                    cursor: pointer;
-                    transition: all 0.3s ease;
-                    font-size: 0.8rem;
-                    font-weight: 500;
-
-                    &.active {
-                      color: $ndiye-success;
-                      border-color: rgba($ndiye-success, 0.3);
-                      background: rgba($ndiye-success, 0.05);
-
-                      &:hover {
-                        background: rgba($ndiye-success, 0.1);
-                        border-color: $ndiye-success;
-                      }
-
-                      i {
-                        color: $ndiye-success;
-                      }
-                    }
-
-                    &:not(.active) {
-                      color: $ndiye-medium;
-                      border-color: rgba($ndiye-medium, 0.3);
-                      background: rgba($ndiye-medium, 0.05);
-
-                      &:hover {
-                        background: rgba($ndiye-medium, 0.1);
-                        border-color: $ndiye-medium;
-                      }
-
-                      i {
-                        color: $ndiye-medium;
-                      }
-                    }
-
-                    i {
-                      font-size: 1rem;
-                    }
-                  }
-                }
-              }
-
-              .actions-cell {
-                .action-buttons {
-                  display: flex;
-                  gap: 0.5rem;
-                  justify-content: center;
-
-                  .action-btn {
-                    width: 32px;
-                    height: 32px;
-                    border-radius: 6px;
-                    border: 1px solid;
-                    background: transparent;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    cursor: pointer;
-                    transition: all 0.3s ease;
-                    font-size: 0.8rem;
-
-                    &.view-btn {
-                      color: $ndiye-info;
-                      border-color: rgba($ndiye-info, 0.3);
-
-                      &:hover {
-                        background: rgba($ndiye-info, 0.1);
-                        border-color: $ndiye-info;
-                        transform: translateY(-1px);
-                      }
-                    }
-
-                    &.edit-btn {
-                      color: $ndiye-warning;
-                      border-color: rgba($ndiye-warning, 0.3);
-
-                      &:hover {
-                        background: rgba($ndiye-warning, 0.1);
-                        border-color: $ndiye-warning;
-                        transform: translateY(-1px);
-                      }
-                    }
-
-                    &.delete-btn {
-                      color: $ndiye-danger;
-                      border-color: rgba($ndiye-danger, 0.3);
-
-                      &:hover {
-                        background: rgba($ndiye-danger, 0.1);
-                        border-color: $ndiye-danger;
-                        transform: translateY(-1px);
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+.country-info {
+  .country-name {
+    font-weight: 600;
+    color: #111827;
   }
 
-  // ==================== RESPONSIVE DESIGN ====================
-  @media (max-width: 768px) {
-    .geography-header-modern {
-      .header-content {
-        flex-direction: column;
-        gap: 2rem;
-        padding: 1.5rem;
+  .country-code {
+    font-size: 0.75rem;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+}
 
-        .header-left {
-          width: 100%;
+.code-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  color: white;
+}
 
-          .title-section {
-            gap: 1.25rem;
+.currency-info {
+  .currency-code {
+    font-weight: 500;
+    color: #111827;
+  }
+}
 
-            .title-with-icon {
-              flex-direction: column;
-              text-align: center;
-              gap: 1rem;
+.cities-count {
+  text-align: center;
 
-              .title-icon {
-                width: 50px;
-                height: 50px;
-
-                i {
-                  font-size: 1.5rem;
-                }
-              }
-
-              .title-text {
-                .geography-title {
-                  font-size: 1.5rem;
-                }
-
-                .geography-subtitle {
-                  font-size: 0.9rem;
-                }
-              }
-            }
-
-            .stats-overview {
-              justify-content: center;
-              gap: 0.75rem;
-
-              .overview-badge {
-                flex: 1;
-                min-width: 0;
-                padding: 0.5rem 0.75rem;
-
-                .overview-number {
-                  font-size: 1rem;
-                }
-
-                .overview-label {
-                  font-size: 0.7rem;
-                }
-              }
-            }
-          }
-        }
-
-        .header-right {
-          width: 100%;
-
-          .action-buttons {
-            width: 100%;
-            flex-direction: column;
-            gap: 0.75rem;
-
-            .btn-modern {
-              width: 100%;
-              min-width: auto;
-              padding: 0.875rem 1.5rem;
-              font-size: 0.9rem;
-            }
-          }
-        }
-      }
-    }
-
-    .geography-stats-modern {
-      padding: 1.5rem;
-
-      .stats-grid {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-
-        .stat-card {
-          padding: 1.5rem;
-
-          .card-header {
-            .card-icon {
-              width: 40px;
-              height: 40px;
-              font-size: 1rem;
-            }
-
-            .card-title h3 {
-              font-size: 1.1rem;
-            }
-          }
-
-          .card-content {
-            .main-stat .stat-number {
-              font-size: 2rem;
-            }
-          }
-        }
-      }
-    }
-
-    .geography-tabs-modern {
-      margin: 1.5rem;
-
-      .tabs-nav {
-        flex-direction: column;
-        padding: 0;
-
-        .tab-btn {
-          padding: 1rem 1.5rem;
-          border-bottom: 1px solid rgba($ndiye-primary, 0.1);
-          border-right: none;
-
-          &:last-child {
-            border-bottom: none;
-          }
-
-          .tab-indicator {
-            bottom: auto;
-            right: -1px;
-            left: auto;
-            top: 0;
-            width: 3px;
-            height: 100%;
-          }
-        }
-      }
-    }
-
-    .tab-content-modern {
-      padding: 1.5rem;
-
-      .countries-section {
-        .section-header {
-          flex-direction: column;
-          gap: 1rem;
-
-          .section-actions {
-            width: 100%;
-            flex-direction: column;
-
-            .search-box .search-input {
-              width: 100%;
-              min-width: auto;
-            }
-          }
-        }
-
-        .table-container {
-          overflow-x: auto;
-
-          .modern-table {
-            min-width: 800px;
-            font-size: 0.8rem;
-
-            th, td {
-              padding: 1rem;
-            }
-          }
-        }
-      }
-    }
+  .count-number {
+    display: block;
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #111827;
   }
 
-  // ==================== STYLES SPÉCIFIQUES VILLES ====================
-  .cities-section {
-    .city-cell {
-      .city-info {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-
-        .city-icon {
-          width: 32px;
-          height: 32px;
-          border-radius: 6px;
-          background: rgba($ndiye-success, 0.1);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: $ndiye-success;
-          font-size: 0.9rem;
-        }
-
-        .city-details {
-          display: flex;
-          flex-direction: column;
-          gap: 0.25rem;
-
-          .city-name {
-            font-weight: 600;
-            color: $ndiye-dark;
-            font-size: 0.9rem;
-          }
-
-          .city-timezone {
-            font-size: 0.75rem;
-            color: $ndiye-medium;
-          }
-        }
-      }
-    }
-
-    .country-cell {
-      .country-info {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-
-        .country-flag {
-          font-size: 1.2rem;
-        }
-
-        .country-details {
-          display: flex;
-          flex-direction: column;
-          gap: 0.25rem;
-
-          .country-name {
-            font-weight: 500;
-            color: $ndiye-dark;
-            font-size: 0.85rem;
-          }
-
-          .country-code {
-            font-size: 0.75rem;
-            color: $ndiye-medium;
-          }
-        }
-      }
-    }
-
-    .coordinates-cell {
-      .coordinates {
-        .coordinate-item {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          font-size: 0.8rem;
-          color: $ndiye-dark;
-
-          i {
-            color: $ndiye-info;
-            font-size: 0.75rem;
-          }
-        }
-      }
-
-      .no-coordinates {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-size: 0.8rem;
-        color: $ndiye-medium;
-        font-style: italic;
-
-        i {
-          color: $ndiye-medium;
-          font-size: 0.75rem;
-        }
-      }
-    }
-
-    .properties-cell {
-      .properties-count {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-
-        .count-number {
-          font-size: 1.1rem;
-          font-weight: 700;
-          color: $ndiye-warning;
-        }
-
-        .count-label {
-          font-size: 0.8rem;
-          color: $ndiye-medium;
-        }
-      }
-    }
+  .count-label {
+    font-size: 0.75rem;
+    color: #6b7280;
   }
+}
 
-  // ==================== STYLES SPÉCIFIQUES DEVISES ====================
-  .currencies-section {
-    .currencies-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 1.5rem;
-      margin-top: 2rem;
+// Toggle switch moderne
+.status-toggle-modern {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 
-      .currency-card {
-        background: $ndiye-white;
-        border: 1px solid rgba($ndiye-primary, 0.1);
-        border-radius: 12px;
-        overflow: hidden;
+  .toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 3rem;
+    height: 1.5rem;
+
+    input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+
+      &:checked + .toggle-slider {
+        background: linear-gradient(135deg, $primary-color, $primary-dark);
+
+        &:before {
+          transform: translateX(1.5rem);
+        }
+      }
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #d1d5db;
+      border-radius: 9999px;
+      transition: all 0.3s ease;
+
+      &:before {
+        content: '';
+        position: absolute;
+        height: 1.25rem;
+        width: 1.25rem;
+        left: 0.125rem;
+        bottom: 0.125rem;
+        background: white;
+        border-radius: 50%;
         transition: all 0.3s ease;
-        position: relative;
-
-        &:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-          border-color: rgba($ndiye-primary, 0.2);
-        }
-
-        &.inactive {
-          opacity: 0.7;
-          background: rgba($ndiye-medium, 0.02);
-        }
-
-        &.default {
-          border-color: $ndiye-warning;
-
-          &::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: $ndiye-warning;
-          }
-        }
-
-        .card-header {
-          padding: 1.5rem 1.5rem 1rem;
-          display: flex;
-          justify-content: space-between;
-          align-items: flex-start;
-
-          .currency-main {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-
-            .currency-icon {
-              width: 48px;
-              height: 48px;
-              border-radius: 8px;
-              background: rgba($ndiye-warning, 0.1);
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              color: $ndiye-warning;
-              font-size: 1.2rem;
-            }
-
-            .currency-info {
-              .currency-name {
-                font-size: 1.1rem;
-                font-weight: 600;
-                color: $ndiye-dark;
-                margin: 0 0 0.25rem 0;
-              }
-
-              .currency-code {
-                font-size: 0.9rem;
-                font-weight: 500;
-                color: $ndiye-primary;
-                background: rgba($ndiye-primary, 0.1);
-                padding: 0.25rem 0.5rem;
-                border-radius: 4px;
-              }
-            }
-          }
-
-          .currency-actions {
-            display: flex;
-            gap: 0.5rem;
-
-            .action-btn {
-              width: 32px;
-              height: 32px;
-              border-radius: 6px;
-              border: 1px solid;
-              background: transparent;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              cursor: pointer;
-              transition: all 0.3s ease;
-              font-size: 0.8rem;
-
-              &.edit-btn {
-                color: $ndiye-info;
-                border-color: rgba($ndiye-info, 0.3);
-
-                &:hover {
-                  background: rgba($ndiye-info, 0.1);
-                  border-color: $ndiye-info;
-                }
-              }
-
-              &.delete-btn {
-                color: $ndiye-danger;
-                border-color: rgba($ndiye-danger, 0.3);
-
-                &:hover {
-                  background: rgba($ndiye-danger, 0.1);
-                  border-color: $ndiye-danger;
-                }
-              }
-            }
-          }
-        }
-
-        .card-content {
-          padding: 0 1.5rem 1rem;
-
-          .currency-symbol {
-            margin-bottom: 1rem;
-
-            .symbol-text {
-              font-size: 2rem;
-              font-weight: 700;
-              color: $ndiye-primary;
-            }
-          }
-
-          .currency-rate {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-            font-size: 0.9rem;
-            color: $ndiye-dark;
-
-            i {
-              color: $ndiye-info;
-              font-size: 0.8rem;
-            }
-
-            &.reference {
-              color: $ndiye-warning;
-
-              i {
-                color: $ndiye-warning;
-              }
-            }
-          }
-
-          .currency-meta {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-
-            .meta-item {
-              display: flex;
-              align-items: center;
-              gap: 0.5rem;
-              font-size: 0.8rem;
-              color: $ndiye-medium;
-
-              i {
-                font-size: 0.75rem;
-                width: 12px;
-              }
-            }
-          }
-        }
-
-        .card-footer {
-          padding: 1rem 1.5rem;
-          border-top: 1px solid rgba($ndiye-primary, 0.1);
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-
-          .currency-status {
-            .status-toggle {
-              display: flex;
-              align-items: center;
-              gap: 0.5rem;
-              padding: 0.5rem 0.75rem;
-              border: 1px solid;
-              border-radius: 6px;
-              background: transparent;
-              cursor: pointer;
-              transition: all 0.3s ease;
-              font-size: 0.8rem;
-              font-weight: 500;
-
-              &:hover {
-                transform: translateY(-1px);
-              }
-
-              i {
-                font-size: 1rem;
-              }
-            }
-
-            &.active .status-toggle {
-              color: $ndiye-success;
-              border-color: rgba($ndiye-success, 0.3);
-              background: rgba($ndiye-success, 0.05);
-
-              &:hover {
-                background: rgba($ndiye-success, 0.1);
-                border-color: $ndiye-success;
-              }
-
-              i {
-                color: $ndiye-success;
-              }
-            }
-
-            &:not(.active) .status-toggle {
-              color: $ndiye-medium;
-              border-color: rgba($ndiye-medium, 0.3);
-              background: rgba($ndiye-medium, 0.05);
-
-              &:hover {
-                background: rgba($ndiye-medium, 0.1);
-                border-color: $ndiye-medium;
-              }
-
-              i {
-                color: $ndiye-medium;
-              }
-            }
-          }
-
-          .default-badge {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.25rem 0.5rem;
-            background: rgba($ndiye-warning, 0.1);
-            color: $ndiye-warning;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 500;
-
-            i {
-              font-size: 0.7rem;
-            }
-          }
-        }
-      }
-    }
-
-    // Vue tableau pour les devises (cachée par défaut)
-    .currencies-table-view {
-      .symbol-cell {
-        .symbol-display {
-          .symbol-text {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: $ndiye-primary;
-          }
-        }
-      }
-
-      .rate-cell {
-        .rate-info {
-          .rate-value {
-            font-weight: 600;
-            color: $ndiye-dark;
-          }
-        }
-
-        .rate-reference {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          color: $ndiye-warning;
-          font-size: 0.8rem;
-          font-weight: 500;
-
-          i {
-            font-size: 0.75rem;
-          }
-        }
-      }
-
-      .row-default {
-        background: rgba($ndiye-warning, 0.02);
-        border-left: 3px solid $ndiye-warning;
       }
     }
   }
 
-  // ==================== MODALS ====================
-  .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+  .status-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+
+    &.active {
+      color: #059669;
+    }
+
+    &.inactive {
+      color: #6b7280;
+    }
+  }
+}
+
+// Boutons d'action dans le tableau
+.action-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+
+  .action-btn {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 1000;
-    padding: 2rem;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
 
-    .modal-container {
-      background: $ndiye-white;
-      border-radius: 12px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-      max-width: 600px;
-      width: 100%;
-      max-height: 90vh;
-      overflow: hidden;
+    &:hover {
+      transform: scale(1.1);
+    }
+
+    &.view {
+      color: #2563eb;
+
+      &:hover {
+        background: #dbeafe;
+        color: #1d4ed8;
+      }
+    }
+
+    &.edit {
+      color: #d97706;
+
+      &:hover {
+        background: #fef3c7;
+        color: #b45309;
+      }
+    }
+
+    &.delete {
+      color: #dc2626;
+
+      &:hover {
+        background: #fee2e2;
+        color: #b91c1c;
+      }
+    }
+
+    &.menu {
+      color: #6b7280;
+
+      &:hover {
+        background: #f3f4f6;
+        color: #374151;
+      }
+    }
+  }
+}
+
+// Boutons de vue du tableau
+.table-view-btn {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: #6b7280;
+    background: #f3f4f6;
+  }
+
+  &.active {
+    color: $primary-color;
+    background: $primary-light;
+  }
+}
+
+// Pagination
+.pagination-btn {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover:not(:disabled) {
+    color: #6b7280;
+    background: #f3f4f6;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.pagination-info {
+  font-size: 0.875rem;
+  color: #374151;
+  font-weight: 500;
+}
+
+
+
+// ========================================
+// CONTENU PRINCIPAL STYLE CARBON
+// ========================================
+
+.content-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+
+  .content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e0e0e0;
+
+    .header-title {
+      h1 {
+        font-size: 1.75rem;
+        font-weight: 600;
+        color: #161616;
+        margin: 0;
+      }
+
+      p {
+        color: #525252;
+        margin: 0.5rem 0 0 0;
+        font-size: 0.875rem;
+      }
+    }
+
+    .header-actions {
       display: flex;
-      flex-direction: column;
+      gap: 0.75rem;
+    }
+  }
+}
 
-      .modal-header {
+// ========================================
+// BOUTONS STYLE CARBON
+// ========================================
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 0;
+  font-size: 0.875rem;
+  font-weight: 400;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  min-height: 48px;
+  font-family: 'IBM Plex Sans', sans-serif;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  &.primary {
+    background: var(--geography-primary);
+    color: white;
+    border: 2px solid var(--geography-primary);
+
+    &:hover:not(:disabled) {
+      background: #0043ce;
+      border-color: #0043ce;
+    }
+
+    &:focus {
+      outline: 2px solid #0f62fe;
+      outline-offset: -2px;
+    }
+  }
+
+  &.secondary {
+    background: transparent;
+    color: var(--geography-primary);
+    border: 1px solid #8d8d8d;
+
+    &:hover:not(:disabled) {
+      background: #e5e5e5;
+    }
+
+    &:focus {
+      outline: 2px solid #0f62fe;
+      outline-offset: -2px;
+    }
+  }
+
+  i {
+    font-size: 1rem;
+  }
+}
+
+// ========================================
+// NAVIGATION ONGLETS STYLE CARBON
+// ========================================
+
+.content-navigation {
+  background: white;
+  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 1.5rem;
+
+  .nav-tabs {
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+
+    .nav-tab {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1rem 1.5rem;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: #525252;
+      font-size: 0.875rem;
+      font-weight: 400;
+
+      &:hover {
+        background: #f4f4f4;
+        color: #161616;
+      }
+
+      &.active {
+        color: var(--geography-primary);
+        border-bottom-color: var(--geography-primary);
+        background: white;
+      }
+
+      .tab-icon {
+        font-size: 1rem;
+      }
+
+      .tab-content {
         display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1.5rem 2rem;
-        border-bottom: 1px solid rgba($ndiye-primary, 0.1);
-        background: rgba($ndiye-primary, 0.02);
+        flex-direction: column;
+        align-items: flex-start;
 
-        .modal-title {
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-          font-size: 1.25rem;
-          font-weight: 600;
-          color: $ndiye-dark;
-          margin: 0;
-
-          i {
-            color: $ndiye-primary;
-            font-size: 1.1rem;
-          }
+        .tab-label {
+          font-weight: 400;
         }
 
-        .modal-close {
-          width: 32px;
-          height: 32px;
-          border: none;
-          background: transparent;
-          color: $ndiye-medium;
-          cursor: pointer;
-          border-radius: 6px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          transition: all 0.3s ease;
+        .tab-count {
+          font-size: 0.75rem;
+          color: #8d8d8d;
+        }
+      }
+    }
+  }
+}
 
-          &:hover {
-            background: rgba($ndiye-danger, 0.1);
-            color: $ndiye-danger;
-          }
+// ========================================
+// TABLEAUX STYLE CARBON
+// ========================================
 
-          i {
-            font-size: 0.9rem;
+.data-table-container {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 0;
+
+  .table-wrapper {
+    overflow-x: auto;
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+
+      .table-header {
+        background: #f4f4f4;
+
+        th {
+          padding: 1rem;
+          text-align: left;
+          font-weight: 600;
+          color: #161616;
+          border-bottom: 1px solid #e0e0e0;
+          white-space: nowrap;
+
+          &.sortable {
+            cursor: pointer;
+            user-select: none;
+
+            &:hover {
+              background: #e8e8e8;
+            }
+
+            .sort-icon {
+              margin-left: 0.5rem;
+              opacity: 0.5;
+            }
           }
         }
       }
 
-      .modal-content {
-        padding: 2rem;
-        overflow-y: auto;
-        flex: 1;
+      .table-body {
+        .table-row {
+          transition: background-color 0.2s ease;
 
-        .create-form {
-          display: flex;
-          flex-direction: column;
-          gap: 1.5rem;
-
-          .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
+          &:hover {
+            background: #f4f4f4;
           }
 
-          .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-
-            label {
-              font-size: 0.875rem;
-              font-weight: 500;
-              color: $ndiye-dark;
-            }
-
-            .form-input,
-            .form-select {
-              padding: 0.75rem 1rem;
-              border: 1px solid rgba($ndiye-primary, 0.2);
-              border-radius: 6px;
-              background: $ndiye-white;
-              color: $ndiye-dark;
-              font-size: 0.875rem;
-              transition: all 0.3s ease;
-
-              &:focus {
-                outline: none;
-                border-color: $ndiye-primary;
-                box-shadow: 0 0 0 3px rgba($ndiye-primary, 0.1);
-              }
-
-              &::placeholder {
-                color: $ndiye-medium;
-              }
-            }
-
-            .form-select {
-              cursor: pointer;
-
-              option {
-                padding: 0.5rem;
-              }
-            }
+          &:not(:last-child) {
+            border-bottom: 1px solid #e0e0e0;
           }
 
-          .form-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 1rem;
-            margin-top: 1rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid rgba($ndiye-primary, 0.1);
-
-            .btn-cancel {
-              padding: 0.75rem 1.5rem;
-              border: 1px solid rgba($ndiye-medium, 0.3);
-              background: transparent;
-              color: $ndiye-medium;
-              border-radius: 6px;
-              font-size: 0.875rem;
-              font-weight: 500;
-              cursor: pointer;
-              transition: all 0.3s ease;
-
-              &:hover {
-                background: rgba($ndiye-medium, 0.1);
-                border-color: $ndiye-medium;
-              }
-            }
-
-            .btn-submit {
-              display: flex;
-              align-items: center;
-              gap: 0.5rem;
-              padding: 0.75rem 1.5rem;
-              border: none;
-              background: $ndiye-primary;
-              color: white;
-              border-radius: 6px;
-              font-size: 0.875rem;
-              font-weight: 500;
-              cursor: pointer;
-              transition: all 0.3s ease;
-
-              &:hover {
-                background: darken($ndiye-primary, 8%);
-                transform: translateY(-1px);
-                box-shadow: 0 4px 12px rgba($ndiye-primary, 0.3);
-              }
-
-              i {
-                font-size: 0.8rem;
-              }
-            }
+          td {
+            padding: 1rem;
+            vertical-align: middle;
+            color: #161616;
           }
         }
       }
     }
   }
+}
 
-  // Responsive pour les modals
-  @media (max-width: 768px) {
-    .modal-overlay {
-      padding: 1rem;
+// ========================================
+// CELLULES SPÉCIALISÉES
+// ========================================
 
-      .modal-container {
-        max-width: none;
-        width: 100%;
-        max-height: 95vh;
+.country-cell {
+  .country-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
 
-        .modal-header {
-          padding: 1rem 1.5rem;
+    .country-avatar {
+      width: 32px;
+      height: 32px;
+      background: var(--countries-color);
+      border-radius: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 0.875rem;
 
-          .modal-title {
-            font-size: 1.1rem;
+      .flag-emoji {
+        font-size: 1.25rem;
+        line-height: 1;
+      }
+    }
+
+    .country-details {
+      .country-name {
+        font-weight: 600;
+        color: #161616;
+        margin-bottom: 0.125rem;
+      }
+
+      .country-code-small {
+        font-size: 0.75rem;
+        color: #8d8d8d;
+        text-transform: uppercase;
+      }
+    }
+  }
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0;
+  font-size: 0.75rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+
+  &.secondary {
+    background: #f4f4f4;
+    color: #161616;
+  }
+}
+
+.status-toggle {
+  .toggle-input {
+    display: none;
+
+    &:checked + .toggle-label .toggle-slider {
+      background: var(--geography-primary);
+
+      &::before {
+        transform: translateX(20px);
+      }
+    }
+  }
+
+  .toggle-label {
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+    cursor: pointer;
+
+    .toggle-slider {
+      display: block;
+      width: 100%;
+      height: 100%;
+      background: #8d8d8d;
+      border-radius: 12px;
+      position: relative;
+      transition: all 0.2s ease;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 20px;
+        height: 20px;
+        background: white;
+        border-radius: 50%;
+        transition: transform 0.2s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+    }
+  }
+}
+
+.action-menu {
+  display: flex;
+  justify-content: center;
+  gap: 0.25rem;
+
+  .action-btn-sm {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.875rem;
+    background: #f4f4f4;
+    color: #161616;
+
+    &:hover {
+      background: #e8e8e8;
+    }
+
+    &.delete:hover {
+      background: var(--geography-danger);
+      color: white;
+    }
+  }
+}
+
+// ========================================
+// ÉTATS VIDES STYLE CARBON
+// ========================================
+
+.empty-state {
+  padding: 3rem 1.5rem;
+  text-align: center;
+  background: white;
+  border: 1px solid #e0e0e0;
+
+  .empty-state-content {
+    max-width: 400px;
+    margin: 0 auto;
+
+    .empty-state-icon {
+      width: 80px;
+      height: 80px;
+      background: #f4f4f4;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      color: #8d8d8d;
+      font-size: 2rem;
+    }
+
+    .empty-state-title {
+      margin: 0 0 1rem 0;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #161616;
+    }
+
+    .empty-state-message {
+      margin: 0 0 2rem 0;
+      font-size: 0.875rem;
+      color: #525252;
+      line-height: 1.6;
+    }
+  }
+}
+
+// ========================================
+// FILTRES STYLE CARBON
+// ========================================
+
+.filters-panel {
+  padding: 1rem;
+  background: #f4f4f4;
+  border-bottom: 1px solid #e0e0e0;
+
+  .filters-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+
+      .filter-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #161616;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .filter-select {
+        padding: 0.5rem;
+        border: 1px solid #8d8d8d;
+        border-radius: 0;
+        font-size: 0.875rem;
+        color: #161616;
+        background: white;
+        min-width: 120px;
+
+        &:focus {
+          outline: 2px solid var(--geography-primary);
+          outline-offset: -2px;
+        }
+      }
+    }
+
+    .filter-actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-left: auto;
+
+      .filter-action-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 0;
+        font-size: 0.875rem;
+        font-weight: 400;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &.reset {
+          background: #f4f4f4;
+          color: #161616;
+
+          &:hover {
+            background: #e8e8e8;
           }
         }
 
-        .modal-content {
-          padding: 1.5rem;
+        &.apply {
+          background: var(--geography-primary);
+          color: white;
 
-          .create-form {
-            .form-row {
-              grid-template-columns: 1fr;
-            }
-
-            .form-actions {
-              flex-direction: column;
-
-              .btn-cancel,
-              .btn-submit {
-                width: 100%;
-                justify-content: center;
-              }
-            }
+          &:hover {
+            background: #0043ce;
           }
         }
       }
     }
+  }
+}
+
+// ========================================
+// RESPONSIVE DESIGN
+// ========================================
+
+@media (max-width: 768px) {
+  .content-main {
+    padding: 1rem 0.5rem;
+  }
+
+  .metrics-container {
+    padding: 0 0.5rem;
+  }
+
+  .content-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+
+    .header-actions {
+      width: 100%;
+      justify-content: flex-end;
+    }
+  }
+
+  .nav-tabs {
+    padding: 0 0.5rem;
+
+    .nav-tab {
+      padding: 0.75rem 1rem;
+      min-width: 100px;
+
+      .tab-content .tab-count {
+        display: none;
+      }
+    }
+  }
+
+  .data-table-container {
+    margin: 0 -0.5rem;
+  }
+
+  .action-btn span {
+    display: none;
   }
 }

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { MobileCacheService } from './mobile-cache.service';
 import { MobileSyncService } from './mobile-sync.service';
-import { MobilePushNotificationsService } from './mobile-push-notifications.service';
+// import { MobilePushNotificationsService } from './mobile-push-notifications.service';
 
 // Import conditionnel pour Network
 let Network: any = {
@@ -42,7 +42,7 @@ export class MobileOfflineManagerService {
   constructor(
     private cacheService: MobileCacheService,
     private syncService: MobileSyncService,
-    private notificationService: MobilePushNotificationsService
+    // private notificationService: MobilePushNotificationsService
   ) {
     this.initializeOfflineManager();
   }
@@ -98,11 +98,11 @@ export class MobileOfflineManagerService {
       await this.syncService.syncWithServer();
       
       // Notifier l'utilisateur
-      await this.notificationService.showToast('✅ Synchronisation terminée', 'short');
+      // await this.notificationService.showToast('✅ Synchronisation terminée', 'short');
       
     } catch (error) {
       console.error('❌ Erreur lors de la synchronisation:', error);
-      await this.notificationService.showToast('⚠️ Erreur de synchronisation', 'short');
+      // await this.notificationService.showToast('⚠️ Erreur de synchronisation', 'short');
     }
   }
 
@@ -115,7 +115,7 @@ export class MobileOfflineManagerService {
       await this.saveEssentialDataForOffline();
       
       // Notifier l'utilisateur
-      await this.notificationService.showToast('📴 Mode hors ligne activé', 'short');
+      // await this.notificationService.showToast('📴 Mode hors ligne activé', 'short');
       
     } catch (error) {
       console.error('❌ Erreur lors de la préparation hors ligne:', error);
@@ -192,7 +192,7 @@ export class MobileOfflineManagerService {
     if (status.connected) {
       await this.handleBackOnline();
     } else {
-      await this.notificationService.showToast('❌ Pas de connexion internet', 'short');
+      // await this.notificationService.showToast('❌ Pas de connexion internet', 'short');
     }
   }
 
@@ -202,7 +202,7 @@ export class MobileOfflineManagerService {
   async clearOfflineData(): Promise<void> {
     await this.cacheService.clear();
     await this.syncService.clearPendingActions();
-    await this.notificationService.showToast('🗑️ Données hors ligne supprimées', 'short');
+    // await this.notificationService.showToast('🗑️ Données hors ligne supprimées', 'short');
   }
 
   /**
@@ -246,11 +246,11 @@ export class MobileOfflineManagerService {
       // Programmer des notifications de rappel
       await this.scheduleOfflineReminders();
       
-      await this.notificationService.showToast('✅ Prêt pour usage hors ligne', 'long');
+      // await this.notificationService.showToast('✅ Prêt pour usage hors ligne', 'long');
       
     } catch (error) {
       console.error('❌ Erreur lors de la préparation hors ligne:', error);
-      await this.notificationService.showToast('❌ Erreur de préparation', 'short');
+      // await this.notificationService.showToast('❌ Erreur de préparation', 'short');
     }
   }
 

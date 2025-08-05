@@ -3,12 +3,16 @@ import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { MonitoringService } from '../services/monitoring.service';
+import { ErrorThrottleService } from '../services/error-throttle.service';
 import { ErrorLevel, ErrorSource } from '../models/monitoring.models';
 import { environment } from '../../../environments/environment';
 
 @Injectable()
 export class MonitoringInterceptor implements HttpInterceptor {
-  constructor(private monitoringService: MonitoringService) {}
+  constructor(
+    private monitoringService: MonitoringService,
+    private errorThrottleService: ErrorThrottleService
+  ) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const startTime = Date.now();
@@ -25,15 +29,14 @@ export class MonitoringInterceptor implements HttpInterceptor {
           this.logHttpError(error, req, startTime);
         }
 
-        // En développement, logger aussi dans la console
+        // En développement, logger avec throttling
         if (!environment.production) {
-          console.error('🌐 HTTP Error intercepted:', {
-            url: req.url,
-            method: req.method,
-            status: error.status,
-            message: error.message,
-            timestamp: new Date().toISOString()
-          });
+          const errorKey = `${req.method} ${req.url} ${error.status}`;
+          this.errorThrottleService.logError(
+            `HTTP ${error.status}: ${req.method} ${req.url} - ${error.message}`,
+            'HTTP_ERROR',
+            'error'
+          );
         }
 
         return throwError(() => error);

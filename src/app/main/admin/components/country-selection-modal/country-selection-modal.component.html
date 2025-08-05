@@ -1,0 +1,179 @@
+<!-- Modal de sélection de pays - Design moderne professionnel -->
+<div class="country-selection-modal">
+  
+  <!-- Header du modal -->
+  <div class="modal-header">
+    <div class="header-content">
+      <div class="header-info">
+        <h2 class="modal-title">{{ title }}</h2>
+        <p class="modal-subtitle">{{ subtitle }}</p>
+      </div>
+      <button class="close-btn" (click)="onCancel()" [disabled]="isLoading$ | async">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <!-- Indicateur d'étapes -->
+    <div class="steps-indicator">
+      <div class="step" [class.active]="currentStep === 'region'" [class.completed]="currentStep === 'country'">
+        <div class="step-circle">
+          <i class="fas fa-globe" *ngIf="currentStep === 'region'"></i>
+          <i class="fas fa-check" *ngIf="currentStep === 'country'"></i>
+        </div>
+        <span class="step-label">Région</span>
+      </div>
+      <div class="step-connector" [class.active]="currentStep === 'country'"></div>
+      <div class="step" [class.active]="currentStep === 'country'">
+        <div class="step-circle">
+          <i class="fas fa-flag"></i>
+        </div>
+        <span class="step-label">Pays</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenu du modal -->
+  <div class="modal-content">
+    
+    <!-- Étape 1: Sélection de région -->
+    <div *ngIf="currentStep === 'region'" class="step-content region-selection">
+      <div class="section-title">
+        <h3>Choisissez une région</h3>
+        <p>Sélectionnez la région géographique pour afficher les pays disponibles</p>
+      </div>
+      
+      <div class="regions-grid">
+        <div
+          *ngFor="let region of regions"
+          class="region-card"
+          (click)="onRegionClick(region)"
+          [class.disabled]="isLoading$ | async">
+          <div class="region-icon" [style.color]="region.color">
+            <i [class]="region.icon"></i>
+          </div>
+          <div class="region-info">
+            <h4 class="region-name">{{ region.label }}</h4>
+            <p class="region-description">{{ region.description }}</p>
+          </div>
+          <div class="region-arrow">
+            <i class="fas fa-chevron-right"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Étape 2: Sélection de pays -->
+    <div *ngIf="currentStep === 'country'" class="step-content country-selection">
+      
+      <!-- Header avec région sélectionnée et recherche -->
+      <div class="country-header">
+        <div class="selected-region-info">
+          <button class="back-btn" (click)="onBackToRegions()" [disabled]="isLoading$ | async">
+            <i class="fas fa-arrow-left"></i>
+          </button>
+          <div class="region-badge" [style.background-color]="selectedRegion?.color">
+            <i [class]="selectedRegion?.icon"></i>
+            <span>{{ selectedRegion?.label }}</span>
+          </div>
+        </div>
+        
+        <!-- Barre de recherche -->
+        <div class="search-container">
+          <div class="search-input-wrapper">
+            <i class="fas fa-search search-icon"></i>
+            <input 
+              type="text" 
+              class="search-input"
+              placeholder="Rechercher un pays..."
+              [formControl]="searchControl"
+              [disabled]="isLoading$ | async">
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading state -->
+      <div *ngIf="isLoading$ | async" class="loading-state">
+        <div class="loading-spinner">
+          <i class="fas fa-spinner fa-spin"></i>
+        </div>
+        <p>Chargement des pays...</p>
+      </div>
+
+      <!-- Liste des pays -->
+      <div *ngIf="!(isLoading$ | async)" class="countries-list">
+        <div 
+          *ngFor="let country of filteredCountries; trackBy: trackByCountryCode" 
+          class="country-item"
+          [class.selected]="selectedCountry?.cca2 === country.cca2"
+          (click)="onSelectCountry(country)">
+          
+          <div class="country-flag">
+            <img [src]="getCountryFlag(country)" [alt]="country.name.common + ' flag'" loading="lazy">
+          </div>
+          
+          <div class="country-info">
+            <h4 class="country-name">{{ country.name.common }}</h4>
+            <p class="country-official">{{ country.name.official }}</p>
+            <div class="country-details">
+              <span class="detail-item">
+                <i class="fas fa-map-marker-alt"></i>
+                {{ getCapital(country) }}
+              </span>
+              <span class="detail-item">
+                <i class="fas fa-coins"></i>
+                {{ getPrimaryCurrency(country) }}
+              </span>
+              <span class="detail-item">
+                <i class="fas fa-users"></i>
+                {{ getFormattedPopulation(country) }}
+              </span>
+            </div>
+          </div>
+          
+          <div class="country-codes">
+            <span class="country-code">{{ country.cca2 }}</span>
+            <span class="country-code-3">{{ country.cca3 }}</span>
+          </div>
+          
+          <div class="selection-indicator">
+            <i class="fas fa-check"></i>
+          </div>
+        </div>
+
+        <!-- État vide -->
+        <div *ngIf="filteredCountries.length === 0" class="empty-state">
+          <div class="empty-icon">
+            <i class="fas fa-search"></i>
+          </div>
+          <h4>Aucun pays trouvé</h4>
+          <p>Aucun pays ne correspond à votre recherche dans la région {{ selectedRegion?.label }}.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer du modal -->
+  <div class="modal-footer">
+    <div class="footer-actions">
+      <button 
+        class="btn-secondary" 
+        (click)="onCancel()"
+        [disabled]="isLoading$ | async">
+        Annuler
+      </button>
+      
+      <button 
+        *ngIf="currentStep === 'country'"
+        class="btn-primary" 
+        (click)="onConfirm()"
+        [disabled]="!selectedCountry || (isLoading$ | async)">
+        <i class="fas fa-plus mr-2"></i>
+        <span *ngIf="!(isLoading$ | async)">Ajouter le pays</span>
+        <span *ngIf="isLoading$ | async">
+          <i class="fas fa-spinner fa-spin mr-2"></i>
+          Ajout en cours...
+        </span>
+      </button>
+    </div>
+  </div>
+</div>

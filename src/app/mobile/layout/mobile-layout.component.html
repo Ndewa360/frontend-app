@@ -1,23 +1,27 @@
-<ion-app>
-  <!-- Header Mobile -->
-  <app-mobile-header
-    [currentRoute]="currentRoute"
-    [isAuthenticated]="isAuthenticated"
-    [isOnline]="isOnline">
-  </app-mobile-header>
+<!-- TEST: Template simplifié pour diagnostic -->
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Ndewa360 Mobile</ion-title>
+  </ion-toolbar>
+</ion-header>
 
-  <!-- Contenu Principal -->
-  <ion-router-outlet id="main-content"></ion-router-outlet>
-
-  <!-- Indicateur hors ligne -->
-  <div class="offline-indicator" *ngIf="!isOnline">
-    <ion-icon [name]="getConnectionIcon()" [color]="getConnectionColor()"></ion-icon>
-    <span>Mode hors ligne</span>
+<ion-content id="main-content">
+  <!-- Test d'affichage -->
+  <div style="padding: 20px; text-align: center;">
+    <h1>🔍 Test Mobile Layout</h1>
+    <p>Route actuelle: {{ currentRoute }}</p>
+    <p>Authentifié: {{ isAuthenticated ? 'Oui' : 'Non' }}</p>
+    <p>En ligne: {{ isOnline ? 'Oui' : 'Non' }}</p>
   </div>
 
-  <!-- Navigation en bas -->
-  <app-mobile-tabs
-    [currentRoute]="currentRoute"
-    [isAuthenticated]="isAuthenticated">
-  </app-mobile-tabs>
-</ion-app>
+  <!-- Contenu de la page -->
+  <router-outlet></router-outlet>
+</ion-content>
+
+<!-- Navigation simplifiée -->
+<ion-tab-bar slot="bottom">
+  <ion-tab-button>
+    <ion-icon name="search"></ion-icon>
+    <ion-label>Recherche</ion-label>
+  </ion-tab-button>
+</ion-tab-bar>

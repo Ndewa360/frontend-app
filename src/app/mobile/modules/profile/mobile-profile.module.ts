@@ -19,7 +19,7 @@ import { MobileProfilePageComponent } from './pages/mobile-profile-page/mobile-p
 // import { MobileAvatarUploadComponent } from './components/mobile-avatar-upload/mobile-avatar-upload.component';
 
 // Shared Mobile Components
-import { MobileModule } from '../../mobile.module';
+
 
 @NgModule({
   declarations: [
@@ -40,8 +40,7 @@ import { MobileModule } from '../../mobile.module';
     IonicModule,
     FormsModule,
     ReactiveFormsModule,
-    MobileProfileRoutingModule,
-    MobileModule
+    MobileProfileRoutingModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

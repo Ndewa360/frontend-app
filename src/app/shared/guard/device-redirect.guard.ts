@@ -16,15 +16,21 @@ export class DeviceRedirectGuard implements CanActivate {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): boolean {
-    
+
     const currentUrl = state.url;
     console.log('🛡️ DeviceRedirectGuard - URL actuelle:', currentUrl);
+    console.log('🛡️ DeviceRedirectGuard - Informations appareil:', this.deviceService.getDeviceInfo());
 
     // Si on est sur la racine, rediriger selon l'appareil
     if (currentUrl === '/' || currentUrl === '') {
       const defaultRoute = this.deviceService.getDefaultRoute();
       console.log('🔄 Redirection racine vers:', defaultRoute);
-      this.router.navigate([defaultRoute]);
+
+      // Utiliser setTimeout pour éviter les problèmes de timing
+      setTimeout(() => {
+        this.router.navigate([defaultRoute]);
+      }, 0);
+
       return false;
     }
 

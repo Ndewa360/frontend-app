@@ -15,9 +15,14 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   
-  <!-- Préchargement des styles critiques -->
+  <!-- Préchargement des ressources critiques -->
   <link rel="preload" href="theme-light.css" as="style">
   <link rel="preload" href="styles.css" as="style">
+  <link rel="preload" href="assets/img/logo/logo-basic.png" as="image">
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" as="style">
+  <link rel="dns-prefetch" href="//fonts.googleapis.com">
+  <link rel="dns-prefetch" href="//fonts.gstatic.com">
+  <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
   
   <!-- Chargement des styles -->
   <link rel="stylesheet" href="theme-light.css">
@@ -67,15 +72,16 @@
       height: 100%;
     }
 
-    #app-loading-holder {  
+    #app-loading-holder {
       position: fixed;
       top: 0;
       right: 0;
       left: 0;
       bottom: 0;
       z-index: 99999;
-      background: #f4f4f4;
-      transition: opacity 0.3s ease-out;
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      transition: opacity 0.15s ease-out;
+      will-change: opacity;
     }
 
     .app-loading {
@@ -92,35 +98,172 @@
     }
 
     .logo img {
-      width: 300px;
+      width: 280px;
       height: auto;
+      max-width: 90vw;
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
     }
 
     .loader {
-      position: absolute;
-      top: 0;
-      right: 0;
-      left: 0;
-      width: 330px;
-      height: 45px;
-      overflow: hidden;
+      margin-top: 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid #e2e8f0;
+      border-top: 3px solid rgb(204, 140, 10);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      margin-top: 1rem;
+      color: #64748b;
+      font-family: 'Roboto', sans-serif;
+      font-size: 14px;
+      font-weight: 400;
     }
   </style>
   <script>
     (function (global) {
-      // main.ts call this function once the app is boostrapped
-      global.appBootstrap = function () {
+      console.log('🚀 Script de diagnostic mobile chargé');
+
+      // Gestionnaire d'erreurs global
+      window.startupErrors = window.startupErrors || [];
+
+      window.onerror = function(message, source, lineno, colno, error) {
+        // Ignorer les erreurs communes et non critiques
+        var messageStr = message ? message.toString() : '';
+        var ignoredErrors = ['WebView', 'Script error', 'Non-Error promise rejection', 'ResizeObserver loop limit exceeded'];
+
+        if (ignoredErrors.some(function(ignored) { return messageStr.includes(ignored); })) {
+          return true; // Ignorer silencieusement
+        }
+
+        // Limiter le nombre d'erreurs stockées
+        if (window.startupErrors.length < 10) {
+          var errorInfo = {
+            message: messageStr.substring(0, 200), // Limiter la taille
+            source: source ? source.split('/').pop() : 'unknown', // Juste le nom du fichier
+            line: lineno,
+            timestamp: new Date().toISOString()
+          };
+
+          window.startupErrors.push(errorInfo);
+          console.error('❌ Erreur JavaScript:', errorInfo);
+        }
+        
+        return false;
+      };
+
+      // Gestionnaire pour les promesses rejetées
+      window.addEventListener('unhandledrejection', function(event) {
+        var errorInfo = {
+          type: 'Promise rejetée',
+          reason: event.reason ? event.reason.toString() : 'Raison inconnue',
+          timestamp: new Date().toISOString()
+        };
+
+        window.startupErrors.push(errorInfo);
+        console.error('❌ Promise rejetée capturée:', errorInfo);
+      });
+
+      // Diagnostic de base
+      console.log('📱 User Agent:', navigator.userAgent.substring(0, 100));
+      console.log('🌐 URL actuelle:', window.location.href);
+      console.log('📊 Taille écran:', window.innerWidth + 'x' + window.innerHeight);
+
+      // Détecter si on est sur mobile
+      var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      console.log('📱 Appareil mobile détecté:', isMobile);
+
+      // Timeout de sécurité pour le loader - RÉDUIT À 5 SECONDES
+      var securityTimeout = setTimeout(function() {
         var loader = document.getElementById("app-loading-holder");
+        var isMobileRoute = window.location.pathname.startsWith('/mobile');
+
         if (loader) {
-          // Ajouter une transition pour une disparition en douceur
+          console.log('⚠️ TIMEOUT DE SÉCURITÉ - Loader encore présent après 5 secondes');
+          console.log('🔧 Suppression forcée du loader...');
+
+          // Supprimer le loader immédiatement
           loader.style.opacity = "0";
           setTimeout(function() {
             if (loader && loader.parentNode) {
               loader.parentNode.removeChild(loader);
+              console.log('✅ Loader supprimé par timeout de sécurité');
             }
-          }, 300);
+
+            // Plus de message d'erreur - suppression silencieuse du loader
+          }, 200);
+        }
+      }, 5000);
+
+      // main.ts call this function once the app is boostrapped
+      global.appBootstrap = function () {
+        console.log('✅ appBootstrap() appelée - Application Angular démarrée');
+
+        // Annuler le timeout de sécurité
+        if (securityTimeout) {
+          clearTimeout(securityTimeout);
+          console.log('🔧 Timeout de sécurité annulé');
+        }
+
+        var loader = document.getElementById("app-loading-holder");
+        if (loader) {
+          console.log('🔧 Suppression du loader...');
+          // Transition plus rapide
+          loader.style.opacity = "0";
+          setTimeout(function() {
+            if (loader && loader.parentNode) {
+              loader.parentNode.removeChild(loader);
+              console.log('✅ Loader supprimé avec succès');
+            }
+          }, 150); // Réduit de 300ms à 150ms
+        } else {
+          console.log('⚠️ Loader déjà supprimé');
         }
       };
+
+      // Diagnostic périodique optimisé - RÉDUIT À 1 SECONDE ET SIMPLIFIÉ
+      var diagnosticCount = 0;
+      var maxDiagnostics = 10; // Maximum 10 diagnostics (10 secondes)
+
+      var diagnosticInterval = setInterval(function() {
+        diagnosticCount++;
+        var loader = document.getElementById("app-loading-holder");
+        var appRoot = document.querySelector('app-root');
+        var ionApp = document.querySelector('ion-app');
+
+        // Log simplifié
+        console.log('📊 Diagnostic #' + diagnosticCount + ':', {
+          hasLoader: !!loader,
+          hasAppRoot: !!appRoot,
+          hasIonApp: !!ionApp,
+          readyState: document.readyState
+        });
+
+        // Log des erreurs JavaScript seulement s'il y en a
+        if (window.startupErrors && window.startupErrors.length > 0) {
+          console.log('❌ Erreurs de démarrage:', window.startupErrors.length);
+        }
+
+        // Arrêter le diagnostic si l'app est chargée OU si on a atteint le maximum
+        if (!loader || ionApp || diagnosticCount >= maxDiagnostics) {
+          clearInterval(diagnosticInterval);
+          console.log('✅ Diagnostic terminé - Raison:', !loader ? 'Loader supprimé' : ionApp ? 'App chargée' : 'Timeout atteint');
+        }
+      }, 1000); // Réduit de 2000ms à 1000ms
+
     })(window);
   </script>
 </head>
@@ -130,8 +273,12 @@
   <div id="app-loading-holder">
     <div class="app-loading">
       <div class="logo">
-        <img src="assets/img/logo/logo-basic.png" />        
+        <img src="assets/img/logo/logo-basic.png" alt="Ndewa360 Logo" />
       </div>
+      <div class="loader">
+        <div class="spinner"></div>
+      </div>
+      <div class="loading-text">Chargement en cours...</div>
     </div>
   </div>
 </body>

@@ -15,7 +15,9 @@ def capacitor_pods
   pod 'CapacitorDevice', :path => '../../node_modules/@capacitor/device'
   pod 'CapacitorHaptics', :path => '../../node_modules/@capacitor/haptics'
   pod 'CapacitorKeyboard', :path => '../../node_modules/@capacitor/keyboard'
+  pod 'CapacitorNetwork', :path => '../../node_modules/@capacitor/network'
   pod 'CapacitorStatusBar', :path => '../../node_modules/@capacitor/status-bar'
+  pod 'CapacitorToast', :path => '../../node_modules/@capacitor/toast'
   pod 'JcesarmobileSslSkip', :path => '../../node_modules/@jcesarmobile/ssl-skip'
 end
 

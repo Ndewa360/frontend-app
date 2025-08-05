@@ -4,13 +4,33 @@ export interface AdminCountry {
   code: string;
   flag?: string;
   currency: string;
-  timezone: string;
+  timezone?: string;
   isActive: boolean;
-  cityCount: number;
-  userCount: number;
-  propertyCount: number;
-  createdAt: Date;
-  updatedAt: Date;
+  cityCount?: number;
+  userCount?: number;
+  propertyCount?: number;
+  createdAt?: Date;
+  updatedAt?: Date;
+
+  // Propriétés étendues du backend
+  fullName?: string;
+  shortName?: string;
+  iso2?: string;
+  iso3?: string;
+  continent?: string;
+  region?: string;
+  subregion?: string;
+  capital?: string;
+  currencyName?: string;
+  currencySymbol?: string;
+  phoneCode?: string;
+  coordinates?: {
+    latitude: number;
+    longitude: number;
+  };
+  languages?: string[];
+  population?: number;
+  area?: number;
 }
 
 export interface AdminCity {
@@ -98,11 +118,35 @@ export interface DistributionData {
 }
 
 export interface CreateCountryDto {
-  name: string;
-  code: string;
-  flag?: string;
+  fullName: string;
+  shortName: string;
+  iso2: string;
+  iso3: string;
+  continent: string;
+  region: string;
+  subregion?: string;
+  capital?: string;
   currency: string;
-  timezone: string;
+  currencyName?: string;
+  currencySymbol?: string;
+  phoneCode?: string;
+  lat?: number;
+  long?: number;
+  languages?: string[];
+  timezone?: string;
+  flag?: string;
+  population?: number;
+  area?: number;
+  isActive?: boolean;
+}
+
+export interface UpdateCountryDto {
+  name?: string;
+  code?: string;
+  currency?: string;
+  timezone?: string;
+  capital?: string;
+  phoneCode?: string;
   isActive?: boolean;
 }
 

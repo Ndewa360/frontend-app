@@ -11,7 +11,15 @@
     "test:once": "jest --watch",
     "lint": "ng lint",
     "lint:fix": "ng lint --fix",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "setup-mobile": "node scripts/setup-mobile-dev.js",
+    "mobile-dev": "npm run setup-mobile && npm start",
+    "ionic-build": "ionic build --configuration=production",
+    "ionic-run": "npm run ionic-build && npx cap run android",
+    "ionic-live": "ionic capacitor run android -l --external --host=192.168.1.5 --port=4200 ",
+    "ionic-studio": "npm run ionic-build && npx cap sync android && npx cap open android",
+    "fix-android": "node scripts/fix-android-build.js",
+    "check-backend": "node scripts/check-backend.js"
   },
   "private": true,
   "dependencies": {

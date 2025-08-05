@@ -1,414 +1,423 @@
-// Variables du thème Ndiye
-$ndiye-primary: rgb(204, 140, 10);
-$ndiye-primary-light: rgba(204, 140, 10, 0.1);
-$ndiye-primary-dark: rgb(184, 126, 9);
-$ndiye-secondary: rgb(39, 122, 252);
-$ndiye-success: #24a148;
-$ndiye-warning: #f1c21b;
-$ndiye-danger: #da1e28;
-$ndiye-info: #0f62fe;
-$ndiye-white: #ffffff;
-$ndiye-light: #f4f4f4;
-$ndiye-medium: #6f6f6f;
-$ndiye-dark: #161616;
+// ========================================
+// STYLES SPÉCIFIQUES - MODULE PAYMENTS
+// ========================================
 
 .admin-payments {
-  padding: 0;
-  background-color: $ndiye-light;
-  min-height: 100vh;
+  // Layout principal
+  display: flex;
+  flex-direction: column;
+  gap: var(--admin-spacing-lg);
+  
+  // Animations d'entrée
+  .admin-card {
+    animation: slideInUp 0.4s ease-out;
+    
+    &:nth-child(2) { animation-delay: 0.1s; }
+    &:nth-child(3) { animation-delay: 0.2s; }
+    &:nth-child(4) { animation-delay: 0.3s; }
+  }
+}
 
-  // Header
-  .admin-payments-header {
+// Navigation par onglets
+.admin-tabs-nav {
+  display: flex;
+  gap: var(--admin-spacing-sm);
+  border-bottom: 1px solid var(--ndiye-gray-200);
+  margin-bottom: var(--admin-spacing-lg);
+  
+  .admin-tab-btn {
+    background: none;
+    border: none;
+    padding: var(--admin-spacing-md) var(--admin-spacing-lg);
+    font-family: var(--admin-font-family);
+    font-size: var(--admin-font-size-sm);
+    font-weight: var(--admin-font-weight-medium);
+    color: var(--ndiye-gray-600);
+    cursor: pointer;
+    transition: all var(--admin-transition-fast);
+    border-bottom: 2px solid transparent;
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 24px;
-    padding: 0 24px;
-
-    .admin-payments-title {
-      h2 {
-        font-size: 1.75rem;
-        font-weight: 700;
-        color: $ndiye-dark;
-        margin: 0 0 8px;
-      }
-
-      .admin-payments-subtitle {
-        color: $ndiye-medium;
-        font-size: 0.875rem;
-        margin: 0;
-      }
+    align-items: center;
+    gap: var(--admin-spacing-sm);
+    
+    &:hover {
+      color: var(--ndiye-primary);
+      background: var(--ndiye-primary-light);
     }
-
-    .admin-payments-actions {
-      display: flex;
-      gap: 12px;
+    
+    &.active {
+      color: var(--ndiye-primary);
+      border-bottom-color: var(--ndiye-primary);
+      background: var(--ndiye-primary-light);
+    }
+    
+    i {
+      font-size: var(--admin-font-size-sm);
     }
   }
+}
 
-  // Stats Cards
-  .admin-payments-stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 16px;
-    margin-bottom: 24px;
-    padding: 0 24px;
+.admin-tab-content {
+  .admin-tab-panel {
+    animation: fadeIn 0.3s ease-out;
+  }
+}
 
-    .admin-stat-card {
-      background: $ndiye-white;
-      border-radius: 8px;
-      padding: 20px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      border: 1px solid rgba($ndiye-primary, 0.1);
+// Cellules spécialisées
+.admin-payment-id {
+  .admin-badge {
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: var(--admin-font-size-xs);
+  }
+}
+
+.admin-user-cell {
+  .admin-user-info {
+    display: flex;
+    align-items: center;
+    gap: var(--admin-spacing-md);
+    
+    .admin-user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--admin-border-radius-sm);
+      background: var(--ndiye-gray-100);
       display: flex;
       align-items: center;
-      gap: 16px;
+      justify-content: center;
+      color: var(--ndiye-gray-600);
+      font-size: var(--admin-font-size-sm);
+    }
+    
+    .admin-user-details {
+      .admin-user-name {
+        font-weight: var(--admin-font-weight-semibold);
+        color: var(--ndiye-gray-900);
+        margin-bottom: var(--admin-spacing-xs);
+      }
+      
+      .admin-user-email {
+        font-size: var(--admin-font-size-xs);
+        color: var(--ndiye-gray-500);
+      }
+    }
+  }
+}
 
-      .admin-stat-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 8px;
+.admin-amount-cell {
+  .admin-amount {
+    font-weight: var(--admin-font-weight-semibold);
+    color: var(--ndiye-gray-900);
+    font-size: var(--admin-font-size-sm);
+  }
+}
+
+.admin-method-cell {
+  .admin-payment-method {
+    .admin-method-name {
+      font-weight: var(--admin-font-weight-medium);
+      color: var(--ndiye-gray-900);
+      margin-bottom: var(--admin-spacing-xs);
+    }
+    
+    .admin-provider-name {
+      font-size: var(--admin-font-size-xs);
+      color: var(--ndiye-gray-500);
+    }
+  }
+}
+
+.admin-plan-cell {
+  .admin-plan-info {
+    .admin-plan-name {
+      font-weight: var(--admin-font-weight-semibold);
+      color: var(--ndiye-gray-900);
+      margin-bottom: var(--admin-spacing-xs);
+    }
+    
+    .admin-plan-price {
+      font-size: var(--admin-font-size-xs);
+      color: var(--ndiye-gray-500);
+    }
+  }
+}
+
+.admin-date-cell {
+  .admin-date {
+    font-size: var(--admin-font-size-sm);
+    color: var(--ndiye-gray-600);
+  }
+}
+
+// Grille des coupons
+.admin-coupons-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--admin-spacing-lg);
+  
+  .admin-coupon-card {
+    background: var(--ndiye-white);
+    border: 1px solid var(--ndiye-gray-200);
+    border-radius: var(--admin-border-radius-lg);
+    padding: var(--admin-spacing-lg);
+    transition: all var(--admin-transition-normal);
+    
+    &:hover {
+      box-shadow: var(--admin-shadow-md);
+      transform: translateY(-2px);
+    }
+    
+    .admin-coupon-main {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--admin-spacing-md);
+      
+      .admin-coupon-code {
+        .admin-code-text {
+          font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+          font-size: var(--admin-font-size-lg);
+          font-weight: var(--admin-font-weight-bold);
+          color: var(--ndiye-primary);
+          background: var(--ndiye-primary-light);
+          padding: var(--admin-spacing-xs) var(--admin-spacing-sm);
+          border-radius: var(--admin-border-radius-sm);
+        }
+      }
+      
+      .admin-coupon-actions {
+        display: flex;
+        gap: var(--admin-spacing-xs);
+      }
+    }
+    
+    .admin-coupon-content {
+      margin-bottom: var(--admin-spacing-md);
+      
+      .admin-coupon-name {
+        font-weight: var(--admin-font-weight-semibold);
+        color: var(--ndiye-gray-900);
+        margin-bottom: var(--admin-spacing-xs);
+      }
+      
+      .admin-coupon-description {
+        font-size: var(--admin-font-size-sm);
+        color: var(--ndiye-gray-600);
+        margin-bottom: var(--admin-spacing-sm);
+        line-height: 1.4;
+      }
+      
+      .admin-coupon-value {
         display: flex;
         align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-
-        &.revenue {
-          background: rgba($ndiye-primary, 0.1);
-          color: $ndiye-primary;
+        gap: var(--admin-spacing-xs);
+        
+        .admin-discount {
+          font-size: var(--admin-font-size-lg);
+          font-weight: var(--admin-font-weight-bold);
+          color: var(--ndiye-success);
         }
-
-        &.payments {
-          background: rgba($ndiye-info, 0.1);
-          color: $ndiye-info;
-        }
-
-        &.subscriptions {
-          background: rgba($ndiye-secondary, 0.1);
-          color: $ndiye-secondary;
-        }
-
-        &.success-rate {
-          background: rgba($ndiye-success, 0.1);
-          color: $ndiye-success;
-        }
-      }
-
-      .admin-stat-content {
-        h3 {
-          font-size: 1.5rem;
-          font-weight: 700;
-          color: $ndiye-dark;
-          margin: 0 0 4px;
-        }
-
-        p {
-          color: $ndiye-medium;
-          font-size: 0.75rem;
-          margin: 0;
+        
+        .admin-discount-type {
+          font-size: var(--admin-font-size-sm);
+          color: var(--ndiye-gray-500);
         }
       }
     }
-  }
-
-  // Tabs
-  .admin-payments-tabs {
-    background: $ndiye-white;
-    border-radius: 8px;
-    margin: 0 24px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba($ndiye-primary, 0.1);
-    overflow: hidden;
-  }
-
-  // Table
-  .admin-payments-table {
-    .admin-transaction-id {
-      background: rgba($ndiye-primary, 0.1);
-      color: $ndiye-primary-dark;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 0.75rem;
-      font-weight: 600;
-    }
-
-    .admin-user-info {
-      display: flex;
-      flex-direction: column;
-
-      .admin-user-name {
-        font-weight: 500;
-        color: $ndiye-dark;
-        font-size: 0.875rem;
-      }
-
-      .admin-user-email {
-        font-size: 0.75rem;
-        color: $ndiye-medium;
-      }
-    }
-
-    .admin-amount {
-      font-weight: 600;
-      color: $ndiye-primary-dark;
-      font-size: 0.875rem;
-    }
-
-    .admin-payment-method {
-      display: flex;
-      flex-direction: column;
-
-      .admin-method {
-        font-weight: 500;
-        color: $ndiye-dark;
-        font-size: 0.875rem;
-        text-transform: capitalize;
-      }
-
-      .admin-provider {
-        font-size: 0.75rem;
-        color: $ndiye-medium;
-        text-transform: capitalize;
-      }
-    }
-
-    .admin-danger-option {
-      color: $ndiye-danger !important;
-    }
-
-    // Loading State
-    .admin-table-loading {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 60px 20px;
-      gap: 16px;
-
-      p {
-        color: $ndiye-medium;
-        font-size: 0.875rem;
-        margin: 0;
-      }
-    }
-
-    // Empty State
-    .admin-table-empty {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 60px 20px;
-      gap: 16px;
-      text-align: center;
-
-      svg {
-        color: $ndiye-medium;
-        opacity: 0.5;
-      }
-
-      h3 {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: $ndiye-dark;
-        margin: 0;
-      }
-
-      p {
-        color: $ndiye-medium;
-        font-size: 0.875rem;
-        margin: 0 0 16px;
-      }
-    }
-  }
-
-  // Coupons Grid
-  .admin-coupons-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 20px;
-    padding: 24px;
-
-    .admin-coupon-card {
-      background: $ndiye-white;
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      border: 1px solid rgba($ndiye-primary, 0.1);
-      transition: all 0.3s ease;
-
-      &:hover {
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-        transform: translateY(-2px);
-      }
-
-      .admin-coupon-header {
+    
+    .admin-coupon-usage {
+      margin-bottom: var(--admin-spacing-md);
+      
+      .admin-usage-info {
         display: flex;
         justify-content: space-between;
-        align-items: flex-start;
-        margin-bottom: 16px;
-
-        .admin-coupon-code {
-          display: flex;
-          flex-direction: column;
-          gap: 8px;
-
-          code {
-            background: rgba($ndiye-primary, 0.1);
-            color: $ndiye-primary-dark;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 1rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-          }
+        align-items: center;
+        margin-bottom: var(--admin-spacing-xs);
+        
+        .admin-usage-label {
+          font-size: var(--admin-font-size-xs);
+          color: var(--ndiye-gray-500);
+        }
+        
+        .admin-usage-count {
+          font-size: var(--admin-font-size-xs);
+          font-weight: var(--admin-font-weight-medium);
+          color: var(--ndiye-gray-700);
         }
       }
-
-      .admin-coupon-details {
-        h4 {
-          font-size: 1.125rem;
-          font-weight: 600;
-          color: $ndiye-dark;
-          margin: 0 0 8px;
+      
+      .admin-usage-bar {
+        width: 100%;
+        height: 4px;
+        background: var(--ndiye-gray-200);
+        border-radius: 2px;
+        overflow: hidden;
+        
+        .admin-usage-progress {
+          height: 100%;
+          background: var(--ndiye-primary);
+          transition: width var(--admin-transition-normal);
         }
-
-        .admin-coupon-description {
-          color: $ndiye-medium;
-          font-size: 0.875rem;
-          margin: 0 0 16px;
-          line-height: 1.4;
+      }
+    }
+    
+    .admin-coupon-dates {
+      margin-bottom: var(--admin-spacing-md);
+      
+      .admin-date {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: var(--admin-spacing-xs);
+        
+        &:last-child {
+          margin-bottom: 0;
         }
-
-        .admin-coupon-value {
-          display: flex;
-          align-items: baseline;
-          gap: 8px;
-          margin-bottom: 16px;
-
-          .admin-discount {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: $ndiye-primary-dark;
-          }
-
-          .admin-discount-type {
-            font-size: 0.875rem;
-            color: $ndiye-medium;
-          }
+        
+        .admin-date-label {
+          font-size: var(--admin-font-size-xs);
+          color: var(--ndiye-gray-500);
         }
-
-        .admin-coupon-usage {
-          margin-bottom: 16px;
-
-          .admin-usage-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-            font-size: 0.875rem;
-            color: $ndiye-medium;
-          }
-
-          .admin-usage-bar {
-            height: 4px;
-            background: rgba($ndiye-primary, 0.1);
-            border-radius: 2px;
-            overflow: hidden;
-
-            .admin-usage-progress {
-              height: 100%;
-              background: $ndiye-primary;
-              transition: width 0.3s ease;
-            }
-          }
+        
+        .admin-date-value {
+          font-size: var(--admin-font-size-xs);
+          font-weight: var(--admin-font-weight-medium);
+          color: var(--ndiye-gray-700);
         }
-
-        .admin-coupon-dates {
-          display: flex;
-          flex-direction: column;
-          gap: 4px;
-
-          .admin-date {
-            font-size: 0.75rem;
-            color: $ndiye-medium;
-          }
+      }
+    }
+    
+    .admin-coupon-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      
+      .admin-coupon-status {
+        .admin-badge {
+          font-size: var(--admin-font-size-xs);
         }
       }
     }
   }
+}
 
-  // Coupons Empty State
-  .admin-coupons-empty {
+// Toggle de statut
+.admin-status-toggle {
+  .admin-toggle-btn {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    background: var(--ndiye-gray-300);
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all var(--admin-transition-fast);
+    
+    .admin-toggle-slider {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 20px;
+      height: 20px;
+      background: var(--ndiye-white);
+      border-radius: 50%;
+      transition: all var(--admin-transition-fast);
+      box-shadow: var(--admin-shadow-sm);
+    }
+    
+    &.active {
+      background: var(--ndiye-primary);
+      
+      .admin-toggle-slider {
+        transform: translateX(20px);
+      }
+    }
+    
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+}
+
+// Actions
+.admin-actions {
+  display: flex;
+  gap: var(--admin-spacing-md);
+  margin-bottom: var(--admin-spacing-lg);
+  
+  .admin-btn {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    padding: 60px 20px;
-    gap: 16px;
-    text-align: center;
-
-    svg {
-      color: $ndiye-medium;
-      opacity: 0.5;
-    }
-
-    h3 {
-      font-size: 1.25rem;
-      font-weight: 600;
-      color: $ndiye-dark;
-      margin: 0;
-    }
-
-    p {
-      color: $ndiye-medium;
-      font-size: 0.875rem;
-      margin: 0 0 16px;
-    }
+    gap: var(--admin-spacing-sm);
   }
 }
 
-// Responsive Design
-@media (max-width: 1024px) {
-  .admin-payments {
-    .admin-payments-stats {
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    }
-
-    .admin-coupons-grid {
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    }
+.admin-action-buttons {
+  display: flex;
+  gap: var(--admin-spacing-xs);
+  
+  .admin-btn {
+    padding: var(--admin-spacing-xs);
+    min-width: 32px;
+    height: 32px;
   }
 }
 
+// Responsive
 @media (max-width: 768px) {
   .admin-payments {
-    .admin-payments-header {
+    gap: var(--admin-spacing-md);
+  }
+  
+  .admin-tabs-nav {
+    flex-wrap: wrap;
+    
+    .admin-tab-btn {
+      flex: 1;
+      min-width: 120px;
+      justify-content: center;
+    }
+  }
+  
+  .admin-coupons-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .admin-actions {
+    flex-direction: column;
+    
+    .admin-btn {
+      justify-content: center;
+    }
+  }
+  
+  .admin-user-cell {
+    .admin-user-info {
       flex-direction: column;
-      gap: 16px;
-      align-items: stretch;
-
-      .admin-payments-actions {
-        justify-content: flex-end;
-      }
-    }
-
-    .admin-payments-stats {
-      grid-template-columns: 1fr;
-    }
-
-    .admin-coupons-grid {
-      grid-template-columns: 1fr;
-    }
-
-    // Hide some table columns on mobile
-    .admin-payments-table {
-      ibm-table-cell:nth-child(4),
-      ibm-table-cell:nth-child(6),
-      ibm-table-header-cell:nth-child(4),
-      ibm-table-header-cell:nth-child(6) {
-        display: none;
+      align-items: flex-start;
+      gap: var(--admin-spacing-xs);
+      
+      .admin-user-details {
+        .admin-user-name {
+          margin-bottom: 0;
+        }
       }
     }
   }
+}
+
+// Animations
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }

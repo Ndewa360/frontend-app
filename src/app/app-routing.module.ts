@@ -77,11 +77,11 @@ const routes: Routes = [
 		path: 'payment',
 		loadChildren: () => import('./public/payment/payment.module').then(m => m.PaymentModule)
 	  },
-	//   {
-	// 	path: '',
-	// 	canActivate: [DeviceRedirectGuard],
-	// 	children: []
-	//   },
+	  {
+		path: '',
+		canActivate: [DeviceRedirectGuard],
+		children: []
+	  },
 	  {
 		path: '**',
 		resolve:{
@@ -89,11 +89,6 @@ const routes: Routes = [
 		},
 		loadChildren: () => import('./landing-page/landing-page.module').then(m => m.LandingPageModule)
 	  }
-	//   {
-	// 	path: '**',
-	// 	redirectTo: '/search/index',
-	// 	pathMatch: 'full',
-	//   },
 ];
 
 @NgModule({

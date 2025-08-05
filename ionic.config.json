@@ -3,5 +3,13 @@
   "integrations": {
     "capacitor": {}
   },
-  "type": "angular"
+  "type": "angular",
+  "serve": {
+    "host": "192.168.1.5",
+    "port": 4200,
+    "external": true
+  },
+  "devapp": {
+    "enabled": false
+  }
 }

@@ -298,4 +298,164 @@ export class AdminGeographyState {
       new AdminGeographyAction.LoadGeographyStats()
     ]);
   }
+
+  // === ACTIONS CRUD PAYS ===
+
+  @Action(AdminGeographyAction.DeleteCountry)
+  deleteCountry(ctx: StateContext<AdminGeographyStateModel>, action: AdminGeographyAction.DeleteCountry) {
+    ctx.patchState({ loading: true, error: null });
+
+    return this.adminGeographyService.deleteCountry(action.countryId).pipe(
+      tap(() => {
+        ctx.dispatch(new AdminGeographyAction.DeleteCountrySuccess(action.countryId));
+      }),
+      catchError(error => {
+        ctx.dispatch(new AdminGeographyAction.DeleteCountryFailure(error));
+        return throwError(error);
+      })
+    );
+  }
+
+  @Action(AdminGeographyAction.DeleteCountrySuccess)
+  deleteCountrySuccess(ctx: StateContext<AdminGeographyStateModel>, action: AdminGeographyAction.DeleteCountrySuccess) {
+    const state = ctx.getState();
+    const updatedCountries = state.countries.filter(country => country._id !== action.countryId);
+
+    ctx.patchState({
+      countries: updatedCountries,
+      loading: false,
+      error: null,
+      lastUpdated: new Date()
+    });
+
+    // Recharger les statistiques
+    ctx.dispatch(new AdminGeographyAction.LoadGeographyStats());
+  }
+
+  @Action(AdminGeographyAction.DeleteCountryFailure)
+  deleteCountryFailure(ctx: StateContext<AdminGeographyStateModel>, action: AdminGeographyAction.DeleteCountryFailure) {
+    ctx.patchState({
+      loading: false,
+      error: action.error
+    });
+  }
+
+  // === ACTIONS CRUD VILLES ===
+
+  @Action(AdminGeographyAction.CreateCity)
+  createCity(ctx: StateContext<AdminGeographyStateModel>, action: AdminGeographyAction.CreateCity) {
+    ctx.patchState({ loading: true, error: null });
+
+    return this.adminGeographyService.createCity(action.cityData).pipe(
+      tap((city) => {
+        ctx.dispatch(new AdminGeographyAction.CreateCitySuccess(city));
+      }),
+      catchError(error => {
+        ctx.dispatch(new AdminGeographyAction.CreateCityFailure(error));
+        return throwError(error);
+      })
+    );
+  }
+
+  @Action(AdminGeographyAction.CreateCitySuccess)
+  createCitySuccess(ctx: StateContext<AdminGeographyStateModel>, action: AdminGeographyAction.CreateCitySuccess) {
+    const state = ctx.getState();
+    const updatedCities = [...state.cities, action.city];
+
+    ctx.patchState({
+      cities: updatedCities,
+      loading: false,
+      error: null,
+      lastUpdated: new Date()
+    });
+
+    // Recharger les statistiques
+    ctx.dispatch(new AdminGeographyAction.LoadGeographyStats());
+  }
+
+  @Action(AdminGeographyAction.CreateCityFailure)
+  createCityFailure(ctx: StateContext<AdminGeographyStateModel>, action: AdminGeographyAction.CreateCityFailure) {
+    ctx.patchState({
+      loading: false,
+      error: action.error
+    });
+  }
+
+  // === ACTIONS GEONAMES ===
+
+  @Action(AdminGeographyAction.LoadCountryCitiesFromGeonames)
+  loadCountryCitiesFromGeonames(ctx: StateContext<AdminGeographyStateModel>, action: AdminGeographyAction.LoadCountryCitiesFromGeonames) {
+    ctx.patchState({ loading: true, error: null });
+
+    return this.adminGeographyService.loadCountryCities(action.countryId).pipe(
+      tap(result => {
+        ctx.dispatch(new AdminGeographyAction.LoadCountryCitiesFromGeonamesSuccess(result));
+      }),
+      catchError(error => {
+        ctx.dispatch(new AdminGeographyAction.LoadCountryCitiesFromGeonamesFailure(error));
+        return throwError(error);
+      })
+    );
+  }
+
+  @Action(AdminGeographyAction.LoadCountryCitiesFromGeonamesSuccess)
+  loadCountryCitiesFromGeonamesSuccess(ctx: StateContext<AdminGeographyStateModel>, action: AdminGeographyAction.LoadCountryCitiesFromGeonamesSuccess) {
+    ctx.patchState({
+      loading: false,
+      error: null,
+      lastUpdated: new Date()
+    });
+
+    // Recharger les villes et statistiques
+    ctx.dispatch([
+      new AdminGeographyAction.LoadCities(),
+      new AdminGeographyAction.LoadGeographyStats()
+    ]);
+  }
+
+  @Action(AdminGeographyAction.LoadCountryCitiesFromGeonamesFailure)
+  loadCountryCitiesFromGeonamesFailure(ctx: StateContext<AdminGeographyStateModel>, action: AdminGeographyAction.LoadCountryCitiesFromGeonamesFailure) {
+    ctx.patchState({
+      loading: false,
+      error: action.error
+    });
+  }
+
+  @Action(AdminGeographyAction.ToggleCity)
+  toggleCity(ctx: StateContext<AdminGeographyStateModel>, action: AdminGeographyAction.ToggleCity) {
+    ctx.patchState({ loading: true, error: null });
+
+    return this.adminGeographyService.toggleCity(action.cityId, action.isActive).pipe(
+      tap(city => {
+        ctx.dispatch(new AdminGeographyAction.ToggleCitySuccess(city));
+      }),
+      catchError(error => {
+        ctx.dispatch(new AdminGeographyAction.ToggleCityFailure(error));
+        return throwError(error);
+      })
+    );
+  }
+
+  @Action(AdminGeographyAction.ToggleCitySuccess)
+  toggleCitySuccess(ctx: StateContext<AdminGeographyStateModel>, action: AdminGeographyAction.ToggleCitySuccess) {
+    const state = ctx.getState();
+    const updatedCities = state.cities.map(city =>
+      city._id === action.city._id ? action.city : city
+    );
+
+    ctx.patchState({
+      cities: updatedCities,
+      loading: false,
+      error: null,
+      lastUpdated: new Date()
+    });
+  }
+
+  @Action(AdminGeographyAction.ToggleCityFailure)
+  toggleCityFailure(ctx: StateContext<AdminGeographyStateModel>, action: AdminGeographyAction.ToggleCityFailure) {
+    ctx.patchState({
+      loading: false,
+      error: action.error
+    });
+  }
 }

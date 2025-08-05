@@ -5,7 +5,16 @@ const config: CapacitorConfig = {
   appName: 'Ndiye',
   webDir: 'dist',
   server: {
-    androidScheme: 'https'
+    // URL pour le développement (live reload)
+    url: 'http://192.168.1.5:4200',
+    cleartext: true,
+    // Autoriser les requêtes HTTP non sécurisées en développement
+    allowNavigation: [
+      'http://192.168.1.5:4200',
+      'http://localhost:4200',
+      'http://192.168.1.5:3001', // Backend API
+      'http://localhost:3001'     // Backend API local
+    ]
   },
   plugins: {
     SplashScreen: {
@@ -38,6 +47,12 @@ const config: CapacitorConfig = {
     },
     App: {
       launchUrl: "com.ndiye.app"
+    },
+    CapacitorHttp: {
+      enabled: true
+    },
+    CapacitorCookies: {
+      enabled: true
     }
   }
 };

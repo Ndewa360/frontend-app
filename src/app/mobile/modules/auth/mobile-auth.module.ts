@@ -14,7 +14,7 @@ import { MobileForgotPasswordPageComponent } from './pages/mobile-forgot-passwor
 // import { MobileSocialLoginComponent } from './components/mobile-social-login/mobile-social-login.component';
 
 // Shared Mobile Components
-import { MobileModule } from '../../mobile.module';
+
 
 @NgModule({
   declarations: [
@@ -29,8 +29,7 @@ import { MobileModule } from '../../mobile.module';
     IonicModule,
     FormsModule,
     ReactiveFormsModule,
-    MobileAuthRoutingModule,
-    MobileModule
+    MobileAuthRoutingModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

@@ -1,945 +1,803 @@
-<!-- Admin Geography Management -->
-<div class="admin-geography">
-  <!-- Header moderne avec design avancé -->
-  <div class="geography-header-modern">
-    <div class="header-content">
-      <div class="header-left">
-        <div class="title-section">
-          <div class="title-with-icon">
-            <div class="title-icon">
-              <i class="fas fa-globe-americas"></i>
-            </div>
-            <div class="title-text">
-              <h2 class="geography-title">Gestion Géographique</h2>
-              <p class="geography-subtitle">Administration des pays, villes et devises de la plateforme</p>
-            </div>
+<!-- Page Géographie - Style identique aux détails des propriétés -->
+<div class="geography-admin-page">
+
+  <!-- Header principal - Style identique aux propriétés -->
+  <div class="main-header">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="header-content py-6">
+        <div class="flex justify-between items-center">
+          <div class="header-info">
+            <h1 class="text-2xl font-bold mb-1">Géographie & Localisation</h1>
+            <p class="text-gray-600 flex items-center text-sm">
+              <i class="fas fa-globe-americas mr-2 text-gray-400"></i>
+              Gérez les pays, villes et devises disponibles dans l'application
+            </p>
           </div>
-          <div class="stats-overview">
-            <div class="overview-badge countries-badge">
-              <i class="fas fa-flag"></i>
-              <span class="overview-number">{{ (countries$ | async)?.length || 0 }}</span>
-              <span class="overview-label">Pays</span>
-            </div>
-            <div class="overview-badge cities-badge">
-              <i class="fas fa-city"></i>
-              <span class="overview-number">{{ (cities$ | async)?.length || 0 }}</span>
-              <span class="overview-label">Villes</span>
-            </div>
-            <div class="overview-badge currencies-badge">
-              <i class="fas fa-coins"></i>
-              <span class="overview-number">{{ getTotalCurrenciesCount() }}</span>
-              <span class="overview-label">Devises</span>
-            </div>
+          <div class="flex space-x-3">
+            <button
+              class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
+              (click)="onRefreshData()"
+              [disabled]="isRefreshing">
+              <i class="fas fa-sync-alt mr-2" [class.fa-spin]="isRefreshing"></i>
+              Actualiser
+            </button>
+            <button
+              class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-all duration-200"
+              style="background-color: rgb(204, 140, 10);"
+              (click)="onCreateItem()">
+              <i class="fas fa-plus mr-2"></i>
+              Nouveau
+            </button>
           </div>
-        </div>
-      </div>
-      <div class="header-right">
-        <div class="action-buttons">
-          <button class="btn-modern btn-refresh" 
-                  (click)="onRefreshData()"
-                  [disabled]="isRefreshing"
-                  title="Actualiser les données géographiques">
-            <i class="fas fa-sync-alt" [class.fa-spin]="isRefreshing"></i>
-            <span>Actualiser</span>
-          </button>
-          
-          <!-- Boutons spécifiques selon l'onglet actif -->
-          <button class="btn-modern btn-primary" 
-                  *ngIf="selectedTab === 'countries'"
-                  (click)="onCreateCountry()"
-                  title="Ajouter un nouveau pays">
-            <i class="fas fa-flag"></i>
-            <span>Nouveau Pays</span>
-          </button>
-          
-          <button class="btn-modern btn-primary" 
-                  *ngIf="selectedTab === 'cities'"
-                  (click)="onCreateCity()"
-                  title="Ajouter une nouvelle ville">
-            <i class="fas fa-city"></i>
-            <span>Nouvelle Ville</span>
-          </button>
-          
-          <button class="btn-modern btn-primary" 
-                  *ngIf="selectedTab === 'currencies'"
-                  (click)="onCreateCurrency()"
-                  title="Ajouter une nouvelle devise">
-            <i class="fas fa-coins"></i>
-            <span>Nouvelle Devise</span>
-          </button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Stats Cards modernes -->
-  <div class="geography-stats-modern">
-    <div class="stats-grid">
-      <!-- Carte Pays -->
-      <div class="stat-card countries-card">
-        <div class="card-header">
-          <div class="card-icon">
+  <!-- Métriques rapides - Style identique aux propriétés -->
+  <div class="metrics-section">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div class="metric-card countries">
+          <div class="metric-icon">
             <i class="fas fa-flag"></i>
           </div>
-          <div class="card-title">
-            <h3>Pays</h3>
-            <span class="card-subtitle">Gestion des pays</span>
+          <div class="metric-content">
+            <div class="metric-value">{{ (stats$ | async)?.countries?.total || 0 }}</div>
+            <div class="metric-label">Pays configurés</div>
           </div>
         </div>
-        <div class="card-content">
-          <div class="main-stat">
-            <span class="stat-number">{{ (countries$ | async)?.length || 0 | number }}</span>
-            <span class="stat-label">Total</span>
-          </div>
-          <div class="sub-stats">
-            <div class="sub-stat active">
-              <i class="fas fa-check-circle"></i>
-              <span>{{ getActiveCountriesCount() | number }} actifs</span>
-            </div>
-            <div class="sub-stat users">
-              <i class="fas fa-users"></i>
-              <span>{{ getCountriesWithUsersCount() | number }} avec utilisateurs</span>
-            </div>
-          </div>
-        </div>
-        <div class="card-progress">
-          <div class="progress-bar">
-            <div class="progress-fill" [style.width.%]="getCountriesActivePercentage()"></div>
-          </div>
-          <span class="progress-text">{{ getCountriesActivePercentage() | number:'1.0-1' }}% actifs</span>
-        </div>
-      </div>
-
-      <!-- Carte Villes -->
-      <div class="stat-card cities-card">
-        <div class="card-header">
-          <div class="card-icon">
+        <div class="metric-card cities">
+          <div class="metric-icon">
             <i class="fas fa-city"></i>
           </div>
-          <div class="card-title">
-            <h3>Villes</h3>
-            <span class="card-subtitle">Gestion des villes</span>
+          <div class="metric-content">
+            <div class="metric-value">{{ (stats$ | async)?.cities?.total || 0 }}</div>
+            <div class="metric-label">Villes disponibles</div>
           </div>
         </div>
-        <div class="card-content">
-          <div class="main-stat">
-            <span class="stat-number">{{ (cities$ | async)?.length || 0 | number }}</span>
-            <span class="stat-label">Total</span>
-          </div>
-          <div class="sub-stats">
-            <div class="sub-stat active">
-              <i class="fas fa-check-circle"></i>
-              <span>{{ getActiveCitiesCount() | number }} actives</span>
-            </div>
-            <div class="sub-stat properties">
-              <i class="fas fa-home"></i>
-              <span>{{ getCitiesWithPropertiesCount() | number }} avec propriétés</span>
-            </div>
-          </div>
-        </div>
-        <div class="card-progress">
-          <div class="progress-bar">
-            <div class="progress-fill" [style.width.%]="getCitiesActivePercentage()"></div>
-          </div>
-          <span class="progress-text">{{ getCitiesActivePercentage() | number:'1.0-1' }}% actives</span>
-        </div>
-      </div>
-
-      <!-- Carte Devises -->
-      <div class="stat-card currencies-card">
-        <div class="card-header">
-          <div class="card-icon">
+        <div class="metric-card currencies">
+          <div class="metric-icon">
             <i class="fas fa-coins"></i>
           </div>
-          <div class="card-title">
-            <h3>Devises</h3>
-            <span class="card-subtitle">Gestion des devises</span>
+          <div class="metric-content">
+            <div class="metric-value">{{ (stats$ | async)?.currencies?.total || 0 }}</div>
+            <div class="metric-label">Devises supportées</div>
           </div>
         </div>
-        <div class="card-content">
-          <div class="main-stat">
-            <span class="stat-number">{{ getTotalCurrenciesCount() | number }}</span>
-            <span class="stat-label">Total</span>
+        <div class="metric-card users">
+          <div class="metric-icon">
+            <i class="fas fa-users"></i>
           </div>
-          <div class="sub-stats">
-            <div class="sub-stat active">
-              <i class="fas fa-check-circle"></i>
-              <span>{{ getActiveCurrenciesCount() | number }} actives</span>
-            </div>
-            <div class="sub-stat default">
-              <i class="fas fa-star"></i>
-              <span>{{ getDefaultCurrency() }} par défaut</span>
-            </div>
+          <div class="metric-content">
+            <div class="metric-value">{{ (stats$ | async)?.distribution?.usersByCountry?.length || 0 }}</div>
+            <div class="metric-label">Pays avec utilisateurs</div>
           </div>
-        </div>
-        <div class="card-progress">
-          <div class="progress-bar">
-            <div class="progress-fill" [style.width.%]="(getActiveCurrenciesCount() / getTotalCurrenciesCount()) * 100"></div>
-          </div>
-          <span class="progress-text">{{ ((getActiveCurrenciesCount() / getTotalCurrenciesCount()) * 100) | number:'1.0-1' }}% actives</span>
-        </div>
-      </div>
-
-      <!-- Carte Distribution -->
-      <div class="stat-card distribution-card">
-        <div class="card-header">
-          <div class="card-icon">
-            <i class="fas fa-chart-pie"></i>
-          </div>
-          <div class="card-title">
-            <h3>Distribution</h3>
-            <span class="card-subtitle">Répartition géographique</span>
-          </div>
-        </div>
-        <div class="card-content">
-          <div class="distribution-stats">
-            <div class="distribution-item">
-              <span class="distribution-label">Utilisateurs</span>
-              <span class="distribution-value">{{ getTotalUsers({}) | number }}</span>
-            </div>
-            <div class="distribution-item">
-              <span class="distribution-label">Propriétés</span>
-              <span class="distribution-value">{{ getTotalProperties({}) | number }}</span>
-            </div>
-          </div>
-        </div>
-        <div class="card-action">
-          <button class="view-details-btn" (click)="onViewDistribution()">
-            <i class="fas fa-chart-bar"></i>
-            <span>Voir détails</span>
-          </button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Onglets modernes -->
-  <div class="geography-tabs-modern">
-    <div class="tabs-container">
-      <div class="tabs-nav">
+  <!-- Navigation par onglets - Style identique aux détails des propriétés -->
+  <div class="tabs-navigation">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav class="flex space-x-0" aria-label="Tabs">
         <button
-          class="tab-btn"
+          class="property-tab-button"
           [class.active]="selectedTab === 'countries'"
           (click)="onTabChange('countries')">
-          <div class="tab-content">
-            <i class="fas fa-flag"></i>
-            <span class="tab-text">Pays</span>
-            <span class="tab-count">{{ (countries$ | async)?.length || 0 }}</span>
+          <div class="flex items-center">
+            <i class="fas fa-flag mr-2"></i>
+            Pays
+            <span class="ml-2 tab-count">{{ (stats$ | async)?.countries?.total || 0 }}</span>
           </div>
-          <div class="tab-indicator"></div>
         </button>
+
         <button
-          class="tab-btn"
+          class="property-tab-button"
           [class.active]="selectedTab === 'cities'"
           (click)="onTabChange('cities')">
-          <div class="tab-content">
-            <i class="fas fa-city"></i>
-            <span class="tab-text">Villes</span>
-            <span class="tab-count">{{ (cities$ | async)?.length || 0 }}</span>
+          <div class="flex items-center">
+            <i class="fas fa-city mr-2"></i>
+            Villes
+            <span class="ml-2 tab-count">{{ (stats$ | async)?.cities?.total || 0 }}</span>
           </div>
-          <div class="tab-indicator"></div>
         </button>
+
         <button
-          class="tab-btn"
+          class="property-tab-button"
           [class.active]="selectedTab === 'currencies'"
           (click)="onTabChange('currencies')">
-          <div class="tab-content">
-            <i class="fas fa-coins"></i>
-            <span class="tab-text">Devises</span>
-            <span class="tab-count">{{ getTotalCurrenciesCount() }}</span>
+          <div class="flex items-center">
+            <i class="fas fa-coins mr-2"></i>
+            Devises
+            <span class="ml-2 tab-count">{{ (stats$ | async)?.currencies?.total || 0 }}</span>
           </div>
-          <div class="tab-indicator"></div>
         </button>
-      </div>
-    </div>
-
-    <!-- Contenu des onglets moderne -->
-    <div class="tab-content-modern">
-      <!-- Tableau des Pays moderne -->
-      <div *ngIf="selectedTab === 'countries'" class="countries-section">
-        <div class="section-header">
-          <div class="section-title">
-            <h3>Gestion des Pays</h3>
-            <p>Administration des pays et leurs informations</p>
-          </div>
-          <div class="section-actions">
-            <div class="search-box">
-              <i class="fas fa-search"></i>
-              <input type="text" 
-                     placeholder="Rechercher un pays..." 
-                     [(ngModel)]="countrySearchTerm"
-                     (input)="onCountrySearch($event)"
-                     class="search-input">
-            </div>
-            <button class="filter-btn" (click)="onToggleCountryFilters()">
-              <i class="fas fa-filter"></i>
-              <span>Filtres</span>
-            </button>
-          </div>
-        </div>
-
-        <div class="table-container">
-          <table class="modern-table">
-            <thead>
-              <tr>
-                <th>
-                  <div class="th-content">
-                    <i class="fas fa-flag"></i>
-                    <span>Pays</span>
-                  </div>
-                </th>
-                <th>
-                  <div class="th-content">
-                    <i class="fas fa-code"></i>
-                    <span>Code</span>
-                  </div>
-                </th>
-                <th>
-                  <div class="th-content">
-                    <i class="fas fa-coins"></i>
-                    <span>Devise</span>
-                  </div>
-                </th>
-                <th>
-                  <div class="th-content">
-                    <i class="fas fa-city"></i>
-                    <span>Villes</span>
-                  </div>
-                </th>
-                <th>
-                  <div class="th-content">
-                    <i class="fas fa-users"></i>
-                    <span>Utilisateurs</span>
-                  </div>
-                </th>
-                <th>
-                  <div class="th-content">
-                    <i class="fas fa-toggle-on"></i>
-                    <span>Statut</span>
-                  </div>
-                </th>
-                <th>
-                  <div class="th-content">
-                    <i class="fas fa-cog"></i>
-                    <span>Actions</span>
-                  </div>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let country of countries$ | async; trackBy: trackByCountryId" 
-                  class="table-row"
-                  [class.row-inactive]="!country.isActive">
-                <td class="country-cell">
-                  <div class="country-info">
-                    <div class="country-flag">
-                      <span *ngIf="country.flag">{{ country.flag }}</span>
-                      <i *ngIf="!country.flag" class="fas fa-flag"></i>
-                    </div>
-                    <div class="country-details">
-                      <span class="country-name">{{ country.name }}</span>
-                      <span class="country-code-small">{{ country.code }}</span>
-                    </div>
-                  </div>
-                </td>
-                <td class="code-cell">
-                  <div class="code-badge">
-                    <span class="code-text">{{ country.code }}</span>
-                  </div>
-                </td>
-                <td class="currency-cell">
-                  <div class="currency-info" *ngIf="country.currency">
-                    <span class="currency-code">{{ country.currency }}</span>
-                  </div>
-                  <span class="no-currency" *ngIf="!country.currency">Non définie</span>
-                </td>
-                <td class="cities-cell">
-                  <div class="cities-count">
-                    <span class="count-number">{{ (country?.cityCount !== undefined && country?.cityCount !== null) ? country.cityCount : 0 }}</span>
-                    <span class="count-label">ville(s)</span>
-                  </div>
-                </td>
-                <td class="users-cell">
-                  <div class="users-count">
-                    <span class="count-number">{{ (country?.userCount !== undefined && country?.userCount !== null) ? country.userCount : 0 }}</span>
-                    <span class="count-label">utilisateur(s)</span>
-                  </div>
-                </td>
-                <td class="status-cell">
-                  <div class="status-toggle">
-                    <button class="toggle-btn" 
-                            [class.active]="country.isActive"
-                            (click)="onToggleCountryStatus(country)"
-                            title="{{ country.isActive ? 'Désactiver' : 'Activer' }} le pays">
-                      <i class="fas" [class.fa-toggle-on]="country.isActive" [class.fa-toggle-off]="!country.isActive"></i>
-                      <span>{{ country.isActive ? 'Actif' : 'Inactif' }}</span>
-                    </button>
-                  </div>
-                </td>
-                <td class="actions-cell">
-                  <div class="action-buttons">
-                    <button class="action-btn view-btn" 
-                            (click)="onViewCountryDetails(country)"
-                            title="Voir les détails">
-                      <i class="fas fa-eye"></i>
-                    </button>
-                    <button class="action-btn edit-btn" 
-                            (click)="onEditCountry(country)"
-                            title="Modifier">
-                      <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="action-btn delete-btn" 
-                            (click)="onDeleteCountry(country)"
-                            title="Supprimer">
-                      <i class="fas fa-trash"></i>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- Message si pas de données -->
-      <div *ngIf="selectedTab === 'countries' && !(countries$ | async)?.length" class="no-data">
-        <i class="fas fa-flag"></i>
-        <h3>Aucun pays trouvé</h3>
-        <p>Cliquez sur "Nouveau Pays" pour ajouter le premier pays.</p>
-      </div>
-
-      <!-- Tableau des Villes -->
-      <div *ngIf="selectedTab === 'cities'" class="cities-section">
-        <div class="section-header">
-          <div class="section-title">
-            <h3>Gestion des Villes</h3>
-            <p>Administration des villes et leurs informations</p>
-          </div>
-          <div class="section-actions">
-            <div class="search-box">
-              <i class="fas fa-search"></i>
-              <input type="text"
-                     placeholder="Rechercher une ville..."
-                     [(ngModel)]="citySearchTerm"
-                     (input)="onCitySearch($event)"
-                     class="search-input">
-            </div>
-            <button class="filter-btn" (click)="onToggleCityFilters()">
-              <i class="fas fa-filter"></i>
-              <span>Filtres</span>
-            </button>
-          </div>
-        </div>
-
-        <div class="table-container" *ngIf="(cities$ | async)?.length; else noCities">
-          <table class="modern-table">
-            <thead>
-              <tr>
-                <th>
-                  <div class="th-content">
-                    <i class="fas fa-city"></i>
-                    <span>Ville</span>
-                  </div>
-                </th>
-                <th>
-                  <div class="th-content">
-                    <i class="fas fa-flag"></i>
-                    <span>Pays</span>
-                  </div>
-                </th>
-                <th>
-                  <div class="th-content">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <span>Coordonnées</span>
-                  </div>
-                </th>
-                <th>
-                  <div class="th-content">
-                    <i class="fas fa-users"></i>
-                    <span>Utilisateurs</span>
-                  </div>
-                </th>
-                <th>
-                  <div class="th-content">
-                    <i class="fas fa-home"></i>
-                    <span>Propriétés</span>
-                  </div>
-                </th>
-                <th>
-                  <div class="th-content">
-                    <i class="fas fa-toggle-on"></i>
-                    <span>Statut</span>
-                  </div>
-                </th>
-                <th>
-                  <div class="th-content">
-                    <i class="fas fa-cog"></i>
-                    <span>Actions</span>
-                  </div>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let city of cities$ | async; trackBy: trackByCityId"
-                  class="table-row"
-                  [class.row-inactive]="!city.isActive">
-                <td class="city-cell">
-                  <div class="city-info">
-                    <div class="city-icon">
-                      <i class="fas fa-city"></i>
-                    </div>
-                    <div class="city-details">
-                      <span class="city-name">{{ city.name || 'N/A' }}</span>
-                      <span class="city-timezone" *ngIf="city.timezone">{{ city.timezone }}</span>
-                    </div>
-                  </div>
-                </td>
-                <td class="country-cell">
-                  <div class="country-info">
-                    <div class="country-flag" *ngIf="city.country?.flag">
-                      <span>{{ city.country.flag }}</span>
-                    </div>
-                    <div class="country-details">
-                      <span class="country-name">{{ city.country?.name || 'N/A' }}</span>
-                      <span class="country-code">{{ city.country?.code || '' }}</span>
-                    </div>
-                  </div>
-                </td>
-                <td class="coordinates-cell">
-                  <div class="coordinates" *ngIf="city.coordinates?.latitude && city.coordinates?.longitude">
-                    <div class="coordinate-item">
-                      <i class="fas fa-map-pin"></i>
-                      <span>{{ city.coordinates.latitude | number:'1.4-4' }}, {{ city.coordinates.longitude | number:'1.4-4' }}</span>
-                    </div>
-                  </div>
-                  <span class="no-coordinates" *ngIf="!city.coordinates?.latitude || !city.coordinates?.longitude">
-                    <i class="fas fa-map-marker-slash"></i>
-                    Non définies
-                  </span>
-                </td>
-                <td class="users-cell">
-                  <div class="users-count">
-                    <span class="count-number">{{ city.userCount || 0 }}</span>
-                    <span class="count-label">utilisateur(s)</span>
-                  </div>
-                </td>
-                <td class="properties-cell">
-                  <div class="properties-count">
-                    <span class="count-number">{{ city.propertyCount || 0 }}</span>
-                    <span class="count-label">propriété(s)</span>
-                  </div>
-                </td>
-                <td class="status-cell">
-                  <div class="status-toggle">
-                    <button class="toggle-btn"
-                            [class.active]="city.isActive"
-                            (click)="onToggleCityStatus(city)"
-                            title="{{ city.isActive ? 'Désactiver' : 'Activer' }} la ville">
-                      <i class="fas" [class.fa-toggle-on]="city.isActive" [class.fa-toggle-off]="!city.isActive"></i>
-                      <span>{{ city.isActive ? 'Actif' : 'Inactif' }}</span>
-                    </button>
-                  </div>
-                </td>
-                <td class="actions-cell">
-                  <div class="action-buttons">
-                    <button class="action-btn view-btn"
-                            (click)="onViewCityDetails(city)"
-                            title="Voir les détails">
-                      <i class="fas fa-eye"></i>
-                    </button>
-                    <button class="action-btn edit-btn"
-                            (click)="onEditCity(city)"
-                            title="Modifier">
-                      <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="action-btn delete-btn"
-                            (click)="onDeleteCity(city)"
-                            title="Supprimer">
-                      <i class="fas fa-trash"></i>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <ng-template #noCities>
-          <div class="no-data">
-            <i class="fas fa-city"></i>
-            <h3>Aucune ville trouvée</h3>
-            <p>Cliquez sur "Nouvelle Ville" pour ajouter la première ville.</p>
-          </div>
-        </ng-template>
-      </div>
-
-      <!-- Section des Devises -->
-      <div *ngIf="selectedTab === 'currencies'" class="currencies-section">
-        <div class="section-header">
-          <div class="section-title">
-            <h3>Gestion des Devises</h3>
-            <p>Administration des devises et taux de change</p>
-          </div>
-          <div class="section-actions">
-            <div class="search-box">
-              <i class="fas fa-search"></i>
-              <input type="text"
-                     placeholder="Rechercher une devise..."
-                     [(ngModel)]="currencySearchTerm"
-                     (input)="onCurrencySearch($event)"
-                     class="search-input">
-            </div>
-            <button class="filter-btn" (click)="onToggleCurrencyFilters()">
-              <i class="fas fa-filter"></i>
-              <span>Filtres</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Vue en grille moderne pour les devises -->
-        <div class="currencies-grid" *ngIf="getCurrenciesData().length > 0; else noCurrencies">
-          <div class="currency-card"
-               *ngFor="let currency of getCurrenciesData(); trackBy: trackByCurrencyId"
-               [class.inactive]="!currency.isActive"
-               [class.default]="currency.isDefault">
-            <div class="card-header">
-              <div class="currency-main">
-                <div class="currency-icon">
-                  <i class="fas fa-coins"></i>
-                </div>
-                <div class="currency-info">
-                  <h4 class="currency-name">{{ currency.name }}</h4>
-                  <span class="currency-code">{{ currency.code }}</span>
-                </div>
-              </div>
-              <div class="currency-actions">
-                <button class="action-btn edit-btn"
-                        (click)="onEditCurrency(currency)"
-                        title="Modifier">
-                  <i class="fas fa-edit"></i>
-                </button>
-                <button class="action-btn delete-btn"
-                        (click)="onDeleteCurrency(currency)"
-                        title="Supprimer">
-                  <i class="fas fa-trash"></i>
-                </button>
-              </div>
-            </div>
-
-            <div class="card-content">
-              <div class="currency-symbol">
-                <span class="symbol-text">{{ currency.symbol || currency.code }}</span>
-              </div>
-
-              <div class="currency-rate" *ngIf="currency.rate && currency.rate !== 1">
-                <i class="fas fa-exchange-alt"></i>
-                <span>1 EUR = {{ currency.rate | number:'1.2-3' }} {{ currency.code }}</span>
-              </div>
-
-              <div class="currency-rate reference" *ngIf="currency.rate === 1 || currency.isDefault">
-                <i class="fas fa-star"></i>
-                <span>Devise de référence</span>
-              </div>
-
-              <div class="currency-meta">
-                <div class="meta-item">
-                  <i class="fas fa-calendar"></i>
-                  <span>{{ currency.createdAt | date:'dd/MM/yyyy' }}</span>
-                </div>
-                <div class="meta-item" *ngIf="currency.updatedAt !== currency.createdAt">
-                  <i class="fas fa-edit"></i>
-                  <span>{{ currency.updatedAt | date:'dd/MM/yyyy' }}</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="card-footer">
-              <div class="currency-status" [class.active]="currency.isActive">
-                <button class="status-toggle"
-                        (click)="onToggleCurrencyStatus(currency)"
-                        title="{{ currency.isActive ? 'Désactiver' : 'Activer' }} la devise">
-                  <i class="fas" [class.fa-toggle-on]="currency.isActive" [class.fa-toggle-off]="!currency.isActive"></i>
-                  <span>{{ currency.isActive ? 'Actif' : 'Inactif' }}</span>
-                </button>
-              </div>
-
-              <div class="default-badge" *ngIf="currency.isDefault">
-                <i class="fas fa-star"></i>
-                <span>Par défaut</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Vue tableau alternative (optionnelle) -->
-        <div class="currencies-table-view" style="display: none;">
-          <div class="table-container">
-            <table class="modern-table">
-              <thead>
-                <tr>
-                  <th>
-                    <div class="th-content">
-                      <i class="fas fa-coins"></i>
-                      <span>Devise</span>
-                    </div>
-                  </th>
-                  <th>
-                    <div class="th-content">
-                      <i class="fas fa-code"></i>
-                      <span>Code</span>
-                    </div>
-                  </th>
-                  <th>
-                    <div class="th-content">
-                      <i class="fas fa-dollar-sign"></i>
-                      <span>Symbole</span>
-                    </div>
-                  </th>
-                  <th>
-                    <div class="th-content">
-                      <i class="fas fa-exchange-alt"></i>
-                      <span>Taux</span>
-                    </div>
-                  </th>
-                  <th>
-                    <div class="th-content">
-                      <i class="fas fa-toggle-on"></i>
-                      <span>Statut</span>
-                    </div>
-                  </th>
-                  <th>
-                    <div class="th-content">
-                      <i class="fas fa-cog"></i>
-                      <span>Actions</span>
-                    </div>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let currency of getCurrenciesData(); trackBy: trackByCurrencyId"
-                    class="table-row"
-                    [class.row-inactive]="!currency.isActive"
-                    [class.row-default]="currency.isDefault">
-                  <td class="currency-cell">
-                    <div class="currency-info">
-                      <div class="currency-icon">
-                        <i class="fas fa-coins"></i>
-                      </div>
-                      <div class="currency-details">
-                        <span class="currency-name">{{ currency.name }}</span>
-                        <span class="currency-code-small">{{ currency.code }}</span>
-                      </div>
-                    </div>
-                  </td>
-                  <td class="code-cell">
-                    <div class="code-badge">
-                      <span class="code-text">{{ currency.code }}</span>
-                    </div>
-                  </td>
-                  <td class="symbol-cell">
-                    <div class="symbol-display">
-                      <span class="symbol-text">{{ currency.symbol || currency.code }}</span>
-                    </div>
-                  </td>
-                  <td class="rate-cell">
-                    <div class="rate-info" *ngIf="currency.rate && currency.rate !== 1">
-                      <span class="rate-value">{{ currency.rate | number:'1.2-3' }}</span>
-                    </div>
-                    <div class="rate-reference" *ngIf="currency.rate === 1 || currency.isDefault">
-                      <i class="fas fa-star"></i>
-                      <span>Référence</span>
-                    </div>
-                  </td>
-                  <td class="status-cell">
-                    <div class="status-toggle">
-                      <button class="toggle-btn"
-                              [class.active]="currency.isActive"
-                              (click)="onToggleCurrencyStatus(currency)">
-                        <i class="fas" [class.fa-toggle-on]="currency.isActive" [class.fa-toggle-off]="!currency.isActive"></i>
-                        <span>{{ currency.isActive ? 'Actif' : 'Inactif' }}</span>
-                      </button>
-                    </div>
-                  </td>
-                  <td class="actions-cell">
-                    <div class="action-buttons">
-                      <button class="action-btn view-btn"
-                              (click)="onViewCurrencyDetails(currency)"
-                              title="Voir les détails">
-                        <i class="fas fa-eye"></i>
-                      </button>
-                      <button class="action-btn edit-btn"
-                              (click)="onEditCurrency(currency)"
-                              title="Modifier">
-                        <i class="fas fa-edit"></i>
-                      </button>
-                      <button class="action-btn delete-btn"
-                              (click)="onDeleteCurrency(currency)"
-                              title="Supprimer">
-                        <i class="fas fa-trash"></i>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <ng-template #noCurrencies>
-          <div class="no-data">
-            <i class="fas fa-coins"></i>
-            <h3>Aucune devise trouvée</h3>
-            <p>Cliquez sur "Nouvelle Devise" pour ajouter la première devise.</p>
-          </div>
-        </ng-template>
-      </div>
+      </nav>
     </div>
   </div>
 
-  <!-- Modals de création et d'édition -->
+  <!-- Contenu des onglets avec scroll - Style identique aux propriétés -->
+  <div class="tab-content flex-1 overflow-y-auto bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div *ngIf="!(isLoading$ | async)">
 
-  <!-- Modal de création -->
-  <div class="modal-overlay" *ngIf="showCreateModal" (click)="onCloseModal()">
-    <div class="modal-container" (click)="$event.stopPropagation()">
-      <div class="modal-header">
-        <h3 class="modal-title">
-          <i class="fas"
-             [class.fa-flag]="selectedTab === 'countries'"
-             [class.fa-city]="selectedTab === 'cities'"
-             [class.fa-coins]="selectedTab === 'currencies'"></i>
-          <span>Nouveau {{ getModalTitle() }}</span>
-        </h3>
-        <button class="modal-close" (click)="onCloseModal()">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
+        <!-- Contenu des onglets - Style moderne -->
+        <div class="space-y-6">
 
-      <div class="modal-content">
-        <!-- Formulaire de création de pays -->
-        <form *ngIf="selectedTab === 'countries'" class="create-form" (ngSubmit)="onSubmitCountryForm()">
-          <div class="form-group">
-            <label for="countryName">Nom du pays *</label>
-            <input type="text" id="countryName" class="form-input"
-                   placeholder="Ex: Cameroun" required>
-          </div>
+          <!-- Section Pays -->
+          <div *ngIf="selectedTab === 'countries'">
+            <ng-container *ngIf="(filteredCountries$ | async) as countries">
+              <ng-container *ngIf="countries.length > 0; else emptyCountries">
 
-          <div class="form-row">
-            <div class="form-group">
-              <label for="countryCode">Code pays *</label>
-              <input type="text" id="countryCode" class="form-input"
-                     placeholder="Ex: CM" maxlength="2" required>
-            </div>
-            <div class="form-group">
-              <label for="countryFlag">Drapeau</label>
-              <input type="text" id="countryFlag" class="form-input"
-                     placeholder="🇨🇲">
-            </div>
-          </div>
+                <!-- Barre de recherche et actions - Design moderne professionnel -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+                  <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
 
-          <div class="form-row">
-            <div class="form-group">
-              <label for="countryCurrency">Devise</label>
-              <input type="text" id="countryCurrency" class="form-input"
-                     placeholder="Ex: XAF">
-            </div>
-            <div class="form-group">
-              <label for="countryTimezone">Fuseau horaire</label>
-              <input type="text" id="countryTimezone" class="form-input"
-                     placeholder="Ex: Africa/Douala">
-            </div>
-          </div>
+                    <!-- Section recherche -->
+                    <div class="flex-1 max-w-2xl">
+                      <div class="relative group">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                          <i class="fas fa-search text-gray-400 group-focus-within:text-yellow-500 transition-colors duration-200"></i>
+                        </div>
+                        <input
+                          type="text"
+                          class="search-input block w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl bg-gray-50 placeholder-gray-500 focus:outline-none focus:bg-white focus:border-yellow-500 focus:ring-2 focus:ring-yellow-100 transition-all duration-200 text-sm"
+                          placeholder="Rechercher un pays par nom, code ou devise..."
+                          [(ngModel)]="countrySearchTerm"
+                          (input)="onCountrySearch($event)">
+                        <div class="absolute inset-y-0 right-0 pr-4 flex items-center">
+                          <kbd class="hidden sm:inline-flex items-center px-2 py-1 border border-gray-200 rounded text-xs font-sans font-medium text-gray-400">
+                            ⌘K
+                          </kbd>
+                        </div>
+                      </div>
+                    </div>
 
-          <div class="form-actions">
-            <button type="button" class="btn-cancel" (click)="onCloseModal()">
-              Annuler
-            </button>
-            <button type="submit" class="btn-submit">
-              <i class="fas fa-save"></i>
-              Créer le pays
-            </button>
-          </div>
-        </form>
+                    <!-- Section actions -->
+                    <div class="flex items-center space-x-3">
+                      <!-- Bouton filtres avec indicateur -->
+                      <button
+                        class="action-btn-secondary group"
+                        [class.active]="showCountryFilters"
+                        (click)="onToggleCountryFilters()">
+                        <i class="fas fa-filter mr-2 group-hover:scale-110 transition-transform duration-200"></i>
+                        <span>Filtres</span>
+                        <span *ngIf="showCountryFilters" class="ml-2 w-2 h-2 bg-yellow-500 rounded-full"></span>
+                      </button>
 
-        <!-- Formulaire de création de ville -->
-        <form *ngIf="selectedTab === 'cities'" class="create-form" (ngSubmit)="onSubmitCityForm()">
-          <div class="form-group">
-            <label for="cityName">Nom de la ville *</label>
-            <input type="text" id="cityName" class="form-input"
-                   placeholder="Ex: Douala" required>
-          </div>
+                      <!-- Bouton export -->
+                      <button
+                        class="action-btn-secondary group"
+                        (click)="onExportCountries()">
+                        <i class="fas fa-download mr-2 group-hover:scale-110 transition-transform duration-200"></i>
+                        <span>Exporter</span>
+                      </button>
 
-          <div class="form-group">
-            <label for="cityCountry">Pays *</label>
-            <select id="cityCountry" class="form-select" required>
-              <option value="">Sélectionner un pays</option>
-              <option *ngFor="let country of countries$ | async" [value]="country._id">
-                {{ country.flag }} {{ country.name }}
-              </option>
-            </select>
-          </div>
+                      <!-- Bouton principal - Ajouter pays -->
+                      <button
+                        class="action-btn-primary group"
+                        (click)="onCreateItem()">
+                        <i class="fas fa-plus mr-2 group-hover:rotate-90 transition-transform duration-200"></i>
+                        <span>Nouveau pays</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
 
-          <div class="form-row">
-            <div class="form-group">
-              <label for="cityLatitude">Latitude</label>
-              <input type="number" id="cityLatitude" class="form-input"
-                     placeholder="Ex: 4.0511" step="any">
-            </div>
-            <div class="form-group">
-              <label for="cityLongitude">Longitude</label>
-              <input type="number" id="cityLongitude" class="form-input"
-                     placeholder="Ex: 9.7679" step="any">
-            </div>
-          </div>
+              <!-- Panneau de filtres avancés - Design moderne -->
+              <div *ngIf="showCountryFilters" class="mb-6 bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200 rounded-xl p-6 shadow-sm">
+                <div class="flex items-center justify-between mb-4">
+                  <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                    <i class="fas fa-sliders-h mr-2 text-yellow-500"></i>
+                    Filtres avancés
+                  </h3>
+                  <button
+                    class="text-gray-400 hover:text-gray-600 transition-colors duration-200"
+                    (click)="onToggleCountryFilters()">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
 
-          <div class="form-actions">
-            <button type="button" class="btn-cancel" (click)="onCloseModal()">
-              Annuler
-            </button>
-            <button type="submit" class="btn-submit">
-              <i class="fas fa-save"></i>
-              Créer la ville
-            </button>
-          </div>
-        </form>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  <!-- Filtre Statut -->
+                  <div class="filter-group">
+                    <label class="filter-label">
+                      <i class="fas fa-toggle-on mr-2 text-green-500"></i>
+                      Statut
+                    </label>
+                    <select class="filter-select">
+                      <option value="">Tous les statuts</option>
+                      <option value="active">✅ Actifs</option>
+                      <option value="inactive">❌ Inactifs</option>
+                    </select>
+                  </div>
 
-        <!-- Formulaire de création de devise -->
-        <form *ngIf="selectedTab === 'currencies'" class="create-form" (ngSubmit)="onSubmitCurrencyForm()">
-          <div class="form-row">
-            <div class="form-group">
-              <label for="currencyName">Nom de la devise *</label>
-              <input type="text" id="currencyName" class="form-input"
-                     placeholder="Ex: Franc CFA" required>
-            </div>
-            <div class="form-group">
-              <label for="currencyCode">Code *</label>
-              <input type="text" id="currencyCode" class="form-input"
-                     placeholder="Ex: XAF" maxlength="3" required>
-            </div>
-          </div>
+                  <!-- Filtre Devise -->
+                  <div class="filter-group">
+                    <label class="filter-label">
+                      <i class="fas fa-coins mr-2 text-yellow-500"></i>
+                      Devise
+                    </label>
+                    <select class="filter-select">
+                      <option value="">Toutes les devises</option>
+                      <option value="XAF">🇨🇲 XAF - Franc CFA</option>
+                      <option value="EUR">🇪🇺 EUR - Euro</option>
+                      <option value="USD">🇺🇸 USD - Dollar</option>
+                    </select>
+                  </div>
 
-          <div class="form-row">
-            <div class="form-group">
-              <label for="currencySymbol">Symbole</label>
-              <input type="text" id="currencySymbol" class="form-input"
-                     placeholder="Ex: FCFA" maxlength="5">
-            </div>
-            <div class="form-group">
-              <label for="currencyRate">Taux de change</label>
-              <input type="number" id="currencyRate" class="form-input"
-                     placeholder="Ex: 655.957" step="any">
-            </div>
-          </div>
+                  <!-- Filtre Région -->
+                  <div class="filter-group">
+                    <label class="filter-label">
+                      <i class="fas fa-globe-africa mr-2 text-blue-500"></i>
+                      Région
+                    </label>
+                    <select class="filter-select">
+                      <option value="">Toutes les régions</option>
+                      <option value="africa">🌍 Afrique</option>
+                      <option value="europe">🌍 Europe</option>
+                      <option value="america">🌍 Amérique</option>
+                    </select>
+                  </div>
 
-          <div class="form-actions">
-            <button type="button" class="btn-cancel" (click)="onCloseModal()">
-              Annuler
-            </button>
-            <button type="submit" class="btn-submit">
-              <i class="fas fa-save"></i>
-              Créer la devise
-            </button>
-          </div>
-        </form>
+                  <!-- Actions -->
+                  <div class="filter-actions">
+                    <button
+                      class="filter-btn-reset group"
+                      (click)="onResetCountryFilters()">
+                      <i class="fas fa-undo mr-2 group-hover:rotate-180 transition-transform duration-300"></i>
+                      Réinitialiser
+                    </button>
+                    <button
+                      class="filter-btn-apply group"
+                      (click)="onApplyCountryFilters()">
+                      <i class="fas fa-check mr-2 group-hover:scale-110 transition-transform duration-200"></i>
+                      Appliquer
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Tableau des pays - Design moderne professionnel -->
+              <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <!-- En-tête du tableau -->
+                <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white">
+                  <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                      <i class="fas fa-flag mr-2 text-blue-500"></i>
+                      Liste des pays
+                      <span class="ml-2 text-sm font-normal text-gray-500">({{ countries.length }} pays)</span>
+                    </h3>
+                    <div class="flex items-center space-x-2">
+                      <button class="table-view-btn active">
+                        <i class="fas fa-th-list"></i>
+                      </button>
+                      <button class="table-view-btn">
+                        <i class="fas fa-th-large"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Tableau responsive -->
+                <div class="overflow-x-auto">
+                  <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                      <tr>
+                        <th scope="col" class="table-header-cell sortable" (click)="onSort('name')">
+                          <div class="flex items-center space-x-2">
+                            <i class="fas fa-flag text-blue-500"></i>
+                            <span>Pays</span>
+                            <i class="fas fa-sort text-gray-400 sort-icon"></i>
+                          </div>
+                        </th>
+                        <th scope="col" class="table-header-cell sortable" (click)="onSort('code')">
+                          <div class="flex items-center space-x-2">
+                            <i class="fas fa-code text-purple-500"></i>
+                            <span>Code ISO</span>
+                            <i class="fas fa-sort text-gray-400 sort-icon"></i>
+                          </div>
+                        </th>
+                        <th scope="col" class="table-header-cell">
+                          <div class="flex items-center space-x-2">
+                            <i class="fas fa-coins text-yellow-500"></i>
+                            <span>Devise</span>
+                          </div>
+                        </th>
+                        <th scope="col" class="table-header-cell">
+                          <div class="flex items-center space-x-2">
+                            <i class="fas fa-city text-green-500"></i>
+                            <span>Villes</span>
+                          </div>
+                        </th>
+                        <th scope="col" class="table-header-cell">
+                          <div class="flex items-center space-x-2">
+                            <i class="fas fa-toggle-on text-blue-500"></i>
+                            <span>Statut</span>
+                          </div>
+                        </th>
+                        <th scope="col" class="table-header-cell text-center">
+                          <div class="flex items-center justify-center space-x-2">
+                            <i class="fas fa-cogs text-gray-500"></i>
+                            <span>Actions</span>
+                          </div>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-100">
+                      <tr *ngFor="let country of countries; trackBy: trackByCountryId" class="country-row group">
+                        <!-- Colonne Pays -->
+                        <td class="table-cell">
+                          <div class="flex items-center space-x-4">
+                            <div class="country-avatar">
+                              <div class="flag-emoji" *ngIf="country.flag">{{ country.flag }}</div>
+                              <i class="fas fa-flag" *ngIf="!country.flag"></i>
+                            </div>
+                            <div class="country-info">
+                              <div class="country-name">{{ country.name }}</div>
+                              <div class="country-code">{{ country.code }}</div>
+                            </div>
+                          </div>
+                        </td>
+
+                        <!-- Colonne Code ISO -->
+                        <td class="table-cell">
+                          <span class="code-badge">{{ country.code }}</span>
+                        </td>
+
+                        <!-- Colonne Devise -->
+                        <td class="table-cell">
+                          <div class="currency-info">
+                            <span class="currency-code">{{ country.currency || 'Non configurée' }}</span>
+                          </div>
+                        </td>
+
+                        <!-- Colonne Villes -->
+                        <td class="table-cell">
+                          <div class="cities-count">
+                            <span class="count-number">{{ country.cityCount || 0 }}</span>
+                            <span class="count-label">villes</span>
+                          </div>
+                        </td>
+
+                        <!-- Colonne Statut -->
+                        <td class="table-cell">
+                          <div class="status-toggle-modern">
+                            <label class="toggle-switch">
+                              <input
+                                type="checkbox"
+                                [checked]="country.isActive"
+                                (change)="onToggleCountryStatus(country)">
+                              <span class="toggle-slider"></span>
+                            </label>
+                            <span class="status-label" [class]="country.isActive ? 'active' : 'inactive'">
+                              {{ country.isActive ? 'Actif' : 'Inactif' }}
+                            </span>
+                          </div>
+                        </td>
+
+                        <!-- Colonne Actions -->
+                        <td class="table-cell">
+                          <div class="action-buttons">
+                            <button
+                              class="action-btn view"
+                              (click)="onViewCountryDetails(country)"
+                              title="Voir les détails">
+                              <i class="fas fa-eye"></i>
+                            </button>
+                            <button
+                              class="action-btn edit"
+                              (click)="onEditCountry(country)"
+                              title="Modifier">
+                              <i class="fas fa-edit"></i>
+                            </button>
+                            <button
+                              class="action-btn delete"
+                              (click)="onDeleteCountry(country)"
+                              title="Supprimer">
+                              <i class="fas fa-trash"></i>
+                            </button>
+                            <div class="action-menu-trigger">
+                              <button class="action-btn menu">
+                                <i class="fas fa-ellipsis-v"></i>
+                              </button>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <!-- Footer du tableau -->
+                <div class="px-6 py-4 border-t border-gray-200 bg-gray-50">
+                  <div class="flex items-center justify-between">
+                    <div class="text-sm text-gray-700">
+                      Affichage de <span class="font-medium">1</span> à <span class="font-medium">{{ countries.length }}</span> sur <span class="font-medium">{{ countries.length }}</span> pays
+                    </div>
+                    <div class="flex items-center space-x-2">
+                      <button class="pagination-btn" disabled>
+                        <i class="fas fa-chevron-left"></i>
+                      </button>
+                      <span class="pagination-info">Page 1 sur 1</span>
+                      <button class="pagination-btn" disabled>
+                        <i class="fas fa-chevron-right"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+
+            <!-- État vide moderne pour les pays - Style Tailwind -->
+            <ng-template #emptyCountries>
+              <div class="text-center py-12">
+                <div class="mx-auto h-24 w-24 text-gray-400 mb-4">
+                  <div class="h-24 w-24 rounded-full bg-gray-100 flex items-center justify-center">
+                    <i class="fas fa-flag text-4xl text-gray-400"></i>
+                  </div>
+                </div>
+                <h3 class="mt-2 text-lg font-medium text-gray-900">Aucun pays configuré</h3>
+                <p class="mt-1 text-sm text-gray-500 max-w-md mx-auto">
+                  Commencez par ajouter des pays pour organiser votre application géographiquement.
+                  Les pays permettent de structurer les villes et les devises.
+                </p>
+                <div class="mt-6">
+                  <button
+                    type="button"
+                    class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    (click)="onCreateItem()">
+                    <i class="fas fa-plus mr-2"></i>
+                    Ajouter un pays
+                  </button>
+                </div>
+              </div>
+            </ng-template>
+          </ng-container>
+        </div>
+
+        <!-- Section Villes -->
+        <div *ngIf="selectedTab === 'cities'">
+          <ng-container *ngIf="(filteredCities$ | async) as cities">
+            <ng-container *ngIf="cities.length > 0; else emptyCities">
+
+              <!-- Barre de recherche et actions pour les villes -->
+              <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
+
+                  <!-- Section recherche -->
+                  <div class="flex-1 max-w-2xl">
+                    <div class="relative group">
+                      <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <i class="fas fa-search text-gray-400 group-focus-within:text-yellow-500 transition-colors duration-200"></i>
+                      </div>
+                      <input
+                        type="text"
+                        class="search-input block w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl bg-gray-50 placeholder-gray-500 focus:outline-none focus:bg-white focus:border-yellow-500 focus:ring-2 focus:ring-yellow-100 transition-all duration-200 text-sm"
+                        placeholder="Rechercher une ville par nom, pays ou région..."
+                        [(ngModel)]="citySearchTerm"
+                        (input)="onCitySearch($event)">
+                      <div class="absolute inset-y-0 right-0 pr-4 flex items-center">
+                        <kbd class="hidden sm:inline-flex items-center px-2 py-1 border border-gray-200 rounded text-xs font-sans font-medium text-gray-400">
+                          ⌘K
+                        </kbd>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Section actions -->
+                  <div class="flex items-center space-x-3">
+                    <!-- Bouton export -->
+                    <button
+                      class="action-btn-secondary group"
+                      (click)="onExportCities()">
+                      <i class="fas fa-download mr-2 group-hover:scale-110 transition-transform duration-200"></i>
+                      <span>Exporter</span>
+                    </button>
+
+                    <!-- Bouton principal - Ajouter ville -->
+                    <button
+                      class="action-btn-primary group"
+                      (click)="onCreateItem()">
+                      <i class="fas fa-plus mr-2 group-hover:rotate-90 transition-transform duration-200"></i>
+                      <span>Nouvelle ville</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Interface de gestion des villes - Design Ndiye -->
+
+              <!-- En-tête avec actions - Style moderne -->
+              <div class="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-xl shadow-lg mb-6">
+                <div class="px-6 py-6">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                      <div class="flex-shrink-0">
+                        <div class="w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl flex items-center justify-center shadow-lg">
+                          <i class="fas fa-city text-white text-xl"></i>
+                        </div>
+                      </div>
+                      <div>
+                        <h3 class="text-xl font-bold text-gray-900 flex items-center">
+                          Gestion des Villes
+                          <span class="ml-3 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
+                            {{ cities.length }} ville(s)
+                          </span>
+                        </h3>
+                        <p class="mt-1 text-sm text-gray-600">
+                          Gérez les villes disponibles dans votre application
+                        </p>
+                      </div>
+                    </div>
+                    <div class="flex space-x-3">
+                      <button
+                        type="button"
+                        class="inline-flex items-center px-4 py-2 border border-yellow-300 shadow-sm text-sm font-medium rounded-lg text-yellow-700 bg-white hover:bg-yellow-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-all duration-200"
+                        (click)="onImportCitiesFromGeonames()">
+                        <i class="fas fa-download mr-2 text-yellow-600"></i>
+                        Importer depuis GeoNames
+                      </button>
+                      <button
+                        type="button"
+                        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-all duration-200"
+                        (click)="onCreateCity()">
+                        <i class="fas fa-plus mr-2"></i>
+                        Ajouter une ville
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Filtres et recherche - Design moderne -->
+              <div class="bg-white border border-gray-200 rounded-xl shadow-sm mb-6">
+                <div class="px-6 py-5">
+                  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Recherche -->
+                    <div>
+                      <label class="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
+                        <i class="fas fa-search mr-2 text-yellow-600"></i>
+                        Rechercher une ville
+                      </label>
+                      <div class="relative">
+                        <input
+                          type="text"
+                          [(ngModel)]="citySearchTerm"
+                          placeholder="Tapez le nom d'une ville..."
+                          class="block w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-400 focus:outline-none focus:placeholder-gray-300 focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm transition-all duration-200">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                          <i class="fas fa-search text-gray-400"></i>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Filtre par pays -->
+                    <div>
+                      <label class="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
+                        <i class="fas fa-flag mr-2 text-blue-600"></i>
+                        Filtrer par pays
+                      </label>
+                      <select
+                        [(ngModel)]="selectedCountryFilter"
+                        class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white transition-all duration-200">
+                        <option value="">🌍 Tous les pays</option>
+                        <option *ngFor="let country of (countries$ | async)" [value]="country._id">
+                          {{ country.name }}
+                        </option>
+                      </select>
+                    </div>
+
+                    <!-- Filtre par statut -->
+                    <div>
+                      <label class="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
+                        <i class="fas fa-toggle-on mr-2 text-green-600"></i>
+                        Statut
+                      </label>
+                      <select
+                        [(ngModel)]="selectedStatusFilter"
+                        class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 sm:text-sm bg-white transition-all duration-200">
+                        <option value="">📊 Tous les statuts</option>
+                        <option value="active">✅ Actives</option>
+                        <option value="inactive">❌ Inactives</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Liste des villes - Design moderne avec cartes -->
+              <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                <div *ngFor="let city of getFilteredCities(cities); trackBy: trackByCityId"
+                     class="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden group">
+
+                  <!-- En-tête de la carte -->
+                  <div class="px-6 py-4 border-b border-gray-100">
+                    <div class="flex items-center justify-between">
+                      <div class="flex items-center space-x-3">
+                        <div class="flex-shrink-0">
+                          <div class="w-12 h-12 rounded-xl flex items-center justify-center shadow-sm transition-all duration-200"
+                               [class]="city.isActive ?
+                                 'bg-gradient-to-br from-green-400 to-emerald-500 text-white' :
+                                 'bg-gradient-to-br from-gray-300 to-gray-400 text-gray-600'">
+                            <i class="fas fa-city text-lg"></i>
+                          </div>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                          <h3 class="text-lg font-semibold text-gray-900 truncate group-hover:text-yellow-700 transition-colors duration-200">
+                            {{ city.name }}
+                          </h3>
+                          <div class="flex items-center mt-1">
+                            <i class="fas fa-flag text-blue-500 mr-2 text-sm"></i>
+                            <p class="text-sm text-gray-600 truncate">
+                              {{ city.country?.name || 'Pays non défini' }}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Badge de statut -->
+                      <div class="flex-shrink-0">
+                        <span [class]="city.isActive ?
+                          'bg-green-100 text-green-800 border-green-200' :
+                          'bg-red-100 text-red-800 border-red-200'"
+                          class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border">
+                          <span [class]="city.isActive ? 'bg-green-400' : 'bg-red-400'"
+                                class="w-2 h-2 rounded-full mr-2"></span>
+                          {{ city.isActive ? 'Active' : 'Inactive' }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Statistiques -->
+                  <div class="px-6 py-4">
+                    <div class="grid grid-cols-2 gap-4">
+                      <div class="text-center p-3 bg-blue-50 rounded-lg border border-blue-100">
+                        <div class="flex items-center justify-center mb-2">
+                          <i class="fas fa-users text-blue-600 text-lg"></i>
+                        </div>
+                        <p class="text-2xl font-bold text-blue-700">{{ city.userCount || 0 }}</p>
+                        <p class="text-xs text-blue-600 font-medium">Utilisateurs</p>
+                      </div>
+                      <div class="text-center p-3 bg-purple-50 rounded-lg border border-purple-100">
+                        <div class="flex items-center justify-center mb-2">
+                          <i class="fas fa-home text-purple-600 text-lg"></i>
+                        </div>
+                        <p class="text-2xl font-bold text-purple-700">{{ city.propertyCount || 0 }}</p>
+                        <p class="text-xs text-purple-600 font-medium">Propriétés</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Actions -->
+                  <div class="px-6 py-4 bg-gray-50 border-t border-gray-100">
+                    <div class="flex items-center justify-between">
+                      <!-- Toggle statut -->
+                      <div class="flex items-center space-x-3">
+                        <span class="text-sm font-medium text-gray-700">Statut :</span>
+                        <button
+                          type="button"
+                          [class]="city.isActive ?
+                            'bg-green-500 hover:bg-green-600 focus:ring-green-500' :
+                            'bg-gray-300 hover:bg-gray-400 focus:ring-gray-500'"
+                          class="relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2"
+                          (click)="onToggleCityStatus(city)">
+                          <span class="sr-only">Activer/Désactiver la ville</span>
+                          <span
+                            [class]="city.isActive ? 'translate-x-5' : 'translate-x-0'"
+                            class="pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200">
+                          </span>
+                        </button>
+                      </div>
+
+                      <!-- Boutons d'action -->
+                      <div class="flex items-center space-x-2">
+                        <button
+                          type="button"
+                          class="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200"
+                          (click)="onViewCity(city)"
+                          title="Voir les détails">
+                          <i class="fas fa-eye"></i>
+                        </button>
+                        <button
+                          type="button"
+                          class="p-2 text-gray-400 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-all duration-200"
+                          (click)="onEditCity(city)"
+                          title="Modifier">
+                          <i class="fas fa-edit"></i>
+                        </button>
+                        <button
+                          type="button"
+                          class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200"
+                          (click)="onDeleteCity(city)"
+                          title="Supprimer">
+                          <i class="fas fa-trash"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+
+            <!-- État vide pour les villes - Design moderne -->
+            <ng-template #emptyCities>
+              <div class="text-center py-16">
+                <div class="mx-auto mb-8">
+                  <div class="w-32 h-32 mx-auto bg-gradient-to-br from-yellow-100 to-orange-100 rounded-full flex items-center justify-center shadow-lg">
+                    <i class="fas fa-city text-6xl text-gradient bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent"></i>
+                  </div>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-4">Aucune ville configurée</h3>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
+                  Commencez par ajouter des villes pour permettre aux utilisateurs de localiser précisément leurs biens.
+                  <br>
+                  <span class="text-sm text-gray-500">Les villes sont associées aux pays que vous avez configurés.</span>
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                  <button
+                    type="button"
+                    class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-all duration-200"
+                    (click)="onCreateCity()">
+                    <i class="fas fa-plus mr-3"></i>
+                    Ajouter une ville
+                  </button>
+                  <button
+                    type="button"
+                    class="inline-flex items-center px-6 py-3 border border-yellow-300 text-base font-medium rounded-lg text-yellow-700 bg-white hover:bg-yellow-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-all duration-200"
+                    (click)="onImportCitiesFromGeonames()">
+                    <i class="fas fa-download mr-3"></i>
+                    Importer depuis GeoNames
+                  </button>
+                </div>
+              </div>
+            </ng-template>
+          </ng-container>
+        </div>
+
+        <!-- Section Devises -->
+        <div *ngIf="selectedTab === 'currencies'">
+          <ng-container *ngIf="(filteredCurrencies$ | async) as currencies">
+            <ng-container *ngIf="currencies.length > 0; else emptyCurrencies">
+              <!-- Contenu des devises ici - À implémenter -->
+              <div class="bg-white shadow overflow-hidden sm:rounded-md p-6">
+                <div class="text-center text-gray-500">
+                  <i class="fas fa-coins text-4xl mb-4"></i>
+                  <p>Interface de gestion des devises en cours de développement</p>
+                </div>
+              </div>
+            </ng-container>
+
+            <!-- État vide pour les devises -->
+            <ng-template #emptyCurrencies>
+              <div class="text-center py-12">
+                <div class="mx-auto h-24 w-24 text-gray-400 mb-4">
+                  <div class="h-24 w-24 rounded-full bg-purple-100 flex items-center justify-center">
+                    <i class="fas fa-coins text-4xl text-purple-400"></i>
+                  </div>
+                </div>
+                <h3 class="mt-2 text-lg font-medium text-gray-900">Aucune devise configurée</h3>
+                <p class="mt-1 text-sm text-gray-500 max-w-md mx-auto">
+                  Configurez les devises pour permettre la gestion des prix et des paiements.
+                  Chaque pays peut avoir sa devise principale.
+                </p>
+                <div class="mt-6">
+                  <button
+                    type="button"
+                    class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+                    (click)="onCreateItem()">
+                    <i class="fas fa-plus mr-2"></i>
+                    Ajouter une devise
+                  </button>
+                </div>
+              </div>
+            </ng-template>
+          </ng-container>
+        </div>
+
       </div>
     </div>
   </div>
