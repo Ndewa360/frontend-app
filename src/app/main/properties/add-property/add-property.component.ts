@@ -153,8 +153,7 @@ export class AddPropertyComponent implements OnInit {
       case 1:
         return this.formGroup.get('name')?.valid &&
                this.formGroup.get('propertyType')?.valid &&
-               this.formGroup.get('geolocationCountry')?.valid &&
-               this.formGroup.get('geolocationCity')?.valid &&
+               this.formGroup.get('geolocation')?.valid &&
                this.formGroup.get('location')?.valid;
       case 2:
         return true; // Étape 2 est optionnelle
@@ -208,10 +207,13 @@ export class AddPropertyComponent implements OnInit {
       return;
     }
 
+    // Exclure le champ geolocation du payload et ajouter les IDs séparément
+    const { geolocation, ...cleanFormValue } = formValue;
+
     this._store.dispatch(new PropertyAction.CreateProperty({
-      ...FormUtils.removeNullAttribut(formValue),
-      geolocationCity: location.city._id,
-      geolocationCountry: location.country._id,
+      ...FormUtils.removeNullAttribut(cleanFormValue),
+      geolocationCity: typeof location.city === 'string' ? location.city : location.city._id,
+      geolocationCountry: typeof location.country === 'string' ? location.country : location.country._id,
 
       // Propriétés existantes
       hasClosure: formValue.hasClosure || false,

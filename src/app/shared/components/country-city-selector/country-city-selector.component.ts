@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, forwardRef } from '@angular/core';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormBuilder, FormGroup } from '@angular/forms';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormBuilder, FormGroup, Validator, NG_VALIDATORS, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CountryModel } from '../../store/country/country.model';
@@ -30,10 +30,15 @@ export interface CountryCityValue {
       provide: NG_VALUE_ACCESSOR,
       useExisting: forwardRef(() => CountryCitySelectorComponent),
       multi: true
+    },
+    {
+      provide: NG_VALIDATORS,
+      useExisting: forwardRef(() => CountryCitySelectorComponent),
+      multi: true
     }
   ]
 })
-export class CountryCitySelectorComponent implements OnInit, OnDestroy, ControlValueAccessor {
+export class CountryCitySelectorComponent implements OnInit, OnDestroy, ControlValueAccessor, Validator {
   private destroy$ = new Subject<void>();
   private onChange = (value: CountryCityValue) => {};
   private onTouched = () => {};
@@ -279,11 +284,43 @@ export class CountryCitySelectorComponent implements OnInit, OnDestroy, ControlV
   setDisabledState(isDisabled: boolean): void {
     this.disabled = isDisabled;
     this.updateCityState();
-    
+
     if (isDisabled) {
       this.selectorForm.disable();
     } else {
       this.selectorForm.enable();
     }
+  }
+
+  // Validator implementation
+  validate(control: AbstractControl): ValidationErrors | null {
+    // Si le contrôle n'a pas de valeur, vérifier les exigences
+    if (!control.value) {
+      const errors: ValidationErrors = {};
+
+      if (this.countryRequired) {
+        errors['countryRequired'] = { message: 'Le pays est obligatoire' };
+      }
+
+      if (this.cityRequired) {
+        errors['cityRequired'] = { message: 'La ville est obligatoire' };
+      }
+
+      return Object.keys(errors).length > 0 ? errors : null;
+    }
+
+    // Si le contrôle a une valeur, vérifier qu'elle est complète
+    const value = control.value as CountryCityValue;
+    const errors: ValidationErrors = {};
+
+    if (this.countryRequired && !value.country) {
+      errors['countryRequired'] = { message: 'Le pays est obligatoire' };
+    }
+
+    if (this.cityRequired && !value.city) {
+      errors['cityRequired'] = { message: 'La ville est obligatoire' };
+    }
+
+    return Object.keys(errors).length > 0 ? errors : null;
   }
 }

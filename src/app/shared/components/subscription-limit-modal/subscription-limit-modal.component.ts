@@ -49,6 +49,7 @@ export class SubscriptionLimitModalComponent implements OnInit, OnDestroy {
     this.subscriptionStatus$
       .pipe(takeUntil(this.destroy$))
       .subscribe(status => {
+        console.log('📊 Statut de souscription reçu dans le modal:', status);
         this.subscriptionStatus = status;
       });
 

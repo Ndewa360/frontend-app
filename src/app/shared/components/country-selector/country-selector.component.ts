@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, forwardRef } from '@angular/core';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormControl } from '@angular/forms';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormControl, Validator, NG_VALIDATORS, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Observable, Subject, BehaviorSubject, combineLatest } from 'rxjs';
 import { takeUntil, map, startWith, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Store, Select } from '@ngxs/store';
@@ -26,10 +26,15 @@ import { CountryModel } from '../../store/country/country.model';
       provide: NG_VALUE_ACCESSOR,
       useExisting: forwardRef(() => CountrySelectorComponent),
       multi: true
+    },
+    {
+      provide: NG_VALIDATORS,
+      useExisting: forwardRef(() => CountrySelectorComponent),
+      multi: true
     }
   ]
 })
-export class CountrySelectorComponent implements OnInit, OnDestroy, ControlValueAccessor {
+export class CountrySelectorComponent implements OnInit, OnDestroy, ControlValueAccessor, Validator {
   private destroy$ = new Subject<void>();
   private onChange = (value: any) => {};
   private onTouched = () => {};
@@ -299,5 +304,13 @@ export class CountrySelectorComponent implements OnInit, OnDestroy, ControlValue
     } else {
       this.searchControl.enable();
     }
+  }
+
+  // Validator implementation
+  validate(control: AbstractControl): ValidationErrors | null {
+    if (this.required && !control.value) {
+      return { 'countryRequired': { message: 'Le pays est obligatoire' } };
+    }
+    return null;
   }
 }

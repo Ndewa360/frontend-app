@@ -18,8 +18,20 @@
     
     <!-- Loading state -->
     <div *ngIf="loading" class="loading-container">
-      <youpez-loader></youpez-loader>
-      <p>Chargement des informations...</p>
+      <div class="loading-content">
+        <div class="loading-spinner">
+          <div class="spinner-ring"></div>
+          <div class="spinner-center">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M12 2L13.09 8.26L20 9L13.09 9.74L12 16L10.91 9.74L4 9L10.91 8.26L12 2Z" fill="currentColor"/>
+            </svg>
+          </div>
+        </div>
+        <div class="loading-text">
+          <h3>Vérification de votre plan</h3>
+          <p>Nous analysons votre souscription actuelle...</p>
+        </div>
+      </div>
     </div>
 
     <!-- Main content -->
@@ -115,8 +127,10 @@
       class="btn btn-primary upgrade-btn"
       (click)="upgradeToPremium()"
       [disabled]="upgrading">
-      <youpez-loader *ngIf="upgrading" size="small"></youpez-loader>
-      <youpez-ibm-icon *ngIf="!upgrading" iconName="arrow-up" iconSize="16"></youpez-ibm-icon>
+      <div *ngIf="upgrading" class="btn-spinner">
+        <div class="mini-spinner"></div>
+      </div>
+      <i *ngIf="!upgrading" class="fas fa-crown"></i>
       {{ upgrading ? 'Upgrade en cours...' : 'Passer au Premium' }}
     </button>
 
@@ -127,8 +141,10 @@
       class="btn btn-success reactivate-btn"
       (click)="reactivateAccount()"
       [disabled]="upgrading">
-      <youpez-loader *ngIf="upgrading" size="small"></youpez-loader>
-      <youpez-ibm-icon *ngIf="!upgrading" iconName="checkmark" iconSize="16"></youpez-ibm-icon>
+      <div *ngIf="upgrading" class="btn-spinner">
+        <div class="mini-spinner"></div>
+      </div>
+      <i *ngIf="!upgrading" class="fas fa-check-circle"></i>
       {{ upgrading ? 'Réactivation...' : 'Réactiver le compte' }}
     </button>
 

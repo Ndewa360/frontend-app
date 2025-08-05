@@ -2,9 +2,9 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store, Actions, ofActionSuccessful, ofActionErrored } from '@ngxs/store';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import { PropertyAction, PropertyModel, CountryState, CountryModel, CityModel } from 'src/app/shared/store';
+import { Subject, combineLatest } from 'rxjs';
+import { takeUntil, filter, take } from 'rxjs/operators';
+import { PropertyAction, PropertyModel, CountryState, CountryModel, CityModel, CityState } from 'src/app/shared/store';
 import { FormUtils } from 'src/app/shared/utils';
 import { CountryCityValue } from 'src/app/shared/components/geography-selectors';
 
@@ -114,12 +114,43 @@ export class UpdatePropertyComponent implements OnInit {
    * Charger les valeurs existantes de la propriété
    */
   private loadExistingValues(): void {
-    if (this.data.property) {
-      // Charger la localisation existante
-      this.formGroup.patchValue({
-        geolocation: {
-          country: this.data.property.geolocationCountry,
-          city: this.data.property.geolocationCity
+    // Vérifier que les données de géolocalisation existent
+    const hasCountry = this.data.property?.geolocationCountry;
+    const hasCity = this.data.property?.geolocationCity;
+
+    if (this.data.property && hasCountry && hasCity) {
+      // Récupérer les objets complets depuis les stores
+      combineLatest([
+        this._store.select(CountryState.selectStateCountries),
+        this._store.select(CityState.selectStateCities)
+      ]).pipe(
+        takeUntil(this.destroy$),
+        filter(([countries, cities]: [CountryModel[], CityModel[]]) =>
+          countries && countries.length > 0 && cities && cities.length > 0),
+        take(1)
+      ).subscribe(([countries, cities]: [CountryModel[], CityModel[]]) => {
+        // Gérer le cas où geolocationCountry/City peuvent être des strings (IDs) ou des objets
+        const countryId = typeof this.data.property.geolocationCountry === 'string'
+          ? this.data.property.geolocationCountry
+          : this.data.property.geolocationCountry?._id;
+
+        const cityId = typeof this.data.property.geolocationCity === 'string'
+          ? this.data.property.geolocationCity
+          : this.data.property.geolocationCity?._id;
+
+        const country = countries.find(c => c._id === countryId);
+        const city = cities.find(c => c._id === cityId);
+
+        if (country && city) {
+          this.formGroup.patchValue({
+            geolocation: {
+              country: country,
+              city: city
+            }
+          });
+          console.log('Localisation existante chargée:', { country: country.fullName, city: city.fullName });
+        } else {
+          console.warn('Impossible de trouver le pays ou la ville dans les stores', { countryId, cityId });
         }
       });
     }
@@ -188,10 +219,13 @@ export class UpdatePropertyComponent implements OnInit {
       return;
     }
 
+    // Exclure le champ geolocation du payload et ajouter les IDs séparément
+    const { geolocation, ...cleanFormValue } = formValue;
+
     this._store.dispatch(new PropertyAction.UpdateProperty({
-      ...FormUtils.removeNullAttribut(formValue),
-      geolocationCity: location.city._id,
-      geolocationCountry: location.country._id,
+      ...FormUtils.removeNullAttribut(cleanFormValue),
+      geolocationCity: typeof location.city === 'string' ? location.city : location.city._id,
+      geolocationCountry: typeof location.country === 'string' ? location.country : location.country._id,
       
       // Propriétés existantes
       hasClosure: formValue.hasClosure || false,
