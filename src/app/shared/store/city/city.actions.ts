@@ -51,6 +51,8 @@ export namespace CityAction
     }
 
 
+
+
     
     //Set city profil
     export class SetCity

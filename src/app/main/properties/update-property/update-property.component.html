@@ -84,33 +84,25 @@
                 placeholder="Ex: 150">
             </div>
 
-            <!-- Pays -->
+            <!-- Localisation (Pays + Ville) -->
             <div class="form-group">
-              <label class="form-label required">Pays</label>
-              <ibm-combo-box 
-                [items]="countriesList"
-                formControlName="geolocationCountry"
-                placeholder="Sélectionner un pays"
-                [class.error]="isValid('geolocationCountry')">
-                <ibm-dropdown-list></ibm-dropdown-list>
-              </ibm-combo-box>
-              <div class="form-error" *ngIf="isValid('geolocationCountry')">
-                Le pays est obligatoire
-              </div>
-            </div>
-
-            <!-- Ville -->
-            <div class="form-group">
-              <label class="form-label required">Ville</label>
-              <ibm-combo-box 
-                [items]="selectedCitiesList"
-                formControlName="geolocationCity"
-                placeholder="Sélectionner une ville"
-                [class.error]="isValid('geolocationCity')">
-                <ibm-dropdown-list></ibm-dropdown-list>
-              </ibm-combo-box>
-              <div class="form-error" *ngIf="isValid('geolocationCity')">
-                La ville est obligatoire
+              <label class="form-label required">Localisation</label>
+              <app-country-city-selector
+                formControlName="geolocation"
+                countryPlaceholder="Sélectionner un pays"
+                cityPlaceholder="Sélectionner une ville"
+                [countryRequired]="true"
+                [cityRequired]="true"
+                [layout]="'horizontal'"
+                [showCountryFlag]="true"
+                [showCountryCode]="true"
+                [showCityRegion]="true"
+                [showCityPopulation]="false"
+                [class.error]="isValid('geolocation')"
+                (selectionChanged)="onLocationChanged($event)">
+              </app-country-city-selector>
+              <div class="form-error" *ngIf="isValid('geolocation')">
+                La localisation est obligatoire
               </div>
             </div>
 

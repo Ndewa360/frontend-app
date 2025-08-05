@@ -1,0 +1,111 @@
+<div class="country-selector" [class.disabled]="disabled" [class.required]="required">
+  <!-- Input principal avec recherche -->
+  <div class="selector-input-container" [class.open]="isOpen" [class.has-value]="selectedCountry">
+    
+    <!-- Drapeau du pays sélectionné -->
+    <div class="selected-flag" *ngIf="showFlag && selectedCountry">
+      <span class="flag-emoji">{{ getFlagEmoji(selectedCountry) }}</span>
+    </div>
+    
+    <!-- Input de recherche -->
+    <input
+      type="text"
+      class="selector-input"
+      [formControl]="searchControl"
+      [placeholder]="selectedCountry ? getDisplayText(selectedCountry) : placeholder"
+      [disabled]="disabled"
+      (focus)="onInputFocus()"
+      (blur)="onInputBlur()"
+      autocomplete="off"
+      readonly="true">
+    
+    <!-- Bouton clear -->
+    <button
+      type="button"
+      class="clear-button"
+      *ngIf="selectedCountry && !disabled"
+      (click)="clearSelection()"
+      tabindex="-1">
+      <i class="fas fa-times"></i>
+    </button>
+    
+    <!-- Icône dropdown -->
+    <div class="dropdown-icon" (click)="toggleDropdown()">
+      <i class="fas fa-chevron-down" [class.rotated]="isOpen"></i>
+    </div>
+    
+    <!-- Indicateur de chargement -->
+    <div class="loading-indicator" *ngIf="loading$ | async">
+      <i class="fas fa-spinner fa-spin"></i>
+    </div>
+  </div>
+
+  <!-- Dropdown avec liste des pays -->
+  <div class="dropdown-container" *ngIf="isOpen" [class.open]="isOpen">
+    
+    <!-- Input de recherche dans le dropdown -->
+    <div class="search-container">
+      <div class="search-input-wrapper">
+        <i class="fas fa-search search-icon"></i>
+        <input
+          type="text"
+          class="search-input"
+          [formControl]="searchControl"
+          placeholder="Rechercher un pays..."
+          [disabled]="disabled"
+          autocomplete="off">
+      </div>
+    </div>
+
+    <!-- Liste des pays filtrés -->
+    <div class="options-container">
+      <div class="options-list" *ngIf="!(loading$ | async)">
+        
+        <!-- Message si aucun résultat -->
+        <div class="no-results" *ngIf="(filteredCountries$ | async)?.length === 0">
+          <i class="fas fa-search"></i>
+          <span>Aucun pays trouvé</span>
+        </div>
+        
+        <!-- Liste des pays -->
+        <div
+          class="option-item"
+          *ngFor="let country of filteredCountries$ | async; trackBy: trackByCountryId"
+          [class.selected]="selectedCountry?._id === country._id"
+          (click)="onOptionClick(country)">
+          
+          <!-- Drapeau -->
+          <div class="option-flag" *ngIf="showFlag">
+            <span class="flag-emoji">{{ getFlagEmoji(country) }}</span>
+          </div>
+          
+          <!-- Informations du pays -->
+          <div class="option-content">
+            <div class="option-name">{{ country.fullName || country.shortName }}</div>
+            <div class="option-details" *ngIf="showCode">
+              <span class="country-code" *ngIf="country.iso2">{{ country.iso2 }}</span>
+              <span class="separator" *ngIf="country.iso2 && country.iso3">•</span>
+              <span class="country-code-3" *ngIf="country.iso3">{{ country.iso3 }}</span>
+            </div>
+          </div>
+          
+          <!-- Icône de sélection -->
+          <div class="option-check" *ngIf="selectedCountry?._id === country._id">
+            <i class="fas fa-check"></i>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Indicateur de chargement dans la liste -->
+      <div class="loading-container" *ngIf="loading$ | async">
+        <div class="loading-item">
+          <i class="fas fa-spinner fa-spin"></i>
+          <span>Chargement des pays...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Overlay pour fermer le dropdown -->
+  <div class="dropdown-overlay" *ngIf="isOpen" (click)="closeDropdown()"></div>
+</div>

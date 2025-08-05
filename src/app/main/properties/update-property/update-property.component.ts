@@ -1,11 +1,12 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Store, Select, Actions, ofActionSuccessful, ofActionErrored } from '@ngxs/store';
-import { Observable, Subject } from 'rxjs';
+import { Store, Actions, ofActionSuccessful, ofActionErrored } from '@ngxs/store';
+import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { PropertyAction, PropertyModel, CountryState, CountryModel, CityModel } from 'src/app/shared/store';
 import { FormUtils } from 'src/app/shared/utils';
+import { CountryCityValue } from 'src/app/shared/components/geography-selectors';
 
 export interface UpdatePropertyDialogData {
   property: PropertyModel;
@@ -23,11 +24,11 @@ export class UpdatePropertyComponent implements OnInit {
   currentYear = new Date().getFullYear();
   private destroy$ = new Subject<void>();
 
-  @Select(CountryState.selectStateCountries) countries$: Observable<CountryModel[]>;
-  
-  countriesList = [];
-  citiesList: CityModel[] = [];
-  selectedCitiesList = [];
+  // Plus besoin de ces propriétés avec le nouveau composant
+  // @Select(CountryState.selectStateCountries) countries$: Observable<CountryModel[]>;
+  // countriesList = [];
+  // citiesList: CityModel[] = [];
+  // selectedCitiesList = [];
 
   constructor(
     public dialogRef: MatDialogRef<UpdatePropertyComponent>,
@@ -40,7 +41,7 @@ export class UpdatePropertyComponent implements OnInit {
   ngOnInit(): void {
     this.initializeForm();
     this.setupSubscriptions();
-    this.loadCountries();
+    this.loadExistingValues();
   }
 
   ngOnDestroy(): void {
@@ -56,8 +57,7 @@ export class UpdatePropertyComponent implements OnInit {
       name: [property.name, [Validators.required]],
       propertyType: [property.propertyType || 'APARTMENT', [Validators.required]],
       totalSurface: [property.totalSurface],
-      geolocationCountry: [null, [Validators.required]], // Sera rempli après chargement des pays
-      geolocationCity: [null, [Validators.required]], // Sera rempli après chargement des villes
+      geolocation: [null, [Validators.required]], // Nouveau champ unifié
       location: [property.location, [Validators.required]],
       buildingYear: [property.buildingYear],
       floors: [property.floors || 1],
@@ -106,59 +106,34 @@ export class UpdatePropertyComponent implements OnInit {
       this.waittingResponse = false;
     });
 
-    // Observer les changements de pays pour charger les villes
-    this.formGroup.get('geolocationCountry')?.valueChanges
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(country => {
-        console.log("Country cities ",country)
-        if (country?.cities) {
-          this.selectedCitiesList = country.cities.map(city => ({
-            content: city.fullName,
-            valueType: city._id,
-            selected:this.data.property.geolocationCity?._id==city._id
-          }));
-          
-          // Si la propriété a une ville, la sélectionner
-          if (this.data.property.geolocationCity) {
-            const currentCity = country.cities.find(city => city._id === this.data.property.geolocationCity._id);
-            if (currentCity) {
-              this.formGroup.patchValue({
-                geolocationCity: {
-                  content: currentCity.fullName,
-                  valueType: currentCity._id
-                }
-              });
-            }
-          }
-        }
-      });
+    // Plus besoin d'observer les changements de pays/villes
+    // Le composant country-city-selector gère cela automatiquement
   }
 
-  private loadCountries(): void {
-    this.countries$.pipe(takeUntil(this.destroy$)).subscribe(countries => {
-      if (countries?.length) {
-        this.countriesList = countries.map(country => ({
-          content: country.fullName,
-          valueType: country._id,
-          selected:country._id==this.data.property.geolocationCountry?._id,
-          cities: country.cities
-        }));
-
-        // Sélectionner le pays actuel de la propriété
-        if (this.data.property.geolocationCountry) {
-          const currentCountry = countries.find(country =>  country._id === this.data.property.geolocationCountry._id);
-          if (currentCountry) {
-            this.formGroup.patchValue({
-              geolocationCountry: {
-                content: currentCountry.fullName,
-                valueType: currentCountry._id,
-                cities: currentCountry.cities
-              }
-            });
-          }
+  /**
+   * Charger les valeurs existantes de la propriété
+   */
+  private loadExistingValues(): void {
+    if (this.data.property) {
+      // Charger la localisation existante
+      this.formGroup.patchValue({
+        geolocation: {
+          country: this.data.property.geolocationCountry,
+          city: this.data.property.geolocationCity
         }
-      }
-    });
+      });
+    }
+  }
+
+  /**
+   * Gérer le changement de localisation
+   */
+  onLocationChanged(location: CountryCityValue): void {
+    console.log('Localisation mise à jour:', location);
+    // Le FormControl 'geolocation' est automatiquement mis à jour
+    if (location.country && location.city) {
+      console.log(`Pays: ${location.country.fullName}, Ville: ${location.city.fullName}`);
+    }
   }
 
   // Navigation entre les étapes
@@ -178,10 +153,9 @@ export class UpdatePropertyComponent implements OnInit {
   isStepValid(step: number): boolean {
     switch (step) {
       case 1:
-        return this.formGroup.get('name')?.valid && 
+        return this.formGroup.get('name')?.valid &&
                this.formGroup.get('propertyType')?.valid &&
-               this.formGroup.get('geolocationCountry')?.valid &&
-               this.formGroup.get('geolocationCity')?.valid &&
+               this.formGroup.get('geolocation')?.valid &&
                this.formGroup.get('location')?.valid;
       case 2:
         return true; // Étape 2 est optionnelle
@@ -205,11 +179,19 @@ export class UpdatePropertyComponent implements OnInit {
   private updateProperty(): void {
     this.waittingResponse = true;
     const formValue = this.formGroup.value;
-    
+    const location = formValue.geolocation;
+
+    // Vérifier que la localisation est complète
+    if (!location || !location.country || !location.city) {
+      console.error('Localisation incomplète');
+      this.waittingResponse = false;
+      return;
+    }
+
     this._store.dispatch(new PropertyAction.UpdateProperty({
       ...FormUtils.removeNullAttribut(formValue),
-      geolocationCity: formValue.geolocationCity.valueType,
-      geolocationCountry: formValue.geolocationCountry.valueType,
+      geolocationCity: location.city._id,
+      geolocationCountry: location.country._id,
       
       // Propriétés existantes
       hasClosure: formValue.hasClosure || false,

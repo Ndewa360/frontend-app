@@ -9,6 +9,7 @@ import { CityModel, CountryModel, CountryState, PropertyAction } from 'src/app/s
 import { FormUtils } from 'src/app/shared/utils';
 import { SubscriptionLimitAction } from 'src/app/shared/store/subscription-limit';
 import { SubscriptionLimitModalComponent, SubscriptionLimitModalData } from 'src/app/shared/components/subscription-limit-modal/subscription-limit-modal.component';
+import { CountryCityValue } from 'src/app/shared/components/geography-selectors';
 
 @Component({
   selector: 'app-add-property',
@@ -21,12 +22,13 @@ export class AddPropertyComponent implements OnInit {
   waittingResponse = false;
   currentStep = 1;
   currentYear = new Date().getFullYear();
+  showValidationErrors = false;
 
-  @Select(CountryState.selectStateCountries) countries$:Observable<CountryModel[]>;
-
-  countriesList=[];
-  citiesList:CityModel[]=[];
-  selectedCitiesList=[]
+  // Plus besoin de ces propriétés avec le nouveau composant
+  // @Select(CountryState.selectStateCountries) countries$:Observable<CountryModel[]>;
+  // countriesList=[];
+  // citiesList:CityModel[]=[];
+  // selectedCitiesList=[]
 
   constructor(
     private dialogRef: MatDialogRef<AddPropertyComponent>,
@@ -43,8 +45,7 @@ export class AddPropertyComponent implements OnInit {
       name: [null, [Validators.required]],
       propertyType: ['APARTMENT', [Validators.required]],
       totalSurface: [null],
-      geolocationCountry: [null, [Validators.required]],
-      geolocationCity: [null, [Validators.required]],
+      geolocation: [null, [Validators.required]], // Nouveau champ unifié
       location: [null, [Validators.required]],
       buildingYear: [null],
       floors: [1],
@@ -76,15 +77,8 @@ export class AddPropertyComponent implements OnInit {
       contractTemplate: [null]
     })
 
-    this.countries$.subscribe((countries:CountryModel[])=>{
-      this.countriesList=countries.map((country)=>({content:country.fullName,valueType:country._id}));
-      if(this.countriesList.length>0) this.formGroup.get("geolocationCountry").setValue(this.countriesList[0].valueType);
-      this.citiesList = countries.map((country)=>country.cities).reduce((acc,curr)=>[...acc,...curr],[])
-    });
-    
-    this.formGroup.get("geolocationCountry").valueChanges.subscribe((value)=>{
-      this.selectedCitiesList=this.citiesList.filter((city)=>city.country==value.valueType).map((city)=>({content:city.fullName, valueType:city._id}));
-    })
+    // Plus besoin de cette logique avec le nouveau composant
+    // Le composant country-city-selector gère automatiquement les pays et villes
 
 
     this._ngxsAction.pipe(ofActionSuccessful(PropertyAction.CreateProperty)).subscribe((value)=>{
@@ -111,6 +105,18 @@ export class AddPropertyComponent implements OnInit {
     this.dialogRef.close(false)
   }
 
+  /**
+   * Gérer le changement de localisation
+   */
+  onLocationChanged(location: CountryCityValue): void {
+    console.log('Localisation sélectionnée:', location);
+    // Le FormControl 'geolocation' est automatiquement mis à jour
+    // Optionnel : actions supplémentaires quand la localisation change
+    if (location.country && location.city) {
+      console.log(`Pays: ${location.country.fullName}, Ville: ${location.city.fullName}`);
+    }
+  }
+
   isValid(name) {
     const instance = this.formGroup.get(name)
     return instance.invalid && (instance.dirty || instance.touched)
@@ -129,6 +135,7 @@ export class AddPropertyComponent implements OnInit {
 
   // Navigation entre les étapes
   nextStep(): void {
+    this.showValidationErrors = true; // Activer l'affichage des erreurs
     if (this.currentStep < 3 && this.isStepValid(this.currentStep)) {
       this.currentStep++;
     }
@@ -193,11 +200,18 @@ export class AddPropertyComponent implements OnInit {
 
   private createProperty(): void {
     const formValue = this.formGroup.value;
+    const location = formValue.geolocation;
+
+    // Vérifier que la localisation est complète
+    if (!location || !location.country || !location.city) {
+      console.error('Localisation incomplète');
+      return;
+    }
 
     this._store.dispatch(new PropertyAction.CreateProperty({
       ...FormUtils.removeNullAttribut(formValue),
-      geolocationCity: formValue.geolocationCity.valueType,
-      geolocationCountry: formValue.geolocationCountry.valueType,
+      geolocationCity: location.city._id,
+      geolocationCountry: location.country._id,
 
       // Propriétés existantes
       hasClosure: formValue.hasClosure || false,

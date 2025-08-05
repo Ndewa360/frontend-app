@@ -1,0 +1,108 @@
+<div class="country-city-selector" [class.layout-vertical]="layout === 'vertical'" [class.layout-horizontal]="layout === 'horizontal'">
+  
+  <!-- Conteneur des sélecteurs -->
+  <div class="selectors-container">
+    
+    <!-- Sélecteur de pays -->
+    <div class="selector-wrapper country-wrapper">
+      <label class="selector-label" *ngIf="layout === 'vertical'">
+        Pays
+        <span class="required-indicator" *ngIf="countryRequired">*</span>
+      </label>
+      
+      <app-country-selector
+        [placeholder]="countryPlaceholder"
+        [disabled]="disabled"
+        [required]="countryRequired"
+        [showFlag]="showCountryFlag"
+        [showCode]="showCountryCode"
+        [preselectedCountryId]="preselectedCountryId"
+        (countrySelected)="onCountrySelected($event)"
+        (countryCleared)="onCountryCleared()"
+        formControlName="country">
+      </app-country-selector>
+    </div>
+
+    <!-- Séparateur pour layout horizontal -->
+    <div class="selector-separator" *ngIf="layout === 'horizontal'">
+      <i class="fas fa-arrow-right"></i>
+    </div>
+
+    <!-- Sélecteur de ville -->
+    <div class="selector-wrapper city-wrapper">
+      <label class="selector-label" *ngIf="layout === 'vertical'">
+        Ville
+        <span class="required-indicator" *ngIf="cityRequired">*</span>
+      </label>
+      
+      <app-city-selector
+        [placeholder]="cityPlaceholder"
+        [disabled]="isCityDisabled"
+        [required]="cityRequired"
+        [countryFilter]="selectedCountry"
+        [showRegion]="showCityRegion"
+        [showPopulation]="showCityPopulation"
+        [preselectedCityId]="preselectedCityId"
+        (citySelected)="onCitySelected($event)"
+        (cityCleared)="onCityCleared()"
+        formControlName="city">
+      </app-city-selector>
+    </div>
+  </div>
+
+  <!-- Bouton pour effacer tout -->
+  <div class="actions-container" *ngIf="(selectedCountry || selectedCity) && !disabled">
+    <button
+      type="button"
+      class="clear-all-button"
+      (click)="clearAll()"
+      title="Effacer la sélection">
+      <i class="fas fa-times"></i>
+      <span>Effacer tout</span>
+    </button>
+  </div>
+
+  <!-- Informations de sélection -->
+  <div class="selection-info" *ngIf="selectedCountry || selectedCity">
+    <div class="info-item" *ngIf="selectedCountry">
+      <div class="info-label">Pays sélectionné :</div>
+      <div class="info-value">
+        <span class="flag-emoji" *ngIf="showCountryFlag && selectedCountry.flag">{{ selectedCountry.flag }}</span>
+        {{ selectedCountry.fullName || selectedCountry.shortName }}
+        <span class="country-code" *ngIf="showCountryCode && selectedCountry.iso2">({{ selectedCountry.iso2 }})</span>
+      </div>
+    </div>
+    
+    <div class="info-item" *ngIf="selectedCity">
+      <div class="info-label">Ville sélectionnée :</div>
+      <div class="info-value">
+        <i class="fas fa-city"></i>
+        {{ selectedCity.fullName }}
+        <span class="city-region" *ngIf="showCityRegion && selectedCity.region">- {{ selectedCity.region }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Messages d'aide -->
+  <div class="help-messages">
+    <!-- Message quand aucun pays n'est sélectionné -->
+    <div class="help-message" *ngIf="!selectedCountry && cityRequired">
+      <i class="fas fa-info-circle"></i>
+      <span>Sélectionnez d'abord un pays pour choisir une ville</span>
+    </div>
+    
+    <!-- Message quand le pays est sélectionné mais pas la ville -->
+    <div class="help-message" *ngIf="selectedCountry && !selectedCity && cityRequired">
+      <i class="fas fa-arrow-up"></i>
+      <span>Maintenant, sélectionnez une ville de {{ selectedCountry.fullName || selectedCountry.shortName }}</span>
+    </div>
+  </div>
+
+  <!-- Erreurs de validation -->
+  <div class="validation-errors" *ngIf="getValidationErrors().length > 0">
+    <div class="error-item" *ngFor="let error of getValidationErrors()">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span>{{ error }}</span>
+    </div>
+  </div>
+</div>

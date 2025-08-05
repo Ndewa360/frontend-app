@@ -1,0 +1,118 @@
+<div class="city-selector" [class.disabled]="disabled" [class.required]="required">
+  <!-- Input principal avec recherche -->
+  <div class="selector-input-container" [class.open]="isOpen" [class.has-value]="selectedCity">
+    
+    <!-- Icône de ville -->
+    <div class="city-icon">
+      <i class="fas fa-city"></i>
+    </div>
+    
+    <!-- Input de recherche -->
+    <input
+      type="text"
+      class="selector-input"
+      [formControl]="searchControl"
+      [placeholder]="selectedCity ? getDisplayText(selectedCity) : placeholder"
+      [disabled]="disabled"
+      (focus)="onInputFocus()"
+      (blur)="onInputBlur()"
+      autocomplete="off"
+      readonly="true">
+    
+    <!-- Bouton clear -->
+    <button
+      type="button"
+      class="clear-button"
+      *ngIf="selectedCity && !disabled"
+      (click)="clearSelection()"
+      tabindex="-1">
+      <i class="fas fa-times"></i>
+    </button>
+    
+    <!-- Icône dropdown -->
+    <div class="dropdown-icon" (click)="toggleDropdown()">
+      <i class="fas fa-chevron-down" [class.rotated]="isOpen"></i>
+    </div>
+    
+    <!-- Indicateur de chargement -->
+    <div class="loading-indicator" *ngIf="loading$ | async">
+      <i class="fas fa-spinner fa-spin"></i>
+    </div>
+  </div>
+
+  <!-- Dropdown avec liste des villes -->
+  <div class="dropdown-container" *ngIf="isOpen" [class.open]="isOpen">
+    
+    <!-- Input de recherche dans le dropdown -->
+    <div class="search-container">
+      <div class="search-input-wrapper">
+        <i class="fas fa-search search-icon"></i>
+        <input
+          type="text"
+          class="search-input"
+          [formControl]="searchControl"
+          placeholder="Rechercher une ville..."
+          [disabled]="disabled"
+          autocomplete="off">
+      </div>
+    </div>
+
+    <!-- Filtre par pays si applicable -->
+    <div class="filter-info" *ngIf="countryFilter">
+      <div class="filter-badge">
+        <i class="fas fa-filter"></i>
+        <span>Villes de {{ countryFilter.fullName || countryFilter.shortName }}</span>
+      </div>
+    </div>
+
+    <!-- Liste des villes filtrées -->
+    <div class="options-container">
+      <div class="options-list" *ngIf="!(loading$ | async)">
+        
+        <!-- Message si aucun résultat -->
+        <div class="no-results" *ngIf="(filteredCities$ | async)?.length === 0">
+          <i class="fas fa-search"></i>
+          <span>Aucune ville trouvée</span>
+          <small *ngIf="countryFilter">dans {{ countryFilter.fullName || countryFilter.shortName }}</small>
+        </div>
+        
+        <!-- Liste des villes -->
+        <div
+          class="option-item"
+          *ngFor="let city of filteredCities$ | async; trackBy: trackByCityId"
+          [class.selected]="selectedCity?._id === city._id"
+          (click)="onOptionClick(city)">
+          
+          <!-- Icône de ville -->
+          <div class="option-icon">
+            <i class="fas fa-city"></i>
+          </div>
+          
+          <!-- Informations de la ville -->
+          <div class="option-content">
+            <div class="option-name">{{ city.fullName }}</div>
+            <div class="option-details" *ngIf="getCityDetails(city)">
+              {{ getCityDetails(city) }}
+            </div>
+          </div>
+          
+          <!-- Icône de sélection -->
+          <div class="option-check" *ngIf="selectedCity?._id === city._id">
+            <i class="fas fa-check"></i>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Indicateur de chargement dans la liste -->
+      <div class="loading-container" *ngIf="loading$ | async">
+        <div class="loading-item">
+          <i class="fas fa-spinner fa-spin"></i>
+          <span>Chargement des villes...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Overlay pour fermer le dropdown -->
+  <div class="dropdown-overlay" *ngIf="isOpen" (click)="closeDropdown()"></div>
+</div>

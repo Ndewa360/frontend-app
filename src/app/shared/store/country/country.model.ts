@@ -1,14 +1,42 @@
 
 export interface CountryModel {
-    _id:string;
-    
-    fullName:string;
+    _id: string;
 
-    cities:any[]
+    // Noms
+    fullName: string;
+    shortName: string;
 
-    shortName:string;
+    // Codes ISO
+    iso2: string;
+    iso3: string;
 
-    phoneCode:string;
-    long:number;
-    lat:number;
+    // Informations géographiques
+    continent: string;
+    region?: string;
+    subregion?: string;
+    capital?: string;
+
+    // Devise et économie
+    currency: string;
+    phoneCode?: string;
+
+    // Coordonnées
+    long: number;
+    lat: number;
+
+    // Informations supplémentaires
+    languages?: string[];
+    timezone?: string;
+    flag?: string;
+    population?: number;
+    area?: number;
+
+    // Relations
+    cities: any[];
+
+    // Statut
+    isActive?: boolean;
+    isDeleted?: boolean;
+    createdAt?: Date;
+    updatedAt?: Date;
 }
