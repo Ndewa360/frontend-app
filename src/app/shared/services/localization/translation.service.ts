@@ -5,7 +5,7 @@ import { LocalizationService } from './localization.service';
 import { Store, Select } from '@ngxs/store';
 import { UserProfileAction } from '../../store/user-profile/user-profile.actions';
 import { UserProfileState } from '../../store/user-profile/user-profile.state';
-import { Platform } from '@ionic/angular';
+
 import { take } from 'rxjs/operators';
 
 @Injectable({
@@ -26,8 +26,7 @@ export class TranslationService {
   constructor(
     private translateService: TranslateService,
     private localizationService: LocalizationService,
-    private store: Store,
-    private platform: Platform
+    private store: Store
   ) {
     this.initializeTranslation();
   }
@@ -85,22 +84,11 @@ export class TranslationService {
         return savedLanguage;
       }
 
-      // 3. Pour mobile : utiliser la langue du système
-      if (this.platform.is('mobile') || this.platform.is('android') || this.platform.is('ios')) {
-        const deviceLanguage = await this.getDeviceLanguage();
-        if (deviceLanguage && this.isLanguageSupported(deviceLanguage)) {
-          console.log('📱 Langue du système mobile:', deviceLanguage);
-          return deviceLanguage;
-        }
-      }
-
-      // 4. Pour web : utiliser la langue du navigateur
-      if (this.platform.is('desktop') || this.platform.is('pwa')) {
-        const browserLanguage = this.getBrowserLanguage();
-        if (browserLanguage && this.isLanguageSupported(browserLanguage)) {
-          console.log('🌐 Langue du navigateur:', browserLanguage);
-          return browserLanguage;
-        }
+      // 3. Utiliser la langue du navigateur
+      const browserLanguage = this.getBrowserLanguage();
+      if (browserLanguage && this.isLanguageSupported(browserLanguage)) {
+        console.log('🌐 Langue du navigateur:', browserLanguage);
+        return browserLanguage;
       }
 
       // 5. Fallback : français par défaut
@@ -113,25 +101,7 @@ export class TranslationService {
     }
   }
 
-  /**
-   * Obtient la langue du système mobile
-   */
-  private async getDeviceLanguage(): Promise<string | null> {
-    try {
-      // Utiliser l'API Capacitor si disponible
-      if (this.platform.is('capacitor')) {
-        const { Device } = await import('@capacitor/device');
-        const info = await Device.getLanguageCode();
-        return info.value?.substring(0, 2) || null;
-      }
 
-      // Fallback sur navigator.language
-      return navigator.language?.substring(0, 2) || null;
-    } catch (error) {
-      console.warn('⚠️ Impossible de détecter la langue du système:', error);
-      return navigator.language?.substring(0, 2) || null;
-    }
-  }
 
   /**
    * Obtient la langue du navigateur
@@ -347,16 +317,16 @@ export class TranslationService {
   }
 
   /**
-   * Détecte si l'utilisateur est sur mobile
+   * Détecte si l'utilisateur est sur mobile (basé sur l'user agent)
    */
   isMobilePlatform(): boolean {
-    return this.platform.is('mobile') || this.platform.is('android') || this.platform.is('ios');
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
   }
 
   /**
    * Détecte si l'utilisateur est sur desktop
    */
   isDesktopPlatform(): boolean {
-    return this.platform.is('desktop') || this.platform.is('pwa');
+    return !this.isMobilePlatform();
   }
 }

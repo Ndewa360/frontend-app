@@ -2,11 +2,10 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { InitialLoadingDataResolver, PublicDataResolver } from './shared/resolvers';
 import { AuthGuard } from './shared/guard';
-import { MobileDashboardGuard } from './shared/guard/mobile-dashboard.guard';
+
 import { LayoutComponent } from './layout/default/layout.component';
 import { LoadingAdminDataResolver } from './shared/resolvers/loading-admin-data';
-import { IonicModule } from '@ionic/angular';
-import { DeviceRedirectGuard } from './shared/guard/device-redirect.guard';
+
 
 const routes: Routes = [
 	{
@@ -22,7 +21,6 @@ const routes: Routes = [
 	},
 	{
 		path: 'search',
-		canActivate: [DeviceRedirectGuard], // Redirection automatique selon l'appareil
 		resolve:{
 			"publicData": PublicDataResolver
 		},
@@ -53,10 +51,7 @@ const routes: Routes = [
 		},
 		loadChildren: () => import('./support/support.module').then(m => m.SupportModule)
 	},
-	{
-		path: 'mobile',
-		loadChildren: () => import('./mobile/mobile.module').then(m => m.MobileModule)
-	},
+
 	{
 		path: 'admin',
 		canActivate:[AuthGuard, ], //MobileDashboardGuard
@@ -79,8 +74,8 @@ const routes: Routes = [
 	  },
 	  {
 		path: '',
-		canActivate: [DeviceRedirectGuard],
-		children: []
+		redirectTo: '/app/welcome',
+		pathMatch: 'full'
 	  },
 	  {
 		path: '**',
@@ -93,7 +88,6 @@ const routes: Routes = [
 
 @NgModule({
 	imports: [
-		IonicModule.forRoot(),
 		RouterModule.forRoot(routes, {
 		anchorScrolling: 'enabled',
 		scrollOffset: [0, 64],

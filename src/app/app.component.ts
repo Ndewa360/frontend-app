@@ -17,7 +17,7 @@ import * as moment from 'moment';
 import { takeUntil, debounceTime, filter, catchError } from 'rxjs/operators';
 import { SeoService } from './shared/services/seo/seo.service';
 import { DeviceDetectionService } from './shared/services/device-detection.service';
-import { Platform } from '@ionic/angular';
+
 import { AuthStateService } from './shared/services/auth-state.service';
 
 
@@ -50,8 +50,7 @@ export class AppComponent implements OnInit, OnDestroy {
   // Propriété pour détecter si on est dans le front office
   isInFrontOffice = false;
 
-  // Propriété pour détecter si on est sur une route mobile - Initialisation intelligente
-  isMobileRoute = this.getInitialMobileRouteState();
+
 
   @ViewChild('topScroll') topScroll: ElementRef;
 
@@ -72,7 +71,6 @@ export class AppComponent implements OnInit, OnDestroy {
     private localizationService: LocalizationService,
     private translationService: TranslationService,
     private deviceService: DeviceDetectionService,
-    private platform: Platform,
     private authStateService: AuthStateService,
     private cdr: ChangeDetectorRef
   ) {
@@ -105,26 +103,16 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     console.log('🚀 AppComponent ngOnInit démarré');
-    console.log('📱 Plateforme:', this.platform.platforms());
     console.log('🌐 URL actuelle:', window.location.href);
-    console.log('🔍 État initial isMobileRoute:', this.isMobileRoute);
 
     // Diagnostic DOM
     console.log('🔍 Diagnostic DOM:');
     console.log('  - app-root:', !!document.querySelector('app-root'));
-    console.log('  - ion-app:', !!document.querySelector('ion-app'));
     console.log('  - router-outlet:', !!document.querySelector('router-outlet'));
-    console.log('  - ion-router-outlet:', !!document.querySelector('ion-router-outlet'));
-
-    // Configurer l'application selon la plateforme (native vs web)
-    console.log('🔧 Configuration automatique selon la plateforme détectée');
 
     // Initialiser la détection d'appareil et redirection automatique
     console.log('🔍 Initialisation de la détection d\'appareil...');
     try {
-      this.deviceService.redirectWithUserPreference();
-      console.log('✅ Détection d\'appareil initialisée');
-
       // Redirection de secours si on est toujours sur la racine après 2 secondes
       setTimeout(() => {
         if (this.router.url === '/' || this.router.url === '') {
@@ -153,9 +141,6 @@ export class AppComponent implements OnInit, OnDestroy {
 
     // Détecter si on est dans le front office ou back office
     this.initializeFrontOfficeDetection();
-
-    // Initialiser la détection de route mobile
-    this.initializeMobileRouteDetection();
 
     // Initialiser moment.js avec la locale française (sera remplacé par le système de localisation)
     try {
@@ -405,7 +390,6 @@ export class AppComponent implements OnInit, OnDestroy {
       '/search',
       '/support',
       '/payment',
-      '/mobile',
       '/', // Landing page
       '/index',
       '/landing'
@@ -431,113 +415,7 @@ export class AppComponent implements OnInit, OnDestroy {
     console.log('🌐 Route détectée:', url, '- Front Office:', this.isInFrontOffice);
   }
 
-  /**
-   * Initialiser la détection de route mobile
-   */
-  private initializeMobileRouteDetection(): void {
-    console.log('📱 Initialisation de la détection de route mobile...');
 
-    // Attendre que la plateforme soit prête avant de détecter
-    this.platform.ready().then(() => {
-      console.log('📱 Plateforme prête, détection de route mobile...');
-
-      // Vérifier la route actuelle
-      this.updateMobileRouteStatus(this.router.url);
-
-      // Écouter les changements de route
-      this.router.events
-        .pipe(
-          takeUntil(this.destroy$),
-          filter(event => event instanceof NavigationEnd)
-        )
-        .subscribe((event: NavigationEnd) => {
-          this.updateMobileRouteStatus(event.urlAfterRedirects);
-        });
-    });
-  }
-
-  /**
-   * Mettre à jour le statut de route mobile
-   */
-  private updateMobileRouteStatus(url: string): void {
-    const wasMobileRoute = this.isMobileRoute;
-
-    // Détecter si on est sur mobile : route mobile OU application native
-    const isNativeApp = this.platform.is('capacitor') || this.platform.is('cordova');
-    const isMobileRoute = url.startsWith('/mobile');
-
-    this.isMobileRoute = isMobileRoute || isNativeApp;
-
-    if (wasMobileRoute !== this.isMobileRoute) {
-      console.log(`📱 Changement de mode: ${this.isMobileRoute ? 'Mobile' : 'Web'} (${url})`);
-      console.log(`🔍 Détails: route=${isMobileRoute}, native=${isNativeApp}, final=${this.isMobileRoute}`);
-
-      // FORCER la détection de changement pour re-rendre le template
-      console.log('🔄 Forçage de la détection de changement...');
-      this.cdr.detectChanges();
-
-      // Double vérification après un court délai
-      setTimeout(() => {
-        console.log('🔍 Vérification DOM après changement:');
-        console.log('  - ion-app présent:', !!document.querySelector('ion-app'));
-        console.log('  - ion-router-outlet présent:', !!document.querySelector('ion-router-outlet'));
-        this.cdr.detectChanges();
-      }, 100);
-    }
-  }
-
-  /**
-   * Getter pour isMobileRoute (force la réévaluation)
-   */
-  getIsMobileRoute(): boolean {
-    const url = this.router.url;
-    const isNativeApp = this.platform.is('capacitor') || this.platform.is('cordova');
-    const isMobileRoute = url.startsWith('/mobile');
-
-    const result = isMobileRoute || isNativeApp;
-
-    // Mettre à jour la propriété si nécessaire
-    if (this.isMobileRoute !== result) {
-      console.log('🔄 Mise à jour isMobileRoute via getter:', {
-        old: this.isMobileRoute,
-        new: result,
-        url,
-        isNativeApp,
-        isMobileRoute
-      });
-      this.isMobileRoute = result;
-    }
-
-    return result;
-  }
-
-  /**
-   * Obtenir l'état initial de isMobileRoute
-   */
-  private getInitialMobileRouteState(): boolean {
-    try {
-      // Vérifier si on est dans une app native
-      if (typeof window !== 'undefined' && window.location) {
-        const url = window.location.pathname;
-        const isNativeApp = !!(window as any).Capacitor || !!(window as any).cordova;
-        const isMobileRoute = url.startsWith('/mobile');
-
-        const result = isMobileRoute || isNativeApp;
-        console.log('🔧 État initial isMobileRoute calculé:', {
-          url,
-          isNativeApp,
-          isMobileRoute,
-          result
-        });
-
-        return result;
-      }
-    } catch (error) {
-      console.warn('⚠️ Erreur lors du calcul de l\'état initial mobile:', error);
-    }
-
-    return false;
-  }
 
   /**
    * Gérer les changements de taille d'écran

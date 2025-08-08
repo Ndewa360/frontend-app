@@ -1,13 +1,6 @@
 
-<!-- Version Mobile avec Ionic (routes /mobile/* OU application native) -->
-<ion-app *ngIf="getIsMobileRoute()">
-	<main #topScroll>
-		<ion-router-outlet></ion-router-outlet>
-	</main>
-</ion-app>
-
-<!-- Version Web classique (uniquement navigateur sur routes non-mobile) -->
-<main #topScroll *ngIf="!getIsMobileRoute()">
+<!-- Version Web uniquement -->
+<main #topScroll>
 	<router-outlet></router-outlet>
 </main>
 

@@ -1,4 +1,4 @@
-import { IonicModule } from '@ionic/angular';
+
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CUSTOM_ELEMENTS_SCHEMA, LOCALE_ID, NgModule, APP_INITIALIZER } from '@angular/core';

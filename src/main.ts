@@ -13,15 +13,7 @@ import { register as registerSwiperElements } from 'swiper/element/bundle'
 
 registerSwiperElements();
 
-// Configuration pour l'environnement Capacitor/Cordova (seulement en mode natif)
-try {
-  if ((window as any).Capacitor && (window as any).Capacitor.isNativePlatform && (window as any).Capacitor.isNativePlatform()) {
-    console.log('📱 Environnement natif détecté');
-    // Le débogage WebView sera configuré automatiquement par Capacitor
-  }
-} catch (error) {
-  // Ignorer silencieusement les erreurs de détection de plateforme
-}
+
 
 // // Fonction pour charger un style CSS
 // function loadStyle(href: string): Promise<Event> {
@@ -86,48 +78,30 @@ function hideLoader() {
 // Démarrer l'application
 console.log('🚀 Démarrage de l\'application Ndiye...');
 
-// Détecter si on est sur mobile
-const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-const isMobileRoute = window.location.pathname.startsWith('/mobile');
+console.log('🚀 Application web Ndiye');
 
-console.log('📱 Détection d\'appareil:', { isMobile, isMobileRoute, userAgent: navigator.userAgent.substring(0, 50) });
-
-// Fonction de diagnostic détaillée
+// Fonction de diagnostic simplifiée
 function checkAppState() {
   const appRoot = document.querySelector('app-root');
-  const ionApp = document.querySelector('ion-app');
   const routerOutlet = document.querySelector('router-outlet');
-  const mobileLayout = document.querySelector('app-mobile-layout');
   const loader = document.getElementById('app-loading-holder');
 
-  console.log('🔍 État détaillé de l\'application:', {
+  console.log('🔍 État de l\'application:', {
     hasAppRoot: !!appRoot,
-    hasIonApp: !!ionApp,
     hasRouterOutlet: !!routerOutlet,
-    hasMobileLayout: !!mobileLayout,
     hasLoader: !!loader,
-    currentUrl: window.location.href,
-    isMobileRoute: window.location.pathname.startsWith('/mobile'),
-    appRootContent: appRoot ? appRoot.innerHTML.substring(0, 100) + '...' : 'N/A',
-    bodyClasses: document.body.className,
-    documentTitle: document.title
+    currentUrl: window.location.href
   });
-
-  // Vérifier les erreurs dans la console
-  if ((window as any).startupErrors && (window as any).startupErrors.length > 0) {
-    console.log('❌ Erreurs détectées:', (window as any).startupErrors);
-  }
 
   // Vérifier si Angular est bien initialisé
   const hasAngularElements = document.querySelector('[ng-version]') ||
-                            document.querySelector('app-root > *') ||
-                            ionApp;
+                            document.querySelector('app-root > *');
 
   console.log('🅰️ Angular initialisé:', !!hasAngularElements);
 
   // Si l'application semble chargée, supprimer le loader
   if (appRoot && (hasAngularElements || appRoot.innerHTML.trim() !== 'Loading...')) {
-    console.log('✅ Application semble chargée, suppression du loader');
+    console.log('✅ Application chargée, suppression du loader');
     hideLoader();
     return true;
   }
@@ -160,23 +134,14 @@ platformBrowserDynamic().bootstrapModule(AppModule)
       }
     }, 50); // Réduit de 100ms à 50ms
 
-    // Sécurité : forcer le masquage après un délai adapté à la plateforme - RÉDUIT
-    const securityTimeout = isMobile ? 4000 : 2000; // Réduit : 4s mobile, 2s desktop
+    // Sécurité : forcer le masquage après 2 secondes
     setTimeout(() => {
       const loader = document.getElementById('app-loading-holder');
       if (loader) {
-        console.log(`⚠️ Loader encore présent après ${securityTimeout/1000}s, suppression forcée`);
+        console.log('⚠️ Loader encore présent après 2s, suppression forcée');
         hideLoader();
-
-        // Sur mobile ET sur route mobile, vérifier si on doit rediriger vers une page de fallback
-        if (isMobile && isMobileRoute) {
-          console.log('📱 Redirection mobile vers fallback...');
-          setTimeout(() => {
-            window.location.href = '/mobile/fallback';
-          }, 1000);
-        }
       }
-    }, securityTimeout);
+    }, 2000);
   })
   .catch(err => {
     console.error('❌ Erreur critique lors du démarrage:', err);
@@ -184,13 +149,5 @@ platformBrowserDynamic().bootstrapModule(AppModule)
     // Même en cas d'erreur, masquer le loader
     setTimeout(() => {
       hideLoader();
-
-      // Sur mobile ET sur route mobile, rediriger vers la page de fallback
-      if (isMobile && window.location.pathname.startsWith('/mobile')) {
-        console.log('📱 Erreur de démarrage mobile - Redirection vers fallback');
-        setTimeout(() => {
-          window.location.href = '/mobile/fallback';
-        }, 1000);
-      }
     }, 1000);
   });
