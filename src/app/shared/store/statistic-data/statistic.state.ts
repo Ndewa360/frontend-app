@@ -215,16 +215,24 @@ export class StatisticState{
 
     static selectStateStatisticRoomByPropertyIdAndYear(propertyID,year:number=new Date().getFullYear())
     {
-        return createSelector([StatisticState],(state)=> state.roomStatistic.filter((u)=>u.room.property==propertyID && u.year==year))
+        return createSelector([StatisticState],(state)=> state.roomStatistic.filter((u)=>u && u.room && u.room.property==propertyID && u.year==year))
     }
 
     @Action(StatisticAction.FetchStaticRoomDataByPropertyIdAndYear)
     fetchRoomStatisticByPropertyAndYear(ctx:StateContext<StatisticStateModel>,{propertyID,year}:StatisticAction.FetchStaticRoomDataByPropertyIdAndYear)
     {
         const state = ctx.getState();
-        let index = state.roomStatistic.findIndex((u)=>u.room.property==propertyID && year==u.year);
+        let index = state.roomStatistic.findIndex((u)=>u && u.room && u.room.property==propertyID && year==u.year);
 
-        if(index>-1) return of(true);
+        // Ne pas retourner early si les données existent déjà - permettre le rechargement
+        // if(index>-1) return of(true);
+
+        console.log('🔄 FetchStaticRoomDataByPropertyIdAndYear:', {
+            propertyID,
+            year,
+            existingIndex: index,
+            currentRoomStats: state.roomStatistic.length
+        });
 
         ctx.patchState({
             loadingStatistic:true,
@@ -236,10 +244,16 @@ export class StatisticState{
             tap(
                 result => {
                     console.log('✅ Room statistics loaded successfully', result);
+
+                    // Supprimer les anciennes données pour cette propriété et année (avec protection null)
+                    const filteredRoomStats = state.roomStatistic.filter(
+                        (u) => !(u && u.room && u.room.property == propertyID && u.year == year)
+                    );
+
                     ctx.patchState({
                         loadingStatistic:false,
                         loadingRoomStatistic:false,
-                        roomStatistic:[...state.roomStatistic, ...result.data],
+                        roomStatistic:[...filteredRoomStats, ...result.data],
                         roomStatisticLastUpdated: new Date(),
                         roomStatisticError: null
                     })

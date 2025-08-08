@@ -57,7 +57,34 @@ export class AddPaymentModalComponent implements OnInit {
   }
 
   getLocationForPayment(): LocationModel | null {
-    return this.location || this.tempLocation;
+    // Priorité 1: Location réelle existante
+    if (this.location && this.location._id && !this.location._id.startsWith('temp_')) {
+      console.log('✅ Location réelle trouvée:', this.location._id);
+      return this.location;
+    }
+
+    // Priorité 2: Créer une location temporaire avec les bonnes données
+    if (this.room && this.tenant && this.propertyId) {
+      console.log('⚠️ Création d\'une location temporaire pour le paiement');
+      this.tempLocation = {
+        _id: null, // Pas d'ID temporaire - sera géré différemment
+        room: this.room._id,
+        locataire: this.tenant._id,
+        property: this.propertyId,
+        startDate: new Date(),
+        endDate: null,
+        monthlyRent: this.room.price || 0,
+        deposit: 0,
+        status: 'active',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      } as LocationModel;
+
+      return this.tempLocation;
+    }
+
+    console.error('❌ Impossible de créer une location pour le paiement - données manquantes');
+    return null;
   }
 
   closeModal(): void {

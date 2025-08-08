@@ -420,6 +420,51 @@ $primary-medium: rgba(204, 140, 10, 0.2);
     }
   }
 
+  // Styles pour les onglets finances (identique aux détails de propriété)
+  .property-tab-button {
+    @apply px-6 py-4 text-sm font-medium border-b-2 border-transparent transition-all duration-300 ease-in-out;
+    color: #525252; // Gris moyen pour le texte
+    background: transparent;
+    display: flex;
+    align-items: center;
+    position: relative;
+    border-radius: 8px 8px 0 0; // Coins arrondis en haut
+
+    &:hover {
+      color: #161616; // Texte sombre sur fond clair
+      background-color: rgba(255, 255, 255, 0.7); // Fond blanc semi-transparent au hover
+    }
+
+    &.active {
+      color: rgb(204, 140, 10) !important; // Couleur principale
+      border-bottom-color: rgb(204, 140, 10) !important;
+      background-color: #ffffff; // Fond blanc pour l'onglet actif
+      box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1); // Ombre subtile
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, rgb(204, 140, 10), #fadc4d);
+        border-radius: 2px 2px 0 0;
+      }
+
+      .tab-count {
+        background-color: rgb(204, 140, 10) !important;
+        color: white !important;
+      }
+    }
+  }
+
+  // Zone de navigation des onglets
+  .tabs-navigation {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    border-bottom: 1px solid #cbd5e1;
+  }
+
   // Personnalisation des tabs IBM Carbon
   ::ng-deep {
     .cds--tabs {

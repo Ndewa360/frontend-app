@@ -22,7 +22,9 @@ export interface LocationModel {
     
     endedAt?:Date;
 
-    locationPriceUnit?:number
+    locationPriceUnit?:number;
+
+    isKnowExactDateEntry?;
 
     removeReason?:string;
     

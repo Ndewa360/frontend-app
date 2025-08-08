@@ -114,7 +114,7 @@ export class FaqComponent implements OnInit {
         },
         {
           title: 'Comment contacter l’assistance ?',
-          content: ' Via le formulaire dans la page "Support", ou par email à <a href="mailto:contact@ndewa-360.com">contact@ndewa-360.com</a>.',
+          content: ' Via le formulaire dans la page "Support", ou par email à <a href="mailto:support@ndewa-360.com">support@ndewa-360.com</a>.',
         }
       ]
     }

@@ -41,7 +41,7 @@ export class HeaderComponent extends BaseComponent implements OnInit {
     this.userProfil$
       .pipe(takeUntil(this.destroy$))
       .subscribe((user) => {
-        if (user) this.isAdmin = user.email === 'contact@ndewa-360.com';
+        if (user) this.isAdmin = user.email === 'support@ndewa-360.com';
       });
 
     // Surveiller les actions de déconnexion

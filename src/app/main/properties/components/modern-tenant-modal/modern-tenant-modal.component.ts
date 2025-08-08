@@ -29,7 +29,6 @@ export interface TenantModalData {
   mode: 'create' | 'edit';
   property: PropertyModel;
   tenant?: LocataireModel;
-  availableRooms?: RoomModel[];
 }
 
 @Component({
@@ -40,7 +39,6 @@ export interface TenantModalData {
 export class ModernTenantModalComponent implements OnInit, OnDestroy {
   formGroup: FormGroup;
   isLoading = false;
-  availableRooms: { content: string; valueType: string }[] = [];
   
   // Photo upload
   selectedPhoto: File | null = null;
@@ -63,9 +61,8 @@ export class ModernTenantModalComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.loadAvailableRooms();
     this.setupActionListeners();
-    
+
     if (this.data.mode === 'edit' && this.data.tenant) {
       this.populateForm();
     }
@@ -104,31 +101,13 @@ export class ModernTenantModalComponent implements OnInit, OnDestroy {
       fullNameRef: [''],
       phoneNumberRef: [''],
       emailRef: ['', [Validators.email]],
-      
-      // Informations de location
-      roomId: [''],
-      description: [''],
-      
+
       // Confirmation
       confirm: [false, [Validators.requiredTrue]]
     });
   }
 
-  private loadAvailableRooms(): void {
-    this.store.select(RoomState.selectStateRoomByPropertyId(this.data.property._id))
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((rooms: RoomModel[]) => {
-        // Filtrer les chambres libres ou la chambre actuelle du locataire
-        const availableRooms = rooms.filter(room => 
-          room.isFree || (this.data.tenant && room._id === this.data.tenant.room)
-        );
-        
-        this.availableRooms = availableRooms.map(room => ({
-          content: `${room.code} - ${room.price.toLocaleString()} FCFA`,
-          valueType: room._id
-        }));
-      });
-  }
+  // Méthode loadAvailableRooms supprimée - utiliser l'assistant d'assignation
 
   private populateForm(): void {
     if (this.data.tenant) {
@@ -380,8 +359,8 @@ export class ModernTenantModalComponent implements OnInit, OnDestroy {
         const tenantData = FormUtils.removeNullAttribut({
           ...formData,
           profilePicture: null, // Sera ajoutée après création
-          propertyId: this.data.property._id,
-          roomId: formData.roomId
+          propertyId: this.data.property._id
+          // roomId supprimé - utiliser l'assistant d'assignation
         });
 
         delete tenantData.confirm;
@@ -401,8 +380,8 @@ export class ModernTenantModalComponent implements OnInit, OnDestroy {
         const tenantData = FormUtils.removeNullAttribut({
           ...formData,
           profilePicture: photoUrl,
-          propertyId: this.data.property._id,
-          roomId: formData.roomId
+          propertyId: this.data.property._id
+          // roomId supprimé - utiliser l'assistant d'assignation
         });
 
         delete tenantData.confirm;

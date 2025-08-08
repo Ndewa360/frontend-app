@@ -8,6 +8,7 @@ import {
 import { Store } from '@ngxs/store';
 import { ExportData } from '../../property-finances.component';
 import { FinancialCalculationsService, FinancialMetrics, MonthlyFinancialData } from 'src/app/shared/services/financial-calculations.service';
+import { PropertyFinancialManagerService } from 'src/app/shared/services/property-financial-manager.service';
 
 export interface OverviewMetrics {
   totalRevenue: number;
@@ -54,7 +55,8 @@ export class FinancialOverviewComponent implements OnInit, OnChanges {
 
   constructor(
     private financialCalculationsService: FinancialCalculationsService,
-    private store: Store
+    private store: Store,
+    private propertyFinancialManager: PropertyFinancialManagerService
   ) {}
 
   ngOnInit(): void {
@@ -72,23 +74,53 @@ export class FinancialOverviewComponent implements OnInit, OnChanges {
   }
 
   private updateFinancialData(): void {
-    // Utiliser le service centralisé pour les calculs avec les locations
-    this.metrics = this.financialCalculationsService.calculateFinancialMetrics(
+    console.log('🔄 NOUVEAU SERVICE - Vue d\'ensemble - Mise à jour des données financières');
+
+    if (!this.propertyId || !this.yearlyStats.length) {
+      console.log('⚠️ Données insuffisantes pour le calcul');
+      return;
+    }
+
+    // Utiliser le nouveau service financier centralisé
+    const propertyMetrics = this.propertyFinancialManager.calculatePropertyMetrics(
+      this.propertyId,
+      this.selectedYear,
       this.yearlyStats,
-      this.recapitulation,
-      this.locations,
-      this.selectedYear
+      this.locations
     );
 
-    this.monthlyData = this.financialCalculationsService.buildMonthlyData(
-      this.yearlyStats,
-      this.recapitulation
+    // Convertir vers le format attendu par ce composant
+    this.metrics = {
+      totalRevenue: propertyMetrics.totalRevenue,
+      totalExpected: propertyMetrics.totalExpected,
+      collectionRate: propertyMetrics.collectionRate,
+      totalRooms: propertyMetrics.totalRooms,
+      occupiedRooms: propertyMetrics.occupiedRooms,
+      occupancyRate: propertyMetrics.occupancyRate,
+      averageRent: propertyMetrics.averageRent,
+      totalDeposits: 0, // À calculer si nécessaire
+      netProfit: propertyMetrics.totalRevenue - propertyMetrics.totalExpected, // Profit net
+      profitMargin: propertyMetrics.collectionRate // Utiliser le taux de recouvrement comme marge
+    };
+
+    // Calculer les données mensuelles avec le nouveau service
+    const monthlyFinancialData = this.propertyFinancialManager.generateMonthlyData(
+      this.selectedYear,
+      propertyMetrics.roomDetails
     );
 
-    console.log('📊 FinancialOverview - Données mises à jour:', {
-      metrics: this.metrics,
-      monthlyDataLength: this.monthlyData.length
-    });
+    // Convertir vers le format attendu par l'ancien interface
+    this.monthlyData = monthlyFinancialData.map((data, index) => ({
+      month: data.monthName,
+      monthIndex: data.month,
+      expected: data.expected,
+      received: data.received,
+      rate: data.collectionRate,
+      profit: data.received - data.expected
+    }));
+
+    console.log('📊 NOUVEAU SERVICE - Vue d\'ensemble - Métriques calculées:', this.metrics);
+    console.log('📅 NOUVEAU SERVICE - Vue d\'ensemble - Données mensuelles:', this.monthlyData);
   }
 
   // Méthodes supprimées - maintenant gérées par FinancialCalculationsService

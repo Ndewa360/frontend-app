@@ -23,10 +23,13 @@
         <div class="flex items-center space-x-2">
           <label class="text-sm font-medium text-gray-700">Année:</label>
           <select [(ngModel)]="selectedYear"
-                  (ngModelChange)="onYearChange(selectedYear)"
+                  (ngModelChange)="onYearChange($event)"
                   class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors">
-            <option *ngFor="let year of getAvailableYears()" [value]="year">{{ year }}</option>
+            <option *ngFor="let year of getAvailableYears()" [value]="year" [selected]="year === selectedYear">
+              {{ year }}
+            </option>
           </select>
+
         </div>
 
         <!-- Indicateur de données -->
@@ -49,51 +52,38 @@
         </button>
 
         <!-- Bouton de debug (développement) -->
-        <button (click)="debugStoreState()"
+        <!-- <button (click)="debugStoreState()"
                 class="flex items-center space-x-2 px-3 py-2 bg-blue-100 text-blue-700 rounded-lg text-sm font-medium hover:bg-blue-200 transition-colors duration-200">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
           </svg>
           <span>Debug</span>
-        </button>
+        </button> -->
       </div>
     </div>
 
-    <!-- Navigation avec tabs et contrôles sur la même ligne -->
-    <div class="flex items-center justify-between">
-      <!-- Tabs à gauche -->
-      <div class="flex-1">
-        <ibm-tabs type="contained" [isNavigation]="false" [followFocus]="false">
-          <ibm-tab
-            [active]="activeSection === 'dashboard'"
-            heading="Tableau de Bord"
-            (selected)="onSectionChange('dashboard')">
-          </ibm-tab>
-
-          <ibm-tab
-            [active]="activeSection === 'overview'"
-            heading="Vue d'ensemble"
-            (selected)="onSectionChange('overview')">
-          </ibm-tab>
-
-          <ibm-tab
-            [active]="activeSection === 'tenants'"
-            heading="Locataires"
-            (selected)="onSectionChange('tenants')">
-          </ibm-tab>
-
-          <ibm-tab
-            [active]="activeSection === 'deposits'"
-            heading="Cautions"
-            (selected)="onSectionChange('deposits')">
-          </ibm-tab>
-
-          <ibm-tab
-            [active]="activeSection === 'monthly'"
-            heading="Revenus"
-            (selected)="onSectionChange('monthly')">
-          </ibm-tab>
-        </ibm-tabs>
+    <!-- Navigation par onglets avec style natif -->
+    <div class="tabs-navigation bg-gray-100 border-b border-gray-200 flex-shrink-0">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <nav class="flex space-x-0" aria-label="Tabs">
+          <button *ngFor="let tab of financeTabs; trackBy: trackByTabId"
+                  (click)="onSectionChange(tab.id)"
+                  class="property-tab-button px-6 py-4 text-sm font-medium border-b-2 border-transparent transition-all duration-300 ease-in-out"
+                  [ngClass]="{
+                    'active': activeSection === tab.id
+                  }">
+            <div class="flex items-center">
+              <youpez-ibm-icon [iconName]="tab.icon"
+                               iconSize="16"
+                               class="mr-2"></youpez-ibm-icon>
+              {{ tab.label }}
+              <span *ngIf="tab.count !== undefined"
+                    class="ml-2 bg-gray-100 text-gray-900 py-1 px-2 rounded-full text-xs font-medium tab-count">
+                {{ tab.count }}
+              </span>
+            </div>
+          </button>
+        </nav>
       </div>
     </div>
   </div>

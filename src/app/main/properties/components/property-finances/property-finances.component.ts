@@ -12,7 +12,7 @@ import {
   StatisticPaymentStateType
 } from 'src/app/shared/store';
 import { ExcelExportService } from 'src/app/shared/services/excel-export.service';
-import { FinancialCalculationsService } from 'src/app/shared/services/financial-calculations.service';
+
 
 export interface FinancialAnalysisData {
   yearlyStats: StatisticRoomYearModel[];
@@ -41,6 +41,45 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
   activeSection: 'dashboard' | 'overview' | 'tenants' | 'deposits' | 'monthly' = 'dashboard';
   isLoading: boolean = false;
 
+  // Contrôle du rechargement pour éviter les cycles infinis
+  private loadingAttempts: number = 0;
+  private maxLoadingAttempts: number = 3;
+  private lastLoadTime: number = 0;
+
+  // Configuration des onglets finances
+  financeTabs: Array<{
+    id: 'dashboard' | 'overview' | 'tenants' | 'deposits' | 'monthly';
+    label: string;
+    icon: string;
+    count?: number;
+  }> = [
+    {
+      id: 'dashboard',
+      label: 'Tableau de Bord',
+      icon: 'dashboard'
+    },
+    {
+      id: 'overview',
+      label: 'Vue d\'ensemble',
+      icon: 'analytics'
+    },
+    {
+      id: 'tenants',
+      label: 'Locataires',
+      icon: 'user'
+    },
+    {
+      id: 'deposits',
+      label: 'Cautions',
+      icon: 'security'
+    },
+    {
+      id: 'monthly',
+      label: 'Revenus',
+      icon: 'money'
+    }
+  ];
+
   // Données financières
   financialData: FinancialAnalysisData = {
     yearlyStats: [],
@@ -65,8 +104,7 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
 
   constructor(
     private store: Store,
-    private excelExportService: ExcelExportService,
-    private financialCalculationsService: FinancialCalculationsService
+    private excelExportService: ExcelExportService
   ) {
     // Les observables seront initialisés dans ngOnInit quand propertyId sera disponible
     this.loadingStates$ = combineLatest([
@@ -85,30 +123,42 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnInit(): void {
+    // S'assurer que l'année sélectionnée est valide
+    this.ensureValidSelectedYear();
+
+    // Remettre à zéro les compteurs
+    this.resetLoadingAttempts();
+
+
+
+    // Initialiser les observables et charger les données
     this.initializeObservables();
     this.setupDataSubscriptions();
 
-    // Charger les données si elles ne sont pas déjà présentes
+    // Charger les données une seule fois au démarrage
     if (this.propertyId) {
       this.loadFinancialData();
+    } else {
+      console.warn('⚠️ PropertyId manquant lors de l\'initialisation');
     }
-
-    console.log('🎯 PropertyFinances - Initialisation avec propertyId:', this.propertyId);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['propertyId'] && this.propertyId) {
+      // S'assurer que l'année est valide lors du changement de propriété
+      this.ensureValidSelectedYear();
+
       // Réinitialiser les observables avec le nouveau propertyId
       this.initializeObservables();
       this.loadFinancialData();
-      console.log('🔄 PropertyFinances - Changement de propriété, rechargement des données');
+
     }
 
     if (changes['selectedYear'] && this.propertyId) {
       // Recharger les données pour la nouvelle année
       this.initializeObservables();
       this.loadFinancialData();
-      console.log('🔄 PropertyFinances - Changement d\'année, rechargement des données');
+
     }
   }
 
@@ -117,8 +167,6 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
       console.warn('⚠️ PropertyId non défini, impossible d\'initialiser les observables');
       return;
     }
-
-    console.log(`🔧 Initialisation des observables pour la propriété: ${this.propertyId}`);
 
     // Utiliser les sélecteurs qui filtrent par propriété ET par année
     this.roomStatistics$ = this.store.select(StatisticState.selectStateStatisticRoomByPropertyIdAndYear(this.propertyId, this.selectedYear));
@@ -140,17 +188,17 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
       return;
     }
 
-    console.log('🚀 Chargement des données financières:', {
-      propertyId: this.propertyId,
-      year: this.selectedYear
-    });
 
-    // Déclencher toutes les actions nécessaires pour charger les données
+
+    // Marquer comme en cours de chargement
+    this.isLoading = true;
+
+    // Déclencher l'action principale de rafraîchissement (une seule fois)
     this.store.dispatch(
-      new StatisticAction.RefreshStaticLocataireDataByPropertyIdAndYear(this.propertyId, this.selectedYear)
+      new StatisticAction.RefreshStaticLocataireDataByPropertyIdAndYear(this.propertyId, this.selectedYear.toString())
     );
 
-    // Vérifier si les données sont déjà présentes dans le store
+    // Vérifier les données existantes sans forcer le rechargement
     this.checkExistingData();
   }
 
@@ -160,31 +208,94 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
     const tenantStats = this.store.selectSnapshot(StatisticState.selectStateStatisticLocataireByPropertyIdAndYear(this.propertyId, this.selectedYear));
     const paymentStats = this.store.selectSnapshot(StatisticState.selectStateStatisticAllPaymentLocataireByPropertyIdAndYear(this.propertyId, this.selectedYear));
 
-    console.log('📋 Données existantes dans le store:', {
-      roomStats: roomStats?.length || 0,
-      tenantStats: tenantStats?.length || 0,
-      paymentStats: paymentStats?.length || 0
-    });
-
     // Si aucune donnée n'est présente, déclencher les actions individuelles
     if (!roomStats || roomStats.length === 0) {
-      console.log('🔄 Chargement des statistiques de chambres...');
       this.store.dispatch(new StatisticAction.FetchStaticRoomDataByPropertyIdAndYear(this.propertyId, this.selectedYear.toString()));
     }
 
     if (!tenantStats || tenantStats.length === 0) {
-      console.log('🔄 Chargement des statistiques de locataires...');
-      this.store.dispatch(new StatisticAction.FetchStaticLocataireDataByPropertyIdAndYear(this.propertyId, this.selectedYear));
+      this.store.dispatch(new StatisticAction.FetchStaticLocataireDataByPropertyIdAndYear(this.propertyId, this.selectedYear.toString()));
     }
 
     if (!paymentStats || paymentStats.length === 0) {
-      console.log('🔄 Chargement des statistiques de paiements...');
-      this.store.dispatch(new StatisticAction.FetchStaticAllPaymentLocataireDataByPropertyIdAndYear(this.propertyId, this.selectedYear));
+      this.store.dispatch(new StatisticAction.FetchStaticAllPaymentLocataireDataByPropertyIdAndYear(this.propertyId, this.selectedYear.toString()));
     }
 
     // Charger la récapitulation pour l'année
-    console.log('🔄 Chargement de la récapitulation...');
-    this.store.dispatch(new StatisticAction.FetchStatisticPaymentRecapitulationAccountOfAllPropertyByYear(this.selectedYear));
+    this.store.dispatch(new StatisticAction.FetchStatisticPaymentRecapitulationAccountOfAllPropertyByYear(this.selectedYear.toString()));
+  }
+
+  /**
+   * Force le chargement de toutes les données nécessaires
+   */
+  private forceLoadAllData(): void {
+    const currentTime = Date.now();
+
+    // Éviter les rechargements trop fréquents (moins de 3 secondes)
+    if (currentTime - this.lastLoadTime < 3000) {
+      return;
+    }
+
+    // Limiter le nombre de tentatives
+    if (this.loadingAttempts >= this.maxLoadingAttempts) {
+      this.isLoading = false;
+      return;
+    }
+
+    this.loadingAttempts++;
+    this.lastLoadTime = currentTime;
+
+    // Charger toutes les statistiques en parallèle
+    const actions = [
+      new StatisticAction.FetchStaticRoomDataByPropertyIdAndYear(this.propertyId, this.selectedYear.toString()),
+      new StatisticAction.FetchStaticLocataireDataByPropertyIdAndYear(this.propertyId, this.selectedYear.toString()),
+      new StatisticAction.FetchStaticAllPaymentLocataireDataByPropertyIdAndYear(this.propertyId, this.selectedYear.toString()),
+      new StatisticAction.FetchStatisticPaymentRecapitulationAccountOfAllPropertyByYear(this.selectedYear.toString())
+    ];
+
+    this.store.dispatch(actions);
+
+    // Vérifier le chargement après un délai plus long
+    setTimeout(() => {
+      this.checkDataLoadingStatus();
+    }, 5000);
+  }
+
+  /**
+   * Vérifie le statut de chargement des données
+   */
+  private checkDataLoadingStatus(): void {
+
+
+
+
+    // Arrêter le loading dans tous les cas après vérification
+    this.isLoading = false;
+
+    // Si aucune donnée n'est chargée ET qu'on n'a pas atteint le max de tentatives
+    if (!this.hasFinancialData() && this.loadingAttempts < this.maxLoadingAttempts) {
+
+      setTimeout(() => {
+        this.forceLoadAllData();
+      }, 3000);
+    } else if (this.hasFinancialData()) {
+
+      this.resetLoadingAttempts();
+    } else {
+      console.error('❌ Échec du chargement après toutes les tentatives');
+      this.resetLoadingAttempts();
+    }
+  }
+
+
+
+  /**
+   * Remet à zéro les compteurs de tentatives de chargement
+   */
+  resetLoadingAttempts(): void {
+    this.loadingAttempts = 0;
+    this.lastLoadTime = 0;
+
   }
 
   private setupDataSubscriptions(): void {
@@ -204,16 +315,21 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
         recapitulation: this.findRecapForYear(recapStats)
       };
 
-      console.log('📊 Données financières mises à jour:', {
-        yearlyStats: this.financialData.yearlyStats.length,
-        tenantStats: this.financialData.tenantStats.length,
-        paymentStats: this.financialData.paymentStats.length,
-        propertyId: this.propertyId,
-        year: this.selectedYear
-      });
 
-      // Diagnostiquer les données pour identifier les problèmes
-      this.diagnoseFinancialData();
+
+
+
+      // Arrêter le loading si on a des données
+      if (this.hasFinancialData()) {
+        this.isLoading = false;
+        this.resetLoadingAttempts();
+        console.log('✅ Données chargées, arrêt du loading');
+
+        // Forcer la détection des changements
+        setTimeout(() => {
+          this.isLoading = false;
+        }, 50);
+      }
     });
 
     // Surveiller les états de chargement
@@ -227,14 +343,14 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
   private loadFinancialDataForYear(year: number): void {
     if (!this.propertyId) return;
 
-    console.log(`🔄 Chargement des données financières pour l'année ${year}`);
+
 
     // Charger les statistiques pour l'année sélectionnée
     this.store.dispatch([
       new StatisticAction.FetchStaticRoomDataByPropertyIdAndYear(this.propertyId, year.toString()),
-      new StatisticAction.FetchStaticLocataireDataByPropertyIdAndYear(this.propertyId, year),
-      new StatisticAction.FetchStaticAllPaymentLocataireDataByPropertyIdAndYear(this.propertyId, year),
-      new StatisticAction.FetchStatisticPaymentRecapitulationAccountOfAllPropertyByYear(year)
+      new StatisticAction.FetchStaticLocataireDataByPropertyIdAndYear(this.propertyId, year.toString()),
+      new StatisticAction.FetchStaticAllPaymentLocataireDataByPropertyIdAndYear(this.propertyId, year.toString()),
+      new StatisticAction.FetchStatisticPaymentRecapitulationAccountOfAllPropertyByYear(year.toString())
     ]);
   }
 
@@ -251,21 +367,56 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
 
   // === MÉTHODES D'ACTIONS ===
 
-  onYearChange(year: number): void {
-    this.selectedYear = year;
+  onYearChange(year: number | string): void {
+    // Convertir en nombre si c'est une string (venant du select HTML)
+    const numericYear = typeof year === 'string' ? parseInt(year, 10) : year;
+
+    if (isNaN(numericYear)) {
+      console.error('❌ Année invalide:', year);
+      return;
+    }
+
+
+
+    // Remettre à zéro les compteurs pour la nouvelle année
+    this.resetLoadingAttempts();
+
+    // Marquer comme en cours de chargement
+    this.isLoading = true;
+
+    // Mettre à jour l'année sélectionnée
+    this.selectedYear = numericYear;
+
     // Réinitialiser les observables avec la nouvelle année
     this.initializeObservables();
-    this.loadFinancialDataForYear(year);
+
+    // Charger les données pour la nouvelle année (une seule fois)
+    this.loadFinancialDataForYear(numericYear);
   }
 
   /**
    * Vérifie s'il y a des données financières disponibles pour l'année sélectionnée
    */
   hasFinancialData(): boolean {
-    return this.financialData.yearlyStats.length > 0 ||
-           this.financialData.tenantStats.length > 0 ||
-           this.financialData.paymentStats.length > 0 ||
-           this.financialData.recapitulation !== null;
+    const hasYearlyStats = this.financialData.yearlyStats.length > 0;
+    const hasTenantStats = this.financialData.tenantStats.length > 0;
+    const hasPaymentStats = this.financialData.paymentStats.length > 0;
+    const hasRecapitulation = this.financialData.recapitulation !== null;
+
+    // Pour considérer qu'on a des données, il faut au minimum yearlyStats OU (tenantStats ET paymentStats)
+    const hasMinimalData = hasYearlyStats || (hasTenantStats && hasPaymentStats);
+
+    console.log('🔍 Vérification des données financières:', {
+      hasYearlyStats,
+      hasTenantStats,
+      hasPaymentStats,
+      hasRecapitulation,
+      hasMinimalData,
+      propertyId: this.propertyId,
+      selectedYear: this.selectedYear
+    });
+
+    return hasMinimalData;
   }
 
   /**
@@ -427,10 +578,7 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
 
   refreshData(): void {
     if (this.propertyId) {
-      console.log('🔄 Actualisation forcée des données financières:', {
-        propertyId: this.propertyId,
-        year: this.selectedYear
-      });
+
 
       // Vider le cache et forcer le rechargement
       this.store.dispatch(new StatisticAction.ResetAllState());
@@ -442,127 +590,7 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  /**
-   * Diagnostiquer les données financières pour identifier les problèmes
-   */
-  private diagnoseFinancialData(): void {
-    console.log('🔍 Diagnostic des données financières:');
-
-    // Vérifier les données de base
-    const hasRoomStats = this.financialData.yearlyStats.length > 0;
-    const hasTenantStats = this.financialData.tenantStats.length > 0;
-    const hasPaymentStats = this.financialData.paymentStats.length > 0;
-    const hasRecapitulation = !!this.financialData.recapitulation;
-
-    console.log('  📋 État des données:', {
-      hasRoomStats,
-      hasTenantStats,
-      hasPaymentStats,
-      hasRecapitulation
-    });
-
-    // Analyser les données de chambres
-    if (hasRoomStats) {
-      const roomsWithPrice = this.financialData.yearlyStats.filter(room => room.room?.price > 0);
-      const roomsWithPayments = this.financialData.yearlyStats.filter(room =>
-        room.paymentValue && room.paymentValue.some(payment => payment > 0)
-      );
-
-      console.log('  🏠 Analyse des chambres:', {
-        totalRooms: this.financialData.yearlyStats.length,
-        roomsWithPrice: roomsWithPrice.length,
-        roomsWithPayments: roomsWithPayments.length
-      });
-
-      // Détailler quelques chambres
-      this.financialData.yearlyStats.slice(0, 3).forEach((room, index) => {
-        console.log(`    Chambre ${index + 1}:`, {
-          code: room.room?.code,
-          price: room.room?.price,
-          payments: room.paymentValue,
-          totalReceived: room.paymentValue?.reduce((sum, p) => sum + (p || 0), 0) || 0
-        });
-      });
-    }
-
-    // Analyser les paiements
-    if (hasPaymentStats) {
-      let totalPaid = 0;
-      let totalDue = 0;
-
-      this.financialData.paymentStats.forEach(payment => {
-        payment.paymentState?.forEach(state => {
-          totalDue += state.price || 0;
-          if (state.state === 'payed') {
-            totalPaid += state.unitLocationPaymentPrice || state.price || 0;
-          } else if (state.state === 'partialPayment') {
-            totalPaid += state.price || 0;
-          }
-        });
-      });
-
-      console.log('  💰 Analyse des paiements:', {
-        totalPayments: this.financialData.paymentStats.length,
-        totalPaid,
-        totalDue,
-        collectionRate: totalDue > 0 ? (totalPaid / totalDue * 100).toFixed(1) + '%' : '0%'
-      });
-    }
-
-    // Calculer les métriques avec le service
-    if (hasRoomStats) {
-      const metrics = this.financialCalculationsService.calculateFinancialMetrics(
-        this.financialData.yearlyStats,
-        this.financialData.recapitulation
-      );
-      console.log('  📊 Métriques calculées:', metrics);
-    }
-
-    // Si aucune donnée n'est trouvée, tester les endpoints directement
-    if (!hasRoomStats && !hasTenantStats && !hasPaymentStats) {
-      console.log('⚠️ Aucune donnée trouvée, test des endpoints...');
-      this.testBackendEndpoints();
-    }
-  }
-
-  /**
-   * Tester directement les endpoints backend pour diagnostiquer les problèmes
-   */
-  private testBackendEndpoints(): void {
-    if (!this.propertyId) return;
-
-    console.log('🧪 Test des endpoints backend...');
-
-    // Test endpoint des statistiques de chambres
-    fetch(`/api/statistic-location-payment/statistic-payement-by-room/${this.propertyId}/${this.selectedYear}/`)
-      .then(response => response.json())
-      .then(data => {
-        console.log('📊 Réponse endpoint chambres:', data);
-      })
-      .catch(error => {
-        console.error('❌ Erreur endpoint chambres:', error);
-      });
-
-    // Test endpoint des statistiques de locataires
-    fetch(`/api/statistic-location-payment/statistic-payement-by-locataire/${this.propertyId}/${this.selectedYear}/`)
-      .then(response => response.json())
-      .then(data => {
-        console.log('👥 Réponse endpoint locataires:', data);
-      })
-      .catch(error => {
-        console.error('❌ Erreur endpoint locataires:', error);
-      });
-
-    // Test endpoint des paiements
-    fetch(`/api/statistic-location-payment/statistic-payement-all-inyear/${this.propertyId}/${this.selectedYear}/`)
-      .then(response => response.json())
-      .then(data => {
-        console.log('💰 Réponse endpoint paiements:', data);
-      })
-      .catch(error => {
-        console.error('❌ Erreur endpoint paiements:', error);
-      });
-  }
+  // Méthode diagnoseFinancialData supprimée (dupliquée)
 
   // === MÉTHODES UTILITAIRES ===
 
@@ -573,6 +601,30 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
       years.push(i);
     }
     return years;
+  }
+
+  /**
+   * S'assure que l'année sélectionnée est valide et dans la liste des années disponibles
+   */
+  private ensureValidSelectedYear(): void {
+    const availableYears = this.getAvailableYears();
+    const currentYear = new Date().getFullYear();
+
+    // Si selectedYear n'est pas défini ou n'est pas dans la liste, utiliser l'année courante
+    if (!this.selectedYear || !availableYears.includes(this.selectedYear)) {
+      this.selectedYear = currentYear;
+    }
+  }
+
+
+
+
+
+  /**
+   * TrackBy function pour les tabs
+   */
+  trackByTabId(_index: number, tab: any): string {
+    return tab.id;
   }
 
   formatPrice(price: number | null | undefined): string {
@@ -588,35 +640,7 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
     return `${value.toFixed(1)}%`;
   }
 
-  /**
-   * Méthode de debug pour vérifier l'état du store
-   */
-  debugStoreState(): void {
-    console.log('🔍 État actuel du store:');
 
-    // Vérifier l'état complet du store
-    const fullState = this.store.selectSnapshot(StatisticState);
-    console.log('  📋 État complet:', fullState);
-
-    // Vérifier les données spécifiques
-    const roomStats = this.store.selectSnapshot(StatisticState.selectStateStatisticRoomByPropertyIdAndYear(this.propertyId, this.selectedYear));
-    const tenantStats = this.store.selectSnapshot(StatisticState.selectStateStatisticLocataireByPropertyIdAndYear(this.propertyId, this.selectedYear));
-    const paymentStats = this.store.selectSnapshot(StatisticState.selectStateStatisticAllPaymentLocataireByPropertyIdAndYear(this.propertyId, this.selectedYear));
-
-    console.log('  🏠 Statistiques chambres:', roomStats);
-    console.log('  👥 Statistiques locataires:', tenantStats);
-    console.log('  💰 Statistiques paiements:', paymentStats);
-
-    // Vérifier les états de chargement
-    const loadingStates = {
-      room: this.store.selectSnapshot(StatisticState.selectStateLoadingRoomStatistic),
-      tenant: this.store.selectSnapshot(StatisticState.selectStateLocataireStatisticLoading),
-      payment: this.store.selectSnapshot(StatisticState.selectStateAllLocatairePayementByYearLoading),
-      recap: this.store.selectSnapshot(StatisticState.selectStateLoadingStatisticRecaptilationLoading)
-    };
-
-    console.log('  ⏳ États de chargement:', loadingStates);
-  }
 
   getMonthName(monthIndex: number): string {
     const months = [

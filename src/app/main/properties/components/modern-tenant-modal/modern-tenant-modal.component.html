@@ -200,33 +200,23 @@
           </div>
         </div>
 
-        <!-- Informations de location -->
+        <!-- Note d'information pour l'assignation -->
         <div class="form-section">
-          <h3 class="section-title">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-            </svg>
-            Informations de location
-          </h3>
-          
-          <div class="form-grid">
-            <div class="form-group">
-              <label class="form-label">Unité à attribuer</label>
-              <select formControlName="roomId" class="form-select">
-                <option value="">Sélectionner une unité</option>
-                <option *ngFor="let room of availableRooms" [value]="room.valueType">
-                  {{ room.content }}
-                </option>
-              </select>
-            </div>
-
-            <div class="form-group full-width">
-              <label class="form-label">Description / Notes</label>
-              <textarea formControlName="description"
-                        class="form-textarea"
-                        rows="3"
-                        placeholder="Informations supplémentaires sur le locataire..."></textarea>
+          <div class="info-note bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div class="flex items-start space-x-3">
+              <div class="flex-shrink-0">
+                <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+              </div>
+              <div class="flex-1">
+                <h4 class="text-sm font-medium text-blue-800 mb-1">Attribution d'une unité</h4>
+                <p class="text-sm text-blue-700">
+                  Pour attribuer une unité à ce locataire, utilisez l'<strong>Assistant d'assignation</strong>
+                  disponible dans la section "Unités" de cette propriété après avoir créé le locataire.
+                </p>
+              </div>
             </div>
           </div>
         </div>

@@ -153,6 +153,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
       0 25px 50px -12px rgba(0, 0, 0, 0.25) !important,
       0 0 0 1px rgba(255, 255, 255, 0.05) !important;
     backdrop-filter: blur(20px) !important;
+    /* Correction de l'ombre à droite */
+    position: relative !important;
+    transform: none !important;
+    margin: auto !important;
   }
 
   .mat-dialog-content {
@@ -160,6 +164,12 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     margin: 0 !important;
     max-height: none !important;
     overflow: hidden !important;
+  }
+
+  /* Correction du backdrop pour éviter les problèmes d'ombre */
+  &.cdk-overlay-pane {
+    position: fixed !important;
+    pointer-events: auto !important;
   }
 }
 
@@ -187,6 +197,26 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     width: 800px !important;
     height: auto !important;
     max-height: 90vh !important;
+  }
+}
+
+/* Correction du backdrop pour éviter les ombres parasites */
+.modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.5) !important;
+  backdrop-filter: blur(4px) !important;
+}
+
+/* Correction spécifique pour les modals de paiement */
+.cdk-overlay-container {
+  .cdk-overlay-pane {
+    &.payment-modal-dialog {
+      position: fixed !important;
+      top: 50% !important;
+      left: 50% !important;
+      transform: translate(-50%, -50%) !important;
+      max-width: 95vw !important;
+      max-height: 90vh !important;
+    }
   }
 }
 

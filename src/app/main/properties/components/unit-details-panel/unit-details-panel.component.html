@@ -531,8 +531,9 @@
                   <span>Assigner un locataire</span>
                 </button>
 
-                <!-- Préparer lien de paiement -->
-                <button (click)="onGeneratePaymentLink()"
+                <!-- Préparer lien de paiement (visible uniquement si unité occupée) -->
+                <button *ngIf="!room?.isFree && (unitData?.tenant || unitData?.location)"
+                        (click)="onGeneratePaymentLink()"
                         class="w-full flex items-center justify-center space-x-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-all duration-200 hover:shadow-lg transform hover:scale-105">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>

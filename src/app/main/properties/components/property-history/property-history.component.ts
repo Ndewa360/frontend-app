@@ -645,7 +645,13 @@ export class PropertyHistoryComponent implements OnInit, OnDestroy, OnChanges {
   /**
    * Construit les données de paiement nécessaires pour les modals
    */
-  private buildPaymentModalData(payment: PaymentHistoryItem): {transaction: any, history: any} {
+  private buildPaymentModalData(payment: PaymentHistoryItem): {
+    transaction: any,
+    history: any,
+    room: any,
+    tenant: any,
+    location: any
+  } {
     // Construire l'objet history avec les données nécessaires
     const history = {
       _id: `history_${payment.tenant?._id || 'unknown'}`,
@@ -655,9 +661,22 @@ export class PropertyHistoryComponent implements OnInit, OnDestroy, OnChanges {
       transactions: [payment.rawPayment]
     };
 
+    // Construire l'objet location si nécessaire
+    const location = {
+      _id: payment.rawPayment?.location || `temp_location_${payment.tenant?._id}`,
+      room: payment.room?._id,
+      locataire: payment.tenant?._id,
+      property: this.propertyId,
+      startDate: payment.rawPayment?.datePayment || new Date(),
+      monthlyRent: payment.room?.price || 0
+    };
+
     return {
       transaction: payment.rawPayment,
-      history: history
+      history: history,
+      room: payment.room,
+      tenant: payment.tenant,
+      location: location
     };
   }
 
@@ -702,12 +721,19 @@ export class PropertyHistoryComponent implements OnInit, OnDestroy, OnChanges {
 
     try {
       const dialogRef = this.dialog.open(ModernPaymentModalComponent, {
-        width: '100%',
-        maxWidth: '800px',
+        width: '700px',
+        maxWidth: '95vw',
+        panelClass: 'payment-modal-dialog',
         disableClose: true,
+        hasBackdrop: true,
+        backdropClass: 'modal-backdrop',
         data: {
+          mode: 'edit',
           transaction: paymentData.transaction,
-          history: paymentData.history
+          history: paymentData.history,
+          room: paymentData.room,
+          tenant: paymentData.tenant,
+          location: paymentData.location
         }
       });
 

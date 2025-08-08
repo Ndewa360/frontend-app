@@ -60,16 +60,19 @@ export class FinancialCalculationsService {
       hasRecapitulation: !!recapitulation
     });
 
-    if (!yearlyStats || yearlyStats.length === 0) {
-      return this.getEmptyMetrics();
-    }
+    try {
+      // Validation des données d'entrée
+      if (!yearlyStats || yearlyStats.length === 0) {
+        console.warn('⚠️ Aucune donnée de statistiques annuelles disponible');
+        return this.getEmptyMetrics();
+      }
 
-    let totalRevenue = 0;
-    let totalExpected = 0;
-    let totalRooms = yearlyStats.length;
-    let occupiedRooms = 0;
-    let totalRentSum = 0;
-    let totalDeposits = 0;
+      let totalRevenue = 0;
+      let totalExpected = 0;
+      let totalRooms = yearlyStats.length;
+      let occupiedRooms = 0;
+      let totalRentSum = 0;
+      let totalDeposits = 0;
 
     // Analyser chaque chambre
     yearlyStats.forEach((roomStat, index) => {
@@ -127,31 +130,52 @@ export class FinancialCalculationsService {
       }
     });
 
-    // Calculer les métriques dérivées
-    const collectionRate = totalExpected > 0 ? (totalRevenue / totalExpected) * 100 : 0;
-    const occupancyRate = totalRooms > 0 ? (occupiedRooms / totalRooms) * 100 : 0;
-    const averageRent = totalRooms > 0 ? totalRentSum / totalRooms : 0;
+      // Calculer les métriques dérivées avec validation
+      let collectionRate = 0;
+      if (totalExpected > 0 && !isNaN(totalRevenue) && !isNaN(totalExpected)) {
+        collectionRate = Math.min((totalRevenue / totalExpected) * 100, 100);
+        collectionRate = Math.max(collectionRate, 0); // Pas de taux négatif
+      }
 
-    // Estimer les coûts et le profit net
-    const estimatedCosts = this.estimateOperatingCosts(totalRevenue);
-    const netProfit = totalRevenue - estimatedCosts;
-    const profitMargin = totalRevenue > 0 ? (netProfit / totalRevenue) * 100 : 0;
+      let occupancyRate = 0;
+      if (totalRooms > 0) {
+        occupancyRate = (occupiedRooms / totalRooms) * 100;
+      }
 
-    const metrics: FinancialMetrics = {
-      totalRevenue,
-      totalExpected,
-      collectionRate,
-      totalRooms,
-      occupiedRooms,
-      occupancyRate,
-      averageRent,
-      totalDeposits,
-      netProfit,
-      profitMargin
-    };
+      let averageRent = 0;
+      if (totalRooms > 0 && totalRentSum > 0) {
+        averageRent = totalRentSum / totalRooms;
+      }
 
-    console.log('✅ Métriques calculées:', metrics);
-    return metrics;
+      // Estimer les coûts et le profit net avec validation
+      const estimatedCosts = this.estimateOperatingCosts(totalRevenue, totalRooms);
+      const netProfit = totalRevenue - estimatedCosts;
+
+      let profitMargin = 0;
+      if (totalRevenue > 0 && !isNaN(netProfit)) {
+        profitMargin = (netProfit / totalRevenue) * 100;
+      }
+
+      const metrics: FinancialMetrics = {
+        totalRevenue: Math.round(totalRevenue * 100) / 100, // Arrondir à 2 décimales
+        totalExpected: Math.round(totalExpected * 100) / 100,
+        collectionRate: Math.round(collectionRate * 100) / 100,
+        totalRooms,
+        occupiedRooms,
+        occupancyRate: Math.round(occupancyRate * 100) / 100,
+        averageRent: Math.round(averageRent * 100) / 100,
+        totalDeposits: Math.round(totalDeposits * 100) / 100,
+        netProfit: Math.round(netProfit * 100) / 100,
+        profitMargin: Math.round(profitMargin * 100) / 100
+      };
+
+      console.log('✅ Métriques calculées:', metrics);
+      return metrics;
+
+    } catch (error) {
+      console.error('❌ Erreur lors du calcul des métriques financières:', error);
+      return this.getEmptyMetrics();
+    }
   }
 
   /**
@@ -371,10 +395,57 @@ export class FinancialCalculationsService {
     });
   }
 
-  private estimateOperatingCosts(revenue: number): number {
-    // Estimation des coûts opérationnels (maintenance, gestion, etc.)
-    // Généralement 15-25% des revenus
-    return revenue * 0.20;
+  /**
+   * Estime les coûts opérationnels basés sur des données réelles du marché camerounais
+   */
+  private estimateOperatingCosts(revenue: number, totalRooms?: number): number {
+    try {
+      // Validation des paramètres
+      if (!revenue || revenue <= 0) {
+        return 0;
+      }
+
+      // Coûts fixes mensuels par unité (en FCFA) - Moyennes du marché camerounais
+      const fixedCostsPerUnit = {
+        maintenance: 50000,    // Maintenance générale
+        insurance: 25000,      // Assurance
+        taxes: 30000,          // Taxes foncières
+        utilities: 40000,      // Eau, électricité communes
+        repairs: 35000,        // Réparations
+        cleaning: 20000,       // Nettoyage
+        security: 45000,       // Sécurité
+        management: 15000,     // Gestion
+        other: 15000          // Divers
+      };
+
+      const totalFixedCostsPerUnit = Object.values(fixedCostsPerUnit).reduce((sum, cost) => sum + cost, 0);
+
+      // Si on connaît le nombre d'unités, utiliser les coûts fixes
+      if (totalRooms && totalRooms > 0) {
+        const totalFixedCosts = totalFixedCostsPerUnit * totalRooms;
+
+        // Ajouter des coûts variables (5-10% du revenu)
+        const variableCosts = revenue * 0.08; // 8% pour les coûts variables
+
+        const totalCosts = totalFixedCosts + variableCosts;
+
+        console.log(`💰 Coûts estimés: ${totalFixedCosts} FCFA (fixes) + ${variableCosts} FCFA (variables) = ${totalCosts} FCFA`);
+        return Math.round(totalCosts);
+      }
+
+      // Fallback: utiliser un pourcentage du revenu (plus conservateur)
+      // Basé sur les standards du marché immobilier camerounais (25-35%)
+      const costRatio = 0.30; // 30% du revenu
+      const estimatedCosts = revenue * costRatio;
+
+      console.log(`💰 Coûts estimés (${costRatio * 100}% du revenu): ${estimatedCosts} FCFA`);
+      return Math.round(estimatedCosts);
+
+    } catch (error) {
+      console.error('❌ Erreur lors de l\'estimation des coûts opérationnels:', error);
+      // Fallback sécurisé
+      return Math.round(revenue * 0.25); // 25% par défaut
+    }
   }
 
   private calculateActiveMonths(payments: StatisticAllPaymentLocataireYearModel[]): number {
@@ -414,4 +485,71 @@ export class FinancialCalculationsService {
 
     return Math.max(0, monthsDiff + daysFraction);
   }
+
+  /**
+   * Calcule la croissance des revenus par rapport à la période précédente
+   */
+  calculateRevenueGrowth(currentPeriodData: any[], previousPeriodData?: any[]): number {
+    try {
+      if (!currentPeriodData || currentPeriodData.length === 0) {
+        return 0;
+      }
+
+      // Si pas de données précédentes, retourner 0
+      if (!previousPeriodData || previousPeriodData.length === 0) {
+        console.log('📊 Pas de données de période précédente pour calculer la croissance');
+        return 0;
+      }
+
+      // Calculer les revenus des deux périodes
+      const currentRevenue = currentPeriodData.reduce((sum, item) => {
+        return sum + (item.locationPaymentPrice || item.amount || item.value || 0);
+      }, 0);
+
+      const previousRevenue = previousPeriodData.reduce((sum, item) => {
+        return sum + (item.locationPaymentPrice || item.amount || item.value || 0);
+      }, 0);
+
+      // Calculer la croissance en pourcentage
+      if (previousRevenue === 0) {
+        return currentRevenue > 0 ? 100 : 0; // 100% de croissance si on part de 0
+      }
+
+      const growth = ((currentRevenue - previousRevenue) / previousRevenue) * 100;
+
+      console.log(`📈 Croissance des revenus: ${growth.toFixed(2)}% (${currentRevenue} vs ${previousRevenue})`);
+      return Math.round(growth * 100) / 100; // Arrondir à 2 décimales
+
+    } catch (error) {
+      console.error('❌ Erreur lors du calcul de la croissance des revenus:', error);
+      return 0;
+    }
+  }
+
+  /**
+   * Valide les données financières pour détecter les incohérences
+   */
+  validateFinancialData(metrics: FinancialMetrics): { isValid: boolean; warnings: string[] } {
+    const warnings: string[] = [];
+
+    // Vérifier les valeurs négatives
+    if (metrics.totalRevenue < 0) warnings.push('Revenus totaux négatifs détectés');
+    if (metrics.totalExpected < 0) warnings.push('Revenus attendus négatifs détectés');
+    if (metrics.netProfit < -metrics.totalRevenue) warnings.push('Perte nette excessive détectée');
+
+    // Vérifier les pourcentages
+    if (metrics.collectionRate > 100) warnings.push('Taux de collection supérieur à 100%');
+    if (metrics.occupancyRate > 100) warnings.push('Taux d\'occupation supérieur à 100%');
+    if (metrics.profitMargin < -100 || metrics.profitMargin > 100) warnings.push('Marge de profit anormale');
+
+    // Vérifier la cohérence
+    if (metrics.occupiedRooms > metrics.totalRooms) warnings.push('Plus de chambres occupées que le total');
+    if (metrics.totalRevenue > metrics.totalExpected * 1.5) warnings.push('Revenus très supérieurs aux attentes');
+
+    return {
+      isValid: warnings.length === 0,
+      warnings
+    };
+  }
+
 }

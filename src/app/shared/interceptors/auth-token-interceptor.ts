@@ -101,7 +101,8 @@ export class AuthTokenInterceptor implements HttpInterceptor {
     if (error.status === 0) {
       console.error('🔴 Erreur de réseau:', error);
       this._toastrService.warning('Problème de connexion réseau. Vérifiez votre connexion internet.', 'Ndewa360°');
-    } else {
+    } else if (!this.shouldSkipErrorDisplay(error, originalRequest)) {
+      // Ne pas afficher l'erreur si elle doit être ignorée
       this.showErrorMessage(error);
     }
 
@@ -266,13 +267,37 @@ export class AuthTokenInterceptor implements HttpInterceptor {
     });
   }
 
+  /**
+   * Détermine si l'affichage d'erreur doit être ignoré pour certaines requêtes
+   */
+  private shouldSkipErrorDisplay(error: HttpErrorResponse, request: HttpRequest<any>): boolean {
+    // Ignorer les erreurs 404 pour la vérification de liens de paiement existants
+    if (error.status === 404 && request.url.includes('/payment-link/existing/')) {
+      console.log('ℹ️ Erreur 404 ignorée pour vérification de lien de paiement:', request.url);
+      return true;
+    }
+
+    // Ignorer les erreurs 404 pour d'autres endpoints où c'est normal
+    const skipUrls = [
+      '/auth/refresh', // Ne pas afficher d'erreur pour les échecs de refresh token
+      '/health',       // Ne pas afficher d'erreur pour les checks de santé
+      '/favicon.ico',  // Ne pas afficher d'erreur pour les favicons manquants
+    ];
+
+    if (error.status === 404 && skipUrls.some(skipUrl => request.url.includes(skipUrl))) {
+      return true;
+    }
+
+    return false;
+  }
+
   showErrorMessage(error: any, isLoginProcess=false) {
     if(isLoginProcess) {
       switch(error.status) {
           case 401:
               this._toastrService.error(`Email ou mot de passe incorrect! `, 'Ndewa360°');
               break;
-              
+
           case 406:
               this._toastrService.warning(`Compte inactivé! Veuillez valider ce compte à partir du lien fourni par mail! `, 'Ndewa360°');
               break;
@@ -287,7 +312,7 @@ export class AuthTokenInterceptor implements HttpInterceptor {
               this._toastrService.error(`Aucune connexion internet activée. Vérifiez votre connexion internet et réessayez! `, 'Ndewa360°');
               this._store.dispatch(new GlobalAction.SetConnexionInternetState(false))
               break;
-              
+
           default:
               let message = error?.error?.message;
               if(!message) message = "Une erreur s'est produite! Réessayez plus tard"

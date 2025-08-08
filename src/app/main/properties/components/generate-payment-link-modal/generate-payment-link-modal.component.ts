@@ -40,18 +40,22 @@ export class GeneratePaymentLinkModalComponent implements OnInit {
       return;
     }
 
-    this.loading = true;
+    // Ne pas afficher le loader lors de la vérification initiale
     this.paymentLinkService.getExistingPaymentLink(this.data.location._id).subscribe({
       next: (response) => {
         // Un lien existe déjà, l'afficher
         this.generatedLink = response.data.paymentUrl;
-        this.loading = false;
         console.log('✅ Lien existant trouvé:', response.data);
       },
-      error: () => {
+      error: (error) => {
         // Aucun lien existant, continuer normalement
-        this.loading = false;
+        // Ne pas afficher d'erreur à l'utilisateur, c'est normal
         console.log('ℹ️ Aucun lien existant, prêt à en créer un nouveau');
+
+        // Vérifier si c'est vraiment une erreur ou juste l'absence de lien
+        if (error.status !== 404) {
+          console.warn('⚠️ Erreur inattendue lors de la vérification du lien:', error);
+        }
       }
     });
   }
@@ -77,7 +81,20 @@ export class GeneratePaymentLinkModalComponent implements OnInit {
       error: (error) => {
         console.error('Erreur lors de la génération du lien:', error);
         this.loading = false;
-        // TODO: Afficher un message d'erreur
+
+        // Afficher un message d'erreur informatif
+        let errorMessage = 'Une erreur est survenue lors de la génération du lien de paiement.';
+
+        if (error.status === 400) {
+          errorMessage = 'Données invalides. Veuillez vérifier les informations saisies.';
+        } else if (error.status === 404) {
+          errorMessage = 'Location non trouvée. Veuillez vérifier que l\'assignation est correcte.';
+        } else if (error.status === 500) {
+          errorMessage = 'Erreur serveur. Veuillez réessayer dans quelques instants.';
+        }
+
+        // Vous pouvez utiliser un service de notification ici
+        alert(errorMessage);
       }
     });
   }

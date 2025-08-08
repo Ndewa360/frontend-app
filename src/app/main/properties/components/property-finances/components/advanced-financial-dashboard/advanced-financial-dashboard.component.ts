@@ -10,7 +10,8 @@ import {
 } from 'src/app/shared/store';
 import { Store } from '@ngxs/store';
 import { ExportData } from '../../property-finances.component';
-import { TenantPaymentCalculatorService } from 'src/app/shared/services/tenant-payment-calculator.service';
+
+import { PropertyFinancialManagerService, PropertyFinancialMetrics } from 'src/app/shared/services/property-financial-manager.service';
 
 interface FinancialMetric {
   label: string;
@@ -51,6 +52,9 @@ export class AdvancedFinancialDashboardComponent implements OnInit, OnChanges {
 
   // Métriques principales
   financialMetrics: FinancialMetric[] = [];
+
+  // Métriques complètes du nouveau service
+  propertyMetrics: PropertyFinancialMetrics | null = null;
   
   // Données des graphiques
   chartData: ChartData = {
@@ -67,7 +71,15 @@ export class AdvancedFinancialDashboardComponent implements OnInit, OnChanges {
   collectionRate: number = 0;
   averageRent: number = 0;
   occupancyRate: number = 0;
+  occupiedRooms: number = 0;
+  totalRooms: number = 0;
   totalProperties: number = 0;
+
+  // Changements calculés
+  revenueChange: { value: number, type: 'increase' | 'decrease' | 'neutral' } = { value: 0, type: 'neutral' };
+  collectionRateChange: { value: number, type: 'increase' | 'decrease' | 'neutral' } = { value: 0, type: 'neutral' };
+  occupancyRateChange: { value: number, type: 'increase' | 'decrease' | 'neutral' } = { value: 0, type: 'neutral' };
+  averageRentChange: { value: number, type: 'increase' | 'decrease' | 'neutral' } = { value: 0, type: 'neutral' };
 
   // Couleurs du thème
   primaryColor = 'rgb(204, 140, 10)';
@@ -82,7 +94,7 @@ export class AdvancedFinancialDashboardComponent implements OnInit, OnChanges {
 
   constructor(
     private store: Store,
-    private tenantPaymentCalculator: TenantPaymentCalculatorService
+    private financialManager: PropertyFinancialManagerService
   ) { }
 
   ngOnInit(): void {
@@ -119,10 +131,19 @@ export class AdvancedFinancialDashboardComponent implements OnInit, OnChanges {
   private processFinancialData(): void {
     this.calculateMetrics();
     this.buildCharts();
+
+    // Forcer l'arrêt du loading après le traitement des données
+    setTimeout(() => {
+      if (this.yearlyStats.length > 0) {
+        console.log('✅ Dashboard: Données traitées, arrêt du loading');
+        // Note: isLoading est un @Input, on ne peut pas le modifier directement
+        // Le composant parent doit gérer cet état
+      }
+    }, 100);
   }
 
   private calculateMetrics(): void {
-    console.log('📊 Calcul des métriques avec yearlyStats:', this.yearlyStats);
+    console.log('📊 NOUVEAU SERVICE - Calcul des métriques avec yearlyStats:', this.yearlyStats);
 
     if (!this.yearlyStats.length) {
       console.log('⚠️ Aucune donnée yearlyStats disponible');
@@ -130,30 +151,36 @@ export class AdvancedFinancialDashboardComponent implements OnInit, OnChanges {
       return;
     }
 
-    // Utiliser le service corrigé pour calculer les métriques
-    const metrics = this.tenantPaymentCalculator.calculateFinancialMetrics(
+    // Utiliser le nouveau service financier centralisé
+    const propertyMetrics = this.financialManager.calculatePropertyMetrics(
+      this.propertyId,
+      this.selectedYear,
       this.yearlyStats,
       this.locations,
-      this.selectedYear
+      this.paymentStats
     );
 
     // Assigner les valeurs calculées
-    this.totalRevenue = metrics.totalRevenue;
-    this.totalExpected = metrics.totalExpected;
-    this.collectionRate = metrics.collectionRate;
-    this.averageRent = metrics.averageRent;
-    this.occupancyRate = metrics.occupancyRate;
+    this.totalRevenue = propertyMetrics.totalRevenue;
+    this.totalExpected = propertyMetrics.totalExpected;
+    this.collectionRate = propertyMetrics.collectionRate;
+    this.averageRent = propertyMetrics.averageRent;
+    this.occupancyRate = propertyMetrics.occupancyRate;
+    this.occupiedRooms = propertyMetrics.occupiedRooms;
+    this.totalRooms = propertyMetrics.totalRooms;
     this.totalProperties = this.getTotalProperties();
 
-    console.log('✅ Métriques calculées:', {
-      totalRevenue: this.totalRevenue,
-      totalExpected: this.totalExpected,
-      collectionRate: this.collectionRate,
-      occupancyRate: this.occupancyRate,
-      averageRent: this.averageRent,
-      occupiedRooms: metrics.occupiedRooms,
-      totalRooms: metrics.totalRooms
-    });
+    // Calculer les changements avec le nouveau service
+    const changes = this.financialManager.calculateMetricChanges(propertyMetrics);
+    this.revenueChange = changes.revenueChange;
+    this.collectionRateChange = changes.collectionRateChange;
+    this.occupancyRateChange = changes.occupancyRateChange;
+    this.averageRentChange = changes.averageRentChange;
+
+    // Stocker les métriques complètes pour les graphiques
+    this.propertyMetrics = propertyMetrics;
+
+
 
     // Construire les métriques pour l'affichage
     this.buildFinancialMetrics();
@@ -546,90 +573,76 @@ export class AdvancedFinancialDashboardComponent implements OnInit, OnChanges {
     };
   }
 
-  // Méthodes utilitaires pour les données
+  // Méthodes utilitaires pour les données (utilisant le nouveau service)
   private getMonthlyRevenueData(): { months: string[], revenues: number[] } {
-    const months = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
-    const revenues = new Array(12).fill(0);
+    if (!this.propertyMetrics) {
+      return { months: [], revenues: [] };
+    }
 
-    console.log('📈 Calcul des revenus mensuels avec', this.yearlyStats.length, 'chambres');
+    // Utiliser le nouveau service pour générer les données mensuelles
+    const monthlyData = this.financialManager.generateMonthlyData(
+      this.selectedYear,
+      this.propertyMetrics.roomDetails
+    );
 
-    this.yearlyStats.forEach((roomStat, roomIndex) => {
-      const monthlyPayments = roomStat.paymentValue || [];
-      console.log(`🏠 Chambre ${roomIndex + 1} (${roomStat.room?.code || 'N/A'}):`, {
-        price: roomStat.room?.price,
-        paymentValue: monthlyPayments,
-        totalPayments: monthlyPayments.reduce((sum, p) => sum + (p || 0), 0)
-      });
+    const chartData = this.financialManager.generateRevenueChartData(monthlyData);
 
-      monthlyPayments.forEach((payment, index) => {
-        if (index < 12) {
-          revenues[index] += payment || 0;
-        }
-      });
+    console.log('📈 NOUVEAU SERVICE - Revenus mensuels:', {
+      months: chartData.months,
+      revenues: chartData.revenues,
+      totalAnnual: chartData.revenues.reduce((sum, r) => sum + r, 0)
     });
 
-    console.log('💰 Revenus mensuels calculés:', revenues);
-    console.log('💰 Total annuel:', revenues.reduce((sum, r) => sum + r, 0));
-
-    return { months, revenues };
+    return {
+      months: chartData.months,
+      revenues: chartData.revenues
+    };
   }
 
   private getPaymentStatusData(): any[] {
-    const statusCounts = {
-      payed: 0,
-      unpayed: 0,
-      partial: 0,
-      waiting: 0,
-      noContract: 0
-    };
+    if (!this.propertyMetrics) {
+      return [];
+    }
 
-    this.paymentStats.forEach(paymentStat => {
-      paymentStat.paymentState.forEach(state => {
-        switch (state.state) {
-          case StatisticPaymentStateType.PAYED:
-            statusCounts.payed++;
-            break;
-          case StatisticPaymentStateType.UNPAYED:
-            statusCounts.unpayed++;
-            break;
-          case StatisticPaymentStateType.PARTIAL_PAYMENT:
-            statusCounts.partial++;
-            break;
-          case StatisticPaymentStateType.WAITING:
-            statusCounts.waiting++;
-            break;
-          case StatisticPaymentStateType.NO_CONTRACT:
-            statusCounts.noContract++;
-            break;
-        }
-      });
-    });
+    // Utiliser le nouveau service pour générer les données de statut
+    const statusData = this.financialManager.generatePaymentStatusData(
+      this.propertyMetrics.roomDetails
+    );
 
-    return [
-      { value: statusCounts.payed, name: 'Payé', itemStyle: { color: this.successColor } },
-      { value: statusCounts.unpayed, name: 'Non payé', itemStyle: { color: this.dangerColor } },
-      { value: statusCounts.partial, name: 'Partiel', itemStyle: { color: this.warningColor } },
-      { value: statusCounts.waiting, name: 'En attente', itemStyle: { color: this.infoColor } },
-      { value: statusCounts.noContract, name: 'Sans contrat', itemStyle: { color: '#6b7280' } }
-    ];
+    console.log('📊 NOUVEAU SERVICE - Statuts de paiement:', statusData);
+
+    // Convertir au format attendu par ECharts
+    return statusData.map(item => ({
+      value: item.value,
+      name: item.name,
+      itemStyle: { color: item.color }
+    }));
   }
 
   private getMonthlyTrendData(): { months: string[], expected: number[], received: number[] } {
-    const months = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
-    const expected = new Array(12).fill(0);
-    const received = new Array(12).fill(0);
+    if (!this.propertyMetrics) {
+      return { months: [], expected: [], received: [] };
+    }
 
-    this.yearlyStats.forEach(roomStat => {
-      const monthlyRent = roomStat.room?.price || 0;
-      const monthlyPayments = roomStat.paymentValue || [];
-      
-      for (let i = 0; i < 12; i++) {
-        expected[i] += monthlyRent;
-        received[i] += monthlyPayments[i] || 0;
-      }
+    // Utiliser le nouveau service pour générer les données mensuelles
+    const monthlyData = this.financialManager.generateMonthlyData(
+      this.selectedYear,
+      this.propertyMetrics.roomDetails
+    );
+
+    const chartData = this.financialManager.generateRevenueChartData(monthlyData);
+
+    console.log('📊 NOUVEAU SERVICE - Tendance mensuelle:', {
+      months: chartData.months,
+      expected: chartData.expected,
+      received: chartData.revenues
     });
 
-    return { months, expected, received };
+    return {
+      months: chartData.months,
+      expected: chartData.expected,
+      received: chartData.revenues
+    };
   }
 
   private getTenantAnalysisData(): any[] {

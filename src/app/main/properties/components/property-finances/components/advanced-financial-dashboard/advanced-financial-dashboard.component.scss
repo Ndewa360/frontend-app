@@ -185,6 +185,19 @@ $info-color: #3b82f6;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 1.5rem;
 
+      // Style spécifique pour 4 colonnes
+      &.four-columns {
+        grid-template-columns: repeat(4, 1fr);
+
+        @media (max-width: 1200px) {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        @media (max-width: 768px) {
+          grid-template-columns: 1fr;
+        }
+      }
+
       @media (max-width: 768px) {
         grid-template-columns: 1fr;
         gap: 1rem;

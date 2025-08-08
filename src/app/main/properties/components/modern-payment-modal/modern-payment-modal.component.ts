@@ -115,14 +115,14 @@ export class ModernPaymentModalComponent implements OnInit, OnDestroy {
   private populateForm(): void {
     if (this.data.transaction) {
       const transaction = this.data.transaction;
-      
+
       // Convertir la date au format YYYY-MM-DD pour l'input date
       let datePayment = '';
       if (transaction.datePayment) {
         const date = new Date(transaction.datePayment);
         datePayment = date.toISOString().split('T')[0];
       }
-      
+
       this.formGroup.patchValue({
         paymentLocationType: transaction.paymentLocationType || LocationPaymentType.LOCATION,
         locationPaymentPrice: transaction.locationPaymentPrice || 0,
@@ -131,6 +131,16 @@ export class ModernPaymentModalComponent implements OnInit, OnDestroy {
         billingRef: transaction.billingRef || '',
         paymentMethod: transaction.paymentMethod || 'CASH',
         notes: transaction.notes || ''
+      });
+
+      // Désactiver le champ référence en mode édition (non modifiable)
+      this.formGroup.get('billingRef')?.disable();
+
+      console.log('✅ Formulaire peuplé avec les données de transaction:', {
+        type: transaction.paymentLocationType,
+        amount: transaction.locationPaymentPrice,
+        date: datePayment,
+        ref: transaction.billingRef
       });
     }
   }
@@ -281,20 +291,40 @@ export class ModernPaymentModalComponent implements OnInit, OnDestroy {
       });
 
       if (this.data.mode === 'create') {
-        // Utiliser la location appropriée
+        // Vérifier si on a une location réelle ou si on doit utiliser les IDs directs
         const targetLocation = this.data.location;
 
-        if (!targetLocation || !targetLocation._id) {
-          console.error('Aucune location disponible pour créer le paiement');
+        if (targetLocation && targetLocation._id && !targetLocation._id.startsWith('temp_')) {
+          // Cas 1: Location réelle existante
+          console.log('✅ Utilisation de la location existante:', targetLocation._id);
+          this.store.dispatch(new LocationPaymentAction.AddLocationPayment({
+            ...paymentData,
+            locationId: targetLocation._id
+          }));
+        } else if (this.data.room && this.data.tenant) {
+          // Cas 2: Pas de location réelle, utiliser les IDs directs
+          console.log('⚠️ Pas de location réelle, utilisation des IDs directs');
+
+          // Vérifier que tous les IDs nécessaires sont présents
+          if (!paymentData.roomId || !paymentData.locataireId || !paymentData.propertyId) {
+            console.error('❌ IDs manquants pour créer le paiement:', {
+              roomId: paymentData.roomId,
+              locataireId: paymentData.locataireId,
+              propertyId: paymentData.propertyId
+            });
+            this.isLoading = false;
+            this.toastr.error('Données incomplètes pour créer le paiement', 'Erreur');
+            return;
+          }
+
+          // Créer le paiement sans locationId (le backend se débrouillera)
+          this.store.dispatch(new LocationPaymentAction.AddLocationPayment(paymentData));
+        } else {
+          console.error('❌ Données insuffisantes pour créer le paiement');
           this.isLoading = false;
-          this.toastr.error('Aucune location disponible', 'Erreur');
+          this.toastr.error('Données insuffisantes pour créer le paiement', 'Erreur');
           return;
         }
-
-        this.store.dispatch(new LocationPaymentAction.AddLocationPayment({
-          ...paymentData,
-          locationId: targetLocation._id
-        }));
       } else {
         if (!this.data.transaction?._id || !this.data.tenant?._id) {
           console.error('Données de transaction manquantes pour la modification');

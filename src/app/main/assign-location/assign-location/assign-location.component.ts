@@ -109,13 +109,17 @@ export class AssignLocationComponent implements OnInit, OnChanges {
     )
 
     this._ngxsAction.pipe(ofActionErrored(LocationAction.CreateLocation)).subscribe(
-      (value) => {
-        this.waittingResponse=false;
+      (error) => {
+        console.error('❌ Erreur lors de l\'assignation classique:', error);
+        this.waittingResponse = false;
+        this.handleAssignationError(error);
       })
 
     this._ngxsAction.pipe(ofActionErrored(LocationAction.CreateAssignationWithAssistant)).subscribe(
-      (value) => {
-        this.waittingResponse=false;
+      (error) => {
+        console.error('❌ Erreur lors de l\'assignation avec assistant:', error);
+        this.waittingResponse = false;
+        this.handleAssignationError(error);
       })
   }
 
@@ -355,6 +359,48 @@ export class AssignLocationComponent implements OnInit, OnChanges {
         }
       }
     }, 500); // Délai pour permettre le rafraîchissement
+  }
+
+  /**
+   * Gérer les erreurs d'assignation
+   */
+  private handleAssignationError(error: any): void {
+    console.error('❌ Erreur lors de l\'assignation:', error);
+
+    // Extraire le message d'erreur
+    let errorMessage = 'Une erreur est survenue lors de l\'assignation';
+
+    if (error?.error?.error?.message && Array.isArray(error.error.error.message)) {
+      errorMessage = error.error.error.message[0];
+    } else if (error?.error?.message) {
+      errorMessage = error.error.message;
+    } else if (error?.message) {
+      errorMessage = error.message;
+    }
+
+    // Afficher un message d'erreur spécifique selon le type d'erreur
+    if (errorMessage.includes('Location not found')) {
+      errorMessage = 'La location n\'a pas pu être trouvée. Veuillez réessayer dans quelques instants.';
+    } else if (errorMessage.includes('Room is not free')) {
+      errorMessage = 'Cette chambre n\'est plus disponible. Veuillez en choisir une autre.';
+    } else if (errorMessage.includes('Locataire not found')) {
+      errorMessage = 'Le locataire sélectionné n\'a pas été trouvé. Veuillez vérifier votre sélection.';
+    } else if (errorMessage.includes('Property not found')) {
+      errorMessage = 'La propriété n\'a pas été trouvée. Veuillez actualiser la page.';
+    }
+
+    console.log('💬 Message d\'erreur:', errorMessage);
+
+    // En cas d'erreur critique, proposer de rafraîchir les données
+    if (errorMessage.includes('not found')) {
+      setTimeout(() => {
+        if (this.property?._id) {
+          console.log('🔄 Rafraîchissement des données après erreur...');
+          this._store.dispatch(new RoomAction.FetchRoomsByPropertyID(this.property._id));
+          this._store.dispatch(new LocataireAction.FetchLocatairesByPropertyId(this.property._id));
+        }
+      }, 2000);
+    }
   }
 
   /**

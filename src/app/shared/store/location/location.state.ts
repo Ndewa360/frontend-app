@@ -10,6 +10,8 @@ import { NotificationService } from "carbon-components-angular";
 import { ToastrService } from "ngx-toastr";
 import { RoomAction } from "../rooms";
 import { LocataireAction } from "../locataire";
+import { LocationPaymentAction } from "../payment-location";
+import { HistoryLocationPaymentAction } from "../history-payment-location";
 
 export class LocationStateModel {
     locations:LocationModel[]
@@ -200,33 +202,71 @@ export class LocationState{
     }
 
     @Action(LocationAction.CreateLocation)
-    createLocation(ctx:StateContext<LocationStateModel>,{location}:LocationAction.CreateLocation)
-    {
+    createLocation(ctx: StateContext<LocationStateModel>, {location}: LocationAction.CreateLocation) {
         const state = ctx.getState();
 
         ctx.patchState({
-            loadingLocation:true
-        })
+            loadingLocation: true
+        });
+
         return this._locationsService.createLocation(location).pipe(
-            tap(
-                result => {
-                    console.log("Location Created ",result);
-                    ctx.patchState({
-                        loadingLocation:false,
-                        locations:[...state.locations, result.data]
-                    })
-                    this._toastrService.success(`Location ajouté avec success!`, 'Ndewa360°');
-                    ctx.dispatch(new RoomAction.UpdateLocalRoomInfos(result.data.room,{isActiveForSouscription:true,isFree:false,locataire:result.data.locataire}))
-                    ctx.dispatch(new LocataireAction.UpdateLocataireRoom(result.data.locataire,result.data.room))
+            tap(result => {
+                console.log("✅ Location créée avec succès:", result);
+
+                // Mettre à jour le state avec la nouvelle location
+                ctx.patchState({
+                    loadingLocation: false,
+                    locations: [...state.locations, result.data]
+                });
+
+                // Afficher le message de succès
+                this._toastrService.success(`Assignation réalisée avec succès!`, 'Ndewa360°');
+
+                // Mettre à jour les informations de la chambre
+                if (result.data.room) {
+                    ctx.dispatch(new RoomAction.UpdateLocalRoomInfos(
+                        result.data.room,
+                        {
+                            isActiveForSouscription: true,
+                            isFree: false,
+                            locataire: result.data.locataire
+                        }
+                    ));
                 }
-            ),
-            catchError((error)=>{
+
+                // Mettre à jour les informations du locataire
+                if (result.data.locataire && result.data.room) {
+                    ctx.dispatch(new LocataireAction.UpdateLocataireRoom(
+                        result.data.locataire,
+                        result.data.room
+                    ));
+                }
+
+                // Rafraîchir les données pour s'assurer de la synchronisation
+                setTimeout(() => {
+                    // Recharger les locations pour cette propriété
+                    if (result.data.property) {
+                        ctx.dispatch(new LocationAction.FetchLocationsByPropertyId(result.data.property));
+                    }
+
+                    // Recharger les statistiques de paiement
+                    ctx.dispatch(new LocationPaymentAction.FetchLocationPaymentsByPropertyId(result.data.property));
+                }, 1000);
+            }),
+            catchError((error) => {
+                console.error("❌ Erreur lors de la création de la location:", error);
+
                 ctx.patchState({
                     loadingLocation: false
-                })
+                });
+
+                // Afficher un message d'erreur plus informatif
+                const errorMessage = error?.error?.message?.[0] || error?.message || 'Erreur lors de l\'assignation';
+                this._toastrService.error(errorMessage, 'Erreur d\'assignation');
+
                 return throwError(error);
             })
-        )
+        );
     }
 
     @Action(LocationAction.CreateAssignationWithAssistant)

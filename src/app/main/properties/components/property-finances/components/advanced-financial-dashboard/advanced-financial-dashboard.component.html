@@ -26,40 +26,9 @@
     </div>
   </div>
 
-  <!-- Métriques principales avec cartes modernes -->
-  <div class="metrics-grid">
-    <div *ngFor="let metric of financialMetrics" class="metric-card">
-      <div class="metric-header">
-        <div class="metric-icon" [style.background-color]="metric.color + '20'">
-          <youpez-ibm-icon [iconName]="metric.icon" iconSize="24" [style.color]="metric.color"></youpez-ibm-icon>
-        </div>
-        <div class="metric-change" [ngClass]="{
-          'positive': metric.changeType === 'increase',
-          'negative': metric.changeType === 'decrease',
-          'neutral': metric.changeType === 'neutral'
-        }">
-          <youpez-ibm-icon 
-            [iconName]="metric.changeType === 'increase' ? 'trending--up' : metric.changeType === 'decrease' ? 'trending--down' : 'trending--flat'" 
-            iconSize="16">
-          </youpez-ibm-icon>
-          <span>{{ metric.change | number:'1.1-1' }}%</span>
-        </div>
-      </div>
-      
-      <div class="metric-content">
-        <div class="metric-value">
-          <span *ngIf="metric.label.includes('Taux')">{{ formatPercentage(metric.value) }}</span>
-          <span *ngIf="!metric.label.includes('Taux')">{{ formatCurrency(metric.value) }}</span>
-        </div>
-        <div class="metric-label">{{ metric.label }}</div>
-        <div class="metric-description">{{ metric.description }}</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Section métriques synthétiques -->
+  <!-- Section métriques synthétiques (4 colonnes) -->
   <div class="metrics-overview">
-    <div class="metrics-container">
+    <div class="metrics-container four-columns">
 
       <!-- Métrique Revenus Totaux -->
       <div class="metric-card primary">
@@ -69,9 +38,13 @@
         <div class="metric-content">
           <div class="metric-value">{{ formatCurrency(totalRevenue) }}</div>
           <div class="metric-label">Revenus Totaux {{ selectedYear }}</div>
-          <div class="metric-trend positive">
-            <youpez-ibm-icon iconName="trending--up" iconSize="16"></youpez-ibm-icon>
-            <span>+12.5% vs année précédente</span>
+          <div class="metric-trend" [ngClass]="{
+            'positive': revenueChange.type === 'increase',
+            'negative': revenueChange.type === 'decrease',
+            'neutral': revenueChange.type === 'neutral'
+          }">
+            <youpez-ibm-icon [iconName]="revenueChange.type === 'increase' ? 'trending--up' : revenueChange.type === 'decrease' ? 'trending--down' : 'trending--flat'" iconSize="16"></youpez-ibm-icon>
+            <span>{{ revenueChange.type === 'increase' ? '+' : revenueChange.type === 'decrease' ? '-' : '' }}{{ revenueChange.value | number:'1.1-1' }}% vs attendu</span>
           </div>
         </div>
       </div>
@@ -88,7 +61,7 @@
         <div class="metric-content">
           <div class="metric-value">{{ formatPercentage(occupancyRate) }}</div>
           <div class="metric-label">Taux d'Occupation</div>
-          <div class="metric-description">{{ Math.round((occupancyRate / 100) * yearlyStats.length) }} / {{ yearlyStats.length }} unités occupées</div>
+          <div class="metric-description">{{ occupiedRooms }} / {{ totalRooms }} unités occupées</div>
         </div>
       </div>
 
@@ -100,14 +73,18 @@
         <div class="metric-content">
           <div class="metric-value">{{ formatCurrency(averageRent) }}</div>
           <div class="metric-label">Loyer Moyen Mensuel</div>
-          <div class="metric-trend positive">
-            <youpez-ibm-icon iconName="trending--up" iconSize="16"></youpez-ibm-icon>
-            <span>+5.8% vs année précédente</span>
+          <div class="metric-trend" [ngClass]="{
+            'positive': averageRentChange.type === 'increase',
+            'negative': averageRentChange.type === 'decrease',
+            'neutral': averageRentChange.type === 'neutral'
+          }">
+            <youpez-ibm-icon [iconName]="averageRentChange.type === 'increase' ? 'trending--up' : averageRentChange.type === 'decrease' ? 'trending--down' : 'trending--flat'" iconSize="16"></youpez-ibm-icon>
+            <span>{{ averageRentChange.type === 'increase' ? '+' : averageRentChange.type === 'decrease' ? '-' : '' }}{{ averageRentChange.value | number:'1.1-1' }}% vs médiane</span>
           </div>
         </div>
       </div>
 
-       <!-- Métrique Loyer Moyen -->
+       <!-- Métrique Taux de Recouvrement -->
       <div class="metric-card" [ngClass]="{
         'success': collectionRate >= 90,
         'warning': collectionRate >= 70 && collectionRate < 90,
@@ -117,7 +94,6 @@
           <youpez-ibm-icon iconName="chart--pie" iconSize="24"></youpez-ibm-icon>
         </div>
         <div class="metric-content">
-        
           <div class="metric-value">{{ formatPercentage(collectionRate) }}</div>
           <div class="metric-label">Taux de Recouvrement</div>
           <div class="metric-trend" [ngClass]="{
@@ -125,14 +101,15 @@
               'negative': collectionRate < 85
             }">
             <youpez-ibm-icon [iconName]="collectionRate >= 85 ? 'trending--up' : 'trending--down'" iconSize="16"></youpez-ibm-icon>
-            <span>{{ collectionRate >= 85 ? '+' : '-' }}{{ Math.abs(collectionRate - 85) | number:'1.1-1' }}% {{ collectionRate >= 90 ? 'Excellent' : collectionRate >= 70 ? 'Bon' : 'À améliorer' }}</span>
+            <span>{{ collectionRate >= 85 ? 'Excellent' : collectionRate >= 70 ? 'Bon' : 'À améliorer' }}</span>
           </div>
         </div>
       </div>
 
-      
     </div>
   </div>
+
+
 
   <!-- Grille unifiée pour graphiques et KPI détaillés -->
   <div class="dashboard-grid">

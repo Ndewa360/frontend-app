@@ -46,7 +46,7 @@ export class LayoutMiniSidebarComponent implements OnInit {
     this.userProfile$.subscribe((user)=>{ 
       
       if(user) {
-        this.isAdmin=user.email=='contact@ndewa-360.com';
+        this.isAdmin=user.email=='support@ndewa-360.com';
        
         this.routerLinkRoute="/app/welcome"
       }

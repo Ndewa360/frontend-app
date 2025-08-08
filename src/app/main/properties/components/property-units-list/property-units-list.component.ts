@@ -569,14 +569,67 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
       return selectedTenant;
     }
 
-    // Pour l'instant, retourner null - peut être amélioré selon la structure des données
-    // room.locataire est un string (ID), pas un objet LocataireModel
+    // Rechercher dans les locataires du store par ID
+    if (!room || room.isFree || !room.locataire) {
+      return null;
+    }
+
+    const tenants = this.store.selectSnapshot(LocataireState.selectStateLocataireByPropertyId(this.propertyId));
+
+    if (tenants && tenants.length > 0) {
+      const tenant = tenants.find(t => t._id === room.locataire);
+      if (tenant) {
+        console.log('✅ Locataire trouvé pour la chambre:', room.code, tenant.fullName);
+        return tenant;
+      }
+    }
+
+    console.log('⚠️ Aucun locataire trouvé pour la chambre:', room.code);
     return null;
   }
 
-  private getLocationForRoom(_room: RoomModel): LocationModel | null {
-    // Pour l'instant, retourner null - peut être amélioré selon la structure des données
-    // RoomModel n'a pas de propriété location directe
+  private getLocationForRoom(room: RoomModel): LocationModel | null {
+    if (!room || room.isFree) {
+      return null;
+    }
+
+    // Rechercher dans les locations du store
+    const locations = this.store.selectSnapshot(LocationState.selectStateLocationByPropertyId(this.propertyId));
+
+    if (locations && locations.length > 0) {
+      // Chercher une location active pour cette chambre
+      const location = locations.find(loc =>
+        loc.room === room._id &&
+        loc.isRunning !== false
+      );
+
+      if (location) {
+        console.log('✅ Location trouvée pour la chambre:', room.code, location._id);
+        return location;
+      }
+    }
+
+    // Si pas de location trouvée dans le store, créer une location temporaire
+    console.log('⚠️ Aucune location trouvée dans le store pour la chambre:', room.code);
+
+    const tenant = this.getTenantForRoom(room);
+    if (tenant) {
+      return {
+        _id: null, // Pas d'ID - sera géré par le backend
+        room: room._id,
+        locataire: tenant._id,
+        property: this.propertyId,
+        startDate: new Date(),
+        endDate: null,
+        monthlyRent: room.price || 0,
+        deposit: 0,
+        status: 'active',
+        isRunning: true,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      } as LocationModel;
+    }
+
     return null;
   }
 

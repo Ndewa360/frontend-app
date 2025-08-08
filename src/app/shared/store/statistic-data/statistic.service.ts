@@ -22,7 +22,7 @@ export class StatisticService
    
 
     getStatisticRoomDataByYear(propertyID:string,year:string|number):Observable<ApiResultFormat<StatisticRoomYearModel[]>>
-    {    
+    {
         return this._httpClient.get<ApiResultFormat<StatisticRoomYearModel[]>>(`${environment.apiUrl}/statistic-location-payment/statistic-payement-by-room/${propertyID}/${year}/`)
     }
 
