@@ -17,8 +17,8 @@
     <youpez-ibm-icon iconName="dashboardReference" iconSize="24"></youpez-ibm-icon>
   </button>
 
-  <!-- Bouton notifications -->
-  <button class="app-layout__header__btn app-layout__header__btn--icon notification-btn"
+  <!-- Bouton notifications - Masqué sur mobile pour éviter le panneau qui cache le site -->
+  <button class="app-layout__header__btn app-layout__header__btn--icon notification-btn hidden md:block"
           (click)="toggleNotifications()"
           [class.has-notifications]="unreadNotificationsCount > 0">
     <youpez-ibm-icon iconName="notification" iconSize="24"></youpez-ibm-icon>
