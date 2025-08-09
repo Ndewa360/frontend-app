@@ -1,7 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, Observable } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
+import { MatDialog } from '@angular/material/dialog';
 
 import {
   ContractTemplateModel,
@@ -11,6 +13,8 @@ import {
   ContractTemplateAction,
   ContractTemplateState
 } from '../../../shared/store/contract-templates';
+import { TemplateSelectionModalComponent, TemplateSelectionData, TemplateSelectionResult } from '../components/template-selection-modal/template-selection-modal.component';
+import { DuplicateTemplateModalComponent } from '../components/duplicate-template-modal/duplicate-template-modal.component';
 
 @Component({
   selector: 'app-contract-templates-dashboard',
@@ -29,7 +33,8 @@ export class ContractTemplatesDashboardComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private store: Store
+    private store: Store,
+    private dialog: MatDialog
   ) {
     // Initialiser les observables
     this.statistics$ = this.store.select(ContractTemplateState.selectStateStatistics);
@@ -81,11 +86,41 @@ export class ContractTemplatesDashboardComponent implements OnInit, OnDestroy {
    * Dupliquer un modèle
    */
   duplicateTemplate(): void {
-    // Pour l'instant, naviguer vers la liste pour sélectionner un modèle
-    // TODO: Implémenter une modal de sélection
-    this.router.navigate(['list'], {
-      relativeTo: this.route,
-      queryParams: { action: 'duplicate' }
+    const dialogData: TemplateSelectionData = {
+      title: 'Sélectionner un modèle à dupliquer',
+      message: 'Choisissez le modèle que vous souhaitez dupliquer :',
+      allowSystemTemplates: true
+    };
+
+    const dialogRef = this.dialog.open(TemplateSelectionModalComponent, {
+      width: '800px',
+      maxWidth: '90vw',
+      data: dialogData,
+      disableClose: false
+    });
+
+    dialogRef.afterClosed().subscribe((result: TemplateSelectionResult) => {
+      if (result && result.selectedTemplate) {
+        this.openDuplicateModal(result.selectedTemplate);
+      }
+    });
+  }
+
+  /**
+   * Ouvrir la modal de duplication avec le template sélectionné
+   */
+  private openDuplicateModal(sourceTemplate: ContractTemplateModel): void {
+    const dialogRef = this.dialog.open(DuplicateTemplateModalComponent, {
+      width: '500px',
+      data: { template: sourceTemplate }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result && result.success && result.newTemplate) {
+        // Rediriger vers l'éditeur du nouveau template avec l'URL complète
+        console.log('🔄 Redirection vers l\'éditeur du template dupliqué:', result.newTemplate._id);
+        this.router.navigate(['/app/contract-templates/edit', result.newTemplate._id]);
+      }
     });
   }
 

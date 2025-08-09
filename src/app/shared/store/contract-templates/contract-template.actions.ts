@@ -1,14 +1,17 @@
 import {
     ContractTemplateModel,
-    TemplateFilters,
-    CreateContractTemplateDTO
-} from "./contract-template.model";
+    ContractTemplateFilterDTO,
+    CreateContractTemplateDTO,
+    DuplicateContractTemplateDTO,
+    UpdateContractTemplateDTO,
+    UploadTemplateContentDTO
+} from "../../models/contract-template.model";
 
 export namespace ContractTemplateAction {
     // Fetch all templates
     export class FetchTemplates {
         static readonly type = '[ContractTemplate] Fetch Templates';
-        constructor(public filters?: TemplateFilters) {}
+        constructor(public filters?: ContractTemplateFilterDTO) {}
     }
 
     // Fetch template by ID
@@ -38,7 +41,7 @@ export namespace ContractTemplateAction {
     // Update template
     export class UpdateTemplate {
         static readonly type = '[ContractTemplate] Update Template';
-        constructor(public templateId: string, public template: Partial<ContractTemplateModel>) {}
+        constructor(public templateId: string, public updateDto: UpdateContractTemplateDTO) {}
     }
 
     // Delete template
@@ -50,7 +53,7 @@ export namespace ContractTemplateAction {
     // Duplicate template
     export class DuplicateTemplate {
         static readonly type = '[ContractTemplate] Duplicate Template';
-        constructor(public duplicateDto: { sourceTemplateId: string; name: string; description?: string }) {}
+        constructor(public duplicateDto: DuplicateContractTemplateDTO) {}
     }
 
     // Set template as default
@@ -74,7 +77,7 @@ export namespace ContractTemplateAction {
     // Update template content
     export class UpdateTemplateContent {
         static readonly type = '[ContractTemplate] Update Template Content';
-        constructor(public templateId: string, public content: string) {}
+        constructor(public templateId: string, public uploadDto: UploadTemplateContentDTO) {}
     }
 
     // Set loading state
@@ -104,7 +107,7 @@ export namespace ContractTemplateAction {
     // Set filters
     export class SetFilters {
         static readonly type = '[ContractTemplate] Set Filters';
-        constructor(public filters: TemplateFilters) {}
+        constructor(public filters: ContractTemplateFilterDTO) {}
     }
 
     // Load default template

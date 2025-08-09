@@ -39,7 +39,18 @@ export interface ContractVariables {
   montantCaution: string;
 }
 
-// Interface principale pour les modèles de contrats
+// Interface pour les variables de template
+export interface TemplateVariable {
+  key: string;
+  label: string;
+  description: string;
+  type: 'text' | 'number' | 'date' | 'boolean';
+  required: boolean;
+  defaultValue?: any;
+  category: 'bailleur' | 'locataire' | 'logement' | 'contrat' | 'custom';
+}
+
+// Interface principale pour les modèles de contrats (UNIFIÉE)
 export interface ContractTemplateModel {
   _id: string;
   name: string;
@@ -60,6 +71,9 @@ export interface ContractTemplateModel {
   createdAt: Date;
   updatedAt: Date;
   lastUsedAt?: Date;
+  // Propriétés calculées côté frontend
+  variables?: TemplateVariable[];
+  content?: string; // Contenu chargé à la demande
 }
 
 // DTOs pour les requêtes

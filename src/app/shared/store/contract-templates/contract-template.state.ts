@@ -7,12 +7,15 @@ import { ToastrService } from "ngx-toastr";
 import { ContractTemplateAction } from "./contract-template.actions";
 import { ContractTemplateService } from "../../services/contract-template.service";
 import {
-    ContractTemplateStateModel,
     ContractTemplateModel,
-    TemplateFilters,
+    ContractTemplateFilterDTO,
     CreateContractTemplateDTO,
-    ContractTemplateStatsDTO
-} from "./contract-template.model";
+    ContractTemplateStatsDTO,
+    UpdateContractTemplateDTO,
+    DuplicateContractTemplateDTO,
+    UploadTemplateContentDTO
+} from "../../models/contract-template.model";
+import { ContractTemplateStateModel } from "./contract-template.model";
 
 @State<ContractTemplateStateModel>({
     name: "contractTemplates",
@@ -78,11 +81,9 @@ export class ContractTemplateState {
 
     @Selector()
     static selectAllTemplates(state: ContractTemplateStateModel) {
-        const allTemplates = [...state.templates];
-        if (state.defaultTemplate) {
-            allTemplates.unshift(state.defaultTemplate); // Ajouter le template par défaut au début
-        }
-        return allTemplates;
+        // Les templates du backend incluent déjà les templates système
+        // Pas besoin d'ajouter le defaultTemplate séparément
+        return state.templates;
     }
 
     @Selector()
@@ -285,7 +286,7 @@ export class ContractTemplateState {
     }
 
     @Action(ContractTemplateAction.UpdateTemplate)
-    updateTemplate(ctx: StateContext<ContractTemplateStateModel>, { templateId, template }: ContractTemplateAction.UpdateTemplate) {
+    updateTemplate(ctx: StateContext<ContractTemplateStateModel>, { templateId, updateDto }: ContractTemplateAction.UpdateTemplate) {
         const state = ctx.getState();
 
         ctx.patchState({
@@ -293,7 +294,7 @@ export class ContractTemplateState {
             error: null
         });
 
-        return this.contractTemplateService.updateTemplate(templateId, template).pipe(
+        return this.contractTemplateService.updateTemplate(templateId, updateDto).pipe(
             tap(updatedTemplate => {
                 const updatedTemplates = state.templates.map(t =>
                     t._id === templateId ? updatedTemplate : t
@@ -471,6 +472,39 @@ export class ContractTemplateState {
                     error: 'Erreur lors de la réindexation'
                 });
                 this.toastrService.error('Erreur lors de la réindexation des templates', 'Erreur');
+                return throwError(error);
+            })
+        );
+    }
+
+    @Action(ContractTemplateAction.UpdateTemplateContent)
+    updateTemplateContent(ctx: StateContext<ContractTemplateStateModel>, { templateId, uploadDto }: ContractTemplateAction.UpdateTemplateContent) {
+        const state = ctx.getState();
+
+        ctx.patchState({
+            loading: true,
+            error: null
+        });
+
+        return this.contractTemplateService.uploadTemplateContent(templateId, uploadDto).pipe(
+            tap(updatedTemplate => {
+                const updatedTemplates = state.templates.map(template =>
+                    template._id === templateId ? updatedTemplate : template
+                );
+
+                ctx.patchState({
+                    loading: false,
+                    templates: updatedTemplates,
+                    currentTemplate: updatedTemplate
+                });
+                this.toastrService.success('Contenu du modèle mis à jour avec succès', 'Succès');
+            }),
+            catchError(error => {
+                ctx.patchState({
+                    loading: false,
+                    error: 'Erreur lors de la mise à jour du contenu'
+                });
+                this.toastrService.error('Erreur lors de la mise à jour du contenu', 'Erreur');
                 return throwError(error);
             })
         );

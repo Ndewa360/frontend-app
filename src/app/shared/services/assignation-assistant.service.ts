@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import {
   AssignationConfig,
   EcritureComptablePreview,
@@ -19,8 +21,9 @@ import { LocataireModel, RoomModel } from '../store';
   providedIn: 'root'
 })
 export class AssignationAssistantService {
+  private readonly apiUrl = '/api'; // À configurer selon votre environnement
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
 
   /**
    * Calcule les écritures comptables prévisionnelles pour un nouveau locataire
@@ -242,14 +245,20 @@ export class AssignationAssistantService {
    * Récupère l'historique financier d'un locataire
    */
   getHistoriqueFinancier(locataireId: string): Observable<HistoriqueFinancier> {
-    // TODO: Implémenter l'appel API réel
-    return of({
-      soldeActuel: 0,
-      dernierPaiement: undefined,
-      paiementsEnRetard: 0,
-      avancePaiement: 0,
-      cautionVersee: 0
-    });
+    // Appel API pour récupérer l'historique financier réel
+    return this.http.get<HistoriqueFinancier>(`${this.apiUrl}/locataires/${locataireId}/historique-financier`).pipe(
+      catchError(error => {
+        console.error('Erreur lors de la récupération de l\'historique financier:', error);
+        // Retourner des valeurs par défaut en cas d'erreur
+        return of({
+          soldeActuel: 0,
+          dernierPaiement: undefined,
+          paiementsEnRetard: 0,
+          avancePaiement: 0,
+          cautionVersee: 0
+        });
+      })
+    );
   }
 
   /**

@@ -137,11 +137,11 @@ export class ContractTemplateService {
     return this.http.put<ContractTemplateModel>(`${this.apiUrl}/${templateId}`, updateDto).pipe(
       tap(updatedTemplate => {
         // Mettre à jour la liste
-        const currentTemplates = this.templatesSubject.value;
+        const currentTemplates = [...this.templatesSubject.value]; // Créer une copie modifiable
         const index = currentTemplates.findIndex(t => t._id === templateId);
         if (index !== -1) {
           currentTemplates[index] = updatedTemplate;
-          this.templatesSubject.next([...currentTemplates]);
+          this.templatesSubject.next(currentTemplates);
         }
         
         // Mettre à jour le template courant si c'est le même

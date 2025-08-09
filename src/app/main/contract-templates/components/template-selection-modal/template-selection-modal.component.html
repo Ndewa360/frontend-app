@@ -1,0 +1,109 @@
+<div class="template-selection-modal">
+  <div class="modal-header">
+    <h2 mat-dialog-title>{{ data.title }}</h2>
+    <button mat-icon-button mat-dialog-close>
+      <i class="fa fa-times"></i>
+    </button>
+  </div>
+
+  <div class="modal-content" mat-dialog-content>
+    <p class="modal-message">{{ data.message }}</p>
+
+    <!-- Filtres -->
+    <div class="filters-section">
+      <div class="filter-row">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Rechercher un modèle</mat-label>
+          <input matInput [(ngModel)]="searchTerm" placeholder="Nom ou description...">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="type-field">
+          <mat-label>Type</mat-label>
+          <mat-select [(ngModel)]="selectedType">
+            <mat-option *ngFor="let type of templateTypes" [value]="type.value">
+              {{ type.label }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="filter-options">
+        <mat-checkbox [(ngModel)]="showSystemTemplates">
+          Inclure les modèles système
+        </mat-checkbox>
+      </div>
+    </div>
+
+    <!-- Liste des templates -->
+    <div class="templates-list" *ngIf="templates$ | async as templates; else loadingTemplate">
+      <div class="templates-grid">
+        <div 
+          *ngFor="let template of getFilteredTemplates(templates)" 
+          class="template-card"
+          [class.selected]="selectedTemplate?._id === template._id"
+          (click)="selectTemplate(template)">
+          
+          <div class="template-header">
+            <div class="template-icon">
+              <i class="fa" [ngClass]="getTemplateTypeIcon(template.type)"></i>
+            </div>
+            <div class="template-info">
+              <h4 class="template-name">{{ template.name }}</h4>
+              <span class="template-type">{{ getTemplateTypeLabel(template.type) }}</span>
+            </div>
+            <div class="template-badges">
+              <span *ngIf="template.isDefault" class="badge badge-primary">Défaut</span>
+              <span *ngIf="template.isSystemDefault" class="badge badge-system">Système</span>
+            </div>
+          </div>
+
+          <div class="template-description" *ngIf="template.description">
+            {{ template.description }}
+          </div>
+
+          <div class="template-meta">
+            <div class="meta-item">
+              <i class="fa fa-chart-line"></i>
+              <span>{{ template.usageCount }} utilisations</span>
+            </div>
+            <div class="meta-item">
+              <i class="fa fa-calendar"></i>
+              <span>{{ template.createdAt | date:'short' }}</span>
+            </div>
+          </div>
+
+          <div class="selection-indicator" *ngIf="selectedTemplate?._id === template._id">
+            <i class="fa fa-check-circle"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="no-templates" *ngIf="getFilteredTemplates(templates).length === 0">
+        <i class="fa fa-search"></i>
+        <p>Aucun modèle trouvé avec ces critères</p>
+      </div>
+    </div>
+
+    <ng-template #loadingTemplate>
+      <div class="loading-state">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Chargement des modèles...</p>
+      </div>
+    </ng-template>
+  </div>
+
+  <div class="modal-actions" mat-dialog-actions>
+    <button mat-button (click)="cancel()">
+      Annuler
+    </button>
+    <button 
+      mat-raised-button 
+      color="primary" 
+      [disabled]="!selectedTemplate"
+      (click)="confirm()">
+      <i class="fa fa-copy"></i>
+      Dupliquer
+    </button>
+  </div>
+</div>

@@ -8,7 +8,8 @@
 
   // Utilisation des variables du thème existant
   background: var(--theme-appUIBg);
-  min-height: 100vh;
+  // Supprimer min-height: 100vh qui peut causer des problèmes de scroll
+  // min-height: 100vh;
 }
 
 // En-tête avec le thème de l'application
@@ -435,11 +436,8 @@
 
 // Contenu principal avec le thème de l'application
 .main-content {
-  padding: 1.5rem 2rem;
-  max-width: 1400px;
-  margin: 0 auto;
   background: var(--theme-appUIBg);
-  min-height: calc(100vh - 200px);
+  // Supprimer padding et max-width ici car ils sont gérés par les composants enfants
 }
 
 // Vue grille avec le thème de l'application
@@ -449,6 +447,8 @@
   gap: 1.5rem;
   padding: 1.5rem 0;
   overflow-y: auto;
+
+
 
   .template-card-modern {
     position: relative;
@@ -1065,6 +1065,8 @@
 
   .templates-grid-modern {
     grid-template-columns: 1fr;
+    padding: 1rem;
+    gap: 1rem;
   }
 
   .templates-list-modern {

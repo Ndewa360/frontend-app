@@ -3,7 +3,9 @@ import {
     CreateContractTemplateDTO,
     ContractTemplateStatsDTO,
     ContractTemplateType,
-    ContractTemplateStatus
+    ContractTemplateStatus,
+    ContractTemplateFilterDTO,
+    TemplateVariable
 } from "../../models/contract-template.model";
 
 // Re-export pour utilisation dans le store
@@ -12,23 +14,16 @@ export {
     CreateContractTemplateDTO,
     ContractTemplateStatsDTO,
     ContractTemplateType,
-    ContractTemplateStatus
+    ContractTemplateStatus,
+    ContractTemplateFilterDTO,
+    TemplateVariable
 };
 
 // Énumérations importées depuis les modèles partagés
 
 // ContractTemplateModel est importé depuis ../../models/contract-template.model
 
-export interface TemplateVariable {
-    name: string;
-    code: string;
-    label: string;
-    description: string;
-    category: string;
-    type: 'text' | 'number' | 'date' | 'boolean';
-    required: boolean;
-    defaultValue?: any;
-}
+// TemplateVariable est déjà exporté ci-dessus
 
 export interface TemplateMetadata {
     version: string;
@@ -40,35 +35,16 @@ export interface TemplateMetadata {
 
 // DTOs importés depuis les modèles partagés
 
-export interface TemplateStatistics {
-    totalTemplates: number;
-    activeTemplates: number;
-    customTemplates: number;
-    defaultTemplates: number;
-    monthlyUsage: number;
-    totalUsage: number;
-    templateGrowth: number;
-    usageGrowth: number;
-}
+// Utiliser ContractTemplateStatsDTO depuis les modèles partagés (déjà exporté)
+export { ContractTemplateStatsDTO as TemplateStatistics } from "../../models/contract-template.model";
 
-export interface TemplateFilters {
-    search?: string;
-    type?: ContractTemplateType;
-    status?: ContractTemplateStatus;
-    propertyId?: string;
-    sortBy?: string;
-    sortOrder?: 'asc' | 'desc';
-    page?: number;
-    limit?: number;
-}
+// Utiliser ContractTemplateFilterDTO depuis les modèles partagés (déjà exporté)
+export { ContractTemplateFilterDTO as TemplateFilters } from "../../models/contract-template.model";
 
-export interface TemplateListResponse {
-    templates: ContractTemplateModel[];
-    total: number;
-    page: number;
-    totalPages: number;
-}
+// Utiliser ContractTemplateListResponse depuis les modèles partagés
+export { ContractTemplateListResponse as TemplateListResponse } from "../../models/contract-template.model";
 
+// Interface pour l'état du store NGXS
 export interface ContractTemplateStateModel {
     // Data
     templates: ContractTemplateModel[];
@@ -76,21 +52,21 @@ export interface ContractTemplateStateModel {
     currentTemplate: ContractTemplateModel | null;
     recentTemplates: ContractTemplateModel[];
     statistics: ContractTemplateStatsDTO | null;
-    
+
     // UI State
     loading: boolean;
     loadingTemplate: boolean;
     loadingStatistics: boolean;
     error: string | null;
-    
+
     // Filters and pagination
-    filters: TemplateFilters;
+    filters: ContractTemplateFilterDTO;
     pagination: {
         total: number;
         page: number;
         totalPages: number;
     };
-    
+
     // Init state
     initLoadingState: 'NO_LOADED' | 'LOADING' | 'LOADED';
 }
@@ -110,29 +86,26 @@ export const DEFAULT_TEMPLATE_VARIABLES: VariableCategory[] = [
         icon: 'fa-user',
         variables: [
             {
-                name: 'tenant_name',
-                code: '{{TENANT_NAME}}',
+                key: 'TENANT_NAME',
                 label: 'Nom du locataire',
                 description: 'Nom complet du locataire',
-                category: 'tenant',
+                category: 'locataire',
                 type: 'text',
                 required: true
             },
             {
-                name: 'tenant_email',
-                code: '{{TENANT_EMAIL}}',
+                key: 'TENANT_EMAIL',
                 label: 'Email du locataire',
                 description: 'Adresse email du locataire',
-                category: 'tenant',
+                category: 'locataire',
                 type: 'text',
                 required: false
             },
             {
-                name: 'tenant_phone',
-                code: '{{TENANT_PHONE}}',
+                key: 'TENANT_PHONE',
                 label: 'Téléphone du locataire',
                 description: 'Numéro de téléphone du locataire',
-                category: 'tenant',
+                category: 'locataire',
                 type: 'text',
                 required: false
             }
@@ -144,20 +117,18 @@ export const DEFAULT_TEMPLATE_VARIABLES: VariableCategory[] = [
         icon: 'fa-building',
         variables: [
             {
-                name: 'property_name',
-                code: '{{PROPERTY_NAME}}',
+                key: 'PROPERTY_NAME',
                 label: 'Nom de la propriété',
                 description: 'Nom de la propriété',
-                category: 'property',
+                category: 'logement',
                 type: 'text',
                 required: true
             },
             {
-                name: 'property_address',
-                code: '{{PROPERTY_ADDRESS}}',
+                key: 'PROPERTY_ADDRESS',
                 label: 'Adresse de la propriété',
                 description: 'Adresse complète de la propriété',
-                category: 'property',
+                category: 'logement',
                 type: 'text',
                 required: true
             }
@@ -169,20 +140,18 @@ export const DEFAULT_TEMPLATE_VARIABLES: VariableCategory[] = [
         icon: 'fa-home',
         variables: [
             {
-                name: 'rental_amount',
-                code: '{{RENTAL_AMOUNT}}',
+                key: 'RENTAL_AMOUNT',
                 label: 'Montant du loyer',
                 description: 'Montant mensuel du loyer',
-                category: 'rental',
+                category: 'contrat',
                 type: 'number',
                 required: true
             },
             {
-                name: 'rental_deposit',
-                code: '{{RENTAL_DEPOSIT}}',
+                key: 'RENTAL_DEPOSIT',
                 label: 'Caution',
                 description: 'Montant de la caution',
-                category: 'rental',
+                category: 'contrat',
                 type: 'number',
                 required: false
             }
@@ -194,29 +163,26 @@ export const DEFAULT_TEMPLATE_VARIABLES: VariableCategory[] = [
         icon: 'fa-calendar',
         variables: [
             {
-                name: 'contract_date',
-                code: '{{CONTRACT_DATE}}',
+                key: 'CONTRACT_DATE',
                 label: 'Date du contrat',
                 description: 'Date de signature du contrat',
-                category: 'dates',
+                category: 'contrat',
                 type: 'date',
                 required: true
             },
             {
-                name: 'start_date',
-                code: '{{START_DATE}}',
+                key: 'START_DATE',
                 label: 'Date de début',
                 description: 'Date de début de la location',
-                category: 'dates',
+                category: 'contrat',
                 type: 'date',
                 required: true
             },
             {
-                name: 'end_date',
-                code: '{{END_DATE}}',
+                key: 'END_DATE',
                 label: 'Date de fin',
                 description: 'Date de fin de la location',
-                category: 'dates',
+                category: 'contrat',
                 type: 'date',
                 required: false
             }

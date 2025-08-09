@@ -53,12 +53,17 @@ export class DuplicateTemplateModalComponent {
       this.store.dispatch(new ContractTemplateAction.DuplicateTemplate(duplicateDto))
         .subscribe({
           next: () => {
-            this.loading = false;
-            // Récupérer le nouveau template depuis le store pour le retourner
-            const newTemplate = this.store.selectSnapshot(ContractTemplateState.selectStateCurrentTemplate);
-            this.dialogRef.close({ success: true, newTemplate });
+            // Petit délai pour s'assurer que le store est mis à jour
+            setTimeout(() => {
+              this.loading = false;
+              // Récupérer le nouveau template depuis le store pour le retourner
+              const newTemplate = this.store.selectSnapshot(ContractTemplateState.selectStateCurrentTemplate);
+              console.log('✅ Template dupliqué, fermeture de la modal:', newTemplate?._id);
+              this.dialogRef.close({ success: true, newTemplate });
+            }, 100);
           },
-          error: () => {
+          error: (error) => {
+            console.error('❌ Erreur lors de la duplication:', error);
             this.loading = false;
             this.dialogRef.close({ success: false });
           }

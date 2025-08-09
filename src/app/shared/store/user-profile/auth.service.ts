@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, from } from 'rxjs';
 import { UserProfileModel } from './user-profile.model';
-import { ApiResultFormat } from '../../../../../../mobile/src/app/shared/store/global';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { ApiResultFormat } from '../global';
 import { environment } from 'src/environments/environment';
 
 @Injectable({

@@ -1,16 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Location } from '@angular/common';
 import { ContractTemplateService } from '../../../shared/services/contract-template.service';
 import { ContractTemplateType, ContractTemplateStatus } from '../../../shared/models/contract-template.model';
+import { htmlContentValidator, templateNameValidator, templateVariablesValidator } from '../../../shared/validators/html-content.validator';
+import { MultilingualNotificationService } from '../../../shared/services/notification/multilingual-notification.service';
 
 @Component({
   selector: 'app-contract-template-editor',
   templateUrl: './contract-template-editor.component.html',
   styleUrls: ['./contract-template-editor.component.scss']
 })
-export class ContractTemplateEditorComponent implements OnInit {
+export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
   templateForm: FormGroup;
   isEditMode = false;
   templateId: string | null = null;
@@ -21,6 +23,9 @@ export class ContractTemplateEditorComponent implements OnInit {
   templateDescription = '';
   templateContent = '';
 
+  // Styles extraits du HTML pour TinyMCE
+  private extractedStyles: string = '';
+
   // UI state
   viewMode: 'edit' | 'preview' = 'edit';
   isSaving = false;
@@ -29,25 +34,61 @@ export class ContractTemplateEditorComponent implements OnInit {
   lastSaveTime: Date | null = null;
   loadingError: string | null = null;
   hasUnsavedChanges = false;
+  previewZoom = 100; // Zoom de prévisualisation en pourcentage
 
-  // TinyMCE configuration avancée
-  editorConfig = {
-    height: 'calc(100vh - 200px)', // Hauteur dynamique basée sur la viewport
+  // Export modal
+  showExportModal = false;
+  selectedExportFormat: string | null = null;
+  isExporting = false;
+
+  // Modal de confirmation pour modifications non sauvegardées
+  showUnsavedChangesModal = false;
+  private pendingNavigation: (() => void) | null = null;
+
+  exportFormats = [
+    {
+      value: 'html',
+      label: 'HTML',
+      description: 'Format web standard avec styles',
+      icon: 'fab fa-html5'
+    },
+    {
+      value: 'pdf',
+      label: 'PDF',
+      description: 'Document portable pour impression',
+      icon: 'fas fa-file-pdf'
+    },
+    {
+      value: 'docx',
+      label: 'Word',
+      description: 'Document Microsoft Word éditable',
+      icon: 'fas fa-file-word'
+    }
+  ];
+
+  // TinyMCE configuration complète et fonctionnelle
+  get editorConfig() {
+    return this.getTinyMCEConfig();
+  }
+
+  private getTinyMCEConfig() {
+    return {
+    height: 600, // Hauteur fixe plus importante
     menubar: 'file edit view insert format tools table help',
+
+    // Plugins essentiels qui fonctionnent (sans ceux qui causent des 404)
     plugins: [
       'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-      'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-      'insertdatetime', 'media', 'table', 'help', 'wordcount', 'template',
-      'paste', 'textcolor', 'colorpicker', 'textpattern', 'codesample',
-      'hr', 'pagebreak', 'nonbreaking', 'toc', 'imagetools', 'emoticons'
+      'searchreplace', 'visualblocks', 'code', 'fullscreen',
+      'insertdatetime', 'media', 'table', 'help', 'wordcount'
     ],
     toolbar1: 'undo redo | cut copy paste | bold italic underline strikethrough | ' +
       'fontselect fontsizeselect | forecolor backcolor | removeformat',
     toolbar2: 'alignleft aligncenter alignright alignjustify | ' +
-      'bullist numlist outdent indent | blockquote hr pagebreak | ' +
-      'link unlink anchor | image media table | code codesample',
-    toolbar3: 'searchreplace | visualblocks visualchars | ' +
-      'insertdatetime nonbreaking | template | preview fullscreen help',
+      'bullist numlist outdent indent | blockquote | ' +
+      'link unlink | image media table | code',
+    toolbar3: 'searchreplace | visualblocks | ' +
+      'insertdatetime | preview fullscreen help',
 
     // Configuration des couleurs
     color_map: [
@@ -93,22 +134,12 @@ export class ContractTemplateEditorComponent implements OnInit {
       "FFFFFF", "Blanc"
     ],
 
-    // Configuration avancée
-    content_style: `
-      body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-        font-size: 14px;
-        line-height: 1.6;
-        color: #333;
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 20px;
-      }
-      .highlight { background-color: #ffff00; }
-      .contract-header { text-align: center; margin-bottom: 30px; }
-      .contract-section { margin: 20px 0; }
-      .signature-block { margin-top: 50px; border-top: 1px solid #ccc; padding-top: 20px; }
-    `,
+    // Configuration avancée - permettre l'interprétation des styles
+    content_style: this.getContentStyle(),
+
+    // Permettre l'interprétation complète du CSS
+    content_css: true, // Ne pas charger le CSS par défaut
+    body_class: 'template-editor-content',
 
     // Configuration des styles
     style_formats: [
@@ -138,16 +169,52 @@ export class ContractTemplateEditorComponent implements OnInit {
     statusbar: true,
     elementpath: true,
     valid_elements: '*[*]',
-    extended_valid_elements: '*[*]',
+    extended_valid_elements: 'style[type],link[href|rel],*[*]',
 
     // Configuration du code HTML
     code_dialog_height: 400,
     code_dialog_width: 800,
 
+    // Configuration setup pour le drag and drop et autres fonctionnalités
+    setup: (editor: any) => {
+      // Gérer le drop des variables
+      editor.on('drop', (e: any) => {
+        const data = e.dataTransfer?.getData('text/html');
+        if (data && data.includes('class="variable"')) {
+          e.preventDefault();
+
+          // Insérer le HTML de la variable à la position du drop
+          editor.insertContent(data);
+
+          // Déclencher l'événement de changement
+          editor.fire('change');
+        }
+      });
+
+      // Permettre le drop
+      editor.on('dragover', (e: any) => {
+        e.preventDefault();
+      });
+
+      // Désactiver subtilement la télémétrie sans casser l'éditeur
+      editor.on('init', () => {
+        // Désactiver les requêtes de télémétrie si possible
+        if (editor.settings) {
+          editor.settings.telemetry = false;
+          editor.settings.usage_tracking = false;
+        }
+      });
+    },
+
     // Configuration des images
     image_advtab: true,
     image_caption: true,
     image_title: true,
+    image_class_list: [
+      { title: 'Logo', value: 'logo' },
+      { title: 'Image responsive', value: 'img-responsive' },
+      { title: 'Image centrée', value: 'img-center' }
+    ],
 
     // Configuration des tableaux
     table_default_attributes: {
@@ -157,56 +224,82 @@ export class ContractTemplateEditorComponent implements OnInit {
       'border-collapse': 'collapse'
     },
 
-    // Configuration de la paste
+    // Configuration de la paste - préserver les styles
     paste_as_text: false,
-    paste_auto_cleanup_on_paste: true,
-    paste_remove_styles_if_webkit: true,
+    paste_auto_cleanup_on_paste: false,
+    paste_remove_styles_if_webkit: false,
+    paste_retain_style_properties: "all",
 
-    // Templates prédéfinis
-    templates: [
-      {
-        title: 'Contrat de location standard',
-        description: 'Modèle de base pour un contrat de location',
-        content: `
-          <div class="contract-header">
-            <h1>CONTRAT DE LOCATION</h1>
-            <p><strong>Entre les soussignés :</strong></p>
-          </div>
+    // Préserver les styles existants
+    verify_html: false,
+    cleanup: false,
+    cleanup_on_startup: false,
+    trim_span_elements: false,
+    remove_redundant_brs: false,
 
-          <div class="contract-section">
-            <h2>Article 1 - Désignation du bailleur</h2>
-            <p>{{OWNER_FIRSTNAME}} {{OWNER_NAME}}, demeurant {{OWNER_ADDRESS}}</p>
-          </div>
+    // Permettre tous les éléments et attributs pour préserver les styles (déjà défini plus haut)
+    valid_children: "+body[style],+div[style]",
 
-          <div class="contract-section">
-            <h2>Article 2 - Désignation du locataire</h2>
-            <p>{{TENANT_FIRSTNAME}} {{TENANT_NAME}}, demeurant {{TENANT_ADDRESS}}</p>
-          </div>
+    // Configuration des images - permettre les images externes
+    image_domains: ["storage.googleapis.com", "localhost","https://ndewa-360.com","https://www.ndewa-360.com"],
+    relative_urls: false,
+    remove_script_host: false,
+    convert_urls: false,
 
-          <div class="contract-section">
-            <h2>Article 3 - Désignation du bien loué</h2>
-            <p>Le bien situé {{PROPERTY_ADDRESS}}, d'une surface de {{PROPERTY_SURFACE}} m²</p>
-          </div>
+    // Pas de templates prédéfinis - utiliser le template par défaut du système
 
-          <div class="signature-block">
-            <p>Fait à _______, le {{CURRENT_DATE}}</p>
-            <table style="width: 100%; margin-top: 30px;">
-              <tr>
-                <td style="text-align: center; width: 50%;">
-                  <strong>Le Bailleur</strong><br><br><br>
-                  _________________
-                </td>
-                <td style="text-align: center; width: 50%;">
-                  <strong>Le Locataire</strong><br><br><br>
-                  _________________
-                </td>
-              </tr>
-            </table>
-          </div>
-        `
+    // Configuration du drag and drop - sera configuré dans ngAfterViewInit
+
+    // Désactiver les services cloud et requêtes externes
+    images_upload_handler: () => Promise.reject('Upload disabled'),
+    automatic_uploads: false
+    };
+  }
+
+  /**
+   * Générer le CSS pour TinyMCE en combinant les styles de base et les styles extraits
+   */
+  private getContentStyle(): string {
+    const baseStyles = `
+      /* Styles de base pour l'éditeur */
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        line-height: 1.6;
+        margin: 0;
+        padding: 20px;
       }
-    ]
-  };
+
+      /* Variables stylées comme des composants */
+      .variable {
+        display: inline-block;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 4px 12px;
+        border-radius: 16px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        margin: 0 2px;
+        cursor: pointer;
+        user-select: none;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: all 0.2s ease;
+      }
+
+      .variable:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      }
+
+      /* Classes utilitaires */
+      .highlight { background-color: #ffff00; }
+      .logo { max-height: 100px; width: auto; }
+      .img-responsive { max-width: 100%; height: auto; }
+      .img-center { display: block; margin: 0 auto; }
+    `;
+
+    // Combiner les styles de base avec les styles extraits du template
+    return baseStyles + (this.extractedStyles ? '\n\n/* Styles du template */\n' + this.extractedStyles : '');
+  }
 
   // Options for dropdowns
   templateTypeOptions = [
@@ -271,14 +364,16 @@ export class ContractTemplateEditorComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private location: Location,
-    private contractTemplateService: ContractTemplateService
+    private contractTemplateService: ContractTemplateService,
+    private notification: MultilingualNotificationService
   ) {
     this.templateForm = this.fb.group({
-      name: ['', Validators.required],
-      description: [''],
-      content: ['', Validators.required],
+      name: ['', [Validators.required, templateNameValidator()]],
+      description: ['', [Validators.maxLength(500)]],
+      content: ['', [Validators.required, htmlContentValidator()]],
       type: ['RENTAL', Validators.required],
-      status: ['ACTIVE', Validators.required]
+      status: ['ACTIVE', Validators.required],
+      customVariables: [null, templateVariablesValidator()]
     });
   }
 
@@ -307,6 +402,8 @@ export class ContractTemplateEditorComponent implements OnInit {
     }
   }
 
+
+
   loadTemplate(): void {
     if (!this.templateId) return;
 
@@ -329,7 +426,13 @@ export class ContractTemplateEditorComponent implements OnInit {
         this.contractTemplateService.getTemplateContent(this.templateId!).subscribe({
           next: (response) => {
             console.log('Template content loaded:', response);
-            this.templateContent = response.content || '<p>Commencez à rédiger votre contrat...</p>';
+            const fullContent = response.content || '<p>Commencez à rédiger votre contrat...</p>';
+
+            // Extraire les styles et le contenu du body
+            const { styles, bodyContent } = this.extractStylesFromHtml(fullContent);
+            this.extractedStyles = styles;
+            this.templateContent = bodyContent;
+
             this.isContentLoading = false;
 
             // Forcer la mise à jour de l'éditeur TinyMCE
@@ -363,13 +466,16 @@ export class ContractTemplateEditorComponent implements OnInit {
   private updateEditorContent(): void {
     console.log('Updating editor content:', this.templateContent);
 
+    // Transformer les variables en composants visuels
+    const contentWithComponents = this.transformVariablesToComponents(this.templateContent || '<p>Commencez à rédiger...</p>');
+
     // Méthode plus robuste pour mettre à jour TinyMCE
     const updateEditor = () => {
       if ((window as any).tinymce) {
         const editor = (window as any).tinymce.activeEditor;
         if (editor && editor.initialized) {
           console.log('Setting content in TinyMCE editor');
-          editor.setContent(this.templateContent || '<p>Commencez à rédiger...</p>');
+          editor.setContent(contentWithComponents);
           editor.focus();
         } else {
           console.log('Editor not ready, retrying...');
@@ -391,10 +497,7 @@ export class ContractTemplateEditorComponent implements OnInit {
     this.loadTemplate();
   }
 
-  // Navigation methods
-  goBack(): void {
-    this.location.back();
-  }
+  // Navigation methods - supprimé car dupliqué plus bas
 
   // Save status methods
   getSaveStatusClass(): string {
@@ -415,40 +518,94 @@ export class ContractTemplateEditorComponent implements OnInit {
     return 'Non sauvegardé';
   }
 
+  ngOnDestroy(): void {
+    // Nettoyage du composant
+  }
+
   // View mode methods
   setViewMode(mode: 'edit' | 'preview'): void {
     this.viewMode = mode;
   }
 
   // Template actions
-  saveTemplate(): void {
+  saveTemplate(triggeredByShortcut: boolean = false): void {
     if (!this.templateName.trim()) {
-      alert('Veuillez saisir un nom pour le modèle');
+      this.notification.warning('TEMPLATE.VALIDATION.NAME_REQUIRED', 'TEMPLATE.VALIDATION.TITLE');
       return;
     }
 
     this.isSaving = true;
 
+    // Transformer les composants visuels en variables textuelles pour la sauvegarde
+    const bodyContent = this.transformComponentsToVariables(this.templateContent);
+    const contentForSave = this.combineContentWithStyles(bodyContent, this.extractedStyles);
+
+
+
     const templateData = {
       name: this.templateName,
       description: this.templateDescription,
-      content: this.templateContent,
+      content: contentForSave,
       type: ContractTemplateType.CUSTOM,
       status: ContractTemplateStatus.ACTIVE
     };
 
     if (this.isEditMode && this.templateId) {
-      // Mise à jour d'un template existant
-      this.contractTemplateService.updateTemplate(this.templateId, templateData).subscribe({
+      // Mise à jour d'un template existant - séparer les métadonnées du contenu
+      const metadataUpdate = {
+        name: this.templateName,
+        description: this.templateDescription,
+        status: ContractTemplateStatus.ACTIVE
+      };
+
+      // Préparer le contenu pour la sauvegarde - recombiner styles et contenu
+      const bodyContent = this.transformComponentsToVariables(this.templateContent);
+      const contentForSave = this.combineContentWithStyles(bodyContent, this.extractedStyles);
+
+
+
+      // D'abord mettre à jour les métadonnées
+      this.contractTemplateService.updateTemplate(this.templateId, metadataUpdate).subscribe({
         next: (response) => {
-          this.isSaving = false;
-          this.lastSaveTime = new Date();
-          console.log('Template mis à jour avec succès');
+          // Ensuite mettre à jour le contenu
+          this.contractTemplateService.uploadTemplateContent(this.templateId, {
+            content: contentForSave
+          }).subscribe({
+            next: (contentResponse) => {
+              this.isSaving = false;
+              this.lastSaveTime = new Date();
+              console.log('Template mis à jour avec succès');
+              this.notification.success('TEMPLATE.SAVE.SUCCESS', 'TEMPLATE.SAVE.TITLE');
+            },
+            error: (error) => {
+              this.isSaving = false;
+              console.error('Erreur lors de la mise à jour du contenu:', error);
+
+              // Afficher le message d'erreur spécifique du serveur
+              let errorMessage = 'TEMPLATE.SAVE.ERROR';
+              if (error?.error?.message && Array.isArray(error.error.message)) {
+                errorMessage = error.error.message[0];
+              } else if (error?.error?.message) {
+                errorMessage = error.error.message;
+              }
+
+              this.notification.error(errorMessage, 'TEMPLATE.SAVE.TITLE');
+            }
+          });
         },
         error: (error) => {
           this.isSaving = false;
-          console.error('Erreur lors de la mise à jour:', error);
-          alert('Erreur lors de la mise à jour du modèle');
+          console.error('Erreur lors de la mise à jour des métadonnées:', error);
+
+          // Afficher le message d'erreur spécifique du serveur
+          let errorMessage = 'TEMPLATE.SAVE.ERROR';
+          if (error?.error?.message && Array.isArray(error.error.message)) {
+            errorMessage = error.error.message[0];
+          } else if (error?.error?.message) {
+            errorMessage = error.error.message;
+          }
+
+          this.notification.error(errorMessage, 'TEMPLATE.SAVE.TITLE');
         }
       });
     } else {
@@ -458,31 +615,29 @@ export class ContractTemplateEditorComponent implements OnInit {
           this.isSaving = false;
           this.lastSaveTime = new Date();
           console.log('Template créé avec succès');
+          this.notification.success('TEMPLATE.CREATE.SUCCESS', 'TEMPLATE.CREATE.TITLE');
           // Rediriger vers la vue du template créé
           this.router.navigate(['/contract-templates/view', response._id]);
         },
         error: (error) => {
           this.isSaving = false;
           console.error('Erreur lors de la création:', error);
-          alert('Erreur lors de la création du modèle');
+
+          // Afficher le message d'erreur spécifique du serveur
+          let errorMessage = 'TEMPLATE.CREATE.ERROR';
+          if (error?.error?.message && Array.isArray(error.error.message)) {
+            errorMessage = error.error.message[0];
+          } else if (error?.error?.message) {
+            errorMessage = error.error.message;
+          }
+
+          this.notification.error(errorMessage, 'TEMPLATE.CREATE.TITLE');
         }
       });
     }
   }
 
-  exportTemplate(): void {
-    if (this.templateContent) {
-      const blob = new Blob([this.templateContent], { type: 'text/html' });
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `${this.templateName || 'template'}.html`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-    }
-  }
+
 
   hasChanges(): boolean {
     if (!this.isEditMode) {
@@ -510,20 +665,7 @@ export class ContractTemplateEditorComponent implements OnInit {
     console.log('Status changed:', event);
   }
 
-  // Variable insertion
-  insertVariable(variable: any): void {
-    // Insérer la variable dans l'éditeur TinyMCE
-    const variableCode = variable.code || `{{${variable.name.toUpperCase().replace(/\s+/g, '_')}}}`;
 
-    // Obtenir l'instance TinyMCE
-    const editor = (window as any).tinymce?.activeEditor;
-    if (editor) {
-      editor.insertContent(`<span class="template-variable" style="background-color: #e3f2fd; padding: 2px 4px; border-radius: 3px; font-weight: bold;">${variableCode}</span>&nbsp;`);
-    } else {
-      // Fallback si TinyMCE n'est pas disponible
-      this.templateContent += ` ${variableCode} `;
-    }
-  }
 
 
 
@@ -539,24 +681,25 @@ export class ContractTemplateEditorComponent implements OnInit {
     // Marquer comme modifié lors du collage
     this.onTemplateChange();
 
-    // Nettoyer le contenu collé si nécessaire
-    setTimeout(() => {
-      if ((window as any).tinymce) {
-        const editor = (window as any).tinymce.activeEditor;
-        if (editor) {
-          // Nettoyer les styles indésirables
-          const content = editor.getContent();
-          const cleanContent = content.replace(/style="[^"]*"/g, '');
-          if (content !== cleanContent) {
-            editor.setContent(cleanContent);
-          }
-        }
-      }
-    }, 100);
+    // Les styles sont maintenant préservés - pas de nettoyage automatique
   }
 
   // Preview methods
   getPreviewContent(): string {
+    // Cette méthode retourne un HTML complet pour les exports et l'impression
+    if (!this.templateContent) {
+      return this.combineContentWithStyles('<p>Aucun contenu à prévisualiser</p>', this.extractedStyles);
+    }
+
+    const previewBodyContent = this.getPreviewBodyContent();
+    return this.combineContentWithStyles(previewBodyContent, this.extractedStyles);
+  }
+
+  /**
+   * Obtenir le contenu body de la prévisualisation avec variables remplacées
+   * Utilisé pour la prévisualisation intégrée (innerHTML)
+   */
+  getPreviewBodyContent(): string {
     if (!this.templateContent) {
       return '<p>Aucun contenu à prévisualiser</p>';
     }
@@ -592,26 +735,24 @@ export class ContractTemplateEditorComponent implements OnInit {
     return previewContent;
   }
 
+  /**
+   * Obtenir les styles CSS pour la prévisualisation intégrée
+   */
+  getPreviewStyles(): string {
+    return this.sanitizeCss(this.extractedStyles || '');
+  }
+
+
+
   printPreview(): void {
+    // Créer un HTML complet avec les styles extraits du template
     const previewContent = this.getPreviewContent();
+    const bodyContent = this.transformComponentsToVariables(previewContent);
+    const fullHtmlContent = this.combineContentWithStyles(bodyContent, this.extractedStyles);
+
     const printWindow = window.open('', '_blank');
     if (printWindow) {
-      printWindow.document.write(`
-        <html>
-          <head>
-            <title>Aperçu - ${this.templateName}</title>
-            <style>
-              body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
-              .contract-header { text-align: center; margin-bottom: 30px; }
-              .contract-section { margin: 20px 0; }
-              .signature-block { margin-top: 50px; border-top: 1px solid #ccc; padding-top: 20px; }
-              table { border-collapse: collapse; width: 100%; }
-              td { padding: 10px; border: 1px solid #ccc; }
-            </style>
-          </head>
-          <body>${previewContent}</body>
-        </html>
-      `);
+      printWindow.document.write(fullHtmlContent);
       printWindow.document.close();
       printWindow.print();
     }
@@ -675,28 +816,655 @@ export class ContractTemplateEditorComponent implements OnInit {
     }
   }
 
-  // Statistics methods
-  getWordCount(): number {
-    if (!this.templateContent) return 0;
-    const text = this.templateContent.replace(/<[^>]*>/g, '');
-    return text.split(/\s+/).filter(word => word.length > 0).length;
-  }
-
-  getCharacterCount(): number {
-    if (!this.templateContent) return 0;
-    return this.templateContent.replace(/<[^>]*>/g, '').length;
-  }
-
-  getLastSaveTime(): string {
-    if (!this.lastSaveTime) return 'Jamais';
-    return this.lastSaveTime.toLocaleTimeString();
-  }
+  // Statistics methods - supprimées car dupliquées plus bas
 
   onSave(): void {
     this.saveTemplate();
   }
 
   onCancel(): void {
-    this.router.navigate(['/contract-templates']);
+    this.router.navigate(['/app/contract-templates']);
   }
+
+  /**
+   * Retour à la liste des templates
+   */
+  goBack(): void {
+    this.router.navigate(['/app/contract-templates']);
+  }
+
+  /**
+   * Gérer la navigation retour avec vérification des modifications
+   */
+  handleBackNavigation(): void {
+    console.log('🔄 handleBackNavigation appelée');
+    console.log('📝 hasChanges():', this.hasChanges());
+
+    if (this.hasChanges()) {
+      console.log('✅ Modifications détectées, affichage du modal');
+      this.pendingNavigation = () => this.goBack();
+      this.showUnsavedChangesModal = true;
+      console.log('🔍 showUnsavedChangesModal:', this.showUnsavedChangesModal);
+    } else {
+      console.log('❌ Aucune modification, navigation directe');
+      this.goBack();
+    }
+  }
+
+  /**
+   * Annuler la navigation et rester sur la page
+   */
+  cancelNavigation(): void {
+    this.showUnsavedChangesModal = false;
+    this.pendingNavigation = null;
+  }
+
+  /**
+   * Sauvegarder d'abord puis naviguer
+   */
+  saveAndNavigate(): void {
+    if (!this.templateName.trim()) {
+      this.notification.warning('TEMPLATE.VALIDATION.NAME_REQUIRED', 'TEMPLATE.VALIDATION.TITLE');
+      return;
+    }
+
+    // Sauvegarder le template
+    this.saveTemplate();
+
+    // Attendre la fin de la sauvegarde pour naviguer
+    const checkSaveComplete = () => {
+      if (!this.isSaving) {
+        this.showUnsavedChangesModal = false;
+        if (this.pendingNavigation) {
+          this.pendingNavigation();
+          this.pendingNavigation = null;
+        }
+      } else {
+        // Vérifier à nouveau dans 100ms
+        setTimeout(checkSaveComplete, 100);
+      }
+    };
+
+    setTimeout(checkSaveComplete, 100);
+  }
+
+  /**
+   * Ignorer les modifications et naviguer
+   */
+  ignoreChangesAndNavigate(): void {
+    this.showUnsavedChangesModal = false;
+    this.hasUnsavedChanges = false; // Réinitialiser le flag
+
+    if (this.pendingNavigation) {
+      this.pendingNavigation();
+      this.pendingNavigation = null;
+    }
+  }
+
+  /**
+   * Obtenir le nombre de mots
+   */
+  getWordCount(): number {
+    if (!this.templateContent) return 0;
+    const text = this.templateContent.replace(/<[^>]*>/g, '').trim();
+    return text ? text.split(/\s+/).length : 0;
+  }
+
+  /**
+   * Obtenir le nombre de caractères
+   */
+  getCharacterCount(): number {
+    if (!this.templateContent) return 0;
+    return this.templateContent.replace(/<[^>]*>/g, '').length;
+  }
+
+  /**
+   * Extraire les styles CSS du HTML complet
+   */
+  private extractStylesFromHtml(html: string): { styles: string; bodyContent: string } {
+    if (!html) return { styles: '', bodyContent: '' };
+
+
+
+    // Créer un parser DOM temporaire
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+
+    // Extraire tous les styles du head
+    const styleElements = doc.querySelectorAll('head style');
+    const linkElements = doc.querySelectorAll('head link[rel="stylesheet"]');
+
+    let extractedStyles = '';
+
+    // Récupérer le contenu des balises <style>
+    styleElements.forEach((style) => {
+      const styleContent = style.textContent || style.innerHTML;
+      if (styleContent) {
+
+        extractedStyles += styleContent + '\n';
+      }
+    });
+
+    // Traiter les liens CSS externes (les conserver comme commentaires pour référence)
+    linkElements.forEach((link) => {
+      const href = link.getAttribute('href');
+      if (href) {
+
+        extractedStyles += `/* Lien CSS externe: ${href} */\n`;
+      }
+    });
+
+    // Extraire le contenu du body
+    const bodyElement = doc.querySelector('body');
+    const bodyContent = bodyElement ? bodyElement.innerHTML : html;
+
+
+
+    return {
+      styles: extractedStyles.trim(),
+      bodyContent: bodyContent.trim()
+    };
+  }
+
+  /**
+   * Combiner le contenu du body avec les styles pour créer un HTML complet
+   */
+  private combineContentWithStyles(bodyContent: string, styles: string): string {
+
+    // Nettoyer le contenu HTML avant de le combiner
+    const cleanBodyContent = this.sanitizeHtml(bodyContent);
+    const cleanStyles = this.sanitizeCss(styles);
+
+    // Créer un HTML complet bien structuré
+    const fullHtml = `<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Template de Contrat</title>
+  ${cleanStyles ? `<style type="text/css">\n${cleanStyles}\n</style>` : ''}
+</head>
+<body>
+${cleanBodyContent}
+</body>
+</html>`;
+
+    // Validation finale pour sécuriser le HTML
+    const finalCleanHtml = this.finalHtmlValidation(fullHtml, bodyContent);
+    return finalCleanHtml;
+  }
+
+  /**
+   * Validation finale du HTML avant envoi au serveur
+   */
+  private finalHtmlValidation(html: string, originalBodyContent?: string): string {
+    // ÉTAPE 1: Protéger les balises <style> en les remplaçant temporairement
+    const styleBlocks: string[] = [];
+    let htmlWithProtectedStyles = html.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, (match) => {
+      const index = styleBlocks.length;
+      styleBlocks.push(match);
+      return `<!--PROTECTED_STYLE_${index}-->`;
+    });
+
+    // Liste des balises autorisées (whitelist) - ÉTENDUE
+    const allowedTags = [
+      'html', 'head', 'body', 'title', 'meta', 'style',
+      'p', 'div', 'span', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+      'strong', 'b', 'em', 'i', 'u', 'br', 'hr',
+      'ul', 'ol', 'li', 'table', 'tr', 'td', 'th', 'thead', 'tbody', 'tfoot',
+      'img', 'a', 'blockquote', 'pre', 'code',
+      'header', 'footer', 'section', 'article', 'nav', 'aside', 'main',
+      'figure', 'figcaption', 'address', 'time'
+    ];
+
+
+
+    // ÉTAPE 2: Supprimer les balises non autorisées du HTML avec styles protégés
+    let cleanHtml = htmlWithProtectedStyles.replace(/<\/?([a-zA-Z][a-zA-Z0-9]*)\b[^>]*>/g, (match, tagName) => {
+      const lowerTagName = tagName.toLowerCase();
+      if (allowedTags.includes(lowerTagName)) {
+        return match;
+      } else {
+
+        return '';
+      }
+    });
+
+
+
+    // Supprimer les attributs dangereux même sur les balises autorisées
+    cleanHtml = cleanHtml
+      .replace(/\s(on\w+)\s*=\s*["'][^"']*["']/gi, '') // Événements
+      .replace(/\s(style)\s*=\s*["'][^"']*expression[^"']*["']/gi, '') // Styles avec expression
+      .replace(/\s(href|src)\s*=\s*["'](javascript|vbscript|data:text\/html)[^"']*["']/gi, ''); // URLs dangereuses
+
+    // ÉTAPE 3: Restaurer les blocs de styles protégés
+    styleBlocks.forEach((styleBlock, index) => {
+      cleanHtml = cleanHtml.replace(`<!--PROTECTED_STYLE_${index}-->`, styleBlock);
+    });
+
+    // Test final avec les patterns exacts du backend
+    const validation = this.testHtmlWithBackendPatterns(cleanHtml);
+    if (!validation.isValid) {
+      console.error('🚨 HTML final échoue à la validation backend:', validation.errors);
+      // Essayer une version simplifiée
+      if (originalBodyContent) {
+        console.log('🔄 Tentative avec HTML simplifié');
+        const simpleHtml = this.createSimpleHtml(originalBodyContent);
+        const simpleValidation = this.testHtmlWithBackendPatterns(simpleHtml);
+        if (simpleValidation.isValid) {
+          console.log('✅ HTML simplifié validé');
+          return simpleHtml;
+        }
+      }
+    }
+
+    // Si le HTML est encore trop complexe, utiliser une version simplifiée
+    if (cleanHtml.length > 50000 && originalBodyContent) {
+      return this.createSimpleHtml(originalBodyContent);
+    }
+
+    return cleanHtml;
+  }
+
+  /**
+   * Créer un HTML simplifié en cas de problème - AVEC STYLES
+   */
+  private createSimpleHtml(bodyContent: string): string {
+    // Inclure les styles extraits même dans la version simplifiée
+    const cleanStyles = this.sanitizeCss(this.extractedStyles);
+
+    const simpleHtml = `<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Template de Contrat</title>
+  ${cleanStyles ? `<style type="text/css">\n${cleanStyles}\n</style>` : ''}
+</head>
+<body>
+${this.sanitizeHtml(bodyContent)}
+</body>
+</html>`;
+
+
+    return simpleHtml;
+  }
+
+  /**
+   * Tester le HTML avec les patterns exacts du backend
+   */
+  private testHtmlWithBackendPatterns(html: string): { isValid: boolean; errors: string[] } {
+    const errors: string[] = [];
+
+    // Patterns exacts du backend
+    const dangerousPatterns = [
+      { pattern: /<script[^>]*>/gi, message: 'Les balises <script> ne sont pas autorisées' },
+      { pattern: /javascript:/gi, message: 'Le code JavaScript n\'est pas autorisé' },
+      { pattern: /on\w+\s*=/gi, message: 'Les gestionnaires d\'événements ne sont pas autorisés' },
+      { pattern: /<iframe[^>]*>/gi, message: 'Les balises <iframe> ne sont pas autorisées' },
+      { pattern: /<object[^>]*>/gi, message: 'Les balises <object> ne sont pas autorisées' },
+      { pattern: /<embed[^>]*>/gi, message: 'Les balises <embed> ne sont pas autorisées' }
+    ];
+
+    dangerousPatterns.forEach(({ pattern, message }) => {
+      if (pattern.test(html)) {
+        errors.push(message);
+        console.error('🚨 Pattern détecté:', message, pattern);
+      }
+    });
+
+    return {
+      isValid: errors.length === 0,
+      errors
+    };
+  }
+
+
+
+  /**
+   * Nettoyer le HTML en supprimant les éléments dangereux
+   * Utilise exactement les mêmes patterns que le backend
+   */
+  private sanitizeHtml(html: string): string {
+    if (!html) return '';
+
+    console.log('🧹 Nettoyage HTML - Avant:', html.substring(0, 500) + '...');
+
+    // Utiliser exactement les mêmes patterns que le backend
+    let cleanHtml = html
+      // Pattern 1: /<script[^>]*>/gi - Supprimer les balises script (ouverture)
+      .replace(/<script[^>]*>/gi, '')
+      // Supprimer aussi les balises script complètes
+      .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+
+      // Pattern 2: /javascript:/gi - Supprimer toutes les références javascript:
+      .replace(/javascript:/gi, '')
+
+      // Pattern 3: /on\w+\s*=/gi - Supprimer tous les gestionnaires d'événements
+      .replace(/on\w+\s*=/gi, '')
+
+      // Pattern 4: /<iframe[^>]*>/gi - Supprimer les balises iframe (ouverture)
+      .replace(/<iframe[^>]*>/gi, '')
+      // Supprimer aussi les balises iframe complètes
+      .replace(/<iframe[^>]*>[\s\S]*?<\/iframe>/gi, '')
+
+      // Pattern 5: /<object[^>]*>/gi - Supprimer les balises object (ouverture)
+      .replace(/<object[^>]*>/gi, '')
+      // Supprimer aussi les balises object complètes
+      .replace(/<object[^>]*>[\s\S]*?<\/object>/gi, '')
+
+      // Pattern 6: /<embed[^>]*>/gi - Supprimer les balises embed
+      .replace(/<embed[^>]*>/gi, '')
+
+      // Nettoyages supplémentaires pour la sécurité
+      .replace(/vbscript:/gi, '')
+      .replace(/<form[^>]*>[\s\S]*?<\/form>/gi, '')
+      .replace(/<!--[\s\S]*?-->/g, '');
+
+    // Vérification finale avec les patterns exacts du backend
+    const backendPatterns = [
+      /<script[^>]*>/gi,
+      /javascript:/gi,
+      /on\w+\s*=/gi,
+      /<iframe[^>]*>/gi,
+      /<object[^>]*>/gi,
+      /<embed[^>]*>/gi
+    ];
+
+    let hasIssues = false;
+    backendPatterns.forEach((pattern, index) => {
+      if (pattern.test(cleanHtml)) {
+        console.error(`🚨 Pattern ${index + 1} encore présent:`, pattern);
+        hasIssues = true;
+      }
+    });
+
+    if (hasIssues) {
+      console.error('🚨 HTML contient encore des éléments dangereux après nettoyage');
+    } else {
+      console.log('✅ HTML nettoyé et validé');
+    }
+
+    console.log('🧹 Nettoyage HTML - Après:', cleanHtml.substring(0, 500) + '...');
+    return cleanHtml;
+  }
+
+  /**
+   * Nettoyer le CSS en supprimant les propriétés dangereuses
+   */
+  private sanitizeCss(css: string): string {
+    if (!css) return '';
+
+    console.log('🎨 Nettoyage CSS - Avant:', css.substring(0, 200) + '...');
+
+    // Supprimer les propriétés CSS potentiellement dangereuses
+    let cleanCss = css
+      // Supprimer les expressions et fonctions dangereuses
+      .replace(/expression\s*\([^)]*\)/gi, '') // Expressions IE
+      .replace(/javascript:/gi, '') // Références javascript
+      .replace(/vbscript:/gi, '') // Références vbscript
+      .replace(/data:text\/html/gi, '') // Data URLs HTML
+
+      // Supprimer les imports et behaviors (mais garder les autres @rules)
+      .replace(/@import[^;]*;/gi, '') // Imports externes
+      .replace(/behavior\s*:[^;]*;/gi, '') // Behaviors IE
+
+      // Supprimer les propriétés potentiellement dangereuses
+      .replace(/binding\s*:[^;]*;/gi, '') // XML binding
+      .replace(/-moz-binding\s*:[^;]*;/gi, ''); // Mozilla binding
+
+      // NE PAS supprimer les commentaires CSS normaux car ils peuvent contenir des infos utiles
+      // NE PAS supprimer @charset car c'est utile pour l'encodage
+
+    // Vérifier que nous n'avons pas supprimé tout le CSS
+    if (css.length > 100 && cleanCss.length < 10) {
+      console.warn('⚠️ Nettoyage CSS trop agressif, restauration partielle');
+      // Restaurer une version moins agressive
+      cleanCss = css
+        .replace(/expression\s*\([^)]*\)/gi, '')
+        .replace(/javascript:/gi, '')
+        .replace(/vbscript:/gi, '');
+    }
+
+    console.log('🎨 Nettoyage CSS - Après:', cleanCss.substring(0, 200) + '...');
+    console.log('📊 Taille CSS - Avant:', css.length, 'Après:', cleanCss.length);
+
+    return cleanCss;
+  }
+
+  /**
+   * Gérer le raccourci clavier Ctrl+S pour sauvegarder
+   */
+  @HostListener('document:keydown', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) {
+    // Ctrl+S ou Cmd+S (Mac)
+    if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+      event.preventDefault(); // Empêcher le comportement par défaut du navigateur
+
+      // Sauvegarder seulement si on peut (pas déjà en cours de sauvegarde et il y a des changements)
+      if (!this.isSaving && this.hasChanges()) {
+        console.log('💾 Sauvegarde déclenchée par Ctrl+S');
+        this.saveTemplate(true);
+      } else if (!this.hasChanges()) {
+        // Afficher un message si aucun changement à sauvegarder
+        this.notification.info('TEMPLATE.SAVE.NO_CHANGES', 'TEMPLATE.SAVE.TITLE');
+      }
+    }
+  }
+
+  /**
+   * Protéger contre la fermeture de fenêtre avec modifications non sauvegardées
+   */
+  @HostListener('window:beforeunload', ['$event'])
+  onBeforeUnload(event: BeforeUnloadEvent): void {
+    // Vérifier s'il y a des modifications non sauvegardées
+    if (this.hasChanges()) {
+      // Message standard du navigateur
+      event.preventDefault();
+      event.returnValue = 'Vous avez des modifications non sauvegardées. Êtes-vous sûr de vouloir quitter ?';
+      return event.returnValue;
+    }
+    return;
+  }
+
+  /**
+   * Obtenir l'heure de la dernière sauvegarde
+   */
+  getLastSaveTime(): string {
+    if (!this.lastSaveTime) return 'Jamais';
+    return this.lastSaveTime.toLocaleTimeString('fr-FR', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+
+  /**
+   * Transformer les variables en composants visuels
+   */
+  private transformVariablesToComponents(content: string): string {
+    // Transformer {{variable}} en composants stylés
+    return content.replace(/\{\{([^}]+)\}\}/g, (match, variableName) => {
+      return `<span class="variable" contenteditable="false" data-variable="${variableName.trim()}">${variableName.trim()}</span>`;
+    });
+  }
+
+  /**
+   * Transformer les composants visuels en variables textuelles pour la sauvegarde
+   */
+  private transformComponentsToVariables(content: string): string {
+    // Transformer les spans de variables en {{variable}}
+    return content.replace(/<span[^>]*class="variable"[^>]*data-variable="([^"]*)"[^>]*>.*?<\/span>/g, (match, variableName) => {
+      return `{{${variableName}}}`;
+    });
+  }
+
+  /**
+   * Gérer le début du drag d'une variable
+   */
+  onVariableDragStart(event: DragEvent, variable: any): void {
+    if (event.dataTransfer) {
+      // Extraire le nom de la variable du code (enlever les accolades)
+      const variableName = variable.code.replace(/[{}]/g, '');
+
+      // Créer le HTML de la variable avec les styles appropriés
+      const variableHtml = `<span class="variable" contenteditable="false" data-variable="${variableName}">${variableName}</span>`;
+
+      event.dataTransfer.setData('text/html', variableHtml);
+      event.dataTransfer.setData('text/plain', variable.code);
+      event.dataTransfer.setData('application/json', JSON.stringify(variable));
+      event.dataTransfer.effectAllowed = 'copy';
+    }
+  }
+
+  /**
+   * Zoomer dans la prévisualisation
+   */
+  zoomIn(): void {
+    if (this.previewZoom < 200) {
+      this.previewZoom += 25;
+    }
+  }
+
+  /**
+   * Dézoomer dans la prévisualisation
+   */
+  zoomOut(): void {
+    if (this.previewZoom > 50) {
+      this.previewZoom -= 25;
+    }
+  }
+
+  /**
+   * Ouvrir le modal d'export
+   */
+  openExportModal(): void {
+    this.showExportModal = true;
+    this.selectedExportFormat = null;
+  }
+
+  /**
+   * Fermer le modal d'export
+   */
+  closeExportModal(): void {
+    this.showExportModal = false;
+    this.selectedExportFormat = null;
+    this.isExporting = false;
+  }
+
+  /**
+   * Sélectionner un format d'export
+   */
+  selectExportFormat(format: any): void {
+    this.selectedExportFormat = format.value;
+  }
+
+  /**
+   * Exporter le template dans le format sélectionné
+   */
+  exportTemplate(): void {
+    if (!this.selectedExportFormat) return;
+
+    this.isExporting = true;
+    const content = this.getPreviewContent();
+
+    switch (this.selectedExportFormat) {
+      case 'html':
+        this.exportAsHTML(content);
+        break;
+      case 'pdf':
+        this.exportAsPDF(content);
+        break;
+      case 'docx':
+        this.exportAsWord(content);
+        break;
+    }
+  }
+
+  /**
+   * Exporter en HTML
+   */
+  private exportAsHTML(content: string): void {
+    // Créer un HTML complet avec les styles extraits du template
+    const bodyContent = this.transformComponentsToVariables(content);
+    const fullHtmlContent = this.combineContentWithStyles(bodyContent, this.extractedStyles);
+
+    const blob = new Blob([fullHtmlContent], { type: 'text/html' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${this.templateName}.html`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+
+    this.isExporting = false;
+    this.closeExportModal();
+    this.notification.success('TEMPLATE.EXPORT.HTML_SUCCESS', 'TEMPLATE.EXPORT.TITLE');
+  }
+
+  /**
+   * Exporter en PDF
+   */
+  private exportAsPDF(content: string): void {
+    // Créer un HTML complet avec les styles extraits du template
+    const bodyContent = this.transformComponentsToVariables(content);
+    const fullHtmlContent = this.combineContentWithStyles(bodyContent, this.extractedStyles);
+
+    // Utiliser html2pdf ou une bibliothèque similaire
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+      printWindow.document.write(fullHtmlContent);
+      printWindow.document.close();
+
+      setTimeout(() => {
+        printWindow.print();
+        printWindow.close();
+      }, 500);
+    }
+
+    this.isExporting = false;
+    this.closeExportModal();
+    this.notification.success('TEMPLATE.EXPORT.PDF_SUCCESS', 'TEMPLATE.EXPORT.TITLE');
+  }
+
+  /**
+   * Exporter en Word
+   */
+  private exportAsWord(content: string): void {
+    // Créer un HTML complet avec les styles extraits du template
+    const bodyContent = this.transformComponentsToVariables(content);
+    const fullHtmlContent = this.combineContentWithStyles(bodyContent, this.extractedStyles);
+
+    // Adapter le HTML pour Word avec les namespaces nécessaires
+    const wordContent = fullHtmlContent.replace(
+      '<html lang="fr">',
+      '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">'
+    ).replace(
+      '<head>',
+      `<head>
+    <!--[if gte mso 9]>
+    <xml>
+        <w:WordDocument>
+            <w:View>Print</w:View>
+            <w:Zoom>90</w:Zoom>
+            <w:DoNotPromptForConvert/>
+            <w:DoNotShowInsertionsAndDeletions/>
+        </w:WordDocument>
+    </xml>
+    <![endif]-->`
+    );
+
+    const blob = new Blob([wordContent], { type: 'application/msword' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${this.templateName}.doc`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+
+    this.isExporting = false;
+    this.closeExportModal();
+    this.notification.success('TEMPLATE.EXPORT.WORD_SUCCESS', 'TEMPLATE.EXPORT.TITLE');
+  }
+
+
 }

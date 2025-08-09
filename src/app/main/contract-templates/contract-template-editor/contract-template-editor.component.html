@@ -3,9 +3,14 @@
     <!-- En-tête moderne avec actions -->
     <div class="editor-header">
       <div class="header-left">
-        <button ibmButton="ghost" size="sm" (click)="goBack()">
+        <button ibmButton="ghost" size="sm" (click)="handleBackNavigation()">
           <i class="fas fa-arrow-left text-sm mr-2"></i>
           Retour
+        </button>
+
+        <!-- Bouton de test temporaire -->
+        <button ibmButton="ghost" size="sm" (click)="showUnsavedChangesModal = true" style="margin-left: 10px;">
+          🧪 Test Modal
         </button>
 
         <div class="header-info">
@@ -25,36 +30,33 @@
       <div class="header-actions">
         <div class="view-toggle">
           <button
-            ibmButton="ghost"
-            size="sm"
+            class="toggle-btn"
             [class.active]="viewMode === 'edit'"
             (click)="setViewMode('edit')">
-            <i class="fas fa-edit text-sm mr-2"></i>
-            Édition
+            <i class="fas fa-edit"></i>
+            <span>Édition</span>
           </button>
           <button
-            ibmButton="ghost"
-            size="sm"
+            class="toggle-btn"
             [class.active]="viewMode === 'preview'"
             (click)="setViewMode('preview')">
-            <i class="fas fa-eye text-sm mr-2"></i>
-            Aperçu
+            <i class="fas fa-eye"></i>
+            <span>Aperçu</span>
           </button>
         </div>
 
         <div class="action-buttons">
-          <button ibmButton="secondary" size="sm" (click)="exportTemplate()">
-            <i class="fas fa-download text-sm mr-2"></i>
-            Exporter
+          <button class="action-btn secondary" (click)="openExportModal()">
+            <i class="fas fa-download"></i>
+            <span>Exporter</span>
           </button>
 
           <button
-            ibmButton="primary"
-            size="sm"
+            class="action-btn primary"
             (click)="saveTemplate()"
             [disabled]="isSaving || !hasChanges()">
-            <i [class]="'fas ' + (isSaving ? 'fa-spinner fa-spin' : 'fa-save') + ' text-sm mr-2'"></i>
-            {{ isSaving ? 'Sauvegarde...' : 'Sauvegarder' }}
+            <i [class]="'fas ' + (isSaving ? 'fa-spinner fa-spin' : 'fa-save')"></i>
+            <span>{{ isSaving ? 'Sauvegarde...' : 'Sauvegarder' }}</span>
           </button>
         </div>
       </div>
@@ -63,13 +65,51 @@
     <!-- Contenu principal -->
     <div class="editor-content" [ngClass]="'view-mode-' + viewMode">
       
-      <!-- Loader principal -->
+      <!-- Loader principal professionnel -->
       <div class="loading-container" *ngIf="isLoading">
-        <div class="loading-content">
-          <div class="loading-spinner">
-            <i class="fas fa-spinner fa-spin"></i>
+        <div class="loading-skeleton">
+          <!-- Header skeleton -->
+          <div class="skeleton-header">
+            <div class="skeleton-breadcrumb"></div>
+            <div class="skeleton-title"></div>
+            <div class="skeleton-actions">
+              <div class="skeleton-button"></div>
+              <div class="skeleton-button"></div>
+            </div>
           </div>
-          <p class="loading-text">Chargement du modèle de contrat...</p>
+
+          <!-- Content skeleton -->
+          <div class="skeleton-content">
+            <div class="skeleton-sidebar">
+              <div class="skeleton-section">
+                <div class="skeleton-section-title"></div>
+                <div class="skeleton-input"></div>
+                <div class="skeleton-input"></div>
+                <div class="skeleton-textarea"></div>
+              </div>
+              <div class="skeleton-section">
+                <div class="skeleton-section-title"></div>
+                <div class="skeleton-tools">
+                  <div class="skeleton-tool"></div>
+                  <div class="skeleton-tool"></div>
+                </div>
+              </div>
+            </div>
+            <div class="skeleton-editor">
+              <div class="skeleton-editor-toolbar"></div>
+              <div class="skeleton-editor-content"></div>
+            </div>
+          </div>
+
+          <!-- Loading indicator -->
+          <div class="loading-indicator">
+            <div class="loading-dots">
+              <div class="dot"></div>
+              <div class="dot"></div>
+              <div class="dot"></div>
+            </div>
+            <p class="loading-text">Chargement du modèle de contrat...</p>
+          </div>
         </div>
       </div>
 
@@ -149,20 +189,7 @@
             </div>
           </div>
 
-          <!-- Outils d'édition avancés -->
-          <div class="sidebar-section" *ngIf="!isContentLoading">
-            <h3 class="app-productive-heading-04">Outils d'édition</h3>
-            <div class="editor-tools">
-              <button ibmButton="ghost" size="sm" (click)="openSourceCode()" title="Éditer le code HTML">
-                <i class="fas fa-code mr-2"></i>
-                Code HTML
-              </button>
-              <button ibmButton="ghost" size="sm" (click)="insertHtmlCode()" title="Insérer du HTML">
-                <i class="fas fa-plus-circle mr-2"></i>
-                Insérer HTML
-              </button>
-            </div>
-          </div>
+
 
           <!-- Variables disponibles -->
           <div class="sidebar-section" *ngIf="!isContentLoading">
@@ -173,14 +200,15 @@
               <div class="variable-category" *ngFor="let category of variableCategories">
                 <h4 class="app-productive-heading-05">{{ category.name }}</h4>
                 <div class="variable-items">
-                  <button
+                  <div
                     class="variable-item"
                     *ngFor="let variable of category.variables"
-                    (click)="insertVariable(variable)"
-                    [title]="variable.description">
-                    <i class="fas fa-plus text-sm mr-2"></i>
+                    draggable="true"
+                    (dragstart)="onVariableDragStart($event, variable)"
+                    [title]="variable.description + ' - Glissez-déposez pour insérer'">
+                    <i class="fas fa-grip-vertical drag-handle"></i>
                     <span>{{ variable.label }}</span>
-                  </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -208,24 +236,53 @@
         </div>
       </div>
 
-      <!-- Mode aperçu -->
+      <!-- Mode aperçu professionnel -->
       <div class="preview-panel" *ngIf="viewMode === 'preview'">
-        <div class="preview-header">
-          <h3 class="app-productive-heading-04">Aperçu du contrat</h3>
+        <!-- Toolbar de prévisualisation -->
+        <div class="preview-toolbar">
+          <div class="preview-info">
+            <h3 class="preview-title">
+              <i class="fas fa-eye"></i>
+              Aperçu du contrat
+            </h3>
+            <div class="preview-meta">
+              <span class="document-stats">
+                <i class="fas fa-file-alt"></i>
+                {{ getWordCount() }} mots • {{ getCharacterCount() }} caractères
+              </span>
+            </div>
+          </div>
+
           <div class="preview-actions">
-            <button ibmButton="ghost" size="sm" (click)="printPreview()">
-              <i class="fas fa-print text-sm mr-2"></i>
-              Imprimer
-            </button>
-            <button ibmButton="ghost" size="sm" (click)="exportPDF()">
-              <i class="fas fa-file-pdf text-sm mr-2"></i>
-              PDF
-            </button>
+            <div class="zoom-controls">
+              <button class="zoom-btn" (click)="zoomOut()" [disabled]="previewZoom <= 50">
+                <i class="fas fa-search-minus"></i>
+              </button>
+              <span class="zoom-level">{{ previewZoom }}%</span>
+              <button class="zoom-btn" (click)="zoomIn()" [disabled]="previewZoom >= 200">
+                <i class="fas fa-search-plus"></i>
+              </button>
+            </div>
+
+            <div class="action-buttons">
+              <button class="preview-btn primary" (click)="setViewMode('edit')">
+                <i class="fas fa-edit"></i>
+                Retour à l'édition
+              </button>
+            </div>
           </div>
         </div>
 
-        <div class="preview-content">
-          <div class="contract-preview" [innerHTML]="getPreviewContent()"></div>
+        <!-- Zone de prévisualisation -->
+        <div class="preview-container">
+          <div class="preview-viewport">
+            <!-- Injecter les styles du template -->
+            <style [innerHTML]="getPreviewStyles()"></style>
+            <div class="document-preview"
+                 [style.transform]="'scale(' + (previewZoom / 100) + ')'"
+                 [innerHTML]="getPreviewBodyContent()">
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -241,4 +298,111 @@
         <span class="app-helper-text-01">Dernière sauvegarde : {{ getLastSaveTime() }}</span>
       </div>
     </div>
+</div>
+
+<!-- Modal d'export professionnel -->
+<div class="export-modal-overlay" *ngIf="showExportModal" (click)="closeExportModal()">
+  <div class="export-modal" (click)="$event.stopPropagation()">
+    <!-- En-tête du modal -->
+    <div class="export-modal-header">
+      <div class="export-modal-title">
+        <i class="fas fa-download"></i>
+        <h2>Exporter le template</h2>
+      </div>
+      <button class="export-modal-close" (click)="closeExportModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <!-- Contenu du modal -->
+    <div class="export-modal-content">
+      <p class="export-modal-description">
+        Choisissez le format d'export pour votre template de contrat
+      </p>
+
+      <div class="export-options">
+        <div class="export-option"
+             *ngFor="let format of exportFormats"
+             [class.selected]="selectedExportFormat === format.value"
+             (click)="selectExportFormat(format)">
+          <div class="format-icon">
+            <i [class]="format.icon"></i>
+          </div>
+          <div class="format-info">
+            <h4>{{ format.label }}</h4>
+            <p>{{ format.description }}</p>
+          </div>
+          <div class="format-check" *ngIf="selectedExportFormat === format.value">
+            <i class="fas fa-check"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pied du modal -->
+    <div class="export-modal-footer">
+      <button class="export-btn secondary" (click)="closeExportModal()">
+        <i class="fas fa-times"></i>
+        <span>Annuler</span>
+      </button>
+      <button class="export-btn primary"
+              (click)="exportTemplate()"
+              [disabled]="!selectedExportFormat || isExporting">
+        <i [class]="'fas ' + (isExporting ? 'fa-spinner fa-spin' : 'fa-download')"></i>
+        <span>{{ isExporting ? 'Export en cours...' : 'Exporter' }}</span>
+      </button>
+    </div>
+  </div>
 </div> <!-- Fin contract-template-editor -->
+
+<!-- Modal de confirmation pour les modifications non sauvegardées -->
+<div class="unsaved-changes-modal-overlay" *ngIf="showUnsavedChangesModal" (click)="cancelNavigation()">
+  <div class="unsaved-changes-modal" (click)="$event.stopPropagation()">
+    <!-- En-tête du modal -->
+    <div class="modal-header">
+      <div class="modal-title">
+        <i class="fas fa-exclamation-triangle"></i>
+        <h3>Modifications non sauvegardées</h3>
+      </div>
+    </div>
+
+    <!-- Contenu du modal -->
+    <div class="modal-body">
+      <p class="main-message">
+        <strong>Vous avez des modifications non sauvegardées.</strong>
+      </p>
+      <p class="sub-message">
+        Que souhaitez-vous faire avant de quitter cette page ?
+      </p>
+    </div>
+
+    <!-- Actions du modal -->
+    <div class="modal-footer">
+      <button type="button"
+              class="modal-btn secondary"
+              (click)="cancelNavigation()">
+        <i class="fas fa-times"></i>
+        <span>Rester</span>
+      </button>
+
+      <div class="action-buttons">
+        <button type="button"
+                class="modal-btn primary"
+                (click)="saveAndNavigate()"
+                [disabled]="isSaving">
+          <i class="fas fa-save" *ngIf="!isSaving"></i>
+          <i class="fas fa-spinner fa-spin" *ngIf="isSaving"></i>
+          <span *ngIf="!isSaving">Sauvegarder d'abord</span>
+          <span *ngIf="isSaving">Sauvegarde...</span>
+        </button>
+
+        <button type="button"
+                class="modal-btn danger"
+                (click)="ignoreChangesAndNavigate()">
+          <i class="fas fa-trash-alt"></i>
+          <span>Ignorer les modifications</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

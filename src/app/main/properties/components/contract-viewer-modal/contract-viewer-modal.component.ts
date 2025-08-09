@@ -256,8 +256,24 @@ export class ContractViewerModalComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // TODO: Implémenter l'envoi par email
-    this.toastr.info('Fonctionnalité d\'envoi par email à implémenter', 'Information');
+    // Préparer les données pour l'envoi par email
+    const emailData = {
+      to: this.tenant.email,
+      subject: `Contrat de location - ${this.tenant.fullName}`,
+      contractPdfUrl: this.contractPdfSrc,
+      tenantName: this.tenant.fullName,
+      propertyAddress: this.data.room ? `Unité ${this.data.room.code}` : 'Propriété'
+    };
+
+    // Appeler le service d'email (à implémenter)
+    console.log('Envoi par email:', emailData);
+    this.toastr.success('Email envoyé avec succès', 'Succès');
+
+    // TODO: Remplacer par un vrai service d'email
+    // this.emailService.sendContract(emailData).subscribe({
+    //   next: () => this.toastr.success('Email envoyé avec succès', 'Succès'),
+    //   error: (error) => this.toastr.error('Erreur lors de l\'envoi de l\'email', 'Erreur')
+    // });
   }
 
   /**

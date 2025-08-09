@@ -14,7 +14,73 @@
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  
+
+  <!-- Configuration TinyMCE pour désactiver la télémétrie -->
+  <script>
+    // Bloquer toutes les requêtes vers sp.tinymce.com
+    (function() {
+      // Configuration globale
+      window.tinymce_disable_telemetry = true;
+
+      // Intercepter fetch
+      const originalFetch = window.fetch;
+      window.fetch = function(url, options) {
+        if (typeof url === 'string' && url.includes('sp.tinymce.com')) {
+          console.log('🚫 Blocked TinyMCE telemetry request:', url);
+          return Promise.reject(new Error('Blocked telemetry request'));
+        }
+        return originalFetch.apply(this, arguments);
+      };
+
+      // Intercepter XMLHttpRequest
+      const originalOpen = XMLHttpRequest.prototype.open;
+      XMLHttpRequest.prototype.open = function(method, url) {
+        if (typeof url === 'string' && url.includes('sp.tinymce.com')) {
+          console.log('🚫 Blocked TinyMCE telemetry XHR:', url);
+          // Créer une requête factice qui ne fait rien
+          this.send = function() {};
+          this.setRequestHeader = function() {};
+          return;
+        }
+        return originalOpen.apply(this, arguments);
+      };
+
+      // Intercepter navigator.sendBeacon
+      if (navigator.sendBeacon) {
+        const originalSendBeacon = navigator.sendBeacon;
+        navigator.sendBeacon = function(url, data) {
+          if (typeof url === 'string' && url.includes('sp.tinymce.com')) {
+            console.log('🚫 Blocked TinyMCE telemetry beacon:', url);
+            return false;
+          }
+          return originalSendBeacon.call(this, url, data);
+        };
+      }
+
+      // Intercepter Image requests (parfois utilisées pour la télémétrie)
+      const originalImage = window.Image;
+      window.Image = function() {
+        const img = new originalImage();
+        const originalSrc = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src');
+
+        Object.defineProperty(img, 'src', {
+          set: function(value) {
+            if (typeof value === 'string' && value.includes('sp.tinymce.com')) {
+              console.log('🚫 Blocked TinyMCE telemetry image:', value);
+              return;
+            }
+            originalSrc.set.call(this, value);
+          },
+          get: function() {
+            return originalSrc.get.call(this);
+          }
+        });
+
+        return img;
+      };
+    })();
+  </script>
+
   <!-- Préchargement des ressources critiques -->
   <link rel="preload" href="theme-light.css" as="style">
   <link rel="preload" href="styles.css" as="style">

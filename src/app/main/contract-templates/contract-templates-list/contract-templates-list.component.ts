@@ -102,13 +102,8 @@ export class ContractTemplatesListComponent implements OnInit, OnDestroy {
       limit: 12
     };
 
-    // Charger les templates utilisateur
+    // Charger tous les templates (le sélecteur selectAllTemplates inclut automatiquement le template par défaut)
     this.store.dispatch(new ContractTemplateAction.FetchTemplates(filters));
-
-    // Charger le template par défaut si aucun filtre de type n'est appliqué ou si on filtre par DEFAULT
-    if (!this.selectedType || this.selectedType === ContractTemplateType.DEFAULT) {
-      this.store.dispatch(new ContractTemplateAction.LoadDefaultTemplate());
-    }
   }
 
   /**
@@ -209,7 +204,7 @@ export class ContractTemplatesListComponent implements OnInit, OnDestroy {
     } else {
       // Utiliser "default" pour les templates système, sinon l'ID normal
       const viewId = template.isSystemDefault ? 'default' : template._id;
-      this.router.navigate(['../view', viewId], { relativeTo: this.route });
+      this.router.navigate(['/app/contract-templates/view', viewId]);
     }
   }
 
@@ -217,7 +212,7 @@ export class ContractTemplatesListComponent implements OnInit, OnDestroy {
    * Modifier un modèle
    */
   editTemplate(template: ContractTemplateModel): void {
-    this.router.navigate(['../edit', template._id], { relativeTo: this.route });
+    this.router.navigate(['/app/contract-templates/edit', template._id]);
   }
 
 
@@ -226,34 +221,91 @@ export class ContractTemplatesListComponent implements OnInit, OnDestroy {
    * Créer un nouveau modèle
    */
   createNewTemplate(): void {
-    this.router.navigate(['../create'], { relativeTo: this.route });
+    this.router.navigate(['/app/contract-templates/create']);
   }
 
   /**
    * Exporter les modèles
    */
   exportTemplates(): void {
-    // TODO: Implémenter l'export
-    console.log('Export des modèles');
+    const templates = this.store.selectSnapshot(ContractTemplateState.selectStateTemplates);
+
+    if (!templates || templates.length === 0) {
+      console.warn('Aucun modèle à exporter');
+      return;
+    }
+
+    // Créer les données d'export
+    const exportData = {
+      exportDate: new Date().toISOString(),
+      totalTemplates: templates.length,
+      templates: templates.map(template => ({
+        id: template._id,
+        name: template.name,
+        description: template.description,
+        type: template.type,
+        status: template.status,
+        isDefault: template.isDefault,
+        isSystemDefault: template.isSystemDefault,
+        usageCount: template.usageCount,
+        version: template.version,
+        createdAt: template.createdAt,
+        updatedAt: template.updatedAt,
+        customVariables: template.customVariables,
+        preview: template.preview
+      }))
+    };
+
+    // Créer et télécharger le fichier JSON
+    const dataStr = JSON.stringify(exportData, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(dataBlob);
+    link.download = `contract-templates-export-${new Date().toISOString().split('T')[0]}.json`;
+    link.click();
+
+    console.log('Export des modèles terminé:', exportData.totalTemplates, 'modèles exportés');
   }
 
   /**
    * Retour
    */
   goBack(): void {
-    if (this.isDuplicateMode) {
-      this.router.navigate(['../'], { relativeTo: this.route });
-    } else {
-      this.router.navigate(['../'], { relativeTo: this.route });
-    }
+    this.router.navigate(['/app/contract-templates']);
   }
 
   /**
    * Basculer le menu de la carte
    */
   toggleCardMenu(templateId: string): void {
-    // TODO: Implémenter le menu contextuel
-    console.log('Toggle menu for template:', templateId);
+    // Fermer tous les autres menus
+    this.templates$.subscribe(templates => {
+      templates.forEach(template => {
+        if (template._id !== templateId) {
+          (template as any).showMenu = false;
+        }
+      });
+    });
+
+    // Basculer le menu du template sélectionné
+    this.templates$.subscribe(templates => {
+      const template = templates.find(t => t._id === templateId);
+      if (template) {
+        (template as any).showMenu = !(template as any).showMenu;
+      }
+    });
+  }
+
+  /**
+   * Fermer tous les menus
+   */
+  closeAllMenus(): void {
+    this.templates$.subscribe(templates => {
+      templates.forEach(template => {
+        (template as any).showMenu = false;
+      });
+    });
   }
 
   /**
@@ -385,9 +437,9 @@ export class ContractTemplatesListComponent implements OnInit, OnDestroy {
         // La duplication a été effectuée avec succès
         console.log('✅ Template dupliqué avec succès:', result.newTemplate);
 
-        // Rediriger directement vers la page d'édition du nouveau template
+        // Rediriger directement vers la page d'édition du nouveau template avec l'URL complète
         console.log('🔄 Redirection vers la page d\'édition du nouveau template:', result.newTemplate._id);
-        this.router.navigate(['../edit', result.newTemplate._id], { relativeTo: this.route });
+        this.router.navigate(['/app/contract-templates/edit', result.newTemplate._id]);
       } else if (result?.success) {
         // Fallback : utiliser le store si le template n'est pas dans le résultat
         console.log('⚠️ Template dupliqué mais non retourné, utilisation du store...');
@@ -399,7 +451,7 @@ export class ContractTemplatesListComponent implements OnInit, OnDestroy {
         ).subscribe((newTemplate: ContractTemplateModel | null) => {
           if (newTemplate) {
             console.log('🔄 Redirection vers la page d\'édition du nouveau template:', newTemplate._id);
-            this.router.navigate(['../edit', newTemplate._id], { relativeTo: this.route });
+            this.router.navigate(['/app/contract-templates/edit', newTemplate._id]);
           } else {
             console.warn('⚠️ Nouveau template non trouvé dans le store après duplication');
             this.store.dispatch(new ContractTemplateAction.FetchTemplates());

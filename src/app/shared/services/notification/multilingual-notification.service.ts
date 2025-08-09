@@ -192,19 +192,7 @@ export class MultilingualNotificationService {
     });
   }
 
-  /**
-   * Affiche une notification d'erreur réseau
-   */
-  async networkError(): Promise<void> {
-    await this.error('NOTIFICATIONS.NETWORK_ERROR');
-  }
 
-  /**
-   * Affiche une notification d'erreur serveur
-   */
-  async serverError(): Promise<void> {
-    await this.error('NOTIFICATIONS.SERVER_ERROR');
-  }
 
   /**
    * Affiche une notification de pas de connexion Internet

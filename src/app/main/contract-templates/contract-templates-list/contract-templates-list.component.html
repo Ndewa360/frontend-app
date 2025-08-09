@@ -160,10 +160,9 @@
     <p>Chargement des modèles...</p>
   </div>
   
-  <!-- Vue grille moderne --> 
+  <!-- Vue grille moderne -->
   <div class="templates-grid-modern" *ngIf="viewMode === 'grid' && !(loading$ | async) && (templates$ | async) as templates">
-    <ng-scroolbar>
-      <div class="template-card-modern" *ngFor="let template of templates; trackBy: trackByTemplate">
+    <div class="template-card-modern" *ngFor="let template of templates; trackBy: trackByTemplate">
         <!-- Badge de statut -->
         <div class="card-status-badge" [ngClass]="getStatusBadgeClass(template.status)">
           {{ getStatusLabel(template.status) }}
@@ -231,8 +230,6 @@
           </button>
         </div>
       </div>
-    </ng-scroolbar>
-    
   </div>
   
   <!-- Vue liste moderne -->

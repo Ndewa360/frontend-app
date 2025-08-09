@@ -466,5 +466,25 @@
     "OCCUPANCY": "Taux d'occupation",
     "PAYMENTS": "Paiements",
     "ARREARS": "Arriérés"
+  },
+  "TEMPLATE": {
+    "SAVE": {
+      "TITLE": "Sauvegarde",
+      "SUCCESS": "Template sauvegardé avec succès",
+      "ERROR": "Erreur lors de la sauvegarde",
+      "NO_CHANGES": "Aucune modification à sauvegarder",
+      "SHORTCUT_USED": "Sauvegarde effectuée avec Ctrl+S"
+    },
+    "VALIDATION": {
+      "TITLE": "Validation",
+      "NAME_REQUIRED": "Le nom du template est requis",
+      "CONTENT_REQUIRED": "Le contenu du template est requis"
+    },
+    "EXPORT": {
+      "TITLE": "Export",
+      "HTML_SUCCESS": "Template exporté en HTML avec succès",
+      "PDF_SUCCESS": "Template exporté en PDF avec succès",
+      "WORD_SUCCESS": "Template exporté en Word avec succès"
+    }
   }
 }

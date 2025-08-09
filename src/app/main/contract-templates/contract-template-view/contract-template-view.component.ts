@@ -144,8 +144,8 @@ export class ContractTemplateViewComponent implements OnInit, OnDestroy {
   editTemplate(): void {
     this.template$.pipe(takeUntil(this.destroy$)).subscribe(template => {
       if (template && !template.isSystemDefault) {
-        // Utiliser l'ID du template actuel plutôt que celui de l'URL
-        this.router.navigate(['../edit', template._id], { relativeTo: this.route });
+        // Utiliser l'URL absolue pour la navigation
+        this.router.navigate(['/app/contract-templates/edit', template._id]);
       }
     });
   }

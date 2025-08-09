@@ -11,6 +11,7 @@ import { ContractTemplateEditorComponent } from './contract-template-editor/cont
 import { ContractTemplateViewComponent } from './contract-template-view/contract-template-view.component';
 import { DuplicateTemplateModalComponent } from './components/duplicate-template-modal/duplicate-template-modal.component';
 import { DeleteConfirmationModalComponent } from './components/delete-confirmation-modal/delete-confirmation-modal.component';
+import { TemplateSelectionModalComponent } from './components/template-selection-modal/template-selection-modal.component';
 import { ContractTemplatesDashboardComponent } from './contract-templates-dashboard/contract-templates-dashboard.component';
 
 // Modules partagés
@@ -47,7 +48,8 @@ const routes: Routes = [
     ContractTemplateViewComponent,
     ContractTemplatesDashboardComponent,
     DuplicateTemplateModalComponent,
-    DeleteConfirmationModalComponent
+    DeleteConfirmationModalComponent,
+    TemplateSelectionModalComponent
   ],
   imports: [
     CommonModule,
