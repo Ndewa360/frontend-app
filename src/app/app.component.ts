@@ -19,6 +19,7 @@ import { SeoService } from './shared/services/seo/seo.service';
 import { DeviceDetectionService } from './shared/services/device-detection.service';
 
 import { AuthStateService } from './shared/services/auth-state.service';
+import { DataDrivenLoaderService } from './shared/services/data-driven-loader.service';
 
 
 const getSessionStorage = (key, defaultValue = null) => {
@@ -72,7 +73,8 @@ export class AppComponent implements OnInit, OnDestroy {
     private translationService: TranslationService,
     private deviceService: DeviceDetectionService,
     private authStateService: AuthStateService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private dataDrivenLoader: DataDrivenLoaderService
   ) {
     // Fallback pour l'écran de chargement au cas où la navigation ne se termine jamais
     this.loadingTimeout = setTimeout(() => {
@@ -110,17 +112,13 @@ export class AppComponent implements OnInit, OnDestroy {
     console.log('  - app-root:', !!document.querySelector('app-root'));
     console.log('  - router-outlet:', !!document.querySelector('router-outlet'));
 
-    // Initialiser la détection d'appareil et redirection automatique
+    // Initialiser la détection d'appareil
     console.log('🔍 Initialisation de la détection d\'appareil...');
     try {
-      // Redirection de secours si on est toujours sur la racine après 2 secondes
-      setTimeout(() => {
-        if (this.router.url === '/' || this.router.url === '') {
-          console.log('🔄 Redirection de secours depuis la racine');
-          const defaultRoute = this.deviceService.getDefaultRoute();
-          this.router.navigate([defaultRoute]);
-        }
-      }, 2000);
+      // ✅ SUPPRESSION de la logique de redirection de secours
+      // Le routing Angular et les routes par défaut gèrent déjà les redirections
+      // Cette logique causait des redirections non désirées lors de l'actualisation
+      console.log('✅ Détection d\'appareil initialisée - pas de redirection automatique');
 
     } catch (error) {
       console.error('❌ Erreur lors de la détection d\'appareil:', error);
@@ -181,62 +179,36 @@ export class AppComponent implements OnInit, OnDestroy {
         }
       });
 
-    // Gérer les événements de navigation
+    // Gérer les événements de navigation avec le nouveau système de loader
     this.routerSubscription = this.router.events
       .pipe(takeUntil(this.destroy$))
       .subscribe(event => {
         if (event instanceof NavigationEnd) {
           // Gérer les métadonnées en fonction de la route
           this.seoService.updateMetaTagsForRoute(event.urlAfterRedirects);
-          
-          if (!this.appLoaded) {
-            try {
-              if (typeof window['appBootstrap'] === 'function') {
-                window['appBootstrap']();
-                this.appLoaded = true;
-                clearTimeout(this.loadingTimeout);
-                console.log('✅ Loader supprimé via appBootstrap lors de NavigationEnd');
-              } else {
-                console.warn('La fonction appBootstrap n\'est pas disponible - Suppression manuelle');
-                // Masquer manuellement l'écran de chargement avec transition plus rapide
-                const loader = document.getElementById('app-loading-holder');
-                if (loader && loader.parentNode) {
-                  loader.style.opacity = '0';
-                  setTimeout(() => {
-                    if (loader.parentNode) {
-                      loader.parentNode.removeChild(loader);
-                    }
-                  }, 150); // Réduit de 300ms à 150ms
-                }
-                this.appLoaded = true;
-                clearTimeout(this.loadingTimeout);
-                console.log('✅ Loader supprimé manuellement lors de NavigationEnd');
-              }
-            } catch (e) {
-              console.error('❌ Erreur lors du masquage de l\'écran de chargement:', e);
-              // Fallback d'urgence
-              const loader = document.getElementById('app-loading-holder');
-              if (loader && loader.parentNode) {
-                loader.style.display = 'none';
-              }
-              this.appLoaded = true;
-              clearTimeout(this.loadingTimeout);
-            }
-          }
+
+          // Le nouveau service DataDrivenLoaderService gère automatiquement le loader
+          // basé sur les données requises pour chaque route
+          console.log(`🔄 Navigation vers: ${event.urlAfterRedirects}`);
         } else if (event instanceof NavigationCancel || event instanceof NavigationError) {
           // Gérer les erreurs de navigation
           console.warn('Navigation annulée ou échouée:', event);
-          if (!this.appLoaded) {
-            try {
-              if (typeof window['appBootstrap'] === 'function') {
-                window['appBootstrap']();
-              }
-              this.appLoaded = true;
-              clearTimeout(this.loadingTimeout);
-            } catch (e) {
-              console.error('Erreur lors du masquage de l\'écran de chargement après erreur:', e);
-            }
-          }
+          this.dataDrivenLoader.forceStopLoading();
+        }
+      });
+
+    // Observer l'état du loader basé sur les données
+    this.dataDrivenLoader.globalLoaderVisible$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(isVisible => {
+        console.log('🔍 DataDrivenLoader état:', isVisible ? 'visible' : 'masqué');
+        if (!isVisible && !this.appLoaded) {
+          this.appLoaded = true;
+          clearTimeout(this.loadingTimeout);
+          console.log('✅ Loader masqué par le service DataDrivenLoader');
+
+          // Masquer le loader global seulement maintenant
+          this.hideGlobalLoader();
         }
       });
 
@@ -333,6 +305,32 @@ export class AppComponent implements OnInit, OnDestroy {
     };
     
     tryScrollToElement();
+  }
+
+  /**
+   * Masque le loader global
+   */
+  private hideGlobalLoader(): void {
+    try {
+      if (typeof window['appBootstrap'] === 'function') {
+        window['appBootstrap']();
+        console.log('✅ Loader global masqué via appBootstrap');
+      } else {
+        const loader = document.getElementById('app-loading-holder');
+        if (loader && loader.parentNode) {
+          loader.style.transition = 'opacity 0.3s ease-out';
+          loader.style.opacity = '0';
+          setTimeout(() => {
+            if (loader.parentNode) {
+              loader.parentNode.removeChild(loader);
+            }
+          }, 300);
+          console.log('✅ Loader global masqué manuellement');
+        }
+      }
+    } catch (error) {
+      console.error('❌ Erreur lors du masquage du loader global:', error);
+    }
   }
 
   ngOnDestroy(): void {

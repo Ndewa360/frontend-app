@@ -69,21 +69,21 @@ const routes: Routes = [
         path: 'properties',
         data: {
           breadcrumb: 'Biens'
-        },  
-        children: [      
+        },
+        children: [
           {
             path: 'home',
             component: HomePropertyComponent,
-            // data: {
-            //   breadcrumb: 'Getting started'
-            // },
+            data: {
+              breadcrumb: 'Accueil des biens'
+            },
           },
           {
             path: 'list',
             component: ListPropertyComponent,
-            // data: {
-            //   breadcrumb: 'Getting started'
-            // },
+            data: {
+              breadcrumb: 'Liste des biens'
+            },
           },
           {
             path: 'details/:id',
@@ -96,8 +96,13 @@ const routes: Routes = [
             },
           },
           {
+            path: '',
+            redirectTo: 'home',
+            pathMatch: 'full',
+          },
+          {
             path: '**',
-            redirectTo: '/app/properties/home',
+            redirectTo: 'home',
             pathMatch: 'full',
           },
         ],
@@ -110,8 +115,13 @@ const routes: Routes = [
         },
       },
       {
+        path: '',
+        redirectTo: 'properties/home',
+        pathMatch: 'full',
+      },
+      {
         path: '**',
-        redirectTo: '/app/welcome',
+        redirectTo: 'properties/home',
         pathMatch: 'full',
       },
     ],

@@ -7,6 +7,7 @@ import { AddPropertyComponent } from '../add-property/add-property.component';
 import { PropertyState, PropertyAction } from 'src/app/shared/store';
 import { PropertyModel } from 'src/app/shared/store/properties/property.model';
 import { LoadingStateService, LoadingState } from 'src/app/shared/services/loading-state.service';
+import { DataDrivenLoaderService } from 'src/app/shared/services/data-driven-loader.service';
 
 type ViewType = 'properties' | 'dashboard';
 
@@ -39,13 +40,12 @@ export class HomePropertyComponent implements OnInit, OnDestroy {
   constructor(
     private dialog: MatDialog,
     private _store: Store,
-    private loadingStateService: LoadingStateService
+    private loadingStateService: LoadingStateService,
+    private dataDrivenLoader: DataDrivenLoaderService
   ) { }
 
   ngOnInit(): void {
-    // Les données sont déjà chargées par InitialLoadingDataResolver
-    // On n'a plus besoin de dispatcher l'action ici
-    console.log('🏠 HomePropertyComponent - Les données sont déjà chargées par le resolver');
+    console.log('🏠 HomePropertyComponent - Initialisation');
 
     // Observer l'état de chargement global
     this.globalLoadingState$ = this.loadingStateService.getGlobalLoadingState();
@@ -56,6 +56,9 @@ export class HomePropertyComponent implements OnInit, OnDestroy {
       .subscribe(properties => {
         this.propertyCount = properties ? properties.length : 0;
         console.log('Nombre de propriétés:', this.propertyCount);
+
+        // Le DataDrivenLoaderService observe automatiquement les stores
+        // Pas besoin de marquage manuel
       });
 
     // Écouter l'état de chargement

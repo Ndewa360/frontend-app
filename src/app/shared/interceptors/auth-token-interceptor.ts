@@ -350,11 +350,18 @@ export class AuthTokenInterceptor implements HttpInterceptor {
 
       // Retourner seulement le pathname et les paramètres nettoyés
       const cleanPath = urlObj.pathname + (urlObj.search ? urlObj.search : '');
-      return cleanPath === '/' ? '/dashboard' : cleanPath;
+
+      // ✅ CORRECTION: Ne pas rediriger vers /dashboard, préserver l'URL originale
+      // Seulement rediriger vers /app/properties/home si on est vraiment sur la racine
+      if (cleanPath === '/' || cleanPath === '') {
+        return '/app/properties/home';
+      }
+
+      return cleanPath;
     } catch (error) {
-      // En cas d'erreur de parsing, retourner une URL par défaut
+      // En cas d'erreur de parsing, retourner l'URL des propriétés
       console.warn('Erreur lors du nettoyage de l\'URL:', error);
-      return '/dashboard';
+      return '/app/properties/home';
     }
   }
 }

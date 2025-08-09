@@ -9,6 +9,7 @@ import { DebugTokenPanelComponent } from './components/debug-token-panel/debug-t
 import { LanguageSwitcherComponent } from './components/language-switcher/language-switcher.component'
 import { AdvancedLanguageSwitcherComponent } from './components/advanced-language-switcher/advanced-language-switcher.component'
 import { TenantAvatarComponent } from './components/tenant-avatar/tenant-avatar.component'
+import { DataLoaderDebugComponent } from './components/data-loader-debug/data-loader-debug.component'
 
 import { ClickOutsideDirective } from './directives/click-outside.directive'
 import { NgxsModule } from '@ngxs/store';
@@ -148,6 +149,7 @@ import { HttpClient } from '@angular/common/http';
     LoadingOverlayComponent,
     DebugTokenPanelComponent,
     ContractTemplateSelectorComponent,
+    DataLoaderDebugComponent,
     SubscriptionLimitModalComponent,
     SubscriptionStatusWidgetComponent,
     NavigationButtonComponent,
@@ -185,6 +187,7 @@ import { HttpClient } from '@angular/common/http';
     LoadingOverlayComponent,
     DebugTokenPanelComponent,
     ContractTemplateSelectorComponent,
+    DataLoaderDebugComponent,
     SubscriptionLimitModalComponent,
     SubscriptionStatusWidgetComponent,
     NavigationButtonComponent,

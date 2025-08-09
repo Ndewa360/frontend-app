@@ -74,7 +74,7 @@ const routes: Routes = [
 	  },
 	  {
 		path: '',
-		redirectTo: '/app/welcome',
+		redirectTo: '/app/properties/home',
 		pathMatch: 'full'
 	  },
 	  {

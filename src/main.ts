@@ -46,33 +46,23 @@ registerSwiperElements();
 // })
 // .catch(err => console.error(err));
 
-// Fonction pour masquer le loader - OPTIMISÉE
-function hideLoader() {
-  console.log('🔧 Tentative de masquage du loader...');
+// ✅ SUPPRESSION de la fonction hideLoader automatique
+// Le DataDrivenLoaderService gère maintenant le masquage du loader
+// Cette fonction causait la page blanche en masquant le loader trop tôt
 
-  // Utiliser la fonction appBootstrap si disponible (plus rapide)
-  if (typeof window['appBootstrap'] === 'function') {
-    window['appBootstrap']();
-    console.log('✅ Loader supprimé via appBootstrap');
-    return;
-  }
+function logAppState() {
+  console.log('🔧 État de l\'application après bootstrap Angular...');
 
-  // Fallback manuel
+  const appRoot = document.querySelector('app-root');
+  const routerOutlet = document.querySelector('router-outlet');
   const loader = document.getElementById('app-loading-holder');
-  if (loader) {
-    console.log('✅ Loader trouvé, masquage en cours...');
-    loader.style.transition = 'opacity 0.15s ease-out'; // Plus rapide
-    loader.style.opacity = '0';
 
-    setTimeout(() => {
-      if (loader && loader.parentNode) {
-        loader.parentNode.removeChild(loader);
-        console.log('✅ Loader supprimé avec succès');
-      }
-    }, 150); // Réduit de 300ms à 150ms
-  } else {
-    console.log('ℹ️ Loader déjà supprimé ou non trouvé');
-  }
+  console.log('🔍 État de l\'application:', {
+    hasAppRoot: !!appRoot,
+    hasRouterOutlet: !!routerOutlet,
+    hasLoader: !!loader,
+    currentUrl: window.location.href
+  });
 }
 
 // Démarrer l'application
@@ -99,10 +89,10 @@ function checkAppState() {
 
   console.log('🅰️ Angular initialisé:', !!hasAngularElements);
 
-  // Si l'application semble chargée, supprimer le loader
+  // Si l'application semble chargée, laisser DataDrivenLoader gérer
   if (appRoot && (hasAngularElements || appRoot.innerHTML.trim() !== 'Loading...')) {
-    console.log('✅ Application chargée, suppression du loader');
-    hideLoader();
+    console.log('✅ Application chargée - DataDrivenLoader prendra le relais');
+    // ✅ Ne plus masquer automatiquement le loader ici
     return true;
   }
 
@@ -125,29 +115,24 @@ platformBrowserDynamic().bootstrapModule(AppModule)
           }
         }, 200); // Réduit de 500ms à 200ms
 
-        // Arrêter les vérifications après 5 secondes au lieu de 10
+        // Arrêter les vérifications après 5 secondes
         setTimeout(() => {
           clearInterval(checkInterval);
-          console.log('⚠️ Timeout des vérifications - Suppression forcée du loader');
-          hideLoader();
-        }, 5000); // Réduit de 10s à 5s
+          console.log('⚠️ Timeout des vérifications - DataDrivenLoader prendra le relais');
+          // ✅ Ne plus masquer automatiquement le loader
+          // Le DataDrivenLoaderService gère maintenant le timing
+        }, 5000);
       }
-    }, 50); // Réduit de 100ms à 50ms
+    }, 50);
 
-    // Sécurité : forcer le masquage après 2 secondes
-    setTimeout(() => {
-      const loader = document.getElementById('app-loading-holder');
-      if (loader) {
-        console.log('⚠️ Loader encore présent après 2s, suppression forcée');
-        hideLoader();
-      }
-    }, 2000);
+    // ✅ SUPPRESSION du timeout de sécurité qui causait la page blanche
+    // Le DataDrivenLoaderService gère maintenant le masquage du loader
+    console.log('✅ Bootstrap Angular terminé - DataDrivenLoader prend le relais');
   })
   .catch(err => {
     console.error('❌ Erreur critique lors du démarrage:', err);
 
-    // Même en cas d'erreur, masquer le loader
-    setTimeout(() => {
-      hideLoader();
-    }, 1000);
+    // ✅ En cas d'erreur, laisser le timeout de sécurité d'index.html gérer
+    // Ne pas masquer automatiquement pour éviter la page blanche
+    console.log('🔧 Erreur de bootstrap - timeout de sécurité d\'index.html actif');
   });

@@ -113,8 +113,8 @@ export class DeviceDetectionService {
    * Obtenir la route par défaut (application web)
    */
   getDefaultRoute(): string {
-    console.log('🖥️ Application web -> /app/welcome');
-    return '/app/welcome';
+    console.log('🖥️ Application web -> /app/properties/home');
+    return '/app/properties/home';
   }
 
   /**
