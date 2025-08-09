@@ -170,13 +170,32 @@ export class ContractTemplateSelectorComponent implements OnInit, OnDestroy, Con
     if (value) {
       // Si on reçoit un ID, chercher le modèle correspondant
       if (typeof value === 'string') {
-        const template = this.templates.find(t => t._id === value);
-        this.selectedTemplate = template || null;
+        this.findAndSetTemplate(value);
       } else if (value._id) {
         // Si on reçoit un objet modèle
         this.selectedTemplate = value;
       }
     } else {
+      this.selectedTemplate = null;
+    }
+  }
+
+  /**
+   * Chercher et définir le template par ID
+   */
+  private findAndSetTemplate(templateId: string): void {
+    const template = this.templates.find(t => t._id === templateId);
+    if (template) {
+      this.selectedTemplate = template;
+    } else if (this.templates.length === 0) {
+      // Si les templates ne sont pas encore chargés, attendre et réessayer
+      console.log('Templates pas encore chargés, attente...', templateId);
+      setTimeout(() => {
+        this.findAndSetTemplate(templateId);
+      }, 500);
+    } else {
+      // Template non trouvé dans la liste
+      console.warn('Template non trouvé:', templateId);
       this.selectedTemplate = null;
     }
   }

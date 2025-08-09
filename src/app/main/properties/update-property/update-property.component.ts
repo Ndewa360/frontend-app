@@ -154,6 +154,33 @@ export class UpdatePropertyComponent implements OnInit {
         }
       });
     }
+
+    // Charger le template de contrat si présent
+    this.loadContractTemplate();
+  }
+
+  /**
+   * Charger le template de contrat existant
+   */
+  private loadContractTemplate(): void {
+    if (this.data.property?.contractTemplate) {
+      console.log('Chargement du template de contrat:', this.data.property.contractTemplate);
+
+      // Déterminer l'ID du template
+      const templateId = typeof this.data.property.contractTemplate === 'string'
+        ? this.data.property.contractTemplate
+        : this.data.property.contractTemplate._id;
+
+      if (templateId) {
+        // Attendre que les templates soient chargés puis définir la valeur
+        setTimeout(() => {
+          this.formGroup.patchValue({
+            contractTemplate: templateId
+          });
+          console.log('Template de contrat défini:', templateId);
+        }, 500);
+      }
+    }
   }
 
   /**

@@ -8,11 +8,6 @@
           Retour
         </button>
 
-        <!-- Bouton de test temporaire -->
-        <button ibmButton="ghost" size="sm" (click)="showUnsavedChangesModal = true" style="margin-left: 10px;">
-          🧪 Test Modal
-        </button>
-
         <div class="header-info">
           <h1 class="app-productive-heading-03">{{ isEditMode ? 'Modifier le modèle' : 'Nouveau modèle' }}</h1>
           <div class="header-meta">
@@ -101,14 +96,15 @@
             </div>
           </div>
 
-          <!-- Loading indicator -->
+          <!-- Loading indicator professionnel -->
           <div class="loading-indicator">
-            <div class="loading-dots">
-              <div class="dot"></div>
-              <div class="dot"></div>
-              <div class="dot"></div>
+            <div class="loading-spinner">
+              <div class="spinner-ring"></div>
             </div>
-            <p class="loading-text">Chargement du modèle de contrat...</p>
+            <div class="loading-text">
+              <h3>Chargement du modèle</h3>
+              <p>Préparation de l'éditeur de contrat...</p>
+            </div>
           </div>
         </div>
       </div>
@@ -230,7 +226,9 @@
               [init]="editorConfig"
               [(ngModel)]="templateContent"
               (ngModelChange)="onContentChange($event)"
-              [disabled]="isSaving">
+              [disabled]="isSaving"
+              style="height: 100%; display: block;"
+              >
             </editor>
           </div>
         </div>

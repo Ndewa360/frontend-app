@@ -338,4 +338,22 @@ export class ContractTemplateService {
 
     return { ...template, permissions };
   }
+
+  /**
+   * Générer un contrat avec un template spécifique
+   */
+  generateContractWithTemplate(locationId: string, templateId: string): Observable<any> {
+    const url = `${environment.apiUrl}/contract/generate-with-template/${locationId}`;
+    const params = new HttpParams().set('templateId', templateId);
+
+    return this.http.get(url, { params }).pipe(
+      tap(() => {
+        console.log('✅ Contrat généré avec template:', templateId);
+      }),
+      catchError(error => {
+        console.error('❌ Erreur génération contrat avec template:', error);
+        throw error;
+      })
+    );
+  }
 }

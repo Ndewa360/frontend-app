@@ -1,18 +1,20 @@
-import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, Inject, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store, Select } from '@ngxs/store';
 import { Observable, Subject, combineLatest } from 'rxjs';
 import { takeUntil, tap } from 'rxjs/operators';
-import { 
-  RoomModel, 
-  LocationModel, 
-  LocataireModel, 
-  ContractState, 
+import {
+  RoomModel,
+  LocationModel,
+  LocataireModel,
+  ContractState,
   ContractAction,
   LocataireState,
-  LocationState 
+  LocationState
 } from 'src/app/shared/store';
 import { ToastrService } from 'ngx-toastr';
+import { ContractTemplateService } from 'src/app/shared/services/contract-template.service';
+import { ContractTemplateModel, ContractTemplateType } from 'src/app/shared/models/contract-template.model';
 
 export interface ContractViewerData {
   room: RoomModel;
@@ -44,20 +46,40 @@ export class ContractViewerModalComponent implements OnInit, OnDestroy {
   totalPages = 1;
   zoomLevel = 1;
 
+  // Gestion des templates
+  availableTemplates: ContractTemplateModel[] = [];
+  selectedTemplateId: string = '';
+  isLoadingTemplates = false;
+  showTemplateSelector = false;
+
   constructor(
     private dialogRef: MatDialogRef<ContractViewerModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ContractViewerData,
     private store: Store,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private contractTemplateService: ContractTemplateService
   ) {}
 
   ngOnInit(): void {
     this.initializeContractData();
+    this.loadAvailableTemplates();
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event): void {
+    // Fermer le dropdown si on clique en dehors
+    if (this.showTemplateSelector) {
+      const target = event.target as HTMLElement;
+      const templateContainer = target.closest('.template-selector-container');
+      if (!templateContainer) {
+        this.showTemplateSelector = false;
+      }
+    }
   }
 
   /**
@@ -292,5 +314,129 @@ export class ContractViewerModalComponent implements OnInit, OnDestroy {
   getRoomInfo(): string {
     const room = this.data.room;
     return `Unité ${room.code || room._id} - ${room.type || 'Type non spécifié'}`;
+  }
+
+  /**
+   * Charger les templates disponibles
+   */
+  private loadAvailableTemplates(): void {
+    this.isLoadingTemplates = true;
+
+    this.contractTemplateService.getTemplates().subscribe({
+      next: (response) => {
+        this.availableTemplates = response.templates || [];
+
+        // Définir le template par défaut basé sur la location
+        if (this.location?.contractTemplateUrl) {
+          if (this.location.contractTemplateUrl.startsWith('template_id:')) {
+            this.selectedTemplateId = this.location.contractTemplateUrl.replace('template_id:', '');
+          }
+        }
+
+        // Si aucun template sélectionné, utiliser le premier disponible
+        if (!this.selectedTemplateId && this.availableTemplates.length > 0) {
+          const defaultTemplate = this.availableTemplates.find(t => t.isDefault) || this.availableTemplates[0];
+          this.selectedTemplateId = defaultTemplate._id;
+        }
+
+        this.isLoadingTemplates = false;
+        console.log('📝 Templates chargés:', this.availableTemplates.length, 'Template sélectionné:', this.selectedTemplateId);
+      },
+      error: (error) => {
+        console.error('❌ Erreur lors du chargement des templates:', error);
+        this.isLoadingTemplates = false;
+        this.toastr.error('Erreur lors du chargement des templates', 'Erreur');
+      }
+    });
+  }
+
+  /**
+   * Basculer l'affichage du sélecteur de template
+   */
+  toggleTemplateSelector(): void {
+    this.showTemplateSelector = !this.showTemplateSelector;
+  }
+
+  /**
+   * Changer le template sélectionné et régénérer le contrat
+   */
+  onTemplateChange(templateId: string): void {
+    if (templateId === this.selectedTemplateId) {
+      return; // Pas de changement
+    }
+
+    this.selectedTemplateId = templateId;
+    console.log('🎨 Changement de template:', templateId);
+
+    // Régénérer le contrat avec le nouveau template
+    this.regenerateContractWithTemplate(templateId);
+  }
+
+  /**
+   * Régénérer le contrat avec un template spécifique
+   */
+  private regenerateContractWithTemplate(templateId: string): void {
+    if (!this.location) {
+      this.toastr.error('Données de location manquantes', 'Erreur');
+      return;
+    }
+
+    this.isLoading = true;
+    this.hasError = false;
+    this.contractPdfSrc = '';
+
+    console.log('🔄 Régénération du contrat avec template:', templateId);
+    console.log('🗑️ Suppression du contrat existant du cache');
+
+    // Supprimer le contrat existant du store pour forcer le rechargement
+    this.store.dispatch(new ContractAction.RemoveContract(this.location._id));
+
+    // Appeler l'API de génération avec le template spécifique
+    this.contractTemplateService.generateContractWithTemplate(this.location._id, templateId).subscribe({
+      next: (response) => {
+        console.log('✅ Contrat régénéré avec succès');
+        console.log('📊 Taille du nouveau contrat:', response.data.length, 'caractères');
+
+        this.contractPdfSrc = `data:application/pdf;base64,${response.data}`;
+        this.isLoading = false;
+
+        // Mettre à jour le store avec le nouveau contrat
+        this.store.dispatch(new ContractAction.SetContract({
+          locationId: this.location!._id,
+          pdf: response.data
+        }));
+
+        this.toastr.success(`Contrat régénéré avec le template "${this.getSelectedTemplateName()}"`, 'Succès');
+      },
+      error: (error) => {
+        console.error('❌ Erreur lors de la régénération:', error);
+        this.handleError('Erreur lors de la régénération du contrat');
+        this.toastr.error('Erreur lors de la régénération du contrat', 'Erreur');
+      }
+    });
+  }
+
+  /**
+   * Obtenir le nom du template sélectionné
+   */
+  getSelectedTemplateName(): string {
+    const template = this.availableTemplates.find(t => t._id === this.selectedTemplateId);
+    return template?.name || 'Template par défaut';
+  }
+
+  /**
+   * Obtenir le label d'affichage pour le type de template
+   */
+  getTemplateTypeLabel(type: ContractTemplateType): string {
+    switch (type) {
+      case ContractTemplateType.DEFAULT:
+        return 'Par défaut';
+      case ContractTemplateType.CUSTOM:
+        return 'Personnalisé';
+      case ContractTemplateType.DUPLICATED:
+        return 'Dupliqué';
+      default:
+        return 'Inconnu';
+    }
   }
 }

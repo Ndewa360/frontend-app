@@ -19,6 +19,18 @@ export namespace ContractAction
         static readonly type = '[Contract] logout'
     }
 
+    export class SetContract
+    {
+        static readonly type = '[Contract] Set Contract'
+        constructor(public payload: {locationId: string, pdf: string}){}
+    }
+
+    export class RemoveContract
+    {
+        static readonly type = '[Contract] Remove Contract'
+        constructor(public locationId: string){}
+    }
+
 
 
 }

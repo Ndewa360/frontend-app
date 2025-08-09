@@ -23,6 +23,11 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
   templateDescription = '';
   templateContent = '';
 
+  // Valeurs originales pour détecter les changements
+  private originalTemplateName = '';
+  private originalTemplateDescription = '';
+  private originalTemplateContent = '';
+
   // Styles extraits du HTML pour TinyMCE
   private extractedStyles: string = '';
 
@@ -73,7 +78,9 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
 
   private getTinyMCEConfig() {
     return {
-    height: 600, // Hauteur fixe plus importante
+    height: '100%', // Utilise toute la hauteur disponible
+    width:'100%',
+    min_height: 500, // Hauteur minimum
     menubar: 'file edit view insert format tools table help',
 
     // Plugins essentiels qui fonctionnent (sans ceux qui causent des 404)
@@ -422,6 +429,10 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
         this.templateDescription = template.description || '';
         this.isLoading = false;
 
+        // Sauvegarder les valeurs originales des métadonnées
+        this.originalTemplateName = this.templateName;
+        this.originalTemplateDescription = this.templateDescription;
+
         // Charger le contenu du template
         this.contractTemplateService.getTemplateContent(this.templateId!).subscribe({
           next: (response) => {
@@ -434,6 +445,9 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
             this.templateContent = bodyContent;
 
             this.isContentLoading = false;
+
+            // Sauvegarder les valeurs originales pour détecter les changements
+            this.saveOriginalValues();
 
             // Forcer la mise à jour de l'éditeur TinyMCE
             setTimeout(() => {
@@ -465,16 +479,34 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
    */
   private updateEditorContent(): void {
     console.log('Updating editor content:', this.templateContent);
+    console.log('Extracted styles:', this.extractedStyles);
 
     // Transformer les variables en composants visuels
     const contentWithComponents = this.transformVariablesToComponents(this.templateContent || '<p>Commencez à rédiger...</p>');
 
-    // Méthode plus robuste pour mettre à jour TinyMCE
+    // Méthode plus robuste pour mettre à jour TinyMCE avec les styles
     const updateEditor = () => {
       if ((window as any).tinymce) {
         const editor = (window as any).tinymce.activeEditor;
         if (editor && editor.initialized) {
           console.log('Setting content in TinyMCE editor');
+
+          // Mettre à jour les styles CSS de l'éditeur
+          const newContentStyle = this.getContentStyle();
+          if (editor.dom && editor.dom.doc) {
+            // Supprimer les anciens styles personnalisés
+            const existingStyle = editor.dom.doc.getElementById('custom-template-styles');
+            if (existingStyle) {
+              existingStyle.remove();
+            }
+
+            // Ajouter les nouveaux styles
+            const styleElement = editor.dom.doc.createElement('style');
+            styleElement.id = 'custom-template-styles';
+            styleElement.textContent = this.extractedStyles || '';
+            editor.dom.doc.head.appendChild(styleElement);
+          }
+
           editor.setContent(contentWithComponents);
           editor.focus();
         } else {
@@ -502,19 +534,19 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
   // Save status methods
   getSaveStatusClass(): string {
     if (this.isSaving) return 'saving';
-    if (this.lastSaveTime) return 'saved';
+    if (!this.hasChanges()) return 'saved';
     return 'unsaved';
   }
 
   getSaveStatusIcon(): string {
     if (this.isSaving) return 'fa-spinner fa-spin';
-    if (this.lastSaveTime) return 'fa-check';
+    if (!this.hasChanges()) return 'fa-check';
     return 'fa-exclamation-triangle';
   }
 
   getSaveStatusText(): string {
     if (this.isSaving) return 'Sauvegarde...';
-    if (this.lastSaveTime) return 'Sauvegardé';
+    if (!this.hasChanges()) return 'Sauvegardé';
     return 'Non sauvegardé';
   }
 
@@ -546,8 +578,8 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
       name: this.templateName,
       description: this.templateDescription,
       content: contentForSave,
-      type: ContractTemplateType.CUSTOM,
-      status: ContractTemplateStatus.ACTIVE
+      type: ContractTemplateType.CUSTOM
+      // status est défini automatiquement par le backend
     };
 
     if (this.isEditMode && this.templateId) {
@@ -574,6 +606,8 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
             next: (contentResponse) => {
               this.isSaving = false;
               this.lastSaveTime = new Date();
+              // Sauvegarder les nouvelles valeurs comme valeurs originales
+              this.saveOriginalValues();
               console.log('Template mis à jour avec succès');
               this.notification.success('TEMPLATE.SAVE.SUCCESS', 'TEMPLATE.SAVE.TITLE');
             },
@@ -614,10 +648,12 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
         next: (response) => {
           this.isSaving = false;
           this.lastSaveTime = new Date();
+          // Sauvegarder les nouvelles valeurs comme valeurs originales
+          this.saveOriginalValues();
           console.log('Template créé avec succès');
           this.notification.success('TEMPLATE.CREATE.SUCCESS', 'TEMPLATE.CREATE.TITLE');
           // Rediriger vers la vue du template créé
-          this.router.navigate(['/contract-templates/view', response._id]);
+          this.router.navigate(['/app/contract-templates/view', response._id]);
         },
         error: (error) => {
           this.isSaving = false;
@@ -639,6 +675,16 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
 
 
 
+  /**
+   * Sauvegarder les valeurs originales pour détecter les changements
+   */
+  private saveOriginalValues(): void {
+    this.originalTemplateName = this.templateName;
+    this.originalTemplateDescription = this.templateDescription;
+    this.originalTemplateContent = this.templateContent;
+    this.hasUnsavedChanges = false;
+  }
+
   hasChanges(): boolean {
     if (!this.isEditMode) {
       // Nouveau template - vérifier si du contenu a été ajouté
@@ -648,7 +694,9 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
     }
 
     // Mode édition - comparer avec les valeurs originales
-    return this.hasUnsavedChanges;
+    return this.templateName !== this.originalTemplateName ||
+           this.templateDescription !== this.originalTemplateDescription ||
+           this.templateContent !== this.originalTemplateContent;
   }
 
   // Template change handlers

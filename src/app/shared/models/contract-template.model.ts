@@ -82,7 +82,7 @@ export interface CreateContractTemplateDTO {
   description?: string;
   content: string; // Contenu HTML du template
   type?: ContractTemplateType;
-  status?: ContractTemplateStatus;
+  // status est défini automatiquement par le backend
   basedOn?: string;
 }
 

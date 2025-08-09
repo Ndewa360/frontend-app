@@ -108,4 +108,35 @@ export class ContractState{
             )
         )
     }
+
+    @Action(ContractAction.SetContract)
+    setContract(ctx: StateContext<ContractStateModel>, action: ContractAction.SetContract) {
+        const state = ctx.getState();
+        const { locationId, pdf } = action.payload;
+
+        // Supprimer l'ancien contrat pour cette location s'il existe
+        const filteredContracts = state.contracts.filter(c => c.locationId !== locationId);
+
+        // Ajouter le nouveau contrat (seulement si le PDF n'est pas vide)
+        if (pdf) {
+            ctx.patchState({
+                contracts: [...filteredContracts, { locationId, pdf }]
+            });
+        } else {
+            // Si PDF vide, juste supprimer l'ancien
+            ctx.patchState({
+                contracts: filteredContracts
+            });
+        }
+    }
+
+    @Action(ContractAction.RemoveContract)
+    removeContract(ctx: StateContext<ContractStateModel>, action: ContractAction.RemoveContract) {
+        const state = ctx.getState();
+        const filteredContracts = state.contracts.filter(c => c.locationId !== action.locationId);
+
+        ctx.patchState({
+            contracts: filteredContracts
+        });
+    }
 }

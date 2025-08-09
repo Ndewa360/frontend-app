@@ -27,6 +27,8 @@ export interface LocationModel {
     isKnowExactDateEntry?;
 
     removeReason?:string;
-    
+
+    contractTemplateUrl?:string;
+
     createdAt?:Date
 }
