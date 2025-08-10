@@ -43,15 +43,47 @@ export class LayoutMiniSidebarComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.userProfile$.subscribe((user)=>{ 
-      
+    this.userProfile$.subscribe((user)=>{
+
       if(user) {
-        this.isAdmin=user.email=='support@ndewa-360.com';
-       
+        // ✅ CORRECTION: Vérifier le rôle super-admin au lieu de l'email spécifique
+        this.isAdmin = this.checkIfUserIsAdmin(user);
+
         this.routerLinkRoute="/app/welcome"
       }
     })
 
+  }
+
+  /**
+   * Vérifier si l'utilisateur a le rôle admin ou super-admin
+   */
+  private checkIfUserIsAdmin(user: any): boolean {
+    // Vérifier uniquement les rôles de l'utilisateur (plus de vérification par email)
+    if (!user.roles || !Array.isArray(user.roles)) {
+      console.log('❌ Admin access denied - No roles found for user:', user.email);
+      return false;
+    }
+
+    const hasAdminRole = user.roles.some((role: any) => {
+      // Vérifier différentes variantes du nom de rôle
+      const roleName = typeof role === 'string' ? role : role.name;
+      return roleName === 'super-admin' || roleName === 'admin'
+    });
+
+    if (hasAdminRole) {
+      console.log('✅ Admin access granted via role for user:', {
+        email: user.email,
+        roles: user.roles.map((role: any) => typeof role === 'string' ? role : role.name)
+      });
+      return true;
+    }
+
+    console.log('❌ Admin access denied - No admin role found for user:', {
+      email: user.email,
+      roles: user.roles.map((role: any) => typeof role === 'string' ? role : role.name)
+    });
+    return false;
   }
 
   onItemClick(event) {

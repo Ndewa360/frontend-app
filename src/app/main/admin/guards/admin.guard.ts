@@ -19,29 +19,51 @@ export class AdminGuard implements CanActivate {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): Observable<boolean> | Promise<boolean> | boolean {
-    
+
     return this.store.select(UserProfileState.selectStateUserProfile).pipe(
       take(1),
       map(userProfile => {
-        // if (!userProfile) {
-        //   this.router.navigate(['/auth/login']);
-        //   return false;
-        // }
+        if (!userProfile) {
+          console.log('❌ AdminGuard - No user profile found, redirecting to login');
+          this.router.navigate(['/auth/signin']);
+          return false;
+        }
 
-        // // Vérifier si l'utilisateur a un rôle admin
-        // const hasAdminRole = (userProfile as any)?.roles?.some((role: any) =>
-        //   role.name === 'admin' || 
-        //   role.name === 'super-admin' || 
-        //   role.name === 'super_admin'
-        // );
+        // Vérifier si l'utilisateur a un rôle admin ou super-admin
+        const hasAdminRole = this.checkIfUserHasAdminRole(userProfile);
 
-        // if (!hasAdminRole) {
-        //   this.router.navigate(['/app']);
-        //   return false;
-        // }
+        if (!hasAdminRole) {
+          console.log('❌ AdminGuard - User does not have admin role, redirecting to app');
+          this.router.navigate(['/app']);
+          return false;
+        }
 
+        console.log('✅ AdminGuard - Admin access granted');
         return true;
       })
     );
+  }
+
+  /**
+   * Vérifier si l'utilisateur a un rôle admin ou super-admin
+   */
+  private checkIfUserHasAdminRole(userProfile: any): boolean {
+    if (!userProfile.roles || !Array.isArray(userProfile.roles)) {
+      console.log('❌ AdminGuard - No roles found for user:', userProfile.email);
+      return false;
+    }
+
+    const hasAdminRole = userProfile.roles.some((role: any) => {
+      const roleName = typeof role === 'string' ? role : role.name;
+      return roleName === 'admin' || roleName === 'super-admin'
+    });
+
+    console.log('🔍 AdminGuard - Role check for user:', {
+      email: userProfile.email,
+      roles: userProfile.roles.map((role: any) => typeof role === 'string' ? role : role.name),
+      hasAdminRole
+    });
+
+    return hasAdminRole;
   }
 }
