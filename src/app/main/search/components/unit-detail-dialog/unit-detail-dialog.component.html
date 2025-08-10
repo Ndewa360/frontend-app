@@ -293,14 +293,20 @@
                 <div class="contact-item">
                   <i class="fas fa-mobile-alt"></i>
                   <span>{{ ownerInfo.owner.phone }}</span>
-                  <button class="copy-button" mat-icon-button>
+                  <button class="copy-button"
+                          mat-icon-button
+                          (click)="copyToClipboard(ownerInfo.owner.phone, 'phone')"
+                          title="Copier le numéro de téléphone">
                     <i class="fas fa-copy"></i>
                   </button>
                 </div>
                 <div class="contact-item">
                   <i class="fas fa-envelope"></i>
                   <span>{{ ownerInfo.owner.email }}</span>
-                  <button class="copy-button" mat-icon-button>
+                  <button class="copy-button"
+                          mat-icon-button
+                          (click)="copyToClipboard(ownerInfo.owner.email, 'email')"
+                          title="Copier l'adresse email">
                     <i class="fas fa-copy"></i>
                   </button>
                 </div>
@@ -328,30 +334,22 @@
                 <div class="coordinates-item">
                   <i class="fas fa-crosshairs"></i>
                   <span>Coordonnées GPS disponibles</span>
-                  <button class="view-map-button" mat-stroked-button>
-                    <i class="fas fa-map"></i>
+                  <button class="view-map-button"
+                          (click)="openMap()"
+                          title="Ouvrir la localisation dans Google Maps">
+                    <i class="fas fa-map-marked-alt"></i>
                     <span>Voir sur la carte</span>
                   </button>
                 </div>
               </div>
             </div>
 
-            <!-- Actions de contact -->
-            <div class="contact-actions">
-              <button class="action-btn primary" (click)="callOwner()">
-                <i class="fas fa-phone"></i>
-                <span>Appeler</span>
-              </button>
-
-              <button class="action-btn secondary" (click)="emailOwner()">
-                <i class="fas fa-envelope"></i>
-                <span>Email</span>
-              </button>
-            </div>
+            <!-- Actions de contact supprimées - équivalents disponibles dans les éléments de contact ci-dessus -->
           </div>
         </div>
 
         <!-- Section Paiement pour accès premium -->
+        <!-- ✅ Cette section ne s'affiche plus car temporaryFreeAccess = true -->
         <div class="payment-section" *ngIf="!hasPremiumAccess">
           <h2 class="section-heading">
             <i class="fas fa-lock"></i>
@@ -440,7 +438,8 @@
   </main>
 </div>
 
-<!-- Modal Premium Access -->
+<!-- Modal Premium Access - TEMPORAIREMENT COMMENTÉ POUR ACCÈS LIBRE -->
+<!--
 <app-premium-access-modal
   *ngIf="showPremiumModal"
   [isOpen]="showPremiumModal"
@@ -449,3 +448,4 @@
   [userEmail]="'user@example.com'"
   (close)="closePremiumModal()">
 </app-premium-access-modal>
+-->

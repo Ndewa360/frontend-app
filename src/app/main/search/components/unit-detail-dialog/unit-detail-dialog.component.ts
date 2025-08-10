@@ -43,6 +43,9 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
   showPremiumModal = false;
   premiumPrice = 500;
 
+  // ✅ TEMPORAIRE: Variable pour simuler l'accès premium (à désactiver plus tard)
+  private temporaryFreeAccess = true;
+
   constructor(
     public dialogRef: MatDialogRef<UnitDetailDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: UnitDetailDialogData,
@@ -57,11 +60,16 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    console.log('🔍 UnitDetailDialog ngOnInit - temporaryFreeAccess:', this.temporaryFreeAccess);
+    console.log('🔍 UnitDetailDialog ngOnInit - hasPremiumAccess initial:', this.hasPremiumAccess);
+
     this.updateNavigationState();
     this.setupKeyboardNavigation();
     this.updateUrlWithUnit();
-    this.checkPremiumAccess();
+    this.checkPremiumAccess(); // ✅ Ceci chargera automatiquement les infos propriétaire si accès libre
     this.subscribeToPremiumStore();
+
+    console.log('🔍 UnitDetailDialog ngOnInit - hasPremiumAccess final:', this.hasPremiumAccess);
   }
 
   ngOnDestroy(): void {
@@ -353,9 +361,22 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
    * Vérifier l'accès premium de l'utilisateur
    */
   private checkPremiumAccess(): void {
+    console.log('🔍 checkPremiumAccess - temporaryFreeAccess:', this.temporaryFreeAccess);
+    console.log('🔍 checkPremiumAccess - hasPremiumAccess avant:', this.hasPremiumAccess);
+
+    // ✅ TEMPORAIRE: Accès libre activé
+    if (this.temporaryFreeAccess) {
+      console.log('✅ Condition temporaryFreeAccess = true détectée');
+      this.hasPremiumAccess = true;
+      console.log('✅ hasPremiumAccess défini à true');
+      this.loadOwnerInfo();
+      console.log('✅ Accès premium temporaire activé - informations propriétaire disponibles');
+      return;
+    }
+
+    console.log('❌ temporaryFreeAccess = false, utilisation de la logique normale');
     // TODO: Récupérer l'ID utilisateur depuis le service d'authentification
     const userId = 'current-user-id'; // À remplacer par la vraie logique
-
     this.store.dispatch(new PremiumAccessAction.CheckActiveAccess(userId));
   }
 
@@ -374,11 +395,29 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
 
     this.store.select(PremiumAccessState.hasActiveAccess)
       .pipe(takeUntil(this.destroy$))
-      .subscribe(hasAccess => this.hasPremiumAccess = hasAccess);
+      .subscribe(hasAccess => {
+        console.log('🔍 Store NGXS hasActiveAccess:', hasAccess);
+        // ✅ TEMPORAIRE: Ne pas écraser si accès libre activé
+        if (!this.temporaryFreeAccess) {
+          this.hasPremiumAccess = hasAccess;
+          console.log('🔍 hasPremiumAccess mis à jour par le store:', hasAccess);
+        } else {
+          console.log('✅ Accès temporaire actif - store NGXS ignoré');
+        }
+      });
 
     this.store.select(PremiumAccessState.ownerInfo)
       .pipe(takeUntil(this.destroy$))
-      .subscribe(ownerInfo => this.ownerInfo = ownerInfo);
+      .subscribe(ownerInfo => {
+        console.log('🔍 Store NGXS ownerInfo:', ownerInfo);
+        // ✅ TEMPORAIRE: Ne pas écraser si accès libre activé
+        if (!this.temporaryFreeAccess) {
+          this.ownerInfo = ownerInfo;
+          console.log('🔍 ownerInfo mis à jour par le store:', ownerInfo);
+        } else {
+          console.log('✅ Accès temporaire actif - ownerInfo du store ignoré');
+        }
+      });
   }
 
   /**
@@ -418,21 +457,7 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
     return this.premiumAccessService.formatAmount(amount);
   }
 
-  /**
-   * Obtenir le texte des jours restants
-   */
-  getRemainingDaysText(): string {
-    if (!this.ownerInfo?.access) return '';
 
-    const remainingDays = this.ownerInfo.access.remainingDays;
-    if (remainingDays <= 0) {
-      return 'Accès expiré';
-    } else if (remainingDays === 1) {
-      return '1 jour restant';
-    } else {
-      return `${remainingDays} jours restants`;
-    }
-  }
 
   /**
    * Obtenir le lien WhatsApp
@@ -443,6 +468,135 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
     const phone = this.ownerInfo.owner.whatsapp.replace(/\s+/g, '');
     const message = encodeURIComponent('Bonjour, je suis intéressé par votre propriété sur Ndewa360°.');
     return `https://wa.me/${phone}?text=${message}`;
+  }
+
+  /**
+   * Copier du texte dans le presse-papiers
+   */
+  async copyToClipboard(text: string, type: 'phone' | 'email'): Promise<void> {
+    try {
+      await navigator.clipboard.writeText(text);
+
+      // Afficher une notification de succès
+      const message = type === 'phone' ? 'Numéro de téléphone copié !' : 'Adresse email copiée !';
+      console.log(`✅ ${message}`);
+
+      // TODO: Ajouter une notification toast ici si disponible
+      // this.notificationService.showSuccess(message);
+
+    } catch (err) {
+      console.error('Erreur lors de la copie:', err);
+
+      // Fallback pour les navigateurs plus anciens
+      this.fallbackCopyToClipboard(text);
+    }
+  }
+
+  /**
+   * Méthode de fallback pour la copie
+   */
+  private fallbackCopyToClipboard(text: string): void {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    textArea.style.top = '-999999px';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+
+    try {
+      document.execCommand('copy');
+      console.log('✅ Texte copié avec la méthode fallback');
+    } catch (err) {
+      console.error('Erreur lors de la copie fallback:', err);
+    }
+
+    document.body.removeChild(textArea);
+  }
+
+  /**
+   * Obtenir le texte des jours restants
+   */
+  getRemainingDaysText(): string {
+    if (!this.ownerInfo?.access) return '';
+
+    const days = this.ownerInfo.access.remainingDays || 0;
+    if (days > 1) {
+      return `${days} jours restants`;
+    } else if (days === 1) {
+      return '1 jour restant';
+    } else {
+      return 'Expire aujourd\'hui';
+    }
+  }
+
+  /**
+   * Ouvrir la localisation dans Google Maps
+   */
+  openMap(): void {
+    const address = this.unit.property?.location || this.ownerInfo?.owner.address;
+
+    if (!address) {
+      console.warn('⚠️ Aucune adresse disponible pour ouvrir la carte');
+      return;
+    }
+
+    // Encoder l'adresse pour l'URL
+    const encodedAddress = encodeURIComponent(address);
+
+    // URL Google Maps avec l'adresse
+    const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
+
+    // Ouvrir dans un nouvel onglet
+    window.open(googleMapsUrl, '_blank', 'noopener,noreferrer');
+
+    console.log('🗺️ Ouverture de Google Maps pour:', address);
+  }
+
+  /**
+   * ✅ Charger les vraies informations du propriétaire depuis unit.property.owner
+   */
+  private loadOwnerInfo(): void {
+    console.log('🔍 loadOwnerInfo appelée');
+    console.log('🔍 unit.property:', this.unit.property);
+
+    const owner = this.unit.property?.owner;
+    console.log('🔍 owner trouvé:', owner);
+
+    if (!owner) {
+      console.warn('⚠️ Aucune information de propriétaire disponible pour cette unité');
+      return;
+    }
+
+    // ✅ Corriger les types selon OwnerInfoModel
+    const expiryDate = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
+
+    this.ownerInfo = {
+      owner: {
+        id: owner.id,
+        name: owner.fullName, // ✅ 'name' au lieu de 'fullName'
+        email: owner.email,
+        phone: owner.phoneNumber,
+        whatsapp: owner.phoneNumber, // Utiliser le même numéro pour WhatsApp
+        address: this.unit.property?.location || 'Adresse non spécifiée'
+      },
+      access: {
+        id: 'temp-access-id',
+        expiryDate: expiryDate.toISOString(), // ✅ String au lieu de Date
+        remainingDays: 3,
+        accessCount: 1,
+        accessedOwnersCount: 1
+      }
+    };
+
+    console.log('✅ Informations du propriétaire chargées:', {
+      nom: owner.fullName,
+      email: owner.email,
+      telephone: owner.phoneNumber
+    });
+    console.log('✅ ownerInfo final:', this.ownerInfo);
+    console.log('✅ hasPremiumAccess final:', this.hasPremiumAccess);
   }
 
   /**

@@ -110,11 +110,11 @@ export class DeviceDetectionService {
   }
 
   /**
-   * Obtenir la route par défaut (application web)
+   * Obtenir la route par défaut (front office public)
    */
   getDefaultRoute(): string {
-    console.log('🖥️ Application web -> /app/properties/home');
-    return '/app/properties/home';
+    console.log('🖥️ Application web -> /search/index (front office)');
+    return '/search/index';
   }
 
   /**

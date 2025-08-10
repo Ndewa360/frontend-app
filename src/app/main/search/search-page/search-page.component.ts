@@ -111,6 +111,11 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   Object = Object;
   Math = Math;
 
+  // ✅ DEBUG: Méthode pour voir les clés d'un objet
+  getObjectKeys(obj: any): string {
+    return obj ? Object.keys(obj).join(', ') : 'null';
+  }
+
 
 
   constructor(

@@ -22,6 +22,9 @@ export class PremiumAccessButtonComponent implements OnInit, OnDestroy {
   showModal = false;
   premiumPrice = 500; // 500 FCFA pour forfait global
 
+  // ✅ TEMPORAIRE: Variable pour simuler l'accès premium (à désactiver plus tard)
+  private temporaryFreeAccess = true;
+
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -57,6 +60,20 @@ export class PremiumAccessButtonComponent implements OnInit, OnDestroy {
 
   // Vérifier l'accès actif
   checkAccess(): void {
+    // ✅ TEMPORAIRE: Accès libre activé
+    if (this.temporaryFreeAccess) {
+      this.hasActiveAccess = true;
+      this.currentAccess = {
+        id: 'temp-access-id',
+        expiryDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+        remainingDays: 3,
+        accessCount: 1,
+        accessedOwnersCount: 1
+      };
+      console.log('✅ Accès premium temporaire activé dans premium-access-button');
+      return;
+    }
+
     if (!this.userId) {
       this.error = 'Informations utilisateur manquantes';
       return;

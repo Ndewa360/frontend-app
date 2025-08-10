@@ -235,40 +235,12 @@
           </div>
         </div>
 
-        <!-- Informations du propriétaire -->
-        <div *ngIf="result.property?.owner" class="owner-info mb-3">
-          <div class="owner-header">
-            <div class="owner-avatar">
-              {{ getOwnerInitials(result.property.owner) }}
-            </div>
-            <div class="owner-details">
-              <div class="owner-name">{{ result.property.owner.fullName || 'Propriétaire' }}</div>
-              <div class="owner-role">Propriétaire vérifié</div>
-            </div>
-          </div>
-          <div class="owner-contact">
-            <button *ngIf="result.property.owner.phoneNumber" class="contact-btn"
-              (click)="contactOwner(result.property.owner, 'phone')" type="button">
-              <youpez-ibm-icon iconName="phone" iconSize="16"></youpez-ibm-icon>
-              Appeler
-            </button>
-            <button *ngIf="result.property.owner.email" class="contact-btn"
-              (click)="contactOwner(result.property.owner, 'email')" type="button">
-              <youpez-ibm-icon iconName="email" iconSize="16"></youpez-ibm-icon>
-              Email
-            </button>
-          </div>
-        </div>
+
 
         <div class="card-actions">
-          <button class="btn btn-primary" [routerLink]="['/search/room', result._id]" type="button">
+          <button class="btn btn-primary" (click)="openUnitDetail(result)" type="button">
             <youpez-ibm-icon iconName="home" iconSize="16"></youpez-ibm-icon>
             Voir détails
-          </button>
-          <button *ngIf="result.property?.owner" class="btn btn-contact"
-            (click)="contactOwner(result.property.owner, 'whatsapp')" type="button">
-            <youpez-ibm-icon iconName="phone" iconSize="16"></youpez-ibm-icon>
-            Contacter
           </button>
           <button class="btn btn-secondary" (click)="toggleFavorite(result)" type="button"
             [title]="isFavorite(result) ? 'Retirer des favoris' : 'Ajouter aux favoris'">
