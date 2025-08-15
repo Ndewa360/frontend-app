@@ -22,7 +22,7 @@ import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'user-profile-infos',
   templateUrl: './user-profile-infos.component.html',
-  styleUrls: ['./user-profile-infos.component.css'],
+  styleUrls: ['./user-profile-infos.component.css', './phone-input.scss'],
   encapsulation: ViewEncapsulation.None
 })
 export class UserProfileInfosComponent implements OnInit, OnDestroy {
@@ -46,6 +46,8 @@ export class UserProfileInfosComponent implements OnInit, OnDestroy {
   uploadProgress = 0;
   defaultAvatarUrl = 'assets/img/avatar/avatarinit.png';
 
+
+
   private destroy$ = new Subject<void>();
   
     constructor(
@@ -57,6 +59,9 @@ export class UserProfileInfosComponent implements OnInit, OnDestroy {
     ) { }
   
   ngOnInit(): void {
+    // Initialiser le formulaire d'abord
+    this.initializeForm();
+    
     // Charger le profil utilisateur
     this._store.dispatch(new UserProfileAction.FetchUserProfile());
 
@@ -65,11 +70,10 @@ export class UserProfileInfosComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((value) => {
         this.userProfile = value;
-        this.updateFormWithUserData();
+        if (this.formGroup) {
+          this.updateFormWithUserData();
+        }
       });
-
-    // Initialiser le formulaire
-    this.initializeForm();
 
     // Écouter les actions de mise à jour du profil
     this.setupActionListeners();
@@ -79,6 +83,12 @@ export class UserProfileInfosComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    // Avertir l'utilisateur s'il y a des changements non sauvegardés
+    if (this.hasUnsavedChanges()) {
+      // Note: Dans un vrai projet, on pourrait utiliser un guard pour empêcher la navigation
+      console.warn('Changements non sauvegardés détectés');
+    }
+    
     this.destroy$.next();
     this.destroy$.complete();
   }
@@ -86,18 +96,18 @@ export class UserProfileInfosComponent implements OnInit, OnDestroy {
   private initializeForm(): void {
     this.formGroup = this.formBuilder.group({
       // Informations personnelles
-      name: [this.userProfile?.name, [Validators.required, Validators.minLength(2)]],
-      phoneNumber: [this.userProfile?.phoneNumber, [Validators.pattern('^(\\+\\d{1,3}\\s)?(\\d{2,3}[\\s.-]?){4}$')]],
-      bio: [this.userProfile?.bio, [Validators.maxLength(500)]],
+      name: [this.userProfile?.name || '', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
+      phoneNumber: [this.userProfile?.phoneNumber || ''],
+      bio: [this.userProfile?.bio || '', [Validators.maxLength(500)]],
 
       // Localisation
-      location: [this.userProfile?.location],
-      country: [this.userProfile?.country],
+      location: [this.userProfile?.location || ''],
+      country: [this.userProfile?.country || 'Cameroun'],
 
       // Contacts supplémentaires
-      whatsappContact: [this.userProfile?.whatsappContact, [Validators.pattern('^(\\+\\d{1,3}\\s)?(\\d{2,3}[\\s.-]?){4}$')]],
-      skype: [this.userProfile?.skype],
-      websiteLink: [this.userProfile?.websiteLink, [Validators.pattern('https?://.+')]],
+      whatsappContact: [this.userProfile?.whatsappContact || ''],
+      skype: [this.userProfile?.skype || '', [Validators.maxLength(50)]],
+      websiteLink: [this.userProfile?.websiteLink || '', [Validators.pattern('^https?:\\/\\/.+\\..+')]],
 
       // Préférences de localisation
       preferredLanguage: [this.userProfile?.preferredLanguage || 'fr'],
@@ -108,26 +118,41 @@ export class UserProfileInfosComponent implements OnInit, OnDestroy {
 
       // Préférences d'affichage
       theme: [this.userProfile?.theme || 'light'],
-      isEnglishTimeFormat: [this.userProfile?.isEnglishTimeFormat || false]
+      isEnglishTimeFormat: [Boolean(this.userProfile?.isEnglishTimeFormat)],
+      
+      // Codes pays pour les téléphones
+      phoneCountryCode: ['+237'],
+      whatsappCountryCode: ['+237']
     });
   }
 
   private updateFormWithUserData(): void {
     if (this.userProfile && this.formGroup) {
+      // Séparer l'indicatif du numéro pour l'affichage
+      const phoneData = this.parsePhoneNumber(this.userProfile.phoneNumber || '');
+      const whatsappData = this.parsePhoneNumber(this.userProfile.whatsappContact || '');
+      
+      console.log('Phone original:', this.userProfile.phoneNumber);
+      console.log('Phone parsed:', phoneData);
+      console.log('WhatsApp original:', this.userProfile.whatsappContact);
+      console.log('WhatsApp parsed:', whatsappData);
+      
+      // Pas besoin de selectedCountryCode, on utilise le FormGroup directement
+      
       this.formGroup.patchValue({
         // Informations personnelles
-        name: this.userProfile.name,
-        phoneNumber: this.userProfile.phoneNumber,
-        bio: this.userProfile.bio,
+        name: this.userProfile.name || '',
+        phoneNumber: phoneData.number,
+        bio: this.userProfile.bio || '',
 
         // Localisation
-        location: this.userProfile.location,
-        country: this.userProfile.country,
+        location: this.userProfile.location || '',
+        country: this.userProfile.country || 'Cameroun',
 
         // Contacts supplémentaires
-        whatsappContact: this.userProfile.whatsappContact,
-        skype: this.userProfile.skype,
-        websiteLink: this.userProfile.websiteLink,
+        whatsappContact: whatsappData.number,
+        skype: this.userProfile.skype || '',
+        websiteLink: this.userProfile.websiteLink || '',
 
         // Préférences de localisation
         preferredLanguage: this.userProfile.preferredLanguage || 'fr',
@@ -138,7 +163,7 @@ export class UserProfileInfosComponent implements OnInit, OnDestroy {
 
         // Préférences d'affichage
         theme: this.userProfile.theme || 'light',
-        isEnglishTimeFormat: this.userProfile.isEnglishTimeFormat || false
+        isEnglishTimeFormat: Boolean(this.userProfile.isEnglishTimeFormat)
       });
     }
   }
@@ -252,7 +277,10 @@ export class UserProfileInfosComponent implements OnInit, OnDestroy {
   }
 
   getProfilePhotoUrl(): string {
-    return this.userProfile?.profilePicture || this.userProfile?.photo || this.defaultAvatarUrl;
+    if (this.userProfile?.profilePicture && this.userProfile.profilePicture.trim() !== '') {
+      return this.userProfile.profilePicture;
+    }
+    return this.defaultAvatarUrl;
   }
 
   onImageError(event: Event): void {
@@ -266,20 +294,139 @@ export class UserProfileInfosComponent implements OnInit, OnDestroy {
     return instance ? instance.invalid && (instance.dirty || instance.touched) : false;
   }
 
+  getFieldError(fieldName: string): string {
+    const field = this.formGroup.get(fieldName);
+    if (field?.errors && (field.dirty || field.touched)) {
+      if (field.errors['required']) return `${fieldName} est requis`;
+      if (field.errors['minlength']) return `Minimum ${field.errors['minlength'].requiredLength} caractères`;
+      if (field.errors['maxlength']) return `Maximum ${field.errors['maxlength'].requiredLength} caractères`;
+      if (field.errors['validatePhoneNumber']) {
+        return 'Numéro de téléphone invalide';
+      }
+      if (field.errors['pattern']) {
+        if (fieldName === 'websiteLink') {
+          return 'URL invalide (doit commencer par http:// ou https://)';
+        }
+        return 'Format invalide';
+      }
+    }
+    return '';
+  }
+
   onSubmitUpdateUserInfos(): void {
     this.formGroup.markAllAsTouched();
-    if (this.formGroup.invalid) return;
+    
+    if (this.formGroup.invalid) {
+      this.toastr.warning('Veuillez corriger les erreurs dans le formulaire', 'Formulaire invalide');
+      this.scrollToFirstError();
+      return;
+    }
 
     this.waittingResponse = true;
-    const formData = FormUtils.removeNullAttribut(this.formGroup.value);
+    const formData = this.prepareFormData();
     this._store.dispatch(new UserProfileAction.UpdateUserProfile(formData, this.userProfile._id));
+  }
+
+  private prepareFormData(): any {
+    const rawData = this.formGroup.value;
+    
+    // Séparer les données utilisateur des paramètres
+    const userData = {
+      // Informations personnelles
+      name: rawData.name?.trim() || '',
+      phoneNumber: rawData.phoneNumber ? `${rawData.phoneCountryCode}${rawData.phoneNumber.replace(/[\s\-\(\)]/g, '')}` : '',
+      bio: rawData.bio?.trim() || '',
+      location: rawData.location?.trim() || '',
+      country: rawData.country?.trim() || '',
+      whatsappContact: rawData.whatsappContact ? `${rawData.whatsappCountryCode}${rawData.whatsappContact.replace(/[\s\-\(\)]/g, '')}` : '',
+      skype: rawData.skype?.trim() || '',
+      websiteLink: rawData.websiteLink?.trim() || '',
+      
+      // Préférences de localisation (directement dans le user schema)
+      preferredLanguage: rawData.preferredLanguage || 'fr',
+      preferredCurrency: rawData.preferredCurrency || 'XAF',
+      timezone: rawData.timezone || 'Africa/Douala',
+      dateFormat: rawData.dateFormat || 'DD/MM/YYYY',
+      numberFormat: rawData.numberFormat || 'fr-FR',
+      theme: rawData.theme || 'light',
+      isEnglishTimeFormat: rawData.isEnglishTimeFormat ? 'true' : 'false'
+    };
+
+    return FormUtils.removeNullAttribut(userData);
+  }
+
+  private scrollToFirstError(): void {
+    const firstErrorField = document.querySelector('.field-input.error');
+    if (firstErrorField) {
+      firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      (firstErrorField as HTMLElement).focus();
+    }
   }
 
   // Méthode pour gérer les changements de localisation
   onLocalizationChange(changes: any): void {
     // Les changements sont déjà appliqués au formulaire par le composant enfant
-    // On peut ajouter ici une logique supplémentaire si nécessaire
     console.log('Changements de localisation:', changes);
+  }
+
+  // Méthode pour réinitialiser le formulaire
+  resetForm(): void {
+    if (this.userProfile) {
+      this.updateFormWithUserData();
+      this.formGroup.markAsUntouched();
+      this.formGroup.markAsPristine();
+      this.toastr.info('Formulaire réinitialisé', 'Information');
+    }
+  }
+
+  // Méthode pour vérifier si le formulaire a été modifié
+  hasUnsavedChanges(): boolean {
+    return this.formGroup.dirty && !this.waittingResponse;
+  }
+
+  getPhonePlaceholder(): string {
+    const placeholders: {[key: string]: string} = {
+      '+237': '6 XX XX XX XX',
+      '+33': '6 XX XX XX XX',
+      '+1': '(XXX) XXX-XXXX',
+      '+44': '7XXX XXXXXX',
+      '+49': 'XXX XXXXXXX'
+    };
+    const countryCode = this.formGroup?.get('phoneCountryCode')?.value || '+237';
+    return placeholders[countryCode] || 'Numéro de téléphone';
+  }
+
+  getWhatsappPlaceholder(): string {
+    const placeholders: {[key: string]: string} = {
+      '+237': '6 XX XX XX XX',
+      '+33': '6 XX XX XX XX',
+      '+1': '(XXX) XXX-XXXX',
+      '+44': '7XXX XXXXXX',
+      '+49': 'XXX XXXXXXX'
+    };
+    const countryCode = this.formGroup?.get('whatsappCountryCode')?.value || '+237';
+    return placeholders[countryCode] || 'Numéro WhatsApp';
+  }
+
+  private parsePhoneNumber(fullNumber: string): {countryCode: string, number: string} {
+    if (!fullNumber) return {countryCode: '+237', number: ''};
+    
+    // Nettoyer le numéro (supprimer espaces, tirets, etc.)
+    const cleanNumber = fullNumber.replace(/[\s\-\(\)]/g, '');
+    
+    const countryCodes = ['+237', '+33', '+1', '+44', '+49'];
+    
+    for (const code of countryCodes) {
+      if (cleanNumber.startsWith(code)) {
+        return {
+          countryCode: code,
+          number: cleanNumber.substring(code.length)
+        };
+      }
+    }
+    
+    // Si aucun indicatif trouvé, considérer comme numéro camerounais
+    return {countryCode: '+237', number: cleanNumber};
   }
 
 }

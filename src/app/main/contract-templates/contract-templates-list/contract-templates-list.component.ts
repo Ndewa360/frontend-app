@@ -436,27 +436,22 @@ export class ContractTemplatesListComponent implements OnInit, OnDestroy {
       if (result?.success && result?.newTemplate) {
         // La duplication a été effectuée avec succès
         console.log('✅ Template dupliqué avec succès:', result.newTemplate);
-
-        // Rediriger directement vers la page d'édition du nouveau template avec l'URL complète
+        
+        // Recharger la liste des templates
+        this.loadTemplates();
+        
+        // Rediriger directement vers la page d'édition du nouveau template
         console.log('🔄 Redirection vers la page d\'édition du nouveau template:', result.newTemplate._id);
         this.router.navigate(['/app/contract-templates/edit', result.newTemplate._id]);
       } else if (result?.success) {
-        // Fallback : utiliser le store si le template n'est pas dans le résultat
-        console.log('⚠️ Template dupliqué mais non retourné, utilisation du store...');
-
-        this.store.select(ContractTemplateState.selectStateCurrentTemplate).pipe(
-          takeUntil(this.destroy$),
-          filter((newTemplate: ContractTemplateModel | null) =>
-            newTemplate && newTemplate._id !== template._id)
-        ).subscribe((newTemplate: ContractTemplateModel | null) => {
-          if (newTemplate) {
-            console.log('🔄 Redirection vers la page d\'édition du nouveau template:', newTemplate._id);
-            this.router.navigate(['/app/contract-templates/edit', newTemplate._id]);
-          } else {
-            console.warn('⚠️ Nouveau template non trouvé dans le store après duplication');
-            this.store.dispatch(new ContractTemplateAction.FetchTemplates());
-          }
-        });
+        // Fallback : recharger la liste et rediriger
+        console.log('⚠️ Template dupliqué, rechargement de la liste...');
+        this.loadTemplates();
+        
+        // Attendre un peu puis rediriger vers la liste
+        setTimeout(() => {
+          this.router.navigate(['/app/contract-templates']);
+        }, 1000);
       }
     });
   }

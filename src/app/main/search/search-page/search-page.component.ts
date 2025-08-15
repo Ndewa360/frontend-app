@@ -751,9 +751,40 @@ export class SearchPageComponent implements OnInit, OnDestroy {
    * Charge les recherches populaires par défaut en cas d'erreur
    */
   private loadDefaultPopularSearches(): void {
-    // Ne plus afficher de données mockup - seulement les vraies statistiques
-    this.popularSearches = [];
-    console.log('⚠️ Aucune recherche populaire disponible - pas de données mockup affichées');
+    // Données par défaut avec les principales villes du Cameroun
+    this.popularSearches = [
+      {
+        label: 'Logements à Douala',
+        filters: { city: 'douala' },
+        count: 150,
+        searchCount: 150,
+        resultsCount: 45,
+        lastSearchDate: new Date(),
+        cityId: 'douala',
+        cityName: 'Douala'
+      },
+      {
+        label: 'Studios à Yaoundé',
+        filters: { city: 'yaounde', roomType: 'STUDIO' },
+        count: 120,
+        searchCount: 120,
+        resultsCount: 32,
+        lastSearchDate: new Date(),
+        cityId: 'yaounde',
+        cityName: 'Yaoundé'
+      },
+      {
+        label: 'Chambres à Bangangté',
+        filters: { city: 'bangangte', roomType: 'ROOM' },
+        count: 80,
+        searchCount: 80,
+        resultsCount: 28,
+        lastSearchDate: new Date(),
+        cityId: 'bangangte',
+        cityName: 'Bangangté'
+      }
+    ];
+    console.log('⚠️ Utilisation des recherches populaires par défaut');
   }
 
   private updateCitySuggestions(cities: CityModel[]): void {
@@ -809,45 +840,44 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   onPopularSearchClick(popularSearch: PopularSearch): void {
     console.log('🔥 Clic sur recherche populaire:', popularSearch);
 
-    // Mettre à jour les filtres actuels
-    this.currentFilters = {
-      ...this.currentFilters,
-      ...popularSearch.filters
-    };
+    // Construire les paramètres URL pour rester sur la même page
+    const queryParams: any = {};
 
-    // Mettre à jour le formulaire SANS déclencher les événements
-    this.searchForm.patchValue(popularSearch.filters, { emitEvent: false });
-
-    // Synchroniser l'affichage de géolocalisation si une ville est sélectionnée
-    if (popularSearch.filters.city) {
-      this.syncLocationDisplayWithCity(popularSearch.filters.city);
+    // Ajouter la ville (utiliser le nom de la ville pour l'URL)
+    if (popularSearch.cityName) {
+      queryParams.ville = popularSearch.cityName;
+    } else if (popularSearch.cityId) {
+      // Fallback sur l'ID si le nom n'est pas disponible
+      queryParams.ville = popularSearch.cityId;
     }
 
-    // Mettre à jour les filtres intelligents
-    Object.keys(popularSearch.filters).forEach(key => {
-      this.smartFiltersService.updateFilter(key, popularSearch.filters[key]);
-      if (popularSearch.filters[key] !== null && popularSearch.filters[key] !== undefined && popularSearch.filters[key] !== '') {
-        this.smartFiltersService.markFieldAsModified(key);
-      }
+    // Ajouter les autres filtres de la recherche populaire
+    if (popularSearch.filters.roomType) {
+      queryParams.roomType = popularSearch.filters.roomType;
+    }
+    if (popularSearch.filters.priceMin) {
+      queryParams.priceMin = popularSearch.filters.priceMin;
+    }
+    if (popularSearch.filters.priceMax) {
+      queryParams.priceMax = popularSearch.filters.priceMax;
+    }
+    if (popularSearch.filters.hasKitchen) {
+      queryParams.hasKitchen = popularSearch.filters.hasKitchen;
+    }
+    if (popularSearch.filters.hasParking) {
+      queryParams.hasParking = popularSearch.filters.hasParking;
+    }
+    if (popularSearch.filters.hasPrivateShower) {
+      queryParams.hasPrivateShower = popularSearch.filters.hasPrivateShower;
+    }
+
+    console.log('🔥 Mise à jour URL avec paramètres recherche populaire:', queryParams);
+
+    // Mettre à jour l'URL de la page actuelle avec les nouveaux paramètres
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams
     });
-
-    // Marquer qu'une recherche va être effectuée
-    this.hasSearched = true;
-
-    // Réinitialiser la pagination
-    this.currentPage = 1;
-
-    console.log('🔥 Filtres appliqués:', {
-      currentFilters: this.currentFilters,
-      smartFilters: this.smartFiltersService.getActiveFilters(),
-      formValue: this.searchForm.value
-    });
-
-    // Effectuer la recherche
-    this.performSearch();
-
-    // Mettre à jour l'URL
-    this.updateUrl();
   }
 
 

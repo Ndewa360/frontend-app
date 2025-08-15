@@ -87,6 +87,7 @@
     "TIMEZONE": "Fuseau horaire",
     "DATE_FORMAT": "Format de date",
     "NUMBER_FORMAT": "Format des nombres",
+    "THEME": "Thème",
     "NOTIFICATIONS": "Notifications",
     "PRIVACY": "Confidentialité",
     "ACCOUNT": "Compte",
@@ -107,7 +108,66 @@
     "PREFERENCES_INFO_DESC": "Ces paramètres seront sauvegardés dans votre profil et appliqués à toutes vos sessions.",
     "ADVANCED_SETTINGS": "Paramètres avancés",
     "CURRENT_LANGUAGE": "Langue actuelle",
-    "CURRENT_CURRENCY": "Devise actuelle"
+    "CURRENT_CURRENCY": "Devise actuelle",
+    "USE_ENGLISH_TIME_FORMAT": "Utiliser le format d'heure anglais (12h AM/PM)",
+    "LANGUAGE_SETTINGS_TITLE": "Paramètres de langue",
+    "LANGUAGE_SETTINGS_DESCRIPTION": "Configurez votre langue, devise et formats d'affichage préférés",
+    "SELECT_LANGUAGE_PLACEHOLDER": "Sélectionner une langue",
+    "SELECT_CURRENCY_PLACEHOLDER": "Sélectionner une devise",
+    "CURRENT_LANGUAGE_INFO": "Langue actuelle",
+    "CURRENT_CURRENCY_INFO": "Devise actuelle",
+    "TIMEZONE_LABEL": "Fuseau horaire",
+    "DATE_FORMAT_LABEL": "Format de date",
+    "NUMBER_FORMAT_LABEL": "Format des nombres",
+    "TIMEZONE_OPTIONS": {
+      "AFRICA_DOUALA": "Africa/Douala (GMT+1)",
+      "EUROPE_PARIS": "Europe/Paris (GMT+1)",
+      "AMERICA_NEW_YORK": "America/New_York (GMT-5)",
+      "ASIA_TOKYO": "Asia/Tokyo (GMT+9)",
+      "UTC": "UTC (GMT+0)"
+    },
+    "DATE_FORMAT_OPTIONS": {
+      "DD_MM_YYYY": "DD/MM/YYYY (31/12/2024)",
+      "MM_DD_YYYY": "MM/DD/YYYY (12/31/2024)",
+      "YYYY_MM_DD": "YYYY-MM-DD (2024-12-31)",
+      "DD_MM_YYYY_DASH": "DD-MM-YYYY (31-12-2024)"
+    },
+    "NUMBER_FORMAT_OPTIONS": {
+      "FRENCH_FULL": "Français (1 234 567,89)",
+      "ENGLISH_US_FULL": "English (1,234,567.89)",
+      "SPANISH_FULL": "Español (1.234.567,89)",
+      "GERMAN_FULL": "Deutsch (1.234.567,89)",
+      "ARABIC_FULL": "العربية (١٬٢٣٤٬٥٦٧٫٨٩)"
+    },
+    "TIMEZONES": {
+      "AFRICA_DOUALA": "Africa/Douala (GMT+1)",
+      "EUROPE_PARIS": "Europe/Paris (GMT+1)",
+      "AMERICA_NEW_YORK": "America/New_York (GMT-5)",
+      "ASIA_TOKYO": "Asia/Tokyo (GMT+9)",
+      "UTC": "UTC (GMT+0)"
+    },
+    "DATE_FORMATS": {
+      "DD_MM_YYYY": "DD/MM/YYYY (31/12/2024)",
+      "MM_DD_YYYY": "MM/DD/YYYY (12/31/2024)",
+      "YYYY_MM_DD": "YYYY-MM-DD (2024-12-31)",
+      "DD_MM_YYYY_DASH": "DD-MM-YYYY (31-12-2024)"
+    },
+    "NUMBER_FORMATS": {
+      "FRENCH": "Français (1 234 567,89)",
+      "ENGLISH_US": "English (1,234,567.89)",
+      "SPANISH": "Español (1.234.567,89)",
+      "GERMAN": "Deutsch (1.234.567,89)",
+      "ARABIC": "العربية (١٬٢٣٤٬٥٦٧٫٨٩)",
+      "FRENCH_SHORT": "Français (1 234,56)",
+      "ENGLISH_US_SHORT": "Anglais US (1,234.56)",
+      "ENGLISH_UK_SHORT": "Anglais UK (1,234.56)"
+    },
+    "THEMES": {
+      "DEFAULT": "Thème par défaut",
+      "LIGHT": "Clair",
+      "DARK": "Sombre",
+      "AUTO": "Automatique"
+    }
   },
   "PROFILE": {
     "TITLE": "Profil utilisateur",
@@ -121,12 +181,46 @@
     "PHOTO": "Photo de profil",
     "UPDATE_PROFILE": "Mettre à jour le profil",
     "PROFILE_UPDATED": "Profil mis à jour avec succès",
+    "SAVING": "Enregistrement...",
+    "SAVE_CHANGES": "Enregistrer les modifications",
+    "RESET": "Réinitialiser",
+    "CHARACTERS": "caractères",
+    "LOADING_PROFILE_INFO": "Chargement des informations de profil",
+    "UPLOAD_PROGRESS": "Upload...",
+    "MODIFY_PHOTO": "Modifier",
+    "USERNAME_PLACEHOLDER": "Nom d'utilisateur",
+    "EMAIL_PLACEHOLDER": "email@exemple.com",
+    "EMAIL_VERIFIED": "Email vérifié",
+    "PHOTO_GUIDELINES": "Formats acceptés : JPEG, PNG, GIF • Taille max : 5MB",
+    "PHONE_FORMAT_HINT": "Format : +237 6XXXXXXXX, +2376XXXXXXXX ou 6XXXXXXXX",
     "SECTIONS": {
       "PERSONAL": "Informations personnelles",
+      "PERSONAL_DESC": "Gérez votre photo de profil et vos informations de base",
       "CONTACT": "Contacts & Réseaux",
+      "CONTACT_DESC": "Ajoutez vos moyens de contact supplémentaires",
       "LOCATION": "Localisation",
+      "LOCATION_DESC": "Indiquez votre localisation géographique",
       "LOCALIZATION": "Langue & Devise",
-      "DISPLAY": "Affichage"
+      "DISPLAY": "Affichage",
+      "DISPLAY_DESC": "Personnalisez l'apparence de l'interface"
+    },
+    "FIELDS": {
+      "FULL_NAME": "Nom complet",
+      "PHONE": "Téléphone",
+      "BIO": "Biographie",
+      "WHATSAPP": "WhatsApp",
+      "SKYPE": "Skype",
+      "WEBSITE": "Site Web",
+      "CITY": "Ville",
+      "COUNTRY": "Pays"
+    },
+    "PLACEHOLDERS": {
+      "FULL_NAME": "Votre nom complet",
+      "BIO": "Parlez-nous de vous...",
+      "SKYPE": "nom.utilisateur",
+      "WEBSITE": "https://monsite.com",
+      "CITY": "Douala, Yaoundé...",
+      "COUNTRY": "Cameroun"
     }
   },
   "VALIDATION": {
@@ -436,7 +530,17 @@
     "SERVER_ERROR": "Erreur du serveur",
     "NETWORK_ERROR": "Erreur réseau",
     "TIMEOUT_ERROR": "Délai d'attente dépassé",
-    "UNKNOWN_ERROR": "Erreur inconnue"
+    "UNKNOWN_ERROR": "Erreur inconnue",
+    "PROFILE_UPDATE_SUCCESS": "Profil mis à jour avec succès",
+    "PROFILE_UPDATE_ERROR": "Erreur lors de la mise à jour du profil",
+    "PHOTO_UPDATE_SUCCESS": "Photo de profil mise à jour avec succès",
+    "PHOTO_UPLOAD_ERROR": "Erreur lors de l'upload de la photo",
+    "INVALID_FILE_FORMAT": "Format de fichier non supporté. Utilisez JPEG, PNG ou GIF.",
+    "FILE_SIZE_ERROR": "Le fichier est trop volumineux. Maximum 5MB.",
+    "FORM_VALIDATION_ERROR": "Veuillez corriger les erreurs dans le formulaire",
+    "FORM_INVALID_TITLE": "Formulaire invalide",
+    "FORM_RESET_SUCCESS": "Formulaire réinitialisé",
+    "UNSAVED_CHANGES_WARNING": "Changements non sauvegardés détectés"
   },
   "ERRORS": {
     "REQUIRED_FIELD": "Ce champ est obligatoire",
@@ -454,7 +558,11 @@
     "CONNECTION_FAILED": "Échec de la connexion",
     "PERMISSION_DENIED": "Permission refusée",
     "NOT_FOUND": "Non trouvé",
-    "ALREADY_EXISTS": "Existe déjà"
+    "ALREADY_EXISTS": "Existe déjà",
+    "INVALID_PHONE_FORMAT": "Format de téléphone invalide (ex: +237 6XXXXXXXX, +2376XXXXXXXX ou 6XXXXXXXX)",
+    "INVALID_URL": "URL invalide (doit commencer par http:// ou https://)",
+    "INVALID_FORMAT": "Format invalide",
+    "FIELD_REQUIRED": "{{field}} est requis"
   },
   "FILTERS": {
     "PERIOD": "Période",

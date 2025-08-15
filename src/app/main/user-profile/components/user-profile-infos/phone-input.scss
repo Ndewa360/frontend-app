@@ -1,0 +1,61 @@
+// Styles pour les inputs téléphone avec sélecteur de pays
+.phone-input-wrapper {
+  display: flex;
+  border: 1px solid var(--theme-appBorderColor);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+
+  &:focus-within {
+    border-color: var(--theme-appPrimary);
+    box-shadow: 0 0 0 3px rgba(var(--theme-appPrimary), 0.1);
+  }
+
+  .country-select {
+    background: var(--theme-appUIBg);
+    border: none;
+    padding: 0.875rem 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--theme-appText);
+    cursor: pointer;
+    min-width: 80px;
+    border-right: 1px solid var(--theme-appBorderColor);
+
+    &:focus {
+      outline: none;
+      background: var(--theme-appUIForegroundBg);
+    }
+
+    option {
+      background: var(--theme-appUIForegroundBg);
+      color: var(--theme-appText);
+    }
+  }
+
+  .phone-number-input {
+    flex: 1;
+    border: none;
+    padding: 0.875rem 1rem;
+    font-size: 1rem;
+    background: transparent;
+    color: var(--theme-appText);
+
+    &:focus {
+      outline: none;
+    }
+
+    &::placeholder {
+      color: var(--theme-appTextSecondary);
+      opacity: 0.7;
+    }
+
+    &.error {
+      background: rgba(var(--theme-appError), 0.05);
+    }
+  }
+
+  &.error {
+    border-color: var(--theme-appError);
+  }
+}

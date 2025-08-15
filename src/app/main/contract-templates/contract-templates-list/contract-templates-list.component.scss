@@ -411,7 +411,6 @@
   padding: 2rem;
   max-width: 1400px;
   margin: 0 auto;
-  min-height: 60vh;
 }
 
 // État de chargement
@@ -437,7 +436,8 @@
 // Contenu principal avec le thème de l'application
 .main-content {
   background: var(--theme-appUIBg);
-  // Supprimer padding et max-width ici car ils sont gérés par les composants enfants
+  height: calc(100vh - 200px);
+  overflow-y: auto;
 }
 
 // Vue grille avec le thème de l'application
@@ -446,7 +446,6 @@
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   gap: 1.5rem;
   padding: 1.5rem 0;
-  overflow-y: auto;
 
 
 

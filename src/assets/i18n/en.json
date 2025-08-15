@@ -87,6 +87,7 @@
     "TIMEZONE": "Timezone",
     "DATE_FORMAT": "Date Format",
     "NUMBER_FORMAT": "Number Format",
+    "THEME": "Theme",
     "NOTIFICATIONS": "Notifications",
     "PRIVACY": "Privacy",
     "ACCOUNT": "Account",
@@ -107,7 +108,120 @@
     "PREFERENCES_INFO_DESC": "These settings will be saved to your profile and applied to all your sessions.",
     "ADVANCED_SETTINGS": "Advanced Settings",
     "CURRENT_LANGUAGE": "Current Language",
-    "CURRENT_CURRENCY": "Current Currency"
+    "CURRENT_CURRENCY": "Current Currency",
+    "USE_ENGLISH_TIME_FORMAT": "Use English time format (12h AM/PM)",
+    "LANGUAGE_SETTINGS_TITLE": "Language Settings",
+    "LANGUAGE_SETTINGS_DESCRIPTION": "Configure your preferred language, currency and display formats",
+    "SELECT_LANGUAGE_PLACEHOLDER": "Select a language",
+    "SELECT_CURRENCY_PLACEHOLDER": "Select a currency",
+    "CURRENT_LANGUAGE_INFO": "Current language",
+    "CURRENT_CURRENCY_INFO": "Current currency",
+    "TIMEZONE_LABEL": "Timezone",
+    "DATE_FORMAT_LABEL": "Date format",
+    "NUMBER_FORMAT_LABEL": "Number format",
+    "TIMEZONE_OPTIONS": {
+      "AFRICA_DOUALA": "Africa/Douala (GMT+1)",
+      "EUROPE_PARIS": "Europe/Paris (GMT+1)",
+      "AMERICA_NEW_YORK": "America/New_York (GMT-5)",
+      "ASIA_TOKYO": "Asia/Tokyo (GMT+9)",
+      "UTC": "UTC (GMT+0)"
+    },
+    "DATE_FORMAT_OPTIONS": {
+      "DD_MM_YYYY": "DD/MM/YYYY (31/12/2024)",
+      "MM_DD_YYYY": "MM/DD/YYYY (12/31/2024)",
+      "YYYY_MM_DD": "YYYY-MM-DD (2024-12-31)",
+      "DD_MM_YYYY_DASH": "DD-MM-YYYY (31-12-2024)"
+    },
+    "NUMBER_FORMAT_OPTIONS": {
+      "FRENCH_FULL": "French (1 234 567.89)",
+      "ENGLISH_US_FULL": "English (1,234,567.89)",
+      "SPANISH_FULL": "Spanish (1.234.567,89)",
+      "GERMAN_FULL": "German (1.234.567,89)",
+      "ARABIC_FULL": "Arabic (١٬٢٣٤٬٥٦٧٫٨٩)"
+    },
+    "TIMEZONES": {
+      "AFRICA_DOUALA": "Africa/Douala (GMT+1)",
+      "EUROPE_PARIS": "Europe/Paris (GMT+1)",
+      "AMERICA_NEW_YORK": "America/New_York (GMT-5)",
+      "ASIA_TOKYO": "Asia/Tokyo (GMT+9)",
+      "UTC": "UTC (GMT+0)"
+    },
+    "DATE_FORMATS": {
+      "DD_MM_YYYY": "DD/MM/YYYY (31/12/2024)",
+      "MM_DD_YYYY": "MM/DD/YYYY (12/31/2024)",
+      "YYYY_MM_DD": "YYYY-MM-DD (2024-12-31)",
+      "DD_MM_YYYY_DASH": "DD-MM-YYYY (31-12-2024)"
+    },
+    "NUMBER_FORMATS": {
+      "FRENCH": "French (1 234 567.89)",
+      "ENGLISH_US": "English (1,234,567.89)",
+      "SPANISH": "Spanish (1.234.567,89)",
+      "GERMAN": "German (1.234.567,89)",
+      "ARABIC": "Arabic (١٬٢٣٤٬٥٦٧٫٨٩)",
+      "FRENCH_SHORT": "French (1 234.56)",
+      "ENGLISH_US_SHORT": "English US (1,234.56)",
+      "ENGLISH_UK_SHORT": "English UK (1,234.56)"
+    },
+    "THEMES": {
+      "DEFAULT": "Default Theme",
+      "LIGHT": "Light",
+      "DARK": "Dark",
+      "AUTO": "Automatic"
+    }
+  },
+  "PROFILE": {
+    "TITLE": "User Profile",
+    "SUBTITLE": "Manage your personal information and preferences",
+    "PERSONAL_INFO": "Personal Information",
+    "FULL_NAME": "Full Name",
+    "PHONE_NUMBER": "Phone Number",
+    "COUNTRY": "Country",
+    "LOCATION": "Location",
+    "BIO": "Biography",
+    "PHOTO": "Profile Photo",
+    "UPDATE_PROFILE": "Update Profile",
+    "PROFILE_UPDATED": "Profile updated successfully",
+    "SAVING": "Saving...",
+    "SAVE_CHANGES": "Save Changes",
+    "RESET": "Reset",
+    "CHARACTERS": "characters",
+    "LOADING_PROFILE_INFO": "Loading profile information",
+    "UPLOAD_PROGRESS": "Upload...",
+    "MODIFY_PHOTO": "Modify",
+    "USERNAME_PLACEHOLDER": "Username",
+    "EMAIL_PLACEHOLDER": "email@example.com",
+    "EMAIL_VERIFIED": "Email verified",
+    "PHOTO_GUIDELINES": "Accepted formats: JPEG, PNG, GIF • Max size: 5MB",
+    "PHONE_FORMAT_HINT": "Format: +237 6XXXXXXXX, +2376XXXXXXXX or 6XXXXXXXX",
+    "SECTIONS": {
+      "PERSONAL": "Personal Information",
+      "PERSONAL_DESC": "Manage your profile photo and basic information",
+      "CONTACT": "Contacts & Networks",
+      "CONTACT_DESC": "Add your additional contact methods",
+      "LOCATION": "Location",
+      "LOCATION_DESC": "Specify your geographical location",
+      "LOCALIZATION": "Language & Currency",
+      "DISPLAY": "Display",
+      "DISPLAY_DESC": "Customize the interface appearance"
+    },
+    "FIELDS": {
+      "FULL_NAME": "Full Name",
+      "PHONE": "Phone",
+      "BIO": "Biography",
+      "WHATSAPP": "WhatsApp",
+      "SKYPE": "Skype",
+      "WEBSITE": "Website",
+      "CITY": "City",
+      "COUNTRY": "Country"
+    },
+    "PLACEHOLDERS": {
+      "FULL_NAME": "Your full name",
+      "BIO": "Tell us about yourself...",
+      "SKYPE": "username",
+      "WEBSITE": "https://mywebsite.com",
+      "CITY": "Douala, Yaoundé...",
+      "COUNTRY": "Cameroon"
+    }
   },
   "PROFILE": {
     "TITLE": "User Profile",
@@ -436,7 +550,17 @@
     "SERVER_ERROR": "Server error",
     "NETWORK_ERROR": "Network error",
     "TIMEOUT_ERROR": "Timeout error",
-    "UNKNOWN_ERROR": "Unknown error"
+    "UNKNOWN_ERROR": "Unknown error",
+    "PROFILE_UPDATE_SUCCESS": "Profile updated successfully",
+    "PROFILE_UPDATE_ERROR": "Error updating profile",
+    "PHOTO_UPDATE_SUCCESS": "Profile photo updated successfully",
+    "PHOTO_UPLOAD_ERROR": "Error uploading photo",
+    "INVALID_FILE_FORMAT": "Unsupported file format. Use JPEG, PNG or GIF.",
+    "FILE_SIZE_ERROR": "File is too large. Maximum 5MB.",
+    "FORM_VALIDATION_ERROR": "Please correct the errors in the form",
+    "FORM_INVALID_TITLE": "Invalid form",
+    "FORM_RESET_SUCCESS": "Form reset",
+    "UNSAVED_CHANGES_WARNING": "Unsaved changes detected"
   },
   "ERRORS": {
     "REQUIRED_FIELD": "This field is required",
@@ -454,7 +578,11 @@
     "CONNECTION_FAILED": "Connection failed",
     "PERMISSION_DENIED": "Permission denied",
     "NOT_FOUND": "Not found",
-    "ALREADY_EXISTS": "Already exists"
+    "ALREADY_EXISTS": "Already exists",
+    "INVALID_PHONE_FORMAT": "Invalid phone format (ex: +237 6XXXXXXXX, +2376XXXXXXXX or 6XXXXXXXX)",
+    "INVALID_URL": "Invalid URL (must start with http:// or https://)",
+    "INVALID_FORMAT": "Invalid format",
+    "FIELD_REQUIRED": "{{field}} is required"
   },
   "FILTERS": {
     "PERIOD": "Period",

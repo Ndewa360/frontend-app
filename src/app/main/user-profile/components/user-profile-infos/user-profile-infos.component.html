@@ -9,8 +9,8 @@
           <youpez-ibm-icon iconName="user" iconSize="24"></youpez-ibm-icon>
         </div>
         <div class="section-title-group">
-          <h2 class="section-title">Informations personnelles</h2>
-          <p class="section-description">Gérez votre photo de profil et vos informations de base</p>
+          <h2 class="section-title">{{ 'PROFILE.SECTIONS.PERSONAL' | translate }}</h2>
+          <p class="section-description">{{ 'PROFILE.SECTIONS.PERSONAL_DESC' | translate }}</p>
         </div>
       </div>
 
@@ -21,14 +21,14 @@
             <div class="avatar-container" [class.uploading]="isUploadingPhoto">
               <img 
                 [src]="getProfilePhotoUrl()" 
-                [alt]="userProfile?.name || 'Photo de profil'"
+                [alt]="userProfile?.name || ('PROFILE.PHOTO' | translate)"
                 class="profile-avatar"
                 (error)="onImageError($event)">
               
               <!-- Overlay d'upload -->
               <div class="avatar-overlay" (click)="triggerPhotoUpload()">
                 <youpez-ibm-icon iconName="camera" iconSize="24"></youpez-ibm-icon>
-                <span>{{ isUploadingPhoto ? 'Upload...' : 'Modifier' }}</span>
+                <span>{{ isUploadingPhoto ? ('PROFILE.UPLOAD_PROGRESS' | translate) : ('PROFILE.MODIFY_PHOTO' | translate) }}</span>
               </div>
               
               <!-- Indicateur de progression -->
@@ -47,12 +47,12 @@
           </div>
           
           <div class="photo-info">
-            <h3 class="user-name">{{ userProfile?.name || 'Nom d\'utilisateur' }}</h3>
-            <p class="user-email">{{ userProfile?.email || 'email@exemple.com' }}</p>
+            <h3 class="user-name">{{ userProfile?.name || ('PROFILE.USERNAME_PLACEHOLDER' | translate) }}</h3>
+            <p class="user-email">{{ userProfile?.email || ('PROFILE.EMAIL_PLACEHOLDER' | translate) }}</p>
             <div class="user-badges">
               <span class="badge badge-verified" *ngIf="userProfile?.emailConfirmed">
                 <youpez-ibm-icon iconName="checkmark" iconSize="16"></youpez-ibm-icon>
-                Email vérifié
+                {{ 'PROFILE.EMAIL_VERIFIED' | translate }}
               </span>
               <span class="badge badge-location" *ngIf="userProfile?.location">
                 <youpez-ibm-icon iconName="location" iconSize="16"></youpez-ibm-icon>
@@ -62,7 +62,7 @@
             <div class="photo-guidelines">
               <p class="guidelines-text">
                 <youpez-ibm-icon iconName="information" iconSize="16"></youpez-ibm-icon>
-                Formats acceptés : JPEG, PNG, GIF • Taille max : 5MB
+                {{ 'PROFILE.PHOTO_GUIDELINES' | translate }}
               </p>
             </div>
           </div>
@@ -71,43 +71,60 @@
         <!-- Informations personnelles -->
         <div class="form-grid">
           <div class="form-field">
-            <label for="name" class="field-label">Nom complet *</label>
+            <label for="name" class="field-label">{{ 'PROFILE.FIELDS.FULL_NAME' | translate }} *</label>
             <input 
               id="name"
               type="text" 
               formControlName="name"
               class="field-input"
               [class.error]="isValid('name')"
-              placeholder="Votre nom complet">
+              placeholder="{{ 'PROFILE.PLACEHOLDERS.FULL_NAME' | translate }}">
             <div class="field-error" *ngIf="isValid('name')">
-              Le nom est requis (minimum 2 caractères)
+              <youpez-ibm-icon iconName="warning" iconSize="16"></youpez-ibm-icon>
+              {{ getFieldError('name') }}
             </div>
           </div>
 
           <div class="form-field">
-            <label for="phoneNumber" class="field-label">Téléphone</label>
-            <input 
-              id="phoneNumber"
-              type="tel" 
-              formControlName="phoneNumber"
-              class="field-input"
-              [class.error]="isValid('phoneNumber')"
-              placeholder="+237 6XX XXX XXX">
+            <label for="phoneNumber" class="field-label">{{ 'PROFILE.FIELDS.PHONE' | translate }}</label>
+            <div class="phone-input-wrapper">
+              <select class="country-select" formControlName="phoneCountryCode">
+                <option value="+237">🇨🇲 +237</option>
+                <option value="+33">🇫🇷 +33</option>
+                <option value="+1">🇺🇸 +1</option>
+                <option value="+44">🇬🇧 +44</option>
+                <option value="+49">🇩🇪 +49</option>
+              </select>
+              <input 
+                id="phoneNumber"
+                type="tel" 
+                formControlName="phoneNumber"
+                class="field-input phone-number-input"
+                [class.error]="isValid('phoneNumber')"
+                [placeholder]="getPhonePlaceholder()">
+            </div>
             <div class="field-error" *ngIf="isValid('phoneNumber')">
-              Format de téléphone invalide
+              <youpez-ibm-icon iconName="warning" iconSize="16"></youpez-ibm-icon>
+              {{ getFieldError('phoneNumber') }}
             </div>
           </div>
         </div>
 
         <div class="form-field">
-          <label for="bio" class="field-label">Biographie</label>
+          <label for="bio" class="field-label">{{ 'PROFILE.FIELDS.BIO' | translate }}</label>
           <textarea 
             id="bio"
             formControlName="bio"
             class="field-input field-textarea"
             rows="4"
-            placeholder="Parlez-nous de vous..."></textarea>
-          <div class="field-hint">{{ formGroup.get('bio')?.value?.length || 0 }}/500 caractères</div>
+            placeholder="{{ 'PROFILE.PLACEHOLDERS.BIO' | translate }}"></textarea>
+          <div class="field-hint" [class.error]="(formGroup.get('bio')?.value?.length || 0) > 500">
+            {{ formGroup.get('bio')?.value?.length || 0 }}/500 {{ 'PROFILE.CHARACTERS' | translate }}
+          </div>
+          <div class="field-error" *ngIf="isValid('bio')">
+            <youpez-ibm-icon iconName="warning" iconSize="16"></youpez-ibm-icon>
+            {{ getFieldError('bio') }}
+          </div>
         </div>
       </div>
     </section>
@@ -119,42 +136,66 @@
           <youpez-ibm-icon iconName="phone" iconSize="24"></youpez-ibm-icon>
         </div>
         <div class="section-title-group">
-          <h2 class="section-title">Contacts & Réseaux</h2>
-          <p class="section-description">Ajoutez vos moyens de contact supplémentaires</p>
+          <h2 class="section-title">{{ 'PROFILE.SECTIONS.CONTACT' | translate }}</h2>
+          <p class="section-description">{{ 'PROFILE.SECTIONS.CONTACT_DESC' | translate }}</p>
         </div>
       </div>
 
       <div class="section-content">
         <div class="form-grid">
           <div class="form-field">
-            <label for="whatsappContact" class="field-label">WhatsApp</label>
-            <input 
-              id="whatsappContact"
-              type="tel" 
-              formControlName="whatsappContact"
-              class="field-input"
-              placeholder="+237 6XX XXX XXX">
+            <label for="whatsappContact" class="field-label">{{ 'PROFILE.FIELDS.WHATSAPP' | translate }}</label>
+            <div class="phone-input-wrapper">
+              <select class="country-select" formControlName="whatsappCountryCode">
+                <option value="+237">🇨🇲 +237</option>
+                <option value="+33">🇫🇷 +33</option>
+                <option value="+1">🇺🇸 +1</option>
+                <option value="+44">🇬🇧 +44</option>
+                <option value="+49">🇩🇪 +49</option>
+              </select>
+              <input 
+                id="whatsappContact"
+                type="tel" 
+                formControlName="whatsappContact"
+                class="field-input phone-number-input"
+                [class.error]="isValid('whatsappContact')"
+                [placeholder]="getWhatsappPlaceholder()">
+            </div>
+            <div class="field-error" *ngIf="isValid('whatsappContact')">
+              <youpez-ibm-icon iconName="warning" iconSize="16"></youpez-ibm-icon>
+              {{ getFieldError('whatsappContact') }}
+            </div>
           </div>
 
           <div class="form-field">
-            <label for="skype" class="field-label">Skype</label>
+            <label for="skype" class="field-label">{{ 'PROFILE.FIELDS.SKYPE' | translate }}</label>
             <input 
               id="skype"
               type="text" 
               formControlName="skype"
               class="field-input"
-              placeholder="nom.utilisateur">
+              [class.error]="isValid('skype')"
+              placeholder="{{ 'PROFILE.PLACEHOLDERS.SKYPE' | translate }}">
+            <div class="field-error" *ngIf="isValid('skype')">
+              <youpez-ibm-icon iconName="warning" iconSize="16"></youpez-ibm-icon>
+              {{ getFieldError('skype') }}
+            </div>
           </div>
         </div>
 
         <div class="form-field">
-          <label for="websiteLink" class="field-label">Site Web</label>
+          <label for="websiteLink" class="field-label">{{ 'PROFILE.FIELDS.WEBSITE' | translate }}</label>
           <input 
             id="websiteLink"
             type="url" 
             formControlName="websiteLink"
             class="field-input"
-            placeholder="https://monsite.com">
+            [class.error]="isValid('websiteLink')"
+            placeholder="{{ 'PROFILE.PLACEHOLDERS.WEBSITE' | translate }}">
+          <div class="field-error" *ngIf="isValid('websiteLink')">
+            <youpez-ibm-icon iconName="warning" iconSize="16"></youpez-ibm-icon>
+            {{ getFieldError('websiteLink') }}
+          </div>
         </div>
       </div>
     </section>
@@ -166,31 +207,31 @@
           <youpez-ibm-icon iconName="location" iconSize="24"></youpez-ibm-icon>
         </div>
         <div class="section-title-group">
-          <h2 class="section-title">Localisation</h2>
-          <p class="section-description">Indiquez votre localisation géographique</p>
+          <h2 class="section-title">{{ 'PROFILE.SECTIONS.LOCATION' | translate }}</h2>
+          <p class="section-description">{{ 'PROFILE.SECTIONS.LOCATION_DESC' | translate }}</p>
         </div>
       </div>
 
       <div class="section-content">
         <div class="form-grid">
           <div class="form-field">
-            <label for="location" class="field-label">Ville</label>
+            <label for="location" class="field-label">{{ 'PROFILE.FIELDS.CITY' | translate }}</label>
             <input 
               id="location"
               type="text" 
               formControlName="location"
               class="field-input"
-              placeholder="Douala, Yaoundé...">
+              placeholder="{{ 'PROFILE.PLACEHOLDERS.CITY' | translate }}">
           </div>
 
           <div class="form-field">
-            <label for="country" class="field-label">Pays</label>
+            <label for="country" class="field-label">{{ 'PROFILE.FIELDS.COUNTRY' | translate }}</label>
             <input 
               id="country"
               type="text" 
               formControlName="country"
               class="field-input"
-              placeholder="Cameroun">
+              placeholder="{{ 'PROFILE.PLACEHOLDERS.COUNTRY' | translate }}">
           </div>
         </div>
       </div>
@@ -209,35 +250,35 @@
           <youpez-ibm-icon iconName="view" iconSize="24"></youpez-ibm-icon>
         </div>
         <div class="section-title-group">
-          <h2 class="section-title">Préférences d'affichage</h2>
-          <p class="section-description">Personnalisez l'apparence de l'interface</p>
+          <h2 class="section-title">{{ 'PROFILE.SECTIONS.DISPLAY' | translate }}</h2>
+          <p class="section-description">{{ 'PROFILE.SECTIONS.DISPLAY_DESC' | translate }}</p>
         </div>
       </div>
 
       <div class="section-content">
         <div class="form-grid">
           <div class="form-field">
-            <label for="theme" class="field-label">Thème</label>
+            <label for="theme" class="field-label">{{ 'SETTINGS.THEME' | translate }}</label>
             <select 
               id="theme"
               formControlName="theme"
               class="field-input">
-              <option value="">Thème par défaut</option>
-              <option value="light">Clair</option>
-              <option value="dark">Sombre</option>
-              <option value="auto">Automatique</option>
+              <option value="">{{ 'SETTINGS.THEMES.DEFAULT' | translate }}</option>
+              <option value="light">{{ 'SETTINGS.THEMES.LIGHT' | translate }}</option>
+              <option value="dark">{{ 'SETTINGS.THEMES.DARK' | translate }}</option>
+              <option value="auto">{{ 'SETTINGS.THEMES.AUTO' | translate }}</option>
             </select>
           </div>
 
           <div class="form-field">
-            <label for="numberFormat" class="field-label">Format des nombres</label>
+            <label for="numberFormat" class="field-label">{{ 'SETTINGS.NUMBER_FORMAT' | translate }}</label>
             <select 
               id="numberFormat"
               formControlName="numberFormat"
               class="field-input">
-              <option value="fr-FR">Français (1 234,56)</option>
-              <option value="en-US">Anglais US (1,234.56)</option>
-              <option value="en-GB">Anglais UK (1,234.56)</option>
+              <option value="fr-FR">{{ 'SETTINGS.NUMBER_FORMATS.FRENCH_SHORT' | translate }}</option>
+              <option value="en-US">{{ 'SETTINGS.NUMBER_FORMATS.ENGLISH_US_SHORT' | translate }}</option>
+              <option value="en-GB">{{ 'SETTINGS.NUMBER_FORMATS.ENGLISH_UK_SHORT' | translate }}</option>
             </select>
           </div>
         </div>
@@ -250,7 +291,7 @@
               formControlName="isEnglishTimeFormat"
               class="checkbox-input">
             <label for="isEnglishTimeFormat" class="checkbox-label">
-              Utiliser le format d'heure anglais (12h AM/PM)
+              {{ 'SETTINGS.USE_ENGLISH_TIME_FORMAT' | translate }}
             </label>
           </div>
         </div>
@@ -262,9 +303,10 @@
       <button
         type="button"
         class="btn btn-secondary"
-        (click)="formGroup.reset()">
-        <youpez-ibm-icon iconName="reset" iconSize="16"></youpez-ibm-icon>
-        Annuler
+        (click)="resetForm()"
+        [disabled]="waittingResponse">
+        <youpez-ibm-icon iconName="refresh" iconSize="16"></youpez-ibm-icon>
+        {{ 'PROFILE.RESET' | translate }}
       </button>
 
       <button
@@ -272,9 +314,9 @@
         class="btn btn-primary"
         [disabled]="formGroup.invalid || waittingResponse"
         [class.loading]="waittingResponse">
-        <youpez-ibm-icon iconName="checkmark" iconSize="16" *ngIf="!waittingResponse"></youpez-ibm-icon>
+        <youpez-ibm-icon iconName="save" iconSize="16" *ngIf="!waittingResponse"></youpez-ibm-icon>
         <div class="spinner" *ngIf="waittingResponse"></div>
-        {{ waittingResponse ? 'Enregistrement...' : 'Enregistrer les modifications' }}
+        <span>{{ waittingResponse ? ('PROFILE.SAVING' | translate) : ('PROFILE.SAVE_CHANGES' | translate) }}</span>
       </button>
     </div>
   </form>

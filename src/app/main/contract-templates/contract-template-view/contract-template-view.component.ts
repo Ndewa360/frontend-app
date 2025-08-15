@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, Observable } from 'rxjs';
-import { takeUntil, filter } from 'rxjs/operators';
+import { takeUntil, filter, take } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
 import { MatDialog } from '@angular/material/dialog';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
@@ -154,7 +154,10 @@ export class ContractTemplateViewComponent implements OnInit, OnDestroy {
    * Dupliquer le modèle
    */
   duplicateTemplate(): void {
-    this.template$.pipe(takeUntil(this.destroy$)).subscribe(template => {
+    this.template$.pipe(
+      takeUntil(this.destroy$),
+      take(1)
+    ).subscribe(template => {
       if (template) {
         const dialogRef = this.dialog.open(DuplicateTemplateModalComponent, {
           width: '600px',
@@ -166,27 +169,19 @@ export class ContractTemplateViewComponent implements OnInit, OnDestroy {
 
         dialogRef.afterClosed().subscribe(result => {
           if (result?.success && result?.newTemplate) {
-            // La duplication a été effectuée avec succès
             console.log('✅ Template dupliqué avec succès:', result.newTemplate);
-
-            // Rediriger directement vers la page d'édition du nouveau template
-            console.log('🔄 Redirection vers la page d\'édition du nouveau template:', result.newTemplate._id);
-            this.router.navigate(['/contract-templates/edit', result.newTemplate._id]);
+            this.router.navigate(['/app/contract-templates/edit', result.newTemplate._id]);
           } else if (result?.success) {
-            // Fallback : utiliser le store si le template n'est pas dans le résultat
             console.log('⚠️ Template dupliqué mais non retourné, utilisation du store...');
-
             this.store.select(ContractTemplateState.selectStateCurrentTemplate).pipe(
               takeUntil(this.destroy$),
               filter((newTemplate: ContractTemplateModel | null) =>
                 newTemplate && newTemplate._id !== template._id)
             ).subscribe((newTemplate: ContractTemplateModel | null) => {
               if (newTemplate) {
-                console.log('🔄 Redirection vers la page d\'édition du nouveau template:', newTemplate._id);
-                this.router.navigate(['/contract-templates/edit', newTemplate._id]);
+                this.router.navigate(['/app/contract-templates/edit', newTemplate._id]);
               } else {
-                console.warn('⚠️ Nouveau template non trouvé dans le store après duplication');
-                this.router.navigate(['/contract-templates/list']);
+                this.router.navigate(['/app/contract-templates/list']);
               }
             });
           }
@@ -325,7 +320,7 @@ export class ContractTemplateViewComponent implements OnInit, OnDestroy {
             this.store.dispatch(new ContractTemplateAction.DeleteTemplate(template._id));
 
             // Rediriger vers la liste après suppression
-            this.router.navigate(['/contract-templates']);
+            this.router.navigate(['/app/contract-templates']);
           }
         });
       }

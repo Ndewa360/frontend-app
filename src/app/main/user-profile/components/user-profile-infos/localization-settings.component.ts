@@ -20,8 +20,8 @@ import { LocalizationService } from '../../../../shared/services/localization/lo
           <youpez-ibm-icon iconName="globe" iconSize="24"></youpez-ibm-icon>
         </div>
         <div class="section-title-group">
-          <h2 class="section-title">{{ 'SETTINGS.LANGUAGE_SETTINGS' | translate }}</h2>
-          <p class="section-description">{{ 'SETTINGS.LANGUAGE_SETTINGS_DESC' | translate }}</p>
+          <h2 class="section-title">{{ 'SETTINGS.LANGUAGE_SETTINGS_TITLE' | translate }}</h2>
+          <p class="section-description">{{ 'SETTINGS.LANGUAGE_SETTINGS_DESCRIPTION' | translate }}</p>
         </div>
       </div>
 
@@ -41,7 +41,7 @@ import { LocalizationService } from '../../../../shared/services/localization/lo
                   [value]="getFormValue('preferredLanguage')"
                   (change)="onLanguageChange($any($event.target).value)"
                   class="field-input custom-select">
-                  <option value="" disabled>{{ 'SETTINGS.SELECT_LANGUAGE' | translate }}</option>
+                  <option value="" disabled>{{ 'SETTINGS.SELECT_LANGUAGE_PLACEHOLDER' | translate }}</option>
                   <option
                     *ngFor="let language of supportedLanguages"
                     [value]="language.code">
@@ -51,7 +51,7 @@ import { LocalizationService } from '../../../../shared/services/localization/lo
                 <youpez-ibm-icon iconName="chevronDown" iconSize="16" class="select-icon"></youpez-ibm-icon>
               </div>
               <div class="field-hint" *ngIf="getCurrentLanguageInfo()">
-                {{ 'SETTINGS.CURRENT_LANGUAGE' | translate }}: {{ getCurrentLanguageInfo()?.nativeName }}
+                {{ 'SETTINGS.CURRENT_LANGUAGE_INFO' | translate }}: {{ getCurrentLanguageInfo()?.nativeName }}
               </div>
             </div>
 
@@ -66,7 +66,7 @@ import { LocalizationService } from '../../../../shared/services/localization/lo
                   [value]="getFormValue('preferredCurrency')"
                   (change)="onCurrencyChange($any($event.target).value)"
                   class="field-input custom-select">
-                  <option value="" disabled>{{ 'SETTINGS.SELECT_CURRENCY' | translate }}</option>
+                  <option value="" disabled>{{ 'SETTINGS.SELECT_CURRENCY_PLACEHOLDER' | translate }}</option>
                   <option
                     *ngFor="let currency of supportedCurrencies"
                     [value]="currency.code">
@@ -76,7 +76,7 @@ import { LocalizationService } from '../../../../shared/services/localization/lo
                 <youpez-ibm-icon iconName="chevronDown" iconSize="16" class="select-icon"></youpez-ibm-icon>
               </div>
               <div class="field-hint" *ngIf="getCurrentCurrencyInfo()">
-                {{ 'SETTINGS.CURRENT_CURRENCY' | translate }}: {{ getCurrentCurrencyInfo()?.name }}
+                {{ 'SETTINGS.CURRENT_CURRENCY_INFO' | translate }}: {{ getCurrentCurrencyInfo()?.name }}
               </div>
             </div>
           </div>
@@ -97,18 +97,18 @@ import { LocalizationService } from '../../../../shared/services/localization/lo
                 <div class="form-field">
                   <label for="timezone" class="field-label">
                     <youpez-ibm-icon iconName="time" iconSize="16"></youpez-ibm-icon>
-                    {{ 'SETTINGS.TIMEZONE' | translate }}
+                    {{ 'SETTINGS.TIMEZONE_LABEL' | translate }}
                   </label>
                   <div class="custom-select-wrapper">
                     <select 
                       id="timezone"
                       formControlName="timezone"
                       class="field-input custom-select">
-                      <option value="Africa/Douala">Africa/Douala (GMT+1)</option>
-                      <option value="Europe/Paris">Europe/Paris (GMT+1)</option>
-                      <option value="America/New_York">America/New_York (GMT-5)</option>
-                      <option value="Asia/Tokyo">Asia/Tokyo (GMT+9)</option>
-                      <option value="UTC">UTC (GMT+0)</option>
+                      <option value="Africa/Douala">{{ 'SETTINGS.TIMEZONE_OPTIONS.AFRICA_DOUALA' | translate }}</option>
+                      <option value="Europe/Paris">{{ 'SETTINGS.TIMEZONE_OPTIONS.EUROPE_PARIS' | translate }}</option>
+                      <option value="America/New_York">{{ 'SETTINGS.TIMEZONE_OPTIONS.AMERICA_NEW_YORK' | translate }}</option>
+                      <option value="Asia/Tokyo">{{ 'SETTINGS.TIMEZONE_OPTIONS.ASIA_TOKYO' | translate }}</option>
+                      <option value="UTC">{{ 'SETTINGS.TIMEZONE_OPTIONS.UTC' | translate }}</option>
                     </select>
                     <youpez-ibm-icon iconName="chevronDown" iconSize="16" class="select-icon"></youpez-ibm-icon>
                   </div>
@@ -117,17 +117,17 @@ import { LocalizationService } from '../../../../shared/services/localization/lo
                 <div class="form-field">
                   <label for="dateFormat" class="field-label">
                     <youpez-ibm-icon iconName="calendar" iconSize="16"></youpez-ibm-icon>
-                    {{ 'SETTINGS.DATE_FORMAT' | translate }}
+                    {{ 'SETTINGS.DATE_FORMAT_LABEL' | translate }}
                   </label>
                   <div class="custom-select-wrapper">
                     <select 
                       id="dateFormat"
                       formControlName="dateFormat"
                       class="field-input custom-select">
-                      <option value="DD/MM/YYYY">DD/MM/YYYY (31/12/2024)</option>
-                      <option value="MM/DD/YYYY">MM/DD/YYYY (12/31/2024)</option>
-                      <option value="YYYY-MM-DD">YYYY-MM-DD (2024-12-31)</option>
-                      <option value="DD-MM-YYYY">DD-MM-YYYY (31-12-2024)</option>
+                      <option value="DD/MM/YYYY">{{ 'SETTINGS.DATE_FORMAT_OPTIONS.DD_MM_YYYY' | translate }}</option>
+                      <option value="MM/DD/YYYY">{{ 'SETTINGS.DATE_FORMAT_OPTIONS.MM_DD_YYYY' | translate }}</option>
+                      <option value="YYYY-MM-DD">{{ 'SETTINGS.DATE_FORMAT_OPTIONS.YYYY_MM_DD' | translate }}</option>
+                      <option value="DD-MM-YYYY">{{ 'SETTINGS.DATE_FORMAT_OPTIONS.DD_MM_YYYY_DASH' | translate }}</option>
                     </select>
                     <youpez-ibm-icon iconName="chevronDown" iconSize="16" class="select-icon"></youpez-ibm-icon>
                   </div>
@@ -137,18 +137,18 @@ import { LocalizationService } from '../../../../shared/services/localization/lo
               <div class="form-field">
                 <label for="numberFormat" class="field-label">
                   <youpez-ibm-icon iconName="hashtag" iconSize="16"></youpez-ibm-icon>
-                  {{ 'SETTINGS.NUMBER_FORMAT' | translate }}
+                  {{ 'SETTINGS.NUMBER_FORMAT_LABEL' | translate }}
                 </label>
                 <div class="custom-select-wrapper">
                   <select 
                     id="numberFormat"
                     formControlName="numberFormat"
                     class="field-input custom-select">
-                    <option value="fr-FR">Français (1 234 567,89)</option>
-                    <option value="en-US">English (1,234,567.89)</option>
-                    <option value="es-ES">Español (1.234.567,89)</option>
-                    <option value="de-DE">Deutsch (1.234.567,89)</option>
-                    <option value="ar-SA">العربية (١٬٢٣٤٬٥٦٧٫٨٩)</option>
+                    <option value="fr-FR">{{ 'SETTINGS.NUMBER_FORMAT_OPTIONS.FRENCH_FULL' | translate }}</option>
+                    <option value="en-US">{{ 'SETTINGS.NUMBER_FORMAT_OPTIONS.ENGLISH_US_FULL' | translate }}</option>
+                    <option value="es-ES">{{ 'SETTINGS.NUMBER_FORMAT_OPTIONS.SPANISH_FULL' | translate }}</option>
+                    <option value="de-DE">{{ 'SETTINGS.NUMBER_FORMAT_OPTIONS.GERMAN_FULL' | translate }}</option>
+                    <option value="ar-SA">{{ 'SETTINGS.NUMBER_FORMAT_OPTIONS.ARABIC_FULL' | translate }}</option>
                   </select>
                   <youpez-ibm-icon iconName="chevronDown" iconSize="16" class="select-icon"></youpez-ibm-icon>
                 </div>
