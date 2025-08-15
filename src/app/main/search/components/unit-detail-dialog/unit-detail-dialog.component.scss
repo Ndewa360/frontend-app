@@ -89,6 +89,10 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.
 
   // Animation d'entrée Carbon
   animation: dialogSlideIn 0.4s cubic-bezier(0.2, 0, 0.38, 0.9) forwards;
+  
+  @media (max-width: 768px) {
+    overflow: hidden; // Garder le header fixe
+  }
 }
 
 // === HEADER CARBON DESIGN SYSTEM ===
@@ -100,6 +104,12 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.
   z-index: 100;
   position: relative;
   box-shadow: $shadow-02;
+  
+  @media (max-width: 768px) {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
 
   // Version Desktop (par défaut)
   .desktop-header {
@@ -302,6 +312,14 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.
   overflow: hidden; // Pas de scroll sur le contenu principal
   width: 100%;
   max-width: 100vw;
+  
+  @media (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
   
   // === SECTION IMAGES CARBON (Côté Gauche) ===
   .images-section {
@@ -1119,22 +1137,37 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.
 // === RESPONSIVE ===
 @media (max-width: 768px) {
   .dialog-content {
-    grid-template-columns: 1fr;
-    grid-template-rows: 50vh 1fr;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
 
     .images-section {
-      grid-row: 1;
+      flex-shrink: 0;
+      position: relative;
+      
+      .main-image-container {
+        height: 250px;
+      }
     }
 
     .details-section {
-      grid-row: 2;
+      flex: 1;
+      overflow: visible;
 
       .details-content {
         padding: 1rem;
+        overflow: visible;
       }
 
       .details-footer {
         padding: 1rem;
+        position: sticky;
+        bottom: 0;
+        background: var(--theme-appUIForegroundBg);
+        border-top: 1px solid var(--theme-appBorderColor);
+        z-index: 10;
 
         .footer-content {
           flex-direction: column;
@@ -1983,34 +2016,35 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.
   // Ajuster le contenu principal pour le mobile
   .dialog-content {
     padding-top: 0;
-    flex-direction: column; // Changer en colonne pour mobile
-    height: calc(100vh - 140px); // Ajuster la hauteur pour le header mobile
+    display: flex !important;
+    flex-direction: column !important;
+    height: calc(100vh - 140px);
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch;
 
     .images-section {
-      flex: 0 0 auto; // Ne pas grandir/rétrécir
-      height: auto; // Hauteur automatique basée sur le contenu
-      max-height: 40vh; // Maximum 40% de la hauteur de l'écran
-      overflow-y: auto; // Permettre le scroll vertical
-      overflow-x: hidden;
+      flex-shrink: 0;
+      position: relative;
+      overflow: visible;
 
       .main-image-container {
-        height: 250px; // Hauteur normale pour les images
+        height: 250px;
         margin-bottom: 0.5rem;
       }
 
-      // Rendre la galerie de miniatures scrollable horizontalement
-      .thumbnails-gallery {
+      .thumbnails-section {
         padding: 0.5rem 1rem;
         overflow-x: auto;
         overflow-y: hidden;
 
-        .thumbnails-container {
+        .thumbnails-wrapper {
           display: flex;
           gap: 0.5rem;
           padding-bottom: 0.5rem;
 
           .thumbnail-item {
-            flex: 0 0 auto; // Empêcher le rétrécissement
+            flex: 0 0 auto;
             width: 70px;
             height: 50px;
           }
@@ -2019,32 +2053,15 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.
     }
 
     .details-section {
-      flex: 1; // Prendre tout l'espace restant (minimum 60% de l'écran)
-      min-height: 60vh; // Minimum 60% de la hauteur de l'écran
+      flex: 1;
       display: flex;
       flex-direction: column;
+      overflow: visible;
 
       .details-content {
         flex: 1;
-        overflow-y: auto;
-        overflow-x: hidden;
+        overflow: visible;
         padding: 0;
-        // Assurer un scroll fluide
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: thin;
-
-        &::-webkit-scrollbar {
-          width: 4px;
-        }
-
-        &::-webkit-scrollbar-track {
-          background: #f1f1f1;
-        }
-
-        &::-webkit-scrollbar-thumb {
-          background: #c1c1c1;
-          border-radius: 2px;
-        }
       }
 
       .property-header {
@@ -2133,19 +2150,35 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.
     height: 100vh !important;
   }
 
-  // Forcer la répartition de l'espace
+  // Header reste fixe, contenu scrollable
+  .unit-detail-dialog {
+    overflow: hidden !important;
+  }
+
+  .dialog-header {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 1000 !important;
+  }
+
   .dialog-content {
-    display: flex !important;
-    flex-direction: column !important;
-    height: 100% !important;
+    flex: 1 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
 
     .images-section {
       flex-shrink: 0 !important;
+      overflow: visible !important;
     }
 
     .details-section {
-      flex-grow: 1 !important;
-      min-height: 0 !important;
+      flex: 1 !important;
+      overflow: visible !important;
+      
+      .details-content {
+        overflow: visible !important;
+      }
     }
   }
 }

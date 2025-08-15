@@ -30,6 +30,11 @@ export interface PopularSearch {
   label: string;
   filters: AdvancedSearchFilters;
   count: number;
+  searchCount: number;
+  resultsCount: number;
+  lastSearchDate: Date;
+  cityId: string;
+  cityName: string;
 }
 
 export interface SearchSuggestion {
@@ -220,8 +225,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
       .subscribe(formValues => {
         console.log('🔄 Application automatique des filtres:', formValues);
 
-        // La valeur city du formulaire est déjà un ID (pas un nom)
-        // car le dropdown utilise [value]="city._id"
+        // Mettre à jour les filtres actuels
         this.currentFilters = {
           ...this.currentFilters,
           ...formValues
@@ -360,11 +364,19 @@ export class SearchPageComponent implements OnInit, OnDestroy {
     // Mettre à jour la pagination
     this.currentPage = params['page'] ? parseInt(params['page']) : 1;
 
-    // Mettre à jour le formulaire
+    // Synchroniser l'affichage de géolocalisation avec la ville sélectionnée
+    if (cityId) {
+      this.syncLocationDisplayWithCity(cityId);
+    }
+
+    // Mettre à jour le formulaire SANS déclencher les événements pour éviter les boucles
     this.searchForm.patchValue(this.currentFilters, { emitEvent: false });
 
     // Effectuer la recherche
     this.performSearch();
+    
+    // S'assurer que le sélecteur affiche la bonne ville après chargement
+    this.ensureCitySelectorSync();
   }
 
   /**
@@ -528,7 +540,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
           const cityParam = params['city'] || params['ville'];
           if (cityParam) {
             this.currentFilters.city = cityParam;
-            this.searchForm.patchValue({ city: cityParam });
+            this.searchForm.patchValue({ city: cityParam }, { emitEvent: false });
 
             // Mettre à jour la localisation affichée si ville dans URL
             this.userLocation = {
@@ -541,6 +553,9 @@ export class SearchPageComponent implements OnInit, OnDestroy {
             this.locationDetected = false; // Indiquer que c'est depuis l'URL
             this.isFromUrl = true; // Nouvelle propriété pour identifier la source
             hasParams = true;
+            
+            // S'assurer que le sélecteur se synchronise avec la ville de l'URL
+            setTimeout(() => this.ensureCitySelectorSync(), 500);
           }
 
           if (params['search']) {
@@ -617,7 +632,12 @@ export class SearchPageComponent implements OnInit, OnDestroy {
           this.popularSearches = response.data.map((search: any) => ({
             label: this.buildSearchLabel(search),
             filters: this.buildSearchFilters(search),
-            count: search.searchCount
+            count: search.searchCount,
+            searchCount: search.searchCount,
+            resultsCount: search.resultsCount,
+            lastSearchDate: search.lastSearchDate,
+            cityId: search.cityId,
+            cityName: search.cityName
           }));
           console.log('✅ Recherches populaires chargées:', this.popularSearches);
         } else {
@@ -658,6 +678,57 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Obtenir le nombre d'unités disponibles pour une recherche populaire
+   */
+  getAvailableUnitsCount(search: PopularSearch): number {
+    // S'assurer qu'on retourne le nombre d'unités disponibles, pas le nombre de recherches
+    return search.resultsCount || 0;
+  }
+
+  /**
+   * Obtenir le nombre de recherches pour une recherche populaire
+   */
+  getSearchCount(search: PopularSearch): number {
+    return search.searchCount || 0;
+  }
+
+  /**
+   * Synchroniser l'affichage de géolocalisation avec la ville sélectionnée
+   */
+  private syncLocationDisplayWithCity(cityId: string): void {
+    if (!cityId) {
+      // Aucune ville sélectionnée, afficher "Toutes les villes"
+      this.userLocation = null;
+      return;
+    }
+
+    // Trouver le nom de la ville à partir de l'ID
+    this.cities$.pipe(
+      filter(cities => cities && cities.length > 0),
+      take(1)
+    ).subscribe(cities => {
+      const selectedCity = cities.find(city => city._id === cityId);
+      if (selectedCity) {
+        // Mettre à jour l'affichage de géolocalisation
+        this.userLocation = {
+          city: selectedCity.fullName,
+          country: 'Cameroun',
+          region: '',
+          latitude: 0,
+          longitude: 0
+        };
+        this.locationDetected = false; // Indiquer que c'est une sélection manuelle
+        this.isFromUrl = true;
+        
+        console.log('🏙️ Synchronisation géolocalisation avec ville sélectionnée:', selectedCity.fullName);
+        
+        // Forcer la détection de changement pour mettre à jour l'affichage
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  /**
    * Construire les filtres d'une recherche populaire
    */
   private buildSearchFilters(search: any): any {
@@ -680,33 +751,9 @@ export class SearchPageComponent implements OnInit, OnDestroy {
    * Charge les recherches populaires par défaut en cas d'erreur
    */
   private loadDefaultPopularSearches(): void {
-    this.popularSearches = [
-      {
-        label: 'Studios à Douala',
-        filters: { roomType: 'STUDIO' },
-        count: 45
-      },
-      {
-        label: 'Chambres à Bangangté',
-        filters: { roomType: 'ROOM' },
-        count: 38
-      },
-      {
-        label: 'Logements avec cuisine',
-        filters: { hasKitchen: true },
-        count: 32
-      },
-      {
-        label: 'Logements avec parking',
-        filters: { hasParking: true },
-        count: 28
-      },
-      {
-        label: 'Studios meublés',
-        filters: { roomType: 'STUDIO', hasKitchen: true },
-        count: 24
-      }
-    ];
+    // Ne plus afficher de données mockup - seulement les vraies statistiques
+    this.popularSearches = [];
+    console.log('⚠️ Aucune recherche populaire disponible - pas de données mockup affichées');
   }
 
   private updateCitySuggestions(cities: CityModel[]): void {
@@ -742,8 +789,18 @@ export class SearchPageComponent implements OnInit, OnDestroy {
 
   onSuggestionClick(suggestion: SearchSuggestion): void {
     if (suggestion.type === 'city') {
-      this.searchForm.patchValue({ city: suggestion.value._id });
+      // Mettre à jour le formulaire avec l'ID de la ville
+      this.searchForm.patchValue({ city: suggestion.value._id }, { emitEvent: false });
       this.searchControl.setValue(suggestion.label);
+      
+      // Mettre à jour les filtres actuels
+      this.currentFilters.city = suggestion.value._id;
+      
+      // Synchroniser l'affichage de géolocalisation
+      this.syncLocationDisplayWithCity(suggestion.value._id);
+      
+      // Forcer la détection de changement
+      this.cdr.detectChanges();
     }
     this.showSuggestions = false;
     this.performSearch();
@@ -758,8 +815,13 @@ export class SearchPageComponent implements OnInit, OnDestroy {
       ...popularSearch.filters
     };
 
-    // Mettre à jour le formulaire
+    // Mettre à jour le formulaire SANS déclencher les événements
     this.searchForm.patchValue(popularSearch.filters, { emitEvent: false });
+
+    // Synchroniser l'affichage de géolocalisation si une ville est sélectionnée
+    if (popularSearch.filters.city) {
+      this.syncLocationDisplayWithCity(popularSearch.filters.city);
+    }
 
     // Mettre à jour les filtres intelligents
     Object.keys(popularSearch.filters).forEach(key => {
@@ -777,7 +839,8 @@ export class SearchPageComponent implements OnInit, OnDestroy {
 
     console.log('🔥 Filtres appliqués:', {
       currentFilters: this.currentFilters,
-      smartFilters: this.smartFiltersService.getActiveFilters()
+      smartFilters: this.smartFiltersService.getActiveFilters(),
+      formValue: this.searchForm.value
     });
 
     // Effectuer la recherche
@@ -1004,19 +1067,21 @@ export class SearchPageComponent implements OnInit, OnDestroy {
           this.locationDetected = true;
           this.isDetectingLocation = false;
 
-          console.log('Localisation détectée:', location);
+          console.log('📍 Localisation détectée:', location);
 
           // Lancer la recherche automatique pour la ville détectée
           this.searchByUserLocation();
         },
         error: (error) => {
-          console.error('Erreur de géolocalisation:', error);
+          console.error('❌ Erreur de géolocalisation:', error);
           this.isDetectingLocation = false;
 
           // Fallback vers Bangangté
           this.userLocation = this.geolocationService.getDefaultLocation();
           this.locationDetected = false;
 
+          console.log('🔄 Fallback vers ville par défaut:', this.userLocation.city);
+          
           // Lancer la recherche pour Bangangté
           this.searchByUserLocation();
         }
@@ -1042,6 +1107,9 @@ export class SearchPageComponent implements OnInit, OnDestroy {
         limit: this.ITEMS_PER_PAGE
       };
 
+      // Mettre à jour le formulaire SANS déclencher les événements
+      this.searchForm.patchValue({ city: finalCityId }, { emitEvent: false });
+
       // Mettre à jour les filtres intelligents
       this.smartFiltersService.updateFilter('city', finalCityId);
       this.smartFiltersService.markFieldAsModified('city');
@@ -1053,6 +1121,9 @@ export class SearchPageComponent implements OnInit, OnDestroy {
       if (this.locationDetected && !this.isFromUrl) {
         this.updateUrl();
       }
+      
+      // S'assurer que le sélecteur affiche la bonne ville
+      this.ensureCitySelectorSync();
     });
   }
 
@@ -1258,6 +1329,66 @@ export class SearchPageComponent implements OnInit, OnDestroy {
     const params = this.route.snapshot.queryParams;
     return params['city'] !== undefined || params['ville'] !== undefined;
   }
+
+  /**
+   * Obtenir le nom de la ville actuellement sélectionnée
+   */
+  getCurrentCityName(): string {
+    const selectedCityId = this.currentFilters.city || this.searchForm.get('city')?.value;
+    
+    if (!selectedCityId) {
+      return 'Toutes les villes';
+    }
+
+    // Utiliser une approche synchrone avec les données déjà chargées
+    let cityName = 'Ville sélectionnée';
+    
+    this.cities$.pipe(take(1)).subscribe(cityList => {
+      const city = cityList?.find(c => c._id === selectedCityId);
+      if (city) {
+        cityName = city.fullName;
+      }
+    });
+
+    return cityName;
+  }
+
+  /**
+   * S'assure que le sélecteur de ville affiche la bonne valeur
+   */
+  private ensureCitySelectorSync(): void {
+    const cityToSync = this.currentFilters.city || this.route.snapshot.queryParams['city'] || this.route.snapshot.queryParams['ville'];
+    
+    if (cityToSync) {
+      console.log('🔄 Synchronisation sélecteur avec ville:', cityToSync);
+      
+      // Attendre que les villes soient chargées
+      this.cities$.pipe(
+        filter(cities => cities && cities.length > 0),
+        take(1)
+      ).subscribe(cities => {
+        // Vérifier si c'est un nom ou un ID
+        let finalCityId = cityToSync;
+        
+        if (!this.cityResolver.isObjectId(cityToSync)) {
+          // C'est un nom, convertir en ID
+          const city = cities.find(c => c.fullName.toLowerCase() === cityToSync.toLowerCase());
+          if (city) {
+            finalCityId = city._id;
+          }
+        }
+        
+        // Mettre à jour le formulaire et les filtres
+        this.currentFilters.city = finalCityId;
+        this.searchForm.patchValue({ city: finalCityId }, { emitEvent: false });
+        
+        console.log('✅ Sélecteur synchronisé avec:', finalCityId);
+        this.cdr.detectChanges();
+      });
+    }
+  }
+
+
 
   /**
    * Compte le nombre de filtres actifs

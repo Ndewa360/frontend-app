@@ -1,6 +1,6 @@
 <div class="relative">
-    <button  [disabled]="waittingResponse"  class="absolute  float-right btn-text-edit top-2 right-0 mt-5 mr-5 bg-slate-700 rounded-md" (click)="deleteFile()">
-        <ibm-loading *ngIf="waittingResponse; else noWaitingResponse" ></ibm-loading>
+    <button  [disabled]="waittingResponse || isDeleting"  class="absolute  float-right btn-text-edit top-2 right-0 mt-5 mr-5 bg-slate-700 rounded-md" (click)="deleteFile()">
+        <ibm-loading *ngIf="waittingResponse || isDeleting; else noWaitingResponse" ></ibm-loading>
         <ng-template #noWaitingResponse>
             <i class="fa fa-trash trash-icon-delete"></i>  
         </ng-template>

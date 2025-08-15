@@ -5,6 +5,7 @@ import { Store, Actions, ofActionErrored, ofActionSuccessful, Select } from '@ng
 import { Observable, Subject, timer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ApiUploadFileStateFormat, RoomModel, RoomState } from 'src/app/shared/store';
+import { RoomAction } from 'src/app/shared/store';
 import { FileUploadContentType, UploadFilesAction, UploadFilesState,ContentUploadRoomType  } from 'src/app/shared/store/files-upload';
 import { MediaUtil } from 'src/app/shared/utils';
 
@@ -50,6 +51,9 @@ export class GaleryComponent implements OnInit, OnDestroy {
   files: File[] = [];
   shouldResetFiles = false;
   maxRetries = 3;
+  
+  // Gestion des suppressions
+  deletingFiles: Set<string> = new Set();
 
   // Observables
   @Select(UploadFilesState.selectStateUploadedFiles) files$: Observable<{name:string,state:ApiUploadFileStateFormat<any>}[]>;
@@ -109,6 +113,8 @@ export class GaleryComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy$)
     ).subscribe(() => {
       this.isUploading = false;
+      // Recharger les données de la room depuis le serveur
+      this._store.dispatch(new RoomAction.FetchRoom(this.data.room._id));
     });
 
     // Gérer les erreurs d'upload
@@ -118,6 +124,29 @@ export class GaleryComponent implements OnInit, OnDestroy {
     ).subscribe((action) => {
       this.isUploading = false;
       this.handleUploadError(action);
+    });
+
+    // Gérer les succès de suppression
+    this._ngxsAction.pipe(
+      ofActionSuccessful(UploadFilesAction.RemoveUploadedFile),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      console.log('✅ Fichier supprimé avec succès');
+      // Recharger les données de la room depuis le serveur
+      this._store.dispatch(new RoomAction.FetchRoom(this.data.room._id));
+    });
+
+    // Gérer les erreurs de suppression
+    this._ngxsAction.pipe(
+      ofActionErrored(UploadFilesAction.RemoveUploadedFile),
+      takeUntil(this.destroy$)
+    ).subscribe((action) => {
+      console.error('❌ Erreur lors de la suppression:', action);
+      // Retirer le fichier de la liste des suppressions en cours en cas d'erreur
+      const fileUrl = action.removedUploadFile?.fileUrl;
+      if (fileUrl) {
+        this.deletingFiles.delete(fileUrl);
+      }
     });
   }
 
@@ -168,6 +197,14 @@ export class GaleryComponent implements OnInit, OnDestroy {
 
   // Méthodes publiques
   deleteFile(urlFile: string): void {
+    // Empêcher les doubles clics
+    if (this.deletingFiles.has(urlFile)) {
+      return;
+    }
+    
+    // Marquer le fichier comme en cours de suppression
+    this.deletingFiles.add(urlFile);
+    
     this._store.dispatch(new UploadFilesAction.RemoveUploadedFile({
       fileUrl: urlFile,
       contentID: this.data.room._id,
@@ -175,15 +212,30 @@ export class GaleryComponent implements OnInit, OnDestroy {
       contentRoomType: ContentUploadRoomType.FOR_ROOM
     }));
 
+    // Marquer qu'il y a eu des changements
+    this.shouldResetFiles = true;
+
     // Recharger les médias après suppression
     setTimeout(() => {
       this.loadMediaData();
+      // Retirer le fichier de la liste des suppressions en cours
+      this.deletingFiles.delete(urlFile);
     }, 1000);
+  }
+  
+  isDeleting(urlFile: string): boolean {
+    return this.deletingFiles.has(urlFile);
   }
 
   close(): void {
-    // Notifier que des médias ont été modifiés
-    this.dialogRef.close({ mediaUpdated: true });
+    // Vérifier s'il y a eu des modifications de médias
+    const hasMediaChanges = this.shouldResetFiles || this.uploadQueue.some(item => item.status === 'success');
+    
+    // Notifier que des médias ont été modifiés si nécessaire
+    this.dialogRef.close({ 
+      mediaUpdated: hasMediaChanges,
+      roomId: this.data.room._id 
+    });
   }
 
   switchView(view: 'gallery' | 'upload'): void {

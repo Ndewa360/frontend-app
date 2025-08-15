@@ -93,4 +93,30 @@ export class UnitDetailsViewService {
   getViewMode(): ViewMode {
     return this.viewStateSubject.value.viewMode;
   }
+
+  /**
+   * Met à jour les données de l'unité sélectionnée
+   */
+  updateSelectedRoom(updatedRoom: RoomModel): void {
+    const currentState = this.viewStateSubject.value;
+    if (currentState.selectedRoom && currentState.selectedRoom._id === updatedRoom._id) {
+      this.viewStateSubject.next({
+        ...currentState,
+        selectedRoom: updatedRoom
+      });
+    }
+  }
+
+  /**
+   * Force la mise à jour de l'unité sélectionnée avec de nouvelles données
+   */
+  refreshSelectedRoom(room: RoomModel): void {
+    const currentState = this.viewStateSubject.value;
+    if (currentState.isOpen && currentState.selectedRoom?._id === room._id) {
+      this.viewStateSubject.next({
+        ...currentState,
+        selectedRoom: room
+      });
+    }
+  }
 }

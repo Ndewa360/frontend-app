@@ -9,7 +9,8 @@ import {
   RoomModel,
   LocataireModel,
   LocataireState,
-  RoomType
+  RoomType,
+  RoomState
 } from 'src/app/shared/store';
 import { UtilsString } from 'src/app/shared/utils';
 import { UnitDetailsService, UnitDetailsData } from '../../services/unit-details.service';
@@ -117,6 +118,10 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
       if (currentRoomId !== previousRoomId && currentRoomId && previousRoomId) {
         // Nouvelle unité sélectionnée - animer la transition
         this.animateContentChange();
+      } else if (currentRoomId === previousRoomId && currentRoomId) {
+        // Même unité mais données mises à jour (ex: après modification de galerie)
+        console.log('🔄 UnitDetailsPanel: Même unité détectée avec nouvelles données, rechargement');
+        this.loadUnitData();
       }
     }
 
@@ -158,6 +163,25 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
   private loadUnitData(): void {
     if (!this.room || !this.propertyId) return;
 
+    // Écouter les changements de la room dans le store
+    this.store.select(RoomState.selectStateRoom(this.room._id))
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(updatedRoom => {
+        if (updatedRoom && updatedRoom._id === this.room._id) {
+          console.log('🔄 UnitDetailsPanel: Room mise à jour depuis le store', updatedRoom);
+          // Mettre à jour la room locale
+          this.room = updatedRoom as RoomModel;
+          
+          // Recharger les données détaillées
+          this.unitDetailsService.loadUnitDetails(updatedRoom as RoomModel, this.propertyId)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(unitData => {
+              this.unitData = unitData;
+            });
+        }
+      });
+
+    // Chargement initial
     this.unitDetailsService.loadUnitDetails(this.room, this.propertyId)
       .pipe(takeUntil(this.destroy$))
       .subscribe(unitData => {
@@ -312,6 +336,16 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
         type: 'edit_gallery',
         room: this.room
       });
+    }
+  }
+
+  /**
+   * Méthode pour recharger les données de l'unité après modification de la galerie
+   */
+  refreshUnitData(): void {
+    console.log('🔄 UnitDetailsPanel: Rechargement des données de l\'unité');
+    if (this.room && this.propertyId) {
+      this.loadUnitData();
     }
   }
 

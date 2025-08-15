@@ -16,6 +16,7 @@ export class GaleryVideo360ItemComponent implements AfterViewInit, OnInit {
   
   @Input() urlFile:string=""
   @Input() isFullScreen=false;
+  @Input() isDeleting=false;
   @ViewChild('viewerContainer', { static: true }) viewerContainer!: ElementRef;
   @Output() onDeleteFileEvent:EventEmitter<string> = new EventEmitter<string>()
   private viewer: any;
@@ -48,6 +49,9 @@ export class GaleryVideo360ItemComponent implements AfterViewInit, OnInit {
 
   deleteFile()
   {
+    if (this.isDeleting) {
+      return; // Empêcher les doubles clics
+    }
     this.onDeleteFileEvent.emit(this.urlFile)
   }
 

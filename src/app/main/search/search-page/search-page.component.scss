@@ -790,7 +790,7 @@
   height: 100vh !important;
   background: rgba(0, 0, 0, 0.6) !important;
   backdrop-filter: blur(8px) !important;
-  z-index: 9998 !important;
+  z-index: 9998 !important; 
   animation: fadeIn 0.3s ease-out;
   margin: 0 !important;
   padding: 0 !important;
@@ -811,6 +811,7 @@
   pointer-events: auto; // Le panneau doit être cliquable
   margin: 0 !important;
   padding: 0 !important;
+  padding-top: 10px !important;
   // Empêcher tout débordement
   overflow: hidden !important;
 
@@ -834,6 +835,17 @@
       padding: 1.5rem;
       border-bottom: 1px solid var(--theme-appBorderColor);
       background: rgba($default_app_color, 0.05);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      
+      // Amélioration responsive
+      @media (max-width: 768px) {
+        padding: 1rem 1.5rem;
+        background: linear-gradient(135deg, rgba($default_app_color, 0.08) 0%, rgba($default_app_color, 0.03) 100%);
+        backdrop-filter: blur(8px);
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+      }
 
       .filters-title {
         display: flex;
@@ -851,18 +863,47 @@
       }
 
       .close-filters-btn {
-        background: none;
-        border: none;
-        color: var(--theme-appTextSecondary);
+        background: rgba($default_app_color, 0.1);
+        border: 2px solid rgba($default_app_color, 0.2);
+        color: $default_app_color;
         cursor: pointer;
-        padding: 0.5rem;
-        border-radius: 50%;
-        transition: all 0.2s ease;
+        padding: 0.75rem;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        font-weight: 600;
+        min-width: 44px;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba($default_app_color, 0.15);
 
         &:hover {
-          background: rgba($default_app_color, 0.1);
-          color: $default_app_color;
-          transform: scale(1.1);
+          background: $default_app_color;
+          color: white;
+          border-color: $default_app_color;
+          transform: scale(1.05);
+          box-shadow: 0 4px 16px rgba($default_app_color, 0.3);
+        }
+
+        &:active {
+          transform: scale(0.95);
+        }
+
+        // Amélioration pour mobile
+        @media (max-width: 768px) {
+          background: $default_app_color;
+          color: white;
+          border-color: $default_app_color;
+          padding: 1rem;
+          min-width: 48px;
+          min-height: 48px;
+          box-shadow: 0 4px 16px rgba($default_app_color, 0.4);
+          
+          &:hover {
+            background: darken($default_app_color, 10%);
+            border-color: darken($default_app_color, 10%);
+          }
         }
       }
     }

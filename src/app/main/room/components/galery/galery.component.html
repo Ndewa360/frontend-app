@@ -87,8 +87,11 @@
                                     <button class="action-btn view-btn" title="Voir en plein écran">
                                         <i class="fa fa-search-plus"></i>
                                     </button>
-                                    <button class="action-btn delete-btn" (click)="deleteFile(imageUrl)" title="Supprimer">
-                                        <i class="fa fa-trash"></i>
+                                    <button class="action-btn delete-btn" 
+                                            (click)="deleteFile(imageUrl)" 
+                                            [disabled]="isDeleting(imageUrl)"
+                                            [title]="isDeleting(imageUrl) ? 'Suppression en cours...' : 'Supprimer'">
+                                        <i class="fa" [class.fa-trash]="!isDeleting(imageUrl)" [class.fa-spinner]="isDeleting(imageUrl)" [class.fa-spin]="isDeleting(imageUrl)"></i>
                                     </button>
                                 </div>
                             </div>
@@ -111,8 +114,11 @@
                             <div class="media-preview">
                                 <video [src]="videoUrl" controls class="preview-video"></video>
                                 <div class="media-overlay">
-                                    <button class="action-btn delete-btn" (click)="deleteFile(videoUrl)" title="Supprimer">
-                                        <i class="fa fa-trash"></i>
+                                    <button class="action-btn delete-btn" 
+                                            (click)="deleteFile(videoUrl)" 
+                                            [disabled]="isDeleting(videoUrl)"
+                                            [title]="isDeleting(videoUrl) ? 'Suppression en cours...' : 'Supprimer'">
+                                        <i class="fa" [class.fa-trash]="!isDeleting(videoUrl)" [class.fa-spinner]="isDeleting(videoUrl)" [class.fa-spin]="isDeleting(videoUrl)"></i>
                                     </button>
                                 </div>
                             </div>
@@ -133,7 +139,7 @@
                     <div *ngIf="roomSelectedImages360.length > 0" class="media-items">
                         <div *ngFor="let image360Url of roomSelectedImages360" class="media-item">
                             <div class="media-preview">
-                                <galery-video360-item [urlFile]="image360Url" (onDeleteFileEvent)="deleteFile($event)"></galery-video360-item>
+                                <galery-video360-item [urlFile]="image360Url" [isDeleting]="isDeleting(image360Url)" (onDeleteFileEvent)="deleteFile($event)"></galery-video360-item>
                             </div>
                         </div>
                     </div>

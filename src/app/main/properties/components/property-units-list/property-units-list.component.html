@@ -568,7 +568,7 @@
   <!-- Panneau latéral avec nouvelle interface professionnelle -->
   <app-unit-details-panel
     *ngIf="viewService.isOpen() && viewService.getViewMode() === 'sidebar'"
-    [room]="viewService.getSelectedRoom()"
+    [room]="getUpdatedSelectedRoom()"
     [propertyId]="propertyId"
     [isOpen]="viewService.isOpen()"
     (close)="viewService.closeUnitDetails()"

@@ -68,7 +68,7 @@
       type="button">
       <div class="card-content">
         <h4 class="card-title">{{ search.label }}</h4>
-        <p class="card-count">{{ search.count }} logements disponibles</p>
+        <p class="card-count">{{ getAvailableUnitsCount(search) }} logements disponibles</p>
       </div>
       <youpez-ibm-icon iconName="arrow_forward" iconSize="20" class="card-arrow">
       </youpez-ibm-icon>
@@ -92,8 +92,7 @@
       </h3>
       <div class="results-location">
         <youpez-ibm-icon iconName="location_on" iconSize="16"></youpez-ibm-icon>
-        <span *ngIf="userLocation">{{ userLocation.city }}, {{ userLocation.country }}</span>
-        <span *ngIf="!userLocation">{{ 'SEARCH.ALL_CITIES' | translate }}</span>
+        <span>{{ getCurrentCityName() }}, Cameroun</span>
       </div>
 
       <!-- Message informatif pour Bangangté par défaut -->

@@ -229,17 +229,24 @@ export class RoomState{
         const state = ctx.getState();
         let index = state.rooms.findIndex((u)=>u._id==roomId);
 
-        if(index>-1) return of(true);
-        console.log("Load Room")
+        console.log("Load Room", roomId)
         ctx.patchState({
             loadingRoom:true
         })
         return this._roomsService.getRoom(roomId).pipe(
             tap(
                 result => {
+                    const rooms = [...state.rooms];
+                    if(index > -1) {
+                        // Mettre à jour la room existante
+                        rooms[index] = result.data;
+                    } else {
+                        // Ajouter la nouvelle room
+                        rooms.push(result.data);
+                    }
                     ctx.patchState({
                         loadingRoom:false,
-                        rooms:[...state.rooms, result.data]
+                        rooms: rooms
                     })
                 }
             )

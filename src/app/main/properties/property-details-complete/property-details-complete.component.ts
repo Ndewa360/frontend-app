@@ -380,6 +380,16 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
           disableClose: true,
           data: {room}
         });
+
+    // Écouter la fermeture du modal et recharger les données si nécessaire
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('🔄 Modal GaleryComponent fermé avec résultat:', result);
+      if (result && result.mediaUpdated) {
+        console.log('✅ Médias mis à jour, rechargement des données de l\'unité');
+        // Recharger les données de l'unité pour refléter les changements
+        this.store.dispatch(new RoomAction.FetchRoomsByPropertyID(this.propertyId));
+      }
+    });
   }
 
   // Actions générales

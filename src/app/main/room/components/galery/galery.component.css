@@ -279,6 +279,23 @@
   color: white;
 }
 
+.action-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.action-btn.delete-btn:disabled {
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #6c757d;
+}
+
+.action-btn.delete-btn:disabled:hover {
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #6c757d;
+  transform: none;
+}
+
 /* Vue Upload */
 .upload-view {
   padding: 24px;

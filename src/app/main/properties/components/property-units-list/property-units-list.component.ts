@@ -159,11 +159,23 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
       ]).pipe(
         takeUntil(this.destroy$)
       ).subscribe(([rooms, locataires, locations, property, loading]) => {
+        const previousRooms = this.rooms;
         this.rooms = rooms || [];
         this.locataires = locataires || [];
         this.locations = locations || [];
         this.property = property;
         this.loading = loading;
+        
+        // Vérifier si l'unité sélectionnée a été mise à jour
+        const selectedRoom = this.viewService.getSelectedRoom();
+        if (selectedRoom) {
+          const updatedRoom = this.rooms.find(r => r._id === selectedRoom._id);
+          if (updatedRoom && JSON.stringify(updatedRoom) !== JSON.stringify(selectedRoom)) {
+            console.log('✅ Unité sélectionnée mise à jour, rafraîchissement du service de vue');
+            this.viewService.refreshSelectedRoom(updatedRoom);
+          }
+        }
+        
         this.updateFilters();
       });
     }
@@ -463,7 +475,9 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
   }
 
   private refreshUnitData(roomId: string): void {
-    // Recharger les données de l'unité depuis le store
+    console.log('🔄 PropertyUnitsList: Rechargement des données pour l\'unité', roomId);
+    
+    // Recharger les données de l'unité depuis le serveur
     this.store.dispatch(new RoomAction.FetchRoom(roomId));
   }
 
@@ -923,6 +937,7 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
       case 'edit_gallery':
         console.log('🎨 PropertyUnitsList: Cas edit_gallery détecté, ouverture du modal');
         this.onEditGaleryUnit(action.room);
+        // Notifier le panel de détail pour qu'il se mette à jour après fermeture du modal
         break;
       case 'add_payment':
         this.openAddPaymentModal(action.room);
@@ -1421,6 +1436,18 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
         this.updateRoomPayments();
       }, 1000);
     }
+  }
+
+  /**
+   * Obtenir la version mise à jour de l'unité sélectionnée depuis le store
+   */
+  getUpdatedSelectedRoom(): RoomModel | null {
+    const selectedRoom = this.viewService.getSelectedRoom();
+    if (!selectedRoom) return null;
+    
+    // Chercher la version mise à jour dans la liste locale
+    const updatedRoom = this.rooms.find(r => r._id === selectedRoom._id);
+    return updatedRoom || selectedRoom;
   }
 
   /**
