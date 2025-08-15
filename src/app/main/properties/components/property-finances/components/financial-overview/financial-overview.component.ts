@@ -7,19 +7,9 @@ import {
 } from 'src/app/shared/store';
 import { Store } from '@ngxs/store';
 import { ExportData } from '../../property-finances.component';
-import { FinancialCalculationsService, FinancialMetrics, MonthlyFinancialData } from 'src/app/shared/services/financial-calculations.service';
-import { PropertyFinancialManagerService } from 'src/app/shared/services/property-financial-manager.service';
+import { PropertyFinancialManagerService, PropertyFinancialMetrics } from 'src/app/shared/services/property-financial-manager.service';
 
-export interface OverviewMetrics {
-  totalRevenue: number;
-  totalExpected: number;
-  collectionRate: number;
-  totalRooms: number;
-  occupiedRooms: number;
-  occupancyRate: number;
-  averageRent: number;
-  totalDeposits: number;
-}
+
 
 @Component({
   selector: 'app-financial-overview',
@@ -38,23 +28,10 @@ export class FinancialOverviewComponent implements OnInit, OnChanges {
   // Données des locations
   locations: LocationModel[] = [];
 
-  metrics: FinancialMetrics = {
-    totalRevenue: 0,
-    totalExpected: 0,
-    collectionRate: 0,
-    totalRooms: 0,
-    occupiedRooms: 0,
-    occupancyRate: 0,
-    averageRent: 0,
-    totalDeposits: 0,
-    netProfit: 0,
-    profitMargin: 0
-  };
-
-  monthlyData: MonthlyFinancialData[] = [];
+  propertyMetrics: PropertyFinancialMetrics | null = null;
+  monthlyData: any[] = [];
 
   constructor(
-    private financialCalculationsService: FinancialCalculationsService,
     private store: Store,
     private propertyFinancialManager: PropertyFinancialManagerService
   ) {}
@@ -74,110 +51,180 @@ export class FinancialOverviewComponent implements OnInit, OnChanges {
   }
 
   private updateFinancialData(): void {
-    console.log('🔄 NOUVEAU SERVICE - Vue d\'ensemble - Mise à jour des données financières');
+    console.log('🔄 VUE D\'ENSEMBLE - Mise à jour des données financières');
 
     if (!this.propertyId || !this.yearlyStats.length) {
       console.log('⚠️ Données insuffisantes pour le calcul');
+      this.resetMetrics();
       return;
     }
 
-    // Utiliser le nouveau service financier centralisé
-    const propertyMetrics = this.propertyFinancialManager.calculatePropertyMetrics(
-      this.propertyId,
-      this.selectedYear,
-      this.yearlyStats,
-      this.locations
-    );
+    try {
+      // Utiliser le service financier centralisé avec validation
+      this.propertyMetrics = this.propertyFinancialManager.calculatePropertyMetrics(
+        this.propertyId,
+        this.selectedYear,
+        this.yearlyStats,
+        this.locations
+      );
 
-    // Convertir vers le format attendu par ce composant
-    this.metrics = {
-      totalRevenue: propertyMetrics.totalRevenue,
-      totalExpected: propertyMetrics.totalExpected,
-      collectionRate: propertyMetrics.collectionRate,
-      totalRooms: propertyMetrics.totalRooms,
-      occupiedRooms: propertyMetrics.occupiedRooms,
-      occupancyRate: propertyMetrics.occupancyRate,
-      averageRent: propertyMetrics.averageRent,
-      totalDeposits: 0, // À calculer si nécessaire
-      netProfit: propertyMetrics.totalRevenue - propertyMetrics.totalExpected, // Profit net
-      profitMargin: propertyMetrics.collectionRate // Utiliser le taux de recouvrement comme marge
-    };
+      // Valider les calculs
+      const validation = this.propertyFinancialManager.validateFinancialCalculations(this.propertyMetrics);
+      
+      if (!validation.isValid) {
+        console.warn('⚠️ Incohérences détectées dans la vue d\'ensemble:', validation.warnings);
+        Object.assign(this.propertyMetrics, validation.corrections);
+      }
 
-    // Calculer les données mensuelles avec le nouveau service
-    const monthlyFinancialData = this.propertyFinancialManager.generateMonthlyData(
-      this.selectedYear,
-      propertyMetrics.roomDetails
-    );
+      // Générer les données mensuelles
+      this.generateMonthlyData();
 
-    // Convertir vers le format attendu par l'ancien interface
-    this.monthlyData = monthlyFinancialData.map((data, index) => ({
-      month: data.monthName,
-      monthIndex: data.month,
-      expected: data.expected,
-      received: data.received,
-      rate: data.collectionRate,
-      profit: data.received - data.expected
-    }));
-
-    console.log('📊 NOUVEAU SERVICE - Vue d\'ensemble - Métriques calculées:', this.metrics);
-    console.log('📅 NOUVEAU SERVICE - Vue d\'ensemble - Données mensuelles:', this.monthlyData);
+      console.log('✅ Vue d\'ensemble - Métriques calculées:', {
+        totalRevenue: this.propertyMetrics.totalRevenue.toLocaleString(),
+        collectionRate: `${this.propertyMetrics.collectionRate.toFixed(1)}%`,
+        warnings: validation.warnings.length
+      });
+      
+    } catch (error) {
+      console.error('❌ Erreur lors de la mise à jour des données financières:', error);
+      this.resetMetrics();
+    }
   }
 
-  // Méthodes supprimées - maintenant gérées par FinancialCalculationsService
+
+
+  private generateMonthlyData(): void {
+    if (!this.propertyMetrics) {
+      this.monthlyData = [];
+      return;
+    }
+
+    try {
+      const monthlyFinancialData = this.propertyFinancialManager.generateMonthlyData(
+        this.selectedYear,
+        this.propertyMetrics.roomDetails
+      );
+
+      this.monthlyData = monthlyFinancialData.map((data) => ({
+        month: data.monthName,
+        monthIndex: data.month,
+        expected: Math.round(data.expected * 100) / 100,
+        received: Math.round(data.received * 100) / 100,
+        rate: Math.round(data.collectionRate * 100) / 100,
+        profit: Math.round((data.received - (data.received * 0.30)) * 100) / 100
+      }));
+
+      console.log('📅 Données mensuelles générées:', this.monthlyData.length, 'mois');
+      
+    } catch (error) {
+      console.error('❌ Erreur lors de la génération des données mensuelles:', error);
+      this.monthlyData = [];
+    }
+  }
+
+  private resetMetrics(): void {
+    this.propertyMetrics = null;
+    this.monthlyData = [];
+  }
+
+  // Méthodes d'analyse financière
+  
+  getFinancialHealthScore(): number {
+    if (!this.propertyMetrics) return 0;
+    
+    const collectionWeight = 0.4;
+    const occupancyWeight = 0.3;
+    const profitWeight = 0.3;
+    
+    const collectionScore = Math.min(this.propertyMetrics.collectionRate, 100);
+    const occupancyScore = Math.min(this.propertyMetrics.occupancyRate, 100);
+    const operatingCosts = this.propertyMetrics.totalRevenue * 0.30;
+    const netProfit = this.propertyMetrics.totalRevenue - operatingCosts;
+    const profitMargin = this.propertyMetrics.totalRevenue > 0 ? (netProfit / this.propertyMetrics.totalRevenue) * 100 : 0;
+    const profitScore = profitMargin > 0 ? Math.min(profitMargin * 2, 100) : 0;
+    
+    return Math.round(
+      (collectionScore * collectionWeight) +
+      (occupancyScore * occupancyWeight) +
+      (profitScore * profitWeight)
+    );
+  }
+  
+  getHealthScoreLabel(score: number): string {
+    if (score >= 80) return 'Excellente';
+    if (score >= 60) return 'Bonne';
+    if (score >= 40) return 'Moyenne';
+    return 'Faible';
+  }
+  
+  getHealthScoreColor(score: number): string {
+    if (score >= 80) return 'text-green-600';
+    if (score >= 60) return 'text-blue-600';
+    if (score >= 40) return 'text-yellow-600';
+    return 'text-red-600';
+  }
 
   // === MÉTHODES D'EXPORT ===
 
   onExportOverview(): void {
+    if (!this.propertyMetrics) return;
+    
+    const operatingCosts = this.propertyMetrics.totalRevenue * 0.30;
+    const netProfit = this.propertyMetrics.totalRevenue - operatingCosts;
+    const profitMargin = this.propertyMetrics.totalRevenue > 0 ? (netProfit / this.propertyMetrics.totalRevenue) * 100 : 0;
+    const totalDeposits = this.propertyMetrics.roomDetails.reduce((total, room) => 
+      room.isOccupied ? total + (room.monthlyRent * 2) : total, 0);
+    
     const exportData = [
       {
         'Métrique': 'Revenus totaux reçus',
-        'Valeur': this.financialCalculationsService.formatCurrency(this.metrics.totalRevenue),
-        'Valeur numérique': this.metrics.totalRevenue
+        'Valeur': this.formatPrice(this.propertyMetrics.totalRevenue),
+        'Valeur numérique': this.propertyMetrics.totalRevenue
       },
       {
         'Métrique': 'Revenus attendus',
-        'Valeur': this.financialCalculationsService.formatCurrency(this.metrics.totalExpected),
-        'Valeur numérique': this.metrics.totalExpected
+        'Valeur': this.formatPrice(this.propertyMetrics.totalExpected),
+        'Valeur numérique': this.propertyMetrics.totalExpected
       },
       {
         'Métrique': 'Taux de recouvrement',
-        'Valeur': this.financialCalculationsService.formatPercentage(this.metrics.collectionRate),
-        'Valeur numérique': this.metrics.collectionRate
+        'Valeur': this.formatPercentage(this.propertyMetrics.collectionRate),
+        'Valeur numérique': this.propertyMetrics.collectionRate
       },
       {
         'Métrique': 'Nombre total de chambres',
-        'Valeur': this.metrics.totalRooms,
-        'Valeur numérique': this.metrics.totalRooms
+        'Valeur': this.propertyMetrics.totalRooms,
+        'Valeur numérique': this.propertyMetrics.totalRooms
       },
       {
         'Métrique': 'Chambres occupées',
-        'Valeur': this.metrics.occupiedRooms,
-        'Valeur numérique': this.metrics.occupiedRooms
+        'Valeur': this.propertyMetrics.occupiedRooms,
+        'Valeur numérique': this.propertyMetrics.occupiedRooms
       },
       {
         'Métrique': 'Taux d\'occupation',
-        'Valeur': this.financialCalculationsService.formatPercentage(this.metrics.occupancyRate),
-        'Valeur numérique': this.metrics.occupancyRate
+        'Valeur': this.formatPercentage(this.propertyMetrics.occupancyRate),
+        'Valeur numérique': this.propertyMetrics.occupancyRate
       },
       {
         'Métrique': 'Loyer moyen',
-        'Valeur': this.financialCalculationsService.formatCurrency(this.metrics.averageRent),
-        'Valeur numérique': this.metrics.averageRent
+        'Valeur': this.formatPrice(this.propertyMetrics.averageRent),
+        'Valeur numérique': this.propertyMetrics.averageRent
       },
       {
         'Métrique': 'Total des cautions',
-        'Valeur': this.financialCalculationsService.formatCurrency(this.metrics.totalDeposits),
-        'Valeur numérique': this.metrics.totalDeposits
+        'Valeur': this.formatPrice(totalDeposits),
+        'Valeur numérique': totalDeposits
       },
       {
         'Métrique': 'Profit net estimé',
-        'Valeur': this.financialCalculationsService.formatCurrency(this.metrics.netProfit),
-        'Valeur numérique': this.metrics.netProfit
+        'Valeur': this.formatPrice(netProfit),
+        'Valeur numérique': netProfit
       },
       {
         'Métrique': 'Marge bénéficiaire',
-        'Valeur': this.financialCalculationsService.formatPercentage(this.metrics.profitMargin),
-        'Valeur numérique': this.metrics.profitMargin
+        'Valeur': this.formatPercentage(profitMargin),
+        'Valeur numérique': profitMargin
       }
     ];
 
@@ -212,6 +259,56 @@ export class FinancialOverviewComponent implements OnInit, OnChanges {
       currency: 'XAF',
       minimumFractionDigits: 0
     }).format(price);
+  }
+  
+  // Getters pour le template
+  get totalRevenue(): number { return this.propertyMetrics?.totalRevenue || 0; }
+  get totalExpected(): number { return this.propertyMetrics?.totalExpected || 0; }
+  get collectionRate(): number { return this.propertyMetrics?.collectionRate || 0; }
+  get totalRooms(): number { return this.propertyMetrics?.totalRooms || 0; }
+  get occupiedRooms(): number { return this.propertyMetrics?.occupiedRooms || 0; }
+  get occupancyRate(): number { return this.propertyMetrics?.occupancyRate || 0; }
+  get averageRent(): number { return this.propertyMetrics?.averageRent || 0; }
+  get totalDeposits(): number { 
+    return this.propertyMetrics?.roomDetails.reduce((total, room) => 
+      room.isOccupied ? total + (room.monthlyRent * 2) : total, 0) || 0;
+  }
+  get netProfit(): number { 
+    const operatingCosts = this.totalRevenue * 0.30;
+    return this.totalRevenue - operatingCosts;
+  }
+  get profitMargin(): number { 
+    return this.totalRevenue > 0 ? (this.netProfit / this.totalRevenue) * 100 : 0;
+  }
+  
+  // Propriété metrics pour compatibilité avec le template
+  get metrics() {
+    if (!this.propertyMetrics) {
+      return {
+        totalRevenue: 0,
+        totalExpected: 0,
+        collectionRate: 0,
+        totalRooms: 0,
+        occupiedRooms: 0,
+        occupancyRate: 0,
+        averageRent: 0,
+        totalDeposits: 0
+      };
+    }
+    
+    const totalDeposits = this.propertyMetrics.roomDetails.reduce((total, room) => 
+      room.isOccupied ? total + (room.monthlyRent * 2) : total, 0);
+    
+    return {
+      totalRevenue: this.propertyMetrics.totalRevenue,
+      totalExpected: this.propertyMetrics.totalExpected,
+      collectionRate: this.propertyMetrics.collectionRate,
+      totalRooms: this.propertyMetrics.totalRooms,
+      occupiedRooms: this.propertyMetrics.occupiedRooms,
+      occupancyRate: this.propertyMetrics.occupancyRate,
+      averageRent: this.propertyMetrics.averageRent,
+      totalDeposits
+    };
   }
 
   formatPercentage(value: number): string {

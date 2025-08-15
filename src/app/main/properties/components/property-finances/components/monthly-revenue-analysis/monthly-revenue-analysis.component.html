@@ -114,9 +114,9 @@
 
         <!-- Taux de collecte global -->
         <div class="metric-card secondary" [ngClass]="{
-          'success': yearlyStats.averageCollectionRate >= 90,
-          'warning': yearlyStats.averageCollectionRate >= 70 && yearlyStats.averageCollectionRate < 90,
-          'danger': yearlyStats.averageCollectionRate < 70
+          'success': yearlyStatsCalculated.averageCollectionRate >= 90,
+          'warning': yearlyStatsCalculated.averageCollectionRate >= 70 && yearlyStatsCalculated.averageCollectionRate < 90,
+          'danger': yearlyStatsCalculated.averageCollectionRate < 70
         }">
           <div class="metric-content">
             <div class="metric-icon">
@@ -126,13 +126,13 @@
             </div>
             <div class="metric-info">
               <p class="metric-label">Taux de collecte</p>
-              <p class="metric-value">{{ formatPercentage(yearlyStats.averageCollectionRate) }}</p>
+              <p class="metric-value">{{ formatPercentage(yearlyStatsCalculated.averageCollectionRate) }}</p>
               <p class="metric-description">Performance de recouvrement</p>
               <div class="metric-progress">
                 <div class="progress-bar">
-                  <div class="progress-fill" [style.width.%]="yearlyStats.averageCollectionRate"></div>
+                  <div class="progress-fill" [style.width.%]="yearlyStatsCalculated.averageCollectionRate"></div>
                 </div>
-                <span class="progress-text">{{ formatPrice(yearlyStats.totalReceived) }}</span>
+                <span class="progress-text">{{ formatPrice(yearlyStatsCalculated.totalReceived) }}</span>
               </div>
             </div>
           </div>

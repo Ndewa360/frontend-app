@@ -228,7 +228,7 @@ export class TenantPaymentCalculatorService {
   }
 
   /**
-   * Construit les détails mensuels en tenant compte de la date d'entrée
+   * Construit les détails mensuels avec logique corrigée
    */
   private buildMonthlyDetails(
     paymentStat: StatisticAllPaymentLocataireYearModel,
@@ -249,9 +249,11 @@ export class TenantPaymentCalculatorService {
         const currentMonthDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
 
         // Un mois est dû s'il est après l'entrée ET avant/égal au mois actuel
+        // ET si on est dans l'année sélectionnée
         const isAfterEntry = monthDate >= entryMonthDate;
         const isBeforeCurrent = monthDate <= currentMonthDate;
-        const isDue = isAfterEntry && isBeforeCurrent;
+        const isInSelectedYear = monthDate.getFullYear() === selectedYear;
+        const isDue = isAfterEntry && isBeforeCurrent && isInSelectedYear;
 
         // Chercher les données de paiement pour ce mois (attention: les mois peuvent être indexés différemment)
         const paymentData = paymentStat.paymentState?.find(p => {
@@ -265,25 +267,35 @@ export class TenantPaymentCalculatorService {
           expected = monthlyRent; // Utiliser le loyer mensuel fixe
         }
 
-        // Calculer le montant reçu
+        // Calculer le montant reçu avec validation
         let received = 0;
-        if (paymentData) {
-          // Essayer différents champs pour le montant reçu
-          received = paymentData.unitLocationPaymentPrice ||
-                    paymentData.price ||
-                    0;
+        if (paymentData && isDue) {
+          // Utiliser le montant réellement payé
+          received = paymentData.unitLocationPaymentPrice || 0;
+          
+          // Validation : le montant reçu ne peut pas dépasser le loyer mensuel * 2
+          if (received > monthlyRent * 2) {
+            console.warn(`⚠️ Montant anormalement élevé pour le mois ${month + 1}: ${received}`);
+            received = Math.min(received, monthlyRent * 2);
+          }
         }
 
-        // Déterminer le statut correct
+        // Déterminer le statut correct avec logique améliorée
         let status: StatisticPaymentStateType = StatisticPaymentStateType.NO_CONTRACT;
+        
         if (isDue) {
           if (received >= expected) {
             status = StatisticPaymentStateType.PAYED;
-          } else if (received > 0) {
+          } else if (received >= expected * 0.5) {
             status = StatisticPaymentStateType.PARTIAL_PAYMENT;
-          } else {
+          } else if (received > 0) {
             status = StatisticPaymentStateType.LATE;
+          } else {
+            status = StatisticPaymentStateType.UNPAYED;
           }
+        } else if (received > 0) {
+          // Paiement d'avance
+          status = StatisticPaymentStateType.PAYED;
         } else if (paymentData?.state) {
           status = paymentData.state;
         }
@@ -303,7 +315,14 @@ export class TenantPaymentCalculatorService {
         });
       }
 
-      console.log(`✅ ${monthlyDetails.length} mois traités, ${monthlyDetails.filter(m => m.isDue).length} mois dus`);
+      const dueMonths = monthlyDetails.filter(m => m.isDue).length;
+      const totalExpected = monthlyDetails.filter(m => m.isDue).reduce((sum, m) => sum + m.expected, 0);
+      const totalReceived = monthlyDetails.reduce((sum, m) => sum + m.received, 0);
+      
+      console.log(`✅ ${monthlyDetails.length} mois traités, ${dueMonths} mois dus`);
+      console.log(`💰 Total attendu: ${totalExpected.toLocaleString()} FCFA`);
+      console.log(`💵 Total reçu: ${totalReceived.toLocaleString()} FCFA`);
+      
       return monthlyDetails;
 
     } catch (error) {
@@ -313,7 +332,7 @@ export class TenantPaymentCalculatorService {
   }
 
   /**
-   * Détermine le statut correct basé sur la logique métier
+   * Détermine le statut correct avec logique simplifiée et robuste
    */
   private determineCorrectStatus(
     monthlyDetails: MonthlyPaymentDetail[],
@@ -329,54 +348,43 @@ export class TenantPaymentCalculatorService {
       const hasNoContract = monthlyDetails.every(m => m.status === StatisticPaymentStateType.NO_CONTRACT);
 
       if (hasEndedContract) return 'ended_contract';
-      if (hasNoContract) return 'no_contract';
+      if (hasNoContract || totalExpected === 0) return 'no_contract';
 
-      // Analyser seulement les mois dus
-      const dueMonths = monthlyDetails.filter(m => m.isDue);
+      // Calculer le ratio de paiement
+      const paymentRatio = totalReceived / totalExpected;
 
-      if (dueMonths.length === 0) {
-        return 'no_contract'; // Aucun mois dû
+      // Logique simplifiée basée sur le ratio
+      if (paymentRatio >= 1.1) {
+        // Plus de 110% = en avance
+        return 'ahead';
       }
-
-      // Calculer les totaux pour les mois dus
-      const totalDue = dueMonths.reduce((sum, m) => sum + m.expected, 0);
-      const totalPaid = dueMonths.reduce((sum, m) => sum + m.received, 0);
-
-      // Vérifier s'il y a des paiements en retard
-      const currentMonth = currentDate.getMonth();
-      const currentYear = currentDate.getFullYear();
-      const hasLatePayments = dueMonths.some(m => {
-        const monthDate = new Date(m.year, m.month - 1, 1);
-        const isCurrentOrPast = monthDate <= new Date(currentYear, currentMonth, 1);
-        return isCurrentOrPast && m.received < m.expected;
-      });
-
-      // Logique de détermination du statut
-      if (totalPaid >= totalDue) {
-        // Vérifie s'il y a des paiements d'avance
-        if (totalPaid > totalDue) {
-          return 'ahead';
-        }
+      
+      if (paymentRatio >= 0.95) {
+        // 95-110% = à jour (tolérance de 5%)
         return 'up_to_date';
-      } else if (totalPaid > 0) {
-        // Il y a des paiements mais pas complets
-        if (hasLatePayments) {
-          return 'late';
-        }
+      }
+      
+      if (paymentRatio > 0.5) {
+        // 50-95% = paiement partiel
         return 'partial';
-      } else {
-        // Aucun paiement
+      }
+      
+      if (paymentRatio > 0) {
+        // 0-50% = en retard
         return 'late';
       }
+      
+      // Aucun paiement
+      return 'late';
 
     } catch (error) {
       console.error('❌ Erreur lors de la détermination du statut:', error);
-      return 'no_contract'; // Statut par défaut en cas d'erreur
+      return 'no_contract';
     }
   }
 
   /**
-   * Calcule les jours de retard ou mois d'avance
+   * Calcule précisément les jours de retard ou mois d'avance
    */
   private calculateLateness(
     monthlyDetails: MonthlyPaymentDetail[],
@@ -392,12 +400,14 @@ export class TenantPaymentCalculatorService {
     const difference = monthsPaid - monthsOccupied;
     
     if (difference > 0.5) {
-      // En avance
-      return { monthsAhead: Math.floor(difference) };
+      // En avance - calculer les mois complets d'avance
+      const monthsAhead = Math.floor(difference);
+      return { monthsAhead };
     } else if (difference < -0.1) {
-      // En retard - calculer les jours
-      const daysLate = Math.abs(difference) * 30; // Approximation
-      return { daysLate: Math.floor(daysLate) };
+      // En retard - calculer les jours précis
+      const monthsLate = Math.abs(difference);
+      const daysLate = Math.ceil(monthsLate * 30.44); // Utiliser la moyenne réelle de jours par mois
+      return { daysLate };
     }
     
     return {};

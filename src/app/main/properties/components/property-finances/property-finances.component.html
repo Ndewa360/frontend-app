@@ -167,6 +167,15 @@
 
       <!-- Analyse des locataires -->
       <div *ngIf="activeSection === 'tenants'">
+        <app-tenant-payment-analysis
+          [tenantStats]="financialData.tenantStats"
+          [paymentStats]="financialData.paymentStats"
+          [selectedYear]="selectedYear"
+          [propertyId]="propertyId"
+          [isLoading]="isLoading"
+          (exportData)="onExportData($event)">
+        </app-tenant-payment-analysis>
+        
         <app-tenant-payment-tracking
           [tenantStats]="financialData.tenantStats"
           [paymentStats]="financialData.paymentStats"
@@ -193,7 +202,9 @@
         <app-monthly-revenue-analysis
           [paymentStats]="financialData.paymentStats"
           [recapitulation]="financialData.recapitulation"
+          [yearlyStats]="financialData.yearlyStats"
           [selectedYear]="selectedYear"
+          [propertyId]="propertyId"
           [isLoading]="isLoading"
           (exportData)="onExportData($event)">
         </app-monthly-revenue-analysis>

@@ -125,6 +125,13 @@ export class AdvancedFinancialDashboardComponent implements OnInit, OnChanges {
   private loadLocations(): void {
     // Récupérer les locations depuis le store
     this.locations = this.store.selectSnapshot(LocationState.selectStateLocations) || [];
+    console.log('🔥 DASHBOARD - Locations chargées:', {
+      locationsCount: this.locations.length,
+      propertyId: this.propertyId,
+      yearlyStatsCount: this.yearlyStats.length,
+      activeLocations: this.locations.filter(l => l.isRunning).length,
+      locationsForProperty: this.locations.filter(l => l.property === this.propertyId).length
+    });
     this.processFinancialData();
   }
 
@@ -143,7 +150,7 @@ export class AdvancedFinancialDashboardComponent implements OnInit, OnChanges {
   }
 
   private calculateMetrics(): void {
-    console.log('📊 NOUVEAU SERVICE - Calcul des métriques avec yearlyStats:', this.yearlyStats);
+    console.log('📊 TABLEAU DE BORD - Calcul des métriques avec yearlyStats:', this.yearlyStats.length);
 
     if (!this.yearlyStats.length) {
       console.log('⚠️ Aucune donnée yearlyStats disponible');
@@ -151,39 +158,111 @@ export class AdvancedFinancialDashboardComponent implements OnInit, OnChanges {
       return;
     }
 
-    // Utiliser le nouveau service financier centralisé
-    const propertyMetrics = this.financialManager.calculatePropertyMetrics(
-      this.propertyId,
-      this.selectedYear,
-      this.yearlyStats,
-      this.locations,
-      this.paymentStats
-    );
+    try {
+      // DIAGNOSTIC COMPLET
+      console.log('🔍 DIAGNOSTIC COMPLET - DASHBOARD:', {
+        propertyId: this.propertyId,
+        selectedYear: this.selectedYear,
+        yearlyStats: this.yearlyStats.map(stat => ({
+          roomId: stat.room?._id,
+          roomCode: stat.room?.code,
+          roomPrice: stat.room?.price,
+          roomProperty: stat.room?.property,
+          paymentValue: stat.paymentValue?.reduce((sum, p) => sum + (p || 0), 0)
+        })),
+        locations: this.locations.map(loc => ({
+          id: loc._id,
+          room: loc.room,
+          property: loc.property,
+          isRunning: loc.isRunning,
+          startedAt: loc.startedAt
+        })),
+        locationsForThisProperty: this.locations.filter(l => l.property === this.propertyId).length,
+        roomsForThisProperty: this.yearlyStats.filter(s => s.room?.property === this.propertyId).length
+      });
+      
+      // Utiliser le service financier centralisé avec validation
+      const propertyMetrics = this.financialManager.calculatePropertyMetrics(
+        this.propertyId,
+        this.selectedYear,
+        this.yearlyStats,
+        this.locations,
+        this.paymentStats
+      );
 
-    // Assigner les valeurs calculées
-    this.totalRevenue = propertyMetrics.totalRevenue;
-    this.totalExpected = propertyMetrics.totalExpected;
-    this.collectionRate = propertyMetrics.collectionRate;
-    this.averageRent = propertyMetrics.averageRent;
-    this.occupancyRate = propertyMetrics.occupancyRate;
-    this.occupiedRooms = propertyMetrics.occupiedRooms;
-    this.totalRooms = propertyMetrics.totalRooms;
-    this.totalProperties = this.getTotalProperties();
+      // Valider les calculs
+      const validation = this.financialManager.validateFinancialCalculations(propertyMetrics);
+      
+      if (!validation.isValid) {
+        console.warn('⚠️ Incohérences détectées:', validation.warnings);
+        // Appliquer les corrections si nécessaire
+        Object.assign(propertyMetrics, validation.corrections);
+      }
 
-    // Calculer les changements avec le nouveau service
-    const changes = this.financialManager.calculateMetricChanges(propertyMetrics);
-    this.revenueChange = changes.revenueChange;
-    this.collectionRateChange = changes.collectionRateChange;
-    this.occupancyRateChange = changes.occupancyRateChange;
-    this.averageRentChange = changes.averageRentChange;
+      // Assigner les valeurs calculées avec logs de debug
+      this.totalRevenue = Math.round(propertyMetrics.totalRevenue * 100) / 100;
+      this.totalExpected = Math.round(propertyMetrics.totalExpected * 100) / 100;
+      this.collectionRate = Math.round(propertyMetrics.collectionRate * 100) / 100;
+      this.averageRent = Math.round(propertyMetrics.averageRent * 100) / 100;
+      this.occupancyRate = Math.round(propertyMetrics.occupancyRate * 100) / 100;
+      this.occupiedRooms = propertyMetrics.occupiedRooms;
+      this.totalRooms = propertyMetrics.totalRooms;
+      this.totalProperties = this.getTotalProperties();
+      
+      console.log('🔥 DASHBOARD - Valeurs assignées:', {
+        totalRevenue: this.totalRevenue,
+        totalExpected: this.totalExpected,
+        collectionRate: this.collectionRate + '%',
+        occupancyRate: this.occupancyRate + '%',
+        occupiedRooms: this.occupiedRooms,
+        totalRooms: this.totalRooms,
+        propertyId: this.propertyId,
+        yearlyStatsLength: this.yearlyStats.length,
+        locationsLength: this.locations.length
+      });
+      
+      // TEST SIMPLE : Vérifier le calcul d'occupation manuellement
+      const activeLocationsForProperty = this.locations.filter(loc => 
+        loc.property === this.propertyId && loc.isRunning === true
+      );
+      const roomsForProperty = this.yearlyStats.filter(stat => 
+        stat.room?.property === this.propertyId
+      );
+      const manualOccupancyRate = roomsForProperty.length > 0 ? 
+        (activeLocationsForProperty.length / roomsForProperty.length) * 100 : 0;
+      
+      console.log('🧪 TEST MANUEL - Taux d\'occupation:', {
+        activeLocations: activeLocationsForProperty.length,
+        totalRooms: roomsForProperty.length,
+        manualRate: manualOccupancyRate.toFixed(1) + '%',
+        serviceRate: this.occupancyRate.toFixed(1) + '%',
+        match: Math.abs(manualOccupancyRate - this.occupancyRate) < 0.1
+      });
 
-    // Stocker les métriques complètes pour les graphiques
-    this.propertyMetrics = propertyMetrics;
+      // Calculer les changements avec le nouveau service
+      const changes = this.financialManager.calculateMetricChanges(propertyMetrics);
+      this.revenueChange = changes.revenueChange;
+      this.collectionRateChange = changes.collectionRateChange;
+      this.occupancyRateChange = changes.occupancyRateChange;
+      this.averageRentChange = changes.averageRentChange;
 
+      // Stocker les métriques complètes pour les graphiques
+      this.propertyMetrics = propertyMetrics;
 
+      console.log('✅ Métriques calculées avec succès:', {
+        totalRevenue: this.totalRevenue.toLocaleString(),
+        collectionRate: `${this.collectionRate.toFixed(1)}%`,
+        occupancyRate: `${this.occupancyRate.toFixed(1)}%`,
+        warnings: validation.warnings.length
+      });
 
-    // Construire les métriques pour l'affichage
-    this.buildFinancialMetrics();
+      // Construire les métriques pour l'affichage
+      this.buildFinancialMetrics();
+      
+    } catch (error) {
+      console.error('❌ Erreur lors du calcul des métriques:', error);
+      this.resetMetrics();
+    }
   }
 
   private buildFinancialMetrics(): void {
@@ -573,30 +652,48 @@ export class AdvancedFinancialDashboardComponent implements OnInit, OnChanges {
     };
   }
 
-  // Méthodes utilitaires pour les données (utilisant le nouveau service)
+  // Méthodes utilitaires pour les données avec validation
   private getMonthlyRevenueData(): { months: string[], revenues: number[] } {
     if (!this.propertyMetrics) {
+      console.warn('⚠️ Pas de métriques disponibles pour les revenus mensuels');
       return { months: [], revenues: [] };
     }
 
-    // Utiliser le nouveau service pour générer les données mensuelles
-    const monthlyData = this.financialManager.generateMonthlyData(
-      this.selectedYear,
-      this.propertyMetrics.roomDetails
-    );
+    try {
+      // Générer les données mensuelles avec le service centralisé
+      const monthlyData = this.financialManager.generateMonthlyData(
+        this.selectedYear,
+        this.propertyMetrics.roomDetails
+      );
 
-    const chartData = this.financialManager.generateRevenueChartData(monthlyData);
+      const chartData = this.financialManager.generateRevenueChartData(monthlyData);
 
-    console.log('📈 NOUVEAU SERVICE - Revenus mensuels:', {
-      months: chartData.months,
-      revenues: chartData.revenues,
-      totalAnnual: chartData.revenues.reduce((sum, r) => sum + r, 0)
-    });
+      // Validation des données
+      const totalAnnual = chartData.revenues.reduce((sum, r) => sum + r, 0);
+      const expectedTotal = this.totalRevenue;
+      
+      if (Math.abs(totalAnnual - expectedTotal) > expectedTotal * 0.1) {
+        console.warn('⚠️ Écart détecté entre total mensuel et annuel:', {
+          mensuel: totalAnnual.toLocaleString(),
+          annuel: expectedTotal.toLocaleString()
+        });
+      }
 
-    return {
-      months: chartData.months,
-      revenues: chartData.revenues
-    };
+      console.log('📈 Revenus mensuels générés:', {
+        months: chartData.months.length,
+        totalAnnual: totalAnnual.toLocaleString(),
+        averageMonthly: (totalAnnual / 12).toLocaleString()
+      });
+
+      return {
+        months: chartData.months,
+        revenues: chartData.revenues
+      };
+      
+    } catch (error) {
+      console.error('❌ Erreur lors de la génération des revenus mensuels:', error);
+      return { months: [], revenues: [] };
+    }
   }
 
   private getPaymentStatusData(): any[] {
@@ -604,19 +701,38 @@ export class AdvancedFinancialDashboardComponent implements OnInit, OnChanges {
       return [];
     }
 
-    // Utiliser le nouveau service pour générer les données de statut
-    const statusData = this.financialManager.generatePaymentStatusData(
-      this.propertyMetrics.roomDetails
-    );
+    try {
+      // Générer les données de statut avec validation
+      const statusData = this.financialManager.generatePaymentStatusData(
+        this.propertyMetrics.roomDetails
+      );
 
-    console.log('📊 NOUVEAU SERVICE - Statuts de paiement:', statusData);
+      // Validation : vérifier que le total correspond au nombre de chambres
+      const totalRooms = statusData.reduce((sum, item) => sum + item.value, 0);
+      if (totalRooms !== this.totalRooms) {
+        console.warn('⚠️ Incohérence dans les statuts de paiement:', {
+          totalStatuts: totalRooms,
+          totalChambres: this.totalRooms
+        });
+      }
 
-    // Convertir au format attendu par ECharts
-    return statusData.map(item => ({
-      value: item.value,
-      name: item.name,
-      itemStyle: { color: item.color }
-    }));
+      console.log('📊 Statuts de paiement:', statusData.map(s => `${s.name}: ${s.value}`));
+
+      // Convertir au format ECharts avec couleurs améliorées
+      return statusData.map(item => ({
+        value: item.value,
+        name: item.name,
+        itemStyle: { 
+          color: item.color,
+          borderColor: '#fff',
+          borderWidth: 2
+        }
+      }));
+      
+    } catch (error) {
+      console.error('❌ Erreur lors de la génération des statuts:', error);
+      return [];
+    }
   }
 
   private getMonthlyTrendData(): { months: string[], expected: number[], received: number[] } {
@@ -624,25 +740,36 @@ export class AdvancedFinancialDashboardComponent implements OnInit, OnChanges {
       return { months: [], expected: [], received: [] };
     }
 
-    // Utiliser le nouveau service pour générer les données mensuelles
-    const monthlyData = this.financialManager.generateMonthlyData(
-      this.selectedYear,
-      this.propertyMetrics.roomDetails
-    );
+    try {
+      // Générer les données de tendance mensuelle
+      const monthlyData = this.financialManager.generateMonthlyData(
+        this.selectedYear,
+        this.propertyMetrics.roomDetails
+      );
 
-    const chartData = this.financialManager.generateRevenueChartData(monthlyData);
+      const chartData = this.financialManager.generateRevenueChartData(monthlyData);
 
-    console.log('📊 NOUVEAU SERVICE - Tendance mensuelle:', {
-      months: chartData.months,
-      expected: chartData.expected,
-      received: chartData.revenues
-    });
+      // Validation des données de tendance
+      const totalExpected = chartData.expected.reduce((sum, e) => sum + e, 0);
+      const totalReceived = chartData.revenues.reduce((sum, r) => sum + r, 0);
+      
+      console.log('📊 Tendance mensuelle générée:', {
+        months: chartData.months.length,
+        totalExpected: totalExpected.toLocaleString(),
+        totalReceived: totalReceived.toLocaleString(),
+        globalRate: totalExpected > 0 ? `${((totalReceived / totalExpected) * 100).toFixed(1)}%` : '0%'
+      });
 
-    return {
-      months: chartData.months,
-      expected: chartData.expected,
-      received: chartData.revenues
-    };
+      return {
+        months: chartData.months,
+        expected: chartData.expected,
+        received: chartData.revenues
+      };
+      
+    } catch (error) {
+      console.error('❌ Erreur lors de la génération de la tendance:', error);
+      return { months: [], expected: [], received: [] };
+    }
   }
 
   private getTenantAnalysisData(): any[] {

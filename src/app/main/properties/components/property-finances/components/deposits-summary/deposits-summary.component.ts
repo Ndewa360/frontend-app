@@ -80,63 +80,141 @@ export class DepositsSummaryComponent implements OnInit, OnChanges {
   }
 
   private processDepositData(): void {
-    this.depositSummaries = this.yearlyStats.map(roomStat => {
-      const roomPrice = roomStat.room?.price || 0;
-      const roomId = roomStat.room?._id || '';
+    console.log('🛡️ CAUTIONS - Traitement des données de caution pour', this.yearlyStats.length, 'chambres');
+    
+    this.depositSummaries = [];
+    let processedCount = 0;
+    let errorCount = 0;
 
-      // Trouver la location active pour cette chambre
-      const activeLocation = this.locations.find(loc =>
-        loc.room === roomId &&
-        loc.isRunning === true
-      );
+    this.yearlyStats.forEach((roomStat, index) => {
+      try {
+        const roomPrice = roomStat.room?.price || 0;
+        const roomId = roomStat.room?._id || '';
+        const roomCode = roomStat.room?.code || `Room_${index + 1}`;
 
-      // Trouver le locataire actuel
-      const currentTenant = activeLocation ?
-        this.tenants.find(tenant => tenant._id === activeLocation.locataire) :
-        null;
+        if (roomPrice <= 0) {
+          console.warn(`⚠️ Prix invalide pour la chambre ${roomCode}:`, roomPrice);
+          errorCount++;
+          return;
+        }
 
-      // Calculer les cautions réelles
-      const expectedDeposit = this.calculateExpectedDeposit(roomPrice, roomStat.room);
-      const receivedDeposit = this.calculateReceivedDeposit(activeLocation, currentTenant, roomPrice);
-      const depositRate = expectedDeposit > 0 ? (receivedDeposit / expectedDeposit) * 100 : 0;
+        // Trouver la location active avec validation
+        const activeLocation = this.locations.find(loc =>
+          loc.room === roomId &&
+          loc.isRunning === true &&
+          loc.startedAt // Vérifier que la date de début existe
+        );
 
-      return {
-        roomId,
-        roomCode: roomStat.room?.code || 'N/A',
-        roomType: this.getRoomTypeLabel(roomStat.room?.type),
-        roomPrice,
-        expectedDeposit,
-        receivedDeposit,
-        depositRate,
-        tenantName: currentTenant?.fullName,
-        status: this.determineDepositStatus(depositRate, currentTenant?.fullName, activeLocation)
-      };
+        // Trouver le locataire actuel
+        const currentTenant = activeLocation ?
+          this.tenants.find(tenant => tenant._id === activeLocation.locataire) :
+          null;
+
+        // Calculer les cautions avec validation
+        const expectedDeposit = this.calculateExpectedDeposit(roomPrice, roomStat.room);
+        const receivedDeposit = this.calculateReceivedDeposit(activeLocation, currentTenant, roomPrice);
+        
+        // Validation des montants
+        if (expectedDeposit < 0 || receivedDeposit < 0) {
+          console.warn(`⚠️ Montants de caution invalides pour ${roomCode}`);
+          errorCount++;
+          return;
+        }
+        
+        const depositRate = expectedDeposit > 0 ? 
+          Math.round((receivedDeposit / expectedDeposit) * 100 * 100) / 100 : 0;
+
+        const depositSummary: DepositSummary = {
+          roomId,
+          roomCode,
+          roomType: this.getRoomTypeLabel(roomStat.room?.type),
+          roomPrice,
+          expectedDeposit: Math.round(expectedDeposit * 100) / 100,
+          receivedDeposit: Math.round(receivedDeposit * 100) / 100,
+          depositRate,
+          tenantName: currentTenant?.fullName,
+          status: this.determineDepositStatus(depositRate, currentTenant?.fullName, activeLocation)
+        };
+
+        // Validation finale
+        if (this.validateDepositSummary(depositSummary)) {
+          this.depositSummaries.push(depositSummary);
+          processedCount++;
+        } else {
+          errorCount++;
+        }
+        
+      } catch (error) {
+        console.error(`❌ Erreur lors du traitement de la chambre ${index + 1}:`, error);
+        errorCount++;
+      }
     });
+
+    console.log(`✅ Traitement des cautions terminé: ${processedCount} chambres traitées, ${errorCount} erreurs`);
 
     this.calculateGlobalStats();
     this.applyFilters();
   }
 
+  private validateDepositSummary(summary: DepositSummary): boolean {
+    // Validation des données de caution
+    if (summary.depositRate > 200) {
+      console.warn(`⚠️ Taux de caution anormal: ${summary.depositRate}% pour ${summary.roomCode}`);
+      summary.depositRate = Math.min(summary.depositRate, 200);
+    }
+    
+    if (summary.receivedDeposit > summary.expectedDeposit * 2) {
+      console.warn(`⚠️ Caution reçue anormalement élevée pour ${summary.roomCode}`);
+    }
+    
+    return true;
+  }
+
   private calculateExpectedDeposit(roomPrice: number, room: any): number {
-    // Utiliser la caution définie sur la chambre ou 2 mois de loyer par défaut
-    return room?.cautionPrice || (roomPrice * 2);
+    // Logique améliorée pour le calcul de la caution attendue
+    if (room?.cautionPrice && room.cautionPrice > 0) {
+      return room.cautionPrice;
+    }
+    
+    // Par défaut: 2 mois de loyer (standard du marché)
+    const defaultDeposit = roomPrice * 2;
+    
+    // Validation: la caution ne peut pas être inférieure au loyer mensuel
+    return Math.max(defaultDeposit, roomPrice);
   }
 
   private calculateReceivedDeposit(location: LocationModel | undefined, tenant: LocataireModel | null, roomPrice: number): number {
     if (!location || !tenant) return 0;
 
-    // Chercher les paiements de caution pour cette location
-    const cautionPayments = this.payments.filter(payment =>
-      payment.location === location._id &&
-      payment.paymentLocationType === LocationPaymentType.CAUTION
-    );
+    try {
+      // Chercher les paiements de caution pour cette location avec validation
+      const cautionPayments = this.payments.filter(payment =>
+        payment.location === location._id &&
+        payment.paymentLocationType === LocationPaymentType.CAUTION &&
+        payment.locationPaymentPrice > 0 // Exclure les montants négatifs ou nuls
+      );
 
-    // Calculer le total des cautions reçues
-    const totalCautionReceived = cautionPayments.reduce((sum, payment) =>
-      sum + (payment.locationPaymentPrice || 0), 0
-    );
+      // Calculer le total avec validation
+      const totalCautionReceived = cautionPayments.reduce((sum, payment) => {
+        const amount = payment.locationPaymentPrice || 0;
+        
+        // Validation: un paiement de caution ne devrait pas dépasser 5 mois de loyer
+        if (amount > roomPrice * 5) {
+          console.warn(`⚠️ Paiement de caution anormalement élevé: ${amount} pour un loyer de ${roomPrice}`);
+          return sum + Math.min(amount, roomPrice * 5);
+        }
+        
+        return sum + amount;
+      }, 0);
 
-    return totalCautionReceived;
+      console.log(`💰 Caution calculée pour ${location._id}: ${totalCautionReceived} FCFA (${cautionPayments.length} paiements)`);
+      
+      return Math.round(totalCautionReceived * 100) / 100;
+      
+    } catch (error) {
+      console.error('❌ Erreur lors du calcul de la caution reçue:', error);
+      return 0;
+    }
   }
 
   private determineDepositStatus(
@@ -144,33 +222,70 @@ export class DepositsSummaryComponent implements OnInit, OnChanges {
     tenantName?: string,
     location?: LocationModel
   ): DepositSummary['status'] {
+    // Vérifier d'abord s'il y a un locataire
     if (!tenantName || !location) return 'no_tenant';
+    
+    // Vérifier si le contrat est actif
+    if (!location.isRunning) return 'no_tenant';
 
-    // Si aucune caution n'a été reçue
-    if (depositRate === 0) return 'missing';
-
-    // Si la caution est complète (100% ou plus)
-    if (depositRate >= 100) return 'complete';
-
-    // Si la caution est partielle
-    if (depositRate > 0) return 'partial';
-
-    return 'missing';
+    // Logique améliorée pour déterminer le statut
+    if (depositRate >= 100) {
+      return 'complete'; // Caution complète
+    } else if (depositRate >= 50) {
+      return 'partial'; // Caution partielle (au moins 50%)
+    } else if (depositRate > 0) {
+      return 'partial'; // Caution partielle (moins de 50%)
+    } else {
+      return 'missing'; // Aucune caution
+    }
   }
 
   private calculateGlobalStats(): void {
+    console.log('📊 Calcul des statistiques globales des cautions');
+    
+    const totalRooms = this.depositSummaries.length;
+    const totalExpectedDeposits = this.depositSummaries.reduce((sum, d) => sum + d.expectedDeposit, 0);
+    const totalReceivedDeposits = this.depositSummaries.reduce((sum, d) => sum + d.receivedDeposit, 0);
+    
+    // Compter par statut
+    const completeDeposits = this.depositSummaries.filter(d => d.status === 'complete').length;
+    const partialDeposits = this.depositSummaries.filter(d => d.status === 'partial').length;
+    const missingDeposits = this.depositSummaries.filter(d => d.status === 'missing').length;
+    const noTenantRooms = this.depositSummaries.filter(d => d.status === 'no_tenant').length;
+    
+    // Calculer la moyenne seulement pour les chambres avec locataires
+    const roomsWithTenants = this.depositSummaries.filter(d => d.status !== 'no_tenant');
+    const averageDepositRate = roomsWithTenants.length > 0 
+      ? Math.round((roomsWithTenants.reduce((sum, d) => sum + d.depositRate, 0) / roomsWithTenants.length) * 100) / 100
+      : 0;
+    
     this.globalStats = {
-      totalRooms: this.depositSummaries.length,
-      totalExpectedDeposits: this.depositSummaries.reduce((sum, d) => sum + d.expectedDeposit, 0),
-      totalReceivedDeposits: this.depositSummaries.reduce((sum, d) => sum + d.receivedDeposit, 0),
-      completeDeposits: this.depositSummaries.filter(d => d.status === 'complete').length,
-      partialDeposits: this.depositSummaries.filter(d => d.status === 'partial').length,
-      missingDeposits: this.depositSummaries.filter(d => d.status === 'missing').length,
-      noTenantRooms: this.depositSummaries.filter(d => d.status === 'no_tenant').length,
-      averageDepositRate: this.depositSummaries.length > 0 
-        ? this.depositSummaries.reduce((sum, d) => sum + d.depositRate, 0) / this.depositSummaries.length 
-        : 0
+      totalRooms,
+      totalExpectedDeposits: Math.round(totalExpectedDeposits * 100) / 100,
+      totalReceivedDeposits: Math.round(totalReceivedDeposits * 100) / 100,
+      completeDeposits,
+      partialDeposits,
+      missingDeposits,
+      noTenantRooms,
+      averageDepositRate
     };
+    
+    // Validation des statistiques
+    const totalCategorized = completeDeposits + partialDeposits + missingDeposits + noTenantRooms;
+    if (totalCategorized !== totalRooms) {
+      console.warn('⚠️ Incohérence dans la catégorisation des cautions:', {
+        totalRooms,
+        totalCategorized
+      });
+    }
+    
+    console.log('✅ Statistiques globales calculées:', {
+      totalRooms,
+      completeRate: `${((completeDeposits / Math.max(roomsWithTenants.length, 1)) * 100).toFixed(1)}%`,
+      averageRate: `${averageDepositRate.toFixed(1)}%`,
+      totalExpected: totalExpectedDeposits.toLocaleString(),
+      totalReceived: totalReceivedDeposits.toLocaleString()
+    });
   }
 
   // === MÉTHODES DE FILTRAGE ===
@@ -203,7 +318,7 @@ export class DepositsSummaryComponent implements OnInit, OnChanges {
     this.applyFilters();
   }
 
-  // === MÉTHODES D'EXPORT ===
+  // === MÉTHODES D'EXPORT AMÉLIORÉES ===
 
   onExportDepositSummary(): void {
     const exportData = this.filteredSummaries.map(deposit => ({
@@ -212,15 +327,39 @@ export class DepositsSummaryComponent implements OnInit, OnChanges {
       'Loyer mensuel': deposit.roomPrice,
       'Caution attendue': deposit.expectedDeposit,
       'Caution reçue': deposit.receivedDeposit,
-      'Taux de caution': deposit.depositRate,
+      'Taux de caution': `${deposit.depositRate.toFixed(1)}%`,
+      'Montant manquant': Math.max(0, deposit.expectedDeposit - deposit.receivedDeposit),
       'Locataire': deposit.tenantName || 'Aucun',
-      'Statut': this.getStatusLabel(deposit.status)
+      'Statut': this.getStatusLabel(deposit.status),
+      'Année': this.selectedYear,
+      'Date export': new Date().toLocaleDateString('fr-FR')
     }));
 
     this.exportData.emit({
       type: 'excel',
       data: exportData,
       filename: `recapitulatif-cautions-${this.selectedYear}`
+    });
+  }
+  
+  onExportGlobalStats(): void {
+    const statsData = [{
+      'Total chambres': this.globalStats.totalRooms,
+      'Cautions complètes': this.globalStats.completeDeposits,
+      'Cautions partielles': this.globalStats.partialDeposits,
+      'Cautions manquantes': this.globalStats.missingDeposits,
+      'Chambres libres': this.globalStats.noTenantRooms,
+      'Total attendu': this.globalStats.totalExpectedDeposits,
+      'Total reçu': this.globalStats.totalReceivedDeposits,
+      'Taux moyen': `${this.globalStats.averageDepositRate.toFixed(1)}%`,
+      'Taux de complétion': `${((this.globalStats.completeDeposits / Math.max(this.globalStats.totalRooms - this.globalStats.noTenantRooms, 1)) * 100).toFixed(1)}%`,
+      'Année': this.selectedYear
+    }];
+    
+    this.exportData.emit({
+      type: 'excel',
+      data: statsData,
+      filename: `statistiques-cautions-${this.selectedYear}`
     });
   }
 
@@ -281,6 +420,38 @@ export class DepositsSummaryComponent implements OnInit, OnChanges {
 
   trackByRoomId(_: number, deposit: DepositSummary): string {
     return deposit.roomId;
+  }
+  
+  // Méthodes d'analyse avancée
+  getDepositCompletionRate(): number {
+    const roomsWithTenants = this.depositSummaries.filter(d => d.status !== 'no_tenant').length;
+    if (roomsWithTenants === 0) return 0;
+    return Math.round((this.globalStats.completeDeposits / roomsWithTenants) * 100 * 100) / 100;
+  }
+  
+  getAverageDepositAmount(): number {
+    const roomsWithDeposits = this.depositSummaries.filter(d => d.receivedDeposit > 0);
+    if (roomsWithDeposits.length === 0) return 0;
+    const total = roomsWithDeposits.reduce((sum, d) => sum + d.receivedDeposit, 0);
+    return Math.round((total / roomsWithDeposits.length) * 100) / 100;
+  }
+  
+  getTotalMissingDeposits(): number {
+    return this.depositSummaries.reduce((total, deposit) => {
+      if (deposit.status !== 'no_tenant' && deposit.status !== 'complete') {
+        return total + Math.max(0, deposit.expectedDeposit - deposit.receivedDeposit);
+      }
+      return total;
+    }, 0);
+  }
+  
+  getDepositHealthScore(): number {
+    // Score de santé des cautions (0-100)
+    const completionRate = this.getDepositCompletionRate();
+    const averageRate = this.globalStats.averageDepositRate;
+    
+    // Pondération: 60% taux de complétion, 40% taux moyen
+    return Math.round((completionRate * 0.6 + averageRate * 0.4) * 100) / 100;
   }
 
   // Propriété Math pour les templates

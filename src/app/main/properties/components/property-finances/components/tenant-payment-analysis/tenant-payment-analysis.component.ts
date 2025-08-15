@@ -1,9 +1,14 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges } from '@angular/core';
 import {
   StatisticLocataireYearModel,
-  StatisticPaymentStateType
+  StatisticAllPaymentLocataireYearModel,
+  StatisticPaymentStateType,
+  LocationModel,
+  LocationState
 } from 'src/app/shared/store';
+import { Store } from '@ngxs/store';
 import { ExportData } from '../../property-finances.component';
+import { TenantPaymentCalculatorService, TenantPaymentCalculation } from 'src/app/shared/services/tenant-payment-calculator.service';
 
 export interface TenantPaymentSummary {
   tenantId: string;
@@ -30,13 +35,17 @@ export interface TenantPaymentSummary {
 })
 export class TenantPaymentAnalysisComponent implements OnInit, OnChanges {
   @Input() tenantStats: StatisticLocataireYearModel[] = [];
+  @Input() paymentStats: StatisticAllPaymentLocataireYearModel[] = [];
   @Input() selectedYear: number = new Date().getFullYear();
+  @Input() propertyId: string = '';
   @Input() isLoading: boolean = false;
 
   @Output() exportData = new EventEmitter<ExportData>();
 
-  tenantSummaries: TenantPaymentSummary[] = [];
-  filteredSummaries: TenantPaymentSummary[] = [];
+  locations: LocationModel[] = [];
+
+  tenantPaymentCalculations: TenantPaymentCalculation[] = [];
+  filteredSummaries: TenantPaymentCalculation[] = [];
   
   // Filtres
   statusFilter: 'all' | 'excellent' | 'good' | 'warning' | 'critical' = 'all';
@@ -53,104 +62,115 @@ export class TenantPaymentAnalysisComponent implements OnInit, OnChanges {
     averagePaymentRate: 0
   };
 
+  constructor(
+    private store: Store,
+    private tenantPaymentCalculator: TenantPaymentCalculatorService
+  ) {}
+
   ngOnInit(): void {
-    this.processTenantData();
+    this.loadLocations();
   }
 
   ngOnChanges(): void {
+    this.loadLocations();
+  }
+
+  private loadLocations(): void {
+    this.locations = this.store.selectSnapshot(LocationState.selectStateLocations) || [];
     this.processTenantData();
   }
 
   private processTenantData(): void {
-    this.tenantSummaries = this.tenantStats.map(tenantStat => {
-      const monthlyPayments = this.buildMonthlyPayments(tenantStat);
-      const totalExpected = monthlyPayments.reduce((sum, month) => sum + month.expectedAmount, 0);
-      const totalReceived = monthlyPayments.reduce((sum, month) => sum + month.receivedAmount, 0);
-      const overallRate = totalExpected > 0 ? (totalReceived / totalExpected) * 100 : 0;
+    console.log('👥 ANALYSE LOCATAIRES - Traitement des données de paiement');
+    
+    this.tenantPaymentCalculations = [];
+    let processedCount = 0;
+    let errorCount = 0;
 
-      return {
-        tenantId: tenantStat.locataire?._id || '',
-        tenantName: tenantStat.locataire?.fullName || 'Locataire inconnu',
-        roomCode: 'N/A', // Cette information n'est pas directement disponible dans StatisticLocataireYearModel
-        monthlyPayments,
-        totalExpected,
-        totalReceived,
-        overallRate,
-        status: this.determineStatus(overallRate, monthlyPayments)
-      };
+    this.paymentStats.forEach((paymentStat, index) => {
+      try {
+        if (!paymentStat.locataire) {
+          console.warn(`⚠️ Locataire manquant pour l'entrée ${index + 1}`);
+          return;
+        }
+
+        // Trouver la location correspondante
+        const location = this.locations.find(loc =>
+          loc.locataire === paymentStat.locataire._id &&
+          loc.room === paymentStat.room._id &&
+          loc.isRunning === true
+        );
+
+        if (location && location.startedAt) {
+          const tenantCalculation = this.tenantPaymentCalculator.calculateTenantPaymentStatus(
+            paymentStat,
+            location,
+            this.selectedYear
+          );
+
+          if (tenantCalculation) {
+            this.tenantPaymentCalculations.push(tenantCalculation);
+            processedCount++;
+          }
+        } else {
+          console.warn('⚠️ Location invalide pour:', paymentStat.locataire.fullName);
+          errorCount++;
+        }
+        
+      } catch (error) {
+        console.error('❌ Erreur lors du traitement du locataire:', error);
+        errorCount++;
+      }
     });
+
+    console.log(`✅ Traitement terminé: ${processedCount} locataires traités, ${errorCount} erreurs`);
 
     this.calculateGlobalStats();
     this.applyFilters();
   }
 
-  private buildMonthlyPayments(tenantStat: StatisticLocataireYearModel): TenantPaymentSummary['monthlyPayments'] {
-    const monthlyPayments: TenantPaymentSummary['monthlyPayments'] = [];
 
-    for (let month = 0; month < 12; month++) {
-      // Utiliser paymentValue qui est un tableau des paiements mensuels
-      const receivedAmount = tenantStat.paymentValue?.[month] || 0;
-      // Estimation du montant attendu (on pourrait l'obtenir d'une autre source)
-      const expectedAmount = 50000; // Estimation par défaut, à ajuster selon les données disponibles
-      const paymentRate = expectedAmount > 0 ? (receivedAmount / expectedAmount) * 100 : 0;
-
-      // Déterminer le statut basé sur le montant reçu
-      let state = StatisticPaymentStateType.NO_CONTRACT;
-      if (receivedAmount > 0) {
-        if (receivedAmount >= expectedAmount) {
-          state = StatisticPaymentStateType.PAYED;
-        } else {
-          state = StatisticPaymentStateType.PARTIAL_PAYMENT;
-        }
-      } else {
-        state = StatisticPaymentStateType.UNPAYED;
-      }
-
-      monthlyPayments.push({
-        month,
-        monthName: this.getMonthName(month),
-        state,
-        expectedAmount,
-        receivedAmount,
-        paymentRate
-      });
-    }
-
-    return monthlyPayments;
-  }
-
-  private determineStatus(overallRate: number, monthlyPayments: TenantPaymentSummary['monthlyPayments']): TenantPaymentSummary['status'] {
-    // Compter les mois avec des problèmes
-    const problematicMonths = monthlyPayments.filter(month => 
-      month.state === StatisticPaymentStateType.UNPAYED || 
-      month.state === StatisticPaymentStateType.PARTIAL_PAYMENT
-    ).length;
-
-    if (overallRate >= 95 && problematicMonths === 0) return 'excellent';
-    if (overallRate >= 80 && problematicMonths <= 1) return 'good';
-    if (overallRate >= 60 || problematicMonths <= 3) return 'warning';
-    return 'critical';
-  }
 
   private calculateGlobalStats(): void {
+    const totalTenants = this.tenantPaymentCalculations.length;
+    
+    // Mapper les statuts du service vers les statuts de ce composant
+    const excellentTenants = this.tenantPaymentCalculations.filter(t => 
+      t.status === 'up_to_date' || t.status === 'ahead').length;
+    const goodTenants = this.tenantPaymentCalculations.filter(t => 
+      t.status === 'partial' && t.paymentRate >= 80).length;
+    const warningTenants = this.tenantPaymentCalculations.filter(t => 
+      t.status === 'partial' && t.paymentRate < 80).length;
+    const criticalTenants = this.tenantPaymentCalculations.filter(t => 
+      t.status === 'late' || t.status === 'no_contract').length;
+    
+    const averagePaymentRate = totalTenants > 0 
+      ? this.tenantPaymentCalculations.reduce((sum, t) => sum + t.paymentRate, 0) / totalTenants 
+      : 0;
+
     this.globalStats = {
-      totalTenants: this.tenantSummaries.length,
-      excellentTenants: this.tenantSummaries.filter(t => t.status === 'excellent').length,
-      goodTenants: this.tenantSummaries.filter(t => t.status === 'good').length,
-      warningTenants: this.tenantSummaries.filter(t => t.status === 'warning').length,
-      criticalTenants: this.tenantSummaries.filter(t => t.status === 'critical').length,
-      averagePaymentRate: this.tenantSummaries.length > 0 
-        ? this.tenantSummaries.reduce((sum, t) => sum + t.overallRate, 0) / this.tenantSummaries.length 
-        : 0
+      totalTenants,
+      excellentTenants,
+      goodTenants,
+      warningTenants,
+      criticalTenants,
+      averagePaymentRate: Math.round(averagePaymentRate * 100) / 100
     };
   }
 
   // === MÉTHODES DE FILTRAGE ===
 
   applyFilters(): void {
-    this.filteredSummaries = this.tenantSummaries.filter(tenant => {
+    this.filteredSummaries = this.tenantPaymentCalculations.filter(tenant => {
+      // Mapper le statut pour le filtre
+      let mappedStatus = 'good';
+      if (tenant.status === 'up_to_date' || tenant.status === 'ahead') mappedStatus = 'excellent';
+      else if (tenant.status === 'partial' && tenant.paymentRate >= 80) mappedStatus = 'good';
+      else if (tenant.status === 'partial' && tenant.paymentRate < 80) mappedStatus = 'warning';
+      else if (tenant.status === 'late' || tenant.status === 'no_contract') mappedStatus = 'critical';
+      
       // Filtre par statut
-      if (this.statusFilter !== 'all' && tenant.status !== this.statusFilter) {
+      if (this.statusFilter !== 'all' && mappedStatus !== this.statusFilter) {
         return false;
       }
 
@@ -183,9 +203,13 @@ export class TenantPaymentAnalysisComponent implements OnInit, OnChanges {
       'Chambre': tenant.roomCode,
       'Revenus attendus': tenant.totalExpected,
       'Revenus reçus': tenant.totalReceived,
-      'Taux de paiement': tenant.overallRate,
-      'Statut': this.getStatusLabel(tenant.status),
-      ...this.getMonthlyExportData(tenant)
+      'Taux de paiement': `${tenant.paymentRate.toFixed(1)}%`,
+      'Statut': this.getCalculationStatusLabel(tenant.status),
+      'Mois occupés': tenant.monthsOccupied,
+      'Loyer mensuel': tenant.monthlyRent,
+      'Statut contrat': tenant.contractStatus,
+      'Date d\'entrée': tenant.entryDate.toLocaleDateString('fr-FR'),
+      'Année': this.selectedYear
     }));
 
     this.exportData.emit({
@@ -195,16 +219,7 @@ export class TenantPaymentAnalysisComponent implements OnInit, OnChanges {
     });
   }
 
-  private getMonthlyExportData(tenant: TenantPaymentSummary): any {
-    const monthlyData: any = {};
-    tenant.monthlyPayments.forEach(month => {
-      monthlyData[`${month.monthName} - État`] = this.getPaymentStateLabel(month.state);
-      monthlyData[`${month.monthName} - Attendu`] = month.expectedAmount;
-      monthlyData[`${month.monthName} - Reçu`] = month.receivedAmount;
-      monthlyData[`${month.monthName} - Taux`] = month.paymentRate;
-    });
-    return monthlyData;
-  }
+
 
   // === MÉTHODES UTILITAIRES ===
 
@@ -253,27 +268,42 @@ export class TenantPaymentAnalysisComponent implements OnInit, OnChanges {
     }
   }
 
-  getStatusLabel(status: TenantPaymentSummary['status']): string {
+  trackByTenantId(_: number, tenant: TenantPaymentCalculation): string {
+    return tenant.tenantId;
+  }
+  
+  getCalculationStatusLabel(status: TenantPaymentCalculation['status']): string {
     switch (status) {
-      case 'excellent': return 'Excellent';
-      case 'good': return 'Bon';
-      case 'warning': return 'Attention';
-      case 'critical': return 'Critique';
+      case 'up_to_date': return 'À jour';
+      case 'ahead': return 'En avance';
+      case 'partial': return 'Paiement partiel';
+      case 'late': return 'En retard';
+      case 'no_contract': return 'Pas de contrat';
+      case 'ended_contract': return 'Contrat terminé';
       default: return 'Inconnu';
     }
   }
 
-  getStatusColor(status: TenantPaymentSummary['status']): string {
+  getCalculationStatusColor(status: TenantPaymentCalculation['status']): string {
     switch (status) {
-      case 'excellent': return 'bg-green-100 text-green-800';
-      case 'good': return 'bg-blue-100 text-blue-800';
-      case 'warning': return 'bg-yellow-100 text-yellow-800';
-      case 'critical': return 'bg-red-100 text-red-800';
+      case 'up_to_date': return 'bg-green-100 text-green-800';
+      case 'ahead': return 'bg-blue-100 text-blue-800';
+      case 'partial': return 'bg-yellow-100 text-yellow-800';
+      case 'late': return 'bg-red-100 text-red-800';
+      case 'no_contract': return 'bg-gray-100 text-gray-800';
+      case 'ended_contract': return 'bg-purple-100 text-purple-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   }
-
-  trackByTenantId(_: number, tenant: TenantPaymentSummary): string {
-    return tenant.tenantId;
+  
+  // Méthodes de mapping pour les statuts
+  getMappedStatus(tenant: TenantPaymentCalculation): 'excellent' | 'good' | 'warning' | 'critical' {
+    if (tenant.status === 'up_to_date' || tenant.status === 'ahead') return 'excellent';
+    if (tenant.status === 'partial' && tenant.paymentRate >= 80) return 'good';
+    if (tenant.status === 'partial' && tenant.paymentRate < 80) return 'warning';
+    if (tenant.status === 'late' || tenant.status === 'no_contract') return 'critical';
+    return 'good';
   }
+  
+
 }

@@ -188,18 +188,32 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
       return;
     }
 
-
+    console.log(`🔄 CHARGEMENT FINANCIER - Propriété: ${this.propertyId}, Année: ${this.selectedYear}`);
 
     // Marquer comme en cours de chargement
     this.isLoading = true;
 
-    // Déclencher l'action principale de rafraîchissement (une seule fois)
-    this.store.dispatch(
-      new StatisticAction.RefreshStaticLocataireDataByPropertyIdAndYear(this.propertyId, this.selectedYear.toString())
-    );
+    try {
+      // Déclencher l'action principale de rafraîchissement
+      this.store.dispatch(
+        new StatisticAction.RefreshStaticLocataireDataByPropertyIdAndYear(this.propertyId, this.selectedYear.toString())
+      );
 
-    // Vérifier les données existantes sans forcer le rechargement
-    this.checkExistingData();
+      // Vérifier les données existantes
+      this.checkExistingData();
+      
+      // Timeout de sécurité pour arrêter le loading
+      setTimeout(() => {
+        if (this.isLoading) {
+          console.warn('⚠️ Timeout de chargement atteint, arrêt forcé du loading');
+          this.isLoading = false;
+        }
+      }, 10000); // 10 secondes maximum
+      
+    } catch (error) {
+      console.error('❌ Erreur lors du chargement des données financières:', error);
+      this.isLoading = false;
+    }
   }
 
   private checkExistingData(): void {
@@ -299,7 +313,9 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private setupDataSubscriptions(): void {
-    // Combiner toutes les données financières
+    console.log('🔍 Configuration des souscriptions aux données');
+    
+    // Combiner toutes les données financières avec gestion d'erreurs
     combineLatest([
       this.roomStatistics$,
       this.tenantStatistics$,
@@ -307,37 +323,79 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
       this.recapitulation$
     ]).pipe(
       takeUntil(this.destroy$)
-    ).subscribe(([roomStats, tenantStats, paymentStats, recapStats]) => {
-      this.financialData = {
-        yearlyStats: roomStats || [],
-        tenantStats: tenantStats || [],
-        paymentStats: paymentStats || [],
-        recapitulation: this.findRecapForYear(recapStats)
-      };
+    ).subscribe({
+      next: ([roomStats, tenantStats, paymentStats, recapStats]) => {
+        try {
+          console.log('📊 Données reçues:', {
+            roomStats: roomStats?.length || 0,
+            tenantStats: tenantStats?.length || 0,
+            paymentStats: paymentStats?.length || 0,
+            recapStats: recapStats?.length || 0
+          });
+          
+          this.financialData = {
+            yearlyStats: roomStats || [],
+            tenantStats: tenantStats || [],
+            paymentStats: paymentStats || [],
+            recapitulation: this.findRecapForYear(recapStats)
+          };
 
+          // Validation des données
+          this.validateFinancialData();
 
-
-
-
-      // Arrêter le loading si on a des données
-      if (this.hasFinancialData()) {
-        this.isLoading = false;
-        this.resetLoadingAttempts();
-        console.log('✅ Données chargées, arrêt du loading');
-
-        // Forcer la détection des changements
-        setTimeout(() => {
+          // Arrêter le loading si on a des données valides
+          if (this.hasFinancialData()) {
+            this.isLoading = false;
+            this.resetLoadingAttempts();
+            console.log('✅ Données financières chargées et validées');
+          } else if (!this.isLoading) {
+            // Si pas de loading en cours et pas de données, relancer
+            console.log('⚠️ Pas de données détectées, tentative de rechargement');
+            setTimeout(() => this.forceLoadAllData(), 2000);
+          }
+          
+        } catch (error) {
+          console.error('❌ Erreur lors du traitement des données:', error);
           this.isLoading = false;
-        }, 50);
+        }
+      },
+      error: (error) => {
+        console.error('❌ Erreur dans la souscription aux données:', error);
+        this.isLoading = false;
       }
     });
 
-    // Surveiller les états de chargement
+    // Surveiller les états de chargement avec timeout
     this.loadingStates$.pipe(
       takeUntil(this.destroy$)
     ).subscribe(states => {
-      this.isLoading = Object.values(states).some(loading => loading);
+      const anyLoading = Object.values(states).some(loading => loading);
+      
+      if (anyLoading !== this.isLoading) {
+        console.log('🔄 État de chargement changé:', anyLoading);
+        this.isLoading = anyLoading;
+      }
     });
+  }
+
+  private validateFinancialData(): void {
+    const warnings: string[] = [];
+    
+    // Vérifier la cohérence des données
+    if (this.financialData.yearlyStats.length === 0 && 
+        this.financialData.tenantStats.length === 0 && 
+        this.financialData.paymentStats.length === 0) {
+      warnings.push('Aucune donnée financière disponible');
+    }
+    
+    // Vérifier la cohérence entre les différentes sources
+    if (this.financialData.yearlyStats.length > 0 && this.financialData.paymentStats.length === 0) {
+      warnings.push('Données de chambres présentes mais pas de statistiques de paiement');
+    }
+    
+    if (warnings.length > 0) {
+      console.warn('⚠️ Avertissements de validation:', warnings);
+    }
   }
 
   private loadFinancialDataForYear(year: number): void {
@@ -368,34 +426,50 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
   // === MÉTHODES D'ACTIONS ===
 
   onYearChange(year: number | string): void {
-    // Convertir en nombre si c'est une string (venant du select HTML)
+    // Convertir en nombre si c'est une string
     const numericYear = typeof year === 'string' ? parseInt(year, 10) : year;
 
-    if (isNaN(numericYear)) {
+    if (isNaN(numericYear) || numericYear < 2020 || numericYear > 2030) {
       console.error('❌ Année invalide:', year);
       return;
     }
 
+    console.log(`📅 CHANGEMENT D'ANNÉE: ${this.selectedYear} → ${numericYear}`);
 
-
-    // Remettre à zéro les compteurs pour la nouvelle année
+    // Remettre à zéro les compteurs
     this.resetLoadingAttempts();
 
     // Marquer comme en cours de chargement
     this.isLoading = true;
 
     // Mettre à jour l'année sélectionnée
+    const previousYear = this.selectedYear;
     this.selectedYear = numericYear;
 
-    // Réinitialiser les observables avec la nouvelle année
-    this.initializeObservables();
+    try {
+      // Réinitialiser les observables avec la nouvelle année
+      this.initializeObservables();
 
-    // Charger les données pour la nouvelle année (une seule fois)
-    this.loadFinancialDataForYear(numericYear);
+      // Charger les données pour la nouvelle année
+      this.loadFinancialDataForYear(numericYear);
+      
+      // Timeout de sécurité
+      setTimeout(() => {
+        if (this.isLoading) {
+          console.warn(`⚠️ Timeout pour l'année ${numericYear}, arrêt forcé`);
+          this.isLoading = false;
+        }
+      }, 12000);
+      
+    } catch (error) {
+      console.error('❌ Erreur lors du changement d\'année:', error);
+      this.selectedYear = previousYear; // Restaurer l'année précédente
+      this.isLoading = false;
+    }
   }
 
   /**
-   * Vérifie s'il y a des données financières disponibles pour l'année sélectionnée
+   * Vérifie s'il y a des données financières disponibles avec validation améliorée
    */
   hasFinancialData(): boolean {
     const hasYearlyStats = this.financialData.yearlyStats.length > 0;
@@ -403,8 +477,16 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
     const hasPaymentStats = this.financialData.paymentStats.length > 0;
     const hasRecapitulation = this.financialData.recapitulation !== null;
 
-    // Pour considérer qu'on a des données, il faut au minimum yearlyStats OU (tenantStats ET paymentStats)
-    const hasMinimalData = hasYearlyStats || (hasTenantStats && hasPaymentStats);
+    // Logique améliorée : au minimum yearlyStats OU paymentStats
+    const hasMinimalData = hasYearlyStats || hasPaymentStats;
+    
+    // Vérification de la qualité des données
+    let dataQuality = 'none';
+    if (hasYearlyStats && hasPaymentStats && hasTenantStats) {
+      dataQuality = 'complete';
+    } else if (hasYearlyStats || hasPaymentStats) {
+      dataQuality = 'partial';
+    }
 
     console.log('🔍 Vérification des données financières:', {
       hasYearlyStats,
@@ -412,11 +494,39 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
       hasPaymentStats,
       hasRecapitulation,
       hasMinimalData,
+      dataQuality,
       propertyId: this.propertyId,
       selectedYear: this.selectedYear
     });
 
     return hasMinimalData;
+  }
+  
+  /**
+   * Obtient le score de qualité des données (0-100)
+   */
+  getDataQualityScore(): number {
+    let score = 0;
+    
+    if (this.financialData.yearlyStats.length > 0) score += 40;
+    if (this.financialData.paymentStats.length > 0) score += 30;
+    if (this.financialData.tenantStats.length > 0) score += 20;
+    if (this.financialData.recapitulation !== null) score += 10;
+    
+    return score;
+  }
+  
+  /**
+   * Obtient le label de qualité des données
+   */
+  getDataQualityLabel(): string {
+    const score = this.getDataQualityScore();
+    
+    if (score >= 90) return 'Excellente';
+    if (score >= 70) return 'Bonne';
+    if (score >= 50) return 'Moyenne';
+    if (score >= 30) return 'Faible';
+    return 'Insuffisante';
   }
 
   /**
@@ -577,16 +687,39 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   refreshData(): void {
-    if (this.propertyId) {
+    if (!this.propertyId) {
+      console.warn('⚠️ Impossible de rafraîchir: propertyId manquant');
+      return;
+    }
 
-
+    console.log('🔄 RAFRAÎCHISSEMENT FORCÉ des données financières');
+    
+    // Marquer comme en cours de chargement
+    this.isLoading = true;
+    
+    // Réinitialiser les compteurs
+    this.resetLoadingAttempts();
+    
+    try {
       // Vider le cache et forcer le rechargement
       this.store.dispatch(new StatisticAction.ResetAllState());
 
-      // Recharger toutes les données
+      // Recharger toutes les données après un court délai
       setTimeout(() => {
         this.loadFinancialData();
-      }, 100);
+      }, 200);
+      
+      // Timeout de sécurité
+      setTimeout(() => {
+        if (this.isLoading) {
+          console.warn('⚠️ Timeout de rafraîchissement, arrêt forcé');
+          this.isLoading = false;
+        }
+      }, 15000);
+      
+    } catch (error) {
+      console.error('❌ Erreur lors du rafraîchissement:', error);
+      this.isLoading = false;
     }
   }
 

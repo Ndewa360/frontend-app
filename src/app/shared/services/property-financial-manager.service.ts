@@ -51,10 +51,14 @@ export interface RoomFinancialDetail {
   expectedForYear: number;
   receivedForYear: number;
   collectionRate: number;
+  advanceAmount?: number; // Nouveau : montant d'avance
   
   // Statut
   status: 'occupied' | 'free' | 'pending';
   paymentStatus: 'up_to_date' | 'late' | 'advance' | 'no_payment';
+  
+  // Détails mensuels
+  monthlyDistribution?: number[]; // Nouveau : répartition mensuelle
 }
 
 /**
@@ -97,8 +101,6 @@ export class PropertyFinancialManagerService {
     paymentStats?: StatisticAllPaymentLocataireYearModel[]
   ): PropertyFinancialMetrics {
     
-    console.log(`🏢 === CALCUL FINANCIER PROPRIÉTÉ ${propertyId} - ANNÉE ${selectedYear} ===`);
-    
     const currentDate = new Date();
     const currentMonth = currentDate.getMonth();
     const currentYear = currentDate.getFullYear();
@@ -112,15 +114,14 @@ export class PropertyFinancialManagerService {
       loc.property === propertyId && loc.isRunning === true
     );
     
-    console.log(`📊 Données filtrées:`, {
-      totalRooms: propertyRooms.length,
-      activeLocations: propertyLocations.length,
-      selectedYear,
-      currentMonth: currentMonth + 1,
-      currentYear
+    // ⚠️ DIAGNOSTIC CRITIQUE: Vérifier les données manquantes
+    console.warn(`🔍 DONNÉES PROPRIÉTÉ ${propertyId}:`, {
+      chambresDetectees: propertyRooms.length,
+      locationsActives: propertyLocations.length,
+      annee: selectedYear
     });
 
-    // Calculer les détails par chambre
+    // Calculer les détails par chambre avec répartition mensuelle
     const roomDetails = this.calculateRoomDetails(
       propertyRooms, 
       propertyLocations, 
@@ -128,17 +129,22 @@ export class PropertyFinancialManagerService {
       currentMonth,
       currentYear
     );
+    
+    // Ajouter la répartition mensuelle pour chaque chambre
+    roomDetails.forEach(room => {
+      if (room.isOccupied && room.entryDate) {
+        room.monthlyDistribution = this.distributeRevenueAcrossMonths(
+          room.receivedForYear,
+          room.entryDate,
+          room.monthlyRent,
+          selectedYear,
+          new Date(currentYear, currentMonth, new Date().getDate())
+        );
+      }
+    });
 
     // Calculer les métriques globales
     const metrics = this.calculateGlobalMetrics(roomDetails, selectedYear);
-
-    console.log(`✅ Métriques calculées pour la propriété ${propertyId}:`, {
-      totalRevenue: metrics.totalRevenue.toLocaleString(),
-      totalExpected: metrics.totalExpected.toLocaleString(),
-      collectionRate: `${metrics.collectionRate.toFixed(1)}%`,
-      occupancyRate: `${metrics.occupancyRate.toFixed(1)}%`,
-      occupiedRooms: `${metrics.occupiedRooms}/${metrics.totalRooms}`
-    });
 
     return metrics;
   }
@@ -154,6 +160,12 @@ export class PropertyFinancialManagerService {
     currentYear: number
   ): RoomFinancialDetail[] {
     
+    // ⚠️ VALIDATION CRITIQUE : Vérifier si toutes les chambres sont présentes
+    if (rooms.length < 2) {
+      console.warn(`⚠️ DONNÉES INCOMPLÈTES: Seulement ${rooms.length} chambre(s) trouvée(s), attendu: 2 ou plus`);
+      console.warn(`🔍 Vérifier la requête backend pour s'assurer que toutes les chambres de la propriété sont incluses`);
+    }
+    
     return rooms.map((roomStat, index) => {
       const room = roomStat.room;
       if (!room) {
@@ -164,16 +176,16 @@ export class PropertyFinancialManagerService {
       const roomCode = room.code || `Room_${index + 1}`;
       const monthlyRent = room.price || 0;
       
-      console.log(`\n🏠 Analyse chambre: ${roomCode}`);
-      
       // Trouver la location active pour cette chambre
-      const activeLocation = locations.find(loc => loc.room === room._id);
+      const activeLocation = locations.find(loc => 
+        loc.room === room._id && 
+        loc.isRunning === true
+      );
       
       if (!activeLocation) {
-        console.log(`   ❌ Aucune location active`);
         return this.createEmptyRoomDetail(room._id, monthlyRent, roomCode);
       }
-
+      
       // Calculer les métriques pour cette chambre occupée
       return this.calculateOccupiedRoomMetrics(
         room._id,
@@ -211,7 +223,7 @@ export class PropertyFinancialManagerService {
   }
 
   /**
-   * Calcule les métriques pour une chambre occupée
+   * Calcule les métriques pour une chambre occupée avec logique corrigée
    */
   private calculateOccupiedRoomMetrics(
     roomId: string,
@@ -225,35 +237,20 @@ export class PropertyFinancialManagerService {
   ): RoomFinancialDetail {
     
     const entryDate = new Date(location.startedAt);
+    const currentDate = new Date(currentYear, currentMonth, new Date().getDate());
     const totalReceivedAllTime = paymentValues.reduce((sum, payment) => sum + (payment || 0), 0);
     
-    console.log(`   📅 Date d'entrée: ${entryDate.toLocaleDateString()}`);
-    console.log(`   💰 Loyer mensuel: ${monthlyRent.toLocaleString()} FCFA`);
-    console.log(`   💵 Total reçu: ${totalReceivedAllTime.toLocaleString()} FCFA`);
-    
-    // Calculer les mois dus dans l'année sélectionnée
-    const monthsDueInYear = this.calculateMonthsDueInYear(
-      entryDate, 
-      selectedYear, 
-      currentMonth, 
-      currentYear
-    );
-    
-    const expectedForYear = monthlyRent * monthsDueInYear;
-    
-    // Calculer les revenus à comptabiliser pour cette année
-    const receivedForYear = this.calculateRevenueForYear(
+    // Calculer avec la nouvelle logique
+    const revenueCalculation = this.calculateRevenueForYear(
       totalReceivedAllTime,
-      expectedForYear
+      entryDate,
+      monthlyRent,
+      selectedYear,
+      currentDate
     );
     
-    const collectionRate = expectedForYear > 0 ? (receivedForYear / expectedForYear) * 100 : 0;
-    
-    console.log(`   📊 Résultats:`);
-    console.log(`      - Mois dus: ${monthsDueInYear}`);
-    console.log(`      - Attendu: ${expectedForYear.toLocaleString()} FCFA`);
-    console.log(`      - Comptabilisé: ${receivedForYear.toLocaleString()} FCFA`);
-    console.log(`      - Taux: ${collectionRate.toFixed(1)}%`);
+    const expectedForYear = monthlyRent * revenueCalculation.monthsDue;
+    const collectionRate = expectedForYear > 0 ? (revenueCalculation.revenueForYear / expectedForYear) * 100 : 0;
     
     return {
       roomId,
@@ -262,79 +259,115 @@ export class PropertyFinancialManagerService {
       isOccupied: true,
       tenantName: location.locataire?.toString() || 'N/A',
       entryDate,
-      monthsDueInYear,
+      monthsDueInYear: revenueCalculation.monthsDue,
       expectedForYear,
-      receivedForYear,
+      receivedForYear: revenueCalculation.revenueForYear,
       collectionRate,
       status: 'occupied',
-      paymentStatus: this.determinePaymentStatus(collectionRate)
+      paymentStatus: this.determinePaymentStatus(collectionRate, revenueCalculation.isAdvancePayment)
     };
   }
 
   /**
-   * Calcule le nombre de mois dus dans une année donnée
+   * Calcule précisément le nombre de mois dus dans une année
    */
-  private calculateMonthsDueInYear(
+  private calculatePreciseMonthsDue(
     entryDate: Date,
     selectedYear: number,
-    currentMonth: number,
-    currentYear: number
+    currentDate: Date
   ): number {
+    // ⚠️ DIAGNOSTIC: Vérifier les dates futures
+    if (entryDate > currentDate) {
+      console.warn(`⚠️ DATE FUTURE DÉTECTÉE: ${entryDate.toLocaleDateString()} > ${currentDate.toLocaleDateString()}`);
+    }
     
     const yearStart = new Date(selectedYear, 0, 1);
-    const yearEnd = new Date(selectedYear, 11, 31);
-    const today = new Date(currentYear, currentMonth, new Date().getDate());
+    const yearEnd = new Date(selectedYear, 11, 31, 23, 59, 59);
     
-    // Déterminer les bornes effectives
+    // CORRECTION: Si date d'entrée est future, retourner 0
+    if (entryDate > currentDate) {
+      return 0;
+    }
+    
+    // CORRECTION: Si entrée après la fin de l'année sélectionnée, retourner 0
+    if (entryDate > yearEnd) {
+      return 0;
+    }
+    
+    // Bornes effectives
     const effectiveStart = entryDate > yearStart ? entryDate : yearStart;
-    const effectiveEnd = today < yearEnd ? today : yearEnd;
+    const effectiveEnd = currentDate < yearEnd ? currentDate : yearEnd;
     
     if (effectiveStart > effectiveEnd) {
       return 0;
     }
     
-    // Calculer les mois complets
-    const startMonth = effectiveStart.getMonth();
-    const endMonth = effectiveEnd.getMonth();
-    const startYear = effectiveStart.getFullYear();
-    const endYear = effectiveEnd.getFullYear();
+    // Calcul précis avec jours
+    const diffTime = effectiveEnd.getTime() - effectiveStart.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
     
-    if (startYear === endYear) {
-      return Math.max(0, endMonth - startMonth + 1);
-    } else {
-      // Cas où on traverse plusieurs années (rare dans ce contexte)
-      return Math.max(0, (12 - startMonth) + endMonth + 1);
-    }
+    // Convertir en mois (30.44 jours par mois en moyenne)
+    const monthsDue = diffDays / 30.44;
+    const roundedMonths = Math.ceil(monthsDue);
+    
+    const finalMonths = Math.max(0, Math.min(roundedMonths, 12));
+    
+    return finalMonths;
   }
 
   /**
-   * Calcule les revenus à comptabiliser pour une année
-   * NOUVELLE LOGIQUE : Répartir intelligemment les avances
+   * Calcule les revenus à comptabiliser pour une année avec gestion correcte des avances
    */
   private calculateRevenueForYear(
     totalReceived: number,
-    expectedForYear: number
-  ): number {
-
-    // Si le locataire a payé moins que l'attendu, comptabiliser tout
+    entryDate: Date,
+    monthlyRent: number,
+    selectedYear: number,
+    currentDate: Date
+  ): {
+    revenueForYear: number;
+    advanceAmount: number;
+    monthsDue: number;
+    isAdvancePayment: boolean;
+  } {
+    const monthsDue = this.calculatePreciseMonthsDue(entryDate, selectedYear, currentDate);
+    const expectedForYear = monthlyRent * monthsDue;
+    
     if (totalReceived <= expectedForYear) {
-      return totalReceived;
+      return {
+        revenueForYear: totalReceived,
+        advanceAmount: 0,
+        monthsDue,
+        isAdvancePayment: false
+      };
     }
-
-    // Si le locataire a payé plus (avance)
-    // Exemple: 175 000 FCFA reçus, 75 000 FCFA attendus pour l'année
-    // On comptabilise les 75 000 FCFA pour cette année
-
-    return expectedForYear;
+    
+    // Gérer les avances : comptabiliser tout mais marquer l'avance
+    const advanceAmount = totalReceived - expectedForYear;
+    return {
+      revenueForYear: totalReceived, // Comptabiliser tout pour l'année
+      advanceAmount,
+      monthsDue,
+      isAdvancePayment: true
+    };
   }
 
   /**
-   * Détermine le statut de paiement basé sur le taux de recouvrement
+   * Détermine le statut de paiement avec logique améliorée
    */
-  private determinePaymentStatus(collectionRate: number): RoomFinancialDetail['paymentStatus'] {
-    if (collectionRate >= 100) return 'up_to_date';
-    if (collectionRate >= 80) return 'late';
-    if (collectionRate > 0) return 'late';
+  private determinePaymentStatus(
+    collectionRate: number, 
+    isAdvancePayment: boolean = false
+  ): RoomFinancialDetail['paymentStatus'] {
+    if (collectionRate === 0) return 'no_payment';
+    
+    if (isAdvancePayment || collectionRate > 110) {
+      return 'advance'; // Nouveau statut pour les avances
+    }
+    
+    if (collectionRate >= 95) return 'up_to_date'; // Tolérance de 5%
+    if (collectionRate >= 50) return 'late';
+    
     return 'no_payment';
   }
 
@@ -350,18 +383,35 @@ export class PropertyFinancialManagerService {
     const occupiedRooms = roomDetails.filter(room => room.isOccupied).length;
     const freeRooms = totalRooms - occupiedRooms;
     
-    const totalRevenue = roomDetails.reduce((sum, room) => sum + room.receivedForYear, 0);
-    const totalExpected = roomDetails.reduce((sum, room) => sum + room.expectedForYear, 0);
-    const totalRentSum = roomDetails.reduce((sum, room) => sum + room.monthlyRent, 0);
+    // ⚠️ ALERTE si le taux semble incorrect
+    if (totalRooms === 1 && occupiedRooms === 1) {
+      console.warn(`⚠️ ATTENTION: Taux d'occupation 100% avec seulement 1 chambre détectée`);
+      console.warn(`🔍 Vérifier si toutes les chambres de la propriété sont incluses dans yearlyStats`);
+    }
     
-    const collectionRate = totalExpected > 0 ? (totalRevenue / totalExpected) * 100 : 0;
-    const averageRent = totalRooms > 0 ? totalRentSum / totalRooms : 0;
     const occupancyRate = totalRooms > 0 ? (occupiedRooms / totalRooms) * 100 : 0;
     
-    return {
-      totalRevenue,
-      totalExpected,
-      collectionRate,
+    // Nouveau calcul du taux de recouvrement : seulement sur les chambres occupées
+    const occupiedRoomsDetails = roomDetails.filter(room => room.isOccupied);
+    const expectedFromOccupiedRooms = occupiedRoomsDetails.reduce((sum, room) => sum + room.expectedForYear, 0);
+    const revenueFromOccupiedRooms = occupiedRoomsDetails.reduce((sum, room) => sum + room.receivedForYear, 0);
+    
+    const collectionRate = expectedFromOccupiedRooms > 0 ? 
+      (revenueFromOccupiedRooms / expectedFromOccupiedRooms) * 100 : 0;
+    
+    if (collectionRate > 200) {
+      console.warn(`⚠️ Taux de recouvrement anormalement élevé (${collectionRate.toFixed(1)}%) - probablement dû à une avance importante`);
+    }
+    
+    // Calcul du loyer moyen (seulement les chambres avec un loyer > 0)
+    const roomsWithRent = roomDetails.filter(room => room.monthlyRent > 0);
+    const totalRentSum = roomsWithRent.reduce((sum, room) => sum + room.monthlyRent, 0);
+    const averageRent = roomsWithRent.length > 0 ? totalRentSum / roomsWithRent.length : 0;
+    
+    const metrics = {
+      totalRevenue: revenueFromOccupiedRooms, // Utiliser seulement les revenus des chambres occupées
+      totalExpected: expectedFromOccupiedRooms, // Utiliser seulement l'attendu des chambres occupées
+      collectionRate: Math.min(collectionRate, 200), // Limiter à 200% pour l'affichage
       averageRent,
       occupancyRate,
       totalRooms,
@@ -372,6 +422,8 @@ export class PropertyFinancialManagerService {
       monthsAnalyzed: this.calculateMonthsAnalyzed(selectedYear),
       roomDetails
     };
+    
+    return metrics;
   }
 
   /**
@@ -400,8 +452,6 @@ export class PropertyFinancialManagerService {
     roomDetails: RoomFinancialDetail[]
   ): MonthlyFinancialData[] {
 
-    console.log(`📅 Génération des données mensuelles pour ${selectedYear}`);
-
     const monthlyData: MonthlyFinancialData[] = [];
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
@@ -420,13 +470,6 @@ export class PropertyFinancialManagerService {
       );
       monthlyData.push(monthData);
     }
-
-    console.log(`📊 Données mensuelles générées:`, monthlyData.map(m => ({
-      month: m.monthName,
-      expected: m.expected,
-      received: m.received,
-      rate: `${m.collectionRate.toFixed(1)}%`
-    })));
 
     return monthlyData;
   }
@@ -489,7 +532,7 @@ export class PropertyFinancialManagerService {
   }
 
   /**
-   * Calcule la part mensuelle d'une chambre en répartissant le montant total
+   * Calcule la répartition mensuelle correcte des revenus
    */
   private calculateMonthlyShare(
     room: RoomFinancialDetail,
@@ -499,33 +542,28 @@ export class PropertyFinancialManagerService {
     currentMonth: number
   ): number {
 
-    if (!room.entryDate) return 0;
+    if (!room.entryDate || !room.isOccupied) return 0;
 
     const entryDate = new Date(room.entryDate);
-    const entryMonth = entryDate.getMonth();
-    const entryYear = entryDate.getFullYear();
+    const monthDate = new Date(selectedYear, month, 1);
+    const entryMonthDate = new Date(entryDate.getFullYear(), entryDate.getMonth(), 1);
+    const currentMonthDate = new Date(currentYear, currentMonth, 1);
 
-    // Calculer les mois d'occupation dans l'année sélectionnée
-    let occupationStartMonth = 0;
-    let occupationEndMonth = 11;
+    // Vérifier si ce mois est dans la période d'occupation
+    const isAfterEntry = monthDate >= entryMonthDate;
+    const isBeforeCurrent = monthDate <= currentMonthDate;
+    const isOccupiedThisMonth = isAfterEntry && isBeforeCurrent;
 
-    if (entryYear === selectedYear) {
-      occupationStartMonth = entryMonth;
+    if (!isOccupiedThisMonth) return 0;
+
+    // Utiliser la répartition mensuelle si disponible
+    if (room.monthlyDistribution && room.monthlyDistribution[month]) {
+      return room.monthlyDistribution[month];
     }
 
-    if (selectedYear === currentYear) {
-      occupationEndMonth = currentMonth;
-    }
-
-    const totalOccupationMonths = occupationEndMonth - occupationStartMonth + 1;
-
-    // Si ce mois est dans la période d'occupation, répartir le montant
-    if (month >= occupationStartMonth && month <= occupationEndMonth && totalOccupationMonths > 0) {
-      const monthlyShare = room.receivedForYear / totalOccupationMonths;
-      return monthlyShare;
-    }
-
-    return 0;
+    // Fallback : répartition égale sur les mois d'occupation
+    const occupiedMonths = room.monthsDueInYear;
+    return occupiedMonths > 0 ? room.receivedForYear / occupiedMonths : 0;
   }
 
   /**
@@ -575,6 +613,88 @@ export class PropertyFinancialManagerService {
       { name: 'Aucun paiement', value: statusCounts.no_payment, color: '#EF4444' },
       { name: 'Libre', value: statusCounts.free, color: '#6B7280' }
     ].filter(item => item.value > 0);
+  }
+
+  /**
+   * Distribue les revenus sur les mois d'occupation
+   */
+  private distributeRevenueAcrossMonths(
+    totalRevenue: number,
+    entryDate: Date,
+    monthlyRent: number,
+    selectedYear: number,
+    currentDate: Date
+  ): number[] {
+    const monthlyDistribution = new Array(12).fill(0);
+    
+    if (totalRevenue === 0) return monthlyDistribution;
+    
+    const monthsDue = this.calculatePreciseMonthsDue(entryDate, selectedYear, currentDate);
+    if (monthsDue === 0) return monthlyDistribution;
+    
+    const monthlyShare = totalRevenue / monthsDue;
+    
+    // Répartir sur les mois d'occupation
+    const entryMonth = entryDate.getMonth();
+    const entryYear = entryDate.getFullYear();
+    const currentMonth = currentDate.getMonth();
+    const currentYear = currentDate.getFullYear();
+    
+    for (let month = 0; month < 12; month++) {
+      const monthDate = new Date(selectedYear, month, 1);
+      const entryMonthDate = new Date(entryYear, entryMonth, 1);
+      const currentMonthDate = new Date(currentYear, currentMonth, 1);
+      
+      const isAfterEntry = monthDate >= entryMonthDate;
+      const isBeforeCurrent = monthDate <= currentMonthDate;
+      
+      if (isAfterEntry && isBeforeCurrent) {
+        monthlyDistribution[month] = monthlyShare;
+      }
+    }
+    
+    return monthlyDistribution;
+  }
+
+  /**
+   * Valide les calculs financiers et détecte les incohérences
+   */
+  validateFinancialCalculations(metrics: PropertyFinancialMetrics): {
+    isValid: boolean;
+    warnings: string[];
+    corrections: Partial<PropertyFinancialMetrics>;
+  } {
+    const warnings: string[] = [];
+    const corrections: Partial<PropertyFinancialMetrics> = {};
+    
+    // Vérifier les taux anormaux
+    if (metrics.collectionRate > 200) {
+      warnings.push('Taux de recouvrement anormalement élevé - vérifier les avances');
+      corrections.collectionRate = Math.min(metrics.collectionRate, 200);
+    }
+    
+    // Vérifier la cohérence des dates
+    if (metrics.roomDetails.some(r => r.monthsDueInYear > 12)) {
+      warnings.push('Nombre de mois dus supérieur à 12 - erreur de calcul');
+    }
+    
+    // Vérifier les revenus négatifs
+    if (metrics.totalRevenue < 0) {
+      warnings.push('Revenus négatifs détectés');
+      corrections.totalRevenue = 0;
+    }
+    
+    // Vérifier l'occupation
+    if (metrics.occupancyRate > 100) {
+      warnings.push('Taux d\'occupation supérieur à 100%');
+      corrections.occupancyRate = 100;
+    }
+    
+    return {
+      isValid: warnings.length === 0,
+      warnings,
+      corrections
+    };
   }
 
   /**
