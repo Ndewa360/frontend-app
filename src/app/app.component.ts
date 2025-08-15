@@ -17,6 +17,7 @@ import * as moment from 'moment';
 import { takeUntil, debounceTime, filter, catchError } from 'rxjs/operators';
 import { SeoService } from './shared/services/seo/seo.service';
 import { DeviceDetectionService } from './shared/services/device-detection.service';
+import { NetworkStatusService } from './shared/services/network-status.service';
 
 import { AuthStateService } from './shared/services/auth-state.service';
 import { DataDrivenLoaderService } from './shared/services/data-driven-loader.service';
@@ -68,6 +69,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private titleService: Title,
     private meta: Meta,
     private seoService: SeoService,
+    private networkStatusService: NetworkStatusService,
     private monitoringService: MonitoringService,
     private localizationService: LocalizationService,
     private translationService: TranslationService,

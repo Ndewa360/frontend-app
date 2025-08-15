@@ -30,8 +30,10 @@ export class ErrorHandlerService {
       error: error.error
     });
 
-    // Afficher le message à l'utilisateur
-    this.showErrorToast(errorInfo, context);
+    // Afficher le message à l'utilisateur (sauf si géré par le toast réseau persistant)
+    if (errorInfo.code !== 'NO_INTERNET' && errorInfo.code !== 'SERVICE_UNAVAILABLE') {
+      this.showErrorToast(errorInfo, context);
+    }
 
     return throwError(() => errorInfo);
   }

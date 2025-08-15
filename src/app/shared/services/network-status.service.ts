@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, fromEvent, merge } from 'rxjs';
 import { map, startWith, distinctUntilChanged, debounceTime } from 'rxjs/operators';
-import { ToastrService } from 'ngx-toastr';
+import { ToastrService, ActiveToast } from 'ngx-toastr';
 import { environment } from '../../../environments/environment';
 
 export interface NetworkStatus {
@@ -22,11 +22,14 @@ export class NetworkStatusService {
   });
 
   public networkStatus$ = this.networkStatusSubject.asObservable();
-  
+
   private backendCheckInterval: any;
   private lastNotificationTime = 0;
   private readonly NOTIFICATION_COOLDOWN = 30000; // 30 secondes entre les notifications
   private hasShownInitialOfflineWarning = false;
+
+  // Toast persistant unique pour l'état réseau
+  private persistentToastRef: ActiveToast<any> | null = null;
 
   constructor(private toastr: ToastrService) {
     this.initializeNetworkMonitoring();
@@ -40,7 +43,7 @@ export class NetworkStatusService {
     // Écouter les événements de connexion/déconnexion
     const online$ = fromEvent(window, 'online').pipe(map(() => true));
     const offline$ = fromEvent(window, 'offline').pipe(map(() => false));
-    
+
     merge(online$, offline$)
       .pipe(
         startWith(navigator.onLine),
@@ -49,17 +52,25 @@ export class NetworkStatusService {
       )
       .subscribe(isOnline => {
         this.updateNetworkStatus({ isOnline });
-        
+
         if (isOnline) {
-          this.showNotification('Connexion internet rétablie', 'success');
+          this.updatePersistentToast('Connexion internet rétablie', 'success');
           // Vérifier immédiatement le backend quand la connexion revient
           this.checkBackendHealth();
         } else {
-          this.showNotification('Connexion internet perdue', 'warning');
+          this.showPersistentToast('Connexion internet perdue', 'warning');
         }
       });
 
     console.log('🌐 Surveillance réseau initialisée');
+
+    // Afficher un toast persistant si on démarre hors-ligne ou backend down
+    const status = this.networkStatusSubject.value;
+    if (!status.isOnline) {
+      this.showPersistentToast('Connexion internet perdue', 'warning');
+    } else if (!status.isBackendReachable) {
+      // On ne le sait pas encore au démarrage; le checkBackendHealth mettra à jour
+    }
   }
 
   /**
@@ -68,7 +79,7 @@ export class NetworkStatusService {
   private startBackendHealthCheck(): void {
     // Vérification initiale
     this.checkBackendHealth();
-    
+
     // Vérification périodique toutes les 30 secondes
     this.backendCheckInterval = setInterval(() => {
       if (navigator.onLine) {
@@ -91,7 +102,7 @@ export class NetworkStatusService {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 5000); // Timeout de 5 secondes
 
-      const response = await fetch(`${environment.apiUrl}/health`, {
+      const response = await fetch(`${environment.apiUrl}/monitoring/health`, {
         method: 'GET',
         signal: controller.signal,
         headers: {
@@ -108,19 +119,19 @@ export class NetworkStatusService {
       const currentStatus = this.networkStatusSubject.value;
       if (currentStatus.isBackendReachable !== isBackendReachable) {
         if (isBackendReachable) {
-          this.showNotification('Serveur accessible', 'success');
+          this.updatePersistentToast('Serveur accessible', 'success');
         } else if (!this.hasShownInitialOfflineWarning) {
-          this.showNotification('Serveur temporairement indisponible', 'warning');
+          this.showPersistentToast('Serveur temporairement indisponible', 'warning');
           this.hasShownInitialOfflineWarning = true;
         }
       }
 
     } catch (error) {
       this.updateNetworkStatus({ isBackendReachable: false });
-      
+
       // Ne montrer la notification que si c'est la première fois ou après un long délai
       if (!this.hasShownInitialOfflineWarning) {
-        this.showNotification('Impossible de contacter le serveur', 'warning');
+        this.showPersistentToast('Impossible de contacter le serveur', 'warning');
         this.hasShownInitialOfflineWarning = true;
       }
     }
@@ -141,39 +152,85 @@ export class NetworkStatusService {
   }
 
   /**
-   * Afficher une notification avec cooldown
+   * Afficher une notification avec cooldown (non persistante)
    */
   private showNotification(message: string, type: 'success' | 'warning' | 'error'): void {
     const now = Date.now();
-    
-    // Éviter les notifications trop fréquentes
     if (now - this.lastNotificationTime < this.NOTIFICATION_COOLDOWN) {
       return;
     }
-
     this.lastNotificationTime = now;
 
-    // Afficher la notification selon le type
     switch (type) {
       case 'success':
-        this.toastr.success(message, 'Réseau', {
-          timeOut: 3000,
-          positionClass: 'toast-bottom-right'
-        });
+        this.toastr.success(message, 'Réseau', { timeOut: 3000, positionClass: 'toast-bottom-right' });
         break;
       case 'warning':
-        this.toastr.warning(message, 'Réseau', {
-          timeOut: 5000,
-          positionClass: 'toast-bottom-right'
-        });
+        this.toastr.warning(message, 'Réseau', { timeOut: 5000, positionClass: 'toast-bottom-right' });
         break;
       case 'error':
-        this.toastr.error(message, 'Réseau', {
-          timeOut: 7000,
-          positionClass: 'toast-bottom-right'
-        });
+        this.toastr.error(message, 'Réseau', { timeOut: 7000, positionClass: 'toast-bottom-right' });
         break;
     }
+  }
+
+  /**
+   * Afficher un toast persistant unique tant que l'état n'est pas revenu à la normale
+   */
+  private showPersistentToast(message: string, type: 'success' | 'warning' | 'error'): void {
+    // Si un toast persistant existe déjà, le mettre à jour au lieu d'en créer un nouveau
+    if (this.persistentToastRef) {
+      this.updatePersistentToast(message, type);
+      return;
+    }
+
+    const options = {
+      disableTimeOut: true, // persistant
+      closeButton: true,
+      tapToDismiss: false,
+      positionClass: 'toast-bottom-right'
+    } as any;
+
+    switch (type) {
+      case 'success':
+        this.persistentToastRef = this.toastr.success(message, 'Réseau', options);
+        break;
+      case 'warning':
+        this.persistentToastRef = this.toastr.warning(message, 'Réseau', options);
+        break;
+      case 'error':
+        this.persistentToastRef = this.toastr.error(message, 'Réseau', options);
+        break;
+    }
+  }
+
+  /**
+   * Mettre à jour/normaliser le toast persistant selon l'état courant
+   */
+  private updatePersistentToast(message: string, type: 'success' | 'warning' | 'error'): void {
+    // Si aucun toast persistant, en créer un si l'état n'est pas normal
+    if (!this.persistentToastRef) {
+      if (type === 'success') {
+        // Si tout est normal, aucune nécessité de créer un toast
+        return;
+      }
+      this.showPersistentToast(message, type);
+      return;
+    }
+
+    // Si on est revenu à un état normal (success), fermer le toast persistant
+    if (type === 'success') {
+      this.toastr.clear(this.persistentToastRef.toastId);
+      this.persistentToastRef = null;
+      // Ensuite, afficher un bref toast de succès si souhaité
+      this.toastr.success(message, 'Réseau', { timeOut: 2000, positionClass: 'toast-bottom-right' });
+      return;
+    }
+
+    // Sinon, mettre à jour visuellement: on ferme et recrée avec le nouveau message/type
+    this.toastr.clear(this.persistentToastRef.toastId);
+    this.persistentToastRef = null;
+    this.showPersistentToast(message, type);
   }
 
   /**
@@ -234,7 +291,7 @@ export class NetworkStatusService {
    */
   getStatusDescription(): string {
     const status = this.networkStatusSubject.value;
-    
+
     if (!status.isOnline) {
       return 'Hors ligne';
     } else if (!status.isBackendReachable) {
@@ -249,7 +306,7 @@ export class NetworkStatusService {
    */
   getStatusColor(): 'success' | 'warning' | 'danger' {
     const status = this.networkStatusSubject.value;
-    
+
     if (!status.isOnline) {
       return 'danger';
     } else if (!status.isBackendReachable) {
@@ -264,7 +321,7 @@ export class NetworkStatusService {
    */
   getStatusIcon(): string {
     const status = this.networkStatusSubject.value;
-    
+
     if (!status.isOnline) {
       return 'wifi-off';
     } else if (!status.isBackendReachable) {

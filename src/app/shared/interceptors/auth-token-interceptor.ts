@@ -97,10 +97,11 @@ export class AuthTokenInterceptor implements HttpInterceptor {
       return this.handle401Error(originalRequest, next);
     }
 
-    // Gestion des erreurs de réseau
+    // Gestion des erreurs de réseau (laisser NetworkStatusService gérer l'affichage persistant)
     if (error.status === 0) {
       console.error('🔴 Erreur de réseau:', error);
-      this._toastrService.warning('Problème de connexion réseau. Vérifiez votre connexion internet.', 'Ndewa360°');
+      // Ne pas afficher de toast ici pour éviter le spam. Le NetworkStatusService affiche un message persistant unique.
+      this._store.dispatch(new GlobalAction.SetConnexionInternetState(false));
     } else if (!this.shouldSkipErrorDisplay(error, originalRequest)) {
       // Ne pas afficher l'erreur si elle doit être ignorée
       this.showErrorMessage(error);
@@ -309,7 +310,7 @@ export class AuthTokenInterceptor implements HttpInterceptor {
     } else {
       switch(error.status) {
           case 0:
-              this._toastrService.error(`Aucune connexion internet activée. Vérifiez votre connexion internet et réessayez! `, 'Ndewa360°');
+              // Ne pas afficher de toast ici (géré par NetworkStatusService). Mettre à jour seulement l'état global.
               this._store.dispatch(new GlobalAction.SetConnexionInternetState(false))
               break;
 

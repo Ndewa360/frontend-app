@@ -119,8 +119,11 @@ import { HttpClient } from '@angular/common/http';
       }),
       NgxsRouterPluginModule.forRoot(),
       ToastrModule.forRoot({
-        progressBar:true,
-        closeButton:true
+        progressBar: true,
+        closeButton: true,
+        preventDuplicates: true,
+        maxOpened: 3,
+        autoDismiss: true,
       }),
       TranslateModule.forChild()
   ],
