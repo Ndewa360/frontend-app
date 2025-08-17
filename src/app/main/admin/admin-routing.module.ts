@@ -69,6 +69,14 @@ const routes: Routes = [
         }
       },
       {
+        path: 'monitoring',
+        loadChildren: () => import('../../monitoring/monitoring.module').then(m => m.MonitoringModule),
+        data: {
+          title: 'Monitoring Système',
+          breadcrumb: 'Monitoring'
+        }
+      },
+      {
         path: '**',
         redirectTo: 'dashboard',
         pathMatch: 'full'

@@ -4,8 +4,7 @@
 	<router-outlet></router-outlet>
 </main>
 
-<!-- Debug Panel (only in development) -->
-<app-debug-token-panel *ngIf="!isProduction"></app-debug-token-panel>
+
 
 <!-- Language Switcher (only on web desktop and front office) -->
 <app-language-switcher *ngIf="isInFrontOffice"></app-language-switcher>

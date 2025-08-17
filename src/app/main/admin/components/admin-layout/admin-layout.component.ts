@@ -69,6 +69,13 @@ export class AdminLayoutComponent implements OnInit, OnDestroy {
       icon: 'cog',
       route: '/admin/settings',
       description: 'Configuration du système'
+    },
+    {
+      id: 'monitoring',
+      label: 'Monitoring',
+      icon: 'chart-line',
+      route: '/admin/monitoring',
+      description: 'Surveillance et monitoring du système'
     }
   ];
 

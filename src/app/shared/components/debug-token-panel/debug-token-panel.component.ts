@@ -335,7 +335,7 @@ export class DebugTokenPanelComponent implements OnInit, OnDestroy {
 
   openMonitoringDashboard() {
     // Ouvrir le dashboard de monitoring dans un nouvel onglet ou naviguer vers la page
-    this.router.navigate(['/monitoring/dashboard']);
+    this.router.navigate(['/admin/monitoring/dashboard']);
     this.addLog('📊 Opening monitoring dashboard', 'info');
     this.toastr.info('Ouverture du dashboard de monitoring...', 'Debug');
   }
