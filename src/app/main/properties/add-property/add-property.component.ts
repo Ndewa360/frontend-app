@@ -210,6 +210,10 @@ export class AddPropertyComponent implements OnInit {
     // Exclure le champ geolocation du payload et ajouter les IDs séparément
     const { geolocation, ...cleanFormValue } = formValue;
 
+    let rentMin = formValue.rentMin || 0, rentMax = formValue.rentMax || 0;
+    delete cleanFormValue.rentMin;
+    delete cleanFormValue.rentMax;
+
     this._store.dispatch(new PropertyAction.CreateProperty({
       ...FormUtils.removeNullAttribut(cleanFormValue),
       geolocationCity: typeof location.city === 'string' ? location.city : location.city._id,
@@ -246,10 +250,8 @@ export class AddPropertyComponent implements OnInit {
       managementFees: formValue.managementFees || 0,
       propertyTax: formValue.propertyTax || 0,
       insuranceCost: formValue.insuranceCost || 0,
-      rentRange: {
-        min: formValue.rentMin || 0,
-        max: formValue.rentMax || 0
-      }
+      
+      rentRange: { min:rentMin, max:rentMax }
     }));
   }
 

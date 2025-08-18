@@ -43,7 +43,11 @@ export interface PropertyModel {
     acquisitionPrice?: number; // Prix d'acquisition
     currentValue?: number; // Valeur actuelle estimée
     rentRange?: { min: number; max: number }; // Fourchette de loyers
+    rentMin?: number;
+    rentMax?: number;
 
     // Modèle de contrat personnalisé pour cette propriété
     contractTemplate?: ContractTemplateModel | string; // Peut être l'objet complet ou juste l'ID
+
+    
 }

@@ -4,10 +4,9 @@
 
 export const environment = {
 	// 🔒 SÉCURITÉ: Utiliser les variables d'environnement pour les URLs sensibles
-  // apiUrl: (window as any)?.env?.API_URL || 'http://localhost:3001',
-	// url: (window as any)?.env?.APP_URL || 'http://localhost:4200',
+  apiUrl: (window as any)?.env?.API_URL || 'http://localhost:3001',
+	url: (window as any)?.env?.APP_URL || 'http://localhost:4200',
 
-  apiUrl: "https://api.ndewa-360.com",
 	production: false,
 
 	// 🔒 SÉCURITÉ CRITIQUE: Ne jamais exposer les clés secrètes dans le code

@@ -488,16 +488,16 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
       dataQuality = 'partial';
     }
 
-    console.log('🔍 Vérification des données financières:', {
-      hasYearlyStats,
-      hasTenantStats,
-      hasPaymentStats,
-      hasRecapitulation,
-      hasMinimalData,
-      dataQuality,
-      propertyId: this.propertyId,
-      selectedYear: this.selectedYear
-    });
+    // console.log('🔍 Vérification des données financières:', {
+    //   hasYearlyStats,
+    //   hasTenantStats,
+    //   hasPaymentStats,
+    //   hasRecapitulation,
+    //   hasMinimalData,
+    //   dataQuality,
+    //   propertyId: this.propertyId,
+    //   selectedYear: this.selectedYear
+    // });
 
     return hasMinimalData;
   }
