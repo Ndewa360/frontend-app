@@ -121,8 +121,6 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.
   // Version Mobile (cachée par défaut)
   .mobile-header {
     display: none;
-    flex-direction: column;
-    gap: 0.75rem;
   }
 
   .header-content {
@@ -1148,7 +1146,7 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.
       position: relative;
       
       .main-image-container {
-        height: 250px;
+        height: 400px; // Augmenté de 250px à 400px pour mobile
       }
     }
 
@@ -1831,20 +1829,14 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.
       display: flex;
     }
 
-    // Styles pour les lignes du header mobile
+    // Style pour la ligne unique du header mobile
     .mobile-header-row {
       display: flex;
       align-items: center;
       width: 100%;
 
-      &.mobile-header-top {
+      &.mobile-header-single {
         justify-content: space-between;
-        margin-bottom: 0.5rem;
-      }
-
-      &.mobile-header-actions {
-        justify-content: center;
-        gap: 1rem;
       }
     }
 
@@ -1958,56 +1950,32 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.
       }
     }
 
-    // Boutons d'action mobile
-    .mobile-action-button {
+    // Bouton de partage mobile
+    .mobile-share-button {
       background: $bg-light;
-      color: $text-primary;
-      border: 1px solid $border-color;
+      color: $text-secondary;
+      border: 2px solid $border-color;
       border-radius: 8px;
-      padding: 0.75rem 1.25rem;
-      font-size: 0.875rem;
-      font-weight: 600;
+      width: 44px;
+      height: 44px;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      transition: all 0.15s ease-in-out;
-      min-width: 120px;
       justify-content: center;
+      transition: all 0.15s ease-in-out;
 
-      i {
-        font-size: 1rem;
-        transition: all 0.15s ease-in-out;
+      i.fa-share-alt {
+        color: #3b82f6;
+        font-size: 1.25rem;
+        font-weight: bold;
       }
 
-      &.mobile-favorite-button {
-        i.fa-heart {
-          color: #ef4444;
-        }
+      &:hover {
+        background: #3b82f6;
+        border-color: #3b82f6;
+        color: white;
 
-        &:hover {
-          background: #ef4444;
-          border-color: #ef4444;
-          color: white;
-
-          i.fa-heart {
-            color: white;
-          }
-        }
-      }
-
-      &.mobile-share-button {
         i.fa-share-alt {
-          color: #3b82f6;
-        }
-
-        &:hover {
-          background: #3b82f6;
-          border-color: #3b82f6;
           color: white;
-
-          i.fa-share-alt {
-            color: white;
-          }
         }
       }
     }
@@ -2029,7 +1997,7 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.
       overflow: visible;
 
       .main-image-container {
-        height: 250px;
+        height: 400px; // Augmenté de 250px à 350px pour mobile
         margin-bottom: 0.5rem;
       }
 

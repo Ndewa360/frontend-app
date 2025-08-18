@@ -34,11 +34,7 @@
       </div>
 
       <div class="header-actions">
-        <button class="action-button favorite-button" mat-button>
-          <i class="far fa-heart"></i>
-          <span>Sauvegarder</span>
-        </button>
-        <button class="action-button share-button" mat-button>
+        <button (click)="shareProperty()" class="action-button share-button" mat-button>
           <i class="fas fa-share-alt"></i>
           <span>Partager</span>
         </button>
@@ -47,8 +43,8 @@
 
     <!-- Version Mobile -->
     <div class="header-content mobile-header">
-      <!-- Première ligne : Fermeture et Navigation -->
-      <div class="mobile-header-row mobile-header-top">
+      <!-- Ligne unique : Fermeture, Navigation et Partage -->
+      <div class="mobile-header-row mobile-header-single">
         <button (click)="closeDialog()" class="mobile-close-button" mat-icon-button>
           <i class="fas fa-times"></i>
         </button>
@@ -76,19 +72,13 @@
             <i class="fas fa-chevron-right"></i>
           </button>
         </div>
+
+        <button (click)="shareProperty()" class="mobile-share-button" mat-icon-button>
+          <i class="fas fa-share-alt"></i>
+        </button>
       </div>
 
-      <!-- Deuxième ligne : Actions -->
-      <div class="mobile-header-row mobile-header-actions">
-        <button class="mobile-action-button mobile-favorite-button" mat-button>
-          <i class="far fa-heart"></i>
-          <span>Sauvegarder</span>
-        </button>
-        <button class="mobile-action-button mobile-share-button" mat-button>
-          <i class="fas fa-share-alt"></i>
-          <span>Partager</span>
-        </button>
-      </div>
+
     </div>
   </header>
 
