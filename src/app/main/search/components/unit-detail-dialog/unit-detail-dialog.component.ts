@@ -612,7 +612,7 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
 
     this.ownerInfo = {
       owner: {
-        id: owner.id || 'unknown-id',
+        id: owner._id || 'unknown-id',
         name: owner.fullName || 'Propriétaire Certifié',
         email: owner.email || 'contact@ndewa360.com',
         phone: owner.phoneNumber || '+237 6XX XXX XXX',
