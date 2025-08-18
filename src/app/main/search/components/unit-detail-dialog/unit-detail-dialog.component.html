@@ -273,36 +273,36 @@
             </div>
           </div>
 
-          <div class="premium-content" *ngIf="ownerInfo?.owner">
+          <div class="premium-content">
             <div class="contact-card">
               <div class="contact-header">
                 <i class="fas fa-phone-alt"></i>
                 <h3>Contact direct</h3>
               </div>
               <div class="contact-details">
-                <div class="contact-item" *ngIf="ownerInfo.owner.phone">
+                <div class="contact-item">
                   <i class="fas fa-mobile-alt"></i>
-                  <span>{{ ownerInfo.owner.phone }}</span>
+                  <span>{{ ownerInfo?.owner?.phone || '+237 6XX XXX XXX' }}</span>
                   <button class="copy-button"
                           mat-icon-button
-                          (click)="copyToClipboard(ownerInfo.owner.phone, 'phone')"
+                          (click)="copyToClipboard(ownerInfo?.owner?.phone || '+237 6XX XXX XXX', 'phone')"
                           title="Copier le numéro de téléphone">
                     <i class="fas fa-copy"></i>
                   </button>
                 </div>
-                <div class="contact-item" *ngIf="ownerInfo.owner.email">
+                <div class="contact-item">
                   <i class="fas fa-envelope"></i>
-                  <span>{{ ownerInfo.owner.email }}</span>
+                  <span>{{ ownerInfo?.owner?.email || 'contact@ndewa360.com' }}</span>
                   <button class="copy-button"
                           mat-icon-button
-                          (click)="copyToClipboard(ownerInfo.owner.email, 'email')"
+                          (click)="copyToClipboard(ownerInfo?.owner?.email || 'contact@ndewa360.com', 'email')"
                           title="Copier l'adresse email">
                     <i class="fas fa-copy"></i>
                   </button>
                 </div>
-                <div class="contact-item" *ngIf="ownerInfo.owner.whatsapp">
+                <div class="contact-item">
                   <i class="fab fa-whatsapp"></i>
-                  <span>{{ ownerInfo.owner.whatsapp }}</span>
+                  <span>{{ ownerInfo?.owner?.whatsapp || ownerInfo?.owner?.phone || '+237 6XX XXX XXX' }}</span>
                   <a [href]="getWhatsAppLink()" target="_blank" class="whatsapp-button">
                     <i class="fab fa-whatsapp"></i>
                     <span>Contacter</span>
@@ -311,7 +311,7 @@
               </div>
             </div>
 
-            <div class="location-card" *ngIf="ownerInfo.owner.address">
+            <div class="location-card">
               <div class="location-header">
                 <i class="fas fa-map-marked-alt"></i>
                 <h3>Localisation précise</h3>
@@ -319,7 +319,7 @@
               <div class="location-details">
                 <div class="address-item">
                   <i class="fas fa-map-marker-alt"></i>
-                  <span>{{ ownerInfo.owner.address }}</span>
+                  <span>{{ ownerInfo?.owner?.address || unit?.property?.location || 'Adresse disponible' }}</span>
                 </div>
                 <div class="coordinates-item">
                   <i class="fas fa-crosshairs"></i>
@@ -335,20 +335,7 @@
             </div>
           </div>
         </div>
-        
-        <!-- Section de Debug Temporaire (à supprimer plus tard) -->
-        <div class="debug-section" style="background: #f0f0f0; padding: 15px; margin: 10px 0; border-radius: 8px; font-family: monospace; font-size: 12px;">
-          <h3 style="color: #333; margin: 0 0 10px 0;">🔍 Debug Info (Production)</h3>
-          <div><strong>hasPremiumAccess:</strong> {{ hasPremiumAccess }}</div>
-          <div><strong>ownerInfo exists:</strong> {{ !!ownerInfo }}</div>
-          <div *ngIf="ownerInfo"><strong>ownerInfo.owner exists:</strong> {{ !!ownerInfo.owner }}</div>
-          <div *ngIf="ownerInfo?.owner"><strong>owner.name:</strong> {{ ownerInfo.owner.name }}</div>
-          <div *ngIf="ownerInfo?.owner"><strong>owner.phone:</strong> {{ ownerInfo.owner.phone }}</div>
-          <div *ngIf="ownerInfo?.owner"><strong>owner.email:</strong> {{ ownerInfo.owner.email }}</div>
-          <div><strong>unit.property exists:</strong> {{ !!unit?.property }}</div>
-          <div *ngIf="unit?.property"><strong>unit.property.owner exists:</strong> {{ !!unit.property.owner }}</div>
-          <div *ngIf="unit?.property?.owner"><strong>original owner.fullName:</strong> {{ unit.property.owner.fullName }}</div>
-        </div>
+
 
         <!-- Section Paiement pour accès premium -->
         <!-- ✅ Cette section ne s'affiche plus car temporaryFreeAccess = true -->
