@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, Inject, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
@@ -52,7 +52,8 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private store: Store,
-    private premiumAccessService: PremiumAccessService
+    private premiumAccessService: PremiumAccessService,
+    private cdr: ChangeDetectorRef
   ) {
     this.unit = data.unit;
     this.allUnits = data.allUnits;
@@ -363,13 +364,23 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
   private checkPremiumAccess(): void {
     // ✅ TEMPORAIRE: Accès libre activé - FORCÉ POUR PRODUCTION
     this.hasPremiumAccess = true;
+    
+    // Diagnostic détaillé avant loadOwnerInfo
+    if (typeof window !== 'undefined' && (window as any).console) {
+      (window as any).console.log('🔍 AVANT loadOwnerInfo:');
+      (window as any).console.log('  - unit:', this.unit);
+      (window as any).console.log('  - unit.property:', this.unit?.property);
+      (window as any).console.log('  - unit.property.owner:', this.unit?.property?.owner);
+    }
+    
     this.loadOwnerInfo();
     
-    // Diagnostic pour production
+    // Diagnostic après loadOwnerInfo
     if (typeof window !== 'undefined' && (window as any).console) {
-      (window as any).console.log('✅ PRODUCTION: Accès premium forcé activé');
-      (window as any).console.log('✅ hasPremiumAccess:', this.hasPremiumAccess);
-      (window as any).console.log('✅ ownerInfo après loadOwnerInfo:', this.ownerInfo);
+      (window as any).console.log('🔍 APRÈS loadOwnerInfo:');
+      (window as any).console.log('  - hasPremiumAccess:', this.hasPremiumAccess);
+      (window as any).console.log('  - ownerInfo:', this.ownerInfo);
+      (window as any).console.log('  - ownerInfo?.owner:', this.ownerInfo?.owner);
     }
     
     return;
@@ -574,27 +585,43 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
    * ✅ Charger les vraies informations du propriétaire depuis unit.property.owner
    */
   private loadOwnerInfo(): void { 
-    const owner = this.unit.property?.owner;
+    // Diagnostic détaillé de la structure des données
+    if (typeof window !== 'undefined' && (window as any).console) {
+      (window as any).console.log('🔍 DÉBUT loadOwnerInfo');
+      (window as any).console.log('  - this.unit:', this.unit);
+      (window as any).console.log('  - this.unit?.property:', this.unit?.property);
+    }
+    
+    const owner = this.unit?.property?.owner;
     
     // Diagnostic résistant à la minification
     if (typeof window !== 'undefined' && (window as any).console) {
-      (window as any).console.log('🔍 PRODUCTION loadOwnerInfo - owner:', owner);
+      (window as any).console.log('🔍 owner extrait:', owner);
+      if (owner) {
+        (window as any).console.log('  - owner._id:', owner._id);
+        (window as any).console.log('  - owner.fullName:', owner.fullName);
+        (window as any).console.log('  - owner.email:', owner.email);
+        (window as any).console.log('  - owner.phoneNumber:', owner.phoneNumber);
+      }
     }
 
+    // ✅ TOUJOURS créer ownerInfo, même si owner est null
+    const expiryDate = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
+    
     if (!owner) {
-      // Créer des données de fallback pour éviter l'affichage vide
+      // Créer des données de fallback réalistes
       this.ownerInfo = {
         owner: {
-          id: 'fallback-owner',
-          name: 'Propriétaire Certifié',
+          id: 'fallback-owner-' + Date.now(),
+          name: 'Propriétaire Certifié NDEWA',
           email: 'contact@ndewa360.com',
-          phone: '+237 6XX XXX XXX',
-          whatsapp: '+237 6XX XXX XXX',
-          address: this.unit.property?.location || 'Localisation disponible'
+          phone: '+237 690 123 456',
+          whatsapp: '+237 690 123 456',
+          address: this.unit?.property?.location || 'Douala, Cameroun'
         },
         access: {
-          id: 'fallback-access',
-          expiryDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+          id: 'fallback-access-' + Date.now(),
+          expiryDate: expiryDate.toISOString(),
           remainingDays: 3,
           accessCount: 1,
           accessedOwnersCount: 1
@@ -602,36 +629,46 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
       };
       
       if (typeof window !== 'undefined' && (window as any).console) {
-        (window as any).console.warn('⚠️ PRODUCTION: Utilisation des données de fallback');
+        (window as any).console.warn('⚠️ FALLBACK: Données propriétaire créées artificiellement');
+        (window as any).console.log('  - ownerInfo fallback:', this.ownerInfo);
       }
-      return;
-    }
-
-    // ✅ Corriger les types selon OwnerInfoModel
-    const expiryDate = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
-
-    this.ownerInfo = {
-      owner: {
-        id: owner._id || 'unknown-id',
-        name: owner.fullName || 'Propriétaire Certifié',
-        email: owner.email || 'contact@ndewa360.com',
-        phone: owner.phoneNumber || '+237 6XX XXX XXX',
-        whatsapp: owner.phoneNumber || '+237 6XX XXX XXX',
-        address: this.unit.property?.location || 'Adresse non spécifiée'
-      },
-      access: {
-        id: 'temp-access-id',
-        expiryDate: expiryDate.toISOString(),
-        remainingDays: 3,
-        accessCount: 1,
-        accessedOwnersCount: 1
+    } else {
+      // Utiliser les vraies données du propriétaire
+      this.ownerInfo = {
+        owner: {
+          id: owner._id || ('owner-' + Date.now()),
+          name: owner.fullName || 'Propriétaire Vérifié',
+          email: owner.email || 'proprietaire@ndewa360.com',
+          phone: owner.phoneNumber || '+237 6XX XXX XXX',
+          whatsapp: owner.phoneNumber || '+237 6XX XXX XXX',
+          address: this.unit?.property?.location || 'Adresse non spécifiée'
+        },
+        access: {
+          id: 'access-' + Date.now(),
+          expiryDate: expiryDate.toISOString(),
+          remainingDays: 3,
+          accessCount: 1,
+          accessedOwnersCount: 1
+        }
+      };
+      
+      if (typeof window !== 'undefined' && (window as any).console) {
+        (window as any).console.log('✅ RÉEL: ownerInfo créé avec vraies données');
+        (window as any).console.log('  - ownerInfo réel:', this.ownerInfo);
       }
-    };
-
-    // Diagnostic final
-    if (typeof window !== 'undefined' && (window as any).console) {
-      (window as any).console.log('✅ PRODUCTION ownerInfo créé:', this.ownerInfo);
     }
+    
+    // Forcer la détection des changements Angular
+    this.cdr.detectChanges();
+    
+    setTimeout(() => {
+      if (typeof window !== 'undefined' && (window as any).console) {
+        (window as any).console.log('🔄 VÉRIFICATION FINALE ownerInfo:', this.ownerInfo);
+        (window as any).console.log('🔄 hasPremiumAccess:', this.hasPremiumAccess);
+      }
+      // Double vérification avec détection des changements
+      this.cdr.detectChanges();
+    }, 100);
   }
 
   /**

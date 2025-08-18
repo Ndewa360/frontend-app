@@ -254,8 +254,8 @@
           </div>
         </div>
 
-        <!-- Section Informations Premium (après paiement) *ngIf="hasPremiumAccess"-->
-        <div class="premium-info-section" >
+        <!-- Section Informations Premium (après paiement) -->
+        <div class="premium-info-section" *ngIf="hasPremiumAccess && ownerInfo">
           <h2 class="section-heading">
             <i class="fas fa-crown"></i>
             <span>Informations de contact</span>
@@ -267,20 +267,20 @@
               <i class="fas fa-check-circle"></i>
               <span>Forfait Premium Actif</span>
             </div>
-            <div class="expiry-info">
+            <div class="expiry-info" *ngIf="ownerInfo?.access">
               <i class="fas fa-clock"></i>
               <span>{{ getRemainingDaysText() }}</span>
             </div>
           </div>
 
-          <div class="premium-content">
+          <div class="premium-content" *ngIf="ownerInfo?.owner">
             <div class="contact-card">
               <div class="contact-header">
                 <i class="fas fa-phone-alt"></i>
                 <h3>Contact direct</h3>
               </div>
               <div class="contact-details">
-                <div class="contact-item">
+                <div class="contact-item" *ngIf="ownerInfo.owner.phone">
                   <i class="fas fa-mobile-alt"></i>
                   <span>{{ ownerInfo.owner.phone }}</span>
                   <button class="copy-button"
@@ -290,7 +290,7 @@
                     <i class="fas fa-copy"></i>
                   </button>
                 </div>
-                <div class="contact-item">
+                <div class="contact-item" *ngIf="ownerInfo.owner.email">
                   <i class="fas fa-envelope"></i>
                   <span>{{ ownerInfo.owner.email }}</span>
                   <button class="copy-button"
@@ -300,7 +300,7 @@
                     <i class="fas fa-copy"></i>
                   </button>
                 </div>
-                <div class="contact-item">
+                <div class="contact-item" *ngIf="ownerInfo.owner.whatsapp">
                   <i class="fab fa-whatsapp"></i>
                   <span>{{ ownerInfo.owner.whatsapp }}</span>
                   <a [href]="getWhatsAppLink()" target="_blank" class="whatsapp-button">
@@ -311,7 +311,7 @@
               </div>
             </div>
 
-            <div class="location-card">
+            <div class="location-card" *ngIf="ownerInfo.owner.address">
               <div class="location-header">
                 <i class="fas fa-map-marked-alt"></i>
                 <h3>Localisation précise</h3>
@@ -333,9 +333,21 @@
                 </div>
               </div>
             </div>
-
-            <!-- Actions de contact supprimées - équivalents disponibles dans les éléments de contact ci-dessus -->
           </div>
+        </div>
+        
+        <!-- Section de Debug Temporaire (à supprimer plus tard) -->
+        <div class="debug-section" style="background: #f0f0f0; padding: 15px; margin: 10px 0; border-radius: 8px; font-family: monospace; font-size: 12px;">
+          <h3 style="color: #333; margin: 0 0 10px 0;">🔍 Debug Info (Production)</h3>
+          <div><strong>hasPremiumAccess:</strong> {{ hasPremiumAccess }}</div>
+          <div><strong>ownerInfo exists:</strong> {{ !!ownerInfo }}</div>
+          <div *ngIf="ownerInfo"><strong>ownerInfo.owner exists:</strong> {{ !!ownerInfo.owner }}</div>
+          <div *ngIf="ownerInfo?.owner"><strong>owner.name:</strong> {{ ownerInfo.owner.name }}</div>
+          <div *ngIf="ownerInfo?.owner"><strong>owner.phone:</strong> {{ ownerInfo.owner.phone }}</div>
+          <div *ngIf="ownerInfo?.owner"><strong>owner.email:</strong> {{ ownerInfo.owner.email }}</div>
+          <div><strong>unit.property exists:</strong> {{ !!unit?.property }}</div>
+          <div *ngIf="unit?.property"><strong>unit.property.owner exists:</strong> {{ !!unit.property.owner }}</div>
+          <div *ngIf="unit?.property?.owner"><strong>original owner.fullName:</strong> {{ unit.property.owner.fullName }}</div>
         </div>
 
         <!-- Section Paiement pour accès premium -->
