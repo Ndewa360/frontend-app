@@ -22,6 +22,7 @@ import { PropertyDataService, Unit, Tenant, HistoryItem } from '../services/prop
 import { UnitAction } from '../components/property-units-list/property-units-list.component';
 import { UpdatePropertyComponent, UpdatePropertyDialogData } from '../update-property/update-property.component';
 import { GaleryComponent } from '../../room/components/galery/galery.component';
+import { PropertyGalleryComponent } from '../components/property-gallery/property-gallery.component';
 import { ModernUnitModalComponent } from '../components/modern-unit-modal/modern-unit-modal.component';
 // import { AddLocataireComponent } from '../../locataires/components/add-locataire/add-locataire.component';
 // import { UpdateRoomComponent } from '../../room/components/update-room/update-room.component';
@@ -376,7 +377,7 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
           maxWidth: '95vw',
           height: '90vh',
           maxHeight: '90vh',
-          panelClass: 'property-form-dialog',
+          panelClass: ['property-form-dialog', 'unit-gallery-modal'],
           disableClose: true,
           data: {room}
         });
@@ -547,5 +548,34 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
   exportData(format: 'pdf' | 'excel' | 'csv'): void {
     console.log('Exporter les données au format:', format);
     // TODO: Implémenter l'export de données
+  }
+
+  onOpenPropertyGallery(): void {
+    const property = this.store.selectSnapshot(PropertyState.selectStateProperty(this.propertyId));
+    if (property) {
+      const dialogRef = this.dialog.open(PropertyGalleryComponent, {
+        width: '900px',
+        maxWidth: '95vw',
+        height: '90vh',
+        maxHeight: '90vh',
+        panelClass: ['property-form-dialog', 'property-gallery-modal'],
+        disableClose: true,
+        data: { property }
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        console.log('🔄 Modal PropertyGallery fermé avec résultat:', result);
+      });
+    }
+  }
+
+  getTotalMediaCount(): number {
+    let totalCount = 0;
+    this.property$.pipe(takeUntil(this.destroy$)).subscribe(property => {
+      if (property?.medias) {
+        totalCount = property.medias.length;
+      }
+    });
+    return totalCount;
   }
 }

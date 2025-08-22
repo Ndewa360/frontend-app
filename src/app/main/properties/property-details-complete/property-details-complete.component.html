@@ -44,6 +44,14 @@
 
           <!-- Actions de l'en-tête -->
           <div class="header-actions flex items-center space-x-3">
+            <button class="gallery-btn inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-medium rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300 ease-in-out"
+                    (click)="onOpenPropertyGallery()">
+              <i class="fas fa-images mr-2 text-lg"></i>
+              <span>Galerie Média</span>
+              <div class="ml-2 bg-white bg-opacity-20 rounded-full px-2 py-1 text-xs font-semibold">
+                {{ getTotalMediaCount() }}
+              </div>
+            </button>
             <button ibmButton="primary"
                     size="md"
                     class="custom-primary-button inline-flex items-center focus-carbon"

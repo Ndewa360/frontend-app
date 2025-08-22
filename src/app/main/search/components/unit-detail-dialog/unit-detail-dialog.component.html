@@ -88,28 +88,58 @@
     <!-- Section Images (Côté Gauche) -->
     <section class="images-section">
       <div class="main-image-container">
-        <img 
-          [src]="getUnitImages()[currentImageIndex]" 
-          [alt]="'Photo ' + (currentImageIndex + 1) + ' de la propriété'"
-          class="property-image"
-          (click)="openImageGallery()">
-        
-        <!-- Overlay avec Contrôles -->
-        <div class="image-overlay">
-          <!-- Navigation d'Images -->
-          <div *ngIf="getUnitImages().length > 1" class="image-navigation">
-            <button (click)="previousImage()" class="image-nav-button" mat-icon-button>
+        <!-- Images avec swipe natif amélioré -->
+        <div class="image-swiper" 
+             (touchstart)="onTouchStart($event)"
+             (touchmove)="onTouchMove($event)"
+             (touchend)="onTouchEnd($event)"
+             (touchcancel)="onTouchCancel($event)"
+             style="touch-action: pan-x; user-select: none; -webkit-user-select: none;">
+          <div class="slider-container">
+            <div class="slider-track" [style.transform]="getSliderTransform()">
+              <div class="slider-slide" *ngFor="let image of unitImages; let i = index">
+                <img 
+                  [src]="image" 
+                  [alt]="'Photo ' + (i + 1) + ' de la propriété'"
+                  class="property-image"
+                  (click)="openImageGallery()"
+                  (error)="onImageError($event, i)"
+                  (load)="onImageLoad($event, i)"
+                  loading="eager">
+              </div>
+            </div>
+          </div>
+          
+          <!-- Navigation -->
+          <div *ngIf="unitImages.length > 1" class="slider-controls">
+            <button (click)="previousImage(); $event.stopPropagation()" 
+                    class="slider-btn slider-btn-prev" 
+                    type="button">
               <i class="fas fa-chevron-left"></i>
             </button>
-            <button (click)="nextImage()" class="image-nav-button" mat-icon-button>
+            <button (click)="nextImage(); $event.stopPropagation()" 
+                    class="slider-btn slider-btn-next" 
+                    type="button">
               <i class="fas fa-chevron-right"></i>
             </button>
           </div>
-
+          
+          <!-- Pagination -->
+          <div *ngIf="unitImages.length > 1" class="slider-dots">
+            <span *ngFor="let image of unitImages; let i = index"
+                  (click)="goToImage(i); $event.stopPropagation()"
+                  class="slider-dot"
+                  [class.active]="i === currentImageIndex">
+            </span>
+          </div>
+        </div>
+        
+        <!-- Overlay avec Contrôles -->
+        <div class="image-overlay">
           <!-- Compteur d'Images -->
-          <div class="image-counter" *ngIf="getUnitImages().length > 1">
+          <div class="image-counter" *ngIf="unitImages.length > 1">
             <i class="fas fa-camera"></i>
-            <span>{{ currentImageIndex + 1 }} / {{ getUnitImages().length }}</span>
+            <span>{{ currentImageIndex + 1 }} / {{ unitImages.length }}</span>
           </div>
 
           <!-- Bouton Plein Écran -->
@@ -120,14 +150,14 @@
       </div>
       
       <!-- Miniatures -->
-      <div *ngIf="getUnitImages().length > 1" class="thumbnails-section">
+      <div *ngIf="unitImages.length > 1" class="thumbnails-section">
         <div class="thumbnails-wrapper">
           <div 
-            *ngFor="let image of getUnitImages(); let i = index" 
+            *ngFor="let image of unitImages; let i = index; trackBy: trackByIndex" 
             (click)="goToImage(i)"
             class="thumbnail-item"
             [class.active]="i === currentImageIndex">
-            <img [src]="image" [alt]="'Miniature ' + (i + 1)">
+            <img [src]="image" [alt]="'Miniature ' + (i + 1)" loading="lazy">
           </div>
         </div>
       </div>
@@ -425,6 +455,48 @@
       </footer>
     </section>
   </main>
+</div>
+
+<!-- Galerie Plein Écran -->
+<div class="image-gallery-overlay" *ngIf="isImageGalleryVisible" (click)="closeImageGallery()">
+  <div class="gallery-container" (click)="$event.stopPropagation()">
+    <!-- Header de la galerie -->
+    <div class="gallery-header">
+      <div class="gallery-counter">
+        <span>{{ currentImageIndex + 1 }} / {{ unitImages.length }}</span>
+      </div>
+      <button (click)="closeImageGallery()" class="gallery-close-button" mat-icon-button>
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <!-- Galerie native plein écran -->
+    <div class="gallery-swiper" 
+         (touchstart)="onTouchStart($event)"
+         (touchmove)="onTouchMove($event)"
+         (touchend)="onTouchEnd($event)">
+      <div class="gallery-container" [style.transform]="'translateX(' + (-currentImageIndex * 100) + '%)'">
+        <div class="gallery-slide" *ngFor="let image of unitImages; let i = index">
+          <img 
+            [src]="image" 
+            [alt]="'Photo ' + (i + 1) + ' de la propriété'" 
+            class="gallery-image">
+        </div>
+      </div>
+      
+      <!-- Navigation galerie -->
+      <button *ngIf="currentImageIndex > 0" 
+              (click)="previousImage()" 
+              class="gallery-nav-button prev-button">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <button *ngIf="currentImageIndex < unitImages.length - 1" 
+              (click)="nextImage()" 
+              class="gallery-nav-button next-button">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+  </div>
 </div>
 
 <!-- Modal Premium Access - TEMPORAIREMENT COMMENTÉ POUR ACCÈS LIBRE -->

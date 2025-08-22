@@ -1552,6 +1552,10 @@
       position: relative;
       height: 280px;
       overflow: hidden;
+      
+      @media (max-width: 768px) {
+        height: 450px;
+      }
 
       .room-image {
         width: 100%;
@@ -1560,16 +1564,35 @@
         transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
       }
 
-      // === SLIDER D'IMAGES ===
+      // === SLIDER D'IMAGES AVEC SUPPORT TACTILE AMÉLIORÉ ===
       .image-slider {
         width: 100%;
         height: 100%;
         position: relative;
+        touch-action: pan-x !important; // Permettre seulement le swipe horizontal
+        user-select: none; // Empêcher la sélection de texte
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        pointer-events: auto !important; // Toujours actif pour les événements tactiles
+        
+        // Forcer les événements tactiles sur mobile
+        @media (max-width: 768px) {
+          pointer-events: auto !important;
+          touch-action: pan-x !important;
+          z-index: 999 !important;
+        }
 
         .slider-container {
           width: 100%;
           height: 100%;
           overflow: hidden;
+          position: relative;
+          
+          @media (max-width: 768px) {
+            pointer-events: auto !important;
+            touch-action: pan-x !important;
+          }
 
           .slider-track {
             display: flex;
@@ -1577,17 +1600,41 @@
             height: 100%;
             transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             will-change: transform;
+            
+            // Améliorer les performances sur mobile
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0);
+            
+            @media (max-width: 768px) {
+              pointer-events: auto !important;
+              touch-action: pan-x !important;
+            }
 
             .slider-slide {
               flex: 0 0 100%;
               width: 100%;
               height: 100%;
+              position: relative;
+              
+              @media (max-width: 768px) {
+                pointer-events: auto !important;
+              }
 
               .room-image {
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
                 transition: transform 0.3s ease;
+                pointer-events: none; // Empêcher les interactions sur l'image
+                -webkit-user-drag: none; // Empêcher le drag sur Safari
+                -khtml-user-drag: none;
+                -moz-user-drag: none;
+                -o-user-drag: none;
+                user-drag: none;
+                
+                @media (max-width: 768px) {
+                  pointer-events: none !important; // Garder none sur l'image pour éviter les conflits
+                }
               }
             }
           }
@@ -1691,6 +1738,43 @@
           }
         }
 
+        // Afficher les contrôles au hover comme dans unit-detail-dialog
+        &:hover {
+          .slider-controls,
+          .slider-dots {
+            opacity: 1 !important;
+            visibility: visible !important;
+            pointer-events: auto !important;
+          }
+        }
+        
+        // Cacher les boutons sur mobile, garder seulement les dots
+        @media (max-width: 768px) {
+          .slider-controls {
+            display: none !important;
+          }
+          
+          .slider-dots {
+            opacity: 1 !important;
+            visibility: visible !important;
+            pointer-events: auto !important;
+            bottom: 1rem !important;
+            padding: 0.5rem 1rem !important;
+            background: rgba(0, 0, 0, 0.6) !important;
+            
+            .slider-dot {
+              width: 8px !important;
+              height: 8px !important;
+              
+              &.active {
+                transform: scale(1.2) !important;
+              }
+            }
+          }
+        }
+        
+
+        
         // Le hover sera géré au niveau de la carte entière
       }
     }
@@ -1836,6 +1920,21 @@
         &:hover {
           background: rgba($default_app_color, 0.15);
           transform: translateY(-1px);
+        }
+
+        // Style spécial pour la surface (plus visible)
+        &.feature-surface {
+          background: rgba($default_app_color, 0.15);
+          border: 2px solid rgba($default_app_color, 0.3);
+          font-weight: 700;
+          color: $default_app_color;
+          order: -1; // Placer en premier
+          
+          &:hover {
+            background: rgba($default_app_color, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba($default_app_color, 0.2);
+          }
         }
 
         youpez-ibm-icon {
@@ -2580,7 +2679,7 @@
 
         .card-image {
           width: 100%;
-          height: 250px;
+          height: 450px;
         }
 
         .card-content {
@@ -2590,7 +2689,7 @@
 
       .result-card {
         .card-image {
-          height: 250px;
+          height: 450px;
         }
 
         .card-content {
@@ -2665,7 +2764,7 @@
     border-radius: 16px !important;
 
     .card-image {
-      height: 200px !important;
+      height: 350px !important;
     }
 
     .card-content {

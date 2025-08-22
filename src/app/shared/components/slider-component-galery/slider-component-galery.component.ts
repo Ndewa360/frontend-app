@@ -25,11 +25,18 @@ export class SliderComponentGaleryComponent implements AfterViewInit {
   ngOnChanges(changes: SimpleChanges): void {
       if(changes['images'].currentValue.length==0) this.images = ["assets/img/utils/house.png"]
         
-      // if(changes['images'].currentValue.length<2) this.shouldShowNavSlider=false;
-      // else this.shouldShowNavSlider=true;
+      if(changes['images'].currentValue.length>0) {
+        this.shouldshowFullScreen=true;
+        // Précharger toutes les images
+        this.preloadImages(changes['images'].currentValue);
+      }
+  }
 
-      if(changes['images'].currentValue.length>0) this.shouldshowFullScreen=true;
-      // this.recursivlySlider()
+  private preloadImages(imageUrls: string[]): void {
+    imageUrls.forEach(url => {
+      const img = new Image();
+      img.src = url;
+    });
   }
 
 
@@ -54,6 +61,16 @@ index = 0;
   swiperConfig = {
     spaceBetween: 10,
     navigation: true,
+    lazy: false,
+    preloadImages: true,
+    updateOnImagesReady: true,
+    watchSlidesProgress: true,
+    observer: true,
+    observeParents: true,
+    centeredSlides: false,
+    slidesPerView: 1,
+    effect: 'slide',
+    speed: 300
   };
 
   swiperThumbsConfig = {
@@ -64,11 +81,39 @@ index = 0;
   };
 
   ngAfterViewInit() {
-    this.swiper.nativeElement.swiper.activeIndex = this.index;
-    // this.swiperThumbs.nativeElement.swiper.activeIndex = this.index;
+    // Délai pour s'assurer que Swiper est complètement initialisé
+    setTimeout(() => {
+      if (this.swiper?.nativeElement?.swiper) {
+        this.swiper.nativeElement.swiper.activeIndex = this.index;
+        this.swiper.nativeElement.swiper.update();
+      }
+    }, 100);
   }
 
   slideChange(swiper: any) {
     this.index = swiper.detail[0].activeIndex;
+    // Forcer le rechargement de l'image active
+    setTimeout(() => {
+      if (this.swiper?.nativeElement?.swiper) {
+        this.swiper.nativeElement.swiper.update();
+      }
+    }, 50);
+  }
+
+  trackByUrl(index: number, item: string): string {
+    return item;
+  }
+
+  onImageError(event: any): void {
+    console.error('Erreur de chargement d\'image:', event.target.src);
+    event.target.src = 'assets/img/utils/house.png';
+  }
+
+  onImageLoad(event: any): void {
+    console.log('Image chargée:', event.target.src);
+    // Forcer la mise à jour du swiper après chargement d'image
+    if (this.swiper?.nativeElement?.swiper) {
+      this.swiper.nativeElement.swiper.update();
+    }
   }
 }

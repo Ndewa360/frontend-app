@@ -5,11 +5,16 @@
       <i class="fa-solid fa-expand"></i>
     </button>
   </div>
-  <swiper-container appSwiper #swiper [config]="swiperConfig" thumbs-swiper=".mySwiper2" (slidechange)="slideChange($event)">
-    <swiper-slide *ngFor="let item of images">
-      <!-- <div class="ratio ratio-4x3" [ngStyle]="{background: 'url(' + item +') no-repeat top center / contain'}"></div> -->
-      <img [src]="item" width="50"  class="w-full h-full object-cover" />
-
+  <swiper-container appSwiper #swiper [config]="swiperConfig" (slidechange)="slideChange($event)">
+    <swiper-slide *ngFor="let item of images; trackBy: trackByUrl">
+      <div class="slide-content">
+        <img [src]="item" 
+             alt="Image" 
+             class="w-full h-full object-cover" 
+             (error)="onImageError($event)"
+             (load)="onImageLoad($event)"
+             loading="eager" />
+      </div>
     </swiper-slide>
   </swiper-container>
   <!-- /image -->

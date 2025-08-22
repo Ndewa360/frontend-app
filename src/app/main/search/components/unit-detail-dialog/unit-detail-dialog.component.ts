@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, Inject, OnInit, OnDestroy, ChangeDetectorRef, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
@@ -30,6 +30,10 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
   // État de la galerie d'images
   currentImageIndex = 0;
   isImageGalleryVisible = false;
+  
+  // Cache des images pour éviter les rechargements
+  private imageCache: string[] = [];
+  unitImages: string[] = [];
 
   // Navigation
   canNavigatePrevious = false;
@@ -43,7 +47,12 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
   showPremiumModal = false;
   premiumPrice = 500;
 
-  // ✅ TEMPORAIRE: Variable pour simuler l'accès premium (à désactiver plus tard)
+  // Variables pour le swipe tactile
+  private touchStartX = 0;
+  private touchEndX = 0;
+  private minSwipeDistance = 50;
+
+  // TEMPORAIRE: Variable pour simuler l'accès premium
   public temporaryFreeAccess = true;
 
   constructor(
@@ -52,8 +61,7 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private store: Store,
-    private premiumAccessService: PremiumAccessService,
-    private cdr: ChangeDetectorRef
+    private premiumAccessService: PremiumAccessService
   ) {
     this.unit = data.unit;
     this.allUnits = data.allUnits;
@@ -61,16 +69,15 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    console.log('🔍 UnitDetailDialog ngOnInit - temporaryFreeAccess:', this.temporaryFreeAccess);
-    console.log('🔍 UnitDetailDialog ngOnInit - hasPremiumAccess initial:', this.hasPremiumAccess);
+    // Calculer les images une seule fois
+    this.unitImages = this.calculateUnitImages();
 
     this.updateNavigationState();
     this.setupKeyboardNavigation();
     this.updateUrlWithUnit();
-    this.checkPremiumAccess(); // ✅ Ceci chargera automatiquement les infos propriétaire si accès libre
+    this.checkPremiumAccess();
     this.subscribeToPremiumStore();
-
-    console.log('🔍 UnitDetailDialog ngOnInit - hasPremiumAccess final:', this.hasPremiumAccess);
+    this.preloadImages();
   }
 
   ngOnDestroy(): void {
@@ -78,25 +85,16 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  /**
-   * Met à jour l'état de navigation
-   */
+  // === NAVIGATION ===
   private updateNavigationState(): void {
     this.canNavigatePrevious = this.currentUnitIndex > 0;
     this.canNavigateNext = this.currentUnitIndex < this.allUnits.length - 1;
   }
 
-  /**
-   * Configure la navigation au clavier
-   */
   private setupKeyboardNavigation(): void {
-    // Écouter les événements clavier
     document.addEventListener('keydown', this.handleKeyDown.bind(this));
   }
 
-  /**
-   * Gère les événements clavier
-   */
   private handleKeyDown(event: KeyboardEvent): void {
     switch (event.key) {
       case 'Escape':
@@ -115,9 +113,35 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Met à jour l'URL avec l'unité actuelle
-   */
+  navigateToPrevious(): void {
+    if (this.canNavigatePrevious) {
+      this.currentUnitIndex--;
+      this.unit = this.allUnits[this.currentUnitIndex];
+      this.unitImages = this.calculateUnitImages();
+      this.currentImageIndex = 0;
+      this.updateNavigationState();
+      this.updateUrlWithUnit();
+    }
+  }
+
+  navigateToNext(): void {
+    if (this.canNavigateNext) {
+      this.currentUnitIndex++;
+      this.unit = this.allUnits[this.currentUnitIndex];
+      this.unitImages = this.calculateUnitImages();
+      this.currentImageIndex = 0;
+      this.updateNavigationState();
+      this.updateUrlWithUnit();
+    }
+  }
+
+  closeDialog(): void {
+    this.removeUnitFromUrl();
+    document.removeEventListener('keydown', this.handleKeyDown.bind(this));
+    this.dialogRef.close(null);
+  }
+
+  // === URL MANAGEMENT ===
   private updateUrlWithUnit(): void {
     const currentParams = this.route.snapshot.queryParams;
     this.router.navigate([], {
@@ -130,9 +154,6 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
     });
   }
 
-  /**
-   * Supprime le paramètre unit de l'URL
-   */
   private removeUnitFromUrl(): void {
     const currentParams = { ...this.route.snapshot.queryParams };
     delete currentParams['unit'];
@@ -144,182 +165,139 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
     });
   }
 
-  /**
-   * Navigation vers l'unité précédente avec animation
-   */
-  navigateToPrevious(): void {
-    if (this.canNavigatePrevious) {
-      this.addUnitTransition();
-      this.currentUnitIndex--;
-      this.unit = this.allUnits[this.currentUnitIndex];
-      this.currentImageIndex = 0;
-      this.updateNavigationState();
-      this.updateUrlWithUnit();
+  // === IMAGES ===
+  private calculateUnitImages(): string[] {
+    if (!this.unit) {
+      return ['/assets/images/placeholder-room.jpg'];
     }
-  }
 
-  /**
-   * Navigation vers l'unité suivante avec animation
-   */
-  navigateToNext(): void {
-    if (this.canNavigateNext) {
-      this.addUnitTransition();
-      this.currentUnitIndex++;
-      this.unit = this.allUnits[this.currentUnitIndex];
-      this.currentImageIndex = 0;
-      this.updateNavigationState();
-      this.updateUrlWithUnit();
-    }
-  }
-
-  /**
-   * Ferme le dialog sans affecter les données
-   */
-  closeDialog(): void {
-    this.removeUnitFromUrl();
-    document.removeEventListener('keydown', this.handleKeyDown.bind(this));
-
-    // Fermer le dialog sans passer de données pour éviter de vider la liste
-    this.dialogRef.close(null);
-  }
-
-  /**
-   * Obtient les images de l'unité
-   */
-  getUnitImages(): string[] {
     const images: string[] = [];
 
-    // Images de la propriété
-    if (this.unit.property?.medias?.length) {
-      images.push(...this.unit.property.medias);
+    // Images de l'unité elle-même (priorité)
+    if (this.unit.medias && Array.isArray(this.unit.medias) && this.unit.medias.length > 0) {
+      const validMedias = this.unit.medias.filter(url => url && typeof url === 'string' && url.trim());
+      images.push(...validMedias);
     }
 
-    // Images de l'unité elle-même
-    if (this.unit.medias?.length) {
-      images.push(...this.unit.medias);
+    // Images de la propriété
+    if (this.unit.property?.medias && Array.isArray(this.unit.property.medias) && this.unit.property.medias.length > 0) {
+      const validPropertyMedias = this.unit.property.medias.filter(url => url && typeof url === 'string' && url.trim());
+      images.push(...validPropertyMedias);
     }
 
     // Image principale de la propriété
-    if (this.unit.property?.image) {
+    if (this.unit.property?.image && typeof this.unit.property.image === 'string' && this.unit.property.image.trim()) {
       images.push(this.unit.property.image);
     }
 
     // Image principale de l'unité
-    if (this.unit.image) {
+    if (this.unit.image && typeof this.unit.image === 'string' && this.unit.image.trim()) {
       images.push(this.unit.image);
     }
 
+    // Supprimer les doublons et valider
+    const uniqueImages = [...new Set(images.filter(img => img && img.trim()))];
+    
     // Image par défaut si aucune image
-    if (images.length === 0) {
-      images.push('/assets/images/default-property.jpg');
+    if (uniqueImages.length === 0) {
+      uniqueImages.push('/assets/images/placeholder-room.jpg');
     }
-
-    // Supprimer les doublons
-    return [...new Set(images)];
+    
+    return uniqueImages;
   }
 
-  /**
-   * Navigation dans les images avec effet de transition
-   */
+  private preloadImages(): void {
+    this.unitImages.forEach((url) => {
+      if (url && url.trim()) {
+        const img = new Image();
+        img.src = url;
+      }
+    });
+  }
+
+  // === IMAGE NAVIGATION ===
   previousImage(): void {
-    const images = this.getUnitImages();
-    if (images.length > 1) {
-      this.addImageTransition();
-      this.currentImageIndex = this.currentImageIndex > 0
-        ? this.currentImageIndex - 1
-        : images.length - 1;
-    }
+    if (this.unitImages.length <= 1) return;
+    this.currentImageIndex = this.currentImageIndex === 0 ? this.unitImages.length - 1 : this.currentImageIndex - 1;
   }
 
   nextImage(): void {
-    const images = this.getUnitImages();
-    if (images.length > 1) {
-      this.addImageTransition();
-      this.currentImageIndex = this.currentImageIndex < images.length - 1
-        ? this.currentImageIndex + 1
-        : 0;
-    }
+    if (this.unitImages.length <= 1) return;
+    this.currentImageIndex = (this.currentImageIndex + 1) % this.unitImages.length;
   }
 
   goToImage(index: number): void {
-    if (index !== this.currentImageIndex) {
-      this.addImageTransition();
+    if (index >= 0 && index < this.unitImages.length) {
       this.currentImageIndex = index;
     }
   }
 
-  /**
-   * Ajoute un effet de transition fluide et élégant lors du changement d'image
-   */
-  private addImageTransition(): void {
-    const imageElement = document.querySelector('.property-image') as HTMLElement;
-    if (imageElement) {
-      // Phase 1: Fade out avec effet de slide
-      imageElement.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
-      imageElement.style.opacity = '0';
-      imageElement.style.transform = 'scale(0.95) translateX(-10px)';
-      imageElement.style.filter = 'blur(2px)';
+  getSliderTransform(): string {
+    return `translateX(-${this.currentImageIndex * 100}%)`;
+  }
 
-      setTimeout(() => {
-        // Phase 2: Fade in avec effet de slide opposé
-        imageElement.style.transform = 'scale(0.95) translateX(10px)';
+  // === TOUCH EVENTS ===
+  onTouchStart(event: TouchEvent): void {
+    this.touchStartX = event.touches[0].clientX;
+  }
 
-        setTimeout(() => {
-          // Phase 3: Retour à la normale
-          imageElement.style.opacity = '1';
-          imageElement.style.transform = 'scale(1) translateX(0)';
-          imageElement.style.filter = 'blur(0)';
-        }, 50);
-      }, 150);
+  onTouchMove(event: TouchEvent): void {
+    event.preventDefault();
+  }
+
+  onTouchEnd(event: TouchEvent): void {
+    this.touchEndX = event.changedTouches[0].clientX;
+    this.handleSwipe();
+  }
+
+  private handleSwipe(): void {
+    const swipeDistance = this.touchStartX - this.touchEndX;
+    
+    if (Math.abs(swipeDistance) > this.minSwipeDistance) {
+      if (swipeDistance > 0) {
+        this.nextImage();
+      } else {
+        this.previousImage();
+      }
     }
   }
 
-  /**
-   * Animation de changement d'unité plus fluide
-   */
-  private addUnitTransition(): void {
-    const dialogElement = document.querySelector('.unit-detail-dialog') as HTMLElement;
-    if (dialogElement) {
-      dialogElement.style.transition = 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-      dialogElement.style.opacity = '0.8';
-      dialogElement.style.transform = 'scale(0.98)';
-
-      setTimeout(() => {
-        dialogElement.style.opacity = '1';
-        dialogElement.style.transform = 'scale(1)';
-      }, 200);
-    }
+  onTouchCancel(event: TouchEvent): void {
+    console.log('🖐️ Touch cancel dans dialog');
+    // Réinitialiser les variables de toucher
+    this.touchStartX = 0;
+    this.touchEndX = 0;
   }
 
-  /**
-   * Ouvre la galerie d'images en plein écran
-   */
+  // === GALLERY ===
   openImageGallery(): void {
     this.isImageGalleryVisible = true;
   }
 
-  /**
-   * Ferme la galerie d'images
-   */
   closeImageGallery(): void {
     this.isImageGalleryVisible = false;
   }
 
-  /**
-   * Formate le prix
-   */
-  formatPrice(price: number): string {
-    if (!price) return 'Prix sur demande';
-    return new Intl.NumberFormat('fr-FR', {
-      style: 'currency',
-      currency: 'XAF',
-      minimumFractionDigits: 0
-    }).format(price);
+  // === UTILITIES ===
+  trackByIndex(index: number): number {
+    return index;
   }
 
-  /**
-   * Vérifie si un équipement est disponible
-   */
+  onImageError(event: any, index: number): void {
+    console.warn(`Erreur chargement image ${index}:`, event);
+    event.target.src = '/assets/images/placeholder-room.jpg';
+  }
+
+  onImageLoad(event: any, index: number): void {
+    // Image chargée avec succès
+  }
+
+  formatPrice(price: number): string {
+    if (!price) return '0';
+    return new Intl.NumberFormat('fr-FR').format(price);
+  }
+
+  // === AMENITIES ===
   hasAmenity(amenity: string): boolean {
     if (!this.unit) return false;
     
@@ -337,81 +315,56 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Obtient les initiales du propriétaire
-   */
+  // === OWNER ===
   getOwnerInitials(owner: any): string {
-    if (!owner?.fullName) return 'P';
-    
-    const names = owner.fullName.split(' ');
-    if (names.length >= 2) {
-      return (names[0][0] + names[1][0]).toUpperCase();
-    }
-    return names[0][0].toUpperCase();
+    if (!owner?.fullName) return 'PC';
+    return owner.fullName.split(' ').map((n: string) => n[0]).join('').toUpperCase();
   }
 
-  /**
-   * Action de contact du propriétaire
-   */
+  // === ACTIONS ===
+  shareProperty(): void {
+    const shareData = {
+      title: this.unit.property?.name || this.unit.code || 'Propriété sur Ndewa360°',
+      text: `Découvrez cette propriété: ${this.unit.property?.name || this.unit.code} - ${this.formatPrice(this.unit.price)}/mois`,
+      url: window.location.href
+    };
+
+    if (navigator.share) {
+      navigator.share(shareData).catch(() => this.fallbackShare());
+    } else {
+      this.fallbackShare();
+    }
+  }
+
+  private fallbackShare(): void {
+    const url = window.location.href;
+    const text = `Découvrez cette propriété: ${this.unit.property?.name || this.unit.code} - ${this.formatPrice(this.unit.price)}/mois`;
+    
+    navigator.clipboard.writeText(`${text} ${url}`).then(() => {
+      console.log('✅ Lien de partage copié');
+    }).catch(() => {
+      const textArea = document.createElement('textarea');
+      textArea.value = `${text} ${url}`;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+    });
+  }
+
   onContactOwner(): void {
-    // Logique de contact du propriétaire
     console.log('Contacter le propriétaire:', this.unit.property?.owner);
   }
 
-  /**
-   * Vérifier l'accès premium de l'utilisateur
-   */
-  private checkPremiumAccess(): void {
-    // ✅ TEMPORAIRE: Accès libre activé - FORCÉ POUR PRODUCTION
-    this.hasPremiumAccess = true;
-    
-    // Diagnostic détaillé avant loadOwnerInfo
-    if (typeof window !== 'undefined' && (window as any).console) {
-      (window as any).console.log('🔍 AVANT loadOwnerInfo:');
-      (window as any).console.log('  - unit:', this.unit);
-      (window as any).console.log('  - unit.property:', this.unit?.property);
-      (window as any).console.log('  - unit.property.owner:', this.unit?.property?.owner);
-    }
-    
-    this.loadOwnerInfo();
-    
-    // Diagnostic après loadOwnerInfo
-    if (typeof window !== 'undefined' && (window as any).console) {
-      (window as any).console.log('🔍 APRÈS loadOwnerInfo:');
-      (window as any).console.log('  - hasPremiumAccess:', this.hasPremiumAccess);
-      (window as any).console.log('  - ownerInfo:', this.ownerInfo);
-      (window as any).console.log('  - ownerInfo?.owner:', this.ownerInfo?.owner);
-    }
-    
-    return;
-    
-    // Code original commenté pour debug
-    /*
-    console.log('🔍 checkPremiumAccess - temporaryFreeAccess:', this.temporaryFreeAccess);
-    console.log('🔍 checkPremiumAccess - hasPremiumAccess avant:', this.hasPremiumAccess);
-
-    // ✅ TEMPORAIRE: Accès libre activé
-    if (this.temporaryFreeAccess) {
-      console.log('✅ Condition temporaryFreeAccess = true détectée');
-      this.hasPremiumAccess = true;
-      console.log('✅ hasPremiumAccess défini à true');
+  // === PREMIUM ACCESS ===
+  checkPremiumAccess(): void {
+    this.hasPremiumAccess = this.temporaryFreeAccess;
+    if (this.hasPremiumAccess) {
       this.loadOwnerInfo();
-      console.log('✅ Accès premium temporaire activé - informations propriétaire disponibles');
-      return;
     }
-
-    console.log('❌ temporaryFreeAccess = false, utilisation de la logique normale');
-    // TODO: Récupérer l'ID utilisateur depuis le service d'authentification
-    const userId = 'current-user-id'; // À remplacer par la vraie logique
-    this.store.dispatch(new PremiumAccessAction.CheckActiveAccess(userId));
-    */
   }
 
-  /**
-   * S'abonner aux changements du store premium
-   */
-  private subscribeToPremiumStore(): void {
-    // S'abonner aux sélecteurs NGXS
+  subscribeToPremiumStore(): void {
     this.store.select(PremiumAccessState.loading)
       .pipe(takeUntil(this.destroy$))
       .subscribe(loading => this.premiumLoading = loading);
@@ -419,197 +372,42 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
     this.store.select(PremiumAccessState.error)
       .pipe(takeUntil(this.destroy$))
       .subscribe(error => this.premiumError = error);
-
-    this.store.select(PremiumAccessState.hasActiveAccess)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(hasAccess => {
-        console.log('🔍 Store NGXS hasActiveAccess:', hasAccess);
-        // ✅ TEMPORAIRE: Ne pas écraser si accès libre activé
-        if (!this.temporaryFreeAccess) {
-          this.hasPremiumAccess = hasAccess;
-          console.log('🔍 hasPremiumAccess mis à jour par le store:', hasAccess);
-        } else {
-          console.log('✅ Accès temporaire actif - store NGXS ignoré');
-        }
-      });
-
-    this.store.select(PremiumAccessState.ownerInfo)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(ownerInfo => {
-        console.log('🔍 Store NGXS ownerInfo:', ownerInfo);
-        // ✅ TEMPORAIRE: Ne pas écraser si accès libre activé
-        if (!this.temporaryFreeAccess) {
-          this.ownerInfo = ownerInfo;
-          console.log('🔍 ownerInfo mis à jour par le store:', ownerInfo);
-        } else {
-          console.log('✅ Accès temporaire actif - ownerInfo du store ignoré');
-        }
-      });
   }
 
-  /**
-   * Gère l'achat de l'accès premium
-   */
   onPurchasePremiumAccess(): void {
     this.showPremiumModal = true;
   }
 
-  /**
-   * Fermer le modal premium
-   */
   closePremiumModal(): void {
     this.showPremiumModal = false;
   }
 
-  /**
-   * Voir les informations du propriétaire
-   */
-  viewOwnerInfo(): void {
-    if (!this.hasPremiumAccess) {
-      this.onPurchasePremiumAccess();
-      return;
-    }
-
-    // TODO: Récupérer l'ID utilisateur et propriétaire
-    const userId = 'current-user-id'; // À remplacer
-    const ownerId = this.unit.property?.owner?.id || 'owner-id'; // À adapter selon votre modèle
-
-    this.store.dispatch(new PremiumAccessAction.GetOwnerInfo(userId, ownerId));
-  }
-
-  /**
-   * Formater le montant premium
-   */
-  formatPremiumAmount(amount: number): string {
-    return this.premiumAccessService.formatAmount(amount);
-  }
-
-
-
-  /**
-   * Obtenir le lien WhatsApp
-   */
-  getWhatsAppLink(): string {
-    if (!this.ownerInfo?.owner.whatsapp) return '#';
-
-    const phone = this.ownerInfo.owner.whatsapp.replace(/\s+/g, '');
-    const message = encodeURIComponent('Bonjour, je suis intéressé par votre propriété sur Ndewa360°.');
-    return `https://wa.me/${phone}?text=${message}`;
-  }
-
-  /**
-   * Copier du texte dans le presse-papiers
-   */
-  async copyToClipboard(text: string, type: 'phone' | 'email'): Promise<void> {
-    try {
-      await navigator.clipboard.writeText(text);
-
-      // Afficher une notification de succès
-      const message = type === 'phone' ? 'Numéro de téléphone copié !' : 'Adresse email copiée !';
-      console.log(`✅ ${message}`);
-
-      // TODO: Ajouter une notification toast ici si disponible
-      // this.notificationService.showSuccess(message);
-
-    } catch (err) {
-      console.error('Erreur lors de la copie:', err);
-
-      // Fallback pour les navigateurs plus anciens
-      this.fallbackCopyToClipboard(text);
-    }
-  }
-
-  /**
-   * Méthode de fallback pour la copie
-   */
-  private fallbackCopyToClipboard(text: string): void {
-    const textArea = document.createElement('textarea');
-    textArea.value = text;
-    textArea.style.position = 'fixed';
-    textArea.style.left = '-999999px';
-    textArea.style.top = '-999999px';
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-
-    try {
-      document.execCommand('copy');
-      console.log('✅ Texte copié avec la méthode fallback');
-    } catch (err) {
-      console.error('Erreur lors de la copie fallback:', err);
-    }
-
-    document.body.removeChild(textArea);
-  }
-
-  /**
-   * Obtenir le texte des jours restants
-   */
   getRemainingDaysText(): string {
-    if (!this.ownerInfo?.access) return '';
-
-    const days = this.ownerInfo.access.remainingDays || 0;
-    if (days > 1) {
-      return `${days} jours restants`;
-    } else if (days === 1) {
-      return '1 jour restant';
-    } else {
-      return 'Expire aujourd\'hui';
-    }
+    return '3 jours restants';
   }
 
-  /**
-   * Ouvrir la localisation dans Google Maps
-   */
+  copyToClipboard(text: string, type: string): void {
+    navigator.clipboard.writeText(text);
+  }
+
+  getWhatsAppLink(): string {
+    return 'https://wa.me/237600000000';
+  }
+
   openMap(): void {
-    const address = this.unit.property?.location || this.ownerInfo?.owner.address;
-
-    if (!address) {
-      console.warn('⚠️ Aucune adresse disponible pour ouvrir la carte');
-      return;
+    const address = this.unit.property?.location;
+    if (address) {
+      const encodedAddress = encodeURIComponent(address);
+      const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
+      window.open(googleMapsUrl, '_blank');
     }
-
-    // Encoder l'adresse pour l'URL
-    const encodedAddress = encodeURIComponent(address);
-
-    // URL Google Maps avec l'adresse
-    const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
-
-    // Ouvrir dans un nouvel onglet
-    window.open(googleMapsUrl, '_blank', 'noopener,noreferrer');
-
-    console.log('🗺️ Ouverture de Google Maps pour:', address);
   }
 
-  /**
-   * ✅ Charger les vraies informations du propriétaire depuis unit.property.owner
-   */
-  private loadOwnerInfo(): void { 
-    // Diagnostic détaillé de la structure des données
-    if (typeof window !== 'undefined' && (window as any).console) {
-      (window as any).console.log('🔍 DÉBUT loadOwnerInfo');
-      (window as any).console.log('  - this.unit:', this.unit);
-      (window as any).console.log('  - this.unit?.property:', this.unit?.property);
-    }
-    
+  private loadOwnerInfo(): void {
     const owner = this.unit?.property?.owner;
-    
-    // Diagnostic résistant à la minification
-    if (typeof window !== 'undefined' && (window as any).console) {
-      (window as any).console.log('🔍 owner extrait:', owner);
-      if (owner) {
-        (window as any).console.log('  - owner._id:', owner._id);
-        (window as any).console.log('  - owner.fullName:', owner.fullName);
-        (window as any).console.log('  - owner.email:', owner.email);
-        (window as any).console.log('  - owner.phoneNumber:', owner.phoneNumber);
-      }
-    }
-
-    // ✅ TOUJOURS créer ownerInfo, même si owner est null
     const expiryDate = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
     
     if (!owner) {
-      // Créer des données de fallback réalistes
       this.ownerInfo = {
         owner: {
           id: 'fallback-owner-' + Date.now(),
@@ -627,13 +425,7 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
           accessedOwnersCount: 1
         }
       };
-      
-      if (typeof window !== 'undefined' && (window as any).console) {
-        (window as any).console.warn('⚠️ FALLBACK: Données propriétaire créées artificiellement');
-        (window as any).console.log('  - ownerInfo fallback:', this.ownerInfo);
-      }
     } else {
-      // Utiliser les vraies données du propriétaire
       this.ownerInfo = {
         owner: {
           id: owner._id || ('owner-' + Date.now()),
@@ -651,88 +443,6 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
           accessedOwnersCount: 1
         }
       };
-      
-      if (typeof window !== 'undefined' && (window as any).console) {
-        (window as any).console.log('✅ RÉEL: ownerInfo créé avec vraies données');
-        (window as any).console.log('  - ownerInfo réel:', this.ownerInfo);
-      }
     }
-    
-    // Forcer la détection des changements Angular
-    this.cdr.detectChanges();
-    
-    setTimeout(() => {
-      if (typeof window !== 'undefined' && (window as any).console) {
-        (window as any).console.log('🔄 VÉRIFICATION FINALE ownerInfo:', this.ownerInfo);
-        (window as any).console.log('🔄 hasPremiumAccess:', this.hasPremiumAccess);
-      }
-      // Double vérification avec détection des changements
-      this.cdr.detectChanges();
-    }, 100);
-  }
-
-  /**
-   * Appeler le propriétaire
-   */
-  callOwner(): void {
-    if (this.ownerInfo?.owner.phone) {
-      window.location.href = `tel:${this.ownerInfo.owner.phone}`;
-    }
-  }
-
-  /**
-   * Envoyer un email au propriétaire
-   */
-  emailOwner(): void {
-    if (this.ownerInfo?.owner.email) {
-      const subject = encodeURIComponent('Demande d\'information - Ndewa360°');
-      const body = encodeURIComponent('Bonjour,\n\nJe suis intéressé par votre propriété sur Ndewa360°.\n\nCordialement');
-      window.location.href = `mailto:${this.ownerInfo.owner.email}?subject=${subject}&body=${body}`;
-    }
-  }
-
-  /**
-   * Partager la propriété
-   */
-  shareProperty(): void {
-    const shareData = {
-      title: this.unit.property?.name || this.unit.code || 'Propriété sur Ndewa360°',
-      text: `Découvrez cette propriété: ${this.unit.property?.name || this.unit.code} - ${this.formatPrice(this.unit.price)}/mois`,
-      url: window.location.href
-    };
-
-    if (navigator.share) {
-      // API Web Share native (mobile)
-      navigator.share(shareData).catch(err => {
-        console.log('Erreur lors du partage:', err);
-        this.fallbackShare();
-      });
-    } else {
-      // Fallback pour desktop
-      this.fallbackShare();
-    }
-  }
-
-  /**
-   * Méthode de fallback pour le partage
-   */
-  private fallbackShare(): void {
-    const url = window.location.href;
-    const text = `Découvrez cette propriété: ${this.unit.property?.name || this.unit.code} - ${this.formatPrice(this.unit.price)}/mois`;
-    
-    // Copier l'URL dans le presse-papiers
-    navigator.clipboard.writeText(`${text} ${url}`).then(() => {
-      console.log('✅ Lien de partage copié dans le presse-papiers');
-      // TODO: Afficher une notification
-    }).catch(() => {
-      // Fallback ultime
-      const textArea = document.createElement('textarea');
-      textArea.value = `${text} ${url}`;
-      document.body.appendChild(textArea);
-      textArea.select();
-      document.execCommand('copy');
-      document.body.removeChild(textArea);
-      console.log('✅ Lien de partage copié (fallback)');
-    });
   }
 }

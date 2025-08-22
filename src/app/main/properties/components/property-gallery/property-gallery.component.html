@@ -8,7 +8,7 @@
                     <i class="fa fa-images mr-2"></i>
                     Galerie Média
                 </h2>
-                <p class="gallery-subtitle">{{ data.room.code }} - Gestion des médias</p>
+                <p class="gallery-subtitle">{{ data.property.name }} - Gestion des médias</p>
             </div>
 
             <!-- Navigation des vues -->
@@ -47,7 +47,7 @@
                     (click)="switchTab('images')">
                     <i class="fa fa-image"></i>
                     <span>Images</span>
-                    <span class="count">{{ roomSelectedImages.length }}</span>
+                    <span class="count">{{ propertyImages.length }}</span>
                 </button>
                 <button
                     class="media-tab"
@@ -55,7 +55,7 @@
                     (click)="switchTab('videos')">
                     <i class="fa fa-video"></i>
                     <span>Vidéos</span>
-                    <span class="count">{{ roomSelectedVideos.length }}</span>
+                    <span class="count">{{ propertyVideos.length }}</span>
                 </button>
                 <button
                     class="media-tab"
@@ -63,7 +63,7 @@
                     (click)="switchTab('360')">
                     <i class="fa fa-globe"></i>
                     <span>360°</span>
-                    <span class="count">{{ roomSelectedImages360.length }}</span>
+                    <span class="count">{{ propertyImages360.length }}</span>
                 </button>
             </div>
 
@@ -71,7 +71,7 @@
             <div class="media-content">
                 <!-- Affichage des images -->
                 <div *ngIf="selectedTab === 'images'" class="media-grid">
-                    <div *ngIf="roomSelectedImages.length === 0" class="empty-state">
+                    <div *ngIf="propertyImages.length === 0" class="empty-state">
                         <i class="fa fa-image fa-3x"></i>
                         <p>Aucune image disponible</p>
                         <button class="add-media-btn" (click)="switchView('upload')">
@@ -79,8 +79,8 @@
                         </button>
                     </div>
 
-                    <div *ngIf="roomSelectedImages.length > 0" class="media-items">
-                        <div *ngFor="let imageUrl of roomSelectedImages" class="media-item">
+                    <div *ngIf="propertyImages.length > 0" class="media-items">
+                        <div *ngFor="let imageUrl of propertyImages" class="media-item">
                             <div class="media-preview">
                                 <img [src]="imageUrl" alt="Image" class="preview-image">
                                 <div class="media-overlay">
@@ -101,7 +101,7 @@
 
                 <!-- Affichage des vidéos -->
                 <div *ngIf="selectedTab === 'videos'" class="media-grid">
-                    <div *ngIf="roomSelectedVideos.length === 0" class="empty-state">
+                    <div *ngIf="propertyVideos.length === 0" class="empty-state">
                         <i class="fa fa-video fa-3x"></i>
                         <p>Aucune vidéo disponible</p>
                         <button class="add-media-btn" (click)="switchView('upload')">
@@ -109,8 +109,8 @@
                         </button>
                     </div>
 
-                    <div *ngIf="roomSelectedVideos.length > 0" class="media-items">
-                        <div *ngFor="let videoUrl of roomSelectedVideos" class="media-item">
+                    <div *ngIf="propertyVideos.length > 0" class="media-items">
+                        <div *ngFor="let videoUrl of propertyVideos" class="media-item">
                             <div class="media-preview">
                                 <video [src]="videoUrl" controls class="preview-video"></video>
                                 <div class="media-overlay">
@@ -128,7 +128,7 @@
 
                 <!-- Affichage des 360 -->
                 <div *ngIf="selectedTab === '360'" class="media-grid">
-                    <div *ngIf="roomSelectedImages360.length === 0" class="empty-state">
+                    <div *ngIf="propertyImages360.length === 0" class="empty-state">
                         <i class="fa fa-globe fa-3x"></i>
                         <p>Aucune image 360° disponible</p>
                         <button class="add-media-btn" (click)="switchView('upload')">
@@ -136,10 +136,23 @@
                         </button>
                     </div>
 
-                    <div *ngIf="roomSelectedImages360.length > 0" class="media-items">
-                        <div *ngFor="let image360Url of roomSelectedImages360" class="media-item">
+                    <div *ngIf="propertyImages360.length > 0" class="media-items">
+                        <div *ngFor="let image360Url of propertyImages360" class="media-item">
                             <div class="media-preview">
-                                <galery-video360-item [urlFile]="image360Url" [isDeleting]="isDeleting(image360Url)" (onDeleteFileEvent)="deleteFile($event)"></galery-video360-item>
+                                <div class="media-preview">
+                                    <img [src]="image360Url" alt="Image 360°" class="preview-image">
+                                    <div class="media-overlay">
+                                        <button class="action-btn view-btn" title="Voir en plein écran">
+                                            <i class="fa fa-search-plus"></i>
+                                        </button>
+                                        <button class="action-btn delete-btn" 
+                                                (click)="deleteFile(image360Url)" 
+                                                [disabled]="isDeleting(image360Url)"
+                                                [title]="isDeleting(image360Url) ? 'Suppression en cours...' : 'Supprimer'">
+                                            <i class="fa" [class.fa-trash]="!isDeleting(image360Url)" [class.fa-spinner]="isDeleting(image360Url)" [class.fa-spin]="isDeleting(image360Url)"></i>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -194,7 +207,7 @@
                                 </div>
                                 <div *ngIf="item.status === 'error'" class="status error">
                                     <i class="fa fa-exclamation-circle"></i> Erreur
-                                    <button class="retry-btn" (click)="retryUpload(item)">
+                                    <button class="retry-btn" (click)="retryFailedUpload(item)">
                                         <i class="fa fa-redo"></i> Réessayer
                                     </button>
                                 </div>
@@ -236,15 +249,15 @@
         <div class="footer-stats">
             <div class="stat-item">
                 <i class="fa fa-image"></i>
-                <span>{{ roomSelectedImages.length }} Images</span>
+                <span>{{ propertyImages.length }} Images</span>
             </div>
             <div class="stat-item">
                 <i class="fa fa-video"></i>
-                <span>{{ roomSelectedVideos.length }} Vidéos</span>
+                <span>{{ propertyVideos.length }} Vidéos</span>
             </div>
             <div class="stat-item">
                 <i class="fa fa-globe"></i>
-                <span>{{ roomSelectedImages360.length }} 360°</span>
+                <span>{{ propertyImages360.length }} 360°</span>
             </div>
         </div>
 

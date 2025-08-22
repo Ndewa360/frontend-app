@@ -276,3 +276,32 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     border-radius: 12px !important;
   }
 }
+
+/* Corrections pour les modals de galerie */
+.property-gallery-modal,
+.unit-gallery-modal {
+  .mat-dialog-container {
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+}
+
+/* Empêcher les conflits de positionnement quand un modal est ouvert */
+body.cdk-global-scrollblock {
+  .property-actions,
+  .action-buttons,
+  .button-group {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+  }
+  
+  .property-actions > *,
+  .action-buttons > *,
+  .button-group > * {
+    position: relative !important;
+    float: none !important;
+    margin-left: 8px !important;
+  }
+}

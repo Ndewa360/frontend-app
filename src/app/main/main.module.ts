@@ -72,6 +72,7 @@ import { UnitPaymentsTabComponent } from './properties/components/unit-details-p
 import { AddPaymentModalComponent } from './properties/components/unit-details-panel/components/add-payment-modal/add-payment-modal.component';
 import { GeneratePaymentLinkModalComponent } from './properties/components/generate-payment-link-modal/generate-payment-link-modal.component';
 import { ContractViewerModalComponent } from './properties/components/contract-viewer-modal/contract-viewer-modal.component';
+import { PropertyGalleryComponent } from './properties/components/property-gallery/property-gallery.component';
 import { PropertiesSharedModule } from './properties/properties-shared.module'
 
 // Import du module de paiement (déjà importé plus haut)
@@ -135,7 +136,8 @@ ModuleRegistry.registerModules([
     UnitPaymentsTabComponent,
     AddPaymentModalComponent,
     GeneratePaymentLinkModalComponent,
-    ContractViewerModalComponent
+    ContractViewerModalComponent,
+    PropertyGalleryComponent
 
   ],
   imports: [

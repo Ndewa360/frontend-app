@@ -76,22 +76,16 @@ function checkAppState() {
   const routerOutlet = document.querySelector('router-outlet');
   const loader = document.getElementById('app-loading-holder');
 
-  console.log('🔍 État de l\'application:', {
-    hasAppRoot: !!appRoot,
-    hasRouterOutlet: !!routerOutlet,
-    hasLoader: !!loader,
-    currentUrl: window.location.href
-  });
+
 
   // Vérifier si Angular est bien initialisé
   const hasAngularElements = document.querySelector('[ng-version]') ||
                             document.querySelector('app-root > *');
 
-  console.log('🅰️ Angular initialisé:', !!hasAngularElements);
+
 
   // Si l'application semble chargée, laisser DataDrivenLoader gérer
   if (appRoot && (hasAngularElements || appRoot.innerHTML.trim() !== 'Loading...')) {
-    console.log('✅ Application chargée - DataDrivenLoader prendra le relais');
     // ✅ Ne plus masquer automatiquement le loader ici
     return true;
   }

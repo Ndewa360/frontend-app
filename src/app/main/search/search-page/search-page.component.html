@@ -148,8 +148,14 @@
 
     <div *ngFor="let result of paginatedResults || []; let i = index" class="result-card" (click)="openUnitDetail(result)">
       <div class="card-image">
-        <!-- Slider d'images -->
-        <div class="image-slider" [attr.data-card-index]="i">
+        <!-- Slider d'images avec support tactile amélioré -->
+        <div class="image-slider" 
+             [attr.data-card-index]="i"
+             (touchstart)="onCardTouchStart($event, i); $event.stopPropagation()"
+             (touchmove)="onCardTouchMove($event, i); $event.stopPropagation()"
+             (touchend)="onCardTouchEnd($event, i); $event.stopPropagation()"
+             (touchcancel)="onCardTouchCancel($event, i); $event.stopPropagation()"
+             (click)="$event.stopPropagation()">
           <div class="slider-container">
             <div class="slider-track" [style.transform]="'translateX(-' + (getCurrentImageIndex(i) * 100) + '%)'">
               <div *ngFor="let media of getMediasForCard(result)" class="slider-slide">
@@ -167,8 +173,6 @@
               <i class="fas fa-chevron-right"></i>
             </button>
           </div>
-
-
 
           <!-- Indicateurs de pagination -->
           <div *ngIf="getMediasForCard(result).length > 1" class="slider-dots">
@@ -207,6 +211,11 @@
           </p>
 
           <div class="card-features">
+            <!-- Surface en premier si disponible -->
+            <span *ngIf="result.property?.totalSurface" class="feature feature-surface">
+              <youpez-ibm-icon iconName="square_foot" iconSize="16"></youpez-ibm-icon>
+              {{ result.property.totalSurface }} m²
+            </span>
             <span *ngIf="result.specifity?.hasKitchen" class="feature">
               <youpez-ibm-icon iconName="restaurant" iconSize="16"></youpez-ibm-icon>
               Cuisine équipée

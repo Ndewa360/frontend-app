@@ -196,7 +196,8 @@ import { HttpClient } from '@angular/common/http';
     NavigationButtonComponent,
     LanguageSwitcherComponent,
     ClickOutsideDirective,
-    AdvancedLanguageSwitcherComponent
+    AdvancedLanguageSwitcherComponent,
+    TenantAvatarComponent
   ],
   providers: [
     // Nouveaux services ajoutés

@@ -72,6 +72,10 @@ export class SearchPageComponent implements OnInit, OnDestroy {
 
   // Gestion du slider d'images
   currentImageIndexes: { [cardIndex: number]: number } = {};
+  
+  // Variables pour le swipe tactile des cartes
+  private cardTouchData: { [cardIndex: number]: { startX: number; startY: number; startTime: number; isDragging: boolean } } = {};
+  private minSwipeDistance = 50;
 
   // Gestion du modal de détails d'unité
   selectedUnit: SearchPropertyModel | null = null;
@@ -1673,6 +1677,118 @@ export class SearchPageComponent implements OnInit, OnDestroy {
 
     // Retourner les médias ou une image par défaut
     return uniqueMedias.length > 0 ? uniqueMedias : ['/assets/images/placeholder-room.jpg'];
+  }
+
+  // === GESTION TACTILE POUR LES CARTES ===
+
+  /**
+   * Début du toucher sur une carte
+   */
+  onCardTouchStart(event: TouchEvent, cardIndex: number): void {
+    console.log(`🖐️ Touch start carte ${cardIndex} - Event:`, event);
+    
+    if (event.touches.length !== 1) {
+      console.log(`⚠️ Touch start ignoré - ${event.touches.length} touches`);
+      return;
+    }
+    
+    const touch = event.touches[0];
+    this.cardTouchData[cardIndex] = {
+      startX: touch.clientX,
+      startY: touch.clientY,
+      startTime: Date.now(),
+      isDragging: false
+    };
+    
+    console.log(`🖐️ Touch start carte ${cardIndex} - Data:`, this.cardTouchData[cardIndex]);
+  }
+
+  /**
+   * Mouvement du toucher sur une carte
+   */
+  onCardTouchMove(event: TouchEvent, cardIndex: number): void {
+    if (event.touches.length !== 1 || !this.cardTouchData[cardIndex]) return;
+    
+    const touch = event.touches[0];
+    const touchData = this.cardTouchData[cardIndex];
+    
+    const deltaX = Math.abs(touch.clientX - touchData.startX);
+    const deltaY = Math.abs(touch.clientY - touchData.startY);
+    
+    // Détecter si c'est un swipe horizontal (plus de mouvement horizontal que vertical)
+    if (deltaX > deltaY && deltaX > 10) {
+      touchData.isDragging = true;
+      event.preventDefault(); // Empêcher le scroll de la page
+      event.stopPropagation();
+    }
+  }
+
+  /**
+   * Fin du toucher sur une carte
+   */
+  onCardTouchEnd(event: TouchEvent, cardIndex: number): void {
+    console.log(`🖐️ Touch end carte ${cardIndex} - Event:`, event);
+    
+    if (!this.cardTouchData[cardIndex]) {
+      console.log(`⚠️ Touch end ignoré - Pas de données pour carte ${cardIndex}`);
+      return;
+    }
+    
+    const touchData = this.cardTouchData[cardIndex];
+    const touch = event.changedTouches[0];
+    
+    const deltaX = touch.clientX - touchData.startX;
+    const deltaY = touch.clientY - touchData.startY;
+    const deltaTime = Date.now() - touchData.startTime;
+    
+    console.log(`🖐️ Touch end carte ${cardIndex} - Calculs:`, {
+      deltaX,
+      deltaY,
+      deltaTime,
+      isDragging: touchData.isDragging,
+      minSwipeDistance: this.minSwipeDistance
+    });
+    
+    // Vérifier si c'est un swipe valide
+    const isHorizontalSwipe = Math.abs(deltaX) > Math.abs(deltaY);
+    const isQuickSwipe = deltaTime < 500;
+    const isLongEnoughSwipe = Math.abs(deltaX) > this.minSwipeDistance;
+    
+    console.log(`🖐️ Touch end carte ${cardIndex} - Validations:`, {
+      isHorizontalSwipe,
+      isQuickSwipe,
+      isLongEnoughSwipe,
+      isDragging: touchData.isDragging
+    });
+    
+    if (touchData.isDragging && isHorizontalSwipe && (isQuickSwipe || isLongEnoughSwipe)) {
+      event.preventDefault();
+      event.stopPropagation();
+      
+      // Déterminer la direction du swipe
+      if (deltaX > 0) {
+        // Swipe vers la droite = image précédente
+        console.log(`👈 Swipe droite carte ${cardIndex} - Image précédente`);
+        this.previousImage(cardIndex);
+      } else {
+        // Swipe vers la gauche = image suivante
+        console.log(`👉 Swipe gauche carte ${cardIndex} - Image suivante`);
+        this.nextImage(cardIndex);
+      }
+    } else {
+      console.log(`❌ Swipe non valide pour carte ${cardIndex}`);
+    }
+    
+    // Nettoyer les données de toucher
+    delete this.cardTouchData[cardIndex];
+  }
+
+  /**
+   * Annulation du toucher sur une carte
+   */
+  onCardTouchCancel(event: TouchEvent, cardIndex: number): void {
+    console.log(`🖐️ Touch cancel carte ${cardIndex}`);
+    delete this.cardTouchData[cardIndex];
   }
 
   /**
