@@ -1569,30 +1569,18 @@
         width: 100%;
         height: 100%;
         position: relative;
-        touch-action: pan-x !important; // Permettre seulement le swipe horizontal
+        touch-action: pan-x; // Permettre seulement le swipe horizontal
         user-select: none; // Empêcher la sélection de texte
         -webkit-user-select: none;
         -moz-user-select: none;
         -ms-user-select: none;
         pointer-events: auto !important; // Toujours actif pour les événements tactiles
-        
-        // Forcer les événements tactiles sur mobile
-        @media (max-width: 768px) {
-          pointer-events: auto !important;
-          touch-action: pan-x !important;
-          z-index: 999 !important;
-        }
 
         .slider-container {
           width: 100%;
           height: 100%;
           overflow: hidden;
           position: relative;
-          
-          @media (max-width: 768px) {
-            pointer-events: auto !important;
-            touch-action: pan-x !important;
-          }
 
           .slider-track {
             display: flex;
@@ -1604,21 +1592,12 @@
             // Améliorer les performances sur mobile
             transform: translateZ(0);
             -webkit-transform: translateZ(0);
-            
-            @media (max-width: 768px) {
-              pointer-events: auto !important;
-              touch-action: pan-x !important;
-            }
 
             .slider-slide {
               flex: 0 0 100%;
               width: 100%;
               height: 100%;
               position: relative;
-              
-              @media (max-width: 768px) {
-                pointer-events: auto !important;
-              }
 
               .room-image {
                 width: 100%;
@@ -1654,6 +1633,10 @@
           transition: all 0.3s ease;
           pointer-events: none;
           z-index: 10;
+          
+          @media (max-width: 768px) {
+            display: none !important;
+          }
 
           .slider-btn {
             background: rgba(0, 0, 0, 0.8);
@@ -1714,6 +1697,15 @@
           backdrop-filter: blur(8px);
           border: 1px solid rgba(255, 255, 255, 0.1);
           z-index: 10;
+          
+          @media (max-width: 768px) {
+            opacity: 1 !important;
+            visibility: visible !important;
+            pointer-events: auto !important;
+            bottom: 1rem !important;
+            padding: 0.5rem 1rem !important;
+            background: rgba(0, 0, 0, 0.6) !important;
+          }
 
           .slider-dot {
             width: 10px; // ← Plus grands

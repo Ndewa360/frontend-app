@@ -1685,12 +1685,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
    * Début du toucher sur une carte
    */
   onCardTouchStart(event: TouchEvent, cardIndex: number): void {
-    console.log(`🖐️ Touch start carte ${cardIndex} - Event:`, event);
-    
-    if (event.touches.length !== 1) {
-      console.log(`⚠️ Touch start ignoré - ${event.touches.length} touches`);
-      return;
-    }
+    if (event.touches.length !== 1) return;
     
     const touch = event.touches[0];
     this.cardTouchData[cardIndex] = {
@@ -1699,8 +1694,6 @@ export class SearchPageComponent implements OnInit, OnDestroy {
       startTime: Date.now(),
       isDragging: false
     };
-    
-    console.log(`🖐️ Touch start carte ${cardIndex} - Data:`, this.cardTouchData[cardIndex]);
   }
 
   /**
@@ -1712,14 +1705,13 @@ export class SearchPageComponent implements OnInit, OnDestroy {
     const touch = event.touches[0];
     const touchData = this.cardTouchData[cardIndex];
     
-    const deltaX = Math.abs(touch.clientX - touchData.startX);
-    const deltaY = Math.abs(touch.clientY - touchData.startY);
+    const deltaX = touch.clientX - touchData.startX;
+    const absDeltaX = Math.abs(deltaX);
     
-    // Détecter si c'est un swipe horizontal (plus de mouvement horizontal que vertical)
-    if (deltaX > deltaY && deltaX > 10) {
+    // Seulement gérer le mouvement horizontal pour le swipe d'image
+    if (absDeltaX > 10) {
+      event.preventDefault();
       touchData.isDragging = true;
-      event.preventDefault(); // Empêcher le scroll de la page
-      event.stopPropagation();
     }
   }
 
@@ -1727,12 +1719,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
    * Fin du toucher sur une carte
    */
   onCardTouchEnd(event: TouchEvent, cardIndex: number): void {
-    console.log(`🖐️ Touch end carte ${cardIndex} - Event:`, event);
-    
-    if (!this.cardTouchData[cardIndex]) {
-      console.log(`⚠️ Touch end ignoré - Pas de données pour carte ${cardIndex}`);
-      return;
-    }
+    if (!this.cardTouchData[cardIndex]) return;
     
     const touchData = this.cardTouchData[cardIndex];
     const touch = event.changedTouches[0];
@@ -1741,45 +1728,21 @@ export class SearchPageComponent implements OnInit, OnDestroy {
     const deltaY = touch.clientY - touchData.startY;
     const deltaTime = Date.now() - touchData.startTime;
     
-    console.log(`🖐️ Touch end carte ${cardIndex} - Calculs:`, {
-      deltaX,
-      deltaY,
-      deltaTime,
-      isDragging: touchData.isDragging,
-      minSwipeDistance: this.minSwipeDistance
-    });
-    
-    // Vérifier si c'est un swipe valide
     const isHorizontalSwipe = Math.abs(deltaX) > Math.abs(deltaY);
     const isQuickSwipe = deltaTime < 500;
     const isLongEnoughSwipe = Math.abs(deltaX) > this.minSwipeDistance;
-    
-    console.log(`🖐️ Touch end carte ${cardIndex} - Validations:`, {
-      isHorizontalSwipe,
-      isQuickSwipe,
-      isLongEnoughSwipe,
-      isDragging: touchData.isDragging
-    });
     
     if (touchData.isDragging && isHorizontalSwipe && (isQuickSwipe || isLongEnoughSwipe)) {
       event.preventDefault();
       event.stopPropagation();
       
-      // Déterminer la direction du swipe
       if (deltaX > 0) {
-        // Swipe vers la droite = image précédente
-        console.log(`👈 Swipe droite carte ${cardIndex} - Image précédente`);
         this.previousImage(cardIndex);
       } else {
-        // Swipe vers la gauche = image suivante
-        console.log(`👉 Swipe gauche carte ${cardIndex} - Image suivante`);
         this.nextImage(cardIndex);
       }
-    } else {
-      console.log(`❌ Swipe non valide pour carte ${cardIndex}`);
     }
     
-    // Nettoyer les données de toucher
     delete this.cardTouchData[cardIndex];
   }
 

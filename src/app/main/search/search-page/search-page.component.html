@@ -151,11 +151,12 @@
         <!-- Slider d'images avec support tactile amélioré -->
         <div class="image-slider" 
              [attr.data-card-index]="i"
-             (touchstart)="onCardTouchStart($event, i); $event.stopPropagation()"
-             (touchmove)="onCardTouchMove($event, i); $event.stopPropagation()"
-             (touchend)="onCardTouchEnd($event, i); $event.stopPropagation()"
-             (touchcancel)="onCardTouchCancel($event, i); $event.stopPropagation()"
-             (click)="$event.stopPropagation()">
+             (touchstart)="onCardTouchStart($event, i)"
+             (touchmove)="onCardTouchMove($event, i)"
+             (touchend)="onCardTouchEnd($event, i)"
+             (touchcancel)="onCardTouchCancel($event, i)"
+             (click)="$event.stopPropagation()"
+             style="touch-action: pan-x; user-select: none; -webkit-user-select: none;">
           <div class="slider-container">
             <div class="slider-track" [style.transform]="'translateX(-' + (getCurrentImageIndex(i) * 100) + '%)'">
               <div *ngFor="let media of getMediasForCard(result)" class="slider-slide">

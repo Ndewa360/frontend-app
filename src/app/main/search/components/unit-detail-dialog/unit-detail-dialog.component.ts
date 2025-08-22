@@ -237,12 +237,30 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
   }
 
   // === TOUCH EVENTS ===
+  private touchStartY = 0;
+  
   onTouchStart(event: TouchEvent): void {
     this.touchStartX = event.touches[0].clientX;
+    this.touchStartY = event.touches[0].clientY;
   }
 
   onTouchMove(event: TouchEvent): void {
-    event.preventDefault();
+    const touch = event.touches[0];
+    const deltaX = touch.clientX - this.touchStartX;
+    const deltaY = touch.clientY - this.touchStartY;
+    const absDeltaX = Math.abs(deltaX);
+    const absDeltaY = Math.abs(deltaY);
+    
+    if (absDeltaX > 5 || absDeltaY > 5) {
+      if (absDeltaY > absDeltaX && absDeltaY > 5) {
+        // Mouvement vertical - scroll naturel qui suit le doigt
+        const dialogContent = document.querySelector('.dialog-content');
+        if (dialogContent) {
+          dialogContent.scrollBy(0, -deltaY);
+        }
+        this.touchStartY = touch.clientY;
+      }
+    }
   }
 
   onTouchEnd(event: TouchEvent): void {
