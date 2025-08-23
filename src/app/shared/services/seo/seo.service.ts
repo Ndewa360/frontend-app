@@ -235,7 +235,7 @@ export class SeoService {
       const { room, property } = data;
       
       // Construire l'URL complète
-      const roomUrl = `https://ndewa-360.com/search/room/${roomId}`;
+      const roomUrl = `https://ndewa-360.com/search/index?unit=${roomId}`;
       
       // Utiliser l'image principale ou la première des médias
       const mainImage = room.image || (room.medias && room.medias.length > 0 ? room.medias[0] : 'https://ndewa-360.com/assets/img/logo/logo-basic.png');

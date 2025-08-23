@@ -106,13 +106,6 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    console.log('🚀 AppComponent ngOnInit démarré');
-    console.log('🌐 URL actuelle:', window.location.href);
-
-    // Diagnostic DOM
-    console.log('🔍 Diagnostic DOM:');
-    console.log('  - app-root:', !!document.querySelector('app-root'));
-    console.log('  - router-outlet:', !!document.querySelector('router-outlet'));
 
     // Initialiser la détection d'appareil
     console.log('🔍 Initialisation de la détection d\'appareil...');

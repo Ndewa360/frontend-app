@@ -1,15 +1,40 @@
 <!doctype html>
-<html lang="en">
+<html lang="fr">
 
 <head>
   <meta charset="utf-8">
-  <title>Ndewa360° | Gestion de location</title>
+  <title>Ndewa360 - Trouvez votre logement idéal au Cameroun | Visites 360°</title>
+  <meta name="description" content="Découvrez des milliers de logements au Cameroun avec Ndewa360. Chambres, studios, appartements avec visites virtuelles 360°. Recherche facile à Douala, Yaoundé et partout au Cameroun.">
+  <meta name="keywords" content="logement Cameroun, chambre Douala, studio Yaoundé, appartement Cameroun, location immobilier, visite 360, ndewa360">
+  <meta name="author" content="Ndewa360">
+  <meta name="robots" content="index, follow">
+  <meta name="language" content="French">
+  <meta name="geo.region" content="CM">
+  <meta name="geo.country" content="Cameroon">
+  <meta name="geo.placename" content="Cameroun">
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://ndewa-360.com/">
+  <meta property="og:title" content="Ndewa360 - Trouvez votre logement idéal au Cameroun">
+  <meta property="og:description" content="Découvrez des milliers de logements au Cameroun avec des visites virtuelles 360°. Chambres, studios, appartements à Douala, Yaoundé et partout au Cameroun.">
+  <meta property="og:image" content="https://ndewa-360.com/assets/img/logo/logo-basic.png">
+  <meta property="og:site_name" content="Ndewa360">
+  <meta property="og:locale" content="fr_FR">
+  
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://ndewa-360.com/">
+  <meta property="twitter:title" content="Ndewa360 - Trouvez votre logement idéal au Cameroun">
+  <meta property="twitter:description" content="Découvrez des milliers de logements au Cameroun avec des visites virtuelles 360°. Chambres, studios, appartements à Douala, Yaoundé et partout au Cameroun.">
+  <meta property="twitter:image" content="https://ndewa-360.com/assets/img/logo/logo-basic.png">
+  
   <base href="/">
   <link rel="canonical" href="https://ndewa-360.com/" />
 
-  <meta name="theme-color" content="#ffff00">
+  <meta name="theme-color" content="#cc8c0a">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" href="assets/img/logo/ndewa_miniaturise.svg" type="image/png">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -117,6 +142,42 @@
         "contactType": "customer service",
         "areaServed": "CM",
         "availableLanguage": "French"
+      },
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "CM",
+        "addressRegion": "Littoral",
+        "addressLocality": "Douala"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.8",
+        "reviewCount": "150"
+      },
+      "offers": {
+        "@type": "Offer",
+        "description": "Recherche de logements au Cameroun",
+        "category": "Immobilier"
+      }
+    }
+    </script>
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Ndewa360",
+      "url": "https://ndewa-360.com",
+      "description": "Plateforme de recherche de logements au Cameroun avec visites virtuelles 360°",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://ndewa-360.com/search/index?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      },
+      "inLanguage": "fr-FR",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Ndewa360"
       }
     }
     </script>
@@ -243,10 +304,7 @@
         console.error('❌ Promise rejetée capturée:', errorInfo);
       });
 
-      // Diagnostic de base
-      console.log('📱 User Agent:', navigator.userAgent.substring(0, 100));
-      console.log('🌐 URL actuelle:', window.location.href);
-      console.log('📊 Taille écran:', window.innerWidth + 'x' + window.innerHeight);
+
 
       // Détecter si on est sur mobile
       var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -310,14 +368,6 @@
         var appRoot = document.querySelector('app-root');
         var ionApp = document.querySelector('ion-app');
 
-        // Log simplifié
-        console.log('📊 Diagnostic #' + diagnosticCount + ':', {
-          hasLoader: !!loader,
-          hasAppRoot: !!appRoot,
-          hasIonApp: !!ionApp,
-          readyState: document.readyState
-        });
-
         // Log des erreurs JavaScript seulement s'il y en a
         if (window.startupErrors && window.startupErrors.length > 0) {
           console.log('❌ Erreurs de démarrage:', window.startupErrors.length);
@@ -326,7 +376,6 @@
         // Arrêter le diagnostic si l'app est chargée OU si on a atteint le maximum
         if (!loader || ionApp || diagnosticCount >= maxDiagnostics) {
           clearInterval(diagnosticInterval);
-          console.log('✅ Diagnostic terminé - Raison:', !loader ? 'Loader supprimé' : ionApp ? 'App chargée' : 'Timeout atteint');
         }
       }, 1000); // Réduit de 2000ms à 1000ms
 
