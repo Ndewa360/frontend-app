@@ -1820,12 +1820,24 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.
       animation: fadeInLeft 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.2s forwards;
       opacity: 0;
       transform: translateX(-20px);
+      
+      // Fallback pour production si l'animation ne charge pas
+      &.loaded {
+        opacity: 1;
+        transform: translateX(0);
+      }
     }
 
     .contact-card, .location-card {
       animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.4s forwards;
       opacity: 0;
       transform: translateY(20px);
+      
+      // Fallback pour production si l'animation ne charge pas
+      &.loaded {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
   }
 }
@@ -2423,6 +2435,17 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.
   to {
     opacity: 1;
     transform: translateX(0);
+  }
+}
+
+// === FALLBACK POUR PRODUCTION ===
+.premium-info-section {
+  .access-status,
+  .contact-card,
+  .location-card {
+    // Forcer l'affichage si les animations ne marchent pas
+    opacity: 1 !important;
+    transform: none !important;
   }
 }
 

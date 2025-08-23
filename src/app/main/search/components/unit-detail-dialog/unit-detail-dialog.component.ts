@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, OnDestroy, ChangeDetectorRef, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, Inject, ViewEncapsulation, OnInit, OnDestroy, ChangeDetectorRef, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
