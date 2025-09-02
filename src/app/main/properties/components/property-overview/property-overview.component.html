@@ -449,7 +449,7 @@
               </div>
               <div class="flex justify-between text-sm" *ngIf="property.rentRange">
                 <span class="text-gray-600">Fourchette loyers :</span>
-                <span class="font-medium text-gray-900">{{ formatPrice(property.rentRange.min) }} - {{ formatPrice(property.rentRange.max) }}</span>
+                <span class="font-medium text-gray-900">{{ formatPrice(getRentRange().min) }} - {{ formatPrice(getRentRange().max) }}</span>
               </div>
             </div>
           </div>

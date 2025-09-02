@@ -255,8 +255,6 @@ export class AuthTokenInterceptor implements HttpInterceptor {
   }
 
   private addToken(request: HttpRequest<any>, token: string): HttpRequest<any> {
-    console.log('🔍 Adding token to request:', request.url, 'Token length:', token?.length);
-    console.log('🔍 Token preview:', token?.substring(0, 50) + '...');
 
     if (!token) {
       console.error('❌ Token is null or undefined');
