@@ -7,7 +7,7 @@ import {
 } from 'src/app/shared/store';
 import { Store } from '@ngxs/store';
 import { ExportData } from '../../property-finances.component';
-import { PropertyFinancialManagerService, PropertyFinancialMetrics } from 'src/app/shared/services/property-financial-manager.service';
+import { PropertyFinancialManagerService, PropertyFinancialMetrics } from 'src/app/main/properties/services/property-financial-manager.service';
 
 
 

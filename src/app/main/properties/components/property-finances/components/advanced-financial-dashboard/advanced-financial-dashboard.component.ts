@@ -11,7 +11,7 @@ import {
 import { Store } from '@ngxs/store';
 import { ExportData } from '../../property-finances.component';
 
-import { PropertyFinancialManagerService, PropertyFinancialMetrics } from 'src/app/shared/services/property-financial-manager.service';
+import { PropertyFinancialManagerService, PropertyFinancialMetrics } from 'src/app/main/properties/services/property-financial-manager.service';
 
 interface FinancialMetric {
   label: string;
@@ -110,14 +110,6 @@ export class AdvancedFinancialDashboardComponent implements OnInit, OnChanges {
       selectedYear: this.selectedYear,
       isLoading: this.isLoading
     });
-
-    if (this.yearlyStats?.length > 0) {
-      console.log('📊 Premier élément yearlyStats:', this.yearlyStats[0]);
-    }
-
-    if (this.paymentStats?.length > 0) {
-      console.log('💰 Premier élément paymentStats:', this.paymentStats[0]);
-    }
 
     this.loadLocations();
   }
@@ -221,23 +213,7 @@ export class AdvancedFinancialDashboardComponent implements OnInit, OnChanges {
         locationsLength: this.locations.length
       });
       
-      // TEST SIMPLE : Vérifier le calcul d'occupation manuellement
-      const activeLocationsForProperty = this.locations.filter(loc => 
-        loc.property === this.propertyId && loc.isRunning === true
-      );
-      const roomsForProperty = this.yearlyStats.filter(stat => 
-        stat.room?.property === this.propertyId
-      );
-      const manualOccupancyRate = roomsForProperty.length > 0 ? 
-        (activeLocationsForProperty.length / roomsForProperty.length) * 100 : 0;
       
-      console.log('🧪 TEST MANUEL - Taux d\'occupation:', {
-        activeLocations: activeLocationsForProperty.length,
-        totalRooms: roomsForProperty.length,
-        manualRate: manualOccupancyRate.toFixed(1) + '%',
-        serviceRate: this.occupancyRate.toFixed(1) + '%',
-        match: Math.abs(manualOccupancyRate - this.occupancyRate) < 0.1
-      });
 
       // Calculer les changements avec le nouveau service
       const changes = this.financialManager.calculateMetricChanges(propertyMetrics);

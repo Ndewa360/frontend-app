@@ -6,7 +6,7 @@ import {
   StatisticPaymentOfAllPropertyByYear,
   LocationModel,
   StatisticPaymentStateType
-} from '../store';
+} from '../../../shared/store';
 
 /**
  * Interface pour les métriques financières d'une propriété
@@ -160,16 +160,11 @@ export class PropertyFinancialManagerService {
     currentYear: number
   ): RoomFinancialDetail[] {
     
-    // ⚠️ VALIDATION CRITIQUE : Vérifier si toutes les chambres sont présentes
-    if (rooms.length < 2) {
-      console.warn(`⚠️ DONNÉES INCOMPLÈTES: Seulement ${rooms.length} chambre(s) trouvée(s), attendu: 2 ou plus`);
-      console.warn(`🔍 Vérifier la requête backend pour s'assurer que toutes les chambres de la propriété sont incluses`);
-    }
+    
     
     return rooms.map((roomStat, index) => {
       const room = roomStat.room;
       if (!room) {
-        console.warn(`⚠️ Chambre ${index + 1}: Données manquantes`);
         return this.createEmptyRoomDetail(`room_${index}`, 0);
       }
 
@@ -239,7 +234,7 @@ export class PropertyFinancialManagerService {
     const entryDate = new Date(location.startedAt);
     const currentDate = new Date(currentYear, currentMonth, new Date().getDate());
     const totalReceivedAllTime = paymentValues.reduce((sum, payment) => sum + (payment || 0), 0);
-    
+    console.log("PaymentValues ",paymentValues)
     // Calculer avec la nouvelle logique
     const revenueCalculation = this.calculateRevenueForYear(
       totalReceivedAllTime,
