@@ -153,8 +153,7 @@ ModuleRegistry.registerModules([
     StatisticsModule,
     AssignLocationModule,
     PropertiesSharedModule,
-    ModernModalsModule,
-    
+    ModernModalsModule
   ]
 })
 export class MainModule {

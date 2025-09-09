@@ -10,6 +10,7 @@ import { PropertyDetailsResolver } from '../shared/resolvers/loading-property-da
 import { ListPropertyComponent } from './properties/list-property/list-property.component'
 import { HomePropertyComponent } from './properties/home-property/home-property.component'
 import { PropertyDetailsCompleteComponent } from './properties/property-details-complete/property-details-complete.component'
+import { AgentProfileGuard } from '../shared/guards/agent-profile-guard.service'
 
 
 
@@ -44,6 +45,13 @@ const routes: Routes = [
         },
       },
       {
+        path: 'agent',
+        loadChildren: () => import('./agent/agent.module').then(m => m.AgentModule),
+        data: {
+          breadcrumb: 'Agent Immobilier'
+        },
+      },
+      {
         path: 'facturation',
         loadChildren: () => import('./biiling/biiling.module').then(m => m.BiilingModule),
         data: {
@@ -67,6 +75,7 @@ const routes: Routes = [
        
       {
         path: 'properties',
+        canActivate: [AgentProfileGuard],
         data: {
           breadcrumb: 'Biens'
         },

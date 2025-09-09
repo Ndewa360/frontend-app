@@ -1,0 +1,403 @@
+<!-- Agent Registration Form -->
+<div class="agent-registration-container">
+  
+  <!-- Header -->
+  <div class="registration-header">
+    <div class="header-content">
+      <h1 class="registration-title">Devenir Agent Immobilier</h1>
+      <p class="registration-subtitle">
+        Rejoignez notre réseau d'agents certifiés et développez votre activité immobilière
+      </p>
+    </div>
+    
+    <!-- Progress Indicator -->
+    <div class="progress-indicator">
+      <div class="flex justify-between items-center">
+        <div *ngFor="let step of [1,2,3,4]; let i = index" 
+             class="flex items-center"
+             [class.completed]="currentStep > step"
+             [class.current]="currentStep === step">
+          <div class="step-circle">{{step}}</div>
+          <div *ngIf="i < 3" class="step-line"></div>
+        </div>
+      </div>
+      <div class="step-labels">
+        <span>Informations personnelles</span>
+        <span>Informations professionnelles</span>
+        <span>Vérification d'identité</span>
+        <span>Finalisation</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form Container -->
+  <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()" class="registration-form">
+    
+    <!-- Step 1: Personal Information -->
+    <div *ngIf="currentStep === 1" class="form-step">
+      <div class="step-header">
+        <h2 class="step-title">Informations Personnelles</h2>
+        <p class="step-description">Commençons par vos informations de base</p>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-field">
+          <label class="form-label">Nom complet *</label>
+          <input 
+            type="text"
+            formControlName="name"
+            class="form-input"
+            [class.error]="isFieldInvalid('name')"
+            placeholder="Votre nom complet">
+          <div *ngIf="isFieldInvalid('name')" class="error-message">
+            {{getFieldError('name')}}
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label">Email *</label>
+          <input 
+            type="email"
+            formControlName="email"
+            class="form-input"
+            [class.error]="isFieldInvalid('email')"
+            placeholder="votre.email@exemple.com">
+          <div *ngIf="isFieldInvalid('email')" class="error-message">
+            {{getFieldError('email')}}
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label">Mot de passe *</label>
+          <input 
+            type="password"
+            formControlName="password"
+            class="form-input"
+            [class.error]="isFieldInvalid('password')"
+            placeholder="Minimum 8 caractères">
+          <div *ngIf="isFieldInvalid('password')" class="error-message">
+            {{getFieldError('password')}}
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label">Confirmer le mot de passe *</label>
+          <input 
+            type="password"
+            formControlName="confirmPassword"
+            class="form-input"
+            [class.error]="isFieldInvalid('confirmPassword')"
+            placeholder="Répétez votre mot de passe">
+          <div *ngIf="isFieldInvalid('confirmPassword')" class="error-message">
+            {{getFieldError('confirmPassword')}}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: Professional Information -->
+    <div *ngIf="currentStep === 2" class="form-step">
+      <div class="step-header">
+        <h2 class="step-title">Informations Professionnelles</h2>
+        <p class="step-description">Parlez-nous de votre activité immobilière</p>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-field">
+          <label class="form-label">Nom de l'agence/entreprise *</label>
+          <input 
+            type="text"
+            formControlName="businessName"
+            class="form-input"
+            [class.error]="isFieldInvalid('businessName')"
+            placeholder="Nom de votre agence ou entreprise">
+          <div *ngIf="isFieldInvalid('businessName')" class="error-message">
+            {{getFieldError('businessName')}}
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label">Téléphone professionnel *</label>
+          <input 
+            type="tel"
+            formControlName="professionalPhone"
+            class="form-input"
+            [class.error]="isFieldInvalid('professionalPhone')"
+            placeholder="+237 6XX XXX XXX">
+          <div *ngIf="isFieldInvalid('professionalPhone')" class="error-message">
+            {{getFieldError('professionalPhone')}}
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label">Email professionnel</label>
+          <input 
+            type="email"
+            formControlName="professionalEmail"
+            class="form-input"
+            [class.error]="isFieldInvalid('professionalEmail')"
+            placeholder="contact@votre-agence.com">
+          <div *ngIf="isFieldInvalid('professionalEmail')" class="error-message">
+            {{getFieldError('professionalEmail')}}
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label">Adresse de l'agence</label>
+          <input 
+            type="text"
+            formControlName="businessAddress"
+            class="form-input"
+            placeholder="Adresse complète de votre agence">
+        </div>
+
+        <div class="form-field full-width">
+          <label class="form-label">Description de votre activité</label>
+          <textarea 
+            formControlName="businessDescription"
+            class="form-textarea"
+            [class.error]="isFieldInvalid('businessDescription')"
+            placeholder="Décrivez brièvement votre expérience et vos services..."
+            rows="4">
+          </textarea>
+          <div *ngIf="isFieldInvalid('businessDescription')" class="error-message">
+            {{getFieldError('businessDescription')}}
+          </div>
+        </div>
+
+        <!-- Specializations -->
+        <div class="form-field full-width">
+          <label class="form-label">Spécialisations</label>
+          <div class="checkbox-grid">
+            <label *ngFor="let spec of specializationOptions" class="checkbox-label">
+              <input 
+                type="checkbox"
+                class="checkbox-input"
+                (change)="onSpecializationChange(spec, $event)">
+              <span class="checkbox-text">{{spec}}</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Operating Zones -->
+        <div class="form-field full-width">
+          <label class="form-label">Zones d'opération</label>
+          <div class="checkbox-grid">
+            <label *ngFor="let zone of zoneOptions" class="checkbox-label">
+              <input 
+                type="checkbox"
+                class="checkbox-input"
+                (change)="onZoneChange(zone, $event)">
+              <span class="checkbox-text">{{zone}}</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3: Identity Verification -->
+    <div *ngIf="currentStep === 3" class="form-step">
+      <div class="step-header">
+        <h2 class="step-title">Vérification d'Identité</h2>
+        <p class="step-description">Nous devons vérifier votre identité pour assurer la sécurité de la plateforme</p>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-field">
+          <label class="form-label">Type de document *</label>
+          <select 
+            formControlName="verificationType"
+            class="form-select"
+            [class.error]="isFieldInvalid('verificationType')">
+            <option value="">Sélectionnez un type de document</option>
+            <option 
+              *ngFor="let type of verificationTypes" 
+              [value]="type.value">
+              {{type.label}}
+            </option>
+          </select>
+          <div *ngIf="isFieldInvalid('verificationType')" class="error-message">
+            {{getFieldError('verificationType')}}
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label">Numéro du document *</label>
+          <input 
+            type="text"
+            formControlName="verificationNumber"
+            class="form-input"
+            [class.error]="isFieldInvalid('verificationNumber')"
+            placeholder="Numéro de votre document d'identité">
+          <div *ngIf="isFieldInvalid('verificationNumber')" class="error-message">
+            {{getFieldError('verificationNumber')}}
+          </div>
+        </div>
+
+        <!-- File Upload -->
+        <div class="form-field full-width">
+          <label class="form-label">Document d'identité * (Photo claire, recto-verso)</label>
+          <div class="file-upload-container">
+            <input 
+              type="file" 
+              id="verificationDocument"
+              accept="image/*"
+              (change)="onFileSelected($event)"
+              class="file-input">
+            <label for="verificationDocument" class="file-upload-label">
+              <i class="fas fa-cloud-upload-alt text-2xl mb-2"></i>
+              <span *ngIf="!selectedFile">Cliquez pour sélectionner votre document</span>
+              <span *ngIf="selectedFile" class="file-selected">
+                {{selectedFile.name}} ({{(selectedFile.size / 1024 / 1024).toFixed(1)}} MB)
+              </span>
+            </label>
+          </div>
+          <small class="file-help-text">
+            Formats acceptés: JPG, PNG. Taille max: 5MB
+          </small>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label">Taux de commission par défaut</label>
+          <input 
+            type="text"
+            formControlName="commissionRate"
+            class="form-input"
+            placeholder="Ex: 5%, 10%, etc.">
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 4: Terms and Conditions -->
+    <div *ngIf="currentStep === 4" class="form-step">
+      <div class="step-header">
+        <h2 class="step-title">Finalisation</h2>
+        <p class="step-description">Dernière étape avant de soumettre votre candidature</p>
+      </div>
+
+      <!-- Summary -->
+      <div class="registration-summary">
+        <h3>Récapitulatif de votre inscription</h3>
+        <div class="summary-grid">
+          <div class="summary-item">
+            <strong>Nom:</strong> {{registrationForm.get('name')?.value}}
+          </div>
+          <div class="summary-item">
+            <strong>Email:</strong> {{registrationForm.get('email')?.value}}
+          </div>
+          <div class="summary-item">
+            <strong>Agence:</strong> {{registrationForm.get('businessName')?.value}}
+          </div>
+          <div class="summary-item">
+            <strong>Téléphone:</strong> {{registrationForm.get('professionalPhone')?.value}}
+          </div>
+          <div class="summary-item" *ngIf="selectedFile">
+            <strong>Document:</strong> {{selectedFile.name}}
+          </div>
+        </div>
+      </div>
+
+      <!-- Terms and Conditions -->
+      <div class="terms-section">
+        <label class="checkbox-label">
+          <input 
+            type="checkbox"
+            formControlName="acceptTerms"
+            class="checkbox-input"
+            [class.error]="isFieldInvalid('acceptTerms')">
+          <span class="checkbox-text">J'accepte les conditions générales d'utilisation *</span>
+        </label>
+
+        <label class="checkbox-label">
+          <input 
+            type="checkbox"
+            formControlName="acceptPrivacy"
+            class="checkbox-input"
+            [class.error]="isFieldInvalid('acceptPrivacy')">
+          <span class="checkbox-text">J'accepte la politique de confidentialité *</span>
+        </label>
+      </div>
+
+      <!-- Important Notice -->
+      <div class="notification info">
+        <div class="notification-icon">
+          <i class="fas fa-info-circle"></i>
+        </div>
+        <div class="notification-content">
+          <h4>Information importante</h4>
+          <p>Votre candidature sera examinée par notre équipe dans un délai de 48h. Vous recevrez une notification par email dès que votre profil sera validé.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="form-navigation">
+      <button 
+        *ngIf="currentStep > 1"
+        type="button"
+        class="btn btn-secondary"
+        (click)="previousStep()">
+        <i class="fas fa-arrow-left mr-2"></i>
+        Précédent
+      </button>
+
+      <div class="nav-spacer"></div>
+
+      <button 
+        *ngIf="currentStep < totalSteps"
+        type="button"
+        class="btn btn-primary"
+        (click)="nextStep()">
+        Suivant
+        <i class="fas fa-arrow-right ml-2"></i>
+      </button>
+
+      <button 
+        *ngIf="currentStep === totalSteps"
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="!registrationForm.valid || !selectedFile || loading">
+        <div *ngIf="loading" class="loading-spinner"></div>
+        <span *ngIf="!loading">Soumettre ma candidature</span>
+        <span *ngIf="loading">Envoi en cours...</span>
+      </button>
+    </div>
+
+  </form>
+
+  <!-- Benefits Section -->
+  <div class="benefits-section">
+    <h3>Pourquoi devenir agent Ndewa360 ?</h3>
+    <div class="benefits-grid">
+      <div class="benefit-item">
+        <i class="fas fa-check-circle text-green-500 text-xl"></i>
+        <div>
+          <h4>Visibilité Professionnelle</h4>
+          <p>Profil vérifié et badge de confiance</p>
+        </div>
+      </div>
+      <div class="benefit-item">
+        <i class="fas fa-chart-line text-blue-500 text-xl"></i>
+        <div>
+          <h4>Outils Analytics</h4>
+          <p>Statistiques détaillées de performance</p>
+        </div>
+      </div>
+      <div class="benefit-item">
+        <i class="fas fa-share-alt text-purple-500 text-xl"></i>
+        <div>
+          <h4>Outils Marketing</h4>
+          <p>Liens trackés et QR codes personnalisés</p>
+        </div>
+      </div>
+      <div class="benefit-item">
+        <i class="fas fa-wallet text-yellow-500 text-xl"></i>
+        <div>
+          <h4>Gestion Commissions</h4>
+          <p>Suivi automatique des gains</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

@@ -13,6 +13,7 @@ import { AdminRolesComponent } from './pages/roles/admin-roles.component';
 import { AdminGeographyComponent } from './pages/geography/admin-geography.component';
 import { AdminPaymentsComponent } from './pages/payments/admin-payments.component';
 import { AdminSettingsComponent } from './pages/settings/admin-settings.component';
+import { AgentManagementComponent } from './pages/agent-management/agent-management.component';
 
 const routes: Routes = [
   {
@@ -66,6 +67,14 @@ const routes: Routes = [
         data: {
           title: 'Paramètres système',
           breadcrumb: 'Paramètres'
+        }
+      },
+      {
+        path: 'agents',
+        component: AgentManagementComponent,
+        data: {
+          title: 'Validation des agents',
+          breadcrumb: 'Agents'
         }
       },
       {

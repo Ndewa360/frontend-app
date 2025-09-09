@@ -32,16 +32,31 @@
         [invalid]="isValid('password')"
         [invalidText]="'Mot de passe obligatoire'">
         Mot de passe
-        <input
-          type="password"
-          formControlName="password"
-          ibmText
-          size="md"
-          [invalid]="isValid('password')"
-          [disabled]="false"
-          theme="dark"
-          [placeholder]="'Votre mot de passe'"
-          [autocomplete]="true">
+        <div class="password-input-container">
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            formControlName="password"
+            ibmText
+            size="md"
+            [invalid]="isValid('password')"
+            [disabled]="false"
+            theme="dark"
+            [placeholder]="'Votre mot de passe'"
+            [autocomplete]="true">
+          <button
+            type="button"
+            class="password-toggle-btn"
+            (click)="togglePasswordVisibility()"
+            [attr.aria-label]="showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'">
+            <svg *ngIf="!showPassword" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M8 3C4.5 3 1.73 5.11 1 8c.73 2.89 3.5 5 7 5s6.27-2.11 7-5c-.73-2.89-3.5-5-7-5zM8 11.5c-1.93 0-3.5-1.57-3.5-3.5S6.07 4.5 8 4.5s3.5 1.57 3.5 3.5S9.93 11.5 8 11.5zM8 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+            </svg>
+            <svg *ngIf="showPassword" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M2.22 2.22a.75.75 0 0 0-1.06 1.06l2.56 2.56c-.84.68-1.52 1.48-1.97 2.38C2.48 10.11 5.25 12.22 8.75 12.22c1.09 0 2.13-.22 3.06-.61l2.97 2.97a.75.75 0 1 0 1.06-1.06L2.22 2.22zM8.75 10.72c-.83 0-1.5-.67-1.5-1.5 0-.28.08-.54.21-.76l2.05 2.05c-.22.13-.48.21-.76.21z"/>
+              <path d="M8.75 3.78c-1.09 0-2.13.22-3.06.61L7.94 6.64c.22-.13.48-.21.76-.21.83 0 1.5.67 1.5 1.5 0 .28-.08.54-.21.76l2.25 2.25c.84-.68 1.52-1.48 1.97-2.38-.73-2.89-3.5-5-7-5z"/>
+            </svg>
+          </button>
+        </div>
       </ibm-label>
     </div>
     <div class="app-form__item app-form__item--opts">

@@ -5,6 +5,10 @@ import {defaultRouterTransition, MenuType} from "../../../@youpez"
 import {SettingsService} from "../../../@youpez"
 import {AppMenuService} from "../../../@youpez"
 import { ModeType, SizeType } from 'src/@youpez/components/app-sidenav/app-sidenav/app-sidenav.component'
+import { Store } from '@ngxs/store'
+import { UserProfileState } from 'src/app/shared/store/user-profile/user-profile.state'
+import { Router, NavigationEnd } from '@angular/router'
+import { filter } from 'rxjs/operators'
 
 @Component({
   selector: 'app-layout',
@@ -105,7 +109,9 @@ export class LayoutComponent implements OnInit, OnDestroy {
   ]
 
   constructor(private settingsService: SettingsService,
-              private appMenuService: AppMenuService) {
+              private appMenuService: AppMenuService,
+              private store: Store,
+              private router: Router) {
   }
 
   ngOnInit(): void {
@@ -117,6 +123,80 @@ export class LayoutComponent implements OnInit, OnDestroy {
           this.lockScreenVisible = true
         }
       })
+    
+    // Filter menu based on user type and agent status
+    this.filterMenuForUser();
+    
+    // Listen to user profile changes to update menu
+    this.store.select(UserProfileState.selectStateUserProfile)
+      .pipe(takeUntil(this.onDestroy))
+      .subscribe(() => {
+        this.filterMenuForUser();
+      });
+    
+    // Listen to route changes to update menu
+    this.router.events
+      .pipe(
+        filter(event => event instanceof NavigationEnd),
+        takeUntil(this.onDestroy)
+      )
+      .subscribe(() => {
+        this.filterMenuForUser();
+      });
+  }
+
+  private filterMenuForUser(): void {
+    const user = this.store.selectSnapshot(UserProfileState.selectStateUserProfile);
+    const currentUrl = this.router.url;
+    
+    // If user is an agent, hide contract templates and properties sections
+    if (user?.userType === 'AGENT') {
+      // If agent is on profile completion or pending approval pages, show minimal menu
+      if (currentUrl.includes('/agent/complete-profile') || currentUrl.includes('/agent/pending-approval')) {
+        this.menu = [
+          {
+            groupName: 'PROFIL AGENT',
+            opened: true,
+            children: [
+              {
+                name: 'Compléter mon profil',
+                url: '/app/agent/complete-profile',
+                prefix: {
+                  type: 'ibm-icon',
+                  name: 'userAvatar',
+                },
+              }
+            ]
+          }
+        ];
+      } else {
+        // For approved agents, show only dashboard
+        this.menu = [
+          {
+            groupName: 'DASHBOARDS',
+            opened: true,
+            children: [
+              {
+                name: 'Acceuil',
+                url: '/app/dashboard/default',
+                prefix: {
+                  type: 'ibm-icon',
+                  name: 'home',
+                },
+              },
+              {
+                name: 'Tableau de bord',
+                url: '/app/dashboard/analytics',
+                prefix: {
+                  type: 'ibm-icon',
+                  name: 'activity',
+                },
+              },
+            ],
+          }
+        ];
+      }
+    }
   }
 
   ngOnDestroy(): void {

@@ -29,6 +29,13 @@
           <span>Exporter</span>
         </button>
         <button
+          class="admin-btn admin-btn-outline"
+          routerLink="/admin/agents"
+          [disabled]="isLoading">
+          <i class="fas fa-user-tie"></i>
+          <span>Valider les agents</span>
+        </button>
+        <button
           class="admin-btn admin-btn-primary"
           (click)="onCreateUser()"
           [disabled]="isLoading">

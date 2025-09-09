@@ -131,19 +131,21 @@ export class UserProfileState {
     }
 
     @Action(UserProfileAction.SignupSimpleUserProfile)
-    signupSimpleUserProfileState(ctx: StateContext<UserProfileStateModel>, { email, password, username, phoneNumber }: UserProfileAction.SignupSimpleUserProfile) {
+    signupSimpleUserProfileState(ctx: StateContext<UserProfileStateModel>, { email, password, username, phoneNumber, userType, businessName }: UserProfileAction.SignupSimpleUserProfile) {
         ctx.patchState({
             loadingUserProfile: true,
             lastError: null
         });
 
-        return this._authService.register(email, password, username, phoneNumber).pipe(
+        return this._authService.register(email, password, username, phoneNumber, userType, businessName).pipe(
             tap((result) => {
                 ctx.patchState({
                     loadingUserProfile: false,
                     userProfile: result.data
                 });
-                this._toastrService.success("Compte créé avec succès! ", "Ndewa360°");
+                
+                const accountType = userType === 'AGENT' ? 'agent' : 'propriétaire';
+                this._toastrService.success(`Compte ${accountType} créé avec succès! Vérifiez votre email.`, "Ndewa360°");
             }),
             catchError((error) => {
                 ctx.patchState({

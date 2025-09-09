@@ -17,7 +17,7 @@
                 <youpez-ibm-icon id="search-menu-btn" iconName="search" iconSize="24"></youpez-ibm-icon>
               </div>
             </div>
-            <div [routerLink]="'/app/properties'" [routerLinkActive]="['app-mini-sidebar__list__item__active']"
+            <div *ngIf="!isAgent" [routerLink]="'/app/properties'" [routerLinkActive]="['app-mini-sidebar__list__item__active']"
               class="app-mini-sidebar__list__item app-mini-sidebar__list__item__highlight">
               <div class="app-mini-sidebar__list__item__pill" placement="right" container="body"
                 ngbTooltip="Bien immobilier">
@@ -30,7 +30,7 @@
                 <youpez-ibm-icon id="billing-menu-btn" iconName="dashboardReference" iconSize="24"></youpez-ibm-icon>
               </div>
             </div>
-            <div [routerLink]="'/app/contract-templates'" [routerLinkActive]="['app-mini-sidebar__list__item__active']"
+            <div *ngIf="!isAgent" [routerLink]="'/app/contract-templates'" [routerLinkActive]="['app-mini-sidebar__list__item__active']"
               class="app-mini-sidebar__list__item app-mini-sidebar__list__item__highlight">
               <div class="app-mini-sidebar__list__item__pill" placement="right" container="body" ngbTooltip="Modele de contrat">
                 <youpez-ibm-icon id="contract-model-menu-btn" iconName="document" iconSize="24"></youpez-ibm-icon>

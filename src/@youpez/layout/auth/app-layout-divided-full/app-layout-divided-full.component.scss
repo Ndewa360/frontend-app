@@ -2,3 +2,13 @@
   height: 100%;
   width: 100%;
 }
+
+[data-left] {
+  height: 100vh;
+  overflow-y: auto;
+}
+
+[data-right] {
+  height: 100vh;
+  overflow: hidden;
+}

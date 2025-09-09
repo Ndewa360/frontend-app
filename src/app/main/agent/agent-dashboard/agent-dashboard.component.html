@@ -1,0 +1,169 @@
+<!-- Loading State -->
+<div *ngIf="loading" class="loading-container">
+  <div class="loading-spinner"></div>
+  <p class="loading-text">Chargement de votre tableau de bord...</p>
+</div>
+
+<!-- Error State -->
+<div *ngIf="error && !loading" class="error-container">
+  <div class="error-notification">
+    <i class="fas fa-exclamation-triangle"></i>
+    <span>{{error}}</span>
+  </div>
+  <button class="btn btn-primary retry-btn" (click)="refreshData()">
+    <i class="fas fa-refresh mr-2"></i>
+    Réessayer
+  </button>
+</div>
+
+<!-- Dashboard Content -->
+<div *ngIf="!loading && !error && agentProfile" class="agent-dashboard">
+  
+  <!-- Header Section -->
+  <div class="dashboard-header">
+    <div class="welcome-section">
+      <h1 class="dashboard-title">Tableau de bord Agent</h1>
+      <p class="welcome-message">
+        Bonjour <strong>{{agentProfile.businessName}}</strong>, 
+        voici un aperçu de votre activité
+      </p>
+    </div>
+    
+    <div class="status-section">
+      <span class="status-badge" [class]="'status-' + getStatusBadgeType(agentProfile.status)">
+        <i class="fas fa-check" *ngIf="agentProfile.status === AgentStatus.CERTIFIED"></i>
+        <i class="fas fa-clock" *ngIf="agentProfile.status === AgentStatus.PENDING"></i>
+        {{getStatusLabel(agentProfile.status)}}
+      </span>
+      
+      <div class="verification-badge" *ngIf="agentProfile.isVerified">
+        <i class="fas fa-check-circle text-green-500"></i>
+        <span>Vérifié</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-grid" *ngIf="agentStats">
+    
+    <!-- Biens Gérés -->
+    <div class="stat-card properties-card">
+      <div class="stat-content">
+        <div class="stat-icon">
+          <i class="fas fa-home"></i>
+        </div>
+        <div class="stat-info">
+          <h3 class="stat-number">{{agentStats.totalPropertiesManaged}}</h3>
+          <p class="stat-label">Biens Gérés</p>
+        </div>
+      </div>
+      <button class="btn btn-ghost" (click)="navigateToProperties()">
+        Voir tous
+        <i class="fas fa-arrow-right ml-2"></i>
+      </button>
+    </div>
+
+    <!-- Taux de Validation -->
+    <div class="stat-card validation-card">
+      <div class="stat-content">
+        <div class="stat-icon">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="stat-info">
+          <h3 class="stat-number" [class]="'text-' + getValidationRateColor(agentStats.validationRate)">
+            {{agentStats.validationRate}}%
+          </h3>
+          <p class="stat-label">Taux de Validation</p>
+        </div>
+      </div>
+      <div class="validation-breakdown">
+        <small>{{agentStats.totalPropertiesValidated}} validés / {{agentStats.totalPropertiesManaged}} total</small>
+      </div>
+    </div>
+
+    <!-- Note Moyenne -->
+    <div class="stat-card rating-card">
+      <div class="stat-content">
+        <div class="stat-icon">
+          <i class="fas fa-star"></i>
+        </div>
+        <div class="stat-info">
+          <h3 class="stat-number">{{agentStats.averageRating.toFixed(1)}}</h3>
+          <p class="stat-label">Note Moyenne</p>
+        </div>
+      </div>
+      <div class="rating-stars">
+        <i *ngFor="let star of getRatingStars(agentStats.averageRating)" 
+           [class]="'fas fa-' + star"
+           [class.text-yellow-400]="star === 'star'"
+           [class.text-gray-300]="star === 'star-o'">
+        </i>
+        <small>({{agentStats.totalRatings}} avis)</small>
+      </div>
+    </div>
+
+    <!-- Score de Performance -->
+    <div class="stat-card score-card">
+      <div class="stat-content">
+        <div class="stat-icon">
+          <i class="fas fa-chart-line"></i>
+        </div>
+        <div class="stat-info">
+          <h3 class="stat-number">{{agentStats.validationScore}}</h3>
+          <p class="stat-label">Score de Performance</p>
+        </div>
+      </div>
+      <button class="btn btn-ghost" (click)="navigateToStats()">
+        Détails
+        <i class="fas fa-arrow-right ml-2"></i>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="quick-actions">
+    <h3 class="section-title">Actions Rapides</h3>
+    <div class="actions-grid">
+      
+      <div class="action-card" (click)="navigateToProperties()">
+        <div class="action-content">
+          <i class="fas fa-plus text-2xl action-icon"></i>
+          <h4>Ajouter un Bien</h4>
+          <p>Publier un nouveau bien immobilier</p>
+        </div>
+      </div>
+
+      <div class="action-card" (click)="navigateToProfile()">
+        <div class="action-content">
+          <i class="fas fa-user text-2xl action-icon"></i>
+          <h4>Mon Profil</h4>
+          <p>Mettre à jour mes informations</p>
+        </div>
+      </div>
+
+      <div class="action-card" (click)="navigateToStats()">
+        <div class="action-content">
+          <i class="fas fa-chart-bar text-2xl action-icon"></i>
+          <h4>Mes Statistiques</h4>
+          <p>Voir les performances détaillées</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Pending Validation Message -->
+  <div class="pending-message" *ngIf="agentProfile.status === AgentStatus.PENDING">
+    <div class="notification info">
+      <div class="notification-icon">
+        <i class="fas fa-info-circle"></i>
+      </div>
+      <div class="notification-content">
+        <h4>Validation en cours</h4>
+        <p>Votre profil est en cours de validation par notre équipe. Vous recevrez une notification dès que le processus sera terminé.</p>
+      </div>
+    </div>
+  </div>
+
+</div>

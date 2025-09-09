@@ -24,9 +24,21 @@ export class AuthService {
   }
 
 
-  register(email: string, password: string,username:string, phoneNumber:string):Observable<ApiResultFormat<UserProfileModel>> {
-    return this._httpClient.post<ApiResultFormat<UserProfileModel>>(`${environment.apiUrl}/user/auth/register`,{email,password,name:username,phoneNumber});
-
+  register(email: string, password: string,username:string, phoneNumber:string, userType?: string, businessName?: string):Observable<ApiResultFormat<UserProfileModel>> {
+    const payload: any = {email,password,name:username,phoneNumber};
+    
+    if (userType) {
+      payload.userType = userType;
+    }
+    
+    if (businessName) {
+      payload.businessName = businessName;
+    }
+    
+    // Debug: vérifier le payload envoyé au backend
+    console.log('🚀 Payload envoyé au backend pour inscription:', payload);
+    
+    return this._httpClient.post<ApiResultFormat<UserProfileModel>>(`${environment.apiUrl}/user/auth/register`, payload);
   }
 
   resetPassword(password: string,token:string) {

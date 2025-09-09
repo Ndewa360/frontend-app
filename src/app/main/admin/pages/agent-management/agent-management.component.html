@@ -1,0 +1,213 @@
+<div class="agent-management-container">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2L2 7v10c0 5.55 3.84 9.74 9 11 5.16-1.26 9-5.45 9-11V7l-10-5z"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="page-title">Validation des agents immobiliers</h1>
+        <p class="page-subtitle">Examinez et validez les demandes d'inscription des agents</p>
+      </div>
+    </div>
+    <div class="stats-badge">
+      <span class="stats-number">{{pendingAgents.length}}</span>
+      <span class="stats-label">En attente</span>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p class="loading-text">Chargement des demandes...</p>
+  </div>
+
+  <!-- Main Content -->
+  <div *ngIf="!isLoading" class="main-content">
+    <!-- Agents List -->
+    <div class="agents-panel">
+      <div class="panel-header">
+        <h2 class="panel-title">Demandes en attente</h2>
+        <div class="panel-badge">{{pendingAgents.length}}</div>
+      </div>
+      <div class="agents-list">
+        <div *ngFor="let agent of pendingAgents" 
+             class="agent-card"
+             [class.selected]="selectedAgent?._id === agent._id"
+             (click)="viewAgent(agent)">
+          <div class="agent-avatar">
+            <span>{{agent.businessName.charAt(0).toUpperCase()}}</span>
+          </div>
+          <div class="agent-info">
+            <h3 class="agent-business">{{agent.businessName}}</h3>
+            <p class="agent-name">{{agent.userId.name}}</p>
+            <p class="agent-email">{{agent.userId.email}}</p>
+            <div class="agent-meta">
+              <span class="agent-date">{{agent.createdAt | date:'dd/MM/yyyy'}}</span>
+              <span class="status-badge pending">En attente</span>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="pendingAgents.length === 0" class="empty-state">
+          <div class="empty-icon">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/>
+            </svg>
+          </div>
+          <h3 class="empty-title">Aucune demande en attente</h3>
+          <p class="empty-description">Toutes les demandes ont été traitées</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Agent Details -->
+    <div class="details-panel">
+      <div class="panel-header">
+        <h2 class="panel-title">Détails de la demande</h2>
+      </div>
+      <div *ngIf="selectedAgent" class="agent-details">
+        <!-- Business Info -->
+        <div class="detail-section">
+          <h3 class="section-title">Informations de l'agence</h3>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label">Nom de l'agence</span>
+              <span class="info-value">{{selectedAgent.businessName}}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Responsable</span>
+              <span class="info-value">{{selectedAgent.userId.name}}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Email</span>
+              <span class="info-value">{{selectedAgent.userId.email}}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Téléphone</span>
+              <span class="info-value">{{selectedAgent.userId.phoneNumber}}</span>
+            </div>
+            <div class="info-item full-width">
+              <span class="info-label">Adresse</span>
+              <span class="info-value">{{selectedAgent.businessAddress}}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div *ngIf="selectedAgent.businessDescription" class="detail-section">
+          <h3 class="section-title">Description de l'activité</h3>
+          <p class="description-text">{{selectedAgent.businessDescription}}</p>
+        </div>
+
+        <!-- Verification -->
+        <div class="detail-section">
+          <h3 class="section-title">Vérification d'identité</h3>
+          <div class="verification-info">
+            <div class="verification-item">
+              <span class="verification-label">Type de document</span>
+              <span class="verification-value">{{selectedAgent.verificationType}}</span>
+            </div>
+            <div class="verification-item">
+              <span class="verification-label">Numéro</span>
+              <span class="verification-value">{{selectedAgent.verificationNumber}}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Documents -->
+        <div class="detail-section">
+          <h3 class="section-title">Documents fournis</h3>
+          <div class="documents-grid">
+            <button 
+              (click)="openDocument(selectedAgent.verificationDocumentUrl)"
+              class="document-btn primary">
+              <div class="doc-icon">📄</div>
+              <span>Document d'identité</span>
+            </button>
+            <button 
+              *ngIf="selectedAgent.professionalCardUrl"
+              (click)="openDocument(selectedAgent.professionalCardUrl)"
+              class="document-btn success">
+              <div class="doc-icon">🎫</div>
+              <span>Carte professionnelle</span>
+            </button>
+            <button 
+              *ngIf="selectedAgent.businessLicenseUrl"
+              (click)="openDocument(selectedAgent.businessLicenseUrl)"
+              class="document-btn info">
+              <div class="doc-icon">📋</div>
+              <span>Licence d'activité</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="actions-section">
+          <button 
+            (click)="approveAgent(selectedAgent)"
+            class="action-btn approve">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+            </svg>
+            Approuver la demande
+          </button>
+          <button 
+            (click)="openRejectModal(selectedAgent)"
+            class="action-btn reject">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+            </svg>
+            Rejeter la demande
+          </button>
+        </div>
+      </div>
+      <div *ngIf="!selectedAgent" class="no-selection">
+        <div class="no-selection-icon">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+          </svg>
+        </div>
+        <h3 class="no-selection-title">Sélectionnez une demande</h3>
+        <p class="no-selection-description">Choisissez une demande dans la liste pour voir les détails</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reject Modal -->
+  <div *ngIf="showRejectModal" class="modal-overlay">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 class="modal-title">Rejeter la demande</h3>
+        <button (click)="closeRejectModal()" class="modal-close">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-description">Veuillez indiquer la raison du rejet de cette demande :</p>
+        <textarea 
+          [(ngModel)]="rejectionReason"
+          rows="4"
+          class="modal-textarea"
+          placeholder="Décrivez les raisons du rejet...">
+        </textarea>
+      </div>
+      <div class="modal-footer">
+        <button 
+          (click)="closeRejectModal()"
+          class="modal-btn secondary">
+          Annuler
+        </button>
+        <button 
+          (click)="rejectAgent()"
+          [disabled]="!rejectionReason.trim()"
+          class="modal-btn danger">
+          Confirmer le rejet
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

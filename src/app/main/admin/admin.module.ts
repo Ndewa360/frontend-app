@@ -19,6 +19,7 @@ import { AdminRolesComponent } from './pages/roles/admin-roles.component';
 import { AdminGeographyComponent } from './pages/geography/admin-geography.component';
 import { AdminPaymentsComponent } from './pages/payments/admin-payments.component';
 import { AdminSettingsComponent } from './pages/settings/admin-settings.component';
+import { AgentManagementComponent } from './pages/agent-management/agent-management.component';
 import { CountrySelectionModalComponent } from './components/country-selection-modal/country-selection-modal.component';
 import { CountryDeleteModalComponent } from './components/country-delete-modal/country-delete-modal.component';
 import { CountryViewModalComponent } from './components/country-view-modal/country-view-modal.component';
@@ -55,6 +56,7 @@ import { AdminRoutingModule } from './admin-routing.module';
     AdminGeographyComponent,
     AdminPaymentsComponent,
     AdminSettingsComponent,
+    AgentManagementComponent,
     CountrySelectionModalComponent,
     CountryDeleteModalComponent,
     CountryViewModalComponent,

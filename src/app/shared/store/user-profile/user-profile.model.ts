@@ -49,6 +49,10 @@ export interface UserProfileModel {
 
     theme?:string;
 
+    userType?: string; // 'PROPERTY_OWNER' or 'AGENT'
+
+    businessName?: string; // For agents only
+
     // Métadonnées
     createdAt?: Date;
     isDeleted?: boolean;

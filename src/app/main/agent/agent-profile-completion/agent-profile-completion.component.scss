@@ -1,0 +1,208 @@
+// Component container - ensure scrollability
+.agent-profile-completion {
+  min-height: 100vh;
+  overflow-y: auto;
+  position: relative;
+  max-height: 100vh;
+  
+  // Ensure content can scroll
+  .max-w-4xl {
+    max-height: none;
+  }
+}
+
+// Smooth scrolling
+html {
+  scroll-behavior: smooth;
+}
+
+// Custom scrollbar
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+  
+  &:hover {
+    background: #94a3b8;
+  }
+}
+
+// Animation classes
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+// Component animations
+.agent-profile-completion {
+  animation: fadeIn 0.5s ease-out;
+}
+
+// Form field animations
+.space-y-2 > * + * {
+  animation: slideInUp 0.3s ease-out;
+}
+
+// Upload card hover effects
+.upload-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+// Progress bar animation
+.progress-step {
+  transition: all 0.3s ease;
+  
+  &.active {
+    transform: scale(1.1);
+  }
+}
+
+// Button hover effects
+button {
+  transition: all 0.2s ease;
+  
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+}
+
+// Focus styles with app colors
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: rgb(204, 140, 10) !important;
+  box-shadow: 0 0 0 3px rgba(204, 140, 10, 0.1) !important;
+  outline: none;
+}
+
+// Focus ring override for yellow color
+.focus\:ring-yellow-500:focus {
+  --tw-ring-color: rgba(204, 140, 10, 0.5);
+}
+
+.focus\:border-yellow-500:focus {
+  border-color: rgb(204, 140, 10);
+}
+
+// Error state animations
+.border-red-500 {
+  animation: pulse 0.5s ease-in-out;
+}
+
+// Success state
+.bg-green-50 {
+  animation: slideInUp 0.3s ease-out;
+}
+
+// Loading animation
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Responsive improvements
+@media (max-width: 768px) {
+  .grid-cols-1.md\\:grid-cols-2 {
+    gap: 1rem;
+  }
+  
+  .grid-cols-1.md\\:grid-cols-3 {
+    gap: 1rem;
+  }
+  
+  .px-8 {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .py-12 {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+}
+
+// Custom gradient backgrounds
+.bg-gradient-to-br {
+  background-image: linear-gradient(to bottom right, var(--tw-gradient-stops));
+}
+
+.bg-gradient-to-r {
+  background-image: linear-gradient(to right, var(--tw-gradient-stops));
+}
+
+// Shadow enhancements
+.shadow-xl {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.hover\\:shadow-xl:hover {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+// File input styling
+input[type="file"] {
+  &::-webkit-file-upload-button {
+    display: none;
+  }
+  
+  &::file-selector-button {
+    display: none;
+  }
+}
+
+// Drag and drop states
+.upload-zone {
+  &.dragover {
+    border-color: #3b82f6;
+    background-color: #eff6ff;
+    transform: scale(1.02);
+  }
+}

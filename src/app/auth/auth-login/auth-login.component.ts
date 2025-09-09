@@ -22,6 +22,7 @@ export class AuthLoginComponent implements OnInit, OnDestroy {
 
   public formGroup: UntypedFormGroup
   waittingResponse = false;
+  showPassword = false;
   private subscriptions: Subscription[] = [];
 
   constructor(
@@ -141,5 +142,9 @@ export class AuthLoginComponent implements OnInit, OnDestroy {
 
   goToSearchPage() {
     this.router.navigateByUrl("/search/index?minPrice=0&maxPrix=100000&ville=Bangangté");
+  }
+
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
   }
 }

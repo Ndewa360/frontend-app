@@ -14,6 +14,7 @@ export class LayoutMiniSidebarComponent implements OnInit {
   @Output() itemClick: EventEmitter<any> = new EventEmitter()
   @Select(UserProfileState.selectStateUserProfile) userProfile$:Observable<UserProfileModel>
   isAdmin=false;
+  isAgent=false;
   routerLinkRoute="/support/home"
 
   public notifications = [
@@ -48,6 +49,7 @@ export class LayoutMiniSidebarComponent implements OnInit {
       if(user) {
         // ✅ CORRECTION: Vérifier le rôle super-admin au lieu de l'email spécifique
         this.isAdmin = this.checkIfUserIsAdmin(user);
+        this.isAgent = user.userType === 'AGENT';
 
         this.routerLinkRoute="/app/welcome"
       }
