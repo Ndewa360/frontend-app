@@ -23,7 +23,8 @@ export class MenuConfigService {
           {
             name: 'Mes Propriétés',
             url: '/main/properties',
-            prefix: { type: 'icon', name: 'home' }
+            prefix: { type: 'icon', name: 'home' },
+            subtitle: 'Gérer vos biens immobiliers'
           },
           {
             name: 'Mes Chambres',
@@ -71,88 +72,9 @@ export class MenuConfigService {
     ];
   }
 
-  // Menu pour les agents immobiliers (nouveau)
+  // Menu pour les agents immobiliers (utilise le même menu de base)
   getAgentMenu(): MenuType[] {
-    return [
-      {
-        groupName: 'Agent Immobilier',
-        opened: true,
-        children: [
-          {
-            name: 'Tableau de bord',
-            url: '/main/agent/dashboard',
-            prefix: { type: 'icon', name: 'dashboard' },
-            subtitle: 'Vue d\'ensemble de votre activité'
-          },
-          {
-            name: 'Mes Biens Gérés',
-            url: '/main/agent/properties',
-            prefix: { type: 'icon', name: 'home' },
-            subtitle: 'Propriétés que vous promouvez'
-          },
-          {
-            name: 'Ajouter un Bien',
-            url: '/main/properties/create',
-            prefix: { type: 'icon', name: 'add' },
-            subtitle: 'Publier un nouveau bien'
-          },
-          {
-            name: 'Mes Statistiques',
-            url: '/main/agent/stats',
-            prefix: { type: 'icon', name: 'analytics' },
-            subtitle: 'Performance et métriques'
-          }
-        ]
-      },
-      {
-        groupName: 'Profil Agent',
-        opened: false,
-        children: [
-          {
-            name: 'Mon Profil Agent',
-            url: '/main/agent/profile',
-            prefix: { type: 'icon', name: 'user--profile' },
-            subtitle: 'Informations professionnelles'
-          },
-          {
-            name: 'Mes Certifications',
-            url: '/main/agent/certifications',
-            prefix: { type: 'icon', name: 'certificate' },
-            subtitle: 'Documents et validations'
-          },
-          {
-            name: 'Zones d\'Opération',
-            url: '/main/agent/zones',
-            prefix: { type: 'icon', name: 'location' },
-            subtitle: 'Secteurs géographiques'
-          }
-        ]
-      },
-      {
-        groupName: 'Outils Marketing',
-        opened: false,
-        children: [
-          {
-            name: 'Liens de Partage',
-            url: '/main/agent/sharing-tools',
-            prefix: { type: 'icon', name: 'share' },
-            subtitle: 'QR codes et liens trackés'
-          },
-          {
-            name: 'Prospects',
-            url: '/main/agent/prospects',
-            prefix: { type: 'icon', name: 'user--follow' },
-            subtitle: 'Contacts et leads générés'
-          },
-          {
-            name: 'Rapports',
-            url: '/main/agent/reports',
-            prefix: { type: 'icon', name: 'report' },
-            subtitle: 'Rapports de performance'
-          }
-        ]
-      }
-    ];
+    return this.getOwnerMenu();
   }
 
   // Menu pour les locataires (existant)
@@ -248,11 +170,6 @@ export class MenuConfigService {
 
   // Méthode pour obtenir le menu selon le rôle de l'utilisateur
   getMenuByUserRole(userRoles: string[]): MenuType[] {
-    // Vérifier si l'utilisateur est un agent
-    if (this.hasRole(userRoles, 'AGENT')) {
-      return this.getAgentMenu();
-    }
-    
     // Vérifier si l'utilisateur est un admin
     if (this.hasRole(userRoles, 'ADMIN')) {
       return this.getAdminMenu();
@@ -263,7 +180,7 @@ export class MenuConfigService {
       return this.getTenantMenu();
     }
     
-    // Par défaut, menu propriétaire
+    // Agents et propriétaires utilisent le même menu
     return this.getOwnerMenu();
   }
 

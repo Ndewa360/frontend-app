@@ -39,6 +39,7 @@ export class GaleryComponent implements OnInit, OnDestroy {
   currentView: 'gallery' | 'upload' = 'gallery';
   selectedTab: 'images' | 'videos' | '360' = 'images';
   isUploading = false;
+  isLoadingMedia = true;
 
   // Données des médias
   roomSelectedImages: string[] = [];
@@ -70,23 +71,62 @@ export class GaleryComponent implements OnInit, OnDestroy {
   
   
   ngOnInit(): void {
+    console.log('📷 Initialisation de la galerie avec room:', this.data.room);
+    
+    // Initialisation directe avec les données de la room
+    this.initializeDirectData();
+    
+    // Chargement depuis le store
     this.loadMediaData();
     this.setupUploadSubscriptions();
   }
+  
+  private async initializeDirectData(): Promise<void> {
+    if (this.data.room?.medias && this.data.room.medias.length > 0) {
+      console.log('📷 Initialisation directe avec', this.data.room.medias.length, 'médias');
+      try {
+        const result = await MediaUtil.getStructMedia(this.data.room.medias);
+        console.log('📷 Résultat initialisation directe:', result);
+        
+        this.roomSelectedImages360 = result.images360;
+        this.roomSelectedVideos = result.videos;
+        this.roomSelectedImages = result.images;
+        this.updateAllMediaItems();
+        this.isLoadingMedia = false;
+        this.cdr.detectChanges();
+      } catch (error) {
+        console.error('❌ Erreur lors de l\'initialisation directe:', error);
+      }
+    } else {
+      console.log('📷 Aucun média dans les données directes de la room');
+      this.isLoadingMedia = false;
+      this.cdr.detectChanges();
+    }
+  }
 
   private loadMediaData(): void {
+    console.log('📷 Chargement des médias pour la room:', this.data.room._id);
+    console.log('📷 Médias existants:', this.data.room.medias);
+    
     this._store.select(RoomState.selectStateRoom(this.data.room._id))
       .pipe(
         takeUntil(this.destroy$),
         switchMap(async (room) => {
-          if (room?.medias) {
+          console.log('📷 Room récupérée du store:', room);
+          
+          if (room?.medias && room.medias.length > 0) {
+            console.log('📷 Traitement de', room.medias.length, 'médias');
             try {
-              return await MediaUtil.getStructMedia(room.medias);
+              const result = await MediaUtil.getStructMedia(room.medias);
+              console.log('📷 Médias classés:', result);
+              return result;
             } catch (error) {
               console.error('❌ Erreur lors du traitement des médias:', error);
               return { images: [], videos: [], images360: [] };
             }
           }
+          
+          console.log('📷 Aucun média trouvé pour cette room');
           return { images: [], videos: [], images360: [] };
         }),
         catchError((error) => {
@@ -95,10 +135,13 @@ export class GaleryComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe((data) => {
+        console.log('📷 Données finales reçues:', data);
         this.roomSelectedImages360 = data.images360;
         this.roomSelectedVideos = data.videos;
         this.roomSelectedImages = data.images;
         this.updateAllMediaItems();
+        this.isLoadingMedia = false;
+        this.cdr.detectChanges(); // Force la détection des changements
       });
   }
 
@@ -108,6 +151,10 @@ export class GaleryComponent implements OnInit, OnDestroy {
       ...this.roomSelectedVideos.map(url => ({ url, type: 'video' as const })),
       ...this.roomSelectedImages360.map(url => ({ url, type: '360' as const }))
     ];
+    console.log('📷 Tous les médias mis à jour:', this.allMediaItems);
+    console.log('📷 Images:', this.roomSelectedImages.length);
+    console.log('📷 Vidéos:', this.roomSelectedVideos.length);
+    console.log('📷 360°:', this.roomSelectedImages360.length);
   }
 
   private setupUploadSubscriptions(): void {

@@ -17,7 +17,7 @@
                 <youpez-ibm-icon id="search-menu-btn" iconName="search" iconSize="24"></youpez-ibm-icon>
               </div>
             </div>
-            <div *ngIf="!isAgent" [routerLink]="'/app/properties'" [routerLinkActive]="['app-mini-sidebar__list__item__active']"
+            <div *ngIf="canAccessProperties" [routerLink]="'/app/properties'" [routerLinkActive]="['app-mini-sidebar__list__item__active']"
               class="app-mini-sidebar__list__item app-mini-sidebar__list__item__highlight">
               <div class="app-mini-sidebar__list__item__pill" placement="right" container="body"
                 ngbTooltip="Bien immobilier">

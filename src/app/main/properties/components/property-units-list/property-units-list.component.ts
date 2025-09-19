@@ -31,7 +31,8 @@ import {
   LocationPaymentModel,
   HistoryLocationPaymentModel,
   LocationModel,
-  LocationState
+  LocationState,
+  UserProfileState
 } from 'src/app/shared/store';
 import { UtilsString } from 'src/app/shared/utils';
 import { UnitDetailsViewService } from '../../services/unit-details-view.service';
@@ -127,6 +128,10 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
     { value: 'status', label: 'Statut' }
   ];
 
+  // Utilisateur actuel et permissions
+  currentUser: any = null;
+  isAgent = false;
+
   constructor(
     private store: Store,
     public viewService: UnitDetailsViewService,
@@ -140,6 +145,14 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     if (!this.propertyId) return;
 
+    // Récupérer l'utilisateur actuel depuis le store UserProfile
+    this.currentUser = this.store.selectSnapshot(UserProfileState.selectStateUserProfile);
+    this.isAgent = this.currentUser?.userType === 'AGENT';
+    
+    console.log('🔍 PropertyUnitsList - Utilisateur depuis store:', this.currentUser);
+    console.log('🔍 PropertyUnitsList - Est agent:', this.isAgent);
+    console.log('🔍 PropertyUnitsList - UserType:', this.currentUser?.userType);
+
     // Les locataires sont déjà chargés par LoadingPropertyDataResolver
     // Initialiser les observables
     this.rooms$ = this.store.select(RoomState.selectStateRoomByPropertyId(this.propertyId));
@@ -148,17 +161,24 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
     this.property$ = this.store.select(PropertyState.selectStateProperty(this.propertyId));
     this.loading$ = this.store.select(RoomState.selectStateLoading);
 
-    // S'abonner aux données
+    // S'abonner aux données incluant le profil utilisateur
     if (this.rooms$ && this.locataires$ && this.locations$ && this.property$ && this.loading$) {
       combineLatest([
         this.rooms$,
         this.locataires$,
         this.locations$,
         this.property$,
-        this.loading$
+        this.loading$,
+        this.store.select(UserProfileState.selectStateUserProfile)
       ]).pipe(
         takeUntil(this.destroy$)
-      ).subscribe(([rooms, locataires, locations, property, loading]) => {
+      ).subscribe(([rooms, locataires, locations, property, loading, userProfile]) => {
+        // Mettre à jour les données utilisateur si elles changent
+        if (userProfile !== this.currentUser) {
+          this.currentUser = userProfile;
+          this.isAgent = this.currentUser?.userType === 'AGENT';
+          console.log('🔄 PropertyUnitsList - Profil utilisateur mis à jour:', this.currentUser);
+        }
         const previousRooms = this.rooms;
         this.rooms = rooms || [];
         this.locataires = locataires || [];
@@ -1608,6 +1628,28 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
         // Pas besoin de recharger manuellement
       }
     });
+  }
+
+  /**
+   * Vérifier si l'utilisateur peut assigner des locataires
+   */
+  canAssignTenant(): boolean {
+    // Vérification directe du userType pour être sûr
+    const userType = this.currentUser?.userType;
+    const isAgentCheck = userType === 'AGENT';
+    console.log('🔍 canAssignTenant - userType:', userType, 'isAgent:', isAgentCheck, 'result:', !isAgentCheck);
+    return !isAgentCheck;
+  }
+
+  /**
+   * Vérifier si l'utilisateur peut résilier des contrats
+   */
+  canTerminateLease(): boolean {
+    // Vérification directe du userType pour être sûr
+    const userType = this.currentUser?.userType;
+    const isAgentCheck = userType === 'AGENT';
+    console.log('🔍 canTerminateLease - userType:', userType, 'isAgent:', isAgentCheck, 'result:', !isAgentCheck);
+    return !isAgentCheck;
   }
 
 }

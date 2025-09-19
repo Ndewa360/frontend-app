@@ -75,7 +75,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
             type: 'ibm-icon',
             name: 'home',
           },
-          url: '/app/properties/list',
+          url: '/main/properties/list',
         },
         {
           name: 'Locataire',
@@ -170,7 +170,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
           }
         ];
       } else {
-        // For approved agents, show only dashboard
+        // For approved agents, show dashboard and properties
         this.menu = [
           {
             groupName: 'DASHBOARDS',
@@ -193,6 +193,20 @@ export class LayoutComponent implements OnInit, OnDestroy {
                 },
               },
             ],
+          },
+          {
+            groupName: 'BIENS IMMOBILIER',
+            opened: true,
+            children: [
+              {
+                name: 'Mes Biens Gérés',
+                prefix: {
+                  type: 'ibm-icon',
+                  name: 'home',
+                },
+                url: '/main/properties/list',
+              }
+            ]
           }
         ];
       }

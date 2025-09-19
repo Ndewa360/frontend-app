@@ -57,6 +57,10 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
   
   private destroy$ = new Subject<void>();
 
+  // Déterminer si l'utilisateur est un agent
+  isAgent = false;
+  currentUser: any = null;
+
   constructor(
     private formBuilder: FormBuilder,
     private store: Store,
@@ -66,6 +70,10 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
     private dialogRef: MatDialogRef<ModernUnitModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: UnitModalData
   ) {
+    // Vérifier si l'utilisateur est un agent
+    this.currentUser = this.store.selectSnapshot(state => state.userProfile?.user);
+    this.isAgent = this.currentUser?.userType === 'AGENT';
+    
     this.initializeForm();
   }
 
@@ -85,7 +93,7 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
   private initializeForm(): void {
     this.formGroup = this.formBuilder.group({
       // Informations de base
-      code: ['', [Validators.minLength(2)]],
+      code: [{value: '', disabled: true}],
       type: [RoomType.ROOM, [Validators.required]],
       price: [0, [Validators.required, Validators.min(1000)]],
       description: [''],
@@ -105,17 +113,22 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
       
       // Visibilité
       isActiveForSouscription: [true],
-      isShowToPublic: [false]
+      isShowToPublic: [false],
+      
+      // Statut de disponibilité (pour les agents)
+      isFree: [true]
     });
 
     // Watchers pour les dépendances
     this.formGroup.get('hasKitchen')?.valueChanges.subscribe(hasKitchen => {
       const kitchenCountControl = this.formGroup.get('numberOfKitchen');
+      const internalKitchenControl = this.formGroup.get('isInternalKitchen');
+      
       if (hasKitchen) {
-        kitchenCountControl?.setValue(Math.max(1, kitchenCountControl.value));
+        kitchenCountControl?.setValue(Math.max(1, kitchenCountControl?.value || 0));
       } else {
         kitchenCountControl?.setValue(0);
-        this.formGroup.get('isInternalKitchen')?.setValue(false);
+        internalKitchenControl?.setValue(false);
       }
     });
 
@@ -125,6 +138,23 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
         cautionPriceControl?.setValue(0);
       }
     });
+    
+    // Validation personnalisée pour s'assurer que le formulaire est valide
+    this.formGroup.statusChanges.subscribe(status => {
+      console.log('Form status:', status, 'Form errors:', this.getFormErrors());
+    });
+  }
+  
+  // Helper pour déboguer les erreurs de validation
+  private getFormErrors(): any {
+    const errors: any = {};
+    Object.keys(this.formGroup.controls).forEach(key => {
+      const control = this.formGroup.get(key);
+      if (control && control.errors) {
+        errors[key] = control.errors;
+      }
+    });
+    return errors;
   }
 
   private populateForm(): void {
@@ -145,7 +175,8 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
         shouldPayCaution: unit.shouldPayCaution ?? false,
         cautionPrice: unit.cautionPrice || 0,
         isActiveForSouscription: unit.isActiveForSouscription ?? true,
-        isShowToPublic: unit.isShowToPublic ?? false
+        isShowToPublic: unit.isShowToPublic ?? false,
+        isFree: unit.isFree ?? true
       });
 
       // Désactiver le champ prix si l'unité est occupée
@@ -153,6 +184,9 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
         this.formGroup.get('price')?.disable();
         console.log('💡 Champ prix désactivé car l\'unité est occupée');
       }
+      
+      // Le code est toujours désactivé (généré automatiquement)
+      this.formGroup.get('code')?.disable();
 
       // Charger les images existantes
       if (unit.medias && unit.medias.length > 0) {

@@ -10,7 +10,7 @@ import { PropertyDetailsResolver } from '../shared/resolvers/loading-property-da
 import { ListPropertyComponent } from './properties/list-property/list-property.component'
 import { HomePropertyComponent } from './properties/home-property/home-property.component'
 import { PropertyDetailsCompleteComponent } from './properties/property-details-complete/property-details-complete.component'
-import { AgentProfileGuard } from '../shared/guards/agent-profile-guard.service'
+import { AgentValidationGuard } from '../shared/guards/agent-validation-guard.service'
 
 
 
@@ -22,6 +22,7 @@ const routes: Routes = [
   {
     path: '',
     component: LayoutComponent,
+    canActivate: [AgentValidationGuard],
     children: [      
       // {
       //   path: 'locataires',
@@ -75,7 +76,6 @@ const routes: Routes = [
        
       {
         path: 'properties',
-        canActivate: [AgentProfileGuard],
         data: {
           breadcrumb: 'Biens'
         },

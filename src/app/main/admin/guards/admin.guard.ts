@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { map, take } from 'rxjs/operators';
+import { map, take, filter, timeout, catchError } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
 import { UserProfileState } from '../../../shared/store/user-profile/user-profile.state';
+import { of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -18,30 +19,27 @@ export class AdminGuard implements CanActivate {
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
-  ): Observable<boolean> | Promise<boolean> | boolean {
+  ): boolean {
+    // Vérification synchrone du profil utilisateur
+    const userProfile = this.store.selectSnapshot(UserProfileState.selectStateUserProfile);
+    
+    if (!userProfile) {
+      console.log('❌ AdminGuard - No user profile found, redirecting to login');
+      this.router.navigate(['/auth/signin']);
+      return false;
+    }
 
-    return this.store.select(UserProfileState.selectStateUserProfile).pipe(
-      take(1),
-      map(userProfile => {
-        if (!userProfile) {
-          console.log('❌ AdminGuard - No user profile found, redirecting to login');
-          this.router.navigate(['/auth/signin']);
-          return false;
-        }
+    // Vérifier si l'utilisateur a un rôle admin ou super-admin
+    const hasAdminRole = this.checkIfUserHasAdminRole(userProfile);
 
-        // Vérifier si l'utilisateur a un rôle admin ou super-admin
-        const hasAdminRole = this.checkIfUserHasAdminRole(userProfile);
+    if (!hasAdminRole) {
+      console.log('❌ AdminGuard - User does not have admin role, redirecting to app');
+      this.router.navigate(['/app']);
+      return false;
+    }
 
-        if (!hasAdminRole) {
-          console.log('❌ AdminGuard - User does not have admin role, redirecting to app');
-          this.router.navigate(['/app']);
-          return false;
-        }
-
-        console.log('✅ AdminGuard - Admin access granted');
-        return true;
-      })
-    );
+    console.log('✅ AdminGuard - Admin access granted');
+    return true;
   }
 
   /**

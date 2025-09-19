@@ -3,6 +3,7 @@ import { Router } from '@angular/router'
 import { Select, Store } from '@ngxs/store'
 import { Observable } from 'rxjs'
 import { UserProfileState, UserProfileModel, UserProfileAction } from 'src/app/shared/store'
+import { AgentStatusService } from 'src/app/shared/services/agent-status.service'
 
 @Component({
   selector: 'app-layout-mini-sidebar',
@@ -15,6 +16,7 @@ export class LayoutMiniSidebarComponent implements OnInit {
   @Select(UserProfileState.selectStateUserProfile) userProfile$:Observable<UserProfileModel>
   isAdmin=false;
   isAgent=false;
+  canAccessProperties=true;
   routerLinkRoute="/support/home"
 
   public notifications = [
@@ -39,7 +41,8 @@ export class LayoutMiniSidebarComponent implements OnInit {
 
   constructor(
     private _store:Store,
-    private _router:Router
+    private _router:Router,
+    private agentStatusService: AgentStatusService
   ) {
   }
 
@@ -50,10 +53,16 @@ export class LayoutMiniSidebarComponent implements OnInit {
         // ✅ CORRECTION: Vérifier le rôle super-admin au lieu de l'email spécifique
         this.isAdmin = this.checkIfUserIsAdmin(user);
         this.isAgent = user.userType === 'AGENT';
+        this.canAccessProperties = this.agentStatusService.canAccessProperties();
 
         this.routerLinkRoute="/app/welcome"
       }
     })
+
+    // Écouter les changements de statut d'agent
+    this.agentStatusService.agentStatus$.subscribe(() => {
+      this.canAccessProperties = this.agentStatusService.canAccessProperties();
+    });
 
   }
 

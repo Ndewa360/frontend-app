@@ -46,4 +46,7 @@ export interface RoomModel {
     isShowToPublic?:boolean;
     shouldPayCaution?:boolean;
     cautionPrice?:number;
+    
+    // Gestion par agent
+    managedByAgent?: string; // ID de l'agent qui gère l'unité
 }

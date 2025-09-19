@@ -3,10 +3,12 @@ export interface SubscriptionStatus {
   accountStatus: 'active' | 'suspended' | 'disabled';
   propertyCount: number;
   propertyLimit: number;
+  unitsPerPropertyLimit?: number;
   monthlyAmount: number;
   lastCalculationDate?: Date;
   suspensionDate?: Date;
   needsUpgrade: boolean;
+  userType?: 'PROPERTY_OWNER' | 'AGENT';
 }
 
 export interface PropertyCreationCheck {

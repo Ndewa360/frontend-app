@@ -69,8 +69,14 @@
 
             <!-- Contenu de la galerie selon l'onglet sélectionné -->
             <div class="media-content">
+                <!-- État de chargement -->
+                <div *ngIf="isLoadingMedia" class="loading-state">
+                    <i class="fa fa-spinner fa-spin fa-3x"></i>
+                    <p>Chargement des médias...</p>
+                </div>
+                
                 <!-- Affichage des images -->
-                <div *ngIf="selectedTab === 'images'" class="media-grid">
+                <div *ngIf="!isLoadingMedia && selectedTab === 'images'" class="media-grid">
                     <div *ngIf="roomSelectedImages.length === 0" class="empty-state">
                         <i class="fa fa-image fa-3x"></i>
                         <p>Aucune image disponible</p>
@@ -100,7 +106,7 @@
                 </div>
 
                 <!-- Affichage des vidéos -->
-                <div *ngIf="selectedTab === 'videos'" class="media-grid">
+                <div *ngIf="!isLoadingMedia && selectedTab === 'videos'" class="media-grid">
                     <div *ngIf="roomSelectedVideos.length === 0" class="empty-state">
                         <i class="fa fa-video fa-3x"></i>
                         <p>Aucune vidéo disponible</p>
@@ -127,7 +133,7 @@
                 </div>
 
                 <!-- Affichage des 360 -->
-                <div *ngIf="selectedTab === '360'" class="media-grid">
+                <div *ngIf="!isLoadingMedia && selectedTab === '360'" class="media-grid">
                     <div *ngIf="roomSelectedImages360.length === 0" class="empty-state">
                         <i class="fa fa-globe fa-3x"></i>
                         <p>Aucune image 360° disponible</p>

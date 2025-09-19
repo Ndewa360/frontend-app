@@ -100,7 +100,7 @@
        *ngIf="isContentVisible">
 
     <!-- Onglet 1: Vue d'ensemble -->
-    <div *ngIf="activeTabIndex === 0" class="p-8">
+    <div *ngIf="isTabActive('overview')" class="p-8">
       <div class="space-y-6">
 
         <!-- Header de section avec image -->
@@ -344,8 +344,8 @@
       </div>
     </div>
 
-    <!-- Onglet 2: Informations locataire -->
-    <div *ngIf="activeTabIndex === 1" class="p-8">
+    <!-- Onglet 2: Informations locataire - Masqué pour les agents -->
+    <div *ngIf="isTabActive('tenant') && !isAgent" class="p-8">
       <div class="space-y-6">
 
         <!-- Cas 1: Unité occupée - Afficher les informations du locataire -->
@@ -439,8 +439,8 @@
               </div>
             </div>
 
-            <!-- Actions pour locataire occupé -->
-            <div class="mt-6 pt-6 border-t border-carbon-subtle">
+            <!-- Actions pour locataire occupé - Masquées pour les agents -->
+            <div *ngIf="!isAgent" class="mt-6 pt-6 border-t border-carbon-subtle">
               <div class="flex flex-wrap gap-3">
                 <button (click)="onViewContract()"
                         class="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium transition-all duration-200 hover:bg-blue-700 hover:shadow-lg">
@@ -522,8 +522,8 @@
 
               <!-- Actions pour unité libre -->
               <div class="space-y-3">
-                <!-- Action d'assignation -->
-                <button (click)="onAssignTenant()"
+                <!-- Action d'assignation - Masquée pour les agents -->
+                <button *ngIf="!isAgent" (click)="onAssignTenant()"
                         class="w-full flex items-center justify-center space-x-2 px-6 py-3 custom-primary-button text-white rounded-lg font-medium transition-all duration-200 hover:shadow-lg transform hover:scale-105">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
@@ -548,8 +548,8 @@
       </div>
     </div>
 
-    <!-- Onglet 3: Historique des paiements -->
-    <div *ngIf="activeTabIndex === 2" class="p-8">
+    <!-- Onglet 3: Historique des paiements - Masqué pour les agents -->
+    <div *ngIf="isTabActive('payments') && !isAgent" class="p-8">
       <div class="space-y-6">
 
         <!-- Header avec métriques financières -->
@@ -569,8 +569,8 @@
 
             <!-- Actions de paiement -->
             <div class="flex flex-wrap gap-3">
-              <!-- Bouton ajouter paiement (seulement si unité occupée) -->
-              <button *ngIf="!room?.isFree && unitData?.tenant"
+              <!-- Bouton ajouter paiement (seulement si unité occupée) - Masqué pour les agents -->
+              <button *ngIf="!room?.isFree && unitData?.tenant && !isAgent"
                       (click)="onAddPayment()"
                       class="flex items-center space-x-2 px-4 py-2 custom-primary-button text-white rounded-lg font-medium transition-all duration-200 hover:shadow-lg">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -579,8 +579,8 @@
                 <span>Ajouter un paiement</span>
               </button>
 
-              <!-- Bouton générer lien (toujours visible si unité occupée ou avec contrat) -->
-              <button *ngIf="!room?.isFree && (unitData?.tenant || unitData?.location)"
+              <!-- Bouton générer lien (toujours visible si unité occupée ou avec contrat) - Masqué pour les agents -->
+              <button *ngIf="!room?.isFree && (unitData?.tenant || unitData?.location) && !isAgent"
                       (click)="onGeneratePaymentLink()"
                       class="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-all duration-200 hover:shadow-lg">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -761,8 +761,8 @@
               <p class="text-carbon-secondary mb-6">Cette unité n'a pas encore d'historique de paiements.</p>
 
               <div class="flex flex-wrap gap-3 justify-center">
-                <!-- Bouton ajouter paiement (seulement si locataire présent) -->
-                <button *ngIf="!room?.isFree && unitData?.tenant"
+                <!-- Bouton ajouter paiement (seulement si locataire présent) - Masqué pour les agents -->
+                <button *ngIf="!room?.isFree && unitData?.tenant && !isAgent"
                         (click)="onAddPayment()"
                         class="inline-flex items-center space-x-2 px-6 py-3 custom-primary-button text-white rounded-lg font-medium transition-all duration-200 hover:shadow-lg">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -771,8 +771,8 @@
                   <span>Enregistrer le premier paiement</span>
                 </button>
 
-                <!-- Bouton générer lien (visible si unité occupée ou avec contrat) -->
-                <button *ngIf="!room?.isFree && (unitData?.tenant || unitData?.location)"
+                <!-- Bouton générer lien (visible si unité occupée ou avec contrat) - Masqué pour les agents -->
+                <button *ngIf="!room?.isFree && (unitData?.tenant || unitData?.location) && !isAgent"
                         (click)="onGeneratePaymentLink()"
                         class="inline-flex items-center space-x-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-all duration-200 hover:shadow-lg">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -789,7 +789,7 @@
     </div>
 
     <!-- Onglet 4: Galerie multimédia -->
-    <div *ngIf="activeTabIndex === 3" class="p-8">
+    <div *ngIf="isTabActive('gallery')" class="p-8">
       <div class="space-y-6">
 
         <!-- Header avec statistiques -->

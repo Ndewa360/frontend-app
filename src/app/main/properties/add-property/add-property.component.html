@@ -24,8 +24,8 @@
           <div class="step-number">2</div>
           <span class="step-label">Caractéristiques</span>
         </div>
-        <div class="progress-line" [class.completed]="currentStep > 2"></div>
-        <div class="progress-step" [class.active]="currentStep >= 3" [class.completed]="currentStep > 3">
+        <div class="progress-line" [class.completed]="currentStep > 2" *ngIf="!isAgent"></div>
+        <div class="progress-step" [class.active]="currentStep >= 3" [class.completed]="currentStep > 3" *ngIf="!isAgent">
           <div class="step-number">3</div>
           <span class="step-label">Finances</span>
         </div>
@@ -39,8 +39,83 @@
         <div class="form-step" *ngIf="currentStep === 1">
           <div class="step-header">
             <h2 class="step-title">Informations générales</h2>
-            <p class="step-description">Renseignez les informations de base de votre propriété</p>
+            <p class="step-description" *ngIf="!isAgent">Renseignez les informations de base de votre propriété</p>
+            <p class="step-description" *ngIf="isAgent">Renseignez les informations de base de la propriété et du propriétaire</p>
           </div>
+          
+          <!-- Section Propriétaire (pour les agents uniquement) -->
+          <div class="owner-info-section" *ngIf="isAgent">
+            <div class="section-header">
+              <h3 class="section-title">
+                <youpez-ibm-icon iconName="user" iconSize="20" class="mr-2"></youpez-ibm-icon>
+                Informations du propriétaire
+              </h3>
+              <p class="section-description">Renseignez les coordonnées du propriétaire du bien</p>
+            </div>
+            
+            <div class="form-grid">
+              <!-- Nom complet du propriétaire -->
+              <div class="form-group">
+                <label class="form-label required">Nom complet du propriétaire</label>
+                <input
+                  formControlName="ownerFullName"
+                  type="text"
+                  class="form-input"
+                  [class.error]="isValid('ownerFullName')"
+                  placeholder="Ex: Jean Dupont">
+                <div class="form-error" *ngIf="isValid('ownerFullName')">
+                  Le nom du propriétaire est obligatoire
+                </div>
+              </div>
+
+              <!-- Téléphone du propriétaire -->
+              <div class="form-group">
+                <label class="form-label required">Numéro de téléphone</label>
+                <input
+                  formControlName="ownerPhoneNumber"
+                  type="tel"
+                  class="form-input"
+                  [class.error]="isValid('ownerPhoneNumber')"
+                  placeholder="Ex: +237 6XX XX XX XX">
+                <div class="form-error" *ngIf="isValid('ownerPhoneNumber')">
+                  Le numéro de téléphone est obligatoire
+                </div>
+              </div>
+
+              <!-- Email du propriétaire -->
+              <div class="form-group">
+                <label class="form-label">Adresse email (optionnel)</label>
+                <input
+                  formControlName="ownerEmail"
+                  type="email"
+                  class="form-input"
+                  [class.error]="isValid('ownerEmail')"
+                  placeholder="Ex: jean.dupont@email.com">
+                <div class="form-error" *ngIf="isValid('ownerEmail')">
+                  Format d'email invalide
+                </div>
+              </div>
+
+              <!-- Adresse du propriétaire -->
+              <div class="form-group col-span-2">
+                <label class="form-label">Adresse du propriétaire (optionnel)</label>
+                <input
+                  formControlName="ownerAddress"
+                  type="text"
+                  class="form-input"
+                  placeholder="Ex: Quartier Bonanjo, Douala">
+              </div>
+            </div>
+          </div>
+          
+          <!-- Section Propriété -->
+          <div class="property-info-section" [class.mt-8]="isAgent">
+            <div class="section-header" *ngIf="isAgent">
+              <h3 class="section-title">
+                <youpez-ibm-icon iconName="home" iconSize="20" class="mr-2"></youpez-ibm-icon>
+                Informations de la propriété
+              </h3>
+            </div>
 
           <div class="form-grid">
             <!-- Nom du bien -->
@@ -152,6 +227,7 @@
                 placeholder="Décrivez votre propriété, ses atouts, son environnement..."></textarea>
             </div>
           </div>
+          </div>
         </div>
   
         <!-- Step 2: Caractéristiques -->
@@ -239,8 +315,8 @@
             </div>
           </div>
         </div>
-        <!-- Step 3: Finances -->
-        <div class="form-step" *ngIf="currentStep === 3">
+        <!-- Step 3: Finances (cachée pour les agents) -->
+        <div class="form-step" *ngIf="currentStep === 3 && !isAgent">
           <div class="step-header">
             <h2 class="step-title">Informations financières</h2>
             <p class="step-description">Renseignez les aspects financiers de votre propriété</p>
@@ -366,7 +442,7 @@
             type="button"
             (click)="nextStep()"
             class="btn btn-primary"
-            *ngIf="currentStep < 3"
+            *ngIf="(currentStep < 3 && !isAgent) || (currentStep < 2 && isAgent)"
             [disabled]="!isStepValid(currentStep)">
             Suivant
             <youpez-ibm-icon iconName="chevronRight" iconSize="16" class="ml-2 white-text"></youpez-ibm-icon>
@@ -376,13 +452,80 @@
             (click)="onSubmit()"
             type="button"
             class="btn btn-primary"
-            *ngIf="currentStep === 3"
+            *ngIf="(currentStep === 3 && !isAgent) || (currentStep === 2 && isAgent)"
             [disabled]="waittingResponse || formGroup.invalid">
             <span *ngIf="waittingResponse" class="loading-spinner"></span>
             <youpez-ibm-icon *ngIf="!waittingResponse" iconName="add" iconSize="16" class="mr-2"></youpez-ibm-icon>
             {{ waittingResponse ? 'Création...' : 'Créer le bien' }}
           </button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de confirmation du propriétaire existant -->
+  <div *ngIf="showOwnerConfirmModal" class="modal-overlay">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 class="modal-title">
+          <youpez-ibm-icon iconName="user" iconSize="24" class="mr-2 text-yellow-600"></youpez-ibm-icon>
+          Propriétaire existant trouvé
+        </h3>
+      </div>
+      
+      <div class="modal-body">
+        <div class="alert alert-warning">
+          <youpez-ibm-icon iconName="warning" iconSize="20" class="mr-2"></youpez-ibm-icon>
+          Un propriétaire avec ces informations existe déjà dans le système.
+        </div>
+        
+        <div class="owner-details" *ngIf="existingOwner">
+          <h4 class="details-title">Informations du propriétaire trouvé :</h4>
+          <div class="details-grid">
+            <div class="detail-item">
+              <span class="detail-label">Nom :</span>
+              <span class="detail-value">{{ existingOwner.name }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Email :</span>
+              <span class="detail-value">{{ existingOwner.email || 'Non renseigné' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Téléphone :</span>
+              <span class="detail-value">{{ existingOwner.phoneNumber }}</span>
+            </div>
+            <div class="detail-item" *ngIf="existingOwner.createdAt">
+              <span class="detail-label">Inscrit le :</span>
+              <span class="detail-value">{{ existingOwner.createdAt | date:'dd/MM/yyyy' }}</span>
+            </div>
+          </div>
+        </div>
+        
+        <p class="confirmation-text">
+          Souhaitez-vous utiliser ce propriétaire existant ou créer un nouveau compte ?
+        </p>
+      </div>
+      
+      <div class="modal-footer">
+        <button 
+          type="button" 
+          (click)="cancelOwnerModal()" 
+          class="btn btn-secondary">
+          Annuler
+        </button>
+        <button 
+          type="button" 
+          (click)="createNewOwner()" 
+          class="btn btn-outline">
+          Créer un nouveau
+        </button>
+        <button 
+          type="button" 
+          (click)="confirmExistingOwner()" 
+          class="btn btn-primary">
+          <youpez-ibm-icon iconName="checkmark" iconSize="16" class="mr-2"></youpez-ibm-icon>
+          Utiliser l'existant
+        </button>
       </div>
     </div>
   </div>

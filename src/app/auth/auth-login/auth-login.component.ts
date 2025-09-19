@@ -8,9 +8,11 @@ import {
 } from "@angular/forms"
 import {ActivatedRoute, ActivatedRouteSnapshot, Router} from '@angular/router'
 import { Actions, ofActionCompleted, ofActionErrored, ofActionSuccessful, Store } from '@ngxs/store'
-import { UserProfileAction } from 'src/app/shared/store'
+import { UserProfileAction, UserProfileState } from 'src/app/shared/store'
 import { Subscription } from 'rxjs'
 import { ToastrService } from 'ngx-toastr'
+import { HttpClient } from '@angular/common/http'
+import { environment } from 'src/environments/environment'
 
 @Component({
   selector: 'app-auth-login',
@@ -31,7 +33,8 @@ export class AuthLoginComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private _store: Store,
     private _ngxsAction: Actions,
-    private _toastrService: ToastrService
+    private _toastrService: ToastrService,
+    private http: HttpClient
   ) {}
 
   ngOnInit(): void {
@@ -77,10 +80,10 @@ export class AuthLoginComponent implements OnInit, OnDestroy {
 
       // Redirection après connexion réussie
       if (returnUrl) {
-        this.router.navigateByUrl(decodeURIComponent(returnUrl));
+        window.location.href = decodeURIComponent(returnUrl);
       } else {
-        // Redirection par défaut vers les propriétés pour les utilisateurs connectés
-        this.router.navigate(['/app/properties']);
+        // Redirection intelligente selon le type d'utilisateur
+        this.redirectBasedOnUserType();
       }
     });
     this.subscriptions.push(successSub);
@@ -146,5 +149,91 @@ export class AuthLoginComponent implements OnInit, OnDestroy {
 
   togglePasswordVisibility() {
     this.showPassword = !this.showPassword;
+  }
+
+  private async redirectBasedOnUserType(): Promise<void> {
+    try {
+      // Attendre que le profil utilisateur soit chargé
+      const user = this._store.selectSnapshot(UserProfileState.selectStateUserProfile);
+      
+      if (!user) {
+        // Attendre un peu plus si l'utilisateur n'est pas encore chargé
+        setTimeout(() => {
+          const retryUser = this._store.selectSnapshot(UserProfileState.selectStateUserProfile);
+          if (retryUser) {
+            this.performRedirection(retryUser);
+          } else {
+            window.location.href = '/app/welcome';
+          }
+        }, 1000);
+        return;
+      }
+
+      this.performRedirection(user);
+    } catch (error) {
+      console.error('Erreur lors de la redirection:', error);
+      window.location.href = '/app/welcome';
+    }
+  }
+
+  private async performRedirection(user: any): Promise<void> {
+    // Vérifier si c'est un admin
+    if (this.isAdmin(user)) {
+      // Attendre plus longtemps pour que le profil soit bien chargé
+      setTimeout(() => {
+        window.location.href = '/app/properties'; //'/admin/dashboard';
+      }, 1500);
+      return;
+    }
+
+    // Vérifier si c'est un agent
+    if (user.userType === 'AGENT') {
+      await this.redirectAgent(user);
+      return;
+    }
+
+    // Utilisateur normal
+    setTimeout(() => {
+      window.location.href = '/app/properties';
+    }, 500);
+  }
+
+  private async redirectAgent(user: any): Promise<void> {
+    try {
+      const response: any = await this.http.get(`${environment.apiUrl}/agents/${user._id}`).toPromise();
+      
+      if (!response) {
+        setTimeout(() => window.location.href = '/app/agent/complete-profile', 500);
+        return;
+      }
+      
+      const agentProfile = response.data || response;
+
+      if (!agentProfile || !agentProfile.isProfileCompleted) {
+        setTimeout(() => window.location.href = '/app/agent/complete-profile', 500);
+      } else if (agentProfile.status === 'PENDING' || agentProfile.status === 'ADMIN_REVIEW') {
+        setTimeout(() => window.location.href = '/app/agent/pending-approval', 500);
+      } else if (agentProfile.status === 'REJECTED') {
+        setTimeout(() => window.location.href = '/app/agent/pending-approval', 500);
+      } else if (agentProfile.status === 'APPROVED') {
+        setTimeout(() => window.location.href = '/app/properties', 500);
+      } else {
+        setTimeout(() => window.location.href = '/app/agent/complete-profile', 500);
+      }
+    } catch (error) {
+      console.error('Erreur lors de la vérification du profil agent:', error);
+      setTimeout(() => window.location.href = '/app/agent/complete-profile', 500);
+    }
+  }
+
+  private isAdmin(user: any): boolean {
+    if (!user.roles || !Array.isArray(user.roles)) {
+      return false;
+    }
+
+    return user.roles.some((role: any) => {
+      const roleName = typeof role === 'string' ? role : role.name;
+      return roleName === 'super-admin' || roleName === 'admin';
+    });
   }
 }

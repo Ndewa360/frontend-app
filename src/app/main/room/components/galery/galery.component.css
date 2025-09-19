@@ -154,7 +154,7 @@
   height: 100%;
 }
 
-.empty-state {
+.empty-state, .loading-state {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -163,6 +163,16 @@
   color: #6c757d;
   text-align: center;
   padding: 48px 0;
+}
+
+.loading-state i {
+  margin-bottom: 16px;
+  color: #fd7e14;
+}
+
+.loading-state p {
+  margin: 0;
+  font-size: 1rem;
 }
 
 .empty-state i {

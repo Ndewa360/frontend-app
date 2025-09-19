@@ -20,6 +20,7 @@ export class AuthGuard implements CanActivate {
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot){
     return this._store.select(AuthTokenState.selectStateAuthToken).pipe(
       map((authToken)=>{
+        console.warn("Auth Token ",authToken)
         if(authToken) return true;
 
         // Éviter la redirection infinie si on est déjà sur la page d'auth

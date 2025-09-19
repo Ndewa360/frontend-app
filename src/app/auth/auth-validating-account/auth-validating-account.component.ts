@@ -2,7 +2,9 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Actions, ofActionCompleted, ofActionErrored, ofActionSuccessful, Store } from '@ngxs/store';
 import { ToastrService } from 'ngx-toastr';
-import { UserProfileAction } from 'src/app/shared/store';
+import { UserProfileAction, UserProfileState } from 'src/app/shared/store';
+import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'auth-validating-account',
@@ -21,6 +23,7 @@ export class AuthValidatingAccountComponent implements OnInit {
     private _ngxsAction:Actions,
     private router:Router,
     private route: ActivatedRoute,
+    private http: HttpClient
   ){}
 
   ngOnInit(): void {
@@ -34,6 +37,10 @@ export class AuthValidatingAccountComponent implements OnInit {
     let token =  this.route.snapshot.queryParamMap.get("token");
     this._ngxsAction.pipe(ofActionSuccessful(UserProfileAction.ValidateUserProfileWithToken)).subscribe((value)=>{
         this.resultState ='success';
+        // Redirection automatique après validation réussie
+        setTimeout(() => {
+          this.redirectAfterValidation();
+        }, 2000); // Attendre 2 secondes pour que l'utilisateur voie le message de succès
       }
     );
 
@@ -44,6 +51,77 @@ export class AuthValidatingAccountComponent implements OnInit {
       })
 
       this._store.dispatch(new UserProfileAction.ValidateUserProfileWithToken(token))
+  }
+
+  private async redirectAfterValidation(): Promise<void> {
+    try {
+      // Attendre que le profil utilisateur soit chargé
+      setTimeout(async () => {
+        const user = this._store.selectSnapshot(UserProfileState.selectStateUserProfile);
+        
+        if (!user) {
+          this.router.navigate(['/auth/signin']);
+          return;
+        }
+
+        // Vérifier si c'est un admin
+        if (this.isAdmin(user)) {
+          this.router.navigate(['/admin/dashboard']);
+          return;
+        }
+
+        // Vérifier si c'est un agent
+        if (user.userType === 'AGENT') {
+          await this.redirectAgent(user);
+          return;
+        }
+
+        // Utilisateur normal
+        this.router.navigate(['/app/properties']);
+      }, 500);
+    } catch (error) {
+      console.error('Erreur lors de la redirection:', error);
+      this.router.navigate(['/auth/signin']);
+    }
+  }
+
+  private async redirectAgent(user: any): Promise<void> {
+    try {
+      const response: any = await this.http.get(`${environment.apiUrl}/agents/${user._id}`).toPromise();
+      
+      if (!response) {
+        this.router.navigate(['/app/agent/complete-profile']);
+        return;
+      }
+      
+      const agentProfile = response.data || response;
+
+      if (!agentProfile || !agentProfile.isProfileCompleted) {
+        this.router.navigate(['/app/agent/complete-profile']);
+      } else if (agentProfile.status === 'PENDING' || agentProfile.status === 'ADMIN_REVIEW') {
+        this.router.navigate(['/app/agent/pending-approval']);
+      } else if (agentProfile.status === 'REJECTED') {
+        this.router.navigate(['/app/agent/pending-approval']);
+      } else if (agentProfile.status === 'APPROVED') {
+        this.router.navigate(['/app/properties']);
+      } else {
+        this.router.navigate(['/app/agent/complete-profile']);
+      }
+    } catch (error) {
+      console.error('Erreur lors de la vérification du profil agent:', error);
+      this.router.navigate(['/app/agent/complete-profile']);
+    }
+  }
+
+  private isAdmin(user: any): boolean {
+    if (!user.roles || !Array.isArray(user.roles)) {
+      return false;
+    }
+
+    return user.roles.some((role: any) => {
+      const roleName = typeof role === 'string' ? role : role.name;
+      return roleName === 'super-admin' || roleName === 'admin';
+    });
   }
 
 }

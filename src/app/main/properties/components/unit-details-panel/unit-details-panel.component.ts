@@ -10,7 +10,8 @@ import {
   LocataireModel,
   LocataireState,
   RoomType,
-  RoomState
+  RoomState,
+  UserProfileState
 } from 'src/app/shared/store';
 import { UtilsString } from 'src/app/shared/utils';
 import { UnitDetailsService, UnitDetailsData } from '../../services/unit-details.service';
@@ -98,6 +99,10 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
 
   private destroy$ = new Subject<void>();
 
+  // Utilisateur actuel et permissions
+  currentUser: any = null;
+  isAgent = false;
+
   constructor(
     private store: Store,
     private unitDetailsService: UnitDetailsService,
@@ -106,6 +111,31 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
   ) {}
 
   ngOnInit(): void {
+    // Récupérer l'utilisateur actuel depuis le store UserProfile
+    this.currentUser = this.store.selectSnapshot(UserProfileState.selectStateUserProfile);
+    this.isAgent = this.currentUser?.userType === 'AGENT';
+    
+    console.log('🔍 UnitDetailsPanel - Utilisateur depuis store:', this.currentUser);
+    console.log('🔍 UnitDetailsPanel - Est agent:', this.isAgent);
+    console.log('🔍 UnitDetailsPanel - UserType:', this.currentUser?.userType);
+    
+    // Filtrer les onglets selon le rôle utilisateur
+    this.updateTabsForUserRole();
+    
+    console.log('🔍 UnitDetailsPanel - Onglets après filtrage:', this.tabs);
+    
+    // S'abonner aux changements du profil utilisateur
+    this.store.select(UserProfileState.selectStateUserProfile)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(userProfile => {
+        if (userProfile !== this.currentUser) {
+          this.currentUser = userProfile;
+          this.isAgent = this.currentUser?.userType === 'AGENT';
+          this.updateTabsForUserRole();
+          console.log('🔄 UnitDetailsPanel - Profil utilisateur mis à jour:', this.currentUser);
+        }
+      });
+    
     this.loadUnitData();
   }
 
@@ -207,6 +237,11 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
 
   setActiveTab(index: number): void {
     this.activeTabIndex = index;
+  }
+  
+  isTabActive(tabId: string): boolean {
+    const currentTab = this.tabs[this.activeTabIndex];
+    return currentTab?.id === tabId;
   }
 
   getRoomName(): string {
@@ -907,6 +942,45 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
       room: this.room,
       data: { url }
     });
+  }
+
+  /**
+   * Mettre à jour les onglets selon le rôle utilisateur
+   */
+  private updateTabsForUserRole(): void {
+    const baseTabs = [
+      {
+        id: 'overview',
+        label: 'Vue d\'ensemble',
+        icon: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4'
+      },
+      {
+        id: 'gallery',
+        label: 'Galerie',
+        icon: 'M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z'
+      }
+    ];
+
+    if (!this.isAgent) {
+      // Propriétaire : accès complet
+      this.tabs = [
+        ...baseTabs.slice(0, 1), // Vue d'ensemble
+        {
+          id: 'tenant',
+          label: 'Locataire',
+          icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'
+        },
+        {
+          id: 'payments',
+          label: 'Paiements',
+          icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1'
+        },
+        ...baseTabs.slice(1) // Galerie
+      ];
+    } else {
+      // Agent : accès limité (pas de locataire ni paiements)
+      this.tabs = baseTabs;
+    }
   }
 
   openVideoViewer(url: string): void {

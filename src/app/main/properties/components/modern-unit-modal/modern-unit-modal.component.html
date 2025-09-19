@@ -36,27 +36,20 @@
         </h3>
         
         <div class="images-container">
-          <div class="images-grid">
-            <div *ngFor="let preview of imagePreviews; let i = index" class="image-item">
-              <img [src]="preview" alt="Image {{ i + 1 }}" class="image-preview">
-              <button type="button" class="remove-image-btn" (click)="removeImage(i)">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-              </button>
-            </div>
-            
-            <div class="add-image-item">
-              <input type="file" id="imagesInput" multiple accept="image/*" (change)="onImagesSelected($event)" style="display: none;">
-              <button type="button" class="add-image-btn" (click)="triggerImagesInput()">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                </svg>
-                <span>Ajouter des photos</span>
-              </button>
+          <div class="images-info-message">
+            <svg class="w-12 h-12 text-blue-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+            </svg>
+            <h4 class="text-lg font-semibold text-gray-700 mb-2">Ajout de photos</h4>
+            <p class="text-gray-600 text-center">
+              Pour ajouter des photos à cette unité, veuillez utiliser l'<strong>uploader de photos</strong> 
+              disponible dans les détails de l'unité après sa création.
+            </p>
+            <div class="mt-3 text-sm text-blue-600">
+              📷 Les photos peuvent être ajoutées et gérées depuis la page de détails de l'unité
             </div>
           </div>
-          <p class="images-info">JPG, PNG ou GIF (max. 5MB par image)</p>
         </div>
       </div>
 
@@ -118,14 +111,22 @@
             </div>
 
             <div class="form-group">
-              <label class="form-label">Code de l'unité </label>
+              <label class="form-label">
+                Code de l'unité
+                <span class="ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+                  <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                  </svg>
+                  Auto-généré
+                </span>
+              </label>
               <input type="text" 
                      formControlName="code"
-                     class="form-input"
-                     [class.error]="code?.invalid && code?.touched"
-                     placeholder="Ex: A101, B205">
-              <div *ngIf="code?.invalid && code?.touched" class="error-message">
-                <span *ngIf="code?.errors?.['minlength']">Le code doit contenir au moins 2 caractères</span>
+                     class="form-input disabled"
+                     placeholder="Le code sera généré automatiquement"
+                     readonly>
+              <div class="mt-1 text-sm text-gray-500">
+                🏷️ Le code de l'unité sera automatiquement généré lors de la création
               </div>
             </div>
 
@@ -299,6 +300,22 @@
                   <span class="checkbox-custom"></span>
                   <span class="checkbox-text">Visible au public</span>
                 </label>
+              </div>
+            </div>
+            
+            <!-- Statut de disponibilité (pour les agents uniquement) -->
+            <div class="form-group" *ngIf="isAgent">
+              <div class="checkbox-group">
+                <label class="checkbox-label">
+                  <input type="checkbox" 
+                         formControlName="isFree"
+                         class="checkbox-input">
+                  <span class="checkbox-custom"></span>
+                  <span class="checkbox-text">Unité disponible</span>
+                </label>
+              </div>
+              <div class="mt-1 text-sm text-gray-600">
+                📝 Les agents peuvent uniquement indiquer si l'unité est disponible ou occupée
               </div>
             </div>
           </div>

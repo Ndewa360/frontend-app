@@ -68,6 +68,9 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
   // État local
   propertyId: string | null = null;
   activeTab: string = 'overview';
+  currentUser: any = null;
+  isAgent = false;
+  currentProperty: PropertyModel | null = null;
 
   // Métriques de la propriété
   metrics: PropertyMetrics = {
@@ -80,34 +83,8 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
     revenueGrowth: 0
   };
 
-  // Configuration des onglets
-  tabs: Tab[] = [
-    {
-      id: 'overview',
-      label: 'Vue d\'ensemble',
-      icon: 'home'
-    },
-    {
-      id: 'units',
-      label: 'Unités locatives',
-      icon: 'balcony'
-    },
-    {
-      id: 'tenants',
-      label: 'Locataires',
-      icon: 'user'
-    },
-    {
-      id: 'history',
-      label: 'Historique', 
-      icon: 'time'
-    },
-    {
-      id: 'finances',
-      label: 'Finances',
-      icon: 'money'
-    }
-  ];
+  // Configuration des onglets (sera mise à jour selon le rôle)
+  tabs: Tab[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -126,6 +103,10 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    // Récupérer l'utilisateur actuel
+    this.currentUser = this.store.selectSnapshot(state => state.userProfile?.user);
+    this.isAgent = this.currentUser?.userType === 'AGENT';
+    
     // Récupérer l'ID de la propriété depuis la route
     this.propertyId = this.route.snapshot.paramMap.get('id');
 
@@ -134,6 +115,7 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
       // On n'a plus besoin de les charger ici
       console.log(`🏢 PropertyDetailsComplete - Les données de la propriété ${this.propertyId} sont déjà chargées par le resolver`);
       this.initializeSubscriptions();
+      this.updateTabsForUserRole();
     }
   }
 
@@ -160,6 +142,12 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
 
     // Mettre à jour les compteurs des onglets
     this.updateTabCounts();
+    
+    // S'abonner aux changements de propriété pour déterminer le rôle
+    this.property$.pipe(takeUntil(this.destroy$)).subscribe(property => {
+      this.currentProperty = property;
+      this.updateTabsForUserRole();
+    });
   }
 
   private updateTabCounts(): void {
@@ -213,6 +201,83 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
     this.activeTab = tabId;
   }
 
+  private updateTabsForUserRole(): void {
+    const baseTabs = [
+      {
+        id: 'overview',
+        label: 'Vue d\'ensemble',
+        icon: 'home'
+      },
+      {
+        id: 'units',
+        label: 'Unités locatives',
+        icon: 'balcony'
+      }
+    ];
+    
+    // Déterminer le rôle de l'utilisateur sur cette propriété
+    const userRole = this.currentProperty?.userRole || 
+                    (this.currentProperty?.owner === this.currentUser?._id ? 'owner' : 'agent');
+    
+    if (userRole === 'owner') {
+      // Propriétaire : accès complet
+      this.tabs = [
+        ...baseTabs,
+        {
+          id: 'tenants',
+          label: 'Locataires',
+          icon: 'user'
+        },
+        {
+          id: 'history',
+          label: 'Historique',
+          icon: 'time'
+        },
+        {
+          id: 'finances',
+          label: 'Finances',
+          icon: 'money'
+        }
+      ];
+    } else {
+      // Agent : accès limité (pas de finances, pas de locataires, pas d'historique)
+      this.tabs = [
+        ...baseTabs
+      ];
+    }
+  }
+  
+  // Vérifier si l'utilisateur peut accéder à un onglet
+  canAccessTab(tabId: string): boolean {
+    if (!this.currentProperty) return true;
+    
+    const userRole = this.currentProperty.userRole || 
+                    (this.currentProperty.owner === this.currentUser?._id ? 'owner' : 'agent');
+    
+    if (userRole === 'agent') {
+      // Les agents ne peuvent pas accéder aux finances et locataires
+      return !['finances', 'tenants'].includes(tabId);
+    }
+    
+    return true;
+  }
+  
+  // Vérifier si l'utilisateur peut effectuer une action
+  canPerformAction(action: string): boolean {
+    if (!this.currentProperty) return true;
+    
+    const userRole = this.currentProperty.userRole || 
+                    (this.currentProperty.owner === this.currentUser?._id ? 'owner' : 'agent');
+    
+    if (userRole === 'agent') {
+      // Les agents ne peuvent pas assigner de locataires ou gérer les finances
+      const restrictedActions = ['assign_tenant', 'terminate_lease', 'add_tenant', 'financial_report'];
+      return !restrictedActions.includes(action);
+    }
+    
+    return true;
+  }
+
   // Gestionnaires d'événements pour les composants enfants
   onUnitAction(action: UnitAction): void {
     switch (action.type) {
@@ -223,10 +288,14 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
         this.onEditUnit(action.room);
         break;
       case 'assign_tenant':
-        this.onAssignTenant(action.room);
+        if (this.canPerformAction('assign_tenant')) {
+          this.onAssignTenant(action.room);
+        }
         break;
       case 'terminate_lease':
-        this.onTerminateLease(action.room);
+        if (this.canPerformAction('terminate_lease')) {
+          this.onTerminateLease(action.room);
+        }
         break;
       case 'manage_media':
         this.onManageMedia(action.room);
@@ -423,9 +492,13 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
   }
 
   onAddTenant(): void {
+    // Vérifier si l'utilisateur peut ajouter des locataires
+    if (!this.canPerformAction('add_tenant')) {
+      console.log('⚠️ Action non autorisée pour les agents');
+      return;
+    }
     
-    
-
+    // Code pour ajouter un locataire (désactivé pour le moment)
     // try {
     //   const dialogRef = this.dialog.open(AddLocataireComponent, {
     //     width: '100%',
@@ -493,10 +566,14 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
         this.onAddUnit();
         break;
       case 'add_tenant':
-        this.onAddTenant();
+        if (this.canPerformAction('add_tenant')) {
+          this.onAddTenant();
+        }
         break;
       case 'financial_report':
-        this.generateFinancialReport();
+        if (this.canPerformAction('financial_report')) {
+          this.generateFinancialReport();
+        }
         break;
       case 'schedule_maintenance':
         this.scheduleMaintenance();

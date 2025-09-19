@@ -205,6 +205,33 @@
           margin: 0;
           text-align: center;
         }
+        
+        .images-info-message {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          padding: 32px 24px;
+          background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+          border: 2px dashed #cbd5e1;
+          border-radius: 12px;
+          text-align: center;
+          
+          h4 {
+            margin: 0;
+            color: #374151;
+          }
+          
+          p {
+            margin: 0;
+            line-height: 1.6;
+            max-width: 400px;
+          }
+          
+          .mt-3 {
+            margin-top: 12px;
+          }
+        }
       }
     }
 
@@ -419,6 +446,73 @@
       box-shadow: none;
     }
   }
+  
+  // Styles pour les badges informatifs
+  .inline-flex {
+    display: inline-flex;
+  }
+  
+  .items-center {
+    align-items: center;
+  }
+  
+  .px-2 {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+  
+  .py-1 {
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+  
+  .rounded-full {
+    border-radius: 9999px;
+  }
+  
+  .text-xs {
+    font-size: 12px;
+  }
+  
+  .font-medium {
+    font-weight: 500;
+  }
+  
+  .bg-gray-100 {
+    background-color: #f3f4f6;
+  }
+  
+  .text-gray-600 {
+    color: #4b5563;
+  }
+  
+  .text-gray-500 {
+    color: #6b7280;
+  }
+  
+  .ml-2 {
+    margin-left: 8px;
+  }
+  
+  .mr-1 {
+    margin-right: 4px;
+  }
+  
+  .mt-1 {
+    margin-top: 4px;
+  }
+  
+  .text-sm {
+    font-size: 14px;
+  }
+  
+  .w-3 {
+    width: 12px;
+  }
+  
+  .h-3 {
+    height: 12px;
+  }
 
   // Styles pour l'indicateur d'unité occupée
   .form-label {
@@ -426,6 +520,31 @@
     align-items: center;
     flex-wrap: wrap;
     gap: 0.5rem;
+  }
+  
+  // Styles pour les messages d'information
+  .text-blue-400 {
+    color: #60a5fa;
+  }
+  
+  .text-blue-600 {
+    color: #2563eb;
+  }
+  
+  .mb-2 {
+    margin-bottom: 8px;
+  }
+  
+  .mb-3 {
+    margin-bottom: 12px;
+  }
+  
+  .w-12 {
+    width: 48px;
+  }
+  
+  .h-12 {
+    height: 48px;
   }
 }
 

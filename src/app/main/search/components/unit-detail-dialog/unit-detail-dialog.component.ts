@@ -333,10 +333,56 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
     }
   }
 
-  // === OWNER ===
+  // === OWNER/AGENT ===
   getOwnerInitials(owner: any): string {
     if (!owner?.fullName) return 'PC';
     return owner.fullName.split(' ').map((n: string) => n[0]).join('').toUpperCase();
+  }
+
+  isPropertyManagedByAgent(): boolean {
+    return !!(this.unit?.property?.managedByAgent || this.unit?.property?.isManaged);
+  }
+
+  getContactPersonTitle(): string {
+    return this.isPropertyManagedByAgent() ? 'Agent immobilier' : 'Propriétaire';
+  }
+
+  getContactPersonName(): string {
+    if (this.isPropertyManagedByAgent()) {
+      return this.unit?.property?.managedByAgent?.fullName || 
+             this.unit?.property?.managedByAgent?.name || 
+             'Agent Certifié';
+    }
+    return this.unit?.property?.owner?.fullName || 'Propriétaire Certifié';
+  }
+
+  getContactPersonInitials(): string {
+    const name = this.getContactPersonName();
+    if (name === 'Agent Certifié') return 'AC';
+    if (name === 'Propriétaire Certifié') return 'PC';
+    return name.split(' ').map((n: string) => n[0]).join('').toUpperCase();
+  }
+
+  getContactPersonBadge(): string {
+    return this.isPropertyManagedByAgent() ? 'Agent Vérifié' : 'Vérifié';
+  }
+
+  getAgencyName(): string {
+    return this.unit?.property?.managedByAgent?.agencyName || 
+           this.unit?.property?.managedByAgent?.company || 
+           'Agence Ndewa360';
+  }
+
+  getAgencyLogo(): string | null {
+    return this.unit?.property?.managedByAgent?.agencyLogo || 
+           this.unit?.property?.managedByAgent?.logo || 
+           null;
+  }
+
+  getAgencyPhone(): string {
+    return this.unit?.property?.managedByAgent?.agencyPhone || 
+           this.unit?.property?.managedByAgent?.phoneNumber || 
+           '+237 690 123 456';
   }
 
   // === ACTIONS ===
@@ -408,8 +454,31 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
     navigator.clipboard.writeText(text);
   }
 
+  getContactPhone(): string {
+    if (this.isPropertyManagedByAgent()) {
+      return this.unit?.property?.managedByAgent?.phoneNumber || 
+             this.unit?.property?.managedByAgent?.phone || 
+             '+237 690 123 456';
+    }
+    return this.ownerInfo?.owner?.phone || '+237 690 123 456';
+  }
+
+  getContactEmail(): string {
+    if (this.isPropertyManagedByAgent()) {
+      return this.unit?.property?.managedByAgent?.email || 
+             this.ownerInfo?.owner?.email || 'contact@ndewa360.com';
+    }
+    return this.ownerInfo?.owner?.email || 'contact@ndewa360.com';
+  }
+
+  getContactWhatsApp(): string {
+    const phone = this.getContactPhone();
+    return phone;
+  }
+
   getWhatsAppLink(): string {
-    return 'https://wa.me/237600000000';
+    const phone = this.getContactPhone().replace(/\D/g, '');
+    return `https://wa.me/${phone}`;
   }
 
   openMap(): void {
@@ -423,27 +492,29 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
 
   private loadOwnerInfo(): void {
     const owner = this.unit?.property?.owner;
+    const agent = this.unit?.property?.managedByAgent;
     const expiryDate = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
     
-    if (!owner) {
+    // Si la propriété est gérée par un agent, utiliser les infos de l'agent
+    if (this.isPropertyManagedByAgent() && agent) {
       this.ownerInfo = {
         owner: {
-          id: 'fallback-owner-' + Date.now(),
-          name: 'Propriétaire Certifié NDEWA',
-          email: 'contact@ndewa360.com',
-          phone: '+237 690 123 456',
-          whatsapp: '+237 690 123 456',
-          address: this.unit?.property?.location || 'Douala, Cameroun'
+          id: agent._id || ('agent-' + Date.now()),
+          name: agent.fullName || agent.name || 'Agent Immobilier Certifié',
+          email: agent.email || 'agent@ndewa360.com',
+          phone: agent.phoneNumber || agent.phone || '+237 6XX XXX XXX',
+          whatsapp: agent.phoneNumber || agent.phone || '+237 6XX XXX XXX',
+          address: this.unit?.property?.location || 'Adresse non spécifiée'
         },
         access: {
-          id: 'fallback-access-' + Date.now(),
+          id: 'access-' + Date.now(),
           expiryDate: expiryDate.toISOString(),
           remainingDays: 3,
           accessCount: 1,
           accessedOwnersCount: 1
         }
       };
-    } else {
+    } else if (owner) {
       this.ownerInfo = {
         owner: {
           id: owner._id || ('owner-' + Date.now()),
@@ -455,6 +526,25 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
         },
         access: {
           id: 'access-' + Date.now(),
+          expiryDate: expiryDate.toISOString(),
+          remainingDays: 3,
+          accessCount: 1,
+          accessedOwnersCount: 1
+        }
+      };
+    } else {
+      // Fallback
+      this.ownerInfo = {
+        owner: {
+          id: 'fallback-contact-' + Date.now(),
+          name: 'Contact Certifié NDEWA',
+          email: 'contact@ndewa360.com',
+          phone: '+237 690 123 456',
+          whatsapp: '+237 690 123 456',
+          address: this.unit?.property?.location || 'Douala, Cameroun'
+        },
+        access: {
+          id: 'fallback-access-' + Date.now(),
           expiryDate: expiryDate.toISOString(),
           remainingDays: 3,
           accessCount: 1,

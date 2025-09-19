@@ -417,8 +417,8 @@
             Détails
           </button>
 
-          <!-- Assigner locataire (si disponible) -->
-          <button *ngIf="getRoomStatus(room) === 'available'"
+          <!-- Assigner locataire (si disponible et autorisé) - Masqué pour les agents -->
+          <button *ngIf="getRoomStatus(room) === 'available' && canAssignTenant() && !isAgent"
                   (click)="onAssignTenant(room)"
                   class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-all duration-200 flex items-center">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -427,8 +427,8 @@
             Assigner
           </button>
 
-          <!-- Résilier contrat (si occupée) -->
-          <button *ngIf="getRoomStatus(room) === 'occupied'"
+          <!-- Résilier contrat (si occupée et autorisé) -->
+          <button *ngIf="getRoomStatus(room) === 'occupied' && canTerminateLease()"
                   (click)="onTerminateLease(room)"
                   class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-all duration-200 flex items-center">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -528,7 +528,8 @@
               Voir
             </button>
 
-            <button *ngIf="getRoomStatus(room) === 'available'"
+            <!-- Bouton Assigner masqué pour les agents -->
+            <button *ngIf="getRoomStatus(room) === 'available' && canAssignTenant() && !isAgent"
                     (click)="onAssignTenant(room)"
                     class="px-4 py-2 text-white rounded-lg font-medium transition-all duration-200 flex items-center custom-primary-button">
               <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -537,7 +538,7 @@
               Assigner
             </button>
 
-            <button *ngIf="getRoomStatus(room) === 'occupied'"
+            <button *ngIf="getRoomStatus(room) === 'occupied' && canTerminateLease()"
                     (click)="onTerminateLease(room)"
                     class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-all duration-200 flex items-center">
               <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
