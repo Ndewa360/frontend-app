@@ -71,24 +71,42 @@ export interface EnrichedStatisticResponse {
                 }
             ]
         },
-        tenants: {
-            room:RoomModel,
-            locataire:LocataireModel,
-            financialAnalysis: {
-                monthlyRent: number,
-                entryDate: Date,
-                monthsElapsed: number,
-                totalPaid: number,
-                expectedPaymentToDate: number,
-                status: string,
-                monthsBehind: number,
-                amountBehind: number,
-                advanceAmount: number,
-                lastPaymentMonth: number,
-                paymentConsistency: number,
-                monthlyPayments: number[]
-            }
-        }[],    
+        tenantsAnalysis: {
+            summary: {
+                totalTenants: number,
+                upToDate: number,
+                inAdvance: number,
+                behind: number,
+                aheadTenants: number,
+                lateTenants: number,
+                partialPaymentTenants: number,
+                upToDateTenants: number,
+                totalAmountBehind: number,
+                totalAdvanceAmount: number,
+                averagePaymentConsistency: number,
+                globalCollectionRate: number,
+                totalPaidByTenants: number,
+                totalExpectedByTenants: number
+            },
+            tenants: {
+                room:RoomModel,
+                locataire:LocataireModel,
+                financialAnalysis: {
+                    monthlyRent: number,
+                    entryDate: Date,
+                    monthsElapsed: number,
+                    totalPaid: number,
+                    expectedPaymentToDate: number,
+                    status: string,
+                    monthsBehind: number,
+                    amountBehind: number,
+                    advanceAmount: number,
+                    lastPaymentMonth: number,
+                    paymentConsistency: number,
+                    monthlyPayments: number[]
+                }
+            }[],    
+        },       
         year:string,    
     },
     performanceMs:  number,

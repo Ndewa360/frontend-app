@@ -161,18 +161,16 @@
 
       <!-- Analyse des locataires -->
       <div *ngIf="activeSection === 'tenants'">
-        <app-tenant-payment-analysis
-          [tenantStats]="backendData"
-          [paymentStats]="backendData"
+        <!-- <app-tenant-payment-analysis
+          [enrichedData]="backendData"
           [selectedYear]="selectedYear"
           [propertyId]="propertyId"
           [isLoading]="isLoading"
           (exportData)="onExportData($event)">
-        </app-tenant-payment-analysis>
+        </app-tenant-payment-analysis> -->
         
         <app-tenant-payment-tracking
-          [tenantStats]="backendData"
-          [paymentStats]="backendData"
+          [enrichedData]="backendData"
           [selectedYear]="selectedYear"
           [propertyId]="propertyId"
           [isLoading]="isLoading"

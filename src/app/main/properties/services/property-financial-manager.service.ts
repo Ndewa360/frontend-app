@@ -70,7 +70,7 @@ export interface MonthlyFinancialData {
 })
 export class PropertyFinancialManagerService {
 
-  private readonly MONTHS_NAMES = [
+  static readonly MONTHS_NAMES = [
     'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
     'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
   ];
@@ -162,7 +162,7 @@ export class PropertyFinancialManagerService {
       const paymentsCount = rooms.filter(roomData => (roomData.paymentValue[month] || 0) > 0).length;
       
       monthlyData.push({
-        month: this.MONTHS_NAMES[month],
+        month: PropertyFinancialManagerService.MONTHS_NAMES[month],
         monthIndex: month,
         expected: Math.round(monthlyExpected * 100) / 100,
         received: Math.round(monthlyReceived * 100) / 100,
@@ -170,7 +170,7 @@ export class PropertyFinancialManagerService {
         profit: Math.round(profit * 100) / 100,
         growth: Math.round(growth * 100) / 100,
         performancePercentage: Math.round(collectionRate * 100) / 100,
-        monthName: this.MONTHS_NAMES[month],
+        monthName: PropertyFinancialManagerService.MONTHS_NAMES[month],
         totalRevenue: Math.round(monthlyReceived * 100) / 100,
         paymentsCount: paymentsCount,
         collectionRate: Math.round(collectionRate * 100) / 100,
@@ -240,7 +240,7 @@ export class PropertyFinancialManagerService {
     const data: MonthlyFinancialData[] = [];
     for (let i = 0; i < 12; i++) {
       data.push({
-        month: this.MONTHS_NAMES[i],
+        month: PropertyFinancialManagerService.MONTHS_NAMES[i],
         monthIndex: i,
         expected: 0,
         received: 0,
@@ -248,7 +248,7 @@ export class PropertyFinancialManagerService {
         profit: 0,
         growth: 0,
         performancePercentage: 0,
-        monthName: this.MONTHS_NAMES[i],
+        monthName: PropertyFinancialManagerService.MONTHS_NAMES[i],
         totalRevenue: 0,
         paymentsCount: 0,
         collectionRate: 0,

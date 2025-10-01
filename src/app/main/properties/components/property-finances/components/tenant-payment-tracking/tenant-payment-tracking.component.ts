@@ -1,13 +1,10 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges } from '@angular/core';
 import {
-  StatisticLocataireYearModel,
-  StatisticAllPaymentLocataireYearModel,
-  LocationModel,
-  LocationState
+  EnrichedStatisticResponse
 } from 'src/app/shared/store';
 import { Store } from '@ngxs/store';
 import { ExportData } from '../../property-finances.component';
-import { TenantPaymentCalculatorService, TenantPaymentCalculation } from 'src/app/shared/services/tenant-payment-calculator.service';
+import { PropertyFinancialManagerService } from 'src/app/main/properties/services/property-financial-manager.service';
 
 
 
@@ -16,12 +13,37 @@ export interface PaymentSummary {
   upToDateTenants: number;
   lateTenants: number;
   partialPaymentTenants: number;
-  endedContractTenants: number;
-  noContractTenants: number;
+  aheadTenants: number;
+  behindTenants: number;
   totalExpectedRevenue: number;
   totalReceivedRevenue: number;
-  totalPendingRevenue: number;
+  totalAdvanceAmount: number;
+  totalAmountBehind: number;
   globalPaymentRate: number;
+  averageConsistency: number;
+}
+
+export interface TenantTrackingData {
+  tenantId: string;
+  tenantName: string;
+  roomCode: string;
+  monthlyRent: number;
+  entryDate: Date;
+  monthsElapsed: number;
+  totalPaid: number;
+  expectedPaymentToDate: number;
+  status: string;
+  monthsBehind: number;
+  amountBehind: number;
+  advanceAmount: number;
+  paymentConsistency: number;
+  paymentRate: number;
+  lastPaymentMonth: number;
+  // Propriétés pour compatibilité template
+  totalExpected: number;
+  totalReceived: number;
+  monthsOccupied: number;
+  contractStatus: string;
 }
 
 @Component({
@@ -30,203 +52,118 @@ export interface PaymentSummary {
   styleUrls: ['./tenant-payment-tracking.component.scss']
 })
 export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
-  @Input() tenantStats: StatisticLocataireYearModel[] = [];
-  @Input() paymentStats: StatisticAllPaymentLocataireYearModel[] = [];
+  @Input() enrichedData: EnrichedStatisticResponse [] = [];
   @Input() selectedYear: number = new Date().getFullYear();
   @Input() isLoading: boolean = false;
-  @Input() propertyId: string = ''; // Ajout pour récupérer les locations
+  @Input() propertyId: string = '';
 
   @Output() exportData = new EventEmitter<ExportData>();
 
-  tenantPaymentStatuses: TenantPaymentCalculation[] = [];
-  locations: LocationModel[] = [];
+  tenantTrackingData: TenantTrackingData[] = [];
   paymentSummary: PaymentSummary = {
     totalTenants: 0,
     upToDateTenants: 0,
     lateTenants: 0,
     partialPaymentTenants: 0,
-    endedContractTenants: 0,
-    noContractTenants: 0,
+    aheadTenants: 0,
+    behindTenants: 0,
     totalExpectedRevenue: 0,
     totalReceivedRevenue: 0,
-    totalPendingRevenue: 0,
-    globalPaymentRate: 0
+    totalAdvanceAmount: 0,
+    totalAmountBehind: 0,
+    globalPaymentRate: 0,
+    averageConsistency: 0
   };
 
   selectedPeriod: 'all' | 'last_2_months' | 'current_month' = 'all';
-  selectedStatus: 'all' | 'up_to_date' | 'partial' | 'late' | 'no_contract' | 'ended_contract' = 'all';
+  selectedStatus: 'all' | 'up_to_date' | 'partial' | 'late' | 'ahead' | 'behind' = 'all';
   searchTerm: string = '';
 
   // Pagination
   currentPage: number = 1;
   itemsPerPage: number = 10;
   totalPages: number = 1;
-  paginatedTenants: TenantPaymentCalculation[] = [];
+  paginatedTenants: TenantTrackingData[] = [];
 
   constructor(
-    private store: Store,
-    private tenantPaymentCalculator: TenantPaymentCalculatorService
+    private store: Store
   ) { }
 
   ngOnInit(): void {
-    this.loadLocations();
     this.processTenantPaymentData();
   }
 
   ngOnChanges(): void {
-    this.loadLocations();
-  }
-
-  private loadLocations(): void {
-    // Récupérer les locations depuis le store
-    this.locations = this.store.selectSnapshot(LocationState.selectStateLocations) || [];
     this.processTenantPaymentData();
   }
 
   private processTenantPaymentData(): void {
-    console.log('👥 SUIVI LOCATAIRES - Traitement des données de paiement');
+    console.log('👥 SUIVI LOCATAIRES - Traitement des nouvelles données enrichies');
     
-    this.tenantPaymentStatuses = [];
-    let processedCount = 0;
-    let errorCount = 0;
-
-    // Validation initiale
-    if (!this.paymentStats || this.paymentStats.length === 0) {
-      console.warn('⚠️ Aucune donnée de paiement disponible');
+    this.tenantTrackingData = [];
+    
+    if (this.enrichedData.length==0) {
+      console.warn('⚠️ Aucune donnée de locataires disponible');
       this.calculatePaymentSummary();
       this.updatePagination();
       return;
     }
 
-    // Combiner les données avec validation
-    this.paymentStats.forEach((paymentStat, index) => {
-      try {
-        if (!paymentStat.locataire) {
-          console.warn(`⚠️ Locataire manquant pour l'entrée ${index + 1}`);
-          return;
-        }
-
-        // Trouver la location correspondante avec validation
-        const location = this.locations.find(loc =>
-          loc.locataire === paymentStat.locataire._id &&
-          loc.room === paymentStat.room._id &&
-          loc.isRunning === true
-        );
-
-        if (location && location.startedAt) {
-          const tenantStatus = this.tenantPaymentCalculator.calculateTenantPaymentStatus(
-            paymentStat,
-            location,
-            this.selectedYear
-          );
-
-          if (tenantStatus) {
-            // Validation des données calculées
-            if (this.validateTenantStatus(tenantStatus)) {
-              this.tenantPaymentStatuses.push(tenantStatus);
-              processedCount++;
-            } else {
-              console.warn('⚠️ Données invalides pour:', tenantStatus.tenantName);
-              errorCount++;
-            }
-          }
-        } else {
-          console.warn('⚠️ Location invalide pour:', paymentStat.locataire.fullName);
-          errorCount++;
-        }
+    this.tenantTrackingData = this.enrichedData[0].data.tenantsAnalysis.tenants.map(tenant => {
+      const paymentRate = tenant.financialAnalysis.expectedPaymentToDate > 0 
+        ? (tenant.financialAnalysis.totalPaid / tenant.financialAnalysis.expectedPaymentToDate) * 100 
+        : 0;
         
-      } catch (error) {
-        console.error('❌ Erreur lors du traitement du locataire:', error);
-        errorCount++;
-      }
+      return {
+        tenantId: tenant.locataire._id,
+        tenantName: tenant.locataire.fullName || 'Nom inconnu',
+        roomCode: tenant.room.code || 'N/A',
+        monthlyRent: tenant.financialAnalysis.monthlyRent,
+        entryDate: new Date(tenant.financialAnalysis.entryDate),
+        monthsElapsed: tenant.financialAnalysis.monthsElapsed,
+        totalPaid: tenant.financialAnalysis.totalPaid,
+        expectedPaymentToDate: tenant.financialAnalysis.expectedPaymentToDate,
+        status: tenant.financialAnalysis.status,
+        monthsBehind: tenant.financialAnalysis.monthsBehind,
+        amountBehind: tenant.financialAnalysis.amountBehind,
+        advanceAmount: tenant.financialAnalysis.advanceAmount,
+        paymentConsistency: tenant.financialAnalysis.paymentConsistency,
+        paymentRate,
+        lastPaymentMonth: tenant.financialAnalysis.lastPaymentMonth,
+        // Propriétés pour compatibilité
+        totalExpected: tenant.financialAnalysis.expectedPaymentToDate,
+        totalReceived: tenant.financialAnalysis.totalPaid,
+        monthsOccupied: tenant.financialAnalysis.monthsElapsed,
+        contractStatus: tenant.financialAnalysis.status
+      };
     });
 
-    console.log(`✅ Traitement terminé: ${processedCount} locataires traités, ${errorCount} erreurs`);
+    this.paymentSummary = {
+      totalTenants: this.enrichedData[0].data.tenantsAnalysis.summary.totalTenants,
+      upToDateTenants: this.enrichedData[0].data.tenantsAnalysis.summary.upToDateTenants,
+      lateTenants: this.enrichedData[0].data.tenantsAnalysis.summary.lateTenants,
+      partialPaymentTenants: this.enrichedData[0].data.tenantsAnalysis.summary.partialPaymentTenants,
+      aheadTenants: this.enrichedData[0].data.tenantsAnalysis.summary.aheadTenants,
+      behindTenants: this.enrichedData[0].data.tenantsAnalysis.summary.behind,
+      totalExpectedRevenue: 0,
+      totalReceivedRevenue: 0,
+      totalAdvanceAmount: this.enrichedData[0].data.tenantsAnalysis.summary.totalAdvanceAmount,
+      totalAmountBehind: this.enrichedData[0].data.tenantsAnalysis.summary.totalAmountBehind,
+      globalPaymentRate: this.enrichedData[0].data.tenantsAnalysis.summary.globalCollectionRate,
+      averageConsistency: this.enrichedData[0].data.tenantsAnalysis.summary.averagePaymentConsistency
+    }
 
+    console.log(`✅ ${this.tenantTrackingData.length} locataires traités`);
     this.calculatePaymentSummary();
     this.updatePagination();
   }
 
-  private validateTenantStatus(status: TenantPaymentCalculation): boolean {
-    // Validation des données calculées
-    if (status.totalExpected < 0 || status.totalReceived < 0) {
-      return false;
-    }
-    
-    if (status.paymentRate < 0 || status.paymentRate > 200) {
-      console.warn(`⚠️ Taux de paiement anormal: ${status.paymentRate}% pour ${status.tenantName}`);
-      // Corriger le taux si possible
-      status.paymentRate = Math.max(0, Math.min(status.paymentRate, 200));
-    }
-    
-    return true;
-  }
+
 
   private calculatePaymentSummary(): void {
-    console.log('📊 Calcul du résumé des paiements pour', this.tenantPaymentStatuses.length, 'locataires');
-    
-    const summary = this.tenantPaymentStatuses.reduce((acc, tenant) => {
-      acc.totalTenants++;
-      acc.totalExpectedRevenue += tenant.totalExpected || 0;
-      acc.totalReceivedRevenue += tenant.totalReceived || 0;
-      acc.totalPendingRevenue += tenant.totalPending || 0;
+    console.log('📊 Calcul du résumé des paiements pour', this.tenantTrackingData.length, 'locataires');
+   
 
-      // Classification améliorée des statuts
-      switch (tenant.status) {
-        case 'up_to_date':
-        case 'ahead':
-          acc.upToDateTenants++;
-          break;
-        case 'partial':
-          acc.partialPaymentTenants++;
-          break;
-        case 'late':
-          acc.lateTenants++;
-          break;
-        case 'no_contract':
-          acc.noContractTenants++;
-          break;
-        case 'ended_contract':
-          acc.endedContractTenants++;
-          break;
-        default:
-          console.warn('⚠️ Statut inconnu:', tenant.status, 'pour', tenant.tenantName);
-          acc.noContractTenants++;
-      }
-
-      return acc;
-    }, {
-      totalTenants: 0,
-      upToDateTenants: 0,
-      lateTenants: 0,
-      partialPaymentTenants: 0,
-      endedContractTenants: 0,
-      noContractTenants: 0,
-      totalExpectedRevenue: 0,
-      totalReceivedRevenue: 0,
-      totalPendingRevenue: 0,
-      globalPaymentRate: 0
-    });
-
-    // Calcul du taux global avec validation
-    summary.globalPaymentRate = summary.totalExpectedRevenue > 0 
-      ? Math.round((summary.totalReceivedRevenue / summary.totalExpectedRevenue) * 100 * 100) / 100
-      : 0;
-
-    // Validation du résumé
-    if (summary.globalPaymentRate > 200) {
-      console.warn('⚠️ Taux global anormalement élevé:', summary.globalPaymentRate + '%');
-    }
-
-    this.paymentSummary = summary;
-    
-    console.log('✅ Résumé calculé:', {
-      totalTenants: summary.totalTenants,
-      globalRate: `${summary.globalPaymentRate.toFixed(1)}%`,
-      upToDate: summary.upToDateTenants,
-      late: summary.lateTenants,
-      partial: summary.partialPaymentTenants
-    });
   }
 
   private updatePagination(): void {
@@ -238,8 +175,8 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
   }
 
   // Méthodes publiques pour le template
-  getFilteredTenants(): TenantPaymentCalculation[] {
-    return this.tenantPaymentStatuses.filter(tenant => {
+  getFilteredTenants(): TenantTrackingData[] {
+    return this.tenantTrackingData.filter(tenant => {
       // Filtre par statut
       if (this.selectedStatus !== 'all' && tenant.status !== this.selectedStatus) {
         return false;
@@ -256,13 +193,13 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
     });
   }
 
-  getPaginatedTenants(): TenantPaymentCalculation[] {
+  getPaginatedTenants(): TenantTrackingData[] {
     const filtered = this.getFilteredTenants();
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
     return filtered.slice(startIndex, startIndex + this.itemsPerPage);
   }
 
-  getStatusLabel(status: TenantPaymentCalculation['status']): string {
+  getStatusLabel(status: string): string {
     const labels = {
       'up_to_date': 'À jour',
       'ahead': 'En avance',
@@ -274,7 +211,7 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
     return labels[status] || 'Statut inconnu';
   }
   
-  getStatusPriority(status: TenantPaymentCalculation['status']): number {
+  getStatusPriority(status: string): number {
     // Priorité pour le tri (plus élevé = plus urgent)
     const priorities = {
       'late': 5,
@@ -287,7 +224,7 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
     return priorities[status] || 0;
   }
   
-  getPaymentHealthScore(tenant: TenantPaymentCalculation): number {
+  getPaymentHealthScore(tenant: TenantTrackingData): number {
     // Score de santé du paiement (0-100)
     if (tenant.status === 'ahead') return 100;
     if (tenant.status === 'up_to_date') return 90;
@@ -296,7 +233,7 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
     return 0;
   }
 
-  getStatusColor(status: TenantPaymentCalculation['status']): string {
+  getStatusColor(status: string): string {
     const colors = {
       'up_to_date': 'text-green-600 bg-green-100',
       'ahead': 'text-blue-600 bg-blue-100',
@@ -324,11 +261,13 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
       'Locataires à jour': this.paymentSummary.upToDateTenants,
       'Locataires en retard': this.paymentSummary.lateTenants,
       'Paiements partiels': this.paymentSummary.partialPaymentTenants,
-      'Contrats terminés': this.paymentSummary.endedContractTenants,
+      'Locataires en avance': this.paymentSummary.aheadTenants,
       'Revenus attendus': this.paymentSummary.totalExpectedRevenue,
       'Revenus reçus': this.paymentSummary.totalReceivedRevenue,
-      'Revenus en attente': this.paymentSummary.totalPendingRevenue,
+      'Total avances': this.paymentSummary.totalAdvanceAmount,
+      'Total retards': this.paymentSummary.totalAmountBehind,
       'Taux global': `${this.paymentSummary.globalPaymentRate.toFixed(1)}%`,
+      'Consistance moyenne': `${this.paymentSummary.averageConsistency.toFixed(1)}%`,
       'Année': this.selectedYear
     }];
     
@@ -356,17 +295,22 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
       'Mois occupés': tenant.monthsOccupied,
       'Total attendu': tenant.totalExpected,
       'Total reçu': tenant.totalReceived,
-      'Total en attente': tenant.totalPending,
+      'Montant en retard': tenant.amountBehind,
       'Taux de paiement': `${tenant.paymentRate.toFixed(1)}%`,
       'Statut': this.getStatusLabel(tenant.status),
       'Statut contrat': tenant.contractStatus,
-      'Jours de retard': tenant.daysLate || 0,
-      'Mois d\'avance': tenant.monthsAhead || 0,
+      'Mois de retard': tenant.monthsBehind,
+      'Montant d\'avance': tenant.advanceAmount,
       'Score santé': this.getPaymentHealthScore(tenant),
-      'Date d\'entrée': tenant.entryDate?.toLocaleDateString('fr-FR') || 'Non définie',
-      'Dernier paiement': tenant.lastPaymentDate?.toLocaleDateString('fr-FR') || 'Aucun',
+      'Date d\'entrée': tenant.entryDate.toLocaleDateString('fr-FR'),
+      'Dernier paiement': tenant.lastPaymentMonth >= 0 ? PropertyFinancialManagerService.MONTHS_NAMES[tenant.lastPaymentMonth] : 'Aucun',
       'Année': this.selectedYear
     }));
+  }
+
+  getStringMonth(month)
+  {
+    return PropertyFinancialManagerService.MONTHS_NAMES[month] 
   }
 
   // Méthodes de navigation
@@ -386,12 +330,12 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
   }
 
   // Méthodes pour le template
-  trackByTenantId(_index: number, tenant: TenantPaymentCalculation): string {
+  trackByTenantId(_index: number, tenant: TenantTrackingData): string {
     return tenant.tenantId;
   }
   
   sortTenantsByPriority(): void {
-    this.tenantPaymentStatuses.sort((a, b) => {
+    this.tenantTrackingData.sort((a, b) => {
       const priorityA = this.getStatusPriority(a.status);
       const priorityB = this.getStatusPriority(b.status);
       
@@ -406,14 +350,14 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
     this.applyFilters();
   }
   
-  getUrgentTenants(): TenantPaymentCalculation[] {
-    return this.tenantPaymentStatuses.filter(tenant => 
+  getUrgentTenants(): TenantTrackingData[] {
+    return this.tenantTrackingData.filter(tenant => 
       tenant.status === 'late' || 
       (tenant.status === 'partial' && tenant.paymentRate < 50)
     );
   }
 
-  selectTenant(tenant: TenantPaymentCalculation): void {
+  selectTenant(tenant: TenantTrackingData): void {
     // Logique pour sélectionner un locataire (ouvrir un modal de détails par exemple)
     console.log('Tenant selected:', tenant);
   }
@@ -422,21 +366,21 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
   
   // Méthodes d'analyse avancée
   getAveragePaymentRate(): number {
-    if (this.tenantPaymentStatuses.length === 0) return 0;
-    const totalRate = this.tenantPaymentStatuses.reduce((sum, tenant) => sum + tenant.paymentRate, 0);
-    return Math.round((totalRate / this.tenantPaymentStatuses.length) * 100) / 100;
+    if (this.tenantTrackingData.length === 0) return 0;
+    const totalRate = this.tenantTrackingData.reduce((sum, tenant) => sum + tenant.paymentRate, 0);
+    return Math.round((totalRate / this.tenantTrackingData.length) * 100) / 100;
   }
   
-  getBestPayingTenant(): TenantPaymentCalculation | null {
-    if (this.tenantPaymentStatuses.length === 0) return null;
-    return this.tenantPaymentStatuses.reduce((best, current) => 
+  getBestPayingTenant(): TenantTrackingData | null {
+    if (this.tenantTrackingData.length === 0) return null;
+    return this.tenantTrackingData.reduce((best, current) => 
       current.paymentRate > best.paymentRate ? current : best
     );
   }
   
-  getWorstPayingTenant(): TenantPaymentCalculation | null {
-    if (this.tenantPaymentStatuses.length === 0) return null;
-    return this.tenantPaymentStatuses.reduce((worst, current) => 
+  getWorstPayingTenant(): TenantTrackingData | null {
+    if (this.tenantTrackingData.length === 0) return null;
+    return this.tenantTrackingData.reduce((worst, current) => 
       current.paymentRate < worst.paymentRate ? current : worst
     );
   }

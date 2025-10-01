@@ -124,6 +124,7 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
       takeUntil(this.destroy$)
     ).subscribe({
       next: (backendData) => {
+        console.log("Data to found ",backendData)
         this.backendData = backendData;
         this.isLoading = false;
       },
@@ -330,29 +331,6 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
     // Forcer le rechargement des données
     console.log('🚀 Forçage du rechargement...');
     this.store.dispatch(new StatisticAction.FetchStaticRoomDataByPropertyIdAndYear(this.propertyId, this.selectedYear.toString()));
-
-    // Vérifier le state complet
-    this.store.select(StatisticState.selectStateRoomStatistic).pipe(
-      takeUntil(this.destroy$)
-    ).subscribe(allRoomStats => {
-      console.log('📊 Toutes les statistiques de chambres dans le store:', allRoomStats);
-    });
-
-    // Vérifier le sélecteur spécifique
-    this.store.select(
-      StatisticState.selectStateStatisticRoomByPropertyIdAndYear(this.propertyId, this.selectedYear)
-    ).pipe(
-      takeUntil(this.destroy$)
-    ).subscribe(filteredData => {
-      console.log('📊 Données filtrées pour cette propriété/année:', filteredData);
-    });
-
-    // Vérifier les états de chargement
-    this.store.select(StatisticState.selectStateLoadingRoomStatistic).pipe(
-      takeUntil(this.destroy$)
-    ).subscribe(loading => {
-      console.log('⏳ État de chargement:', loading);
-    });
   }
 
   // Méthode diagnoseFinancialData supprimée (dupliquée)

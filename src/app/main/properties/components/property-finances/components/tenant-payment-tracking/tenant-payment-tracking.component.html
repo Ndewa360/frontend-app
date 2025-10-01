@@ -58,8 +58,8 @@
       </div>
 
       <div class="metric-card secondary">
-        <div class="metric-value">{{ paymentSummary.noContractTenants }}</div>
-        <div class="metric-label">Sans contrat</div>
+        <div class="metric-value">{{ paymentSummary.aheadTenants }}</div>
+        <div class="metric-label">En avance</div>
       </div>
 
       <div class="metric-card primary">
@@ -119,7 +119,7 @@
             <th>Loyer mensuel</th>
             <th>Total attendu</th>
             <th>Total reçu</th>
-            <th>En attente</th>
+            <th>En retard</th>
             <th>Taux</th>
             <th>Statut</th>
             <th>Dernier paiement</th>
@@ -156,20 +156,20 @@
 
             <!-- Total attendu -->
             <td>
-              <div class="text-gray-900">{{ tenant.totalExpected | currency:'XAF':'symbol':'1.0-0' }}</div>
+              <div class="text-gray-900">{{ tenant.expectedPaymentToDate | currency:'XAF':'symbol':'1.0-0' }}</div>
             </td>
 
             <!-- Total reçu -->
             <td>
-              <div class="font-medium text-green-600">{{ tenant.totalReceived | currency:'XAF':'symbol':'1.0-0' }}</div>
+              <div class="font-medium text-green-600">{{ tenant.totalPaid | currency:'XAF':'symbol':'1.0-0' }}</div>
             </td>
 
-            <!-- En attente -->
+            <!-- Montant en retard -->
             <td>
-              <div class="text-red-600" *ngIf="tenant.totalPending > 0">
-                {{ tenant.totalPending | currency:'XAF':'symbol':'1.0-0' }}
+              <div class="text-red-600" *ngIf="tenant.amountBehind > 0">
+                {{ tenant.amountBehind | currency:'XAF':'symbol':'1.0-0' }}
               </div>
-              <div class="text-gray-400" *ngIf="tenant.totalPending <= 0">-</div>
+              <div class="text-gray-400" *ngIf="tenant.amountBehind <= 0">-</div>
             </td>
 
             <!-- Taux de paiement -->
@@ -192,10 +192,10 @@
 
             <!-- Dernier paiement -->
             <td>
-              <div class="text-gray-900" *ngIf="tenant.lastPaymentDate">
-                {{ tenant.lastPaymentDate | date:'dd/MM/yyyy' }}
+              <div class="text-gray-900" *ngIf="tenant.lastPaymentMonth >= 0">
+                {{getStringMonth(tenant.lastPaymentMonth )}}
               </div>
-              <div class="text-gray-400" *ngIf="!tenant.lastPaymentDate">Aucun</div>
+              <div class="text-gray-400" *ngIf="tenant.lastPaymentMonth < 0">Aucun</div>
             </td>
           </tr>
         </tbody>

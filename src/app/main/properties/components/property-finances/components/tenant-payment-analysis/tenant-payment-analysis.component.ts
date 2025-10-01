@@ -1,31 +1,31 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges } from '@angular/core';
 import {
-  StatisticLocataireYearModel,
-  StatisticAllPaymentLocataireYearModel,
-  StatisticPaymentStateType,
-  LocationModel,
-  LocationState
+  EnrichedStatisticResponse,
+  StatisticPaymentStateType
 } from 'src/app/shared/store';
 import { Store } from '@ngxs/store';
 import { ExportData } from '../../property-finances.component';
-import { TenantPaymentCalculatorService, TenantPaymentCalculation } from 'src/app/shared/services/tenant-payment-calculator.service';
 
-export interface TenantPaymentSummary {
+export interface TenantFinancialAnalysis {
   tenantId: string;
   tenantName: string;
   roomCode: string;
-  monthlyPayments: Array<{
-    month: number;
-    monthName: string;
-    state: StatisticPaymentStateType;
-    expectedAmount: number;
-    receivedAmount: number;
-    paymentRate: number;
-  }>;
+  monthlyRent: number;
+  entryDate: Date;
+  monthsElapsed: number;
+  totalPaid: number;
+  expectedPaymentToDate: number;
+  status: string;
+  monthsBehind: number;
+  amountBehind: number;
+  advanceAmount: number;
+  lastPaymentMonth: number;
+  paymentConsistency: number;
+  monthlyPayments: number[];
+  // Propriétés calculées pour compatibilité template
+  paymentRate: number;
   totalExpected: number;
   totalReceived: number;
-  overallRate: number;
-  status: 'excellent' | 'good' | 'warning' | 'critical';
 }
 
 @Component({
@@ -34,18 +34,16 @@ export interface TenantPaymentSummary {
   styleUrls: ['./tenant-payment-analysis.component.scss']
 })
 export class TenantPaymentAnalysisComponent implements OnInit, OnChanges {
-  @Input() tenantStats: StatisticLocataireYearModel[] = [];
-  @Input() paymentStats: StatisticAllPaymentLocataireYearModel[] = [];
+  @Input() enrichedData: EnrichedStatisticResponse[] = [];
   @Input() selectedYear: number = new Date().getFullYear();
   @Input() propertyId: string = '';
   @Input() isLoading: boolean = false;
 
   @Output() exportData = new EventEmitter<ExportData>();
 
-  locations: LocationModel[] = [];
-
-  tenantPaymentCalculations: TenantPaymentCalculation[] = [];
-  filteredSummaries: TenantPaymentCalculation[] = [];
+  tenantAnalyses: TenantFinancialAnalysis[] = [];
+  filteredAnalyses: TenantFinancialAnalysis[] = [];
+  filteredSummaries: TenantFinancialAnalysis[] = []; // Alias pour compatibilité template
   
   // Filtres
   statusFilter: 'all' | 'excellent' | 'good' | 'warning' | 'critical' = 'all';
@@ -63,68 +61,58 @@ export class TenantPaymentAnalysisComponent implements OnInit, OnChanges {
   };
 
   constructor(
-    private store: Store,
-    private tenantPaymentCalculator: TenantPaymentCalculatorService
+    private store: Store
   ) {}
 
   ngOnInit(): void {
-    this.loadLocations();
+    this.processTenantData();
   }
 
   ngOnChanges(): void {
-    this.loadLocations();
-  }
-
-  private loadLocations(): void {
-    this.locations = this.store.selectSnapshot(LocationState.selectStateLocations) || [];
     this.processTenantData();
   }
 
   private processTenantData(): void {
-    console.log('👥 ANALYSE LOCATAIRES - Traitement des données de paiement');
+    console.log('👥 ANALYSE LOCATAIRES - Traitement des nouvelles données enrichies');
     
-    this.tenantPaymentCalculations = [];
-    let processedCount = 0;
-    let errorCount = 0;
+    this.tenantAnalyses = [];
+    console.log("Data enriched ",this.enrichedData)
+    if (this.enrichedData.length==0) {
+      console.warn('⚠️ Aucune donnée de locataires disponible');
+      this.calculateGlobalStats();
+      this.applyFilters();
+      return;
+    }
 
-    this.paymentStats.forEach((paymentStat, index) => {
-      try {
-        if (!paymentStat.locataire) {
-          console.warn(`⚠️ Locataire manquant pour l'entrée ${index + 1}`);
-          return;
-        }
-
-        // Trouver la location correspondante
-        const location = this.locations.find(loc =>
-          loc.locataire === paymentStat.locataire._id &&
-          loc.room === paymentStat.room._id &&
-          loc.isRunning === true
-        );
-
-        if (location && location.startedAt) {
-          const tenantCalculation = this.tenantPaymentCalculator.calculateTenantPaymentStatus(
-            paymentStat,
-            location,
-            this.selectedYear
-          );
-
-          if (tenantCalculation) {
-            this.tenantPaymentCalculations.push(tenantCalculation);
-            processedCount++;
-          }
-        } else {
-          console.warn('⚠️ Location invalide pour:', paymentStat.locataire.fullName);
-          errorCount++;
-        }
+    this.tenantAnalyses = this.enrichedData[0].data.tenantsAnalysis.tenants.map(tenant => {
+      const paymentRate = tenant.financialAnalysis.expectedPaymentToDate > 0 
+        ? (tenant.financialAnalysis.totalPaid / tenant.financialAnalysis.expectedPaymentToDate) * 100 
+        : 0;
         
-      } catch (error) {
-        console.error('❌ Erreur lors du traitement du locataire:', error);
-        errorCount++;
-      }
+      return {
+        tenantId: tenant.locataire._id,
+        tenantName: tenant.locataire.fullName || 'Nom inconnu',
+        roomCode: tenant.room.code || 'N/A',
+        monthlyRent: tenant.financialAnalysis.monthlyRent,
+        entryDate: new Date(tenant.financialAnalysis.entryDate),
+        monthsElapsed: tenant.financialAnalysis.monthsElapsed,
+        totalPaid: tenant.financialAnalysis.totalPaid,
+        expectedPaymentToDate: tenant.financialAnalysis.expectedPaymentToDate,
+        status: tenant.financialAnalysis.status,
+        monthsBehind: tenant.financialAnalysis.monthsBehind,
+        amountBehind: tenant.financialAnalysis.amountBehind,
+        advanceAmount: tenant.financialAnalysis.advanceAmount,
+        lastPaymentMonth: tenant.financialAnalysis.lastPaymentMonth,
+        paymentConsistency: tenant.financialAnalysis.paymentConsistency,
+        monthlyPayments: tenant.financialAnalysis.monthlyPayments,
+        // Propriétés calculées
+        paymentRate,
+        totalExpected: tenant.financialAnalysis.expectedPaymentToDate,
+        totalReceived: tenant.financialAnalysis.totalPaid
+      };
     });
 
-    console.log(`✅ Traitement terminé: ${processedCount} locataires traités, ${errorCount} erreurs`);
-
+    console.log(`✅ ${this.tenantAnalyses.length} analyses de locataires traitées`);
     this.calculateGlobalStats();
     this.applyFilters();
   }
@@ -132,20 +120,19 @@ export class TenantPaymentAnalysisComponent implements OnInit, OnChanges {
 
 
   private calculateGlobalStats(): void {
-    const totalTenants = this.tenantPaymentCalculations.length;
+    const totalTenants = this.tenantAnalyses.length;
     
-    // Mapper les statuts du service vers les statuts de ce composant
-    const excellentTenants = this.tenantPaymentCalculations.filter(t => 
+    const excellentTenants = this.tenantAnalyses.filter(t => 
       t.status === 'up_to_date' || t.status === 'ahead').length;
-    const goodTenants = this.tenantPaymentCalculations.filter(t => 
-      t.status === 'partial' && t.paymentRate >= 80).length;
-    const warningTenants = this.tenantPaymentCalculations.filter(t => 
-      t.status === 'partial' && t.paymentRate < 80).length;
-    const criticalTenants = this.tenantPaymentCalculations.filter(t => 
-      t.status === 'late' || t.status === 'no_contract').length;
+    const goodTenants = this.tenantAnalyses.filter(t => 
+      t.status === 'partial' && this.getPaymentRate(t) >= 80).length;
+    const warningTenants = this.tenantAnalyses.filter(t => 
+      t.status === 'partial' && this.getPaymentRate(t) < 80).length;
+    const criticalTenants = this.tenantAnalyses.filter(t => 
+      t.status === 'late' || t.status === 'behind').length;
     
     const averagePaymentRate = totalTenants > 0 
-      ? this.tenantPaymentCalculations.reduce((sum, t) => sum + t.paymentRate, 0) / totalTenants 
+      ? this.tenantAnalyses.reduce((sum, t) => sum + this.getPaymentRate(t), 0) / totalTenants 
       : 0;
 
     this.globalStats = {
@@ -157,24 +144,28 @@ export class TenantPaymentAnalysisComponent implements OnInit, OnChanges {
       averagePaymentRate: Math.round(averagePaymentRate * 100) / 100
     };
   }
+  
+  private getPaymentRate(tenant: TenantFinancialAnalysis): number {
+    return tenant.paymentRate;
+  }
 
   // === MÉTHODES DE FILTRAGE ===
 
   applyFilters(): void {
-    this.filteredSummaries = this.tenantPaymentCalculations.filter(tenant => {
-      // Mapper le statut pour le filtre
+    this.filteredAnalyses = this.tenantAnalyses.filter(tenant => {
+
+      const paymentRate = this.getPaymentRate(tenant);
       let mappedStatus = 'good';
-      if (tenant.status === 'up_to_date' || tenant.status === 'ahead') mappedStatus = 'excellent';
-      else if (tenant.status === 'partial' && tenant.paymentRate >= 80) mappedStatus = 'good';
-      else if (tenant.status === 'partial' && tenant.paymentRate < 80) mappedStatus = 'warning';
-      else if (tenant.status === 'late' || tenant.status === 'no_contract') mappedStatus = 'critical';
       
-      // Filtre par statut
+      if (tenant.status === 'up_to_date' || tenant.status === 'ahead') mappedStatus = 'excellent';
+      else if (tenant.status === 'partial' && paymentRate >= 80) mappedStatus = 'good';
+      else if (tenant.status === 'partial' && paymentRate < 80) mappedStatus = 'warning';
+      else if (tenant.status === 'late' || tenant.status === 'behind') mappedStatus = 'critical';
+      
       if (this.statusFilter !== 'all' && mappedStatus !== this.statusFilter) {
         return false;
       }
 
-      // Filtre par recherche
       if (this.searchTerm) {
         const searchLower = this.searchTerm.toLowerCase();
         if (!tenant.tenantName.toLowerCase().includes(searchLower) && 
@@ -198,17 +189,20 @@ export class TenantPaymentAnalysisComponent implements OnInit, OnChanges {
   // === MÉTHODES D'EXPORT ===
 
   onExportTenantAnalysis(): void {
-    const exportData = this.filteredSummaries.map(tenant => ({
+    const exportData = this.filteredAnalyses.map(tenant => ({
       'Locataire': tenant.tenantName,
       'Chambre': tenant.roomCode,
-      'Revenus attendus': tenant.totalExpected,
-      'Revenus reçus': tenant.totalReceived,
-      'Taux de paiement': `${tenant.paymentRate.toFixed(1)}%`,
-      'Statut': this.getCalculationStatusLabel(tenant.status),
-      'Mois occupés': tenant.monthsOccupied,
       'Loyer mensuel': tenant.monthlyRent,
-      'Statut contrat': tenant.contractStatus,
-      'Date d\'entrée': tenant.entryDate?.toLocaleDateString('fr-FR') || 'Non définie',
+      'Mois écoulés': tenant.monthsElapsed,
+      'Total payé': tenant.totalPaid,
+      'Attendu à ce jour': tenant.expectedPaymentToDate,
+      'Taux de paiement': `${this.getPaymentRate(tenant).toFixed(1)}%`,
+      'Statut': this.getStatusLabel(tenant.status),
+      'Mois de retard': tenant.monthsBehind,
+      'Montant en retard': tenant.amountBehind,
+      'Montant d\'avance': tenant.advanceAmount,
+      'Consistance paiement': `${tenant.paymentConsistency.toFixed(1)}%`,
+      'Date d\'entrée': tenant.entryDate.toLocaleDateString('fr-FR'),
       'Année': this.selectedYear
     }));
 
@@ -266,40 +260,46 @@ export class TenantPaymentAnalysisComponent implements OnInit, OnChanges {
     }
   }
 
-  trackByTenantId(_: number, tenant: TenantPaymentCalculation): string {
+  trackByTenantId(_: number, tenant: TenantFinancialAnalysis): string {
     return tenant.tenantId;
   }
   
-  getCalculationStatusLabel(status: TenantPaymentCalculation['status']): string {
+  getStatusLabel(status: string): string {
     switch (status) {
       case 'up_to_date': return 'À jour';
       case 'ahead': return 'En avance';
       case 'partial': return 'Paiement partiel';
       case 'late': return 'En retard';
+      case 'behind': return 'En retard';
       case 'no_contract': return 'Pas de contrat';
       case 'ended_contract': return 'Contrat terminé';
       default: return 'Inconnu';
     }
   }
 
-  getCalculationStatusColor(status: TenantPaymentCalculation['status']): string {
+  getStatusColor(status: string): string {
     switch (status) {
       case 'up_to_date': return 'bg-green-100 text-green-800';
       case 'ahead': return 'bg-blue-100 text-blue-800';
       case 'partial': return 'bg-yellow-100 text-yellow-800';
-      case 'late': return 'bg-red-100 text-red-800';
+      case 'late': 
+      case 'behind': return 'bg-red-100 text-red-800';
       case 'no_contract': return 'bg-gray-100 text-gray-800';
       case 'ended_contract': return 'bg-purple-100 text-purple-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   }
   
+  getCalculationStatusColor = this.getStatusColor;
+  getCalculationStatusLabel = this.getStatusLabel;
+  
   // Méthodes de mapping pour les statuts
-  getMappedStatus(tenant: TenantPaymentCalculation): 'excellent' | 'good' | 'warning' | 'critical' {
+  getMappedStatus(tenant: TenantFinancialAnalysis): 'excellent' | 'good' | 'warning' | 'critical' {
+    const paymentRate = this.getPaymentRate(tenant);
     if (tenant.status === 'up_to_date' || tenant.status === 'ahead') return 'excellent';
-    if (tenant.status === 'partial' && tenant.paymentRate >= 80) return 'good';
-    if (tenant.status === 'partial' && tenant.paymentRate < 80) return 'warning';
-    if (tenant.status === 'late' || tenant.status === 'no_contract') return 'critical';
+    if (tenant.status === 'partial' && paymentRate >= 80) return 'good';
+    if (tenant.status === 'partial' && paymentRate < 80) return 'warning';
+    if (tenant.status === 'late' || tenant.status === 'behind') return 'critical';
     return 'good';
   }
   
