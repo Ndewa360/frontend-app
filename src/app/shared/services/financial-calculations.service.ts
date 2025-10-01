@@ -238,88 +238,7 @@ export class FinancialCalculationsService {
     return data;
   }
 
-  private buildMonthlyFromRecapitulation(
-    recapitulation: StatisticPaymentOfAllPropertyByYear
-  ): MonthlyFinancialData[] {
-    const monthlyAggregated: { [key: number]: { expected: number, received: number } } = {};
 
-    // Initialiser les 12 mois
-    for (let i = 0; i < 12; i++) {
-      monthlyAggregated[i] = { expected: 0, received: 0 };
-    }
-
-    // Agréger les données
-    recapitulation.paymentProperty.forEach(propertyData => {
-      if (propertyData?.amountMonth && Array.isArray(propertyData.amountMonth)) {
-        propertyData.amountMonth.forEach(monthData => {
-          if (monthData && typeof monthData.month === 'number') {
-            const monthIndex = (monthData.month - 1) % 12;
-            if (monthIndex >= 0 && monthIndex < 12) {
-              monthlyAggregated[monthIndex].expected += monthData.totalAmountToBeReceveid || 0;
-              monthlyAggregated[monthIndex].received += monthData.totalAmountReceived || 0;
-            }
-          }
-        });
-      }
-    });
-
-    // Convertir en format final
-    return Object.keys(monthlyAggregated).map(monthKey => {
-      const monthIndex = parseInt(monthKey);
-      const data = monthlyAggregated[monthIndex];
-      const rate = data.expected > 0 ? (data.received / data.expected) * 100 : 0;
-      const costs = this.estimateOperatingCosts(data.received);
-      const profit = data.received - costs;
-
-      return {
-        month: this.getMonthName(monthIndex),
-        monthIndex,
-        expected: data.expected,
-        received: data.received,
-        rate,
-        profit
-      };
-    });
-  }
-
-  private buildMonthlyFromRoomStats(yearlyStats: StatisticRoomYearModel[]): MonthlyFinancialData[] {
-    const monthlyAggregated: { [key: number]: { expected: number, received: number } } = {};
-
-    // Initialiser les 12 mois
-    for (let i = 0; i < 12; i++) {
-      monthlyAggregated[i] = { expected: 0, received: 0 };
-    }
-
-    // Agréger les données de toutes les chambres
-    yearlyStats.forEach(roomStat => {
-      const roomPrice = roomStat.room?.price || 0;
-      const monthlyPayments = roomStat.paymentValue || [];
-
-      for (let monthIndex = 0; monthIndex < 12; monthIndex++) {
-        monthlyAggregated[monthIndex].expected += roomPrice;
-        const paymentForMonth = monthlyPayments[monthIndex] || 0;
-        monthlyAggregated[monthIndex].received += paymentForMonth;
-      }
-    });
-
-    // Convertir en format final
-    return Object.keys(monthlyAggregated).map(monthKey => {
-      const monthIndex = parseInt(monthKey);
-      const data = monthlyAggregated[monthIndex];
-      const rate = data.expected > 0 ? (data.received / data.expected) * 100 : 0;
-      const costs = this.estimateOperatingCosts(data.received);
-      const profit = data.received - costs;
-
-      return {
-        month: this.getMonthName(monthIndex),
-        monthIndex,
-        expected: data.expected,
-        received: data.received,
-        rate,
-        profit
-      };
-    });
-  }
 
   /**
    * Estime les coûts opérationnels basés sur des données réelles du marché camerounais
@@ -453,27 +372,234 @@ export class FinancialCalculationsService {
   }
 
   /**
+   * 📊 EXTRACTION DES MÉTRIQUES DEPUIS LES CALCULS CENTRALISÉS DU BACKEND
+   */
+  extractFinancialMetricsFromBackend(backendData: any): FinancialMetrics {
+    console.log('📊 Extraction des métriques depuis les calculs centralisés du backend');
+    
+    if (!backendData || !backendData.propertyMetrics) {
+      console.warn('⚠️ Données backend manquantes ou incompletes');
+      return this.getEmptyMetrics();
+    }
+
+    const metrics = backendData.propertyMetrics;
+    const estimatedCosts = this.estimateOperatingCosts(metrics.totalRevenue, metrics.totalRooms);
+    const netProfit = metrics.totalRevenue - estimatedCosts;
+    const profitMargin = metrics.totalRevenue > 0 ? (netProfit / metrics.totalRevenue) * 100 : 0;
+
+    const result = {
+      totalRevenue: metrics.totalRevenue,
+      totalExpected: metrics.totalExpected,
+      collectionRate: metrics.collectionRate,
+      totalRooms: metrics.totalRooms,
+      occupiedRooms: metrics.occupiedRooms,
+      occupancyRate: metrics.occupancyRate,
+      averageRent: metrics.averageRent,
+      totalDeposits: Math.round((metrics.occupiedRooms * metrics.averageRent * 2) * 100) / 100,
+      netProfit: Math.round(netProfit * 100) / 100,
+      profitMargin: Math.round(profitMargin * 100) / 100
+    };
+
+    console.log('✅ Métriques extraites:', {
+      revenus: `${result.totalRevenue}/${result.totalExpected} FCFA`,
+      taux: `${result.collectionRate}%`,
+      occupation: `${result.occupiedRooms}/${result.totalRooms}`
+    });
+
+    return result;
+  }
+
+  /**
+   * 📅 EXTRACTION DES DONNÉES MENSUELLES DEPUIS LE BACKEND
+   */
+  extractMonthlyDataFromBackend(backendData: any): MonthlyFinancialData[] {
+    console.log('📅 Extraction des données mensuelles depuis les calculs centralisés du backend');
+    
+    if (!backendData || !backendData.rooms) {
+      console.warn('⚠️ Données backend manquantes pour les données mensuelles');
+      return this.getEmptyMonthlyData();
+    }
+
+    const monthlyData: MonthlyFinancialData[] = [];
+    
+    for (let month = 0; month < 12; month++) {
+      let monthlyReceived = 0;
+      let monthlyExpected = 0;
+
+      backendData.rooms.forEach(roomData => {
+        const monthlyPayment = roomData.paymentValue[month] || 0;
+        monthlyReceived += monthlyPayment;
+        
+        if (roomData.monthsDue > month || monthlyPayment > 0) {
+          monthlyExpected += roomData.room.price || 0;
+        }
+      });
+
+      const collectionRate = monthlyExpected > 0 ? (monthlyReceived / monthlyExpected) * 100 : 0;
+      const costs = this.estimateOperatingCosts(monthlyReceived);
+      const profit = monthlyReceived - costs;
+
+      monthlyData.push({
+        month: this.getMonthName(month),
+        monthIndex: month,
+        expected: Math.round(monthlyExpected * 100) / 100,
+        received: Math.round(monthlyReceived * 100) / 100,
+        rate: Math.round(collectionRate * 100) / 100,
+        profit: Math.round(profit * 100) / 100
+      });
+    }
+
+    console.log('✅ Données mensuelles extraites:', monthlyData.length, 'mois');
+    return monthlyData;
+  }
+
+  /**
+   * 👥 EXTRACTION DES PERFORMANCES DES LOCATAIRES DEPUIS LE BACKEND
+   */
+  extractTenantPerformanceFromBackend(backendData: any): TenantFinancialSummary[] {
+    console.log('👥 Extraction des performances locataires depuis les calculs centralisés du backend');
+
+    if (!backendData || !backendData.rooms) {
+      console.warn('⚠️ Données backend manquantes pour l\'analyse des locataires');
+      return [];
+    }
+
+    const tenantSummaries = backendData.rooms
+      .filter(roomData => roomData.totalReceived > 0)
+      .map(roomData => {
+        const monthsActive = roomData.monthsDue || 12;
+        const averageMonthlyPayment = monthsActive > 0 ? roomData.totalReceived / monthsActive : 0;
+        
+        return {
+          tenantId: roomData.room._id || '',
+          tenantName: `Chambre ${roomData.room.code}`,
+          totalPaid: roomData.totalReceived,
+          totalDue: roomData.expectedAmount,
+          paymentRate: roomData.collectionRate,
+          monthsActive,
+          averageMonthlyPayment: Math.round(averageMonthlyPayment * 100) / 100
+        };
+      });
+
+    console.log(`✅ Performances extraites pour ${tenantSummaries.length} locataires/chambres`);
+    return tenantSummaries;
+  }
+
+  /**
+   * Valide les données du backend
+   */
+  validateBackendData(data: any): { isValid: boolean; errors: string[] } {
+    const errors: string[] = [];
+
+    try {
+      if (!data) {
+        errors.push('Données manquantes');
+        return { isValid: false, errors };
+      }
+
+      if (data.rooms && Array.isArray(data.rooms)) {
+        data.rooms.forEach((room: any, index: number) => {
+          if (!room.room) errors.push(`Chambre ${index}: données de chambre manquantes`);
+          if (typeof room.totalReceived !== 'number') errors.push(`Chambre ${index}: totalReceived invalide`);
+          if (typeof room.expectedAmount !== 'number') errors.push(`Chambre ${index}: expectedAmount invalide`);
+        });
+      }
+
+      if (data.propertyMetrics) {
+        const metrics = data.propertyMetrics;
+        if (typeof metrics.totalRevenue !== 'number') errors.push('totalRevenue invalide');
+        if (typeof metrics.collectionRate !== 'number') errors.push('collectionRate invalide');
+      }
+
+      return {
+        isValid: errors.length === 0,
+        errors
+      };
+      
+    } catch (error) {
+      return {
+        isValid: false,
+        errors: ['Erreur lors de la validation']
+      };
+    }
+  }
+
+  /**
+   * Construit les données mensuelles depuis les statistiques de chambres
+   */
+  private buildMonthlyFromRoomStats(yearlyStats: StatisticRoomYearModel[]): MonthlyFinancialData[] {
+    const monthlyData: MonthlyFinancialData[] = [];
+    
+    for (let month = 0; month < 12; month++) {
+      let monthlyReceived = 0;
+      let monthlyExpected = 0;
+
+      yearlyStats.forEach(roomStat => {
+        const monthlyPayment = roomStat.paymentValue?.[month] || 0;
+        monthlyReceived += monthlyPayment;
+        monthlyExpected += roomStat.room?.price || 0;
+      });
+
+      const collectionRate = monthlyExpected > 0 ? (monthlyReceived / monthlyExpected) * 100 : 0;
+      const costs = this.estimateOperatingCosts(monthlyReceived);
+      const profit = monthlyReceived - costs;
+
+      monthlyData.push({
+        month: this.getMonthName(month),
+        monthIndex: month,
+        expected: Math.round(monthlyExpected * 100) / 100,
+        received: Math.round(monthlyReceived * 100) / 100,
+        rate: Math.round(collectionRate * 100) / 100,
+        profit: Math.round(profit * 100) / 100
+      });
+    }
+
+    return monthlyData;
+  }
+
+  /**
+   * Construit les données mensuelles depuis la récapitulation
+   */
+  private buildMonthlyFromRecapitulation(recapitulation: StatisticPaymentOfAllPropertyByYear): MonthlyFinancialData[] {
+    const monthlyData: MonthlyFinancialData[] = [];
+    
+    if (recapitulation.paymentProperty && recapitulation.paymentProperty[0]?.amountMonth) {
+      recapitulation.paymentProperty[0].amountMonth.forEach((monthData: any, index: number) => {
+        const costs = this.estimateOperatingCosts(monthData.totalAmountReceived);
+        const profit = monthData.totalAmountReceived - costs;
+        const rate = monthData.totalAmountToBeReceveid > 0 ? 
+          (monthData.totalAmountReceived / monthData.totalAmountToBeReceveid) * 100 : 0;
+
+        monthlyData.push({
+          month: this.getMonthName(index),
+          monthIndex: index,
+          expected: monthData.totalAmountToBeReceveid,
+          received: monthData.totalAmountReceived,
+          rate: Math.round(rate * 100) / 100,
+          profit: Math.round(profit * 100) / 100
+        });
+      });
+    }
+
+    return monthlyData.length > 0 ? monthlyData : this.getEmptyMonthlyData();
+  }
+
+  /**
    * Valide les données financières pour détecter les incohérences
    */
   validateFinancialData(metrics: FinancialMetrics): { isValid: boolean; warnings: string[] } {
     const warnings: string[] = [];
 
     try {
-      // Vérifier les valeurs négatives
       if (metrics.totalRevenue < 0) warnings.push('Revenus totaux négatifs détectés');
       if (metrics.totalExpected < 0) warnings.push('Revenus attendus négatifs détectés');
       if (metrics.netProfit < -metrics.totalRevenue) warnings.push('Perte nette excessive détectée');
-
-      // Vérifier les pourcentages avec tolérance pour les avances
       if (metrics.collectionRate > 200) warnings.push('Taux de collection anormalement élevé (>200%)');
       if (metrics.occupancyRate > 100) warnings.push('Taux d\'occupation supérieur à 100%');
       if (metrics.profitMargin < -200 || metrics.profitMargin > 200) warnings.push('Marge de profit anormale');
-
-      // Vérifier la cohérence
       if (metrics.occupiedRooms > metrics.totalRooms) warnings.push('Plus de chambres occupées que le total');
       if (metrics.totalRevenue > metrics.totalExpected * 3) warnings.push('Revenus excessivement supérieurs aux attentes');
       
-      // Vérifications de logique métier
       if (metrics.totalRooms === 0 && (metrics.totalRevenue > 0 || metrics.totalExpected > 0)) {
         warnings.push('Revenus détectés sans chambres');
       }

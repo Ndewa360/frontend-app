@@ -90,6 +90,14 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
     let processedCount = 0;
     let errorCount = 0;
 
+    // Validation initiale
+    if (!this.paymentStats || this.paymentStats.length === 0) {
+      console.warn('⚠️ Aucune donnée de paiement disponible');
+      this.calculatePaymentSummary();
+      this.updatePagination();
+      return;
+    }
+
     // Combiner les données avec validation
     this.paymentStats.forEach((paymentStat, index) => {
       try {
@@ -153,10 +161,6 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
     
     return true;
   }
-
-
-
-
 
   private calculatePaymentSummary(): void {
     console.log('📊 Calcul du résumé des paiements pour', this.tenantPaymentStatuses.length, 'locataires');
@@ -304,8 +308,6 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
     return colors[status] || 'text-gray-600 bg-gray-100';
   }
 
-
-
   // Méthodes d'export améliorées
   exportToExcel(): void {
     const data = this.prepareExportData();
@@ -361,7 +363,7 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
       'Jours de retard': tenant.daysLate || 0,
       'Mois d\'avance': tenant.monthsAhead || 0,
       'Score santé': this.getPaymentHealthScore(tenant),
-      'Date d\'entrée': tenant.entryDate.toLocaleDateString('fr-FR'),
+      'Date d\'entrée': tenant.entryDate?.toLocaleDateString('fr-FR') || 'Non définie',
       'Dernier paiement': tenant.lastPaymentDate?.toLocaleDateString('fr-FR') || 'Aucun',
       'Année': this.selectedYear
     }));

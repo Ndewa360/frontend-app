@@ -7,6 +7,99 @@ export interface StatisticRoomYearModel {
     room:RoomModel,
     paymentValue:number[],
     year:string;
+    // 🆕 MÉTRIQUES ENRICHIES DU BACKEND
+    totalPaid?: number;
+    expectedAmount?: number;
+    monthsDue?: number;
+    paymentStatus?: string;
+    advanceAmount?: number;
+    debtAmount?: number;
+    collectionRate?: number;
+    adjustedPaid?: number;
+    entryDate?: Date;
+    contractEndDate?: Date;
+    initialFinancialState?: string;
+    initialSolde?: number;
+}
+
+// 🆕 MÉTRIQUES GLOBALES DE PROPRIÉTÉ
+export interface PropertyMetrics {
+    totalRevenue: number;
+    totalExpected: number;
+    collectionRate: number;
+    averageRent: number;
+    occupancyRate: number;
+    totalRooms: number;
+    occupiedRooms: number;
+    totalAdvances: number;
+    totalDebts: number;
+}
+
+// 🆕 RAPPORT COMPLET
+export interface ComprehensiveReport {
+    alerts: Array<{type: string, message: string, severity: string}>;
+    recommendations: Array<{type: string, message: string, priority: string}>;
+    summary: {
+        totalRooms: number;
+        performanceLevel: string;
+        riskLevel: string;
+    };
+}
+
+// 🆕 RÉPONSE ENRICHIE DU BACKEND
+export interface EnrichedStatisticResponse {
+    data: {
+        rooms: StatisticRoomYearModel[],
+        propertyMetrics:PropertyMetrics,
+        comprehensiveReport:ComprehensiveReport,
+        calculatedAt: Date,
+        revenueDistribution: {
+            monthlyDistribution: number[],
+            monthlyExpected: number[],
+            monthlyQuota: number[],
+            monthlyExcess: number[],
+            monthlyAnalysis: [
+                {
+                    month: number,
+                    distributed: number,
+                    expected: number,
+                    fulfillmentRate: number,
+                    variance: number,
+                    deficit: number,
+                    quota: number,
+                    totalActiveRooms:number
+                }
+            ]
+        },
+        tenants: {
+            room:RoomModel,
+            locataire:LocataireModel,
+            financialAnalysis: {
+                monthlyRent: number,
+                entryDate: Date,
+                monthsElapsed: number,
+                totalPaid: number,
+                expectedPaymentToDate: number,
+                status: string,
+                monthsBehind: number,
+                amountBehind: number,
+                advanceAmount: number,
+                lastPaymentMonth: number,
+                paymentConsistency: number,
+                monthlyPayments: number[]
+            }
+        }[],    
+        year:string,    
+    },
+    performanceMs:  number,
+    roomsCount: number,
+    metricsIncluded: {
+        propertyMetrics: number,
+        comprehensiveReport: number,
+        alerts: number,
+        recommendations: number
+    },
+    calculatedAt: Date,
 }
 
 export interface StatisticLocataireYearModel {

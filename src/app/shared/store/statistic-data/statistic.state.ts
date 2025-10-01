@@ -7,7 +7,7 @@ import { of, throwError } from "rxjs";
 import { catchError, tap } from "rxjs/operators";
 import { UtilsString } from "../../utils";
 import { ToastrService } from "ngx-toastr";
-import { StatisticAllPaymentLocataireYearModel, StatisticLocataireYearModel, StatisticPaymentOfAllPropertyByYear, StatisticRoomYearModel } from "./statistic.model";
+import { StatisticAllPaymentLocataireYearModel, StatisticLocataireYearModel, StatisticPaymentOfAllPropertyByYear, StatisticRoomYearModel, PropertyMetrics, ComprehensiveReport, EnrichedStatisticResponse } from "./statistic.model";
 
 export interface StatisticError {
     message: string;
@@ -19,12 +19,18 @@ export class StatisticStateModel {
     roomStatistic:StatisticRoomYearModel[] //statistic de chambre
     locataireStatistic:StatisticLocataireYearModel[] //statistic de locataire
     allLocatairePayementByYear:StatisticAllPaymentLocataireYearModel[] //statistique de paiement
+    
+    
+    // 🆕 DONNÉES ENRICHIES DU BACKEND
+    propertyMetrics: { [key: string]: PropertyMetrics } // Clé: propertyId-year
+    comprehensiveReports: { [key: string]: ComprehensiveReport } // Clé: propertyId-year
 
     loadingStatistic:boolean
     loadingRoomStatistic:boolean
     locataireStatisticLoading:boolean
     allLocatairePayementByYearLoading:boolean
     loadingStatisticRecaptilationLoading:boolean
+    loadingPropertyStatistic:boolean
     statisticRecapitulationPayment:StatisticPaymentOfAllPropertyByYear[] //statistique de recaptiulation de paiement par ans
 
     // Error handling
@@ -40,6 +46,9 @@ export class StatisticStateModel {
     locataireStatisticLastUpdated: Date | null
     allLocatairePayementByYearLastUpdated: Date | null
     statisticRecapitulationPaymentLastUpdated: Date | null
+
+    //PropertyStatistic
+    propertyStatistic:{key:string,data:EnrichedStatisticResponse}[]
 }
 
 
@@ -50,11 +59,17 @@ export class StatisticStateModel {
         loadingRoomStatistic:false,
         locataireStatisticLoading:false,
         loadingStatisticRecaptilationLoading:false,
+        loadingPropertyStatistic:false,
         allLocatairePayementByYearLoading:false,
+        
         roomStatistic:[],
         locataireStatistic:[],
         allLocatairePayementByYear:[],
         statisticRecapitulationPayment:[],
+        
+        // 🆕 DONNÉES ENRICHIES
+        propertyMetrics: {},
+        comprehensiveReports: {},
 
         // Error states
         error: null,
@@ -62,6 +77,8 @@ export class StatisticStateModel {
         locataireStatisticError: null,
         allLocatairePayementByYearError: null,
         statisticRecapitulationPaymentError: null,
+
+        propertyStatistic:[],
 
         // Timestamps
         lastUpdated: null,
@@ -198,64 +215,86 @@ export class StatisticState{
         })
     }
 
-    static selectStateStatisticRecapitulationPaymentBydYear(year:number=new Date().getFullYear())
+    static selectStateStatisticRecapitulationPaymentBydYear(year:number|string=new Date().getFullYear())
     {
-        return createSelector([StatisticState],(state)=> state.statisticRecapitulationPayment.filter((u)=> u.year==year))    
+        return createSelector([StatisticState],(state)=> state.statisticRecapitulationPayment.filter((u)=> u.year==year.toString()))    
     }
 
-    static selectStateStatisticLocataireByPropertyIdAndYear(propertyID,year:number=new Date().getFullYear())
+    static selectStateStatisticLocataireByPropertyIdAndYear(propertyID,year:number|string=new Date().getFullYear())
     {
-        return createSelector([StatisticState],(state)=> state.locataireStatistic.filter((u)=>u.locataire.property==propertyID && u.year==year))    
+        return createSelector([StatisticState],(state)=> state.locataireStatistic.filter((u)=>u.locataire.property==propertyID && u.year==year.toString()))    
     }
 
     static selectStateStatisticAllPaymentLocataireByPropertyIdAndYear(propertyID,year:number|string=new Date().getFullYear())
     {
-        return createSelector([StatisticState],(state)=> state.allLocatairePayementByYear.filter((u)=>u.locataire.property==propertyID && u.year==year))
+        return createSelector([StatisticState],(state)=> state.allLocatairePayementByYear.filter((u)=>u.locataire.property==propertyID && u.year==year.toString()))
     }
 
-    static selectStateStatisticRoomByPropertyIdAndYear(propertyID,year:number=new Date().getFullYear())
+    static selectStateStatisticRoomByPropertyIdAndYear(propertyID,year:number|string=new Date().getFullYear())
     {
-        return createSelector([StatisticState],(state)=> state.roomStatistic.filter((u)=>u && u.room && u.room.property==propertyID && u.year==year))
+        return createSelector([StatisticState],(state)=> {            
+            const filtered = state.roomStatistic.filter((u)=>u && u.room && u.room.property==propertyID && u.year==year.toString());
+            return filtered;
+        })
     }
 
-    @Action(StatisticAction.FetchStaticRoomDataByPropertyIdAndYear)
+    static selectStateStatisticPropertyIdAndYear(propertyID,year:number|string=new Date().getFullYear())
+    {
+        return createSelector([StatisticState],(state)=> {            
+            const filtered = state.propertyStatistic.filter((u)=> u.key==`${propertyID}-${year}`);
+            return filtered;
+        })
+    }
+
+    // 🆕 SÉLECTEURS POUR LES DONNÉES ENRICHIES
+    static selectPropertyMetrics(propertyID: string, year: string)
+    {
+        return createSelector([StatisticState], (state) => {
+            const key = `${propertyID}-${year}`;
+            return state.propertyMetrics[key] || null;
+        });
+    }
+
+    static selectComprehensiveReport(propertyID: string, year: string)
+    {
+        return createSelector([StatisticState], (state) => {
+            const key = `${propertyID}-${year}`;
+            return state.comprehensiveReports[key] || null;
+        });
+    }
+
+    @Action(StatisticAction.FetchStaticByPropertyIdAndYear)
     fetchRoomStatisticByPropertyAndYear(ctx:StateContext<StatisticStateModel>,{propertyID,year}:StatisticAction.FetchStaticRoomDataByPropertyIdAndYear)
     {
         const state = ctx.getState();
-        let index = state.roomStatistic.findIndex((u)=>u && u.room && u.room.property==propertyID && year==u.year);
+        let index = state.roomStatistic.findIndex((u)=>u && u.room && u.room.property==propertyID && year.toString()==u.year);
 
         // Ne pas retourner early si les données existent déjà - permettre le rechargement
         // if(index>-1) return of(true);
 
-        console.log('🔄 FetchStaticRoomDataByPropertyIdAndYear:', {
-            propertyID,
-            year,
-            existingIndex: index,
-            currentRoomStats: state.roomStatistic.length
-        });
-
         ctx.patchState({
-            loadingStatistic:true,
-            loadingRoomStatistic:true,
-            roomStatisticError: null // Clear previous errors
+            loadingPropertyStatistic:true,
         })
 
-        return this._statisticsService.getStatisticRoomDataByYear(propertyID,year).pipe(
+        return this._statisticsService.getStatisticPropertyDataByYear(propertyID,year).pipe(
             tap(
                 result => {
-                    console.log('✅ Room statistics loaded successfully', result);
+                    console.log('🔍 Type de result.data:', typeof result.data, result);
+                    
+                    const key = `${propertyID}-${year}`;
 
                     // Supprimer les anciennes données pour cette propriété et année (avec protection null)
-                    const filteredRoomStats = state.roomStatistic.filter(
-                        (u) => !(u && u.room && u.room.property == propertyID && u.year == year)
-                    );
+                    const filterePropertyStats = state.propertyStatistic.filter((u) => u.key!=key);
+
+                 
+                    // 🆕 STOCKER LES DONNÉES ENRICHIES  
+
+                    const finalStatistic = [...filterePropertyStats, {key,data:result.data}];
+        
 
                     ctx.patchState({
-                        loadingStatistic:false,
-                        loadingRoomStatistic:false,
-                        roomStatistic:[...filteredRoomStats, ...result.data],
-                        roomStatisticLastUpdated: new Date(),
-                        roomStatisticError: null
+                        loadingPropertyStatistic:false,
+                        propertyStatistic:[...finalStatistic]
                     })
                 }
             ),
@@ -283,7 +322,7 @@ export class StatisticState{
     fetchPaymentRecapitulationByYear(ctx:StateContext<StatisticStateModel>,{year}:StatisticAction.FetchStatisticPaymentRecapitulationAccountOfAllPropertyByYear)
     {
         const state = ctx.getState();
-        let index = state.statisticRecapitulationPayment.findIndex((u)=>u.year==year);
+        let index = state.statisticRecapitulationPayment.findIndex((u)=>u.year==year.toString());
         console.log("Index Static", index, year, state.statisticRecapitulationPayment)
         // //console.log("Index Static", index,propertyID,state.roomStatistic)
         if(index>-1) return of(true);
@@ -314,7 +353,9 @@ export class StatisticState{
             allLocatairePayementByYearLoading:false,
             roomStatistic:[],
             locataireStatistic:[],
-            allLocatairePayementByYear:[]
+            allLocatairePayementByYear:[],
+            propertyMetrics: {},
+            comprehensiveReports: {}
             // initLoadingState:'NO_LOADED',
         })
     }
@@ -330,6 +371,8 @@ export class StatisticState{
             roomStatistic:[],
             locataireStatistic:[],
             allLocatairePayementByYear:[],
+            propertyMetrics: {},
+            comprehensiveReports: {}
             // initLoadingState:'NO_LOADED',
         })
     }
@@ -338,7 +381,7 @@ export class StatisticState{
     fetchLocataireStatisticByPropertyAndYear(ctx:StateContext<StatisticStateModel>,{propertyID,year}:StatisticAction.FetchStaticLocataireDataByPropertyIdAndYear)
     {
         const state = ctx.getState();
-        let index = state.locataireStatistic.findIndex((u)=>u.locataire.property==propertyID && u.year==year);
+        let index = state.locataireStatistic.findIndex((u)=>u.locataire.property==propertyID && u.year==year.toString());
         let locataireStatisticNewState = [...state.locataireStatistic]
         if(index>-1) locataireStatisticNewState.splice(index,1);
 
@@ -366,7 +409,7 @@ export class StatisticState{
     fetchAllPayementLocataireStatisticByPropertyAndYear(ctx:StateContext<StatisticStateModel>,{propertyID,year}:StatisticAction.FetchStaticAllPaymentLocataireDataByPropertyIdAndYear)
     {
         const state = ctx.getState();
-        let index = state.allLocatairePayementByYear.findIndex((u)=>u.locataire.property==propertyID && year==u.year);
+        let index = state.allLocatairePayementByYear.findIndex((u)=>u.locataire.property==propertyID && year.toString()==u.year);
         let allLocatairePayementByYearNewState = [...state.allLocatairePayementByYear]
         if(index>-1) allLocatairePayementByYearNewState.splice(index,1);
 
@@ -397,11 +440,11 @@ export class StatisticState{
 
         const state = ctx.getState();
         let newStateLocataireStatistic = [...state.locataireStatistic];
-        let indexNewStateLocataireStatistic = state.locataireStatistic.findIndex((u)=>u.locataire.property==propertyID && u.year==year);
+        let indexNewStateLocataireStatistic = state.locataireStatistic.findIndex((u)=>u.locataire.property==propertyID && u.year==year.toString());
         if(indexNewStateLocataireStatistic>-1) newStateLocataireStatistic.splice(indexNewStateLocataireStatistic,1);
 
         let newallLocatairePayementByYear = [...state.allLocatairePayementByYear];
-        let indexAllLocatairePayementByYear = state.allLocatairePayementByYear.findIndex((u)=>u.locataire.property==propertyID && u.year==year);
+        let indexAllLocatairePayementByYear = state.allLocatairePayementByYear.findIndex((u)=>u.locataire.property==propertyID && u.year==year.toString());
         if(indexAllLocatairePayementByYear>-1) newallLocatairePayementByYear.splice(indexAllLocatairePayementByYear,1);
 
 

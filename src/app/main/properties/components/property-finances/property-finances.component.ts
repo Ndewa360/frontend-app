@@ -1,25 +1,14 @@
 import { Component, Input, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
 import { Store } from '@ngxs/store';
-import { Subject, Observable, combineLatest } from 'rxjs';
-import { takeUntil, map } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import {
-  StatisticState,
   StatisticAction,
-  StatisticRoomYearModel,
-  StatisticLocataireYearModel,
-  StatisticAllPaymentLocataireYearModel,
-  StatisticPaymentOfAllPropertyByYear,
   StatisticPaymentStateType
 } from 'src/app/shared/store';
+import { StatisticState } from 'src/app/shared/store/statistic-data/statistic.state';
 import { ExcelExportService } from 'src/app/shared/services/excel-export.service';
 
-
-export interface FinancialAnalysisData {
-  yearlyStats: StatisticRoomYearModel[];
-  tenantStats: StatisticLocataireYearModel[];
-  paymentStats: StatisticAllPaymentLocataireYearModel[];
-  recapitulation: StatisticPaymentOfAllPropertyByYear | null;
-}
 
 export interface ExportData {
   type: 'excel' | 'csv';
@@ -36,15 +25,9 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
   @Input() propertyId: string = '';
   @Input() finances: any = null; // Garde pour compatibilité
 
-  // État local
   selectedYear: number = new Date().getFullYear();
   activeSection: 'dashboard' | 'overview' | 'tenants' | 'deposits' | 'monthly' = 'dashboard';
   isLoading: boolean = false;
-
-  // Contrôle du rechargement pour éviter les cycles infinis
-  private loadingAttempts: number = 0;
-  private maxLoadingAttempts: number = 3;
-  private lastLoadTime: number = 0;
 
   // Configuration des onglets finances
   financeTabs: Array<{
@@ -80,465 +63,107 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
     }
   ];
 
-  // Données financières
-  financialData: FinancialAnalysisData = {
-    yearlyStats: [],
-    tenantStats: [],
-    paymentStats: [],
-    recapitulation: null
-  };
-
-  // Observables du store
-  roomStatistics$: Observable<StatisticRoomYearModel[]>;
-  tenantStatistics$: Observable<StatisticLocataireYearModel[]>;
-  paymentStatistics$: Observable<StatisticAllPaymentLocataireYearModel[]>;
-  recapitulation$: Observable<StatisticPaymentOfAllPropertyByYear[]>;
-  loadingStates$: Observable<{
-    room: boolean;
-    tenant: boolean;
-    payment: boolean;
-    recap: boolean;
-  }>;
+  backendData: any = null;
 
   private destroy$ = new Subject<void>();
 
   constructor(
     private store: Store,
     private excelExportService: ExcelExportService
-  ) {
-    // Les observables seront initialisés dans ngOnInit quand propertyId sera disponible
-    this.loadingStates$ = combineLatest([
-      this.store.select(StatisticState.selectStateLoadingRoomStatistic),
-      this.store.select(StatisticState.selectStateLocataireStatisticLoading),
-      this.store.select(StatisticState.selectStateAllLocatairePayementByYearLoading),
-      this.store.select(StatisticState.selectStateLoadingStatisticRecaptilationLoading)
-    ]).pipe(
-      map(([room, tenant, payment, recap]) => ({
-        room: Boolean(room),
-        tenant: Boolean(tenant),
-        payment: Boolean(payment),
-        recap: Boolean(recap)
-      }))
-    );
-  }
+  ) {}
 
   ngOnInit(): void {
-    // S'assurer que l'année sélectionnée est valide
+    
     this.ensureValidSelectedYear();
-
-    // Remettre à zéro les compteurs
-    this.resetLoadingAttempts();
-
-
-
-    // Initialiser les observables et charger les données
-    this.initializeObservables();
-    this.setupDataSubscriptions();
-
-    // Charger les données une seule fois au démarrage
+    
     if (this.propertyId) {
+      // D'abord configurer les subscriptions
+      this.setupDataSubscriptions();
+      // Puis charger les données
       this.loadFinancialData();
     } else {
-      console.warn('⚠️ PropertyId manquant lors de l\'initialisation');
+      console.log('⚠️ Pas de propertyId au démarrage');
     }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['propertyId'] && this.propertyId) {
-      // S'assurer que l'année est valide lors du changement de propriété
-      this.ensureValidSelectedYear();
-
-      // Réinitialiser les observables avec le nouveau propertyId
-      this.initializeObservables();
-      this.loadFinancialData();
-
-    }
-
-    if (changes['selectedYear'] && this.propertyId) {
-      // Recharger les données pour la nouvelle année
-      this.initializeObservables();
-      this.loadFinancialData();
-
+    if (changes['propertyId'] || changes['selectedYear']) {
+      if (this.propertyId) {
+        // Reconfigurer les subscriptions avec les nouvelles valeurs
+        this.setupDataSubscriptions();
+        this.loadFinancialData();
+      }
     }
   }
 
-  private initializeObservables(): void {
-    if (!this.propertyId) {
-      console.warn('⚠️ PropertyId non défini, impossible d\'initialiser les observables');
-      return;
-    }
 
-    // Utiliser les sélecteurs qui filtrent par propriété ET par année
-    this.roomStatistics$ = this.store.select(StatisticState.selectStateStatisticRoomByPropertyIdAndYear(this.propertyId, this.selectedYear));
-    this.tenantStatistics$ = this.store.select(StatisticState.selectStateStatisticLocataireByPropertyIdAndYear(this.propertyId, this.selectedYear));
-    this.paymentStatistics$ = this.store.select(StatisticState.selectStateStatisticAllPaymentLocataireByPropertyIdAndYear(this.propertyId, this.selectedYear));
-    this.recapitulation$ = this.store.select(StatisticState.selectStateStatisticRecapitulationPaymentBydYear(this.selectedYear));
-  }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }
 
-  // === MÉTHODES DE CHARGEMENT DES DONNÉES ===
-
   private loadFinancialData(): void {
     if (!this.propertyId) {
-      console.warn('⚠️ Impossible de charger les données: propertyId manquant');
+      console.log('❌ Pas de propertyId, arrêt du chargement');
       return;
     }
-
-    console.log(`🔄 CHARGEMENT FINANCIER - Propriété: ${this.propertyId}, Année: ${this.selectedYear}`);
-
-    // Marquer comme en cours de chargement
+    
     this.isLoading = true;
-
-    try {
-      // Déclencher l'action principale de rafraîchissement
-      this.store.dispatch(
-        new StatisticAction.RefreshStaticLocataireDataByPropertyIdAndYear(this.propertyId, this.selectedYear.toString())
-      );
-
-      // Vérifier les données existantes
-      this.checkExistingData();
-      
-      // Timeout de sécurité pour arrêter le loading
-      setTimeout(() => {
-        if (this.isLoading) {
-          console.warn('⚠️ Timeout de chargement atteint, arrêt forcé du loading');
-          this.isLoading = false;
-        }
-      }, 10000); // 10 secondes maximum
-      
-    } catch (error) {
-      console.error('❌ Erreur lors du chargement des données financières:', error);
-      this.isLoading = false;
-    }
+    
+    // Déclencher l'action pour récupérer les calculs centralisés
+    this.store.dispatch(new StatisticAction.FetchStaticByPropertyIdAndYear(this.propertyId, this.selectedYear.toString()));
   }
 
-  private checkExistingData(): void {
-    // Vérifier les données existantes dans le store
-    const roomStats = this.store.selectSnapshot(StatisticState.selectStateStatisticRoomByPropertyIdAndYear(this.propertyId, this.selectedYear));
-    const tenantStats = this.store.selectSnapshot(StatisticState.selectStateStatisticLocataireByPropertyIdAndYear(this.propertyId, this.selectedYear));
-    const paymentStats = this.store.selectSnapshot(StatisticState.selectStateStatisticAllPaymentLocataireByPropertyIdAndYear(this.propertyId, this.selectedYear));
-
-    // Si aucune donnée n'est présente, déclencher les actions individuelles
-    if (!roomStats || roomStats.length === 0) {
-      this.store.dispatch(new StatisticAction.FetchStaticRoomDataByPropertyIdAndYear(this.propertyId, this.selectedYear.toString()));
-    }
-
-    if (!tenantStats || tenantStats.length === 0) {
-      this.store.dispatch(new StatisticAction.FetchStaticLocataireDataByPropertyIdAndYear(this.propertyId, this.selectedYear.toString()));
-    }
-
-    if (!paymentStats || paymentStats.length === 0) {
-      this.store.dispatch(new StatisticAction.FetchStaticAllPaymentLocataireDataByPropertyIdAndYear(this.propertyId, this.selectedYear.toString()));
-    }
-
-    // Charger la récapitulation pour l'année
-    this.store.dispatch(new StatisticAction.FetchStatisticPaymentRecapitulationAccountOfAllPropertyByYear(this.selectedYear.toString()));
-  }
-
-  /**
-   * Force le chargement de toutes les données nécessaires
-   */
-  private forceLoadAllData(): void {
-    const currentTime = Date.now();
-
-    // Éviter les rechargements trop fréquents (moins de 3 secondes)
-    if (currentTime - this.lastLoadTime < 3000) {
-      return;
-    }
-
-    // Limiter le nombre de tentatives
-    if (this.loadingAttempts >= this.maxLoadingAttempts) {
-      this.isLoading = false;
-      return;
-    }
-
-    this.loadingAttempts++;
-    this.lastLoadTime = currentTime;
-
-    // Charger toutes les statistiques en parallèle
-    const actions = [
-      new StatisticAction.FetchStaticRoomDataByPropertyIdAndYear(this.propertyId, this.selectedYear.toString()),
-      new StatisticAction.FetchStaticLocataireDataByPropertyIdAndYear(this.propertyId, this.selectedYear.toString()),
-      new StatisticAction.FetchStaticAllPaymentLocataireDataByPropertyIdAndYear(this.propertyId, this.selectedYear.toString()),
-      new StatisticAction.FetchStatisticPaymentRecapitulationAccountOfAllPropertyByYear(this.selectedYear.toString())
-    ];
-
-    this.store.dispatch(actions);
-
-    // Vérifier le chargement après un délai plus long
-    setTimeout(() => {
-      this.checkDataLoadingStatus();
-    }, 5000);
-  }
-
-  /**
-   * Vérifie le statut de chargement des données
-   */
-  private checkDataLoadingStatus(): void {
-
-
-
-
-    // Arrêter le loading dans tous les cas après vérification
-    this.isLoading = false;
-
-    // Si aucune donnée n'est chargée ET qu'on n'a pas atteint le max de tentatives
-    if (!this.hasFinancialData() && this.loadingAttempts < this.maxLoadingAttempts) {
-
-      setTimeout(() => {
-        this.forceLoadAllData();
-      }, 3000);
-    } else if (this.hasFinancialData()) {
-
-      this.resetLoadingAttempts();
-    } else {
-      console.error('❌ Échec du chargement après toutes les tentatives');
-      this.resetLoadingAttempts();
-    }
-  }
-
-
-
-  /**
-   * Remet à zéro les compteurs de tentatives de chargement
-   */
-  resetLoadingAttempts(): void {
-    this.loadingAttempts = 0;
-    this.lastLoadTime = 0;
-
-  }
 
   private setupDataSubscriptions(): void {
-    console.log('🔍 Configuration des souscriptions aux données');
     
-    // Combiner toutes les données financières avec gestion d'erreurs
-    combineLatest([
-      this.roomStatistics$,
-      this.tenantStatistics$,
-      this.paymentStatistics$,
-      this.recapitulation$
-    ]).pipe(
+    this.store.select(
+      StatisticState.selectStateStatisticPropertyIdAndYear(this.propertyId, this.selectedYear)
+    ).pipe(
       takeUntil(this.destroy$)
     ).subscribe({
-      next: ([roomStats, tenantStats, paymentStats, recapStats]) => {
-        try {
-          console.log('📊 Données reçues:', {
-            roomStats: roomStats?.length || 0,
-            tenantStats: tenantStats?.length || 0,
-            paymentStats: paymentStats?.length || 0,
-            recapStats: recapStats?.length || 0
-          });
-          
-          this.financialData = {
-            yearlyStats: roomStats || [],
-            tenantStats: tenantStats || [],
-            paymentStats: paymentStats || [],
-            recapitulation: this.findRecapForYear(recapStats)
-          };
-
-          // Validation des données
-          this.validateFinancialData();
-
-          // Arrêter le loading si on a des données valides
-          if (this.hasFinancialData()) {
-            this.isLoading = false;
-            this.resetLoadingAttempts();
-            console.log('✅ Données financières chargées et validées');
-          } else if (!this.isLoading) {
-            // Si pas de loading en cours et pas de données, relancer
-            console.log('⚠️ Pas de données détectées, tentative de rechargement');
-            setTimeout(() => this.forceLoadAllData(), 2000);
-          }
-          
-        } catch (error) {
-          console.error('❌ Erreur lors du traitement des données:', error);
-          this.isLoading = false;
-        }
+      next: (backendData) => {
+        this.backendData = backendData;
+        this.isLoading = false;
       },
       error: (error) => {
-        console.error('❌ Erreur dans la souscription aux données:', error);
+        console.error('❌ Erreur lors du chargement des données:', error);
         this.isLoading = false;
       }
     });
-
-    // Surveiller les états de chargement avec timeout
-    this.loadingStates$.pipe(
-      takeUntil(this.destroy$)
-    ).subscribe(states => {
-      const anyLoading = Object.values(states).some(loading => loading);
-      
-      if (anyLoading !== this.isLoading) {
-        console.log('🔄 État de chargement changé:', anyLoading);
-        this.isLoading = anyLoading;
-      }
-    });
-  }
-
-  private validateFinancialData(): void {
-    const warnings: string[] = [];
-    
-    // Vérifier la cohérence des données
-    if (this.financialData.yearlyStats.length === 0 && 
-        this.financialData.tenantStats.length === 0 && 
-        this.financialData.paymentStats.length === 0) {
-      warnings.push('Aucune donnée financière disponible');
-    }
-    
-    // Vérifier la cohérence entre les différentes sources
-    if (this.financialData.yearlyStats.length > 0 && this.financialData.paymentStats.length === 0) {
-      warnings.push('Données de chambres présentes mais pas de statistiques de paiement');
-    }
-    
-    if (warnings.length > 0) {
-      console.warn('⚠️ Avertissements de validation:', warnings);
-    }
-  }
-
-  private loadFinancialDataForYear(year: number): void {
-    if (!this.propertyId) return;
-
-
-
-    // Charger les statistiques pour l'année sélectionnée
-    this.store.dispatch([
-      new StatisticAction.FetchStaticRoomDataByPropertyIdAndYear(this.propertyId, year.toString()),
-      new StatisticAction.FetchStaticLocataireDataByPropertyIdAndYear(this.propertyId, year.toString()),
-      new StatisticAction.FetchStaticAllPaymentLocataireDataByPropertyIdAndYear(this.propertyId, year.toString()),
-      new StatisticAction.FetchStatisticPaymentRecapitulationAccountOfAllPropertyByYear(year.toString())
-    ]);
-  }
-
-
-
-  private findRecapForYear(recapStats: StatisticPaymentOfAllPropertyByYear[] | null | undefined): StatisticPaymentOfAllPropertyByYear | null {
-    if (!recapStats || !Array.isArray(recapStats)) {
-      return null;
-    }
-    return recapStats.find(recap =>
-      recap && recap.year && recap.year.toString() === this.selectedYear.toString()
-    ) || null;
   }
 
   // === MÉTHODES D'ACTIONS ===
 
   onYearChange(year: number | string): void {
-    // Convertir en nombre si c'est une string
     const numericYear = typeof year === 'string' ? parseInt(year, 10) : year;
 
     if (isNaN(numericYear) || numericYear < 2020 || numericYear > 2030) {
-      console.error('❌ Année invalide:', year);
       return;
     }
 
-    console.log(`📅 CHANGEMENT D'ANNÉE: ${this.selectedYear} → ${numericYear}`);
-
-    // Remettre à zéro les compteurs
-    this.resetLoadingAttempts();
-
-    // Marquer comme en cours de chargement
-    this.isLoading = true;
-
-    // Mettre à jour l'année sélectionnée
-    const previousYear = this.selectedYear;
     this.selectedYear = numericYear;
-
-    try {
-      // Réinitialiser les observables avec la nouvelle année
-      this.initializeObservables();
-
-      // Charger les données pour la nouvelle année
-      this.loadFinancialDataForYear(numericYear);
-      
-      // Timeout de sécurité
-      setTimeout(() => {
-        if (this.isLoading) {
-          console.warn(`⚠️ Timeout pour l'année ${numericYear}, arrêt forcé`);
-          this.isLoading = false;
-        }
-      }, 12000);
-      
-    } catch (error) {
-      console.error('❌ Erreur lors du changement d\'année:', error);
-      this.selectedYear = previousYear; // Restaurer l'année précédente
-      this.isLoading = false;
-    }
+    this.loadFinancialData();
   }
 
-  /**
-   * Vérifie s'il y a des données financières disponibles avec validation améliorée
-   */
   hasFinancialData(): boolean {
-    const hasYearlyStats = this.financialData.yearlyStats.length > 0;
-    const hasTenantStats = this.financialData.tenantStats.length > 0;
-    const hasPaymentStats = this.financialData.paymentStats.length > 0;
-    const hasRecapitulation = this.financialData.recapitulation !== null;
-
-    // Logique améliorée : au minimum yearlyStats OU paymentStats
-    const hasMinimalData = hasYearlyStats || hasPaymentStats;
-    
-    // Vérification de la qualité des données
-    let dataQuality = 'none';
-    if (hasYearlyStats && hasPaymentStats && hasTenantStats) {
-      dataQuality = 'complete';
-    } else if (hasYearlyStats || hasPaymentStats) {
-      dataQuality = 'partial';
-    }
-
-    // console.log('🔍 Vérification des données financières:', {
-    //   hasYearlyStats,
-    //   hasTenantStats,
-    //   hasPaymentStats,
-    //   hasRecapitulation,
-    //   hasMinimalData,
-    //   dataQuality,
-    //   propertyId: this.propertyId,
-    //   selectedYear: this.selectedYear
-    // });
-
-    return hasMinimalData;
+    const hasData = this.backendData && this.backendData.length > 0;
+    return hasData;
   }
   
-  /**
-   * Obtient le score de qualité des données (0-100)
-   */
   getDataQualityScore(): number {
-    let score = 0;
-    
-    if (this.financialData.yearlyStats.length > 0) score += 40;
-    if (this.financialData.paymentStats.length > 0) score += 30;
-    if (this.financialData.tenantStats.length > 0) score += 20;
-    if (this.financialData.recapitulation !== null) score += 10;
-    
-    return score;
+    return this.hasFinancialData() ? 100 : 0;
   }
   
-  /**
-   * Obtient le label de qualité des données
-   */
   getDataQualityLabel(): string {
-    const score = this.getDataQualityScore();
-    
-    if (score >= 90) return 'Excellente';
-    if (score >= 70) return 'Bonne';
-    if (score >= 50) return 'Moyenne';
-    if (score >= 30) return 'Faible';
-    return 'Insuffisante';
+    return this.hasFinancialData() ? 'Excellente' : 'Insuffisante';
   }
 
-  /**
-   * Vérifie s'il y a au moins quelques données (pour affichage conditionnel)
-   */
   hasPartialData(): boolean {
     return this.hasFinancialData();
   }
 
-  /**
-   * Vérifie si l'année est complètement vide (aucune donnée du tout)
-   */
   isYearCompletelyEmpty(): boolean {
     return !this.hasFinancialData() && !this.isLoading;
   }
@@ -588,7 +213,6 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   onExportData(exportData: ExportData): void {
-    console.log('📊 Export des données financières:', exportData);
 
     if (exportData.type === 'excel') {
       this.exportToExcel(exportData);
@@ -687,40 +311,48 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   refreshData(): void {
-    if (!this.propertyId) {
-      console.warn('⚠️ Impossible de rafraîchir: propertyId manquant');
-      return;
-    }
-
-    console.log('🔄 RAFRAÎCHISSEMENT FORCÉ des données financières');
+    if (!this.propertyId) return;
     
-    // Marquer comme en cours de chargement
     this.isLoading = true;
-    
-    // Réinitialiser les compteurs
-    this.resetLoadingAttempts();
-    
-    try {
-      // Vider le cache et forcer le rechargement
-      this.store.dispatch(new StatisticAction.ResetAllState());
+    this.loadFinancialData();
+  }
 
-      // Recharger toutes les données après un court délai
-      setTimeout(() => {
-        this.loadFinancialData();
-      }, 200);
-      
-      // Timeout de sécurité
-      setTimeout(() => {
-        if (this.isLoading) {
-          console.warn('⚠️ Timeout de rafraîchissement, arrêt forcé');
-          this.isLoading = false;
-        }
-      }, 15000);
-      
-    } catch (error) {
-      console.error('❌ Erreur lors du rafraîchissement:', error);
-      this.isLoading = false;
-    }
+  debugStoreState(): void {
+    console.log('🔍 DEBUG STORE STATE:');
+    console.log('📊 Composant state:', {
+      propertyId: this.propertyId,
+      selectedYear: this.selectedYear,
+      backendData: this.backendData,
+      isLoading: this.isLoading,
+      hasFinancialData: this.hasFinancialData()
+    });
+
+    // Forcer le rechargement des données
+    console.log('🚀 Forçage du rechargement...');
+    this.store.dispatch(new StatisticAction.FetchStaticRoomDataByPropertyIdAndYear(this.propertyId, this.selectedYear.toString()));
+
+    // Vérifier le state complet
+    this.store.select(StatisticState.selectStateRoomStatistic).pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(allRoomStats => {
+      console.log('📊 Toutes les statistiques de chambres dans le store:', allRoomStats);
+    });
+
+    // Vérifier le sélecteur spécifique
+    this.store.select(
+      StatisticState.selectStateStatisticRoomByPropertyIdAndYear(this.propertyId, this.selectedYear)
+    ).pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(filteredData => {
+      console.log('📊 Données filtrées pour cette propriété/année:', filteredData);
+    });
+
+    // Vérifier les états de chargement
+    this.store.select(StatisticState.selectStateLoadingRoomStatistic).pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(loading => {
+      console.log('⏳ État de chargement:', loading);
+    });
   }
 
   // Méthode diagnoseFinancialData supprimée (dupliquée)

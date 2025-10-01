@@ -16,7 +16,8 @@ import {
   LocationAction,
   LocationState,
   HistoryLocationPaymentAction,
-  HistoryLocationPaymentState
+  HistoryLocationPaymentState,
+  StatisticAction
 } from 'src/app/shared/store';
 import { PropertyDataService, Unit, Tenant, HistoryItem } from '../services/property-data.service';
 import { UnitAction } from '../components/property-units-list/property-units-list.component';
@@ -113,7 +114,6 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
     if (this.propertyId) {
       // Les données sont déjà chargées par PropertyDetailsResolver
       // On n'a plus besoin de les charger ici
-      console.log(`🏢 PropertyDetailsComplete - Les données de la propriété ${this.propertyId} sont déjà chargées par le resolver`);
       this.initializeSubscriptions();
       this.updateTabsForUserRole();
     }
@@ -128,7 +128,6 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
     if (!this.propertyId) return;
 
     // S'abonner aux données déjà chargées par le resolver
-    console.log('📊 Initialisation des abonnements aux données');
 
     // Les données sont déjà disponibles dans le store grâce au resolver
     // On peut directement s'abonner aux observables
@@ -139,6 +138,10 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
     this.tenants$ = this.store.select(LocataireState.selectStateLocataireByPropertyId(this.propertyId));
     this.history$ = this.propertyDataService.getPropertyHistory(this.propertyId);
     this.loadingStates$ = this.propertyDataService.getLoadingStates();
+
+    // 🆕 Charger les données financières pour l'année courante
+    const currentYear = new Date().getFullYear();
+    this.store.dispatch(new StatisticAction.FetchStaticRoomDataByPropertyIdAndYear(this.propertyId, currentYear.toString()));
 
     // Mettre à jour les compteurs des onglets
     this.updateTabCounts();
@@ -614,10 +617,13 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
    */
   reloadPropertyData(): void {
     if (this.propertyId) {
+      const currentYear = new Date().getFullYear();
       // Recharger les données via le store
       this.store.dispatch(new PropertyAction.FetchProperty(this.propertyId));
       this.store.dispatch(new RoomAction.FetchRoomsByPropertyID(this.propertyId));
       this.store.dispatch(new LocationAction.FetchLocationsByPropertyId(this.propertyId));
+      // 🆕 Charger les données financières
+      this.store.dispatch(new StatisticAction.FetchStaticRoomDataByPropertyIdAndYear(this.propertyId, currentYear.toString()));
     }
   }
 

@@ -208,7 +208,7 @@ export class TenantPaymentAnalysisComponent implements OnInit, OnChanges {
       'Mois occupés': tenant.monthsOccupied,
       'Loyer mensuel': tenant.monthlyRent,
       'Statut contrat': tenant.contractStatus,
-      'Date d\'entrée': tenant.entryDate.toLocaleDateString('fr-FR'),
+      'Date d\'entrée': tenant.entryDate?.toLocaleDateString('fr-FR') || 'Non définie',
       'Année': this.selectedYear
     }));
 
@@ -218,8 +218,6 @@ export class TenantPaymentAnalysisComponent implements OnInit, OnChanges {
       filename: `analyse-locataires-${this.selectedYear}`
     });
   }
-
-
 
   // === MÉTHODES UTILITAIRES ===
 

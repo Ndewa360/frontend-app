@@ -3,8 +3,8 @@ import { environment } from 'src/environments/environment';
 import { HttpClient } from "@angular/common/http";
 import { Observable, combineLatest, of, } from "rxjs";
 import { ApiResultFormat } from "../global";
-import { switchMap } from "rxjs/operators";
-import { StatisticAllPaymentLocataireYearModel, StatisticLocataireYearModel, StatisticPaymentOfAllPropertyByYear, StatisticRoomYearModel } from "./statistic.model";
+import { switchMap, tap, catchError } from "rxjs/operators";
+import { StatisticAllPaymentLocataireYearModel, StatisticLocataireYearModel, StatisticPaymentOfAllPropertyByYear, StatisticRoomYearModel, EnrichedStatisticResponse, PropertyMetrics, ComprehensiveReport } from "./statistic.model";
 
 @Injectable({
     providedIn:'root'
@@ -21,9 +21,21 @@ export class StatisticService
 
    
 
-    getStatisticRoomDataByYear(propertyID:string,year:string|number):Observable<ApiResultFormat<StatisticRoomYearModel[]>>
+    getStatisticPropertyDataByYear(propertyID:string,year:string|number):Observable<ApiResultFormat<EnrichedStatisticResponse>>
     {
-        return this._httpClient.get<ApiResultFormat<StatisticRoomYearModel[]>>(`${environment.apiUrl}/statistic-location-payment/statistic-payement-by-room/${propertyID}/${year}/`)
+        const url = `${environment.apiUrl}/statistic-location-payment/statistic-payement-by-property/${propertyID}/${year}/`;
+        return this._httpClient.get<ApiResultFormat<EnrichedStatisticResponse>>(url).pipe(
+            catchError(error => {
+                console.error('❌ API Error:', {
+                    status: error.status,
+                    statusText: error.statusText,
+                    message: error.message,
+                    url: url,
+                    error: error.error
+                });
+                throw error;
+            })
+        )
     }
 
     getStatisticLocataireDataByYear(propertyID:string,year:string|number):Observable<ApiResultFormat<StatisticLocataireYearModel[]>>

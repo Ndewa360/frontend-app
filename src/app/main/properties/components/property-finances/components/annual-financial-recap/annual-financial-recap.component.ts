@@ -160,7 +160,7 @@ export class AnnualFinancialRecapComponent implements OnInit, OnChanges {
             if (monthData && typeof monthData.month === 'number') {
               const monthIndex = (monthData.month - 1) % 12; // Convertir 1-12 en 0-11
               if (monthIndex >= 0 && monthIndex < 12) {
-                monthlyData[monthIndex].expected += monthData.totalAmountToBeReceveid || 0;
+                monthlyData[monthIndex].expected += monthData.totalAmountToBeReceived || 0;
                 monthlyData[monthIndex].received += monthData.totalAmountReceived || 0;
                 monthlyData[monthIndex].count += 1;
               }

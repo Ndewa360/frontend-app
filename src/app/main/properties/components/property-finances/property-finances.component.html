@@ -52,13 +52,13 @@
         </button>
 
         <!-- Bouton de debug (développement) -->
-        <!-- <button (click)="debugStoreState()"
+        <button (click)="debugStoreState()"
                 class="flex items-center space-x-2 px-3 py-2 bg-blue-100 text-blue-700 rounded-lg text-sm font-medium hover:bg-blue-200 transition-colors duration-200">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
           </svg>
-          <span>Debug</span>
-        </button> -->
+          <span>Debug Store</span>
+        </button>
       </div>
     </div>
 
@@ -142,10 +142,6 @@
       <!-- Tableau de bord avancé -->
       <div *ngIf="activeSection === 'dashboard'">
         <app-advanced-financial-dashboard
-          [yearlyStats]="financialData.yearlyStats"
-          [tenantStats]="financialData.tenantStats"
-          [paymentStats]="financialData.paymentStats"
-          [recapitulation]="financialData.recapitulation"
           [selectedYear]="selectedYear"
           [propertyId]="propertyId"
           [isLoading]="isLoading"
@@ -156,8 +152,6 @@
       <!-- Vue d'ensemble -->
       <div *ngIf="activeSection === 'overview'">
         <app-financial-overview
-          [yearlyStats]="financialData.yearlyStats"
-          [recapitulation]="financialData.recapitulation"
           [selectedYear]="selectedYear"
           [propertyId]="propertyId"
           [isLoading]="isLoading"
@@ -168,8 +162,8 @@
       <!-- Analyse des locataires -->
       <div *ngIf="activeSection === 'tenants'">
         <app-tenant-payment-analysis
-          [tenantStats]="financialData.tenantStats"
-          [paymentStats]="financialData.paymentStats"
+          [tenantStats]="backendData"
+          [paymentStats]="backendData"
           [selectedYear]="selectedYear"
           [propertyId]="propertyId"
           [isLoading]="isLoading"
@@ -177,8 +171,8 @@
         </app-tenant-payment-analysis>
         
         <app-tenant-payment-tracking
-          [tenantStats]="financialData.tenantStats"
-          [paymentStats]="financialData.paymentStats"
+          [tenantStats]="backendData"
+          [paymentStats]="backendData"
           [selectedYear]="selectedYear"
           [propertyId]="propertyId"
           [isLoading]="isLoading"
@@ -189,7 +183,7 @@
       <!-- Récapitulatif des cautions -->
       <div *ngIf="activeSection === 'deposits'">
         <app-deposits-summary
-          [yearlyStats]="financialData.yearlyStats"
+          [yearlyStats]="backendData"
           [selectedYear]="selectedYear"
           [propertyId]="propertyId"
           [isLoading]="isLoading"
@@ -200,9 +194,6 @@
       <!-- Revenus mensuels -->
       <div *ngIf="activeSection === 'monthly'">
         <app-monthly-revenue-analysis
-          [paymentStats]="financialData.paymentStats"
-          [recapitulation]="financialData.recapitulation"
-          [yearlyStats]="financialData.yearlyStats"
           [selectedYear]="selectedYear"
           [propertyId]="propertyId"
           [isLoading]="isLoading"

@@ -1,8 +1,9 @@
 import { CurrencyPipe } from '@angular/common';
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Store } from '@ngxs/store';
-import { Currency, StatisticAllPaymentLocataireYearModel, StatisticPaymentStateType, StatisticState } from 'src/app/shared/store';
+import { Currency, StatisticAllPaymentLocataireYearModel, StatisticPaymentStateType, StatisticState, StatisticAction } from 'src/app/shared/store';
 import { UtilsString } from 'src/app/shared/utils';
+import { FinancialCalculationsService } from 'src/app/shared/services/financial-calculations.service';
 
 @Component({
   selector: 'chart-finance-payement-annee',
@@ -21,16 +22,36 @@ export class ChartFinancePayementAnneeComponent implements OnChanges{
 
   constructor(
     private _store:Store,
-    private currencyPipe:CurrencyPipe
+    private currencyPipe:CurrencyPipe,
+    private financialService: FinancialCalculationsService
   ){}
 
   ngOnInit(): void {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if(changes['propertyID'] || changes['selectedYear']) {
-      this.title=`Paiment de locataire ${this.selectedYear}`
+      this.title=`Paiement de locataire ${this.selectedYear} (Calculs centralisés)`;
+      
+      console.log(`📊 Chargement des paiements centralisés - Propriété: ${this.propertyID}, Année: ${this.selectedYear}`);
+      
+      // Déclencher l'action pour récupérer les calculs centralisés
+      this._store.dispatch(new StatisticAction.FetchStaticAllPaymentLocataireDataByPropertyIdAndYear(this.propertyID, this.selectedYear.toString()));
+      
+      // Écouter les données centralisées
       this._store.select(StatisticState.selectStateStatisticAllPaymentLocataireByPropertyIdAndYear(this.propertyID,this.selectedYear))
-      .subscribe((value)=>this.charsOpts = this.getChart(value))
+      .subscribe((backendData) => {
+        if (backendData && backendData.length > 0) {
+          // Validation des données backend
+          const validation = this.financialService.validateBackendData({ rooms: backendData });
+          if (!validation.isValid) {
+            console.warn('⚠️ Données backend invalides:', validation.errors);
+          }
+          
+          console.log('✅ Utilisation des données centralisées pour les paiements locataires');
+        }
+        
+        this.charsOpts = this.getChart(backendData);
+      });
     }
   }
   
@@ -48,11 +69,15 @@ export class ChartFinancePayementAnneeComponent implements OnChanges{
           let statusText = this.getTextFromPaymentStatus(status);
           let room = this.getRoomInfosByUserName(params.data[1], params.data[0])
           return `
-            ${params.seriesName}<br/>Locataire: ${params.data[1]}<br/>
-            Mois: ${UtilsString.capitalizedFirstLetter(new Date(this.selectedYear,params.data[0]).toLocaleDateString("fr-FR",{month:'long'}))}<br/>
-            Montant: ${room.price}<br/>
-            ${room.roomStringTYpe}: ${room.roomCode}<br/>
-            Status: ${statusText}
+            <div style="padding: 8px; background: #f9f9f9; border-radius: 4px;">
+              <strong>${params.seriesName}</strong><br/>
+              <strong>Locataire:</strong> ${params.data[1]}<br/>
+              <strong>Mois:</strong> ${UtilsString.capitalizedFirstLetter(new Date(this.selectedYear,params.data[0]).toLocaleDateString("fr-FR",{month:'long'}))}<br/>
+              <strong>Montant:</strong> ${room.price}<br/>
+              <strong>${room.roomStringTYpe}:</strong> ${room.roomCode}<br/>
+              <strong>Statut:</strong> ${statusText}<br/>
+              <em style="color: #666; font-size: 0.9em;">Calculs centralisés backend</em>
+            </div>
             `;
         }
       },
@@ -93,16 +118,18 @@ export class ChartFinancePayementAnneeComponent implements OnChanges{
         }
       },
       series: [{
-        name: 'Status des Paiements',
+        name: 'Statut des Paiements (Centralisé)',
         type: 'heatmap',
-        data: dataPayment, // Format des données : [mois, utilisateur, statut]
+        data: dataPayment,
         label: {
           show: true,
           formatter: (params)=>{
-            let room = this.getRoomInfosByUserName(params.data[1], params.data[0])
             let status = params.data[2];
-            return `${this.getTextFromPaymentStatus(status)}`;
-          }
+            let statusText = this.getTextFromPaymentStatus(status);
+            return `${statusText}`;
+          },
+          fontSize: 10,
+          fontWeight: 'bold'
         },
         emphasis: {
           itemStyle: {
