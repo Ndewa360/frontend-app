@@ -106,7 +106,51 @@ export interface EnrichedStatisticResponse {
                     monthlyPayments: number[]
                 }
             }[],    
-        },       
+        },   
+        cautionsAnalysis: {
+            roomsCautions:  {
+                room: RoomModel,
+                tenant: LocataireModel,
+                location: {
+                    _id: string,
+                    startedAt: string,
+                    endedAt: string | null,
+                    locationPriceUnit: number
+                },
+                cautionStatus: string,
+                expectedCautionAmount: number,
+                totalCautionPaid: number,
+                cautionDeficit: number,
+                cautionExcess: number,
+                paymentsCount: number,
+                cautionPayments: {
+                    paymentId: string,
+                    amount: number,
+                    paymentDate: Date,
+                    paymentMethod: string
+                }[],
+                lastCautionPayment: {
+                    paymentId: string,
+                    amount: number,
+                    paymentDate: Date,
+                    paymentMethod: string
+                } | null
+            }[],
+            summary: {
+                totalOccupiedRooms: number,
+                roomsRequiringCaution: number,
+                roomsWithCautionPaid: number,
+                roomsWithCautionUnpaid: number,
+                totalCautionsReceived: number,
+                totalCautionsExpected: number,
+                cautionCoverageRate: number,
+                paidCautions: number,
+                partialCautions: number,
+                unpaidCautions: number,
+                overpaidCautions: number
+            },
+            alerts: string[]
+        },    
         year:string,    
     },
     performanceMs:  number,

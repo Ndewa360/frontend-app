@@ -181,7 +181,7 @@
       <!-- Récapitulatif des cautions -->
       <div *ngIf="activeSection === 'deposits'">
         <app-deposits-summary
-          [yearlyStats]="backendData"
+          [enrichedData]="backendData"
           [selectedYear]="selectedYear"
           [propertyId]="propertyId"
           [isLoading]="isLoading"
