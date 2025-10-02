@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import {
   EnrichedStatisticResponse
 } from 'src/app/shared/store';
@@ -88,8 +88,14 @@ export class DepositsSummaryComponent implements OnInit, OnChanges {
     this.processDepositData();
   }
 
-  ngOnChanges(): void {
-    this.processDepositData();
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['enrichedData'] || changes['selectedYear']) {
+      this.processDepositData();
+    }
+    
+    if (changes['isLoading']) {
+      console.log('🔄 DEPOSITS - Changement de loading:', changes['isLoading'].currentValue);
+    }
   }
 
   private processDepositData(): void {
@@ -97,7 +103,7 @@ export class DepositsSummaryComponent implements OnInit, OnChanges {
     
     this.depositSummaries = [];
     
-    if (!this.enrichedData) {
+    if (!this.enrichedData || this.enrichedData.length === 0) {
       console.warn('⚠️ Aucune donnée de cautions disponible');
       this.calculateGlobalStats();
       this.applyFilters();

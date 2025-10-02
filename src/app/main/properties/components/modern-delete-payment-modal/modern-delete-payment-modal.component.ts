@@ -10,7 +10,8 @@ import {
   LocationPaymentType,
   LocataireModel,
   RoomModel,
-  HistoryLocationPaymentModel
+  HistoryLocationPaymentModel,
+  StatisticAction
 } from 'src/app/shared/store';
 
 export interface DeletePaymentModalData {
@@ -54,6 +55,10 @@ export class ModernDeletePaymentModalComponent implements OnInit, OnDestroy {
       console.log('✅ Paiement supprimé avec succès');
       this.isLoading = false;
       this.toastr.success('Paiement supprimé avec succès', 'Succès');
+      
+      // Rafraîchir automatiquement les statistiques
+      this.refreshStatistics();
+      
       this.dialogRef.close(true);
     });
 
@@ -207,6 +212,26 @@ export class ModernDeletePaymentModalComponent implements OnInit, OnDestroy {
         return 'shield';
       default:
         return 'money';
+    }
+  }
+
+  /**
+   * Rafraîchit automatiquement les statistiques après suppression d'un paiement
+   */
+  private refreshStatistics(): void {
+    const propertyId = this.data.history?.property?._id;
+    const currentYear = new Date().getFullYear();
+    
+    if (propertyId) {
+      console.log('🔄 Déclenchement du rafraîchissement des statistiques après suppression pour:', {
+        propertyId,
+        year: currentYear
+      });
+      
+      // Déclencher le rafraîchissement des statistiques
+      this.store.dispatch(new StatisticAction.RefreshStatisticAfterPayment(propertyId, currentYear));
+    } else {
+      console.warn('⚠️ Impossible de rafraîchir les statistiques: propertyId manquant');
     }
   }
 }

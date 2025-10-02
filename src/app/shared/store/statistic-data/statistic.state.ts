@@ -432,6 +432,24 @@ export class StatisticState{
                 }
             )
         )
+    }
+
+    @Action(StatisticAction.RefreshStatisticAfterPayment)
+    refreshStatisticAfterPayment(ctx: StateContext<StatisticStateModel>, { propertyID, year }: StatisticAction.RefreshStatisticAfterPayment) {
+        console.log('🔄 Rafraîchissement automatique des statistiques après paiement');
+        
+        const state = ctx.getState();
+        const key = `${propertyID}-${year}`;
+        
+        // Supprimer les anciennes données pour forcer le rechargement
+        const filteredPropertyStats = state.propertyStatistic.filter((u) => u.key !== key);
+        
+        ctx.patchState({
+            propertyStatistic: filteredPropertyStats
+        });
+        
+        // Déclencher le rechargement des données
+        return ctx.dispatch(new StatisticAction.FetchStaticByPropertyIdAndYear(propertyID, year.toString()));
     }  
     
     @Action(StatisticAction.RefreshStaticLocataireDataByPropertyIdAndYear)

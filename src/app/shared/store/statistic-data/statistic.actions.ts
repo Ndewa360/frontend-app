@@ -48,4 +48,10 @@ export namespace StatisticAction
     {
         static readonly type = '[Statistic] Logout'
     }
+
+    export class RefreshStatisticAfterPayment
+    {
+        static readonly type = '[Statistic] Refresh After Payment'
+        constructor(public propertyID: string, public year: string | number) {}
+    }
 }

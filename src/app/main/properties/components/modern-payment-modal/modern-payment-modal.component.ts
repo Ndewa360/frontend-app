@@ -15,7 +15,8 @@ import {
   LocataireModel,
   RoomModel,
   LocationModel,
-  HistoryLocationPaymentModel
+  HistoryLocationPaymentModel,
+  StatisticAction
 } from 'src/app/shared/store';
 import { FormUtils } from 'src/app/shared/utils';
 
@@ -177,6 +178,10 @@ export class ModernPaymentModalComponent implements OnInit, OnDestroy {
       console.log('✅ Paiement ajouté avec succès');
       this.isLoading = false;
       this.toastr.success('Paiement enregistré avec succès', 'Succès');
+      
+      // Rafraîchir automatiquement les statistiques
+      this.refreshStatistics();
+      
       this.dialogRef.close(true);
     });
 
@@ -188,6 +193,10 @@ export class ModernPaymentModalComponent implements OnInit, OnDestroy {
       console.log('✅ Paiement modifié avec succès');
       this.isLoading = false;
       this.toastr.success('Paiement modifié avec succès', 'Succès');
+      
+      // Rafraîchir automatiquement les statistiques
+      this.refreshStatistics();
+      
       this.dialogRef.close(true);
     });
 
@@ -430,6 +439,26 @@ export class ModernPaymentModalComponent implements OnInit, OnDestroy {
 
   regenerateBillingRef(): void {
     this.generateBillingRef();
+  }
+
+  /**
+   * Rafraîchit automatiquement les statistiques après un paiement
+   */
+  private refreshStatistics(): void {
+    const propertyId = this.data.room?.property || this.data.transaction?.property;
+    const currentYear = new Date().getFullYear();
+    
+    if (propertyId) {
+      console.log('🔄 Déclenchement du rafraîchissement des statistiques pour:', {
+        propertyId,
+        year: currentYear
+      });
+      
+      // Déclencher le rafraîchissement des statistiques
+      this.store.dispatch(new StatisticAction.RefreshStatisticAfterPayment(propertyId, currentYear));
+    } else {
+      console.warn('⚠️ Impossible de rafraîchir les statistiques: propertyId manquant');
+    }
   }
 
   // Méthodes de paiement disponibles

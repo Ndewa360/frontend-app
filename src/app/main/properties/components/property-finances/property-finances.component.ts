@@ -126,7 +126,10 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
       next: (backendData) => {
         console.log("Data to found ",backendData)
         this.backendData = backendData;
-        this.isLoading = false;
+        // Arrêter le loading seulement si on a reçu des données
+        if (backendData && backendData.length > 0) {
+          this.isLoading = false;
+        }
       },
       error: (error) => {
         console.error('❌ Erreur lors du chargement des données:', error);
@@ -144,6 +147,8 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
       return;
     }
 
+    // Définir isLoading immédiatement avant de changer l'année
+    this.isLoading = true;
     this.selectedYear = numericYear;
     this.loadFinancialData();
   }
