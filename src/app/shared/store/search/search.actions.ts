@@ -1,10 +1,12 @@
+import { AdvancedSearchFilters } from './search.service';
+
 export namespace SearchAction
 {
     //Fetch  Search profil
     export class FetchSearch
     {
         static readonly type = '[Search] Fectch Search'
-        constructor(public city:string, public page:number = 1, public pageSize:number = 12){}
+        constructor(public city:string, public page:number = 1, public pageSize:number = 10000){}
     }
 
     export class FetchSearchByIdRoom
@@ -32,6 +34,12 @@ export namespace SearchAction
             minPrice?:number,
             maxPrice?:number
         }, public isNewLocation:boolean){}
+    }
+
+    export class AdvancedSearch
+    {
+        static readonly type = '[Search] Advanced Search'
+        constructor(public filters: any, public resetResults: boolean = true){}
     }
 
 }

@@ -81,7 +81,7 @@ export class SearchService
     /**
      * Recherche simple par ville avec pagination
      */
-    getSearch(city:string, page:number = 1, pageSize:number = 12):Observable<ApiResultFormat<PaginatedSearchResponse>>
+    getSearch(city:string, page:number = 1, pageSize:number = 10000):Observable<ApiResultFormat<PaginatedSearchResponse>>
     {
         const params = new HttpParams()
             .set('page', page.toString())

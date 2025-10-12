@@ -17,6 +17,11 @@ export class SearchStateModel {
     loadingSearch:boolean
     loadingSearchItem:boolean
     initLoadingState:'NO_LOADED'|'LOADING'|'LOADED';
+    // Pagination
+    currentPage: number;
+    totalPages: number;
+    totalResults: number;
+    pageSize: number;
     criteriaFinder?:{
         specifity?: { 
             hasClosure?: boolean,
@@ -44,6 +49,10 @@ export class SearchStateModel {
         loadingSearchItem:true,
         filteredSearchedProperties:[],
         initLoadingState:'NO_LOADED',
+        currentPage: 1,
+        totalPages: 1,
+        totalResults: 0,
+        pageSize: 10000, // Limite backend élevée
         criteriaFinder:null
     }
 })
@@ -85,6 +94,17 @@ export class SearchState{
     static selectStateFilteredProperty(state:SearchStateModel)
     {
         return state.filteredSearchedProperties
+    }
+
+    @Selector()
+    static selectStatePagination(state:SearchStateModel)
+    {
+        return {
+            currentPage: state.currentPage,
+            totalPages: state.totalPages,
+            totalResults: state.totalResults,
+            pageSize: state.pageSize
+        }
     }
 
     static selectStateSearch(searchID)
@@ -201,7 +221,7 @@ export class SearchState{
 
 
     @Action(SearchAction.FetchSearch)
-    fetchSearch(ctx:StateContext<SearchStateModel>,{city, page = 1, pageSize = 12}:SearchAction.FetchSearch)
+    fetchSearch(ctx:StateContext<SearchStateModel>,{city, page = 1, pageSize = 10000}:SearchAction.FetchSearch)
     {
         const state = ctx.getState();
 
@@ -266,6 +286,57 @@ export class SearchState{
                 return throwError(error);
             })
         )
+    }
+
+    @Action(SearchAction.AdvancedSearch)
+    advancedSearch(ctx: StateContext<SearchStateModel>, { filters, resetResults }: SearchAction.AdvancedSearch) {
+        const state = ctx.getState();
+        
+        // Définir les valeurs par défaut pour la pagination
+        const searchFilters = {
+            ...filters,
+            page: filters.page || 1,
+            limit: filters.limit || 10000 // Limite backend élevée
+        };
+
+        console.log('🔍 Recherche avancée avec filtres:', searchFilters);
+
+        ctx.patchState({
+            loadingSearch: true
+        });
+
+        return this._searchPropertiesService.advancedSearch(searchFilters).pipe(
+            tap(result => {
+                console.log('✅ Résultats de recherche reçus:', result);
+                
+                const responseData = result.data;
+                const properties = responseData?.data || [];
+                const pagination = responseData?.pagination;
+
+                // Mettre à jour les résultats selon le mode (reset ou ajout)
+                const updatedProperties = resetResults 
+                    ? properties 
+                    : [...state.filteredSearchedProperties, ...properties];
+
+                ctx.patchState({
+                    loadingSearch: false,
+                    filteredSearchedProperties: updatedProperties,
+                    searchProperties: resetResults ? properties : [...state.searchProperties, ...properties],
+                    currentPage: pagination?.page || 1,
+                    totalPages: pagination?.totalPages || 1,
+                    totalResults: pagination?.total || properties.length,
+                    pageSize: pagination?.limit || 10000
+                });
+            }),
+            catchError(error => {
+                console.error('❌ Erreur lors de la recherche avancée:', error);
+                ctx.patchState({
+                    loadingSearch: false
+                });
+                this._toastrService.error('Erreur lors de la recherche', 'Erreur');
+                return throwError(error);
+            })
+        );
     }
 
 }

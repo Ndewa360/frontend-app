@@ -9,7 +9,7 @@ import { takeUntil, map, filter, take, switchMap } from 'rxjs/operators';
 
 // Services et modèles
 import { SearchService, AdvancedSearchFilters } from 'src/app/shared/store/search/search.service';
-import { CityModel, CityState, CityAction, SearchPropertyModel, SearchState, CountryAction } from 'src/app/shared/store';
+import { CityModel, CityState, CityAction, SearchPropertyModel, SearchState, CountryAction, SearchAction } from 'src/app/shared/store';
 
 import { GeolocationService, LocationInfo } from 'src/app/shared/services/geolocation/geolocation.service';
 import { TranslationService } from 'src/app/shared/services/localization/translation.service';
@@ -58,6 +58,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   @Select(CityState.selectStateCities) cities$: Observable<CityModel[]>;
   @Select(SearchState.selectStateFilteredProperty) searchResults$: Observable<SearchPropertyModel[]>;
   @Select(SearchState.selectStateLoading) loading$: Observable<boolean>;
+  @Select(SearchState.selectStatePagination) pagination$: Observable<any>;
 
   // Form et état
   searchForm: FormGroup;
@@ -95,11 +96,13 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   currentFilters: AdvancedSearchFilters = {};
 
   // Pagination
-  readonly ITEMS_PER_PAGE = 12; // 12 unités par page (entre 10-15)
+  readonly ITEMS_PER_PAGE = 20; // 20 unités par page en frontend
+  readonly BACKEND_LIMIT = 10000; // Charger 10000 unités depuis le backend
   currentPage = 1;
   totalPages = 1;
   totalResults = 0;
   paginatedResults: SearchPropertyModel[] = [];
+  allResults: SearchPropertyModel[] = []; // Stocker tous les résultats du backend
 
   // Gestion des favoris (stockage local)
   favoriteIds: Set<string> = new Set();
@@ -464,18 +467,29 @@ export class SearchPageComponent implements OnInit, OnDestroy {
         }
       });
 
-    // Écouter les changements de filtres (désactivé temporairement pour debugging)
-    // this.searchForm.valueChanges
-    //   .pipe(
-    //     debounceTime(500),
-    //     distinctUntilChanged(),
-    //     takeUntil(this.destroy$)
-    //   )
-    //   .subscribe(formValue => {
-    //     console.log('🔄 Form value changed:', formValue);
-    //     this.currentFilters = { ...formValue };
-    //     this.performSearch();
-    //   });
+    // Écouter les changements de résultats de recherche
+    this.searchResults$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(results => {
+        console.log('🔍 Nouveaux résultats de recherche reçus:', results?.length || 0);
+        
+        if (results && Array.isArray(results)) {
+          this.allResults = results; // Stocker tous les résultats
+          this.totalResults = results.length;
+          this.updatePagination(); // Calculer la pagination côté client
+          
+          // Réinitialiser les index d'images pour les nouvelles cartes
+          this.currentImageIndexes = {};
+          
+          console.log('✅ Résultats mis à jour:', {
+            totalCount: this.allResults.length,
+            totalResults: this.totalResults,
+            currentPage: this.currentPage,
+            totalPages: this.totalPages,
+            displayedCount: this.paginatedResults.length
+          });
+        }
+      });
   }
 
   private loadInitialData(): void {
@@ -906,6 +920,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
     this.searchForm.reset();
     this.quickFilters.forEach(f => f.active = false);
     this.currentFilters = {};
+    this.allResults = [];
     this.searchResults = [];
     this.paginatedResults = [];
     this.currentPage = 1;
@@ -948,11 +963,11 @@ export class SearchPageComponent implements OnInit, OnDestroy {
 
     console.log('🔍 Recherche démarrée - hasSearched:', this.hasSearched);
 
-    // Utiliser les filtres déterminés
+    // Utiliser les filtres déterminés avec limite backend élevée
     const filters: AdvancedSearchFilters = {
       ...filtersToUse,
-      page: this.currentPage,
-      limit: this.ITEMS_PER_PAGE
+      page: 1, // Toujours page 1 pour récupérer tous les résultats
+      limit: this.BACKEND_LIMIT // Charger 10000 unités depuis le backend
     };
 
     this.searchService.advancedSearch(filters)
@@ -963,8 +978,9 @@ export class SearchPageComponent implements OnInit, OnDestroy {
             // Vérification de la structure des données
             const data = response.data?.data || response.data || [];
 
-            this.searchResults = Array.isArray(data) ? data : [];
-            this.totalResults = this.searchResults.length; // Total des résultats reçus
+            this.allResults = Array.isArray(data) ? data : []; // Stocker tous les résultats
+            this.totalResults = this.allResults.length; // Total des résultats reçus
+            console.warn("Total Result ",this.allResults.length)
             this.updatePagination(); // Calculer la pagination côté client
 
             // Réinitialiser les index d'images pour les nouvelles cartes
@@ -978,7 +994,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
             });
 
             // Si aucun résultat, afficher l'état vide au lieu de faire un fallback automatique
-            if (this.searchResults.length === 0) {
+            if (this.allResults.length === 0) {
               console.log('📭 Aucun résultat trouvé - affichage de l\'état vide');
               // Ne pas faire de fallback automatique, laisser l'utilisateur voir l'état vide
               // this.fallbackToBangangte();
@@ -1203,8 +1219,8 @@ export class SearchPageComponent implements OnInit, OnDestroy {
               // Vérification de la structure des données
               const data = response.data?.data || response.data || [];
 
-              this.searchResults = Array.isArray(data) ? data : [];
-              this.totalResults = this.searchResults.length;
+              this.allResults = Array.isArray(data) ? data : [];
+              this.totalResults = this.allResults.length;
               this.updatePagination();
 
               // Réinitialiser les index d'images pour les nouvelles cartes
@@ -1214,6 +1230,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
           },
           error: (error) => {
             console.error('Erreur lors du fallback vers Bangangté:', error);
+            this.allResults = [];
             this.searchResults = [];
             this.isLoading = false;
           }
@@ -1466,7 +1483,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
    * Détermine si l'état vide doit être affiché
    */
   shouldShowEmptyState(): boolean {
-    const hasResults = this.searchResults && this.searchResults.length > 0;
+    const hasResults = this.allResults && this.allResults.length > 0;
     const isCurrentlyLoading = this.isLoading || this.isLoadingMore || this.isPerformingSearch;
 
     // Critères de recherche plus larges
@@ -1492,26 +1509,26 @@ export class SearchPageComponent implements OnInit, OnDestroy {
                       !hasResults;
 
     // Logs détaillés pour debugging
-    console.log('🔍 Empty state check - DETAILED:', {
-      timestamp: new Date().toISOString(),
-      isLoading: this.isLoading,
-      isLoadingMore: this.isLoadingMore,
-      isPerformingSearch: this.isPerformingSearch,
-      hasSearched: this.hasSearched,
-      searchResults: this.searchResults,
-      searchResultsLength: this.searchResults?.length || 0,
-      hasResults,
-      currentFilters: this.currentFilters,
-      searchControlValue: this.searchControl?.value,
-      hasSearchCriteria,
-      shouldShow,
-      '--- BREAKDOWN ---': '---',
-      'NOT loading': !isCurrentlyLoading,
-      'HAS searched': this.hasSearched,
-      'NO results': !hasResults,
-      'HAS criteria': hasSearchCriteria,
-      '🛡️ PROTECTION': hasResults ? 'BLOQUÉ - On a des résultats!' : 'OK'
-    });
+    // console.log('🔍 Empty state check - DETAILED:', {
+    //   timestamp: new Date().toISOString(),
+    //   isLoading: this.isLoading,
+    //   isLoadingMore: this.isLoadingMore,
+    //   isPerformingSearch: this.isPerformingSearch,
+    //   hasSearched: this.hasSearched,
+    //   searchResults: this.searchResults,
+    //   searchResultsLength: this.searchResults?.length || 0,
+    //   hasResults,
+    //   currentFilters: this.currentFilters,
+    //   searchControlValue: this.searchControl?.value,
+    //   hasSearchCriteria,
+    //   shouldShow,
+    //   '--- BREAKDOWN ---': '---',
+    //   'NOT loading': !isCurrentlyLoading,
+    //   'HAS searched': this.hasSearched,
+    //   'NO results': !hasResults,
+    //   'HAS criteria': hasSearchCriteria,
+    //   '🛡️ PROTECTION': hasResults ? 'BLOQUÉ - On a des résultats!' : 'OK'
+    // });
 
     return shouldShow;
   }
@@ -1538,7 +1555,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
    * Debug: Afficher les informations du slider pour une carte
    */
   debugSlider(cardIndex: number): void {
-    const result = this.searchResults[cardIndex];
+    const result = this.paginatedResults[cardIndex];
     const medias = this.getMediasForCard(result);
     const currentIndex = this.getCurrentImageIndex(cardIndex);
 
@@ -1583,7 +1600,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
    * Définit l'image actuelle pour une carte donnée
    */
   setCurrentImage(cardIndex: number, imageIndex: number): void {
-    const result = this.searchResults[cardIndex];
+    const result = this.paginatedResults[cardIndex];
     if (!result) {
       console.warn(`🖼️ Slider: Résultat non trouvé pour carte ${cardIndex}`);
       return;
@@ -1606,7 +1623,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
    * Passe à l'image suivante
    */
   nextImage(cardIndex: number): void {
-    const result = this.searchResults[cardIndex];
+    const result = this.paginatedResults[cardIndex];
     if (!result) {
       console.log(`🖼️ Slider: Résultat non trouvé pour carte ${cardIndex}`);
       return;
@@ -1628,7 +1645,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
    * Passe à l'image précédente
    */
   previousImage(cardIndex: number): void {
-    const result = this.searchResults[cardIndex];
+    const result = this.paginatedResults[cardIndex];
     if (!result) {
       console.log(`🖼️ Slider: Résultat non trouvé pour carte ${cardIndex}`);
       return;
@@ -1768,7 +1785,8 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   private updatePaginatedResults(): void {
     const startIndex = (this.currentPage - 1) * this.ITEMS_PER_PAGE;
     const endIndex = startIndex + this.ITEMS_PER_PAGE;
-    this.paginatedResults = this.searchResults.slice(startIndex, endIndex);
+    this.paginatedResults = this.allResults.slice(startIndex, endIndex);
+    this.searchResults = this.paginatedResults; // Pour compatibilité avec le template
   }
 
   /**
@@ -1777,6 +1795,8 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   goToPage(page: number): void {
     if (page >= 1 && page <= this.totalPages && page !== this.currentPage) {
       this.currentPage = page;
+      
+      // Mettre à jour les résultats paginés côté client
       this.updatePaginatedResults();
 
       // Scroll vers le haut des résultats
@@ -1996,12 +2016,12 @@ export class SearchPageComponent implements OnInit, OnDestroy {
    * Ouvre le dialog de détails pour une unité avec MatDialog
    */
   openUnitDetail(unit: SearchPropertyModel): void {
-    const currentIndex = this.searchResults.findIndex(u => u._id === unit._id);
+    const currentIndex = this.allResults.findIndex(u => u._id === unit._id);
 
     const dialogRef = this.dialog.open(UnitDetailDialogComponent, {
       data: {
         unit: unit,
-        allUnits: this.searchResults,
+        allUnits: this.allResults,
         currentIndex: currentIndex
       },
       width: '100vw',
@@ -2049,8 +2069,8 @@ export class SearchPageComponent implements OnInit, OnDestroy {
     const unitId = this.route.snapshot.queryParams['unit'];
     if (unitId) {
       // Si les résultats sont déjà chargés, ouvrir directement
-      if (this.searchResults && this.searchResults.length > 0) {
-        const unit = this.searchResults.find(u => u._id === unitId);
+      if (this.allResults && this.allResults.length > 0) {
+        const unit = this.allResults.find(u => u._id === unitId);
         if (unit) {
           setTimeout(() => this.openUnitDetail(unit), 100); // Petit délai pour s'assurer que tout est initialisé
         }
