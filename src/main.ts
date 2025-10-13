@@ -5,6 +5,10 @@ import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
 
+import { inject } from "@vercel/analytics"
+import { injectSpeedInsights } from '@vercel/speed-insights';
+
+
 if (environment.production) {
 	enableProdMode();
 }
@@ -12,6 +16,9 @@ if (environment.production) {
 import { register as registerSwiperElements } from 'swiper/element/bundle'
 
 registerSwiperElements();
+
+inject();
+injectSpeedInsights();
 
 
 

@@ -54,6 +54,8 @@
     "@tailwindcss/typography": "^0.5.15",
     "@tinymce/tinymce-angular": "^9.0.0",
     "@types/chroma-js": "^2.1.4",
+    "@vercel/analytics": "^1.5.0",
+    "@vercel/speed-insights": "^1.2.0",
     "angular-bem": "^2.2.0",
     "angular-resizable-element": "^7.0.2",
     "carbon-components": "^10.58.15",
