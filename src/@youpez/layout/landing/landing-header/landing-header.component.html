@@ -50,6 +50,11 @@
               <span>Support</span> 
             </a>
           </li>
+          <li [routerLink]="'/fundraising'" [routerLinkActive]="['active']">
+            <a class="block py-2 px-3 text-orange-600 font-semibold md:hover:bg-transparent md:border-0  md:p-0 dark:hover:text-orange-400 md:dark:hover:bg-transparent">
+              <span>💝 Nous Soutenir</span>
+            </a>
+          </li>
 
 
 
@@ -91,6 +96,9 @@
           </li>
           <li [routerLink]="'/support/welcome'">
             <a  class="block py-2 px-3 text-gray-900 md:hover:bg-transparent md:border-0  md:p-0 dark:hover:text-white md:dark:hover:bg-transparent">Support</a>
+          </li>
+          <li [routerLink]="'/fundraising'">
+            <a class="block py-2 px-3 text-orange-600 font-semibold md:hover:bg-transparent md:border-0  md:p-0 dark:hover:text-orange-400 md:dark:hover:bg-transparent">💝 Nous Soutenir</a>
           </li>
           <li>
             
@@ -154,6 +162,12 @@
                 <a class="mobile-nav-link">
                   <i class="fas fa-life-ring"></i>
                   <span>Support</span>
+                </a>
+              </li>
+              <li [routerLink]="'/fundraising'" (click)="toggleMenu()">
+                <a class="mobile-nav-link text-orange-600">
+                  <i class="fas fa-heart"></i>
+                  <span>💝 Nous Soutenir</span>
                 </a>
               </li>
             </ul>

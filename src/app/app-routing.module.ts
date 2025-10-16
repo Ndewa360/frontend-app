@@ -51,6 +51,16 @@ const routes: Routes = [
 		},
 		loadChildren: () => import('./support/support.module').then(m => m.SupportModule)
 	},
+	{
+		path: 'fundraising',
+		resolve:{
+			"publicData": PublicDataResolver
+		},
+		data:{
+			breadcrumb: 'Collecte de Fonds'
+		},
+		loadChildren: () => import('./fundraising/fundraising.module').then(m => m.FundraisingModule)
+	},
 
 	{
 		path: 'admin',
