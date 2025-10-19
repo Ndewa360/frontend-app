@@ -30,7 +30,7 @@
                             <div class="app-border-b flex items-center p-4 ">
                                 <div class="mr-4">
                                     <div>
-                                        <div class="app-expressive-heading-02">Gestion de la facturation et des couts
+                                        <div class="app-expressive-heading-02">{{ 'BILLING.TITLE' | translate }}
                                         </div>
                                     </div>
                                 </div>
@@ -57,19 +57,18 @@
                     <div class="app-card mb-4" *ngIf="!(souscription$ | async)">
                         <div class="app-card__content">
                             <youpez-alert [appearance]="'outline'" [type]="'warning'">
-                                <div class="app-productive-heading-02 mb-4">Plan Freemium</div>
+                                <div class="app-productive-heading-02 mb-4">{{ 'BILLING.FREEMIUM_PLAN' | translate }}</div>
 
                                 <div class="flex items-center mb-2">
                                     <div class="">
                                         <div class="app-body-short-01 mb-1">
-                                            Activez le plan Pro pour bénéficier de l'ensemble des fonctionnalités de
-                                            l'application.
+                                            {{ 'BILLING.ACTIVATE_PRO_PLAN' | translate }}
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="flex items-center mb-2">
-                                    <a [routerLink]="'/app/facturation/choix-plan'">Cliquez ici pour activer</a>
+                                    <a [routerLink]="'/app/facturation/choix-plan'">{{ 'BILLING.CLICK_TO_ACTIVATE' | translate }}</a>
                                 </div>
                             </youpez-alert>
 
@@ -93,10 +92,9 @@
                     <div class="flex items-center">
                         <youpez-ibm-icon iconName="warning" iconSize="20" class="text-red-600 mr-3"></youpez-ibm-icon>
                         <div>
-                            <h3 class="text-lg font-semibold text-red-800">Factures impayées</h3>
+                            <h3 class="text-lg font-semibold text-red-800">{{ 'BILLING.UNPAID_INVOICES' | translate }}</h3>
                             <p class="text-red-600">
-                                Vous avez {{ unpaidInvoices.length }} facture(s) impayée(s)
-                                pour un montant total de {{ (totalUnpaidAmount$ | async) || 0 }} FCFA
+                                {{ 'BILLING.UNPAID_INVOICES_COUNT' | translate: {count: unpaidInvoices.length, amount: (totalUnpaidAmount$ | async) || 0} }}
                             </p>
                         </div>
                     </div>
@@ -112,7 +110,7 @@
 
             <div class="app-main-header__inner">
                 <div class="text-4xl fond-bold app-main-header__text">
-                    Factures
+                    {{ 'BILLING.INVOICES.TITLE' | translate }}
                 </div>
             </div>
 

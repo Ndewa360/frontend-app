@@ -6,7 +6,7 @@
       <div class="header-content">
         <div class="header-title">
           <youpez-ibm-icon iconName="home" iconSize="24" class="text-primary-600 mr-3"></youpez-ibm-icon>
-          <h1 class="text-2xl font-bold text-gray-900">Ajouter un nouveau bien</h1>
+          <h1 class="text-2xl font-bold text-gray-900">{{ 'PROPERTIES.ADD_PROPERTY' | translate }}</h1>
         </div>
         <button (click)="onClose()" type="button" class="close-button">
           <youpez-ibm-icon iconName="close" iconSize="20"></youpez-ibm-icon>
@@ -17,17 +17,17 @@
       <div class="progress-indicator">
         <div class="progress-step" [class.active]="currentStep >= 1" [class.completed]="currentStep > 1">
           <div class="step-number">1</div>
-          <span class="step-label">Informations générales</span>
+          <span class="step-label">{{ 'PROPERTIES.GENERAL_INFO' | translate }}</span>
         </div>
         <div class="progress-line" [class.completed]="currentStep > 1"></div>
         <div class="progress-step" [class.active]="currentStep >= 2" [class.completed]="currentStep > 2">
           <div class="step-number">2</div>
-          <span class="step-label">Caractéristiques</span>
+          <span class="step-label">{{ 'PROPERTIES.CHARACTERISTICS' | translate }}</span>
         </div>
         <div class="progress-line" [class.completed]="currentStep > 2" *ngIf="!isAgent"></div>
         <div class="progress-step" [class.active]="currentStep >= 3" [class.completed]="currentStep > 3" *ngIf="!isAgent">
           <div class="step-number">3</div>
-          <span class="step-label">Finances</span>
+          <span class="step-label">{{ 'PROPERTIES.FINANCES' | translate }}</span>
         </div>
       </div>
     </div>
@@ -38,9 +38,9 @@
         <!-- Step 1: Informations générales -->
         <div class="form-step" *ngIf="currentStep === 1">
           <div class="step-header">
-            <h2 class="step-title">Informations générales</h2>
-            <p class="step-description" *ngIf="!isAgent">Renseignez les informations de base de votre propriété</p>
-            <p class="step-description" *ngIf="isAgent">Renseignez les informations de base de la propriété et du propriétaire</p>
+            <h2 class="step-title">{{ 'PROPERTIES.GENERAL_INFO' | translate }}</h2>
+            <p class="step-description" *ngIf="!isAgent">{{ 'PROPERTIES.GENERAL_INFO_DESC' | translate }}</p>
+            <p class="step-description" *ngIf="isAgent">{{ 'PROPERTIES.GENERAL_INFO_DESC_AGENT' | translate }}</p>
           </div>
           
           <!-- Section Propriétaire (pour les agents uniquement) -->
@@ -48,62 +48,62 @@
             <div class="section-header">
               <h3 class="section-title">
                 <youpez-ibm-icon iconName="user" iconSize="20" class="mr-2"></youpez-ibm-icon>
-                Informations du propriétaire
+                {{ 'PROPERTIES.OWNER_INFO' | translate }}
               </h3>
-              <p class="section-description">Renseignez les coordonnées du propriétaire du bien</p>
+              <p class="section-description">{{ 'PROPERTIES.OWNER_INFO_DESC' | translate }}</p>
             </div>
             
             <div class="form-grid">
               <!-- Nom complet du propriétaire -->
               <div class="form-group">
-                <label class="form-label required">Nom complet du propriétaire</label>
+                <label class="form-label required">{{ 'PROPERTIES.OWNER_FULL_NAME' | translate }}</label>
                 <input
                   formControlName="ownerFullName"
                   type="text"
                   class="form-input"
                   [class.error]="isValid('ownerFullName')"
-                  placeholder="Ex: Jean Dupont">
+                  [placeholder]="'PROPERTIES.OWNER_NAME_PLACEHOLDER' | translate">
                 <div class="form-error" *ngIf="isValid('ownerFullName')">
-                  Le nom du propriétaire est obligatoire
+                  {{ 'PROPERTIES.OWNER_NAME_REQUIRED' | translate }}
                 </div>
               </div>
 
               <!-- Téléphone du propriétaire -->
               <div class="form-group">
-                <label class="form-label required">Numéro de téléphone</label>
+                <label class="form-label required">{{ 'PROPERTIES.PHONE_NUMBER' | translate }}</label>
                 <input
                   formControlName="ownerPhoneNumber"
                   type="tel"
                   class="form-input"
                   [class.error]="isValid('ownerPhoneNumber')"
-                  placeholder="Ex: +237 6XX XX XX XX">
+                  [placeholder]="'PROPERTIES.PHONE_PLACEHOLDER' | translate">
                 <div class="form-error" *ngIf="isValid('ownerPhoneNumber')">
-                  Le numéro de téléphone est obligatoire
+                  {{ 'PROPERTIES.PHONE_REQUIRED' | translate }}
                 </div>
               </div>
 
               <!-- Email du propriétaire -->
               <div class="form-group">
-                <label class="form-label">Adresse email (optionnel)</label>
+                <label class="form-label">{{ 'PROPERTIES.EMAIL_OPTIONAL' | translate }}</label>
                 <input
                   formControlName="ownerEmail"
                   type="email"
                   class="form-input"
                   [class.error]="isValid('ownerEmail')"
-                  placeholder="Ex: jean.dupont@email.com">
+                  [placeholder]="'PROPERTIES.EMAIL_PLACEHOLDER' | translate">
                 <div class="form-error" *ngIf="isValid('ownerEmail')">
-                  Format d'email invalide
+                  {{ 'PROPERTIES.EMAIL_INVALID' | translate }}
                 </div>
               </div>
 
               <!-- Adresse du propriétaire -->
               <div class="form-group col-span-2">
-                <label class="form-label">Adresse du propriétaire (optionnel)</label>
+                <label class="form-label">{{ 'PROPERTIES.OWNER_ADDRESS_OPTIONAL' | translate }}</label>
                 <input
                   formControlName="ownerAddress"
                   type="text"
                   class="form-input"
-                  placeholder="Ex: Quartier Bonanjo, Douala">
+                  [placeholder]="'PROPERTIES.OWNER_ADDRESS_PLACEHOLDER' | translate">
               </div>
             </div>
           </div>
@@ -113,58 +113,58 @@
             <div class="section-header" *ngIf="isAgent">
               <h3 class="section-title">
                 <youpez-ibm-icon iconName="home" iconSize="20" class="mr-2"></youpez-ibm-icon>
-                Informations de la propriété
+                {{ 'PROPERTIES.PROPERTY_INFO' | translate }}
               </h3>
             </div>
 
           <div class="form-grid">
             <!-- Nom du bien -->
             <div class="form-group col-span-2">
-              <label class="form-label required">Nom du bien</label>
+              <label class="form-label required">{{ 'PROPERTIES.PROPERTY_NAME' | translate }}</label>
               <input
                 formControlName="name"
                 type="text"
                 class="form-input"
                 [class.error]="isValid('name')"
-                placeholder="Ex: Résidence Les Palmiers">
+                [placeholder]="'PROPERTIES.PROPERTY_NAME_PLACEHOLDER' | translate">
               <div class="form-error" *ngIf="isValid('name')">
-                Le nom du bien est obligatoire
+                {{ 'PROPERTIES.PROPERTY_NAME_REQUIRED' | translate }}
               </div>
             </div>
 
             <!-- Type de propriété -->
             <div class="form-group">
-              <label class="form-label required">Type de propriété</label>
+              <label class="form-label required">{{ 'PROPERTIES.PROPERTY_TYPE' | translate }}</label>
               <select formControlName="propertyType" class="form-select" [class.error]="isValid('propertyType')">
-                <option value="">Sélectionner un type</option>
-                <option value="APARTMENT">Appartement</option>
-                <option value="HOUSE">Maison</option>
-                <option value="COMMERCIAL">Commercial</option>
-                <option value="MIXED">Mixte</option>
-                <option value="LAND">Terrain</option>
+                <option value="">{{ 'PROPERTIES.SELECT_TYPE' | translate }}</option>
+                <option value="APARTMENT">{{ 'PROPERTY_TYPES.APARTMENT' | translate }}</option>
+                <option value="HOUSE">{{ 'PROPERTY_TYPES.HOUSE' | translate }}</option>
+                <option value="COMMERCIAL">{{ 'PROPERTY_TYPES.COMMERCIAL' | translate }}</option>
+                <option value="MIXED">{{ 'PROPERTY_TYPES.MIXED' | translate }}</option>
+                <option value="LAND">{{ 'PROPERTY_TYPES.LAND' | translate }}</option>
               </select>
               <div class="form-error" *ngIf="isValid('propertyType')">
-                Le type de propriété est obligatoire
+                {{ 'PROPERTIES.PROPERTY_TYPE_REQUIRED' | translate }}
               </div>
             </div>
 
             <!-- Surface totale -->
             <div class="form-group">
-              <label class="form-label">Surface totale (m²)</label>
+              <label class="form-label">{{ 'PROPERTIES.TOTAL_SURFACE' | translate }}</label>
               <input
                 formControlName="totalSurface"
                 type="number"
                 class="form-input"
-                placeholder="Ex: 150">
+                [placeholder]="'PROPERTIES.SURFACE_PLACEHOLDER' | translate">
             </div>
 
             <!-- Localisation (Pays + Ville) -->
             <div class="form-group col-span-2">
-              <label class="form-label required">Localisation</label>
+              <label class="form-label required">{{ 'PROPERTIES.LOCATION' | translate }}</label>
               <app-country-city-selector
                 formControlName="geolocation"
-                countryPlaceholder="Sélectionner un pays"
-                cityPlaceholder="Sélectionner une ville"
+                [countryPlaceholder]="'PROPERTIES.SELECT_COUNTRY' | translate"
+                [cityPlaceholder]="'PROPERTIES.SELECT_CITY' | translate"
                 [countryRequired]="true"
                 [cityRequired]="true"
                 [layout]="'horizontal'"
@@ -176,55 +176,55 @@
                 (selectionChanged)="onLocationChanged($event)">
               </app-country-city-selector>
               <div class="form-error" *ngIf="showValidationErrors && isValid('geolocation')">
-                La localisation est obligatoire
+                {{ 'PROPERTIES.LOCATION_REQUIRED' | translate }}
               </div>
             </div>
 
             <!-- Adresse -->
             <div class="form-group col-span-2">
-              <label class="form-label required">Adresse complète</label>
+              <label class="form-label required">{{ 'PROPERTIES.FULL_ADDRESS' | translate }}</label>
               <input
                 formControlName="location"
                 type="text"
                 class="form-input"
                 [class.error]="isValid('location')"
-                placeholder="Ex: 123 Avenue de la Liberté, Quartier Bonanjo">
+                [placeholder]="'PROPERTIES.ADDRESS_PLACEHOLDER' | translate">
               <div class="form-error" *ngIf="isValid('location')">
-                L'adresse est obligatoire
+                {{ 'PROPERTIES.ADDRESS_REQUIRED' | translate }}
               </div>
             </div>
 
             <!-- Année de construction -->
             <div class="form-group">
-              <label class="form-label">Année de construction</label>
+              <label class="form-label">{{ 'PROPERTIES.BUILDING_YEAR' | translate }}</label>
               <input
                 formControlName="buildingYear"
                 type="number"
                 class="form-input"
                 [min]="1900"
                 [max]="currentYear"
-                placeholder="Ex: 2020">
+                [placeholder]="'PROPERTIES.YEAR_PLACEHOLDER' | translate">
             </div>
 
             <!-- Nombre d'étages -->
             <div class="form-group">
-              <label class="form-label">Nombre d'étages</label>
+              <label class="form-label">{{ 'PROPERTIES.FLOORS_COUNT' | translate }}</label>
               <input
                 formControlName="floors"
                 type="number"
                 class="form-input"
                 [min]="1"
-                placeholder="Ex: 3">
+                [placeholder]="'PROPERTIES.FLOORS_PLACEHOLDER' | translate">
             </div>
 
             <!-- Description -->
             <div class="form-group col-span-2">
-              <label class="form-label">Description</label>
+              <label class="form-label">{{ 'PROPERTIES.DESCRIPTION' | translate }}</label>
               <textarea
                 formControlName="description"
                 class="form-textarea"
                 rows="4"
-                placeholder="Décrivez votre propriété, ses atouts, son environnement..."></textarea>
+                [placeholder]="'PROPERTIES.DESCRIPTION_PLACEHOLDER' | translate"></textarea>
             </div>
           </div>
           </div>
@@ -233,83 +233,83 @@
         <!-- Step 2: Caractéristiques -->
         <div class="form-step" *ngIf="currentStep === 2">
           <div class="step-header">
-            <h2 class="step-title">Caractéristiques et équipements</h2>
-            <p class="step-description">Détaillez les équipements et l'état de votre propriété</p>
+            <h2 class="step-title">{{ 'PROPERTIES.CHARACTERISTICS' | translate }}</h2>
+            <p class="step-description">{{ 'PROPERTIES.CHARACTERISTICS_DESC' | translate }}</p>
           </div>
 
           <div class="form-grid">
             <!-- État du bien -->
             <div class="form-group">
-              <label class="form-label">État du bien</label>
+              <label class="form-label">{{ 'PROPERTIES.CONDITION' | translate }}</label>
               <select formControlName="condition" class="form-select">
-                <option value="NEW">Neuf</option>
-                <option value="EXCELLENT">Excellent</option>
-                <option value="GOOD">Bon</option>
-                <option value="FAIR">Correct</option>
-                <option value="POOR">À rénover</option>
+                <option value="NEW">{{ 'PROPERTIES.CONDITION_NEW' | translate }}</option>
+                <option value="EXCELLENT">{{ 'PROPERTIES.CONDITION_EXCELLENT' | translate }}</option>
+                <option value="GOOD">{{ 'PROPERTIES.CONDITION_GOOD' | translate }}</option>
+                <option value="FAIR">{{ 'PROPERTIES.CONDITION_FAIR' | translate }}</option>
+                <option value="POOR">{{ 'PROPERTIES.CONDITION_POOR' | translate }}</option>
               </select>
             </div>
 
             <!-- Statut d'ameublement -->
             <div class="form-group">
-              <label class="form-label">Ameublement</label>
+              <label class="form-label">{{ 'PROPERTIES.FURNISHING' | translate }}</label>
               <select formControlName="furnishingStatus" class="form-select">
-                <option value="UNFURNISHED">Non meublé</option>
-                <option value="SEMI_FURNISHED">Semi-meublé</option>
-                <option value="FURNISHED">Meublé</option>
+                <option value="UNFURNISHED">{{ 'PROPERTIES.UNFURNISHED' | translate }}</option>
+                <option value="SEMI_FURNISHED">{{ 'PROPERTIES.SEMI_FURNISHED' | translate }}</option>
+                <option value="FURNISHED">{{ 'PROPERTIES.FURNISHED' | translate }}</option>
               </select>
             </div>
 
             <!-- Équipements de base -->
             <div class="form-group col-span-2">
-              <label class="form-label">Équipements de base</label>
+              <label class="form-label">{{ 'PROPERTIES.BASIC_AMENITIES' | translate }}</label>
               <div class="checkbox-grid">
                 <label class="checkbox-item">
                   <input type="checkbox" formControlName="hasClosure">
-                  <span class="checkbox-label">Clôture/Barrière</span>
+                  <span class="checkbox-label">{{ 'PROPERTIES.CLOSURE' | translate }}</span>
                 </label>
                 <label class="checkbox-item">
                   <input type="checkbox" formControlName="hasParking">
-                  <span class="checkbox-label">Parking</span>
+                  <span class="checkbox-label">{{ 'PROPERTIES.PARKING' | translate }}</span>
                 </label>
                 <label class="checkbox-item">
                   <input type="checkbox" formControlName="hasElevator">
-                  <span class="checkbox-label">Ascenseur</span>
+                  <span class="checkbox-label">{{ 'PROPERTIES.ELEVATOR' | translate }}</span>
                 </label>
                 <label class="checkbox-item">
                   <input type="checkbox" formControlName="hasWater">
-                  <span class="checkbox-label">Eau courante</span>
+                  <span class="checkbox-label">{{ 'PROPERTIES.WATER' | translate }}</span>
                 </label>
                 <label class="checkbox-item">
                   <input type="checkbox" formControlName="hasInternet">
-                  <span class="checkbox-label">Internet</span>
+                  <span class="checkbox-label">{{ 'PROPERTIES.INTERNET' | translate }}</span>
                 </label>
                 <label class="checkbox-item">
                   <input type="checkbox" formControlName="hasGenerator">
-                  <span class="checkbox-label">Générateur</span>
+                  <span class="checkbox-label">{{ 'PROPERTIES.GENERATOR' | translate }}</span>
                 </label>
               </div>
             </div>
 
             <!-- Équipements de confort -->
             <div class="form-group col-span-2">
-              <label class="form-label">Équipements de confort</label>
+              <label class="form-label">{{ 'PROPERTIES.COMFORT_AMENITIES' | translate }}</label>
               <div class="checkbox-grid">
                 <label class="checkbox-item">
                   <input type="checkbox" formControlName="hasGarden">
-                  <span class="checkbox-label">Jardin</span>
+                  <span class="checkbox-label">{{ 'PROPERTIES.GARDEN' | translate }}</span>
                 </label>
                 <label class="checkbox-item">
                   <input type="checkbox" formControlName="hasPool">
-                  <span class="checkbox-label">Piscine</span>
+                  <span class="checkbox-label">{{ 'PROPERTIES.POOL' | translate }}</span>
                 </label>
                 <label class="checkbox-item">
                   <input type="checkbox" formControlName="hasGym">
-                  <span class="checkbox-label">Salle de sport</span>
+                  <span class="checkbox-label">{{ 'PROPERTIES.GYM' | translate }}</span>
                 </label>
                 <label class="checkbox-item">
                   <input type="checkbox" formControlName="hasSecurity">
-                  <span class="checkbox-label">Sécurité 24h/24</span>
+                  <span class="checkbox-label">{{ 'PROPERTIES.SECURITY_24H' | translate }}</span>
                 </label>
               </div>
             </div>
@@ -318,93 +318,93 @@
         <!-- Step 3: Finances (cachée pour les agents) -->
         <div class="form-step" *ngIf="currentStep === 3 && !isAgent">
           <div class="step-header">
-            <h2 class="step-title">Informations financières</h2>
-            <p class="step-description">Renseignez les aspects financiers de votre propriété</p>
+            <h2 class="step-title">{{ 'PROPERTIES.FINANCIAL_INFO' | translate }}</h2>
+            <p class="step-description">{{ 'PROPERTIES.FINANCIAL_INFO_DESC' | translate }}</p>
           </div>
 
           <div class="form-grid">
             <!-- Prix d'acquisition -->
             <div class="form-group">
-              <label class="form-label">Prix d'acquisition (FCFA)</label>
+              <label class="form-label">{{ 'PROPERTIES.ACQUISITION_PRICE' | translate }}</label>
               <input
                 formControlName="acquisitionPrice"
                 type="number"
                 class="form-input"
-                placeholder="Ex: 50000000">
+                [placeholder]="'PROPERTIES.PRICE_PLACEHOLDER' | translate">
             </div>
 
             <!-- Valeur actuelle -->
             <div class="form-group">
-              <label class="form-label">Valeur actuelle estimée (FCFA)</label>
+              <label class="form-label">{{ 'PROPERTIES.CURRENT_VALUE' | translate }}</label>
               <input
                 formControlName="currentValue"
                 type="number"
                 class="form-input"
-                placeholder="Ex: 55000000">
+                [placeholder]="'PROPERTIES.VALUE_PLACEHOLDER' | translate">
             </div>
 
             <!-- Fourchette de loyers -->
             <div class="form-group">
-              <label class="form-label">Loyer minimum (FCFA)</label>
+              <label class="form-label">{{ 'PROPERTIES.RENT_MIN' | translate }}</label>
               <input
                 formControlName="rentMin"
                 type="number"
                 class="form-input"
-                placeholder="Ex: 150000">
+                [placeholder]="'PROPERTIES.RENT_MIN_PLACEHOLDER' | translate">
             </div>
 
             <div class="form-group">
-              <label class="form-label">Loyer maximum (FCFA)</label>
+              <label class="form-label">{{ 'PROPERTIES.RENT_MAX' | translate }}</label>
               <input
                 formControlName="rentMax"
                 type="number"
                 class="form-input"
-                placeholder="Ex: 300000">
+                [placeholder]="'PROPERTIES.RENT_MAX_PLACEHOLDER' | translate">
             </div>
 
             <!-- Charges et frais -->
             <div class="form-group">
-              <label class="form-label">Charges mensuelles (FCFA)</label>
+              <label class="form-label">{{ 'PROPERTIES.MONTHLY_CHARGES' | translate }}</label>
               <input
                 formControlName="monthlyCharges"
                 type="number"
                 class="form-input"
-                placeholder="Ex: 25000">
+                [placeholder]="'PROPERTIES.CHARGES_PLACEHOLDER' | translate">
             </div>
 
             <div class="form-group">
-              <label class="form-label">Frais de gestion mensuels (FCFA)</label>
+              <label class="form-label">{{ 'PROPERTIES.MANAGEMENT_FEES' | translate }}</label>
               <input
                 formControlName="managementFees"
                 type="number"
                 class="form-input"
-                placeholder="Ex: 15000">
+                [placeholder]="'PROPERTIES.FEES_PLACEHOLDER' | translate">
             </div>
 
             <div class="form-group">
-              <label class="form-label">Taxe foncière annuelle (FCFA)</label>
+              <label class="form-label">{{ 'PROPERTIES.PROPERTY_TAX' | translate }}</label>
               <input
                 formControlName="propertyTax"
                 type="number"
                 class="form-input"
-                placeholder="Ex: 500000">
+                [placeholder]="'PROPERTIES.TAX_PLACEHOLDER' | translate">
             </div>
 
             <div class="form-group">
-              <label class="form-label">Coût d'assurance annuel (FCFA)</label>
+              <label class="form-label">{{ 'PROPERTIES.INSURANCE_COST' | translate }}</label>
               <input
                 formControlName="insuranceCost"
                 type="number"
                 class="form-input"
-                placeholder="Ex: 200000">
+                [placeholder]="'PROPERTIES.INSURANCE_PLACEHOLDER' | translate">
             </div>
 
             <!-- Modèle de contrat -->
             <div class="form-group col-span-2">
-              <label class="form-label">Modèle de contrat</label>
+              <label class="form-label">{{ 'PROPERTIES.CONTRACT_TEMPLATE' | translate }}</label>
               <app-contract-template-selector
                 formControlName="contractTemplate"
-                placeholder="Sélectionner un modèle de contrat (optionnel)"
+                [placeholder]="'PROPERTIES.CONTRACT_TEMPLATE_PLACEHOLDER' | translate"
                 [required]="false"
                 [showCreateButton]="false"
                 [showPreview]="true">
@@ -424,7 +424,7 @@
             type="button"
             (click)="onClose()"
             class="btn btn-secondary">
-            Annuler
+            {{ 'COMMON.CANCEL' | translate }}
           </button>
         </div>
 
@@ -435,7 +435,7 @@
             class="btn btn-secondary"
             *ngIf="currentStep > 1">
             <youpez-ibm-icon iconName="chevronLeft" iconSize="16" class="mr-2"></youpez-ibm-icon>
-            Précédent
+            {{ 'COMMON.PREVIOUS' | translate }}
           </button>
 
           <button
@@ -444,7 +444,7 @@
             class="btn btn-primary"
             *ngIf="(currentStep < 3 && !isAgent) || (currentStep < 2 && isAgent)"
             [disabled]="!isStepValid(currentStep)">
-            Suivant
+            {{ 'COMMON.NEXT' | translate }}
             <youpez-ibm-icon iconName="chevronRight" iconSize="16" class="ml-2 white-text"></youpez-ibm-icon>
           </button>
 
@@ -456,7 +456,7 @@
             [disabled]="waittingResponse || formGroup.invalid">
             <span *ngIf="waittingResponse" class="loading-spinner"></span>
             <youpez-ibm-icon *ngIf="!waittingResponse" iconName="add" iconSize="16" class="mr-2"></youpez-ibm-icon>
-            {{ waittingResponse ? 'Création...' : 'Créer le bien' }}
+            {{ waittingResponse ? ('PROPERTIES.CREATING' | translate) : ('PROPERTIES.CREATE_PROPERTY' | translate) }}
           </button>
         </div>
       </div>
@@ -469,40 +469,40 @@
       <div class="modal-header">
         <h3 class="modal-title">
           <youpez-ibm-icon iconName="user" iconSize="24" class="mr-2 text-yellow-600"></youpez-ibm-icon>
-          Propriétaire existant trouvé
+          {{ 'PROPERTIES.EXISTING_OWNER_FOUND' | translate }}
         </h3>
       </div>
       
       <div class="modal-body">
         <div class="alert alert-warning">
           <youpez-ibm-icon iconName="warning" iconSize="20" class="mr-2"></youpez-ibm-icon>
-          Un propriétaire avec ces informations existe déjà dans le système.
+          {{ 'PROPERTIES.OWNER_EXISTS_MESSAGE' | translate }}
         </div>
         
         <div class="owner-details" *ngIf="existingOwner">
-          <h4 class="details-title">Informations du propriétaire trouvé :</h4>
+          <h4 class="details-title">{{ 'PROPERTIES.FOUND_OWNER_INFO' | translate }}</h4>
           <div class="details-grid">
             <div class="detail-item">
-              <span class="detail-label">Nom :</span>
+              <span class="detail-label">{{ 'PROPERTIES.NAME' | translate }} :</span>
               <span class="detail-value">{{ existingOwner.name }}</span>
             </div>
             <div class="detail-item">
-              <span class="detail-label">Email :</span>
-              <span class="detail-value">{{ existingOwner.email || 'Non renseigné' }}</span>
+              <span class="detail-label">{{ 'PROPERTIES.EMAIL' | translate }} :</span>
+              <span class="detail-value">{{ existingOwner.email || ('PROPERTIES.NOT_PROVIDED' | translate) }}</span>
             </div>
             <div class="detail-item">
-              <span class="detail-label">Téléphone :</span>
+              <span class="detail-label">{{ 'PROPERTIES.PHONE' | translate }} :</span>
               <span class="detail-value">{{ existingOwner.phoneNumber }}</span>
             </div>
             <div class="detail-item" *ngIf="existingOwner.createdAt">
-              <span class="detail-label">Inscrit le :</span>
+              <span class="detail-label">{{ 'PROPERTIES.REGISTERED_ON' | translate }} :</span>
               <span class="detail-value">{{ existingOwner.createdAt | date:'dd/MM/yyyy' }}</span>
             </div>
           </div>
         </div>
         
         <p class="confirmation-text">
-          Souhaitez-vous utiliser ce propriétaire existant ou créer un nouveau compte ?
+          {{ 'PROPERTIES.USE_EXISTING_OR_CREATE' | translate }}
         </p>
       </div>
       
@@ -511,20 +511,20 @@
           type="button" 
           (click)="cancelOwnerModal()" 
           class="btn btn-secondary">
-          Annuler
+          {{ 'COMMON.CANCEL' | translate }}
         </button>
         <button 
           type="button" 
           (click)="createNewOwner()" 
           class="btn btn-outline">
-          Créer un nouveau
+          {{ 'PROPERTIES.CREATE_NEW' | translate }}
         </button>
         <button 
           type="button" 
           (click)="confirmExistingOwner()" 
           class="btn btn-primary">
           <youpez-ibm-icon iconName="checkmark" iconSize="16" class="mr-2"></youpez-ibm-icon>
-          Utiliser l'existant
+          {{ 'PROPERTIES.USE_EXISTING' | translate }}
         </button>
       </div>
     </div>

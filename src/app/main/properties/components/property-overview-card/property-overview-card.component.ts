@@ -1,4 +1,5 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { PropertyModel } from 'src/app/shared/store';
 import { BaseComponent } from 'src/app/shared/utils/base-component';
 import { PropertyImageService } from 'src/app/shared/services/property-image.service';
@@ -37,7 +38,10 @@ export class PropertyOverviewCardComponent extends BaseComponent implements OnIn
 
   hasAlerts: boolean = false;
 
-  constructor(public propertyImageService: PropertyImageService) {
+  constructor(
+    public propertyImageService: PropertyImageService,
+    private translate: TranslateService
+  ) {
     super();
   }
 
@@ -138,10 +142,10 @@ export class PropertyOverviewCardComponent extends BaseComponent implements OnIn
   }
 
   getStatusLabel(): string {
-    if (this.occupancyRate >= 90) return 'Excellent';
-    if (this.occupancyRate >= 70) return 'Bon';
-    if (this.occupancyRate >= 50) return 'Moyen';
-    return 'Faible';
+    if (this.occupancyRate >= 90) return this.translate.instant('PROPERTIES.CARD.STATUS.EXCELLENT');
+    if (this.occupancyRate >= 70) return this.translate.instant('PROPERTIES.CARD.STATUS.GOOD');
+    if (this.occupancyRate >= 50) return this.translate.instant('PROPERTIES.CARD.STATUS.AVERAGE');
+    return this.translate.instant('PROPERTIES.CARD.STATUS.POOR');
   }
 
   getPropertyImage(): string {

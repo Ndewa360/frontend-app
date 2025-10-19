@@ -2,6 +2,7 @@ import { Component, Input, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { TranslateService } from '@ngx-translate/core';
 import {
   StatisticAction,
   StatisticPaymentStateType
@@ -69,8 +70,41 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
 
   constructor(
     private store: Store,
-    private excelExportService: ExcelExportService
-  ) {}
+    private excelExportService: ExcelExportService,
+    private translate: TranslateService
+  ) {
+    this.initializeFinanceTabs();
+  }
+
+  private initializeFinanceTabs(): void {
+    this.financeTabs = [
+      {
+        id: 'dashboard',
+        label: this.translate.instant('FINANCIAL_DASHBOARD.DASHBOARD'),
+        icon: 'dashboard'
+      },
+      {
+        id: 'overview',
+        label: this.translate.instant('FINANCIAL_DASHBOARD.OVERVIEW'),
+        icon: 'analytics'
+      },
+      {
+        id: 'tenants',
+        label: this.translate.instant('FINANCIAL_DASHBOARD.TENANTS'),
+        icon: 'user'
+      },
+      {
+        id: 'deposits',
+        label: this.translate.instant('FINANCIAL_DASHBOARD.DEPOSITS'),
+        icon: 'security'
+      },
+      {
+        id: 'monthly',
+        label: this.translate.instant('FINANCIAL_DASHBOARD.REVENUE'),
+        icon: 'money'
+      }
+    ];
+  }
 
   ngOnInit(): void {
     

@@ -8,10 +8,10 @@
       <!-- Titre et description -->
       <div class="header-content">
         <h2 class="text-2xl font-bold text-carbon-primary mb-2">
-          Tableau de Bord Financier
+          {{ 'FINANCIAL_DASHBOARD.TITLE' | translate }}
         </h2>
         <p class="text-carbon-secondary">
-          Vue d'ensemble de vos revenus et performances financières
+          {{ 'FINANCIAL_DASHBOARD.SUBTITLE' | translate }}
         </p>
       </div>
 
@@ -19,7 +19,7 @@
       <div class="header-controls flex items-center gap-4">
         <!-- Sélecteur d'année -->
         <div class="control-group">
-          <label class="text-sm text-carbon-secondary mb-1 block">Année</label>
+          <label class="text-sm text-carbon-secondary mb-1 block">{{ 'FINANCIAL_DASHBOARD.YEAR' | translate }}</label>
           <select 
             class="input-carbon px-3 py-2 text-sm min-w-[120px]"
             [value]="selectedYear"
@@ -32,13 +32,13 @@
 
         <!-- Sélecteur de période -->
         <div class="control-group">
-          <label class="text-sm text-carbon-secondary mb-1 block">Période</label>
+          <label class="text-sm text-carbon-secondary mb-1 block">{{ 'FINANCIAL_DASHBOARD.PERIOD' | translate }}</label>
           <select 
             class="input-carbon px-3 py-2 text-sm min-w-[120px]"
             [value]="selectedPeriod"
             (change)="onPeriodChange($event)">
             <option *ngFor="let period of periodOptions" [value]="period.value">
-              {{ period.label }}
+              {{ period.label | translate }}
             </option>
           </select>
         </div>
@@ -52,7 +52,7 @@
                   d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
             </path>
           </svg>
-          Exporter
+          {{ 'FINANCIAL_DASHBOARD.EXPORT' | translate }}
         </button>
       </div>
     </div>
@@ -90,15 +90,15 @@
         <!-- Valeur et label -->
         <div class="metric-content">
           <div class="metric-value text-2xl font-bold text-carbon-primary mb-1">
-            <ng-container *ngIf="metric.label.includes('Taux'); else currencyValue">
+            <ng-container *ngIf="!metric.isMoney; else currencyValue">
               {{ metric.value }}%
             </ng-container>
             <ng-template #currencyValue>
-              {{ metric.value }}
+              {{ metric.value | currency:'XAF':'symbol':'1.0-0' }}
             </ng-template>
           </div>
           <div class="metric-label text-sm text-carbon-secondary">
-            {{ metric.label }}
+            {{ metric.label | translate }}
           </div>
         </div>
       </div>
@@ -113,10 +113,10 @@
       <div class="chart-card card-carbon-elevated p-6">
         <div class="chart-header mb-6">
           <h3 class="text-lg font-semibold text-carbon-primary mb-2">
-            Revenus par Propriété
+            {{ 'FINANCIAL_DASHBOARD.REVENUE_BY_PROPERTY' | translate }}
           </h3>
           <p class="text-sm text-carbon-secondary">
-            Répartition des revenus collectés par propriété
+            {{ 'FINANCIAL_DASHBOARD.REVENUE_DISTRIBUTION' | translate }}
           </p>
         </div>
         
@@ -143,10 +143,10 @@
       <div class="chart-card card-carbon-elevated p-6">
         <div class="chart-header mb-6">
           <h3 class="text-lg font-semibold text-carbon-primary mb-2">
-            Taux de Recouvrement
+            {{ 'FINANCIAL_DASHBOARD.COLLECTION_RATE' | translate }}
           </h3>
           <p class="text-sm text-carbon-secondary">
-            Performance de collecte par propriété
+            {{ 'FINANCIAL_DASHBOARD.COLLECTION_PERFORMANCE' | translate }}
           </p>
         </div>
         
@@ -180,7 +180,7 @@
                     'text-carbon-primary-70': item.value >= 70 && item.value < 90,
                     'text-carbon-red-70': item.value < 70
                   }">
-                    {{ item.value >= 90 ? 'Excellent' : item.value >= 70 ? 'Bon' : 'À améliorer' }}
+                    {{ item.value >= 90 ? ('FINANCIAL_DASHBOARD.EXCELLENT' | translate) : item.value >= 70 ? ('FINANCIAL_DASHBOARD.GOOD' | translate) : ('FINANCIAL_DASHBOARD.TO_IMPROVE' | translate) }}
                   </span>
                 </div>
               </div>
@@ -195,10 +195,10 @@
   <div class="properties-summary">
     <div class="summary-header mb-6">
       <h3 class="text-lg font-semibold text-carbon-primary mb-2">
-        Résumé par Propriété
+        {{ 'FINANCIAL_DASHBOARD.PROPERTY_SUMMARY' | translate }}
       </h3>
       <p class="text-sm text-carbon-secondary">
-        Performance détaillée de chaque propriété
+        {{ 'FINANCIAL_DASHBOARD.DETAILED_PERFORMANCE' | translate }}
       </p>
     </div>
 
@@ -218,7 +218,7 @@
               <div class="text-xl font-bold text-carbon-primary">
                 {{ property.totalRevenue | currency:'XAF':'symbol':'1.0-0' }}
               </div>
-              <div class="text-xs text-carbon-secondary">Revenus collectés</div>
+              <div class="text-xs text-carbon-secondary">{{ 'FINANCIAL_DASHBOARD.COLLECTED_REVENUE' | translate }}</div>
             </div>
             <div class="metric">
               <div class="text-xl font-bold" [ngClass]="{
@@ -228,7 +228,7 @@
               }">
                 {{ property.collectionRate }}%
               </div>
-              <div class="text-xs text-carbon-secondary">Taux de recouvrement</div>
+              <div class="text-xs text-carbon-secondary">{{ 'FINANCIAL_DASHBOARD.COLLECTION_RATE' | translate }}</div>
             </div>
           </div>
         </div>
@@ -236,7 +236,7 @@
         <!-- Barre de progression -->
         <div class="property-progress mb-4">
           <div class="flex items-center justify-between mb-2">
-            <span class="text-xs text-carbon-secondary">Objectif</span>
+            <span class="text-xs text-carbon-secondary">{{ 'FINANCIAL_DASHBOARD.TARGET' | translate }}</span>
             <span class="text-xs text-carbon-secondary">
               {{ property.expectedRevenue | currency:'XAF':'symbol':'1.0-0' }}
             </span>
@@ -257,7 +257,7 @@
         <!-- Actions -->
         <div class="property-actions">
           <button class="btn-carbon-tertiary w-full text-sm">
-            Voir détails
+            {{ 'FINANCIAL_DASHBOARD.VIEW_DETAILS' | translate }}
           </button>
         </div>
       </div>

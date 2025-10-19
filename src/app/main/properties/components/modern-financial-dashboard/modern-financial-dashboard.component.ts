@@ -3,6 +3,7 @@ import { createFinalStoragePluginOptions } from '@ngxs/storage-plugin/src/intern
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { TranslateService } from '@ngx-translate/core';
 import { StatisticState, StatisticAction } from 'src/app/shared/store';
 import { MONTH } from 'src/app/shared/store/global/global.model';
 import { StatisticPaymentOfAllPropertyByYear } from 'src/app/shared/store/statistic-data/statistic.model';
@@ -50,44 +51,7 @@ export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
   selectedPeriod: 'month' | 'quarter' | 'year' = 'month';
   
   // Métriques principales
-  financialMetrics: FinancialMetric[] = [
-    {
-      label: 'Revenus Totaux',
-      value: 0,
-      change: 0,
-      changeType: 'neutral',
-      icon: 'money',
-      color: 'success',
-      isMoney: true
-    },
-    {
-      label: 'Taux de Collecte',
-      value: 0,
-      change: 0,
-      changeType: 'neutral',
-      icon: 'percentage',
-      color: 'info',
-      isMoney: false
-    },
-    {
-      label: 'Propriétés Actives',
-      value: 0,
-      change: 0,
-      changeType: 'neutral',
-      icon: 'home',
-      color: 'primary',
-      isMoney: false
-    },
-    {
-      label: 'Bénéfice Net',
-      value: 0,
-      change: 0,
-      changeType: 'neutral',
-      icon: 'trending-up',
-      color: 'warning',
-      isMoney: true
-    }
-  ];
+  financialMetrics: FinancialMetric[] = [];
 
   // Données des propriétés
   propertiesSummary: PropertyFinancialSummary[] = [];
@@ -98,21 +62,26 @@ export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
   
   // Options de période
   periodOptions = [
-    { value: 'month', label: 'Mensuel' },
-    { value: 'quarter', label: 'Trimestriel' },
-    { value: 'year', label: 'Annuel' }
+    { value: 'month', label: 'FINANCIAL_DASHBOARD.MONTHLY' },
+    { value: 'quarter', label: 'FINANCIAL_DASHBOARD.QUARTERLY' },
+    { value: 'year', label: 'FINANCIAL_DASHBOARD.YEARLY' }
   ];
 
   // Options d'année
   yearOptions: any[] = [];
 
-  constructor(private store: Store) {
+  constructor(
+    private store: Store,
+    private translate: TranslateService
+  ) {
     this.initializeYearOptions();
+    this.initializeFinancialMetrics();
     this.generateMockData();
   }
 
   ngOnInit(): void {
     this.loadFinancialData();
+    this.updatePeriodOptions();
   }
 
   ngOnDestroy(): void {
@@ -125,6 +94,55 @@ export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
       value: this.currentYear - i,
       label: (this.currentYear - i).toString()
     }));
+  }
+
+  private initializeFinancialMetrics(): void {
+    this.financialMetrics = [
+      {
+        label: 'FINANCIAL_DASHBOARD.TOTAL_REVENUE',
+        value: 0,
+        change: 0,
+        changeType: 'neutral',
+        icon: 'money',
+        color: 'success',
+        isMoney: true
+      },
+      {
+        label: 'FINANCIAL_DASHBOARD.COLLECTION_RATE',
+        value: 0,
+        change: 0,
+        changeType: 'neutral',
+        icon: 'percentage',
+        color: 'info',
+        isMoney: false
+      },
+      {
+        label: 'FINANCIAL_DASHBOARD.ACTIVE_PROPERTIES',
+        value: 0,
+        change: 0,
+        changeType: 'neutral',
+        icon: 'home',
+        color: 'primary',
+        isMoney: false
+      },
+      {
+        label: 'FINANCIAL_DASHBOARD.NET_PROFIT',
+        value: 0,
+        change: 0,
+        changeType: 'neutral',
+        icon: 'trending-up',
+        color: 'warning',
+        isMoney: true
+      }
+    ];
+  }
+
+  private updatePeriodOptions(): void {
+    this.periodOptions = [
+      { value: 'month', label: 'FINANCIAL_DASHBOARD.MONTHLY' },
+      { value: 'quarter', label: 'FINANCIAL_DASHBOARD.QUARTERLY' },
+      { value: 'year', label: 'FINANCIAL_DASHBOARD.YEARLY' }
+    ];
   }
 
   private loadFinancialData(): void {

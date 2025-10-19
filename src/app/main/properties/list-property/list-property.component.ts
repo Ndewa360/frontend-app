@@ -3,6 +3,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
 import { PropertyModel, PropertyState, RoomState, LocationPaymentState, LocationState } from 'src/app/shared/store';
 import { AddPropertyComponent } from '../add-property/add-property.component';
 import { Store } from '@ngxs/store';
@@ -32,7 +33,8 @@ export class ListPropertyComponent implements OnInit {
     private dialog: MatDialog,
     private _store: Store,
     private router: Router,
-    private propertyNavigationService: PropertyNavigationService
+    private propertyNavigationService: PropertyNavigationService,
+    private translate: TranslateService
   ) { }
 
   ngOnInit(): void {
@@ -159,7 +161,7 @@ export class ListPropertyComponent implements OnInit {
     if (overdueCount > 0) {
       alerts.push({
         type: overdueCount > 2 ? 'critical' : 'warning',
-        message: `${overdueCount} paiement(s) en retard`,
+        message: `${overdueCount} ${this.translate.instant('PROPERTIES.CARD.PAYMENT_OVERDUE')}`,
         actionRoute: `/app/properties/${propertyId}/payments`
       });
     }
@@ -169,7 +171,7 @@ export class ListPropertyComponent implements OnInit {
     if (freeRooms > 0) {
       alerts.push({
         type: 'info',
-        message: `${freeRooms} chambre(s) libre(s)`,
+        message: `${freeRooms} ${this.translate.instant('PROPERTIES.CARD.ROOMS_FREE')}`,
         actionRoute: `/app/properties/${propertyId}/rooms`
       });
     }

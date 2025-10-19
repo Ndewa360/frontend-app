@@ -6,7 +6,6 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
-import { ModalTranslationService } from '../../../../shared/services/modal-translation.service';
 import {
   LocationPaymentModel,
   LocationPaymentAction,
@@ -42,15 +41,15 @@ export class ModernPaymentModalComponent implements OnInit, OnDestroy {
   paymentTypes = [
     { 
       value: LocationPaymentType.LOCATION, 
-      label: 'Loyer mensuel', 
+      label: this.translate.instant('PAYMENT_MANAGEMENT.MONTHLY_RENT'), 
       icon: 'home',
-      description: 'Paiement du loyer mensuel'
+      description: this.translate.instant('PAYMENT_MANAGEMENT.MONTHLY_RENT_DESC')
     },
     { 
       value: LocationPaymentType.CAUTION, 
-      label: 'Caution', 
+      label: this.translate.instant('PAYMENT_MANAGEMENT.DEPOSIT'), 
       icon: 'shield',
-      description: 'Dépôt de garantie'
+      description: this.translate.instant('PAYMENT_MANAGEMENT.DEPOSIT_DESC')
     }
   ];
   
@@ -61,6 +60,7 @@ export class ModernPaymentModalComponent implements OnInit, OnDestroy {
     private store: Store,
     private actions: Actions,
     private toastr: ToastrService,
+    private translate: TranslateService,
     private dialogRef: MatDialogRef<ModernPaymentModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: PaymentModalData
   ) {
@@ -69,12 +69,30 @@ export class ModernPaymentModalComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.setupActionListeners();
+    this.updatePaymentTypes();
     
     if (this.data.mode === 'edit' && this.data.transaction) {
       this.populateForm();
     } else {
       this.setDefaultValues();
     }
+  }
+
+  private updatePaymentTypes(): void {
+    this.paymentTypes = [
+      { 
+        value: LocationPaymentType.LOCATION, 
+        label: this.translate.instant('PAYMENT_MANAGEMENT.MONTHLY_RENT'), 
+        icon: 'home',
+        description: this.translate.instant('PAYMENT_MANAGEMENT.MONTHLY_RENT_DESC')
+      },
+      { 
+        value: LocationPaymentType.CAUTION, 
+        label: this.translate.instant('PAYMENT_MANAGEMENT.DEPOSIT'), 
+        icon: 'shield',
+        description: this.translate.instant('PAYMENT_MANAGEMENT.DEPOSIT_DESC')
+      }
+    ];
   }
 
   ngOnDestroy(): void {
@@ -177,7 +195,10 @@ export class ModernPaymentModalComponent implements OnInit, OnDestroy {
     ).subscribe(() => {
       console.log('✅ Paiement ajouté avec succès');
       this.isLoading = false;
-      this.toastr.success('Paiement enregistré avec succès', 'Succès');
+      this.toastr.success(
+        this.translate.instant('NOTIFICATIONS.PAYMENT_CREATED_SUCCESS'),
+        this.translate.instant('NOTIFICATIONS.SUCCESS')
+      );
       
       // Rafraîchir automatiquement les statistiques
       this.refreshStatistics();
@@ -192,7 +213,10 @@ export class ModernPaymentModalComponent implements OnInit, OnDestroy {
     ).subscribe(() => {
       console.log('✅ Paiement modifié avec succès');
       this.isLoading = false;
-      this.toastr.success('Paiement modifié avec succès', 'Succès');
+      this.toastr.success(
+        this.translate.instant('NOTIFICATIONS.PAYMENT_UPDATED_SUCCESS'),
+        this.translate.instant('NOTIFICATIONS.SUCCESS')
+      );
       
       // Rafraîchir automatiquement les statistiques
       this.refreshStatistics();
@@ -208,7 +232,10 @@ export class ModernPaymentModalComponent implements OnInit, OnDestroy {
       console.error('❌ Erreur lors de l\'ajout du paiement:', ctx);
       this.isLoading = false;
       const errorMessage = this.getErrorMessage(ctx);
-      this.toastr.error(errorMessage, 'Erreur d\'ajout');
+      this.toastr.error(
+        errorMessage,
+        this.translate.instant('NOTIFICATIONS.PAYMENT_CREATE_ERROR')
+      );
     });
 
     // Erreurs de modification
@@ -219,7 +246,10 @@ export class ModernPaymentModalComponent implements OnInit, OnDestroy {
       console.error('❌ Erreur lors de la modification du paiement:', ctx);
       this.isLoading = false;
       const errorMessage = this.getErrorMessage(ctx);
-      this.toastr.error(errorMessage, 'Erreur de modification');
+      this.toastr.error(
+        errorMessage,
+        this.translate.instant('NOTIFICATIONS.PAYMENT_UPDATE_ERROR')
+      );
     });
   }
 
@@ -242,7 +272,10 @@ export class ModernPaymentModalComponent implements OnInit, OnDestroy {
   onSubmit(): void {
     if (this.formGroup.invalid || this.isLoading) {
       this.formGroup.markAllAsTouched();
-      this.toastr.warning('Veuillez corriger les erreurs dans le formulaire', 'Formulaire invalide');
+      this.toastr.warning(
+        this.translate.instant('NOTIFICATIONS.FORM_VALIDATION_ERROR'),
+        this.translate.instant('NOTIFICATIONS.FORM_INVALID_TITLE')
+      );
       return;
     }
 
@@ -361,28 +394,43 @@ export class ModernPaymentModalComponent implements OnInit, OnDestroy {
   private validateRequiredData(): boolean {
     if (this.data.mode === 'create') {
       if (!this.data.room?._id) {
-        this.toastr.error('ID de chambre manquant', 'Erreur');
+        this.toastr.error(
+          this.translate.instant('PAYMENT_MANAGEMENT.ROOM_ID_MISSING'),
+          this.translate.instant('NOTIFICATIONS.ERROR')
+        );
         this.isLoading = false;
         return false;
       }
       if (!this.data.tenant?._id) {
-        this.toastr.error('ID de locataire manquant', 'Erreur');
+        this.toastr.error(
+          this.translate.instant('PAYMENT_MANAGEMENT.TENANT_ID_MISSING'),
+          this.translate.instant('NOTIFICATIONS.ERROR')
+        );
         this.isLoading = false;
         return false;
       }
       if (!this.data.location?._id) {
-        this.toastr.error('ID de location manquant', 'Erreur');
+        this.toastr.error(
+          this.translate.instant('PAYMENT_MANAGEMENT.LOCATION_ID_MISSING'),
+          this.translate.instant('NOTIFICATIONS.ERROR')
+        );
         this.isLoading = false;
         return false;
       }
       if (!this.data.room?.property) {
-        this.toastr.error('ID de propriété manquant', 'Erreur');
+        this.toastr.error(
+          this.translate.instant('PAYMENT_MANAGEMENT.PROPERTY_ID_MISSING'),
+          this.translate.instant('NOTIFICATIONS.ERROR')
+        );
         this.isLoading = false;
         return false;
       }
     } else {
       if (!this.data.transaction?._id) {
-        this.toastr.error('ID de transaction manquant', 'Erreur');
+        this.toastr.error(
+          this.translate.instant('PAYMENT_MANAGEMENT.TRANSACTION_ID_MISSING'),
+          this.translate.instant('NOTIFICATIONS.ERROR')
+        );
         this.isLoading = false;
         return false;
       }
@@ -401,28 +449,28 @@ export class ModernPaymentModalComponent implements OnInit, OnDestroy {
   get billingRef() { return this.formGroup.get('billingRef'); }
 
   getTitle(): string {
-    return this.data.mode === 'create' ? 'Nouveau Paiement' : 'Modifier le Paiement';
+    return this.data.mode === 'create' ? 'PAYMENT_MANAGEMENT.ADD_PAYMENT' : 'PAYMENT_MANAGEMENT.EDIT_PAYMENT';
   }
 
   getSubmitText(): string {
     if (this.isLoading) {
-      return this.data.mode === 'create' ? 'Enregistrement...' : 'Modification...';
+      return this.data.mode === 'create' ? 'PAYMENT_MANAGEMENT.CREATING' : 'PAYMENT_MANAGEMENT.UPDATING';
     }
-    return this.data.mode === 'create' ? 'Enregistrer le Paiement' : 'Modifier le Paiement';
+    return this.data.mode === 'create' ? 'PAYMENT_MANAGEMENT.CREATE_PAYMENT' : 'PAYMENT_MANAGEMENT.UPDATE_PAYMENT';
   }
 
   getTenantInfo(): string {
     if (this.data.tenant) {
-      return this.data.tenant.fullName || 'Locataire';
+      return this.data.tenant.fullName || this.translate.instant('PAYMENT_MANAGEMENT.TENANT');
     }
-    return 'Aucun locataire';
+    return this.translate.instant('PAYMENT_MANAGEMENT.NO_TENANT');
   }
 
   getRoomInfo(): string {
     if (this.data.room) {
       return `${this.data.room.code} - ${this.formatPrice(this.data.room.price)}`;
     }
-    return 'Aucune unité';
+    return this.translate.instant('PAYMENT_MANAGEMENT.NO_UNIT');
   }
 
   formatPrice(price: number): string {
@@ -464,11 +512,11 @@ export class ModernPaymentModalComponent implements OnInit, OnDestroy {
   // Méthodes de paiement disponibles
   getPaymentMethods() {
     return [
-      { value: 'CASH', label: 'Espèces', icon: 'money' },
-      { value: 'BANK_TRANSFER', label: 'Virement bancaire', icon: 'bank' },
-      { value: 'MOBILE_MONEY', label: 'Mobile Money', icon: 'phone' },
-      { value: 'CHECK', label: 'Chèque', icon: 'check' },
-      { value: 'CARD', label: 'Carte bancaire', icon: 'card' }
+      { value: 'CASH', label: this.translate.instant('FINANCES.PAYMENT_METHODS.CASH'), icon: 'money' },
+      { value: 'BANK_TRANSFER', label: this.translate.instant('FINANCES.PAYMENT_METHODS.BANK_TRANSFER'), icon: 'bank' },
+      { value: 'MOBILE_MONEY', label: this.translate.instant('FINANCES.PAYMENT_METHODS.MOBILE_MONEY'), icon: 'phone' },
+      { value: 'CHECK', label: this.translate.instant('FINANCES.PAYMENT_METHODS.CHECK'), icon: 'check' },
+      { value: 'CARD', label: this.translate.instant('FINANCES.PAYMENT_METHODS.CREDIT_CARD'), icon: 'card' }
     ];
   }
 }

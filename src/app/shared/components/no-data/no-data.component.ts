@@ -1,4 +1,5 @@
 import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-no-data-list',
@@ -10,7 +11,8 @@ export class NoDataComponent implements OnInit {
 
   @Input() textDescription:string=""
   @Input() isTextDescriptionForFilter:boolean=false
-  constructor() { }
+  
+  constructor(private translate: TranslateService) { }
 
   ngOnInit(): void {
   }

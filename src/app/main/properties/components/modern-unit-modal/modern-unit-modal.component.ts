@@ -5,6 +5,7 @@ import { Store, Actions, ofActionSuccessful, ofActionErrored } from '@ngxs/store
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 import { FormUtils } from 'src/app/shared/utils';
 
 import { 
@@ -49,10 +50,10 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
   
   // Room types
   roomTypes = [
-    { value: RoomType.ROOM, label: 'Chambre simple', icon: 'bed' },
-    { value: RoomType.STUDIO, label: 'Studio', icon: 'home' },
-    { value: RoomType.SIMPLE_APARTMENT, label: 'Appartement simple', icon: 'apartment' },
-    { value: RoomType.FURNISHED_APARTMENT, label: 'Appartement meublé', icon: 'chair' }
+    { value: RoomType.ROOM, label: this.translate.instant('ROOM_TYPES.ROOM'), icon: 'bed' },
+    { value: RoomType.STUDIO, label: this.translate.instant('ROOM_TYPES.STUDIO'), icon: 'home' },
+    { value: RoomType.SIMPLE_APARTMENT, label: this.translate.instant('ROOM_TYPES.SIMPLE_APARTMENT'), icon: 'apartment' },
+    { value: RoomType.FURNISHED_APARTMENT, label: this.translate.instant('ROOM_TYPES.FURNISHED_APARTMENT'), icon: 'chair' }
   ];
   
   private destroy$ = new Subject<void>();
@@ -66,6 +67,7 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
     private store: Store,
     private actions: Actions,
     private toastr: ToastrService,
+    private translate: TranslateService,
     private dialog: MatDialog,
     private dialogRef: MatDialogRef<ModernUnitModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: UnitModalData
@@ -79,10 +81,20 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.setupActionListeners();
+    this.updateRoomTypes();
     
     if (this.data.mode === 'edit' && this.data.unit) {
       this.populateForm();
     }
+  }
+
+  private updateRoomTypes(): void {
+    this.roomTypes = [
+      { value: RoomType.ROOM, label: this.translate.instant('ROOM_TYPES.ROOM'), icon: 'bed' },
+      { value: RoomType.STUDIO, label: this.translate.instant('ROOM_TYPES.STUDIO'), icon: 'home' },
+      { value: RoomType.SIMPLE_APARTMENT, label: this.translate.instant('ROOM_TYPES.SIMPLE_APARTMENT'), icon: 'apartment' },
+      { value: RoomType.FURNISHED_APARTMENT, label: this.translate.instant('ROOM_TYPES.FURNISHED_APARTMENT'), icon: 'chair' }
+    ];
   }
 
   ngOnDestroy(): void {
@@ -212,7 +224,10 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy$)
     ).subscribe(() => {
       this.isLoading = false;
-      this.toastr.success('Unité créée avec succès', 'Succès');
+      this.toastr.success(
+        this.translate.instant('NOTIFICATIONS.UNIT_CREATED_SUCCESS'),
+        this.translate.instant('NOTIFICATIONS.SUCCESS')
+      );
       this.dialogRef.close(true);
     });
 
@@ -222,7 +237,10 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy$)
     ).subscribe(() => {
       this.isLoading = false;
-      this.toastr.success('Unité modifiée avec succès', 'Succès');
+      this.toastr.success(
+        this.translate.instant('NOTIFICATIONS.UNIT_UPDATED_SUCCESS'),
+        this.translate.instant('NOTIFICATIONS.SUCCESS')
+      );
       this.dialogRef.close(true);
     });
 
@@ -245,7 +263,10 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy$)
     ).subscribe(() => {
       this.isLoading = false;
-      this.toastr.error('Une erreur est survenue lors de la modification', 'Erreur');
+      this.toastr.error(
+        this.translate.instant('NOTIFICATIONS.UNIT_UPDATE_ERROR'),
+        this.translate.instant('NOTIFICATIONS.ERROR')
+      );
     });
   }
 
@@ -258,11 +279,17 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
       // Validation
       const validFiles = files.filter(file => {
         if (!file.type.startsWith('image/')) {
-          this.toastr.error(`${file.name} n'est pas une image valide`, 'Erreur');
+          this.toastr.error(
+            this.translate.instant('ERRORS.INVALID_FILE_TYPE', { fileName: file.name }),
+            this.translate.instant('NOTIFICATIONS.ERROR')
+          );
           return false;
         }
         if (file.size > 5 * 1024 * 1024) { // 5MB
-          this.toastr.error(`${file.name} dépasse la taille maximale de 5MB`, 'Erreur');
+          this.toastr.error(
+            this.translate.instant('ERRORS.FILE_TOO_LARGE', { fileName: file.name }),
+            this.translate.instant('NOTIFICATIONS.ERROR')
+          );
           return false;
         }
         return true;
@@ -317,7 +344,10 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
       
     } catch (error) {
       console.error('Erreur lors de l\'upload des images:', error);
-      this.toastr.error('Erreur lors de l\'upload des images', 'Erreur');
+      this.toastr.error(
+        this.translate.instant('ERRORS.UPLOAD_FAILED'),
+        this.translate.instant('NOTIFICATIONS.ERROR')
+      );
       return this.data.unit?.medias || [];
     } finally {
       this.isUploadingImages = false;
@@ -443,14 +473,14 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
   get cautionPrice() { return this.formGroup.get('cautionPrice'); }
 
   getTitle(): string {
-    return this.data.mode === 'create' ? 'Nouvelle Unité' : 'Modifier l\'Unité';
+    return this.data.mode === 'create' ? 'UNIT_MANAGEMENT.ADD_UNIT' : 'UNIT_MANAGEMENT.EDIT_UNIT';
   }
 
   getSubmitText(): string {
     if (this.isLoading) {
-      return this.data.mode === 'create' ? 'Création...' : 'Modification...';
+      return this.data.mode === 'create' ? 'UNIT_MANAGEMENT.CREATING' : 'UNIT_MANAGEMENT.UPDATING';
     }
-    return this.data.mode === 'create' ? 'Créer l\'Unité' : 'Modifier l\'Unité';
+    return this.data.mode === 'create' ? 'UNIT_MANAGEMENT.CREATE_UNIT' : 'UNIT_MANAGEMENT.UPDATE_UNIT';
   }
 
   getRoomTypeIcon(type: RoomType): string {

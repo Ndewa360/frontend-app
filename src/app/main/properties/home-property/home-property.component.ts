@@ -3,6 +3,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Store, Select } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { TranslateService } from '@ngx-translate/core';
 import { AddPropertyComponent } from '../add-property/add-property.component';
 import { PropertyState, PropertyAction } from 'src/app/shared/store';
 import { PropertyModel } from 'src/app/shared/store/properties/property.model';
@@ -41,7 +42,8 @@ export class HomePropertyComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private _store: Store,
     private loadingStateService: LoadingStateService,
-    private dataDrivenLoader: DataDrivenLoaderService
+    private dataDrivenLoader: DataDrivenLoaderService,
+    private translate: TranslateService
   ) { }
 
   ngOnInit(): void {

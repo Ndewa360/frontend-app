@@ -160,19 +160,31 @@ export class ModernTenantModalComponent implements OnInit, OnDestroy {
           if (photoUrl) {
             console.log('✅ Photo uploadée avec succès:', photoUrl);
             // Afficher un message spécifique pour la photo
-            this.toastr.success('Locataire créé avec photo de profil', this.translate.instant('NOTIFICATIONS.SUCCESS'));
+            this.toastr.success(
+              this.translate.instant('NOTIFICATIONS.TENANT_CREATED_WITH_PHOTO'),
+              this.translate.instant('NOTIFICATIONS.SUCCESS')
+            );
           } else {
             // Pas de photo uploadée, message standard
-            this.toastr.success(this.translate.instant('MODALS.TENANT.SUCCESS_CREATED'), this.translate.instant('NOTIFICATIONS.SUCCESS'));
+            this.toastr.success(
+              this.translate.instant('NOTIFICATIONS.TENANT_CREATED_SUCCESS'),
+              this.translate.instant('NOTIFICATIONS.SUCCESS')
+            );
           }
         } catch (error) {
           console.error('❌ Erreur lors de l\'upload de la photo:', error);
           // Afficher un message indiquant que le locataire est créé mais sans photo
-          this.toastr.warning('Locataire créé mais erreur lors de l\'upload de la photo', 'Attention');
+          this.toastr.warning(
+            this.translate.instant('NOTIFICATIONS.TENANT_CREATED_PHOTO_ERROR'),
+            this.translate.instant('NOTIFICATIONS.WARNING')
+          );
         }
       } else {
         // Pas de photo sélectionnée, message standard
-        this.toastr.success(this.translate.instant('MODALS.TENANT.SUCCESS_CREATED'), this.translate.instant('NOTIFICATIONS.SUCCESS'));
+        this.toastr.success(
+          this.translate.instant('NOTIFICATIONS.TENANT_CREATED_SUCCESS'),
+          this.translate.instant('NOTIFICATIONS.SUCCESS')
+        );
       }
 
       this.isLoading = false;
@@ -185,7 +197,10 @@ export class ModernTenantModalComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy$)
     ).subscribe(() => {
       this.isLoading = false;
-      this.toastr.success(this.translate.instant('MODALS.TENANT.SUCCESS_UPDATED'), this.translate.instant('NOTIFICATIONS.SUCCESS'));
+      this.toastr.success(
+        this.translate.instant('NOTIFICATIONS.TENANT_UPDATED_SUCCESS'),
+        this.translate.instant('NOTIFICATIONS.SUCCESS')
+      );
       this.dialogRef.close(true);
     });
 
@@ -195,7 +210,10 @@ export class ModernTenantModalComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy$)
     ).subscribe(() => {
       this.isLoading = false;
-      this.toastr.error(this.translate.instant('MODALS.TENANT.ERROR_CREATE'), this.translate.instant('NOTIFICATIONS.ERROR'));
+      this.toastr.error(
+        this.translate.instant('NOTIFICATIONS.TENANT_CREATE_ERROR'),
+        this.translate.instant('NOTIFICATIONS.ERROR')
+      );
     });
 
     // Erreurs de modification
@@ -204,7 +222,10 @@ export class ModernTenantModalComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy$)
     ).subscribe(() => {
       this.isLoading = false;
-      this.toastr.error(this.translate.instant('MODALS.TENANT.ERROR_UPDATE'), this.translate.instant('NOTIFICATIONS.ERROR'));
+      this.toastr.error(
+        this.translate.instant('NOTIFICATIONS.TENANT_UPDATE_ERROR'),
+        this.translate.instant('NOTIFICATIONS.ERROR')
+      );
     });
   }
 
@@ -216,12 +237,18 @@ export class ModernTenantModalComponent implements OnInit, OnDestroy {
       
       // Validation du fichier
       if (!file.type.startsWith('image/')) {
-        this.toastr.error('Veuillez sélectionner une image valide', 'Erreur');
+        this.toastr.error(
+          this.translate.instant('ERRORS.INVALID_FILE_TYPE'),
+          this.translate.instant('NOTIFICATIONS.ERROR')
+        );
         return;
       }
       
       if (file.size > 5 * 1024 * 1024) { // 5MB
-        this.toastr.error('La taille de l\'image ne doit pas dépasser 5MB', 'Erreur');
+        this.toastr.error(
+          this.translate.instant('ERRORS.FILE_TOO_LARGE'),
+          this.translate.instant('NOTIFICATIONS.ERROR')
+        );
         return;
       }
       
@@ -336,7 +363,10 @@ export class ModernTenantModalComponent implements OnInit, OnDestroy {
 
     } catch (error) {
       console.error('❌ Erreur lors de l\'upload de la photo:', error);
-      this.toastr.error('Erreur lors de l\'upload de la photo', 'Erreur');
+      this.toastr.error(
+        this.translate.instant('ERRORS.UPLOAD_FAILED'),
+        this.translate.instant('NOTIFICATIONS.ERROR')
+      );
       return null;
     } finally {
       this.isUploadingPhoto = false;
@@ -389,7 +419,10 @@ export class ModernTenantModalComponent implements OnInit, OnDestroy {
       }
     } catch (error) {
       this.isLoading = false;
-      this.toastr.error('Une erreur est survenue', 'Erreur');
+      this.toastr.error(
+        this.translate.instant('NOTIFICATIONS.OPERATION_ERROR'),
+        this.translate.instant('NOTIFICATIONS.ERROR')
+      );
     }
   }
 
@@ -407,16 +440,15 @@ export class ModernTenantModalComponent implements OnInit, OnDestroy {
   get confirm() { return this.formGroup.get('confirm'); }
 
   getTitle(): string {
-    const titleKey = this.data.mode === 'create'
-      ? 'MODALS.TENANT.ADD_TITLE'
-      : 'MODALS.TENANT.EDIT_TITLE';
-    return this.translate.instant(titleKey);
+    return this.data.mode === 'create'
+      ? 'TENANT_MANAGEMENT.ADD_TENANT'
+      : 'TENANT_MANAGEMENT.EDIT_TENANT';
   }
 
   getSubmitText(): string {
     if (this.isLoading) {
-      return this.data.mode === 'create' ? 'Création...' : 'Modification...';
+      return this.data.mode === 'create' ? 'TENANT_MANAGEMENT.CREATING' : 'TENANT_MANAGEMENT.UPDATING';
     }
-    return this.data.mode === 'create' ? 'Créer le Locataire' : 'Modifier le Locataire';
+    return this.data.mode === 'create' ? 'TENANT_MANAGEMENT.CREATE_TENANT' : 'TENANT_MANAGEMENT.UPDATE_TENANT';
   }
 }

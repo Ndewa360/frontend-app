@@ -10,7 +10,7 @@
         </svg>
       </div>
       <div class="header-text">
-        <h2 class="modal-title">{{ getTitle() }}</h2>
+        <h2 class="modal-title">{{ getTitle() | translate }}</h2>
         <p class="modal-subtitle">{{ data.property.name }}</p>
       </div>
     </div>
@@ -32,7 +32,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                   d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
           </svg>
-          Photos de l'unité
+          {{ 'UNIT_MANAGEMENT.UNIT_PHOTOS' | translate }}
         </h3>
         
         <div class="images-container">
@@ -41,13 +41,12 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                     d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
             </svg>
-            <h4 class="text-lg font-semibold text-gray-700 mb-2">Ajout de photos</h4>
+            <h4 class="text-lg font-semibold text-gray-700 mb-2">{{ 'UNIT_MANAGEMENT.ADD_PHOTOS' | translate }}</h4>
             <p class="text-gray-600 text-center">
-              Pour ajouter des photos à cette unité, veuillez utiliser l'<strong>uploader de photos</strong> 
-              disponible dans les détails de l'unité après sa création.
+              {{ 'UNIT_MANAGEMENT.PHOTOS_INFO' | translate }}
             </p>
             <div class="mt-3 text-sm text-blue-600">
-              📷 Les photos peuvent être ajoutées et gérées depuis la page de détails de l'unité
+              {{ 'UNIT_MANAGEMENT.PHOTOS_MANAGEMENT_INFO' | translate }}
             </div>
           </div>
         </div>
@@ -63,32 +62,32 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                     d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
-            Informations de base
+            {{ 'UNIT_MANAGEMENT.BASIC_INFO' | translate }}
           </h3>
           
           <div class="form-grid">
             
             <div class="form-group">
-              <label class="form-label">Type d'unité *</label>
+              <label class="form-label">{{ 'UNIT_MANAGEMENT.UNIT_TYPE' | translate }} *</label>
               <select formControlName="type" class="form-select" [class.error]="type?.invalid && type?.touched">
                 <option *ngFor="let roomType of roomTypes" [value]="roomType.value">
                   {{ roomType.label }}
                 </option>
               </select>
               <div *ngIf="type?.invalid && type?.touched" class="error-message">
-                <span *ngIf="type?.errors?.['required']">Le type est requis</span>
+                <span *ngIf="type?.errors?.['required']">{{ 'UNIT_MANAGEMENT.TYPE_REQUIRED' | translate }}</span>
               </div>
             </div>
 
             <div class="form-group">
               <label class="form-label">
-                Prix mensuel (FCFA) *
+                {{ 'UNIT_MANAGEMENT.MONTHLY_PRICE' | translate }} *
                 <span *ngIf="data.mode === 'edit' && isUnitOccupied()"
                       class="ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
                   <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
                   </svg>
-                  Non modifiable (unité occupée)
+                  {{ 'UNIT_MANAGEMENT.NOT_MODIFIABLE_OCCUPIED' | translate }}
                 </span>
               </label>
               <input type="number"
@@ -99,11 +98,11 @@
                      placeholder="Ex: 50000"
                      min="1000">
               <div *ngIf="price?.invalid && price?.touched" class="error-message">
-                <span *ngIf="price?.errors?.['required']">Le prix est requis</span>
-                <span *ngIf="price?.errors?.['min']">Le prix minimum est de 1 000 FCFA</span>
+                <span *ngIf="price?.errors?.['required']">{{ 'UNIT_MANAGEMENT.PRICE_REQUIRED' | translate }}</span>
+                <span *ngIf="price?.errors?.['min']">{{ 'UNIT_MANAGEMENT.PRICE_MIN_ERROR' | translate }}</span>
               </div>
               <div *ngIf="data.mode === 'edit' && isUnitOccupied()" class="mt-1 text-sm text-orange-600">
-                💡 Le prix ne peut pas être modifié car l'unité est actuellement occupée
+                {{ 'UNIT_MANAGEMENT.PRICE_MODIFICATION_INFO' | translate }}
               </div>
               <div *ngIf="formGroup.get('price')?.value > 0" class="price-preview">
                 {{ formatPrice(formGroup.get('price')?.value) }}
@@ -112,30 +111,30 @@
 
             <div class="form-group">
               <label class="form-label">
-                Code de l'unité
+                {{ 'UNIT_MANAGEMENT.UNIT_CODE' | translate }}
                 <span class="ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
                   <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                   </svg>
-                  Auto-généré
+                  {{ 'UNIT_MANAGEMENT.AUTO_GENERATED' | translate }}
                 </span>
               </label>
               <input type="text" 
                      formControlName="code"
                      class="form-input disabled"
-                     placeholder="Le code sera généré automatiquement"
+                     [placeholder]="'UNIT_MANAGEMENT.CODE_PLACEHOLDER' | translate"
                      readonly>
               <div class="mt-1 text-sm text-gray-500">
-                🏷️ Le code de l'unité sera automatiquement généré lors de la création
+                {{ 'UNIT_MANAGEMENT.CODE_INFO' | translate }}
               </div>
             </div>
 
             <div class="form-group full-width">
-              <label class="form-label">Description</label>
+              <label class="form-label">{{ 'UNIT_MANAGEMENT.DESCRIPTION' | translate }}</label>
               <textarea formControlName="description"
                         class="form-textarea"
                         rows="3"
-                        placeholder="Description détaillée de l'unité..."></textarea>
+                        [placeholder]="'UNIT_MANAGEMENT.DESCRIPTION_PLACEHOLDER' | translate"></textarea>
             </div>
           </div>
         </div>
@@ -147,12 +146,12 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                     d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
             </svg>
-            Spécificités de l'unité
+            {{ 'UNIT_MANAGEMENT.UNIT_SPECIFICATIONS' | translate }}
           </h3>
           
           <div class="form-grid">
             <div class="form-group">
-              <label class="form-label">Nombre de douches</label>
+              <label class="form-label">{{ 'UNIT_MANAGEMENT.NUMBER_OF_SHOWERS' | translate }}</label>
               <input type="number" 
                      formControlName="numberOfShower"
                      class="form-input"
@@ -161,7 +160,7 @@
             </div>
 
             <div class="form-group">
-              <label class="form-label">Nombre de salons</label>
+              <label class="form-label">{{ 'UNIT_MANAGEMENT.NUMBER_OF_LIVING_ROOMS' | translate }}</label>
               <input type="number" 
                      formControlName="numberOfLivingRoom"
                      class="form-input"
@@ -170,7 +169,7 @@
             </div>
 
             <div class="form-group">
-              <label class="form-label">Nombre de chambres</label>
+              <label class="form-label">{{ 'UNIT_MANAGEMENT.NUMBER_OF_BEDROOMS' | translate }}</label>
               <input type="number" 
                      formControlName="numberOfBathroom"
                      class="form-input"
@@ -185,7 +184,7 @@
                          formControlName="isInternalShower"
                          class="checkbox-input">
                   <span class="checkbox-custom"></span>
-                  <span class="checkbox-text">Douche interne</span>
+                  <span class="checkbox-text">{{ 'UNIT_MANAGEMENT.INTERNAL_SHOWER' | translate }}</span>
                 </label>
               </div>
             </div>
@@ -197,13 +196,13 @@
                          formControlName="hasKitchen"
                          class="checkbox-input">
                   <span class="checkbox-custom"></span>
-                  <span class="checkbox-text">Possède une cuisine</span>
+                  <span class="checkbox-text">{{ 'UNIT_MANAGEMENT.HAS_KITCHEN' | translate }}</span>
                 </label>
               </div>
             </div>
 
             <div class="form-group" *ngIf="hasKitchen()">
-              <label class="form-label">Nombre de cuisines</label>
+              <label class="form-label">{{ 'UNIT_MANAGEMENT.NUMBER_OF_KITCHENS' | translate }}</label>
               <input type="number" 
                      formControlName="numberOfKitchen"
                      class="form-input"
@@ -218,7 +217,7 @@
                          formControlName="isInternalKitchen"
                          class="checkbox-input">
                   <span class="checkbox-custom"></span>
-                  <span class="checkbox-text">Cuisine interne</span>
+                  <span class="checkbox-text">{{ 'UNIT_MANAGEMENT.INTERNAL_KITCHEN' | translate }}</span>
                 </label>
               </div>
             </div>
@@ -232,7 +231,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                     d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
             </svg>
-            Caution et garantie
+            {{ 'UNIT_MANAGEMENT.DEPOSIT_AND_GUARANTEE' | translate }}
           </h3>
           
           <div class="form-grid">
@@ -243,13 +242,13 @@
                          formControlName="shouldPayCaution"
                          class="checkbox-input">
                   <span class="checkbox-custom"></span>
-                  <span class="checkbox-text">Caution requise</span>
+                  <span class="checkbox-text">{{ 'UNIT_MANAGEMENT.DEPOSIT_REQUIRED' | translate }}</span>
                 </label>
               </div>
             </div>
 
             <div class="form-group" *ngIf="shouldPayCaution()">
-              <label class="form-label">Montant de la caution (FCFA)</label>
+              <label class="form-label">{{ 'UNIT_MANAGEMENT.DEPOSIT_AMOUNT' | translate }}</label>
               <input type="number" 
                      formControlName="cautionPrice"
                      class="form-input"
@@ -257,7 +256,7 @@
                      placeholder="Ex: 100000"
                      min="0">
               <div *ngIf="cautionPrice?.invalid && cautionPrice?.touched" class="error-message">
-                <span *ngIf="cautionPrice?.errors?.['min']">Le montant ne peut pas être négatif</span>
+                <span *ngIf="cautionPrice?.errors?.['min']">{{ 'UNIT_MANAGEMENT.AMOUNT_NOT_NEGATIVE' | translate }}</span>
               </div>
               <div *ngIf="formGroup.get('cautionPrice')?.value > 0" class="price-preview">
                 {{ formatPrice(formGroup.get('cautionPrice')?.value) }}
@@ -275,7 +274,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                     d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
             </svg>
-            Visibilité et disponibilité
+            {{ 'UNIT_MANAGEMENT.VISIBILITY_AND_AVAILABILITY' | translate }}
           </h3>
           
           <div class="form-grid">
@@ -286,7 +285,7 @@
                          formControlName="isActiveForSouscription"
                          class="checkbox-input">
                   <span class="checkbox-custom"></span>
-                  <span class="checkbox-text">Active pour souscription</span>
+                  <span class="checkbox-text">{{ 'UNIT_MANAGEMENT.ACTIVE_FOR_SUBSCRIPTION' | translate }}</span>
                 </label>
               </div>
             </div>
@@ -298,7 +297,7 @@
                          formControlName="isShowToPublic"
                          class="checkbox-input">
                   <span class="checkbox-custom"></span>
-                  <span class="checkbox-text">Visible au public</span>
+                  <span class="checkbox-text">{{ 'UNIT_MANAGEMENT.VISIBLE_TO_PUBLIC' | translate }}</span>
                 </label>
               </div>
             </div>
@@ -311,11 +310,11 @@
                          formControlName="isFree"
                          class="checkbox-input">
                   <span class="checkbox-custom"></span>
-                  <span class="checkbox-text">Unité disponible</span>
+                  <span class="checkbox-text">{{ 'UNIT_MANAGEMENT.UNIT_AVAILABLE' | translate }}</span>
                 </label>
               </div>
               <div class="mt-1 text-sm text-gray-600">
-                📝 Les agents peuvent uniquement indiquer si l'unité est disponible ou occupée
+                {{ 'UNIT_MANAGEMENT.AGENT_AVAILABILITY_INFO' | translate }}
               </div>
             </div>
           </div>
@@ -331,7 +330,7 @@
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
       </svg>
-      Annuler
+      {{ 'COMMON.CANCEL' | translate }}
     </button>
     
     <button type="submit" 
@@ -345,7 +344,7 @@
       <svg *ngIf="!isLoading" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
       </svg>
-      {{ getSubmitText() }}
+      {{ getSubmitText() | translate }}
     </button>
   </div>
 </div>

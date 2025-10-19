@@ -4,6 +4,7 @@ import {NgxPrintModule} from 'ngx-print';
 import { BiilingRoutingModule } from './biiling-routing.module';
 import { ShowBiilingComponent } from './components/show-biiling/show-biiling.component';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { TranslateModule } from '@ngx-translate/core';
 import { ChoisePlanComponent } from './components/choise-plan/choise-plan.component';
 import { ShowBillingContractComponent } from './components/show-billing-contract/show-billing-contract.component';
 import { BillingPageComponent } from './billing-page/billing-page.component';
@@ -26,7 +27,8 @@ import { SubscriptionDashboardComponent } from './components/subscription-dashbo
     CommonModule,
     BiilingRoutingModule,
     SharedModule,
-    NgxPrintModule
+    NgxPrintModule,
+    TranslateModule
   ]
 })
 export class BiilingModule { }

@@ -177,7 +177,7 @@ export class AdvancedFinancialDashboardComponent implements OnInit, OnChanges, O
 
     this.financialMetrics = [
       {
-        label: 'Revenus Totaux',
+        label: 'FINANCIAL_DASHBOARD.TOTAL_REVENUE',
         value: this.totalRevenue,
         change: revenueChange.value,
         changeType: revenueChange.type,
@@ -186,7 +186,7 @@ export class AdvancedFinancialDashboardComponent implements OnInit, OnChanges, O
         description: 'Revenus collectés cette année'
       },
       {
-        label: 'Taux de Recouvrement',
+        label: 'FINANCIAL_DASHBOARD.COLLECTION_RATE',
         value: this.collectionRate,
         change: collectionRateChange.value,
         changeType: collectionRateChange.type,
@@ -195,7 +195,7 @@ export class AdvancedFinancialDashboardComponent implements OnInit, OnChanges, O
         description: 'Pourcentage des loyers collectés'
       },
       {
-        label: 'Taux d\'Occupation',
+        label: 'FINANCIAL_DASHBOARD.OCCUPANCY_RATE',
         value: this.occupancyRate,
         change: occupancyRateChange.value,
         changeType: occupancyRateChange.type,
@@ -204,7 +204,7 @@ export class AdvancedFinancialDashboardComponent implements OnInit, OnChanges, O
         description: 'Pourcentage d\'unités occupées'
       },
       {
-        label: 'Loyer Moyen',
+        label: 'FINANCIAL_DASHBOARD.AVERAGE_RENT',
         value: this.averageRent,
         change: averageRentChange.value,
         changeType: averageRentChange.type,

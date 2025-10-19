@@ -10,7 +10,7 @@
         </svg>
       </div>
       <div class="header-text">
-        <h2 class="modal-title">{{ getTitle() }}</h2>
+        <h2 class="modal-title">{{ getTitle() | translate }}</h2>
         <p class="modal-subtitle">{{ getTenantInfo() }} • {{ getRoomInfo() }}</p>
       </div>
     </div>
@@ -36,7 +36,7 @@
               </svg>
             </div>
             <div class="card-content">
-              <h4 class="card-title">Locataire</h4>
+              <h4 class="card-title">{{ 'PAYMENT_MANAGEMENT.TENANT' | translate }}</h4>
               <p class="card-value">{{ getTenantInfo() }}</p>
               <p class="card-detail" *ngIf="data.tenant?.phoneNumber">{{ data.tenant.phoneNumber }}</p>
             </div>
@@ -50,9 +50,9 @@
               </svg>
             </div>
             <div class="card-content">
-              <h4 class="card-title">Unité</h4>
+              <h4 class="card-title">{{ 'PAYMENT_MANAGEMENT.UNIT' | translate }}</h4>
               <p class="card-value">{{ data.room?.code || 'N/A' }}</p>
-              <p class="card-detail" *ngIf="data.room?.price">Loyer: {{ formatPrice(data.room.price) }}</p>
+              <p class="card-detail" *ngIf="data.room?.price">{{ 'PAYMENT_MANAGEMENT.RENT' | translate }}: {{ formatPrice(data.room.price) }}</p>
             </div>
           </div>
         </div>
@@ -68,12 +68,12 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                     d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
             </svg>
-            Type et montant du paiement
+            {{ 'PAYMENT_MANAGEMENT.TYPE_AND_AMOUNT' | translate }}
           </h3>
           
           <div class="form-grid">
             <div class="form-group">
-              <label class="form-label">Type de paiement *</label>
+              <label class="form-label">{{ 'PAYMENT_MANAGEMENT.PAYMENT_TYPE' | translate }} *</label>
               <div class="payment-type-selector">
                 <div *ngFor="let type of paymentTypes" 
                      class="payment-type-option"
@@ -94,21 +94,21 @@
                 </div>
               </div>
               <div *ngIf="paymentLocationType?.invalid && paymentLocationType?.touched" class="error-message">
-                <span *ngIf="paymentLocationType?.errors?.['required']">Le type de paiement est requis</span>
+                <span *ngIf="paymentLocationType?.errors?.['required']">{{ 'PAYMENT_MANAGEMENT.PAYMENT_TYPE_REQUIRED' | translate }}</span>
               </div>
             </div>
 
             <div class="form-group">
-              <label class="form-label">Montant (FCFA) *</label>
+              <label class="form-label">{{ 'PAYMENT_MANAGEMENT.AMOUNT_FCFA' | translate }} *</label>
               <input type="number" 
                      formControlName="locationPaymentPrice"
                      class="form-input amount-input"
                      [class.error]="locationPaymentPrice?.invalid && locationPaymentPrice?.touched"
-                     placeholder="Ex: 50000"
+                     [placeholder]="'PAYMENT_MANAGEMENT.AMOUNT_PLACEHOLDER' | translate"
                      min="1000">
               <div *ngIf="locationPaymentPrice?.invalid && locationPaymentPrice?.touched" class="error-message">
-                <span *ngIf="locationPaymentPrice?.errors?.['required']">Le montant est requis</span>
-                <span *ngIf="locationPaymentPrice?.errors?.['min']">Le montant minimum est de 1 000 FCFA</span>
+                <span *ngIf="locationPaymentPrice?.errors?.['required']">{{ 'PAYMENT_MANAGEMENT.AMOUNT_REQUIRED' | translate }}</span>
+                <span *ngIf="locationPaymentPrice?.errors?.['min']">{{ 'PAYMENT_MANAGEMENT.AMOUNT_MIN_ERROR' | translate }}</span>
               </div>
               <div *ngIf="formGroup.get('locationPaymentPrice')?.value > 0" class="amount-preview">
                 {{ formatPrice(formGroup.get('locationPaymentPrice')?.value) }}
@@ -124,33 +124,33 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                     d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
             </svg>
-            Date et référence
+            {{ 'PAYMENT_MANAGEMENT.DATE_AND_REFERENCE' | translate }}
           </h3>
           
           <div class="form-grid">
             <div class="form-group">
-              <label class="form-label">Date de paiement *</label>
+              <label class="form-label">{{ 'PAYMENT_MANAGEMENT.PAYMENT_DATE' | translate }} *</label>
               <input type="date" 
                      formControlName="datePayment"
                      class="form-input"
                      [class.error]="datePayment?.invalid && datePayment?.touched">
               <div *ngIf="datePayment?.invalid && datePayment?.touched" class="error-message">
-                <span *ngIf="datePayment?.errors?.['required']">La date de paiement est requise</span>
+                <span *ngIf="datePayment?.errors?.['required']">{{ 'PAYMENT_MANAGEMENT.PAYMENT_DATE_REQUIRED' | translate }}</span>
               </div>
             </div>
 
             <div class="form-group">
-              <label class="form-label">Référence de facturation</label>
+              <label class="form-label">{{ 'PAYMENT_MANAGEMENT.BILLING_REFERENCE' | translate }}</label>
               <div class="input-with-button">
                 <input type="text"
                        formControlName="billingRef"
                        class="form-input readonly-input"
-                       placeholder="Générée automatiquement"
+                       [placeholder]="'PAYMENT_MANAGEMENT.AUTO_GENERATED' | translate"
                        readonly>
                 <button type="button"
                         class="generate-btn"
                         (click)="regenerateBillingRef()"
-                        title="Générer une nouvelle référence"
+                        [title]="'PAYMENT_MANAGEMENT.GENERATE_NEW_REFERENCE' | translate"
                         *ngIf="data.mode === 'create'">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
@@ -162,7 +162,7 @@
                   </svg>
                 </div>
               </div>
-              <p class="form-help">La référence est générée automatiquement et ne peut pas être modifiée</p>
+              <p class="form-help">{{ 'PAYMENT_MANAGEMENT.REFERENCE_INFO' | translate }}</p>
             </div>
           </div>
         </div>
@@ -174,12 +174,12 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                     d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
             </svg>
-            Méthode de paiement
+            {{ 'PAYMENT_MANAGEMENT.PAYMENT_METHOD' | translate }}
           </h3>
           
           <div class="form-grid">
             <div class="form-group">
-              <label class="form-label">Mode de paiement</label>
+              <label class="form-label">{{ 'PAYMENT_MANAGEMENT.PAYMENT_MODE' | translate }}</label>
               <select formControlName="paymentMethod" class="form-select">
                 <option *ngFor="let method of getPaymentMethods()" [value]="method.value">
                   {{ method.label }}
@@ -188,11 +188,11 @@
             </div>
 
             <div class="form-group">
-              <label class="form-label">Motif / Période</label>
+              <label class="form-label">{{ 'PAYMENT_MANAGEMENT.REASON_PERIOD' | translate }}</label>
               <input type="text" 
                      formControlName="reason"
                      class="form-input"
-                     placeholder="Ex: Loyer Janvier 2024">
+                     [placeholder]="'PAYMENT_MANAGEMENT.REASON_PLACEHOLDER' | translate">
             </div>
           </div>
         </div>
@@ -204,16 +204,16 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                     d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
             </svg>
-            Notes additionnelles
+            {{ 'PAYMENT_MANAGEMENT.ADDITIONAL_NOTES' | translate }}
           </h3>
           
           <div class="form-grid">
             <div class="form-group full-width">
-              <label class="form-label">Notes / Commentaires</label>
+              <label class="form-label">{{ 'PAYMENT_MANAGEMENT.NOTES_COMMENTS' | translate }}</label>
               <textarea formControlName="notes"
                         class="form-textarea"
                         rows="3"
-                        placeholder="Informations supplémentaires sur ce paiement..."></textarea>
+                        [placeholder]="'PAYMENT_MANAGEMENT.NOTES_PLACEHOLDER' | translate"></textarea>
             </div>
           </div>
         </div>
@@ -228,7 +228,7 @@
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
       </svg>
-      Annuler
+      {{ 'COMMON.CANCEL' | translate }}
     </button>
     
     <button type="submit" 
@@ -242,7 +242,7 @@
       <svg *ngIf="!isLoading" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
       </svg>
-      {{ getSubmitText() }}
+      {{ getSubmitText() | translate }}
     </button>
   </div>
 </div>

@@ -12,8 +12,8 @@
           </svg>
         </div>
         <div>
-          <h2 class="text-2xl font-bold text-gray-900">Analyse Financière</h2>
-          <p class="text-gray-600">Suivi des revenus et statistiques</p>
+          <h2 class="text-2xl font-bold text-gray-900">{{ 'FINANCIAL_DASHBOARD.FINANCIAL_ANALYSIS' | translate }}</h2>
+          <p class="text-gray-600">{{ 'FINANCIAL_DASHBOARD.REVENUE_TRACKING' | translate }}</p>
         </div>
       </div>
 
@@ -21,7 +21,7 @@
       <div class="flex items-center space-x-4">
         <!-- Sélecteur d'année -->
         <div class="flex items-center space-x-2">
-          <label class="text-sm font-medium text-gray-700">Année:</label>
+          <label class="text-sm font-medium text-gray-700">{{ 'FINANCIAL_DASHBOARD.YEAR_LABEL' | translate }}:</label>
           <select [(ngModel)]="selectedYear"
                   (ngModelChange)="onYearChange($event)"
                   class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors">
@@ -29,7 +29,6 @@
               {{ year }}
             </option>
           </select>
-
         </div>
 
         <!-- Indicateur de données -->
@@ -38,7 +37,7 @@
                [class.bg-green-500]="hasFinancialData()"
                [class.bg-gray-400]="!hasFinancialData()">
           </div>
-          <span>{{ hasFinancialData() ? 'Données disponibles' : 'Aucune donnée' }}</span>
+          <span>{{ hasFinancialData() ? ('FINANCIAL_DASHBOARD.DATA_AVAILABLE' | translate) : ('FINANCIAL_DASHBOARD.NO_DATA' | translate) }}</span>
         </div>
 
         <!-- Bouton de rafraîchissement -->
@@ -48,7 +47,7 @@
           <svg class="w-4 h-4" [class.animate-spin]="isLoading" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
           </svg>
-          <span>{{ isLoading ? 'Chargement...' : 'Actualiser' }}</span>
+          <span>{{ isLoading ? ('FINANCIAL_DASHBOARD.LOADING' | translate) : ('FINANCIAL_DASHBOARD.REFRESH' | translate) }}</span>
         </button>
 
         <!-- Bouton de debug (développement) -->
@@ -57,7 +56,7 @@
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
           </svg>
-          <span>Debug Store</span>
+          <span>{{ 'FINANCIAL_DASHBOARD.DEBUG_STORE' | translate }}</span>
         </button>
       </div>
     </div>
@@ -100,10 +99,9 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
             </svg>
           </div>
-          <h3 class="text-3xl font-bold text-gray-900 mb-4">Aucune donnée financière pour {{ selectedYear }}</h3>
+          <h3 class="text-3xl font-bold text-gray-900 mb-4">{{ 'FINANCIAL_DASHBOARD.NO_FINANCIAL_DATA_YEAR' | translate: {year: selectedYear} }}</h3>
           <p class="text-lg text-gray-600 mb-8 max-w-lg mx-auto leading-relaxed">
-            Il n'y a aucune activité financière enregistrée pour cette année.
-            Les données apparaîtront automatiquement dès qu'il y aura des transactions.
+            {{ 'FINANCIAL_DASHBOARD.NO_ACTIVITY_MESSAGE' | translate }}
           </p>
           <div class="flex items-center justify-center space-x-4">
             <button (click)="refreshData()"
@@ -112,7 +110,7 @@
               <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
               </svg>
-              Actualiser les données
+              {{ 'FINANCIAL_DASHBOARD.REFRESH_DATA' | translate }}
             </button>
             <button (click)="goToCurrentYear()"
                     *ngIf="selectedYear !== getCurrentYear()"
@@ -120,17 +118,17 @@
               <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
               </svg>
-              Voir l'année actuelle
+              {{ 'FINANCIAL_DASHBOARD.VIEW_CURRENT_YEAR' | translate }}
             </button>
           </div>
 
           <!-- Suggestions d'actions -->
           <div class="mt-12 pt-8 border-t border-gray-200">
-            <p class="text-sm text-gray-500 mb-4">Suggestions pour commencer :</p>
+            <p class="text-sm text-gray-500 mb-4">{{ 'FINANCIAL_DASHBOARD.SUGGESTIONS_TITLE' | translate }}</p>
             <div class="flex flex-wrap justify-center gap-3">
-              <span class="px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">Ajouter des locataires</span>
-              <span class="px-4 py-2 bg-green-50 text-green-700 rounded-full text-sm font-medium">Enregistrer des paiements</span>
-              <span class="px-4 py-2 bg-purple-50 text-purple-700 rounded-full text-sm font-medium">Configurer les loyers</span>
+              <span class="px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">{{ 'FINANCIAL_DASHBOARD.ADD_TENANTS' | translate }}</span>
+              <span class="px-4 py-2 bg-green-50 text-green-700 rounded-full text-sm font-medium">{{ 'FINANCIAL_DASHBOARD.RECORD_PAYMENTS' | translate }}</span>
+              <span class="px-4 py-2 bg-purple-50 text-purple-700 rounded-full text-sm font-medium">{{ 'FINANCIAL_DASHBOARD.CONFIGURE_RENT' | translate }}</span>
             </div>
           </div>
         </div>
@@ -161,14 +159,6 @@
 
       <!-- Analyse des locataires -->
       <div *ngIf="activeSection === 'tenants'">
-        <!-- <app-tenant-payment-analysis
-          [enrichedData]="backendData"
-          [selectedYear]="selectedYear"
-          [propertyId]="propertyId"
-          [isLoading]="isLoading"
-          (exportData)="onExportData($event)">
-        </app-tenant-payment-analysis> -->
-        
         <app-tenant-payment-tracking
           [enrichedData]="backendData"
           [selectedYear]="selectedYear"

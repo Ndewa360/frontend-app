@@ -4,14 +4,14 @@
   <div class="financial-header">
     <div class="header-content">
       <div class="header-title">
-        <h1 class="app-productive-heading-05">Tableau de bord financier</h1>
-        <p class="app-body-short-01 text-gray-600">Suivi des revenus et performances de votre portefeuille</p>
+        <h1 class="app-productive-heading-05">{{ 'FINANCIAL_DASHBOARD.TITLE' | translate }}</h1>
+        <p class="app-body-short-01 text-gray-600">{{ 'FINANCIAL_DASHBOARD.SUBTITLE' | translate }}</p>
       </div>
       
       <div class="header-controls">
         <div class="period-selector">
           <ibm-combo-box
-            placeholder="Période"
+            [placeholder]="'FINANCIAL_DASHBOARD.PERIOD' | translate"
             [items]="periodOptions"
             (selected)="onPeriodChange($event)"
             size="md"
@@ -22,7 +22,7 @@
         
         <button ibmButton="tertiary" size="md" (click)="exportData()">
           <youpez-ibm-icon iconName="download" iconSize="16" class="mr-2"></youpez-ibm-icon>
-          Exporter
+          {{ 'FINANCIAL_DASHBOARD.EXPORT' | translate }}
         </button>
       </div>
     </div>
@@ -44,14 +44,14 @@
         </div>
         <div class="card-content">
           <div class="main-value">{{ totalRevenue | currency:'XAF':'symbol':'1.0-0' }}</div>
-          <div class="main-label">Revenus totaux</div>
+          <div class="main-label">{{ 'FINANCIAL_DASHBOARD.TOTAL_REVENUE' | translate }}</div>
           <div class="sub-metrics">
             <div class="sub-metric">
-              <span class="sub-label">Ce mois:</span>
+              <span class="sub-label">{{ 'FINANCIAL_DASHBOARD.THIS_MONTH' | translate }}:</span>
               <span class="sub-value">{{ currentMonthRevenue | currency:'XAF':'symbol':'1.0-0' }}</span>
             </div>
             <div class="sub-metric">
-              <span class="sub-label">Mois dernier:</span>
+              <span class="sub-label">{{ 'FINANCIAL_DASHBOARD.LAST_MONTH' | translate }}:</span>
               <span class="sub-value">{{ lastMonthRevenue | currency:'XAF':'symbol':'1.0-0' }}</span>
             </div>
           </div>
@@ -70,14 +70,14 @@
         </div>
         <div class="card-content">
           <div class="main-value">{{ pendingAmount | currency:'XAF':'symbol':'1.0-0' }}</div>
-          <div class="main-label">Paiements en attente</div>
+          <div class="main-label">{{ 'FINANCIAL_DASHBOARD.PENDING_PAYMENTS' | translate }}</div>
           <div class="sub-metrics">
             <div class="sub-metric">
-              <span class="sub-label">En retard:</span>
+              <span class="sub-label">{{ 'FINANCIAL_DASHBOARD.OVERDUE_PAYMENTS' | translate }}:</span>
               <span class="sub-value text-red-600">{{ overduePayments }}</span>
             </div>
             <div class="sub-metric">
-              <span class="sub-label">À venir:</span>
+              <span class="sub-label">{{ 'FINANCIAL_DASHBOARD.UPCOMING_PAYMENTS' | translate }}:</span>
               <span class="sub-value text-blue-600">{{ upcomingPayments }}</span>
             </div>
           </div>
@@ -100,14 +100,14 @@
         </div>
         <div class="card-content">
           <div class="main-value">{{ collectionRate }}%</div>
-          <div class="main-label">Taux de recouvrement</div>
+          <div class="main-label">{{ 'FINANCIAL_DASHBOARD.COLLECTION_RATE' | translate }}</div>
           <div class="sub-metrics">
             <div class="sub-metric">
-              <span class="sub-label">Collecté:</span>
+              <span class="sub-label">{{ 'FINANCIAL_DASHBOARD.COLLECTED_REVENUE' | translate }}:</span>
               <span class="sub-value text-green-600">{{ collectedAmount | currency:'XAF':'symbol':'1.0-0' }}</span>
             </div>
             <div class="sub-metric">
-              <span class="sub-label">Attendu:</span>
+              <span class="sub-label">{{ 'FINANCIAL_DASHBOARD.TARGET' | translate }}:</span>
               <span class="sub-value">{{ expectedAmount | currency:'XAF':'symbol':'1.0-0' }}</span>
             </div>
           </div>
@@ -127,14 +127,14 @@
         </div>
         <div class="card-content">
           <div class="main-value">{{ totalExpenses | currency:'XAF':'symbol':'1.0-0' }}</div>
-          <div class="main-label">Charges totales</div>
+          <div class="main-label">{{ 'FINANCIAL_DASHBOARD.TOTAL_EXPENSES' | translate }}</div>
           <div class="sub-metrics">
             <div class="sub-metric">
-              <span class="sub-label">Maintenance:</span>
+              <span class="sub-label">{{ 'FINANCIAL_DASHBOARD.MAINTENANCE_EXPENSES' | translate }}:</span>
               <span class="sub-value">{{ maintenanceExpenses | currency:'XAF':'symbol':'1.0-0' }}</span>
             </div>
             <div class="sub-metric">
-              <span class="sub-label">Autres:</span>
+              <span class="sub-label">{{ 'FINANCIAL_DASHBOARD.OTHER_EXPENSES' | translate }}:</span>
               <span class="sub-value">{{ otherExpenses | currency:'XAF':'symbol':'1.0-0' }}</span>
             </div>
           </div>
@@ -149,17 +149,17 @@
       <!-- Évolution des revenus -->
       <div class="chart-card revenue-evolution">
         <div class="chart-header">
-          <h3 class="chart-title">Évolution des revenus</h3>
+          <h3 class="chart-title">{{ 'FINANCIAL_DASHBOARD.EVOLUTION_REVENUES' | translate }}</h3>
           <div class="chart-controls">
             <ibm-content-switcher (selected)="onRevenueChartPeriodChange($event)">
               <ibm-content-switcher-option value="month" [selected]="revenueChartPeriod === 'month'">
-                Mois
+                {{ 'FINANCIAL_DASHBOARD.MONTHLY' | translate }}
               </ibm-content-switcher-option>
               <ibm-content-switcher-option value="quarter" [selected]="revenueChartPeriod === 'quarter'">
-                Trimestre
+                {{ 'FINANCIAL_DASHBOARD.QUARTERLY' | translate }}
               </ibm-content-switcher-option>
               <ibm-content-switcher-option value="year" [selected]="revenueChartPeriod === 'year'">
-                Année
+                {{ 'FINANCIAL_DASHBOARD.YEARLY' | translate }}
               </ibm-content-switcher-option>
             </ibm-content-switcher>
           </div>
@@ -176,7 +176,7 @@
       <!-- Répartition des paiements -->
       <div class="chart-card payments-breakdown">
         <div class="chart-header">
-          <h3 class="chart-title">Répartition des paiements</h3>
+          <h3 class="chart-title">{{ 'FINANCIAL_DASHBOARD.PAYMENT_STATUS' | translate }}</h3>
         </div>
         <div class="chart-content">
           <app-payments-pie-chart
@@ -189,9 +189,9 @@
       <!-- Performance par propriété -->
       <div class="chart-card property-performance">
         <div class="chart-header">
-          <h3 class="chart-title">Performance par propriété</h3>
+          <h3 class="chart-title">{{ 'FINANCIAL_DASHBOARD.REVENUE_BY_PROPERTY' | translate }}</h3>
           <button ibmButton="ghost" size="sm" (click)="viewDetailedPerformance()">
-            Voir détails
+            {{ 'FINANCIAL_DASHBOARD.VIEW_DETAILS' | translate }}
             <youpez-ibm-icon iconName="arrow--right" iconSize="16" class="ml-2"></youpez-ibm-icon>
           </button>
         </div>
@@ -208,9 +208,9 @@
   <!-- Transactions récentes -->
   <div class="recent-transactions">
     <div class="transactions-header">
-      <h3 class="section-title">Transactions récentes</h3>
+      <h3 class="section-title">{{ 'FINANCIAL_DASHBOARD.RECENT_TRANSACTIONS' | translate }}</h3>
       <button ibmButton="tertiary" size="sm" (click)="viewAllTransactions()">
-        Voir tout
+        {{ 'FINANCIAL_DASHBOARD.VIEW_ALL_TRANSACTIONS' | translate }}
         <youpez-ibm-icon iconName="arrow--right" iconSize="16" class="ml-2"></youpez-ibm-icon>
       </button>
     </div>
@@ -228,7 +228,7 @@
   <!-- Alertes financières -->
   <div class="financial-alerts" *ngIf="financialAlerts.length > 0">
     <div class="alerts-header">
-      <h3 class="section-title">Alertes financières</h3>
+      <h3 class="section-title">{{ 'FINANCIAL_DASHBOARD.FINANCIAL_ALERTS' | translate }}</h3>
     </div>
     
     <div class="alerts-content">
