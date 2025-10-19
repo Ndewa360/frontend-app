@@ -16,6 +16,7 @@ import {
 import { ContractTemplateService } from '../../../shared/services/contract-template.service';
 import { DuplicateTemplateModalComponent } from '../components/duplicate-template-modal/duplicate-template-modal.component';
 import { DeleteConfirmationModalComponent } from '../components/delete-confirmation-modal/delete-confirmation-modal.component';
+import { LanguageUrlService } from '../../../shared/services/language-url.service';
 
 @Component({
   selector: 'app-contract-template-view',
@@ -46,7 +47,8 @@ export class ContractTemplateViewComponent implements OnInit, OnDestroy {
     private store: Store,
     private dialog: MatDialog,
     private contractTemplateService: ContractTemplateService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private languageUrlService: LanguageUrlService
   ) {
     // Initialiser les observables
     this.template$ = this.store.select(ContractTemplateState.selectStateCurrentTemplate);
@@ -144,8 +146,8 @@ export class ContractTemplateViewComponent implements OnInit, OnDestroy {
   editTemplate(): void {
     this.template$.pipe(takeUntil(this.destroy$)).subscribe(template => {
       if (template && !template.isSystemDefault) {
-        // Utiliser l'URL absolue pour la navigation
-        this.router.navigate(['/app/contract-templates/edit', template._id]);
+        const currentLang = this.languageUrlService.getCurrentLanguage();
+        this.router.navigate([`/${currentLang}/app/contract-templates/edit`, template._id]);
       }
     });
   }
@@ -170,7 +172,8 @@ export class ContractTemplateViewComponent implements OnInit, OnDestroy {
         dialogRef.afterClosed().subscribe(result => {
           if (result?.success && result?.newTemplate) {
             console.log('✅ Template dupliqué avec succès:', result.newTemplate);
-            this.router.navigate(['/app/contract-templates/edit', result.newTemplate._id]);
+            const currentLang = this.languageUrlService.getCurrentLanguage();
+            this.router.navigate([`/${currentLang}/app/contract-templates/edit`, result.newTemplate._id]);
           } else if (result?.success) {
             console.log('⚠️ Template dupliqué mais non retourné, utilisation du store...');
             this.store.select(ContractTemplateState.selectStateCurrentTemplate).pipe(
@@ -179,9 +182,11 @@ export class ContractTemplateViewComponent implements OnInit, OnDestroy {
                 newTemplate && newTemplate._id !== template._id)
             ).subscribe((newTemplate: ContractTemplateModel | null) => {
               if (newTemplate) {
-                this.router.navigate(['/app/contract-templates/edit', newTemplate._id]);
+                const currentLang = this.languageUrlService.getCurrentLanguage();
+                this.router.navigate([`/${currentLang}/app/contract-templates/edit`, newTemplate._id]);
               } else {
-                this.router.navigate(['/app/contract-templates/list']);
+                const currentLang = this.languageUrlService.getCurrentLanguage();
+                this.router.navigate([`/${currentLang}/app/contract-templates/list`]);
               }
             });
           }
@@ -194,7 +199,8 @@ export class ContractTemplateViewComponent implements OnInit, OnDestroy {
    * Retour à la liste
    */
   goBack(): void {
-    this.router.navigate(['/app/contract-templates']);
+    const currentLang = this.languageUrlService.getCurrentLanguage();
+    this.router.navigate([`/${currentLang}/app/contract-templates`]);
   }
 
   /**
@@ -320,7 +326,8 @@ export class ContractTemplateViewComponent implements OnInit, OnDestroy {
             this.store.dispatch(new ContractTemplateAction.DeleteTemplate(template._id));
 
             // Rediriger vers la liste après suppression
-            this.router.navigate(['/app/contract-templates']);
+            const currentLang = this.languageUrlService.getCurrentLanguage();
+            this.router.navigate([`/${currentLang}/app/contract-templates`]);
           }
         });
       }

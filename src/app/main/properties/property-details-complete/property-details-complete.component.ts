@@ -29,6 +29,7 @@ import { ModernUnitModalComponent } from '../components/modern-unit-modal/modern
 // import { UpdateRoomComponent } from '../../room/components/update-room/update-room.component';
 import { AssignLocationModalService } from '../../assign-location/services/assign-location-modal.service';
 import { ModernContractTerminationModalComponent } from '../components/modern-contract-termination-modal/modern-contract-termination-modal.component';
+import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
 
 interface Tab {
   id: string;
@@ -93,7 +94,8 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
     private store: Store,
     private propertyDataService: PropertyDataService,
     private dialog: MatDialog,
-    private assignLocationModalService: AssignLocationModalService
+    private assignLocationModalService: AssignLocationModalService,
+    private languageUrlService: LanguageUrlService
   ) {
     // Initialiser les observables vides
     this.property$ = new Observable();
@@ -356,7 +358,8 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
   // Actions sur les unités
   private onViewUnit(room: RoomModel): void {
     console.log('Voir les détails de l\'unité:', room);
-    this.router.navigate(['/main/rooms', room._id]);
+    const currentLang = this.languageUrlService.getCurrentLanguage();
+    this.router.navigate([`/${currentLang}/app/rooms`, room._id]);
   }
 
   private onEditUnit(room: RoomModel): void {
@@ -528,7 +531,8 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
   }
 
   goBack(): void {
-    this.router.navigate(['/app/properties/home']);
+    const currentLang = this.languageUrlService.getCurrentLanguage();
+    this.router.navigate([`/${currentLang}/app/properties/home`]);
   }
 
   // Méthodes utilitaires pour les templates

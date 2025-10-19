@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { PropertyModel } from 'src/app/shared/store';
 import { BaseComponent } from 'src/app/shared/utils/base-component';
+import { PropertyNavigationService } from '../services/property-navigation.service';
 
 export interface PropertyMetrics {
   occupancyRate: number;
@@ -44,7 +45,9 @@ export class EnhancedPropertyCardComponent extends BaseComponent implements OnIn
 
   hasAlerts: boolean = false;
 
-  constructor() {
+  constructor(
+    private propertyNavigationService: PropertyNavigationService
+  ) {
     super();
   }
 
@@ -60,7 +63,8 @@ export class EnhancedPropertyCardComponent extends BaseComponent implements OnIn
   // Gestion des clics
   onCardClick(): void {
     if (!this.loading) {
-      this.propertyClicked.emit(this.property);
+      // Naviguer directement vers les détails avec la langue
+      this.propertyNavigationService.navigateToPropertyDetails(this.property._id);
     }
   }
 

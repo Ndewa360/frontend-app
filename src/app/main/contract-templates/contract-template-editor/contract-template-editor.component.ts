@@ -6,6 +6,7 @@ import { ContractTemplateService } from '../../../shared/services/contract-templ
 import { ContractTemplateType, ContractTemplateStatus } from '../../../shared/models/contract-template.model';
 import { htmlContentValidator, templateNameValidator, templateVariablesValidator } from '../../../shared/validators/html-content.validator';
 import { MultilingualNotificationService } from '../../../shared/services/notification/multilingual-notification.service';
+import { LanguageUrlService } from '../../../shared/services/language-url.service';
 
 @Component({
   selector: 'app-contract-template-editor',
@@ -372,7 +373,8 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
     private router: Router,
     private location: Location,
     private contractTemplateService: ContractTemplateService,
-    private notification: MultilingualNotificationService
+    private notification: MultilingualNotificationService,
+    private languageUrlService: LanguageUrlService
   ) {
     this.templateForm = this.fb.group({
       name: ['', [Validators.required, templateNameValidator()]],
@@ -653,7 +655,8 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
           console.log('Template créé avec succès');
           this.notification.success('TEMPLATE.CREATE.SUCCESS', 'TEMPLATE.CREATE.TITLE');
           // Rediriger vers la vue du template créé
-          this.router.navigate(['/app/contract-templates/view', response._id]);
+          const currentLang = this.languageUrlService.getCurrentLanguage();
+          this.router.navigate([`/${currentLang}/app/contract-templates/view`, response._id]);
         },
         error: (error) => {
           this.isSaving = false;
@@ -871,14 +874,16 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
   }
 
   onCancel(): void {
-    this.router.navigate(['/app/contract-templates']);
+    const currentLang = this.languageUrlService.getCurrentLanguage();
+    this.router.navigate([`/${currentLang}/app/contract-templates`]);
   }
 
   /**
    * Retour à la liste des templates
    */
   goBack(): void {
-    this.router.navigate(['/app/contract-templates']);
+    const currentLang = this.languageUrlService.getCurrentLanguage();
+    this.router.navigate([`/${currentLang}/app/contract-templates`]);
   }
 
   /**

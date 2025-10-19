@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
+import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,10 @@ export class PropertyNavigationService {
   // Observable pour les composants qui veulent écouter l'état de chargement
   public loading$ = this.loadingSubject.asObservable();
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private languageUrlService: LanguageUrlService
+  ) {}
 
   /**
    * Vérifie si une propriété est en cours de chargement
@@ -42,8 +46,9 @@ export class PropertyNavigationService {
     this.setPropertyLoading(propertyId, true);
     console.log(`🚀 Navigation vers les détails de la propriété ${propertyId}`);
 
-    // Naviguer vers la page de détails
-    return this.router.navigate(['/app/properties/details', propertyId])
+    // Naviguer vers la page de détails avec la langue
+    const currentLang = this.languageUrlService.getCurrentLanguage();
+    return this.router.navigate([`/${currentLang}/app/properties/details`, propertyId])
       .then((success) => {
         if (success) {
           console.log(`✅ Navigation réussie vers ${propertyId}`);
