@@ -2,10 +2,10 @@
   <youpez-logo class="cursor-pointer" type="white" logoWidth="130px"></youpez-logo>
 </div>
 
-<h1 class="app-expressive-heading-06 mb-1">Connectez-vous</h1>
+<h1 class="app-expressive-heading-06 mb-1">{{ 'AUTH.SIGN_IN_TITLE' | translate }}</h1>
 <div class="app-body-long-02 mb-8">
-  Vous n'avez pas de compte?
-  <a ibmLink routerLink="../signup">Creer un compte</a>
+  {{ 'AUTH.NO_ACCOUNT' | translate }}
+  <a ibmLink routerLink="../signup">{{ 'AUTH.CREATE_ACCOUNT' | translate }}</a>
 </div>
 <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
   <div class="app-form">
@@ -13,8 +13,8 @@
       <ibm-label
         [helperText]="''"
         [invalid]="isValid('email')"
-        [invalidText]="'Email obligatoire'">
-        Adresse email
+        [invalidText]="'AUTH.EMAIL_REQUIRED' | translate">
+        {{ 'AUTH.EMAIL_ADDRESS' | translate }}
         <input
           formControlName="email"
           ibmText
@@ -22,7 +22,7 @@
           [invalid]="isValid('email')"
           [disabled]="false"
           theme="dark"
-          [placeholder]="'Votre email'"
+          [placeholder]="'AUTH.EMAIL_PLACEHOLDER' | translate"
           [autocomplete]="true">
       </ibm-label>
     </div>
@@ -30,8 +30,8 @@
       <ibm-label
         [helperText]="''"
         [invalid]="isValid('password')"
-        [invalidText]="'Mot de passe obligatoire'">
-        Mot de passe
+        [invalidText]="'AUTH.PASSWORD_REQUIRED' | translate">
+        {{ 'AUTH.PASSWORD' | translate }}
         <div class="password-input-container">
           <input
             [type]="showPassword ? 'text' : 'password'"
@@ -41,13 +41,13 @@
             [invalid]="isValid('password')"
             [disabled]="false"
             theme="dark"
-            [placeholder]="'Votre mot de passe'"
+            [placeholder]="'AUTH.PASSWORD_PLACEHOLDER' | translate"
             [autocomplete]="true">
           <button
             type="button"
             class="password-toggle-btn"
             (click)="togglePasswordVisibility()"
-            [attr.aria-label]="showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'">
+            [attr.aria-label]="showPassword ? ('AUTH.HIDE_PASSWORD' | translate) : ('AUTH.SHOW_PASSWORD' | translate)">
             <svg *ngIf="!showPassword" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
               <path d="M8 3C4.5 3 1.73 5.11 1 8c.73 2.89 3.5 5 7 5s6.27-2.11 7-5c-.73-2.89-3.5-5-7-5zM8 11.5c-1.93 0-3.5-1.57-3.5-3.5S6.07 4.5 8 4.5s3.5 1.57 3.5 3.5S9.93 11.5 8 11.5zM8 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
             </svg>
@@ -63,9 +63,9 @@
       <div class="flex justify-between items-center">
         <ibm-checkbox
           [checked]="true">
-          Se rappeler de moi?
+          {{ 'AUTH.REMEMBER_ME' | translate }}
         </ibm-checkbox>
-        <a ibmLink routerLink="../forgot-password">Mot de passe oublié?</a>
+        <a ibmLink routerLink="../forgot-password">{{ 'AUTH.FORGOT_PASSWORD' | translate }}</a>
       </div>
     </div>
     <div class="app-form__submit">
@@ -73,7 +73,7 @@
       <button type="submit" size="md" class="app-ibm-btn-full custom-primary-button" [disabled]="waittingResponse || formGroup.invalid" ibmButton="primary" >
         <ibm-loading *ngIf="waittingResponse; else noWaitingResponse"></ibm-loading>
         <ng-template #noWaitingResponse>
-          <span class="btn-text">Connexion</span>
+          <span class="btn-text">{{ 'AUTH.SIGN_IN' | translate }}</span>
           <!-- <svg class="cds--btn__icon" ibmIconArrowRight size="sm"></svg> -->
           <youpez-ibm-icon iconClass="cds--btn__icon" iconName="arrowRight" iconSize="20" ></youpez-ibm-icon >
         </ng-template>
@@ -84,15 +84,15 @@
 <div class="mt-4">
   <h1 class="app-expressive-heading-06 mb-1"><a ibmLink  routerLink="/search/index" [queryParams]="{ minPrice: 0,maxPrix:100000,ville:'Bangangté' }">
     <youpez-ibm-icon iconClass="cds--btn__icon" iconName="arrowLeft" iconSize="20" ></youpez-ibm-icon >
-      Retour à la page de recherche</a></h1>
+      {{ 'AUTH.BACK_TO_SEARCH' | translate }}</a></h1>
 
 </div>
-<div class="app-separator mt-8 mb-8">Ou se connectez avec</div>
+<div class="app-separator mt-8 mb-8">{{ 'AUTH.OR_SIGN_IN_WITH' | translate }}</div>
 <div fxLayout="row" class="">
   <div fxFlex="50" class="mr-1">
     <!-- size="md" -->
     <button class="w-full" size="md" ibmButton="tertiary">
-      Google
+      {{ 'AUTH.GOOGLE' | translate }}
       <svg class="cds--btn__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
         <path
           d="M12.24 10.285V14.4h6.806c-.275 1.765-2.056 5.174-6.806 5.174-4.095 0-7.439-3.389-7.439-7.574s3.345-7.574 7.439-7.574c2.33 0 3.891.989 4.785 1.849l3.254-3.138C18.189 1.186 15.479 0 12.24 0c-6.635 0-12 5.365-12 12s5.365 12 12 12c6.926 0 11.52-4.869 11.52-11.726 0-.788-.085-1.39-.189-1.989H12.24z"/>
@@ -102,7 +102,7 @@
   <div fxFlex="50" class="ml-1">
     <!-- size="md" -->
     <button class="w-full" ibmButton="tertiary" size="md">
-      Facebook
+      {{ 'AUTH.FACEBOOK' | translate }}
       <svg class="cds--btn__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
         <path
           d="M23.9981 11.9991C23.9981 5.37216 18.626 0 11.9991 0C5.37216 0 0 5.37216 0 11.9991C0 17.9882 4.38789 22.9522 10.1242 23.8524V15.4676H7.07758V11.9991H10.1242V9.35553C10.1242 6.34826 11.9156 4.68714 14.6564 4.68714C15.9692 4.68714 17.3424 4.92149 17.3424 4.92149V7.87439H15.8294C14.3388 7.87439 13.8739 8.79933 13.8739 9.74824V11.9991H17.2018L16.6698 15.4676H13.8739V23.8524C19.6103 22.9522 23.9981 17.9882 23.9981 11.9991Z"/>

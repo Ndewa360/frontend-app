@@ -2,16 +2,16 @@
   <youpez-logo class="cursor-pointer" type="white" logoWidth="130px"></youpez-logo>
 </div>
 
-<h1 class="app-expressive-heading-06 mb-1">Créer un compte</h1>
+<h1 class="app-expressive-heading-06 mb-1">{{ 'AUTH.CREATE_ACCOUNT_TITLE' | translate }}</h1>
 <div class="app-body-long-02 mb-8">
-  Vous avez déjà un compte?
-  <a ibmLink routerLink="../signin">Connectez-vous</a>
+  {{ 'AUTH.ALREADY_HAVE_ACCOUNT' | translate }}
+  <a ibmLink routerLink="../signin">{{ 'AUTH.SIGN_IN' | translate }}</a>
 </div>
 
 <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
   <!-- Sélecteur de type de profil -->
   <div class="mb-8">
-    <h3 class="app-productive-heading-03 mb-4">Type de profil *</h3>
+    <h3 class="app-productive-heading-03 mb-4">{{ 'AUTH.PROFILE_TYPE' | translate }} *</h3>
     <div class="profile-selector-grid">
       <label *ngFor="let type of profileTypes" class="profile-option">
         <input type="radio" 
@@ -21,21 +21,21 @@
                class="sr-only">
         
         <div class="profile-card" 
-             [attr.title]="type.description"
-             [ngbTooltip]="type.description"
+             [attr.title]="getProfileTypeDescription(type.value)"
+             [ngbTooltip]="getProfileTypeDescription(type.value)"
              placement="top">
           <div class="profile-icon" [class]="type.iconClass">
             <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
               <path [attr.d]="type.iconPath"/>
             </svg>
           </div>
-          <span class="profile-label">{{type.label}}</span>
+          <span class="profile-label">{{ getProfileTypeLabel(type.value) }}</span>
           <div class="profile-indicator"></div>
         </div>
       </label>
     </div>
     <div *ngIf="isValid('profileType')" class="text-red-600 text-sm mt-2">
-      Veuillez sélectionner un type de profil
+      {{ 'AUTH.SELECT_PROFILE_TYPE' | translate }}
     </div>
   </div>
 
@@ -52,10 +52,10 @@
       </div>
       <div>
         <h4 class="app-productive-heading-02 mb-1" [class]="isAgentProfile() ? 'text-green-800' : 'text-blue-800'">
-          {{ isAgentProfile() ? 'Inscription Agent Immobilier' : 'Inscription Propriétaire' }}
+          {{ isAgentProfile() ? ('AUTH.AGENT_REGISTRATION' | translate) : ('AUTH.OWNER_REGISTRATION' | translate) }}
         </h4>
         <p class="text-sm" [class]="isAgentProfile() ? 'text-green-600' : 'text-blue-600'">
-          {{ isAgentProfile() ? 'Renseignez les informations de votre agence' : 'Renseignez vos informations personnelles' }}
+          {{ isAgentProfile() ? ('AUTH.AGENCY_INFO_PROMPT' | translate) : ('AUTH.PERSONAL_INFO_PROMPT' | translate) }}
         </p>
       </div>
     </div>
@@ -70,8 +70,8 @@
         <ibm-label
           [helperText]="''"
           [invalid]="isValid('businessName')"
-          [invalidText]="'Nom de l\'agence obligatoire'">
-          Nom de l'agence/entreprise
+          [invalidText]="'AUTH.AGENCY_NAME_REQUIRED' | translate">
+          {{ 'AUTH.AGENCY_NAME' | translate }}
           <input
             formControlName="businessName"
             ibmText
@@ -79,7 +79,7 @@
             [invalid]="isValid('businessName')"
             [disabled]="false"
             theme="dark"
-            [placeholder]="'Nom officiel de votre agence'"
+            [placeholder]="'AUTH.AGENCY_NAME_PLACEHOLDER' | translate"
             [autocomplete]="true">
         </ibm-label>
       </div>
@@ -89,8 +89,8 @@
         <ibm-label
           [helperText]="''"
           [invalid]="isValid('fullName')"
-          [invalidText]="'Nom du responsable obligatoire'">
-          Nom du responsable
+          [invalidText]="'AUTH.MANAGER_NAME_REQUIRED' | translate">
+          {{ 'AUTH.MANAGER_NAME' | translate }}
           <input
             formControlName="fullName"
             ibmText
@@ -98,7 +98,7 @@
             [invalid]="isValid('fullName')"
             [disabled]="false"
             theme="dark"
-            [placeholder]="'Nom et prénom du responsable'"
+            [placeholder]="'AUTH.MANAGER_NAME_PLACEHOLDER' | translate"
             [autocomplete]="true">
         </ibm-label>
       </div>
@@ -108,8 +108,8 @@
         <ibm-label
           [helperText]="''"
           [invalid]="isValid('email')"
-          [invalidText]="'Email de l\'agence obligatoire'">
-          Email de l'agence
+          [invalidText]="'AUTH.AGENCY_EMAIL_REQUIRED' | translate">
+          {{ 'AUTH.AGENCY_EMAIL' | translate }}
           <input
             formControlName="email"
             ibmText
@@ -117,7 +117,7 @@
             [invalid]="isValid('email')"
             [disabled]="false"
             theme="dark"
-            [placeholder]="'contact@votre-agence.com'"
+            [placeholder]="'AUTH.AGENCY_EMAIL_PLACEHOLDER' | translate"
             [autocomplete]="true">
         </ibm-label>
       </div>
@@ -127,8 +127,8 @@
         <ibm-label
           [helperText]="''"
           [invalid]="isValid('phoneNumber')"
-          [invalidText]="'Téléphone principal obligatoire'">
-          Téléphone principal
+          [invalidText]="'AUTH.MAIN_PHONE_REQUIRED' | translate">
+          {{ 'AUTH.MAIN_PHONE' | translate }}
           <input
             formControlName="phoneNumber"
             ibmText
@@ -151,8 +151,8 @@
         <ibm-label
           [helperText]="''"
           [invalid]="isValid('fullName')"
-          [invalidText]="'Nom complet obligatoire'">
-          Nom complet
+          [invalidText]="'AUTH.FULL_NAME_REQUIRED' | translate">
+          {{ 'AUTH.FULL_NAME' | translate }}
           <input
             formControlName="fullName"
             ibmText
@@ -160,7 +160,7 @@
             [invalid]="isValid('fullName')"
             [disabled]="false"
             theme="dark"
-            [placeholder]="'Votre nom et prénom'"
+            [placeholder]="'AUTH.FULL_NAME_PLACEHOLDER' | translate"
             [autocomplete]="true">
         </ibm-label>
       </div>
@@ -170,8 +170,8 @@
         <ibm-label
           [helperText]="''"
           [invalid]="isValid('email')"
-          [invalidText]="'Email obligatoire'">
-          Adresse email
+          [invalidText]="'AUTH.EMAIL_REQUIRED' | translate">
+          {{ 'AUTH.EMAIL_ADDRESS' | translate }}
           <input
             formControlName="email"
             ibmText
@@ -179,7 +179,7 @@
             [invalid]="isValid('email')"
             [disabled]="false"
             theme="dark"
-            [placeholder]="'votre.email@exemple.com'"
+            [placeholder]="'AUTH.EMAIL_PLACEHOLDER' | translate"
             [autocomplete]="true">
         </ibm-label>
       </div>
@@ -189,8 +189,8 @@
         <ibm-label
           [helperText]="''"
           [invalid]="isValid('phoneNumber')"
-          [invalidText]="'Numéro de téléphone obligatoire'">
-          Numéro de téléphone
+          [invalidText]="'AUTH.PHONE_REQUIRED' | translate">
+          {{ 'AUTH.PHONE_NUMBER' | translate }}
           <input
             formControlName="phoneNumber"
             ibmText
@@ -211,8 +211,8 @@
       <ibm-label
         [helperText]="''"
         [invalid]="isValid('password')"
-        [invalidText]="'Mot de passe obligatoire'">
-        Mot de passe
+        [invalidText]="'AUTH.PASSWORD_REQUIRED' | translate">
+        {{ 'AUTH.PASSWORD' | translate }}
         <div class="password-input-container">
           <input
             [type]="showPassword ? 'text' : 'password'"
@@ -222,7 +222,7 @@
             [invalid]="isValid('password')"
             [disabled]="false"
             theme="dark"
-            [placeholder]="'Minimum 8 caractères'"
+            [placeholder]="'AUTH.PASSWORD_MIN_LENGTH' | translate"
             [autocomplete]="true">
           <button type="button" 
                   class="password-toggle-btn"
@@ -244,8 +244,8 @@
     <div class="app-form__item app-form__item--opts">
       <div class="flex justify-between items-center">
         <ibm-checkbox formControlName="condition">
-          J'ai lu et accepte
-          <a class="app-link">les termes et conditions</a>
+          {{ 'AUTH.ACCEPT_TERMS_START' | translate }}
+          <a class="app-link">{{ 'AUTH.TERMS_CONDITIONS' | translate }}</a>
         </ibm-checkbox>
       </div>
     </div>
@@ -260,7 +260,7 @@
         <ibm-loading *ngIf="waittingResponse; else noWaitingResponse"></ibm-loading>
         <ng-template #noWaitingResponse>
           <span class="btn-text">
-            {{ isAgentProfile() ? 'Créer mon compte agent' : 'Créer un compte' }}
+            {{ isAgentProfile() ? ('AUTH.CREATE_AGENT_ACCOUNT' | translate) : ('AUTH.CREATE_ACCOUNT' | translate) }}
           </span>
           <youpez-ibm-icon iconClass="cds--btn__icon" iconName="arrowRight" iconSize="20"></youpez-ibm-icon>
         </ng-template>

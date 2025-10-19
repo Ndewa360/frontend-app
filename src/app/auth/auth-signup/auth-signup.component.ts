@@ -3,6 +3,7 @@ import {UntypedFormBuilder, UntypedFormGroup, Validators} from "@angular/forms"
 import {Router} from "@angular/router"
 import { Actions, ofActionCompleted, ofActionErrored, ofActionSuccessful, Store } from '@ngxs/store'
 import {UserProfileAction} from "src/app/shared/store"
+import { TranslateService } from '@ngx-translate/core'
 
 /**
  * Signup component
@@ -40,7 +41,8 @@ export class AuthSignupComponent implements OnInit {
   constructor(protected formBuilder: UntypedFormBuilder,
               private router: Router,
             private _store:Store,
-            private _ngxsAction:Actions
+            private _ngxsAction:Actions,
+            private translate: TranslateService
 
           ) {
   }
@@ -143,6 +145,16 @@ export class AuthSignupComponent implements OnInit {
 
   togglePasswordVisibility() {
     this.showPassword = !this.showPassword;
+  }
+
+  getProfileTypeLabel(profileType: string): string {
+    const key = profileType === 'PROPERTY_OWNER' ? 'AUTH.PROPERTY_OWNER' : 'AUTH.REAL_ESTATE_AGENT';
+    return this.translate.instant(key);
+  }
+
+  getProfileTypeDescription(profileType: string): string {
+    const key = profileType === 'PROPERTY_OWNER' ? 'AUTH.PROPERTY_OWNER_DESC' : 'AUTH.REAL_ESTATE_AGENT_DESC';
+    return this.translate.instant(key);
   }
 
 }
