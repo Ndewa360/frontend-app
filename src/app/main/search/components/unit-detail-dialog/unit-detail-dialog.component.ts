@@ -7,6 +7,7 @@ import { SearchPropertyModel } from 'src/app/shared/store';
 import { Store } from '@ngxs/store';
 import { PremiumAccessState, PremiumAccessAction, OwnerInfoModel } from 'src/app/shared/store/premium-access';
 import { PremiumAccessService } from 'src/app/shared/services/premium-access/premium-access.service';
+import { TranslateService } from '@ngx-translate/core';
 
 export interface UnitDetailDialogData {
   unit: SearchPropertyModel;
@@ -61,7 +62,8 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private store: Store,
-    private premiumAccessService: PremiumAccessService
+    private premiumAccessService: PremiumAccessService,
+    private translate: TranslateService
   ) {
     this.unit = data.unit;
     this.allUnits = data.allUnits;
@@ -344,33 +346,39 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
   }
 
   getContactPersonTitle(): string {
-    return this.isPropertyManagedByAgent() ? 'Agent immobilier' : 'Propriétaire';
+    return this.isPropertyManagedByAgent() ? 
+      this.translate.instant('UNIT_DETAIL.CONTACT.AGENT_TITLE') : 
+      this.translate.instant('UNIT_DETAIL.CONTACT.OWNER_TITLE');
   }
 
   getContactPersonName(): string {
     if (this.isPropertyManagedByAgent()) {
       return this.unit?.property?.managedByAgent?.fullName || 
              this.unit?.property?.managedByAgent?.name || 
-             'Agent Certifié';
+             this.translate.instant('UNIT_DETAIL.CONTACT.CERTIFIED_AGENT');
     }
-    return this.unit?.property?.owner?.fullName || 'Propriétaire Certifié';
+    return this.unit?.property?.owner?.fullName || this.translate.instant('UNIT_DETAIL.CONTACT.CERTIFIED_OWNER');
   }
 
   getContactPersonInitials(): string {
     const name = this.getContactPersonName();
-    if (name === 'Agent Certifié') return 'AC';
-    if (name === 'Propriétaire Certifié') return 'PC';
+    const certifiedAgent = this.translate.instant('UNIT_DETAIL.CONTACT.CERTIFIED_AGENT');
+    const certifiedOwner = this.translate.instant('UNIT_DETAIL.CONTACT.CERTIFIED_OWNER');
+    if (name === certifiedAgent) return 'AC';
+    if (name === certifiedOwner) return 'PC';
     return name.split(' ').map((n: string) => n[0]).join('').toUpperCase();
   }
 
   getContactPersonBadge(): string {
-    return this.isPropertyManagedByAgent() ? 'Agent Vérifié' : 'Vérifié';
+    return this.isPropertyManagedByAgent() ? 
+      'UNIT_DETAIL.CONTACT.VERIFIED_AGENT' : 
+      'UNIT_DETAIL.CONTACT.VERIFIED';
   }
 
   getAgencyName(): string {
     return this.unit?.property?.managedByAgent?.agencyName || 
            this.unit?.property?.managedByAgent?.company || 
-           'Agence Ndewa360';
+           this.translate.instant('UNIT_DETAIL.AGENCY.DEFAULT_NAME');
   }
 
   getAgencyLogo(): string | null {
@@ -388,8 +396,11 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
   // === ACTIONS ===
   shareProperty(): void {
     const shareData = {
-      title: this.unit.property?.name || this.unit.code || 'Propriété sur Ndewa360°',
-      text: `Découvrez cette propriété: ${this.unit.property?.name || this.unit.code} - ${this.formatPrice(this.unit.price)}/mois`,
+      title: this.unit.property?.name || this.unit.code || this.translate.instant('UNIT_DETAIL.SHARE.DEFAULT_TITLE'),
+      text: this.translate.instant('UNIT_DETAIL.SHARE.TEXT', {
+        name: this.unit.property?.name || this.unit.code,
+        price: this.formatPrice(this.unit.price)
+      }),
       url: window.location.href
     };
 
@@ -402,10 +413,13 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
 
   private fallbackShare(): void {
     const url = window.location.href;
-    const text = `Découvrez cette propriété: ${this.unit.property?.name || this.unit.code} - ${this.formatPrice(this.unit.price)}/mois`;
+    const text = this.translate.instant('UNIT_DETAIL.SHARE.TEXT', {
+      name: this.unit.property?.name || this.unit.code,
+      price: this.formatPrice(this.unit.price)
+    });
     
     navigator.clipboard.writeText(`${text} ${url}`).then(() => {
-      console.log('✅ Lien de partage copié');
+      console.log('✅ Share link copied');
     }).catch(() => {
       const textArea = document.createElement('textarea');
       textArea.value = `${text} ${url}`;
@@ -417,7 +431,7 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
   }
 
   onContactOwner(): void {
-    console.log('Contacter le propriétaire:', this.unit.property?.owner);
+    console.log('Contact owner:', this.unit.property?.owner);
   }
 
   // === PREMIUM ACCESS ===
@@ -447,7 +461,7 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
   }
 
   getRemainingDaysText(): string {
-    return '3 jours restants';
+    return this.translate.instant('UNIT_DETAIL.PREMIUM.REMAINING_DAYS');
   }
 
   copyToClipboard(text: string, type: string): void {
@@ -500,11 +514,11 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
       this.ownerInfo = {
         owner: {
           id: agent._id || ('agent-' + Date.now()),
-          name: agent.fullName || agent.name || 'Agent Immobilier Certifié',
+          name: agent.fullName || agent.name || this.translate.instant('UNIT_DETAIL.CONTACT.CERTIFIED_REAL_ESTATE_AGENT'),
           email: agent.email || 'agent@ndewa360.com',
           phone: agent.phoneNumber || agent.phone || '+237 6XX XXX XXX',
           whatsapp: agent.phoneNumber || agent.phone || '+237 6XX XXX XXX',
-          address: this.unit?.property?.location || 'Adresse non spécifiée'
+          address: this.unit?.property?.location || this.translate.instant('UNIT_DETAIL.LOCATION.ADDRESS_NOT_SPECIFIED')
         },
         access: {
           id: 'access-' + Date.now(),
@@ -518,11 +532,11 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
       this.ownerInfo = {
         owner: {
           id: owner._id || ('owner-' + Date.now()),
-          name: owner.fullName || 'Propriétaire Vérifié',
+          name: owner.fullName || this.translate.instant('UNIT_DETAIL.CONTACT.VERIFIED_OWNER'),
           email: owner.email || 'proprietaire@ndewa360.com',
           phone: owner.phoneNumber || '+237 6XX XXX XXX',
           whatsapp: owner.phoneNumber || '+237 6XX XXX XXX',
-          address: this.unit?.property?.location || 'Adresse non spécifiée'
+          address: this.unit?.property?.location || this.translate.instant('UNIT_DETAIL.LOCATION.ADDRESS_NOT_SPECIFIED')
         },
         access: {
           id: 'access-' + Date.now(),
@@ -537,11 +551,11 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
       this.ownerInfo = {
         owner: {
           id: 'fallback-contact-' + Date.now(),
-          name: 'Contact Certifié NDEWA',
+          name: this.translate.instant('UNIT_DETAIL.CONTACT.CERTIFIED_NDEWA_CONTACT'),
           email: 'contact@ndewa360.com',
           phone: '+237 690 123 456',
           whatsapp: '+237 690 123 456',
-          address: this.unit?.property?.location || 'Douala, Cameroun'
+          address: this.unit?.property?.location || this.translate.instant('UNIT_DETAIL.LOCATION.DEFAULT_LOCATION')
         },
         access: {
           id: 'fallback-access-' + Date.now(),

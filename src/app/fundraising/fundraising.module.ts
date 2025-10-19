@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { MatDialogModule } from '@angular/material/dialog';
+import { TranslateModule } from '@ngx-translate/core';
 
 // Carbon Components
 import { ButtonModule, GridModule, IconModule, ProgressIndicatorModule, TagModule, TilesModule } from 'carbon-components-angular';
@@ -28,6 +29,7 @@ import { FundraisingService } from './services/fundraising.service';
     ReactiveFormsModule,
     FormsModule,
     HttpClientModule,
+    TranslateModule,
     RouterModule.forChild([
       {
         path: '',

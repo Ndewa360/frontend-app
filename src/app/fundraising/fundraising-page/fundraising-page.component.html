@@ -1,12 +1,12 @@
 <!-- Navigation flottante -->
 <nav class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 bg-white/90 backdrop-blur-lg rounded-full px-6 py-3 shadow-xl border border-orange-200/50 animate-fade-in-up">
   <div class="flex items-center space-x-4">
-    <a href="#hero" class="text-orange-600 hover:text-orange-700 transition-colors duration-300 font-medium text-sm">Accueil</a>
-    <a href="#vision" class="text-gray-700 hover:text-orange-600 transition-colors duration-300 font-medium text-sm">Vision</a>
-    <a href="#produit" class="text-gray-700 hover:text-orange-600 transition-colors duration-300 font-medium text-sm">Produit</a>
-    <a href="#equipe" class="text-gray-700 hover:text-orange-600 transition-colors duration-300 font-medium text-sm">Équipe</a>
-    <a href="#newsletter" class="text-gray-700 hover:text-orange-600 transition-colors duration-300 font-medium text-sm">Newsletter</a>
-    <a href="#don" class="bg-gradient-to-r from-orange-500 to-yellow-500 text-white px-3 py-2 rounded-full hover:from-orange-600 hover:to-yellow-600 transition-all duration-300 font-medium text-sm">Faire un Don</a>
+    <a href="#hero" class="text-orange-600 hover:text-orange-700 transition-colors duration-300 font-medium text-sm">{{ 'FUNDRAISING.NAVIGATION.HOME' | translate }}</a>
+    <a href="#vision" class="text-gray-700 hover:text-orange-600 transition-colors duration-300 font-medium text-sm">{{ 'FUNDRAISING.NAVIGATION.VISION' | translate }}</a>
+    <a href="#produit" class="text-gray-700 hover:text-orange-600 transition-colors duration-300 font-medium text-sm">{{ 'FUNDRAISING.NAVIGATION.PRODUCT' | translate }}</a>
+    <a href="#equipe" class="text-gray-700 hover:text-orange-600 transition-colors duration-300 font-medium text-sm">{{ 'FUNDRAISING.NAVIGATION.TEAM' | translate }}</a>
+    <a href="#newsletter" class="text-gray-700 hover:text-orange-600 transition-colors duration-300 font-medium text-sm">{{ 'FUNDRAISING.NAVIGATION.NEWSLETTER' | translate }}</a>
+    <a href="#don" class="bg-gradient-to-r from-orange-500 to-yellow-500 text-white px-3 py-2 rounded-full hover:from-orange-600 hover:to-yellow-600 transition-all duration-300 font-medium text-sm">{{ 'FUNDRAISING.NAVIGATION.DONATE' | translate }}</a>
   </div>
 </nav>
 
@@ -31,11 +31,11 @@
         <img src="assets/img/logo/logo-basic-nobg.png" alt="Ndewa360 Logo" class="h-20 sm:h-24 lg:h-28 mx-auto drop-shadow-lg hover:scale-110 hover:rotate-12 transition-all duration-500 animate-pulse">
       </div>
       <h1 class="text-5xl sm:text-6xl lg:text-8xl font-bold mb-6 leading-tight fade-in-on-scroll">
-        Révolutionnons l'Immobilier au <span class="text-yellow-200 drop-shadow-md animate-pulse">Cameroun</span>
+        {{ 'FUNDRAISING.HERO.TITLE' | translate }}
       </h1>
       <div class="text-center fade-in-on-scroll">
         <p class="text-lg sm:text-xl lg:text-2xl mb-12 opacity-95 max-w-4xl mx-auto leading-relaxed">
-          Aidez-nous à créer la plateforme de référence en Afrique pour la gestion et la location immobilière intelligente avec des visites 360° immersives
+          {{ 'FUNDRAISING.HERO.SUBTITLE' | translate }}
         </p>
       </div>
       
@@ -46,13 +46,13 @@
             <div class="text-3xl sm:text-4xl lg:text-5xl font-bold mb-2 text-yellow-100 drop-shadow-md">
               {{ formatCurrency(totalGoal) }}
             </div>
-            <div class="text-base sm:text-lg opacity-90 font-medium">Objectif de collecte</div>
+            <div class="text-base sm:text-lg opacity-90 font-medium">{{ 'FUNDRAISING.HERO.FUNDING_GOAL' | translate }}</div>
           </div>
           
           <div class="lg:col-span-2">
             <div class="mb-4">
               <div class="flex justify-between items-center mb-3">
-                <span class="text-sm font-semibold text-white/90">Progression</span>
+                <span class="text-sm font-semibold text-white/90">{{ 'FUNDRAISING.HERO.PROGRESS' | translate }}</span>
                 <span class="text-sm font-bold bg-white/20 px-3 py-1 rounded-full">{{ progressPercentage.toFixed(1) }}%</span>
               </div>
               <div class="w-full bg-white/25 rounded-full h-4 overflow-hidden shadow-inner">
@@ -63,10 +63,10 @@
             
             <div class="flex justify-between text-sm">
               <span *ngIf="campaignStats" class="opacity-90 flex items-center">
-                <i class="fas fa-users mr-2 text-yellow-200"></i>{{ campaignStats.donorsCount }} donateurs
+                <i class="fas fa-users mr-2 text-yellow-200"></i>{{ campaignStats.donorsCount }} {{ 'FUNDRAISING.HERO.DONORS' | translate }}
               </span>
               <span *ngIf="campaignStats && currentAmount > 0" class="font-semibold text-green-200 flex items-center">
-                <i class="fas fa-coins mr-2"></i>{{ formatCurrency(currentAmount) }} collectés
+                <i class="fas fa-coins mr-2"></i>{{ formatCurrency(currentAmount) }} {{ 'FUNDRAISING.HERO.COLLECTED' | translate }}
               </span>
             </div>
           </div>
@@ -93,14 +93,13 @@
             <i class="fas fa-eye text-white text-2xl"></i>
           </div>
           <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900">
-            Notre <span class="text-orange-600 drop-shadow-sm">Vision</span>
+            {{ 'FUNDRAISING.VISION.OUR_VISION' | translate }}
           </h2>
         </div>
         
         <div class="bg-white/60 rounded-2xl p-4 lg:p-6 border border-orange-100 shadow-lg">
           <p class="text-lg sm:text-xl text-gray-700 leading-relaxed font-medium">
-            Devenir la <span class="text-orange-600 font-bold">plateforme de référence en Afrique</span> pour la gestion et la location immobilière intelligente, 
-            en connectant propriétaires et locataires à travers une expérience numérique <span class="text-yellow-600 font-bold">immersive, transparente et inclusive</span>.
+            {{ 'FUNDRAISING.VISION.VISION_TEXT' | translate }}
           </p>
         </div>
       </div>
@@ -112,14 +111,13 @@
             <i class="fas fa-rocket text-white text-2xl"></i>
           </div>
           <h3 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900">
-            Notre <span class="text-yellow-600 drop-shadow-sm">Mission</span>
+            {{ 'FUNDRAISING.VISION.OUR_MISSION' | translate }}
           </h3>
         </div>
         
         <div class="bg-white/60 rounded-2xl p-4 lg:p-6 border border-yellow-100 shadow-lg">
           <p class="text-lg sm:text-xl text-gray-700 leading-relaxed font-medium">
-            <span class="text-yellow-600 font-bold">Simplifier et digitaliser</span> la gestion locative en offrant une plateforme complète qui permet de rechercher, 
-            explorer, louer et administrer des biens immobiliers <span class="text-orange-600 font-bold">en toute confiance</span>.
+            {{ 'FUNDRAISING.VISION.MISSION_TEXT' | translate }}
           </p>
         </div>
       </div>
@@ -132,9 +130,9 @@
           <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center mr-4">
             <i class="fas fa-vr-cardboard text-white text-lg"></i>
           </div>
-          <h4 class="text-lg font-bold text-gray-900">Visites 360°</h4>
+          <h4 class="text-lg font-bold text-gray-900">{{ 'FUNDRAISING.VISION.FEATURES.VR_TOURS' | translate }}</h4>
         </div>
-        <p class="text-gray-600 text-sm">Faciliter l'accès au logement grâce à des visites virtuelles révolutionnaires</p>
+        <p class="text-gray-600 text-sm">{{ 'FUNDRAISING.VISION.FEATURES.VR_TOURS_DESC' | translate }}</p>
       </div>
       
       <div class="bg-white/40 rounded-xl p-6 border border-yellow-100 hover:shadow-lg transition-all duration-300 fade-in-on-scroll hover:scale-110 hover:-translate-y-2 animate-wiggle-on-scroll">
@@ -142,9 +140,9 @@
           <div class="w-12 h-12 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center mr-4">
             <i class="fas fa-mobile-alt text-white text-lg"></i>
           </div>
-          <h4 class="text-lg font-bold text-gray-900">Paiements Mobiles</h4>
+          <h4 class="text-lg font-bold text-gray-900">{{ 'FUNDRAISING.VISION.FEATURES.MOBILE_PAYMENTS' | translate }}</h4>
         </div>
-        <p class="text-gray-600 text-sm">Sécuriser les transactions via Orange Money et MTN Mobile Money</p>
+        <p class="text-gray-600 text-sm">{{ 'FUNDRAISING.VISION.FEATURES.MOBILE_PAYMENTS_DESC' | translate }}</p>
       </div>
       
       <div class="bg-white/40 rounded-xl p-6 border border-green-100 hover:shadow-lg transition-all duration-300 fade-in-on-scroll hover:scale-110 hover:-translate-y-2 animate-wiggle-on-scroll">
@@ -152,9 +150,9 @@
           <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center mr-4">
             <i class="fas fa-chart-line text-white text-lg"></i>
           </div>
-          <h4 class="text-lg font-bold text-gray-900">Outils Analytiques</h4>
+          <h4 class="text-lg font-bold text-gray-900">{{ 'FUNDRAISING.VISION.FEATURES.ANALYTICS' | translate }}</h4>
         </div>
-        <p class="text-gray-600 text-sm">Accompagner les propriétaires avec des analyses financières automatisées</p>
+        <p class="text-gray-600 text-sm">{{ 'FUNDRAISING.VISION.FEATURES.ANALYTICS_DESC' | translate }}</p>
       </div>
       
       <div class="bg-white/40 rounded-xl p-6 border border-blue-100 hover:shadow-lg transition-all duration-300 fade-in-on-scroll hover:scale-110 hover:-translate-y-2 animate-wiggle-on-scroll">
@@ -162,9 +160,9 @@
           <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mr-4">
             <i class="fas fa-handshake text-white text-lg"></i>
           </div>
-          <h4 class="text-lg font-bold text-gray-900">Écosystème Équitable</h4>
+          <h4 class="text-lg font-bold text-gray-900">{{ 'FUNDRAISING.VISION.FEATURES.ECOSYSTEM' | translate }}</h4>
         </div>
-        <p class="text-gray-600 text-sm">Créer un environnement transparent et équitable pour tous</p>
+        <p class="text-gray-600 text-sm">{{ 'FUNDRAISING.VISION.FEATURES.ECOSYSTEM_DESC' | translate }}</p>
       </div>
     </div>
     
@@ -176,12 +174,11 @@
             <i class="fas fa-heart text-white text-2xl"></i>
           </div>
           <h3 class="text-3xl sm:text-4xl font-bold text-gray-900">
-            Notre <span class="text-orange-600">Impact</span>
+            {{ 'FUNDRAISING.VISION.OUR_IMPACT' | translate }}
           </h3>
         </div>
         <p class="text-lg sm:text-xl text-gray-700 max-w-4xl mx-auto leading-relaxed">
-          Transformer la vie de <span class="text-orange-600 font-bold">milliers de familles africaines</span> en rendant 
-          l'accès au logement plus simple, transparent et équitable grâce à l'innovation technologique.
+          {{ 'FUNDRAISING.VISION.IMPACT_TEXT' | translate }}
         </p>
       </div>
     </div>
@@ -193,11 +190,11 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
     <div class="text-center mb-16">
       <h2 class="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 mb-6">
-        Découvrez <span class="text-orange-600">Ndewa360</span> en Action
+        {{ 'FUNDRAISING.PRODUCT.TITLE' | translate }}
       </h2>
       <div class="text-center">
         <p class="text-lg sm:text-xl text-gray-600 max-w-4xl mx-auto">
-          Découvrez comment Ndewa360 révolutionne la gestion immobilière avec des technologies de pointe et une approche centrée utilisateur
+          {{ 'FUNDRAISING.PRODUCT.SUBTITLE' | translate }}
         </p>
       </div>
       
@@ -220,9 +217,9 @@
             <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center mr-3">
               <i class="fas fa-search text-orange-600"></i>
             </div>
-            <h3 class="text-xl font-bold text-gray-900">Recherche Intelligente</h3>
+            <h3 class="text-xl font-bold text-gray-900">{{ 'FUNDRAISING.PRODUCT.FEATURES.SMART_SEARCH' | translate }}</h3>
           </div>
-          <p class="text-gray-600 leading-relaxed">Moteur de recherche intelligent avec filtres avancés (ville, type, prix, disponibilité) et géolocalisation précise.</p>
+          <p class="text-gray-600 leading-relaxed">{{ 'FUNDRAISING.PRODUCT.FEATURES.SMART_SEARCH_DESC' | translate }}</p>
         </div>
       </div>
       
@@ -241,9 +238,9 @@
             <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center mr-3">
               <i class="fas fa-chart-line text-yellow-600"></i>
             </div>
-            <h3 class="text-xl font-bold text-gray-900">Tableau de Bord</h3>
+            <h3 class="text-xl font-bold text-gray-900">{{ 'FUNDRAISING.PRODUCT.FEATURES.DASHBOARD' | translate }}</h3>
           </div>
-          <p class="text-gray-600 leading-relaxed">Tableau de bord complet avec revenus mensuels, taux d'occupation et état de chaque locataire en temps réel.</p>
+          <p class="text-gray-600 leading-relaxed">{{ 'FUNDRAISING.PRODUCT.FEATURES.DASHBOARD_DESC' | translate }}</p>
         </div>
       </div>
       
@@ -262,9 +259,9 @@
             <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
               <i class="fas fa-coins text-purple-600"></i>
             </div>
-            <h3 class="text-xl font-bold text-gray-900">Gestion Financière</h3>
+            <h3 class="text-xl font-bold text-gray-900">{{ 'FUNDRAISING.PRODUCT.FEATURES.FINANCIAL_MANAGEMENT' | translate }}</h3>
           </div>
-          <p class="text-gray-600 leading-relaxed">Suivi automatique des paiements, calcul des mois couverts, relances automatiques et statistiques dynamiques.</p>
+          <p class="text-gray-600 leading-relaxed">{{ 'FUNDRAISING.PRODUCT.FEATURES.FINANCIAL_MANAGEMENT_DESC' | translate }}</p>
         </div>
       </div>
       
@@ -283,9 +280,9 @@
             <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center mr-3">
               <i class="fas fa-file-contract text-orange-600"></i>
             </div>
-            <h3 class="text-xl font-bold text-gray-900">Contrats Digitaux</h3>
+            <h3 class="text-xl font-bold text-gray-900">{{ 'FUNDRAISING.PRODUCT.FEATURES.DIGITAL_CONTRACTS' | translate }}</h3>
           </div>
-          <p class="text-gray-600 leading-relaxed">Génération automatique de contrats de location avec signature électronique et gestion centralisée.</p>
+          <p class="text-gray-600 leading-relaxed">{{ 'FUNDRAISING.PRODUCT.FEATURES.DIGITAL_CONTRACTS_DESC' | translate }}</p>
         </div>
       </div>
       
@@ -304,9 +301,9 @@
             <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center mr-3">
               <i class="fas fa-receipt text-indigo-600"></i>
             </div>
-            <h3 class="text-xl font-bold text-gray-900">Facturation Automatisée</h3>
+            <h3 class="text-xl font-bold text-gray-900">{{ 'FUNDRAISING.PRODUCT.FEATURES.AUTOMATED_BILLING' | translate }}</h3>
           </div>
-          <p class="text-gray-600 leading-relaxed">Facturation automatique, envoi par mail/WhatsApp et synchronisation avec les paiements mobiles.</p>
+          <p class="text-gray-600 leading-relaxed">{{ 'FUNDRAISING.PRODUCT.FEATURES.AUTOMATED_BILLING_DESC' | translate }}</p>
         </div>
       </div>
       
@@ -325,9 +322,9 @@
             <div class="w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center mr-3">
               <i class="fas fa-comments text-teal-600"></i>
             </div>
-            <h3 class="text-xl font-bold text-gray-900">Contact Direct</h3>
+            <h3 class="text-xl font-bold text-gray-900">{{ 'FUNDRAISING.PRODUCT.FEATURES.DIRECT_CONTACT' | translate }}</h3>
           </div>
-          <p class="text-gray-600 leading-relaxed">Communication sécurisée entre locataires et propriétaires avec système de vérification intégré.</p>
+          <p class="text-gray-600 leading-relaxed">{{ 'FUNDRAISING.PRODUCT.FEATURES.DIRECT_CONTACT_DESC' | translate }}</p>
         </div>
       </div>
     </div>
@@ -339,26 +336,26 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
     <div class="text-center mb-16">
       <h2 class="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6">
-        Pourquoi <span class="text-orange-400">Ndewa360</span> ?
+        {{ 'FUNDRAISING.ADVANTAGES.TITLE' | translate }}
       </h2>
       <div class="text-center">
         <p class="text-lg sm:text-xl text-gray-300 max-w-4xl mx-auto">
-          La première plateforme africaine intégrant visites 360°, paiements mobiles et gestion automatisée
+          {{ 'FUNDRAISING.ADVANTAGES.SUBTITLE' | translate }}
         </p>
       </div>
     </div>
     
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16">
       <div class="text-left">
-        <h3 class="text-3xl sm:text-4xl font-bold mb-8 text-orange-400">Avantages Concurrentiels</h3>
+        <h3 class="text-3xl sm:text-4xl font-bold mb-8 text-orange-400">{{ 'FUNDRAISING.ADVANTAGES.COMPETITIVE_ADVANTAGES' | translate }}</h3>
         <div class="space-y-8">
           <div class="flex items-start">
             <div class="w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center mr-6 flex-shrink-0 shadow-xl">
               <i class="fas fa-vr-cardboard text-white text-2xl"></i>
             </div>
             <div>
-              <h4 class="text-xl font-bold mb-2">Visites 360° Immersives</h4>
-              <p class="text-gray-300">Première plateforme africaine avec exploration visuelle complète des logements</p>
+              <h4 class="text-xl font-bold mb-2">{{ 'FUNDRAISING.ADVANTAGES.FEATURES.IMMERSIVE_TOURS' | translate }}</h4>
+              <p class="text-gray-300">{{ 'FUNDRAISING.ADVANTAGES.FEATURES.IMMERSIVE_TOURS_DESC' | translate }}</p>
             </div>
           </div>
           
@@ -367,8 +364,8 @@
               <i class="fas fa-mobile-alt text-white text-2xl"></i>
             </div>
             <div>
-              <h4 class="text-xl font-bold mb-2">Paiements Mobiles Intégrés</h4>
-              <p class="text-gray-300">Connexion directe avec Orange Money et MTN Mobile Money</p>
+              <h4 class="text-xl font-bold mb-2">{{ 'FUNDRAISING.ADVANTAGES.FEATURES.INTEGRATED_PAYMENTS' | translate }}</h4>
+              <p class="text-gray-300">{{ 'FUNDRAISING.ADVANTAGES.FEATURES.INTEGRATED_PAYMENTS_DESC' | translate }}</p>
             </div>
           </div>
           
@@ -377,8 +374,8 @@
               <i class="fas fa-robot text-white text-2xl"></i>
             </div>
             <div>
-              <h4 class="text-xl font-bold mb-2">Automatisation Complète</h4>
-              <p class="text-gray-300">Gestion automatisée des contrats, factures et relances</p>
+              <h4 class="text-xl font-bold mb-2">{{ 'FUNDRAISING.ADVANTAGES.FEATURES.COMPLETE_AUTOMATION' | translate }}</h4>
+              <p class="text-gray-300">{{ 'FUNDRAISING.ADVANTAGES.FEATURES.COMPLETE_AUTOMATION_DESC' | translate }}</p>
             </div>
           </div>
           
@@ -387,8 +384,8 @@
               <i class="fas fa-users text-white text-2xl"></i>
             </div>
             <div>
-              <h4 class="text-xl font-bold mb-2">Adapté au Contexte Africain</h4>
-              <p class="text-gray-300">Conçu pour les étudiants, jeunes actifs et petits bailleurs</p>
+              <h4 class="text-xl font-bold mb-2">{{ 'FUNDRAISING.ADVANTAGES.FEATURES.AFRICAN_CONTEXT' | translate }}</h4>
+              <p class="text-gray-300">{{ 'FUNDRAISING.ADVANTAGES.FEATURES.AFRICAN_CONTEXT_DESC' | translate }}</p>
             </div>
           </div>
         </div>
@@ -397,7 +394,7 @@
       <div class="relative">
         <div class="bg-gradient-to-br from-orange-500/20 to-yellow-500/20 rounded-3xl p-8 backdrop-blur-sm border border-orange-500/30">
           <div class="text-center mb-6">
-            <h4 class="text-2xl font-bold text-orange-400 mb-4">Segments de Clientèle</h4>
+            <h4 class="text-2xl font-bold text-orange-400 mb-4">{{ 'FUNDRAISING.ADVANTAGES.CUSTOMER_SEGMENTS' | translate }}</h4>
           </div>
           
           <div class="grid grid-cols-1 gap-4">
@@ -406,8 +403,8 @@
                 <i class="fas fa-user text-white text-xl"></i>
               </div>
               <div class="text-left">
-                <h5 class="font-bold mb-2 text-white">Propriétaires Individuels</h5>
-                <p class="text-sm text-gray-300 leading-relaxed">Particuliers avec un ou plusieurs biens</p>
+                <h5 class="font-bold mb-2 text-white">{{ 'FUNDRAISING.ADVANTAGES.SEGMENTS.INDIVIDUAL_OWNERS' | translate }}</h5>
+                <p class="text-sm text-gray-300 leading-relaxed">{{ 'FUNDRAISING.ADVANTAGES.SEGMENTS.INDIVIDUAL_OWNERS_DESC' | translate }}</p>
               </div>
             </div>
             
@@ -416,8 +413,8 @@
                 <i class="fas fa-building text-white text-xl"></i>
               </div>
               <div class="text-left">
-                <h5 class="font-bold mb-2 text-white">Agences Immobilières</h5>
-                <p class="text-sm text-gray-300 leading-relaxed">Gestionnaires de portefeuille professionnel</p>
+                <h5 class="font-bold mb-2 text-white">{{ 'FUNDRAISING.ADVANTAGES.SEGMENTS.REAL_ESTATE_AGENCIES' | translate }}</h5>
+                <p class="text-sm text-gray-300 leading-relaxed">{{ 'FUNDRAISING.ADVANTAGES.SEGMENTS.REAL_ESTATE_AGENCIES_DESC' | translate }}</p>
               </div>
             </div>
             
@@ -426,8 +423,8 @@
                 <i class="fas fa-graduation-cap text-white text-xl"></i>
               </div>
               <div class="text-left">
-                <h5 class="font-bold mb-2 text-white">Locataires & Étudiants</h5>
-                <p class="text-sm text-gray-300 leading-relaxed">Recherche rapide et sécurisée de logement</p>
+                <h5 class="font-bold mb-2 text-white">{{ 'FUNDRAISING.ADVANTAGES.SEGMENTS.TENANTS_STUDENTS' | translate }}</h5>
+                <p class="text-sm text-gray-300 leading-relaxed">{{ 'FUNDRAISING.ADVANTAGES.SEGMENTS.TENANTS_STUDENTS_DESC' | translate }}</p>
               </div>
             </div>
           </div>
@@ -437,38 +434,38 @@
     
     <!-- Revenue Model -->
     <div class="bg-gradient-to-r from-orange-500/10 to-yellow-500/10 rounded-3xl p-8 lg:p-12 border border-orange-500/20">
-      <h3 class="text-3xl sm:text-4xl font-bold mb-8 text-center">Modèle Économique Durable</h3>
+      <h3 class="text-3xl sm:text-4xl font-bold mb-8 text-center">{{ 'FUNDRAISING.ADVANTAGES.ECONOMIC_MODEL' | translate }}</h3>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div class="text-center">
           <div class="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
             <i class="fas fa-percentage text-white text-xl"></i>
           </div>
-          <h4 class="font-bold mb-2">Commissions</h4>
-          <p class="text-sm text-gray-300">2% du loyer mensuel</p>
+          <h4 class="font-bold mb-2">{{ 'FUNDRAISING.ADVANTAGES.REVENUE_MODEL.COMMISSIONS' | translate }}</h4>
+          <p class="text-sm text-gray-300">{{ 'FUNDRAISING.ADVANTAGES.REVENUE_MODEL.COMMISSIONS_DESC' | translate }}</p>
         </div>
         
         <div class="text-center">
           <div class="w-16 h-16 bg-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4">
             <i class="fas fa-crown text-white text-xl"></i>
           </div>
-          <h4 class="font-bold mb-2">Abonnements</h4>
-          <p class="text-sm text-gray-300">Formules premium</p>
+          <h4 class="font-bold mb-2">{{ 'FUNDRAISING.ADVANTAGES.REVENUE_MODEL.SUBSCRIPTIONS' | translate }}</h4>
+          <p class="text-sm text-gray-300">{{ 'FUNDRAISING.ADVANTAGES.REVENUE_MODEL.SUBSCRIPTIONS_DESC' | translate }}</p>
         </div>
         
         <div class="text-center">
           <div class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
             <i class="fas fa-credit-card text-white text-xl"></i>
           </div>
-          <h4 class="font-bold mb-2">Frais de Service</h4>
-          <p class="text-sm text-gray-300">Accès premium & réservations</p>
+          <h4 class="font-bold mb-2">{{ 'FUNDRAISING.ADVANTAGES.REVENUE_MODEL.SERVICE_FEES' | translate }}</h4>
+          <p class="text-sm text-gray-300">{{ 'FUNDRAISING.ADVANTAGES.REVENUE_MODEL.SERVICE_FEES_DESC' | translate }}</p>
         </div>
         
         <div class="text-center">
           <div class="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
             <i class="fas fa-plus text-white text-xl"></i>
           </div>
-          <h4 class="font-bold mb-2">Services Additionnels</h4>
-          <p class="text-sm text-gray-300">Production 360°, maintenance</p>
+          <h4 class="font-bold mb-2">{{ 'FUNDRAISING.ADVANTAGES.REVENUE_MODEL.ADDITIONAL_SERVICES' | translate }}</h4>
+          <p class="text-sm text-gray-300">{{ 'FUNDRAISING.ADVANTAGES.REVENUE_MODEL.ADDITIONAL_SERVICES_DESC' | translate }}</p>
         </div>
       </div>
     </div>
@@ -480,11 +477,11 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
     <div class="text-center mb-16">
       <h2 class="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 mb-6">
-        Comment Vos Dons Seront <span class="text-orange-600">Utilisés</span>
+        {{ 'FUNDRAISING.FUNDING.TITLE' | translate }}
       </h2>
       <div class="text-center">
         <p class="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto">
-          Transparence totale sur l'utilisation des fonds collectés
+          {{ 'FUNDRAISING.FUNDING.SUBTITLE' | translate }}
         </p>
       </div>
     </div>
@@ -509,7 +506,7 @@
           <div class="bg-blue-600 h-3 rounded-full" [style.width.%]="goal.percentage"></div>
         </div>
         <p class="text-gray-600">{{ goal.description }}</p>
-        <div class="text-sm text-gray-500 mt-2">{{ goal.percentage }}% du budget total</div>
+        <div class="text-sm text-gray-500 mt-2">{{ goal.percentage }}% {{ 'FUNDRAISING.FUNDING.BUDGET_PERCENTAGE' | translate }}</div>
       </div>
     </div>
   </div>
@@ -524,62 +521,62 @@
       <div class="bg-white rounded-2xl shadow-xl p-8 lg:p-10 border border-orange-100 fade-in-on-scroll hover:scale-105 transition-all duration-500 card-3d">
         <div class="text-center mb-8">
           <h2 class="text-5xl sm:text-6xl font-bold text-gray-900 mb-4">
-            Faire un <span class="text-orange-600">Don</span>
+            {{ 'FUNDRAISING.DONATION.TITLE' | translate }}
           </h2>
-          <p class="text-gray-600">Votre contribution compte pour l'avenir de l'immobilier camerounais</p>
+          <p class="text-gray-600">{{ 'FUNDRAISING.DONATION.SUBTITLE' | translate }}</p>
         </div>
         
         <form [formGroup]="donationForm" (ngSubmit)="onSubmitDonation()">
           <div class="grid md:grid-cols-2 gap-6">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Montant (FCFA)</label>
+              <label class="block text-sm font-medium text-gray-700 mb-2">{{ 'FUNDRAISING.DONATION.AMOUNT_LABEL' | translate }}</label>
               <input type="number" 
                      formControlName="amount"
                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200"
-                     placeholder="10000">
+                     [placeholder]="'FUNDRAISING.DONATION.AMOUNT_PLACEHOLDER' | translate">
             </div>
             
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Nom complet</label>
+              <label class="block text-sm font-medium text-gray-700 mb-2">{{ 'FUNDRAISING.DONATION.FULL_NAME_LABEL' | translate }}</label>
               <input type="text" 
                      formControlName="name"
                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200"
-                     placeholder="Votre nom">
+                     [placeholder]="'FUNDRAISING.DONATION.NAME_PLACEHOLDER' | translate">
             </div>
           </div>
           
           <div class="mt-6">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+            <label class="block text-sm font-medium text-gray-700 mb-2">{{ 'FUNDRAISING.DONATION.EMAIL_LABEL' | translate }}</label>
             <input type="email" 
                    formControlName="email"
                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200"
-                   placeholder="votre@email.com">
+                   [placeholder]="'FUNDRAISING.DONATION.EMAIL_PLACEHOLDER' | translate">
           </div>
           
           <div class="mt-6">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Message (optionnel)</label>
+            <label class="block text-sm font-medium text-gray-700 mb-2">{{ 'FUNDRAISING.DONATION.MESSAGE_LABEL' | translate }}</label>
             <textarea formControlName="message"
                       rows="3"
                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200"
-                      placeholder="Votre message de soutien..."></textarea>
+                      [placeholder]="'FUNDRAISING.DONATION.MESSAGE_PLACEHOLDER' | translate"></textarea>
           </div>
           
           <button type="submit" 
                   [disabled]="!donationForm.valid || isSubmittingDonation"
                   class="w-full mt-8 bg-gradient-to-r from-orange-600 to-yellow-500 text-white py-4 px-6 rounded-xl font-bold text-lg hover:from-orange-700 hover:to-yellow-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-110 hover:-translate-y-1 shadow-lg btn-shimmer animate-bounce">
-            <span *ngIf="!isSubmittingDonation">Faire un Don Maintenant</span>
+            <span *ngIf="!isSubmittingDonation">{{ 'FUNDRAISING.DONATION.DONATE_NOW' | translate }}</span>
             <span *ngIf="isSubmittingDonation" class="flex items-center justify-center">
               <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
-              Traitement en cours...
+              {{ 'FUNDRAISING.DONATION.PROCESSING' | translate }}
             </span>
           </button>
         </form>
         
         <div class="mt-6 text-center text-sm text-gray-500">
-          <p>🔒 Paiement sécurisé • Reçu fiscal disponible</p>
+          <p>{{ 'FUNDRAISING.DONATION.SECURITY_NOTE' | translate }}</p>
         </div>
       </div>
     </div>
@@ -591,11 +588,11 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="text-center mb-16">
       <h2 class="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 mb-6 fade-in-on-scroll">
-        Notre <span class="text-orange-600">Équipe</span>
+        {{ 'FUNDRAISING.TEAM.TITLE' | translate }}
       </h2>
       <div class="text-center">
         <p class="text-lg sm:text-xl text-gray-600 max-w-4xl mx-auto fade-in-on-scroll">
-          Une équipe passionnée et expérimentée dédiée à révolutionner l'immobilier africain
+          {{ 'FUNDRAISING.TEAM.SUBTITLE' | translate }}
         </p>
       </div>
     </div>
@@ -642,33 +639,31 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="text-center">
       <h2 class="text-5xl sm:text-6xl lg:text-7xl font-bold mb-12">
-        L'Impact de Votre <span class="text-orange-400">Soutien</span>
+        {{ 'FUNDRAISING.IMPACT.TITLE' | translate }}
       </h2>
       
       <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
         <div class="text-center">
           <div class="text-3xl sm:text-4xl font-bold text-orange-400 mb-2">10,000+</div>
-          <div class="text-base sm:text-lg">Logements référencés</div>
+          <div class="text-base sm:text-lg">{{ 'FUNDRAISING.IMPACT.STATS.PROPERTIES' | translate }}</div>
         </div>
         <div class="text-center">
           <div class="text-3xl sm:text-4xl font-bold text-yellow-400 mb-2">500+</div>
-          <div class="text-base sm:text-lg">Propriétaires partenaires</div>
+          <div class="text-base sm:text-lg">{{ 'FUNDRAISING.IMPACT.STATS.OWNERS' | translate }}</div>
         </div>
         <div class="text-center">
           <div class="text-3xl sm:text-4xl font-bold text-green-400 mb-2">50,000+</div>
-          <div class="text-base sm:text-lg">Recherches mensuelles</div>
+          <div class="text-base sm:text-lg">{{ 'FUNDRAISING.IMPACT.STATS.SEARCHES' | translate }}</div>
         </div>
         <div class="text-center">
           <div class="text-3xl sm:text-4xl font-bold text-blue-400 mb-2">95%</div>
-          <div class="text-base sm:text-lg">Satisfaction utilisateurs</div>
+          <div class="text-base sm:text-lg">{{ 'FUNDRAISING.IMPACT.STATS.SATISFACTION' | translate }}</div>
         </div>
       </div>
       
       <div class="max-w-4xl mx-auto">
         <p class="text-lg sm:text-xl opacity-90 leading-relaxed text-center">
-          Ensemble, nous construisons l'avenir de l'immobilier en Afrique. 
-          Votre soutien nous permet de développer une solution qui transformera la vie 
-          de milliers de familles, étudiants et propriétaires à travers le continent.
+          {{ 'FUNDRAISING.IMPACT.MESSAGE' | translate }}
         </p>
       </div>
     </div>
@@ -681,10 +676,10 @@
     <div class="max-w-4xl mx-auto text-center">
       <div class="fade-in-on-scroll">
         <h2 class="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6">
-          Restez <span class="text-yellow-200">Informé</span>
+          {{ 'FUNDRAISING.NEWSLETTER.TITLE_PART1' | translate }} <span class="text-yellow-200">{{ 'FUNDRAISING.NEWSLETTER.TITLE_PART2' | translate }}</span>
         </h2>
         <p class="text-lg sm:text-xl lg:text-2xl mb-12 opacity-95 leading-relaxed">
-          Recevez les dernières nouvelles sur le développement de Ndewa360 et l'évolution de notre campagne
+          {{ 'FUNDRAISING.NEWSLETTER.SUBTITLE' | translate }}
         </p>
       </div>
       
@@ -692,40 +687,40 @@
         <form [formGroup]="newsletterForm" (ngSubmit)="onSubmitNewsletter()" class="space-y-6">
           <div class="grid md:grid-cols-2 gap-6">
             <div>
-              <label class="block text-sm font-medium text-white/90 mb-2">Nom complet</label>
+              <label class="block text-sm font-medium text-white/90 mb-2">{{ 'FUNDRAISING.NEWSLETTER.FULL_NAME_LABEL' | translate }}</label>
               <input type="text" 
                      formControlName="name"
                      class="w-full px-4 py-3 bg-white/20 border border-white/30 rounded-lg text-white placeholder-white/70 focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all duration-200"
-                     placeholder="Votre nom">
+                     [placeholder]="'FUNDRAISING.NEWSLETTER.NAME_PLACEHOLDER' | translate">
             </div>
             
             <div>
-              <label class="block text-sm font-medium text-white/90 mb-2">Email</label>
+              <label class="block text-sm font-medium text-white/90 mb-2">{{ 'FUNDRAISING.NEWSLETTER.EMAIL_LABEL' | translate }}</label>
               <input type="email" 
                      formControlName="email"
                      class="w-full px-4 py-3 bg-white/20 border border-white/30 rounded-lg text-white placeholder-white/70 focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all duration-200"
-                     placeholder="votre@email.com">
+                     [placeholder]="'FUNDRAISING.NEWSLETTER.EMAIL_PLACEHOLDER' | translate">
             </div>
           </div>
           
           <div>
-            <label class="block text-sm font-medium text-white/90 mb-3">Centres d'intérêt</label>
+            <label class="block text-sm font-medium text-white/90 mb-3">{{ 'FUNDRAISING.NEWSLETTER.INTERESTS_LABEL' | translate }}</label>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
               <label class="flex items-center space-x-2 cursor-pointer">
                 <input type="checkbox" class="rounded border-white/30 bg-white/20 text-yellow-400 focus:ring-yellow-400">
-                <span class="text-sm text-white/90">Développement produit</span>
+                <span class="text-sm text-white/90">{{ 'FUNDRAISING.NEWSLETTER.INTERESTS.PRODUCT_DEVELOPMENT' | translate }}</span>
               </label>
               <label class="flex items-center space-x-2 cursor-pointer">
                 <input type="checkbox" class="rounded border-white/30 bg-white/20 text-yellow-400 focus:ring-yellow-400">
-                <span class="text-sm text-white/90">Actualités financières</span>
+                <span class="text-sm text-white/90">{{ 'FUNDRAISING.NEWSLETTER.INTERESTS.FINANCIAL_NEWS' | translate }}</span>
               </label>
               <label class="flex items-center space-x-2 cursor-pointer">
                 <input type="checkbox" class="rounded border-white/30 bg-white/20 text-yellow-400 focus:ring-yellow-400">
-                <span class="text-sm text-white/90">Événements</span>
+                <span class="text-sm text-white/90">{{ 'FUNDRAISING.NEWSLETTER.INTERESTS.EVENTS' | translate }}</span>
               </label>
               <label class="flex items-center space-x-2 cursor-pointer">
                 <input type="checkbox" class="rounded border-white/30 bg-white/20 text-yellow-400 focus:ring-yellow-400">
-                <span class="text-sm text-white/90">Partenariats</span>
+                <span class="text-sm text-white/90">{{ 'FUNDRAISING.NEWSLETTER.INTERESTS.PARTNERSHIPS' | translate }}</span>
               </label>
             </div>
           </div>
@@ -735,20 +730,20 @@
                   class="w-full bg-white text-orange-600 py-4 px-6 rounded-xl font-bold text-lg hover:bg-yellow-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105 shadow-lg btn-shimmer">
             <span *ngIf="!isSubmittingNewsletter" class="flex items-center justify-center">
               <i class="fas fa-envelope mr-2"></i>
-              S'inscrire à la Newsletter
+              {{ 'FUNDRAISING.NEWSLETTER.SUBSCRIBE' | translate }}
             </span>
             <span *ngIf="isSubmittingNewsletter" class="flex items-center justify-center">
               <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-orange-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 714 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
-              Inscription en cours...
+              {{ 'FUNDRAISING.NEWSLETTER.SUBSCRIBING' | translate }}
             </span>
           </button>
         </form>
         
         <div class="mt-6 text-center text-sm text-white/70">
-          <p>🔒 Vos données sont protégées • Désabonnement facile • Pas de spam</p>
+          <p>{{ 'FUNDRAISING.NEWSLETTER.PRIVACY_NOTE' | translate }}</p>
         </div>
       </div>
       
@@ -756,15 +751,15 @@
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12 fade-in-on-scroll">
         <div class="text-center">
           <div class="text-3xl sm:text-4xl font-bold text-yellow-200 mb-2 animate-bounce">2,500+</div>
-          <div class="text-base sm:text-lg opacity-90">Abonnés newsletter</div>
+          <div class="text-base sm:text-lg opacity-90">{{ 'FUNDRAISING.NEWSLETTER.STATS.SUBSCRIBERS' | translate }}</div>
         </div>
         <div class="text-center">
           <div class="text-3xl sm:text-4xl font-bold text-yellow-200 mb-2 animate-bounce">95%</div>
-          <div class="text-base sm:text-lg opacity-90">Taux d'ouverture</div>
+          <div class="text-base sm:text-lg opacity-90">{{ 'FUNDRAISING.NEWSLETTER.STATS.OPEN_RATE' | translate }}</div>
         </div>
         <div class="text-center">
-          <div class="text-3xl sm:text-4xl font-bold text-yellow-200 mb-2 animate-bounce">Hebdo</div>
-          <div class="text-base sm:text-lg opacity-90">Fréquence d'envoi</div>
+          <div class="text-3xl sm:text-4xl font-bold text-yellow-200 mb-2 animate-bounce">{{ 'FUNDRAISING.NEWSLETTER.STATS.WEEKLY' | translate }}</div>
+          <div class="text-base sm:text-lg opacity-90">{{ 'FUNDRAISING.NEWSLETTER.STATS.FREQUENCY' | translate }}</div>
         </div>
       </div>
     </div>
@@ -784,19 +779,19 @@
   <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
     <div class="max-w-4xl mx-auto">
       <h2 class="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 leading-tight drop-shadow-lg">
-        Rejoignez la <span class="text-yellow-200">Révolution</span> Immobilière
+        {{ 'FUNDRAISING.CTA.TITLE_PART1' | translate }} <span class="text-yellow-200">{{ 'FUNDRAISING.CTA.TITLE_PART2' | translate }}</span> {{ 'FUNDRAISING.CTA.TITLE_PART3' | translate }}
       </h2>
       <p class="text-lg sm:text-xl lg:text-2xl mb-12 opacity-95 leading-relaxed text-center">
-        Votre contribution aujourd'hui façonne l'avenir du logement en Afrique
+        {{ 'FUNDRAISING.CTA.SUBTITLE' | translate }}
       </p>
       <div class="flex flex-col sm:flex-row gap-6 justify-center">
         <button class="group bg-white text-orange-600 px-8 py-4 rounded-2xl font-bold text-lg hover:bg-yellow-200 hover:text-orange-800 transition-all duration-300 transform hover:scale-105 shadow-xl">
           <i class="fas fa-heart mr-2 group-hover:text-red-500 transition-colors"></i>
-          Faire un Don
+          {{ 'FUNDRAISING.CTA.DONATE_BUTTON' | translate }}
         </button>
         <button class="group border-2 border-white text-white px-8 py-4 rounded-2xl font-bold text-lg hover:bg-white hover:text-orange-600 transition-all duration-300 transform hover:scale-105">
           <i class="fas fa-share-alt mr-2"></i>
-          Partager la Campagne
+          {{ 'FUNDRAISING.CTA.SHARE_BUTTON' | translate }}
         </button>
       </div>
     </div>

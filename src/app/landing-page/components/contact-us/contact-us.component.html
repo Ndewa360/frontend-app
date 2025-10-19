@@ -1,45 +1,45 @@
 <div fxFlex id="contacts" class="contact-us leading-normal">
     <div  fxLayout="row wrap">  
         <div class="text-center mt-10 text-header pr-2" fxFlex="100%">
-            <div><h1>Contact</h1></div>
+            <div><h1>{{ 'LANDING.CONTACT.TITLE' | translate }}</h1></div>
             <div class="mt-6">
-                <span class="second-contact-title">Contactez Ndewa360 pour profiter de nos services</span>
+                <span class="second-contact-title">{{ 'LANDING.CONTACT.SUBTITLE' | translate }}</span>
             </div>
         </div>
     
         <div class="contact-form-section mt-16" fxFlex.gt-md="70%" fxFlex.sm="99%" >
             <div fxLayout="row wrap">
                 <div fxFlex="100%" fxFlex.gt-md="50%" fxFlex.sm="99%" class="contact-infos-section">
-                    <div class="contact-us-sub-title mb-6"><span>Contactez- Nous</span></div>
-                    <div class="contact-us-second-sub-title "><span>Contactez Ndewa360 pour profiter de nos services</span></div>
+                    <div class="contact-us-sub-title mb-6"><span>{{ 'LANDING.CONTACT.FORM_TITLE' | translate }}</span></div>
+                    <div class="contact-us-second-sub-title "><span>{{ 'LANDING.CONTACT.FORM_SUBTITLE' | translate }}</span></div>
                     <div class="section-basic-ndewa-infos mt-10 p-10  pb-8">
                         <ul>
                             <li>
                                 <img src="assets/landing/pngimages/Location.png" alt="">
                                 <div>
-                                    <span>Adresse</span>
-                                    <span>Bangangté Cameroun</span>
+                                    <span>{{ 'LANDING.CONTACT.ADDRESS_LABEL' | translate }}</span>
+                                    <span>{{ 'LANDING.CONTACT.ADDRESS_VALUE' | translate }}</span>
                                 </div>
                             </li>
                             <li>
                                 <img src="assets/landing/pngimages/horloge.png" alt="">
                                 <div>
-                                    <span>Ouvert</span>
-                                    <span>24H/24</span>
+                                    <span>{{ 'LANDING.CONTACT.HOURS_LABEL' | translate }}</span>
+                                    <span>{{ 'LANDING.CONTACT.HOURS_VALUE' | translate }}</span>
                                 </div>
                             </li>
                             <li>
                                 <img src="assets/landing/pngimages/phone.png" alt="">
                                 <div>
-                                    <span>contact</span>
-                                    <span>+237 698178925</span>
+                                    <span>{{ 'LANDING.CONTACT.PHONE_LABEL' | translate }}</span>
+                                    <span>{{ 'LANDING.CONTACT.PHONE_VALUE' | translate }}</span>
                                 </div>
                             </li>
                             <li>
                                 <img src="assets/landing/pngimages/phone.png" alt="">
                                 <div>
-                                    <span>Mail</span>
-                                    <span>contact@ndewa-360.com</span>
+                                    <span>{{ 'LANDING.CONTACT.EMAIL_LABEL' | translate }}</span>
+                                    <span>{{ 'LANDING.CONTACT.EMAIL_VALUE' | translate }}</span>
                                 </div>
                             </li>
                         </ul>
@@ -74,8 +74,8 @@
                             <ibm-label
                               [helperText]="''"
                               [invalid]="isValid('name')"
-                              [invalidText]="'Ce champs est obligatoire'">
-                              <span>Nom</span>
+                              [invalidText]="'LANDING.CONTACT.FORM.NAME_REQUIRED' | translate">
+                              <span>{{ 'LANDING.CONTACT.FORM.NAME_LABEL' | translate }}</span>
                               <input
                                 formControlName="name"
                                 ibmText
@@ -83,7 +83,7 @@
                                 [invalid]="isValid('name')"
                                 [disabled]="false"
                                 theme="light"
-                                [placeholder]="'Votre nom'"
+                                [placeholder]="'LANDING.CONTACT.FORM.NAME_PLACEHOLDER' | translate"
                                 [autocomplete]="true">
                             </ibm-label>
                           </div>
@@ -91,8 +91,8 @@
                             <ibm-label
                               [helperText]="''"
                               [invalid]="isValid('email')"
-                              [invalidText]="'Email obligatoire'">
-                              <span>Addresse Email</span>
+                              [invalidText]="'LANDING.CONTACT.FORM.EMAIL_REQUIRED' | translate">
+                              <span>{{ 'LANDING.CONTACT.FORM.EMAIL_LABEL' | translate }}</span>
                               <input
                                 formControlName="email"
                                 ibmText
@@ -100,7 +100,7 @@
                                 [invalid]="isValid('email')"
                                 [disabled]="false"
                                 theme="light"
-                                [placeholder]="'Adresse Email'"
+                                [placeholder]="'LANDING.CONTACT.FORM.EMAIL_PLACEHOLDER' | translate"
                                 [autocomplete]="true">
                             </ibm-label>
                           </div>
@@ -108,8 +108,8 @@
                             <ibm-label
                               [helperText]="''"
                               [invalid]="isValid('tel')"
-                              [invalidText]="'Téléphone obligatoire'">
-                              <span>Tél</span>
+                              [invalidText]="'LANDING.CONTACT.FORM.PHONE_REQUIRED' | translate">
+                              <span>{{ 'LANDING.CONTACT.FORM.PHONE_LABEL' | translate }}</span>
                               <input
                                 formControlName="tel"
                                 ibmText
@@ -117,15 +117,15 @@
                                 [invalid]="isValid('tel')"
                                 [disabled]="false"
                                 theme="light"
-                                [placeholder]="'Numéro de téléphone'" >
+                                [placeholder]="'LANDING.CONTACT.FORM.PHONE_PLACEHOLDER' | translate" >
                             </ibm-label>
                           </div>
                           <div class="app-form__item">
                             <ibm-label
                               [helperText]="''"
                               [invalid]="isValid('object')"
-                              [invalidText]="'Sujet obligatoire'">
-                              <span>Objet</span>
+                              [invalidText]="'LANDING.CONTACT.FORM.SUBJECT_REQUIRED' | translate">
+                              <span>{{ 'LANDING.CONTACT.FORM.SUBJECT_LABEL' | translate }}</span>
                               <input
                                 formControlName="object"
                                 ibmText
@@ -133,7 +133,7 @@
                                 [invalid]="isValid('object')"
                                 [disabled]="false"
                                 theme="light"
-                                [placeholder]="'Sujet'"
+                                [placeholder]="'LANDING.CONTACT.FORM.SUBJECT_PLACEHOLDER' | translate"
                                 [autocomplete]="true">
                             </ibm-label>
                           </div>
@@ -142,7 +142,7 @@
                             <ibm-label
                               [helperText]="''"
                               [invalid]="isValid('message')">
-                              <span>Message</span>
+                              <span>{{ 'LANDING.CONTACT.FORM.MESSAGE_LABEL' | translate }}</span>
                               <textarea
                                 formControlName="message"                                
                                 cdsTextArea 
@@ -161,7 +161,7 @@
                               <ibm-loading *ngIf="waittingResponse; else noWaitingResponse" ></ibm-loading> 
                               <!-- pt-4 pb-4 -->
                               <ng-template #noWaitingResponse>
-                                <span class="btn-text">Envoyer</span>
+                                <span class="btn-text">{{ 'LANDING.CONTACT.FORM.SEND_BUTTON' | translate }}</span>
                                 <youpez-ibm-icon class="mt-6" iconClass="cds--btn__icon" iconName="arrowRight" iconSize="32" ></youpez-ibm-icon >
                               </ng-template>
                             </button>

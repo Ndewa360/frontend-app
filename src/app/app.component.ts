@@ -21,6 +21,7 @@ import { NetworkStatusService } from './shared/services/network-status.service';
 
 import { AuthStateService } from './shared/services/auth-state.service';
 import { DataDrivenLoaderService } from './shared/services/data-driven-loader.service';
+import { LanguageUrlService } from './shared/services/language-url.service';
 
 
 
@@ -77,7 +78,8 @@ export class AppComponent implements OnInit, OnDestroy {
     private deviceService: DeviceDetectionService,
     private authStateService: AuthStateService,
     private cdr: ChangeDetectorRef,
-    private dataDrivenLoader: DataDrivenLoaderService
+    private dataDrivenLoader: DataDrivenLoaderService,
+    private languageUrlService: LanguageUrlService
   ) {
     // Fallback pour l'écran de chargement au cas où la navigation ne se termine jamais
     this.loadingTimeout = setTimeout(() => {
@@ -107,6 +109,9 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    // Initialiser le service de langue avec URL
+    console.log('🌍 Initialisation du service de langue avec URL...');
+    // Le service s'initialise automatiquement via son constructeur
 
     // Initialiser la détection d'appareil
     console.log('🔍 Initialisation de la détection d\'appareil...');

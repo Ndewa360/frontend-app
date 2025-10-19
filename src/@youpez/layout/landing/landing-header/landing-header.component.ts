@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { UserProfileState, UserProfileModel, AuthTokenState } from 'src/app/shared/store';
+import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
 
 @Component({
   selector: 'app-landing-header',
@@ -15,7 +16,8 @@ export class LandingHeaderComponent implements OnInit {
   @Select(AuthTokenState.selectStateUserIsLogin)  isLogin$:Observable<boolean>
 
   constructor(
-    private router:Router
+    private router:Router,
+    private languageUrlService: LanguageUrlService
   ) { }
   
   ngOnInit(): void {
@@ -37,8 +39,12 @@ export class LandingHeaderComponent implements OnInit {
   navigateToSearchPage()
   {
     this.router.navigate(
-      ['/search/index'],
+      [`/${this.getCurrentLanguage()}/search/index`],
       { queryParams: { ville:"Bangangté"} }
     );
+  }
+
+  getCurrentLanguage(): string {
+    return this.languageUrlService.getCurrentLanguage();
   }
 }

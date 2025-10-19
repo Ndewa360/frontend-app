@@ -319,12 +319,10 @@ export class SearchPageComponent implements OnInit, OnDestroy {
 
         if (isValidId && cityExists) {
           // C'est déjà un ID valide
-          console.log('🏙️ Paramètre URL est déjà un ID valide:', cityParam);
           finalCityId = cityParam;
           this.processCityFilters(finalCityId, params);
         } else {
           // C'est un nom, il faut le convertir en ID
-          console.log('🏙️ Conversion nom -> ID pour:', cityParam);
           this.cityResolver.getCityIdByName(cityParam).subscribe(cityId => {
             if (cityId) {
               console.log('✅ Ville convertie:', cityParam, '->', cityId);
@@ -425,25 +423,25 @@ export class SearchPageComponent implements OnInit, OnDestroy {
     this.quickFilters = [
       {
         key: 'hasKitchen',
-        label: 'Cuisine équipée',
+        label: this.translationService.instant('SEARCH_MODULE.FILTERS.KITCHEN'),
         icon: 'restaurant',
         active: false
       },
       {
         key: 'hasPrivateShower',
-        label: 'Douche privée',
+        label: this.translationService.instant('SEARCH_MODULE.FILTERS.PRIVATE_SHOWER'),
         icon: 'shower',
         active: false
       },
       {
         key: 'hasParking',
-        label: 'Parking',
+        label: this.translationService.instant('SEARCH_MODULE.FILTERS.PARKING'),
         icon: 'local_parking',
         active: false
       },
       {
         key: 'furnished',
-        label: 'Meublé',
+        label: this.translationService.instant('SEARCH_MODULE.FILTERS.FURNISHED'),
         icon: 'chair',
         active: false
       }
@@ -677,15 +675,16 @@ export class SearchPageComponent implements OnInit, OnDestroy {
     let label = '';
 
     if (search.roomType) {
-      const roomTypeLabel = search.roomType === 'STUDIO' ? 'Studios' :
-                           search.roomType === 'ROOM' ? 'Chambres' : 'Logements';
+      const roomTypeLabel = search.roomType === 'STUDIO' ? this.translationService.instant('SEARCH_MODULE.POPULAR_SEARCHES.STUDIOS') :
+                           search.roomType === 'ROOM' ? this.translationService.instant('SEARCH_MODULE.POPULAR_SEARCHES.ROOMS') : 
+                           this.translationService.instant('SEARCH_MODULE.POPULAR_SEARCHES.PROPERTIES');
       label += roomTypeLabel;
     } else {
-      label += 'Logements';
+      label += this.translationService.instant('SEARCH_MODULE.POPULAR_SEARCHES.PROPERTIES');
     }
 
     if (search.cityName) {
-      label += ` à ${search.cityName}`;
+      label += ` ${this.translationService.instant('SEARCH_MODULE.POPULAR_SEARCHES.IN')} ${search.cityName}`;
     }
 
     if (search.features && search.features.length > 0) {
@@ -772,7 +771,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
     // Données par défaut avec les principales villes du Cameroun
     this.popularSearches = [
       {
-        label: 'Logements à Douala',
+        label: `${this.translationService.instant('SEARCH_MODULE.POPULAR_SEARCHES.PROPERTIES')} ${this.translationService.instant('SEARCH_MODULE.POPULAR_SEARCHES.IN')} Douala`,
         filters: { city: 'douala' },
         count: 150,
         searchCount: 150,
@@ -782,7 +781,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
         cityName: 'Douala'
       },
       {
-        label: 'Studios à Yaoundé',
+        label: `${this.translationService.instant('SEARCH_MODULE.POPULAR_SEARCHES.STUDIOS')} ${this.translationService.instant('SEARCH_MODULE.POPULAR_SEARCHES.IN')} Yaoundé`,
         filters: { city: 'yaounde', roomType: 'STUDIO' },
         count: 120,
         searchCount: 120,
@@ -792,7 +791,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
         cityName: 'Yaoundé'
       },
       {
-        label: 'Chambres à Bangangté',
+        label: `${this.translationService.instant('SEARCH_MODULE.POPULAR_SEARCHES.ROOMS')} ${this.translationService.instant('SEARCH_MODULE.POPULAR_SEARCHES.IN')} Bangangté`,
         filters: { city: 'bangangte', roomType: 'ROOM' },
         count: 80,
         searchCount: 80,
@@ -1049,13 +1048,14 @@ export class SearchPageComponent implements OnInit, OnDestroy {
 
       case 'email':
         if (owner.email) {
-          window.open(`mailto:${owner.email}?subject=Intérêt pour votre logement`, '_self');
+          const subject = this.translationService.instant('SEARCH_MODULE.UNIT_DETAIL.EMAIL_SUBJECT');
+          window.open(`mailto:${owner.email}?subject=${encodeURIComponent(subject)}`, '_self');
         }
         break;
 
       case 'whatsapp':
         if (owner.phoneNumber) {
-          const message = encodeURIComponent('Bonjour, je suis intéressé par votre logement sur Ndiye.');
+          const message = encodeURIComponent(this.translationService.instant('SEARCH_MODULE.UNIT_DETAIL.WHATSAPP_MESSAGE'));
           window.open(`https://wa.me/${owner.phoneNumber.replace(/\D/g, '')}?text=${message}`, '_blank');
         }
         break;
@@ -1388,11 +1388,11 @@ export class SearchPageComponent implements OnInit, OnDestroy {
     const selectedCityId = this.currentFilters.city || this.searchForm.get('city')?.value;
     
     if (!selectedCityId) {
-      return 'Toutes les villes';
+      return this.translationService.instant('SEARCH_MODULE.FILTERS.ALL_CITIES');
     }
 
     // Utiliser une approche synchrone avec les données déjà chargées
-    let cityName = 'Ville sélectionnée';
+    let cityName = this.translationService.instant('SEARCH_MODULE.FILTERS.SELECTED_CITY');
     
     this.cities$.pipe(take(1)).subscribe(cityList => {
       const city = cityList?.find(c => c._id === selectedCityId);

@@ -8,92 +8,129 @@ import { LoadingAdminDataResolver } from './shared/resolvers/loading-admin-data'
 
 
 const routes: Routes = [
+	// Routes avec langue
+	{
+		path: ':lang',
+		children: [
+			{
+				path: 'app',
+				canActivate:[AuthGuard],
+				data:{
+					breadcrumb: 'Acceuil'
+				},
+				resolve:{
+					"initialData":InitialLoadingDataResolver
+				},
+				loadChildren: () => import('./main/main.module').then(m => m.MainModule)
+			},
+			{
+				path: 'search',
+				resolve:{
+					"publicData": PublicDataResolver
+				},
+				data:{
+					breadcrumb: 'Recherche'
+				},
+				loadChildren: () => import('./main/search/search.module').then(m => m.SearchModule)
+			},
+			{
+				path: 'monitoring',
+				canActivate: [AuthGuard],
+				data: {
+					breadcrumb: 'Monitoring'
+				},
+				resolve: {
+					"initialData": InitialLoadingDataResolver
+				},
+				loadChildren: () => import('./monitoring/monitoring.module').then(m => m.MonitoringModule)
+			},
+			{
+				path: 'support',
+				resolve:{
+					"publicData": PublicDataResolver
+				},
+				data:{
+					breadcrumb: 'Support'
+				},
+				loadChildren: () => import('./support/support.module').then(m => m.SupportModule)
+			},
+			{
+				path: 'fundraising',
+				resolve:{
+					"publicData": PublicDataResolver
+				},
+				data:{
+					breadcrumb: 'Collecte de Fonds'
+				},
+				loadChildren: () => import('./fundraising/fundraising.module').then(m => m.FundraisingModule)
+			},
+			{
+				path: 'admin',
+				canActivate:[AuthGuard],
+				component: LayoutComponent,
+				data:{
+					breadcrumb: 'Acceuil'
+				},
+				resolve:{
+					"initialData":LoadingAdminDataResolver
+				},
+				loadChildren: () => import('./main/admin/admin.module').then(m => m.AdminModule)
+			},
+			{
+				path: 'auth',
+				loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)
+			},
+			{
+				path: 'payment',
+				loadChildren: () => import('./public/payment/payment.module').then(m => m.PaymentModule)
+			},
+			{
+				path: 'home',
+				resolve:{
+					"publicData": PublicDataResolver
+				},
+				loadChildren: () => import('./landing-page/landing-page.module').then(m => m.LandingPageModule)
+			},
+			{
+				path: '',
+				redirectTo: 'search/index',
+				pathMatch: 'full'
+			}
+		]
+	},
+	{
+		path: '',
+		redirectTo: '/en/search/index',
+		pathMatch: 'full'
+	},
 	{
 		path: 'app',
-		canActivate:[AuthGuard],
-		data:{
-			breadcrumb: 'Acceuil'
-		},
-		resolve:{
-			"initialData":InitialLoadingDataResolver
-		},
-		loadChildren: () => import('./main/main.module').then(m => m.MainModule)
+		redirectTo: '/en/app'
 	},
 	{
 		path: 'search',
-		resolve:{
-			"publicData": PublicDataResolver
-		},
-		data:{
-			breadcrumb: 'Recherche'
-		},
-		loadChildren: () => import('./main/search/search.module').then(m => m.SearchModule)
-	},
-	{
-		path: 'monitoring',
-		canActivate: [AuthGuard],
-		data: {
-			breadcrumb: 'Monitoring'
-		},
-		resolve: {
-			"initialData": InitialLoadingDataResolver
-		},
-		loadChildren: () => import('./monitoring/monitoring.module').then(m => m.MonitoringModule)
+		redirectTo: '/en/search'
 	},
 	{
 		path: 'support',
-		// canActivate:[AuthGuard], // Page publique
-		resolve:{
-			"publicData": PublicDataResolver
-		},
-		data:{
-			breadcrumb: 'Support'
-		},
-		loadChildren: () => import('./support/support.module').then(m => m.SupportModule)
+		redirectTo: '/en/support'
 	},
 	{
 		path: 'fundraising',
-		resolve:{
-			"publicData": PublicDataResolver
-		},
-		data:{
-			breadcrumb: 'Collecte de Fonds'
-		},
-		loadChildren: () => import('./fundraising/fundraising.module').then(m => m.FundraisingModule)
+		redirectTo: '/en/fundraising'
 	},
-
 	{
 		path: 'admin',
-		canActivate:[AuthGuard, ], //MobileDashboardGuard
-		component: LayoutComponent,
-		data:{
-			breadcrumb: 'Acceuil'
-		},
-		resolve:{
-			"initialData":LoadingAdminDataResolver
-		},
-		loadChildren: () => import('./main/admin/admin.module').then(m => m.AdminModule),
+		redirectTo: '/en/admin'
 	},
 	{
 		path: 'auth',
-		loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)
-	  },
-	  {
-		path: 'payment',
-		loadChildren: () => import('./public/payment/payment.module').then(m => m.PaymentModule)
-	  },
-	  {
-		path: '',
-		redirectTo: '/search/index',
-		pathMatch: 'full'
-	  },
-	  {
-		path: '**',
-		resolve:{
-			"publicData": PublicDataResolver
-		},
-		loadChildren: () => import('./landing-page/landing-page.module').then(m => m.LandingPageModule)
-	  }
+		redirectTo: '/en/auth'
+	},
+	{
+		path: 'home',
+		redirectTo: '/en/home'
+	}
 ];
 
 @NgModule({
@@ -101,6 +138,7 @@ const routes: Routes = [
 		RouterModule.forRoot(routes, {
 		anchorScrolling: 'enabled',
 		scrollOffset: [0, 64],
+		useHash: false
 	})],
 	exports: [RouterModule]
 })

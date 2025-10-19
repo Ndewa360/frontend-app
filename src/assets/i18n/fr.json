@@ -512,6 +512,75 @@
       "100K_200K": "100 000 - 200 000 FCFA",
       "200K_300K": "200 000 - 300 000 FCFA",
       "OVER_300K": "Plus de 300 000 FCFA"
+    },
+    "FILTERS_PANEL": {
+      "TITLE": "Filtres de Recherche",
+      "QUICK_FILTERS": "Filtres Rapides",
+      "LOCATION_SECTION": "Localisation",
+      "PROPERTY_TYPE_SECTION": "Type de Logement",
+      "ROOM_SPECIFICITY": "Spécificités de la Chambre",
+      "ROOM_AMENITIES_SECTION": "Équipements de la Chambre",
+      "PROPERTY_AMENITIES_SECTION": "Équipements de la Propriété",
+      "SORT_SECTION": "Trier par",
+      "RESET_BUTTON": "Réinitialiser",
+      "APPLY_BUTTON": "Appliquer",
+      "RELOAD_CITIES": "Recharger les villes",
+      "LOADING_CITIES_TEXT": "Chargement des villes...",
+      "NO_CITIES_TEXT": "Aucune ville disponible",
+      "BATHROOM_COUNT": "Nombre de salles de bain",
+      "SHOWER_COUNT": "Nombre de douches",
+      "LIVING_ROOM_COUNT": "Nombre de salons",
+      "ANY_COUNT": "Peu importe",
+      "NO_LIVING_ROOM": "Aucun salon",
+      "SURFACE_MIN": "Surface minimale (m²)",
+      "EQUIPPED_KITCHEN_TEXT": "Cuisine équipée",
+      "PRIVATE_SHOWER_TEXT": "Douche privée",
+      "INTERNAL_KITCHEN_TEXT": "Cuisine interne",
+      "PARKING_TEXT": "Parking",
+      "FENCED_TEXT": "Clôturé"
+    },
+    "UNIT_DETAIL": {
+      "SHARE_BUTTON": "Partager",
+      "VIEW_DETAILS_BUTTON": "Voir détails",
+      "ADD_TO_FAVORITES_TEXT": "Ajouter aux favoris",
+      "REMOVE_FROM_FAVORITES_TEXT": "Retirer des favoris",
+      "CHARACTERISTICS_TITLE": "Caractéristiques",
+      "TYPE_LABEL": "Type",
+      "SURFACE_LABEL": "Surface",
+      "BATHROOMS_LABEL": "Salles de bain",
+      "AMENITIES_TITLE": "Équipements inclus",
+      "ABOUT_TITLE": "À propos",
+      "CONTACT_PERSON_OWNER": "Propriétaire",
+      "CONTACT_PERSON_AGENT": "Agent",
+      "VERIFIED_OWNER": "Propriétaire vérifié",
+      "CERTIFIED_AGENT": "Agent certifié",
+      "PREMIUM_CONTACT_TITLE": "Informations de contact",
+      "PREMIUM_ACTIVE": "Forfait Premium Actif",
+      "DIRECT_CONTACT_TITLE": "Contact direct",
+      "COPY_PHONE_TITLE": "Copier le numéro de téléphone",
+      "COPY_EMAIL_TITLE": "Copier l'adresse email",
+      "WHATSAPP_CONTACT": "Contacter",
+      "CERTIFIED_AGENCY": "Agence immobilière certifiée",
+      "PRECISE_LOCATION_TITLE": "Localisation précise",
+      "GPS_AVAILABLE": "Coordonnées GPS disponibles",
+      "VIEW_ON_MAP": "Voir sur la carte",
+      "STARTING_FROM": "À partir de",
+      "CONTACT_BUTTON": "Contacter",
+      "CALL_BUTTON": "Appeler",
+      "PREMIUM_GLOBAL_TITLE": "Forfait Premium Global",
+      "ACCESS_VERIFICATION": "Vérification de l'accès...",
+      "ACCESS_ALL_OWNERS": "Accès à TOUS les propriétaires",
+      "DIRECT_PHONES_EMAILS": "Téléphones et emails directs",
+      "WHATSAPP_CONTACTS": "Contacts WhatsApp",
+      "VALID_3_DAYS": "Forfait valable 3 jours",
+      "GLOBAL_ACCESS_3_DAYS": "pour 3 jours d'accès global",
+      "BUY_PACKAGE": "Acheter le forfait"
+    },
+    "PAGINATION": {
+      "RESULTS_ON": "sur",
+      "RESULTS_TEXT": "résultats",
+      "PREVIOUS_BUTTON": "Précédent",
+      "NEXT_BUTTON": "Suivant"
     }
   },
   "NOTIFICATIONS": {
@@ -594,5 +663,955 @@
       "PDF_SUCCESS": "Template exporté en PDF avec succès",
       "WORD_SUCCESS": "Template exporté en Word avec succès"
     }
+  },
+  "FUNDRAISING": {
+    "NAVIGATION": {
+      "HOME": "Accueil",
+      "VISION": "Vision",
+      "PRODUCT": "Produit",
+      "TEAM": "Équipe",
+      "NEWSLETTER": "Newsletter",
+      "DONATE": "Faire un Don"
+    },
+    "HERO": {
+      "TITLE": "Révolutionnons l'Immobilier au Cameroun",
+      "SUBTITLE": "Aidez-nous à créer la plateforme de référence en Afrique pour la gestion et la location immobilière intelligente avec des visites 360° immersives",
+      "FUNDING_GOAL": "Objectif de collecte",
+      "PROGRESS": "Progression",
+      "DONORS": "donateurs",
+      "COLLECTED": "collectés"
+    },
+    "VISION": {
+      "OUR_VISION": "Notre Vision",
+      "OUR_MISSION": "Notre Mission",
+      "OUR_IMPACT": "Notre Impact",
+      "VISION_TEXT": "Devenir la plateforme de référence en Afrique pour la gestion et la location immobilière intelligente, en connectant propriétaires et locataires à travers une expérience numérique immersive, transparente et inclusive.",
+      "MISSION_TEXT": "Simplifier et digitaliser la gestion locative en offrant une plateforme complète qui permet de rechercher, explorer, louer et administrer des biens immobiliers en toute confiance.",
+      "IMPACT_TEXT": "Transformer la vie de milliers de familles africaines en rendant l'accès au logement plus simple, transparent et équitable grâce à l'innovation technologique.",
+      "FEATURES": {
+        "VR_TOURS": "Visites 360°",
+        "VR_TOURS_DESC": "Faciliter l'accès au logement grâce à des visites virtuelles révolutionnaires",
+        "MOBILE_PAYMENTS": "Paiements Mobiles",
+        "MOBILE_PAYMENTS_DESC": "Sécuriser les transactions via Orange Money et MTN Mobile Money",
+        "ANALYTICS": "Outils Analytiques",
+        "ANALYTICS_DESC": "Accompagner les propriétaires avec des analyses financières automatisées",
+        "ECOSYSTEM": "Écosystème Équitable",
+        "ECOSYSTEM_DESC": "Créer un environnement transparent et équitable pour tous"
+      }
+    },
+    "PRODUCT": {
+      "TITLE": "Découvrez Ndewa360 en Action",
+      "SUBTITLE": "Découvrez comment Ndewa360 révolutionne la gestion immobilière avec des technologies de pointe et une approche centrée utilisateur",
+      "FEATURES": {
+        "SMART_SEARCH": "Recherche Intelligente",
+        "SMART_SEARCH_DESC": "Moteur de recherche intelligent avec filtres avancés (ville, type, prix, disponibilité) et géolocalisation précise.",
+        "DASHBOARD": "Tableau de Bord",
+        "DASHBOARD_DESC": "Tableau de bord complet avec revenus mensuels, taux d'occupation et état de chaque locataire en temps réel.",
+        "FINANCIAL_MANAGEMENT": "Gestion Financière",
+        "FINANCIAL_MANAGEMENT_DESC": "Suivi automatique des paiements, calcul des mois couverts, relances automatiques et statistiques dynamiques.",
+        "DIGITAL_CONTRACTS": "Contrats Digitaux",
+        "DIGITAL_CONTRACTS_DESC": "Génération automatique de contrats de location avec signature électronique et gestion centralisée.",
+        "AUTOMATED_BILLING": "Facturation Automatisée",
+        "AUTOMATED_BILLING_DESC": "Facturation automatique, envoi par mail/WhatsApp et synchronisation avec les paiements mobiles.",
+        "DIRECT_CONTACT": "Contact Direct",
+        "DIRECT_CONTACT_DESC": "Communication sécurisée entre locataires et propriétaires avec système de vérification intégré."
+      }
+    },
+    "ADVANTAGES": {
+      "TITLE": "Pourquoi Ndewa360 ?",
+      "SUBTITLE": "La première plateforme africaine intégrant visites 360°, paiements mobiles et gestion automatisée",
+      "COMPETITIVE_ADVANTAGES": "Avantages Concurrentiels",
+      "CUSTOMER_SEGMENTS": "Segments de Clientèle",
+      "ECONOMIC_MODEL": "Modèle Économique Durable",
+      "FEATURES": {
+        "IMMERSIVE_TOURS": "Visites 360° Immersives",
+        "IMMERSIVE_TOURS_DESC": "Première plateforme africaine avec exploration visuelle complète des logements",
+        "INTEGRATED_PAYMENTS": "Paiements Mobiles Intégrés",
+        "INTEGRATED_PAYMENTS_DESC": "Connexion directe avec Orange Money et MTN Mobile Money",
+        "COMPLETE_AUTOMATION": "Automatisation Complète",
+        "COMPLETE_AUTOMATION_DESC": "Gestion automatisée des contrats, factures et relances",
+        "AFRICAN_CONTEXT": "Adapté au Contexte Africain",
+        "AFRICAN_CONTEXT_DESC": "Conçu pour les étudiants, jeunes actifs et petits bailleurs"
+      },
+      "SEGMENTS": {
+        "INDIVIDUAL_OWNERS": "Propriétaires Individuels",
+        "INDIVIDUAL_OWNERS_DESC": "Particuliers avec un ou plusieurs biens",
+        "REAL_ESTATE_AGENCIES": "Agences Immobilières",
+        "REAL_ESTATE_AGENCIES_DESC": "Gestionnaires de portefeuille professionnel",
+        "TENANTS_STUDENTS": "Locataires & Étudiants",
+        "TENANTS_STUDENTS_DESC": "Recherche rapide et sécurisée de logement"
+      },
+      "REVENUE_MODEL": {
+        "COMMISSIONS": "Commissions",
+        "COMMISSIONS_DESC": "2% du loyer mensuel",
+        "SUBSCRIPTIONS": "Abonnements",
+        "SUBSCRIPTIONS_DESC": "Formules premium",
+        "SERVICE_FEES": "Frais de Service",
+        "SERVICE_FEES_DESC": "Accès premium & réservations",
+        "ADDITIONAL_SERVICES": "Services Additionnels",
+        "ADDITIONAL_SERVICES_DESC": "Production 360°, maintenance"
+      }
+    },
+    "FUNDING": {
+      "TITLE": "Comment Vos Dons Seront Utilisés",
+      "SUBTITLE": "Transparence totale sur l'utilisation des fonds collectés",
+      "BUDGET_PERCENTAGE": "% du budget total",
+      "CATEGORIES": {
+        "MARKETING": "Marketing & Communication",
+        "MARKETING_DESC": "Campagnes publicitaires, création de contenu, événements de lancement",
+        "DEVELOPMENT": "Développement Technique",
+        "DEVELOPMENT_DESC": "Amélioration de la plateforme, nouvelles fonctionnalités, optimisation",
+        "HUMAN_RESOURCES": "Ressources Humaines",
+        "HUMAN_RESOURCES_DESC": "Recrutement d'experts, formation de l'équipe, consultants",
+        "INFRASTRUCTURE": "Infrastructure & Opérations",
+        "INFRASTRUCTURE_DESC": "Serveurs, licences, outils de développement, frais opérationnels"
+      }
+    },
+    "HERO": {
+      "TITLE": "Révolutionnons l'Immobilier au Cameroun",
+      "SUBTITLE": "Aidez-nous à créer la plateforme de référence en Afrique pour la gestion et la location immobilière intelligente avec des visites 360° immersives",
+      "FUNDING_GOAL": "Objectif de collecte",
+      "PROGRESS": "Progression",
+      "DONORS": "donateurs",
+      "COLLECTED": "collectés"
+    },
+    "VISION": {
+      "OUR_VISION": "Notre Vision",
+      "OUR_MISSION": "Notre Mission",
+      "OUR_IMPACT": "Notre Impact",
+      "VISION_TEXT": "Devenir la plateforme de référence en Afrique pour la gestion et la location immobilière intelligente, en connectant propriétaires et locataires à travers une expérience numérique immersive, transparente et inclusive.",
+      "MISSION_TEXT": "Simplifier et digitaliser la gestion locative en offrant une plateforme complète qui permet de rechercher, explorer, louer et administrer des biens immobiliers en toute confiance.",
+      "IMPACT_TEXT": "Transformer la vie de milliers de familles africaines en rendant l'accès au logement plus simple, transparent et équitable grâce à l'innovation technologique.",
+      "FEATURES": {
+        "VR_TOURS": "Visites 360°",
+        "VR_TOURS_DESC": "Faciliter l'accès au logement grâce à des visites virtuelles révolutionnaires",
+        "MOBILE_PAYMENTS": "Paiements Mobiles",
+        "MOBILE_PAYMENTS_DESC": "Sécuriser les transactions via Orange Money et MTN Mobile Money",
+        "ANALYTICS": "Outils Analytiques",
+        "ANALYTICS_DESC": "Accompagner les propriétaires avec des analyses financières automatisées",
+        "ECOSYSTEM": "Écosystème Équitable",
+        "ECOSYSTEM_DESC": "Créer un environnement transparent et équitable pour tous"
+      }
+    },
+    "PRODUCT": {
+      "TITLE": "Découvrez Ndewa360 en Action",
+      "SUBTITLE": "Découvrez comment Ndewa360 révolutionne la gestion immobilière avec des technologies de pointe et une approche centrée utilisateur",
+      "FEATURES": {
+        "SMART_SEARCH": "Recherche Intelligente",
+        "SMART_SEARCH_DESC": "Moteur de recherche intelligent avec filtres avancés (ville, type, prix, disponibilité) et géolocalisation précise.",
+        "DASHBOARD": "Tableau de Bord",
+        "DASHBOARD_DESC": "Tableau de bord complet avec revenus mensuels, taux d'occupation et état de chaque locataire en temps réel.",
+        "FINANCIAL_MANAGEMENT": "Gestion Financière",
+        "FINANCIAL_MANAGEMENT_DESC": "Suivi automatique des paiements, calcul des mois couverts, relances automatiques et statistiques dynamiques.",
+        "DIGITAL_CONTRACTS": "Contrats Digitaux",
+        "DIGITAL_CONTRACTS_DESC": "Génération automatique de contrats de location avec signature électronique et gestion centralisée.",
+        "AUTOMATED_BILLING": "Facturation Automatisée",
+        "AUTOMATED_BILLING_DESC": "Facturation automatique, envoi par mail/WhatsApp et synchronisation avec les paiements mobiles.",
+        "DIRECT_CONTACT": "Contact Direct",
+        "DIRECT_CONTACT_DESC": "Communication sécurisée entre locataires et propriétaires avec système de vérification intégré."
+      }
+    },
+    "ADVANTAGES": {
+      "TITLE": "Pourquoi Ndewa360 ?",
+      "SUBTITLE": "La première plateforme africaine intégrant visites 360°, paiements mobiles et gestion automatisée",
+      "COMPETITIVE_ADVANTAGES": "Avantages Concurrentiels",
+      "CUSTOMER_SEGMENTS": "Segments de Clientèle",
+      "ECONOMIC_MODEL": "Modèle Économique Durable",
+      "FEATURES": {
+        "IMMERSIVE_TOURS": "Visites 360° Immersives",
+        "IMMERSIVE_TOURS_DESC": "Première plateforme africaine avec exploration visuelle complète des logements",
+        "INTEGRATED_PAYMENTS": "Paiements Mobiles Intégrés",
+        "INTEGRATED_PAYMENTS_DESC": "Connexion directe avec Orange Money et MTN Mobile Money",
+        "COMPLETE_AUTOMATION": "Automatisation Complète",
+        "COMPLETE_AUTOMATION_DESC": "Gestion automatisée des contrats, factures et relances",
+        "AFRICAN_CONTEXT": "Adapté au Contexte Africain",
+        "AFRICAN_CONTEXT_DESC": "Conçu pour les étudiants, jeunes actifs et petits bailleurs"
+      },
+      "SEGMENTS": {
+        "INDIVIDUAL_OWNERS": "Propriétaires Individuels",
+        "INDIVIDUAL_OWNERS_DESC": "Particuliers avec un ou plusieurs biens",
+        "REAL_ESTATE_AGENCIES": "Agences Immobilières",
+        "REAL_ESTATE_AGENCIES_DESC": "Gestionnaires de portefeuille professionnel",
+        "TENANTS_STUDENTS": "Locataires & Étudiants",
+        "TENANTS_STUDENTS_DESC": "Recherche rapide et sécurisée de logement"
+      },
+      "REVENUE_MODEL": {
+        "COMMISSIONS": "Commissions",
+        "COMMISSIONS_DESC": "2% du loyer mensuel",
+        "SUBSCRIPTIONS": "Abonnements",
+        "SUBSCRIPTIONS_DESC": "Formules premium",
+        "SERVICE_FEES": "Frais de Service",
+        "SERVICE_FEES_DESC": "Accès premium & réservations",
+        "ADDITIONAL_SERVICES": "Services Additionnels",
+        "ADDITIONAL_SERVICES_DESC": "Production 360°, maintenance"
+      }
+    },
+    "FUNDING": {
+      "TITLE": "Comment Vos Dons Seront Utilisés",
+      "SUBTITLE": "Transparence totale sur l'utilisation des fonds collectés",
+      "BUDGET_PERCENTAGE": "% du budget total",
+      "CATEGORIES": {
+        "MARKETING": "Marketing & Communication",
+        "MARKETING_DESC": "Campagnes publicitaires, création de contenu, événements de lancement",
+        "DEVELOPMENT": "Développement Technique",
+        "DEVELOPMENT_DESC": "Amélioration de la plateforme, nouvelles fonctionnalités, optimisation",
+        "HUMAN_RESOURCES": "Ressources Humaines",
+        "HUMAN_RESOURCES_DESC": "Recrutement d'experts, formation de l'équipe, consultants",
+        "INFRASTRUCTURE": "Infrastructure & Opérations",
+        "INFRASTRUCTURE_DESC": "Serveurs, licences, outils de développement, frais opérationnels"
+      }
+    },
+    "DONATION": {
+      "TITLE": "Faire un Don",
+      "SUBTITLE": "Votre contribution compte pour l'avenir de l'immobilier camerounais",
+      "AMOUNT_LABEL": "Montant (FCFA)",
+      "FULL_NAME_LABEL": "Nom complet",
+      "EMAIL_LABEL": "Email",
+      "MESSAGE_LABEL": "Message (optionnel)",
+      "AMOUNT_PLACEHOLDER": "10000",
+      "NAME_PLACEHOLDER": "Votre nom",
+      "EMAIL_PLACEHOLDER": "votre@email.com",
+      "MESSAGE_PLACEHOLDER": "Votre message de soutien...",
+      "DONATE_NOW": "Faire un Don Maintenant",
+      "PROCESSING": "Traitement en cours...",
+      "SECURITY_NOTE": "🔒 Paiement sécurisé • Reçu fiscal disponible",
+      "TIERS": {
+        "SUPPORTER": "Supporter",
+        "SUPPORTER_DESC": "Soutenez notre mission",
+        "CONTRIBUTOR": "Contributeur",
+        "CONTRIBUTOR_DESC": "Contribuez au développement",
+        "PARTNER": "Partenaire",
+        "PARTNER_DESC": "Devenez partenaire du projet",
+        "SPONSOR": "Sponsor",
+        "SPONSOR_DESC": "Sponsorisez l'innovation"
+      },
+      "BENEFITS": {
+        "SOCIAL_THANKS": "Remerciement sur les réseaux sociaux",
+        "MONTHLY_NEWSLETTER": "Newsletter mensuelle",
+        "EARLY_ACCESS": "Accès anticipé aux nouvelles fonctionnalités",
+        "CONTRIBUTOR_BADGE": "Badge contributeur",
+        "PARTNER_MENTION": "Mention comme partenaire",
+        "VIP_ACCESS": "Accès VIP",
+        "PRODUCT_CONSULTATION": "Consultation produit",
+        "PLATFORM_LOGO": "Logo sur la plateforme",
+        "PRIVILEGED_PARTNERSHIP": "Partenariat privilégié",
+        "PRIORITY_API": "Accès API prioritaire",
+        "STRATEGIC_CONSULTATION": "Consultation stratégique"
+      }
+    },
+    "TEAM": {
+      "TITLE": "Notre Équipe",
+      "SUBTITLE": "Une équipe passionnée et expérimentée dédiée à révolutionner l'immobilier africain",
+      "ROLES": {
+        "CEO_FOUNDER": "CEO & Fondateur",
+        "CTO": "CTO",
+        "MARKETING_DIRECTOR": "Directeur Marketing",
+        "PRODUCT_MANAGER": "Responsable Produit"
+      },
+      "DESCRIPTIONS": {
+        "CEO_DESC": "Expert en immobilier avec 10+ ans d'expérience dans l'innovation technologique",
+        "CTO_DESC": "Développeuse senior spécialisée en architecture cloud et technologies 360°",
+        "MARKETING_DESC": "Stratège marketing digital avec expertise en croissance startup",
+        "PRODUCT_DESC": "Product Manager experte en UX/UI et gestion de produits immobiliers"
+      }
+    },
+    "IMPACT": {
+      "TITLE": "L'Impact de Votre Soutien",
+      "STATS": {
+        "PROPERTIES": "Logements référencés",
+        "OWNERS": "Propriétaires partenaires",
+        "SEARCHES": "Recherches mensuelles",
+        "SATISFACTION": "Satisfaction utilisateurs"
+      },
+      "MESSAGE": "Ensemble, nous construisons l'avenir de l'immobilier en Afrique. Votre soutien nous permet de développer une solution qui transformera la vie de milliers de familles, étudiants et propriétaires à travers le continent."
+    },
+    "NEWSLETTER": {
+      "TITLE": "Restez Informé",
+      "TITLE_PART1": "Restez",
+      "TITLE_PART2": "Informé",
+      "SUBTITLE": "Recevez les dernières nouvelles sur le développement de Ndewa360 et l'évolution de notre campagne",
+      "FULL_NAME_LABEL": "Nom complet",
+      "EMAIL_LABEL": "Email",
+      "INTERESTS_LABEL": "Centres d'intérêt",
+      "NAME_PLACEHOLDER": "Votre nom",
+      "EMAIL_PLACEHOLDER": "votre@email.com",
+      "SUBSCRIBE": "S'inscrire à la Newsletter",
+      "SUBSCRIBING": "Inscription en cours...",
+      "PRIVACY_NOTE": "🔒 Vos données sont protégées • Désabonnement facile • Pas de spam",
+      "INTERESTS": {
+        "PRODUCT_DEVELOPMENT": "Développement produit",
+        "FINANCIAL_NEWS": "Actualités financières",
+        "EVENTS": "Événements",
+        "PARTNERSHIPS": "Partenariats"
+      },
+      "STATS": {
+        "SUBSCRIBERS": "Abonnés newsletter",
+        "OPEN_RATE": "Taux d'ouverture",
+        "FREQUENCY": "Fréquence d'envoi",
+        "WEEKLY": "Hebdo"
+      }
+    },
+    "CTA": {
+      "TITLE": "Rejoignez la Révolution Immobilière",
+      "TITLE_PART1": "Rejoignez la",
+      "TITLE_PART2": "Révolution",
+      "TITLE_PART3": "Immobilière",
+      "SUBTITLE": "Votre contribution aujourd'hui façonne l'avenir du logement en Afrique",
+      "DONATE_BUTTON": "Faire un Don",
+      "SHARE_BUTTON": "Partager la Campagne"
+    },
+    "ALERTS": {
+      "DONATION_SUCCESS": "Merci pour votre don ! Votre contribution fait la différence.",
+      "DONATION_ERROR": "Une erreur est survenue. Veuillez réessayer.",
+      "NEWSLETTER_SUCCESS": "Merci ! Vous êtes maintenant inscrit à notre newsletter."
+    }
+  },
+  "LANDING": {
+    "HERO": {
+      "TITLE_PART1": "Trouvez votre",
+      "TITLE_PART2": "Chez-vous",
+      "SUBTITLE": "Gérez vos biens immobiliers sans stress avec la solution la plus complète du marché"
+    },
+    "TABS": {
+      "RENT": "Louer",
+      "MANAGE": "Gérer"
+    },
+    "SEARCH_FORM": {
+      "LOCATION_LABEL": "Localisation",
+      "LOCATION_PLACEHOLDER": "Où souhaitez-vous habiter",
+      "PROPERTY_TYPE_LABEL": "Type de bien",
+      "PROPERTY_TYPE_PLACEHOLDER": "Type de logement",
+      "BUDGET_LABEL": "Budget",
+      "BUDGET_PLACEHOLDER": "Budget max",
+      "SEARCH_BUTTON": "Rechercher",
+      "REQUIRED_FIELD": "Ce champ est obligatoire"
+    },
+    "MANAGE_SECTION": {
+      "TITLE": "Commencez à gérer vos biens immobiliers",
+      "SUBTITLE": "Ajoutez votre premier bien immobilier pour commencer à profiter de nos outils de gestion. Suivez vos revenus, gérez vos locataires et émettez des factures en quelques clics.",
+      "ADD_PROPERTY_BUTTON": "Ajouter mon premier biens"
+    },
+    "COMPLETE_SOLUTION": {
+      "TITLE": "Une Solution Complète",
+      "SUBTITLE": "Découvrez toutes les fonctionnalités qui font de Ndewa360 la plateforme préférée des propriétaires",
+      "PROPERTY_MANAGEMENT": {
+        "TITLE": "Gestion des Biens",
+        "FEATURE_1": "Ajout et gestion facile de vos proprités",
+        "FEATURE_2": "Suivi en temps réel des disponibilités",
+        "FEATURE_3": "Photos et descriptions détaillées"
+      },
+      "FINANCIAL_TRACKING": {
+        "TITLE": "Suivi Financier",
+        "FEATURE_1": "Tableau de bord financier en temps réel",
+        "FEATURE_2": "Gestion automatisée des paiements",
+        "FEATURE_3": "Rapports mensuels détaillés"
+      },
+      "ADMINISTRATIVE_MANAGEMENT": {
+        "TITLE": "Gestion Administrative",
+        "FEATURE_1": "Génération automatique des contrats",
+        "FEATURE_2": "Suivi des documents importants",
+        "FEATURE_3": "Alertes et notifications automatiques"
+      }
+    },
+    "STATS": {
+      "SATISFIED_USERS": "Utilisateurs Satisfaits",
+      "MANAGED_PROPERTIES": "Logements Gérès",
+      "COVERED_CITIES": "Villes Couvertes",
+      "AVERAGE_RATING": "Note Moyenne"
+    },
+    "HOW_IT_WORKS": {
+      "TITLE": "Comment ça marche?",
+      "SUBTITLE": "Commencez à gérer vos biens en quelques étapes simples",
+      "STEP_1": {
+        "TITLE": "1. Ajoutez vos biens",
+        "DESCRIPTION": "Créez votre portfolio immobilier"
+      },
+      "STEP_2": {
+        "TITLE": "2. Configurez",
+        "DESCRIPTION": "Personnalisez vos paramètres"
+      },
+      "STEP_3": {
+        "TITLE": "3. Gérez",
+        "DESCRIPTION": "Suivez vos locations"
+      },
+      "STEP_4": {
+        "TITLE": "4. Analysez",
+        "DESCRIPTION": "Consultez vos statistiques"
+      }
+    },
+    "FEATURED_PROPERTIES": {
+      "TITLE": "Propriétés en Vedette?",
+      "SUBTITLE": "Découvrez nos meilleures offres du moment"
+    },
+    "CONTACT": {
+      "TITLE": "Contact",
+      "SUBTITLE": "Contactez Ndewa360 pour profiter de nos services",
+      "FORM_TITLE": "Contactez- Nous",
+      "FORM_SUBTITLE": "Contactez Ndewa360 pour profiter de nos services",
+      "ADDRESS_LABEL": "Adresse",
+      "ADDRESS_VALUE": "Bangangté Cameroun",
+      "HOURS_LABEL": "Ouvert",
+      "HOURS_VALUE": "24H/24",
+      "PHONE_LABEL": "contact",
+      "PHONE_VALUE": "+237 698178925",
+      "EMAIL_LABEL": "Mail",
+      "EMAIL_VALUE": "contact@ndewa-360.com",
+      "FORM": {
+        "NAME_LABEL": "Nom",
+        "NAME_PLACEHOLDER": "Votre nom",
+        "NAME_REQUIRED": "Ce champs est obligatoire",
+        "EMAIL_LABEL": "Addresse Email",
+        "EMAIL_PLACEHOLDER": "Adresse Email",
+        "EMAIL_REQUIRED": "Email obligatoire",
+        "PHONE_LABEL": "Tél",
+        "PHONE_PLACEHOLDER": "Numéro de téléphone",
+        "PHONE_REQUIRED": "Téléphone obligatoire",
+        "SUBJECT_LABEL": "Objet",
+        "SUBJECT_PLACEHOLDER": "Sujet",
+        "SUBJECT_REQUIRED": "Sujet obligatoire",
+        "MESSAGE_LABEL": "Message",
+        "SEND_BUTTON": "Envoyer"
+      }
+    },
+    "PRICING": {
+      "TITLE": "Des tarifs adaptés à vos besoins",
+      "SUBTITLE": "Choisissez le plan qui correspond à votre activité",
+      "BEGINNER": {
+        "TITLE": "Débutant",
+        "PRICE": "Free",
+        "FEATURES": {
+          "FEATURE_1": "Jusqu'à 1 bien et 10 unités locatives",
+          "FEATURE_2": "Gestion financiere",
+          "FEATURE_3": "Génération des contrats de bails",
+          "FEATURE_4": "Notification par mail des paiements",
+          "FEATURE_5": "Envoyez des factures par mail",
+          "FEATURE_6": "Tableau de bord financier en temps réel",
+          "FEATURE_7": "Gestion automatisée des paiements",
+          "FEATURE_8": "Rapports mensuels détaillés",
+          "FEATURE_9": "Suivi des documents importants",
+          "FEATURE_10": "Photos et descriptions détaillées",
+          "FEATURE_11": "Suivi en temps réel des disponibilités"
+        },
+        "BUTTON": "Commencer"
+      },
+      "PRO": {
+        "TITLE": "Pro",
+        "POPULAR": "Populaire",
+        "PRICE": "2%",
+        "PRICE_UNIT": "/unité/mois",
+        "FEATURES": {
+          "FEATURE_1": "Biens illimités",
+          "FEATURE_2": "Unités locatives illimités"
+        },
+        "BUTTON": "Commencer"
+      }
+    },
+    "SLOGAN": {
+      "TEXT": "La location réinventée en 360°"
+    }
+  },
+  "ADMIN": {
+    "DASHBOARD": {
+      "TITLE": "Tableau de bord administrateur",
+      "SUBTITLE": "Vue d'ensemble du système Ndiye",
+      "REFRESH": "Actualiser",
+      "EXPORT": "Exporter",
+      "LOADING": "Chargement du tableau de bord...",
+      "STATS": {
+        "TOTAL_USERS": "Utilisateurs totaux",
+        "TOTAL_PROPERTIES": "Propriétés",
+        "TOTAL_REVENUE": "Revenus totaux",
+        "SYSTEM_HEALTH": "Santé du système",
+        "OCCUPIED_PERCENTAGE": "% occupées",
+        "REVENUE_GROWTH": "Croissance des revenus",
+        "HEALTH_STATUS": {
+          "EXCELLENT": "Excellent",
+          "GOOD": "Bon",
+          "WARNING": "Attention"
+        }
+      },
+      "CHARTS": {
+        "USER_GROWTH": "Croissance des utilisateurs",
+        "REVENUE_EVOLUTION": "Évolution des revenus",
+        "PERIOD_7D": "7 jours",
+        "PERIOD_30D": "30 jours",
+        "PERIOD_90D": "90 jours"
+      },
+      "SYSTEM_HEALTH": {
+        "TITLE": "État du système",
+        "STATUS": {
+          "HEALTHY": "Sain",
+          "WARNING": "Attention",
+          "CRITICAL": "Critique"
+        },
+        "SERVICES": {
+          "ACTIVE": "Actif",
+          "INACTIVE": "Inactif",
+          "DEGRADED": "Dégradé"
+        },
+        "RECENT_ALERTS": "Alertes récentes"
+      },
+      "RECENT_ACTIVITIES": {
+        "TITLE": "Activités récentes",
+        "VIEW_ALL": "Voir tout"
+      },
+      "QUICK_ACTIONS": {
+        "TITLE": "Actions rapides",
+        "MANAGE_USERS": "Gérer les utilisateurs",
+        "VIEW_PAYMENTS": "Voir les paiements",
+        "MANAGE_PROPERTIES": "Gérer les propriétés",
+        "SYSTEM_SETTINGS": "Paramètres système"
+      }
+    },
+    "USERS": {
+      "TITLE": "Gestion des Utilisateurs",
+      "SUBTITLE": "Gérez les comptes utilisateurs, leurs rôles et permissions dans le système",
+      "REFRESH": "Actualiser",
+      "EXPORT": "Exporter",
+      "VALIDATE_AGENTS": "Valider les agents",
+      "NEW_USER": "Nouvel Utilisateur",
+      "LOADING": "Chargement des données...",
+      "STATS": {
+        "TOTAL_USERS": "Utilisateurs totaux",
+        "ACTIVE_USERS": "Utilisateurs actifs",
+        "VERIFIED_USERS": "Utilisateurs vérifiés",
+        "NEW_THIS_MONTH": "Nouveaux ce mois",
+        "OF_TOTAL": "% du total",
+        "THIS_MONTH": "ce mois"
+      },
+      "SEARCH": {
+        "PLACEHOLDER": "Rechercher par nom, email ou téléphone..."
+      },
+      "FILTERS": {
+        "STATUS": "Statut",
+        "ROLE": "Rôle",
+        "VERIFICATION": "Vérification",
+        "ALL_STATUSES": "Tous les statuts",
+        "ALL_ROLES": "Tous les rôles",
+        "ALL": "Tous",
+        "VERIFIED": "Vérifiés",
+        "UNVERIFIED": "Non vérifiés",
+        "CLEAR": "Effacer"
+      },
+      "STATUS": {
+        "ACTIVE": "Actif",
+        "INACTIVE": "Inactif",
+        "SUSPENDED": "Suspendu",
+        "BANNED": "Banni"
+      },
+      "LIST": {
+        "TITLE": "Liste des Utilisateurs",
+        "VIEW_GRID": "Grille",
+        "VIEW_LIST": "Liste"
+      },
+      "BULK_ACTIONS": {
+        "SELECTED": "utilisateur(s) sélectionné(s)",
+        "ACTIVATE": "Activer",
+        "DEACTIVATE": "Désactiver",
+        "DELETE": "Supprimer"
+      },
+      "EMPTY_STATE": {
+        "TITLE": "Aucun utilisateur trouvé",
+        "MESSAGE": "Il n'y a aucun utilisateur correspondant à vos critères de recherche.",
+        "CREATE_USER": "Créer un utilisateur"
+      },
+      "PAGINATION": {
+        "SHOWING": "Affichage de",
+        "TO": "à",
+        "OF": "sur",
+        "USERS": "utilisateurs",
+        "PER_PAGE_10": "10 par page",
+        "PER_PAGE_20": "20 par page",
+        "PER_PAGE_50": "50 par page",
+        "PER_PAGE_100": "100 par page"
+      }
+    }
+  },
+  "SUPPORT": {
+    "TITLE": "Support",
+    "BACK_TO_HOME": "Retour à l'accueil",
+    "ASSISTANCE_FORM": {
+      "TITLE": "Formulaire de Demande d'Assistance",
+      "DESCRIPTION": "Remplissez ce formulaire afin d'obtenir une assistance technique gratuite. Nous garantissons la confidentialité complète des informations qui nous sont fournies.",
+      "EMAIL": "Adresse email",
+      "EMAIL_INVALID": "Email invalide",
+      "FULL_NAME": "Nom complet",
+      "FULL_NAME_PLACEHOLDER": "Votre nom complet",
+      "PHONE": "Tél",
+      "PHONE_PLACEHOLDER": "Votre numéro de téléphone",
+      "PHONE_FORMAT": "Ex: +237 6xx xx xx xx",
+      "PHONE_INVALID": "Format invalide. Ex: +237 6xx xx xx xx",
+      "SUBJECT": "Sujet",
+      "SUBJECT_PLACEHOLDER": "Sujet de la requête",
+      "SUBJECT_REQUIRED": "Sujet obligatoire",
+      "MESSAGE": "Décrivez votre problème",
+      "REQUIRED_FIELD": "Ce champ est obligatoire ou incorrect",
+      "SEND": "Envoyer"
+    },
+    "FAQ": {
+      "TITLE": "Questions Fréquemment Posées"
+    }
+  },
+  "SEARCH_MODULE": {
+    "SEARCH_BAR": {
+      "PLACEHOLDER": "Rechercher une propriété, une ville, un quartier...",
+      "MOBILE_PLACEHOLDER": "Rechercher un logement...",
+      "CLEAR_SEARCH": "Effacer la recherche",
+      "DETECTING_LOCATION": "Détection de votre position...",
+      "RETRY_LOCATION": "Réessayer la géolocalisation"
+    },
+    "FILTERS": {
+      "TITLE": "Filtres de Recherche",
+      "QUICK_FILTERS": "Filtres Rapides",
+      "LOCATION": "Localisation",
+      "ROOM_TYPE": "Type de Logement",
+      "BUDGET": "Budget",
+      "SURFACE": "Superficie",
+      "ROOM_AMENITIES": "Équipements de la Chambre",
+      "PROPERTY_AMENITIES": "Équipements de la Propriété",
+      "SORT_BY": "Trier par",
+      "ALL_CITIES": "Toutes les villes",
+      "SELECTED_CITY": "Ville sélectionnée",
+      "ALL_DISTRICTS": "Tous les quartiers",
+      "ALL_TYPES": "Tous les types",
+      "ROOM": "Chambre",
+      "STUDIO": "Studio",
+      "SIMPLE_APARTMENT": "Appartement simple",
+      "FURNISHED_APARTMENT": "Appartement meublé",
+      "PRICE_MIN": "Prix minimum (FCFA)",
+      "PRICE_MAX": "Prix maximum (FCFA)",
+      "MIN_SURFACE": "Surface minimale (m²)",
+      "BATHROOMS": "Salles de bain",
+      "BATHROOM_COUNT": "Nombre de salles de bain",
+      "SHOWERS": "Douches",
+      "SHOWER_COUNT": "Nombre de douches",
+      "LIVING_ROOMS": "Salons",
+      "LIVING_ROOM_COUNT": "Nombre de salons",
+      "ANY": "Peu importe",
+      "ANY_COUNT": "Peu importe",
+      "NO_LIVING_ROOM": "Aucun salon",
+      "NONE": "Aucun salon",
+      "KITCHEN": "Cuisine",
+      "INTERNAL_KITCHEN": "Cuisine interne",
+      "PRIVATE_SHOWER": "Douche privée",
+      "PARKING": "Parking",
+      "FENCED": "Clôturé",
+      "FURNISHED": "Meublé",
+      "NEWEST": "Plus récent",
+      "PRICE": "Prix",
+      "AREA": "Superficie",
+      "DESCENDING": "Décroissant",
+      "ASCENDING": "Croissant",
+      "RESET": "Réinitialiser",
+      "APPLY": "Appliquer",
+      "RELOAD_CITIES": "Recharger les villes",
+      "LOADING_CITIES": "Chargement des villes...",
+      "NO_CITIES": "Aucune ville disponible",
+      "LOCATION_SECTION": "Localisation",
+      "PROPERTY_TYPE_SECTION": "Type de Logement",
+      "ROOM_SPECIFICITY": "Spécificités de la Chambre",
+      "ROOM_AMENITIES_SECTION": "Équipements de la Chambre",
+      "PROPERTY_AMENITIES_SECTION": "Équipements de la Propriété",
+      "SORT_SECTION": "Trier par",
+      "RESET_BUTTON": "Réinitialiser",
+      "APPLY_BUTTON": "Appliquer",
+      "BATHROOM_COUNT": "Nombre de salles de bain",
+      "SHOWER_COUNT": "Nombre de douches",
+      "LIVING_ROOM_COUNT": "Nombre de salons",
+      "ANY_COUNT": "Peu importe",
+      "NO_LIVING_ROOM": "Aucun salon",
+      "SURFACE_MIN": "Surface minimale (m²)",
+      "EQUIPPED_KITCHEN_TEXT": "Cuisine équipée",
+      "PRIVATE_SHOWER_TEXT": "Douche privée",
+      "INTERNAL_KITCHEN_TEXT": "Cuisine interne",
+      "PARKING_TEXT": "Parking",
+      "FENCED_TEXT": "Clôturé",
+      "DISTRICT": "Quartier"
+    },
+
+    "RESULTS": {
+      "EQUIPPED_KITCHEN": "Cuisine équipée",
+      "PRIVATE_SHOWER": "Douche privée",
+      "PARKING": "Parking",
+      "BATHROOM": "SDB",
+      "LIVING_ROOM": "Salon",
+      "LIVING_ROOMS": "Salons",
+      "VIEW_DETAILS": "Voir détails",
+      "ADD_TO_FAVORITES": "Ajouter aux favoris",
+      "REMOVE_FROM_FAVORITES": "Retirer des favoris",
+      "PREVIOUS": "Précédent",
+      "NEXT": "Suivant",
+      "RESULTS_ON": "sur",
+      "RESULTS_TEXT": "résultats",
+      "LOADING_TITLE": "Recherche en cours...",
+      "LOADING_SUBTITLE": "Nous recherchons les meilleurs logements pour vous",
+      "VIEW_GRID": "Vue grille",
+      "VIEW_LIST": "Vue liste",
+      "LOAD_MORE": "Charger plus",
+      "NO_MORE_RESULTS": "Aucun autre résultat"
+    },
+    "EMPTY_STATE": {
+      "TITLE": "Aucun logement trouvé",
+      "MESSAGE": "Nous n'avons trouvé aucun logement correspondant à vos critères de recherche.",
+      "SUGGESTIONS_TITLE": "Suggestions :",
+      "MODIFY_FILTERS": "Modifiez vos filtres de prix ou de type",
+      "EXPLORE_CITIES": "Explorez d'autres villes ou quartiers",
+      "RESET_FILTERS": "Réinitialisez tous les filtres",
+      "RESET_FILTERS_BTN": "Réinitialiser les filtres",
+      "MODIFY_FILTERS_BTN": "Modifier les filtres"
+    },
+    "POPULAR_SEARCHES": {
+      "TITLE": "Recherches populaires",
+      "SUBTITLE": "Découvrez les logements les plus recherchés",
+      "AVAILABLE_UNITS": "logements disponibles",
+      "PROPERTIES": "Logements",
+      "STUDIOS": "Studios",
+      "ROOMS": "Chambres",
+      "IN": "à"
+    },
+    "UNIT_DETAIL": {
+      "SHARE_BUTTON": "Partager",
+      "VIEW_DETAILS_BUTTON": "Voir détails",
+      "ADD_TO_FAVORITES_TEXT": "Ajouter aux favoris",
+      "REMOVE_FROM_FAVORITES_TEXT": "Retirer des favoris",
+      "CHARACTERISTICS_TITLE": "Caractéristiques",
+      "TYPE_LABEL": "Type",
+      "SURFACE_LABEL": "Surface",
+      "BATHROOMS_LABEL": "Salles de bain",
+      "AMENITIES_TITLE": "Équipements inclus",
+      "ABOUT_TITLE": "À propos",
+      "CONTACT_PERSON_OWNER": "Propriétaire",
+      "CONTACT_PERSON_AGENT": "Agent",
+      "VERIFIED_OWNER": "Propriétaire vérifié",
+      "CERTIFIED_AGENT": "Agent certifié",
+      "PREMIUM_CONTACT_TITLE": "Informations de contact",
+      "PREMIUM_ACTIVE": "Forfait Premium Actif",
+      "DIRECT_CONTACT_TITLE": "Contact direct",
+      "COPY_PHONE_TITLE": "Copier le numéro de téléphone",
+      "COPY_EMAIL_TITLE": "Copier l'adresse email",
+      "WHATSAPP_CONTACT": "Contacter",
+      "CERTIFIED_AGENCY": "Agence immobilière certifiée",
+      "PRECISE_LOCATION_TITLE": "Localisation précise",
+      "GPS_AVAILABLE": "Coordonnées GPS disponibles",
+      "VIEW_ON_MAP": "Voir sur la carte",
+      "STARTING_FROM": "À partir de",
+      "CONTACT_BUTTON": "Contacter",
+      "CALL_BUTTON": "Appeler",
+      "PREMIUM_GLOBAL_TITLE": "Forfait Premium Global",
+      "ACCESS_VERIFICATION": "Vérification de l'accès...",
+      "ACCESS_ALL_OWNERS": "Accès à TOUS les propriétaires",
+      "DIRECT_PHONES_EMAILS": "Téléphones et emails directs",
+      "WHATSAPP_CONTACTS": "Contacts WhatsApp",
+      "VALID_3_DAYS": "Forfait valable 3 jours",
+      "GLOBAL_ACCESS_3_DAYS": "pour 3 jours d'accès global",
+      "BUY_PACKAGE": "Acheter le forfait",
+      "CLOSE_DIALOG": "Fermer",
+      "FULLSCREEN_GALLERY": "Galerie plein écran",
+      "IMAGE_COUNTER": "Image {{current}} sur {{total}}",
+      "PROPERTY_TITLE": "Propriété Premium",
+      "PREMIUM_LOCATION": "Localisation premium",
+      "MONTHLY_RENT": "/ mois",
+      "MODERN_STUDIO": "Studio moderne",
+      "EQUIPPED_KITCHEN_FULL": "Cuisine équipée",
+      "PRIVATE_BATHROOM": "Salle de bain privée",
+      "PARKING_SPACE": "Place de parking",
+      "SECURITY_24H": "Sécurité 24h/24",
+      "BEAUTIFUL_PROPERTY_DESC": "Magnifique propriété située dans un quartier calme et résidentiel.",
+      "REAL_ESTATE_AGENT": "Agent immobilier",
+      "CERTIFIED_AGENT_NAME": "Agent Certifié",
+      "CERTIFIED_OWNER_NAME": "Propriétaire Certifié",
+      "AGENT_VERIFIED": "Agent Vérifié",
+      "OWNER_VERIFIED": "Vérifié",
+      "NDEWA_AGENCY": "Agence Ndewa360",
+      "REMAINING_DAYS": "{{days}} jours restants",
+      "COPY_SUCCESS": "Copié dans le presse-papiers",
+      "SHARE_SUCCESS": "Lien de partage copié",
+      "SHARE_PROPERTY_TEXT": "Découvrez cette propriété: {{name}} - {{price}}/mois"
+    },
+    "PREMIUM_MODAL": {
+      "TITLE": "Accès Premium",
+      "SUBTITLE": "Informations du propriétaire",
+      "LOADING_TEXT": "Chargement...",
+      "ERROR_TITLE": "Erreur",
+      "RETRY_BUTTON": "Réessayer",
+      "ACTIVE_ACCESS": "Accès actif",
+      "OWNER_INFO_TITLE": "Informations du propriétaire",
+      "NAME_LABEL": "Nom",
+      "EMAIL_LABEL": "Email",
+      "PHONE_LABEL": "Téléphone",
+      "WHATSAPP_LABEL": "WhatsApp",
+      "ADDRESS_LABEL": "Adresse",
+      "WHATSAPP_CONTACT_TEXT": "Contacter sur WhatsApp",
+      "CALL_OWNER_BUTTON": "Appeler",
+      "EMAIL_OWNER_BUTTON": "Envoyer un email",
+      "GLOBAL_PREMIUM_TITLE": "Forfait Premium - Accès Global",
+      "GLOBAL_PREMIUM_DESC": "Accédez aux informations de contact de TOUS les propriétaires pendant 3 jours.",
+      "BENEFIT_ALL_OWNERS": "Accès à TOUS les propriétaires",
+      "BENEFIT_DIRECT_CONTACTS": "Téléphones et emails directs",
+      "BENEFIT_WHATSAPP": "Contacts WhatsApp",
+      "BENEFIT_ADDRESSES": "Adresses complètes",
+      "BENEFIT_3_DAYS": "Forfait valable 3 jours",
+      "PRICE_DURATION": "pour 3 jours d'accès global",
+      "PROCESSING_TEXT": "Traitement...",
+      "BUY_WITH_STRIPE": "Acheter avec Stripe",
+      "SECURE_PAYMENT": "Paiement sécurisé par Stripe",
+      "ACCESS_INFO": "Après paiement, vous aurez accès immédiatement aux informations du propriétaire.",
+      "EXPIRY_INFO": "{{days}} jours restants",
+      "ACCESS_EXPIRED": "Accès expiré",
+      "REMAINING_DAYS_SINGULAR": "1 jour restant",
+      "REMAINING_DAYS_PLURAL": "{{days}} jours restants",
+      "MISSING_USER_INFO": "Informations utilisateur manquantes",
+      "MISSING_OWNER_ID": "ID du propriétaire manquant",
+      "MISSING_PURCHASE_INFO": "Informations manquantes pour effectuer l'achat",
+      "WHATSAPP_MESSAGE": "Bonjour, je suis intéressé par votre propriété sur Ndewa360°.",
+      "EMAIL_SUBJECT": "Intérêt pour votre logement - Ndewa360°",
+      "EMAIL_BODY": "Bonjour,\n\nJe suis intéressé par votre propriété sur Ndewa360°.\n\nCordialement"
+    },
+    "PREMIUM_SUCCESS": {
+      "TITLE": "Accès Premium Activé !",
+      "SUBTITLE": "Félicitations ! Vous avez maintenant accès aux informations du propriétaire pendant 7 jours.",
+      "ACCESS_SUMMARY": "Votre accès premium",
+      "STATUS_LABEL": "Statut",
+      "STATUS_ACTIVE": "Accès Premium Actif",
+      "DURATION_LABEL": "Durée",
+      "DURATION_VALUE": "7 jours",
+      "EXPIRES_LABEL": "Expire le",
+      "AMOUNT_PAID_LABEL": "Montant payé",
+      "UNLOCKED_FEATURES": "Avantages débloqués",
+      "PHONE_NUMBER": "Numéro de téléphone",
+      "EMAIL_ADDRESS": "Adresse email",
+      "WHATSAPP_CONTACT": "Contact WhatsApp",
+      "COMPLETE_ADDRESS": "Adresse complète",
+      "VIEW_INFO_BUTTON": "Voir les informations",
+      "BACK_TO_SEARCH_BUTTON": "Retour à la recherche",
+      "INFO_MESSAGE": "Vous pouvez accéder aux informations du propriétaire à tout moment depuis la page de détails de la propriété.",
+      "CONFIRMATION_ERROR": "Erreur de confirmation",
+      "CONFIRMING_ACCESS": "Confirmation de votre accès premium...",
+      "RETRY_CONFIRMATION": "Réessayer"
+    },
+    "PAGINATION": {
+      "RESULTS_ON": "sur",
+      "RESULTS_TEXT": "résultats",
+      "PREVIOUS_BUTTON": "Précédent",
+      "NEXT_BUTTON": "Suivant",
+      "SHOWING": "Affichage de",
+      "TO": "à",
+      "OF": "sur",
+      "ITEMS": "éléments"
+    }
+  },
+  "UNIT_DETAIL": {
+    "ACTIONS": {
+      "SHARE": "Partager",
+      "CONTACT": "Contacter",
+      "CALL": "Appeler"
+    },
+    "IMAGES": {
+      "PHOTO_ALT": "Photo de la propriété",
+      "THUMBNAIL_ALT": "Miniature"
+    },
+    "PROPERTY": {
+      "DEFAULT_NAME": "Propriété Premium",
+      "DEFAULT_LOCATION": "Localisation premium"
+    },
+    "PRICE": {
+      "PER_MONTH": "/ mois",
+      "FROM": "À partir de"
+    },
+    "SECTIONS": {
+      "FEATURES": "Caractéristiques",
+      "AMENITIES": "Équipements inclus",
+      "ABOUT": "À propos",
+      "CONTACT_INFO": "Informations de contact"
+    },
+    "FEATURES": {
+      "TYPE": "Type",
+      "DEFAULT_TYPE": "Studio moderne",
+      "SURFACE": "Surface",
+      "BATHROOMS": "Salles de bain"
+    },
+    "AMENITIES": {
+      "KITCHEN": "Cuisine équipée",
+      "PRIVATE_SHOWER": "Salle de bain privée",
+      "PARKING": "Place de parking",
+      "SECURITY": "Sécurité 24h/24"
+    },
+    "DESCRIPTION": {
+      "DEFAULT": "Magnifique propriété située dans un quartier calme et résidentiel."
+    },
+    "CONTACT": {
+      "AGENT_TITLE": "Agent immobilier",
+      "OWNER_TITLE": "Propriétaire",
+      "CERTIFIED_AGENT": "Agent Certifié",
+      "CERTIFIED_OWNER": "Propriétaire Certifié",
+      "CERTIFIED_REAL_ESTATE_AGENT": "Agent Immobilier Certifié",
+      "VERIFIED_OWNER": "Propriétaire Vérifié",
+      "VERIFIED_AGENT": "Agent Vérifié",
+      "VERIFIED": "Vérifié",
+      "DIRECT_CONTACT": "Contact direct",
+      "COPY_PHONE": "Copier le numéro de téléphone",
+      "COPY_EMAIL": "Copier l'adresse email",
+      "CONTACT_WHATSAPP": "Contacter",
+      "CERTIFIED_NDEWA_CONTACT": "Contact Certifié NDEWA"
+    },
+    "AGENCY": {
+      "CERTIFIED": "Agence immobilière certifiée",
+      "DEFAULT_NAME": "Agence Ndewa360"
+    },
+    "LOCATION": {
+      "PRECISE_LOCATION": "Localisation précise",
+      "ADDRESS_AVAILABLE": "Adresse disponible",
+      "ADDRESS_NOT_SPECIFIED": "Adresse non spécifiée",
+      "GPS_AVAILABLE": "Coordonnées GPS disponibles",
+      "OPEN_MAPS": "Ouvrir la localisation dans Google Maps",
+      "VIEW_MAP": "Voir sur la carte",
+      "DEFAULT_LOCATION": "Douala, Cameroun"
+    },
+    "PREMIUM": {
+      "ACTIVE_PLAN": "Forfait Premium Actif",
+      "GLOBAL_PLAN": "Forfait Premium Global",
+      "CHECKING_ACCESS": "Vérification de l'accès...",
+      "ALL_OWNERS_ACCESS": "Accès à TOUS les propriétaires",
+      "SINGLE_PAYMENT_DESC": "Un seul paiement pour accéder aux informations de tous les propriétaires",
+      "DURATION": "pour 3 jours d'accès global",
+      "BUY_PLAN": "Acheter le forfait",
+      "REMAINING_DAYS": "3 jours restants",
+      "FEATURES": {
+        "ALL_OWNERS": "Accès à TOUS les propriétaires",
+        "DIRECT_CONTACTS": "Téléphones et emails directs",
+        "WHATSAPP": "Contacts WhatsApp",
+        "VALIDITY": "Forfait valable 3 jours"
+      }
+    },
+    "SHARE": {
+      "DEFAULT_TITLE": "Propriété sur Ndewa360°",
+      "TEXT": "Découvrez cette propriété: {{name}} - {{price}}/mois"
+    }
+  },
+  "HEADER": {
+    "HOME": "Accueil",
+    "TEAM": "Équipe",
+    "SEARCH_PROPERTIES": "Recherche de biens",
+    "CONTACT": "Contact",
+    "SUPPORT": "Support",
+    "PRICING": "Tarifs",
+    "SIGN_IN": "Se connecter",
+    "SIGN_UP": "S'inscrire",
+    "OPEN_MENU": "Ouvrir le menu",
+    "CLOSE_MENU": "Fermer le menu"
+  },
+  "FOOTER": {
+    "USEFUL_LINKS": "Liens utiles",
+    "SEARCH_PROPERTIES": "Rechercher un bien",
+    "OUR_SERVICES": "Nos services",
+    "ABOUT": "À propos",
+    "TEAM": "Équipe",
+    "CONTACT_US": "Contactez-nous",
+    "LEGAL": "Légal",
+    "PRIVACY_POLICY": "Politique de confidentialité",
+    "TERMS_CONDITIONS": "Termes & Conditions",
+    "LANGUAGE": "Langue",
+    "ALL_RIGHTS_RESERVED": "Tous droits réservés.",
+    "CURRENT": "Actuel"
   }
 }

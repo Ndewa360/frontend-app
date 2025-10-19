@@ -1,130 +1,130 @@
 <div fxFlex class="tarifs-list leading-normal">
     <div  fxLayout="row wrap">  
         <div class="text-center mt-10 text-header" fxFlex="100%">
-            <div><h1>Des tarifs adaptés à vos besoins</h1></div>
+            <div><h1>{{ 'LANDING.PRICING.TITLE' | translate }}</h1></div>
             <div class="mt-6">
-                <span class="second-contact-title">Choisissez le plan qui correspond à votre activité</span>
+                <span class="second-contact-title">{{ 'LANDING.PRICING.SUBTITLE' | translate }}</span>
             </div>
         </div>
  
         <div class="list-func-section mt-16" fxFlex.gt-md="70%">
             <div fxLayout="row wrap">
                 <div fxFlex="100%" fxFlex.gt-md="30%" class="tarif-plan tarif-free mr-10">
-                    <div class="plan-type"><span>Débutant</span></div>
-                    <div class="plan-price"><span>Free</span></div>
+                    <div class="plan-type"><span>{{ 'LANDING.PRICING.BEGINNER.TITLE' | translate }}</span></div>
+                    <div class="plan-price"><span>{{ 'LANDING.PRICING.BEGINNER.PRICE' | translate }}</span></div>
                     <div class="plan-function-list">
                         <ul>
                             <li><img src="assets/landing/Checkmark.svg" alt="">
-                                <span>Jusqu’à 1 bien et 10 unités locatives</span>
+                                <span>{{ 'LANDING.PRICING.BEGINNER.FEATURES.FEATURE_1' | translate }}</span>
                             </li>
                             <li><img src="assets/landing/Checkmark.svg" alt="">
-                                <span>Gestion financiere</span>
+                                <span>{{ 'LANDING.PRICING.BEGINNER.FEATURES.FEATURE_2' | translate }}</span>
                             </li>
                             <li>
                                 <img src="assets/landing/Checkmark.svg" alt="">
-                                <span>Génération des contrats de bails</span>
+                                <span>{{ 'LANDING.PRICING.BEGINNER.FEATURES.FEATURE_3' | translate }}</span>
                             </li>
                             <li>
                                 <img src="assets/landing/Checkmark.svg" alt="">
-                                <span>Notification par mail des paiements</span>
+                                <span>{{ 'LANDING.PRICING.BEGINNER.FEATURES.FEATURE_4' | translate }}</span>
                             </li>
                             <li>
                                 <img src="assets/landing/Checkmark.svg" alt="">
-                                <span>Envoyez des factures par mail</span>
+                                <span>{{ 'LANDING.PRICING.BEGINNER.FEATURES.FEATURE_5' | translate }}</span>
                             </li>
                             <li>
                                 <img src="assets/landing/Checkmark.svg" alt="">
-                                <span>Tableau de bord financier en temps réel</span>
+                                <span>{{ 'LANDING.PRICING.BEGINNER.FEATURES.FEATURE_6' | translate }}</span>
                             </li>
                             <li>
                                 <img src="assets/landing/Checkmark.svg" alt="">
-                                <span>Gestion automatisée des paiements</span>
+                                <span>{{ 'LANDING.PRICING.BEGINNER.FEATURES.FEATURE_7' | translate }}</span>
                             </li>
                             <li>
                                 <img src="assets/landing/Checkmark.svg" alt="">
-                                <span>Rapports mensuels détaillés</span>
+                                <span>{{ 'LANDING.PRICING.BEGINNER.FEATURES.FEATURE_8' | translate }}</span>
                             </li>
                             <li>
                                 <img src="assets/landing/Checkmark.svg" alt="">
-                                <span>Suivi des documents importants</span>
+                                <span>{{ 'LANDING.PRICING.BEGINNER.FEATURES.FEATURE_9' | translate }}</span>
                             </li>
                             <li>
                                 <img src="assets/landing/Checkmark.svg" alt="">
-                                <span>Photos et descriptions détaillées</span>
+                                <span>{{ 'LANDING.PRICING.BEGINNER.FEATURES.FEATURE_10' | translate }}</span>
                             </li>
                             <li>
                                 <img src="assets/landing/Checkmark.svg" alt="">
-                                <span>Suivi en temps réel des disponibilités</span>
+                                <span>{{ 'LANDING.PRICING.BEGINNER.FEATURES.FEATURE_11' | translate }}</span>
                             </li>
                         </ul>
                         <div class="app-form__submit mb-4 app-btn-start-free-tarif">
                             <!--  -->
                             <button [routerLink]="'/auth/signup'" type="submit" cdsButton size="md" class=" app-ibm-btn-full text-center custom--btn--tertiary tarif-btn " ibmButton="tertiary" >
-                                <span class="btn-text">Commencer</span>
+                                <span class="btn-text">{{ 'LANDING.PRICING.BEGINNER.BUTTON' | translate }}</span>
                             </button>
                           </div>
                     </div>
                 </div>
                 <div fxFlex="100%" fxFlex.gt-md="30%" class="tarif-plan tarif-pro mr-10">
                     <div class="special-mention-for-pro">
-                        <span>Populaire</span>
+                        <span>{{ 'LANDING.PRICING.PRO.POPULAR' | translate }}</span>
                         <img src="assets/landing/pngimages/Crown.png" alt="">
                     </div>
-                    <div class="plan-type plan-pro-type"><span>Pro</span></div>
-                    <div ><span class="plan-price">2%</span>/unité/mois</div>
+                    <div class="plan-type plan-pro-type"><span>{{ 'LANDING.PRICING.PRO.TITLE' | translate }}</span></div>
+                    <div ><span class="plan-price">{{ 'LANDING.PRICING.PRO.PRICE' | translate }}</span>{{ 'LANDING.PRICING.PRO.PRICE_UNIT' | translate }}</div>
                     <div class="plan-function-list">
                         <ul>
                             <li><img src="assets/landing/Checkmark.svg" alt="">
-                                <span>Biens illimités</span>
+                                <span>{{ 'LANDING.PRICING.PRO.FEATURES.FEATURE_1' | translate }}</span>
                             </li>
                             <li><img src="assets/landing/Checkmark.svg" alt="">
-                                <span>Unités locatives illimités</span>
+                                <span>{{ 'LANDING.PRICING.PRO.FEATURES.FEATURE_2' | translate }}</span>
                             </li>
                             <li>
                                 <img src="assets/landing/Checkmark.svg" alt="">
-                                <span>Gestion financiere</span>
+                                <span>{{ 'LANDING.PRICING.BEGINNER.FEATURES.FEATURE_2' | translate }}</span>
                             </li>
                             <li>
                                 <img src="assets/landing/Checkmark.svg" alt="">
-                                <span>Génération des contrats de bails</span>
+                                <span>{{ 'LANDING.PRICING.BEGINNER.FEATURES.FEATURE_3' | translate }}</span>
                             </li>
                             <li>
                                 <img src="assets/landing/Checkmark.svg" alt="">
-                                <span>Notification par mail des paiements</span>
+                                <span>{{ 'LANDING.PRICING.BEGINNER.FEATURES.FEATURE_4' | translate }}</span>
                             </li>
                             <li>
                                 <img src="assets/landing/Checkmark.svg" alt="">
-                                <span>Envoyez des factures par mail</span>
+                                <span>{{ 'LANDING.PRICING.BEGINNER.FEATURES.FEATURE_5' | translate }}</span>
                             </li>
                             <li>
                                 <img src="assets/landing/Checkmark.svg" alt="">
-                                <span>Tableau de bord financier en temps réel</span>
+                                <span>{{ 'LANDING.PRICING.BEGINNER.FEATURES.FEATURE_6' | translate }}</span>
                             </li>
                             <li>
                                 <img src="assets/landing/Checkmark.svg" alt="">
-                                <span>Gestion automatisée des paiements</span>
+                                <span>{{ 'LANDING.PRICING.BEGINNER.FEATURES.FEATURE_7' | translate }}</span>
                             </li>
                             <li>
                                 <img src="assets/landing/Checkmark.svg" alt="">
-                                <span>Rapports mensuels détaillés</span>
+                                <span>{{ 'LANDING.PRICING.BEGINNER.FEATURES.FEATURE_8' | translate }}</span>
                             </li>
                             <li>
                                 <img src="assets/landing/Checkmark.svg" alt="">
-                                <span>Suivi des documents importants</span>
+                                <span>{{ 'LANDING.PRICING.BEGINNER.FEATURES.FEATURE_9' | translate }}</span>
                             </li>
                             <li>
                                 <img src="assets/landing/Checkmark.svg" alt="">
-                                <span>Photos et descriptions détaillées</span>
+                                <span>{{ 'LANDING.PRICING.BEGINNER.FEATURES.FEATURE_10' | translate }}</span>
                             </li>
                             <li>
                                 <img src="assets/landing/Checkmark.svg" alt="">
-                                <span>Suivi en temps réel des disponibilités</span>
+                                <span>{{ 'LANDING.PRICING.BEGINNER.FEATURES.FEATURE_11' | translate }}</span>
                             </li>
                         </ul>
                         <div class="app-form__submit mb-4 mt-12">
                             <!--  -->
                             <button [routerLink]="'/auth/signup'" type="submit" cdsButton size="md" class=" app-ibm-btn-full text-center custom-primary-button tarif-btn " ibmButton="primary" >
-                                <span class="btn-text">Commencer</span>
+                                <span class="btn-text">{{ 'LANDING.PRICING.PRO.BUTTON' | translate }}</span>
                             </button>
                           </div>
                     </div>

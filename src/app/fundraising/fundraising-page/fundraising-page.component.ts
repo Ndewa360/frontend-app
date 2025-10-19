@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, AfterViewInit, ElementRef } from '@angula
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
 import { FundraisingService, CampaignStats } from '../services/fundraising.service';
 import { ImageModalComponent } from '../image-modal/image-modal.component';
 
@@ -43,14 +44,7 @@ export class FundraisingPageComponent implements OnInit, OnDestroy, AfterViewIni
   isSubmittingNewsletter = false;
   
   // Galerie d'images
-  public galleryImages = [
-    { src: 'assets/cap_apps/page de recherche.png', title: 'Recherche Intelligente', description: 'Moteur de recherche intelligent avec filtres avancés (ville, type, prix, disponibilité) et géolocalisation précise.' },
-    { src: 'assets/cap_apps/dasbord global.jpg', title: 'Tableau de Bord', description: 'Tableau de bord complet avec revenus mensuels, taux d\'occupation et état de chaque locataire en temps réel.' },
-    { src: 'assets/cap_apps/analyse financiere.png', title: 'Gestion Financière', description: 'Suivi automatique des paiements, calcul des mois couverts, relances automatiques et statistiques dynamiques.' },
-    { src: 'assets/cap_apps/gestion de contrat.png', title: 'Contrats Digitaux', description: 'Génération automatique de contrats de location avec signature électronique et gestion centralisée.' },
-    { src: 'assets/cap_apps/facturation.png', title: 'Facturation Automatisée', description: 'Facturation automatique, envoi par mail/WhatsApp et synchronisation avec les paiements mobiles.' },
-    { src: 'assets/cap_apps/capture-information-contact-proprio.png', title: 'Contact Direct', description: 'Communication sécurisée entre locataires et propriétaires avec système de vérification intégré.' }
-  ];
+  public galleryImages: any[] = [];
   
   // Objectifs de financement
   totalGoal = 5000000; // 5 millions FCFA
@@ -60,105 +54,20 @@ export class FundraisingPageComponent implements OnInit, OnDestroy, AfterViewIni
   isSubmittingDonation = false;
   
   // Paliers de dons
-  donationTiers: DonationTier[] = [
-    {
-      amount: 10000,
-      title: 'Supporter',
-      description: 'Soutenez notre mission',
-      benefits: ['Remerciement sur les réseaux sociaux', 'Newsletter mensuelle']
-    },
-    {
-      amount: 50000,
-      title: 'Contributeur',
-      description: 'Contribuez au développement',
-      benefits: ['Accès anticipé aux nouvelles fonctionnalités', 'Badge contributeur', 'Newsletter mensuelle']
-    },
-    {
-      amount: 100000,
-      title: 'Partenaire',
-      description: 'Devenez partenaire du projet',
-      benefits: ['Mention comme partenaire', 'Accès VIP', 'Consultation produit', 'Newsletter mensuelle'],
-      popular: true
-    },
-    {
-      amount: 500000,
-      title: 'Sponsor',
-      description: 'Sponsorisez l\'innovation',
-      benefits: ['Logo sur la plateforme', 'Partenariat privilégié', 'Accès API prioritaire', 'Consultation stratégique']
-    }
-  ];
+  donationTiers: DonationTier[] = [];
 
   // Équipe du projet
-  teamMembers: TeamMember[] = [
-    {
-      name: 'Jean-Claude KAMDEM',
-      role: 'CEO & Fondateur',
-      description: 'Expert en immobilier avec 10+ ans d\'expérience dans l\'innovation technologique',
-      image: 'assets/team/ceo.jpg',
-      linkedin: '#',
-      twitter: '#'
-    },
-    {
-      name: 'Marie NGUEFACK',
-      role: 'CTO',
-      description: 'Développeuse senior spécialisée en architecture cloud et technologies 360°',
-      image: 'assets/team/cto.jpg',
-      linkedin: '#'
-    },
-    {
-      name: 'Paul FOTSO',
-      role: 'Directeur Marketing',
-      description: 'Stratège marketing digital avec expertise en croissance startup',
-      image: 'assets/team/marketing.jpg',
-      linkedin: '#',
-      twitter: '#'
-    },
-    {
-      name: 'Sylvie MBALLA',
-      role: 'Responsable Produit',
-      description: 'Product Manager experte en UX/UI et gestion de produits immobiliers',
-      image: 'assets/team/product.jpg',
-      linkedin: '#'
-    }
-  ];
+  teamMembers: TeamMember[] = [];
 
   // Répartition des fonds
-  fundingGoals: FundingGoal[] = [
-    {
-      category: 'Marketing & Communication',
-      amount: 2000000,
-      percentage: 40,
-      description: 'Campagnes publicitaires, création de contenu, événements de lancement',
-      icon: 'campaign'
-    },
-    {
-      category: 'Développement Technique',
-      amount: 1500000,
-      percentage: 30,
-      description: 'Amélioration de la plateforme, nouvelles fonctionnalités, optimisation',
-      icon: 'code'
-    },
-    {
-      category: 'Ressources Humaines',
-      amount: 1000000,
-      percentage: 20,
-      description: 'Recrutement d\'experts, formation de l\'équipe, consultants',
-      icon: 'group'
-    },
-    {
-      category: 'Infrastructure & Opérations',
-      amount: 500000,
-      percentage: 10,
-      description: 'Serveurs, licences, outils de développement, frais opérationnels',
-      icon: 'cloud'
-    }
-  ];
+  fundingGoals: FundingGoal[] = [];
 
   constructor(
     private fb: FormBuilder,
     private fundraisingService: FundraisingService,
     private elementRef: ElementRef,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private translate: TranslateService
   ) {
     this.donationForm = this.fb.group({
       amount: ['', [Validators.required, Validators.min(1000)]],
@@ -175,9 +84,161 @@ export class FundraisingPageComponent implements OnInit, OnDestroy, AfterViewIni
   }
 
   ngOnInit(): void {
+    this.initializeData();
     this.calculateProgress();
     this.loadCampaignStats();
     this.setupAnimations();
+    
+    // Écouter les changements de langue
+    this.translate.onLangChange
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.initializeData();
+      });
+  }
+
+  private initializeData(): void {
+    this.donationTiers = [
+      {
+        amount: 10000,
+        title: this.translate.instant('FUNDRAISING.DONATION.TIERS.SUPPORTER'),
+        description: this.translate.instant('FUNDRAISING.DONATION.TIERS.SUPPORTER_DESC'),
+        benefits: [
+          this.translate.instant('FUNDRAISING.DONATION.BENEFITS.SOCIAL_THANKS'),
+          this.translate.instant('FUNDRAISING.DONATION.BENEFITS.MONTHLY_NEWSLETTER')
+        ]
+      },
+      {
+        amount: 50000,
+        title: this.translate.instant('FUNDRAISING.DONATION.TIERS.CONTRIBUTOR'),
+        description: this.translate.instant('FUNDRAISING.DONATION.TIERS.CONTRIBUTOR_DESC'),
+        benefits: [
+          this.translate.instant('FUNDRAISING.DONATION.BENEFITS.EARLY_ACCESS'),
+          this.translate.instant('FUNDRAISING.DONATION.BENEFITS.CONTRIBUTOR_BADGE'),
+          this.translate.instant('FUNDRAISING.DONATION.BENEFITS.MONTHLY_NEWSLETTER')
+        ]
+      },
+      {
+        amount: 100000,
+        title: this.translate.instant('FUNDRAISING.DONATION.TIERS.PARTNER'),
+        description: this.translate.instant('FUNDRAISING.DONATION.TIERS.PARTNER_DESC'),
+        benefits: [
+          this.translate.instant('FUNDRAISING.DONATION.BENEFITS.PARTNER_MENTION'),
+          this.translate.instant('FUNDRAISING.DONATION.BENEFITS.VIP_ACCESS'),
+          this.translate.instant('FUNDRAISING.DONATION.BENEFITS.PRODUCT_CONSULTATION'),
+          this.translate.instant('FUNDRAISING.DONATION.BENEFITS.MONTHLY_NEWSLETTER')
+        ],
+        popular: true
+      },
+      {
+        amount: 500000,
+        title: this.translate.instant('FUNDRAISING.DONATION.TIERS.SPONSOR'),
+        description: this.translate.instant('FUNDRAISING.DONATION.TIERS.SPONSOR_DESC'),
+        benefits: [
+          this.translate.instant('FUNDRAISING.DONATION.BENEFITS.PLATFORM_LOGO'),
+          this.translate.instant('FUNDRAISING.DONATION.BENEFITS.PRIVILEGED_PARTNERSHIP'),
+          this.translate.instant('FUNDRAISING.DONATION.BENEFITS.PRIORITY_API'),
+          this.translate.instant('FUNDRAISING.DONATION.BENEFITS.STRATEGIC_CONSULTATION')
+        ]
+      }
+    ];
+
+    this.teamMembers = [
+      {
+        name: 'Jean-Claude KAMDEM',
+        role: this.translate.instant('FUNDRAISING.TEAM.ROLES.CEO_FOUNDER'),
+        description: this.translate.instant('FUNDRAISING.TEAM.DESCRIPTIONS.CEO_DESC'),
+        image: 'assets/team/ceo.jpg',
+        linkedin: '#',
+        twitter: '#'
+      },
+      {
+        name: 'Marie NGUEFACK',
+        role: this.translate.instant('FUNDRAISING.TEAM.ROLES.CTO'),
+        description: this.translate.instant('FUNDRAISING.TEAM.DESCRIPTIONS.CTO_DESC'),
+        image: 'assets/team/cto.jpg',
+        linkedin: '#'
+      },
+      {
+        name: 'Paul FOTSO',
+        role: this.translate.instant('FUNDRAISING.TEAM.ROLES.MARKETING_DIRECTOR'),
+        description: this.translate.instant('FUNDRAISING.TEAM.DESCRIPTIONS.MARKETING_DESC'),
+        image: 'assets/team/marketing.jpg',
+        linkedin: '#',
+        twitter: '#'
+      },
+      {
+        name: 'Sylvie MBALLA',
+        role: this.translate.instant('FUNDRAISING.TEAM.ROLES.PRODUCT_MANAGER'),
+        description: this.translate.instant('FUNDRAISING.TEAM.DESCRIPTIONS.PRODUCT_DESC'),
+        image: 'assets/team/product.jpg',
+        linkedin: '#'
+      }
+    ];
+
+    this.fundingGoals = [
+      {
+        category: this.translate.instant('FUNDRAISING.FUNDING.CATEGORIES.MARKETING'),
+        amount: 2000000,
+        percentage: 40,
+        description: this.translate.instant('FUNDRAISING.FUNDING.CATEGORIES.MARKETING_DESC'),
+        icon: 'campaign'
+      },
+      {
+        category: this.translate.instant('FUNDRAISING.FUNDING.CATEGORIES.DEVELOPMENT'),
+        amount: 1500000,
+        percentage: 30,
+        description: this.translate.instant('FUNDRAISING.FUNDING.CATEGORIES.DEVELOPMENT_DESC'),
+        icon: 'code'
+      },
+      {
+        category: this.translate.instant('FUNDRAISING.FUNDING.CATEGORIES.HUMAN_RESOURCES'),
+        amount: 1000000,
+        percentage: 20,
+        description: this.translate.instant('FUNDRAISING.FUNDING.CATEGORIES.HUMAN_RESOURCES_DESC'),
+        icon: 'group'
+      },
+      {
+        category: this.translate.instant('FUNDRAISING.FUNDING.CATEGORIES.INFRASTRUCTURE'),
+        amount: 500000,
+        percentage: 10,
+        description: this.translate.instant('FUNDRAISING.FUNDING.CATEGORIES.INFRASTRUCTURE_DESC'),
+        icon: 'cloud'
+      }
+    ];
+
+    this.galleryImages = [
+      { 
+        src: 'assets/cap_apps/page de recherche.png', 
+        title: this.translate.instant('FUNDRAISING.PRODUCT.FEATURES.SMART_SEARCH'), 
+        description: this.translate.instant('FUNDRAISING.PRODUCT.FEATURES.SMART_SEARCH_DESC') 
+      },
+      { 
+        src: 'assets/cap_apps/dasbord global.jpg', 
+        title: this.translate.instant('FUNDRAISING.PRODUCT.FEATURES.DASHBOARD'), 
+        description: this.translate.instant('FUNDRAISING.PRODUCT.FEATURES.DASHBOARD_DESC') 
+      },
+      { 
+        src: 'assets/cap_apps/analyse financiere.png', 
+        title: this.translate.instant('FUNDRAISING.PRODUCT.FEATURES.FINANCIAL_MANAGEMENT'), 
+        description: this.translate.instant('FUNDRAISING.PRODUCT.FEATURES.FINANCIAL_MANAGEMENT_DESC') 
+      },
+      { 
+        src: 'assets/cap_apps/gestion de contrat.png', 
+        title: this.translate.instant('FUNDRAISING.PRODUCT.FEATURES.DIGITAL_CONTRACTS'), 
+        description: this.translate.instant('FUNDRAISING.PRODUCT.FEATURES.DIGITAL_CONTRACTS_DESC') 
+      },
+      { 
+        src: 'assets/cap_apps/facturation.png', 
+        title: this.translate.instant('FUNDRAISING.PRODUCT.FEATURES.AUTOMATED_BILLING'), 
+        description: this.translate.instant('FUNDRAISING.PRODUCT.FEATURES.AUTOMATED_BILLING_DESC') 
+      },
+      { 
+        src: 'assets/cap_apps/capture-information-contact-proprio.png', 
+        title: this.translate.instant('FUNDRAISING.PRODUCT.FEATURES.DIRECT_CONTACT'), 
+        description: this.translate.instant('FUNDRAISING.PRODUCT.FEATURES.DIRECT_CONTACT_DESC') 
+      }
+    ];
   }
 
   ngAfterViewInit(): void {
@@ -235,7 +296,7 @@ export class FundraisingPageComponent implements OnInit, OnDestroy, AfterViewIni
               button.classList.add('animate-bounce');
             }
             
-            alert('Merci pour votre don ! Votre contribution fait la différence.');
+            alert(this.translate.instant('FUNDRAISING.ALERTS.DONATION_SUCCESS'));
           },
           error: (error) => {
             console.error('Donation failed:', error);
@@ -246,7 +307,7 @@ export class FundraisingPageComponent implements OnInit, OnDestroy, AfterViewIni
               button.classList.add('animate-wiggle');
             }
             
-            alert('Une erreur est survenue. Veuillez réessayer.');
+            alert(this.translate.instant('FUNDRAISING.ALERTS.DONATION_ERROR'));
           },
           complete: () => {
             this.isSubmittingDonation = false;
@@ -272,7 +333,7 @@ export class FundraisingPageComponent implements OnInit, OnDestroy, AfterViewIni
         console.log('Newsletter subscription:', formData);
         this.newsletterForm.reset();
         this.isSubmittingNewsletter = false;
-        alert('Merci ! Vous êtes maintenant inscrit à notre newsletter.');
+        alert(this.translate.instant('FUNDRAISING.ALERTS.NEWSLETTER_SUCCESS'));
       }, 1000);
     }
   }

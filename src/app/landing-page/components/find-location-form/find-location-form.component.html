@@ -7,8 +7,8 @@
                 <ibm-label
                   [helperText]="''"
                   [invalid]="isValid('location')"
-                  [invalidText]="'Ce champ est obligatoire'">
-                  <span class="find-location-text-label">Localisation</span>
+                  [invalidText]="'LANDING.SEARCH_FORM.REQUIRED_FIELD' | translate">
+                  <span class="find-location-text-label">{{ 'LANDING.SEARCH_FORM.LOCATION_LABEL' | translate }}</span>
                   
                   <div class="custom-input-wrapper">
                     <img src="assets/landing/Location.svg" alt="Location" class="input-icon">
@@ -18,7 +18,7 @@
                       [invalid]="isValid('location')"
                       [disabled]="false"
                       theme="light"
-                      [placeholder]="'Où souhaitez-vous habiter'"
+                      [placeholder]="'LANDING.SEARCH_FORM.LOCATION_PLACEHOLDER' | translate"
                       [autocomplete]="true">
                   </div>
                   
@@ -29,8 +29,8 @@
                 <ibm-label
                   [helperText]="''"
                   [invalid]="isValid('propertyType')"
-                  [invalidText]="'Ce champ est obligatoire'">
-                  <span class="find-location-text-label">Type de bien</span>
+                  [invalidText]="'LANDING.SEARCH_FORM.REQUIRED_FIELD' | translate">
+                  <span class="find-location-text-label">{{ 'LANDING.SEARCH_FORM.PROPERTY_TYPE_LABEL' | translate }}</span>
                   
                   <div class="custom-input-wrapper">
                     <img src="assets/landing/Keypad.svg" alt="Location" class="input-icon">
@@ -40,7 +40,7 @@
                       [invalid]="isValid('propertyType')"
                       [disabled]="false"
                       theme="light"
-                      [placeholder]="'Type de logement'"
+                      [placeholder]="'LANDING.SEARCH_FORM.PROPERTY_TYPE_PLACEHOLDER' | translate"
                       [autocomplete]="true">
                       <!-- <ibm-combo-box  [items]="roomListType" formControlName="propertyType"  theme="light">
                         <ibm-dropdown-list></ibm-dropdown-list>
@@ -53,8 +53,8 @@
                 <ibm-label
                   [helperText]="''"
                   [invalid]="isValid('price')"
-                  [invalidText]="'Ce champ est obligatoire'">
-                  <span class="find-location-text-label">Budget</span>
+                  [invalidText]="'LANDING.SEARCH_FORM.REQUIRED_FIELD' | translate">
+                  <span class="find-location-text-label">{{ 'LANDING.SEARCH_FORM.BUDGET_LABEL' | translate }}</span>
                   
                   <div class="custom-input-wrapper">
                     <img src="assets/landing/Dollar_Bag.svg" alt="Budget" class="input-icon">
@@ -64,7 +64,7 @@
                       [invalid]="isValid('price')"
                       [disabled]="false"
                       theme="light"
-                      [placeholder]="'Budget max'"
+                      [placeholder]="'LANDING.SEARCH_FORM.BUDGET_PLACEHOLDER' | translate"
                       [autocomplete]="true">
                   </div>
                   
@@ -79,7 +79,7 @@
           <!-- <ibm-loading *ngIf="waittingResponse; else noWaitingResponse"></ibm-loading> -->
           <!-- <ng-template #noWaitingResponse> -->
             <div class="content-butom-found">
-                <span class="btn-text">Rechercher</span>
+                <span class="btn-text">{{ 'LANDING.SEARCH_FORM.SEARCH_BUTTON' | translate }}</span>
                 <youpez-ibm-icon iconClass="cds--btn__icon" iconName="arrowRight" iconSize="16" ></youpez-ibm-icon >
             </div>
             

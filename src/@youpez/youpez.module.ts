@@ -2,6 +2,7 @@ import {NgModule} from '@angular/core'
 import {CommonModule} from '@angular/common'
 import {NavigationEnd, NavigationStart, Router, RouterModule} from '@angular/router'
 import {FormsModule, ReactiveFormsModule} from "@angular/forms"
+import {TranslateModule} from '@ngx-translate/core'
 
 
 import {NgScrollbarModule} from 'ngx-scrollbar'
@@ -106,6 +107,7 @@ const MainModules = [
   NgbDropdownModule,
   NgbTooltipModule,
   ResizableModule,
+  TranslateModule,
   // BemModule.config({
   //   separators: ['__', '--', '-'], // el / mod / val separators
   //   modCase: 'kebab', // case of modifiers names

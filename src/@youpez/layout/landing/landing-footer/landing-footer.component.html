@@ -6,47 +6,105 @@
                   <youpez-logo class="cursor-pointer" type="white" logoWidth="120px"></youpez-logo>
                 </a>
             </div>
-            <div class="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
+            <div class="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-4">
                 <div>
-                    <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Liens utils</h2>
+                    <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">{{ 'FOOTER.USEFUL_LINKS' | translate }}</h2>
                     <ul class="text-gray-600 dark:text-gray-400">
                         <li class="mb-4 hover:underline">
-                            <a [routerLink]="'/search/index'" >Rechercher un bien</a>
+                            <a [routerLink]="'/search/index'">{{ 'FOOTER.SEARCH_PROPERTIES' | translate }}</a>
                         </li>
                         <li class="hover:underline">
-                            <a  [routerLink]="'/search/index'" class="hover:underline">Nos services</a>
+                            <a [routerLink]="'/search/index'" class="hover:underline">{{ 'FOOTER.OUR_SERVICES' | translate }}</a>
                         </li>
-                       
                     </ul>
                 </div>
                 <div>
-                    <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">A propos</h2>
+                    <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">{{ 'FOOTER.ABOUT' | translate }}</h2>
                     <ul class="text-gray-600 dark:text-gray-400">
                         <li class="mb-4 hover:underline">
-                          <a  [routerLink]="'/search/index'" class="hover:underline">Equipes</a>
+                          <a [routerLink]="'/search/index'" class="hover:underline">{{ 'FOOTER.TEAM' | translate }}</a>
                         </li>
                         <li class="hover:underline">
-                          <a  [routerLink]="'/search/index'" class="hover:underline">Contactez-nous</a>
+                          <a [routerLink]="'/search/index'" class="hover:underline">{{ 'FOOTER.CONTACT_US' | translate }}</a>
                       </li>
                     </ul>
                 </div>
                 <div>
-                    <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Legal</h2>
+                    <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">{{ 'FOOTER.LEGAL' | translate }}</h2>
                     <ul class="text-gray-600 dark:text-gray-400">
                         <li class="mb-4 hover:underline">
-                            <a href="#" >Politique de confidentialité</a>
+                            <a href="#">{{ 'FOOTER.PRIVACY_POLICY' | translate }}</a>
                         </li>
                         <li class="hover:underline">
-                            <a href="#" >Termes &amp; Conditions</a>
+                            <a href="#">{{ 'FOOTER.TERMS_CONDITIONS' | translate }}</a>
                         </li>
                     </ul>
+                </div>
+                <div>
+                    <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">{{ 'FOOTER.LANGUAGE' | translate }}</h2>
+                    <div class="relative">
+                        <!-- Bouton principal -->
+                        <button 
+                            (click)="toggleLanguageDropdown()"
+                            class="w-full flex items-center justify-between px-4 py-3 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200">
+                            <div class="flex items-center space-x-3">
+                                <span class="text-lg">{{ getCurrentLanguageFlag() }}</span>
+                                <span class="font-medium text-gray-700">{{ getCurrentLanguageName() }}</span>
+                            </div>
+                            <svg class="w-4 h-4 text-gray-500 transition-transform duration-200" 
+                                 [class.rotate-180]="isLanguageDropdownOpen"
+                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        
+                        <!-- Menu déroulant -->
+                        <div *ngIf="isLanguageDropdownOpen" 
+                             class="absolute bottom-full mb-2 left-0 right-0 bg-white border border-gray-200 rounded-lg shadow-xl z-50 overflow-hidden backdrop-blur-sm">
+                            <div class="p-1">
+                                <button
+                                    *ngFor="let language of supportedLanguages; trackBy: trackByLanguage"
+                                    (click)="changeLanguage(language.code)"
+                                    class="w-full flex items-center justify-between px-3 py-2.5 text-sm rounded-md transition-all duration-200 group"
+                                    [class]="language.code === currentLanguage ? 
+                                        'bg-orange-500 text-white shadow-md' : 
+                                        'text-gray-700 hover:bg-orange-50 hover:text-orange-700'">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-6 h-6 rounded-full flex items-center justify-center"
+                                             [class]="language.code === currentLanguage ? 
+                                                'bg-white/20' : 
+                                                'bg-gray-100 group-hover:bg-orange-100'">
+                                            <span class="text-sm">{{ language.flag }}</span>
+                                        </div>
+                                        <span class="font-medium">{{ language.name }}</span>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <span *ngIf="language.code === currentLanguage" 
+                                              class="text-xs px-2 py-0.5 bg-white/20 text-white rounded-full font-medium">
+                                            {{ 'FOOTER.CURRENT' | translate }}
+                                        </span>
+                                        <svg *ngIf="language.code === currentLanguage" 
+                                             class="w-4 h-4 text-white" 
+                                             fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Overlay -->
+                        <div *ngIf="isLanguageDropdownOpen" 
+                             class="fixed inset-0 z-40" 
+                             (click)="closeLanguageDropdown()"></div>
+                    </div>
                 </div>
             </div>
         </div>
         <hr class="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
         <!-- <hr class="my-6 border-gray-700 sm:mx-auto dark:border-gray-700 lg:my-8" /> -->
         <div class="sm:flex sm:items-center sm:justify-between">
-            <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">© {{currentDate | date: 'yyyy'}} <a [routerLink]="'/search/index'" class="hover:underline text-appname">Ndewa360°</a>. Tous droits réservés.
+            <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">© {{currentDate | date: 'yyyy'}} <a [routerLink]="'/search/index'" class="hover:underline text-appname">Ndewa360°</a>. {{ 'FOOTER.ALL_RIGHTS_RESERVED' | translate }}
             </span>
   
             <div class="flex mt-4 space-x-6 sm:justify-center sm:mt-0">            

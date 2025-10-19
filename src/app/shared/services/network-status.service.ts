@@ -117,23 +117,23 @@ export class NetworkStatusService {
 
       // Ne notifier que si le statut change
       const currentStatus = this.networkStatusSubject.value;
-      if (currentStatus.isBackendReachable !== isBackendReachable) {
-        if (isBackendReachable) {
-          this.updatePersistentToast('Serveur accessible', 'success');
-        } else if (!this.hasShownInitialOfflineWarning) {
-          this.showPersistentToast('Serveur temporairement indisponible', 'warning');
-          this.hasShownInitialOfflineWarning = true;
-        }
-      }
+      // if (currentStatus.isBackendReachable !== isBackendReachable) {
+      //   if (isBackendReachable) {
+      //     this.updatePersistentToast('Serveur accessible', 'success');
+      //   } else if (!this.hasShownInitialOfflineWarning) {
+      //     this.showPersistentToast('Serveur temporairement indisponible', 'warning');
+      //     this.hasShownInitialOfflineWarning = true;
+      //   }
+      // }
 
     } catch (error) {
       this.updateNetworkStatus({ isBackendReachable: false });
 
       // Ne montrer la notification que si c'est la première fois ou après un long délai
-      if (!this.hasShownInitialOfflineWarning) {
-        this.showPersistentToast('Impossible de contacter le serveur', 'warning');
-        this.hasShownInitialOfflineWarning = true;
-      }
+      // if (!this.hasShownInitialOfflineWarning) {
+      //   this.showPersistentToast('Impossible de contacter le serveur', 'warning');
+      //   this.hasShownInitialOfflineWarning = true;
+      // }
     }
   }
 
