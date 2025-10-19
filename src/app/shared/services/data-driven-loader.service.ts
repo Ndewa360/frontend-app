@@ -3,6 +3,7 @@ import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
 import { map, distinctUntilChanged, filter } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
 import { Router, NavigationStart, NavigationEnd, NavigationCancel, NavigationError } from '@angular/router';
+import { ContentReadyService } from './content-ready.service';
 
 export interface PageLoadingState {
   route: string;
@@ -183,7 +184,8 @@ export class DataDrivenLoaderService {
 
   constructor(
     private store: Store,
-    private router: Router
+    private router: Router,
+    private contentReadyService: ContentReadyService
   ) {
     this.initializeRouteListener();
 
@@ -204,15 +206,16 @@ export class DataDrivenLoaderService {
     const currentUrl = this.router.url || window.location.pathname;
     console.log('📍 Route initiale détectée:', currentUrl);
 
-    // Simuler un NavigationStart pour la route actuelle
-    // car nous sommes déjà sur la route lors de l'initialisation
-    this.handleNavigationStart(currentUrl);
-
-    // Petit délai pour laisser Angular et les resolvers s'initialiser
+    // Attendre que Angular soit complètement initialisé
     setTimeout(() => {
-      // Simuler NavigationEnd car nous sommes déjà sur la route
-      this.handleNavigationEnd(currentUrl);
-    }, 200);
+      // Simuler un NavigationStart pour la route actuelle
+      this.handleNavigationStart(currentUrl);
+      
+      // Attendre plus longtemps pour que les resolvers et les stores soient prêts
+      setTimeout(() => {
+        this.handleNavigationEnd(currentUrl);
+      }, 500);
+    }, 300);
   }
 
   /**
@@ -460,11 +463,14 @@ export class DataDrivenLoaderService {
 
         this.pageLoadingSubject.next(completedState);
         
-        // Masquer le loader global
-        setTimeout(() => {
-          this.globalLoaderVisible.next(false);
-          this.hideGlobalLoader();
-        }, 200);
+        // Utiliser le ContentReadyService pour attendre que le contenu soit prêt
+        this.contentReadyService.startContentCheck();
+        this.contentReadyService.waitForContent().then(() => {
+          setTimeout(() => {
+            this.globalLoaderVisible.next(false);
+            this.hideGlobalLoader();
+          }, 200); // Délai réduit car le contenu est vraiment prêt
+        });
       }
     }, remainingTime);
   }
@@ -573,6 +579,30 @@ export class DataDrivenLoaderService {
   public addRouteConfig(config: DataLoadingConfig): void {
     this.routeConfigs[config.route] = config;
     console.log(`➕ Configuration ajoutée pour la route: ${config.route}`);
+  }
+
+  /**
+   * Attend que le DOM soit prêt avant d'exécuter le callback
+   */
+  private waitForDOMReady(callback: () => void): void {
+    // Vérifier si le contenu Angular est rendu
+    const checkDOMReady = () => {
+      const appRoot = document.querySelector('app-root');
+      const routerOutlet = document.querySelector('router-outlet');
+      const hasContent = appRoot && (appRoot.children.length > 1 || 
+        (routerOutlet && routerOutlet.nextElementSibling));
+      
+      if (hasContent) {
+        console.log('✅ DOM prêt - contenu Angular détecté');
+        callback();
+      } else {
+        console.log('⏳ DOM pas encore prêt, nouvelle vérification dans 100ms');
+        setTimeout(checkDOMReady, 100);
+      }
+    };
+    
+    // Démarrer la vérification
+    setTimeout(checkDOMReady, 100);
   }
 
   /**

@@ -198,7 +198,7 @@ export class AuthLoginComponent implements OnInit, OnDestroy {
       setTimeout(() => {
         const currentLang = this.languageUrlService.getCurrentLanguage();
         window.location.href = `/${currentLang}/app/properties/home`;
-      }, 1500);
+      }, 2000); // Augmenté pour laisser plus de temps au loader
       return;
     }
 
@@ -212,7 +212,7 @@ export class AuthLoginComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       const currentLang = this.languageUrlService.getCurrentLanguage();
       window.location.href = `/${currentLang}/app/properties/home`;
-    }, 500);
+    }, 1000); // Augmenté pour laisser plus de temps au loader
   }
 
   private async redirectAgent(user: any): Promise<void> {
@@ -231,9 +231,9 @@ export class AuthLoginComponent implements OnInit, OnDestroy {
 
       const currentLang = this.languageUrlService.getCurrentLanguage();
       if (!agentProfile || !agentProfile.isProfileCompleted) {
-        setTimeout(() => window.location.href = `/${currentLang}/app/agent/complete-profile`, 500);
+        setTimeout(() => window.location.href = `/${currentLang}/app/agent/complete-profile`, 1000);
       } else if (agentProfile.status === 'PENDING' || agentProfile.status === 'ADMIN_REVIEW') {
-        setTimeout(() => window.location.href = `/${currentLang}/app/agent/pending-approval`, 500);
+        setTimeout(() => window.location.href = `/${currentLang}/app/agent/pending-approval`, 1000);
       } else if (agentProfile.status === 'REJECTED') {
         setTimeout(() => window.location.href = `/${currentLang}/app/agent/pending-approval`, 500);
       } else if (agentProfile.status === 'APPROVED') {

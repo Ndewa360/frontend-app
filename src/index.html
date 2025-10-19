@@ -364,13 +364,14 @@
       var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
       console.log('📱 Appareil mobile détecté:', isMobile);
 
-      // Timeout de sécurité pour le loader - RÉDUIT À 5 SECONDES
+      // Timeout de sécurité pour le loader - 8 SECONDES pour laisser plus de temps
       var securityTimeout = setTimeout(function() {
         var loader = document.getElementById("app-loading-holder");
-        var isMobileRoute = window.location.pathname.startsWith('/mobile');
+        var appRoot = document.querySelector('app-root');
+        var hasContent = appRoot && appRoot.children.length > 1;
 
-        if (loader) {
-          console.log('⚠️ TIMEOUT DE SÉCURITÉ - Loader encore présent après 5 secondes');
+        if (loader && !hasContent) {
+          console.log('⚠️ TIMEOUT DE SÉCURITÉ - Loader encore présent après 8 secondes sans contenu');
           console.log('🔧 Suppression forcée du loader...');
 
           // Supprimer le loader immédiatement
@@ -380,58 +381,79 @@
               loader.parentNode.removeChild(loader);
               console.log('✅ Loader supprimé par timeout de sécurité');
             }
-
-            // Plus de message d'erreur - suppression silencieuse du loader
           }, 200);
+        } else if (loader && hasContent) {
+          console.log('✅ Contenu détecté, suppression normale du loader');
+          if (global.appBootstrap) {
+            global.appBootstrap();
+          }
         }
-      }, 5000);
+      }, 8000);
 
       // main.ts call this function once the app is boostrapped
       global.appBootstrap = function () {
         console.log('✅ appBootstrap() appelée - Application Angular démarrée');
 
-        // Annuler le timeout de sécurité
-        if (securityTimeout) {
-          clearTimeout(securityTimeout);
-          console.log('🔧 Timeout de sécurité annulé');
-        }
-
-        var loader = document.getElementById("app-loading-holder");
-        if (loader) {
-          console.log('🔧 Suppression du loader...');
-          // Transition plus rapide
-          loader.style.opacity = "0";
-          setTimeout(function() {
-            if (loader && loader.parentNode) {
-              loader.parentNode.removeChild(loader);
-              console.log('✅ Loader supprimé avec succès');
+        // Vérifier que le contenu est prêt avant de supprimer le loader
+        var checkContentReady = function() {
+          var appRoot = document.querySelector('app-root');
+          var routerOutlet = document.querySelector('router-outlet');
+          var hasContent = appRoot && (appRoot.children.length > 1 || 
+            (routerOutlet && routerOutlet.nextElementSibling));
+          
+          if (hasContent) {
+            // Annuler le timeout de sécurité
+            if (securityTimeout) {
+              clearTimeout(securityTimeout);
+              console.log('🔧 Timeout de sécurité annulé');
             }
-          }, 150); // Réduit de 300ms à 150ms
-        } else {
-          console.log('⚠️ Loader déjà supprimé');
-        }
+
+            var loader = document.getElementById("app-loading-holder");
+            if (loader) {
+              console.log('🔧 Suppression du loader - contenu prêt...');
+              loader.style.opacity = "0";
+              setTimeout(function() {
+                if (loader && loader.parentNode) {
+                  loader.parentNode.removeChild(loader);
+                  console.log('✅ Loader supprimé avec succès');
+                }
+              }, 200);
+            } else {
+              console.log('⚠️ Loader déjà supprimé');
+            }
+          } else {
+            console.log('⏳ Contenu pas encore prêt, nouvelle vérification dans 100ms');
+            setTimeout(checkContentReady, 100);
+          }
+        };
+        
+        // Démarrer la vérification avec un petit délai
+        setTimeout(checkContentReady, 100);
       };
 
-      // Diagnostic périodique optimisé - RÉDUIT À 1 SECONDE ET SIMPLIFIÉ
+      // Diagnostic périodique optimisé - surveillance du contenu
       var diagnosticCount = 0;
-      var maxDiagnostics = 10; // Maximum 10 diagnostics (10 secondes)
+      var maxDiagnostics = 15; // Maximum 15 diagnostics (15 secondes)
 
       var diagnosticInterval = setInterval(function() {
         diagnosticCount++;
         var loader = document.getElementById("app-loading-holder");
         var appRoot = document.querySelector('app-root');
-        var ionApp = document.querySelector('ion-app');
+        var hasContent = appRoot && appRoot.children.length > 1;
 
         // Log des erreurs JavaScript seulement s'il y en a
         if (window.startupErrors && window.startupErrors.length > 0) {
           console.log('❌ Erreurs de démarrage:', window.startupErrors.length);
         }
 
-        // Arrêter le diagnostic si l'app est chargée OU si on a atteint le maximum
-        if (!loader || ionApp || diagnosticCount >= maxDiagnostics) {
+        // Arrêter le diagnostic si l'app est chargée avec du contenu OU si on a atteint le maximum
+        if (!loader || hasContent || diagnosticCount >= maxDiagnostics) {
           clearInterval(diagnosticInterval);
+          if (hasContent) {
+            console.log('✅ Diagnostic arrêté - contenu détecté');
+          }
         }
-      }, 1000); // Réduit de 2000ms à 1000ms
+      }, 1000);
 
     })(window);
   </script>

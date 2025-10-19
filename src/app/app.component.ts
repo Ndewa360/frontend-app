@@ -22,6 +22,7 @@ import { NetworkStatusService } from './shared/services/network-status.service';
 import { AuthStateService } from './shared/services/auth-state.service';
 import { DataDrivenLoaderService } from './shared/services/data-driven-loader.service';
 import { LanguageUrlService } from './shared/services/language-url.service';
+import { ContentReadyService } from './shared/services/content-ready.service';
 
 
 
@@ -79,33 +80,37 @@ export class AppComponent implements OnInit, OnDestroy {
     private authStateService: AuthStateService,
     private cdr: ChangeDetectorRef,
     private dataDrivenLoader: DataDrivenLoaderService,
-    private languageUrlService: LanguageUrlService
+    private languageUrlService: LanguageUrlService,
+    private contentReadyService: ContentReadyService
   ) {
     // Fallback pour l'écran de chargement au cas où la navigation ne se termine jamais
     this.loadingTimeout = setTimeout(() => {
       if (!this.appLoaded) {
         console.warn('⚠️ Timeout de sécurité Angular atteint - Suppression forcée du loader');
 
-        // Essayer d'abord la fonction appBootstrap
-        if (typeof window['appBootstrap'] === 'function') {
-          window['appBootstrap']();
-        } else {
-          // Fallback manuel si appBootstrap n'existe pas
-          const loader = document.getElementById('app-loading-holder');
-          if (loader && loader.parentNode) {
-            loader.style.opacity = '0';
-            setTimeout(() => {
-              if (loader.parentNode) {
-                loader.parentNode.removeChild(loader);
-              }
-            }, 150);
+        // Utiliser le ContentReadyService pour vérifier le contenu
+        this.contentReadyService.waitForContent().then(() => {
+          // Essayer d'abord la fonction appBootstrap
+          if (typeof window['appBootstrap'] === 'function') {
+            window['appBootstrap']();
+          } else {
+            // Fallback manuel si appBootstrap n'existe pas
+            const loader = document.getElementById('app-loading-holder');
+            if (loader && loader.parentNode) {
+              loader.style.opacity = '0';
+              setTimeout(() => {
+                if (loader.parentNode) {
+                  loader.parentNode.removeChild(loader);
+                }
+              }, 150);
+            }
           }
-        }
 
-        this.appLoaded = true;
-        console.log('✅ Écran de chargement masqué par le timeout de sécurité Angular');
+          this.appLoaded = true;
+          console.log('✅ Écran de chargement masqué par le timeout de sécurité Angular');
+        });
       }
-    }, 3000); // RÉDUIT DE 10 À 3 SECONDES
+    }, 5000); // Augmenté à 5 secondes pour laisser plus de temps au chargement
   }
 
   ngOnInit(): void {
@@ -204,12 +209,13 @@ export class AppComponent implements OnInit, OnDestroy {
       .subscribe(isVisible => {
         console.log('🔍 DataDrivenLoader état:', isVisible ? 'visible' : 'masqué');
         if (!isVisible && !this.appLoaded) {
-          this.appLoaded = true;
-          clearTimeout(this.loadingTimeout);
-          console.log('✅ Loader masqué par le service DataDrivenLoader');
-
-          // Masquer le loader global seulement maintenant
-          this.hideGlobalLoader();
+          // Utiliser le ContentReadyService pour vérifier que le contenu est prêt
+          this.contentReadyService.waitForContent().then(() => {
+            this.appLoaded = true;
+            clearTimeout(this.loadingTimeout);
+            console.log('✅ Loader masqué par le service DataDrivenLoader - contenu prêt');
+            this.hideGlobalLoader();
+          });
         }
       });
 
@@ -307,6 +313,8 @@ export class AppComponent implements OnInit, OnDestroy {
     
     tryScrollToElement();
   }
+
+
 
   /**
    * Masque le loader global
