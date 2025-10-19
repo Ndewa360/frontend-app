@@ -8,6 +8,7 @@ import { of, throwError } from "rxjs";
 import { catchError, tap } from "rxjs/operators";
 import { NotificationService } from "carbon-components-angular";
 import { ToastrService } from "ngx-toastr";
+import { TranslateService } from "@ngx-translate/core";
 
 export class LocataireStateModel {
     locataires:LocataireModel[]
@@ -29,7 +30,8 @@ export class LocataireState{
     
     constructor(
         private _locatairesService:LocataireService,
-        private _toastrService:ToastrService
+        private _toastrService:ToastrService,
+        private _translateService: TranslateService
         // private notificationService: NotificationService,
 
     ){}
@@ -127,7 +129,7 @@ export class LocataireState{
                         loadingLocataire:false,
                         locataires:data
                     })
-                    this._toastrService.success(`Profil locataire modifié avec success`, 'Ndewa360°');
+                    this._toastrService.success(this._translateService.instant('NOTIFICATIONS.TENANT_PROFILE_UPDATED'), 'Ndewa360°');
                 }
             ),
             catchError((error) => {               

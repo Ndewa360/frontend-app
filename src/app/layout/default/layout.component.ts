@@ -9,6 +9,8 @@ import { Store } from '@ngxs/store'
 import { UserProfileState } from 'src/app/shared/store/user-profile/user-profile.state'
 import { Router, NavigationEnd } from '@angular/router'
 import { filter } from 'rxjs/operators'
+import { TranslateService } from '@ngx-translate/core'
+import { LanguageUrlService } from 'src/app/shared/services/language-url.service'
 
 @Component({
   selector: 'app-layout',
@@ -41,77 +43,14 @@ export class LayoutComponent implements OnInit, OnDestroy {
   public searchVisible: boolean = false
   public lockScreenVisible: boolean = false
 
-  public menu: Array<MenuType> = [
-    {
-      groupName: 'DASHBOARDS',
-      opened: true,
-      children: [
-        {
-          name: 'Acceuil',
-          url: '/app/dashboard/default',
-          prefix: {
-            type: 'ibm-icon',
-            name: 'home',
-          },
-        },
-        {
-          name: 'Tableau de bord',
-          url: '/app/dashboard/analytics',
-          prefix: {
-            type: 'ibm-icon',
-            name: 'activity',
-          },
-        },
-      ],
-    },
-    {
-      groupName: 'BIENS IMMOBILIER',
-      opened: true,
-      children: [
-        {
-          name: 'Biens',
-
-          prefix: {
-            type: 'ibm-icon',
-            name: 'home',
-          },
-          url: '/main/properties/list',
-        },
-        {
-          name: 'Locataire',
-          prefix: {
-             type: 'ibm-icon',
-            name: 'userAvatar'
-          },
-          suffix: {
-            type: 'badge',
-            level: 'danger',
-            text: 3,
-          },
-          url: '/app/tasks',
-        },
-      ]
-    },
-    {
-      groupName: 'GESTION',
-      opened: true,
-      children: [
-        {
-          name: 'Modèles de contrats',
-          prefix: {
-            type: 'ibm-icon',
-            name: 'document'
-          },
-          url: '/app/contract-templates',
-        },
-      ]
-    },
-  ]
+  public menu: Array<MenuType> = []
 
   constructor(private settingsService: SettingsService,
               private appMenuService: AppMenuService,
               private store: Store,
-              private router: Router) {
+              private router: Router,
+              private translate: TranslateService,
+              private languageUrlService: LanguageUrlService) {
   }
 
   ngOnInit(): void {
@@ -124,14 +63,21 @@ export class LayoutComponent implements OnInit, OnDestroy {
         }
       })
     
-    // Filter menu based on user type and agent status
-    this.filterMenuForUser();
+    // Initialize menu with translations
+    this.initializeMenu();
+    
+    // Listen to language changes to update menu
+    this.translate.onLangChange
+      .pipe(takeUntil(this.onDestroy))
+      .subscribe(() => {
+        this.initializeMenu();
+      });
     
     // Listen to user profile changes to update menu
     this.store.select(UserProfileState.selectStateUserProfile)
       .pipe(takeUntil(this.onDestroy))
       .subscribe(() => {
-        this.filterMenuForUser();
+        this.initializeMenu();
       });
     
     // Listen to route changes to update menu
@@ -141,26 +87,89 @@ export class LayoutComponent implements OnInit, OnDestroy {
         takeUntil(this.onDestroy)
       )
       .subscribe(() => {
-        this.filterMenuForUser();
+        this.initializeMenu();
       });
   }
 
-  private filterMenuForUser(): void {
+  private initializeMenu(): void {
+    const currentLang = this.languageUrlService.getCurrentLanguage();
     const user = this.store.selectSnapshot(UserProfileState.selectStateUserProfile);
     const currentUrl = this.router.url;
     
-    // If user is an agent, hide contract templates and properties sections
+    // Default menu for property owners
+    let defaultMenu = [
+      {
+        groupName: this.translate.instant('NAVIGATION.DASHBOARD'),
+        opened: true,
+        children: [
+          {
+            name: this.translate.instant('NAVIGATION.DASHBOARD'),
+            url: `/${currentLang}/app/welcome`,
+            prefix: {
+              type: 'ibm-icon',
+              name: 'home',
+            },
+          },
+        ],
+      },
+      {
+        groupName: this.translate.instant('NAVIGATION.PROPERTIES'),
+        opened: true,
+        children: [
+          {
+            name: this.translate.instant('NAVIGATION.PROPERTIES'),
+            prefix: {
+              type: 'ibm-icon',
+              name: 'home',
+            },
+            url: `/${currentLang}/app/properties/home`,
+          },
+          {
+            name: 'Liste des biens',
+            prefix: {
+              type: 'ibm-icon',
+              name: 'list'
+            },
+            url: `/${currentLang}/app/properties/list`,
+          },
+        ]
+      },
+      {
+        groupName: this.translate.instant('COMMON.SETTINGS'),
+        opened: true,
+        children: [
+          {
+            name: 'Modèles de contrats',
+            prefix: {
+              type: 'ibm-icon',
+              name: 'document'
+            },
+            url: `/${currentLang}/app/contract-templates`,
+          },
+          {
+            name: this.translate.instant('NAVIGATION.PROFILE'),
+            prefix: {
+              type: 'ibm-icon',
+              name: 'userAvatar'
+            },
+            url: `/${currentLang}/app/profile`,
+          },
+        ]
+      },
+    ];
+    
+    // If user is an agent, customize menu
     if (user?.userType === 'AGENT') {
       // If agent is on profile completion or pending approval pages, show minimal menu
       if (currentUrl.includes('/agent/complete-profile') || currentUrl.includes('/agent/pending-approval')) {
         this.menu = [
           {
-            groupName: 'PROFIL AGENT',
+            groupName: this.translate.instant('NAVIGATION.PROFILE'),
             opened: true,
             children: [
               {
                 name: 'Compléter mon profil',
-                url: '/app/agent/complete-profile',
+                url: `/${currentLang}/app/agent/complete-profile`,
                 prefix: {
                   type: 'ibm-icon',
                   name: 'userAvatar',
@@ -173,29 +182,21 @@ export class LayoutComponent implements OnInit, OnDestroy {
         // For approved agents, show dashboard and properties
         this.menu = [
           {
-            groupName: 'DASHBOARDS',
+            groupName: this.translate.instant('NAVIGATION.DASHBOARD'),
             opened: true,
             children: [
               {
-                name: 'Acceuil',
-                url: '/app/dashboard/default',
+                name: this.translate.instant('NAVIGATION.DASHBOARD'),
+                url: `/${currentLang}/app/welcome`,
                 prefix: {
                   type: 'ibm-icon',
                   name: 'home',
                 },
               },
-              {
-                name: 'Tableau de bord',
-                url: '/app/dashboard/analytics',
-                prefix: {
-                  type: 'ibm-icon',
-                  name: 'activity',
-                },
-              },
             ],
           },
           {
-            groupName: 'BIENS IMMOBILIER',
+            groupName: this.translate.instant('NAVIGATION.PROPERTIES'),
             opened: true,
             children: [
               {
@@ -204,12 +205,14 @@ export class LayoutComponent implements OnInit, OnDestroy {
                   type: 'ibm-icon',
                   name: 'home',
                 },
-                url: '/main/properties/list',
+                url: `/${currentLang}/app/properties/home`,
               }
             ]
           }
         ];
       }
+    } else {
+      this.menu = defaultMenu;
     }
   }
 

@@ -5,6 +5,7 @@ import { of, throwError } from "rxjs";
 import { tap, catchError } from "rxjs/operators";
 import { NotificationService } from "carbon-components-angular";
 import { ToastrService } from "ngx-toastr";
+import { TranslateService } from "@ngx-translate/core";
 
 export class AuthTokenStateModel {
     authToken: string;
@@ -30,7 +31,10 @@ export class AuthTokenStateModel {
 })
 @Injectable()
 export class AuthTokenState {
-    constructor(private _toastrService: ToastrService) {}
+    constructor(
+        private _toastrService: ToastrService,
+        private _translateService: TranslateService
+    ) {}
 
     @Selector()
     static selectStateToken(state: AuthTokenStateModel) {
@@ -188,7 +192,7 @@ export class AuthTokenState {
             const { exp } = JSON.parse(jsonPayload);
             return exp;
         } catch (e) {
-            this._toastrService.error("Erreur lors du décodage du token", "Ndewa360°");
+            this._toastrService.error(this._translateService.instant('NOTIFICATIONS.TOKEN_DECODE_ERROR'), "Ndewa360°");
             return null;
         }
     }

@@ -8,6 +8,7 @@ import { of, throwError } from "rxjs";
 import { catchError, tap } from "rxjs/operators";
 import { NotificationService } from "carbon-components-angular";
 import { ToastrService } from "ngx-toastr";
+import { TranslateService } from "@ngx-translate/core";
 import { RoomAction } from "../rooms";
 import { LocataireAction } from "../locataire";
 import { HistoryLocationPaymentAction } from "../history-payment-location";
@@ -33,7 +34,8 @@ export class LocationPaymentStateModel {
 export class LocationPaymentState{
     constructor(
         private _locationPaymentsService:LocationPaymentService,
-        private _toastrService:ToastrService
+        private _toastrService:ToastrService,
+        private _translateService: TranslateService
         // private notificationService: NotificationService,
 
     ){}
@@ -132,7 +134,7 @@ export class LocationPaymentState{
                         loadingLocationPayment:false,
                         locationPayments:data
                     })
-                    this._toastrService.success(`Paiement supprimer avec success!`, 'Ndewa360°');
+                    this._toastrService.success(this._translateService.instant('NOTIFICATIONS.PAYMENT_DELETED_SUCCESS'), 'Ndewa360°');
 
                     // Mise à jour de l'historique
                     if (locataireId) {
@@ -154,7 +156,7 @@ export class LocationPaymentState{
                     loadingLocationPayment: false
                 })
                 console.error('Erreur lors de la suppression du paiement:', error);
-                this._toastrService.error('Erreur lors de la suppression du paiement', 'Erreur');
+                this._toastrService.error(this._translateService.instant('NOTIFICATIONS.PAYMENT_DELETE_ERROR'), 'Erreur');
                 return throwError(error);
             })
         )
@@ -179,7 +181,7 @@ export class LocationPaymentState{
                         loadingLocationPayment:false,
                         locationPayments:data
                     })
-                    this._toastrService.success(`Paiement mise à jour avec success!`, 'Ndewa360°');
+                    this._toastrService.success(this._translateService.instant('NOTIFICATIONS.PAYMENT_UPDATED_SUCCESS'), 'Ndewa360°');
 
                     // Mise à jour de l'historique
                     if (locataireID) {
@@ -276,7 +278,7 @@ export class LocationPaymentState{
                     } else {
                         console.warn('⚠️ ID de propriété manquant pour le rafraîchissement des statistiques');
                     }
-                    this._toastrService.success(`Paiement ajouté avec success!`, 'Ndewa360°');
+                    this._toastrService.success(this._translateService.instant('NOTIFICATIONS.PAYMENT_CREATED_SUCCESS'), 'Ndewa360°');
 
                 }
             ),
@@ -285,7 +287,7 @@ export class LocationPaymentState{
                     loadingLocationPayment: false
                 })
                 console.error('Erreur lors de l\'ajout du paiement:', error);
-                this._toastrService.error('Erreur lors de l\'ajout du paiement', 'Erreur');
+                this._toastrService.error(this._translateService.instant('NOTIFICATIONS.PAYMENT_CREATE_ERROR'), 'Erreur');
                 return throwError(error);
             })
         )

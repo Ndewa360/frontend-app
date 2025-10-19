@@ -13,6 +13,8 @@ import { Navigate } from '@ngxs/router-plugin';
 import { ToastrService } from "ngx-toastr";
 import { DisconnexionService } from "./disconnection.service";
 import { RefreshTokenService } from "../auth-token/refresh-token.service";
+import { TranslateService } from "@ngx-translate/core";
+import { LanguageUrlService } from "../../services/language-url.service";
 
 export class UserProfileStateModel {
     userProfile: UserProfileModel;
@@ -41,7 +43,9 @@ export class UserProfileState {
         private _router: Router,
         private _store:Store,
         private disconnetionService: DisconnexionService,
-        private refreshTokenService: RefreshTokenService
+        private refreshTokenService: RefreshTokenService,
+        private _translateService: TranslateService,
+        private _languageUrlService: LanguageUrlService
     ) {}
 
     @Selector()
@@ -104,7 +108,7 @@ export class UserProfileState {
                 ctx.dispatch(new AuthTokenAction.StartActivityMonitoring());
                 this.refreshTokenService.startActivityMonitoring();
 
-                this._toastrService.success(`Bienvenue sur Ndewa360°! `, 'Ndewa360°');
+                this._toastrService.success(this._translateService.instant('NOTIFICATIONS.WELCOME_LOGIN'), 'Ndewa360°');
             }),
             catchError((error) => {
                 ctx.patchState({
@@ -126,7 +130,7 @@ export class UserProfileState {
         this.refreshTokenService.cleanup();
 
         this.disconnetionService.logout();
-        this._toastrService.success("Déconnexion avec succès! ", "Ndewa360°");
+        this._toastrService.success(this._translateService.instant('NOTIFICATIONS.LOGOUT_SUCCESS'), "Ndewa360°");
         return of(true);
     }
 
@@ -145,7 +149,7 @@ export class UserProfileState {
                 });
                 
                 const accountType = userType === 'AGENT' ? 'agent' : 'propriétaire';
-                this._toastrService.success(`Compte ${accountType} créé avec succès! Vérifiez votre email.`, "Ndewa360°");
+                this._toastrService.success(this._translateService.instant('NOTIFICATIONS.ACCOUNT_CREATED_SUCCESS', { type: accountType }), "Ndewa360°");
             }),
             catchError((error) => {
                 ctx.patchState({
@@ -161,18 +165,18 @@ export class UserProfileState {
     validateUserProfileWithTokenState(ctx: StateContext<UserProfileStateModel>, { token }: UserProfileAction.ValidateUserProfileWithToken) {
         return this._authService.validateEmailWithToken(token).pipe(
             tap((result) => {
-                this._toastrService.success(`Email activé avec succès! `, 'Ndewa360°');
+                this._toastrService.success(this._translateService.instant('NOTIFICATIONS.EMAIL_ACTIVATED_SUCCESS'), 'Ndewa360°');
             }),
             catchError((error) => {
                 switch (error.status) {
                     case 404:
-                        this._toastrService.error(`Compte introuvable! `, 'Ndewa360°');
+                        this._toastrService.error(this._translateService.instant('NOTIFICATIONS.ACCOUNT_NOT_FOUND'), 'Ndewa360°');
                         break;
                     case 403:
-                        this._toastrService.warning(`Compte déjà activé! `, 'Ndewa360°');
+                        this._toastrService.warning(this._translateService.instant('NOTIFICATIONS.ACCOUNT_ALREADY_ACTIVATED'), 'Ndewa360°');
                         break;
                     default:
-                        this._toastrService.error(`Une erreur s'est produite! `, 'Ndewa360°');
+                        this._toastrService.error(this._translateService.instant('NOTIFICATIONS.GENERIC_ERROR'), 'Ndewa360°');
                 }
                 return throwError(() => error);
             })
@@ -273,7 +277,7 @@ export class UserProfileState {
                     waitingForUserProfilSaved: false,
                     userProfile: userProfile,
                 });
-                this._toastrService.success(`Profil utilisateur modifié avec succès`, 'Ndewa360°');
+                this._toastrService.success(this._translateService.instant('NOTIFICATIONS.PROFILE_UPDATED_SUCCESS'), 'Ndewa360°');
             }),
             catchError((error) => {
                 ctx.patchState({
@@ -377,7 +381,7 @@ export class UserProfileState {
                     waitingForUserProfilSaved: false,
                     userProfile: updatedProfile,
                 });
-                this._toastrService.success(`Langue mise à jour avec succès`, 'Ndewa360°');
+                this._toastrService.success(this._translateService.instant('NOTIFICATIONS.LANGUAGE_UPDATED_SUCCESS'), 'Ndewa360°');
             }),
             catchError((error) => {
                 ctx.patchState({

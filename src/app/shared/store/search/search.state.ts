@@ -10,6 +10,7 @@ import { of, throwError } from "rxjs";
 import { catchError, tap } from "rxjs/operators";
 import { NotificationService } from "carbon-components-angular";
 import { ToastrService } from "ngx-toastr";
+import { TranslateService } from "@ngx-translate/core";
 
 export class SearchStateModel {
     searchProperties:SearchPropertyModel[]
@@ -61,7 +62,8 @@ export class SearchState{
     
     constructor(
         private _searchPropertiesService:SearchService,
-        private _toastrService:ToastrService
+        private _toastrService:ToastrService,
+        private _translateService: TranslateService
         // private notificationService: NotificationService,
 
     ){}
@@ -333,7 +335,7 @@ export class SearchState{
                 ctx.patchState({
                     loadingSearch: false
                 });
-                this._toastrService.error('Erreur lors de la recherche', 'Erreur');
+                this._toastrService.error(this._translateService.instant('NOTIFICATIONS.SEARCH_ERROR'), 'Erreur');
                 return throwError(error);
             })
         );

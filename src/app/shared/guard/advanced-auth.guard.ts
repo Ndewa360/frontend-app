@@ -7,6 +7,7 @@ import { ToastrService } from 'ngx-toastr';
 import { AuthTokenState, UserProfileState } from '../store';
 import { RefreshTokenService } from '../store/auth-token/refresh-token.service';
 import { UserActivityService, UserActivityState } from '../store/auth-token/user-activity.service';
+import { LanguageUrlService } from '../services/language-url.service';
 
 export interface SessionCheckResult {
   canActivate: boolean;
@@ -24,7 +25,8 @@ export class AdvancedAuthGuard implements CanActivate {
     private router: Router,
     private toastrService: ToastrService,
     private refreshTokenService: RefreshTokenService,
-    private userActivityService: UserActivityService
+    private userActivityService: UserActivityService,
+    private languageUrlService: LanguageUrlService
   ) {}
 
   canActivate(
@@ -67,18 +69,20 @@ export class AdvancedAuthGuard implements CanActivate {
       switchMap(([token, userProfile, activityState]) => {
         // 1. Vérifier si l'utilisateur a un token
         if (!token || !token.accessToken) {
+          const currentLang = this.languageUrlService.getCurrentLanguage();
           return of({
             canActivate: false,
-            redirectUrl: this.getSafeRedirectUrl(state.url),
+            redirectUrl: this.getSafeRedirectUrl(state.url, currentLang),
             message: '🔑 Authentification requise pour accéder à cette section de Ndewa360°'
           });
         }
 
         // 2. Vérifier l'état d'activité critique
         if (activityState === UserActivityState.CRITICAL_INACTIVE) {
+          const currentLang = this.languageUrlService.getCurrentLanguage();
           return of({
             canActivate: false,
-            redirectUrl: `/auth/signin?returnUrl=${encodeURIComponent(state.url)}&reason=critical_inactive`,
+            redirectUrl: `/${currentLang}/auth/signin?returnUrl=${encodeURIComponent(state.url)}&reason=critical_inactive`,
             message: '🔒 Session fermée automatiquement après 30 minutes d\'inactivité pour protéger vos données'
           });
         }
@@ -98,9 +102,10 @@ export class AdvancedAuthGuard implements CanActivate {
    * Gère le cas d'un utilisateur inactif
    */
   private handleInactiveUser(currentUrl: string): Observable<SessionCheckResult> {
+    const currentLang = this.languageUrlService.getCurrentLanguage();
     return of({
       canActivate: false,
-      redirectUrl: `/auth/signin?returnUrl=${encodeURIComponent(currentUrl)}&reason=inactive`,
+      redirectUrl: `/${currentLang}/auth/signin?returnUrl=${encodeURIComponent(currentUrl)}&reason=inactive`,
       message: '⏰ Session suspendue pour inactivité. Reconnectez-vous pour reprendre là où vous vous êtes arrêté.'
     });
   }
@@ -116,9 +121,10 @@ export class AdvancedAuthGuard implements CanActivate {
           return { canActivate: true };
         } else {
           // Échec de la vérification/refresh du token
+          const currentLang = this.languageUrlService.getCurrentLanguage();
           return {
             canActivate: false,
-            redirectUrl: this.getSafeRedirectUrl(currentUrl),
+            redirectUrl: this.getSafeRedirectUrl(currentUrl, currentLang),
             message: 'Votre session a expiré. Veuillez vous reconnecter.'
           };
         }
@@ -134,9 +140,10 @@ export class AdvancedAuthGuard implements CanActivate {
           message = 'Session expirée pour cause d\'inactivité prolongée.';
         }
         
+        const currentLang = this.languageUrlService.getCurrentLanguage();
         return of({
           canActivate: false,
-          redirectUrl: this.getSafeRedirectUrl(currentUrl),
+          redirectUrl: this.getSafeRedirectUrl(currentUrl, currentLang),
           message
         });
       })
@@ -192,19 +199,21 @@ export class AdvancedAuthGuard implements CanActivate {
   /**
    * Génère une URL de redirection sécurisée pour éviter les boucles infinies
    */
-  private getSafeRedirectUrl(currentUrl: string): string {
+  private getSafeRedirectUrl(currentUrl: string, lang?: string): string {
+    const currentLang = lang || this.languageUrlService.getCurrentLanguage();
+    
     // Si on est déjà sur une page d'auth, ne pas ajouter de returnUrl
     if (currentUrl.includes('/auth/signin') ||
         currentUrl.includes('/auth/signup') ||
         currentUrl.includes('/auth/register') ||
         currentUrl === '/auth' ||
         currentUrl === '/') {
-      return '/auth/signin';
+      return `/${currentLang}/auth/signin`;
     }
 
     // Nettoyer l'URL pour éviter les paramètres returnUrl imbriqués
     const cleanUrl = this.cleanReturnUrl(currentUrl);
-    return `/auth/signin?returnUrl=${encodeURIComponent(cleanUrl)}`;
+    return `/${currentLang}/auth/signin?returnUrl=${encodeURIComponent(cleanUrl)}`;
   }
 
   /**
@@ -218,11 +227,13 @@ export class AdvancedAuthGuard implements CanActivate {
 
       // Retourner seulement le pathname et les paramètres nettoyés
       const cleanPath = urlObj.pathname + (urlObj.search ? urlObj.search : '');
-      return cleanPath === '/' ? '/dashboard' : cleanPath;
+      const currentLang = this.languageUrlService.getCurrentLanguage();
+      return cleanPath === '/' ? `/${currentLang}/app/welcome` : cleanPath;
     } catch (error) {
       // En cas d'erreur de parsing, retourner une URL par défaut
       console.warn('Erreur lors du nettoyage de l\'URL:', error);
-      return '/dashboard';
+      const currentLang = this.languageUrlService.getCurrentLanguage();
+      return `/${currentLang}/app/welcome`;
     }
   }
 }

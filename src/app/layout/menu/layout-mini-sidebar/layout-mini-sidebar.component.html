@@ -17,35 +17,34 @@
                 <youpez-ibm-icon id="search-menu-btn" iconName="search" iconSize="24"></youpez-ibm-icon>
               </div>
             </div>
-            <div *ngIf="canAccessProperties" [routerLink]="'/app/properties'" [routerLinkActive]="['app-mini-sidebar__list__item__active']"
-              class="app-mini-sidebar__list__item app-mini-sidebar__list__item__highlight">
+            <div *ngIf="canAccessProperties" (click)="navigateToProperties()"
+              class="app-mini-sidebar__list__item app-mini-sidebar__list__item__highlight"
+              [ngClass]="{'app-mini-sidebar__list__item__active': isRouteActive('/app/properties')}">
               <div class="app-mini-sidebar__list__item__pill" placement="right" container="body"
                 ngbTooltip="Bien immobilier">
                 <youpez-ibm-icon id="home-menu-btn" iconName="home" iconSize="24"></youpez-ibm-icon>
               </div>
             </div>
-            <div [routerLink]="'/app/facturation/plan'" [routerLinkActive]="['app-mini-sidebar__list__item__active']"
-              class="app-mini-sidebar__list__item app-mini-sidebar__list__item__highlight">
+            <div (click)="navigateToBilling()"
+              class="app-mini-sidebar__list__item app-mini-sidebar__list__item__highlight"
+              [ngClass]="{'app-mini-sidebar__list__item__active': isRouteActive('/app/facturation')}">
               <div class="app-mini-sidebar__list__item__pill" placement="right" container="body" ngbTooltip="Facturation">
                 <youpez-ibm-icon id="billing-menu-btn" iconName="dashboardReference" iconSize="24"></youpez-ibm-icon>
               </div>
             </div>
-            <div *ngIf="!isAgent" [routerLink]="'/app/contract-templates'" [routerLinkActive]="['app-mini-sidebar__list__item__active']"
-              class="app-mini-sidebar__list__item app-mini-sidebar__list__item__highlight">
+            <div *ngIf="!isAgent" (click)="navigateToContractTemplates()"
+              class="app-mini-sidebar__list__item app-mini-sidebar__list__item__highlight"
+              [ngClass]="{'app-mini-sidebar__list__item__active': isRouteActive('/app/contract-templates')}">
               <div class="app-mini-sidebar__list__item__pill" placement="right" container="body" ngbTooltip="Modele de contrat">
                 <youpez-ibm-icon id="contract-model-menu-btn" iconName="document" iconSize="24"></youpez-ibm-icon>
               </div>
             </div>
             <!-- Bouton Admin avec loader intégré -->
-            <div *ngIf="isAdmin" class="app-mini-sidebar__list__item app-mini-sidebar__list__item__highlight">
+            <div *ngIf="isAdmin" (click)="navigateToAdmin()" 
+              class="app-mini-sidebar__list__item app-mini-sidebar__list__item__highlight"
+              [ngClass]="{'app-mini-sidebar__list__item__active': isRouteActive('/admin')}">
               <div class="app-mini-sidebar__list__item__pill" placement="right" container="body" ngbTooltip="Administration">
-                <app-navigation-button
-                  route="/admin/dashboard"
-                  icon="settings"
-                  tooltip="Administration"
-                  buttonClass="mini-sidebar-admin-btn"
-                  iconSize="24">
-                </app-navigation-button>
+                <youpez-ibm-icon iconName="settings" iconSize="24"></youpez-ibm-icon>
               </div>
             </div>
           </ng-container>
@@ -61,7 +60,7 @@
       </div>
       <div ngbDropdownMenu>
         <div class="app-list app-list--hover app-list--no-border app-list--select">
-          <div class="app-list__item" ngbDropdownItem routerLink="/support/welcome">
+          <div class="app-list__item" ngbDropdownItem (click)="navigateToSupport()">
             <div class="px-2">
               <youpez-ibm-icon iconName="email" iconSize="20"></youpez-ibm-icon>
             </div>
@@ -70,7 +69,7 @@
             </div>
           </div>
          
-          <div class="app-list__item" ngbDropdownItem routerLink="/app/application/welcome">
+          <div class="app-list__item" ngbDropdownItem (click)="navigateToAbout()">
             <div class="px-2">
               <youpez-ibm-icon iconName="buildingInsights1" iconSize="20"></youpez-ibm-icon>
             </div>
@@ -78,7 +77,7 @@
               A propos
             </div>
           </div>
-          <div class="app-list__item" ngbDropdownItem routerLink="/app/pricing/modern">
+          <div class="app-list__item" ngbDropdownItem (click)="navigateToPricing()">
             <div class="px-2">
               <youpez-ibm-icon iconName="tag" iconSize="20"></youpez-ibm-icon>
             </div>
@@ -231,7 +230,7 @@
                 </div>
               </ng-container>
               <ng-template #noConnected>
-                <div class="app-list__item app-list__item--no-p mt-2" ngbDropdownItem [routerLink]="'/auth/signin'">
+                <div class="app-list__item app-list__item--no-p mt-2" ngbDropdownItem (click)="navigateToLogin()">
                   <div class="px-2">
                     <img class="w-10 h-10 rounded-full" src="assets/img/avatar/avatarinit.png" />
                   </div>
@@ -243,18 +242,18 @@
                 </div>
               </ng-template>
             <div class="app-list__divider"></div>
-            <div class="app-list__item" ngbDropdownItem routerLink="/app/profile" *ngIf="userProfile$ | async">
+            <div class="app-list__item" ngbDropdownItem (click)="navigateToProfile()" *ngIf="userProfile$ | async">
               <div class="app-list__item__content">
                 Profil
               </div>
             </div>
           
-          <!-- <div class="app-list__item" ngbDropdownItem routerLink="/app/facturation/choix-plan">
+          <!-- <div class="app-list__item" ngbDropdownItem (click)="navigateToBillingPlan()">
             <div class="app-list__item__content">
               Plan 
             </div>
           </div> -->
-          <div class="app-list__item" ngbDropdownItem routerLink="/">
+          <div class="app-list__item" ngbDropdownItem (click)="navigateToHome()">
             <div class="app-list__item__content">
               Acceuil
             </div>

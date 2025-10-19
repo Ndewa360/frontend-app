@@ -2,6 +2,7 @@ import {Component, OnInit, ViewEncapsulation} from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router';
 import { Actions, ofActionCompleted, ofActionErrored, ofActionSuccessful, Store } from '@ngxs/store';
 import { UserProfileAction } from 'src/app/shared/store';
+import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
 
 @Component({
   selector: 'app-auth-confirmation',
@@ -17,7 +18,8 @@ export class AuthConfirmationComponent implements OnInit {
     private route: ActivatedRoute,
     private _ngxsAction:Actions,
     private _store:Store,
-    private router:Router
+    private router:Router,
+    private languageUrlService: LanguageUrlService
   ) {}
 
   ngOnInit(): void {
@@ -29,7 +31,8 @@ export class AuthConfirmationComponent implements OnInit {
     });
 
     this._ngxsAction.pipe(ofActionSuccessful(UserProfileAction.ResentLinkForUserProfilePassWord)).subscribe((value)=>{
-      this.router.navigate(['/auth/askto-valid-email']);
+      const currentLang = this.languageUrlService.getCurrentLanguage();
+      this.router.navigate([`/${currentLang}/auth/askto-valid-email`]);
     });
   }
 

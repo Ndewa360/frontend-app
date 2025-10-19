@@ -8,6 +8,7 @@ import { of, throwError } from "rxjs";
 import { catchError, tap } from "rxjs/operators";
 import { NotificationService } from "carbon-components-angular";
 import { ToastrService } from "ngx-toastr";
+import { TranslateService } from "@ngx-translate/core";
 
 export class PropertyStateModel {
     properties:PropertyModel[]
@@ -28,7 +29,8 @@ export class PropertyStateModel {
 export class PropertyState{
     constructor(
         private _propertysService:PropertyService,
-        private _toastrService:ToastrService
+        private _toastrService:ToastrService,
+        private _translateService: TranslateService
     ){}
 
     @Selector()
@@ -87,7 +89,7 @@ export class PropertyState{
                         properties:data
                     })
                     
-                    this._toastrService.success(`Propriété mise à jour avec success!`, 'Ndewa360°');
+                    this._toastrService.success(this._translateService.instant('NOTIFICATIONS.PROPERTY_UPDATED_SUCCESS'), 'Ndewa360°');
                 }
             ),
             catchError((error) => {
@@ -225,7 +227,7 @@ export class PropertyState{
                         loadingProperty:false,
                         properties:[...state.properties, result.data]
                     });                    
-                    this._toastrService.success(`Propriété ajouté avec success!`, 'Ndewa360°');
+                    this._toastrService.success(this._translateService.instant('NOTIFICATIONS.PROPERTY_CREATED_SUCCESS'), 'Ndewa360°');
 
                 }
             ),

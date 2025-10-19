@@ -3,6 +3,7 @@ import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { tap, catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 import { SubscriptionLimitAction } from './subscription-limit.action';
 import { SubscriptionLimitStateModel, SubscriptionStatus, PropertyCreationCheck, MonthlyCalculation } from './subscription-limit.model';
 import { SubscriptionLimitService } from '../../services/subscription-limit.service';
@@ -24,7 +25,8 @@ export class SubscriptionLimitState {
 
   constructor(
     private subscriptionLimitService: SubscriptionLimitService,
-    private toastrService: ToastrService
+    private toastrService: ToastrService,
+    private translateService: TranslateService
   ) {}
 
   @Selector()
@@ -122,7 +124,7 @@ export class SubscriptionLimitState {
     return this.subscriptionLimitService.upgradeToPremium().pipe(
       tap((response) => {
         ctx.patchState({ loading: false });
-        this.toastrService.success('Félicitations ! Vous êtes maintenant sur le forfait Premium.', 'Upgrade réussi');
+        this.toastrService.success(this.translateService.instant('NOTIFICATIONS.SUBSCRIPTION_UPGRADE_SUCCESS'), 'Upgrade réussi');
         
         // Recharger le statut après upgrade
         ctx.dispatch(new SubscriptionLimitAction.GetSubscriptionStatus());
@@ -132,7 +134,7 @@ export class SubscriptionLimitState {
           loading: false,
           error: error.message || 'Erreur lors de l\'upgrade'
         });
-        this.toastrService.error('Une erreur est survenue lors de l\'upgrade.', 'Erreur');
+        this.toastrService.error(this.translateService.instant('NOTIFICATIONS.SUBSCRIPTION_UPGRADE_ERROR'), 'Erreur');
         return throwError(error);
       })
     );
@@ -145,7 +147,7 @@ export class SubscriptionLimitState {
     return this.subscriptionLimitService.reactivateAccount().pipe(
       tap((response) => {
         ctx.patchState({ loading: false });
-        this.toastrService.success('Votre compte a été réactivé avec succès.', 'Compte réactivé');
+        this.toastrService.success(this.translateService.instant('NOTIFICATIONS.ACCOUNT_REACTIVATED_SUCCESS'), 'Compte réactivé');
         
         // Recharger le statut après réactivation
         ctx.dispatch(new SubscriptionLimitAction.GetSubscriptionStatus());
@@ -155,7 +157,7 @@ export class SubscriptionLimitState {
           loading: false,
           error: error.message || 'Erreur lors de la réactivation'
         });
-        this.toastrService.error('Une erreur est survenue lors de la réactivation.', 'Erreur');
+        this.toastrService.error(this.translateService.instant('NOTIFICATIONS.ACCOUNT_REACTIVATION_ERROR'), 'Erreur');
         return throwError(error);
       })
     );
@@ -172,14 +174,14 @@ export class SubscriptionLimitState {
           lastCalculationMonth: response.data.month,
           loading: false
         });
-        this.toastrService.info(`Montant mensuel estimé: ${response.data.amount} FCFA`, 'Calcul terminé');
+        this.toastrService.info(this.translateService.instant('NOTIFICATIONS.MONTHLY_AMOUNT_CALCULATED', { amount: response.data.amount }), 'Calcul terminé');
       }),
       catchError((error) => {
         ctx.patchState({
           loading: false,
           error: error.message || 'Erreur lors du calcul'
         });
-        this.toastrService.error('Erreur lors du calcul du montant mensuel.', 'Erreur');
+        this.toastrService.error(this.translateService.instant('NOTIFICATIONS.MONTHLY_CALCULATION_ERROR'), 'Erreur');
         return throwError(error);
       })
     );

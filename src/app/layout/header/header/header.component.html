@@ -9,11 +9,15 @@
     <youpez-ibm-icon iconName="search" iconSize="24"></youpez-ibm-icon>
   </button>
 
-  <button class="app-layout__header__btn app-layout__header__btn--icon" [routerLink]="'/app/properties'" [routerLinkActive]="['app-mini-sidebar__list__item__active']">
+  <button class="app-layout__header__btn app-layout__header__btn--icon" 
+          (click)="navigateToProperties()"
+          [ngClass]="{'app-mini-sidebar__list__item__active': isRouteActive('/app/properties')}">
     <youpez-ibm-icon iconName="home" iconSize="24"></youpez-ibm-icon>
   </button>
 
-  <button class="app-layout__header__btn app-layout__header__btn--icon" [routerLink]="'/app/facturation/plan'" [routerLinkActive]="['app-mini-sidebar__list__item__active']">
+  <button class="app-layout__header__btn app-layout__header__btn--icon" 
+          (click)="navigateToBilling()"
+          [ngClass]="{'app-mini-sidebar__list__item__active': isRouteActive('/app/facturation')}">
     <youpez-ibm-icon iconName="dashboardReference" iconSize="24"></youpez-ibm-icon>
   </button>
 
@@ -29,14 +33,11 @@
   </button>
 
   <!-- Bouton Admin avec loader intégré -->
-  <app-navigation-button
-    *ngIf="isAdmin"
-    route="/admin/dashboard"
-    icon="settings"
-    tooltip="Administration"
-    buttonClass="app-layout__header__btn app-layout__header__btn--icon admin-nav-button"
-    iconSize="24">
-  </app-navigation-button>
+  <button *ngIf="isAdmin" 
+          class="app-layout__header__btn app-layout__header__btn--icon admin-nav-button"
+          (click)="navigateToAdmin()">
+    <youpez-ibm-icon iconName="settings" iconSize="24"></youpez-ibm-icon>
+  </button>
 
 
   <!-- Dropdown utilisateur - visible seulement si connecté -->
@@ -61,22 +62,22 @@
           </div>
         </div>
         <div class="app-list__divider"></div>
-        <div class="app-list__item" ngbDropdownItem routerLink="/app/profile">
+        <div class="app-list__item" ngbDropdownItem (click)="navigateToProfile()">
           <div class="app-list__item__content">
             Profil
           </div>
         </div>
-        <div class="app-list__item" ngbDropdownItem routerLink="/search/index">
+        <div class="app-list__item" ngbDropdownItem (click)="navigateToSearch()">
           <div class="app-list__item__content">
             Espace de recherche
           </div>
         </div>
-        <!-- <div class="app-list__item" ngbDropdownItem routerLink="/app/facturation/choix-plan">
+        <!-- <div class="app-list__item" ngbDropdownItem (click)="navigateToBillingPlan()">
           <div class="app-list__item__content">
             Plan
           </div>
         </div> -->
-        <div class="app-list__item" ngbDropdownItem routerLink="/app/user/settings">
+        <div class="app-list__item" ngbDropdownItem (click)="navigateToSettings()">
           <div class="app-list__item__content">
             Parametre
           </div>
@@ -96,7 +97,7 @@
   <!-- Bouton de connexion pour les utilisateurs non connectés -->
   <button *ngIf="!(isAuthenticated$ | async)"
           class="app-layout__header__btn app-layout__header__btn--primary"
-          routerLink="/auth/signin">
+          (click)="navigateToLogin()">
     <youpez-ibm-icon iconName="user" iconSize="16"></youpez-ibm-icon>
     <span class="ml-2">Se connecter</span>
   </button>

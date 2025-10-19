@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core"
 import { State, Selector, Action, StateContext } from "@ngxs/store"
 import { ToastrService } from "ngx-toastr"
 import { ProspectionService } from "./prospection.service"
+import { TranslateService } from "@ngx-translate/core"
 import { ProspectionAction } from "./prospection.action"
 import { tap, catchError } from "rxjs"
 
@@ -22,6 +23,7 @@ export class ProspectionState{
     constructor(
         private _prospectionsService:ProspectionService,
         private _toastrService:ToastrService,
+        private _translateService: TranslateService
     ){}
 
 
@@ -45,7 +47,7 @@ export class ProspectionState{
                     ctx.patchState({
                         loadingProspection:false
                     })
-                    this._toastrService.success(`Votre demande a été transférée avec succès! Vous serez contactez par mail au plus tôt`, 'Ndewa360°');
+                    this._toastrService.success(this._translateService.instant('NOTIFICATIONS.PROSPECTION_SUCCESS'), 'Ndewa360°');
                 }
             ),
             catchError((error)=>{

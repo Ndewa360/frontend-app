@@ -4,6 +4,8 @@ import {ActivatedRoute, Router} from "@angular/router"
 import { Actions, ofActionCompleted,ofActionSuccessful, Store } from '@ngxs/store';
 import { ToastrService } from 'ngx-toastr';
 import { UserProfileAction } from 'src/app/shared/store';
+import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-auth-reset-password',
@@ -24,6 +26,8 @@ export class AuthResetPasswordComponent implements OnInit {
     private _store:Store,
     private _ngxsAction:Actions,
     private _toastrService:ToastrService,
+    private languageUrlService: LanguageUrlService,
+    private translate: TranslateService
    ) {
   }
 
@@ -31,7 +35,8 @@ export class AuthResetPasswordComponent implements OnInit {
     if(!this.route.snapshot.queryParamMap.has("resetTokenPwd"))
       {
         this._toastrService.error(`Token non fournis! `, 'Ndewa360°');
-        this.router.navigate(["/auth/signin"])
+        const currentLang = this.languageUrlService.getCurrentLanguage();
+        this.router.navigate([`/${currentLang}/auth/signin`])
         return;
       }
     this.token = this.route.snapshot.queryParamMap.get("resetTokenPwd");
@@ -49,7 +54,8 @@ export class AuthResetPasswordComponent implements OnInit {
 
     this._ngxsAction.pipe(ofActionSuccessful(UserProfileAction.ResetPasswordForUserProfile)).subscribe(
       (value) => {
-        this.router.navigate(["/auth/signin"])
+        const currentLang = this.languageUrlService.getCurrentLanguage();
+        this.router.navigate([`/${currentLang}/auth/signin`])
       }
     )
   }
@@ -69,7 +75,7 @@ export class AuthResetPasswordComponent implements OnInit {
   }
   getValidText()
   {
-    if(this.formGroup.value.password != this.formGroup.value.passwordConfirm) return "Les mots de passe doivent être identique";
-    return "Ce champs est obligatoire";
+    if(this.formGroup.value.password != this.formGroup.value.passwordConfirm) return this.translate.instant('VALIDATION.PASSWORDS_NOT_MATCH');
+    return this.translate.instant('VALIDATION.REQUIRED');
   }
 }

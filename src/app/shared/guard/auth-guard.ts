@@ -6,6 +6,7 @@ import { AuthTokenState } from '../store/auth-token';
 import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
+import { LanguageUrlService } from '../services/language-url.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,9 @@ export class AuthGuard implements CanActivate {
   constructor(
     // private notificationService: NotificationService,
     private _toastrService:ToastrService,
-    private _store:Store, private router: Router) {}
+    private _store:Store, 
+    private router: Router,
+    private languageUrlService: LanguageUrlService) {}
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot){
     return this._store.select(AuthTokenState.selectStateAuthToken).pipe(
@@ -23,13 +26,15 @@ export class AuthGuard implements CanActivate {
         console.warn("Auth Token ",authToken)
         if(authToken) return true;
 
+        const currentLang = this.languageUrlService.getCurrentLanguage();
+        
         // Éviter la redirection infinie si on est déjà sur la page d'auth
         if (state.url.includes('/auth/signin') || state.url.includes('/auth/signup')) {
-          return this.router.parseUrl('/auth/signin');
+          return this.router.parseUrl(`/${currentLang}/auth/signin`);
         }
 
         this._toastrService.warning("Veuillez vous authentifier", "Ndewa360°");
-        return this.router.parseUrl(`/auth/signin?returnUrl=${encodeURIComponent(state.url)}`)
+        return this.router.parseUrl(`/${currentLang}/auth/signin?returnUrl=${encodeURIComponent(state.url)}`)
       })
     )
 

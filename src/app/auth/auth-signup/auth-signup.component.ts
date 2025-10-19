@@ -4,6 +4,7 @@ import {Router} from "@angular/router"
 import { Actions, ofActionCompleted, ofActionErrored, ofActionSuccessful, Store } from '@ngxs/store'
 import {UserProfileAction} from "src/app/shared/store"
 import { TranslateService } from '@ngx-translate/core'
+import { LanguageUrlService } from 'src/app/shared/services/language-url.service'
 
 /**
  * Signup component
@@ -42,7 +43,8 @@ export class AuthSignupComponent implements OnInit {
               private router: Router,
             private _store:Store,
             private _ngxsAction:Actions,
-            private translate: TranslateService
+            private translate: TranslateService,
+            private languageUrlService: LanguageUrlService
 
           ) {
   }
@@ -70,7 +72,8 @@ export class AuthSignupComponent implements OnInit {
     this._ngxsAction.pipe(ofActionSuccessful(UserProfileAction.SignupSimpleUserProfile)).subscribe((value)=>{
       // Navigate to the parent
       this.waittingResponse=false;
-      this.router.navigate(['/auth/askto-valid-email']);
+      const currentLang = this.languageUrlService.getCurrentLanguage();
+      this.router.navigate([`/${currentLang}/auth/askto-valid-email`]);
       }
     );
     this._ngxsAction.pipe(ofActionCompleted(UserProfileAction.SignupSimpleUserProfile)).subscribe(

@@ -13,6 +13,8 @@ import { Subscription } from 'rxjs'
 import { ToastrService } from 'ngx-toastr'
 import { HttpClient } from '@angular/common/http'
 import { environment } from 'src/environments/environment'
+import { LanguageUrlService } from 'src/app/shared/services/language-url.service'
+import { TranslateService } from '@ngx-translate/core'
 
 @Component({
   selector: 'app-auth-login',
@@ -34,7 +36,9 @@ export class AuthLoginComponent implements OnInit, OnDestroy {
     private _store: Store,
     private _ngxsAction: Actions,
     private _toastrService: ToastrService,
-    private http: HttpClient
+    private http: HttpClient,
+    private languageUrlService: LanguageUrlService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -72,7 +76,7 @@ export class AuthLoginComponent implements OnInit, OnDestroy {
         );
       } else {
         this._toastrService.success(
-          '🎉 Bienvenue sur Ndewa360° ! Votre session est active.',
+          this.translate.instant('NOTIFICATIONS.WELCOME_LOGIN'),
           'Ndewa360°',
           { timeOut: 4000, extendedTimeOut: 1000 }
         );
@@ -80,7 +84,14 @@ export class AuthLoginComponent implements OnInit, OnDestroy {
 
       // Redirection après connexion réussie
       if (returnUrl) {
-        window.location.href = decodeURIComponent(returnUrl);
+        // Sécuriser la redirection pour éviter les attaques de redirection
+        const decodedUrl = decodeURIComponent(returnUrl);
+        if (this.isValidReturnUrl(decodedUrl)) {
+          window.location.href = decodedUrl;
+        } else {
+          console.warn('URL de retour non sécurisée détectée:', decodedUrl);
+          this.redirectBasedOnUserType();
+        }
       } else {
         // Redirection intelligente selon le type d'utilisateur
         this.redirectBasedOnUserType();
@@ -96,7 +107,8 @@ export class AuthLoginComponent implements OnInit, OnDestroy {
       
       // Vérifier si c'est une erreur 406 (compte inactif)
       if (value?.result?.error?.['status'] == 406) {
-        this.router.navigate(['/auth/confirmation', this.formGroup.value.email]);
+        const currentLang = this.languageUrlService.getCurrentLanguage();
+        this.router.navigate([`/${currentLang}/auth/confirmation`, this.formGroup.value.email]);
       }
     });
     this.subscriptions.push(completedSub);
@@ -134,7 +146,7 @@ export class AuthLoginComponent implements OnInit, OnDestroy {
     } else {
       // Marquer tous les champs comme touchés pour afficher les erreurs
       this.formGroup.markAllAsTouched();
-      this._toastrService.warning("Veuillez remplir correctement tous les champs", "Ndewa360°");
+      this._toastrService.warning(this.translate.instant('VALIDATION.REQUIRED'), "Ndewa360°");
     }
   }
 
@@ -144,7 +156,8 @@ export class AuthLoginComponent implements OnInit, OnDestroy {
   }
 
   goToSearchPage() {
-    this.router.navigateByUrl("/search/index?minPrice=0&maxPrix=100000&ville=Bangangté");
+    const currentLang = this.languageUrlService.getCurrentLanguage();
+    this.router.navigateByUrl(`/${currentLang}/search/index?minPrice=0&maxPrix=100000&ville=Bangangté`);
   }
 
   togglePasswordVisibility() {
@@ -163,7 +176,8 @@ export class AuthLoginComponent implements OnInit, OnDestroy {
           if (retryUser) {
             this.performRedirection(retryUser);
           } else {
-            window.location.href = '/app/welcome';
+            const currentLang = this.languageUrlService.getCurrentLanguage();
+            window.location.href = `/${currentLang}/app/welcome`;
           }
         }, 1000);
         return;
@@ -172,7 +186,8 @@ export class AuthLoginComponent implements OnInit, OnDestroy {
       this.performRedirection(user);
     } catch (error) {
       console.error('Erreur lors de la redirection:', error);
-      window.location.href = '/app/welcome';
+      const currentLang = this.languageUrlService.getCurrentLanguage();
+      window.location.href = `/${currentLang}/app/welcome`;
     }
   }
 
@@ -181,7 +196,8 @@ export class AuthLoginComponent implements OnInit, OnDestroy {
     if (this.isAdmin(user)) {
       // Attendre plus longtemps pour que le profil soit bien chargé
       setTimeout(() => {
-        window.location.href = '/app/properties'; //'/admin/dashboard';
+        const currentLang = this.languageUrlService.getCurrentLanguage();
+        window.location.href = `/${currentLang}/app/properties/home`;
       }, 1500);
       return;
     }
@@ -194,7 +210,8 @@ export class AuthLoginComponent implements OnInit, OnDestroy {
 
     // Utilisateur normal
     setTimeout(() => {
-      window.location.href = '/app/properties';
+      const currentLang = this.languageUrlService.getCurrentLanguage();
+      window.location.href = `/${currentLang}/app/properties/home`;
     }, 500);
   }
 
@@ -203,26 +220,33 @@ export class AuthLoginComponent implements OnInit, OnDestroy {
       const response: any = await this.http.get(`${environment.apiUrl}/agents/${user._id}`).toPromise();
       
       if (!response) {
-        setTimeout(() => window.location.href = '/app/agent/complete-profile', 500);
+        setTimeout(() => {
+          const currentLang = this.languageUrlService.getCurrentLanguage();
+          window.location.href = `/${currentLang}/app/agent/complete-profile`;
+        }, 500);
         return;
       }
       
       const agentProfile = response.data || response;
 
+      const currentLang = this.languageUrlService.getCurrentLanguage();
       if (!agentProfile || !agentProfile.isProfileCompleted) {
-        setTimeout(() => window.location.href = '/app/agent/complete-profile', 500);
+        setTimeout(() => window.location.href = `/${currentLang}/app/agent/complete-profile`, 500);
       } else if (agentProfile.status === 'PENDING' || agentProfile.status === 'ADMIN_REVIEW') {
-        setTimeout(() => window.location.href = '/app/agent/pending-approval', 500);
+        setTimeout(() => window.location.href = `/${currentLang}/app/agent/pending-approval`, 500);
       } else if (agentProfile.status === 'REJECTED') {
-        setTimeout(() => window.location.href = '/app/agent/pending-approval', 500);
+        setTimeout(() => window.location.href = `/${currentLang}/app/agent/pending-approval`, 500);
       } else if (agentProfile.status === 'APPROVED') {
-        setTimeout(() => window.location.href = '/app/properties', 500);
+        setTimeout(() => window.location.href = `/${currentLang}/app/properties/home`, 500);
       } else {
-        setTimeout(() => window.location.href = '/app/agent/complete-profile', 500);
+        setTimeout(() => window.location.href = `/${currentLang}/app/agent/complete-profile`, 500);
       }
     } catch (error) {
       console.error('Erreur lors de la vérification du profil agent:', error);
-      setTimeout(() => window.location.href = '/app/agent/complete-profile', 500);
+      setTimeout(() => {
+        const currentLang = this.languageUrlService.getCurrentLanguage();
+        window.location.href = `/${currentLang}/app/agent/complete-profile`;
+      }, 500);
     }
   }
 
@@ -235,5 +259,27 @@ export class AuthLoginComponent implements OnInit, OnDestroy {
       const roleName = typeof role === 'string' ? role : role.name;
       return roleName === 'super-admin' || roleName === 'admin';
     });
+  }
+
+  /**
+   * Vérifie si l'URL de retour est sécurisée (même domaine)
+   */
+  private isValidReturnUrl(url: string): boolean {
+    try {
+      // Vérifier si c'est une URL relative
+      if (url.startsWith('/')) {
+        return true;
+      }
+      
+      // Vérifier si c'est une URL absolue du même domaine
+      const urlObj = new URL(url);
+      const currentOrigin = window.location.origin;
+      
+      return urlObj.origin === currentOrigin;
+    } catch (error) {
+      // En cas d'erreur de parsing, considérer comme non sécurisé
+      console.warn('Erreur lors de la validation de l\'URL de retour:', error);
+      return false;
+    }
   }
 }

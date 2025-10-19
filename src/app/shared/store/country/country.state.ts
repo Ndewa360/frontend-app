@@ -9,6 +9,7 @@ import { catchError, tap } from "rxjs/operators";
 import { NotificationService } from "carbon-components-angular";
 import { ToastrService } from "ngx-toastr";
 import { CityAction } from "../city";
+import { TranslateService } from "@ngx-translate/core";
 
 export class CountryStateModel {
     countries:CountryModel[]
@@ -29,7 +30,8 @@ export class CountryStateModel {
 export class CountryState{
     constructor(
         private _countrysService:CountryService,
-        private _toastrService:ToastrService
+        private _toastrService:ToastrService,
+        private _translateService: TranslateService
     ){}
 
     @Selector()
@@ -86,7 +88,7 @@ export class CountryState{
                         loadingCountry:false,
                         countries:data
                     })
-                    this._toastrService.success(`Pays mise à jour avec success!`, 'Ndewa360°');
+                    this._toastrService.success(this._translateService.instant('NOTIFICATIONS.COUNTRY_UPDATED_SUCCESS'), 'Ndewa360°');
                 }
             ),
             catchError((error) => {
@@ -187,7 +189,7 @@ export class CountryState{
                         loadingCountry:false,
                         countries:[...state.countries, result.data]
                     });       
-                    this._toastrService.success(`Pays crée avec success!`, 'Ndewa360°');
+                    this._toastrService.success(this._translateService.instant('NOTIFICATIONS.COUNTRY_CREATED_SUCCESS'), 'Ndewa360°');
                 }
             ),
             catchError((error)=>{

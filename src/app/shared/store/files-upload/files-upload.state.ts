@@ -7,6 +7,7 @@ import { of, throwError } from "rxjs";
 import { catchError, scan, tap } from "rxjs/operators";
 import { calculateState, UtilsString } from "../../utils";
 import { ToastrService } from "ngx-toastr";
+import { TranslateService } from "@ngx-translate/core";
 import { ApiResultFormat, ApiUploadFileStateFormat } from "../global";
 import { RoomAction, RoomModel } from "../rooms";
 import { PropertyAction } from "../properties";
@@ -34,6 +35,7 @@ export class UploadFilesState{
     constructor(
         private _updateFilesService:UploadFilesService,
         private _toastrService:ToastrService,
+        private _translateService: TranslateService
     ){}
 
     @Selector()
@@ -72,7 +74,7 @@ export class UploadFilesState{
         const state = ctx.getState();
         
         let fileFound = state.filesState.findIndex((f)=>f.name==uploadFiles.file.name);
-        if(fileFound>-1) return this._toastrService.warning(`Impossible d'importer le fichier ${uploadFiles.file.name} car déjà existant!`, 'Ndewa360°');
+        if(fileFound>-1) return this._toastrService.warning(this._translateService.instant('NOTIFICATIONS.FILE_ALREADY_EXISTS', { fileName: uploadFiles.file.name }), 'Ndewa360°');
 
         let newFile = {name:uploadFiles.file.name,state:null};
         newFile.state = { state: 'PENDING', progress: 0 }
@@ -92,7 +94,7 @@ export class UploadFilesState{
                     {
                         if(uploadFiles.contentRoomType==ContentUploadRoomType.FOR_ROOM) ctx.dispatch(new RoomAction.SetRoom(result.data.data))
                         else ctx.dispatch(new PropertyAction.SetProperty(result.data.data))
-                        this._toastrService.success(`Le fichier '${uploadFiles.file.name}' envoyé avec succés!`, 'Ndewa360°');                                             
+                        this._toastrService.success(this._translateService.instant('NOTIFICATIONS.FILE_UPLOAD_SUCCESS', { fileName: uploadFiles.file.name }), 'Ndewa360°');                                             
                     }
                     const data = [...ctx.getState().filesState]
                     let index = data.findIndex((u)=>u.name==uploadFiles.file.name);
@@ -134,7 +136,7 @@ export class UploadFilesState{
 
                     if(removedUploadFile.contentRoomType==ContentUploadRoomType.FOR_ROOM) ctx.dispatch(new RoomAction.RemoveImageRoom(removedUploadFile.fileUrl,removedUploadFile.contentID))
                     else ctx.dispatch(new PropertyAction.RemoveFile(removedUploadFile.fileUrl,removedUploadFile.contentID))
-                    this._toastrService.success(`Fichier '${removedUploadFile.fileUrl}' envoyé avec succés!`, 'Ndewa360°');
+                    this._toastrService.success(this._translateService.instant('NOTIFICATIONS.FILE_REMOVED_SUCCESS', { fileName: removedUploadFile.fileUrl }), 'Ndewa360°');
                     
                     ctx.patchState({
                         loadingUploadFiles: false,

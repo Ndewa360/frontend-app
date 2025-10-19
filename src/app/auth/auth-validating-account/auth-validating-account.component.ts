@@ -5,6 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { UserProfileAction, UserProfileState } from 'src/app/shared/store';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
+import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
 
 @Component({
   selector: 'auth-validating-account',
@@ -23,14 +24,16 @@ export class AuthValidatingAccountComponent implements OnInit {
     private _ngxsAction:Actions,
     private router:Router,
     private route: ActivatedRoute,
-    private http: HttpClient
+    private http: HttpClient,
+    private languageUrlService: LanguageUrlService
   ){}
 
   ngOnInit(): void {
     if(!this.route.snapshot.queryParamMap.has("token"))
     {
       this._toastrService.error(`Token non fournis! `, 'Ndewa360°');
-      this.router.navigate(["/auth/signin"])
+      const currentLang = this.languageUrlService.getCurrentLanguage();
+      this.router.navigate([`/${currentLang}/auth/signin`])
       return;
     }
 
@@ -60,13 +63,15 @@ export class AuthValidatingAccountComponent implements OnInit {
         const user = this._store.selectSnapshot(UserProfileState.selectStateUserProfile);
         
         if (!user) {
-          this.router.navigate(['/auth/signin']);
+          const currentLang = this.languageUrlService.getCurrentLanguage();
+          this.router.navigate([`/${currentLang}/auth/signin`]);
           return;
         }
 
         // Vérifier si c'est un admin
         if (this.isAdmin(user)) {
-          this.router.navigate(['/admin/dashboard']);
+          const currentLang = this.languageUrlService.getCurrentLanguage();
+          this.router.navigate([`/${currentLang}/admin/dashboard`]);
           return;
         }
 
@@ -77,11 +82,13 @@ export class AuthValidatingAccountComponent implements OnInit {
         }
 
         // Utilisateur normal
-        this.router.navigate(['/app/properties']);
+        const currentLang = this.languageUrlService.getCurrentLanguage();
+        this.router.navigate([`/${currentLang}/app/properties`]);
       }, 500);
     } catch (error) {
       console.error('Erreur lors de la redirection:', error);
-      this.router.navigate(['/auth/signin']);
+      const currentLang = this.languageUrlService.getCurrentLanguage();
+      this.router.navigate([`/${currentLang}/auth/signin`]);
     }
   }
 
@@ -90,26 +97,29 @@ export class AuthValidatingAccountComponent implements OnInit {
       const response: any = await this.http.get(`${environment.apiUrl}/agents/${user._id}`).toPromise();
       
       if (!response) {
-        this.router.navigate(['/app/agent/complete-profile']);
+        const currentLang = this.languageUrlService.getCurrentLanguage();
+        this.router.navigate([`/${currentLang}/app/agent/complete-profile`]);
         return;
       }
       
       const agentProfile = response.data || response;
 
+      const currentLang = this.languageUrlService.getCurrentLanguage();
       if (!agentProfile || !agentProfile.isProfileCompleted) {
-        this.router.navigate(['/app/agent/complete-profile']);
+        this.router.navigate([`/${currentLang}/app/agent/complete-profile`]);
       } else if (agentProfile.status === 'PENDING' || agentProfile.status === 'ADMIN_REVIEW') {
-        this.router.navigate(['/app/agent/pending-approval']);
+        this.router.navigate([`/${currentLang}/app/agent/pending-approval`]);
       } else if (agentProfile.status === 'REJECTED') {
-        this.router.navigate(['/app/agent/pending-approval']);
+        this.router.navigate([`/${currentLang}/app/agent/pending-approval`]);
       } else if (agentProfile.status === 'APPROVED') {
-        this.router.navigate(['/app/properties']);
+        this.router.navigate([`/${currentLang}/app/properties`]);
       } else {
-        this.router.navigate(['/app/agent/complete-profile']);
+        this.router.navigate([`/${currentLang}/app/agent/complete-profile`]);
       }
     } catch (error) {
       console.error('Erreur lors de la vérification du profil agent:', error);
-      this.router.navigate(['/app/agent/complete-profile']);
+      const currentLang = this.languageUrlService.getCurrentLanguage();
+      this.router.navigate([`/${currentLang}/app/agent/complete-profile`]);
     }
   }
 

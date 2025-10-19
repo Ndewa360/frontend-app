@@ -3,6 +3,7 @@ import { Injectable } from "@angular/core";
 import { tap, catchError } from "rxjs/operators";
 import { throwError } from "rxjs";
 import { ToastrService } from "ngx-toastr";
+import { TranslateService } from "@ngx-translate/core";
 
 import { ContractTemplateAction } from "./contract-template.actions";
 import { ContractTemplateService } from "../../services/contract-template.service";
@@ -49,7 +50,8 @@ import { ContractTemplateStateModel } from "./contract-template.model";
 export class ContractTemplateState {
     constructor(
         private contractTemplateService: ContractTemplateService,
-        private toastrService: ToastrService
+        private toastrService: ToastrService,
+        private translateService: TranslateService
     ) {}
 
     // ===== SELECTORS =====
@@ -171,7 +173,7 @@ export class ContractTemplateState {
                     error: 'Erreur lors du chargement des modèles',
                     initLoadingState: 'LOADED'
                 });
-                this.toastrService.error('Erreur lors du chargement des modèles', 'Erreur');
+                this.toastrService.error(this.translateService.instant('NOTIFICATIONS.CONTRACT_TEMPLATE_LOAD_ERROR'), 'Erreur');
                 return throwError(error);
             })
         );
@@ -196,7 +198,7 @@ export class ContractTemplateState {
                     loadingTemplate: false,
                     error: 'Erreur lors du chargement du modèle'
                 });
-                this.toastrService.error('Erreur lors du chargement du modèle', 'Erreur');
+                this.toastrService.error(this.translateService.instant('NOTIFICATIONS.CONTRACT_TEMPLATE_FETCH_ERROR'), 'Erreur');
                 return throwError(error);
             })
         );
@@ -272,14 +274,14 @@ export class ContractTemplateState {
                     templates: [...state.templates, newTemplate],
                     currentTemplate: newTemplate
                 });
-                this.toastrService.success('Modèle créé avec succès', 'Succès');
+                this.toastrService.success(this.translateService.instant('NOTIFICATIONS.CONTRACT_TEMPLATE_CREATED_SUCCESS'), 'Succès');
             }),
             catchError(error => {
                 ctx.patchState({
                     loading: false,
                     error: 'Erreur lors de la création du modèle'
                 });
-                this.toastrService.error('Erreur lors de la création du modèle', 'Erreur');
+                this.toastrService.error(this.translateService.instant('NOTIFICATIONS.CONTRACT_TEMPLATE_CREATE_ERROR'), 'Erreur');
                 return throwError(error);
             })
         );
@@ -305,14 +307,14 @@ export class ContractTemplateState {
                     templates: updatedTemplates,
                     currentTemplate: state.currentTemplate?._id === templateId ? updatedTemplate : state.currentTemplate
                 });
-                this.toastrService.success('Modèle mis à jour avec succès', 'Succès');
+                this.toastrService.success(this.translateService.instant('NOTIFICATIONS.CONTRACT_TEMPLATE_UPDATED_SUCCESS'), 'Succès');
             }),
             catchError(error => {
                 ctx.patchState({
                     loading: false,
                     error: 'Erreur lors de la mise à jour du modèle'
                 });
-                this.toastrService.error('Erreur lors de la mise à jour du modèle', 'Erreur');
+                this.toastrService.error(this.translateService.instant('NOTIFICATIONS.CONTRACT_TEMPLATE_UPDATE_ERROR'), 'Erreur');
                 return throwError(error);
             })
         );
@@ -336,14 +338,14 @@ export class ContractTemplateState {
                     templates: filteredTemplates,
                     currentTemplate: state.currentTemplate?._id === templateId ? null : state.currentTemplate
                 });
-                this.toastrService.success('Modèle supprimé avec succès', 'Succès');
+                this.toastrService.success(this.translateService.instant('NOTIFICATIONS.CONTRACT_TEMPLATE_DELETED_SUCCESS'), 'Succès');
             }),
             catchError(error => {
                 ctx.patchState({
                     loading: false,
                     error: 'Erreur lors de la suppression du modèle'
                 });
-                this.toastrService.error('Erreur lors de la suppression du modèle', 'Erreur');
+                this.toastrService.error(this.translateService.instant('NOTIFICATIONS.CONTRACT_TEMPLATE_DELETE_ERROR'), 'Erreur');
                 return throwError(error);
             })
         );
@@ -402,14 +404,14 @@ export class ContractTemplateState {
                     templates: [newTemplate, ...state.templates],
                     currentTemplate: newTemplate
                 });
-                this.toastrService.success('Modèle dupliqué avec succès', 'Succès');
+                this.toastrService.success(this.translateService.instant('NOTIFICATIONS.CONTRACT_TEMPLATE_DUPLICATED_SUCCESS'), 'Succès');
             }),
             catchError(error => {
                 ctx.patchState({
                     loading: false,
                     error: 'Erreur lors de la duplication du modèle'
                 });
-                this.toastrService.error('Erreur lors de la duplication du modèle', 'Erreur');
+                this.toastrService.error(this.translateService.instant('NOTIFICATIONS.CONTRACT_TEMPLATE_DUPLICATE_ERROR'), 'Erreur');
                 return throwError(error);
             })
         );
@@ -435,7 +437,7 @@ export class ContractTemplateState {
                     loading: false,
                     error: 'Erreur lors du chargement du modèle par défaut'
                 });
-                this.toastrService.error('Erreur lors du chargement du modèle par défaut', 'Erreur');
+                this.toastrService.error(this.translateService.instant('NOTIFICATIONS.CONTRACT_TEMPLATE_DEFAULT_ERROR'), 'Erreur');
                 return throwError(error);
             })
         );
@@ -497,14 +499,14 @@ export class ContractTemplateState {
                     templates: updatedTemplates,
                     currentTemplate: updatedTemplate
                 });
-                this.toastrService.success('Contenu du modèle mis à jour avec succès', 'Succès');
+                this.toastrService.success(this.translateService.instant('NOTIFICATIONS.CONTRACT_TEMPLATE_CONTENT_UPDATED_SUCCESS'), 'Succès');
             }),
             catchError(error => {
                 ctx.patchState({
                     loading: false,
                     error: 'Erreur lors de la mise à jour du contenu'
                 });
-                this.toastrService.error('Erreur lors de la mise à jour du contenu', 'Erreur');
+                this.toastrService.error(this.translateService.instant('NOTIFICATIONS.CONTRACT_TEMPLATE_CONTENT_UPDATE_ERROR'), 'Erreur');
                 return throwError(error);
             })
         );

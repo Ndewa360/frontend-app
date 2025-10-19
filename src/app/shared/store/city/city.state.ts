@@ -9,6 +9,7 @@ import { catchError, tap } from "rxjs/operators";
 import { ToastrService } from "ngx-toastr";
 import { DefaultCoordCity } from "../../utils";
 import { SearchAction } from "../search";
+import { TranslateService } from "@ngx-translate/core";
 
 export class CityStateModel {
     cities:CityModel[]
@@ -30,7 +31,8 @@ export class CityState{
     
     constructor(
         private _citiesService:CityService,
-        private _toastrService:ToastrService
+        private _toastrService:ToastrService,
+        private _translateService: TranslateService
         // private notificationService: NotificationService,
 
     ){}
@@ -108,7 +110,7 @@ export class CityState{
                         loadingCity:false,
                         cities:data
                     })
-                    this._toastrService.success(`City modifié avec success`, 'Ndewa360°');
+                    this._toastrService.success(this._translateService.instant('NOTIFICATIONS.CITY_UPDATED_SUCCESS'), 'Ndewa360°');
                 }
             ),
             catchError((error) => {               
@@ -171,7 +173,7 @@ export class CityState{
                         loadingCity:false,
                         cities:[...state.cities, result.data]
                     })
-                    this._toastrService.success(`City ajouté avec success!`, 'Ndewa360°');
+                    this._toastrService.success(this._translateService.instant('NOTIFICATIONS.CITY_CREATED_SUCCESS'), 'Ndewa360°');
                     ctx.dispatch(new CountryAction.AddCity(result.data, result.data.country))
                 }
             ),

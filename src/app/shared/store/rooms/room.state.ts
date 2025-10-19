@@ -9,6 +9,7 @@ import { catchError, tap } from "rxjs/operators";
 import { UtilsString } from "../../utils";
 import { ToastrService } from "ngx-toastr";
 import { PropertyAction } from "../properties";
+import { TranslateService } from "@ngx-translate/core";
 
 export class RoomStateModel {
     rooms:RoomModel[]
@@ -31,6 +32,7 @@ export class RoomState{
     constructor(
         private _roomsService:RoomService,
         private _toastrService:ToastrService,
+        private _translateService: TranslateService
     ){}
 
     @Selector()
@@ -179,7 +181,7 @@ export class RoomState{
                         loadingRoom:false,
                         rooms:data
                     })
-                    this._toastrService.success(`Bien mise à jour avec success!`, 'Ndewa360°');
+                    this._toastrService.success(this._translateService.instant('NOTIFICATIONS.ROOM_UPDATED_SUCCESS'), 'Ndewa360°');
 
                 }
             ),
@@ -271,7 +273,7 @@ export class RoomState{
                     console.log("Prop ",roomState[index].property)
                     ctx.dispatch(new PropertyAction.ChangePropertyRoomLength(roomState[index].property));
                     roomState.splice(index, 1)
-                    this._toastrService.success(`Bien supprimé avec success!`, 'Ndewa360°');
+                    this._toastrService.success(this._translateService.instant('NOTIFICATIONS.ROOM_DELETED_SUCCESS'), 'Ndewa360°');
                     ctx.patchState({
                         loadingRoom:false,
                         rooms:roomState
@@ -355,7 +357,7 @@ export class RoomState{
                         initLoadingState:"LOADED"
                     })
                     let status = isActiveForSouscription?"activé":"désactivé";
-                    this._toastrService.success(`La souscription à été ${status} avec success!`, 'Ndewa360°');
+                    this._toastrService.success(this._translateService.instant('NOTIFICATIONS.SUBSCRIPTION_STATUS_UPDATED', { status }), 'Ndewa360°');
                 }
             ),
             catchError((error)=>{
@@ -378,7 +380,7 @@ export class RoomState{
         return this._roomsService.createRoom(bodyToSend).pipe(
             tap(
                 result => {
-                    this._toastrService.success(`${UtilsString.getStringOfRoomType(room.type)} ajouté avec success!`, 'Ndewa360°');
+                    this._toastrService.success(this._translateService.instant('NOTIFICATIONS.ROOM_CREATED_SUCCESS', { type: UtilsString.getStringOfRoomType(room.type) }), 'Ndewa360°');
                     ctx.patchState({
                         loadingRoom:false,
                         rooms:[...state.rooms, result.data]

@@ -1,16 +1,19 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core'
-import { Router } from '@angular/router'
+import {Component, EventEmitter, OnInit, OnDestroy, Output} from '@angular/core'
+import { Router, NavigationEnd } from '@angular/router'
 import { Select, Store } from '@ngxs/store'
 import { Observable } from 'rxjs'
 import { UserProfileState, UserProfileModel, UserProfileAction } from 'src/app/shared/store'
 import { AgentStatusService } from 'src/app/shared/services/agent-status.service'
+import { LanguageUrlService } from 'src/app/shared/services/language-url.service'
+import { filter, takeUntil } from 'rxjs/operators'
+import { Subject } from 'rxjs'
 
 @Component({
   selector: 'app-layout-mini-sidebar',
   templateUrl: './layout-mini-sidebar.component.html',
   styleUrls: ['./layout-mini-sidebar.component.scss']
 })
-export class LayoutMiniSidebarComponent implements OnInit {
+export class LayoutMiniSidebarComponent implements OnInit, OnDestroy {
 
   @Output() itemClick: EventEmitter<any> = new EventEmitter()
   @Select(UserProfileState.selectStateUserProfile) userProfile$:Observable<UserProfileModel>
@@ -18,6 +21,8 @@ export class LayoutMiniSidebarComponent implements OnInit {
   isAgent=false;
   canAccessProperties=true;
   routerLinkRoute="/support/home"
+  currentRoute = '';
+  private destroy$ = new Subject<void>();
 
   public notifications = [
     // {
@@ -42,7 +47,8 @@ export class LayoutMiniSidebarComponent implements OnInit {
   constructor(
     private _store:Store,
     private _router:Router,
-    private agentStatusService: AgentStatusService
+    private agentStatusService: AgentStatusService,
+    private languageUrlService: LanguageUrlService
   ) {
   }
 
@@ -55,7 +61,8 @@ export class LayoutMiniSidebarComponent implements OnInit {
         this.isAgent = user.userType === 'AGENT';
         this.canAccessProperties = this.agentStatusService.canAccessProperties();
 
-        this.routerLinkRoute="/app/welcome"
+        const currentLang = this.languageUrlService.getCurrentLanguage();
+        this.routerLinkRoute=`/${currentLang}/app/welcome`
       }
     })
 
@@ -64,6 +71,18 @@ export class LayoutMiniSidebarComponent implements OnInit {
       this.canAccessProperties = this.agentStatusService.canAccessProperties();
     });
 
+    // Écouter les changements de route pour mettre à jour l'état actif
+    this._router.events
+      .pipe(
+        filter(event => event instanceof NavigationEnd),
+        takeUntil(this.destroy$)
+      )
+      .subscribe((event: NavigationEnd) => {
+        this.currentRoute = event.url;
+      });
+
+    // Initialiser la route courante
+    this.currentRoute = this._router.url;
   }
 
   /**
@@ -111,13 +130,80 @@ export class LayoutMiniSidebarComponent implements OnInit {
   logout()
   {
     this._store.dispatch(new UserProfileAction.LogoutUserProfile(true))
-    this._router.navigate(['/auth/signin'])
+    const currentLang = this.languageUrlService.getCurrentLanguage();
+    this._router.navigate([`/${currentLang}/auth/signin`])
   }
   goToSearchPage()
   {
+    const currentLang = this.languageUrlService.getCurrentLanguage();
     this._router.navigate(
-      ['/search/index'],
+      [`/${currentLang}/search/index`],
       { queryParams: { minPrice: 0,maxPrix:100000,  ville:"Bangangté"} }
     );
+  }
+
+  navigateToProperties(): void {
+    const currentLang = this.languageUrlService.getCurrentLanguage();
+    this._router.navigate([`/${currentLang}/app/properties/home`]);
+  }
+
+  navigateToBilling(): void {
+    const currentLang = this.languageUrlService.getCurrentLanguage();
+    this._router.navigate([`/${currentLang}/app/facturation/plan`]);
+  }
+
+  navigateToContractTemplates(): void {
+    const currentLang = this.languageUrlService.getCurrentLanguage();
+    this._router.navigate([`/${currentLang}/app/contract-templates`]);
+  }
+
+  navigateToAdmin(): void {
+    const currentLang = this.languageUrlService.getCurrentLanguage();
+    this._router.navigate([`/${currentLang}/admin/dashboard`]);
+  }
+
+  navigateToProfile(): void {
+    const currentLang = this.languageUrlService.getCurrentLanguage();
+    this._router.navigate([`/${currentLang}/app/profile`]);
+  }
+
+  navigateToSupport(): void {
+    const currentLang = this.languageUrlService.getCurrentLanguage();
+    this._router.navigate([`/${currentLang}/support/welcome`]);
+  }
+
+  navigateToAbout(): void {
+    const currentLang = this.languageUrlService.getCurrentLanguage();
+    this._router.navigate([`/${currentLang}/app/application/welcome`]);
+  }
+
+  navigateToPricing(): void {
+    const currentLang = this.languageUrlService.getCurrentLanguage();
+    this._router.navigate([`/${currentLang}/app/pricing/modern`]);
+  }
+
+  navigateToHome(): void {
+    const currentLang = this.languageUrlService.getCurrentLanguage();
+    this._router.navigate([`/${currentLang}/`]);
+  }
+
+  navigateToLogin(): void {
+    const currentLang = this.languageUrlService.getCurrentLanguage();
+    this._router.navigate([`/${currentLang}/auth/signin`]);
+  }
+
+  isRouteActive(route: string): boolean {
+    if (!route) return false;
+    
+    // Normaliser les routes pour la comparaison
+    const normalizedCurrentRoute = this.currentRoute.replace(/\/[a-z]{2}\//g, '/').replace(/\/$/, '');
+    const normalizedRoute = route.replace(/\/[a-z]{2}\//g, '/').replace(/\/$/, '');
+    
+    return normalizedCurrentRoute.startsWith(normalizedRoute);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

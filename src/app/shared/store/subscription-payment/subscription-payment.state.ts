@@ -3,6 +3,7 @@ import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { tap, catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 import { SubscriptionPaymentAction } from './subscription-payment.action';
 import { SubscriptionPaymentStateModel, PaymentHistory, UnpaidInvoice, PaymentStatus, Invoice } from './subscription-payment.model';
 import { SubscriptionPaymentService } from '../../services/subscription-payment.service';
@@ -28,7 +29,8 @@ export class SubscriptionPaymentState {
 
   constructor(
     private subscriptionPaymentService: SubscriptionPaymentService,
-    private toastrService: ToastrService
+    private toastrService: ToastrService,
+    private translateService: TranslateService
   ) {}
 
   @Selector()
@@ -100,7 +102,7 @@ export class SubscriptionPaymentState {
     return this.subscriptionPaymentService.processPayment(action.paymentData).pipe(
       tap((response) => {
         ctx.patchState({ loading: false });
-        this.toastrService.success('Paiement traité avec succès', 'Paiement confirmé');
+        this.toastrService.success(this.translateService.instant('NOTIFICATIONS.PAYMENT_PROCESSED_SUCCESS'), 'Paiement confirmé');
         
         // Recharger les données après paiement
         ctx.dispatch(new SubscriptionPaymentAction.GetPaymentStatus());
@@ -111,7 +113,7 @@ export class SubscriptionPaymentState {
           loading: false,
           error: error.message || 'Erreur lors du traitement du paiement'
         });
-        this.toastrService.error('Erreur lors du traitement du paiement', 'Erreur');
+        this.toastrService.error(this.translateService.instant('NOTIFICATIONS.PAYMENT_PROCESS_ERROR'), 'Erreur');
         return throwError(error);
       })
     );
@@ -209,14 +211,14 @@ export class SubscriptionPaymentState {
     return this.subscriptionPaymentService.sendPaymentReminders().pipe(
       tap((response) => {
         ctx.patchState({ loading: false });
-        this.toastrService.success('Rappels de paiement envoyés', 'Envoi terminé');
+        this.toastrService.success(this.translateService.instant('NOTIFICATIONS.PAYMENT_REMINDERS_SENT'), 'Envoi terminé');
       }),
       catchError((error) => {
         ctx.patchState({
           loading: false,
           error: error.message || 'Erreur lors de l\'envoi des rappels'
         });
-        this.toastrService.error('Erreur lors de l\'envoi des rappels', 'Erreur');
+        this.toastrService.error(this.translateService.instant('NOTIFICATIONS.PAYMENT_REMINDERS_ERROR'), 'Erreur');
         return throwError(error);
       })
     );
@@ -303,7 +305,7 @@ export class SubscriptionPaymentState {
           stripeLoading: false,
           stripeError: error.error?.message || 'Erreur lors de la création de la session Stripe'
         });
-        this.toastrService.error('Erreur lors de la création de la session de paiement');
+        this.toastrService.error(this.translateService.instant('NOTIFICATIONS.STRIPE_SESSION_ERROR'));
         return throwError(error);
       })
     );
@@ -319,7 +321,7 @@ export class SubscriptionPaymentState {
           stripeLoading: false,
           stripeSession: null
         });
-        this.toastrService.success('Paiement confirmé avec succès');
+        this.toastrService.success(this.translateService.instant('NOTIFICATIONS.STRIPE_PAYMENT_CONFIRMED'));
         // Recharger les données de paiement
         ctx.dispatch(new SubscriptionPaymentAction.GetPaymentHistory());
         ctx.dispatch(new SubscriptionPaymentAction.GetUnpaidInvoices());
@@ -329,7 +331,7 @@ export class SubscriptionPaymentState {
           stripeLoading: false,
           stripeError: error.error?.message || 'Erreur lors de la confirmation du paiement'
         });
-        this.toastrService.error('Erreur lors de la confirmation du paiement');
+        this.toastrService.error(this.translateService.instant('NOTIFICATIONS.STRIPE_PAYMENT_ERROR'));
         return throwError(error);
       })
     );
