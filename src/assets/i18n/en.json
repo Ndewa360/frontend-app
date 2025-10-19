@@ -507,26 +507,7 @@
       "COUNTRY": "Cameroon"
     }
   },
-  "PROFILE": {
-    "TITLE": "User Profile",
-    "SUBTITLE": "Manage your personal information and preferences",
-    "PERSONAL_INFO": "Personal Information",
-    "FULL_NAME": "Full Name",
-    "PHONE_NUMBER": "Phone Number",
-    "COUNTRY": "Country",
-    "LOCATION": "Location",
-    "BIO": "Biography",
-    "PHOTO": "Profile Photo",
-    "UPDATE_PROFILE": "Update Profile",
-    "PROFILE_UPDATED": "Profile updated successfully",
-    "SECTIONS": {
-      "PERSONAL": "Personal Information",
-      "CONTACT": "Contacts & Networks",
-      "LOCATION": "Location",
-      "LOCALIZATION": "Language & Currency",
-      "DISPLAY": "Display"
-    }
-  },
+
   "VALIDATION": {
     "REQUIRED": "This field is required",
     "EMAIL_INVALID": "Invalid email",
@@ -798,15 +779,7 @@
     "COMPLETED": "Completed",
     "CANCELLED": "Cancelled"
   },
-  "ROOM_TYPES": {
-    "ROOM": "Room",
-    "STUDIO": "Studio",
-    "SIMPLE_APARTMENT": "Apartment",
-    "FURNISHED_APARTMENT": "Furnished Apartment",
-    "APARTMENT": "Apartment",
-    "HOUSE": "House",
-    "VILLA": "Villa"
-  },
+
   "LANGUAGE": {
     "CHANGE_LANGUAGE": "Change Language",
     "SELECT_LANGUAGE": "Select Language",
@@ -814,11 +787,7 @@
     "FRENCH": "French",
     "ENGLISH": "English"
   },
-  "SETTINGS": {
-    "LANGUAGE": "Language",
-    "LANGUAGE_SETTINGS": "Language Settings",
-    "SELECT_LANGUAGE": "Select Language"
-  },
+
   "SEARCH": {
     "PLACEHOLDER": "Search for a property...",
     "NO_RESULTS": "No results found",
@@ -891,34 +860,7 @@
       "OVER_300K": "Over 300,000 FCFA"
     }
   },
-  "NOTIFICATIONS": {
-    "SUCCESS": "Success",
-    "ERROR": "Error",
-    "WARNING": "Warning",
-    "INFO": "Information",
-    "SEARCH_SUCCESS": "Search completed successfully",
-    "SEARCH_ERROR": "Search error",
-    "FILTERS_APPLIED": "Filters applied",
-    "FILTERS_CLEARED": "Filters cleared",
-    "LANGUAGE_CHANGED": "Language changed to {{language}}",
-    "LANGUAGE_CHANGE_ERROR": "Error changing language",
-    "LOADING_DATA": "Loading data...",
-    "NO_INTERNET": "No Internet connection",
-    "SERVER_ERROR": "Server error",
-    "NETWORK_ERROR": "Network error",
-    "TIMEOUT_ERROR": "Timeout error",
-    "UNKNOWN_ERROR": "Unknown error",
-    "PROFILE_UPDATE_SUCCESS": "Profile updated successfully",
-    "PROFILE_UPDATE_ERROR": "Error updating profile",
-    "PHOTO_UPDATE_SUCCESS": "Profile photo updated successfully",
-    "PHOTO_UPLOAD_ERROR": "Error uploading photo",
-    "INVALID_FILE_FORMAT": "Unsupported file format. Use JPEG, PNG or GIF.",
-    "FILE_SIZE_ERROR": "File is too large. Maximum 5MB.",
-    "FORM_VALIDATION_ERROR": "Please correct the errors in the form",
-    "FORM_INVALID_TITLE": "Invalid form",
-    "FORM_RESET_SUCCESS": "Form reset",
-    "UNSAVED_CHANGES_WARNING": "Unsaved changes detected"
-  },
+
   "ERRORS": {
     "REQUIRED_FIELD": "This field is required",
     "INVALID_EMAIL": "Invalid email address",
