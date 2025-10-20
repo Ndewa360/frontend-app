@@ -17,8 +17,8 @@
         </svg>
       </div>
       <div>
-        <h2 class="text-2xl font-bold text-gray-900">Unités Locatives</h2>
-        <p class="text-gray-600">Gestion des unités et locataires</p>
+        <h2 class="text-2xl font-bold text-gray-900">{{ 'PROPERTY_DETAILS.UNITS.TITLE' | translate }}</h2>
+        <p class="text-gray-600">{{ 'PROPERTY_DETAILS.UNITS.SUBTITLE' | translate }}</p>
       </div>
     </div>
 
@@ -36,7 +36,7 @@
           <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
           </svg>
-          <span class="text-sm font-medium">CSV</span>
+          <span class="text-sm font-medium">{{ 'PROPERTY_DETAILS.UNITS.EXPORT_CSV' | translate }}</span>
         </button>
 
         <button (click)="exportUnitsToExcel()"
@@ -49,7 +49,7 @@
           <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
           </svg>
-          <span class="text-sm font-medium">Excel</span>
+          <span class="text-sm font-medium">{{ 'PROPERTY_DETAILS.UNITS.EXPORT_EXCEL' | translate }}</span>
         </button>
       </div>
 
@@ -60,7 +60,7 @@
         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
         </svg>
-        Ajouter une unité
+        {{ 'PROPERTY_DETAILS.UNITS.ADD_UNIT' | translate }}
       </button>
     </div>
   </div>
@@ -74,7 +74,7 @@
           <input type="text"
                  [value]="searchTerm"
                  (input)="searchTerm = $any($event.target).value; onSearchChange()"
-                 placeholder="Rechercher une unité (nom, code, locataire...)"
+                 [placeholder]="'PROPERTY_DETAILS.UNITS.SEARCH_PLACEHOLDER' | translate"
                  class="w-full pl-11 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:border-custom-primary focus:ring-2 focus:ring-custom-primary-light transition-all duration-200 bg-white">
           <div class="absolute inset-y-0 right-0 mr-4 pl-3 flex items-center pointer-events-none z-10">
             <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -92,10 +92,10 @@
           <select [value]="statusFilter"
                   (change)="statusFilter = $any($event.target).value; onStatusFilterChange()"
                   class="px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-custom-primary focus:ring-2 focus:ring-custom-primary-light transition-all duration-200 text-sm bg-white">
-            <option value="">Tous</option>
-            <option value="occupied">Occupées</option>
-            <option value="available">Disponibles</option>
-            <option value="maintenance">Maintenance</option>
+            <option value="">{{ 'PROPERTY_DETAILS.UNITS.FILTERS.ALL' | translate }}</option>
+            <option value="occupied">{{ 'PROPERTY_DETAILS.UNITS.FILTERS.OCCUPIED' | translate }}</option>
+            <option value="available">{{ 'PROPERTY_DETAILS.UNITS.FILTERS.AVAILABLE' | translate }}</option>
+            <option value="maintenance">{{ 'PROPERTY_DETAILS.UNITS.FILTERS.MAINTENANCE' | translate }}</option>
           </select>
         </div>
 

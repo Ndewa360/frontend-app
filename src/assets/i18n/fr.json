@@ -1,4 +1,25 @@
 {
+  "SIDEBAR": {
+    "GLOBAL_SEARCH": "Recherche globale",
+    "PROPERTIES": "Bien immobilier",
+    "BILLING": "Facturation",
+    "CONTRACT_TEMPLATES": "Modèle de contrat",
+    "ADMINISTRATION": "Administration",
+    "HELP": "Aide",
+    "SUPPORT": "Support",
+    "ABOUT": "À propos",
+    "PRICING": "Prix",
+    "NOTIFICATIONS": "Notifications",
+    "MESSAGES": "Messages",
+    "VIEW_ALL": "Voir tout",
+    "ACCOUNT_DETAILS": "Détails du compte",
+    "LOGGED_IN_AS": "Connecté en tant que",
+    "PLEASE_LOGIN": "Connectez-vous",
+    "PROFILE": "Profil",
+    "HOME": "Accueil",
+    "SEARCH_SPACE": "Espace de recherche",
+    "LOGOUT": "Déconnexion"
+  },
   "COMMON": {
     "SAVE": "Enregistrer",
     "CANCEL": "Annuler",
@@ -837,6 +858,14 @@
     "CURRENT": "Actuel"
   }
 ,
+  "HEADER": {
+    "LOGGED_IN_AS": "Connecté en tant que",
+    "PROFILE": "Profil",
+    "SEARCH_SPACE": "Espace de recherche",
+    "SETTINGS": "Paramètres",
+    "LOGOUT": "Déconnexion",
+    "LOGIN": "Se connecter"
+  },
   "SEARCH": {
     "PLACEHOLDER": "Rechercher une propriété...",
     "NO_RESULTS": "Aucun résultat trouvé",
@@ -1584,6 +1613,558 @@
     "SHARE": {
       "DEFAULT_TITLE": "Propriété sur Ndewa360°",
       "TEXT": "Découvrez cette propriété : {{name}} - {{price}}/mois"
+    }
+  },
+  "SEARCH_MODULE": {
+    "SEARCH_BAR": {
+      "PLACEHOLDER": "Rechercher une propriété, ville, quartier...",
+      "MOBILE_PLACEHOLDER": "Rechercher un logement...",
+      "CLEAR_SEARCH": "Effacer la recherche",
+      "DETECTING_LOCATION": "Détection de votre localisation...",
+      "RETRY_LOCATION": "Réessayer la géolocalisation"
+    },
+    "FILTERS": {
+      "TITLE": "Filtres de recherche",
+      "QUICK_FILTERS": "Filtres rapides",
+      "LOCATION": "Localisation",
+      "ROOM_TYPE": "Type de propriété",
+      "BUDGET": "Budget",
+      "SURFACE": "Surface",
+      "ROOM_AMENITIES": "Équipements de chambre",
+      "PROPERTY_AMENITIES": "Équipements de propriété",
+      "SORT_BY": "Trier par",
+      "ALL_CITIES": "Toutes les villes",
+      "ALL_DISTRICTS": "Tous les quartiers",
+      "ALL_TYPES": "Tous les types",
+      "ROOM": "Chambre",
+      "STUDIO": "Studio",
+      "SIMPLE_APARTMENT": "Appartement simple",
+      "FURNISHED_APARTMENT": "Appartement meublé",
+      "PRICE_MIN": "Prix minimum (FCFA)",
+      "PRICE_MAX": "Prix maximum (FCFA)",
+      "MIN_SURFACE": "Surface minimum (m²)",
+      "BATHROOMS": "Nombre de salles de bain",
+      "SHOWERS": "Nombre de douches",
+      "LIVING_ROOMS": "Nombre de salons",
+      "ANY": "Peu importe",
+      "NONE": "Pas de salon",
+      "KITCHEN": "Cuisine",
+      "INTERNAL_KITCHEN": "Cuisine interne",
+      "PRIVATE_SHOWER": "Douche privée",
+      "PARKING": "Parking",
+      "FENCED": "Clôturé",
+      "NEWEST": "Plus récent",
+      "PRICE": "Prix",
+      "AREA": "Surface",
+      "DESCENDING": "Décroissant",
+      "ASCENDING": "Croissant",
+      "RESET": "Réinitialiser",
+      "APPLY": "Appliquer",
+      "RELOAD_CITIES": "Recharger les villes",
+      "LOADING_CITIES": "Chargement des villes...",
+      "NO_CITIES": "Aucune ville disponible",
+      "LOCATION_SECTION": "Localisation",
+      "PROPERTY_TYPE_SECTION": "Type de propriété",
+      "ROOM_SPECIFICITY": "Spécifications de chambre",
+      "ROOM_AMENITIES_SECTION": "Équipements de chambre",
+      "PROPERTY_AMENITIES_SECTION": "Équipements de propriété",
+      "SORT_SECTION": "Trier par",
+      "RESET_BUTTON": "Réinitialiser",
+      "APPLY_BUTTON": "Appliquer",
+      "BATHROOM_COUNT": "Nombre de salles de bain",
+      "SHOWER_COUNT": "Nombre de douches",
+      "LIVING_ROOM_COUNT": "Nombre de salons",
+      "ANY_COUNT": "Peu importe",
+      "NO_LIVING_ROOM": "Pas de salon",
+      "SURFACE_MIN": "Surface minimum (m²)",
+      "EQUIPPED_KITCHEN_TEXT": "Cuisine équipée",
+      "PRIVATE_SHOWER_TEXT": "Douche privée",
+      "INTERNAL_KITCHEN_TEXT": "Cuisine interne",
+      "PARKING_TEXT": "Parking",
+      "FENCED_TEXT": "Clôturé",
+      "FURNISHED": "Meublé",
+      "DISTRICT": "Quartier"
+    },
+    "RESULTS": {
+      "EQUIPPED_KITCHEN": "Cuisine équipée",
+      "PRIVATE_SHOWER": "Douche privée",
+      "PARKING": "Parking",
+      "BATHROOM": "Salle de bain",
+      "LIVING_ROOM": "Salon",
+      "LIVING_ROOMS": "Salons",
+      "VIEW_DETAILS": "Voir détails",
+      "ADD_TO_FAVORITES": "Ajouter aux favoris",
+      "REMOVE_FROM_FAVORITES": "Retirer des favoris",
+      "PREVIOUS": "Précédent",
+      "NEXT": "Suivant",
+      "RESULTS_ON": "sur",
+      "RESULTS_TEXT": "résultats",
+      "LOADING_TITLE": "Recherche en cours...",
+      "LOADING_SUBTITLE": "Nous trouvons les meilleurs logements pour vous",
+      "VIEW_GRID": "Vue grille",
+      "VIEW_LIST": "Vue liste",
+      "LOAD_MORE": "Charger plus",
+      "NO_MORE_RESULTS": "Plus de résultats"
+    },
+    "EMPTY_STATE": {
+      "TITLE": "Aucun logement trouvé",
+      "MESSAGE": "Nous n'avons trouvé aucun logement correspondant à vos critères de recherche.",
+      "SUGGESTIONS_TITLE": "Suggestions :",
+      "MODIFY_FILTERS": "Modifiez vos filtres de prix ou de type",
+      "EXPLORE_CITIES": "Explorez d'autres villes ou quartiers",
+      "RESET_FILTERS": "Réinitialisez tous les filtres",
+      "RESET_FILTERS_BTN": "Réinitialiser les filtres",
+      "MODIFY_FILTERS_BTN": "Modifier les filtres"
+    },
+    "POPULAR_SEARCHES": {
+      "TITLE": "Recherches populaires",
+      "SUBTITLE": "Découvrez les logements les plus recherchés",
+      "AVAILABLE_UNITS": "logements disponibles"
+    },
+    "PAGINATION": {
+      "RESULTS_ON": "sur",
+      "RESULTS_TEXT": "résultats",
+      "PREVIOUS_BUTTON": "Précédent",
+      "NEXT_BUTTON": "Suivant",
+      "SHOWING": "Affichage",
+      "TO": "à",
+      "OF": "sur",
+      "ITEMS": "éléments"
+    }
+  },
+  "UNIT_DETAIL": {
+    "ACTIONS": {
+      "SHARE": "Partager",
+      "CONTACT": "Contacter",
+      "CALL": "Appeler"
+    },
+    "IMAGES": {
+      "PHOTO_ALT": "Photo de la propriété",
+      "THUMBNAIL_ALT": "Miniature"
+    },
+    "PROPERTY": {
+      "DEFAULT_NAME": "Propriété Premium",
+      "DEFAULT_LOCATION": "Localisation premium"
+    },
+    "PRICE": {
+      "PER_MONTH": "/ mois",
+      "FROM": "À partir de"
+    },
+    "SECTIONS": {
+      "FEATURES": "Caractéristiques",
+      "AMENITIES": "Équipements inclus",
+      "ABOUT": "À propos",
+      "CONTACT_INFO": "Informations de contact"
+    },
+    "FEATURES": {
+      "TYPE": "Type",
+      "DEFAULT_TYPE": "Studio moderne",
+      "SURFACE": "Surface",
+      "BATHROOMS": "Salles de bain"
+    },
+    "AMENITIES": {
+      "KITCHEN": "Cuisine équipée",
+      "PRIVATE_SHOWER": "Salle de bain privée",
+      "PARKING": "Place de parking",
+      "SECURITY": "Sécurité 24h/24"
+    },
+    "DESCRIPTION": {
+      "DEFAULT": "Belle propriété située dans un quartier calme et résidentiel."
+    },
+    "CONTACT": {
+      "AGENT_TITLE": "Agent immobilier",
+      "OWNER_TITLE": "Propriétaire",
+      "CERTIFIED_AGENT": "Agent Certifié",
+      "CERTIFIED_OWNER": "Propriétaire Certifié",
+      "CERTIFIED_REAL_ESTATE_AGENT": "Agent Immobilier Certifié",
+      "VERIFIED_OWNER": "Propriétaire Vérifié",
+      "VERIFIED_AGENT": "Agent Vérifié",
+      "VERIFIED": "Vérifié",
+      "DIRECT_CONTACT": "Contact direct",
+      "COPY_PHONE": "Copier le numéro de téléphone",
+      "COPY_EMAIL": "Copier l'adresse email",
+      "CONTACT_WHATSAPP": "Contacter",
+      "CERTIFIED_NDEWA_CONTACT": "Contact NDEWA Certifié"
+    },
+    "AGENCY": {
+      "CERTIFIED": "Agence immobilière certifiée",
+      "DEFAULT_NAME": "Agence Ndewa360"
+    },
+    "LOCATION": {
+      "PRECISE_LOCATION": "Localisation précise",
+      "ADDRESS_AVAILABLE": "Adresse disponible",
+      "ADDRESS_NOT_SPECIFIED": "Adresse non spécifiée",
+      "GPS_AVAILABLE": "Coordonnées GPS disponibles",
+      "OPEN_MAPS": "Ouvrir la localisation dans Google Maps",
+      "VIEW_MAP": "Voir sur la carte",
+      "DEFAULT_LOCATION": "Douala, Cameroun"
+    },
+    "PREMIUM": {
+      "ACTIVE_PLAN": "Package Premium Actif",
+      "GLOBAL_PLAN": "Package Premium Global",
+      "CHECKING_ACCESS": "Vérification d'accès...",
+      "ALL_OWNERS_ACCESS": "Accès à TOUS les propriétaires",
+      "SINGLE_PAYMENT_DESC": "Un seul paiement pour accéder aux informations de tous les propriétaires",
+      "DURATION": "pour 3 jours d'accès global",
+      "BUY_PLAN": "Acheter le package",
+      "REMAINING_DAYS": "3 jours restants",
+      "FEATURES": {
+        "ALL_OWNERS": "Accès à TOUS les propriétaires",
+        "DIRECT_CONTACTS": "Téléphones et emails directs",
+        "WHATSAPP": "Contacts WhatsApp",
+        "VALIDITY": "Package valide 3 jours"
+      }
+    },
+    "SHARE": {
+      "DEFAULT_TITLE": "Propriété sur Ndewa360°",
+      "TEXT": "Découvrez cette propriété : {{name}} - {{price}}/mois"
+    }
+  },
+  "PROPERTY_DETAILS": {
+    "NAVIGATION": {
+      "BACK_TO_PROPERTIES": "Retour aux propriétés",
+      "PROPERTIES": "Propriétés",
+      "DETAILS": "Détails",
+      "ADDRESS_NOT_SPECIFIED": "Adresse non spécifiée"
+    },
+    "ACTIONS": {
+      "MEDIA_GALLERY": "Galerie Média",
+      "EDIT": "Modifier",
+      "REFRESH": "Actualiser",
+      "EXPORT": "Exporter"
+    },
+    "TABS": {
+      "OVERVIEW": "Vue d'ensemble",
+      "UNITS": "Unités locatives",
+      "TENANTS": "Locataires",
+      "HISTORY": "Historique",
+      "FINANCES": "Finances"
+    },
+    "LOADING": {
+      "PROPERTY_DATA": "Chargement des données de la propriété...",
+      "LOADING": "Chargement..."
+    },
+    "ERROR": {
+      "PROPERTY_NOT_FOUND": "Propriété introuvable",
+      "NO_PERMISSION": "La propriété demandée n'existe pas ou vous n'avez pas les permissions pour la voir.",
+      "BACK_TO_PROPERTIES": "Retour aux propriétés"
+    },
+    "OVERVIEW": {
+      "METRICS": {
+        "MONTHLY_REVENUE": "Revenus mensuels",
+        "OCCUPANCY_RATE": "Taux d'occupation",
+        "ESTIMATED_VALUE": "Valeur estimée",
+        "ANNUAL_YIELD": "Rendement annuel",
+        "VS_LAST_MONTH": "vs mois dernier",
+        "UNITS_OCCUPIED": "unités occupées",
+        "SINCE_ACQUISITION": "depuis acquisition"
+      },
+      "FINANCIAL_ANALYSIS": {
+        "TITLE": "Analyse financière détaillée",
+        "LAST_UPDATE": "Dernière mise à jour",
+        "REVENUE": "Revenus",
+        "CURRENT_MONTHLY": "Mensuels actuels",
+        "ANNUAL_PROJECTION": "Projection annuelle",
+        "EXPENSES": "Charges",
+        "MONTHLY_CHARGES": "Charges mensuelles",
+        "MANAGEMENT_FEES": "Frais de gestion",
+        "PERFORMANCE": "Performance",
+        "NET_PROFIT_MONTH": "Bénéfice net/mois",
+        "ANNUAL_YIELD": "Rendement annuel"
+      },
+      "PROPERTY_SHEET": {
+        "TITLE": "Fiche technique de la propriété",
+        "IDENTITY": "Identité",
+        "PROPERTY_CODE": "Code propriété",
+        "PROPERTY_TYPE": "Type de bien",
+        "STATUS": "Statut",
+        "ESTIMATED_VALUE": "Valeur estimée",
+        "LOCATION_FEATURES": "Localisation & Caractéristiques",
+        "ADDRESS": "Adresse",
+        "COUNTRY_REGION": "Pays/Région",
+        "NUMBER_OF_UNITS": "Nombre d'unités",
+        "TOTAL_SURFACE": "Surface totale",
+        "CONSTRUCTION_YEAR": "Année de construction",
+        "NUMBER_OF_FLOORS": "Nombre d'étages",
+        "PROPERTY_CONDITION": "État du bien",
+        "FURNISHING": "Ameublement",
+        "UNITS": "unités"
+      },
+      "ADMINISTRATIVE_INFO": {
+        "TITLE": "Informations administratives",
+        "CREATION_DATE": "Date de création",
+        "AGE": "Ancienneté",
+        "LAST_INSPECTION": "Dernière inspection",
+        "NEXT_MAINTENANCE": "Prochaine maintenance",
+        "NO_INSPECTION": "Aucune inspection",
+        "NO_MAINTENANCE_SCHEDULED": "Aucune maintenance programmée"
+      },
+      "EQUIPMENT_SERVICES": {
+        "TITLE": "Équipements et services",
+        "BASIC_EQUIPMENT": "Équipements de base",
+        "ELECTRICITY": "Électricité",
+        "RUNNING_WATER": "Eau courante",
+        "PARKING": "Parking",
+        "SECURITY": "Sécurité",
+        "AVAILABLE": "Disponible",
+        "NOT_AVAILABLE": "Non disponible",
+        "SECURITY_GUARD": "Gardiennage",
+        "ADDITIONAL_SERVICES": "Services additionnels",
+        "NO_ADDITIONAL_SERVICES": "Aucun service additionnel spécifié"
+      },
+      "OCCUPATION": {
+        "TITLE": "Occupation",
+        "GLOBAL_RATE": "Taux global",
+        "OCCUPIED": "Occupées",
+        "FREE": "Libres",
+        "ACTIVE_TENANTS": "Locataires actifs",
+        "AVERAGE_RENT": "Loyer moyen"
+      },
+      "FINANCES": {
+        "TITLE": "Finances",
+        "VALUES": "Valeurs",
+        "ACQUISITION_PRICE": "Prix d'acquisition",
+        "CURRENT_VALUE": "Valeur actuelle",
+        "RENT_RANGE": "Fourchette loyers",
+        "MONTHLY_CHARGES": "Charges mensuelles",
+        "CHARGES": "Charges",
+        "MANAGEMENT": "Gestion",
+        "PROPERTY_TAX_YEAR": "Taxe foncière/an",
+        "INSURANCE_YEAR": "Assurance/an",
+        "PERFORMANCE": "Performance",
+        "ANNUAL_REVENUE": "Revenus annuels",
+        "NET_PROFIT": "Bénéfice net",
+        "MARGIN": "Marge"
+      },
+      "VISUAL_METRICS": {
+        "PERFORMANCE": "Performance",
+        "OCCUPATION": "Occupation",
+        "PROFITABILITY": "Rentabilité",
+        "GROWTH": "Croissance",
+        "SUMMARY": "Résumé",
+        "UNITS": "Unités",
+        "TENANTS": "Locataires",
+        "AVERAGE_RENT": "Loyer moyen",
+        "PROFIT": "Bénéfice"
+      },
+      "CONDITION_LABELS": {
+        "NEW": "Neuf",
+        "EXCELLENT": "Excellent",
+        "GOOD": "Bon",
+        "FAIR": "Correct",
+        "POOR": "À rénover"
+      },
+      "FURNISHING_LABELS": {
+        "UNFURNISHED": "Non meublé",
+        "SEMI_FURNISHED": "Semi-meublé",
+        "FURNISHED": "Meublé"
+      },
+      "YIELD_STATUS": {
+        "EXCELLENT": "Performance excellente",
+        "GOOD": "Bonne performance",
+        "AVERAGE": "Performance moyenne",
+        "POOR": "En dessous des attentes"
+      },
+      "HARD_CODED_TEXTS": {
+        "VS_LAST_MONTH": "vs mois dernier",
+        "SINCE_ACQUISITION": "depuis acquisition",
+        "REVENUE": "Revenus",
+        "CURRENT_MONTHLY": "Mensuels actuels",
+        "ANNUAL_PROJECTION": "Projection annuelle",
+        "EXPENSES": "Charges",
+        "MONTHLY_CHARGES": "Charges mensuelles",
+        "MANAGEMENT_FEES": "Frais de gestion",
+        "PERFORMANCE": "Performance",
+        "NET_PROFIT_MONTH": "Bénéfice net/mois",
+        "ANNUAL_YIELD": "Rendement annuel",
+        "IDENTITY": "🏢 Identité",
+        "PROPERTY_CODE": "Code propriété",
+        "PROPERTY_TYPE": "Type de bien",
+        "STATUS": "Statut",
+        "ESTIMATED_VALUE": "Valeur estimée",
+        "LOCATION_FEATURES": "📍 Localisation & Caractéristiques",
+        "ADDRESS": "Adresse",
+        "COUNTRY_REGION": "Pays/Région",
+        "NUMBER_OF_UNITS": "Nombre d'unités",
+        "TOTAL_SURFACE": "Surface totale",
+        "CONSTRUCTION_YEAR": "Année de construction",
+        "NUMBER_OF_FLOORS": "Nombre d'étages",
+        "PROPERTY_CONDITION": "État du bien",
+        "FURNISHING": "Ameublement",
+        "UNITS": "unités",
+        "ADMINISTRATIVE_INFO": "📋 Informations administratives",
+        "CREATION_DATE": "Date de création",
+        "AGE": "Ancienneté",
+        "LAST_INSPECTION": "Dernière inspection",
+        "NEXT_MAINTENANCE": "Prochaine maintenance",
+        "NO_INSPECTION": "Aucune inspection",
+        "NO_MAINTENANCE_SCHEDULED": "Aucune maintenance programmée",
+        "EQUIPMENT_SERVICES": "🛠️ Équipements et services",
+        "BASIC_EQUIPMENT": "Équipements de base",
+        "ELECTRICITY": "Électricité",
+        "RUNNING_WATER": "Eau courante",
+        "PARKING": "Parking",
+        "SECURITY": "Sécurité",
+        "AVAILABLE": "✓ Disponible",
+        "NOT_AVAILABLE": "✗ Non disponible",
+        "SECURITY_GUARD": "✓ Gardiennage",
+        "ADDITIONAL_SERVICES": "Services additionnels",
+        "NO_ADDITIONAL_SERVICES": "Aucun service additionnel spécifié",
+        "OCCUPATION": "Occupation",
+        "GLOBAL_RATE": "Taux global",
+        "OCCUPIED": "Occupées",
+        "FREE": "Libres",
+        "ACTIVE_TENANTS": "Locataires actifs",
+        "AVERAGE_RENT": "Loyer moyen",
+        "FINANCES": "Finances",
+        "VALUES": "Valeurs",
+        "ACQUISITION_PRICE": "Prix d'acquisition",
+        "CURRENT_VALUE": "Valeur actuelle",
+        "RENT_RANGE": "Fourchette loyers",
+        "CHARGES": "Charges",
+        "MANAGEMENT": "Gestion",
+        "PROPERTY_TAX_YEAR": "Taxe foncière/an",
+        "INSURANCE_YEAR": "Assurance/an",
+        "ANNUAL_REVENUE": "Revenus annuels",
+        "NET_PROFIT": "Bénéfice net",
+        "MARGIN": "Marge",
+        "VISUAL_METRICS": {
+          "PERFORMANCE": "Performance",
+          "OCCUPATION": "Occupation",
+          "PROFITABILITY": "Rentabilité",
+          "GROWTH": "Croissance",
+          "SUMMARY": "Résumé",
+          "UNITS": "Unités",
+          "TENANTS": "Locataires",
+          "AVERAGE_RENT": "Loyer moyen",
+          "PROFIT": "Bénéfice"
+        },
+        "PROPERTY_SHEET_TITLE": "Fiche technique de la propriété",
+        "NOT_AVAILABLE_SHORT": "N/A",
+        "EXCELLENT": "Excellent",
+        "GOOD": "Bon",
+        "AVERAGE": "Moyen",
+        "TO_IMPROVE": "À améliorer",
+        "EXCELLENT_PERFORMANCE": "Performance excellente",
+        "GOOD_PERFORMANCE": "Bonne performance",
+        "AVERAGE_PERFORMANCE": "Performance moyenne",
+        "POOR_PERFORMANCE": "En dessous des attentes",
+        "EXCELLENT_YIELD": "Excellent rendement",
+        "GOOD_YIELD": "Bon rendement",
+        "CORRECT_YIELD": "Rendement correct",
+        "LOW_YIELD": "Rendement faible",
+        "PARTIALLY_OCCUPIED": "Partiellement occupé",
+        "FULLY_OCCUPIED": "Entièrement occupé"
+      }
+    },
+    "UNITS": {
+      "TITLE": "Unités Locatives",
+      "SUBTITLE": "Gestion des unités et locataires",
+      "ADD_UNIT": "Ajouter une unité",
+      "EXPORT_CSV": "CSV",
+      "EXPORT_EXCEL": "Excel",
+      "SEARCH_PLACEHOLDER": "Rechercher une unité (nom, code, locataire...)",
+      "FILTERS": {
+        "STATUS": "Statut",
+        "ALL": "Tous",
+        "OCCUPIED": "Occupées",
+        "AVAILABLE": "Disponibles",
+        "MAINTENANCE": "Maintenance",
+        "TYPE": "Type",
+        "SORT_BY": "Trier par",
+        "NAME": "Nom",
+        "PRICE": "Prix",
+        "STATUS_FILTER": "Statut",
+        "VIEW_MODE": "Vue",
+        "GRID": "Grille",
+        "LIST": "Liste"
+      },
+      "EMPTY_STATE": {
+        "NO_UNITS": "Aucune unité locative",
+        "NO_RESULTS": "Aucun résultat trouvé",
+        "ADD_FIRST_UNIT": "Ajouter la première unité",
+        "MODIFY_SEARCH": "Essayez de modifier vos critères de recherche ou de filtrage pour trouver les unités souhaitées.",
+        "GET_STARTED": "Commencez par ajouter des unités locatives à cette propriété pour gérer vos locataires et revenus."
+      },
+      "UNIT_CARD": {
+        "PER_MONTH": "par mois",
+        "CHARACTERISTICS": "Caractéristiques",
+        "SURFACE": "Surface",
+        "BATHROOMS": "SDB",
+        "KITCHEN": "Cuisine",
+        "PRIVATE_SHOWER": "Douche privée",
+        "ACTIONS": {
+          "VIEW_DETAILS": "Détails",
+          "ASSIGN_TENANT": "Assigner",
+          "TERMINATE_LEASE": "Résilier",
+          "EDIT": "Modifier",
+          "DELETE": "Supprimer",
+          "MANAGE_MEDIA": "Gérer les médias"
+        },
+        "STATUS": {
+          "AVAILABLE": "Disponible à la location",
+          "OCCUPIED": "Occupée par",
+          "MAINTENANCE": "En maintenance",
+          "READY_FOR_TENANT": "Prête à accueillir un nouveau locataire",
+          "WORK_IN_PROGRESS": "Travaux en cours",
+          "TEMPORARILY_UNAVAILABLE": "Indisponible temporairement",
+          "TENANT_NOT_SPECIFIED": "Locataire non spécifié",
+          "UNKNOWN_DATE": "Date inconnue"
+        }
+      }
+    },
+    "TENANTS": {
+      "TITLE": "Locataires",
+      "SUBTITLE": "Gestion des locataires de la propriété",
+      "STATS": {
+        "TOTAL": "Total",
+        "ACTIVE": "Actifs",
+        "REVENUE_MONTH": "Revenus/mois",
+        "OCCUPATION": "Occupation"
+      },
+      "ACTIONS": {
+        "NEW_TENANT": "Nouveau",
+        "EXPORT_CSV": "CSV",
+        "EXPORT_EXCEL": "Excel"
+      },
+      "SEARCH_PLACEHOLDER": "Rechercher un locataire...",
+      "FILTERS": {
+        "ALL": "Tous",
+        "ACTIVE": "Actifs",
+        "INACTIVE": "Inactifs",
+        "SORT_BY": {
+          "NAME": "Nom",
+          "UNIT": "Unité",
+          "RENT": "Loyer",
+          "LEASE_END": "Date d'entrée"
+        }
+      },
+      "EMPTY_STATE": {
+        "NO_TENANTS": "Aucun locataire",
+        "NO_RESULTS": "Aucun résultat trouvé",
+        "ADD_FIRST_TENANT": "Ajouter le premier locataire",
+        "GET_STARTED": "Commencez par ajouter des locataires à cette propriété pour gérer vos locations.",
+        "MODIFY_SEARCH": "Essayez de modifier vos critères de recherche ou de filtrage."
+      },
+      "TENANT_CARD": {
+        "ENTRY_DATE": "Entrée le",
+        "ACTIONS": {
+          "VIEW_DETAILS": "Voir les détails",
+          "EDIT": "Modifier",
+          "ADD_PAYMENT": "Ajouter un paiement",
+          "ASSIGN_UNIT": "Assigner une unité",
+          "DELETE": "Supprimer le locataire"
+        },
+        "STATUS": {
+          "ACTIVE": "Actif",
+          "INACTIVE": "Inactif",
+          "PENDING": "En attente"
+        },
+        "CONTACT": {
+          "EMAIL_NOT_PROVIDED": "Email non renseigné",
+          "PHONE_NOT_PROVIDED": "Téléphone non renseigné"
+        }
+      }
     }
   }
 }

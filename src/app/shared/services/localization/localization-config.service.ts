@@ -46,25 +46,7 @@ export class LocalizationConfigService {
         nativeName: 'English',
         flag: '🇺🇸'
       },
-      {
-        code: 'es',
-        name: 'Español',
-        nativeName: 'Español',
-        flag: '🇪🇸'
-      },
-      {
-        code: 'de',
-        name: 'Deutsch',
-        nativeName: 'Deutsch',
-        flag: '🇩🇪'
-      },
-      {
-        code: 'ar',
-        name: 'Arabic',
-        nativeName: 'العربية',
-        flag: '🇸🇦',
-        rtl: true
-      }
+
     ],
     
     supportedCurrencies: [

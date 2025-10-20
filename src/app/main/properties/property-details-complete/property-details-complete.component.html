@@ -15,12 +15,12 @@
               <button (click)="goBack()"
                       class="inline-flex items-center px-4 py-2 bg-white border-2 border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-all duration-300 shadow-sm hover:shadow-md">
                 <youpez-ibm-icon iconName="arrowLeft" iconSize="16" class="mr-2 text-gray-500"></youpez-ibm-icon>
-                <span class="font-medium">Retour aux propriétés</span>
+                <span class="font-medium">{{ 'PROPERTY_DETAILS.NAVIGATION.BACK_TO_PROPERTIES' | translate }}</span>
               </button>
               <div class="flex items-center text-sm text-gray-500">
-                <span>Propriétés</span>
+                <span>{{ 'PROPERTY_DETAILS.NAVIGATION.PROPERTIES' | translate }}</span>
                 <youpez-ibm-icon iconName="chevronRight" iconSize="16" class="mx-2"></youpez-ibm-icon>
-                <span class="text-gray-700 font-medium">Détails</span>
+                <span class="text-gray-700 font-medium">{{ 'PROPERTY_DETAILS.NAVIGATION.DETAILS' | translate }}</span>
               </div>
             </div>
 
@@ -30,7 +30,7 @@
               </h1>
               <p class="text-gray-600 flex items-center text-sm">
                 <youpez-ibm-icon iconName="location" iconSize="16" class="mr-2 text-gray-400"></youpez-ibm-icon>
-                {{ property.location ?? 'Adresse non spécifiée' }}
+                {{ property.location ?? ('PROPERTY_DETAILS.NAVIGATION.ADDRESS_NOT_SPECIFIED' | translate) }}
               </p>
             </ng-container>
 
@@ -47,7 +47,7 @@
             <button class="gallery-btn inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-medium rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300 ease-in-out"
                     (click)="onOpenPropertyGallery()">
               <i class="fas fa-images mr-2 text-lg"></i>
-              <span>Galerie Média</span>
+              <span>{{ 'PROPERTY_DETAILS.ACTIONS.MEDIA_GALLERY' | translate }}</span>
               <div class="ml-2 bg-white bg-opacity-20 rounded-full px-2 py-1 text-xs font-semibold">
                 {{ getTotalMediaCount() }}
               </div>
@@ -57,7 +57,7 @@
                     class="custom-primary-button inline-flex items-center focus-carbon"
                     (click)="onEditProperty()">
               <youpez-ibm-icon iconName="edit" iconSize="16" class="mr-2"></youpez-ibm-icon>
-              Modifier
+              {{ 'PROPERTY_DETAILS.ACTIONS.EDIT' | translate }}
             </button>
           </div>
         </div>
@@ -81,7 +81,7 @@
             <youpez-ibm-icon [iconName]="getTabIcon(tab.icon)"
                              iconSize="16"
                              class="mr-2"></youpez-ibm-icon>
-            {{ tab.label }}
+            {{ getTabLabel(tab.id) | translate }}
             <span *ngIf="tab.count !== undefined"
                   class="ml-2 bg-gray-100 text-gray-900 py-1 px-2 rounded-full text-xs font-medium tab-count">
               {{ tab.count }}

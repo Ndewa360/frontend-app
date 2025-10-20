@@ -17,8 +17,7 @@ export class TranslationService {
   private readonly currentLanguage$ = new BehaviorSubject<string>('fr');
   private readonly supportedLanguages = [
     { code: 'fr', name: 'Français', flag: '🇫🇷', nativeName: 'Français' },
-    { code: 'en', name: 'English', flag: '🇺🇸', nativeName: 'English' },
-    { code: 'es', name: 'Español', flag: '🇪🇸', nativeName: 'Español' }
+    { code: 'en', name: 'English', flag: '🇺🇸', nativeName: 'English' }
   ];
 
   @Select(UserProfileState.selectStateUserProfile) userProfile$: Observable<any>;

@@ -2,6 +2,8 @@ import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChange
 import { PropertyModel, RoomModel, LocataireModel } from 'src/app/shared/store';
 import { PropertyMetrics, FinancialSummary, PropertyMetricsService } from '../../services/property-metrics.service';
 import { HistoryItem } from '../../services/property-data.service';
+import { PropertyDetailsTranslationService } from '../../services/property-details-translation.service';
+import { TranslationService } from 'src/app/shared/services/localization/translation.service';
 
 @Component({
   selector: 'app-property-overview',
@@ -27,7 +29,9 @@ export class PropertyOverviewComponent implements OnInit, OnChanges {
   Math = Math;
 
   constructor(
-    private propertyMetricsService:PropertyMetricsService
+    private propertyMetricsService: PropertyMetricsService,
+    private translationService: PropertyDetailsTranslationService,
+    private translate: TranslationService
   ) { }
 
   ngOnInit(): void {
@@ -147,42 +151,32 @@ export class PropertyOverviewComponent implements OnInit, OnChanges {
   }
 
   getPropertyCondition(): string {
-    if (!this.property?.condition) return 'Non spécifié';
+    if (!this.property?.condition) return this.translate.instant('PROPERTY_DETAILS.OVERVIEW.HARD_CODED_TEXTS.NOT_AVAILABLE_SHORT');
 
-    const conditionMap = {
-      'NEW': 'Neuf',
-      'EXCELLENT': 'Excellent',
-      'GOOD': 'Bon',
-      'FAIR': 'Correct',
-      'POOR': 'À rénover'
-    };
-
-    return conditionMap[this.property.condition];
+    const conditionLabels = this.translationService.getConditionLabels();
+    const translationKey = conditionLabels[this.property.condition];
+    return translationKey ? this.translate.instant(translationKey) : this.property.condition;
   }
 
   getFurnishingStatus(): string {
-    if (!this.property?.furnishingStatus) return 'Non spécifié';
+    if (!this.property?.furnishingStatus) return this.translate.instant('PROPERTY_DETAILS.OVERVIEW.HARD_CODED_TEXTS.NOT_AVAILABLE_SHORT');
 
-    const furnishingMap = {
-      'FURNISHED': 'Meublé',
-      'SEMI_FURNISHED': 'Semi-meublé',
-      'UNFURNISHED': 'Non meublé'
-    };
-
-    return furnishingMap[this.property.furnishingStatus];
+    const furnishingLabels = this.translationService.getFurnishingLabels();
+    const translationKey = furnishingLabels[this.property.furnishingStatus];
+    return translationKey ? this.translate.instant(translationKey) : this.property.furnishingStatus;
   }
 
   getAvailabilityStatus(): string {
-    if (!this.property?.availabilityStatus) return 'Non spécifié';
+    if (!this.property?.availabilityStatus) return this.translate.instant('PROPERTY_DETAILS.OVERVIEW.HARD_CODED_TEXTS.NOT_AVAILABLE_SHORT');
 
     const statusMap = {
-      'AVAILABLE': 'Disponible',
-      'PARTIALLY_OCCUPIED': 'Partiellement occupé',
-      'FULLY_OCCUPIED': 'Entièrement occupé',
-      'MAINTENANCE': 'En maintenance'
+      'AVAILABLE': 'STATUS.AVAILABLE',
+      'PARTIALLY_OCCUPIED': 'PROPERTY_DETAILS.OVERVIEW.HARD_CODED_TEXTS.PARTIALLY_OCCUPIED',
+      'FULLY_OCCUPIED': 'PROPERTY_DETAILS.OVERVIEW.HARD_CODED_TEXTS.FULLY_OCCUPIED',
+      'MAINTENANCE': 'STATUS.MAINTENANCE'
     };
 
-    return statusMap[this.property.availabilityStatus];
+    return this.translate.instant(statusMap[this.property.availabilityStatus] || this.property.availabilityStatus);
   }
 
   // Nouvelles méthodes pour l'interface financière détaillée
@@ -233,10 +227,10 @@ export class PropertyOverviewComponent implements OnInit, OnChanges {
 
   getPropertyStatus(): string {
     const occupancyRate = this.metrics?.occupancyRate || 0;
-    if (occupancyRate >= 90) return 'Excellent';
-    if (occupancyRate >= 75) return 'Bon';
-    if (occupancyRate >= 50) return 'Moyen';
-    return 'À améliorer';
+    if (occupancyRate >= 90) return this.translate.instant('PROPERTY_DETAILS.OVERVIEW.HARD_CODED_TEXTS.EXCELLENT');
+    if (occupancyRate >= 75) return this.translate.instant('PROPERTY_DETAILS.OVERVIEW.HARD_CODED_TEXTS.GOOD');
+    if (occupancyRate >= 50) return this.translate.instant('PROPERTY_DETAILS.OVERVIEW.HARD_CODED_TEXTS.AVERAGE');
+    return this.translate.instant('PROPERTY_DETAILS.OVERVIEW.HARD_CODED_TEXTS.TO_IMPROVE');
   }
 
   getPropertyValue(): number {
@@ -245,10 +239,10 @@ export class PropertyOverviewComponent implements OnInit, OnChanges {
 
   getPerformanceStatus(): string {
     const occupancyRate = this.metrics?.occupancyRate || 0;
-    if (occupancyRate >= 90) return 'Excellent';
-    if (occupancyRate >= 75) return 'Bon';
-    if (occupancyRate >= 50) return 'Moyen';
-    return 'Faible';
+    if (occupancyRate >= 90) return this.translate.instant('PROPERTY_DETAILS.OVERVIEW.HARD_CODED_TEXTS.EXCELLENT_PERFORMANCE');
+    if (occupancyRate >= 75) return this.translate.instant('PROPERTY_DETAILS.OVERVIEW.HARD_CODED_TEXTS.GOOD_PERFORMANCE');
+    if (occupancyRate >= 50) return this.translate.instant('PROPERTY_DETAILS.OVERVIEW.HARD_CODED_TEXTS.AVERAGE_PERFORMANCE');
+    return this.translate.instant('PROPERTY_DETAILS.OVERVIEW.HARD_CODED_TEXTS.POOR_PERFORMANCE');
   }
 
   getPerformanceColor(): string {
@@ -312,10 +306,10 @@ export class PropertyOverviewComponent implements OnInit, OnChanges {
 
   getYieldStatus(): string {
     const yield_ = this.getAnnualYield();
-    if (yield_ >= 8) return 'Excellent rendement';
-    if (yield_ >= 6) return 'Bon rendement';
-    if (yield_ >= 4) return 'Rendement correct';
-    return 'Rendement faible';
+    if (yield_ >= 8) return this.translate.instant('PROPERTY_DETAILS.OVERVIEW.HARD_CODED_TEXTS.EXCELLENT_YIELD');
+    if (yield_ >= 6) return this.translate.instant('PROPERTY_DETAILS.OVERVIEW.HARD_CODED_TEXTS.GOOD_YIELD');
+    if (yield_ >= 4) return this.translate.instant('PROPERTY_DETAILS.OVERVIEW.HARD_CODED_TEXTS.CORRECT_YIELD');
+    return this.translate.instant('PROPERTY_DETAILS.OVERVIEW.HARD_CODED_TEXTS.LOW_YIELD');
   }
 
   // Méthodes pour les données financières réelles (non redondantes)
@@ -350,7 +344,7 @@ export class PropertyOverviewComponent implements OnInit, OnChanges {
 
   formatDate(date: Date | string | undefined): string {
 
-    if (!date) return 'Non spécifiée';
+    if (!date) return this.translate.instant('PROPERTY_DETAILS.OVERVIEW.ADMINISTRATIVE_INFO.NO_INSPECTION');
 
     try {
       const dateObj = typeof date === 'string' ? new Date(date) : date;
@@ -360,7 +354,7 @@ export class PropertyOverviewComponent implements OnInit, OnChanges {
         year: 'numeric'
       }).format(dateObj);
     } catch (error) {
-      return 'Date invalide';
+      return this.translate.instant('ERRORS.INVALID_DATE');
     }
   }
 
@@ -604,23 +598,15 @@ export class PropertyOverviewComponent implements OnInit, OnChanges {
   }
 
   getConditionLabel(condition: string): string {
-    const labels = {
-      'NEW': 'Neuf',
-      'EXCELLENT': 'Excellent',
-      'GOOD': 'Bon',
-      'FAIR': 'Correct',
-      'POOR': 'À rénover'
-    };
-    return labels[condition] || condition;
+    const conditionLabels = this.translationService.getConditionLabels();
+    const translationKey = conditionLabels[condition];
+    return translationKey ? this.translationService.instant(translationKey) : condition;
   }
 
   getFurnishingLabel(status: string): string {
-    const labels = {
-      'FURNISHED': 'Meublé',
-      'SEMI_FURNISHED': 'Semi-meublé',
-      'UNFURNISHED': 'Non meublé'
-    };
-    return labels[status] || status;
+    const furnishingLabels = this.translationService.getFurnishingLabels();
+    const translationKey = furnishingLabels[status];
+    return translationKey ? this.translationService.instant(translationKey) : status;
   }
 
 }

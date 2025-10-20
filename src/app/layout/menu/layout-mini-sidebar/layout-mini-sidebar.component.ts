@@ -6,6 +6,7 @@ import { UserProfileState, UserProfileModel, UserProfileAction } from 'src/app/s
 import { AgentStatusService } from 'src/app/shared/services/agent-status.service'
 import { LanguageUrlService } from 'src/app/shared/services/language-url.service'
 import { LanguagePreservationService } from 'src/app/shared/services/language-preservation.service'
+import { TranslateService } from '@ngx-translate/core'
 import { filter, takeUntil } from 'rxjs/operators'
 import { Subject } from 'rxjs'
 
@@ -50,7 +51,8 @@ export class LayoutMiniSidebarComponent implements OnInit, OnDestroy {
     private _router:Router,
     private agentStatusService: AgentStatusService,
     private languageUrlService: LanguageUrlService,
-    private languagePreservation: LanguagePreservationService
+    private languagePreservation: LanguagePreservationService,
+    private translate: TranslateService
   ) {
   }
 

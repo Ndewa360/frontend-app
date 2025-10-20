@@ -11,7 +11,11 @@
     "lint": "ng lint",
     "lint:fix": "ng lint --fix",
     "e2e": "ng e2e",
-    "check-backend": "node scripts/check-backend.js"
+    "check-backend": "node scripts/check-backend.js",
+    "check-translations": "node scripts/check-translations.js",
+    "detect-hardcoded": "node scripts/detect-hardcoded-text.js",
+    "clean-languages": "node scripts/clean-unsupported-languages.js",
+    "translation-audit": "npm run check-translations && npm run detect-hardcoded"
   },
   "private": true,
   "dependencies": {

@@ -10,7 +10,7 @@
           <i class="fas fa-users text-white text-lg"></i>
         </div>
         <div>
-          <h2 class="text-2xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">Locataires</h2>
+          <h2 class="text-2xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">{{ 'PROPERTY_DETAILS.TENANTS.TITLE' | translate }}</h2>
           <p class="text-amber-600 text-sm">{{ getTotalTenants() }} locataire(s) • {{ getActiveTenants() }} actif(s)</p>
         </div>
       </div>
@@ -25,7 +25,7 @@
                 [class.cursor-not-allowed]="filteredTenants.length === 0"
                 title="Exporter en CSV ({{ filteredTenants.length }} locataires)">
           <i class="fas fa-file-csv mr-2 text-white"></i>
-          <span class="text-white font-medium">CSV</span>
+          <span class="text-white font-medium">{{ 'PROPERTY_DETAILS.TENANTS.ACTIONS.EXPORT_CSV' | translate }}</span>
         </button>
 
         <button (click)="exportTenantsToExcel()"
@@ -35,13 +35,13 @@
                 [class.cursor-not-allowed]="filteredTenants.length === 0"
                 title="Exporter en Excel ({{ filteredTenants.length }} locataires)">
           <i class="fas fa-file-excel mr-2 text-white"></i>
-          <span class="text-white font-medium">Excel</span>
+          <span class="text-white font-medium">{{ 'PROPERTY_DETAILS.TENANTS.ACTIONS.EXPORT_EXCEL' | translate }}</span>
         </button>
 
         <button (click)="addTenant()"
                 class="custom-primary-button px-5 py-2 rounded-lg font-semibold transition-all duration-300 flex items-center shadow-md hover:shadow-lg text-sm hover:transform hover:-translate-y-1">
           <i class="fas fa-plus mr-2"></i>
-          Nouveau
+          {{ 'PROPERTY_DETAILS.TENANTS.ACTIONS.NEW_TENANT' | translate }}
         </button>
       </div>
     </div>
@@ -55,7 +55,7 @@
           </div>
           <div>
             <div class="text-xl font-bold text-amber-800">{{ getTotalTenants() }}</div>
-            <div class="text-xs text-amber-600 font-medium">Total</div>
+            <div class="text-xs text-amber-600 font-medium">{{ 'PROPERTY_DETAILS.TENANTS.STATS.TOTAL' | translate }}</div>
           </div>
         </div>
       </div>
@@ -67,7 +67,7 @@
           </div>
           <div>
             <div class="text-xl font-bold text-emerald-800">{{ getActiveTenants() }}</div>
-            <div class="text-xs text-emerald-600 font-medium">Actifs</div>
+            <div class="text-xs text-emerald-600 font-medium">{{ 'PROPERTY_DETAILS.TENANTS.STATS.ACTIVE' | translate }}</div>
           </div>
         </div>
       </div>
@@ -106,7 +106,7 @@
           <input type="text"
                  [(ngModel)]="searchTerm"
                  (ngModelChange)="filterTenants()"
-                 placeholder="Rechercher un locataire..."
+                 [placeholder]="'PROPERTY_DETAILS.TENANTS.SEARCH_PLACEHOLDER' | translate"
                  class="w-full pl-10 pr-4 py-3 border border-amber-300 rounded-lg focus:border-amber-500 focus:ring-2 focus:ring-amber-200 transition-all duration-200 bg-white text-gray-800 placeholder-gray-500">
           <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <i class="fas fa-search text-amber-500"></i>

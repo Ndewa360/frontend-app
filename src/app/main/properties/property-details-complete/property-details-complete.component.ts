@@ -210,12 +210,12 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
     const baseTabs = [
       {
         id: 'overview',
-        label: 'Vue d\'ensemble',
+        label: 'PROPERTY_DETAILS.TABS.OVERVIEW',
         icon: 'home'
       },
       {
         id: 'units',
-        label: 'Unités locatives',
+        label: 'PROPERTY_DETAILS.TABS.UNITS',
         icon: 'balcony'
       }
     ];
@@ -230,17 +230,17 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
         ...baseTabs,
         {
           id: 'tenants',
-          label: 'Locataires',
+          label: 'PROPERTY_DETAILS.TABS.TENANTS',
           icon: 'user'
         },
         {
           id: 'history',
-          label: 'Historique',
+          label: 'PROPERTY_DETAILS.TABS.HISTORY',
           icon: 'time'
         },
         {
           id: 'finances',
-          label: 'Finances',
+          label: 'PROPERTY_DETAILS.TABS.FINANCES',
           icon: 'money'
         }
       ];
@@ -664,5 +664,9 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
       }
     });
     return totalCount;
+  }
+
+  getTabLabel(tabId: string): string {
+    return `PROPERTY_DETAILS.TABS.${tabId.toUpperCase()}`;
   }
 }

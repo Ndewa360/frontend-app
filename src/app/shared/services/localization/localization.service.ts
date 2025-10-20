@@ -9,9 +9,6 @@ import { UserProfileModel } from '../../store/user-profile/user-profile.model';
 // Import des locales Angular
 import localeEn from '@angular/common/locales/en';
 import localeFr from '@angular/common/locales/fr';
-import localeEs from '@angular/common/locales/es';
-import localeDe from '@angular/common/locales/de';
-import localeAr from '@angular/common/locales/ar';
 
 export interface LocalizationState {
   currentLanguage: string;
@@ -38,10 +35,7 @@ export class LocalizationService {
 
   private readonly localeMap = new Map([
     ['en', localeEn],
-    ['fr', localeFr],
-    ['es', localeEs],
-    ['de', localeDe],
-    ['ar', localeAr]
+    ['fr', localeFr]
   ]);
 
   constructor(
@@ -149,10 +143,7 @@ export class LocalizationService {
   private getNumberFormatForLanguage(language: string): string {
     const formatMap: { [key: string]: string } = {
       'fr': 'fr-FR',
-      'en': 'en-US',
-      'es': 'es-ES',
-      'de': 'de-DE',
-      'ar': 'ar-SA'
+      'en': 'en-US'
     };
     return formatMap[language] || 'fr-FR';
   }

@@ -13,7 +13,7 @@
           <ng-container  *ngIf="userProfile$ | async">
             <div  (click)="onItemClick({key:'search'})" class="app-mini-sidebar__list__item app-mini-sidebar__list__item__highlight">
               <div class="app-mini-sidebar__list__item__pill" placement="right" container="body"
-                ngbTooltip="Recherche globale">
+                [ngbTooltip]="'SIDEBAR.GLOBAL_SEARCH' | translate">
                 <youpez-ibm-icon id="search-menu-btn" iconName="search" iconSize="24"></youpez-ibm-icon>
               </div>
             </div>
@@ -21,21 +21,21 @@
               class="app-mini-sidebar__list__item app-mini-sidebar__list__item__highlight"
               [ngClass]="{'app-mini-sidebar__list__item__active': isRouteActive('/app/properties')}">
               <div class="app-mini-sidebar__list__item__pill" placement="right" container="body"
-                ngbTooltip="Bien immobilier">
+                [ngbTooltip]="'SIDEBAR.PROPERTIES' | translate">
                 <youpez-ibm-icon id="home-menu-btn" iconName="home" iconSize="24"></youpez-ibm-icon>
               </div>
             </div>
             <div (click)="navigateToBilling()"
               class="app-mini-sidebar__list__item app-mini-sidebar__list__item__highlight"
               [ngClass]="{'app-mini-sidebar__list__item__active': isRouteActive('/app/facturation')}">
-              <div class="app-mini-sidebar__list__item__pill" placement="right" container="body" ngbTooltip="Facturation">
+              <div class="app-mini-sidebar__list__item__pill" placement="right" container="body" [ngbTooltip]="'SIDEBAR.BILLING' | translate">
                 <youpez-ibm-icon id="billing-menu-btn" iconName="dashboardReference" iconSize="24"></youpez-ibm-icon>
               </div>
             </div>
             <div *ngIf="!isAgent" (click)="navigateToContractTemplates()"
               class="app-mini-sidebar__list__item app-mini-sidebar__list__item__highlight"
               [ngClass]="{'app-mini-sidebar__list__item__active': isRouteActive('/app/contract-templates')}">
-              <div class="app-mini-sidebar__list__item__pill" placement="right" container="body" ngbTooltip="Modele de contrat">
+              <div class="app-mini-sidebar__list__item__pill" placement="right" container="body" [ngbTooltip]="'SIDEBAR.CONTRACT_TEMPLATES' | translate">
                 <youpez-ibm-icon id="contract-model-menu-btn" iconName="document" iconSize="24"></youpez-ibm-icon>
               </div>
             </div>
@@ -43,7 +43,7 @@
             <div *ngIf="isAdmin" (click)="navigateToAdmin()" 
               class="app-mini-sidebar__list__item app-mini-sidebar__list__item__highlight"
               [ngClass]="{'app-mini-sidebar__list__item__active': isRouteActive('/admin')}">
-              <div class="app-mini-sidebar__list__item__pill" placement="right" container="body" ngbTooltip="Administration">
+              <div class="app-mini-sidebar__list__item__pill" placement="right" container="body" [ngbTooltip]="'SIDEBAR.ADMINISTRATION' | translate">
                 <youpez-ibm-icon iconName="settings" iconSize="24"></youpez-ibm-icon>
               </div>
             </div>
@@ -54,7 +54,7 @@
   </div>
   <div class="app-mini-sidebar__list">
     <div class="app-mini-sidebar__list__item" ngbDropdown container="body">
-      <div class="app-mini-sidebar__list__item__pill" placement="right" container="body" ngbTooltip="Aide"
+      <div class="app-mini-sidebar__list__item__pill" placement="right" container="body" [ngbTooltip]="'SIDEBAR.HELP' | translate"
         ngbDropdownToggle>
         <youpez-ibm-icon iconName="help" iconSize="24"></youpez-ibm-icon>
       </div>
@@ -65,7 +65,7 @@
               <youpez-ibm-icon iconName="email" iconSize="20"></youpez-ibm-icon>
             </div>
             <div class="app-list__item__content">
-              Support
+              {{ 'SIDEBAR.SUPPORT' | translate }}
             </div>
           </div>
          
@@ -74,7 +74,7 @@
               <youpez-ibm-icon iconName="buildingInsights1" iconSize="20"></youpez-ibm-icon>
             </div>
             <div class="app-list__item__content">
-              A propos
+              {{ 'SIDEBAR.ABOUT' | translate }}
             </div>
           </div>
           <div class="app-list__item" ngbDropdownItem (click)="navigateToPricing()">
@@ -82,7 +82,7 @@
               <youpez-ibm-icon iconName="tag" iconSize="20"></youpez-ibm-icon>
             </div>
             <div class="app-list__item__content">
-              Prix
+              {{ 'SIDEBAR.PRICING' | translate }}
             </div>
           </div>
         </div>
@@ -90,14 +90,14 @@
     </div>
     <div class="app-mini-sidebar__list__item" ngbDropdown container="body" *ngIf="userProfile$ | async">
       <div class="app-mini-sidebar__list__item__pill" (click)="onFakeLoading()" placement="right" container="body"
-        ngbTooltip="Notifications" ngbDropdownToggle>
+        [ngbTooltip]="'SIDEBAR.NOTIFICATIONS' | translate" ngbDropdownToggle>
         <youpez-ibm-icon iconName="notification" iconSize="24"></youpez-ibm-icon>
       </div>
       <div ngbDropdownMenu class="relative">
         <div fxLayout="column">
           <div class="app-list-header-alt" ngbDropdownItem>
             <div class="flex justify-between items-center">
-              <div>notifications</div>
+              <div>{{ 'SIDEBAR.NOTIFICATIONS' | translate }}</div>
               <div class="app-helper-text-01 app-color-danger">+ {{notifications.length}}</div>
             </div>
           </div>
@@ -145,21 +145,21 @@
             </div>
           </div>
           <div class="app-list-footer-alt text-center app-helper-text-01 mb-2" ngbDropdownItem>
-            <a>Voir tout</a>
+            <a>{{ 'SIDEBAR.VIEW_ALL' | translate }}</a>
           </div>
         </div>
       </div>
     </div>
     <div class="app-mini-sidebar__list__item" ngbDropdown container="body" *ngIf="userProfile$ | async">
       <div class="app-mini-sidebar__list__item__pill" (click)="onFakeLoading()" placement="right" container="body"
-        ngbTooltip="Messages" ngbDropdownToggle>
+        [ngbTooltip]="'SIDEBAR.MESSAGES' | translate" ngbDropdownToggle>
         <youpez-ibm-icon iconName="chat" iconSize="24"></youpez-ibm-icon>
       </div>
       <div ngbDropdownMenu class="relative">
         <div fxLayout="column">
           <div class="app-list-header-alt" ngbDropdownItem>
             <div class="flex justify-between items-center">
-              <div>Messages</div>
+              <div>{{ 'SIDEBAR.MESSAGES' | translate }}</div>
               <div class="app-helper-text-01 app-color-success">+ {{messages.length}}</div>
             </div>
           </div>
@@ -202,14 +202,14 @@
             </div>
           </div>
           <div class="app-list-footer-alt text-center app-helper-text-01 mb-2" ngbDropdownItem>
-            <a>Voir tout</a>
+            <a>{{ 'SIDEBAR.VIEW_ALL' | translate }}</a>
           </div>
         </div>
       </div>
     </div>
 
     <div class="app-mini-sidebar__list__item" ngbDropdown container="body">
-      <div class="app-mini-sidebar__list__item__pill" placement="right" container="body" ngbTooltip="Details du compte"
+      <div class="app-mini-sidebar__list__item__pill" placement="right" container="body" [ngbTooltip]="'SIDEBAR.ACCOUNT_DETAILS' | translate"
         ngbDropdownToggle>
         <youpez-ibm-icon iconName="user" iconSize="24"></youpez-ibm-icon>
       </div>
@@ -223,7 +223,7 @@
                   </div>
                   <div class="app-list__item__content mr-4">
                     <div>
-                      <div class="app-helper-text-01">Connecté en tant que</div>
+                      <div class="app-helper-text-01">{{ 'SIDEBAR.LOGGED_IN_AS' | translate }}</div>
                       <div class="app-expressive-heading-02" *ngIf="userProfile$ | async as userProfil">{{userProfil.name}}</div>
                     </div>
                   </div>
@@ -236,7 +236,7 @@
                   </div>
                   <div class="app-list__item__content mr-4">
                     <div>
-                      <div class="app-helper-text-01">Connectez-vous</div>
+                      <div class="app-helper-text-01">{{ 'SIDEBAR.PLEASE_LOGIN' | translate }}</div>
                     </div>
                   </div>
                 </div>
@@ -244,7 +244,7 @@
             <div class="app-list__divider"></div>
             <div class="app-list__item" ngbDropdownItem (click)="navigateToProfile()" *ngIf="userProfile$ | async">
               <div class="app-list__item__content">
-                Profil
+                {{ 'SIDEBAR.PROFILE' | translate }}
               </div>
             </div>
           
@@ -255,19 +255,19 @@
           </div> -->
           <div class="app-list__item" ngbDropdownItem (click)="navigateToHome()">
             <div class="app-list__item__content">
-              Acceuil
+              {{ 'SIDEBAR.HOME' | translate }}
             </div>
           </div>
           <div class="app-list__item" ngbDropdownItem (click)="goToSearchPage()">
             <div class="app-list__item__content">
-              Espace de recherche
+              {{ 'SIDEBAR.SEARCH_SPACE' | translate }}
             </div>
           </div>          
           <ng-container  *ngIf="(userProfile$ | async)">
             <div class="app-list__divider"></div>
             <div class="app-list__item mb-2" ngbDropdownItem (click)="logout()">
               <div class="app-list__item__content">
-                Deconnexion
+                {{ 'SIDEBAR.LOGOUT' | translate }}
               </div>
             </div>
           </ng-container>          
