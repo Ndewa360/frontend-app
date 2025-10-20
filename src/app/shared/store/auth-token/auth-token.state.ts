@@ -6,6 +6,7 @@ import { tap, catchError } from "rxjs/operators";
 import { NotificationService } from "carbon-components-angular";
 import { ToastrService } from "ngx-toastr";
 import { TranslateService } from "@ngx-translate/core";
+import { LanguagePreservationService } from "../../services/language-preservation.service";
 
 export class AuthTokenStateModel {
     authToken: string;
@@ -33,7 +34,8 @@ export class AuthTokenStateModel {
 export class AuthTokenState {
     constructor(
         private _toastrService: ToastrService,
-        private _translateService: TranslateService
+        private _translateService: TranslateService,
+        private _languagePreservation: LanguagePreservationService
     ) {}
 
     @Selector()
@@ -116,6 +118,9 @@ export class AuthTokenState {
 
     @Action(AuthTokenAction.Logout)
     logout(ctx: StateContext<AuthTokenStateModel>, { reason }: AuthTokenAction.Logout) {
+        // Préserver la langue avant la déconnexion
+        this._languagePreservation.preserveCurrentLanguage();
+        
         ctx.setState({
             authToken: null,
             refreshToken: null,
@@ -177,6 +182,8 @@ export class AuthTokenState {
         console.error('❌ Échec du refresh token:', error);
         return of(false);
     }
+
+
 
     // Fonction utilitaire pour extraire la date d'expiration du token JWT
     private getTokenExpiration(token: string): number {

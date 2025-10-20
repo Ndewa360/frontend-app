@@ -4,6 +4,8 @@ import { Subject } from 'rxjs';
 import { takeUntil, filter } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
 import { UserProfileState } from '../../../../shared/store/user-profile/user-profile.state';
+import { UserProfileAction } from '../../../../shared/store/user-profile/user-profile.actions';
+import { LanguagePreservationService } from '../../../../shared/services/language-preservation.service';
 
 interface AdminMenuItem {
   id: string;
@@ -82,7 +84,8 @@ export class AdminLayoutComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private store: Store
+    private store: Store,
+    private languagePreservation: LanguagePreservationService
   ) {}
 
   ngOnInit(): void {
@@ -133,8 +136,9 @@ export class AdminLayoutComponent implements OnInit, OnDestroy {
   }
 
   onLogout(): void {
-    // Logique de déconnexion
-    this.router.navigate(['/auth/login']);
+    // Préserver la langue et déconnecter
+    this.languagePreservation.preserveCurrentLanguage();
+    this.store.dispatch(new UserProfileAction.LogoutUserProfile(true));
   }
 
   // Template helper methods to simplify expressions

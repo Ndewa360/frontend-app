@@ -15,6 +15,7 @@ import { DisconnexionService } from "./disconnection.service";
 import { RefreshTokenService } from "../auth-token/refresh-token.service";
 import { TranslateService } from "@ngx-translate/core";
 import { LanguageUrlService } from "../../services/language-url.service";
+import { LanguagePreservationService } from "../../services/language-preservation.service";
 
 export class UserProfileStateModel {
     userProfile: UserProfileModel;
@@ -45,7 +46,8 @@ export class UserProfileState {
         private disconnetionService: DisconnexionService,
         private refreshTokenService: RefreshTokenService,
         private _translateService: TranslateService,
-        private _languageUrlService: LanguageUrlService
+        private _languageUrlService: LanguageUrlService,
+        private _languagePreservation: LanguagePreservationService
     ) {}
 
     @Selector()
@@ -334,10 +336,10 @@ export class UserProfileState {
                     lastError: error?.error?.message || "Erreur lors du chargement du profil"
                 });
                 
-                // Si erreur 401, rediriger vers la page de connexion
+                // Si erreur 401, rediriger vers la page de connexion avec langue
                 if (error.status === 401) {
                     this._store.dispatch(new AuthTokenAction.Logout());
-                    this._router.navigateByUrl('/auth/signin');
+                    this._languagePreservation.redirectToLogin();
                     this._toastrService.warning("Session expirée. Veuillez vous reconnecter.", 'Ndewa360°');
                 } else {
                     let message = error?.error?.message;
@@ -521,9 +523,9 @@ export class UserProfileState {
                 // Redirection conditionnelle selon le paramètre
                 if (error.status === 401) {
                     if (forceRedirectOnError) {
-                        // Rediriger seulement si explicitement demandé
+                        // Rediriger seulement si explicitement demandé avec langue
                         this._store.dispatch(new AuthTokenAction.Logout());
-                        this._router.navigateByUrl('/auth/signin');
+                        this._languagePreservation.redirectToLogin();
                         this._toastrService.warning("Session expirée. Veuillez vous reconnecter.", 'Ndewa360°');
                     } else {
                         // Juste nettoyer l'état sans rediriger

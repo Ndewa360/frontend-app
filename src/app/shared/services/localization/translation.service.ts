@@ -5,6 +5,7 @@ import { LocalizationService } from './localization.service';
 import { Store, Select } from '@ngxs/store';
 import { UserProfileAction } from '../../store/user-profile/user-profile.actions';
 import { UserProfileState } from '../../store/user-profile/user-profile.state';
+import { LanguagePreservationService } from '../language-preservation.service';
 
 import { take } from 'rxjs/operators';
 
@@ -26,7 +27,8 @@ export class TranslationService {
   constructor(
     private translateService: TranslateService,
     private localizationService: LocalizationService,
-    private store: Store
+    private store: Store,
+    private languagePreservation: LanguagePreservationService
   ) {
     this.initializeTranslation();
   }
@@ -77,14 +79,21 @@ export class TranslationService {
         return userProfile.preferredLanguage;
       }
 
-      // 2. Vérifier le localStorage (utilisateur non connecté avec préférence sauvegardée)
+      // 2. Vérifier la langue préservée (après déconnexion)
+      const preservedLanguage = this.languagePreservation.getPreservedLanguage();
+      if (preservedLanguage && this.isLanguageSupported(preservedLanguage)) {
+        console.log('💾 Langue préservée après déconnexion:', preservedLanguage);
+        return preservedLanguage;
+      }
+
+      // 3. Vérifier le localStorage (utilisateur non connecté avec préférence sauvegardée)
       const savedLanguage = this.getLanguageFromLocalStorage();
       if (savedLanguage && this.isLanguageSupported(savedLanguage)) {
         console.log('💾 Langue sauvegardée localement:', savedLanguage);
         return savedLanguage;
       }
 
-      // 3. Utiliser la langue du navigateur
+      // 4. Utiliser la langue du navigateur
       const browserLanguage = this.getBrowserLanguage();
       if (browserLanguage && this.isLanguageSupported(browserLanguage)) {
         console.log('🌐 Langue du navigateur:', browserLanguage);

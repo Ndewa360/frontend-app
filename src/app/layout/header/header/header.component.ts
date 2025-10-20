@@ -8,6 +8,7 @@ import { BaseComponent } from 'src/app/shared/utils/base-component'
 import { NotificationManagerService } from 'src/app/shared/services/notification-manager.service'
 import { AuthStateService } from 'src/app/shared/services/auth-state.service'
 import { LanguageUrlService } from 'src/app/shared/services/language-url.service'
+import { LanguagePreservationService } from 'src/app/shared/services/language-preservation.service'
 
 @Component({
   selector: 'app-main-header',
@@ -34,7 +35,8 @@ export class HeaderComponent extends BaseComponent implements OnInit {
     private router: Router,
     private notificationManager: NotificationManagerService,
     private authStateService: AuthStateService,
-    private languageUrlService: LanguageUrlService
+    private languageUrlService: LanguageUrlService,
+    private languagePreservation: LanguagePreservationService
   ) {
     super();
   }
@@ -47,16 +49,7 @@ export class HeaderComponent extends BaseComponent implements OnInit {
         if (user) this.isAdmin = user.email === 'support@ndewa-360.com';
       });
 
-    // Surveiller les actions de déconnexion
-    this._ngxsAction
-      .pipe(
-        ofActionSuccessful(UserProfileAction.LogoutUserProfile),
-        takeUntil(this.destroy$)
-      )
-      .subscribe(() => {
-        const currentLang = this.languageUrlService.getCurrentLanguage();
-        this.router.navigate([`/${currentLang}/auth/signin`]);
-      });
+    // Les redirections de déconnexion sont gérées par le DisconnectionService
 
     // Surveiller le nombre de notifications non lues
     this.notificationManager.getUnreadCount()
@@ -96,6 +89,8 @@ export class HeaderComponent extends BaseComponent implements OnInit {
   }
 
   logout(): void {
+    // Préserver la langue avant la déconnexion
+    this.languagePreservation.preserveCurrentLanguage();
     this._store.dispatch(new UserProfileAction.LogoutUserProfile(true));
   }
 

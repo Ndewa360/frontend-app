@@ -1,4 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit, HostListener } from '@angular/core';
+import { Store } from '@ngxs/store';
+import { UserProfileAction } from '../../../store/user-profile/user-profile.actions';
+import { LanguagePreservationService } from '../../../services/language-preservation.service';
 
 export interface NavItem {
   id: string;
@@ -145,6 +148,11 @@ export class ModernSidebarComponent implements OnInit {
     }
   ];
 
+  constructor(
+    private store: Store,
+    private languagePreservation: LanguagePreservationService
+  ) {}
+
   @HostListener('window:resize', ['$event'])
   onResize(event: any): void {
     this.checkMobile();
@@ -235,7 +243,8 @@ export class ModernSidebarComponent implements OnInit {
   }
 
   private logout(): void {
-    // Implémentation de la déconnexion
-    console.log('Déconnexion...');
+    // Préserver la langue et déconnecter
+    this.languagePreservation.preserveCurrentLanguage();
+    this.store.dispatch(new UserProfileAction.LogoutUserProfile(true));
   }
 }

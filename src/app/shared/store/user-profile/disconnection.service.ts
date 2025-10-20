@@ -19,6 +19,7 @@ import { StatisticAction } from "../statistic-data";
 import { SouscriptionPeriodAction } from "../souscription-period";
 import { UserAction } from "../user";
 import { UserProfileAction } from "./user-profile.actions";
+import { LanguagePreservationService } from "../../services/language-preservation.service";
 
 @Injectable({
     providedIn:"root"
@@ -27,11 +28,15 @@ export class DisconnexionService
 {
     constructor(
         private store:Store,
-        private authService: AuthService
+        private authService: AuthService,
+        private languagePreservation: LanguagePreservationService
     ){}
     
     logout()
     {
+        // Préserver la langue avant la déconnexion
+        this.languagePreservation.preserveCurrentLanguage();
+        
         // Appeler l'endpoint de déconnexion backend pour nettoyer le refresh token
         this.authService.logout().pipe(
             catchError(error => {
@@ -60,5 +65,10 @@ export class DisconnexionService
         this.store.dispatch(new UserAction.Logout())
         this.store.dispatch(new UserProfileAction.Logout())
         this.store.dispatch(new AuthTokenAction.Logout('Manual logout'));
+        
+        // Rediriger vers la page de connexion avec la langue appropriée
+        setTimeout(() => {
+            this.languagePreservation.redirectToLogin();
+        }, 100);
     }
 }

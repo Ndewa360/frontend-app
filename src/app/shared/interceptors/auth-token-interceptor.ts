@@ -10,6 +10,8 @@ import { StoreHelper } from "../utils";
 import { RefreshTokenService } from "../store/auth-token/refresh-token.service";
 import { ApiResultFormat } from "../store";
 import { UserActivityService } from "../store/auth-token/user-activity.service";
+import { TranslateService } from "@ngx-translate/core";
+import { LanguagePreservationService } from "../services/language-preservation.service";
 
 
 @Injectable()
@@ -25,7 +27,9 @@ export class AuthTokenInterceptor implements HttpInterceptor {
     private _router: Router,
     private _toastrService: ToastrService,
     private refreshTokenService: RefreshTokenService,
-    private userActivityService: UserActivityService
+    private userActivityService: UserActivityService,
+    private translate: TranslateService,
+    private languagePreservation: LanguagePreservationService
   ) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -128,15 +132,15 @@ export class AuthTokenInterceptor implements HttpInterceptor {
    */
   private redirectToLogin(): void {
     const currentUrl = this._router.url;
-    const safeRedirectUrl = this.getSafeRedirectUrl(currentUrl);
-    this._router.navigateByUrl(safeRedirectUrl);
+    this.languagePreservation.redirectToLogin(currentUrl);
   }
 
   private handle401Error(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     // Vérifier l'état d'activité de l'utilisateur avant de tenter un refresh
     if (this.userActivityService.isUserCriticallyInactive()) {
       console.log('🔴 Utilisateur en inactivité critique - déconnexion forcée');
-      this.forceLogoutWithRedirect('🔒 Session fermée automatiquement après 30 minutes d\'inactivité pour protéger vos données.');
+      const criticalMessage = this.translate.instant('NOTIFICATIONS.SESSION_EXPIRED');
+      this.forceLogoutWithRedirect(criticalMessage);
       return throwError(() => new Error('User critically inactive'));
     }
 
@@ -161,25 +165,19 @@ export class AuthTokenInterceptor implements HttpInterceptor {
 
           console.error('❌ Échec du rafraîchissement du token:', err);
 
-          // Gestion différenciée selon le type d'erreur
+          // Gestion différenciée selon le type d'erreur avec messages traduits
           if (err.message?.includes('User inactive')) {
-            this._toastrService.info(
-              "⏰ Reconnectez-vous pour reprendre votre session là où vous l'avez laissée",
-              "Ndewa360° - Session suspendue",
-              { timeOut: 8000, extendedTimeOut: 3000 }
-            );
+            const inactiveMessage = this.translate.instant('NOTIFICATIONS.SESSION_EXPIRED');
+            const inactiveTitle = `Ndewa360° - ${this.translate.instant('COMMON.INFO')}`;
+            this._toastrService.info(inactiveMessage, inactiveTitle, { timeOut: 8000, extendedTimeOut: 3000 });
           } else if (err.message?.includes('critically inactive')) {
-            this._toastrService.warning(
-              "🔒 Session fermée pour inactivité prolongée. Vos données sont protégées.",
-              "Ndewa360° - Sécurité",
-              { timeOut: 10000, extendedTimeOut: 5000 }
-            );
+            const criticalMessage = this.translate.instant('NOTIFICATIONS.SESSION_EXPIRED');
+            const securityTitle = `Ndewa360° - ${this.translate.instant('COMMON.WARNING')}`;
+            this._toastrService.warning(criticalMessage, securityTitle, { timeOut: 10000, extendedTimeOut: 5000 });
           } else {
-            this._toastrService.warning(
-              "🔑 Session expirée. Reconnectez-vous pour accéder à vos données",
-              "Ndewa360° - Authentification",
-              { timeOut: 8000, extendedTimeOut: 3000 }
-            );
+            const expiredMessage = this.translate.instant('NOTIFICATIONS.SESSION_EXPIRED');
+            const authTitle = `Ndewa360° - ${this.translate.instant('COMMON.INFO')}`;
+            this._toastrService.warning(expiredMessage, authTitle, { timeOut: 8000, extendedTimeOut: 3000 });
           }
 
           this.forceLogoutWithRedirect();
@@ -201,11 +199,9 @@ export class AuthTokenInterceptor implements HttpInterceptor {
           // Si le timeout est atteint, forcer une déconnexion
           if (error.name === 'TimeoutError') {
             console.error('⏰ Timeout lors de l\'attente du rafraîchissement');
-            this._toastrService.warning(
-              "⏱️ Délai d'attente dépassé lors de la reconnexion automatique. Reconnectez-vous manuellement.",
-              "Ndewa360° - Connexion",
-              { timeOut: 10000, extendedTimeOut: 5000 }
-            );
+            const timeoutMessage = this.translate.instant('NOTIFICATIONS.NETWORK_ERROR');
+            const connectionTitle = `Ndewa360° - ${this.translate.instant('COMMON.WARNING')}`;
+            this._toastrService.warning(timeoutMessage, connectionTitle, { timeOut: 10000, extendedTimeOut: 5000 });
           }
           this.forceLogoutWithRedirect();
           return throwError(() => error);
@@ -234,7 +230,7 @@ export class AuthTokenInterceptor implements HttpInterceptor {
           error: () => {
             // Échec du rafraîchissement, déconnexion
             this._store.dispatch(new AuthTokenAction.Logout());
-            this._router.navigateByUrl('/auth/signin');
+            this.languagePreservation.redirectToLogin();
           }
         });
       }
@@ -245,6 +241,7 @@ export class AuthTokenInterceptor implements HttpInterceptor {
    * Force la déconnexion avec redirection
    */
   private forceLogoutWithRedirect(message?: string): void {
+    this.languagePreservation.preserveCurrentLanguage();
     this._store.dispatch(new AuthTokenAction.Logout());
     this.refreshTokenService.stopActivityMonitoring();
     this.redirectToLogin();
@@ -294,15 +291,17 @@ export class AuthTokenInterceptor implements HttpInterceptor {
     if(isLoginProcess) {
       switch(error.status) {
           case 401:
-              this._toastrService.error(`Email ou mot de passe incorrect! `, 'Ndewa360°');
+              const invalidCredentials = this.translate.instant('NOTIFICATIONS.UNAUTHORIZED');
+              this._toastrService.error(invalidCredentials, 'Ndewa360°');
               break;
 
           case 406:
-              this._toastrService.warning(`Compte inactivé! Veuillez valider ce compte à partir du lien fourni par mail! `, 'Ndewa360°');
+              const accountInactive = this.translate.instant('NOTIFICATIONS.ACCOUNT_NOT_FOUND');
+              this._toastrService.warning(accountInactive, 'Ndewa360°');
               break;
           default:
               let message = error?.error?.message;
-              if(!message) message = "Une erreur s'est produite! Réessayez plus tard"
+              if(!message) message = this.translate.instant('NOTIFICATIONS.GENERIC_ERROR');
               this._toastrService.error(message, 'Ndewa360°');
       }
     } else {
@@ -314,53 +313,11 @@ export class AuthTokenInterceptor implements HttpInterceptor {
 
           default:
               let message = error?.error?.message;
-              if(!message) message = "Une erreur s'est produite! Réessayez plus tard"
+              if(!message) message = this.translate.instant('NOTIFICATIONS.GENERIC_ERROR');
               this._toastrService.error(message, 'Ndewa360°');
       }
     }
   }
 
-  /**
-   * Génère une URL de redirection sécurisée pour éviter les boucles infinies
-   */
-  private getSafeRedirectUrl(currentUrl: string): string {
-    // Si on est déjà sur une page d'auth, ne pas ajouter de returnUrl
-    if (currentUrl.includes('/auth/signin') ||
-        currentUrl.includes('/auth/signup') ||
-        currentUrl.includes('/auth/register') ||
-        currentUrl === '/auth' ||
-        currentUrl === '/') {
-      return '/auth/signin';
-    }
 
-    // Nettoyer l'URL pour éviter les paramètres returnUrl imbriqués
-    const cleanUrl = this.cleanReturnUrl(currentUrl);
-    return `/auth/signin?returnUrl=${encodeURIComponent(cleanUrl)}`;
-  }
-
-  /**
-   * Nettoie l'URL de retour pour éviter les paramètres returnUrl imbriqués
-   */
-  private cleanReturnUrl(url: string): string {
-    try {
-      // Supprimer les paramètres returnUrl existants pour éviter l'imbrication
-      const urlObj = new URL(url, window.location.origin);
-      urlObj.searchParams.delete('returnUrl');
-
-      // Retourner seulement le pathname et les paramètres nettoyés
-      const cleanPath = urlObj.pathname + (urlObj.search ? urlObj.search : '');
-
-      // ✅ CORRECTION: Ne pas rediriger vers /dashboard, préserver l'URL originale
-      // Seulement rediriger vers /search/index si on est vraiment sur la racine (front office)
-      if (cleanPath === '/' || cleanPath === '') {
-        return '/search/index';
-      }
-
-      return cleanPath;
-    } catch (error) {
-      // En cas d'erreur de parsing, retourner l'URL du front office
-      console.warn('Erreur lors du nettoyage de l\'URL:', error);
-      return '/search/index';
-    }
-  }
 }

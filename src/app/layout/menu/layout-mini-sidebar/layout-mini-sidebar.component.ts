@@ -5,6 +5,7 @@ import { Observable } from 'rxjs'
 import { UserProfileState, UserProfileModel, UserProfileAction } from 'src/app/shared/store'
 import { AgentStatusService } from 'src/app/shared/services/agent-status.service'
 import { LanguageUrlService } from 'src/app/shared/services/language-url.service'
+import { LanguagePreservationService } from 'src/app/shared/services/language-preservation.service'
 import { filter, takeUntil } from 'rxjs/operators'
 import { Subject } from 'rxjs'
 
@@ -48,7 +49,8 @@ export class LayoutMiniSidebarComponent implements OnInit, OnDestroy {
     private _store:Store,
     private _router:Router,
     private agentStatusService: AgentStatusService,
-    private languageUrlService: LanguageUrlService
+    private languageUrlService: LanguageUrlService,
+    private languagePreservation: LanguagePreservationService
   ) {
   }
 
@@ -129,9 +131,9 @@ export class LayoutMiniSidebarComponent implements OnInit, OnDestroy {
 
   logout()
   {
-    this._store.dispatch(new UserProfileAction.LogoutUserProfile(true))
-    const currentLang = this.languageUrlService.getCurrentLanguage();
-    this._router.navigate([`/${currentLang}/auth/signin`])
+    // Préserver la langue avant la déconnexion
+    this.languagePreservation.preserveCurrentLanguage();
+    this._store.dispatch(new UserProfileAction.LogoutUserProfile(true));
   }
   goToSearchPage()
   {

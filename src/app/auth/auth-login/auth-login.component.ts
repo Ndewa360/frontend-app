@@ -15,6 +15,7 @@ import { HttpClient } from '@angular/common/http'
 import { environment } from 'src/environments/environment'
 import { LanguageUrlService } from 'src/app/shared/services/language-url.service'
 import { TranslateService } from '@ngx-translate/core'
+import { LanguagePreservationService } from 'src/app/shared/services/language-preservation.service'
 
 @Component({
   selector: 'app-auth-login',
@@ -38,7 +39,8 @@ export class AuthLoginComponent implements OnInit, OnDestroy {
     private _toastrService: ToastrService,
     private http: HttpClient,
     private languageUrlService: LanguageUrlService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private languagePreservation: LanguagePreservationService
   ) {}
 
   ngOnInit(): void {
@@ -57,23 +59,17 @@ export class AuthLoginComponent implements OnInit, OnDestroy {
 
       // Message spécifique selon la raison de la reconnexion
       if (reason === 'inactive') {
-        this._toastrService.success(
-          '✅ Reconnexion réussie ! Vous reprenez votre session là où vous l\'aviez laissée.',
-          'Ndewa360° - Session restaurée',
-          { timeOut: 6000, extendedTimeOut: 2000 }
-        );
+        const reconnectMessage = this.translate.instant('NOTIFICATIONS.WELCOME_LOGIN');
+        const sessionTitle = `Ndewa360° - ${this.translate.instant('COMMON.SUCCESS')}`;
+        this._toastrService.success(reconnectMessage, sessionTitle, { timeOut: 6000, extendedTimeOut: 2000 });
       } else if (reason === 'critical_inactive') {
-        this._toastrService.success(
-          '🔒 Reconnexion sécurisée réussie ! Vos données sont protégées.',
-          'Ndewa360° - Sécurité',
-          { timeOut: 6000, extendedTimeOut: 2000 }
-        );
+        const secureMessage = this.translate.instant('NOTIFICATIONS.WELCOME_LOGIN');
+        const securityTitle = `Ndewa360° - ${this.translate.instant('COMMON.SUCCESS')}`;
+        this._toastrService.success(secureMessage, securityTitle, { timeOut: 6000, extendedTimeOut: 2000 });
       } else if (reason === 'token_expired') {
-        this._toastrService.success(
-          '🔑 Session renouvelée avec succès ! Vous pouvez continuer.',
-          'Ndewa360° - Authentification',
-          { timeOut: 5000, extendedTimeOut: 2000 }
-        );
+        const renewedMessage = this.translate.instant('NOTIFICATIONS.WELCOME_LOGIN');
+        const authTitle = `Ndewa360° - ${this.translate.instant('COMMON.SUCCESS')}`;
+        this._toastrService.success(renewedMessage, authTitle, { timeOut: 5000, extendedTimeOut: 2000 });
       } else {
         this._toastrService.success(
           this.translate.instant('NOTIFICATIONS.WELCOME_LOGIN'),
@@ -107,8 +103,7 @@ export class AuthLoginComponent implements OnInit, OnDestroy {
       
       // Vérifier si c'est une erreur 406 (compte inactif)
       if (value?.result?.error?.['status'] == 406) {
-        const currentLang = this.languageUrlService.getCurrentLanguage();
-        this.router.navigate([`/${currentLang}/auth/confirmation`, this.formGroup.value.email]);
+        this.languagePreservation.navigateWithLanguage(`/auth/confirmation/${this.formGroup.value.email}`);
       }
     });
     this.subscriptions.push(completedSub);
@@ -156,8 +151,7 @@ export class AuthLoginComponent implements OnInit, OnDestroy {
   }
 
   goToSearchPage() {
-    const currentLang = this.languageUrlService.getCurrentLanguage();
-    this.router.navigateByUrl(`/${currentLang}/search/index?minPrice=0&maxPrix=100000&ville=Bangangté`);
+    this.languagePreservation.navigateWithLanguage('/search/index', { minPrice: 0, maxPrix: 100000, ville: 'Bangangté' });
   }
 
   togglePasswordVisibility() {

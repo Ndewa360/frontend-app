@@ -8,6 +8,7 @@ import { AuthTokenState, UserProfileState } from '../store';
 import { RefreshTokenService } from '../store/auth-token/refresh-token.service';
 import { UserActivityService, UserActivityState } from '../store/auth-token/user-activity.service';
 import { LanguageUrlService } from '../services/language-url.service';
+import { LanguagePreservationService } from '../services/language-preservation.service';
 
 export interface SessionCheckResult {
   canActivate: boolean;
@@ -26,7 +27,8 @@ export class AdvancedAuthGuard implements CanActivate {
     private toastrService: ToastrService,
     private refreshTokenService: RefreshTokenService,
     private userActivityService: UserActivityService,
-    private languageUrlService: LanguageUrlService
+    private languageUrlService: LanguageUrlService,
+    private languagePreservation: LanguagePreservationService
   ) {}
 
   canActivate(
@@ -69,7 +71,7 @@ export class AdvancedAuthGuard implements CanActivate {
       switchMap(([token, userProfile, activityState]) => {
         // 1. Vérifier si l'utilisateur a un token
         if (!token || !token.accessToken) {
-          const currentLang = this.languageUrlService.getCurrentLanguage();
+          const currentLang = this.languagePreservation.getCurrentOrPreservedLanguage();
           return of({
             canActivate: false,
             redirectUrl: this.getSafeRedirectUrl(state.url, currentLang),
@@ -79,7 +81,7 @@ export class AdvancedAuthGuard implements CanActivate {
 
         // 2. Vérifier l'état d'activité critique
         if (activityState === UserActivityState.CRITICAL_INACTIVE) {
-          const currentLang = this.languageUrlService.getCurrentLanguage();
+          const currentLang = this.languagePreservation.getCurrentOrPreservedLanguage();
           return of({
             canActivate: false,
             redirectUrl: `/${currentLang}/auth/signin?returnUrl=${encodeURIComponent(state.url)}&reason=critical_inactive`,
@@ -102,7 +104,7 @@ export class AdvancedAuthGuard implements CanActivate {
    * Gère le cas d'un utilisateur inactif
    */
   private handleInactiveUser(currentUrl: string): Observable<SessionCheckResult> {
-    const currentLang = this.languageUrlService.getCurrentLanguage();
+    const currentLang = this.languagePreservation.getCurrentOrPreservedLanguage();
     return of({
       canActivate: false,
       redirectUrl: `/${currentLang}/auth/signin?returnUrl=${encodeURIComponent(currentUrl)}&reason=inactive`,
@@ -121,7 +123,7 @@ export class AdvancedAuthGuard implements CanActivate {
           return { canActivate: true };
         } else {
           // Échec de la vérification/refresh du token
-          const currentLang = this.languageUrlService.getCurrentLanguage();
+          const currentLang = this.languagePreservation.getCurrentOrPreservedLanguage();
           return {
             canActivate: false,
             redirectUrl: this.getSafeRedirectUrl(currentUrl, currentLang),
@@ -140,7 +142,7 @@ export class AdvancedAuthGuard implements CanActivate {
           message = 'Session expirée pour cause d\'inactivité prolongée.';
         }
         
-        const currentLang = this.languageUrlService.getCurrentLanguage();
+        const currentLang = this.languagePreservation.getCurrentOrPreservedLanguage();
         return of({
           canActivate: false,
           redirectUrl: this.getSafeRedirectUrl(currentUrl, currentLang),
@@ -200,7 +202,7 @@ export class AdvancedAuthGuard implements CanActivate {
    * Génère une URL de redirection sécurisée pour éviter les boucles infinies
    */
   private getSafeRedirectUrl(currentUrl: string, lang?: string): string {
-    const currentLang = lang || this.languageUrlService.getCurrentLanguage();
+    const currentLang = lang || this.languagePreservation.getCurrentOrPreservedLanguage();
     
     // Si on est déjà sur une page d'auth, ne pas ajouter de returnUrl
     if (currentUrl.includes('/auth/signin') ||
@@ -227,12 +229,12 @@ export class AdvancedAuthGuard implements CanActivate {
 
       // Retourner seulement le pathname et les paramètres nettoyés
       const cleanPath = urlObj.pathname + (urlObj.search ? urlObj.search : '');
-      const currentLang = this.languageUrlService.getCurrentLanguage();
+      const currentLang = this.languagePreservation.getCurrentOrPreservedLanguage();
       return cleanPath === '/' ? `/${currentLang}/app/welcome` : cleanPath;
     } catch (error) {
       // En cas d'erreur de parsing, retourner une URL par défaut
       console.warn('Erreur lors du nettoyage de l\'URL:', error);
-      const currentLang = this.languageUrlService.getCurrentLanguage();
+      const currentLang = this.languagePreservation.getCurrentOrPreservedLanguage();
       return `/${currentLang}/app/welcome`;
     }
   }

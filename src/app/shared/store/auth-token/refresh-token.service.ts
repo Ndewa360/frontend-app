@@ -10,6 +10,8 @@ import { ToastrService } from 'ngx-toastr';
 import { AuthTokenState } from './auth-token.state';
 import { Router } from '@angular/router';
 import { UserActivityService, UserActivityState } from './user-activity.service';
+import { TranslateService } from '@ngx-translate/core';
+import { LanguagePreservationService } from '../../services/language-preservation.service';
 
 @Injectable({
   providedIn: 'root'
@@ -26,7 +28,9 @@ export class RefreshTokenService {
     private store: Store,
     private toastrService: ToastrService,
     private router: Router,
-    private userActivityService: UserActivityService
+    private userActivityService: UserActivityService,
+    private translate: TranslateService,
+    private languagePreservation: LanguagePreservationService
   ) {
     this.initializeActivityBasedRefresh();
   }
@@ -75,7 +79,8 @@ export class RefreshTokenService {
       case UserActivityState.CRITICAL_INACTIVE:
         // Inactivité critique : forcer la déconnexion
         console.log('🔴 Inactivité critique - déconnexion forcée');
-        this.forceLogout('🔒 Session expirée pour inactivité prolongée. Vos données sont protégées. Reconnectez-vous pour continuer.');
+        const criticalMessage = this.languagePreservation.getLocalizedMessage('NOTIFICATIONS.SESSION_EXPIRED');
+        this.forceLogout(criticalMessage);
         break;
     }
   }
@@ -84,11 +89,19 @@ export class RefreshTokenService {
    * Force la déconnexion avec un message personnalisé
    */
   private forceLogout(message: string): void {
+    // Préserver la langue avant la déconnexion
+    this.languagePreservation.preserveCurrentLanguage();
+    
     this.store.dispatch(new AuthTokenAction.Logout());
     this.userActivityService.stopMonitoring();
+    
+    // Rediriger avec la langue appropriée
     const currentUrl = this.router.url;
-    this.router.navigateByUrl(`/auth/signin?returnUrl=${encodeURIComponent(currentUrl)}`);
-    this.toastrService.warning(message, 'Ndewa360°');
+    this.languagePreservation.redirectToLogin(currentUrl);
+    
+    // Utiliser la langue préservée pour le message
+    const localizedMessage = this.languagePreservation.getLocalizedMessage(message);
+    this.toastrService.warning(localizedMessage, 'Ndewa360°');
   }
 
   /**
@@ -111,7 +124,8 @@ export class RefreshTokenService {
   refreshAccessToken(): Observable<string> {
     // Vérifier si l'utilisateur est dans un état critique d'inactivité
     if (this.userActivityService.isUserCriticallyInactive()) {
-      this.forceLogout('Session expirée pour cause d\'inactivité prolongée');
+      const criticalMessage = this.languagePreservation.getLocalizedMessage('NOTIFICATIONS.SESSION_EXPIRED');
+      this.forceLogout(criticalMessage);
       return throwError(() => new Error('User critically inactive'));
     }
 
@@ -169,11 +183,11 @@ export class RefreshTokenService {
 
           // Gestion des différents types d'erreurs
           if (err.status === 401 || err.status === 403) {
-            this.handleRefreshFailure('Votre session a expiré. Veuillez vous reconnecter.');
+            this.handleRefreshFailure('session_expired');
           } else if (err.status === 0) {
-            this.handleRefreshFailure('Problème de connexion. Vérifiez votre connexion internet.');
+            this.handleRefreshFailure('connection_error');
           } else {
-            this.handleRefreshFailure('Erreur lors du rafraîchissement de la session.');
+            this.handleRefreshFailure('refresh_error');
           }
 
           return throwError(() => err);
@@ -188,13 +202,22 @@ export class RefreshTokenService {
    * Gère le cas où l'utilisateur est inactif et nécessite une reconnexion
    */
   private handleInactiveUserRefresh(): void {
+    // Préserver la langue avant la déconnexion
+    this.languagePreservation.preserveCurrentLanguage();
+    
     const currentUrl = this.router.url;
     this.store.dispatch(new AuthTokenAction.Logout());
     this.userActivityService.stopMonitoring();
-    this.router.navigateByUrl(`/auth/signin?returnUrl=${encodeURIComponent(currentUrl)}&reason=inactive`);
+    
+    // Rediriger avec la langue et paramètres appropriés
+    this.languagePreservation.redirectToLogin(currentUrl + '&reason=inactive');
+    
+    const inactiveMessage = this.languagePreservation.getLocalizedMessage('NOTIFICATIONS.SESSION_EXPIRED');
+    const securityTitle = this.languagePreservation.getLocalizedMessage('COMMON.INFO');
+    
     this.toastrService.info(
-      '⏰ Session suspendue pour inactivité. Reconnectez-vous pour reprendre là où vous vous êtes arrêté.',
-      'Ndewa360° - Sécurité',
+      inactiveMessage,
+      `Ndewa360° - ${securityTitle}`,
       { timeOut: 8000, extendedTimeOut: 3000 }
     );
   }
@@ -203,23 +226,29 @@ export class RefreshTokenService {
    * Gère les échecs de rafraîchissement de token
    */
   private handleRefreshFailure(message: string): void {
+    // Préserver la langue avant la déconnexion
+    this.languagePreservation.preserveCurrentLanguage();
+    
     const currentUrl = this.router.url;
     this.store.dispatch(new AuthTokenAction.Logout());
     this.userActivityService.stopMonitoring();
-    this.router.navigateByUrl(`/auth/signin?returnUrl=${encodeURIComponent(currentUrl)}&reason=token_expired`);
+    
+    // Rediriger avec la langue et paramètres appropriés
+    this.languagePreservation.redirectToLogin(currentUrl + '&reason=token_expired');
 
-    // Message personnalisé selon le type d'erreur
-    let userMessage = message;
-    let title = 'Ndewa360° - Authentification';
+    // Messages traduits selon le type d'erreur
+    let userMessage: string;
+    let title: string;
 
-    if (message.includes('Réponse invalide')) {
-      userMessage = '🔧 Problème technique temporaire. Reconnectez-vous pour continuer.';
-      title = 'Ndewa360° - Maintenance';
-    } else if (message.includes('connexion')) {
-      userMessage = '🌐 Problème de connexion réseau. Vérifiez votre connexion et reconnectez-vous.';
-      title = 'Ndewa360° - Connexion';
-    } else if (message.includes('session')) {
-      userMessage = '🔒 Votre session a expiré pour votre sécurité. Reconnectez-vous pour continuer.';
+    if (message.includes('Réponse invalide') || message.includes('Invalid')) {
+      userMessage = this.languagePreservation.getLocalizedMessage('NOTIFICATIONS.SERVER_ERROR');
+      title = `Ndewa360° - ${this.languagePreservation.getLocalizedMessage('COMMON.ERROR')}`;
+    } else if (message.includes('connexion') || message.includes('connection')) {
+      userMessage = this.languagePreservation.getLocalizedMessage('NOTIFICATIONS.NETWORK_ERROR');
+      title = `Ndewa360° - ${this.languagePreservation.getLocalizedMessage('COMMON.WARNING')}`;
+    } else {
+      userMessage = this.languagePreservation.getLocalizedMessage('NOTIFICATIONS.SESSION_EXPIRED');
+      title = `Ndewa360° - ${this.languagePreservation.getLocalizedMessage('COMMON.INFO')}`;
     }
 
     this.toastrService.warning(userMessage, title, {
@@ -307,6 +336,8 @@ export class RefreshTokenService {
       this.refreshTimer = undefined;
     }
   }
+
+
 
   /**
    * Décode un token JWT

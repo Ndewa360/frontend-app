@@ -8,8 +8,8 @@ import { filter } from 'rxjs/operators';
 })
 export class LanguageUrlService {
   private supportedLanguages = ['en', 'fr'];
-  private defaultLanguage = 'en';
-  private currentLanguage = 'en';
+  private defaultLanguage = 'fr';
+  private currentLanguage = 'fr';
 
   constructor(
     private router: Router,
@@ -29,10 +29,11 @@ export class LanguageUrlService {
         if (this.supportedLanguages.includes(langFromUrl)) {
           this.setLanguage(langFromUrl);
         } else {
-          // Rediriger vers la langue par défaut si pas de langue dans l'URL
+          // Utiliser la langue préservée ou par défaut si pas de langue dans l'URL
           const currentPath = this.router.url;
           if (!currentPath.startsWith('/en') && !currentPath.startsWith('/fr')) {
-            this.router.navigate([`/${this.defaultLanguage}${currentPath}`]);
+            const preferredLang = this.getPreferredLanguage();
+            this.router.navigate([`/${preferredLang}${currentPath}`]);
           }
         }
       });
@@ -60,5 +61,20 @@ export class LanguageUrlService {
 
   getSupportedLanguages(): string[] {
     return this.supportedLanguages;
+  }
+
+  /**
+   * Obtient la langue préférée (préservée ou par défaut)
+   */
+  private getPreferredLanguage(): string {
+    try {
+      const preservedLang = localStorage.getItem('ndiye-preferred-language');
+      if (preservedLang && this.supportedLanguages.includes(preservedLang)) {
+        return preservedLang;
+      }
+    } catch (error) {
+      console.warn('⚠️ Impossible de récupérer la langue préservée:', error);
+    }
+    return this.defaultLanguage;
   }
 }
