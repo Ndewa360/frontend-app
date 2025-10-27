@@ -142,10 +142,10 @@ export class PropertyOverviewCardComponent extends BaseComponent implements OnIn
   }
 
   getStatusLabel(): string {
-    if (this.occupancyRate >= 90) return this.translate.instant('PROPERTIES.CARD.STATUS.EXCELLENT');
-    if (this.occupancyRate >= 70) return this.translate.instant('PROPERTIES.CARD.STATUS.GOOD');
-    if (this.occupancyRate >= 50) return this.translate.instant('PROPERTIES.CARD.STATUS.AVERAGE');
-    return this.translate.instant('PROPERTIES.CARD.STATUS.POOR');
+    if (this.occupancyRate >= 90) return this.translate.instant('properties.card.status.excellent');
+    if (this.occupancyRate >= 70) return this.translate.instant('properties.card.status.good');
+    if (this.occupancyRate >= 50) return this.translate.instant('properties.card.status.average');
+    return this.translate.instant('properties.card.status.poor');
   }
 
   getPropertyImage(): string {

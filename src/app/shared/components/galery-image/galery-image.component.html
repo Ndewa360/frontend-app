@@ -5,7 +5,7 @@
                 <div class="app-card app-card--select" *ngFor="let urlListItem of getElementOfColone(urlListItemListIndex)">
                     <div class="relative">
                         <!-- (click)="updateProperty(property,$event)" -->
-                        <button  [disabled]="waittingResponse"  class="absolute  float-right btn-text-edit top-2 right-0 mt-5 mr-5 bg-slate-700 rounded-md" (click)="deleteFile(urlListItem)">
+                        <button  [disabled]="waittingResponse"  class="absolute  float-right btn-text-edit top-2 right-0 mt-5 mr-5 bg-slate-700 rounded-md" (click)="deleteFile(urlListItem)" [title]="'IMAGE_GALLERY.DELETE_IMAGE' | translate">
                             <ibm-loading *ngIf="waittingResponse; else noWaitingResponse" ></ibm-loading>
                             <ng-template #noWaitingResponse>
                                 <i class="fa fa-trash trash-icon-delete"></i>  
@@ -23,7 +23,7 @@
             </div>
         </div>
         <ng-template #noDataToShow>
-            <app-no-data-list textDescription="élément" class="flex-auto"></app-no-data-list> 
+            <app-no-data-list [textDescription]="'IMAGE_GALLERY.ELEMENT' | translate" class="flex-auto"></app-no-data-list> 
         </ng-template>                           
 
     </ng-scrollbar>

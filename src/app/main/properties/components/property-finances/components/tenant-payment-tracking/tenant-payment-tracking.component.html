@@ -5,8 +5,8 @@
   <div class="header-section">
     <div class="flex items-center justify-between mb-4">
       <div class="header-content">
-        <h3>Suivi des paiements par locataire</h3>
-        <p>Analyse détaillée des paiements pour {{ selectedYear }}</p>
+        <h3>{{ 'TENANT_PAYMENT_TRACKING.TITLE' | translate }}</h3>
+        <p>{{ 'TENANT_PAYMENT_TRACKING.SUBTITLE' | translate:{ year: selectedYear } }}</p>
       </div>
 
       <!-- Actions d'export -->
@@ -39,32 +39,32 @@
     <div class="metrics-grid">
       <div class="metric-card info">
         <div class="metric-value">{{ paymentSummary.totalTenants }}</div>
-        <div class="metric-label">Total locataires</div>
+        <div class="metric-label">{{ 'TENANT_PAYMENT_TRACKING.METRICS.TOTAL_TENANTS' | translate }}</div>
       </div>
 
       <div class="metric-card success">
         <div class="metric-value">{{ paymentSummary.upToDateTenants }}</div>
-        <div class="metric-label">À jour</div>
+        <div class="metric-label">{{ 'TENANT_PAYMENT_TRACKING.METRICS.UP_TO_DATE' | translate }}</div>
       </div>
 
       <div class="metric-card warning">
         <div class="metric-value">{{ paymentSummary.partialPaymentTenants }}</div>
-        <div class="metric-label">Paiement partiel</div>
+        <div class="metric-label">{{ 'TENANT_PAYMENT_TRACKING.METRICS.PARTIAL_PAYMENT' | translate }}</div>
       </div>
 
       <div class="metric-card danger">
         <div class="metric-value">{{ paymentSummary.lateTenants }}</div>
-        <div class="metric-label">En retard</div>
+        <div class="metric-label">{{ 'TENANT_PAYMENT_TRACKING.METRICS.LATE' | translate }}</div>
       </div>
 
       <div class="metric-card secondary">
         <div class="metric-value">{{ paymentSummary.aheadTenants }}</div>
-        <div class="metric-label">En avance</div>
+        <div class="metric-label">{{ 'TENANT_PAYMENT_TRACKING.METRICS.AHEAD' | translate }}</div>
       </div>
 
       <div class="metric-card primary">
         <div class="metric-value">{{ paymentSummary.globalPaymentRate | number:'1.1-1' }}%</div>
-        <div class="metric-label">Taux global</div>
+        <div class="metric-label">{{ 'TENANT_PAYMENT_TRACKING.METRICS.GLOBAL_RATE' | translate }}</div>
       </div>
     </div>
   </div>
@@ -78,7 +78,7 @@
         <input type="text"
                [(ngModel)]="searchTerm"
                (ngModelChange)="onFilterChange()"
-               placeholder="Rechercher par nom ou unité...">
+               [placeholder]="'TENANT_PAYMENT_TRACKING.FILTERS.SEARCH_PLACEHOLDER' | translate">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
         </svg>
@@ -88,19 +88,19 @@
       <div class="filters-group">
         <select [(ngModel)]="selectedStatus"
                 (ngModelChange)="onFilterChange()">
-          <option value="all">Tous les statuts</option>
-          <option value="up_to_date">À jour</option>
-          <option value="partial">Paiement partiel</option>
-          <option value="late">En retard</option>
-          <option value="no_contract">Sans contrat</option>
-          <option value="ended_contract">Contrat terminé</option>
+          <option value="all">{{ 'TENANT_PAYMENT_TRACKING.FILTERS.ALL_STATUS' | translate }}</option>
+          <option value="up_to_date">{{ 'TENANT_PAYMENT_TRACKING.FILTERS.UP_TO_DATE' | translate }}</option>
+          <option value="partial">{{ 'TENANT_PAYMENT_TRACKING.FILTERS.PARTIAL' | translate }}</option>
+          <option value="late">{{ 'TENANT_PAYMENT_TRACKING.FILTERS.LATE' | translate }}</option>
+          <option value="no_contract">{{ 'TENANT_PAYMENT_TRACKING.FILTERS.NO_CONTRACT' | translate }}</option>
+          <option value="ended_contract">{{ 'TENANT_PAYMENT_TRACKING.FILTERS.ENDED_CONTRACT' | translate }}</option>
         </select>
 
         <select [(ngModel)]="selectedPeriod"
                 (ngModelChange)="onFilterChange()">
-          <option value="all">Toute l'année</option>
-          <option value="last_2_months">2 derniers mois</option>
-          <option value="current_month">Mois actuel</option>
+          <option value="all">{{ 'TENANT_PAYMENT_TRACKING.FILTERS.ALL_YEAR' | translate }}</option>
+          <option value="last_2_months">{{ 'TENANT_PAYMENT_TRACKING.FILTERS.LAST_2_MONTHS' | translate }}</option>
+          <option value="current_month">{{ 'TENANT_PAYMENT_TRACKING.FILTERS.CURRENT_MONTH' | translate }}</option>
         </select>
       </div>
     </div>
@@ -114,15 +114,15 @@
       <table>
         <thead>
           <tr>
-            <th>Locataire</th>
-            <th>Unité</th>
-            <th>Loyer mensuel</th>
-            <th>Total attendu</th>
-            <th>Total reçu</th>
-            <th>En retard</th>
-            <th>Taux</th>
-            <th>Statut</th>
-            <th>Dernier paiement</th>
+            <th>{{ 'TENANT_PAYMENT_TRACKING.TABLE.TENANT' | translate }}</th>
+            <th>{{ 'TENANT_PAYMENT_TRACKING.TABLE.UNIT' | translate }}</th>
+            <th>{{ 'TENANT_PAYMENT_TRACKING.TABLE.MONTHLY_RENT' | translate }}</th>
+            <th>{{ 'TENANT_PAYMENT_TRACKING.TABLE.TOTAL_EXPECTED' | translate }}</th>
+            <th>{{ 'TENANT_PAYMENT_TRACKING.TABLE.TOTAL_RECEIVED' | translate }}</th>
+            <th>{{ 'TENANT_PAYMENT_TRACKING.TABLE.BEHIND' | translate }}</th>
+            <th>{{ 'TENANT_PAYMENT_TRACKING.TABLE.RATE' | translate }}</th>
+            <th>{{ 'TENANT_PAYMENT_TRACKING.TABLE.STATUS' | translate }}</th>
+            <th>{{ 'TENANT_PAYMENT_TRACKING.TABLE.LAST_PAYMENT' | translate }}</th>
           </tr>
         </thead>
         <tbody>
@@ -186,7 +186,7 @@
             <td>
               <span [ngClass]="getStatusColor(tenant.status)"
                     class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium">
-                {{ getStatusLabel(tenant.status) }}
+                {{ getStatusLabel(tenant.status) | translate }}
               </span>
             </td>
 
@@ -195,7 +195,7 @@
               <div class="text-gray-900" *ngIf="tenant.lastPaymentMonth >= 0">
                 {{getStringMonth(tenant.lastPaymentMonth )}}
               </div>
-              <div class="text-gray-400" *ngIf="tenant.lastPaymentMonth < 0">Aucun</div>
+              <div class="text-gray-400" *ngIf="tenant.lastPaymentMonth < 0">{{ 'TENANT_PAYMENT_TRACKING.TABLE.NONE' | translate }}</div>
             </td>
           </tr>
         </tbody>
@@ -205,24 +205,24 @@
     <!-- Pagination -->
     <div *ngIf="!isLoading && totalPages > 1" class="pagination-container">
       <div class="pagination-info">
-        Affichage de {{ (currentPage - 1) * itemsPerPage + 1 }} à
+        {{ 'TENANT_PAYMENT_TRACKING.PAGINATION.SHOWING' | translate }} {{ (currentPage - 1) * itemsPerPage + 1 }} {{ 'TENANT_PAYMENT_TRACKING.PAGINATION.TO' | translate }}
         {{ Math.min(currentPage * itemsPerPage, getFilteredTenants().length) }}
-        sur {{ getFilteredTenants().length }} résultats
+        {{ 'TENANT_PAYMENT_TRACKING.PAGINATION.ON' | translate }} {{ getFilteredTenants().length }} {{ 'TENANT_PAYMENT_TRACKING.PAGINATION.RESULTS' | translate }}
       </div>
 
       <div class="pagination-controls">
         <button (click)="goToPage(currentPage - 1)"
                 [disabled]="currentPage <= 1">
-          Précédent
+          {{ 'TENANT_PAYMENT_TRACKING.PAGINATION.PREVIOUS' | translate }}
         </button>
 
         <span class="page-info">
-          Page {{ currentPage }} sur {{ totalPages }}
+          {{ 'TENANT_PAYMENT_TRACKING.PAGINATION.PAGE' | translate }} {{ currentPage }} {{ 'TENANT_PAYMENT_TRACKING.PAGINATION.ON' | translate }} {{ totalPages }}
         </span>
 
         <button (click)="goToPage(currentPage + 1)"
                 [disabled]="currentPage >= totalPages">
-          Suivant
+          {{ 'TENANT_PAYMENT_TRACKING.PAGINATION.NEXT' | translate }}
         </button>
       </div>
     </div>
@@ -232,8 +232,8 @@
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
       </svg>
-      <h3>Aucun locataire trouvé</h3>
-      <p>Aucun locataire ne correspond aux critères de recherche sélectionnés.</p>
+      <h3>{{ 'TENANT_PAYMENT_TRACKING.EMPTY_STATE.TITLE' | translate }}</h3>
+      <p>{{ 'TENANT_PAYMENT_TRACKING.EMPTY_STATE.MESSAGE' | translate }}</p>
     </div>
 
   </div>

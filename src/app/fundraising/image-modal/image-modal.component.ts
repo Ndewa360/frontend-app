@@ -1,5 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
 
 export interface GalleryImage {
   src: string;
@@ -19,12 +20,12 @@ export interface ImageModalData {
       <!-- Header avec navigation -->
       <div class="gallery-header bg-gradient-to-r from-orange-500 to-yellow-500 text-white p-4 flex justify-between items-center">
         <div class="flex items-center space-x-4">
-          <h2 class="text-xl font-bold">{{ currentImage?.title || 'Image' }}</h2>
+          <h2 class="text-xl font-bold">{{ currentImage?.title || ('IMAGE_GALLERY.DEFAULT_IMAGE_TITLE' | translate) }}</h2>
           <span class="text-sm bg-white/20 px-3 py-1 rounded-full">
             {{ currentIndex + 1 }} / {{ data?.images?.length || 0 }}
           </span>
         </div>
-        <button (click)="close()" class="close-btn">
+        <button (click)="close()" class="close-btn" [title]="'IMAGE_GALLERY.CLOSE_GALLERY' | translate">
           <i class="fas fa-times"></i>
         </button>
       </div>
@@ -42,12 +43,14 @@ export interface ImageModalData {
         <div *ngIf="data?.images && data.images.length > 1" class="slider-controls">
           <button (click)="previousImage()" 
                   class="slider-btn slider-btn-prev" 
-                  type="button">
+                  type="button"
+                  [title]="'IMAGE_GALLERY.PREVIOUS_IMAGE' | translate">
             <i class="fas fa-chevron-left"></i>
           </button>
           <button (click)="nextImage()" 
                   class="slider-btn slider-btn-next" 
-                  type="button">
+                  type="button"
+                  [title]="'IMAGE_GALLERY.NEXT_IMAGE' | translate">
             <i class="fas fa-chevron-right"></i>
           </button>
         </div>
@@ -56,7 +59,7 @@ export interface ImageModalData {
       <!-- Description -->
       <div class="gallery-footer bg-gradient-to-r from-gray-50 to-orange-50 p-6 border-t">
         <div class="max-w-4xl mx-auto text-center">
-          <p class="text-gray-800 text-lg leading-relaxed">{{ currentImage?.description || 'Description non disponible' }}</p>
+          <p class="text-gray-800 text-lg leading-relaxed">{{ currentImage?.description || ('IMAGE_GALLERY.NO_DESCRIPTION_AVAILABLE' | translate) }}</p>
         </div>
       </div>
       
@@ -192,7 +195,8 @@ export class ImageModalComponent {
   
   constructor(
     public dialogRef: MatDialogRef<ImageModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: ImageModalData
+    @Inject(MAT_DIALOG_DATA) public data: ImageModalData,
+    private translate: TranslateService
   ) {
     console.log('Modal data received:', data);
     this.currentIndex = data?.currentIndex || 0;

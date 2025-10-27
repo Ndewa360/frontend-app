@@ -3,8 +3,8 @@
         <div class="app-form">
             <div fxLayout="row wrap" class="app-form__row">
                 <div fxFlex="100%"  class="app-form__item">
-                    <ibm-label  [invalid]="isValid('roomId')" [invalidText]="'Vous devez choisir une unité'">
-                    Choisissez la unité 
+                    <ibm-label  [invalid]="isValid('roomId')" [invalidText]="'ASSIGNMENT.UNIT_REQUIRED' | translate">
+                    {{ 'ASSIGNMENT.CHOOSE_UNIT' | translate }} 
                         <ibm-combo-box class="mt-2"
                         [items]="roomList"
                         formControlName="roomId"
@@ -16,8 +16,8 @@
                 </div>
 
                 <div fxFlex="100%"  class="app-form__item">
-                    <ibm-label [invalid]="isValid('locataireId')" [invalidText]="'Vous devez choisir un locataire libre'">
-                    Choisissez le locataire 
+                    <ibm-label [invalid]="isValid('locataireId')" [invalidText]="'ASSIGNMENT.TENANT_REQUIRED' | translate">
+                    {{ 'ASSIGNMENT.CHOOSE_TENANT' | translate }} 
                         <ibm-combo-box class="mt-2"
                             [items]="locataireList"
                             formControlName="locataireId"
@@ -30,13 +30,13 @@
 
                 <div fxLayout="row wrap" class="app-form__row">              
                     <div fxFlex="100%" fxFlex.gt-md="40%" class="app-form__item">
-                      <ibm-toggle formControlName="isKnowExactDateEntry" label="Connaissez-vous la date d'entrée du locataire?" [onText]="'Oui'" [offText]="'Non'" [checked]="false" size="md">
+                      <ibm-toggle formControlName="isKnowExactDateEntry" [label]="'ASSIGNMENT.KNOW_ENTRY_DATE' | translate" [onText]="'COMMON.YES' | translate" [offText]="'COMMON.NO' | translate" [checked]="false" size="md">
                       </ibm-toggle>
                     </div>
                     <div fxFlex="100%" fxFlex.gt-md="50%" class="app-form__item">
                         <ibm-date-picker
                             formControlName="startedDate"
-                            [label]="'Date d\'entrée du locataire'"
+                            [label]="'ASSIGNMENT.TENANT_ENTRY_DATE' | translate"
                             [placeholder]="'dd/mm/yyyy'"
                             [language]="'fr'"
                             [size]="'lg'"
@@ -52,8 +52,8 @@
 
                   <div fxLayout="row wrap" class="app-form__row">              
                     <div fxFlex="100%" fxFlex.gt-md="50%" class="app-form__item">
-                        <ibm-label [invalid]="isValid('locataireId')" invalidText="'Vous devez choisir l'etat financier du locataire'">
-                            Solde du locataire 
+                        <ibm-label [invalid]="isValid('locataireId')" [invalidText]="'ASSIGNMENT.FINANCIAL_STATE_REQUIRED' | translate">
+                            {{ 'ASSIGNMENT.TENANT_BALANCE' | translate }} 
                                 <ibm-combo-box class="mt-2"
                                     [items]="fiancialStateList"
                                     formControlName="initialFinancialState"
@@ -64,7 +64,7 @@
                             </ibm-label>
                     </div>
                     <div fxFlex="100%" fxFlex.gt-md="50%" class="app-form__item">
-                        <ibm-label> Montant ({{getMoney()}})
+                        <ibm-label> {{ 'ASSIGNMENT.AMOUNT' | translate }} ({{getMoney()}})
                             <ibm-number class="mt-2" [helperText]="''" [theme]="'dark'" [invalid]="false"
                               [invalidText]="''" [size]="'md'" formControlName="initialSolde" [disabled]="true">
                             </ibm-number>
@@ -77,7 +77,7 @@
                     <youpez-alert
                         [appearance]="'outline'"
                         [type]="'info'">
-                        Si vous selectionnez un date précédente alors la facturation sera automatiquement calculé
+                        {{ 'ASSIGNMENT.AUTO_BILLING_INFO' | translate }}
                     </youpez-alert>
                 </div>
 

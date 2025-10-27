@@ -1,0 +1,79 @@
+{
+  "properties": {
+    "propertiesCount": "Propriétés",
+    "unitsCount": "Unités",
+    "occupancy": "Occupation",
+    "monthlyRevenue": "Revenus/mois",
+    "loadingText": "Chargement...",
+    "card": {
+      "viewDetails": "Voir détails",
+      "rooms": "chambres",
+      "occupied": "occupées",
+      "monthlyRevenue": "revenus/mois",
+      "occupancy": "Occupation",
+      "freeRooms": "Libres",
+      "growth": "Croissance",
+      "overdue": "Retards",
+      "alerts": "Alertes",
+      "paymentOverdue": "paiement(s) en retard",
+      "roomsFree": "chambre(s) libre(s)",
+      "status": {
+        "excellent": "Excellent",
+        "good": "Bon",
+        "average": "Moyen",
+        "poor": "Faible"
+      }
+    }
+  },
+  "propertyDetails": {
+    "tabs": {
+      "overview": "Vue d'ensemble",
+      "units": "Unités locatives",
+      "tenants": "Locataires",
+      "history": "Historique",
+      "finances": "Finances"
+    }
+  },
+  "notifications": {
+    "success": "Succès",
+    "error": "Erreur",
+    "warning": "Attention",
+    "tenantCreatedWithPhoto": "Locataire créé avec photo avec succès",
+    "tenantCreatedSuccess": "Locataire créé avec succès",
+    "tenantCreatedPhotoError": "Locataire créé mais erreur photo",
+    "tenantUpdatedSuccess": "Locataire mis à jour avec succès",
+    "tenantCreateError": "Erreur lors de la création du locataire",
+    "tenantUpdateError": "Erreur lors de la mise à jour du locataire",
+    "unitCreatedSuccess": "Unité créée avec succès",
+    "unitUpdatedSuccess": "Unité mise à jour avec succès",
+    "unitUpdateError": "Erreur lors de la mise à jour de l'unité",
+    "operationError": "Erreur d'opération"
+  },
+  "errors": {
+    "invalidFileType": "Type de fichier invalide",
+    "fileTooLarge": "Fichier trop volumineux",
+    "uploadFailed": "Échec du téléchargement"
+  },
+  "tenantManagement": {
+    "addTenant": "Ajouter un locataire",
+    "editTenant": "Modifier le locataire",
+    "creating": "Création...",
+    "updating": "Mise à jour...",
+    "createTenant": "Créer le locataire",
+    "updateTenant": "Mettre à jour le locataire"
+  },
+  "roomTypes": {
+    "room": "Chambre",
+    "studio": "Studio",
+    "simpleApartment": "Appartement",
+    "furnishedApartment": "Appartement meublé"
+  },
+  "unitManagement": {
+    "addUnit": "Ajouter une unité",
+    "editUnit": "Modifier l'unité",
+    "creating": "Création...",
+    "updating": "Mise à jour...",
+    "createUnit": "Créer l'unité",
+    "updateUnit": "Mettre à jour l'unité"
+  }
+}

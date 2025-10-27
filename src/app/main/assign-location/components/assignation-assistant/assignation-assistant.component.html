@@ -11,7 +11,7 @@
       <div class="header-content">
         <div class="header-title">
           <i class="fas fa-user-plus" style="font-size: 24px;"></i>
-          <h2>Assistant d'assignation de locataire</h2>
+          <h2>{{ 'ASSIGNMENT_ASSISTANT.TITLE' | translate }}</h2>
         </div>
         <button
           class="close-button"
@@ -62,8 +62,8 @@
       <!-- Étape 1: Sélection du type -->
       <div *ngIf="isEtapeActive(EtapeAssistant.SELECTION_TYPE)" class="step-content">
         <div class="step-header">
-          <h3>Type d'assignation</h3>
-          <p>Choisissez le type de locataire que vous souhaitez assigner</p>
+          <h3>{{ 'ASSIGNMENT_ASSISTANT.ASSIGNMENT_TYPE' | translate }}</h3>
+          <p>{{ 'ASSIGNMENT_ASSISTANT.CHOOSE_TENANT_TYPE' | translate }}</p>
         </div>
         
         <form [formGroup]="typeForm" class="step-form">
@@ -78,16 +78,16 @@
                   <i class="fas fa-user-plus" style="font-size: 32px;"></i>
                 </div>
                 <div class="option-info">
-                  <h4>Nouveau locataire dans ce bien</h4>
-                  <p><strong>Le locataire n'a jamais occupé cette chambre.</strong> Il s'agit de sa première installation dans ce bien immobilier.</p>
+                  <h4>{{ 'ASSIGNMENT_ASSISTANT.NEW_TENANT_IN_PROPERTY' | translate }}</h4>
+                  <p><strong>{{ 'ASSIGNMENT_ASSISTANT.NEW_TENANT_DESCRIPTION' | translate }}</strong></p>
                   <ul class="option-features">
-                    <li>✅ Première fois dans cette propriété</li>
-                    <li>✅ Calcul automatique des dettes (loyer + caution)</li>
-                    <li>✅ Enregistrement des paiements d'installation</li>
-                    <li>✅ Création d'un nouveau contrat de location</li>
+                    <li>✅ {{ 'ASSIGNMENT_ASSISTANT.NEW_TENANT_FEATURES.FIRST_TIME' | translate }}</li>
+                    <li>✅ {{ 'ASSIGNMENT_ASSISTANT.NEW_TENANT_FEATURES.AUTO_DEBT_CALCULATION' | translate }}</li>
+                    <li>✅ {{ 'ASSIGNMENT_ASSISTANT.NEW_TENANT_FEATURES.INSTALLATION_PAYMENTS' | translate }}</li>
+                    <li>✅ {{ 'ASSIGNMENT_ASSISTANT.NEW_TENANT_FEATURES.NEW_CONTRACT' | translate }}</li>
                   </ul>
                   <div class="option-example">
-                    <strong>Exemple :</strong> Jean emménage pour la première fois dans la chambre A1
+                    <strong>{{ 'ASSIGNMENT_ASSISTANT.EXAMPLE' | translate }} :</strong> Jean {{ 'ASSIGNMENT_ASSISTANT.FIRST_INSTALLATION' | translate }} A1
                   </div>
                 </div>
               </div>
@@ -103,16 +103,16 @@
                   <i class="fas fa-user" style="font-size: 32px;"></i>
                 </div>
                 <div class="option-info">
-                  <h4>Locataire déjà installé (Mise à jour)</h4>
-                  <p><strong>Le locataire occupe déjà cette chambre.</strong> Vous voulez juste enregistrer sa situation actuelle dans l'application.</p>
+                  <h4>{{ 'ASSIGNMENT_ASSISTANT.EXISTING_TENANT' | translate }}</h4>
+                  <p><strong>{{ 'ASSIGNMENT_ASSISTANT.EXISTING_TENANT_DESCRIPTION' | translate }}</strong></p>
                   <ul class="option-features">
-                    <li>✅ Locataire déjà en place dans la chambre</li>
-                    <li>✅ Enregistrement de l'état financier actuel</li>
-                    <li>✅ Prise en compte des arriérés ou avances</li>
-                    <li>✅ Mise à jour du système avec la situation réelle</li>
+                    <li>✅ {{ 'ASSIGNMENT_ASSISTANT.EXISTING_TENANT_FEATURES.ALREADY_INSTALLED' | translate }}</li>
+                    <li>✅ {{ 'ASSIGNMENT_ASSISTANT.EXISTING_TENANT_FEATURES.CURRENT_FINANCIAL_STATE' | translate }}</li>
+                    <li>✅ {{ 'ASSIGNMENT_ASSISTANT.EXISTING_TENANT_FEATURES.ARREARS_ADVANCES' | translate }}</li>
+                    <li>✅ {{ 'ASSIGNMENT_ASSISTANT.EXISTING_TENANT_FEATURES.SYSTEM_UPDATE' | translate }}</li>
                   </ul>
                   <div class="option-example">
-                    <strong>Exemple :</strong> Marie occupe déjà la chambre B2 depuis 3 mois, vous voulez l'enregistrer dans l'application
+                    <strong>{{ 'ASSIGNMENT_ASSISTANT.EXAMPLE' | translate }} :</strong> Marie {{ 'ASSIGNMENT_ASSISTANT.ALREADY_OCCUPIES' | translate }} B2 {{ 'ASSIGNMENT_ASSISTANT.WANTS_TO_RECORD' | translate }}
                   </div>
                 </div>
               </div>
@@ -125,9 +125,8 @@
               <i class="fas fa-info-circle" style="font-size: 20px;"></i>
             </div>
             <div class="note-content">
-              <h5>Important</h5>
-              <p>Tous les locataires doivent être créés dans l'application avant l'assignation.
-              Utilisez la section "Locataires" pour créer un nouveau locataire si nécessaire.</p>
+              <h5>{{ 'ASSIGNMENT_ASSISTANT.IMPORTANT_NOTE' | translate }}</h5>
+              <p>{{ 'ASSIGNMENT_ASSISTANT.TENANT_CREATION_INFO' | translate }}</p>
             </div>
           </div>
         </form>
@@ -136,20 +135,20 @@
       <!-- Étape 2: Sélection du locataire -->
       <div *ngIf="isEtapeActive(EtapeAssistant.SELECTION_LOCATAIRE)" class="step-content">
         <div class="step-header">
-          <h3>Sélection du locataire</h3>
-          <p>Choisissez le locataire à assigner dans la liste des locataires existants</p>
+          <h3>{{ 'ASSIGNMENT_ASSISTANT.TENANT_SELECTION' | translate }}</h3>
+          <p>{{ 'ASSIGNMENT_ASSISTANT.CHOOSE_TENANT' | translate }}</p>
         </div>
 
         <form [formGroup]="locataireForm" class="step-form">
           <div class="form-section">
             <div class="form-field">
-              <label class="field-label">Locataire</label>
+              <label class="field-label">{{ 'ASSIGNMENT_ASSISTANT.TENANT' | translate }}</label>
               <select
                 formControlName="locataireId"
                 class="field-input"
                 [class.selected]="locataireForm.get('locataireId')?.value"
                 (change)="onLocataireChange($event)">
-                <option [value]="null" disabled>Sélectionner un locataire</option>
+                <option [value]="null" disabled>{{ 'ASSIGNMENT_ASSISTANT.SELECT_TENANT' | translate }}</option>
                 <option
                   *ngFor="let locataire of locatairesList; trackBy: trackByLocataireId"
                   [value]="locataire._id"
@@ -161,19 +160,19 @@
               <!-- Indicateur de sélection -->
               <div class="selection-indicator" *ngIf="selectedLocataire">
                 <i class="fas fa-check-circle" style="color: green;"></i>
-                <span>{{ selectedLocataire.fullName }} sélectionné</span>
+                <span>{{ selectedLocataire.fullName }} {{ 'ASSIGNMENT_ASSISTANT.TENANT_SELECTED' | translate }}</span>
               </div>
             </div>
 
             <!-- Message d'aide -->
             <div class="help-message" *ngIf="locatairesList.length === 0">
               <i class="fas fa-info-circle" style="font-size: 16px;"></i>
-              <p>Aucun locataire disponible. Veuillez d'abord créer un locataire dans la section "Locataires".</p>
+              <p>{{ 'ASSIGNMENT_ASSISTANT.NO_TENANTS_AVAILABLE' | translate }}</p>
             </div>
 
             <div class="help-message" *ngIf="locatairesList.length > 0">
               <i class="fas fa-check" style="font-size: 16px;"></i>
-              <p>{{ locatairesList.length }} locataire(s) disponible(s) pour assignation.</p>
+              <p>{{ locatairesList.length }} {{ 'ASSIGNMENT_ASSISTANT.TENANTS_AVAILABLE' | translate }}</p>
             </div>
           </div>
         </form>
@@ -182,8 +181,8 @@
       <!-- Étape 3: Sélection de la chambre -->
       <div *ngIf="isEtapeActive(EtapeAssistant.SELECTION_CHAMBRE)" class="step-content">
         <div class="step-header">
-          <h3>Sélection de la chambre</h3>
-          <p>Choisissez la chambre à assigner au locataire</p>
+          <h3>{{ 'ASSIGNMENT_ASSISTANT.ROOM_SELECTION' | translate }}</h3>
+          <p>{{ 'ASSIGNMENT_ASSISTANT.CHOOSE_ROOM' | translate }}</p>
         </div>
         
         <form [formGroup]="chambreForm" class="step-form">
@@ -214,7 +213,7 @@
                   <p class="room-type">{{ room.type }}</p>
                   <div class="room-features">
                     <span class="feature" *ngIf="room.shouldPayCaution">
-                      Caution: {{ room.cautionPrice | currency:'XAF':'symbol':'1.0-0' }}
+                      {{ 'ASSIGNMENT_ASSISTANT.DEPOSIT' | translate }}: {{ room.cautionPrice | currency:'XAF':'symbol':'1.0-0' }}
                     </span>
                   </div>
                 </div>
@@ -225,7 +224,7 @@
           <!-- Message d'aide -->
           <div class="help-message" *ngIf="roomsList.length === 0">
             <i class="fas fa-info-circle" style="font-size: 16px;"></i>
-            <p>Aucune chambre libre disponible dans cette propriété.</p>
+            <p>{{ 'ASSIGNMENT_ASSISTANT.NO_FREE_ROOMS' | translate }}</p>
           </div>
         </form>
       </div>
@@ -233,14 +232,14 @@
       <!-- Étape 4: Configuration financière -->
       <div *ngIf="isEtapeActive(EtapeAssistant.CONFIGURATION_FINANCIERE)" class="step-content">
         <div class="step-header">
-          <h3>Configuration financière</h3>
-          <p>Configurez les aspects financiers de l'assignation</p>
+          <h3>{{ 'ASSIGNMENT_ASSISTANT.FINANCIAL_CONFIGURATION' | translate }}</h3>
+          <p>{{ 'ASSIGNMENT_ASSISTANT.CONFIGURE_FINANCIAL_ASPECTS' | translate }}</p>
         </div>
         
         <form [formGroup]="configFinanciereForm" class="step-form">
           <!-- Configuration pour nouveau locataire -->
           <div *ngIf="typeForm.get('typeLocataire').value === TypeLocataire.NOUVEAU" class="config-section">
-            <h4>Nouveau locataire</h4>
+            <h4>{{ 'ASSIGNMENT_ASSISTANT.NEW_TENANT_CONFIG' | translate }}</h4>
 
             <!-- Gestion de la caution de la chambre -->
             <div class="caution-section" *ngIf="selectedRoom">
@@ -248,15 +247,15 @@
                 <div class="caution-header">
                   <div class="caution-title">
                     <i class="fas fa-shield-alt" style="font-size: 20px;"></i>
-                    <h5>Caution de l'unité locative</h5>
+                    <h5>{{ 'ASSIGNMENT_ASSISTANT.UNIT_DEPOSIT' | translate }}</h5>
                   </div>
                   <div class="caution-amount">
-                    <span class="amount-label">Montant défini :</span>
+                    <span class="amount-label">{{ 'ASSIGNMENT_ASSISTANT.DEFINED_AMOUNT' | translate }}</span>
                     <span class="amount-value" *ngIf="selectedRoom.cautionPrice > 0">
                       {{ selectedRoom.cautionPrice | currency:'XAF':'symbol':'1.0-0' }}
                     </span>
                     <span class="amount-value no-caution" *ngIf="!selectedRoom.cautionPrice || selectedRoom.cautionPrice === 0">
-                      Aucune caution
+                      {{ 'ASSIGNMENT_ASSISTANT.NO_DEPOSIT' | translate }}
                     </span>
                   </div>
                 </div>
@@ -272,11 +271,11 @@
                       <span class="switch-slider"></span>
                     </label>
                     <div class="switch-text">
-                      <span class="switch-title">Prendre en compte la caution</span>
+                      <span class="switch-title">{{ 'ASSIGNMENT_ASSISTANT.TAKE_DEPOSIT_INTO_ACCOUNT' | translate }}</span>
                       <span class="switch-description">
                         {{ configFinanciereForm.get('prendreEnCompteCaution')?.value ?
-                           'La caution sera incluse dans les calculs' :
-                           'La caution sera ignorée pour cette assignation' }}
+                           ('ASSIGNMENT_ASSISTANT.DEPOSIT_INCLUDED' | translate) :
+                           ('ASSIGNMENT_ASSISTANT.DEPOSIT_IGNORED' | translate) }}
                       </span>
                     </div>
                   </div>
@@ -285,15 +284,14 @@
                 <!-- Message si pas de caution définie -->
                 <div class="no-caution-message" *ngIf="!selectedRoom.cautionPrice || selectedRoom.cautionPrice === 0">
                   <i class="fas fa-info-circle" style="font-size: 16px;"></i>
-                  <p>Aucune caution n'est définie pour cette unité locative.
-                  Vous pouvez en définir une lors de la modification de l'unité.</p>
+                  <p>{{ 'ASSIGNMENT_ASSISTANT.NO_DEPOSIT_DEFINED' | translate }}</p>
                 </div>
               </div>
             </div>
 
             <!-- Paiement effectivement perçu -->
             <div class="form-field">
-              <label class="field-label">Montant effectivement perçu *</label>
+              <label class="field-label">{{ 'ASSIGNMENT_ASSISTANT.AMOUNT_RECEIVED' | translate }} *</label>
               <input
                 type="number"
                 formControlName="paiementMontant"
@@ -301,40 +299,40 @@
                 placeholder="0"
                 min="0">
               <div class="field-help">
-                Montant total reçu du locataire lors de l'assignation
+                {{ 'ASSIGNMENT_ASSISTANT.TOTAL_RECEIVED_FROM_TENANT' | translate }}
               </div>
             </div>
 
             <!-- Type de paiement automatique -->
             <div class="form-field" *ngIf="selectedRoom">
-              <label class="field-label">Type de paiement</label>
+              <label class="field-label">{{ 'ASSIGNMENT_ASSISTANT.PAYMENT_TYPE' | translate }}</label>
               <div class="readonly-field">
                 <span *ngIf="isCautionActive()">
-                  <strong>Paiement + Caution</strong> -
-                  Création automatique de 2 transactions (caution: {{ selectedRoom.cautionPrice | currency:'XAF':'symbol':'1.0-0' }})
+                  <strong>{{ 'ASSIGNMENT_ASSISTANT.PAYMENT_PLUS_DEPOSIT' | translate }}</strong> -
+                  {{ 'ASSIGNMENT_ASSISTANT.AUTO_CREATE_TRANSACTIONS' | translate }} {{ selectedRoom.cautionPrice | currency:'XAF':'symbol':'1.0-0' }})
                 </span>
                 <span *ngIf="!isCautionActive()">
-                  <strong>Paiement unique</strong> -
-                  Création d'une seule transaction
+                  <strong>{{ 'ASSIGNMENT_ASSISTANT.SINGLE_PAYMENT' | translate }}</strong> -
+                  {{ 'ASSIGNMENT_ASSISTANT.SINGLE_TRANSACTION' | translate }}
                 </span>
               </div>
             </div>
 
             <!-- Répartition automatique si caution active -->
             <div class="repartition-info" *ngIf="isCautionActive() && configFinanciereForm.get('paiementMontant').value > 0">
-              <h5>Répartition automatique</h5>
+              <h5>{{ 'ASSIGNMENT_ASSISTANT.AUTO_DISTRIBUTION' | translate }}</h5>
               <div class="repartition-details">
                 <div class="repartition-item">
-                  <span class="label">Caution (unité locative) :</span>
+                  <span class="label">{{ 'ASSIGNMENT_ASSISTANT.DEPOSIT_UNIT' | translate }}</span>
                   <span class="value">{{ getActiveCautionAmount() | currency:'XAF':'symbol':'1.0-0' }}</span>
                 </div>
                 <div class="repartition-item">
-                  <span class="label">Reste pour loyer :</span>
+                  <span class="label">{{ 'ASSIGNMENT_ASSISTANT.REMAINING_FOR_RENT' | translate }}</span>
                   <span class="value">{{ calculateRemainingAmount() | currency:'XAF':'symbol':'1.0-0' }}</span>
                 </div>
                 <div class="repartition-item total" *ngIf="configFinanciereForm.get('paiementMontant').value < getActiveCautionAmount()">
-                  <span class="label">⚠️ Attention :</span>
-                  <span class="value warning">Le montant perçu est inférieur à la caution</span>
+                  <span class="label">{{ 'ASSIGNMENT_ASSISTANT.WARNING_AMOUNT_INSUFFICIENT' | translate }}</span>
+                  <span class="value warning"></span>
                 </div>
               </div>
             </div>
@@ -342,7 +340,7 @@
 
           <!-- Configuration pour locataire existant -->
           <div *ngIf="typeForm.get('typeLocataire').value === TypeLocataire.EXISTANT" class="config-section">
-            <h4>Locataire existant</h4>
+            <h4>{{ 'ASSIGNMENT_ASSISTANT.EXISTING_TENANT_CONFIG' | translate }}</h4>
 
             <!-- Information sur la logique -->
             <div class="info-note">
@@ -350,14 +348,14 @@
                 <i class="fas fa-info-circle" style="font-size: 20px;"></i>
               </div>
               <div class="note-content">
-                <h5>Logique de transfert</h5>
-                <p>Les avances seront transférées comme paiements de loyer. Les arriérés seront pris en compte dans l'état financier initial.</p>
+                <h5>{{ 'ASSIGNMENT_ASSISTANT.TRANSFER_LOGIC' | translate }}</h5>
+                <p>{{ 'ASSIGNMENT_ASSISTANT.TRANSFER_INFO' | translate }}</p>
               </div>
             </div>
 
             <div class="form-grid">
               <div class="form-field">
-                <label class="field-label">Solde actuel *</label>
+                <label class="field-label">{{ 'ASSIGNMENT_ASSISTANT.CURRENT_BALANCE' | translate }} *</label>
                 <input
                   type="number"
                   formControlName="soldeActuel"
@@ -365,12 +363,12 @@
                   placeholder="0"
                   step="0.01">
                 <div class="field-help">
-                  Montant positif = avances, montant négatif = arriérés
+                  {{ 'ASSIGNMENT_ASSISTANT.BALANCE_HELP' | translate }}
                 </div>
               </div>
 
               <div class="form-field">
-                <label class="field-label">Caution déjà versée</label>
+                <label class="field-label">{{ 'ASSIGNMENT_ASSISTANT.DEPOSIT_ALREADY_PAID' | translate }}</label>
                 <input
                   type="number"
                   formControlName="cautionVersee"
@@ -379,7 +377,7 @@
                   min="0"
                   step="0.01">
                 <div class="field-help">
-                  Montant de la caution déjà payée par le locataire
+                  {{ 'ASSIGNMENT_ASSISTANT.DEPOSIT_PAID_AMOUNT' | translate }}
                 </div>
               </div>
             </div>
@@ -395,11 +393,11 @@
                   <span class="switch-slider"></span>
                 </label>
                 <div class="switch-text">
-                  <span class="switch-title">Transférer la caution existante</span>
+                  <span class="switch-title">{{ 'ASSIGNMENT_ASSISTANT.TRANSFER_EXISTING_DEPOSIT' | translate }}</span>
                   <span class="switch-description">
                     {{ configFinanciereForm.get('cautionExistanteActive')?.value ?
-                       'La caution sera transférée vers la nouvelle assignation' :
-                       'La caution ne sera pas prise en compte' }}
+                       ('ASSIGNMENT_ASSISTANT.DEPOSIT_TRANSFERRED' | translate) :
+                       ('ASSIGNMENT_ASSISTANT.DEPOSIT_NOT_CONSIDERED' | translate) }}
                   </span>
                 </div>
               </div>
@@ -412,13 +410,13 @@
                   <i class="fas fa-info-circle" style="font-size: 16px;"></i>
                 </div>
                 <div class="note-content">
-                  <h5>Caution de l'unité locative</h5>
+                  <h5>{{ 'ASSIGNMENT_ASSISTANT.UNIT_DEPOSIT_INFO' | translate }}</h5>
                   <p *ngIf="selectedRoom.cautionPrice > 0">
-                    Cette unité a une caution définie de <strong>{{ selectedRoom.cautionPrice | currency:'XAF':'symbol':'1.0-0' }}</strong>.
-                    Si le locataire n'a pas encore versé cette caution, vous pouvez l'ajouter ci-dessus.
+                    {{ 'ASSIGNMENT_ASSISTANT.UNIT_HAS_DEPOSIT' | translate }} <strong>{{ selectedRoom.cautionPrice | currency:'XAF':'symbol':'1.0-0' }}</strong>.
+                    {{ 'ASSIGNMENT_ASSISTANT.ADD_DEPOSIT_INFO' | translate }}
                   </p>
                   <p *ngIf="!selectedRoom.cautionPrice || selectedRoom.cautionPrice === 0">
-                    Aucune caution n'est définie pour cette unité locative.
+                    {{ 'ASSIGNMENT_ASSISTANT.NO_UNIT_DEPOSIT' | translate }}
                   </p>
                 </div>
               </div>
@@ -429,18 +427,18 @@
 
             <!-- Résumé du transfert -->
             <div class="transfer-summary" *ngIf="configFinanciereForm.get('soldeActuel').value !== 0">
-              <h5>Résumé du transfert</h5>
+              <h5>{{ 'ASSIGNMENT_ASSISTANT.TRANSFER_SUMMARY' | translate }}</h5>
               <div class="summary-details">
                 <div class="summary-item" *ngIf="configFinanciereForm.get('soldeActuel').value > 0">
-                  <span class="label">Avances à transférer :</span>
+                  <span class="label">{{ 'ASSIGNMENT_ASSISTANT.ADVANCES_TO_TRANSFER' | translate }}</span>
                   <span class="value positive">{{ configFinanciereForm.get('soldeActuel').value | currency:'XAF':'symbol':'1.0-0' }}</span>
                 </div>
                 <div class="summary-item" *ngIf="configFinanciereForm.get('soldeActuel').value < 0">
-                  <span class="label">Arriérés à reporter :</span>
+                  <span class="label">{{ 'ASSIGNMENT_ASSISTANT.ARREARS_TO_REPORT' | translate }}</span>
                   <span class="value negative">{{ configFinanciereForm.get('soldeActuel').value | currency:'XAF':'symbol':'1.0-0' }}</span>
                 </div>
                 <div class="summary-item" *ngIf="configFinanciereForm.get('cautionVersee').value > 0">
-                  <span class="label">Caution à transférer :</span>
+                  <span class="label">{{ 'ASSIGNMENT_ASSISTANT.DEPOSIT_TO_TRANSFER' | translate }}</span>
                   <span class="value">{{ configFinanciereForm.get('cautionVersee').value | currency:'XAF':'symbol':'1.0-0' }}</span>
                 </div>
               </div>
@@ -450,7 +448,7 @@
           <!-- Champs communs -->
           <div class="form-grid">
             <div class="form-field">
-              <label class="field-label">Date d'entrée *</label>
+              <label class="field-label">{{ 'ASSIGNMENT_ASSISTANT.ENTRY_DATE' | translate }} *</label>
               <input
                 type="date"
                 formControlName="dateEntree"
@@ -458,18 +456,18 @@
                 [class.error]="configFinanciereForm.get('dateEntree')?.invalid && configFinanciereForm.get('dateEntree')?.touched">
               <div class="field-error" *ngIf="configFinanciereForm.get('dateEntree')?.invalid && configFinanciereForm.get('dateEntree')?.touched">
                 <i class="fas fa-exclamation-triangle"></i>
-                <span>La date d'entrée est obligatoire</span>
+                <span>{{ 'ASSIGNMENT_ASSISTANT.ENTRY_DATE_REQUIRED' | translate }}</span>
               </div>
             </div>
           </div>
 
           <div class="form-field">
-            <label class="field-label">Commentaire</label>
+            <label class="field-label">{{ 'ASSIGNMENT_ASSISTANT.COMMENT' | translate }}</label>
             <textarea 
               formControlName="commentaire" 
               class="field-input field-textarea"
               rows="3"
-              placeholder="Commentaire optionnel..."></textarea>
+              placeholder="{{ 'ASSIGNMENT_ASSISTANT.OPTIONAL_COMMENT' | translate }}"></textarea>
           </div>
         </form>
       </div>
@@ -477,25 +475,25 @@
       <!-- Autres étapes à implémenter... -->
       <div *ngIf="isEtapeActive(EtapeAssistant.PREVIEW_ECRITURES)" class="step-content">
         <div class="step-header">
-          <h3>Aperçu des écritures comptables</h3>
-          <p>Vérifiez les écritures qui seront générées</p>
+          <h3>{{ 'ASSIGNMENT_ASSISTANT.ACCOUNTING_PREVIEW' | translate }}</h3>
+          <p>{{ 'ASSIGNMENT_ASSISTANT.VERIFY_GENERATED_ENTRIES' | translate }}</p>
         </div>
 
         <div class="step-form" *ngIf="ecrituresPrevisionnelles.length > 0">
           <!-- Résumé des totaux -->
           <div class="ecritures-summary" *ngIf="resumeEcritures">
             <div class="summary-item">
-              <span class="label">Total débits :</span>
+              <span class="label">{{ 'ASSIGNMENT_ASSISTANT.TOTAL_DEBITS' | translate }}</span>
               <span class="value debit">{{ resumeEcritures.totalDebits | currency:'XAF':'symbol':'1.0-0' }}</span>
             </div>
             <div class="summary-item">
-              <span class="label">Total crédits :</span>
+              <span class="label">{{ 'ASSIGNMENT_ASSISTANT.TOTAL_CREDITS' | translate }}</span>
               <span class="value credit">{{ resumeEcritures.totalCredits | currency:'XAF':'symbol':'1.0-0' }}</span>
             </div>
             <div class="summary-item">
-              <span class="label">Équilibre :</span>
+              <span class="label">{{ 'ASSIGNMENT_ASSISTANT.BALANCE' | translate }}</span>
               <span class="value" [class.equilibre]="resumeEcritures.equilibre" [class.desequilibre]="!resumeEcritures.equilibre">
-                {{ resumeEcritures.equilibre ? 'Équilibré' : 'Déséquilibré' }}
+                {{ resumeEcritures.equilibre ? ('ASSIGNMENT_ASSISTANT.BALANCED' | translate) : ('ASSIGNMENT_ASSISTANT.UNBALANCED' | translate) }}
               </span>
             </div>
           </div>
@@ -503,10 +501,10 @@
           <!-- Tableau des écritures -->
           <div class="ecritures-table">
             <div class="table-header">
-              <div class="col-libelle">Libellé</div>
-              <div class="col-compte">Compte</div>
-              <div class="col-debit">Débit</div>
-              <div class="col-credit">Crédit</div>
+              <div class="col-libelle">{{ 'ASSIGNMENT_ASSISTANT.LABEL' | translate }}</div>
+              <div class="col-compte">{{ 'ASSIGNMENT_ASSISTANT.ACCOUNT' | translate }}</div>
+              <div class="col-debit">{{ 'ASSIGNMENT_ASSISTANT.DEBIT' | translate }}</div>
+              <div class="col-credit">{{ 'ASSIGNMENT_ASSISTANT.CREDIT' | translate }}</div>
             </div>
 
             <div class="table-body">
@@ -532,14 +530,14 @@
         </div>
 
         <div class="no-ecritures" *ngIf="ecrituresPrevisionnelles.length === 0">
-          <p>Aucune écriture comptable à afficher. Veuillez compléter la configuration financière.</p>
+          <p>{{ 'ASSIGNMENT_ASSISTANT.NO_ACCOUNTING_ENTRIES' | translate }}</p>
         </div>
       </div>
 
       <div *ngIf="isEtapeActive(EtapeAssistant.CONFIRMATION)" class="step-content">
         <div class="step-header">
-          <h3>Confirmation de l'assignation</h3>
-          <p>Vérifiez les informations avant de confirmer l'assignation</p>
+          <h3>{{ 'ASSIGNMENT_ASSISTANT.ASSIGNMENT_CONFIRMATION' | translate }}</h3>
+          <p>{{ 'ASSIGNMENT_ASSISTANT.VERIFY_BEFORE_CONFIRM' | translate }}</p>
         </div>
 
         <div class="confirmation-summary">
@@ -547,19 +545,19 @@
           <div class="summary-section">
             <div class="section-header">
               <i class="fas fa-info-circle"></i>
-              <h4>Informations générales</h4>
+              <h4>{{ 'ASSIGNMENT_ASSISTANT.GENERAL_INFO' | translate }}</h4>
             </div>
             <div class="summary-grid">
               <div class="summary-item">
-                <label>Type d'assignation</label>
+                <label>{{ 'ASSIGNMENT_ASSISTANT.ASSIGNMENT_TYPE_LABEL' | translate }}</label>
                 <span class="value">{{ getTypeAssignationLabel() }}</span>
               </div>
               <div class="summary-item">
-                <label>Date d'entrée</label>
+                <label>{{ 'ASSIGNMENT_ASSISTANT.ENTRY_DATE_LABEL' | translate }}</label>
                 <span class="value">{{ configFinanciereForm.get('dateEntree')?.value | date:'dd/MM/yyyy' }}</span>
               </div>
               <div class="summary-item">
-                <label>Propriété</label>
+                <label>{{ 'ASSIGNMENT_ASSISTANT.PROPERTY' | translate }}</label>
                 <span class="value">{{ property?.name }}</span>
               </div>
             </div>
@@ -569,7 +567,7 @@
           <div class="summary-section">
             <div class="section-header">
               <i class="fas fa-user"></i>
-              <h4>Locataire</h4>
+              <h4>{{ 'ASSIGNMENT_ASSISTANT.TENANT' | translate }}</h4>
             </div>
             <div class="locataire-info" *ngIf="selectedLocataire">
               <div class="locataire-avatar">
@@ -587,7 +585,7 @@
           <div class="summary-section">
             <div class="section-header">
               <i class="fas fa-home"></i>
-              <h4>Chambre</h4>
+              <h4>{{ 'ASSIGNMENT_ASSISTANT.ROOM' | translate }}</h4>
             </div>
             <div class="chambre-info" *ngIf="selectedRoom">
               <div class="chambre-details">
@@ -598,7 +596,7 @@
                 <div class="chambre-features">
                   <span class="feature">{{ selectedRoom.type }}</span>
                   <span class="feature" *ngIf="selectedRoom.shouldPayCaution">
-                    Caution: {{ selectedRoom.cautionPrice | currency:'XAF':'symbol':'1.0-0' }}
+                    {{ 'ASSIGNMENT_ASSISTANT.DEPOSIT' | translate }}: {{ selectedRoom.cautionPrice | currency:'XAF':'symbol':'1.0-0' }}
                   </span>
                 </div>
               </div>
@@ -609,19 +607,19 @@
           <div class="summary-section">
             <div class="section-header">
               <i class="fas fa-calculator"></i>
-              <h4>Configuration financière</h4>
+              <h4>{{ 'ASSIGNMENT_ASSISTANT.FINANCIAL_CONFIG' | translate }}</h4>
             </div>
             <div class="financial-summary">
               <div class="financial-item" *ngIf="typeForm.get('typeLocataire')?.value === TypeLocataire.NOUVEAU">
-                <label>Montant perçu</label>
+                <label>{{ 'ASSIGNMENT_ASSISTANT.AMOUNT_RECEIVED_LABEL' | translate }}</label>
                 <span class="value amount">{{ configFinanciereForm.get('paiementMontant')?.value | currency:'XAF':'symbol':'1.0-0' }}</span>
               </div>
               <div class="financial-item" *ngIf="isCautionActive()">
-                <label>Caution active</label>
+                <label>{{ 'ASSIGNMENT_ASSISTANT.ACTIVE_DEPOSIT' | translate }}</label>
                 <span class="value amount">{{ getActiveCautionAmount() | currency:'XAF':'symbol':'1.0-0' }}</span>
               </div>
               <div class="financial-item" *ngIf="typeForm.get('typeLocataire')?.value === TypeLocataire.NOUVEAU">
-                <label>Montant pour avance</label>
+                <label>{{ 'ASSIGNMENT_ASSISTANT.AMOUNT_FOR_ADVANCE' | translate }}</label>
                 <span class="value amount">{{ calculateRemainingAmount() | currency:'XAF':'symbol':'1.0-0' }}</span>
               </div>
             </div>
@@ -631,11 +629,11 @@
           <div class="summary-section">
             <div class="section-header">
               <i class="fas fa-chart-line"></i>
-              <h4>État de la location</h4>
+              <h4>{{ 'ASSIGNMENT_ASSISTANT.RENTAL_STATUS' | translate }}</h4>
             </div>
             <div class="location-status">
               <div class="status-item">
-                <label>Statut financier</label>
+                <label>{{ 'ASSIGNMENT_ASSISTANT.FINANCIAL_STATUS' | translate }}</label>
                 <span class="value status" [ngClass]="getStatutFinancier().classe">
                   <i class="fas" [ngClass]="getStatutFinancier().icone"></i>
                   {{ getStatutFinancier().statut }}
@@ -645,30 +643,30 @@
 
               <!-- Pour nouveaux locataires : mois couverts -->
               <div class="status-item" *ngIf="typeForm.get('typeLocataire')?.value === TypeLocataire.NOUVEAU && getMoisCouverts() > 0">
-                <label>Mois couverts par l'avance</label>
-                <span class="value amount positive">{{ getMoisCouverts() }} mois</span>
+                <label>{{ 'ASSIGNMENT_ASSISTANT.MONTHS_COVERED_BY_ADVANCE' | translate }}</label>
+                <span class="value amount positive">{{ getMoisCouverts() }} {{ 'ASSIGNMENT_ASSISTANT.MONTHS' | translate }}</span>
               </div>
 
               <!-- Pour locataires existants : retard/avance -->
               <div class="status-item" *ngIf="typeForm.get('typeLocataire')?.value === TypeLocataire.EXISTANT">
-                <label>Situation financière</label>
+                <label>{{ 'ASSIGNMENT_ASSISTANT.FINANCIAL_SITUATION' | translate }}</label>
                 <span class="value amount" [class.positive]="getMoisRetard() >= 0" [class.negative]="getMoisRetard() < 0">
                   {{ getDescriptionRetard() }}
                 </span>
               </div>
 
               <div class="status-item">
-                <label>Solde financier</label>
+                <label>{{ 'ASSIGNMENT_ASSISTANT.FINANCIAL_BALANCE' | translate }}</label>
                 <span class="value amount" [class.positive]="getSoldeEcritures() >= 0" [class.negative]="getSoldeEcritures() < 0">
                   {{ getSoldeEcritures() | currency:'XAF':'symbol':'1.0-0' }}
                 </span>
                 <small class="status-description">
-                  {{ getSoldeEcritures() >= 0 ? 'Crédit (en avance)' : 'Débit (dû)' }}
+                  {{ getSoldeEcritures() >= 0 ? ('ASSIGNMENT_ASSISTANT.CREDIT_ADVANCE' | translate) : ('ASSIGNMENT_ASSISTANT.DEBIT_DUE' | translate) }}
                 </small>
               </div>
 
               <div class="status-item" *ngIf="selectedRoom">
-                <label>Loyer mensuel</label>
+                <label>{{ 'ASSIGNMENT_ASSISTANT.MONTHLY_RENT' | translate }}</label>
                 <span class="value amount">{{ selectedRoom.price | currency:'XAF':'symbol':'1.0-0' }}</span>
               </div>
             </div>
@@ -678,28 +676,28 @@
           <div class="summary-section" *ngIf="resumeEcritures">
             <div class="section-header">
               <i class="fas fa-file-invoice"></i>
-              <h4>Résumé comptable</h4>
+              <h4>{{ 'ASSIGNMENT_ASSISTANT.ACCOUNTING_SUMMARY' | translate }}</h4>
             </div>
             <div class="ecritures-resume">
               <div class="resume-item">
-                <label>Total débits (Dettes)</label>
+                <label>{{ 'ASSIGNMENT_ASSISTANT.TOTAL_DEBITS_DEBTS' | translate }}</label>
                 <span class="value amount debit">{{ resumeEcritures.totalDebits | currency:'XAF':'symbol':'1.0-0' }}</span>
               </div>
               <div class="resume-item">
-                <label>Total crédits (Paiements)</label>
+                <label>{{ 'ASSIGNMENT_ASSISTANT.TOTAL_CREDITS_PAYMENTS' | translate }}</label>
                 <span class="value amount credit">{{ resumeEcritures.totalCredits | currency:'XAF':'symbol':'1.0-0' }}</span>
               </div>
               <div class="resume-item balance">
-                <label>Solde (Dettes - Paiements)</label>
+                <label>{{ 'ASSIGNMENT_ASSISTANT.BALANCE_DEBTS_PAYMENTS' | translate }}</label>
                 <span class="value amount" [class.positive]="getSoldeEcritures() >= 0" [class.negative]="getSoldeEcritures() < 0">
                   {{ getSoldeEcritures() | currency:'XAF':'symbol':'1.0-0' }}
                 </span>
               </div>
               <div class="resume-item">
-                <label>Équilibre comptable</label>
+                <label>{{ 'ASSIGNMENT_ASSISTANT.ACCOUNTING_BALANCE' | translate }}</label>
                 <span class="value" [class.equilibre]="resumeEcritures.equilibre">
                   <i class="fas" [class.fa-check-circle]="resumeEcritures.equilibre" [class.fa-exclamation-triangle]="!resumeEcritures.equilibre"></i>
-                  {{ resumeEcritures.equilibre ? 'Équilibré' : 'Non équilibré' }}
+                  {{ resumeEcritures.equilibre ? ('ASSIGNMENT_ASSISTANT.BALANCED_ACCOUNTING' | translate) : ('ASSIGNMENT_ASSISTANT.UNBALANCED_ACCOUNTING' | translate) }}
                 </span>
               </div>
             </div>
@@ -709,7 +707,7 @@
           <div class="summary-section" *ngIf="configFinanciereForm.get('commentaire')?.value">
             <div class="section-header">
               <i class="fas fa-comment"></i>
-              <h4>Commentaire</h4>
+              <h4>{{ 'ASSIGNMENT_ASSISTANT.COMMENT_LABEL' | translate }}</h4>
             </div>
             <div class="commentaire-content">
               <p>{{ configFinanciereForm.get('commentaire')?.value }}</p>
@@ -740,7 +738,7 @@
           (click)="allerEtapePrecedente()"
           [disabled]="assistantState.etapeActuelle === EtapeAssistant.SELECTION_TYPE">
           <i class="fas fa-arrow-left" style="font-size: 16px;"></i>
-          Précédent
+          {{ 'ASSIGNMENT_ASSISTANT.PREVIOUS' | translate }}
         </button>
 
         <div class="actions-right">
@@ -748,7 +746,7 @@
           type="button" 
           class="btn btn-secondary"
           (click)="fermerAssistant()">
-          Annuler
+          {{ 'ASSIGNMENT_ASSISTANT.CANCEL' | translate }}
         </button>
 
         <button
@@ -757,7 +755,7 @@
           class="btn btn-primary"
           (click)="allerEtapeSuivante()"
           [disabled]="!assistantState.canProceed">
-          Suivant
+          {{ 'ASSIGNMENT_ASSISTANT.NEXT' | translate }}
           <i class="fas fa-arrow-right" style="font-size: 16px;"></i>
         </button>
 
@@ -769,7 +767,7 @@
           [disabled]="assistantState.isLoading">
           <div class="spinner" *ngIf="assistantState.isLoading"></div>
           <i class="fas fa-check" style="font-size: 16px;" *ngIf="!assistantState.isLoading"></i>
-          {{ assistantState.isLoading ? 'Création...' : 'Confirmer l\'assignation' }}
+          {{ assistantState.isLoading ? ('ASSIGNMENT_ASSISTANT.CREATING_ASSIGNMENT' | translate) : ('ASSIGNMENT_ASSISTANT.CONFIRM_ASSIGNMENT' | translate) }}
         </button>
       </div>
       </div> <!-- Fermeture navigation-actions -->

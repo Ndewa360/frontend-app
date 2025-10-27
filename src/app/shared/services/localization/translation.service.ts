@@ -21,7 +21,7 @@ export class TranslationService {
   ];
 
   @Select(UserProfileState.selectStateUserProfile) userProfile$: Observable<any>;
-  userProfile:any;
+  private userProfile: any;
 
   constructor(
     private translateService: TranslateService,
@@ -50,6 +50,7 @@ export class TranslationService {
       if (profile?.preferredLanguage && profile.preferredLanguage !== this.currentLanguage$.value) {
         this.changeLanguage(profile.preferredLanguage);
       }
+      this.userProfile = profile;
     });
 
     // Écouter les changements de localisation
@@ -58,9 +59,6 @@ export class TranslationService {
         this.changeLanguage(state.currentLanguage);
       }
     });
-
-    //ecouter les evenements lié au profil
-    this.userProfile$.subscribe((user)=>this.userProfile=user);
 
     // Initialiser avec la langue déterminée
     this.changeLanguage(initialLanguage);
@@ -73,38 +71,34 @@ export class TranslationService {
     try {
       // 1. Vérifier si l'utilisateur a une préférence dans son profil (utilisateur connecté)
       const userProfile = await this.userProfile$.pipe(take(1)).toPromise();
-      if (userProfile?.preferredLanguage) {
-        console.log('🌐 Langue du profil utilisateur:', userProfile.preferredLanguage);
+      if (userProfile?.preferredLanguage && this.isLanguageSupported(userProfile.preferredLanguage)) {
         return userProfile.preferredLanguage;
       }
 
       // 2. Vérifier la langue préservée (après déconnexion)
       const preservedLanguage = this.languagePreservation.getPreservedLanguage();
       if (preservedLanguage && this.isLanguageSupported(preservedLanguage)) {
-        console.log('💾 Langue préservée après déconnexion:', preservedLanguage);
         return preservedLanguage;
       }
 
       // 3. Vérifier le localStorage (utilisateur non connecté avec préférence sauvegardée)
       const savedLanguage = this.getLanguageFromLocalStorage();
       if (savedLanguage && this.isLanguageSupported(savedLanguage)) {
-        console.log('💾 Langue sauvegardée localement:', savedLanguage);
         return savedLanguage;
       }
 
       // 4. Utiliser la langue du navigateur
       const browserLanguage = this.getBrowserLanguage();
       if (browserLanguage && this.isLanguageSupported(browserLanguage)) {
-        console.log('🌐 Langue du navigateur:', browserLanguage);
         return browserLanguage;
       }
 
       // 5. Fallback : français par défaut
-      console.log('🌐 Langue par défaut: fr');
       return 'fr';
 
     } catch (error) {
-      console.error('❌ Erreur lors de la détermination de la langue:', error);
+      // Log error without exposing sensitive information
+      console.error('Erreur lors de la détermination de la langue');
       return 'fr';
     }
   }
@@ -129,25 +123,22 @@ export class TranslationService {
    * Change la langue de l'application
    */
   changeLanguage(languageCode: string): void {
+    if (!languageCode || !this.isLanguageSupported(languageCode)) {
+      console.warn('Langue non supportée');
+      return;
+    }
+
     if (this.translateService.getLangs().includes(languageCode)) {
       this.translateService.use(languageCode).subscribe({
         next: () => {
           this.currentLanguage$.next(languageCode);
-
-          // Sauvegarder dans le localStorage pour les utilisateurs non connectés
           this.saveLanguageToLocalStorage(languageCode);
-
-          // Sauvegarder dans le profil utilisateur si connecté
           this.saveLanguagePreference(languageCode);
-
-          console.log(`🌐 Langue changée vers: ${languageCode}`);
         },
-        error: (error) => {
-          console.error(`❌ Erreur lors du changement de langue vers ${languageCode}:`, error);
+        error: () => {
+          console.error('Erreur lors du changement de langue');
         }
       });
-    } else {
-      console.warn(`⚠️ Langue non supportée: ${languageCode}`);
     }
   }
 
@@ -185,8 +176,6 @@ export class TranslationService {
   getCurrentLanguageValue(): string {
     return this.currentLanguage$.value;
   }
-
-  
 
   /**
    * Obtient toutes les langues supportées
@@ -278,10 +267,11 @@ export class TranslationService {
    */
   private saveLanguageToLocalStorage(languageCode: string): void {
     try {
-      localStorage.setItem('ndiye-preferred-language', languageCode);
-      console.log('💾 Langue sauvegardée dans localStorage:', languageCode);
+      if (languageCode && this.isLanguageSupported(languageCode)) {
+        localStorage.setItem('ndiye-preferred-language', languageCode);
+      }
     } catch (error) {
-      console.warn('⚠️ Impossible de sauvegarder dans localStorage:', error);
+      console.warn('Impossible de sauvegarder dans localStorage');
     }
   }
 
@@ -292,7 +282,7 @@ export class TranslationService {
     try {
       return localStorage.getItem('ndiye-preferred-language');
     } catch (error) {
-      console.warn('⚠️ Impossible de lire localStorage:', error);
+      console.warn('Impossible de lire localStorage');
       return null;
     }
   }
@@ -302,17 +292,13 @@ export class TranslationService {
    */
   private async saveLanguagePreference(languageCode: string): Promise<void> {
     try {
-      // Vérifier si l'utilisateur est connecté
-      if (this.userProfile && this.userProfile._id) {
+      if (this.userProfile && this.userProfile._id && languageCode && this.isLanguageSupported(languageCode)) {
         this.store.dispatch(new UserProfileAction.UpdateUserProfile({
           preferredLanguage: languageCode
         }, this.userProfile._id));
-        console.log('💾 Préférence de langue sauvegardée dans le profil:', languageCode);
-      } else {
-        console.log('👤 Utilisateur non connecté, langue sauvegardée localement uniquement');
       }
     } catch (error) {
-      console.error('❌ Erreur lors de la sauvegarde de la préférence de langue:', error);
+      console.error('Erreur lors de la sauvegarde de la préférence de langue');
     }
   }
 

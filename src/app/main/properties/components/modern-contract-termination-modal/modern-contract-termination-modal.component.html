@@ -10,7 +10,7 @@
         </svg>
       </div>
       <div class="header-text">
-        <h2 class="modal-title">Résiliation de Contrat</h2>
+        <h2 class="modal-title">{{ 'CONTRACT_TERMINATION.TITLE' | translate }}</h2>
         <p class="modal-subtitle">{{ getTenantName() }} • {{ getRoomCode() }}</p>
       </div>
     </div>
@@ -31,7 +31,7 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                 d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
         </svg>
-        Informations du contrat actuel
+        {{ 'CONTRACT_TERMINATION.CURRENT_CONTRACT_INFO' | translate }}
       </h3>
       
       <div class="contract-cards">
@@ -43,7 +43,7 @@
             </svg>
           </div>
           <div class="card-content">
-            <h4 class="card-title">Locataire</h4>
+            <h4 class="card-title">{{ 'CONTRACT_TERMINATION.TENANT' | translate }}</h4>
             <p class="card-value">{{ getTenantName() }}</p>
             <p class="card-detail" *ngIf="data.tenant?.phoneNumber">{{ data.tenant.phoneNumber }}</p>
           </div>
@@ -57,9 +57,9 @@
             </svg>
           </div>
           <div class="card-content">
-            <h4 class="card-title">Unité</h4>
+            <h4 class="card-title">{{ 'CONTRACT_TERMINATION.UNIT' | translate }}</h4>
             <p class="card-value">{{ getRoomCode() }}</p>
-            <p class="card-detail">Loyer: {{ getMonthlyRent() }}</p>
+            <p class="card-detail">{{ 'CONTRACT_TERMINATION.RENT' | translate }}: {{ getMonthlyRent() }}</p>
           </div>
         </div>
 
@@ -71,9 +71,9 @@
             </svg>
           </div>
           <div class="card-content">
-            <h4 class="card-title">Durée</h4>
+            <h4 class="card-title">{{ 'CONTRACT_TERMINATION.DURATION' | translate }}</h4>
             <p class="card-value">{{ getContractDuration() }}</p>
-            <p class="card-detail">Depuis le {{ getContractStartDate() }}</p>
+            <p class="card-detail">{{ 'CONTRACT_TERMINATION.SINCE' | translate }} {{ getContractStartDate() }}</p>
           </div>
         </div>
 
@@ -85,9 +85,9 @@
             </svg>
           </div>
           <div class="card-content">
-            <h4 class="card-title">Caution</h4>
+            <h4 class="card-title">{{ 'CONTRACT_TERMINATION.DEPOSIT' | translate }}</h4>
             <p class="card-value">{{ getDepositAmount() }}</p>
-            <p class="card-detail">Dépôt de garantie</p>
+            <p class="card-detail">{{ 'CONTRACT_TERMINATION.SECURITY_DEPOSIT' | translate }}</p>
           </div>
         </div>
       </div>
@@ -104,45 +104,45 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                     d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
             </svg>
-            Date et motif de résiliation
+            {{ 'CONTRACT_TERMINATION.DATE_AND_REASON' | translate }}
           </h3>
           
           <div class="form-grid">
             <div class="form-group">
-              <label class="form-label">Date de résiliation *</label>
+              <label class="form-label">{{ 'CONTRACT_TERMINATION.TERMINATION_DATE' | translate }} *</label>
               <input type="date" 
                      formControlName="terminationDate"
                      class="form-input"
                      [class.error]="terminationDate?.invalid && terminationDate?.touched">
               <div *ngIf="terminationDate?.invalid && terminationDate?.touched" class="error-message">
-                <span *ngIf="terminationDate?.errors?.['required']">La date de résiliation est requise</span>
+                <span *ngIf="terminationDate?.errors?.['required']">{{ 'CONTRACT_TERMINATION.DATE_REQUIRED' | translate }}</span>
               </div>
             </div>
 
             <div class="form-group">
-              <label class="form-label">Motif de résiliation *</label>
+              <label class="form-label">{{ 'CONTRACT_TERMINATION.TERMINATION_REASON' | translate }} *</label>
               <select formControlName="terminationReason" 
                       class="form-select"
                       [class.error]="terminationReason?.invalid && terminationReason?.touched">
-                <option value="">Sélectionner un motif</option>
+                <option value="">{{ 'CONTRACT_TERMINATION.SELECT_REASON' | translate }}</option>
                 <option *ngFor="let reason of terminationReasons" [value]="reason.value">
                   {{ reason.label }}
                 </option>
               </select>
               <div *ngIf="terminationReason?.invalid && terminationReason?.touched" class="error-message">
-                <span *ngIf="terminationReason?.errors?.['required']">Le motif est requis</span>
+                <span *ngIf="terminationReason?.errors?.['required']">{{ 'CONTRACT_TERMINATION.REASON_REQUIRED' | translate }}</span>
               </div>
             </div>
 
             <div class="form-group full-width" *ngIf="isCustomReasonRequired()">
-              <label class="form-label">Préciser le motif *</label>
+              <label class="form-label">{{ 'CONTRACT_TERMINATION.SPECIFY_REASON' | translate }} *</label>
               <input type="text" 
                      formControlName="customReason"
                      class="form-input"
                      [class.error]="customReason?.invalid && customReason?.touched"
-                     placeholder="Veuillez préciser la raison de la résiliation">
+                     [placeholder]="'CONTRACT_TERMINATION.SPECIFY_REASON_PLACEHOLDER' | translate">
               <div *ngIf="customReason?.invalid && customReason?.touched" class="error-message">
-                <span *ngIf="customReason?.errors?.['required']">Veuillez préciser le motif</span>
+                <span *ngIf="customReason?.errors?.['required']">{{ 'CONTRACT_TERMINATION.SPECIFY_REASON_REQUIRED' | translate }}</span>
               </div>
             </div>
           </div>
@@ -155,7 +155,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                     d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
             </svg>
-            Gestion de la caution
+            {{ 'CONTRACT_TERMINATION.DEPOSIT_MANAGEMENT' | translate }}
           </h3>
           
           <div class="form-grid">
@@ -166,14 +166,14 @@
                          formControlName="refundDeposit"
                          class="checkbox-input">
                   <span class="checkbox-custom"></span>
-                  <span class="checkbox-text">Rembourser la caution</span>
+                  <span class="checkbox-text">{{ 'CONTRACT_TERMINATION.REFUND_DEPOSIT' | translate }}</span>
                 </label>
               </div>
-              <p class="help-text">Caution versée: {{ getDepositAmount() }}</p>
+              <p class="help-text">{{ 'CONTRACT_TERMINATION.DEPOSIT_PAID' | translate }}: {{ getDepositAmount() }}</p>
             </div>
 
             <div class="form-group" *ngIf="shouldShowRefundAmount()">
-              <label class="form-label">Montant à rembourser (FCFA)</label>
+              <label class="form-label">{{ 'CONTRACT_TERMINATION.REFUND_AMOUNT' | translate }} (FCFA)</label>
               <div class="input-with-buttons">
                 <input type="number" 
                        formControlName="refundAmount"
@@ -185,22 +185,22 @@
                   <button type="button" 
                           class="quick-btn" 
                           (click)="setRefundToFullDeposit()"
-                          title="Remboursement intégral">
+                          [title]="'CONTRACT_TERMINATION.FULL_REFUND' | translate">
                     100%
                   </button>
                   <button type="button" 
                           class="quick-btn" 
                           (click)="calculateProportionalRefund()"
-                          title="Remboursement proportionnel">
+                          [title]="'CONTRACT_TERMINATION.PROPORTIONAL_REFUND' | translate">
                     80%
                   </button>
                 </div>
               </div>
               <div *ngIf="refundAmount?.invalid && refundAmount?.touched" class="error-message">
-                <span *ngIf="refundAmount?.errors?.['min']">Le montant ne peut pas être négatif</span>
+                <span *ngIf="refundAmount?.errors?.['min']">{{ 'CONTRACT_TERMINATION.AMOUNT_NOT_NEGATIVE' | translate }}</span>
               </div>
               <div *ngIf="formGroup.get('refundAmount')?.value > 0" class="amount-preview">
-                Remboursement: {{ formatPrice(formGroup.get('refundAmount')?.value) }}
+                {{ 'CONTRACT_TERMINATION.REFUND_PREVIEW' | translate }}: {{ formatPrice(formGroup.get('refundAmount')?.value) }}
               </div>
             </div>
           </div>
@@ -213,24 +213,24 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                     d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
             </svg>
-            Dates importantes (optionnel)
+            {{ 'CONTRACT_TERMINATION.IMPORTANT_DATES' | translate }}
           </h3>
           
           <div class="form-grid">
             <div class="form-group">
-              <label class="form-label">Date d'inspection finale</label>
+              <label class="form-label">{{ 'CONTRACT_TERMINATION.FINAL_INSPECTION_DATE' | translate }}</label>
               <input type="date" 
                      formControlName="finalInspectionDate"
                      class="form-input">
-              <p class="help-text">Date prévue pour l'état des lieux de sortie</p>
+              <p class="help-text">{{ 'CONTRACT_TERMINATION.FINAL_INSPECTION_HELP' | translate }}</p>
             </div>
 
             <div class="form-group">
-              <label class="form-label">Date de remise des clés</label>
+              <label class="form-label">{{ 'CONTRACT_TERMINATION.HANDOVER_DATE' | translate }}</label>
               <input type="date" 
                      formControlName="handoverDate"
                      class="form-input">
-              <p class="help-text">Date effective de libération du logement</p>
+              <p class="help-text">{{ 'CONTRACT_TERMINATION.HANDOVER_HELP' | translate }}</p>
             </div>
           </div>
         </div>
@@ -242,16 +242,16 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                     d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
             </svg>
-            Notes et observations
+            {{ 'CONTRACT_TERMINATION.NOTES_AND_OBSERVATIONS' | translate }}
           </h3>
           
           <div class="form-grid">
             <div class="form-group full-width">
-              <label class="form-label">Notes additionnelles</label>
+              <label class="form-label">{{ 'CONTRACT_TERMINATION.ADDITIONAL_NOTES' | translate }}</label>
               <textarea formControlName="notes"
                         class="form-textarea"
                         rows="4"
-                        placeholder="Observations, conditions particulières, accords spéciaux..."></textarea>
+                        [placeholder]="'CONTRACT_TERMINATION.NOTES_PLACEHOLDER' | translate"></textarea>
             </div>
           </div>
         </div>
@@ -267,11 +267,11 @@
                        [class.error]="confirm?.invalid && confirm?.touched">
                 <span class="checkbox-custom"></span>
                 <span class="checkbox-text">
-                  Je confirme vouloir résilier ce contrat de location. Cette action est définitive et entraînera la libération de l'unité.
+                  {{ 'CONTRACT_TERMINATION.CONFIRMATION_TEXT' | translate }}
                 </span>
               </label>
               <div *ngIf="confirm?.invalid && confirm?.touched" class="error-message">
-                <span>Vous devez confirmer la résiliation</span>
+                <span>{{ 'CONTRACT_TERMINATION.CONFIRMATION_REQUIRED' | translate }}</span>
               </div>
             </div>
           </div>
@@ -287,7 +287,7 @@
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
       </svg>
-      Annuler
+      {{ 'COMMON.CANCEL' | translate }}
     </button>
     
     <button type="submit" 

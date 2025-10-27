@@ -2,6 +2,7 @@ import {NgModule} from '@angular/core'
 import {CommonModule} from '@angular/common'
 import { MatDialogModule } from '@angular/material/dialog'
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer'
+import { TranslateModule } from '@ngx-translate/core'
 
 import {SharedModule} from "../shared/shared.module"
 import {LayoutModule} from "../layout/layout.module"
@@ -153,7 +154,8 @@ ModuleRegistry.registerModules([
     StatisticsModule,
     AssignLocationModule,
     PropertiesSharedModule,
-    ModernModalsModule
+    ModernModalsModule,
+    TranslateModule
   ]
 })
 export class MainModule {

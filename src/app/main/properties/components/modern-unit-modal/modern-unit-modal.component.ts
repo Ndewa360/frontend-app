@@ -50,10 +50,10 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
   
   // Room types
   roomTypes = [
-    { value: RoomType.ROOM, label: this.translate.instant('ROOM_TYPES.ROOM'), icon: 'bed' },
-    { value: RoomType.STUDIO, label: this.translate.instant('ROOM_TYPES.STUDIO'), icon: 'home' },
-    { value: RoomType.SIMPLE_APARTMENT, label: this.translate.instant('ROOM_TYPES.SIMPLE_APARTMENT'), icon: 'apartment' },
-    { value: RoomType.FURNISHED_APARTMENT, label: this.translate.instant('ROOM_TYPES.FURNISHED_APARTMENT'), icon: 'chair' }
+    { value: RoomType.ROOM, label: this.translate.instant('roomTypes.room'), icon: 'bed' },
+    { value: RoomType.STUDIO, label: this.translate.instant('roomTypes.studio'), icon: 'home' },
+    { value: RoomType.SIMPLE_APARTMENT, label: this.translate.instant('roomTypes.simpleApartment'), icon: 'apartment' },
+    { value: RoomType.FURNISHED_APARTMENT, label: this.translate.instant('roomTypes.furnishedApartment'), icon: 'chair' }
   ];
   
   private destroy$ = new Subject<void>();
@@ -90,10 +90,10 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
 
   private updateRoomTypes(): void {
     this.roomTypes = [
-      { value: RoomType.ROOM, label: this.translate.instant('ROOM_TYPES.ROOM'), icon: 'bed' },
-      { value: RoomType.STUDIO, label: this.translate.instant('ROOM_TYPES.STUDIO'), icon: 'home' },
-      { value: RoomType.SIMPLE_APARTMENT, label: this.translate.instant('ROOM_TYPES.SIMPLE_APARTMENT'), icon: 'apartment' },
-      { value: RoomType.FURNISHED_APARTMENT, label: this.translate.instant('ROOM_TYPES.FURNISHED_APARTMENT'), icon: 'chair' }
+      { value: RoomType.ROOM, label: this.translate.instant('roomTypes.room'), icon: 'bed' },
+      { value: RoomType.STUDIO, label: this.translate.instant('roomTypes.studio'), icon: 'home' },
+      { value: RoomType.SIMPLE_APARTMENT, label: this.translate.instant('roomTypes.simpleApartment'), icon: 'apartment' },
+      { value: RoomType.FURNISHED_APARTMENT, label: this.translate.instant('roomTypes.furnishedApartment'), icon: 'chair' }
     ];
   }
 
@@ -225,8 +225,8 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
     ).subscribe(() => {
       this.isLoading = false;
       this.toastr.success(
-        this.translate.instant('NOTIFICATIONS.UNIT_CREATED_SUCCESS'),
-        this.translate.instant('NOTIFICATIONS.SUCCESS')
+        this.translate.instant('notifications.unitCreatedSuccess'),
+        this.translate.instant('notifications.success')
       );
       this.dialogRef.close(true);
     });
@@ -238,8 +238,8 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
     ).subscribe(() => {
       this.isLoading = false;
       this.toastr.success(
-        this.translate.instant('NOTIFICATIONS.UNIT_UPDATED_SUCCESS'),
-        this.translate.instant('NOTIFICATIONS.SUCCESS')
+        this.translate.instant('notifications.unitUpdatedSuccess'),
+        this.translate.instant('notifications.success')
       );
       this.dialogRef.close(true);
     });
@@ -264,8 +264,8 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
     ).subscribe(() => {
       this.isLoading = false;
       this.toastr.error(
-        this.translate.instant('NOTIFICATIONS.UNIT_UPDATE_ERROR'),
-        this.translate.instant('NOTIFICATIONS.ERROR')
+        this.translate.instant('notifications.unitUpdateError'),
+        this.translate.instant('notifications.error')
       );
     });
   }
@@ -280,15 +280,15 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
       const validFiles = files.filter(file => {
         if (!file.type.startsWith('image/')) {
           this.toastr.error(
-            this.translate.instant('ERRORS.INVALID_FILE_TYPE', { fileName: file.name }),
-            this.translate.instant('NOTIFICATIONS.ERROR')
+            this.translate.instant('errors.invalidFileType', { fileName: file.name }),
+            this.translate.instant('notifications.error')
           );
           return false;
         }
         if (file.size > 5 * 1024 * 1024) { // 5MB
           this.toastr.error(
-            this.translate.instant('ERRORS.FILE_TOO_LARGE', { fileName: file.name }),
-            this.translate.instant('NOTIFICATIONS.ERROR')
+            this.translate.instant('errors.fileTooLarge', { fileName: file.name }),
+            this.translate.instant('notifications.error')
           );
           return false;
         }
@@ -345,8 +345,8 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
     } catch (error) {
       console.error('Erreur lors de l\'upload des images:', error);
       this.toastr.error(
-        this.translate.instant('ERRORS.UPLOAD_FAILED'),
-        this.translate.instant('NOTIFICATIONS.ERROR')
+        this.translate.instant('errors.uploadFailed'),
+        this.translate.instant('notifications.error')
       );
       return this.data.unit?.medias || [];
     } finally {
@@ -473,14 +473,14 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
   get cautionPrice() { return this.formGroup.get('cautionPrice'); }
 
   getTitle(): string {
-    return this.data.mode === 'create' ? 'UNIT_MANAGEMENT.ADD_UNIT' : 'UNIT_MANAGEMENT.EDIT_UNIT';
+    return this.data.mode === 'create' ? 'unitManagement.addUnit' : 'unitManagement.editUnit';
   }
 
   getSubmitText(): string {
     if (this.isLoading) {
-      return this.data.mode === 'create' ? 'UNIT_MANAGEMENT.CREATING' : 'UNIT_MANAGEMENT.UPDATING';
+      return this.data.mode === 'create' ? 'unitManagement.creating' : 'unitManagement.updating';
     }
-    return this.data.mode === 'create' ? 'UNIT_MANAGEMENT.CREATE_UNIT' : 'UNIT_MANAGEMENT.UPDATE_UNIT';
+    return this.data.mode === 'create' ? 'unitManagement.createUnit' : 'unitManagement.updateUnit';
   }
 
   getRoomTypeIcon(type: RoomType): string {

@@ -7,6 +7,7 @@ import {
   StatisticAction
 } from '../../../shared/store';
 import { StatisticState } from '../../../shared/store/statistic-data/statistic.state';
+import { TranslationUtilsService } from '../../../shared/services/translation-utils.service';
 
 /**
  * Interface pour les métriques financières extraites du backend
@@ -70,12 +71,10 @@ export interface MonthlyFinancialData {
 })
 export class PropertyFinancialManagerService {
 
-  static readonly MONTHS_NAMES = [
-    'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-    'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
-  ];
-
-  constructor(private store: Store) {}
+  constructor(
+    private store: Store,
+    private translationUtils: TranslationUtilsService
+  ) {}
 
   /**
    * Charge les données financières centralisées depuis le backend
@@ -162,7 +161,7 @@ export class PropertyFinancialManagerService {
       const paymentsCount = rooms.filter(roomData => (roomData.paymentValue[month] || 0) > 0).length;
       
       monthlyData.push({
-        month: PropertyFinancialManagerService.MONTHS_NAMES[month],
+        month: this.translationUtils.getMonthName(month + 1),
         monthIndex: month,
         expected: Math.round(monthlyExpected * 100) / 100,
         received: Math.round(monthlyReceived * 100) / 100,
@@ -170,7 +169,7 @@ export class PropertyFinancialManagerService {
         profit: Math.round(profit * 100) / 100,
         growth: Math.round(growth * 100) / 100,
         performancePercentage: Math.round(collectionRate * 100) / 100,
-        monthName: PropertyFinancialManagerService.MONTHS_NAMES[month],
+        monthName: this.translationUtils.getMonthName(month + 1),
         totalRevenue: Math.round(monthlyReceived * 100) / 100,
         paymentsCount: paymentsCount,
         collectionRate: Math.round(collectionRate * 100) / 100,
@@ -240,7 +239,7 @@ export class PropertyFinancialManagerService {
     const data: MonthlyFinancialData[] = [];
     for (let i = 0; i < 12; i++) {
       data.push({
-        month: PropertyFinancialManagerService.MONTHS_NAMES[i],
+        month: this.translationUtils.getMonthName(i + 1),
         monthIndex: i,
         expected: 0,
         received: 0,
@@ -248,7 +247,7 @@ export class PropertyFinancialManagerService {
         profit: 0,
         growth: 0,
         performancePercentage: 0,
-        monthName: PropertyFinancialManagerService.MONTHS_NAMES[i],
+        monthName: this.translationUtils.getMonthName(i + 1),
         totalRevenue: 0,
         paymentsCount: 0,
         collectionRate: 0,
@@ -267,7 +266,7 @@ export class PropertyFinancialManagerService {
     expected: number[];
   } {
     return {
-      months: monthlyData.map(m => m.month.substring(0, 3)),
+      months: monthlyData.map(m => this.translationUtils.getMonthShortName(m.monthIndex + 1)),
       revenues: monthlyData.map(m => m.received),
       expected: monthlyData.map(m => m.expected)
     };

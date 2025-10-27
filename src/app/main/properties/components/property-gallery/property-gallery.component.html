@@ -6,9 +6,9 @@
             <div class="header-left">
                 <h2 class="gallery-title">
                     <i class="fa fa-images mr-2"></i>
-                    Galerie Média
+                    {{ 'PROPERTY_GALLERY.MEDIA_GALLERY' | translate }}
                 </h2>
-                <p class="gallery-subtitle">{{ data.property.name }} - Gestion des médias</p>
+                <p class="gallery-subtitle">{{ data.property.name }} - {{ 'PROPERTY_GALLERY.MEDIA_MANAGEMENT' | translate }}</p>
             </div>
 
             <!-- Navigation des vues -->
@@ -17,15 +17,15 @@
                     class="view-btn"
                     [class.active]="currentView === 'gallery'"
                     (click)="switchView('gallery')">
-                    <i class="fa fa-th-large"></i>
-                    <span>Galerie</span>
+                    <i class="fa fa-th-large mr-2"></i>
+                    <span>{{ 'PROPERTY_GALLERY.GALLERY' | translate }}</span>
                 </button>
                 <button
                     class="view-btn"
                     [class.active]="currentView === 'upload'"
                     (click)="switchView('upload')">
-                    <i class="fa fa-cloud-upload-alt"></i>
-                    <span>Importer</span>
+                    <i class="fa fa-cloud-upload-alt mr-2"></i>
+                    <span>{{ 'PROPERTY_GALLERY.IMPORT' | translate }}</span>
                 </button>
             </div>
 
@@ -45,24 +45,24 @@
                     class="media-tab"
                     [class.active]="selectedTab === 'images'"
                     (click)="switchTab('images')">
-                    <i class="fa fa-image"></i>
-                    <span>Images</span>
+                    <i class="fa fa-image mr-2"></i>
+                    <span>{{ 'PROPERTY_GALLERY.IMAGES' | translate }}</span>
                     <span class="count">{{ propertyImages.length }}</span>
                 </button>
                 <button
                     class="media-tab"
                     [class.active]="selectedTab === 'videos'"
                     (click)="switchTab('videos')">
-                    <i class="fa fa-video"></i>
-                    <span>Vidéos</span>
+                    <i class="fa fa-video mr-2"></i>
+                    <span>{{ 'PROPERTY_GALLERY.VIDEOS' | translate }}</span>
                     <span class="count">{{ propertyVideos.length }}</span>
                 </button>
                 <button
                     class="media-tab"
                     [class.active]="selectedTab === '360'"
                     (click)="switchTab('360')">
-                    <i class="fa fa-globe"></i>
-                    <span>360°</span>
+                    <i class="fa fa-globe mr-2"></i>
+                    <span>{{ 'PROPERTY_GALLERY.360_IMAGES' | translate }}</span>
                     <span class="count">{{ propertyImages360.length }}</span>
                 </button>
             </div>
@@ -73,24 +73,24 @@
                 <div *ngIf="selectedTab === 'images'" class="media-grid">
                     <div *ngIf="propertyImages.length === 0" class="empty-state">
                         <i class="fa fa-image fa-3x"></i>
-                        <p>Aucune image disponible</p>
+                        <p>{{ 'PROPERTY_GALLERY.NO_IMAGES_AVAILABLE' | translate }}</p>
                         <button class="add-media-btn" (click)="switchView('upload')">
-                            <i class="fa fa-plus"></i> Ajouter des images
+                            <i class="fa fa-plus"></i> {{ 'PROPERTY_GALLERY.ADD_IMAGES' | translate }}
                         </button>
                     </div>
 
                     <div *ngIf="propertyImages.length > 0" class="media-items">
                         <div *ngFor="let imageUrl of propertyImages" class="media-item">
                             <div class="media-preview">
-                                <img [src]="imageUrl" alt="Image" class="preview-image">
+                                <img [src]="imageUrl" [alt]="'PROPERTY_GALLERY.IMAGE_ALT' | translate" class="preview-image">
                                 <div class="media-overlay">
-                                    <button class="action-btn view-btn" title="Voir en plein écran">
+                                    <button class="action-btn view-btn" [title]="'PROPERTY_GALLERY.VIEW_FULLSCREEN' | translate">
                                         <i class="fa fa-search-plus"></i>
                                     </button>
                                     <button class="action-btn delete-btn" 
                                             (click)="deleteFile(imageUrl)" 
                                             [disabled]="isDeleting(imageUrl)"
-                                            [title]="isDeleting(imageUrl) ? 'Suppression en cours...' : 'Supprimer'">
+                                            [title]="isDeleting(imageUrl) ? ('PROPERTY_GALLERY.DELETING' | translate) : ('PROPERTY_GALLERY.DELETE' | translate)">
                                         <i class="fa" [class.fa-trash]="!isDeleting(imageUrl)" [class.fa-spinner]="isDeleting(imageUrl)" [class.fa-spin]="isDeleting(imageUrl)"></i>
                                     </button>
                                 </div>
@@ -103,9 +103,9 @@
                 <div *ngIf="selectedTab === 'videos'" class="media-grid">
                     <div *ngIf="propertyVideos.length === 0" class="empty-state">
                         <i class="fa fa-video fa-3x"></i>
-                        <p>Aucune vidéo disponible</p>
+                        <p>{{ 'PROPERTY_GALLERY.NO_VIDEOS_AVAILABLE' | translate }}</p>
                         <button class="add-media-btn" (click)="switchView('upload')">
-                            <i class="fa fa-plus"></i> Ajouter des vidéos
+                            <i class="fa fa-plus"></i> {{ 'PROPERTY_GALLERY.ADD_VIDEOS' | translate }}
                         </button>
                     </div>
 
@@ -117,7 +117,7 @@
                                     <button class="action-btn delete-btn" 
                                             (click)="deleteFile(videoUrl)" 
                                             [disabled]="isDeleting(videoUrl)"
-                                            [title]="isDeleting(videoUrl) ? 'Suppression en cours...' : 'Supprimer'">
+                                            [title]="isDeleting(videoUrl) ? ('PROPERTY_GALLERY.DELETING' | translate) : ('PROPERTY_GALLERY.DELETE' | translate)">
                                         <i class="fa" [class.fa-trash]="!isDeleting(videoUrl)" [class.fa-spinner]="isDeleting(videoUrl)" [class.fa-spin]="isDeleting(videoUrl)"></i>
                                     </button>
                                 </div>
@@ -130,9 +130,9 @@
                 <div *ngIf="selectedTab === '360'" class="media-grid">
                     <div *ngIf="propertyImages360.length === 0" class="empty-state">
                         <i class="fa fa-globe fa-3x"></i>
-                        <p>Aucune image 360° disponible</p>
+                        <p>{{ 'PROPERTY_GALLERY.NO_360_IMAGES_AVAILABLE' | translate }}</p>
                         <button class="add-media-btn" (click)="switchView('upload')">
-                            <i class="fa fa-plus"></i> Ajouter des images 360°
+                            <i class="fa fa-plus"></i> {{ 'PROPERTY_GALLERY.ADD_360_IMAGES' | translate }}
                         </button>
                     </div>
 
@@ -140,15 +140,15 @@
                         <div *ngFor="let image360Url of propertyImages360" class="media-item">
                             <div class="media-preview">
                                 <div class="media-preview">
-                                    <img [src]="image360Url" alt="Image 360°" class="preview-image">
+                                    <img [src]="image360Url" [alt]="'PROPERTY_GALLERY.360_IMAGE_ALT' | translate" class="preview-image">
                                     <div class="media-overlay">
-                                        <button class="action-btn view-btn" title="Voir en plein écran">
+                                        <button class="action-btn view-btn" [title]="'PROPERTY_GALLERY.VIEW_FULLSCREEN' | translate">
                                             <i class="fa fa-search-plus"></i>
                                         </button>
                                         <button class="action-btn delete-btn" 
                                                 (click)="deleteFile(image360Url)" 
                                                 [disabled]="isDeleting(image360Url)"
-                                                [title]="isDeleting(image360Url) ? 'Suppression en cours...' : 'Supprimer'">
+                                                [title]="isDeleting(image360Url) ? ('PROPERTY_GALLERY.DELETING' | translate) : ('PROPERTY_GALLERY.DELETE' | translate)">
                                             <i class="fa" [class.fa-trash]="!isDeleting(image360Url)" [class.fa-spinner]="isDeleting(image360Url)" [class.fa-spin]="isDeleting(image360Url)"></i>
                                         </button>
                                     </div>
@@ -165,7 +165,7 @@
             <div class="upload-container">
                 <h3 class="upload-title">
                     <i class="fa fa-cloud-upload-alt mr-2"></i>
-                    Importer des médias
+                    {{ 'PROPERTY_GALLERY.IMPORT_MEDIA' | translate }}
                 </h3>
 
                 <app-file-upload
@@ -179,13 +179,13 @@
                 <div class="upload-queue" *ngIf="uploadQueue.length > 0">
                     <h4 class="queue-title">
                         <i class="fa fa-list mr-2"></i>
-                        Files à télécharger ({{ uploadQueue.length }})
+                        {{ 'PROPERTY_GALLERY.FILES_TO_UPLOAD' | translate }} ({{ uploadQueue.length }})
                     </h4>
 
                     <div class="queue-items">
                         <div *ngFor="let item of uploadQueue" class="queue-item">
                             <div class="item-info">
-                                <i class="fa"
+                                <i class="fa  mr-4"
                                    [class.fa-image]="item.file.type.includes('image')"
                                    [class.fa-video]="item.file.type.includes('video')"
                                    [class.fa-file]="!item.file.type.includes('image') && !item.file.type.includes('video')">
@@ -195,7 +195,7 @@
                             </div>
 
                             <div class="item-status">
-                                <div *ngIf="item.status === 'pending'" class="status pending">En attente</div>
+                                <div *ngIf="item.status === 'pending'" class="status pending">{{ 'PROPERTY_GALLERY.PENDING' | translate }}</div>
                                 <div *ngIf="item.status === 'uploading'" class="status uploading">
                                     <div class="progress-bar">
                                         <div class="progress" [style.width.%]="item.progress"></div>
@@ -203,16 +203,16 @@
                                     <span>{{ item.progress }}%</span>
                                 </div>
                                 <div *ngIf="item.status === 'success'" class="status success">
-                                    <i class="fa fa-check-circle"></i> Terminé
+                                    <i class="fa fa-check-circle  mr-4"></i> {{ 'PROPERTY_GALLERY.COMPLETED' | translate }}
                                 </div>
                                 <div *ngIf="item.status === 'error'" class="status error">
-                                    <i class="fa fa-exclamation-circle"></i> Erreur
+                                    <i class="fa fa-exclamation-circle  mr-4"></i> {{ 'PROPERTY_GALLERY.ERROR' | translate }}
                                     <button class="retry-btn" (click)="retryFailedUpload(item)">
-                                        <i class="fa fa-redo"></i> Réessayer
+                                        <i class="fa fa-redo"></i> {{ 'PROPERTY_GALLERY.RETRY' | translate }}
                                     </button>
                                 </div>
                                 <div *ngIf="item.status === 'retrying'" class="status retrying">
-                                    <i class="fa fa-sync fa-spin"></i> Nouvelle tentative...
+                                    <i class="fa fa-sync fa-spin"></i> {{ 'PROPERTY_GALLERY.RETRYING' | translate }}
                                 </div>
 
                                 <button *ngIf="item.status === 'pending'" class="remove-btn" (click)="removeFromQueue(item)">
@@ -229,7 +229,7 @@
                         class="cancel-btn"
                         (click)="switchView('gallery')">
                         <i class="fa fa-arrow-left mr-2"></i>
-                        Retour à la galerie
+                        {{ 'PROPERTY_GALLERY.BACK_TO_GALLERY' | translate }}
                     </button>
 
                     <button
@@ -237,7 +237,7 @@
                         [disabled]="files.length === 0 || isUploading"
                         (click)="uploadFiles()">
                         <i class="fa fa-cloud-upload-alt mr-2"></i>
-                        {{ isUploading ? 'Téléchargement en cours...' : 'Télécharger les fichiers' }}
+                        {{ isUploading ? ('PROPERTY_GALLERY.UPLOADING' | translate) : ('PROPERTY_GALLERY.UPLOAD_FILES' | translate) }}
                     </button>
                 </div>
             </div>
@@ -248,23 +248,23 @@
     <div class="gallery-footer">
         <div class="footer-stats">
             <div class="stat-item">
-                <i class="fa fa-image"></i>
-                <span>{{ propertyImages.length }} Images</span>
+                <i class="fa fa-image mr-2"></i>
+                <span>{{ propertyImages.length }} {{ 'PROPERTY_GALLERY.IMAGES' | translate }}</span>
             </div>
             <div class="stat-item">
-                <i class="fa fa-video"></i>
-                <span>{{ propertyVideos.length }} Vidéos</span>
+                <i class="fa fa-video  mr-2"></i>
+                <span>{{ propertyVideos.length }} {{ 'PROPERTY_GALLERY.VIDEOS' | translate }}</span>
             </div>
             <div class="stat-item">
-                <i class="fa fa-globe"></i>
-                <span>{{ propertyImages360.length }} 360°</span>
+                <i class="fa fa-globe  mr-2"></i>
+                <span>{{ propertyImages360.length }} {{ 'PROPERTY_GALLERY.360_IMAGES' | translate }}</span>
             </div>
         </div>
 
         <div class="footer-actions">
             <button class="footer-btn secondary" (click)="close()">
                 <i class="fa fa-times mr-2"></i>
-                Fermer
+                {{ 'PROPERTY_GALLERY.CLOSE' | translate }}
             </button>
         </div>
     </div>

@@ -3,6 +3,8 @@ import {
   EnrichedStatisticResponse
 } from 'src/app/shared/store';
 import { Store } from '@ngxs/store';
+import { TranslateService } from '@ngx-translate/core';
+import { TranslationUtilsService } from 'src/app/shared/services/translation-utils.service';
 import { ExportData } from '../../property-finances.component';
 import { PropertyFinancialManagerService } from 'src/app/main/properties/services/property-financial-manager.service';
 
@@ -86,7 +88,9 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
   paginatedTenants: TenantTrackingData[] = [];
 
   constructor(
-    private store: Store
+    private store: Store,
+    private translateService: TranslateService,
+    private translationUtils: TranslationUtilsService
   ) { }
 
   ngOnInit(): void {
@@ -201,14 +205,14 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
 
   getStatusLabel(status: string): string {
     const labels = {
-      'up_to_date': 'À jour',
-      'ahead': 'En avance',
-      'partial': 'Paiement partiel',
-      'late': 'En retard',
-      'no_contract': 'Pas de contrat',
-      'ended_contract': 'Contrat terminé'
+      'up_to_date': 'TENANT_PAYMENT_TRACKING.STATUS_LABELS.UP_TO_DATE',
+      'ahead': 'TENANT_PAYMENT_TRACKING.STATUS_LABELS.AHEAD',
+      'partial': 'TENANT_PAYMENT_TRACKING.STATUS_LABELS.PARTIAL',
+      'late': 'TENANT_PAYMENT_TRACKING.STATUS_LABELS.LATE',
+      'no_contract': 'TENANT_PAYMENT_TRACKING.STATUS_LABELS.NO_CONTRACT',
+      'ended_contract': 'TENANT_PAYMENT_TRACKING.STATUS_LABELS.ENDED_CONTRACT'
     };
-    return labels[status] || 'Statut inconnu';
+    return labels[status] || 'TENANT_PAYMENT_TRACKING.STATUS_LABELS.UNKNOWN';
   }
   
   getStatusPriority(status: string): number {
@@ -303,14 +307,13 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
       'Montant d\'avance': tenant.advanceAmount,
       'Score santé': this.getPaymentHealthScore(tenant),
       'Date d\'entrée': tenant.entryDate.toLocaleDateString('fr-FR'),
-      'Dernier paiement': tenant.lastPaymentMonth >= 0 ? PropertyFinancialManagerService.MONTHS_NAMES[tenant.lastPaymentMonth] : 'Aucun',
+      'Dernier paiement': tenant.lastPaymentMonth >= 0 ? this.translationUtils.getMonthName(tenant.lastPaymentMonth + 1) : this.translateService.instant('TENANT_PAYMENT_TRACKING.TABLE.NONE'),
       'Année': this.selectedYear
     }));
   }
 
-  getStringMonth(month)
-  {
-    return PropertyFinancialManagerService.MONTHS_NAMES[month] 
+  getStringMonth(month: number): string {
+    return this.translationUtils.getMonthName(month + 1);
   }
 
   // Méthodes de navigation

@@ -4,6 +4,7 @@ import { Store } from '@ngxs/store';
 import { MatDialog } from '@angular/material/dialog';
 import { AssignLocationModalService } from 'src/app/main/assign-location/services/assign-location-modal.service';
 import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 // Nouveaux modals modernes
 import { ModernTenantModalComponent } from '../modern-tenant-modal/modern-tenant-modal.component';
 import { ModernUnitModalComponent } from '../modern-unit-modal/modern-unit-modal.component';
@@ -89,14 +90,7 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
 
   // Panneau latéral
   activePanelTab: string = 'details';
-  panelTabs = [
-    { id: 'details', label: 'Détails' },
-    { id: 'tenant', label: 'Locataire' },
-    { id: 'payments', label: 'Paiements' },
-    { id: 'actions', label: 'Actions' },
-    { id: 'contract', label: 'Contrat' },
-    { id: 'gallery', label: 'Galerie' }
-  ];
+  panelTabs: { id: string; label: string }[] = [];
 
   // Données des paiements
   roomPayments: LocationPaymentModel[] = [];
@@ -139,11 +133,24 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private assignLocationModalService: AssignLocationModalService,
     private toastr: ToastrService,
-    private exportService: ExportService
+    private exportService: ExportService,
+    private translateService: TranslateService
   ) { }
 
   ngOnInit(): void {
     if (!this.propertyId) return;
+
+    // Attendre que les traductions soient chargées avant d'initialiser les onglets
+    this.translateService.get('PROPERTY_DETAILS.UNIT_DETAILS.TABS.DETAILS').subscribe(() => {
+      this.panelTabs = [
+        { id: 'details', label: this.translateService.instant('PROPERTY_DETAILS.UNIT_DETAILS.TABS.DETAILS') },
+        { id: 'tenant', label: this.translateService.instant('PROPERTY_DETAILS.UNIT_DETAILS.TABS.TENANT') },
+        { id: 'payments', label: this.translateService.instant('PROPERTY_DETAILS.UNIT_DETAILS.TABS.PAYMENTS') },
+        { id: 'actions', label: this.translateService.instant('PROPERTY_DETAILS.UNIT_DETAILS.TABS.ACTIONS') },
+        { id: 'contract', label: this.translateService.instant('PROPERTY_DETAILS.UNIT_DETAILS.TABS.CONTRACT') },
+        { id: 'gallery', label: this.translateService.instant('PROPERTY_DETAILS.UNIT_DETAILS.TABS.GALLERY') }
+      ];
+    });
 
     // Récupérer l'utilisateur actuel depuis le store UserProfile
     this.currentUser = this.store.selectSnapshot(UserProfileState.selectStateUserProfile);
@@ -202,6 +209,26 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
 
     // Charger l'historique des paiements pour la propriété
     this.loadPaymentHistory();
+    
+    // Debug: Tester le service de traduction
+    this.debugTranslationService();
+  }
+  
+  private debugTranslationService(): void {
+    console.log('🔍 Debug TranslateService:');
+    console.log('- Service disponible:', !!this.translateService);
+    console.log('- Langue par défaut:', this.translateService.getDefaultLang());
+    console.log('- Langue actuelle:', this.translateService.currentLang);
+    
+    // Test d'une traduction simple
+    const testKey = 'COMMON.EDIT';
+    const translation = this.translateService.instant(testKey);
+    console.log(`- Test traduction '${testKey}':`, translation);
+    
+    // Test avec observable
+    this.translateService.get(testKey).subscribe(result => {
+      console.log(`- Test traduction observable '${testKey}':`, result);
+    });
   }
 
   ngOnDestroy(): void {
@@ -345,11 +372,16 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
 
   getRoomStatusLabel(room: RoomModel): string {
     const status = this.getRoomStatus(room);
+    // Utiliser des valeurs par défaut si les traductions ne sont pas encore chargées
     switch (status) {
-      case 'occupied': return 'Occupée';
-      case 'available': return 'Disponible';
-      case 'maintenance': return 'Maintenance';
-      default: return 'Inconnu';
+      case 'occupied': 
+        return this.translateService.instant('PROPERTY_DETAILS.UNIT_CARD.STATUS.OCCUPIED') || 'Occupée';
+      case 'available': 
+        return this.translateService.instant('PROPERTY_DETAILS.UNIT_CARD.STATUS.AVAILABLE') || 'Disponible';
+      case 'maintenance': 
+        return this.translateService.instant('PROPERTY_DETAILS.UNIT_CARD.STATUS.MAINTENANCE') || 'En maintenance';
+      default: 
+        return this.translateService.instant('PROPERTY_DETAILS.UNIT_CARD.STATUS.AVAILABLE') || 'Disponible';
     }
   }
 
@@ -359,11 +391,11 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
     // Chercher le locataire par son ID dans le store (déjà chargé par le resolver)
     const locataire = this.locataires.find(l => l._id === room.locataire);
     if (locataire) {
-      return locataire.fullName || locataire.name || 'Locataire';
+      return locataire.fullName || locataire.name || this.translateService.instant('PROPERTY_DETAILS.UNIT_CARD.STATUS.TENANT_NOT_SPECIFIED');
     }
     
     // Si le locataire n'est pas trouvé, c'est probablement une erreur de données
-    return 'Locataire introuvable';
+    return this.translateService.instant('PROPERTY_DETAILS.UNIT_CARD.STATUS.TENANT_NOT_SPECIFIED');
   }
 
   getTenantStartDate(room: RoomModel): string {
@@ -374,7 +406,7 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
     if (locataire && locataire.createdAt) {
       return new Date(locataire.createdAt).toLocaleDateString('fr-FR');
     }
-    return 'Date inconnue';
+    return this.translateService.instant('PROPERTY_DETAILS.UNIT_CARD.STATUS.UNKNOWN_DATE');
   }
 
   getRoomImage(room: RoomModel): string {
@@ -696,7 +728,7 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
         return new Date(tenant.createdAt).toLocaleDateString('fr-FR');
       }
 
-      return 'Date inconnue';
+      return this.translateService.instant('PROPERTY_DETAILS.UNIT_CARD.STATUS.UNKNOWN_DATE');
     }
 
     // Unité libre - récupérer toutes les locations pour cette unité
@@ -707,7 +739,7 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
       if (room.createdAt) {
         return new Date(room.createdAt).toLocaleDateString('fr-FR');
       }
-      return 'Date inconnue';
+      return this.translateService.instant('PROPERTY_DETAILS.UNIT_CARD.STATUS.UNKNOWN_DATE');
     }
 
     // Trouver la dernière location terminée (endedAt défini)
@@ -729,15 +761,17 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
       return new Date(room.createdAt).toLocaleDateString('fr-FR');
     }
 
-    return 'Date inconnue';
+    return this.translateService.instant('PROPERTY_DETAILS.UNIT_CARD.STATUS.UNKNOWN_DATE');
   }
 
   /**
    * Obtenir le libellé selon le statut de l'unité
    */
   getOccupancyLabel(room: RoomModel): string {
-    if (!room) return 'Depuis';
-    return room.isFree ? 'Libre depuis' : 'Occupé depuis';
+    if (!room) return this.translateService.instant('PROPERTY_DETAILS.UNIT_CARD.STATUS.SINCE');
+    return room.isFree 
+      ? this.translateService.instant('PROPERTY_DETAILS.UNIT_CARD.STATUS.FREE_SINCE') 
+      : this.translateService.instant('PROPERTY_DETAILS.UNIT_CARD.STATUS.OCCUPIED_SINCE');
   }
 
   // Méthodes pour les modals

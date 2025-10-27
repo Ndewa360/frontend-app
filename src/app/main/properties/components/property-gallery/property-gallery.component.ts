@@ -4,6 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store, Actions, ofActionErrored, ofActionSuccessful, Select } from '@ngxs/store';
 import { Observable, Subject, timer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { TranslateService } from '@ngx-translate/core';
 import { ApiUploadFileStateFormat, PropertyModel, PropertyState, PropertyAction } from 'src/app/shared/store';
 import { FileUploadContentType, UploadFilesAction, UploadFilesState, ContentUploadRoomType } from 'src/app/shared/store/files-upload';
 import { MediaUtil } from 'src/app/shared/utils';
@@ -64,6 +65,7 @@ export class PropertyGalleryComponent implements OnInit, OnDestroy {
     private _store: Store,
     private _ngxsAction: Actions,
     private cdr: ChangeDetectorRef,
+    private translate: TranslateService,
     @Inject(MAT_DIALOG_DATA) public data: { property: PropertyModel }
   ) {
     // Empêcher l'ouverture d'autres modals pendant que celui-ci est ouvert

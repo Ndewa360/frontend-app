@@ -4,7 +4,7 @@
   <div class="modal-header">
     <h2 class="modal-title">
       <i class="fas fa-user-plus mr-3"></i>
-      Assigner une unité locative
+      {{ 'ASSIGNMENT.ASSIGN_UNIT' | translate }}
     </h2>
     <button class="modal-close-btn" (click)="navigateBack()" type="button">
       <i class="fas fa-times"></i>
@@ -21,7 +21,7 @@
   <div fxFlex class="relative">
     <div class="app-a-box app-scrollbar-fix">
       <ng-scrollbar>
-        <youpez-content-simple mainTitle="Assigner une unité locative">
+        <youpez-content-simple [mainTitle]="'ASSIGNMENT.ASSIGN_UNIT' | translate">
           <ng-container *ngTemplateOutlet="assignmentContent"></ng-container>
         </youpez-content-simple>
       </ng-scrollbar>
@@ -49,15 +49,15 @@
                             class="btn btn-primary btn-assistant"
                             (click)="ouvrirAssistant()">
                             <i class="fas fa-user-plus mr-2"></i>
-                            Assistant d'assignation
+                            {{ 'ASSIGNMENT.ASSIGNMENT_ASSISTANT' | translate }}
                           </button>
 
                           <div class="divider">
-                            <span>ou</span>
+                            <span>{{ 'ASSIGNMENT.OR' | translate }}</span>
                           </div>
 
                           <div class="legacy-form">
-                            <h4>Assignation rapide</h4>
+                            <h4>{{ 'ASSIGNMENT.QUICK_ASSIGNMENT' | translate }}</h4>
                             <assign-location-form
                               (onSendLocationData)="onSetLocataireFormData($event)"
                               #locationForm
@@ -70,12 +70,12 @@
                         <div class="mt-1 flex justify-between">
                           <button ibmButton="secondary" size="md" [disabled]="waittingResponse" (click)="navigateBack()">
                             <i class="fas fa-arrow-left mr-2"></i>
-                            <span class="btn-text">Retour</span>
+                            <span class="btn-text">{{ 'ASSIGNMENT.BACK' | translate }}</span>
                           </button>
                           <button ibmButton="primary" class="custom-primary-button" [disabled]="waittingResponse || !canSendingData" (click)="onSubmit()" size="md">
                             <ibm-loading *ngIf="waittingResponse; else noWaitingResponse"></ibm-loading>
                             <ng-template #noWaitingResponse>
-                              <span class="btn-text">Enregistrer</span>
+                              <span class="btn-text">{{ 'ASSIGNMENT.SAVE' | translate }}</span>
                               <i class="fas fa-save ml-2"></i>
                             </ng-template>
                           </button>

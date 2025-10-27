@@ -266,14 +266,14 @@ export class TenantPaymentAnalysisComponent implements OnInit, OnChanges {
   
   getStatusLabel(status: string): string {
     switch (status) {
-      case 'up_to_date': return 'À jour';
-      case 'ahead': return 'En avance';
-      case 'partial': return 'Paiement partiel';
-      case 'late': return 'En retard';
-      case 'behind': return 'En retard';
-      case 'no_contract': return 'Pas de contrat';
-      case 'ended_contract': return 'Contrat terminé';
-      default: return 'Inconnu';
+      case 'up_to_date': return 'TENANT_PAYMENT_TRACKING.STATUS_LABELS.UP_TO_DATE';
+      case 'ahead': return 'TENANT_PAYMENT_TRACKING.STATUS_LABELS.AHEAD';
+      case 'partial': return 'TENANT_PAYMENT_TRACKING.STATUS_LABELS.PARTIAL';
+      case 'late': return 'TENANT_PAYMENT_TRACKING.STATUS_LABELS.LATE';
+      case 'behind': return 'TENANT_PAYMENT_TRACKING.STATUS_LABELS.LATE';
+      case 'no_contract': return 'TENANT_PAYMENT_TRACKING.STATUS_LABELS.NO_CONTRACT';
+      case 'ended_contract': return 'TENANT_PAYMENT_TRACKING.STATUS_LABELS.ENDED_CONTRACT';
+      default: return 'TENANT_PAYMENT_TRACKING.STATUS_LABELS.UNKNOWN';
     }
   }
 

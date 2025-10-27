@@ -18,6 +18,7 @@ import { takeUntil, debounceTime, filter, catchError } from 'rxjs/operators';
 import { SeoService } from './shared/services/seo/seo.service';
 import { DeviceDetectionService } from './shared/services/device-detection.service';
 import { NetworkStatusService } from './shared/services/network-status.service';
+import { TranslateService } from '@ngx-translate/core';
 
 import { AuthStateService } from './shared/services/auth-state.service';
 import { DataDrivenLoaderService } from './shared/services/data-driven-loader.service';
@@ -81,7 +82,8 @@ export class AppComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     private dataDrivenLoader: DataDrivenLoaderService,
     private languageUrlService: LanguageUrlService,
-    private contentReadyService: ContentReadyService
+    private contentReadyService: ContentReadyService,
+    private translateService: TranslateService
   ) {
     // Fallback pour l'écran de chargement au cas où la navigation ne se termine jamais
     this.loadingTimeout = setTimeout(() => {
@@ -131,13 +133,16 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     // Initialiser les services de localisation
-    // Note: Les services sont automatiquement initialisés via leurs constructeurs
-    // mais nous nous assurons qu'ils sont bien injectés
     console.log('🌍 Initialisation des services de localisation...');
     try {
+      // Initialiser le service de traduction avec la langue par défaut
+      this.translateService.setDefaultLang('fr');
+      this.translateService.use('fr');
+      
       // Vérifier que les services sont bien injectés
       console.log('LocalizationService:', !!this.localizationService);
       console.log('TranslationService:', !!this.translationService);
+      console.log('TranslateService:', !!this.translateService);
       console.log('✅ Services de localisation initialisés');
     } catch (error) {
       console.error('❌ Erreur lors de l\'initialisation des services de localisation:', error);
@@ -152,6 +157,22 @@ export class AppComponent implements OnInit, OnDestroy {
     } catch (e) {
       console.warn('Erreur lors de l\'initialisation de moment.js:', e);
     }
+    
+    // S'assurer que les traductions sont chargées de manière synchrone
+    this.translateService.get('COMMON.LOADING').subscribe(translation => {
+      console.log('✅ Traductions chargées, test:', translation);
+      if (translation === 'COMMON.LOADING') {
+        console.warn('⚠️ Traductions non chargées, rechargement...');
+        this.translateService.reloadLang('fr').subscribe(() => {
+          console.log('✅ Traductions rechargées');
+        });
+      }
+    });
+    
+    // Forcer le chargement immédiat des traductions
+    this.translateService.getTranslation('fr').subscribe(translations => {
+      console.log('📚 Traductions FR chargées:', Object.keys(translations).length, 'clés');
+    });
     // Initialiser la capture automatique des erreurs pour le monitoring
     this.monitoringService.initializeErrorCapture();
 

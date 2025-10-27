@@ -107,7 +107,7 @@ export class ContractViewerModalComponent implements OnInit, OnDestroy {
     ) || null;
 
     if (!this.location) {
-      this.handleError('Aucune location active trouvée pour cette unité');
+      this.handleError('CONTRACT_VIEWER.NO_ACTIVE_LOCATION_FOUND');
       return;
     }
 
@@ -119,7 +119,7 @@ export class ContractViewerModalComponent implements OnInit, OnDestroy {
    */
   private loadContractData(): void {
     if (!this.location) {
-      this.handleError('Données de location manquantes');
+      this.handleError('CONTRACT_VIEWER.LOCATION_DATA_MISSING');
       return;
     }
 
@@ -184,7 +184,7 @@ export class ContractViewerModalComponent implements OnInit, OnDestroy {
     this.hasError = true;
     this.errorMessage = message;
     this.isLoading = false;
-    this.toastr.error(message, 'Erreur');
+    this.toastr.error(message, 'NOTIFICATIONS.ERROR');
   }
 
   /**
@@ -214,7 +214,7 @@ export class ContractViewerModalComponent implements OnInit, OnDestroy {
    */
   downloadContract(): void {
     if (!this.contractPdfSrc || !this.tenant) {
-      this.toastr.error('Contrat non disponible pour le téléchargement', 'Erreur');
+      this.toastr.error('CONTRACT_VIEWER.CONTRACT_NOT_AVAILABLE_DOWNLOAD', 'NOTIFICATIONS.ERROR');
       return;
     }
 
@@ -226,10 +226,10 @@ export class ContractViewerModalComponent implements OnInit, OnDestroy {
       link.click();
       document.body.removeChild(link);
       
-      this.toastr.success('Contrat téléchargé avec succès', 'Succès');
+      this.toastr.success('CONTRACT_VIEWER.CONTRACT_DOWNLOADED_SUCCESS', 'NOTIFICATIONS.SUCCESS');
     } catch (error) {
       console.error('Erreur lors du téléchargement:', error);
-      this.toastr.error('Erreur lors du téléchargement', 'Erreur');
+      this.toastr.error('CONTRACT_VIEWER.DOWNLOAD_ERROR', 'NOTIFICATIONS.ERROR');
     }
   }
 
@@ -238,7 +238,7 @@ export class ContractViewerModalComponent implements OnInit, OnDestroy {
    */
   printContract(): void {
     if (!this.contractPdfSrc) {
-      this.toastr.error('Contrat non disponible pour l\'impression', 'Erreur');
+      this.toastr.error('CONTRACT_VIEWER.CONTRACT_NOT_AVAILABLE_PRINT', 'NOTIFICATIONS.ERROR');
       return;
     }
 
@@ -265,7 +265,7 @@ export class ContractViewerModalComponent implements OnInit, OnDestroy {
       }
     } catch (error) {
       console.error('Erreur lors de l\'impression:', error);
-      this.toastr.error('Erreur lors de l\'impression', 'Erreur');
+      this.toastr.error('CONTRACT_VIEWER.PRINT_ERROR', 'NOTIFICATIONS.ERROR');
     }
   }
 
@@ -274,14 +274,14 @@ export class ContractViewerModalComponent implements OnInit, OnDestroy {
    */
   sendContractByEmail(): void {
     if (!this.tenant?.email) {
-      this.toastr.error('Adresse email du locataire non disponible', 'Erreur');
+      this.toastr.error('CONTRACT_VIEWER.TENANT_EMAIL_NOT_AVAILABLE', 'NOTIFICATIONS.ERROR');
       return;
     }
 
     // Préparer les données pour l'envoi par email
     const emailData = {
       to: this.tenant.email,
-      subject: `Contrat de location - ${this.tenant.fullName}`,
+      subject: 'CONTRACT_VIEWER.EMAIL_SUBJECT',
       contractPdfUrl: this.contractPdfSrc,
       tenantName: this.tenant.fullName,
       propertyAddress: this.data.room ? `Unité ${this.data.room.code}` : 'Propriété'
@@ -289,7 +289,7 @@ export class ContractViewerModalComponent implements OnInit, OnDestroy {
 
     // Appeler le service d'email (à implémenter)
     console.log('Envoi par email:', emailData);
-    this.toastr.success('Email envoyé avec succès', 'Succès');
+    this.toastr.success('CONTRACT_VIEWER.EMAIL_SENT_SUCCESS', 'NOTIFICATIONS.SUCCESS');
 
     // TODO: Remplacer par un vrai service d'email
     // this.emailService.sendContract(emailData).subscribe({
@@ -303,9 +303,9 @@ export class ContractViewerModalComponent implements OnInit, OnDestroy {
    */
   getContractTitle(): string {
     if (this.tenant) {
-      return `Contrat de location - ${this.tenant.fullName}`;
+      return 'CONTRACT_VIEWER.CONTRACT_TITLE_WITH_TENANT';
     }
-    return 'Contrat de location';
+    return 'CONTRACT_VIEWER.CONTRACT_TITLE';
   }
 
   /**
@@ -345,7 +345,7 @@ export class ContractViewerModalComponent implements OnInit, OnDestroy {
       error: (error) => {
         console.error('❌ Erreur lors du chargement des templates:', error);
         this.isLoadingTemplates = false;
-        this.toastr.error('Erreur lors du chargement des templates', 'Erreur');
+        this.toastr.error('CONTRACT_VIEWER.TEMPLATES_LOADING_ERROR', 'NOTIFICATIONS.ERROR');
       }
     });
   }
@@ -377,7 +377,7 @@ export class ContractViewerModalComponent implements OnInit, OnDestroy {
    */
   private regenerateContractWithTemplate(templateId: string): void {
     if (!this.location) {
-      this.toastr.error('Données de location manquantes', 'Erreur');
+      this.toastr.error('CONTRACT_VIEWER.LOCATION_DATA_MISSING', 'NOTIFICATIONS.ERROR');
       return;
     }
 
@@ -406,12 +406,12 @@ export class ContractViewerModalComponent implements OnInit, OnDestroy {
           pdf: response.data
         }));
 
-        this.toastr.success(`Contrat régénéré avec le template "${this.getSelectedTemplateName()}"`, 'Succès');
+        this.toastr.success('CONTRACT_VIEWER.CONTRACT_REGENERATED_SUCCESS', 'NOTIFICATIONS.SUCCESS');
       },
       error: (error) => {
         console.error('❌ Erreur lors de la régénération:', error);
         this.handleError('Erreur lors de la régénération du contrat');
-        this.toastr.error('Erreur lors de la régénération du contrat', 'Erreur');
+        this.toastr.error('CONTRACT_VIEWER.REGENERATION_ERROR', 'NOTIFICATIONS.ERROR');
       }
     });
   }
@@ -421,7 +421,7 @@ export class ContractViewerModalComponent implements OnInit, OnDestroy {
    */
   getSelectedTemplateName(): string {
     const template = this.availableTemplates.find(t => t._id === this.selectedTemplateId);
-    return template?.name || 'Template par défaut';
+    return template?.name || 'CONTRACT_VIEWER.DEFAULT_TEMPLATE_NAME';
   }
 
   /**
@@ -430,13 +430,13 @@ export class ContractViewerModalComponent implements OnInit, OnDestroy {
   getTemplateTypeLabel(type: ContractTemplateType): string {
     switch (type) {
       case ContractTemplateType.DEFAULT:
-        return 'Par défaut';
+        return 'CONTRACT_VIEWER.TEMPLATE_TYPE_DEFAULT';
       case ContractTemplateType.CUSTOM:
-        return 'Personnalisé';
+        return 'CONTRACT_VIEWER.TEMPLATE_TYPE_CUSTOM';
       case ContractTemplateType.DUPLICATED:
-        return 'Dupliqué';
+        return 'CONTRACT_VIEWER.TEMPLATE_TYPE_DUPLICATED';
       default:
-        return 'Inconnu';
+        return 'CONTRACT_VIEWER.TEMPLATE_TYPE_UNKNOWN';
     }
   }
 }

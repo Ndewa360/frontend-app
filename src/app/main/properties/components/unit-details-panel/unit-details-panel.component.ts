@@ -5,6 +5,7 @@ import { takeUntil } from 'rxjs/operators';
 import { trigger, state, style, transition, animate, keyframes } from '@angular/animations';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 import {
   RoomModel,
   LocataireModel,
@@ -74,28 +75,7 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
   isContentVisible: boolean = true;
   private previousRoomId: string | null = null;
 
-  tabs = [
-    {
-      id: 'overview',
-      label: 'Vue d\'ensemble',
-      icon: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4'
-    },
-    {
-      id: 'tenant',
-      label: 'Locataire',
-      icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'
-    },
-    {
-      id: 'payments',
-      label: 'Paiements',
-      icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1'
-    },
-    {
-      id: 'gallery',
-      label: 'Galerie',
-      icon: 'M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z'
-    },
-  ];
+  tabs: any[] = [];
 
   private destroy$ = new Subject<void>();
 
@@ -107,7 +87,8 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
     private store: Store,
     private unitDetailsService: UnitDetailsService,
     private dialog: MatDialog,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -119,7 +100,8 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
     console.log('🔍 UnitDetailsPanel - Est agent:', this.isAgent);
     console.log('🔍 UnitDetailsPanel - UserType:', this.currentUser?.userType);
     
-    // Filtrer les onglets selon le rôle utilisateur
+    // Initialiser les onglets avec les traductions et filtrer selon le rôle
+    this.initializeTabs();
     this.updateTabsForUserRole();
     
     console.log('🔍 UnitDetailsPanel - Onglets après filtrage:', this.tabs);
@@ -245,11 +227,11 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   getRoomName(): string {
-    return this.room?.code || `Unité ${this.room?._id?.substring(0, 8)}`;
+    return this.room?.code || `${this.translate.instant('UNIT_DETAILS_PANEL.UNIT')} ${this.room?._id?.substring(0, 8)}`;
   }
 
   getRoomTypeLabel(): string {
-    if (!this.room?.type) return 'Type inconnu';
+    if (!this.room?.type) return this.translate.instant('UNIT_DETAILS_PANEL.UNKNOWN_TYPE');
     return UtilsString.getStringOfRoomType(this.room.type);
   }
 
@@ -263,15 +245,15 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
   getRoomStatusLabel(): string {
     const status = this.getRoomStatus();
     switch (status) {
-      case 'available': return 'Disponible';
-      case 'occupied': return 'Occupée';
-      case 'maintenance': return 'En maintenance';
-      default: return 'Statut inconnu';
+      case 'available': return this.translate.instant('PROPERTY_DETAILS.UNIT_CARD.STATUS.AVAILABLE');
+      case 'occupied': return this.translate.instant('UNIT_DETAILS_PANEL.OCCUPIED');
+      case 'maintenance': return this.translate.instant('PROPERTY_DETAILS.UNIT_CARD.STATUS.MAINTENANCE');
+      default: return this.translate.instant('UNIT_DETAILS_PANEL.UNKNOWN_STATUS');
     }
   }
 
   getTenantName(): string {
-    return this.unitData?.tenant?.fullName || this.unitData?.tenant?.name || 'Locataire inconnu';
+    return this.unitData?.tenant?.fullName || this.unitData?.tenant?.name || this.translate.instant('UNIT_DETAILS_PANEL.UNKNOWN_TENANT');
   }
 
   formatPrice(price: number): string {
@@ -742,13 +724,13 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   getTenantNameById(tenantId: string): string {
-    if (tenantId === 'unknown') return 'Locataire inconnu';
+    if (tenantId === 'unknown') return this.translate.instant('UNIT_DETAILS_PANEL.UNKNOWN_TENANT');
     // Chercher le locataire dans les données
     const tenant = this.unitData?.tenant;
     if (tenant && tenant._id === tenantId) {
-      return tenant.fullName || tenant.name || 'Locataire';
+      return tenant.fullName || tenant.name || this.translate.instant('UNIT_DETAILS_PANEL.TENANT');
     }
-    return 'Locataire introuvable';
+    return this.translate.instant('UNIT_DETAILS_PANEL.TENANT_NOT_FOUND');
   }
 
   formatPaymentDate(date: string | Date): string {
@@ -775,9 +757,9 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
 
   getPaymentTypeLabel(type: string): string {
     switch (type) {
-      case 'LOCATION': return 'Loyer';
-      case 'CAUTION': return 'Caution';
-      default: return type || 'Autre';
+      case 'LOCATION': return this.translate.instant('UNIT_PAYMENTS.PAYMENT_TYPE.LOCATION');
+      case 'CAUTION': return this.translate.instant('UNIT_PAYMENTS.PAYMENT_TYPE.CAUTION');
+      default: return type || this.translate.instant('UNIT_DETAILS_PANEL.OTHER');
     }
   }
 
@@ -817,10 +799,10 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
   getMediaTypeLabel(mediaUrl: string): string {
     const type = this.getMediaType(mediaUrl);
     switch (type) {
-      case 'image': return 'Photo';
-      case 'video': return 'Vidéo';
-      case '360': return '360°';
-      default: return 'Média';
+      case 'image': return this.translate.instant('PROPERTY_DETAILS.UNIT_DETAILS.IMAGE');
+      case 'video': return this.translate.instant('PROPERTY_DETAILS.UNIT_DETAILS.VIDEO');
+      case '360': return this.translate.instant('PROPERTY_DETAILS.UNIT_DETAILS.TOUR_360');
+      default: return this.translate.instant('UNIT_DETAILS_PANEL.MEDIA');
     }
   }
 
@@ -851,14 +833,14 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
 
   getMediaVariety(): string {
     const types = [];
-    if (this.getMediaCount('image') > 0) types.push('Photos');
-    if (this.getMediaCount('video') > 0) types.push('Vidéos');
-    if (this.getMediaCount('360') > 0) types.push('360°');
+    if (this.getMediaCount('image') > 0) types.push(this.translate.instant('PROPERTY_DETAILS.UNIT_DETAILS.PHOTOS'));
+    if (this.getMediaCount('video') > 0) types.push(this.translate.instant('PROPERTY_DETAILS.UNIT_DETAILS.VIDEOS'));
+    if (this.getMediaCount('360') > 0) types.push(this.translate.instant('PROPERTY_DETAILS.UNIT_DETAILS.TOUR_360'));
 
-    if (types.length === 0) return 'Aucune';
-    if (types.length === 1) return 'Basique';
-    if (types.length === 2) return 'Bonne';
-    return 'Excellente';
+    if (types.length === 0) return this.translate.instant('UNIT_DETAILS_PANEL.NONE');
+    if (types.length === 1) return this.translate.instant('UNIT_DETAILS_PANEL.BASIC');
+    if (types.length === 2) return this.translate.instant('UNIT_DETAILS_PANEL.GOOD');
+    return this.translate.instant('UNIT_DETAILS_PANEL.EXCELLENT');
   }
 
   getRoomMainImage(): string | null {
@@ -945,18 +927,46 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   /**
+   * Initialiser les onglets avec les traductions
+   */
+  private initializeTabs(): void {
+    this.tabs = [
+      {
+        id: 'overview',
+        label: this.translate.instant('PROPERTY_DETAILS.TABS.OVERVIEW'),
+        icon: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4'
+      },
+      {
+        id: 'tenant',
+        label: this.translate.instant('PROPERTY_DETAILS.TABS.TENANTS'),
+        icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'
+      },
+      {
+        id: 'payments',
+        label: this.translate.instant('PROPERTY_DETAILS.TABS.FINANCES'),
+        icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1'
+      },
+      {
+        id: 'gallery',
+        label: this.translate.instant('PROPERTY_DETAILS.TABS.GALLERY'),
+        icon: 'M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z'
+      }
+    ];
+  }
+
+  /**
    * Mettre à jour les onglets selon le rôle utilisateur
    */
   private updateTabsForUserRole(): void {
     const baseTabs = [
       {
         id: 'overview',
-        label: 'Vue d\'ensemble',
+        label: this.translate.instant('PROPERTY_DETAILS.TABS.OVERVIEW'),
         icon: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4'
       },
       {
         id: 'gallery',
-        label: 'Galerie',
+        label: this.translate.instant('PROPERTY_DETAILS.TABS.GALLERY'),
         icon: 'M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z'
       }
     ];
@@ -967,12 +977,12 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
         ...baseTabs.slice(0, 1), // Vue d'ensemble
         {
           id: 'tenant',
-          label: 'Locataire',
+          label: this.translate.instant('PROPERTY_DETAILS.TABS.TENANTS'),
           icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'
         },
         {
           id: 'payments',
-          label: 'Paiements',
+          label: this.translate.instant('PROPERTY_DETAILS.TABS.FINANCES'),
           icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1'
         },
         ...baseTabs.slice(1) // Galerie

@@ -55,7 +55,7 @@
           <!-- Bouton d'édition -->
           <button (click)="onEditUnit()"
                   class="p-2 rounded-lg hover:bg-carbon-layer-03 transition-colors duration-200 focus-carbon"
-                  title="Modifier l'unité">
+                  [title]="'UNIT_DETAILS_PANEL.MODIFY_BUTTON' | translate">
             <svg class="w-6 h-6 text-custom-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
             </svg>
@@ -147,7 +147,7 @@
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2-2H7a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                 </svg>
-                <span>Modifier</span>
+                <span>{{ 'UNIT_DETAILS_PANEL.MODIFY' | translate }}</span>
               </button>
             </div>
           </div>
@@ -156,12 +156,12 @@
           <div class="p-8">
             <div class="flex items-center justify-between mb-6">
               <div>
-                <h3 class="text-2xl font-bold text-carbon-primary">{{ room?.code || 'Unité sans nom' }}</h3>
+                <h3 class="text-2xl font-bold text-carbon-primary">{{ room?.code || ('UNIT_DETAILS_PANEL.UNIT_WITHOUT_NAME' | translate) }}</h3>
                 <p class="text-lg text-carbon-secondary">{{ getRoomTypeLabel() }}</p>
               </div>
               <div class="text-right">
                 <div class="text-3xl font-bold text-custom-primary">{{ formatPrice(room?.price || 0) }}</div>
-                <div class="text-sm text-carbon-secondary">par mois</div>
+                <div class="text-sm text-carbon-secondary">{{ 'PROPERTY_DETAILS.UNIT_CARD.PER_MONTH' | translate }}</div>
               </div>
             </div>
 
@@ -171,7 +171,7 @@
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                 </svg>
-                Description
+                {{ 'PROPERTIES.DESCRIPTION' | translate }}
               </h4>
               <p class="text-sm text-carbon-secondary leading-relaxed">{{ room?.description }}</p>
             </div>
@@ -184,7 +184,7 @@
             <svg class="w-5 h-5 mr-2 text-custom-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
             </svg>
-            Caractéristiques de l'unité
+            {{ 'UNIT_DETAILS_PANEL.UNIT_CHARACTERISTICS' | translate }}
           </h4>
 
           <div class="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4">
@@ -198,7 +198,7 @@
                 </div>
                 <div>
                   <div class="text-lg font-bold text-blue-600">{{ room?.specifity?.numberOfBathroom || 1 }}</div>
-                  <div class="text-xs text-carbon-secondary">Chambre(s)</div>
+                  <div class="text-xs text-carbon-secondary">{{ 'PROPERTY_DETAILS.UNIT_DETAILS.ROOMS' | translate }}</div>
                 </div>
               </div>
             </div>
@@ -213,7 +213,7 @@
                 </div>
                 <div>
                   <div class="text-lg font-bold text-green-600">{{ room?.specifity?.numberOfLivingRoom || 0 }}</div>
-                  <div class="text-xs text-carbon-secondary">Salon(s)</div>
+                  <div class="text-xs text-carbon-secondary">{{ 'PROPERTY_DETAILS.UNIT_DETAILS.LIVING_ROOMS' | translate }}</div>
                 </div>
               </div>
             </div>
@@ -229,7 +229,7 @@
                 <div>
                   <div class="text-lg font-bold text-purple-600">{{ room?.specifity?.numberOfShower || 0 }}</div>
                   <div class="text-xs text-carbon-secondary">
-                    Douche(s) {{ room?.specifity?.isInternalShower ? 'interne(s)' : 'externe(s)' }}
+                    {{ 'PROPERTY_DETAILS.UNIT_DETAILS.SHOWERS' | translate }} {{ room?.specifity?.isInternalShower ? ('PROPERTY_DETAILS.UNIT_DETAILS.INTERNAL' | translate) : ('PROPERTY_DETAILS.UNIT_DETAILS.EXTERNAL' | translate) }}
                   </div>
                 </div>
               </div>
@@ -252,10 +252,10 @@
                   <div class="text-lg font-bold"
                        [class.text-green-600]="room?.specifity?.hasKitchen"
                        [class.text-red-600]="!room?.specifity?.hasKitchen">
-                    {{ room?.specifity?.hasKitchen ? 'Oui' : 'Non' }}
+                    {{ room?.specifity?.hasKitchen ? ('PROPERTY_DETAILS.UNIT_DETAILS.YES' | translate) : ('PROPERTY_DETAILS.UNIT_DETAILS.NO' | translate) }}
                   </div>
                   <div class="text-xs text-carbon-secondary">
-                    Cuisine {{ room?.specifity?.isInternalKitchen ? 'interne' : 'externe' }}
+                    {{ 'PROPERTY_DETAILS.UNIT_CARD.KITCHEN' | translate }} {{ room?.specifity?.isInternalKitchen ? ('PROPERTY_DETAILS.UNIT_DETAILS.INTERNAL' | translate) : ('PROPERTY_DETAILS.UNIT_DETAILS.EXTERNAL' | translate) }}
                   </div>
                 </div>
               </div>
@@ -271,9 +271,9 @@
                 </div>
                 <div>
                   <div class="text-lg font-bold text-yellow-600">
-                    {{ room?.shouldPayCaution ? formatPrice(room?.cautionPrice || 0) : 'Aucune' }}
+                    {{ room?.shouldPayCaution ? formatPrice(room?.cautionPrice || 0) : ('PROPERTY_DETAILS.UNIT_DETAILS.NONE' | translate) }}
                   </div>
-                  <div class="text-xs text-carbon-secondary">Caution</div>
+                  <div class="text-xs text-carbon-secondary">{{ 'PROPERTY_DETAILS.UNIT_DETAILS.DEPOSIT' | translate }}</div>
                 </div>
               </div>
             </div>
@@ -296,9 +296,9 @@
                   <div class="text-lg font-bold"
                        [class.text-green-600]="room?.isShowToPublic"
                        [class.text-gray-600]="!room?.isShowToPublic">
-                    {{ room?.isShowToPublic ? 'Visible' : 'Masquée' }}
+                    {{ room?.isShowToPublic ? ('PROPERTY_DETAILS.UNIT_DETAILS.VISIBLE' | translate) : ('PROPERTY_DETAILS.UNIT_DETAILS.HIDDEN' | translate) }}
                   </div>
-                  <div class="text-xs text-carbon-secondary">Visibilité publique</div>
+                  <div class="text-xs text-carbon-secondary">{{ 'PROPERTY_DETAILS.UNIT_DETAILS.PUBLIC_VISIBILITY' | translate }}</div>
                 </div>
               </div>
             </div>
@@ -311,31 +311,31 @@
             <svg class="w-5 h-5 mr-2 text-custom-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
             </svg>
-            Informations administratives
+            {{ 'UNIT_DETAILS_PANEL.ADMINISTRATIVE_INFO' | translate }}
           </h4>
 
           <div class="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-4">
             <div class="bg-carbon-layer-01 p-4 rounded-lg border border-carbon-subtle">
-              <label class="block text-xs font-medium text-carbon-secondary mb-1">ID Unité</label>
+              <label class="block text-xs font-medium text-carbon-secondary mb-1">{{ 'PROPERTY_DETAILS.UNIT_DETAILS.UNIT_ID' | translate }}</label>
               <p class="text-sm font-mono text-carbon-primary">{{ room?._id?.substring(0, 8) }}...</p>
             </div>
 
             <div class="bg-carbon-layer-01 p-4 rounded-lg border border-carbon-subtle">
-              <label class="block text-xs font-medium text-carbon-secondary mb-1">Souscription active</label>
+              <label class="block text-xs font-medium text-carbon-secondary mb-1">{{ 'PROPERTY_DETAILS.UNIT_DETAILS.ACTIVE_SUBSCRIPTION' | translate }}</label>
               <p class="text-sm font-medium"
                  [class.text-green-600]="room?.isActiveForSouscription"
                  [class.text-red-600]="!room?.isActiveForSouscription">
-                {{ room?.isActiveForSouscription ? 'Oui' : 'Non' }}
+                {{ room?.isActiveForSouscription ? ('PROPERTY_DETAILS.UNIT_DETAILS.YES' | translate) : ('PROPERTY_DETAILS.UNIT_DETAILS.NO' | translate) }}
               </p>
             </div>
 
             <div class="bg-carbon-layer-01 p-4 rounded-lg border border-carbon-subtle">
-              <label class="block text-xs font-medium text-carbon-secondary mb-1">Date de création</label>
+              <label class="block text-xs font-medium text-carbon-secondary mb-1">{{ 'PROPERTY_DETAILS.UNIT_DETAILS.CREATION_DATE' | translate }}</label>
               <p class="text-sm text-carbon-primary">{{ formatDate(room?.createdAt) }}</p>
             </div>
 
             <div class="bg-carbon-layer-01 p-4 rounded-lg border border-carbon-subtle">
-              <label class="block text-xs font-medium text-carbon-secondary mb-1">Dernière modification</label>
+              <label class="block text-xs font-medium text-carbon-secondary mb-1">{{ 'PROPERTY_DETAILS.UNIT_DETAILS.LAST_MODIFICATION' | translate }}</label>
               <p class="text-sm text-carbon-primary">{{ formatDate(room?.updatedAt) }}</p>
             </div>
           </div>
@@ -360,13 +360,13 @@
                   </svg>
                 </div>
                 <div>
-                  <h3 class="text-lg font-semibold text-red-800">Unité occupée</h3>
-                  <p class="text-sm text-red-600">Locataire assigné à cette unité</p>
+                  <h3 class="text-lg font-semibold text-red-800">{{ 'UNIT_DETAILS_PANEL.UNIT_OCCUPIED' | translate }}</h3>
+                  <p class="text-sm text-red-600">{{ 'UNIT_DETAILS_PANEL.TENANT_ASSIGNED' | translate }}</p>
                 </div>
               </div>
               <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
                 <div class="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
-                Occupée
+                {{ 'UNIT_DETAILS_PANEL.OCCUPIED' | translate }}
               </span>
             </div>
           </div>
@@ -380,24 +380,24 @@
                   <svg class="w-4 h-4 mr-2 text-custom-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                   </svg>
-                  Informations personnelles
+                  {{ 'UNIT_DETAILS_PANEL.PERSONAL_INFO' | translate }}
                 </h4>
 
                 <div class="space-y-3">
                   <div class="flex items-center justify-between py-2 border-b border-carbon-subtle">
-                    <span class="text-sm text-carbon-secondary">Nom complet</span>
+                    <span class="text-sm text-carbon-secondary">{{ 'UNIT_DETAILS_PANEL.FULL_NAME' | translate }}</span>
                     <span class="text-sm font-medium text-carbon-primary">{{ getTenantName() }}</span>
                   </div>
                   <div class="flex items-center justify-between py-2 border-b border-carbon-subtle">
-                    <span class="text-sm text-carbon-secondary">Email</span>
-                    <span class="text-sm font-medium text-carbon-primary">{{ unitData?.tenant?.email || 'Non renseigné' }}</span>
+                    <span class="text-sm text-carbon-secondary">{{ 'UNIT_DETAILS_PANEL.EMAIL' | translate }}</span>
+                    <span class="text-sm font-medium text-carbon-primary">{{ unitData?.tenant?.email || ('UNIT_DETAILS_PANEL.NOT_PROVIDED_INFO' | translate) }}</span>
                   </div>
                   <div class="flex items-center justify-between py-2 border-b border-carbon-subtle">
-                    <span class="text-sm text-carbon-secondary">Téléphone</span>
-                    <span class="text-sm font-medium text-carbon-primary">{{ unitData?.tenant?.phoneNumber || 'Non renseigné' }}</span>
+                    <span class="text-sm text-carbon-secondary">{{ 'UNIT_DETAILS_PANEL.PHONE' | translate }}</span>
+                    <span class="text-sm font-medium text-carbon-primary">{{ unitData?.tenant?.phoneNumber || ('UNIT_DETAILS_PANEL.NOT_PROVIDED_INFO' | translate) }}</span>
                   </div>
                   <div class="flex items-center justify-between py-2 border-b border-carbon-subtle">
-                    <span class="text-sm text-carbon-secondary">Date d'entrée</span>
+                    <span class="text-sm text-carbon-secondary">{{ 'UNIT_DETAILS_PANEL.ENTRY_DATE' | translate }}</span>
                     <span class="text-sm font-medium text-carbon-primary">{{ formatDate(unitData?.location?.startedAt) }}</span>
                   </div>
                 </div>
@@ -409,30 +409,30 @@
                   <svg class="w-4 h-4 mr-2 text-custom-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                   </svg>
-                  Contrat de location
+                  {{ 'PROPERTY_DETAILS.UNIT_DETAILS.LEASE_CONTRACT' | translate }}
                 </h4>
 
                 <div class="space-y-3">
                   <div class="flex items-center justify-between py-2 border-b border-carbon-subtle">
-                    <span class="text-sm text-carbon-secondary">Statut du contrat</span>
+                    <span class="text-sm text-carbon-secondary">{{ 'UNIT_DETAILS_PANEL.CONTRACT_STATUS' | translate }}</span>
                     <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
                           [class.bg-green-100]="unitData?.location?.isRunning"
                           [class.text-green-800]="unitData?.location?.isRunning"
                           [class.bg-red-100]="!unitData?.location?.isRunning"
                           [class.text-red-800]="!unitData?.location?.isRunning">
-                      {{ unitData?.location?.isRunning ? 'Actif' : 'Inactif' }}
+                      {{ unitData?.location?.isRunning ? ('UNIT_DETAILS_PANEL.ACTIVE' | translate) : ('UNIT_DETAILS_PANEL.INACTIVE' | translate) }}
                     </span>
                   </div>
                   <div class="flex items-center justify-between py-2 border-b border-carbon-subtle">
-                    <span class="text-sm text-carbon-secondary">Date de fin</span>
+                    <span class="text-sm text-carbon-secondary">{{ 'UNIT_DETAILS_PANEL.END_DATE' | translate }}</span>
                     <span class="text-sm font-medium text-carbon-primary">{{ formatDate(unitData?.location?.endedAt) }}</span>
                   </div>
                   <div class="flex items-center justify-between py-2 border-b border-carbon-subtle">
-                    <span class="text-sm text-carbon-secondary">Loyer mensuel</span>
+                    <span class="text-sm text-carbon-secondary">{{ 'UNIT_DETAILS_PANEL.MONTHLY_RENT' | translate }}</span>
                     <span class="text-sm font-bold text-custom-primary">{{ formatPrice(room?.price || 0) }}</span>
                   </div>
                   <div class="flex items-center justify-between py-2">
-                    <span class="text-sm text-carbon-secondary">Caution</span>
+                    <span class="text-sm text-carbon-secondary">{{ 'UNIT_DETAILS_PANEL.DEPOSIT' | translate }}</span>
                     <span class="text-sm font-medium text-carbon-primary">{{ formatPrice(room?.cautionPrice || 0) }}</span>
                   </div>
                 </div>
@@ -447,7 +447,7 @@
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                   </svg>
-                  <span>Voir le contrat</span>
+                  <span>{{ 'UNIT_DETAILS_PANEL.VIEW_CONTRACT' | translate }}</span>
                 </button>
 
                 <button (click)="onEditTenant()"
@@ -455,7 +455,7 @@
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                   </svg>
-                  <span>Modifier les infos</span>
+                  <span>{{ 'UNIT_DETAILS_PANEL.EDIT_INFO' | translate }}</span>
                 </button>
 
                 <button (click)="onCancelContract()"
@@ -463,7 +463,7 @@
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                   </svg>
-                  <span>Annuler le contrat</span>
+                  <span>{{ 'UNIT_DETAILS_PANEL.CANCEL_CONTRACT' | translate }}</span>
                 </button>
               </div>
             </div>
@@ -482,13 +482,13 @@
                   </svg>
                 </div>
                 <div>
-                  <h3 class="text-lg font-semibold text-green-800">Unité disponible</h3>
-                  <p class="text-sm text-green-600">Aucun locataire assigné</p>
+                  <h3 class="text-lg font-semibold text-green-800">{{ 'PROPERTY_DETAILS.UNIT_DETAILS.UNIT_AVAILABLE' | translate }}</h3>
+                  <p class="text-sm text-green-600">{{ 'PROPERTY_DETAILS.UNIT_DETAILS.NO_TENANT_ASSIGNED' | translate }}</p>
                 </div>
               </div>
               <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
                 <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                Disponible
+                {{ 'PROPERTY_DETAILS.UNIT_DETAILS.AVAILABLE' | translate }}
               </span>
             </div>
           </div>
@@ -502,8 +502,8 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                   </svg>
                 </div>
-                <h4 class="text-lg font-semibold text-carbon-primary mb-2">Unité prête à louer</h4>
-                <p class="text-carbon-secondary">Cette unité est disponible et peut être assignée à un nouveau locataire.</p>
+                <h4 class="text-lg font-semibold text-carbon-primary mb-2">{{ 'PROPERTY_DETAILS.UNIT_DETAILS.UNIT_READY_TO_RENT' | translate }}</h4>
+                <p class="text-carbon-secondary">{{ 'PROPERTY_DETAILS.UNIT_DETAILS.UNIT_AVAILABLE_FOR_ASSIGNMENT' | translate }}</p>
               </div>
 
               <!-- Informations de l'unité -->
@@ -511,11 +511,11 @@
                 <div class="grid grid-cols-2 gap-4 text-sm">
                   <div class="text-center">
                     <div class="font-semibold text-custom-primary">{{ formatPrice(room?.price || 0) }}</div>
-                    <div class="text-carbon-secondary">Loyer mensuel</div>
+                    <div class="text-carbon-secondary">{{ 'PROPERTY_DETAILS.UNIT_DETAILS.MONTHLY_RENT' | translate }}</div>
                   </div>
                   <div class="text-center">
                     <div class="font-semibold text-custom-primary">{{ formatPrice(room?.cautionPrice || 0) }}</div>
-                    <div class="text-carbon-secondary">Caution</div>
+                    <div class="text-carbon-secondary">{{ 'PROPERTY_DETAILS.UNIT_DETAILS.DEPOSIT' | translate }}</div>
                   </div>
                 </div>
               </div>
@@ -528,7 +528,7 @@
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                   </svg>
-                  <span>Assigner un locataire</span>
+                  <span>{{ 'PROPERTY_DETAILS.UNIT_DETAILS.ASSIGN_TENANT' | translate }}</span>
                 </button>
 
                 <!-- Préparer lien de paiement (visible uniquement si unité occupée) -->
@@ -538,7 +538,7 @@
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
                   </svg>
-                  <span>Préparer lien de paiement</span>
+                  <span>{{ 'PROPERTY_DETAILS.UNIT_DETAILS.GENERATE_PAYMENT_LINK' | translate }}</span>
                 </button>
               </div>
             </div>
@@ -562,8 +562,8 @@
                 </svg>
               </div>
               <div>
-                <h3 class="text-lg font-semibold text-carbon-primary">Historique des paiements</h3>
-                <p class="text-sm text-carbon-secondary">Suivi complet des transactions pour cette unité</p>
+                <h3 class="text-lg font-semibold text-carbon-primary">{{ 'PROPERTY_DETAILS.UNIT_DETAILS.PAYMENT_HISTORY' | translate }}</h3>
+                <p class="text-sm text-carbon-secondary">{{ 'PROPERTY_DETAILS.UNIT_DETAILS.COMPLETE_TRACKING' | translate }}</p>
               </div>
             </div>
 
@@ -576,7 +576,7 @@
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                 </svg>
-                <span>Ajouter un paiement</span>
+                <span>{{ 'PROPERTY_DETAILS.UNIT_DETAILS.ADD_PAYMENT' | translate }}</span>
               </button>
 
               <!-- Bouton générer lien (toujours visible si unité occupée ou avec contrat) - Masqué pour les agents -->
@@ -586,7 +586,7 @@
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
                 </svg>
-                <span>Générer lien de paiement</span>
+                <span>{{ 'UNIT_DETAILS_PANEL.GENERATE_PAYMENT_LINK' | translate }}</span>
               </button>
             </div>
           </div>
@@ -602,7 +602,7 @@
                 </div>
                 <div>
                   <div class="text-lg font-bold text-green-800">{{ formatPrice(getTotalPayments()) }}</div>
-                  <div class="text-xs text-green-600">Total encaissé</div>
+                  <div class="text-xs text-green-600">{{ 'PROPERTY_DETAILS.UNIT_DETAILS.TOTAL_COLLECTED' | translate }}</div>
                 </div>
               </div>
             </div>
@@ -616,7 +616,7 @@
                 </div>
                 <div>
                   <div class="text-lg font-bold text-blue-800">{{ getPaymentCount() }}</div>
-                  <div class="text-xs text-blue-600">Transactions</div>
+                  <div class="text-xs text-blue-600">{{ 'PROPERTY_DETAILS.UNIT_DETAILS.TRANSACTIONS' | translate }}</div>
                 </div>
               </div>
             </div>
@@ -630,7 +630,7 @@
                 </div>
                 <div>
                   <div class="text-lg font-bold text-purple-800">{{ formatPrice(getAveragePayment()) }}</div>
-                  <div class="text-xs text-purple-600">Moyenne</div>
+                  <div class="text-xs text-purple-600">{{ 'PROPERTY_DETAILS.UNIT_DETAILS.AVERAGE' | translate }}</div>
                 </div>
               </div>
             </div>
@@ -644,7 +644,7 @@
                 </div>
                 <div>
                   <div class="text-lg font-bold text-orange-800">{{ formatDate(getLastPaymentDate()) }}</div>
-                  <div class="text-xs text-orange-600">Dernier paiement</div>
+                  <div class="text-xs text-orange-600">{{ 'PROPERTY_DETAILS.UNIT_DETAILS.LAST_PAYMENT' | translate }}</div>
                 </div>
               </div>
             </div>
@@ -666,14 +666,14 @@
                   <div>
                     <h4 class="font-semibold text-carbon-primary">{{ tenantGroup.tenantName }}</h4>
                     <p class="text-sm text-carbon-secondary">
-                      {{ tenantGroup.payments.length }} paiement(s) •
+                      {{ tenantGroup.payments.length }} {{ 'UNIT_DETAILS_PANEL.PAYMENTS_COUNT' | translate }} •
                       {{ formatDate(tenantGroup.dateRange.start) }} - {{ formatDate(tenantGroup.dateRange.end) }}
                     </p>
                   </div>
                 </div>
                 <div class="text-right">
                   <div class="text-lg font-bold text-custom-primary">{{ formatPrice(tenantGroup.total) }}</div>
-                  <div class="text-xs text-carbon-secondary">Total payé</div>
+                  <div class="text-xs text-carbon-secondary">{{ 'UNIT_DETAILS_PANEL.TOTAL_PAID' | translate }}</div>
                 </div>
               </div>
             </div>
@@ -704,14 +704,14 @@
                               [class.text-green-800]="payment.paymentLocationType === 'LOCATION'"
                               [class.bg-blue-100]="payment.paymentLocationType === 'CAUTION'"
                               [class.text-blue-800]="payment.paymentLocationType === 'CAUTION'">
-                          {{ payment.paymentLocationType === 'LOCATION' ? 'Loyer' : 'Caution' }}
+                          {{ payment.paymentLocationType === 'LOCATION' ? ('UNIT_PAYMENTS.PAYMENT_TYPE.LOCATION' | translate) : ('UNIT_PAYMENTS.PAYMENT_TYPE.CAUTION' | translate) }}
                         </span>
                       </div>
                       <div class="text-sm text-carbon-secondary">
                         {{ formatDate(payment.datePayment) }}
                         <span *ngIf="payment.reason" class="ml-2">• {{ payment.reason }}</span>
                       </div>
-                      <div class="text-xs text-carbon-tertiary">Réf: {{ payment.billingRef }}</div>
+                      <div class="text-xs text-carbon-tertiary">{{ 'COMMON.REFERENCE' | translate }}: {{ payment.billingRef }}</div>
                     </div>
                   </div>
 
@@ -719,7 +719,7 @@
                   <div class="flex items-center space-x-2">
                     <button (click)="onViewPayment(payment)"
                             class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200"
-                            title="Voir les détails">
+                            [title]="'UNIT_DETAILS_PANEL.VIEW_DETAILS' | translate">
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
@@ -728,7 +728,7 @@
 
                     <button (click)="onEditPayment(payment)"
                             class="p-2 text-custom-primary hover:bg-custom-primary-light rounded-lg transition-colors duration-200"
-                            title="Modifier">
+                            [title]="'UNIT_DETAILS_PANEL.MODIFY' | translate">
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                       </svg>
@@ -736,7 +736,7 @@
 
                     <button (click)="onDeletePayment(payment)"
                             class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200"
-                            title="Supprimer">
+                            [title]="'COMMON.DELETE' | translate">
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                       </svg>
@@ -757,8 +757,8 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
                 </svg>
               </div>
-              <h4 class="text-lg font-semibold text-carbon-primary mb-2">Aucun paiement enregistré</h4>
-              <p class="text-carbon-secondary mb-6">Cette unité n'a pas encore d'historique de paiements.</p>
+              <h4 class="text-lg font-semibold text-carbon-primary mb-2">{{ 'UNIT_DETAILS_PANEL.NO_PAYMENTS_RECORDED' | translate }}</h4>
+              <p class="text-carbon-secondary mb-6">{{ 'UNIT_DETAILS_PANEL.NO_PAYMENT_HISTORY' | translate }}</p>
 
               <div class="flex flex-wrap gap-3 justify-center">
                 <!-- Bouton ajouter paiement (seulement si locataire présent) - Masqué pour les agents -->
@@ -768,7 +768,7 @@
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                   </svg>
-                  <span>Enregistrer le premier paiement</span>
+                  <span>{{ 'UNIT_DETAILS_PANEL.RECORD_FIRST_PAYMENT' | translate }}</span>
                 </button>
 
                 <!-- Bouton générer lien (visible si unité occupée ou avec contrat) - Masqué pour les agents -->
@@ -778,7 +778,7 @@
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
                   </svg>
-                  <span>Générer lien de paiement</span>
+                  <span>{{ 'UNIT_DETAILS_PANEL.GENERATE_PAYMENT_LINK' | translate }}</span>
                 </button>
               </div>
             </div>
@@ -802,8 +802,8 @@
                 </svg>
               </div>
               <div>
-                <h3 class="text-lg font-semibold text-carbon-primary">Galerie multimédia</h3>
-                <p class="text-sm text-carbon-secondary">Photos, vidéos et visites virtuelles de l'unité</p>
+                <h3 class="text-lg font-semibold text-carbon-primary">{{ 'PROPERTY_DETAILS.UNIT_DETAILS.MULTIMEDIA_GALLERY' | translate }}</h3>
+                <p class="text-sm text-carbon-secondary">{{ 'PROPERTY_DETAILS.UNIT_DETAILS.PHOTOS_VIDEOS_TOURS' | translate }}</p>
               </div>
             </div>
 
@@ -813,7 +813,7 @@
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
               </svg>
-              <span>Modifier la galerie</span>
+              <span>{{ 'PROPERTY_DETAILS.UNIT_DETAILS.EDIT_GALLERY' | translate }}</span>
             </button>
           </div>
 
@@ -828,7 +828,7 @@
                 </div>
                 <div>
                   <div class="text-lg font-bold text-blue-800">{{ getMediaCount('image') }}</div>
-                  <div class="text-xs text-blue-600">Photos</div>
+                  <div class="text-xs text-blue-600">{{ 'PROPERTY_DETAILS.UNIT_DETAILS.PHOTOS' | translate }}</div>
                 </div>
               </div>
             </div>
@@ -842,7 +842,7 @@
                 </div>
                 <div>
                   <div class="text-lg font-bold text-purple-800">{{ getMediaCount('video') }}</div>
-                  <div class="text-xs text-purple-600">Vidéos</div>
+                  <div class="text-xs text-purple-600">{{ 'PROPERTY_DETAILS.UNIT_DETAILS.VIDEOS' | translate }}</div>
                 </div>
               </div>
             </div>
@@ -856,7 +856,7 @@
                 </div>
                 <div>
                   <div class="text-lg font-bold text-green-800">{{ getMediaCount('360') }}</div>
-                  <div class="text-xs text-green-600">Visites 360°</div>
+                  <div class="text-xs text-green-600">{{ 'PROPERTY_DETAILS.UNIT_DETAILS.VIRTUAL_TOURS' | translate }}</div>
                 </div>
               </div>
             </div>
@@ -870,7 +870,7 @@
                 </div>
                 <div>
                   <div class="text-lg font-bold text-gray-800">{{ getTotalMediaCount() }}</div>
-                  <div class="text-xs text-gray-600">Total</div>
+                  <div class="text-xs text-gray-600">{{ 'PROPERTY_DETAILS.UNIT_DETAILS.TOTAL' | translate }}</div>
                 </div>
               </div>
             </div>
@@ -884,7 +884,7 @@
                 </div>
                 <div>
                   <div class="text-lg font-bold text-indigo-800">{{ getMediaQualityScore() }}%</div>
-                  <div class="text-xs text-indigo-600">Qualité</div>
+                  <div class="text-xs text-indigo-600">{{ 'PROPERTY_DETAILS.UNIT_DETAILS.QUALITY' | translate }}</div>
                 </div>
               </div>
             </div>
@@ -898,7 +898,7 @@
                 </div>
                 <div>
                   <div class="text-lg font-bold text-pink-800">{{ getMediaVariety() }}</div>
-                  <div class="text-xs text-pink-600">Variété</div>
+                  <div class="text-xs text-pink-600">{{ 'PROPERTY_DETAILS.UNIT_DETAILS.VARIETY' | translate }}</div>
                 </div>
               </div>
             </div>
@@ -916,7 +916,7 @@
                 <!-- Image -->
                 <img *ngIf="getMediaType(media) === 'image'"
                      [src]="media"
-                     [alt]="'Photo de l\'unité'"
+                     [alt]="'PROPERTY_DETAILS.UNIT_DETAILS.IMAGE' | translate"
                      class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
                      (click)="onViewMedia({ url: media, type: 'image' })"
                      loading="lazy">
@@ -931,7 +931,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293H15M9 10V9a2 2 0 012-2h2a2 2 0 012 2v1M9 10v5a2 2 0 002 2h2a2 2 0 002-2v-5"></path>
                       </svg>
                     </div>
-                    <span class="text-xs text-purple-600 font-medium">Vidéo</span>
+                    <span class="text-xs text-purple-600 font-medium">{{ 'PROPERTY_DETAILS.UNIT_DETAILS.VIDEO' | translate }}</span>
                   </div>
                 </div>
 
@@ -945,7 +945,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                       </svg>
                     </div>
-                    <span class="text-xs text-green-600 font-medium">360°</span>
+                    <span class="text-xs text-green-600 font-medium">{{ 'PROPERTY_DETAILS.UNIT_DETAILS.TOUR_360' | translate }}</span>
                   </div>
                 </div>
 
@@ -954,7 +954,7 @@
                   <div class="flex space-x-2">
                     <button (click)="onViewMedia({ url: media, type: getMediaType(media) }); $event.stopPropagation()"
                             class="p-2 bg-white bg-opacity-90 rounded-full hover:bg-opacity-100 transition-all duration-200"
-                            title="Voir en grand">
+                            [title]="'PROPERTY_DETAILS.UNIT_DETAILS.VIEW_FULLSCREEN' | translate">
                       <svg class="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
@@ -963,7 +963,7 @@
 
                     <button (click)="onDeleteMedia({ url: media, type: getMediaType(media) }); $event.stopPropagation()"
                             class="p-2 bg-red-500 bg-opacity-90 rounded-full hover:bg-opacity-100 transition-all duration-200"
-                            title="Supprimer">
+                            [title]="'COMMON.DELETE' | translate">
                       <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                       </svg>
@@ -997,15 +997,15 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                 </svg>
               </div>
-              <h4 class="text-lg font-semibold text-carbon-primary mb-2">Aucun média disponible</h4>
-              <p class="text-carbon-secondary mb-6">Cette unité n'a pas encore de photos ou de vidéos.</p>
+              <h4 class="text-lg font-semibold text-carbon-primary mb-2">{{ 'PROPERTY_DETAILS.UNIT_DETAILS.NO_MEDIA_AVAILABLE' | translate }}</h4>
+              <p class="text-carbon-secondary mb-6">{{ 'PROPERTY_DETAILS.UNIT_DETAILS.NO_PHOTOS_VIDEOS' | translate }}</p>
 
               <button (click)="onEditGallery()"
                       class="inline-flex items-center space-x-2 px-6 py-3 custom-primary-button text-white rounded-lg font-medium transition-all duration-200 hover:shadow-lg">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                 </svg>
-                <span>Ajouter des médias</span>
+                <span>{{ 'PROPERTY_DETAILS.UNIT_DETAILS.ADD_MEDIA' | translate }}</span>
               </button>
             </div>
           </div>

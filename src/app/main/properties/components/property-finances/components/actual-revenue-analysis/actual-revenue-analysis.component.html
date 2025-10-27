@@ -5,8 +5,8 @@
   <div class="px-6 py-4 border-b border-gray-200">
     <div class="flex items-center justify-between mb-4">
       <div>
-        <h3 class="text-lg font-semibold text-gray-900">Analyse des montants effectivement reçus</h3>
-        <p class="text-sm text-gray-600 mt-1">Comparaison entre montants attendus et reçus pour {{ selectedYear }}</p>
+        <h3 class="text-lg font-semibold text-gray-900">{{ 'ACTUAL_REVENUE_ANALYSIS.TITLE' | translate }}</h3>
+        <p class="text-sm text-gray-600 mt-1">{{ 'ACTUAL_REVENUE_ANALYSIS.SUBTITLE' | translate:{ year: selectedYear } }}</p>
       </div>
       
       <!-- Actions d'export -->
@@ -35,34 +35,34 @@
     <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
       <div class="bg-blue-50 rounded-lg p-3">
         <div class="text-2xl font-bold text-blue-900">{{ revenueSummary.totalUnits }}</div>
-        <div class="text-sm text-blue-700">Total unités</div>
+        <div class="text-sm text-blue-700">{{ 'ACTUAL_REVENUE_ANALYSIS.SUMMARY_METRICS.TOTAL_UNITS' | translate }}</div>
       </div>
       
       <div class="bg-green-50 rounded-lg p-3">
         <div class="text-2xl font-bold text-green-900">{{ revenueSummary.totalActualRevenue | currency:'XAF':'symbol':'1.0-0' }}</div>
-        <div class="text-sm text-green-700">Revenus reçus</div>
+        <div class="text-sm text-green-700">{{ 'ACTUAL_REVENUE_ANALYSIS.SUMMARY_METRICS.REVENUE_RECEIVED' | translate }}</div>
       </div>
       
       <div class="bg-gray-50 rounded-lg p-3">
         <div class="text-2xl font-bold text-gray-900">{{ revenueSummary.totalExpectedRevenue | currency:'XAF':'symbol':'1.0-0' }}</div>
-        <div class="text-sm text-gray-700">Revenus attendus</div>
+        <div class="text-sm text-gray-700">{{ 'ACTUAL_REVENUE_ANALYSIS.SUMMARY_METRICS.REVENUE_EXPECTED' | translate }}</div>
       </div>
       
       <div class="rounded-lg p-3" [ngClass]="revenueSummary.totalDifference >= 0 ? 'bg-green-50' : 'bg-red-50'">
         <div class="text-2xl font-bold" [ngClass]="revenueSummary.totalDifference >= 0 ? 'text-green-900' : 'text-red-900'">
           {{ getDifferenceIcon(revenueSummary.totalDifference) }} {{ revenueSummary.totalDifference | currency:'XAF':'symbol':'1.0-0' }}
         </div>
-        <div class="text-sm" [ngClass]="revenueSummary.totalDifference >= 0 ? 'text-green-700' : 'text-red-700'">Différence</div>
+        <div class="text-sm" [ngClass]="revenueSummary.totalDifference >= 0 ? 'text-green-700' : 'text-red-700'">{{ 'ACTUAL_REVENUE_ANALYSIS.SUMMARY_METRICS.DIFFERENCE' | translate }}</div>
       </div>
       
       <div class="bg-yellow-50 rounded-lg p-3">
         <div class="text-2xl font-bold text-yellow-900">{{ revenueSummary.unitsWithOverpayments }}</div>
-        <div class="text-sm text-yellow-700">Surpaiements</div>
+        <div class="text-sm text-yellow-700">{{ 'ACTUAL_REVENUE_ANALYSIS.SUMMARY_METRICS.OVERPAYMENTS' | translate }}</div>
       </div>
       
       <div class="bg-purple-50 rounded-lg p-3">
         <div class="text-2xl font-bold text-purple-900">{{ revenueSummary.averageDifferencePercentage | number:'1.1-1' }}%</div>
-        <div class="text-sm text-purple-700">Écart moyen</div>
+        <div class="text-sm text-purple-700">{{ 'ACTUAL_REVENUE_ANALYSIS.SUMMARY_METRICS.AVERAGE_GAP' | translate }}</div>
       </div>
     </div>
   </div>
@@ -76,16 +76,16 @@
         <select [(ngModel)]="selectedFilter" 
                 (ngModelChange)="onFilterChange()"
                 class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-custom-primary focus:border-transparent">
-          <option value="all">Toutes les unités</option>
-          <option value="overpayments">Surpaiements uniquement</option>
-          <option value="underpayments">Sous-paiements uniquement</option>
-          <option value="exact">Montants exacts</option>
+          <option value="all">{{ 'ACTUAL_REVENUE_ANALYSIS.FILTERS.ALL_UNITS' | translate }}</option>
+          <option value="overpayments">{{ 'ACTUAL_REVENUE_ANALYSIS.FILTERS.OVERPAYMENTS_ONLY' | translate }}</option>
+          <option value="underpayments">{{ 'ACTUAL_REVENUE_ANALYSIS.FILTERS.UNDERPAYMENTS_ONLY' | translate }}</option>
+          <option value="exact">{{ 'ACTUAL_REVENUE_ANALYSIS.FILTERS.EXACT_AMOUNTS' | translate }}</option>
         </select>
 
         <select [(ngModel)]="selectedMonth" 
                 (ngModelChange)="onFilterChange()"
                 class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-custom-primary focus:border-transparent">
-          <option value="0">Toute l'année</option>
+          <option value="0">{{ 'ACTUAL_REVENUE_ANALYSIS.FILTERS.ALL_YEAR' | translate }}</option>
           <option *ngFor="let month of [1,2,3,4,5,6,7,8,9,10,11,12]; let i = index" [value]="month">
             {{ getMonthName(i) }}
           </option>
@@ -94,21 +94,21 @@
 
       <!-- Tri -->
       <div class="flex items-center space-x-2">
-        <span class="text-sm text-gray-600">Trier par:</span>
+        <span class="text-sm text-gray-600">{{ 'ACTUAL_REVENUE_ANALYSIS.FILTERS.SORT_BY' | translate }}</span>
         <button (click)="onSortChange('unit')"
                 [ngClass]="sortBy === 'unit' ? 'bg-custom-primary text-white' : 'bg-gray-200 text-gray-700'"
                 class="px-3 py-1 text-sm rounded-lg hover:bg-opacity-80 transition-colors duration-200">
-          Unité {{ sortBy === 'unit' ? (sortDirection === 'asc' ? '↑' : '↓') : '' }}
+          {{ 'ACTUAL_REVENUE_ANALYSIS.FILTERS.UNIT' | translate }} {{ sortBy === 'unit' ? (sortDirection === 'asc' ? '↑' : '↓') : '' }}
         </button>
         <button (click)="onSortChange('difference')"
                 [ngClass]="sortBy === 'difference' ? 'bg-custom-primary text-white' : 'bg-gray-200 text-gray-700'"
                 class="px-3 py-1 text-sm rounded-lg hover:bg-opacity-80 transition-colors duration-200">
-          Différence {{ sortBy === 'difference' ? (sortDirection === 'asc' ? '↑' : '↓') : '' }}
+          {{ 'ACTUAL_REVENUE_ANALYSIS.FILTERS.DIFFERENCE' | translate }} {{ sortBy === 'difference' ? (sortDirection === 'asc' ? '↑' : '↓') : '' }}
         </button>
         <button (click)="onSortChange('percentage')"
                 [ngClass]="sortBy === 'percentage' ? 'bg-custom-primary text-white' : 'bg-gray-200 text-gray-700'"
                 class="px-3 py-1 text-sm rounded-lg hover:bg-opacity-80 transition-colors duration-200">
-          Pourcentage {{ sortBy === 'percentage' ? (sortDirection === 'asc' ? '↑' : '↓') : '' }}
+          {{ 'ACTUAL_REVENUE_ANALYSIS.FILTERS.PERCENTAGE' | translate }} {{ sortBy === 'percentage' ? (sortDirection === 'asc' ? '↑' : '↓') : '' }}
         </button>
       </div>
     </div>
@@ -124,14 +124,14 @@
       <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gray-50">
           <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Unité</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Loyer mensuel</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Attendu annuel</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reçu annuel</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Différence</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Écart %</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Performance</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ 'ACTUAL_REVENUE_ANALYSIS.TABLE.HEADERS.UNIT' | translate }}</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ 'ACTUAL_REVENUE_ANALYSIS.TABLE.HEADERS.TYPE' | translate }}</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ 'ACTUAL_REVENUE_ANALYSIS.TABLE.HEADERS.MONTHLY_RENT' | translate }}</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ 'ACTUAL_REVENUE_ANALYSIS.TABLE.HEADERS.ANNUAL_EXPECTED' | translate }}</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ 'ACTUAL_REVENUE_ANALYSIS.TABLE.HEADERS.ANNUAL_RECEIVED' | translate }}</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ 'ACTUAL_REVENUE_ANALYSIS.TABLE.HEADERS.DIFFERENCE' | translate }}</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ 'ACTUAL_REVENUE_ANALYSIS.TABLE.HEADERS.GAP_PERCENT' | translate }}</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ 'ACTUAL_REVENUE_ANALYSIS.TABLE.HEADERS.PERFORMANCE' | translate }}</th>
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
@@ -202,7 +202,7 @@
                        [style.width.%]="Math.min(Math.abs(unit.yearlyDifferencePercentage), 100)"></div>
                 </div>
                 <span class="text-xs text-gray-600">
-                  {{ unit.hasOverpayments ? 'Surpaiement' : (unit.yearlyDifference < 0 ? 'Sous-paiement' : 'Exact') }}
+                  {{ unit.hasOverpayments ? ('ACTUAL_REVENUE_ANALYSIS.TABLE.PERFORMANCE_LABELS.OVERPAYMENT' | translate) : (unit.yearlyDifference < 0 ? ('ACTUAL_REVENUE_ANALYSIS.TABLE.PERFORMANCE_LABELS.UNDERPAYMENT' | translate) : ('ACTUAL_REVENUE_ANALYSIS.TABLE.PERFORMANCE_LABELS.EXACT' | translate)) }}
                 </span>
               </div>
             </td>
@@ -216,9 +216,9 @@
       <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
       </svg>
-      <h3 class="mt-2 text-sm font-medium text-gray-900">Aucune donnée trouvée</h3>
+      <h3 class="mt-2 text-sm font-medium text-gray-900">{{ 'ACTUAL_REVENUE_ANALYSIS.EMPTY_STATE.TITLE' | translate }}</h3>
       <p class="mt-1 text-sm text-gray-500">
-        Aucune unité ne correspond aux critères de filtrage sélectionnés.
+        {{ 'ACTUAL_REVENUE_ANALYSIS.EMPTY_STATE.MESSAGE' | translate }}
       </p>
     </div>
 

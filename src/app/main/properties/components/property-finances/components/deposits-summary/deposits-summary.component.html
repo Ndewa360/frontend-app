@@ -5,8 +5,8 @@
   <div class="header-section">
     <div class="header-content">
       <div class="header-text">
-        <h2 class="header-title">Récapitulatif des cautions</h2>
-        <p class="header-subtitle">Suivi des cautions versées par unité pour {{ selectedYear }}</p>
+        <h2 class="header-title">{{ 'DEPOSITS_SUMMARY.TITLE' | translate }}</h2>
+        <p class="header-subtitle">{{ 'DEPOSITS_SUMMARY.SUBTITLE' | translate:{ year: selectedYear } }}</p>
       </div>
 
       <div class="header-actions">
@@ -14,7 +14,7 @@
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
           </svg>
-          <span>Exporter Cautions</span>
+          <span>{{ 'DEPOSITS_SUMMARY.EXPORT_DEPOSITS' | translate }}</span>
         </button>
       </div>
     </div>
@@ -33,14 +33,14 @@
             </svg>
           </div>
           <div class="metric-info">
-            <p class="metric-label">Cautions attendues</p>
+            <p class="metric-label">{{ 'DEPOSITS_SUMMARY.METRICS.EXPECTED_DEPOSITS' | translate }}</p>
             <p class="metric-value">{{ formatPrice(globalStats.totalExpectedDeposits) }}</p>
-            <p class="metric-description">{{ globalStats.totalRooms }} unité(s) au total</p>
+            <p class="metric-description">{{ 'DEPOSITS_SUMMARY.METRICS.EXPECTED_DEPOSITS_DESC' | translate:{ count: globalStats.totalRooms } }}</p>
             <div class="metric-trend">
               <svg class="trend-icon neutral" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
               </svg>
-              <span class="trend-text">Objectif {{ selectedYear }}</span>
+              <span class="trend-text">{{ 'DEPOSITS_SUMMARY.METRICS.YEAR_TARGET' | translate:{ year: selectedYear } }}</span>
             </div>
           </div>
         </div>
@@ -55,9 +55,9 @@
             </svg>
           </div>
           <div class="metric-info">
-            <p class="metric-label">Cautions reçues</p>
+            <p class="metric-label">{{ 'DEPOSITS_SUMMARY.METRICS.RECEIVED_DEPOSITS' | translate }}</p>
             <p class="metric-value">{{ formatPrice(globalStats.totalReceivedDeposits) }}</p>
-            <p class="metric-description">{{ globalStats.completeDeposits }} complète(s)</p>
+            <p class="metric-description">{{ 'DEPOSITS_SUMMARY.METRICS.RECEIVED_DEPOSITS_DESC' | translate:{ count: globalStats.completeDeposits } }}</p>
             <div class="metric-progress">
               <div class="progress-bar">
                 <div class="progress-fill" [style.width.%]="globalStats.averageDepositRate"></div>
@@ -81,16 +81,16 @@
             </svg>
           </div>
           <div class="metric-info">
-            <p class="metric-label">Taux de collecte</p>
+            <p class="metric-label">{{ 'DEPOSITS_SUMMARY.METRICS.COLLECTION_RATE' | translate }}</p>
             <p class="metric-value">{{ formatPercentage(globalStats.averageDepositRate) }}</p>
-            <p class="metric-description">Performance moyenne</p>
+            <p class="metric-description">{{ 'DEPOSITS_SUMMARY.METRICS.COLLECTION_PERFORMANCE' | translate }}</p>
             <div class="metric-status">
               <span class="status-badge" [ngClass]="{
                 'status-excellent': globalStats.averageDepositRate >= 90,
                 'status-good': globalStats.averageDepositRate >= 70 && globalStats.averageDepositRate < 90,
                 'status-poor': globalStats.averageDepositRate < 70
               }">
-                {{ globalStats.averageDepositRate >= 90 ? 'Excellent' : globalStats.averageDepositRate >= 70 ? 'Bon' : 'À améliorer' }}
+                {{ globalStats.averageDepositRate >= 90 ? ('DEPOSITS_SUMMARY.STATUS_LABELS.EXCELLENT' | translate) : globalStats.averageDepositRate >= 70 ? ('DEPOSITS_SUMMARY.STATUS_LABELS.GOOD' | translate) : ('DEPOSITS_SUMMARY.STATUS_LABELS.TO_IMPROVE' | translate) }}
               </span>
             </div>
           </div>
@@ -106,16 +106,16 @@
             </svg>
           </div>
           <div class="metric-info">
-            <p class="metric-label">Cautions manquantes</p>
+            <p class="metric-label">{{ 'DEPOSITS_SUMMARY.METRICS.MISSING_DEPOSITS' | translate }}</p>
             <p class="metric-value">{{ formatPrice(globalStats.totalExpectedDeposits - globalStats.totalReceivedDeposits) }}</p>
-            <p class="metric-description">{{ globalStats.missingDeposits + globalStats.partialDeposits }} unité(s) concernées</p>
+            <p class="metric-description">{{ 'DEPOSITS_SUMMARY.METRICS.MISSING_DEPOSITS_DESC' | translate:{ count: globalStats.missingDeposits + globalStats.partialDeposits } }}</p>
             <div class="metric-breakdown">
               <div class="breakdown-item">
-                <span class="breakdown-label">Manquantes:</span>
+                <span class="breakdown-label">{{ 'DEPOSITS_SUMMARY.METRICS.MISSING_COUNT' | translate }}</span>
                 <span class="breakdown-value">{{ globalStats.missingDeposits }}</span>
               </div>
               <div class="breakdown-item">
-                <span class="breakdown-label">Partielles:</span>
+                <span class="breakdown-label">{{ 'DEPOSITS_SUMMARY.METRICS.PARTIAL_COUNT' | translate }}</span>
                 <span class="breakdown-value">{{ globalStats.partialDeposits }}</span>
               </div>
             </div>
@@ -131,15 +131,15 @@
 
       <!-- Filtres par statut -->
       <div class="filters-group">
-        <label class="filter-label">Filtrer par statut:</label>
+        <label class="filter-label">{{ 'DEPOSITS_SUMMARY.FILTERS.FILTER_BY_STATUS' | translate }}</label>
         <select [(ngModel)]="statusFilter"
                 (ngModelChange)="onStatusFilterChange()"
                 class="filter-select">
-          <option value="all">Tous les statuts</option>
-          <option value="complete">Complètes</option>
-          <option value="partial">Partielles</option>
-          <option value="missing">Manquantes</option>
-          <option value="no_tenant">Sans locataire</option>
+          <option value="all">{{ 'DEPOSITS_SUMMARY.FILTERS.ALL_STATUS' | translate }}</option>
+          <option value="complete">{{ 'DEPOSITS_SUMMARY.FILTERS.COMPLETE' | translate }}</option>
+          <option value="partial">{{ 'DEPOSITS_SUMMARY.FILTERS.PARTIAL' | translate }}</option>
+          <option value="missing">{{ 'DEPOSITS_SUMMARY.FILTERS.MISSING' | translate }}</option>
+          <option value="no_tenant">{{ 'DEPOSITS_SUMMARY.FILTERS.NO_TENANT' | translate }}</option>
         </select>
       </div>
 
@@ -148,7 +148,7 @@
         <input type="text"
                [(ngModel)]="searchTerm"
                (ngModelChange)="onSearchChange()"
-               placeholder="Code chambre ou nom locataire..."
+               [placeholder]="'DEPOSITS_SUMMARY.FILTERS.SEARCH_PLACEHOLDER' | translate"
                class="search-input">
         <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -162,9 +162,9 @@
 
     <!-- Header du tableau -->
     <div class="table-header">
-      <h3 class="table-title">Détail par unité</h3>
+      <h3 class="table-title">{{ 'DEPOSITS_SUMMARY.TABLE.TITLE' | translate }}</h3>
       <div class="table-summary">
-        <span class="summary-text">{{ filteredSummaries.length }} unité(s) affichée(s)</span>
+        <span class="summary-text">{{ 'DEPOSITS_SUMMARY.TABLE.SUMMARY' | translate:{ count: filteredSummaries.length } }}</span>
       </div>
     </div>
 
@@ -173,14 +173,14 @@
       <table>
         <thead>
           <tr>
-            <th>Unité</th>
-            <th>Type</th>
-            <th>Loyer</th>
-            <th>Caution attendue</th>
-            <th>Caution reçue</th>
-            <th>Taux</th>
-            <th>Locataire</th>
-            <th>Statut</th>
+            <th>{{ 'DEPOSITS_SUMMARY.TABLE.HEADERS.UNIT' | translate }}</th>
+            <th>{{ 'DEPOSITS_SUMMARY.TABLE.HEADERS.TYPE' | translate }}</th>
+            <th>{{ 'DEPOSITS_SUMMARY.TABLE.HEADERS.RENT' | translate }}</th>
+            <th>{{ 'DEPOSITS_SUMMARY.TABLE.HEADERS.EXPECTED_DEPOSIT' | translate }}</th>
+            <th>{{ 'DEPOSITS_SUMMARY.TABLE.HEADERS.RECEIVED_DEPOSIT' | translate }}</th>
+            <th>{{ 'DEPOSITS_SUMMARY.TABLE.HEADERS.RATE' | translate }}</th>
+            <th>{{ 'DEPOSITS_SUMMARY.TABLE.HEADERS.TENANT' | translate }}</th>
+            <th>{{ 'DEPOSITS_SUMMARY.TABLE.HEADERS.STATUS' | translate }}</th>
           </tr>
         </thead>
         <tbody>
@@ -191,7 +191,7 @@
             <td>
               <div class="unit-info">
                 <div class="unit-code">{{ deposit.roomCode }}</div>
-                <div class="unit-id">ID: {{ deposit.roomId.substring(0, 8) }}...</div>
+                <div class="unit-id">{{ 'DEPOSITS_SUMMARY.TABLE.UNIT_ID' | translate }} {{ deposit.roomId.substring(0, 8) }}...</div>
               </div>
             </td>
 
@@ -206,7 +206,7 @@
             <td>
               <div class="price-info">
                 <span class="price-amount">{{ formatPrice(deposit.roomPrice) }}</span>
-                <span class="price-label">/ mois</span>
+                <span class="price-label">{{ 'DEPOSITS_SUMMARY.TABLE.PER_MONTH' | translate }}</span>
               </div>
             </td>
 
@@ -245,8 +245,8 @@
                   {{ deposit.tenantName.charAt(0).toUpperCase() }}
                 </div>
                 <div class="tenant-details">
-                  <span class="tenant-name">{{ deposit.tenantName || 'Aucun locataire' }}</span>
-                  <span class="tenant-status" *ngIf="!deposit.tenantName">Unité libre</span>
+                  <span class="tenant-name">{{ deposit.tenantName || ('DEPOSITS_SUMMARY.TABLE.NO_TENANT' | translate) }}</span>
+                  <span class="tenant-status" *ngIf="!deposit.tenantName">{{ 'DEPOSITS_SUMMARY.TABLE.UNIT_FREE' | translate }}</span>
                 </div>
               </div>
             </td>
@@ -257,7 +257,7 @@
                 <svg class="status-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="getStatusIcon(deposit.status)"></path>
                 </svg>
-                {{ getStatusLabel(deposit.status) }}
+                {{ getStatusLabel(deposit.status) | translate }}
               </span>
             </td>
           </tr>
@@ -270,13 +270,13 @@
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
       </svg>
-      <h3>Aucune caution trouvée</h3>
-      <p>Aucune caution ne correspond à vos critères de filtrage.</p>
+      <h3>{{ 'DEPOSITS_SUMMARY.EMPTY_STATE.TITLE' | translate }}</h3>
+      <p>{{ 'DEPOSITS_SUMMARY.EMPTY_STATE.MESSAGE' | translate }}</p>
       <button (click)="statusFilter = 'all'; searchTerm = ''; applyFilters()" class="btn-reset">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
         </svg>
-        Réinitialiser les filtres
+        {{ 'DEPOSITS_SUMMARY.EMPTY_STATE.RESET_FILTERS' | translate }}
       </button>
     </div>
   </div>
@@ -285,7 +285,7 @@
   <div *ngIf="isLoading" class="loading-overlay">
     <div class="loading-content">
       <div class="loading-spinner"></div>
-      <span class="loading-text">Chargement des données de caution...</span>
+      <span class="loading-text">{{ 'DEPOSITS_SUMMARY.LOADING_MESSAGE' | translate }}</span>
     </div>
   </div>
 </div>

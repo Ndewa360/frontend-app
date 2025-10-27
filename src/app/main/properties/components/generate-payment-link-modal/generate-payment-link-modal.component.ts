@@ -26,7 +26,7 @@ export class GeneratePaymentLinkModalComponent implements OnInit {
     }
   ) {
     this.formGroup = this.formBuilder.group({
-      description: [`Lien de paiement pour ${this.data.room?.code || 'l\'unité'}`, Validators.required]
+      description: ['PAYMENT_LINK.DEFAULT_DESCRIPTION', Validators.required]
     });
   }
 
@@ -83,14 +83,14 @@ export class GeneratePaymentLinkModalComponent implements OnInit {
         this.loading = false;
 
         // Afficher un message d'erreur informatif
-        let errorMessage = 'Une erreur est survenue lors de la génération du lien de paiement.';
+        let errorMessage = 'PAYMENT_LINK.GENERATION_ERROR';
 
         if (error.status === 400) {
-          errorMessage = 'Données invalides. Veuillez vérifier les informations saisies.';
+          errorMessage = 'PAYMENT_LINK.INVALID_DATA_ERROR';
         } else if (error.status === 404) {
-          errorMessage = 'Location non trouvée. Veuillez vérifier que l\'assignation est correcte.';
+          errorMessage = 'PAYMENT_LINK.LOCATION_NOT_FOUND_ERROR';
         } else if (error.status === 500) {
-          errorMessage = 'Erreur serveur. Veuillez réessayer dans quelques instants.';
+          errorMessage = 'PAYMENT_LINK.SERVER_ERROR';
         }
 
         // Vous pouvez utiliser un service de notification ici

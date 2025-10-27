@@ -5,8 +5,8 @@
   <div class="overview-header">
     <div class="header-content">
       <div class="header-text">
-        <h2 class="header-title">Vue d'ensemble financière</h2>
-        <p class="header-subtitle">Analyse des performances financières pour {{ selectedYear }}</p>
+        <h2 class="header-title">{{ 'FINANCIAL_OVERVIEW.TITLE' | translate }}</h2>
+        <p class="header-subtitle">{{ 'FINANCIAL_OVERVIEW.SUBTITLE' | translate:{ year: selectedYear } }}</p>
       </div>
 
       <div class="header-actions">
@@ -14,7 +14,7 @@
           <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
           </svg>
-          <span>Exporter Vue d'ensemble</span>
+          <span>{{ 'FINANCIAL_OVERVIEW.EXPORT_OVERVIEW' | translate }}</span>
         </button>
       </div>
     </div>
@@ -32,9 +32,9 @@
           </svg>
         </div>
         <div class="metric-info">
-          <p class="metric-label">Revenus reçus</p>
+          <p class="metric-label">{{ 'FINANCIAL_OVERVIEW.METRICS.REVENUE_RECEIVED' | translate }}</p>
           <p class="metric-value">{{ formatPrice(metrics.totalRevenue) }}</p>
-          <p class="metric-description">sur {{ formatPrice(metrics.totalExpected) }} attendus</p>
+          <p class="metric-description">{{ 'COMMON.ON' | translate }} {{ formatPrice(metrics.totalExpected) }} {{ 'FINANCIAL_OVERVIEW.METRICS.EXPECTED_REVENUE' | translate }}</p>
           <div class="metric-progress">
             <div class="progress-bar">
               <div class="progress-fill" [style.width.%]="metrics.collectionRate"></div>
@@ -58,16 +58,16 @@
           </svg>
         </div>
         <div class="metric-info">
-          <p class="metric-label">Taux de recouvrement</p>
+          <p class="metric-label">{{ 'FINANCIAL_OVERVIEW.METRICS.COLLECTION_RATE' | translate }}</p>
           <p class="metric-value">{{ formatPercentage(metrics.collectionRate) }}</p>
-          <p class="metric-description">Performance de collecte</p>
+          <p class="metric-description">{{ 'FINANCIAL_OVERVIEW.METRICS.COLLECTION_PERFORMANCE' | translate }}</p>
           <div class="metric-status">
             <span class="status-badge" [ngClass]="{
               'status-excellent': metrics.collectionRate >= 90,
               'status-good': metrics.collectionRate >= 70 && metrics.collectionRate < 90,
               'status-poor': metrics.collectionRate < 70
             }">
-              {{ metrics.collectionRate >= 90 ? 'Excellent' : metrics.collectionRate >= 70 ? 'Bon' : 'À améliorer' }}
+              {{ metrics.collectionRate >= 90 ? ('FINANCIAL_OVERVIEW.STATUS.EXCELLENT' | translate) : metrics.collectionRate >= 70 ? ('FINANCIAL_OVERVIEW.STATUS.GOOD' | translate) : ('FINANCIAL_OVERVIEW.STATUS.TO_IMPROVE' | translate) }}
             </span>
           </div>
         </div>
@@ -87,14 +87,14 @@
           </svg>
         </div>
         <div class="metric-info">
-          <p class="metric-label">Taux d'occupation</p>
+          <p class="metric-label">{{ 'FINANCIAL_OVERVIEW.METRICS.OCCUPANCY_RATE' | translate }}</p>
           <p class="metric-value">{{ formatPercentage(metrics.occupancyRate) }}</p>
-          <p class="metric-description">{{ metrics.occupiedRooms }}/{{ metrics.totalRooms }} unités occupées</p>
+          <p class="metric-description">{{ metrics.occupiedRooms }}/{{ metrics.totalRooms }} {{ 'FINANCIAL_OVERVIEW.METRICS.UNITS_OCCUPIED' | translate }}</p>
           <div class="metric-progress">
             <div class="progress-bar">
               <div class="progress-fill" [style.width.%]="metrics.occupancyRate"></div>
             </div>
-            <span class="progress-text">{{ metrics.occupiedRooms }} unités</span>
+            <span class="progress-text">{{ metrics.occupiedRooms }} {{ 'COMMON.UNITS' | translate }}</span>
           </div>
         </div>
       </div>
@@ -109,14 +109,14 @@
           </svg>
         </div>
         <div class="metric-info">
-          <p class="metric-label">Loyer moyen</p>
+          <p class="metric-label">{{ 'FINANCIAL_OVERVIEW.METRICS.AVERAGE_RENT' | translate }}</p>
           <p class="metric-value">{{ formatPrice(metrics.averageRent) }}</p>
-          <p class="metric-description">Par unité/mois</p>
+          <p class="metric-description">{{ 'FINANCIAL_OVERVIEW.METRICS.PER_UNIT_MONTH' | translate }}</p>
           <div class="metric-trend">
             <svg class="trend-icon positive" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
             </svg>
-            <span class="trend-text">+5.8% vs année précédente</span>
+            <span class="trend-text">+5.8% {{ 'FINANCIAL_OVERVIEW.METRICS.VS_PREVIOUS_YEAR' | translate }}</span>
           </div>
         </div>
       </div>
@@ -130,14 +130,14 @@
     <div class="monthly-evolution-card">
       <div class="card-header">
         <div class="header-info">
-          <h3 class="card-title">Évolution mensuelle</h3>
-          <p class="card-subtitle">Comparaison revenus attendus vs reçus</p>
+          <h3 class="card-title">{{ 'FINANCIAL_OVERVIEW.MONTHLY_EVOLUTION.TITLE' | translate }}</h3>
+          <p class="card-subtitle">{{ 'FINANCIAL_OVERVIEW.MONTHLY_EVOLUTION.SUBTITLE' | translate }}</p>
         </div>
         <button (click)="onExportMonthlyData()" class="btn-export-small">
           <svg class="btn-icon-small" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
           </svg>
-          <span>Exporter</span>
+          <span>{{ 'FINANCIAL_OVERVIEW.MONTHLY_EVOLUTION.EXPORT' | translate }}</span>
         </button>
       </div>
 
@@ -170,11 +170,11 @@
             <!-- Valeurs avec meilleur design -->
             <div class="progress-values">
               <div class="value-received">
-                <span class="value-label">Reçu</span>
+                <span class="value-label">{{ 'FINANCIAL_OVERVIEW.MONTHLY_EVOLUTION.RECEIVED' | translate }}</span>
                 <span class="value-amount">{{ formatPrice(month.received) }}</span>
               </div>
               <div class="value-expected">
-                <span class="value-label">Attendu</span>
+                <span class="value-label">{{ 'FINANCIAL_OVERVIEW.MONTHLY_EVOLUTION.EXPECTED' | translate }}</span>
                 <span class="value-amount">{{ formatPrice(month.expected) }}</span>
               </div>
             </div>
@@ -204,7 +204,7 @@
     <!-- Résumé financier -->
     <div class="financial-summary-card">
       <div class="summary-header">
-        <h3 class="summary-title">Résumé financier</h3>
+        <h3 class="summary-title">{{ 'FINANCIAL_OVERVIEW.FINANCIAL_SUMMARY.TITLE' | translate }}</h3>
         <div class="summary-badge">
           <span class="badge-text">{{ selectedYear }}</span>
         </div>
@@ -220,8 +220,8 @@
           </div>
           <div class="item-content">
             <div class="item-info">
-              <p class="item-label">Total des cautions</p>
-              <p class="item-description">Montant sécurisé</p>
+              <p class="item-label">{{ 'FINANCIAL_OVERVIEW.FINANCIAL_SUMMARY.TOTAL_DEPOSITS' | translate }}</p>
+              <p class="item-description">{{ 'FINANCIAL_OVERVIEW.FINANCIAL_SUMMARY.SECURED_AMOUNT' | translate }}</p>
             </div>
             <div class="item-value">
               <p class="value-amount">{{ formatPrice(metrics.totalDeposits) }}</p>
@@ -238,8 +238,8 @@
           </div>
           <div class="item-content">
             <div class="item-info">
-              <p class="item-label">Performance globale</p>
-              <p class="item-description">Taux de recouvrement</p>
+              <p class="item-label">{{ 'FINANCIAL_OVERVIEW.FINANCIAL_SUMMARY.GLOBAL_PERFORMANCE' | translate }}</p>
+              <p class="item-description">{{ 'FINANCIAL_OVERVIEW.FINANCIAL_SUMMARY.COLLECTION_RATE' | translate }}</p>
             </div>
             <div class="item-value">
               <p class="value-amount">{{ formatPercentage(metrics.collectionRate) }}</p>
@@ -261,8 +261,8 @@
           </div>
           <div class="item-content">
             <div class="item-info">
-              <p class="item-label">Manque à gagner</p>
-              <p class="item-description">Revenus non perçus</p>
+              <p class="item-label">{{ 'FINANCIAL_OVERVIEW.FINANCIAL_SUMMARY.SHORTFALL' | translate }}</p>
+              <p class="item-description">{{ 'FINANCIAL_OVERVIEW.FINANCIAL_SUMMARY.UNCOLLECTED_REVENUE' | translate }}</p>
             </div>
             <div class="item-value">
               <p class="value-amount">{{ formatPrice(metrics.totalExpected - metrics.totalRevenue) }}</p>
@@ -282,8 +282,8 @@
           </div>
           <div class="item-content">
             <div class="item-info">
-              <p class="item-label">Projection annuelle</p>
-              <p class="item-description">Potentiel maximum</p>
+              <p class="item-label">{{ 'FINANCIAL_OVERVIEW.FINANCIAL_SUMMARY.ANNUAL_PROJECTION' | translate }}</p>
+              <p class="item-description">{{ 'FINANCIAL_OVERVIEW.FINANCIAL_SUMMARY.MAXIMUM_POTENTIAL' | translate }}</p>
             </div>
             <div class="item-value">
               <p class="value-amount">{{ formatPrice(metrics.totalExpected) }}</p>
@@ -291,7 +291,7 @@
                 <svg class="trend-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"></path>
                 </svg>
-                <span class="trend-label">Objectif {{ selectedYear }}</span>
+                <span class="trend-label">{{ 'FINANCIAL_OVERVIEW.FINANCIAL_SUMMARY.YEAR_TARGET' | translate:{ year: selectedYear } }}</span>
               </div>
             </div>
           </div>

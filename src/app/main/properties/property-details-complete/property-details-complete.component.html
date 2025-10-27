@@ -149,7 +149,7 @@
         <div class="flex items-center justify-center py-12">
           <div class="text-center">
             <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
-            <p class="text-gray-600">Chargement des données de la propriété...</p>
+            <p class="text-gray-600">{{ 'PROPERTY_DETAILS.LOADING.PROPERTY_DATA' | translate }}</p>
           </div>
         </div>
       </div>
@@ -159,14 +159,14 @@
            class="error-state">
         <div class="text-center py-12">
           <youpez-ibm-icon iconName="warning" iconSize="32" class="text-red-500 mx-auto mb-4"></youpez-ibm-icon>
-          <h3 class="text-lg font-medium text-gray-900 mb-2">Propriété introuvable</h3>
+          <h3 class="text-lg font-medium text-gray-900 mb-2">{{ 'PROPERTY_DETAILS.ERROR.PROPERTY_NOT_FOUND' | translate }}</h3>
           <p class="text-gray-600 mb-6">
-            La propriété demandée n'existe pas ou vous n'avez pas les permissions pour la voir.
+            {{ 'PROPERTY_DETAILS.ERROR.NO_PERMISSION' | translate }}
           </p>
           <button ibmButton="primary"
                   (click)="goBack()"
                   class="custom-primary-button">
-            Retour aux propriétés
+            {{ 'PROPERTY_DETAILS.ERROR.BACK_TO_PROPERTIES' | translate }}
           </button>
         </div>
       </div>

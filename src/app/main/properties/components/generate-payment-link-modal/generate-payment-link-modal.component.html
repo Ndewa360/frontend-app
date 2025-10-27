@@ -7,8 +7,8 @@
         <i class="fa fa-link"></i>
       </div>
       <div class="header-text">
-        <h2>Lien de paiement permanent</h2>
-        <p>Générer un lien réutilisable pour ce contrat de location</p>
+        <h2>{{ 'PAYMENT_LINK.PERMANENT_PAYMENT_LINK' | translate }}</h2>
+        <p>{{ 'PAYMENT_LINK.GENERATE_REUSABLE_LINK' | translate }}</p>
       </div>
     </div>
     <button class="close-btn" (click)="onClose()">
@@ -23,14 +23,14 @@
     <div class="contract-info-section">
       <h3 class="section-title">
         <i class="fa fa-file-contract"></i>
-        Informations du contrat
+        {{ 'PAYMENT_LINK.CONTRACT_INFORMATION' | translate }}
       </h3>
       
       <div class="info-grid">
         <div class="info-item">
           <div class="info-label">
             <i class="fa fa-building"></i>
-            Propriété
+            {{ 'PAYMENT_LINK.PROPERTY' | translate }}
           </div>
           <div class="info-value">{{ data.room?.property?.name || 'N/A' }}</div>
         </div>
@@ -38,7 +38,7 @@
         <div class="info-item">
           <div class="info-label">
             <i class="fa fa-door-open"></i>
-            Unité
+            {{ 'PAYMENT_LINK.UNIT' | translate }}
           </div>
           <div class="info-value">{{ data.room?.code || 'N/A' }}</div>
         </div>
@@ -46,7 +46,7 @@
         <div class="info-item">
           <div class="info-label">
             <i class="fa fa-user"></i>
-            Locataire
+            {{ 'PAYMENT_LINK.TENANT' | translate }}
           </div>
           <div class="info-value">{{ data.tenant?.fullName || 'N/A' }}</div>
         </div>
@@ -54,7 +54,7 @@
         <div class="info-item">
           <div class="info-label">
             <i class="fa fa-money-bill-wave"></i>
-            Loyer mensuel
+            {{ 'PAYMENT_LINK.MONTHLY_RENT' | translate }}
           </div>
           <div class="info-value">{{ formatAmount(data.room?.price || 0) }}</div>
         </div>
@@ -65,7 +65,7 @@
     <div class="link-config-section" *ngIf="!generatedLink">
       <h3 class="section-title">
         <i class="fa fa-cog"></i>
-        Configuration du lien
+        {{ 'PAYMENT_LINK.LINK_CONFIGURATION' | translate }}
       </h3>
 
       <form [formGroup]="formGroup" (ngSubmit)="onSubmit()" class="config-form">
@@ -74,22 +74,20 @@
         <div class="form-group">
           <label class="form-label">
             <i class="fa fa-tag"></i>
-            Description du lien
+            {{ 'PAYMENT_LINK.LINK_DESCRIPTION' | translate }}
           </label>
           <input
             type="text"
             class="custom-input"
             formControlName="description"
-            placeholder="Ex: Lien de paiement pour l'appartement A1">
+            [placeholder]="'PAYMENT_LINK.DESCRIPTION_PLACEHOLDER' | translate">
         </div>
 
         <!-- Note explicative -->
         <div class="info-note">
           <i class="fa fa-info-circle"></i>
           <div>
-            <strong>Lien universel :</strong> Ce lien sera valide tant que le contrat de location est actif.
-            Le locataire pourra l'utiliser pour tous ses paiements (loyer, caution, etc.).
-            Le système détectera automatiquement le type de paiement selon le contexte.
+            <strong>{{ 'PAYMENT_LINK.UNIVERSAL_LINK' | translate }}:</strong> {{ 'PAYMENT_LINK.UNIVERSAL_LINK_DESC' | translate }}
           </div>
         </div>
 
@@ -97,12 +95,12 @@
         <div class="auto-detection-info">
           <h4>
             <i class="fa fa-magic"></i>
-            Détection automatique
+            {{ 'PAYMENT_LINK.AUTOMATIC_DETECTION' | translate }}
           </h4>
           <ul>
-            <li><strong>Caution :</strong> Si non payée, sera déduite automatiquement du montant versé</li>
-            <li><strong>Loyer :</strong> Le reste du montant sera considéré comme paiement de loyer</li>
-            <li><strong>Flexible :</strong> Le locataire peut saisir n'importe quel montant</li>
+            <li><strong>{{ 'PAYMENT_LINK.DEPOSIT' | translate }}:</strong> {{ 'PAYMENT_LINK.DEPOSIT_AUTO_DEDUCTION' | translate }}</li>
+            <li><strong>{{ 'PAYMENT_LINK.RENT' | translate }}:</strong> {{ 'PAYMENT_LINK.RENT_REMAINING_AMOUNT' | translate }}</li>
+            <li><strong>{{ 'PAYMENT_LINK.FLEXIBLE' | translate }}:</strong> {{ 'PAYMENT_LINK.FLEXIBLE_AMOUNT' | translate }}</li>
           </ul>
         </div>
       </form>
@@ -112,7 +110,7 @@
     <div class="generated-link-section" *ngIf="generatedLink">
       <h3 class="section-title success">
         <i class="fa fa-check-circle"></i>
-        Lien de paiement généré avec succès
+        {{ 'PAYMENT_LINK.LINK_GENERATED_SUCCESS' | translate }}
       </h3>
 
       <div class="link-display">
@@ -121,11 +119,11 @@
           <div class="link-actions">
             <button class="btn-copy" (click)="copyToClipboard()" [class.copied]="copied">
               <i class="fa" [class.fa-copy]="!copied" [class.fa-check]="copied"></i>
-              {{ copied ? 'Copié !' : 'Copier' }}
+              {{ copied ? ('PAYMENT_LINK.COPIED' | translate) : ('PAYMENT_LINK.COPY' | translate) }}
             </button>
             <button class="btn-open" (click)="openLink()">
               <i class="fa fa-external-link-alt"></i>
-              Ouvrir
+              {{ 'PAYMENT_LINK.OPEN' | translate }}
             </button>
           </div>
         </div>
@@ -134,15 +132,15 @@
       <div class="link-info">
         <div class="info-item">
           <i class="fa fa-calendar"></i>
-          <span>Créé le {{ getCurrentDate() | date:'dd/MM/yyyy à HH:mm' }}</span>
+          <span>{{ 'PAYMENT_LINK.CREATED_ON' | translate }} {{ getCurrentDate() | date:'dd/MM/yyyy à HH:mm' }}</span>
         </div>
         <div class="info-item">
           <i class="fa fa-infinity"></i>
-          <span>Valide tant que le contrat est actif</span>
+          <span>{{ 'PAYMENT_LINK.VALID_WHILE_ACTIVE' | translate }}</span>
         </div>
         <div class="info-item">
           <i class="fa fa-sync-alt"></i>
-          <span>Réutilisable pour tous les paiements</span>
+          <span>{{ 'PAYMENT_LINK.REUSABLE_FOR_ALL_PAYMENTS' | translate }}</span>
         </div>
       </div>
 
@@ -150,13 +148,13 @@
       <div class="usage-instructions">
         <h4>
           <i class="fa fa-question-circle"></i>
-          Comment utiliser ce lien ?
+          {{ 'PAYMENT_LINK.HOW_TO_USE_LINK' | translate }}
         </h4>
         <ul>
-          <li>Partagez ce lien avec votre locataire par email, SMS ou WhatsApp</li>
-          <li>Le locataire peut utiliser ce lien chaque mois pour payer son loyer</li>
-          <li>Chaque paiement sera automatiquement enregistré dans votre système</li>
-          <li>Vous recevrez une notification à chaque paiement effectué</li>
+          <li>{{ 'PAYMENT_LINK.SHARE_WITH_TENANT' | translate }}</li>
+          <li>{{ 'PAYMENT_LINK.MONTHLY_USAGE' | translate }}</li>
+          <li>{{ 'PAYMENT_LINK.AUTO_RECORDED' | translate }}</li>
+          <li>{{ 'PAYMENT_LINK.NOTIFICATION_ON_PAYMENT' | translate }}</li>
         </ul>
       </div>
     </div>
@@ -166,7 +164,7 @@
   <div class="modal-footer">
     <button type="button" class="btn btn-secondary" (click)="onClose()">
       <i class="fa fa-times"></i>
-      {{ generatedLink ? 'Fermer' : 'Annuler' }}
+      {{ generatedLink ? ('PAYMENT_LINK.CLOSE' | translate) : ('PAYMENT_LINK.CANCEL' | translate) }}
     </button>
     <button 
       *ngIf="!generatedLink"
@@ -176,7 +174,7 @@
       (click)="onSubmit()">
       <i *ngIf="loading" class="fa fa-spinner fa-spin"></i>
       <i *ngIf="!loading" class="fa fa-link"></i>
-      {{ loading ? 'Génération...' : 'Générer le lien' }}
+      {{ loading ? ('PAYMENT_LINK.GENERATING' | translate) : ('PAYMENT_LINK.GENERATE_LINK' | translate) }}
     </button>
   </div>
 </div>

@@ -383,11 +383,11 @@ export class AnnualFinancialRecapComponent implements OnInit, OnChanges {
 
   getRoomTypeLabel(type: string): string {
     switch (type) {
-      case 'room': return 'Chambre';
-      case 'studio': return 'Studio';
-      case 'simple_apartment': return 'Appartement';
-      case 'furnished_apartment': return 'App. Meublé';
-      default: return 'Inconnu';
+      case 'room': return 'ROOM_TYPES.ROOM';
+      case 'studio': return 'ROOM_TYPES.STUDIO';
+      case 'simple_apartment': return 'ROOM_TYPES.SIMPLE_APARTMENT';
+      case 'furnished_apartment': return 'ROOM_TYPES.FURNISHED_APARTMENT';
+      default: return 'ROOM_TYPES.ROOM';
     }
   }
 

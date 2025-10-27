@@ -3,7 +3,9 @@ import {
   StatisticRoomYearModel,
   StatisticPaymentOfAllPropertyByYear
 } from 'src/app/shared/store';
+import { TranslationUtilsService } from 'src/app/shared/services/translation-utils.service';
 import { ExportData } from '../../property-finances.component';
+import { PropertyFinancialManagerService } from 'src/app/main/properties/services/property-financial-manager.service';
 
 export interface ActualRevenueData {
   unitCode: string;
@@ -43,6 +45,8 @@ export interface RevenueSummary {
   styleUrls: ['./actual-revenue-analysis.component.css']
 })
 export class ActualRevenueAnalysisComponent implements OnInit, OnChanges {
+  
+  constructor(private translationUtils: TranslationUtilsService) {}
   @Input() yearlyStats: StatisticRoomYearModel[] = [];
   @Input() recapitulation: StatisticPaymentOfAllPropertyByYear | null = null;
   @Input() selectedYear: number = new Date().getFullYear();
@@ -239,11 +243,7 @@ export class ActualRevenueAnalysisComponent implements OnInit, OnChanges {
   }
 
   getMonthName(monthIndex: number): string {
-    const months = [
-      'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-      'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
-    ];
-    return months[monthIndex] || '';
+    return this.translationUtils.getMonthName(monthIndex + 1);
   }
 
   getRoomTypeLabel(type: any): string {

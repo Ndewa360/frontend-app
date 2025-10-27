@@ -15,7 +15,7 @@
     <div class="quick-actions-overlay">
       <button ibmButton="ghost" size="sm" 
               class="action-btn"
-              [ngbTooltip]="'Voir les détails'"
+              [ngbTooltip]="'PROPERTIES.CARD.VIEW_DETAILS' | translate"
               placement="bottom"
               (click)="onViewDetails($event)">
         <youpez-ibm-icon iconName="view" iconSize="16"></youpez-ibm-icon>
@@ -23,7 +23,7 @@
       
       <button ibmButton="ghost" size="sm" 
               class="action-btn"
-              [ngbTooltip]="'Modifier'"
+              [ngbTooltip]="'COMMON.EDIT' | translate"
               placement="bottom"
               (click)="onEdit($event)">
         <youpez-ibm-icon iconName="edit" iconSize="16"></youpez-ibm-icon>
@@ -31,7 +31,7 @@
       
       <button ibmButton="ghost" size="sm" 
               class="action-btn"
-              [ngbTooltip]="'Plus d'actions'"
+              [ngbTooltip]="'COMMON.MORE_ACTIONS' | translate || 'Plus d\'actions'"
               placement="bottom"
               (click)="onMoreActions($event)">
         <youpez-ibm-icon iconName="overflow-menu--horizontal" iconSize="16"></youpez-ibm-icon>
@@ -64,13 +64,13 @@
         <div class="metric-item">
           <div class="metric-header">
             <youpez-ibm-icon iconName="home" iconSize="16" class="metric-icon"></youpez-ibm-icon>
-            <span class="metric-label">Occupation</span>
+            <span class="metric-label">{{ 'PROPERTIES.CARD.OCCUPANCY' | translate }}</span>
           </div>
           <div class="metric-value" [ngClass]="getOccupancyClass()">
             {{ metrics.occupancyRate }}%
           </div>
           <div class="metric-detail">
-            {{ metrics.occupiedRooms }}/{{ metrics.totalRooms }} chambres
+            {{ metrics.occupiedRooms }}/{{ metrics.totalRooms }} {{ 'PROPERTIES.CARD.ROOMS' | translate }}
           </div>
         </div>
 
@@ -78,13 +78,13 @@
         <div class="metric-item">
           <div class="metric-header">
             <youpez-ibm-icon iconName="currency--dollar" iconSize="16" class="metric-icon"></youpez-ibm-icon>
-            <span class="metric-label">Revenus</span>
+            <span class="metric-label">{{ 'PROPERTIES.CARD.MONTHLY_REVENUE' | translate }}</span>
           </div>
           <div class="metric-value text-green-600">
             {{ metrics.monthlyRevenue | currency:'XAF':'symbol':'1.0-0' }}
           </div>
           <div class="metric-detail" [ngClass]="getRevenueGrowthClass()">
-            {{ metrics.revenueGrowth > 0 ? '+' : '' }}{{ metrics.revenueGrowth }}% ce mois
+            {{ metrics.revenueGrowth > 0 ? '+' : '' }}{{ metrics.revenueGrowth }}% {{ 'FINANCIAL_DASHBOARD.THIS_MONTH' | translate }}
           </div>
         </div>
       </div>
@@ -94,7 +94,7 @@
         <div class="metric-item">
           <div class="metric-header">
             <youpez-ibm-icon iconName="warning" iconSize="16" class="metric-icon"></youpez-ibm-icon>
-            <span class="metric-label">Retards</span>
+            <span class="metric-label">{{ 'PROPERTIES.CARD.OVERDUE' | translate }}</span>
           </div>
           <div class="metric-value" [ngClass]="getOverdueClass()">
             {{ metrics.overduePayments }}
@@ -108,13 +108,13 @@
         <div class="metric-item">
           <div class="metric-header">
             <youpez-ibm-icon iconName="tools" iconSize="16" class="metric-icon"></youpez-ibm-icon>
-            <span class="metric-label">Maintenance</span>
+            <span class="metric-label">{{ 'PROPERTIES.CARD.MAINTENANCE' | translate }}</span>
           </div>
           <div class="metric-value" [ngClass]="getMaintenanceClass()">
             {{ metrics.maintenanceRequests }}
           </div>
           <div class="metric-detail">
-            {{ metrics.urgentMaintenance }} urgentes
+            {{ metrics.urgentMaintenance }} {{ 'COMMON.URGENT' | translate || 'urgentes' }}
           </div>
         </div>
       </div>
@@ -124,7 +124,7 @@
     <div *ngIf="hasAlerts" class="alerts-section">
       <div class="alert-header">
         <youpez-ibm-icon iconName="warning--filled" iconSize="16" class="alert-icon"></youpez-ibm-icon>
-        <span class="alert-title">{{ alerts.length }} alerte(s)</span>
+        <span class="alert-title">{{ alerts.length }} {{ 'PROPERTIES.CARD.ALERTS' | translate }}</span>
       </div>
       
       <div class="alerts-list">
@@ -140,7 +140,7 @@
         
         <div *ngIf="alerts.length > 2" class="more-alerts">
           <button class="more-alerts-btn" (click)="onViewAllAlerts($event)">
-            +{{ alerts.length - 2 }} autres alertes
+            +{{ alerts.length - 2 }} {{ 'COMMON.OTHER_ALERTS' | translate || 'autres alertes' }}
           </button>
         </div>
       </div>
@@ -152,21 +152,21 @@
               class="action-button"
               (click)="onAddTenant($event)">
         <youpez-ibm-icon iconName="user--plus" iconSize="16" class="action-icon"></youpez-ibm-icon>
-        Nouveau locataire
+        {{ 'PROPERTIES.CARD.NEW_TENANT' | translate }}
       </button>
       
       <button ibmButton="tertiary" size="sm" 
               class="action-button"
               (click)="onRecordPayment($event)">
         <youpez-ibm-icon iconName="receipt" iconSize="16" class="action-icon"></youpez-ibm-icon>
-        Paiement
+        {{ 'PROPERTIES.CARD.PAYMENT' | translate }}
       </button>
       
       <button ibmButton="tertiary" size="sm" 
               class="action-button"
               (click)="onViewFinances($event)">
         <youpez-ibm-icon iconName="chart--line" iconSize="16" class="action-icon"></youpez-ibm-icon>
-        Finances
+        {{ 'NAVIGATION.FINANCES' | translate }}
       </button>
     </div>
   </div>

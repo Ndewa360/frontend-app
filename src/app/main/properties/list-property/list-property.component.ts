@@ -161,7 +161,7 @@ export class ListPropertyComponent implements OnInit {
     if (overdueCount > 0) {
       alerts.push({
         type: overdueCount > 2 ? 'critical' : 'warning',
-        message: `${overdueCount} ${this.translate.instant('PROPERTIES.CARD.PAYMENT_OVERDUE')}`,
+        message: `${overdueCount} ${this.translate.instant('properties.card.paymentOverdue')}`,
         actionRoute: `/app/properties/${propertyId}/payments`
       });
     }
@@ -171,7 +171,7 @@ export class ListPropertyComponent implements OnInit {
     if (freeRooms > 0) {
       alerts.push({
         type: 'info',
-        message: `${freeRooms} ${this.translate.instant('PROPERTIES.CARD.ROOMS_FREE')}`,
+        message: `${freeRooms} ${this.translate.instant('properties.card.roomsFree')}`,
         actionRoute: `/app/properties/${propertyId}/rooms`
       });
     }

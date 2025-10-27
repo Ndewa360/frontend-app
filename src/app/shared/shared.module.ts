@@ -52,6 +52,7 @@ import { MaxPipe } from './pipes/max.pipe';
 import { DynamicTranslatePipe } from './pipes/dynamic-translate.pipe';
 import { AuthStateService } from './services/auth-state.service';
 import { FileSizePipe } from './pipes/file-size.pipe';
+import { MonthTranslatePipe } from './pipes/month-translate.pipe';
 import { FileUploadComponent } from './components/file-upload/file-upload.component';
 import { UploadFilesState } from './store/files-upload';
 import { GaleryImageComponent } from './components/galery-image/galery-image.component';
@@ -137,6 +138,7 @@ import { HttpClient } from '@angular/common/http';
     MaxPipe,
     DynamicTranslatePipe,
     FileSizePipe,
+    MonthTranslatePipe,
     FileUploadComponent,
     GaleryImageComponent,
     GaleryVideoComponent,
@@ -176,6 +178,7 @@ import { HttpClient } from '@angular/common/http';
     MaxPipe,
     DynamicTranslatePipe,
     FileSizePipe,
+    MonthTranslatePipe,
     FileUploadComponent,
     GaleryImageComponent,
     GaleryVideoComponent,

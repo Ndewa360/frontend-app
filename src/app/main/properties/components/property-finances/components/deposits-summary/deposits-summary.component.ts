@@ -3,6 +3,8 @@ import {
   EnrichedStatisticResponse
 } from 'src/app/shared/store';
 import { Store } from '@ngxs/store';
+import { TranslateService } from '@ngx-translate/core';
+import { TranslationUtilsService } from 'src/app/shared/services/translation-utils.service';
 import { ExportData } from '../../property-finances.component';
 
 export interface DepositSummary {
@@ -82,7 +84,11 @@ export class DepositsSummaryComponent implements OnInit, OnChanges {
   
   cautionAlerts: string[] = [];
 
-  constructor(private store: Store) { }
+  constructor(
+    private store: Store,
+    private translateService: TranslateService,
+    private translationUtils: TranslationUtilsService
+  ) { }
 
   ngOnInit(): void {
     this.processDepositData();
@@ -121,7 +127,7 @@ export class DepositsSummaryComponent implements OnInit, OnChanges {
       return {
         roomId: roomCaution.room._id,
         roomCode: roomCaution.room.code || 'N/A',
-        roomType: this.getRoomTypeLabel(roomCaution.room.type),
+        roomType: this.translationUtils.getRoomTypeLabel(roomCaution.room.type),
         roomPrice: roomCaution.room.price || 0,
         expectedDeposit: roomCaution.expectedCautionAmount,
         receivedDeposit: roomCaution.totalCautionPaid,
@@ -196,9 +202,12 @@ export class DepositsSummaryComponent implements OnInit, OnChanges {
     console.log('📊 Statistiques globales des cautions chargées depuis le backend');
   }
   
-  private getRoomTypeLabel(roomType: any): string {
-    if (typeof roomType === 'string') return roomType;
-    return roomType?.label || roomType?.name || 'Standard';
+  getMonthName(monthNumber: number): string {
+    return this.translationUtils.getMonthName(monthNumber);
+  }
+  
+  getMonthShortName(monthNumber: number): string {
+    return this.translationUtils.getMonthShortName(monthNumber);
   }
   
   applyFilters(): void {
@@ -226,34 +235,34 @@ export class DepositsSummaryComponent implements OnInit, OnChanges {
   
   onExportDeposits(): void {
     const exportData = this.filteredSummaries.map(deposit => ({
-      'Chambre': deposit.roomCode,
-      'Type': deposit.roomType,
-      'Prix chambre': deposit.roomPrice,
-      'Caution attendue': deposit.expectedDeposit,
-      'Caution reçue': deposit.receivedDeposit,
-      'Taux caution': `${deposit.depositRate.toFixed(1)}%`,
-      'Statut': this.getStatusLabel(deposit.status),
-      'Statut caution': deposit.cautionStatus,
-      'Nombre paiements': deposit.cautionPayments.length,
-      'Année': this.selectedYear
+      [this.translateService.instant('DEPOSITS_SUMMARY.TABLE.HEADERS.UNIT')]: deposit.roomCode,
+      [this.translateService.instant('DEPOSITS_SUMMARY.TABLE.HEADERS.TYPE')]: deposit.roomType,
+      [this.translateService.instant('DEPOSITS_SUMMARY.TABLE.HEADERS.RENT')]: deposit.roomPrice,
+      [this.translateService.instant('DEPOSITS_SUMMARY.TABLE.HEADERS.EXPECTED_DEPOSIT')]: deposit.expectedDeposit,
+      [this.translateService.instant('DEPOSITS_SUMMARY.TABLE.HEADERS.RECEIVED_DEPOSIT')]: deposit.receivedDeposit,
+      [this.translateService.instant('DEPOSITS_SUMMARY.TABLE.HEADERS.RATE')]: `${deposit.depositRate.toFixed(1)}%`,
+      [this.translateService.instant('DEPOSITS_SUMMARY.TABLE.HEADERS.STATUS')]: this.translateService.instant(this.getStatusLabel(deposit.status)),
+      [this.translateService.instant('COMMON.REFERENCE')]: deposit.cautionStatus,
+      [this.translateService.instant('TENANT_PAYMENT_TRACKING.TABLE.LAST_PAYMENT')]: deposit.cautionPayments.length,
+      [this.translateService.instant('FINANCIAL_DASHBOARD.YEAR')]: this.selectedYear
     }));
 
     this.exportData.emit({
       type: 'excel',
       data: exportData,
-      filename: `cautions-${this.selectedYear}`
+      filename: this.translationUtils.getTranslatedFilename('DEPOSITS_SUMMARY.TITLE', this.selectedYear)
     });
   }
   
   getStatusLabel(status: DepositSummary['status']): string {
-    switch (status) {
-      case 'complete': return 'Complète';
-      case 'partial': return 'Partielle';
-      case 'missing': return 'Manquante';
-      case 'no_tenant': return 'Pas de locataire';
-      case 'overpaid': return 'Surpayée';
-      default: return 'Inconnu';
-    }
+    const labels = {
+      'complete': 'DEPOSITS_SUMMARY.STATUS_LABELS.COMPLETE',
+      'partial': 'DEPOSITS_SUMMARY.STATUS_LABELS.PARTIAL',
+      'missing': 'DEPOSITS_SUMMARY.STATUS_LABELS.MISSING',
+      'no_tenant': 'DEPOSITS_SUMMARY.STATUS_LABELS.NO_TENANT',
+      'overpaid': 'DEPOSITS_SUMMARY.STATUS_LABELS.OVERPAID'
+    };
+    return labels[status] || 'DEPOSITS_SUMMARY.STATUS_LABELS.MISSING';
   }
 
   getStatusColor(status: DepositSummary['status']): string {

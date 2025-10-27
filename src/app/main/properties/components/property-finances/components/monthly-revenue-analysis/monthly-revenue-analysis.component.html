@@ -5,8 +5,8 @@
   <div class="header-section">
     <div class="header-content">
       <div class="header-text">
-        <h3 class="header-title">Analyse des revenus mensuels</h3>
-        <p class="header-subtitle">Évolution des paiements par mois pour {{ selectedYear }}</p>
+        <h3 class="header-title">{{ 'MONTHLY_REVENUE_ANALYSIS.TITLE' | translate }}</h3>
+        <p class="header-subtitle">{{ 'MONTHLY_REVENUE_ANALYSIS.SUBTITLE' | translate:{ year: selectedYear } }}</p>
       </div>
 
       <!-- Actions d'export -->
@@ -36,7 +36,7 @@
   <div *ngIf="isLoading" class="loading-overlay">
     <div class="loading-content">
       <div class="loading-spinner"></div>
-      <span class="loading-text">Chargement des données mensuelles...</span>
+      <span class="loading-text">{{ 'MONTHLY_REVENUE_ANALYSIS.LOADING' | translate }}</span>
     </div>
   </div>
 
@@ -56,14 +56,14 @@
               </svg>
             </div>
             <div class="metric-info">
-              <p class="metric-label">Total annuel</p>
+              <p class="metric-label">{{ 'MONTHLY_REVENUE_ANALYSIS.METRICS.ANNUAL_TOTAL' | translate }}</p>
               <p class="metric-value">{{ getTotalRevenue() | currency:'XAF':'symbol':'1.0-0' }}</p>
-              <p class="metric-description">Revenus collectés en {{ selectedYear }}</p>
+              <p class="metric-description">{{ 'MONTHLY_REVENUE_ANALYSIS.METRICS.ANNUAL_TOTAL_DESC' | translate:{ year: selectedYear } }}</p>
               <div class="metric-trend">
                 <svg class="trend-icon positive" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
                 </svg>
-                <span class="trend-text">Performance annuelle</span>
+                <span class="trend-text">{{ 'MONTHLY_REVENUE_ANALYSIS.METRICS.ANNUAL_PERFORMANCE' | translate }}</span>
               </div>
             </div>
           </div>
@@ -78,14 +78,14 @@
               </svg>
             </div>
             <div class="metric-info">
-              <p class="metric-label">Moyenne mensuelle</p>
+              <p class="metric-label">{{ 'MONTHLY_REVENUE_ANALYSIS.METRICS.MONTHLY_AVERAGE' | translate }}</p>
               <p class="metric-value">{{ getAverageMonthlyRevenue() | currency:'XAF':'symbol':'1.0-0' }}</p>
-              <p class="metric-description">Revenus moyens par mois</p>
+              <p class="metric-description">{{ 'MONTHLY_REVENUE_ANALYSIS.METRICS.MONTHLY_AVERAGE_DESC' | translate }}</p>
               <div class="metric-progress">
                 <div class="progress-bar">
                   <div class="progress-fill" [style.width.%]="(getAverageMonthlyRevenue() / getTotalRevenue() * 12 * 100)"></div>
                 </div>
-                <span class="progress-text">{{ monthlyData.length }} mois</span>
+                <span class="progress-text">{{ monthlyData.length }} {{ 'MONTHLY_REVENUE_ANALYSIS.METRICS.MONTHS' | translate }}</span>
               </div>
             </div>
           </div>
@@ -100,12 +100,12 @@
               </svg>
             </div>
             <div class="metric-info">
-              <p class="metric-label">Meilleur mois</p>
+              <p class="metric-label">{{ 'MONTHLY_REVENUE_ANALYSIS.METRICS.BEST_MONTH' | translate }}</p>
               <p class="metric-value">{{ getBestMonth() }}</p>
-              <p class="metric-description">Mois avec le plus de revenus</p>
+              <p class="metric-description">{{ 'MONTHLY_REVENUE_ANALYSIS.METRICS.BEST_MONTH_DESC' | translate }}</p>
               <div class="metric-status">
                 <span class="status-badge status-excellent">
-                  Performance maximale
+                  {{ 'MONTHLY_REVENUE_ANALYSIS.METRICS.MAX_PERFORMANCE' | translate }}
                 </span>
               </div>
             </div>
@@ -125,9 +125,9 @@
               </svg>
             </div>
             <div class="metric-info">
-              <p class="metric-label">Taux de collecte</p>
+              <p class="metric-label">{{ 'MONTHLY_REVENUE_ANALYSIS.METRICS.COLLECTION_RATE' | translate }}</p>
               <p class="metric-value">{{ formatPercentage(yearlyStatsCalculated.averageCollectionRate) }}</p>
-              <p class="metric-description">Performance de recouvrement</p>
+              <p class="metric-description">{{ 'MONTHLY_REVENUE_ANALYSIS.METRICS.COLLECTION_PERFORMANCE' | translate }}</p>
               <div class="metric-progress">
                 <div class="progress-bar">
                   <div class="progress-fill" [style.width.%]="yearlyStatsCalculated.averageCollectionRate"></div>
@@ -143,9 +143,9 @@
     <!-- Tableau des données mensuelles -->
     <div class="table-section">
       <div class="table-header">
-        <h4 class="table-title">Détail mensuel</h4>
+        <h4 class="table-title">{{ 'MONTHLY_REVENUE_ANALYSIS.TABLE.TITLE' | translate }}</h4>
         <div class="table-summary">
-          <span class="summary-text">{{ monthlyData.length }} mois analysés</span>
+          <span class="summary-text">{{ 'MONTHLY_REVENUE_ANALYSIS.TABLE.MONTHS_ANALYZED' | translate:{ count: monthlyData.length } }}</span>
         </div>
       </div>
 
@@ -153,11 +153,11 @@
         <table>
           <thead>
             <tr>
-              <th>Mois</th>
-              <th>Revenus</th>
-              <th>Unités actives</th>
-              <th>Évolution</th>
-              <th>Performance</th>
+              <th>{{ 'MONTHLY_REVENUE_ANALYSIS.TABLE.HEADERS.MONTH' | translate }}</th>
+              <th>{{ 'MONTHLY_REVENUE_ANALYSIS.TABLE.HEADERS.REVENUE' | translate }}</th>
+              <th>{{ 'MONTHLY_REVENUE_ANALYSIS.TABLE.HEADERS.ACTIVE_UNITS' | translate }}</th>
+              <th>{{ 'MONTHLY_REVENUE_ANALYSIS.TABLE.HEADERS.EVOLUTION' | translate }}</th>
+              <th>{{ 'MONTHLY_REVENUE_ANALYSIS.TABLE.HEADERS.PERFORMANCE' | translate }}</th>
             </tr>
           </thead>
           <tbody>
@@ -180,7 +180,7 @@
                 <div class="revenue-info">
                   <div class="revenue-amount">{{ month.totalRevenue | currency:'XAF':'symbol':'1.0-0' }}</div>
                   <div class="revenue-details">
-                    <span class="payments-count">{{ month.paymentsCount }} paiements</span>
+                    <span class="payments-count">{{ month.paymentsCount }} {{ 'MONTHLY_REVENUE_ANALYSIS.TABLE.PAYMENTS' | translate }}</span>
                     <span class="collection-rate">{{ formatPercentage(month.collectionRate) }}</span>
                   </div>
                 </div>
@@ -190,7 +190,7 @@
               <td>
                 <div class="units-info">
                   <div class="units-count">{{ month.activeUnits }}</div>
-                  <div class="units-label">unités actives</div>
+                  <div class="units-label">{{ 'MONTHLY_REVENUE_ANALYSIS.TABLE.ACTIVE_UNITS' | translate }}</div>
                 </div>
               </td>
 
@@ -209,7 +209,7 @@
                     </svg>
                     <span *ngIf="month.growth > 0">+{{ month.growth }}%</span>
                     <span *ngIf="month.growth < 0">{{ month.growth }}%</span>
-                    <span *ngIf="month.growth === 0">Stable</span>
+                    <span *ngIf="month.growth === 0">{{ 'MONTHLY_REVENUE_ANALYSIS.TABLE.STABLE' | translate }}</span>
                   </span>
                 </div>
               </td>
@@ -243,14 +243,14 @@
     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 00-2-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
     </svg>
-    <h3>Aucune donnée disponible</h3>
-    <p>Aucune donnée de revenus mensuels trouvée pour {{ selectedYear }}.</p>
+    <h3>{{ 'MONTHLY_REVENUE_ANALYSIS.EMPTY_STATE.TITLE' | translate }}</h3>
+    <p>{{ 'MONTHLY_REVENUE_ANALYSIS.EMPTY_STATE.MESSAGE' | translate:{ year: selectedYear } }}</p>
     <div class="empty-actions">
       <button (click)="exportToExcel()" class="btn-secondary">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
         </svg>
-        Actualiser les données
+        {{ 'MONTHLY_REVENUE_ANALYSIS.EMPTY_STATE.REFRESH_DATA' | translate }}
       </button>
     </div>
   </div>

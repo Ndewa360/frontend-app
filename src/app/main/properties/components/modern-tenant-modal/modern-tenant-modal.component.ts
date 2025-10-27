@@ -161,13 +161,13 @@ export class ModernTenantModalComponent implements OnInit, OnDestroy {
             console.log('✅ Photo uploadée avec succès:', photoUrl);
             // Afficher un message spécifique pour la photo
             this.toastr.success(
-              this.translate.instant('NOTIFICATIONS.TENANT_CREATED_WITH_PHOTO'),
+              this.translate.instant('NOTIFICATIONS_ADDITIONAL.TENANT_CREATED_WITH_PHOTO'),
               this.translate.instant('NOTIFICATIONS.SUCCESS')
             );
           } else {
             // Pas de photo uploadée, message standard
             this.toastr.success(
-              this.translate.instant('NOTIFICATIONS.TENANT_CREATED_SUCCESS'),
+              this.translate.instant('NOTIFICATIONS_ADDITIONAL.TENANT_CREATED_SUCCESS'),
               this.translate.instant('NOTIFICATIONS.SUCCESS')
             );
           }
@@ -175,14 +175,14 @@ export class ModernTenantModalComponent implements OnInit, OnDestroy {
           console.error('❌ Erreur lors de l\'upload de la photo:', error);
           // Afficher un message indiquant que le locataire est créé mais sans photo
           this.toastr.warning(
-            this.translate.instant('NOTIFICATIONS.TENANT_CREATED_PHOTO_ERROR'),
+            this.translate.instant('NOTIFICATIONS_ADDITIONAL.TENANT_CREATED_PHOTO_ERROR'),
             this.translate.instant('NOTIFICATIONS.WARNING')
           );
         }
       } else {
         // Pas de photo sélectionnée, message standard
         this.toastr.success(
-          this.translate.instant('NOTIFICATIONS.TENANT_CREATED_SUCCESS'),
+          this.translate.instant('NOTIFICATIONS_ADDITIONAL.TENANT_CREATED_SUCCESS'),
           this.translate.instant('NOTIFICATIONS.SUCCESS')
         );
       }
@@ -198,7 +198,7 @@ export class ModernTenantModalComponent implements OnInit, OnDestroy {
     ).subscribe(() => {
       this.isLoading = false;
       this.toastr.success(
-        this.translate.instant('NOTIFICATIONS.TENANT_UPDATED_SUCCESS'),
+        this.translate.instant('NOTIFICATIONS_ADDITIONAL.TENANT_UPDATED_SUCCESS'),
         this.translate.instant('NOTIFICATIONS.SUCCESS')
       );
       this.dialogRef.close(true);
@@ -211,7 +211,7 @@ export class ModernTenantModalComponent implements OnInit, OnDestroy {
     ).subscribe(() => {
       this.isLoading = false;
       this.toastr.error(
-        this.translate.instant('NOTIFICATIONS.TENANT_CREATE_ERROR'),
+        this.translate.instant('NOTIFICATIONS_ADDITIONAL.TENANT_CREATE_ERROR'),
         this.translate.instant('NOTIFICATIONS.ERROR')
       );
     });
@@ -223,7 +223,7 @@ export class ModernTenantModalComponent implements OnInit, OnDestroy {
     ).subscribe(() => {
       this.isLoading = false;
       this.toastr.error(
-        this.translate.instant('NOTIFICATIONS.TENANT_UPDATE_ERROR'),
+        this.translate.instant('NOTIFICATIONS_ADDITIONAL.TENANT_UPDATE_ERROR'),
         this.translate.instant('NOTIFICATIONS.ERROR')
       );
     });
@@ -238,7 +238,7 @@ export class ModernTenantModalComponent implements OnInit, OnDestroy {
       // Validation du fichier
       if (!file.type.startsWith('image/')) {
         this.toastr.error(
-          this.translate.instant('ERRORS.INVALID_FILE_TYPE'),
+          this.translate.instant('ERRORS_ADDITIONAL.INVALID_FILE_TYPE'),
           this.translate.instant('NOTIFICATIONS.ERROR')
         );
         return;
@@ -246,7 +246,7 @@ export class ModernTenantModalComponent implements OnInit, OnDestroy {
       
       if (file.size > 5 * 1024 * 1024) { // 5MB
         this.toastr.error(
-          this.translate.instant('ERRORS.FILE_TOO_LARGE'),
+          this.translate.instant('ERRORS_ADDITIONAL.FILE_TOO_LARGE'),
           this.translate.instant('NOTIFICATIONS.ERROR')
         );
         return;
@@ -364,7 +364,7 @@ export class ModernTenantModalComponent implements OnInit, OnDestroy {
     } catch (error) {
       console.error('❌ Erreur lors de l\'upload de la photo:', error);
       this.toastr.error(
-        this.translate.instant('ERRORS.UPLOAD_FAILED'),
+        this.translate.instant('ERRORS_ADDITIONAL.UPLOAD_FAILED'),
         this.translate.instant('NOTIFICATIONS.ERROR')
       );
       return null;
@@ -420,7 +420,7 @@ export class ModernTenantModalComponent implements OnInit, OnDestroy {
     } catch (error) {
       this.isLoading = false;
       this.toastr.error(
-        this.translate.instant('NOTIFICATIONS.OPERATION_ERROR'),
+        this.translate.instant('NOTIFICATIONS_ADDITIONAL.OPERATION_ERROR'),
         this.translate.instant('NOTIFICATIONS.ERROR')
       );
     }

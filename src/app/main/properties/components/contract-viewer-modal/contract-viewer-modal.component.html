@@ -11,7 +11,7 @@
         </svg>
       </div>
       <div class="header-text">
-        <h2 class="modal-title">{{ getContractTitle() }}</h2>
+        <h2 class="modal-title">{{ getContractTitle() | translate }}</h2>
         <p class="modal-subtitle">{{ getRoomInfo() }}</p>
       </div>
     </div>
@@ -22,7 +22,7 @@
       <div class="template-selector-container">
         <button (click)="toggleTemplateSelector()"
                 class="template-selector-btn"
-                title="Changer le template de contrat"
+                [title]="'CONTRACT_VIEWER.CHANGE_TEMPLATE' | translate"
                 [disabled]="isLoading || isLoadingTemplates">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -40,7 +40,7 @@
         <!-- Dropdown des templates -->
         <div class="template-dropdown" *ngIf="showTemplateSelector" (click)="$event.stopPropagation()">
           <div class="template-dropdown-header">
-            <h4>Choisir un template</h4>
+            <h4>{{ 'CONTRACT_VIEWER.CHOOSE_TEMPLATE' | translate }}</h4>
             <button (click)="toggleTemplateSelector()" class="dropdown-close-btn">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -63,7 +63,7 @@
                     {{ getTemplateTypeLabel(template.type) }}
                   </span>
                   <span class="template-default" *ngIf="template.isDefault">
-                    Par défaut
+                    {{ 'CONTRACT_VIEWER.DEFAULT_TEMPLATE' | translate }}
                   </span>
                 </div>
               </div>
@@ -78,7 +78,7 @@
 
           <div class="template-loading" *ngIf="isLoadingTemplates">
             <div class="loading-spinner-small"></div>
-            <span>Chargement des templates...</span>
+            <span>{{ 'CONTRACT_VIEWER.LOADING_TEMPLATES' | translate }}</span>
           </div>
         </div>
       </div>
@@ -86,7 +86,7 @@
       <!-- Bouton plein écran -->
       <button (click)="toggleFullscreen()"
               class="action-btn"
-              [title]="isFullscreen ? 'Quitter le plein écran' : 'Plein écran'">
+              [title]="isFullscreen ? ('CONTRACT_VIEWER.EXIT_FULLSCREEN' | translate) : ('CONTRACT_VIEWER.FULLSCREEN' | translate)">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" *ngIf="!isFullscreen">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4">
@@ -102,7 +102,7 @@
       <!-- Bouton télécharger -->
       <button (click)="downloadContract()" 
               class="action-btn" 
-              title="Télécharger le contrat"
+              [title]="'CONTRACT_VIEWER.DOWNLOAD_CONTRACT' | translate"
               [disabled]="isLoading || hasError">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
@@ -114,7 +114,7 @@
       <!-- Bouton imprimer -->
       <button (click)="printContract()" 
               class="action-btn" 
-              title="Imprimer le contrat"
+              [title]="'CONTRACT_VIEWER.PRINT_CONTRACT' | translate"
               [disabled]="isLoading || hasError">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
@@ -126,7 +126,7 @@
       <!-- Bouton email -->
       <button (click)="sendContractByEmail()" 
               class="action-btn" 
-              title="Envoyer par email"
+              [title]="'CONTRACT_VIEWER.SEND_BY_EMAIL' | translate"
               [disabled]="isLoading || hasError || !tenant?.email">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
@@ -136,7 +136,7 @@
       </button>
 
       <!-- Bouton fermer -->
-      <button (click)="onClose()" class="close-btn" title="Fermer">
+      <button (click)="onClose()" class="close-btn" [title]="'CONTRACT_VIEWER.CLOSE' | translate">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
           </path>
@@ -152,7 +152,7 @@
       <div class="loading-spinner">
         <div class="spinner"></div>
       </div>
-      <p class="loading-text">Chargement du contrat...</p>
+      <p class="loading-text">{{ 'CONTRACT_VIEWER.LOADING_CONTRACT' | translate }}</p>
     </div>
 
     <!-- État d'erreur -->
@@ -164,10 +164,10 @@
           </path>
         </svg>
       </div>
-      <h3 class="error-title">Erreur de chargement</h3>
+      <h3 class="error-title">{{ 'CONTRACT_VIEWER.LOADING_ERROR' | translate }}</h3>
       <p class="error-message">{{ errorMessage }}</p>
       <button (click)="onClose()" class="error-close-btn">
-        Fermer
+        {{ 'CONTRACT_VIEWER.CLOSE' | translate }}
       </button>
     </div>
 
@@ -189,9 +189,9 @@
           </path>
         </svg>
       </div>
-      <h3 class="no-contract-title">Aucun contrat disponible</h3>
+      <h3 class="no-contract-title">{{ 'CONTRACT_VIEWER.NO_CONTRACT_AVAILABLE' | translate }}</h3>
       <p class="no-contract-message">
-        Aucun contrat n'a été généré pour cette location.
+        {{ 'CONTRACT_VIEWER.NO_CONTRACT_MESSAGE' | translate }}
       </p>
     </div>
   </div>
@@ -200,15 +200,15 @@
   <div class="modal-footer" *ngIf="!isLoading && !hasError && tenant">
     <div class="footer-info">
       <div class="info-item">
-        <span class="info-label">Locataire :</span>
+        <span class="info-label">{{ 'CONTRACT_VIEWER.TENANT' | translate }} :</span>
         <span class="info-value">{{ tenant.fullName }}</span>
       </div>
       <div class="info-item" *ngIf="tenant.email">
-        <span class="info-label">Email :</span>
+        <span class="info-label">{{ 'CONTRACT_VIEWER.EMAIL' | translate }} :</span>
         <span class="info-value">{{ tenant.email }}</span>
       </div>
       <div class="info-item" *ngIf="location">
-        <span class="info-label">Date de début :</span>
+        <span class="info-label">{{ 'CONTRACT_VIEWER.START_DATE' | translate }} :</span>
         <span class="info-value">{{ location.startedAt | date:'dd/MM/yyyy' }}</span>
       </div>
     </div>

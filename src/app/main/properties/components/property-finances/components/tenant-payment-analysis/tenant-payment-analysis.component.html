@@ -4,8 +4,8 @@
   <!-- Header avec actions -->
   <div class="flex items-center justify-between mb-6">
     <div>
-      <h2 class="text-2xl font-bold text-gray-900">Analyse des locataires</h2>
-      <p class="text-gray-600 mt-1">Suivi des performances de paiement par locataire pour {{ selectedYear }}</p>
+      <h2 class="text-2xl font-bold text-gray-900">{{ 'TENANT_PAYMENT_ANALYSIS.TITLE' | translate }}</h2>
+      <p class="text-gray-600 mt-1">{{ 'TENANT_PAYMENT_ANALYSIS.SUBTITLE' | translate:{ year: selectedYear } }}</p>
     </div>
     
     <div class="flex items-center space-x-3">
@@ -14,7 +14,7 @@
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
         </svg>
-        <span>Exporter</span>
+        <span>{{ 'TENANT_PAYMENT_ANALYSIS.EXPORT_BUTTON' | translate }}</span>
       </button>
     </div>
   </div>
@@ -31,7 +31,7 @@
           </svg>
         </div>
         <p class="text-2xl font-bold text-gray-900">{{ globalStats.totalTenants }}</p>
-        <p class="text-sm text-gray-600">Total locataires</p>
+        <p class="text-sm text-gray-600">{{ 'TENANT_PAYMENT_ANALYSIS.STATS.TOTAL_TENANTS' | translate }}</p>
       </div>
     </div>
 
@@ -44,7 +44,7 @@
           </svg>
         </div>
         <p class="text-2xl font-bold text-green-600">{{ globalStats.excellentTenants }}</p>
-        <p class="text-sm text-gray-600">Excellents</p>
+        <p class="text-sm text-gray-600">{{ 'TENANT_PAYMENT_ANALYSIS.STATS.EXCELLENT' | translate }}</p>
       </div>
     </div>
 
@@ -57,7 +57,7 @@
           </svg>
         </div>
         <p class="text-2xl font-bold text-blue-600">{{ globalStats.goodTenants }}</p>
-        <p class="text-sm text-gray-600">Bons</p>
+        <p class="text-sm text-gray-600">{{ 'TENANT_PAYMENT_ANALYSIS.STATS.GOOD' | translate }}</p>
       </div>
     </div>
 
@@ -70,7 +70,7 @@
           </svg>
         </div>
         <p class="text-2xl font-bold text-yellow-600">{{ globalStats.warningTenants }}</p>
-        <p class="text-sm text-gray-600">Attention</p>
+        <p class="text-sm text-gray-600">{{ 'TENANT_PAYMENT_ANALYSIS.STATS.WARNING' | translate }}</p>
       </div>
     </div>
 
@@ -83,7 +83,7 @@
           </svg>
         </div>
         <p class="text-2xl font-bold text-red-600">{{ globalStats.criticalTenants }}</p>
-        <p class="text-sm text-gray-600">Critiques</p>
+        <p class="text-sm text-gray-600">{{ 'TENANT_PAYMENT_ANALYSIS.STATS.CRITICAL' | translate }}</p>
       </div>
     </div>
   </div>
@@ -94,25 +94,25 @@
       
       <!-- Filtres par statut -->
       <div class="flex items-center space-x-4">
-        <label class="text-sm font-medium text-gray-700">Filtrer par statut:</label>
+        <label class="text-sm font-medium text-gray-700">{{ 'TENANT_PAYMENT_ANALYSIS.FILTERS.FILTER_BY_STATUS' | translate }}</label>
         <select [(ngModel)]="statusFilter" 
                 (ngModelChange)="onStatusFilterChange()"
                 class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-custom-primary focus:border-custom-primary">
-          <option value="all">Tous les statuts</option>
-          <option value="excellent">Excellents</option>
-          <option value="good">Bons</option>
-          <option value="warning">Attention</option>
-          <option value="critical">Critiques</option>
+          <option value="all">{{ 'TENANT_PAYMENT_ANALYSIS.FILTERS.ALL_STATUS' | translate }}</option>
+          <option value="excellent">{{ 'TENANT_PAYMENT_ANALYSIS.FILTERS.EXCELLENT' | translate }}</option>
+          <option value="good">{{ 'TENANT_PAYMENT_ANALYSIS.FILTERS.GOOD' | translate }}</option>
+          <option value="warning">{{ 'TENANT_PAYMENT_ANALYSIS.FILTERS.WARNING' | translate }}</option>
+          <option value="critical">{{ 'TENANT_PAYMENT_ANALYSIS.FILTERS.CRITICAL' | translate }}</option>
         </select>
       </div>
 
       <!-- Recherche -->
       <div class="flex items-center space-x-2">
-        <label class="text-sm font-medium text-gray-700">Rechercher:</label>
+        <label class="text-sm font-medium text-gray-700">{{ 'TENANT_PAYMENT_ANALYSIS.FILTERS.SEARCH' | translate }}</label>
         <input type="text" 
                [(ngModel)]="searchTerm"
                (ngModelChange)="onSearchChange()"
-               placeholder="Nom locataire ou code chambre..."
+               placeholder="{{ 'TENANT_PAYMENT_ANALYSIS.FILTERS.SEARCH_PLACEHOLDER' | translate }}"
                class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-custom-primary focus:border-custom-primary">
       </div>
     </div>
@@ -129,7 +129,7 @@
           <div class="flex items-center space-x-4">
             <div>
               <h3 class="text-lg font-semibold text-gray-900">{{ tenant.tenantName }}</h3>
-              <p class="text-sm text-gray-600">Chambre {{ tenant.roomCode }}</p>
+              <p class="text-sm text-gray-600">{{ 'TENANT_PAYMENT_ANALYSIS.TENANT_CARD.ROOM' | translate }} {{ tenant.roomCode }}</p>
             </div>
             <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium"
                   [ngClass]="getCalculationStatusColor(tenant.status)">
@@ -139,7 +139,7 @@
           
           <div class="text-right">
             <p class="text-lg font-bold text-gray-900">{{ formatPercentage(tenant.paymentRate) }}</p>
-            <p class="text-sm text-gray-600">Taux de paiement</p>
+            <p class="text-sm text-gray-600">{{ 'TENANT_PAYMENT_ANALYSIS.TENANT_CARD.PAYMENT_RATE' | translate }}</p>
           </div>
         </div>
       </div>
@@ -162,15 +162,15 @@
       <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">
         <div class="grid grid-cols-3 gap-4 text-center">
           <div>
-            <p class="text-sm font-medium text-gray-600">Total attendu</p>
+            <p class="text-sm font-medium text-gray-600">{{ 'TENANT_PAYMENT_ANALYSIS.TENANT_CARD.TOTAL_EXPECTED' | translate }}</p>
             <p class="text-lg font-bold text-gray-900">{{ formatPrice(tenant.totalExpected) }}</p>
           </div>
           <div>
-            <p class="text-sm font-medium text-gray-600">Total reçu</p>
+            <p class="text-sm font-medium text-gray-600">{{ 'TENANT_PAYMENT_ANALYSIS.TENANT_CARD.TOTAL_RECEIVED' | translate }}</p>
             <p class="text-lg font-bold text-green-600">{{ formatPrice(tenant.totalReceived) }}</p>
           </div>
           <div>
-            <p class="text-sm font-medium text-gray-600">Manque à gagner</p>
+            <p class="text-sm font-medium text-gray-600">{{ 'TENANT_PAYMENT_ANALYSIS.TENANT_CARD.SHORTFALL' | translate }}</p>
             <p class="text-lg font-bold text-red-600">{{ formatPrice(tenant.totalExpected - tenant.totalReceived) }}</p>
           </div>
         </div>
@@ -185,15 +185,15 @@
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
       </svg>
     </div>
-    <h3 class="text-lg font-semibold text-gray-900 mb-2">Aucun locataire trouvé</h3>
-    <p class="text-gray-600">Aucun locataire ne correspond à vos critères de filtrage.</p>
+    <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ 'TENANT_PAYMENT_ANALYSIS.EMPTY_STATE.TITLE' | translate }}</h3>
+    <p class="text-gray-600">{{ 'TENANT_PAYMENT_ANALYSIS.EMPTY_STATE.MESSAGE' | translate }}</p>
   </div>
 
   <!-- Indicateur de chargement -->
   <div *ngIf="isLoading" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white rounded-lg p-6 flex items-center space-x-3">
       <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-custom-primary"></div>
-      <span class="text-gray-700">Chargement de l'analyse des locataires...</span>
+      <span class="text-gray-700">{{ 'TENANT_PAYMENT_ANALYSIS.LOADING_MESSAGE' | translate }}</span>
     </div>
   </div>
 </div>

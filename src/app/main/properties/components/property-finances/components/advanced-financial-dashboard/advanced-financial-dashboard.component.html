@@ -5,8 +5,8 @@
   <div class="dashboard-header">
     <div class="header-content">
       <div class="header-info">
-        <h1 class="app-productive-heading-05">{{ 'FINANCIAL_DASHBOARD.ADVANCED_FINANCIAL_ANALYSIS' | translate }} {{ selectedYear }}</h1>
-        <p class="app-body-short-01 opacity-90">{{ 'FINANCIAL_DASHBOARD.COMPLETE_DASHBOARD_DESCRIPTION' | translate }}</p>
+        <h1 class="app-productive-heading-05">{{ 'ADVANCED_FINANCIAL_DASHBOARD.TITLE' | translate }} {{ selectedYear }}</h1>
+        <p class="app-body-short-01 opacity-90">{{ 'ADVANCED_FINANCIAL_DASHBOARD.SUBTITLE' | translate }}</p>
       </div>
       
       <div class="header-actions">
@@ -37,14 +37,14 @@
         </div>
         <div class="metric-content">
           <div class="metric-value">{{ formatCurrency(totalRevenue) }}</div>
-          <div class="metric-label">{{ 'FINANCIAL_DASHBOARD.REVENUE_TOTALS_YEAR' | translate }}</div>
+          <div class="metric-label">{{ 'ADVANCED_FINANCIAL_DASHBOARD.METRICS.REVENUE_TOTALS_YEAR' | translate:{ year: selectedYear } }}</div>
           <div class="metric-trend" [ngClass]="{
             'positive': revenueChange.type === 'increase',
             'negative': revenueChange.type === 'decrease',
             'neutral': revenueChange.type === 'neutral'
           }">
             <youpez-ibm-icon [iconName]="revenueChange.type === 'increase' ? 'trending--up' : revenueChange.type === 'decrease' ? 'trending--down' : 'trending--flat'" iconSize="16"></youpez-ibm-icon>
-            <span>{{ revenueChange.type === 'increase' ? '+' : revenueChange.type === 'decrease' ? '-' : '' }}{{ revenueChange.value | number:'1.1-1' }}% vs attendu</span>
+            <span>{{ revenueChange.type === 'increase' ? '+' : revenueChange.type === 'decrease' ? '-' : '' }}{{ revenueChange.value | number:'1.1-1' }}% {{ 'ADVANCED_FINANCIAL_DASHBOARD.METRICS.VS_EXPECTED' | translate }}</span>
           </div>
         </div>
       </div>
@@ -60,8 +60,8 @@
         </div>
         <div class="metric-content">
           <div class="metric-value">{{ formatPercentage(occupancyRate) }}</div>
-          <div class="metric-label">{{ 'FINANCIAL_DASHBOARD.OCCUPANCY_RATE' | translate }}</div>
-          <div class="metric-description">{{ occupiedRooms }} / {{ totalRooms }} {{ 'FINANCIAL_DASHBOARD.OCCUPIED_UNITS' | translate }}</div>
+          <div class="metric-label">{{ 'ADVANCED_FINANCIAL_DASHBOARD.METRICS.OCCUPANCY_RATE' | translate }}</div>
+          <div class="metric-description">{{ occupiedRooms }} / {{ totalRooms }} {{ 'ADVANCED_FINANCIAL_DASHBOARD.METRICS.OCCUPIED_UNITS' | translate }}</div>
         </div>
       </div>
 
@@ -72,14 +72,14 @@
         </div>
         <div class="metric-content">
           <div class="metric-value">{{ formatCurrency(averageRent) }}</div>
-          <div class="metric-label">{{ 'FINANCIAL_DASHBOARD.AVERAGE_RENT' | translate }}</div>
+          <div class="metric-label">{{ 'ADVANCED_FINANCIAL_DASHBOARD.METRICS.AVERAGE_RENT' | translate }}</div>
           <div class="metric-trend" [ngClass]="{
             'positive': averageRentChange.type === 'increase',
             'negative': averageRentChange.type === 'decrease',
             'neutral': averageRentChange.type === 'neutral'
           }">
             <youpez-ibm-icon [iconName]="averageRentChange.type === 'increase' ? 'trending--up' : averageRentChange.type === 'decrease' ? 'trending--down' : 'trending--flat'" iconSize="16"></youpez-ibm-icon>
-            <span>{{ averageRentChange.type === 'increase' ? '+' : averageRentChange.type === 'decrease' ? '-' : '' }}{{ averageRentChange.value | number:'1.1-1' }}% vs médiane</span>
+            <span>{{ averageRentChange.type === 'increase' ? '+' : averageRentChange.type === 'decrease' ? '-' : '' }}{{ averageRentChange.value | number:'1.1-1' }}% {{ 'ADVANCED_FINANCIAL_DASHBOARD.METRICS.VS_MEDIAN' | translate }}</span>
           </div>
         </div>
       </div>
@@ -95,13 +95,13 @@
         </div>
         <div class="metric-content">
           <div class="metric-value">{{ formatPercentage(collectionRate) }}</div>
-          <div class="metric-label">{{ 'FINANCIAL_DASHBOARD.COLLECTION_RATE' | translate }}</div>
+          <div class="metric-label">{{ 'ADVANCED_FINANCIAL_DASHBOARD.METRICS.COLLECTION_RATE' | translate }}</div>
           <div class="metric-trend" [ngClass]="{
               'positive': collectionRate >= 85,
               'negative': collectionRate < 85
             }">
             <youpez-ibm-icon [iconName]="collectionRate >= 85 ? 'trending--up' : 'trending--down'" iconSize="16"></youpez-ibm-icon>
-            <span>{{ collectionRate >= 85 ? ('FINANCIAL_DASHBOARD.EXCELLENT' | translate) : collectionRate >= 70 ? ('FINANCIAL_DASHBOARD.GOOD' | translate) : ('FINANCIAL_DASHBOARD.TO_IMPROVE' | translate) }}</span>
+            <span>{{ collectionRate >= 85 ? ('ADVANCED_FINANCIAL_DASHBOARD.METRICS.EXCELLENT' | translate) : collectionRate >= 70 ? ('ADVANCED_FINANCIAL_DASHBOARD.METRICS.GOOD' | translate) : ('ADVANCED_FINANCIAL_DASHBOARD.METRICS.TO_IMPROVE' | translate) }}</span>
           </div>
         </div>
       </div>
@@ -117,8 +117,8 @@
     <!-- Graphique des revenus mensuels -->
     <div class="dashboard-item chart-item">
       <div class="chart-header">
-        <h3 class="app-productive-heading-03">{{ 'FINANCIAL_DASHBOARD.EVOLUTION_REVENUES' | translate }}</h3>
-        <p class="app-body-short-01">{{ 'FINANCIAL_DASHBOARD.MONTHLY_TREND' | translate }}</p>
+        <h3 class="app-productive-heading-03">{{ 'ADVANCED_FINANCIAL_DASHBOARD.CHARTS.EVOLUTION_REVENUES' | translate }}</h3>
+        <p class="app-body-short-01">{{ 'ADVANCED_FINANCIAL_DASHBOARD.CHARTS.MONTHLY_TREND' | translate }}</p>
       </div>
       <div class="chart-content">
         <youpez-echarts-container>
@@ -134,8 +134,8 @@
     <!-- Graphique des statuts de paiement -->
     <div class="dashboard-item chart-item">
       <div class="chart-header">
-        <h3 class="app-productive-heading-03">{{ 'FINANCIAL_DASHBOARD.PAYMENT_STATUS' | translate }}</h3>
-        <p class="app-body-short-01">{{ 'FINANCIAL_DASHBOARD.PAYMENT_STATUS_DISTRIBUTION' | translate }}</p>
+        <h3 class="app-productive-heading-03">{{ 'ADVANCED_FINANCIAL_DASHBOARD.CHARTS.PAYMENT_STATUS' | translate }}</h3>
+        <p class="app-body-short-01">{{ 'ADVANCED_FINANCIAL_DASHBOARD.CHARTS.PAYMENT_STATUS_DISTRIBUTION' | translate }}</p>
       </div>
       <div class="chart-content">
         <youpez-echarts-container>
@@ -151,8 +151,8 @@
     <!-- Graphique de tendance mensuelle -->
     <div class="dashboard-item chart-item">
       <div class="chart-header">
-        <h3 class="app-productive-heading-03">{{ 'FINANCIAL_DASHBOARD.EXPECTED_VS_RECEIVED' | translate }}</h3>
-        <p class="app-body-short-01">{{ 'FINANCIAL_DASHBOARD.MONTHLY_COMPARISON' | translate }}</p>
+        <h3 class="app-productive-heading-03">{{ 'ADVANCED_FINANCIAL_DASHBOARD.CHARTS.EXPECTED_VS_RECEIVED' | translate }}</h3>
+        <p class="app-body-short-01">{{ 'ADVANCED_FINANCIAL_DASHBOARD.CHARTS.MONTHLY_COMPARISON' | translate }}</p>
       </div>
       <div class="chart-content">
         <youpez-echarts-container>
@@ -168,8 +168,8 @@
     <!-- Graphique de performance par unité -->
     <div class="dashboard-item chart-item">
       <div class="chart-header">
-        <h3 class="app-productive-heading-03">{{ 'FINANCIAL_DASHBOARD.UNIT_PERFORMANCE' | translate }}</h3>
-        <p class="app-body-short-01">{{ 'FINANCIAL_DASHBOARD.UNIT_COLLECTION_RATE' | translate }}</p>
+        <h3 class="app-productive-heading-03">{{ 'ADVANCED_FINANCIAL_DASHBOARD.CHARTS.UNIT_PERFORMANCE' | translate }}</h3>
+        <p class="app-body-short-01">{{ 'ADVANCED_FINANCIAL_DASHBOARD.CHARTS.UNIT_COLLECTION_RATE' | translate }}</p>
       </div>
       <div class="chart-content">
         <youpez-echarts-container>
