@@ -1,5 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
 
 export interface DeleteConfirmationData {
   title: string;
@@ -18,7 +19,8 @@ export class DeleteConfirmationModalComponent {
 
   constructor(
     public dialogRef: MatDialogRef<DeleteConfirmationModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: DeleteConfirmationData
+    @Inject(MAT_DIALOG_DATA) public data: DeleteConfirmationData,
+    private translateService: TranslateService
   ) {}
 
   /**

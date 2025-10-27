@@ -2,6 +2,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
 import { ContractTemplateModel, ContractTemplateType } from '../../../../shared/models/contract-template.model';
 import { ContractTemplateAction, ContractTemplateState } from '../../../../shared/store/contract-templates';
 
@@ -32,19 +33,25 @@ export class TemplateSelectionModalComponent implements OnInit {
   selectedType: ContractTemplateType | 'ALL' = 'ALL';
   showSystemTemplates = true;
   
-  readonly templateTypes = [
-    { value: 'ALL', label: 'Tous les types' },
-    { value: ContractTemplateType.DEFAULT, label: 'Par défaut' },
-    { value: ContractTemplateType.CUSTOM, label: 'Personnalisé' },
-    { value: ContractTemplateType.DUPLICATED, label: 'Dupliqué' }
-  ];
+  templateTypes: { value: string; label: string }[] = [];
 
   constructor(
     public dialogRef: MatDialogRef<TemplateSelectionModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: TemplateSelectionData,
-    private store: Store
+    private store: Store,
+    private translateService: TranslateService
   ) {
     this.showSystemTemplates = data.allowSystemTemplates !== false;
+    this.initializeTemplateTypes();
+  }
+
+  private initializeTemplateTypes(): void {
+    this.templateTypes = [
+      { value: 'ALL', label: this.translateService.instant('CONTRACT_TEMPLATES.LIST.FILTERS.ALL_TYPES') },
+      { value: ContractTemplateType.DEFAULT, label: this.translateService.instant('CONTRACT_TEMPLATES.TYPES.DEFAULT') },
+      { value: ContractTemplateType.CUSTOM, label: this.translateService.instant('CONTRACT_TEMPLATES.TYPES.CUSTOM') },
+      { value: ContractTemplateType.DUPLICATED, label: this.translateService.instant('CONTRACT_TEMPLATES.TYPES.DUPLICATED') }
+    ];
   }
 
   ngOnInit(): void {
@@ -137,13 +144,13 @@ export class TemplateSelectionModalComponent implements OnInit {
   getTemplateTypeLabel(type: ContractTemplateType): string {
     switch (type) {
       case ContractTemplateType.DEFAULT:
-        return 'Par défaut';
+        return this.translateService.instant('CONTRACT_TEMPLATES.TYPES.DEFAULT');
       case ContractTemplateType.CUSTOM:
-        return 'Personnalisé';
+        return this.translateService.instant('CONTRACT_TEMPLATES.TYPES.CUSTOM');
       case ContractTemplateType.DUPLICATED:
-        return 'Dupliqué';
+        return this.translateService.instant('CONTRACT_TEMPLATES.TYPES.DUPLICATED');
       default:
-        return 'Inconnu';
+        return this.translateService.instant('CONTRACT_TEMPLATES.TYPES.UNKNOWN');
     }
   }
 }

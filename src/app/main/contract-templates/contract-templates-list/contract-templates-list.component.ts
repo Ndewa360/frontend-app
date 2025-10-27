@@ -4,6 +4,7 @@ import { Subject, debounceTime, Observable } from 'rxjs';
 import { takeUntil, filter } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
 import { MatDialog } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
 
 import {
   ContractTemplateModel,
@@ -51,7 +52,8 @@ export class ContractTemplatesListComponent implements OnInit, OnDestroy {
     private store: Store,
     private router: Router,
     private route: ActivatedRoute,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private translateService: TranslateService
   ) {
     // Initialiser les observables
     this.templates$ = this.store.select(ContractTemplateState.selectAllTemplates);
@@ -204,7 +206,8 @@ export class ContractTemplatesListComponent implements OnInit, OnDestroy {
     } else {
       // Utiliser "default" pour les templates système, sinon l'ID normal
       const viewId = template.isSystemDefault ? 'default' : template._id;
-      this.router.navigate(['/app/contract-templates/view', viewId]);
+      const currentLang = this.translateService.currentLang || 'fr';
+      this.router.navigate([`/${currentLang}/app/contract-templates/view`, viewId]);
     }
   }
 
@@ -212,7 +215,8 @@ export class ContractTemplatesListComponent implements OnInit, OnDestroy {
    * Modifier un modèle
    */
   editTemplate(template: ContractTemplateModel): void {
-    this.router.navigate(['/app/contract-templates/edit', template._id]);
+    const currentLang = this.translateService.currentLang || 'fr';
+    this.router.navigate([`/${currentLang}/app/contract-templates/edit`, template._id]);
   }
 
 
@@ -221,7 +225,8 @@ export class ContractTemplatesListComponent implements OnInit, OnDestroy {
    * Créer un nouveau modèle
    */
   createNewTemplate(): void {
-    this.router.navigate(['/app/contract-templates/create']);
+    const currentLang = this.translateService.currentLang || 'fr';
+    this.router.navigate([`/${currentLang}/app/contract-templates/create`]);
   }
 
   /**
@@ -231,7 +236,7 @@ export class ContractTemplatesListComponent implements OnInit, OnDestroy {
     const templates = this.store.selectSnapshot(ContractTemplateState.selectStateTemplates);
 
     if (!templates || templates.length === 0) {
-      console.warn('Aucun modèle à exporter');
+      console.warn(this.translateService.instant('CONTRACT_TEMPLATES.LIST.NO_TEMPLATES_TO_EXPORT'));
       return;
     }
 
@@ -265,14 +270,15 @@ export class ContractTemplatesListComponent implements OnInit, OnDestroy {
     link.download = `contract-templates-export-${new Date().toISOString().split('T')[0]}.json`;
     link.click();
 
-    console.log('Export des modèles terminé:', exportData.totalTemplates, 'modèles exportés');
+    console.log(this.translateService.instant('CONTRACT_TEMPLATES.LIST.EXPORT_COMPLETED'), exportData.totalTemplates, this.translateService.instant('CONTRACT_TEMPLATES.LIST.TEMPLATES_EXPORTED'));
   }
 
   /**
    * Retour
    */
   goBack(): void {
-    this.router.navigate(['/app/contract-templates']);
+    const currentLang = this.translateService.currentLang || 'fr';
+    this.router.navigate([`/${currentLang}/app/contract-templates`]);
   }
 
   /**
@@ -362,13 +368,13 @@ export class ContractTemplatesListComponent implements OnInit, OnDestroy {
   getTemplateTypeLabel(type: ContractTemplateType): string {
     switch (type) {
       case ContractTemplateType.DEFAULT:
-        return 'Par défaut';
+        return this.translateService.instant('CONTRACT_TEMPLATES.TYPES.DEFAULT');
       case ContractTemplateType.CUSTOM:
-        return 'Personnalisé';
+        return this.translateService.instant('CONTRACT_TEMPLATES.TYPES.CUSTOM');
       case ContractTemplateType.DUPLICATED:
-        return 'Dupliqué';
+        return this.translateService.instant('CONTRACT_TEMPLATES.TYPES.DUPLICATED');
       default:
-        return 'Inconnu';
+        return this.translateService.instant('CONTRACT_TEMPLATES.TYPES.UNKNOWN');
     }
   }
 
@@ -378,13 +384,13 @@ export class ContractTemplatesListComponent implements OnInit, OnDestroy {
   getStatusLabel(status: ContractTemplateStatus): string {
     switch (status) {
       case ContractTemplateStatus.ACTIVE:
-        return 'Actif';
+        return this.translateService.instant('CONTRACT_TEMPLATES.STATUS.ACTIVE');
       case ContractTemplateStatus.INACTIVE:
-        return 'Inactif';
+        return this.translateService.instant('CONTRACT_TEMPLATES.STATUS.INACTIVE');
       case ContractTemplateStatus.ARCHIVED:
-        return 'Archivé';
+        return this.translateService.instant('CONTRACT_TEMPLATES.STATUS.ARCHIVED');
       default:
-        return 'Inconnu';
+        return this.translateService.instant('CONTRACT_TEMPLATES.STATUS.UNKNOWN');
     }
   }
 
@@ -394,7 +400,8 @@ export class ContractTemplatesListComponent implements OnInit, OnDestroy {
   getPaginationText(pagination: any): string {
     const start = (pagination.page - 1) * 12 + 1;
     const end = Math.min(pagination.page * 12, pagination.total);
-    return `${start}-${end} sur ${pagination.total}`;
+    const onText = this.translateService.instant('CONTRACT_TEMPLATES.LIST.PAGINATION.SHOWING');
+    return `${start}-${end} ${onText} ${pagination.total}`;
   }
 
   /**
@@ -435,22 +442,24 @@ export class ContractTemplatesListComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe(result => {
       if (result?.success && result?.newTemplate) {
         // La duplication a été effectuée avec succès
-        console.log('✅ Template dupliqué avec succès:', result.newTemplate);
+        console.log(this.translateService.instant('CONTRACT_TEMPLATES.LIST.TEMPLATE_DUPLICATED_SUCCESS'), result.newTemplate);
         
         // Recharger la liste des templates
         this.loadTemplates();
         
         // Rediriger directement vers la page d'édition du nouveau template
-        console.log('🔄 Redirection vers la page d\'édition du nouveau template:', result.newTemplate._id);
-        this.router.navigate(['/app/contract-templates/edit', result.newTemplate._id]);
+        console.log(this.translateService.instant('CONTRACT_TEMPLATES.LIST.REDIRECTING_TO_EDIT'), result.newTemplate._id);
+        const currentLang = this.translateService.currentLang || 'fr';
+        this.router.navigate([`/${currentLang}/app/contract-templates/edit`, result.newTemplate._id]);
       } else if (result?.success) {
         // Fallback : recharger la liste et rediriger
-        console.log('⚠️ Template dupliqué, rechargement de la liste...');
+        console.log(this.translateService.instant('CONTRACT_TEMPLATES.LIST.TEMPLATE_DUPLICATED_RELOADING'));
         this.loadTemplates();
         
         // Attendre un peu puis rediriger vers la liste
         setTimeout(() => {
-          this.router.navigate(['/app/contract-templates']);
+          const currentLang = this.translateService.currentLang || 'fr';
+          this.router.navigate([`/${currentLang}/app/contract-templates`]);
         }, 1000);
       }
     });
@@ -469,11 +478,11 @@ export class ContractTemplatesListComponent implements OnInit, OnDestroy {
       width: '500px',
       maxWidth: '90vw',
       data: {
-        title: 'Supprimer le modèle',
-        message: `Êtes-vous sûr de vouloir supprimer le modèle "${template.name}" ?`,
-        warning: 'Cette action est irréversible. Le fichier sera également supprimé du stockage.',
-        confirmText: 'Supprimer',
-        cancelText: 'Annuler'
+        title: this.translateService.instant('CONTRACT_TEMPLATES.LIST.DELETE_MODAL.TITLE'),
+        message: `${this.translateService.instant('CONTRACT_TEMPLATES.LIST.DELETE_MODAL.MESSAGE')} "${template.name}" ?`,
+        warning: this.translateService.instant('CONTRACT_TEMPLATES.LIST.DELETE_MODAL.WARNING'),
+        confirmText: this.translateService.instant('CONTRACT_TEMPLATES.LIST.DELETE_MODAL.CONFIRM'),
+        cancelText: this.translateService.instant('CONTRACT_TEMPLATES.LIST.DELETE_MODAL.CANCEL')
       },
       disableClose: true,
       panelClass: ['custom-dialog-container', 'delete-confirmation-dialog'],
@@ -487,6 +496,14 @@ export class ContractTemplatesListComponent implements OnInit, OnDestroy {
         this.store.dispatch(new ContractTemplateAction.DeleteTemplate(template._id));
       }
     });
+  }
+
+  /**
+   * Obtenir le format de date selon la langue
+   */
+  getDateFormat(): string {
+    const currentLang = this.translateService.currentLang || 'fr';
+    return currentLang === 'en' ? 'MM/dd/yyyy' : 'dd/MM/yyyy';
   }
 
   /**

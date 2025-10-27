@@ -1330,6 +1330,266 @@
       "ADMINISTRATION": "41:22"
     }
   },
+  "CONTRACT_TEMPLATES": {
+    "TITLE": "Gestion des Modèles de Contrats",
+    "SUBTITLE": "Créez, gérez et personnalisez vos modèles de contrats de location avec une interface moderne et intuitive.",
+    "NEW_TEMPLATE": "Nouveau modèle",
+    "REINDEX": "Réindexer",
+    "METRICS": {
+      "TOTAL_TEMPLATES": "Modèles total",
+      "ACTIVE_TEMPLATES": "Modèles actifs",
+      "TOTAL_USAGE": "Utilisations totales",
+      "CUSTOM_TEMPLATES": "Modèles personnalisés",
+      "ACTIVE": "actifs",
+      "OF_TOTAL": "du total",
+      "ALL_USAGE": "Toutes les utilisations",
+      "DEFAULT": "par défaut"
+    },
+    "QUICK_ACTIONS": {
+      "TITLE": "Actions rapides",
+      "SUBTITLE": "Accédez rapidement aux fonctionnalités principales",
+      "CREATE_TEMPLATE": "Créer un modèle",
+      "CREATE_DESCRIPTION": "Créez un nouveau modèle de contrat personnalisé",
+      "BROWSE_TEMPLATES": "Parcourir les modèles",
+      "BROWSE_DESCRIPTION": "Consultez et gérez vos modèles existants",
+      "DUPLICATE_TEMPLATE": "Dupliquer un modèle",
+      "DUPLICATE_DESCRIPTION": "Créez une copie d'un modèle existant",
+      "REINDEX_TEMPLATES": "Réindexer les templates",
+      "REINDEX_DESCRIPTION": "Synchroniser avec Google Cloud Storage"
+    },
+    "RECENT_TEMPLATES": {
+      "TITLE": "Modèles récents",
+      "VIEW_ALL": "Voir tout",
+      "NO_DESCRIPTION": "Aucune description",
+      "USAGE_COUNT": "utilisations",
+      "EDIT": "Modifier",
+      "VIEW": "Voir"
+    },
+    "EMPTY_STATE": {
+      "TITLE": "Aucun modèle récent",
+      "DESCRIPTION": "Commencez par créer votre premier modèle de contrat",
+      "CREATE_BUTTON": "Créer un modèle"
+    },
+    "TIPS": {
+      "TITLE": "Conseils et astuces",
+      "DYNAMIC_VARIABLES": {
+        "TITLE": "Variables dynamiques",
+        "DESCRIPTION": "Utilisez des variables pour personnaliser automatiquement vos contrats."
+      },
+      "SMART_DUPLICATION": {
+        "TITLE": "Duplication intelligente",
+        "DESCRIPTION": "Dupliquez vos modèles existants pour créer rapidement de nouvelles variantes."
+      },
+      "AUTO_SAVE": {
+        "TITLE": "Sauvegarde automatique",
+        "DESCRIPTION": "Vos modifications sont automatiquement sauvegardées pendant l'édition."
+      }
+    },
+    "TYPES": {
+      "DEFAULT": "Par défaut",
+      "CUSTOM": "Personnalisé",
+      "DUPLICATED": "Dupliqué",
+      "UNKNOWN": "Inconnu"
+    },
+    "STATUS": {
+      "ACTIVE": "Actif",
+      "INACTIVE": "Inactif",
+      "ARCHIVED": "Archivé",
+      "UNKNOWN": "Inconnu"
+    },
+    "DUPLICATE_MODAL": {
+      "TITLE": "Sélectionner un modèle à dupliquer",
+      "MESSAGE": "Choisissez le modèle que vous souhaitez dupliquer :"
+    },
+    "LIST": {
+      "TITLE": "Modèles de contrats",
+      "DUPLICATE_TITLE": "Sélectionner un modèle à dupliquer",
+      "SUBTITLE": "modèle(s) trouvé(s)",
+      "DUPLICATE_SUBTITLE": "Cliquez sur un modèle pour le dupliquer",
+      "BACK": "Retour",
+      "EXPORT": "Exporter",
+      "NEW_TEMPLATE": "Nouveau modèle",
+      "SEARCH_PLACEHOLDER": "Rechercher un modèle...",
+      "FILTERS": {
+        "ALL": "Tous",
+        "CUSTOM": "Personnalisés",
+        "DEFAULT": "Par défaut",
+        "FILTERS": "Filtres",
+        "GRID_VIEW": "Vue grille",
+        "LIST_VIEW": "Vue liste",
+        "SORT_BY": {
+          "UPDATED_AT": "Date de modification",
+          "CREATED_AT": "Date de création",
+          "NAME": "Nom",
+          "USAGE_COUNT": "Utilisations"
+        },
+        "ADVANCED": {
+          "TEMPLATE_TYPE": "Type de modèle",
+          "ALL_TYPES": "Tous les types",
+          "STATUS": "Statut",
+          "ALL_STATUS": "Tous les statuts",
+          "RESET": "Réinitialiser"
+        }
+      },
+      "TABLE": {
+        "NAME": "Nom",
+        "TYPE": "Type",
+        "STATUS": "Statut",
+        "USAGE": "Utilisations",
+        "MODIFIED": "Modifié",
+        "ACTIONS": "Actions",
+        "NO_DESCRIPTION": "Aucune description"
+      },
+      "ACTIONS": {
+        "EDIT": "Modifier",
+        "DUPLICATE": "Dupliquer",
+        "SELECT": "Sélectionner",
+        "DELETE": "Supprimer",
+        "MORE_OPTIONS": "Plus d'options"
+      },
+      "EMPTY_STATE": {
+        "TITLE": "Aucun modèle trouvé",
+        "NO_SEARCH_RESULTS": "Aucun modèle ne correspond à votre recherche.",
+        "NO_TEMPLATES": "Commencez par créer votre premier modèle de contrat.",
+        "CREATE_BUTTON": "Créer un modèle"
+      },
+      "LOADING": "Chargement des modèles...",
+      "PAGINATION": {
+        "SHOWING": "sur"
+      },
+      "DELETE_MODAL": {
+        "TITLE": "Supprimer le modèle",
+        "MESSAGE": "Êtes-vous sûr de vouloir supprimer le modèle",
+        "WARNING": "Cette action est irréversible. Le fichier sera également supprimé du stockage.",
+        "CONFIRM": "Supprimer",
+        "CANCEL": "Annuler"
+      },
+      "NO_TEMPLATES_TO_EXPORT": "Aucun modèle à exporter",
+      "EXPORT_COMPLETED": "Export des modèles terminé:",
+      "TEMPLATES_EXPORTED": "modèles exportés",
+      "TEMPLATE_DUPLICATED_SUCCESS": "✅ Template dupliqué avec succès:",
+      "REDIRECTING_TO_EDIT": "🔄 Redirection vers la page d'édition du nouveau template:",
+      "TEMPLATE_DUPLICATED_RELOADING": "⚠️ Template dupliqué, rechargement de la liste..."
+    },
+    "EDITOR": {
+      "TITLE": "Éditeur de modèle",
+      "NEW_TEMPLATE": "Nouveau modèle",
+      "EDIT_TEMPLATE": "Modifier le modèle",
+      "BACK": "Retour",
+      "SAVE": "Sauvegarder",
+      "SAVING": "Sauvegarde...",
+      "EXPORT": "Exporter",
+      "EDIT_MODE": "Édition",
+      "PREVIEW_MODE": "Aperçu",
+      "GENERAL_INFO": "Informations générales",
+      "TEMPLATE_NAME": "Nom du modèle",
+      "TEMPLATE_NAME_PLACEHOLDER": "Ex: Contrat de location standard",
+      "DESCRIPTION": "Description",
+      "DESCRIPTION_PLACEHOLDER": "Description du modèle...",
+      "TYPE": "Type",
+      "STATUS": "Statut",
+      "VARIABLES": "Variables",
+      "VARIABLES_HELP": "Cliquez pour insérer",
+      "LOADING_TEMPLATE": "Chargement du modèle",
+      "LOADING_EDITOR": "Préparation de l'éditeur de contrat...",
+      "LOADING_ERROR": "Erreur de chargement",
+      "RETRY": "Réessayer",
+      "PREVIEW_TITLE": "Aperçu du contrat",
+      "WORD_COUNT": "mots",
+      "CHARACTER_COUNT": "caractères",
+      "ZOOM_IN": "Zoom avant",
+      "ZOOM_OUT": "Zoom arrière",
+      "BACK_TO_EDIT": "Retour à l'édition",
+      "LAST_SAVE": "Dernière sauvegarde",
+      "SAVE_STATUS": {
+        "SAVED": "Sauvegardé",
+        "SAVING": "Sauvegarde...",
+        "UNSAVED": "Non sauvegardé",
+        "ERROR": "Erreur de sauvegarde"
+      },
+      "EXPORT_MODAL": {
+        "TITLE": "Exporter le template",
+        "DESCRIPTION": "Choisissez le format d'export pour votre template de contrat",
+        "CANCEL": "Annuler",
+        "EXPORT": "Exporter",
+        "EXPORTING": "Export en cours..."
+      },
+      "UNSAVED_CHANGES": {
+        "TITLE": "Modifications non sauvegardées",
+        "MESSAGE": "Vous avez des modifications non sauvegardées.",
+        "QUESTION": "Que souhaitez-vous faire avant de quitter cette page ?",
+        "STAY": "Rester",
+        "SAVE_FIRST": "Sauvegarder d'abord",
+        "IGNORE": "Ignorer les modifications"
+      }
+    },
+    "VIEWER": {
+      "TITLE": "Visualisation du modèle",
+      "BACK": "Retour",
+      "BREADCRUMB": "Modèles de contrats",
+      "DUPLICATE": "Dupliquer",
+      "EDIT": "Modifier",
+      "DELETE": "Supprimer",
+      "READ_ONLY": "Lecture seule",
+      "GENERAL_INFO": "Informations générales",
+      "TEMPLATE_NAME": "Nom du modèle",
+      "DESCRIPTION": "Description",
+      "NO_DESCRIPTION": "Aucune description",
+      "TYPE": "Type",
+      "STATUS": "Statut",
+      "METADATA": "Métadonnées",
+      "CREATED_ON": "Créé le",
+      "MODIFIED_ON": "Modifié le",
+      "USAGE_COUNT": "Utilisations",
+      "USAGE_TIMES": "fois",
+      "VERSION": "Version",
+      "QUICK_ACTIONS": "Actions rapides",
+      "DUPLICATE_ACTION": "Dupliquer",
+      "EXPORT_PDF": "Exporter PDF",
+      "PRINT": "Imprimer",
+      "PREVIEW_TITLE": "Aperçu du modèle",
+      "LOADING_CONTENT": "Chargement du contenu...",
+      "LOADING_ERROR": "Erreur de chargement",
+      "RETRY": "Réessayer",
+      "NO_CONTENT": "Aucun contenu",
+      "NO_CONTENT_MESSAGE": "Ce modèle ne contient pas encore de contenu.",
+      "ADD_CONTENT": "Ajouter du contenu",
+      "LOADING_TEMPLATE": "Chargement du modèle..."
+    },
+    "MODALS": {
+      "TEMPLATE_SELECTION": {
+        "SEARCH_PLACEHOLDER": "Rechercher un modèle",
+        "SEARCH_LABEL": "Nom ou description...",
+        "TYPE_LABEL": "Type",
+        "INCLUDE_SYSTEM": "Inclure les modèles système",
+        "NO_TEMPLATES_FOUND": "Aucun modèle trouvé avec ces critères",
+        "LOADING_TEMPLATES": "Chargement des modèles...",
+        "CANCEL": "Annuler",
+        "DUPLICATE": "Dupliquer",
+        "DEFAULT_BADGE": "Défaut",
+        "SYSTEM_BADGE": "Système",
+        "USAGE_COUNT": "utilisations"
+      },
+      "DELETE_CONFIRMATION": {
+        "SUBTITLE": "Action irréversible"
+      },
+      "DUPLICATE_TEMPLATE": {
+        "TITLE": "Dupliquer le modèle",
+        "SOURCE_TEMPLATE": "Modèle source",
+        "NEW_TEMPLATE": "Nouveau modèle",
+        "NAME_LABEL": "Nom du modèle",
+        "NAME_REQUIRED": "*",
+        "NAME_PLACEHOLDER": "Entrez le nom du nouveau modèle",
+        "DESCRIPTION_LABEL": "Description (optionnelle)",
+        "DESCRIPTION_PLACEHOLDER": "Entrez une description pour le nouveau modèle",
+        "CHARACTER_COUNT": "caractères",
+        "CANCEL": "Annuler",
+        "DUPLICATE": "Dupliquer",
+        "DUPLICATING": "Duplication...",
+        "CREATED_ON": "Créé le"
+      }
+    }
+  },
   "ERRORS": {
     "REQUIRED_FIELD": "Ce champ est obligatoire",
     "INVALID_EMAIL": "Adresse email invalide",

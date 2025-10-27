@@ -6,14 +6,14 @@
     <div class="header-left">
       <button class="back-btn" (click)="goBack()">
         <i class="fas fa-arrow-left"></i>
-        <span>Retour</span>
+        <span>{{ 'CONTRACT_TEMPLATES.LIST.BACK' | translate }}</span>
       </button>
       <div class="header-info">
         <h1 class="page-title">
-          {{ isDuplicateMode ? 'Sélectionner un modèle à dupliquer' : 'Modèles de contrats' }}
+          {{ isDuplicateMode ? ('CONTRACT_TEMPLATES.LIST.DUPLICATE_TITLE' | translate) : ('CONTRACT_TEMPLATES.LIST.TITLE' | translate) }}
         </h1>
         <p class="page-subtitle" *ngIf="pagination$ | async as pagination">
-          {{ isDuplicateMode ? 'Cliquez sur un modèle pour le dupliquer' : pagination.total + ' modèle(s) trouvé(s)' }}
+          {{ isDuplicateMode ? ('CONTRACT_TEMPLATES.LIST.DUPLICATE_SUBTITLE' | translate) : (pagination.total + ' ' + ('CONTRACT_TEMPLATES.LIST.SUBTITLE' | translate)) }}
         </p>
       </div>
     </div>
@@ -21,11 +21,11 @@
     <div class="header-actions">
       <button class="action-btn secondary" (click)="exportTemplates()">
         <i class="fas fa-download"></i>
-        <span>Exporter</span>
+        <span>{{ 'CONTRACT_TEMPLATES.LIST.EXPORT' | translate }}</span>
       </button>
       <button class="action-btn primary" (click)="createNewTemplate()">
         <i class="fas fa-plus"></i>
-        <span>Nouveau modèle</span>
+        <span>{{ 'CONTRACT_TEMPLATES.LIST.NEW_TEMPLATE' | translate }}</span>
       </button>
     </div>
   </div>
@@ -39,7 +39,7 @@
       <input 
         type="text" 
         class="search-input"
-        placeholder="Rechercher un modèle..."
+        [placeholder]="'CONTRACT_TEMPLATES.LIST.SEARCH_PLACEHOLDER' | translate"
         [(ngModel)]="searchQuery"
         (input)="onSearchChange($event)">
       <button class="clear-search" *ngIf="searchQuery" (click)="clearSearch()">
@@ -56,19 +56,19 @@
           class="filter-chip"
           [class.active]="selectedType === ''"
           (click)="setTypeFilter('')">
-          Tous
+          {{ 'CONTRACT_TEMPLATES.LIST.FILTERS.ALL' | translate }}
         </button>
         <button
           class="filter-chip"
           [class.active]="selectedType === ContractTemplateType.CUSTOM"
           (click)="setTypeFilter(ContractTemplateType.CUSTOM)">
-          Personnalisés
+          {{ 'CONTRACT_TEMPLATES.LIST.FILTERS.CUSTOM' | translate }}
         </button>
         <button
           class="filter-chip"
           [class.active]="selectedType === ContractTemplateType.DEFAULT"
           (click)="setTypeFilter(ContractTemplateType.DEFAULT)">
-          Par défaut
+          {{ 'CONTRACT_TEMPLATES.LIST.FILTERS.DEFAULT' | translate }}
         </button>
       </div>
       
@@ -78,7 +78,7 @@
         [class.active]="showAdvancedFilters"
         (click)="toggleAdvancedFilters()">
         <i class="fas fa-filter"></i>
-        <span>Filtres</span>
+        <span>{{ 'CONTRACT_TEMPLATES.LIST.FILTERS.FILTERS' | translate }}</span>
         <i class="fas fa-chevron-down toggle-icon" [class.rotated]="showAdvancedFilters"></i>
       </button>
     </div>
@@ -90,24 +90,24 @@
           class="view-btn"
           [class.active]="viewMode === 'grid'"
           (click)="setViewMode('grid')"
-          title="Vue grille">
+          [title]="'CONTRACT_TEMPLATES.LIST.FILTERS.GRID_VIEW' | translate">
           <i class="fas fa-th"></i>
         </button>
         <button 
           class="view-btn"
           [class.active]="viewMode === 'list'"
           (click)="setViewMode('list')"
-          title="Vue liste">
+          [title]="'CONTRACT_TEMPLATES.LIST.FILTERS.LIST_VIEW' | translate">
           <i class="fas fa-list"></i>
         </button>
       </div>
       
       <div class="sort-controls">
         <select class="sort-select" [(ngModel)]="sortBy" (change)="onSortChange()">
-          <option value="updatedAt">Date de modification</option>
-          <option value="createdAt">Date de création</option>
-          <option value="name">Nom</option>
-          <option value="usageCount">Utilisations</option>
+          <option value="updatedAt">{{ 'CONTRACT_TEMPLATES.LIST.FILTERS.SORT_BY.UPDATED_AT' | translate }}</option>
+          <option value="createdAt">{{ 'CONTRACT_TEMPLATES.LIST.FILTERS.SORT_BY.CREATED_AT' | translate }}</option>
+          <option value="name">{{ 'CONTRACT_TEMPLATES.LIST.FILTERS.SORT_BY.NAME' | translate }}</option>
+          <option value="usageCount">{{ 'CONTRACT_TEMPLATES.LIST.FILTERS.SORT_BY.USAGE_COUNT' | translate }}</option>
         </select>
         <button class="sort-order-btn" (click)="toggleSortOrder()">
           <i [class]="'fas ' + (sortOrder === 'asc' ? 'fa-sort-up' : 'fa-sort-down')"></i>
@@ -120,29 +120,29 @@
   <div class="advanced-filters" *ngIf="showAdvancedFilters">
     <div class="advanced-filters-content">
       <div class="filter-group">
-        <label>Type de modèle</label>
+        <label>{{ 'CONTRACT_TEMPLATES.LIST.FILTERS.ADVANCED.TEMPLATE_TYPE' | translate }}</label>
         <select [(ngModel)]="selectedType" (change)="applyFilters()">
-          <option value="">Tous les types</option>
-          <option [value]="ContractTemplateType.DEFAULT">Par défaut</option>
-          <option [value]="ContractTemplateType.CUSTOM">Personnalisé</option>
-          <option [value]="ContractTemplateType.DUPLICATED">Dupliqué</option>
+          <option value="">{{ 'CONTRACT_TEMPLATES.LIST.FILTERS.ADVANCED.ALL_TYPES' | translate }}</option>
+          <option [value]="ContractTemplateType.DEFAULT">{{ 'CONTRACT_TEMPLATES.LIST.FILTERS.DEFAULT' | translate }}</option>
+          <option [value]="ContractTemplateType.CUSTOM">{{ 'CONTRACT_TEMPLATES.LIST.FILTERS.CUSTOM' | translate }}</option>
+          <option [value]="ContractTemplateType.DUPLICATED">{{ 'CONTRACT_TEMPLATES.TYPES.DUPLICATED' | translate }}</option>
         </select>
       </div>
       
       <div class="filter-group">
-        <label>Statut</label>
+        <label>{{ 'CONTRACT_TEMPLATES.LIST.FILTERS.ADVANCED.STATUS' | translate }}</label>
         <select [(ngModel)]="selectedStatus" (change)="applyFilters()">
-          <option value="">Tous les statuts</option>
-          <option [value]="ContractTemplateStatus.ACTIVE">Actif</option>
-          <option [value]="ContractTemplateStatus.INACTIVE">Inactif</option>
-          <option [value]="ContractTemplateStatus.ARCHIVED">Archivé</option>
+          <option value="">{{ 'CONTRACT_TEMPLATES.LIST.FILTERS.ADVANCED.ALL_STATUS' | translate }}</option>
+          <option [value]="ContractTemplateStatus.ACTIVE">{{ 'CONTRACT_TEMPLATES.STATUS.ACTIVE' | translate }}</option>
+          <option [value]="ContractTemplateStatus.INACTIVE">{{ 'CONTRACT_TEMPLATES.STATUS.INACTIVE' | translate }}</option>
+          <option [value]="ContractTemplateStatus.ARCHIVED">{{ 'CONTRACT_TEMPLATES.STATUS.ARCHIVED' | translate }}</option>
         </select>
       </div>
       
       <div class="filter-actions">
         <button class="reset-btn" (click)="resetFilters()">
           <i class="fas fa-undo"></i>
-          <span>Réinitialiser</span>
+          <span>{{ 'CONTRACT_TEMPLATES.LIST.FILTERS.ADVANCED.RESET' | translate }}</span>
         </button>
       </div>
     </div>
@@ -157,7 +157,7 @@
     <div class="loading-spinner">
       <i class="fas fa-spinner fa-spin"></i>
     </div>
-    <p>Chargement des modèles...</p>
+    <p>{{ 'CONTRACT_TEMPLATES.LIST.LOADING' | translate }}</p>
   </div>
   
   <!-- Vue grille moderne -->
@@ -183,7 +183,7 @@
         <!-- Contenu de la carte -->
         <div class="card-content" (click)="viewTemplate(template)">
           <h3 class="card-title">{{ template.name }}</h3>
-          <p class="card-description">{{ template.description || 'Aucune description disponible' }}</p>
+          <p class="card-description">{{ template.description || ('CONTRACT_TEMPLATES.LIST.TABLE.NO_DESCRIPTION' | translate) }}</p>
           
           <!-- Badges de type -->
           <div class="card-badges">
@@ -197,11 +197,11 @@
         <div class="card-meta">
           <div class="meta-item">
             <i class="fas fa-chart-line"></i>
-            <span>{{ template.usageCount }} utilisations</span>
+            <span>{{ template.usageCount }} {{ 'CONTRACT_TEMPLATES.LIST.TABLE.USAGE' | translate }}</span>
           </div>
           <div class="meta-item">
             <i class="fas fa-calendar"></i>
-            <span>{{ template.updatedAt | date:'dd/MM/yyyy' }}</span>
+            <span>{{ template.updatedAt | date:getDateFormat() }}</span>
           </div>
         </div>
         
@@ -212,13 +212,13 @@
             (click)="editTemplate(template)"
             [disabled]="template.isSystemDefault">
             <i class="fas fa-edit"></i>
-            <span>Modifier</span>
+            <span>{{ 'CONTRACT_TEMPLATES.LIST.ACTIONS.EDIT' | translate }}</span>
           </button>
           <button
             class="action-btn-small secondary"
             (click)="duplicateTemplate(template)">
             <i class="fas fa-copy"></i>
-            <span>{{ isDuplicateMode ? 'Sélectionner' : 'Dupliquer' }}</span>
+            <span>{{ isDuplicateMode ? ('CONTRACT_TEMPLATES.LIST.ACTIONS.SELECT' | translate) : ('CONTRACT_TEMPLATES.LIST.ACTIONS.DUPLICATE' | translate) }}</span>
           </button>
           <button
             class="action-btn-small danger"
@@ -226,7 +226,7 @@
             [disabled]="template.isSystemDefault"
             *ngIf="!template.isSystemDefault">
             <i class="fas fa-trash"></i>
-            <span>Supprimer</span>
+            <span>{{ 'CONTRACT_TEMPLATES.LIST.ACTIONS.DELETE' | translate }}</span>
           </button>
         </div>
       </div>
@@ -235,12 +235,12 @@
   <!-- Vue liste moderne -->
   <div class="templates-list-modern" *ngIf="viewMode === 'list' && !(loading$ | async) && (templates$ | async) as templates">
     <div class="list-header">
-      <div class="col-name">Nom</div>
-      <div class="col-type">Type</div>
-      <div class="col-status">Statut</div>
-      <div class="col-usage">Utilisations</div>
-      <div class="col-date">Modifié</div>
-      <div class="col-actions">Actions</div>
+      <div class="col-name">{{ 'CONTRACT_TEMPLATES.LIST.TABLE.NAME' | translate }}</div>
+      <div class="col-type">{{ 'CONTRACT_TEMPLATES.LIST.TABLE.TYPE' | translate }}</div>
+      <div class="col-status">{{ 'CONTRACT_TEMPLATES.LIST.TABLE.STATUS' | translate }}</div>
+      <div class="col-usage">{{ 'CONTRACT_TEMPLATES.LIST.TABLE.USAGE' | translate }}</div>
+      <div class="col-date">{{ 'CONTRACT_TEMPLATES.LIST.TABLE.MODIFIED' | translate }}</div>
+      <div class="col-actions">{{ 'CONTRACT_TEMPLATES.LIST.TABLE.ACTIONS' | translate }}</div>
     </div>
     
     <div class="list-item" *ngFor="let template of templates; trackBy: trackByTemplate">
@@ -251,7 +251,7 @@
           </div>
           <div class="template-details">
             <h4 class="template-name">{{ template.name }}</h4>
-            <p class="template-desc">{{ template.description || 'Aucune description' }}</p>
+            <p class="template-desc">{{ template.description || ('CONTRACT_TEMPLATES.LIST.TABLE.NO_DESCRIPTION' | translate) }}</p>
           </div>
         </div>
       </div>
@@ -273,7 +273,7 @@
       </div>
       
       <div class="col-date">
-        <span class="date-text">{{ template.updatedAt | date:'dd/MM/yyyy' }}</span>
+        <span class="date-text">{{ template.updatedAt | date:getDateFormat() }}</span>
       </div>
       
       <div class="col-actions">
@@ -281,13 +281,13 @@
           class="action-btn-icon"
           (click)="editTemplate(template)"
           [disabled]="template.isSystemDefault"
-          title="Modifier">
+          [title]="'CONTRACT_TEMPLATES.LIST.ACTIONS.EDIT' | translate">
           <i class="fas fa-edit"></i>
         </button>
         <button
           class="action-btn-icon"
           (click)="duplicateTemplate(template)"
-          title="Dupliquer">
+          [title]="'CONTRACT_TEMPLATES.LIST.ACTIONS.DUPLICATE' | translate">
           <i class="fas fa-copy"></i>
         </button>
         <button
@@ -295,13 +295,13 @@
           (click)="deleteTemplate(template)"
           [disabled]="template.isSystemDefault"
           *ngIf="!template.isSystemDefault"
-          title="Supprimer">
+          [title]="'CONTRACT_TEMPLATES.LIST.ACTIONS.DELETE' | translate">
           <i class="fas fa-trash"></i>
         </button>
         <button
           class="action-btn-icon"
           (click)="toggleCardMenu(template._id)"
-          title="Plus d'options">
+          [title]="'CONTRACT_TEMPLATES.LIST.ACTIONS.MORE_OPTIONS' | translate">
           <i class="fas fa-ellipsis-v"></i>
         </button>
       </div>
@@ -313,13 +313,13 @@
     <div class="empty-icon">
       <i class="fas fa-file-contract"></i>
     </div>
-    <h3 class="empty-title">Aucun modèle trouvé</h3>
+    <h3 class="empty-title">{{ 'CONTRACT_TEMPLATES.LIST.EMPTY_STATE.TITLE' | translate }}</h3>
     <p class="empty-description">
-      {{ searchQuery ? 'Aucun modèle ne correspond à votre recherche.' : 'Commencez par créer votre premier modèle de contrat.' }}
+      {{ searchQuery ? ('CONTRACT_TEMPLATES.LIST.EMPTY_STATE.NO_SEARCH_RESULTS' | translate) : ('CONTRACT_TEMPLATES.LIST.EMPTY_STATE.NO_TEMPLATES' | translate) }}
     </p>
     <button class="action-btn primary" (click)="createNewTemplate()" *ngIf="!searchQuery">
       <i class="fas fa-plus"></i>
-      <span>Créer un modèle</span>
+      <span>{{ 'CONTRACT_TEMPLATES.LIST.EMPTY_STATE.CREATE_BUTTON' | translate }}</span>
     </button>
   </div>
 </div>

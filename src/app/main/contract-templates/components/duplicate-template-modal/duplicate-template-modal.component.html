@@ -4,7 +4,7 @@
   <div class="modal-header">
     <h2 class="modal-title">
       <i class="fas fa-copy"></i>
-      Dupliquer le modèle
+      {{ 'CONTRACT_TEMPLATES.MODALS.DUPLICATE_TEMPLATE.TITLE' | translate }}
     </h2>
     <button 
       type="button" 
@@ -19,7 +19,7 @@
   <div class="modal-content">
     <!-- Informations du template source -->
     <div class="source-template-info">
-      <h3>Modèle source</h3>
+      <h3>{{ 'CONTRACT_TEMPLATES.MODALS.DUPLICATE_TEMPLATE.SOURCE_TEMPLATE' | translate }}</h3>
       <div class="template-card">
         <div class="template-icon">
           <i class="fas fa-file-contract"></i>
@@ -32,7 +32,7 @@
               {{ getTemplateTypeLabel(data.template.type) }}
             </span>
             <span class="template-date">
-              Créé le {{ data.template.createdAt | date:'dd/MM/yyyy' }}
+              {{ 'CONTRACT_TEMPLATES.MODALS.DUPLICATE_TEMPLATE.CREATED_ON' | translate }} {{ data.template.createdAt | date:'dd/MM/yyyy' }}
             </span>
           </div>
         </div>
@@ -41,12 +41,12 @@
 
     <!-- Formulaire de duplication -->
     <form [formGroup]="duplicateForm" (ngSubmit)="onDuplicate()" class="duplicate-form">
-      <h3>Nouveau modèle</h3>
+      <h3>{{ 'CONTRACT_TEMPLATES.MODALS.DUPLICATE_TEMPLATE.NEW_TEMPLATE' | translate }}</h3>
       
       <!-- Nom du nouveau template -->
       <div class="form-group">
         <label for="name">
-          Nom du modèle <span class="required">*</span>
+          {{ 'CONTRACT_TEMPLATES.MODALS.DUPLICATE_TEMPLATE.NAME_LABEL' | translate }} <span class="required">{{ 'CONTRACT_TEMPLATES.MODALS.DUPLICATE_TEMPLATE.NAME_REQUIRED' | translate }}</span>
         </label>
         <input
           id="name"
@@ -54,7 +54,7 @@
           formControlName="name"
           class="form-control"
           [class.error]="nameErrors"
-          placeholder="Entrez le nom du nouveau modèle"
+          [placeholder]="'CONTRACT_TEMPLATES.MODALS.DUPLICATE_TEMPLATE.NAME_PLACEHOLDER' | translate"
           [disabled]="loading">
         <div class="error-message" *ngIf="nameErrors">
           {{ nameErrors }}
@@ -63,20 +63,20 @@
 
       <!-- Description du nouveau template -->
       <div class="form-group">
-        <label for="description">Description (optionnelle)</label>
+        <label for="description">{{ 'CONTRACT_TEMPLATES.MODALS.DUPLICATE_TEMPLATE.DESCRIPTION_LABEL' | translate }}</label>
         <textarea
           id="description"
           formControlName="description"
           class="form-control"
           [class.error]="descriptionErrors"
-          placeholder="Entrez une description pour le nouveau modèle"
+          [placeholder]="'CONTRACT_TEMPLATES.MODALS.DUPLICATE_TEMPLATE.DESCRIPTION_PLACEHOLDER' | translate"
           rows="3"
           [disabled]="loading"></textarea>
         <div class="error-message" *ngIf="descriptionErrors">
           {{ descriptionErrors }}
         </div>
         <div class="character-count">
-          {{ duplicateForm.get('description')?.value?.length || 0 }}/500 caractères
+          {{ duplicateForm.get('description')?.value?.length || 0 }}/500 {{ 'CONTRACT_TEMPLATES.MODALS.DUPLICATE_TEMPLATE.CHARACTER_COUNT' | translate }}
         </div>
       </div>
     </form>
@@ -89,7 +89,7 @@
       class="btn secondary"
       (click)="onCancel()"
       [disabled]="loading">
-      Annuler
+      {{ 'CONTRACT_TEMPLATES.MODALS.DUPLICATE_TEMPLATE.CANCEL' | translate }}
     </button>
     <button 
       type="button" 
@@ -100,7 +100,7 @@
         <i class="fas fa-spinner fa-spin"></i>
       </span>
       <i *ngIf="!loading" class="fas fa-copy"></i>
-      {{ loading ? 'Duplication...' : 'Dupliquer' }}
+      {{ loading ? ('CONTRACT_TEMPLATES.MODALS.DUPLICATE_TEMPLATE.DUPLICATING' | translate) : ('CONTRACT_TEMPLATES.MODALS.DUPLICATE_TEMPLATE.DUPLICATE' | translate) }}
     </button>
   </div>
 </div>

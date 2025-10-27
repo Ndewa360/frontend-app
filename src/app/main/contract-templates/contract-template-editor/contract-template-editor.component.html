@@ -5,11 +5,11 @@
       <div class="header-left">
         <button ibmButton="ghost" size="sm" (click)="handleBackNavigation()">
           <i class="fas fa-arrow-left text-sm mr-2"></i>
-          Retour
+          {{ 'CONTRACT_TEMPLATES.EDITOR.BACK' | translate }}
         </button>
 
         <div class="header-info">
-          <h1 class="app-productive-heading-03">{{ isEditMode ? 'Modifier le modèle' : 'Nouveau modèle' }}</h1>
+          <h1 class="app-productive-heading-03">{{ isEditMode ? ('CONTRACT_TEMPLATES.EDITOR.EDIT_TEMPLATE' | translate) : ('CONTRACT_TEMPLATES.EDITOR.NEW_TEMPLATE' | translate) }}</h1>
           <div class="header-meta">
             <span class="app-body-short-01" *ngIf="templateName">{{ templateName }}</span>
             <div class="status-indicators">
@@ -29,21 +29,21 @@
             [class.active]="viewMode === 'edit'"
             (click)="setViewMode('edit')">
             <i class="fas fa-edit"></i>
-            <span>Édition</span>
+            <span>{{ 'CONTRACT_TEMPLATES.EDITOR.EDIT_MODE' | translate }}</span>
           </button>
           <button
             class="toggle-btn"
             [class.active]="viewMode === 'preview'"
             (click)="setViewMode('preview')">
             <i class="fas fa-eye"></i>
-            <span>Aperçu</span>
+            <span>{{ 'CONTRACT_TEMPLATES.EDITOR.PREVIEW_MODE' | translate }}</span>
           </button>
         </div>
 
         <div class="action-buttons">
           <button class="action-btn secondary" (click)="openExportModal()">
             <i class="fas fa-download"></i>
-            <span>Exporter</span>
+            <span>{{ 'CONTRACT_TEMPLATES.EDITOR.EXPORT' | translate }}</span>
           </button>
 
           <button
@@ -51,7 +51,7 @@
             (click)="saveTemplate()"
             [disabled]="isSaving || !hasChanges()">
             <i [class]="'fas ' + (isSaving ? 'fa-spinner fa-spin' : 'fa-save')"></i>
-            <span>{{ isSaving ? 'Sauvegarde...' : 'Sauvegarder' }}</span>
+            <span>{{ isSaving ? ('CONTRACT_TEMPLATES.EDITOR.SAVING' | translate) : ('CONTRACT_TEMPLATES.EDITOR.SAVE' | translate) }}</span>
           </button>
         </div>
       </div>
@@ -102,8 +102,8 @@
               <div class="spinner-ring"></div>
             </div>
             <div class="loading-text">
-              <h3>Chargement du modèle</h3>
-              <p>Préparation de l'éditeur de contrat...</p>
+              <h3>{{ 'CONTRACT_TEMPLATES.EDITOR.LOADING_TEMPLATE' | translate }}</h3>
+              <p>{{ 'CONTRACT_TEMPLATES.EDITOR.LOADING_EDITOR' | translate }}</p>
             </div>
           </div>
         </div>
@@ -113,11 +113,11 @@
       <div class="error-container" *ngIf="loadingError && !isLoading">
         <div class="error-content">
           <i class="fas fa-exclamation-triangle error-icon"></i>
-          <h3>Erreur de chargement</h3>
+          <h3>{{ 'CONTRACT_TEMPLATES.EDITOR.LOADING_ERROR' | translate }}</h3>
           <p>{{ loadingError }}</p>
           <button ibmButton="primary" size="sm" (click)="retryLoading()">
             <i class="fas fa-redo mr-2"></i>
-            Réessayer
+            {{ 'CONTRACT_TEMPLATES.EDITOR.RETRY' | translate }}
           </button>
         </div>
       </div>
@@ -138,32 +138,32 @@
 
           <!-- Contenu normal -->
           <div class="sidebar-section" *ngIf="!isContentLoading">
-            <h3 class="app-productive-heading-04">Informations générales</h3>
+            <h3 class="app-productive-heading-04">{{ 'CONTRACT_TEMPLATES.EDITOR.GENERAL_INFO' | translate }}</h3>
 
             <div class="form-group">
-              <label class="app-label-01">Nom du modèle *</label>
+              <label class="app-label-01">{{ 'CONTRACT_TEMPLATES.EDITOR.TEMPLATE_NAME' | translate }} *</label>
               <input
                 type="text"
                 class="form-control"
                 [(ngModel)]="templateName"
-                placeholder="Ex: Contrat de location standard"
+                [placeholder]="'CONTRACT_TEMPLATES.EDITOR.TEMPLATE_NAME_PLACEHOLDER' | translate"
                 (ngModelChange)="onTemplateChange()"
                 required>
             </div>
 
             <div class="form-group">
-              <label class="app-label-01">Description</label>
+              <label class="app-label-01">{{ 'CONTRACT_TEMPLATES.EDITOR.DESCRIPTION' | translate }}</label>
               <textarea
                 class="form-control"
                 [(ngModel)]="templateDescription"
-                placeholder="Description du modèle..."
+                [placeholder]="'CONTRACT_TEMPLATES.EDITOR.DESCRIPTION_PLACEHOLDER' | translate"
                 (ngModelChange)="onTemplateChange()"
                 rows="3">
               </textarea>
             </div>
 
             <div class="form-group">
-              <label class="app-label-01">Type</label>
+              <label class="app-label-01">{{ 'CONTRACT_TEMPLATES.EDITOR.TYPE' | translate }}</label>
               <ibm-combo-box
                 placeholder="Sélectionner"
                 [items]="templateTypeOptions"
@@ -174,7 +174,7 @@
             </div>
 
             <div class="form-group">
-              <label class="app-label-01">Statut</label>
+              <label class="app-label-01">{{ 'CONTRACT_TEMPLATES.EDITOR.STATUS' | translate }}</label>
               <ibm-combo-box
                 placeholder="Sélectionner"
                 [items]="statusOptions"
@@ -189,8 +189,8 @@
 
           <!-- Variables disponibles -->
           <div class="sidebar-section" *ngIf="!isContentLoading">
-            <h3 class="app-productive-heading-04">Variables</h3>
-            <p class="app-helper-text-01">Cliquez pour insérer</p>
+            <h3 class="app-productive-heading-04">{{ 'CONTRACT_TEMPLATES.EDITOR.VARIABLES' | translate }}</h3>
+            <p class="app-helper-text-01">{{ 'CONTRACT_TEMPLATES.EDITOR.VARIABLES_HELP' | translate }}</p>
 
             <div class="variables-list">
               <div class="variable-category" *ngFor="let category of variableCategories">
@@ -265,7 +265,7 @@
             <div class="action-buttons">
               <button class="preview-btn primary" (click)="setViewMode('edit')">
                 <i class="fas fa-edit"></i>
-                Retour à l'édition
+                {{ 'CONTRACT_TEMPLATES.EDITOR.BACK_TO_EDIT' | translate }}
               </button>
             </div>
           </div>
@@ -288,12 +288,12 @@
     <!-- Barre de statut -->
     <div class="editor-status-bar">
       <div class="status-left">
-        <span class="app-helper-text-01">{{ getWordCount() }} mots</span>
-        <span class="app-helper-text-01">{{ getCharacterCount() }} caractères</span>
+        <span class="app-helper-text-01">{{ getWordCount() }} {{ 'CONTRACT_TEMPLATES.EDITOR.WORD_COUNT' | translate }}</span>
+        <span class="app-helper-text-01">{{ getCharacterCount() }} {{ 'CONTRACT_TEMPLATES.EDITOR.CHARACTER_COUNT' | translate }}</span>
       </div>
       
       <div class="status-right">
-        <span class="app-helper-text-01">Dernière sauvegarde : {{ getLastSaveTime() }}</span>
+        <span class="app-helper-text-01">{{ 'CONTRACT_TEMPLATES.EDITOR.LAST_SAVE' | translate }} : {{ getLastSaveTime() }}</span>
       </div>
     </div>
 </div>
@@ -305,7 +305,7 @@
     <div class="export-modal-header">
       <div class="export-modal-title">
         <i class="fas fa-download"></i>
-        <h2>Exporter le template</h2>
+        <h2>{{ 'CONTRACT_TEMPLATES.EDITOR.EXPORT_MODAL.TITLE' | translate }}</h2>
       </div>
       <button class="export-modal-close" (click)="closeExportModal()">
         <i class="fas fa-times"></i>
@@ -315,7 +315,7 @@
     <!-- Contenu du modal -->
     <div class="export-modal-content">
       <p class="export-modal-description">
-        Choisissez le format d'export pour votre template de contrat
+        {{ 'CONTRACT_TEMPLATES.EDITOR.EXPORT_MODAL.DESCRIPTION' | translate }}
       </p>
 
       <div class="export-options">
@@ -341,13 +341,13 @@
     <div class="export-modal-footer">
       <button class="export-btn secondary" (click)="closeExportModal()">
         <i class="fas fa-times"></i>
-        <span>Annuler</span>
+        <span>{{ 'CONTRACT_TEMPLATES.EDITOR.EXPORT_MODAL.CANCEL' | translate }}</span>
       </button>
       <button class="export-btn primary"
               (click)="exportTemplate()"
               [disabled]="!selectedExportFormat || isExporting">
         <i [class]="'fas ' + (isExporting ? 'fa-spinner fa-spin' : 'fa-download')"></i>
-        <span>{{ isExporting ? 'Export en cours...' : 'Exporter' }}</span>
+        <span>{{ isExporting ? ('CONTRACT_TEMPLATES.EDITOR.EXPORT_MODAL.EXPORTING' | translate) : ('CONTRACT_TEMPLATES.EDITOR.EXPORT_MODAL.EXPORT' | translate) }}</span>
       </button>
     </div>
   </div>
@@ -360,17 +360,17 @@
     <div class="modal-header">
       <div class="modal-title">
         <i class="fas fa-exclamation-triangle"></i>
-        <h3>Modifications non sauvegardées</h3>
+        <h3>{{ 'CONTRACT_TEMPLATES.EDITOR.UNSAVED_CHANGES.TITLE' | translate }}</h3>
       </div>
     </div>
 
     <!-- Contenu du modal -->
     <div class="modal-body">
       <p class="main-message">
-        <strong>Vous avez des modifications non sauvegardées.</strong>
+        <strong>{{ 'CONTRACT_TEMPLATES.EDITOR.UNSAVED_CHANGES.MESSAGE' | translate }}</strong>
       </p>
       <p class="sub-message">
-        Que souhaitez-vous faire avant de quitter cette page ?
+        {{ 'CONTRACT_TEMPLATES.EDITOR.UNSAVED_CHANGES.QUESTION' | translate }}
       </p>
     </div>
 
@@ -380,7 +380,7 @@
               class="modal-btn secondary"
               (click)="cancelNavigation()">
         <i class="fas fa-times"></i>
-        <span>Rester</span>
+        <span>{{ 'CONTRACT_TEMPLATES.EDITOR.UNSAVED_CHANGES.STAY' | translate }}</span>
       </button>
 
       <div class="action-buttons">
@@ -390,15 +390,15 @@
                 [disabled]="isSaving">
           <i class="fas fa-save" *ngIf="!isSaving"></i>
           <i class="fas fa-spinner fa-spin" *ngIf="isSaving"></i>
-          <span *ngIf="!isSaving">Sauvegarder d'abord</span>
-          <span *ngIf="isSaving">Sauvegarde...</span>
+          <span *ngIf="!isSaving">{{ 'CONTRACT_TEMPLATES.EDITOR.UNSAVED_CHANGES.SAVE_FIRST' | translate }}</span>
+          <span *ngIf="isSaving">{{ 'CONTRACT_TEMPLATES.EDITOR.SAVING' | translate }}</span>
         </button>
 
         <button type="button"
                 class="modal-btn danger"
                 (click)="ignoreChangesAndNavigate()">
           <i class="fas fa-trash-alt"></i>
-          <span>Ignorer les modifications</span>
+          <span>{{ 'CONTRACT_TEMPLATES.EDITOR.UNSAVED_CHANGES.IGNORE' | translate }}</span>
         </button>
       </div>
     </div>

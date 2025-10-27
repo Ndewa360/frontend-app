@@ -5,17 +5,17 @@
     <div class="hero-section">
       <div class="hero-content">
         <div class="hero-text">
-          <h1 class="app-productive-heading-05">Gestion des Modèles de Contrats</h1>
-          <p class="app-body-long-01">Créez, gérez et personnalisez vos modèles de contrats de location avec une interface moderne et intuitive.</p>
+          <h1 class="app-productive-heading-05">{{ 'CONTRACT_TEMPLATES.TITLE' | translate }}</h1>
+          <p class="app-body-long-01">{{ 'CONTRACT_TEMPLATES.SUBTITLE' | translate }}</p>
         </div>
         <div class="hero-actions">
           <button ibmButton="primary" size="lg" (click)="createNewTemplate()">
             <i class="fas fa-plus mr-2"></i>
-            Nouveau modèle
+            {{ 'CONTRACT_TEMPLATES.NEW_TEMPLATE' | translate }}
           </button>
           <button ibmButton="secondary" size="lg" (click)="reindexTemplates()">
             <i class="fas fa-sync mr-2"></i>
-            Réindexer
+            {{ 'CONTRACT_TEMPLATES.REINDEX' | translate }}
           </button>
         </div>
       </div>
@@ -37,8 +37,8 @@
           </div>
           <div class="metric-content">
             <div class="metric-value">{{ statistics.totalTemplates }}</div>
-            <div class="metric-label">Modèles total</div>
-            <div class="metric-description">{{ statistics.activeTemplates }} actifs</div>
+            <div class="metric-label">{{ 'CONTRACT_TEMPLATES.METRICS.TOTAL_TEMPLATES' | translate }}</div>
+            <div class="metric-description">{{ statistics.activeTemplates }} {{ 'CONTRACT_TEMPLATES.METRICS.ACTIVE' | translate }}</div>
           </div>
         </div>
 
@@ -51,8 +51,8 @@
           </div>
           <div class="metric-content">
             <div class="metric-value">{{ statistics.activeTemplates }}</div>
-            <div class="metric-label">Modèles actifs</div>
-            <div class="metric-description">{{ getActivePercentage(statistics) }}% du total</div>
+            <div class="metric-label">{{ 'CONTRACT_TEMPLATES.METRICS.ACTIVE_TEMPLATES' | translate }}</div>
+            <div class="metric-description">{{ getActivePercentage(statistics) }}% {{ 'CONTRACT_TEMPLATES.METRICS.OF_TOTAL' | translate }}</div>
           </div>
         </div>
 
@@ -69,8 +69,8 @@
           </div>
           <div class="metric-content">
             <div class="metric-value">{{ statistics.totalUsage }}</div>
-            <div class="metric-label">Utilisations totales</div>
-            <div class="metric-description">Toutes les utilisations</div>
+            <div class="metric-label">{{ 'CONTRACT_TEMPLATES.METRICS.TOTAL_USAGE' | translate }}</div>
+            <div class="metric-description">{{ 'CONTRACT_TEMPLATES.METRICS.ALL_USAGE' | translate }}</div>
           </div>
         </div>
 
@@ -83,8 +83,8 @@
           </div>
           <div class="metric-content">
             <div class="metric-value">{{ statistics.customTemplates }}</div>
-            <div class="metric-label">Modèles personnalisés</div>
-            <div class="metric-description">{{ statistics.defaultTemplates }} par défaut</div>
+            <div class="metric-label">{{ 'CONTRACT_TEMPLATES.METRICS.CUSTOM_TEMPLATES' | translate }}</div>
+            <div class="metric-description">{{ statistics.defaultTemplates }} {{ 'CONTRACT_TEMPLATES.METRICS.DEFAULT' | translate }}</div>
           </div>
         </div>
       </div>
@@ -93,8 +93,8 @@
     <!-- Actions rapides -->
     <div class="quick-actions-section">
       <div class="section-header">
-        <h2 class="app-productive-heading-04">Actions rapides</h2>
-        <p class="app-body-short-01">Accédez rapidement aux fonctionnalités principales</p>
+        <h2 class="app-productive-heading-04">{{ 'CONTRACT_TEMPLATES.QUICK_ACTIONS.TITLE' | translate }}</h2>
+        <p class="app-body-short-01">{{ 'CONTRACT_TEMPLATES.QUICK_ACTIONS.SUBTITLE' | translate }}</p>
       </div>
       
       <div class="quick-actions-grid">
@@ -103,8 +103,8 @@
             <i class="fas fa-plus text-xl"></i>
           </div>
           <div class="action-content">
-            <h3 class="app-productive-heading-03">Créer un modèle</h3>
-            <p class="app-body-short-01">Créez un nouveau modèle de contrat personnalisé</p>
+            <h3 class="app-productive-heading-03">{{ 'CONTRACT_TEMPLATES.QUICK_ACTIONS.CREATE_TEMPLATE' | translate }}</h3>
+            <p class="app-body-short-01">{{ 'CONTRACT_TEMPLATES.QUICK_ACTIONS.CREATE_DESCRIPTION' | translate }}</p>
           </div>
           <div class="action-arrow">
             <i class="fas fa-arrow-right text-sm"></i>
@@ -116,8 +116,8 @@
             <i class="fas fa-eye text-xl"></i>
           </div>
           <div class="action-content">
-            <h3 class="app-productive-heading-03">Parcourir les modèles</h3>
-            <p class="app-body-short-01">Consultez et gérez vos modèles existants</p>
+            <h3 class="app-productive-heading-03">{{ 'CONTRACT_TEMPLATES.QUICK_ACTIONS.BROWSE_TEMPLATES' | translate }}</h3>
+            <p class="app-body-short-01">{{ 'CONTRACT_TEMPLATES.QUICK_ACTIONS.BROWSE_DESCRIPTION' | translate }}</p>
           </div>
           <div class="action-arrow">
             <i class="fas fa-arrow-right text-sm"></i>
@@ -129,8 +129,8 @@
             <i class="fas fa-copy text-xl"></i>
           </div>
           <div class="action-content">
-            <h3 class="app-productive-heading-03">Dupliquer un modèle</h3>
-            <p class="app-body-short-01">Créez une copie d'un modèle existant</p>
+            <h3 class="app-productive-heading-03">{{ 'CONTRACT_TEMPLATES.QUICK_ACTIONS.DUPLICATE_TEMPLATE' | translate }}</h3>
+            <p class="app-body-short-01">{{ 'CONTRACT_TEMPLATES.QUICK_ACTIONS.DUPLICATE_DESCRIPTION' | translate }}</p>
           </div>
           <div class="action-arrow">
             <i class="fas fa-arrow-right text-sm"></i>
@@ -142,8 +142,8 @@
             <i class="fas fa-sync text-xl"></i>
           </div>
           <div class="action-content">
-            <h3 class="app-productive-heading-03">Réindexer les templates</h3>
-            <p class="app-body-short-01">Synchroniser avec Google Cloud Storage</p>
+            <h3 class="app-productive-heading-03">{{ 'CONTRACT_TEMPLATES.QUICK_ACTIONS.REINDEX_TEMPLATES' | translate }}</h3>
+            <p class="app-body-short-01">{{ 'CONTRACT_TEMPLATES.QUICK_ACTIONS.REINDEX_DESCRIPTION' | translate }}</p>
           </div>
           <div class="action-arrow">
             <i class="fas fa-arrow-right text-sm"></i>
@@ -155,9 +155,9 @@
     <!-- Modèles récents -->
     <div class="recent-templates-section">
       <div class="section-header">
-        <h2 class="app-productive-heading-04">Modèles récents</h2>
+        <h2 class="app-productive-heading-04">{{ 'CONTRACT_TEMPLATES.RECENT_TEMPLATES.TITLE' | translate }}</h2>
         <button ibmButton="ghost" size="sm" (click)="viewAllTemplates()">
-          Voir tout
+          {{ 'CONTRACT_TEMPLATES.RECENT_TEMPLATES.VIEW_ALL' | translate }}
           <i class="fas fa-arrow-right text-sm ml-2"></i>
         </button>
       </div>
@@ -167,25 +167,25 @@
           <div class="template-header">
             <div class="template-type">
               <span class="template-type-badge" [ngClass]="getTypeBadgeClass(template.type)">
-                {{ getTemplateTypeLabel(template.type) }}
+                {{ 'CONTRACT_TEMPLATES.TYPES.' + template.type | translate }}
               </span>
             </div>
             <div class="template-status">
               <span class="template-status-badge" [ngClass]="getStatusBadgeClass(template.status)">
-                {{ getStatusLabel(template.status) }}
+                {{ 'CONTRACT_TEMPLATES.STATUS.' + template.status | translate }}
               </span>
             </div>
           </div>
           
           <div class="template-content">
             <h3 class="app-productive-heading-03">{{ template.name }}</h3>
-            <p class="app-body-short-01">{{ template.description || 'Aucune description' }}</p>
+            <p class="app-body-short-01">{{ template.description || ('CONTRACT_TEMPLATES.RECENT_TEMPLATES.NO_DESCRIPTION' | translate) }}</p>
           </div>
 
           <div class="template-meta">
             <div class="template-usage">
               <i class="fas fa-chart-line text-sm mr-1"></i>
-              <span>{{ template.usageCount }} utilisations</span>
+              <span>{{ template.usageCount }} {{ 'CONTRACT_TEMPLATES.RECENT_TEMPLATES.USAGE_COUNT' | translate }}</span>
             </div>
             <div class="template-date">
               <i class="fas fa-calendar text-sm mr-1"></i>
@@ -200,11 +200,11 @@
               (click)="editTemplate(template)"
               *ngIf="!template.isSystemDefault">
               <i class="fas fa-edit text-sm mr-1"></i>
-              Modifier
+              {{ 'CONTRACT_TEMPLATES.RECENT_TEMPLATES.EDIT' | translate }}
             </button>
             <button ibmButton="ghost" size="sm" (click)="viewTemplate(template)">
               <i class="fas fa-eye text-sm mr-1"></i>
-              Voir
+              {{ 'CONTRACT_TEMPLATES.RECENT_TEMPLATES.VIEW' | translate }}
             </button>
           </div>
         </div>
@@ -215,11 +215,11 @@
         <div class="empty-icon">
           <i class="fas fa-file-contract text-3xl"></i>
         </div>
-        <h3 class="app-productive-heading-03">Aucun modèle récent</h3>
-        <p class="app-body-short-01">Commencez par créer votre premier modèle de contrat</p>
+        <h3 class="app-productive-heading-03">{{ 'CONTRACT_TEMPLATES.EMPTY_STATE.TITLE' | translate }}</h3>
+        <p class="app-body-short-01">{{ 'CONTRACT_TEMPLATES.EMPTY_STATE.DESCRIPTION' | translate }}</p>
         <button ibmButton="primary" (click)="createNewTemplate()">
           <i class="fas fa-plus text-sm mr-2"></i>
-          Créer un modèle
+          {{ 'CONTRACT_TEMPLATES.EMPTY_STATE.CREATE_BUTTON' | translate }}
         </button>
       </div>
     </div>
@@ -227,7 +227,7 @@
     <!-- Conseils et astuces -->
     <div class="tips-section">
       <div class="section-header">
-        <h2 class="app-productive-heading-04">Conseils et astuces</h2>
+        <h2 class="app-productive-heading-04">{{ 'CONTRACT_TEMPLATES.TIPS.TITLE' | translate }}</h2>
       </div>
       
       <div class="tips-grid">
@@ -236,8 +236,8 @@
             <i class="fas fa-lightbulb text-xl"></i>
           </div>
           <div class="tip-content">
-            <h4 class="app-productive-heading-03">Variables dynamiques</h4>
-            <p class="app-body-short-01">Utilisez des variables pour personnaliser automatiquement vos contrats.</p>
+            <h4 class="app-productive-heading-03">{{ 'CONTRACT_TEMPLATES.TIPS.DYNAMIC_VARIABLES.TITLE' | translate }}</h4>
+            <p class="app-body-short-01">{{ 'CONTRACT_TEMPLATES.TIPS.DYNAMIC_VARIABLES.DESCRIPTION' | translate }}</p>
           </div>
         </div>
 
@@ -246,8 +246,8 @@
             <i class="fas fa-copy text-xl"></i>
           </div>
           <div class="tip-content">
-            <h4 class="app-productive-heading-03">Duplication intelligente</h4>
-            <p class="app-body-short-01">Dupliquez vos modèles existants pour créer rapidement de nouvelles variantes.</p>
+            <h4 class="app-productive-heading-03">{{ 'CONTRACT_TEMPLATES.TIPS.SMART_DUPLICATION.TITLE' | translate }}</h4>
+            <p class="app-body-short-01">{{ 'CONTRACT_TEMPLATES.TIPS.SMART_DUPLICATION.DESCRIPTION' | translate }}</p>
           </div>
         </div>
 
@@ -256,8 +256,8 @@
             <i class="fas fa-save text-xl"></i>
           </div>
           <div class="tip-content">
-            <h4 class="app-productive-heading-03">Sauvegarde automatique</h4>
-            <p class="app-body-short-01">Vos modifications sont automatiquement sauvegardées pendant l'édition.</p>
+            <h4 class="app-productive-heading-03">{{ 'CONTRACT_TEMPLATES.TIPS.AUTO_SAVE.TITLE' | translate }}</h4>
+            <p class="app-body-short-01">{{ 'CONTRACT_TEMPLATES.TIPS.AUTO_SAVE.DESCRIPTION' | translate }}</p>
           </div>
         </div>
       </div>

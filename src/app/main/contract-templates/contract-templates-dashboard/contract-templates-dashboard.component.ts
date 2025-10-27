@@ -87,8 +87,8 @@ export class ContractTemplatesDashboardComponent implements OnInit, OnDestroy {
    */
   duplicateTemplate(): void {
     const dialogData: TemplateSelectionData = {
-      title: 'Sélectionner un modèle à dupliquer',
-      message: 'Choisissez le modèle que vous souhaitez dupliquer :',
+      title: 'CONTRACT_TEMPLATES.DUPLICATE_MODAL.TITLE',
+      message: 'CONTRACT_TEMPLATES.DUPLICATE_MODAL.MESSAGE',
       allowSystemTemplates: true
     };
 
@@ -199,32 +199,14 @@ export class ContractTemplatesDashboardComponent implements OnInit, OnDestroy {
    * Obtenir le libellé du type de modèle
    */
   getTemplateTypeLabel(type: ContractTemplateType): string {
-    switch (type) {
-      case ContractTemplateType.DEFAULT:
-        return 'Par défaut';
-      case ContractTemplateType.CUSTOM:
-        return 'Personnalisé';
-      case ContractTemplateType.DUPLICATED:
-        return 'Dupliqué';
-      default:
-        return 'Inconnu';
-    }
+    return type.toUpperCase();
   }
 
   /**
    * Obtenir le libellé du statut
    */
   getStatusLabel(status: ContractTemplateStatus): string {
-    switch (status) {
-      case ContractTemplateStatus.ACTIVE:
-        return 'Actif';
-      case ContractTemplateStatus.INACTIVE:
-        return 'Inactif';
-      case ContractTemplateStatus.ARCHIVED:
-        return 'Archivé';
-      default:
-        return 'Inconnu';
-    }
+    return status.toUpperCase();
   }
 
   /**

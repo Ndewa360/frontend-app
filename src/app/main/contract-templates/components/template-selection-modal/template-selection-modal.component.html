@@ -1,25 +1,25 @@
 <div class="template-selection-modal">
   <div class="modal-header">
-    <h2 mat-dialog-title>{{ data.title }}</h2>
+    <h2 mat-dialog-title>{{ data.title | translate }}</h2>
     <button mat-icon-button mat-dialog-close>
       <i class="fa fa-times"></i>
     </button>
   </div>
 
   <div class="modal-content" mat-dialog-content>
-    <p class="modal-message">{{ data.message }}</p>
+    <p class="modal-message">{{ data.message | translate }}</p>
 
     <!-- Filtres -->
     <div class="filters-section">
       <div class="filter-row">
         <mat-form-field appearance="outline" class="search-field">
-          <mat-label>Rechercher un modèle</mat-label>
-          <input matInput [(ngModel)]="searchTerm" placeholder="Nom ou description...">
+          <mat-label>{{ 'CONTRACT_TEMPLATES.MODALS.TEMPLATE_SELECTION.SEARCH_PLACEHOLDER' | translate }}</mat-label>
+          <input matInput [(ngModel)]="searchTerm" [placeholder]="'CONTRACT_TEMPLATES.MODALS.TEMPLATE_SELECTION.SEARCH_LABEL' | translate">
           <mat-icon matSuffix>search</mat-icon>
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="type-field">
-          <mat-label>Type</mat-label>
+          <mat-label>{{ 'CONTRACT_TEMPLATES.MODALS.TEMPLATE_SELECTION.TYPE_LABEL' | translate }}</mat-label>
           <mat-select [(ngModel)]="selectedType">
             <mat-option *ngFor="let type of templateTypes" [value]="type.value">
               {{ type.label }}
@@ -30,7 +30,7 @@
 
       <div class="filter-options">
         <mat-checkbox [(ngModel)]="showSystemTemplates">
-          Inclure les modèles système
+          {{ 'CONTRACT_TEMPLATES.MODALS.TEMPLATE_SELECTION.INCLUDE_SYSTEM' | translate }}
         </mat-checkbox>
       </div>
     </div>
@@ -53,8 +53,8 @@
               <span class="template-type">{{ getTemplateTypeLabel(template.type) }}</span>
             </div>
             <div class="template-badges">
-              <span *ngIf="template.isDefault" class="badge badge-primary">Défaut</span>
-              <span *ngIf="template.isSystemDefault" class="badge badge-system">Système</span>
+              <span *ngIf="template.isDefault" class="badge badge-primary">{{ 'CONTRACT_TEMPLATES.MODALS.TEMPLATE_SELECTION.DEFAULT_BADGE' | translate }}</span>
+              <span *ngIf="template.isSystemDefault" class="badge badge-system">{{ 'CONTRACT_TEMPLATES.MODALS.TEMPLATE_SELECTION.SYSTEM_BADGE' | translate }}</span>
             </div>
           </div>
 
@@ -65,7 +65,7 @@
           <div class="template-meta">
             <div class="meta-item">
               <i class="fa fa-chart-line"></i>
-              <span>{{ template.usageCount }} utilisations</span>
+              <span>{{ template.usageCount }} {{ 'CONTRACT_TEMPLATES.MODALS.TEMPLATE_SELECTION.USAGE_COUNT' | translate }}</span>
             </div>
             <div class="meta-item">
               <i class="fa fa-calendar"></i>
@@ -81,21 +81,21 @@
 
       <div class="no-templates" *ngIf="getFilteredTemplates(templates).length === 0">
         <i class="fa fa-search"></i>
-        <p>Aucun modèle trouvé avec ces critères</p>
+        <p>{{ 'CONTRACT_TEMPLATES.MODALS.TEMPLATE_SELECTION.NO_TEMPLATES_FOUND' | translate }}</p>
       </div>
     </div>
 
     <ng-template #loadingTemplate>
       <div class="loading-state">
         <mat-spinner diameter="40"></mat-spinner>
-        <p>Chargement des modèles...</p>
+        <p>{{ 'CONTRACT_TEMPLATES.MODALS.TEMPLATE_SELECTION.LOADING_TEMPLATES' | translate }}</p>
       </div>
     </ng-template>
   </div>
 
   <div class="modal-actions" mat-dialog-actions>
     <button mat-button (click)="cancel()">
-      Annuler
+      {{ 'CONTRACT_TEMPLATES.MODALS.TEMPLATE_SELECTION.CANCEL' | translate }}
     </button>
     <button 
       mat-raised-button 
@@ -103,7 +103,7 @@
       [disabled]="!selectedTemplate"
       (click)="confirm()">
       <i class="fa fa-copy"></i>
-      Dupliquer
+      {{ 'CONTRACT_TEMPLATES.MODALS.TEMPLATE_SELECTION.DUPLICATE' | translate }}
     </button>
   </div>
 </div>

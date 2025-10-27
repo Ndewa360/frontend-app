@@ -1384,6 +1384,266 @@
       "ADMINISTRATION": "41:22"
     }
   },
+  "CONTRACT_TEMPLATES": {
+    "TITLE": "Contract Templates Management",
+    "SUBTITLE": "Create, manage and customize your lease contract templates with a modern and intuitive interface.",
+    "NEW_TEMPLATE": "New Template",
+    "REINDEX": "Reindex",
+    "METRICS": {
+      "TOTAL_TEMPLATES": "Total Templates",
+      "ACTIVE_TEMPLATES": "Active Templates",
+      "TOTAL_USAGE": "Total Usage",
+      "CUSTOM_TEMPLATES": "Custom Templates",
+      "ACTIVE": "active",
+      "OF_TOTAL": "of total",
+      "ALL_USAGE": "All usage",
+      "DEFAULT": "default"
+    },
+    "QUICK_ACTIONS": {
+      "TITLE": "Quick Actions",
+      "SUBTITLE": "Quickly access main features",
+      "CREATE_TEMPLATE": "Create Template",
+      "CREATE_DESCRIPTION": "Create a new custom contract template",
+      "BROWSE_TEMPLATES": "Browse Templates",
+      "BROWSE_DESCRIPTION": "View and manage your existing templates",
+      "DUPLICATE_TEMPLATE": "Duplicate Template",
+      "DUPLICATE_DESCRIPTION": "Create a copy of an existing template",
+      "REINDEX_TEMPLATES": "Reindex Templates",
+      "REINDEX_DESCRIPTION": "Synchronize with Google Cloud Storage"
+    },
+    "RECENT_TEMPLATES": {
+      "TITLE": "Recent Templates",
+      "VIEW_ALL": "View All",
+      "NO_DESCRIPTION": "No description",
+      "USAGE_COUNT": "usage",
+      "EDIT": "Edit",
+      "VIEW": "View"
+    },
+    "EMPTY_STATE": {
+      "TITLE": "No Recent Templates",
+      "DESCRIPTION": "Start by creating your first contract template",
+      "CREATE_BUTTON": "Create Template"
+    },
+    "TIPS": {
+      "TITLE": "Tips and Tricks",
+      "DYNAMIC_VARIABLES": {
+        "TITLE": "Dynamic Variables",
+        "DESCRIPTION": "Use variables to automatically customize your contracts."
+      },
+      "SMART_DUPLICATION": {
+        "TITLE": "Smart Duplication",
+        "DESCRIPTION": "Duplicate your existing templates to quickly create new variants."
+      },
+      "AUTO_SAVE": {
+        "TITLE": "Auto Save",
+        "DESCRIPTION": "Your changes are automatically saved during editing."
+      }
+    },
+    "TYPES": {
+      "DEFAULT": "Default",
+      "CUSTOM": "Custom",
+      "DUPLICATED": "Duplicated",
+      "UNKNOWN": "Unknown"
+    },
+    "STATUS": {
+      "ACTIVE": "Active",
+      "INACTIVE": "Inactive",
+      "ARCHIVED": "Archived",
+      "UNKNOWN": "Unknown"
+    },
+    "DUPLICATE_MODAL": {
+      "TITLE": "Select a template to duplicate",
+      "MESSAGE": "Choose the template you want to duplicate:"
+    },
+    "LIST": {
+      "TITLE": "Contract Templates",
+      "DUPLICATE_TITLE": "Select a template to duplicate",
+      "SUBTITLE": "template(s) found",
+      "DUPLICATE_SUBTITLE": "Click on a template to duplicate it",
+      "BACK": "Back",
+      "EXPORT": "Export",
+      "NEW_TEMPLATE": "New Template",
+      "SEARCH_PLACEHOLDER": "Search for a template...",
+      "FILTERS": {
+        "ALL": "All",
+        "CUSTOM": "Custom",
+        "DEFAULT": "Default",
+        "FILTERS": "Filters",
+        "GRID_VIEW": "Grid view",
+        "LIST_VIEW": "List view",
+        "SORT_BY": {
+          "UPDATED_AT": "Modified date",
+          "CREATED_AT": "Creation date",
+          "NAME": "Name",
+          "USAGE_COUNT": "Usage"
+        },
+        "ADVANCED": {
+          "TEMPLATE_TYPE": "Template type",
+          "ALL_TYPES": "All types",
+          "STATUS": "Status",
+          "ALL_STATUS": "All status",
+          "RESET": "Reset"
+        }
+      },
+      "TABLE": {
+        "NAME": "Name",
+        "TYPE": "Type",
+        "STATUS": "Status",
+        "USAGE": "Usage",
+        "MODIFIED": "Modified",
+        "ACTIONS": "Actions",
+        "NO_DESCRIPTION": "No description"
+      },
+      "ACTIONS": {
+        "EDIT": "Edit",
+        "DUPLICATE": "Duplicate",
+        "SELECT": "Select",
+        "DELETE": "Delete",
+        "MORE_OPTIONS": "More options"
+      },
+      "EMPTY_STATE": {
+        "TITLE": "No templates found",
+        "NO_SEARCH_RESULTS": "No templates match your search.",
+        "NO_TEMPLATES": "Start by creating your first contract template.",
+        "CREATE_BUTTON": "Create Template"
+      },
+      "LOADING": "Loading templates...",
+      "PAGINATION": {
+        "SHOWING": "of"
+      },
+      "DELETE_MODAL": {
+        "TITLE": "Delete Template",
+        "MESSAGE": "Are you sure you want to delete the template",
+        "WARNING": "This action is irreversible. The file will also be deleted from storage.",
+        "CONFIRM": "Delete",
+        "CANCEL": "Cancel"
+      },
+      "NO_TEMPLATES_TO_EXPORT": "No templates to export",
+      "EXPORT_COMPLETED": "Template export completed:",
+      "TEMPLATES_EXPORTED": "templates exported",
+      "TEMPLATE_DUPLICATED_SUCCESS": "✅ Template duplicated successfully:",
+      "REDIRECTING_TO_EDIT": "🔄 Redirecting to edit page for new template:",
+      "TEMPLATE_DUPLICATED_RELOADING": "⚠️ Template duplicated, reloading list..."
+    },
+    "EDITOR": {
+      "TITLE": "Template Editor",
+      "NEW_TEMPLATE": "New Template",
+      "EDIT_TEMPLATE": "Edit Template",
+      "BACK": "Back",
+      "SAVE": "Save",
+      "SAVING": "Saving...",
+      "EXPORT": "Export",
+      "EDIT_MODE": "Edit",
+      "PREVIEW_MODE": "Preview",
+      "GENERAL_INFO": "General Information",
+      "TEMPLATE_NAME": "Template Name",
+      "TEMPLATE_NAME_PLACEHOLDER": "Ex: Standard Lease Contract",
+      "DESCRIPTION": "Description",
+      "DESCRIPTION_PLACEHOLDER": "Template description...",
+      "TYPE": "Type",
+      "STATUS": "Status",
+      "VARIABLES": "Variables",
+      "VARIABLES_HELP": "Click to insert",
+      "LOADING_TEMPLATE": "Loading template",
+      "LOADING_EDITOR": "Preparing contract editor...",
+      "LOADING_ERROR": "Loading error",
+      "RETRY": "Retry",
+      "PREVIEW_TITLE": "Contract preview",
+      "WORD_COUNT": "words",
+      "CHARACTER_COUNT": "characters",
+      "ZOOM_IN": "Zoom in",
+      "ZOOM_OUT": "Zoom out",
+      "BACK_TO_EDIT": "Back to editing",
+      "LAST_SAVE": "Last save",
+      "SAVE_STATUS": {
+        "SAVED": "Saved",
+        "SAVING": "Saving...",
+        "UNSAVED": "Unsaved",
+        "ERROR": "Save error"
+      },
+      "EXPORT_MODAL": {
+        "TITLE": "Export template",
+        "DESCRIPTION": "Choose the export format for your contract template",
+        "CANCEL": "Cancel",
+        "EXPORT": "Export",
+        "EXPORTING": "Exporting..."
+      },
+      "UNSAVED_CHANGES": {
+        "TITLE": "Unsaved changes",
+        "MESSAGE": "You have unsaved changes.",
+        "QUESTION": "What would you like to do before leaving this page?",
+        "STAY": "Stay",
+        "SAVE_FIRST": "Save first",
+        "IGNORE": "Ignore changes"
+      }
+    },
+    "VIEWER": {
+      "TITLE": "Template View",
+      "BACK": "Back",
+      "BREADCRUMB": "Contract Templates",
+      "DUPLICATE": "Duplicate",
+      "EDIT": "Edit",
+      "DELETE": "Delete",
+      "READ_ONLY": "Read only",
+      "GENERAL_INFO": "General Information",
+      "TEMPLATE_NAME": "Template Name",
+      "DESCRIPTION": "Description",
+      "NO_DESCRIPTION": "No description",
+      "TYPE": "Type",
+      "STATUS": "Status",
+      "METADATA": "Metadata",
+      "CREATED_ON": "Created on",
+      "MODIFIED_ON": "Modified on",
+      "USAGE_COUNT": "Usage",
+      "USAGE_TIMES": "times",
+      "VERSION": "Version",
+      "QUICK_ACTIONS": "Quick actions",
+      "DUPLICATE_ACTION": "Duplicate",
+      "EXPORT_PDF": "Export PDF",
+      "PRINT": "Print",
+      "PREVIEW_TITLE": "Template preview",
+      "LOADING_CONTENT": "Loading content...",
+      "LOADING_ERROR": "Loading error",
+      "RETRY": "Retry",
+      "NO_CONTENT": "No content",
+      "NO_CONTENT_MESSAGE": "This template does not contain any content yet.",
+      "ADD_CONTENT": "Add content",
+      "LOADING_TEMPLATE": "Loading template..."
+    },
+    "MODALS": {
+      "TEMPLATE_SELECTION": {
+        "SEARCH_PLACEHOLDER": "Search for a template",
+        "SEARCH_LABEL": "Name or description...",
+        "TYPE_LABEL": "Type",
+        "INCLUDE_SYSTEM": "Include system templates",
+        "NO_TEMPLATES_FOUND": "No templates found with these criteria",
+        "LOADING_TEMPLATES": "Loading templates...",
+        "CANCEL": "Cancel",
+        "DUPLICATE": "Duplicate",
+        "DEFAULT_BADGE": "Default",
+        "SYSTEM_BADGE": "System",
+        "USAGE_COUNT": "usage"
+      },
+      "DELETE_CONFIRMATION": {
+        "SUBTITLE": "Irreversible action"
+      },
+      "DUPLICATE_TEMPLATE": {
+        "TITLE": "Duplicate template",
+        "SOURCE_TEMPLATE": "Source template",
+        "NEW_TEMPLATE": "New template",
+        "NAME_LABEL": "Template name",
+        "NAME_REQUIRED": "*",
+        "NAME_PLACEHOLDER": "Enter the new template name",
+        "DESCRIPTION_LABEL": "Description (optional)",
+        "DESCRIPTION_PLACEHOLDER": "Enter a description for the new template",
+        "CHARACTER_COUNT": "characters",
+        "CANCEL": "Cancel",
+        "DUPLICATE": "Duplicate",
+        "DUPLICATING": "Duplicating...",
+        "CREATED_ON": "Created on"
+      }
+    }
+  },
 
   "SEARCH": {
     "PLACEHOLDER": "Search for a property...",

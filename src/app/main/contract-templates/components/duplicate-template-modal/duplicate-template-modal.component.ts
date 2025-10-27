@@ -2,6 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store } from '@ngxs/store';
+import { TranslateService } from '@ngx-translate/core';
 import { ContractTemplateAction, ContractTemplateState } from '../../../../shared/store/contract-templates';
 import { ContractTemplateModel, ContractTemplateType } from '../../../../shared/store/contract-templates/contract-template.model';
 
@@ -21,6 +22,7 @@ export class DuplicateTemplateModalComponent {
   constructor(
     private fb: FormBuilder,
     private store: Store,
+    private translateService: TranslateService,
     public dialogRef: MatDialogRef<DuplicateTemplateModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DuplicateTemplateData
   ) {
@@ -75,9 +77,9 @@ export class DuplicateTemplateModalComponent {
   get nameErrors() {
     const control = this.duplicateForm.get('name');
     if (control?.errors && control.touched) {
-      if (control.errors['required']) return 'Le nom est requis';
-      if (control.errors['minlength']) return 'Le nom doit contenir au moins 3 caractères';
-      if (control.errors['maxlength']) return 'Le nom ne peut pas dépasser 100 caractères';
+      if (control.errors['required']) return this.translateService.instant('ERRORS.REQUIRED_FIELD');
+      if (control.errors['minlength']) return this.translateService.instant('ERRORS.MIN_LENGTH', { min: 3 });
+      if (control.errors['maxlength']) return this.translateService.instant('ERRORS.MAX_LENGTH', { max: 100 });
     }
     return null;
   }
@@ -85,7 +87,7 @@ export class DuplicateTemplateModalComponent {
   get descriptionErrors() {
     const control = this.duplicateForm.get('description');
     if (control?.errors && control.touched) {
-      if (control.errors['maxlength']) return 'La description ne peut pas dépasser 500 caractères';
+      if (control.errors['maxlength']) return this.translateService.instant('ERRORS.MAX_LENGTH', { max: 500 });
     }
     return null;
   }
@@ -93,13 +95,13 @@ export class DuplicateTemplateModalComponent {
   getTemplateTypeLabel(type: ContractTemplateType): string {
     switch (type) {
       case ContractTemplateType.DEFAULT:
-        return 'Par défaut';
+        return this.translateService.instant('CONTRACT_TEMPLATES.TYPES.DEFAULT');
       case ContractTemplateType.CUSTOM:
-        return 'Personnalisé';
+        return this.translateService.instant('CONTRACT_TEMPLATES.TYPES.CUSTOM');
       case ContractTemplateType.DUPLICATED:
-        return 'Dupliqué';
+        return this.translateService.instant('CONTRACT_TEMPLATES.TYPES.DUPLICATED');
       default:
-        return 'Inconnu';
+        return this.translateService.instant('CONTRACT_TEMPLATES.TYPES.UNKNOWN');
     }
   }
 }
