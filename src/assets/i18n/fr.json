@@ -1302,6 +1302,34 @@
     "FRENCH": "Français",
     "ENGLISH": "Anglais"
   },
+  "WELCOME": {
+    "GREETING": "Bonjour {{name}}, bienvenue sur Ndewa360°",
+    "CONGRATULATIONS_MESSAGE": "Félicitations pour avoir commencé votre voyage avec la plateforme Ndewa360°. Nous sommes ravis que vous soyez ici et nous avons hâte de vous aider à démarrer votre gestion de bien immobiliers.",
+    "GETTING_STARTED_GUIDE": "Guide de démarrage",
+    "GUIDE_DESCRIPTION": "Découvrez la plateforme Ndewa360° en utilisant des guides d'utilisation & vidéos",
+    "FAQ_TITLE": "FAQ",
+    "FAQ_DESCRIPTION": "Foire aux questions si vous ne trouvez pas de réponse",
+    "DOCUMENTATION_TITLE": "Documentation",
+    "DOCUMENTATION_DESCRIPTION": "Parcourir la documentation pour obtenir des réponses",
+    "SUPPORT_TITLE": "Support",
+    "SUPPORT_DESCRIPTION": "Contactez-nous si vous avez une question spécifique",
+    "CREATE_PROPERTY_TITLE": "Créer un bien",
+    "CREATE_PROPERTY_DESCRIPTION": "Créez votre premier bien et gérez vos finances",
+    "GUIDES": {
+      "INTRODUCTION": "Introduction à Ndewa360°",
+      "ADVANCED_TOPICS": "Sujets avancés",
+      "FINANCIAL_MANAGEMENT": "Gestion de Finances",
+      "LISTING_MANAGEMENT": "Gestion des annonces",
+      "ADMINISTRATION": "Administration"
+    },
+    "DURATIONS": {
+      "INTRODUCTION": "07:34",
+      "ADVANCED_TOPICS": "10:14",
+      "FINANCIAL_MANAGEMENT": "71:22",
+      "LISTING_MANAGEMENT": "31:11",
+      "ADMINISTRATION": "41:22"
+    }
+  },
   "ERRORS": {
     "REQUIRED_FIELD": "Ce champ est obligatoire",
     "INVALID_EMAIL": "Adresse email invalide",

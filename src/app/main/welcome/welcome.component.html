@@ -6,14 +6,15 @@
           <youpez-logo class="cursor-pointer" type="white" logoWidth="300px"></youpez-logo>
         </div>
         <div class="app-productive-heading-06 mb-8">
-          Bonjour <span *ngIf="userProfile$ | async as userProfile">{{userProfile.name}}</span> , bienvenue sur
-          Ndewa360°
+          <span *ngIf="userProfile$ | async as userProfile">
+            {{ 'WELCOME.GREETING' | translate: {name: userProfile.name} }}
+          </span>
+          <span *ngIf="!(userProfile$ | async)">
+            {{ 'WELCOME.GREETING' | translate: {name: ''} }}
+          </span>
         </div>
         <p class="app-body-long-02 mb-4">
-          Félicitations pour avoir commencé votre voyage avec la plateforme<span class="font-bold">
-            Ndewa360°</span>.<br />
-          Nous sommes ravis que vous soyez ici et nous avons hâte de vous aider à démarrer votre gestion de bien
-          immobiliers.<br />
+          {{ 'WELCOME.CONGRATULATIONS_MESSAGE' | translate }}
         </p>
         <div class="mt-10 app-cards-layout-1">
           <div fxLayout="row wrap" fxLayoutGap="1px grid">
@@ -36,29 +37,12 @@
                       <path id="video--02_1_" class="st0"
                         d="M39,39H9 M39,10H9v22h30V10z M20,15.8v10.4l9-5.2L20,15.8z" />
                     </svg>
-                    <div class="app-productive-heading-03 mb-4 mt-5">Guide de démarrage</div>
-                    <p class="app-body-short-01 mb-5">Découvrez la plateforme Ndewa360° en utilisant des guides
-                      d'utilisation & vidéos </p>
+                    <div class="app-productive-heading-03 mb-4 mt-5">{{ 'WELCOME.GETTING_STARTED_GUIDE' | translate }}</div>
+                    <p class="app-body-short-01 mb-5">{{ 'WELCOME.GUIDE_DESCRIPTION' | translate }}</p>
                     <ul ibmList class="cds--list--separator ml-4">
-                      <li ibmListItem class="flex justify-between">
-                        <span class="inline-block" style="min-width: 200px">Introduction à Ndewa360°</span>
-                        07:34
-                      </li>
-                      <li ibmListItem class="flex justify-between">
-                        <span class="inline-block" style="min-width: 200px">Sujets avancés</span> 10:14
-
-                      </li>
-                      <li ibmListItem class="flex justify-between">
-                        <span class="inline-block" style="min-width: 200px">Gestion de Finances</span>
-                        71:22
-                      </li>
-                      <li ibmListItem class="flex justify-between">
-                        <span class="inline-block" style="min-width: 200px">Gestion des annonces</span>
-                        31:11
-                      </li>
-                      <li ibmListItem class="flex justify-between">
-                        <span class="inline-block" style="min-width: 200px">Administration</span>
-                        41:22
+                      <li ibmListItem class="flex justify-between" *ngFor="let guide of guides">
+                        <span class="inline-block" style="min-width: 200px">{{ 'WELCOME.GUIDES.' + guide.key | translate }}</span>
+                        {{ 'WELCOME.DURATIONS.' + guide.durationKey | translate }}
                       </li>
                     </ul>
                     <div class="absolute bottom-0 right-0 left-0 app-card__content"></div>
@@ -85,8 +69,8 @@
                         </g>
                       </svg>
                       <div class="absolute bottom-0 right-0 left-0 app-card__content">
-                        <div class="app-productive-heading-03 mb-4">FAQ</div>
-                        <p class="app-body-short-01">Foire aux questions si vous ne trouvez pas de réponse</p>
+                        <div class="app-productive-heading-03 mb-4">{{ 'WELCOME.FAQ_TITLE' | translate }}</div>
+                        <p class="app-body-short-01">{{ 'WELCOME.FAQ_DESCRIPTION' | translate }}</p>
                       </div>
                     </div>
                   </div>
@@ -105,8 +89,8 @@
                         </g>
                       </svg>
                       <div class="absolute bottom-0 right-0 left-0 app-card__content">
-                        <div class="app-productive-heading-03 mb-4">Documentation</div>
-                        <p class="app-body-short-01">Parcourir la documentation pour obtenir des réponses</p>
+                        <div class="app-productive-heading-03 mb-4">{{ 'WELCOME.DOCUMENTATION_TITLE' | translate }}</div>
+                        <p class="app-body-short-01">{{ 'WELCOME.DOCUMENTATION_DESCRIPTION' | translate }}</p>
                       </div>
                     </div>
                   </div>
@@ -130,8 +114,8 @@
                         </g>
                       </svg>
                       <div class="absolute bottom-0 right-0 left-0 app-card__content">
-                        <div class="app-productive-heading-03 mb-4">Support</div>
-                        <p class="app-body-short-01">Contactez-nous si vous avez une question spécifique</p>
+                        <div class="app-productive-heading-03 mb-4">{{ 'WELCOME.SUPPORT_TITLE' | translate }}</div>
+                        <p class="app-body-short-01">{{ 'WELCOME.SUPPORT_DESCRIPTION' | translate }}</p>
                       </div>
                     </div>
                   </div>
@@ -150,9 +134,8 @@
                         </g>
                       </svg>
                       <div class="absolute bottom-0 right-0 left-0 app-card__content">
-                        <div class="app-productive-heading-03 mb-4">Créer un bien
-                        </div>
-                        <p class="app-body-short-01">Créez votre premier bien et gérez vos finances</p>
+                        <div class="app-productive-heading-03 mb-4">{{ 'WELCOME.CREATE_PROPERTY_TITLE' | translate }}</div>
+                        <p class="app-body-short-01">{{ 'WELCOME.CREATE_PROPERTY_DESCRIPTION' | translate }}</p>
                       </div>
                     </div>
                   </div>

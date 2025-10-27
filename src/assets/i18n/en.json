@@ -1356,6 +1356,34 @@
     "FRENCH": "French",
     "ENGLISH": "English"
   },
+  "WELCOME": {
+    "GREETING": "Hello {{name}}, welcome to Ndewa360°",
+    "CONGRATULATIONS_MESSAGE": "Congratulations on starting your journey with the Ndewa360° platform. We are delighted that you are here and we look forward to helping you get started with your real estate management.",
+    "GETTING_STARTED_GUIDE": "Getting Started Guide",
+    "GUIDE_DESCRIPTION": "Discover the Ndewa360° platform using user guides & videos",
+    "FAQ_TITLE": "FAQ",
+    "FAQ_DESCRIPTION": "Frequently asked questions if you can't find an answer",
+    "DOCUMENTATION_TITLE": "Documentation",
+    "DOCUMENTATION_DESCRIPTION": "Browse the documentation to get answers",
+    "SUPPORT_TITLE": "Support",
+    "SUPPORT_DESCRIPTION": "Contact us if you have a specific question",
+    "CREATE_PROPERTY_TITLE": "Create Property",
+    "CREATE_PROPERTY_DESCRIPTION": "Create your first property and manage your finances",
+    "GUIDES": {
+      "INTRODUCTION": "Introduction to Ndewa360°",
+      "ADVANCED_TOPICS": "Advanced Topics",
+      "FINANCIAL_MANAGEMENT": "Financial Management",
+      "LISTING_MANAGEMENT": "Listing Management",
+      "ADMINISTRATION": "Administration"
+    },
+    "DURATIONS": {
+      "INTRODUCTION": "07:34",
+      "ADVANCED_TOPICS": "10:14",
+      "FINANCIAL_MANAGEMENT": "71:22",
+      "LISTING_MANAGEMENT": "31:11",
+      "ADMINISTRATION": "41:22"
+    }
+  },
 
   "SEARCH": {
     "PLACEHOLDER": "Search for a property...",
