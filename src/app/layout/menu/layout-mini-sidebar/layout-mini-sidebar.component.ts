@@ -45,6 +45,7 @@ export class LayoutMiniSidebarComponent implements OnInit, OnDestroy {
   ]
 
   public loading: boolean = false
+  public loadingAdmin: boolean = false
 
   constructor(
     private _store:Store,
@@ -162,8 +163,18 @@ export class LayoutMiniSidebarComponent implements OnInit, OnDestroy {
   }
 
   navigateToAdmin(): void {
+    this.loadingAdmin = true;
     const currentLang = this.languageUrlService.getCurrentLanguage();
-    this._router.navigate([`/${currentLang}/admin/dashboard`]);
+    
+    setTimeout(() => {
+      this._router.navigate([`/${currentLang}/admin/dashboard`]).then(() => {
+        setTimeout(() => {
+          this.loadingAdmin = false;
+        }, 500);
+      }).catch(() => {
+        this.loadingAdmin = false;
+      });
+    }, 300);
   }
 
   navigateToProfile(): void {

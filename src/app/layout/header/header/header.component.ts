@@ -28,6 +28,7 @@ export class HeaderComponent extends BaseComponent implements OnInit {
   isAuthenticated$ = this.authStateService.isAuthenticated();
   authState$ = this.authStateService.getAuthState();
   currentRoute = '';
+  isLoadingAdmin = false;
  
   constructor(
     private _store:Store,
@@ -105,8 +106,20 @@ export class HeaderComponent extends BaseComponent implements OnInit {
   }
 
   navigateToAdmin(): void {
+    this.isLoadingAdmin = true;
     const currentLang = this.languageUrlService.getCurrentLanguage();
-    this.router.navigate([`/${currentLang}/admin/dashboard`]);
+    
+    // Simuler un délai de chargement pour montrer le loader
+    setTimeout(() => {
+      this.router.navigate([`/${currentLang}/admin/dashboard`]).then(() => {
+        // Le loader sera arrêté après la navigation
+        setTimeout(() => {
+          this.isLoadingAdmin = false;
+        }, 500);
+      }).catch(() => {
+        this.isLoadingAdmin = false;
+      });
+    }, 300);
   }
 
   navigateToProfile(): void {

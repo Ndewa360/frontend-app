@@ -2,6 +2,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
+import { Router } from '@angular/router';
+import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
 
 // Actions
 import { AdminUsersAction } from '../../store/users/admin-users.actions';
@@ -74,7 +76,11 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
     { key: 'actions', label: 'Actions', sortable: false }
   ];
 
-  constructor(private store: Store) {}
+  constructor(
+    private store: Store,
+    private router: Router,
+    private languageUrlService: LanguageUrlService
+  ) {}
 
   ngOnInit(): void {
     this.loadData();
@@ -520,5 +526,10 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
     }
 
     return pages;
+  }
+
+  navigateToAgentValidation(): void {
+    const currentLang = this.languageUrlService.getCurrentLanguage();
+    this.router.navigate([`/${currentLang}/admin/agents`]);
   }
 }

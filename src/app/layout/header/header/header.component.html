@@ -35,8 +35,14 @@
   <!-- Bouton Admin avec loader intégré -->
   <button *ngIf="isAdmin" 
           class="app-layout__header__btn app-layout__header__btn--icon admin-nav-button"
+          [disabled]="isLoadingAdmin"
           (click)="navigateToAdmin()">
-    <youpez-ibm-icon iconName="settings" iconSize="24"></youpez-ibm-icon>
+    <div *ngIf="!isLoadingAdmin">
+      <youpez-ibm-icon iconName="settings" iconSize="24"></youpez-ibm-icon>
+    </div>
+    <div *ngIf="isLoadingAdmin" class="admin-loading-spinner">
+      <youpez-ibm-icon iconName="loading" iconSize="20"></youpez-ibm-icon>
+    </div>
   </button>
 
 

@@ -40,11 +40,16 @@
               </div>
             </div>
             <!-- Bouton Admin avec loader intégré -->
-            <div *ngIf="isAdmin" (click)="navigateToAdmin()" 
+            <div *ngIf="isAdmin" (click)="!loadingAdmin && navigateToAdmin()" 
               class="app-mini-sidebar__list__item app-mini-sidebar__list__item__highlight"
               [ngClass]="{'app-mini-sidebar__list__item__active': isRouteActive('/admin')}">
               <div class="app-mini-sidebar__list__item__pill" placement="right" container="body" [ngbTooltip]="'SIDEBAR.ADMINISTRATION' | translate">
-                <youpez-ibm-icon iconName="settings" iconSize="24"></youpez-ibm-icon>
+                <div class="admin-button-content">
+                  <youpez-ibm-icon *ngIf="!loadingAdmin" iconName="settings" iconSize="24"></youpez-ibm-icon>
+                  <div *ngIf="loadingAdmin" class="admin-loading-spinner">
+                    <div class="spinner-white"></div>
+                  </div>
+                </div>
               </div>
             </div>
           </ng-container>
