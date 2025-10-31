@@ -4,8 +4,8 @@
         <div class="app-card__header header-footer-billing">
             <div class="app-row app-row--center  p-2">
                 <div>
-                    <div class="app-expressive-heading-03 font-bold mb-2">Facture de la période actuelle</div>
-                    <div class="app-label-01">{{ currentPeriod?.billingRef || 'Référence non disponible' }} - {{ formatPeriodDates() }}</div>
+                    <div class="app-expressive-heading-03 font-bold mb-2">{{ 'BILLING.INVOICE.CURRENT_PERIOD_INVOICE' | translate }}</div>
+                    <div class="app-label-01">{{ currentPeriod?.billingRef || ('BILLING.INVOICE.REFERENCE_NOT_AVAILABLE' | translate) }} - {{ formatPeriodDates() }}</div>
 
 
                 </div>
@@ -16,7 +16,7 @@
             <div fxFlex="100%" fxFlex.gt-md="33.33%" class="app-card__block">
                 <div class="flex justify-between">
                     <div>
-                        <div class="app-productive-heading-03 mb-2">ID Facture</div>
+                        <div class="app-productive-heading-03 mb-2">{{ 'BILLING.INVOICE.INVOICE_ID' | translate }}</div>
                         <div class="app-label-01">{{currentPeriod.billingRef}}</div>
                     </div>   
                 </div>
@@ -24,7 +24,7 @@
             <div fxFlex="100%" fxFlex.gt-md="33.33%" class="app-card__block">
                 <div class="flex justify-between">
                     <div>
-                        <div class="app-productive-heading-03 mb-2">Période de facturation</div>
+                        <div class="app-productive-heading-03 mb-2">{{ 'BILLING.INVOICE.BILLING_PERIOD' | translate }}</div>
                         <div class="app-label-01">{{currentPeriod.startedAt | date:'d MMMM'}} - {{currentPeriod.endedAt | date:'d MMMM YYYY'}}</div>
                     </div>
                 </div>
@@ -32,7 +32,7 @@
             <div fxFlex="100%" fxFlex.gt-md="33.33%" class="app-card__block">
                 <div class="flex justify-between state-billing">
                     <div>
-                        <div class="app-productive-heading-03">Status de la facture</div>
+                        <div class="app-productive-heading-03">{{ 'BILLING.INVOICE.INVOICE_STATUS' | translate }}</div>
                     </div>
                     <!-- <ng-container [ngSwitch]="currentPeriod.state">
                         <div *ngSwitchCase="'payed'" class="app-row app-row--center app-color-success">
@@ -49,7 +49,7 @@
                         </div>
                     </ng-container> -->
                     <div class="app-row app-row--center ">
-                        <span class="mr-1">Inconnu</span>
+                        <span class="mr-1">{{ 'BILLING.INVOICE.UNKNOWN' | translate }}</span>
                         <youpez-ibm-icon iconName="warningMarkOutline" iconSize="32"></youpez-ibm-icon>
                     </div>
                 </div>
@@ -59,7 +59,7 @@
             <div fxFlex="100%" fxFlex.gt-md="50%" class="app-card__block">
                 <div class="flex justify-end">
                     <div>
-                        <div class="app-label-01 mb-2">Fournisseur de services</div>
+                        <div class="app-label-01 mb-2">{{ 'BILLING.INVOICE.SERVICE_PROVIDER' | translate }}</div>
                         <div class="app-productive-heading-05 fond-bold ">Ndewa360</div>
                     </div>   
                 </div>
@@ -67,7 +67,7 @@
             <div fxFlex="100%" fxFlex.gt-md="50%" class="app-card__block">
                 <div class="flex justify-end">
                     <div>
-                        <div class="app-label-01 mb-2">Total en FCFA</div>
+                        <div class="app-label-01 mb-2">{{ 'BILLING.INVOICE.TOTAL_FCFA' | translate }}</div>
                         <div class="app-productive-heading-03 fond-extrabold ">
                             <span *ngIf="getTotalServiceFees() === 0; else hasMoney">0</span>
                             <ng-template #hasMoney>{{ getTotalServiceFees() | currency : getDefaultCurrency(): 'symbol' : '1.0-0' }} </ng-template>
@@ -85,7 +85,7 @@
                         <button type="submit" size="lg" disabled class="custom-primary-button" ibmButton="primary" >
                             <!-- <ibm-loading *ngIf="waittingResponse; else noWaitingResponse"></ibm-loading> -->
                             <!-- <ng-template #noWaitingResponse> -->
-                              <span class="btn-text">Régler la facture</span>
+                              <span class="btn-text">{{ 'BILLING.INVOICE.PAY_INVOICE' | translate }}</span>
                               <youpez-ibm-icon iconClass="cds--btn__icon" iconName="money" iconSize="20" ></youpez-ibm-icon >
                             <!-- </ng-template> -->
                           </button>
@@ -99,7 +99,7 @@
         <div class="app-card__header header-footer-billing">
             <div class="app-row app-row--center  p-2">
                 <div>
-                    <div class="app-expressive-heading-03 font-bold mb-2">Ndewa360 frais de service </div>
+                    <div class="app-expressive-heading-03 font-bold mb-2">{{ 'BILLING.INVOICE.SERVICE_FEES' | translate }}</div>
                     <!-- <div class="app-label-01">Montant total des frais et d'informations de paiement</div> -->
                 </div>
             </div>
@@ -109,7 +109,7 @@
             <div fxFlex="100%" fxFlex.gt-md="50%" class="">
                 <div class="flex justify-between app-card__block">
                     <div>
-                        <div class="app-label-04 mb-2">Total de bien actif</div>
+                        <div class="app-label-04 mb-2">{{ 'BILLING.INVOICE.TOTAL_ACTIVE_PROPERTIES' | translate }}</div>
                         <div class="app-productive-heading-03 font-bold" >{{ getOccupiedUnitsCount() }} / {{ getTotalUnitsCount() }}</div>
                     </div>   
                 </div>
@@ -117,7 +117,7 @@
             <div fxFlex="100%" fxFlex.gt-md="50%" class="app-card__block">
                 <div class="flex md:justify-end">
                     <div>
-                        <div class="app-label-03 mb-2">Total des frais de services hors taxes en {{getDefaultCurrency()}}</div>
+                        <div class="app-label-03 mb-2">{{ 'BILLING.INVOICE.SERVICE_FEES_EXCLUDING_TAX' | translate: {currency: getDefaultCurrency()} }}</div>
                         <div class="app-productive-heading-03 font-bold text-end">
                             <span *ngIf="getTotalServiceFees() === 0; else hasMoneyService">0</span>
                             <ng-template #hasMoneyService>{{ getTotalServiceFees() | currency : getDefaultCurrency(): 'symbol' : '1.0-0' }} </ng-template>
@@ -135,10 +135,10 @@
         
                 <ng-template #roomTemplate let-data="data">
                         <ng-container [ngSwitch]="data.type">
-                            <span *ngSwitchCase="'room'">Chambre {{data["code"]}}</span>
-                            <span *ngSwitchCase="'studio'">Studio #{{data["code"]}}</span>
-                            <span *ngSwitchCase="'simple_apartment'">Apartement #{{data["code"]}}</span>
-                            <span *ngSwitchCase="'furnished_apartment'">Apartement Meublé #{{data["code"]}}</span>
+                            <span *ngSwitchCase="'room'">{{ 'BILLING.INVOICE.ROOM_TYPES.ROOM' | translate: {code: data["code"]} }}</span>
+                            <span *ngSwitchCase="'studio'">{{ 'BILLING.INVOICE.ROOM_TYPES.STUDIO' | translate: {code: data["code"]} }}</span>
+                            <span *ngSwitchCase="'simple_apartment'">{{ 'BILLING.INVOICE.ROOM_TYPES.SIMPLE_APARTMENT' | translate: {code: data["code"]} }}</span>
+                            <span *ngSwitchCase="'furnished_apartment'">{{ 'BILLING.INVOICE.ROOM_TYPES.FURNISHED_APARTMENT' | translate: {code: data["code"]} }}</span>
                         </ng-container>
                 </ng-template>
 
@@ -152,7 +152,7 @@
                     <div class="flex" *ngIf="data.room.isFree">
                         <div fxLayout="row wrap" class="app-form__row" >
                             <div fxFlex="80%" class="app-form__item">
-                              <ibm-toggle (checkedChange)="changeStatusRoom($event,data.roomId)" [disabled]="data.isLoading | async"    [onText]="'Actif'" [offText]="'Inactif'" [checked]="data.value | async" size="md">
+                              <ibm-toggle (checkedChange)="changeStatusRoom($event,data.roomId)" [disabled]="data.isLoading | async"    [onText]="'BILLING.INVOICE.TOGGLE_STATUS.ACTIVE' | translate" [offText]="'BILLING.INVOICE.TOGGLE_STATUS.INACTIVE' | translate" [checked]="data.value | async" size="md">
                               </ibm-toggle>
                             </div>
                             <div *ngIf="data.isLoading | async" fxFlex="20%" class="app-form__item align-middle pt-4 pl-3" >
@@ -195,7 +195,7 @@
             <div fxFlex="100%" fxFlex.gt-md="50%" >
                 <div class="flex justify-between app-card__block">
                     <div>
-                        <div class="app-productive-heading-03 fond-extrabold">Total des taxes</div>
+                        <div class="app-productive-heading-03 fond-extrabold">{{ 'BILLING.INVOICE.TOTAL_TAXES' | translate }}</div>
                     </div>   
                 </div>
             </div>

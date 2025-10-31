@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, TemplateRef, ViewChild } from '@angular/c
 import { Actions, ofActionCompleted, ofActionErrored, ofActionSuccessful, Select, Selector, Store } from '@ngxs/store';
 import { TableModel, TableRowSize, TableHeaderItem, TableItem } from 'carbon-components-angular';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
 import { sort } from 'src/@youpez';
 import { SouscriptionState, SouscriptionModel, SouscriptionPeriodModel, SouscriptionPeriodState, SouscriptionPeriodService, SouscriptionPeriodAction, RoomModel, RoomType, RoomAction, LocataireState, PropertyState } from 'src/app/shared/store';
 import { UtilsString } from 'src/app/shared/utils';
@@ -50,7 +51,8 @@ export class ShowFactureCurrentComponent {
     private _store:Store,
     private _ngxsAction:Actions,
     private cdr: ChangeDetectorRef,
-    private _souscriptionPeriodService: SouscriptionPeriodService
+    private _souscriptionPeriodService: SouscriptionPeriodService,
+    private translate: TranslateService
   ){}
   ngOnInit() {
     // Charger la période actuelle avec les détails des unités via le store
@@ -146,11 +148,11 @@ export class ShowFactureCurrentComponent {
           className: "items-center"
         }),
         new TableItem({
-          data: unit.occupiedDays + ' jours',
+          data: unit.occupiedDays + ' ' + this.translate.instant('BILLING.INVOICE.DAYS_SUFFIX'),
           className: "items-center"
         }),
         new TableItem({
-          data: unit.isEligible ? 'Oui' : 'Non',
+          data: unit.isEligible ? this.translate.instant('BILLING.INVOICE.ELIGIBILITY.YES') : this.translate.instant('BILLING.INVOICE.ELIGIBILITY.NO'),
           className: "items-center " + (unit.isEligible ? 'text-green-600' : 'text-red-600')
         }),
         new TableItem({
@@ -265,31 +267,31 @@ export class ShowFactureCurrentComponent {
 
     newModel.header = [
       new TableHeaderItem({
-        data: "Code",
+        data: this.translate.instant('BILLING.INVOICE.TABLE_HEADERS.CODE'),
         className: "items-center font-bold"
       }),
       new TableHeaderItem({
-        data: "Propriété",
+        data: this.translate.instant('BILLING.INVOICE.TABLE_HEADERS.PROPERTY'),
         className: "items-center"
       }),
       new TableHeaderItem({
-        data: "Prix",
+        data: this.translate.instant('BILLING.INVOICE.TABLE_HEADERS.PRICE'),
         className: "items-center"
       }),
       new TableHeaderItem({
-        data: "Jours occupés",
+        data: this.translate.instant('BILLING.INVOICE.TABLE_HEADERS.OCCUPIED_DAYS'),
         className: "items-center",
       }),
       new TableHeaderItem({
-        data: "Éligible",
+        data: this.translate.instant('BILLING.INVOICE.TABLE_HEADERS.ELIGIBLE'),
         className: "items-center",
       }),
       new TableHeaderItem({
-        data: "Montant",
+        data: this.translate.instant('BILLING.INVOICE.TABLE_HEADERS.AMOUNT'),
         className: "items-center",
       }),
       new TableHeaderItem({
-        data: "Statut",
+        data: this.translate.instant('BILLING.INVOICE.TABLE_HEADERS.STATUS'),
         className: "items-center",
       }),
     ]
@@ -305,7 +307,7 @@ export class ShowFactureCurrentComponent {
   }
 
   formatPeriodDates(): string {
-    if (!this.currentPeriod) return 'Période non définie';
+    if (!this.currentPeriod) return this.translate.instant('BILLING.INVOICE.PERIOD_UNDEFINED');
 
     const start = new Date(this.currentPeriod.startedAt).toLocaleDateString('fr-FR');
     const end = new Date(this.currentPeriod.endedAt).toLocaleDateString('fr-FR');
@@ -316,10 +318,10 @@ export class ShowFactureCurrentComponent {
     if (!this.currentPeriod) return 'N/A';
 
     switch (this.currentPeriod.state) {
-      case 'payed': return 'Payée';
-      case 'waiting': return 'En attente de paiement';
-      case 'unpaid': return 'Impayée';
-      default: return 'Statut inconnu';
+      case 'payed': return this.translate.instant('BILLING.INVOICE.PERIOD_STATUS.PAID');
+      case 'waiting': return this.translate.instant('BILLING.INVOICE.PERIOD_STATUS.WAITING');
+      case 'unpaid': return this.translate.instant('BILLING.INVOICE.PERIOD_STATUS.UNPAID');
+      default: return this.translate.instant('BILLING.INVOICE.PERIOD_STATUS.UNKNOWN');
     }
   }
 

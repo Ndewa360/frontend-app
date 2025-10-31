@@ -28,8 +28,8 @@
           </div>
         </div>
         <div class="loading-text">
-          <h3>Vérification de votre plan</h3>
-          <p>Nous analysons votre souscription actuelle...</p>
+          <h3>{{ 'SUBSCRIPTION_MODAL.PLAN_VERIFICATION' | translate }}</h3>
+          <p>{{ 'SUBSCRIPTION_MODAL.ANALYZING_SUBSCRIPTION' | translate }}</p>
         </div>
       </div>
     </div>
@@ -52,21 +52,21 @@
       <div *ngIf="subscriptionStatus" class="subscription-info">
         <div class="info-grid">
           <div class="info-item">
-            <span class="label">Forfait actuel :</span>
+            <span class="label">{{ 'SUBSCRIPTION_MODAL.CURRENT_PLAN' | translate }}</span>
             <span class="value" [ngClass]="subscriptionStatus.plan">
-              {{ subscriptionStatus.plan === 'free' ? 'Gratuit' : 'Premium' }}
+              {{ subscriptionStatus.plan === 'free' ? ('SUBSCRIPTION_MODAL.PLAN_FREE' | translate) : ('SUBSCRIPTION_MODAL.PLAN_PREMIUM' | translate) }}
             </span>
           </div>
           
           <div class="info-item">
-            <span class="label">Statut du compte :</span>
+            <span class="label">{{ 'SUBSCRIPTION_MODAL.ACCOUNT_STATUS' | translate }}</span>
             <span class="value" [ngClass]="subscriptionStatus.accountStatus">
               {{ getAccountStatusLabel(subscriptionStatus.accountStatus) }}
             </span>
           </div>
           
           <div class="info-item">
-            <span class="label">Biens créés :</span>
+            <span class="label">{{ 'SUBSCRIPTION_MODAL.PROPERTIES_CREATED' | translate }}</span>
             <span class="value">
               {{ subscriptionStatus.propertyCount }} / 
               {{ subscriptionStatus.plan === 'free' ? subscriptionStatus.propertyLimit : '∞' }}
@@ -74,7 +74,7 @@
           </div>
           
           <div *ngIf="subscriptionStatus.plan === 'premium'" class="info-item">
-            <span class="label">Montant mensuel :</span>
+            <span class="label">{{ 'SUBSCRIPTION_MODAL.MONTHLY_AMOUNT' | translate }}</span>
             <span class="value">{{ subscriptionStatus.monthlyAmount }} FCFA</span>
           </div>
         </div>
@@ -82,23 +82,23 @@
 
       <!-- Avantages du forfait Premium -->
       <div *ngIf="showUpgradeButton" class="premium-benefits">
-        <h3>Avantages du forfait Premium :</h3>
+        <h3>{{ 'SUBSCRIPTION_MODAL.PREMIUM_BENEFITS_TITLE' | translate }}</h3>
         <ul class="benefits-list">
           <li>
             <youpez-ibm-icon iconName="checkmark" iconSize="16" class="check-icon"></youpez-ibm-icon>
-            Nombre illimité de biens immobiliers
+            {{ 'SUBSCRIPTION_MODAL.BENEFIT_UNLIMITED_PROPERTIES' | translate }}
           </li>
           <li>
             <youpez-ibm-icon iconName="checkmark" iconSize="16" class="check-icon"></youpez-ibm-icon>
-            Paiement uniquement sur les unités occupées (15+ jours/mois)
+            {{ 'SUBSCRIPTION_MODAL.BENEFIT_OCCUPIED_UNITS_ONLY' | translate }}
           </li>
           <li>
             <youpez-ibm-icon iconName="checkmark" iconSize="16" class="check-icon"></youpez-ibm-icon>
-            Tarif avantageux : seulement 2% du loyer mensuel
+            {{ 'SUBSCRIPTION_MODAL.BENEFIT_ADVANTAGEOUS_RATE' | translate }}
           </li>
           <li>
             <youpez-ibm-icon iconName="checkmark" iconSize="16" class="check-icon"></youpez-ibm-icon>
-            Support prioritaire et fonctionnalités avancées
+            {{ 'SUBSCRIPTION_MODAL.BENEFIT_PRIORITY_SUPPORT' | translate }}
           </li>
         </ul>
       </div>
@@ -106,11 +106,11 @@
       <!-- Informations de suspension -->
       <div *ngIf="data.type === 'account_suspended' && subscriptionStatus?.suspensionDate" class="suspension-info">
         <p class="suspension-date">
-          <strong>Date de suspension :</strong> 
+          <strong>{{ 'SUBSCRIPTION_MODAL.SUSPENSION_DATE' | translate }}</strong> 
           {{ subscriptionStatus.suspensionDate | date:'dd/MM/yyyy à HH:mm' }}
         </p>
         <p class="suspension-note">
-          Votre compte sera automatiquement réactivé dès le règlement de vos factures impayées.
+          {{ 'SUBSCRIPTION_MODAL.AUTO_REACTIVATION_INFO' | translate }}
         </p>
       </div>
 
@@ -131,7 +131,7 @@
         <div class="mini-spinner"></div>
       </div>
       <i *ngIf="!upgrading" class="fas fa-crown"></i>
-      {{ upgrading ? 'Upgrade en cours...' : 'Passer au Premium' }}
+      {{ upgrading ? ('SUBSCRIPTION_MODAL.UPGRADING' | translate) : ('SUBSCRIPTION_MODAL.UPGRADE_TO_PREMIUM' | translate) }}
     </button>
 
     <!-- Bouton Réactivation -->
@@ -145,7 +145,7 @@
         <div class="mini-spinner"></div>
       </div>
       <i *ngIf="!upgrading" class="fas fa-check-circle"></i>
-      {{ upgrading ? 'Réactivation...' : 'Réactiver le compte' }}
+      {{ upgrading ? ('SUBSCRIPTION_MODAL.REACTIVATING' | translate) : ('SUBSCRIPTION_MODAL.REACTIVATE_ACCOUNT' | translate) }}
     </button>
 
     <!-- Bouton Calculer montant -->
@@ -155,7 +155,7 @@
       class="btn btn-secondary calculate-btn"
       (click)="calculateMonthlyAmount()">
       <youpez-ibm-icon iconName="calculator" iconSize="16"></youpez-ibm-icon>
-      Calculer le montant mensuel
+      {{ 'SUBSCRIPTION_MODAL.CALCULATE_MONTHLY_AMOUNT' | translate }}
     </button>
 
     <!-- Bouton Fermer -->
@@ -164,7 +164,7 @@
       class="btn btn-outline close-btn"
       (click)="close()"
       [disabled]="upgrading">
-      {{ data.type === 'limit_reached' ? 'Plus tard' : 'Fermer' }}
+      {{ data.type === 'limit_reached' ? ('SUBSCRIPTION_MODAL.LATER' | translate) : ('SUBSCRIPTION_MODAL.CLOSE' | translate) }}
     </button>
 
   </div>

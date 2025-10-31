@@ -723,19 +723,13 @@
     }
   },
   "FINANCES": {
-    "TITLE": "Finances",
-    "INCOME": "Revenus",
-    "EXPENSES": "Dépenses",
-    "PROFIT": "Bénéfice",
-    "MONTHLY_REPORT": "Rapport mensuel",
-    "YEARLY_REPORT": "Rapport annuel",
-    "PAYMENT_HISTORY": "Historique des paiements",
-    "RENT_AMOUNT": "Montant du loyer",
-    "PAYMENT_DATE": "Date de paiement",
-    "PAYMENT_STATUS": "Statut du paiement",
-    "PAID": "Payé",
-    "PENDING": "En attente",
-    "OVERDUE": "En retard"
+    "PAYMENT_METHODS": {
+      "CASH": "Espèces",
+      "BANK_TRANSFER": "Virement bancaire",
+      "MOBILE_MONEY": "Mobile Money",
+      "CHECK": "Chèque",
+      "CREDIT_CARD": "Carte de crédit"
+    }
   },
   "SETTINGS": {
     "TITLE": "Paramètres",
@@ -777,26 +771,6 @@
     "TIMEZONE_LABEL": "Fuseau horaire",
     "DATE_FORMAT_LABEL": "Format de date",
     "NUMBER_FORMAT_LABEL": "Format de nombre",
-    "TIMEZONE_OPTIONS": {
-      "AFRICA_DOUALA": "Afrique/Douala (GMT+1)",
-      "EUROPE_PARIS": "Europe/Paris (GMT+1)",
-      "AMERICA_NEW_YORK": "Amérique/New_York (GMT-5)",
-      "ASIA_TOKYO": "Asie/Tokyo (GMT+9)",
-      "UTC": "UTC (GMT+0)"
-    },
-    "DATE_FORMAT_OPTIONS": {
-      "DD_MM_YYYY": "JJ/MM/AAAA (31/12/2024)",
-      "MM_DD_YYYY": "MM/JJ/AAAA (12/31/2024)",
-      "YYYY_MM_DD": "AAAA-MM-JJ (2024-12-31)",
-      "DD_MM_YYYY_DASH": "JJ-MM-AAAA (31-12-2024)"
-    },
-    "NUMBER_FORMAT_OPTIONS": {
-      "FRENCH_FULL": "Français (1 234 567,89)",
-      "ENGLISH_US_FULL": "Anglais (1,234,567.89)",
-      "SPANISH_FULL": "Espagnol (1.234.567,89)",
-      "GERMAN_FULL": "Allemand (1.234.567,89)",
-      "ARABIC_FULL": "Arabe (١٬٢٣٤٬٥٦٧٫٨٩)"
-    },
     "TIMEZONES": {
       "AFRICA_DOUALA": "Afrique/Douala (GMT+1)",
       "EUROPE_PARIS": "Europe/Paris (GMT+1)",
@@ -818,7 +792,12 @@
       "ARABIC": "Arabe (١٬٢٣٤٬٥٦٧٫٨٩)",
       "FRENCH_SHORT": "Français (1 234,56)",
       "ENGLISH_US_SHORT": "Anglais US (1,234.56)",
-      "ENGLISH_UK_SHORT": "Anglais UK (1,234.56)"
+      "ENGLISH_UK_SHORT": "Anglais UK (1,234.56)",
+      "FRENCH_FULL": "Français (1 234 567,89)",
+      "ENGLISH_US_FULL": "Anglais (1,234,567.89)",
+      "SPANISH_FULL": "Espagnol (1.234.567,89)",
+      "GERMAN_FULL": "Allemand (1.234.567,89)",
+      "ARABIC_FULL": "Arabe (١٬٢٣٤٬٥٦٧٫٨٩)"
     },
     "THEMES": {
       "DEFAULT": "Thème par défaut",
@@ -1245,6 +1224,86 @@
     "STRIPE_PAYMENT_CONFIRMED": "Paiement confirmé avec succès",
     "STRIPE_PAYMENT_ERROR": "Erreur lors de la confirmation du paiement"
   },
+  "SUBSCRIPTION_MODAL": {
+    "PLAN_VERIFICATION": "Vérification de votre plan",
+    "ANALYZING_SUBSCRIPTION": "Nous analysons votre souscription actuelle...",
+    "CURRENT_PLAN": "Forfait actuel :",
+    "ACCOUNT_STATUS": "Statut du compte :",
+    "PROPERTIES_CREATED": "Biens créés :",
+    "MONTHLY_AMOUNT": "Montant mensuel :",
+    "PLAN_FREE": "Gratuit",
+    "PLAN_PREMIUM": "Premium",
+    "PREMIUM_BENEFITS_TITLE": "Avantages du forfait Premium :",
+    "BENEFIT_UNLIMITED_PROPERTIES": "Nombre illimité de biens immobiliers",
+    "BENEFIT_OCCUPIED_UNITS_ONLY": "Paiement uniquement sur les unités occupées (15+ jours/mois)",
+    "BENEFIT_ADVANTAGEOUS_RATE": "Tarif avantageux : seulement 2% du loyer mensuel",
+    "BENEFIT_PRIORITY_SUPPORT": "Support prioritaire et fonctionnalités avancées",
+    "SUSPENSION_DATE": "Date de suspension :",
+    "AUTO_REACTIVATION_INFO": "Votre compte sera automatiquement réactivé dès le règlement de vos factures impayées.",
+    "UPGRADING": "Upgrade en cours...",
+    "UPGRADE_TO_PREMIUM": "Passer au Premium",
+    "REACTIVATING": "Réactivation...",
+    "REACTIVATE_ACCOUNT": "Réactiver le compte",
+    "CALCULATE_MONTHLY_AMOUNT": "Calculer le montant mensuel",
+    "LATER": "Plus tard",
+    "CLOSE": "Fermer",
+    "MODAL_TITLES": {
+      "UNITS_LIMIT_REACHED": "Limite d'unités atteinte",
+      "PROPERTIES_LIMIT_REACHED": "Limite de biens atteinte",
+      "RENTAL_UNITS_LIMIT_REACHED": "Limite d'unités locatives atteinte",
+      "ACCOUNT_SUSPENDED": "Compte suspendu",
+      "UPGRADE_TO_PREMIUM": "Passer au forfait Premium",
+      "SUBSCRIPTION_MANAGEMENT": "Gestion de souscription"
+    },
+    "MODAL_MESSAGES": {
+      "ROOM_LIMIT_MESSAGE": "Vous avez atteint la limite de {{limit}} unités locatives par bien pour le forfait gratuit. Pour créer plus d'unités, passez au forfait Premium.",
+      "PROPERTY_LIMIT_MESSAGE": "Vous avez atteint la limite de {{limit}} bien pour le forfait gratuit. Pour créer plus de biens, passez au forfait Premium.",
+      "ACCOUNT_SUSPENDED_MESSAGE": "Votre compte est suspendu pour impayé. Veuillez régler vos factures pour réactiver votre compte.",
+      "UPGRADE_PROMPT_MESSAGE": "Le forfait Premium vous permet de créer un nombre illimité de biens et d'unités locatives. Vous ne payez que 2% du loyer des unités effectivement occupées."
+    },
+    "ACCOUNT_STATUS_LABELS": {
+      "ACTIVE": "Actif",
+      "SUSPENDED": "Suspendu",
+      "DISABLED": "Désactivé"
+    }
+  },
+  "SUBSCRIPTION_DASHBOARD": {
+    "TITLE": "Gestion de votre souscription",
+    "REFRESH": "Actualiser",
+    "CURRENT_SUBSCRIPTION": "Souscription actuelle",
+    "PLAN_LABEL": "Plan",
+    "ACTIVE_SINCE": "Actif depuis le",
+    "UPGRADE_TO_PREMIUM": "Passer au Premium",
+    "PREMIUM_PLAN_ACTIVE": "Plan Premium Actif",
+    "CURRENT_PERIOD": "Période actuelle",
+    "PERIOD_LABEL": "Période",
+    "AMOUNT_LABEL": "Montant",
+    "BILLED_PROPERTIES": "Propriétés facturées",
+    "PERIOD_PROGRESS": "Progression de la période",
+    "DAYS_REMAINING": "jours restants",
+    "PERIOD_EXPIRED": "Période expirée",
+    "PAY_NOW": "Payer maintenant",
+    "REDIRECTING_TO_STRIPE": "Redirection vers Stripe...",
+    "DOWNLOAD_INVOICE": "Télécharger la facture",
+    "PROPERTIES_COUNT": "Propriétés",
+    "FREE_PLAN_LIMIT": "Limite (Plan Gratuit)",
+    "FREE_PLAN": "Gratuit",
+    "MONTHLY_AMOUNT": "Montant mensuel",
+    "NO_ACTIVE_SUBSCRIPTION": "Aucune souscription active",
+    "NO_SUBSCRIPTION_MESSAGE": "Vous n'avez pas encore de souscription. Souscrivez au plan Premium pour débloquer toutes les fonctionnalités.",
+    "SUBSCRIBE_TO_PREMIUM": "Souscrire au plan Premium",
+    "UNPAID_INVOICES": "Factures impayées",
+    "UNPAID_INVOICES_MESSAGE": "Vous avez {{count}} facture(s) impayée(s) pour un montant total de {{amount}}",
+    "VIEW_DETAILS": "Voir les détails",
+    "SUBSCRIPTION_HISTORY": "Historique des souscriptions",
+    "LOADING_HISTORY": "Chargement...",
+    "BILLING_PERIODS": "Périodes de facturation",
+    "PERIODS_COUNT": "Périodes:",
+    "PROPERTIES_COUNT_LABEL": "Propriétés:",
+    "PAY_NOW_ACTION": "Payer maintenant",
+    "NO_HISTORY": "Aucun historique",
+    "NO_HISTORY_MESSAGE": "Votre historique de souscriptions apparaîtra ici."
+  },
   "ROOM_TYPES": {
     "ROOM": "Chambre",
     "STUDIO": "Studio",
@@ -1588,6 +1647,29 @@
         "DUPLICATING": "Duplication...",
         "CREATED_ON": "Créé le"
       }
+    }
+  },
+  "TEMPLATE": {
+    "SAVE": {
+      "SUCCESS": "Modèle sauvegardé avec succès",
+      "ERROR": "Erreur lors de la sauvegarde du modèle",
+      "TITLE": "Sauvegarde du modèle",
+      "NO_CHANGES": "Aucune modification à sauvegarder"
+    },
+    "CREATE": {
+      "SUCCESS": "Modèle créé avec succès",
+      "ERROR": "Erreur lors de la création du modèle",
+      "TITLE": "Création du modèle"
+    },
+    "VALIDATION": {
+      "NAME_REQUIRED": "Le nom du modèle est obligatoire",
+      "TITLE": "Validation du modèle"
+    },
+    "EXPORT": {
+      "HTML_SUCCESS": "Modèle exporté en HTML avec succès",
+      "PDF_SUCCESS": "Modèle exporté en PDF avec succès",
+      "WORD_SUCCESS": "Modèle exporté en Word avec succès",
+      "TITLE": "Export du modèle"
     }
   },
   "ERRORS": {
@@ -3038,14 +3120,11 @@
       },
       "SEARCH_PLACEHOLDER": "Rechercher un locataire...",
       "FILTERS": {
-        "ALL": "Tous",
-        "ACTIVE": "Actifs",
-        "INACTIVE": "Inactifs",
         "SORT_BY": {
           "NAME": "Nom",
           "UNIT": "Unité",
           "RENT": "Loyer",
-          "LEASE_END": "Date d'entrée"
+          "LEASE_END": "Date de fin de bail"
         }
       },
       "EMPTY_STATE": {
@@ -3075,14 +3154,6 @@
           "EMAIL_NOT_PROVIDED": "Email non renseigné",
           "PHONE_NOT_PROVIDED": "Téléphone non renseigné"
         }
-      },
-      "FILTERS": {
-        "SORT_BY": {
-          "NAME": "Nom",
-          "UNIT": "Unité",
-          "RENT": "Loyer",
-          "LEASE_END": "Date de fin de bail"
-        }
       }
     },
     "UNIT_DETAILS": {
@@ -3103,7 +3174,7 @@
       "PRIVATE_SHOWER": "Douche privée",
       "BATHROOMS": "Salles de bain",
       "TECHNICAL_INFO": "Informations techniques",
-      "UNIT_ID": "ID de l'unité",
+      "UNIT_ID": "ID Unité",
       "CREATION_DATE": "Date de création",
       "LAST_MODIFICATION": "Dernière modification",
       "TENANT_INFO": "Informations du locataire",
@@ -3112,7 +3183,7 @@
       "PHONE": "Téléphone",
       "ENTRY_DATE": "Date d'entrée",
       "NO_TENANT": "Aucun locataire",
-      "UNIT_AVAILABLE": "Cette unité est disponible pour location",
+      "UNIT_AVAILABLE": "Unité disponible",
       "ASSIGN_TENANT": "Assigner un locataire",
       "QUICK_ACTIONS": "Actions rapides",
       "EDIT_UNIT": "Modifier l'unité",
@@ -3141,28 +3212,23 @@
       "OCCUPIED": "Occupée",
       "PERSONAL_INFO": "Informations personnelles",
       "NOT_PROVIDED": "Non renseigné",
-      "CONTRACT_STATUS": "Statut du contrat",
       "ACTIVE": "Actif",
       "INACTIVE": "Inactif",
       "END_DATE": "Date de fin",
-      "VIEW_CONTRACT": "Voir le contrat",
       "EDIT_INFO": "Modifier les infos",
       "CANCEL_CONTRACT": "Annuler le contrat",
-      "UNIT_AVAILABLE": "Unité disponible",
       "NO_TENANT_ASSIGNED": "Aucun locataire assigné",
       "AVAILABLE": "Disponible",
       "UNIT_READY_TO_RENT": "Unité prête à louer",
-      "UNIT_AVAILABLE_FOR_ASSIGNMENT": "Cette unité est disponible et peut être assignée à un nouveau locataire.",
+      "UNIT_AVAILABLE_FOR_ASSIGNMENT": "Cette unité est disponible et peut être assignée à un nouveau locataire",
       "PAYMENT_HISTORY": "Historique des paiements",
       "COMPLETE_TRACKING": "Suivi complet des transactions pour cette unité",
-      "ADD_PAYMENT": "Ajouter un paiement",
       "GENERATE_PAYMENT_LINK": "Générer lien de paiement",
       "TOTAL_COLLECTED": "Total encaissé",
       "TRANSACTIONS": "Transactions",
       "AVERAGE": "Moyenne",
       "LAST_PAYMENT": "Dernier paiement",
       "RENT": "Loyer",
-      "DEPOSIT": "Caution",
       "VIEW_DETAILS": "Voir les détails",
       "EDIT": "Modifier",
       "DELETE": "Supprimer",
@@ -3198,15 +3264,12 @@
       "HIDDEN": "Masquée",
       "PUBLIC_VISIBILITY": "Visibilité publique",
       "ADMINISTRATIVE_INFO": "Informations administratives",
-      "UNIT_ID": "ID Unité",
       "ACTIVE_SUBSCRIPTION": "Souscription active",
       "MODIFY": "Modifier",
       "DESCRIPTION": "Description",
       "UNIT_WITHOUT_NAME": "Unité sans nom",
       "PER_MONTH": "par mois",
       "CONTACT_TENANT": "Contacter le locataire",
-      "NO_TENANT_ASSIGNED": "Aucun locataire assigné",
-      "UNIT_AVAILABLE_FOR_ASSIGNMENT": "Cette unité est disponible et peut être assignée à un nouveau locataire",
       "ASSIGN_TENANT_BUTTON": "Assigner un locataire",
       "GALLERY_PHOTOS_COUNT": "Galerie photos ({{count}})",
       "ADD_IMAGES_BUTTON": "Ajouter des images",
@@ -3443,12 +3506,7 @@
     "CANCEL_CONTRACT": "Annuler le contrat",
     "RECORD_FIRST_PAYMENT": "Enregistrer le premier paiement",
     "OCCUPIED": "Occupée",
-    "PAYMENTS_COUNT": "paiement(s)",
-    "MODIFY_BUTTON": "Modifier",
-    "UNIT": "Unité",
-    "UNKNOWN_TYPE": "Type inconnu",
     "UNKNOWN_STATUS": "Statut inconnu",
-    "UNKNOWN_TENANT": "Locataire inconnu",
     "TENANT": "Locataire",
     "TENANT_NOT_FOUND": "Locataire introuvable",
     "OTHER": "Autre",
@@ -3614,15 +3672,6 @@
     "CANNOT_ADD_PAYMENT": "Impossible d'ajouter un paiement",
     "NO_TENANT_ASSIGNED": "Cette unité n'a pas de locataire assigné ou les données sont incomplètes."
   },
-  "FINANCES": {
-    "PAYMENT_METHODS": {
-      "CASH": "Espèces",
-      "BANK_TRANSFER": "Virement bancaire",
-      "MOBILE_MONEY": "Mobile Money",
-      "CHECK": "Chèque",
-      "CREDIT_CARD": "Carte de crédit"
-    }
-  },
   "PAYMENT_LINK": {
     "PERMANENT_PAYMENT_LINK": "Lien de paiement permanent",
     "GENERATE_REUSABLE_LINK": "Générer un lien réutilisable pour ce contrat de location",
@@ -3710,5 +3759,219 @@
     "360_IMAGE_ALT": "Image 360°",
     "VIDEO": "Vidéo",
     "TOUR_360": "360°"
+  },
+  "BILLING": {
+    "TITLE": "Facturation",
+    "PRICING_TITLE": "Prix & Plan",
+    "PRICING_SUBTITLE": "Ndewa360 la plateforme de gestion de location réinventé en 360.",
+    "FREEMIUM_PLAN": "Plan Freemium",
+    "ACTIVATE_PRO_PLAN": "Activez le plan Pro pour bénéficier de toutes les fonctionnalités",
+    "CLICK_TO_ACTIVATE": "Cliquez ici pour activer",
+    "UNPAID_INVOICES": "Factures impayées",
+    "UNPAID_INVOICES_COUNT": "Vous avez {{count}} facture(s) impayée(s) pour un montant de {{amount}} FCFA",
+    "FREE_PLAN": {
+      "TITLE": "GRATUIT",
+      "SUBTITLE": "Plan automatique à l'inscription",
+      "NAME": "Ndewa360 FREE",
+      "DESCRIPTION": "Commencez gratuitement avec les fonctionnalités de base pour gérer votre premier bien immobilier",
+      "LIMITS_TITLE": "LIMITES DU PLAN FREE",
+      "MAX_PROPERTIES": "Maximum 1 bien immobilier",
+      "MAX_UNITS": "Maximum 8 unités locatives",
+      "FINANCIAL_MANAGEMENT": "Gestion des finances",
+      "CONTRACT_MANAGEMENT": "Gestion des contrats",
+      "CURRENT_PLAN": "Plan actuel",
+      "BASE_PLAN": "Plan de base"
+    },
+    "PREMIUM_PLAN": {
+      "TITLE": "2%",
+      "SUBTITLE": "Upgrade vers Premium",
+      "NAME": "Ndewa360 Premium",
+      "DESCRIPTION": "Gérez un nombre illimité de biens immobiliers et débloquez toutes les fonctionnalités avancées",
+      "FEATURES_TITLE": "FONCTIONNALITES PREMIUM",
+      "UNLIMITED_PROPERTIES": "Biens immobiliers illimités",
+      "UNLIMITED_UNITS": "Unités locatives illimitées",
+      "PAYMENT_NOTIFICATIONS": "Notifications de non paiement",
+      "DETAILED_DASHBOARD": "Tableau de bord détaillé",
+      "PRIORITY_SUPPORT": "Support prioritaire",
+      "ADVANCED_REPORTS": "Rapports avancés",
+      "UPGRADE_TO_PREMIUM": "Passer au Premium",
+      "UPGRADING": "Upgrade en cours..."
+    },
+    "INVOICES": {
+      "TITLE": "Factures"
+    },
+    "PLAN_LABELS": {
+      "FREE": "Plan Gratuit",
+      "PREMIUM": "Plan Premium"
+    },
+    "STATUS_LABELS": {
+      "ACTIVE": "Actif",
+      "SUSPENDED": "Suspendu",
+      "CANCELLED": "Annulé"
+    },
+    "PERIOD_STATUS": {
+      "PAID": "Payé",
+      "OVERDUE": "En retard",
+      "PENDING": "En attente"
+    },
+    "WIDGET": {
+      "LOADING": "Chargement...",
+      "LOADING_ERROR": "Erreur de chargement",
+      "PROPERTIES_CREATED": "Biens créés",
+      "MONTHLY_AMOUNT": "Montant mensuel :",
+      "LIMIT_SOON_REACHED": "Limite bientôt atteinte",
+      "UPGRADE_TO_PREMIUM": "Passer au Premium",
+      "SETTLE_UNPAID": "Régler les impayés",
+      "CALCULATE": "Calculer",
+      "UNPAID_AMOUNT": "{{amount}} FCFA impayés",
+      "ACCOUNT_SUSPENDED": "Compte suspendu",
+      "PREMIUM_PLAN": "Forfait Premium",
+      "FREE_PLAN": "Forfait Gratuit"
+    },
+    "MENU": {
+      "BILLING_PAYMENT": "Facturation & Paiement",
+      "DASHBOARD": "Dashboard",
+      "INVOICES": "Factures",
+      "SUBSCRIPTIONS": "Abonnements",
+      "HISTORY_PAYMENTS": "Historique & Paiements",
+      "TRANSACTION_HISTORY": "Historique des transactions",
+      "PAYMENT_METHODS": "Méthodes de paiement"
+    },
+    "INVOICE": {
+      "CURRENT_PERIOD_INVOICE": "Facture de la période actuelle",
+      "REFERENCE_NOT_AVAILABLE": "Référence non disponible",
+      "INVOICE_ID": "ID Facture",
+      "BILLING_PERIOD": "Période de facturation",
+      "INVOICE_STATUS": "Status de la facture",
+      "UNKNOWN": "Inconnu",
+      "SERVICE_PROVIDER": "Fournisseur de services",
+      "TOTAL_FCFA": "Total en FCFA",
+      "PAY_INVOICE": "Régler la facture",
+      "SERVICE_FEES": "Ndewa360 frais de service",
+      "TOTAL_ACTIVE_PROPERTIES": "Total de bien actif",
+      "SERVICE_FEES_EXCLUDING_TAX": "Total des frais de services hors taxes en {{currency}}",
+      "TOTAL_TAXES": "Total des taxes",
+      "TABLE_HEADERS": {
+        "CODE": "Code",
+        "PROPERTY": "Propriété",
+        "PRICE": "Prix",
+        "OCCUPIED_DAYS": "Jours occupés",
+        "ELIGIBLE": "Éligible",
+        "AMOUNT": "Montant",
+        "STATUS": "Statut"
+      },
+      "ROOM_TYPES": {
+        "ROOM": "Chambre {{code}}",
+        "STUDIO": "Studio #{{code}}",
+        "SIMPLE_APARTMENT": "Apartement #{{code}}",
+        "FURNISHED_APARTMENT": "Apartement Meublé #{{code}}"
+      },
+      "TOGGLE_STATUS": {
+        "ACTIVE": "Actif",
+        "INACTIVE": "Inactif"
+      },
+      "ELIGIBILITY": {
+        "YES": "Oui",
+        "NO": "Non"
+      },
+      "PERIOD_STATUS": {
+        "PAID": "Payée",
+        "WAITING": "En attente de paiement",
+        "UNPAID": "Impayée",
+        "UNKNOWN": "Statut inconnu"
+      },
+      "PERIOD_UNDEFINED": "Période non définie",
+      "DAYS_SUFFIX": "jours"
+    }
+  },
+  "TENANT_DETAILS": {
+    "TABS": {
+      "OVERVIEW": "Vue d'ensemble",
+      "ROOM": "Chambre occupée",
+      "PAYMENT_HISTORY": "Historique paiements"
+    },
+    "OVERVIEW": {
+      "NO_ROOM_ASSIGNED": "Aucune chambre assignée",
+      "PER_MONTH": "par mois",
+      "EDIT": "Modifier",
+      "PERSONAL_INFO": "Informations personnelles",
+      "EMAIL": "Email",
+      "PHONE": "Téléphone",
+      "REGISTRATION_DATE": "Date d'inscription",
+      "REFERENCE": "Référent",
+      "REFERENCE_NAME": "Nom du référent",
+      "REFERENCE_EMAIL": "Email du référent",
+      "REFERENCE_PHONE": "Téléphone du référent",
+      "ADMIN_INFO": "Informations administratives",
+      "TENANT_ID": "ID Locataire",
+      "STATUS": "Statut",
+      "ENTRY_DATE": "Date d'entrée",
+      "CREATION_DATE": "Date de création"
+    },
+    "ROOM": {
+      "ROOM_ASSIGNED": "Chambre assignée",
+      "OCCUPIED": "Occupée",
+      "ROOM_INFO": "Informations de la chambre",
+      "ROOM_CODE": "Code chambre",
+      "TYPE": "Type",
+      "MONTHLY_RENT": "Loyer mensuel",
+      "DEPOSIT": "Caution",
+      "CHARACTERISTICS": "Caractéristiques",
+      "ROOMS": "Chambre(s)",
+      "KITCHEN": "Cuisine",
+      "SHOWERS": "Douche(s)",
+      "VISIBILITY": "Visibilité",
+      "VIEW_CONTRACT": "Voir le contrat",
+      "TERMINATE_CONTRACT": "Résilier le contrat",
+      "NO_ROOM_ASSIGNED_TITLE": "Aucune chambre assignée",
+      "NO_ROOM_MESSAGE": "Ce locataire n'a pas encore de chambre",
+      "NO_ROOM_STATUS": "Sans chambre",
+      "READY_FOR_ASSIGNMENT": "Prêt pour assignation",
+      "ASSIGNMENT_MESSAGE": "Ce locataire peut être assigné à une chambre disponible dans cette propriété.",
+      "ASSIGN_ROOM": "Assigner une chambre"
+    },
+    "PAYMENTS": {
+      "PAYMENT_HISTORY": "Historique des paiements",
+      "COMPLETE_TRACKING": "Suivi complet des transactions pour ce locataire",
+      "ADD_PAYMENT": "Ajouter un paiement",
+      "TOTAL_PAID": "Total payé",
+      "TRANSACTIONS": "Transactions",
+      "AVERAGE": "Moyenne",
+      "LAST_PAYMENT": "Dernier paiement",
+      "PAYMENTS_COUNT": "paiement(s)",
+      "RENT": "Loyer",
+      "DEPOSIT": "Caution",
+      "VIEW_DETAILS": "Voir les détails",
+      "EDIT": "Modifier",
+      "DELETE": "Supprimer",
+      "NO_PAYMENTS_TITLE": "Aucun paiement enregistré",
+      "NO_PAYMENTS_MESSAGE": "Ce locataire n'a pas encore d'historique de paiements.",
+      "RECORD_FIRST_PAYMENT": "Enregistrer le premier paiement"
+    },
+    "STATUS_LABELS": {
+      "ACTIVE": "Actif",
+      "INACTIVE": "Inactif",
+      "PENDING": "En attente",
+      "UNKNOWN": "Inconnu"
+    },
+    "ROOM_TYPES": {
+      "ROOM": "Chambre simple",
+      "STUDIO": "Studio",
+      "SIMPLE_APARTMENT": "Appartement simple",
+      "FURNISHED_APARTMENT": "Appartement meublé"
+    },
+    "DEFAULTS": {
+      "NO_NAME": "Locataire sans nom",
+      "NO_EMAIL": "Email non renseigné",
+      "NO_PHONE": "Téléphone non renseigné",
+      "NO_ROOM": "Aucune chambre assignée",
+      "UNKNOWN_ROOM": "Chambre inconnue",
+      "PRICE_ZERO": "0 FCFA",
+      "DATE_NA": "N/A",
+      "YES": "Oui",
+      "NO": "Non",
+      "VISIBLE": "Visible",
+      "HIDDEN": "Masquée"
+    }
   }
 }

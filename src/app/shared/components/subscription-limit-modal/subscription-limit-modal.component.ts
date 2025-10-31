@@ -3,6 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store, Select } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { TranslateService } from '@ngx-translate/core';
 import { SubscriptionLimitState, SubscriptionLimitAction, SubscriptionStatus } from '../../store/subscription-limit';
 
 export interface SubscriptionLimitModalData {
@@ -32,7 +33,8 @@ export class SubscriptionLimitModalComponent implements OnInit, OnDestroy {
   constructor(
     public dialogRef: MatDialogRef<SubscriptionLimitModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: SubscriptionLimitModalData,
-    private store: Store
+    private store: Store,
+    private translate: TranslateService
   ) { }
 
   ngOnInit(): void {
@@ -98,15 +100,17 @@ export class SubscriptionLimitModalComponent implements OnInit, OnDestroy {
   get modalTitle(): string {
     switch (this.data.type) {
       case 'limit_reached':
-        return this.data.limitType === 'room' ? 'Limite d\'unités atteinte' : 'Limite de biens atteinte';
+        return this.data.limitType === 'room' ? 
+          this.translate.instant('SUBSCRIPTION_MODAL.MODAL_TITLES.UNITS_LIMIT_REACHED') : 
+          this.translate.instant('SUBSCRIPTION_MODAL.MODAL_TITLES.PROPERTIES_LIMIT_REACHED');
       case 'room_limit_reached':
-        return 'Limite d\'unités locatives atteinte';
+        return this.translate.instant('SUBSCRIPTION_MODAL.MODAL_TITLES.RENTAL_UNITS_LIMIT_REACHED');
       case 'account_suspended':
-        return 'Compte suspendu';
+        return this.translate.instant('SUBSCRIPTION_MODAL.MODAL_TITLES.ACCOUNT_SUSPENDED');
       case 'upgrade_prompt':
-        return 'Passer au forfait Premium';
+        return this.translate.instant('SUBSCRIPTION_MODAL.MODAL_TITLES.UPGRADE_TO_PREMIUM');
       default:
-        return 'Gestion de souscription';
+        return this.translate.instant('SUBSCRIPTION_MODAL.MODAL_TITLES.SUBSCRIPTION_MANAGEMENT');
     }
   }
 
@@ -114,16 +118,16 @@ export class SubscriptionLimitModalComponent implements OnInit, OnDestroy {
     switch (this.data.type) {
       case 'limit_reached':
         if (this.data.limitType === 'room') {
-          return `Vous avez atteint la limite de ${this.data.currentLimit || 8} unités locatives par bien pour le forfait gratuit. Pour créer plus d'unités, passez au forfait Premium.`;
+          return this.translate.instant('SUBSCRIPTION_MODAL.MODAL_MESSAGES.ROOM_LIMIT_MESSAGE', { limit: this.data.currentLimit || 8 });
         } else {
-          return `Vous avez atteint la limite de ${this.data.currentLimit || 1} bien pour le forfait gratuit. Pour créer plus de biens, passez au forfait Premium.`;
+          return this.translate.instant('SUBSCRIPTION_MODAL.MODAL_MESSAGES.PROPERTY_LIMIT_MESSAGE', { limit: this.data.currentLimit || 1 });
         }
       case 'room_limit_reached':
-        return `Vous avez atteint la limite de ${this.data.currentLimit || 8} unités locatives par bien pour le forfait gratuit. Pour créer plus d'unités, passez au forfait Premium.`;
+        return this.translate.instant('SUBSCRIPTION_MODAL.MODAL_MESSAGES.ROOM_LIMIT_MESSAGE', { limit: this.data.currentLimit || 8 });
       case 'account_suspended':
-        return 'Votre compte est suspendu pour impayé. Veuillez régler vos factures pour réactiver votre compte.';
+        return this.translate.instant('SUBSCRIPTION_MODAL.MODAL_MESSAGES.ACCOUNT_SUSPENDED_MESSAGE');
       case 'upgrade_prompt':
-        return 'Le forfait Premium vous permet de créer un nombre illimité de biens et d\'unités locatives. Vous ne payez que 2% du loyer des unités effectivement occupées.';
+        return this.translate.instant('SUBSCRIPTION_MODAL.MODAL_MESSAGES.UPGRADE_PROMPT_MESSAGE');
       default:
         return '';
     }
@@ -144,13 +148,14 @@ export class SubscriptionLimitModalComponent implements OnInit, OnDestroy {
   }
 
   getAccountStatusLabel(status: string): string {
-    switch (status) {
+    const statusKey = status?.toLowerCase();
+    switch (statusKey) {
       case 'active':
-        return 'Actif';
+        return this.translate.instant('SUBSCRIPTION_MODAL.ACCOUNT_STATUS_LABELS.ACTIVE');
       case 'suspended':
-        return 'Suspendu';
+        return this.translate.instant('SUBSCRIPTION_MODAL.ACCOUNT_STATUS_LABELS.SUSPENDED');
       case 'disabled':
-        return 'Désactivé';
+        return this.translate.instant('SUBSCRIPTION_MODAL.ACCOUNT_STATUS_LABELS.DISABLED');
       default:
         return status;
     }

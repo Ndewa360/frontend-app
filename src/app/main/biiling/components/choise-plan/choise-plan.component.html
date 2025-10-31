@@ -14,10 +14,10 @@
             <div class="">
               <div class="text-center">
                 <div class="app-productive-heading-06 mb-4">
-                  Prix & Plan
+                  {{ 'BILLING.PRICING_TITLE' | translate }}
                 </div>
                 <p class="app-body-long-02 mb-8">
-                  Ndewa360 la plateforme de gestion de location réinventé en 360.
+                  {{ 'BILLING.PRICING_SUBTITLE' | translate }}
                 </p>
                 
               </div>
@@ -31,10 +31,10 @@
                           <div fxFlex
                                class="p-12 text-center app-bg-info-lt-30 app-text-contrast">
                             <div class="flex items-center justify-center">
-                              <span class="app-productive-heading-07 mr-1 font-bold">GRATUIT</span>
+                              <span class="app-productive-heading-07 mr-1 font-bold">{{ 'BILLING.FREE_PLAN.TITLE' | translate }}</span>
                             </div>
                             <div class="app-body-short-01 mt-1 mb-8">
-                              Plan automatique à l'inscription
+                              {{ 'BILLING.FREE_PLAN.SUBTITLE' | translate }}
                             </div>
                             <div class="">
                               <button
@@ -43,7 +43,7 @@
                                 ibmButton="secondary"
                                 size="md"
                                 class="app-ibm-btn-full">
-                                Plan actuel
+                                {{ 'BILLING.FREE_PLAN.CURRENT_PLAN' | translate }}
                               </button>
                               <ng-template #currentPlan>
                                 <button
@@ -51,7 +51,7 @@
                                   ibmButton="tertiary"
                                   size="md"
                                   class="app-ibm-btn-full">
-                                  Plan de base
+                                  {{ 'BILLING.FREE_PLAN.BASE_PLAN' | translate }}
                                 </button>
                               </ng-template>
                             </div>
@@ -59,32 +59,32 @@
                         </div>
                         <div fxLayout="row wrap" fxLayoutAlign=" center" fxFlex="100%" fxFlex.gt-md="">
                           <div fxFlex class="px-12 py-8">
-                            <div class="app-productive-heading-03 mb-3 font-bold">Ndewa360 FREE</div>
+                            <div class="app-productive-heading-03 mb-3 font-bold">{{ 'BILLING.FREE_PLAN.NAME' | translate }}</div>
                             <div class="app-body-short-02">
-                              Commencez gratuitement avec les fonctionnalités de base pour gérer votre premier bien immobilier
+                              {{ 'BILLING.FREE_PLAN.DESCRIPTION' | translate }}
                             </div>
                             <div class="app-separator app-separator--left mt-8 mb-4">
-                              <span class="app-label-01 font-bold">LIMITES DU PLAN FREE</span>
+                              <span class="app-label-01 font-bold">{{ 'BILLING.FREE_PLAN.LIMITS_TITLE' | translate }}</span>
                             </div>
                             <div fxLayout="row wrap">
                               <div fxFlex="100%" fxFlex.gt-md="50%">
                                 <div class="flex items-center app-body-short-01 mb-1">
                                   <i class="fas fa-home app-color-info mr-2"></i>
-                                  Maximum 1 bien immobilier
+                                  {{ 'BILLING.FREE_PLAN.MAX_PROPERTIES' | translate }}
                                 </div>
                                 <div class="flex items-center app-body-short-01">
                                   <i class="fas fa-door-open app-color-info mr-2"></i>
-                                  Maximum 8 unités locatives
+                                  {{ 'BILLING.FREE_PLAN.MAX_UNITS' | translate }}
                                 </div>
                               </div>
                               <div fxFlex="100%" fxFlex.gt-md="50%">
                                 <div class="flex items-center app-body-short-01 mb-1">
                                   <i class="fas fa-check-circle app-color-success mr-2"></i>
-                                  Gestion des finances
+                                  {{ 'BILLING.FREE_PLAN.FINANCIAL_MANAGEMENT' | translate }}
                                 </div>
                                 <div class="flex items-center app-body-short-01">
                                   <i class="fas fa-check-circle app-color-success mr-2"></i>
-                                  Gestion des contrats
+                                  {{ 'BILLING.FREE_PLAN.CONTRACT_MANAGEMENT' | translate }}
                                 </div>
                               </div>
                             </div>
@@ -107,7 +107,7 @@
                               <span class="app-productive-heading-02">/unité/mois</span>
                             </div>
                             <div class="app-body-short-01 mt-1 mb-8">
-                              Upgrade vers Premium
+                              {{ 'BILLING.PREMIUM_PLAN.SUBTITLE' | translate }}
                             </div>
                             <div class="">
                               <button
@@ -117,10 +117,10 @@
                                 ibmButton="primary"
                                 size="md"
                                 class="app-ibm-btn-full custom-primary-button">
-                                <span *ngIf="!(isUpgrading$ | async)">Passer au Premium</span>
+                                <span *ngIf="!(isUpgrading$ | async)">{{ 'BILLING.PREMIUM_PLAN.UPGRADE_TO_PREMIUM' | translate }}</span>
                                 <span *ngIf="isUpgrading$ | async">
                                   <i class="fas fa-spinner fa-spin mr-2"></i>
-                                  Upgrade en cours...
+                                  {{ 'BILLING.PREMIUM_PLAN.UPGRADING' | translate }}
                                 </span>
                               </button>
                               <ng-template #alreadyPremium>
@@ -129,7 +129,7 @@
                                   ibmButton="primary"
                                   size="md"
                                   class="app-ibm-btn-full">
-                                  Plan actuel
+                                  {{ 'BILLING.PREMIUM_PLAN.CURRENT_PLAN' | translate }}
                                 </button>
                               </ng-template>
                             </div>
@@ -137,12 +137,12 @@
                         </div>
                         <div fxLayout="row wrap" fxLayoutAlign=" center" fxFlex="100%" fxFlex.gt-md="">
                           <div fxFlex class="px-12 py-8">
-                            <div class="app-productive-heading-03 mb-3 font-bold">Ndewa360 Premium</div>
+                            <div class="app-productive-heading-03 mb-3 font-bold">{{ 'BILLING.PREMIUM_PLAN.NAME' | translate }}</div>
                             <div class="app-body-short-02">
-                              Gérez un nombre illimité de biens immobiliers et débloquez toutes les fonctionnalités avancées
+                              {{ 'BILLING.PREMIUM_PLAN.DESCRIPTION' | translate }}
                             </div>
                             <div class="app-separator app-separator--left mt-8 mb-4">
-                              <span class="app-label-01 font-bold">FONCTIONNALITES PREMIUM</span>
+                              <span class="app-label-01 font-bold">{{ 'BILLING.PREMIUM_PLAN.FEATURES_TITLE' | translate }}</span>
                             </div>
                             <div fxLayout="row wrap">
                               <div fxFlex="100%" fxFlex.gt-md="50%">
