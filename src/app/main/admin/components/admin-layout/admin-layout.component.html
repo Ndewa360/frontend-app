@@ -4,7 +4,7 @@
   <ibm-header name="Ndiye Admin" class="admin-header">
     <ibm-header-navigation>
       <ibm-header-item>
-        <a routerLink="/admin/dashboard" class="admin-logo">
+        <a [routerLink]="getRouteWithLang('/admin/dashboard')" class="admin-logo">
           <i class="fas fa-tachometer-alt" style="font-size: 20px;"></i>
           <span class="admin-logo-text">Ndiye Admin</span>
         </a>
@@ -14,7 +14,7 @@
     <ibm-header-global>
       <!-- Header simplifié - Les notifications et profil sont dans la sidebar principale -->
       <div class="admin-header-title">
-        <h1>Administration</h1>
+        <h1>{{ 'ADMIN.TITLE' | translate }}</h1>
       </div>
     </ibm-header-global>
   </ibm-header>
@@ -37,7 +37,7 @@
         <!-- Navigation Menu -->
         <div class="admin-nav-menu">
           <div class="admin-nav-section">
-            <h3 class="admin-nav-section-title">Navigation</h3>
+            <h3 class="admin-nav-section-title">{{ 'ADMIN.NAVIGATION' | translate }}</h3>
             <ul class="admin-nav-list">
               <li *ngFor="let item of menuItems" class="admin-nav-item">
                 <a [routerLink]="item.route" 

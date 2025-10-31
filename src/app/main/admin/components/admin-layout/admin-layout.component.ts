@@ -3,6 +3,7 @@ import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil, filter } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
+import { TranslateService } from '@ngx-translate/core';
 import { UserProfileState } from '../../../../shared/store/user-profile/user-profile.state';
 import { UserProfileAction } from '../../../../shared/store/user-profile/user-profile.actions';
 import { LanguagePreservationService } from '../../../../shared/services/language-preservation.service';
@@ -29,68 +30,74 @@ export class AdminLayoutComponent implements OnInit, OnDestroy {
   pageTitle = '';
   breadcrumbs: string[] = [];
 
-  menuItems: AdminMenuItem[] = [
-    {
-      id: 'dashboard',
-      label: 'Tableau de bord',
-      icon: 'tachometer-alt',
-      route: '/admin/dashboard',
-      description: 'Vue d\'ensemble du système'
-    },
-    {
-      id: 'users',
-      label: 'Utilisateurs',
-      icon: 'users',
-      route: '/admin/users',
-      description: 'Gestion des utilisateurs'
-    },
-    {
-      id: 'roles',
-      label: 'Rôles & Permissions',
-      icon: 'user-shield',
-      route: '/admin/roles',
-      description: 'Gestion des rôles et permissions'
-    },
-    {
-      id: 'geography',
-      label: 'Géographie',
-      icon: 'globe-africa',
-      route: '/admin/geography',
-      description: 'Pays, villes et devises'
-    },
-    {
-      id: 'payments',
-      label: 'Paiements',
-      icon: 'credit-card',
-      route: '/admin/payments',
-      description: 'Gestion des paiements et souscriptions'
-    },
-    {
-      id: 'settings',
-      label: 'Paramètres',
-      icon: 'cog',
-      route: '/admin/settings',
-      description: 'Configuration du système'
-    },
-    {
-      id: 'monitoring',
-      label: 'Monitoring',
-      icon: 'chart-line',
-      route: '/admin/monitoring',
-      description: 'Surveillance et monitoring du système'
-    }
-  ];
+  menuItems: AdminMenuItem[] = [];
 
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private store: Store,
-    private languagePreservation: LanguagePreservationService
+    private languagePreservation: LanguagePreservationService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
+    this.initializeMenuItems();
     this.setupRouteListener();
     this.updateCurrentRoute();
+  }
+
+  private initializeMenuItems(): void {
+    this.menuItems = [
+      {
+        id: 'dashboard',
+        label: this.translate.instant('ADMIN.MENU.DASHBOARD'),
+        icon: 'tachometer-alt',
+        route: this.getRouteWithLang('/admin/dashboard'),
+        description: this.translate.instant('ADMIN.DESCRIPTIONS.DASHBOARD')
+      },
+      {
+        id: 'users',
+        label: this.translate.instant('ADMIN.MENU.USERS'),
+        icon: 'users',
+        route: this.getRouteWithLang('/admin/users'),
+        description: this.translate.instant('ADMIN.DESCRIPTIONS.USERS')
+      },
+      {
+        id: 'roles',
+        label: this.translate.instant('ADMIN.MENU.ROLES_PERMISSIONS'),
+        icon: 'user-shield',
+        route: this.getRouteWithLang('/admin/roles'),
+        description: this.translate.instant('ADMIN.DESCRIPTIONS.ROLES_PERMISSIONS')
+      },
+      {
+        id: 'geography',
+        label: this.translate.instant('ADMIN.MENU.GEOGRAPHY'),
+        icon: 'globe-africa',
+        route: this.getRouteWithLang('/admin/geography'),
+        description: this.translate.instant('ADMIN.DESCRIPTIONS.GEOGRAPHY')
+      },
+      {
+        id: 'payments',
+        label: this.translate.instant('ADMIN.MENU.PAYMENTS'),
+        icon: 'credit-card',
+        route: this.getRouteWithLang('/admin/payments'),
+        description: this.translate.instant('ADMIN.DESCRIPTIONS.PAYMENTS')
+      },
+      {
+        id: 'settings',
+        label: this.translate.instant('ADMIN.MENU.SETTINGS'),
+        icon: 'cog',
+        route: this.getRouteWithLang('/admin/settings'),
+        description: this.translate.instant('ADMIN.DESCRIPTIONS.SETTINGS')
+      },
+      {
+        id: 'monitoring',
+        label: this.translate.instant('ADMIN.MENU.MONITORING'),
+        icon: 'chart-line',
+        route: this.getRouteWithLang('/admin/monitoring'),
+        description: this.translate.instant('ADMIN.DESCRIPTIONS.MONITORING')
+      }
+    ];
   }
 
   ngOnDestroy(): void {
@@ -119,10 +126,14 @@ export class AdminLayoutComponent implements OnInit, OnDestroy {
     route.data.pipe(
       takeUntil(this.destroy$)
     ).subscribe(data => {
-      this.pageTitle = data['title'] || 'Administration';
-      this.breadcrumbs = ['Administration'];
+      // Traduire le titre de page
+      const titleKey = data['title'] || 'ADMIN.TITLE';
+      this.pageTitle = this.translate.instant(titleKey);
+      
+      // Traduire les breadcrumbs
+      this.breadcrumbs = [this.translate.instant('ADMIN.TITLE')];
       if (data['breadcrumb']) {
-        this.breadcrumbs.push(data['breadcrumb']);
+        this.breadcrumbs.push(this.translate.instant(data['breadcrumb']));
       }
     });
   }
@@ -133,6 +144,11 @@ export class AdminLayoutComponent implements OnInit, OnDestroy {
 
   navigateTo(route: string): void {
     this.router.navigate([route]);
+  }
+
+  getRouteWithLang(route: string): string {
+    const currentLang = this.translate.currentLang || 'en';
+    return `/${currentLang}${route}`;
   }
 
   onLogout(): void {

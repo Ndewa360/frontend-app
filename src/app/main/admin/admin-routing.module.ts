@@ -25,64 +25,64 @@ const routes: Routes = [
         path: 'dashboard',
         component: AdminDashboardComponent,
         data: {
-          title: 'Tableau de bord',
-          breadcrumb: 'Dashboard'
+          title: 'ADMIN.PAGE_TITLES.DASHBOARD',
+          breadcrumb: 'ADMIN.BREADCRUMBS.DASHBOARD'
         }
       },
       {
         path: 'users',
         component: AdminUsersComponent,
         data: {
-          title: 'Gestion des utilisateurs',
-          breadcrumb: 'Utilisateurs'
+          title: 'ADMIN.PAGE_TITLES.USERS',
+          breadcrumb: 'ADMIN.BREADCRUMBS.USERS'
         }
       },
       {
         path: 'roles',
         component: AdminRolesComponent,
         data: {
-          title: 'Rôles et permissions',
-          breadcrumb: 'Rôles'
+          title: 'ADMIN.PAGE_TITLES.ROLES',
+          breadcrumb: 'ADMIN.BREADCRUMBS.ROLES'
         }
       },
       {
         path: 'geography',
         component: AdminGeographyComponent,
         data: {
-          title: 'Gestion géographique',
-          breadcrumb: 'Géographie'
+          title: 'ADMIN.PAGE_TITLES.GEOGRAPHY',
+          breadcrumb: 'ADMIN.BREADCRUMBS.GEOGRAPHY'
         }
       },
       {
         path: 'payments',
         component: AdminPaymentsComponent,
         data: {
-          title: 'Gestion des paiements',
-          breadcrumb: 'Paiements'
+          title: 'ADMIN.PAGE_TITLES.PAYMENTS',
+          breadcrumb: 'ADMIN.BREADCRUMBS.PAYMENTS'
         }
       },
       {
         path: 'settings',
         component: AdminSettingsComponent,
         data: {
-          title: 'Paramètres système',
-          breadcrumb: 'Paramètres'
+          title: 'ADMIN.PAGE_TITLES.SETTINGS',
+          breadcrumb: 'ADMIN.BREADCRUMBS.SETTINGS'
         }
       },
       {
         path: 'agents',
         component: AgentManagementComponent,
         data: {
-          title: 'Validation des agents',
-          breadcrumb: 'Agents'
+          title: 'ADMIN.PAGE_TITLES.AGENTS',
+          breadcrumb: 'ADMIN.BREADCRUMBS.AGENTS'
         }
       },
       {
         path: 'monitoring',
         loadChildren: () => import('../../monitoring/monitoring.module').then(m => m.MonitoringModule),
         data: {
-          title: 'Monitoring Système',
-          breadcrumb: 'Monitoring'
+          title: 'ADMIN.PAGE_TITLES.MONITORING',
+          breadcrumb: 'ADMIN.BREADCRUMBS.MONITORING'
         }
       },
       {

@@ -2057,7 +2057,9 @@
     "POPULAR_SEARCHES": {
       "TITLE": "Popular searches",
       "SUBTITLE": "Discover the most sought-after accommodation",
-      "AVAILABLE_UNITS": "accommodation available"
+      "AVAILABLE_UNITS": "accommodation available",
+      "PROPERTIES": "Properties",
+      "IN": "in"
     },
     "UNIT_DETAIL": {
       "SHARE_BUTTON": "Share",
@@ -3972,6 +3974,50 @@
       "NO": "No",
       "VISIBLE": "Visible",
       "HIDDEN": "Hidden"
+    }
+  },
+  "ADMIN": {
+    "TITLE": "Administration",
+    "NAVIGATION": "Navigation",
+    "MENU": {
+      "DASHBOARD": "Dashboard",
+      "USERS": "Users",
+      "ROLES_PERMISSIONS": "Roles & Permissions",
+      "GEOGRAPHY": "Geography",
+      "PAYMENTS": "Payments",
+      "SETTINGS": "Settings",
+      "MONITORING": "Monitoring",
+      "AGENTS": "Agents"
+    },
+    "DESCRIPTIONS": {
+      "DASHBOARD": "System overview",
+      "USERS": "User management",
+      "ROLES_PERMISSIONS": "Roles and permissions management",
+      "GEOGRAPHY": "Countries, cities and currencies",
+      "PAYMENTS": "Payments and subscriptions management",
+      "SETTINGS": "System configuration",
+      "MONITORING": "System monitoring and surveillance",
+      "AGENTS": "Agent validation"
+    },
+    "BREADCRUMBS": {
+      "DASHBOARD": "Dashboard",
+      "USERS": "Users",
+      "ROLES": "Roles",
+      "GEOGRAPHY": "Geography",
+      "PAYMENTS": "Payments",
+      "SETTINGS": "Settings",
+      "MONITORING": "Monitoring",
+      "AGENTS": "Agents"
+    },
+    "PAGE_TITLES": {
+      "DASHBOARD": "Dashboard",
+      "USERS": "User management",
+      "ROLES": "Roles and permissions",
+      "GEOGRAPHY": "Geographic management",
+      "PAYMENTS": "Payment management",
+      "SETTINGS": "System settings",
+      "MONITORING": "System Monitoring",
+      "AGENTS": "Agent validation"
     }
   }
 }

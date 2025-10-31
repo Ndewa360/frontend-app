@@ -2057,7 +2057,9 @@
     "POPULAR_SEARCHES": {
       "TITLE": "Recherches populaires",
       "SUBTITLE": "Découvrez les logements les plus recherchés",
-      "AVAILABLE_UNITS": "logements disponibles"
+      "AVAILABLE_UNITS": "logements disponibles",
+      "PROPERTIES": "Propriétés",
+      "IN": "à"
     },
     "UNIT_DETAIL": {
       "SHARE_BUTTON": "Partager",
@@ -3972,6 +3974,50 @@
       "NO": "Non",
       "VISIBLE": "Visible",
       "HIDDEN": "Masquée"
+    }
+  },
+  "ADMIN": {
+    "TITLE": "Administration",
+    "NAVIGATION": "Navigation",
+    "MENU": {
+      "DASHBOARD": "Tableau de bord",
+      "USERS": "Utilisateurs",
+      "ROLES_PERMISSIONS": "Rôles & Permissions",
+      "GEOGRAPHY": "Géographie",
+      "PAYMENTS": "Paiements",
+      "SETTINGS": "Paramètres",
+      "MONITORING": "Monitoring",
+      "AGENTS": "Agents"
+    },
+    "DESCRIPTIONS": {
+      "DASHBOARD": "Vue d'ensemble du système",
+      "USERS": "Gestion des utilisateurs",
+      "ROLES_PERMISSIONS": "Gestion des rôles et permissions",
+      "GEOGRAPHY": "Pays, villes et devises",
+      "PAYMENTS": "Gestion des paiements et souscriptions",
+      "SETTINGS": "Configuration du système",
+      "MONITORING": "Surveillance et monitoring du système",
+      "AGENTS": "Validation des agents"
+    },
+    "BREADCRUMBS": {
+      "DASHBOARD": "Dashboard",
+      "USERS": "Utilisateurs",
+      "ROLES": "Rôles",
+      "GEOGRAPHY": "Géographie",
+      "PAYMENTS": "Paiements",
+      "SETTINGS": "Paramètres",
+      "MONITORING": "Monitoring",
+      "AGENTS": "Agents"
+    },
+    "PAGE_TITLES": {
+      "DASHBOARD": "Tableau de bord",
+      "USERS": "Gestion des utilisateurs",
+      "ROLES": "Rôles et permissions",
+      "GEOGRAPHY": "Gestion géographique",
+      "PAYMENTS": "Gestion des paiements",
+      "SETTINGS": "Paramètres système",
+      "MONITORING": "Monitoring Système",
+      "AGENTS": "Validation des agents"
     }
   }
 }
