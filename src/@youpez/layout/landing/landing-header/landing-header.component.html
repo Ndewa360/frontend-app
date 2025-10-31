@@ -26,7 +26,10 @@
       <div class="hidden w-full md:block md:w-auto">
         <ul class="font-medium flex items-center flex-col p-4 md:p-0 mt-4 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white ">
           <li>
-            <a [routerLink]="['/' + getCurrentLanguage() + '/home']" class="block py-2 px-3 text-gray-900 md:bg-transparent  md:p-0 dark:text-white md:dark:hover:bg-transparent">
+            <a [routerLink]="['/' + getCurrentLanguage() + '/home']" 
+               routerLinkActive="active-nav-link"
+               [routerLinkActiveOptions]="{exact: false}"
+               class="block py-2 px-3 text-gray-900 md:bg-transparent  md:p-0 dark:text-white md:dark:hover:bg-transparent">
               <span>{{ 'HEADER.HOME' | translate }}</span>
             </a>
           </li>
@@ -36,17 +39,28 @@
             </a>
           </li>
           <li>
-            <a [routerLink]="['/' + getCurrentLanguage() + '/search/index']" class="block py-2 px-3 text-gray-900 md:hover:bg-transparent md:border-0  md:p-0 dark:hover:text-white md:dark:hover:bg-transparent">
+            <a [routerLink]="['/' + getCurrentLanguage() + '/search/index']" 
+               routerLinkActive="active-nav-link"
+               [routerLinkActiveOptions]="{exact: false}"
+               class="block py-2 px-3 text-gray-900 md:hover:bg-transparent md:border-0  md:p-0 dark:hover:text-white md:dark:hover:bg-transparent">
               <span>{{ 'HEADER.SEARCH_PROPERTIES' | translate }}</span>
             </a>
           </li>
           <li>
-            <a [routerLink]="['/' + getCurrentLanguage() + '/home']" fragment="contacts" class="block py-2 px-3 text-gray-900 md:hover:bg-transparent md:border-0  md:p-0 dark:hover:text-white md:dark:hover:bg-transparent">
+            <a [routerLink]="['/' + getCurrentLanguage() + '/home']" 
+               routerLinkActive="active-nav-link"
+               [routerLinkActiveOptions]="{exact: false}"
+               fragment="contacts" 
+               class="block py-2 px-3 text-gray-900 md:hover:bg-transparent md:border-0  md:p-0 dark:hover:text-white md:dark:hover:bg-transparent">
               <span>{{ 'HEADER.CONTACT' | translate }}</span> 
             </a>
           </li>
           <li>
-            <a [routerLink]="['/' + getCurrentLanguage() + '/support/welcome']" fragment="support" class="block py-2 px-3 text-gray-900 md:hover:bg-transparent md:border-0  md:p-0 dark:hover:text-white md:dark:hover:bg-transparent">
+            <a [routerLink]="['/' + getCurrentLanguage() + '/support/welcome']" 
+               routerLinkActive="active-nav-link"
+               [routerLinkActiveOptions]="{exact: false}"
+               fragment="support" 
+               class="block py-2 px-3 text-gray-900 md:hover:bg-transparent md:border-0  md:p-0 dark:hover:text-white md:dark:hover:bg-transparent">
               <span>{{ 'HEADER.SUPPORT' | translate }}</span> 
             </a>
           </li>

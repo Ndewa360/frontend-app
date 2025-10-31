@@ -418,6 +418,29 @@ li.active {
   }
 }
 
+// Style pour routerLinkActive
+.active-nav-link {
+  color: rgb(204, 140, 10) !important;
+  font-weight: 600 !important;
+  position: relative;
+
+  span {
+    color: rgb(204, 140, 10) !important;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 2px;
+    background: rgb(204, 140, 10);
+    border-radius: 1px;
+  }
+}
+
 // Responsive adjustments
 @media (max-width: 480px) {
   .mobile-menu {

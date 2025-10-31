@@ -145,10 +145,17 @@ export class HeaderComponent extends BaseComponent implements OnInit {
   isRouteActive(route: string): boolean {
     if (!route) return false;
     
-    // Normaliser les routes pour la comparaison
-    const normalizedCurrentRoute = this.currentRoute.replace(/\/[a-z]{2}\//g, '/').replace(/\/$/, '');
-    const normalizedRoute = route.replace(/\/[a-z]{2}\//g, '/').replace(/\/$/, '');
+    // Normaliser les routes pour la comparaison - amélioration de la regex
+    const normalizedCurrentRoute = this.currentRoute
+      .replace(/^\/[a-z]{2}(\/|$)/, '/') // Supprimer le code langue au début
+      .replace(/\/$/, '') // Supprimer le slash final
+      .replace(/\?.*$/, '') // Supprimer les query params
+      .replace(/#.*$/, ''); // Supprimer les fragments
     
-    return normalizedCurrentRoute.startsWith(normalizedRoute);
+    const normalizedRoute = route
+      .replace(/^\/[a-z]{2}(\/|$)/, '/')
+      .replace(/\/$/, '');
+    
+    return normalizedCurrentRoute.startsWith(normalizedRoute) && normalizedRoute !== '/';
   }
 }
