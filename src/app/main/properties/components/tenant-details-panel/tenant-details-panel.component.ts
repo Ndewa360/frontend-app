@@ -6,6 +6,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 import { LocataireModel, RoomModel, LocationModel, LocationState, RoomState, LocationPaymentModel, LocationPaymentState, HistoryLocationPaymentState } from 'src/app/shared/store';
 import { ModernPaymentModalComponent } from '../modern-payment-modal/modern-payment-modal.component';
 import { ModernDeletePaymentModalComponent } from '../modern-delete-payment-modal/modern-delete-payment-modal.component';
@@ -82,30 +83,36 @@ export class TenantDetailsPanelComponent implements OnInit, OnDestroy, OnChanges
   private destroy$ = new Subject<void>();
   
   // Configuration des onglets
-  tabs: Tab[] = [
-    {
-      label: 'Vue d\'ensemble',
-      icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'
-    },
-    {
-      label: 'Chambre occupée',
-      icon: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4'
-    },
-    {
-      label: 'Historique paiements',
-      icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1'
-    }
-  ];
+  tabs: Tab[] = [];
 
   constructor(
     private store: Store,
     private router: Router,
     private dialog: MatDialog,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
+    this.initializeTabs();
     this.loadTenantData();
+  }
+
+  private initializeTabs(): void {
+    this.tabs = [
+      {
+        label: this.translate.instant('TENANT_DETAILS.TABS.OVERVIEW'),
+        icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'
+      },
+      {
+        label: this.translate.instant('TENANT_DETAILS.TABS.ROOM'),
+        icon: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4'
+      },
+      {
+        label: this.translate.instant('TENANT_DETAILS.TABS.PAYMENT_HISTORY'),
+        icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1'
+      }
+    ];
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -222,15 +229,15 @@ export class TenantDetailsPanelComponent implements OnInit, OnDestroy, OnChanges
   // === MÉTHODES D'INFORMATION DU LOCATAIRE ===
 
   getTenantName(): string {
-    return this.tenant?.fullName || 'Locataire sans nom';
+    return this.tenant?.fullName || this.translate.instant('TENANT_DETAILS.DEFAULTS.NO_NAME');
   }
 
   getTenantEmail(): string {
-    return this.tenant?.emailRef || this.tenant?.email || 'Email non renseigné';
+    return this.tenant?.emailRef || this.tenant?.email || this.translate.instant('TENANT_DETAILS.DEFAULTS.NO_EMAIL');
   }
 
   getTenantPhone(): string {
-    return this.tenant?.phoneNumberRef || this.tenant?.phoneNumber || 'Téléphone non renseigné';
+    return this.tenant?.phoneNumberRef || this.tenant?.phoneNumber || this.translate.instant('TENANT_DETAILS.DEFAULTS.NO_PHONE');
   }
 
   getTenantStatus(): 'active' | 'inactive' | 'pending' {
@@ -243,27 +250,27 @@ export class TenantDetailsPanelComponent implements OnInit, OnDestroy, OnChanges
   getTenantStatusLabel(): string {
     const status = this.getTenantStatus();
     switch (status) {
-      case 'active': return 'Actif';
-      case 'inactive': return 'Inactif';
-      case 'pending': return 'En attente';
-      default: return 'Inconnu';
+      case 'active': return this.translate.instant('TENANT_DETAILS.STATUS_LABELS.ACTIVE');
+      case 'inactive': return this.translate.instant('TENANT_DETAILS.STATUS_LABELS.INACTIVE');
+      case 'pending': return this.translate.instant('TENANT_DETAILS.STATUS_LABELS.PENDING');
+      default: return this.translate.instant('TENANT_DETAILS.STATUS_LABELS.UNKNOWN');
     }
   }
 
   // === MÉTHODES D'INFORMATION DE LA CHAMBRE ===
 
   getCurrentRoomName(): string {
-    return this.currentRoom?.code || 'Aucune chambre assignée';
+    return this.currentRoom?.code || this.translate.instant('TENANT_DETAILS.DEFAULTS.NO_ROOM');
   }
 
   getCurrentRoomType(): string {
     if (!this.currentRoom) return '';
 
     switch (this.currentRoom.type) {
-      case 'room': return 'Chambre simple';
-      case 'studio': return 'Studio';
-      case 'simple_apartment': return 'Appartement simple';
-      case 'furnished_apartment': return 'Appartement meublé';
+      case 'room': return this.translate.instant('TENANT_DETAILS.ROOM_TYPES.ROOM');
+      case 'studio': return this.translate.instant('TENANT_DETAILS.ROOM_TYPES.STUDIO');
+      case 'simple_apartment': return this.translate.instant('TENANT_DETAILS.ROOM_TYPES.SIMPLE_APARTMENT');
+      case 'furnished_apartment': return this.translate.instant('TENANT_DETAILS.ROOM_TYPES.FURNISHED_APARTMENT');
       default: return this.currentRoom.type || '';
     }
   }
@@ -275,7 +282,7 @@ export class TenantDetailsPanelComponent implements OnInit, OnDestroy, OnChanges
   // === MÉTHODES DE FORMATAGE ===
 
   formatPrice(price: number | null | undefined): string {
-    if (!price) return '0 FCFA';
+    if (!price) return this.translate.instant('TENANT_DETAILS.DEFAULTS.PRICE_ZERO');
     return new Intl.NumberFormat('fr-CM', {
       style: 'currency',
       currency: 'XAF',
@@ -284,7 +291,7 @@ export class TenantDetailsPanelComponent implements OnInit, OnDestroy, OnChanges
   }
 
   formatDate(date: Date | string | null | undefined): string {
-    if (!date) return 'N/A';
+    if (!date) return this.translate.instant('TENANT_DETAILS.DEFAULTS.DATE_NA');
     return new Date(date).toLocaleDateString('fr-FR', {
       year: 'numeric',
       month: 'long',
@@ -367,7 +374,7 @@ export class TenantDetailsPanelComponent implements OnInit, OnDestroy, OnChanges
         const room = this.store.selectSnapshot(RoomState.selectStateRoom(roomId));
         groupedPayments[roomId] = {
           roomId,
-          roomName: room?.code || 'Chambre inconnue',
+          roomName: room?.code || this.translate.instant('TENANT_DETAILS.DEFAULTS.UNKNOWN_ROOM'),
           payments: [],
           total: 0,
           dateRange: {
