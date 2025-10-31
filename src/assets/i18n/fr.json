@@ -1692,7 +1692,8 @@
     "INVALID_PHONE_FORMAT": "Format de téléphone invalide (ex: +237 6XXXXXXXX, +2376XXXXXXXX ou 6XXXXXXXX)",
     "INVALID_URL": "URL invalide (doit commencer par http:// ou https://)",
     "INVALID_FORMAT": "Format invalide",
-    "FIELD_REQUIRED": "{{field}} est obligatoire"
+    "FIELD_REQUIRED": "{{field}} est obligatoire",
+    "BACK_TO_HOME": "Retour à l'acceuil"
   },
   "FILTERS": {
     "PERIOD": "Période",

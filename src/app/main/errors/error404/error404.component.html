@@ -19,8 +19,8 @@
     <div class="app-productive-heading-07 mb-2 font-bold">We are sorry!</div>
     <div class="app-productive-heading-04 mb-4 ">404 Page Not Found</div>
     <div class="app-body-long-02 mb-4" style="max-width:500px">We are very sorry for inconvenience. It looks like you’re try to access a page that either has been deleted or never existed.</div>
-    <button type="submit" ibmButton="primary" size="md">
-      Back to Home
+    <button type="button" ibmButton="primary" size="md" (click)="goHome()">
+      {{ 'ERRORS.BACK_TO_HOME' | translate }}
       <svg class="cds--btn__icon" ibmIconArrowRight size="20"></svg>
     </button>
   </div>

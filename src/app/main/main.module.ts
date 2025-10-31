@@ -74,7 +74,9 @@ import { AddPaymentModalComponent } from './properties/components/unit-details-p
 import { GeneratePaymentLinkModalComponent } from './properties/components/generate-payment-link-modal/generate-payment-link-modal.component';
 import { ContractViewerModalComponent } from './properties/components/contract-viewer-modal/contract-viewer-modal.component';
 import { PropertyGalleryComponent } from './properties/components/property-gallery/property-gallery.component';
-import { PropertiesSharedModule } from './properties/properties-shared.module'
+import { PropertiesSharedModule } from './properties/properties-shared.module';
+import { Error404Component } from './errors/error404/error404.component';
+import { Error500Component } from './errors/error500/error500.component';
 
 // Import du module de paiement (déjà importé plus haut)
 
@@ -138,7 +140,9 @@ ModuleRegistry.registerModules([
     AddPaymentModalComponent,
     GeneratePaymentLinkModalComponent,
     ContractViewerModalComponent,
-    PropertyGalleryComponent
+    PropertyGalleryComponent,
+    Error404Component,
+    Error500Component
 
   ],
   imports: [

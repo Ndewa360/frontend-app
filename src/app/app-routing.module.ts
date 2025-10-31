@@ -5,6 +5,7 @@ import { AuthGuard } from './shared/guard';
 
 import { LayoutComponent } from './layout/default/layout.component';
 import { LoadingAdminDataResolver } from './shared/resolvers/loading-admin-data';
+import { Error404Component } from './main/errors/error404/error404.component';
 
 
 const routes: Routes = [
@@ -95,6 +96,10 @@ const routes: Routes = [
 				path: '',
 				redirectTo: 'search/index',
 				pathMatch: 'full'
+			},
+			{
+				path: '**',
+				component: Error404Component
 			}
 		]
 	},
@@ -130,6 +135,10 @@ const routes: Routes = [
 	{
 		path: 'home',
 		redirectTo: '/en/home'
+	},
+	{
+		path: '**',
+		component: Error404Component
 	}
 ];
 
