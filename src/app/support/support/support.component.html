@@ -8,22 +8,22 @@
         <div class="">
           <button  (click)="goBack()"  ibmButton="ghost" size="sm" class="cds--btn__icon--left -ml-2">
             <youpez-ibm-icon iconName="arrowLeft" iconClass="cds--btn__icon" size="20"></youpez-ibm-icon>
-            Retour à l'acceuil
+            {{ 'SUPPORT.CONTACT_FORM.BACK_TO_HOME' | translate }}
           </button>
         </div>
         <div class="app-productive-heading-06 mb-8">
-          Formulaire de Demande d'Assistance
+          {{ 'SUPPORT.CONTACT_FORM.TITLE' | translate }}
         </div>
         <p class="app-body-long-02 mb-10" >
-          Remplissez ce formulaire afin d’obtenir <span class="font-bold">une assistance technique gratuite</span>. Nous garantissons la confidentialité complète des informations qui nous sont fournies.
+          {{ 'SUPPORT.CONTACT_FORM.DESCRIPTION' | translate }}
         </p>
         <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
           <div class="app-card app-card--m-0 p-4">
             <div class="app-form">  
               <div class="app-form__item">
                 <ibm-label
-                  [invalidText]="'Email invalide'" [invalid]="isValid('email')">
-                  Adresse email <span class="text-red-600">*</span> 
+                  [invalidText]="'SUPPORT.CONTACT_FORM.FORM.EMAIL.INVALID' | translate" [invalid]="isValid('email')">
+                  {{ 'SUPPORT.CONTACT_FORM.FORM.EMAIL.LABEL' | translate }} <span class="text-red-600">{{ 'SUPPORT.CONTACT_FORM.FORM.EMAIL.REQUIRED' | translate }}</span> 
                   <input
                     ibmText
                     size="md"
@@ -39,41 +39,40 @@
                 <div fxFlex="100%"  fxFlex.gt-md="50%" class="app-form__item">
                   <ibm-label
                     [helperText]="''"
-                    [invalidText]="'Ce champ est obligatoire ou incorrect'">
-                    Nom complet <span class="text-red-600">*</span> 
+                    [invalidText]="'SUPPORT.CONTACT_FORM.FORM.FULL_NAME.INVALID' | translate">
+                    {{ 'SUPPORT.CONTACT_FORM.FORM.FULL_NAME.LABEL' | translate }} <span class="text-red-600">{{ 'SUPPORT.CONTACT_FORM.FORM.FULL_NAME.REQUIRED' | translate }}</span> 
                     <input
                       ibmText
                       size="md"
                       formControlName="name"
                       [disabled]="false"
                       theme="dark"
-                      [placeholder]="'Votre nom complet'"
+                      [placeholder]="'SUPPORT.CONTACT_FORM.FORM.FULL_NAME.PLACEHOLDER' | translate"
                       [autocomplete]="true">
                   </ibm-label>
                 </div>
                 <div class="app-form__item" fxFlex.gt-md="50%">
                   <ibm-label
                   [invalid]="isValid('tel')"
-                   helperText="Ex: +237 6xx xx xx xx"
-                  [invalidText]="'Format invalide. Ex: +237 6xx xx xx xx'">
-                    Tél <span class="text-red-600">*</span> 
+                   [helperText]="'SUPPORT.CONTACT_FORM.FORM.PHONE.HELPER' | translate"
+                  [invalidText]="'SUPPORT.CONTACT_FORM.FORM.PHONE.INVALID' | translate">
+                    {{ 'SUPPORT.CONTACT_FORM.FORM.PHONE.LABEL' | translate }} <span class="text-red-600">{{ 'SUPPORT.CONTACT_FORM.FORM.PHONE.REQUIRED' | translate }}</span> 
                     <input
                       ibmText
                       size="md"
                       [disabled]="false"
                       formControlName="tel"
                       [invalid]="isValid('tel')"
-                      [placeholder]="'Numéro de téléphone'"
                       theme="dark"
-                      [placeholder]="'Votre numéro de téléphone'"
+                      [placeholder]="'SUPPORT.CONTACT_FORM.FORM.PHONE.PLACEHOLDER' | translate"
                       [autocomplete]="true">
                   </ibm-label>
                 </div>
               </div>
               <div class="app-form__item">
                 <ibm-label
-                  [invalidText]="'Sujet obligatoire'" [invalid]="isValid('object')">
-                  Sujet <span class="text-red-600">*</span> 
+                  [invalidText]="'SUPPORT.CONTACT_FORM.FORM.SUBJECT.INVALID' | translate" [invalid]="isValid('object')">
+                  {{ 'SUPPORT.CONTACT_FORM.FORM.SUBJECT.LABEL' | translate }} <span class="text-red-600">{{ 'SUPPORT.CONTACT_FORM.FORM.SUBJECT.REQUIRED' | translate }}</span> 
                   <input
                     ibmText
                     size="md"
@@ -81,7 +80,7 @@
                     [disabled]="false"
                     formControlName="object"
                     theme="dark"
-                    [placeholder]="'Sujet de la requête'"
+                    [placeholder]="'SUPPORT.CONTACT_FORM.FORM.SUBJECT.PLACEHOLDER' | translate"
                     [autocomplete]="true">
                 </ibm-label>
               </div>
@@ -89,7 +88,7 @@
                 <ibm-label
                   [invalid]="isValid('message')"
                   [helperText]="''" >
-                  Décrivez votre problème <span class="text-red-600">*</span> 
+                  {{ 'SUPPORT.CONTACT_FORM.FORM.MESSAGE.LABEL' | translate }} <span class="text-red-600">{{ 'SUPPORT.CONTACT_FORM.FORM.MESSAGE.REQUIRED' | translate }}</span> 
                 <textarea
                   theme="dark"
                   cdsTextArea 
@@ -101,15 +100,10 @@
               </div>
             </div>
             <div class="app-form__submit flex justify-end">
-              <!-- <button type="submit" ibmButton="primary" size="md">
-                Submit
-                <svg class="cds--btn__icon" ibmIconArrowRight size="20"></svg>
-              </button> -->
               <button type="submit" cdsButton size="md" [disabled]="waittingResponse || formGroup.invalid" class=" text-center custom-primary-button contact-btn " ibmButton="primary" >
                   <ibm-loading *ngIf="waittingResponse; else noWaitingResponse" ></ibm-loading> 
-                              <!-- pt-4 pb-4 -->
                 <ng-template #noWaitingResponse>
-                  <span class="btn-text">Envoyer</span>
+                  <span class="btn-text">{{ 'SUPPORT.CONTACT_FORM.FORM.SUBMIT' | translate }}</span>
                   <youpez-ibm-icon class="mt-6" iconClass="cds--btn__icon" iconName="arrowRight" iconSize="32" ></youpez-ibm-icon >
                 </ng-template>
               </button>

@@ -8,11 +8,11 @@
         <div class="">
           <button (click)="goBack()" ibmButton="ghost" size="sm" class="cds--btn__icon--left -ml-2">
             <youpez-ibm-icon iconName="arrowLeft" iconClass="cds--btn__icon" size="20"></youpez-ibm-icon>
-            Retour à l'acceuil
+            {{ 'SUPPORT.FAQ.BACK_TO_HOME' | translate }}
           </button>
         </div>
         <div class="app-productive-heading-06 mb-8">
-          Questions Fréquemment Posées
+          {{ 'SUPPORT.FAQ.TITLE' | translate }}
         </div>
         <ng-container *ngFor="let group of faq">
           <div class="mb-6">

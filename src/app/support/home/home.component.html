@@ -6,22 +6,21 @@
           <youpez-logo class="cursor-pointer" type="white" logoWidth="300px"></youpez-logo>
         </div>
         <div class="app-productive-heading-06 mb-8">
-          Bienvenue sur le support de Ndewa360°
+          {{ 'SUPPORT.WELCOME.TITLE' | translate }}
         </div>
         <p class="app-body-long-02 mb-4">
-          Félicitations pour avoir commencé votre voyage avec la plateforme<span class="font-bold">
+          {{ 'SUPPORT.WELCOME.CONGRATULATIONS' | translate }}<span class="font-bold">
             Ndewa360°</span>.<br />
-          Nous sommes ravis que vous soyez ici et nous avons hâte de vous aider à démarrer votre gestion de bien
-          immobiliers.<br />
+          {{ 'SUPPORT.WELCOME.GLAD_YOU_HERE' | translate }}<br />
         </p>
         <p class="app-body-long-02" style="max-width: 370px;">
-          Nous vous recommandons de <span class="font-bold">suivre les tutoriels</span> et <span class="font-bold">de publier votre premier bien</span>.
+          {{ 'SUPPORT.WELCOME.RECOMMENDATION' | translate }} <span class="font-bold">{{ 'SUPPORT.WELCOME.FOLLOW_TUTORIALS' | translate }}</span> {{ 'COMMON.AND' | translate }} <span class="font-bold">{{ 'SUPPORT.WELCOME.PUBLISH_FIRST_PROPERTY' | translate }}</span>.
         </p>
         <div class="mt-10 app-cards-layout-1">
           <div fxLayout="row wrap" fxLayoutGap="1px grid">
             <div fxFlex="100%" fxFlex.gt-md="50%" class="card-color-white">
               <div fxFlex >
-                <div fxFlex routerLink="/support/getting-started" class="app-card app-card--m-0 app-card--select app-welcome-big-tile">
+                <div fxFlex (click)="navigateToSupportPage('getting-started')" class="app-card app-card--m-0 app-card--select app-welcome-big-tile cursor-pointer">
                   <div class="app-card__content">
                     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                       class="app-ibm-pictogram-stroke" version="1.1" width="100px" height="100px" id="Layer_1" x="0px"
@@ -37,29 +36,28 @@
                       <path id="video--02_1_" class="st0"
                         d="M39,39H9 M39,10H9v22h30V10z M20,15.8v10.4l9-5.2L20,15.8z" />
                     </svg>
-                    <div class="app-productive-heading-03 mb-4 mt-5">Guide de démarrage</div>
-                    <p class="app-body-short-01 mb-5">Découvrez la plateforme Ndewa360° en utilisant des guides
-                      d'utilisation & vidéos </p>
+                    <div class="app-productive-heading-03 mb-4 mt-5">{{ 'SUPPORT.WELCOME.GETTING_STARTED.TITLE' | translate }}</div>
+                    <p class="app-body-short-01 mb-5">{{ 'SUPPORT.WELCOME.GETTING_STARTED.DESCRIPTION' | translate }}</p>
                     <ul ibmList class="cds--list--separator ml-4">
                       <li ibmListItem class="flex justify-between">
-                        <span class="inline-block" style="min-width: 200px">Introduction à Ndewa360°</span>
-                        07:34
+                        <span class="inline-block" style="min-width: 200px">{{ 'SUPPORT.WELCOME.GETTING_STARTED.GUIDES.INTRODUCTION' | translate }}</span>
+                        {{ 'SUPPORT.WELCOME.GETTING_STARTED.DURATIONS.INTRODUCTION' | translate }}
                       </li>
                       <li ibmListItem class="flex justify-between">
-                        <span class="inline-block" style="min-width: 200px">Gestion de biens</span> 10:14
+                        <span class="inline-block" style="min-width: 200px">{{ 'SUPPORT.WELCOME.GETTING_STARTED.GUIDES.PROPERTY_MANAGEMENT' | translate }}</span> {{ 'SUPPORT.WELCOME.GETTING_STARTED.DURATIONS.PROPERTY_MANAGEMENT' | translate }}
 
                       </li>
                       <li ibmListItem class="flex justify-between">
-                        <span class="inline-block" style="min-width: 200px">Gestion de Finances</span>
-                        71:22
+                        <span class="inline-block" style="min-width: 200px">{{ 'SUPPORT.WELCOME.GETTING_STARTED.GUIDES.FINANCIAL_MANAGEMENT' | translate }}</span>
+                        {{ 'SUPPORT.WELCOME.GETTING_STARTED.DURATIONS.FINANCIAL_MANAGEMENT' | translate }}
                       </li>
                       <li ibmListItem class="flex justify-between">
-                        <span class="inline-block" style="min-width: 200px">Gestion des annonces</span>
-                        31:11
+                        <span class="inline-block" style="min-width: 200px">{{ 'SUPPORT.WELCOME.GETTING_STARTED.GUIDES.LISTING_MANAGEMENT' | translate }}</span>
+                        {{ 'SUPPORT.WELCOME.GETTING_STARTED.DURATIONS.LISTING_MANAGEMENT' | translate }}
                       </li>
                       <li ibmListItem class="flex justify-between">
-                        <span class="inline-block" style="min-width: 200px">Facturation</span>
-                        41:22
+                        <span class="inline-block" style="min-width: 200px">{{ 'SUPPORT.WELCOME.GETTING_STARTED.GUIDES.BILLING' | translate }}</span>
+                        {{ 'SUPPORT.WELCOME.GETTING_STARTED.DURATIONS.BILLING' | translate }}
                       </li>
                     </ul>
                     <div class="absolute bottom-0 right-0 left-0 app-card__content"></div>
@@ -71,7 +69,7 @@
               <div fxFlex fxLayout="column" fxLayoutGap="1px">
                 <div fxFlex>
                   <!--  -->
-                  <div fxFlex class="app-card app-card--m-0 app-card--select app-welcome-mini-tile" routerLink="/support/faq">
+                  <div fxFlex class="app-card app-card--m-0 app-card--select app-welcome-mini-tile cursor-pointer" (click)="navigateToSupportPage('faq')">
                     <div class="app-card__content">
                       <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                         class="app-ibm-pictogram-stroke" version="1.1" width="50px" height="50px" x="0px" y="0px"
@@ -86,8 +84,8 @@
                         </g>
                       </svg>
                       <div class="absolute bottom-0 right-0 left-0 app-card__content">
-                        <div class="app-productive-heading-03 mb-4">FAQ</div>
-                        <p class="app-body-short-01">Foire aux questions si vous ne trouvez pas de réponse</p>
+                        <div class="app-productive-heading-03 mb-4">{{ 'SUPPORT.WELCOME.FAQ.TITLE' | translate }}</div>
+                        <p class="app-body-short-01">{{ 'SUPPORT.WELCOME.FAQ.DESCRIPTION' | translate }}</p>
                       </div>
                     </div>
                   </div>
@@ -106,8 +104,8 @@
                         </g>
                       </svg>
                       <div class="absolute bottom-0 right-0 left-0 app-card__content">
-                        <div class="app-productive-heading-03 mb-4">Documentation</div>
-                        <p class="app-body-short-01">Parcourir la documentation pour obtenir des réponses</p>
+                        <div class="app-productive-heading-03 mb-4">{{ 'SUPPORT.WELCOME.DOCUMENTATION.TITLE' | translate }}</div>
+                        <p class="app-body-short-01">{{ 'SUPPORT.WELCOME.DOCUMENTATION.DESCRIPTION' | translate }}</p>
                       </div>
                     </div>
                   </div>
@@ -118,7 +116,7 @@
               <div fxFlex fxLayout="column" fxLayoutGap="1px">
                 <div fxFlex>
                   <!--  -->
-                  <div fxFlex class="app-card app-card--m-0 app-card--select app-welcome-mini-tile" routerLink="/support/support">
+                  <div fxFlex class="app-card app-card--m-0 app-card--select app-welcome-mini-tile cursor-pointer" (click)="navigateToSupportPage('support')">
                     <div class="app-card__content">
 
                       <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"
@@ -131,8 +129,8 @@
                         </g>
                       </svg>
                       <div class="absolute bottom-0 right-0 left-0 app-card__content">
-                        <div class="app-productive-heading-03 mb-4">Support</div>
-                        <p class="app-body-short-01">Contactez-nous si vous avez une question spécifique</p>
+                        <div class="app-productive-heading-03 mb-4">{{ 'SUPPORT.WELCOME.SUPPORT_CONTACT.TITLE' | translate }}</div>
+                        <p class="app-body-short-01">{{ 'SUPPORT.WELCOME.SUPPORT_CONTACT.DESCRIPTION' | translate }}</p>
                       </div>
                     </div>
                   </div>
@@ -152,10 +150,10 @@
                       </svg>
                       <div class="absolute bottom-0 right-0 left-0 app-card__content">
                         <div class="app-productive-heading-03 mb-4">
-                          <ng-container *ngIf="(userProfil$ | async) else startNow">Créer un bien</ng-container> 
-                          <ng-template #startNow>Lancez-vous</ng-template>
+                          <ng-container *ngIf="(userProfil$ | async) else startNow">{{ 'SUPPORT.WELCOME.CREATE_PROPERTY.TITLE' | translate }}</ng-container> 
+                          <ng-template #startNow>{{ 'SUPPORT.WELCOME.CREATE_PROPERTY.TITLE_ALT' | translate }}</ng-template>
                         </div>
-                        <p class="app-body-short-01">Créez votre premier bien et gérez vos finances</p>
+                        <p class="app-body-short-01">{{ 'SUPPORT.WELCOME.CREATE_PROPERTY.DESCRIPTION' | translate }}</p>
                       </div>
                     </div>
                   </div>

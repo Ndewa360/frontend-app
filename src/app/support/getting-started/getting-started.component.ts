@@ -4,6 +4,9 @@ import { Observable } from 'rxjs'
 import { Select, Store } from '@ngxs/store'
 import { UserProfileAction, UserProfileModel, UserProfileState } from 'src/app/shared/store'
 import { Location } from '@angular/common';
+import { TranslateService } from '@ngx-translate/core';
+import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-getting-started',
@@ -13,119 +16,85 @@ import { Location } from '@angular/common';
 export class GettingStartedComponent implements OnInit {
   @Select(UserProfileState.selectStateUserProfile) userProfil$:Observable<UserProfileModel>
 
-  public videos = [
+  public videos: any[] = [];
+
+  private buildVideosData() {
+    return [
     {
-      title: 'Introduction à Ndewa360',
-      topic: 'tutoriels vidéo',
+      title: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.INTRODUCTION.TITLE'),
+      topic: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.INTRODUCTION.TOPIC'),
       url: 'https://www.youtube.com/embed/F4xu5FXW62k',
       seen: true,
-      steps: [
-      ],
-      page: 'Présentation général',
-      info: 'Présentation général de l\'application.',
+      steps: [],
+      page: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.INTRODUCTION.PAGE'),
+      info: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.INTRODUCTION.INFO'),
     },
     {
-      title: 'Creation de compte',
-      topic: 'Gestion du profil',
+      title: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.ACCOUNT_CREATION.TITLE'),
+      topic: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.ACCOUNT_CREATION.TOPIC'),
       url: 'https://www.youtube.com/embed/gyin31wzg4Q',
       seen: true,
-      steps: [
-        'Cliquer sur \'S\'inscrire\'',
-        'Remplir le formulaire',
-        'Accepter les conditions générales',
-        'Soumettre le formulaire',
-        'Vérifiez votre email',
-        'Connectez-vous à votre compte',
-      ],
-      page: 'Création de compte & Connexion',
-      info: 'Processus complet de création de compte avec confirmation de l\'adresse email',
+      steps: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.ACCOUNT_CREATION.STEPS'),
+      page: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.ACCOUNT_CREATION.PAGE'),
+      info: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.ACCOUNT_CREATION.INFO'),
     },
     {
-      title: 'Ajout de bien immobilier',
-      topic: 'Gestion de bien',
+      title: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.PROPERTY_ADDITION.TITLE'),
+      topic: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.PROPERTY_ADDITION.TOPIC'),
       url: 'https://www.youtube.com/embed/WBhNszyc_Ks',
-      steps: [
-        'Connectez-vous à votre compte',
-        'Cliquer sur \'Bien immobilier\'',
-        'Cliquer sur  \'Nouveau\'',
-        'Remplir le formulaire',
-        'Soumettre le formulaire',
-        'Acceder au panel de gestion du bien',
-      ],
-      page: 'Bien immobilier',
-      info: 'Processus de création d\'un bien immobiliér dans un localité précise en tenant compte de la ville et du pays.',
+      steps: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.PROPERTY_ADDITION.STEPS'),
+      page: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.PROPERTY_ADDITION.PAGE'),
+      info: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.PROPERTY_ADDITION.INFO'),
     },
     {
-      title: 'Ajout d\'une unité locative',
-      topic: 'Gestion d\'unité locative',
+      title: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.UNIT_ADDITION.TITLE'),
+      topic: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.UNIT_ADDITION.TOPIC'),
       url: 'https://www.youtube.com/embed/7rkeORD4jSw',
-      steps: [
-        'Connectez-vous à votre compte',
-        'Cliquer sur \'Bien immobilier\'',
-        'Cliquer sur \'Unité\'',
-        'Cliquer sur \'Ajouter une unité\'',
-        'Remplir le formulaire',
-        'Soumettre le formulaire',
-        'Voir l\'unité nouvellement créée',
-      ],
-      page: 'Unités',
-      info: 'Processus de création d\'une unité locative (chambre, studio ou appartement) à l\'intérieur d\'un bien immobilier.',
+      steps: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.UNIT_ADDITION.STEPS'),
+      page: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.UNIT_ADDITION.PAGE'),
+      info: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.UNIT_ADDITION.INFO'),
     },
     {
-      title: 'Ajout d\'un locataire',
-      topic: 'Gestion de locataire',
+      title: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.TENANT_ADDITION.TITLE'),
+      topic: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.TENANT_ADDITION.TOPIC'),
       url: 'https://www.youtube.com/embed/Bsq5cKkS33I',
-      steps: [
-        'Connectez-vous à votre compte',
-        'Cliquer sur \'Bien immobilier\'',
-        'Cliquer sur \'Locataires\'',
-        'Cliquer sur \'Ajouter un locataire\'',
-        'Remplir le formulaire',
-        'Soumettre le formulaire',
-        'Voir le locataire nouvellement créée',
-      ],
-      page: 'Locataires',
-      info: 'Processus de création d\'un locataire appartenant à un bien immobilier.',
+      steps: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.TENANT_ADDITION.STEPS'),
+      page: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.TENANT_ADDITION.PAGE'),
+      info: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.TENANT_ADDITION.INFO'),
     },
     {
-      title: 'Assigner un locataire à une unité',
-      topic: 'Gestion de location',
+      title: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.TENANT_ASSIGNMENT.TITLE'),
+      topic: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.TENANT_ASSIGNMENT.TOPIC'),
       url: 'https://www.youtube.com/embed/PH-2FfFD2PU',
-      steps: [
-        'Connectez-vous à votre compte',
-        'Cliquer sur \'Bien immobilier\'',
-        'Cliquer sur \'Voir locations\'',
-        'Cliquer sur \'Nouveau contrat de location\'',
-        'Remplir le formulaire',
-        'Soumettre le formulaire',
-        'Voir l\'assignation nouvellement effectué',
-      ],
-      page: 'Location',
-      info: 'Processus d\'assignation d\'un locataire à une unité locative. Elle à pour conséquence de générer un contrat de location entre les deux parties et de les envoyer par mail.',
+      steps: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.TENANT_ASSIGNMENT.STEPS'),
+      page: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.TENANT_ASSIGNMENT.PAGE'),
+      info: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.TENANT_ASSIGNMENT.INFO'),
     },
     {
-      title: 'Analyse financière d\'un bien',
-      topic: 'Gestion financière',
+      title: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.FINANCIAL_ANALYSIS.TITLE'),
+      topic: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.FINANCIAL_ANALYSIS.TOPIC'),
       url: 'https://www.youtube.com/embed/PH-2FfFD2PU',
-      steps: [
-        'Connectez-vous à votre compte',
-        'Cliquer sur \'Bien immobilier\'',
-        'Cliquer sur \'Finances\'',
-        'Choisir l\'année',
-        'Consulter les états de paiements de l\'année choisie',
-      ],
-      page: 'Finnace',
-      info: 'Processus d\'analyse des états financiers d\'un bien immobilier en fonction d\'une année d\'activité',
+      steps: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.FINANCIAL_ANALYSIS.STEPS'),
+      page: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.FINANCIAL_ANALYSIS.PAGE'),
+      info: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.FINANCIAL_ANALYSIS.INFO'),
     }
-  ]
+  ];
+  }
 
   constructor(
     private sanitizer: DomSanitizer,
-    private location: Location
+    private location: Location,
+    private translate: TranslateService,
+    private languageUrlService: LanguageUrlService,
+    private router: Router
   ) {
   }
 
   ngOnInit(): void {
+    this.videos = this.buildVideosData();
+    this.translate.onLangChange.subscribe(() => {
+      this.videos = this.buildVideosData();
+    });
   }
 
   getUrl(url) {
@@ -138,6 +107,8 @@ export class GettingStartedComponent implements OnInit {
 
   goBack()
     {
-      this.location.back();
+      // Naviguer vers la page d'accueil du support avec la langue courante
+      const currentLang = this.languageUrlService.getCurrentLanguage();
+      this.router.navigate([`/${currentLang}/support/welcome`]);
     }
 }

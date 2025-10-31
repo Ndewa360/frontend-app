@@ -4019,5 +4019,295 @@
       "MONITORING": "System Monitoring",
       "AGENTS": "Agent validation"
     }
+  },
+  "SUPPORT": {
+    "WELCOME": {
+      "TITLE": "Welcome to Ndewa360° Support",
+      "CONGRATULATIONS": "Congratulations on starting your journey with the Ndewa360° platform.",
+      "GLAD_YOU_HERE": "We're glad you're here and we look forward to helping you get started with your property management.",
+      "RECOMMENDATION": "We recommend that you follow the tutorials and publish your first property.",
+      "FOLLOW_TUTORIALS": "follow the tutorials",
+      "PUBLISH_FIRST_PROPERTY": "publish your first property",
+      "GETTING_STARTED": {
+        "TITLE": "Getting Started Guide",
+        "DESCRIPTION": "Discover the Ndewa360° platform using user guides & videos",
+        "GUIDES": {
+          "INTRODUCTION": "Introduction to Ndewa360°",
+          "PROPERTY_MANAGEMENT": "Property Management",
+          "FINANCIAL_MANAGEMENT": "Financial Management",
+          "LISTING_MANAGEMENT": "Listing Management",
+          "BILLING": "Billing"
+        },
+        "DURATIONS": {
+          "INTRODUCTION": "07:34",
+          "PROPERTY_MANAGEMENT": "10:14",
+          "FINANCIAL_MANAGEMENT": "71:22",
+          "LISTING_MANAGEMENT": "31:11",
+          "BILLING": "41:22"
+        }
+      },
+      "FAQ": {
+        "TITLE": "FAQ",
+        "DESCRIPTION": "Frequently asked questions if you can't find an answer"
+      },
+      "DOCUMENTATION": {
+        "TITLE": "Documentation",
+        "DESCRIPTION": "Browse the documentation for answers"
+      },
+      "SUPPORT_CONTACT": {
+        "TITLE": "Support",
+        "DESCRIPTION": "Contact us if you have a specific question"
+      },
+      "CREATE_PROPERTY": {
+        "TITLE": "Create a property",
+        "TITLE_ALT": "Get started",
+        "DESCRIPTION": "Create your first property and manage your finances"
+      }
+    },
+    "FAQ": {
+      "TITLE": "Frequently Asked Questions",
+      "BACK_TO_HOME": "Back to home",
+      "GROUPS": {
+        "GENERAL": "General",
+        "OWNERS": "For property owners",
+        "TENANTS": "For tenants",
+        "TECHNICAL_SUPPORT": "Technical issues / Support contact"
+      },
+      "GENERAL": {
+        "WHAT_IS_NDEWA": {
+          "QUESTION": "What is Ndewa360?",
+          "ANSWER": "Ndewa360 is a property management and rental platform, specially designed to facilitate student housing searches with a 360° tour experience. It also allows property owners to manage rents, tenants and finances."
+        },
+        "IS_FREE": {
+          "QUESTION": "Is using Ndewa360 free?",
+          "ANSWER": "Registration is free. All features are free for up to one property with at most 10 rental units. From the eleventh unit, you need to pay 2% of the rent for each rental unit activated per month."
+        },
+        "TRAINING_VIDEOS": {
+          "QUESTION": "Where can I find training videos?",
+          "ANSWER": "All videos are available on our official YouTube channel: https://www.youtube.com/channel/UCUoWr4IOAJnjOq-kvb-yueA."
+        }
+      },
+      "OWNERS": {
+        "HOW_TO_REGISTER": {
+          "QUESTION": "How do I register as a property owner?",
+          "ANSWER": "You can register in just a few clicks via the home page. Once registered, you will receive a confirmation email. <br/><br/> Watch the video: \"How to register on Ndewa360?\" → <a href=\"https://www.youtube.com/watch?v=gyin31wzg4Q\">https://www.youtube.com/watch?v=gyin31wzg4Q</a>"
+        },
+        "HOW_TO_CREATE_PROPERTY": {
+          "QUESTION": "How do I create a property?",
+          "ANSWER": "Go to the \"Real Estate\" menu and click on \"New +\". Fill in the requested information. <br/><br/> Watch the video: \"Add a property on Ndewa360 – Beginner's Guide\" → <a href=\"https://youtu.be/WBhNszyc_Ks?si=SM9WUHKc6TV16E6L\">https://youtu.be/WBhNszyc_Ks?si=SM9WUHKc6TV16E6L</a>."
+        },
+        "PROPERTY_VS_UNIT": {
+          "QUESTION": "What is the difference between property and unit?",
+          "ANSWER": "A property is a building or structure. A unit is a room, studio or apartment inside that property."
+        },
+        "HOW_TO_ADD_UNIT": {
+          "QUESTION": "How do I add a unit (room, studio...)?",
+          "ANSWER": "Once the property is created, click on \"Add a unit\" to add your accommodations. <br/><br/> Watch the video: \"Create a room in a property on Ndewa360 – Beginner's Guide\" → <a href=\"https://youtu.be/-xTYP8uuKgk\">https://youtu.be/-xTYP8uuKgk</a>."
+        },
+        "ADD_360_TOUR": {
+          "QUESTION": "Can I add a 360° tour myself?",
+          "ANSWER": "Yes, if you have a 360° video or photo. Otherwise, you can contact our team for assistance."
+        },
+        "HOW_TO_ADD_TENANT": {
+          "QUESTION": "How do I add a tenant?",
+          "ANSWER": "Go to the relevant unit, then click on the \"Tenants\" menu then on the \"Add a tenant\" button."
+        },
+        "HOW_TO_RECORD_PAYMENT": {
+          "QUESTION": "How do I record a payment?",
+          "ANSWER": "Choose the relevant property then go to the tenant list from the \"Tenants\" menu or to the unit list from the \"Units\" menu, then to the relevant tenant or unit, then click on \"Add a payment\". You can specify the period, amount, and more. <br/><br/> Watch the video: \"Add a payment – Beginner's Guide\" → <a href=\"https://youtu.be/-xTYP8uuKgk\">https://youtu.be/-xTYP8uuKgk</a>."
+        },
+        "TENANT_NOTIFICATION": {
+          "QUESTION": "Does the tenant receive a notification?",
+          "ANSWER": "Yes, a confirmation email is automatically sent to the tenant once the payment is recorded."
+        },
+        "MONTHLY_REVENUE_TRACKING": {
+          "QUESTION": "Where can I track my monthly revenue?",
+          "ANSWER": "The financial dashboard shows you all payments, broken down by month and by property. A summary of property assets is first available on the space for all properties (\"Real Estate\" menu), but a complete financial dashboard is available on the \"Finance\" menu of each property"
+        },
+        "DOWNLOAD_DOCUMENTS": {
+          "QUESTION": "Can I download a contract or invoice?",
+          "ANSWER": "Yes. You can automatically generate contracts and invoices from the tenant's profile"
+        }
+      },
+      "TENANTS": {
+        "HOW_TO_SEARCH": {
+          "QUESTION": "How do I search for housing on Ndewa360?",
+          "ANSWER": "From the home page, and from the \"Property Search\" menu use the search engine. Filter by city, type of accommodation, price, etc."
+        },
+        "WHAT_IS_360_TOUR": {
+          "QUESTION": "What is a 360° tour?",
+          "ANSWER": "It's an immersive view of the accommodation. You can move virtually inside as if you were there."
+        },
+        "IS_360_TOUR_FREE": {
+          "QUESTION": "Do I have to pay to see the 360° tour?",
+          "ANSWER": "No, the immersive tour is completely free"
+        },
+        "HOW_TO_CONTACT_OWNER": {
+          "QUESTION": "How do I contact the owner?",
+          "ANSWER": "For a payment, you will have access to their contact details (phone, WhatsApp or email)"
+        },
+        "HOW_TO_KNOW_AVAILABILITY": {
+          "QUESTION": "How do I know if accommodation is still available?",
+          "ANSWER": "Only accommodations that are not yet rented appear in search results."
+        }
+      },
+      "TECHNICAL_SUPPORT": {
+        "NO_EMAIL_RECEIVED": {
+          "QUESTION": "I'm not receiving emails, what should I do?",
+          "ANSWER": "Check your spam folder. Otherwise, use the contact form or try again with another email."
+        },
+        "PAYMENT_ACCESS_ISSUE": {
+          "QUESTION": "I made a payment but don't have access to my member area. What should I do?",
+          "ANSWER": "Contact our support with proof of payment. We will activate your access manually if necessary."
+        },
+        "HOW_TO_CONTACT_SUPPORT": {
+          "QUESTION": "How do I contact support?",
+          "ANSWER": "Via the form on the \"Support\" page, or by email at <a href=\"mailto:support@ndewa-360.com\">support@ndewa-360.com</a>."
+        }
+      }
+    },
+    "CONTACT_FORM": {
+      "TITLE": "Support Request Form",
+      "BACK_TO_HOME": "Back to home",
+      "DESCRIPTION": "Fill out this form to get free technical assistance. We guarantee complete confidentiality of the information provided to us.",
+      "FREE_TECHNICAL_ASSISTANCE": "free technical assistance",
+      "FORM": {
+        "EMAIL": {
+          "LABEL": "Email address",
+          "REQUIRED": "*",
+          "INVALID": "Invalid email"
+        },
+        "FULL_NAME": {
+          "LABEL": "Full name",
+          "PLACEHOLDER": "Your full name",
+          "REQUIRED": "*",
+          "INVALID": "This field is required or incorrect"
+        },
+        "PHONE": {
+          "LABEL": "Phone",
+          "PLACEHOLDER": "Your phone number",
+          "HELPER": "Ex: +237 6xx xx xx xx",
+          "REQUIRED": "*",
+          "INVALID": "Invalid format. Ex: +237 6xx xx xx xx"
+        },
+        "SUBJECT": {
+          "LABEL": "Subject",
+          "PLACEHOLDER": "Request subject",
+          "REQUIRED": "*",
+          "INVALID": "Subject required"
+        },
+        "MESSAGE": {
+          "LABEL": "Describe your problem",
+          "REQUIRED": "*"
+        },
+        "SUBMIT": "Send"
+      }
+    },
+    "GETTING_STARTED": {
+      "TITLE": "Getting Started Guide",
+      "BACK_TO_HOME": "Back to home",
+      "DESCRIPTION": "Discover the Ndewa360 platform using guided tours and videos",
+      "VIDEOS": {
+        "INTRODUCTION": {
+          "TITLE": "Introduction to Ndewa360",
+          "TOPIC": "video tutorials",
+          "PAGE": "General presentation",
+          "INFO": "General presentation of the application."
+        },
+        "ACCOUNT_CREATION": {
+          "TITLE": "Account creation",
+          "TOPIC": "Profile management",
+          "PAGE": "Account creation & Login",
+          "INFO": "Complete account creation process with email address confirmation",
+          "STEPS": [
+            "Click on 'Sign up'",
+            "Fill out the form",
+            "Accept the terms and conditions",
+            "Submit the form",
+            "Check your email",
+            "Log in to your account"
+          ]
+        },
+        "PROPERTY_ADDITION": {
+          "TITLE": "Adding real estate property",
+          "TOPIC": "Property management",
+          "PAGE": "Real estate",
+          "INFO": "Process of creating a real estate property in a specific location taking into account the city and country.",
+          "STEPS": [
+            "Log in to your account",
+            "Click on 'Real estate'",
+            "Click on 'New'",
+            "Fill out the form",
+            "Submit the form",
+            "Access the property management panel"
+          ]
+        },
+        "UNIT_ADDITION": {
+          "TITLE": "Adding a rental unit",
+          "TOPIC": "Rental unit management",
+          "PAGE": "Units",
+          "INFO": "Process of creating a rental unit (room, studio or apartment) inside a real estate property.",
+          "STEPS": [
+            "Log in to your account",
+            "Click on 'Real estate'",
+            "Click on 'Unit'",
+            "Click on 'Add a unit'",
+            "Fill out the form",
+            "Submit the form",
+            "See the newly created unit"
+          ]
+        },
+        "TENANT_ADDITION": {
+          "TITLE": "Adding a tenant",
+          "TOPIC": "Tenant management",
+          "PAGE": "Tenants",
+          "INFO": "Process of creating a tenant belonging to a real estate property.",
+          "STEPS": [
+            "Log in to your account",
+            "Click on 'Real estate'",
+            "Click on 'Tenants'",
+            "Click on 'Add a tenant'",
+            "Fill out the form",
+            "Submit the form",
+            "See the newly created tenant"
+          ]
+        },
+        "TENANT_ASSIGNMENT": {
+          "TITLE": "Assigning a tenant to a unit",
+          "TOPIC": "Rental management",
+          "PAGE": "Rental",
+          "INFO": "Process of assigning a tenant to a rental unit. This results in generating a rental contract between the two parties and sending them by email.",
+          "STEPS": [
+            "Log in to your account",
+            "Click on 'Real estate'",
+            "Click on 'View rentals'",
+            "Click on 'New rental contract'",
+            "Fill out the form",
+            "Submit the form",
+            "See the newly completed assignment"
+          ]
+        },
+        "FINANCIAL_ANALYSIS": {
+          "TITLE": "Financial analysis of a property",
+          "TOPIC": "Financial management",
+          "PAGE": "Finance",
+          "INFO": "Process of analyzing the financial statements of a real estate property based on a year of activity",
+          "STEPS": [
+            "Log in to your account",
+            "Click on 'Real estate'",
+            "Click on 'Finance'",
+            "Choose the year",
+            "View the payment statements for the chosen year"
+          ]
+        }
+      },
+      "LABELS": {
+        "SUBJECT": "SUBJECT",
+        "VIDEO": "VIDEO",
+        "DESCRIPTION": "Description",
+        "PAGE": "page",
+        "DETAILS": "Details"
+      }
+    }
   }
 }

@@ -4019,5 +4019,295 @@
       "MONITORING": "Monitoring Système",
       "AGENTS": "Validation des agents"
     }
+  },
+  "SUPPORT": {
+    "WELCOME": {
+      "TITLE": "Bienvenue sur le support de Ndewa360°",
+      "CONGRATULATIONS": "Félicitations pour avoir commencé votre voyage avec la plateforme Ndewa360°.",
+      "GLAD_YOU_HERE": "Nous sommes ravis que vous soyez ici et nous avons hâte de vous aider à démarrer votre gestion de bien immobiliers.",
+      "RECOMMENDATION": "Nous vous recommandons de suivre les tutoriels et de publier votre premier bien.",
+      "FOLLOW_TUTORIALS": "suivre les tutoriels",
+      "PUBLISH_FIRST_PROPERTY": "de publier votre premier bien",
+      "GETTING_STARTED": {
+        "TITLE": "Guide de démarrage",
+        "DESCRIPTION": "Découvrez la plateforme Ndewa360° en utilisant des guides d'utilisation & vidéos",
+        "GUIDES": {
+          "INTRODUCTION": "Introduction à Ndewa360°",
+          "PROPERTY_MANAGEMENT": "Gestion de biens",
+          "FINANCIAL_MANAGEMENT": "Gestion de Finances",
+          "LISTING_MANAGEMENT": "Gestion des annonces",
+          "BILLING": "Facturation"
+        },
+        "DURATIONS": {
+          "INTRODUCTION": "07:34",
+          "PROPERTY_MANAGEMENT": "10:14",
+          "FINANCIAL_MANAGEMENT": "71:22",
+          "LISTING_MANAGEMENT": "31:11",
+          "BILLING": "41:22"
+        }
+      },
+      "FAQ": {
+        "TITLE": "FAQ",
+        "DESCRIPTION": "Foire aux questions si vous ne trouvez pas de réponse"
+      },
+      "DOCUMENTATION": {
+        "TITLE": "Documentation",
+        "DESCRIPTION": "Parcourir la documentation pour obtenir des réponses"
+      },
+      "SUPPORT_CONTACT": {
+        "TITLE": "Support",
+        "DESCRIPTION": "Contactez-nous si vous avez une question spécifique"
+      },
+      "CREATE_PROPERTY": {
+        "TITLE": "Créer un bien",
+        "TITLE_ALT": "Lancez-vous",
+        "DESCRIPTION": "Créez votre premier bien et gérez vos finances"
+      }
+    },
+    "FAQ": {
+      "TITLE": "Questions Fréquemment Posées",
+      "BACK_TO_HOME": "Retour à l'accueil",
+      "GROUPS": {
+        "GENERAL": "Général",
+        "OWNERS": "Pour les propriétaires",
+        "TENANTS": "Pour les locataires",
+        "TECHNICAL_SUPPORT": "Problèmes techniques / Contact support"
+      },
+      "GENERAL": {
+        "WHAT_IS_NDEWA": {
+          "QUESTION": "Qu'est-ce que Ndewa360 ?",
+          "ANSWER": "Ndewa360 est une plateforme de gestion et de location de biens immobiliers, spécialement conçue pour faciliter les recherches de logements étudiants avec une expérience de visite en 360°. Elle permet aussi aux propriétaires de gérer les loyers, les locataires et les finances."
+        },
+        "IS_FREE": {
+          "QUESTION": "Est-ce que l'utilisation de Ndewa360 est gratuite ?",
+          "ANSWER": "L'inscription est gratuite. Toutes les fonctionnalités sont gratuite en dessous de un bien avec au plus 10 unités locative. A la onzieme unité, il faut payer 2% du loyer de chaque unité locative activé par mois."
+        },
+        "TRAINING_VIDEOS": {
+          "QUESTION": "Où puis-je trouver les vidéos de formation ?",
+          "ANSWER": "Toutes les vidéos sont disponibles sur notre chaîne YouTube officielle : https://www.youtube.com/channel/UCUoWr4IOAJnjOq-kvb-yueA."
+        }
+      },
+      "OWNERS": {
+        "HOW_TO_REGISTER": {
+          "QUESTION": "Comment m'inscrire en tant que propriétaire ?",
+          "ANSWER": "Vous pouvez vous inscrire en quelques clics via la page d'accueil. Une fois inscrit, vous recevrez un email de confirmation. <br/><br/> Voir la vidéo : \"Comment s'inscrire sur Ndewa360 ?\" ➜ <a href=\"https://www.youtube.com/watch?v=gyin31wzg4Q\">https://www.youtube.com/watch?v=gyin31wzg4Q</a>"
+        },
+        "HOW_TO_CREATE_PROPERTY": {
+          "QUESTION": "Comment créer une propriété ?",
+          "ANSWER": "Allez dans le menu « Bien immobilier » et cliquez sur « Nouveau + ». Renseignez les informations demandées. <br/><br/> Voir la vidéo : \"Ajouter un bien immobilier sur Ndewa360 – Guide pour débuter\" ➜ <a href=\"https://youtu.be/WBhNszyc_Ks?si=SM9WUHKc6TV16E6L\">https://youtu.be/WBhNszyc_Ks?si=SM9WUHKc6TV16E6L</a>."
+        },
+        "PROPERTY_VS_UNIT": {
+          "QUESTION": "Quelle est la différence entre propriété et unité ?",
+          "ANSWER": "Une propriété est un immeuble ou bâtiment. Une unité est une chambre, un studio ou un appartement à l'intérieur de cette propriété."
+        },
+        "HOW_TO_ADD_UNIT": {
+          "QUESTION": "Comment ajouter une unité (chambre, studio...) ?",
+          "ANSWER": "Une fois la propriété créée, cliquez sur « Ajouter une unité » pour y ajouter vos logements. <br/><br/> Voir la vidéo : \"Créer une chambre dans un bien sur Ndewa360 – Guide pour débuter\" ➜ <a href=\"https://youtu.be/-xTYP8uuKgk\">https://youtu.be/-xTYP8uuKgk</a>."
+        },
+        "ADD_360_TOUR": {
+          "QUESTION": "Puis-je ajouter une visite 360° moi-même ?",
+          "ANSWER": "Oui, si vous disposez d'une vidéo ou d'une photo 360°. Sinon, vous pouvez contacter notre équipe pour assistance."
+        },
+        "HOW_TO_ADD_TENANT": {
+          "QUESTION": "Comment ajouter un locataire ?",
+          "ANSWER": "Rendez-vous sur l'unité concernée, puis cliquez sur le menu «Locataires» ensuite sur le bouton « Ajouter un locataire »."
+        },
+        "HOW_TO_RECORD_PAYMENT": {
+          "QUESTION": "Comment enregistrer un paiement ?",
+          "ANSWER": "Choisissez le bien concerné puis allez sur la liste des locataires à partir du menu « Locataires » ou sur la liste des unités du menu « Unités », ensuite sur le locataire ou l'unité concernée, puis cliquez sur « Ajouter un paiement ». Vous pouvez y préciser la période, le montant, et autre. <br/><br/> Voir la vidéo : \"Ajouter un paiement – Guide pour débuter\" ➜ <a href=\"https://youtu.be/-xTYP8uuKgk\">https://youtu.be/-xTYP8uuKgk</a>."
+        },
+        "TENANT_NOTIFICATION": {
+          "QUESTION": "Est-ce que le locataire reçoit une notification ?",
+          "ANSWER": "Oui, un email de confirmation est automatiquement envoyé au locataire une fois le paiement enregistré."
+        },
+        "MONTHLY_REVENUE_TRACKING": {
+          "QUESTION": "Où puis-je suivre mes revenus mensuels ?",
+          "ANSWER": "Le tableau de bord financier vous affiche tous les paiements, répartis par mois et par propriété. Un recapitulatif des biens de propriétés est tout d'abord disponible sur l'espace de l'ensemble des biens (menu « Biens immobilier »), mais un tableau de bord financier complet est disponible sur le menu « Finances » de chaque bien immobilier"
+        },
+        "DOWNLOAD_DOCUMENTS": {
+          "QUESTION": "Est-ce que je peux télécharger un contrat ou une facture ?",
+          "ANSWER": "Oui. Vous pouvez générer automatiquement les contrats et les factures à partir du profil du locataire"
+        }
+      },
+      "TENANTS": {
+        "HOW_TO_SEARCH": {
+          "QUESTION": "Comment chercher un logement sur Ndewa360 ?",
+          "ANSWER": "Depuis la page d'accueil, et à partir du menu « Recherche de biens » utilisez le moteur de recherche. Filtrez par ville, type de logement, prix, etc."
+        },
+        "WHAT_IS_360_TOUR": {
+          "QUESTION": "Qu'est-ce qu'une visite 360° ?",
+          "ANSWER": "C'est une vue immersive du logement. Vous pouvez vous déplacer virtuellement à l'intérieur comme si vous y étiez."
+        },
+        "IS_360_TOUR_FREE": {
+          "QUESTION": "Est-ce que je dois payer pour voir la visite 360° ?",
+          "ANSWER": "Non, la visite immersive est entièrement gratuite"
+        },
+        "HOW_TO_CONTACT_OWNER": {
+          "QUESTION": "Comment contacter le propriétaire ?",
+          "ANSWER": "Contre un paiement, vous aurez accès à ses coordonnées (téléphone, WhatsApp ou email)"
+        },
+        "HOW_TO_KNOW_AVAILABILITY": {
+          "QUESTION": "Comment savoir si un logement est encore disponible ?",
+          "ANSWER": "Seuls les logements non encore loués apparaissent dans les résultats de recherche."
+        }
+      },
+      "TECHNICAL_SUPPORT": {
+        "NO_EMAIL_RECEIVED": {
+          "QUESTION": "Je ne reçois pas d'email, que faire ?",
+          "ANSWER": "Vérifiez dans vos spams. Sinon, utilisez le formulaire de contact ou réessayez avec un autre email."
+        },
+        "PAYMENT_ACCESS_ISSUE": {
+          "QUESTION": "J'ai fait un paiement mais je n'ai pas accès à mon espace membre. Que faire?",
+          "ANSWER": "Contactez notre support avec la preuve de paiement. Nous activerons votre accès manuellement si nécessaire."
+        },
+        "HOW_TO_CONTACT_SUPPORT": {
+          "QUESTION": "Comment contacter l'assistance ?",
+          "ANSWER": "Via le formulaire dans la page \"Support\", ou par email à <a href=\"mailto:support@ndewa-360.com\">support@ndewa-360.com</a>."
+        }
+      }
+    },
+    "CONTACT_FORM": {
+      "TITLE": "Formulaire de Demande d'Assistance",
+      "BACK_TO_HOME": "Retour à l'accueil",
+      "DESCRIPTION": "Remplissez ce formulaire afin d'obtenir une assistance technique gratuite. Nous garantissons la confidentialité complète des informations qui nous sont fournies.",
+      "FREE_TECHNICAL_ASSISTANCE": "une assistance technique gratuite",
+      "FORM": {
+        "EMAIL": {
+          "LABEL": "Adresse email",
+          "REQUIRED": "*",
+          "INVALID": "Email invalide"
+        },
+        "FULL_NAME": {
+          "LABEL": "Nom complet",
+          "PLACEHOLDER": "Votre nom complet",
+          "REQUIRED": "*",
+          "INVALID": "Ce champ est obligatoire ou incorrect"
+        },
+        "PHONE": {
+          "LABEL": "Tél",
+          "PLACEHOLDER": "Votre numéro de téléphone",
+          "HELPER": "Ex: +237 6xx xx xx xx",
+          "REQUIRED": "*",
+          "INVALID": "Format invalide. Ex: +237 6xx xx xx xx"
+        },
+        "SUBJECT": {
+          "LABEL": "Sujet",
+          "PLACEHOLDER": "Sujet de la requête",
+          "REQUIRED": "*",
+          "INVALID": "Sujet obligatoire"
+        },
+        "MESSAGE": {
+          "LABEL": "Décrivez votre problème",
+          "REQUIRED": "*"
+        },
+        "SUBMIT": "Envoyer"
+      }
+    },
+    "GETTING_STARTED": {
+      "TITLE": "Guide de démarrage",
+      "BACK_TO_HOME": "Retour à l'accueil",
+      "DESCRIPTION": "Découvrez la plate-forme Ndewa360 en utilisant des visites guidées et des vidéos",
+      "VIDEOS": {
+        "INTRODUCTION": {
+          "TITLE": "Introduction à Ndewa360",
+          "TOPIC": "tutoriels vidéo",
+          "PAGE": "Présentation général",
+          "INFO": "Présentation général de l'application."
+        },
+        "ACCOUNT_CREATION": {
+          "TITLE": "Creation de compte",
+          "TOPIC": "Gestion du profil",
+          "PAGE": "Création de compte & Connexion",
+          "INFO": "Processus complet de création de compte avec confirmation de l'adresse email",
+          "STEPS": [
+            "Cliquer sur 'S'inscrire'",
+            "Remplir le formulaire",
+            "Accepter les conditions générales",
+            "Soumettre le formulaire",
+            "Vérifiez votre email",
+            "Connectez-vous à votre compte"
+          ]
+        },
+        "PROPERTY_ADDITION": {
+          "TITLE": "Ajout de bien immobilier",
+          "TOPIC": "Gestion de bien",
+          "PAGE": "Bien immobilier",
+          "INFO": "Processus de création d'un bien immobiliér dans un localité précise en tenant compte de la ville et du pays.",
+          "STEPS": [
+            "Connectez-vous à votre compte",
+            "Cliquer sur 'Bien immobilier'",
+            "Cliquer sur 'Nouveau'",
+            "Remplir le formulaire",
+            "Soumettre le formulaire",
+            "Acceder au panel de gestion du bien"
+          ]
+        },
+        "UNIT_ADDITION": {
+          "TITLE": "Ajout d'une unité locative",
+          "TOPIC": "Gestion d'unité locative",
+          "PAGE": "Unités",
+          "INFO": "Processus de création d'une unité locative (chambre, studio ou appartement) à l'intérieur d'un bien immobilier.",
+          "STEPS": [
+            "Connectez-vous à votre compte",
+            "Cliquer sur 'Bien immobilier'",
+            "Cliquer sur 'Unité'",
+            "Cliquer sur 'Ajouter une unité'",
+            "Remplir le formulaire",
+            "Soumettre le formulaire",
+            "Voir l'unité nouvellement créée"
+          ]
+        },
+        "TENANT_ADDITION": {
+          "TITLE": "Ajout d'un locataire",
+          "TOPIC": "Gestion de locataire",
+          "PAGE": "Locataires",
+          "INFO": "Processus de création d'un locataire appartenant à un bien immobilier.",
+          "STEPS": [
+            "Connectez-vous à votre compte",
+            "Cliquer sur 'Bien immobilier'",
+            "Cliquer sur 'Locataires'",
+            "Cliquer sur 'Ajouter un locataire'",
+            "Remplir le formulaire",
+            "Soumettre le formulaire",
+            "Voir le locataire nouvellement créée"
+          ]
+        },
+        "TENANT_ASSIGNMENT": {
+          "TITLE": "Assigner un locataire à une unité",
+          "TOPIC": "Gestion de location",
+          "PAGE": "Location",
+          "INFO": "Processus d'assignation d'un locataire à une unité locative. Elle à pour conséquence de générer un contrat de location entre les deux parties et de les envoyer par mail.",
+          "STEPS": [
+            "Connectez-vous à votre compte",
+            "Cliquer sur 'Bien immobilier'",
+            "Cliquer sur 'Voir locations'",
+            "Cliquer sur 'Nouveau contrat de location'",
+            "Remplir le formulaire",
+            "Soumettre le formulaire",
+            "Voir l'assignation nouvellement effectué"
+          ]
+        },
+        "FINANCIAL_ANALYSIS": {
+          "TITLE": "Analyse financière d'un bien",
+          "TOPIC": "Gestion financière",
+          "PAGE": "Finance",
+          "INFO": "Processus d'analyse des états financiers d'un bien immobilier en fonction d'une année d'activité",
+          "STEPS": [
+            "Connectez-vous à votre compte",
+            "Cliquer sur 'Bien immobilier'",
+            "Cliquer sur 'Finances'",
+            "Choisir l'année",
+            "Consulter les états de paiements de l'année choisie"
+          ]
+        }
+      },
+      "LABELS": {
+        "SUBJECT": "SUJET",
+        "VIDEO": "VIDEO",
+        "DESCRIPTION": "Description",
+        "PAGE": "page",
+        "DETAILS": "Détails"
+      }
+    }
   }
 }

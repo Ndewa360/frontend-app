@@ -6,6 +6,7 @@ import { Store, Actions, ofActionCompleted, ofActionSuccessful,Select } from '@n
 import { Observable } from 'rxjs';
 import { ProspectionState, ProspectionAction,UserProfileState,UserProfileModel } from 'src/app/shared/store';
 import { FormUtils } from 'src/app/shared/utils';
+import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
 
 
 @Component({
@@ -28,7 +29,8 @@ export class SupportComponent implements OnInit {
     private router: Router,
     private _store:Store,
     private _ngxsAction:Actions,
-    private location: Location
+    private location: Location,
+    private languageUrlService: LanguageUrlService
   ) { }
 
   ngOnInit(): void {
@@ -64,6 +66,8 @@ export class SupportComponent implements OnInit {
 
     goBack()
     {
-      this.location.back();
+      // Naviguer vers la page d'accueil du support avec la langue courante
+      const currentLang = this.languageUrlService.getCurrentLanguage();
+      this.router.navigate([`/${currentLang}/support/welcome`]);
     }
 }

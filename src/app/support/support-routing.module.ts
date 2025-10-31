@@ -63,6 +63,11 @@ const routes: Routes = [
         data: {
           breadcrumb: 'Home'
         },
+      },
+      {
+        path: '',
+        redirectTo: 'welcome',
+        pathMatch: 'full'
       }
     ]
   }
