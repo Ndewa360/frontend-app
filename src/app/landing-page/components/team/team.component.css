@@ -1,0 +1,371 @@
+/* Header Styles */
+.text-header h1 {
+  font-size: 35px;
+  font-weight: bold;
+  font-family: 'Inter';
+  color: #0E2A46;
+}
+
+.text-header span,
+.team-subtitle {
+  font-size: 20px;
+  color: #4D5756;
+}
+
+.team-page {
+  padding-top: 40px;
+  padding-bottom: 40px;
+  background-color: #FFFFFF;
+}
+
+/* Team Members Section */
+.team-members-section {
+  padding: 0 5%;
+}
+
+.team-member-card {
+  padding: 20px;
+  margin-bottom: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 400px;
+}
+
+.team-member-card.first {
+  padding-left: 10%;
+}
+
+.team-member-card.second {
+  padding-left: 7%;
+  padding-right: 7%;
+}
+
+.team-member-card.third {
+  padding-right: 10%;
+}
+
+/* Member Photo */
+.member-photo-container {
+  position: relative;
+  display: inline-block;
+}
+
+.member-photo-wrapper {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(187, 137, 16, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  flex-shrink: 0;
+}
+
+.member-photo-wrapper:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px rgba(187, 137, 16, 0.3);
+}
+
+.member-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.photo-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(187, 137, 16, 0.9);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.member-photo-wrapper:hover .photo-overlay {
+  opacity: 1;
+}
+
+/* Social Links */
+.social-links {
+  display: flex;
+  gap: 15px;
+}
+
+.social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: white;
+  border-radius: 50%;
+  color: #BB8910;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.social-link:hover {
+  background-color: #0E2A46;
+  color: white;
+  transform: scale(1.1);
+}
+
+.social-link.linkedin:hover {
+  background-color: #0077B5;
+}
+
+.social-link.facebook:hover {
+  background-color: #1877F2;
+}
+
+.social-link.twitter:hover {
+  background-color: #1DA1F2;
+}
+
+.social-link.instagram:hover {
+  background-color: #E4405F;
+}
+
+/* Member Info */
+.member-info {
+  max-width: 300px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.member-name {
+  font-size: 24px;
+  font-weight: bold;
+  color: #0E2A46;
+  margin-bottom: 8px;
+}
+
+.member-position {
+  font-size: 18px;
+  font-weight: 600;
+  color: #BB8910;
+  margin-bottom: 4px;
+}
+
+.member-experience {
+  font-size: 14px;
+  color: #4D5756;
+  font-style: italic;
+}
+
+/* Social Links Direct */
+.member-social-links {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.social-link-direct {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 45px;
+  height: 45px;
+  background-color: rgba(187, 137, 16, 0.1);
+  border-radius: 50%;
+  color: #BB8910;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.social-link-direct:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.social-link-direct.linkedin:hover {
+  background-color: #0077B5;
+  color: white;
+  border-color: #0077B5;
+}
+
+.social-link-direct.facebook:hover {
+  background-color: #1877F2;
+  color: white;
+  border-color: #1877F2;
+}
+
+.social-link-direct.twitter:hover {
+  background-color: #1DA1F2;
+  color: white;
+  border-color: #1DA1F2;
+}
+
+/* Company Values Section */
+.company-values-section {
+  background-color: #F2F2F2;
+  padding: 60px 5%;
+  margin-top: 60px;
+}
+
+.company-values-section .text-header h2 {
+  font-size: 30px;
+  font-weight: bold;
+  color: #0E2A46;
+}
+
+.values-list {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.value-item {
+  text-align: center;
+  padding: 20px;
+  max-width: 250px;
+  margin: 0 auto 30px;
+}
+
+.value-icon {
+  width: 80px;
+  height: 80px;
+  background-color: rgba(187, 137, 16, 0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  transition: all 0.3s ease;
+}
+
+.value-icon:hover {
+  background-color: #BB8910;
+  transform: scale(1.1);
+}
+
+.value-icon:hover .value-icon-svg {
+  color: white;
+}
+
+.value-icon-svg {
+  color: #BB8910;
+  transition: color 0.3s ease;
+}
+
+.value-item h4 {
+  font-size: 18px;
+  font-weight: bold;
+  color: #0E2A46;
+  margin-bottom: 12px;
+}
+
+.value-item p {
+  color: #4D5756;
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+/* Responsive Design */
+@media only screen and (max-width: 1500px) {
+  .team-member-card.first {
+    padding-left: 4%;
+  }
+
+  .team-member-card.second {
+    padding-left: 2%;
+    padding-right: 2%;
+  }
+
+  .team-member-card.third {
+    padding-right: 4%;
+  }
+}
+
+@media only screen and (max-width: 900px) {
+  .team-members-section {
+    padding: 0 2%;
+  }
+
+  .team-member-card {
+    padding: 15px;
+    margin-bottom: 50px;
+  }
+
+  .team-member-card.first,
+  .team-member-card.second,
+  .team-member-card.third {
+    padding-left: 5%;
+    padding-right: 5%;
+  }
+
+  .member-photo-wrapper {
+    width: 180px;
+    height: 180px;
+  }
+
+  .company-values-section {
+    padding: 40px 2%;
+  }
+
+  .value-item {
+    margin-bottom: 40px;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .team-page {
+    padding: 20px 10px;
+  }
+
+  .team-member-card {
+    padding: 10px;
+  }
+
+  .team-member-card.first,
+  .team-member-card.second,
+  .team-member-card.third {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .member-photo-wrapper {
+    width: 150px;
+    height: 150px;
+  }
+
+  .member-name {
+    font-size: 20px;
+  }
+
+  .member-position {
+    font-size: 16px;
+  }
+
+  .social-links {
+    gap: 10px;
+  }
+
+  .social-link {
+    width: 35px;
+    height: 35px;
+  }
+
+  .company-values-section {
+    padding: 30px 10px;
+  }
+
+  .value-icon {
+    width: 60px;
+    height: 60px;
+  }
+}

@@ -1952,6 +1952,32 @@
     },
     "SLOGAN": {
       "TEXT": "La location réinventée en 360°"
+    },
+    "TEAM": {
+      "TITLE": "Notre Équipe",
+      "SUBTITLE": "Rencontrez les experts passionnés qui donnent vie à Ndewa360",
+      "SKILLS": "Compétences",
+      "CONTACT": "Contacter",
+      "VALUES": {
+        "TITLE": "Nos Valeurs",
+        "SUBTITLE": "Les principes qui guident notre travail quotidien",
+        "INNOVATION": {
+          "TITLE": "Innovation",
+          "DESCRIPTION": "Nous repoussons constamment les limites technologiques pour offrir des solutions avant-gardistes."
+        },
+        "EXCELLENCE": {
+          "TITLE": "Excellence",
+          "DESCRIPTION": "Nous nous engageons à livrer des produits et services de la plus haute qualité."
+        },
+        "COLLABORATION": {
+          "TITLE": "Collaboration",
+          "DESCRIPTION": "Nous croyons en la force du travail d'équipe et de la communication ouverte."
+        },
+        "INTEGRITY": {
+          "TITLE": "Intégrité",
+          "DESCRIPTION": "Nous agissons avec transparence et honnêteté dans toutes nos interactions."
+        }
+      }
     }
   },
   "SEARCH_MODULE": {

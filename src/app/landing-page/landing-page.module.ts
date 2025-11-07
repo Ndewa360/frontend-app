@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { LandingPageRoutingModule } from './landing-page-routing.module';
 import { HomeComponent } from './components/home/home.component';
+import { TeamComponent } from './components/team/team.component';
 import { BaniereSlideComponent } from './components/baniere-slide/baniere-slide.component';
 import { FindAndManageComponentComponent } from './components/find-and-manage-component/find-and-manage-component.component';
 import { SharedModule } from '../shared/shared.module';
@@ -20,6 +21,7 @@ import { ScrollToTopComponent } from './components/scroll-to-top/scroll-to-top.c
 @NgModule({
   declarations: [
     HomeComponent,
+    TeamComponent,
     BaniereSlideComponent,
     FindAndManageComponentComponent,
     FindLocationFormComponent,

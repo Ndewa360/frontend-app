@@ -1,0 +1,11 @@
+Images à ajouter dans ce dossier :
+
+1. cedric-nguendap.jpg - Photo de Cédric Nguendap (CTO)
+2. wawo-domguia.jpg - Photo de Wawo Domguia (CEO)  
+3. konguep-elvira.jpg - Photo de Konguep Elvira (CFO)
+
+Format recommandé :
+- Taille : 400x400px minimum
+- Format : JPG ou PNG
+- Qualité : Haute résolution
+- Style : Photos professionnelles avec fond neutre ou transparent

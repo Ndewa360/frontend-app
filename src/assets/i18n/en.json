@@ -1820,7 +1820,7 @@
       "RENT": "To rent out",
       "MANAGE": "Manage"
     },
-    "SEARCH_FORM": {
+    "SEARCH_FORM": { 
       "LOCATION_LABEL": "Location",
       "LOCATION_PLACEHOLDER": "Where do you want to live",
       "PROPERTY_TYPE_LABEL": "Property type",
@@ -1952,6 +1952,32 @@
     },
     "SLOGAN": {
       "TEXT": "Rental reinvented in 360°"
+    },
+    "TEAM": {
+      "TITLE": "Our Team",
+      "SUBTITLE": "Meet the passionate experts who bring Ndewa360 to life",
+      "SKILLS": "Skills",
+      "CONTACT": "Contact",
+      "VALUES": {
+        "TITLE": "Our Values",
+        "SUBTITLE": "The principles that guide our daily work",
+        "INNOVATION": {
+          "TITLE": "Innovation",
+          "DESCRIPTION": "We constantly push technological boundaries to deliver cutting-edge solutions."
+        },
+        "EXCELLENCE": {
+          "TITLE": "Excellence",
+          "DESCRIPTION": "We are committed to delivering products and services of the highest quality."
+        },
+        "COLLABORATION": {
+          "TITLE": "Collaboration",
+          "DESCRIPTION": "We believe in the power of teamwork and open communication."
+        },
+        "INTEGRITY": {
+          "TITLE": "Integrity",
+          "DESCRIPTION": "We act with transparency and honesty in all our interactions."
+        }
+      }
     }
   },
   "SEARCH_MODULE": {
