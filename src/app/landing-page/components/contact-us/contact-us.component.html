@@ -161,8 +161,10 @@
                               <ibm-loading *ngIf="waittingResponse; else noWaitingResponse" ></ibm-loading> 
                               <!-- pt-4 pb-4 -->
                               <ng-template #noWaitingResponse>
-                                <span class="btn-text">{{ 'LANDING.CONTACT.FORM.SEND_BUTTON' | translate }}</span>
-                                <youpez-ibm-icon class="mt-6" iconClass="cds--btn__icon" iconName="arrowRight" iconSize="32" ></youpez-ibm-icon >
+                                <div class="contact-btn-content">
+                                  <span class="btn-text">{{ 'LANDING.CONTACT.FORM.SEND_BUTTON' | translate }}</span>
+                                  <youpez-ibm-icon iconClass="cds--btn__icon" iconName="arrowRight" iconSize="20" ></youpez-ibm-icon >
+                                </div>
                               </ng-template>
                             </button>
                           </div>

@@ -7,16 +7,20 @@
     margin-right: 10px;
     font-weight: bold;
     font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
-.content-butom-found .btn-text, 
-.content-butom-found .cds--btn__icon
-{
-    vertical-align: middle;
+.content-butom-found .btn-text {
+    display: inline-flex;
+    align-items: center;
 }
 
 .content-butom-found .cds--btn__icon {
-    margin-top: 10px;
+    display: inline-flex;
+    align-items: center;
 }
 
 .find-location-text-label {

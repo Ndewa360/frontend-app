@@ -9,15 +9,15 @@ const routes: Routes = [
     component: LandingLayoutComponent,
     children:[
       {
-        path: 'home',
+        path: '**',
         component: HomeComponent,
         pathMatch: 'full'
       },
-      {
-        path: '**',
-        redirectTo: 'home',
-        pathMatch: 'full'
-      }
+      // {
+      //   path: '**',
+      //   redirectTo: 'home',
+      //   pathMatch: 'full'
+      // }
     ],
   }
 ];

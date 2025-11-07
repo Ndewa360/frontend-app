@@ -124,6 +124,23 @@ ibm-label span {
     border-radius: 3px;
 }
 
+.contact-btn-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.contact-btn-content .btn-text {
+    display: inline-flex;
+    align-items: center;
+}
+
+.contact-btn-content .cds--btn__icon {
+    display: inline-flex;
+    align-items: center;
+}
+
 
 
 .backgroun-for-design {

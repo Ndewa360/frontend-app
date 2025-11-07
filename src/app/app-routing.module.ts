@@ -94,7 +94,7 @@ const routes: Routes = [
 			},
 			{
 				path: '',
-				redirectTo: 'search/index',
+				redirectTo: 'home',
 				pathMatch: 'full'
 			},
 			{
@@ -105,7 +105,7 @@ const routes: Routes = [
 	},
 	{
 		path: '',
-		redirectTo: '/en/search/index',
+		redirectTo: '/en/home',
 		pathMatch: 'full'
 	},
 	{

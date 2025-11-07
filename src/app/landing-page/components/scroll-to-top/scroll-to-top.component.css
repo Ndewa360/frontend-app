@@ -13,10 +13,14 @@
     cursor: pointer;
     z-index: 1000;
     transition: opacity 0.3s ease-in-out;
- 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
 }
 
-&:hover {
+.scroll-top-btn:hover {
     background-color: #333;
-  }
+    transform: scale(1.1);
+}
   
