@@ -2,6 +2,8 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './components/home/home.component';
 import { TeamComponent } from './components/team/team.component';
+import { LandingAltComponent } from './components/landing-alt/landing-alt.component';
+import { AboutComponent } from './components/about/about.component';
 import { LandingLayoutComponent } from 'src/@youpez/layout/landing/landing-layout/landing-layout.component';
 
 const routes: Routes = [
@@ -12,6 +14,16 @@ const routes: Routes = [
       {
         path: 'team',
         component: TeamComponent,
+        pathMatch: 'full'
+      },
+      {
+        path: 'landing-alt',
+        component: LandingAltComponent,
+        pathMatch: 'full'
+      },
+      {
+        path: 'about',
+        component: AboutComponent,
         pathMatch: 'full'
       },
       {

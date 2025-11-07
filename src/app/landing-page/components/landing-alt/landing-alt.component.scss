@@ -1,0 +1,632 @@
+// Hero Section - Adapté au thème Ndewa360
+.hero-360 {
+  min-height: 100vh;
+  background-image: url("/assets/landing/analog-landscape-city-with-buildings.jpg");
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  
+  .hero-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+  }
+  
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    padding: 80px 20px;
+    
+    .hero-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+  }
+  
+  .hero-badge {
+    margin-bottom: 24px;
+    
+    .badge-text {
+      background: rgba(187, 137, 16, 0.2);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(187, 137, 16, 0.3);
+    }
+  }
+  
+  .hero-title {
+    font-size: 83px;
+    font-weight: bold;
+    color: white;
+    line-height: 1.2;
+    margin-bottom: 24px;
+    font-family: 'Inter';
+    
+    .highlight-360 {
+      color: #BB8910;
+      text-shadow: 
+        -1px -1px 0 white,  
+        1px -1px 0 white,  
+        -1px 1px 0 white,  
+        1px 1px 0 white;
+    }
+  }
+  
+  .hero-subtitle {
+    font-size: 35px;
+    color: white;
+    font-weight: bold;
+    font-family: 'Inria Sans';
+    line-height: 1.4;
+    margin-bottom: 32px;
+  }
+  
+  .hero-actions {
+    margin-bottom: 48px;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    
+    .cta-primary {
+      background: #BB8910;
+      color: white;
+      border: none;
+      padding: 16px 32px;
+      border-radius: 6px;
+      font-size: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        background: #9a7209;
+        transform: translateY(-2px);
+      }
+    }
+    
+    .cta-secondary {
+      background: transparent;
+      color: white;
+      border: 2px solid white;
+      padding: 14px 30px;
+      border-radius: 6px;
+      font-size: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        background: white;
+        color: #0E2A46;
+      }
+    }
+  }
+  
+  .hero-stats {
+    .stat-item {
+      text-align: center;
+      
+      .stat-number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #BB8910;
+      }
+      
+      .stat-label {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 0.9rem;
+      }
+    }
+  }
+}
+
+// Phone Mockup - Style Ndewa360
+.phone-mockup {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  .phone-frame {
+    width: 300px;
+    height: 600px;
+    background: #1a1a1a;
+    border-radius: 30px;
+    padding: 20px;
+    box-shadow: 0 20px 40px rgba(187, 137, 16, 0.3);
+    
+    .phone-screen {
+      width: 100%;
+      height: 100%;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      
+      .app-preview {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        
+        .preview-header {
+          padding: 20px;
+          background: #f8f9fa;
+          
+          .preview-title {
+            font-weight: 600;
+            color: #0E2A46;
+            font-size: 14px;
+          }
+        }
+        
+        .preview-360 {
+          flex: 1;
+          background: linear-gradient(45deg, #BB8910, #0E2A46);
+          position: relative;
+          
+          .rotation-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            animation: rotate 2s linear infinite;
+          }
+          
+          .hotspots {
+            .hotspot {
+              position: absolute;
+              width: 20px;
+              height: 20px;
+              background: #BB8910;
+              border-radius: 50%;
+              animation: pulse 2s infinite;
+              border: 2px solid white;
+              
+              &.hotspot-1 { top: 30%; left: 20%; }
+              &.hotspot-2 { top: 60%; right: 25%; }
+              &.hotspot-3 { bottom: 40%; left: 40%; }
+            }
+          }
+        }
+        
+        .preview-controls {
+          padding: 15px;
+          display: flex;
+          gap: 10px;
+          background: #f8f9fa;
+          
+          .control-btn {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 6px;
+            background: #f1f3f4;
+            font-size: 12px;
+            color: #4D5756;
+            
+            &.active {
+              background: #BB8910;
+              color: white;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Problem & Solution Section - Style Ndewa360
+.problem-solution {
+  padding: 40px 20px;
+  background-color: #F2F2F2;
+  
+  .section-badge {
+    margin-bottom: 16px;
+    
+    .badge-problem {
+      background: rgba(220, 38, 38, 0.1);
+      color: #dc2626;
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    
+    .badge-solution {
+      background: rgba(187, 137, 16, 0.1);
+      color: #BB8910;
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+  }
+  
+  .section-title {
+    font-size: 35px;
+    font-weight: bold;
+    color: #0E2A46;
+    line-height: 1.2;
+    font-family: 'Inter';
+    margin-bottom: 24px;
+  }
+  
+  .problem-item, .solution-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 20px;
+    
+    .problem-icon, .solution-icon {
+      font-size: 1.5rem;
+      flex-shrink: 0;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: rgba(187, 137, 16, 0.1);
+    }
+    
+    .problem-text, .solution-text {
+      color: #4D5756;
+      line-height: 1.6;
+      font-size: 15px;
+    }
+  }
+}
+
+// Features Showcase - Style Ndewa360
+.features-showcase {
+  padding: 40px 20px;
+  
+  .section-title {
+    font-size: 35px;
+    font-weight: bold;
+    color: #0E2A46;
+    font-family: 'Inter';
+    text-align: center;
+  }
+  
+  .section-subtitle {
+    font-size: 20px;
+    color: #4D5756;
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  
+  .feature-card {
+    background: white;
+    padding: 32px;
+    border-radius: 10px;
+    box-shadow: 0 8px 32px rgba(187, 137, 16, 0.2);
+    border: 1px solid #e5e7eb;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 32px;
+    
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 40px rgba(187, 137, 16, 0.3);
+    }
+    
+    .feature-visual {
+      text-align: center;
+      margin-bottom: 24px;
+      
+      .feature-icon-360 {
+        .rotating-circle {
+          width: 80px;
+          height: 80px;
+          border: 3px solid #BB8910;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 0 auto;
+          animation: rotate 10s linear infinite;
+          background: rgba(187, 137, 16, 0.1);
+          
+          .inner-circle {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #BB8910;
+          }
+        }
+      }
+      
+      .payment-icons {
+        display: flex;
+        justify-content: center;
+        gap: 16px;
+        
+        .payment-icon {
+          width: 50px;
+          height: 50px;
+          border-radius: 10px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 700;
+          color: white;
+          
+          &.orange { background: #ff6b35; }
+          &.mtn { background: #ffcc02; color: #333; }
+          &.card { background: #BB8910; }
+        }
+      }
+      
+      .ai-brain {
+        .brain-core {
+          width: 80px;
+          height: 80px;
+          background: linear-gradient(45deg, #BB8910, #0E2A46);
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 0 auto;
+          position: relative;
+          
+          .neural-network {
+            .node {
+              width: 8px;
+              height: 8px;
+              background: white;
+              border-radius: 50%;
+              position: absolute;
+              animation: pulse 2s infinite;
+              
+              &:nth-child(1) { top: 20%; left: 30%; }
+              &:nth-child(2) { top: 50%; right: 25%; }
+              &:nth-child(3) { bottom: 25%; left: 40%; }
+            }
+          }
+        }
+      }
+    }
+    
+    .feature-title {
+      font-size: 19px;
+      font-weight: bold;
+      color: #0E2A46;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    
+    .feature-description {
+      color: #4D5756;
+      line-height: 1.6;
+      font-size: 15px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    
+    .feature-benefits {
+      .benefit-item {
+        color: #BB8910;
+        margin-bottom: 8px;
+        font-size: 15px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        
+        &::before {
+          content: "✓";
+          color: #BB8910;
+          font-weight: bold;
+        }
+      }
+    }
+  }
+}
+
+// Social Proof - Style Ndewa360
+.social-proof {
+  padding: 40px 20px;
+  background: linear-gradient(135deg, #0E2A46 0%, #BB8910 100%);
+  
+  .section-title {
+    font-size: 35px;
+    font-weight: bold;
+    color: white;
+    font-family: 'Inter';
+    text-align: center;
+  }
+  
+  .section-subtitle {
+    font-size: 20px;
+    color: rgba(255, 255, 255, 0.9);
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  
+  .testimonial-card {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 24px;
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin-bottom: 24px;
+    
+    .testimonial-content {
+      .stars {
+        font-size: 1.2rem;
+        margin-bottom: 16px;
+      }
+      
+      .testimonial-text {
+        font-style: italic;
+        line-height: 1.6;
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 15px;
+        margin-bottom: 16px;
+      }
+      
+      .testimonial-author {
+        color: #BB8910;
+        font-weight: 600;
+        font-size: 14px;
+      }
+    }
+  }
+}
+
+// Final CTA - Style Ndewa360
+.final-cta {
+  padding: 40px 20px;
+  background-color: #0E2A46;
+  
+  .cta-title {
+    font-size: 35px;
+    font-weight: bold;
+    color: white;
+    font-family: 'Inter';
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  
+  .cta-subtitle {
+    font-size: 20px;
+    color: rgba(255, 255, 255, 0.9);
+    max-width: 600px;
+    margin: 0 auto 32px;
+    text-align: center;
+    line-height: 1.6;
+  }
+  
+  .cta-actions {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 32px;
+    
+    .cta-main {
+      background: #BB8910;
+      color: white;
+      border: none;
+      padding: 16px 32px;
+      border-radius: 6px;
+      font-size: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        background: #9a7209;
+        transform: translateY(-2px);
+      }
+    }
+    
+    .cta-demo {
+      background: transparent;
+      color: white;
+      border: 2px solid white;
+      padding: 14px 30px;
+      border-radius: 6px;
+      font-size: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        background: white;
+        color: #0E2A46;
+      }
+    }
+  }
+  
+  .guarantee-badge {
+    background: rgba(187, 137, 16, 0.2);
+    color: #BB8910;
+    padding: 12px 24px;
+    border-radius: 24px;
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid rgba(187, 137, 16, 0.3);
+  }
+}
+
+// Animations
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.1); }
+}
+
+// Responsive - Adapté au style Ndewa360
+@media (max-width: 1300px) {
+  .hero-360 {
+    margin-bottom: 45px;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 50px !important;
+  }
+  
+  .hero-subtitle {
+    font-size: 24px !important;
+  }
+  
+  .section-title {
+    font-size: 28px !important;
+  }
+  
+  .phone-mockup .phone-frame {
+    width: 250px;
+    height: 500px;
+  }
+  
+  .hero-actions {
+    flex-direction: column;
+    align-items: center;
+    
+    .cta-primary,
+    .cta-secondary {
+      width: 100%;
+      max-width: 300px;
+      justify-content: center;
+    }
+  }
+  
+  .cta-actions {
+    flex-direction: column;
+    align-items: center;
+    
+    .cta-main,
+    .cta-demo {
+      width: 100%;
+      max-width: 300px;
+      justify-content: center;
+    }
+  }
+}
