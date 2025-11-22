@@ -70,6 +70,15 @@ export class AdminUsersService {
   }
 
   /**
+   * Obtenir les détails complets d'un utilisateur avec informations financières
+   */
+  getUserDetails(userId: string): Observable<any> {
+    return this.http.get<ApiResultFormat<any>>(`${this.apiUrl}/${userId}/details`).pipe(
+      map(response => response.data)
+    );
+  }
+
+  /**
    * Créer un nouvel utilisateur
    */
   createUser(userData: CreateAdminUserDto): Observable<AdminUser> {

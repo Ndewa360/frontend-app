@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
 
 // Actions
@@ -79,6 +79,7 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
   constructor(
     private store: Store,
     private router: Router,
+    private route: ActivatedRoute,
     private languageUrlService: LanguageUrlService
   ) {}
 
@@ -179,6 +180,10 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
   onEditUser(user: AdminUser): void {
     this.selectedUser = user;
     this.showEditModal = true;
+  }
+
+  onViewUserDetails(user: AdminUser): void {
+    this.router.navigate(['..', 'users', user._id], { relativeTo: this.route });
   }
 
   onDeleteUser(user: AdminUser): void {

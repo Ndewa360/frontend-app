@@ -13,6 +13,7 @@ import { AdminRolesComponent } from './pages/roles/admin-roles.component';
 import { AdminGeographyComponent } from './pages/geography/admin-geography.component';
 import { AdminPaymentsComponent } from './pages/payments/admin-payments.component';
 import { AdminSettingsComponent } from './pages/settings/admin-settings.component';
+import { UserDetailsComponent } from './pages/user-details/user-details.component';
 import { AgentManagementComponent } from './pages/agent-management/agent-management.component';
 
 const routes: Routes = [
@@ -35,6 +36,14 @@ const routes: Routes = [
         data: {
           title: 'ADMIN.PAGE_TITLES.USERS',
           breadcrumb: 'ADMIN.BREADCRUMBS.USERS'
+        }
+      },
+      {
+        path: 'users/:id',
+        component: UserDetailsComponent,
+        data: {
+          title: 'ADMIN.PAGE_TITLES.USER_DETAILS',
+          breadcrumb: 'ADMIN.BREADCRUMBS.USER_DETAILS'
         }
       },
       {

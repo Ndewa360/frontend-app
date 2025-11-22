@@ -1,0 +1,352 @@
+<!-- Admin Subscriptions Management -->
+<div class="admin-subscriptions">
+  
+  <!-- Header -->
+  <div class="admin-header">
+    <div class="admin-header-content">
+      <div class="admin-header-title">
+        <h1>Gestion des Souscriptions</h1>
+        <p>Gérez les abonnements et paiements des utilisateurs</p>
+      </div>
+      <div class="admin-header-actions">
+        <button 
+          class="admin-btn admin-btn-secondary"
+          (click)="onToggleFilters()"
+          [class.active]="showFilters">
+          <i class="fas fa-filter"></i>
+          Filtres
+        </button>
+        <button 
+          class="admin-btn admin-btn-secondary"
+          (click)="onExportData()">
+          <i class="fas fa-download"></i>
+          Exporter
+        </button>
+        <button 
+          class="admin-btn admin-btn-primary"
+          (click)="onRefreshData()"
+          [disabled]="isRefreshing">
+          <i class="fas fa-sync-alt" [class.fa-spin]="isRefreshing"></i>
+          Actualiser
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Overview -->
+  <div class="admin-stats-grid" *ngIf="stats$ | async as stats">
+    <div class="admin-stat-card">
+      <div class="admin-stat-icon admin-stat-icon-primary">
+        <i class="fas fa-users"></i>
+      </div>
+      <div class="admin-stat-content">
+        <div class="admin-stat-value">{{ stats.overview.totalUsers | number }}</div>
+        <div class="admin-stat-label">Utilisateurs Total</div>
+      </div>
+    </div>
+    
+    <div class="admin-stat-card">
+      <div class="admin-stat-icon admin-stat-icon-success">
+        <i class="fas fa-crown"></i>
+      </div>
+      <div class="admin-stat-content">
+        <div class="admin-stat-value">{{ stats.overview.premiumUsers | number }}</div>
+        <div class="admin-stat-label">Utilisateurs Premium</div>
+      </div>
+    </div>
+    
+    <div class="admin-stat-card">
+      <div class="admin-stat-icon admin-stat-icon-warning">
+        <i class="fas fa-exclamation-triangle"></i>
+      </div>
+      <div class="admin-stat-content">
+        <div class="admin-stat-value">{{ stats.overview.suspendedUsers | number }}</div>
+        <div class="admin-stat-label">Comptes Suspendus</div>
+      </div>
+    </div>
+    
+    <div class="admin-stat-card">
+      <div class="admin-stat-icon admin-stat-icon-danger">
+        <i class="fas fa-credit-card"></i>
+      </div>
+      <div class="admin-stat-content">
+        <div class="admin-stat-value">{{ formatCurrency(stats.overview.totalUnpaidAmount) }}</div>
+        <div class="admin-stat-label">Impayés Total</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters Panel -->
+  <div class="admin-filters-panel" *ngIf="showFilters">
+    <div class="admin-filters-content">
+      <div class="admin-filters-row">
+        <div class="admin-filter-group">
+          <label>Recherche</label>
+          <input 
+            type="text" 
+            class="admin-input"
+            placeholder="Nom, email, ID..."
+            [(ngModel)]="currentFilters.search"
+            (keyup.enter)="onApplyFilters(currentFilters)">
+        </div>
+        
+        <div class="admin-filter-group">
+          <label>Plan</label>
+          <select 
+            class="admin-select"
+            [(ngModel)]="currentFilters.plan"
+            (change)="onApplyFilters(currentFilters)">
+            <option *ngFor="let option of planOptions" [value]="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+        
+        <div class="admin-filter-group">
+          <label>Statut Compte</label>
+          <select 
+            class="admin-select"
+            [(ngModel)]="currentFilters.accountStatus"
+            (change)="onApplyFilters(currentFilters)">
+            <option *ngFor="let option of statusOptions" [value]="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+        
+        <div class="admin-filter-group">
+          <label>Paiements</label>
+          <select 
+            class="admin-select"
+            [(ngModel)]="currentFilters.paymentStatus"
+            (change)="onApplyFilters(currentFilters)">
+            <option *ngFor="let option of paymentStatusOptions" [value]="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="admin-filters-actions">
+        <button 
+          class="admin-btn admin-btn-secondary"
+          (click)="onClearFilters()">
+          Effacer
+        </button>
+        <button 
+          class="admin-btn admin-btn-primary"
+          (click)="onApplyFilters(currentFilters)">
+          Appliquer
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Subscriptions Table -->
+  <div class="admin-table-container">
+    <div class="admin-table-header">
+      <h3>Liste des Souscriptions</h3>
+      <div class="admin-table-info" *ngIf="pagination$ | async as pagination">
+        {{ pagination.total }} résultats
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div class="admin-loading" *ngIf="isLoading$ | async">
+      <div class="admin-spinner"></div>
+      <p>Chargement des souscriptions...</p>
+    </div>
+
+    <!-- Subscriptions Table -->
+    <div class="admin-table-wrapper" *ngIf="!(isLoading$ | async)">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th (click)="onSortChange('user.firstName')" class="sortable">
+              Utilisateur
+              <i class="fas fa-sort"></i>
+            </th>
+            <th (click)="onSortChange('plan')" class="sortable">
+              Plan
+              <i class="fas fa-sort"></i>
+            </th>
+            <th (click)="onSortChange('accountStatus')" class="sortable">
+              Statut Compte
+              <i class="fas fa-sort"></i>
+            </th>
+            <th>Paiements</th>
+            <th (click)="onSortChange('propertyCount')" class="sortable">
+              Propriétés
+              <i class="fas fa-sort"></i>
+            </th>
+            <th (click)="onSortChange('createdAt')" class="sortable">
+              Créé le
+              <i class="fas fa-sort"></i>
+            </th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let subscription of subscriptions$ | async; trackBy: trackBySubscriptionId">
+            <!-- User Info -->
+            <td>
+              <div class="admin-user-cell">
+                <div class="admin-user-avatar">
+                  {{ subscription.user.firstName.charAt(0) }}{{ subscription.user.lastName.charAt(0) }}
+                </div>
+                <div class="admin-user-info">
+                  <div class="admin-user-name">
+                    {{ subscription.user.firstName }} {{ subscription.user.lastName }}
+                  </div>
+                  <div class="admin-user-email">{{ subscription.user.email }}</div>
+                </div>
+              </div>
+            </td>
+
+            <!-- Plan -->
+            <td>
+              <span class="admin-badge" [ngClass]="getPlanColor(subscription.plan)">
+                {{ getPlanLabel(subscription.plan) }}
+              </span>
+            </td>
+
+            <!-- Account Status -->
+            <td>
+              <span class="admin-badge" [ngClass]="getAccountStatusColor(subscription.accountStatus)">
+                {{ getAccountStatusLabel(subscription.accountStatus) }}
+              </span>
+            </td>
+
+            <!-- Payment Status -->
+            <td>
+              <div class="admin-payment-status">
+                <span class="admin-badge" [ngClass]="getPaymentStatusColor(subscription.hasUnpaidInvoices, subscription.totalUnpaidAmount)">
+                  {{ getPaymentStatusLabel(subscription.hasUnpaidInvoices, subscription.totalUnpaidAmount) }}
+                </span>
+                <div class="admin-payment-details" *ngIf="subscription.hasUnpaidInvoices">
+                  <small>{{ subscription.unpaidInvoicesCount }} facture(s) impayée(s)</small>
+                </div>
+              </div>
+            </td>
+
+            <!-- Properties -->
+            <td>
+              <div class="admin-property-info">
+                <span class="admin-property-count">{{ subscription.propertyCount }}</span>
+                <span class="admin-property-limit" *ngIf="subscription.plan === 'free'">
+                  / {{ subscription.propertyLimit }}
+                </span>
+                <span class="admin-property-unlimited" *ngIf="subscription.plan === 'premium'">
+                  Illimité
+                </span>
+              </div>
+            </td>
+
+            <!-- Created Date -->
+            <td>{{ formatDate(subscription.createdAt) }}</td>
+
+            <!-- Actions -->
+            <td>
+              <div class="admin-actions">
+                <div class="admin-dropdown" [class.open]="openMenuId === subscription._id">
+                  <button 
+                    class="admin-btn admin-btn-icon"
+                    (click)="toggleSubscriptionMenu(subscription._id)">
+                    <i class="fas fa-ellipsis-v"></i>
+                  </button>
+                  
+                  <div class="admin-dropdown-menu">
+                    <button 
+                      class="admin-dropdown-item"
+                      (click)="onViewDetails(subscription)">
+                      <i class="fas fa-eye"></i>
+                      Voir détails
+                    </button>
+                    
+                    <button 
+                      class="admin-dropdown-item"
+                      *ngIf="subscription.plan === 'free'"
+                      (click)="onForceUpgrade(subscription)">
+                      <i class="fas fa-arrow-up"></i>
+                      Forcer upgrade Premium
+                    </button>
+                    
+                    <button 
+                      class="admin-dropdown-item"
+                      *ngIf="subscription.plan === 'premium'"
+                      (click)="onDowngradeToPlan(subscription, 'free')">
+                      <i class="fas fa-arrow-down"></i>
+                      Downgrade vers Free
+                    </button>
+                    
+                    <div class="admin-dropdown-divider"></div>
+                    
+                    <button 
+                      class="admin-dropdown-item"
+                      *ngIf="subscription.accountStatus === 'active'"
+                      (click)="onSuspendAccount(subscription)">
+                      <i class="fas fa-pause"></i>
+                      Suspendre compte
+                    </button>
+                    
+                    <button 
+                      class="admin-dropdown-item"
+                      *ngIf="subscription.accountStatus === 'suspended'"
+                      (click)="onReactivateAccount(subscription)">
+                      <i class="fas fa-play"></i>
+                      Réactiver compte
+                    </button>
+                    
+                    <button 
+                      class="admin-dropdown-item"
+                      *ngIf="subscription.hasUnpaidInvoices"
+                      (click)="onSendPaymentReminder(subscription)">
+                      <i class="fas fa-envelope"></i>
+                      Rappel de paiement
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Empty State -->
+      <div class="admin-empty-state" *ngIf="(subscriptions$ | async)?.length === 0">
+        <i class="fas fa-users"></i>
+        <h3>Aucune souscription trouvée</h3>
+        <p>Aucune souscription ne correspond aux critères de recherche.</p>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="admin-pagination" *ngIf="pagination$ | async as pagination">
+      <div class="admin-pagination-info">
+        Affichage {{ (pagination.page - 1) * pagination.limit + 1 }} à 
+        {{ Math.min(pagination.page * pagination.limit, pagination.total) }} 
+        sur {{ pagination.total }} résultats
+      </div>
+      
+      <div class="admin-pagination-controls">
+        <button 
+          class="admin-btn admin-btn-secondary"
+          [disabled]="pagination.page <= 1"
+          (click)="onPageChange(pagination.page - 1)">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        
+        <span class="admin-pagination-current">
+          Page {{ pagination.page }} sur {{ pagination.totalPages }}
+        </span>
+        
+        <button 
+          class="admin-btn admin-btn-secondary"
+          [disabled]="pagination.page >= pagination.totalPages"
+          (click)="onPageChange(pagination.page + 1)">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
