@@ -531,46 +531,123 @@ export class AssignationAssistantService {
     console.log('🔄 Génération écritures locataire existant:', { config, chambre });
 
     const ecritures: EcritureComptablePreview[] = [];
-    const dateEntree = new Date(config.dateEntree);
+    const dateEntree = config.dateEntree ? new Date(config.dateEntree) : null;
     const aujourdhui = new Date();
 
-    // Calculer le nombre de mois écoulés depuis l'entrée
-    const moisEcoules = Math.ceil((aujourdhui.getTime() - dateEntree.getTime()) / (1000 * 60 * 60 * 24 * 30));
-    const montantDuTotal = moisEcoules * chambre.price;
-
-    console.log('📊 Calcul locataire existant:', {
+    console.log('📊 Configuration locataire existant:', {
       dateEntree,
       aujourdhui,
-      moisEcoules,
-      prixMensuel: chambre.price,
-      montantDuTotal,
-      soldeActuel: config.soldeActuel
+      soldeActuel: config.soldeActuel,
+      cautionVersee: config.cautionVersee,
+      prixMensuel: chambre.price
     });
 
-    // Dette totale pour les mois écoulés
-    ecritures.push({
-      type: TypeEcritureComptable.DETTE_AVANCE,
-      libelle: `Dette loyer (${moisEcoules} mois écoulés)`,
-      montant: montantDuTotal,
-      sens: 'DEBIT',
-      compte: 'DETTE_LOCATAIRE',
-      description: `Loyer dû depuis ${dateEntree.toLocaleDateString()} - Chambre ${chambre.code}`
-    });
+    // **NOUVELLE LOGIQUE** : Vérifier si la date d'entrée est connue
+    if (dateEntree) {
+      // **ALGORITHME CLASSIQUE** : Calcul basé sur la date d'entrée
+      console.log('📅 Utilisation de l\'algorithme classique avec date d\'entrée');
+      
+      const moisEcoules = Math.ceil((aujourdhui.getTime() - dateEntree.getTime()) / (1000 * 60 * 60 * 24 * 30));
+      const montantDuTotal = moisEcoules * chambre.price;
 
-    // Paiements effectués (calculés à partir du solde)
-    const montantPaye = montantDuTotal + config.soldeActuel; // Si solde négatif, moins de paiements
-    if (montantPaye > 0) {
-      ecritures.push({
-        type: TypeEcritureComptable.PAIEMENT_AVANCE,
-        libelle: 'Paiements effectués',
-        montant: montantPaye,
-        sens: 'CREDIT',
-        compte: '512000',
-        description: `Paiements cumulés - Chambre ${chambre.code}`
+      console.log('📊 Calcul classique:', {
+        moisEcoules,
+        montantDuTotal
       });
+
+      // Dette totale pour les mois écoulés
+      ecritures.push({
+        type: TypeEcritureComptable.DETTE_AVANCE,
+        libelle: `Dette loyer (${moisEcoules} mois écoulés)`,
+        montant: montantDuTotal,
+        sens: 'DEBIT',
+        compte: 'DETTE_LOCATAIRE',
+        description: `Loyer dû depuis ${dateEntree.toLocaleDateString()} - Chambre ${chambre.code}`
+      });
+
+      // Paiements effectués (calculés à partir du solde)
+      const montantPaye = montantDuTotal + config.soldeActuel; // Si solde négatif, moins de paiements
+      if (montantPaye > 0) {
+        ecritures.push({
+          type: TypeEcritureComptable.PAIEMENT_AVANCE,
+          libelle: 'Paiements effectués',
+          montant: montantPaye,
+          sens: 'CREDIT',
+          compte: '512000',
+          description: `Paiements cumulés - Chambre ${chambre.code}`
+        });
+      }
+    } else {
+      // **NOUVEL ALGORITHME** : Calcul basé sur le solde avec ancrage sur aujourd'hui
+      console.log('🧠 Utilisation du nouvel algorithme basé sur le solde');
+      
+      // Calculer l'écart en mois basé sur le solde
+      const moisEcart = Math.round(config.soldeActuel / chambre.price);
+      
+      console.log('📊 Calcul intelligent:', {
+        soldeActuel: config.soldeActuel,
+        prixMensuel: chambre.price,
+        moisEcart
+      });
+
+      // Déterminer le dernier mois payé selon votre logique
+      let dernierMoisPaye: Date;
+      const aujourdhuiCopy = new Date(aujourdhui);
+      
+      if (moisEcart === 0) {
+        // Solde = 0 → il a payé jusqu'à ce mois-ci inclus
+        dernierMoisPaye = new Date(aujourdhuiCopy.getFullYear(), aujourdhuiCopy.getMonth(), 1);
+      } else if (moisEcart > 0) {
+        // Solde positif → il a payé en avance
+        dernierMoisPaye = new Date(aujourdhuiCopy.getFullYear(), aujourdhuiCopy.getMonth() + moisEcart, 1);
+      } else {
+        // Solde négatif → il est en retard
+        dernierMoisPaye = new Date(aujourdhuiCopy.getFullYear(), aujourdhuiCopy.getMonth() + moisEcart, 1);
+      }
+
+      console.log('📅 Dernier mois payé calculé:', dernierMoisPaye.toLocaleDateString());
+
+      // Calculer le montant total dû jusqu'à aujourd'hui (en supposant une entrée au début)
+      // On utilise une date d'entrée fictive pour le calcul
+      const dateEntreeFictive = new Date(dernierMoisPaye);
+      dateEntreeFictive.setMonth(dateEntreeFictive.getMonth() - Math.abs(moisEcart));
+      
+      const moisDus = Math.ceil((aujourdhui.getTime() - dateEntreeFictive.getTime()) / (1000 * 60 * 60 * 24 * 30));
+      const montantDuTotal = moisDus * chambre.price;
+      const montantPaye = montantDuTotal + config.soldeActuel;
+
+      console.log('📊 Calculs finaux:', {
+        dateEntreeFictive: dateEntreeFictive.toLocaleDateString(),
+        moisDus,
+        montantDuTotal,
+        montantPaye
+      });
+
+      // Créer les écritures basées sur le calcul intelligent
+      if (montantDuTotal > 0) {
+        ecritures.push({
+          type: TypeEcritureComptable.DETTE_AVANCE,
+          libelle: `Dette loyer (calcul basé sur solde)`,
+          montant: montantDuTotal,
+          sens: 'DEBIT',
+          compte: 'DETTE_LOCATAIRE',
+          description: `Loyer dû (calcul intelligent) - Chambre ${chambre.code}`
+        });
+      }
+
+      if (montantPaye > 0) {
+        ecritures.push({
+          type: TypeEcritureComptable.PAIEMENT_AVANCE,
+          libelle: 'Paiements effectués (basé sur solde)',
+          montant: montantPaye,
+          sens: 'CREDIT',
+          compte: '512000',
+          description: `Paiements reconstitués à partir du solde - Chambre ${chambre.code}`
+        });
+      }
     }
 
-    // Gestion de la caution
+    // Gestion de la caution (commune aux deux algorithmes)
     if (chambre.shouldPayCaution && chambre.cautionPrice > 0) {
       // Dette de caution
       ecritures.push({

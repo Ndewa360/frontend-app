@@ -353,6 +353,52 @@
               </div>
             </div>
 
+            <!-- Case à cocher pour date d'entrée inconnue -->
+            <div class="date-entry-control">
+              <div class="switch-container">
+                <label class="switch-label">
+                  <input
+                    type="checkbox"
+                    formControlName="dateEntreeConnue"
+                    class="switch-input">
+                  <span class="switch-slider"></span>
+                </label>
+                <div class="switch-text">
+                  <span class="switch-title">{{ 'ASSIGNMENT_ASSISTANT.ENTRY_DATE_KNOWN' | translate }}</span>
+                  <span class="switch-description">
+                    {{ configFinanciereForm.get('dateEntreeConnue')?.value ?
+                       ('ASSIGNMENT_ASSISTANT.ENTRY_DATE_WILL_BE_USED' | translate) :
+                       ('ASSIGNMENT_ASSISTANT.BALANCE_BASED_CALCULATION' | translate) }}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Explication du mode de calcul -->
+            <div class="calculation-mode-info">
+              <div class="info-note" [class.highlighted]="!configFinanciereForm.get('dateEntreeConnue')?.value">
+                <div class="note-icon">
+                  <i class="fas" [class.fa-calendar-alt]="configFinanciereForm.get('dateEntreeConnue')?.value" 
+                     [class.fa-calculator]="!configFinanciereForm.get('dateEntreeConnue')?.value" 
+                     style="font-size: 16px;"></i>
+                </div>
+                <div class="note-content">
+                  <h5 *ngIf="configFinanciereForm.get('dateEntreeConnue')?.value">
+                    {{ 'ASSIGNMENT_ASSISTANT.CLASSIC_CALCULATION' | translate }}
+                  </h5>
+                  <h5 *ngIf="!configFinanciereForm.get('dateEntreeConnue')?.value">
+                    {{ 'ASSIGNMENT_ASSISTANT.SMART_CALCULATION' | translate }}
+                  </h5>
+                  <p *ngIf="configFinanciereForm.get('dateEntreeConnue')?.value">
+                    {{ 'ASSIGNMENT_ASSISTANT.CLASSIC_CALCULATION_DESC' | translate }}
+                  </p>
+                  <p *ngIf="!configFinanciereForm.get('dateEntreeConnue')?.value">
+                    {{ 'ASSIGNMENT_ASSISTANT.SMART_CALCULATION_DESC' | translate }}
+                  </p>
+                </div>
+              </div>
+            </div>
+
             <div class="form-grid">
               <div class="form-field">
                 <label class="field-label">{{ 'ASSIGNMENT_ASSISTANT.CURRENT_BALANCE' | translate }} *</label>
@@ -425,6 +471,26 @@
             <div class="form-grid">
             </div>
 
+            <!-- Aperçu de la situation financière -->
+            <div class="financial-preview" *ngIf="selectedRoom && configFinanciereForm.get('soldeActuel').value !== null">
+              <h5>{{ 'ASSIGNMENT_ASSISTANT.FINANCIAL_SITUATION_PREVIEW' | translate }}</h5>
+              <div class="preview-content">
+                <div class="situation-description">
+                  <i class="fas" [class.fa-check-circle]="configFinanciereForm.get('soldeActuel').value >= 0"
+                     [class.fa-exclamation-triangle]="configFinanciereForm.get('soldeActuel').value < 0"
+                     [style.color]="configFinanciereForm.get('soldeActuel').value >= 0 ? 'green' : 'orange'"></i>
+                  <span class="description-text">{{ getDescriptionSoldeActuel() }}</span>
+                </div>
+                
+                <div class="calculation-method" *ngIf="!configFinanciereForm.get('dateEntreeConnue')?.value">
+                  <div class="method-info">
+                    <i class="fas fa-info-circle" style="color: #2196F3;"></i>
+                    <span>{{ 'ASSIGNMENT_ASSISTANT.CALCULATION_BASED_ON_TODAY' | translate }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <!-- Résumé du transfert -->
             <div class="transfer-summary" *ngIf="configFinanciereForm.get('soldeActuel').value !== 0">
               <h5>{{ 'ASSIGNMENT_ASSISTANT.TRANSFER_SUMMARY' | translate }}</h5>
@@ -448,12 +514,22 @@
           <!-- Champs communs -->
           <div class="form-grid">
             <div class="form-field">
-              <label class="field-label">{{ 'ASSIGNMENT_ASSISTANT.ENTRY_DATE' | translate }} *</label>
+              <label class="field-label">
+                {{ 'ASSIGNMENT_ASSISTANT.ENTRY_DATE' | translate }}
+                <span *ngIf="typeForm.get('typeLocataire').value === TypeLocataire.NOUVEAU || configFinanciereForm.get('dateEntreeConnue')?.value"> *</span>
+                <span *ngIf="typeForm.get('typeLocataire').value === TypeLocataire.EXISTANT && !configFinanciereForm.get('dateEntreeConnue')?.value" class="optional-label">
+                  ({{ 'ASSIGNMENT_ASSISTANT.NOT_REQUIRED' | translate }})
+                </span>
+              </label>
               <input
                 type="date"
                 formControlName="dateEntree"
                 class="field-input"
-                [class.error]="configFinanciereForm.get('dateEntree')?.invalid && configFinanciereForm.get('dateEntree')?.touched">
+                [class.error]="configFinanciereForm.get('dateEntree')?.invalid && configFinanciereForm.get('dateEntree')?.touched"
+                [disabled]="typeForm.get('typeLocataire').value === TypeLocataire.EXISTANT && !configFinanciereForm.get('dateEntreeConnue')?.value">
+              <div class="field-help" *ngIf="typeForm.get('typeLocataire').value === TypeLocataire.EXISTANT && !configFinanciereForm.get('dateEntreeConnue')?.value">
+                {{ 'ASSIGNMENT_ASSISTANT.DATE_NOT_USED_CALCULATION' | translate }}
+              </div>
               <div class="field-error" *ngIf="configFinanciereForm.get('dateEntree')?.invalid && configFinanciereForm.get('dateEntree')?.touched">
                 <i class="fas fa-exclamation-triangle"></i>
                 <span>{{ 'ASSIGNMENT_ASSISTANT.ENTRY_DATE_REQUIRED' | translate }}</span>
@@ -554,11 +630,24 @@
               </div>
               <div class="summary-item">
                 <label>{{ 'ASSIGNMENT_ASSISTANT.ENTRY_DATE_LABEL' | translate }}</label>
-                <span class="value">{{ configFinanciereForm.get('dateEntree')?.value | date:'dd/MM/yyyy' }}</span>
+                <span class="value" *ngIf="configFinanciereForm.get('dateEntreeConnue')?.value">
+                  {{ configFinanciereForm.get('dateEntree')?.value | date:'dd/MM/yyyy' }}
+                </span>
+                <span class="value" *ngIf="!configFinanciereForm.get('dateEntreeConnue')?.value" style="color: #666; font-style: italic;">
+                  {{ 'ASSIGNMENT_ASSISTANT.NOT_REQUIRED' | translate }} ({{ 'ASSIGNMENT_ASSISTANT.SMART_CALCULATION' | translate }})
+                </span>
               </div>
               <div class="summary-item">
                 <label>{{ 'ASSIGNMENT_ASSISTANT.PROPERTY' | translate }}</label>
                 <span class="value">{{ property?.name }}</span>
+              </div>
+              <!-- Nouveau : Mode de calcul -->
+              <div class="summary-item" *ngIf="typeForm.get('typeLocataire')?.value === TypeLocataire.EXISTANT">
+                <label>Mode de calcul</label>
+                <span class="value" [class.smart-mode]="!configFinanciereForm.get('dateEntreeConnue')?.value" [class.classic-mode]="configFinanciereForm.get('dateEntreeConnue')?.value">
+                  <i class="fas" [class.fa-calendar-alt]="configFinanciereForm.get('dateEntreeConnue')?.value" [class.fa-calculator]="!configFinanciereForm.get('dateEntreeConnue')?.value"></i>
+                  {{ configFinanciereForm.get('dateEntreeConnue')?.value ? ('ASSIGNMENT_ASSISTANT.CLASSIC_CALCULATION' | translate) : ('ASSIGNMENT_ASSISTANT.SMART_CALCULATION' | translate) }}
+                </span>
               </div>
             </div>
           </div>
@@ -610,6 +699,7 @@
               <h4>{{ 'ASSIGNMENT_ASSISTANT.FINANCIAL_CONFIG' | translate }}</h4>
             </div>
             <div class="financial-summary">
+              <!-- Nouveau locataire -->
               <div class="financial-item" *ngIf="typeForm.get('typeLocataire')?.value === TypeLocataire.NOUVEAU">
                 <label>{{ 'ASSIGNMENT_ASSISTANT.AMOUNT_RECEIVED_LABEL' | translate }}</label>
                 <span class="value amount">{{ configFinanciereForm.get('paiementMontant')?.value | currency:'XAF':'symbol':'1.0-0' }}</span>
@@ -621,6 +711,27 @@
               <div class="financial-item" *ngIf="typeForm.get('typeLocataire')?.value === TypeLocataire.NOUVEAU">
                 <label>{{ 'ASSIGNMENT_ASSISTANT.AMOUNT_FOR_ADVANCE' | translate }}</label>
                 <span class="value amount">{{ calculateRemainingAmount() | currency:'XAF':'symbol':'1.0-0' }}</span>
+              </div>
+              
+              <!-- Locataire existant -->
+              <div class="financial-item" *ngIf="typeForm.get('typeLocataire')?.value === TypeLocataire.EXISTANT">
+                <label>{{ 'ASSIGNMENT_ASSISTANT.CURRENT_BALANCE' | translate }}</label>
+                <span class="value amount" [class.positive]="configFinanciereForm.get('soldeActuel')?.value >= 0" [class.negative]="configFinanciereForm.get('soldeActuel')?.value < 0">
+                  {{ configFinanciereForm.get('soldeActuel')?.value | currency:'XAF':'symbol':'1.0-0' }}
+                </span>
+              </div>
+              
+              <!-- Méthode de calcul pour locataire existant -->
+              <div class="financial-item" *ngIf="typeForm.get('typeLocataire')?.value === TypeLocataire.EXISTANT">
+                <label>Méthode de calcul</label>
+                <span class="value" *ngIf="configFinanciereForm.get('dateEntreeConnue')?.value">
+                  <i class="fas fa-calendar-alt" style="color: #2196F3;"></i>
+                  {{ 'ASSIGNMENT_ASSISTANT.CLASSIC_CALCULATION_DESC' | translate }}
+                </span>
+                <span class="value" *ngIf="!configFinanciereForm.get('dateEntreeConnue')?.value">
+                  <i class="fas fa-calculator" style="color: #4CAF50;"></i>
+                  {{ 'ASSIGNMENT_ASSISTANT.SMART_CALCULATION_DESC' | translate }}
+                </span>
               </div>
             </div>
           </div>
@@ -653,6 +764,9 @@
                 <span class="value amount" [class.positive]="getMoisRetard() >= 0" [class.negative]="getMoisRetard() < 0">
                   {{ getDescriptionRetard() }}
                 </span>
+                <small class="calculation-method" *ngIf="!configFinanciereForm.get('dateEntreeConnue')?.value" style="display: block; color: #4CAF50; font-style: italic;">
+                  <i class="fas fa-info-circle"></i> {{ 'ASSIGNMENT_ASSISTANT.CALCULATION_BASED_ON_TODAY' | translate }}
+                </small>
               </div>
 
               <div class="status-item">

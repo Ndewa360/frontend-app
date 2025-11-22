@@ -1186,7 +1186,7 @@
   gap: 0.75rem;
   padding: 1rem;
   background: var(--theme-appUIForegroundBg);
-  border: 1px solid var(--theme-appColorInfo);
+  border: 1px solid var(--theme-appColorDecorative);
   border-radius: 8px;
   margin-top: 1rem;
 }
@@ -1588,4 +1588,152 @@
 .repartition-item .value.warning {
   color: var(--theme-appColorDanger);
   font-weight: 600;
+}
+
+/* Styles pour la gestion de la date d'entrée inconnue */
+.date-entry-control {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: var(--theme-appUIForegroundBg);
+  border: 1px solid var(--theme-appColorDecorative);
+  border-radius: 8px;
+}
+
+.calculation-mode-info {
+  margin-top: 1rem;
+}
+
+.calculation-mode-info .info-note.highlighted {
+  background: rgba(33, 150, 243, 0.05);
+  border-color: #2196F3;
+}
+
+.calculation-mode-info .info-note.highlighted .note-icon {
+  color: #2196F3;
+}
+
+.optional-label {
+  font-size: 0.75rem;
+  color: var(--theme-appTextSecondary);
+  font-style: italic;
+  font-weight: normal;
+}
+
+.field-input:disabled {
+  background: var(--theme-appColorDecorative);
+  color: var(--theme-appTextSecondary);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Styles pour l'aperçu de la situation financière */
+.financial-preview {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: var(--theme-appUIForegroundBg);
+  border: 1px solid var(--theme-appColorDecorative);
+  border-radius: 8px;
+}
+
+.financial-preview h5 {
+  margin: 0 0 1rem 0;
+  color: var(--theme-appText);
+  font-weight: 600;
+}
+
+.preview-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.situation-description {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: rgba(204, 140, 10, 0.05);
+  border-left: 4px solid var(--theme-appColorPrimary);
+  border-radius: 4px;
+}
+
+.description-text {
+  font-weight: 500;
+  color: var(--theme-appText);
+}
+
+.calculation-method {
+  padding: 0.75rem 1rem;
+  background: rgba(33, 150, 243, 0.05);
+  border: 1px solid rgba(33, 150, 243, 0.2);
+  border-radius: 6px;
+}
+
+.method-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--theme-appText);
+}
+
+/* Styles pour le récapitulatif adaptatif */
+.smart-mode {
+  color: #4CAF50;
+  font-weight: 500;
+}
+
+.classic-mode {
+  color: #2196F3;
+  font-weight: 500;
+}
+
+.calculation-method {
+  font-size: 0.85em;
+  margin-top: 4px;
+}
+
+.positive {
+  color: #4CAF50;
+}
+
+.negative {
+  color: #f44336;
+}
+
+.summary-item .value.smart-mode,
+.summary-item .value.classic-mode {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.summary-item .value.smart-mode i,
+.summary-item .value.classic-mode i {
+  font-size: 16px;
+}
+
+/* Responsive pour les nouvelles fonctionnalités */
+@media (max-width: 768px) {
+  .switch-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  
+  .caution-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  
+  .caution-amount {
+    align-items: flex-start;
+  }
+  
+  .situation-description {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+  }
 }

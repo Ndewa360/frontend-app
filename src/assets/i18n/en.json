@@ -13,7 +13,7 @@
     "MESSAGES": "Messages",
     "VIEW_ALL": "See all",
     "ACCOUNT_DETAILS": "Account details",
-    "LOGGED_IN_AS": "Logged in as",
+    "LOGGED_IN_AS": "Logged in as", 
     "PLEASE_LOGIN": "Log in",
     "PROFILE": "Profile",
     "HOME": "Welcome",
@@ -3444,7 +3444,19 @@
     "NO_ACCOUNTING_ENTRIES": "No accounting entries to display. Please complete the financial setup.",
     "ASSIGNMENT_TYPE_LABEL_SHORT": "Type of assignment",
     "ENTRY_DATE_LABEL": "Entry date",
-    "COMMENT_LABEL": "Comment"
+    "COMMENT_LABEL": "Comment",
+    
+    "ENTRY_DATE_KNOWN": "I know the exact entry date",
+    "ENTRY_DATE_WILL_BE_USED": "Entry date will be used for calculations",
+    "BALANCE_BASED_CALCULATION": "Calculation based only on current balance",
+    "CLASSIC_CALCULATION": "Classic calculation with entry date",
+    "SMART_CALCULATION": "Smart calculation based on balance",
+    "CLASSIC_CALCULATION_DESC": "Arrears/advances will be calculated from entry date to today",
+    "SMART_CALCULATION_DESC": "Balance indicates situation RELATIVE TO TODAY. Positive = in advance, Negative = in arrears",
+    "NOT_REQUIRED": "not required",
+    "DATE_NOT_USED_CALCULATION": "This date will not be used in calculations",
+    "FINANCIAL_SITUATION_PREVIEW": "Financial situation preview",
+    "CALCULATION_BASED_ON_TODAY": "Calculation based on today's date as reference"
   },
   "UNIT_PAYMENTS": {
     "PAYMENT_HISTORY": "Payment history",

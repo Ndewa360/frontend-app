@@ -189,8 +189,8 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
 
     // Formulaire de configuration financière
     this.configFinanciereForm = this.formBuilder.group({
-      // Champs communs
-      dateEntree: [new Date(), Validators.required],
+      // Champs communs - VIDE par défaut pour forcer la saisie
+      dateEntree: [null, Validators.required],
       commentaire: [''],
       
       // Champs pour nouveau locataire
@@ -205,8 +205,14 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
       transfererHistorique: [true],
       ajustementType: [''],
       ajustementMontant: [0],
-      ajustementMotif: ['']
+      ajustementMotif: [''],
+      
+      // Nouveau champ pour gérer la date d'entrée inconnue
+      dateEntreeConnue: [true] // Par défaut, on suppose que la date est connue
     });
+
+    // Forcer la validation dès l'initialisation
+    this.assistantState.canProceed = false;
   }
 
   private setupFormSubscriptions(): void {
@@ -217,6 +223,15 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
         this.assistantState.configuration.typeAssignation = type;
         this.updateFormValidators();
         this.validateCurrentStep();
+      });
+
+    // Écouter les changements de la case "Date d'entrée connue"
+    this.configFinanciereForm.get('dateEntreeConnue')?.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(dateConnue => {
+        this.onDateEntreeConnueChange(dateConnue);
+        // Forcer la revalidation immédiate
+        setTimeout(() => this.validateCurrentStep(), 50);
       });
 
     // Écouter les changements des autres formulaires
@@ -296,6 +311,7 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
     this.configFinanciereForm.get('paiementMontant')?.clearValidators();
     this.configFinanciereForm.get('soldeActuel')?.clearValidators();
     this.configFinanciereForm.get('cautionVersee')?.clearValidators();
+    this.configFinanciereForm.get('dateEntree')?.clearValidators();
 
     if (typeLocataire === TypeLocataire.NOUVEAU) {
       // Pour un nouveau locataire, le montant perçu est obligatoire
@@ -303,16 +319,55 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
         Validators.required,
         Validators.min(0)
       ]);
+      // Date d'entrée toujours requise pour nouveau locataire
+      this.configFinanciereForm.get('dateEntree')?.setValidators([Validators.required]);
     } else {
       // Pour un locataire existant, on peut avoir un solde négatif (arriérés)
       this.configFinanciereForm.get('soldeActuel')?.setValidators([Validators.required]);
       this.configFinanciereForm.get('cautionVersee')?.setValidators([Validators.min(0)]);
+      
+      // Date d'entrée conditionnelle selon la case cochée
+      const dateEntreeConnue = this.configFinanciereForm.get('dateEntreeConnue')?.value;
+      if (dateEntreeConnue) {
+        this.configFinanciereForm.get('dateEntree')?.setValidators([Validators.required]);
+      }
     }
 
     // Mettre à jour la validité
     this.configFinanciereForm.get('paiementMontant')?.updateValueAndValidity();
     this.configFinanciereForm.get('soldeActuel')?.updateValueAndValidity();
     this.configFinanciereForm.get('cautionVersee')?.updateValueAndValidity();
+    this.configFinanciereForm.get('dateEntree')?.updateValueAndValidity();
+  }
+
+  /**
+   * Gérer le changement de la case "Date d'entrée connue"
+   */
+  onDateEntreeConnueChange(dateConnue: boolean): void {
+    const typeLocataire = this.typeForm.get('typeLocataire')?.value;
+    
+    // Pour tous les types de locataires
+    if (dateConnue) {
+      // Date connue : activer le champ et le rendre obligatoire
+      this.configFinanciereForm.get('dateEntree')?.enable();
+      this.configFinanciereForm.get('dateEntree')?.setValidators([Validators.required]);
+    } else {
+      // Date inconnue : seulement pour locataires existants
+      if (typeLocataire !== TypeLocataire.NOUVEAU) {
+        this.configFinanciereForm.get('dateEntree')?.disable();
+        this.configFinanciereForm.get('dateEntree')?.clearValidators();
+        this.configFinanciereForm.get('dateEntree')?.setValue(null);
+      }
+    }
+    
+    this.configFinanciereForm.get('dateEntree')?.updateValueAndValidity();
+    
+    // Forcer la revalidation immédiate
+    this.assistantState.canProceed = false;
+    setTimeout(() => {
+      this.validateCurrentStep();
+      this.calculerEcrituresComptables();
+    }, 50);
   }
 
   // Navigation entre les étapes
@@ -396,16 +451,31 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
       case EtapeAssistant.CONFIGURATION_FINANCIERE:
         isValid = true; // Commencer par true et invalider si nécessaire
 
-        // Vérification obligatoire de la date d'entrée pour tous les types
+        // Vérification de la date d'entrée selon le type et la configuration
         const dateEntree = this.configFinanciereForm.get('dateEntree')?.value;
-        if (!dateEntree) {
+        const dateEntreeConnue = this.configFinanciereForm.get('dateEntreeConnue')?.value;
+        const typeLocataire = this.typeForm.get('typeLocataire')?.value;
+        
+        // Vérification stricte de la date d'entrée
+        if (dateEntreeConnue === true && (!dateEntree || dateEntree === '' || dateEntree === null)) {
           isValid = false;
-          errors.push('La date d\'entrée est obligatoire');
+          if (typeLocataire === TypeLocataire.NOUVEAU) {
+            errors.push('La date d\'entrée est obligatoire pour un nouveau locataire');
+          } else {
+            errors.push('La date d\'entrée est obligatoire quand "Je connais la date d\'entrée exacte" est coché');
+          }
         }
+        
+        
 
         // Vérifications spécifiques selon le type de locataire
-        const typeLocataire = this.typeForm.get('typeLocataire')?.value;
         if (typeLocataire === TypeLocataire.NOUVEAU) {
+          // Pour nouveau locataire, la case doit toujours être cochée
+          if (dateEntreeConnue !== true) {
+            isValid = false;
+            errors.push('La date d\'entrée est obligatoire pour un nouveau locataire');
+          }
+
           const montantPercu = this.configFinanciereForm.get('paiementMontant')?.value;
           if (montantPercu === null || montantPercu === undefined || montantPercu < 0) {
             isValid = false;
@@ -417,6 +487,15 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
           if (soldeActuel === null || soldeActuel === undefined) {
             isValid = false;
             errors.push('Veuillez saisir le solde actuel du locataire');
+          }
+          
+          // Vérification supplémentaire pour la date si case cochée
+          if (dateEntreeConnue === true) {
+            const dateValue = this.configFinanciereForm.get('dateEntree')?.value;
+            if (!dateValue || dateValue === '') {
+              isValid = false;
+              // errors.push('La date d\'entrée est obligatoire quand "Je connais la date d\'entrée exacte" est coché');
+            }
           }
         }
 
@@ -516,7 +595,8 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
    */
   private buildAssignationDTO(): any {
     const typeAssignation = this.typeForm.get('typeLocataire').value;
-    const dateEffet = this.configFinanciereForm.get('dateEntree').value || new Date();
+    const dateEntreeConnue = this.configFinanciereForm.get('dateEntreeConnue')?.value;
+    const dateEffet = dateEntreeConnue ? this.configFinanciereForm.get('dateEntree').value : new Date();
 
     const baseDTO = {
       locataireId: this.selectedLocataire._id,
@@ -623,12 +703,14 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
       const soldeActuel = this.configFinanciereForm.get('soldeActuel')?.value || 0;
       const cautionVersee = this.configFinanciereForm.get('cautionVersee')?.value || 0;
       const cautionActive = this.configFinanciereForm.get('cautionExistanteActive')?.value;
-      const dateEntree = this.configFinanciereForm.get('dateEntree')?.value || new Date();
+      const dateEntreeConnue = this.configFinanciereForm.get('dateEntreeConnue')?.value;
+      const dateEntree = dateEntreeConnue ? this.configFinanciereForm.get('dateEntree')?.value : null;
 
       console.log('💰 Données financières locataire existant:', {
         soldeActuel,
         cautionVersee,
         cautionActive,
+        dateEntreeConnue,
         dateEntree
       });
 
@@ -648,7 +730,7 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
         situationActuelle: situationActuelle,
         soldeActuel: Number(soldeActuel) || 0,
         cautionVersee: cautionActive ? Number(cautionVersee) || 0 : 0, // Caution selon le switcher
-        dateEntree: dateEntree,
+        dateEntree: dateEntreeConnue ? dateEntree : null, // null si date inconnue pour activer le nouvel algorithme
         transfererHistorique: Boolean(this.configFinanciereForm.get('transfererHistorique')?.value),
         commentaire: this.configFinanciereForm.get('commentaire')?.value || ''
       };
@@ -924,11 +1006,17 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
    */
   getTypeAssignationLabel(): string {
     const type = this.typeForm.get('typeLocataire')?.value;
+    const dateEntreeConnue = this.configFinanciereForm.get('dateEntreeConnue')?.value;
+    
     switch (type) {
       case TypeLocataire.NOUVEAU:
         return 'Nouveau locataire';
       case TypeLocataire.EXISTANT:
-        return 'Locataire existant';
+        if (dateEntreeConnue) {
+          return 'Locataire existant (calcul classique)';
+        } else {
+          return 'Locataire existant (calcul intelligent)';
+        }
       case TypeLocataire.MIGRATION:
         return 'Migration de locataire';
       default:
@@ -1078,16 +1166,55 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
     }
 
     if (typeLocataire === TypeLocataire.EXISTANT) {
-      const moisRetard = this.getMoisRetard();
-      if (moisRetard > 0) {
-        return `${moisRetard} mois d'avance`;
-      } else if (moisRetard < 0) {
-        return `${Math.abs(moisRetard)} mois de retard`;
+      const dateEntreeConnue = this.configFinanciereForm.get('dateEntreeConnue')?.value;
+      
+      if (dateEntreeConnue) {
+        // Calcul classique avec date d'entrée
+        const moisRetard = this.getMoisRetard();
+        if (moisRetard > 0) {
+          return `${moisRetard} mois d'avance (calcul depuis date d'entrée)`;
+        } else if (moisRetard < 0) {
+          return `${Math.abs(moisRetard)} mois de retard (calcul depuis date d'entrée)`;
+        }
+        return 'À jour (calcul depuis date d\'entrée)';
+      } else {
+        // Calcul avec ancrage sur aujourd'hui
+        return this.getDescriptionSoldeActuel();
       }
-      return 'À jour';
     }
 
     return '';
+  }
+
+  /**
+   * Description basée sur le solde actuel (nouvelle approche)
+   */
+  getDescriptionSoldeActuel(): string {
+    if (!this.selectedRoom) return '';
+    
+    const soldeActuel = this.configFinanciereForm.get('soldeActuel')?.value || 0;
+    const prixMensuel = this.selectedRoom.price;
+    
+    if (prixMensuel === 0) return 'Prix de la chambre non défini';
+    
+    const moisEcart = Math.round(soldeActuel / prixMensuel);
+    
+    if (moisEcart === 0) {
+      return 'À jour ce mois-ci (ancrage aujourd\'hui)';
+    } else if (moisEcart > 0) {
+      return `En avance de ${moisEcart} mois (ancrage aujourd'hui - payé jusqu'au ${this.getMonthName(new Date(), moisEcart)})`;
+    } else {
+      return `En retard de ${Math.abs(moisEcart)} mois (ancrage aujourd'hui - doit depuis ${this.getMonthName(new Date(), moisEcart)})`;
+    }
+  }
+
+  /**
+   * Obtenir le nom du mois avec décalage
+   */
+  private getMonthName(dateRef: Date, moisDecalage: number): string {
+    const date = new Date(dateRef);
+    date.setMonth(date.getMonth() + moisDecalage);
+    return date.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
   }
 
   // Méthodes utilitaires
