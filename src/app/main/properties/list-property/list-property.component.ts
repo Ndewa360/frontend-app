@@ -11,6 +11,7 @@ import { UpdatePropertyComponent } from '../update-property/update-property.comp
 import { PropertyAlert } from '../components/property-overview-card/property-overview-card.component';
 import { ModernTenantModalComponent } from '../components/modern-tenant-modal/modern-tenant-modal.component';
 import { PropertyNavigationService } from '../services/property-navigation.service';
+import { PropertiesTourService } from '../services/properties-tour.service';
 
 @Component({
   selector: 'app-list-property',
@@ -34,12 +35,19 @@ export class ListPropertyComponent implements OnInit {
     private _store: Store,
     private router: Router,
     private propertyNavigationService: PropertyNavigationService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private propertiesTourService: PropertiesTourService
   ) { }
 
   ngOnInit(): void {
     this.initLoading$.subscribe((value)=>{
       console.log("Init Loading Property ",value)
+      // Démarrer le tour après chargement des propriétés
+      if (value === 'LOADED') {
+        setTimeout(() => {
+          this.propertiesTourService.startPropertiesMainTour();
+        }, 1000);
+      }
     })
     this.properties$.subscribe((value)=>{
       console.log("Value Property ",value)
@@ -298,6 +306,22 @@ export class ListPropertyComponent implements OnInit {
 
       return total + monthlyRevenue;
     }, 0);
+  }
+
+  // Méthodes pour le tour guidé
+  startTour(): void {
+    console.log('ListPropertyComponent: startTour called');
+    console.log('Service available:', !!this.propertiesTourService);
+    
+    // Forcer le reset pour les tests
+    this.propertiesTourService.resetTour('properties_main');
+    this.propertiesTourService.startPropertiesMainTour();
+  }
+
+  resetTour(): void {
+    console.log('ListPropertyComponent: resetTour called');
+    this.propertiesTourService.resetTour('properties_main');
+    this.startTour();
   }
 
 }

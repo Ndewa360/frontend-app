@@ -10,6 +10,9 @@ import { ModernModalsModule } from './components/modern-modals/modern-modals.mod
 // Import des sélecteurs géographiques
 import { GeographySelectorsModule } from 'src/app/shared/components/geography-selectors/geography-selectors.module';
 
+// Import du composant tour help
+import { TourHelpButtonComponent } from './components/tour-help-button/tour-help-button.component';
+
 @NgModule({
   declarations: [
     // Les composants sont déjà déclarés dans MainModule, on les exporte juste ici

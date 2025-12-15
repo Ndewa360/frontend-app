@@ -77,6 +77,7 @@ import { PropertyGalleryComponent } from './properties/components/property-galle
 import { PropertiesSharedModule } from './properties/properties-shared.module';
 import { Error404Component } from './errors/error404/error404.component';
 import { Error500Component } from './errors/error500/error500.component';
+import { TourHelpButtonComponent } from './properties/components/tour-help-button/tour-help-button.component';
 
 // Import du module de paiement (déjà importé plus haut)
 
@@ -142,7 +143,8 @@ ModuleRegistry.registerModules([
     ContractViewerModalComponent,
     PropertyGalleryComponent,
     Error404Component,
-    Error500Component
+    Error500Component,
+    TourHelpButtonComponent
 
   ],
   imports: [

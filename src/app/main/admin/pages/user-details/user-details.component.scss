@@ -2,3 +2,31 @@
 .user-details-page {
   // Styles de base
 }
+
+// Styles pour Shepherd.js Tour
+:global(.shepherd-element) {
+  max-width: 400px;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+:global(.shepherd-header) {
+  padding: 1rem 1rem 0.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+:global(.shepherd-text) {
+  padding: 0.5rem 1rem;
+  line-height: 1.5;
+}
+
+:global(.shepherd-footer) {
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+:global(.shepherd-modal-overlay-container) {
+  background-color: rgba(0, 0, 0, 0.5);
+}
