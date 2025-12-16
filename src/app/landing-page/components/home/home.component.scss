@@ -1,0 +1,1447 @@
+// Variables SCSS
+$primary: #BB890B;
+$primary-dark: #9A7309;
+$primary-light: #D4A00D;
+$background: #FFF7F2;
+
+
+
+
+//largeur
+.max-w-7xl { max-width: 80rem; margin: 0 auto; }
+
+
+/* Animations */
+.fade-in { animation: fadeIn 1s ease-out; }
+.slide-up { animation: slideUp 0.8s ease-out; }
+.slide-left { animation: slideLeft 0.8s ease-out; }
+.slide-right { animation: slideRight 0.8s ease-out; }
+.bounce-in { animation: bounceIn 1.2s ease-out; }
+.float { animation: float 3s ease-in-out infinite; }
+.pulse-glow { animation: pulseGlow 2s ease-in-out infinite; }
+.rotate-in { animation: rotateIn 0.8s ease-out; }
+.scale-in { animation: scaleIn 0.6s ease-out; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideLeft { from { opacity: 0; transform: translateX(-40px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes slideRight { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes bounceIn { 0% { opacity: 0; transform: scale(0.3) rotate(-10deg); } 50% { opacity: 1; transform: scale(1.05) rotate(2deg); } 70% { transform: scale(0.95) rotate(-1deg); } 100% { opacity: 1; transform: scale(1) rotate(0deg); } }
+@keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+@keyframes pulseGlow { 0%, 100% { box-shadow: 0 0 20px rgba(187, 137, 11, 0.3); } 50% { box-shadow: 0 0 30px rgba(187, 137, 11, 0.6); } }
+@keyframes rotateIn { from { opacity: 0; transform: rotate(-180deg) scale(0.5); } to { opacity: 1; transform: rotate(0deg) scale(1); } }
+@keyframes scaleIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+
+/* Effets hover */
+.hover-lift { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+.hover-lift:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); }
+
+/* Boutons */
+.btn-primary {
+  background: linear-gradient(135deg, $primary 0%, $primary-light 100%);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+  }
+
+  &:hover {
+    &::before { left: 100%; }
+    background: linear-gradient(135deg, $primary-dark 0%, $primary 100%); 
+    transform: translateY(-3px) scale(1.05); 
+    box-shadow: 0 15px 35px rgba(187, 137, 11, 0.4);
+  }
+}
+
+// Icônes
+.icon-bounce { 
+  transition: transform 0.3s ease;
+  &:hover { transform: scale(1.2) rotate(5deg); }
+}
+
+// Texte dégradé
+.gradient-text {
+  background: linear-gradient(135deg, $primary 0%, $primary-light 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+// Cartes
+.card-hover { 
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  &:hover { transform: translateY(-5px) rotate(1deg); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1); }
+}
+
+/* Animations au scroll */
+.scroll-animate {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.scroll-animate.animate {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.scroll-animate-left {
+  opacity: 0;
+  transform: translateX(-30px);
+  transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.scroll-animate-left.animate {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.scroll-animate-right {
+  opacity: 0;
+  transform: translateX(30px);
+  transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.scroll-animate-right.animate {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.scroll-animate-scale {
+  opacity: 0;
+  transform: scale(0.9);
+  transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.scroll-animate-scale.animate {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Modal vidéo */
+.video-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.video-modal.active {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.video-modal-content {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.video-modal video {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.video-modal-close {
+  position: absolute;
+  top: -50px;
+  right: 0;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #333;
+  transition: all 0.3s ease;
+}
+
+.video-modal-close:hover {
+  background: white;
+  transform: scale(1.1);
+}
+
+// Classes Tailwind personnalisées
+.text-primary { color: $primary !important; }
+.bg-primary { background-color: $primary !important; }
+.border-primary { border-color: $primary !important; }
+.hover\:text-primary:hover { color: $primary !important; }
+.hover\:border-primary:hover { border-color: $primary !important; }
+
+.text-primary-light { color: $primary-light !important; }
+.hover\:text-primary-light:hover { color: $primary-light !important; }
+
+.from-primary { --tw-gradient-from: #{$primary} !important; }
+.to-primary-light { --tw-gradient-to: #{$primary-light} !important; }
+
+
+.home-content {
+  font-family: 'Inter', sans-serif;
+  background-color: #FFF7F2 !important;
+}
+/* Override Angular Material styles pour le composant home */
+:host {
+  
+
+  // Reset des styles Material qui peuvent interférer
+  .mat-typography,
+  .mat-body,
+  .mat-body-1,
+  .mat-body-2 {
+    font-family: 'Inter', sans-serif !important;
+    line-height: inherit !important;
+    font-size: inherit !important;
+    font-weight: inherit !important;
+    letter-spacing: inherit !important;
+  }
+
+  // Reset des marges/paddings Material
+  h1, h2, h3, h4, h5, h6 {
+    margin: 0 !important;
+    padding: 0 !important;
+    font-family: 'Inter', sans-serif !important;
+    line-height: inherit !important;
+  }
+
+  p {
+    margin: 0 !important;
+    padding: 0 !important;
+    font-family: 'Inter', sans-serif !important;
+  }
+
+  // Override des boutons Material
+  button {
+    font-family: 'Inter', sans-serif !important;
+    
+    &:not(.mat-button):not(.mat-raised-button):not(.mat-fab):not(.mat-mini-fab) {
+      background: none !important;
+      border: none !important;
+      box-shadow: none !important;
+    }
+  }
+
+  // Override des liens Material
+  a {
+    text-decoration: none !important;
+    
+    &:not(.mat-button):not(.mat-raised-button) {
+      color: inherit !important;
+    }
+  }
+
+  // Assurer que les classes Tailwind ont la priorité
+  .text-gray-800 { color: #1f2937 !important; }
+  .text-gray-600 { color: #4b5563 !important; }
+  .text-gray-900 { color: #111827 !important; }
+  .text-white { color: #ffffff !important; }
+  .text-yellow-500 { color: #eab308 !important; }
+  .text-red-600 { color: #dc2626 !important; }
+  .text-red-700 { color: #b91c1c !important; }
+  .text-red-800 { color: #991b1b !important; }
+  .text-orange-600 { color: #ea580c !important; }
+  .text-green-800 { color: #166534 !important; }
+  .text-blue-800 { color: #1e40af !important; }
+
+  // Override des backgrounds Material
+  .bg-white { background-color: #ffffff !important; }
+  .bg-gray-50 { background-color: #f9fafb !important; }
+  .bg-gray-100 { background-color: #f3f4f6 !important; }
+  .bg-gray-900 { background-color: #111827 !important; }
+  .bg-red-50 { background-color: #fef2f2 !important; }
+  .bg-red-100 { background-color: #fee2e2 !important; }
+  .bg-orange-100 { background-color: #ffedd5 !important; }
+  .bg-green-50 { background-color: #f0fdf4 !important; }
+  .bg-green-500 { background-color: #22c55e !important; }
+  .bg-blue-50 { background-color: #eff6ff !important; }
+  .bg-gray-400 { background-color: #9ca3af !important; }
+  .bg-gray-700 { background-color: #374151 !important; }
+  .bg-gray-800 { background-color: #1f2937 !important; }
+  .bg-black { background-color: #000000 !important; }
+  .bg-green-400 { background-color: #4ade80 !important; }
+  .text-gray-400 { color: #9ca3af !important; }
+  .text-gray-700 { color: #374151 !important; }
+  .text-green-400 { color: #4ade80 !important; }
+  .text-green-500 { color: #22c55e !important; }
+  .text-green-700 { color: #15803d !important; }
+  
+  // Override des couleurs de texte spécifiques au composant home
+  .home-content {
+    .text-gray-800 { color: #1f2937 !important; }
+    .text-gray-600 { color: #4b5563 !important; }
+    .text-gray-900 { color: #111827 !important; }
+    .text-white { color: #ffffff !important; }
+    .text-primary { color: #BB890B !important; }
+    
+    // Override complet des textes dans tous les boutons
+    button, a[href], .btn-primary {
+      font-family: 'Inter', sans-serif !important;
+      font-weight: inherit !important;
+      text-transform: none !important;
+      letter-spacing: normal !important;
+      
+      // Texte dans les boutons primaires
+      &.btn-primary {
+        background: linear-gradient(135deg, #BB890B 0%, #D4A00D 100%) !important;
+        color: #ffffff !important;
+        border: none !important;
+        
+        * {
+          color: #ffffff !important;
+        }
+        
+        &:hover {
+          background: linear-gradient(135deg, #9A7309 0%, #BB890B 100%) !important;
+          color: #ffffff !important;
+          
+          * {
+            color: #ffffff !important;
+          }
+        }
+      }
+      
+      // Texte dans les boutons avec classe text-white
+      &.text-white {
+        color: #ffffff !important;
+        
+        * {
+          color: #ffffff !important;
+        }
+        
+        // Si c'est aussi btn-primary
+        &.btn-primary {
+          background: linear-gradient(135deg, #BB890B 0%, #D4A00D 100%) !important;
+        }
+      }
+      
+      // Texte dans les boutons avec classe text-primary
+      &.text-primary {
+        color: #BB890B !important;
+        
+        * {
+          color: #BB890B !important;
+        }
+      }
+      
+      // Texte dans les boutons avec classe text-gray-800
+      &.text-gray-800 {
+        color: #1f2937 !important;
+        
+        * {
+          color: #1f2937 !important;
+        }
+      }
+    }
+    
+    // Boutons spécifiques avec bordure grise
+    button.border-2.border-gray-300 {
+      color: #1f2937 !important;
+      background-color: transparent !important;
+      border-color: #d1d5db !important;
+      
+      * {
+        color: #1f2937 !important;
+      }
+      
+      &:hover {
+        background-color: #ffffff !important;
+        border-color: #BB890B !important;
+        color: #1f2937 !important;
+        
+        * {
+          color: #1f2937 !important;
+        }
+      }
+    }
+    
+    // Liens et boutons avec fond blanc
+    a.bg-white {
+      background-color: #ffffff !important;
+      color: #BB890B !important;
+      
+      * {
+        color: #BB890B !important;
+      }
+      
+      &:hover {
+        background-color: #f3f4f6 !important;
+        color: #BB890B !important;
+        
+        * {
+          color: #BB890B !important;
+        }
+      }
+    }
+    
+    // Boutons avec fond gris
+    a.bg-gray-100 {
+      background-color: #f3f4f6 !important;
+      color: #1f2937 !important;
+      
+      * {
+        color: #1f2937 !important;
+      }
+      
+      &:hover {
+        background-color: #e5e7eb !important;
+        color: #1f2937 !important;
+        
+        * {
+          color: #1f2937 !important;
+        }
+      }
+    }
+    
+    // Boutons avec bordure blanche (CTA section)
+    a.border-2.border-white {
+      border-color: #ffffff !important;
+      color: #ffffff !important;
+      background-color: transparent !important;
+      
+      * {
+        color: #ffffff !important;
+      }
+      
+      &:hover {
+        background-color: #ffffff !important;
+        color: #BB890B !important;
+        
+        * {
+          color: #BB890B !important;
+        }
+      }
+    }
+    
+    // Boutons dans les sections avec gradient
+    .bg-gradient-to-r, .bg-gradient-to-br {
+      button, a {
+        color: #ffffff !important;
+        
+        * {
+          color: #ffffff !important;
+        }
+        
+        &.bg-white {
+          color: #BB890B !important;
+          
+          * {
+            color: #BB890B !important;
+          }
+        }
+      }
+    }
+  }
+  
+  // Couleurs avec opacité
+  .bg-opacity-50 { background-color: rgba(0, 0, 0, 0.5) !important; }
+  .bg-opacity-75 { background-color: rgba(0, 0, 0, 0.75) !important; }
+  .border-primary\/20 { border-color: rgba(187, 137, 11, 0.2) !important; }
+
+  // Override des tailles de police Material
+  .text-xs { font-size: 0.75rem !important; }
+  .text-sm { font-size: 0.875rem !important; }
+  .text-base { font-size: 1rem !important; }
+  .text-lg { font-size: 1.125rem !important; }
+  .text-xl { font-size: 1.25rem !important; }
+  .text-2xl { font-size: 1.5rem !important; }
+  .text-4xl { font-size: 2.25rem !important; line-height: 2.5rem !important; }
+  .text-5xl { font-size: 3rem !important; line-height: 1 !important; }
+  .lg\:text-6xl { 
+    @media (min-width: 1024px) {
+      font-size: 3.75rem !important; 
+      line-height: 1 !important;
+    }
+  }
+  .md\:text-5xl { 
+    @media (min-width: 768px) {
+      font-size: 3rem !important;
+    }
+  }
+
+  // Override des poids de police Material
+  .font-medium { font-weight: 500 !important; }
+  .font-semibold { font-weight: 600 !important; }
+  .font-bold { font-weight: 700 !important; }
+
+  // Override des espacements Material
+  // .leading-tight { line-height: 1.25 !important; }
+  .leading-relaxed { line-height: 1.625 !important; }
+  .leading-none { line-height: 1 !important; }
+  .leading-normal { line-height: 1.5 !important; }
+
+  // Override des espacements Tailwind
+  .mb-2 { margin-bottom: 0.5rem !important; }
+  .mb-3 { margin-bottom: 0.75rem !important; }
+  .mb-4 { margin-bottom: 1rem !important; }
+  .mb-6 { margin-bottom: 1.5rem !important; }
+  .mb-8 { margin-bottom: 2rem !important; }
+  .mb-12 { margin-bottom: 3rem !important; }
+  .mb-16 { margin-bottom: 4rem !important; }
+  .mb-20 { margin-bottom: 5rem !important; }
+  .mt-2 { margin-top: 0.5rem !important; }
+  .mt-4 { margin-top: 1rem !important; }
+  .mt-12 { margin-top: 3rem !important; }
+  .mt-16 { margin-top: 4rem !important; }
+  .ml-4 { margin-left: 1rem !important; }
+  .mr-2 { margin-right: 0.5rem !important; }
+  
+  // Espacements spécifiques pour la section fonctionnalités
+  .space-y-24 > * + * { margin-top: 6rem !important; }
+  .space-y-4 > * + * { margin-top: 1rem !important; }
+  .space-y-3 > * + * { margin-top: 0.75rem !important; }
+  .space-y-6 > * + * { margin-top: 1.5rem !important; }
+  .space-y-8 > * + * { margin-top: 2rem !important; }
+
+  .px-4 { padding-left: 1rem !important; padding-right: 1rem !important; }
+  .px-6 { padding-left: 1.5rem !important; padding-right: 1.5rem !important; }
+  .px-8 { padding-left: 2rem !important; padding-right: 2rem !important; }
+  .px-10 { padding-left: 2.5rem !important; padding-right: 2.5rem !important; }
+  .py-2 { padding-top: 0.5rem !important; padding-bottom: 0.5rem !important; }
+  .py-3 { padding-top: 0.75rem !important; padding-bottom: 0.75rem !important; }
+  .py-4 { padding-top: 1rem !important; padding-bottom: 1rem !important; }
+  .py-5 { padding-top: 1.25rem !important; padding-bottom: 1.25rem !important; }
+  .py-6 { padding-top: 1.5rem !important; padding-bottom: 1.5rem !important; }
+  .py-20 { padding-top: 5rem !important; padding-bottom: 5rem !important; }
+  .py-24 { padding-top: 6rem !important; padding-bottom: 6rem !important; }
+  .p-3 { padding: 0.75rem !important; }
+  .p-4 { padding: 1rem !important; }
+  .p-6 { padding: 1.5rem !important; }
+  .p-8 { padding: 2rem !important; }
+
+  .gap-2 { gap: 0.5rem !important; }
+  .gap-3 { gap: 0.75rem !important; }
+  .gap-4 { gap: 1rem !important; }
+  .gap-6 { gap: 1.5rem !important; }
+  .gap-8 { gap: 2rem !important; }
+  .gap-16 { gap: 4rem !important; }
+
+  .space-y-2 > * + * { margin-top: 0.5rem !important; }
+  .space-y-3 > * + * { margin-top: 0.75rem !important; }
+  .space-y-4 > * + * { margin-top: 1rem !important; }
+  .space-y-6 > * + * { margin-top: 1.5rem !important; }
+  .space-y-24 > * + * { margin-top: 6rem !important; }
+
+  // Override des bordures et rayons
+  .rounded-lg { border-radius: 0.5rem !important; }
+  .rounded-xl { border-radius: 0.75rem !important; }
+  .rounded-2xl { border-radius: 1rem !important; }
+  .rounded-full { border-radius: 9999px !important; }
+
+  // Override des ombres
+  .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important; }
+  .shadow-2xl { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important; }
+
+  // Override des dimensions
+  .w-3 { width: 0.75rem !important; }
+  .w-8 { width: 2rem !important; }
+  .w-10 { width: 2.5rem !important; }
+  .w-12 { width: 3rem !important; }
+  .w-16 { width: 4rem !important; }
+  .w-full { width: 100% !important; }
+  .h-3 { height: 0.75rem !important; }
+  .h-8 { height: 2rem !important; }
+  .h-10 { height: 2.5rem !important; }
+  .h-12 { height: 3rem !important; }
+  .h-16 { height: 4rem !important; }
+  .h-auto { height: auto !important; }
+
+  // Override des largeurs max
+  .max-w-2xl { max-width: 42rem !important; }
+  .max-w-3xl { max-width: 48rem !important; }
+  .max-w-4xl { max-width: 56rem !important; }
+  .max-w-5xl { max-width: 64rem !important; }
+  .max-w-6xl { max-width: 72rem !important; }
+  .max-w-7xl { max-width: 80rem !important; }
+
+  // Forcer le centrage de toutes les sections
+  .mx-auto { 
+    margin-left: auto !important; 
+    margin-right: auto !important; 
+  }
+
+  // Assurer que toutes les sections sont centrées
+  section {
+    width: 100% !important;
+    display: block !important;
+    
+    > div {
+      margin-left: auto !important;
+      margin-right: auto !important;
+    }
+  }
+
+  // Override des flexbox et grid
+  .flex { display: flex !important; }
+  .grid { display: grid !important; }
+  .items-center { align-items: center !important; }
+  .items-start { align-items: flex-start !important; }
+  .justify-center { justify-content: center !important; }
+  .justify-between { justify-content: space-between !important; }
+  .flex-col { flex-direction: column !important; }
+  .sm\:flex-row { 
+    @media (min-width: 640px) {
+      flex-direction: row !important;
+    }
+  }
+  .sm\:items-center { 
+    @media (min-width: 640px) {
+      align-items: center !important;
+    }
+  }
+  .md\:flex-row { 
+    @media (min-width: 768px) {
+      flex-direction: row !important;
+    }
+  }
+  .text-center { text-align: center !important; }
+  
+  // Grid responsive
+  .lg\:grid-cols-2 { 
+    @media (min-width: 1024px) {
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+  }
+  .md\:grid-cols-2 { 
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+  }
+  .md\:grid-cols-4 { 
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    }
+  }
+  .lg\:grid-cols-4 { 
+    @media (min-width: 1024px) {
+      grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    }
+  }
+  .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+
+  // Override des transitions
+  .transition-all { transition: all 0.15s ease-in-out !important; }
+  .transition-colors { transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out !important; }
+  .duration-300 { transition-duration: 0.3s !important; }
+
+  // Override des transformations
+  .hover\:scale-105:hover { transform: scale(1.05) !important; }
+  .hover\:scale-110:hover { transform: scale(1.1) !important; }
+
+  // Override des positions
+  .relative { position: relative !important; }
+  .absolute { position: absolute !important; }
+  .fixed { position: fixed !important; }
+  .inset-0 { top: 0 !important; right: 0 !important; bottom: 0 !important; left: 0 !important; }
+
+  // Override des z-index
+  .z-1000 { z-index: 1000 !important; }
+
+  // Override des opacités
+  .opacity-75 { opacity: 0.75 !important; }
+  .opacity-90 { opacity: 0.9 !important; }
+
+  // Override des bordures
+  .border { border-width: 1px !important; }
+  .border-2 { border-width: 2px !important; }
+  .border-gray-200 { border-color: #e5e7eb !important; }
+  .border-gray-300 { border-color: #d1d5db !important; }
+  .border-red-200 { border-color: #fecaca !important; }
+  .border-green-200 { border-color: #bbf7d0 !important; }
+
+  // Override complet des boutons pour éviter les styles Material/Theme
+  button, .btn-primary, a[class*="btn"] {
+    font-family: 'Inter', sans-serif !important;
+    font-weight: inherit !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
+    border-radius: inherit !important;
+    box-shadow: none !important;
+    outline: none !important;
+    color: inherit !important;
+    background: inherit !important;
+    border: inherit !important;
+    
+    &:focus, &:active, &:hover {
+      outline: none !important;
+      box-shadow: none !important;
+      color: inherit !important;
+    }
+    
+    &.mat-button, &.mat-raised-button, &.mat-fab, &.mat-mini-fab {
+      font-family: 'Inter', sans-serif !important;
+      text-transform: none !important;
+      color: inherit !important;
+      background: inherit !important;
+    }
+  }
+
+  // Override spécifique pour les boutons du composant home
+  .btn-primary {
+    background: linear-gradient(135deg, #BB890B 0%, #D4A00D 100%) !important;
+    color: #ffffff !important;
+    border: none !important;
+    font-weight: 700 !important;
+    
+    &:hover {
+      background: linear-gradient(135deg, #9A7309 0%, #BB890B 100%) !important;
+      color: #ffffff !important;
+      transform: translateY(-2px) !important;
+      box-shadow: 0 8px 25px rgba(187, 137, 11, 0.3) !important;
+    }
+    
+    // Forcer les couleurs sur tous les éléments enfants
+    * {
+      color: #ffffff !important;
+    }
+    
+    i.fas {
+      color: #ffffff !important;
+    }
+  }
+  
+  // Boutons d'appel à l'action spécifiques
+  .home-content {
+    // Boutons primaires dans toutes les sections
+    a.btn-primary,
+    a[class*="btn-primary"] {
+      background: linear-gradient(135deg, #BB890B 0%, #D4A00D 100%) !important;
+      color: #ffffff !important;
+      border: none !important;
+      font-weight: 700 !important;
+      text-decoration: none !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      
+      &:hover {
+        background: linear-gradient(135deg, #9A7309 0%, #BB890B 100%) !important;
+        color: #ffffff !important;
+        transform: translateY(-2px) scale(1.02) !important;
+        box-shadow: 0 8px 25px rgba(187, 137, 11, 0.3) !important;
+      }
+      
+      * {
+        color: #ffffff !important;
+      }
+    }
+    
+    // Boutons secondaires (comme "Voir la démo")
+    button.border-2.border-gray-300,
+    button[class*="border-gray-300"] {
+      background-color: transparent !important;
+      color: #1f2937 !important;
+      border: 2px solid #d1d5db !important;
+      font-weight: 600 !important;
+      
+      &:hover {
+        background-color: #ffffff !important;
+        border-color: #BB890B !important;
+        color: #1f2937 !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+      }
+      
+      * {
+        color: inherit !important;
+      }
+      
+      i.fas {
+        color: inherit !important;
+      }
+    }
+  }
+
+  // Override des liens pour éviter les styles Material/Theme
+  a {
+    font-family: 'Inter', sans-serif !important;
+    text-decoration: none !important;
+    color: inherit !important;
+    
+    &:hover, &:focus, &:active, &:visited {
+      text-decoration: none !important;
+      outline: none !important;
+    }
+  }
+
+  // Override des titres pour éviter les styles Material/Theme
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Inter', sans-serif !important;
+    font-weight: inherit !important;
+    line-height: inherit !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    color: inherit !important;
+    letter-spacing: normal !important;
+  }
+
+  // Override des paragraphes et spans
+  p, span, div {
+    font-family: 'Inter', sans-serif !important;
+    line-height: inherit !important;
+    margin: 0 !important;
+    color: inherit !important;
+  }
+
+  // Override des listes
+  ul, ol, li {
+    font-family: 'Inter', sans-serif !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    list-style: none !important;
+  }
+
+  // Override des couleurs d'arrière-plan spécifiques au thème
+  .bg-gradient-to-r { background-image: linear-gradient(to right, var(--tw-gradient-stops)) !important; }
+  .bg-gradient-to-br { background-image: linear-gradient(to bottom right, var(--tw-gradient-stops)) !important; }
+  
+  // Override des couleurs de texte avec hover states
+  .hover\:text-white:hover { color: #ffffff !important; }
+  .hover\:text-primary:hover { color: #BB890B !important; }
+  .hover\:bg-white:hover { background-color: #ffffff !important; }
+  .hover\:bg-gray-100:hover { background-color: #f3f4f6 !important; }
+  .hover\:bg-gray-200:hover { background-color: #e5e7eb !important; }
+  .hover\:border-white:hover { border-color: #ffffff !important; }
+  .hover\:border-primary:hover { border-color: #BB890B !important; }
+  
+  // États hover pour les éléments du footer
+  footer {
+    .hover\:text-white:hover { color: #ffffff !important; }
+    .hover\:text-primary:hover { color: #BB890B !important; }
+    .text-gray-400 { color: #9ca3af !important; }
+  }
+
+  // Override des états focus et active
+  *:focus, *:active {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
+  // Override des styles Material spécifiques
+  .mat-typography {
+    font-family: 'Inter', sans-serif !important;
+    
+    h1, h2, h3, h4, h5, h6, p, span, div, a, button {
+      font-family: 'Inter', sans-serif !important;
+    }
+  }
+
+  // Override des couleurs Material theme
+  .mat-primary .mat-option-text {
+    color: inherit !important;
+  }
+
+  // Override des animations Material qui peuvent interférer
+  .mat-ripple, .mat-ripple-element {
+    display: none !important;
+  }
+
+  // Override des styles Carbon qui peuvent interférer
+  .bx--btn, .cds--btn {
+    font-family: 'Inter', sans-serif !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
+  }
+
+  // Override des couleurs de fond spécifiques
+  .bg-primary\/10 { background-color: rgba(187, 137, 11, 0.1) !important; }
+  .bg-primary\/5 { background-color: rgba(187, 137, 11, 0.05) !important; }
+  
+  // Correction spécifique pour la section "Contrôle total même à distance"
+  .bg-gradient-to-br.from-primary\/10.to-primary\/5 {
+    background: linear-gradient(to bottom right, rgba(187, 137, 11, 0.1), rgba(187, 137, 11, 0.05)) !important;
+    
+    // Assurer que les cartes blanches à l'intérieur sont visibles
+    .bg-white {
+      background-color: #ffffff !important;
+      color: #1f2937 !important;
+      
+      * {
+        color: inherit !important;
+      }
+      
+      .text-primary {
+        color: #BB890B !important;
+      }
+      
+      .text-gray-600 {
+        color: #4b5563 !important;
+      }
+    }
+  }
+  .text-primary\/500 { color: rgba(187, 137, 11, 0.5) !important; }
+  .from-primary\/10 { --tw-gradient-from: rgba(187, 137, 11, 0.1) !important; }
+  .to-primary\/5 { --tw-gradient-to: rgba(187, 137, 11, 0.05) !important; }
+  
+  // Gradients pour les sections CTA
+  .bg-gradient-to-r.from-primary.to-primary-light {
+    background: linear-gradient(to right, #BB890B, #D4A00D) !important;
+    color: #ffffff !important;
+    
+    * {
+      color: inherit !important;
+    }
+  }
+  
+  // Cartes premium avec gradient
+  .bg-gradient-to-br.from-primary.to-primary-light {
+    background: linear-gradient(to bottom right, #BB890B, #D4A00D) !important;
+    color: #ffffff !important;
+    
+    * {
+      color: inherit !important;
+    }
+  }
+
+  // Override des styles inline qui peuvent être appliqués
+  * {
+    &[style*="font-family"] {
+      font-family: 'Inter', sans-serif !important;
+    }
+    &[style*="color"] {
+      color: inherit !important;
+    }
+  }
+  
+  // Forcer les couleurs sur les éléments spécifiques
+  .home-content {
+    // Assurer que les icônes gardent leurs couleurs
+    i.fas, i.fab {
+      color: inherit !important;
+    }
+    
+    // Couleurs spécifiques pour les badges
+    .bg-primary\/10.text-primary {
+      background-color: rgba(187, 137, 11, 0.1) !important;
+      color: #BB890B !important;
+    }
+    
+    // Couleurs pour les cartes de témoignages
+    .bg-white {
+      background-color: #ffffff !important;
+      color: inherit !important;
+    }
+    
+    // Couleurs pour les sections avec fond coloré
+    .bg-gray-50 {
+      background-color: #f9fafb !important;
+    }
+    
+    .bg-gray-900 {
+      background-color: #111827 !important;
+      color: #ffffff !important;
+      
+      * {
+        color: inherit !important;
+      }
+    }
+    
+    // Espacements améliorés pour la section fonctionnalités
+    #fonctionnalites {
+      .space-y-24 > div {
+        margin-top: 6rem !important;
+        
+        &:first-child {
+          margin-top: 0 !important;
+        }
+      }
+      
+      // Espacements entre les éléments de texte
+      h3 {
+        margin-bottom: 1.5rem !important;
+        line-height: 1.2 !important;
+      }
+      
+      p {
+        margin-bottom: 2rem !important;
+        line-height: 1.6 !important;
+      }
+      
+      ul {
+        li {
+          margin-bottom: 1rem !important;
+          line-height: 1.5 !important;
+          
+          &:last-child {
+            margin-bottom: 0 !important;
+          }
+        }
+      }
+      
+      // Badge fonctionnalité
+      .bg-primary\/10 {
+        margin-bottom: 1rem !important;
+      }
+    }
+    
+    // Styles spécifiques pour la section tarifs
+    #tarifs {
+      // Badge "RECOMMANDÉ" sur la carte Premium
+      .relative {
+        position: relative !important;
+        
+        .absolute {
+          position: absolute !important;
+          top: -1rem !important;
+          left: 50% !important;
+          transform: translateX(-50%) !important;
+          z-index: 10 !important;
+          
+          &.-top-4 {
+            top: -1rem !important;
+          }
+          
+          &.left-1\/2 {
+            left: 50% !important;
+          }
+          
+          &.transform {
+            transform: translateX(-50%) !important;
+          }
+          
+          &.-translate-x-1\/2 {
+            transform: translateX(-50%) !important;
+          }
+        }
+      }
+      
+      // Assurer que le badge est visible
+      .bg-white.text-primary {
+        background-color: #ffffff !important;
+        color: #BB890B !important;
+        font-weight: 700 !important;
+        padding: 0.5rem 1.5rem !important;
+        border-radius: 9999px !important;
+        font-size: 0.875rem !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+        border: 2px solid #BB890B !important;
+      }
+      
+      // Carte Premium avec gradient
+      .bg-gradient-to-br.from-primary.to-primary-light {
+        background: linear-gradient(to bottom right, #BB890B, #D4A00D) !important;
+        color: #ffffff !important;
+        position: relative !important;
+        overflow: visible !important;
+        
+        * {
+          color: inherit !important;
+        }
+        
+        // Texte dans la carte Premium
+        h3, h4, p, span, li {
+          color: #ffffff !important;
+        }
+        
+        // Icônes dans la carte Premium
+        i.fas {
+          color: #ffffff !important;
+        }
+        
+        // Bouton dans la carte Premium
+        a.bg-white {
+          background-color: #ffffff !important;
+          color: #BB890B !important;
+          font-weight: 700 !important;
+          
+          * {
+            color: #BB890B !important;
+          }
+          
+          &:hover {
+            background-color: #f3f4f6 !important;
+            color: #BB890B !important;
+            transform: translateY(-1px) !important;
+            
+            * {
+              color: #BB890B !important;
+            }
+          }
+        }
+      }
+    }
+    
+    // Styles spécifiques pour la section CTA finale
+    .bg-gradient-to-r.from-primary.to-primary-light {
+      background: linear-gradient(to right, #BB890B, #D4A00D) !important;
+      color: #ffffff !important;
+      
+      // Tous les textes en blanc
+      * {
+        color: #ffffff !important;
+      }
+      
+      // Titres spécifiques
+      h2 {
+        color: #ffffff !important;
+        font-weight: 700 !important;
+      }
+      
+      // Paragraphes
+      p {
+        color: #ffffff !important;
+        opacity: 0.9 !important;
+      }
+      
+      // Boutons dans la section CTA
+      a.bg-white {
+        background-color: #ffffff !important;
+        color: #BB890B !important;
+        font-weight: 700 !important;
+        border: none !important;
+        
+        * {
+          color: #BB890B !important;
+        }
+        
+        i.fas {
+          color: #BB890B !important;
+        }
+        
+        &:hover {
+          background-color: #f3f4f6 !important;
+          color: #BB890B !important;
+          transform: translateY(-2px) scale(1.05) !important;
+          box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2) !important;
+          
+          * {
+            color: #BB890B !important;
+          }
+        }
+      }
+      
+      // Boutons avec bordure blanche
+      a.border-2.border-white {
+        background-color: transparent !important;
+        color: #ffffff !important;
+        border: 2px solid #ffffff !important;
+        font-weight: 700 !important;
+        
+        * {
+          color: #ffffff !important;
+        }
+        
+        i.fas {
+          color: #ffffff !important;
+        }
+        
+        &:hover {
+          background-color: #ffffff !important;
+          color: #BB890B !important;
+          border-color: #ffffff !important;
+          transform: translateY(-2px) !important;
+          box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2) !important;
+          
+          * {
+            color: #BB890B !important;
+          }
+        }
+      }
+      
+      // Icônes de check vertes
+      i.fas.fa-check-circle {
+        color: #4ade80 !important;
+      }
+      
+      // Autres icônes
+      i.fas.fa-shield-alt,
+      i.fas.fa-star,
+      i.fas.fa-users {
+        color: #ffffff !important;
+      }
+      
+      // Spans avec icônes
+      span {
+        color: #ffffff !important;
+        
+        i.fas {
+          color: inherit !important;
+        }
+      }
+      
+      // Classes d'opacité spécifiques
+      .opacity-90 {
+        opacity: 0.9 !important;
+        color: #ffffff !important;
+      }
+      
+      .opacity-75 {
+        opacity: 0.75 !important;
+        color: #ffffff !important;
+      }
+    }
+  }
+
+  // Override des classes utilitaires manquantes
+  .inline-block { display: inline-block !important; }
+  .block { display: block !important; }
+  .hidden { display: none !important; }
+  .invisible { visibility: hidden !important; }
+  .visible { visibility: visible !important; }
+  .overflow-hidden { overflow: hidden !important; }
+  .object-contain { object-fit: contain !important; }
+  .cursor-pointer { cursor: pointer !important; }
+  .italic { font-style: italic !important; }
+  .not-italic { font-style: normal !important; }
+  .order-1 { order: 1 !important; }
+  .order-2 { order: 2 !important; }
+  .lg\:order-1 { 
+    @media (min-width: 1024px) {
+      order: 1 !important;
+    }
+  }
+  .lg\:order-2 { 
+    @media (min-width: 1024px) {
+      order: 2 !important;
+    }
+  }
+  .transform { transform: translateX(var(--tw-translate-x)) translateY(var(--tw-translate-y)) !important; }
+  .-translate-x-1\/2 { --tw-translate-x: -50% !important; }
+  .max-h-\[90vh\] { max-height: 90vh !important; }
+  .max-h-\[70vh\] { max-height: 70vh !important; }
+  .backdrop-blur-sm { backdrop-filter: blur(4px) !important; }
+
+  // Override des animations Tailwind
+  .animate-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite !important; }
+  .animate-bounce { animation: bounce 1s infinite !important; }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  @keyframes bounce {
+    0%, 100% {
+      transform: translateY(-25%);
+      animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+    }
+    50% {
+      transform: none;
+      animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+    }
+  }
+}
+
+// @media (min-width: 1024px) {
+//   .lg\:text-6xl {
+//     font-size: 3.75rem !important;
+//     line-height: 1;
+//   }
+// }
+// .text-gray-900 {
+//   color: var(--gray-900);
+// }
+// .leading-tight {
+//   line-height: 1.25;
+// }
+// .font-bold {
+//   font-weight: 700;
+// }
+
+/* Responsive */
+@media (max-width: 768px) {
+  :host {
+    // Ajustements des tailles de police
+    .text-5xl { font-size: 2.5rem !important; line-height: 1.1 !important; }
+    .text-6xl { font-size: 3rem !important; line-height: 1.1 !important; }
+    .text-4xl { font-size: 2rem !important; line-height: 1.2 !important; }
+    .text-3xl { font-size: 1.75rem !important; }
+    .text-2xl { font-size: 1.5rem !important; }
+    .text-xl { font-size: 1.125rem !important; }
+    .text-lg { font-size: 1rem !important; }
+    
+    // Ajustements des espacements
+    .py-20 { padding-top: 3rem !important; padding-bottom: 3rem !important; }
+    .py-24 { padding-top: 4rem !important; padding-bottom: 4rem !important; }
+    .py-16 { padding-top: 2.5rem !important; padding-bottom: 2.5rem !important; }
+    .px-6 { padding-left: 1rem !important; padding-right: 1rem !important; }
+    .px-8 { padding-left: 1.5rem !important; padding-right: 1.5rem !important; }
+    .px-10 { padding-left: 2rem !important; padding-right: 2rem !important; }
+    
+    // Ajustements des marges
+    .mb-16 { margin-bottom: 2.5rem !important; }
+    .mb-20 { margin-bottom: 3rem !important; }
+    .mb-12 { margin-bottom: 2rem !important; }
+    .mb-8 { margin-bottom: 1.5rem !important; }
+    .gap-16 { gap: 2rem !important; }
+    .gap-8 { gap: 1rem !important; }
+    
+    // Grilles responsive
+    .lg\:grid-cols-2 { grid-template-columns: 1fr !important; }
+    .md\:grid-cols-2 { grid-template-columns: 1fr !important; }
+    .md\:grid-cols-4 { grid-template-columns: repeat(2, 1fr) !important; }
+    .lg\:grid-cols-4 { grid-template-columns: repeat(2, 1fr) !important; }
+    
+    // Boutons responsive
+    .flex.flex-col.sm\:flex-row {
+      flex-direction: column !important;
+      
+      a, button {
+        width: 100% !important;
+        margin-bottom: 0.75rem !important;
+        
+        &:last-child {
+          margin-bottom: 0 !important;
+        }
+      }
+    }
+    
+    // Section hero responsive
+    .home-content {
+      h1 {
+        font-size: 2.25rem !important;
+        line-height: 1.2 !important;
+        margin-bottom: 1.5rem !important;
+      }
+      
+      // Espacements des fonctionnalités
+      #fonctionnalites {
+        .space-y-24 > div {
+          margin-top: 3rem !important;
+        }
+        
+        .grid.lg\:grid-cols-2 {
+          grid-template-columns: 1fr !important;
+          gap: 2rem !important;
+        }
+      }
+      
+      // Section tarifs responsive
+      #tarifs {
+        .grid.lg\:grid-cols-2 {
+          grid-template-columns: 1fr !important;
+          gap: 1.5rem !important;
+        }
+        
+        .relative .absolute {
+          position: static !important;
+          transform: none !important;
+          margin-bottom: 1rem !important;
+          text-align: center !important;
+        }
+      }
+      
+      // CTA finale responsive
+      .bg-gradient-to-r {
+        .flex.flex-col.sm\:flex-row {
+          flex-direction: column !important;
+          gap: 1rem !important;
+          
+          a {
+            width: 100% !important;
+            padding: 1rem 2rem !important;
+            font-size: 1.125rem !important;
+          }
+        }
+        
+        .gap-8 {
+          gap: 1rem !important;
+        }
+        
+        span {
+          font-size: 0.875rem !important;
+          text-align: center !important;
+        }
+      }
+    }
+    
+    // Modal vidéo responsive
+    .video-modal {
+      .max-w-5xl {
+        max-width: 95vw !important;
+        margin: 1rem !important;
+      }
+      
+      .max-h-\[90vh\] {
+        max-height: 85vh !important;
+      }
+      
+      .max-h-\[70vh\] {
+        max-height: 60vh !important;
+      }
+    }
+  }
+}
+
+// Responsive pour tablettes
+@media (min-width: 769px) and (max-width: 1024px) {
+  :host {
+    .text-5xl { font-size: 2.75rem !important; }
+    .text-4xl { font-size: 2.125rem !important; }
+    
+    .home-content {
+      .gap-16 { gap: 2.5rem !important; }
+      
+      #fonctionnalites {
+        .space-y-24 > div {
+          margin-top: 4rem !important;
+        }
+      }
+    }
+  }
+}
+
+// Responsive pour très petits écrans
+@media (max-width: 480px) {
+  :host {
+    .px-6 { padding-left: 0.75rem !important; padding-right: 0.75rem !important; }
+    .py-20 { padding-top: 2rem !important; padding-bottom: 2rem !important; }
+    .py-24 { padding-top: 2.5rem !important; padding-bottom: 2.5rem !important; }
+    
+    .home-content {
+      .text-5xl { font-size: 2rem !important; }
+      .text-4xl { font-size: 1.75rem !important; }
+      .text-3xl { font-size: 1.5rem !important; }
+      
+      // Cartes plus compactes
+      .p-8 { padding: 1.5rem !important; }
+      .p-6 { padding: 1.25rem !important; }
+      
+      // Grilles en une colonne
+      .md\:grid-cols-4 { grid-template-columns: 1fr !important; }
+      .lg\:grid-cols-4 { grid-template-columns: 1fr !important; }
+      
+      // Boutons plus compacts
+      .px-10 { padding-left: 1.5rem !important; padding-right: 1.5rem !important; }
+      .py-5 { padding-top: 0.875rem !important; padding-bottom: 0.875rem !important; }
+    }
+  }
+}
+
+/* Amélioration de l'accessibilité */
+@media (prefers-reduced-motion: reduce) {
+  .fade-in, .slide-up, .slide-left, .slide-right, .bounce-in, .float, .pulse-glow, .rotate-in, .scale-in,
+  .scroll-animate, .scroll-animate-left, .scroll-animate-right, .scroll-animate-scale {
+    animation: none;
+    transition: none;
+  }
+  
+  .scroll-animate, .scroll-animate-left, .scroll-animate-right, .scroll-animate-scale {
+    opacity: 1;
+    transform: none;
+  }
+}

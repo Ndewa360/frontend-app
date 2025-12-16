@@ -110,7 +110,20 @@ const config = {
                 },
               },
             colors                  : {
-                gray: colors.slate
+                gray: colors.slate,
+                primary: {
+                    DEFAULT: '#BB890B',
+                    50: '#FFF7F2',
+                    100: '#FFEFD9',
+                    200: '#FFD9A6',
+                    300: '#FFC373',
+                    400: '#FFAD40',
+                    500: '#D4A00D',
+                    600: '#BB890B',
+                    700: '#9A7309',
+                    800: '#7A5C07',
+                    900: '#5A4505'
+                }
             },
             flex                    : {
                 '0': '0 0 auto'
@@ -201,7 +214,6 @@ const config = {
             transitionTimingFunction: {
                 'drawer': 'cubic-bezier(0.25, 0.8, 0.25, 1)'
             },
-
             // @tailwindcss/typography
             typography: ({theme}) => ({
                 DEFAULT: {

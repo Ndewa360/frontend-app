@@ -1,4 +1,4 @@
-<nav class="bg-white border-gray-200 dark:bg-gray-900 shadow-md fixed w-full">
+<nav class="bg-white border-gray-200 dark:bg-gray-900 shadow-md fixed w-full nav-header">
     <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
       <a [routerLink]="'/search/index'" class="flex items-center max-md:m-10 max-md:p-5">
           <youpez-logo class="cursor-pointer" type="white" logoWidth="75px"></youpez-logo>
@@ -83,6 +83,7 @@
           </li>
           <li *ngIf="!(isLogin$ | async)">
               <button type="reset"  [routerLink]="['/' + getCurrentLanguage() + '/auth/signup']"  class="custom-primary-button app-ibm-btn-full rounded-xl" ibmButton="primary" size="sm">
+              <i class="fas fa-rocket icon-bounce"></i>
                 {{ 'HEADER.SIGN_UP' | translate }}
               </button>
           </li>
