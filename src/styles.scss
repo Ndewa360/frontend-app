@@ -22,6 +22,11 @@
 @use 'swiper/css/navigation';
 @use 'swiper/css/pagination';
 
+// Import Tailwind CSS
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
 // Import des styles Carbon personnalisés
 @import './assets/styles/carbon-theme.scss';
 @import './assets/styles/carbon-utilities.scss';
@@ -62,11 +67,120 @@
 }
 
 
+// Import Google Fonts - Inter
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
-.textarea-field
-{
+body { 
+  margin: 0; 
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, "Helvetica Neue", sans-serif;
+}
+
+// Styles globaux pour forcer l'application de Tailwind
+* {
+  box-sizing: border-box;
+}
+
+// Force la police Inter partout
+.contact-content,
+.contact-content *,
+app-contact,
+app-contact * {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
+// Styles pour les composants de landing page
+app-contact {
+  display: block;
+  width: 100%;
+  min-height: 100vh;
+  
+  * {
+    font-family: 'Inter', sans-serif !important;
+  }
+}
+.textarea-field {
     width: 100%;
+}
+
+// Styles spécifiques pour les pages de landing
+.landing-page {
+  font-family: 'Inter', sans-serif !important;
+  
+  * {
+    font-family: 'Inter', sans-serif !important;
+  }
+  
+  // Force les couleurs Tailwind
+  .text-gray-900 { color: #111827 !important; }
+  .text-gray-600 { color: #4b5563 !important; }
+  .text-white { color: #ffffff !important; }
+  
+  // Force les backgrounds
+  .bg-white { background-color: #ffffff !important; }
+  .bg-gray-50 { background-color: #f9fafb !important; }
+  
+  // Force les espacements
+  .py-20 { padding-top: 5rem !important; padding-bottom: 5rem !important; }
+  .px-6 { padding-left: 1.5rem !important; padding-right: 1.5rem !important; }
+  .mb-16 { margin-bottom: 4rem !important; }
+  .mb-12 { margin-bottom: 3rem !important; }
+  .mb-6 { margin-bottom: 1.5rem !important; }
+  
+  // Force les tailles de texte
+  .text-5xl { font-size: 3rem !important; line-height: 1 !important; }
+  .text-4xl { font-size: 2.25rem !important; line-height: 2.5rem !important; }
+  .text-xl { font-size: 1.25rem !important; line-height: 1.75rem !important; }
+  
+  // Force les grilles
+  .grid { display: grid !important; }
+  .lg\:grid-cols-3 {
+    @media (min-width: 1024px) {
+      grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    }
+  }
+  .md\:grid-cols-2 {
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+  }
+  
+  // Force les flexbox
+  .flex { display: flex !important; }
+  .items-center { align-items: center !important; }
+  .justify-center { justify-content: center !important; }
+  .text-center { text-align: center !important; }
+  
+  // Force les boutons primaires
+  button.btn-primary,
+  .btn-primary {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: linear-gradient(135deg, #BB890B 0%, #D4A00D 100%) !important;
+    color: #ffffff !important;
+    border: none !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+    min-height: 48px !important;
+    
+    &:hover:not(:disabled) {
+      background: linear-gradient(135deg, #9A7309 0%, #BB890B 100%) !important;
+    }
+    
+    i {
+      color: #ffffff !important;
+    }
+  }
+  
+  // Force les bordures et rayons
+  .rounded-lg { border-radius: 0.5rem !important; }
+  .rounded-xl { border-radius: 0.75rem !important; }
+  .rounded-2xl { border-radius: 1rem !important; }
+  
+  // Force les ombres
+  .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important; }
+  .shadow-2xl { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important; }
 }
 
 @media print {

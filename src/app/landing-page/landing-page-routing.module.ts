@@ -5,6 +5,7 @@ import { TeamComponent } from './components/team/team.component';
 import { LandingAltComponent } from './components/landing-alt/landing-alt.component';
 import { AboutComponent } from './components/about/about.component';
 import { LandingLayoutComponent } from 'src/@youpez/layout/landing/landing-layout/landing-layout.component';
+import { ContactComponent } from './components/contact/contact.component';
 
 const routes: Routes = [
   {
@@ -24,6 +25,11 @@ const routes: Routes = [
       {
         path: 'about',
         component: AboutComponent,
+        pathMatch: 'full'
+      },
+      {
+        path: 'contact',
+        component: ContactComponent,
         pathMatch: 'full'
       },
       {
