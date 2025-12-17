@@ -24,22 +24,22 @@
   <div class="grid lg:grid-cols-2 gap-16 items-center">
     <div class="slide-left">
       <h1 class="text-5xl lg:text-6xl font-bold leading-tight text-gray-900 mb-6">
-        Passez à la gestion immobilière <span class="gradient-text">intelligente</span>
+        {{ t('LANDING.HERO.TITLE_PART1') }} <span class="gradient-text">{{ t('LANDING.HERO.TITLE_PART2') }}</span>
       </h1>
 
       <p class="text-xl text-gray-600 leading-relaxed mb-8">
-        <strong>Fini les cahiers et le désordre.</strong><br>
-        Ndewa360 digitalise la gestion de vos chambres et appartements avec une plateforme simple, automatisée et transparente.
+        <strong>{{ t('LANDING.HERO.SUBTITLE_BOLD') }}</strong><br>
+        {{ t('LANDING.HERO.SUBTITLE_TEXT') }}
       </p>
 
       <div class="flex flex-col sm:flex-row gap-4 mb-8">
-        <a href="#" class="btn-primary text-white px-8 py-4 rounded-lg font-bold text-lg flex items-center justify-center gap-3">
+        <a [routerLink]="['/' + getCurrentLanguage() + '/auth/signup']" class="btn-primary text-white px-8 py-4 rounded-lg font-bold text-lg flex items-center justify-center gap-3">
           <i class="fas fa-rocket"></i>
-          Commencer gratuitement
+          {{ t('LANDING.HERO.BUTTONS.START_FREE') }}
         </a>
         <button (click)="openVideoModal()" class="border-2 border-gray-300 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white hover:border-primary transition-all duration-300 flex items-center justify-center gap-3">
           <i class="fas fa-play-circle"></i>
-          Voir la démo
+          {{ t('LANDING.HERO.BUTTONS.WATCH_DEMO') }}
         </button>
       </div>
 
@@ -53,7 +53,7 @@
             <i class="fas fa-star text-yellow-500"></i>
             <i class="fas fa-star text-yellow-500"></i>
           </div>
-          <span>4.9/5</span>
+          <span>{{ t('LANDING.HERO.RATING') }}</span>
         </div>
       </div>
     </div>
@@ -74,7 +74,7 @@
         <div class="absolute -bottom-6 -left-6 bg-white p-4 rounded-xl shadow-lg">
           <div class="flex items-center gap-3">
             <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-            <span class="text-sm font-semibold">Démo en direct</span>
+            <span class="text-sm font-semibold">{{ t('LANDING.HERO.LIVE_DEMO') }}</span>
           </div>
         </div>
       </div>
@@ -87,10 +87,10 @@
   <div class="max-w-7xl mx-auto px-6">
     <div class="text-center mb-16">
       <h2 class="text-4xl font-bold text-gray-900 mb-6 scroll-animate">
-        Vous reconnaissez-vous dans ces situations ?
+        {{ t('LANDING.PROBLEMS.TITLE') }}
       </h2>
       <p class="text-xl text-gray-600 scroll-animate">
-        La gestion manuelle vous fait perdre du temps, de l'argent et votre tranquillité d'esprit
+        {{ t('LANDING.PROBLEMS.SUBTITLE') }}
       </p>
     </div>
 
@@ -99,32 +99,32 @@
         <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-4">
           <i class="fas fa-question-circle text-red-600 text-xl"></i>
         </div>
-        <h3 class="font-bold text-gray-900 mb-2">Qui a payé ?</h3>
-        <p class="text-gray-600 text-sm">Vous ne savez jamais exactement qui est à jour dans ses paiements</p>
+        <h3 class="font-bold text-gray-900 mb-2">{{ t('LANDING.PROBLEMS.CARDS.WHO_PAID.TITLE') }}</h3>
+        <p class="text-gray-600 text-sm">{{ t('LANDING.PROBLEMS.CARDS.WHO_PAID.DESCRIPTION') }}</p>
       </div>
 
       <div class="bg-white p-6 rounded-xl shadow-lg card-hover scroll-animate-scale">
         <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mb-4">
           <i class="fas fa-calendar-times text-orange-600 text-xl"></i>
         </div>
-        <h3 class="font-bold text-gray-900 mb-2">Jusqu'à quand ?</h3>
-        <p class="text-gray-600 text-sm">Impossible de savoir jusqu'à quelle date un locataire est couvert</p>
+        <h3 class="font-bold text-gray-900 mb-2">{{ t('LANDING.PROBLEMS.CARDS.UNTIL_WHEN.TITLE') }}</h3>
+        <p class="text-gray-600 text-sm">{{ t('LANDING.PROBLEMS.CARDS.UNTIL_WHEN.DESCRIPTION') }}</p>
       </div>
 
       <div class="bg-white p-6 rounded-xl shadow-lg card-hover scroll-animate-scale">
         <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-4">
           <i class="fas fa-file-alt text-red-600 text-xl"></i>
         </div>
-        <h3 class="font-bold text-gray-900 mb-2">Aucune preuve</h3>
-        <p class="text-gray-600 text-sm">Pas de documents fiables pour justifier les paiements</p>
+        <h3 class="font-bold text-gray-900 mb-2">{{ t('LANDING.PROBLEMS.CARDS.NO_PROOF.TITLE') }}</h3>
+        <p class="text-gray-600 text-sm">{{ t('LANDING.PROBLEMS.CARDS.NO_PROOF.DESCRIPTION') }}</p>
       </div>
 
       <div class="bg-white p-6 rounded-xl shadow-lg card-hover scroll-animate-scale">
         <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-4">
           <i class="fas fa-brain text-gray-600 text-xl"></i>
         </div>
-        <h3 class="font-bold text-gray-900 mb-2">Gestion mentale</h3>
-        <p class="text-gray-600 text-sm">Tout repose sur votre mémoire et des cahiers manuscrits</p>
+        <h3 class="font-bold text-gray-900 mb-2">{{ t('LANDING.PROBLEMS.CARDS.MENTAL_MANAGEMENT.TITLE') }}</h3>
+        <p class="text-gray-600 text-sm">{{ t('LANDING.PROBLEMS.CARDS.MENTAL_MANAGEMENT.DESCRIPTION') }}</p>
       </div>
     </div>
 
@@ -132,9 +132,9 @@
       <div class="bg-red-50 border border-red-200 rounded-xl p-6 max-w-2xl mx-auto">
         <h3 class="font-bold text-red-800 mb-3 flex items-center justify-center gap-2">
           <i class="fas fa-exclamation-triangle"></i>
-          Résultat : Stress permanent et pertes invisibles
+          {{ t('LANDING.PROBLEMS.RESULT.TITLE') }}
         </h3>
-        <p class="text-red-700">Conflits fréquents • Manque de contrôle • Argent mal suivi • Frustration constante</p>
+        <p class="text-red-700">{{ t('LANDING.PROBLEMS.RESULT.DESCRIPTION') }}</p>
       </div>
     </div>
   </div>
@@ -145,10 +145,10 @@
   <div class="max-w-7xl mx-auto px-6">
     <div class="text-center mb-20">
       <h2 class="text-5xl font-bold text-gray-900 mb-6 scroll-animate">
-        Ndewa360 : Votre assistant de gestion immobilière
+        {{ t('LANDING.SOLUTION.TITLE') }}
       </h2>
       <p class="text-xl text-gray-600 max-w-3xl mx-auto scroll-animate">
-        Une plateforme simple qui centralise tout : propriétés, locataires, paiements, contrats et statistiques
+        {{ t('LANDING.SOLUTION.SUBTITLE') }}
       </p>
     </div>
 
@@ -157,30 +157,30 @@
       <div class="grid lg:grid-cols-2 gap-16 items-center">
         <div class="scroll-animate-left">
           <div class="bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold inline-block mb-4">
-            Fonctionnalité #1
+            {{ t('LANDING.SOLUTION.FEATURES.FEATURE_1.BADGE') }}
           </div>
           <h3 class="text-4xl font-bold mb-6">
-            <span class="gradient-text">Vision claire</span> en temps réel
+            <span class="gradient-text">{{ t('LANDING.SOLUTION.FEATURES.FEATURE_1.TITLE_PART1') }}</span> {{ t('LANDING.SOLUTION.FEATURES.FEATURE_1.TITLE_PART2') }}
           </h3>
           <p class="text-xl text-gray-600 mb-8">
-            Fini les calculs à la main ! Visualisez instantanément qui a payé, jusqu'à quand, et combien vous devez encore recevoir.
+            {{ t('LANDING.SOLUTION.FEATURES.FEATURE_1.DESCRIPTION') }}
           </p>
           <ul class="space-y-4 text-lg">
             <li class="flex items-center gap-3 scroll-animate">
               <i class="fas fa-check-circle text-primary"></i>
-              <span>Suivi automatique des paiements multi-mois</span>
+              <span>{{ t('LANDING.SOLUTION.FEATURES.FEATURE_1.BENEFITS.MULTI_MONTH') }}</span>
             </li>
             <li class="flex items-center gap-3 scroll-animate">
               <i class="fas fa-check-circle text-primary"></i>
-              <span>Calcul automatique des mois couverts</span>
+              <span>{{ t('LANDING.SOLUTION.FEATURES.FEATURE_1.BENEFITS.AUTO_CALCULATION') }}</span>
             </li>
             <li class="flex items-center gap-3 scroll-animate">
               <i class="fas fa-check-circle text-primary"></i>
-              <span>Alertes automatiques pour les impayés</span>
+              <span>{{ t('LANDING.SOLUTION.FEATURES.FEATURE_1.BENEFITS.AUTO_ALERTS') }}</span>
             </li>
             <li class="flex items-center gap-3 scroll-animate">
               <i class="fas fa-check-circle text-primary"></i>
-              <span>Historique sécurisé et accessible partout</span>
+              <span>{{ t('LANDING.SOLUTION.FEATURES.FEATURE_1.BENEFITS.SECURE_HISTORY') }}</span>
             </li>
           </ul>
         </div>
@@ -196,30 +196,30 @@
         </div>
         <div class="order-1 lg:order-2 scroll-animate-right">
           <div class="bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold inline-block mb-4">
-            Fonctionnalité #2
+            {{ t('LANDING.SOLUTION.FEATURES.FEATURE_2.BADGE') }}
           </div>
           <h3 class="text-4xl font-bold mb-6">
-            <span class="gradient-text">Documents professionnels</span> automatiques
+            <span class="gradient-text">{{ t('LANDING.SOLUTION.FEATURES.FEATURE_2.TITLE_PART1') }}</span> {{ t('LANDING.SOLUTION.FEATURES.FEATURE_2.TITLE_PART2') }}
           </h3>
           <p class="text-xl text-gray-600 mb-8">
-            Générez instantanément tous vos documents : contrats, factures, reçus. Plus jamais de paperasse manuelle !
+            {{ t('LANDING.SOLUTION.FEATURES.FEATURE_2.DESCRIPTION') }}
           </p>
           <ul class="space-y-4 text-lg">
             <li class="flex items-center gap-3 scroll-animate">
               <i class="fas fa-check-circle text-primary"></i>
-              <span>Contrats de location personnalisables</span>
+              <span>{{ t('LANDING.SOLUTION.FEATURES.FEATURE_2.BENEFITS.CUSTOM_CONTRACTS') }}</span>
             </li>
             <li class="flex items-center gap-3 scroll-animate">
               <i class="fas fa-check-circle text-primary"></i>
-              <span>Factures et reçus automatiques</span>
+              <span>{{ t('LANDING.SOLUTION.FEATURES.FEATURE_2.BENEFITS.AUTO_INVOICES') }}</span>
             </li>
             <li class="flex items-center gap-3 scroll-animate">
               <i class="fas fa-check-circle text-primary"></i>
-              <span>Envoi par email en un clic</span>
+              <span>{{ t('LANDING.SOLUTION.FEATURES.FEATURE_2.BENEFITS.EMAIL_SENDING') }}</span>
             </li>
             <li class="flex items-center gap-3 scroll-animate">
               <i class="fas fa-check-circle text-primary"></i>
-              <span>Archivage numérique sécurisé</span>
+              <span>{{ t('LANDING.SOLUTION.FEATURES.FEATURE_2.BENEFITS.DIGITAL_ARCHIVE') }}</span>
             </li>
           </ul>
         </div>
@@ -229,30 +229,30 @@
       <div class="grid lg:grid-cols-2 gap-16 items-center">
         <div class="slide-left">
           <div class="bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold inline-block mb-4">
-            Fonctionnalité #3
+            {{ t('LANDING.SOLUTION.FEATURES.FEATURE_3.BADGE') }}
           </div>
           <h3 class="text-4xl font-bold mb-6">
-            <span class="gradient-text">Contrôle total</span> même à distance
+            <span class="gradient-text">{{ t('LANDING.SOLUTION.FEATURES.FEATURE_3.TITLE_PART1') }}</span> {{ t('LANDING.SOLUTION.FEATURES.FEATURE_3.TITLE_PART2') }}
           </h3>
           <p class="text-xl text-gray-600 mb-8">
-            Que vous soyez à Dakar, Paris ou New York, gérez vos biens comme si vous étiez sur place. Accès mobile 24/7.
+            {{ t('LANDING.SOLUTION.FEATURES.FEATURE_3.DESCRIPTION') }}
           </p>
           <ul class="space-y-4 text-lg">
             <li class="flex items-center gap-3">
               <i class="fas fa-check-circle text-primary"></i>
-              <span>Application mobile responsive</span>
+              <span>{{ t('LANDING.SOLUTION.FEATURES.FEATURE_3.BENEFITS.MOBILE_APP') }}</span>
             </li>
             <li class="flex items-center gap-3">
               <i class="fas fa-check-circle text-primary"></i>
-              <span>Synchronisation en temps réel</span>
+              <span>{{ t('LANDING.SOLUTION.FEATURES.FEATURE_3.BENEFITS.REAL_TIME_SYNC') }}</span>
             </li>
             <li class="flex items-center gap-3">
               <i class="fas fa-check-circle text-primary"></i>
-              <span>Notifications automatiques</span>
+              <span>{{ t('LANDING.SOLUTION.FEATURES.FEATURE_3.BENEFITS.AUTO_NOTIFICATIONS') }}</span>
             </li>
             <li class="flex items-center gap-3">
               <i class="fas fa-check-circle text-primary"></i>
-              <span>Accès sécurisé depuis n'importe où</span>
+              <span>{{ t('LANDING.SOLUTION.FEATURES.FEATURE_3.BENEFITS.SECURE_ACCESS') }}</span>
             </li>
           </ul>
         </div>
@@ -261,23 +261,23 @@
             <div class="grid grid-cols-2 gap-4">
               <div class="bg-white p-4 rounded-xl shadow-lg">
                 <i class="fas fa-mobile-alt text-primary text-2xl mb-2"></i>
-                <h4 class="font-bold text-sm">Mobile</h4>
-                <p class="text-xs text-gray-600">iOS & Android</p>
+                <h4 class="font-bold text-sm">{{ t('LANDING.SOLUTION.FEATURES.FEATURE_3.PLATFORMS.MOBILE.TITLE') }}</h4>
+                <p class="text-xs text-gray-600">{{ t('LANDING.SOLUTION.FEATURES.FEATURE_3.PLATFORMS.MOBILE.DESCRIPTION') }}</p>
               </div>
               <div class="bg-white p-4 rounded-xl shadow-lg">
                 <i class="fas fa-laptop text-primary text-2xl mb-2"></i>
-                <h4 class="font-bold text-sm">Web</h4>
-                <p class="text-xs text-gray-600">Tous navigateurs</p>
+                <h4 class="font-bold text-sm">{{ t('LANDING.SOLUTION.FEATURES.FEATURE_3.PLATFORMS.WEB.TITLE') }}</h4>
+                <p class="text-xs text-gray-600">{{ t('LANDING.SOLUTION.FEATURES.FEATURE_3.PLATFORMS.WEB.DESCRIPTION') }}</p>
               </div>
               <div class="bg-white p-4 rounded-xl shadow-lg">
                 <i class="fas fa-cloud text-primary text-2xl mb-2"></i>
-                <h4 class="font-bold text-sm">Cloud</h4>
-                <p class="text-xs text-gray-600">Sauvegarde auto</p>
+                <h4 class="font-bold text-sm">{{ t('LANDING.SOLUTION.FEATURES.FEATURE_3.PLATFORMS.CLOUD.TITLE') }}</h4>
+                <p class="text-xs text-gray-600">{{ t('LANDING.SOLUTION.FEATURES.FEATURE_3.PLATFORMS.CLOUD.DESCRIPTION') }}</p>
               </div>
               <div class="bg-white p-4 rounded-xl shadow-lg">
                 <i class="fas fa-shield-alt text-primary text-2xl mb-2"></i>
-                <h4 class="font-bold text-sm">Sécurisé</h4>
-                <p class="text-xs text-gray-600">Chiffrement SSL</p>
+                <h4 class="font-bold text-sm">{{ t('LANDING.SOLUTION.FEATURES.FEATURE_3.PLATFORMS.SECURE.TITLE') }}</h4>
+                <p class="text-xs text-gray-600">{{ t('LANDING.SOLUTION.FEATURES.FEATURE_3.PLATFORMS.SECURE.DESCRIPTION') }}</p>
               </div>
             </div>
           </div>
@@ -292,10 +292,10 @@
   <div class="max-w-7xl mx-auto px-6">
     <div class="text-center mb-16">
       <h2 class="text-4xl font-bold text-gray-900 mb-6 scroll-animate">
-        Ils ont repris le contrôle de leurs loyers
+        {{ t('LANDING.TESTIMONIALS.TITLE') }}
       </h2>
       <p class="text-xl text-gray-600 scroll-animate">
-        Découvrez comment Ndewa360 a transformé la gestion de centaines de propriétaires
+        {{ t('LANDING.TESTIMONIALS.SUBTITLE') }}
       </p>
     </div>
 
@@ -304,8 +304,8 @@
         <div class="flex items-center mb-6">
           <div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center text-white font-bold text-lg">MT</div>
           <div class="ml-4">
-            <h4 class="font-bold text-gray-900">Madame Tchouamo</h4>
-            <p class="text-gray-600">Propriétaire • Banganté</p>
+            <h4 class="font-bold text-gray-900">{{ t('LANDING.TESTIMONIALS.TESTIMONIAL_1.NAME') }}</h4>
+            <p class="text-gray-600">{{ t('LANDING.TESTIMONIALS.TESTIMONIAL_1.LOCATION') }}</p>
           </div>
         </div>
         <div class="flex mb-4">
@@ -316,11 +316,11 @@
           <i class="fas fa-star text-yellow-500"></i>
         </div>
         <p class="text-gray-700 italic mb-4">
-          "Grâce à Ndewa360, je ne rédige plus les contrats de locations. Ils sont directement générés en ligne et il me suffit de les envoyer au locataire. En plus de cela, je n'ai plus de soucis à me faire avec un fichier Excel pour reporter les paiements de loyer et les calculer. Tout est désormais très simple et facile."
+          "{{ t('LANDING.TESTIMONIALS.TESTIMONIAL_1.QUOTE') }}"
         </p>
         <div class="bg-green-50 p-3 rounded-lg">
           <p class="text-green-800 font-semibold text-sm">
-            <i class="fas fa-file-contract mr-2"></i>Contrats automatisés
+            <i class="fas fa-file-contract mr-2"></i>{{ t('LANDING.TESTIMONIALS.TESTIMONIAL_1.HIGHLIGHT') }}
           </p>
         </div>
       </div>
@@ -329,8 +329,8 @@
         <div class="flex items-center mb-6">
           <div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center text-white font-bold text-lg">SN</div>
           <div class="ml-4">
-            <h4 class="font-bold text-gray-900">Sévérin Nguendap</h4>
-            <p class="text-gray-600">Propriétaire • Dakar, Douala</p>
+            <h4 class="font-bold text-gray-900">{{ t('LANDING.TESTIMONIALS.TESTIMONIAL_2.NAME') }}</h4>
+            <p class="text-gray-600">{{ t('LANDING.TESTIMONIALS.TESTIMONIAL_2.LOCATION') }}</p>
           </div>
         </div>
         <div class="flex mb-4">
@@ -341,11 +341,11 @@
           <i class="fas fa-star text-yellow-500"></i>
         </div>
         <p class="text-gray-700 italic mb-4">
-          "N'étant pas sur place pour gérer mon bien je l'ai confié à une personne qui ne m'assurait pas de suivi complet et j'étais perdu le suivi car je ne savais pas exactement qui doit combien et à quelle date. Grâce à Ndewa360, je dors tranquillement désormais car je connais exactement l'état financier de mon bien et de mes locataires."
+          "{{ t('LANDING.TESTIMONIALS.TESTIMONIAL_2.QUOTE') }}"
         </p>
         <div class="bg-blue-50 p-3 rounded-lg">
           <p class="text-blue-800 font-semibold text-sm">
-            <i class="fas fa-bed mr-2"></i>Tranquillité d'esprit
+            <i class="fas fa-bed mr-2"></i>{{ t('LANDING.TESTIMONIALS.TESTIMONIAL_2.HIGHLIGHT') }}
           </p>
         </div>
       </div>
@@ -355,20 +355,20 @@
       <div class="bg-primary/10 border border-primary/20 rounded-xl p-6 max-w-2xl mx-auto">
         <h3 class="font-bold text-primary mb-3">
           <i class="fas fa-chart-line mr-2"></i>
-          Résultats moyens de nos utilisateurs
+          {{ t('LANDING.TESTIMONIALS.STATS.TITLE') }}
         </h3>
         <div class="grid grid-cols-3 gap-4 text-center">
           <div>
-            <div class="text-2xl font-bold text-primary">15h</div>
-            <div class="text-sm text-gray-600">économisées/mois</div>
+            <div class="text-2xl font-bold text-primary">{{ t('LANDING.TESTIMONIALS.STATS.TIME_SAVED.VALUE') }}</div>
+            <div class="text-sm text-gray-600">{{ t('LANDING.TESTIMONIALS.STATS.TIME_SAVED.LABEL') }}</div>
           </div>
           <div>
-            <div class="text-2xl font-bold text-primary">98%</div>
-            <div class="text-sm text-gray-600">paiements à temps</div>
+            <div class="text-2xl font-bold text-primary">{{ t('LANDING.TESTIMONIALS.STATS.ON_TIME_PAYMENTS.VALUE') }}</div>
+            <div class="text-sm text-gray-600">{{ t('LANDING.TESTIMONIALS.STATS.ON_TIME_PAYMENTS.LABEL') }}</div>
           </div>
           <div>
-            <div class="text-2xl font-bold text-primary">0</div>
-            <div class="text-sm text-gray-600">conflit locataire</div>
+            <div class="text-2xl font-bold text-primary">{{ t('LANDING.TESTIMONIALS.STATS.TENANT_CONFLICTS.VALUE') }}</div>
+            <div class="text-sm text-gray-600">{{ t('LANDING.TESTIMONIALS.STATS.TENANT_CONFLICTS.LABEL') }}</div>
           </div>
         </div>
       </div>
@@ -381,10 +381,10 @@
   <div class="max-w-7xl mx-auto px-6">
     <div class="text-center mb-16">
       <h2 class="text-4xl font-bold text-gray-900 mb-6 slide-up">
-        Tarifs transparents et équitables
+        {{ t('LANDING.PRICING.TITLE') }}
       </h2>
       <p class="text-xl text-gray-600 slide-up" style="animation-delay: 0.2s">
-        Toutes les fonctionnalités pour tous. Vous ne payez que si vous générez des revenus.
+        {{ t('LANDING.PRICING.SUBTITLE') }}
       </p>
     </div>
 
@@ -392,79 +392,79 @@
       <!-- Plan Freemium -->
       <div class="bg-white p-8 rounded-2xl shadow-lg border-2 border-gray-200 card-hover slide-left">
         <div class="text-center mb-8">
-          <h3 class="text-2xl font-bold text-gray-900 mb-2">Freemium</h3>
-          <div class="text-5xl font-bold text-gray-900 mb-2">0 FCFA</div>
-          <p class="text-gray-600">Pour toujours • Aucune carte bancaire</p>
+          <h3 class="text-2xl font-bold text-gray-900 mb-2">{{ t('LANDING.PRICING.FREEMIUM.TITLE') }}</h3>
+          <div class="text-5xl font-bold text-gray-900 mb-2">{{ t('LANDING.PRICING.FREEMIUM.PRICE') }}</div>
+          <p class="text-gray-600">{{ t('LANDING.PRICING.FREEMIUM.DESCRIPTION') }}</p>
         </div>
         
         <div class="mb-8">
-          <h4 class="font-bold text-gray-900 mb-4">Parfait pour commencer :</h4>
+          <h4 class="font-bold text-gray-900 mb-4">{{ t('LANDING.PRICING.FREEMIUM.SUBTITLE') }}</h4>
           <ul class="space-y-3">
             <li class="flex items-center gap-3">
               <i class="fas fa-check text-green-500"></i>
-              <span>1 propriété</span>
+              <span>{{ t('LANDING.PRICING.FREEMIUM.FEATURES.PROPERTIES') }}</span>
             </li>
             <li class="flex items-center gap-3">
               <i class="fas fa-check text-green-500"></i>
-              <span>Jusqu'à 10 unités locatives</span>
+              <span>{{ t('LANDING.PRICING.FREEMIUM.FEATURES.UNITS') }}</span>
             </li>
             <li class="flex items-center gap-3">
               <i class="fas fa-check text-green-500"></i>
-              <span>100% des fonctionnalités</span>
+              <span>{{ t('LANDING.PRICING.FREEMIUM.FEATURES.ALL_FEATURES') }}</span>
             </li>
             <li class="flex items-center gap-3">
               <i class="fas fa-check text-green-500"></i>
-              <span>Support par email</span>
+              <span>{{ t('LANDING.PRICING.FREEMIUM.FEATURES.EMAIL_SUPPORT') }}</span>
             </li>
           </ul>
         </div>
 
-        <a href="#" class="w-full bg-gray-100 text-gray-800 py-4 px-6 rounded-lg font-bold text-center hover:bg-gray-200 transition-colors block">
-          Commencer gratuitement
+        <a [routerLink]="['/' + getCurrentLanguage() + '/auth/signup']" class="w-full bg-gray-100 text-gray-800 py-4 px-6 rounded-lg font-bold text-center hover:bg-gray-200 transition-colors block">
+          {{ t('LANDING.PRICING.FREEMIUM.BUTTON') }}
         </a>
       </div>
 
       <!-- Plan Premium -->
       <div class="bg-gradient-to-br from-primary to-primary-light text-white p-8 rounded-2xl shadow-2xl border-2 border-primary card-hover slide-right relative" style="animation-delay: 0.2s">
         <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-white text-primary px-6 py-2 rounded-full text-sm font-bold">
-          RECOMMANDÉ
+          {{ t('LANDING.PRICING.PREMIUM.BADGE') }}
         </div>
         
         <div class="text-center mb-8">
-          <h3 class="text-2xl font-bold mb-2">Premium</h3>
-          <div class="text-5xl font-bold mb-2">2%</div>
-          <p class="opacity-90">du loyer par unité occupée/mois</p>
-          <p class="text-sm opacity-75 mt-2">Unité vide = 0 FCFA • Modèle équitable</p>
+          <h3 class="text-2xl font-bold mb-2">{{ t('LANDING.PRICING.PREMIUM.TITLE') }}</h3>
+          <div class="text-5xl font-bold mb-2">{{ t('LANDING.PRICING.PREMIUM.PRICE') }}</div>
+          <p class="opacity-90">{{ t('LANDING.PRICING.PREMIUM.DESCRIPTION') }}</p>
+          <p class="text-sm opacity-75 mt-2">{{ t('LANDING.PRICING.PREMIUM.SUBTITLE_1') }}</p>
         </div>
         
         <div class="mb-8">
-          <h4 class="font-bold mb-4">Pour les professionnels :</h4>
+          <h4 class="font-bold mb-4">{{ t('LANDING.PRICING.PREMIUM.SUBTITLE_2') }}</h4>
           <ul class="space-y-3">
             <li class="flex items-center gap-3">
               <i class="fas fa-check text-white"></i>
-              <span>Propriétés illimitées</span>
+              <span>{{ t('LANDING.PRICING.PREMIUM.FEATURES.UNLIMITED_PROPERTIES') }}</span>
             </li>
             <li class="flex items-center gap-3">
               <i class="fas fa-check text-white"></i>
-              <span>Unités locatives illimitées</span>
+              <span>{{ t('LANDING.PRICING.PREMIUM.FEATURES.UNLIMITED_UNITS') }}</span>
             </li>
             <li class="flex items-center gap-3">
               <i class="fas fa-check text-white"></i>
-              <span>100% des fonctionnalités</span>
+              <span>{{ t('LANDING.PRICING.PREMIUM.FEATURES.ALL_FEATURES') }}</span>
             </li>
             <li class="flex items-center gap-3">
               <i class="fas fa-check text-white"></i>
-              <span>Support prioritaire 24/7</span>
+              <span>{{ t('LANDING.PRICING.PREMIUM.FEATURES.PRIORITY_SUPPORT') }}</span>
             </li>
             <li class="flex items-center gap-3">
               <i class="fas fa-check text-white"></i>
-              <span>Formation personnalisée</span>
+              <span>{{ t('LANDING.PRICING.PREMIUM.FEATURES.PERSONAL_TRAINING') }}</span>
             </li>
           </ul>
         </div>
 
-        <a href="#" class="w-full bg-white text-primary py-4 px-6 rounded-lg font-bold text-center hover:bg-gray-100 transition-colors block">
-          Essayer 30 jours gratuits
+        <a [routerLink]="['/' + getCurrentLanguage() + '/auth/signup']" class="w-full bg-white text-primary py-4 px-6 rounded-lg font-bold text-center hover:bg-gray-100 transition-colors block">
+          {{ t('LANDING.PRICING.PREMIUM.BUTTON') }}
         </a>
       </div>
     </div>
@@ -474,9 +474,9 @@
       <div class="bg-green-50 border border-green-200 rounded-xl p-6 max-w-lg mx-auto">
         <h4 class="font-bold text-green-800 mb-2 flex items-center justify-center gap-2">
           <i class="fas fa-shield-alt"></i>
-          Garantie satisfait ou remboursé
+          {{ t('LANDING.PRICING.GUARANTEE.TITLE') }}
         </h4>
-        <p class="text-green-700">30 jours pour tester sans risque. Pas convaincu ? Remboursement intégral.</p>
+        <p class="text-green-700">{{ t('LANDING.PRICING.GUARANTEE.DESCRIPTION') }}</p>
       </div>
     </div>
 
@@ -487,9 +487,9 @@
 <section id="faq" class="bg-gray-50 py-20">
   <div class="max-w-4xl mx-auto px-6">
     <div class="text-center mb-16">
-      <h2 class="text-4xl font-bold text-gray-900 mb-6 slide-up">Questions fréquentes</h2>
+      <h2 class="text-4xl font-bold text-gray-900 mb-6 slide-up">{{ t('LANDING.FAQ.TITLE') }}</h2>
       <p class="text-xl text-gray-600 slide-up" style="animation-delay: 0.2s">
-        Tout ce que vous devez savoir sur Ndewa360
+        {{ t('LANDING.FAQ.SUBTITLE') }}
       </p>
     </div>
 
@@ -497,60 +497,60 @@
       <div class="bg-white rounded-2xl shadow-lg p-8 hover-lift slide-up">
         <h3 class="font-bold text-xl text-gray-900 mb-3 flex items-center gap-3">
           <i class="fas fa-mobile-alt text-primary"></i>
-          Comment puis-je accéder à Ndewa360 ?
+          {{ t('LANDING.FAQ.QUESTIONS.ACCESS.QUESTION') }}
         </h3>
         <p class="text-gray-600">
-          Ndewa360 est accessible depuis n'importe quel appareil : smartphone, tablette ou ordinateur. Aucune installation requise, tout fonctionne dans votre navigateur web. Vos données sont synchronisées en temps réel sur tous vos appareils.
+          {{ t('LANDING.FAQ.QUESTIONS.ACCESS.ANSWER') }}
         </p>
       </div>
 
       <div class="bg-white rounded-2xl shadow-lg p-8 hover-lift slide-up" style="animation-delay: 0.1s">
         <h3 class="font-bold text-xl text-gray-900 mb-3 flex items-center gap-3">
           <i class="fas fa-credit-card text-primary"></i>
-          Comment fonctionne le paiement "2% du loyer" ?
+          {{ t('LANDING.FAQ.QUESTIONS.PAYMENT.QUESTION') }}
         </h3>
         <p class="text-gray-600">
-          Vous ne payez que pour les unités qui génèrent des revenus. Si vous avez 10 appartements mais seulement 7 sont occupés, vous payez uniquement pour les 7 occupés. Appartement vide = 0 FCFA. C'est un modèle équitable qui grandit avec votre succès.
+          {{ t('LANDING.FAQ.QUESTIONS.PAYMENT.ANSWER') }}
         </p>
       </div>
 
       <div class="bg-white rounded-2xl shadow-lg p-8 hover-lift slide-up" style="animation-delay: 0.2s">
         <h3 class="font-bold text-xl text-gray-900 mb-3 flex items-center gap-3">
           <i class="fas fa-lock text-primary"></i>
-          Mes données sont-elles sécurisées ?
+          {{ t('LANDING.FAQ.QUESTIONS.SECURITY.QUESTION') }}
         </h3>
         <p class="text-gray-600">
-          Absolument. Vos données sont chiffrées avec les mêmes standards que les banques (SSL 256-bit), sauvegardées quotidiennement et hébergées sur des serveurs sécurisés. Nous respectons le RGPD et ne partageons jamais vos informations.
+          {{ t('LANDING.FAQ.QUESTIONS.SECURITY.ANSWER') }}
         </p>
       </div>
 
       <div class="bg-white rounded-2xl shadow-lg p-8 hover-lift slide-up" style="animation-delay: 0.3s">
         <h3 class="font-bold text-xl text-gray-900 mb-3 flex items-center gap-3">
           <i class="fas fa-download text-primary"></i>
-          Puis-je importer mes données existantes ?
+          {{ t('LANDING.FAQ.QUESTIONS.IMPORT.QUESTION') }}
         </h3>
         <p class="text-gray-600">
-          Oui ! Notre équipe vous aide gratuitement à migrer toutes vos données depuis Excel, Word, cahiers ou tout autre système. La migration se fait généralement en moins de 24h et nous nous occupons de tout.
+          {{ t('LANDING.FAQ.QUESTIONS.IMPORT.ANSWER') }}
         </p>
       </div>
 
       <div class="bg-white rounded-2xl shadow-lg p-8 hover-lift slide-up" style="animation-delay: 0.4s">
         <h3 class="font-bold text-xl text-gray-900 mb-3 flex items-center gap-3">
           <i class="fas fa-headset text-primary"></i>
-          Quel support proposez-vous ?
+          {{ t('LANDING.FAQ.QUESTIONS.SUPPORT.QUESTION') }}
         </h3>
         <p class="text-gray-600">
-          Support par email pour tous les utilisateurs, support prioritaire 24/7 pour les Premium, plus formation personnalisée et accompagnement à la prise en main. Notre équipe parle français et connaît le contexte africain.
+          {{ t('LANDING.FAQ.QUESTIONS.SUPPORT.ANSWER') }}
         </p>
       </div>
 
       <div class="bg-white rounded-2xl shadow-lg p-8 hover-lift slide-up" style="animation-delay: 0.5s">
         <h3 class="font-bold text-xl text-gray-900 mb-3 flex items-center gap-3">
           <i class="fas fa-globe text-primary"></i>
-          Ndewa360 fonctionne-t-il dans tous les pays d'Afrique ?
+          {{ t('LANDING.FAQ.QUESTIONS.COUNTRIES.QUESTION') }}
         </h3>
         <p class="text-gray-600">
-          Oui, Ndewa360 fonctionne dans tous les pays. Les devises, formats de dates et réglementations locales sont pris en compte. Nous avons des utilisateurs au Sénégal, Côte d'Ivoire, Mali, Burkina Faso, Cameroun et bien d'autres pays.
+          {{ t('LANDING.FAQ.QUESTIONS.COUNTRIES.ANSWER') }}
         </p>
       </div>
     </div>
@@ -561,20 +561,20 @@
 <section class="bg-gradient-to-r from-primary to-primary-light text-white py-24">
   <div class="max-w-5xl mx-auto px-6 text-center">
     <h2 class="text-4xl md:text-5xl font-bold mb-6 slide-up">
-      Prêt à reprendre le contrôle de vos loyers ?
+      {{ t('LANDING.CTA.TITLE') }}
     </h2>
     <p class="text-xl mb-8 opacity-90 slide-up" style="animation-delay: 0.2s">
-      Rejoignez les 500+ propriétaires qui ont déjà transformé leur gestion immobilière
+      {{ t('LANDING.CTA.SUBTITLE') }}
     </p>
 
     <div class="flex flex-col sm:flex-row justify-center gap-6 mb-12 slide-up" style="animation-delay: 0.4s">
-      <a href="#" class="bg-white text-primary px-10 py-5 rounded-lg font-bold text-xl hover:bg-gray-100 transition-all duration-300 hover:scale-105 flex items-center justify-center gap-3">
+      <a [routerLink]="['/' + getCurrentLanguage() + '/auth/signup']" class="bg-white text-primary px-10 py-5 rounded-lg font-bold text-xl hover:bg-gray-100 transition-all duration-300 hover:scale-105 flex items-center justify-center gap-3">
         <i class="fas fa-rocket"></i>
-        Commencer gratuitement
+        {{ t('LANDING.CTA.BUTTONS.START_FREE') }}
       </a>
-      <a href="#" class="border-2 border-white text-white px-10 py-5 rounded-lg font-bold text-xl hover:bg-white hover:text-primary transition-all duration-300 flex items-center justify-center gap-3">
+      <a [routerLink]="['/' + getCurrentLanguage() + '/home/contact']" class="border-2 border-white text-white px-10 py-5 rounded-lg font-bold text-xl hover:bg-white hover:text-primary transition-all duration-300 flex items-center justify-center gap-3">
         <i class="fas fa-phone"></i>
-        Parler à un expert
+        {{ t('LANDING.CTA.BUTTONS.TALK_EXPERT') }}
       </a>
     </div>
 
@@ -582,29 +582,29 @@
       <div class="flex flex-col sm:flex-row justify-center items-center gap-8 text-lg opacity-90 mb-6">
         <span class="flex items-center gap-2">
           <i class="fas fa-check-circle text-green-400"></i>
-          Gratuit pour toujours (plan Freemium)
+          {{ t('LANDING.CTA.GUARANTEES.FREE_FOREVER') }}
         </span>
         <span class="flex items-center gap-2">
           <i class="fas fa-check-circle text-green-400"></i>
-          Aucune carte bancaire requise
+          {{ t('LANDING.CTA.GUARANTEES.NO_CARD') }}
         </span>
         <span class="flex items-center gap-2">
           <i class="fas fa-check-circle text-green-400"></i>
-          Support inclus
+          {{ t('LANDING.CTA.GUARANTEES.SUPPORT_INCLUDED') }}
         </span>
       </div>
       <div class="flex flex-col sm:flex-row justify-center items-center gap-8 text-sm opacity-75">
         <span class="flex items-center gap-2">
           <i class="fas fa-shield-alt"></i>
-          Garantie 30 jours
+          {{ t('LANDING.CTA.TRUST_SIGNALS.GUARANTEE') }}
         </span>
         <span class="flex items-center gap-2">
           <i class="fas fa-star"></i>
-          4.9/5 étoiles
+          {{ t('LANDING.CTA.TRUST_SIGNALS.RATING') }}
         </span>
         <span class="flex items-center gap-2">
           <i class="fas fa-users"></i>
-          500+ utilisateurs satisfaits
+          {{ t('LANDING.CTA.TRUST_SIGNALS.USERS') }}
         </span>
       </div>
     </div>
@@ -620,14 +620,14 @@
   <div class="relative bg-black rounded-2xl shadow-2xl max-w-5xl max-h-[90vh] mx-4">
     <!-- Header avec titre et boutons de fermeture -->
     <div class="flex items-center justify-between p-4 border-b border-gray-700">
-      <h3 class="text-white text-xl font-bold">Présentation Ndewa360</h3>
+      <h3 class="text-white text-xl font-bold">{{ t('LANDING.VIDEO_MODAL.TITLE') }}</h3>
       <div class="flex items-center gap-2">
         <!-- Bouton réduire -->
-        <button (click)="closeVideoModal()" class="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-gray-700 transition-colors" title="Réduire">
+        <button (click)="closeVideoModal()" class="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-gray-700 transition-colors" [title]="t('LANDING.VIDEO_MODAL.MINIMIZE')">
           <i class="fas fa-minus"></i>
         </button>
         <!-- Bouton fermer principal -->
-        <button (click)="closeVideoModal()" class="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-red-600 transition-colors" title="Fermer">
+        <button (click)="closeVideoModal()" class="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-red-600 transition-colors" [title]="t('LANDING.VIDEO_MODAL.CLOSE')">
           <i class="fas fa-times"></i>
         </button>
       </div>
@@ -637,11 +637,11 @@
     <div class="relative">
       <video #modalVideo class="w-full h-auto max-h-[70vh] rounded-b-2xl" controls controlsList="nodownload">
         <source src="assets/presentation.mp4" type="video/mp4">
-        Votre navigateur ne supporte pas la lecture vidéo.
+        {{ t('LANDING.VIDEO_MODAL.BROWSER_ERROR') }}
       </video>
       
       <!-- Bouton fermeture flottant (secours) -->
-      <button (click)="closeVideoModal()" class="absolute top-4 right-4 bg-black bg-opacity-50 text-white p-3 rounded-full hover:bg-opacity-75 transition-all duration-300 hover:scale-110" title="Fermer la vidéo">
+      <button (click)="closeVideoModal()" class="absolute top-4 right-4 bg-black bg-opacity-50 text-white p-3 rounded-full hover:bg-opacity-75 transition-all duration-300 hover:scale-110" [title]="t('LANDING.VIDEO_MODAL.CLOSE_VIDEO')">
         <i class="fas fa-times text-lg"></i>
       </button>
     </div>
@@ -649,11 +649,11 @@
     <!-- Footer avec informations -->
     <div class="p-4 bg-gray-900 rounded-b-2xl">
       <div class="flex items-center justify-between text-sm text-gray-400">
-        <span>Durée : 2 minutes</span>
+        <span>{{ t('LANDING.VIDEO_MODAL.DURATION') }}</span>
         <div class="flex items-center gap-4">
-          <span>Appuyez sur Échap pour fermer</span>
+          <span>{{ t('LANDING.VIDEO_MODAL.CLOSE_ESC') }}</span>
           <button (click)="closeVideoModal()" class="text-primary hover:text-primary-light font-semibold">
-            Fermer
+            {{ t('LANDING.VIDEO_MODAL.CLOSE') }}
           </button>
         </div>
       </div>

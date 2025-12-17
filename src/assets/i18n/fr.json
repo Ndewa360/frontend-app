@@ -1714,7 +1714,7 @@
     "SUPPORT": "Support",
     "PRICING": "Tarifs",
     "SIGN_IN": "Se connecter",
-    "SIGN_UP": "S'inscrire",
+    "SIGN_UP": "Commencer gratuitement",
     "OPEN_MENU": "Ouvrir le menu",
     "CLOSE_MENU": "Fermer le menu",
     "LOGGED_IN_AS": "Connecté en tant que",
@@ -1812,172 +1812,227 @@
   },
   "LANDING": {
     "HERO": {
-      "TITLE_PART1": "Trouvez votre",
-      "TITLE_PART2": "Maison",
-      "SUBTITLE": "Gérez vos biens immobiliers sans stress avec la solution la plus complète du marché"
-    },
-    "TABS": {
-      "RENT": "Louer",
-      "MANAGE": "Gérer"
-    },
-    "SEARCH_FORM": {
-      "LOCATION_LABEL": "Localisation",
-      "LOCATION_PLACEHOLDER": "Où souhaitez-vous habiter",
-      "PROPERTY_TYPE_LABEL": "Type de propriété",
-      "PROPERTY_TYPE_PLACEHOLDER": "Type de logement",
-      "BUDGET_LABEL": "Budget",
-      "BUDGET_PLACEHOLDER": "Budget max",
-      "SEARCH_BUTTON": "Rechercher",
-      "REQUIRED_FIELD": "Ce champ est obligatoire"
-    },
-    "MANAGE_SECTION": {
-      "TITLE": "Commencez à gérer vos biens immobiliers",
-      "SUBTITLE": "Ajoutez votre première propriété pour commencer à profiter de nos outils de gestion. Suivez vos revenus, gérez vos locataires et émettez des factures en quelques clics.",
-      "ADD_PROPERTY_BUTTON": "Ajouter ma première propriété"
-    },
-    "COMPLETE_SOLUTION": {
-      "TITLE": "Une solution complète",
-      "SUBTITLE": "Découvrez toutes les fonctionnalités qui font de Ndewa360 la plateforme préférée des propriétaires",
-      "PROPERTY_MANAGEMENT": {
-        "TITLE": "Gestion immobilière",
-        "FEATURE_1": "Ajout et gestion faciles de vos propriétés",
-        "FEATURE_2": "Suivi de disponibilité en temps réel",
-        "FEATURE_3": "Photos et descriptions détaillées"
+      "TITLE_PART1": "Passez à la gestion immobilière",
+      "TITLE_PART2": "intelligente",
+      "SUBTITLE_BOLD": "Fini les cahiers et le désordre.",
+      "SUBTITLE_TEXT": "Ndewa360 digitalise la gestion de vos chambres et appartements avec une plateforme simple, automatisée et transparente.",
+      "BUTTONS": {
+        "START_FREE": "Commencer gratuitement",
+        "WATCH_DEMO": "Voir la démo"
       },
-      "FINANCIAL_TRACKING": {
-        "TITLE": "Suivi financier",
-        "FEATURE_1": "Tableau de bord financier en temps réel",
-        "FEATURE_2": "Gestion automatisée des paiements",
-        "FEATURE_3": "Rapports mensuels détaillés"
+      "RATING": "4.9/5",
+      "LIVE_DEMO": "Démo en direct"
+    },
+    "PROBLEMS": {
+      "TITLE": "Vous reconnaissez-vous dans ces situations ?",
+      "SUBTITLE": "La gestion manuelle vous fait perdre du temps, de l'argent et votre tranquillité d'esprit",
+      "CARDS": {
+        "WHO_PAID": {
+          "TITLE": "Qui a payé ?",
+          "DESCRIPTION": "Vous ne savez jamais exactement qui est à jour dans ses paiements"
+        },
+        "UNTIL_WHEN": {
+          "TITLE": "Jusqu'à quand ?",
+          "DESCRIPTION": "Impossible de savoir jusqu'à quelle date un locataire est couvert"
+        },
+        "NO_PROOF": {
+          "TITLE": "Aucune preuve",
+          "DESCRIPTION": "Pas de documents fiables pour justifier les paiements"
+        },
+        "MENTAL_MANAGEMENT": {
+          "TITLE": "Gestion mentale",
+          "DESCRIPTION": "Tout repose sur votre mémoire et des cahiers manuscrits"
+        }
       },
-      "ADMINISTRATIVE_MANAGEMENT": {
-        "TITLE": "Gestion administrative",
-        "FEATURE_1": "Génération automatique de contrats",
-        "FEATURE_2": "Suivi des documents importants",
-        "FEATURE_3": "Alertes et notifications automatiques"
+      "RESULT": {
+        "TITLE": "Résultat : Stress permanent et pertes invisibles",
+        "DESCRIPTION": "Conflits fréquents • Manque de contrôle • Argent mal suivi • Frustration constante"
       }
     },
-    "STATS": {
-      "SATISFIED_USERS": "Utilisateurs satisfaits",
-      "MANAGED_PROPERTIES": "Propriétés gérées",
-      "COVERED_CITIES": "Villes couvertes",
-      "AVERAGE_RATING": "Note moyenne"
-    },
-    "HOW_IT_WORKS": {
-      "TITLE": "Comment ça marche ?",
-      "SUBTITLE": "Commencez à gérer vos propriétés en quelques étapes simples",
-      "STEP_1": {
-        "TITLE": "1. Ajoutez vos propriétés",
-        "DESCRIPTION": "Créez votre portefeuille immobilier"
-      },
-      "STEP_2": {
-        "TITLE": "2. Configurez",
-        "DESCRIPTION": "Personnalisez vos paramètres"
-      },
-      "STEP_3": {
-        "TITLE": "3. Gérez",
-        "DESCRIPTION": "Suivez vos locations"
-      },
-      "STEP_4": {
-        "TITLE": "4. Analysez",
-        "DESCRIPTION": "Consultez vos statistiques"
+    "SOLUTION": {
+      "TITLE": "Ndewa360 : Votre assistant de gestion immobilière",
+      "SUBTITLE": "Une plateforme simple qui centralise tout : propriétés, locataires, paiements, contrats et statistiques",
+      "FEATURES": {
+        "FEATURE_1": {
+          "BADGE": "Fonctionnalité #1",
+          "TITLE_PART1": "Vision claire",
+          "TITLE_PART2": "en temps réel",
+          "DESCRIPTION": "Fini les calculs à la main ! Visualisez instantanément qui a payé, jusqu'à quand, et combien vous devez encore recevoir.",
+          "BENEFITS": {
+            "MULTI_MONTH": "Suivi automatique des paiements multi-mois",
+            "AUTO_CALCULATION": "Calcul automatique des mois couverts",
+            "AUTO_ALERTS": "Alertes automatiques pour les impayés",
+            "SECURE_HISTORY": "Historique sécurisé et accessible partout"
+          }
+        },
+        "FEATURE_2": {
+          "BADGE": "Fonctionnalité #2",
+          "TITLE_PART1": "Documents professionnels",
+          "TITLE_PART2": "automatiques",
+          "DESCRIPTION": "Générez instantanément tous vos documents : contrats, factures, reçus. Plus jamais de paperasse manuelle !",
+          "BENEFITS": {
+            "CUSTOM_CONTRACTS": "Contrats de location personnalisables",
+            "AUTO_INVOICES": "Factures et reçus automatiques",
+            "EMAIL_SENDING": "Envoi par email en un clic",
+            "DIGITAL_ARCHIVE": "Archivage numérique sécurisé"
+          }
+        },
+        "FEATURE_3": {
+          "BADGE": "Fonctionnalité #3",
+          "TITLE_PART1": "Contrôle total",
+          "TITLE_PART2": "même à distance",
+          "DESCRIPTION": "Que vous soyez à Dakar, Paris ou New York, gérez vos biens comme si vous étiez sur place. Accès mobile 24/7.",
+          "BENEFITS": {
+            "MOBILE_APP": "Application mobile responsive",
+            "REAL_TIME_SYNC": "Synchronisation en temps réel",
+            "AUTO_NOTIFICATIONS": "Notifications automatiques",
+            "SECURE_ACCESS": "Accès sécurisé depuis n'importe où"
+          },
+          "PLATFORMS": {
+            "MOBILE": {
+              "TITLE": "Mobile",
+              "DESCRIPTION": "iOS & Android"
+            },
+            "WEB": {
+              "TITLE": "Web",
+              "DESCRIPTION": "Tous navigateurs"
+            },
+            "CLOUD": {
+              "TITLE": "Cloud",
+              "DESCRIPTION": "Sauvegarde auto"
+            },
+            "SECURE": {
+              "TITLE": "Sécurisé",
+              "DESCRIPTION": "Chiffrement SSL"
+            }
+          }
+        }
       }
     },
-    "FEATURED_PROPERTIES": {
-      "TITLE": "Propriétés en vedette ?",
-      "SUBTITLE": "Découvrez nos meilleures offres actuelles"
-    },
-    "CONTACT": {
-      "TITLE": "Contact",
-      "SUBTITLE": "Contactez Ndewa360 pour profiter de nos services",
-      "FORM_TITLE": "Nous contacter",
-      "FORM_SUBTITLE": "Contactez Ndewa360 pour profiter de nos services",
-      "ADDRESS_LABEL": "Adresse",
-      "ADDRESS_VALUE": "Bangangté Cameroun",
-      "HOURS_LABEL": "Ouvert",
-      "HOURS_VALUE": "24h/24 7j/7",
-      "PHONE_LABEL": "contact",
-      "PHONE_VALUE": "+237 698178925",
-      "EMAIL_LABEL": "Mail",
-      "EMAIL_VALUE": "contact@ndewa-360.com",
-      "FORM": {
-        "NAME_LABEL": "Nom",
-        "NAME_PLACEHOLDER": "Votre nom",
-        "NAME_REQUIRED": "Ce champ est obligatoire",
-        "EMAIL_LABEL": "Adresse email",
-        "EMAIL_PLACEHOLDER": "Adresse email",
-        "EMAIL_REQUIRED": "Email obligatoire",
-        "PHONE_LABEL": "Téléphone",
-        "PHONE_PLACEHOLDER": "Numéro de téléphone",
-        "PHONE_REQUIRED": "Téléphone obligatoire",
-        "SUBJECT_LABEL": "Sujet",
-        "SUBJECT_PLACEHOLDER": "Sujet",
-        "SUBJECT_REQUIRED": "Sujet obligatoire",
-        "MESSAGE_LABEL": "Message",
-        "SEND_BUTTON": "Envoyer"
+    "TESTIMONIALS": {
+      "TITLE": "Ils ont repris le contrôle de leurs loyers",
+      "SUBTITLE": "Découvrez comment Ndewa360 a transformé la gestion de centaines de propriétaires",
+      "TESTIMONIAL_1": {
+        "NAME": "Madame Tchouamo",
+        "LOCATION": "Propriétaire • Banganté",
+        "QUOTE": "Grâce à Ndewa360, je ne rédige plus les contrats de locations. Ils sont directement générés en ligne et il me suffit de les envoyer au locataire. En plus de cela, je n'ai plus de soucis à me faire avec un fichier Excel pour reporter les paiements de loyer et les calculer. Tout est désormais très simple et facile.",
+        "HIGHLIGHT": "Contrats automatisés"
+      },
+      "TESTIMONIAL_2": {
+        "NAME": "Sévérin Nguendap",
+        "LOCATION": "Propriétaire • Dakar, Douala",
+        "QUOTE": "N'étant pas sur place pour gérer mon bien je l'ai confié à une personne qui ne m'assurait pas de suivi complet et j'étais perdu le suivi car je ne savais pas exactement qui doit combien et à quelle date. Grâce à Ndewa360, je dors tranquillement désormais car je connais exactement l'état financier de mon bien et de mes locataires.",
+        "HIGHLIGHT": "Tranquillité d'esprit"
+      },
+      "STATS": {
+        "TITLE": "Résultats moyens de nos utilisateurs",
+        "TIME_SAVED": {
+          "VALUE": "15h",
+          "LABEL": "économisées/mois"
+        },
+        "ON_TIME_PAYMENTS": {
+          "VALUE": "98%",
+          "LABEL": "paiements à temps"
+        },
+        "TENANT_CONFLICTS": {
+          "VALUE": "0",
+          "LABEL": "conflit locataire"
+        }
       }
     },
     "PRICING": {
-      "TITLE": "Tarifs adaptés à vos besoins",
-      "SUBTITLE": "Choisissez le plan qui correspond à votre activité",
-      "BEGINNER": {
-        "TITLE": "Débutant",
-        "PRICE": "Gratuit",
+      "TITLE": "Tarifs transparents et équitables",
+      "SUBTITLE": "Toutes les fonctionnalités pour tous. Vous ne payez que si vous générez des revenus.",
+      "FREEMIUM": {
+        "TITLE": "Freemium",
+        "PRICE": "0 FCFA",
+        "DESCRIPTION": "Pour toujours • Aucune carte bancaire",
+        "SUBTITLE": "Parfait pour commencer :",
         "FEATURES": {
-          "FEATURE_1": "Jusqu'à 1 propriété et 10 unités locatives",
-          "FEATURE_2": "Gestion financière",
-          "FEATURE_3": "Génération de contrats de bail",
-          "FEATURE_4": "Notifications de paiement par email",
-          "FEATURE_5": "Envoi de factures par email",
-          "FEATURE_6": "Tableau de bord financier en temps réel",
-          "FEATURE_7": "Gestion automatisée des paiements",
-          "FEATURE_8": "Rapports mensuels détaillés",
-          "FEATURE_9": "Suivi des documents importants",
-          "FEATURE_10": "Photos et descriptions détaillées",
-          "FEATURE_11": "Suivi de disponibilité en temps réel"
+          "PROPERTIES": "1 propriété",
+          "UNITS": "Jusqu'à 10 unités locatives",
+          "ALL_FEATURES": "100% des fonctionnalités",
+          "EMAIL_SUPPORT": "Support par email"
         },
-        "BUTTON": "Commencer"
+        "BUTTON": "Commencer gratuitement"
       },
-      "PRO": {
-        "TITLE": "Pro",
-        "POPULAR": "Populaire",
+      "PREMIUM": {
+        "TITLE": "Premium",
         "PRICE": "2%",
-        "PRICE_UNIT": "/unité/mois",
+        "DESCRIPTION": "du loyer par unité occupée/mois",
+        "SUBTITLE_1": "Unité vide = 0 FCFA • Modèle équitable",
+        "SUBTITLE_2": "Pour les professionnels :",
+        "BADGE": "RECOMMANDÉ",
         "FEATURES": {
-          "FEATURE_1": "Propriétés illimitées",
-          "FEATURE_2": "Unités locatives illimitées"
+          "UNLIMITED_PROPERTIES": "Propriétés illimitées",
+          "UNLIMITED_UNITS": "Unités locatives illimitées",
+          "ALL_FEATURES": "100% des fonctionnalités",
+          "PRIORITY_SUPPORT": "Support prioritaire 24/7",
+          "PERSONAL_TRAINING": "Formation personnalisée"
         },
-        "BUTTON": "Commencer"
+        "BUTTON": "Essayer 30 jours gratuits"
+      },
+      "GUARANTEE": {
+        "TITLE": "Garantie satisfait ou remboursé",
+        "DESCRIPTION": "30 jours pour tester sans risque. Pas convaincu ? Remboursement intégral."
       }
     },
-    "SLOGAN": {
-      "TEXT": "La location réinventée en 360°"
-    },
-    "TEAM": {
-      "TITLE": "Notre Équipe",
-      "SUBTITLE": "Rencontrez les experts passionnés qui donnent vie à Ndewa360",
-      "SKILLS": "Compétences",
-      "CONTACT": "Contacter",
-      "VALUES": {
-        "TITLE": "Nos Valeurs",
-        "SUBTITLE": "Les principes qui guident notre travail quotidien",
-        "INNOVATION": {
-          "TITLE": "Innovation",
-          "DESCRIPTION": "Nous repoussons constamment les limites technologiques pour offrir des solutions avant-gardistes."
+    "FAQ": {
+      "TITLE": "Questions fréquentes",
+      "SUBTITLE": "Tout ce que vous devez savoir sur Ndewa360",
+      "QUESTIONS": {
+        "ACCESS": {
+          "QUESTION": "Comment puis-je accéder à Ndewa360 ?",
+          "ANSWER": "Ndewa360 est accessible depuis n'importe quel appareil : smartphone, tablette ou ordinateur. Aucune installation requise, tout fonctionne dans votre navigateur web. Vos données sont synchronisées en temps réel sur tous vos appareils."
         },
-        "EXCELLENCE": {
-          "TITLE": "Excellence",
-          "DESCRIPTION": "Nous nous engageons à livrer des produits et services de la plus haute qualité."
+        "PAYMENT": {
+          "QUESTION": "Comment fonctionne le paiement \"2% du loyer\" ?",
+          "ANSWER": "Vous ne payez que pour les unités qui génèrent des revenus. Si vous avez 10 appartements mais seulement 7 sont occupés, vous payez uniquement pour les 7 occupés. Appartement vide = 0 FCFA. C'est un modèle équitable qui grandit avec votre succès."
         },
-        "COLLABORATION": {
-          "TITLE": "Collaboration",
-          "DESCRIPTION": "Nous croyons en la force du travail d'équipe et de la communication ouverte."
+        "SECURITY": {
+          "QUESTION": "Mes données sont-elles sécurisées ?",
+          "ANSWER": "Absolument. Vos données sont chiffrées avec les mêmes standards que les banques (SSL 256-bit), sauvegardées quotidiennement et hébergées sur des serveurs sécurisés. Nous respectons le RGPD et ne partageons jamais vos informations."
         },
-        "INTEGRITY": {
-          "TITLE": "Intégrité",
-          "DESCRIPTION": "Nous agissons avec transparence et honnêteté dans toutes nos interactions."
+        "IMPORT": {
+          "QUESTION": "Puis-je importer mes données existantes ?",
+          "ANSWER": "Oui ! Notre équipe vous aide gratuitement à migrer toutes vos données depuis Excel, Word, cahiers ou tout autre système. La migration se fait généralement en moins de 24h et nous nous occupons de tout."
+        },
+        "SUPPORT": {
+          "QUESTION": "Quel support proposez-vous ?",
+          "ANSWER": "Support par email pour tous les utilisateurs, support prioritaire 24/7 pour les Premium, plus formation personnalisée et accompagnement à la prise en main. Notre équipe parle français et connaît le contexte africain."
+        },
+        "COUNTRIES": {
+          "QUESTION": "Ndewa360 fonctionne-t-il dans tous les pays d'Afrique ?",
+          "ANSWER": "Oui, Ndewa360 fonctionne dans tous les pays. Les devises, formats de dates et réglementations locales sont pris en compte. Nous avons des utilisateurs au Sénégal, Côte d'Ivoire, Mali, Burkina Faso, Cameroun et bien d'autres pays."
         }
       }
+    },
+    "CTA": {
+      "TITLE": "Prêt à reprendre le contrôle de vos loyers ?",
+      "SUBTITLE": "Rejoignez les 20+ propriétaires qui ont déjà transformé leur gestion immobilière",
+      "BUTTONS": {
+        "START_FREE": "Commencer gratuitement",
+        "TALK_EXPERT": "Parler à un expert"
+      },
+      "GUARANTEES": {
+        "FREE_FOREVER": "Gratuit pour toujours (plan Freemium)",
+        "NO_CARD": "Aucune carte bancaire requise",
+        "SUPPORT_INCLUDED": "Support inclus"
+      },
+      "TRUST_SIGNALS": {
+        "GUARANTEE": "Garantie 30 jours",
+        "RATING": "4.9/5 étoiles",
+        "USERS": "20+ utilisateurs satisfaits"
+      }
+    },
+    "VIDEO_MODAL": {
+      "TITLE": "Présentation Ndewa360",
+      "DURATION": "Durée : 2 minutes",
+      "CLOSE_ESC": "Appuyez sur Échap pour fermer",
+      "CLOSE": "Fermer",
+      "MINIMIZE": "Réduire",
+      "BROWSER_ERROR": "Votre navigateur ne supporte pas la lecture vidéo.",
+      "CLOSE_VIDEO": "Fermer la vidéo"
     }
   },
   "SEARCH_MODULE": {
@@ -4345,6 +4400,96 @@
         "DESCRIPTION": "Description",
         "PAGE": "page",
         "DETAILS": "Détails"
+      }
+    }
+  },
+  "CONTACT": {
+    "HERO": {
+      "TITLE_PART1": "Contactez",
+      "TITLE_PART2": "notre équipe",
+      "SUBTITLE": "Une question ? Un projet ? Notre équipe d'experts est là pour vous accompagner dans votre transformation digitale immobilière."
+    },
+    "INFO": {
+      "PHONE": {
+        "TITLE": "Téléphone",
+        "DESCRIPTION": "Appelez-nous directement"
+      },
+      "EMAIL": {
+        "TITLE": "Email",
+        "DESCRIPTION": "Écrivez-nous"
+      },
+      "LOCATION": {
+        "TITLE": "Localisation",
+        "DESCRIPTION": "Notre siège",
+        "ADDRESS": "Douala, Cameroun"
+      }
+    },
+    "FORM": {
+      "TITLE": "Envoyez-nous un message",
+      "SUBTITLE": "Remplissez le formulaire ci-dessous et nous vous répondrons dans les plus brefs délais",
+      "FIELDS": {
+        "NAME": {
+          "LABEL": "Nom complet *",
+          "PLACEHOLDER": "Votre nom complet"
+        },
+        "EMAIL": {
+          "LABEL": "Email *",
+          "PLACEHOLDER": "votre@email.com"
+        },
+        "PHONE": {
+          "LABEL": "Téléphone",
+          "PLACEHOLDER": "+237 6XX XXX XXX"
+        },
+        "COMPANY": {
+          "LABEL": "Entreprise",
+          "PLACEHOLDER": "Nom de votre entreprise"
+        },
+        "SUBJECT": {
+          "LABEL": "Sujet *",
+          "PLACEHOLDER": "Sélectionnez un sujet",
+          "OPTIONS": {
+            "DEMO": "Demande de démonstration",
+            "PRICING": "Questions sur les tarifs",
+            "SUPPORT": "Support technique",
+            "PARTNERSHIP": "Partenariat",
+            "OTHER": "Autre"
+          }
+        },
+        "MESSAGE": {
+          "LABEL": "Message *",
+          "PLACEHOLDER": "Décrivez votre projet ou votre question en détail..."
+        }
+      },
+      "SUBMIT_BUTTON": "Envoyer le message"
+    },
+    "FAQ": {
+      "TITLE": "Questions fréquentes",
+      "SUBTITLE": "Trouvez rapidement les réponses à vos questions",
+      "QUESTIONS": {
+        "RESPONSE_TIME": {
+          "QUESTION": "Quel est le délai de réponse ?",
+          "ANSWER": "Nous répondons généralement dans les 2 heures pendant les heures ouvrables (8h-18h, GMT+1)."
+        },
+        "DEMO": {
+          "QUESTION": "Puis-je planifier une démonstration ?",
+          "ANSWER": "Oui ! Sélectionnez \"Demande de démonstration\" dans le formulaire et nous planifierons un rendez-vous."
+        },
+        "SUPPORT": {
+          "QUESTION": "Le support est-il gratuit ?",
+          "ANSWER": "Le support par email est inclus dans tous nos plans, même le plan gratuit."
+        },
+        "INTERNATIONAL": {
+          "QUESTION": "Travaillez-vous à l'international ?",
+          "ANSWER": "Oui, nous accompagnons des clients dans toute l'Afrique et la diaspora africaine."
+        }
+      }
+    },
+    "CTA": {
+      "TITLE": "Prêt à transformer votre gestion immobilière ?",
+      "SUBTITLE": "Rejoignez les 20+ propriétaires qui nous font déjà confiance",
+      "BUTTONS": {
+        "START_FREE": "Commencer gratuitement",
+        "CALL_NOW": "Appeler maintenant"
       }
     }
   }

@@ -450,3 +450,15 @@ li.active {
     right: -100%;
   }
 }
+
+@media not all and (min-width: 960px) {
+  .max-md\:m-10 {
+    margin: 0 !important;
+  }
+}
+
+@media not all and (min-width: 960px) {
+  .max-md\:p-5 {
+    padding: 0 !important;
+  }
+}

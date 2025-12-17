@@ -1,5 +1,7 @@
 import { Component, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
+import { TranslationService } from 'src/app/shared/services/localization/translation.service';
 
 @Component({
   selector: 'app-contact',
@@ -11,7 +13,11 @@ export class ContactComponent {
   
   contactForm: FormGroup;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private translationService: TranslationService,
+    private languageUrlService: LanguageUrlService
+  ) {
     this.contactForm = this.fb.group({
       name: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
@@ -29,5 +35,16 @@ export class ContactComponent {
     } else {
       console.log('Formulaire invalide');
     }
+  }
+
+  /**
+   * Obtient la traduction d'une clé
+   */
+  t(key: string, params?: any): string {
+    return this.translationService.instant(key, params);
+  }
+
+  getCurrentLanguage(): string {
+    return this.languageUrlService.getCurrentLanguage();
   }
 }

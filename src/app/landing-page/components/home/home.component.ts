@@ -1,4 +1,6 @@
 import { Component, ViewEncapsulation, ElementRef, ViewChild, OnInit, OnDestroy, HostListener } from '@angular/core';
+import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
+import { TranslationService } from 'src/app/shared/services/localization/translation.service';
 
 @Component({
   selector: 'home',
@@ -12,7 +14,10 @@ export class HomeComponent implements OnInit, OnDestroy {
   private observer!: IntersectionObserver;
   private listObserver!: IntersectionObserver;
 
-  constructor() {}
+  constructor(
+    private translationService: TranslationService,
+    private languageUrlService: LanguageUrlService
+) {}
 
   ngOnInit() {
     this.initScrollAnimations();
@@ -96,5 +101,16 @@ export class HomeComponent implements OnInit, OnDestroy {
         }
       });
     }, 100);
+  }
+
+  /**
+   * Obtient la traduction d'une clé
+   */
+  t(key: string, params?: any): string {
+    return this.translationService.instant(key, params);
+  }
+
+  getCurrentLanguage(): string {
+    return this.languageUrlService.getCurrentLanguage();
   }
 }

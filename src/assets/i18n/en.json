@@ -1714,7 +1714,7 @@
     "SUPPORT": "Support",
     "PRICING": "Prices",
     "SIGN_IN": "Log in",
-    "SIGN_UP": "Register",
+    "SIGN_UP": "Start for free",
     "OPEN_MENU": "Open menu",
     "CLOSE_MENU": "Close menu",
     "LOGGED_IN_AS": "Logged in as",
@@ -1811,173 +1811,228 @@
     }
   },
   "LANDING": {
-    "HERO": {
-      "TITLE_PART1": "Find your",
-      "TITLE_PART2": "Home",
-      "SUBTITLE": "Manage your real estate stress-free with the most complete solution on the market"
-    },
-    "TABS": {
-      "RENT": "To rent out",
-      "MANAGE": "Manage"
-    },
-    "SEARCH_FORM": { 
-      "LOCATION_LABEL": "Location",
-      "LOCATION_PLACEHOLDER": "Where do you want to live",
-      "PROPERTY_TYPE_LABEL": "Property type",
-      "PROPERTY_TYPE_PLACEHOLDER": "Type of accommodation",
-      "BUDGET_LABEL": "Budget",
-      "BUDGET_PLACEHOLDER": "Max budget",
-      "SEARCH_BUTTON": "To research",
-      "REQUIRED_FIELD": "This field is required"
-    },
-    "MANAGE_SECTION": {
-      "TITLE": "Start managing your real estate",
-      "SUBTITLE": "Add your first property to start taking advantage of our management tools. Track your income, manage your tenants and issue invoices in just a few clicks.",
-      "ADD_PROPERTY_BUTTON": "Add my first property"
-    },
-    "COMPLETE_SOLUTION": {
-      "TITLE": "A complete solution",
-      "SUBTITLE": "Discover all the features that make Ndewa360 the preferred platform for owners",
-      "PROPERTY_MANAGEMENT": {
-        "TITLE": "Property management",
-        "FEATURE_1": "Easily add and manage your properties",
-        "FEATURE_2": "Real-time availability monitoring",
-        "FEATURE_3": "Detailed photos and descriptions"
+   "HERO": {
+      "TITLE_PART1": "Switch to",
+      "TITLE_PART2": "smart property management",
+      "SUBTITLE_BOLD": "No more notebooks and disorder.",
+      "SUBTITLE_TEXT": "Ndewa360 digitalizes the management of your rooms and apartments with a simple, automated and transparent platform.",
+      "BUTTONS": {
+        "START_FREE": "Start for free",
+        "WATCH_DEMO": "Watch demo"
       },
-      "FINANCIAL_TRACKING": {
-        "TITLE": "Financial monitoring",
-        "FEATURE_1": "Real-time financial dashboard",
-        "FEATURE_2": "Automated payment management",
-        "FEATURE_3": "Detailed monthly reports"
+      "RATING": "4.9/5",
+      "LIVE_DEMO": "Live demo"
+    },
+    "PROBLEMS": {
+      "TITLE": "Do you recognize yourself in these situations?",
+      "SUBTITLE": "Manual management makes you lose time, money and peace of mind",
+      "CARDS": {
+        "WHO_PAID": {
+          "TITLE": "Who paid?",
+          "DESCRIPTION": "You never know exactly who is up to date with their payments"
+        },
+        "UNTIL_WHEN": {
+          "TITLE": "Until when?",
+          "DESCRIPTION": "Impossible to know until what date a tenant is covered"
+        },
+        "NO_PROOF": {
+          "TITLE": "No proof",
+          "DESCRIPTION": "No reliable documents to justify payments"
+        },
+        "MENTAL_MANAGEMENT": {
+          "TITLE": "Mental management",
+          "DESCRIPTION": "Everything relies on your memory and handwritten notebooks"
+        }
       },
-      "ADMINISTRATIVE_MANAGEMENT": {
-        "TITLE": "Administrative management",
-        "FEATURE_1": "Automatic generation of contracts",
-        "FEATURE_2": "Track important documents",
-        "FEATURE_3": "Automatic alerts and notifications"
+      "RESULT": {
+        "TITLE": "Result: Permanent stress and invisible losses",
+        "DESCRIPTION": "Frequent conflicts • Lack of control • Poorly tracked money • Constant frustration"
       }
     },
-    "STATS": {
-      "SATISFIED_USERS": "Satisfied users",
-      "MANAGED_PROPERTIES": "Managed properties",
-      "COVERED_CITIES": "Cities covered",
-      "AVERAGE_RATING": "Average rating"
-    },
-    "HOW_IT_WORKS": {
-      "TITLE": "How does it work?",
-      "SUBTITLE": "Start managing your properties in a few simple steps",
-      "STEP_1": {
-        "TITLE": "1. Add your properties",
-        "DESCRIPTION": "Create your real estate portfolio"
-      },
-      "STEP_2": {
-        "TITLE": "2. Configure",
-        "DESCRIPTION": "Customize your settings"
-      },
-      "STEP_3": {
-        "TITLE": "3. Manage",
-        "DESCRIPTION": "Track your rentals"
-      },
-      "STEP_4": {
-        "TITLE": "4. Analyze",
-        "DESCRIPTION": "Check your statistics"
+    "SOLUTION": {
+      "TITLE": "Ndewa360: Your real estate management assistant",
+      "SUBTITLE": "A simple platform that centralizes everything: properties, tenants, payments, contracts and statistics",
+      "FEATURES": {
+        "FEATURE_1": {
+          "BADGE": "Feature #1",
+          "TITLE_PART1": "Clear vision",
+          "TITLE_PART2": "in real time",
+          "DESCRIPTION": "No more manual calculations! Instantly visualize who has paid, until when, and how much you still need to receive.",
+          "BENEFITS": {
+            "MULTI_MONTH": "Automatic multi-month payment tracking",
+            "AUTO_CALCULATION": "Automatic calculation of covered months",
+            "AUTO_ALERTS": "Automatic alerts for unpaid rent",
+            "SECURE_HISTORY": "Secure history accessible everywhere"
+          }
+        },
+        "FEATURE_2": {
+          "BADGE": "Feature #2",
+          "TITLE_PART1": "Professional documents",
+          "TITLE_PART2": "automatic",
+          "DESCRIPTION": "Instantly generate all your documents: contracts, invoices, receipts. Never again manual paperwork!",
+          "BENEFITS": {
+            "CUSTOM_CONTRACTS": "Customizable rental contracts",
+            "AUTO_INVOICES": "Automatic invoices and receipts",
+            "EMAIL_SENDING": "One-click email sending",
+            "DIGITAL_ARCHIVE": "Secure digital archiving"
+          }
+        },
+        "FEATURE_3": {
+          "BADGE": "Feature #3",
+          "TITLE_PART1": "Total control",
+          "TITLE_PART2": "even remotely",
+          "DESCRIPTION": "Whether you're in Dakar, Paris or New York, manage your properties as if you were on site. 24/7 mobile access.",
+          "BENEFITS": {
+            "MOBILE_APP": "Responsive mobile application",
+            "REAL_TIME_SYNC": "Real-time synchronization",
+            "AUTO_NOTIFICATIONS": "Automatic notifications",
+            "SECURE_ACCESS": "Secure access from anywhere"
+          },
+          "PLATFORMS": {
+            "MOBILE": {
+              "TITLE": "Mobile",
+              "DESCRIPTION": "iOS & Android"
+            },
+            "WEB": {
+              "TITLE": "Web",
+              "DESCRIPTION": "All browsers"
+            },
+            "CLOUD": {
+              "TITLE": "Cloud",
+              "DESCRIPTION": "Auto backup"
+            },
+            "SECURE": {
+              "TITLE": "Secure",
+              "DESCRIPTION": "SSL encryption"
+            }
+          }
+        }
       }
     },
-    "FEATURED_PROPERTIES": {
-      "TITLE": "Featured properties?",
-      "SUBTITLE": "Discover our best current offers"
-    },
-    "CONTACT": {
-      "TITLE": "Contact",
-      "SUBTITLE": "Contact Ndewa360 to benefit from our services",
-      "FORM_TITLE": "Contact us",
-      "FORM_SUBTITLE": "Contact Ndewa360 to benefit from our services",
-      "ADDRESS_LABEL": "Address",
-      "ADDRESS_VALUE": "Bangangté Cameroon",
-      "HOURS_LABEL": "Open",
-      "HOURS_VALUE": "24/7",
-      "PHONE_LABEL": "contact",
-      "PHONE_VALUE": "+237 698178925",
-      "EMAIL_LABEL": "Email",
-      "EMAIL_VALUE": "contact@ndewa-360.com",
-      "FORM": {
-        "NAME_LABEL": "Name",
-        "NAME_PLACEHOLDER": "Your name",
-        "NAME_REQUIRED": "This field is required",
-        "EMAIL_LABEL": "E-mail address",
-        "EMAIL_PLACEHOLDER": "E-mail address",
-        "EMAIL_REQUIRED": "Email required",
-        "PHONE_LABEL": "Phone",
-        "PHONE_PLACEHOLDER": "Phone number",
-        "PHONE_REQUIRED": "Telephone required",
-        "SUBJECT_LABEL": "Subject",
-        "SUBJECT_PLACEHOLDER": "Subject",
-        "SUBJECT_REQUIRED": "Mandatory subject",
-        "MESSAGE_LABEL": "Message",
-        "SEND_BUTTON": "Send"
+    "TESTIMONIALS": {
+      "TITLE": "They have regained control of their rents",
+      "SUBTITLE": "Discover how Ndewa360 has transformed the management of hundreds of property owners",
+      "TESTIMONIAL_1": {
+        "NAME": "Madame Tchouamo",
+        "LOCATION": "Property Owner • Banganté",
+        "QUOTE": "Thanks to Ndewa360, I no longer write rental contracts. They are directly generated online and I just have to send them to the tenant. In addition to that, I no longer have to worry about an Excel file to report rent payments and calculate them. Everything is now very simple and easy.",
+        "HIGHLIGHT": "Automated contracts"
+      },
+      "TESTIMONIAL_2": {
+        "NAME": "Sévérin Nguendap",
+        "LOCATION": "Property Owner • Dakar, Douala",
+        "QUOTE": "Not being on site to manage my property, I entrusted it to a person who did not provide me with complete follow-up and I was lost in the follow-up because I did not know exactly who owes how much and on what date. Thanks to Ndewa360, I now sleep peacefully because I know exactly the financial state of my property and my tenants.",
+        "HIGHLIGHT": "Peace of mind"
+      },
+      "STATS": {
+        "TITLE": "Average results of our users",
+        "TIME_SAVED": {
+          "VALUE": "15h",
+          "LABEL": "saved/month"
+        },
+        "ON_TIME_PAYMENTS": {
+          "VALUE": "98%",
+          "LABEL": "on-time payments"
+        },
+        "TENANT_CONFLICTS": {
+          "VALUE": "0",
+          "LABEL": "tenant conflict"
+        }
       }
     },
     "PRICING": {
-      "TITLE": "Prices adapted to your needs",
-      "SUBTITLE": "Choose the plan that fits your business",
-      "BEGINNER": {
-        "TITLE": "Beginner",
-        "PRICE": "Free",
+      "TITLE": "Transparent and fair pricing",
+      "SUBTITLE": "All features for everyone. You only pay if you generate revenue.",
+      "FREEMIUM": {
+        "TITLE": "Freemium",
+        "PRICE": "0 FCFA",
+        "DESCRIPTION": "Forever • No credit card",
+        "SUBTITLE": "Perfect to get started:",
         "FEATURES": {
-          "FEATURE_1": "Up to 1 property and 10 rental units",
-          "FEATURE_2": "Financial management",
-          "FEATURE_3": "Generation of lease contracts",
-          "FEATURE_4": "Email payment notifications",
-          "FEATURE_5": "Sending invoices by email",
-          "FEATURE_6": "Real-time financial dashboard",
-          "FEATURE_7": "Automated payment management",
-          "FEATURE_8": "Detailed monthly reports",
-          "FEATURE_9": "Track important documents",
-          "FEATURE_10": "Detailed photos and descriptions",
-          "FEATURE_11": "Real-time availability monitoring"
+          "PROPERTIES": "1 property",
+          "UNITS": "Up to 10 rental units",
+          "ALL_FEATURES": "100% of features",
+          "EMAIL_SUPPORT": "Email support"
         },
-        "BUTTON": "To start"
+        "BUTTON": "Start for free"
       },
-      "PRO": {
-        "TITLE": "Pro",
-        "POPULAR": "Popular",
+      "PREMIUM": {
+        "TITLE": "Premium",
         "PRICE": "2%",
-        "PRICE_UNIT": "/unit/month",
+        "DESCRIPTION": "of rent per occupied unit/month",
+        "SUBTITLE_1": "Empty unit = 0 FCFA • Fair model",
+        "SUBTITLE_2": "For professionals:",
+        "BADGE": "RECOMMENDED",
         "FEATURES": {
-          "FEATURE_1": "Unlimited properties",
-          "FEATURE_2": "Unlimited rental units"
+          "UNLIMITED_PROPERTIES": "Unlimited properties",
+          "UNLIMITED_UNITS": "Unlimited rental units",
+          "ALL_FEATURES": "100% of features",
+          "PRIORITY_SUPPORT": "24/7 priority support",
+          "PERSONAL_TRAINING": "Personalized training"
         },
-        "BUTTON": "To start"
+        "BUTTON": "Try 30 days free"
+      },
+      "GUARANTEE": {
+        "TITLE": "Satisfaction or money back guarantee",
+        "DESCRIPTION": "30 days to test risk-free. Not convinced? Full refund."
       }
     },
-    "SLOGAN": {
-      "TEXT": "Rental reinvented in 360°"
-    },
-    "TEAM": {
-      "TITLE": "Our Team",
-      "SUBTITLE": "Meet the passionate experts who bring Ndewa360 to life",
-      "SKILLS": "Skills",
-      "CONTACT": "Contact",
-      "VALUES": {
-        "TITLE": "Our Values",
-        "SUBTITLE": "The principles that guide our daily work",
-        "INNOVATION": {
-          "TITLE": "Innovation",
-          "DESCRIPTION": "We constantly push technological boundaries to deliver cutting-edge solutions."
+    "FAQ": {
+      "TITLE": "Frequently Asked Questions",
+      "SUBTITLE": "Everything you need to know about Ndewa360",
+      "QUESTIONS": {
+        "ACCESS": {
+          "QUESTION": "How can I access Ndewa360?",
+          "ANSWER": "Ndewa360 is accessible from any device: smartphone, tablet or computer. No installation required, everything works in your web browser. Your data is synchronized in real time on all your devices."
         },
-        "EXCELLENCE": {
-          "TITLE": "Excellence",
-          "DESCRIPTION": "We are committed to delivering products and services of the highest quality."
+        "PAYMENT": {
+          "QUESTION": "How does the \"2% of rent\" payment work?",
+          "ANSWER": "You only pay for units that generate revenue. If you have 10 apartments but only 7 are occupied, you only pay for the 7 occupied ones. Empty apartment = 0 FCFA. It's a fair model that grows with your success."
         },
-        "COLLABORATION": {
-          "TITLE": "Collaboration",
-          "DESCRIPTION": "We believe in the power of teamwork and open communication."
+        "SECURITY": {
+          "QUESTION": "Is my data secure?",
+          "ANSWER": "Absolutely. Your data is encrypted with the same standards as banks (SSL 256-bit), backed up daily and hosted on secure servers. We comply with GDPR and never share your information."
         },
-        "INTEGRITY": {
-          "TITLE": "Integrity",
-          "DESCRIPTION": "We act with transparency and honesty in all our interactions."
+        "IMPORT": {
+          "QUESTION": "Can I import my existing data?",
+          "ANSWER": "Yes! Our team helps you for free to migrate all your data from Excel, Word, notebooks or any other system. Migration is usually done in less than 24 hours and we take care of everything."
+        },
+        "SUPPORT": {
+          "QUESTION": "What support do you offer?",
+          "ANSWER": "Email support for all users, 24/7 priority support for Premium users, plus personalized training and onboarding assistance. Our team speaks French and knows the African context."
+        },
+        "COUNTRIES": {
+          "QUESTION": "Does Ndewa360 work in all African countries?",
+          "ANSWER": "Yes, Ndewa360 works in all countries. Currencies, date formats and local regulations are taken into account. We have users in Senegal, Ivory Coast, Mali, Burkina Faso, Cameroon and many other countries."
         }
       }
+    },
+    "CTA": {
+      "TITLE": "Ready to regain control of your rents?",
+      "SUBTITLE": "Join the 20+ property owners who have already transformed their real estate management",
+      "BUTTONS": {
+        "START_FREE": "Start for free",
+        "TALK_EXPERT": "Talk to an expert"
+      },
+      "GUARANTEES": {
+        "FREE_FOREVER": "Free forever (Freemium plan)",
+        "NO_CARD": "No credit card required",
+        "SUPPORT_INCLUDED": "Support included"
+      },
+      "TRUST_SIGNALS": {
+        "GUARANTEE": "30-day guarantee",
+        "RATING": "4.9/5 stars",
+        "USERS": "20+ satisfied users"
+      }
+    },
+    "VIDEO_MODAL": {
+      "TITLE": "Ndewa360 Presentation",
+      "DURATION": "Duration: 2 minutes",
+      "CLOSE_ESC": "Press Esc to close",
+      "CLOSE": "Close",
+      "MINIMIZE": "Minimize",
+      "BROWSER_ERROR": "Your browser does not support video playback.",
+      "CLOSE_VIDEO": "Close video"
     }
   },
   "SEARCH_MODULE": {
@@ -4346,6 +4401,96 @@
         "DESCRIPTION": "Description",
         "PAGE": "page",
         "DETAILS": "Details"
+      }
+    }
+  },
+  "CONTACT": {
+    "HERO": {
+      "TITLE_PART1": "Contact",
+      "TITLE_PART2": "our team",
+      "SUBTITLE": "A question? A project? Our team of experts is here to support you in your real estate digital transformation."
+    },
+    "INFO": {
+      "PHONE": {
+        "TITLE": "Phone",
+        "DESCRIPTION": "Call us directly"
+      },
+      "EMAIL": {
+        "TITLE": "Email",
+        "DESCRIPTION": "Write to us"
+      },
+      "LOCATION": {
+        "TITLE": "Location",
+        "DESCRIPTION": "Our headquarters",
+        "ADDRESS": "Douala, Cameroon"
+      }
+    },
+    "FORM": {
+      "TITLE": "Send us a message",
+      "SUBTITLE": "Fill out the form below and we will get back to you as soon as possible",
+      "FIELDS": {
+        "NAME": {
+          "LABEL": "Full name *",
+          "PLACEHOLDER": "Your full name"
+        },
+        "EMAIL": {
+          "LABEL": "Email *",
+          "PLACEHOLDER": "your@email.com"
+        },
+        "PHONE": {
+          "LABEL": "Phone",
+          "PLACEHOLDER": "+237 6XX XXX XXX"
+        },
+        "COMPANY": {
+          "LABEL": "Company",
+          "PLACEHOLDER": "Your company name"
+        },
+        "SUBJECT": {
+          "LABEL": "Subject *",
+          "PLACEHOLDER": "Select a subject",
+          "OPTIONS": {
+            "DEMO": "Demo request",
+            "PRICING": "Pricing questions",
+            "SUPPORT": "Technical support",
+            "PARTNERSHIP": "Partnership",
+            "OTHER": "Other"
+          }
+        },
+        "MESSAGE": {
+          "LABEL": "Message *",
+          "PLACEHOLDER": "Describe your project or question in detail..."
+        }
+      },
+      "SUBMIT_BUTTON": "Send message"
+    },
+    "FAQ": {
+      "TITLE": "Frequently Asked Questions",
+      "SUBTITLE": "Quickly find answers to your questions",
+      "QUESTIONS": {
+        "RESPONSE_TIME": {
+          "QUESTION": "What is the response time?",
+          "ANSWER": "We typically respond within 2 hours during business hours (8am-6pm, GMT+1)."
+        },
+        "DEMO": {
+          "QUESTION": "Can I schedule a demo?",
+          "ANSWER": "Yes! Select \"Demo request\" in the form and we will schedule an appointment."
+        },
+        "SUPPORT": {
+          "QUESTION": "Is support free?",
+          "ANSWER": "Email support is included in all our plans, even the free plan."
+        },
+        "INTERNATIONAL": {
+          "QUESTION": "Do you work internationally?",
+          "ANSWER": "Yes, we support clients throughout Africa and the African diaspora."
+        }
+      }
+    },
+    "CTA": {
+      "TITLE": "Ready to transform your real estate management?",
+      "SUBTITLE": "Join the 20+ property owners who already trust us",
+      "BUTTONS": {
+        "START_FREE": "Start for free",
+        "CALL_NOW": "Call now"
       }
     }
   }
