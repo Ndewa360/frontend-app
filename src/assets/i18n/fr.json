@@ -1209,7 +1209,7 @@
     "CONTRACT_TEMPLATE_REINDEX_ERROR": "Erreur lors de la réindexation des modèles",
     "CONTRACT_TEMPLATE_CONTENT_UPDATED_SUCCESS": "Contenu du modèle mis à jour avec succès",
     "CONTRACT_TEMPLATE_CONTENT_UPDATE_ERROR": "Erreur lors de la mise à jour du contenu",
-    "PROSPECTION_SUCCESS": "Votre demande a été transférée avec succès ! Vous serez contacté par email dès que possible",
+    "PROSPECTION_SUCCESS": "Votre message a été envoyé avec succès ! Nous vous répondrons dans les plus brefs délais",
     "SUBSCRIPTION_UPGRADE_SUCCESS": "Félicitations ! Vous êtes maintenant sur le plan Premium.",
     "SUBSCRIPTION_UPGRADE_ERROR": "Une erreur s'est produite lors de la mise à niveau.",
     "ACCOUNT_REACTIVATED_SUCCESS": "Votre compte a été réactivé avec succès.",
@@ -4460,7 +4460,8 @@
           "PLACEHOLDER": "Décrivez votre projet ou votre question en détail..."
         }
       },
-      "SUBMIT_BUTTON": "Envoyer le message"
+      "SUBMIT_BUTTON": "Envoyer le message",
+      "SENDING": "Envoi en cours..."
     },
     "FAQ": {
       "TITLE": "Questions fréquentes",

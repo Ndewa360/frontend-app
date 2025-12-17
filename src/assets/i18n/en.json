@@ -4461,7 +4461,8 @@
           "PLACEHOLDER": "Describe your project or question in detail..."
         }
       },
-      "SUBMIT_BUTTON": "Send message"
+      "SUBMIT_BUTTON": "Send message",
+      "SENDING": "Sending in progress..."
     },
     "FAQ": {
       "TITLE": "Frequently Asked Questions",
