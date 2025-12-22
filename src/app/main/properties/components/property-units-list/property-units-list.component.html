@@ -206,7 +206,7 @@
 
   <!-- Vue grille modernisée -->
   <div *ngIf="!loading && filteredRooms.length > 0 && viewMode === 'grid'"
-       class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10">
+       class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-10">
     <div *ngFor="let room of filteredRooms; trackBy: trackByRoomId"
          class="unit-card bg-white rounded-2xl shadow-2xl border-4 border-gray-400 overflow-hidden hover:shadow-3xl hover:border-blue-500 hover:scale-105 transition-all duration-300 group">
 

@@ -3,7 +3,7 @@
 
   <!-- Header principal - Style identique à la page de liste -->
   <div class="main-header">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
 
       <div class="header-content py-4">
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
@@ -69,7 +69,7 @@
 
   <!-- Navigation par onglets -->
   <div class="tabs-navigation bg-gray-100 border-b border-gray-200 flex-shrink-0">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
       <nav class="flex space-x-0" aria-label="Tabs">
         <button *ngFor="let tab of tabs; trackBy: trackByTabId"
                 (click)="setActiveTab(tab.id)"
@@ -94,7 +94,7 @@
 
   <!-- Contenu des onglets avec scroll -->
   <div class="tab-content flex-1 overflow-y-auto bg-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
       
       <!-- Onglet Vue d'ensemble -->
       <div *ngIf="activeTab === 'overview'" class="tab-panel">
@@ -175,22 +175,22 @@
 </div>
 
 <!-- Actions flottantes (optionnel) -->
-<div class="floating-actions fixed bottom-6 right-6 z-50">
-  <div class="flex flex-col space-y-3">
+<!-- <div class="floating-actions fixed bottom-6 right-6 z-50">
+  <div class="flex flex-col space-y-3"> -->
     <!-- Bouton d'actualisation -->
-    <button ibmButton="ghost" 
+    <!-- <button ibmButton="ghost" 
             size="lg"
             (click)="refreshData()"
             class="rounded-full shadow-lg bg-white border border-gray-200 hover:shadow-xl transition-shadow">
       <youpez-ibm-icon iconName="refresh" iconSize="20"></youpez-ibm-icon>
-    </button>
+    </button> -->
     
     <!-- Bouton d'export -->
-    <button ibmButton="secondary" 
+    <!-- <button ibmButton="secondary" 
             size="lg"
             (click)="exportData('pdf')"
             class="rounded-full shadow-lg hover:shadow-xl transition-shadow">
       <youpez-ibm-icon iconName="download" iconSize="20"></youpez-ibm-icon>
     </button>
   </div>
-</div>
+</div> -->
