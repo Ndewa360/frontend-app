@@ -2117,19 +2117,15 @@
       },
       "STATS": {
         "CITIES": {
-          "VALUE": "10+",
           "LABEL": "Villes couvertes"
         },
         "LISTINGS": {
-          "VALUE": "500+",
           "LABEL": "Annonces publiées"
         },
         "TOURS": {
-          "VALUE": "360°",
           "LABEL": "Visites immersives"
         },
         "FREE": {
-          "VALUE": "100%",
           "LABEL": "Gratuit pour les chercheurs"
         }
       }

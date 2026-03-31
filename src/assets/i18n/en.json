@@ -2117,19 +2117,15 @@
       },
       "STATS": {
         "CITIES": {
-          "VALUE": "10+",
           "LABEL": "Cities covered"
         },
         "LISTINGS": {
-          "VALUE": "500+",
           "LABEL": "Published listings"
         },
         "TOURS": {
-          "VALUE": "360°",
           "LABEL": "Immersive tours"
         },
         "FREE": {
-          "VALUE": "100%",
           "LABEL": "Free for seekers"
         }
       }
