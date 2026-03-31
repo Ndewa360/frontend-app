@@ -64,18 +64,8 @@ function logAppState() {
   const routerOutlet = document.querySelector('router-outlet');
   const loader = document.getElementById('app-loading-holder');
 
-  console.log('🔍 État de l\'application:', {
-    hasAppRoot: !!appRoot,
-    hasRouterOutlet: !!routerOutlet,
-    hasLoader: !!loader,
-    currentUrl: window.location.href
-  });
 }
 
-// Démarrer l'application
-console.log('🚀 Démarrage de l\'application Ndiye...');
-
-console.log('🚀 Application web Ndiye');
 
 // Fonction de diagnostic simplifiée
 function checkAppState() {

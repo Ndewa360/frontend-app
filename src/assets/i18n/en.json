@@ -2033,6 +2033,106 @@
       "MINIMIZE": "Minimize",
       "BROWSER_ERROR": "Your browser does not support video playback.",
       "CLOSE_VIDEO": "Close video"
+    },
+    "DISCOVERY": {
+      "BADGE": "Complete platform",
+      "TITLE_PART1": "Publish, discover and visit",
+      "TITLE_PART2": "with complete freedom",
+      "SUBTITLE": "One platform for everyone: list your available properties, find your ideal home and take 360° virtual tours — from anywhere.",
+      "OWNERS": {
+        "BADGE": "Owners & Agents",
+        "TITLE": "Give your properties maximum visibility",
+        "DESCRIPTION": "Publish your available units in just a few clicks and reach thousands of housing seekers across Africa and the diaspora.",
+        "FEATURES": {
+          "PUBLISH": "Publish your available properties in one click",
+          "PHOTOS_360": "Add photos and immersive 360° virtual tours",
+          "VISIBILITY": "Visibility to thousands of potential tenants",
+          "CONTACT": "Receive contact requests directly"
+        }
+      },
+      "SEEKERS": {
+        "BADGE": "Housing seekers",
+        "TITLE": "Find your ideal home",
+        "DESCRIPTION": "Search through hundreds of verified listings, filter by your criteria and virtually visit properties you're interested in, without traveling.",
+        "FEATURES": {
+          "SEARCH": "Advanced search by city, type, price and amenities",
+          "VISIT_360": "Free immersive 360° virtual tours",
+          "FILTERS": "Smart filters: kitchen, private shower, parking...",
+          "CONTACT_OWNER": "Contact the owner or agent directly"
+        }
+      },
+      "TOUR_360": {
+        "BADGE": "Exclusive technology",
+        "TITLE_PART1": "Visit in 360°",
+        "TITLE_PART2": "without traveling",
+        "DESCRIPTION": "Explore every room of a property as if you were there, from anywhere in the world. Perfect for the African diaspora.",
+        "BENEFIT_CARDS": {
+          "IMMERSIVE": {
+            "TITLE": "Immersive tour",
+            "DESC": "Navigate 360° through every room of the property"
+          },
+          "REMOTE": {
+            "TITLE": "From anywhere",
+            "DESC": "Visit from Dakar, Paris or New York"
+          },
+          "FREE": {
+            "TITLE": "100% free",
+            "DESC": "No fees for housing seekers"
+          },
+          "MOBILE": {
+            "TITLE": "Multi-device",
+            "DESC": "Smartphone, tablet or computer"
+          }
+        },
+        "CTA": "Explore available properties",
+        "PREVIEW": {
+          "PROPERTY_NAME": "Modern studio • Douala",
+          "PRICE": "75,000 FCFA/month",
+          "LOCATION": "Bonanjo, Douala"
+        },
+        "MOCKUP": {
+          "SEARCH_LABEL": "Property search",
+          "TOUR_ACTIVE": "360° tour in progress",
+          "DRAG_HINT": "Drag to explore",
+          "TAGS": {
+            "KITCHEN": "Kitchen",
+            "SHOWER": "Private shower",
+            "PARKING": "Parking"
+          },
+          "BADGE_VERIFIED": {
+            "TITLE": "Verified property",
+            "SUBTITLE": "By our team"
+          },
+          "BADGE_VIEWS": {
+            "TITLE": "247 views",
+            "SUBTITLE": "This week"
+          }
+        },
+        "TAGS": {
+          "IMMERSIVE": "Immersive tour",
+          "SMART_FILTERS": "Smart filters",
+          "GEOLOCATION": "Geolocation",
+          "MOBILE": "100% Mobile"
+        }
+      },
+      "STATS": {
+        "CITIES": {
+          "VALUE": "10+",
+          "LABEL": "Cities covered"
+        },
+        "LISTINGS": {
+          "VALUE": "500+",
+          "LABEL": "Published listings"
+        },
+        "TOURS": {
+          "VALUE": "360°",
+          "LABEL": "Immersive tours"
+        },
+        "FREE": {
+          "VALUE": "100%",
+          "LABEL": "Free for seekers"
+        }
+      }
     }
   },
   "SEARCH_MODULE": {

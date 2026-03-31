@@ -116,21 +116,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // Initialiser le service de langue avec URL
-    console.log('🌍 Initialisation du service de langue avec URL...');
-    // Le service s'initialise automatiquement via son constructeur
 
-    // Initialiser la détection d'appareil
-    console.log('🔍 Initialisation de la détection d\'appareil...');
-    try {
-      // ✅ SUPPRESSION de la logique de redirection de secours
-      // Le routing Angular et les routes par défaut gèrent déjà les redirections
-      // Cette logique causait des redirections non désirées lors de l'actualisation
-      console.log('✅ Détection d\'appareil initialisée - pas de redirection automatique');
-
-    } catch (error) {
-      console.error('❌ Erreur lors de la détection d\'appareil:', error);
-    }
 
     // Initialiser les services de localisation
     console.log('🌍 Initialisation des services de localisation...');
@@ -139,10 +125,6 @@ export class AppComponent implements OnInit, OnDestroy {
       this.translateService.setDefaultLang('fr');
       this.translateService.use('fr');
       
-      // Vérifier que les services sont bien injectés
-      console.log('LocalizationService:', !!this.localizationService);
-      console.log('TranslationService:', !!this.translationService);
-      console.log('TranslateService:', !!this.translateService);
       console.log('✅ Services de localisation initialisés');
     } catch (error) {
       console.error('❌ Erreur lors de l\'initialisation des services de localisation:', error);

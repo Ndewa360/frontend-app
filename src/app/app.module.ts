@@ -27,11 +27,9 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 export function initStyles() {
   return () => {
     return new Promise<void>((resolve) => {
-      console.log('🎨 Initialisation des styles...');
 
       // Résoudre immédiatement pour éviter les blocages
       setTimeout(() => {
-        console.log('✅ Styles initialisés (mode simplifié)');
         resolve();
       }, 100);
     });

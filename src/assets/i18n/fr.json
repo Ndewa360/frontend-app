@@ -2033,6 +2033,106 @@
       "MINIMIZE": "Réduire",
       "BROWSER_ERROR": "Votre navigateur ne supporte pas la lecture vidéo.",
       "CLOSE_VIDEO": "Fermer la vidéo"
+    },
+    "DISCOVERY": {
+      "BADGE": "Plateforme complète",
+      "TITLE_PART1": "Publiez, découvrez et visitez",
+      "TITLE_PART2": "en toute liberté",
+      "SUBTITLE": "Une plateforme pour tous : publiez vos biens libres, trouvez votre logement idéal et visitez en 360° — sans vous déplacer.",
+      "OWNERS": {
+        "BADGE": "Propriétaires & Agents",
+        "TITLE": "Mettez vos biens en visibilité",
+        "DESCRIPTION": "Publiez vos unités disponibles en quelques clics et touchez des milliers de chercheurs de logement à travers l'Afrique et la diaspora.",
+        "FEATURES": {
+          "PUBLISH": "Publiez vos biens libres en un clic",
+          "PHOTOS_360": "Ajoutez photos et visites immersives 360°",
+          "VISIBILITY": "Visibilité auprès de milliers de locataires potentiels",
+          "CONTACT": "Recevez les demandes de contact directement"
+        }
+      },
+      "SEEKERS": {
+        "BADGE": "Chercheurs de logement",
+        "TITLE": "Trouvez votre logement idéal",
+        "DESCRIPTION": "Recherchez parmi des centaines d'annonces vérifiées, filtrez selon vos critères et visitez virtuellement les biens qui vous intéressent, sans vous déplacer.",
+        "FEATURES": {
+          "SEARCH": "Recherche avancée par ville, type, prix et équipements",
+          "VISIT_360": "Visites immersives 360° gratuites",
+          "FILTERS": "Filtres intelligents : cuisine, douche privée, parking...",
+          "CONTACT_OWNER": "Contactez directement le propriétaire ou l'agent"
+        }
+      },
+      "TOUR_360": {
+        "BADGE": "Technologie exclusive",
+        "TITLE_PART1": "Visitez en 360°",
+        "TITLE_PART2": "sans vous déplacer",
+        "DESCRIPTION": "Explorez chaque pièce d'un logement comme si vous y étiez, depuis n'importe où dans le monde. Idéal pour la diaspora africaine.",
+        "BENEFIT_CARDS": {
+          "IMMERSIVE": {
+            "TITLE": "Visite immersive",
+            "DESC": "Naviguez à 360° dans chaque pièce du logement"
+          },
+          "REMOTE": {
+            "TITLE": "Depuis partout",
+            "DESC": "Visitez depuis Dakar, Paris ou New York"
+          },
+          "FREE": {
+            "TITLE": "100% gratuit",
+            "DESC": "Aucun frais pour les chercheurs de logement"
+          },
+          "MOBILE": {
+            "TITLE": "Multi-appareils",
+            "DESC": "Smartphone, tablette ou ordinateur"
+          }
+        },
+        "CTA": "Explorer les logements disponibles",
+        "PREVIEW": {
+          "PROPERTY_NAME": "Studio moderne • Douala",
+          "PRICE": "75 000 FCFA/mois",
+          "LOCATION": "Bonanjo, Douala"
+        },
+        "MOCKUP": {
+          "SEARCH_LABEL": "Recherche de logement",
+          "TOUR_ACTIVE": "Visite 360° en cours",
+          "DRAG_HINT": "Faites glisser pour explorer",
+          "TAGS": {
+            "KITCHEN": "Cuisine",
+            "SHOWER": "Douche privée",
+            "PARKING": "Parking"
+          },
+          "BADGE_VERIFIED": {
+            "TITLE": "Bien vérifié",
+            "SUBTITLE": "Par notre équipe"
+          },
+          "BADGE_VIEWS": {
+            "TITLE": "247 vues",
+            "SUBTITLE": "Cette semaine"
+          }
+        },
+        "TAGS": {
+          "IMMERSIVE": "Visite immersive",
+          "SMART_FILTERS": "Filtres intelligents",
+          "GEOLOCATION": "Géolocalisation",
+          "MOBILE": "100% Mobile"
+        }
+      },
+      "STATS": {
+        "CITIES": {
+          "VALUE": "10+",
+          "LABEL": "Villes couvertes"
+        },
+        "LISTINGS": {
+          "VALUE": "500+",
+          "LABEL": "Annonces publiées"
+        },
+        "TOURS": {
+          "VALUE": "360°",
+          "LABEL": "Visites immersives"
+        },
+        "FREE": {
+          "VALUE": "100%",
+          "LABEL": "Gratuit pour les chercheurs"
+        }
+      }
     }
   },
   "SEARCH_MODULE": {
