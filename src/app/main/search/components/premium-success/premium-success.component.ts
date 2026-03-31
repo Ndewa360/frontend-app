@@ -58,7 +58,7 @@ export class PremiumSuccessComponent implements OnInit, OnDestroy {
     this.error = null;
 
     // Confirmer le paiement avec le backend
-    this.store.dispatch(new PremiumAccessAction.ConfirmAccess(this.sessionId, ''));
+    this.store.dispatch(new PremiumAccessAction.ConfirmAccess(this.sessionId));
 
     // S'abonner aux changements pour détecter la confirmation
     this.store.select(PremiumAccessState.hasActiveAccess)

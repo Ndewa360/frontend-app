@@ -6,10 +6,24 @@ import { environment } from 'src/environments/environment';
 export interface PaymentLinkDetails {
   token: string;
   description: string;
-  location: any;
-  property: any;
-  room: any;
-  locataire: any;
+  context: string;          // 'rent' | 'premium_access' | 'subscription' | 'deposit'
+  amount?: number;          // montant fixe si non éditable
+  amountEditable?: boolean;
+  currency?: string;
+  // Contexte loyer
+  location?: any;
+  property?: any;
+  room?: any;
+  locataire?: any;
+  // Contexte premium
+  ownerId?: string;
+  userId?: string;
+  // Contexte souscription
+  periodId?: string;
+  // Redirections après paiement
+  successRedirectPath?: string;
+  cancelRedirectPath?: string;
+  metadata?: Record<string, any>;
   usageCount: number;
 }
 

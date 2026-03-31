@@ -1,151 +1,404 @@
-<div class="payment-page">
-  
-  <!-- Header simplifié -->
-  <header class="payment-header">
-    <div class="header-container">
-      <div class="logo-section">
-        <img src="assets/img/logo/logo-basic-nobg.png" alt="Ndewa360°" class="logo">
-      </div>
-      <div class="security-badge">
-        <i class="fa fa-shield-alt"></i>
+<div class="ndewa-payment">
+
+  <!-- HEADER -->
+  <header class="ndewa-payment__header">
+    <div class="ndewa-payment__header-inner">
+      <img src="assets/img/logo/logo-basic-nobg.png" alt="Ndewa360°" class="ndewa-payment__logo">
+      <div class="ndewa-payment__secure-badge">
+        <i class="fas fa-shield-alt"></i>
         <span>Paiement sécurisé</span>
       </div>
     </div>
   </header>
 
-  <!-- Contenu principal -->
-  <main class="payment-main" *ngIf="!loading">
-    
-    <!-- Erreur -->
-    <div *ngIf="error" class="error-section">
-      <div class="error-card">
-        <i class="fa fa-exclamation-triangle"></i>
-        <h3>Erreur de paiement</h3>
-        <p>{{ error }}</p>
-        <button (click)="error = null" class="retry-btn">Réessayer</button>
-      </div>
-    </div>
-
-    <!-- Formulaire de paiement -->
-    <div *ngIf="!error && paymentDetails" class="payment-container">
-      
-      <!-- Titre -->
-      <div class="payment-title">
-        <h1>{{ paymentDetails.description || 'Paiement de location' }}</h1>
-        <div class="payment-badge">Lien permanent</div>
-      </div>
-
-      <!-- Formulaire compact -->
-      <div class="payment-form">
-        
-        <!-- Section montant -->
-        <div class="amount-section">
-          <label class="amount-label">
-            <i class="fa fa-money-bill-wave"></i>
-            Montant à payer (FCFA)
-          </label>
-          
-          <div class="amount-input-group">
-            <input
-              type="number"
-              #amountInput
-              class="amount-input"
-              placeholder="Saisissez le montant"
-              min="1000"
-              step="100"
-              (input)="onAmountChange(+amountInput.value)"
-              [class.error]="amountError">
-            <span class="currency-suffix">FCFA</span>
-          </div>
-          
-          <!-- Montants rapides -->
-          <div class="quick-amounts">
-            <button
-              type="button"
-              class="quick-btn"
-              *ngFor="let amount of quickAmounts.slice(0, 6)"
-              (click)="setQuickAmount(amount, amountInput)">
-              {{ (amount / 1000) }}k
-            </button>
-          </div>
-
-          <!-- Message d'erreur -->
-          <div *ngIf="amountError" class="error-message">
-            <i class="fa fa-exclamation-triangle"></i>
-            {{ amountError }}
-          </div>
-        </div>
-
-        <!-- Informations de paiement -->
-        <div class="payment-info">
-          <div class="info-row">
-            <div class="payment-methods">
-              <i class="fab fa-cc-visa"></i>
-              <i class="fab fa-cc-mastercard"></i>
-              <i class="fab fa-cc-amex"></i>
-              <span>Cartes acceptées</span>
-            </div>
-            <div class="security-info">
-              <i class="fa fa-lock"></i>
-              <span>Sécurisé SSL</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Détection automatique -->
-        <div class="auto-detection">
-          <div class="detection-header">
-            <i class="fa fa-magic"></i>
-            <span>Détection automatique du type de paiement</span>
-          </div>
-          <div class="detection-items">
-            <div class="detection-item">
-              <i class="fa fa-shield"></i>
-              <span>Caution déduite automatiquement</span>
-            </div>
-            <div class="detection-item">
-              <i class="fa fa-home"></i>
-              <span>Reste appliqué au loyer</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Bouton de paiement -->
-        <button
-          class="pay-button"
-          [disabled]="processing || !isAmountValid(+amountInput.value)"
-          (click)="processPayment(+amountInput.value)">
-          <div class="button-content">
-            <i *ngIf="processing" class="fa fa-spinner fa-spin"></i>
-            <i *ngIf="!processing" class="fab fa-stripe"></i>
-            <span>{{ processing ? 'Traitement en cours...' : 'Payer avec Stripe' }}</span>
-            <span *ngIf="!processing && amountInput.value" class="amount-display">
-              {{ formatAmount(+amountInput.value) }}
-            </span>
-          </div>
-        </button>
-      </div>
-    </div>
-  </main>
-
-  <!-- Loading -->
-  <div *ngIf="loading" class="loading-section">
-    <div class="loading-content">
-      <!-- <i class="fa fa-spinner fa-spin"></i>
-      <h3>Chargement...</h3> -->
-      <app-payment-loading></app-payment-loading>
+  <!-- CHARGEMENT INITIAL -->
+  <div *ngIf="pageLoading" class="ndewa-payment__fullscreen-state">
+    <div class="ndewa-payment__spinner-wrap">
+      <div class="ndewa-payment__spinner"></div>
+      <p>Chargement du paiement…</p>
     </div>
   </div>
 
-  <!-- Footer -->
-  <footer class="payment-footer">
-    <div class="footer-content">
-      <span>&copy; 2024 Ndewa360°</span>
-      <div class="footer-links">
-        <a href="#">Conditions</a>
-        <a href="#">Confidentialité</a>
-        <a href="#">Support</a>
+  <!-- ERREUR DE PAGE -->
+  <div *ngIf="!pageLoading && pageError" class="ndewa-payment__fullscreen-state">
+    <div class="ndewa-payment__state-card ndewa-payment__state-card--error">
+      <div class="ndewa-payment__state-icon ndewa-payment__state-icon--error">
+        <i class="fas fa-exclamation-triangle"></i>
       </div>
+      <h2>Lien invalide</h2>
+      <p>{{ pageError }}</p>
+    </div>
+  </div>
+
+  <!-- CONTENU PRINCIPAL -->
+  <main *ngIf="!pageLoading && !pageError" class="ndewa-payment__main">
+    <div class="ndewa-payment__card">
+
+      <!-- Indicateur d'étapes -->
+      <div class="ndewa-payment__steps" *ngIf="currentStep !== 'result'">
+        <div class="ndewa-payment__step"
+             [class.ndewa-payment__step--active]="currentStep === 'method'"
+             [class.ndewa-payment__step--done]="currentStep === 'details' || currentStep === 'processing'">
+          <div class="ndewa-payment__step-dot">
+            <i class="fas fa-check" *ngIf="currentStep === 'details' || currentStep === 'processing'"></i>
+            <span *ngIf="currentStep === 'method'">1</span>
+          </div>
+          <span>Moyen de paiement</span>
+        </div>
+        <div class="ndewa-payment__step-line"></div>
+        <div class="ndewa-payment__step"
+             [class.ndewa-payment__step--active]="currentStep === 'details'"
+             [class.ndewa-payment__step--done]="currentStep === 'processing'">
+          <div class="ndewa-payment__step-dot">
+            <i class="fas fa-check" *ngIf="currentStep === 'processing'"></i>
+            <span *ngIf="currentStep !== 'processing'">2</span>
+          </div>
+          <span>Détails</span>
+        </div>
+        <div class="ndewa-payment__step-line"></div>
+        <div class="ndewa-payment__step"
+             [class.ndewa-payment__step--active]="currentStep === 'processing'">
+          <div class="ndewa-payment__step-dot"><span>3</span></div>
+          <span>Confirmation</span>
+        </div>
+      </div>
+
+      <!-- Bandeau contexte -->
+      <div class="ndewa-payment__context-banner" *ngIf="paymentDetails && currentStep !== 'result'">
+        <div class="ndewa-payment__context-icon" [style.background]="contextMeta.color">
+          <i class="fas" [ngClass]="contextMeta.icon"></i>
+        </div>
+        <div class="ndewa-payment__context-body">
+          <div class="ndewa-payment__context-top">
+            <span class="ndewa-payment__context-label">{{ contextMeta.title }}</span>
+            <span class="ndewa-payment__context-amount" *ngIf="paymentDetails.amount && !paymentDetails.amountEditable">
+              {{ formatAmount(paymentDetails.amount) }}
+            </span>
+          </div>
+          <div class="ndewa-payment__context-desc" *ngIf="paymentDetails.description">
+            {{ paymentDetails.description }}
+          </div>
+          <div class="ndewa-payment__context-meta" *ngIf="paymentDetails.property?.name || paymentDetails.room?.code">
+            <span *ngIf="paymentDetails.property?.name">
+              <i class="fas fa-building"></i> {{ paymentDetails.property.name }}
+            </span>
+            <span *ngIf="paymentDetails.room?.code">
+              <i class="fas fa-door-open"></i> Unité {{ paymentDetails.room.code }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ ÉTAPE 1 — CHOIX DU MOYEN DE PAIEMENT ══ -->
+      <div *ngIf="currentStep === 'method'" class="ndewa-payment__step-content">
+        <h2 class="ndewa-payment__step-title">Comment souhaitez-vous payer ?</h2>
+
+        <div class="ndewa-payment__methods">
+          <button class="ndewa-payment__method-btn ndewa-payment__method-btn--orange"
+                  (click)="selectMethod('orange_money')">
+            <div class="ndewa-payment__method-logo">
+              <div class="ndewa-payment__method-logo-circle ndewa-payment__method-logo-circle--orange">
+                <span>OM</span>
+              </div>
+            </div>
+            <div class="ndewa-payment__method-info">
+              <strong>Orange Money</strong>
+              <span>Paiement via votre compte Orange</span>
+            </div>
+            <i class="fas fa-chevron-right ndewa-payment__method-arrow"></i>
+          </button>
+
+          <button class="ndewa-payment__method-btn ndewa-payment__method-btn--mtn"
+                  (click)="selectMethod('mtn_money')">
+            <div class="ndewa-payment__method-logo">
+              <div class="ndewa-payment__method-logo-circle ndewa-payment__method-logo-circle--mtn">
+                <span>MTN</span>
+              </div>
+            </div>
+            <div class="ndewa-payment__method-info">
+              <strong>MTN Mobile Money</strong>
+              <span>Paiement via votre compte MTN</span>
+            </div>
+            <i class="fas fa-chevron-right ndewa-payment__method-arrow"></i>
+          </button>
+
+          <button class="ndewa-payment__method-btn ndewa-payment__method-btn--card"
+                  (click)="selectMethod('card')">
+            <div class="ndewa-payment__method-logo">
+              <div class="ndewa-payment__method-logo-circle ndewa-payment__method-logo-circle--card">
+                <i class="fas fa-credit-card"></i>
+              </div>
+            </div>
+            <div class="ndewa-payment__method-info">
+              <strong>Carte bancaire</strong>
+              <div class="ndewa-payment__card-brands">
+                <i class="fab fa-cc-visa"></i>
+                <i class="fab fa-cc-mastercard"></i>
+              </div>
+            </div>
+            <i class="fas fa-chevron-right ndewa-payment__method-arrow"></i>
+          </button>
+        </div>
+
+        <p class="ndewa-payment__security-note">
+          <i class="fas fa-lock"></i>
+          Toutes les transactions sont chiffrées et sécurisées
+        </p>
+      </div>
+
+      <!-- ══ ÉTAPE 2 — DÉTAILS DU PAIEMENT ══ -->
+      <div *ngIf="currentStep === 'details'" class="ndewa-payment__step-content">
+
+        <div class="ndewa-payment__selected-method">
+          <button class="ndewa-payment__back-btn" (click)="backToMethod()">
+            <i class="fas fa-arrow-left"></i>
+          </button>
+          <div class="ndewa-payment__selected-method-label">
+            <ng-container [ngSwitch]="selectedMethod">
+              <span *ngSwitchCase="'orange_money'" class="ndewa-payment__badge ndewa-payment__badge--orange">
+                <span>OM</span> Orange Money
+              </span>
+              <span *ngSwitchCase="'mtn_money'" class="ndewa-payment__badge ndewa-payment__badge--mtn">
+                <span>MTN</span> MTN Money
+              </span>
+              <span *ngSwitchCase="'card'" class="ndewa-payment__badge ndewa-payment__badge--card">
+                <i class="fas fa-credit-card"></i> Carte bancaire
+              </span>
+            </ng-container>
+          </div>
+        </div>
+
+        <!-- Montant -->
+        <div class="ndewa-payment__form-group" [formGroup]="amountForm">
+          <label class="ndewa-payment__label">
+            <i class="fas fa-money-bill-wave"></i>
+            Montant à payer
+          </label>
+          <div class="ndewa-payment__amount-wrap">
+            <input
+              type="number"
+              formControlName="amount"
+              class="ndewa-payment__input ndewa-payment__input--amount"
+              [class.ndewa-payment__input--error]="amountForm.get('amount')?.invalid && amountForm.get('amount')?.touched"
+              [readonly]="isAmountFixed"
+              placeholder="Saisissez le montant">
+            <span class="ndewa-payment__currency">FCFA</span>
+          </div>
+          <div *ngIf="amountForm.get('amount')?.invalid && amountForm.get('amount')?.touched"
+               class="ndewa-payment__field-error">
+            <i class="fas fa-exclamation-circle"></i>
+            <span *ngIf="amountForm.get('amount')?.errors?.['min']">Montant minimum : 100 FCFA</span>
+            <span *ngIf="amountForm.get('amount')?.errors?.['max']">Montant maximum : 10 000 000 FCFA</span>
+            <span *ngIf="amountForm.get('amount')?.errors?.['required']">Veuillez saisir un montant</span>
+          </div>
+
+          <!-- Montants rapides (uniquement si montant éditable) -->
+          <div class="ndewa-payment__quick-amounts" *ngIf="!isAmountFixed && quickAmounts.length > 0">
+            <button *ngFor="let q of quickAmounts"
+                    type="button"
+                    class="ndewa-payment__quick-btn"
+                    [class.ndewa-payment__quick-btn--active]="amount === q"
+                    (click)="setQuickAmount(q)">
+              {{ q / 1000 }}k
+            </button>
+          </div>
+        </div>
+
+        <!-- Téléphone (Mobile Money) -->
+        <div *ngIf="selectedMethod !== 'card'" class="ndewa-payment__form-group" [formGroup]="mobileForm">
+          <label class="ndewa-payment__label">
+            <i class="fas fa-mobile-alt"></i>
+            Numéro de téléphone
+          </label>
+          <div class="ndewa-payment__phone-wrap">
+            <span class="ndewa-payment__phone-prefix">+237</span>
+            <input
+              type="tel"
+              formControlName="phone"
+              class="ndewa-payment__input ndewa-payment__input--phone"
+              [class.ndewa-payment__input--error]="mobileForm.get('phone')?.invalid && mobileForm.get('phone')?.touched"
+              placeholder="6XX XXX XXX">
+          </div>
+          <div *ngIf="mobileForm.get('phone')?.invalid && mobileForm.get('phone')?.touched"
+               class="ndewa-payment__field-error">
+            <i class="fas fa-exclamation-circle"></i>
+            Numéro invalide. Format : 6XXXXXXXX
+          </div>
+          <div class="ndewa-payment__mobile-instructions">
+            <div class="ndewa-payment__instruction-item">
+              <div class="ndewa-payment__instruction-num">1</div>
+              <span>Saisissez votre numéro et confirmez</span>
+            </div>
+            <div class="ndewa-payment__instruction-item">
+              <div class="ndewa-payment__instruction-num">2</div>
+              <span>Vous recevrez une notification sur votre téléphone</span>
+            </div>
+            <div class="ndewa-payment__instruction-item">
+              <div class="ndewa-payment__instruction-num">3</div>
+              <span>Confirmez le paiement avec votre code PIN</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Récapitulatif -->
+        <div class="ndewa-payment__recap" *ngIf="isAmountValid">
+          <div class="ndewa-payment__recap-row">
+            <span>{{ contextMeta.title }}</span>
+            <strong>{{ formatAmount(amount) }}</strong>
+          </div>
+          <div class="ndewa-payment__recap-row">
+            <span>Moyen de paiement</span>
+            <strong>{{ getMethodLabel(selectedMethod!) }}</strong>
+          </div>
+          <div class="ndewa-payment__recap-divider"></div>
+          <div class="ndewa-payment__recap-row ndewa-payment__recap-row--total">
+            <span>Total</span>
+            <strong>{{ formatAmount(amount) }}</strong>
+          </div>
+        </div>
+
+        <button
+          class="ndewa-payment__pay-btn"
+          [class.ndewa-payment__pay-btn--orange]="selectedMethod === 'orange_money'"
+          [class.ndewa-payment__pay-btn--mtn]="selectedMethod === 'mtn_money'"
+          [class.ndewa-payment__pay-btn--card]="selectedMethod === 'card'"
+          [disabled]="!isAmountValid || (selectedMethod !== 'card' && !isMobileFormValid)"
+          (click)="submitPayment()">
+          <i class="fas fa-lock"></i>
+          <span>Payer {{ isAmountValid ? formatAmount(amount) : '' }}</span>
+        </button>
+      </div>
+
+      <!-- ══ ÉTAPE 3 — TRAITEMENT ══ -->
+      <div *ngIf="currentStep === 'processing'" class="ndewa-payment__step-content ndewa-payment__step-content--centered">
+
+        <ng-container *ngIf="selectedMethod === 'card' && paymentStatus === 'processing'">
+          <div class="ndewa-payment__processing-anim">
+            <div class="ndewa-payment__spinner ndewa-payment__spinner--large"></div>
+          </div>
+          <h2>Redirection vers le paiement sécurisé…</h2>
+          <p>Vous allez être redirigé vers la page de paiement par carte.</p>
+        </ng-container>
+
+        <ng-container *ngIf="paymentStatus === 'pending_confirmation'">
+          <div class="ndewa-payment__mobile-waiting">
+            <div class="ndewa-payment__phone-anim">
+              <div class="ndewa-payment__phone-icon">
+                <i class="fas fa-mobile-alt"></i>
+                <div class="ndewa-payment__phone-pulse"></div>
+              </div>
+            </div>
+            <h2>En attente de confirmation</h2>
+            <p>
+              Une notification a été envoyée au
+              <strong>{{ mobileForm.value.phone }}</strong>.
+              Confirmez le paiement avec votre code PIN.
+            </p>
+            <div *ngIf="ussdCode" class="ndewa-payment__ussd-box">
+              <p class="ndewa-payment__ussd-label">Ou composez ce code :</p>
+              <div class="ndewa-payment__ussd-code">{{ ussdCode }}</div>
+            </div>
+            <div class="ndewa-payment__polling-bar">
+              <div class="ndewa-payment__polling-fill" [style.width.%]="pollingProgress"></div>
+            </div>
+            <p class="ndewa-payment__polling-hint">
+              Vérification automatique… ({{ pollingAttempts }}/{{ MAX_POLLING }})
+            </p>
+            <p *ngIf="expiresAt" class="ndewa-payment__expiry">
+              <i class="fas fa-clock"></i>
+              Expire à {{ expiresAt | date:'HH:mm' }}
+            </p>
+          </div>
+        </ng-container>
+      </div>
+
+      <!-- ══ ÉTAPE 4 — RÉSULTAT ══ -->
+      <div *ngIf="currentStep === 'result'" class="ndewa-payment__step-content ndewa-payment__step-content--centered">
+
+        <!-- SUCCÈS -->
+        <ng-container *ngIf="paymentStatus === 'success'">
+          <div class="ndewa-payment__result-icon ndewa-payment__result-icon--success">
+            <svg viewBox="0 0 52 52" class="ndewa-payment__checkmark">
+              <circle class="ndewa-payment__checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+              <path class="ndewa-payment__checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+            </svg>
+          </div>
+          <h2 class="ndewa-payment__result-title ndewa-payment__result-title--success">
+            Paiement réussi !
+          </h2>
+          <p class="ndewa-payment__result-message">
+            Votre paiement a été traité avec succès.
+          </p>
+          <div class="ndewa-payment__result-actions">
+            <button class="ndewa-payment__action-btn ndewa-payment__action-btn--primary"
+                    (click)="redirectAfterSuccess()">
+              <i class="fas fa-arrow-left"></i> Retour
+            </button>
+            <button class="ndewa-payment__action-btn ndewa-payment__action-btn--secondary"
+                    onclick="window.print()">
+              <i class="fas fa-print"></i> Imprimer le reçu
+            </button>
+          </div>
+        </ng-container>
+
+        <!-- ÉCHEC -->
+        <ng-container *ngIf="paymentStatus === 'failed'">
+          <div class="ndewa-payment__result-icon ndewa-payment__result-icon--error">
+            <div class="ndewa-payment__cross">
+              <span class="ndewa-payment__cross-left"></span>
+              <span class="ndewa-payment__cross-right"></span>
+            </div>
+          </div>
+          <h2 class="ndewa-payment__result-title ndewa-payment__result-title--error">Paiement échoué</h2>
+          <p class="ndewa-payment__result-message">
+            {{ paymentError || 'Une erreur est survenue lors du traitement de votre paiement.' }}
+          </p>
+          <div class="ndewa-payment__result-actions">
+            <button class="ndewa-payment__action-btn ndewa-payment__action-btn--primary" (click)="retry()">
+              <i class="fas fa-redo"></i> Réessayer
+            </button>
+            <button class="ndewa-payment__action-btn ndewa-payment__action-btn--secondary"
+                    (click)="redirectAfterCancel()">
+              <i class="fas fa-arrow-left"></i> Retour
+            </button>
+          </div>
+        </ng-container>
+
+        <!-- ANNULÉ -->
+        <ng-container *ngIf="paymentStatus === 'cancelled'">
+          <div class="ndewa-payment__result-icon ndewa-payment__result-icon--warning">
+            <i class="fas fa-ban"></i>
+          </div>
+          <h2 class="ndewa-payment__result-title ndewa-payment__result-title--warning">Paiement annulé</h2>
+          <p class="ndewa-payment__result-message">
+            Vous avez annulé le paiement. Aucun montant n'a été débité.
+          </p>
+          <div class="ndewa-payment__result-actions">
+            <button class="ndewa-payment__action-btn ndewa-payment__action-btn--primary" (click)="retry()">
+              <i class="fas fa-redo"></i> Recommencer
+            </button>
+            <button class="ndewa-payment__action-btn ndewa-payment__action-btn--secondary"
+                    (click)="redirectAfterCancel()">
+              <i class="fas fa-arrow-left"></i> Retour
+            </button>
+          </div>
+        </ng-container>
+
+        <p class="ndewa-payment__support-note">
+          <i class="fas fa-headset"></i>
+          Besoin d'aide ? Contactez notre support.
+        </p>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="ndewa-payment__footer">
+    <span>© 2024 Ndewa360°</span>
+    <div class="ndewa-payment__footer-links">
+      <a href="#">Conditions</a>
+      <a href="#">Confidentialité</a>
+      <a href="#">Support</a>
     </div>
   </footer>
 

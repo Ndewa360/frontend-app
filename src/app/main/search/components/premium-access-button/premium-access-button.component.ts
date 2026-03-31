@@ -2,8 +2,10 @@ import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
-import { PremiumAccessState, PremiumAccessAction, OwnerInfoModel } from 'src/app/shared/store/premium-access';
+import { PremiumAccessState, PremiumAccessAction } from 'src/app/shared/store/premium-access';
+import { UserProfileState } from 'src/app/shared/store/user-profile';
 import { PremiumAccessService } from 'src/app/shared/services/premium-access/premium-access.service';
+import { AnonymousUserService } from 'src/app/shared/services/anonymous-user.service';
 
 @Component({
   selector: 'app-premium-access-button',
@@ -12,30 +14,26 @@ import { PremiumAccessService } from 'src/app/shared/services/premium-access/pre
 })
 export class PremiumAccessButtonComponent implements OnInit, OnDestroy {
   @Input() ownerId = '';
-  @Input() userId = '';
-  @Input() userEmail = '';
 
   loading = false;
   error: string | null = null;
   hasActiveAccess = false;
   currentAccess: any = null;
   showModal = false;
-  premiumPrice = 500; // 500 FCFA pour forfait global
+  premiumPrice = 500;
 
-  // ✅ TEMPORAIRE: Variable pour simuler l'accès premium (à désactiver plus tard)
-  private temporaryFreeAccess = true;
-
+  private effectiveUserId = '';
   private destroy$ = new Subject<void>();
 
   constructor(
     private store: Store,
-    private premiumAccessService: PremiumAccessService
+    private premiumAccessService: PremiumAccessService,
+    private anonymousUserService: AnonymousUserService
   ) {}
 
   ngOnInit(): void {
-    this.checkAccess();
+    this.resolveAndCheck();
 
-    // S'abonner aux changements du store NGXS
     this.store.select(PremiumAccessState.loading)
       .pipe(takeUntil(this.destroy$))
       .subscribe(loading => this.loading = loading);
@@ -58,59 +56,45 @@ export class PremiumAccessButtonComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  // Vérifier l'accès actif
-  checkAccess(): void {
-    // ✅ TEMPORAIRE: Accès libre activé
-    if (this.temporaryFreeAccess) {
+  private resolveAndCheck(): void {
+    // 1. Vérifier d'abord en local (pas d'appel réseau)
+    if (this.anonymousUserService.hasLocalActiveAccess()) {
       this.hasActiveAccess = true;
-      this.currentAccess = {
-        id: 'temp-access-id',
-        expiryDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
-        remainingDays: 3,
-        accessCount: 1,
-        accessedOwnersCount: 1
-      };
-      console.log('✅ Accès premium temporaire activé dans premium-access-button');
       return;
     }
 
-    if (!this.userId) {
-      this.error = 'Informations utilisateur manquantes';
-      return;
-    }
+    // 2. Résoudre l'identité
+    const profile = this.store.selectSnapshot(UserProfileState.selectStateUserProfile);
+    this.effectiveUserId = profile?._id || this.anonymousUserService.getVisitorId();
 
-    this.store.dispatch(new PremiumAccessAction.CheckActiveAccess(this.userId));
+    // 3. Vérifier côté backend
+    this.store.dispatch(new PremiumAccessAction.CheckActiveAccess(this.effectiveUserId));
   }
 
-  // Ouvrir le modal
+  checkAccess(): void {
+    this.resolveAndCheck();
+  }
+
   openModal(): void {
     this.showModal = true;
   }
 
-  // Fermer le modal
   closeModal(): void {
     this.showModal = false;
-    // Revérifier l'accès après fermeture du modal (au cas où un achat aurait été effectué)
-    setTimeout(() => {
-      this.checkAccess();
-    }, 1000);
+    setTimeout(() => this.resolveAndCheck(), 500);
   }
 
-  // Obtenir le texte des jours restants
   getRemainingDaysText(): string {
-    if (!this.currentAccess?.expiryDate) return '';
-    
-    const remainingDays = this.premiumAccessService.calculateRemainingDays(this.currentAccess.expiryDate);
-    if (remainingDays <= 0) {
-      return 'Accès expiré';
-    } else if (remainingDays === 1) {
-      return '1 jour restant';
-    } else {
-      return `${remainingDays} jours restants`;
+    if (this.currentAccess?.expiryDate) {
+      const d = this.premiumAccessService.calculateRemainingDays(this.currentAccess.expiryDate);
+      if (d <= 0) return 'Accès expiré';
+      return d === 1 ? '1 jour restant' : `${d} jours restants`;
     }
+    const d = this.anonymousUserService.getRemainingDays();
+    if (d <= 0) return '';
+    return d === 1 ? '1 jour restant' : `${d} jours restants`;
   }
 
-  // Formater le montant
   formatAmount(amount: number): string {
     return this.premiumAccessService.formatAmount(amount);
   }

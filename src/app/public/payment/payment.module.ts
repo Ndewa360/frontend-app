@@ -8,6 +8,8 @@ import { PaymentPageComponent } from './components/payment-page/payment-page.com
 import { PaymentSuccessComponent } from './components/payment-success/payment-success.component';
 import { PaymentErrorComponent } from './components/payment-error/payment-error.component';
 import { PaymentLoadingComponent } from './components/payment-loading/payment-loading.component';
+import { UnifiedPaymentService } from './services/unified-payment.service';
+import { AnonymousUserService } from 'src/app/shared/services/anonymous-user.service';
 
 const routes = [
   {
@@ -37,6 +39,10 @@ const routes = [
     HttpClientModule,
     RouterModule.forChild(routes)
   ],
-  providers: [DatePipe]
+  providers: [
+    DatePipe,
+    UnifiedPaymentService,
+    AnonymousUserService
+  ]
 })
 export class PaymentModule { }

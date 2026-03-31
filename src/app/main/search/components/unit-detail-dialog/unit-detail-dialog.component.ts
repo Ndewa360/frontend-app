@@ -1,4 +1,4 @@
-import { Component, Inject, ViewEncapsulation, OnInit, OnDestroy, ChangeDetectorRef, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, Inject, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
@@ -6,7 +6,9 @@ import { takeUntil } from 'rxjs/operators';
 import { SearchPropertyModel } from 'src/app/shared/store';
 import { Store } from '@ngxs/store';
 import { PremiumAccessState, PremiumAccessAction, OwnerInfoModel } from 'src/app/shared/store/premium-access';
+import { UserProfileState } from 'src/app/shared/store/user-profile';
 import { PremiumAccessService } from 'src/app/shared/services/premium-access/premium-access.service';
+import { AnonymousUserService } from 'src/app/shared/services/anonymous-user.service';
 import { TranslateService } from '@ngx-translate/core';
 
 export interface UnitDetailDialogData {
@@ -48,13 +50,14 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
   showPremiumModal = false;
   premiumPrice = 500;
 
+  // Données utilisateur courant (connecté ou anonyme)
+  currentUserId: string = '';
+  currentUserEmail: string = '';
+
   // Variables pour le swipe tactile
   private touchStartX = 0;
   private touchEndX = 0;
   private minSwipeDistance = 50;
-
-  // TEMPORAIRE: Variable pour simuler l'accès premium
-  public temporaryFreeAccess = true;
 
   constructor(
     public dialogRef: MatDialogRef<UnitDetailDialogComponent>,
@@ -63,6 +66,7 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private store: Store,
     private premiumAccessService: PremiumAccessService,
+    private anonymousUserService: AnonymousUserService,
     private translate: TranslateService
   ) {
     this.unit = data.unit;
@@ -77,9 +81,10 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
     this.updateNavigationState();
     this.setupKeyboardNavigation();
     this.updateUrlWithUnit();
-    this.checkPremiumAccess();
+    this.loadCurrentUser();
     this.subscribeToPremiumStore();
     this.preloadImages();
+    this.checkPremiumReturnFromPayment();
   }
 
   ngOnDestroy(): void {
@@ -435,11 +440,33 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
   }
 
   // === PREMIUM ACCESS ===
-  checkPremiumAccess(): void {
-    this.hasPremiumAccess = this.temporaryFreeAccess;
-    if (this.hasPremiumAccess) {
-      this.loadOwnerInfo();
+
+  private loadCurrentUser(): void {
+    // 1. Essayer l'utilisateur connecté
+    const profile = this.store.selectSnapshot(UserProfileState.selectStateUserProfile);
+    if (profile?._id) {
+      this.currentUserId = profile._id;
+      this.currentUserEmail = profile.email || '';
+    } else {
+      // 2. Visiteur anonyme
+      this.currentUserId = this.anonymousUserService.getVisitorId();
+      this.currentUserEmail = '';
     }
+
+    // 3. Vérifier d'abord en local
+    if (this.anonymousUserService.hasLocalActiveAccess()) {
+      this.hasPremiumAccess = true;
+      if (this.unit?.property?.owner?._id) {
+        this.store.dispatch(new PremiumAccessAction.GetOwnerInfo(
+          this.currentUserId,
+          this.unit.property.owner._id
+        ));
+      }
+      return;
+    }
+
+    // 4. Vérifier côté backend
+    this.store.dispatch(new PremiumAccessAction.CheckActiveAccess(this.currentUserId));
   }
 
   subscribeToPremiumStore(): void {
@@ -450,6 +477,25 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
     this.store.select(PremiumAccessState.error)
       .pipe(takeUntil(this.destroy$))
       .subscribe(error => this.premiumError = error);
+
+    this.store.select(PremiumAccessState.hasActiveAccess)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(hasAccess => {
+        this.hasPremiumAccess = hasAccess;
+        // Si accès actif, charger les infos propriétaire depuis le backend
+        if (hasAccess && this.currentUserId && this.unit?.property?.owner?._id) {
+          this.store.dispatch(new PremiumAccessAction.GetOwnerInfo(
+            this.currentUserId,
+            this.unit.property.owner._id
+          ));
+        }
+      });
+
+    this.store.select(PremiumAccessState.ownerInfo)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(ownerInfo => {
+        if (ownerInfo) this.ownerInfo = ownerInfo;
+      });
   }
 
   onPurchasePremiumAccess(): void {
@@ -458,6 +504,46 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
 
   closePremiumModal(): void {
     this.showPremiumModal = false;
+  }
+
+  onPremiumAccessGranted(): void {
+    this.showPremiumModal = false;
+  }
+
+  // Vérifier si on revient de la page de paiement avec succès
+  private checkPremiumReturnFromPayment(): void {
+    const params = this.route.snapshot.queryParams;
+    if (params['premium'] === 'success') {
+      const visitorId = params['visitorId'];
+      // Si l'accès local n'est pas encore sauvé, le marquer comme actif
+      if (!this.anonymousUserService.hasLocalActiveAccess()) {
+        const expiryDate = new Date();
+        expiryDate.setDate(expiryDate.getDate() + 3);
+        this.anonymousUserService.savePremiumAccess({
+          accessId: 'payment-confirmed',
+          transactionId: 'payment-confirmed',
+          expiryDate: expiryDate.toISOString(),
+          phone: '',
+          paymentMethod: 'card',
+          paidAt: new Date().toISOString()
+        });
+      }
+      this.hasPremiumAccess = true;
+      // Charger les infos propriétaire si on a l'ownerId
+      if (this.unit?.property?.owner?._id && this.currentUserId) {
+        this.store.dispatch(new PremiumAccessAction.GetOwnerInfo(
+          this.currentUserId,
+          this.unit.property.owner._id
+        ));
+      }
+      // Nettoyer l'URL
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: { premium: null, visitorId: null },
+        queryParamsHandling: 'merge',
+        replaceUrl: true
+      });
+    }
   }
 
   getRemainingDaysText(): string {
@@ -504,67 +590,5 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
     }
   }
 
-  private loadOwnerInfo(): void {
-    const owner = this.unit?.property?.owner;
-    const agent = this.unit?.property?.managedByAgent;
-    const expiryDate = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
-    
-    // Si la propriété est gérée par un agent, utiliser les infos de l'agent
-    if (this.isPropertyManagedByAgent() && agent) {
-      this.ownerInfo = {
-        owner: {
-          id: agent._id || ('agent-' + Date.now()),
-          name: agent.fullName || agent.name || this.translate.instant('UNIT_DETAIL.CONTACT.CERTIFIED_REAL_ESTATE_AGENT'),
-          email: agent.email || 'agent@ndewa360.com',
-          phone: agent.phoneNumber || agent.phone || '+237 6XX XXX XXX',
-          whatsapp: agent.phoneNumber || agent.phone || '+237 6XX XXX XXX',
-          address: this.unit?.property?.location || this.translate.instant('UNIT_DETAIL.LOCATION.ADDRESS_NOT_SPECIFIED')
-        },
-        access: {
-          id: 'access-' + Date.now(),
-          expiryDate: expiryDate.toISOString(),
-          remainingDays: 3,
-          accessCount: 1,
-          accessedOwnersCount: 1
-        }
-      };
-    } else if (owner) {
-      this.ownerInfo = {
-        owner: {
-          id: owner._id || ('owner-' + Date.now()),
-          name: owner.fullName || this.translate.instant('UNIT_DETAIL.CONTACT.VERIFIED_OWNER'),
-          email: owner.email || 'proprietaire@ndewa360.com',
-          phone: owner.phoneNumber || '+237 6XX XXX XXX',
-          whatsapp: owner.phoneNumber || '+237 6XX XXX XXX',
-          address: this.unit?.property?.location || this.translate.instant('UNIT_DETAIL.LOCATION.ADDRESS_NOT_SPECIFIED')
-        },
-        access: {
-          id: 'access-' + Date.now(),
-          expiryDate: expiryDate.toISOString(),
-          remainingDays: 3,
-          accessCount: 1,
-          accessedOwnersCount: 1
-        }
-      };
-    } else {
-      // Fallback
-      this.ownerInfo = {
-        owner: {
-          id: 'fallback-contact-' + Date.now(),
-          name: this.translate.instant('UNIT_DETAIL.CONTACT.CERTIFIED_NDEWA_CONTACT'),
-          email: 'contact@ndewa360.com',
-          phone: '+237 690 123 456',
-          whatsapp: '+237 690 123 456',
-          address: this.unit?.property?.location || this.translate.instant('UNIT_DETAIL.LOCATION.DEFAULT_LOCATION')
-        },
-        access: {
-          id: 'fallback-access-' + Date.now(),
-          expiryDate: expiryDate.toISOString(),
-          remainingDays: 3,
-          accessCount: 1,
-          accessedOwnersCount: 1
-        }
-      };
-    }
-  }
+
 }

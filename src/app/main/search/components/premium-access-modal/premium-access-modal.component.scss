@@ -1,26 +1,26 @@
-/* Modal Premium Access - Design professionnel */
+// ─── Variables ────────────────────────────────────────────────────────────────
+$gold:    #c8860a;
+$gold-bg: #fdf6e3;
+$green:   #16a34a;
+$red:     #dc2626;
+$gray-50: #f9fafb;
+$gray-100:#f3f4f6;
+$gray-200:#e5e7eb;
+$gray-500:#6b7280;
+$gray-700:#374151;
+$gray-900:#111827;
+$orange:  #f97316;
+$mtn:     #fbbf24;
+$wa:      #25d366;
+$radius:  16px;
+$shadow:  0 20px 60px rgba(0,0,0,.18);
 
-// Variables de couleurs de l'application
-$primary-color: rgb(204, 140, 10);
-$primary-dark: rgb(184, 126, 9);
-$primary-light: rgba(204, 140, 10, 0.1);
-$text-dark: #1f2937;
-$text-light: #6b7280;
-$bg-light: #f8fafc;
-$border-light: #e2e8f0;
-$success-color: #10b981;
-$error-color: #ef4444;
-$premium-color: #8b5cf6;
-
-/* Overlay */
-.premium-modal-overlay {
+// ─── Overlay ──────────────────────────────────────────────────────────────────
+.pm-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
+  inset: 0;
+  background: rgba(0,0,0,.5);
+  backdrop-filter: blur(6px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -28,549 +28,399 @@ $premium-color: #8b5cf6;
   padding: 1rem;
 }
 
-/* Modal */
-.premium-modal {
-  background: white;
-  border-radius: 20px;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
-  max-width: 500px;
+// ─── Modal ────────────────────────────────────────────────────────────────────
+.pm {
+  background: #fff;
+  border-radius: $radius;
+  box-shadow: $shadow;
   width: 100%;
-  max-height: 90vh;
+  max-width: 420px;
+  max-height: 92vh;
   overflow: hidden;
-  animation: modalSlideIn 0.3s ease-out;
-}
-
-@keyframes modalSlideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-20px) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-/* Header */
-.modal-header {
-  background: linear-gradient(135deg, $premium-color, #7c3aed);
-  color: white;
-  padding: 1.5rem;
   display: flex;
+  flex-direction: column;
+  animation: pmIn .25s cubic-bezier(.34,1.56,.64,1);
+}
+
+@keyframes pmIn {
+  from { opacity:0; transform: translateY(16px) scale(.97); }
+  to   { opacity:1; transform: translateY(0)    scale(1);   }
+}
+
+// ─── Header ───────────────────────────────────────────────────────────────────
+.pm__header {
+  display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: center;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid $gray-100;
 }
 
-.header-content {
+.pm__header-left {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: .875rem;
 }
 
-.premium-icon {
-  width: 50px;
-  height: 50px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  
-  i {
-    font-size: 1.5rem;
-    color: #fbbf24;
-  }
-}
-
-.header-text {
-  h2 {
-    font-size: 1.25rem;
-    font-weight: 700;
-    margin: 0 0 0.25rem 0;
-  }
-  
-  p {
-    font-size: 0.875rem;
-    margin: 0;
-    opacity: 0.9;
-  }
-}
-
-.close-btn {
-  background: rgba(255, 255, 255, 0.2);
-  border: none;
-  color: white;
+.pm__crown {
   width: 40px;
   height: 40px;
-  border-radius: 50%;
+  background: $gold-bg;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  i { color: $gold; font-size: 1.125rem; }
+}
+
+.pm__title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: $gray-900;
+  line-height: 1.2;
+}
+
+.pm__subtitle {
+  font-size: .75rem;
+  color: $gray-500;
+  margin-top: 1px;
+}
+
+.pm__close {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: $gray-100;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    background: rgba(255, 255, 255, 0.3);
-  }
-  
-  i {
-    font-size: 1.125rem;
-  }
+  color: $gray-500;
+  transition: background .15s;
+
+  &:hover { background: $gray-200; color: $gray-700; }
+  i { font-size: .875rem; }
 }
 
-/* Content */
-.modal-content {
+// ─── Body ─────────────────────────────────────────────────────────────────────
+.pm__body {
   padding: 1.5rem;
-  max-height: calc(90vh - 120px);
   overflow-y: auto;
+  flex: 1;
 }
 
-/* Loading */
-.loading-section {
-  text-align: center;
-  padding: 2rem;
-  
-  i {
-    font-size: 2rem;
-    color: $primary-color;
-    margin-bottom: 1rem;
-  }
-  
-  p {
-    color: $text-light;
-    margin: 0;
-  }
-}
-
-/* Error */
-.error-section {
-  text-align: center;
-  padding: 2rem;
-  
-  i {
-    font-size: 2.5rem;
-    color: $error-color;
-    margin-bottom: 1rem;
-  }
-  
-  h3 {
-    color: $text-dark;
-    margin-bottom: 0.5rem;
-  }
-  
-  p {
-    color: $text-light;
-    margin-bottom: 1.5rem;
-  }
-}
-
-.retry-btn {
-  background: $primary-color;
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    background: $primary-dark;
-    transform: translateY(-1px);
-  }
-}
-
-/* Owner Info Section */
-.owner-info-section {
-  .access-status {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem;
-    background: rgba($success-color, 0.05);
-    border: 1px solid rgba($success-color, 0.2);
-    border-radius: 12px;
-    margin-bottom: 1.5rem;
-  }
-  
-  .status-badge {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: $success-color;
-    font-weight: 600;
-    font-size: 0.875rem;
-    
-    i {
-      font-size: 1rem;
-    }
-  }
-  
-  .expiry-info {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: $text-light;
-    font-size: 0.8125rem;
-    
-    i {
-      font-size: 0.875rem;
-    }
-  }
-}
-
-.owner-details {
-  h3 {
-    color: $text-dark;
-    font-size: 1.125rem;
-    font-weight: 700;
-    margin: 0 0 1rem 0;
-  }
-}
-
-.detail-item {
+// ─── État générique (loading) ─────────────────────────────────────────────────
+.pm__state {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
-  padding: 1rem;
-  background: $bg-light;
-  border: 1px solid $border-light;
-  border-radius: 12px;
-  margin-bottom: 0.75rem;
-  
-  &:last-child {
-    margin-bottom: 1.5rem;
-  }
+  gap: .75rem;
+  padding: 2.5rem 0;
+  color: $gray-500;
+  font-size: .875rem;
 }
 
-.detail-label {
+.pm__spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid $gray-200;
+  border-top-color: $gold;
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+// ─── Erreur ───────────────────────────────────────────────────────────────────
+.pm__error {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  color: $text-light;
-  font-weight: 600;
-  font-size: 0.875rem;
-  
-  i {
-    color: $primary-color;
-    font-size: 1rem;
-    width: 1rem;
+  gap: .5rem;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 10px;
+  padding: .75rem 1rem;
+  color: $red;
+  font-size: .8125rem;
+  margin-bottom: 1.25rem;
+
+  i { flex-shrink: 0; }
+
+  button {
+    margin-left: auto;
+    background: none;
+    border: 1px solid $red;
+    color: $red;
+    border-radius: 6px;
+    padding: .25rem .625rem;
+    font-size: .75rem;
+    cursor: pointer;
+    white-space: nowrap;
+    &:hover { background: #fef2f2; }
   }
 }
 
-.detail-value {
-  color: $text-dark;
-  font-weight: 600;
-  font-size: 0.875rem;
-  text-align: right;
-  
-  a {
-    color: $primary-color;
-    text-decoration: none;
-    transition: color 0.3s ease;
-    
-    &:hover {
-      color: $primary-dark;
-    }
-  }
+// ─── Prix hero ────────────────────────────────────────────────────────────────
+.pm__price-hero {
+  text-align: center;
+  padding: 1.5rem 0 1.25rem;
 }
 
-.whatsapp-link {
+.pm__price-amount {
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: #25d366;
-  color: white !important;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 0.8125rem;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    background: #128c7e !important;
-    color: white !important;
-    transform: translateY(-1px);
-  }
-  
-  i {
-    font-size: 1rem;
-  }
+  align-items: baseline;
+  justify-content: center;
+  gap: .375rem;
 }
 
-/* Purchase Section */
-.purchase-section {
-  .premium-benefits {
-    text-align: center;
-    margin-bottom: 2rem;
+.pm__price-value {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: $gold;
+  line-height: 1;
+}
 
-    h3 {
-      color: $text-dark;
-      font-size: 1.25rem;
-      font-weight: 700;
-      margin: 0 0 0.75rem 0;
-    }
+.pm__price-currency {
+  font-size: .875rem;
+  font-weight: 600;
+  color: $gold;
+}
 
-    .benefits-description {
-      color: $text-light;
-      font-size: 1rem;
-      margin: 0 0 1.5rem 0;
-      line-height: 1.5;
-    }
-  }
+.pm__price-label {
+  font-size: .8125rem;
+  color: $gray-500;
+  margin-top: .375rem;
+}
 
-  .benefits-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    margin-bottom: 2rem;
-  }
+// ─── Avantages ────────────────────────────────────────────────────────────────
+.pm__benefits {
+  list-style: none;
+  margin: 0 0 1.5rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
 
-  .benefit-item {
+  li {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem;
-    background: rgba($success-color, 0.05);
-    border: 1px solid rgba($success-color, 0.1);
-    border-radius: 8px;
+    gap: .625rem;
+    font-size: .875rem;
+    color: $gray-700;
 
     i {
-      color: $success-color;
-      font-size: 1rem;
-      width: 1rem;
-    }
-
-    span {
-      color: $text-dark;
-      font-weight: 500;
-      font-size: 0.875rem;
+      color: $green;
+      font-size: .75rem;
+      flex-shrink: 0;
     }
   }
 }
 
-/* Pricing */
-.pricing-section {
-  text-align: center;
-  margin-bottom: 2rem;
+// ─── Méthodes de paiement ─────────────────────────────────────────────────────
+.pm__methods {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  margin-bottom: 1.25rem;
 }
 
-.price-card {
-  background: linear-gradient(135deg, rgba($primary-color, 0.05), rgba($primary-color, 0.1));
-  border: 2px solid rgba($primary-color, 0.2);
-  border-radius: 16px;
-  padding: 1.5rem;
+.pm__method {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+  padding: 0 .625rem;
+  border-radius: 6px;
+  font-size: .6875rem;
+  font-weight: 700;
+  letter-spacing: .02em;
 
-  .price-amount {
-    display: flex;
-    align-items: baseline;
-    justify-content: center;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
-
-    .currency {
-      color: $primary-color;
-      font-size: 1rem;
-      font-weight: 600;
-    }
-
-    .amount {
-      color: $primary-color;
-      font-size: 2rem;
-      font-weight: 700;
-    }
-  }
-
-  .price-duration {
-    color: $text-light;
-    font-size: 0.875rem;
-    font-weight: 500;
-  }
+  &--orange { background: #fff3e0; color: $orange; border: 1px solid #fed7aa; }
+  &--mtn    { background: #fffbeb; color: #92400e; border: 1px solid $mtn; }
+  &--card   { background: $gray-100; color: $gray-700; border: 1px solid $gray-200;
+               i { font-size: .75rem; } }
 }
 
-/* Purchase Actions */
-.purchase-actions {
-  text-align: center;
-}
-
-.purchase-btn {
+// ─── CTA ──────────────────────────────────────────────────────────────────────
+.pm__cta {
   width: 100%;
-  background: linear-gradient(135deg, $primary-color, $primary-dark);
-  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .625rem;
+  padding: .875rem;
+  background: $gold;
+  color: #fff;
   border: none;
   border-radius: 12px;
+  font-size: .9375rem;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba($primary-color, 0.3);
-  margin-bottom: 1rem;
+  transition: background .15s, transform .15s, box-shadow .15s;
+  box-shadow: 0 4px 14px rgba($gold, .35);
 
   &:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba($primary-color, 0.4);
+    background: darken($gold, 6%);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba($gold, .4);
   }
 
   &:disabled {
-    opacity: 0.6;
+    background: $gray-200;
+    color: $gray-500;
+    box-shadow: none;
     cursor: not-allowed;
-    transform: none;
-    background: linear-gradient(135deg, #9ca3af, #6b7280);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 
-  &:active:not(:disabled) {
-    transform: translateY(-1px);
-  }
+  i { font-size: 1rem; }
 }
 
-.btn-content {
+// ─── Sécurité ─────────────────────────────────────────────────────────────────
+.pm__secure {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem;
-  padding: 1rem 1.5rem;
+  gap: .375rem;
+  margin-top: .875rem;
+  font-size: .75rem;
+  color: $gray-500;
 
-  i {
-    font-size: 1.125rem;
-  }
-
-  span {
-    font-size: 1rem;
-  }
+  i { color: $green; }
 }
 
-.security-info {
+// ─── Badge accès actif ────────────────────────────────────────────────────────
+.pm__access-badge {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  color: $success-color;
-  font-size: 0.8125rem;
+  gap: .5rem;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 10px;
+  padding: .75rem 1rem;
+  color: $green;
+  font-size: .875rem;
   font-weight: 600;
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
 
-  i {
-    font-size: 1rem;
-  }
+  i { font-size: 1rem; }
 }
 
-.info-note {
+// ─── Propriétaire ─────────────────────────────────────────────────────────────
+.pm__owner-header {
+  display: flex;
+  align-items: center;
+  gap: .875rem;
+  margin-bottom: 1.25rem;
+}
+
+.pm__avatar {
+  width: 44px;
+  height: 44px;
+  background: $gold-bg;
+  border: 2px solid rgba($gold, .3);
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  color: $text-light;
-  font-size: 0.8125rem;
-  padding: 1rem;
-  background: rgba($primary-color, 0.03);
-  border-radius: 8px;
-  border: 1px solid rgba($primary-color, 0.1);
-
-  i {
-    color: $primary-color;
-    font-size: 1rem;
-  }
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: $gold;
+  flex-shrink: 0;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .premium-modal {
-    margin: 1rem;
-    max-width: calc(100vw - 2rem);
-  }
-
-  .modal-header {
-    padding: 1rem;
-  }
-
-  .header-content {
-    gap: 0.75rem;
-  }
-
-  .premium-icon {
-    width: 40px;
-    height: 40px;
-
-    i {
-      font-size: 1.25rem;
-    }
-  }
-
-  .header-text h2 {
-    font-size: 1.125rem;
-  }
-
-  .modal-content {
-    padding: 1rem;
-  }
-
-  .contact-actions {
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-
-  .detail-item {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
-
-    .detail-value {
-      text-align: left;
-    }
-  }
-
-  .access-status {
-    flex-direction: column;
-    gap: 0.5rem;
-    text-align: center;
-  }
+.pm__owner-name {
+  font-size: .9375rem;
+  font-weight: 700;
+  color: $gray-900;
 }
 
-/* Contact Actions */
-.contact-actions {
+.pm__owner-tag {
+  font-size: .75rem;
+  color: $green;
+  margin-top: 2px;
+}
+
+// ─── Contacts ─────────────────────────────────────────────────────────────────
+.pm__contacts {
   display: flex;
-  gap: 1rem;
-  margin-top: 1.5rem;
+  flex-direction: column;
+  gap: .5rem;
 }
 
-.action-btn {
-  flex: 1;
+.pm__contact {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1rem;
-  border: none;
+  gap: .875rem;
+  padding: .875rem 1rem;
+  background: $gray-50;
+  border: 1px solid $gray-100;
   border-radius: 12px;
-  font-weight: 600;
+  text-decoration: none;
+  transition: background .15s, border-color .15s;
   cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 0.875rem;
-  
-  &.primary {
-    background: linear-gradient(135deg, $primary-color, $primary-dark);
-    color: white;
-    
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba($primary-color, 0.4);
-    }
+
+  &:hover:not(.pm__contact--address) {
+    background: #fff;
+    border-color: $gray-200;
+    box-shadow: 0 2px 8px rgba(0,0,0,.06);
   }
-  
-  &.secondary {
-    background: $bg-light;
-    color: $text-dark;
-    border: 1px solid $border-light;
-    
-    &:hover {
-      background: white;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-  }
-  
-  i {
-    font-size: 1rem;
-  }
+
+  &--address { cursor: default; }
+}
+
+.pm__contact-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  i { font-size: .9375rem; color: #fff; }
+
+  &--phone   { background: #2563eb; }
+  &--whatsapp{ background: $wa; }
+  &--email   { background: #7c3aed; }
+  &--address { background: $gray-500; }
+}
+
+.pm__contact-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.pm__contact-label {
+  font-size: .6875rem;
+  color: $gray-500;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  font-weight: 600;
+}
+
+.pm__contact-value {
+  font-size: .875rem;
+  color: $gray-900;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pm__contact-arrow {
+  color: $gray-200;
+  font-size: .75rem;
+  flex-shrink: 0;
+}
+
+// ─── Responsive ───────────────────────────────────────────────────────────────
+@media (max-width: 480px) {
+  .pm { max-width: 100%; border-radius: $radius $radius 0 0; }
+  .pm-overlay { align-items: flex-end; padding: 0; }
+  .pm__body { padding: 1.25rem; }
 }

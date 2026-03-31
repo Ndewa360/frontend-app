@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { OverlayModule } from '@angular/cdk/overlay';
 
 import { SearchRoutingModule } from './search-routing.module';
@@ -20,6 +21,7 @@ import { PremiumSuccessComponent } from './components/premium-success/premium-su
   ],
   imports: [
     CommonModule,
+    FormsModule,
     SharedModule,
     SearchRoutingModule,
     OverlayModule,

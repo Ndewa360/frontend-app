@@ -388,7 +388,6 @@
 
 
         <!-- Payment Section for premium access -->
-        <!-- ✅ This section no longer displays because temporaryFreeAccess = true -->
         <div class="payment-section" *ngIf="!hasPremiumAccess">
           <h2 class="section-heading">
             <i class="fas fa-lock"></i>
@@ -480,7 +479,6 @@
 <!-- Full Screen Gallery -->
 <div class="image-gallery-overlay" *ngIf="isImageGalleryVisible" (click)="closeImageGallery()">
   <div class="gallery-container" (click)="$event.stopPropagation()">
-    <!-- Gallery header -->
     <div class="gallery-header">
       <div class="gallery-counter">
         <span>{{ currentImageIndex + 1 }} / {{ unitImages.length }}</span>
@@ -489,44 +487,30 @@
         <i class="fas fa-times"></i>
       </button>
     </div>
-    
-    <!-- Native full screen gallery -->
-    <div class="gallery-swiper" 
+    <div class="gallery-swiper"
          (touchstart)="onTouchStart($event)"
          (touchmove)="onTouchMove($event)"
          (touchend)="onTouchEnd($event)">
       <div class="gallery-container" [style.transform]="'translateX(' + (-currentImageIndex * 100) + '%)'">
         <div class="gallery-slide" *ngFor="let image of unitImages; let i = index">
-          <img 
-            [src]="image" 
-            [alt]="('UNIT_DETAIL.IMAGES.PHOTO_ALT' | translate) + ' ' + (i + 1)" 
-            class="gallery-image">
+          <img [src]="image" [alt]="('UNIT_DETAIL.IMAGES.PHOTO_ALT' | translate) + ' ' + (i + 1)" class="gallery-image">
         </div>
       </div>
-      
-      <!-- Gallery navigation -->
-      <button *ngIf="currentImageIndex > 0" 
-              (click)="previousImage()" 
-              class="gallery-nav-button prev-button">
+      <button *ngIf="currentImageIndex > 0" (click)="previousImage()" class="gallery-nav-button prev-button">
         <i class="fas fa-chevron-left"></i>
       </button>
-      <button *ngIf="currentImageIndex < unitImages.length - 1" 
-              (click)="nextImage()" 
-              class="gallery-nav-button next-button">
+      <button *ngIf="currentImageIndex < unitImages.length - 1" (click)="nextImage()" class="gallery-nav-button next-button">
         <i class="fas fa-chevron-right"></i>
       </button>
     </div>
   </div>
 </div>
 
-<!-- Premium Access Modal - TEMPORARILY COMMENTED FOR FREE ACCESS -->
-<!--
+<!-- Premium Access Modal -->
 <app-premium-access-modal
   *ngIf="showPremiumModal"
   [isOpen]="showPremiumModal"
-  [ownerId]="unit.property?.owner?.id || 'owner-id'"
-  [userId]="'current-user-id'"
-  [userEmail]="'user@example.com'"
-  (close)="closePremiumModal()">
+  [ownerId]="unit?.property?.owner?._id || ''"
+  (close)="closePremiumModal()"
+  (accessGranted)="onPremiumAccessGranted()">
 </app-premium-access-modal>
--->

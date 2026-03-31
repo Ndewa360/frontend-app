@@ -4,8 +4,9 @@ export interface PremiumAccessModel {
   userEmail: string;
   amount: number;
   currency: string;
-  stripeSessionId: string;
-  stripePaymentIntentId: string;
+  paymentMethod: 'orange_money' | 'mtn_money';
+  transactionId: string;
+  accessId: string;
   purchaseDate: Date;
   expiryDate: Date;
   status: 'PENDING' | 'ACTIVE' | 'EXPIRED' | 'CANCELLED';
@@ -41,5 +42,9 @@ export interface PremiumAccessStateModel {
   ownerInfo: OwnerInfoModel | null;
   accessHistory: PremiumAccessModel[];
   hasActiveAccess: boolean;
+  // Paiement en cours
+  pendingTransactionId: string | null;
+  pendingAccessId: string | null;
+  paymentStatus: 'idle' | 'pending' | 'success' | 'failed';
   initLoadingState: 'NO_LOADED' | 'LOADING' | 'LOADED';
 }

@@ -1,183 +1,150 @@
-<div class="premium-modal-overlay" (click)="closeModal()">
-  <div class="premium-modal" (click)="$event.stopPropagation()">
-    
-    <!-- Header -->
-    <div class="modal-header">
-      <div class="header-content">
-        <div class="premium-icon">
-          <i class="fa fa-crown"></i>
-        </div>
-        <div class="header-text">
-          <h2>Accès Premium</h2>
-          <p>Informations du propriétaire</p>
+<div class="pm-overlay" (click)="closeModal()">
+  <div class="pm" (click)="$event.stopPropagation()">
+
+    <!-- HEADER -->
+    <div class="pm__header">
+      <div class="pm__header-left">
+        <div class="pm__crown"><i class="fa fa-crown"></i></div>
+        <div>
+          <div class="pm__title">Accès Premium</div>
+          <div class="pm__subtitle">Contactez les propriétaires directement</div>
         </div>
       </div>
-      <button class="close-btn" (click)="closeModal()">
+      <button class="pm__close" (click)="closeModal()">
         <i class="fa fa-times"></i>
       </button>
     </div>
 
-    <!-- Content -->
-    <div class="modal-content">
-      
-      <!-- Loading -->
-      <div *ngIf="loading" class="loading-section">
-        <i class="fa fa-spinner fa-spin"></i>
-        <p>Chargement...</p>
+    <!-- BODY -->
+    <div class="pm__body">
+
+      <!-- Vérification -->
+      <div *ngIf="step === 'checking'" class="pm__state">
+        <div class="pm__spinner"></div>
+        <span>Vérification en cours…</span>
       </div>
 
-      <!-- Error -->
-      <div *ngIf="error && !loading" class="error-section">
-        <i class="fa fa-exclamation-triangle"></i>
-        <h3>Erreur</h3>
-        <p>{{ error }}</p>
-        <button class="retry-btn" (click)="checkAccess()">Réessayer</button>
-      </div>
+      <!-- Offre -->
+      <div *ngIf="step === 'offer'">
 
-      <!-- Has Active Access -->
-      <div *ngIf="!loading && !error && hasActiveAccess && ownerInfo" class="owner-info-section">
-        <div class="access-status">
-          <div class="status-badge active">
-            <i class="fa fa-check-circle"></i>
-            <span>Accès actif</span>
-          </div>
-          <div class="expiry-info">
-            <i class="fa fa-clock"></i>
-            <span>{{ getRemainingDaysText() }}</span>
-          </div>
+        <div *ngIf="error" class="pm__error">
+          <i class="fa fa-exclamation-circle"></i> {{ error }}
+          <button (click)="resolveUserIdentity()">Réessayer</button>
         </div>
 
-        <div class="owner-details">
-          <h3>Informations du propriétaire</h3>
-          
-          <div class="detail-item">
-            <div class="detail-label">
-              <i class="fa fa-user"></i>
-              <span>Nom</span>
+        <!-- Prix mis en avant -->
+        <div class="pm__price-hero">
+          <div class="pm__price-amount">
+            <span class="pm__price-value">{{ premiumPrice | number }}</span>
+            <span class="pm__price-currency">FCFA</span>
+          </div>
+          <div class="pm__price-label">pour 3 jours d'accès illimité</div>
+        </div>
+
+        <!-- Avantages -->
+        <ul class="pm__benefits">
+          <li><i class="fa fa-check"></i> Téléphone direct du propriétaire</li>
+          <li><i class="fa fa-check"></i> Email et WhatsApp</li>
+          <li><i class="fa fa-check"></i> Adresse précise du bien</li>
+          <li><i class="fa fa-check"></i> Accès à TOUS les propriétaires</li>
+        </ul>
+
+        <!-- Méthodes de paiement disponibles -->
+        <div class="pm__methods">
+          <span class="pm__method pm__method--orange">OM</span>
+          <span class="pm__method pm__method--mtn">MTN</span>
+          <span class="pm__method pm__method--card"><i class="fa fa-credit-card"></i></span>
+        </div>
+
+        <!-- CTA -->
+        <button class="pm__cta" [disabled]="loading" (click)="goToPayment()">
+          <i *ngIf="loading" class="fa fa-spinner fa-spin"></i>
+          <i *ngIf="!loading" class="fa fa-lock"></i>
+          <span>{{ loading ? 'Préparation…' : 'Accéder pour ' + formatAmount(premiumPrice) }}</span>
+        </button>
+
+        <div class="pm__secure">
+          <i class="fa fa-shield-alt"></i> Paiement 100% sécurisé
+        </div>
+      </div>
+
+      <!-- Infos propriétaire -->
+      <div *ngIf="step === 'owner_info'">
+
+        <!-- Badge accès actif -->
+        <div class="pm__access-badge">
+          <i class="fa fa-check-circle"></i>
+          <span>Accès actif — {{ getRemainingDaysText() }}</span>
+        </div>
+
+        <!-- Chargement infos -->
+        <div *ngIf="!ownerInfo" class="pm__state">
+          <div class="pm__spinner"></div>
+          <span>Chargement des informations…</span>
+        </div>
+
+        <!-- Infos propriétaire -->
+        <div *ngIf="ownerInfo" class="pm__owner">
+
+          <!-- Avatar + nom -->
+          <div class="pm__owner-header">
+            <div class="pm__avatar">{{ ownerInfo.owner.name | slice:0:1 | uppercase }}</div>
+            <div>
+              <div class="pm__owner-name">{{ ownerInfo.owner.name }}</div>
+              <div class="pm__owner-tag">Propriétaire vérifié</div>
             </div>
-            <div class="detail-value">{{ ownerInfo.owner.name }}</div>
           </div>
 
-          <div class="detail-item">
-            <div class="detail-label">
-              <i class="fa fa-envelope"></i>
-              <span>Email</span>
-            </div>
-            <div class="detail-value">
-              <a [href]="'mailto:' + ownerInfo.owner.email">{{ ownerInfo.owner.email }}</a>
-            </div>
-          </div>
+          <!-- Contacts -->
+          <div class="pm__contacts">
 
-          <div class="detail-item">
-            <div class="detail-label">
-              <i class="fa fa-phone"></i>
-              <span>Téléphone</span>
-            </div>
-            <div class="detail-value">
-              <a [href]="'tel:' + ownerInfo.owner.phone">{{ ownerInfo.owner.phone }}</a>
-            </div>
-          </div>
+            <a class="pm__contact" [href]="'tel:' + ownerInfo.owner.phone">
+              <div class="pm__contact-icon pm__contact-icon--phone">
+                <i class="fa fa-phone"></i>
+              </div>
+              <div class="pm__contact-info">
+                <span class="pm__contact-label">Téléphone</span>
+                <span class="pm__contact-value">{{ ownerInfo.owner.phone }}</span>
+              </div>
+              <i class="fa fa-chevron-right pm__contact-arrow"></i>
+            </a>
 
-          <div class="detail-item">
-            <div class="detail-label">
-              <i class="fab fa-whatsapp"></i>
-              <span>WhatsApp</span>
-            </div>
-            <div class="detail-value">
-              <a [href]="getWhatsAppLink()" target="_blank" class="whatsapp-link">
+            <a class="pm__contact" [href]="getWhatsAppLink()" target="_blank">
+              <div class="pm__contact-icon pm__contact-icon--whatsapp">
                 <i class="fab fa-whatsapp"></i>
-                Contacter sur WhatsApp
-              </a>
-            </div>
-          </div>
+              </div>
+              <div class="pm__contact-info">
+                <span class="pm__contact-label">WhatsApp</span>
+                <span class="pm__contact-value">{{ ownerInfo.owner.whatsapp }}</span>
+              </div>
+              <i class="fa fa-chevron-right pm__contact-arrow"></i>
+            </a>
 
-          <div class="detail-item">
-            <div class="detail-label">
-              <i class="fa fa-map-marker-alt"></i>
-              <span>Adresse</span>
-            </div>
-            <div class="detail-value">{{ ownerInfo.owner.address }}</div>
-          </div>
-        </div>
+            <a class="pm__contact" [href]="'mailto:' + ownerInfo.owner.email">
+              <div class="pm__contact-icon pm__contact-icon--email">
+                <i class="fa fa-envelope"></i>
+              </div>
+              <div class="pm__contact-info">
+                <span class="pm__contact-label">Email</span>
+                <span class="pm__contact-value">{{ ownerInfo.owner.email }}</span>
+              </div>
+              <i class="fa fa-chevron-right pm__contact-arrow"></i>
+            </a>
 
-        <div class="contact-actions">
-          <button class="action-btn primary" (click)="callOwner()">
-            <i class="fa fa-phone"></i>
-            <span>Appeler</span>
-          </button>
-          
-          <button class="action-btn secondary" (click)="emailOwner()">
-            <i class="fa fa-envelope"></i>
-            <span>Envoyer un email</span>
-          </button>
+            <div class="pm__contact pm__contact--address">
+              <div class="pm__contact-icon pm__contact-icon--address">
+                <i class="fa fa-map-marker-alt"></i>
+              </div>
+              <div class="pm__contact-info">
+                <span class="pm__contact-label">Adresse</span>
+                <span class="pm__contact-value">{{ ownerInfo.owner.address }}</span>
+              </div>
+            </div>
+
+          </div>
         </div>
       </div>
 
-      <!-- No Access - Purchase Required -->
-      <div *ngIf="!loading && !error && !hasActiveAccess" class="purchase-section">
-        <div class="premium-benefits">
-          <h3>Forfait Premium - Accès Global</h3>
-          <p class="benefits-description">
-            Accédez aux informations de contact de TOUS les propriétaires pendant 3 jours.
-          </p>
-
-          <div class="benefits-list">
-            <div class="benefit-item">
-              <i class="fa fa-check"></i>
-              <span>Accès à TOUS les propriétaires</span>
-            </div>
-            <div class="benefit-item">
-              <i class="fa fa-check"></i>
-              <span>Téléphones et emails directs</span>
-            </div>
-            <div class="benefit-item">
-              <i class="fa fa-check"></i>
-              <span>Contacts WhatsApp</span>
-            </div>
-            <div class="benefit-item">
-              <i class="fa fa-check"></i>
-              <span>Adresses complètes</span>
-            </div>
-            <div class="benefit-item">
-              <i class="fa fa-check"></i>
-              <span>Forfait valable 3 jours</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="pricing-section">
-          <div class="price-card">
-            <div class="price-amount">
-              <span class="currency">FCFA</span>
-              <span class="amount">{{ premiumPrice | number }}</span>
-            </div>
-            <div class="price-duration">pour 3 jours d'accès global</div>
-          </div>
-        </div>
-
-        <div class="purchase-actions">
-          <button
-            class="purchase-btn"
-            [disabled]="processing"
-            (click)="purchasePremiumAccess()">
-            <div class="btn-content">
-              <i *ngIf="processing" class="fa fa-spinner fa-spin"></i>
-              <i *ngIf="!processing" class="fab fa-stripe"></i>
-              <span>{{ processing ? 'Traitement...' : 'Acheter avec Stripe' }}</span>
-            </div>
-          </button>
-
-          <div class="security-info">
-            <i class="fa fa-shield-alt"></i>
-            <span>Paiement sécurisé par Stripe</span>
-          </div>
-        </div>
-
-        <div class="info-note">
-          <i class="fa fa-info-circle"></i>
-          <span>Après paiement, vous aurez accès immédiatement aux informations du propriétaire.</span>
-        </div>
-      </div>
     </div>
   </div>
 </div>
