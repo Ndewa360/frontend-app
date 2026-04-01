@@ -3,29 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 
-export interface PremiumAccessRequest {
-  userId: string;
-  userEmail: string;
-  amount: number;
-  paymentMethod: 'orange_money' | 'mtn_money';
-  phone?: string;
-  metadata?: any;
-}
-
-export interface PremiumAccessInitResponse {
-  accessId: string;
-  transactionId: string;
-  status: 'pending' | 'success' | 'failed';
-  message: string;
-  ussdCode?: string;
-  expiresAt?: string;
-}
-
-export interface PremiumAccessStatusResponse {
-  transactionId: string;
-  accessId: string;
-  status: 'pending' | 'success' | 'failed';
-  completedAt?: string;
+export interface AccessCheck {
+  hasAccess: boolean;
+  access: any | null;
 }
 
 export interface OwnerInfo {
@@ -35,6 +15,7 @@ export interface OwnerInfo {
     remainingDays: number;
     accessCount: number;
     accessedOwnersCount: number;
+    paymentTransactionRef?: string;
   };
   owner: {
     id: string;
@@ -46,75 +27,65 @@ export interface OwnerInfo {
   };
 }
 
-export interface AccessCheck {
-  hasAccess: boolean;
-  access: any | null;
-}
-
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class PremiumAccessService {
-  private apiUrl = `${environment.apiUrl}/premium-access`;
+
+  private readonly api = `${environment.apiUrl}/premium-access`;
 
   constructor(private http: HttpClient) {}
 
-  // Initier un paiement Mobile Money pour l'accès premium
-  initiatePremiumPayment(data: PremiumAccessRequest): Observable<{ data: PremiumAccessInitResponse }> {
-    return this.http.post<{ data: PremiumAccessInitResponse }>(`${this.apiUrl}/initiate-payment`, data);
-  }
-
-  // Vérifier le statut d'un paiement en cours
-  checkPaymentStatus(transactionId: string): Observable<{ data: PremiumAccessStatusResponse }> {
-    return this.http.get<{ data: PremiumAccessStatusResponse }>(`${this.apiUrl}/payment-status/${transactionId}`);
-  }
-
-  // Confirmer l'accès après paiement réussi
-  confirmPremiumAccess(accessId: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/confirm`, { accessId });
-  }
-
-  // Vérifier si l'utilisateur (connecté ou visiteur) a un accès actif
+  // ─── Vérifier si un utilisateur (connecté ou anonyme) a un accès actif ───
+  // Route backend: GET /premium-access/check/:userId (publique)
   checkActiveAccess(userId: string): Observable<{ data: AccessCheck }> {
-    return this.http.get<{ data: AccessCheck }>(`${this.apiUrl}/check/${userId}`);
+    return this.http.get<{ data: AccessCheck }>(`${this.api}/check/${userId}`);
   }
 
-  // Obtenir les informations du propriétaire (nécessite un accès actif)
-  // userId peut être un vrai userId ou un visitorId
-  getOwnerInfo(userId: string, ownerId: string): Observable<{ data: OwnerInfo }> {
-    return this.http.get<{ data: OwnerInfo }>(`${this.apiUrl}/owner-info/${userId}/${ownerId}`);
+  // ─── Infos propriétaire pour utilisateur connecté (JWT requis) ───────────
+  // Route backend: GET /premium-access/owner-info/:ownerId
+  getOwnerInfo(ownerId: string): Observable<{ data: OwnerInfo }> {
+    return this.http.get<{ data: OwnerInfo }>(`${this.api}/owner-info/${ownerId}`);
   }
 
-  // Obtenir l'historique des accès premium
-  getUserPremiumHistory(userId: string): Observable<{ data: any[] }> {
-    return this.http.get<{ data: any[] }>(`${this.apiUrl}/history/${userId}`);
+  // ─── Infos propriétaire pour visiteur anonyme (pas de JWT) ───────────────
+  // Route backend: GET /premium-access/public-owner-info/:ownerId?visitorId=
+  getPublicOwnerInfo(ownerId: string, visitorId: string): Observable<{ data: OwnerInfo }> {
+    return this.http.get<{ data: OwnerInfo }>(
+      `${this.api}/public-owner-info/${ownerId}?visitorId=${visitorId}`
+    );
   }
 
-  // Formater le montant
+  // ─── Historique des accès (JWT requis) ───────────────────────────────────
+  // Route backend: GET /premium-access/history
+  getUserPremiumHistory(): Observable<{ data: any[] }> {
+    return this.http.get<{ data: any[] }>(`${this.api}/history`);
+  }
+
+  // ─── Accès + transaction liée (JWT requis) ───────────────────────────────
+  // Route backend: GET /premium-access/transaction
+  getAccessWithTransaction(): Observable<{ data: any }> {
+    return this.http.get<{ data: any }>(`${this.api}/transaction`);
+  }
+
+  // ─── Utilitaires ─────────────────────────────────────────────────────────
+
   formatAmount(amount: number): string {
     return new Intl.NumberFormat('fr-FR', {
       style: 'currency',
       currency: 'XAF',
-      minimumFractionDigits: 0
+      minimumFractionDigits: 0,
     }).format(amount);
   }
 
-  // Calculer les jours restants
   calculateRemainingDays(expiryDate: string): number {
-    const expiry = new Date(expiryDate);
-    const now = new Date();
-    const diffTime = expiry.getTime() - now.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return Math.max(0, diffDays);
+    const diff = new Date(expiryDate).getTime() - Date.now();
+    return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
   }
 
-  // Vérifier si l'accès est expiré
   isAccessExpired(expiryDate: string): boolean {
     return new Date(expiryDate) <= new Date();
   }
 
-  // Prix de l'accès premium
   getPremiumAccessPrice(): number {
-    return 500; // 500 FCFA pour 3 jours d'accès global
+    return 500;
   }
 }

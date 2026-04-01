@@ -3,75 +3,70 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
-// ─── Types de moyens de paiement ───────────────────────────────────────────
-export type PaymentMethod = 'orange_money' | 'mtn_money' | 'card';
+// ─── Types alignés sur le backend ──────────────────────────────────────────
+// Backend: PaymentProvider enum → MTN | ORANGE | STRIPE | EASY_TRANSACT
+export type PaymentProvider = 'MTN' | 'ORANGE' | 'STRIPE' | 'EASY_TRANSACT';
 
-// ─── Contextes d'utilisation du module de paiement ─────────────────────────
-export type PaymentContext =
-  | 'rent'           // Paiement de loyer (locataire → propriétaire)
-  | 'subscription'   // Souscription Ndewa360 (propriétaire → Ndewa360)
-  | 'premium_access' // Accès premium chercheur (chercheur → Ndewa360)
-  | 'deposit';       // Caution (locataire → propriétaire)
+// Backend: PaymentContext enum → RENT | SUBSCRIPTION | PREMIUM_ACCESS
+export type PaymentContext = 'RENT' | 'SUBSCRIPTION' | 'PREMIUM_ACCESS';
 
-// ─── Statuts de paiement ────────────────────────────────────────────────────
+// Alias lisibles pour le template
+export type PaymentMethod = 'orange_money' | 'mtn_money' | 'card' | 'easy_transact';
+
 export type PaymentStatus =
   | 'idle'
   | 'processing'
-  | 'pending_confirmation'  // En attente de confirmation opérateur
+  | 'pending_confirmation'
   | 'success'
   | 'failed'
   | 'cancelled';
 
-// ─── Interfaces ─────────────────────────────────────────────────────────────
-export interface PaymentConfig {
+// ─── DTO d'initiation aligné sur InitiatePaymentRequestDto backend ──────────
+export interface InitiatePaymentDto {
   context: PaymentContext;
-  amount?: number;           // Montant fixe (optionnel, sinon l'utilisateur saisit)
-  amountEditable?: boolean;  // L'utilisateur peut modifier le montant
-  currency?: string;         // Défaut: XAF
+  provider: PaymentProvider;
+  amount: number;
+  currency?: string;
+  phoneNumber?: string;
   description?: string;
-  reference?: string;        // Référence interne (token, periodId, etc.)
-  metadata?: Record<string, any>;
-  successRedirect?: string;
-  cancelRedirect?: string;
+  userEmail?: string;
+  paymentLinkId?: string;
+  // Contexte RENT
+  locationId?: string;
+  locataireId?: string;
+  roomId?: string;
+  propertyId?: string;
+  // Contexte SUBSCRIPTION
+  periodId?: string;
+  subscriptionId?: string;
+  // Stripe
+  successUrl?: string;
+  cancelUrl?: string;
+  // Visiteur anonyme (PREMIUM_ACCESS public)
+  visitorId?: string;
 }
 
-export interface MobileMoneyPayload {
-  phone: string;
-  operator: 'orange' | 'mtn';
-  amount: number;
-  reference: string;
-  description?: string;
+export interface InitiatePaymentResponse {
+  externalRef: string;
+  status: 'PENDING' | 'SUCCESS' | 'FAILED' | 'CANCELLED' | 'EXPIRED';
+  redirectUrl?: string;
 }
 
-export interface MobileMoneyResponse {
-  transactionId: string;
-  status: 'pending' | 'success' | 'failed';
-  message: string;
-  ussdCode?: string;
-  expiresAt?: string;
-}
-
-export interface MobileMoneyStatusResponse {
-  transactionId: string;
-  status: 'pending' | 'success' | 'failed';
-  amount: number;
-  phone: string;
-  completedAt?: string;
-}
-
-export interface StripeSessionPayload {
-  amount: number;
-  reference: string;
+export interface CheckPaymentResponse {
+  externalRef: string;
+  status: 'PENDING' | 'SUCCESS' | 'FAILED' | 'CANCELLED' | 'EXPIRED';
   context: PaymentContext;
-  description?: string;
-  successUrl: string;
-  cancelUrl: string;
-  metadata?: Record<string, any>;
+  amount: number;
 }
 
-export interface StripeSessionResponse {
-  sessionId: string;
-  sessionUrl: string;
+export interface PaymentTransactionResponse {
+  externalRef: string;
+  status: string;
+  context: PaymentContext;
+  provider: PaymentProvider;
+  amount: number;
+  currency: string;
+  processedAt?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -81,65 +76,96 @@ export class UnifiedPaymentService {
 
   constructor(private http: HttpClient) {}
 
-  // ─── Orange Money ──────────────────────────────────────────────────────────
+  // ─── Initiation unifiée (tous providers) ──────────────────────────────────
+  // Route sécurisée : POST /payment/initiate        (JWT requis — RENT, SUBSCRIPTION)
+  // Route publique  : POST /payment/initiate-public (anonymes — PREMIUM_ACCESS)
 
-  initiateOrangeMoney(payload: MobileMoneyPayload): Observable<{ data: MobileMoneyResponse }> {
-    return this.http.post<{ data: MobileMoneyResponse }>(
-      `${this.api}/payments/orange-money/initiate`, payload
+  initiatePayment(
+    dto: InitiatePaymentDto,
+    isPublic = false
+  ): Observable<{ data: InitiatePaymentResponse }> {
+    const route = isPublic ? 'initiate-public' : 'initiate';
+    return this.http.post<{ data: InitiatePaymentResponse }>(
+      `${this.api}/payment/${route}`, dto
     );
   }
 
-  checkOrangeMoneyStatus(transactionId: string): Observable<{ data: MobileMoneyStatusResponse }> {
-    return this.http.get<{ data: MobileMoneyStatusResponse }>(
-      `${this.api}/payments/orange-money/status/${transactionId}`
+  // ─── Vérification du statut ───────────────────────────────────────────────
+  // Route backend: GET /payment/check/:externalRef
+
+  checkPaymentStatus(externalRef: string): Observable<{ data: CheckPaymentResponse }> {
+    return this.http.get<{ data: CheckPaymentResponse }>(
+      `${this.api}/payment/check/${externalRef}`
     );
   }
 
-  // ─── MTN Money ────────────────────────────────────────────────────────────
+  // ─── Récupérer une transaction ────────────────────────────────────────────
+  // Route backend: GET /payment/transaction/:externalRef
 
-  initiateMtnMoney(payload: MobileMoneyPayload): Observable<{ data: MobileMoneyResponse }> {
-    return this.http.post<{ data: MobileMoneyResponse }>(
-      `${this.api}/payments/mtn-money/initiate`, payload
+  getTransaction(externalRef: string): Observable<{ data: PaymentTransactionResponse }> {
+    return this.http.get<{ data: PaymentTransactionResponse }>(
+      `${this.api}/payment/transaction/${externalRef}`
     );
   }
 
-  checkMtnMoneyStatus(transactionId: string): Observable<{ data: MobileMoneyStatusResponse }> {
-    return this.http.get<{ data: MobileMoneyStatusResponse }>(
-      `${this.api}/payments/mtn-money/status/${transactionId}`
+  // ─── Mes transactions ─────────────────────────────────────────────────────
+  // Route backend: GET /payment/my-transactions?context=...
+
+  getMyTransactions(context?: PaymentContext): Observable<{ data: PaymentTransactionResponse[] }> {
+    const params = context ? `?context=${context}` : '';
+    return this.http.get<{ data: PaymentTransactionResponse[] }>(
+      `${this.api}/payment/my-transactions${params}`
     );
   }
 
-  // ─── Stripe (Visa / Mastercard) ───────────────────────────────────────────
+  // ─── Transactions d'une location ─────────────────────────────────────────
+  // Route backend: GET /payment/location/:locationId/transactions
 
-  createStripeSession(payload: StripeSessionPayload): Observable<{ data: StripeSessionResponse }> {
-    return this.http.post<{ data: StripeSessionResponse }>(
-      `${this.api}/payments/stripe/create-session`, payload
+  getLocationTransactions(locationId: string): Observable<{ data: PaymentTransactionResponse[] }> {
+    return this.http.get<{ data: PaymentTransactionResponse[] }>(
+      `${this.api}/payment/location/${locationId}/transactions`
     );
   }
 
-  confirmStripePayment(sessionId: string): Observable<{ data: any }> {
-    return this.http.post<{ data: any }>(
-      `${this.api}/payments/stripe/confirm`, { sessionId }
+  // ─── Stats de paiement d'une location ────────────────────────────────────
+  // Route backend: GET /payment/location/:locationId/stats
+
+  getLocationPaymentStats(locationId: string): Observable<{ data: any }> {
+    return this.http.get<{ data: any }>(
+      `${this.api}/payment/location/${locationId}/stats`
     );
   }
 
-  // ─── Utilitaires ──────────────────────────────────────────────────────────
+  // ─── Helpers pour la page de paiement ────────────────────────────────────
+
+  /** Mappe le PaymentMethod du template vers le PaymentProvider backend */
+  methodToProvider(method: PaymentMethod): PaymentProvider {
+    const map: Record<PaymentMethod, PaymentProvider> = {
+      orange_money: 'ORANGE',
+      mtn_money: 'MTN',
+      card: 'STRIPE',
+      easy_transact: 'EASY_TRANSACT',
+    };
+    return map[method];
+  }
 
   formatAmount(amount: number, currency = 'XAF'): string {
     return new Intl.NumberFormat('fr-FR', {
       style: 'currency',
       currency,
-      minimumFractionDigits: 0
+      minimumFractionDigits: 0,
     }).format(amount);
   }
 
   validatePhone(phone: string): boolean {
-    // Cameroun : 6XXXXXXXX ou +2376XXXXXXXX
     return /^(\+237)?6[0-9]{8}$/.test(phone.replace(/\s/g, ''));
   }
 
   normalizePhone(phone: string): string {
-    const cleaned = phone.replace(/\s/g, '');
-    return cleaned.startsWith('+237') ? cleaned : `+237${cleaned}`;
+    // Supprimer tous les espaces et caractères non numériques sauf +
+    const cleaned = phone.replace(/[\s\-\.]/g, '');
+    if (cleaned.startsWith('+237')) return cleaned;
+    if (cleaned.startsWith('00237')) return `+${cleaned.slice(2)}`;
+    return `+237${cleaned}`;
   }
 }

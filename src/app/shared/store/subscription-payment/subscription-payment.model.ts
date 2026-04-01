@@ -86,12 +86,14 @@ export interface SubscriptionPaymentStateModel {
 }
 
 export interface StripeSessionModel {
-  sessionId: string;
-  sessionUrl: string;
-  periodId: string;
-  amount: number;
-  billingRef: string;
+  sessionId?: string;
+  sessionUrl?: string;
+  externalRef?: string;   // référence interne POST /payment/initiate
+  redirectUrl?: string;   // URL de redirection (Stripe Checkout)
   status?: string;
+  periodId?: string;
+  amount?: number;
+  billingRef?: string;
 }
 
 export interface PaymentMethodsModel {

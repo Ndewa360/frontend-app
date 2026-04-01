@@ -57,17 +57,12 @@ export class PremiumAccessButtonComponent implements OnInit, OnDestroy {
   }
 
   private resolveAndCheck(): void {
-    // 1. Vérifier d'abord en local (pas d'appel réseau)
     if (this.anonymousUserService.hasLocalActiveAccess()) {
       this.hasActiveAccess = true;
       return;
     }
-
-    // 2. Résoudre l'identité
     const profile = this.store.selectSnapshot(UserProfileState.selectStateUserProfile);
     this.effectiveUserId = profile?._id || this.anonymousUserService.getVisitorId();
-
-    // 3. Vérifier côté backend
     this.store.dispatch(new PremiumAccessAction.CheckActiveAccess(this.effectiveUserId));
   }
 

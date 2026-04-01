@@ -5,6 +5,8 @@ import { takeUntil } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
 import { PremiumAccessState, PremiumAccessAction } from 'src/app/shared/store/premium-access';
 import { PremiumAccessService } from 'src/app/shared/services/premium-access/premium-access.service';
+import { AnonymousUserService } from 'src/app/shared/services/anonymous-user.service';
+import { UserProfileState } from 'src/app/shared/store/user-profile';
 
 @Component({
   selector: 'app-premium-success',
@@ -15,7 +17,6 @@ export class PremiumSuccessComponent implements OnInit, OnDestroy {
   loading = true;
   error: string | null = null;
   accessConfirmed = false;
-  sessionId: string | null = null;
 
   private destroy$ = new Subject<void>();
 
@@ -23,22 +24,12 @@ export class PremiumSuccessComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private store: Store,
-    private premiumAccessService: PremiumAccessService
+    private premiumAccessService: PremiumAccessService,
+    private anonymousUserService: AnonymousUserService,
   ) {}
 
   ngOnInit(): void {
-    // Récupérer le session_id depuis l'URL
-    this.route.queryParams
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(params => {
-        this.sessionId = params['session_id'];
-        if (this.sessionId) {
-          this.confirmAccess();
-        } else {
-          this.error = 'Session de paiement non trouvée';
-          this.loading = false;
-        }
-      });
+    this.verifyAccess();
   }
 
   ngOnDestroy(): void {
@@ -46,65 +37,63 @@ export class PremiumSuccessComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  // Confirmer l'accès premium
-  confirmAccess(): void {
-    if (!this.sessionId) {
-      this.error = 'Session de paiement manquante';
-      this.loading = false;
-      return;
-    }
-
+  // La confirmation est gérée automatiquement par le webhook backend.
+  // Ici on vérifie simplement que l'accès est bien actif.
+  verifyAccess(): void {
     this.loading = true;
     this.error = null;
 
-    // Confirmer le paiement avec le backend
-    this.store.dispatch(new PremiumAccessAction.ConfirmAccess(this.sessionId));
+    // Résoudre l'identité
+    const profile = this.store.selectSnapshot(UserProfileState.selectStateUserProfile);
+    const userId = profile?._id || this.anonymousUserService.getVisitorId();
 
-    // S'abonner aux changements pour détecter la confirmation
-    this.store.select(PremiumAccessState.hasActiveAccess)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(hasAccess => {
-        if (hasAccess) {
-          this.loading = false;
+    // Vérifier côté backend que l'accès est bien ACTIVE
+    this.premiumAccessService.checkActiveAccess(userId).subscribe({
+      next: (res) => {
+        this.loading = false;
+        if (res.data.hasAccess) {
           this.accessConfirmed = true;
+          // Sauvegarder localement pour les visiteurs anonymes
+          if (!profile?._id && res.data.access?.expiryDate) {
+            this.anonymousUserService.savePremiumAccess({
+              accessId: res.data.access.id || 'confirmed',
+              transactionId: res.data.access.paymentTransactionRef || 'confirmed',
+              expiryDate: res.data.access.expiryDate,
+              phone: '',
+              paymentMethod: 'card',
+              paidAt: new Date().toISOString(),
+            });
+          }
+          // Mettre à jour le store
+          this.store.dispatch(new PremiumAccessAction.CheckActiveAccess(userId));
+        } else {
+          // Accès pas encore actif — réessayer dans 3s (webhook peut être en retard)
+          setTimeout(() => this.verifyAccess(), 3000);
         }
-      });
-
-    this.store.select(PremiumAccessState.error)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(error => {
-        if (error) {
-          this.loading = false;
-          this.error = error;
-        }
-      });
-  }
-
-  // Voir les informations du propriétaire
-  viewOwnerInfo(): void {
-    // Rediriger vers la page de recherche avec un paramètre pour ouvrir le modal
-    this.router.navigate(['/search'], { 
-      queryParams: { 
-        premium: 'true',
-        action: 'view-owner-info'
-      } 
+      },
+      error: () => {
+        this.loading = false;
+        this.error = 'Impossible de vérifier votre accès. Veuillez réessayer.';
+      }
     });
   }
 
-  // Retour à la recherche
-  backToSearch(): void {
-    this.router.navigate(['/search']);
+  viewOwnerInfo(): void {
+    const lang = window.location.pathname.split('/')[1] || 'fr';
+    this.router.navigate([`/${lang}/search`]);
   }
 
-  // Obtenir la date d'expiration
+  backToSearch(): void {
+    const lang = window.location.pathname.split('/')[1] || 'fr';
+    this.router.navigate([`/${lang}/search`]);
+  }
+
   getExpiryDate(): Date {
-    // 3 jours à partir de maintenant
     const expiryDate = new Date();
     expiryDate.setDate(expiryDate.getDate() + 3);
     return expiryDate;
   }
 
-  // Formater le montant
   formatAmount(amount: number): string {
     return this.premiumAccessService.formatAmount(amount);
   }

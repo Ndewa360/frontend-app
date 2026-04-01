@@ -4,9 +4,7 @@ export interface PremiumAccessModel {
   userEmail: string;
   amount: number;
   currency: string;
-  paymentMethod: 'orange_money' | 'mtn_money';
-  transactionId: string;
-  accessId: string;
+  paymentTransactionRef?: string;
   purchaseDate: Date;
   expiryDate: Date;
   status: 'PENDING' | 'ACTIVE' | 'EXPIRED' | 'CANCELLED';
@@ -14,7 +12,6 @@ export interface PremiumAccessModel {
   firstAccessDate?: Date;
   lastAccessDate?: Date;
   accessedOwners: string[];
-  metadata?: any;
 }
 
 export interface OwnerInfoModel {
@@ -24,6 +21,7 @@ export interface OwnerInfoModel {
     remainingDays: number;
     accessCount: number;
     accessedOwnersCount: number;
+    paymentTransactionRef?: string;
   };
   owner: {
     id: string;
@@ -42,9 +40,5 @@ export interface PremiumAccessStateModel {
   ownerInfo: OwnerInfoModel | null;
   accessHistory: PremiumAccessModel[];
   hasActiveAccess: boolean;
-  // Paiement en cours
-  pendingTransactionId: string | null;
-  pendingAccessId: string | null;
-  paymentStatus: 'idle' | 'pending' | 'success' | 'failed';
   initLoadingState: 'NO_LOADED' | 'LOADING' | 'LOADED';
 }

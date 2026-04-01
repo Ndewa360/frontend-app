@@ -442,30 +442,30 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
   // === PREMIUM ACCESS ===
 
   private loadCurrentUser(): void {
-    // 1. Essayer l'utilisateur connecté
     const profile = this.store.selectSnapshot(UserProfileState.selectStateUserProfile);
     if (profile?._id) {
       this.currentUserId = profile._id;
       this.currentUserEmail = profile.email || '';
     } else {
-      // 2. Visiteur anonyme
       this.currentUserId = this.anonymousUserService.getVisitorId();
       this.currentUserEmail = '';
     }
 
-    // 3. Vérifier d'abord en local
+    // Vérifier d'abord en local (0 appel réseau)
     if (this.anonymousUserService.hasLocalActiveAccess()) {
       this.hasPremiumAccess = true;
       if (this.unit?.property?.owner?._id) {
+        const isAnonymous = !profile?._id;
         this.store.dispatch(new PremiumAccessAction.GetOwnerInfo(
           this.currentUserId,
-          this.unit.property.owner._id
+          this.unit.property.owner._id,
+          isAnonymous
         ));
       }
       return;
     }
 
-    // 4. Vérifier côté backend
+    // Vérifier côté backend
     this.store.dispatch(new PremiumAccessAction.CheckActiveAccess(this.currentUserId));
   }
 
@@ -482,11 +482,13 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(hasAccess => {
         this.hasPremiumAccess = hasAccess;
-        // Si accès actif, charger les infos propriétaire depuis le backend
         if (hasAccess && this.currentUserId && this.unit?.property?.owner?._id) {
+          const profile = this.store.selectSnapshot(UserProfileState.selectStateUserProfile);
+          const isAnonymous = !profile?._id;
           this.store.dispatch(new PremiumAccessAction.GetOwnerInfo(
             this.currentUserId,
-            this.unit.property.owner._id
+            this.unit.property.owner._id,
+            isAnonymous
           ));
         }
       });
@@ -511,39 +513,48 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
   }
 
   // Vérifier si on revient de la page de paiement avec succès
+  // Sécurisé : on vérifie côté backend au lieu de faire confiance au query param
   private checkPremiumReturnFromPayment(): void {
     const params = this.route.snapshot.queryParams;
-    if (params['premium'] === 'success') {
-      const visitorId = params['visitorId'];
-      // Si l'accès local n'est pas encore sauvé, le marquer comme actif
-      if (!this.anonymousUserService.hasLocalActiveAccess()) {
-        const expiryDate = new Date();
-        expiryDate.setDate(expiryDate.getDate() + 3);
-        this.anonymousUserService.savePremiumAccess({
-          accessId: 'payment-confirmed',
-          transactionId: 'payment-confirmed',
-          expiryDate: expiryDate.toISOString(),
-          phone: '',
-          paymentMethod: 'card',
-          paidAt: new Date().toISOString()
-        });
-      }
-      this.hasPremiumAccess = true;
-      // Charger les infos propriétaire si on a l'ownerId
-      if (this.unit?.property?.owner?._id && this.currentUserId) {
-        this.store.dispatch(new PremiumAccessAction.GetOwnerInfo(
-          this.currentUserId,
-          this.unit.property.owner._id
-        ));
-      }
-      // Nettoyer l'URL
-      this.router.navigate([], {
-        relativeTo: this.route,
-        queryParams: { premium: null, visitorId: null },
-        queryParamsHandling: 'merge',
-        replaceUrl: true
-      });
-    }
+    if (params['premium'] !== 'success') return;
+
+    // Nettoyer l'URL immédiatement
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { premium: null, visitorId: null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true
+    });
+
+    // Vérifier côté backend que l'accès est réellement actif
+    this.premiumAccessService.checkActiveAccess(this.currentUserId).subscribe({
+      next: (res) => {
+        if (res.data.hasAccess) {
+          // Sauvegarder localement pour les visiteurs anonymes
+          const profile = this.store.selectSnapshot(UserProfileState.selectStateUserProfile);
+          const isAnonymous = !profile?._id;
+          if (isAnonymous && res.data.access?.expiryDate && !this.anonymousUserService.hasLocalActiveAccess()) {
+            this.anonymousUserService.savePremiumAccess({
+              accessId: res.data.access.id || 'confirmed',
+              transactionId: res.data.access.paymentTransactionRef || 'confirmed',
+              expiryDate: res.data.access.expiryDate,
+              phone: '',
+              paymentMethod: 'card',
+              paidAt: new Date().toISOString()
+            });
+          }
+          this.hasPremiumAccess = true;
+          if (this.unit?.property?.owner?._id) {
+            this.store.dispatch(new PremiumAccessAction.GetOwnerInfo(
+              this.currentUserId,
+              this.unit.property.owner._id,
+              isAnonymous
+            ));
+          }
+        }
+      },
+      error: () => {} // Silencieux — l'accès sera vérifié au prochain chargement
+    });
   }
 
   getRemainingDaysText(): string {

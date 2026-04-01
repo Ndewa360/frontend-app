@@ -204,40 +204,42 @@
           </div>
         </div>
 
-        <!-- Téléphone (Mobile Money) -->
-        <div *ngIf="selectedMethod !== 'card'" class="ndewa-payment__form-group" [formGroup]="mobileForm">
-          <label class="ndewa-payment__label">
-            <i class="fas fa-mobile-alt"></i>
-            Numéro de téléphone
-          </label>
-          <div class="ndewa-payment__phone-wrap">
-            <span class="ndewa-payment__phone-prefix">+237</span>
-            <input
-              type="tel"
-              formControlName="phone"
-              class="ndewa-payment__input ndewa-payment__input--phone"
-              [class.ndewa-payment__input--error]="mobileForm.get('phone')?.invalid && mobileForm.get('phone')?.touched"
-              placeholder="6XX XXX XXX">
-          </div>
-          <div *ngIf="mobileForm.get('phone')?.invalid && mobileForm.get('phone')?.touched"
-               class="ndewa-payment__field-error">
-            <i class="fas fa-exclamation-circle"></i>
-            Numéro invalide. Format : 6XXXXXXXX
-          </div>
-          <div class="ndewa-payment__mobile-instructions">
-            <div class="ndewa-payment__instruction-item">
-              <div class="ndewa-payment__instruction-num">1</div>
-              <span>Saisissez votre numéro et confirmez</span>
+        <!-- Téléphone (Mobile Money) — form séparé, hors du amountForm -->
+        <div *ngIf="selectedMethod !== 'card'" class="ndewa-payment__form-group">
+          <form [formGroup]="mobileForm" (ngSubmit)="submitPayment()">
+            <label class="ndewa-payment__label">
+              <i class="fas fa-mobile-alt"></i>
+              Numéro de téléphone
+            </label>
+            <div class="ndewa-payment__phone-wrap">
+              <span class="ndewa-payment__phone-prefix">+237</span>
+              <input
+                type="tel"
+                formControlName="phone"
+                class="ndewa-payment__input ndewa-payment__input--phone"
+                [class.ndewa-payment__input--error]="mobileForm.get('phone')?.invalid && mobileForm.get('phone')?.touched"
+                placeholder="6XX XXX XXX">
             </div>
-            <div class="ndewa-payment__instruction-item">
-              <div class="ndewa-payment__instruction-num">2</div>
-              <span>Vous recevrez une notification sur votre téléphone</span>
+            <div *ngIf="mobileForm.get('phone')?.invalid && mobileForm.get('phone')?.touched"
+                 class="ndewa-payment__field-error">
+              <i class="fas fa-exclamation-circle"></i>
+              Numéro invalide. Format : 6XXXXXXXX
             </div>
-            <div class="ndewa-payment__instruction-item">
-              <div class="ndewa-payment__instruction-num">3</div>
-              <span>Confirmez le paiement avec votre code PIN</span>
+            <div class="ndewa-payment__mobile-instructions">
+              <div class="ndewa-payment__instruction-item">
+                <div class="ndewa-payment__instruction-num">1</div>
+                <span>Saisissez votre numéro et confirmez</span>
+              </div>
+              <div class="ndewa-payment__instruction-item">
+                <div class="ndewa-payment__instruction-num">2</div>
+                <span>Vous recevrez une notification sur votre téléphone</span>
+              </div>
+              <div class="ndewa-payment__instruction-item">
+                <div class="ndewa-payment__instruction-num">3</div>
+                <span>Confirmez le paiement avec votre code PIN</span>
+              </div>
             </div>
-          </div>
+          </form>
         </div>
 
         <!-- Récapitulatif -->
@@ -272,6 +274,7 @@
       <!-- ══ ÉTAPE 3 — TRAITEMENT ══ -->
       <div *ngIf="currentStep === 'processing'" class="ndewa-payment__step-content ndewa-payment__step-content--centered">
 
+        <!-- Carte : redirection Stripe en cours -->
         <ng-container *ngIf="selectedMethod === 'card' && paymentStatus === 'processing'">
           <div class="ndewa-payment__processing-anim">
             <div class="ndewa-payment__spinner ndewa-payment__spinner--large"></div>
@@ -280,6 +283,19 @@
           <p>Vous allez être redirigé vers la page de paiement par carte.</p>
         </ng-container>
 
+        <!-- Mobile Money : appel HTTP en cours (avant réponse du backend) -->
+        <ng-container *ngIf="selectedMethod !== 'card' && paymentStatus === 'processing'">
+          <div class="ndewa-payment__processing-anim">
+            <div class="ndewa-payment__spinner ndewa-payment__spinner--large"></div>
+          </div>
+          <h2>Initialisation du paiement…</h2>
+          <p>Connexion au service
+            <strong>{{ selectedMethod === 'orange_money' ? 'Orange Money' : 'MTN Mobile Money' }}</strong>
+            en cours, veuillez patienter.
+          </p>
+        </ng-container>
+
+        <!-- Mobile Money : en attente de confirmation PIN sur le téléphone -->
         <ng-container *ngIf="paymentStatus === 'pending_confirmation'">
           <div class="ndewa-payment__mobile-waiting">
             <div class="ndewa-payment__phone-anim">
@@ -290,8 +306,8 @@
             </div>
             <h2>En attente de confirmation</h2>
             <p>
-              Une notification a été envoyée au
-              <strong>{{ mobileForm.value.phone }}</strong>.
+              Une notification a été envoyée au numéro
+              <strong>+237 {{ mobileForm.value.phone }}</strong>.
               Confirmez le paiement avec votre code PIN.
             </p>
             <div *ngIf="ussdCode" class="ndewa-payment__ussd-box">
@@ -310,6 +326,7 @@
             </p>
           </div>
         </ng-container>
+
       </div>
 
       <!-- ══ ÉTAPE 4 — RÉSULTAT ══ -->

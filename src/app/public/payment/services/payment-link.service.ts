@@ -3,65 +3,49 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
+// Aligné sur la réponse de GET /payment-link/details/:token (backend PaymentLinkService.getPaymentLinkByToken)
 export interface PaymentLinkDetails {
   token: string;
   description: string;
-  context: string;          // 'rent' | 'premium_access' | 'subscription' | 'deposit'
-  amount?: number;          // montant fixe si non éditable
+  context: string;          // 'RENT' | 'PREMIUM_ACCESS' | 'SUBSCRIPTION'
+  amount?: number;
   amountEditable?: boolean;
   currency?: string;
-  // Contexte loyer
+  // Contexte loyer (payment-link persistant)
   location?: any;
   property?: any;
   room?: any;
   locataire?: any;
-  // Contexte premium
-  ownerId?: string;
+  // Contexte session JWT
+  reference?: string;
   userId?: string;
-  // Contexte souscription
-  periodId?: string;
-  // Redirections après paiement
+  userEmail?: string;
+  metadata?: Record<string, any>;
   successRedirectPath?: string;
   cancelRedirectPath?: string;
-  metadata?: Record<string, any>;
   usageCount: number;
 }
 
-export interface StripePaymentData {
-  paymentIntentId: string;
-  sessionId?: string;
-}
-
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class PaymentLinkService {
-  private apiUrl = `${environment.apiUrl}/payment-link`;
+
+  private readonly api = `${environment.apiUrl}/payment-link`;
 
   constructor(private http: HttpClient) {}
 
+  // Route backend: GET /payment-link/details/:token
   getPaymentDetails(token: string): Observable<{ data: PaymentLinkDetails }> {
-    return this.http.get<{ data: PaymentLinkDetails }>(`${this.apiUrl}/details/${token}`);
+    return this.http.get<{ data: PaymentLinkDetails }>(`${this.api}/details/${token}`);
   }
 
-  confirmPayment(token: string, paymentData: StripePaymentData): Observable<any> {
-    return this.http.post(`${this.apiUrl}/confirm/${token}`, paymentData);
-  }
-
-  createStripeSession(token: string, amount: number): Observable<{ sessionId: string }> {
-    return this.http.post<{ sessionId: string }>(`${environment.apiUrl}/stripe/create-session`, {
-      token,
-      amount,
-      successUrl: `${window.location.origin}/payment/success`,
-      cancelUrl: `${window.location.origin}/payment/${token}`
-    });
-  }
-
-  getTransactionHistory(locationId: string): Observable<{ data: any[] }> {
-    return this.http.get<{ data: any[] }>(`${environment.apiUrl}/stripe/transactions/${locationId}`);
-  }
-
-  getPaymentStats(locationId: string): Observable<{ data: any }> {
-    return this.http.get<{ data: any }>(`${environment.apiUrl}/stripe/stats/${locationId}`);
+  // Route backend: POST /payment-link/confirm/:token
+  confirmPayment(token: string, paymentData: {
+    amount: number;
+    paymentType: 'LOCATION' | 'CAUTION';
+    paymentIntentId: string;
+    sessionId?: string;
+    userEmail?: string;
+  }): Observable<{ data: any }> {
+    return this.http.post<{ data: any }>(`${this.api}/confirm/${token}`, paymentData);
   }
 }

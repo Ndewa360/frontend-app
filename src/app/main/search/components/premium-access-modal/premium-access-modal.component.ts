@@ -137,7 +137,11 @@ export class PremiumAccessModalComponent implements OnInit, OnDestroy {
 
   loadOwnerInfo(): void {
     if (!this.ownerId || !this.effectiveUserId) return;
-    this.store.dispatch(new PremiumAccessAction.GetOwnerInfo(this.effectiveUserId, this.ownerId));
+    this.store.dispatch(new PremiumAccessAction.GetOwnerInfo(
+      this.effectiveUserId,
+      this.ownerId,
+      this.isAnonymous
+    ));
   }
 
   // ─── Redirection vers la page de paiement centrale ────────────────────────
@@ -150,7 +154,7 @@ export class PremiumAccessModalComponent implements OnInit, OnDestroy {
     this.error = null;
 
     this.paymentSessionService.createSessionWithFallback(this.lang, {
-      context: 'premium_access',
+      context: 'PREMIUM_ACCESS',
       amount: this.premiumPrice,
       amountEditable: false,
       currency: 'XAF',

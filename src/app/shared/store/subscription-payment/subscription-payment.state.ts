@@ -287,74 +287,68 @@ export class SubscriptionPaymentState {
     });
   }
 
-  // ==================== NOUVELLES ACTIONS STRIPE ====================
+  // ─── Paiement unifié via POST /payment/initiate ───────────────────────────
 
-  @Action(SubscriptionPaymentAction.CreateStripeSession)
-  createStripeSession(ctx: StateContext<SubscriptionPaymentStateModel>, action: SubscriptionPaymentAction.CreateStripeSession) {
+  @Action(SubscriptionPaymentAction.InitiatePayment)
+  initiatePayment(ctx: StateContext<SubscriptionPaymentStateModel>, action: SubscriptionPaymentAction.InitiatePayment) {
     ctx.patchState({ stripeLoading: true, stripeError: null });
 
-    return this.subscriptionPaymentService.createStripeSession(action.payload).pipe(
+    return this.subscriptionPaymentService.initiateSubscriptionPayment(action.dto).pipe(
       tap((response: any) => {
         ctx.patchState({
           stripeLoading: false,
-          stripeSession: response.data
+          stripeSession: response.data,
         });
+        // Si Stripe → redirection automatique gérée par le composant via redirectUrl
       }),
       catchError((error: any) => {
         ctx.patchState({
           stripeLoading: false,
-          stripeError: error.error?.message || 'Erreur lors de la création de la session Stripe'
+          stripeError: error.error?.message || 'Erreur lors de l\'initiation du paiement',
         });
-        this.toastrService.error(this.translateService.instant('NOTIFICATIONS.STRIPE_SESSION_ERROR'));
+        this.toastrService.error(this.translateService.instant('NOTIFICATIONS.PAYMENT_INITIATE_ERROR'));
         return throwError(error);
       })
     );
+  }
+
+  @Action(SubscriptionPaymentAction.CheckPaymentStatus)
+  checkPaymentStatus(ctx: StateContext<SubscriptionPaymentStateModel>, action: SubscriptionPaymentAction.CheckPaymentStatus) {
+    return this.subscriptionPaymentService.checkPaymentStatus(action.externalRef).pipe(
+      tap((response: any) => {
+        if (response.data.status === 'SUCCESS') {
+          ctx.patchState({ stripeSession: null });
+          this.toastrService.success(this.translateService.instant('NOTIFICATIONS.PAYMENT_SUCCESS'));
+          ctx.dispatch(new SubscriptionPaymentAction.GetPaymentHistory());
+          ctx.dispatch(new SubscriptionPaymentAction.GetUnpaidInvoices());
+        }
+      }),
+      catchError((error: any) => throwError(error))
+    );
+  }
+
+  // CreateStripeSession → délègue vers InitiatePayment avec provider=STRIPE
+  @Action(SubscriptionPaymentAction.CreateStripeSession)
+  createStripeSession(ctx: StateContext<SubscriptionPaymentStateModel>, action: SubscriptionPaymentAction.CreateStripeSession) {
+    return ctx.dispatch(new SubscriptionPaymentAction.InitiatePayment({
+      context: 'SUBSCRIPTION',
+      provider: 'STRIPE',
+      amount: action.payload.amount,
+      currency: 'XAF',
+      userEmail: action.payload.userEmail,
+      periodId: action.payload.periodId,
+      subscriptionId: action.payload.subscriptionId,
+      successUrl: action.payload.successUrl,
+      cancelUrl: action.payload.cancelUrl,
+      description: 'Souscription Ndewa360°',
+    }));
   }
 
   @Action(SubscriptionPaymentAction.ConfirmStripePayment)
   confirmStripePayment(ctx: StateContext<SubscriptionPaymentStateModel>, action: SubscriptionPaymentAction.ConfirmStripePayment) {
-    ctx.patchState({ stripeLoading: true, stripeError: null });
-
-    return this.subscriptionPaymentService.confirmStripePayment(action.payload).pipe(
-      tap((response: any) => {
-        ctx.patchState({
-          stripeLoading: false,
-          stripeSession: null
-        });
-        this.toastrService.success(this.translateService.instant('NOTIFICATIONS.STRIPE_PAYMENT_CONFIRMED'));
-        // Recharger les données de paiement
-        ctx.dispatch(new SubscriptionPaymentAction.GetPaymentHistory());
-        ctx.dispatch(new SubscriptionPaymentAction.GetUnpaidInvoices());
-      }),
-      catchError((error: any) => {
-        ctx.patchState({
-          stripeLoading: false,
-          stripeError: error.error?.message || 'Erreur lors de la confirmation du paiement'
-        });
-        this.toastrService.error(this.translateService.instant('NOTIFICATIONS.STRIPE_PAYMENT_ERROR'));
-        return throwError(error);
-      })
-    );
-  }
-
-  @Action(SubscriptionPaymentAction.GetStripeSessionStatus)
-  getStripeSessionStatus(ctx: StateContext<SubscriptionPaymentStateModel>, action: SubscriptionPaymentAction.GetStripeSessionStatus) {
-    ctx.patchState({ stripeLoading: true, stripeError: null });
-
-    return this.subscriptionPaymentService.checkStripeSessionStatus(action.sessionId).pipe(
-      tap((response: any) => {
-        ctx.patchState({
-          stripeLoading: false
-        });
-      }),
-      catchError((error: any) => {
-        ctx.patchState({
-          stripeLoading: false,
-          stripeError: error.error?.message || 'Erreur lors de la récupération du statut'
-        });
-        return throwError(error);
-      })
-    );
+    // La confirmation Stripe est gérée par le webhook backend (POST /payment/callback/stripe)
+    // Ici on vérifie juste le statut de la transaction
+    return ctx.dispatch(new SubscriptionPaymentAction.CheckPaymentStatus(action.payload.sessionId));
   }
 
   @Action(SubscriptionPaymentAction.GetPaymentMethods)
@@ -365,17 +359,22 @@ export class SubscriptionPaymentState {
       tap((response: any) => {
         ctx.patchState({
           stripeLoading: false,
-          paymentMethods: response.data
+          paymentMethods: response.data,
         });
       }),
       catchError((error: any) => {
         ctx.patchState({
           stripeLoading: false,
-          stripeError: error.error?.message || 'Erreur lors de la récupération des méthodes de paiement'
+          stripeError: error.error?.message || 'Erreur lors de la récupération des méthodes de paiement',
         });
         return throwError(error);
       })
     );
+  }
+
+  @Action(SubscriptionPaymentAction.SetPaymentSession)
+  setPaymentSession(ctx: StateContext<SubscriptionPaymentStateModel>, action: SubscriptionPaymentAction.SetPaymentSession) {
+    ctx.patchState({ stripeSession: action.session });
   }
 
   @Action(SubscriptionPaymentAction.SetStripeLoading)

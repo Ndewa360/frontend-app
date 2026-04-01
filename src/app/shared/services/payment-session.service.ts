@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+// Contextes alignés sur le backend (PaymentContext enum)
 import { PaymentContext } from 'src/app/public/payment/services/unified-payment.service';
 
 export interface CreatePaymentSessionPayload {
@@ -35,24 +36,12 @@ export class PaymentSessionService {
     private router: Router
   ) {}
 
-  // ─── Créer une session via le backend ─────────────────────────────────────
+  // ─── Créer une session via le backend (POST /payment-sessions/create) ─────
   createSession(payload: CreatePaymentSessionPayload): Observable<{ data: PaymentSessionResponse }> {
     return this.http.post<{ data: PaymentSessionResponse }>(`${this.api}/create`, payload);
   }
 
-  // ─── Générer un token local (sans backend) ────────────────────────────────
-  // Le payload est encodé en base64 — lisible côté frontend sans clé secrète
-  createLocalToken(payload: CreatePaymentSessionPayload): string {
-    const exp = Math.floor(Date.now() / 1000) + 30 * 60; // 30 min
-    const fullPayload = { ...payload, exp, iat: Math.floor(Date.now() / 1000) };
-    const header = btoa(JSON.stringify({ alg: 'none', typ: 'JWT' }))
-      .replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
-    const body = btoa(unescape(encodeURIComponent(JSON.stringify(fullPayload))))
-      .replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
-    return `${header}.${body}.local`;
-  }
-
-  // ─── Créer session : backend d'abord, fallback local si indisponible ──────
+  // ─── Créer session avec fallback local si backend indisponible ────────────
   createSessionWithFallback(
     lang: string,
     payload: CreatePaymentSessionPayload
@@ -64,8 +53,15 @@ export class PaymentSessionService {
           observer.complete();
         },
         error: () => {
-          // Backend pas encore prêt — générer le token localement
-          const token = this.createLocalToken(payload);
+          // Backend indisponible — générer un token local non signé (base64 uniquement)
+          // ATTENTION: ce token n'est pas sécurisé, à utiliser uniquement en dev/fallback
+          const exp = Math.floor(Date.now() / 1000) + 30 * 60;
+          const fullPayload = { ...payload, exp, iat: Math.floor(Date.now() / 1000) };
+          const header = btoa(JSON.stringify({ alg: 'none', typ: 'JWT' }))
+            .replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+          const body = btoa(unescape(encodeURIComponent(JSON.stringify(fullPayload))))
+            .replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+          const token = `${header}.${body}.local`;
           observer.next({
             data: {
               token,
@@ -79,7 +75,7 @@ export class PaymentSessionService {
     });
   }
 
-  // ─── Créer et rediriger (avec fallback) ───────────────────────────────────
+  // ─── Créer et rediriger ───────────────────────────────────────────────────
   createAndRedirect(lang: string, payload: CreatePaymentSessionPayload): void {
     this.createSessionWithFallback(lang, payload).subscribe({
       next: (res) => {
@@ -92,7 +88,7 @@ export class PaymentSessionService {
     return `/${lang}/payment/${token}`;
   }
 
-  // ─── Helpers contextes ────────────────────────────────────────────────────
+  // ─── Helpers contextes (contextes alignés sur le backend) ─────────────────
 
   createPremiumAccessSession(
     lang: string,
@@ -102,7 +98,7 @@ export class PaymentSessionService {
     returnPath: string
   ): void {
     this.createAndRedirect(lang, {
-      context: 'premium_access',
+      context: 'PREMIUM_ACCESS',
       amount: 500,
       amountEditable: false,
       currency: 'XAF',
@@ -123,7 +119,7 @@ export class PaymentSessionService {
     returnPath: string
   ): void {
     this.createAndRedirect(lang, {
-      context: 'rent',
+      context: 'RENT',
       amount,
       amountEditable: true,
       currency: 'XAF',
@@ -143,7 +139,7 @@ export class PaymentSessionService {
     returnPath: string
   ): void {
     this.createAndRedirect(lang, {
-      context: 'subscription',
+      context: 'SUBSCRIPTION',
       amount,
       amountEditable: false,
       currency: 'XAF',

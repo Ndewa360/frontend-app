@@ -95,9 +95,9 @@ export class SubscriptionDashboardComponent implements OnInit, OnDestroy {
 
     this.stripeSession$.pipe(takeUntil(this.destroy$)).subscribe(session => {
       this.stripeSession = session;
-      if (session?.sessionUrl) {
-        // Rediriger vers Stripe Checkout
-        window.location.href = session.sessionUrl;
+      // Le backend retourne redirectUrl (URL Stripe Checkout) via POST /payment/initiate
+      if (session?.redirectUrl) {
+        window.location.href = session.redirectUrl;
       }
     });
   }
@@ -209,17 +209,18 @@ export class SubscriptionDashboardComponent implements OnInit, OnDestroy {
     const successUrl = `${currentUrl}?payment=success&session_id={CHECKOUT_SESSION_ID}`;
     const cancelUrl = `${currentUrl}?payment=cancelled`;
 
-    const payload = {
+    const subscription = this.currentSubscription;
+    const amount = this.currentPeriod?.calculatedAmount || 0;
+    const userEmail = this.store.selectSnapshot((state: any) => state.userProfile?.userProfile?.email);
+
+    this.store.dispatch(new SubscriptionPaymentAction.CreateStripeSession({
       periodId,
+      subscriptionId: subscription?._id,
+      amount,
+      userEmail,
       successUrl,
       cancelUrl,
-      metadata: {
-        source: 'subscription_dashboard',
-        timestamp: new Date().toISOString()
-      }
-    };
-
-    this.store.dispatch(new SubscriptionPaymentAction.CreateStripeSession(payload));
+    }));
   }
 
   /**

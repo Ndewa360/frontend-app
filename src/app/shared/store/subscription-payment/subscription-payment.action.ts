@@ -1,5 +1,7 @@
+import { InitiatePaymentDto } from 'src/app/public/payment/services/unified-payment.service';
+
 export namespace SubscriptionPaymentAction {
-  
+
   export class ProcessPayment {
     static readonly type = '[SubscriptionPayment] Process Payment';
     constructor(public paymentData: any) {}
@@ -61,16 +63,30 @@ export namespace SubscriptionPaymentAction {
     constructor(public error: string | null) {}
   }
 
-  // ==================== NOUVELLES ACTIONS STRIPE ====================
+  // ─── Paiement unifié (POST /payment/initiate) ─────────────────────────────
+  // Remplace CreateStripeSession — supporte tous les providers
 
+  export class InitiatePayment {
+    static readonly type = '[SubscriptionPayment] Initiate Payment';
+    constructor(public dto: InitiatePaymentDto) {}
+  }
+
+  export class CheckPaymentStatus {
+    static readonly type = '[SubscriptionPayment] Check Payment Status';
+    constructor(public externalRef: string) {}
+  }
+
+  // Gardé pour compatibilité avec les composants existants
   export class CreateStripeSession {
     static readonly type = '[SubscriptionPayment] Create Stripe Session';
     constructor(public payload: {
       periodId: string;
+      subscriptionId?: string;
+      amount: number;
+      userEmail?: string;
       successUrl: string;
       cancelUrl: string;
-      metadata?: any;
-    }) { }
+    }) {}
   }
 
   export class ConfirmStripePayment {
@@ -78,26 +94,26 @@ export namespace SubscriptionPaymentAction {
     constructor(public payload: {
       sessionId: string;
       paymentIntentId: string;
-    }) { }
-  }
-
-  export class GetStripeSessionStatus {
-    static readonly type = '[SubscriptionPayment] Get Stripe Session Status';
-    constructor(public sessionId: string) { }
+    }) {}
   }
 
   export class GetPaymentMethods {
     static readonly type = '[SubscriptionPayment] Get Payment Methods';
   }
 
+  export class SetPaymentSession {
+    static readonly type = '[SubscriptionPayment] Set Payment Session';
+    constructor(public session: any) {}
+  }
+
   export class SetStripeLoading {
     static readonly type = '[SubscriptionPayment] Set Stripe Loading';
-    constructor(public loading: boolean) { }
+    constructor(public loading: boolean) {}
   }
 
   export class SetStripeError {
     static readonly type = '[SubscriptionPayment] Set Stripe Error';
-    constructor(public error: string | null) { }
+    constructor(public error: string | null) {}
   }
 
   export class ClearStripeError {

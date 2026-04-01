@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ApiResultFormat } from '../store';
+import { InitiatePaymentDto, InitiatePaymentResponse, CheckPaymentResponse } from 'src/app/public/payment/services/unified-payment.service';
 
 export interface PaymentData {
   periodId: string;
@@ -11,40 +12,13 @@ export interface PaymentData {
   paymentMethod?: string;
 }
 
-export interface StripeSessionPayload {
-  periodId: string;
-  successUrl: string;
-  cancelUrl: string;
-  metadata?: any;
-}
-
-export interface StripeSessionResponse {
-  sessionId: string;
-  sessionUrl: string;
-  periodId: string;
-  amount: number;
-  billingRef: string;
-}
-
-export interface StripeConfirmPayload {
-  sessionId: string;
-  paymentIntentId: string;
-}
-
 export interface Invoice {
   invoiceNumber: string;
   subscriptionId: string;
   periodId: string;
   userId: string;
-  userInfo: {
-    name: string;
-    email: string;
-  };
-  period: {
-    startDate: Date;
-    endDate: Date;
-    billingRef: string;
-  };
+  userInfo: { name: string; email: string };
+  period: { startDate: Date; endDate: Date; billingRef: string };
   amount: number;
   plan: string;
   status: string;
@@ -95,16 +69,20 @@ export interface PaymentStatus {
   paymentRequired: boolean;
 }
 
-@Injectable({
-  providedIn: 'root'
-})
+// Réponse de POST /payment/initiate pour une souscription
+export interface SubscriptionInitiateResponse {
+  externalRef: string;
+  status: string;
+  redirectUrl?: string;  // URL Stripe Checkout si provider=STRIPE
+}
+
+@Injectable({ providedIn: 'root' })
 export class SubscriptionPaymentService {
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-  /**
-   * Traite un paiement
-   */
+  // ─── Routes souscription (backend /souscription ou /subscription-payment) ──
+
   processPayment(paymentData: PaymentData): Observable<ApiResultFormat<any>> {
     return this.http.post<ApiResultFormat<any>>(
       `${environment.apiUrl}/subscription-payment/process-payment`,
@@ -112,45 +90,30 @@ export class SubscriptionPaymentService {
     );
   }
 
-  /**
-   * Génère une facture pour une période
-   */
   generateInvoice(periodId: string): Observable<ApiResultFormat<Invoice>> {
     return this.http.get<ApiResultFormat<Invoice>>(
       `${environment.apiUrl}/subscription-payment/invoice/${periodId}`
     );
   }
 
-  /**
-   * Récupère l'historique des paiements
-   */
-  getPaymentHistory(page: number = 1, limit: number = 10): Observable<ApiResultFormat<PaymentHistory>> {
+  getPaymentHistory(page = 1, limit = 10): Observable<ApiResultFormat<PaymentHistory>> {
     return this.http.get<ApiResultFormat<PaymentHistory>>(
       `${environment.apiUrl}/subscription-payment/payment-history?page=${page}&limit=${limit}`
     );
   }
 
-  /**
-   * Récupère les factures impayées
-   */
   getUnpaidInvoices(): Observable<ApiResultFormat<UnpaidInvoicesResponse>> {
     return this.http.get<ApiResultFormat<UnpaidInvoicesResponse>>(
       `${environment.apiUrl}/subscription-payment/unpaid-invoices`
     );
   }
 
-  /**
-   * Récupère le statut de paiement
-   */
   getPaymentStatus(): Observable<ApiResultFormat<PaymentStatus>> {
     return this.http.get<ApiResultFormat<PaymentStatus>>(
       `${environment.apiUrl}/subscription-payment/payment-status`
     );
   }
 
-  /**
-   * Envoie des rappels de paiement
-   */
   sendPaymentReminders(): Observable<ApiResultFormat<any>> {
     return this.http.post<ApiResultFormat<any>>(
       `${environment.apiUrl}/subscription-payment/send-payment-reminders`,
@@ -158,52 +121,45 @@ export class SubscriptionPaymentService {
     );
   }
 
-  /**
-   * Récupère la facture de la période courante
-   */
   getCurrentPeriodInvoice(): Observable<ApiResultFormat<Invoice>> {
     return this.http.get<ApiResultFormat<Invoice>>(
       `${environment.apiUrl}/subscription-payment/current-period-invoice`
     );
   }
 
-  // ==================== MÉTHODES STRIPE ====================
+  // ─── Paiement unifié via POST /payment/initiate ───────────────────────────
+  // Utilisé pour initier un paiement de souscription (Stripe, MTN, Orange, EasyTransact)
 
-  /**
-   * Crée une session de paiement Stripe pour une période de souscription
-   */
-  createStripeSession(payload: StripeSessionPayload): Observable<ApiResultFormat<StripeSessionResponse>> {
-    return this.http.post<ApiResultFormat<StripeSessionResponse>>(
-      `${environment.apiUrl}/subscription-payment/stripe/create-session`,
-      payload
+  initiateSubscriptionPayment(dto: InitiatePaymentDto): Observable<{ data: InitiatePaymentResponse }> {
+    // SUBSCRIPTION et RENT nécessitent un JWT — route sécurisée
+    return this.http.post<{ data: InitiatePaymentResponse }>(
+      `${environment.apiUrl}/payment/initiate`,
+      dto
     );
   }
 
-  /**
-   * Confirme un paiement Stripe après succès
-   */
-  confirmStripePayment(payload: StripeConfirmPayload): Observable<ApiResultFormat<any>> {
-    return this.http.post<ApiResultFormat<any>>(
-      `${environment.apiUrl}/subscription-payment/stripe/confirm-payment`,
-      payload
+  // ─── Vérification du statut via GET /payment/check/:externalRef ──────────
+
+  checkPaymentStatus(externalRef: string): Observable<{ data: CheckPaymentResponse }> {
+    return this.http.get<{ data: CheckPaymentResponse }>(
+      `${environment.apiUrl}/payment/check/${externalRef}`
     );
   }
 
-  /**
-   * Récupère les méthodes de paiement disponibles
-   */
+  // ─── Récupérer une transaction ────────────────────────────────────────────
+
+  getTransaction(externalRef: string): Observable<{ data: any }> {
+    return this.http.get<{ data: any }>(
+      `${environment.apiUrl}/payment/transaction/${externalRef}`
+    );
+  }
+
+  // ─── Méthodes de paiement disponibles ────────────────────────────────────
+  // Retourne les providers disponibles (statique côté frontend)
+
   getPaymentMethods(): Observable<ApiResultFormat<any>> {
     return this.http.get<ApiResultFormat<any>>(
       `${environment.apiUrl}/subscription-payment/payment-methods`
-    );
-  }
-
-  /**
-   * Vérifie le statut d'une session Stripe
-   */
-  checkStripeSessionStatus(sessionId: string): Observable<ApiResultFormat<any>> {
-    return this.http.get<ApiResultFormat<any>>(
-      `${environment.apiUrl}/subscription-payment/stripe/session-status/${sessionId}`
     );
   }
 }

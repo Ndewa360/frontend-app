@@ -32,21 +32,9 @@ export class PaymentSuccessComponent implements OnInit {
   }
 
   private confirmPayment(): void {
-    // Confirmer le paiement côté serveur
-    this.paymentService.confirmPayment(this.token, {
-      paymentIntentId: '', // Sera récupéré côté serveur via la session
-      sessionId: this.sessionId
-    }).subscribe({
-      next: (response) => {
-        this.loading = false;
-        // Récupérer les détails du paiement pour l'affichage
-        this.loadPaymentDetails();
-      },
-      error: (error) => {
-        this.error = error.error?.message || 'Erreur lors de la confirmation du paiement';
-        this.loading = false;
-      }
-    });
+    // La confirmation Stripe est gérée par le webhook backend via POST /payment/callback/stripe
+    // Ici on charge juste les détails pour l'affichage
+    this.loadPaymentDetails();
   }
 
   private loadPaymentDetails(): void {
