@@ -3,13 +3,22 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ApiResultFormat } from '../store';
-import { InitiatePaymentDto, InitiatePaymentResponse, CheckPaymentResponse } from 'src/app/public/payment/services/unified-payment.service';
+import { PaymentProvider } from 'src/app/public/payment/services/unified-payment.service';
 
-export interface PaymentData {
+// ─── DTOs alignés sur le backend ─────────────────────────────────────────────
+
+export interface InitiateSubscriptionPaymentDto {
   periodId: string;
-  paymentAmount: number;
-  paymentReference: string;
-  paymentMethod?: string;
+  provider: PaymentProvider;
+  phoneNumber?: string;
+  successUrl?: string;
+  cancelUrl?: string;
+}
+
+export interface InitiateSubscriptionPaymentResponse {
+  externalRef: string;
+  status: string;
+  redirectUrl?: string;
 }
 
 export interface Invoice {
@@ -22,6 +31,9 @@ export interface Invoice {
   amount: number;
   plan: string;
   status: string;
+  paymentMethod: string | null;
+  paidAt: Date | null;
+  transaction: any | null;
   createdAt: Date;
   dueDate: Date;
   unitsDetails: any[];
@@ -34,6 +46,9 @@ export interface PaymentHistoryItem {
   endDate: Date;
   amount: number;
   status: string;
+  paymentMethod: string | null;
+  paidAt: Date | null;
+  paymentTransactionRef: string | null;
   occupiedUnits: number;
   totalRevenue: number;
   unitsDetails: any[];
@@ -66,100 +81,78 @@ export interface UnpaidInvoicesResponse {
 export interface PaymentStatus {
   hasUnpaidInvoices: boolean;
   totalUnpaidAmount: number;
-  paymentRequired: boolean;
 }
 
-// Réponse de POST /payment/initiate pour une souscription
-export interface SubscriptionInitiateResponse {
-  externalRef: string;
-  status: string;
-  redirectUrl?: string;  // URL Stripe Checkout si provider=STRIPE
+export interface AvailablePaymentMethods {
+  stripe: { enabled: boolean; methods: string[]; currencies: string[] };
+  mtn: { enabled: boolean; methods: string[]; currencies: string[] };
+  orange: { enabled: boolean; methods: string[]; currencies: string[] };
+  easyTransact: { enabled: boolean; methods: string[]; currencies: string[] };
 }
 
 @Injectable({ providedIn: 'root' })
 export class SubscriptionPaymentService {
 
+  private readonly api = `${environment.apiUrl}/subscription-payment`;
+
   constructor(private http: HttpClient) {}
 
-  // ─── Routes souscription (backend /souscription ou /subscription-payment) ──
-
-  processPayment(paymentData: PaymentData): Observable<ApiResultFormat<any>> {
-    return this.http.post<ApiResultFormat<any>>(
-      `${environment.apiUrl}/subscription-payment/process-payment`,
-      paymentData
+  // ─── POST /subscription-payment/initiate ─────────────────────────────────
+  // Initie un paiement via le module de paiement unifié (tous providers)
+  initiatePayment(dto: InitiateSubscriptionPaymentDto): Observable<{ data: InitiateSubscriptionPaymentResponse }> {
+    return this.http.post<{ data: InitiateSubscriptionPaymentResponse }>(
+      `${this.api}/initiate`, dto
     );
   }
 
+  // ─── GET /subscription-payment/invoice/:periodId ─────────────────────────
   generateInvoice(periodId: string): Observable<ApiResultFormat<Invoice>> {
-    return this.http.get<ApiResultFormat<Invoice>>(
-      `${environment.apiUrl}/subscription-payment/invoice/${periodId}`
-    );
+    return this.http.get<ApiResultFormat<Invoice>>(`${this.api}/invoice/${periodId}`);
   }
 
+  // ─── GET /subscription-payment/payment-history ───────────────────────────
   getPaymentHistory(page = 1, limit = 10): Observable<ApiResultFormat<PaymentHistory>> {
     return this.http.get<ApiResultFormat<PaymentHistory>>(
-      `${environment.apiUrl}/subscription-payment/payment-history?page=${page}&limit=${limit}`
+      `${this.api}/payment-history?page=${page}&limit=${limit}`
     );
   }
 
+  // ─── GET /subscription-payment/unpaid-invoices ───────────────────────────
   getUnpaidInvoices(): Observable<ApiResultFormat<UnpaidInvoicesResponse>> {
-    return this.http.get<ApiResultFormat<UnpaidInvoicesResponse>>(
-      `${environment.apiUrl}/subscription-payment/unpaid-invoices`
-    );
+    return this.http.get<ApiResultFormat<UnpaidInvoicesResponse>>(`${this.api}/unpaid-invoices`);
   }
 
+  // ─── GET /subscription-payment/payment-status ────────────────────────────
   getPaymentStatus(): Observable<ApiResultFormat<PaymentStatus>> {
-    return this.http.get<ApiResultFormat<PaymentStatus>>(
-      `${environment.apiUrl}/subscription-payment/payment-status`
-    );
+    return this.http.get<ApiResultFormat<PaymentStatus>>(`${this.api}/payment-status`);
   }
 
+  // ─── GET /subscription-payment/payment-methods ───────────────────────────
+  getPaymentMethods(): Observable<ApiResultFormat<AvailablePaymentMethods>> {
+    return this.http.get<ApiResultFormat<AvailablePaymentMethods>>(`${this.api}/payment-methods`);
+  }
+
+  // ─── POST /subscription-payment/send-reminders ───────────────────────────
   sendPaymentReminders(): Observable<ApiResultFormat<any>> {
-    return this.http.post<ApiResultFormat<any>>(
-      `${environment.apiUrl}/subscription-payment/send-payment-reminders`,
-      {}
+    return this.http.post<ApiResultFormat<any>>(`${this.api}/send-reminders`, {});
+  }
+
+  // ─── GET /subscription-payment/period/:periodId/transaction ─────────────
+  getPeriodWithTransaction(periodId: string): Observable<ApiResultFormat<any>> {
+    return this.http.get<ApiResultFormat<any>>(`${this.api}/period/${periodId}/transaction`);
+  }
+
+  // ─── GET /subscription-payment/subscription/:id/transactions ─────────────
+  getSubscriptionTransactions(subscriptionId: string): Observable<ApiResultFormat<any[]>> {
+    return this.http.get<ApiResultFormat<any[]>>(
+      `${this.api}/subscription/${subscriptionId}/transactions`
     );
   }
 
-  getCurrentPeriodInvoice(): Observable<ApiResultFormat<Invoice>> {
-    return this.http.get<ApiResultFormat<Invoice>>(
-      `${environment.apiUrl}/subscription-payment/current-period-invoice`
-    );
-  }
-
-  // ─── Paiement unifié via POST /payment/initiate ───────────────────────────
-  // Utilisé pour initier un paiement de souscription (Stripe, MTN, Orange, EasyTransact)
-
-  initiateSubscriptionPayment(dto: InitiatePaymentDto): Observable<{ data: InitiatePaymentResponse }> {
-    // SUBSCRIPTION et RENT nécessitent un JWT — route sécurisée
-    return this.http.post<{ data: InitiatePaymentResponse }>(
-      `${environment.apiUrl}/payment/initiate`,
-      dto
-    );
-  }
-
-  // ─── Vérification du statut via GET /payment/check/:externalRef ──────────
-
-  checkPaymentStatus(externalRef: string): Observable<{ data: CheckPaymentResponse }> {
-    return this.http.get<{ data: CheckPaymentResponse }>(
-      `${environment.apiUrl}/payment/check/${externalRef}`
-    );
-  }
-
-  // ─── Récupérer une transaction ────────────────────────────────────────────
-
-  getTransaction(externalRef: string): Observable<{ data: any }> {
+  // ─── GET /payment/check/:externalRef (module paiement unifié) ────────────
+  checkPaymentStatus(externalRef: string): Observable<{ data: any }> {
     return this.http.get<{ data: any }>(
-      `${environment.apiUrl}/payment/transaction/${externalRef}`
-    );
-  }
-
-  // ─── Méthodes de paiement disponibles ────────────────────────────────────
-  // Retourne les providers disponibles (statique côté frontend)
-
-  getPaymentMethods(): Observable<ApiResultFormat<any>> {
-    return this.http.get<ApiResultFormat<any>>(
-      `${environment.apiUrl}/subscription-payment/payment-methods`
+      `${environment.apiUrl}/payment/check/${externalRef}`
     );
   }
 }

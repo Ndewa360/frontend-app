@@ -64,11 +64,15 @@
     <div *ngIf="subscriptionStatus.plan === 'premium'" class="premium-info">
       <div class="premium-item">
         <span class="label">Montant mensuel :</span>
-        <span class="value">{{ subscriptionStatus.monthlyAmount }} FCFA</span>
+        <span class="value">{{ subscriptionStatus.monthlyAmount | number:'1.0-0' }} FCFA</span>
       </div>
       <div class="premium-item">
         <span class="label">Biens créés :</span>
         <span class="value">{{ subscriptionStatus.propertyCount }}</span>
+      </div>
+      <div *ngIf="subscriptionStatus.lastCalculationDate" class="premium-item">
+        <span class="label">Dernier calcul :</span>
+        <span class="value">{{ subscriptionStatus.lastCalculationDate | date:'dd/MM/yyyy' }}</span>
       </div>
     </div>
 

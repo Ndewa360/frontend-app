@@ -20,18 +20,9 @@ export class SouscriptionPeriodService
     )
     {}
 
-    /**
-     * Create souscriptionPeriod
-     */
-    createDefaultSouscriptionPeriod(): Observable<ApiResultFormat<SouscriptionPeriodModel>>
-    {
-        return this._httpClient.post<ApiResultFormat<SouscriptionPeriodModel>>(`${environment.apiUrl}/souscription-period/default`, {})
-    }
-
     getSouscriptionPeriod(souscriptionPeriodId):Observable<ApiResultFormat<SouscriptionPeriodModel>>
     {
         return this._httpClient.get<ApiResultFormat<SouscriptionPeriodModel>>(`${environment.apiUrl}/souscription-period/${souscriptionPeriodId}`)
-
     }
 
     /**
@@ -50,9 +41,5 @@ export class SouscriptionPeriodService
         return this._httpClient.put<ApiResultFormat<any>>(`${environment.apiUrl}/souscription-period/toggle-unit-status/${roomId}`, {
             isActive: isActive
         })
-    }
-
-    removeAssignationSouscriptionPeriod(souscriptionPeriodId: string) {
-        return this._httpClient.delete<ApiResultFormat<SouscriptionPeriodModel[]>>(`${environment.apiUrl}/souscription-period/${souscriptionPeriodId}`)
     }
 }

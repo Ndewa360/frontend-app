@@ -28,12 +28,6 @@ export class SouscriptionService
         return this._httpClient.post<ApiResultFormat<SouscriptionModel>>(`${environment.apiUrl}/souscription/default`, {})
     }
 
-    getSouscription(souscriptionId):Observable<ApiResultFormat<SouscriptionModel>>
-    {
-        return this._httpClient.get<ApiResultFormat<SouscriptionModel>>(`${environment.apiUrl}/souscription/${souscriptionId}`)
-
-    }
-
     getSouscriptions(userId:string):Observable<ApiResultFormat<SouscriptionModel[]>>
     {       
         return this._httpClient.get<ApiResultFormat<SouscriptionModel[]>>(`${environment.apiUrl}/souscription/user/${userId}`)

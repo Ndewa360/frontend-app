@@ -127,27 +127,38 @@ export class SouscriptionState{
     fetchSouscriptionByUserID(ctx:StateContext<SouscriptionStateModel>,{userId}:SouscriptionAction.FetchSouscriptionsByUserId)
     {
         const state = ctx.getState();
-        let index = state.souscription.findIndex((u)=>u.owner==userId);
+        // Ne pas utiliser le cache si initLoadingState est LOADED mais forcer le rechargement
+        // apres un upgrade (le cache est invalide)
+        if (state.initLoadingState === 'LOADED') {
+            // Deja charge : mettre a jour silencieusement sans bloquer
+            return this._souscriptionService.getSouscriptions(userId).pipe(
+                tap(result => {
+                    ctx.patchState({
+                        souscription: result.data,
+                        initLoadingState: 'LOADED'
+                    });
+                    result.data.forEach(element => {
+                        element.periods.forEach((u) => {
+                            ctx.dispatch(new SouscriptionPeriodAction.SetSouscriptionPeriod(u));
+                        });
+                    });
+                })
+            );
+        }
 
-        if(index>-1) return of(true);
-
-        ctx.patchState({
-            loadingSouscription:true
-        })
+        ctx.patchState({ loadingSouscription: true })
         return this._souscriptionService.getSouscriptions(userId).pipe(
             tap(
                 result => {
-                    console.log("Souscription data ",result.data)
                     ctx.patchState({
                         loadingSouscription:false,
-                        souscription:[...state.souscription, ...result.data],
+                        souscription: result.data,
                         initLoadingState:"LOADED"
                     })
                     result.data.forEach(element => {
                         element.periods.forEach((u)=>{
                             ctx.dispatch(new SouscriptionPeriodAction.SetSouscriptionPeriod(u))
                         })
-                        // ctx.dispatch(new SouscriptionPeriodAction.FetchSouscriptionPeriod(element.currentPeriod));
                     });
                     if(result.data.length==0) ctx.dispatch(new SouscriptionPeriodAction.SetInitLoading("LOADED"))
                 }
@@ -158,24 +169,15 @@ export class SouscriptionState{
     @Action(SouscriptionAction.FetchSouscription)
     fetchSouscription(ctx:StateContext<SouscriptionStateModel>,{souscriptionId}:SouscriptionAction.FetchSouscription)
     {
+        // GET /souscription/:id n'existe pas dans le backend.
+        // On cherche dans le store local uniquement.
         const state = ctx.getState();
-        let index = state.souscription.findIndex((u)=>u._id==souscriptionId);
-
-        if(index>-1) return of(true);
-
-        ctx.patchState({
-            loadingSouscription:true
-        })
-        return this._souscriptionService.getSouscription(souscriptionId).pipe(
-            tap(
-                result => {
-                    ctx.patchState({
-                        loadingSouscription:false,
-                        souscription:[...state.souscription, result.data]
-                    })
-                }
-            )
-        )
+        const found = state.souscription.find((u)=>u._id==souscriptionId);
+        if (!found) {
+            // Déclencher un rechargement complet si non trouvé
+            return ctx.dispatch(new SouscriptionAction.FetchCurrentSubscription());
+        }
+        return of(true);
     }
 
     @Action(SouscriptionAction.CreateSouscription)
@@ -285,10 +287,15 @@ export class SouscriptionState{
                     loadingHistory: false,
                     subscriptionHistory: []
                 })
-                // Ne pas propager l'erreur pour éviter les toasts
                 return of([]);
             })
         )
+    }
+
+    @Action(SouscriptionAction.SetCurrentSubscription)
+    setCurrentSubscription(ctx:StateContext<SouscriptionStateModel>, {subscription}:SouscriptionAction.SetCurrentSubscription)
+    {
+        ctx.patchState({ currentSubscription: subscription });
     }
 
 }

@@ -5,9 +5,10 @@ export interface SubscriptionStatus {
   propertyLimit: number;
   unitsPerPropertyLimit?: number;
   monthlyAmount: number;
+  isRunning?: boolean;
   lastCalculationDate?: Date;
   suspensionDate?: Date;
-  needsUpgrade: boolean;
+  needsUpgrade?: boolean;
   userType?: 'PROPERTY_OWNER' | 'AGENT';
 }
 
@@ -16,8 +17,23 @@ export interface PropertyCreationCheck {
   needsUpgrade: boolean;
 }
 
+export interface UnitDetail {
+  unitId: string;
+  unitCode: string;
+  unitName: string;
+  unitPrice: number;
+  occupiedDays: number;
+  isEligible: boolean;
+  revenue: number;
+  isActiveForSouscription: boolean;
+  propertyName: string;
+}
+
 export interface MonthlyCalculation {
   amount: number;
+  occupiedUnits: number;
+  totalRevenue: number;
+  unitDetails: UnitDetail[];
   month: string;
   calculationDate: Date;
 }
@@ -27,6 +43,7 @@ export interface SubscriptionLimitStateModel {
   canCreateProperty: boolean;
   needsUpgrade: boolean;
   monthlyAmount: number;
+  monthlyCalculation: MonthlyCalculation | null;
   lastCalculationMonth: string | null;
   loading: boolean;
   error: string | null;

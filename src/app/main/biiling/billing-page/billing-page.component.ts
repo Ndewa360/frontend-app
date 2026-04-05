@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Store, Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
-import { SouscriptionModel, SouscriptionState } from 'src/app/shared/store';
+import { SouscriptionModel, SouscriptionState, SouscriptionAction, SouscriptionPeriodAction } from 'src/app/shared/store';
 import { SubscriptionLimitState, SubscriptionLimitAction, SubscriptionStatus } from 'src/app/shared/store/subscription-limit';
 import { SubscriptionPaymentState, SubscriptionPaymentAction, PaymentHistory, UnpaidInvoice } from 'src/app/shared/store/subscription-payment';
 
@@ -39,13 +39,14 @@ export class BillingPageComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Initialiser le menu avec les traductions
     this.initializeMenu();
-    
-    // Charger les données de souscription et paiement
+    // Charger toutes les donnees necessaires aux 3 sous-pages
     this.store.dispatch(new SubscriptionLimitAction.GetSubscriptionStatus());
     this.store.dispatch(new SubscriptionPaymentAction.GetPaymentHistory());
     this.store.dispatch(new SubscriptionPaymentAction.GetUnpaidInvoices());
+    this.store.dispatch(new SouscriptionAction.FetchCurrentSubscription());
+    this.store.dispatch(new SouscriptionAction.FetchSubscriptionHistory());
+    this.store.dispatch(new SouscriptionPeriodAction.FetchCurrentPeriodWithDetails());
   }
 
   private initializeMenu(): void {

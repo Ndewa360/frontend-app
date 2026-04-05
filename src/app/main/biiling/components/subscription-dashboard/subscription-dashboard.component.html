@@ -42,7 +42,17 @@
             </p>
           </div>
           <div class="subscription-actions">
-            <button *ngIf="currentSubscription.plan === 'free'"
+            <!-- Compte suspendu : afficher alerte + bouton réactivation -->
+            <div *ngIf="currentSubscription.accountStatus === 'suspended'" class="alert alert-danger">
+              <i class="fas fa-ban"></i>
+              {{ 'SUBSCRIPTION_DASHBOARD.ACCOUNT_SUSPENDED_MESSAGE' | translate }}
+              <button (click)="reactivateAccount()" class="btn btn-warning ml-2">
+                <i class="fas fa-redo"></i>
+                {{ 'SUBSCRIPTION_DASHBOARD.REACTIVATE_ACCOUNT' | translate }}
+              </button>
+            </div>
+            <!-- Plan FREE actif : bouton upgrade -->
+            <button *ngIf="currentSubscription.plan === 'free' && currentSubscription.accountStatus === 'active'"
                     (click)="upgradeToPremium()"
                     class="btn btn-primary">
               <i class="fas fa-arrow-up"></i>
@@ -76,7 +86,7 @@
               </div>
               <div class="info-item">
                 <label>{{ 'SUBSCRIPTION_DASHBOARD.BILLED_PROPERTIES' | translate }}</label>
-                <span>{{ currentSubscription.propertyCount || 0 }}</span>
+                <span>{{ currentPeriod?.occupiedUnitsCount || 0 }} unité(s) facturée(s)</span>
               </div>
             </div>
 
@@ -100,7 +110,7 @@
             </div>
 
             <!-- Actions de paiement -->
-            <div *ngIf="currentPeriod?.state !== 'payed' && currentPeriod?.calculatedAmount > 0" class="payment-actions">
+            <div *ngIf="canPayCurrentPeriod()" class="payment-actions">
               <button (click)="payCurrentPeriod()"
                       class="btn btn-success"
                       [disabled]="stripeLoading">
@@ -109,8 +119,12 @@
                 <span *ngIf="!stripeLoading">{{ 'SUBSCRIPTION_DASHBOARD.PAY_NOW' | translate }} ({{ formatCurrency(currentPeriod?.calculatedAmount) }})</span>
                 <span *ngIf="stripeLoading">{{ 'SUBSCRIPTION_DASHBOARD.REDIRECTING_TO_STRIPE' | translate }}</span>
               </button>
+            </div>
+
+            <!-- Bouton téléchargement facture — uniquement si payée -->
+            <div *ngIf="currentPeriod?.state === 'payed'" class="payment-actions">
               <button (click)="downloadInvoice(currentPeriod._id)" class="btn btn-secondary">
-                <i class="fas fa-download"></i>
+                <i class="fas fa-file-pdf"></i>
                 {{ 'SUBSCRIPTION_DASHBOARD.DOWNLOAD_INVOICE' | translate }}
               </button>
             </div>
@@ -126,17 +140,21 @@
         <!-- Statistiques -->
         <div class="subscription-stats">
           <div class="stat-item">
-            <div class="stat-value">{{ currentSubscription.propertyCount || 0 }}</div>
+            <div class="stat-value">{{ currentSubscription.displayLimits?.properties || 0 }}</div>
             <div class="stat-label">{{ 'SUBSCRIPTION_DASHBOARD.PROPERTIES_COUNT' | translate }}</div>
           </div>
           <div class="stat-item" *ngIf="currentSubscription.plan === 'free'">
-            <div class="stat-value">{{ currentSubscription.propertyLimit || 1 }}</div>
+            <div class="stat-value">{{ currentSubscription.propertyLimit || 8 }}</div>
             <div class="stat-label">{{ 'SUBSCRIPTION_DASHBOARD.FREE_PLAN_LIMIT' | translate }}</div>
+          </div>
+          <div class="stat-item" *ngIf="currentPeriod">
+            <div class="stat-value">{{ currentPeriod.occupiedUnitsCount || 0 }}</div>
+            <div class="stat-label">Unités occupées ce mois</div>
           </div>
           <div class="stat-item">
             <div class="stat-value">
               <span *ngIf="currentSubscription.plan === 'free'">{{ 'SUBSCRIPTION_DASHBOARD.FREE_PLAN' | translate }}</span>
-              <span *ngIf="currentSubscription.plan === 'premium'">{{ formatCurrency(currentSubscription.monthlyAmount) }}</span>
+              <span *ngIf="currentSubscription.plan === 'premium'">{{ formatCurrency(currentPeriod?.calculatedAmount || currentSubscription.monthlyAmount) }}</span>
             </div>
             <div class="stat-label">
               <span *ngIf="currentSubscription.plan === 'free'">{{ 'SUBSCRIPTION_DASHBOARD.FREE_PLAN' | translate }}</span>
@@ -158,20 +176,19 @@
       </div>
     </div>
 
-    <!-- Résumé des impayés -->
-    <div *ngIf="getUnpaidPeriodsCount() > 0" class="unpaid-summary">
+    <!-- Résumé des impayés depuis l'API -->
+    <div *ngIf="(unpaidInvoices$ | async)?.length > 0" class="unpaid-summary">
       <div class="summary-card warning">
-        <div class="summary-icon">
-          <i class="fas fa-exclamation-circle"></i>
-        </div>
+        <div class="summary-icon"><i class="fas fa-exclamation-circle"></i></div>
         <div class="summary-content">
           <h3>{{ 'SUBSCRIPTION_DASHBOARD.UNPAID_INVOICES' | translate }}</h3>
-          <p>{{ 'SUBSCRIPTION_DASHBOARD.UNPAID_INVOICES_MESSAGE' | translate : {count: getUnpaidPeriodsCount(), amount: formatCurrency(getTotalUnpaidAmount())} }}</p>
+          <p>{{ 'SUBSCRIPTION_DASHBOARD.UNPAID_INVOICES_MESSAGE' | translate : {
+            count: (unpaidInvoices$ | async)?.length,
+            amount: formatCurrency(getUnpaidTotal())
+          } }}</p>
         </div>
         <div class="summary-action">
-          <button class="btn btn-warning">
-            {{ 'SUBSCRIPTION_DASHBOARD.VIEW_DETAILS' | translate }}
-          </button>
+          <button class="btn btn-warning" [routerLink]="['plan-list']">{{ 'SUBSCRIPTION_DASHBOARD.VIEW_DETAILS' | translate }}</button>
         </div>
       </div>
     </div>
@@ -211,7 +228,7 @@
               </div>
               <div class="summary-item">
                 <span class="label">{{ 'SUBSCRIPTION_DASHBOARD.PROPERTIES_COUNT_LABEL' | translate }}</span>
-                <span class="value">{{ subscription.propertyCount || 0 }}</span>
+                <span class="value">{{ subscription.displayLimits?.properties || 0 }}</span>
               </div>
             </div>
           </div>
@@ -237,8 +254,8 @@
                           [title]="'SUBSCRIPTION_DASHBOARD.DOWNLOAD_INVOICE' | translate">
                     <i class="fas fa-download"></i>
                   </button>
-                  <button *ngIf="period.state !== 'payed'"
-                          (click)="initiateStripePayment(period._id)"
+                  <button *ngIf="period.state !== 'payed' && period.state !== 'should_not_payed' && period.calculatedAmount > 0"
+                          (click)="payPeriod(period)"
                           class="btn-icon pay"
                           [disabled]="stripeLoading"
                           [title]="'SUBSCRIPTION_DASHBOARD.PAY_NOW_ACTION' | translate">

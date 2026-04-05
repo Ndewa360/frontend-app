@@ -1,65 +1,87 @@
-import { Component, ElementRef, HostListener, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, OnInit, OnDestroy, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { Router } from '@angular/router';
-import { Actions, ofActionCompleted, ofActionErrored, ofActionSuccessful, Store } from '@ngxs/store';
-import { SouscriptionAction, SouscriptionType } from 'src/app/shared/store';
+import { Actions, ofActionErrored, ofActionSuccessful, Store } from '@ngxs/store';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { SubscriptionLimitAction } from 'src/app/shared/store/subscription-limit';
 
 @Component({
   selector: 'show-billing-contract',
   templateUrl: './show-billing-contract.component.html',
   styleUrls: ['./show-billing-contract.component.css'],
-  encapsulation:ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None
 })
-export class ShowBillingContractComponent implements OnInit{
+export class ShowBillingContractComponent implements OnInit, OnDestroy {
 
-  waittingResponse=false;
+  waittingResponse = false;
   isButtonEnabled = false;
+  upgradeError: string | null = null;
 
-  @ViewChild('refContractBilling', {static: true}) refContractBilling:ElementRef;
+  private destroy$ = new Subject<void>();
+
+  @ViewChild('refContractBilling', { static: true }) refContractBilling: ElementRef;
+
   constructor(
-    private showBillingContract: MatDialogRef<ShowBillingContractComponent>,
-    private _store:Store,
-    private _ngxsAction:Actions,
-    private _router:Router
-  ){}
-  
+    private dialogRef: MatDialogRef<ShowBillingContractComponent>,
+    private _store: Store,
+    private _ngxsAction: Actions,
+  ) {}
+
   ngOnInit(): void {
-    this._ngxsAction.pipe(ofActionSuccessful(SouscriptionAction.CreateSouscription)).subscribe((value)=>{
-      // Navigate to the parent
-      this.waittingResponse=false;
-      this.onClose()
-      this._router.navigate([`/app/facturation/plan/facture`])
+    // Activer le bouton si le contenu ne necessite pas de scroll
+    setTimeout(() => {
+      const el = this.refContractBilling?.nativeElement;
+      if (el && el.scrollHeight <= el.clientHeight) {
+        this.isButtonEnabled = true;
       }
-    );
-    this._ngxsAction.pipe(ofActionCompleted(SouscriptionAction.CreateSouscription)).subscribe(
-      (value) => {
-        this.waittingResponse=false;
+    }, 200);
+
+    // Succes : fermer le dialog — le composant parent gere la suite
+    this._ngxsAction.pipe(
+      ofActionSuccessful(SubscriptionLimitAction.UpgradeToPremium),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.waittingResponse = false;
+      this.dialogRef.close({ upgraded: true });
+    });
+
+    // Erreur
+    this._ngxsAction.pipe(
+      ofActionErrored(SubscriptionLimitAction.UpgradeToPremium),
+      takeUntil(this.destroy$)
+    ).subscribe((ctx: any) => {
+      this.waittingResponse = false;
+      const error = ctx?.error?.error;
+      if (error?.error === 'Souscription/UnpaidInvoices') {
+        this.upgradeError = error?.message?.[0] || 'Vous avez des factures impayées. Veuillez les régler avant de passer au premium.';
+      } else if (error?.error === 'Souscription/AlreadyPremium') {
+        this.upgradeError = 'Vous êtes déjà sur le plan premium.';
+        this.dialogRef.close({ upgraded: false });
+      } else {
+        this.upgradeError = error?.message?.[0] || 'Une erreur est survenue lors de l\'upgrade.';
       }
-    )
-
-    this._ngxsAction.pipe(ofActionErrored(SouscriptionAction.CreateSouscription)).subscribe(
-      (value) => {
-        this.waittingResponse=false;        
-      })  
-
+    });
   }
 
-  onClose() {
-    this.showBillingContract.close(false)
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
-  onContractScroll(e) {
-    const element = event.target as HTMLElement;
+  onClose(): void {
+    this.dialogRef.close({ upgraded: false });
+  }
 
-    // Vérifiez si l'utilisateur a atteint le bas de l'élément
-    if (element.scrollHeight - element.scrollTop === element.clientHeight) {
-      this.isButtonEnabled = true; // Activez le bouton
+  onContractScroll(e: Event): void {
+    const element = e.target as HTMLElement;
+    if (element.scrollHeight - element.scrollTop <= element.clientHeight + 10) {
+      this.isButtonEnabled = true;
     }
   }
 
-  validConsultation()
-  {
-    this.waittingResponse=true;
-    this._store.dispatch(new SouscriptionAction.CreateSouscription(SouscriptionType.DEFAULT))
+  validConsultation(): void {
+    this.waittingResponse = true;
+    this.upgradeError = null;
+    this._store.dispatch(new SubscriptionLimitAction.UpgradeToPremium());
   }
 }

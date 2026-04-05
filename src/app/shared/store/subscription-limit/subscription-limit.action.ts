@@ -1,5 +1,5 @@
 export namespace SubscriptionLimitAction {
-  
+
   export class CheckCanCreateProperty {
     static readonly type = '[SubscriptionLimit] Check Can Create Property';
   }
@@ -22,11 +22,6 @@ export namespace SubscriptionLimitAction {
 
   export class ValidatePropertyCreation {
     static readonly type = '[SubscriptionLimit] Validate Property Creation';
-  }
-
-  export class UpdatePropertyCount {
-    static readonly type = '[SubscriptionLimit] Update Property Count';
-    constructor(public userId: string) {}
   }
 
   export class SetSubscriptionStatus {

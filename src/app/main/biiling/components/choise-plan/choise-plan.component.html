@@ -37,21 +37,28 @@
                               {{ 'BILLING.FREE_PLAN.SUBTITLE' | translate }}
                             </div>
                             <div class="">
-                              <button
-                                *ngIf="(currentSubscription$ | async)?.plan === 'FREE' || (currentSubscription$ | async)?.plan === 'free'; else currentPlan"
-                                disabled
-                                ibmButton="secondary"
-                                size="md"
-                                class="app-ibm-btn-full">
-                                {{ 'BILLING.FREE_PLAN.CURRENT_PLAN' | translate }}
-                              </button>
-                              <ng-template #currentPlan>
+                              <ng-container *ngIf="(currentSubscription$ | async) as sub; else loadingBtn">
                                 <button
+                                  *ngIf="sub.plan === 'FREE' || sub.plan === 'free'; else currentPlan"
                                   disabled
-                                  ibmButton="tertiary"
+                                  ibmButton="secondary"
                                   size="md"
                                   class="app-ibm-btn-full">
-                                  {{ 'BILLING.FREE_PLAN.BASE_PLAN' | translate }}
+                                  {{ 'BILLING.FREE_PLAN.CURRENT_PLAN' | translate }}
+                                </button>
+                                <ng-template #currentPlan>
+                                  <button
+                                    disabled
+                                    ibmButton="tertiary"
+                                    size="md"
+                                    class="app-ibm-btn-full">
+                                    {{ 'BILLING.FREE_PLAN.BASE_PLAN' | translate }}
+                                  </button>
+                                </ng-template>
+                              </ng-container>
+                              <ng-template #loadingBtn>
+                                <button disabled ibmButton="secondary" size="md" class="app-ibm-btn-full">
+                                  <i class="fas fa-spinner fa-spin mr-2"></i>
                                 </button>
                               </ng-template>
                             </div>
@@ -110,26 +117,44 @@
                               {{ 'BILLING.PREMIUM_PLAN.SUBTITLE' | translate }}
                             </div>
                             <div class="">
-                              <button
-                                *ngIf="(currentSubscription$ | async)?.plan === 'FREE' || (currentSubscription$ | async)?.plan === 'free'; else alreadyPremium"
-                                (click)="showBillingContract()"
-                                [disabled]="isUpgrading$ | async"
-                                ibmButton="primary"
-                                size="md"
-                                class="app-ibm-btn-full custom-primary-button">
-                                <span *ngIf="!(isUpgrading$ | async)">{{ 'BILLING.PREMIUM_PLAN.UPGRADE_TO_PREMIUM' | translate }}</span>
-                                <span *ngIf="isUpgrading$ | async">
-                                  <i class="fas fa-spinner fa-spin mr-2"></i>
-                                  {{ 'BILLING.PREMIUM_PLAN.UPGRADING' | translate }}
-                                </span>
-                              </button>
-                              <ng-template #alreadyPremium>
+                              <ng-container *ngIf="(currentSubscription$ | async) as sub; else loadingPremiumBtn">
                                 <button
-                                  disabled
+                                  *ngIf="(sub.plan === 'FREE' || sub.plan === 'free') && sub.accountStatus !== 'suspended'; else alreadyPremium"
+                                  (click)="showBillingContract()"
+                                  [disabled]="isUpgrading$ | async"
                                   ibmButton="primary"
                                   size="md"
-                                  class="app-ibm-btn-full">
-                                  {{ 'BILLING.PREMIUM_PLAN.CURRENT_PLAN' | translate }}
+                                  class="app-ibm-btn-full custom-primary-button">
+                                  <span *ngIf="!(isUpgrading$ | async)">{{ 'BILLING.PREMIUM_PLAN.UPGRADE_TO_PREMIUM' | translate }}</span>
+                                  <span *ngIf="isUpgrading$ | async">
+                                    <i class="fas fa-spinner fa-spin mr-2"></i>
+                                    {{ 'BILLING.PREMIUM_PLAN.UPGRADING' | translate }}
+                                  </span>
+                                </button>
+                                <ng-template #alreadyPremium>
+                                  <button
+                                    *ngIf="sub.accountStatus === 'suspended'; else isPremium"
+                                    disabled
+                                    ibmButton="danger"
+                                    size="md"
+                                    class="app-ibm-btn-full">
+                                    <i class="fas fa-ban mr-2"></i>
+                                    {{ 'BILLING.PREMIUM_PLAN.ACCOUNT_SUSPENDED' | translate }}
+                                  </button>
+                                  <ng-template #isPremium>
+                                    <button
+                                      disabled
+                                      ibmButton="primary"
+                                      size="md"
+                                      class="app-ibm-btn-full">
+                                      {{ 'BILLING.PREMIUM_PLAN.CURRENT_PLAN' | translate }}
+                                    </button>
+                                  </ng-template>
+                                </ng-template>
+                              </ng-container>
+                              <ng-template #loadingPremiumBtn>
+                                <button disabled ibmButton="primary" size="md" class="app-ibm-btn-full">
+                                  <i class="fas fa-spinner fa-spin mr-2"></i>
                                 </button>
                               </ng-template>
                             </div>

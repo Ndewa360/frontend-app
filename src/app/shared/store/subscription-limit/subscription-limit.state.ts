@@ -15,6 +15,7 @@ import { SubscriptionLimitService } from '../../services/subscription-limit.serv
     canCreateProperty: true,
     needsUpgrade: false,
     monthlyAmount: 0,
+    monthlyCalculation: null,
     lastCalculationMonth: null,
     loading: false,
     error: null
@@ -47,6 +48,11 @@ export class SubscriptionLimitState {
   @Selector()
   static selectMonthlyAmount(state: SubscriptionLimitStateModel): number {
     return state.monthlyAmount;
+  }
+
+  @Selector()
+  static selectMonthlyCalculation(state: SubscriptionLimitStateModel) {
+    return state.monthlyCalculation;
   }
 
   @Selector()
@@ -123,10 +129,22 @@ export class SubscriptionLimitState {
 
     return this.subscriptionLimitService.upgradeToPremium().pipe(
       tap((response) => {
-        ctx.patchState({ loading: false });
-        this.toastrService.success(this.translateService.instant('NOTIFICATIONS.SUBSCRIPTION_UPGRADE_SUCCESS'), 'Upgrade réussi');
-        
-        // Recharger le statut après upgrade
+        // Mettre a jour immediatement le store avec le nouveau plan
+        // sans attendre un second appel reseau
+        const current = ctx.getState().subscriptionStatus;
+        ctx.patchState({
+          loading: false,
+          subscriptionStatus: current ? {
+            ...current,
+            plan: 'premium',
+            accountStatus: 'active',
+          } : null,
+        });
+        this.toastrService.success(
+          this.translateService.instant('NOTIFICATIONS.SUBSCRIPTION_UPGRADE_SUCCESS'),
+          'Upgrade réussi'
+        );
+        // Recharger depuis le backend pour avoir les données fraîches
         ctx.dispatch(new SubscriptionLimitAction.GetSubscriptionStatus());
       }),
       catchError((error) => {
@@ -134,7 +152,10 @@ export class SubscriptionLimitState {
           loading: false,
           error: error.message || 'Erreur lors de l\'upgrade'
         });
-        this.toastrService.error(this.translateService.instant('NOTIFICATIONS.SUBSCRIPTION_UPGRADE_ERROR'), 'Erreur');
+        this.toastrService.error(
+          this.translateService.instant('NOTIFICATIONS.SUBSCRIPTION_UPGRADE_ERROR'),
+          'Erreur'
+        );
         return throwError(error);
       })
     );
@@ -171,16 +192,24 @@ export class SubscriptionLimitState {
       tap((response) => {
         ctx.patchState({
           monthlyAmount: response.data.amount,
+          monthlyCalculation: response.data,
           lastCalculationMonth: response.data.month,
           loading: false
         });
-        this.toastrService.info(this.translateService.instant('NOTIFICATIONS.MONTHLY_AMOUNT_CALCULATED', { amount: response.data.amount }), 'Calcul terminé');
+        // Mettre a jour aussi le montant dans subscriptionStatus
+        const current = ctx.getState().subscriptionStatus;
+        if (current) {
+          ctx.patchState({
+            subscriptionStatus: { ...current, monthlyAmount: response.data.amount }
+          });
+        }
+        this.toastrService.info(
+          this.translateService.instant('NOTIFICATIONS.MONTHLY_AMOUNT_CALCULATED', { amount: response.data.amount }),
+          'Calcul terminé'
+        );
       }),
       catchError((error) => {
-        ctx.patchState({
-          loading: false,
-          error: error.message || 'Erreur lors du calcul'
-        });
+        ctx.patchState({ loading: false, error: error.message || 'Erreur lors du calcul' });
         this.toastrService.error(this.translateService.instant('NOTIFICATIONS.MONTHLY_CALCULATION_ERROR'), 'Erreur');
         return throwError(error);
       })

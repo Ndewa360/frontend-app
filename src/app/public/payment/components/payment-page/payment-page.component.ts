@@ -236,6 +236,9 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
     this.paymentError = null;
 
     const base = `${window.location.origin}/${this.lang}/payment`;
+    // externalRef sera connu après la réponse du backend — on le passera via metadata Stripe
+    // Le backend injecte déjà externalRef dans session.metadata, Stripe le renvoie dans l'URL via {CHECKOUT_SESSION_ID}
+    // On passe un placeholder __REF__ remplacé après réception de l'externalRef
     const dto: InitiatePaymentDto = {
       context: this.context,
       provider: 'STRIPE',
@@ -254,7 +257,12 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
         next: async (res) => {
           this.externalRef = res.data.externalRef;
           if (res.data.redirectUrl) {
-            window.location.href = res.data.redirectUrl;
+            // Injecter l'externalRef dans l'URL de succès pour le retrouver au retour
+            const redirectUrl = res.data.redirectUrl.replace(
+              encodeURIComponent(`${base}/${this.token}?payment=success&session_id={CHECKOUT_SESSION_ID}`),
+              encodeURIComponent(`${base}/${this.token}?payment=success&session_id={CHECKOUT_SESSION_ID}&ext=${res.data.externalRef}`)
+            );
+            window.location.href = redirectUrl || res.data.redirectUrl;
           } else {
             this.paymentError = 'Impossible d\'obtenir l\'URL de paiement Stripe.';
             this.paymentStatus = 'failed';
@@ -351,7 +359,11 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
     this.currentStep = 'processing';
     this.paymentStatus = 'processing';
 
-    this.paymentService.checkPaymentStatus(this.token)
+    // Récupérer l'externalRef depuis les query params (injecté lors de la redirection Stripe)
+    const extRef = this.route.snapshot.queryParams['ext'] || null;
+    const refToCheck = extRef || this.token;
+
+    this.paymentService.checkPaymentStatus(refToCheck)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res) => {

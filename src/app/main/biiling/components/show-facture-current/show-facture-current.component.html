@@ -34,24 +34,28 @@
                     <div>
                         <div class="app-productive-heading-03">{{ 'BILLING.INVOICE.INVOICE_STATUS' | translate }}</div>
                     </div>
-                    <!-- <ng-container [ngSwitch]="currentPeriod.state">
+                    <ng-container [ngSwitch]="currentPeriod.state">
                         <div *ngSwitchCase="'payed'" class="app-row app-row--center app-color-success">
-                            <span class="mr-1">Payé</span>
+                            <span class="mr-1">{{ 'BILLING.INVOICE.PERIOD_STATUS.PAID' | translate }}</span>
                             <youpez-ibm-icon iconName="checkMarkOutline" iconSize="32"></youpez-ibm-icon>
                         </div>
-                        <div  *ngSwitchCase="'waiting'" class="app-row app-row--center ">
-                            <span class="mr-1">En attente de paiement</span>
+                        <div *ngSwitchCase="'waiting'" class="app-row app-row--center">
+                            <span class="mr-1">{{ 'BILLING.INVOICE.PERIOD_STATUS.WAITING' | translate }}</span>
                             <youpez-ibm-icon iconName="warningMarkOutline" iconSize="32"></youpez-ibm-icon>
                         </div>
-                        <div  *ngSwitchCase="'unpaid'" class="app-row app-row--center app-color-danger">
-                            <span class="mr-1">Non payé</span>
+                        <div *ngSwitchCase="'unpaid'" class="app-row app-row--center app-color-danger">
+                            <span class="mr-1">{{ 'BILLING.INVOICE.PERIOD_STATUS.UNPAID' | translate }}</span>
                             <youpez-ibm-icon iconName="closeOutline" iconSize="32"></youpez-ibm-icon>
                         </div>
-                    </ng-container> -->
-                    <div class="app-row app-row--center ">
-                        <span class="mr-1">{{ 'BILLING.INVOICE.UNKNOWN' | translate }}</span>
-                        <youpez-ibm-icon iconName="warningMarkOutline" iconSize="32"></youpez-ibm-icon>
-                    </div>
+                        <div *ngSwitchCase="'should_not_payed'" class="app-row app-row--center app-color-info">
+                            <span class="mr-1">{{ 'BILLING.INVOICE.PERIOD_STATUS.FREE' | translate }}</span>
+                            <youpez-ibm-icon iconName="gift" iconSize="32"></youpez-ibm-icon>
+                        </div>
+                        <div *ngSwitchDefault class="app-row app-row--center">
+                            <span class="mr-1">{{ getPeriodStatus() }}</span>
+                            <youpez-ibm-icon iconName="warningMarkOutline" iconSize="32"></youpez-ibm-icon>
+                        </div>
+                    </ng-container>
                 </div>
             </div>
         </div>
@@ -82,12 +86,12 @@
             <div fxFlex="100%"  class="app-card__block">
                 <div class="flex justify-end">
                     <div>
-                        <button type="submit" size="lg" disabled class="custom-primary-button" ibmButton="primary" >
-                            <!-- <ibm-loading *ngIf="waittingResponse; else noWaitingResponse"></ibm-loading> -->
-                            <!-- <ng-template #noWaitingResponse> -->
+                        <button type="submit" size="lg"
+                            [disabled]="currentPeriod?.state === 'payed' || currentPeriod?.state === 'should_not_payed' || !currentPeriod?.calculatedAmount"
+                            (click)="payCurrentPeriod()"
+                            class="custom-primary-button" ibmButton="primary">
                               <span class="btn-text">{{ 'BILLING.INVOICE.PAY_INVOICE' | translate }}</span>
-                              <youpez-ibm-icon iconClass="cds--btn__icon" iconName="money" iconSize="20" ></youpez-ibm-icon >
-                            <!-- </ng-template> -->
+                              <youpez-ibm-icon iconClass="cds--btn__icon" iconName="money" iconSize="20"></youpez-ibm-icon>
                           </button>
                     </div>
                 </div>

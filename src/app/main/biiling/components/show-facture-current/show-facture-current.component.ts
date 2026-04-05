@@ -1,23 +1,27 @@
-import { ChangeDetectorRef, Component, TemplateRef, ViewChild } from '@angular/core';
-import { Actions, ofActionCompleted, ofActionErrored, ofActionSuccessful, Select, Selector, Store } from '@ngxs/store';
+import { ChangeDetectorRef, Component, OnInit, OnDestroy, TemplateRef, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Actions, ofActionCompleted, ofActionErrored, ofActionSuccessful, Select, Store } from '@ngxs/store';
 import { TableModel, TableRowSize, TableHeaderItem, TableItem } from 'carbon-components-angular';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
 import { sort } from 'src/@youpez';
 import { SouscriptionState, SouscriptionModel, SouscriptionPeriodModel, SouscriptionPeriodState, SouscriptionPeriodService, SouscriptionPeriodAction, RoomModel, RoomType, RoomAction, LocataireState, PropertyState } from 'src/app/shared/store';
 import { UtilsString } from 'src/app/shared/utils';
+import { PaymentSessionService } from 'src/app/shared/services/payment-session.service';
+import { UserProfileState } from 'src/app/shared/store/user-profile';
 
 @Component({
   selector: 'show-facture-current',
   templateUrl: './show-facture-current.component.html',
   styleUrls: ['./show-facture-current.component.css']
 })
-export class ShowFactureCurrentComponent {
-  @Select(SouscriptionState.selectStatePeriodDefaultWithRunningState) souscription$:Observable<SouscriptionModel>
+export class ShowFactureCurrentComponent implements OnInit, OnDestroy {
   @Select(SouscriptionPeriodState.selectCurrentPeriodWithDetails) currentPeriodWithDetails$: Observable<SouscriptionPeriodModel>;
   @Select(SouscriptionPeriodState.selectLoadingCurrentPeriod) loadingCurrentPeriod$: Observable<boolean>;
   roomsValueChangeStatus:{isLoading:BehaviorSubject<boolean>,roomId:string, value:BehaviorSubject<boolean>,room:RoomModel}[]=[];
 
+  private destroy$ = new Subject<void>();
   currentPeriod:SouscriptionPeriodModel=null;
   waittingResponse=false;
   isAssignedOpened = false;
@@ -52,57 +56,53 @@ export class ShowFactureCurrentComponent {
     private _ngxsAction:Actions,
     private cdr: ChangeDetectorRef,
     private _souscriptionPeriodService: SouscriptionPeriodService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private paymentSessionService: PaymentSessionService,
+    private route: ActivatedRoute,
+    private router: Router,
   ){}
+
   ngOnInit() {
-    // Charger la période actuelle avec les détails des unités via le store
+    // Toujours recharger depuis l'API au chargement de la page
     this._store.dispatch(new SouscriptionPeriodAction.FetchCurrentPeriodWithDetails());
 
-    // S'abonner aux changements de la période actuelle
-    this.currentPeriodWithDetails$.subscribe((period) => {
+    this.currentPeriodWithDetails$.pipe(takeUntil(this.destroy$)).subscribe((period) => {
       if (period) {
         this.currentPeriod = period;
+        this.roomsValueChangeStatus = [];
         this.setupUnitsTable();
         this.cdr.detectChanges();
       }
     });
 
-    this._ngxsAction.pipe(ofActionSuccessful(RoomAction.ChangeStatusActivatedForSouscriptionRoom)).subscribe((value)=>{
-      // Navigate to the parent
+    // Retour apres paiement
+    this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe(params => {
+      if (params['payment'] === 'success') {
+        this.router.navigate([], { relativeTo: this.route, queryParams: {}, replaceUrl: true });
+        this._store.dispatch(new SouscriptionPeriodAction.FetchCurrentPeriodWithDetails());
+      }
+    });
+
+    this._ngxsAction.pipe(ofActionSuccessful(RoomAction.ChangeStatusActivatedForSouscriptionRoom), takeUntil(this.destroy$)).subscribe((value)=>{
       let foundRoom = this.roomsValueChangeStatus.find((u)=>u.roomId==value.roomId);
-      foundRoom.value.next(value.isActiveForSouscription);
-      this.cdr.detectChanges()
-      }
-    );
-    this._ngxsAction.pipe(ofActionCompleted(RoomAction.ChangeStatusActivatedForSouscriptionRoom)).subscribe(
-      (value) => {
-        // this.waittingResponse=false;
-        let foundRoom = this.roomsValueChangeStatus.find((u)=>u.roomId==value.action.roomId);
-        foundRoom.isLoading.next(false);
-      this.cdr.detectChanges()
+      if (foundRoom) foundRoom.value.next(value.isActiveForSouscription);
+      this.cdr.detectChanges();
+    });
+    this._ngxsAction.pipe(ofActionCompleted(RoomAction.ChangeStatusActivatedForSouscriptionRoom), takeUntil(this.destroy$)).subscribe((value) => {
+      let foundRoom = this.roomsValueChangeStatus.find((u)=>u.roomId==value.action.roomId);
+      if (foundRoom) foundRoom.isLoading.next(false);
+      this.cdr.detectChanges();
+    });
+    this._ngxsAction.pipe(ofActionErrored(RoomAction.ChangeStatusActivatedForSouscriptionRoom), takeUntil(this.destroy$)).subscribe((value) => {
+      let foundRoom = this.roomsValueChangeStatus.find((u)=>u.roomId==value.roomId);
+      if (foundRoom) foundRoom.value.next(value.isActiveForSouscription);
+      this.cdr.detectChanges();
+    });
+  }
 
-      }
-    )
-
-    this._ngxsAction.pipe(ofActionErrored(RoomAction.ChangeStatusActivatedForSouscriptionRoom)).subscribe(
-      (value) => {
-        let foundRoom = this.roomsValueChangeStatus.find((u)=>u.roomId==value.roomId);
-        foundRoom.value.next(value.isActiveForSouscription);     
-      this.cdr.detectChanges()
-
-      })  
-
-    this.souscription$.subscribe((value)=>{
-      if(!value) return;
-      this._store.select(SouscriptionPeriodState.selectStateSouscriptionPeriod(value.currentPeriod)).subscribe((value)=>{
-        if(!value) return;
-        this.currentPeriod=value;
-        this.setupUnitsTable(); // Utiliser la nouvelle méthode
-      })
-    })
-
-    // Ne plus utiliser roomList$ - les données viennent maintenant du backend
-
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   getPage(page: number)
@@ -257,12 +257,12 @@ export class ShowFactureCurrentComponent {
   }
 
   private setupUnitsTable(): void {
-    // Utiliser unitsDetails (nom du backend) ou unitDetails (alias frontend)
-    const unitsData = this.currentPeriod?.unitsDetails || this.currentPeriod?.unitDetails;
+    const unitsData = this.currentPeriod?.unitsDetails;
 
     if (!unitsData || unitsData.length === 0) {
       return;
     }
+
     let newModel = new TableModel()
 
     newModel.header = [
@@ -350,13 +350,35 @@ export class ShowFactureCurrentComponent {
   }
 
   getTotalUnitsCount(): number {
-    const unitsData = this.currentPeriod?.unitsDetails || this.currentPeriod?.unitDetails;
-    return unitsData?.length || 0;
+    return this.currentPeriod?.unitsDetails?.length || 0;
   }
 
   getTotalTaxes(): number {
-    // Calcul des taxes (18% sur les frais de service)
     const serviceFees = this.getTotalServiceFees();
     return serviceFees * 0.18;
+  }
+
+  payCurrentPeriod(): void {
+    if (!this.currentPeriod) return;
+    if (this.currentPeriod.state === 'payed' || this.currentPeriod.state === 'should_not_payed') return;
+    if (!this.currentPeriod.calculatedAmount) return;
+
+    const lang = window.location.pathname.split('/')[1] || 'fr';
+    const profile = this._store.selectSnapshot(UserProfileState.selectStateUserProfile);
+    const currentPath = window.location.pathname;
+
+    this.paymentSessionService.createAndRedirect(lang, {
+      context: 'SUBSCRIPTION',
+      amount: this.currentPeriod.calculatedAmount,
+      amountEditable: false,
+      currency: 'XAF',
+      description: `Abonnement Ndewa360° — ${this.currentPeriod.billingRef}`,
+      reference: this.currentPeriod._id,
+      userId: profile?._id,
+      userEmail: profile?.email,
+      metadata: { periodId: this.currentPeriod._id, lang },
+      successRedirectPath: `${currentPath}?payment=success`,
+      cancelRedirectPath: currentPath,
+    });
   }
 }

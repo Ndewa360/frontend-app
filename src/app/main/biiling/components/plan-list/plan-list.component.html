@@ -1,1 +1,282 @@
-<p>plan-list works!</p>
+<div class="pl">
+
+  <!-- ═══════════════════════════════════════════════════════════
+       EN-TÊTE
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="pl__header">
+    <div class="pl__header-left">
+      <div class="pl__header-icon">
+        <i class="fas fa-file-invoice-dollar"></i>
+      </div>
+      <div>
+        <h1 class="pl__title">Historique de facturation</h1>
+        <p class="pl__subtitle">Toutes vos périodes de facturation et leur statut</p>
+      </div>
+    </div>
+    <button class="pl__refresh-btn" (click)="loadData()" [disabled]="loading">
+      <i class="fas fa-sync-alt" [class.fa-spin]="loading"></i>
+      <span>Actualiser</span>
+    </button>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       BADGE PLAN ACTUEL
+  ═══════════════════════════════════════════════════════════ -->
+  <div *ngIf="subscriptionStatus" class="pl__plan-banner"
+       [class.pl__plan-banner--premium]="subscriptionStatus.plan === 'premium'"
+       [class.pl__plan-banner--free]="subscriptionStatus.plan !== 'premium'">
+    <div class="pl__plan-banner-left">
+      <div class="pl__plan-icon">
+        <i class="fas" [class.fa-crown]="subscriptionStatus.plan === 'premium'"
+                       [class.fa-user]="subscriptionStatus.plan !== 'premium'"></i>
+      </div>
+      <div>
+        <div class="pl__plan-name">
+          Plan {{ subscriptionStatus.plan === 'premium' ? 'Premium' : 'Gratuit' }}
+        </div>
+        <div class="pl__plan-status">
+          <span class="pl__dot"
+                [class.pl__dot--active]="subscriptionStatus.accountStatus === 'active'"
+                [class.pl__dot--suspended]="subscriptionStatus.accountStatus === 'suspended'">
+          </span>
+          {{ subscriptionStatus.accountStatus === 'active' ? 'Actif' :
+             subscriptionStatus.accountStatus === 'suspended' ? 'Suspendu' : 'Désactivé' }}
+        </div>
+      </div>
+    </div>
+    <div class="pl__plan-banner-right" *ngIf="subscriptionStatus.plan === 'premium'">
+      <div class="pl__plan-amount">{{ formatCurrency(subscriptionStatus.monthlyAmount) }}</div>
+      <div class="pl__plan-period">/ mois</div>
+    </div>
+    <div class="pl__plan-banner-right" *ngIf="subscriptionStatus.plan !== 'premium'">
+      <span class="pl__plan-free-badge">Gratuit</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       CHARGEMENT
+  ═══════════════════════════════════════════════════════════ -->
+  <div *ngIf="loading && !paymentHistory" class="pl__loading">
+    <div class="pl__spinner"></div>
+    <p>Chargement de l'historique…</p>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       ÉTAT VIDE
+  ═══════════════════════════════════════════════════════════ -->
+  <div *ngIf="!loading && (!paymentHistory?.periods || paymentHistory.periods.length === 0)"
+       class="pl__empty">
+    <div class="pl__empty-icon">
+      <i class="fas fa-file-invoice"></i>
+    </div>
+    <h3>Aucune période de facturation</h3>
+    <p>Votre historique apparaîtra ici une fois votre abonnement actif.</p>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       TABLEAU DES PÉRIODES
+  ═══════════════════════════════════════════════════════════ -->
+  <div *ngIf="paymentHistory?.periods?.length > 0" class="pl__content">
+
+    <!-- Résumé rapide -->
+    <div class="pl__summary-row">
+      <div class="pl__summary-card">
+        <div class="pl__summary-value">{{ paymentHistory.total }}</div>
+        <div class="pl__summary-label">Périodes totales</div>
+      </div>
+      <div class="pl__summary-card pl__summary-card--warning">
+        <div class="pl__summary-value">{{ unpaidCount }}</div>
+        <div class="pl__summary-label">En retard</div>
+      </div>
+      <div class="pl__summary-card pl__summary-card--success">
+        <div class="pl__summary-value">{{ paidCount }}</div>
+        <div class="pl__summary-label">Payées</div>
+      </div>
+    </div>
+
+    <!-- Tableau desktop -->
+    <div class="pl__table-wrap">
+      <table class="pl__table">
+        <thead>
+          <tr>
+            <th>Référence</th>
+            <th>Période</th>
+            <th class="pl__th--center">Unités facturées</th>
+            <th class="pl__th--right">Montant</th>
+            <th class="pl__th--center">Statut</th>
+            <th>Payé le</th>
+            <th class="pl__th--center">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let period of paymentHistory.periods; let i = index"
+              class="pl__row"
+              [class.pl__row--unpaid]="period.status === 'unpaid'"
+              [class.pl__row--paid]="period.status === 'payed'">
+
+            <!-- Référence -->
+            <td>
+              <span class="pl__ref">{{ period.billingRef }}</span>
+            </td>
+
+            <!-- Période -->
+            <td class="pl__dates">
+              <i class="fas fa-calendar-alt pl__dates-icon"></i>
+              <span>{{ formatDate(period.startDate) }}</span>
+              <span class="pl__dates-sep">→</span>
+              <span>{{ formatDate(period.endDate) }}</span>
+            </td>
+
+            <!-- Unités -->
+            <td class="pl__td--center">
+              <span class="pl__units-badge">{{ period.occupiedUnits || 0 }}</span>
+            </td>
+
+            <!-- Montant -->
+            <td class="pl__td--right">
+              <strong class="pl__amount"
+                      [class.pl__amount--zero]="!period.amount || period.amount === 0">
+                {{ formatCurrency(period.amount) }}
+              </strong>
+            </td>
+
+            <!-- Statut -->
+            <td class="pl__td--center">
+              <span class="pl__status-badge"
+                    [class.pl__status-badge--success]="period.status === 'payed'"
+                    [class.pl__status-badge--warning]="period.status === 'waiting'"
+                    [class.pl__status-badge--danger]="period.status === 'unpaid'"
+                    [class.pl__status-badge--info]="period.status === 'should_not_payed'">
+                <i class="fas"
+                   [class.fa-check-circle]="period.status === 'payed'"
+                   [class.fa-clock]="period.status === 'waiting'"
+                   [class.fa-exclamation-circle]="period.status === 'unpaid'"
+                   [class.fa-gift]="period.status === 'should_not_payed'">
+                </i>
+                {{ getPeriodStatusLabel(period.status) }}
+              </span>
+            </td>
+
+            <!-- Payé le -->
+            <td class="pl__paid-date">
+              <span *ngIf="period.paidAt">{{ formatDate(period.paidAt) }}</span>
+              <span *ngIf="!period.paidAt" class="pl__dash">—</span>
+            </td>
+
+            <!-- Action -->
+            <td class="pl__td--center">
+              <!-- Payer : uniquement si en attente ou impaye avec montant > 0 -->
+              <button *ngIf="canPayPeriod(period)"
+                      class="pl__pay-btn"
+                      (click)="payPeriod(period)">
+                <i class="fas fa-credit-card"></i>
+                <span>Payer</span>
+              </button>
+              <!-- Telecharger facture : uniquement si payee -->
+              <button *ngIf="period.status === 'payed'"
+                      class="pl__pay-btn pl__pay-btn--download"
+                      (click)="downloadInvoice(period.id)"
+                      title="Télécharger la facture PDF">
+                <i class="fas fa-file-pdf"></i>
+                <span>Facture</span>
+              </button>
+              <div *ngIf="period.status === 'should_not_payed'" class="pl__free-icon">
+                <i class="fas fa-gift"></i>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Cartes mobile (< 768px) -->
+    <div class="pl__cards">
+      <div *ngFor="let period of paymentHistory.periods"
+           class="pl__card"
+           [class.pl__card--unpaid]="period.status === 'unpaid'"
+           [class.pl__card--paid]="period.status === 'payed'">
+
+        <div class="pl__card-top">
+          <span class="pl__ref">{{ period.billingRef }}</span>
+          <span class="pl__status-badge"
+                [class.pl__status-badge--success]="period.status === 'payed'"
+                [class.pl__status-badge--warning]="period.status === 'waiting'"
+                [class.pl__status-badge--danger]="period.status === 'unpaid'"
+                [class.pl__status-badge--info]="period.status === 'should_not_payed'">
+            <i class="fas"
+               [class.fa-check-circle]="period.status === 'payed'"
+               [class.fa-clock]="period.status === 'waiting'"
+               [class.fa-exclamation-circle]="period.status === 'unpaid'"
+               [class.fa-gift]="period.status === 'should_not_payed'">
+            </i>
+            {{ getPeriodStatusLabel(period.status) }}
+          </span>
+        </div>
+
+        <div class="pl__card-dates">
+          <i class="fas fa-calendar-alt"></i>
+          {{ formatDate(period.startDate) }} → {{ formatDate(period.endDate) }}
+        </div>
+
+        <div class="pl__card-row">
+          <div class="pl__card-item">
+            <span class="pl__card-label">Montant</span>
+            <strong class="pl__amount">{{ formatCurrency(period.amount) }}</strong>
+          </div>
+          <div class="pl__card-item">
+            <span class="pl__card-label">Unités</span>
+            <span class="pl__units-badge">{{ period.occupiedUnits || 0 }}</span>
+          </div>
+          <div class="pl__card-item" *ngIf="period.paidAt">
+            <span class="pl__card-label">Payé le</span>
+            <span>{{ formatDate(period.paidAt) }}</span>
+          </div>
+        </div>
+
+        <button *ngIf="canPayPeriod(period)"
+                class="pl__pay-btn pl__pay-btn--full"
+                (click)="payPeriod(period)">
+          <i class="fas fa-credit-card"></i>
+          Payer {{ formatCurrency(period.amount) }}
+        </button>
+        <button *ngIf="period.status === 'payed'"
+                class="pl__pay-btn pl__pay-btn--full pl__pay-btn--download"
+                (click)="downloadInvoice(period.id)">
+          <i class="fas fa-file-pdf"></i>
+          Télécharger la facture
+        </button>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="totalPages > 1" class="pl__pagination">
+      <button class="pl__page-btn"
+              (click)="changePage(currentPage - 1)"
+              [disabled]="currentPage === 1">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+
+      <ng-container *ngFor="let page of pages">
+        <button class="pl__page-btn"
+                [class.pl__page-btn--active]="page === currentPage"
+                (click)="changePage(page)">
+          {{ page }}
+        </button>
+      </ng-container>
+
+      <button class="pl__page-btn"
+              (click)="changePage(currentPage + 1)"
+              [disabled]="currentPage === totalPages">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+
+    <!-- Total -->
+    <div class="pl__footer-note">
+      <i class="fas fa-info-circle"></i>
+      {{ paymentHistory.total }} période(s) au total
+    </div>
+
+  </div><!-- /.pl__content -->
+
+</div><!-- /.pl -->

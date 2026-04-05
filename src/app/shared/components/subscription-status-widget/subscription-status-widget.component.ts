@@ -4,7 +4,8 @@ import { takeUntil } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { Store, Select } from '@ngxs/store';
 import { SubscriptionLimitState, SubscriptionLimitAction, SubscriptionStatus } from '../../store/subscription-limit';
-import { SubscriptionPaymentState, SubscriptionPaymentAction, PaymentStatus } from '../../store/subscription-payment';
+import { SubscriptionPaymentState, SubscriptionPaymentAction } from '../../store/subscription-payment';
+import { PaymentStatus } from '../../services/subscription-payment.service';
 import { SubscriptionLimitModalComponent, SubscriptionLimitModalData } from '../subscription-limit-modal/subscription-limit-modal.component';
 
 @Component({
@@ -69,9 +70,13 @@ export class SubscriptionStatusWidgetComponent implements OnInit, OnDestroy {
   }
 
   loadSubscriptionData(): void {
-    // Dispatcher les actions pour charger les données
     this.store.dispatch(new SubscriptionLimitAction.GetSubscriptionStatus());
     this.store.dispatch(new SubscriptionPaymentAction.GetPaymentStatus());
+    // Pour les plans premium, calculer automatiquement le montant reel
+    const status = this.store.selectSnapshot(SubscriptionLimitState.selectSubscriptionStatus);
+    if (status?.plan === 'premium') {
+      this.store.dispatch(new SubscriptionLimitAction.CalculateMonthlyAmount());
+    }
   }
 
   openUpgradeModal(): void {
@@ -133,8 +138,9 @@ export class SubscriptionStatusWidgetComponent implements OnInit, OnDestroy {
   }
 
   get showUpgradeButton(): boolean {
-    return this.subscriptionStatus?.plan === 'free' && 
-           this.subscriptionStatus?.accountStatus === 'active';
+    return this.subscriptionStatus?.plan === 'free' &&
+           this.subscriptionStatus?.accountStatus === 'active' &&
+           !this.paymentStatus?.hasUnpaidInvoices;
   }
 
   get showPaymentButton(): boolean {

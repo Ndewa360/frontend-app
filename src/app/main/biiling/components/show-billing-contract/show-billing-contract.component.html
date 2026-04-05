@@ -114,6 +114,12 @@
 
     </div>
     <div class="px-4 py-4 flex justify-end app-border-t">
+        <div *ngIf="upgradeError" class="flex-1 mr-4">
+          <div class="text-red-600 text-sm p-2 bg-red-50 rounded border border-red-200">
+            <i class="fas fa-exclamation-triangle mr-1"></i>
+            {{ upgradeError }}
+          </div>
+        </div>
         <button ibmButton="primary" (click)="validConsultation()" class="custom-primary-button" size="md"
             [disabled]="waittingResponse || !isButtonEnabled" type="submit">
             <ibm-loading *ngIf="waittingResponse; else noWaitingResponse"></ibm-loading>

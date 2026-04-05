@@ -1,73 +1,9 @@
-export interface PaymentData {
-  periodId: string;
-  paymentAmount: number;
-  paymentReference: string;
-  paymentMethod?: string;
-}
-
-export interface Invoice {
-  invoiceNumber: string;
-  subscriptionId: string;
-  periodId: string;
-  userId: string;
-  userInfo: {
-    name: string;
-    email: string;
-  };
-  period: {
-    startDate: Date;
-    endDate: Date;
-    billingRef: string;
-  };
-  amount: number;
-  plan: string;
-  status: string;
-  createdAt: Date;
-  dueDate: Date;
-  unitsDetails: any[];
-}
-
-export interface PaymentHistoryItem {
-  id: string;
-  billingRef: string;
-  startDate: Date;
-  endDate: Date;
-  amount: number;
-  status: string;
-  occupiedUnits: number;
-  totalRevenue: number;
-  unitsDetails: any[];
-}
-
-export interface PaymentHistory {
-  periods: PaymentHistoryItem[];
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
-}
-
-export interface UnpaidInvoice {
-  id: string;
-  billingRef: string;
-  startDate: Date;
-  endDate: Date;
-  amount: number;
-  dueDate: Date;
-  overdueDays: number;
-}
-
-export interface UnpaidInvoicesResponse {
-  invoices: UnpaidInvoice[];
-  totalAmount: number;
-  count: number;
-}
-
-export interface PaymentStatus {
-  hasUnpaidInvoices: boolean;
-  totalUnpaidAmount: number;
-  paymentRequired: boolean;
-}
+import {
+  PaymentHistory,
+  UnpaidInvoice,
+  PaymentStatus,
+  Invoice,
+} from '../../services/subscription-payment.service';
 
 export interface SubscriptionPaymentStateModel {
   paymentHistory: PaymentHistory | null;
@@ -77,36 +13,16 @@ export interface SubscriptionPaymentStateModel {
   totalUnpaidAmount: number;
   loading: boolean;
   error: string | null;
-
-  // Nouveaux champs Stripe
   stripeLoading: boolean;
   stripeError: string | null;
-  stripeSession: StripeSessionModel | null;
-  paymentMethods: PaymentMethodsModel | null;
+  // Session de paiement retournee par POST /subscription-payment/initiate
+  stripeSession: PaymentSessionModel | null;
+  paymentMethods: any | null;
 }
 
-export interface StripeSessionModel {
-  sessionId?: string;
-  sessionUrl?: string;
-  externalRef?: string;   // référence interne POST /payment/initiate
-  redirectUrl?: string;   // URL de redirection (Stripe Checkout)
-  status?: string;
-  periodId?: string;
-  amount?: number;
-  billingRef?: string;
-}
-
-export interface PaymentMethodsModel {
-  stripe: {
-    enabled: boolean;
-    methods: string[];
-    currencies: string[];
-    description: string;
-  };
-  mobileMoney: {
-    enabled: boolean;
-    methods: string[];
-    currencies: string[];
-    description: string;
-  };
+// Reponse de POST /subscription-payment/initiate
+export interface PaymentSessionModel {
+  externalRef: string;
+  status: string;
+  redirectUrl?: string;  // URL Stripe Checkout si provider=STRIPE
 }

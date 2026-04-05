@@ -56,4 +56,11 @@ export namespace SouscriptionAction
         static readonly type = '[Souscription] Fetch Subscription History'
     }
 
+    // Mise a jour immediate du currentSubscription dans le store (sans appel reseau)
+    export class SetCurrentSubscription
+    {
+        static readonly type = '[Souscription] Set Current Subscription'
+        constructor(public subscription: SouscriptionModel) {}
+    }
+
 }

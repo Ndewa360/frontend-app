@@ -1,20 +1,42 @@
-import { InitiatePaymentDto } from 'src/app/public/payment/services/unified-payment.service';
+import { InitiateSubscriptionPaymentDto } from 'src/app/shared/services/subscription-payment.service';
 
 export namespace SubscriptionPaymentAction {
 
-  export class ProcessPayment {
-    static readonly type = '[SubscriptionPayment] Process Payment';
-    constructor(public paymentData: any) {}
+  // ─── Paiement via POST /subscription-payment/initiate ────────────────────
+  export class InitiatePayment {
+    static readonly type = '[SubscriptionPayment] Initiate Payment';
+    constructor(public dto: InitiateSubscriptionPaymentDto) {}
   }
 
-  export class GenerateInvoice {
-    static readonly type = '[SubscriptionPayment] Generate Invoice';
-    constructor(public periodId: string) {}
+  // ─── Vérification statut via GET /payment/check/:externalRef ─────────────
+  export class CheckPaymentStatus {
+    static readonly type = '[SubscriptionPayment] Check Payment Status';
+    constructor(public externalRef: string) {}
   }
 
+  // ─── Alias rétrocompatibilité : CreateStripeSession → InitiatePayment ─────
+  export class CreateStripeSession {
+    static readonly type = '[SubscriptionPayment] Create Stripe Session';
+    constructor(public payload: {
+      periodId: string;
+      subscriptionId?: string;
+      amount?: number;
+      userEmail?: string;
+      successUrl: string;
+      cancelUrl: string;
+    }) {}
+  }
+
+  // ─── Alias rétrocompatibilité : ConfirmStripePayment → CheckPaymentStatus ─
+  export class ConfirmStripePayment {
+    static readonly type = '[SubscriptionPayment] Confirm Stripe Payment';
+    constructor(public payload: { sessionId: string; paymentIntentId: string }) {}
+  }
+
+  // ─── Historique & factures ────────────────────────────────────────────────
   export class GetPaymentHistory {
     static readonly type = '[SubscriptionPayment] Get Payment History';
-    constructor(public page: number = 1, public limit: number = 10) {}
+    constructor(public page = 1, public limit = 10) {}
   }
 
   export class GetUnpaidInvoices {
@@ -25,32 +47,23 @@ export namespace SubscriptionPaymentAction {
     static readonly type = '[SubscriptionPayment] Get Payment Status';
   }
 
+  export class GetCurrentPeriodInvoice {
+    static readonly type = '[SubscriptionPayment] Get Current Period Invoice';
+    constructor(public periodId: string) {}
+  }
+
+  export class GetPaymentMethods {
+    static readonly type = '[SubscriptionPayment] Get Payment Methods';
+  }
+
   export class SendPaymentReminders {
     static readonly type = '[SubscriptionPayment] Send Payment Reminders';
   }
 
-  export class GetCurrentPeriodInvoice {
-    static readonly type = '[SubscriptionPayment] Get Current Period Invoice';
-  }
-
-  export class SetPaymentHistory {
-    static readonly type = '[SubscriptionPayment] Set Payment History';
-    constructor(public history: any) {}
-  }
-
-  export class SetUnpaidInvoices {
-    static readonly type = '[SubscriptionPayment] Set Unpaid Invoices';
-    constructor(public invoices: any[]) {}
-  }
-
-  export class SetPaymentStatus {
-    static readonly type = '[SubscriptionPayment] Set Payment Status';
-    constructor(public status: any) {}
-  }
-
-  export class SetCurrentInvoice {
-    static readonly type = '[SubscriptionPayment] Set Current Invoice';
-    constructor(public invoice: any) {}
+  // ─── Setters store ────────────────────────────────────────────────────────
+  export class SetPaymentSession {
+    static readonly type = '[SubscriptionPayment] Set Payment Session';
+    constructor(public session: any) {}
   }
 
   export class SetLoading {
@@ -61,49 +74,6 @@ export namespace SubscriptionPaymentAction {
   export class SetError {
     static readonly type = '[SubscriptionPayment] Set Error';
     constructor(public error: string | null) {}
-  }
-
-  // ─── Paiement unifié (POST /payment/initiate) ─────────────────────────────
-  // Remplace CreateStripeSession — supporte tous les providers
-
-  export class InitiatePayment {
-    static readonly type = '[SubscriptionPayment] Initiate Payment';
-    constructor(public dto: InitiatePaymentDto) {}
-  }
-
-  export class CheckPaymentStatus {
-    static readonly type = '[SubscriptionPayment] Check Payment Status';
-    constructor(public externalRef: string) {}
-  }
-
-  // Gardé pour compatibilité avec les composants existants
-  export class CreateStripeSession {
-    static readonly type = '[SubscriptionPayment] Create Stripe Session';
-    constructor(public payload: {
-      periodId: string;
-      subscriptionId?: string;
-      amount: number;
-      userEmail?: string;
-      successUrl: string;
-      cancelUrl: string;
-    }) {}
-  }
-
-  export class ConfirmStripePayment {
-    static readonly type = '[SubscriptionPayment] Confirm Stripe Payment';
-    constructor(public payload: {
-      sessionId: string;
-      paymentIntentId: string;
-    }) {}
-  }
-
-  export class GetPaymentMethods {
-    static readonly type = '[SubscriptionPayment] Get Payment Methods';
-  }
-
-  export class SetPaymentSession {
-    static readonly type = '[SubscriptionPayment] Set Payment Session';
-    constructor(public session: any) {}
   }
 
   export class SetStripeLoading {
