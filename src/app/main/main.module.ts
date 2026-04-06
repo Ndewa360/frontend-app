@@ -78,6 +78,8 @@ import { PropertiesSharedModule } from './properties/properties-shared.module';
 import { Error404Component } from './errors/error404/error404.component';
 import { Error500Component } from './errors/error500/error500.component';
 import { TourHelpButtonComponent } from './properties/components/tour-help-button/tour-help-button.component';
+import { AssignManagerModalComponent } from './properties/components/property-managers/assign-manager-modal/assign-manager-modal.component';
+import { ManagersListComponent } from './properties/components/property-managers/managers-list/managers-list.component';
 
 // Import du module de paiement (déjà importé plus haut)
 
@@ -144,7 +146,9 @@ ModuleRegistry.registerModules([
     PropertyGalleryComponent,
     Error404Component,
     Error500Component,
-    TourHelpButtonComponent
+    TourHelpButtonComponent,
+    AssignManagerModalComponent,
+    ManagersListComponent,
 
   ],
   imports: [

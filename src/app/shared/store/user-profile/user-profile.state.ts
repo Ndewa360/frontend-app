@@ -16,6 +16,7 @@ import { RefreshTokenService } from "../auth-token/refresh-token.service";
 import { TranslateService } from "@ngx-translate/core";
 import { LanguageUrlService } from "../../services/language-url.service";
 import { LanguagePreservationService } from "../../services/language-preservation.service";
+import { PropertyManagerAction } from '../property-manager/property-manager.actions';
 
 export class UserProfileStateModel {
     userProfile: UserProfileModel;
@@ -105,6 +106,11 @@ export class UserProfileState {
 
                 // Stocker les tokens
                 ctx.dispatch(new AuthTokenAction.SetToken(result.data.access_token, result.data.refresh_token));
+
+                // Charger les biens gérés si présents dans la réponse
+                if (result.data.managedProperties && result.data.managedProperties.length > 0) {
+                    ctx.dispatch(new PropertyManagerAction.SetManagedProperties(result.data.managedProperties));
+                }
 
                 // Démarrer la surveillance d'activité
                 ctx.dispatch(new AuthTokenAction.StartActivityMonitoring());

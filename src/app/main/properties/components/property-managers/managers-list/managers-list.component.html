@@ -1,0 +1,56 @@
+<div class="managers-container">
+  <div class="managers-header">
+    <div>
+      <h3>{{ 'PROPERTY_MANAGERS.TITLE' | translate }}</h3>
+      <p class="subtitle">{{ 'PROPERTY_MANAGERS.SUBTITLE' | translate }}</p>
+    </div>
+    <button class="btn-add" (click)="openAssignModal()">
+      {{ 'PROPERTY_MANAGERS.ADD_MANAGER' | translate }}
+    </button>
+  </div>
+
+  <div *ngIf="loading$ | async" class="loading-state">
+    <span>{{ 'PROPERTY_MANAGERS.LOADING' | translate }}</span>
+  </div>
+
+  <ng-container *ngIf="!(loading$ | async)">
+    <ng-container *ngIf="managers$ | async as managers">
+
+      <div *ngIf="getActiveManagers(managers).length === 0" class="empty-state">
+        <div class="empty-icon">👤</div>
+        <p>{{ 'PROPERTY_MANAGERS.EMPTY_TITLE' | translate }}</p>
+        <button class="btn-add-empty" (click)="openAssignModal()">{{ 'PROPERTY_MANAGERS.EMPTY_ADD' | translate }}</button>
+      </div>
+
+      <div class="managers-list" *ngIf="getActiveManagers(managers).length > 0">
+        <div class="manager-card" *ngFor="let manager of getActiveManagers(managers)">
+          <div class="manager-info">
+            <img
+              [src]="manager.manager?.profilePicture || 'assets/images/default-avatar.png'"
+              alt="avatar"
+              class="avatar"
+            />
+            <div class="manager-details">
+              <strong>{{ manager.manager?.name || 'Gérant' }}</strong>
+              <span class="email">{{ manager.manager?.email }}</span>
+              <span class="date">{{ 'PROPERTY_MANAGERS.ASSIGNED_ON' | translate }} {{ manager.createdAt | date:'dd/MM/yyyy' }}</span>
+            </div>
+          </div>
+
+          <div class="manager-permissions">
+            <span class="perm-badge" *ngFor="let perm of manager.permissions">
+              {{ getPermissionLabel(perm) }}
+            </span>
+          </div>
+
+          <div class="manager-actions">
+            <button class="btn-revoke" (click)="revokeManager(manager._id)" [title]="'PROPERTY_MANAGERS.REVOKE' | translate">
+              {{ 'PROPERTY_MANAGERS.REVOKE' | translate }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </ng-container>
+  </ng-container>
+</div>

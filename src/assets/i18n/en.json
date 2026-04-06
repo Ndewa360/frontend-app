@@ -2847,6 +2847,45 @@
     "AUTO_BILLING_INFO": "If you select a previous date then the billing will be automatically calculated",
     "DEPOSIT": "Deposit"
   },
+  "PROPERTY_MANAGERS": {
+    "TAB_LABEL": "Managers",
+    "TITLE": "Property Managers",
+    "SUBTITLE": "People authorized to manage this property on your behalf",
+    "ADD_MANAGER": "+ Add a manager",
+    "LOADING": "Loading managers...",
+    "EMPTY_TITLE": "No manager assigned to this property",
+    "EMPTY_ADD": "Add a manager",
+    "ASSIGNED_ON": "Assigned on",
+    "REVOKE": "Revoke",
+    "REVOKE_CONFIRM": "Are you sure you want to revoke this manager?",
+    "MODAL": {
+      "TITLE": "Add a manager",
+      "TAB_NEW": "Create a manager account",
+      "TAB_EXISTING": "Assign an existing account",
+      "FULL_NAME": "Full name *",
+      "NAME_PLACEHOLDER": "Manager name",
+      "NAME_ERROR": "Name required (min. 2 characters)",
+      "EMAIL": "Email *",
+      "EMAIL_PLACEHOLDER": "email@example.com",
+      "EMAIL_ERROR": "Invalid email",
+      "ACCOUNT_EMAIL": "Account email *",
+      "SEARCHING": "Searching...",
+      "NOT_FOUND": "No account found with this email",
+      "FOUND_BADGE": "\u2713 Account found",
+      "PERMISSIONS_LABEL": "Granted permissions *",
+      "CANCEL": "Cancel",
+      "CREATE_AND_ASSIGN": "Create and assign",
+      "CREATING": "Creating...",
+      "ASSIGN": "Assign as manager",
+      "ASSIGNING": "Assigning..."
+    },
+    "MANAGED_PROPERTIES": {
+      "TITLE": "Properties I manage",
+      "SUBTITLE": "Properties entrusted by other owners",
+      "MANAGER_BADGE": "Manager",
+      "OWNER_LABEL": "Owner:"
+    }
+  },
   "PROPERTY_DETAILS": {
     "HISTORY": {
       "TITLE": "Payment history",

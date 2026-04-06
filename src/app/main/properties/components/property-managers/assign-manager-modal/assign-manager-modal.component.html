@@ -1,0 +1,103 @@
+<div class="modal-container">
+  <div class="modal-header">
+    <h2>{{ 'PROPERTY_MANAGERS.MODAL.TITLE' | translate }}</h2>
+    <p class="property-name">{{ data.propertyName }}</p>
+    <button class="close-btn" (click)="close()">✕</button>
+  </div>
+
+  <!-- Onglets -->
+  <div class="tabs">
+    <button class="tab-btn" [class.active]="activeTab === 'new'" (click)="activeTab = 'new'">
+      {{ 'PROPERTY_MANAGERS.MODAL.TAB_NEW' | translate }}
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'existing'" (click)="activeTab = 'existing'">
+      {{ 'PROPERTY_MANAGERS.MODAL.TAB_EXISTING' | translate }}
+    </button>
+  </div>
+
+  <!-- Onglet Nouveau gérant -->
+  <div *ngIf="activeTab === 'new'" class="tab-content">
+    <form [formGroup]="newManagerForm" (ngSubmit)="submitNew()">
+      <div class="form-group">
+        <label>{{ 'PROPERTY_MANAGERS.MODAL.FULL_NAME' | translate }}</label>
+        <input type="text" formControlName="name" [placeholder]="'PROPERTY_MANAGERS.MODAL.NAME_PLACEHOLDER' | translate" class="form-control" />
+        <span class="error" *ngIf="newManagerForm.get('name')?.invalid && newManagerForm.get('name')?.touched">
+          {{ 'PROPERTY_MANAGERS.MODAL.NAME_ERROR' | translate }}
+        </span>
+      </div>
+      <div class="form-group">
+        <label>{{ 'PROPERTY_MANAGERS.MODAL.EMAIL' | translate }}</label>
+        <input type="email" formControlName="email" [placeholder]="'PROPERTY_MANAGERS.MODAL.EMAIL_PLACEHOLDER' | translate" class="form-control" />
+        <span class="error" *ngIf="newManagerForm.get('email')?.invalid && newManagerForm.get('email')?.touched">
+          {{ 'PROPERTY_MANAGERS.MODAL.EMAIL_ERROR' | translate }}
+        </span>
+      </div>
+
+      <div class="permissions-section">
+        <label>{{ 'PROPERTY_MANAGERS.MODAL.PERMISSIONS_LABEL' | translate }}</label>
+        <div class="permissions-grid">
+          <label *ngFor="let perm of allPermissions" class="perm-item" [class.selected]="isPermissionSelected(perm.key)">
+            <input type="checkbox" [checked]="isPermissionSelected(perm.key)" (change)="togglePermission(perm.key)" />
+            {{ perm.label }}
+          </label>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-cancel" (click)="close()">{{ 'PROPERTY_MANAGERS.MODAL.CANCEL' | translate }}</button>
+        <button type="submit" class="btn-primary" [disabled]="newManagerForm.invalid || (loading$ | async)">
+          <span *ngIf="!(loading$ | async)">{{ 'PROPERTY_MANAGERS.MODAL.CREATE_AND_ASSIGN' | translate }}</span>
+          <span *ngIf="loading$ | async">{{ 'PROPERTY_MANAGERS.MODAL.CREATING' | translate }}</span>
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Onglet Compte existant -->
+  <div *ngIf="activeTab === 'existing'" class="tab-content">
+    <form [formGroup]="existingManagerForm" (ngSubmit)="submitExisting()">
+      <div class="form-group">
+        <label>{{ 'PROPERTY_MANAGERS.MODAL.ACCOUNT_EMAIL' | translate }}</label>
+        <input
+          type="email"
+          formControlName="email"
+          [placeholder]="'PROPERTY_MANAGERS.MODAL.EMAIL_PLACEHOLDER' | translate"
+          class="form-control"
+          (input)="onExistingEmailChange($any($event.target).value)"
+        />
+        <span class="searching-hint" *ngIf="searching">{{ 'PROPERTY_MANAGERS.MODAL.SEARCHING' | translate }}</span>
+        <span class="error" *ngIf="searchError && !searching">{{ searchError }}</span>
+      </div>
+
+      <!-- Résultat de recherche -->
+      <div class="search-result" *ngIf="searchResult">
+        <div class="user-card">
+          <img [src]="searchResult.profilePicture || 'assets/images/default-avatar.png'" alt="avatar" class="avatar" />
+          <div class="user-info">
+            <strong>{{ searchResult.name }}</strong>
+            <span>{{ searchResult.email }}</span>
+          </div>
+          <span class="found-badge">{{ 'PROPERTY_MANAGERS.MODAL.FOUND_BADGE' | translate }}</span>
+        </div>
+      </div>
+
+      <div class="permissions-section">
+        <label>{{ 'PROPERTY_MANAGERS.MODAL.PERMISSIONS_LABEL' | translate }}</label>
+        <div class="permissions-grid">
+          <label *ngFor="let perm of allPermissions" class="perm-item" [class.selected]="isPermissionSelected(perm.key)">
+            <input type="checkbox" [checked]="isPermissionSelected(perm.key)" (change)="togglePermission(perm.key)" />
+            {{ perm.label }}
+          </label>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-cancel" (click)="close()">{{ 'PROPERTY_MANAGERS.MODAL.CANCEL' | translate }}</button>
+        <button type="submit" class="btn-primary" [disabled]="existingManagerForm.invalid || !searchResult || (loading$ | async)">
+          <span *ngIf="!(loading$ | async)">{{ 'PROPERTY_MANAGERS.MODAL.ASSIGN' | translate }}</span>
+          <span *ngIf="loading$ | async">{{ 'PROPERTY_MANAGERS.MODAL.ASSIGNING' | translate }}</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

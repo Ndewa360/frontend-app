@@ -2847,6 +2847,45 @@
     "AUTO_BILLING_INFO": "Si vous sélectionnez une date précédente alors la facturation sera automatiquement calculée",
     "DEPOSIT": "Caution"
   },
+  "PROPERTY_MANAGERS": {
+    "TAB_LABEL": "Gérants",
+    "TITLE": "Gérants du bien",
+    "SUBTITLE": "Personnes autorisées à gérer ce bien en votre nom",
+    "ADD_MANAGER": "+ Ajouter un gérant",
+    "LOADING": "Chargement des gérants...",
+    "EMPTY_TITLE": "Aucun gérant assigné à ce bien",
+    "EMPTY_ADD": "Ajouter un gérant",
+    "ASSIGNED_ON": "Assigné le",
+    "REVOKE": "Révoquer",
+    "REVOKE_CONFIRM": "Êtes-vous sûr de vouloir révoquer ce gérant ?",
+    "MODAL": {
+      "TITLE": "Ajouter un gérant",
+      "TAB_NEW": "Créer un compte gérant",
+      "TAB_EXISTING": "Assigner un compte existant",
+      "FULL_NAME": "Nom complet *",
+      "NAME_PLACEHOLDER": "Nom du gérant",
+      "NAME_ERROR": "Nom requis (min. 2 caractères)",
+      "EMAIL": "Email *",
+      "EMAIL_PLACEHOLDER": "email@exemple.com",
+      "EMAIL_ERROR": "Email invalide",
+      "ACCOUNT_EMAIL": "Email du compte *",
+      "SEARCHING": "Recherche en cours...",
+      "NOT_FOUND": "Aucun compte trouvé avec cet email",
+      "FOUND_BADGE": "✓ Compte trouvé",
+      "PERMISSIONS_LABEL": "Droits accordés *",
+      "CANCEL": "Annuler",
+      "CREATE_AND_ASSIGN": "Créer et assigner",
+      "CREATING": "Création en cours...",
+      "ASSIGN": "Assigner comme gérant",
+      "ASSIGNING": "Assignation en cours..."
+    },
+    "MANAGED_PROPERTIES": {
+      "TITLE": "Biens que je gère",
+      "SUBTITLE": "Biens confiés par d'autres propriétaires",
+      "MANAGER_BADGE": "Gérant",
+      "OWNER_LABEL": "Propriétaire :"
+    }
+  },
   "PROPERTY_DETAILS": {
     "HISTORY": {
       "TITLE": "Historique des paiements",

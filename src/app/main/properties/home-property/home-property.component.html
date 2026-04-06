@@ -80,6 +80,31 @@
       [class.active]="currentView === 'properties'"
       [class.hidden]="currentView !== 'properties'">
       <app-list-property></app-list-property>
+
+      <!-- Section Biens gérés -->
+      <ng-container *ngIf="managedProperties$ | async as managed">
+        <div class="managed-properties-section" *ngIf="managed.length > 0">
+          <div class="section-header">
+            <h2>{{ 'PROPERTY_MANAGERS.MANAGED_PROPERTIES.TITLE' | translate }}</h2>
+            <p class="section-subtitle">{{ 'PROPERTY_MANAGERS.MANAGED_PROPERTIES.SUBTITLE' | translate }}</p>
+          </div>
+          <div class="managed-grid">
+            <div class="managed-card" *ngFor="let item of managed" (click)="navigateToManagedProperty(item.propertyId)">
+              <div class="managed-card-header">
+                <span class="manager-badge">{{ 'PROPERTY_MANAGERS.MANAGED_PROPERTIES.MANAGER_BADGE' | translate }}</span>
+              </div>
+              <div class="managed-card-body">
+                <h3>{{ item.propertyName || 'Bien sans nom' }}</h3>
+                <p class="owner-name">{{ 'PROPERTY_MANAGERS.MANAGED_PROPERTIES.OWNER_LABEL' | translate }} {{ item.ownerName }}</p>
+                <div class="perms-preview">
+                  <span class="perm-chip" *ngFor="let perm of item.permissions.slice(0, 3)">{{ perm }}</span>
+                  <span class="perm-chip more" *ngIf="item.permissions.length > 3">+{{ item.permissions.length - 3 }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
     </div>
 
     <!-- Vue Dashboard Financier -->

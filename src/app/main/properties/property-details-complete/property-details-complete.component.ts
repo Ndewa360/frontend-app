@@ -208,47 +208,23 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
 
   private updateTabsForUserRole(): void {
     const baseTabs = [
-      {
-        id: 'overview',
-        label: 'PROPERTY_DETAILS.TABS.OVERVIEW',
-        icon: 'home'
-      },
-      {
-        id: 'units',
-        label: 'PROPERTY_DETAILS.TABS.UNITS',
-        icon: 'balcony'
-      }
+      { id: 'overview', label: 'PROPERTY_DETAILS.TABS.OVERVIEW', icon: 'home' },
+      { id: 'units', label: 'PROPERTY_DETAILS.TABS.UNITS', icon: 'balcony' }
     ];
     
-    // Déterminer le rôle de l'utilisateur sur cette propriété
     const userRole = this.currentProperty?.userRole || 
                     (this.currentProperty?.owner === this.currentUser?._id ? 'owner' : 'agent');
     
     if (userRole === 'owner') {
-      // Propriétaire : accès complet
       this.tabs = [
         ...baseTabs,
-        {
-          id: 'tenants',
-          label: 'PROPERTY_DETAILS.TABS.TENANTS',
-          icon: 'user'
-        },
-        {
-          id: 'history',
-          label: 'PROPERTY_DETAILS.TABS.HISTORY',
-          icon: 'time'
-        },
-        {
-          id: 'finances',
-          label: 'PROPERTY_DETAILS.TABS.FINANCES',
-          icon: 'money'
-        }
+        { id: 'tenants', label: 'PROPERTY_DETAILS.TABS.TENANTS', icon: 'user' },
+        { id: 'history', label: 'PROPERTY_DETAILS.TABS.HISTORY', icon: 'time' },
+        { id: 'finances', label: 'PROPERTY_DETAILS.TABS.FINANCES', icon: 'money' },
+        { id: 'managers', label: 'PROPERTY_MANAGERS.TAB_LABEL', icon: 'user-multiple' },
       ];
     } else {
-      // Agent : accès limité (pas de finances, pas de locataires, pas d'historique)
-      this.tabs = [
-        ...baseTabs
-      ];
+      this.tabs = [ ...baseTabs ];
     }
   }
   

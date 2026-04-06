@@ -9,6 +9,9 @@ import { PropertyState, PropertyAction } from 'src/app/shared/store';
 import { PropertyModel } from 'src/app/shared/store/properties/property.model';
 import { LoadingStateService, LoadingState } from 'src/app/shared/services/loading-state.service';
 import { DataDrivenLoaderService } from 'src/app/shared/services/data-driven-loader.service';
+import { PropertyManagerState, ManagedPropertyItem } from 'src/app/shared/store/property-manager';
+import { Router } from '@angular/router';
+import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
 
 type ViewType = 'properties' | 'dashboard';
 
@@ -38,12 +41,17 @@ export class HomePropertyComponent implements OnInit, OnDestroy {
   // État de chargement global
   globalLoadingState$: Observable<LoadingState>;
 
+  @Select(PropertyManagerState.selectManagedProperties)
+  managedProperties$!: Observable<ManagedPropertyItem[]>;
+
   constructor(
     private dialog: MatDialog,
     private _store: Store,
     private loadingStateService: LoadingStateService,
     private dataDrivenLoader: DataDrivenLoaderService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private router: Router,
+    private languageUrlService: LanguageUrlService
   ) { }
 
   ngOnInit(): void {
@@ -133,6 +141,11 @@ export class HomePropertyComponent implements OnInit, OnDestroy {
 
   isDashboardView(): boolean {
     return this.currentView === 'dashboard';
+  }
+
+  navigateToManagedProperty(propertyId: string): void {
+    const lang = this.languageUrlService.getCurrentLanguage();
+    this.router.navigate([`/${lang}/app/properties`, propertyId]);
   }
 
   // Méthode pour rafraîchir les données

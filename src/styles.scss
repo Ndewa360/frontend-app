@@ -77,3 +77,13 @@ body {
 }
 
 
+
+// Suppression de l'ombre parasite sur le modal des gérants
+.manager-modal-panel .mat-dialog-container,
+.manager-modal-panel .mat-mdc-dialog-container,
+.manager-modal-panel .mdc-dialog__surface {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12) !important;
+  border-radius: 12px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}

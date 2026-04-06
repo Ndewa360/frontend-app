@@ -54,6 +54,7 @@ import { SubscriptionStatusWidgetComponent } from './components/subscription-sta
 import { NavigationButtonComponent } from './components/navigation-button/navigation-button.component';
 import { ProspectionState } from './store/prospection/prospection.state';
 import { TranslateModule } from '@ngx-translate/core';
+import { PropertyManagerState } from './store/property-manager/property-manager.state';
 
 const DECLARATIONS = [
   DummyTableRichComponent, DummyTablePaginationComponent, DummyTableExpansionComponent,
@@ -84,6 +85,7 @@ const DECLARATIONS = [
       UploadFilesState, ContractState, ProspectionState, ContractTemplateState,
       SubscriptionLimitState, SubscriptionPaymentState, PremiumAccessState,
       WalletState,
+      PropertyManagerState,
     ]),
     NgxsStoragePluginModule.forRoot({ key: ['ndewa360_auth_token'] }),
     NgxsRouterPluginModule.forRoot(),

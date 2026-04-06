@@ -289,3 +289,84 @@
   scrollbar-width: thin;
   scrollbar-color: #c1c1c1 #f1f1f1;
 }
+
+// Section biens gérés
+.managed-properties-section {
+  padding: 24px;
+  border-top: 2px solid #f0f0f0;
+  margin-top: 8px;
+
+  .section-header {
+    margin-bottom: 20px;
+    h2 { margin: 0 0 4px; font-size: 20px; font-weight: 700; color: #222; }
+    .section-subtitle { margin: 0; font-size: 13px; color: #888; }
+  }
+}
+
+.managed-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.managed-card {
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+    border-color: #cc8c0a;
+  }
+
+  .managed-card-header {
+    background: linear-gradient(135deg, #cc8c0a, #fadc4d);
+    padding: 12px 16px;
+    display: flex;
+    justify-content: flex-end;
+
+    .manager-badge {
+      font-size: 11px;
+      font-weight: 700;
+      color: #fff;
+      background: rgba(255,255,255,0.25);
+      padding: 3px 10px;
+      border-radius: 12px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+  }
+
+  .managed-card-body {
+    padding: 16px;
+
+    h3 { margin: 0 0 6px; font-size: 15px; font-weight: 700; color: #222; }
+    .owner-name { margin: 0 0 12px; font-size: 12px; color: #888; }
+
+    .perms-preview {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+
+      .perm-chip {
+        font-size: 10px;
+        padding: 2px 8px;
+        background: #f5f5f5;
+        color: #555;
+        border-radius: 10px;
+        border: 1px solid #e0e0e0;
+
+        &.more {
+          background: #fff8e1;
+          color: #cc8c0a;
+          border-color: #ffe082;
+          font-weight: 600;
+        }
+      }
+    }
+  }
+}

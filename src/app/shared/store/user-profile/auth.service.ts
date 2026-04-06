@@ -18,9 +18,9 @@ export class AuthService {
     private _httpClient: HttpClient
   ) { }
 
-  login(email: string, password: string): Observable<ApiResultFormat<{access_token:string,refresh_token:string,user:UserProfileModel}>> 
+  login(email: string, password: string): Observable<ApiResultFormat<{access_token:string,refresh_token:string,user:UserProfileModel,managedProperties:any[]}>> 
   {
-    return this._httpClient.post<ApiResultFormat<{access_token:string,refresh_token:string,user:UserProfileModel}>>(`${environment.apiUrl}/user/auth/login`,{email, password});
+    return this._httpClient.post<ApiResultFormat<{access_token:string,refresh_token:string,user:UserProfileModel,managedProperties:any[]}>>(`${environment.apiUrl}/user/auth/login`,{email, password});
   }
 
 

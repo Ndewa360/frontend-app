@@ -143,6 +143,14 @@
         </app-property-finances>
       </div>
 
+      <!-- Onglet Gérants -->
+      <div *ngIf="activeTab === 'managers'" class="tab-panel">
+        <app-managers-list
+          [propertyId]="propertyId"
+          [propertyName]="(property$ | async)?.name">
+        </app-managers-list>
+      </div>
+
       <!-- État de chargement global -->
       <div *ngIf="(loadingStates$ | async)?.property && !(property$ | async)"
            class="loading-state">
