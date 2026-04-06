@@ -66,11 +66,12 @@ export class GeneratePaymentLinkModalComponent implements OnInit {
     }
 
     this.loading = true;
-    const formValue = this.formGroup.value;
+    const lang = window.location.pathname.split('/')[1] || 'fr';
 
     const request = {
       locationId: this.data.location._id,
-      description: formValue.description
+      description: this.formGroup.value.description,
+      lang,
     };
 
     this.paymentLinkService.generatePaymentLink(request).subscribe({
@@ -81,20 +82,7 @@ export class GeneratePaymentLinkModalComponent implements OnInit {
       error: (error) => {
         console.error('Erreur lors de la génération du lien:', error);
         this.loading = false;
-
-        // Afficher un message d'erreur informatif
-        let errorMessage = 'PAYMENT_LINK.GENERATION_ERROR';
-
-        if (error.status === 400) {
-          errorMessage = 'PAYMENT_LINK.INVALID_DATA_ERROR';
-        } else if (error.status === 404) {
-          errorMessage = 'PAYMENT_LINK.LOCATION_NOT_FOUND_ERROR';
-        } else if (error.status === 500) {
-          errorMessage = 'PAYMENT_LINK.SERVER_ERROR';
-        }
-
-        // Vous pouvez utiliser un service de notification ici
-        alert(errorMessage);
+        alert('Impossible de générer le lien de paiement. Veuillez réessayer.');
       }
     });
   }

@@ -6,6 +6,7 @@ import { environment } from 'src/environments/environment';
 export interface GeneratePaymentLinkRequest {
   locationId: string;
   description?: string;
+  lang?: string;
 }
 
 export interface PaymentLinkResponse {

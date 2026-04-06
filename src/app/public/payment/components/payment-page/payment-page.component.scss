@@ -34,9 +34,20 @@ $shadow-btn:    0 4px 14px rgba(0,0,0,0.15);
 
 $font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 
-// Reset & Base
+// Main
+.ndewa-payment__main {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 2rem 1rem 3rem;
+}
+
+// Wrapper global — scroll sur toute la page
 .ndewa-payment {
   min-height: 100vh;
+  height: 100vh;
+  overflow-y: auto;
   background: linear-gradient(160deg, #0f172a 0%, #1e293b 60%, #0f172a 100%);
   font-family: $font;
   display: flex;
