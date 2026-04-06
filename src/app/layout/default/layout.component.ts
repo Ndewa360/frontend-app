@@ -118,19 +118,29 @@ export class LayoutComponent implements OnInit, OnDestroy {
         children: [
           {
             name: this.translate.instant('NAVIGATION.PROPERTIES'),
-            prefix: {
-              type: 'ibm-icon',
-              name: 'home',
-            },
+            prefix: { type: 'ibm-icon', name: 'home' },
             url: `/${currentLang}/app/properties/home`,
           },
           {
             name: 'Liste des biens',
-            prefix: {
-              type: 'ibm-icon',
-              name: 'list'
-            },
+            prefix: { type: 'ibm-icon', name: 'list' },
             url: `/${currentLang}/app/properties/list`,
+          },
+        ]
+      },
+      {
+        groupName: 'Finances',
+        opened: true,
+        children: [
+          {
+            name: 'Facturation',
+            prefix: { type: 'ibm-icon', name: 'receipt' },
+            url: `/${currentLang}/app/facturation/plan/dashboard`,
+          },
+          {
+            name: 'Mon Portefeuille',
+            prefix: { type: 'ibm-icon', name: 'money' },
+            url: `/${currentLang}/app/portefeuille`,
           },
         ]
       },
@@ -140,18 +150,12 @@ export class LayoutComponent implements OnInit, OnDestroy {
         children: [
           {
             name: 'Modèles de contrats',
-            prefix: {
-              type: 'ibm-icon',
-              name: 'document'
-            },
+            prefix: { type: 'ibm-icon', name: 'document' },
             url: `/${currentLang}/app/contract-templates`,
           },
           {
             name: this.translate.instant('NAVIGATION.PROFILE'),
-            prefix: {
-              type: 'ibm-icon',
-              name: 'userAvatar'
-            },
+            prefix: { type: 'ibm-icon', name: 'userAvatar' },
             url: `/${currentLang}/app/profile`,
           },
         ]
@@ -201,14 +205,22 @@ export class LayoutComponent implements OnInit, OnDestroy {
             children: [
               {
                 name: 'Mes Biens Gérés',
-                prefix: {
-                  type: 'ibm-icon',
-                  name: 'home',
-                },
+                prefix: { type: 'ibm-icon', name: 'home' },
                 url: `/${currentLang}/app/properties/home`,
               }
             ]
-          }
+          },
+          {
+            groupName: 'Finances',
+            opened: true,
+            children: [
+              {
+                name: 'Mon Portefeuille',
+                prefix: { type: 'ibm-icon', name: 'money' },
+                url: `/${currentLang}/app/portefeuille`,
+              },
+            ]
+          },
         ];
       }
     } else {

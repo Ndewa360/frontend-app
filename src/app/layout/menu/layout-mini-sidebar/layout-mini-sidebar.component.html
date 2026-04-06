@@ -32,6 +32,13 @@
                 <youpez-ibm-icon id="billing-menu-btn" iconName="dashboardReference" iconSize="24"></youpez-ibm-icon>
               </div>
             </div>
+            <div (click)="navigateToWallet()"
+              class="app-mini-sidebar__list__item app-mini-sidebar__list__item__highlight"
+              [ngClass]="{'app-mini-sidebar__list__item__active': isRouteActive('/app/portefeuille')}">
+              <div class="app-mini-sidebar__list__item__pill" placement="right" container="body" [ngbTooltip]="'Mon Portefeuille'">
+                <youpez-ibm-icon id="wallet-menu-btn" iconName="money" iconSize="24"></youpez-ibm-icon>
+              </div>
+            </div>
             <div *ngIf="!isAgent" (click)="navigateToContractTemplates()"
               class="app-mini-sidebar__list__item app-mini-sidebar__list__item__highlight"
               [ngClass]="{'app-mini-sidebar__list__item__active': isRouteActive('/app/contract-templates')}">

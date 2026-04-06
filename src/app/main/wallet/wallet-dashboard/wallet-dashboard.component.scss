@@ -1,0 +1,602 @@
+// ─── Variables couleurs de l'application ─────────────────────────────────────
+$primary:       rgb(204, 140, 10);
+$primary-dark:  rgb(160, 110, 8);
+$primary-light: rgba(204, 140, 10, 0.10);
+$primary-grad:  linear-gradient(135deg, rgb(204, 140, 10), #fadc4d);
+
+$success:       #10b981;
+$success-light: rgba(16, 185, 129, 0.10);
+$warning:       #f59e0b;
+$warning-light: rgba(245, 158, 11, 0.10);
+$danger:        #ef4444;
+$danger-light:  rgba(239, 68, 68, 0.10);
+$info:          #6366f1;
+$info-light:    rgba(99, 102, 241, 0.10);
+
+$bg:            #ffffff;
+$bg-header:     #f4f4f4;
+$border:        #e0e0e0;
+$text-primary:  #161616;
+$text-secondary:#525252;
+$text-muted:    #8d8d8d;
+$font:          'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+// ─── Container principal ──────────────────────────────────────────────────────
+.wallet-container {
+  height: 100vh;
+  background-color: $bg;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: $font;
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+// ─── Header ───────────────────────────────────────────────────────────────────
+.wallet-header {
+  background-color: $bg-header;
+  border-bottom: 1px solid $border;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  flex-shrink: 0;
+  animation: slideInFromTop 0.6s ease-out;
+}
+
+@keyframes slideInFromTop {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.wallet-header__inner {
+  max-width: 100%;
+  padding: 0 1.5rem;
+}
+
+.wallet-header__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 0 1rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.wallet-header__title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem;
+  background: $primary-grad;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.wallet-header__subtitle {
+  color: $text-secondary;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.wallet-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+// ─── Boutons ──────────────────────────────────────────────────────────────────
+.wallet-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.625rem 1.25rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-family: $font;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+
+  &__icon { width: 1rem; height: 1rem; }
+  &.spinning { animation: spin 1s linear infinite; }
+
+  &--primary {
+    background: $primary;
+    color: #fff;
+    &:hover:not(:disabled) {
+      background: $primary-dark;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba($primary, 0.35);
+    }
+    &:disabled { opacity: 0.45; cursor: not-allowed; transform: none; box-shadow: none; }
+  }
+
+  &--ghost {
+    background: transparent;
+    color: $text-secondary;
+    border: 1px solid $border;
+    &:hover:not(:disabled) { background: #e8e8e8; color: $text-primary; }
+    &:disabled { opacity: 0.45; cursor: not-allowed; }
+  }
+
+  &--sm { padding: 0.4rem 0.875rem; font-size: 0.8125rem; }
+}
+
+// ─── Onglets ──────────────────────────────────────────────────────────────────
+.wallet-tabs {
+  border-top: 1px solid $border;
+}
+
+.wallet-tabs__nav {
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+}
+
+.wallet-tabs__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-family: $font;
+  color: $text-secondary;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.25s;
+  margin-bottom: -1px;
+
+  &:hover { color: $text-primary; background: rgba(0,0,0,0.03); }
+
+  &.active {
+    color: $primary;
+    border-bottom-color: $primary;
+    background: $bg;
+    font-weight: 700;
+  }
+}
+
+.wallet-tabs__icon { width: 1.125rem; height: 1.125rem; }
+
+.wallet-tabs__badge {
+  background: $primary-light;
+  color: $primary-dark;
+  padding: 0.1rem 0.5rem;
+  border-radius: 10px;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+// ─── Contenu ──────────────────────────────────────────────────────────────────
+.wallet-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 1.5rem;
+  scrollbar-width: thin;
+  scrollbar-color: #c1c1c1 #f1f1f1;
+
+  &::-webkit-scrollbar { width: 6px; }
+  &::-webkit-scrollbar-track { background: #f1f1f1; }
+  &::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 3px; }
+}
+
+.wallet-view { animation: fadeIn 0.35s ease-out; }
+
+// ─── Loading ──────────────────────────────────────────────────────────────────
+.wallet-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem;
+  color: $text-muted;
+
+  &__spinner {
+    width: 40px; height: 40px;
+    border: 3px solid rgba($primary, 0.2);
+    border-top-color: $primary;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-bottom: 1rem;
+  }
+}
+
+// ─── Alerte ───────────────────────────────────────────────────────────────────
+.wallet-alert {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  border-radius: 4px;
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+
+  &__icon { width: 1.25rem; height: 1.25rem; flex-shrink: 0; }
+
+  &--warning {
+    background: $warning-light;
+    border: 1px solid rgba($warning, 0.3);
+    color: darken($warning, 25%);
+  }
+}
+
+// ─── KPI Grid ─────────────────────────────────────────────────────────────────
+.wallet-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.wallet-kpi {
+  background: $bg;
+  border: 1px solid $border;
+  border-radius: 4px;
+  padding: 1.25rem;
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+
+  &:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+
+  &--primary { border-left: 4px solid $primary; }
+  &--success  { border-left: 4px solid $success; }
+  &--info     { border-left: 4px solid $info; }
+  &--warning  { border-left: 4px solid $warning; }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+  }
+
+  &__label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: $text-muted;
+  }
+
+  &__icon {
+    width: 36px; height: 36px;
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    svg { width: 1.125rem; height: 1.125rem; }
+
+    &--primary { background: $primary-light; color: $primary; }
+    &--success  { background: $success-light; color: $success; }
+    &--info     { background: $info-light; color: $info; }
+    &--warning  { background: $warning-light; color: $warning; }
+  }
+
+  &__value {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: $text-primary;
+    margin-bottom: 0.25rem;
+    line-height: 1.2;
+  }
+
+  &__sub {
+    font-size: 0.75rem;
+    color: $text-muted;
+    margin-bottom: 0.875rem;
+  }
+
+  &__action {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.4rem 0.875rem;
+    background: $primary;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    font-family: $font;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover:not(:disabled) { background: $primary-dark; }
+    &:disabled { opacity: 0.4; cursor: not-allowed; }
+  }
+}
+
+// ─── Section ──────────────────────────────────────────────────────────────────
+.wallet-section {
+  background: $bg;
+  border: 1px solid $border;
+  border-radius: 4px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+
+  &__title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: $text-primary;
+    margin: 0;
+  }
+}
+
+.wallet-link {
+  font-size: 0.8125rem;
+  color: $primary;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-family: $font;
+  &:hover { color: $primary-dark; text-decoration: underline; }
+}
+
+// ─── Transactions ─────────────────────────────────────────────────────────────
+.wallet-tx-list { display: flex; flex-direction: column; gap: 0.5rem; }
+
+.wallet-tx {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 0.75rem;
+  border-radius: 4px;
+  border: 1px solid $border;
+  transition: background 0.15s;
+  &:hover { background: #fafafa; }
+
+  &__icon {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    svg { width: 1rem; height: 1rem; }
+
+    &--credit { background: $success-light; color: $success; }
+    &--debit  { background: $danger-light; color: $danger; }
+  }
+
+  &__body { flex: 1; min-width: 0; }
+  &__label { font-size: 0.875rem; font-weight: 600; color: $text-primary; }
+  &__date  { font-size: 0.75rem; color: $text-muted; }
+
+  &__amount {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    white-space: nowrap;
+    &--credit { color: $success; }
+    &--debit  { color: $danger; }
+  }
+}
+
+// ─── Table ────────────────────────────────────────────────────────────────────
+.wallet-table-wrap {
+  background: $bg;
+  border: 1px solid $border;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.wallet-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  thead tr {
+    background: #f4f4f4;
+    border-bottom: 1px solid $border;
+  }
+
+  th {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: $text-muted;
+  }
+
+  &__row {
+    border-bottom: 1px solid #f0f0f0;
+    transition: background 0.15s;
+    &:hover { background: #fafafa; }
+    &:last-child { border-bottom: none; }
+  }
+
+  td {
+    padding: 0.875rem 1rem;
+    font-size: 0.875rem;
+    color: $text-primary;
+  }
+
+  &__date { color: $text-muted; font-size: 0.8125rem; }
+  &__balance { color: $text-muted; font-size: 0.8125rem; }
+
+  .text-right { text-align: right; }
+}
+
+.wallet-ref {
+  font-family: 'Courier New', monospace;
+  font-size: 0.75rem;
+  color: $text-muted;
+  background: #f4f4f4;
+  padding: 0.15rem 0.4rem;
+  border-radius: 3px;
+}
+
+.wallet-credit { color: $success; font-weight: 700; }
+.wallet-debit  { color: $danger; font-weight: 700; }
+
+// ─── Pagination ───────────────────────────────────────────────────────────────
+.wallet-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-top: 1px solid $border;
+
+  &__info { font-size: 0.875rem; color: $text-muted; }
+}
+
+.wallet-page-btn {
+  width: 32px; height: 32px;
+  border-radius: 4px;
+  border: 1px solid $border;
+  background: $bg;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  color: $text-muted;
+  transition: all 0.15s;
+  &:hover:not(:disabled) { background: #f4f4f4; color: $text-primary; border-color: $primary; }
+  &:disabled { opacity: 0.4; cursor: not-allowed; }
+}
+
+// ─── Retraits ─────────────────────────────────────────────────────────────────
+.wallet-withdrawal-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1rem;
+}
+
+.wallet-withdrawal {
+  background: $bg;
+  border: 1px solid $border;
+  border-radius: 4px;
+  padding: 1.25rem;
+  transition: box-shadow 0.2s;
+  &:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+
+  &__method {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  &__method-icon {
+    width: 40px; height: 40px;
+    border-radius: 4px;
+    background: $primary-light;
+    display: flex; align-items: center; justify-content: center;
+    color: $primary;
+    svg { width: 1.125rem; height: 1.125rem; }
+  }
+
+  &__method-name { font-size: 0.9375rem; font-weight: 700; color: $text-primary; }
+  &__recipient   { font-size: 0.75rem; color: $text-muted; }
+
+  &__amounts { margin-bottom: 0.875rem; }
+
+  &__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.875rem;
+    padding: 0.3rem 0;
+    color: $text-secondary;
+    strong { color: $text-primary; }
+
+    &--fee { color: $danger; }
+    &--net { font-weight: 700; font-size: 1rem; color: $text-primary; }
+  }
+
+  &__divider { height: 1px; background: $border; margin: 0.5rem 0; }
+
+  &__footer {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    font-size: 0.75rem;
+    color: $text-muted;
+    padding-top: 0.75rem;
+    border-top: 1px solid #f0f0f0;
+  }
+
+  &__error {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.4rem;
+    margin-top: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    background: $danger-light;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    color: darken($danger, 10%);
+  }
+}
+
+// ─── Badges ───────────────────────────────────────────────────────────────────
+.wallet-badge {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+
+  &--success   { background: $success-light; color: darken($success, 10%); }
+  &--warning   { background: $warning-light; color: darken($warning, 25%); }
+  &--danger    { background: $danger-light;  color: darken($danger, 10%); }
+  &--secondary { background: #f4f4f4; color: $text-muted; }
+}
+
+// ─── État vide ────────────────────────────────────────────────────────────────
+.wallet-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+
+  &__icon {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: $primary-light;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 1.25rem;
+    svg { width: 2rem; height: 2rem; color: $primary; }
+  }
+
+  h3 { font-size: 1.125rem; font-weight: 700; color: $text-primary; margin: 0 0 0.5rem; }
+  p  { font-size: 0.9rem; color: $text-muted; max-width: 400px; margin: 0; }
+}
+
+// ─── Responsive ───────────────────────────────────────────────────────────────
+@media (max-width: 768px) {
+  .wallet-container { height: 100vh; overflow: hidden; }
+  .wallet-content { padding: 1rem; }
+  .wallet-header__top { flex-direction: column; align-items: flex-start; }
+  .wallet-header__actions { width: 100%; }
+  .wallet-btn--primary { width: 100%; justify-content: center; }
+  .wallet-kpi-grid { grid-template-columns: 1fr 1fr; }
+  .wallet-withdrawal-grid { grid-template-columns: 1fr; }
+  .wallet-table-wrap { overflow-x: auto; }
+  .wallet-table { min-width: 600px; }
+}
+
+@media (max-width: 480px) {
+  .wallet-kpi-grid { grid-template-columns: 1fr; }
+  .wallet-tabs__btn { padding: 0.75rem 1rem; font-size: 0.8125rem; }
+}

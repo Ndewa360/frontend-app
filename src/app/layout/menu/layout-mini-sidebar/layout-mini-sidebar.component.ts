@@ -157,6 +157,11 @@ export class LayoutMiniSidebarComponent implements OnInit, OnDestroy {
     this._router.navigate([`/${currentLang}/app/facturation/plan`]);
   }
 
+  navigateToWallet(): void {
+    const currentLang = this.languageUrlService.getCurrentLanguage();
+    this._router.navigate([`/${currentLang}/app/portefeuille`]);
+  }
+
   navigateToContractTemplates(): void {
     const currentLang = this.languageUrlService.getCurrentLanguage();
     this._router.navigate([`/${currentLang}/app/contract-templates`]);

@@ -42,6 +42,11 @@ export class MenuConfigService {
             prefix: { type: 'icon', name: 'wallet' }
           },
           {
+            name: 'Mon Portefeuille',
+            url: '/main/portefeuille',
+            prefix: { type: 'icon', name: 'money' }
+          },
+          {
             name: 'Contrats',
             url: '/main/contract',
             prefix: { type: 'icon', name: 'document' }

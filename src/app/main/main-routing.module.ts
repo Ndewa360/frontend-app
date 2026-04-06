@@ -55,9 +55,12 @@ const routes: Routes = [
       {
         path: 'facturation',
         loadChildren: () => import('./biiling/biiling.module').then(m => m.BiilingModule),
-        data: {
-          breadcrumb: 'Facturation'
-        },
+        data: { breadcrumb: 'Facturation' },
+      },
+      {
+        path: 'portefeuille',
+        loadChildren: () => import('./wallet/wallet.module').then(m => m.WalletModule),
+        data: { breadcrumb: 'Portefeuille' },
       },
       {
         path: 'profile',

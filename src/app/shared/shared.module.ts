@@ -36,6 +36,7 @@ import {
   PremiumAccessState
 
 } from './store';
+import { WalletState } from './store/wallet';
 
 
 import { NgxsRouterPluginModule } from '@ngxs/router-plugin';
@@ -112,6 +113,7 @@ import { HttpClient } from '@angular/common/http';
         SubscriptionLimitState,
         SubscriptionPaymentState,
         PremiumAccessState,
+        WalletState,
       ]),
       NgxsStoragePluginModule.forRoot({
         key:["ndewa360_auth_token"]

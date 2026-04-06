@@ -1,0 +1,272 @@
+$primary:      rgb(204, 140, 10);
+$primary-dark: rgb(160, 110, 8);
+$primary-light:rgba(204, 140, 10, 0.10);
+$success:      #10b981;
+$danger:       #ef4444;
+$border:       #e0e0e0;
+$text:         #161616;
+$muted:        #525252;
+$font:         'Inter', -apple-system, sans-serif;
+
+.wmodal {
+  font-family: $font;
+  background: #fff;
+  border-radius: 4px;
+  overflow: hidden;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid $border;
+    background: #f4f4f4;
+  }
+
+  &__header-left { display: flex; align-items: center; gap: 0.875rem; }
+
+  &__icon {
+    width: 44px; height: 44px;
+    border-radius: 4px;
+    background: $primary;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+    svg { width: 1.25rem; height: 1.25rem; }
+  }
+
+  &__title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: $text;
+    margin: 0;
+  }
+
+  &__subtitle {
+    font-size: 0.8rem;
+    color: $muted;
+    margin: 0;
+    strong { color: $primary; font-weight: 700; }
+  }
+
+  &__close {
+    width: 32px; height: 32px;
+    border-radius: 4px;
+    border: 1px solid $border;
+    background: #fff;
+    cursor: pointer;
+    color: $muted;
+    display: flex; align-items: center; justify-content: center;
+    svg { width: 1rem; height: 1rem; }
+    &:hover { background: #e8e8e8; }
+    &:disabled { opacity: 0.4; }
+  }
+
+  &__body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  &__field { display: flex; flex-direction: column; gap: 0.5rem; }
+
+  &__label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: $text;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    svg { width: 1rem; height: 1rem; color: $primary; }
+  }
+
+  &__amount-wrap { position: relative; display: flex; align-items: center; }
+
+  &__input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid $border;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-family: $font;
+    color: $text;
+    background: #fff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+
+    &:focus {
+      outline: none;
+      border-color: $primary;
+      box-shadow: 0 0 0 2px rgba($primary, 0.15);
+    }
+
+    &--error { border-color: $danger; }
+    &--phone { border-left: none; border-radius: 0 4px 4px 0; }
+  }
+
+  &__currency {
+    position: absolute;
+    right: 3.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: $primary;
+    pointer-events: none;
+  }
+
+  &__max-btn {
+    position: absolute;
+    right: 0.5rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 3px;
+    background: $primary-light;
+    color: $primary;
+    border: none;
+    font-size: 0.75rem;
+    font-weight: 700;
+    font-family: $font;
+    cursor: pointer;
+    &:hover { background: rgba($primary, 0.2); }
+  }
+
+  &__phone-wrap { display: flex; }
+
+  &__prefix {
+    display: flex;
+    align-items: center;
+    padding: 0 0.75rem;
+    background: #f4f4f4;
+    border: 1px solid $border;
+    border-right: none;
+    border-radius: 4px 0 0 4px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: $muted;
+    white-space: nowrap;
+  }
+
+  &__methods { display: flex; flex-direction: column; gap: 0.5rem; }
+
+  &__method {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid $border;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    color: $text;
+    font-family: $font;
+    transition: all 0.15s;
+    background: #fff;
+
+    svg { width: 1.125rem; height: 1.125rem; color: $muted; }
+
+    &:hover:not(.wmodal__method--active) { border-color: rgba($primary, 0.4); background: $primary-light; }
+
+    &--active {
+      border-color: $primary;
+      background: $primary-light;
+      color: $primary;
+      font-weight: 600;
+      svg { color: $primary; }
+    }
+  }
+
+  &__radio { display: none; }
+
+  &__recap {
+    background: #f4f4f4;
+    border: 1px solid $border;
+    border-radius: 4px;
+    padding: 1rem;
+  }
+
+  &__recap-title {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: $muted;
+    margin-bottom: 0.75rem;
+  }
+
+  &__recap-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.875rem;
+    padding: 0.3rem 0;
+    color: $muted;
+    strong { color: $text; }
+    &--fee { color: $danger; }
+    &--net { font-size: 1rem; font-weight: 700; color: $text; }
+  }
+
+  &__recap-divider { height: 1px; background: $border; margin: 0.5rem 0; }
+  &__fee { color: $danger; font-weight: 600; }
+  &__net { color: $success; font-size: 1.125rem; font-weight: 800; }
+
+  &__error {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: $danger;
+    font-size: 0.8rem;
+    svg { width: 0.875rem; height: 0.875rem; flex-shrink: 0; }
+  }
+
+  &__alert {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: rgba($danger, 0.08);
+    border: 1px solid rgba($danger, 0.2);
+    border-radius: 4px;
+    color: $danger;
+    font-size: 0.875rem;
+    svg { width: 1rem; height: 1rem; flex-shrink: 0; }
+  }
+
+  &__footer {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid $border;
+    background: #f4f4f4;
+  }
+
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    font-family: $font;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    svg { width: 1rem; height: 1rem; }
+
+    &--primary {
+      background: $primary;
+      color: #fff;
+      &:hover:not(:disabled) {
+        background: $primary-dark;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba($primary, 0.35);
+      }
+      &:disabled { opacity: 0.45; cursor: not-allowed; transform: none; box-shadow: none; }
+    }
+
+    &--secondary {
+      background: #fff;
+      color: $muted;
+      border: 1px solid $border;
+      &:hover { background: #e8e8e8; color: $text; }
+    }
+  }
+}

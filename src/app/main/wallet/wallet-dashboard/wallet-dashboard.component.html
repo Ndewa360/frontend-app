@@ -1,0 +1,350 @@
+<div class="wallet-container">
+
+  <!-- ═══ HEADER ═══ -->
+  <div class="wallet-header">
+    <div class="wallet-header__inner">
+
+      <div class="wallet-header__top">
+        <div class="wallet-header__info">
+          <h1 class="wallet-header__title">Mon Portefeuille</h1>
+          <p class="wallet-header__subtitle">Gérez vos revenus locatifs et effectuez vos retraits</p>
+        </div>
+        <div class="wallet-header__actions">
+          <button class="wallet-btn wallet-btn--ghost" (click)="refresh()" [disabled]="loading">
+            <svg class="wallet-btn__icon" [class.spinning]="loading" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+            </svg>
+            Actualiser
+          </button>
+          <button class="wallet-btn wallet-btn--primary"
+                  (click)="openWithdrawalModal()"
+                  [disabled]="!summary || summary.balance <= 0 || summary.hasPendingWithdrawal">
+            <svg class="wallet-btn__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+            </svg>
+            Retirer des fonds
+          </button>
+        </div>
+      </div>
+
+      <!-- Onglets -->
+      <div class="wallet-tabs">
+        <nav class="wallet-tabs__nav">
+          <button class="wallet-tabs__btn" [class.active]="activeTab === 'overview'" (click)="activeTab = 'overview'" type="button">
+            <svg class="wallet-tabs__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+            Vue d'ensemble
+          </button>
+          <button class="wallet-tabs__btn" [class.active]="activeTab === 'rent'" (click)="activeTab = 'rent'" type="button">
+            <svg class="wallet-tabs__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+            </svg>
+            Loyers reçus
+            <span class="wallet-tabs__badge" *ngIf="totalRentPayments > 0">{{ totalRentPayments }}</span>
+          </button>
+          <button class="wallet-tabs__btn" [class.active]="activeTab === 'withdrawals'" (click)="activeTab = 'withdrawals'" type="button">
+            <svg class="wallet-tabs__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+            </svg>
+            Retraits
+          </button>
+        </nav>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ CONTENU ═══ -->
+  <div class="wallet-content">
+
+    <!-- Loading initial -->
+    <div *ngIf="loading && !summary" class="wallet-loading">
+      <div class="wallet-loading__spinner"></div>
+      <p>Chargement de votre portefeuille…</p>
+    </div>
+
+    <ng-container *ngIf="summary">
+
+      <!-- Alerte retrait en cours -->
+      <div *ngIf="summary.hasPendingWithdrawal" class="wallet-alert wallet-alert--warning">
+        <svg class="wallet-alert__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0"/>
+        </svg>
+        <div>
+          <strong>Retrait en cours de traitement</strong> —
+          {{ formatCurrency(summary.pendingWithdrawal?.amount) }} via {{ getMethodLabel(summary.pendingWithdrawal?.method) }}
+          <span class="wallet-badge wallet-badge--warning ml-2">{{ getStatusLabel(summary.pendingWithdrawal?.status) }}</span>
+        </div>
+      </div>
+
+      <!-- ═══ VUE D'ENSEMBLE ═══ -->
+      <div *ngIf="activeTab === 'overview'" class="wallet-view">
+
+        <!-- Cartes KPI -->
+        <div class="wallet-kpi-grid">
+
+          <div class="wallet-kpi wallet-kpi--primary">
+            <div class="wallet-kpi__header">
+              <span class="wallet-kpi__label">Solde disponible</span>
+              <div class="wallet-kpi__icon wallet-kpi__icon--primary">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </div>
+            </div>
+            <div class="wallet-kpi__value">{{ formatCurrency(summary.balance) }}</div>
+            <div class="wallet-kpi__sub" *ngIf="summary.reservedBalance > 0">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-3 h-3 inline mr-1">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+              </svg>
+              {{ formatCurrency(summary.reservedBalance) }} réservé
+            </div>
+            <button class="wallet-kpi__action"
+                    (click)="openWithdrawalModal()"
+                    [disabled]="summary.balance <= 0 || summary.hasPendingWithdrawal">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4 mr-1">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+              </svg>
+              Retirer
+            </button>
+          </div>
+
+          <div class="wallet-kpi wallet-kpi--success">
+            <div class="wallet-kpi__header">
+              <span class="wallet-kpi__label">Total reçu</span>
+              <div class="wallet-kpi__icon wallet-kpi__icon--success">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+                </svg>
+              </div>
+            </div>
+            <div class="wallet-kpi__value">{{ formatCurrency(summary.totalReceived) }}</div>
+            <div class="wallet-kpi__sub">{{ totalRentPayments }} paiement(s) de loyer</div>
+          </div>
+
+          <div class="wallet-kpi wallet-kpi--info">
+            <div class="wallet-kpi__header">
+              <span class="wallet-kpi__label">Total retiré</span>
+              <div class="wallet-kpi__icon wallet-kpi__icon--info">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+                </svg>
+              </div>
+            </div>
+            <div class="wallet-kpi__value">{{ formatCurrency(summary.totalWithdrawn) }}</div>
+            <div class="wallet-kpi__sub">Frais prélevés : {{ formatCurrency(summary.totalFees) }}</div>
+          </div>
+
+          <div class="wallet-kpi wallet-kpi--warning">
+            <div class="wallet-kpi__header">
+              <span class="wallet-kpi__label">Frais de service (2%)</span>
+              <div class="wallet-kpi__icon wallet-kpi__icon--warning">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                </svg>
+              </div>
+            </div>
+            <div class="wallet-kpi__value">{{ formatCurrency(summary.totalFees) }}</div>
+            <div class="wallet-kpi__sub">Calculés sur chaque retrait</div>
+          </div>
+
+        </div>
+
+        <!-- Derniers mouvements -->
+        <div class="wallet-section" *ngIf="rentPayments.length > 0">
+          <div class="wallet-section__header">
+            <h2 class="wallet-section__title">Derniers mouvements</h2>
+            <button class="wallet-link" (click)="activeTab = 'rent'">Voir tout →</button>
+          </div>
+          <div class="wallet-tx-list">
+            <div *ngFor="let tx of rentPayments.slice(0, 5)" class="wallet-tx">
+              <div class="wallet-tx__icon wallet-tx__icon--credit">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+                </svg>
+              </div>
+              <div class="wallet-tx__body">
+                <div class="wallet-tx__label">{{ tx.description || 'Loyer reçu' }}</div>
+                <div class="wallet-tx__date">{{ formatDate(tx.createdAt) }}</div>
+              </div>
+              <div class="wallet-tx__amount wallet-tx__amount--credit">+{{ formatCurrency(tx.amount) }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- État vide -->
+        <div *ngIf="rentPayments.length === 0 && !loading" class="wallet-empty">
+          <div class="wallet-empty__icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+            </svg>
+          </div>
+          <h3>Aucun mouvement pour le moment</h3>
+          <p>Les paiements de loyer effectués par vos locataires apparaîtront ici automatiquement.</p>
+        </div>
+
+      </div>
+
+      <!-- ═══ LOYERS REÇUS ═══ -->
+      <div *ngIf="activeTab === 'rent'" class="wallet-view">
+
+        <div *ngIf="rentPayments.length === 0 && !loading" class="wallet-empty">
+          <div class="wallet-empty__icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+            </svg>
+          </div>
+          <h3>Aucun paiement de loyer reçu</h3>
+          <p>Partagez vos liens de paiement avec vos locataires pour commencer à recevoir des loyers.</p>
+        </div>
+
+        <div *ngIf="rentPayments.length > 0" class="wallet-table-wrap">
+          <table class="wallet-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Référence</th>
+                <th class="text-right">Montant reçu</th>
+                <th class="text-right">Solde après</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let tx of rentPayments" class="wallet-table__row">
+                <td class="wallet-table__date">{{ formatDate(tx.createdAt) }}</td>
+                <td>{{ tx.description || 'Loyer reçu' }}</td>
+                <td><span class="wallet-ref">{{ tx.reference || '—' }}</span></td>
+                <td class="text-right"><strong class="wallet-credit">+{{ formatCurrency(tx.amount) }}</strong></td>
+                <td class="text-right wallet-table__balance">{{ formatCurrency(tx.balanceAfter) }}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Pagination -->
+          <div class="wallet-pagination" *ngIf="rentTotalPages > 1">
+            <button class="wallet-page-btn" (click)="changeRentPage(rentPage - 1)" [disabled]="rentPage === 1">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+              </svg>
+            </button>
+            <span class="wallet-pagination__info">Page {{ rentPage }} / {{ rentTotalPages }}</span>
+            <button class="wallet-page-btn" (click)="changeRentPage(rentPage + 1)" [disabled]="rentPage === rentTotalPages">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ═══ RETRAITS ═══ -->
+      <div *ngIf="activeTab === 'withdrawals'" class="wallet-view">
+
+        <div class="wallet-section__header mb-4">
+          <h2 class="wallet-section__title">Historique des retraits</h2>
+          <button class="wallet-btn wallet-btn--primary wallet-btn--sm"
+                  (click)="openWithdrawalModal()"
+                  [disabled]="!summary || summary.balance <= 0 || summary.hasPendingWithdrawal">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4 mr-1">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+            </svg>
+            Nouveau retrait
+          </button>
+        </div>
+
+        <div *ngIf="withdrawals.length === 0 && !loading" class="wallet-empty">
+          <div class="wallet-empty__icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+            </svg>
+          </div>
+          <h3>Aucun retrait effectué</h3>
+          <p>Votre solde disponible est de <strong>{{ formatCurrency(summary.balance) }}</strong>. Cliquez sur "Nouveau retrait" pour commencer.</p>
+        </div>
+
+        <div *ngIf="withdrawals.length > 0" class="wallet-withdrawal-grid">
+          <div *ngFor="let w of withdrawals" class="wallet-withdrawal">
+            <div class="wallet-withdrawal__header">
+              <div class="wallet-withdrawal__method">
+                <div class="wallet-withdrawal__method-icon">
+                  <svg *ngIf="w.method !== 'BANK'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                  </svg>
+                  <svg *ngIf="w.method === 'BANK'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/>
+                  </svg>
+                </div>
+                <div>
+                  <div class="wallet-withdrawal__method-name">{{ getMethodLabel(w.method) }}</div>
+                  <div class="wallet-withdrawal__recipient">{{ w.recipient }}</div>
+                </div>
+              </div>
+              <span class="wallet-badge"
+                    [class.wallet-badge--success]="w.status === 'COMPLETED'"
+                    [class.wallet-badge--warning]="w.status === 'PENDING' || w.status === 'PROCESSING'"
+                    [class.wallet-badge--danger]="w.status === 'FAILED'"
+                    [class.wallet-badge--secondary]="w.status === 'CANCELLED'">
+                {{ getStatusLabel(w.status) }}
+              </span>
+            </div>
+
+            <div class="wallet-withdrawal__amounts">
+              <div class="wallet-withdrawal__row">
+                <span>Montant demandé</span>
+                <strong>{{ formatCurrency(w.amount) }}</strong>
+              </div>
+              <div class="wallet-withdrawal__row wallet-withdrawal__row--fee">
+                <span>Frais de service (2%)</span>
+                <span class="wallet-debit">− {{ formatCurrency(w.fees) }}</span>
+              </div>
+              <div class="wallet-withdrawal__divider"></div>
+              <div class="wallet-withdrawal__row wallet-withdrawal__row--net">
+                <span>Montant reçu</span>
+                <strong class="wallet-credit">{{ formatCurrency(w.netAmount) }}</strong>
+              </div>
+            </div>
+
+            <div class="wallet-withdrawal__footer">
+              <span>
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-3 h-3 inline mr-1">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                {{ formatDate(w.createdAt) }}
+              </span>
+              <span *ngIf="w.processedAt">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-3 h-3 inline mr-1">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+                Traité le {{ formatDate(w.processedAt) }}
+              </span>
+            </div>
+
+            <div *ngIf="w.failureReason" class="wallet-withdrawal__error">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4 mr-1 flex-shrink-0">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+              </svg>
+              {{ w.failureReason }}
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </ng-container>
+  </div>
+
+</div>

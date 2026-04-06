@@ -435,6 +435,14 @@
     <svg [class]="iconClass" cdsIcon="money" [size]="iconSize"></svg>
   </ng-container>
 
+  <ng-container *ngSwitchCase="'wallet'">
+    <svg [class]="iconClass" cdsIcon="money" [size]="iconSize"></svg>
+  </ng-container>
+
+  <ng-container *ngSwitchCase="'receipt'">
+    <svg [class]="iconClass" cdsIcon="document" [size]="iconSize"></svg>
+  </ng-container>
+
   <ng-container *ngSwitchCase="'faceActivated'">
     <svg [class]="iconClass" cdsIcon="face--activated" [size]="iconSize"></svg>
   </ng-container>
