@@ -1,11 +1,16 @@
+<!-- Overlay Angular — remplace le loader HTML, évite la page blanche -->
+<div class="app-data-overlay" *ngIf="overlayVisible" aria-live="polite" aria-busy="true">
+  <div class="app-data-overlay__inner">
+    <img src="assets/img/logo/logo-basic.png" alt="Ndewa360°" class="app-data-overlay__logo">
+    <div class="app-data-overlay__spinner"></div>
+    <p class="app-data-overlay__message">{{ overlayMessage }}</p>
+    <div class="app-data-overlay__bar" *ngIf="overlayProgress > 0">
+      <div class="app-data-overlay__bar-fill" [style.width.%]="overlayProgress"></div>
+    </div>
+  </div>
+</div>
 
-<!-- Version Web uniquement -->
+<!-- Contenu de l'application -->
 <main #topScroll>
-	<router-outlet></router-outlet>
+  <router-outlet></router-outlet>
 </main>
-
-
-
-
-
-<!-- class="cds--content" -->

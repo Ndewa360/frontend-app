@@ -1,1 +1,70 @@
 @import "../assets/scss/scss-utils.scss";
+
+// Overlay Angular de chargement des données
+// Affiché après que le loader HTML est retiré (bootstrap Angular)
+// Reste visible jusqu'à ce que les stores NGXS soient LOADED
+.app-data-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99998;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: overlay-fade-in 0.15s ease-out;
+
+  &__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+  }
+
+  &__logo {
+    width: 220px;
+    max-width: 80vw;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.08));
+  }
+
+  &__spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #e2e8f0;
+    border-top-color: rgb(204, 140, 10);
+    border-radius: 50%;
+    animation: overlay-spin 0.9s linear infinite;
+  }
+
+  &__message {
+    color: #64748b;
+    font-family: 'Inter', 'Roboto', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    margin: 0;
+    min-height: 20px;
+  }
+
+  &__bar {
+    width: 200px;
+    height: 3px;
+    background: #e2e8f0;
+    border-radius: 2px;
+    overflow: hidden;
+
+    &-fill {
+      height: 100%;
+      background: linear-gradient(90deg, rgb(204, 140, 10), #fadc4d);
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+  }
+}
+
+@keyframes overlay-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes overlay-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}

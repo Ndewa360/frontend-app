@@ -1,5 +1,5 @@
 import {Component, EventEmitter, OnInit, OnDestroy, Output} from '@angular/core'
-import { Router, NavigationEnd } from '@angular/router'
+import { Router, NavigationEnd, NavigationCancel, NavigationError } from '@angular/router'
 import { Select, Store } from '@ngxs/store'
 import { Observable } from 'rxjs'
 import { UserProfileState, UserProfileModel, UserProfileAction } from 'src/app/shared/store'
@@ -170,16 +170,14 @@ export class LayoutMiniSidebarComponent implements OnInit, OnDestroy {
   navigateToAdmin(): void {
     this.loadingAdmin = true;
     const currentLang = this.languageUrlService.getCurrentLanguage();
-    
-    setTimeout(() => {
-      this._router.navigate([`/${currentLang}/admin/dashboard`]).then(() => {
-        setTimeout(() => {
-          this.loadingAdmin = false;
-        }, 500);
-      }).catch(() => {
-        this.loadingAdmin = false;
-      });
-    }, 300);
+    this._router.navigate([`/${currentLang}/admin/dashboard`])
+      .catch(() => { this.loadingAdmin = false; });
+    // Le resolver LoadingAdminDataResolver signale la fin via NavigationEnd
+    // On remet loadingAdmin a false apres la navigation
+    this._router.events.pipe(
+      filter(event => event instanceof NavigationEnd || event instanceof NavigationCancel || event instanceof NavigationError),
+      takeUntil(this.destroy$)
+    ).subscribe(() => { this.loadingAdmin = false; });
   }
 
   navigateToProfile(): void {
@@ -214,32 +212,15 @@ export class LayoutMiniSidebarComponent implements OnInit, OnDestroy {
 
   isRouteActive(route: string): boolean {
     if (!route) return false;
-    
-    console.log('🔍 Checking route active:', {
-      currentRoute: this.currentRoute,
-      checkingRoute: route
-    });
-    
-    // Normaliser les routes pour la comparaison - amélioration de la regex
     const normalizedCurrentRoute = this.currentRoute
-      .replace(/^\/[a-z]{2}(\/|$)/, '/') // Supprimer le code langue au début
-      .replace(/\/$/, '') // Supprimer le slash final
-      .replace(/\?.*$/, '') // Supprimer les query params
-      .replace(/#.*$/, ''); // Supprimer les fragments
-    
+      .replace(/^\/[a-z]{2}(\/|$)/, '/')
+      .replace(/\/$/, '')
+      .replace(/\?.*$/, '')
+      .replace(/#.*$/, '');
     const normalizedRoute = route
       .replace(/^\/[a-z]{2}(\/|$)/, '/')
       .replace(/\/$/, '');
-    
-    const isActive = normalizedCurrentRoute.startsWith(normalizedRoute) && normalizedRoute !== '/';
-    
-    console.log('🎯 Route comparison:', {
-      normalizedCurrent: normalizedCurrentRoute,
-      normalizedCheck: normalizedRoute,
-      isActive
-    });
-    
-    return isActive;
+    return normalizedCurrentRoute.startsWith(normalizedRoute) && normalizedRoute !== '/';
   }
 
   ngOnDestroy(): void {

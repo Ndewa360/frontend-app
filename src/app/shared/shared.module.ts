@@ -10,38 +10,19 @@ import { LanguageSwitcherComponent } from './components/language-switcher/langua
 import { AdvancedLanguageSwitcherComponent } from './components/advanced-language-switcher/advanced-language-switcher.component'
 import { TenantAvatarComponent } from './components/tenant-avatar/tenant-avatar.component'
 import { DataLoaderDebugComponent } from './components/data-loader-debug/data-loader-debug.component'
-
 import { ClickOutsideDirective } from './directives/click-outside.directive'
 import { NgxsModule } from '@ngxs/store';
 import {
-  UserProfileState,
-  UserState,
-  PropertyState,
-  RoomState,
-  LocataireState,
-  AuthTokenState,
-  LocationState,
-  StatisticState,
-  SouscriptionState,
-  SouscriptionPeriodState,
-  CityState,
-  CountryState,
-  SearchState,
-  ContractState,
-  HistoryLocationPaymentState,
-  GlobalState,
-  ContractTemplateState,
-  SubscriptionLimitState,
-  SubscriptionPaymentState,
-  PremiumAccessState
-
+  UserProfileState, UserState, PropertyState, RoomState, LocataireState,
+  AuthTokenState, LocationState, StatisticState, SouscriptionState,
+  SouscriptionPeriodState, CityState, CountryState, SearchState, ContractState,
+  HistoryLocationPaymentState, GlobalState, ContractTemplateState,
+  SubscriptionLimitState, SubscriptionPaymentState, PremiumAccessState
 } from './store';
 import { WalletState } from './store/wallet';
-
-
 import { NgxsRouterPluginModule } from '@ngxs/router-plugin';
 import { RouterModule } from '@angular/router';
-import { NgxsStoragePluginModule, StorageOption } from '@ngxs/storage-plugin';
+import { NgxsStoragePluginModule } from '@ngxs/storage-plugin';
 import { NoDataComponent } from './components/no-data/no-data.component';
 import { SmartNotificationsComponent } from './components/smart-notifications/smart-notifications.component';
 import { ToastrModule } from 'ngx-toastr';
@@ -51,7 +32,6 @@ import { LocationPaymentState } from './store/payment-location';
 import { LocalizedDatePipe } from './pipes/localized-date.pipe';
 import { MaxPipe } from './pipes/max.pipe';
 import { DynamicTranslatePipe } from './pipes/dynamic-translate.pipe';
-import { AuthStateService } from './services/auth-state.service';
 import { FileSizePipe } from './pipes/file-size.pipe';
 import { MonthTranslatePipe } from './pipes/month-translate.pipe';
 import { FileUploadComponent } from './components/file-upload/file-upload.component';
@@ -64,157 +44,63 @@ import { SliderComponentGaleryComponent } from './components/slider-component-ga
 import { FullScreenGaleryComponent } from './components/full-screen-galery/full-screen-galery.component';
 import { SinglePageScreenGaleryComponent } from './components/single-page-screen-galery/single-page-screen-galery.component';
 import { SwiperDirective } from './directives';
-import { BrowserModule } from '@angular/platform-browser';
 import { ContractTemplateSelectorComponent } from './components/contract-template-selector/contract-template-selector.component';
 import { ScrollRevealDirective } from './directives/scroll-reveal/scroll-reveal.directive';
 import { LoadingOverlayComponent } from './components/loading-overlay/loading-overlay.component';
 import { CountUpDirective } from './directives/counter-up/counter-up.directive';
+import { NavProgressBarComponent } from './components/nav-progress-bar/nav-progress-bar.component';
 import { SubscriptionLimitModalComponent } from './components/subscription-limit-modal/subscription-limit-modal.component';
 import { SubscriptionStatusWidgetComponent } from './components/subscription-status-widget/subscription-status-widget.component';
 import { NavigationButtonComponent } from './components/navigation-button/navigation-button.component';
-
 import { ProspectionState } from './store/prospection/prospection.state';
-import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { HttpClient } from '@angular/common/http';
+import { TranslateModule } from '@ngx-translate/core';
 
+const DECLARATIONS = [
+  DummyTableRichComponent, DummyTablePaginationComponent, DummyTableExpansionComponent,
+  DummyTableAdvancedComponent, NoDataComponent, LocalizedDatePipe, MaxPipe,
+  DynamicTranslatePipe, FileSizePipe, MonthTranslatePipe, FileUploadComponent,
+  GaleryImageComponent, GaleryVideoComponent, GaleryVideo360Component,
+  GaleryVideo360ItemComponent, SliderComponentGaleryComponent, FullScreenGaleryComponent,
+  SinglePageScreenGaleryComponent, SwiperDirective, ScrollRevealDirective, CountUpDirective,
+  SmartNotificationsComponent, LoadingOverlayComponent, DebugTokenPanelComponent,
+  ContractTemplateSelectorComponent, DataLoaderDebugComponent, SubscriptionLimitModalComponent,
+  SubscriptionStatusWidgetComponent, NavigationButtonComponent, LanguageSwitcherComponent,
+  ClickOutsideDirective, AdvancedLanguageSwitcherComponent, TenantAvatarComponent,
+  NavProgressBarComponent,
+];
 
 @NgModule({
   imports: [
     CommonModule,
     YoupezModule,
     MatDialogModule,
-
     FormsModule,
     ReactiveFormsModule,
-    //Ngxs module
-    NgxsModule.forFeature(
-      [
-        GlobalState,
-        UserProfileState,
-        UserState,
-        PropertyState,
-        RoomState,
-        LocataireState,
-        LocationState,
-        AuthTokenState,
-        LocationPaymentState,
-        HistoryLocationPaymentState,
-        StatisticState,
-        SouscriptionState,
-        SouscriptionPeriodState,
-        CityState,
-        CountryState,
-        SearchState,
-        UploadFilesState,
-        ContractState,
-        ProspectionState,
-        ContractTemplateState,
-        SubscriptionLimitState,
-        SubscriptionPaymentState,
-        PremiumAccessState,
-        WalletState,
-      ]),
-      NgxsStoragePluginModule.forRoot({
-        key:["ndewa360_auth_token"]
-        // key:"auth_token",
-        // storage:StorageOption.SessionStorage
-      }),
-      NgxsRouterPluginModule.forRoot(),
-      ToastrModule.forRoot({
-        progressBar: true,
-        closeButton: true,
-        preventDuplicates: true,
-        maxOpened: 3,
-        autoDismiss: true,
-      }),
-      TranslateModule.forChild()
+    NgxsModule.forFeature([
+      GlobalState, UserProfileState, UserState, PropertyState, RoomState,
+      LocataireState, LocationState, AuthTokenState, LocationPaymentState,
+      HistoryLocationPaymentState, StatisticState, SouscriptionState,
+      SouscriptionPeriodState, CityState, CountryState, SearchState,
+      UploadFilesState, ContractState, ProspectionState, ContractTemplateState,
+      SubscriptionLimitState, SubscriptionPaymentState, PremiumAccessState,
+      WalletState,
+    ]),
+    NgxsStoragePluginModule.forRoot({ key: ['ndewa360_auth_token'] }),
+    NgxsRouterPluginModule.forRoot(),
+    ToastrModule.forRoot({
+      progressBar: true, closeButton: true,
+      preventDuplicates: true, maxOpened: 3, autoDismiss: true,
+    }),
+    TranslateModule.forChild(),
   ],
-  declarations: [
-    DummyTableRichComponent,
-    DummyTablePaginationComponent,
-    DummyTableExpansionComponent,
-    DummyTableAdvancedComponent,
-    NoDataComponent,
-    LocalizedDatePipe,
-    MaxPipe,
-    DynamicTranslatePipe,
-    FileSizePipe,
-    MonthTranslatePipe,
-    FileUploadComponent,
-    GaleryImageComponent,
-    GaleryVideoComponent,
-    GaleryVideo360Component,
-    GaleryVideo360ItemComponent,
-    SliderComponentGaleryComponent,
-    FullScreenGaleryComponent,
-    SinglePageScreenGaleryComponent,
-    SwiperDirective,
-    ScrollRevealDirective,
-    CountUpDirective,
-    SmartNotificationsComponent,
-    LoadingOverlayComponent,
-    DebugTokenPanelComponent,
-    ContractTemplateSelectorComponent,
-    DataLoaderDebugComponent,
-    SubscriptionLimitModalComponent,
-    SubscriptionStatusWidgetComponent,
-    NavigationButtonComponent,
-    LanguageSwitcherComponent,
-    ClickOutsideDirective,
-    AdvancedLanguageSwitcherComponent,
-    TenantAvatarComponent
-  ],
+  declarations: DECLARATIONS,
   exports: [
-    YoupezModule,
-    NgxsRouterPluginModule,
-    NoDataComponent,
-    NgxsModule,
-    RouterModule,
-    ToastrModule,
-    MatDialogModule,
-    FormsModule,
-    ReactiveFormsModule,
+    YoupezModule, NgxsRouterPluginModule, NoDataComponent, NgxsModule,
+    RouterModule, ToastrModule, MatDialogModule, FormsModule, ReactiveFormsModule,
     TranslateModule,
-    LocalizedDatePipe,
-    MaxPipe,
-    DynamicTranslatePipe,
-    FileSizePipe,
-    MonthTranslatePipe,
-    FileUploadComponent,
-    GaleryImageComponent,
-    GaleryVideoComponent,
-    GaleryVideo360Component,
-    GaleryVideo360ItemComponent,
-    SliderComponentGaleryComponent,
-    FullScreenGaleryComponent,
-    SinglePageScreenGaleryComponent,
-    ScrollRevealDirective,
-    CountUpDirective,
-    SmartNotificationsComponent,
-    LoadingOverlayComponent,
-    DebugTokenPanelComponent,
-    ContractTemplateSelectorComponent,
-    DataLoaderDebugComponent,
-    SubscriptionLimitModalComponent,
-    SubscriptionStatusWidgetComponent,
-    NavigationButtonComponent,
-    LanguageSwitcherComponent,
-    ClickOutsideDirective,
-    AdvancedLanguageSwitcherComponent,
-    TenantAvatarComponent
+    ...DECLARATIONS,
   ],
-  providers: [
-    // Nouveaux services ajoutés
-    // ErrorHandlerService est déjà fourni via providedIn: 'root'
-    // NotificationManagerService sera ajouté plus tard
-  ],
-  schemas: [
-      CUSTOM_ELEMENTS_SCHEMA
-      ],
+  providers: [],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class SharedModule {
-  constructor() {
-
-  }
-}
+export class SharedModule {}
