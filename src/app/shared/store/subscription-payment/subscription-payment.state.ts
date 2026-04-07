@@ -70,7 +70,7 @@ export class SubscriptionPaymentState {
           stripeLoading: false,
           stripeError: error.error?.message || 'Erreur lors de l\'initiation du paiement',
         });
-        this.toastrService.error(error.error?.message || 'Erreur paiement', 'Erreur');
+        this.toastrService.error(error.error?.message || this.translateService.instant('NOTIFICATIONS.STRIPE_SESSION_ERROR'), 'Ndewa360°');
         return throwError(error);
       })
     );
@@ -84,7 +84,7 @@ export class SubscriptionPaymentState {
       tap((response: any) => {
         if (response.data.status === 'SUCCESS') {
           ctx.patchState({ stripeSession: null });
-          this.toastrService.success('Paiement confirmé avec succès !', 'Succès');
+        this.toastrService.success(this.translateService.instant('NOTIFICATIONS.PAYMENT_CONFIRMED_SUCCESS'), 'Ndewa360°');
           ctx.dispatch(new SubscriptionPaymentAction.GetPaymentHistory());
           ctx.dispatch(new SubscriptionPaymentAction.GetUnpaidInvoices());
           ctx.dispatch(new SubscriptionPaymentAction.GetPaymentStatus());
@@ -178,7 +178,7 @@ export class SubscriptionPaymentState {
   @Action(SubscriptionPaymentAction.SendPaymentReminders)
   sendPaymentReminders(ctx: StateContext<SubscriptionPaymentStateModel>) {
     return this.subscriptionPaymentService.sendPaymentReminders().pipe(
-      tap(() => this.toastrService.success('Rappels envoyés', 'Succès')),
+      tap(() => this.toastrService.success(this.translateService.instant('NOTIFICATIONS.REMINDERS_SENT_SUCCESS'), 'Ndewa360°')),
       catchError((error: any) => throwError(error))
     );
   }

@@ -195,19 +195,19 @@ export class UserProfileState {
     resendEmailLinkForActivateUserProfile(ctx: StateContext<UserProfileStateModel>, { email }: UserProfileAction.ResentLinkForUserProfilePassWord) {
         return this._authService.resendEmailLinkForActiveAccound(email).pipe(
             tap((result) => {
-                this._toastrService.success(`Email envoyé avec succès! `, 'Ndewa360°');
+                this._toastrService.success(this._translateService.instant('NOTIFICATIONS.EMAIL_SENT_SUCCESS'), 'Ndewa360°');
             }),
             catchError((error) => {
                 switch (error.status) {
                     case 404:
-                        this._toastrService.error(`Compte introuvable! `, 'Ndewa360°');
+                        this._toastrService.error(this._translateService.instant('NOTIFICATIONS.ACCOUNT_NOT_FOUND'), 'Ndewa360°');
                         break;
                     case 403:
-                        this._toastrService.warning(`Compte déjà activé! `, 'Ndewa360°');
+                        this._toastrService.warning(this._translateService.instant('NOTIFICATIONS.ACCOUNT_ALREADY_ACTIVATED'), 'Ndewa360°');
                         break;
                     default:
                         let message = error?.error?.message;
-                        if (!message) message = "Une erreur s'est produite! Réessayez plus tard";
+                        if (!message) message = this._translateService.instant('NOTIFICATIONS.GENERIC_ERROR_RETRY');
                         this._toastrService.error(message, 'Ndewa360°');
                 }
                 return throwError(() => error);
@@ -231,19 +231,19 @@ export class UserProfileState {
     resetPasswordForUserProfile(ctx: StateContext<UserProfileStateModel>, { password, token }: UserProfileAction.ResetPasswordForUserProfile) {
         return this._authService.resetPassword(password, token).pipe(
             tap((result) => {
-                this._toastrService.success(`Mot de passe modifié avec succès! `, 'Ndewa360°');
+                this._toastrService.success(this._translateService.instant('NOTIFICATIONS.PASSWORD_RESET_SUCCESS'), 'Ndewa360°');
             }),
             catchError((error) => {
                 switch (error.status) {
                     case 404:
-                        this._toastrService.error(`Compte introuvable! `, 'Ndewa360°');
+                        this._toastrService.error(this._translateService.instant('NOTIFICATIONS.ACCOUNT_NOT_FOUND'), 'Ndewa360°');
                         break;
                     case 403:
-                        this._toastrService.warning(`Token invalide! `, 'Ndewa360°');
+                        this._toastrService.warning(this._translateService.instant('NOTIFICATIONS.TOKEN_INVALID_WARNING'), 'Ndewa360°');
                         break;
                     default:
                         let message = error?.error?.message;
-                        if (!message) message = "Une erreur s'est produite! Réessayez plus tard";
+                        if (!message) message = this._translateService.instant('NOTIFICATIONS.GENERIC_ERROR_RETRY');
                         this._toastrService.error(message, 'Ndewa360°');
                 }
                 return throwError(() => error);
@@ -255,16 +255,16 @@ export class UserProfileState {
     resendEmailLinkForResetPasswordUserProfile(ctx: StateContext<UserProfileStateModel>, { email }: UserProfileAction.ForgotPasswordUserProfile) {
         return this._authService.resendEmailLinkForResetPassword(email).pipe(
             tap((result) => {
-                this._toastrService.success(`Email envoyé avec succès! `, 'Ndewa360°');
+                this._toastrService.success(this._translateService.instant('NOTIFICATIONS.EMAIL_SENT_SUCCESS'), 'Ndewa360°');
             }),
             catchError((error) => {
                 switch (error.status) {
                     case 404:
-                        this._toastrService.error(`Compte introuvable! `, 'Ndewa360°');
+                        this._toastrService.error(this._translateService.instant('NOTIFICATIONS.ACCOUNT_NOT_FOUND'), 'Ndewa360°');
                         break;
                     default:
                         let message = error?.error?.message;
-                        if (!message) message = "Une erreur s'est produite! Réessayez plus tard";
+                        if (!message) message = this._translateService.instant('NOTIFICATIONS.GENERIC_ERROR_RETRY');
                         this._toastrService.error(message, 'Ndewa360°');
                 }
                 return throwError(() => error);
@@ -293,7 +293,7 @@ export class UserProfileState {
                     lastError: error?.error?.message || "Erreur lors de la mise à jour du profil"
                 });
                 let message = error?.error?.message;
-                if (!message) message = "Une erreur s'est produite! Réessayez plus tard";
+                if (!message) message = this._translateService.instant('NOTIFICATIONS.GENERIC_ERROR_RETRY');
                 this._toastrService.error(message, 'Ndewa360°');
                 return throwError(() => error);
             })
@@ -346,10 +346,10 @@ export class UserProfileState {
                 if (error.status === 401) {
                     this._store.dispatch(new AuthTokenAction.Logout());
                     this._languagePreservation.redirectToLogin();
-                    this._toastrService.warning("Session expirée. Veuillez vous reconnecter.", 'Ndewa360°');
+                    this._toastrService.warning(this._translateService.instant('NOTIFICATIONS.SESSION_EXPIRED_RECONNECT'), 'Ndewa360°');
                 } else {
                     let message = error?.error?.message;
-                    if (!message) message = "Une erreur s'est produite! Réessayez plus tard";
+                    if (!message) message = this._translateService.instant('NOTIFICATIONS.GENERIC_ERROR_RETRY');
                     this._toastrService.error(message, 'Ndewa360°');
                 }
                 
@@ -396,7 +396,7 @@ export class UserProfileState {
                     waitingForUserProfilSaved: false,
                     lastError: error?.error?.message || "Erreur lors de la mise à jour de la langue"
                 });
-                this._toastrService.error('Erreur lors de la mise à jour de la langue', 'Ndewa360°');
+                this._toastrService.error(this._translateService.instant('NOTIFICATIONS.LANGUAGE_UPDATE_ERROR'), 'Ndewa360°');
                 return throwError(() => error);
             })
         );
@@ -427,14 +427,14 @@ export class UserProfileState {
                     waitingForUserProfilSaved: false,
                     userProfile: updatedProfile,
                 });
-                this._toastrService.success(`Devise mise à jour avec succès`, 'Ndewa360°');
+                this._toastrService.success(this._translateService.instant('NOTIFICATIONS.CURRENCY_UPDATED_SUCCESS'), 'Ndewa360°');
             }),
             catchError((error) => {
                 ctx.patchState({
                     waitingForUserProfilSaved: false,
                     lastError: error?.error?.message || "Erreur lors de la mise à jour de la devise"
                 });
-                this._toastrService.error('Erreur lors de la mise à jour de la devise', 'Ndewa360°');
+                this._toastrService.error(this._translateService.instant('NOTIFICATIONS.CURRENCY_UPDATE_ERROR'), 'Ndewa360°');
                 return throwError(() => error);
             })
         );
@@ -465,14 +465,14 @@ export class UserProfileState {
                     waitingForUserProfilSaved: false,
                     userProfile: updatedProfile,
                 });
-                this._toastrService.success(`Préférences de localisation mises à jour avec succès`, 'Ndewa360°');
+                this._toastrService.success(this._translateService.instant('NOTIFICATIONS.LOCALIZATION_UPDATED_SUCCESS'), 'Ndewa360°');
             }),
             catchError((error) => {
                 ctx.patchState({
                     waitingForUserProfilSaved: false,
                     lastError: error?.error?.message || "Erreur lors de la mise à jour des préférences"
                 });
-                this._toastrService.error('Erreur lors de la mise à jour des préférences', 'Ndewa360°');
+                this._toastrService.error(this._translateService.instant('NOTIFICATIONS.LOCALIZATION_UPDATE_ERROR'), 'Ndewa360°');
                 return throwError(() => error);
             })
         );
@@ -529,19 +529,16 @@ export class UserProfileState {
                 // Redirection conditionnelle selon le paramètre
                 if (error.status === 401) {
                     if (forceRedirectOnError) {
-                        // Rediriger seulement si explicitement demandé avec langue
                         this._store.dispatch(new AuthTokenAction.Logout());
                         this._languagePreservation.redirectToLogin();
-                        this._toastrService.warning("Session expirée. Veuillez vous reconnecter.", 'Ndewa360°');
+                        this._toastrService.warning(this._translateService.instant('NOTIFICATIONS.SESSION_EXPIRED_RECONNECT'), 'Ndewa360°');
                     } else {
-                        // Juste nettoyer l'état sans rediriger
                         console.log('👤 Token invalide sur page publique, nettoyage silencieux');
                         this._store.dispatch(new AuthTokenAction.Logout());
                     }
                 } else if (forceRedirectOnError) {
-                    // Afficher l'erreur seulement si on est sur une page privée
                     let message = error?.error?.message;
-                    if (!message) message = "Une erreur s'est produite! Réessayez plus tard";
+                    if (!message) message = this._translateService.instant('NOTIFICATIONS.GENERIC_ERROR_RETRY');
                     this._toastrService.error(message, 'Ndewa360°');
                 }
 

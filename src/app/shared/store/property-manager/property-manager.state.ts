@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { tap, catchError } from 'rxjs/operators';
 import { throwError, of } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 import { PropertyManagerAction } from './property-manager.actions';
 import { PropertyManagerApiService } from './property-manager.service';
 import { ManagedPropertyItem, PropertyManagerAssignment } from './property-manager.model';
@@ -28,6 +29,7 @@ export class PropertyManagerState {
   constructor(
     private api: PropertyManagerApiService,
     private toastr: ToastrService,
+    private translate: TranslateService,
   ) {}
 
   @Selector()
@@ -76,11 +78,11 @@ export class PropertyManagerState {
     return this.api.createAndAssign(payload).pipe(
       tap(() => {
         ctx.patchState({ loading: false });
-        this.toastr.success('Gérant créé et assigné avec succès', 'Ndewa360°');
+        this.toastr.success(this.translate.instant('NOTIFICATIONS.MANAGER_CREATED_SUCCESS'), 'Ndewa360°');
       }),
       catchError(error => {
         ctx.patchState({ loading: false });
-        const msg = error?.error?.message?.[0] || 'Une erreur est survenue';
+        const msg = error?.error?.message?.[0] || this.translate.instant('NOTIFICATIONS.GENERIC_ERROR');
         this.toastr.error(msg, 'Ndewa360°');
         return throwError(() => error);
       }),
@@ -93,11 +95,11 @@ export class PropertyManagerState {
     return this.api.assignExisting(payload).pipe(
       tap(() => {
         ctx.patchState({ loading: false });
-        this.toastr.success('Gérant assigné avec succès', 'Ndewa360°');
+        this.toastr.success(this.translate.instant('NOTIFICATIONS.MANAGER_ASSIGNED_SUCCESS'), 'Ndewa360°');
       }),
       catchError(error => {
         ctx.patchState({ loading: false });
-        const msg = error?.error?.message?.[0] || 'Une erreur est survenue';
+        const msg = error?.error?.message?.[0] || this.translate.instant('NOTIFICATIONS.GENERIC_ERROR');
         this.toastr.error(msg, 'Ndewa360°');
         return throwError(() => error);
       }),
@@ -127,10 +129,10 @@ export class PropertyManagerState {
           m._id === assignmentId ? { ...m, permissions: permissions as any } : m,
         );
         ctx.patchState({ propertyManagers: updated });
-        this.toastr.success('Permissions mises à jour', 'Ndewa360°');
+        this.toastr.success(this.translate.instant('NOTIFICATIONS.MANAGER_PERMISSIONS_UPDATED'), 'Ndewa360°');
       }),
       catchError(error => {
-        const msg = error?.error?.message?.[0] || 'Une erreur est survenue';
+        const msg = error?.error?.message?.[0] || this.translate.instant('NOTIFICATIONS.GENERIC_ERROR');
         this.toastr.error(msg, 'Ndewa360°');
         return throwError(() => error);
       }),
@@ -144,10 +146,10 @@ export class PropertyManagerState {
         const state = ctx.getState();
         const updated = state.propertyManagers.filter(m => m._id !== assignmentId);
         ctx.patchState({ propertyManagers: updated });
-        this.toastr.success('Gérant révoqué avec succès', 'Ndewa360°');
+        this.toastr.success(this.translate.instant('NOTIFICATIONS.MANAGER_REVOKED_SUCCESS'), 'Ndewa360°');
       }),
       catchError(error => {
-        const msg = error?.error?.message?.[0] || 'Une erreur est survenue';
+        const msg = error?.error?.message?.[0] || this.translate.instant('NOTIFICATIONS.GENERIC_ERROR');
         this.toastr.error(msg, 'Ndewa360°');
         return throwError(() => error);
       }),

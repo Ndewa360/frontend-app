@@ -106,17 +106,10 @@ export class MonitoringInterceptor implements HttpInterceptor {
       error: (logError) => console.error('Failed to log HTTP error:', logError)
     });
 
-    // Ajouter une alerte si c'est critique
+    // Ajouter une alerte interne (non visible par l'utilisateur) si c'est critique
     if (level === ErrorLevel.HIGH || level === ErrorLevel.CRITICAL) {
-      this.monitoringService.addAlert({
-        type: 'error',
-        title: 'Erreur HTTP Critique',
-        message: `${request.method} ${request.url} - ${error.status} ${error.statusText}`,
-        source,
-        level,
-        autoClose: true,
-        duration: 10000
-      });
+      // Logger uniquement en console pour les erreurs critiques de monitoring
+      console.error(`[Monitoring] Erreur HTTP critique: ${request.method} ${request.url} - ${error.status} ${error.statusText}`);
     }
   }
 
@@ -189,16 +182,9 @@ export class MonitoringInterceptor implements HttpInterceptor {
   }
 
   private trackResponseTime(url: string, responseTime: number): void {
-    // Ici vous pouvez implémenter le tracking des temps de réponse
-    // pour les métriques en temps réel
-    if (responseTime > 5000) { // Plus de 5 secondes
-      this.monitoringService.addAlert({
-        type: 'warning',
-        title: 'Réponse Lente',
-        message: `Requête vers ${url} a pris ${responseTime}ms`,
-        autoClose: true,
-        duration: 5000
-      });
+    // Temps de réponse lent : logger silencieusement, ne pas afficher à l'utilisateur
+    if (responseTime > 5000) {
+      console.warn(`Monitoring: requête lente vers ${url} (${responseTime}ms)`);
     }
   }
 }

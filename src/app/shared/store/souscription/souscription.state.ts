@@ -1,12 +1,11 @@
 import { Action, Selector, State, StateContext, createSelector } from "@ngxs/store";
 import { SouscriptionModel, SouscriptionType } from "./souscription.model";
 import { Injectable } from "@angular/core";
-import { SouscriptionAction } from "./souscription.actions";
-// import { ToastrService } from "ngx-toastr";
 import { Observable, of, throwError } from "rxjs";
 import { catchError, tap } from "rxjs/operators";
-import { NotificationService } from "carbon-components-angular";
+import { SouscriptionAction } from "./souscription.actions";
 import { ToastrService } from "ngx-toastr";
+import { TranslateService } from "@ngx-translate/core";
 import { RoomAction } from "../rooms";
 import { LocataireAction } from "../locataire";
 import { SouscriptionService } from "./souscription.service";
@@ -38,9 +37,8 @@ export class SouscriptionStateModel {
 export class SouscriptionState{
     constructor(
         private _souscriptionService:SouscriptionService,
-        private _toastrService:ToastrService
-        // private notificationService: NotificationService,
-
+        private _toastrService:ToastrService,
+        private _translateService:TranslateService
     ){}
 
     @Selector()
@@ -200,7 +198,7 @@ export class SouscriptionState{
                         souscription:[...state.souscription, result.data]
                     })
                     ctx.dispatch(new SouscriptionPeriodAction.SetSouscriptionPeriod(period))
-                    this._toastrService.success(`Souscription confirmer avec success!`, 'Ndewa360°');
+                    this._toastrService.success(this._translateService.instant('NOTIFICATIONS.SOUSCRIPTION_CREATED_SUCCESS'), 'Ndewa360°');
                 }
             ),
             catchError((error)=>{
@@ -229,7 +227,7 @@ export class SouscriptionState{
                         loadingSouscription:false,
                         souscription:data
                     })
-                    this._toastrService.success(`Souscription retiré avec success!`, 'Ndewa360°');
+                    this._toastrService.success(this._translateService.instant('NOTIFICATIONS.SOUSCRIPTION_REMOVED_SUCCESS'), 'Ndewa360°');
                 }
             ),
             catchError((error)=>{

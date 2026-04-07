@@ -4,6 +4,7 @@ import { Store, Actions, ofActionSuccessful, ofActionErrored } from '@ngxs/store
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 import { 
   LocationPaymentModel, 
   LocationPaymentAction, 
@@ -33,6 +34,7 @@ export class ModernDeletePaymentModalComponent implements OnInit, OnDestroy {
     private store: Store,
     private actions: Actions,
     private toastr: ToastrService,
+    private translate: TranslateService,
     private dialogRef: MatDialogRef<ModernDeletePaymentModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DeletePaymentModalData
   ) {}
@@ -54,7 +56,7 @@ export class ModernDeletePaymentModalComponent implements OnInit, OnDestroy {
     ).subscribe(() => {
       console.log('✅ Paiement supprimé avec succès');
       this.isLoading = false;
-      this.toastr.success('Paiement supprimé avec succès', 'Succès');
+      this.toastr.success(this.translate.instant('NOTIFICATIONS.PAYMENT_DELETED_MODAL_SUCCESS'), 'Ndewa360°');
       
       // Rafraîchir automatiquement les statistiques
       this.refreshStatistics();
@@ -103,15 +105,15 @@ export class ModernDeletePaymentModalComponent implements OnInit, OnDestroy {
    */
   private validateDeleteData(): boolean {
     if (!this.data.transaction?._id) {
-      this.toastr.error('ID de transaction manquant', 'Erreur');
+      this.toastr.error(this.translate.instant('NOTIFICATIONS.PAYMENT_ID_MISSING'), 'Ndewa360°');
       return false;
     }
     if (!this.data.history?.locataire?._id) {
-      this.toastr.error('ID de locataire manquant', 'Erreur');
+      this.toastr.error(this.translate.instant('NOTIFICATIONS.TENANT_ID_MISSING'), 'Ndewa360°');
       return false;
     }
     if (!this.data.history?.property?._id) {
-      this.toastr.error('ID de propriété manquant', 'Erreur');
+      this.toastr.error(this.translate.instant('NOTIFICATIONS.PROPERTY_ID_MISSING'), 'Ndewa360°');
       return false;
     }
     return true;

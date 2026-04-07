@@ -26,9 +26,7 @@ export class ModernDeleteUnitModalComponent implements OnInit {
     private translate: TranslateService
   ) {}
 
-  ngOnInit(): void {
-    console.log('🗑️ Modal de suppression d\'unité ouvert pour:', this.data.unit);
-  }
+  ngOnInit(): void {}
 
   onCancel(): void {
     this.dialogRef.close(false);
@@ -36,50 +34,32 @@ export class ModernDeleteUnitModalComponent implements OnInit {
 
   async onConfirmDelete(): Promise<void> {
     if (this.isDeleting) return;
-
     this.isDeleting = true;
-
     try {
-      console.log('🗑️ Suppression de l\'unité:', this.data.unit._id);
-      
-      // Dispatch l'action de suppression
       await this.store.dispatch(new RoomAction.DeleteRoom(this.data.unit._id)).toPromise();
-      
-      console.log('✅ Unité supprimée avec succès');
-      this.toastr.success('Unité supprimée avec succès', 'Succès');
+      this.toastr.success(this.translate.instant('NOTIFICATIONS.UNIT_DELETED_SUCCESS'), 'Ndewa360°');
       this.dialogRef.close(true);
-      
     } catch (error) {
-      console.error('❌ Erreur lors de la suppression:', error);
-      this.toastr.error('Erreur lors de la suppression de l\'unité', 'Erreur');
+      this.toastr.error(this.translate.instant('NOTIFICATIONS.UNIT_DELETE_ERROR'), 'Ndewa360°');
       this.isDeleting = false;
     }
   }
 
   getUnitDisplayName(): string {
-    return  this.data.unit?.code || 
-           `Unité ${this.data.unit?._id?.slice(-6)}` || 
-           'Unité';
+    return this.data.unit?.code || `Unité ${this.data.unit?._id?.slice(-6)}` || 'Unité';
   }
 
   getUnitTypeLabel(): string {
-    const typeLabels = {
-      'STUDIO': 'Studio',
-      'APPARTEMENT': 'Appartement',
-      'CHAMBRE': 'Chambre',
-      'MAISON': 'Maison',
-      'BUREAU': 'Bureau',
-      'COMMERCE': 'Commerce'
+    const typeLabels: Record<string, string> = {
+      'STUDIO': 'Studio', 'APPARTEMENT': 'Appartement',
+      'CHAMBRE': 'Chambre', 'MAISON': 'Maison',
+      'BUREAU': 'Bureau', 'COMMERCE': 'Commerce'
     };
     return typeLabels[this.data.unit?.type] || this.data.unit?.type || 'Non spécifié';
   }
 
   formatPrice(price: number): string {
     if (!price) return 'Non spécifié';
-    return new Intl.NumberFormat('fr-CM', {
-      style: 'currency',
-      currency: 'XAF',
-      minimumFractionDigits: 0
-    }).format(price);
+    return new Intl.NumberFormat('fr-CM', { style: 'currency', currency: 'XAF', minimumFractionDigits: 0 }).format(price);
   }
 }

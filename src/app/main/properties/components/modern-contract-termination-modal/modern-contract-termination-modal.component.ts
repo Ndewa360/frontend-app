@@ -142,7 +142,7 @@ export class ModernContractTerminationModalComponent implements OnInit, OnDestro
       takeUntil(this.destroy$)
     ).subscribe(() => {
       this.isLoading = false;
-      this.toastr.success('Contrat résilié avec succès', 'Succès');
+      this.toastr.success(this.translate.instant('NOTIFICATIONS.CONTRACT_TERMINATED_SUCCESS'), 'Ndewa360°');
       this.dialogRef.close(true);
     });
 
@@ -152,7 +152,7 @@ export class ModernContractTerminationModalComponent implements OnInit, OnDestro
       takeUntil(this.destroy$)
     ).subscribe(() => {
       this.isLoading = false;
-      this.toastr.error('Une erreur est survenue lors de la résiliation', 'Erreur');
+      this.toastr.error(this.translate.instant('NOTIFICATIONS.CONTRACT_TERMINATION_ERROR'), 'Ndewa360°');
     });
   }
 

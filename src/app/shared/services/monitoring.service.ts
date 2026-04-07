@@ -317,15 +317,8 @@ export class MonitoringService {
       .subscribe(() => {
         this.getDashboardData().subscribe({
           error: (error) => {
-            if (this.config.enableRealTimeAlerts) {
-              this.addAlert({
-                type: 'error',
-                title: 'Erreur de monitoring',
-                message: 'Impossible de récupérer les données du dashboard',
-                autoClose: true,
-                duration: 5000
-              });
-            }
+            // Erreur de monitoring : logger silencieusement, ne pas afficher à l'utilisateur
+            console.warn('Monitoring: impossible de récupérer les données du dashboard', error);
           }
         });
       });

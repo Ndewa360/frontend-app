@@ -26,9 +26,7 @@ export class ModernDeleteTenantModalComponent implements OnInit {
     private translate: TranslateService
   ) {}
 
-  ngOnInit(): void {
-    console.log('🗑️ Modal de suppression ouvert pour:', this.data.tenant);
-  }
+  ngOnInit(): void {}
 
   onCancel(): void {
     this.dialogRef.close(false);
@@ -36,29 +34,18 @@ export class ModernDeleteTenantModalComponent implements OnInit {
 
   async onConfirmDelete(): Promise<void> {
     if (this.isDeleting) return;
-
     this.isDeleting = true;
-
     try {
-      console.log('🗑️ Suppression du locataire:', this.data.tenant._id);
-      
-      // Dispatch l'action de suppression
       await this.store.dispatch(new LocataireAction.DeleteLocataire(this.data.tenant._id)).toPromise();
-      
-      console.log('✅ Locataire supprimé avec succès');
-      this.toastr.success('Locataire supprimé avec succès', 'Succès');
+      this.toastr.success(this.translate.instant('NOTIFICATIONS.TENANT_DELETED_SUCCESS'), 'Ndewa360°');
       this.dialogRef.close(true);
-      
     } catch (error) {
-      console.error('❌ Erreur lors de la suppression:', error);
-      this.toastr.error('Erreur lors de la suppression du locataire', 'Erreur');
+      this.toastr.error(this.translate.instant('NOTIFICATIONS.TENANT_DELETE_ERROR'), 'Ndewa360°');
       this.isDeleting = false;
     }
   }
 
   getTenantDisplayName(): string {
-    return this.data.tenant?.fullName ||
-           this.data.tenant?.name ||
-           'Locataire';
+    return this.data.tenant?.fullName || this.data.tenant?.name || 'Locataire';
   }
 }

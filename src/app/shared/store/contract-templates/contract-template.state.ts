@@ -457,12 +457,11 @@ export class ContractTemplateState {
                 });
 
                 // Afficher le résultat de la réindexation
-                const message = `Réindexation terminée: ${result.indexed} nouveaux templates, ${result.updated} mis à jour`;
-                this.toastrService.success(message, 'Réindexation');
+                this.toastrService.success(this.translateService.instant('NOTIFICATIONS.CONTRACT_TEMPLATE_REINDEX_SUCCESS', { indexed: result.indexed, updated: result.updated }), 'Ndewa360°');
 
                 if (result.errors.length > 0) {
                     console.warn('Erreurs lors de la réindexation:', result.errors);
-                    this.toastrService.warning(`${result.errors.length} erreurs rencontrées`, 'Attention');
+                    this.toastrService.warning(this.translateService.instant('NOTIFICATIONS.CONTRACT_TEMPLATE_REINDEX_WARNING', { errors: result.errors.length }), 'Ndewa360°');
                 }
 
                 // Recharger la liste des templates
@@ -473,7 +472,7 @@ export class ContractTemplateState {
                     loading: false,
                     error: 'Erreur lors de la réindexation'
                 });
-                this.toastrService.error('Erreur lors de la réindexation des templates', 'Erreur');
+                this.toastrService.error(this.translateService.instant('NOTIFICATIONS.CONTRACT_TEMPLATE_REINDEX_ERROR'), 'Ndewa360°');
                 return throwError(error);
             })
         );

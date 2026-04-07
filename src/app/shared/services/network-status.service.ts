@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, fromEvent, merge } from 'rxjs';
 import { map, startWith, distinctUntilChanged, debounceTime } from 'rxjs/operators';
 import { ToastrService, ActiveToast } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 import { environment } from '../../../environments/environment';
 
 export interface NetworkStatus {
@@ -31,7 +32,7 @@ export class NetworkStatusService {
   // Toast persistant unique pour l'état réseau
   private persistentToastRef: ActiveToast<any> | null = null;
 
-  constructor(private toastr: ToastrService) {
+  constructor(private toastr: ToastrService, private translate: TranslateService) {
     this.initializeNetworkMonitoring();
     this.startBackendHealthCheck();
   }
@@ -54,11 +55,10 @@ export class NetworkStatusService {
         this.updateNetworkStatus({ isOnline });
 
         if (isOnline) {
-          this.updatePersistentToast('Connexion internet rétablie', 'success');
-          // Vérifier immédiatement le backend quand la connexion revient
+          this.updatePersistentToast(this.translate.instant('NOTIFICATIONS.NETWORK_RESTORED'), 'success');
           this.checkBackendHealth();
         } else {
-          this.showPersistentToast('Connexion internet perdue', 'warning');
+          this.showPersistentToast(this.translate.instant('NOTIFICATIONS.NETWORK_LOST'), 'warning');
         }
       });
 
@@ -67,7 +67,7 @@ export class NetworkStatusService {
     // Afficher un toast persistant si on démarre hors-ligne ou backend down
     const status = this.networkStatusSubject.value;
     if (!status.isOnline) {
-      this.showPersistentToast('Connexion internet perdue', 'warning');
+      this.showPersistentToast(this.translate.instant('NOTIFICATIONS.NETWORK_LOST'), 'warning');
     } else if (!status.isBackendReachable) {
       // On ne le sait pas encore au démarrage; le checkBackendHealth mettra à jour
     }

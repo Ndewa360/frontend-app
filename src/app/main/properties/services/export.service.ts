@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 import * as XLSX from 'xlsx';
 
 export interface ExportColumn {
@@ -21,7 +22,7 @@ export interface ExportOptions {
 })
 export class ExportService {
 
-  constructor(private toastr: ToastrService) {}
+  constructor(private toastr: ToastrService, private translate: TranslateService) {}
 
   /**
    * Exporter en CSV
@@ -29,7 +30,7 @@ export class ExportService {
   exportToCSV(options: ExportOptions): void {
     try {
       if (!options.data || options.data.length === 0) {
-        this.toastr.warning('Aucune donnée à exporter', 'Export CSV');
+        this.toastr.warning(this.translate.instant('NOTIFICATIONS.EXPORT_NO_DATA'), 'Ndewa360°');
         return;
       }
 
@@ -37,10 +38,10 @@ export class ExportService {
       const fileName = this.generateFileName(options.filename, options.propertyName, 'csv');
       this.downloadFile(csvContent, fileName, 'text/csv;charset=utf-8;');
       
-      this.toastr.success(`${options.data.length} éléments exportés en CSV`, 'Export réussi');
+      this.toastr.success(this.translate.instant('NOTIFICATIONS.EXPORT_SUCCESS', { count: options.data.length }), 'Ndewa360°');
     } catch (error) {
       console.error('Erreur lors de l\'export CSV:', error);
-      this.toastr.error('Erreur lors de l\'export CSV', 'Erreur');
+      this.toastr.error(this.translate.instant('NOTIFICATIONS.EXPORT_ERROR'), 'Ndewa360°');
     }
   }
 
@@ -50,16 +51,16 @@ export class ExportService {
   exportToExcel(options: ExportOptions): void {
     try {
       if (!options.data || options.data.length === 0) {
-        this.toastr.warning('Aucune donnée à exporter', 'Export Excel');
+        this.toastr.warning(this.translate.instant('NOTIFICATIONS.EXPORT_NO_DATA'), 'Ndewa360°');
         return;
       }
 
       this.generateExcelFile(options);
 
-      this.toastr.success(`${options.data.length} éléments exportés en Excel`, 'Export réussi');
+      this.toastr.success(this.translate.instant('NOTIFICATIONS.EXPORT_SUCCESS', { count: options.data.length }), 'Ndewa360°');
     } catch (error) {
       console.error('Erreur lors de l\'export Excel:', error);
-      this.toastr.error('Erreur lors de l\'export Excel', 'Erreur');
+      this.toastr.error(this.translate.instant('NOTIFICATIONS.EXPORT_ERROR'), 'Ndewa360°');
     }
   }
 
@@ -223,7 +224,7 @@ export class ExportService {
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
     } else {
-      this.toastr.error('Téléchargement non supporté par ce navigateur', 'Erreur');
+      this.toastr.error(this.translate.instant('NOTIFICATIONS.BROWSER_DOWNLOAD_NOT_SUPPORTED'), 'Ndewa360°');
     }
   }
 

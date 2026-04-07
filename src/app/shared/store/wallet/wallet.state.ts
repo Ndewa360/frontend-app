@@ -3,6 +3,7 @@ import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { tap, catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 import { WalletAction } from './wallet.actions';
 import { WalletStateModel, WalletSummary, WalletTransaction, WithdrawalRequest } from './wallet.model';
 import { WalletHttpService } from './wallet.service';
@@ -27,6 +28,7 @@ export class WalletState {
   constructor(
     private walletService: WalletHttpService,
     private toastr: ToastrService,
+    private translate: TranslateService,
   ) {}
 
   @Selector() static summary(s: WalletStateModel): WalletSummary | null { return s.summary; }
@@ -93,15 +95,15 @@ export class WalletState {
     return this.walletService.requestWithdrawal(amount, method, recipient).pipe(
       tap(res => {
         ctx.patchState({ withdrawLoading: false });
-        this.toastr.success('Demande de retrait envoyée avec succès !', 'Retrait');
+        this.toastr.success(this.translate.instant('NOTIFICATIONS.WALLET_WITHDRAWAL_SUCCESS'), 'Ndewa360°');
         // Recharger le résumé pour mettre à jour le solde
         ctx.dispatch(new WalletAction.LoadSummary());
         ctx.dispatch(new WalletAction.LoadWithdrawals());
       }),
       catchError(err => {
-        const msg = err.error?.message || 'Erreur lors de la demande de retrait';
+        const msg = err.error?.message || this.translate.instant('NOTIFICATIONS.WALLET_WITHDRAWAL_ERROR');
         ctx.patchState({ withdrawLoading: false, error: msg });
-        this.toastr.error(msg, 'Erreur');
+        this.toastr.error(msg, 'Ndewa360°');
         return throwError(err);
       })
     );

@@ -206,7 +206,7 @@ export class CityState{
                 ctx.patchState({
                     loadingCity: false
                 });
-                this._toastrService.error('Erreur lors du chargement des villes');
+                this._toastrService.error(this._translateService.instant('NOTIFICATIONS.CITY_LOAD_ERROR'), 'Ndewa360°');
                 return throwError(error);
             })
         );
@@ -231,7 +231,7 @@ export class CityState{
                 ctx.patchState({
                     loadingCity: false
                 });
-                this._toastrService.error('Erreur lors du chargement des villes');
+                this._toastrService.error(this._translateService.instant('NOTIFICATIONS.CITY_LOAD_ERROR'), 'Ndewa360°');
                 return throwError(error);
             })
         );

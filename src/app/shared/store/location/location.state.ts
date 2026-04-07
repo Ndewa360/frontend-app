@@ -3,11 +3,11 @@ import { LocationModel } from "./location.model";
 import { Injectable } from "@angular/core";
 import { LocationAction } from "./location.actions";
 import { LocationService } from "./location.service";
-// import { ToastrService } from "ngx-toastr";
 import { of, throwError } from "rxjs";
 import { catchError, tap } from "rxjs/operators";
 import { NotificationService } from "carbon-components-angular";
 import { ToastrService } from "ngx-toastr";
+import { TranslateService } from "@ngx-translate/core";
 import { RoomAction } from "../rooms";
 import { LocataireAction } from "../locataire";
 import { LocationPaymentAction } from "../payment-location";
@@ -32,9 +32,8 @@ export class LocationStateModel {
 export class LocationState{
     constructor(
         private _locationsService:LocationService,
-        private _toastrService:ToastrService
-        // private notificationService: NotificationService,
-
+        private _toastrService:ToastrService,
+        private _translateService:TranslateService
     ){}
 
     @Selector()
@@ -108,7 +107,7 @@ export class LocationState{
                         loadingLocation:false,
                         locations:data
                     })
-                    this._toastrService.success(`Location modifié avec success`, 'Location');
+                    this._toastrService.success(this._translateService.instant('NOTIFICATIONS.LOCATION_UPDATED_SUCCESS'), 'Ndewa360°');
                 }
             ),
             catchError((error) => {
@@ -220,7 +219,7 @@ export class LocationState{
                 });
 
                 // Afficher le message de succès
-                this._toastrService.success(`Assignation réalisée avec succès!`, 'Ndewa360°');
+                this._toastrService.success(this._translateService.instant('NOTIFICATIONS.LOCATION_CREATED_SUCCESS'), 'Ndewa360°');
 
                 // Mettre à jour les informations de la chambre
                 if (result.data.room) {
@@ -261,8 +260,8 @@ export class LocationState{
                 });
 
                 // Afficher un message d'erreur plus informatif
-                const errorMessage = error?.error?.message?.[0] || error?.message || 'Erreur lors de l\'assignation';
-                this._toastrService.error(errorMessage, 'Erreur d\'assignation');
+                const errorMessage = this._translateService.instant('NOTIFICATIONS.LOCATION_ERROR');
+                this._toastrService.error(errorMessage, 'Ndewa360°');
 
                 return throwError(error);
             })
@@ -285,7 +284,7 @@ export class LocationState{
                         loadingLocation:false,
                         locations:[...state.locations, result.data.location]
                     })
-                    this._toastrService.success(`Assignation créée avec succès via l'assistant!`, 'Ndewa360°');
+                    this._toastrService.success(this._translateService.instant('NOTIFICATIONS.LOCATION_ASSISTANT_SUCCESS'), 'Ndewa360°');
                     // Mettre à jour les stores liés
                     if (result.data.location) {
                         ctx.dispatch(new RoomAction.UpdateLocalRoomInfos(result.data.location.room,{isActiveForSouscription:true,isFree:false,locataire:result.data.location.locataire}))
@@ -319,7 +318,7 @@ export class LocationState{
                         loadingLocation:false,
                         locations:data
                     })
-                    this._toastrService.success(`Location retiré avec success!`, 'Ndewa360°');
+                    this._toastrService.success(this._translateService.instant('NOTIFICATIONS.LOCATION_REMOVED_SUCCESS'), 'Ndewa360°');
                     ctx.dispatch(new RoomAction.UpdateLocalRoomInfos(result.data.room,{isActiveForSouscription:false,isFree:true,locataire:null}))
                     ctx.dispatch(new LocataireAction.UpdateLocataireRoom(result.data.locataire,null))
                 }
