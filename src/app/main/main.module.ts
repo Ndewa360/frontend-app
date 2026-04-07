@@ -80,6 +80,8 @@ import { Error500Component } from './errors/error500/error500.component';
 import { TourHelpButtonComponent } from './properties/components/tour-help-button/tour-help-button.component';
 import { AssignManagerModalComponent } from './properties/components/property-managers/assign-manager-modal/assign-manager-modal.component';
 import { ManagersListComponent } from './properties/components/property-managers/managers-list/managers-list.component';
+import { RevokeConfirmModalComponent } from './properties/components/property-managers/revoke-confirm-modal/revoke-confirm-modal.component';
+import { EditPermissionsModalComponent } from './properties/components/property-managers/edit-permissions-modal/edit-permissions-modal.component';
 
 // Import du module de paiement (déjà importé plus haut)
 
@@ -149,6 +151,8 @@ ModuleRegistry.registerModules([
     TourHelpButtonComponent,
     AssignManagerModalComponent,
     ManagersListComponent,
+    RevokeConfirmModalComponent,
+    EditPermissionsModalComponent,
 
   ],
   imports: [

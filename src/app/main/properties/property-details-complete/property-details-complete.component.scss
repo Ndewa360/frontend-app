@@ -693,3 +693,41 @@ $primary-dark: rgb(184, 126, 9);
     }
   }
 }
+
+// ─── Bandeau gérant ────────────────────────────────────────────────────────
+.manager-banner {
+  background: linear-gradient(135deg, #fff8e1, #fff3cd);
+  border-bottom: 2px solid #ffe082;
+  padding: 10px 0;
+  flex-shrink: 0;
+
+  .banner-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+
+    .banner-icon { font-size: 18px; }
+
+    .banner-text {
+      font-size: 13px;
+      font-weight: 600;
+      color: #7a5200;
+    }
+
+    .banner-perms {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+
+      .perm-tag {
+        font-size: 11px;
+        padding: 2px 10px;
+        background: #cc8c0a;
+        color: #fff;
+        border-radius: 12px;
+        font-weight: 600;
+      }
+    }
+  }
+}

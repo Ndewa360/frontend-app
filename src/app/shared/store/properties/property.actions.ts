@@ -16,6 +16,13 @@ export namespace PropertyAction
         constructor(public propertyId:string){}
     }
 
+    // Force le rechargement même si déjà dans le store (pour les biens gérés)
+    export class FetchPropertyForced
+    {
+        static readonly type = '[Property] Fetch Property Forced'
+        constructor(public propertyId:string){}
+    }
+
     export class ResetAllState
     {
         static readonly type = '[Property] Reset All State'

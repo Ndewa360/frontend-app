@@ -36,6 +36,11 @@ export class PropertyNavigationService {
    * Navigue vers les détails d'une propriété avec protection contre les clics multiples
    */
   navigateToPropertyDetails(propertyId: string): Promise<boolean> {
+    if (!propertyId) {
+      console.error('❌ navigateToPropertyDetails: propertyId est undefined ou null');
+      return Promise.resolve(false);
+    }
+
     // Vérifier si cette propriété est déjà en cours de chargement
     if (this.isPropertyLoading(propertyId)) {
       console.log(`⏳ Navigation vers ${propertyId} déjà en cours, ignorée`);

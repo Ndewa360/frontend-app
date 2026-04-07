@@ -50,7 +50,8 @@ export interface PropertyModel {
     contractTemplate?: ContractTemplateModel | string; // Peut être l'objet complet ou juste l'ID
 
     // Gestion par agent
-    managedByAgent?: string; // ID de l'agent qui gère la propriété
-    userRole?: 'owner' | 'agent'; // Rôle de l'utilisateur connecté sur cette propriété
-    isManaged?: boolean; // Indique si la propriété est gérée par un agent
+    managedByAgent?: string;
+    userRole?: 'owner' | 'agent' | 'manager';
+    isManaged?: boolean;
+    managerPermissions?: string[];
 }

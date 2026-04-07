@@ -11,6 +11,7 @@ import {
   RoomType
 } from 'src/app/shared/store';
 import { UtilsString } from 'src/app/shared/utils';
+import { PropertyAccessService } from 'src/app/shared/services/property-access.service';
 
 export interface ModernUnitAction {
   type: 'edit' | 'assign_tenant' | 'terminate_lease' | 'add_payment' | 'view_contract' | 'view_image' | 'manage_media';
@@ -49,7 +50,7 @@ export class ModernUnitDetailsPanelComponent implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
-  constructor(private store: Store) {}
+  constructor(private store: Store, public propertyAccessService: PropertyAccessService) {}
 
   ngOnInit(): void {
     this.loadTenantData();

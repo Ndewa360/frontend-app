@@ -12,10 +12,9 @@ export class PropertyAccessService {
     return profile?._id || null;
   }
 
-  private getOwnerIdForProperty(propertyId: string): string | null {
+  private getPropertyFromStore(propertyId: string): any {
     const properties = this.store.selectSnapshot((state: any) => state.properties?.properties || []);
-    const prop = properties.find((p: any) => p._id === propertyId);
-    return prop?.owner?._id || prop?.owner || null;
+    return properties.find((p: any) => p._id === propertyId) || null;
   }
 
   private getAssignment(propertyId: string): ManagedPropertyItem | null {
@@ -23,14 +22,35 @@ export class PropertyAccessService {
     return managed.find(m => m.propertyId === propertyId) || null;
   }
 
+  /**
+   * L'utilisateur est propriétaire si :
+   * - Le backend a retourné userRole === 'owner' dans la propriété du store
+   * - OU l'owner._id correspond à l'userId courant
+   */
   isOwner(propertyId: string): boolean {
+    if (!propertyId) return false;
+    const prop = this.getPropertyFromStore(propertyId);
+    if (!prop) return false;
+
+    // Le backend retourne userRole directement
+    if (prop.userRole === 'owner') return true;
+
+    // Fallback : comparer owner._id
     const userId = this.getCurrentUserId();
     if (!userId) return false;
-    const ownerId = this.getOwnerIdForProperty(propertyId);
-    return ownerId === userId;
+    const ownerId = prop.owner?._id || prop.owner;
+    return ownerId?.toString() === userId;
   }
 
+  /**
+   * L'utilisateur est gérant si :
+   * - Le backend a retourné userRole === 'manager'
+   * - OU il y a un assignment dans le store PropertyManager
+   */
   isManager(propertyId: string): boolean {
+    if (!propertyId) return false;
+    const prop = this.getPropertyFromStore(propertyId);
+    if (prop?.userRole === 'manager') return true;
     return !!this.getAssignment(propertyId);
   }
 
@@ -38,11 +58,29 @@ export class PropertyAccessService {
     return this.isOwner(propertyId) || this.isManager(propertyId);
   }
 
+  /**
+   * Récupère les permissions du gérant :
+   * - D'abord depuis la propriété du store (retournées par le backend)
+   * - Sinon depuis le store PropertyManager
+   */
+  getPermissionsForProperty(propertyId: string): ManagerPermission[] {
+    if (this.isOwner(propertyId)) return ['FULL_ACCESS'];
+
+    // Permissions retournées par le backend dans la propriété
+    const prop = this.getPropertyFromStore(propertyId);
+    if (prop?.managerPermissions?.length > 0) {
+      return prop.managerPermissions as ManagerPermission[];
+    }
+
+    // Fallback : store PropertyManager
+    const assignment = this.getAssignment(propertyId);
+    return assignment?.permissions || [];
+  }
+
   hasPermission(propertyId: string, permission: ManagerPermission): boolean {
     if (this.isOwner(propertyId)) return true;
-    const assignment = this.getAssignment(propertyId);
-    if (!assignment) return false;
-    return assignment.permissions.includes('FULL_ACCESS') || assignment.permissions.includes(permission);
+    const perms = this.getPermissionsForProperty(propertyId);
+    return perms.includes('FULL_ACCESS') || perms.includes(permission);
   }
 
   canManageUnits(propertyId: string): boolean {
@@ -67,10 +105,5 @@ export class PropertyAccessService {
 
   canManageFinances(propertyId: string): boolean {
     return this.hasPermission(propertyId, 'MANAGE_FINANCES');
-  }
-
-  getPermissionsForProperty(propertyId: string): ManagerPermission[] {
-    if (this.isOwner(propertyId)) return ['FULL_ACCESS'];
-    return this.getAssignment(propertyId)?.permissions || [];
   }
 }

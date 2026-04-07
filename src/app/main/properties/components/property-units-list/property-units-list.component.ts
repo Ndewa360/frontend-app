@@ -40,6 +40,7 @@ import { UnitDetailsViewService } from '../../services/unit-details-view.service
 import { GaleryComponent } from '../../../room/components/galery/galery.component';
 import { GeneratePaymentLinkModalComponent } from '../generate-payment-link-modal/generate-payment-link-modal.component';
 import { ExportService, ExportColumn } from '../../services/export.service';
+import { PropertyAccessService } from 'src/app/shared/services/property-access.service';
 
 export interface UnitAction {
   type: 'view' | 'edit' | 'assign_tenant' | 'terminate_lease' | 'manage_media' | 'toggle_status' | 'edit_galery' | 'edit_tenant';
@@ -134,7 +135,8 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
     private assignLocationModalService: AssignLocationModalService,
     private toastr: ToastrService,
     private exportService: ExportService,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    public propertyAccessService: PropertyAccessService
   ) { }
 
   ngOnInit(): void {
@@ -1666,24 +1668,43 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
 
   /**
    * Vérifier si l'utilisateur peut assigner des locataires
+   * Utilise PropertyAccessService pour les gérants
    */
   canAssignTenant(): boolean {
-    // Vérification directe du userType pour être sûr
-    const userType = this.currentUser?.userType;
-    const isAgentCheck = userType === 'AGENT';
-    console.log('🔍 canAssignTenant - userType:', userType, 'isAgent:', isAgentCheck, 'result:', !isAgentCheck);
-    return !isAgentCheck;
+    if (!this.propertyId) return false;
+    return this.propertyAccessService.canManageTenants(this.propertyId);
   }
 
   /**
    * Vérifier si l'utilisateur peut résilier des contrats
    */
   canTerminateLease(): boolean {
-    // Vérification directe du userType pour être sûr
-    const userType = this.currentUser?.userType;
-    const isAgentCheck = userType === 'AGENT';
-    console.log('🔍 canTerminateLease - userType:', userType, 'isAgent:', isAgentCheck, 'result:', !isAgentCheck);
-    return !isAgentCheck;
+    if (!this.propertyId) return false;
+    return this.propertyAccessService.canManageContracts(this.propertyId);
+  }
+
+  /**
+   * Vérifier si l'utilisateur peut gérer les unités (ajouter, modifier, supprimer)
+   */
+  canManageUnits(): boolean {
+    if (!this.propertyId) return false;
+    return this.propertyAccessService.canManageUnits(this.propertyId);
+  }
+
+  /**
+   * Vérifier si l'utilisateur peut gérer les paiements
+   */
+  canManagePayments(): boolean {
+    if (!this.propertyId) return false;
+    return this.propertyAccessService.canManagePayments(this.propertyId);
+  }
+
+  /**
+   * Vérifier si l'utilisateur est propriétaire
+   */
+  isOwner(): boolean {
+    if (!this.propertyId) return false;
+    return this.propertyAccessService.isOwner(this.propertyId);
   }
 
 }

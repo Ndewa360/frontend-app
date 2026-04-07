@@ -39,6 +39,7 @@
         </button>
 
         <button (click)="addTenant()"
+                *ngIf="propertyAccessService.canManageTenants(propertyId)"
                 class="custom-primary-button px-5 py-2 rounded-lg font-semibold transition-all duration-300 flex items-center shadow-md hover:shadow-lg text-sm hover:transform hover:-translate-y-1">
           <i class="fas fa-plus mr-2"></i>
           {{ 'PROPERTY_DETAILS.TENANTS.ACTIONS.NEW_TENANT' | translate }}
@@ -172,7 +173,7 @@
       </div>
       <h3 class="text-xl font-bold text-gray-900 mb-2">{{ 'PROPERTY_DETAILS.TENANTS.EMPTY_STATE.NO_TENANTS' | translate }}</h3>
       <p class="text-gray-600 mb-6">{{ 'PROPERTY_DETAILS.TENANTS.EMPTY_STATE.GET_STARTED' | translate }}</p>
-      <button (click)="addTenant()" class="custom-primary-button px-6 py-3 rounded-xl font-semibold transition-all duration-200 flex items-center mx-auto shadow-lg hover:shadow-xl">
+      <button *ngIf="propertyAccessService.canManageTenants(propertyId)" (click)="addTenant()" class="custom-primary-button px-6 py-3 rounded-xl font-semibold transition-all duration-200 flex items-center mx-auto shadow-lg hover:shadow-xl">
         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
         </svg>
@@ -277,37 +278,40 @@
 
                   <!-- Actions rapides compactes -->
                   <div class="flex items-center space-x-2 ml-4">
+                    <!-- Voir détails : toujours visible -->
                     <button (click)="onViewTenantDetails(tenant, $event)"
                             class="p-2 text-amber-600 hover:text-amber-700 hover:bg-amber-100 rounded-lg transition-all duration-200 border border-amber-200 hover:border-amber-300"
                             [title]="'PROPERTY_DETAILS.TENANTS.TENANT_CARD.ACTIONS.VIEW_DETAILS' | translate">
                       <i class="fas fa-eye"></i>
                     </button>
 
+                    <!-- Modifier : MANAGE_TENANTS -->
                     <button (click)="onEditTenant(tenant, $event)"
+                            *ngIf="propertyAccessService.canManageTenants(propertyId)"
                             class="p-2 text-blue-600 hover:text-blue-700 hover:bg-blue-100 rounded-lg transition-all duration-200 border border-blue-200 hover:border-blue-300"
                             [title]="'PROPERTY_DETAILS.TENANTS.TENANT_CARD.ACTIONS.EDIT' | translate">
                       <i class="fas fa-edit"></i>
                     </button>
 
-                    <!-- Bouton Ajouter paiement - Visible seulement si assigné à une chambre -->
+                    <!-- Ajouter paiement : MANAGE_PAYMENTS et locataire assigné -->
                     <button (click)="onAddPayment(tenant, $event)"
-                            *ngIf="getTenantUnit(tenant)"
+                            *ngIf="getTenantUnit(tenant) && propertyAccessService.canManagePayments(propertyId)"
                             class="p-2 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-100 rounded-lg transition-all duration-200 border border-emerald-200 hover:border-emerald-300"
                             [title]="'PROPERTY_DETAILS.TENANTS.TENANT_CARD.ACTIONS.ADD_PAYMENT' | translate">
                       <i class="fas fa-coins"></i>
                     </button>
 
-                    <!-- Bouton Assigner unité - Visible seulement si pas encore assigné -->
+                    <!-- Assigner unité : MANAGE_TENANTS et pas encore assigné -->
                     <button (click)="onAssignUnit(tenant, $event)"
-                            *ngIf="!getTenantUnit(tenant)"
+                            *ngIf="!getTenantUnit(tenant) && propertyAccessService.canManageTenants(propertyId)"
                             class="p-2 text-purple-600 hover:text-purple-700 hover:bg-purple-100 rounded-lg transition-all duration-200 border border-purple-200 hover:border-purple-300"
                             [title]="'PROPERTY_DETAILS.TENANTS.TENANT_CARD.ACTIONS.ASSIGN_UNIT' | translate">
                       <i class="fas fa-home"></i>
                     </button>
 
-                    <!-- Bouton Supprimer - Visible seulement si pas assigné à une chambre -->
+                    <!-- Supprimer : propriétaire uniquement et pas assigné -->
                     <button (click)="onDeleteTenant(tenant, $event)"
-                            *ngIf="!getTenantUnit(tenant)"
+                            *ngIf="!getTenantUnit(tenant) && propertyAccessService.isOwner(propertyId)"
                             class="p-2 text-red-600 hover:text-red-700 hover:bg-red-100 rounded-lg transition-all duration-200 border border-red-200 hover:border-red-300"
                             [title]="'PROPERTY_DETAILS.TENANTS.TENANT_CARD.ACTIONS.DELETE' | translate">
                       <i class="fas fa-trash"></i>

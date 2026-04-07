@@ -1,34 +1,519 @@
-.location-icon svg {
-    vertical-align: middle !important;
-    
+// ─── Variables ────────────────────────────────────────────────────────────────
+$gold:        #cc8c0a;
+$gold-light:  #fff8e1;
+$gold-dark:   #b07a08;
+$manager:     #5c35d4;
+$manager-bg:  #f3f0ff;
+
+// ─── Wrapper ──────────────────────────────────────────────────────────────────
+.lp-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #f7f8fa;
+  overflow: hidden;
 }
 
-.location-home svg
-{
-    fill: #0f62fe;
+// ─── Barre de stats ───────────────────────────────────────────────────────────
+.lp-stats-bar {
+  background: #fff;
+  border-bottom: 1px solid #e8e8e8;
+  flex-shrink: 0;
+  padding: 16px 0;
 }
 
-.home-romm svg{
-    fill: rgba(204, 140, 10,.9)
+.lp-stats-inner {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
+.lp-stat {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: #fafafa;
+  border: 1px solid #f0f0f0;
+  transition: box-shadow 0.2s;
 
-.btn-text-edit svg
-{
-    fill: #fff;
+  &:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
 }
 
-.btn-text-edit
-{
-    background-color: rgb(204, 140, 10);
-    cursor: pointer;
+.lp-stat-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  svg { width: 20px; height: 20px; }
+
+  &--green  { background: #e8f5e9; svg { color: #2e7d32; } }
+  &--blue   { background: #e3f2fd; svg { color: #1565c0; } }
+  &--purple { background: #f3e5f5; svg { color: #6a1b9a; } }
+  &--gold   { background: $gold-light; svg { color: $gold; } }
 }
 
-.btn-text-edit:hover
-{
-    background-color: rgba(204, 140, 10,.8);
+.lp-stat-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: #222;
+  line-height: 1.2;
 }
 
-.btn-text-edit {
-    z-index:1000 !important;
+.lp-stat-label {
+  font-size: 11px;
+  color: #888;
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+// ─── Contenu scrollable ───────────────────────────────────────────────────────
+.lp-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+
+  &::-webkit-scrollbar { width: 6px; }
+  &::-webkit-scrollbar-track { background: #f0f0f0; }
+  &::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+}
+
+.lp-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 0;
+}
+
+.lp-empty {
+  text-align: center;
+  padding: 64px 24px;
+  color: #aaa;
+
+  .lp-empty-icon { font-size: 48px; margin-bottom: 12px; }
+  p { font-size: 15px; }
+}
+
+// ─── Bandeau de section ───────────────────────────────────────────────────────
+.lp-section-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+
+  &--mt { margin-top: 36px; }
+
+  &--owner {
+    background: linear-gradient(135deg, #fff8e1 0%, #fff3cd 100%);
+    border: 2px solid #ffe082;
+  }
+
+  &--manager {
+    background: linear-gradient(135deg, #f3f0ff 0%, #ede7f6 100%);
+    border: 2px solid #ce93d8;
+  }
+
+  &__left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  &__icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    svg { width: 22px; height: 22px; }
+
+    .lp-section-banner--owner & {
+      background: $gold;
+      svg { color: #fff; }
+    }
+
+    .lp-section-banner--manager & {
+      background: $manager;
+      svg { color: #fff; }
+    }
+  }
+
+  &__title {
+    margin: 0 0 2px;
+    font-size: 16px;
+    font-weight: 700;
+
+    .lp-section-banner--owner &   { color: #7a5200; }
+    .lp-section-banner--manager & { color: #3d1a8e; }
+  }
+
+  &__sub {
+    margin: 0;
+    font-size: 12px;
+
+    .lp-section-banner--owner &   { color: #a07030; }
+    .lp-section-banner--manager & { color: #6a3db5; }
+  }
+
+  &__count {
+    font-size: 22px;
+    font-weight: 800;
+    padding: 4px 14px;
+    border-radius: 20px;
+
+    .lp-section-banner--owner & {
+      background: $gold;
+      color: #fff;
+    }
+
+    &--manager {
+      background: $manager;
+      color: #fff;
+    }
+  }
+}
+
+// ─── Grille ───────────────────────────────────────────────────────────────────
+.lp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+// ─── Carte commune ────────────────────────────────────────────────────────────
+.lp-card {
+  background: #fff;
+  border-radius: 14px;
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 2px solid transparent;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.1);
+  }
+
+  &--owner {
+    border-color: #ffe082;
+    &:hover { border-color: $gold; box-shadow: 0 12px 32px rgba(204,140,10,0.15); }
+  }
+
+  &--manager {
+    border-color: #ce93d8;
+    &:hover { border-color: $manager; box-shadow: 0 12px 32px rgba(92,53,212,0.15); }
+  }
+
+  &--loading { opacity: 0.7; pointer-events: none; }
+}
+
+// Ruban en haut à gauche
+.lp-card__ribbon {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+
+  svg { width: 12px; height: 12px; }
+
+  &--owner {
+    background: $gold;
+    color: #fff;
+  }
+
+  &--manager {
+    background: $manager;
+    color: #fff;
+  }
+}
+
+// Overlay chargement
+.lp-card__loading-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+}
+
+.lp-spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid #e0e0e0;
+  border-top-color: $gold;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+// Image
+.lp-card__img {
+  height: 160px;
+  overflow: hidden;
+  position: relative;
+  background: #f5f5f5;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+  }
+
+  .lp-card:hover & img { transform: scale(1.04); }
+
+  &--manager {
+    background: linear-gradient(135deg, #ede7f6, #d1c4e9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.lp-card__manager-placeholder {
+  font-size: 56px;
+  font-weight: 800;
+  color: rgba(92,53,212,0.25);
+  user-select: none;
+}
+
+.lp-card__owner-chip {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255,255,255,0.92);
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: $manager;
+
+  svg { width: 13px; height: 13px; }
+}
+
+.lp-card__occupancy-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+
+  &--high  { background: #e8f5e9; color: #2e7d32; }
+  &--mid   { background: #fff8e1; color: #f57f17; }
+  &--low   { background: #ffebee; color: #c62828; }
+}
+
+// Corps
+.lp-card__body {
+  padding: 16px;
+  flex: 1;
+}
+
+.lp-card__name {
+  margin: 0 0 4px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #1a1a1a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lp-card__location {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #888;
+  margin: 0 0 14px;
+
+  svg { width: 13px; height: 13px; flex-shrink: 0; }
+}
+
+.lp-card__owner-label {
+  font-size: 12px;
+  color: #888;
+  margin: 0 0 12px;
+  strong { color: #555; }
+}
+
+// Métriques (biens possédés)
+.lp-card__metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.lp-card__metric {
+  text-align: center;
+  padding: 8px 4px;
+  background: #fafafa;
+  border-radius: 8px;
+  border: 1px solid #f0f0f0;
+}
+
+.lp-card__metric-val {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  color: #222;
+
+  &--gold { color: $gold; }
+}
+
+.lp-card__metric-lbl {
+  display: block;
+  font-size: 10px;
+  color: #aaa;
+  margin-top: 2px;
+}
+
+// Permissions (biens gérés)
+.lp-card__perms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.lp-perm-chip {
+  font-size: 10px;
+  padding: 2px 8px;
+  background: $manager-bg;
+  color: $manager;
+  border: 1px solid #ce93d8;
+  border-radius: 10px;
+  font-weight: 600;
+
+  &--more {
+    background: #f5f5f5;
+    color: #999;
+    border-color: #e0e0e0;
+  }
+}
+
+// Accès rapides (biens gérés)
+.lp-card__access {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.lp-access {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 8px;
+  font-weight: 500;
+
+  svg { width: 11px; height: 11px; flex-shrink: 0; }
+
+  &--ok {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+
+  &--no {
+    background: #fafafa;
+    color: #bbb;
+    text-decoration: line-through;
+  }
+}
+
+// Footer carte
+.lp-card__footer {
+  padding: 12px 16px;
+  border-top: 1px solid #f5f5f5;
+  background: #fafafa;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.lp-card__btn-primary {
+  flex: 1;
+  padding: 8px 12px;
+  background: $gold;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover { background: $gold-dark; }
+}
+
+.lp-card__btn-manager {
+  flex: 1;
+  padding: 8px 12px;
+  background: $manager;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover { background: darken($manager, 8%); }
+}
+
+.lp-card__btn-icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #666;
+  transition: all 0.15s;
+  flex-shrink: 0;
+
+  svg { width: 15px; height: 15px; }
+
+  &:hover { background: #f5f5f5; border-color: #ccc; color: #333; }
 }

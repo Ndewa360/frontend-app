@@ -42,7 +42,8 @@
   <!-- Actions rapides modernes -->
   <div class="actions-section px-6 py-4 bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
     <div class="grid grid-cols-2 gap-3">
-      <button (click)="onEditRoom()" 
+      <!-- Modifier : MANAGE_UNITS -->
+      <button *ngIf="propertyAccessService.canManageUnits(propertyId)" (click)="onEditRoom()" 
               class="action-btn flex items-center justify-center gap-2 px-4 py-3 bg-white hover:bg-gray-50 text-gray-700 rounded-xl border border-gray-200 hover:border-amber-300 hover:shadow-md text-sm font-medium transition-all duration-300 group">
         <svg class="w-4 h-4 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
@@ -50,7 +51,8 @@
         Modifier
       </button>
       
-      <button *ngIf="getRoomStatus() === 'available'" 
+      <!-- Assigner : MANAGE_TENANTS -->
+      <button *ngIf="getRoomStatus() === 'available' && propertyAccessService.canManageTenants(propertyId)" 
               (click)="onAssignTenant()" 
               class="action-btn flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white rounded-xl text-sm font-medium transition-all duration-300 hover:shadow-lg group">
         <svg class="w-4 h-4 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -59,7 +61,8 @@
         Assigner
       </button>
       
-      <button *ngIf="getRoomStatus() === 'occupied'" 
+      <!-- Résilier : MANAGE_CONTRACTS -->
+      <button *ngIf="getRoomStatus() === 'occupied' && propertyAccessService.canManageContracts(propertyId)" 
               (click)="onTerminateLease()" 
               class="action-btn flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-xl text-sm font-medium transition-all duration-300 hover:shadow-lg group">
         <svg class="w-4 h-4 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -68,6 +71,7 @@
         Résilier
       </button>
       
+      <!-- Médias : toujours visible -->
       <button (click)="onManageMedia()" 
               class="action-btn flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white rounded-xl text-sm font-medium transition-all duration-300 hover:shadow-lg group">
         <svg class="w-4 h-4 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -265,7 +269,8 @@
                 </svg>
                 Contacter le locataire
               </button>
-              <button (click)="onTerminateLease()" class="w-full flex items-center justify-center gap-3 px-4 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-xl text-sm font-medium transition-all duration-300 hover:shadow-lg group">
+              <!-- Résilier : MANAGE_CONTRACTS uniquement -->
+              <button *ngIf="propertyAccessService.canManageContracts(propertyId)" (click)="onTerminateLease()" class="w-full flex items-center justify-center gap-3 px-4 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-xl text-sm font-medium transition-all duration-300 hover:shadow-lg group">
                 <svg class="w-4 h-4 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
                 </svg>
@@ -284,7 +289,8 @@
             </div>
             <h3 class="text-lg font-semibold text-gray-900 mb-2">Aucun locataire assigné</h3>
             <p class="text-sm text-gray-600 mb-6">Cette unité est actuellement disponible pour location</p>
-            <button (click)="onAssignTenant()" 
+            <!-- Assigner : MANAGE_TENANTS uniquement -->
+            <button *ngIf="propertyAccessService.canManageTenants(propertyId)" (click)="onAssignTenant()" 
                     class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white rounded-xl text-sm font-medium transition-all duration-300 hover:shadow-lg group">
               <svg class="w-4 h-4 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>

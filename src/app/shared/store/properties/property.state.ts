@@ -171,19 +171,35 @@ export class PropertyState{
 
         if(index>-1) return of(true);
 
-        ctx.patchState({
-            loadingProperty:true
-        })
+        ctx.patchState({ loadingProperty:true })
         return this._propertysService.getProperty(propertyId).pipe(
-            tap(
-                result => {
-                    console.warn("Property Found ",result)
-                    ctx.patchState({
-                        loadingProperty:false,
-                        properties:[...state.properties, result.data]
-                    })
-                }
-            )
+            tap(result => {
+                ctx.patchState({
+                    loadingProperty:false,
+                    properties:[...state.properties, result.data]
+                })
+            })
+        )
+    }
+
+    @Action(PropertyAction.FetchPropertyForced)
+    fetchPropertyForced(ctx:StateContext<PropertyStateModel>,{propertyId}:PropertyAction.FetchPropertyForced)
+    {
+        const state = ctx.getState();
+        ctx.patchState({ loadingProperty:true })
+        return this._propertysService.getProperty(propertyId).pipe(
+            tap(result => {
+                if (!result?.data) return;
+                const existing = state.properties.filter(p => p._id !== propertyId);
+                ctx.patchState({
+                    loadingProperty: false,
+                    properties: [...existing, result.data]
+                });
+            }),
+            catchError(error => {
+                ctx.patchState({ loadingProperty: false });
+                return throwError(error);
+            })
         )
     }
 

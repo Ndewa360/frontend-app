@@ -4,6 +4,7 @@ import { PropertyMetrics, FinancialSummary, PropertyMetricsService } from '../..
 import { HistoryItem } from '../../services/property-data.service';
 import { PropertyDetailsTranslationService } from '../../services/property-details-translation.service';
 import { TranslationService } from 'src/app/shared/services/localization/translation.service';
+import { PropertyAccessService } from 'src/app/shared/services/property-access.service';
 
 @Component({
   selector: 'app-property-overview',
@@ -12,6 +13,7 @@ import { TranslationService } from 'src/app/shared/services/localization/transla
 })
 export class PropertyOverviewComponent implements OnInit, OnChanges {
   @Input() property: PropertyModel | null = null;
+  @Input() propertyId: string | null = null;
   @Input() units: RoomModel[] = [];
   @Input() tenants: LocataireModel[] = [];
   @Input() history: HistoryItem[] = [];
@@ -31,7 +33,8 @@ export class PropertyOverviewComponent implements OnInit, OnChanges {
   constructor(
     private propertyMetricsService: PropertyMetricsService,
     private translationService: PropertyDetailsTranslationService,
-    private translate: TranslationService
+    private translate: TranslationService,
+    public propertyAccessService: PropertyAccessService
   ) { }
 
   ngOnInit(): void {

@@ -50,10 +50,10 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
   
   // Room types
   roomTypes = [
-    { value: RoomType.ROOM, label: this.translate.instant('roomTypes.room'), icon: 'bed' },
-    { value: RoomType.STUDIO, label: this.translate.instant('roomTypes.studio'), icon: 'home' },
-    { value: RoomType.SIMPLE_APARTMENT, label: this.translate.instant('roomTypes.simpleApartment'), icon: 'apartment' },
-    { value: RoomType.FURNISHED_APARTMENT, label: this.translate.instant('roomTypes.furnishedApartment'), icon: 'chair' }
+    { value: RoomType.ROOM, label: this.translate.instant('ROOM_TYPES.ROOM'), icon: 'bed' },
+    { value: RoomType.STUDIO, label: this.translate.instant('ROOM_TYPES.STUDIO'), icon: 'home' },
+    { value: RoomType.SIMPLE_APARTMENT, label: this.translate.instant('ROOM_TYPES.SIMPLE_APARTMENT'), icon: 'apartment' },
+    { value: RoomType.FURNISHED_APARTMENT, label: this.translate.instant('ROOM_TYPES.FURNISHED_APARTMENT'), icon: 'chair' }
   ];
   
   private destroy$ = new Subject<void>();
@@ -90,10 +90,10 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
 
   private updateRoomTypes(): void {
     this.roomTypes = [
-      { value: RoomType.ROOM, label: this.translate.instant('roomTypes.room'), icon: 'bed' },
-      { value: RoomType.STUDIO, label: this.translate.instant('roomTypes.studio'), icon: 'home' },
-      { value: RoomType.SIMPLE_APARTMENT, label: this.translate.instant('roomTypes.simpleApartment'), icon: 'apartment' },
-      { value: RoomType.FURNISHED_APARTMENT, label: this.translate.instant('roomTypes.furnishedApartment'), icon: 'chair' }
+      { value: RoomType.ROOM, label: this.translate.instant('ROOM_TYPES.ROOM'), icon: 'bed' },
+      { value: RoomType.STUDIO, label: this.translate.instant('ROOM_TYPES.STUDIO'), icon: 'home' },
+      { value: RoomType.SIMPLE_APARTMENT, label: this.translate.instant('ROOM_TYPES.SIMPLE_APARTMENT'), icon: 'apartment' },
+      { value: RoomType.FURNISHED_APARTMENT, label: this.translate.instant('ROOM_TYPES.FURNISHED_APARTMENT'), icon: 'chair' }
     ];
   }
 

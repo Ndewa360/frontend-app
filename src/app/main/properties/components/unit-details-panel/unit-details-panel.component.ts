@@ -19,6 +19,7 @@ import { UnitDetailsService, UnitDetailsData } from '../../services/unit-details
 import { PaymentAction } from './components/unit-payments-tab/unit-payments-tab.component';
 import { ModernPaymentModalComponent } from '../modern-payment-modal/modern-payment-modal.component';
 import { ModernDeletePaymentModalComponent } from '../modern-delete-payment-modal/modern-delete-payment-modal.component';
+import { PropertyAccessService } from 'src/app/shared/services/property-access.service';
 
 export interface UnitPanelAction {
   type: 'edit' | 'assign_tenant' | 'terminate_lease' | 'add_payment' | 'view_contract' | 'view_image' | 'edit_tenant' |
@@ -88,7 +89,8 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
     private unitDetailsService: UnitDetailsService,
     private dialog: MatDialog,
     private toastr: ToastrService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    public propertyAccessService: PropertyAccessService
   ) {}
 
   ngOnInit(): void {
@@ -971,26 +973,28 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
       }
     ];
 
-    if (!this.isAgent) {
-      // Propriétaire : accès complet
-      this.tabs = [
-        ...baseTabs.slice(0, 1), // Vue d'ensemble
-        {
-          id: 'tenant',
-          label: this.translate.instant('PROPERTY_DETAILS.TABS.TENANTS'),
-          icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'
-        },
-        {
-          id: 'payments',
-          label: this.translate.instant('PROPERTY_DETAILS.TABS.FINANCES'),
-          icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1'
-        },
-        ...baseTabs.slice(1) // Galerie
-      ];
-    } else {
-      // Agent : accès limité (pas de locataire ni paiements)
-      this.tabs = baseTabs;
+    const tabs = [baseTabs[0]]; // Vue d'ensemble toujours visible
+
+    // Onglet locataire : si MANAGE_TENANTS ou propriétaire
+    if (!this.propertyId || this.propertyAccessService.canManageTenants(this.propertyId) || this.propertyAccessService.isOwner(this.propertyId)) {
+      tabs.push({
+        id: 'tenant',
+        label: this.translate.instant('PROPERTY_DETAILS.TABS.TENANTS'),
+        icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'
+      });
     }
+
+    // Onglet paiements : si MANAGE_PAYMENTS ou VIEW_FINANCES ou propriétaire
+    if (!this.propertyId || this.propertyAccessService.canManagePayments(this.propertyId) || this.propertyAccessService.canViewFinances(this.propertyId) || this.propertyAccessService.isOwner(this.propertyId)) {
+      tabs.push({
+        id: 'payments',
+        label: this.translate.instant('PROPERTY_DETAILS.TABS.FINANCES'),
+        icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1'
+      });
+    }
+
+    tabs.push(baseTabs[1]); // Galerie toujours visible
+    this.tabs = tabs;
   }
 
   openVideoViewer(url: string): void {

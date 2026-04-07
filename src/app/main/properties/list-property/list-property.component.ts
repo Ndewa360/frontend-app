@@ -2,7 +2,8 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Select } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Observable, combineLatest } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
 import { PropertyModel, PropertyState, RoomState, LocationPaymentState, LocationState } from 'src/app/shared/store';
 import { AddPropertyComponent } from '../add-property/add-property.component';
@@ -12,6 +13,8 @@ import { PropertyAlert } from '../components/property-overview-card/property-ove
 import { ModernTenantModalComponent } from '../components/modern-tenant-modal/modern-tenant-modal.component';
 import { PropertyNavigationService } from '../services/property-navigation.service';
 import { PropertiesTourService } from '../services/properties-tour.service';
+import { PropertyManagerState, ManagedPropertyItem, PropertyManagerAction } from 'src/app/shared/store/property-manager';
+import { PropertyAccessService } from 'src/app/shared/services/property-access.service';
 
 @Component({
   selector: 'app-list-property',
@@ -24,6 +27,7 @@ export class ListPropertyComponent implements OnInit {
 
   @Select(PropertyState.selectStateProperties) properties$:Observable<PropertyModel[]>;
   @Select(PropertyState.selectStateInitLoading) initLoading$:Observable<string>;
+  @Select(PropertyManagerState.selectManagedProperties) managedProperties$: Observable<ManagedPropertyItem[]>;
 
   // État de chargement pour la navigation
   loadingProperties$: Observable<Set<string>>;
@@ -36,13 +40,12 @@ export class ListPropertyComponent implements OnInit {
     private router: Router,
     private propertyNavigationService: PropertyNavigationService,
     private translate: TranslateService,
-    private propertiesTourService: PropertiesTourService
+    private propertiesTourService: PropertiesTourService,
+    public propertyAccessService: PropertyAccessService
   ) { }
 
   ngOnInit(): void {
     this.initLoading$.subscribe((value)=>{
-      console.log("Init Loading Property ",value)
-      // Démarrer le tour après chargement des propriétés
       if (value === 'LOADED') {
         setTimeout(() => {
           this.propertiesTourService.startPropertiesMainTour();
@@ -53,8 +56,10 @@ export class ListPropertyComponent implements OnInit {
       console.log("Value Property ",value)
     })
 
-    // Initialiser l'observable de chargement de navigation
     this.loadingProperties$ = this.propertyNavigationService.loading$;
+
+    // Toujours recharger les assignments (même après refresh de page)
+    this._store.dispatch(new PropertyManagerAction.LoadMyAssignments());
   }
 
 
@@ -220,8 +225,28 @@ export class ListPropertyComponent implements OnInit {
 
   // Nouvelles méthodes pour la navigation et les actions
   onViewPropertyDetails(property: PropertyModel): void {
-    // Utiliser le service de navigation avec protection contre les clics multiples
     this.propertyNavigationService.navigateToPropertyDetails(property._id);
+  }
+
+  onViewManagedPropertyDetails(propertyId: string): void {
+    if (!propertyId) {
+      console.error('❌ propertyId manquant pour la navigation vers le bien géré');
+      return;
+    }
+    this.propertyNavigationService.navigateToPropertyDetails(propertyId);
+  }
+
+  getManagedPropertyPermissions(propertyId: string): string[] {
+    return this.propertyAccessService.getPermissionsForProperty(propertyId);
+  }
+
+  canAccessManagedProperty(propertyId: string, action: string): boolean {
+    switch (action) {
+      case 'finances': return this.propertyAccessService.canViewFinances(propertyId);
+      case 'tenants':  return this.propertyAccessService.canManageTenants(propertyId);
+      case 'payments': return this.propertyAccessService.canManagePayments(propertyId);
+      default: return true;
+    }
   }
 
   // Méthode helper pour vérifier si une propriété est en cours de chargement

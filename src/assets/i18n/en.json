@@ -2857,7 +2857,16 @@
     "EMPTY_ADD": "Add a manager",
     "ASSIGNED_ON": "Assigned on",
     "REVOKE": "Revoke",
-    "REVOKE_CONFIRM": "Are you sure you want to revoke this manager?",
+    "MANAGER_BANNER": "You manage this property as a manager. Your access rights:",
+    "REVOKE_MODAL": {
+      "TITLE": "Revoke manager",
+      "SUBTITLE": "This action will remove all access rights",
+      "PROPERTY_LABEL": "Property:",
+      "PERMISSIONS_LABEL": "Permissions that will be removed:",
+      "WARNING": "Once revoked, this manager will no longer be able to access this property or perform any action. This operation is immediate.",
+      "CANCEL": "Cancel",
+      "CONFIRM": "Revoke permanently"
+    },
     "MODAL": {
       "TITLE": "Add a manager",
       "TAB_NEW": "Create a manager account",
@@ -2884,6 +2893,17 @@
       "SUBTITLE": "Properties entrusted by other owners",
       "MANAGER_BADGE": "Manager",
       "OWNER_LABEL": "Owner:"
+    },
+    "EDIT_PERMISSIONS": {
+      "TITLE": "Edit permissions",
+      "SAVE": "Save changes",
+      "SAVING": "Saving...",
+      "CHANGES_SUMMARY": "Changes summary",
+      "ADDED": "Added permissions",
+      "REMOVED": "Removed permissions",
+      "LEGEND_CURRENT": "Current permission",
+      "LEGEND_ADDED": "Added",
+      "LEGEND_REMOVED": "Removed"
     }
   },
   "PROPERTY_DETAILS": {
@@ -3344,7 +3364,10 @@
           "UNIT": "Unit",
           "RENT": "Rent",
           "LEASE_END": "Lease end date"
-        }
+        },
+        "ALL": "All",
+        "ACTIVE": "Active",
+        "INACTIVE": "Inactive"
       },
       "EMPTY_STATE": {
         "NO_TENANTS": "No tenant",

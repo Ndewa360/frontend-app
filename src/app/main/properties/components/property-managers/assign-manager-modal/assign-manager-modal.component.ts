@@ -2,6 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngxs/store';
+import { TranslateService } from '@ngx-translate/core';
 import { debounceTime, distinctUntilChanged, switchMap, catchError } from 'rxjs/operators';
 import { Subject, of } from 'rxjs';
 import { PropertyManagerAction, ManagerPermission, PERMISSION_LABELS } from 'src/app/shared/store/property-manager';
@@ -40,6 +41,7 @@ export class AssignManagerModalComponent implements OnInit {
     private fb: FormBuilder,
     private store: Store,
     private api: PropertyManagerApiService,
+    private translate: TranslateService,
     public dialogRef: MatDialogRef<AssignManagerModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: AssignManagerModalData,
   ) {}
@@ -63,13 +65,16 @@ export class AssignManagerModalComponent implements OnInit {
         this.searching = true;
         this.searchError = '';
         return this.api.searchUserByEmail(email).pipe(
-          catchError(() => { this.searchError = 'Aucun compte trouvé avec cet email'; return of(null); }),
+          catchError(() => {
+            this.searchError = this.translate.instant('PROPERTY_MANAGERS.MODAL.NOT_FOUND');
+            return of(null);
+          }),
         );
       }),
     ).subscribe(result => {
       this.searching = false;
       this.searchResult = result?.data || null;
-      if (!this.searchResult) this.searchError = 'Aucun compte trouvé avec cet email';
+      if (!this.searchResult) this.searchError = this.translate.instant('PROPERTY_MANAGERS.MODAL.NOT_FOUND');
     });
   }
 

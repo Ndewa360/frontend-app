@@ -1,0 +1,133 @@
+<div class="epm-container">
+
+  <!-- Header -->
+  <div class="epm-header">
+    <div class="epm-header__icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
+      </svg>
+    </div>
+    <div class="epm-header__text">
+      <h2>{{ 'PROPERTY_MANAGERS.EDIT_PERMISSIONS.TITLE' | translate }}</h2>
+      <p>{{ data.propertyName }}</p>
+    </div>
+    <button class="epm-header__close" (click)="close()">✕</button>
+  </div>
+
+  <!-- Carte gérant -->
+  <div class="epm-manager-card">
+    <div class="epm-manager-card__avatar">{{ getManagerAvatar() }}</div>
+    <div class="epm-manager-card__info">
+      <strong>{{ getManagerName() }}</strong>
+      <span>{{ getManagerEmail() }}</span>
+    </div>
+    <div class="epm-manager-card__badge">
+      <svg viewBox="0 0 20 20" fill="currentColor">
+        <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
+      </svg>
+      {{ 'PROPERTY_MANAGERS.MANAGED_PROPERTIES.MANAGER_BADGE' | translate }}
+    </div>
+  </div>
+
+  <!-- Corps -->
+  <div class="epm-body">
+
+    <!-- Légende -->
+    <div class="epm-legend">
+      <span class="epm-legend__item epm-legend__item--current">
+        <span class="epm-legend__dot epm-legend__dot--current"></span>
+        {{ 'PROPERTY_MANAGERS.EDIT_PERMISSIONS.LEGEND_CURRENT' | translate }}
+      </span>
+      <span class="epm-legend__item epm-legend__item--added">
+        <span class="epm-legend__dot epm-legend__dot--added"></span>
+        {{ 'PROPERTY_MANAGERS.EDIT_PERMISSIONS.LEGEND_ADDED' | translate }}
+      </span>
+      <span class="epm-legend__item epm-legend__item--removed">
+        <span class="epm-legend__dot epm-legend__dot--removed"></span>
+        {{ 'PROPERTY_MANAGERS.EDIT_PERMISSIONS.LEGEND_REMOVED' | translate }}
+      </span>
+    </div>
+
+    <!-- Grille des permissions -->
+    <div class="epm-permissions-label">
+      {{ 'PROPERTY_MANAGERS.MODAL.PERMISSIONS_LABEL' | translate }}
+    </div>
+
+    <div class="epm-permissions-grid">
+      <label
+        *ngFor="let perm of allPermissions"
+        class="epm-perm"
+        [class.epm-perm--selected]="isPermissionSelected(perm.key)"
+        [class.epm-perm--added]="isAdded(perm.key)"
+        [class.epm-perm--removed]="isRemoved(perm.key)"
+        [class.epm-perm--full]="perm.key === 'FULL_ACCESS'"
+      >
+        <div class="epm-perm__check">
+          <input
+            type="checkbox"
+            [checked]="isPermissionSelected(perm.key)"
+            (change)="togglePermission(perm.key)"
+          />
+          <span class="epm-perm__checkmark">
+            <svg *ngIf="isPermissionSelected(perm.key)" viewBox="0 0 12 12" fill="currentColor">
+              <path d="M10 3L5 8.5 2 5.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </svg>
+          </span>
+        </div>
+        <div class="epm-perm__content">
+          <div class="epm-perm__header">
+            <span class="epm-perm__label">{{ perm.label }}</span>
+            <span class="epm-perm__badge" *ngIf="isAdded(perm.key)">+</span>
+            <span class="epm-perm__badge epm-perm__badge--removed" *ngIf="isRemoved(perm.key)">−</span>
+          </div>
+          <span class="epm-perm__desc">{{ perm.description }}</span>
+        </div>
+      </label>
+    </div>
+
+    <!-- Résumé des changements -->
+    <div class="epm-changes" *ngIf="hasChanges">
+      <div class="epm-changes__title">
+        <svg viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+        </svg>
+        {{ 'PROPERTY_MANAGERS.EDIT_PERMISSIONS.CHANGES_SUMMARY' | translate }}
+      </div>
+      <div class="epm-changes__body">
+        <div *ngIf="getChangeSummary().added.length > 0" class="epm-changes__row epm-changes__row--added">
+          <span class="epm-changes__icon">+</span>
+          <span>{{ 'PROPERTY_MANAGERS.EDIT_PERMISSIONS.ADDED' | translate }} :
+            <strong>{{ getChangeSummary().added.join(', ') }}</strong>
+          </span>
+        </div>
+        <div *ngIf="getChangeSummary().removed.length > 0" class="epm-changes__row epm-changes__row--removed">
+          <span class="epm-changes__icon">−</span>
+          <span>{{ 'PROPERTY_MANAGERS.EDIT_PERMISSIONS.REMOVED' | translate }} :
+            <strong>{{ getChangeSummary().removed.join(', ') }}</strong>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="epm-footer">
+    <button class="epm-footer__cancel" (click)="close()">
+      {{ 'PROPERTY_MANAGERS.MODAL.CANCEL' | translate }}
+    </button>
+    <button
+      class="epm-footer__save"
+      [disabled]="!hasChanges || (loading$ | async)"
+      (click)="submit()"
+    >
+      <svg *ngIf="!(loading$ | async)" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+      </svg>
+      <span *ngIf="!(loading$ | async)">{{ 'PROPERTY_MANAGERS.EDIT_PERMISSIONS.SAVE' | translate }}</span>
+      <span *ngIf="loading$ | async">{{ 'PROPERTY_MANAGERS.EDIT_PERMISSIONS.SAVING' | translate }}</span>
+    </button>
+  </div>
+
+</div>

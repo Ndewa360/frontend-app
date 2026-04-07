@@ -35,32 +35,6 @@
 
 // Import des styles de navigation admin
 @import './app/shared/styles/admin-navigation.scss';
-// @use '@ag-grid-community/styles/ag-grid.css';
-// @use '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-// @use '@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css';
-// .white {
-// 	@include styles.theme(styles.$white);
-// }
-
-// .g10 {
-// 	@include styles.theme(styles.$g10);
-// }
-
-// .g90 {
-// 	@include styles.theme(styles.$g90);
-// }
-
-// .g100 {
-// 	@include styles.theme(styles.$g100);
-// }
-
-// // Want to use only one theme? Add the css variables directly in root
-
-// body {
-// 	@include styles.theme(styles.$white);
-// // }
-
-
 
 :root {
   @include theme.theme();
@@ -76,14 +50,30 @@ body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, "Helvetica Neue", sans-serif;
 }
 
-
-
 // Suppression de l'ombre parasite sur le modal des gérants
-.manager-modal-panel .mat-dialog-container,
-.manager-modal-panel .mat-mdc-dialog-container,
-.manager-modal-panel .mdc-dialog__surface {
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12) !important;
-  border-radius: 12px !important;
-  padding: 0 !important;
-  overflow: hidden !important;
+// Le panelClass 'manager-modal-panel' est appliqué sur le cdk-overlay-pane
+// Les styles doivent cibler les éléments enfants sans encapsulation
+.manager-modal-panel {
+  --mdc-dialog-container-elevation: none;
+  --mdc-dialog-container-shadow-color: transparent;
+
+  &.mat-dialog-container,
+  .mat-dialog-container,
+  .mat-mdc-dialog-container,
+  .mdc-dialog__surface,
+  .mat-mdc-dialog-surface {
+    box-shadow: none !important;
+    border-radius: 12px !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+}
+
+// Cibler aussi via le cdk-overlay-pane parent
+.cdk-overlay-pane.manager-modal-panel {
+  .mat-mdc-dialog-container .mdc-dialog__surface,
+  .mat-mdc-dialog-surface {
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
 }

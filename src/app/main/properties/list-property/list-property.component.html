@@ -1,96 +1,283 @@
-<div class="bg-white overflow-y-auto">
+<div class="lp-wrapper">
 
-  <!-- Métriques rapides compactes -->
-  <div class="bg-white border-b border-gray-200 py-4">
-    <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
-      <!-- Header avec bouton d'aide -->
-      <!-- <div class="flex justify-between items-center mb-4">
-        <h1 class="text-2xl font-bold text-gray-900">Gestion des Biens</h1>
-        <div class="flex items-center space-x-3">
-          <button 
-            (click)="startTour()"
-            class="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-            Aide
-          </button>
-          <button 
-            (click)="onAddProperty()"
-            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-            </svg>
-            Ajouter une propriété
-          </button>
+  <!-- ── Barre de stats ─────────────────────────────────────────────────── -->
+  <div class="lp-stats-bar">
+    <div class="lp-stats-inner">
+
+      <div class="lp-stat">
+        <div class="lp-stat-icon lp-stat-icon--green">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+            <polyline stroke-linecap="round" stroke-linejoin="round" stroke-width="2" points="9 22 9 12 15 12 15 22"/>
+          </svg>
         </div>
-      </div> -->
-      
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div class="text-center p-3 bg-green-50 border border-green-200 rounded">
-          <div class="text-xl font-bold text-green-700">{{ getTotalProperties() }}</div>
-          <div class="text-xs text-green-600">{{ 'PROPERTIES.PROPERTIES_COUNT' | translate }}</div>
-        </div>
-        <div class="text-center p-3 bg-blue-50 border border-blue-200 rounded">
-          <div class="text-xl font-bold text-blue-700">{{ getTotalUnits() }}</div>
-          <div class="text-xs text-blue-600">{{ 'PROPERTIES.UNITS_COUNT' | translate }}</div>
-        </div>
-        <div class="text-center p-3 bg-purple-50 border border-purple-200 rounded">
-          <div class="text-xl font-bold text-purple-700">{{ getOccupancyRate() }}%</div>
-          <div class="text-xs text-purple-600">{{ 'PROPERTIES.OCCUPANCY' | translate }}</div>
-        </div>
-        <div class="text-center p-3 bg-yellow-50 border border-yellow-200 rounded">
-          <div class="text-xl font-bold" style="color: rgb(204, 140, 10);">{{ getTotalMonthlyRevenue() | currency:'XAF':'symbol':'1.0-0' }}</div>
-          <div class="text-xs" style="color: rgb(164, 112, 8);">{{ 'PROPERTIES.MONTHLY_REVENUE' | translate }}</div>
+        <div>
+          <div class="lp-stat-value">{{ getTotalProperties() }}</div>
+          <div class="lp-stat-label">{{ 'PROPERTIES.PROPERTIES_COUNT' | translate }}</div>
         </div>
       </div>
+
+      <div class="lp-stat">
+        <div class="lp-stat-icon lp-stat-icon--blue">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <rect x="3" y="3" width="7" height="7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="14" y="3" width="7" height="7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="14" y="14" width="7" height="7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="3" y="14" width="7" height="7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div>
+          <div class="lp-stat-value">{{ getTotalUnits() }}</div>
+          <div class="lp-stat-label">{{ 'PROPERTIES.UNITS_COUNT' | translate }}</div>
+        </div>
+      </div>
+
+      <div class="lp-stat">
+        <div class="lp-stat-icon lp-stat-icon--purple">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="lp-stat-value">{{ getOccupancyRate() }}%</div>
+          <div class="lp-stat-label">{{ 'PROPERTIES.OCCUPANCY' | translate }}</div>
+        </div>
+      </div>
+
+      <div class="lp-stat">
+        <div class="lp-stat-icon lp-stat-icon--gold">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <line x1="12" y1="1" x2="12" y2="23" stroke-width="2" stroke-linecap="round"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+          </svg>
+        </div>
+        <div>
+          <div class="lp-stat-value">{{ getTotalMonthlyRevenue() | currency:'XAF':'symbol':'1.0-0' }}</div>
+          <div class="lp-stat-label">{{ 'PROPERTIES.MONTHLY_REVENUE' | translate }}</div>
+        </div>
+      </div>
+
     </div>
   </div>
 
-  <!-- Contenu principal avec scroll -->
-  <div class="max-w- mx-auto px-4 sm:px-6 lg:px-8 py-6 overflow-y-auto max-h-screen">
-    <div *ngIf="(initLoading$ | async) == 'LOADED'; else isLoadingTemp">
-      <ng-container *ngIf="properties$ | async as properties">
+  <!-- ── Contenu ────────────────────────────────────────────────────────── -->
+  <div class="lp-content">
 
+    <div *ngIf="(initLoading$ | async) == 'LOADED'; else loadingTpl">
 
-        <!-- Nouvelle grille avec PropertyOverviewCard -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-4">
-          <ng-container *ngFor="let property of properties; trackBy: trackByPropertyId">
-            <app-property-overview-card [property]="property" [occupancyRate]="getPropertyOccupancyRate(property._id)"
-              [monthlyRevenue]="getMonthlyRevenue(property._id)" [revenueGrowth]="getRevenueGrowth(property._id)"
-              [overduePayments]="getOverduePayments(property._id)" [freeRooms]="getFreeRooms(property._id)"
-              [totalRooms]="property.roomLength || 0" [occupiedRooms]="getOccupiedRooms(property._id)"
-              [alerts]="getPropertyAlerts(property._id)" [isLoading]="isPropertyLoading(property._id)"
-              (addTenantClicked)="onAddTenant($event)"
-              (recordPaymentClicked)="onRecordPayment($event)" (viewFinancesClicked)="onViewFinances($event)"
-              (alertClicked)="onAlertClick($event)" (propertyViewed)="onViewPropertyDetails($event)"
-              (propertyEdited)="onEditProperty($event)" (favoriteToggled)="onToggleFavorite($event)"
-              (quickActionClicked)="onQuickAction($event)">
-            </app-property-overview-card>
-          </ng-container>
+      <ng-container *ngIf="{
+        owned:   (properties$        | async) || [],
+        managed: (managedProperties$ | async) || []
+      } as data">
+
+        <!-- Aucun bien du tout -->
+        <div *ngIf="data.owned.length === 0 && data.managed.length === 0" class="lp-empty">
+          <div class="lp-empty-icon">🏠</div>
+          <p>{{ 'MESSAGES.NO_PROPERTIES' | translate }}</p>
         </div>
-      </ng-container>
-      <ng-container *ngIf="(properties$ | async).length == 0">
-        <app-no-data-list textDescription="bien" class="flex-auto"></app-no-data-list>
+
+        <!-- ── Bandeau "Mes biens" ──────────────────────────────────────── -->
+        <ng-container *ngIf="data.owned.length > 0">
+
+          <div class="lp-section-banner lp-section-banner--owner">
+            <div class="lp-section-banner__left">
+              <div class="lp-section-banner__icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+                  <polyline stroke-linecap="round" stroke-linejoin="round" stroke-width="2" points="9 22 9 12 15 12 15 22"/>
+                </svg>
+              </div>
+              <div>
+                <h2 class="lp-section-banner__title">{{ 'PROPERTIES.MY_PROPERTIES' | translate }}</h2>
+                <p class="lp-section-banner__sub">{{ 'PROPERTIES.MANAGEMENT_SUBTITLE' | translate }}</p>
+              </div>
+            </div>
+            <span class="lp-section-banner__count">{{ data.owned.length }}</span>
+          </div>
+
+          <!-- Grille biens possédés -->
+          <div class="lp-grid">
+            <div *ngFor="let property of data.owned; trackBy: trackByPropertyId"
+                 class="lp-card lp-card--owner"
+                 [class.lp-card--loading]="isPropertyLoading(property._id)"
+                 (click)="onViewPropertyDetails(property)">
+
+              <!-- Ruban propriétaire -->
+              <div class="lp-card__ribbon lp-card__ribbon--owner">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+                </svg>
+                {{ 'PROPERTIES.MY_PROPERTIES' | translate }}
+              </div>
+
+              <!-- Overlay chargement -->
+              <div *ngIf="isPropertyLoading(property._id)" class="lp-card__loading-overlay">
+                <div class="lp-spinner"></div>
+              </div>
+
+              <!-- Image -->
+              <div class="lp-card__img">
+                <img [src]="property.image || 'assets/images/properties/property-placeholder-1.svg'"
+                     [alt]="property.name"
+                     (error)="$any($event.target).src='assets/images/properties/property-placeholder-1.svg'">
+                <div class="lp-card__occupancy-badge"
+                     [class.lp-card__occupancy-badge--high]="getPropertyOccupancyRate(property._id) >= 80"
+                     [class.lp-card__occupancy-badge--mid]="getPropertyOccupancyRate(property._id) >= 50 && getPropertyOccupancyRate(property._id) < 80"
+                     [class.lp-card__occupancy-badge--low]="getPropertyOccupancyRate(property._id) < 50">
+                  {{ getPropertyOccupancyRate(property._id) }}%
+                </div>
+              </div>
+
+              <!-- Corps -->
+              <div class="lp-card__body">
+                <h3 class="lp-card__name">{{ property.name }}</h3>
+                <p class="lp-card__location">
+                  <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg>
+                  {{ property.location }}
+                </p>
+
+                <div class="lp-card__metrics">
+                  <div class="lp-card__metric">
+                    <span class="lp-card__metric-val">{{ property.roomLength || 0 }}</span>
+                    <span class="lp-card__metric-lbl">{{ 'PROPERTIES.CARD.ROOMS' | translate }}</span>
+                  </div>
+                  <div class="lp-card__metric">
+                    <span class="lp-card__metric-val">{{ getOccupiedRooms(property._id) }}</span>
+                    <span class="lp-card__metric-lbl">{{ 'PROPERTIES.CARD.OCCUPIED' | translate }}</span>
+                  </div>
+                  <div class="lp-card__metric">
+                    <span class="lp-card__metric-val lp-card__metric-val--gold">
+                      {{ getMonthlyRevenue(property._id) | currency:'XAF':'symbol':'1.0-0' }}
+                    </span>
+                    <span class="lp-card__metric-lbl">{{ 'PROPERTIES.CARD.MONTHLY_REVENUE' | translate }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Footer -->
+              <div class="lp-card__footer">
+                <button class="lp-card__btn-primary" (click)="onViewPropertyDetails(property); $event.stopPropagation()">
+                  {{ 'PROPERTIES.CARD.VIEW_DETAILS' | translate }}
+                </button>
+                <button class="lp-card__btn-icon" (click)="onEditProperty(property); $event.stopPropagation()" title="Modifier">
+                  <svg viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
+                  </svg>
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+        </ng-container>
+
+        <!-- ── Bandeau "Biens gérés" ───────────────────────────────────── -->
+        <ng-container *ngIf="data.managed.length > 0">
+
+          <div class="lp-section-banner lp-section-banner--manager" [class.lp-section-banner--mt]="data.owned.length > 0">
+            <div class="lp-section-banner__left">
+              <div class="lp-section-banner__icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
+                </svg>
+              </div>
+              <div>
+                <h2 class="lp-section-banner__title">{{ 'PROPERTY_MANAGERS.MANAGED_PROPERTIES.TITLE' | translate }}</h2>
+                <p class="lp-section-banner__sub">{{ 'PROPERTY_MANAGERS.MANAGED_PROPERTIES.SUBTITLE' | translate }}</p>
+              </div>
+            </div>
+            <span class="lp-section-banner__count lp-section-banner__count--manager">{{ data.managed.length }}</span>
+          </div>
+
+          <!-- Grille biens gérés -->
+          <div class="lp-grid">
+            <div *ngFor="let item of data.managed"
+                 class="lp-card lp-card--manager"
+                 (click)="onViewManagedPropertyDetails(item.propertyId)">
+
+              <!-- Ruban gérant -->
+              <div class="lp-card__ribbon lp-card__ribbon--manager">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
+                </svg>
+                {{ 'PROPERTY_MANAGERS.MANAGED_PROPERTIES.MANAGER_BADGE' | translate }}
+              </div>
+
+              <!-- Image placeholder avec initiale -->
+              <div class="lp-card__img lp-card__img--manager">
+                <div class="lp-card__manager-placeholder">
+                  {{ item.propertyName?.charAt(0)?.toUpperCase() || 'B' }}
+                </div>
+                <div class="lp-card__owner-chip">
+                  <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/></svg>
+                  {{ item.ownerName }}
+                </div>
+              </div>
+
+              <!-- Corps -->
+              <div class="lp-card__body">
+                <h3 class="lp-card__name">{{ item.propertyName || '—' }}</h3>
+                <p class="lp-card__owner-label">
+                  {{ 'PROPERTY_MANAGERS.MANAGED_PROPERTIES.OWNER_LABEL' | translate }}
+                  <strong>{{ item.ownerName }}</strong>
+                </p>
+
+                <!-- Droits accordés -->
+                <div class="lp-card__perms">
+                  <span class="lp-perm-chip" *ngFor="let perm of item.permissions.slice(0, 3)">{{ perm }}</span>
+                  <span class="lp-perm-chip lp-perm-chip--more" *ngIf="item.permissions.length > 3">
+                    +{{ item.permissions.length - 3 }}
+                  </span>
+                </div>
+
+                <!-- Accès rapides -->
+                <div class="lp-card__access">
+                  <span class="lp-access" [class.lp-access--ok]="true">
+                    <svg viewBox="0 0 16 16" fill="currentColor"><path d="M13.854 3.646a.5.5 0 010 .708l-7 7a.5.5 0 01-.708 0l-3.5-3.5a.5.5 0 11.708-.708L6.5 10.293l6.646-6.647a.5.5 0 01.708 0z"/></svg>
+                    {{ 'PROPERTY_DETAILS.TABS.UNITS' | translate }}
+                  </span>
+                  <span class="lp-access"
+                        [class.lp-access--ok]="canAccessManagedProperty(item.propertyId, 'tenants')"
+                        [class.lp-access--no]="!canAccessManagedProperty(item.propertyId, 'tenants')">
+                    <svg *ngIf="canAccessManagedProperty(item.propertyId, 'tenants')" viewBox="0 0 16 16" fill="currentColor"><path d="M13.854 3.646a.5.5 0 010 .708l-7 7a.5.5 0 01-.708 0l-3.5-3.5a.5.5 0 11.708-.708L6.5 10.293l6.646-6.647a.5.5 0 01.708 0z"/></svg>
+                    <svg *ngIf="!canAccessManagedProperty(item.propertyId, 'tenants')" viewBox="0 0 16 16" fill="currentColor"><path d="M4.646 4.646a.5.5 0 01.708 0L8 7.293l2.646-2.647a.5.5 0 01.708.708L8.707 8l2.647 2.646a.5.5 0 01-.708.708L8 8.707l-2.646 2.647a.5.5 0 01-.708-.708L7.293 8 4.646 5.354a.5.5 0 010-.708z"/></svg>
+                    {{ 'PROPERTY_DETAILS.TABS.TENANTS' | translate }}
+                  </span>
+                  <span class="lp-access"
+                        [class.lp-access--ok]="canAccessManagedProperty(item.propertyId, 'finances')"
+                        [class.lp-access--no]="!canAccessManagedProperty(item.propertyId, 'finances')">
+                    <svg *ngIf="canAccessManagedProperty(item.propertyId, 'finances')" viewBox="0 0 16 16" fill="currentColor"><path d="M13.854 3.646a.5.5 0 010 .708l-7 7a.5.5 0 01-.708 0l-3.5-3.5a.5.5 0 11.708-.708L6.5 10.293l6.646-6.647a.5.5 0 01.708 0z"/></svg>
+                    <svg *ngIf="!canAccessManagedProperty(item.propertyId, 'finances')" viewBox="0 0 16 16" fill="currentColor"><path d="M4.646 4.646a.5.5 0 01.708 0L8 7.293l2.646-2.647a.5.5 0 01.708.708L8.707 8l2.647 2.646a.5.5 0 01-.708.708L8 8.707l-2.646 2.647a.5.5 0 01-.708-.708L7.293 8 4.646 5.354a.5.5 0 010-.708z"/></svg>
+                    {{ 'PROPERTY_DETAILS.TABS.FINANCES' | translate }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Footer -->
+              <div class="lp-card__footer">
+                <button class="lp-card__btn-manager" (click)="onViewManagedPropertyDetails(item.propertyId); $event.stopPropagation()">
+                  {{ 'PROPERTIES.CARD.VIEW_DETAILS' | translate }}
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+        </ng-container>
+
       </ng-container>
     </div>
-    <ng-template #isLoadingTemp>
-      <div class="flex items-center justify-center py-16">
+
+    <ng-template #loadingTpl>
+      <div class="lp-loading">
         <youpez-loader></youpez-loader>
       </div>
     </ng-template>
-  </div>
 
-  <!-- Bouton d'aide flottant -->
-  <!-- <app-tour-help-button tourType="main" [showDebug]="true"></app-tour-help-button> -->
-  
-  <!-- Bouton de secours pour test -->
-  <!-- <button 
-    (click)="startTour()"
-    class="fixed bottom-4 left-4 bg-red-500 text-white p-3 rounded-full shadow-lg hover:bg-red-600 z-50"
-    title="Bouton de secours">
-    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-    </svg>
-  </button> -->
+  </div>
 </div>

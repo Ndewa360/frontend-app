@@ -1,0 +1,296 @@
+$gold: #cc8c0a;
+$gold-dark: #b07a08;
+$gold-light: #fff8e1;
+
+.epm-container {
+  width: 580px;
+  max-width: 100%;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: none;
+}
+
+// ─── Header ───────────────────────────────────────────────────────────────────
+.epm-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 24px;
+  background: $gold;
+  color: #fff;
+  position: relative;
+
+  &__icon {
+    width: 40px; height: 40px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    svg { width: 22px; height: 22px; color: #fff; }
+  }
+
+  &__text {
+    flex: 1;
+    h2 { margin: 0 0 2px; font-size: 17px; font-weight: 700; }
+    p  { margin: 0; font-size: 13px; opacity: 0.85; }
+  }
+
+  &__close {
+    position: absolute; top: 14px; right: 14px;
+    background: none; border: none;
+    color: #fff; font-size: 16px; cursor: pointer;
+    padding: 4px 8px; border-radius: 4px;
+    &:hover { background: rgba(255,255,255,0.2); }
+  }
+}
+
+// ─── Carte gérant ─────────────────────────────────────────────────────────────
+.epm-manager-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 24px;
+  background: #fafafa;
+  border-bottom: 1px solid #f0f0f0;
+
+  &__avatar {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, $gold, #fadc4d);
+    color: #fff;
+    font-size: 18px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  &__info {
+    flex: 1;
+    display: flex; flex-direction: column;
+    strong { font-size: 14px; color: #222; }
+    span   { font-size: 12px; color: #888; }
+  }
+
+  &__badge {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 11px; font-weight: 700;
+    color: $gold;
+    background: $gold-light;
+    border: 1px solid #ffe082;
+    padding: 4px 10px; border-radius: 12px;
+    svg { width: 13px; height: 13px; }
+  }
+}
+
+// ─── Corps ────────────────────────────────────────────────────────────────────
+.epm-body {
+  padding: 20px 24px;
+  max-height: 420px;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar { width: 5px; }
+  &::-webkit-scrollbar-track { background: #f5f5f5; }
+  &::-webkit-scrollbar-thumb { background: #ddd; border-radius: 3px; }
+}
+
+// Légende
+.epm-legend {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+
+  &__item {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11px; color: #666;
+  }
+
+  &__dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    &--current  { background: $gold; }
+    &--added    { background: #2e7d32; }
+    &--removed  { background: #c62828; }
+  }
+}
+
+// Label permissions
+.epm-permissions-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 12px;
+}
+
+// Grille des permissions
+.epm-permissions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 16px;
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.epm-perm {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+  background: #fff;
+
+  &:hover { background: #fafafa; border-color: #ccc; }
+
+  &--selected {
+    background: $gold-light;
+    border-color: $gold;
+  }
+
+  &--added {
+    background: #e8f5e9;
+    border-color: #66bb6a;
+  }
+
+  &--removed {
+    background: #ffebee;
+    border-color: #ef9a9a;
+    opacity: 0.75;
+  }
+
+  &--full {
+    grid-column: 1 / -1;
+    border-style: dashed;
+    border-color: $gold;
+    background: linear-gradient(135deg, $gold-light, #fff);
+  }
+
+  &__check {
+    position: relative;
+    flex-shrink: 0;
+    margin-top: 1px;
+
+    input[type="checkbox"] {
+      position: absolute; opacity: 0; width: 0; height: 0;
+    }
+  }
+
+  &__checkmark {
+    width: 18px; height: 18px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    background: #fff;
+    transition: all 0.15s;
+
+    .epm-perm--selected & {
+      background: $gold;
+      border-color: $gold;
+      svg { color: #fff; width: 12px; height: 12px; }
+    }
+
+    .epm-perm--added & {
+      background: #2e7d32;
+      border-color: #2e7d32;
+      svg { color: #fff; width: 12px; height: 12px; }
+    }
+  }
+
+  &__content { flex: 1; min-width: 0; }
+
+  &__header {
+    display: flex; align-items: center; gap: 6px;
+    margin-bottom: 2px;
+  }
+
+  &__label {
+    font-size: 13px; font-weight: 600; color: #222;
+    .epm-perm--removed & { text-decoration: line-through; color: #999; }
+  }
+
+  &__badge {
+    font-size: 11px; font-weight: 700;
+    padding: 1px 6px; border-radius: 8px;
+    background: #e8f5e9; color: #2e7d32;
+
+    &--removed {
+      background: #ffebee; color: #c62828;
+    }
+  }
+
+  &__desc {
+    font-size: 11px; color: #888; line-height: 1.4;
+    display: block;
+  }
+}
+
+// Résumé des changements
+.epm-changes {
+  background: #f9f9f9;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  overflow: hidden;
+
+  &__title {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 14px;
+    background: #f0f0f0;
+    font-size: 12px; font-weight: 600; color: #555;
+    svg { width: 14px; height: 14px; }
+  }
+
+  &__body { padding: 10px 14px; display: flex; flex-direction: column; gap: 6px; }
+
+  &__row {
+    display: flex; align-items: flex-start; gap: 8px;
+    font-size: 12px; color: #333;
+  }
+
+  &__icon {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700;
+    flex-shrink: 0;
+
+    .epm-changes__row--added &   { background: #e8f5e9; color: #2e7d32; }
+    .epm-changes__row--removed & { background: #ffebee; color: #c62828; }
+  }
+}
+
+// ─── Footer ───────────────────────────────────────────────────────────────────
+.epm-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 24px;
+  border-top: 1px solid #f0f0f0;
+  background: #fafafa;
+
+  &__cancel {
+    padding: 10px 20px;
+    background: none;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px; cursor: pointer; color: #555;
+    &:hover { background: #f5f5f5; }
+  }
+
+  &__save {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 24px;
+    background: $gold; color: #fff;
+    border: none; border-radius: 8px;
+    font-size: 14px; font-weight: 600; cursor: pointer;
+    transition: background 0.2s;
+
+    svg { width: 16px; height: 16px; }
+
+    &:hover:not(:disabled) { background: $gold-dark; }
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
+  }
+}

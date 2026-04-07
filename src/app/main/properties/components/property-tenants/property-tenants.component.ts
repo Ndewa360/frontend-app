@@ -19,6 +19,7 @@ import { ContractViewerModalComponent } from '../contract-viewer-modal/contract-
 // Services
 import { TenantAvatarService } from 'src/app/shared/services/tenant-avatar.service';
 import { ExportService, ExportColumn } from '../../services/export.service';
+import { PropertyAccessService } from 'src/app/shared/services/property-access.service';
 
 
 
@@ -52,7 +53,8 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
     private toastr: ToastrService,
     private tenantAvatarService: TenantAvatarService,
     private exportService: ExportService,
-    private assignLocationModalService: AssignLocationModalService
+    private assignLocationModalService: AssignLocationModalService,
+    public propertyAccessService: PropertyAccessService
   ) {}
 
   ngOnInit(): void {

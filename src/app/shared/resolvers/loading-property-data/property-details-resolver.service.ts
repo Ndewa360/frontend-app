@@ -9,7 +9,8 @@ import {
     LocataireAction, 
     LocationAction, 
     LocationPaymentAction,
-    HistoryLocationPaymentAction 
+    HistoryLocationPaymentAction,
+    PropertyState
 } from "../../store";
 
 @Injectable({
@@ -19,10 +20,6 @@ export class PropertyDetailsResolver implements Resolve<any> {
     
     constructor(private _store: Store) {}
 
-    /**
-     * Charge toutes les données nécessaires pour les détails d'une propriété
-     * Inclut : chambres, locataires, locations, paiements, historique
-     */
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any> {
         const propertyId = route.paramMap.get('id');
         
@@ -33,6 +30,9 @@ export class PropertyDetailsResolver implements Resolve<any> {
 
         console.log(`🔄 PropertyDetailsResolver - Chargement des données pour la propriété ${propertyId}`);
 
+        // Toujours forcer le chargement de la propriété (gère aussi les biens gérés)
+        this._store.dispatch(new PropertyAction.FetchPropertyForced(propertyId));
+
         // Dispatcher toutes les actions nécessaires
         this._store.dispatch([
             new RoomAction.FetchRoomsByPropertyID(propertyId),
@@ -42,7 +42,6 @@ export class PropertyDetailsResolver implements Resolve<any> {
             new HistoryLocationPaymentAction.FetchHistoryLocationPaymentsByPropertyId(propertyId)
         ]);
 
-        // Attendre que toutes les données soient chargées
         return combineLatest([
             this._store.select((state) => state.rooms.initLoadingState).pipe(
                 skipWhile((state) => state === "LOADING"),
@@ -66,22 +65,14 @@ export class PropertyDetailsResolver implements Resolve<any> {
             )
         ]).pipe(
             take(1),
-            map(() => {
-                console.log(`🎉 Toutes les données de la propriété ${propertyId} sont chargées`);
-                return {
-                    propertyId,
-                    dataLoaded: true,
-                    timestamp: new Date()
-                };
-            }),
+            map(() => ({
+                propertyId,
+                dataLoaded: true,
+                timestamp: new Date()
+            })),
             catchError((error) => {
                 console.error(`❌ Erreur lors du chargement des données de la propriété ${propertyId}:`, error);
-                return of({
-                    propertyId,
-                    dataLoaded: false,
-                    error: error.message,
-                    timestamp: new Date()
-                });
+                return of({ propertyId, dataLoaded: false, error: error.message, timestamp: new Date() });
             })
         );
     }

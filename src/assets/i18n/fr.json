@@ -2857,7 +2857,16 @@
     "EMPTY_ADD": "Ajouter un gérant",
     "ASSIGNED_ON": "Assigné le",
     "REVOKE": "Révoquer",
-    "REVOKE_CONFIRM": "Êtes-vous sûr de vouloir révoquer ce gérant ?",
+    "MANAGER_BANNER": "Vous gérez ce bien en tant que gérant. Vos droits d'accès :",
+    "REVOKE_MODAL": {
+      "TITLE": "Révoquer le gérant",
+      "SUBTITLE": "Cette action retirera tous les droits d'accès",
+      "PROPERTY_LABEL": "Bien concerné :",
+      "PERMISSIONS_LABEL": "Droits qui seront retirés :",
+      "WARNING": "Une fois révoqué, ce gérant ne pourra plus accéder à ce bien ni effectuer aucune action. Cette opération est immédiate.",
+      "CANCEL": "Annuler",
+      "CONFIRM": "Révoquer définitivement"
+    },
     "MODAL": {
       "TITLE": "Ajouter un gérant",
       "TAB_NEW": "Créer un compte gérant",
@@ -2884,6 +2893,17 @@
       "SUBTITLE": "Biens confiés par d'autres propriétaires",
       "MANAGER_BADGE": "Gérant",
       "OWNER_LABEL": "Propriétaire :"
+    },
+    "EDIT_PERMISSIONS": {
+      "TITLE": "Modifier les droits",
+      "SAVE": "Enregistrer les modifications",
+      "SAVING": "Enregistrement...",
+      "CHANGES_SUMMARY": "Résumé des modifications",
+      "ADDED": "Droits ajoutés",
+      "REMOVED": "Droits retirés",
+      "LEGEND_CURRENT": "Droit actuel",
+      "LEGEND_ADDED": "Ajouté",
+      "LEGEND_REMOVED": "Retiré"
     }
   },
   "PROPERTY_DETAILS": {
@@ -3344,7 +3364,10 @@
           "UNIT": "Unité",
           "RENT": "Loyer",
           "LEASE_END": "Date de fin de bail"
-        }
+        },
+        "ALL": "Tous",
+        "ACTIVE": "Actifs",
+        "INACTIVE": "Inactifs"
       },
       "EMPTY_STATE": {
         "NO_TENANTS": "Aucun locataire",

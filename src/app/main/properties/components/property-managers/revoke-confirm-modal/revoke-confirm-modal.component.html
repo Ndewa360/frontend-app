@@ -1,0 +1,69 @@
+<div class="revoke-modal">
+
+  <!-- Header -->
+  <div class="revoke-header">
+    <div class="warning-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+      </svg>
+    </div>
+    <div class="header-text">
+      <h2>{{ 'PROPERTY_MANAGERS.REVOKE_MODAL.TITLE' | translate }}</h2>
+      <p>{{ 'PROPERTY_MANAGERS.REVOKE_MODAL.SUBTITLE' | translate }}</p>
+    </div>
+    <button class="close-btn" (click)="cancel()">✕</button>
+  </div>
+
+  <!-- Corps -->
+  <div class="revoke-body">
+
+    <!-- Infos du gérant -->
+    <div class="manager-info-card">
+      <div class="manager-avatar">
+        {{ data.managerName?.charAt(0)?.toUpperCase() || '?' }}
+      </div>
+      <div class="manager-details">
+        <strong>{{ data.managerName }}</strong>
+        <span>{{ data.managerEmail }}</span>
+      </div>
+    </div>
+
+    <!-- Bien concerné -->
+    <div class="property-info">
+      <span class="label">{{ 'PROPERTY_MANAGERS.REVOKE_MODAL.PROPERTY_LABEL' | translate }}</span>
+      <span class="value">{{ data.propertyName }}</span>
+    </div>
+
+    <!-- Droits qui seront retirés -->
+    <div class="permissions-info" *ngIf="data.permissions?.length > 0">
+      <span class="label">{{ 'PROPERTY_MANAGERS.REVOKE_MODAL.PERMISSIONS_LABEL' | translate }}</span>
+      <div class="perms-list">
+        <span class="perm-chip" *ngFor="let perm of data.permissions">{{ perm }}</span>
+      </div>
+    </div>
+
+    <!-- Message d'avertissement -->
+    <div class="warning-message">
+      <svg viewBox="0 0 20 20" fill="currentColor" class="warn-icon">
+        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+      </svg>
+      <p>{{ 'PROPERTY_MANAGERS.REVOKE_MODAL.WARNING' | translate }}</p>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="revoke-footer">
+    <button class="btn-cancel" (click)="cancel()">
+      {{ 'PROPERTY_MANAGERS.REVOKE_MODAL.CANCEL' | translate }}
+    </button>
+    <button class="btn-revoke" (click)="confirm()">
+      <svg viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
+      </svg>
+      {{ 'PROPERTY_MANAGERS.REVOKE_MODAL.CONFIRM' | translate }}
+    </button>
+  </div>
+
+</div>

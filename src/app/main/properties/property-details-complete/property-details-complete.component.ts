@@ -30,6 +30,7 @@ import { ModernUnitModalComponent } from '../components/modern-unit-modal/modern
 import { AssignLocationModalService } from '../../assign-location/services/assign-location-modal.service';
 import { ModernContractTerminationModalComponent } from '../components/modern-contract-termination-modal/modern-contract-termination-modal.component';
 import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
+import { PropertyAccessService } from 'src/app/shared/services/property-access.service';
 
 interface Tab {
   id: string;
@@ -95,7 +96,8 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
     private propertyDataService: PropertyDataService,
     private dialog: MatDialog,
     private assignLocationModalService: AssignLocationModalService,
-    private languageUrlService: LanguageUrlService
+    private languageUrlService: LanguageUrlService,
+    public propertyAccessService: PropertyAccessService
   ) {
     // Initialiser les observables vides
     this.property$ = new Observable();
@@ -106,18 +108,14 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // Récupérer l'utilisateur actuel
-    this.currentUser = this.store.selectSnapshot(state => state.userProfile?.user);
+    // Correction : la clé du store est 'userprofile' (minuscule)
+    this.currentUser = this.store.selectSnapshot((state: any) => state.userprofile?.userProfile);
     this.isAgent = this.currentUser?.userType === 'AGENT';
     
-    // Récupérer l'ID de la propriété depuis la route
     this.propertyId = this.route.snapshot.paramMap.get('id');
 
     if (this.propertyId) {
-      // Les données sont déjà chargées par PropertyDetailsResolver
-      // On n'a plus besoin de les charger ici
       this.initializeSubscriptions();
-      this.updateTabsForUserRole();
     }
   }
 
@@ -211,52 +209,60 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
       { id: 'overview', label: 'PROPERTY_DETAILS.TABS.OVERVIEW', icon: 'home' },
       { id: 'units', label: 'PROPERTY_DETAILS.TABS.UNITS', icon: 'balcony' }
     ];
-    
-    const userRole = this.currentProperty?.userRole || 
-                    (this.currentProperty?.owner === this.currentUser?._id ? 'owner' : 'agent');
-    
-    if (userRole === 'owner') {
+
+    const isOwner = this.propertyAccessService.isOwner(this.propertyId);
+    const isManager = this.propertyAccessService.isManager(this.propertyId);
+
+    if (isOwner) {
+      // Propriétaire : accès complet + onglet Gérants
       this.tabs = [
         ...baseTabs,
-        { id: 'tenants', label: 'PROPERTY_DETAILS.TABS.TENANTS', icon: 'user' },
-        { id: 'history', label: 'PROPERTY_DETAILS.TABS.HISTORY', icon: 'time' },
+        { id: 'tenants',  label: 'PROPERTY_DETAILS.TABS.TENANTS',  icon: 'user' },
+        { id: 'history',  label: 'PROPERTY_DETAILS.TABS.HISTORY',  icon: 'time' },
         { id: 'finances', label: 'PROPERTY_DETAILS.TABS.FINANCES', icon: 'money' },
-        { id: 'managers', label: 'PROPERTY_MANAGERS.TAB_LABEL', icon: 'user-multiple' },
+        { id: 'managers', label: 'PROPERTY_MANAGERS.TAB_LABEL',    icon: 'user-multiple' },
       ];
+    } else if (isManager) {
+      // Gérant : onglets selon ses permissions
+      const tabs = [...baseTabs];
+      if (this.propertyAccessService.canManageTenants(this.propertyId)) {
+        tabs.push({ id: 'tenants', label: 'PROPERTY_DETAILS.TABS.TENANTS', icon: 'user' });
+      }
+      if (this.propertyAccessService.canViewFinances(this.propertyId)) {
+        tabs.push({ id: 'finances', label: 'PROPERTY_DETAILS.TABS.FINANCES', icon: 'money' });
+      }
+      this.tabs = tabs;
     } else {
-      this.tabs = [ ...baseTabs ];
+      // Fallback : accès de base uniquement
+      this.tabs = [...baseTabs];
     }
   }
   
   // Vérifier si l'utilisateur peut accéder à un onglet
   canAccessTab(tabId: string): boolean {
-    if (!this.currentProperty) return true;
-    
-    const userRole = this.currentProperty.userRole || 
-                    (this.currentProperty.owner === this.currentUser?._id ? 'owner' : 'agent');
-    
-    if (userRole === 'agent') {
-      // Les agents ne peuvent pas accéder aux finances et locataires
-      return !['finances', 'tenants'].includes(tabId);
+    if (!this.propertyId) return true;
+    if (this.propertyAccessService.isOwner(this.propertyId)) return true;
+    switch (tabId) {
+      case 'tenants':  return this.propertyAccessService.canManageTenants(this.propertyId);
+      case 'finances': return this.propertyAccessService.canViewFinances(this.propertyId);
+      case 'history':  return this.propertyAccessService.isOwner(this.propertyId);
+      case 'managers': return this.propertyAccessService.isOwner(this.propertyId);
+      default: return true;
     }
-    
-    return true;
   }
-  
+
   // Vérifier si l'utilisateur peut effectuer une action
   canPerformAction(action: string): boolean {
-    if (!this.currentProperty) return true;
-    
-    const userRole = this.currentProperty.userRole || 
-                    (this.currentProperty.owner === this.currentUser?._id ? 'owner' : 'agent');
-    
-    if (userRole === 'agent') {
-      // Les agents ne peuvent pas assigner de locataires ou gérer les finances
-      const restrictedActions = ['assign_tenant', 'terminate_lease', 'add_tenant', 'financial_report'];
-      return !restrictedActions.includes(action);
+    if (!this.propertyId) return true;
+    if (this.propertyAccessService.isOwner(this.propertyId)) return true;
+    switch (action) {
+      case 'assign_tenant':   return this.propertyAccessService.canManageTenants(this.propertyId);
+      case 'terminate_lease': return this.propertyAccessService.canManageContracts(this.propertyId);
+      case 'add_tenant':      return this.propertyAccessService.canManageTenants(this.propertyId);
+      case 'financial_report':return this.propertyAccessService.canViewFinances(this.propertyId);
+      case 'add_unit':        return this.propertyAccessService.canManageUnits(this.propertyId);
+      default: return true;
     }
-    
-    return true;
   }
 
   // Gestionnaires d'événements pour les composants enfants
@@ -598,11 +604,10 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
   reloadPropertyData(): void {
     if (this.propertyId) {
       const currentYear = new Date().getFullYear();
-      // Recharger les données via le store
-      this.store.dispatch(new PropertyAction.FetchProperty(this.propertyId));
+      // FetchPropertyForced pour forcer le rechargement (fonctionne aussi pour les biens gérés)
+      this.store.dispatch(new PropertyAction.FetchPropertyForced(this.propertyId));
       this.store.dispatch(new RoomAction.FetchRoomsByPropertyID(this.propertyId));
       this.store.dispatch(new LocationAction.FetchLocationsByPropertyId(this.propertyId));
-      // 🆕 Charger les données financières
       this.store.dispatch(new StatisticAction.FetchStaticRoomDataByPropertyIdAndYear(this.propertyId, currentYear.toString()));
     }
   }
@@ -643,6 +648,7 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
   }
 
   getTabLabel(tabId: string): string {
+    if (tabId === 'managers') return 'PROPERTY_MANAGERS.TAB_LABEL';
     return `PROPERTY_DETAILS.TABS.${tabId.toUpperCase()}`;
   }
 }

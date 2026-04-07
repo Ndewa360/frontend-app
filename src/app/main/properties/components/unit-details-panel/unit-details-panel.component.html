@@ -52,8 +52,8 @@
 
         <!-- Boutons d'action -->
         <div class="flex items-center space-x-2">
-          <!-- Bouton d'édition -->
-          <button (click)="onEditUnit()"
+          <!-- Bouton d'édition - MANAGE_UNITS -->
+          <button *ngIf="propertyAccessService.canManageUnits(propertyId)" (click)="onEditUnit()"
                   class="p-2 rounded-lg hover:bg-carbon-layer-03 transition-colors duration-200 focus-carbon"
                   [title]="'UNIT_DETAILS_PANEL.MODIFY_BUTTON' | translate">
             <svg class="w-6 h-6 text-custom-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -140,8 +140,8 @@
               </span>
             </div>
 
-            <!-- Bouton modifier en overlay -->
-            <div class="absolute top-4 left-4">
+          <!-- Bouton modifier en overlay - MANAGE_UNITS -->
+            <div *ngIf="propertyAccessService.canManageUnits(propertyId)" class="absolute top-4 left-4">
               <button (click)="onEditRoom()"
                       class="flex items-center space-x-2 px-3 py-2 bg-white bg-opacity-90 hover:bg-opacity-100 text-gray-800 rounded-lg font-medium transition-all duration-200 hover:shadow-lg backdrop-blur-sm">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -344,8 +344,8 @@
       </div>
     </div>
 
-    <!-- Onglet 2: Informations locataire - Masqué pour les agents -->
-    <div *ngIf="isTabActive('tenant') && !isAgent" class="p-8">
+    <!-- Onglet 2: Informations locataire - Masqué selon les droits -->
+    <div *ngIf="isTabActive('tenant') && propertyAccessService.canManageTenants(propertyId)" class="p-8">
       <div class="space-y-6">
 
         <!-- Cas 1: Unité occupée - Afficher les informations du locataire -->
@@ -439,8 +439,8 @@
               </div>
             </div>
 
-            <!-- Actions pour locataire occupé - Masquées pour les agents -->
-            <div *ngIf="!isAgent" class="mt-6 pt-6 border-t border-carbon-subtle">
+            <!-- Actions pour locataire occupé - selon les droits -->
+            <div *ngIf="propertyAccessService.canManageTenants(propertyId) || propertyAccessService.canManageContracts(propertyId)" class="mt-6 pt-6 border-t border-carbon-subtle">
               <div class="flex flex-wrap gap-3">
                 <button (click)="onViewContract()"
                         class="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium transition-all duration-200 hover:bg-blue-700 hover:shadow-lg">
@@ -450,7 +450,7 @@
                   <span>{{ 'UNIT_DETAILS_PANEL.VIEW_CONTRACT' | translate }}</span>
                 </button>
 
-                <button (click)="onEditTenant()"
+                <button *ngIf="propertyAccessService.canManageTenants(propertyId)" (click)="onEditTenant()"
                         class="flex items-center space-x-2 px-4 py-2 custom-primary-button text-white rounded-lg font-medium transition-all duration-200 hover:shadow-lg">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
@@ -458,7 +458,7 @@
                   <span>{{ 'UNIT_DETAILS_PANEL.EDIT_INFO' | translate }}</span>
                 </button>
 
-                <button (click)="onCancelContract()"
+                <button *ngIf="propertyAccessService.canManageContracts(propertyId)" (click)="onCancelContract()"
                         class="flex items-center space-x-2 px-4 py-2 bg-red-600 text-white rounded-lg font-medium transition-all duration-200 hover:bg-red-700 hover:shadow-lg">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -522,8 +522,8 @@
 
               <!-- Actions pour unité libre -->
               <div class="space-y-3">
-                <!-- Action d'assignation - Masquée pour les agents -->
-                <button *ngIf="!isAgent" (click)="onAssignTenant()"
+                <!-- Action d'assignation - MANAGE_TENANTS -->
+                <button *ngIf="propertyAccessService.canManageTenants(propertyId)" (click)="onAssignTenant()"
                         class="w-full flex items-center justify-center space-x-2 px-6 py-3 custom-primary-button text-white rounded-lg font-medium transition-all duration-200 hover:shadow-lg transform hover:scale-105">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
@@ -548,8 +548,8 @@
       </div>
     </div>
 
-    <!-- Onglet 3: Historique des paiements - Masqué pour les agents -->
-    <div *ngIf="isTabActive('payments') && !isAgent" class="p-8">
+    <!-- Onglet 3: Historique des paiements - Masqué selon les droits -->
+    <div *ngIf="isTabActive('payments') && (propertyAccessService.canManagePayments(propertyId) || propertyAccessService.canViewFinances(propertyId))" class="p-8">
       <div class="space-y-6">
 
         <!-- Header avec métriques financières -->
@@ -569,8 +569,8 @@
 
             <!-- Actions de paiement -->
             <div class="flex flex-wrap gap-3">
-              <!-- Bouton ajouter paiement (seulement si unité occupée) - Masqué pour les agents -->
-              <button *ngIf="!room?.isFree && unitData?.tenant && !isAgent"
+              <!-- Bouton ajouter paiement (seulement si unité occupée) - MANAGE_PAYMENTS -->
+              <button *ngIf="!room?.isFree && unitData?.tenant && propertyAccessService.canManagePayments(propertyId)"
                       (click)="onAddPayment()"
                       class="flex items-center space-x-2 px-4 py-2 custom-primary-button text-white rounded-lg font-medium transition-all duration-200 hover:shadow-lg">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -579,8 +579,8 @@
                 <span>{{ 'PROPERTY_DETAILS.UNIT_DETAILS.ADD_PAYMENT' | translate }}</span>
               </button>
 
-              <!-- Bouton générer lien (toujours visible si unité occupée ou avec contrat) - Masqué pour les agents -->
-              <button *ngIf="!room?.isFree && (unitData?.tenant || unitData?.location) && !isAgent"
+              <!-- Bouton générer lien (toujours visible si unité occupée ou avec contrat) - MANAGE_PAYMENTS -->
+              <button *ngIf="!room?.isFree && (unitData?.tenant || unitData?.location) && propertyAccessService.canManagePayments(propertyId)"
                       (click)="onGeneratePaymentLink()"
                       class="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-all duration-200 hover:shadow-lg">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -761,8 +761,8 @@
               <p class="text-carbon-secondary mb-6">{{ 'UNIT_DETAILS_PANEL.NO_PAYMENT_HISTORY' | translate }}</p>
 
               <div class="flex flex-wrap gap-3 justify-center">
-                <!-- Bouton ajouter paiement (seulement si locataire présent) - Masqué pour les agents -->
-                <button *ngIf="!room?.isFree && unitData?.tenant && !isAgent"
+                <!-- Bouton ajouter paiement (seulement si locataire présent) - MANAGE_PAYMENTS -->
+                <button *ngIf="!room?.isFree && unitData?.tenant && propertyAccessService.canManagePayments(propertyId)"
                         (click)="onAddPayment()"
                         class="inline-flex items-center space-x-2 px-6 py-3 custom-primary-button text-white rounded-lg font-medium transition-all duration-200 hover:shadow-lg">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -771,8 +771,8 @@
                   <span>{{ 'UNIT_DETAILS_PANEL.RECORD_FIRST_PAYMENT' | translate }}</span>
                 </button>
 
-                <!-- Bouton générer lien (visible si unité occupée ou avec contrat) - Masqué pour les agents -->
-                <button *ngIf="!room?.isFree && (unitData?.tenant || unitData?.location) && !isAgent"
+                <!-- Bouton générer lien (visible si unité occupée ou avec contrat) - MANAGE_PAYMENTS -->
+                <button *ngIf="!room?.isFree && (unitData?.tenant || unitData?.location) && propertyAccessService.canManagePayments(propertyId)"
                         (click)="onGeneratePaymentLink()"
                         class="inline-flex items-center space-x-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-all duration-200 hover:shadow-lg">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

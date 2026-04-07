@@ -52,7 +52,9 @@
                 {{ getTotalMediaCount() }}
               </div>
             </button>
-            <button ibmButton="primary"
+            <!-- Bouton Modifier : visible uniquement pour le propriétaire -->
+            <button *ngIf="propertyId && propertyAccessService.isOwner(propertyId)"
+                    ibmButton="primary"
                     size="md"
                     class="custom-primary-button inline-flex items-center focus-carbon"
                     (click)="onEditProperty()">
@@ -64,6 +66,21 @@
       </div>
 
 
+    </div>
+  </div>
+
+  <!-- Bandeau gérant si l'utilisateur est gérant de ce bien -->
+  <div class="manager-banner" *ngIf="propertyId && propertyAccessService.isManager(propertyId) && !propertyAccessService.isOwner(propertyId)">
+    <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="banner-content">
+        <span class="banner-icon">🔑</span>
+        <span class="banner-text">{{ 'PROPERTY_MANAGERS.MANAGER_BANNER' | translate }}</span>
+        <div class="banner-perms">
+          <span class="perm-tag" *ngFor="let perm of propertyAccessService.getPermissionsForProperty(propertyId)">
+            {{ perm }}
+          </span>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -100,6 +117,7 @@
       <div *ngIf="activeTab === 'overview'" class="tab-panel">
         <app-property-overview
           [property]="property$ | async"
+          [propertyId]="propertyId"
           [units]="units$ | async"
           [tenants]="tenants$ | async"
           [history]="history$ | async"
