@@ -266,7 +266,7 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
     }).format(price);
   }
 
-  formatDate(date: Date | string | undefined): string {
+  formatDate(date: Date | string | undefined | null): string {
     if (!date) return 'N/A';
     return new Date(date).toLocaleDateString('fr-FR', {
       year: 'numeric',
@@ -855,18 +855,50 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
     return null;
   }
 
-  getLastPaymentDate(): string | Date | null {
+  getLastPaymentDate(): Date | null {
+    // Priorité 1 : date calculée par le service (depuis le store)
+    if (this.unitData?.lastPaymentDate) return new Date(this.unitData.lastPaymentDate);
+    // Priorité 2 : calcul local depuis les paiements
     const payments = this.getPayments();
     if (payments.length === 0) return null;
+    const sorted = [...payments].sort((a, b) =>
+      new Date(b.datePayment || b.createdAt).getTime() - new Date(a.datePayment || a.createdAt).getTime()
+    );
+    const d = sorted[0]?.datePayment || sorted[0]?.createdAt;
+    return d ? new Date(d) : null;
+  }
 
-    // Trier les paiements par date décroissante et prendre le premier
-    const sortedPayments = [...payments].sort((a, b) => {
-      const dateA = new Date(a.datePayment || a.createdAt);
-      const dateB = new Date(b.datePayment || b.createdAt);
-      return dateB.getTime() - dateA.getTime();
-    });
+  getNextPaymentDate(): Date | null {
+    // Priorité 1 : date calculée par le service
+    if (this.unitData?.nextPaymentDate) return new Date(this.unitData.nextPaymentDate);
+    // Priorité 2 : calcul local depuis la location
+    const location = this.unitData?.location;
+    if (!location?.startedAt) return null;
+    if (location.endedAt && new Date(location.endedAt) < new Date()) return null;
+    // Si pas de paiements chargés, retourner le 1er du mois prochain
+    const payments = this.getPayments();
+    if (payments.length === 0) {
+      const now = new Date();
+      return new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    }
+    return this.unitDetailsService.computeNextPaymentDate(
+      location,
+      payments,
+      this.room?.price || 0
+    );
+  }
 
-    return sortedPayments[0]?.datePayment || sortedPayments[0]?.createdAt || null;
+  isPaymentOverdue(): boolean {
+    const next = this.getNextPaymentDate();
+    return next ? next < new Date() : false;
+  }
+
+  // ✅ Vrai si l'unité est occupée
+  // Se base sur unitData.location (plus fiable) ou room.isFree
+  isOccupied(): boolean {
+    if (this.unitData?.location) return true;
+    if (this.unitData?.tenant) return true;
+    return this.room?.isFree === false;
   }
 
   viewPaymentDetails(payment: any): void {

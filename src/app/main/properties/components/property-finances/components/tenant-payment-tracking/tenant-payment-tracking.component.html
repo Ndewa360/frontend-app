@@ -123,6 +123,7 @@
             <th>{{ 'TENANT_PAYMENT_TRACKING.TABLE.RATE' | translate }}</th>
             <th>{{ 'TENANT_PAYMENT_TRACKING.TABLE.STATUS' | translate }}</th>
             <th>{{ 'TENANT_PAYMENT_TRACKING.TABLE.LAST_PAYMENT' | translate }}</th>
+            <th>{{ 'TENANT_PAYMENT_TRACKING.TABLE.NEXT_PAYMENT' | translate }}</th>
           </tr>
         </thead>
         <tbody>
@@ -192,10 +193,26 @@
 
             <!-- Dernier paiement -->
             <td>
-              <div class="text-gray-900" *ngIf="tenant.lastPaymentMonth >= 0">
-                {{getStringMonth(tenant.lastPaymentMonth )}}
+              <div *ngIf="tenant.lastPaymentDate" class="text-sm text-green-700 font-medium">
+                {{ tenant.lastPaymentDate | date:'dd/MM/yyyy' }}
               </div>
-              <div class="text-gray-400" *ngIf="tenant.lastPaymentMonth < 0">{{ 'TENANT_PAYMENT_TRACKING.TABLE.NONE' | translate }}</div>
+              <div *ngIf="!tenant.lastPaymentDate && tenant.lastPaymentMonth >= 0" class="text-sm text-gray-700">
+                {{ getStringMonth(tenant.lastPaymentMonth) }}
+              </div>
+              <div *ngIf="!tenant.lastPaymentDate && tenant.lastPaymentMonth < 0" class="text-gray-400 text-sm">
+                {{ 'TENANT_PAYMENT_TRACKING.TABLE.NONE' | translate }}
+              </div>
+            </td>
+
+            <!-- ✅ Prochain paiement -->
+            <td>
+              <div *ngIf="tenant.nextPaymentDate" class="text-sm font-semibold"
+                   [class.text-red-600]="tenant.nextPaymentDate < today"
+                   [class.text-blue-600]="tenant.nextPaymentDate >= today">
+                <span *ngIf="tenant.nextPaymentDate < today">⚠️ </span>
+                {{ tenant.nextPaymentDate | date:'dd/MM/yyyy' }}
+              </div>
+              <div *ngIf="!tenant.nextPaymentDate" class="text-gray-400 text-sm">-</div>
             </td>
           </tr>
         </tbody>

@@ -19,6 +19,9 @@ export interface StatisticRoomYearModel {
   contractEndDate?: Date;
   initialFinancialState?: string;
   initialSolde?: number;
+  // ✅ Dates de paiement
+  lastPaymentDate?: Date | null;
+  nextPaymentDate?: Date | null;
 }
 
 // ─── Métriques globales de propriété ─────────────────────────────────────────
@@ -100,6 +103,9 @@ export interface TenantFinancialAnalysis {
   paymentConsistency: number;
   monthlyPayments: number[];
   collectionRate: number;
+  // ✅ Dates de paiement
+  lastPaymentDate?: Date | null;
+  nextPaymentDate?: Date | null;
 }
 
 export interface TenantAnalysisItem {
@@ -328,4 +334,7 @@ export interface StatisticAllPaymentLocataireYearModel {
   paymentStatus?: string;
   advanceAmount?: number;
   debtAmount?: number;
+  // ✅ Dates de paiement
+  lastPaymentDate?: Date | null;
+  nextPaymentDate?: Date | null;
 }

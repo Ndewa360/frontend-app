@@ -175,6 +175,55 @@
               </h4>
               <p class="text-sm text-carbon-secondary leading-relaxed">{{ room?.description }}</p>
             </div>
+
+            <!-- ✅ DATES DE PAIEMENT (unité occupée uniquement) -->
+            <div *ngIf="isOccupied()" class="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+
+              <!-- Dernier paiement -->
+              <div class="flex items-center space-x-3 p-4 bg-green-50 rounded-lg border border-green-200">
+                <div class="p-2 bg-green-100 rounded-lg flex-shrink-0">
+                  <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                </div>
+                <div>
+                  <p class="text-xs font-medium text-green-700">{{ 'UNIT_DETAILS_PANEL.LAST_PAYMENT_DATE' | translate }}</p>
+                  <p class="text-sm font-bold text-green-900">
+                    {{ getLastPaymentDate() ? formatDate(getLastPaymentDate()) : ('UNIT_DETAILS_PANEL.NO_PAYMENT_YET' | translate) }}
+                  </p>
+                </div>
+              </div>
+
+              <!-- Prochain paiement -->
+              <div class="flex items-center space-x-3 p-4 rounded-lg border"
+                   [class.bg-red-50]="isPaymentOverdue()"
+                   [class.border-red-200]="isPaymentOverdue()"
+                   [class.bg-blue-50]="!isPaymentOverdue()"
+                   [class.border-blue-200]="!isPaymentOverdue()">
+                <div class="p-2 rounded-lg flex-shrink-0"
+                     [class.bg-red-100]="isPaymentOverdue()"
+                     [class.bg-blue-100]="!isPaymentOverdue()">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                       [class.text-red-600]="isPaymentOverdue()"
+                       [class.text-blue-600]="!isPaymentOverdue()">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                </div>
+                <div>
+                  <p class="text-xs font-medium"
+                     [class.text-red-700]="isPaymentOverdue()"
+                     [class.text-blue-700]="!isPaymentOverdue()">
+                    {{ isPaymentOverdue() ? ('UNIT_DETAILS_PANEL.PAYMENT_OVERDUE' | translate) : ('UNIT_DETAILS_PANEL.NEXT_PAYMENT_DATE' | translate) }}
+                  </p>
+                  <p class="text-sm font-bold"
+                     [class.text-red-900]="isPaymentOverdue()"
+                     [class.text-blue-900]="!isPaymentOverdue()">
+                    {{ getNextPaymentDate() ? formatDate(getNextPaymentDate()) : ('UNIT_DETAILS_PANEL.CONTRACT_ENDED' | translate) }}
+                  </p>
+                </div>
+              </div>
+
+            </div>
           </div>
         </div>
 
@@ -399,6 +448,26 @@
                   <div class="flex items-center justify-between py-2 border-b border-carbon-subtle">
                     <span class="text-sm text-carbon-secondary">{{ 'UNIT_DETAILS_PANEL.ENTRY_DATE' | translate }}</span>
                     <span class="text-sm font-medium text-carbon-primary">{{ formatDate(unitData?.location?.startedAt) }}</span>
+                  </div>
+                  <!-- ✅ Dernier paiement -->
+                  <div class="flex items-center justify-between py-2 border-b border-carbon-subtle">
+                    <span class="text-sm text-carbon-secondary">{{ 'UNIT_DETAILS_PANEL.LAST_PAYMENT_DATE' | translate }}</span>
+                    <span class="text-sm font-medium"
+                          [class.text-green-600]="getLastPaymentDate()"
+                          [class.text-carbon-tertiary]="!getLastPaymentDate()">
+                      {{ getLastPaymentDate() ? formatDate(getLastPaymentDate()) : ('UNIT_DETAILS_PANEL.NO_PAYMENT_YET' | translate) }}
+                    </span>
+                  </div>
+                  <!-- ✅ Prochain paiement -->
+                  <div class="flex items-center justify-between py-2">
+                    <span class="text-sm text-carbon-secondary">{{ 'UNIT_DETAILS_PANEL.NEXT_PAYMENT_DATE' | translate }}</span>
+                    <span class="text-sm font-semibold"
+                          [class.text-red-600]="isPaymentOverdue()"
+                          [class.text-blue-600]="!isPaymentOverdue() && getNextPaymentDate()"
+                          [class.text-carbon-tertiary]="!getNextPaymentDate()">
+                      <span *ngIf="isPaymentOverdue()">⚠️ </span>
+                      {{ getNextPaymentDate() ? formatDate(getNextPaymentDate()) : ('UNIT_DETAILS_PANEL.CONTRACT_ENDED' | translate) }}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -645,6 +714,40 @@
                 <div>
                   <div class="text-lg font-bold text-orange-800">{{ formatDate(getLastPaymentDate()) }}</div>
                   <div class="text-xs text-orange-600">{{ 'PROPERTY_DETAILS.UNIT_DETAILS.LAST_PAYMENT' | translate }}</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ✅ Prochain paiement -->
+            <div class="p-4 rounded-lg border"
+                 [class.bg-gradient-to-br]="true"
+                 [class.from-red-50]="isPaymentOverdue()"
+                 [class.to-red-100]="isPaymentOverdue()"
+                 [class.border-red-200]="isPaymentOverdue()"
+                 [class.from-blue-50]="!isPaymentOverdue()"
+                 [class.to-blue-100]="!isPaymentOverdue()"
+                 [class.border-blue-200]="!isPaymentOverdue()">
+              <div class="flex items-center space-x-3">
+                <div class="p-2 rounded-lg"
+                     [class.bg-red-100]="isPaymentOverdue()"
+                     [class.bg-blue-100]="!isPaymentOverdue()">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                       [class.text-red-600]="isPaymentOverdue()"
+                       [class.text-blue-600]="!isPaymentOverdue()">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                  </svg>
+                </div>
+                <div>
+                  <div class="text-lg font-bold"
+                       [class.text-red-800]="isPaymentOverdue()"
+                       [class.text-blue-800]="!isPaymentOverdue()">
+                    {{ getNextPaymentDate() ? formatDate(getNextPaymentDate()) : 'N/A' }}
+                  </div>
+                  <div class="text-xs"
+                       [class.text-red-600]="isPaymentOverdue()"
+                       [class.text-blue-600]="!isPaymentOverdue()">
+                    {{ isPaymentOverdue() ? ('UNIT_DETAILS_PANEL.PAYMENT_OVERDUE' | translate) : ('UNIT_DETAILS_PANEL.NEXT_PAYMENT_DATE' | translate) }}
+                  </div>
                 </div>
               </div>
             </div>

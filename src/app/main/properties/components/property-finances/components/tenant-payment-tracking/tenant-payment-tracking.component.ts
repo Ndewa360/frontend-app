@@ -41,6 +41,9 @@ export interface TenantTrackingData {
   paymentConsistency: number;
   paymentRate: number;
   lastPaymentMonth: number;
+  // ✅ Dates de paiement
+  lastPaymentDate?: Date | null;
+  nextPaymentDate?: Date | null;
   // Propriétés pour compatibilité template
   totalExpected: number;
   totalReceived: number;
@@ -134,6 +137,11 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
         paymentConsistency: tenant.financialAnalysis.paymentConsistency,
         paymentRate,
         lastPaymentMonth: tenant.financialAnalysis.lastPaymentMonth,
+        // ✅ Dates de paiement depuis le backend
+        lastPaymentDate: tenant.financialAnalysis.lastPaymentDate
+          ? new Date(tenant.financialAnalysis.lastPaymentDate) : null,
+        nextPaymentDate: tenant.financialAnalysis.nextPaymentDate
+          ? new Date(tenant.financialAnalysis.nextPaymentDate) : null,
         // Propriétés pour compatibilité
         totalExpected: tenant.financialAnalysis.expectedPaymentToDate,
         totalReceived: tenant.financialAnalysis.totalPaid,
@@ -366,6 +374,7 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
   }
 
   Math = Math; // Exposer Math pour le template
+  today = new Date(); // ✅ Pour comparer les dates dans le template
   
   // Méthodes d'analyse avancée
   getAveragePaymentRate(): number {

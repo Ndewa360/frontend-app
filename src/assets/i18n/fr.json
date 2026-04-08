@@ -3827,7 +3827,13 @@
     "NONE": "Aucune",
     "BASIC": "Basique",
     "GOOD": "Bonne",
-    "EXCELLENT": "Excellente"
+    "EXCELLENT": "Excellente",
+    "VIEW_DETAILS": "Voir les détails",
+    "LAST_PAYMENT_DATE": "Dernier paiement",
+    "NEXT_PAYMENT_DATE": "Prochain paiement",
+    "NO_PAYMENT_YET": "Aucun paiement effectué",
+    "PAYMENT_OVERDUE": "Paiement en retard !",
+    "CONTRACT_ENDED": "Contrat terminé"
   },
   "TENANT_MANAGEMENT": {
     "ADD_TENANT": "Ajouter un locataire",
