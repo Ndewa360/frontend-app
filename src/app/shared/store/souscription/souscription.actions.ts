@@ -63,4 +63,10 @@ export namespace SouscriptionAction
         constructor(public subscription: SouscriptionModel) {}
     }
 
+    // Démarrer le trial 60 jours
+    export class StartTrial
+    {
+        static readonly type = '[Souscription] Start Trial'
+    }
+
 }

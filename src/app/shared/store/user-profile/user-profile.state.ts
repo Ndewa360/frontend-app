@@ -143,13 +143,13 @@ export class UserProfileState {
     }
 
     @Action(UserProfileAction.SignupSimpleUserProfile)
-    signupSimpleUserProfileState(ctx: StateContext<UserProfileStateModel>, { email, password, username, phoneNumber, userType, businessName }: UserProfileAction.SignupSimpleUserProfile) {
+    signupSimpleUserProfileState(ctx: StateContext<UserProfileStateModel>, { email, password, username, phoneNumber, userType, businessName, plan }: UserProfileAction.SignupSimpleUserProfile) {
         ctx.patchState({
             loadingUserProfile: true,
             lastError: null
         });
 
-        return this._authService.register(email, password, username, phoneNumber, userType, businessName).pipe(
+        return this._authService.register(email, password, username, phoneNumber, userType, businessName, plan).pipe(
             tap((result) => {
                 ctx.patchState({
                     loadingUserProfile: false,

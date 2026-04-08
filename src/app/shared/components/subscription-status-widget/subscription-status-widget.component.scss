@@ -65,6 +65,69 @@ $info-color: #17a2b8;
   }
 
   .widget-content {
+    .trial-banner {
+      background: linear-gradient(135deg, rgba(204, 140, 10, 0.12), rgba(204, 140, 10, 0.06));
+      border: 1px solid rgba(204, 140, 10, 0.3);
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-bottom: 12px;
+
+      .trial-banner-content {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+
+        .trial-icon {
+          color: $primary-color;
+          font-size: 1.1rem;
+          flex-shrink: 0;
+        }
+
+        .trial-info {
+          display: flex;
+          flex-direction: column;
+          flex: 1;
+
+          .trial-title {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: $primary-dark;
+          }
+
+          .trial-days {
+            font-size: 0.8rem;
+            color: #666;
+
+            &.trial-urgent {
+              color: $danger-color;
+              font-weight: 600;
+            }
+          }
+        }
+
+        .trial-progress-bar {
+          width: 100%;
+          height: 4px;
+          background: rgba(204, 140, 10, 0.2);
+          border-radius: 2px;
+          overflow: hidden;
+          margin-top: 6px;
+
+          .trial-progress-fill {
+            height: 100%;
+            background: $primary-color;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+
+            &.trial-progress-urgent {
+              background: $danger-color;
+            }
+          }
+        }
+      }
+    }
+
     .widget-header {
       margin-bottom: 16px;
 

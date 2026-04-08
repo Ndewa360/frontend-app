@@ -1216,6 +1216,7 @@
     "PAYMENT_PROCESS_ERROR": "An error occurred while processing the payment.",
     "LOCATION_UPDATED_SUCCESS": "The rental has been updated successfully.",
     "LOCATION_CREATED_SUCCESS": "The tenant has been assigned to the unit successfully.",
+    "TRIAL_STARTED_SUCCESS": "Your 60-day free Premium trial has started! Enjoy all the features.",
     "SOUSCRIPTION_CREATED_SUCCESS": "Your subscription has been activated successfully.",
     "SOUSCRIPTION_REMOVED_SUCCESS": "Your subscription has been removed successfully.",
     "WALLET_WITHDRAWAL_SUCCESS": "Your withdrawal request has been sent successfully.",
@@ -2030,11 +2031,11 @@
           "PRIORITY_SUPPORT": "24/7 priority support",
           "PERSONAL_TRAINING": "Personalized training"
         },
-        "BUTTON": "Try 30 days free"
+        "BUTTON": "Try 60 days free"
       },
       "GUARANTEE": {
-        "TITLE": "Satisfaction or money back guarantee",
-        "DESCRIPTION": "30 days to test risk-free. Not convinced? Full refund."
+        "TITLE": "No commitment — automatic return to free plan",
+        "DESCRIPTION": "60 days to test all Premium features with no credit card. At the end of the trial, automatic return to the Freemium plan."
       }
     },
     "FAQ": {
@@ -2080,7 +2081,7 @@
         "SUPPORT_INCLUDED": "Support included"
       },
       "TRUST_SIGNALS": {
-        "GUARANTEE": "30-day guarantee",
+        "GUARANTEE": "60-day trial",
         "RATING": "4.9/5 stars",
         "USERS": "20+ satisfied users"
       }

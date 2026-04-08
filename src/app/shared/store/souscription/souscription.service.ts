@@ -52,4 +52,20 @@ export class SouscriptionService
     {
         return this._httpClient.get<ApiResultFormat<SouscriptionModel[]>>(`${environment.apiUrl}/souscription/history`)
     }
+
+    /**
+     * Start 60-day trial plan
+     */
+    startTrial(): Observable<ApiResultFormat<SouscriptionModel>>
+    {
+        return this._httpClient.post<ApiResultFormat<SouscriptionModel>>(`${environment.apiUrl}/souscription/trial`, {})
+    }
+
+    /**
+     * Get trial status
+     */
+    getTrialStatus(): Observable<ApiResultFormat<{isTrial: boolean; daysRemaining: number; trialEndDate: Date; isTrialExpired: boolean}>>
+    {
+        return this._httpClient.get<any>(`${environment.apiUrl}/souscription/trial/status`)
+    }
 }

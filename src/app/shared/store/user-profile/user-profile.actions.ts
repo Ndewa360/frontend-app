@@ -33,7 +33,7 @@ export namespace UserProfileAction
     export class SignupSimpleUserProfile
     {
         static readonly type = '[UserProfile] Signup simple UserProfile'
-        constructor(public email:string,public password:string,public username:string,public phoneNumber:string,public userType?:string,public businessName?:string){}
+        constructor(public email:string,public password:string,public username:string,public phoneNumber:string,public userType?:string,public businessName?:string,public plan?:string){}
     }
 
 

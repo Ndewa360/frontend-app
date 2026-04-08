@@ -120,6 +120,8 @@ export class SubscriptionStatusWidgetComponent implements OnInit, OnDestroy {
       return 'red';
     } else if (this.subscriptionStatus.plan === 'premium') {
       return 'gold';
+    } else if (this.subscriptionStatus.plan === 'trial') {
+      return 'gold';
     } else {
       return 'blue';
     }
@@ -132,13 +134,16 @@ export class SubscriptionStatusWidgetComponent implements OnInit, OnDestroy {
       return 'Compte suspendu';
     } else if (this.subscriptionStatus.plan === 'premium') {
       return 'Forfait Premium';
+    } else if (this.subscriptionStatus.plan === 'trial') {
+      const days = this.subscriptionStatus.trialInfo?.daysRemaining || 0;
+      return `Essai Premium (${days}j)`;
     } else {
       return 'Forfait Gratuit';
     }
   }
 
   get showUpgradeButton(): boolean {
-    return this.subscriptionStatus?.plan === 'free' &&
+    return (this.subscriptionStatus?.plan === 'free' || this.subscriptionStatus?.plan === 'trial') &&
            this.subscriptionStatus?.accountStatus === 'active' &&
            !this.paymentStatus?.hasUnpaidInvoices;
   }
@@ -167,5 +172,11 @@ export class SubscriptionStatusWidgetComponent implements OnInit, OnDestroy {
 
   calculateMonthlyAmount(): void {
     this.store.dispatch(new SubscriptionLimitAction.CalculateMonthlyAmount());
+  }
+
+  getTrialProgressPercentage(): number {
+    if (!this.subscriptionStatus?.trialInfo) return 0;
+    const daysRemaining = this.subscriptionStatus.trialInfo.daysRemaining;
+    return Math.max(0, Math.min(100, (daysRemaining / 60) * 100));
   }
 }

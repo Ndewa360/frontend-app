@@ -1,5 +1,5 @@
 export interface SubscriptionStatus {
-  plan: 'free' | 'premium';
+  plan: 'free' | 'premium' | 'trial';
   accountStatus: 'active' | 'suspended' | 'disabled';
   propertyCount: number;
   propertyLimit: number;
@@ -10,6 +10,12 @@ export interface SubscriptionStatus {
   suspensionDate?: Date;
   needsUpgrade?: boolean;
   userType?: 'PROPERTY_OWNER' | 'AGENT';
+  trialInfo?: {
+    isTrial: boolean;
+    daysRemaining: number;
+    trialEndDate: Date;
+    isTrialExpired: boolean;
+  } | null;
 }
 
 export interface PropertyCreationCheck {

@@ -14,13 +14,21 @@ export enum SouscriptionType {
 
 export enum SouscriptionPlan {
   FREE    = 'free',
-  PREMIUM = 'premium'
+  PREMIUM = 'premium',
+  TRIAL   = 'trial'
 }
 
 export enum AccountStatus {
   ACTIVE    = 'active',
   SUSPENDED = 'suspended',
   DISABLED  = 'disabled'
+}
+
+export interface TrialInfo {
+  isTrial: boolean;
+  daysRemaining: number;
+  trialEndDate: Date;
+  isTrialExpired: boolean;
 }
 
 export interface SouscriptionModel {
@@ -41,6 +49,10 @@ export interface SouscriptionModel {
   monthlyAmount: number;
   lastCalculationDate: Date;
   suspensionDate: Date;
+  trialStartDate?: Date;
+  trialEndDate?: Date;
+  isTrialExpired?: boolean;
+  trialInfo?: TrialInfo | null;
   // Champs enrichis retournés par GET /souscription/current
   userType?: string;
   displayLimits?: {

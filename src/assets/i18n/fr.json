@@ -1214,7 +1214,7 @@
     "PAYMENT_REMINDERS_ERROR": "Impossible d'envoyer les rappels de paiement.",
     "PAYMENT_PROCESSED_SUCCESS": "Paiement traité avec succès.",
     "PAYMENT_PROCESS_ERROR": "Une erreur est survenue lors du traitement du paiement.",
-    "SOUSCRIPTION_CREATED_SUCCESS": "Votre souscription a été activée avec succès.",
+    "TRIAL_STARTED_SUCCESS": "Votre essai gratuit de 60 jours Premium a démarré ! Profitez de toutes les fonctionnalités.",
     "SOUSCRIPTION_REMOVED_SUCCESS": "Votre souscription a été retirée avec succès.",
     "WALLET_WITHDRAWAL_SUCCESS": "Votre demande de retrait a été envoyée avec succès.",
     "WALLET_WITHDRAWAL_ERROR": "Impossible d'effectuer le retrait. Veuillez réessayer.",
@@ -2030,11 +2030,11 @@
           "PRIORITY_SUPPORT": "Support prioritaire 24/7",
           "PERSONAL_TRAINING": "Formation personnalisée"
         },
-        "BUTTON": "Essayer 30 jours gratuits"
+        "BUTTON": "Essayer 60 jours gratuits"
       },
       "GUARANTEE": {
-        "TITLE": "Garantie satisfait ou remboursé",
-        "DESCRIPTION": "30 jours pour tester sans risque. Pas convaincu ? Remboursement intégral."
+        "TITLE": "Aucun engagement — retour au plan gratuit automatique",
+        "DESCRIPTION": "60 jours pour tester toutes les fonctionnalités Premium sans aucune carte bancaire. À la fin du trial, retour automatique au plan Freemium."
       }
     },
     "FAQ": {
@@ -2080,7 +2080,7 @@
         "SUPPORT_INCLUDED": "Support inclus"
       },
       "TRUST_SIGNALS": {
-        "GUARANTEE": "Garantie 30 jours",
+        "GUARANTEE": "Garantie 60 jours",
         "RATING": "4.9/5 étoiles",
         "USERS": "20+ utilisateurs satisfaits"
       }

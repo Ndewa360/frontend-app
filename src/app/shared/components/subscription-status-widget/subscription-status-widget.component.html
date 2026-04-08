@@ -19,12 +19,31 @@
   <!-- Content -->
   <div *ngIf="!loading && !error && subscriptionStatus" class="widget-content">
     
+    <!-- Bandeau Trial 60 jours -->
+    <div *ngIf="subscriptionStatus.plan === 'trial'" class="trial-banner">
+      <div class="trial-banner-content">
+        <i class="fas fa-clock trial-icon"></i>
+        <div class="trial-info">
+          <span class="trial-title">Essai Premium 60 jours</span>
+          <span class="trial-days" [ngClass]="{'trial-urgent': subscriptionStatus.trialInfo?.daysRemaining <= 7}">
+            {{ subscriptionStatus.trialInfo?.daysRemaining || 0 }} jours restants
+          </span>
+        </div>
+        <div class="trial-progress-bar">
+          <div class="trial-progress-fill" 
+               [style.width.%]="getTrialProgressPercentage()"
+               [ngClass]="{'trial-progress-urgent': subscriptionStatus.trialInfo?.daysRemaining <= 7}">
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Header -->
     <div class="widget-header">
       <div class="status-info">
         <div class="status-badge" [ngClass]="statusColor">
           <youpez-ibm-icon 
-            [iconName]="subscriptionStatus.plan === 'premium' ? 'star' : 'user'"
+            [iconName]="subscriptionStatus.plan === 'premium' || subscriptionStatus.plan === 'trial' ? 'star' : 'user'"
             iconSize="16">
           </youpez-ibm-icon>
           <span>{{ statusText }}</span>
@@ -79,7 +98,7 @@
     <!-- Actions -->
     <div class="widget-actions">
       
-      <!-- Bouton Upgrade -->
+      <!-- Bouton Upgrade (free ou trial expirant bientôt) -->
       <button 
         *ngIf="showUpgradeButton"
         class="action-btn upgrade-btn"
