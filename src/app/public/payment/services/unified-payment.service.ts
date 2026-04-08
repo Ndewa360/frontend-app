@@ -7,8 +7,8 @@ import { environment } from 'src/environments/environment';
 // Backend: PaymentProvider enum → MTN | ORANGE | STRIPE | EASY_TRANSACT
 export type PaymentProvider = 'MTN' | 'ORANGE' | 'STRIPE' | 'EASY_TRANSACT';
 
-// Backend: PaymentContext enum → RENT | SUBSCRIPTION | PREMIUM_ACCESS
-export type PaymentContext = 'RENT' | 'SUBSCRIPTION' | 'PREMIUM_ACCESS';
+// Backend: PaymentContext enum → RENT | SUBSCRIPTION | PREMIUM_ACCESS | WALLET_DEPOSIT
+export type PaymentContext = 'RENT' | 'SUBSCRIPTION' | 'PREMIUM_ACCESS' | 'WALLET_DEPOSIT';
 
 // Alias lisibles pour le template
 export type PaymentMethod = 'orange_money' | 'mtn_money' | 'card' | 'easy_transact';

@@ -21,6 +21,7 @@ const CONTEXT_LABELS: Record<string, { title: string; icon: string; color: strin
   RENT:           { title: 'Paiement de loyer',       icon: 'fa-home',       color: '#2563eb' },
   SUBSCRIPTION:   { title: 'Souscription Ndewa360°',  icon: 'fa-star',       color: '#059669' },
   PREMIUM_ACCESS: { title: 'Accès Premium',            icon: 'fa-crown',      color: '#d97706' },
+  WALLET_DEPOSIT: { title: 'Dépôt wallet',            icon: 'fa-wallet',     color: '#7c3aed' },
 };
 
 @Component({
@@ -439,27 +440,25 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
     if (!this.paymentDetails) return {};
     const meta = this.paymentDetails.metadata || {};
 
-    // Pour PREMIUM_ACCESS : passer userId/visitorId depuis les metadata de la session
     if (this.context === 'PREMIUM_ACCESS') {
-      return {
-        visitorId: meta['visitorId'] || this.paymentDetails.userId,
-      };
+      return { visitorId: meta['visitorId'] || this.paymentDetails.userId };
     }
-
-    // Pour SUBSCRIPTION
     if (this.context === 'SUBSCRIPTION') {
       return {
         periodId:       meta['periodId']       || this.paymentDetails.reference,
         subscriptionId: meta['subscriptionId'],
       };
     }
-
-    // Pour RENT
+    if (this.context === 'WALLET_DEPOSIT') {
+      // Pas d'IDs métier supplémentaires pour un dépôt wallet
+      return {};
+    }
+    // RENT
     return {
-      locationId:   meta['locationId']   || this.paymentDetails.location?._id,
-      locataireId:  meta['locataireId']  || this.paymentDetails.locataire?._id,
-      roomId:       meta['roomId']       || this.paymentDetails.room?._id,
-      propertyId:   meta['propertyId']   || this.paymentDetails.property?._id,
+      locationId:    meta['locationId']   || this.paymentDetails.location?._id,
+      locataireId:   meta['locataireId']  || this.paymentDetails.locataire?._id,
+      roomId:        meta['roomId']       || this.paymentDetails.room?._id,
+      propertyId:    meta['propertyId']   || this.paymentDetails.property?._id,
       paymentLinkId: this.paymentDetails.token,
     };
   }

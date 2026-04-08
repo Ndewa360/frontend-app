@@ -5,6 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { WalletDashboardComponent } from './wallet-dashboard/wallet-dashboard.component';
 import { WithdrawalModalComponent } from './components/withdrawal-modal/withdrawal-modal.component';
+import { DepositModalComponent } from './components/deposit-modal/deposit-modal.component';
 
 const routes: Routes = [
   { path: '', component: WalletDashboardComponent },
@@ -14,6 +15,7 @@ const routes: Routes = [
   declarations: [
     WalletDashboardComponent,
     WithdrawalModalComponent,
+    DepositModalComponent,
   ],
   imports: [
     CommonModule,

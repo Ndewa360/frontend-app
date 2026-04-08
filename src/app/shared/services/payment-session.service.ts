@@ -131,6 +131,27 @@ export class PaymentSessionService {
     });
   }
 
+  createWalletDepositSession(
+    lang: string,
+    userId: string,
+    userEmail: string,
+    amount: number,
+    returnPath: string
+  ): void {
+    this.createAndRedirect(lang, {
+      context: 'WALLET_DEPOSIT',
+      amount,
+      amountEditable: false,
+      currency: 'XAF',
+      description: `Dépôt wallet Ndewa360° — ${amount.toLocaleString('fr-FR')} FCFA`,
+      userId,
+      userEmail,
+      metadata: { lang },
+      successRedirectPath: `${returnPath}?deposit=success`,
+      cancelRedirectPath: returnPath,
+    });
+  }
+
   createSubscriptionSession(
     lang: string,
     periodId: string,

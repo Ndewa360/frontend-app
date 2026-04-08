@@ -1,0 +1,117 @@
+<div class="wmodal">
+
+  <!-- Header -->
+  <div class="wmodal__header">
+    <div class="wmodal__header-left">
+      <div class="wmodal__icon wmodal__icon--deposit">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+        </svg>
+      </div>
+      <div>
+        <h2 class="wmodal__title">Déposer des fonds</h2>
+        <p class="wmodal__subtitle">Alimentez votre wallet pour payer vos souscriptions</p>
+      </div>
+    </div>
+    <button class="wmodal__close" (click)="close()" [disabled]="loading">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Body -->
+  <div class="wmodal__body" [formGroup]="form">
+
+    <!-- Info -->
+    <div class="wmodal__info">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+      <span>
+        Saisissez le montant à déposer. Vous choisirez votre moyen de paiement
+        (Orange Money, MTN, Carte) à l'étape suivante.
+      </span>
+    </div>
+
+    <!-- Montant -->
+    <div class="wmodal__field">
+      <label class="wmodal__label">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        Montant à déposer
+      </label>
+      <div class="wmodal__amount-wrap">
+        <input type="number" formControlName="amount" class="wmodal__input"
+               [class.wmodal__input--error]="form.get('amount')?.invalid && form.get('amount')?.touched"
+               [placeholder]="'Min. ' + formatCurrency(minAmount)">
+        <span class="wmodal__currency">FCFA</span>
+      </div>
+      <div *ngIf="form.get('amount')?.invalid && form.get('amount')?.touched" class="wmodal__error">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+        </svg>
+        <span *ngIf="form.get('amount')?.errors?.['required']">Montant requis</span>
+        <span *ngIf="form.get('amount')?.errors?.['min']">Minimum {{ formatCurrency(minAmount) }}</span>
+      </div>
+    </div>
+
+    <!-- Méthodes disponibles (informatif) -->
+    <div class="wmodal__methods-preview">
+      <p class="wmodal__methods-preview__label">Méthodes acceptées</p>
+      <div class="wmodal__methods-preview__list">
+        <div class="wmodal__method-badge wmodal__method-badge--orange">
+          <span>OM</span> Orange Money
+        </div>
+        <div class="wmodal__method-badge wmodal__method-badge--mtn">
+          <span>MTN</span> MTN Money
+        </div>
+        <div class="wmodal__method-badge wmodal__method-badge--card">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+          </svg>
+          Carte bancaire
+        </div>
+      </div>
+    </div>
+
+    <!-- Erreur -->
+    <div *ngIf="error" class="wmodal__alert">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+      </svg>
+      {{ error }}
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="wmodal__footer">
+    <button type="button" class="wmodal__btn wmodal__btn--secondary" (click)="close()" [disabled]="loading">
+      Annuler
+    </button>
+    <button type="button" class="wmodal__btn wmodal__btn--deposit" (click)="submit()"
+            [disabled]="form.invalid || loading">
+      <svg *ngIf="loading" class="spinning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+      </svg>
+      <svg *ngIf="!loading" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+      </svg>
+      {{ loading ? 'Préparation du paiement…' : 'Choisir le moyen de paiement' }}
+    </button>
+  </div>
+
+</div>
+
+<style>
+  .spinning { animation: spin 1s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>

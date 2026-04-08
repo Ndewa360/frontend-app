@@ -17,6 +17,12 @@
             </svg>
             Actualiser
           </button>
+          <button class="wallet-btn wallet-btn--success" (click)="openDepositModal()">
+            <svg class="wallet-btn__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+            </svg>
+            Déposer des fonds
+          </button>
           <button class="wallet-btn wallet-btn--primary"
                   (click)="openWithdrawalModal()"
                   [disabled]="!summary || summary.balance <= 0 || summary.hasPendingWithdrawal">
@@ -45,6 +51,13 @@
             </svg>
             Loyers reçus
             <span class="wallet-tabs__badge" *ngIf="totalRentPayments > 0">{{ totalRentPayments }}</span>
+          </button>
+          <button class="wallet-tabs__btn" [class.active]="activeTab === 'deposits'" (click)="activeTab = 'deposits'" type="button">
+            <svg class="wallet-tabs__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+            </svg>
+            Dépôts
+            <span class="wallet-tabs__badge" *ngIf="totalDeposits > 0">{{ totalDeposits }}</span>
           </button>
           <button class="wallet-tabs__btn" [class.active]="activeTab === 'withdrawals'" (click)="activeTab = 'withdrawals'" type="button">
             <svg class="wallet-tabs__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -101,19 +114,18 @@
             </div>
             <div class="wallet-kpi__value">{{ formatCurrency(summary.balance) }}</div>
             <div class="wallet-kpi__sub" *ngIf="summary.reservedBalance > 0">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-3 h-3 inline mr-1">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-              </svg>
               {{ formatCurrency(summary.reservedBalance) }} réservé
             </div>
-            <button class="wallet-kpi__action"
-                    (click)="openWithdrawalModal()"
-                    [disabled]="summary.balance <= 0 || summary.hasPendingWithdrawal">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4 mr-1">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
-              </svg>
-              Retirer
-            </button>
+            <div class="wallet-kpi__actions">
+              <button class="wallet-kpi__action wallet-kpi__action--success" (click)="openDepositModal()">
+                Déposer
+              </button>
+              <button class="wallet-kpi__action"
+                      (click)="openWithdrawalModal()"
+                      [disabled]="summary.balance <= 0 || summary.hasPendingWithdrawal">
+                Retirer
+              </button>
+            </div>
           </div>
 
           <div class="wallet-kpi wallet-kpi--success">
@@ -126,7 +138,7 @@
               </div>
             </div>
             <div class="wallet-kpi__value">{{ formatCurrency(summary.totalReceived) }}</div>
-            <div class="wallet-kpi__sub">{{ totalRentPayments }} paiement(s) de loyer</div>
+            <div class="wallet-kpi__sub">{{ totalRentPayments }} loyer(s) + {{ totalDeposits }} dépôt(s)</div>
           </div>
 
           <div class="wallet-kpi wallet-kpi--info">
@@ -144,7 +156,7 @@
 
           <div class="wallet-kpi wallet-kpi--warning">
             <div class="wallet-kpi__header">
-              <span class="wallet-kpi__label">Frais de service (2%)</span>
+              <span class="wallet-kpi__label">Frais de retrait (2%)</span>
               <div class="wallet-kpi__icon wallet-kpi__icon--warning">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
@@ -238,6 +250,69 @@
             </button>
             <span class="wallet-pagination__info">Page {{ rentPage }} / {{ rentTotalPages }}</span>
             <button class="wallet-page-btn" (click)="changeRentPage(rentPage + 1)" [disabled]="rentPage === rentTotalPages">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ═══ DÉPÔTS ═══ -->
+      <div *ngIf="activeTab === 'deposits'" class="wallet-view">
+
+        <div class="wallet-section__header mb-4">
+          <h2 class="wallet-section__title">Historique des dépôts</h2>
+          <button class="wallet-btn wallet-btn--success wallet-btn--sm" (click)="openDepositModal()">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4 mr-1">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+            </svg>
+            Nouveau dépôt
+          </button>
+        </div>
+
+        <div *ngIf="deposits.length === 0 && !loading" class="wallet-empty">
+          <div class="wallet-empty__icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+            </svg>
+          </div>
+          <h3>Aucun dépôt effectué</h3>
+          <p>Déposez des fonds dans votre wallet pour payer automatiquement vos souscriptions.</p>
+          <button class="wallet-btn wallet-btn--success" (click)="openDepositModal()">Déposer maintenant</button>
+        </div>
+
+        <div *ngIf="deposits.length > 0" class="wallet-table-wrap">
+          <table class="wallet-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Référence</th>
+                <th class="text-right">Montant</th>
+                <th class="text-right">Solde après</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let tx of deposits" class="wallet-table__row">
+                <td class="wallet-table__date">{{ formatDate(tx.createdAt) }}</td>
+                <td>{{ tx.description || 'Dépôt' }}</td>
+                <td><span class="wallet-ref">{{ tx.reference || '—' }}</span></td>
+                <td class="text-right"><strong class="wallet-credit">+{{ formatCurrency(tx.amount) }}</strong></td>
+                <td class="text-right wallet-table__balance">{{ formatCurrency(tx.balanceAfter) }}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="wallet-pagination" *ngIf="depositTotalPages > 1">
+            <button class="wallet-page-btn" (click)="changeDepositPage(depositPage - 1)" [disabled]="depositPage === 1">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+              </svg>
+            </button>
+            <span class="wallet-pagination__info">Page {{ depositPage }} / {{ depositTotalPages }}</span>
+            <button class="wallet-page-btn" (click)="changeDepositPage(depositPage + 1)" [disabled]="depositPage === depositTotalPages">
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
               </svg>

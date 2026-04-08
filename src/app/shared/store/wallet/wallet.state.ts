@@ -5,7 +5,7 @@ import { throwError } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { WalletAction } from './wallet.actions';
-import { WalletStateModel, WalletSummary, WalletTransaction, WithdrawalRequest } from './wallet.model';
+import { WalletStateModel, WalletSummary, WalletTransaction, WithdrawalRequest, DepositInitiateResult } from './wallet.model';
 import { WalletHttpService } from './wallet.service';
 
 @State<WalletStateModel>({
@@ -14,12 +14,15 @@ import { WalletHttpService } from './wallet.service';
     summary: null,
     transactions: [],
     rentPayments: [],
+    deposits: [],
     withdrawals: [],
     totalTransactions: 0,
     totalRentPayments: 0,
+    totalDeposits: 0,
     totalWithdrawals: 0,
     loading: false,
     withdrawLoading: false,
+    depositLoading: false,
     error: null,
   },
 })
@@ -34,12 +37,15 @@ export class WalletState {
   @Selector() static summary(s: WalletStateModel): WalletSummary | null { return s.summary; }
   @Selector() static transactions(s: WalletStateModel): WalletTransaction[] { return s.transactions; }
   @Selector() static rentPayments(s: WalletStateModel): WalletTransaction[] { return s.rentPayments; }
+  @Selector() static deposits(s: WalletStateModel): WalletTransaction[] { return s.deposits; }
   @Selector() static withdrawals(s: WalletStateModel): WithdrawalRequest[] { return s.withdrawals; }
   @Selector() static loading(s: WalletStateModel): boolean { return s.loading; }
   @Selector() static withdrawLoading(s: WalletStateModel): boolean { return s.withdrawLoading; }
+  @Selector() static depositLoading(s: WalletStateModel): boolean { return s.depositLoading; }
   @Selector() static error(s: WalletStateModel): string | null { return s.error; }
   @Selector() static balance(s: WalletStateModel): number { return s.summary?.balance || 0; }
   @Selector() static totalRentPayments(s: WalletStateModel): number { return s.totalRentPayments; }
+  @Selector() static totalDeposits(s: WalletStateModel): number { return s.totalDeposits; }
 
   @Action(WalletAction.LoadSummary)
   loadSummary(ctx: StateContext<WalletStateModel>) {
@@ -76,6 +82,19 @@ export class WalletState {
     );
   }
 
+  @Action(WalletAction.LoadDeposits)
+  loadDeposits(ctx: StateContext<WalletStateModel>, { page, limit }: WalletAction.LoadDeposits) {
+    ctx.patchState({ loading: true });
+    return this.walletService.getDeposits(page, limit).pipe(
+      tap(res => ctx.patchState({
+        deposits: res.data.deposits,
+        totalDeposits: res.data.total,
+        loading: false,
+      })),
+      catchError(err => { ctx.patchState({ loading: false }); return throwError(err); })
+    );
+  }
+
   @Action(WalletAction.LoadWithdrawals)
   loadWithdrawals(ctx: StateContext<WalletStateModel>, { page, limit }: WalletAction.LoadWithdrawals) {
     ctx.patchState({ loading: true });
@@ -93,10 +112,9 @@ export class WalletState {
   requestWithdrawal(ctx: StateContext<WalletStateModel>, { amount, method, recipient }: WalletAction.RequestWithdrawal) {
     ctx.patchState({ withdrawLoading: true, error: null });
     return this.walletService.requestWithdrawal(amount, method, recipient).pipe(
-      tap(res => {
+      tap(() => {
         ctx.patchState({ withdrawLoading: false });
         this.toastr.success(this.translate.instant('NOTIFICATIONS.WALLET_WITHDRAWAL_SUCCESS'), 'Ndewa360°');
-        // Recharger le résumé pour mettre à jour le solde
         ctx.dispatch(new WalletAction.LoadSummary());
         ctx.dispatch(new WalletAction.LoadWithdrawals());
       }),
@@ -109,12 +127,35 @@ export class WalletState {
     );
   }
 
+  @Action(WalletAction.InitiateDeposit)
+  initiateDeposit(ctx: StateContext<WalletStateModel>, { amount, provider, phoneNumber, successUrl, cancelUrl }: WalletAction.InitiateDeposit) {
+    ctx.patchState({ depositLoading: true, error: null });
+    return this.walletService.initiateDeposit(amount, provider, phoneNumber, successUrl, cancelUrl).pipe(
+      tap(res => {
+        ctx.patchState({ depositLoading: false });
+        if (res.data.redirectUrl) {
+          window.location.href = res.data.redirectUrl;
+        } else {
+          this.toastr.success('Dépôt initié avec succès', 'Ndewa360°');
+          ctx.dispatch(new WalletAction.LoadSummary());
+          ctx.dispatch(new WalletAction.LoadDeposits());
+        }
+      }),
+      catchError(err => {
+        const msg = err.error?.message?.[0] || err.error?.message || 'Erreur lors du dépôt';
+        ctx.patchState({ depositLoading: false, error: msg });
+        this.toastr.error(msg, 'Ndewa360°');
+        return throwError(err);
+      })
+    );
+  }
+
   @Action(WalletAction.Reset)
   reset(ctx: StateContext<WalletStateModel>) {
     ctx.setState({
-      summary: null, transactions: [], rentPayments: [], withdrawals: [],
-      totalTransactions: 0, totalRentPayments: 0, totalWithdrawals: 0,
-      loading: false, withdrawLoading: false, error: null,
+      summary: null, transactions: [], rentPayments: [], deposits: [], withdrawals: [],
+      totalTransactions: 0, totalRentPayments: 0, totalDeposits: 0, totalWithdrawals: 0,
+      loading: false, withdrawLoading: false, depositLoading: false, error: null,
     });
   }
 }

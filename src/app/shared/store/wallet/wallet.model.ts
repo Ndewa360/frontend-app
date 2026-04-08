@@ -1,6 +1,14 @@
 export type WithdrawalMethod = 'MTN_MONEY' | 'ORANGE_MONEY' | 'EASY_TRANSACT' | 'BANK';
 export type WithdrawalStatus = 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED' | 'CANCELLED';
-export type WalletTxType = 'CREDIT_RENT' | 'DEBIT_WITHDRAWAL' | 'DEBIT_FEE' | 'REFUND';
+export type WalletTxType =
+  | 'CREDIT_RENT'
+  | 'CREDIT_DEPOSIT'
+  | 'DEBIT_WITHDRAWAL'
+  | 'DEBIT_FEE'
+  | 'DEBIT_SUBSCRIPTION'
+  | 'REFUND';
+
+export type PaymentProvider = 'MTN_MONEY' | 'ORANGE_MONEY' | 'EASY_TRANSACT' | 'STRIPE';
 
 export interface WalletSummary {
   balance: number;
@@ -41,6 +49,12 @@ export interface WithdrawalRequest {
   createdAt: Date;
 }
 
+export interface DepositInitiateResult {
+  externalRef: string;
+  status: string;
+  redirectUrl?: string;
+}
+
 export interface PaginatedResult<T> {
   data: T[];
   total: number;
@@ -53,11 +67,14 @@ export interface WalletStateModel {
   summary: WalletSummary | null;
   transactions: WalletTransaction[];
   rentPayments: WalletTransaction[];
+  deposits: WalletTransaction[];
   withdrawals: WithdrawalRequest[];
   totalTransactions: number;
   totalRentPayments: number;
+  totalDeposits: number;
   totalWithdrawals: number;
   loading: boolean;
   withdrawLoading: boolean;
+  depositLoading: boolean;
   error: string | null;
 }

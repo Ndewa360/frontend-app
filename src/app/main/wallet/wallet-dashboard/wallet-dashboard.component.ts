@@ -1,10 +1,12 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Store, Select } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { WalletState, WalletAction, WalletSummary, WalletTransaction, WithdrawalRequest } from 'src/app/shared/store/wallet';
 import { WithdrawalModalComponent } from '../components/withdrawal-modal/withdrawal-modal.component';
+import { DepositModalComponent } from '../components/deposit-modal/deposit-modal.component';
 
 @Component({
   selector: 'app-wallet-dashboard',
@@ -14,33 +16,46 @@ import { WithdrawalModalComponent } from '../components/withdrawal-modal/withdra
 export class WalletDashboardComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
-  @Select(WalletState.summary)      summary$: Observable<WalletSummary | null>;
-  @Select(WalletState.rentPayments) rentPayments$: Observable<WalletTransaction[]>;
-  @Select(WalletState.withdrawals)  withdrawals$: Observable<WithdrawalRequest[]>;
-  @Select(WalletState.loading)      loading$: Observable<boolean>;
+  @Select(WalletState.summary)         summary$: Observable<WalletSummary | null>;
+  @Select(WalletState.rentPayments)    rentPayments$: Observable<WalletTransaction[]>;
+  @Select(WalletState.deposits)        deposits$: Observable<WalletTransaction[]>;
+  @Select(WalletState.withdrawals)     withdrawals$: Observable<WithdrawalRequest[]>;
+  @Select(WalletState.loading)         loading$: Observable<boolean>;
   @Select(WalletState.totalRentPayments) totalRentPayments$: Observable<number>;
+  @Select(WalletState.totalDeposits)   totalDeposits$: Observable<number>;
 
   summary: WalletSummary | null = null;
   rentPayments: WalletTransaction[] = [];
+  deposits: WalletTransaction[] = [];
   withdrawals: WithdrawalRequest[] = [];
   loading = false;
   totalRentPayments = 0;
+  totalDeposits = 0;
 
-  activeTab: 'overview' | 'rent' | 'withdrawals' = 'overview';
+  activeTab: 'overview' | 'rent' | 'deposits' | 'withdrawals' = 'overview';
   rentPage = 1;
+  depositPage = 1;
   withdrawalPage = 1;
   readonly pageSize = 10;
 
-  constructor(private store: Store, private dialog: MatDialog) {}
+  constructor(
+    private store: Store,
+    private dialog: MatDialog,
+    private route: ActivatedRoute,
+    private router: Router,
+  ) {}
 
   ngOnInit(): void {
     this.loadAll();
+    this.handleDepositCallback();
 
     this.summary$.pipe(takeUntil(this.destroy$)).subscribe(s => this.summary = s);
     this.rentPayments$.pipe(takeUntil(this.destroy$)).subscribe(p => this.rentPayments = p);
+    this.deposits$.pipe(takeUntil(this.destroy$)).subscribe(d => this.deposits = d);
     this.withdrawals$.pipe(takeUntil(this.destroy$)).subscribe(w => this.withdrawals = w);
     this.loading$.pipe(takeUntil(this.destroy$)).subscribe(l => this.loading = l);
     this.totalRentPayments$.pipe(takeUntil(this.destroy$)).subscribe(t => this.totalRentPayments = t);
+    this.totalDeposits$.pipe(takeUntil(this.destroy$)).subscribe(t => this.totalDeposits = t);
   }
 
   ngOnDestroy(): void {
@@ -51,7 +66,18 @@ export class WalletDashboardComponent implements OnInit, OnDestroy {
   private loadAll(): void {
     this.store.dispatch(new WalletAction.LoadSummary());
     this.store.dispatch(new WalletAction.LoadRentPayments(this.rentPage, this.pageSize));
+    this.store.dispatch(new WalletAction.LoadDeposits(this.depositPage, this.pageSize));
     this.store.dispatch(new WalletAction.LoadWithdrawals(this.withdrawalPage, this.pageSize));
+  }
+
+  private handleDepositCallback(): void {
+    this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe(params => {
+      if (params['deposit'] === 'success') {
+        this.router.navigate([], { relativeTo: this.route, queryParams: {}, replaceUrl: true });
+        this.loadAll();
+        this.activeTab = 'deposits';
+      }
+    });
   }
 
   refresh(): void { this.loadAll(); }
@@ -67,9 +93,24 @@ export class WalletDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
+  openDepositModal(): void {
+    const ref = this.dialog.open(DepositModalComponent, {
+      width: '480px',
+      disableClose: false,
+    });
+    ref.afterClosed().subscribe(result => {
+      if (result?.success) this.loadAll();
+    });
+  }
+
   changeRentPage(page: number): void {
     this.rentPage = page;
     this.store.dispatch(new WalletAction.LoadRentPayments(page, this.pageSize));
+  }
+
+  changeDepositPage(page: number): void {
+    this.depositPage = page;
+    this.store.dispatch(new WalletAction.LoadDeposits(page, this.pageSize));
   }
 
   changeWithdrawalPage(page: number): void {
@@ -77,9 +118,8 @@ export class WalletDashboardComponent implements OnInit, OnDestroy {
     this.store.dispatch(new WalletAction.LoadWithdrawals(page, this.pageSize));
   }
 
-  get rentTotalPages(): number {
-    return Math.ceil(this.totalRentPayments / this.pageSize) || 1;
-  }
+  get rentTotalPages(): number { return Math.ceil(this.totalRentPayments / this.pageSize) || 1; }
+  get depositTotalPages(): number { return Math.ceil(this.totalDeposits / this.pageSize) || 1; }
 
   formatCurrency(amount: number): string {
     return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XAF', minimumFractionDigits: 0 }).format(amount || 0);
@@ -92,13 +132,14 @@ export class WalletDashboardComponent implements OnInit, OnDestroy {
 
   getTxLabel(type: string): string {
     const labels: Record<string, string> = {
-      CREDIT_RENT: 'Loyer reçu', DEBIT_WITHDRAWAL: 'Retrait', DEBIT_FEE: 'Frais', REFUND: 'Remboursement',
+      CREDIT_RENT: 'Loyer reçu', CREDIT_DEPOSIT: 'Dépôt', DEBIT_WITHDRAWAL: 'Retrait',
+      DEBIT_FEE: 'Frais', DEBIT_SUBSCRIPTION: 'Souscription', REFUND: 'Remboursement',
     };
     return labels[type] || type;
   }
 
   getTxColor(type: string): string {
-    return type === 'CREDIT_RENT' || type === 'REFUND' ? 'credit' : 'debit';
+    return ['CREDIT_RENT', 'CREDIT_DEPOSIT', 'REFUND'].includes(type) ? 'credit' : 'debit';
   }
 
   getStatusLabel(status: string): string {
@@ -117,7 +158,8 @@ export class WalletDashboardComponent implements OnInit, OnDestroy {
 
   getMethodLabel(method: string): string {
     const labels: Record<string, string> = {
-      MTN_MONEY: 'MTN Mobile Money', ORANGE_MONEY: 'Orange Money', BANK: 'Virement bancaire',
+      MTN_MONEY: 'MTN Mobile Money', ORANGE_MONEY: 'Orange Money',
+      EASY_TRANSACT: 'Easy Transact', BANK: 'Virement bancaire', WALLET: 'Wallet',
     };
     return labels[method] || method;
   }
