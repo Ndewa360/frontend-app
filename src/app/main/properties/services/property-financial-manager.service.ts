@@ -92,10 +92,11 @@ export class PropertyFinancialManagerService {
    */
   extractPropertyMetrics(data: EnrichedStatisticResponse): PropertyFinancialMetrics {
     
-    if (!data) {
+    if (!data || !data.data) {
       return this.getEmptyMetrics();
     }
 
+    // ✅ data.data est l'objet EnrichedStatisticData
     const propertyMetrics = data.data.propertyMetrics;
     const rooms = data.data.rooms || [];
 
@@ -132,35 +133,30 @@ export class PropertyFinancialManagerService {
    * Extrait les données mensuelles depuis les calculs centralisés du backend
    */
   extractMonthlyData(data: EnrichedStatisticResponse): MonthlyFinancialData[] {
-    console.log('📅 Extraction des données mensuelles depuis les calculs centralisés du backend');
-    
-    if (!data) {
+    if (!data || !data.data || !data.data.revenueDistribution) {
       return this.getEmptyMonthlyData();
     }
+
     const rooms = data.data.rooms || [];
-    const monthlyData: MonthlyFinancialData[] = [];
-    
-    for (let month = 0; month < 12; month++) {
-      let monthlyReceived = data.data.revenueDistribution.monthlyAnalysis[month].distributed;
-      let monthlyExpected = data.data.revenueDistribution.monthlyAnalysis[month].expected;
+    const monthlyAnalysis = data.data.revenueDistribution.monthlyAnalysis;
 
-      
-
-      const collectionRate = data.data.revenueDistribution.monthlyAnalysis[month].fulfillmentRate;
-      const estimatedCosts = 0; // 30% de coûts opérationnels
-      const profit = monthlyReceived - estimatedCosts;
+    return monthlyAnalysis.map((item, month) => {
+      const monthlyReceived = item.distributed;
+      const monthlyExpected = item.expected;
+      const collectionRate = item.fulfillmentRate;
+      const profit = monthlyReceived; // Pas de coûts fictifs
 
       let growth = 0;
-      if (month > 0 && monthlyData.length > 0) {
-        const previousReceived = monthlyData[month - 1].received;
-        growth = previousReceived > 0 ? ((monthlyReceived - previousReceived) / previousReceived) * 100 : 0;
+      if (month > 0) {
+        const previousReceived = monthlyAnalysis[month - 1].distributed;
+        growth = previousReceived > 0
+          ? ((monthlyReceived - previousReceived) / previousReceived) * 100
+          : 0;
       }
-      
-     
-      
-      const paymentsCount = rooms.filter(roomData => (roomData.paymentValue[month] || 0) > 0).length;
-      
-      monthlyData.push({
+
+      const paymentsCount = rooms.filter(r => (r.paymentValue[month] || 0) > 0).length;
+
+      return {
         month: this.translationUtils.getMonthName(month + 1),
         monthIndex: month,
         expected: Math.round(monthlyExpected * 100) / 100,
@@ -171,13 +167,11 @@ export class PropertyFinancialManagerService {
         performancePercentage: Math.round(collectionRate * 100) / 100,
         monthName: this.translationUtils.getMonthName(month + 1),
         totalRevenue: Math.round(monthlyReceived * 100) / 100,
-        paymentsCount: paymentsCount,
+        paymentsCount,
         collectionRate: Math.round(collectionRate * 100) / 100,
-        activeUnits: data.data.revenueDistribution.monthlyAnalysis[month].totalActiveRooms
-      });
-    }
-
-    return monthlyData;
+        activeUnits: item.totalActiveRooms
+      };
+    });
   }
 
   /**

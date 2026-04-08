@@ -193,6 +193,12 @@ export class StatisticState{
     }
 
     @Selector()
+    static selectStateLoadingPropertyStatistic(state:StatisticStateModel)
+    {
+        return state.loadingPropertyStatistic
+    }
+
+    @Selector()
     static selectStateAllLocatairePayementByYearLoading(state:StatisticStateModel)
     {
         return state.allLocatairePayementByYearLoading
@@ -267,10 +273,6 @@ export class StatisticState{
     fetchRoomStatisticByPropertyAndYear(ctx:StateContext<StatisticStateModel>,{propertyID,year}:StatisticAction.FetchStaticRoomDataByPropertyIdAndYear)
     {
         const state = ctx.getState();
-        let index = state.roomStatistic.findIndex((u)=>u && u.room && u.room.property==propertyID && year.toString()==u.year);
-
-        // Ne pas retourner early si les données existent déjà - permettre le rechargement
-        // if(index>-1) return of(true);
 
         ctx.patchState({
             loadingPropertyStatistic:true,
@@ -279,23 +281,16 @@ export class StatisticState{
         return this._statisticsService.getStatisticPropertyDataByYear(propertyID,year).pipe(
             tap(
                 result => {
-                    console.log('🔍 Type de result.data:', typeof result.data, result);
-                    
                     const key = `${propertyID}-${year}`;
-
-                    // Supprimer les anciennes données pour cette propriété et année (avec protection null)
-                    const filterePropertyStats = state.propertyStatistic.filter((u) => u.key!=key);
-
-                 
-                    // 🆕 STOCKER LES DONNÉES ENRICHIES  
-
-                    const finalStatistic = [...filterePropertyStats, {key,data:result.data}];
-        
+                    // ✅ result.data est directement l'objet EnrichedStatisticData renvoyé par le backend
+                    // L'API retourne { statusCode, message, data: EnrichedStatisticData, ... }
+                    const filteredPropertyStats = state.propertyStatistic.filter((u) => u.key !== key);
+                    const finalStatistic = [...filteredPropertyStats, { key, data: result.data }];
 
                     ctx.patchState({
-                        loadingPropertyStatistic:false,
-                        propertyStatistic:[...finalStatistic]
-                    })
+                        loadingPropertyStatistic: false,
+                        propertyStatistic: finalStatistic
+                    });
                 }
             ),
             catchError(error => {
@@ -307,8 +302,7 @@ export class StatisticState{
                 };
 
                 ctx.patchState({
-                    loadingStatistic:false,
-                    loadingRoomStatistic:false,
+                    loadingPropertyStatistic: false,
                     roomStatisticError: errorObj
                 });
 

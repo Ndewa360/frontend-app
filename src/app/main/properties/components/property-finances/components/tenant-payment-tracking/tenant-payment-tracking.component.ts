@@ -119,9 +119,9 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
         : 0;
         
       return {
-        tenantId: tenant.locataire._id,
-        tenantName: tenant.locataire.fullName || 'Nom inconnu',
-        roomCode: tenant.room.code || 'N/A',
+        tenantId: tenant.locataire?._id || tenant.room?._id || '',
+        tenantName: tenant.locataire?.fullName || 'Locataire inconnu',
+        roomCode: tenant.room?.code || 'N/A',
         monthlyRent: tenant.financialAnalysis.monthlyRent,
         entryDate: new Date(tenant.financialAnalysis.entryDate),
         monthsElapsed: tenant.financialAnalysis.monthsElapsed,

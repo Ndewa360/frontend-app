@@ -76,21 +76,15 @@ export class FinancialOverviewComponent implements OnInit, OnChanges, OnDestroy 
   getFinancialHealthScore(): number {
     if (!this.propertyMetrics) return 0;
     
-    const collectionWeight = 0.4;
-    const occupancyWeight = 0.3;
-    const profitWeight = 0.3;
+    const collectionWeight = 0.5;
+    const occupancyWeight = 0.5;
     
     const collectionScore = Math.min(this.propertyMetrics.collectionRate, 100);
     const occupancyScore = Math.min(this.propertyMetrics.occupancyRate, 100);
-    const operatingCosts = this.propertyMetrics.totalRevenue * 0.30;
-    const netProfit = this.propertyMetrics.totalRevenue - operatingCosts;
-    const profitMargin = this.propertyMetrics.totalRevenue > 0 ? (netProfit / this.propertyMetrics.totalRevenue) * 100 : 0;
-    const profitScore = profitMargin > 0 ? Math.min(profitMargin * 2, 100) : 0;
     
     return Math.round(
       (collectionScore * collectionWeight) +
-      (occupancyScore * occupancyWeight) +
-      (profitScore * profitWeight)
+      (occupancyScore * occupancyWeight)
     );
   }
   
@@ -111,63 +105,16 @@ export class FinancialOverviewComponent implements OnInit, OnChanges, OnDestroy 
   onExportOverview(): void {
     if (!this.propertyMetrics) return;
     
-    const operatingCosts = this.propertyMetrics.totalRevenue * 0.30;
-    const netProfit = this.propertyMetrics.totalRevenue - operatingCosts;
-    const profitMargin = this.propertyMetrics.totalRevenue > 0 ? (netProfit / this.propertyMetrics.totalRevenue) * 100 : 0;
-    const totalDeposits = this.propertyMetrics.roomDetails.reduce((total, room) => 
-      total + (room.monthlyRent * 2), 0);
-    
     const exportData = [
-      {
-        'Métrique': 'Revenus totaux reçus',
-        'Valeur': this.formatPrice(this.propertyMetrics.totalRevenue),
-        'Valeur numérique': this.propertyMetrics.totalRevenue
-      },
-      {
-        'Métrique': 'Revenus attendus',
-        'Valeur': this.formatPrice(this.propertyMetrics.totalExpected),
-        'Valeur numérique': this.propertyMetrics.totalExpected
-      },
-      {
-        'Métrique': 'Taux de recouvrement',
-        'Valeur': this.formatPercentage(this.propertyMetrics.collectionRate),
-        'Valeur numérique': this.propertyMetrics.collectionRate
-      },
-      {
-        'Métrique': 'Nombre total de chambres',
-        'Valeur': this.propertyMetrics.totalRooms,
-        'Valeur numérique': this.propertyMetrics.totalRooms
-      },
-      {
-        'Métrique': 'Chambres occupées',
-        'Valeur': this.propertyMetrics.occupiedRooms,
-        'Valeur numérique': this.propertyMetrics.occupiedRooms
-      },
-      {
-        'Métrique': 'Taux d\'occupation',
-        'Valeur': this.formatPercentage(this.propertyMetrics.occupancyRate),
-        'Valeur numérique': this.propertyMetrics.occupancyRate
-      },
-      {
-        'Métrique': 'Loyer moyen',
-        'Valeur': this.formatPrice(this.propertyMetrics.averageRent),
-        'Valeur numérique': this.propertyMetrics.averageRent
-      },
-      {
-        'Métrique': 'Total des cautions',
-        'Valeur': this.formatPrice(totalDeposits),
-        'Valeur numérique': totalDeposits
-      },
-      {
-        'Métrique': 'Profit net estimé',
-        'Valeur': this.formatPrice(netProfit),
-        'Valeur numérique': netProfit
-      },
-      {
-        'Métrique': 'Marge bénéficiaire',
-        'Valeur': this.formatPercentage(profitMargin),
-        'Valeur numérique': profitMargin
-      }
+      { 'Métrique': 'Revenus totaux reçus', 'Valeur': this.formatPrice(this.propertyMetrics.totalRevenue), 'Valeur numérique': this.propertyMetrics.totalRevenue },
+      { 'Métrique': 'Revenus attendus', 'Valeur': this.formatPrice(this.propertyMetrics.totalExpected), 'Valeur numérique': this.propertyMetrics.totalExpected },
+      { 'Métrique': 'Taux de recouvrement', 'Valeur': this.formatPercentage(this.propertyMetrics.collectionRate), 'Valeur numérique': this.propertyMetrics.collectionRate },
+      { 'Métrique': 'Nombre total de chambres', 'Valeur': this.propertyMetrics.totalRooms, 'Valeur numérique': this.propertyMetrics.totalRooms },
+      { 'Métrique': 'Chambres occupées', 'Valeur': this.propertyMetrics.occupiedRooms, 'Valeur numérique': this.propertyMetrics.occupiedRooms },
+      { 'Métrique': 'Taux d\'occupation', 'Valeur': this.formatPercentage(this.propertyMetrics.occupancyRate), 'Valeur numérique': this.propertyMetrics.occupancyRate },
+      { 'Métrique': 'Loyer moyen', 'Valeur': this.formatPrice(this.propertyMetrics.averageRent), 'Valeur numérique': this.propertyMetrics.averageRent },
+      { 'Métrique': 'Total avances', 'Valeur': this.formatPrice(this.propertyMetrics.totalAdvances), 'Valeur numérique': this.propertyMetrics.totalAdvances },
+      { 'Métrique': 'Total dettes', 'Valeur': this.formatPrice(this.propertyMetrics.totalDebts), 'Valeur numérique': this.propertyMetrics.totalDebts }
     ];
 
     this.exportData.emit({
@@ -209,45 +156,27 @@ export class FinancialOverviewComponent implements OnInit, OnChanges, OnDestroy 
   get occupiedRooms(): number { return this.propertyMetrics?.occupiedRooms || 0; }
   get occupancyRate(): number { return this.propertyMetrics?.occupancyRate || 0; }
   get averageRent(): number { return this.propertyMetrics?.averageRent || 0; }
-  get totalDeposits(): number { 
-    return this.propertyMetrics?.roomDetails.reduce((total, room) => 
-      total + (room.monthlyRent * 2), 0) || 0;
-  }
-  get netProfit(): number { 
-    const operatingCosts = this.totalRevenue * 0.30;
-    return this.totalRevenue - operatingCosts;
-  }
-  get profitMargin(): number { 
+  // ✅ Cautions réelles depuis le backend (totalAdvances/totalDebts)
+  get totalDeposits(): number { return this.propertyMetrics?.totalAdvances || 0; }
+  // ✅ Pas de coûts fictifs — on expose les dettes réelles comme indicateur
+  get netProfit(): number { return this.totalRevenue - (this.propertyMetrics?.totalDebts || 0); }
+  get profitMargin(): number {
     return this.totalRevenue > 0 ? (this.netProfit / this.totalRevenue) * 100 : 0;
   }
-  
-  // Propriété metrics pour compatibilité avec le template
+
   get metrics() {
-    if (!this.propertyMetrics) {
-      return {
-        totalRevenue: 0,
-        totalExpected: 0,
-        collectionRate: 0,
-        totalRooms: 0,
-        occupiedRooms: 0,
-        occupancyRate: 0,
-        averageRent: 0,
-        totalDeposits: 0
-      };
-    }
-    
-    const totalDeposits = this.propertyMetrics.roomDetails.reduce((total, room) => 
-      total + (room.monthlyRent * 2), 0);
-    
     return {
-      totalRevenue: this.propertyMetrics.totalRevenue,
-      totalExpected: this.propertyMetrics.totalExpected,
-      collectionRate: this.propertyMetrics.collectionRate,
-      totalRooms: this.propertyMetrics.totalRooms,
-      occupiedRooms: this.propertyMetrics.occupiedRooms,
-      occupancyRate: this.propertyMetrics.occupancyRate,
-      averageRent: this.propertyMetrics.averageRent,
-      totalDeposits
+      totalRevenue: this.totalRevenue,
+      totalExpected: this.totalExpected,
+      collectionRate: this.collectionRate,
+      totalRooms: this.totalRooms,
+      occupiedRooms: this.occupiedRooms,
+      occupancyRate: this.occupancyRate,
+      averageRent: this.averageRent,
+      // ✅ totalDeposits exposé pour le template (cautions reçues réelles)
+      totalDeposits: this.propertyMetrics?.totalAdvances || 0,
+      totalAdvances: this.propertyMetrics?.totalAdvances || 0,
+      totalDebts: this.propertyMetrics?.totalDebts || 0
     };
   }
 

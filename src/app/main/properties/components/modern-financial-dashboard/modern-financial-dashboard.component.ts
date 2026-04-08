@@ -126,11 +126,11 @@ export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
         isMoney: false
       },
       {
-        label: 'FINANCIAL_DASHBOARD.NET_PROFIT',
+        label: 'FINANCIAL_DASHBOARD.TOTAL_DEFICIT',
         value: 0,
         change: 0,
         changeType: 'neutral',
-        icon: 'trending-up',
+        icon: 'trending-down',
         color: 'warning',
         isMoney: true
       }
@@ -220,31 +220,21 @@ export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
   }
 
   private updateMetrics(): void {
-    // Vérifier que le tableau financialMetrics est correctement initialisé
-    if (!this.financialMetrics || this.financialMetrics.length < 4) {
-      console.error('financialMetrics n\'est pas correctement initialisé');
-      return;
-    }
+    if (!this.financialMetrics || this.financialMetrics.length < 4) return;
 
     const totalRevenue = this.propertiesSummary.reduce((sum, prop) => sum + prop.totalRevenue, 0);
     const totalExpected = this.propertiesSummary.reduce((sum, prop) => sum + prop.expectedRevenue, 0);
     const avgCollectionRate = this.propertiesSummary.length > 0
       ? this.propertiesSummary.reduce((sum, prop) => sum + prop.collectionRate, 0) / this.propertiesSummary.length
       : 0;
+    // ✅ Déficit réel = attendu - reçu (pas de coûts fictifs)
+    const totalDeficit = Math.max(0, totalExpected - totalRevenue);
 
-    // Mise à jour sécurisée des métriques
-    if (this.financialMetrics[0]) {
-      this.financialMetrics[0].value = totalRevenue;
-    }
-    if (this.financialMetrics[1]) {
-      this.financialMetrics[1].value = Math.round(avgCollectionRate * 10) / 10; // Arrondir à 1 décimale
-    }
-    if (this.financialMetrics[2]) {
-      this.financialMetrics[2].value = this.propertiesSummary.length;
-    }
-    if (this.financialMetrics[3]) {
-      this.financialMetrics[3].value = Math.round(totalRevenue * 0.77); // Estimation du bénéfice net
-    }
+    if (this.financialMetrics[0]) this.financialMetrics[0].value = totalRevenue;
+    if (this.financialMetrics[1]) this.financialMetrics[1].value = Math.round(avgCollectionRate * 10) / 10;
+    if (this.financialMetrics[2]) this.financialMetrics[2].value = this.propertiesSummary.length;
+    // ✅ Remplacé le 77% hardcodé par le déficit réel
+    if (this.financialMetrics[3]) this.financialMetrics[3].value = totalDeficit;
   }
 
   private updateChartData(): void {
