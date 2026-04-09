@@ -73,9 +73,11 @@ export class AppComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    // Traductions
-    this.translateService.setDefaultLang('fr');
-    this.translateService.use('fr');
+    // Traductions — langue détectée depuis le navigateur
+    this.translateService.setDefaultLang('en');
+    const browserLang = (navigator.language || '').split('-')[0].toLowerCase();
+    const lang = ['fr', 'en'].includes(browserLang) ? browserLang : 'en';
+    this.translateService.use(lang);
 
     // Overlay Angular piloté par DataDrivenLoaderService
     this.dataDrivenLoader.overlayVisible$.pipe(takeUntil(this.destroy$))

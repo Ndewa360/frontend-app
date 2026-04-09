@@ -8,8 +8,8 @@ import { filter } from 'rxjs/operators';
 })
 export class LanguageUrlService {
   private supportedLanguages = ['en', 'fr'];
-  private defaultLanguage = 'fr';
-  private currentLanguage = 'fr';
+  private defaultLanguage = 'en'; // fallback si langue navigateur non supportée
+  private currentLanguage = 'en';
 
   constructor(
     private router: Router,
@@ -67,14 +67,17 @@ export class LanguageUrlService {
    * Obtient la langue préférée (préservée ou par défaut)
    */
   private getPreferredLanguage(): string {
+    // 1. Langue choisie manuellement par l'utilisateur
     try {
-      const preservedLang = localStorage.getItem('ndiye-preferred-language');
-      if (preservedLang && this.supportedLanguages.includes(preservedLang)) {
-        return preservedLang;
-      }
-    } catch (error) {
-      console.warn('⚠️ Impossible de récupérer la langue préservée:', error);
-    }
+      const saved = localStorage.getItem('selectedLanguage');
+      if (saved && this.supportedLanguages.includes(saved)) return saved;
+    } catch {}
+
+    // 2. Langue du navigateur
+    const browserLang = (navigator.language || '').split('-')[0].toLowerCase();
+    if (this.supportedLanguages.includes(browserLang)) return browserLang;
+
+    // 3. Fallback anglais si langue non supportée
     return this.defaultLanguage;
   }
 }

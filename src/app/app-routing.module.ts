@@ -7,6 +7,16 @@ import { LayoutComponent } from './layout/default/layout.component';
 import { LoadingAdminDataResolver } from './shared/resolvers/loading-admin-data';
 import { Error404Component } from './main/errors/error404/error404.component';
 
+/** Détecte la langue du navigateur et retourne 'fr', 'en' ou 'en' par défaut */
+function getBrowserLang(): string {
+  try {
+    const saved = localStorage.getItem('selectedLanguage');
+    if (saved === 'fr' || saved === 'en') return saved;
+  } catch {}
+  const browser = (navigator.language || '').split('-')[0].toLowerCase();
+  return browser === 'fr' ? 'fr' : 'en';
+}
+
 
 const routes: Routes = [
 	// Routes avec langue
@@ -105,36 +115,36 @@ const routes: Routes = [
 	},
 	{
 		path: '',
-		redirectTo: '/en/home',
-		pathMatch: 'full'
+		pathMatch: 'full',
+		redirectTo: getBrowserLang() + '/home'
 	},
 	{
 		path: 'app',
-		redirectTo: '/en/app'
+		redirectTo: getBrowserLang() + '/app'
 	},
 	{
 		path: 'search',
-		redirectTo: '/en/search'
+		redirectTo: getBrowserLang() + '/search'
 	},
 	{
 		path: 'support',
-		redirectTo: '/en/support'
+		redirectTo: getBrowserLang() + '/support'
 	},
 	{
 		path: 'fundraising',
-		redirectTo: '/en/fundraising'
+		redirectTo: getBrowserLang() + '/fundraising'
 	},
 	{
 		path: 'admin',
-		redirectTo: '/en/admin'
+		redirectTo: getBrowserLang() + '/admin'
 	},
 	{
 		path: 'auth',
-		redirectTo: '/en/auth'
+		redirectTo: getBrowserLang() + '/auth'
 	},
 	{
 		path: 'home',
-		redirectTo: '/en/home'
+		redirectTo: getBrowserLang() + '/home'
 	},
 	{
 		path: '**',
