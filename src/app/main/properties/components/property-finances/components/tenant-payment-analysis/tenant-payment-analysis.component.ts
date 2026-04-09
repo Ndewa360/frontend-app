@@ -84,33 +84,34 @@ export class TenantPaymentAnalysisComponent implements OnInit, OnChanges {
       return;
     }
 
-    this.tenantAnalyses = this.enrichedData[0].data.tenantsAnalysis.tenants.map(tenant => {
-      const paymentRate = tenant.financialAnalysis.expectedPaymentToDate > 0 
-        ? (tenant.financialAnalysis.totalPaid / tenant.financialAnalysis.expectedPaymentToDate) * 100 
-        : 0;
-        
-      return {
-        tenantId: tenant.locataire._id,
-        tenantName: tenant.locataire.fullName || 'Nom inconnu',
-        roomCode: tenant.room.code || 'N/A',
-        monthlyRent: tenant.financialAnalysis.monthlyRent,
-        entryDate: new Date(tenant.financialAnalysis.entryDate),
-        monthsElapsed: tenant.financialAnalysis.monthsElapsed,
-        totalPaid: tenant.financialAnalysis.totalPaid,
-        expectedPaymentToDate: tenant.financialAnalysis.expectedPaymentToDate,
-        status: tenant.financialAnalysis.status,
-        monthsBehind: tenant.financialAnalysis.monthsBehind,
-        amountBehind: tenant.financialAnalysis.amountBehind,
-        advanceAmount: tenant.financialAnalysis.advanceAmount,
-        lastPaymentMonth: tenant.financialAnalysis.lastPaymentMonth,
-        paymentConsistency: tenant.financialAnalysis.paymentConsistency,
-        monthlyPayments: tenant.financialAnalysis.monthlyPayments,
-        // Propriétés calculées
-        paymentRate,
-        totalExpected: tenant.financialAnalysis.expectedPaymentToDate,
-        totalReceived: tenant.financialAnalysis.totalPaid
-      };
-    });
+    this.tenantAnalyses = this.enrichedData[0].data.tenantsAnalysis.tenants
+      .filter(tenant => tenant.locataire !== null) // ✅ Ignorer les chambres sans locataire identifié
+      .map(tenant => {
+        const paymentRate = tenant.financialAnalysis.expectedPaymentToDate > 0
+          ? (tenant.financialAnalysis.totalPaid / tenant.financialAnalysis.expectedPaymentToDate) * 100
+          : 0;
+
+        return {
+          tenantId: tenant.locataire?._id || tenant.room?._id || '',
+          tenantName: tenant.locataire?.fullName || 'Locataire inconnu',
+          roomCode: tenant.room?.code || 'N/A',
+          monthlyRent: tenant.financialAnalysis.monthlyRent,
+          entryDate: new Date(tenant.financialAnalysis.entryDate),
+          monthsElapsed: tenant.financialAnalysis.monthsElapsed,
+          totalPaid: tenant.financialAnalysis.totalPaid,
+          expectedPaymentToDate: tenant.financialAnalysis.expectedPaymentToDate,
+          status: tenant.financialAnalysis.status,
+          monthsBehind: tenant.financialAnalysis.monthsBehind,
+          amountBehind: tenant.financialAnalysis.amountBehind,
+          advanceAmount: tenant.financialAnalysis.advanceAmount,
+          lastPaymentMonth: tenant.financialAnalysis.lastPaymentMonth,
+          paymentConsistency: tenant.financialAnalysis.paymentConsistency,
+          monthlyPayments: tenant.financialAnalysis.monthlyPayments,
+          paymentRate,
+          totalExpected: tenant.financialAnalysis.expectedPaymentToDate,
+          totalReceived: tenant.financialAnalysis.totalPaid
+        };
+      });
 
     console.log(`✅ ${this.tenantAnalyses.length} analyses de locataires traitées`);
     this.calculateGlobalStats();
@@ -176,6 +177,8 @@ export class TenantPaymentAnalysisComponent implements OnInit, OnChanges {
 
       return true;
     });
+    // ✅ filteredSummaries est un alias de filteredAnalyses pour le template
+    this.filteredSummaries = this.filteredAnalyses;
   }
 
   onStatusFilterChange(): void {
@@ -216,7 +219,7 @@ export class TenantPaymentAnalysisComponent implements OnInit, OnChanges {
   // === MÉTHODES UTILITAIRES ===
 
   formatPrice(price: number | null | undefined): string {
-    if (!price) return '0 FCFA';
+    if (price === null || price === undefined || isNaN(price as number)) return '0 FCFA';
     return new Intl.NumberFormat('fr-CM', {
       style: 'currency',
       currency: 'XAF',

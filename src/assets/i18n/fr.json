@@ -616,6 +616,7 @@
       "RATE": "Taux",
       "STATUS": "Statut",
       "LAST_PAYMENT": "Dernier paiement",
+      "NEXT_PAYMENT": "Prochain paiement",
       "NONE": "Aucun"
     },
     "STATUS_LABELS": {
@@ -3291,7 +3292,8 @@
         "CORRECT_YIELD": "Rendement correct",
         "LOW_YIELD": "Rendement faible",
         "PARTIALLY_OCCUPIED": "Partiellement occupé",
-        "FULLY_OCCUPIED": "Entièrement occupé"
+        "FULLY_OCCUPIED": "Entièrement occupé",
+        "SET_PROPERTY_VALUE": "Renseignez la valeur du bien pour calculer le rendement"
       },
       "UNITS_HARD_CODED": {
         "STATUS": "Statut",

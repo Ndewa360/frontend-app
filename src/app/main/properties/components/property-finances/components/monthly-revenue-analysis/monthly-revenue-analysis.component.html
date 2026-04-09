@@ -83,7 +83,9 @@
               <p class="metric-description">{{ 'MONTHLY_REVENUE_ANALYSIS.METRICS.MONTHLY_AVERAGE_DESC' | translate }}</p>
               <div class="metric-progress">
                 <div class="progress-bar">
-                  <div class="progress-fill" [style.width.%]="(getAverageMonthlyRevenue() / getTotalRevenue() * 12 * 100)"></div>
+                  <!-- ✅ Taux de la moyenne par rapport au total : toujours 100/nbMois % -->
+                  <!-- On affiche plutôt le taux de recouvrement global -->
+                  <div class="progress-fill" [style.width.%]="yearlyStatsCalculated.averageCollectionRate > 100 ? 100 : yearlyStatsCalculated.averageCollectionRate"></div>
                 </div>
                 <span class="progress-text">{{ monthlyData.length }} {{ 'MONTHLY_REVENUE_ANALYSIS.METRICS.MONTHS' | translate }}</span>
               </div>
@@ -169,9 +171,10 @@
                 <div class="month-info">
                   <div class="month-name">{{ month.monthName }}</div>
                   <div class="month-year">{{ selectedYear }}</div>
-                  <div class="month-indicator">
-                    <span class="month-number">{{ (month.month + 1).toString().padStart(2, '0') }}</span>
-                  </div>
+                  <!-- ✅ monthIndex est l'index numérique, month.month est la string du nom -->
+              <div class="month-indicator">
+                <span class="month-number">{{ (month.monthIndex + 1).toString().padStart(2, '0') }}</span>
+              </div>
                 </div>
               </td>
 
@@ -181,7 +184,7 @@
                   <div class="revenue-amount">{{ month.totalRevenue | currency:'XAF':'symbol':'1.0-0' }}</div>
                   <div class="revenue-details">
                     <span class="payments-count">{{ month.paymentsCount }} {{ 'MONTHLY_REVENUE_ANALYSIS.TABLE.PAYMENTS' | translate }}</span>
-                    <span class="collection-rate">{{ formatPercentage(month.collectionRate) }}</span>
+                  <span class="collection-rate">{{ formatPercentage(month.collectionRate) }}</span>
                   </div>
                 </div>
               </td>
@@ -198,18 +201,18 @@
               <td>
                 <div class="growth-container">
                   <span class="growth-badge" [ngClass]="{
-                    'growth-positive': month.growth > 0,
-                    'growth-negative': month.growth < 0,
-                    'growth-stable': month.growth === 0
+                    'growth-positive': month.growth > 0.01,
+                    'growth-negative': month.growth < -0.01,
+                    'growth-stable': month.growth >= -0.01 && month.growth <= 0.01
                   }">
                     <svg class="growth-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path *ngIf="month.growth > 0" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-                      <path *ngIf="month.growth < 0" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path>
-                      <path *ngIf="month.growth === 0" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14"></path>
+                      <path *ngIf="month.growth > 0.01" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                      <path *ngIf="month.growth < -0.01" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path>
+                      <path *ngIf="month.growth >= -0.01 && month.growth <= 0.01" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14"></path>
                     </svg>
-                    <span *ngIf="month.growth > 0">+{{ month.growth }}%</span>
-                    <span *ngIf="month.growth < 0">{{ month.growth }}%</span>
-                    <span *ngIf="month.growth === 0">{{ 'MONTHLY_REVENUE_ANALYSIS.TABLE.STABLE' | translate }}</span>
+                    <span *ngIf="month.growth > 0.01">+{{ month.growth | number:'1.1-1' }}%</span>
+                    <span *ngIf="month.growth < -0.01">{{ month.growth | number:'1.1-1' }}%</span>
+                    <span *ngIf="month.growth >= -0.01 && month.growth <= 0.01">{{ 'MONTHLY_REVENUE_ANALYSIS.TABLE.STABLE' | translate }}</span>
                   </span>
                 </div>
               </td>
@@ -228,7 +231,7 @@
                       <div class="progress-shine"></div>
                     </div>
                   </div>
-                  <span class="progress-text">{{ month.performancePercentage }}%</span>
+                  <span class="progress-text">{{ month.performancePercentage | number:'1.1-1' }}%</span>
                 </div>
               </td>
             </tr>

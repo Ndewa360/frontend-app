@@ -286,8 +286,10 @@ export class PropertyFinancialManagerService {
 
     roomDetails.forEach(room => {
       const status = room.paymentStatus;
-      if (statusCounts.hasOwnProperty(status)) {
-        statusCounts[status]++;
+      // ✅ Mapper 'behind' vers 'late' pour cohérence avec le backend
+      const normalizedStatus = status === 'behind' ? 'late' : status;
+      if (statusCounts.hasOwnProperty(normalizedStatus)) {
+        statusCounts[normalizedStatus]++;
       } else {
         statusCounts.no_payment++;
       }

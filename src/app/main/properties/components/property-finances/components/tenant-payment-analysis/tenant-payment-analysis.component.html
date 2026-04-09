@@ -147,13 +147,16 @@
       <!-- Détails des paiements mensuels -->
       <div class="px-6 py-4">
         <div class="grid grid-cols-12 gap-2">
-          <div *ngFor="let i of [].constructor(12); let monthIndex = index" 
+          <div *ngFor="let payment of tenant.monthlyPayments; let monthIndex = index"
                class="text-center">
             <div class="text-xs font-medium text-gray-600 mb-1">{{ getMonthName(monthIndex).substring(0, 3) }}</div>
-            <div class="w-full h-8 rounded-lg flex items-center justify-center text-xs font-medium bg-gray-100 text-gray-600">
-              {{ monthIndex + 1 }}
+            <div class="w-full h-8 rounded-lg flex items-center justify-center text-xs font-medium"
+                 [ngClass]="{
+                   'bg-green-100 text-green-700': payment > 0,
+                   'bg-gray-100 text-gray-400': payment === 0
+                 }">
+              {{ payment > 0 ? (payment | currency:'XAF':'symbol':'1.0-0') : '-' }}
             </div>
-            <div class="text-xs text-gray-500 mt-1">-</div>
           </div>
         </div>
       </div>

@@ -616,6 +616,7 @@
       "RATE": "Rate",
       "STATUS": "Status",
       "LAST_PAYMENT": "Last payment",
+      "NEXT_PAYMENT": "Next payment",
       "NONE": "None"
     },
     "STATUS_LABELS": {
@@ -3292,7 +3293,8 @@
         "CORRECT_YIELD": "Correct yield",
         "LOW_YIELD": "Low yield",
         "PARTIALLY_OCCUPIED": "Partially occupied",
-        "FULLY_OCCUPIED": "Fully occupied"
+        "FULLY_OCCUPIED": "Fully occupied",
+        "SET_PROPERTY_VALUE": "Set the property value to calculate the yield"
       },
       "UNITS_HARD_CODED": {
         "STATUS": "Status",

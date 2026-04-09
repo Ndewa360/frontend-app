@@ -98,19 +98,12 @@ export class DepositsSummaryComponent implements OnInit, OnChanges {
     if (changes['enrichedData'] || changes['selectedYear']) {
       this.processDepositData();
     }
-    
-    if (changes['isLoading']) {
-      console.log('🔄 DEPOSITS - Changement de loading:', changes['isLoading'].currentValue);
-    }
   }
 
   private processDepositData(): void {
-    console.log('🛡️ CAUTIONS - Traitement des nouvelles données enrichies',this.enrichedData);
-    
     this.depositSummaries = [];
-    
+
     if (!this.enrichedData || this.enrichedData.length === 0) {
-      console.warn('⚠️ Aucune donnée de cautions disponible');
       this.calculateGlobalStats();
       this.applyFilters();
       return;
@@ -171,8 +164,6 @@ export class DepositsSummaryComponent implements OnInit, OnChanges {
     };
     
     this.cautionAlerts = cautionsData.alerts || [];
-
-    console.log(`✅ ${this.depositSummaries.length} cautions traitées`);
     this.applyFilters();
   }
 
@@ -277,6 +268,7 @@ export class DepositsSummaryComponent implements OnInit, OnChanges {
   }
   
   formatCurrency(amount: number): string {
+    if (amount === null || amount === undefined || isNaN(amount)) return '0 FCFA';
     return new Intl.NumberFormat('fr-CM', {
       style: 'currency',
       currency: 'XAF',

@@ -83,7 +83,6 @@ export class AdvancedFinancialDashboardComponent implements OnInit, OnChanges, O
   ) {}
 
   ngOnInit(): void {
-    console.warn("Data to change to advanced")
     this.loadFinancialData();
   }
 
@@ -110,18 +109,11 @@ export class AdvancedFinancialDashboardComponent implements OnInit, OnChanges, O
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (backendData) => {
-          console.warn("Backend data getted ",backendData)
           if (backendData && backendData.length > 0) {
-          this.propertyMetrics = this.financialManager.extractPropertyMetrics(backendData[0]);
+            this.propertyMetrics = this.financialManager.extractPropertyMetrics(backendData[0]);
             this.monthlyData = this.financialManager.extractMonthlyData(backendData[0]);
             this.tenantPerformances = this.financialManager.extractTenantPerformances(backendData[0]);
-            
             this.processFinancialData();
-            
-            console.log('✅ Données financières extraites pour le dashboard:', {
-              totalRevenue: this.propertyMetrics.totalRevenue,
-              collectionRate: this.propertyMetrics.collectionRate
-            });
           } else {
             this.resetMetrics();
           }

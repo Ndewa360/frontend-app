@@ -37,7 +37,8 @@
           <p class="metric-description">{{ 'COMMON.ON' | translate }} {{ formatPrice(metrics.totalExpected) }} {{ 'FINANCIAL_OVERVIEW.METRICS.EXPECTED_REVENUE' | translate }}</p>
           <div class="metric-progress">
             <div class="progress-bar">
-              <div class="progress-fill" [style.width.%]="metrics.collectionRate"></div>
+              <!-- ✅ Plafonné à 100 pour éviter le débordement visuel -->
+              <div class="progress-fill" [style.width.%]="metrics.collectionRateCapped"></div>
             </div>
             <span class="progress-text">{{ formatPercentage(metrics.collectionRate) }}</span>
           </div>
@@ -92,7 +93,8 @@
           <p class="metric-description">{{ metrics.occupiedRooms }}/{{ metrics.totalRooms }} {{ 'FINANCIAL_OVERVIEW.METRICS.UNITS_OCCUPIED' | translate }}</p>
           <div class="metric-progress">
             <div class="progress-bar">
-              <div class="progress-fill" [style.width.%]="metrics.occupancyRate"></div>
+              <!-- ✅ Plafonné à 100 -->
+              <div class="progress-fill" [style.width.%]="metrics.occupancyRateCapped"></div>
             </div>
             <span class="progress-text">{{ metrics.occupiedRooms }} {{ 'COMMON.UNITS' | translate }}</span>
           </div>
@@ -112,8 +114,7 @@
           <p class="metric-label">{{ 'FINANCIAL_OVERVIEW.METRICS.AVERAGE_RENT' | translate }}</p>
           <p class="metric-value">{{ formatPrice(metrics.averageRent) }}</p>
           <p class="metric-description">{{ 'FINANCIAL_OVERVIEW.METRICS.PER_UNIT_MONTH' | translate }}</p>
-          <div class="metric-trend">
-            </div>
+          <div class="metric-trend"></div>
         </div>
       </div>
     </div>
@@ -137,23 +138,22 @@
         </button>
       </div>
 
-      <!-- Graphique amélioré avec barres -->
       <div class="monthly-chart">
         <div *ngFor="let month of monthlyData; let i = index"
              class="month-row"
              [style.animation-delay.ms]="i * 100">
 
           <div class="month-label">
-            <span class="month-name">{{ month.month.substring(0, 3) }}</span>
+            <!-- ✅ monthName est la string traduite, on prend les 3 premiers caractères -->
+            <span class="month-name">{{ (month.monthName || month.month).substring(0, 3) }}</span>
             <span class="month-index">{{ (i + 1).toString().padStart(2, '0') }}</span>
           </div>
 
           <div class="progress-container">
-            <!-- Barre de fond (attendu) -->
             <div class="progress-track">
-              <!-- Barre de progression (reçu) -->
+              <!-- ✅ Plafonné à 100 -->
               <div class="progress-bar-fill"
-                   [style.width.%]="month.rate"
+                   [style.width.%]="month.rate > 100 ? 100 : month.rate"
                    [ngClass]="{
                      'excellent': month.rate >= 90,
                      'good': month.rate >= 70 && month.rate < 90,
@@ -163,7 +163,6 @@
               </div>
             </div>
 
-            <!-- Valeurs avec meilleur design -->
             <div class="progress-values">
               <div class="value-received">
                 <span class="value-label">{{ 'FINANCIAL_OVERVIEW.MONTHLY_EVOLUTION.RECEIVED' | translate }}</span>
@@ -207,7 +206,7 @@
       </div>
 
       <div class="summary-content">
-        <!-- Total des cautions -->
+        <!-- Total des cautions reçues -->
         <div class="summary-item deposits">
           <div class="item-icon">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -217,6 +216,7 @@
           <div class="item-content">
             <div class="item-info">
               <p class="item-label">{{ 'FINANCIAL_OVERVIEW.FINANCIAL_SUMMARY.TOTAL_DEPOSITS' | translate }}</p>
+              <!-- ✅ totalDeposits = cautionsAnalysis.summary.totalCautionsReceived -->
               <p class="item-description">{{ 'FINANCIAL_OVERVIEW.FINANCIAL_SUMMARY.SECURED_AMOUNT' | translate }}</p>
             </div>
             <div class="item-value">
@@ -241,8 +241,9 @@
               <p class="value-amount">{{ formatPercentage(metrics.collectionRate) }}</p>
               <div class="performance-bar">
                 <div class="bar-track"></div>
-                <div class="bar-fill" [style.width.%]="metrics.collectionRate"></div>
-                <div class="bar-indicator" [style.left.%]="metrics.collectionRate"></div>
+                <!-- ✅ Plafonné à 100 -->
+                <div class="bar-fill" [style.width.%]="metrics.collectionRateCapped"></div>
+                <div class="bar-indicator" [style.left.%]="metrics.collectionRateCapped"></div>
               </div>
             </div>
           </div>
@@ -261,9 +262,11 @@
               <p class="item-description">{{ 'FINANCIAL_OVERVIEW.FINANCIAL_SUMMARY.UNCOLLECTED_REVENUE' | translate }}</p>
             </div>
             <div class="item-value">
+              <!-- ✅ shortfall = Math.max(0, totalExpected - totalRevenue) — toujours >= 0 -->
               <p class="value-amount">{{ formatPrice(metrics.shortfall) }}</p>
               <div class="loss-percentage">
-                <span class="loss-rate">{{ formatPercentage(100 - metrics.collectionRate) }}</span>
+                <!-- ✅ Plafonné à 0 si collectionRate > 100 -->
+                <span class="loss-rate">{{ formatPercentage(metrics.collectionRate >= 100 ? 0 : 100 - metrics.collectionRate) }}</span>
               </div>
             </div>
           </div>
@@ -282,6 +285,7 @@
               <p class="item-description">{{ 'FINANCIAL_OVERVIEW.FINANCIAL_SUMMARY.MAXIMUM_POTENTIAL' | translate }}</p>
             </div>
             <div class="item-value">
+              <!-- ✅ totalExpected = montant attendu selon les contrats (calculé par le backend) -->
               <p class="value-amount">{{ formatPrice(metrics.totalExpected) }}</p>
               <div class="projection-trend">
                 <svg class="trend-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -295,6 +299,4 @@
       </div>
     </div>
   </div>
-
-  <!-- Les données de chargement sont gérées par le composant parent -->
 </div>

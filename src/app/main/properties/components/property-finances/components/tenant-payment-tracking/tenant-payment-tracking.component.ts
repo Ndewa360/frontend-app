@@ -105,12 +105,9 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
   }
 
   private processTenantPaymentData(): void {
-    console.log('👥 SUIVI LOCATAIRES - Traitement des nouvelles données enrichies');
-    
     this.tenantTrackingData = [];
-    
-    if (this.enrichedData.length==0) {
-      console.warn('⚠️ Aucune donnée de locataires disponible');
+
+    if (this.enrichedData.length === 0) {
       this.calculatePaymentSummary();
       this.updatePagination();
       return;
@@ -192,6 +189,22 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
       // Filtre par statut
       if (this.selectedStatus !== 'all' && tenant.status !== this.selectedStatus) {
         return false;
+      }
+
+      // Filtre par période (basé sur la date du dernier paiement)
+      if (this.selectedPeriod !== 'all') {
+        const now = new Date();
+        if (this.selectedPeriod === 'current_month') {
+          const hasPaymentThisMonth = tenant.lastPaymentDate &&
+            new Date(tenant.lastPaymentDate).getMonth() === now.getMonth() &&
+            new Date(tenant.lastPaymentDate).getFullYear() === now.getFullYear();
+          if (!hasPaymentThisMonth) return false;
+        } else if (this.selectedPeriod === 'last_2_months') {
+          const twoMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 2, 1);
+          const hasRecentPayment = tenant.lastPaymentDate &&
+            new Date(tenant.lastPaymentDate) >= twoMonthsAgo;
+          if (!hasRecentPayment) return false;
+        }
       }
 
       // Filtre par terme de recherche

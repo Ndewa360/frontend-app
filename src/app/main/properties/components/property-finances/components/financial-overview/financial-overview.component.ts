@@ -169,12 +169,14 @@ export class FinancialOverviewComponent implements OnInit, OnChanges, OnDestroy 
       occupiedRooms: this.occupiedRooms,
       occupancyRate: this.occupancyRate,
       averageRent: this.averageRent,
-      // ✅ Cautions réelles depuis cautionsAnalysis
       totalDeposits: this.totalDeposits,
       totalAdvances: this.propertyMetrics?.totalAdvances ?? 0,
       totalDebts: this.propertyMetrics?.totalDebts ?? 0,
-      // ✅ Manque à gagner calculé correctement
-      shortfall: this.shortfall
+      // ✅ shortfall exposé pour le template
+      shortfall: this.shortfall,
+      // ✅ collectionRate plafonné à 100 pour les barres de progression
+      collectionRateCapped: Math.min(this.collectionRate, 100),
+      occupancyRateCapped: Math.min(this.occupancyRate, 100)
     };
   }
 
