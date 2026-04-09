@@ -1,0 +1,157 @@
+<!-- Modal de reçu de paiement -->
+<div class="receipt-modal-container">
+
+  <!-- Header -->
+  <div class="receipt-modal-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+      </div>
+      <div>
+        <h2 class="header-title">Reçu de paiement</h2>
+        <p class="header-subtitle">#{{ getReceiptNumber() }}</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button (click)="downloadPdf()" [disabled]="isDownloading" class="btn-download">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        </svg>
+        {{ isDownloading ? 'Génération...' : 'Télécharger PDF' }}
+      </button>
+      <button (click)="onClose()" class="btn-close">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Corps du reçu -->
+  <div class="receipt-body">
+
+    <!-- Aperçu du reçu -->
+    <div class="receipt-preview">
+
+      <!-- En-tête du reçu -->
+      <div class="receipt-header-section">
+        <div class="receipt-logo-area">
+          <img src="https://www.ndewa-360.com/assets/img/logo/logo-basic-nobg.png"
+               alt="Ndewa360" class="receipt-logo"
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+          <span class="receipt-logo-fallback" style="display:none; font-weight:bold; font-size:18px; color:#cc8c0a;">Ndewa360°</span>
+        </div>
+        <div class="receipt-title-area">
+          <h1 class="receipt-main-title">REÇU</h1>
+          <p class="receipt-ref">#{{ getReceiptNumber() }}</p>
+        </div>
+      </div>
+
+      <!-- Parties -->
+      <div class="receipt-parties">
+        <div class="party-block">
+          <h3 class="party-title">FACTURATION DE</h3>
+          <p class="party-info font-semibold">{{ data.owner?.name || 'Propriétaire' }}</p>
+          <p class="party-info" *ngIf="data.owner?.email">{{ data.owner.email }}</p>
+          <p class="party-info" *ngIf="data.owner?.phoneNumber">{{ data.owner.phoneNumber }}</p>
+          <p class="party-info" *ngIf="data.propertyName">{{ data.propertyName }}</p>
+        </div>
+        <div class="party-block">
+          <h3 class="party-title">FACTURÉ À</h3>
+          <p class="party-info font-semibold">{{ data.tenant?.fullName || 'Locataire' }}</p>
+          <p class="party-info" *ngIf="data.tenant?.email">{{ data.tenant.email }}</p>
+          <p class="party-info" *ngIf="data.tenant?.phoneNumber">{{ data.tenant.phoneNumber }}</p>
+          <p class="party-info">Unité {{ data.room?.code || 'N/A' }}</p>
+        </div>
+        <div class="party-block details-block">
+          <table class="details-table">
+            <tr>
+              <td class="detail-label">N° Reçu</td>
+              <td class="detail-value">{{ getReceiptNumber() }}</td>
+            </tr>
+            <tr>
+              <td class="detail-label">Date paiement</td>
+              <td class="detail-value">{{ formatDate(data.payment.datePayment) }}</td>
+            </tr>
+            <tr>
+              <td class="detail-label">Date facturation</td>
+              <td class="detail-value">{{ formatDate(today) }}</td>
+            </tr>
+            <tr>
+              <td class="detail-label">Mode</td>
+              <td class="detail-value">{{ getPaymentMethodLabel() }}</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- Tableau des services -->
+      <table class="services-table">
+        <thead>
+          <tr>
+            <th>Description</th>
+            <th>Unité</th>
+            <th>Période</th>
+            <th class="text-right">Montant (FCFA)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{ getPaymentTypeLabel() }}</td>
+            <td>{{ data.room?.code || 'N/A' }}</td>
+            <td>{{ getMonthLabel() }}</td>
+            <td class="text-right font-semibold">{{ formatPrice(data.payment.locationPaymentPrice) }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Totaux -->
+      <div class="totals-section">
+        <table class="totals-table">
+          <tr>
+            <td class="total-label">Sous-total</td>
+            <td class="total-value">{{ formatPrice(data.payment.locationPaymentPrice) }}</td>
+          </tr>
+          <tr>
+            <td class="total-label">TVA</td>
+            <td class="total-value">0 FCFA</td>
+          </tr>
+          <tr class="total-final-row">
+            <td class="total-label font-bold">Total TTC</td>
+            <td class="total-value font-bold">{{ formatPrice(data.payment.locationPaymentPrice) }}</td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- Notes -->
+      <div class="receipt-notes" *ngIf="data.payment.reason || data.payment.notes">
+        <p class="notes-label">Notes :</p>
+        <p class="notes-text">{{ data.payment.reason || data.payment.notes }}</p>
+      </div>
+
+      <!-- Footer du reçu -->
+      <div class="receipt-footer-section">
+        <p class="footer-conditions">CONDITIONS GÉNÉRALES</p>
+        <p class="footer-info">Par Ndewa360° © {{ currentYear }}</p>
+        <p class="footer-info"><a href="https://ndewa-360.com" target="_blank">www.ndewa-360.com</a></p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Footer du modal -->
+  <div class="modal-footer">
+    <button (click)="onClose()" class="btn-secondary">Fermer</button>
+    <button (click)="downloadPdf()" [disabled]="isDownloading" class="btn-primary">
+      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+      </svg>
+      {{ isDownloading ? 'Génération en cours...' : 'Imprimer / Télécharger PDF' }}
+    </button>
+  </div>
+</div>

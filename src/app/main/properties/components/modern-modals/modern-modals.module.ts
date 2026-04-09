@@ -10,7 +10,6 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { TranslateModule } from '@ngx-translate/core';
 
-// Nouveaux modals modernes
 import { ModernTenantModalComponent } from '../modern-tenant-modal/modern-tenant-modal.component';
 import { ModernUnitModalComponent } from '../modern-unit-modal/modern-unit-modal.component';
 import { ModernPaymentModalComponent } from '../modern-payment-modal/modern-payment-modal.component';
@@ -18,6 +17,7 @@ import { ModernDeletePaymentModalComponent } from '../modern-delete-payment-moda
 import { ModernContractTerminationModalComponent } from '../modern-contract-termination-modal/modern-contract-termination-modal.component';
 import { ModernDeleteTenantModalComponent } from '../modern-delete-tenant-modal/modern-delete-tenant-modal.component';
 import { ModernDeleteUnitModalComponent } from '../modern-delete-unit-modal/modern-delete-unit-modal.component';
+import { PaymentReceiptModalComponent } from '../payment-receipt-modal/payment-receipt-modal.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +27,8 @@ import { ModernDeleteUnitModalComponent } from '../modern-delete-unit-modal/mode
     ModernDeletePaymentModalComponent,
     ModernContractTerminationModalComponent,
     ModernDeleteTenantModalComponent,
-    ModernDeleteUnitModalComponent
+    ModernDeleteUnitModalComponent,
+    PaymentReceiptModalComponent
   ],
   imports: [
     CommonModule,
@@ -48,7 +49,8 @@ import { ModernDeleteUnitModalComponent } from '../modern-delete-unit-modal/mode
     ModernDeletePaymentModalComponent,
     ModernContractTerminationModalComponent,
     ModernDeleteTenantModalComponent,
-    ModernDeleteUnitModalComponent
+    ModernDeleteUnitModalComponent,
+    PaymentReceiptModalComponent
   ]
 })
 export class ModernModalsModule { }

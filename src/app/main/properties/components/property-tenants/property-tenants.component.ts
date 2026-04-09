@@ -715,25 +715,28 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
    * Ouvre le modal de modification d'un paiement
    */
   onEditPayment(payment: any): void {
-    console.log('🔧 PropertyTenants: onEditPayment appelé', payment);
-
     if (!payment?.transaction || !payment?.history) {
-      console.error('❌ Données de paiement manquantes pour la modification');
       this.toastr.error('Données de paiement manquantes', 'Erreur');
       return;
     }
 
-    if (!this.dialog) {
-      console.error('❌ Service MatDialog non disponible !');
-      return;
-    }
+    if (!this.dialog) return;
 
-    console.log('📝 Ouverture du modal ModernPaymentModalComponent...');
+    // Résoudre room et tenant depuis history ou depuis le store
+    const room = (typeof payment.history?.room === 'object' && payment.history?.room?._id)
+      ? payment.history.room
+      : this.units.find(r => r._id === (payment.history?.room || payment.transaction?.room)) || null;
 
-    // Récupérer les données nécessaires
-    const room = payment.history?.room;
-    const tenant = payment.history?.locataire;
-    const location = payment.history?.location;
+    const tenant = (typeof payment.history?.locataire === 'object' && payment.history?.locataire?._id)
+      ? payment.history.locataire
+      : this.tenants.find(t => t._id === (payment.history?.locataire || payment.transaction?.locataire)) || null;
+
+    const location = payment.history?.location
+      || this.locations.find(loc =>
+          loc.locataire === tenant?._id &&
+          loc.room === room?._id &&
+          loc.isRunning === true
+        ) || null;
 
     try {
       const dialogRef = this.dialog.open(ModernPaymentModalComponent, {
@@ -742,24 +745,17 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
         disableClose: true,
         data: {
           mode: 'edit',
-          room: room,
-          tenant: tenant,
-          location: location,
+          room,
+          tenant,
+          location,
           transaction: payment.transaction
         }
       });
 
-      console.log('✅ Modal UpdatePayment ouvert, dialogRef:', dialogRef);
-
       dialogRef.afterClosed().subscribe(result => {
-        console.log('🔄 Modal UpdatePayment fermé avec résultat:', result);
-        if (result) {
-          console.log('✅ Paiement modifié avec succès');
-          this.toastr.success('Paiement modifié avec succès', 'Succès');
-        }
+        if (result) this.toastr.success('Paiement modifié avec succès', 'Succès');
       });
     } catch (error) {
-      console.error('❌ Erreur lors de l\'ouverture du modal UpdatePayment:', error);
       this.toastr.error('Erreur lors de l\'ouverture du modal', 'Erreur');
     }
   }

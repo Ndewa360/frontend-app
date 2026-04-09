@@ -1,0 +1,308 @@
+.receipt-modal-container {
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+  width: 100%;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.receipt-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f9fafb;
+  flex-shrink: 0;
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .header-icon {
+      width: 40px;
+      height: 40px;
+      background: #d1fae5;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .header-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #111827;
+      margin: 0;
+    }
+
+    .header-subtitle {
+      font-size: 13px;
+      color: #6b7280;
+      margin: 0;
+    }
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
+
+.btn-download {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  background: #059669;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover:not(:disabled) { background: #047857; }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+}
+
+.btn-close {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #6b7280;
+  transition: all 0.2s;
+
+  &:hover { background: #f3f4f6; color: #111827; }
+}
+
+.receipt-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+  background: #f3f4f6;
+}
+
+.receipt-preview {
+  background: white;
+  border-radius: 8px;
+  padding: 40px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "Ndewa360";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-45deg);
+    font-size: 120px;
+    color: rgba(200, 167, 96, 0.06);
+    font-weight: bold;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+}
+
+.receipt-header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 32px;
+
+  .receipt-logo { width: 80px; height: auto; }
+
+  .receipt-title-area {
+    text-align: right;
+
+    .receipt-main-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: #111827;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .receipt-ref {
+      font-size: 14px;
+      font-weight: 600;
+      color: #374151;
+      margin-top: 4px;
+    }
+  }
+}
+
+.receipt-parties {
+  display: flex;
+  gap: 32px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+
+  .party-block {
+    flex: 1;
+    min-width: 140px;
+
+    &.details-block { flex: 0 0 auto; }
+  }
+
+  .party-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: #374151;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+
+  .party-info {
+    font-size: 13px;
+    color: #374151;
+    margin-bottom: 3px;
+  }
+}
+
+.details-table {
+  border-collapse: collapse;
+
+  td {
+    padding: 3px 8px;
+    font-size: 13px;
+    color: #374151;
+
+    &.detail-label { font-weight: normal; text-align: left; padding-left: 0; }
+    &.detail-value { font-weight: 600; text-align: right; }
+  }
+}
+
+.services-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 16px;
+
+  th {
+    text-align: left;
+    padding: 8px 10px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #374151;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #111827;
+  }
+
+  td {
+    padding: 12px 10px;
+    font-size: 13px;
+    color: #374151;
+    border-bottom: 1px solid #d1d5db;
+    border-top: 1px solid #d1d5db;
+  }
+
+  .text-right { text-align: right; }
+  .font-semibold { font-weight: 600; }
+}
+
+.totals-section {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 24px;
+
+  .totals-table {
+    width: 240px;
+    border-collapse: collapse;
+
+    td {
+      padding: 4px 0;
+      font-size: 13px;
+      color: #374151;
+
+      &.total-label { text-align: left; }
+      &.total-value { text-align: right; }
+    }
+
+    .total-final-row td {
+      font-weight: 700;
+      border-top: 2px solid #111827;
+      padding-top: 8px;
+      font-size: 14px;
+    }
+  }
+}
+
+.receipt-notes {
+  background: #f9fafb;
+  border-left: 3px solid #d1d5db;
+  padding: 10px 14px;
+  margin-bottom: 24px;
+  border-radius: 0 4px 4px 0;
+
+  .notes-label { font-size: 11px; font-weight: 700; color: #6b7280; text-transform: uppercase; margin-bottom: 4px; }
+  .notes-text { font-size: 13px; color: #374151; }
+}
+
+.receipt-footer-section {
+  border-top: 1px solid #e5e7eb;
+  padding-top: 16px;
+  margin-top: 16px;
+
+  .footer-conditions { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #374151; margin-bottom: 4px; }
+  .footer-info { font-size: 11px; color: #6b7280; margin-bottom: 2px; }
+
+  a { color: #cc8c0a; text-decoration: none; }
+}
+
+.modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 24px;
+  border-top: 1px solid #e5e7eb;
+  background: #f9fafb;
+  flex-shrink: 0;
+}
+
+.btn-secondary {
+  padding: 8px 20px;
+  background: white;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover { background: #f3f4f6; }
+}
+
+.btn-primary {
+  display: flex;
+  align-items: center;
+  padding: 8px 20px;
+  background: #cc8c0a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover:not(:disabled) { background: #a87008; }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+}
+
+.font-bold { font-weight: 700; }
+.font-semibold { font-weight: 600; }

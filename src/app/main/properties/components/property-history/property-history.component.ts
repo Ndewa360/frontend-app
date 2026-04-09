@@ -19,6 +19,7 @@ import {
 } from 'src/app/shared/store';
 import { ModernPaymentModalComponent } from '../modern-payment-modal/modern-payment-modal.component';
 import { ModernDeletePaymentModalComponent } from '../modern-delete-payment-modal/modern-delete-payment-modal.component';
+import { PaymentReceiptModalComponent } from '../payment-receipt-modal/payment-receipt-modal.component';
 import { ExportService, ExportColumn } from '../../services/export.service';
 
 interface PaymentHistoryItem {
@@ -681,6 +682,26 @@ export class PropertyHistoryComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   /**
+   * Affiche le reçu d'un paiement
+   */
+  onViewReceipt(payment: PaymentHistoryItem): void {
+    if (!payment?.rawPayment || !this.dialog) return;
+    const owner = this.store.selectSnapshot((state: any) => state.userprofile?.userProfile);
+    this.dialog.open(PaymentReceiptModalComponent, {
+      width: '700px',
+      maxWidth: '95vw',
+      maxHeight: '90vh',
+      data: {
+        payment: payment.rawPayment,
+        tenant: payment.tenant ? { fullName: payment.tenant.fullName, email: payment.tenant.email || payment.tenant.emailRef, phoneNumber: payment.tenant.phoneNumber || payment.tenant.phoneNumberRef } : null,
+        room: payment.room ? { code: payment.room.code, price: payment.room.price, type: payment.room.type } : null,
+        owner: owner ? { name: owner.name || owner.fullName, email: owner.email, phoneNumber: owner.phoneNumber } : null,
+        propertyName: this.property?.name
+      }
+    });
+  }
+
+  /**
    * Affiche les détails d'un paiement
    */
   onViewPayment(payment: PaymentHistoryItem): void {
@@ -701,23 +722,22 @@ export class PropertyHistoryComponent implements OnInit, OnDestroy, OnChanges {
    * Ouvre le modal de modification d'un paiement
    */
   onEditPayment(payment: PaymentHistoryItem): void {
-    console.log('🔧 PropertyHistory: onEditPayment appelé', payment);
-
     if (!payment?.rawPayment || !payment?.tenant) {
-      console.error('❌ Données de paiement manquantes pour la modification');
       this.toastr.error('Données de paiement manquantes', 'Erreur');
       return;
     }
 
-    if (!this.dialog) {
-      console.error('❌ Service MatDialog non disponible !');
-      return;
-    }
+    if (!this.dialog) return;
 
-    // Construire les données nécessaires pour le modal
-    const paymentData = this.buildPaymentModalData(payment);
-
-    console.log('📝 Ouverture du modal ModernPaymentModalComponent...');
+    // Récupérer la location active pour ce locataire/chambre
+    const locations = this.store.selectSnapshot(
+      (state: any) => state.location?.locations || []
+    ) as any[];
+    const location = locations.find((loc: any) =>
+      loc.locataire === payment.tenant?._id &&
+      loc.room === payment.room?._id &&
+      loc.isRunning === true
+    ) || null;
 
     try {
       const dialogRef = this.dialog.open(ModernPaymentModalComponent, {
@@ -725,31 +745,22 @@ export class PropertyHistoryComponent implements OnInit, OnDestroy, OnChanges {
         maxWidth: '95vw',
         panelClass: 'payment-modal-dialog',
         disableClose: true,
-        hasBackdrop: true,
-        backdropClass: 'modal-backdrop',
         data: {
           mode: 'edit',
-          transaction: paymentData.transaction,
-          history: paymentData.history,
-          room: paymentData.room,
-          tenant: paymentData.tenant,
-          location: paymentData.location
+          transaction: payment.rawPayment,
+          room: payment.room,
+          tenant: payment.tenant,
+          location
         }
       });
 
-      console.log('✅ Modal UpdatePayment ouvert, dialogRef:', dialogRef);
-
       dialogRef.afterClosed().subscribe(result => {
-        console.log('🔄 Modal UpdatePayment fermé avec résultat:', result);
         if (result) {
-          console.log('✅ Paiement modifié avec succès');
           this.toastr.success('Paiement modifié avec succès', 'Succès');
-          // Recharger les données
           this.loadData();
         }
       });
     } catch (error) {
-      console.error('❌ Erreur lors de l\'ouverture du modal UpdatePayment:', error);
       this.toastr.error('Erreur lors de l\'ouverture du modal', 'Erreur');
     }
   }

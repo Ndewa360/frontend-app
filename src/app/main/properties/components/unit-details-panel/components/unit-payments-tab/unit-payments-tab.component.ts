@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { UnitDetailsData, UnitDetailsService } from '../../../../services/unit-details.service';
 
 export interface PaymentAction {
-  type: 'add' | 'view' | 'edit' | 'delete' | 'export';
+  type: 'add' | 'view' | 'edit' | 'delete' | 'export' | 'receipt';
   data?: any;
 }
 
@@ -102,6 +102,10 @@ export class UnitPaymentsTabComponent {
   // Actions
   onAddPayment(): void {
     this.paymentAction.emit({ type: 'add' });
+  }
+
+  viewReceipt(payment: any): void {
+    this.paymentAction.emit({ type: 'receipt', data: payment });
   }
 
   viewPaymentDetails(payment: any): void {

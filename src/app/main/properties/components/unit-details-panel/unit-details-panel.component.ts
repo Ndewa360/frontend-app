@@ -19,6 +19,7 @@ import { UnitDetailsService, UnitDetailsData } from '../../services/unit-details
 import { PaymentAction } from './components/unit-payments-tab/unit-payments-tab.component';
 import { ModernPaymentModalComponent } from '../modern-payment-modal/modern-payment-modal.component';
 import { ModernDeletePaymentModalComponent } from '../modern-delete-payment-modal/modern-delete-payment-modal.component';
+import { PaymentReceiptModalComponent } from '../payment-receipt-modal/payment-receipt-modal.component';
 import { PropertyAccessService } from 'src/app/shared/services/property-access.service';
 
 export interface UnitPanelAction {
@@ -453,6 +454,27 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   /**
+   * Ouvre le modal de reçu d'un paiement
+   */
+  onViewReceipt(payment: any): void {
+    if (!payment || !this.dialog) return;
+    const transaction = payment.transaction || payment;
+    const tenant = this.unitData?.tenant || null;
+    const owner = this.store.selectSnapshot((state: any) => state.userprofile?.userProfile);
+    this.dialog.open(PaymentReceiptModalComponent, {
+      width: '700px',
+      maxWidth: '95vw',
+      maxHeight: '90vh',
+      data: {
+        payment: transaction,
+        tenant: tenant ? { fullName: tenant.fullName, email: tenant.email || tenant.emailRef, phoneNumber: tenant.phoneNumber || tenant.phoneNumberRef } : null,
+        room: this.room ? { code: this.room.code, price: this.room.price, type: this.room.type } : null,
+        owner: owner ? { name: owner.name || owner.fullName, email: owner.email, phoneNumber: owner.phoneNumber } : null
+      }
+    });
+  }
+
+  /**
    * Ouvrir le modal de modification d'un paiement
    */
   onEditPayment(payment: any): void {
@@ -500,27 +522,24 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
       return;
     }
 
-    console.log('📝 Ouverture du modal ModernPaymentModalComponent...');
-
     try {
       const dialogRef = this.dialog.open(ModernPaymentModalComponent, {
         width: '100%',
         maxWidth: '800px',
         disableClose: true,
         data: {
+          mode: 'edit',
           transaction: transaction,
-          history: history
+          history: history,
+          // ✅ Fournir room, tenant et location pour que le modal fonctionne correctement
+          room: this.room,
+          tenant: this.unitData?.tenant || history?.locataire || null,
+          location: this.unitData?.location || null
         }
       });
 
-      console.log('✅ Modal UpdatePayment ouvert, dialogRef:', dialogRef);
-
       dialogRef.afterClosed().subscribe(result => {
-        console.log('🔄 Modal UpdatePayment fermé avec résultat:', result);
         if (result) {
-          console.log('✅ Paiement modifié avec succès');
-          this.toastr.success('Paiement modifié avec succès', 'Succès');
-          // Recharger les données de l'unité
           this.loadUnitData();
         }
       });
@@ -627,8 +646,9 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
         this.showAddPaymentModal = true;
         break;
       case 'view':
-        console.log('Voir les détails du paiement:', paymentAction.data);
-        // TODO: Implémenter la visualisation des détails du paiement
+        break;
+      case 'receipt':
+        this.onViewReceipt(paymentAction.data);
         break;
       case 'edit':
         console.log("Edit payment ",paymentAction)

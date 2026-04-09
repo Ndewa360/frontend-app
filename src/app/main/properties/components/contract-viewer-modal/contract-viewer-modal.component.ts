@@ -301,13 +301,15 @@ export class ContractViewerModalComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Obtient le titre du contrat
+   * Obtient le titre du contrat avec le nom du locataire interpolé
    */
   getContractTitle(): string {
-    if (this.tenant) {
-      return 'CONTRACT_VIEWER.CONTRACT_TITLE_WITH_TENANT';
+    if (this.tenant?.fullName) {
+      return this.translate.instant('CONTRACT_VIEWER.CONTRACT_TITLE_WITH_TENANT', {
+        tenantName: this.tenant.fullName
+      });
     }
-    return 'CONTRACT_VIEWER.CONTRACT_TITLE';
+    return this.translate.instant('CONTRACT_VIEWER.CONTRACT_TITLE');
   }
 
   /**
