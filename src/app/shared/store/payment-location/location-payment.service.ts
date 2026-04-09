@@ -51,4 +51,11 @@ export class LocationPaymentService
     {       
         return this._httpClient.get<ApiResultFormat<LocationPaymentModel[]>>(`${environment.apiUrl}/location-payment/property/${propertyId}`)
     }
+
+    downloadReceipt(paymentId: string): Observable<Blob> {
+        return this._httpClient.get(
+            `${environment.apiUrl}/location-payment/${paymentId}/receipt/download`,
+            { responseType: 'blob' }
+        );
+    }
 }

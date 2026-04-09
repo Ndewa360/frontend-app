@@ -3,6 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 import { LocationPaymentType } from 'src/app/shared/store';
+import { LocationPaymentService } from 'src/app/shared/store/payment-location/location-payment.service';
 
 export interface PaymentReceiptData {
   payment: {
@@ -48,7 +49,8 @@ export class PaymentReceiptModalComponent implements OnInit {
     private dialogRef: MatDialogRef<PaymentReceiptModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: PaymentReceiptData,
     private translate: TranslateService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private locationPaymentService: LocationPaymentService,
   ) {}
 
   ngOnInit(): void {}
@@ -106,43 +108,46 @@ export class PaymentReceiptModalComponent implements OnInit {
   }
 
   downloadPdf(): void {
+    // Si le paiement a un _id, utiliser le backend (PDF professionnel avec logo)
+    if (this.data.payment._id) {
+      this.isDownloading = true;
+      this.locationPaymentService.downloadReceipt(this.data.payment._id).subscribe({
+        next: (blob: Blob) => {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `recu_${this.data.payment.billingRef || this.data.payment._id}.pdf`;
+          a.click();
+          URL.revokeObjectURL(url);
+          this.isDownloading = false;
+          this.toastr.success('Reçu téléchargé avec succès', 'Ndewa360°');
+        },
+        error: () => {
+          this.isDownloading = false;
+          this.toastr.error('Erreur lors du téléchargement du reçu', 'Erreur');
+        }
+      });
+      return;
+    }
+
+    // Fallback : impression navigateur si pas d'_id
     this.isDownloading = true;
-
     try {
-      // Générer le HTML du reçu
-      const receiptHtml = this.generateReceiptHtml();
-
-      // Ouvrir dans une nouvelle fenêtre et imprimer en PDF
       const printWindow = window.open('', '_blank', 'width=900,height=700');
       if (!printWindow) {
         this.toastr.error('Impossible d\'ouvrir la fenêtre d\'impression. Vérifiez les popups.', 'Erreur');
         this.isDownloading = false;
         return;
       }
-
-      printWindow.document.write(receiptHtml);
+      printWindow.document.write(this.generateReceiptHtml());
       printWindow.document.close();
-
-      // Attendre le chargement puis imprimer
       printWindow.onload = () => {
-        setTimeout(() => {
-          printWindow.focus();
-          printWindow.print();
-          this.isDownloading = false;
-        }, 500);
+        setTimeout(() => { printWindow.focus(); printWindow.print(); this.isDownloading = false; }, 500);
       };
-
-      // Fallback si onload ne se déclenche pas
       setTimeout(() => {
-        if (this.isDownloading) {
-          printWindow.focus();
-          printWindow.print();
-          this.isDownloading = false;
-        }
+        if (this.isDownloading) { printWindow.focus(); printWindow.print(); this.isDownloading = false; }
       }, 1500);
-
     } catch (error) {
-      console.error('Erreur lors du téléchargement:', error);
       this.toastr.error('Erreur lors de la génération du PDF', 'Erreur');
       this.isDownloading = false;
     }
