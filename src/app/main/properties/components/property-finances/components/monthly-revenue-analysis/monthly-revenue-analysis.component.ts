@@ -106,25 +106,25 @@ export class MonthlyRevenueAnalysisComponent implements OnInit, OnChanges, OnDes
       return;
     }
 
+    // Totaux déjà calculés par le backend, on les agrège ici uniquement pour bestMonth/worstMonth
     const totalExpected = this.monthlyData.reduce((sum, month) => sum + month.expected, 0);
     const totalReceived = this.monthlyData.reduce((sum, month) => sum + month.received, 0);
-    
+
     let bestMonth = { month: 0, rate: 0 };
     let worstMonth = { month: 0, rate: 100 };
 
     this.monthlyData.forEach((month) => {
-      if (month.rate > bestMonth.rate) {
-        bestMonth = { month: month.monthIndex, rate: month.rate };
-      }
-      if (month.rate < worstMonth.rate) {
-        worstMonth = { month: month.monthIndex, rate: month.rate };
-      }
+      if (month.rate > bestMonth.rate) bestMonth = { month: month.monthIndex, rate: month.rate };
+      if (month.rate < worstMonth.rate) worstMonth = { month: month.monthIndex, rate: month.rate };
     });
 
     this.yearlyStatsCalculated = {
       totalExpected: Math.round(totalExpected * 100) / 100,
       totalReceived: Math.round(totalReceived * 100) / 100,
-      averageCollectionRate: totalExpected > 0 ? Math.round((totalReceived / totalExpected) * 100 * 100) / 100 : 0,
+      // Taux moyen calculé sur la base des totaux (plus précis que la moyenne des taux mensuels)
+      averageCollectionRate: totalExpected > 0
+        ? Math.round((totalReceived / totalExpected) * 100 * 100) / 100
+        : 0,
       bestMonth,
       worstMonth
     };

@@ -8,8 +8,8 @@ import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
 })
 export class ChartNombreLocataireComponent implements OnInit{
   
-  @Input() nbreLocataireTotal:number=100;
-  @Input() nbreLocataireActif:number=50;
+  @Input() nbreLocataireTotal: number = 0;
+  @Input() nbreLocataireActif: number = 0;
 
   ngOnInit(): void {
   }

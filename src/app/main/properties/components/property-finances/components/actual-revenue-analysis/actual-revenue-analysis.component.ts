@@ -105,17 +105,17 @@ export class ActualRevenueAnalysisComponent implements OnInit, OnChanges {
     let yearlyActual = 0;
     let hasOverpayments = false;
 
-    // Traiter les 12 mois
     for (let month = 0; month < 12; month++) {
-      const expectedAmount = monthlyRent;
+      // ✅ Utiliser expectedAmount du backend si disponible
+      const expectedAmount = roomStat.expectedAmount
+        ? roomStat.expectedAmount / (roomStat.monthsDue || 12)
+        : monthlyRent;
       const actualAmount = monthlyPayments[month] || 0;
       const difference = actualAmount - expectedAmount;
       const differencePercentage = expectedAmount > 0 ? (difference / expectedAmount) * 100 : 0;
       const overpayment = actualAmount > expectedAmount;
 
-      if (overpayment) {
-        hasOverpayments = true;
-      }
+      if (overpayment) hasOverpayments = true;
 
       monthlyDetails.push({
         month: month + 1,

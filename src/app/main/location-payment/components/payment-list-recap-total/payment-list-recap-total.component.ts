@@ -1,6 +1,8 @@
 import { CurrencyPipe } from '@angular/common';
-import { Component, Input, OnChanges, OnInit, SimpleChanges, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Store } from '@ngxs/store';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { TableModel, TableRowSize, TableHeaderItem, TableItem } from 'carbon-components-angular';
 import { sort } from 'src/@youpez';
 import { LocationPaymentState, LocationPaymentType, LocationPaymentModel, RoomState, LocataireState, StatisticState, StatisticAllPaymentLocataireYearModel, StatisticPaymentStateType, Currency } from 'src/app/shared/store';
@@ -12,7 +14,7 @@ import { UtilsString } from 'src/app/shared/utils';
   styleUrls: ['./payment-list-recap-total.component.css'],
   encapsulation:ViewEncapsulation.None
 })
-export class PaymentListRecapTotalComponent implements OnChanges, OnInit{
+export class PaymentListRecapTotalComponent implements OnChanges, OnInit, OnDestroy {
   @Input() propertyID:string;
   @Input() selectedYear
   title=`Montant percus année ${new Date().getFullYear()}`;
@@ -41,19 +43,28 @@ export class PaymentListRecapTotalComponent implements OnChanges, OnInit{
   @ViewChild("payementSumTemplate", {static: true}) payementSumTemplate: TemplateRef<any>
   @ViewChild("locataireTemplate", {static: true}) locataireTemplate: TemplateRef<any>
 
+  private destroy$ = new Subject<void>();
+
   constructor(
-    private _store:Store,
-    private currencyPipe:CurrencyPipe
-    
-  ){}
+    private _store: Store,
+    private currencyPipe: CurrencyPipe
+  ) {}
 
   ngOnInit() {}
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
-    if(changes['propertyID'] || changes["selectedYear"]) {
-      this.title=`Montant percus année ${this.selectedYear}`;
-      this._store.select(StatisticState.selectStateStatisticAllPaymentLocataireByPropertyIdAndYear(this.propertyID,this.selectedYear))
-      .subscribe((value)=>this.model=this.updateData(value))
+    if (changes['propertyID'] || changes['selectedYear']) {
+      this.title = `Montant perçus année ${this.selectedYear}`;
+      this.destroy$.next(); // Annuler la subscription précédente
+      this._store.select(
+        StatisticState.selectStateStatisticAllPaymentLocataireByPropertyIdAndYear(this.propertyID, this.selectedYear)
+      ).pipe(takeUntil(this.destroy$))
+        .subscribe(value => this.model = this.updateData(value));
     }
   }
   getHeader()

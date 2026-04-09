@@ -1,5 +1,7 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
 import { Store } from '@ngxs/store';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { TableModel, TableRowSize, TableHeaderItem, TableItem } from 'carbon-components-angular';
 import { sort } from 'src/@youpez';
 import { RoomState, LocataireState } from 'src/app/shared/store';
@@ -11,7 +13,7 @@ import { UtilsString } from 'src/app/shared/utils';
   templateUrl: './payment-list-type-property.component.html',
   styleUrls: ['./payment-list-type-property.component.css']
 })
-export class PaymentListTypePropertyComponent implements OnChanges, OnInit{  
+export class PaymentListTypePropertyComponent implements OnChanges, OnInit, OnDestroy {
   @Input() propertyID:string;
   @Input() selectedYear;
   title="Caution retenu remboursable";
@@ -43,15 +45,27 @@ export class PaymentListTypePropertyComponent implements OnChanges, OnInit{
   @ViewChild("roomTemplate", {static: true}) roomTemplate: TemplateRef<any>
   @ViewChild("datePaymentTemplate", {static: true}) datePaymentTemplate: TemplateRef<any>
 
-  constructor(private _store:Store){}
+  private destroy$ = new Subject<void>();
+
+  constructor(private _store: Store) {}
 
   ngOnInit() {}
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
-    if(changes['propertyID']) {
-      //console.log("PropertyID",changes["propertyID"].currentValue)
-      this._store.select(LocationPaymentState.selectStateLocationPaymentByPropertyIdAndPaymentType(changes['propertyID'].currentValue,LocationPaymentType.CAUTION))
-      .subscribe((value)=>this.model=this.updateData(value))
+    if (changes['propertyID']) {
+      this.destroy$.next();
+      this._store.select(
+        LocationPaymentState.selectStateLocationPaymentByPropertyIdAndPaymentType(
+          changes['propertyID'].currentValue,
+          LocationPaymentType.CAUTION
+        )
+      ).pipe(takeUntil(this.destroy$))
+        .subscribe(value => this.model = this.updateData(value));
     }
   }
   getHeader()

@@ -113,11 +113,7 @@
           <p class="metric-value">{{ formatPrice(metrics.averageRent) }}</p>
           <p class="metric-description">{{ 'FINANCIAL_OVERVIEW.METRICS.PER_UNIT_MONTH' | translate }}</p>
           <div class="metric-trend">
-            <svg class="trend-icon positive" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-            </svg>
-            <span class="trend-text">+5.8% {{ 'FINANCIAL_OVERVIEW.METRICS.VS_PREVIOUS_YEAR' | translate }}</span>
-          </div>
+            </div>
         </div>
       </div>
     </div>
@@ -265,7 +261,7 @@
               <p class="item-description">{{ 'FINANCIAL_OVERVIEW.FINANCIAL_SUMMARY.UNCOLLECTED_REVENUE' | translate }}</p>
             </div>
             <div class="item-value">
-              <p class="value-amount">{{ formatPrice(metrics.totalExpected - metrics.totalRevenue) }}</p>
+              <p class="value-amount">{{ formatPrice(metrics.shortfall) }}</p>
               <div class="loss-percentage">
                 <span class="loss-rate">{{ formatPercentage(100 - metrics.collectionRate) }}</span>
               </div>

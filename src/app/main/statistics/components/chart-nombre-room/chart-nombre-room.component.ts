@@ -6,8 +6,8 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./chart-nombre-room.component.css']
 })
 export class ChartNombreRoomComponent {
-  @Input() nbreRoomTotal:number=100;
-  @Input() nbreRoomActif:number=50;
+  @Input() nbreRoomTotal: number = 0;
+  @Input() nbreRoomActif: number = 0;
 
   ngOnInit(): void {
   }

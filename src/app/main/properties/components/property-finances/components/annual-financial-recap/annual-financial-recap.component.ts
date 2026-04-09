@@ -1,7 +1,8 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges } from '@angular/core';
 import {
   StatisticRoomYearModel,
-  StatisticPaymentOfAllPropertyByYear
+  StatisticPaymentOfAllPropertyByYear,
+  EnrichedStatisticResponse
 } from 'src/app/shared/store';
 import { ExportData } from '../../property-finances.component';
 
@@ -55,6 +56,7 @@ export interface AnnualFinancialSummary {
 export class AnnualFinancialRecapComponent implements OnInit, OnChanges {
   @Input() yearlyStats: StatisticRoomYearModel[] = [];
   @Input() recapitulation: StatisticPaymentOfAllPropertyByYear | null = null;
+  @Input() enrichedData: EnrichedStatisticResponse | null = null; // ✅ Données enrichies backend
   @Input() selectedYear: number = new Date().getFullYear();
   @Input() isLoading: boolean = false;
 
@@ -100,42 +102,55 @@ export class AnnualFinancialRecapComponent implements OnInit, OnChanges {
   }
 
   private calculateAnnualSummary(): void {
-    let totalExpected = 0;
-    let totalReceived = 0;
-    let totalDeposits = 0;
-    let totalRentSum = 0;
-    let occupiedUnits = 0;
+    // ✅ Priorité aux données enrichies du backend
+    if (this.enrichedData?.data?.propertyMetrics) {
+      const m = this.enrichedData.data.propertyMetrics;
+      const cautionsReceived = this.enrichedData.data.cautionsAnalysis?.summary?.totalCautionsReceived || 0;
+      this.annualSummary = {
+        ...this.annualSummary,
+        totalExpectedRevenue: m.totalExpected,
+        totalReceivedRevenue: m.totalRevenue,
+        totalRevenue: m.totalRevenue,
+        totalDeposits: cautionsReceived,
+        totalUnits: m.totalRooms,
+        occupiedUnits: m.occupiedRooms,
+        occupancyRate: m.occupancyRate,
+        collectionRate: m.collectionRate,
+        performanceScore: Math.round((m.occupancyRate + m.collectionRate) / 2),
+        averageRentPerUnit: m.averageRent,
+        totalMissedRevenue: m.totalDebts
+      };
+      return;
+    }
+
+    // Fallback sur yearlyStats si pas de données enrichies
+    let totalExpected = 0, totalReceived = 0, totalRentSum = 0, occupiedUnits = 0;
 
     this.yearlyStats.forEach(roomStat => {
-      // Calculer les totaux à partir des paymentValue (tableau des paiements mensuels)
       const monthlyPayments = roomStat.paymentValue || [];
       const receivedForRoom = monthlyPayments.reduce((sum, payment) => sum + (payment || 0), 0);
       const roomPrice = roomStat.room?.price || 0;
-      const expectedForYear = roomPrice * 12; // Loyer annuel attendu
-
-      totalExpected += expectedForYear;
+      const monthsDue = roomStat.monthsDue ?? 12;
+      totalExpected += roomPrice * monthsDue;
       totalReceived += receivedForRoom;
       totalRentSum += roomPrice;
-
-      if (receivedForRoom > 0) {
-        occupiedUnits++;
-      }
+      if (receivedForRoom > 0) occupiedUnits++;
     });
 
     const occupancyRate = this.yearlyStats.length > 0 ? (occupiedUnits / this.yearlyStats.length) * 100 : 0;
-    const collectionRate = totalExpected > 0 ? (totalReceived / totalExpected) * 100 : 0;
+    const collectionRate = totalExpected > 0 ? Math.min((totalReceived / totalExpected) * 100, 100) : 0;
 
     this.annualSummary = {
       ...this.annualSummary,
       totalExpectedRevenue: totalExpected,
       totalReceivedRevenue: totalReceived,
-      totalRevenue: totalReceived, // Alias
-      totalDeposits,
+      totalRevenue: totalReceived,
+      totalDeposits: 0,
       totalUnits: this.yearlyStats.length,
       occupiedUnits,
       occupancyRate,
       collectionRate,
-      performanceScore: Math.round((occupancyRate + collectionRate) / 2), // Score basé sur occupation et collecte
+      performanceScore: Math.round((occupancyRate + collectionRate) / 2),
       averageRentPerUnit: this.yearlyStats.length > 0 ? totalRentSum / this.yearlyStats.length : 0,
       totalMissedRevenue: totalExpected - totalReceived
     };
@@ -203,45 +218,58 @@ export class AnnualFinancialRecapComponent implements OnInit, OnChanges {
   }
 
   private buildUnitPerformance(): void {
+    // ✅ Priorité aux données enrichies du backend
+    if (this.enrichedData?.data?.rooms) {
+      const rooms = this.enrichedData.data.rooms;
+      this.annualSummary.unitPerformance = rooms.map((roomData: any) => ({
+        unitCode: roomData.room?.code || 'N/A',
+        unitType: this.getRoomTypeLabel(roomData.room?.type),
+        monthlyRent: roomData.room?.price || 0,
+        totalExpected: roomData.expectedAmount || 0,
+        totalReceived: roomData.totalReceived || 0,
+        performanceRate: roomData.collectionRate || 0,
+        monthsOccupied: roomData.monthsDue || 0
+      })).sort((a, b) => b.performanceRate - a.performanceRate);
+
+      this.annualSummary.unitBreakdown = this.annualSummary.unitPerformance.map(u => ({
+        unitCode: u.unitCode,
+        unitType: u.unitType,
+        monthlyRent: u.monthlyRent,
+        totalExpected: u.totalExpected,
+        totalReceived: u.totalReceived,
+        collectionRate: u.performanceRate,
+        monthsOccupied: u.monthsOccupied
+      }));
+      return;
+    }
+
+    // Fallback sur yearlyStats
     this.annualSummary.unitPerformance = this.yearlyStats.map(roomStat => {
       const monthlyPayments = roomStat.paymentValue || [];
       const totalReceived = monthlyPayments.reduce((sum, payment) => sum + (payment || 0), 0);
       const monthlyRent = roomStat.room?.price || 0;
-      const totalExpected = monthlyRent * 12;
-
-      // Calculer le nombre de mois d'occupation basé sur les paiements
-      const monthsOccupied = monthlyRent > 0 ? Math.round(totalReceived / monthlyRent) : 0;
-
+      const monthsDue = roomStat.monthsDue ?? 12;
+      const totalExpected = monthlyRent * monthsDue;
       return {
         unitCode: roomStat.room?.code || 'N/A',
         unitType: this.getRoomTypeLabel(roomStat.room?.type),
         monthlyRent,
         totalExpected,
         totalReceived,
-        performanceRate: totalExpected > 0 ? (totalReceived / totalExpected) * 100 : 0,
-        monthsOccupied: Math.min(monthsOccupied, 12)
+        performanceRate: totalExpected > 0 ? Math.min((totalReceived / totalExpected) * 100, 100) : 0,
+        monthsOccupied: monthsDue
       };
     }).sort((a, b) => b.performanceRate - a.performanceRate);
 
-    // Construire aussi unitBreakdown pour le template
-    this.annualSummary.unitBreakdown = this.yearlyStats.map(roomStat => {
-      const monthlyPayments = roomStat.paymentValue || [];
-      const totalReceived = monthlyPayments.reduce((sum, payment) => sum + (payment || 0), 0);
-      const monthlyRent = roomStat.room?.price || 0;
-      const totalExpected = monthlyRent * 12;
-      const monthsOccupied = monthlyRent > 0 ? Math.round(totalReceived / monthlyRent) : 0;
-      const collectionRate = totalExpected > 0 ? (totalReceived / totalExpected) * 100 : 0;
-
-      return {
-        unitCode: roomStat.room?.code || 'N/A',
-        unitType: this.getRoomTypeLabel(roomStat.room?.type),
-        monthlyRent,
-        totalExpected,
-        totalReceived,
-        collectionRate,
-        monthsOccupied: Math.min(monthsOccupied, 12)
-      };
-    }).sort((a, b) => b.collectionRate - a.collectionRate);
+    this.annualSummary.unitBreakdown = this.annualSummary.unitPerformance.map(u => ({
+      unitCode: u.unitCode,
+      unitType: u.unitType,
+      monthlyRent: u.monthlyRent,
+      totalExpected: u.totalExpected,
+      totalReceived: u.totalReceived,
+      collectionRate: u.performanceRate,
+      monthsOccupied: u.monthsOccupied
+    }));
   }
 
   private calculateYearComparison(): void {

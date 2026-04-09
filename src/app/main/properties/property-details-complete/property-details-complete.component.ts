@@ -139,9 +139,9 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
     this.history$ = this.propertyDataService.getPropertyHistory(this.propertyId);
     this.loadingStates$ = this.propertyDataService.getLoadingStates();
 
-    // 🆕 Charger les données financières pour l'année courante
+    // Charger les données financières pour l'année courante
     const currentYear = new Date().getFullYear();
-    this.store.dispatch(new StatisticAction.FetchStaticRoomDataByPropertyIdAndYear(this.propertyId, currentYear.toString()));
+    this.store.dispatch(new StatisticAction.FetchStaticByPropertyIdAndYear(this.propertyId, currentYear.toString()));
 
     // Mettre à jour les compteurs des onglets
     this.updateTabCounts();
@@ -180,12 +180,10 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
     const availableUnits = totalUnits - occupiedUnits;
     const occupancyRate = totalUnits > 0 ? (occupiedUnits / totalUnits) * 100 : 0;
 
-    // Calculer le revenu mensuel total
     const monthlyRevenue = units.reduce((total, unit) => {
       return total + (!unit.isFree ? (unit.price || 0) : 0);
     }, 0);
 
-    // Calculer le loyer moyen
     const averageRent = occupiedUnits > 0 ? monthlyRevenue / occupiedUnits : 0;
 
     this.metrics = {
@@ -195,7 +193,7 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
       occupancyRate,
       monthlyRevenue,
       averageRent,
-      revenueGrowth: 5.2 // Valeur simulée pour l'instant
+      revenueGrowth: 0 // Calculé par le backend via trendIndicator dans globalMetrics
     };
   }
 
@@ -608,7 +606,7 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
       this.store.dispatch(new PropertyAction.FetchPropertyForced(this.propertyId));
       this.store.dispatch(new RoomAction.FetchRoomsByPropertyID(this.propertyId));
       this.store.dispatch(new LocationAction.FetchLocationsByPropertyId(this.propertyId));
-      this.store.dispatch(new StatisticAction.FetchStaticRoomDataByPropertyIdAndYear(this.propertyId, currentYear.toString()));
+      this.store.dispatch(new StatisticAction.FetchStaticByPropertyIdAndYear(this.propertyId, currentYear.toString()));
     }
   }
 

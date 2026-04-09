@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 import {
-  EnrichedStatisticResponse,
-  StatisticAction
+  EnrichedStatisticResponse
 } from '../../../shared/store';
 import { StatisticState } from '../../../shared/store/statistic-data/statistic.state';
 import { TranslationUtilsService } from '../../../shared/services/translation-utils.service';
@@ -22,6 +20,7 @@ export interface PropertyFinancialMetrics {
   occupiedRooms: number;
   totalAdvances: number;
   totalDebts: number;
+  totalDeposits: number; // Cautions réelles depuis cautionsAnalysis.summary.totalCautionsReceived
   selectedYear: number;
   roomDetails: RoomFinancialDetail[];
 }
@@ -77,11 +76,11 @@ export class PropertyFinancialManagerService {
   ) {}
 
   /**
-   * Charge les données financières centralisées depuis le backend
+   * Charge les données financières centralisées depuis le backend.
+   * Ne dispatche PAS si les données sont déjà présentes dans le store
+   * (le parent PropertyFinancesComponent dispatche déjà FetchStaticByPropertyIdAndYear).
    */
   loadPropertyFinancialData(propertyId: string, selectedYear: number): Observable<any> {
-    this.store.dispatch(new StatisticAction.FetchStaticByPropertyIdAndYear(propertyId, selectedYear.toString()));
-    
     return this.store.select(
       StatisticState.selectStateStatisticPropertyIdAndYear(propertyId, selectedYear)
     );
@@ -124,6 +123,8 @@ export class PropertyFinancialManagerService {
       occupiedRooms: propertyMetrics.occupiedRooms,
       totalAdvances: propertyMetrics.totalAdvances,
       totalDebts: propertyMetrics.totalDebts,
+      // ✅ Cautions réelles depuis cautionsAnalysis
+      totalDeposits: data.data.cautionsAnalysis?.summary?.totalCautionsReceived || 0,
       selectedYear: data.data.year ? parseInt(data.data.year) : new Date().getFullYear(),
       roomDetails
     };
@@ -221,6 +222,7 @@ export class PropertyFinancialManagerService {
       occupiedRooms: 0,
       totalAdvances: 0,
       totalDebts: 0,
+      totalDeposits: 0,
       selectedYear: new Date().getFullYear(),
       roomDetails: []
     };

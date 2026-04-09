@@ -139,8 +139,7 @@ export class PropertyMetricsService {
   }
 
   getInsuranceCosts(property:PropertyModel): number {
-    // Simulation - coût fixe mensuel
-    return (property?.insuranceCost || 50000) / 12;
+    return (property?.insuranceCost || 0) / 12;
   }
 
   getNetProfit(metrics,property:PropertyModel): number {
@@ -156,21 +155,19 @@ export class PropertyMetricsService {
     return Math.round((this.getNetProfit(metrics,property) / revenue) * 100);
   }
 
-  getAnnualYield(metrics,property:PropertyModel): number {
-    const annualProfit = this.getNetProfit(metrics,property) * 12;
-    const propertyValue = this.getPropertyValue(metrics,property);
+  getAnnualYield(metrics, property: PropertyModel): number {
+    const propertyValue = this.getPropertyValue(metrics, property);
+    // Rendement uniquement calculable si la valeur du bien est connue
     if (propertyValue === 0) return 0;
-    return Math.round((annualProfit / propertyValue) * 100 * 10) / 10;
+    const annualRevenue = (metrics?.monthlyRevenue || 0) * 12;
+    return Math.round((annualRevenue / propertyValue) * 100 * 10) / 10;
   }
 
-  getPropertyValue(metrics,property:PropertyModel): number {
-    // Utilise la valeur actuelle si disponible, sinon estime
+  getPropertyValue(metrics, property: PropertyModel): number {
     if (property?.currentValue) return property.currentValue;
     if (property?.acquisitionPrice) return property.acquisitionPrice;
-
-    // Estimation basée sur les revenus (multiple de 10-15 ans)
-    const annualRevenue = (metrics?.monthlyRevenue || 0) * 12;
-    return annualRevenue * 12;
+    // Pas de valeur immobilière renseignée — retourne 0 pour éviter un rendement fictif
+    return 0;
   }
 
   /**
@@ -207,12 +204,10 @@ export class PropertyMetricsService {
       .reduce((total, unit) => total + (unit.price || 0), 0);
   }
 
-   getActualMonthlyExpenses(property:PropertyModel,units:RoomModel[]=[]): number {
-    // Calcul basé sur les vraies charges de la propriété
+  getActualMonthlyExpenses(property:PropertyModel,units:RoomModel[]=[]): number {
     const baseExpenses = property?.monthlyCharges || 0;
-    const maintenanceExpenses = this.getActualMonthlyRevenue(units) * 0.08; // 8% pour maintenance
     const insuranceExpenses = (property?.insuranceCost || 0) / 12;
-    return baseExpenses + maintenanceExpenses + insuranceExpenses;
+    return baseExpenses + insuranceExpenses;
   }
 
   getActualNetProfit(property:PropertyModel,units:RoomModel[]): number {
@@ -223,9 +218,10 @@ export class PropertyMetricsService {
     return revenue - expenses - managementFees;
   }
 
-  getActualManagementFees(units:RoomModel[]): number {
-    // 5% des revenus réels pour les frais de gestion
-    return this.getActualMonthlyRevenue(units) * 0.05;
+  getActualManagementFees(units: RoomModel[]): number {
+    // Pas de taux de gestion configurable disponible — retourne 0
+    // Les frais réels sont dans property.managementFees
+    return 0;
   }
 
 
@@ -303,12 +299,13 @@ export class PropertyMetricsService {
 
   /**
    * Génère l'historique des revenus pour les graphiques
+   * @deprecated Utiliser les données revenueDistribution.monthlyAnalysis du backend
    */
   generateRevenueHistory(monthlyRevenue: number): { month: string; amount: number }[] {
     const months = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin'];
     return months.map(month => ({
       month,
-      amount: monthlyRevenue + (Math.random() - 0.5) * monthlyRevenue * 0.1 // Variation de ±5%
+      amount: monthlyRevenue
     }));
   }
 
@@ -424,10 +421,8 @@ export class PropertyMetricsService {
     return new Date(lastInspection.date);
   }
 
-  getNextPaymentDate(history:any[]=[]): Date | null // OK
-  {
-    //doit calculer sur la base de la date d'entreer de l'utilisateur
-    return new Date();
+  getNextPaymentDate(history:any[]=[]): Date | null {
+    return null;
   }
 
 }

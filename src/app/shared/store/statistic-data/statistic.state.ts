@@ -2,7 +2,6 @@ import { Action, Selector, State, StateContext, createSelector } from "@ngxs/sto
 import { Injectable } from "@angular/core";
 import { StatisticAction } from "./statistic.actions";
 import { StatisticService } from "./statistic.service";
-// import { ToastrService } from "ngx-toastr";
 import { of, throwError } from "rxjs";
 import { catchError, tap } from "rxjs/operators";
 import { UtilsString } from "../../utils";
@@ -312,13 +311,16 @@ export class StatisticState{
         )
     }
 
+    @Action(StatisticAction.FetchStaticByPropertyIdAndYear)
+    fetchStaticByPropertyIdAndYearAlias(ctx: StateContext<StatisticStateModel>, action: StatisticAction.FetchStaticRoomDataByPropertyIdAndYear) {
+        return this.fetchRoomStatisticByPropertyAndYear(ctx, action);
+    }
+
     @Action(StatisticAction.FetchStatisticPaymentRecapitulationAccountOfAllPropertyByYear)
     fetchPaymentRecapitulationByYear(ctx:StateContext<StatisticStateModel>,{year}:StatisticAction.FetchStatisticPaymentRecapitulationAccountOfAllPropertyByYear)
     {
         const state = ctx.getState();
         let index = state.statisticRecapitulationPayment.findIndex((u)=>u.year==year.toString());
-        console.log("Index Static", index, year, state.statisticRecapitulationPayment)
-        // //console.log("Index Static", index,propertyID,state.roomStatistic)
         if(index>-1) return of(true);
 
         ctx.patchState({
@@ -327,13 +329,25 @@ export class StatisticState{
         return this._statisticsService.getPaymentRecapitulationAccountOfAllPropertyByYear(year).pipe(
             tap(
                 result => {
-                    console.log("FetchStatisticPaymentRecapitulationAccountOfAllPropertyByYear ",result)
                     ctx.patchState({
                         loadingStatisticRecaptilationLoading:false,
                         statisticRecapitulationPayment:[...state.statisticRecapitulationPayment, result.data]
                     })
                 }
-            )
+            ),
+            catchError(error => {
+                const errorObj: StatisticError = {
+                    message: error.error?.message || 'Erreur lors du chargement du récapitulatif',
+                    code: error.error?.error || 'RECAP_STATS_ERROR',
+                    timestamp: new Date()
+                };
+                ctx.patchState({
+                    loadingStatisticRecaptilationLoading: false,
+                    statisticRecapitulationPaymentError: errorObj
+                });
+                this._toastrService.error(errorObj.message, 'Erreur');
+                return throwError(error);
+            })
         )
     }
 
@@ -430,19 +444,24 @@ export class StatisticState{
 
     @Action(StatisticAction.RefreshStatisticAfterPayment)
     refreshStatisticAfterPayment(ctx: StateContext<StatisticStateModel>, { propertyID, year }: StatisticAction.RefreshStatisticAfterPayment) {
-        console.log('🔄 Rafraîchissement automatique des statistiques après paiement');
-        
         const state = ctx.getState();
         const key = `${propertyID}-${year}`;
-        
-        // Supprimer les anciennes données pour forcer le rechargement
+
+        // Invalider toutes les données liées à cette propriété/année
         const filteredPropertyStats = state.propertyStatistic.filter((u) => u.key !== key);
-        
+        const filteredLocataireStats = state.locataireStatistic.filter(
+            (u) => !(u.locataire.property === propertyID && u.year === year.toString())
+        );
+        const filteredAllLocatairePayements = state.allLocatairePayementByYear.filter(
+            (u) => !(u.locataire.property === propertyID && u.year === year.toString())
+        );
+
         ctx.patchState({
-            propertyStatistic: filteredPropertyStats
+            propertyStatistic: filteredPropertyStats,
+            locataireStatistic: filteredLocataireStats,
+            allLocatairePayementByYear: filteredAllLocatairePayements
         });
-        
-        // Déclencher le rechargement des données
+
         return ctx.dispatch(new StatisticAction.FetchStaticByPropertyIdAndYear(propertyID, year.toString()));
     }  
     

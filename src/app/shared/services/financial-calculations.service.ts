@@ -65,8 +65,8 @@ export class FinancialCalculationsService {
       const received = (roomStat.paymentValue || []).reduce((s, p) => s + (p || 0), 0);
       const price = roomStat.room?.price || 0;
       totalRevenue += received;
-      // ✅ Utiliser monthsDue du backend si disponible, sinon 12
-      totalExpected += price * (roomStat.monthsDue ?? 12);
+      // ✅ Utiliser expectedAmount du backend si disponible, sinon monthsDue * price
+      totalExpected += roomStat.expectedAmount ?? (price * (roomStat.monthsDue ?? 12));
       totalRentSum += price;
       if (received > 0 || !roomStat.room?.isFree) occupiedRooms++;
     });

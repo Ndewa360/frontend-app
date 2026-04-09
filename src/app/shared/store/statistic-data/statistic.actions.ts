@@ -10,6 +10,7 @@ export namespace StatisticAction
         constructor(public propertyID:string,public year:string){}
     }
 
+    /** @deprecated Utiliser FetchStaticByPropertyIdAndYear à la place */
     export class FetchStaticRoomDataByPropertyIdAndYear
     {
         static readonly type = '[Room] Fetch Statics Rooms By PropertyID'

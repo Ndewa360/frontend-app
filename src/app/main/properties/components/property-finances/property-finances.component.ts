@@ -9,6 +9,7 @@ import {
 } from 'src/app/shared/store';
 import { StatisticState } from 'src/app/shared/store/statistic-data/statistic.state';
 import { ExcelExportService } from 'src/app/shared/services/excel-export.service';
+import { PerformanceAlertsService } from 'src/app/main/statistics/services/performance-alerts.service';
 
 
 export interface ExportData {
@@ -71,7 +72,8 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
   constructor(
     private store: Store,
     private excelExportService: ExcelExportService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private performanceAlertsService: PerformanceAlertsService
   ) {
     this.initializeFinanceTabs();
   }
@@ -158,15 +160,18 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
       takeUntil(this.destroy$)
     ).subscribe({
       next: (backendData) => {
-        console.log("Data to found ",backendData)
         this.backendData = backendData;
-        // Arrêter le loading seulement si on a reçu des données
         if (backendData && backendData.length > 0) {
           this.isLoading = false;
+          // ✅ Alimenter les alertes depuis les données enrichies du backend
+          this.performanceAlertsService.loadAlertsFromEnrichedData(
+            backendData[0],
+            `Propriété ${this.propertyId}`
+          );
         }
       },
       error: (error) => {
-        console.error('❌ Erreur lors du chargement des données:', error);
+        console.error('Erreur lors du chargement des données:', error);
         this.isLoading = false;
       }
     });
@@ -352,24 +357,8 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
 
   refreshData(): void {
     if (!this.propertyId) return;
-    
     this.isLoading = true;
     this.loadFinancialData();
-  }
-
-  debugStoreState(): void {
-    console.log('🔍 DEBUG STORE STATE:');
-    console.log('📊 Composant state:', {
-      propertyId: this.propertyId,
-      selectedYear: this.selectedYear,
-      backendData: this.backendData,
-      isLoading: this.isLoading,
-      hasFinancialData: this.hasFinancialData()
-    });
-
-    // Forcer le rechargement des données
-    console.log('🚀 Forçage du rechargement...');
-    this.store.dispatch(new StatisticAction.FetchStaticRoomDataByPropertyIdAndYear(this.propertyId, this.selectedYear.toString()));
   }
 
   // Méthode diagnoseFinancialData supprimée (dupliquée)

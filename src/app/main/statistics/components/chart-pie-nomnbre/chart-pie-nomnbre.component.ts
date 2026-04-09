@@ -6,12 +6,12 @@ import { Component, Input, OnInit } from '@angular/core';
   styleUrls: ['./chart-pie-nomnbre.component.css']
 })
 export class ChartPieNomnbreComponent implements OnInit{
-  @Input() nbreTotal:number=100;
-  @Input() nbreActif:number=50;
-  @Input() label:string=''
-  @Input() title:string=''
-  @Input() chartColorBegin:string='rgba(76,107,167,1)'
-  @Input() chartColorEnd:string='rgba(76,107,167,.8)'
+  @Input() nbreTotal: number = 0;
+  @Input() nbreActif: number = 0;
+  @Input() label: string = ''
+  @Input() title: string = ''
+  @Input() chartColorBegin: string = 'rgba(76,107,167,1)'
+  @Input() chartColorEnd: string = 'rgba(76,107,167,.8)'
 
   locataireOpts: any={};
 

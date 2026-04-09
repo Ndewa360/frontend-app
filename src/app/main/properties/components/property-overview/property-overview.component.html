@@ -53,9 +53,9 @@
           </div>
           <div class="ml-5 flex-1">
             <p class="text-sm font-semibold text-gray-700 mb-1">{{ 'PROPERTY_DETAILS.OVERVIEW.METRICS.ESTIMATED_VALUE' | translate }}</p>
-            <p class="text-3xl font-bold text-purple-600">{{ formatPrice(getPropertyValue()) }}</p>
+            <p class="text-3xl font-bold text-purple-600">{{ formatPrice(getActualMonthlyRevenue() * 12) }}</p>
             <p class="text-xs text-gray-600 mt-1">
-              {{ getValueAppreciation() >= 0 ? '+' : '' }}{{ getValueAppreciation() }}% {{ 'PROPERTY_DETAILS.OVERVIEW.HARD_CODED_TEXTS.SINCE_ACQUISITION' | translate }}
+              {{ 'PROPERTY_DETAILS.OVERVIEW.HARD_CODED_TEXTS.ANNUAL_PROJECTION' | translate }}
             </p>
           </div>
         </div>
@@ -71,9 +71,11 @@
           </div>
           <div class="ml-5 flex-1">
             <p class="text-sm font-semibold text-gray-700 mb-1">{{ 'PROPERTY_DETAILS.OVERVIEW.METRICS.ANNUAL_YIELD' | translate }}</p>
-            <p class="text-3xl font-bold text-green-600">{{ getAnnualYield() }}%</p>
+            <p class="text-3xl font-bold text-green-600">
+              {{ getAnnualYield() > 0 ? getAnnualYield() + '%' : ('PROPERTY_DETAILS.OVERVIEW.HARD_CODED_TEXTS.NOT_AVAILABLE_SHORT' | translate) }}
+            </p>
             <p class="text-xs text-gray-600 mt-1">
-              {{ getYieldStatus() }}
+              {{ getAnnualYield() > 0 ? getYieldStatus() : ('PROPERTY_DETAILS.OVERVIEW.HARD_CODED_TEXTS.SET_PROPERTY_VALUE' | translate) }}
             </p>
           </div>
         </div>

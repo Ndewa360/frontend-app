@@ -157,8 +157,9 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
       partialPaymentTenants: this.enrichedData[0].data.tenantsAnalysis.summary.partialPaymentTenants,
       aheadTenants: this.enrichedData[0].data.tenantsAnalysis.summary.aheadTenants,
       behindTenants: this.enrichedData[0].data.tenantsAnalysis.summary.behind,
-      totalExpectedRevenue: 0,
-      totalReceivedRevenue: 0,
+      // ✅ Utiliser les totaux calculés par le backend
+      totalExpectedRevenue: this.enrichedData[0].data.tenantsAnalysis.summary.totalExpectedByTenants,
+      totalReceivedRevenue: this.enrichedData[0].data.tenantsAnalysis.summary.totalPaidByTenants,
       totalAdvanceAmount: this.enrichedData[0].data.tenantsAnalysis.summary.totalAdvanceAmount,
       totalAmountBehind: this.enrichedData[0].data.tenantsAnalysis.summary.totalAmountBehind,
       globalPaymentRate: this.enrichedData[0].data.tenantsAnalysis.summary.globalCollectionRate,
@@ -173,9 +174,8 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
 
 
   private calculatePaymentSummary(): void {
-    console.log('📊 Calcul du résumé des paiements pour', this.tenantTrackingData.length, 'locataires');
-   
-
+    // Les données sont déjà chargées depuis le backend dans processTenantPaymentData()
+    // Aucun recalcul nécessaire
   }
 
   private updatePagination(): void {

@@ -47,22 +47,21 @@ export class FinancialOverviewComponent implements OnInit, OnChanges, OnDestroy 
       return;
     }
 
-    console.log(`📊 Chargement des données financières centralisées - Propriété: ${this.propertyId}, Année: ${this.selectedYear}`);
-
+    // Le parent (PropertyFinancesComponent) dispatche déjà FetchStaticByPropertyIdAndYear.
+    // On s'abonne uniquement au store sans re-dispatcher pour éviter le double appel API.
     this.propertyFinancialManager.loadPropertyFinancialData(this.propertyId, this.selectedYear)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (backendData) => {
-          console.warn("Backend Data ",backendData)
           if (backendData && backendData.length > 0) {
             this.propertyMetrics = this.propertyFinancialManager.extractPropertyMetrics(backendData[0]);
-            this.monthlyData = this.propertyFinancialManager.extractMonthlyData(backendData[0]);            
+            this.monthlyData = this.propertyFinancialManager.extractMonthlyData(backendData[0]);
           } else {
             this.resetMetrics();
           }
         },
         error: (error) => {
-          console.error('❌ Erreur lors du chargement des données financières:', error);
+          console.error('Erreur chargement données financières:', error);
           this.resetMetrics();
         }
       });
@@ -140,7 +139,7 @@ export class FinancialOverviewComponent implements OnInit, OnChanges, OnDestroy 
   }
 
   formatPrice(price: number | null | undefined): string {
-    if (!price) return '0 FCFA';
+    if (price === null || price === undefined || isNaN(price as number)) return '0 FCFA';
     return new Intl.NumberFormat('fr-CM', {
       style: 'currency',
       currency: 'XAF',
@@ -149,20 +148,17 @@ export class FinancialOverviewComponent implements OnInit, OnChanges, OnDestroy 
   }
   
   // Getters pour le template
-  get totalRevenue(): number { return this.propertyMetrics?.totalRevenue || 0; }
-  get totalExpected(): number { return this.propertyMetrics?.totalExpected || 0; }
-  get collectionRate(): number { return this.propertyMetrics?.collectionRate || 0; }
-  get totalRooms(): number { return this.propertyMetrics?.totalRooms || 0; }
-  get occupiedRooms(): number { return this.propertyMetrics?.occupiedRooms || 0; }
-  get occupancyRate(): number { return this.propertyMetrics?.occupancyRate || 0; }
-  get averageRent(): number { return this.propertyMetrics?.averageRent || 0; }
-  // ✅ Cautions réelles depuis le backend (totalAdvances/totalDebts)
-  get totalDeposits(): number { return this.propertyMetrics?.totalAdvances || 0; }
-  // ✅ Pas de coûts fictifs — on expose les dettes réelles comme indicateur
-  get netProfit(): number { return this.totalRevenue - (this.propertyMetrics?.totalDebts || 0); }
-  get profitMargin(): number {
-    return this.totalRevenue > 0 ? (this.netProfit / this.totalRevenue) * 100 : 0;
-  }
+  get totalRevenue(): number { return this.propertyMetrics?.totalRevenue ?? 0; }
+  get totalExpected(): number { return this.propertyMetrics?.totalExpected ?? 0; }
+  get collectionRate(): number { return this.propertyMetrics?.collectionRate ?? 0; }
+  get totalRooms(): number { return this.propertyMetrics?.totalRooms ?? 0; }
+  get occupiedRooms(): number { return this.propertyMetrics?.occupiedRooms ?? 0; }
+  get occupancyRate(): number { return this.propertyMetrics?.occupancyRate ?? 0; }
+  get averageRent(): number { return this.propertyMetrics?.averageRent ?? 0; }
+  // ✅ Cautions réelles depuis cautionsAnalysis.summary.totalCautionsReceived
+  get totalDeposits(): number { return this.propertyMetrics?.totalDeposits ?? 0; }
+  // ✅ Manque à gagner = attendu - reçu (toujours >= 0)
+  get shortfall(): number { return Math.max(0, this.totalExpected - this.totalRevenue); }
 
   get metrics() {
     return {
@@ -173,10 +169,12 @@ export class FinancialOverviewComponent implements OnInit, OnChanges, OnDestroy 
       occupiedRooms: this.occupiedRooms,
       occupancyRate: this.occupancyRate,
       averageRent: this.averageRent,
-      // ✅ totalDeposits exposé pour le template (cautions reçues réelles)
-      totalDeposits: this.propertyMetrics?.totalAdvances || 0,
-      totalAdvances: this.propertyMetrics?.totalAdvances || 0,
-      totalDebts: this.propertyMetrics?.totalDebts || 0
+      // ✅ Cautions réelles depuis cautionsAnalysis
+      totalDeposits: this.totalDeposits,
+      totalAdvances: this.propertyMetrics?.totalAdvances ?? 0,
+      totalDebts: this.propertyMetrics?.totalDebts ?? 0,
+      // ✅ Manque à gagner calculé correctement
+      shortfall: this.shortfall
     };
   }
 

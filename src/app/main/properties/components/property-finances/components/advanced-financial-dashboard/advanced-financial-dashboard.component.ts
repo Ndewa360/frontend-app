@@ -638,37 +638,32 @@ export class AdvancedFinancialDashboardComponent implements OnInit, OnChanges, O
     this.financialMetrics = [];
   }
 
-  // Méthodes de calcul des changements réels
   private calculateRevenueChange(): { value: number, type: 'increase' | 'decrease' | 'neutral' } {
-    // Calculer la différence entre les revenus attendus et reçus
-    const expectedVsReceived = this.totalExpected > 0 ?
-      ((this.totalRevenue - this.totalExpected) / this.totalExpected) * 100 : 0;
-
+    // Différence entre revenus reçus et attendus
+    const expectedVsReceived = this.totalExpected > 0
+      ? ((this.totalRevenue - this.totalExpected) / this.totalExpected) * 100
+      : 0;
     return {
-      value: Math.abs(expectedVsReceived),
+      value: Math.abs(Math.round(expectedVsReceived * 10) / 10),
       type: expectedVsReceived > 0 ? 'increase' : expectedVsReceived < 0 ? 'decrease' : 'neutral'
     };
   }
 
   private calculateCollectionRateChange(): { value: number, type: 'increase' | 'decrease' | 'neutral' } {
-    // Comparer avec un taux de référence (85% est considéré comme bon)
-    const referenceRate = 85;
-    const difference = this.collectionRate - referenceRate;
-
+    // Différence par rapport au taux de recouvrement attendu (100%)
+    const difference = this.collectionRate - 100;
     return {
-      value: Math.abs(difference),
-      type: difference > 0 ? 'increase' : difference < 0 ? 'decrease' : 'neutral'
+      value: Math.abs(Math.round(difference * 10) / 10),
+      type: this.collectionRate >= 100 ? 'increase' : 'decrease'
     };
   }
 
   private calculateOccupancyRateChange(): { value: number, type: 'increase' | 'decrease' | 'neutral' } {
-    // Comparer avec un taux d'occupation de référence (90% est considéré comme excellent)
-    const referenceRate = 90;
-    const difference = this.occupancyRate - referenceRate;
-
+    // Différence par rapport au taux d'occupation attendu (100%)
+    const difference = this.occupancyRate - 100;
     return {
-      value: Math.abs(difference),
-      type: difference > 0 ? 'increase' : difference < 0 ? 'decrease' : 'neutral'
+      value: Math.abs(Math.round(difference * 10) / 10),
+      type: this.occupancyRate >= 100 ? 'increase' : 'decrease'
     };
   }
 
@@ -676,21 +671,17 @@ export class AdvancedFinancialDashboardComponent implements OnInit, OnChanges, O
     if (!this.propertyMetrics || this.propertyMetrics.roomDetails.length === 0) {
       return { value: 0, type: 'neutral' };
     }
-
     const rents = this.propertyMetrics.roomDetails.map(room => room.monthlyRent).filter(price => price > 0);
-    if (rents.length === 0) {
-      return { value: 0, type: 'neutral' };
-    }
+    if (rents.length === 0) return { value: 0, type: 'neutral' };
 
     rents.sort((a, b) => a - b);
-    const median = rents.length % 2 === 0 ?
-      (rents[rents.length / 2 - 1] + rents[rents.length / 2]) / 2 :
-      rents[Math.floor(rents.length / 2)];
+    const median = rents.length % 2 === 0
+      ? (rents[rents.length / 2 - 1] + rents[rents.length / 2]) / 2
+      : rents[Math.floor(rents.length / 2)];
 
-    const difference = this.averageRent > 0 ? ((this.averageRent - median) / median) * 100 : 0;
-
+    const difference = median > 0 ? ((this.averageRent - median) / median) * 100 : 0;
     return {
-      value: Math.abs(difference),
+      value: Math.abs(Math.round(difference * 10) / 10),
       type: difference > 0 ? 'increase' : difference < 0 ? 'decrease' : 'neutral'
     };
   }

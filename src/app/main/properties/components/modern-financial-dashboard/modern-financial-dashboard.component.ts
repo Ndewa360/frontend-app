@@ -1,5 +1,4 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { createFinalStoragePluginOptions } from '@ngxs/storage-plugin/src/internals/final-options';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -7,6 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { StatisticState, StatisticAction } from 'src/app/shared/store';
 import { MONTH } from 'src/app/shared/store/global/global.model';
 import { StatisticPaymentOfAllPropertyByYear } from 'src/app/shared/store/statistic-data/statistic.model';
+import { PerformanceAlertsService } from 'src/app/main/statistics/services/performance-alerts.service';
 
 interface FinancialMetric {
   label: string;
@@ -72,11 +72,11 @@ export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
 
   constructor(
     private store: Store,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private performanceAlertsService: PerformanceAlertsService
   ) {
     this.initializeYearOptions();
     this.initializeFinancialMetrics();
-    this.generateMockData();
   }
 
   ngOnInit(): void {
@@ -160,28 +160,33 @@ export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
   }
 
   private processFinancialData(data: StatisticPaymentOfAllPropertyByYear[]): void {
-    // Traiter les données pour les métriques et graphiques
     this.propertiesSummary = [];
 
     data.forEach(yearData => {
       if (yearData.paymentProperty && yearData.paymentProperty.length > 0) {
         yearData.paymentProperty.forEach(propertyPayment => {
-          const totalReceived = propertyPayment.amountProperty?.totalAmountReceived || 0;
-          const totalExpected = propertyPayment.amountProperty?.totalAmountToBeReceveid || 0;
+          // ✅ Utiliser detailedMetrics du backend si disponible
+          const metrics = propertyPayment.detailedMetrics;
+          const totalReceived = metrics?.totalRevenue ?? (propertyPayment.amountProperty?.totalAmountReceived || 0);
+          const totalExpected = metrics?.totalExpected ?? (propertyPayment.amountProperty?.totalAmountToBeReceveid || 0);
+          const collectionRate = metrics?.collectionRate ?? this.calculateCollectionRate(totalReceived, totalExpected);
 
           this.propertiesSummary.push({
             propertyId: propertyPayment.property._id,
             propertyName: propertyPayment.property.name,
             totalRevenue: totalReceived,
             expectedRevenue: totalExpected,
-            collectionRate: this.calculateCollectionRate(totalReceived, totalExpected),
+            collectionRate,
             monthlyData: this.generateMonthlyDataFromProperty(propertyPayment)
           });
         });
+
+        // ✅ Alimenter les alertes depuis les données backend
+        this.performanceAlertsService.loadAlertsFromRecapitulation(yearData);
       }
     });
 
-    this.updateMetrics();
+    this.updateMetrics(data);
     this.updateChartData();
   }
 
@@ -191,49 +196,44 @@ export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
   }
 
   private generateMonthlyDataFromProperty(propertyPayment: any): MonthlyData[] {
-    // Générer des données mensuelles à partir des données réelles
-    const monthlyData: MonthlyData[] = [];
+    if (!propertyPayment.amountMonth || propertyPayment.amountMonth.length === 0) return [];
 
-    if (propertyPayment.amountMonth && propertyPayment.amountMonth.length > 0) {
-      propertyPayment.amountMonth.forEach((monthData: any) => {
-        const monthNames = Object.values(MONTH);
-        const monthName = monthNames[monthData.month - 1] || `Mois ${monthData.month}`;
-
-        // Calculer les dépenses basées sur un pourcentage du revenu (plus réaliste)
-        const revenue = monthData.totalAmountReceived || 0;
-        const estimatedExpenses = revenue * 0.15; // 15% du revenu en dépenses estimées
-
-        monthlyData.push({
-          month: monthName,
-          revenue: revenue,
-          expenses: estimatedExpenses,
-          profit: revenue - estimatedExpenses
-        });
-      });
-    } else {
-      // Retourner un tableau vide si pas de données réelles
-      console.warn('⚠️ Aucune donnée de paiement disponible pour cette propriété');
-      return [];
-    }
-
-    return monthlyData;
+    const monthNames = Object.values(MONTH);
+    return propertyPayment.amountMonth.map((monthData: any) => {
+      const monthName = monthNames[monthData.month - 1] || `Mois ${monthData.month}`;
+      const revenue = monthData.totalAmountReceived || 0;
+      // ✅ Pas de charges fictives : profit = revenus reçus (pas de dépenses inventées)
+      return {
+        month: monthName,
+        revenue,
+        expenses: 0,
+        profit: revenue
+      };
+    });
   }
 
-  private updateMetrics(): void {
+  private updateMetrics(data?: StatisticPaymentOfAllPropertyByYear[]): void {
     if (!this.financialMetrics || this.financialMetrics.length < 4) return;
 
-    const totalRevenue = this.propertiesSummary.reduce((sum, prop) => sum + prop.totalRevenue, 0);
-    const totalExpected = this.propertiesSummary.reduce((sum, prop) => sum + prop.expectedRevenue, 0);
-    const avgCollectionRate = this.propertiesSummary.length > 0
-      ? this.propertiesSummary.reduce((sum, prop) => sum + prop.collectionRate, 0) / this.propertiesSummary.length
-      : 0;
-    // ✅ Déficit réel = attendu - reçu (pas de coûts fictifs)
-    const totalDeficit = Math.max(0, totalExpected - totalRevenue);
+    // ✅ Utiliser globalMetrics du backend si disponible
+    const globalMetrics = data?.[0]?.globalMetrics;
+    const paymentYear = data?.[0]?.paymentYear;
+
+    const totalRevenue = globalMetrics?.netCashFlow !== undefined
+      ? (paymentYear?.totalAmountReceived || 0)
+      : this.propertiesSummary.reduce((sum, prop) => sum + prop.totalRevenue, 0);
+
+    const avgCollectionRate = globalMetrics?.averageCollectionRate
+      ?? (this.propertiesSummary.length > 0
+        ? this.propertiesSummary.reduce((sum, prop) => sum + prop.collectionRate, 0) / this.propertiesSummary.length
+        : 0);
+
+    const totalDeficit = paymentYear?.totalAmountRelicat
+      ?? Math.max(0, this.propertiesSummary.reduce((sum, p) => sum + p.expectedRevenue, 0) - totalRevenue);
 
     if (this.financialMetrics[0]) this.financialMetrics[0].value = totalRevenue;
     if (this.financialMetrics[1]) this.financialMetrics[1].value = Math.round(avgCollectionRate * 10) / 10;
-    if (this.financialMetrics[2]) this.financialMetrics[2].value = this.propertiesSummary.length;
-    // ✅ Remplacé le 77% hardcodé par le déficit réel
+    if (this.financialMetrics[2]) this.financialMetrics[2].value = globalMetrics?.totalProperties ?? this.propertiesSummary.length;
     if (this.financialMetrics[3]) this.financialMetrics[3].value = totalDeficit;
   }
 
@@ -250,24 +250,6 @@ export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
     }));
   }
 
-  private generateMockData(): void {
-    // ⚠️ MÉTHODE DÉPRÉCIÉE - Ne plus utiliser de données simulées
-    console.warn('⚠️ generateMockData() est déprécié. Utilisez les vraies données du store.');
-    this.propertiesSummary = [];
-  }
-
-  private generateMockMonthlyData(): MonthlyData[] {
-    return Object.values(MONTH).map((month, index) => {
-      const revenue = Math.random() * 150000 + 50000;
-      const expenses = Math.random() * 30000 + 10000;
-      return {
-        month,
-        revenue,
-        expenses,
-        profit: revenue - expenses
-      };
-    });
-  }
 
   // Méthodes d'événements
   onYearChange(event: Event): void {
