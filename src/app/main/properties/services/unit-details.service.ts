@@ -102,7 +102,6 @@ export class UnitDetailsService {
     monthlyRent: number
   ): Date | null {
     if (!location?.startedAt) return null;
-    // Contrat terminé
     if (location.endedAt && new Date(location.endedAt) < new Date()) return null;
 
     const entryDate = location.isKnowExactDateEntry && location.startedAt
@@ -113,14 +112,30 @@ export class UnitDetailsService {
     const totalPaid = rentPayments.reduce((sum, p) => sum + (p.locationPaymentPrice || 0), 0);
     const monthsCovered = monthlyRent > 0 ? Math.floor(totalPaid / monthlyRent) : 0;
 
-    const nextDate = new Date(entryDate.getFullYear(), entryDate.getMonth() + monthsCovered, 1);
-    const now = new Date();
+    // Prochaine date = même jour d'entrée + mois couverts
+    // Ex: entrée le 15 jan + 1 mois couvert = 15 fév
+    const nextDate = new Date(
+      entryDate.getFullYear(),
+      entryDate.getMonth() + monthsCovered,
+      entryDate.getDate()
+    );
 
+    const now = new Date();
     if (nextDate <= now) {
-      return new Date(now.getFullYear(), now.getMonth() + 1, 1);
+      // Avancer mois par mois en gardant le même jour d'entrée
+      let future = new Date(nextDate);
+      while (future <= now) {
+        future = new Date(future.getFullYear(), future.getMonth() + 1, entryDate.getDate());
+      }
+      return future;
     }
     return nextDate;
   }
+
+  /**
+   * Expose computeNextPaymentDate pour les composants qui l'appellent directement
+   */
+  computeNextPaymentDatePublic = this.computeNextPaymentDate.bind(this);
 
   private updateCurrentUnit(unitData: UnitDetailsData): void {
     this.currentUnitSubject.next(unitData);

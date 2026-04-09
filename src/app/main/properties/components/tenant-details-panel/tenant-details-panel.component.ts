@@ -475,6 +475,10 @@ export class TenantDetailsPanelComponent implements OnInit, OnDestroy, OnChanges
     if (!payment || !this.dialog) return;
     const room = this.store.selectSnapshot(RoomState.selectStateRoom(payment.room));
     const owner = this.store.selectSnapshot((state: any) => state.userprofile?.userProfile);
+    // Passer la location et tous les paiements du locataire pour la période exacte
+    const allPayments = this.tenantPayments.filter(p =>
+      p.room === payment.room
+    );
     this.dialog.open(PaymentReceiptModalComponent, {
       width: '700px',
       maxWidth: '95vw',
@@ -483,7 +487,9 @@ export class TenantDetailsPanelComponent implements OnInit, OnDestroy, OnChanges
         payment,
         tenant: this.tenant ? { fullName: this.tenant.fullName, email: this.tenant.email || this.tenant.emailRef, phoneNumber: this.tenant.phoneNumber || this.tenant.phoneNumberRef } : null,
         room: room ? { code: room.code, price: room.price, type: room.type } : null,
-        owner: owner ? { name: owner.name || owner.fullName, email: owner.email, phoneNumber: owner.phoneNumber } : null
+        owner: owner ? { name: owner.name || owner.fullName, email: owner.email, phoneNumber: owner.phoneNumber } : null,
+        location: this.currentLocation,
+        allPayments,
       }
     });
   }

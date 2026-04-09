@@ -32,6 +32,15 @@ export interface PaymentReceiptData {
     phoneNumber?: string;
   } | null;
   propertyName?: string;
+  /** Contrat de location pour calculer la période exacte */
+  location?: {
+    startedAt?: Date | string;
+    createdAt?: Date | string;
+    isKnowExactDateEntry?: boolean;
+    endedAt?: Date | string;
+  } | null;
+  /** Tous les paiements du locataire dans cette chambre (pour calculer les mois déjà couverts) */
+  allPayments?: Array<{ _id?: string; locationPaymentPrice: number; datePayment: Date | string }> | null;
 }
 
 @Component({
@@ -99,12 +108,52 @@ export class PaymentReceiptModalComponent implements OnInit {
     return this.data.payment.billingRef || `REC-${Date.now().toString().slice(-8)}`;
   }
 
-  getMonthLabel(): string {
-    if (!this.data.payment.datePayment) return '';
-    return new Date(this.data.payment.datePayment).toLocaleDateString('fr-FR', {
-      month: 'long',
-      year: 'numeric'
-    });
+  /**
+   * Calcule la période couverte par CE paiement, identique à la logique backend.
+   * - Début : jour exact d'entrée + mois déjà couverts par les paiements précédents
+   * - Fin   : veille du jour d'entrée dans le mois suivant la fin de couverture
+   */
+  getPeriodLabel(): string {
+    const monthlyRent = this.data.room?.price || 0;
+    const payments    = this.data.allPayments || [];
+
+    // Date d'entrée
+    const loc = this.data.location;
+    const entryDate = loc
+      ? new Date(loc.isKnowExactDateEntry && loc.startedAt ? loc.startedAt : (loc.createdAt || loc.startedAt || this.data.payment.datePayment))
+      : new Date(this.data.payment.datePayment);
+
+    if (!monthlyRent) {
+      // Pas de loyer connu : afficher le mois du paiement
+      return new Date(this.data.payment.datePayment).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+    }
+
+    // Total payé avant ce paiement
+    const refTime = new Date(this.data.payment.datePayment).getTime();
+    const refId   = this.data.payment._id;
+    const totalAvant = payments
+      .filter(p => {
+        const t = new Date(p.datePayment).getTime();
+        return t < refTime || (t === refTime && p._id !== refId);
+      })
+      .reduce((s, p) => s + (p.locationPaymentPrice || 0), 0);
+
+    const moisDejaCouverts = Math.floor(totalAvant / monthlyRent);
+    const nbMoisCePaiement = Math.ceil(this.data.payment.locationPaymentPrice / monthlyRent);
+
+    const debut = new Date(
+      entryDate.getFullYear(),
+      entryDate.getMonth() + moisDejaCouverts,
+      entryDate.getDate()
+    );
+    const fin = new Date(
+      entryDate.getFullYear(),
+      entryDate.getMonth() + moisDejaCouverts + nbMoisCePaiement,
+      entryDate.getDate() - 1
+    );
+
+    const fmt = (d: Date) => d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
+    return `${fmt(debut)} au ${fmt(fin)}`;
   }
 
   downloadPdf(): void {
@@ -165,7 +214,7 @@ export class PaymentReceiptModalComponent implements OnInit {
     const ownerEmail = this.data.owner?.email || '';
     const ownerPhone = this.data.owner?.phoneNumber || '';
     const roomCode = this.data.room?.code || 'N/A';
-    const monthLabel = this.getMonthLabel();
+    const periodLabel = this.getPeriodLabel();
     const paymentType = this.getPaymentTypeLabel();
 
     return `<!DOCTYPE html>
@@ -284,7 +333,7 @@ export class PaymentReceiptModalComponent implements OnInit {
         <tr>
           <td>${paymentType}</td>
           <td>${roomCode}</td>
-          <td>${monthLabel}</td>
+          <td>${periodLabel}</td>
           <td class="price-column">${amount}</td>
         </tr>
       </tbody>

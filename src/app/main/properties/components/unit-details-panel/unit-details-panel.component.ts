@@ -461,6 +461,10 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
     const transaction = payment.transaction || payment;
     const tenant = this.unitData?.tenant || null;
     const owner = this.store.selectSnapshot((state: any) => state.userprofile?.userProfile);
+    // Passer la location et tous les paiements pour la période exacte
+    const allPayments = this.getPayments().filter((p: any) =>
+      p.room === transaction.room || p.room === this.room?._id
+    );
     this.dialog.open(PaymentReceiptModalComponent, {
       width: '700px',
       maxWidth: '95vw',
@@ -469,7 +473,9 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
         payment: transaction,
         tenant: tenant ? { fullName: tenant.fullName, email: tenant.email || tenant.emailRef, phoneNumber: tenant.phoneNumber || tenant.phoneNumberRef } : null,
         room: this.room ? { code: this.room.code, price: this.room.price, type: this.room.type } : null,
-        owner: owner ? { name: owner.name || owner.fullName, email: owner.email, phoneNumber: owner.phoneNumber } : null
+        owner: owner ? { name: owner.name || owner.fullName, email: owner.email, phoneNumber: owner.phoneNumber } : null,
+        location: this.unitData?.location || null,
+        allPayments,
       }
     });
   }
@@ -895,11 +901,12 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
     const location = this.unitData?.location;
     if (!location?.startedAt) return null;
     if (location.endedAt && new Date(location.endedAt) < new Date()) return null;
-    // Si pas de paiements chargés, retourner le 1er du mois prochain
+    // Si pas de paiements chargés, retourner le jour d'entrée du mois prochain
     const payments = this.getPayments();
     if (payments.length === 0) {
       const now = new Date();
-      return new Date(now.getFullYear(), now.getMonth() + 1, 1);
+      const entry = new Date(location.isKnowExactDateEntry ? location.startedAt : (location.createdAt || location.startedAt));
+      return new Date(now.getFullYear(), now.getMonth() + 1, entry.getDate());
     }
     return this.unitDetailsService.computeNextPaymentDate(
       location,

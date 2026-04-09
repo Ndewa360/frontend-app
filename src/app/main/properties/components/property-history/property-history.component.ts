@@ -687,6 +687,16 @@ export class PropertyHistoryComponent implements OnInit, OnDestroy, OnChanges {
   onViewReceipt(payment: PaymentHistoryItem): void {
     if (!payment?.rawPayment || !this.dialog) return;
     const owner = this.store.selectSnapshot((state: any) => state.userprofile?.userProfile);
+    // Récupérer la location et tous les paiements du locataire pour calculer la période
+    const locations = this.store.selectSnapshot((state: any) => state.location?.locations || []) as any[];
+    const location = locations.find((loc: any) =>
+      loc.locataire === payment.rawPayment.locataire &&
+      loc.room === payment.rawPayment.room
+    ) || null;
+    const allPayments = this.allPayments.filter(p =>
+      p.locataire === payment.rawPayment.locataire &&
+      p.room === payment.rawPayment.room
+    );
     this.dialog.open(PaymentReceiptModalComponent, {
       width: '700px',
       maxWidth: '95vw',
@@ -696,7 +706,9 @@ export class PropertyHistoryComponent implements OnInit, OnDestroy, OnChanges {
         tenant: payment.tenant ? { fullName: payment.tenant.fullName, email: payment.tenant.email || payment.tenant.emailRef, phoneNumber: payment.tenant.phoneNumber || payment.tenant.phoneNumberRef } : null,
         room: payment.room ? { code: payment.room.code, price: payment.room.price, type: payment.room.type } : null,
         owner: owner ? { name: owner.name || owner.fullName, email: owner.email, phoneNumber: owner.phoneNumber } : null,
-        propertyName: this.property?.name
+        propertyName: this.property?.name,
+        location,
+        allPayments,
       }
     });
   }
