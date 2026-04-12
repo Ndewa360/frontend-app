@@ -7,6 +7,10 @@ $danger:       #ef4444;
 $border:       #e0e0e0;
 $text:         #161616;
 $muted:        #525252;
+$orange:       #f97316;
+$orange-dark:  #ea6c0a;
+$mtn:          #eab308;
+$mtn-dark:     #ca9a06;
 $font:         'Inter', -apple-system, sans-serif;
 
 .wmodal {
@@ -14,7 +18,9 @@ $font:         'Inter', -apple-system, sans-serif;
   background: #fff;
   border-radius: 4px;
   overflow: hidden;
+  min-width: 460px;
 
+  // ── HEADER ──────────────────────────────────────────────────────────────
   &__header {
     display: flex;
     align-items: center;
@@ -33,7 +39,6 @@ $font:         'Inter', -apple-system, sans-serif;
     display: flex; align-items: center; justify-content: center;
     color: #fff;
     svg { width: 1.25rem; height: 1.25rem; }
-
     &--deposit { background: $success; }
   }
 
@@ -64,6 +69,54 @@ $font:         'Inter', -apple-system, sans-serif;
     &:disabled { opacity: 0.4; }
   }
 
+  // ── INDICATEUR D'ÉTAPES (retrait) ────────────────────────────────────────
+  &__steps {
+    display: flex;
+    align-items: center;
+    padding: 0.875rem 1.5rem;
+    background: #fafafa;
+    border-bottom: 1px solid $border;
+  }
+
+  &__step {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #a0a0a0;
+    transition: color 0.2s;
+
+    &.active {
+      color: $primary;
+      .wmodal__step-dot { background: $primary; border-color: $primary; color: #fff; }
+    }
+    &.done {
+      color: $success;
+      .wmodal__step-dot { background: $success; border-color: $success; color: #fff; }
+    }
+  }
+
+  &__step-dot {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    border: 2px solid #d0d0d0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem; font-weight: 800;
+    color: #a0a0a0; background: #fff;
+    transition: all 0.2s;
+    svg { width: 0.75rem; height: 0.75rem; }
+  }
+
+  &__step-label { white-space: nowrap; }
+
+  &__step-line {
+    flex: 1; height: 2px;
+    background: #e0e0e0;
+    margin: 0 0.75rem;
+  }
+
+  // ── BODY ─────────────────────────────────────────────────────────────────
   &__body {
     padding: 1.5rem;
     display: flex;
@@ -71,13 +124,19 @@ $font:         'Inter', -apple-system, sans-serif;
     gap: 1.25rem;
   }
 
+  &__step-title {
+    font-size: 0.9rem; font-weight: 600;
+    color: $text; margin: 0;
+  }
+
+  // ── BLOC INFO (dépôt) ────────────────────────────────────────────────────
   &__info {
     display: flex;
     align-items: flex-start;
     gap: 0.5rem;
     padding: 0.75rem 1rem;
-    background: rgba(16, 185, 129, 0.08);
-    border: 1px solid rgba(16, 185, 129, 0.2);
+    background: rgba($success, 0.08);
+    border: 1px solid rgba($success, 0.2);
     border-radius: 4px;
     color: #065f46;
     font-size: 0.8rem;
@@ -85,15 +144,147 @@ $font:         'Inter', -apple-system, sans-serif;
     svg { width: 1rem; height: 1rem; flex-shrink: 0; margin-top: 1px; color: $success; }
   }
 
+  // ── MÉTHODES PREVIEW (dépôt) ─────────────────────────────────────────────
+  &__methods-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    &__label {
+      font-size: 0.75rem; font-weight: 600;
+      color: $muted; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    &__list { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  }
+
+  // ── BADGES MÉTHODES (dépôt — inline) ────────────────────────────────────
+  &__method-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem; font-weight: 600;
+    border: 1px solid;
+    svg { width: 0.875rem; height: 0.875rem; }
+
+    span {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      font-size: 0.6rem; font-weight: 800; color: #fff;
+    }
+
+    &--orange {
+      background: rgba($orange, 0.08); border-color: rgba($orange, 0.3); color: #c2410c;
+      span { background: $orange; }
+    }
+    &--mtn {
+      background: rgba($mtn, 0.08); border-color: rgba($mtn, 0.3); color: #854d0e;
+      span { background: $mtn; color: #1a1a1a; }
+    }
+    &--card {
+      background: rgba(99, 102, 241, 0.08); border-color: rgba(99, 102, 241, 0.3); color: #4338ca;
+      svg { color: #6366f1; }
+    }
+  }
+
+  // ── MÉTHODES BOUTONS (retrait étape 1) ───────────────────────────────────
+  &__methods { display: flex; flex-direction: column; gap: 0.625rem; }
+
+  &__method-btn {
+    display: flex; align-items: center; gap: 1rem;
+    padding: 0.875rem 1rem;
+    border: 1.5px solid $border; border-radius: 8px;
+    cursor: pointer; font-family: $font;
+    background: #fff; text-align: left;
+    transition: all 0.15s; width: 100%;
+
+    &:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    &--orange:hover { border-color: $orange; box-shadow: 0 4px 12px rgba($orange, 0.2); }
+    &--mtn:hover    { border-color: $mtn;    box-shadow: 0 4px 12px rgba($mtn, 0.2); }
+    &--bank:hover   { border-color: $primary; box-shadow: 0 4px 12px rgba($primary, 0.2); }
+  }
+
+  // ── BADGES MÉTHODES (retrait — boutons) ──────────────────────────────────
+  &__method-badge.badge--orange,
+  &__method-badge.badge--mtn,
+  &__method-badge.badge--bank {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; padding: 0; border: none;
+
+    span {
+      width: 100%; height: 100%;
+      border-radius: 10px;
+      font-size: 0.65rem; font-weight: 900; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+    }
+  }
+
+  &__method-badge.badge--orange { background: $orange; }
+  &__method-badge.badge--mtn    { background: $mtn; span { color: #1a1a1a; } }
+  &__method-badge.badge--bank   { background: #1a1a2e; span { font-size: 1.1rem; } }
+
+  &__method-info {
+    flex: 1; display: flex; flex-direction: column; gap: 2px;
+    strong { font-size: 0.9rem; font-weight: 700; color: $text; }
+    span   { font-size: 0.78rem; color: $muted; }
+  }
+
+  &__method-arrow {
+    width: 1.125rem; height: 1.125rem;
+    color: #c0c0c0; flex-shrink: 0;
+  }
+
+  // ── NOTE SÉCURITÉ ────────────────────────────────────────────────────────
+  &__security-note {
+    display: flex; align-items: center; gap: 0.4rem;
+    font-size: 0.78rem; color: $muted; margin: 0;
+    svg { width: 0.875rem; height: 0.875rem; color: $success; flex-shrink: 0; }
+  }
+
+  // ── MÉTHODE SÉLECTIONNÉE (retrait étape 2) ───────────────────────────────
+  &__selected-method {
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 0.625rem 0.875rem;
+    background: #f4f4f4; border-radius: 6px; border: 1px solid $border;
+  }
+
+  &__back-btn {
+    width: 28px; height: 28px;
+    border-radius: 4px; border: 1px solid $border;
+    background: #fff; cursor: pointer; color: $muted;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    svg { width: 0.875rem; height: 0.875rem; }
+    &:hover { background: #e8e8e8; }
+    &:disabled { opacity: 0.4; }
+  }
+
+  &__selected-badge {
+    width: 32px; height: 32px; border-radius: 7px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+
+    span {
+      display: flex; align-items: center; justify-content: center;
+      width: 100%; height: 100%; border-radius: 7px;
+      font-size: 0.55rem; font-weight: 900; color: #fff;
+    }
+
+    &.badge--orange { background: $orange; }
+    &.badge--mtn    { background: $mtn; span { color: #1a1a1a; } }
+    &.badge--bank   { background: #1a1a2e; span { font-size: 0.9rem; } }
+  }
+
+  &__selected-label { font-size: 0.875rem; font-weight: 700; color: $text; }
+
+  // ── CHAMPS ───────────────────────────────────────────────────────────────
   &__field { display: flex; flex-direction: column; gap: 0.5rem; }
 
   &__label {
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: $text;
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
+    font-size: 0.875rem; font-weight: 600; color: $text;
+    display: flex; align-items: center; gap: 0.4rem;
     svg { width: 1rem; height: 1rem; color: $primary; }
   }
 
@@ -102,171 +293,75 @@ $font:         'Inter', -apple-system, sans-serif;
   &__input {
     width: 100%;
     padding: 0.75rem 1rem;
-    border: 1px solid $border;
-    border-radius: 4px;
-    font-size: 1rem;
-    font-family: $font;
-    color: $text;
-    background: #fff;
+    border: 1px solid $border; border-radius: 4px;
+    font-size: 1rem; font-family: $font; color: $text; background: #fff;
     transition: border-color 0.2s, box-shadow 0.2s;
 
     &:focus {
-      outline: none;
-      border-color: $primary;
+      outline: none; border-color: $primary;
       box-shadow: 0 0 0 2px rgba($primary, 0.15);
     }
-
     &--error { border-color: $danger; }
     &--phone { border-left: none; border-radius: 0 4px 4px 0; }
   }
 
   &__currency {
-    position: absolute;
-    right: 3.5rem;
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: $primary;
-    pointer-events: none;
+    position: absolute; right: 3.5rem;
+    font-size: 0.75rem; font-weight: 700; color: $primary; pointer-events: none;
   }
 
   &__max-btn {
-    position: absolute;
-    right: 0.5rem;
-    padding: 0.25rem 0.6rem;
-    border-radius: 3px;
-    background: $primary-light;
-    color: $primary;
-    border: none;
-    font-size: 0.75rem;
-    font-weight: 700;
-    font-family: $font;
-    cursor: pointer;
+    position: absolute; right: 0.5rem;
+    padding: 0.25rem 0.6rem; border-radius: 3px;
+    background: $primary-light; color: $primary; border: none;
+    font-size: 0.75rem; font-weight: 700; font-family: $font; cursor: pointer;
     &:hover { background: rgba($primary, 0.2); }
   }
 
   &__phone-wrap { display: flex; }
 
   &__prefix {
-    display: flex;
-    align-items: center;
+    display: flex; align-items: center;
     padding: 0 0.75rem;
-    background: #f4f4f4;
-    border: 1px solid $border;
-    border-right: none;
+    background: #f4f4f4; border: 1px solid $border; border-right: none;
     border-radius: 4px 0 0 4px;
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: $muted;
-    white-space: nowrap;
+    font-size: 0.875rem; font-weight: 600; color: $muted; white-space: nowrap;
   }
 
-  &__methods { display: flex; flex-direction: column; gap: 0.5rem; }
-
-  &__method {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem 1rem;
-    border: 1px solid $border;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.875rem;
-    color: $text;
-    font-family: $font;
-    transition: all 0.15s;
-    background: #fff;
-
-    svg { width: 1.125rem; height: 1.125rem; color: $muted; }
-
-    &:hover:not(.wmodal__method--active) { border-color: rgba($primary, 0.4); background: $primary-light; }
-
-    &--active {
-      border-color: $primary;
-      background: $primary-light;
-      color: $primary;
-      font-weight: 600;
-      svg { color: $primary; }
-    }
+  // ── INSTRUCTIONS MOBILE ──────────────────────────────────────────────────
+  &__mobile-instructions {
+    display: flex; flex-direction: column; gap: 0.5rem;
+    padding: 0.75rem;
+    background: #f8f9fa; border-radius: 6px; border: 1px solid $border;
   }
 
-  &__radio { display: none; }
-
-  // ── Badges informatifs (deposit modal) ──────────────────────────────────
-  &__methods-preview {
-    &__label {
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: $muted;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 0.5rem;
-    }
-    &__list { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  &__instruction {
+    display: flex; align-items: center; gap: 0.625rem;
+    font-size: 0.8rem; color: $muted;
   }
 
-  &__method-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.4rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    border: 1px solid;
-    svg { width: 0.875rem; height: 0.875rem; }
-    span {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 22px; height: 22px;
-      border-radius: 50%;
-      font-size: 0.6rem;
-      font-weight: 800;
-      color: #fff;
-    }
-    &--orange {
-      background: rgba(249, 115, 22, 0.08);
-      border-color: rgba(249, 115, 22, 0.3);
-      color: #c2410c;
-      span { background: #f97316; }
-    }
-    &--mtn {
-      background: rgba(234, 179, 8, 0.08);
-      border-color: rgba(234, 179, 8, 0.3);
-      color: #854d0e;
-      span { background: #eab308; }
-    }
-    &--card {
-      background: rgba(99, 102, 241, 0.08);
-      border-color: rgba(99, 102, 241, 0.3);
-      color: #4338ca;
-      svg { color: #6366f1; }
-    }
+  &__instruction-num {
+    width: 20px; height: 20px; border-radius: 50%;
+    background: $primary; color: #fff;
+    font-size: 0.65rem; font-weight: 800;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
   }
 
+  // ── RÉCAPITULATIF ────────────────────────────────────────────────────────
   &__recap {
-    background: #f4f4f4;
-    border: 1px solid $border;
-    border-radius: 4px;
-    padding: 1rem;
+    background: #f4f4f4; border: 1px solid $border;
+    border-radius: 4px; padding: 1rem;
   }
 
   &__recap-title {
-    font-size: 0.7rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: $muted;
-    margin-bottom: 0.75rem;
+    font-size: 0.7rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    color: $muted; margin-bottom: 0.75rem;
   }
 
   &__recap-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.875rem;
-    padding: 0.3rem 0;
-    color: $muted;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 0.875rem; padding: 0.3rem 0; color: $muted;
     strong { color: $text; }
     &--fee { color: $danger; }
     &--net { font-size: 1rem; font-weight: 700; color: $text; }
@@ -276,78 +371,77 @@ $font:         'Inter', -apple-system, sans-serif;
   &__fee { color: $danger; font-weight: 600; }
   &__net { color: $success; font-size: 1.125rem; font-weight: 800; }
 
+  // ── ERREURS ──────────────────────────────────────────────────────────────
   &__error {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    color: $danger;
-    font-size: 0.8rem;
+    display: flex; align-items: center; gap: 0.4rem;
+    color: $danger; font-size: 0.8rem;
     svg { width: 0.875rem; height: 0.875rem; flex-shrink: 0; }
   }
 
   &__alert {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    display: flex; align-items: center; gap: 0.5rem;
     padding: 0.75rem 1rem;
-    background: rgba($danger, 0.08);
-    border: 1px solid rgba($danger, 0.2);
-    border-radius: 4px;
-    color: $danger;
-    font-size: 0.875rem;
+    background: rgba($danger, 0.08); border: 1px solid rgba($danger, 0.2);
+    border-radius: 4px; color: $danger; font-size: 0.875rem;
     svg { width: 1rem; height: 1rem; flex-shrink: 0; }
   }
 
+  // ── FOOTER ───────────────────────────────────────────────────────────────
   &__footer {
-    display: flex;
-    gap: 0.75rem;
-    justify-content: flex-end;
+    display: flex; gap: 0.75rem; justify-content: flex-end;
     padding: 1rem 1.5rem;
-    border-top: 1px solid $border;
-    background: #f4f4f4;
+    border-top: 1px solid $border; background: #f4f4f4;
+    &--single { justify-content: flex-end; }
   }
 
+  // ── BOUTONS ──────────────────────────────────────────────────────────────
   &__btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem 1.5rem;
-    border-radius: 4px;
-    font-size: 0.875rem;
-    font-weight: 600;
-    font-family: $font;
-    cursor: pointer;
-    border: none;
-    transition: all 0.2s;
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.75rem 1.5rem; border-radius: 4px;
+    font-size: 0.875rem; font-weight: 600; font-family: $font;
+    cursor: pointer; border: none; transition: all 0.2s;
     svg { width: 1rem; height: 1rem; }
 
     &--primary {
-      background: $primary;
-      color: #fff;
+      background: $primary; color: #fff;
       &:hover:not(:disabled) {
-        background: $primary-dark;
-        transform: translateY(-1px);
+        background: $primary-dark; transform: translateY(-1px);
         box-shadow: 0 4px 12px rgba($primary, 0.35);
       }
       &:disabled { opacity: 0.45; cursor: not-allowed; transform: none; box-shadow: none; }
     }
 
     &--deposit {
-      background: $success;
-      color: #fff;
+      background: $success; color: #fff;
       &:hover:not(:disabled) {
-        background: $success-dark;
-        transform: translateY(-1px);
+        background: $success-dark; transform: translateY(-1px);
         box-shadow: 0 4px 12px rgba($success, 0.35);
       }
       &:disabled { opacity: 0.45; cursor: not-allowed; transform: none; box-shadow: none; }
     }
 
+    &--orange {
+      background: $orange; color: #fff;
+      &:hover:not(:disabled) {
+        background: $orange-dark; transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba($orange, 0.35);
+      }
+      &:disabled { opacity: 0.45; cursor: not-allowed; transform: none; box-shadow: none; }
+    }
+
+    &--mtn {
+      background: $mtn; color: #1a1a1a;
+      &:hover:not(:disabled) {
+        background: $mtn-dark; transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba($mtn, 0.35);
+      }
+      &:disabled { opacity: 0.45; cursor: not-allowed; transform: none; box-shadow: none; }
+    }
+
     &--secondary {
-      background: #fff;
-      color: $muted;
-      border: 1px solid $border;
-      &:hover { background: #e8e8e8; color: $text; }
+      background: #fff; color: $muted; border: 1px solid $border;
+      &:hover:not(:disabled) { background: #e8e8e8; color: $text; }
+      &:disabled { opacity: 0.4; cursor: not-allowed; }
     }
   }
 }

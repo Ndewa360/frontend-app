@@ -1,6 +1,6 @@
 <div class="wmodal">
 
-  <!-- Header -->
+  <!-- HEADER -->
   <div class="wmodal__header">
     <div class="wmodal__header-left">
       <div class="wmodal__icon">
@@ -20,79 +20,150 @@
     </button>
   </div>
 
-  <!-- Body -->
+  <!-- INDICATEUR D'ÉTAPES -->
+  <div class="wmodal__steps">
+    <div class="wmodal__step" [class.active]="step === 'method'" [class.done]="step === 'details'">
+      <div class="wmodal__step-dot">
+        <svg *ngIf="step === 'details'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+        </svg>
+        <span *ngIf="step === 'method'">1</span>
+      </div>
+      <span class="wmodal__step-label">Méthode</span>
+    </div>
+    <div class="wmodal__step-line"></div>
+    <div class="wmodal__step" [class.active]="step === 'details'">
+      <div class="wmodal__step-dot"><span>2</span></div>
+      <span class="wmodal__step-label">Détails</span>
+    </div>
+  </div>
+
+  <!-- BODY -->
   <div class="wmodal__body" [formGroup]="form">
 
-    <!-- Montant -->
-    <div class="wmodal__field">
-      <label class="wmodal__label">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-        </svg>
-        Montant à retirer
-      </label>
-      <div class="wmodal__amount-wrap">
-        <input type="number" formControlName="amount" class="wmodal__input"
-               [class.wmodal__input--error]="form.get('amount')?.invalid && form.get('amount')?.touched"
-               [placeholder]="'Min. ' + formatCurrency(minAmount)">
-        <span class="wmodal__currency">FCFA</span>
-        <button type="button" class="wmodal__max-btn" (click)="setMaxAmount()">Max</button>
-      </div>
-      <div *ngIf="form.get('amount')?.invalid && form.get('amount')?.touched" class="wmodal__error">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-        </svg>
-        <span *ngIf="form.get('amount')?.errors?.['min']">Minimum {{ formatCurrency(minAmount) }}</span>
-        <span *ngIf="form.get('amount')?.errors?.['max']">Solde insuffisant (max {{ formatCurrency(data.balance) }})</span>
-        <span *ngIf="form.get('amount')?.errors?.['required']">Montant requis</span>
-      </div>
-    </div>
+    <!-- ══ ÉTAPE 1 — CHOIX DE LA MÉTHODE ══ -->
+    <ng-container *ngIf="step === 'method'">
 
-    <!-- Méthode -->
-    <div class="wmodal__field">
-      <label class="wmodal__label">
+      <p class="wmodal__step-title">Comment souhaitez-vous recevoir votre retrait ?</p>
+
+      <div class="wmodal__methods">
+        <button *ngFor="let m of methods" type="button"
+                class="wmodal__method-btn"
+                [class.wmodal__method-btn--orange]="m.value === 'ORANGE_MONEY'"
+                [class.wmodal__method-btn--mtn]="m.value === 'MTN_MONEY'"
+                [class.wmodal__method-btn--bank]="m.value === 'BANK'"
+                (click)="selectMethod(m)">
+          <div class="wmodal__method-badge" [ngClass]="m.badgeClass">
+            <span>{{ m.badge }}</span>
+          </div>
+          <div class="wmodal__method-info">
+            <strong>{{ m.label }}</strong>
+            <span>{{ m.description }}</span>
+          </div>
+          <svg class="wmodal__method-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </button>
+      </div>
+
+      <p class="wmodal__security-note">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
         </svg>
-        Méthode de retrait
-      </label>
-      <div class="wmodal__methods">
-        <label *ngFor="let m of methods" class="wmodal__method"
-               [class.wmodal__method--active]="form.value.method === m.value">
-          <input type="radio" formControlName="method" [value]="m.value" class="wmodal__radio">
+        Toutes les transactions sont sécurisées et chiffrées
+      </p>
+
+    </ng-container>
+
+    <!-- ══ ÉTAPE 2 — DÉTAILS ══ -->
+    <ng-container *ngIf="step === 'details'">
+
+      <!-- Méthode sélectionnée + retour -->
+      <div class="wmodal__selected-method">
+        <button type="button" class="wmodal__back-btn" (click)="backToMethod()" [disabled]="loading">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+          </svg>
+        </button>
+        <div class="wmodal__selected-badge" [ngClass]="selectedMethodDef?.badgeClass">
+          <span>{{ selectedMethodDef?.badge }}</span>
+        </div>
+        <span class="wmodal__selected-label">{{ selectedMethodDef?.label }}</span>
+      </div>
+
+      <!-- Montant -->
+      <div class="wmodal__field">
+        <label class="wmodal__label">
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  [attr.d]="m.value === 'BANK'
-                    ? 'M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z'
-                    : 'M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z'"/>
+                  d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
           </svg>
-          <span>{{ m.label }}</span>
+          Montant à retirer
         </label>
+        <div class="wmodal__amount-wrap">
+          <input type="number" formControlName="amount" class="wmodal__input"
+                 [class.wmodal__input--error]="form.get('amount')?.invalid && form.get('amount')?.touched"
+                 [placeholder]="'Min. ' + formatCurrency(minAmount)">
+          <span class="wmodal__currency">FCFA</span>
+          <button type="button" class="wmodal__max-btn" (click)="setMaxAmount()" [disabled]="loading">Max</button>
+        </div>
+        <div *ngIf="form.get('amount')?.invalid && form.get('amount')?.touched" class="wmodal__error">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+          </svg>
+          <span *ngIf="form.get('amount')?.errors?.['min']">Minimum {{ formatCurrency(minAmount) }}</span>
+          <span *ngIf="form.get('amount')?.errors?.['max']">Solde insuffisant (max {{ formatCurrency(data.balance) }})</span>
+          <span *ngIf="form.get('amount')?.errors?.['required']">Montant requis</span>
+        </div>
       </div>
-    </div>
 
-    <!-- Numéro / IBAN -->
-    <div class="wmodal__field">
-      <label class="wmodal__label">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
-        </svg>
-        {{ form.value.method === 'BANK' ? 'IBAN / Numéro de compte' : 'Numéro de téléphone' }}
-      </label>
-      <div class="wmodal__phone-wrap" *ngIf="form.value.method !== 'BANK'">
-        <span class="wmodal__prefix">+237</span>
-        <input type="tel" formControlName="recipient" class="wmodal__input wmodal__input--phone"
-               [class.wmodal__input--error]="form.get('recipient')?.invalid && form.get('recipient')?.touched"
-               [placeholder]="selectedMethod?.placeholder || '6XXXXXXXX'">
+      <!-- Numéro Mobile Money -->
+      <div class="wmodal__field" *ngIf="isPhone">
+        <label class="wmodal__label">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+          </svg>
+          Numéro {{ selectedMethodDef?.label }}
+        </label>
+        <div class="wmodal__phone-wrap">
+          <span class="wmodal__prefix">+237</span>
+          <input type="tel" formControlName="recipient" class="wmodal__input wmodal__input--phone"
+                 [class.wmodal__input--error]="form.get('recipient')?.invalid && form.get('recipient')?.touched"
+                 [placeholder]="selectedMethodDef?.placeholder || '6XXXXXXXX'">
+        </div>
+        <div class="wmodal__mobile-instructions">
+          <div class="wmodal__instruction">
+            <div class="wmodal__instruction-num">1</div>
+            <span>Saisissez votre numéro et confirmez</span>
+          </div>
+          <div class="wmodal__instruction">
+            <div class="wmodal__instruction-num">2</div>
+            <span>Vous recevrez une notification sur votre téléphone</span>
+          </div>
+          <div class="wmodal__instruction">
+            <div class="wmodal__instruction-num">3</div>
+            <span>Le montant sera crédité sous 24h ouvrées</span>
+          </div>
+        </div>
       </div>
-      <input *ngIf="form.value.method === 'BANK'" type="text" formControlName="recipient"
-             class="wmodal__input"
-             [class.wmodal__input--error]="form.get('recipient')?.invalid && form.get('recipient')?.touched"
-             [placeholder]="selectedMethod?.placeholder">
+
+      <!-- IBAN / Compte bancaire -->
+      <div class="wmodal__field" *ngIf="!isPhone">
+        <label class="wmodal__label">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/>
+          </svg>
+          IBAN / Numéro de compte
+        </label>
+        <input type="text" formControlName="recipient" class="wmodal__input"
+               [class.wmodal__input--error]="form.get('recipient')?.invalid && form.get('recipient')?.touched"
+               [placeholder]="selectedMethodDef?.placeholder">
+      </div>
+
       <div *ngIf="form.get('recipient')?.invalid && form.get('recipient')?.touched" class="wmodal__error">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -100,51 +171,63 @@
         </svg>
         Champ requis (minimum 6 caractères)
       </div>
-    </div>
 
-    <!-- Récapitulatif -->
-    <div class="wmodal__recap" *ngIf="form.value.amount > 0">
-      <div class="wmodal__recap-title">Récapitulatif du retrait</div>
-      <div class="wmodal__recap-row">
-        <span>Montant demandé</span>
-        <strong>{{ formatCurrency(form.value.amount) }}</strong>
+      <!-- Récapitulatif -->
+      <div class="wmodal__recap" *ngIf="form.value.amount > 0">
+        <div class="wmodal__recap-title">Récapitulatif</div>
+        <div class="wmodal__recap-row">
+          <span>Montant demandé</span>
+          <strong>{{ formatCurrency(form.value.amount) }}</strong>
+        </div>
+        <div class="wmodal__recap-row wmodal__recap-row--fee">
+          <span>Frais de service (2%)</span>
+          <span class="wmodal__fee">− {{ formatCurrency(fees) }}</span>
+        </div>
+        <div class="wmodal__recap-divider"></div>
+        <div class="wmodal__recap-row wmodal__recap-row--net">
+          <span>Vous recevrez</span>
+          <strong class="wmodal__net">{{ formatCurrency(netAmount) }}</strong>
+        </div>
+        <div class="wmodal__recap-row">
+          <span>Via</span>
+          <strong>{{ selectedMethodDef?.label }}</strong>
+        </div>
       </div>
-      <div class="wmodal__recap-row wmodal__recap-row--fee">
-        <span>Frais de service (2%)</span>
-        <span class="wmodal__fee">− {{ formatCurrency(fees) }}</span>
-      </div>
-      <div class="wmodal__recap-divider"></div>
-      <div class="wmodal__recap-row wmodal__recap-row--net">
-        <span>Vous recevrez</span>
-        <strong class="wmodal__net">{{ formatCurrency(netAmount) }}</strong>
-      </div>
-    </div>
 
-    <!-- Erreur -->
-    <div *ngIf="error" class="wmodal__alert">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-      </svg>
-      {{ error }}
-    </div>
+      <!-- Erreur -->
+      <div *ngIf="error" class="wmodal__alert">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+        </svg>
+        {{ error }}
+      </div>
+
+    </ng-container>
 
   </div>
 
-  <!-- Footer -->
-  <div class="wmodal__footer">
-    <button type="button" class="wmodal__btn wmodal__btn--secondary" (click)="close()" [disabled]="loading">
-      Annuler
+  <!-- FOOTER étape 1 -->
+  <div class="wmodal__footer wmodal__footer--single" *ngIf="step === 'method'">
+    <button type="button" class="wmodal__btn wmodal__btn--secondary" (click)="close()">Annuler</button>
+  </div>
+
+  <!-- FOOTER étape 2 -->
+  <div class="wmodal__footer" *ngIf="step === 'details'">
+    <button type="button" class="wmodal__btn wmodal__btn--secondary" (click)="backToMethod()" [disabled]="loading">
+      Retour
     </button>
-    <button type="button" class="wmodal__btn wmodal__btn--primary" (click)="submit()"
-            [disabled]="form.invalid || loading">
+    <button type="button" class="wmodal__btn"
+            [class.wmodal__btn--orange]="selectedMethodDef?.value === 'ORANGE_MONEY'"
+            [class.wmodal__btn--mtn]="selectedMethodDef?.value === 'MTN_MONEY'"
+            [class.wmodal__btn--primary]="selectedMethodDef?.value === 'BANK'"
+            (click)="submit()" [disabled]="form.invalid || loading">
       <svg *ngIf="loading" class="spinning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
       </svg>
       <svg *ngIf="!loading" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
       </svg>
       {{ loading ? 'Traitement en cours…' : 'Confirmer le retrait' }}
     </button>
