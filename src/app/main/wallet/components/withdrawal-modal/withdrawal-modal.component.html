@@ -132,8 +132,47 @@
           <span class="wmodal__prefix">+237</span>
           <input type="tel" formControlName="recipient" class="wmodal__input wmodal__input--phone"
                  [class.wmodal__input--error]="form.get('recipient')?.invalid && form.get('recipient')?.touched"
-                 [placeholder]="selectedMethodDef?.placeholder || '6XXXXXXXX'">
+                 [class.wmodal__input--valid]="form.get('recipient')?.valid && form.get('recipient')?.touched"
+                 [placeholder]="selectedMethodDef?.placeholder || '6XXXXXXXX'"
+                 maxlength="9">
+          <!-- Icône de validation -->
+          <span class="wmodal__phone-status" *ngIf="form.get('recipient')?.touched">
+            <svg *ngIf="form.get('recipient')?.valid" class="wmodal__phone-status--ok"
+                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+            </svg>
+            <svg *ngIf="form.get('recipient')?.invalid" class="wmodal__phone-status--err"
+                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </span>
         </div>
+
+        <!-- Hint opérateur -->
+        <div class="wmodal__phone-hint"
+             [class.wmodal__phone-hint--orange]="selectedMethodDef?.value === 'ORANGE_MONEY'"
+             [class.wmodal__phone-hint--mtn]="selectedMethodDef?.value === 'MTN_MONEY'">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <span *ngIf="selectedMethodDef?.value === 'ORANGE_MONEY'">
+            Numéros Orange : <strong>69X</strong>, <strong>65[5-9]X</strong>, <strong>66X</strong>
+          </span>
+          <span *ngIf="selectedMethodDef?.value === 'MTN_MONEY'">
+            Numéros MTN : <strong>67X</strong>, <strong>68X</strong>, <strong>65[0-4]X</strong>
+          </span>
+        </div>
+
+        <!-- Erreur contextuelle -->
+        <div *ngIf="phoneError" class="wmodal__error">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+          </svg>
+          {{ phoneError }}
+        </div>
+
         <div class="wmodal__mobile-instructions">
           <div class="wmodal__instruction">
             <div class="wmodal__instruction-num">1</div>
@@ -162,14 +201,13 @@
         <input type="text" formControlName="recipient" class="wmodal__input"
                [class.wmodal__input--error]="form.get('recipient')?.invalid && form.get('recipient')?.touched"
                [placeholder]="selectedMethodDef?.placeholder">
-      </div>
-
-      <div *ngIf="form.get('recipient')?.invalid && form.get('recipient')?.touched" class="wmodal__error">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-        </svg>
-        Champ requis (minimum 6 caractères)
+        <div *ngIf="form.get('recipient')?.invalid && form.get('recipient')?.touched" class="wmodal__error">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+          </svg>
+          Champ requis (minimum 6 caractères)
+        </div>
       </div>
 
       <!-- Récapitulatif -->

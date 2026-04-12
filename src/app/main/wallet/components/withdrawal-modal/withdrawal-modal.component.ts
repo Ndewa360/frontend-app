@@ -9,6 +9,10 @@ import { WalletAction, WalletState, WithdrawalMethod } from 'src/app/shared/stor
 const FEE_RATE  = 0.02;
 const MIN_AMOUNT = 500;
 
+// Préfixes Cameroun par opérateur
+const ORANGE_PREFIXES = /^6(9|5[5-9]|6)/;  // 69X, 655-659, 66X
+const MTN_PREFIXES    = /^6(7|8|5[0-4])/;  // 67X, 68X, 650-654
+
 export interface WithdrawalMethodDef {
   value: WithdrawalMethod;
   label: string;
@@ -111,6 +115,8 @@ export class WithdrawalModalComponent implements OnInit, OnDestroy {
     this.selectedMethodDef = m;
     this.form.patchValue({ method: m.value, recipient: '' });
     this.error = null;
+    // Mettre à jour le validateur du numéro selon la méthode
+    this.updateRecipientValidator(m.value);
     this.step = 'details';
   }
 
@@ -119,10 +125,51 @@ export class WithdrawalModalComponent implements OnInit, OnDestroy {
     this.selectedMethodDef = null;
     this.error = null;
     this.form.patchValue({ method: '', recipient: '' });
+    this.form.get('recipient')?.setValidators([Validators.required, Validators.minLength(6)]);
+    this.form.get('recipient')?.updateValueAndValidity();
   }
 
   setMaxAmount(): void {
     this.form.patchValue({ amount: this.data.balance });
+  }
+
+  private updateRecipientValidator(method: WithdrawalMethod): void {
+    const ctrl = this.form.get('recipient');
+    if (method === 'ORANGE_MONEY') {
+      ctrl?.setValidators([
+        Validators.required,
+        Validators.minLength(9),
+        Validators.maxLength(9),
+        Validators.pattern(ORANGE_PREFIXES),
+      ]);
+    } else if (method === 'MTN_MONEY') {
+      ctrl?.setValidators([
+        Validators.required,
+        Validators.minLength(9),
+        Validators.maxLength(9),
+        Validators.pattern(MTN_PREFIXES),
+      ]);
+    } else {
+      // Virement bancaire : pas de contrainte de format
+      ctrl?.setValidators([Validators.required, Validators.minLength(6)]);
+    }
+    ctrl?.updateValueAndValidity();
+  }
+
+  /** Message d'erreur contextuel pour le champ recipient */
+  get phoneError(): string | null {
+    const ctrl = this.form.get('recipient');
+    if (!ctrl?.invalid || !ctrl?.touched) return null;
+    if (ctrl.errors?.['required'])   return 'Ce champ est requis.';
+    if (ctrl.errors?.['minlength'] || ctrl.errors?.['maxlength'])
+      return 'Le numéro doit contenir exactement 9 chiffres (ex : 6XXXXXXXX).';
+    if (ctrl.errors?.['pattern']) {
+      if (this.selectedMethodDef?.value === 'ORANGE_MONEY')
+        return 'Numéro invalide pour Orange Money. Les numéros Orange commencent par 69, 65[5-9] ou 66.';
+      if (this.selectedMethodDef?.value === 'MTN_MONEY')
+        return 'Numéro invalide pour MTN MoMo. Les numéros MTN commencent par 67, 68 ou 65[0-4].';
+    }
+    return 'Numéro invalide.';
   }
 
   // ── Soumission ─────────────────────────────────────────────────────────────

@@ -302,7 +302,8 @@ $font:         'Inter', -apple-system, sans-serif;
       box-shadow: 0 0 0 2px rgba($primary, 0.15);
     }
     &--error { border-color: $danger; }
-    &--phone { border-left: none; border-radius: 0 4px 4px 0; }
+    &--valid { border-color: $success; box-shadow: 0 0 0 2px rgba($success, 0.12); }
+    &--phone { border-left: none; border-radius: 0 4px 4px 0; padding-right: 2.5rem; }
   }
 
   &__currency {
@@ -318,7 +319,40 @@ $font:         'Inter', -apple-system, sans-serif;
     &:hover { background: rgba($primary, 0.2); }
   }
 
-  &__phone-wrap { display: flex; }
+  &__phone-wrap { display: flex; position: relative; }
+
+  &__phone-status {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%; transform: translateY(-50%);
+    display: flex; align-items: center;
+    svg { width: 1rem; height: 1rem; }
+    &--ok  { color: $success; }
+    &--err { color: $danger; }
+  }
+
+  // ── HINT OPÉRATEUR ────────────────────────────────────────────────────────
+  &__phone-hint {
+    display: flex; align-items: flex-start; gap: 0.4rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.78rem;
+    border: 1px solid;
+    svg { width: 0.875rem; height: 0.875rem; flex-shrink: 0; margin-top: 1px; }
+
+    &--orange {
+      background: rgba($orange, 0.06);
+      border-color: rgba($orange, 0.25);
+      color: #9a3412;
+      svg { color: $orange; }
+    }
+    &--mtn {
+      background: rgba($mtn, 0.06);
+      border-color: rgba($mtn, 0.25);
+      color: #713f12;
+      svg { color: $mtn; }
+    }
+  }
 
   &__prefix {
     display: flex; align-items: center;
