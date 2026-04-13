@@ -41,21 +41,18 @@ export class AdminSubscriptionsService {
    */
   getSubscriptions(filters: SubscriptionFilters = {}): Observable<{ subscriptions: AdminUserSubscription[], total: number, meta: any }> {
     let params = new HttpParams();
-    
-    // Ajouter les filtres aux paramètres
     Object.keys(filters).forEach(key => {
-      const value = filters[key];
+      const value = (filters as any)[key];
       if (value !== undefined && value !== null && value !== '') {
-        if (value instanceof Date) {
-          params = params.set(key, value.toISOString());
-        } else {
-          params = params.set(key, value.toString());
-        }
+        params = params.set(key, value instanceof Date ? value.toISOString() : value.toString());
       }
     });
-
-    return this.http.get<ApiResultFormat<{ subscriptions: AdminUserSubscription[], total: number, meta: any }>>(`${this.apiUrl}`, { params }).pipe(
-      map(response => response.data)
+    return this.http.get<any>(`${this.apiUrl}`, { params }).pipe(
+      map(response => ({
+        subscriptions: response.data || [],
+        total: response.meta?.total || 0,
+        meta: response.meta || { page: 1, limit: 20, totalPages: 0 }
+      }))
     );
   }
 
@@ -232,35 +229,26 @@ export class AdminSubscriptionsService {
    */
   getConversionMetrics(timeRange: string = '30d'): Observable<any> {
     const params = new HttpParams().set('timeRange', timeRange);
-    return this.http.get<ApiResultFormat<any>>(`${this.apiUrl}/conversion-metrics`, { params }).pipe(
+    return this.http.get<ApiResultFormat<any>>(`${this.apiUrl}/analytics/conversion-metrics`, { params }).pipe(
       map(response => response.data)
     );
   }
 
-  /**
-   * Obtenir les tendances de revenus
-   */
   getRevenueTrends(timeRange: string = '30d'): Observable<any> {
     const params = new HttpParams().set('timeRange', timeRange);
-    return this.http.get<ApiResultFormat<any>>(`${this.apiUrl}/revenue-trends`, { params }).pipe(
+    return this.http.get<ApiResultFormat<any>>(`${this.apiUrl}/analytics/revenue-trends`, { params }).pipe(
       map(response => response.data)
     );
   }
 
-  /**
-   * Obtenir les utilisateurs à risque de churn
-   */
   getChurnRiskUsers(): Observable<AdminUserSubscription[]> {
-    return this.http.get<ApiResultFormat<AdminUserSubscription[]>>(`${this.apiUrl}/churn-risk`).pipe(
+    return this.http.get<ApiResultFormat<AdminUserSubscription[]>>(`${this.apiUrl}/analytics/churn-risk`).pipe(
       map(response => response.data)
     );
   }
 
-  /**
-   * Obtenir les opportunités d'upgrade
-   */
   getUpgradeOpportunities(): Observable<AdminUserSubscription[]> {
-    return this.http.get<ApiResultFormat<AdminUserSubscription[]>>(`${this.apiUrl}/upgrade-opportunities`).pipe(
+    return this.http.get<ApiResultFormat<AdminUserSubscription[]>>(`${this.apiUrl}/analytics/upgrade-opportunities`).pipe(
       map(response => response.data)
     );
   }

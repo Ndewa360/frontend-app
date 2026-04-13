@@ -78,6 +78,17 @@ export namespace AdminDashboardAction {
     constructor(public error: any) {}
   }
 
+  // Load Financial Dashboard
+  export class LoadFinancialDashboard {
+    static readonly type = '[Admin Dashboard] Load Financial Dashboard';
+    constructor(public period?: string) {}
+  }
+
+  export class LoadFinancialDashboardSuccess {
+    static readonly type = '[Admin Dashboard] Load Financial Dashboard Success';
+    constructor(public data: any) {}
+  }
+
   // Set Loading
   export class SetLoading {
     static readonly type = '[Admin Dashboard] Set Loading';

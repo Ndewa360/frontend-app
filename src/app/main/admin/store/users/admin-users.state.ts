@@ -302,6 +302,21 @@ export class AdminUsersState {
     });
   }
 
+  @Action(AdminUsersAction.BulkAction)
+  bulkAction(ctx: StateContext<AdminUsersStateModel>, action: AdminUsersAction.BulkAction) {
+    ctx.patchState({ loading: true });
+    return this.adminUsersService.bulkAction({ userIds: action.userIds, action: action.action as any, data: action.data }).pipe(
+      tap(result => {
+        ctx.patchState({ loading: false });
+        ctx.dispatch(new AdminUsersAction.RefreshData());
+      }),
+      catchError(error => {
+        ctx.patchState({ loading: false, error: error.message });
+        return throwError(error);
+      })
+    );
+  }
+
   @Action(AdminUsersAction.SetFilters)
   setFilters(ctx: StateContext<AdminUsersStateModel>, action: AdminUsersAction.SetFilters) {
     ctx.patchState({
@@ -332,5 +347,24 @@ export class AdminUsersState {
       new AdminUsersAction.LoadUsers(state.filters),
       new AdminUsersAction.LoadUserStats()
     ]);
+  }
+
+  @Action(AdminUsersAction.ExportUsers)
+  exportUsers(ctx: StateContext<AdminUsersStateModel>, action: AdminUsersAction.ExportUsers) {
+    return this.adminUsersService.exportUsers(action.filters, action.format).pipe(
+      tap((result) => {
+        if (result?.downloadUrl) {
+          window.open(result.downloadUrl, '_blank');
+        }
+      }),
+      catchError(error => throwError(error))
+    );
+  }
+
+  @Action(AdminUsersAction.ResetPassword)
+  resetPassword(ctx: StateContext<AdminUsersStateModel>, action: AdminUsersAction.ResetPassword) {
+    return this.adminUsersService.resetPassword(action.userId, true).pipe(
+      catchError(error => throwError(error))
+    );
   }
 }

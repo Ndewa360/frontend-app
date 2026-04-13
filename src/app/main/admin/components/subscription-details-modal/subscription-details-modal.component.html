@@ -1,0 +1,135 @@
+<div class="sub-modal">
+
+  <!-- Header -->
+  <div class="sub-modal__header">
+    <div class="sub-modal__header-left">
+      <div class="sub-modal__avatar">{{ userName.charAt(0).toUpperCase() }}</div>
+      <div>
+        <h2 class="sub-modal__title">{{ userName }}</h2>
+        <p class="sub-modal__email">{{ subscription.user.email }}</p>
+      </div>
+    </div>
+    <div class="sub-modal__badges">
+      <span class="admin-badge" [ngClass]="getPlanClass(subscription.plan)">{{ getPlanLabel(subscription.plan) }}</span>
+      <span class="admin-badge" [ngClass]="getStatusClass(subscription.accountStatus)">{{ getStatusLabel(subscription.accountStatus) }}</span>
+    </div>
+    <button class="sub-modal__close" (click)="close()">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Tabs -->
+  <div class="sub-modal__tabs">
+    <button [class.active]="activeTab === 'overview'" (click)="setTab('overview')">Vue d'ensemble</button>
+    <button [class.active]="activeTab === 'periods'" (click)="setTab('periods')">Périodes</button>
+    <button [class.active]="activeTab === 'actions'" (click)="setTab('actions')">Actions</button>
+  </div>
+
+  <!-- Body -->
+  <div class="sub-modal__body">
+
+    <!-- Vue d'ensemble -->
+    <ng-container *ngIf="activeTab === 'overview'">
+      <div class="sub-modal__grid">
+        <div class="sub-modal__stat">
+          <span class="sub-modal__stat-label">Propriétés</span>
+          <span class="sub-modal__stat-value">{{ subscription.propertyCount }} / {{ subscription.propertyLimit === 999999 ? '∞' : subscription.propertyLimit }}</span>
+        </div>
+        <div class="sub-modal__stat">
+          <span class="sub-modal__stat-label">Montant mensuel</span>
+          <span class="sub-modal__stat-value">{{ formatCurrency(subscription.monthlyAmount) }}</span>
+        </div>
+        <div class="sub-modal__stat">
+          <span class="sub-modal__stat-label">Factures impayées</span>
+          <span class="sub-modal__stat-value" [class.text-danger]="subscription.hasUnpaidInvoices">{{ subscription.unpaidInvoicesCount || 0 }}</span>
+        </div>
+        <div class="sub-modal__stat">
+          <span class="sub-modal__stat-label">Montant impayé</span>
+          <span class="sub-modal__stat-value" [class.text-danger]="subscription.totalUnpaidAmount > 0">{{ formatCurrency(subscription.totalUnpaidAmount) }}</span>
+        </div>
+        <div class="sub-modal__stat">
+          <span class="sub-modal__stat-label">Dernier paiement</span>
+          <span class="sub-modal__stat-value">{{ formatDate(subscription.lastPaymentDate) }}</span>
+        </div>
+        <div class="sub-modal__stat">
+          <span class="sub-modal__stat-label">Membre depuis</span>
+          <span class="sub-modal__stat-value">{{ formatDate(subscription.createdAt) }}</span>
+        </div>
+      </div>
+
+      <div *ngIf="subscription.hasUnpaidInvoices" class="sub-modal__alert sub-modal__alert--danger">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+        </svg>
+        {{ subscription.unpaidInvoicesCount }} facture(s) impayée(s) — Total : {{ formatCurrency(subscription.totalUnpaidAmount) }}
+      </div>
+
+      <div *ngIf="subscription.currentPeriod" class="sub-modal__current-period">
+        <h4>Période courante</h4>
+        <div class="sub-modal__period-row">
+          <span>{{ formatDate(subscription.currentPeriod.startedAt) }} → {{ formatDate(subscription.currentPeriod.endedAt) }}</span>
+          <span class="admin-badge" [ngClass]="getPeriodStateClass(subscription.currentPeriod.state)">{{ getPeriodStateLabel(subscription.currentPeriod.state) }}</span>
+          <span>{{ formatCurrency(subscription.currentPeriod.calculatedAmount) }}</span>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Périodes -->
+    <ng-container *ngIf="activeTab === 'periods'">
+      <div *ngIf="!subscription.periods || subscription.periods.length === 0" class="sub-modal__empty">Aucune période de facturation</div>
+      <div *ngIf="subscription.periods?.length > 0" class="sub-modal__periods-list">
+        <div *ngFor="let period of subscription.periods" class="sub-modal__period-item">
+          <div class="sub-modal__period-dates">
+            <span>{{ formatDate(period.startedAt) }}</span>
+            <span>→</span>
+            <span>{{ formatDate(period.endedAt) }}</span>
+          </div>
+          <span class="admin-badge" [ngClass]="getPeriodStateClass(period.state)">{{ getPeriodStateLabel(period.state) }}</span>
+          <span>{{ formatCurrency(period.calculatedAmount) }}</span>
+          <span class="sub-modal__period-ref">{{ period.billingRef }}</span>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Actions -->
+    <ng-container *ngIf="activeTab === 'actions'">
+      <div *ngIf="showReasonInput" class="sub-modal__reason-form">
+        <label>{{ pendingAction === 'upgrade' ? 'Raison (optionnel)' : 'Raison de la suspension *' }}</label>
+        <textarea [(ngModel)]="actionReason" rows="3" class="sub-modal__textarea"
+                  [placeholder]="pendingAction === 'upgrade' ? 'Ex: Offre commerciale...' : 'Ex: Factures impayées...'"></textarea>
+        <div class="sub-modal__reason-actions">
+          <button class="admin-btn admin-btn--secondary" (click)="cancelAction()">Annuler</button>
+          <button class="admin-btn admin-btn--primary" (click)="confirmAction()">Confirmer</button>
+        </div>
+      </div>
+
+      <div *ngIf="!showReasonInput" class="sub-modal__actions-grid">
+        <button *ngIf="subscription.plan !== 'premium'" class="sub-modal__action-btn sub-modal__action-btn--upgrade" (click)="onUpgrade()">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+          <div><strong>Upgrade Premium</strong><span>Forcer le passage au plan Premium</span></div>
+        </button>
+        <button *ngIf="subscription.accountStatus === 'active'" class="sub-modal__action-btn sub-modal__action-btn--suspend" (click)="onSuspend()">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>
+          <div><strong>Suspendre</strong><span>Bloquer l'accès temporairement</span></div>
+        </button>
+        <button *ngIf="subscription.accountStatus !== 'active'" class="sub-modal__action-btn sub-modal__action-btn--reactivate" (click)="onReactivate()">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <div><strong>Réactiver</strong><span>Restaurer l'accès complet</span></div>
+        </button>
+        <button *ngIf="subscription.hasUnpaidInvoices" class="sub-modal__action-btn sub-modal__action-btn--reminder" (click)="onSendReminder()">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          <div><strong>Envoyer un rappel</strong><span>Rappel de paiement par email</span></div>
+        </button>
+      </div>
+    </ng-container>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="sub-modal__footer">
+    <button class="admin-btn admin-btn--secondary" (click)="close()">Fermer</button>
+  </div>
+
+</div>

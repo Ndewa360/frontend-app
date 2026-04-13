@@ -4,15 +4,10 @@ import { takeUntil } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
 import { MatDialog } from '@angular/material/dialog';
 import { SubscriptionDetailsModalComponent } from '../../components/subscription-details-modal/subscription-details-modal.component';
-
-// Actions
 import { AdminSubscriptionsAction } from '../../store/subscriptions/admin-subscriptions.actions';
-
-// States
 import { AdminSubscriptionsState } from '../../store/subscriptions/admin-subscriptions.state';
-
-// Models
 import { AdminUserSubscription, SubscriptionFilters, SubscriptionStats } from '../../store/subscriptions/admin-subscriptions.model';
+import { AdminSubscriptionsService } from '../../services/admin-subscriptions.service';
 
 @Component({
   selector: 'app-admin-subscriptions',
@@ -33,6 +28,12 @@ export class AdminSubscriptionsComponent implements OnInit, OnDestroy {
   selectedTab = 'overview';
   showFilters = false;
   isRefreshing = false;
+
+  // Analytics data
+  analyticsData: any = null;
+  churnRiskUsers: any[] = [];
+  upgradeOpportunities: any[] = [];
+  isLoadingAnalytics = false;
 
   // Filter options
   planOptions = [
@@ -65,12 +66,14 @@ export class AdminSubscriptionsComponent implements OnInit, OnDestroy {
 
   constructor(
     private store: Store,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private subscriptionsService: AdminSubscriptionsService
   ) {}
 
   ngOnInit(): void {
     this.loadData();
     this.setupSubscriptions();
+    this.loadAnalytics();
   }
 
   ngOnDestroy(): void {
@@ -143,49 +146,57 @@ export class AdminSubscriptionsComponent implements OnInit, OnDestroy {
   }
 
   onUpgradePlan(subscription: AdminUserSubscription): void {
-    const reason = prompt('Raison de l\'upgrade:');
-    if (reason !== null) {
-      this.store.dispatch(new AdminSubscriptionsAction.ForceUpgradeToPremium(subscription._id, reason));
-    }
+    this.store.dispatch(new AdminSubscriptionsAction.ForceUpgradeToPremium(subscription._id));
   }
 
   onSuspendAccount(subscription: AdminUserSubscription): void {
-    const reason = prompt('Raison de la suspension:');
-    if (reason !== null) {
-      this.store.dispatch(new AdminSubscriptionsAction.SuspendAccount(subscription._id, reason));
-    }
+    const reason = 'Suspension administrative';
+    this.store.dispatch(new AdminSubscriptionsAction.SuspendAccount(subscription._id, reason));
   }
 
   onReactivateAccount(subscription: AdminUserSubscription): void {
-    if (confirm(`Réactiver le compte de ${subscription.user.firstName} ${subscription.user.lastName} ?`)) {
-      this.store.dispatch(new AdminSubscriptionsAction.ReactivateAccount(subscription._id));
-    }
+    this.store.dispatch(new AdminSubscriptionsAction.ReactivateAccount(subscription._id));
   }
 
   onForceUpgrade(subscription: AdminUserSubscription): void {
-    if (confirm(`Forcer l'upgrade vers Premium pour ${subscription.user.firstName} ${subscription.user.lastName} ?`)) {
-      this.store.dispatch(new AdminSubscriptionsAction.ForceUpgradeToPremium(subscription._id));
-    }
+    this.store.dispatch(new AdminSubscriptionsAction.ForceUpgradeToPremium(subscription._id));
   }
 
   onDowngradeToPlan(subscription: AdminUserSubscription, plan: string): void {
-    if (confirm(`Changer le plan vers ${plan} pour ${subscription.user.firstName} ${subscription.user.lastName} ?`)) {
-      this.store.dispatch(new AdminSubscriptionsAction.ChangePlan(subscription._id, plan));
-    }
+    this.store.dispatch(new AdminSubscriptionsAction.ChangePlan(subscription._id, plan));
   }
 
   onSendPaymentReminder(subscription: AdminUserSubscription): void {
-    if (confirm(`Envoyer un rappel de paiement à ${subscription.user.email} ?`)) {
-      this.store.dispatch(new AdminSubscriptionsAction.SendPaymentReminder(subscription._id));
-    }
+    this.store.dispatch(new AdminSubscriptionsAction.SendPaymentReminder(subscription._id));
+  }
+
+  private loadAnalytics(): void {
+    this.isLoadingAnalytics = true;
+    this.subscriptionsService.getConversionMetrics('30d')
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => { this.analyticsData = data; this.isLoadingAnalytics = false; },
+        error: () => this.isLoadingAnalytics = false
+      });
+    this.subscriptionsService.getChurnRiskUsers()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (users) => this.churnRiskUsers = users || [],
+        error: () => this.churnRiskUsers = []
+      });
+    this.subscriptionsService.getUpgradeOpportunities()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (users) => this.upgradeOpportunities = users || [],
+        error: () => this.upgradeOpportunities = []
+      });
   }
 
   onRefreshData(): void {
     this.isRefreshing = true;
     this.store.dispatch(new AdminSubscriptionsAction.RefreshData());
-    setTimeout(() => {
-      this.isRefreshing = false;
-    }, 1000);
+    this.loadAnalytics();
+    setTimeout(() => this.isRefreshing = false, 1000);
   }
 
   onExportData(): void {
@@ -195,14 +206,10 @@ export class AdminSubscriptionsComponent implements OnInit, OnDestroy {
   // Status helper methods
   getAccountStatusColor(status: string): string {
     switch (status) {
-      case 'active':
-        return 'admin-badge-success';
-      case 'suspended':
-        return 'admin-badge-warning';
-      case 'disabled':
-        return 'admin-badge-danger';
-      default:
-        return 'admin-badge-secondary';
+      case 'active':    return 'success';
+      case 'suspended': return 'warning';
+      case 'disabled':  return 'danger';
+      default:          return 'secondary';
     }
   }
 
@@ -221,12 +228,9 @@ export class AdminSubscriptionsComponent implements OnInit, OnDestroy {
 
   getPlanColor(plan: string): string {
     switch (plan) {
-      case 'premium':
-        return 'admin-badge-success';
-      case 'free':
-        return 'admin-badge-info';
-      default:
-        return 'admin-badge-secondary';
+      case 'premium': return 'success';
+      case 'free':    return 'info';
+      default:        return 'secondary';
     }
   }
 
@@ -242,9 +246,9 @@ export class AdminSubscriptionsComponent implements OnInit, OnDestroy {
   }
 
   getPaymentStatusColor(hasUnpaid: boolean, totalUnpaid: number): string {
-    if (!hasUnpaid) return 'admin-badge-success';
-    if (totalUnpaid > 0) return 'admin-badge-danger';
-    return 'admin-badge-warning';
+    if (!hasUnpaid) return 'success';
+    if (totalUnpaid > 0) return 'danger';
+    return 'warning';
   }
 
   getPaymentStatusLabel(hasUnpaid: boolean, totalUnpaid: number): string {
@@ -275,5 +279,9 @@ export class AdminSubscriptionsComponent implements OnInit, OnDestroy {
 
   toggleSubscriptionMenu(subscriptionId: string): void {
     this.openMenuId = this.openMenuId === subscriptionId ? null : subscriptionId;
+  }
+
+  getPaginationEnd(pagination: any): number {
+    return Math.min(pagination.page * pagination.limit, pagination.total);
   }
 }

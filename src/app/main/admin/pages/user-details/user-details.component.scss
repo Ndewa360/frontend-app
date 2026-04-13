@@ -1,32 +1,186 @@
-// Styles simples et professionnels
-.user-details-page {
-  // Styles de base
+$primary:      #cc8c0a;
+$primary-light: rgba(204, 140, 10, 0.10);
+$primary-dark:  #b87e09;
+$success:  #10b981;
+$warning:  #f59e0b;
+$danger:   #ef4444;
+$info:     #3b82f6;
+$white:    #ffffff;
+$gray-50:  #f8fafc;
+$gray-100: #f1f5f9;
+$gray-200: #e2e8f0;
+$gray-400: #94a3b8;
+$gray-500: #64748b;
+$gray-700: #334155;
+$gray-900: #0f172a;
+
+.admin-users-container {
+  // Le layout fournit déjà padding:24px
+
+  // ── Header ────────────────────────────────────────────────────────────────
+  .admin-page-header {
+    background: $white; border: 1px solid $gray-200;
+    border-radius: 10px; padding: 16px 20px; margin-bottom: 20px;
+
+    .admin-header-content {
+      display: flex; justify-content: space-between;
+      align-items: center; gap: 16px; flex-wrap: wrap;
+    }
+
+    .admin-header-text {
+      display: flex; align-items: center; gap: 12px;
+    }
+
+    .admin-page-title {
+      font-size: 1.375rem; font-weight: 700; color: $gray-900; margin: 0;
+    }
+
+    .admin-header-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  }
+
+  // ── Stats ─────────────────────────────────────────────────────────────────
+  .admin-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px; margin-bottom: 20px;
+
+    .admin-stat-card {
+      background: $white; border-radius: 10px; padding: 18px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+      border: 1px solid $gray-200;
+      display: flex; align-items: center; gap: 14px;
+      transition: transform 0.2s;
+      &:hover { transform: translateY(-2px); }
+
+      &.admin-stat-success { border-left: 4px solid $success; .admin-stat-icon { background: rgba($success,0.1); color: $success; } }
+      &.admin-stat-info    { border-left: 4px solid $info;    .admin-stat-icon { background: rgba($info,0.1);    color: $info;    } }
+      &.admin-stat-warning { border-left: 4px solid $warning; .admin-stat-icon { background: rgba($warning,0.1); color: darken($warning,15%); } }
+      &.admin-stat-primary { border-left: 4px solid $primary; .admin-stat-icon { background: $primary-light;    color: $primary-dark; } }
+
+      .admin-stat-icon {
+        width: 44px; height: 44px; border-radius: 10px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.125rem; flex-shrink: 0;
+      }
+
+      .admin-stat-content { flex: 1; }
+      .admin-stat-number  { font-size: 1.625rem; font-weight: 700; color: $gray-900; }
+      .admin-stat-label   { font-size: 0.78rem; color: $gray-500; margin: 2px 0; }
+      .admin-stat-trend   { font-size: 0.72rem; color: $gray-400; }
+    }
+  }
+
+  // ── Grid 2 colonnes ───────────────────────────────────────────────────────
+  .admin-bottom-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;
+    @media (max-width: 768px) { grid-template-columns: 1fr; }
+  }
+
+  // ── Cards ─────────────────────────────────────────────────────────────────
+  .admin-health-card {
+    background: $white; border-radius: 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    border: 1px solid $gray-200; overflow: hidden;
+
+    .admin-card-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 18px; border-bottom: 1px solid $gray-100; background: $gray-50;
+      h3 { font-size: 0.9375rem; font-weight: 600; color: $gray-900; margin: 0; }
+    }
+
+    .admin-health-content { padding: 14px 18px; }
+    .admin-health-services { display: flex; flex-direction: column; }
+  }
+
+  // ── Service items ─────────────────────────────────────────────────────────
+  .admin-service-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 9px 0; border-bottom: 1px solid $gray-100; font-size: 0.875rem;
+    &:last-child { border-bottom: none; }
+
+    .admin-service-name { color: $gray-500; font-weight: 500; }
+    .admin-service-status {
+      font-weight: 600; color: $gray-900;
+      &.down { color: $danger; }
+      &.up   { color: $success; }
+    }
+  }
+
+  // ── Content section ───────────────────────────────────────────────────────
+  .admin-content-section {
+    margin-bottom: 20px;
+
+    .admin-table-container {
+      background: $white; border-radius: 10px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+      border: 1px solid $gray-200; overflow: hidden;
+    }
+
+    .admin-table-header {
+      padding: 14px 18px; border-bottom: 1px solid $gray-100; background: $gray-50;
+      .admin-table-title {
+        font-size: 0.9375rem; font-weight: 600; color: $gray-900; margin: 0;
+        i { margin-right: 8px; color: $primary; }
+      }
+    }
+  }
+
+  // ── Loading ───────────────────────────────────────────────────────────────
+  .admin-loading-overlay {
+    display: flex; align-items: center; justify-content: center; padding: 60px;
+
+    .admin-loader {
+      display: flex; flex-direction: column; align-items: center; gap: 12px;
+      .admin-spinner {
+        width: 36px; height: 36px;
+        border: 3px solid rgba($primary,0.15); border-top-color: $primary;
+        border-radius: 50%; animation: udSpin 0.8s linear infinite;
+      }
+      p { color: $gray-500; font-size: 0.875rem; }
+    }
+  }
+
+  // ── Empty state ───────────────────────────────────────────────────────────
+  .admin-empty-state {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; padding: 60px; text-align: center;
+    .admin-empty-icon { font-size: 3rem; color: $gray-200; margin-bottom: 12px; }
+    h3 { font-size: 1.125rem; font-weight: 600; color: $gray-700; margin: 0 0 6px; }
+    p  { color: $gray-500; margin: 0 0 20px; }
+  }
+
+  .admin-bulk-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  // ── Badges ────────────────────────────────────────────────────────────────
+  .admin-badge {
+    display: inline-flex; align-items: center;
+    padding: 3px 10px; border-radius: 20px;
+    font-size: 0.75rem; font-weight: 600;
+
+    &.admin-badge-success  { background: rgba($success,0.1);  color: darken($success,10%); }
+    &.admin-badge-warning  { background: rgba($warning,0.15); color: darken($warning,20%); }
+    &.admin-badge-danger   { background: rgba($danger,0.1);   color: $danger; }
+    &.admin-badge-info     { background: rgba($info,0.1);     color: darken($info,10%); }
+    &.admin-badge-secondary{ background: rgba($gray-500,0.1); color: $gray-700; }
+  }
+
+  // ── Buttons ───────────────────────────────────────────────────────────────
+  .admin-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 16px; border-radius: 6px; border: none;
+    font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all 0.15s;
+
+    &.admin-btn-sm { padding: 5px 10px; font-size: 0.8rem; }
+
+    &.admin-btn-primary  { background: $primary; color: $white; &:hover { background: $primary-dark; } }
+    &.admin-btn-success  { background: $success; color: $white; &:hover { background: darken($success,8%); } }
+    &.admin-btn-warning  { background: $warning; color: #1a1a1a; &:hover { background: darken($warning,8%); } }
+    &.admin-btn-secondary{ background: $white; color: $gray-700; border: 1px solid $gray-200; &:hover { background: $gray-50; } }
+    &.admin-btn-ghost    { background: transparent; color: $primary; &:hover { background: $primary-light; } }
+    &.admin-btn-outline  { background: transparent; color: $gray-700; border: 1px solid $gray-200; &:hover { background: $gray-50; } }
+
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
+  }
 }
 
-// Styles pour Shepherd.js Tour
-:global(.shepherd-element) {
-  max-width: 400px;
-  border-radius: 8px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-}
-
-:global(.shepherd-header) {
-  padding: 1rem 1rem 0.5rem;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-:global(.shepherd-text) {
-  padding: 0.5rem 1rem;
-  line-height: 1.5;
-}
-
-:global(.shepherd-footer) {
-  padding: 1rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-:global(.shepherd-modal-overlay-container) {
-  background-color: rgba(0, 0, 0, 0.5);
-}
+@keyframes udSpin { to { transform: rotate(360deg); } }

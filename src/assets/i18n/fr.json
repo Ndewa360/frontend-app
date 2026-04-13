@@ -4301,6 +4301,7 @@
     "MENU": {
       "DASHBOARD": "Tableau de bord",
       "USERS": "Utilisateurs",
+      "SUBSCRIPTIONS": "Souscriptions",
       "ROLES_PERMISSIONS": "Rôles & Permissions",
       "GEOGRAPHY": "Géographie",
       "PAYMENTS": "Paiements",
@@ -4311,6 +4312,7 @@
     "DESCRIPTIONS": {
       "DASHBOARD": "Vue d'ensemble du système",
       "USERS": "Gestion des utilisateurs",
+      "SUBSCRIPTIONS": "Abonnements et paiements des utilisateurs",
       "ROLES_PERMISSIONS": "Gestion des rôles et permissions",
       "GEOGRAPHY": "Pays, villes et devises",
       "PAYMENTS": "Gestion des paiements et souscriptions",
@@ -4321,6 +4323,8 @@
     "BREADCRUMBS": {
       "DASHBOARD": "Dashboard",
       "USERS": "Utilisateurs",
+      "USER_DETAILS": "Détails utilisateur",
+      "SUBSCRIPTIONS": "Souscriptions",
       "ROLES": "Rôles",
       "GEOGRAPHY": "Géographie",
       "PAYMENTS": "Paiements",
@@ -4331,6 +4335,8 @@
     "PAGE_TITLES": {
       "DASHBOARD": "Tableau de bord",
       "USERS": "Gestion des utilisateurs",
+      "USER_DETAILS": "Détails utilisateur",
+      "SUBSCRIPTIONS": "Gestion des souscriptions",
       "ROLES": "Rôles et permissions",
       "GEOGRAPHY": "Gestion géographique",
       "PAYMENTS": "Gestion des paiements",

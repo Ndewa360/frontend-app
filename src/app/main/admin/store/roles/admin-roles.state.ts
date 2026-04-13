@@ -251,6 +251,26 @@ export class AdminRolesState {
     });
   }
 
+  @Action(AdminRolesAction.UpdateRole)
+  updateRole(ctx: StateContext<AdminRolesStateModel>, action: AdminRolesAction.UpdateRole) {
+    ctx.patchState({ loading: true, error: null });
+    return this.adminRolesService.updateRole(action.roleId, action.roleData).pipe(
+      tap(role => {
+        const state = ctx.getState();
+        ctx.patchState({
+          roles: state.roles.map(r => r._id === role._id ? role : r),
+          loading: false,
+          error: null,
+          lastUpdated: new Date()
+        });
+      }),
+      catchError(error => {
+        ctx.patchState({ loading: false, error: error.message });
+        return throwError(error);
+      })
+    );
+  }
+
   @Action(AdminRolesAction.SetLoading)
   setLoading(ctx: StateContext<AdminRolesStateModel>, action: AdminRolesAction.SetLoading) {
     ctx.patchState({ loading: action.loading });

@@ -1,6 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject, firstValueFrom } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
+import { AdminRolesService } from '../../services/admin-roles.service';
 
 // Actions
 import { AdminRolesAction } from '../../store/roles/admin-roles.actions';
@@ -48,10 +51,11 @@ export class AdminRolesComponent implements OnInit, OnDestroy {
   permissionSearchQuery = '';
   expandedModules: Set<string> = new Set(['users', 'roles', 'admin']); // Modules expanded by default
 
-  constructor(private store: Store) {}
+  constructor(private store: Store, private fb: FormBuilder, private adminRolesService: AdminRolesService) {}
 
   ngOnInit(): void {
     this.loadData();
+    this.initRoleForm();
   }
 
   ngOnDestroy(): void {
@@ -72,13 +76,47 @@ export class AdminRolesComponent implements OnInit, OnDestroy {
     this.selectedTab = tab;
   }
 
+  // Role form
+  roleForm: FormGroup;
+
+  private initRoleForm(): void {
+    this.roleForm = this.fb.group({
+      name:        ['', [Validators.required, Validators.pattern(/^[a-z0-9_]+$/)]],
+      displayName: ['', Validators.required],
+      description: [''],
+      color:       ['#6c757d']
+    });
+  }
+
   onCreateRole(): void {
+    this.roleForm.reset({ color: '#6c757d' });
     this.showCreateModal = true;
   }
 
   onEditRole(role: AdminRole): void {
     this.selectedRole = role;
+    this.roleForm.patchValue({
+      name:        role.name,
+      displayName: role.displayName,
+      description: role.description || '',
+      color:       role.color || '#6c757d'
+    });
     this.showEditModal = true;
+  }
+
+  onSubmitRole(): void {
+    if (this.roleForm.invalid) {
+      this.roleForm.markAllAsTouched();
+      return;
+    }
+    const data = this.roleForm.value;
+    if (this.showEditModal && this.selectedRole) {
+      this.store.dispatch(new AdminRolesAction.UpdateRole(this.selectedRole._id, data));
+    } else {
+      this.store.dispatch(new AdminRolesAction.CreateRole(data));
+    }
+    this.onCloseModal();
+    setTimeout(() => this.loadData(), 500);
   }
 
   onDeleteRole(role: AdminRole): void {
@@ -102,11 +140,18 @@ export class AdminRolesComponent implements OnInit, OnDestroy {
   }
 
   onDuplicateRole(role: AdminRole): void {
-    const newName = prompt('Nom du nouveau rôle:', `${role.name}_copy`);
-    if (newName) {
-      // Dispatch duplicate role action
-      console.log('Duplicate role:', role._id, newName);
+    if (role.isSystem) {
+      alert('Impossible de dupliquer un rôle système');
+      return;
     }
+    const newName = window.prompt('Nom du nouveau rôle :', `${role.name}_copy`);
+    if (!newName) return;
+    this.adminRolesService.duplicateRole(role._id, newName)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => this.loadData(),
+        error: () => {}
+      });
   }
 
   onRefreshData(): void {

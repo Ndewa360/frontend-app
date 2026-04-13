@@ -148,4 +148,16 @@ export namespace AdminUsersAction {
   export class RefreshData {
     static readonly type = '[Admin Users] Refresh Data';
   }
+
+  // Export Users
+  export class ExportUsers {
+    static readonly type = '[Admin Users] Export Users';
+    constructor(public filters?: any, public format: string = 'xlsx') {}
+  }
+
+  // Reset Password
+  export class ResetPassword {
+    static readonly type = '[Admin Users] Reset Password';
+    constructor(public userId: string) {}
+  }
 }

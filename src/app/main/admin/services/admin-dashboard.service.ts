@@ -24,6 +24,16 @@ export class AdminDashboardService {
   constructor(private http: HttpClient) {}
 
   /**
+   * Obtenir le dashboard financier
+   */
+  getFinancialDashboard(period: string = '30d'): Observable<any> {
+    const params = new HttpParams().set('period', period);
+    return this.http.get<ApiResultFormat<any>>(`${this.apiUrl}/financial`, { params }).pipe(
+      map(response => response.data)
+    );
+  }
+
+  /**
    * Obtenir les statistiques du dashboard
    */
   getDashboardStats(): Observable<DashboardStats> {

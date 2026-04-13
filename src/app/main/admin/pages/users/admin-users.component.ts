@@ -1,18 +1,16 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
 import { Router, ActivatedRoute } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
-
-// Actions
 import { AdminUsersAction } from '../../store/users/admin-users.actions';
-
-// States
 import { AdminUsersState } from '../../store/users/admin-users.state';
-
-// Models
 import { AdminUser, AdminUserFilters } from '../../store/users/admin-users.model';
+import { AdminRolesState } from '../../store/roles/admin-roles.state';
+import { AdminRolesAction } from '../../store/roles/admin-roles.actions';
 
 @Component({
   selector: 'app-admin-users',
@@ -80,8 +78,12 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
     private store: Store,
     private router: Router,
     private route: ActivatedRoute,
-    private languageUrlService: LanguageUrlService
-  ) {}
+    private languageUrlService: LanguageUrlService,
+    private toastr: ToastrService,
+    private fb: FormBuilder
+  ) {
+    this.initUserForm();
+  }
 
   ngOnInit(): void {
     this.loadData();
@@ -105,8 +107,8 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
     ]);
   }
 
-  onSearch(event): void {
-    let searchTerm: string = (event.target as HTMLInputElement).value
+  onSearch(event: any): void {
+    const searchTerm: string = typeof event === 'string' ? event : (event?.target as HTMLInputElement)?.value || '';
     this.searchTerm = searchTerm;
     this.applyFilters();
   }
@@ -173,13 +175,60 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
     }
   }
 
+  // User form
+  userForm: FormGroup;
+
+  private initUserForm(): void {
+    this.userForm = this.fb.group({
+      name:     ['', [Validators.required, Validators.minLength(2)]],
+      email:    ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.minLength(8)]],
+      phoneNumber: [''],
+      status:   ['active'],
+      country:  [''],
+      roles:    [[]]
+    });
+  }
+
   onCreateUser(): void {
+    this.userForm.reset({ status: 'active', roles: [] });
+    this.userForm.get('password')?.setValidators([Validators.required, Validators.minLength(8)]);
+    this.userForm.get('password')?.updateValueAndValidity();
     this.showCreateModal = true;
   }
 
   onEditUser(user: AdminUser): void {
     this.selectedUser = user;
+    this.userForm.patchValue({
+      name:        user.name,
+      email:       user.email,
+      phoneNumber: user.phoneNumber || '',
+      status:      user.status || 'active',
+      country:     user.country || '',
+      roles:       user.roles?.map(r => r._id) || []
+    });
+    this.userForm.get('password')?.clearValidators();
+    this.userForm.get('password')?.updateValueAndValidity();
     this.showEditModal = true;
+  }
+
+  onSubmitUser(): void {
+    if (this.userForm.invalid) { this.userForm.markAllAsTouched(); return; }
+    const data = this.userForm.value;
+    if (this.showEditModal && this.selectedUser) {
+      const updateData: any = {
+        status:      data.status,
+        country:     data.country,
+        phoneNumber: data.phoneNumber
+      };
+      if (data.password) updateData.password = data.password;
+      this.store.dispatch(new AdminUsersAction.UpdateUser(this.selectedUser._id, updateData));
+      this.toastr.success('Utilisateur mis à jour');
+    } else {
+      this.store.dispatch(new AdminUsersAction.CreateUser(data));
+      this.toastr.success('Utilisateur créé');
+    }
+    this.onCloseModal();
   }
 
   onViewUserDetails(user: AdminUser): void {
@@ -187,9 +236,9 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
   }
 
   onDeleteUser(user: AdminUser): void {
-    if (confirm(`Êtes-vous sûr de vouloir supprimer l'utilisateur ${user.name} ?`)) {
-      this.store.dispatch(new AdminUsersAction.DeleteUser(user._id));
-    }
+    if (!confirm(`Supprimer définitivement l'utilisateur "${user.name}" ?`)) return;
+    this.store.dispatch(new AdminUsersAction.DeleteUser(user._id));
+    this.toastr.success(`Utilisateur ${user.name} supprimé`);
   }
 
   onToggleUserStatus(user: AdminUser): void {
@@ -198,10 +247,10 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
   }
 
   onResetPassword(user: AdminUser): void {
-    if (confirm(`Réinitialiser le mot de passe de ${user.name} ?`)) {
-      // Dispatch reset password action
-      console.log('Reset password for user:', user._id);
-    }
+    if (!confirm(`Réinitialiser le mot de passe de ${user.name} ?`)) return;
+    // Appel direct au service pour reset password (envoie un email)
+    this.store.dispatch(new AdminUsersAction.ResetPassword(user._id));
+    this.toastr.success(`Email de réinitialisation envoyé à ${user.email}`);
   }
 
   onBulkAction(action: string): void {
@@ -222,13 +271,13 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
   }
 
   onExportUsers(): void {
-    // Export users functionality
-    console.log('Export users');
+    const filters = this.store.selectSnapshot(AdminUsersState.selectFilters);
+    this.store.dispatch(new AdminUsersAction.ExportUsers(filters));
+    this.toastr.info('Export en cours de préparation…');
   }
 
   onImportUsers(): void {
-    // Import users functionality
-    console.log('Import users');
+    this.toastr.info('Fonctionnalité d\'import disponible prochainement');
   }
 
   onRefreshData(): void {
@@ -386,6 +435,35 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
     }
   }
 
+  // Pagination helpers — snapshot-based, pas de subscribe dans le template
+  getDisplayRange(pagination: any): { start: number; end: number } {
+    if (!pagination || pagination.total === 0) return { start: 0, end: 0 };
+    const start = (pagination.page - 1) * pagination.limit + 1;
+    const end = Math.min(pagination.page * pagination.limit, pagination.total);
+    return { start, end };
+  }
+
+  getVisiblePages(pagination: any): (number | string)[] {
+    if (!pagination || pagination.totalPages <= 1) return [];
+    const current = pagination.page;
+    const total = pagination.totalPages;
+    const pages: (number | string)[] = [];
+    if (total <= 7) {
+      for (let i = 1; i <= total; i++) pages.push(i);
+    } else if (current <= 4) {
+      for (let i = 1; i <= 5; i++) pages.push(i);
+      pages.push('...'); pages.push(total);
+    } else if (current >= total - 3) {
+      pages.push(1); pages.push('...');
+      for (let i = total - 4; i <= total; i++) pages.push(i);
+    } else {
+      pages.push(1); pages.push('...');
+      for (let i = current - 1; i <= current + 1; i++) pages.push(i);
+      pages.push('...'); pages.push(total);
+    }
+    return pages;
+  }
+
   // New methods for the redesigned interface
 
   onClearFilters(): void {
@@ -397,12 +475,13 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
   }
 
   private loadAvailableRoles(): void {
-    // TODO: Load roles from store or service
-    this.availableRoles = [
-      { id: 'admin', name: 'Administrateur' },
-      { id: 'user', name: 'Utilisateur' },
-      { id: 'moderator', name: 'Modérateur' }
-    ];
+    // Charger les rôles réels depuis le store
+    this.store.dispatch(new AdminRolesAction.LoadRoles());
+    this.store.select(AdminRolesState.selectRoles)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(roles => {
+        this.availableRoles = (roles || []).map((r: any) => ({ id: r._id, name: r.name }));
+      });
   }
 
   applyFilters(): void {
@@ -463,74 +542,6 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
     const colorIndex = charCode % colors.length;
 
     return colors[colorIndex];
-  }
-
-  /**
-   * Obtenir la plage d'affichage pour la pagination
-   */
-  getDisplayRange(): { start: number, end: number } {
-    let pagination: any;
-    this.pagination$.pipe(takeUntil(this.destroy$)).subscribe(p => pagination = p);
-
-    if (!pagination || pagination.total === 0) {
-      return { start: 0, end: 0 };
-    }
-
-    const start = (pagination.page - 1) * pagination.limit + 1;
-    const end = Math.min(pagination.page * pagination.limit, pagination.total);
-
-    return { start, end };
-  }
-
-  /**
-   * Obtenir les pages visibles pour la pagination
-   */
-  getVisiblePages(): (number | string)[] {
-    let pagination: any;
-    this.pagination$.pipe(takeUntil(this.destroy$)).subscribe(p => pagination = p);
-
-    if (!pagination || pagination.totalPages <= 1) {
-      return [];
-    }
-
-    const current = pagination.page;
-    const total = pagination.totalPages;
-    const pages: (number | string)[] = [];
-
-    if (total <= 7) {
-      // Afficher toutes les pages si <= 7
-      for (let i = 1; i <= total; i++) {
-        pages.push(i);
-      }
-    } else {
-      // Logique complexe pour les nombreuses pages
-      if (current <= 4) {
-        // Début : 1 2 3 4 5 ... total
-        for (let i = 1; i <= 5; i++) {
-          pages.push(i);
-        }
-        pages.push('...');
-        pages.push(total);
-      } else if (current >= total - 3) {
-        // Fin : 1 ... total-4 total-3 total-2 total-1 total
-        pages.push(1);
-        pages.push('...');
-        for (let i = total - 4; i <= total; i++) {
-          pages.push(i);
-        }
-      } else {
-        // Milieu : 1 ... current-1 current current+1 ... total
-        pages.push(1);
-        pages.push('...');
-        for (let i = current - 1; i <= current + 1; i++) {
-          pages.push(i);
-        }
-        pages.push('...');
-        pages.push(total);
-      }
-    }
-
-    return pages;
   }
 
   navigateToAgentValidation(): void {

@@ -287,6 +287,27 @@ export class AuthTokenInterceptor implements HttpInterceptor {
     return false;
   }
 
+  // Messages techniques à ne jamais afficher à l'utilisateur
+  private readonly TECHNICAL_PATTERNS = [
+    /nested bson depth/i,
+    /bson/i,
+    /document exceeds maximum/i,
+    /MongoServerError/i,
+    /MongoError/i,
+    /CastError/i,
+    /ValidationError/i,
+    /buffering timed out/i,
+    /topology/i,
+  ];
+
+  private sanitizeMessage(message: any): string {
+    const msg = Array.isArray(message) ? message[0] : (message || '');
+    if (typeof msg === 'string' && this.TECHNICAL_PATTERNS.some(r => r.test(msg))) {
+      return this.translate.instant('NOTIFICATIONS.GENERIC_ERROR') || 'Une erreur est survenue. Veuillez réessayer.';
+    }
+    return msg || this.translate.instant('NOTIFICATIONS.GENERIC_ERROR');
+  }
+
   showErrorMessage(error: any, isLoginProcess=false) {
     if(isLoginProcess) {
       switch(error.status) {
@@ -300,24 +321,20 @@ export class AuthTokenInterceptor implements HttpInterceptor {
               this._toastrService.warning(accountInactive, 'Ndewa360°');
               break;
           default:
-              let message = error?.error?.message;
-              if(!message) message = this.translate.instant('NOTIFICATIONS.GENERIC_ERROR');
-              this._toastrService.error(message, 'Ndewa360°');
+              const msg1 = this.sanitizeMessage(error?.error?.message);
+              this._toastrService.error(msg1, 'Ndewa360°');
       }
     } else {
       switch(error.status) {
           case 0:
-              // Ne pas afficher de toast ici (géré par NetworkStatusService). Mettre à jour seulement l'état global.
-              this._store.dispatch(new GlobalAction.SetConnexionInternetState(false))
+              this._store.dispatch(new GlobalAction.SetConnexionInternetState(false));
               break;
 
           default:
-              let message = error?.error?.message;
-              if(!message) message = this.translate.instant('NOTIFICATIONS.GENERIC_ERROR');
-              this._toastrService.error(message, 'Ndewa360°');
+              const msg2 = this.sanitizeMessage(error?.error?.message);
+              this._toastrService.error(msg2, 'Ndewa360°');
       }
     }
   }
-
 
 }

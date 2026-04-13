@@ -659,5 +659,78 @@
 
 <!-- Modals -->
 <!-- Create Role Modal -->
+<div class="admin-modal-overlay" *ngIf="showCreateModal" (click)="onCloseModal()">
+  <div class="admin-modal-container" (click)="$event.stopPropagation()">
+    <div class="admin-modal-header">
+      <h3 class="admin-modal-title"><i class="fas fa-plus"></i> Nouveau rôle</h3>
+      <button class="admin-modal-close" (click)="onCloseModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="admin-modal-content">
+      <form [formGroup]="roleForm" (ngSubmit)="onSubmitRole()">
+        <div class="admin-form-grid">
+          <div class="admin-form-group">
+            <label>Nom technique *</label>
+            <input type="text" class="admin-form-input" formControlName="name" placeholder="ex: manager">
+            <small class="admin-form-hint">Minuscules, sans espaces</small>
+          </div>
+          <div class="admin-form-group">
+            <label>Nom d'affichage *</label>
+            <input type="text" class="admin-form-input" formControlName="displayName" placeholder="ex: Gestionnaire">
+          </div>
+          <div class="admin-form-group" style="grid-column: 1 / -1">
+            <label>Description</label>
+            <textarea class="admin-form-input" formControlName="description" rows="2" placeholder="Description du rôle"></textarea>
+          </div>
+          <div class="admin-form-group">
+            <label>Couleur</label>
+            <input type="color" class="admin-form-input" formControlName="color" style="height: 40px; padding: 2px;">
+          </div>
+        </div>
+        <div class="admin-form-actions">
+          <button type="button" class="admin-btn admin-btn-secondary" (click)="onCloseModal()">Annuler</button>
+          <button type="submit" class="admin-btn admin-btn-primary" [disabled]="roleForm.invalid">
+            <i class="fas fa-save"></i> Créer le rôle
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 <!-- Edit Role Modal -->
-<!-- These would be separate components -->
+<div class="admin-modal-overlay" *ngIf="showEditModal" (click)="onCloseModal()">
+  <div class="admin-modal-container" (click)="$event.stopPropagation()">
+    <div class="admin-modal-header">
+      <h3 class="admin-modal-title"><i class="fas fa-edit"></i> Modifier le rôle</h3>
+      <button class="admin-modal-close" (click)="onCloseModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="admin-modal-content">
+      <form [formGroup]="roleForm" (ngSubmit)="onSubmitRole()">
+        <div class="admin-form-grid">
+          <div class="admin-form-group">
+            <label>Nom technique</label>
+            <input type="text" class="admin-form-input" formControlName="name" [readonly]="selectedRole?.isSystem">
+          </div>
+          <div class="admin-form-group">
+            <label>Nom d'affichage *</label>
+            <input type="text" class="admin-form-input" formControlName="displayName">
+          </div>
+          <div class="admin-form-group" style="grid-column: 1 / -1">
+            <label>Description</label>
+            <textarea class="admin-form-input" formControlName="description" rows="2"></textarea>
+          </div>
+          <div class="admin-form-group">
+            <label>Couleur</label>
+            <input type="color" class="admin-form-input" formControlName="color" style="height: 40px; padding: 2px;">
+          </div>
+        </div>
+        <div class="admin-form-actions">
+          <button type="button" class="admin-btn admin-btn-secondary" (click)="onCloseModal()">Annuler</button>
+          <button type="submit" class="admin-btn admin-btn-primary" [disabled]="roleForm.invalid">
+            <i class="fas fa-save"></i> Enregistrer
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

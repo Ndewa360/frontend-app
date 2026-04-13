@@ -67,6 +67,7 @@
               "node_modules/ngx-toastr/toastr.css",
               "src/app/shared/styles/app.themes.scss",
               "src/assets/tailwind/tailwind.scss",
+              "src/app/main/admin/styles/admin-design-system.scss",
               "node_modules/@photo-sphere-viewer/core/index.css",
               "node_modules/swiper/swiper-bundle.min.css"
               

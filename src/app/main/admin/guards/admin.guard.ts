@@ -1,67 +1,41 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
-import { Observable } from 'rxjs';
-import { map, take, filter, timeout, catchError } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
 import { UserProfileState } from '../../../shared/store/user-profile/user-profile.state';
-import { of } from 'rxjs';
+import { LanguageUrlService } from '../../../shared/services/language-url.service';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class AdminGuard implements CanActivate {
 
   constructor(
     private store: Store,
-    private router: Router
+    private router: Router,
+    private languageUrlService: LanguageUrlService
   ) {}
 
-  canActivate(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-  ): boolean {
-    // Vérification synchrone du profil utilisateur
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
     const userProfile = this.store.selectSnapshot(UserProfileState.selectStateUserProfile);
-    
+
     if (!userProfile) {
-      console.log('❌ AdminGuard - No user profile found, redirecting to login');
-      this.router.navigate(['/auth/signin']);
+      const lang = this.languageUrlService.getCurrentLanguage();
+      this.router.navigate([`/${lang}/auth/signin`]);
       return false;
     }
 
-    // Vérifier si l'utilisateur a un rôle admin ou super-admin
-    const hasAdminRole = this.checkIfUserHasAdminRole(userProfile);
-
-    if (!hasAdminRole) {
-      console.log('❌ AdminGuard - User does not have admin role, redirecting to app');
-      this.router.navigate(['/app']);
+    if (!this.checkIfUserHasAdminRole(userProfile)) {
+      const lang = this.languageUrlService.getCurrentLanguage();
+      this.router.navigate([`/${lang}/app/properties/home`]);
       return false;
     }
 
-    console.log('✅ AdminGuard - Admin access granted');
     return true;
   }
 
-  /**
-   * Vérifier si l'utilisateur a un rôle admin ou super-admin
-   */
   private checkIfUserHasAdminRole(userProfile: any): boolean {
-    if (!userProfile.roles || !Array.isArray(userProfile.roles)) {
-      console.log('❌ AdminGuard - No roles found for user:', userProfile.email);
-      return false;
-    }
-
-    const hasAdminRole = userProfile.roles.some((role: any) => {
+    if (!userProfile.roles || !Array.isArray(userProfile.roles)) return false;
+    return userProfile.roles.some((role: any) => {
       const roleName = typeof role === 'string' ? role : role.name;
-      return roleName === 'admin' || roleName === 'super-admin'
+      return roleName === 'admin' || roleName === 'super-admin';
     });
-
-    console.log('🔍 AdminGuard - Role check for user:', {
-      email: userProfile.email,
-      roles: userProfile.roles.map((role: any) => typeof role === 'string' ? role : role.name),
-      hasAdminRole
-    });
-
-    return hasAdminRole;
   }
 }

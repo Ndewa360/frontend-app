@@ -8,39 +8,20 @@
           <i class="fas fa-users admin-title-icon"></i>
           Gestion des Utilisateurs
         </h1>
-        <p class="admin-page-subtitle">
-          Gérez les comptes utilisateurs, leurs rôles et permissions dans le système
-        </p>
+        <p class="admin-page-subtitle">Gérez les comptes utilisateurs, leurs rôles et permissions dans le système</p>
       </div>
-
       <div class="admin-header-actions">
-        <button
-          class="admin-btn admin-btn-secondary"
-          (click)="onRefreshData()"
-          [disabled]="isLoading">
-          <i class="fas fa-sync-alt" [class.fa-spin]="isLoading"></i>
-          <span>Actualiser</span>
+        <button class="admin-btn admin-btn-secondary" (click)="onRefreshData()" [disabled]="isLoading">
+          <i class="fas fa-sync-alt" [class.fa-spin]="isLoading"></i><span>Actualiser</span>
         </button>
-        <button
-          class="admin-btn admin-btn-outline"
-          (click)="onExportUsers()"
-          [disabled]="isLoading">
-          <i class="fas fa-download"></i>
-          <span>Exporter</span>
+        <button class="admin-btn admin-btn-outline" (click)="onExportUsers()" [disabled]="isLoading">
+          <i class="fas fa-download"></i><span>Exporter</span>
         </button>
-        <button
-          class="admin-btn admin-btn-outline"
-          (click)="navigateToAgentValidation()"
-          [disabled]="isLoading">
-          <i class="fas fa-user-tie"></i>
-          <span>Valider les agents</span>
+        <button class="admin-btn admin-btn-outline" (click)="navigateToAgentValidation()" [disabled]="isLoading">
+          <i class="fas fa-user-tie"></i><span>Valider les agents</span>
         </button>
-        <button
-          class="admin-btn admin-btn-primary"
-          (click)="onCreateUser()"
-          [disabled]="isLoading">
-          <i class="fas fa-plus"></i>
-          <span>Nouvel Utilisateur</span>
+        <button class="admin-btn admin-btn-primary" (click)="onCreateUser()" [disabled]="isLoading">
+          <i class="fas fa-plus"></i><span>Nouvel Utilisateur</span>
         </button>
       </div>
     </div>
@@ -54,61 +35,39 @@
     </div>
   </div>
 
-
-
   <!-- Stats Cards -->
   <div class="admin-stats-grid" *ngIf="!isLoading && (stats$ | async) as stats">
     <div class="admin-stat-card admin-stat-primary">
-      <div class="admin-stat-icon">
-        <i class="fas fa-users"></i>
-      </div>
+      <div class="admin-stat-icon"><i class="fas fa-users"></i></div>
       <div class="admin-stat-content">
         <div class="admin-stat-number">{{ stats.totalUsers | number }}</div>
         <div class="admin-stat-label">Utilisateurs totaux</div>
         <div class="admin-stat-trend" *ngIf="stats.newUsersThisMonth > 0">
-          <i class="fas fa-arrow-up"></i>
-          +{{ stats.newUsersThisMonth }} ce mois
+          <i class="fas fa-arrow-up"></i> +{{ stats.newUsersThisMonth }} ce mois
         </div>
       </div>
     </div>
-
     <div class="admin-stat-card admin-stat-success">
-      <div class="admin-stat-icon">
-        <i class="fas fa-user-check"></i>
-      </div>
+      <div class="admin-stat-icon"><i class="fas fa-user-check"></i></div>
       <div class="admin-stat-content">
         <div class="admin-stat-number">{{ stats.activeUsers | number }}</div>
         <div class="admin-stat-label">Utilisateurs actifs</div>
-        <div class="admin-stat-percentage">
-          {{ ((stats.activeUsers / stats.totalUsers) * 100) | number:'1.0-1' }}% du total
-        </div>
+        <div class="admin-stat-percentage">{{ ((stats.activeUsers / stats.totalUsers) * 100) | number:'1.0-1' }}% du total</div>
       </div>
     </div>
-
     <div class="admin-stat-card admin-stat-info">
-      <div class="admin-stat-icon">
-        <i class="fas fa-shield-alt"></i>
-      </div>
+      <div class="admin-stat-icon"><i class="fas fa-shield-alt"></i></div>
       <div class="admin-stat-content">
         <div class="admin-stat-number">{{ stats.verifiedUsers | number }}</div>
         <div class="admin-stat-label">Utilisateurs vérifiés</div>
-        <div class="admin-stat-percentage">
-          {{ ((stats.verifiedUsers / stats.totalUsers) * 100) | number:'1.0-1' }}% du total
-        </div>
+        <div class="admin-stat-percentage">{{ ((stats.verifiedUsers / stats.totalUsers) * 100) | number:'1.0-1' }}% du total</div>
       </div>
     </div>
-
     <div class="admin-stat-card admin-stat-warning">
-      <div class="admin-stat-icon">
-        <i class="fas fa-user-plus"></i>
-      </div>
+      <div class="admin-stat-icon"><i class="fas fa-user-plus"></i></div>
       <div class="admin-stat-content">
         <div class="admin-stat-number">{{ stats.newUsersThisMonth | number }}</div>
         <div class="admin-stat-label">Nouveaux ce mois</div>
-        <div class="admin-stat-trend" *ngIf="stats.newUsersThisMonth > 0">
-          <i class="fas fa-chart-line"></i>
-          +{{ stats.newUsersThisMonth }} ce mois
-        </div>
       </div>
     </div>
   </div>
@@ -119,24 +78,14 @@
       <div class="admin-search-section">
         <div class="admin-search-input-group">
           <i class="fas fa-search admin-search-icon"></i>
-          <input
-            type="text"
-            class="admin-search-input"
-            placeholder="Rechercher par nom, email ou téléphone..."
-            [(ngModel)]="searchTerm"
-            (input)="onSearch($event)"
-            [disabled]="isLoading">
+          <input type="text" class="admin-search-input" placeholder="Rechercher par nom, email ou téléphone..."
+                 [(ngModel)]="searchTerm" (input)="onSearch($event)" [disabled]="isLoading">
         </div>
       </div>
-
       <div class="admin-filters-section">
         <div class="admin-filter-group">
           <label class="admin-filter-label">Statut</label>
-          <select
-            class="admin-filter-select"
-            [(ngModel)]="selectedStatus"
-            (change)="applyFilters()"
-            [disabled]="isLoading">
+          <select class="admin-filter-select" [(ngModel)]="selectedStatus" (change)="applyFilters()" [disabled]="isLoading">
             <option value="">Tous les statuts</option>
             <option value="active">Actif</option>
             <option value="inactive">Inactif</option>
@@ -144,40 +93,23 @@
             <option value="banned">Banni</option>
           </select>
         </div>
-
         <div class="admin-filter-group">
           <label class="admin-filter-label">Rôle</label>
-          <select
-            class="admin-filter-select"
-            [(ngModel)]="selectedRole"
-            (change)="applyFilters()"
-            [disabled]="isLoading">
+          <select class="admin-filter-select" [(ngModel)]="selectedRole" (change)="applyFilters()" [disabled]="isLoading">
             <option value="">Tous les rôles</option>
-            <option *ngFor="let role of availableRoles" [value]="role.id">
-              {{ role.name }}
-            </option>
+            <option *ngFor="let role of availableRoles" [value]="role.id">{{ role.name }}</option>
           </select>
         </div>
-
         <div class="admin-filter-group">
           <label class="admin-filter-label">Vérification</label>
-          <select
-            class="admin-filter-select"
-            [(ngModel)]="selectedVerification"
-            (change)="applyFilters()"
-            [disabled]="isLoading">
+          <select class="admin-filter-select" [(ngModel)]="selectedVerification" (change)="applyFilters()" [disabled]="isLoading">
             <option value="">Tous</option>
             <option value="verified">Vérifiés</option>
             <option value="unverified">Non vérifiés</option>
           </select>
         </div>
-
-        <button
-          class="admin-btn admin-btn-outline admin-btn-sm"
-          (click)="onClearFilters()"
-          [disabled]="isLoading">
-          <i class="fas fa-times"></i>
-          Effacer
+        <button class="admin-btn admin-btn-outline admin-btn-sm" (click)="onClearFilters()" [disabled]="isLoading">
+          <i class="fas fa-times"></i> Effacer
         </button>
       </div>
     </div>
@@ -187,16 +119,9 @@
   <div class="admin-content-section" *ngIf="!isLoading">
     <div class="admin-table-container">
       <div class="admin-table-header">
-        <h3 class="admin-table-title">
-          <i class="fas fa-list"></i>
-          Liste des Utilisateurs
-        </h3>
-
+        <h3 class="admin-table-title"><i class="fas fa-list"></i> Liste des Utilisateurs</h3>
         <div class="admin-table-actions">
-          <button
-            class="admin-btn admin-btn-outline admin-btn-sm"
-            (click)="onToggleView()"
-            [disabled]="isLoading">
+          <button class="admin-btn admin-btn-outline admin-btn-sm" (click)="onToggleView()" [disabled]="isLoading">
             <i [class]="viewMode === 'list' ? 'fas fa-th' : 'fas fa-list'"></i>
             <span>{{ viewMode === 'list' ? 'Grille' : 'Liste' }}</span>
           </button>
@@ -209,28 +134,15 @@
           <i class="fas fa-check-circle"></i>
           <span>{{ selectedUsers.length }} utilisateur(s) sélectionné(s)</span>
         </div>
-
         <div class="admin-bulk-buttons">
-          <button
-            class="admin-btn admin-btn-outline admin-btn-sm"
-            (click)="onBulkAction('activate')"
-            [disabled]="isLoading">
-            <i class="fas fa-check"></i>
-            Activer
+          <button class="admin-btn admin-btn-outline admin-btn-sm" (click)="onBulkAction('activate')" [disabled]="isLoading">
+            <i class="fas fa-check"></i> Activer
           </button>
-          <button
-            class="admin-btn admin-btn-outline admin-btn-sm"
-            (click)="onBulkAction('deactivate')"
-            [disabled]="isLoading">
-            <i class="fas fa-times"></i>
-            Désactiver
+          <button class="admin-btn admin-btn-outline admin-btn-sm" (click)="onBulkAction('deactivate')" [disabled]="isLoading">
+            <i class="fas fa-times"></i> Désactiver
           </button>
-          <button
-            class="admin-btn admin-btn-outline admin-btn-sm admin-btn-danger"
-            (click)="onBulkAction('delete')"
-            [disabled]="isLoading">
-            <i class="fas fa-trash"></i>
-            Supprimer
+          <button class="admin-btn admin-btn-outline admin-btn-sm admin-btn-danger" (click)="onBulkAction('delete')" [disabled]="isLoading">
+            <i class="fas fa-trash"></i> Supprimer
           </button>
         </div>
       </div>
@@ -241,66 +153,38 @@
         <div class="admin-users-list" *ngIf="viewMode === 'list'">
           <div class="admin-user-item" *ngFor="let user of users" [class.selected]="isUserSelected(user._id)">
             <div class="admin-user-checkbox">
-              <input
-                type="checkbox"
-                [checked]="isUserSelected(user._id)"
-                (change)="onUserSelect(user._id, $event)">
+              <input type="checkbox" [checked]="isUserSelected(user._id)" (change)="onUserSelect(user._id, $event)">
             </div>
-
             <div class="admin-user-avatar">
-              <img
-                *ngIf="user.profilePicture"
-                [src]="user.profilePicture"
-                [alt]="user.name"
-                class="admin-avatar-image">
-              <div
-                *ngIf="!user.profilePicture"
-                class="admin-avatar-initials"
-                [style.background-color]="getAvatarColor(user.name)">
+              <img *ngIf="user.profilePicture" [src]="user.profilePicture" [alt]="user.name" class="admin-avatar-image">
+              <div *ngIf="!user.profilePicture" class="admin-avatar-initials" [style.background-color]="getAvatarColor(user.name)">
                 {{ getInitials(user.name) }}
               </div>
             </div>
-
-            <div class="admin-user-info" (click)="onViewUserDetails(user)" style="cursor: pointer;">
+            <div class="admin-user-info" (click)="onViewUserDetails(user)" style="cursor:pointer">
               <div class="admin-user-name">{{ user.name }}</div>
               <div class="admin-user-email">{{ user.email }}</div>
             </div>
-
             <div class="admin-user-role">
-              <span class="admin-role-badge" [class]="'role-' + (user.roles[0]?.name || 'user')" *ngIf="user.roles && user.roles.length > 0">
+              <span class="admin-role-badge" [class]="'role-' + (user.roles[0]?.name || 'user')" *ngIf="user.roles?.length > 0">
                 {{ user.roles[0]?.displayName || user.roles[0]?.name }}
               </span>
-              <span class="admin-role-badge role-user" *ngIf="!user.roles || user.roles.length === 0">
-                Utilisateur
-              </span>
+              <span class="admin-role-badge role-user" *ngIf="!user.roles?.length">Utilisateur</span>
             </div>
-
             <div class="admin-user-status">
-              <span class="admin-status-badge" [class]="'status-' + user.status">
-                {{ user.status }}
-              </span>
+              <span class="admin-status-badge" [class]="'status-' + user.status">{{ getStatusLabel(user.status) }}</span>
             </div>
-
             <div class="admin-user-actions">
-              <button
-                class="admin-btn admin-btn-outline admin-btn-sm"
-                (click)="onViewUserDetails(user)"
-                [disabled]="isLoading"
-                title="Voir les détails">
+              <button class="admin-btn admin-btn-outline admin-btn-sm" (click)="onViewUserDetails(user)" title="Voir les détails">
                 <i class="fas fa-eye"></i>
               </button>
-              <button
-                class="admin-btn admin-btn-outline admin-btn-sm"
-                (click)="onEditUser(user)"
-                [disabled]="isLoading"
-                title="Modifier">
+              <button class="admin-btn admin-btn-outline admin-btn-sm" (click)="onEditUser(user)" title="Modifier">
                 <i class="fas fa-edit"></i>
               </button>
-              <button
-                class="admin-btn admin-btn-outline admin-btn-sm admin-btn-danger"
-                (click)="onDeleteUser(user)"
-                [disabled]="isLoading"
-                title="Supprimer">
+              <button class="admin-btn admin-btn-outline admin-btn-sm" (click)="onResetPassword(user)" title="Réinitialiser mot de passe">
+                <i class="fas fa-key"></i>
+              </button>
+              <button class="admin-btn admin-btn-outline admin-btn-sm admin-btn-danger" (click)="onDeleteUser(user)" title="Supprimer">
                 <i class="fas fa-trash"></i>
               </button>
             </div>
@@ -312,84 +196,49 @@
           <div class="admin-user-card" *ngFor="let user of users" [class.selected]="isUserSelected(user._id)">
             <div class="admin-user-card-header">
               <div class="admin-user-card-checkbox">
-                <input
-                  type="checkbox"
-                  [checked]="isUserSelected(user._id)"
-                  (change)="onUserSelect(user._id, $event)">
+                <input type="checkbox" [checked]="isUserSelected(user._id)" (change)="onUserSelect(user._id, $event)">
               </div>
-
               <div class="admin-user-card-actions">
-                <button
-                  class="admin-btn admin-btn-outline admin-btn-sm"
-                  (click)="onViewUserDetails(user)"
-                  [disabled]="isLoading"
-                  title="Voir les détails">
+                <button class="admin-btn admin-btn-outline admin-btn-sm" (click)="onViewUserDetails(user)" title="Voir les détails">
                   <i class="fas fa-eye"></i>
                 </button>
-                <button
-                  class="admin-btn admin-btn-outline admin-btn-sm"
-                  (click)="onEditUser(user)"
-                  [disabled]="isLoading"
-                  title="Modifier">
+                <button class="admin-btn admin-btn-outline admin-btn-sm" (click)="onEditUser(user)" title="Modifier">
                   <i class="fas fa-edit"></i>
                 </button>
-                <button
-                  class="admin-btn admin-btn-outline admin-btn-sm admin-btn-danger"
-                  (click)="onDeleteUser(user)"
-                  [disabled]="isLoading"
-                  title="Supprimer">
+                <button class="admin-btn admin-btn-outline admin-btn-sm admin-btn-danger" (click)="onDeleteUser(user)" title="Supprimer">
                   <i class="fas fa-trash"></i>
                 </button>
               </div>
             </div>
-
             <div class="admin-user-card-avatar">
-              <img
-                *ngIf="user.profilePicture"
-                [src]="user.profilePicture"
-                [alt]="user.name"
-                class="admin-avatar-image">
-              <div
-                *ngIf="!user.profilePicture"
-                class="admin-avatar-initials"
-                [style.background-color]="getAvatarColor(user.name)">
+              <img *ngIf="user.profilePicture" [src]="user.profilePicture" [alt]="user.name" class="admin-avatar-image">
+              <div *ngIf="!user.profilePicture" class="admin-avatar-initials" [style.background-color]="getAvatarColor(user.name)">
                 {{ getInitials(user.name) }}
               </div>
             </div>
-
-            <div class="admin-user-card-info" (click)="onViewUserDetails(user)" style="cursor: pointer;">
+            <div class="admin-user-card-info" (click)="onViewUserDetails(user)" style="cursor:pointer">
               <div class="admin-user-card-name">{{ user.name }}</div>
               <div class="admin-user-card-email">{{ user.email }}</div>
-
               <div class="admin-user-card-meta">
                 <div class="admin-user-card-role">
-                  <span class="admin-role-badge" [class]="'role-' + (user.roles[0]?.name || 'user')" *ngIf="user.roles && user.roles.length > 0">
+                  <span class="admin-role-badge" [class]="'role-' + (user.roles[0]?.name || 'user')" *ngIf="user.roles?.length > 0">
                     {{ user.roles[0]?.displayName || user.roles[0]?.name }}
                   </span>
-                  <span class="admin-role-badge role-user" *ngIf="!user.roles || user.roles.length === 0">
-                    Utilisateur
-                  </span>
+                  <span class="admin-role-badge role-user" *ngIf="!user.roles?.length">Utilisateur</span>
                 </div>
-
                 <div class="admin-user-card-status">
-                  <span class="admin-status-badge" [class]="'status-' + user.status">
-                    {{ user.status }}
-                  </span>
+                  <span class="admin-status-badge" [class]="'status-' + user.status">{{ getStatusLabel(user.status) }}</span>
                 </div>
               </div>
-
               <div class="admin-user-card-details">
                 <div class="admin-user-card-detail" *ngIf="user.phoneNumber">
-                  <i class="fas fa-phone"></i>
-                  <span>{{ user.phoneNumber }}</span>
+                  <i class="fas fa-phone"></i><span>{{ user.phoneNumber }}</span>
                 </div>
                 <div class="admin-user-card-detail" *ngIf="user.country">
-                  <i class="fas fa-globe"></i>
-                  <span>{{ user.country }}</span>
+                  <i class="fas fa-globe"></i><span>{{ user.country }}</span>
                 </div>
                 <div class="admin-user-card-detail">
-                  <i class="fas fa-calendar"></i>
-                  <span>{{ user.createdAt | date:'dd/MM/yyyy' }}</span>
+                  <i class="fas fa-calendar"></i><span>{{ user.createdAt | date:'dd/MM/yyyy' }}</span>
                 </div>
               </div>
             </div>
@@ -402,12 +251,8 @@
           <i class="fas fa-users admin-empty-icon"></i>
           <h3>Aucun utilisateur trouvé</h3>
           <p>Il n'y a aucun utilisateur correspondant à vos critères de recherche.</p>
-          <button
-            class="admin-btn admin-btn-primary"
-            (click)="onCreateUser()"
-            [disabled]="isLoading">
-            <i class="fas fa-plus"></i>
-            Créer un utilisateur
+          <button class="admin-btn admin-btn-primary" (click)="onCreateUser()" [disabled]="isLoading">
+            <i class="fas fa-plus"></i> Créer un utilisateur
           </button>
         </div>
       </ng-template>
@@ -415,58 +260,29 @@
       <!-- Pagination -->
       <div class="admin-pagination" *ngIf="(users$ | async)?.length > 0 && (pagination$ | async) as pagination">
         <div class="admin-pagination-info">
-          <span>
-            Affichage de {{ getDisplayRange().start }} à {{ getDisplayRange().end }}
-            sur {{ pagination.total }} utilisateurs
-          </span>
+          <span>Affichage de {{ getDisplayRange(pagination).start }} à {{ getDisplayRange(pagination).end }} sur {{ pagination.total }} utilisateurs</span>
         </div>
-
         <div class="admin-pagination-controls">
-          <button
-            class="admin-pagination-btn"
-            [disabled]="pagination.page <= 1"
-            (click)="onPageChange(1)">
+          <button class="admin-pagination-btn" [disabled]="pagination.page <= 1" (click)="onPageChange(1)">
             <i class="fas fa-angle-double-left"></i>
           </button>
-
-          <button
-            class="admin-pagination-btn"
-            [disabled]="pagination.page <= 1"
-            (click)="onPageChange(pagination.page - 1)">
+          <button class="admin-pagination-btn" [disabled]="pagination.page <= 1" (click)="onPageChange(pagination.page - 1)">
             <i class="fas fa-angle-left"></i>
           </button>
-
           <div class="admin-pagination-pages">
-            <button
-              *ngFor="let page of getVisiblePages()"
-              class="admin-pagination-page"
-              [class.active]="page === pagination.page"
-              [disabled]="page === '...'"
-              (click)="page !== '...' && onPageChange(page)">
-              {{ page }}
-            </button>
+            <button *ngFor="let page of getVisiblePages(pagination)" class="admin-pagination-page"
+                    [class.active]="page === pagination.page" [disabled]="page === '...'"
+                    (click)="page !== '...' && onPageChange(page)">{{ page }}</button>
           </div>
-
-          <button
-            class="admin-pagination-btn"
-            [disabled]="pagination.page >= pagination.totalPages"
-            (click)="onPageChange(pagination.page + 1)">
+          <button class="admin-pagination-btn" [disabled]="pagination.page >= pagination.totalPages" (click)="onPageChange(pagination.page + 1)">
             <i class="fas fa-angle-right"></i>
           </button>
-
-          <button
-            class="admin-pagination-btn"
-            [disabled]="pagination.page >= pagination.totalPages"
-            (click)="onPageChange(pagination.totalPages)">
+          <button class="admin-pagination-btn" [disabled]="pagination.page >= pagination.totalPages" (click)="onPageChange(pagination.totalPages)">
             <i class="fas fa-angle-double-right"></i>
           </button>
         </div>
-
         <div class="admin-pagination-size">
-          <select
-            class="admin-pagination-select"
-            [value]="pagination.limit"
-            (change)="onPageSizeChange($event)">
+          <select class="admin-pagination-select" [value]="pagination.limit" (change)="onPageSizeChange($event)">
             <option value="10">10 par page</option>
             <option value="20">20 par page</option>
             <option value="50">50 par page</option>
@@ -474,6 +290,73 @@
           </select>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Modal Création / Édition Utilisateur ── -->
+<div class="admin-modal-overlay" *ngIf="showCreateModal || showEditModal" (click)="onCloseModal()">
+  <div class="admin-modal-container" (click)="$event.stopPropagation()" style="max-width:560px">
+    <div class="admin-modal-header">
+      <h3 class="admin-modal-title">
+        <i class="fas fa-user-plus" *ngIf="showCreateModal"></i>
+        <i class="fas fa-user-edit" *ngIf="showEditModal"></i>
+        {{ showCreateModal ? 'Nouvel utilisateur' : 'Modifier l\'utilisateur' }}
+      </h3>
+      <button class="admin-modal-close" (click)="onCloseModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="admin-modal-content">
+      <form [formGroup]="userForm" (ngSubmit)="onSubmitUser()">
+        <div class="admin-form-grid">
+          <div class="admin-form-group" style="grid-column:1/-1">
+            <label>Nom complet *</label>
+            <input type="text" class="admin-form-input" formControlName="name" placeholder="Nom complet">
+            <small class="text-red-500" *ngIf="userForm.get('name')?.invalid && userForm.get('name')?.touched">
+              Nom requis (min. 2 caractères)
+            </small>
+          </div>
+          <div class="admin-form-group">
+            <label>Email *</label>
+            <input type="email" class="admin-form-input" formControlName="email" placeholder="email@exemple.com"
+                   [readonly]="showEditModal">
+            <small class="text-red-500" *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched">
+              Email invalide
+            </small>
+          </div>
+          <div class="admin-form-group">
+            <label>Téléphone</label>
+            <input type="tel" class="admin-form-input" formControlName="phoneNumber" placeholder="+237 6XX XXX XXX">
+          </div>
+          <div class="admin-form-group">
+            <label>{{ showCreateModal ? 'Mot de passe *' : 'Nouveau mot de passe (optionnel)' }}</label>
+            <input type="password" class="admin-form-input" formControlName="password"
+                   [placeholder]="showCreateModal ? 'Min. 8 caractères' : 'Laisser vide pour ne pas changer'">
+            <small class="text-red-500" *ngIf="userForm.get('password')?.invalid && userForm.get('password')?.touched">
+              Mot de passe requis (min. 8 caractères)
+            </small>
+          </div>
+          <div class="admin-form-group">
+            <label>Statut</label>
+            <select class="admin-filter-select" formControlName="status">
+              <option value="active">Actif</option>
+              <option value="inactive">Inactif</option>
+              <option value="suspended">Suspendu</option>
+              <option value="pending">En attente</option>
+            </select>
+          </div>
+          <div class="admin-form-group">
+            <label>Pays</label>
+            <input type="text" class="admin-form-input" formControlName="country" placeholder="Ex: Cameroun">
+          </div>
+        </div>
+        <div class="admin-form-actions" style="margin-top:1.5rem">
+          <button type="button" class="admin-btn admin-btn-secondary" (click)="onCloseModal()">Annuler</button>
+          <button type="submit" class="admin-btn admin-btn-primary" [disabled]="userForm.invalid">
+            <i class="fas fa-save"></i>
+            {{ showCreateModal ? 'Créer l\'utilisateur' : 'Enregistrer' }}
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 </div>

@@ -35,6 +35,15 @@ export class AdminSettingsService {
    * Mettre à jour les paramètres
    */
   updateSettings(settingsData: Partial<AdminSettings>): Observable<AdminSettings> {
+    // Mettre à jour chaque section présente
+    const sections = Object.keys(settingsData) as (keyof AdminSettings)[];
+    if (sections.length === 1) {
+      const section = sections[0];
+      return this.http.put<ApiResultFormat<AdminSettings>>(`${this.apiUrl}/${section}`, settingsData[section]).pipe(
+        map(response => response.data)
+      );
+    }
+    // Plusieurs sections : appel global PUT /admin/settings
     return this.http.put<ApiResultFormat<AdminSettings>>(`${this.apiUrl}`, settingsData).pipe(
       map(response => response.data)
     );

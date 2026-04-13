@@ -15,6 +15,7 @@ import { AdminPaymentsComponent } from './pages/payments/admin-payments.componen
 import { AdminSettingsComponent } from './pages/settings/admin-settings.component';
 import { UserDetailsComponent } from './pages/user-details/user-details.component';
 import { AgentManagementComponent } from './pages/agent-management/agent-management.component';
+import { AdminSubscriptionsComponent } from './pages/subscriptions/admin-subscriptions.component';
 
 const routes: Routes = [
   {
@@ -84,6 +85,14 @@ const routes: Routes = [
         data: {
           title: 'ADMIN.PAGE_TITLES.AGENTS',
           breadcrumb: 'ADMIN.BREADCRUMBS.AGENTS'
+        }
+      },
+      {
+        path: 'subscriptions',
+        component: AdminSubscriptionsComponent,
+        data: {
+          title: 'ADMIN.PAGE_TITLES.SUBSCRIPTIONS',
+          breadcrumb: 'ADMIN.BREADCRUMBS.SUBSCRIPTIONS'
         }
       },
       {

@@ -1,423 +1,342 @@
-// ========================================
-// STYLES SPÉCIFIQUES - MODULE PAYMENTS
-// ========================================
+$primary:      #cc8c0a;
+$primary-light: rgba(204, 140, 10, 0.10);
+$primary-dark:  #b87e09;
+$success:  #10b981;
+$warning:  #f59e0b;
+$danger:   #ef4444;
+$info:     #3b82f6;
+$white:    #ffffff;
+$gray-50:  #f8fafc;
+$gray-100: #f1f5f9;
+$gray-200: #e2e8f0;
+$gray-300: #cbd5e1;
+$gray-400: #94a3b8;
+$gray-500: #64748b;
+$gray-700: #334155;
+$gray-900: #0f172a;
 
 .admin-payments {
-  // Layout principal
-  display: flex;
-  flex-direction: column;
-  gap: var(--admin-spacing-lg);
-  
-  // Animations d'entrée
-  .admin-card {
-    animation: slideInUp 0.4s ease-out;
-    
-    &:nth-child(2) { animation-delay: 0.1s; }
-    &:nth-child(3) { animation-delay: 0.2s; }
-    &:nth-child(4) { animation-delay: 0.3s; }
-  }
-}
+  // Le layout fournit déjà padding:24px
 
-// Navigation par onglets
-.admin-tabs-nav {
-  display: flex;
-  gap: var(--admin-spacing-sm);
-  border-bottom: 1px solid var(--ndiye-gray-200);
-  margin-bottom: var(--admin-spacing-lg);
-  
-  .admin-tab-btn {
-    background: none;
-    border: none;
-    padding: var(--admin-spacing-md) var(--admin-spacing-lg);
-    font-family: var(--admin-font-family);
-    font-size: var(--admin-font-size-sm);
-    font-weight: var(--admin-font-weight-medium);
-    color: var(--ndiye-gray-600);
-    cursor: pointer;
-    transition: all var(--admin-transition-fast);
-    border-bottom: 2px solid transparent;
-    display: flex;
-    align-items: center;
-    gap: var(--admin-spacing-sm);
-    
-    &:hover {
-      color: var(--ndiye-primary);
-      background: var(--ndiye-primary-light);
-    }
-    
-    &.active {
-      color: var(--ndiye-primary);
-      border-bottom-color: var(--ndiye-primary);
-      background: var(--ndiye-primary-light);
-    }
-    
-    i {
-      font-size: var(--admin-font-size-sm);
-    }
-  }
-}
+  // ── Header ────────────────────────────────────────────────────────────────
+  .admin-page-header {
+    background: $white; border: 1px solid $gray-200;
+    border-radius: 10px; padding: 16px 20px; margin-bottom: 20px;
 
-.admin-tab-content {
-  .admin-tab-panel {
-    animation: fadeIn 0.3s ease-out;
-  }
-}
-
-// Cellules spécialisées
-.admin-payment-id {
-  .admin-badge {
-    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-    font-size: var(--admin-font-size-xs);
-  }
-}
-
-.admin-user-cell {
-  .admin-user-info {
-    display: flex;
-    align-items: center;
-    gap: var(--admin-spacing-md);
-    
-    .admin-user-avatar {
-      width: 32px;
-      height: 32px;
-      border-radius: var(--admin-border-radius-sm);
-      background: var(--ndiye-gray-100);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--ndiye-gray-600);
-      font-size: var(--admin-font-size-sm);
+    .admin-header-content {
+      display: flex; justify-content: space-between;
+      align-items: center; gap: 16px; flex-wrap: wrap;
     }
-    
-    .admin-user-details {
-      .admin-user-name {
-        font-weight: var(--admin-font-weight-semibold);
-        color: var(--ndiye-gray-900);
-        margin-bottom: var(--admin-spacing-xs);
+
+    .admin-header-text {
+      h1 {
+        font-size: 1.375rem; font-weight: 700; color: $gray-900; margin: 0 0 2px;
+        .admin-title-icon { margin-right: 10px; color: $primary; }
       }
-      
-      .admin-user-email {
-        font-size: var(--admin-font-size-xs);
-        color: var(--ndiye-gray-500);
-      }
+      .admin-page-subtitle { color: $gray-500; font-size: 0.8rem; margin: 0; }
     }
-  }
-}
 
-.admin-amount-cell {
-  .admin-amount {
-    font-weight: var(--admin-font-weight-semibold);
-    color: var(--ndiye-gray-900);
-    font-size: var(--admin-font-size-sm);
+    .admin-header-actions { display: flex; gap: 8px; flex-wrap: wrap; }
   }
-}
 
-.admin-method-cell {
-  .admin-payment-method {
-    .admin-method-name {
-      font-weight: var(--admin-font-weight-medium);
-      color: var(--ndiye-gray-900);
-      margin-bottom: var(--admin-spacing-xs);
-    }
-    
-    .admin-provider-name {
-      font-size: var(--admin-font-size-xs);
-      color: var(--ndiye-gray-500);
-    }
-  }
-}
+  // ── Stats ─────────────────────────────────────────────────────────────────
+  .admin-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px; margin-bottom: 20px;
 
-.admin-plan-cell {
-  .admin-plan-info {
-    .admin-plan-name {
-      font-weight: var(--admin-font-weight-semibold);
-      color: var(--ndiye-gray-900);
-      margin-bottom: var(--admin-spacing-xs);
-    }
-    
-    .admin-plan-price {
-      font-size: var(--admin-font-size-xs);
-      color: var(--ndiye-gray-500);
-    }
-  }
-}
+    .admin-stat-card {
+      background: $white; border-radius: 10px; padding: 18px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+      border: 1px solid $gray-200;
+      display: flex; align-items: center; gap: 14px;
+      transition: transform 0.2s;
+      &:hover { transform: translateY(-2px); }
 
-.admin-date-cell {
-  .admin-date {
-    font-size: var(--admin-font-size-sm);
-    color: var(--ndiye-gray-600);
-  }
-}
+      &.admin-stat-primary { .admin-stat-icon { background: $primary-light; color: $primary-dark; } }
+      &.admin-stat-success { .admin-stat-icon { background: rgba($success,0.1); color: $success; } }
+      &.admin-stat-warning { .admin-stat-icon { background: rgba($warning,0.1); color: darken($warning,15%); } }
+      &.admin-stat-info    { .admin-stat-icon { background: rgba($info,0.1);    color: $info; } }
 
-// Grille des coupons
-.admin-coupons-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: var(--admin-spacing-lg);
-  
-  .admin-coupon-card {
-    background: var(--ndiye-white);
-    border: 1px solid var(--ndiye-gray-200);
-    border-radius: var(--admin-border-radius-lg);
-    padding: var(--admin-spacing-lg);
-    transition: all var(--admin-transition-normal);
-    
-    &:hover {
-      box-shadow: var(--admin-shadow-md);
-      transform: translateY(-2px);
-    }
-    
-    .admin-coupon-main {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: var(--admin-spacing-md);
-      
-      .admin-coupon-code {
-        .admin-code-text {
-          font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-          font-size: var(--admin-font-size-lg);
-          font-weight: var(--admin-font-weight-bold);
-          color: var(--ndiye-primary);
-          background: var(--ndiye-primary-light);
-          padding: var(--admin-spacing-xs) var(--admin-spacing-sm);
-          border-radius: var(--admin-border-radius-sm);
-        }
+      .admin-stat-icon {
+        width: 44px; height: 44px; border-radius: 10px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.125rem; flex-shrink: 0;
       }
-      
-      .admin-coupon-actions {
-        display: flex;
-        gap: var(--admin-spacing-xs);
-      }
-    }
-    
-    .admin-coupon-content {
-      margin-bottom: var(--admin-spacing-md);
-      
-      .admin-coupon-name {
-        font-weight: var(--admin-font-weight-semibold);
-        color: var(--ndiye-gray-900);
-        margin-bottom: var(--admin-spacing-xs);
-      }
-      
-      .admin-coupon-description {
-        font-size: var(--admin-font-size-sm);
-        color: var(--ndiye-gray-600);
-        margin-bottom: var(--admin-spacing-sm);
-        line-height: 1.4;
-      }
-      
-      .admin-coupon-value {
-        display: flex;
-        align-items: center;
-        gap: var(--admin-spacing-xs);
-        
-        .admin-discount {
-          font-size: var(--admin-font-size-lg);
-          font-weight: var(--admin-font-weight-bold);
-          color: var(--ndiye-success);
-        }
-        
-        .admin-discount-type {
-          font-size: var(--admin-font-size-sm);
-          color: var(--ndiye-gray-500);
-        }
-      }
-    }
-    
-    .admin-coupon-usage {
-      margin-bottom: var(--admin-spacing-md);
-      
-      .admin-usage-info {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: var(--admin-spacing-xs);
-        
-        .admin-usage-label {
-          font-size: var(--admin-font-size-xs);
-          color: var(--ndiye-gray-500);
-        }
-        
-        .admin-usage-count {
-          font-size: var(--admin-font-size-xs);
-          font-weight: var(--admin-font-weight-medium);
-          color: var(--ndiye-gray-700);
-        }
-      }
-      
-      .admin-usage-bar {
-        width: 100%;
-        height: 4px;
-        background: var(--ndiye-gray-200);
-        border-radius: 2px;
-        overflow: hidden;
-        
-        .admin-usage-progress {
-          height: 100%;
-          background: var(--ndiye-primary);
-          transition: width var(--admin-transition-normal);
-        }
-      }
-    }
-    
-    .admin-coupon-dates {
-      margin-bottom: var(--admin-spacing-md);
-      
-      .admin-date {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: var(--admin-spacing-xs);
-        
-        &:last-child {
-          margin-bottom: 0;
-        }
-        
-        .admin-date-label {
-          font-size: var(--admin-font-size-xs);
-          color: var(--ndiye-gray-500);
-        }
-        
-        .admin-date-value {
-          font-size: var(--admin-font-size-xs);
-          font-weight: var(--admin-font-weight-medium);
-          color: var(--ndiye-gray-700);
-        }
-      }
-    }
-    
-    .admin-coupon-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      
-      .admin-coupon-status {
-        .admin-badge {
-          font-size: var(--admin-font-size-xs);
-        }
-      }
-    }
-  }
-}
 
-// Toggle de statut
-.admin-status-toggle {
-  .admin-toggle-btn {
-    position: relative;
-    width: 44px;
-    height: 24px;
-    background: var(--ndiye-gray-300);
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all var(--admin-transition-fast);
-    
-    .admin-toggle-slider {
-      position: absolute;
-      top: 2px;
-      left: 2px;
-      width: 20px;
-      height: 20px;
-      background: var(--ndiye-white);
-      border-radius: 50%;
-      transition: all var(--admin-transition-fast);
-      box-shadow: var(--admin-shadow-sm);
-    }
-    
-    &.active {
-      background: var(--ndiye-primary);
-      
-      .admin-toggle-slider {
-        transform: translateX(20px);
-      }
-    }
-    
-    &:hover {
-      opacity: 0.8;
+      .admin-stat-content { flex: 1; }
+      .admin-stat-number  { font-size: 1.625rem; font-weight: 700; color: $gray-900; }
+      .admin-stat-label   { font-size: 0.78rem; color: $gray-500; margin-top: 2px; }
     }
   }
-}
 
-// Actions
-.admin-actions {
-  display: flex;
-  gap: var(--admin-spacing-md);
-  margin-bottom: var(--admin-spacing-lg);
-  
-  .admin-btn {
-    display: flex;
-    align-items: center;
-    gap: var(--admin-spacing-sm);
-  }
-}
+  // ── Content section ───────────────────────────────────────────────────────
+  .admin-content-section {
+    margin-bottom: 20px;
 
-.admin-action-buttons {
-  display: flex;
-  gap: var(--admin-spacing-xs);
-  
-  .admin-btn {
-    padding: var(--admin-spacing-xs);
-    min-width: 32px;
-    height: 32px;
-  }
-}
+    .admin-table-container {
+      background: $white; border-radius: 10px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+      border: 1px solid $gray-200; overflow: hidden; position: relative;
+    }
 
-// Responsive
-@media (max-width: 768px) {
-  .admin-payments {
-    gap: var(--admin-spacing-md);
+    .admin-table-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 18px; border-bottom: 1px solid $gray-100;
+      background: $gray-50; flex-wrap: wrap; gap: 10px;
+    }
   }
-  
+
+  // ── Tabs ──────────────────────────────────────────────────────────────────
   .admin-tabs-nav {
-    flex-wrap: wrap;
-    
+    display: flex; gap: 4px;
+
     .admin-tab-btn {
-      flex: 1;
-      min-width: 120px;
-      justify-content: center;
+      display: flex; align-items: center; gap: 6px;
+      padding: 7px 14px; border-radius: 6px;
+      font-size: 0.8125rem; font-weight: 500;
+      color: $gray-500; background: transparent; border: none; cursor: pointer;
+      transition: all 0.15s;
+
+      &:hover { background: $gray-100; color: $gray-900; }
+      &.active { background: $primary-light; color: $primary-dark; font-weight: 600; }
     }
   }
-  
-  .admin-coupons-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .admin-actions {
-    flex-direction: column;
-    
-    .admin-btn {
-      justify-content: center;
+
+  // ── Filters ───────────────────────────────────────────────────────────────
+  .admin-filters-container {
+    display: flex; align-items: flex-end; gap: 14px; flex-wrap: wrap;
+
+    .admin-search-section { flex: 1; min-width: 180px; }
+
+    .admin-search-input-group {
+      position: relative;
+      .admin-search-icon {
+        position: absolute; left: 10px; top: 50%;
+        transform: translateY(-50%); color: $gray-400; font-size: 0.8rem;
+      }
+      .admin-search-input {
+        width: 100%; padding: 8px 10px 8px 32px;
+        border: 1px solid $gray-200; border-radius: 6px; font-size: 0.875rem;
+        &:focus { outline: none; border-color: $primary; box-shadow: 0 0 0 2px rgba($primary,0.1); }
+      }
     }
-  }
-  
-  .admin-user-cell {
-    .admin-user-info {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: var(--admin-spacing-xs);
-      
-      .admin-user-details {
-        .admin-user-name {
-          margin-bottom: 0;
-        }
+
+    .admin-filters-section { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    .admin-filter-group {
+      display: flex; flex-direction: column; gap: 3px;
+      .admin-filter-label { font-size: 0.72rem; font-weight: 500; color: $gray-400; }
+      .admin-filter-select {
+        padding: 7px 26px 7px 10px; border: 1px solid $gray-200;
+        border-radius: 6px; font-size: 0.8125rem; background: $white;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+        background-position: right 6px center; background-repeat: no-repeat; background-size: 1.1em;
+        &:focus { outline: none; border-color: $primary; }
       }
     }
   }
+
+  // ── Table ─────────────────────────────────────────────────────────────────
+  .admin-table {
+    width: 100%; border-collapse: collapse;
+
+    th, td {
+      padding: 11px 16px; text-align: left;
+      border-bottom: 1px solid $gray-100; font-size: 0.875rem;
+    }
+
+    th {
+      background: $gray-50; font-weight: 600; color: $gray-500;
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em;
+    }
+
+    tr:hover td { background: rgba($primary, 0.02); }
+    tr:last-child td { border-bottom: none; }
+
+    .admin-user-info {
+      .admin-user-name  { font-weight: 600; color: $gray-900; font-size: 0.875rem; }
+      .admin-user-email { font-size: 0.78rem; color: $gray-400; }
+    }
+  }
+
+  // ── Coupons grid ──────────────────────────────────────────────────────────
+  .admin-coupons-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px; padding: 16px;
+
+    .admin-coupon-card {
+      background: $white; border: 1px solid $gray-200;
+      border-radius: 10px; overflow: hidden;
+      transition: box-shadow 0.2s, transform 0.2s;
+      &:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); transform: translateY(-2px); }
+
+      .admin-coupon-main {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 12px 16px;
+        background: linear-gradient(135deg, $primary-light, rgba($primary,0.04));
+        border-bottom: 1px solid $gray-100;
+
+        .admin-code-text {
+          font-size: 0.9375rem; font-weight: 800; letter-spacing: 2px;
+          color: $primary-dark; font-family: monospace;
+        }
+
+        .admin-coupon-actions { display: flex; gap: 4px; }
+      }
+
+      .admin-coupon-content {
+        padding: 12px 16px;
+        .admin-coupon-name  { font-weight: 600; color: $gray-900; margin-bottom: 4px; font-size: 0.875rem; }
+        .admin-coupon-value { font-size: 0.8125rem; color: $gray-500; margin-bottom: 3px; strong { color: $primary-dark; } }
+        .admin-coupon-usage { font-size: 0.75rem; color: $gray-400; }
+      }
+
+      .admin-coupon-footer {
+        display: flex; align-items: center; gap: 10px;
+        padding: 10px 16px; border-top: 1px solid $gray-100; background: $gray-50;
+      }
+    }
+  }
+
+  // ── Toggle ────────────────────────────────────────────────────────────────
+  .admin-toggle-btn {
+    position: relative; width: 36px; height: 20px;
+    background: $gray-300; border-radius: 10px;
+    border: none; cursor: pointer; transition: background 0.2s; flex-shrink: 0;
+
+    &.active { background: $success; }
+
+    .admin-toggle-slider {
+      position: absolute; top: 2px; left: 2px;
+      width: 16px; height: 16px; border-radius: 50%;
+      background: $white; transition: transform 0.2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+
+    &.active .admin-toggle-slider { transform: translateX(16px); }
+  }
+
+  // ── Loading ───────────────────────────────────────────────────────────────
+  .admin-loading-overlay {
+    position: absolute; inset: 0;
+    background: rgba($white, 0.85);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 10; border-radius: 10px;
+
+    .admin-loader {
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+      .admin-spinner {
+        width: 32px; height: 32px;
+        border: 3px solid rgba($primary,0.15); border-top-color: $primary;
+        border-radius: 50%; animation: pmSpin 0.8s linear infinite;
+      }
+    }
+  }
+
+  // ── Empty state ───────────────────────────────────────────────────────────
+  .admin-empty-state {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; padding: 48px; text-align: center;
+    .admin-empty-icon { font-size: 2.5rem; color: $gray-200; margin-bottom: 10px; }
+    h3 { font-size: 1rem; font-weight: 600; color: $gray-700; margin: 0 0 6px; }
+  }
+
+  // ── Pagination ────────────────────────────────────────────────────────────
+  .admin-pagination {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 16px; border-top: 1px solid $gray-100;
+    font-size: 0.8125rem; color: $gray-500;
+  }
+
+  // ── Modal ─────────────────────────────────────────────────────────────────
+  .admin-modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 1000; padding: 16px;
+
+    .admin-modal-container {
+      background: $white; border-radius: 12px;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+      max-width: 560px; width: 100%; max-height: 90vh; overflow-y: auto;
+      animation: pmSlide 0.25s ease-out;
+    }
+
+    .admin-modal-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 16px 20px; border-bottom: 1px solid $gray-100;
+
+      .admin-modal-title {
+        font-size: 1.0625rem; font-weight: 600; color: $gray-900;
+        margin: 0; display: flex; align-items: center; gap: 8px;
+        i { color: $primary; }
+      }
+
+      .admin-modal-close {
+        background: none; border: none; font-size: 1.25rem;
+        color: $gray-400; cursor: pointer; padding: 4px 8px; border-radius: 4px;
+        &:hover { background: $gray-100; color: $gray-700; }
+      }
+    }
+
+    .admin-modal-content { padding: 20px; }
+  }
+
+  // ── Form ──────────────────────────────────────────────────────────────────
+  .admin-form-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+    @media (max-width: 480px) { grid-template-columns: 1fr; }
+  }
+
+  .admin-form-group {
+    display: flex; flex-direction: column; gap: 5px;
+
+    label { font-size: 0.8125rem; font-weight: 500; color: $gray-700; }
+
+    .admin-form-input {
+      padding: 8px 12px; border: 1px solid $gray-200;
+      border-radius: 6px; font-size: 0.875rem; background: $white;
+      &:focus { outline: none; border-color: $primary; box-shadow: 0 0 0 2px rgba($primary,0.1); }
+    }
+  }
+
+  .admin-form-actions {
+    display: flex; justify-content: flex-end; gap: 8px;
+    padding-top: 14px; border-top: 1px solid $gray-100; margin-top: 14px;
+  }
+
+  // ── Badges ────────────────────────────────────────────────────────────────
+  .admin-badge {
+    display: inline-flex; align-items: center;
+    padding: 2px 9px; border-radius: 20px;
+    font-size: 0.72rem; font-weight: 600;
+
+    &.admin-badge-success  { background: rgba($success,0.1);  color: darken($success,10%); }
+    &.admin-badge-warning  { background: rgba($warning,0.15); color: darken($warning,20%); }
+    &.admin-badge-danger   { background: rgba($danger,0.1);   color: $danger; }
+    &.admin-badge-info     { background: rgba($info,0.1);     color: darken($info,10%); }
+    &.admin-badge-secondary{ background: rgba($gray-500,0.1); color: $gray-700; }
+  }
+
+  // ── Buttons ───────────────────────────────────────────────────────────────
+  .admin-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 16px; border-radius: 6px; border: none;
+    font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all 0.15s;
+
+    &.admin-btn-sm { padding: 5px 10px; font-size: 0.78rem; }
+
+    &.admin-btn-primary  { background: $primary; color: $white; &:hover { background: $primary-dark; } }
+    &.admin-btn-secondary{ background: $white; color: $gray-700; border: 1px solid $gray-200; &:hover { background: $gray-50; } }
+    &.admin-btn-outline  { background: transparent; color: $gray-700; border: 1px solid $gray-200; &:hover { background: $gray-50; } }
+    &.admin-btn-danger   { background: transparent; color: $danger; border: 1px solid rgba($danger,0.3); &:hover { background: rgba($danger,0.05); } }
+
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
+  }
 }
 
-// Animations
-@keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
+@keyframes pmSpin  { to { transform: rotate(360deg); } }
+@keyframes pmSlide { from { opacity: 0; transform: scale(0.96) translateY(-8px); } to { opacity: 1; transform: scale(1) translateY(0); } }

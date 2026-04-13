@@ -1,538 +1,284 @@
-// Variables du thème Ndiye
-$ndiye-primary: rgb(204, 140, 10);
-$ndiye-primary-light: rgba(204, 140, 10, 0.1);
-$ndiye-primary-dark: rgb(184, 126, 9);
-$ndiye-secondary: rgb(39, 122, 252);
-$ndiye-success: #24a148;
-$ndiye-warning: #f1c21b;
-$ndiye-danger: #da1e28;
-$ndiye-info: #0f62fe;
-$ndiye-white: #ffffff;
-$ndiye-light: #f4f4f4;
-$ndiye-medium: #6f6f6f;
-$ndiye-dark: #161616;
+// Variables locales — pas de dépendance externe
+$primary:      #cc8c0a;
+$primary-light: rgba(204, 140, 10, 0.10);
+$primary-dark:  #b87e09;
+$success:  #10b981;
+$warning:  #f59e0b;
+$danger:   #ef4444;
+$info:     #3b82f6;
+$white:    #ffffff;
+$gray-50:  #f8fafc;
+$gray-100: #f1f5f9;
+$gray-200: #e2e8f0;
+$gray-400: #94a3b8;
+$gray-500: #64748b;
+$gray-700: #334155;
+$gray-900: #0f172a;
 
 .admin-dashboard {
-  padding: 0;
-  background-color: $ndiye-light;
-  min-height: 100vh;
+  // Le layout fournit déjà padding:24px via .admin-main-content
+  // On ne remet pas de padding ici pour éviter le double
 
+  // ── Loading ──────────────────────────────────────────────────────────────
   .admin-dashboard-loading {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 400px;
-    gap: 16px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    height: 400px; gap: 16px;
 
     .admin-spinner {
-      width: 32px;
-      height: 32px;
-      border: 3px solid rgba($ndiye-primary, 0.1);
-      border-top: 3px solid $ndiye-primary;
+      width: 36px; height: 36px;
+      border: 3px solid rgba($primary, 0.15);
+      border-top-color: $primary;
       border-radius: 50%;
-      animation: spin 1s linear infinite;
+      animation: dashSpin 0.8s linear infinite;
     }
 
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    p {
-      color: $ndiye-medium;
-      font-size: 0.875rem;
-    }
+    p { color: $gray-500; font-size: 0.875rem; }
   }
 
-  .admin-dashboard-content {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0;
-  }
-
-  // Header
+  // ── Header ────────────────────────────────────────────────────────────────
   .admin-dashboard-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 32px;
-    padding: 0 24px;
+    display: flex; justify-content: space-between;
+    align-items: flex-start; margin-bottom: 24px;
 
     .admin-dashboard-title {
-      h2 {
-        font-size: 2rem;
-        font-weight: 700;
-        color: $ndiye-dark;
-        margin: 0 0 8px;
-      }
-
-      .admin-dashboard-subtitle {
-        color: $ndiye-medium;
-        font-size: 1rem;
-        margin: 0;
-      }
+      h2 { font-size: 1.5rem; font-weight: 700; color: $gray-900; margin: 0 0 4px; }
+      .admin-dashboard-subtitle { color: $gray-500; font-size: 0.875rem; margin: 0; }
     }
 
-    .admin-dashboard-actions {
-      display: flex;
-      gap: 12px;
-
-      .admin-btn {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 16px;
-        border: none;
-        border-radius: 4px;
-        font-size: 0.875rem;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.2s ease;
-
-        &.admin-btn-primary {
-          background: $ndiye-primary;
-          color: $ndiye-white;
-
-          &:hover {
-            background: $ndiye-primary-dark;
-          }
-        }
-
-        &.admin-btn-secondary {
-          background: $ndiye-white;
-          color: $ndiye-dark;
-          border: 1px solid rgba($ndiye-primary, 0.2);
-
-          &:hover {
-            background: rgba($ndiye-primary, 0.05);
-            border-color: $ndiye-primary;
-          }
-        }
-
-        svg {
-          fill: currentColor;
-        }
-      }
-    }
+    .admin-dashboard-actions { display: flex; gap: 8px; }
   }
 
-  // Stats Grid
+  // ── Stats grid ────────────────────────────────────────────────────────────
   .admin-stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 24px;
-    margin-bottom: 32px;
-    padding: 0 24px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px; margin-bottom: 24px;
 
     .admin-stat-card {
-      background: $ndiye-white;
-      border-radius: 12px;
-      padding: 24px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      border: 1px solid rgba($ndiye-primary, 0.1);
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      transition: all 0.3s ease;
+      background: $white; border-radius: 10px; padding: 20px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      border: 1px solid $gray-200;
+      display: flex; align-items: center; gap: 16px;
+      transition: transform 0.2s, box-shadow 0.2s;
 
-      &:hover {
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-        transform: translateY(-2px);
-      }
+      &:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
 
       .admin-stat-icon {
-        width: 56px;
-        height: 56px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
+        width: 48px; height: 48px; border-radius: 10px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.25rem; flex-shrink: 0;
 
-        &.users {
-          background: rgba($ndiye-info, 0.1);
-          color: $ndiye-info;
-        }
-
-        &.properties {
-          background: rgba($ndiye-success, 0.1);
-          color: $ndiye-success;
-        }
-
-        &.revenue {
-          background: rgba($ndiye-primary, 0.1);
-          color: $ndiye-primary;
-        }
-
-        &.health {
-          background: rgba($ndiye-success, 0.1);
-          color: $ndiye-success;
-        }
+        &.users    { background: rgba($info,0.1);    color: $info;    }
+        &.revenue  { background: rgba($primary,0.1); color: $primary; }
+        &.premium  { background: rgba($warning,0.1); color: $warning; }
+        &.geography{ background: rgba($success,0.1); color: $success; }
       }
 
       .admin-stat-content {
         flex: 1;
-
-        h3 {
-          font-size: 2rem;
-          font-weight: 700;
-          color: $ndiye-dark;
-          margin: 0 0 4px;
-        }
-
-        p {
-          color: $ndiye-medium;
-          font-size: 0.875rem;
-          margin: 0 0 8px;
-        }
+        h3 { font-size: 1.75rem; font-weight: 700; color: $gray-900; margin: 0 0 4px; }
+        p  { color: $gray-500; font-size: 0.8rem; margin: 0 0 6px; }
 
         .admin-stat-change {
-          font-size: 0.75rem;
-          font-weight: 600;
-          padding: 4px 8px;
-          border-radius: 4px;
-
-          &.positive {
-            background: rgba($ndiye-success, 0.1);
-            color: $ndiye-success;
-          }
-
-          &.negative {
-            background: rgba($ndiye-danger, 0.1);
-            color: $ndiye-danger;
-          }
-
-          &.warning {
-            background: rgba($ndiye-warning, 0.1);
-            color: $ndiye-warning;
-          }
+          font-size: 0.75rem; font-weight: 600;
+          padding: 2px 8px; border-radius: 4px;
+          &.positive { background: rgba($success,0.1); color: $success; }
+          &.warning  { background: rgba($warning,0.1); color: darken($warning, 15%); }
         }
       }
     }
   }
 
-  // Charts Section
-  .admin-charts-section {
-    margin-bottom: 32px;
-    padding: 0 24px;
-
-    .admin-charts-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-
-      .admin-chart-card {
-        background: $ndiye-white;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        border: 1px solid rgba($ndiye-primary, 0.1);
-        overflow: hidden;
-
-        .admin-chart-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 20px 24px;
-          border-bottom: 1px solid rgba($ndiye-primary, 0.1);
-
-          h3 {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: $ndiye-dark;
-            margin: 0;
-          }
-
-          .admin-chart-select {
-            padding: 6px 12px;
-            border: 1px solid rgba($ndiye-primary, 0.2);
-            border-radius: 4px;
-            background: $ndiye-white;
-            color: $ndiye-dark;
-            font-size: 0.875rem;
-            cursor: pointer;
-
-            &:focus {
-              outline: none;
-              border-color: $ndiye-primary;
-              box-shadow: 0 0 0 2px rgba($ndiye-primary, 0.1);
-            }
-          }
-        }
-
-        .admin-chart-content {
-          padding: 24px;
-          height: 300px;
-
-          .admin-chart-placeholder {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            background: rgba($ndiye-primary, 0.05);
-            border-radius: 8px;
-            border: 2px dashed rgba($ndiye-primary, 0.2);
-
-            p {
-              color: $ndiye-medium;
-              font-size: 0.875rem;
-            }
-          }
-        }
-      }
-    }
-  }
-
-  // Bottom Section
+  // ── Bottom sections ───────────────────────────────────────────────────────
   .admin-bottom-section {
-    margin-bottom: 32px;
-    padding: 0 24px;
+    margin-bottom: 24px;
 
     .admin-bottom-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+      @media (max-width: 900px) { grid-template-columns: 1fr; }
+    }
+  }
 
-      .admin-health-card,
-      .admin-activities-card {
-        background: $ndiye-white;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        border: 1px solid rgba($ndiye-primary, 0.1);
-        overflow: hidden;
+  // ── Cards ─────────────────────────────────────────────────────────────────
+  .admin-health-card,
+  .admin-activities-card {
+    background: $white; border-radius: 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    border: 1px solid $gray-200; overflow: hidden;
 
-        .admin-card-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 20px 24px;
-          border-bottom: 1px solid rgba($ndiye-primary, 0.1);
+    .admin-card-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 16px 20px; border-bottom: 1px solid $gray-100;
+      background: $gray-50;
 
-          h3 {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: $ndiye-dark;
-            margin: 0;
-          }
+      h3 { font-size: 0.9375rem; font-weight: 600; color: $gray-900; margin: 0; }
 
-          .admin-health-status {
-            padding: 4px 12px;
-            border-radius: 16px;
-            font-size: 0.75rem;
-            font-weight: 600;
-
-            &.healthy {
-              background: rgba($ndiye-success, 0.1);
-              color: $ndiye-success;
-            }
-
-            &.warning {
-              background: rgba($ndiye-warning, 0.1);
-              color: $ndiye-warning;
-            }
-
-            &.critical {
-              background: rgba($ndiye-danger, 0.1);
-              color: $ndiye-danger;
-            }
-          }
-        }
-
-        .admin-health-content,
-        .admin-activities-content {
-          padding: 24px;
-          max-height: 400px;
-          overflow-y: auto;
-        }
+      .admin-health-status {
+        padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600;
+        &.healthy { background: rgba($success,0.1); color: darken($success,10%); }
+        &.warning { background: rgba($warning,0.1); color: darken($warning,20%); }
+        &.critical{ background: rgba($danger,0.1);  color: $danger; }
       }
+    }
 
-      .admin-service-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 12px 0;
-        border-bottom: 1px solid rgba($ndiye-primary, 0.05);
+    .admin-health-content,
+    .admin-activities-content {
+      padding: 16px 20px; max-height: 360px; overflow-y: auto;
+    }
+  }
 
-        &:last-child {
-          border-bottom: none;
-        }
+  // ── Service items ─────────────────────────────────────────────────────────
+  .admin-service-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 0; border-bottom: 1px solid $gray-100; font-size: 0.875rem;
+    &:last-child { border-bottom: none; }
 
-        .admin-service-name {
-          font-weight: 500;
-          color: $ndiye-dark;
-        }
+    .admin-service-name { color: $gray-700; font-weight: 500; }
 
-        .admin-service-status {
-          padding: 2px 8px;
-          border-radius: 4px;
-          font-size: 0.75rem;
-          font-weight: 600;
+    .admin-service-status {
+      font-weight: 600; color: $gray-900;
+      padding: 2px 8px; border-radius: 4px; font-size: 0.78rem;
+      &.up       { background: rgba($success,0.1); color: darken($success,10%); }
+      &.down     { background: rgba($danger,0.1);  color: $danger; }
+      &.degraded { background: rgba($warning,0.1); color: darken($warning,20%); }
+    }
+  }
 
-          &.up {
-            background: rgba($ndiye-success, 0.1);
-            color: $ndiye-success;
-          }
+  // ── Activity items ────────────────────────────────────────────────────────
+  .admin-activity-item {
+    display: flex; gap: 12px; padding: 10px 0;
+    border-bottom: 1px solid $gray-100;
+    &:last-child { border-bottom: none; }
 
-          &.down {
-            background: rgba($ndiye-danger, 0.1);
-            color: $ndiye-danger;
-          }
+    .admin-activity-icon {
+      width: 32px; height: 32px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.875rem; flex-shrink: 0;
 
-          &.degraded {
-            background: rgba($ndiye-warning, 0.1);
-            color: $ndiye-warning;
-          }
-        }
+      &.user    { background: rgba($info,0.1);    color: $info;    }
+      &.property{ background: rgba($success,0.1); color: $success; }
+      &.payment { background: rgba($primary,0.1); color: $primary; }
+      &.system  { background: rgba($gray-500,0.1);color: $gray-500;}
+      &.INFO    { background: rgba($info,0.1);    color: $info;    }
+      &.ERROR   { background: rgba($danger,0.1);  color: $danger;  }
+      &.WARNING { background: rgba($warning,0.1); color: darken($warning,15%); }
+    }
 
-        .admin-service-time {
-          font-size: 0.75rem;
-          color: $ndiye-medium;
-        }
-      }
-
-      .admin-activity-item {
-        display: flex;
-        gap: 12px;
-        padding: 12px 0;
-        border-bottom: 1px solid rgba($ndiye-primary, 0.05);
-
-        &:last-child {
-          border-bottom: none;
-        }
-
-        .admin-activity-icon {
-          width: 32px;
-          height: 32px;
-          border-radius: 8px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-shrink: 0;
-
-          &.user {
-            background: rgba($ndiye-info, 0.1);
-            color: $ndiye-info;
-          }
-
-          &.property {
-            background: rgba($ndiye-success, 0.1);
-            color: $ndiye-success;
-          }
-
-          &.payment {
-            background: rgba($ndiye-primary, 0.1);
-            color: $ndiye-primary;
-          }
-
-          &.system {
-            background: rgba($ndiye-medium, 0.1);
-            color: $ndiye-medium;
-          }
-        }
-
-        .admin-activity-content {
-          flex: 1;
-
-          .admin-activity-description {
-            font-size: 0.875rem;
-            color: $ndiye-dark;
-            margin: 0 0 4px;
-          }
-
-          .admin-activity-meta {
-            display: flex;
-            gap: 12px;
-            font-size: 0.75rem;
-            color: $ndiye-medium;
-
-            .admin-activity-user {
-              font-weight: 500;
-            }
-          }
-        }
+    .admin-activity-content {
+      flex: 1;
+      .admin-activity-description { font-size: 0.875rem; color: $gray-900; margin: 0 0 3px; }
+      .admin-activity-meta {
+        display: flex; gap: 12px; font-size: 0.75rem; color: $gray-400;
+        .admin-activity-user { font-weight: 500; color: $gray-500; }
       }
     }
   }
 
-  // Quick Actions
-  .admin-quick-actions {
-    padding: 0 24px 32px;
+  // ── Alert items ───────────────────────────────────────────────────────────
+  .admin-alert-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 12px 16px; border-radius: 8px; margin-bottom: 8px;
+    font-size: 0.875rem;
 
-    h3 {
-      font-size: 1.25rem;
-      font-weight: 600;
-      color: $ndiye-dark;
-      margin: 0 0 20px;
+    i { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+    .admin-alert-body { flex: 1; strong { display: block; margin-bottom: 2px; } }
+
+    &.alert-warning { background: #fef3c7; color: #92400e; }
+    &.alert-info    { background: #dbeafe; color: #1e40af; }
+    &.alert-success { background: #dcfce7; color: #166534; }
+    &.alert-danger  { background: #fee2e2; color: #991b1b; }
+  }
+
+  // ── Bar chart ─────────────────────────────────────────────────────────────
+  .dash-chart-bars {
+    display: flex; align-items: flex-end; gap: 6px; height: 160px; padding: 8px 0;
+
+    .dash-bar-item {
+      flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%;
+
+      .dash-bar-wrap { flex: 1; width: 100%; display: flex; align-items: flex-end; }
+
+      .dash-bar {
+        width: 100%; min-height: 4px; border-radius: 4px 4px 0 0;
+        background: linear-gradient(180deg, $primary, $primary-dark);
+        transition: height 0.3s ease; cursor: pointer;
+        &:hover { opacity: 0.8; }
+      }
+
+      .dash-bar-label { font-size: 0.65rem; color: $gray-400; text-align: center; white-space: nowrap; }
     }
+  }
+
+  // ── Quick actions ─────────────────────────────────────────────────────────
+  .admin-quick-actions {
+    h3 { font-size: 1.125rem; font-weight: 600; color: $gray-900; margin: 0 0 16px; }
 
     .admin-actions-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 16px;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px;
 
       .admin-action-btn {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 16px 20px;
-        background: $ndiye-white;
-        border: 1px solid rgba($ndiye-primary, 0.2);
-        border-radius: 8px;
-        color: $ndiye-dark;
-        font-size: 0.875rem;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        text-decoration: none;
+        display: flex; align-items: center; gap: 10px;
+        padding: 14px 18px; background: $white;
+        border: 1px solid $gray-200; border-radius: 8px;
+        color: $gray-700; font-size: 0.875rem; font-weight: 500;
+        cursor: pointer; transition: all 0.15s;
+
+        i { color: $primary; font-size: 1rem; }
 
         &:hover {
-          background: rgba($ndiye-primary, 0.05);
-          border-color: $ndiye-primary;
-          transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        svg {
-          fill: currentColor;
-          flex-shrink: 0;
+          background: $primary-light; border-color: $primary;
+          color: $primary-dark; transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(0,0,0,0.08);
         }
       }
     }
   }
-}
 
-// Responsive Design
-@media (max-width: 1024px) {
-  .admin-dashboard {
-    .admin-charts-grid,
-    .admin-bottom-grid {
-      grid-template-columns: 1fr;
+  // ── Buttons ───────────────────────────────────────────────────────────────
+  .admin-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 16px; border-radius: 6px; border: none;
+    font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all 0.15s;
+
+    &.admin-btn-secondary {
+      background: $white; color: $gray-700;
+      border: 1px solid $gray-200;
+      &:hover { background: $gray-50; border-color: $primary; color: $primary-dark; }
     }
 
-    .admin-stats-grid {
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    &.admin-btn-ghost {
+      background: transparent; color: $primary; border: none;
+      font-size: 0.8rem;
+      &:hover { background: $primary-light; }
     }
+
+    &.admin-btn-sm { padding: 5px 10px; font-size: 0.8rem; }
+  }
+
+  // ── Empty state ───────────────────────────────────────────────────────────
+  .admin-empty-state {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; padding: 32px; text-align: center;
+    i { font-size: 2rem; color: $gray-200; margin-bottom: 8px; }
+    p { color: $gray-400; font-size: 0.875rem; margin: 0; }
   }
 }
 
+@keyframes dashSpin { to { transform: rotate(360deg); } }
+
+// Responsive
 @media (max-width: 768px) {
   .admin-dashboard {
-    .admin-dashboard-header {
-      flex-direction: column;
-      gap: 16px;
-      align-items: stretch;
+    .admin-stats-grid { grid-template-columns: 1fr 1fr; }
+    .admin-bottom-section .admin-bottom-grid { grid-template-columns: 1fr; }
+    .admin-quick-actions .admin-actions-grid { grid-template-columns: 1fr 1fr; }
+  }
+}
 
-      .admin-dashboard-actions {
-        justify-content: flex-end;
-      }
-    }
-
-    .admin-stats-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .admin-actions-grid {
-      grid-template-columns: 1fr;
-    }
+@media (max-width: 480px) {
+  .admin-dashboard {
+    .admin-stats-grid { grid-template-columns: 1fr; }
+    .admin-quick-actions .admin-actions-grid { grid-template-columns: 1fr; }
   }
 }

@@ -1,71 +1,81 @@
-<!-- Admin Layout Container -->
+<!-- Admin Layout -->
 <div class="admin-layout">
-  <!-- Header -->
-  <ibm-header name="Ndiye Admin" class="admin-header">
-    <ibm-header-navigation>
-      <ibm-header-item>
-        <a [routerLink]="getRouteWithLang('/admin/dashboard')" class="admin-logo">
-          <i class="fas fa-tachometer-alt" style="font-size: 20px;"></i>
-          <span class="admin-logo-text">Ndiye Admin</span>
-        </a>
-      </ibm-header-item>
-    </ibm-header-navigation>
 
-    <ibm-header-global>
-      <!-- Header simplifié - Les notifications et profil sont dans la sidebar principale -->
+  <!-- ── Header ── -->
+  <header class="admin-header">
+    <div class="admin-header-inner">
+
+      <!-- Logo -->
+      <a [routerLink]="getRouteWithLang('/admin/dashboard')" class="admin-logo">
+        <i class="fas fa-shield-alt"></i>
+        <span class="admin-logo-text">Ndewa<span>360</span> Admin</span>
+      </a>
+
+      <div class="admin-header-divider"></div>
+
+      <!-- Page title -->
       <div class="admin-header-title">
         <h1>{{ 'ADMIN.TITLE' | translate }}</h1>
       </div>
-    </ibm-header-global>
-  </ibm-header>
 
-  <!-- Main Content Area -->
+      <!-- User zone -->
+      <div class="admin-header-user" *ngIf="currentUser$ | async as user">
+        <div class="admin-user-avatar-circle">
+          {{ getInitials(user) }}
+        </div>
+        <span class="admin-user-name">{{ getUserFullName(user) }}</span>
+        <button class="admin-btn-logout" (click)="onLogout()" title="Se déconnecter">
+          <i class="fas fa-sign-out-alt"></i>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ── Body ── -->
   <div class="admin-content">
-    <!-- Sidebar Navigation -->
+
+    <!-- Sidebar -->
     <nav class="admin-sidebar">
       <div class="admin-sidebar-content">
-        <!-- Page Title -->
+
+        <!-- Breadcrumb -->
         <div class="admin-page-header">
-          <h1 class="admin-page-title">{{ pageTitle }}</h1>
-          <ibm-breadcrumb class="admin-breadcrumb">
-            <ibm-breadcrumb-item *ngFor="let crumb of breadcrumbs">
-              {{ crumb }}
-            </ibm-breadcrumb-item>
-          </ibm-breadcrumb>
+          <h2 class="admin-page-title">{{ pageTitle }}</h2>
+          <nav class="admin-breadcrumb" aria-label="breadcrumb">
+            <span *ngFor="let crumb of breadcrumbs; let last = last" class="admin-breadcrumb-item">
+              <span>{{ crumb }}</span>
+              <span *ngIf="!last" class="admin-breadcrumb-sep">/</span>
+            </span>
+          </nav>
         </div>
 
-        <!-- Navigation Menu -->
+        <!-- Navigation -->
         <div class="admin-nav-menu">
-          <div class="admin-nav-section">
-            <h3 class="admin-nav-section-title">{{ 'ADMIN.NAVIGATION' | translate }}</h3>
-            <ul class="admin-nav-list">
-              <li *ngFor="let item of menuItems" class="admin-nav-item">
-                <a [routerLink]="item.route" 
-                   class="admin-nav-link"
-                   [class.active]="isActiveRoute(item.route)"
-                   [title]="item.description">
-                  <i [class]="'fas fa-' + item.icon + ' admin-nav-icon'" style="font-size: 20px;"></i>
-                  <span class="admin-nav-label">{{ item.label }}</span>
-                  <span *ngIf="item.badge" class="admin-nav-badge">{{ item.badge }}</span>
-                </a>
-              </li>
-            </ul>
-          </div>
+          <h3 class="admin-nav-section-title">{{ 'ADMIN.NAVIGATION' | translate }}</h3>
+          <ul class="admin-nav-list">
+            <li *ngFor="let item of menuItems" class="admin-nav-item">
+              <a [routerLink]="item.route"
+                 class="admin-nav-link"
+                 [class.active]="isActiveRoute(item.id)"
+                 [title]="item.description || item.label">
+                <i [class]="'fas fa-' + item.icon + ' admin-nav-icon'"></i>
+                <span class="admin-nav-label">{{ item.label }}</span>
+                <span *ngIf="item.badge" class="admin-nav-badge">{{ item.badge }}</span>
+              </a>
+            </li>
+          </ul>
         </div>
+
       </div>
     </nav>
 
-    <!-- Main Content -->
+    <!-- Main -->
     <main class="admin-main">
       <div class="admin-main-content">
-        <!-- Loading Indicator -->
-        <div class="admin-loading" *ngIf="false">
-          <ibm-loading></ibm-loading>
-        </div>
-
-        <!-- Router Outlet -->
         <router-outlet></router-outlet>
       </div>
     </main>
+
   </div>
 </div>

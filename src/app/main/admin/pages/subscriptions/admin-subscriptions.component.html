@@ -1,352 +1,413 @@
 <!-- Admin Subscriptions Management -->
-<div class="admin-subscriptions">
-  
-  <!-- Header -->
-  <div class="admin-header">
-    <div class="admin-header-content">
-      <div class="admin-header-title">
-        <h1>Gestion des Souscriptions</h1>
-        <p>Gérez les abonnements et paiements des utilisateurs</p>
+<div class="subs-page">
+
+  <!-- Page Header -->
+  <div class="subs-header">
+    <div class="subs-header-left">
+      <h1 class="subs-title">
+        <i class="fas fa-crown subs-title-icon"></i>
+        Gestion des Souscriptions
+      </h1>
+      <p class="subs-subtitle">Gérez les abonnements et paiements des utilisateurs</p>
+    </div>
+    <div class="subs-header-actions">
+      <button class="subs-btn subs-btn-outline" (click)="onToggleFilters()" [class.active]="showFilters">
+        <i class="fas fa-filter"></i> Filtres
+      </button>
+      <button class="subs-btn subs-btn-outline" (click)="onExportData()">
+        <i class="fas fa-download"></i> Exporter
+      </button>
+      <button class="subs-btn subs-btn-primary" (click)="onRefreshData()" [disabled]="isRefreshing">
+        <i class="fas fa-sync-alt" [class.fa-spin]="isRefreshing"></i> Actualiser
+      </button>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="subs-stats" *ngIf="stats$ | async as stats">
+    <div class="subs-stat-card subs-stat-blue">
+      <div class="subs-stat-icon"><i class="fas fa-users"></i></div>
+      <div class="subs-stat-body">
+        <div class="subs-stat-value">{{ stats.overview.totalUsers | number }}</div>
+        <div class="subs-stat-label">Utilisateurs total</div>
       </div>
-      <div class="admin-header-actions">
-        <button 
-          class="admin-btn admin-btn-secondary"
-          (click)="onToggleFilters()"
-          [class.active]="showFilters">
-          <i class="fas fa-filter"></i>
-          Filtres
-        </button>
-        <button 
-          class="admin-btn admin-btn-secondary"
-          (click)="onExportData()">
-          <i class="fas fa-download"></i>
-          Exporter
-        </button>
-        <button 
-          class="admin-btn admin-btn-primary"
-          (click)="onRefreshData()"
-          [disabled]="isRefreshing">
-          <i class="fas fa-sync-alt" [class.fa-spin]="isRefreshing"></i>
-          Actualiser
-        </button>
+    </div>
+    <div class="subs-stat-card subs-stat-gold">
+      <div class="subs-stat-icon"><i class="fas fa-crown"></i></div>
+      <div class="subs-stat-body">
+        <div class="subs-stat-value">{{ stats.overview.premiumUsers | number }}</div>
+        <div class="subs-stat-label">Premium</div>
+      </div>
+    </div>
+    <div class="subs-stat-card subs-stat-green">
+      <div class="subs-stat-icon"><i class="fas fa-check-circle"></i></div>
+      <div class="subs-stat-body">
+        <div class="subs-stat-value">{{ stats.overview.activeUsers | number }}</div>
+        <div class="subs-stat-label">Comptes actifs</div>
+      </div>
+    </div>
+    <div class="subs-stat-card subs-stat-orange">
+      <div class="subs-stat-icon"><i class="fas fa-pause-circle"></i></div>
+      <div class="subs-stat-body">
+        <div class="subs-stat-value">{{ stats.overview.suspendedUsers | number }}</div>
+        <div class="subs-stat-label">Suspendus</div>
+      </div>
+    </div>
+    <div class="subs-stat-card subs-stat-red">
+      <div class="subs-stat-icon"><i class="fas fa-exclamation-circle"></i></div>
+      <div class="subs-stat-body">
+        <div class="subs-stat-value">{{ formatCurrency(stats.overview.totalUnpaidAmount) }}</div>
+        <div class="subs-stat-label">Impayés</div>
       </div>
     </div>
   </div>
 
-  <!-- Stats Overview -->
-  <div class="admin-stats-grid" *ngIf="stats$ | async as stats">
-    <div class="admin-stat-card">
-      <div class="admin-stat-icon admin-stat-icon-primary">
-        <i class="fas fa-users"></i>
-      </div>
-      <div class="admin-stat-content">
-        <div class="admin-stat-value">{{ stats.overview.totalUsers | number }}</div>
-        <div class="admin-stat-label">Utilisateurs Total</div>
-      </div>
-    </div>
-    
-    <div class="admin-stat-card">
-      <div class="admin-stat-icon admin-stat-icon-success">
-        <i class="fas fa-crown"></i>
-      </div>
-      <div class="admin-stat-content">
-        <div class="admin-stat-value">{{ stats.overview.premiumUsers | number }}</div>
-        <div class="admin-stat-label">Utilisateurs Premium</div>
-      </div>
-    </div>
-    
-    <div class="admin-stat-card">
-      <div class="admin-stat-icon admin-stat-icon-warning">
-        <i class="fas fa-exclamation-triangle"></i>
-      </div>
-      <div class="admin-stat-content">
-        <div class="admin-stat-value">{{ stats.overview.suspendedUsers | number }}</div>
-        <div class="admin-stat-label">Comptes Suspendus</div>
-      </div>
-    </div>
-    
-    <div class="admin-stat-card">
-      <div class="admin-stat-icon admin-stat-icon-danger">
-        <i class="fas fa-credit-card"></i>
-      </div>
-      <div class="admin-stat-content">
-        <div class="admin-stat-value">{{ formatCurrency(stats.overview.totalUnpaidAmount) }}</div>
-        <div class="admin-stat-label">Impayés Total</div>
-      </div>
-    </div>
+  <!-- Tab Navigation -->
+  <div class="subs-tab-nav">
+    <button class="subs-tab-btn" [class.active]="selectedTab === 'overview'" (click)="onTabChange('overview')">
+      <i class="fas fa-list"></i> Liste des souscriptions
+    </button>
+    <button class="subs-tab-btn" [class.active]="selectedTab === 'analytics'" (click)="onTabChange('analytics')">
+      <i class="fas fa-chart-line"></i> Analytics
+    </button>
   </div>
 
-  <!-- Filters Panel -->
-  <div class="admin-filters-panel" *ngIf="showFilters">
-    <div class="admin-filters-content">
-      <div class="admin-filters-row">
-        <div class="admin-filter-group">
+  <!-- ── TAB: Liste ── -->
+  <ng-container *ngIf="selectedTab === 'overview'">
+
+    <!-- Filters Panel -->
+    <div class="subs-filters" *ngIf="showFilters">
+      <div class="subs-filters-grid">
+        <div class="subs-filter-group">
           <label>Recherche</label>
-          <input 
-            type="text" 
-            class="admin-input"
-            placeholder="Nom, email, ID..."
-            [(ngModel)]="currentFilters.search"
-            (keyup.enter)="onApplyFilters(currentFilters)">
+          <input type="text" class="subs-input" placeholder="Nom, email, ID..."
+                 [(ngModel)]="currentFilters.search" (keyup.enter)="onApplyFilters(currentFilters)">
         </div>
-        
-        <div class="admin-filter-group">
+        <div class="subs-filter-group">
           <label>Plan</label>
-          <select 
-            class="admin-select"
-            [(ngModel)]="currentFilters.plan"
-            (change)="onApplyFilters(currentFilters)">
-            <option *ngFor="let option of planOptions" [value]="option.value">
-              {{ option.label }}
-            </option>
+          <select class="subs-select" [(ngModel)]="currentFilters.plan" (change)="onApplyFilters(currentFilters)">
+            <option *ngFor="let o of planOptions" [value]="o.value">{{ o.label }}</option>
           </select>
         </div>
-        
-        <div class="admin-filter-group">
-          <label>Statut Compte</label>
-          <select 
-            class="admin-select"
-            [(ngModel)]="currentFilters.accountStatus"
-            (change)="onApplyFilters(currentFilters)">
-            <option *ngFor="let option of statusOptions" [value]="option.value">
-              {{ option.label }}
-            </option>
+        <div class="subs-filter-group">
+          <label>Statut compte</label>
+          <select class="subs-select" [(ngModel)]="currentFilters.accountStatus" (change)="onApplyFilters(currentFilters)">
+            <option *ngFor="let o of statusOptions" [value]="o.value">{{ o.label }}</option>
           </select>
         </div>
-        
-        <div class="admin-filter-group">
+        <div class="subs-filter-group">
           <label>Paiements</label>
-          <select 
-            class="admin-select"
-            [(ngModel)]="currentFilters.paymentStatus"
-            (change)="onApplyFilters(currentFilters)">
-            <option *ngFor="let option of paymentStatusOptions" [value]="option.value">
-              {{ option.label }}
-            </option>
+          <select class="subs-select" [(ngModel)]="currentFilters.paymentStatus" (change)="onApplyFilters(currentFilters)">
+            <option *ngFor="let o of paymentStatusOptions" [value]="o.value">{{ o.label }}</option>
           </select>
         </div>
       </div>
-      
-      <div class="admin-filters-actions">
-        <button 
-          class="admin-btn admin-btn-secondary"
-          (click)="onClearFilters()">
-          Effacer
+      <div class="subs-filters-actions">
+        <button class="subs-btn subs-btn-ghost" (click)="onClearFilters()">
+          <i class="fas fa-times"></i> Effacer
         </button>
-        <button 
-          class="admin-btn admin-btn-primary"
-          (click)="onApplyFilters(currentFilters)">
-          Appliquer
+        <button class="subs-btn subs-btn-primary" (click)="onApplyFilters(currentFilters)">
+          <i class="fas fa-search"></i> Appliquer
         </button>
       </div>
     </div>
-  </div>
 
-  <!-- Subscriptions Table -->
-  <div class="admin-table-container">
-    <div class="admin-table-header">
-      <h3>Liste des Souscriptions</h3>
-      <div class="admin-table-info" *ngIf="pagination$ | async as pagination">
-        {{ pagination.total }} résultats
+    <!-- Table Container -->
+    <div class="subs-table-card">
+      <div class="subs-table-header">
+        <h3 class="subs-table-title">
+          <i class="fas fa-list"></i> Liste des souscriptions
+        </h3>
+        <span class="subs-table-count" *ngIf="pagination$ | async as p">
+          {{ p.total }} résultat{{ p.total > 1 ? 's' : '' }}
+        </span>
       </div>
-    </div>
 
-    <!-- Loading State -->
-    <div class="admin-loading" *ngIf="isLoading$ | async">
-      <div class="admin-spinner"></div>
-      <p>Chargement des souscriptions...</p>
-    </div>
+      <!-- Loading -->
+      <div class="subs-loading" *ngIf="isLoading$ | async">
+        <div class="subs-spinner"></div>
+        <span>Chargement des souscriptions...</span>
+      </div>
 
-    <!-- Subscriptions Table -->
-    <div class="admin-table-wrapper" *ngIf="!(isLoading$ | async)">
-      <table class="admin-table">
-        <thead>
-          <tr>
-            <th (click)="onSortChange('user.firstName')" class="sortable">
-              Utilisateur
-              <i class="fas fa-sort"></i>
-            </th>
-            <th (click)="onSortChange('plan')" class="sortable">
-              Plan
-              <i class="fas fa-sort"></i>
-            </th>
-            <th (click)="onSortChange('accountStatus')" class="sortable">
-              Statut Compte
-              <i class="fas fa-sort"></i>
-            </th>
-            <th>Paiements</th>
-            <th (click)="onSortChange('propertyCount')" class="sortable">
-              Propriétés
-              <i class="fas fa-sort"></i>
-            </th>
-            <th (click)="onSortChange('createdAt')" class="sortable">
-              Créé le
-              <i class="fas fa-sort"></i>
-            </th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let subscription of subscriptions$ | async; trackBy: trackBySubscriptionId">
-            <!-- User Info -->
-            <td>
-              <div class="admin-user-cell">
-                <div class="admin-user-avatar">
-                  {{ subscription.user.firstName.charAt(0) }}{{ subscription.user.lastName.charAt(0) }}
-                </div>
-                <div class="admin-user-info">
-                  <div class="admin-user-name">
-                    {{ subscription.user.firstName }} {{ subscription.user.lastName }}
+      <!-- Table -->
+      <div class="subs-table-wrapper" *ngIf="!(isLoading$ | async)">
+        <table class="subs-table">
+          <thead>
+            <tr>
+              <th (click)="onSortChange('user.firstName')" class="sortable">Utilisateur <i class="fas fa-sort"></i></th>
+              <th (click)="onSortChange('plan')" class="sortable">Plan <i class="fas fa-sort"></i></th>
+              <th (click)="onSortChange('accountStatus')" class="sortable">Statut <i class="fas fa-sort"></i></th>
+              <th>Paiements</th>
+              <th (click)="onSortChange('propertyCount')" class="sortable">Propriétés <i class="fas fa-sort"></i></th>
+              <th (click)="onSortChange('createdAt')" class="sortable">Créé le <i class="fas fa-sort"></i></th>
+              <th class="col-actions">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let sub of subscriptions$ | async; trackBy: trackBySubscriptionId" class="subs-row">
+              <td>
+                <div class="subs-user-cell">
+                  <div class="subs-avatar">{{ sub.user.firstName.charAt(0) }}{{ sub.user.lastName.charAt(0) }}</div>
+                  <div class="subs-user-info">
+                    <div class="subs-user-name">{{ sub.user.firstName }} {{ sub.user.lastName }}</div>
+                    <div class="subs-user-email">{{ sub.user.email }}</div>
+                    <div class="subs-user-type">{{ sub.user.userType }}</div>
                   </div>
-                  <div class="admin-user-email">{{ subscription.user.email }}</div>
                 </div>
-              </div>
-            </td>
-
-            <!-- Plan -->
-            <td>
-              <span class="admin-badge" [ngClass]="getPlanColor(subscription.plan)">
-                {{ getPlanLabel(subscription.plan) }}
-              </span>
-            </td>
-
-            <!-- Account Status -->
-            <td>
-              <span class="admin-badge" [ngClass]="getAccountStatusColor(subscription.accountStatus)">
-                {{ getAccountStatusLabel(subscription.accountStatus) }}
-              </span>
-            </td>
-
-            <!-- Payment Status -->
-            <td>
-              <div class="admin-payment-status">
-                <span class="admin-badge" [ngClass]="getPaymentStatusColor(subscription.hasUnpaidInvoices, subscription.totalUnpaidAmount)">
-                  {{ getPaymentStatusLabel(subscription.hasUnpaidInvoices, subscription.totalUnpaidAmount) }}
+              </td>
+              <td>
+                <span class="subs-badge" [ngClass]="'subs-badge-' + getPlanColor(sub.plan)">
+                  <i class="fas" [class.fa-crown]="sub.plan === 'premium'" [class.fa-user]="sub.plan !== 'premium'"></i>
+                  {{ getPlanLabel(sub.plan) }}
                 </span>
-                <div class="admin-payment-details" *ngIf="subscription.hasUnpaidInvoices">
-                  <small>{{ subscription.unpaidInvoicesCount }} facture(s) impayée(s)</small>
+              </td>
+              <td>
+                <span class="subs-badge" [ngClass]="'subs-badge-' + getAccountStatusColor(sub.accountStatus)">
+                  {{ getAccountStatusLabel(sub.accountStatus) }}
+                </span>
+              </td>
+              <td>
+                <div class="subs-payment-cell">
+                  <span class="subs-badge subs-badge-sm"
+                        [ngClass]="'subs-badge-' + getPaymentStatusColor(sub.hasUnpaidInvoices, sub.totalUnpaidAmount)">
+                    {{ getPaymentStatusLabel(sub.hasUnpaidInvoices, sub.totalUnpaidAmount) }}
+                  </span>
+                  <div class="subs-unpaid-detail" *ngIf="sub.hasUnpaidInvoices">
+                    <small>{{ sub.unpaidInvoicesCount }} facture(s) — {{ formatCurrency(sub.totalUnpaidAmount) }}</small>
+                  </div>
                 </div>
-              </div>
-            </td>
-
-            <!-- Properties -->
-            <td>
-              <div class="admin-property-info">
-                <span class="admin-property-count">{{ subscription.propertyCount }}</span>
-                <span class="admin-property-limit" *ngIf="subscription.plan === 'free'">
-                  / {{ subscription.propertyLimit }}
-                </span>
-                <span class="admin-property-unlimited" *ngIf="subscription.plan === 'premium'">
-                  Illimité
-                </span>
-              </div>
-            </td>
-
-            <!-- Created Date -->
-            <td>{{ formatDate(subscription.createdAt) }}</td>
-
-            <!-- Actions -->
-            <td>
-              <div class="admin-actions">
-                <div class="admin-dropdown" [class.open]="openMenuId === subscription._id">
-                  <button 
-                    class="admin-btn admin-btn-icon"
-                    (click)="toggleSubscriptionMenu(subscription._id)">
+              </td>
+              <td>
+                <div class="subs-prop-cell">
+                  <span class="subs-prop-count">{{ sub.propertyCount }}</span>
+                  <span class="subs-prop-limit" *ngIf="sub.plan === 'free'"> / {{ sub.propertyLimit }}</span>
+                  <span class="subs-prop-unlimited" *ngIf="sub.plan === 'premium'"><i class="fas fa-infinity"></i></span>
+                </div>
+              </td>
+              <td class="subs-date-cell">{{ formatDate(sub.createdAt) }}</td>
+              <td class="col-actions">
+                <div class="subs-actions" [class.open]="openMenuId === sub._id">
+                  <button class="subs-menu-btn" (click)="toggleSubscriptionMenu(sub._id)">
                     <i class="fas fa-ellipsis-v"></i>
                   </button>
-                  
-                  <div class="admin-dropdown-menu">
-                    <button 
-                      class="admin-dropdown-item"
-                      (click)="onViewDetails(subscription)">
-                      <i class="fas fa-eye"></i>
-                      Voir détails
+                  <div class="subs-dropdown" *ngIf="openMenuId === sub._id">
+                    <button class="subs-dropdown-item" (click)="onViewDetails(sub)">
+                      <i class="fas fa-eye"></i> Voir détails
                     </button>
-                    
-                    <button 
-                      class="admin-dropdown-item"
-                      *ngIf="subscription.plan === 'free'"
-                      (click)="onForceUpgrade(subscription)">
-                      <i class="fas fa-arrow-up"></i>
-                      Forcer upgrade Premium
+                    <button class="subs-dropdown-item" *ngIf="sub.plan === 'free'" (click)="onForceUpgrade(sub)">
+                      <i class="fas fa-arrow-up"></i> Upgrade Premium
                     </button>
-                    
-                    <button 
-                      class="admin-dropdown-item"
-                      *ngIf="subscription.plan === 'premium'"
-                      (click)="onDowngradeToPlan(subscription, 'free')">
-                      <i class="fas fa-arrow-down"></i>
-                      Downgrade vers Free
+                    <button class="subs-dropdown-item" *ngIf="sub.plan === 'premium'" (click)="onDowngradeToPlan(sub, 'free')">
+                      <i class="fas fa-arrow-down"></i> Downgrade Free
                     </button>
-                    
-                    <div class="admin-dropdown-divider"></div>
-                    
-                    <button 
-                      class="admin-dropdown-item"
-                      *ngIf="subscription.accountStatus === 'active'"
-                      (click)="onSuspendAccount(subscription)">
-                      <i class="fas fa-pause"></i>
-                      Suspendre compte
+                    <div class="subs-dropdown-divider"></div>
+                    <button class="subs-dropdown-item subs-item-warning"
+                            *ngIf="sub.accountStatus === 'active'" (click)="onSuspendAccount(sub)">
+                      <i class="fas fa-pause"></i> Suspendre
                     </button>
-                    
-                    <button 
-                      class="admin-dropdown-item"
-                      *ngIf="subscription.accountStatus === 'suspended'"
-                      (click)="onReactivateAccount(subscription)">
-                      <i class="fas fa-play"></i>
-                      Réactiver compte
+                    <button class="subs-dropdown-item subs-item-success"
+                            *ngIf="sub.accountStatus === 'suspended'" (click)="onReactivateAccount(sub)">
+                      <i class="fas fa-play"></i> Réactiver
                     </button>
-                    
-                    <button 
-                      class="admin-dropdown-item"
-                      *ngIf="subscription.hasUnpaidInvoices"
-                      (click)="onSendPaymentReminder(subscription)">
-                      <i class="fas fa-envelope"></i>
-                      Rappel de paiement
+                    <button class="subs-dropdown-item" *ngIf="sub.hasUnpaidInvoices" (click)="onSendPaymentReminder(sub)">
+                      <i class="fas fa-envelope"></i> Rappel paiement
                     </button>
                   </div>
                 </div>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+              </td>
+            </tr>
+          </tbody>
+        </table>
 
-      <!-- Empty State -->
-      <div class="admin-empty-state" *ngIf="(subscriptions$ | async)?.length === 0">
-        <i class="fas fa-users"></i>
-        <h3>Aucune souscription trouvée</h3>
-        <p>Aucune souscription ne correspond aux critères de recherche.</p>
+        <!-- Empty State -->
+        <div class="subs-empty" *ngIf="(subscriptions$ | async)?.length === 0">
+          <i class="fas fa-users subs-empty-icon"></i>
+          <h3>Aucune souscription trouvée</h3>
+          <p>Aucune souscription ne correspond aux critères de recherche.</p>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div class="subs-pagination" *ngIf="pagination$ | async as pagination">
+        <div class="subs-pagination-info">
+          Affichage {{ (pagination.page - 1) * pagination.limit + 1 }} à
+          {{ getPaginationEnd(pagination) }} sur {{ pagination.total }} résultats
+        </div>
+        <div class="subs-pagination-controls">
+          <button class="subs-page-btn" [disabled]="pagination.page <= 1" (click)="onPageChange(pagination.page - 1)">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <span class="subs-page-current">Page {{ pagination.page }} / {{ pagination.totalPages }}</span>
+          <button class="subs-page-btn" [disabled]="pagination.page >= pagination.totalPages" (click)="onPageChange(pagination.page + 1)">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
       </div>
     </div>
 
-    <!-- Pagination -->
-    <div class="admin-pagination" *ngIf="pagination$ | async as pagination">
-      <div class="admin-pagination-info">
-        Affichage {{ (pagination.page - 1) * pagination.limit + 1 }} à 
-        {{ Math.min(pagination.page * pagination.limit, pagination.total) }} 
-        sur {{ pagination.total }} résultats
-      </div>
-      
-      <div class="admin-pagination-controls">
-        <button 
-          class="admin-btn admin-btn-secondary"
-          [disabled]="pagination.page <= 1"
-          (click)="onPageChange(pagination.page - 1)">
-          <i class="fas fa-chevron-left"></i>
-        </button>
-        
-        <span class="admin-pagination-current">
-          Page {{ pagination.page }} sur {{ pagination.totalPages }}
-        </span>
-        
-        <button 
-          class="admin-btn admin-btn-secondary"
-          [disabled]="pagination.page >= pagination.totalPages"
-          (click)="onPageChange(pagination.page + 1)">
-          <i class="fas fa-chevron-right"></i>
-        </button>
-      </div>
+  </ng-container>
+
+  <!-- ── TAB: Analytics ── -->
+  <ng-container *ngIf="selectedTab === 'analytics'">
+
+    <!-- Loading analytics -->
+    <div class="subs-loading" *ngIf="isLoadingAnalytics">
+      <div class="subs-spinner"></div>
+      <span>Chargement des analytics...</span>
     </div>
-  </div>
+
+    <ng-container *ngIf="!isLoadingAnalytics">
+
+      <!-- Conversion Metrics -->
+      <div class="subs-analytics-grid" *ngIf="analyticsData">
+        <div class="subs-analytics-card">
+          <div class="subs-analytics-header">
+            <i class="fas fa-exchange-alt"></i>
+            <h4>Taux de conversion</h4>
+          </div>
+          <div class="subs-analytics-value">{{ analyticsData.conversionRate | number:'1.1-1' }}%</div>
+          <p class="subs-analytics-desc">Free → Premium</p>
+        </div>
+        <div class="subs-analytics-card">
+          <div class="subs-analytics-header">
+            <i class="fas fa-door-open"></i>
+            <h4>Taux de churn</h4>
+          </div>
+          <div class="subs-analytics-value" [class.subs-value-danger]="analyticsData.churnRate > 5">
+            {{ analyticsData.churnRate | number:'1.1-1' }}%
+          </div>
+          <p class="subs-analytics-desc">Taux d'abandon mensuel</p>
+        </div>
+        <div class="subs-analytics-card">
+          <div class="subs-analytics-header">
+            <i class="fas fa-user-dollar"></i>
+            <h4>ARPU</h4>
+          </div>
+          <div class="subs-analytics-value">{{ formatCurrency(analyticsData.averageRevenuePerUser) }}</div>
+          <p class="subs-analytics-desc">Revenu moyen par utilisateur</p>
+        </div>
+        <div class="subs-analytics-card">
+          <div class="subs-analytics-header">
+            <i class="fas fa-check-double"></i>
+            <h4>Taux de paiement</h4>
+          </div>
+          <div class="subs-analytics-value">{{ analyticsData.paymentSuccessRate | number:'1.1-1' }}%</div>
+          <p class="subs-analytics-desc">Paiements réussis</p>
+        </div>
+      </div>
+
+      <!-- Churn Risk Users -->
+      <div class="subs-table-card" *ngIf="churnRiskUsers.length > 0">
+        <div class="subs-table-header">
+          <h3 class="subs-table-title">
+            <i class="fas fa-exclamation-triangle" style="color:#f97316"></i>
+            Utilisateurs à risque de churn ({{ churnRiskUsers.length }})
+          </h3>
+        </div>
+        <div class="subs-table-wrapper">
+          <table class="subs-table">
+            <thead>
+              <tr>
+                <th>Utilisateur</th>
+                <th>Plan</th>
+                <th>Statut</th>
+                <th>Impayés</th>
+                <th>Dernier paiement</th>
+                <th class="col-actions">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let sub of churnRiskUsers" class="subs-row">
+                <td>
+                  <div class="subs-user-cell">
+                    <div class="subs-avatar">{{ sub.user.firstName.charAt(0) }}{{ sub.user.lastName.charAt(0) }}</div>
+                    <div class="subs-user-info">
+                      <div class="subs-user-name">{{ sub.user.firstName }} {{ sub.user.lastName }}</div>
+                      <div class="subs-user-email">{{ sub.user.email }}</div>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <span class="subs-badge" [ngClass]="'subs-badge-' + getPlanColor(sub.plan)">{{ getPlanLabel(sub.plan) }}</span>
+                </td>
+                <td>
+                  <span class="subs-badge" [ngClass]="'subs-badge-' + getAccountStatusColor(sub.accountStatus)">
+                    {{ getAccountStatusLabel(sub.accountStatus) }}
+                  </span>
+                </td>
+                <td>
+                  <span class="subs-badge subs-badge-danger" *ngIf="sub.hasUnpaidInvoices">
+                    {{ formatCurrency(sub.totalUnpaidAmount) }}
+                  </span>
+                  <span class="subs-badge subs-badge-success" *ngIf="!sub.hasUnpaidInvoices">À jour</span>
+                </td>
+                <td class="subs-date-cell">{{ formatDate(sub.lastPaymentDate) }}</td>
+                <td class="col-actions">
+                  <button class="subs-btn subs-btn-outline" style="padding:4px 10px;font-size:0.75rem"
+                          (click)="onSendPaymentReminder(sub)" *ngIf="sub.hasUnpaidInvoices">
+                    <i class="fas fa-envelope"></i> Rappel
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Upgrade Opportunities -->
+      <div class="subs-table-card" *ngIf="upgradeOpportunities.length > 0">
+        <div class="subs-table-header">
+          <h3 class="subs-table-title">
+            <i class="fas fa-arrow-up" style="color:#10b981"></i>
+            Opportunités d'upgrade ({{ upgradeOpportunities.length }})
+          </h3>
+        </div>
+        <div class="subs-table-wrapper">
+          <table class="subs-table">
+            <thead>
+              <tr>
+                <th>Utilisateur</th>
+                <th>Propriétés</th>
+                <th>Limite</th>
+                <th>Montant mensuel</th>
+                <th class="col-actions">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let sub of upgradeOpportunities" class="subs-row">
+                <td>
+                  <div class="subs-user-cell">
+                    <div class="subs-avatar">{{ sub.user.firstName.charAt(0) }}{{ sub.user.lastName.charAt(0) }}</div>
+                    <div class="subs-user-info">
+                      <div class="subs-user-name">{{ sub.user.firstName }} {{ sub.user.lastName }}</div>
+                      <div class="subs-user-email">{{ sub.user.email }}</div>
+                    </div>
+                  </div>
+                </td>
+                <td><strong>{{ sub.propertyCount }}</strong></td>
+                <td>{{ sub.propertyLimit }}</td>
+                <td>{{ formatCurrency(sub.monthlyAmount) }}</td>
+                <td class="col-actions">
+                  <button class="subs-btn subs-btn-primary" style="padding:4px 10px;font-size:0.75rem"
+                          (click)="onForceUpgrade(sub)">
+                    <i class="fas fa-crown"></i> Upgrade
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Empty analytics state -->
+      <div class="subs-empty" *ngIf="!analyticsData && churnRiskUsers.length === 0 && upgradeOpportunities.length === 0">
+        <i class="fas fa-chart-line subs-empty-icon"></i>
+        <h3>Aucune donnée analytique disponible</h3>
+        <p>Les données analytics apparaîtront ici une fois que des souscriptions seront actives.</p>
+      </div>
+
+    </ng-container>
+
+  </ng-container>
+
 </div>

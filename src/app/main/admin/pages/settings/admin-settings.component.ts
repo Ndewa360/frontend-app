@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
+import { ToastrService } from 'ngx-toastr';
 
 // Actions
 import { AdminSettingsAction } from '../../store/settings/admin-settings.actions';
@@ -12,6 +13,9 @@ import { AdminSettingsState } from '../../store/settings/admin-settings.state';
 
 // Models
 import { AdminSettings } from '../../store/settings/admin-settings.model';
+
+// Services
+import { AdminSettingsService } from '../../services/admin-settings.service';
 
 @Component({
   selector: 'app-admin-settings',
@@ -44,7 +48,9 @@ export class AdminSettingsComponent implements OnInit, OnDestroy {
 
   constructor(
     private store: Store,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private settingsService: AdminSettingsService,
+    private toastr: ToastrService
   ) {
     this.initializeForm();
   }
@@ -211,8 +217,10 @@ export class AdminSettingsComponent implements OnInit, OnDestroy {
     if (this.settingsForm.valid) {
       const formValue = this.settingsForm.value;
       const settingsData = this.buildSettingsData(formValue);
-      
-      this.store.dispatch(new AdminSettingsAction.UpdateSettings(settingsData));
+      // Envoyer uniquement la section active
+      const sectionData: any = {};
+      sectionData[this.selectedTab] = settingsData[this.selectedTab];
+      this.store.dispatch(new AdminSettingsAction.UpdateSettings(sectionData));
       this.hasUnsavedChanges = false;
       this.settingsForm.markAsPristine();
     }
@@ -227,23 +235,35 @@ export class AdminSettingsComponent implements OnInit, OnDestroy {
   }
 
   onTestEmailConfiguration(): void {
-    const testEmail = prompt('Adresse email de test:');
-    if (testEmail) {
-      // Dispatch test email action
-      console.log('Test email configuration:', testEmail);
+    const testEmail = this.settingsForm.get('supportEmail')?.value;
+    if (!testEmail) {
+      this.toastr.warning('Veuillez renseigner un email de support');
+      return;
     }
+    this.settingsService.testEmailConfiguration(testEmail)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result) => {
+          if (result.success) {
+            this.toastr.success('Email de test envoyé avec succès');
+          } else {
+            this.toastr.error(result.message || 'Erreur lors du test');
+          }
+        },
+        error: () => this.toastr.error('Erreur lors du test de configuration email')
+      });
   }
 
   onCreateBackup(): void {
-    if (confirm('Créer une nouvelle sauvegarde ?')) {
-      this.store.dispatch(new AdminSettingsAction.BackupDatabase());
-    }
+    if (!confirm('Créer une nouvelle sauvegarde ?')) return;
+    this.store.dispatch(new AdminSettingsAction.BackupDatabase());
+    this.toastr.info('Sauvegarde en cours...');
   }
 
   onClearCache(): void {
-    if (confirm('Vider le cache système ?')) {
-      this.store.dispatch(new AdminSettingsAction.ClearCache());
-    }
+    if (!confirm('Vider le cache système ?')) return;
+    this.store.dispatch(new AdminSettingsAction.ClearCache());
+    this.toastr.info('Cache en cours de nettoyage...');
   }
 
   onToggleMaintenanceMode(): void {
@@ -275,7 +295,7 @@ export class AdminSettingsComponent implements OnInit, OnDestroy {
         maintenanceMode: formValue.maintenanceMode,
         registrationEnabled: formValue.registrationEnabled,
         emailVerificationRequired: formValue.emailVerificationRequired
-      },
+      } as any,
       email: {
         provider: formValue.emailProvider,
         smtpHost: formValue.smtpHost,
@@ -284,6 +304,32 @@ export class AdminSettingsComponent implements OnInit, OnDestroy {
         smtpUser: formValue.smtpUser,
         fromEmail: formValue.fromEmail,
         fromName: formValue.fromName
+      } as any,
+      payment: {
+        providers: {
+          stripe: {
+            enabled: formValue.stripeEnabled,
+            publicKey: formValue.stripePublicKey,
+            secretKey: formValue.stripeSecretKey,
+            webhookSecret: ''
+          },
+          paypal: {
+            enabled: formValue.paypalEnabled,
+            clientId: formValue.paypalClientId,
+            clientSecret: formValue.paypalClientSecret,
+            sandbox: true
+          },
+          mobileMoney: {
+            enabled: formValue.mobileMoneyEnabled,
+            orangeMoneyApiKey: '',
+            mtnMomoApiKey: ''
+          }
+        },
+        defaultCurrency: 'XAF',
+        supportedCurrencies: ['XAF'],
+        taxRate: 0,
+        freeTrialDays: 0,
+        subscriptionPlans: []
       },
       security: {
         passwordMinLength: formValue.passwordMinLength,
@@ -294,7 +340,22 @@ export class AdminSettingsComponent implements OnInit, OnDestroy {
         sessionTimeout: formValue.sessionTimeout,
         maxLoginAttempts: formValue.maxLoginAttempts,
         lockoutDuration: formValue.lockoutDuration,
-        twoFactorRequired: formValue.twoFactorRequired
+        twoFactorRequired: formValue.twoFactorRequired,
+        ipWhitelist: [],
+        corsOrigins: [],
+        rateLimiting: { enabled: true, windowMs: 60000, maxRequests: 100 }
+      },
+      maintenance: {
+        maintenanceMode: formValue.maintenanceMode,
+        maintenanceMessage: '',
+        allowedIPs: [],
+        scheduledMaintenance: { enabled: false, startTime: null, endTime: null, message: '' },
+        backups: {
+          enabled: formValue.backupsEnabled,
+          frequency: formValue.backupFrequency,
+          retention: formValue.backupRetention,
+          location: 'local'
+        }
       }
     } as Partial<AdminSettings>;
   }

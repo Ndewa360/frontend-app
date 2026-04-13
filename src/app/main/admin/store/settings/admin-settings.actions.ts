@@ -46,6 +46,12 @@ export namespace AdminSettingsAction {
     constructor(public error: any) {}
   }
 
+  // Test Email Configuration
+  export class TestEmailConfiguration {
+    static readonly type = '[Admin Settings] Test Email Configuration';
+    constructor(public testEmail: string) {}
+  }
+
   // Backup Database
   export class BackupDatabase {
     static readonly type = '[Admin Settings] Backup Database';

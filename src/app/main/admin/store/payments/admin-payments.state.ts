@@ -279,4 +279,89 @@ export class AdminPaymentsState {
       new AdminPaymentsAction.LoadPaymentStats()
     ]);
   }
+
+  @Action(AdminPaymentsAction.LoadCoupons)
+  loadCoupons(ctx: StateContext<AdminPaymentsStateModel>, action: AdminPaymentsAction.LoadCoupons) {
+    ctx.patchState({ loading: true, error: null });
+    const filters = action.filters || ctx.getState().filters.coupons;
+    return this.adminPaymentsService.getCoupons(filters).pipe(
+      tap(response => {
+        ctx.patchState({
+          coupons: response.coupons,
+          loading: false,
+          lastUpdated: new Date()
+        });
+      }),
+      catchError(error => {
+        ctx.patchState({ loading: false, error: error.message });
+        return throwError(error);
+      })
+    );
+  }
+
+  @Action(AdminPaymentsAction.CreateCoupon)
+  createCoupon(ctx: StateContext<AdminPaymentsStateModel>, action: AdminPaymentsAction.CreateCoupon) {
+    ctx.patchState({ loading: true });
+    return this.adminPaymentsService.createCoupon(action.couponData).pipe(
+      tap(coupon => {
+        const state = ctx.getState();
+        ctx.patchState({ coupons: [coupon, ...state.coupons], loading: false });
+      }),
+      catchError(error => {
+        ctx.patchState({ loading: false, error: error.message });
+        return throwError(error);
+      })
+    );
+  }
+
+  @Action(AdminPaymentsAction.UpdateCoupon)
+  updateCoupon(ctx: StateContext<AdminPaymentsStateModel>, action: AdminPaymentsAction.UpdateCoupon) {
+    ctx.patchState({ loading: true });
+    return this.adminPaymentsService.updateCoupon(action.couponId, action.couponData).pipe(
+      tap(updated => {
+        const state = ctx.getState();
+        ctx.patchState({
+          coupons: state.coupons.map(c => c._id === updated._id ? updated : c),
+          loading: false
+        });
+      }),
+      catchError(error => {
+        ctx.patchState({ loading: false, error: error.message });
+        return throwError(error);
+      })
+    );
+  }
+
+  @Action(AdminPaymentsAction.DeleteCoupon)
+  deleteCoupon(ctx: StateContext<AdminPaymentsStateModel>, action: AdminPaymentsAction.DeleteCoupon) {
+    ctx.patchState({ loading: true });
+    return this.adminPaymentsService.deleteCoupon(action.couponId).pipe(
+      tap(() => {
+        const state = ctx.getState();
+        ctx.patchState({
+          coupons: state.coupons.filter(c => c._id !== action.couponId),
+          loading: false
+        });
+      }),
+      catchError(error => {
+        ctx.patchState({ loading: false, error: error.message });
+        return throwError(error);
+      })
+    );
+  }
+
+  @Action(AdminPaymentsAction.ProcessPendingPayments)
+  processPendingPayments(ctx: StateContext<AdminPaymentsStateModel>) {
+    ctx.patchState({ loading: true });
+    return this.adminPaymentsService.processPendingPayments().pipe(
+      tap(() => {
+        ctx.patchState({ loading: false });
+        ctx.dispatch(new AdminPaymentsAction.LoadPayments());
+      }),
+      catchError(error => {
+        ctx.patchState({ loading: false, error: error.message });
+        return throwError(error);
+      })
+    );
+  }
 }

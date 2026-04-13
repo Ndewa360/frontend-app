@@ -1,15 +1,13 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
+import { ToastrService } from 'ngx-toastr';
 
-// Actions
 import { AdminPaymentsAction } from '../../store/payments/admin-payments.actions';
-
-// States
 import { AdminPaymentsState } from '../../store/payments/admin-payments.state';
-
-// Models
+import { AdminPaymentsService } from '../../services/admin-payments.service';
 import { AdminPayment, AdminSubscription, AdminCoupon } from '../../store/payments/admin-payments.model';
 
 @Component({
@@ -20,40 +18,59 @@ import { AdminPayment, AdminSubscription, AdminCoupon } from '../../store/paymen
 export class AdminPaymentsComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
-  // Observables
-  payments$ = this.store.select(AdminPaymentsState.selectPayments);
+  payments$      = this.store.select(AdminPaymentsState.selectPayments);
   subscriptions$ = this.store.select(AdminPaymentsState.selectSubscriptions);
-  coupons$ = this.store.select(AdminPaymentsState.selectCoupons);
-  stats$ = this.store.select(AdminPaymentsState.selectStats);
-  isLoading$ = this.store.select(AdminPaymentsState.selectIsLoading);
+  coupons$       = this.store.select(AdminPaymentsState.selectCoupons);
+  stats$         = this.store.select(AdminPaymentsState.selectStats);
+  isLoading$     = this.store.select(AdminPaymentsState.selectIsLoading);
 
-  // Component state
   selectedTab = 'payments';
-  showCreateModal = false;
-  showEditModal = false;
-  selectedItem: AdminPayment | AdminSubscription | AdminCoupon | null = null;
+  showCouponModal = false;
+  editingCoupon: AdminCoupon | null = null;
   isProcessing = false;
   isRefreshing = false;
+  openMenuId: string | null = null;
 
-  // Status options
+  // Modal refund
+  showRefundModal = false;
+  refundingPayment: AdminPayment | null = null;
+  refundAmount: number | null = null;
+  refundReason = '';
+
+  // Modal cancel subscription
+  showCancelModal = false;
+  cancellingSubscription: AdminSubscription | null = null;
+  cancelReason = '';
+
+  couponForm: FormGroup;
+
   paymentStatusOptions = [
     { value: '', label: 'Tous les statuts' },
-    { value: 'pending', label: 'En attente' },
+    { value: 'pending',   label: 'En attente' },
     { value: 'completed', label: 'Complété' },
-    { value: 'failed', label: 'Échoué' },
+    { value: 'failed',    label: 'Échoué' },
     { value: 'cancelled', label: 'Annulé' },
-    { value: 'refunded', label: 'Remboursé' }
+    { value: 'refunded',  label: 'Remboursé' }
   ];
 
-  subscriptionStatusOptions = [
-    { value: '', label: 'Tous les statuts' },
-    { value: 'active', label: 'Actif' },
-    { value: 'inactive', label: 'Inactif' },
-    { value: 'cancelled', label: 'Annulé' },
-    { value: 'expired', label: 'Expiré' }
-  ];
-
-  constructor(private store: Store) {}
+  constructor(
+    private store: Store,
+    private fb: FormBuilder,
+    private paymentsService: AdminPaymentsService,
+    private toastr: ToastrService
+  ) {
+    this.couponForm = this.fb.group({
+      name:        ['', Validators.required],
+      code:        ['', Validators.required],
+      description: [''],
+      type:        ['percentage', Validators.required],
+      value:       [0, [Validators.required, Validators.min(0)]],
+      usageLimit:  [null],
+      startDate:   [null],
+      endDate:     [null],
+      isActive:    [true]
+    });
+  }
 
   ngOnInit(): void {
     this.loadData();
@@ -73,230 +90,199 @@ export class AdminPaymentsComponent implements OnInit, OnDestroy {
     ]);
   }
 
-  onTabChange(tab: string): void {
-    this.selectedTab = tab;
+  onTabChange(tab: string): void { this.selectedTab = tab; }
+
+  onRefreshData(): void {
+    this.isRefreshing = true;
+    this.store.dispatch(new AdminPaymentsAction.RefreshData());
+    setTimeout(() => this.isRefreshing = false, 1000);
   }
 
-  onCreateItem(): void {
-    this.showCreateModal = true;
+  onProcessPendingPayments(): void {
+    if (!confirm('Traiter tous les paiements en attente ?')) return;
+    this.isProcessing = true;
+    this.store.dispatch(new AdminPaymentsAction.ProcessPendingPayments());
+    setTimeout(() => this.isProcessing = false, 2000);
   }
 
-  onEditItem(item: AdminPayment | AdminSubscription | AdminCoupon): void {
-    this.selectedItem = item;
-    this.showEditModal = true;
-  }
-
-  onDeleteItem(item: AdminCoupon): void {
-    if (confirm(`Êtes-vous sûr de vouloir supprimer ce coupon "${item.code}" ?`)) {
-      this.store.dispatch(new AdminPaymentsAction.DeleteCoupon(item._id));
-    }
-  }
-
+  // Payments
   onRefundPayment(payment: AdminPayment): void {
-    const refundAmount = prompt('Montant à rembourser (laisser vide pour remboursement total):', payment.amount.toString());
-    if (refundAmount !== null) {
-      const amount = refundAmount ? parseFloat(refundAmount) : undefined;
-      const reason = prompt('Raison du remboursement:');
-      // Dispatch refund action
-      console.log('Refund payment:', payment._id, { amount, reason });
-    }
+    this.refundingPayment = payment;
+    this.refundAmount = null;
+    this.refundReason = '';
+    this.showRefundModal = true;
+  }
+
+  confirmRefund(): void {
+    if (!this.refundingPayment) return;
+    const amount = this.refundAmount || undefined;
+    const reason = this.refundReason.trim() || 'Remboursement administratif';
+    this.showRefundModal = false;
+    this.paymentsService.refundPayment(this.refundingPayment._id, { amount, reason })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.toastr.success('Remboursement effectué');
+          this.store.dispatch(new AdminPaymentsAction.LoadPayments());
+        },
+        error: () => this.toastr.error('Erreur lors du remboursement')
+      });
+    this.refundingPayment = null;
+  }
+
+  cancelRefund(): void {
+    this.showRefundModal = false;
+    this.refundingPayment = null;
+  }
+
+  // Filters
+  paymentSearchTerm = '';
+  paymentStatusFilter = '';
+
+  onPaymentSearch(event: Event): void {
+    this.paymentSearchTerm = (event.target as HTMLInputElement).value;
+  }
+
+  onPaymentStatusFilter(event: Event): void {
+    this.paymentStatusFilter = (event.target as HTMLSelectElement).value;
+    this.store.dispatch(new AdminPaymentsAction.LoadPayments({ status: this.paymentStatusFilter }));
   }
 
   onCancelSubscription(subscription: AdminSubscription): void {
-    const reason = prompt('Raison de l\'annulation:');
-    if (reason !== null) {
-      // Dispatch cancel subscription action
-      console.log('Cancel subscription:', subscription._id, reason);
+    this.cancellingSubscription = subscription;
+    this.cancelReason = '';
+    this.showCancelModal = true;
+  }
+
+  confirmCancelSubscription(): void {
+    if (!this.cancellingSubscription) return;
+    const reason = this.cancelReason.trim() || 'Annulation administrative';
+    this.showCancelModal = false;
+    this.paymentsService.cancelSubscription(this.cancellingSubscription._id, reason)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.toastr.success('Abonnement annulé');
+          this.store.dispatch(new AdminPaymentsAction.LoadSubscriptions());
+        },
+        error: () => this.toastr.error('Erreur lors de l\'annulation')
+      });
+    this.cancellingSubscription = null;
+  }
+
+  cancelCancelSubscription(): void {
+    this.showCancelModal = false;
+    this.cancellingSubscription = null;
+  }
+
+  // Coupons
+  onCreateCoupon(): void {
+    this.editingCoupon = null;
+    this.couponForm.reset({ type: 'percentage', value: 0, isActive: true });
+    this.showCouponModal = true;
+  }
+
+  onEditCoupon(coupon: AdminCoupon): void {
+    this.editingCoupon = coupon;
+    this.couponForm.patchValue({
+      name:        coupon.name,
+      code:        coupon.code,
+      description: coupon.description,
+      type:        coupon.type,
+      value:       coupon.value,
+      usageLimit:  coupon.usageLimit,
+      startDate:   coupon.startDate ? new Date(coupon.startDate).toISOString().split('T')[0] : null,
+      endDate:     coupon.endDate   ? new Date(coupon.endDate).toISOString().split('T')[0]   : null,
+      isActive:    coupon.isActive
+    });
+    this.showCouponModal = true;
+  }
+
+  onSaveCoupon(): void {
+    if (this.couponForm.invalid) {
+      this.couponForm.markAllAsTouched();
+      return;
     }
+    const data = this.couponForm.value;
+    if (this.editingCoupon) {
+      this.store.dispatch(new AdminPaymentsAction.UpdateCoupon(this.editingCoupon._id, data));
+    } else {
+      this.store.dispatch(new AdminPaymentsAction.CreateCoupon(data));
+    }
+    this.showCouponModal = false;
+    this.editingCoupon = null;
+  }
+
+  onDeleteCoupon(coupon: AdminCoupon): void {
+    if (!confirm(`Supprimer le coupon "${coupon.code}" ?`)) return;
+    this.store.dispatch(new AdminPaymentsAction.DeleteCoupon(coupon._id));
   }
 
   onToggleCouponStatus(coupon: AdminCoupon): void {
     this.store.dispatch(new AdminPaymentsAction.UpdateCoupon(coupon._id, { isActive: !coupon.isActive }));
   }
 
-  onProcessPendingPayments(): void {
-    if (confirm('Traiter tous les paiements en attente ?')) {
-      this.isProcessing = true;
-      this.store.dispatch(new AdminPaymentsAction.ProcessPendingPayments());
-      // Simuler un délai pour l'UI
-      setTimeout(() => {
-        this.isProcessing = false;
-      }, 2000);
-    }
+  onCloseCouponModal(): void {
+    this.showCouponModal = false;
+    this.editingCoupon = null;
   }
 
-  onRefreshData(): void {
-    this.isRefreshing = true;
-    this.store.dispatch(new AdminPaymentsAction.RefreshData());
-    // Simuler un délai pour l'UI
-    setTimeout(() => {
-      this.isRefreshing = false;
-    }, 1000);
+  toggleMenu(id: string): void {
+    this.openMenuId = this.openMenuId === id ? null : id;
   }
 
-  onCloseModal(): void {
-    this.showCreateModal = false;
-    this.showEditModal = false;
-    this.selectedItem = null;
-  }
-
-  onViewPaymentDetails(payment: AdminPayment): void {
-    // TODO: Implémenter la vue détaillée du paiement
-    console.log('Voir détails du paiement:', payment);
-  }
-
-  onViewSubscriptionDetails(subscription: AdminSubscription): void {
-    // TODO: Implémenter la vue détaillée de l'abonnement
-    console.log('Voir détails de l\'abonnement:', subscription);
-  }
-
-  onViewCouponDetails(coupon: AdminCoupon): void {
-    // TODO: Implémenter la vue détaillée du coupon
-    console.log('Voir détails du coupon:', coupon);
-  }
-
-  onEditCoupon(coupon: AdminCoupon): void {
-    this.selectedItem = coupon;
-    this.showEditModal = true;
-  }
-
-  onDeleteCoupon(coupon: AdminCoupon): void {
-    if (confirm(`Êtes-vous sûr de vouloir supprimer ce coupon "${coupon.code}" ?`)) {
-      this.store.dispatch(new AdminPaymentsAction.DeleteCoupon(coupon._id));
-    }
-  }
-
-  onItemCreated(): void {
-    this.onCloseModal();
-    this.loadData();
-  }
-
-  onItemUpdated(): void {
-    this.onCloseModal();
-    this.loadData();
-  }
-
-  getPaymentStatusColor(status: string): string {
-    switch (status) {
-      case 'completed':
-        return 'success';
-      case 'pending':
-        return 'info';
-      case 'failed':
-        return 'danger';
-      case 'cancelled':
-        return 'secondary';
-      case 'refunded':
-        return 'warning';
-      default:
-        return 'secondary';
-    }
+  getPaymentStatusClasses(status: string): string {
+    const map: Record<string, string> = {
+      completed: 'admin-badge-success',
+      pending:   'admin-badge-warning',
+      failed:    'admin-badge-danger',
+      cancelled: 'admin-badge-secondary',
+      refunded:  'admin-badge-info'
+    };
+    return map[status] || 'admin-badge-secondary';
   }
 
   getPaymentStatusLabel(status: string): string {
-    switch (status) {
-      case 'completed':
-        return 'Complété';
-      case 'pending':
-        return 'En attente';
-      case 'failed':
-        return 'Échoué';
-      case 'cancelled':
-        return 'Annulé';
-      case 'refunded':
-        return 'Remboursé';
-      default:
-        return status;
-    }
-  }
-
-  getSubscriptionStatusColor(status: string): string {
-    switch (status) {
-      case 'active':
-        return 'admin-badge-success';
-      case 'inactive':
-        return 'admin-badge-secondary';
-      case 'cancelled':
-        return 'admin-badge-danger';
-      case 'expired':
-        return 'admin-badge-warning';
-      default:
-        return 'admin-badge-secondary';
-    }
-  }
-
-  getSubscriptionStatusLabel(status: string): string {
-    switch (status) {
-      case 'active':
-        return 'Actif';
-      case 'inactive':
-        return 'Inactif';
-      case 'cancelled':
-        return 'Annulé';
-      case 'expired':
-        return 'Expiré';
-      default:
-        return status;
-    }
-  }
-
-  trackByPaymentId(index: number, payment: AdminPayment): string {
-    return payment._id;
-  }
-
-  trackBySubscriptionId(index: number, subscription: AdminSubscription): string {
-    return subscription._id;
-  }
-
-  trackByCouponId(index: number, coupon: AdminCoupon): string {
-    return coupon._id;
-  }
-
-  // Menu state
-  openMenuId: string | null = null;
-
-  togglePaymentMenu(paymentId: string): void {
-    this.openMenuId = this.openMenuId === paymentId ? null : paymentId;
-  }
-
-  toggleSubscriptionMenu(subscriptionId: string): void {
-    this.openMenuId = this.openMenuId === subscriptionId ? null : subscriptionId;
-  }
-
-  toggleCouponMenu(couponId: string): void {
-    this.openMenuId = this.openMenuId === couponId ? null : couponId;
-  }
-
-  // Status helper methods
-  getPaymentStatusClasses(status: string): string {
-    switch (status) {
-      case 'completed':
-        return 'admin-badge-success';
-      case 'pending':
-        return 'admin-badge-warning';
-      case 'failed':
-        return 'admin-badge-danger';
-      case 'cancelled':
-        return 'admin-badge-secondary';
-      case 'refunded':
-        return 'admin-badge-info';
-      default:
-        return 'admin-badge-secondary';
-    }
+    const map: Record<string, string> = {
+      completed: 'Complété', pending: 'En attente',
+      failed: 'Échoué', cancelled: 'Annulé', refunded: 'Remboursé'
+    };
+    return map[status] || status;
   }
 
   getSubscriptionStatusClasses(status: string): string {
-    switch (status) {
-      case 'active':
-        return 'admin-badge-success';
-      case 'inactive':
-        return 'admin-badge-secondary';
-      case 'cancelled':
-        return 'admin-badge-danger';
-      case 'expired':
-        return 'admin-badge-warning';
-      default:
-        return 'admin-badge-secondary';
-    }
+    const map: Record<string, string> = {
+      active: 'admin-badge-success', inactive: 'admin-badge-secondary',
+      cancelled: 'admin-badge-danger', expired: 'admin-badge-warning'
+    };
+    return map[status] || 'admin-badge-secondary';
+  }
+
+  getSubscriptionStatusLabel(status: string): string {
+    const map: Record<string, string> = {
+      active: 'Actif', inactive: 'Inactif', cancelled: 'Annulé', expired: 'Expiré'
+    };
+    return map[status] || status;
+  }
+
+  trackByPaymentId(_: number, p: AdminPayment): string      { return p._id; }
+  trackBySubscriptionId(_: number, s: AdminSubscription): string { return s._id; }
+  trackByCouponId(_: number, c: AdminCoupon): string        { return c._id; }
+
+  couponSearchTerm = '';
+
+  onSubscriptionStatusFilter(event: Event): void {
+    const status = (event.target as HTMLSelectElement).value;
+    this.store.dispatch(new AdminPaymentsAction.LoadSubscriptions({ status }));
+  }
+
+  filterCoupons(coupons: AdminCoupon[]): AdminCoupon[] {
+    if (!coupons) return [];
+    if (!this.couponSearchTerm) return coupons;
+    const term = this.couponSearchTerm.toLowerCase();
+    return coupons.filter(c =>
+      c.code?.toLowerCase().includes(term) ||
+      c.name?.toLowerCase().includes(term)
+    );
   }
 }

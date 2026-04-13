@@ -4297,6 +4297,7 @@
     "MENU": {
       "DASHBOARD": "Dashboard",
       "USERS": "Users",
+      "SUBSCRIPTIONS": "Subscriptions",
       "ROLES_PERMISSIONS": "Roles & Permissions",
       "GEOGRAPHY": "Geography",
       "PAYMENTS": "Payments",
@@ -4307,6 +4308,7 @@
     "DESCRIPTIONS": {
       "DASHBOARD": "System overview",
       "USERS": "User management",
+      "SUBSCRIPTIONS": "User subscriptions and payments",
       "ROLES_PERMISSIONS": "Roles and permissions management",
       "GEOGRAPHY": "Countries, cities and currencies",
       "PAYMENTS": "Payments and subscriptions management",
@@ -4317,6 +4319,8 @@
     "BREADCRUMBS": {
       "DASHBOARD": "Dashboard",
       "USERS": "Users",
+      "USER_DETAILS": "User details",
+      "SUBSCRIPTIONS": "Subscriptions",
       "ROLES": "Roles",
       "GEOGRAPHY": "Geography",
       "PAYMENTS": "Payments",
@@ -4327,6 +4331,8 @@
     "PAGE_TITLES": {
       "DASHBOARD": "Dashboard",
       "USERS": "User management",
+      "USER_DETAILS": "User details",
+      "SUBSCRIPTIONS": "Subscription management",
       "ROLES": "Roles and permissions",
       "GEOGRAPHY": "Geographic management",
       "PAYMENTS": "Payment management",

@@ -5,8 +5,45 @@ export interface DashboardStats {
   users: UserOverview;
   properties: PropertyOverview;
   payments: PaymentOverview;
+  subscriptions: SubscriptionOverview;
+  roles: RolesOverview;
+  geography: GeographyOverview;
+  coupons: CouponsOverview;
   system: SystemOverview;
+  systemHealth: any;
   charts: DashboardCharts;
+}
+
+export interface SubscriptionOverview {
+  total: number;
+  free: number;
+  premium: number;
+  active: number;
+  suspended: number;
+  totalRevenue: number;
+  monthlyRevenue: number;
+  unpaidAmount: number;
+  unpaidCount: number;
+  topMetrics: any;
+}
+
+export interface RolesOverview {
+  total: number;
+  active: number;
+  permissions: number;
+}
+
+export interface GeographyOverview {
+  countries: number;
+  cities: number;
+  currencies: number;
+}
+
+export interface CouponsOverview {
+  total: number;
+  active: number;
+  totalUsages: number;
+  totalDiscount: number;
 }
 
 export interface OverviewStats {
@@ -86,6 +123,16 @@ export interface StatusData {
 export interface SystemHealth {
   status: 'healthy' | 'warning' | 'critical';
   score: number;
+  uptime: number;
+  uptimeFormatted?: string;
+  memory?: {
+    heapUsed: number;
+    heapTotal: number;
+    rss: number;
+    unit: string;
+  };
+  nodeVersion?: string;
+  platform?: string;
   services: ServiceHealth[];
   alerts: SystemAlert[];
   lastCheck: Date;
@@ -113,6 +160,7 @@ export interface RecentActivity {
   type: 'user' | 'property' | 'payment' | 'system';
   action: string;
   description: string;
+  userName?: string;
   user: {
     id: string;
     name: string;
@@ -148,6 +196,7 @@ export interface AdminDashboardStateModel {
   systemHealth: SystemHealth | null;
   recentActivities: RecentActivity[];
   performanceMetrics: PerformanceMetrics | null;
+  financialData: any | null;
   loading: boolean;
   error: any;
   lastUpdated: Date | null;

@@ -228,28 +228,32 @@
             
             <div class="admin-form-group" *ngIf="settingsForm.get('emailProvider')?.value === 'smtp'">
               <label>Serveur SMTP</label>
-              <ibm-text-input formControlName="smtpHost" placeholder="smtp.gmail.com"></ibm-text-input>
+              <input type="text" formControlName="smtpHost" placeholder="smtp.gmail.com"
+                     class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500">
             </div>
             
             <div class="admin-form-group" *ngIf="settingsForm.get('emailProvider')?.value === 'smtp'">
               <label>Port SMTP</label>
-              <ibm-number-input formControlName="smtpPort"></ibm-number-input>
+              <input type="number" formControlName="smtpPort"
+                     class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500">
             </div>
             
             <div class="admin-form-group">
               <label>Email expéditeur</label>
-              <ibm-text-input formControlName="fromEmail" placeholder="noreply@ndiye.com"></ibm-text-input>
+              <input type="email" formControlName="fromEmail" placeholder="noreply@ndewa360.com"
+                     class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500">
             </div>
             
             <div class="admin-form-group">
               <label>Nom expéditeur</label>
-              <ibm-text-input formControlName="fromName" placeholder="Ndiye"></ibm-text-input>
+              <input type="text" formControlName="fromName" placeholder="Ndewa360"
+                     class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500">
             </div>
           </div>
           
           <div class="admin-form-actions">
-            <button type="button" ibmButton="secondary" (click)="onTestEmailConfiguration()">
-              <svg ibmIcon="email" size="16"></svg>
+            <button type="button" class="admin-btn admin-btn-secondary" (click)="onTestEmailConfiguration()">
+              <i class="fas fa-envelope"></i>
               Tester la configuration
             </button>
           </div>
@@ -286,33 +290,137 @@
           
           <div class="admin-form-toggles">
             <div class="admin-toggle-group">
-              <ibm-toggle formControlName="passwordRequireUppercase">
-                <label>Majuscules obligatoires</label>
-              </ibm-toggle>
+              <div class="flex items-center justify-between">
+                <label class="text-sm font-medium text-gray-700">Majuscules obligatoires</label>
+                <button type="button" class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out"
+                        [class]="settingsForm.get('passwordRequireUppercase')?.value ? 'bg-yellow-600' : 'bg-gray-200'"
+                        (click)="toggleSetting('passwordRequireUppercase')">
+                  <span class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+                        [class]="settingsForm.get('passwordRequireUppercase')?.value ? 'translate-x-5' : 'translate-x-0'"></span>
+                </button>
+              </div>
             </div>
-            
             <div class="admin-toggle-group">
-              <ibm-toggle formControlName="passwordRequireLowercase">
-                <label>Minuscules obligatoires</label>
-              </ibm-toggle>
+              <div class="flex items-center justify-between">
+                <label class="text-sm font-medium text-gray-700">Chiffres obligatoires</label>
+                <button type="button" class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out"
+                        [class]="settingsForm.get('passwordRequireNumbers')?.value ? 'bg-yellow-600' : 'bg-gray-200'"
+                        (click)="toggleSetting('passwordRequireNumbers')">
+                  <span class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+                        [class]="settingsForm.get('passwordRequireNumbers')?.value ? 'translate-x-5' : 'translate-x-0'"></span>
+                </button>
+              </div>
             </div>
-            
             <div class="admin-toggle-group">
-              <ibm-toggle formControlName="passwordRequireNumbers">
-                <label>Chiffres obligatoires</label>
-              </ibm-toggle>
+              <div class="flex items-center justify-between">
+                <label class="text-sm font-medium text-gray-700">Authentification à deux facteurs</label>
+                <button type="button" class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out"
+                        [class]="settingsForm.get('twoFactorRequired')?.value ? 'bg-yellow-600' : 'bg-gray-200'"
+                        (click)="toggleSetting('twoFactorRequired')">
+                  <span class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+                        [class]="settingsForm.get('twoFactorRequired')?.value ? 'translate-x-5' : 'translate-x-0'"></span>
+                </button>
+              </div>
             </div>
-            
-            <div class="admin-toggle-group">
-              <ibm-toggle formControlName="passwordRequireSymbols">
-                <label>Symboles obligatoires</label>
-              </ibm-toggle>
+          </div>
+        </div>
+
+        <!-- Payment Settings -->
+        <div class="admin-settings-section" *ngIf="selectedTab === 'payment'">
+          <h3>Paramètres de paiement</h3>
+          <div class="admin-form-grid">
+            <div class="admin-form-group">
+              <label class="block text-sm font-medium text-gray-700 mb-2">Clé publique Stripe</label>
+              <input type="text" formControlName="stripePublicKey" placeholder="pk_live_..."
+                     class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500">
             </div>
-            
+            <div class="admin-form-group">
+              <label class="block text-sm font-medium text-gray-700 mb-2">Clé secrète Stripe</label>
+              <input type="password" formControlName="stripeSecretKey" placeholder="sk_live_..."
+                     class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500">
+            </div>
+          </div>
+          <div class="admin-form-toggles">
             <div class="admin-toggle-group">
-              <ibm-toggle formControlName="twoFactorRequired">
-                <label>Authentification à deux facteurs</label>
-              </ibm-toggle>
+              <div class="flex items-center justify-between">
+                <label class="text-sm font-medium text-gray-700">Activer Stripe</label>
+                <button type="button" class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out"
+                        [class]="settingsForm.get('stripeEnabled')?.value ? 'bg-yellow-600' : 'bg-gray-200'"
+                        (click)="toggleSetting('stripeEnabled')">
+                  <span class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+                        [class]="settingsForm.get('stripeEnabled')?.value ? 'translate-x-5' : 'translate-x-0'"></span>
+                </button>
+              </div>
+            </div>
+            <div class="admin-toggle-group">
+              <div class="flex items-center justify-between">
+                <label class="text-sm font-medium text-gray-700">Activer Mobile Money</label>
+                <button type="button" class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out"
+                        [class]="settingsForm.get('mobileMoneyEnabled')?.value ? 'bg-yellow-600' : 'bg-gray-200'"
+                        (click)="toggleSetting('mobileMoneyEnabled')">
+                  <span class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+                        [class]="settingsForm.get('mobileMoneyEnabled')?.value ? 'translate-x-5' : 'translate-x-0'"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notifications Settings -->
+        <div class="admin-settings-section" *ngIf="selectedTab === 'notifications'">
+          <h3>Paramètres de notifications</h3>
+          <div class="admin-form-toggles">
+            <div class="admin-toggle-group">
+              <div class="flex items-center justify-between">
+                <label class="text-sm font-medium text-gray-700">Notifications email</label>
+                <button type="button" class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out"
+                        [class]="settingsForm.get('emailNotificationsEnabled')?.value ? 'bg-yellow-600' : 'bg-gray-200'"
+                        (click)="toggleSetting('emailNotificationsEnabled')">
+                  <span class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+                        [class]="settingsForm.get('emailNotificationsEnabled')?.value ? 'translate-x-5' : 'translate-x-0'"></span>
+                </button>
+              </div>
+            </div>
+            <div class="admin-toggle-group">
+              <div class="flex items-center justify-between">
+                <label class="text-sm font-medium text-gray-700">Notifications SMS</label>
+                <button type="button" class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out"
+                        [class]="settingsForm.get('smsNotificationsEnabled')?.value ? 'bg-yellow-600' : 'bg-gray-200'"
+                        (click)="toggleSetting('smsNotificationsEnabled')">
+                  <span class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+                        [class]="settingsForm.get('smsNotificationsEnabled')?.value ? 'translate-x-5' : 'translate-x-0'"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Integrations Settings -->
+        <div class="admin-settings-section" *ngIf="selectedTab === 'integrations'">
+          <h3>Intégrations</h3>
+          <div class="admin-form-grid">
+            <div class="admin-form-group">
+              <label class="block text-sm font-medium text-gray-700 mb-2">Client ID PayPal</label>
+              <input type="text" formControlName="paypalClientId" placeholder="AXxx..."
+                     class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500">
+            </div>
+            <div class="admin-form-group">
+              <label class="block text-sm font-medium text-gray-700 mb-2">Secret PayPal</label>
+              <input type="password" formControlName="paypalClientSecret" placeholder="EXxx..."
+                     class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500">
+            </div>
+          </div>
+          <div class="admin-form-toggles">
+            <div class="admin-toggle-group">
+              <div class="flex items-center justify-between">
+                <label class="text-sm font-medium text-gray-700">Activer PayPal</label>
+                <button type="button" class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out"
+                        [class]="settingsForm.get('paypalEnabled')?.value ? 'bg-yellow-600' : 'bg-gray-200'"
+                        (click)="toggleSetting('paypalEnabled')">
+                  <span class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+                        [class]="settingsForm.get('paypalEnabled')?.value ? 'translate-x-5' : 'translate-x-0'"></span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -341,28 +449,27 @@
           
           <div class="admin-form-toggles">
             <div class="admin-toggle-group">
-              <ibm-toggle formControlName="backupsEnabled">
-                <label>Sauvegardes automatiques</label>
-              </ibm-toggle>
+              <div class="flex items-center justify-between">
+                <label class="text-sm font-medium text-gray-700">Sauvegardes automatiques</label>
+                <button type="button" class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out"
+                        [class]="settingsForm.get('backupsEnabled')?.value ? 'bg-yellow-600' : 'bg-gray-200'"
+                        (click)="toggleSetting('backupsEnabled')">
+                  <span class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+                        [class]="settingsForm.get('backupsEnabled')?.value ? 'translate-x-5' : 'translate-x-0'"></span>
+                </button>
+              </div>
             </div>
           </div>
           
           <div class="admin-form-actions">
-            <button type="button" ibmButton="secondary" (click)="onCreateBackup()">
-              <svg ibmIcon="save" size="16"></svg>
-              Créer une sauvegarde
+            <button type="button" class="admin-btn admin-btn-secondary" (click)="onCreateBackup()">
+              <i class="fas fa-save"></i> Créer une sauvegarde
             </button>
-            
-            <button type="button" ibmButton="secondary" (click)="onClearCache()">
-              <svg ibmIcon="clean" size="16"></svg>
-              Vider le cache
+            <button type="button" class="admin-btn admin-btn-secondary" (click)="onClearCache()">
+              <i class="fas fa-broom"></i> Vider le cache
             </button>
-            
-            <button 
-              type="button" 
-              ibmButton="danger" 
-              (click)="onToggleMaintenanceMode()">
-              <svg ibmIcon="warning" size="16"></svg>
+            <button type="button" class="admin-btn admin-btn-danger" (click)="onToggleMaintenanceMode()">
+              <i class="fas fa-tools"></i>
               {{ settingsForm.get('maintenanceMode')?.value ? 'Désactiver' : 'Activer' }} la maintenance
             </button>
           </div>

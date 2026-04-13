@@ -182,4 +182,43 @@ export class AdminSettingsState {
       new AdminSettingsAction.LoadSystemInfo()
     ]);
   }
+
+  @Action(AdminSettingsAction.BackupDatabase)
+  backupDatabase(ctx: StateContext<AdminSettingsStateModel>) {
+    ctx.patchState({ loading: true });
+    return this.adminSettingsService.createBackup().pipe(
+      tap((result) => {
+        ctx.patchState({ loading: false });
+        ctx.dispatch(new AdminSettingsAction.BackupDatabaseSuccess(result));
+      }),
+      catchError(error => {
+        ctx.patchState({ loading: false, error: error.message });
+        ctx.dispatch(new AdminSettingsAction.BackupDatabaseFailure(error));
+        return throwError(error);
+      })
+    );
+  }
+
+  @Action(AdminSettingsAction.TestEmailConfiguration)
+  testEmailConfiguration(ctx: StateContext<AdminSettingsStateModel>, action: AdminSettingsAction.TestEmailConfiguration) {
+    return this.adminSettingsService.testEmailConfiguration(action.testEmail).pipe(
+      catchError(error => throwError(error))
+    );
+  }
+
+  @Action(AdminSettingsAction.ClearCache)
+  clearCache(ctx: StateContext<AdminSettingsStateModel>) {
+    ctx.patchState({ loading: true });
+    return this.adminSettingsService.clearCache().pipe(
+      tap((result) => {
+        ctx.patchState({ loading: false });
+        ctx.dispatch(new AdminSettingsAction.ClearCacheSuccess(result));
+      }),
+      catchError(error => {
+        ctx.patchState({ loading: false, error: error.message });
+        ctx.dispatch(new AdminSettingsAction.ClearCacheFailure(error));
+        return throwError(error);
+      })
+    );
+  }
 }

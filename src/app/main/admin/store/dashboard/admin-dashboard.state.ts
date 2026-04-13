@@ -19,6 +19,7 @@ import { AdminDashboardService } from '../../services/admin-dashboard.service';
     systemHealth: null,
     recentActivities: [],
     performanceMetrics: null,
+    financialData: null,
     loading: false,
     error: null,
     lastUpdated: null
@@ -48,6 +49,11 @@ export class AdminDashboardState {
   @Selector()
   static selectPerformanceMetrics(state: AdminDashboardStateModel): PerformanceMetrics | null {
     return state.performanceMetrics;
+  }
+
+  @Selector()
+  static selectFinancialData(state: AdminDashboardStateModel): any {
+    return state.financialData;
   }
 
   @Selector()
@@ -164,6 +170,20 @@ export class AdminDashboardState {
     });
   }
 
+  @Action(AdminDashboardAction.LoadFinancialDashboard)
+  loadFinancialDashboard(ctx: StateContext<AdminDashboardStateModel>, action: AdminDashboardAction.LoadFinancialDashboard) {
+    ctx.patchState({ loading: true, error: null });
+    return this.adminDashboardService.getFinancialDashboard(action.period).pipe(
+      tap(data => {
+        ctx.patchState({ financialData: data, loading: false, error: null, lastUpdated: new Date() });
+      }),
+      catchError(error => {
+        ctx.patchState({ loading: false, error });
+        return throwError(error);
+      })
+    );
+  }
+
   @Action(AdminDashboardAction.SetLoading)
   setLoading(ctx: StateContext<AdminDashboardStateModel>, action: AdminDashboardAction.SetLoading) {
     ctx.patchState({ loading: action.loading });
@@ -176,6 +196,7 @@ export class AdminDashboardState {
       systemHealth: null,
       recentActivities: [],
       performanceMetrics: null,
+      financialData: null,
       error: null,
       lastUpdated: null
     });
@@ -188,5 +209,21 @@ export class AdminDashboardState {
       new AdminDashboardAction.LoadSystemHealth(),
       new AdminDashboardAction.LoadRecentActivities(10)
     ]);
+  }
+
+  @Action(AdminDashboardAction.ExportDashboardReport)
+  exportDashboardReport(ctx: StateContext<AdminDashboardStateModel>, action: AdminDashboardAction.ExportDashboardReport) {
+    return this.adminDashboardService.exportDashboardReport(action.format).pipe(
+      tap((result) => {
+        if (result?.downloadUrl) {
+          window.open(result.downloadUrl, '_blank');
+        }
+        ctx.dispatch(new AdminDashboardAction.ExportDashboardReportSuccess(result?.downloadUrl || ''));
+      }),
+      catchError(error => {
+        ctx.dispatch(new AdminDashboardAction.ExportDashboardReportFailure(error));
+        return throwError(error);
+      })
+    );
   }
 }

@@ -1,394 +1,264 @@
-<div class="min-h-screen bg-gray-50">
+<div class="admin-users-container">
   <!-- Header -->
-  <div class="bg-white shadow-sm border-b border-gray-200">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="user-header flex items-center justify-between py-6">
-        <div class="flex items-center space-x-4">
-          <button 
-            (click)="goBack()"
-            class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-            </svg>
-            Retour
-          </button>
-          
-          <div class="flex items-center space-x-4" *ngIf="user">
-            <div class="relative">
-              <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center text-white text-xl font-bold">
-                {{ user.firstName.charAt(0) }}{{ user.lastName.charAt(0) }}
-              </div>
-              <div class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-white"
-                   [class]="user.isActive ? 'bg-green-500' : 'bg-red-500'"></div>
-            </div>
-            
-            <div>
-              <h1 class="text-2xl font-bold text-gray-900">{{ user.firstName }} {{ user.lastName }}</h1>
-              <p class="text-gray-600">{{ user.email }}</p>
-              <div class="flex items-center space-x-2 mt-2">
-                <span class="bg-blue-100 text-blue-800 px-2.5 py-0.5 rounded-full text-xs font-medium">
-                  {{ user.userType }}
-                </span>
-                <span [ngClass]="getStatusBadgeClass(user.subscription?.accountStatus)">
-                  {{ getStatusLabel(user.subscription?.accountStatus) }}
-                </span>
-                <span [ngClass]="getPlanBadgeClass(user.subscription?.plan)">
-                  {{ getPlanLabel(user.subscription?.plan) }}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div class="flex items-center space-x-3" *ngIf="user">
-          <button 
-            (click)="startTour()"
-            class="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-            Aide
-          </button>
-          
-          <button 
-            (click)="testBackendConnection()"
-            class="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-            Test Backend
-          </button>
-        </div>
+  <div class="admin-page-header">
+    <div class="admin-header-content">
+      <div class="admin-header-text">
+        <button class="admin-btn admin-btn-ghost admin-btn-sm" (click)="goBack()">
+          <i class="fas fa-arrow-left"></i> Retour
+        </button>
+        <h1 class="admin-page-title" *ngIf="user">
+          {{ user.firstName }} {{ user.lastName }}
+        </h1>
+      </div>
+      <div class="admin-header-actions" *ngIf="user">
+        <button class="admin-btn admin-btn-secondary" (click)="refreshSubscription()">
+          <i class="fas fa-sync-alt"></i> Actualiser
+        </button>
+        <button
+          class="admin-btn admin-btn-primary"
+          *ngIf="user.subscription?.plan === 'free'"
+          (click)="upgradeToPremium()">
+          <i class="fas fa-crown"></i> Upgrade Premium
+        </button>
+        <button
+          class="admin-btn admin-btn-warning"
+          *ngIf="user.subscription?.accountStatus === 'active'"
+          (click)="suspendAccount()">
+          <i class="fas fa-pause"></i> Suspendre
+        </button>
+        <button
+          class="admin-btn admin-btn-success"
+          *ngIf="user.subscription?.accountStatus === 'suspended'"
+          (click)="reactivateAccount()">
+          <i class="fas fa-play"></i> Réactiver
+        </button>
       </div>
     </div>
   </div>
 
-  <!-- Loading State -->
-  <div *ngIf="isLoading" class="flex items-center justify-center min-h-96">
-    <div class="text-center">
-      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-      <p class="mt-4 text-slate-600">Chargement des détails...</p>
-    </div>
-  </div>
-
-  <!-- Content -->
-  <div *ngIf="!isLoading && user" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    
-    <!-- Indicateur de source des données -->
-    <div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
-      <div class="flex items-center">
-        <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        <span class="text-sm font-medium text-green-800">
-          ✅ Données chargées depuis le backend - ID: {{ user._id }} - Dernière mise à jour: {{ getCurrentDate() }}
-        </span>
-      </div>
-    </div>
-    
-    <!-- Section de debug -->
-    <div class="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-      <details>
-        <summary class="cursor-pointer text-sm font-medium text-yellow-800 mb-2">🔍 Informations de debug (cliquez pour développer)</summary>
-        <div class="mt-2 text-xs text-yellow-700 space-y-1">
-          <p><strong>URL API:</strong> {{ getApiUrl() }}</p>
-          <p><strong>ID utilisateur demandé:</strong> {{ userId }}</p>
-          <p><strong>ID utilisateur reçu:</strong> {{ user._id }}</p>
-          <p><strong>Email:</strong> {{ user.email }}</p>
-          <p><strong>Nom complet:</strong> {{ user.firstName }} {{ user.lastName }}</p>
-          <p><strong>Date création:</strong> {{ user.createdAt }}</p>
-          <p><strong>Abonnement ID:</strong> {{ user.subscription?._id || 'N/A' }}</p>
-          <p><strong>Propriétés total:</strong> {{ (user.properties?.total) || 0 }}</p>
-          <p><strong>Revenus total:</strong> {{ (user.financialSummary?.totalRevenue) || 0 }}</p>
-          <p><strong>Vérification données:</strong> 
-            <span [class]="getDataValidationClass()" (click)="showValidationDetails()" class="cursor-pointer hover:underline">
-              {{ getDataValidationMessage() }}
-            </span>
-          </p>
-        </div>
-      </details>
-    </div>
-
-    <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-      <div class="bg-white rounded-lg shadow p-6">
-        <div class="flex items-center">
-          <div class="flex-shrink-0">
-            <div class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center">
-              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-              </svg>
-            </div>
-          </div>
-          <div class="ml-4">
-            <p class="text-2xl font-bold text-gray-900">{{ (user.properties?.total) || 0 }}</p>
-            <p class="text-sm font-medium text-gray-600">Propriétés</p>
-            <p class="text-xs text-gray-500">{{ (user.properties?.active) || 0 }} actives</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="bg-white rounded-lg shadow p-6">
-        <div class="flex items-center">
-          <div class="flex-shrink-0">
-            <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center">
-              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M10 3v4h4V3m-4 4h4v4h-4V7z"></path>
-              </svg>
-            </div>
-          </div>
-          <div class="ml-4">
-            <p class="text-2xl font-bold text-gray-900">{{ (user.properties?.totalUnits) || 0 }}</p>
-            <p class="text-sm font-medium text-gray-600">Unités Total</p>
-            <p class="text-xs text-gray-500">{{ (user.properties?.occupiedUnits) || 0 }} occupées</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="bg-white rounded-lg shadow p-6">
-        <div class="flex items-center">
-          <div class="flex-shrink-0">
-            <div class="w-12 h-12 bg-yellow-500 rounded-lg flex items-center justify-center">
-              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
-              </svg>
-            </div>
-          </div>
-          <div class="ml-4">
-            <p class="text-2xl font-bold text-gray-900">{{ formatCurrency((user.financialSummary?.totalRevenue) || 0) }}</p>
-            <p class="text-sm font-medium text-gray-600">Revenus Total</p>
-            <p class="text-xs text-gray-500">{{ formatCurrency((user.financialSummary?.monthlyRevenue) || 0) }}/mois</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="bg-white rounded-lg shadow p-6">
-        <div class="flex items-center">
-          <div class="flex-shrink-0">
-            <div class="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center">
-              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-              </svg>
-            </div>
-          </div>
-          <div class="ml-4">
-            <p class="text-2xl font-bold text-gray-900">{{ (user.financialSummary?.averageOccupancy) || 0 }}%</p>
-            <p class="text-sm font-medium text-gray-600">Taux d'Occupation</p>
-            <p class="text-xs text-gray-500">Moyenne</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Main Content Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-      <!-- Subscription Details -->
-      <div class="subscription-section bg-white rounded-lg shadow overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
-          <div class="flex items-center justify-between">
-            <h3 class="text-lg font-medium text-gray-900">Détails de Souscription</h3>
-            <button 
-              (click)="refreshSubscription()"
-              class="p-2 text-gray-400 hover:text-gray-600 rounded-md hover:bg-gray-100">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-              </svg>
-            </button>
-          </div>
-        </div>
-        <div class="p-6" *ngIf="user.subscription">
-          <div class="space-y-4">
-            <div class="flex items-center justify-between py-3 border-b border-gray-100">
-              <span class="text-sm font-medium text-gray-600">Plan:</span>
-              <span [ngClass]="getPlanBadgeClass(user.subscription.plan)">
-                {{ getPlanLabel(user.subscription.plan) }}
-              </span>
-            </div>
-            <div class="flex items-center justify-between py-3 border-b border-gray-100">
-              <span class="text-sm font-medium text-gray-600">Statut:</span>
-              <span [ngClass]="getStatusBadgeClass(user.subscription.accountStatus)">
-                {{ getStatusLabel(user.subscription.accountStatus) }}
-              </span>
-            </div>
-            <div class="flex items-center justify-between py-3 border-b border-gray-100">
-              <span class="text-sm font-medium text-gray-600">Limite propriétés:</span>
-              <span class="text-sm font-semibold text-gray-900">{{ (user.properties?.total) || 0 }} / {{ (user.subscription.propertyLimit) || 0 }}</span>
-            </div>
-            <div class="flex items-center justify-between py-3 border-b border-gray-100">
-              <span class="text-sm font-medium text-gray-600">Montant mensuel:</span>
-              <span class="text-sm font-semibold text-gray-900">{{ formatCurrency((user.subscription.monthlyAmount) || 0) }}</span>
-            </div>
-            <div class="flex items-center justify-between py-3">
-              <span class="text-sm font-medium text-gray-600">Membre depuis:</span>
-              <span class="text-sm font-semibold text-gray-900">{{ formatDate(user.subscription.createdAt) }}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Payment Status -->
-      <div class="payment-section bg-white rounded-lg shadow overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
-          <div class="flex items-center justify-between">
-            <h3 class="text-lg font-medium text-gray-900">État des Paiements</h3>
-            <button 
-              *ngIf="user.subscription?.hasUnpaidInvoices" 
-              (click)="sendPaymentReminder()"
-              class="p-2 text-gray-400 hover:text-gray-600 rounded-md hover:bg-gray-100">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-              </svg>
-            </button>
-          </div>
-        </div>
-        <div class="p-6">
-          <div class="p-5 mb-6" [ngClass]="getPaymentStatusClass()">
-            <div class="flex items-center">
-              <div class="flex-shrink-0">
-                <div class="w-12 h-12 rounded-2xl flex items-center justify-center" [class]="user.subscription?.hasUnpaidInvoices ? 'bg-red-200' : 'bg-emerald-200'">
-                  <svg class="w-7 h-7" [class]="getPaymentStatusIconColor()" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path *ngIf="!user.subscription?.hasUnpaidInvoices" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    <path *ngIf="user.subscription?.hasUnpaidInvoices" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                  </svg>
-                </div>
-              </div>
-              <div class="ml-4">
-                <h4 class="text-lg font-bold mb-1" [class]="getPaymentStatusTextColor()">{{ getPaymentStatusTitle() }}</h4>
-                <p class="text-sm font-medium" [class]="getPaymentStatusSubtitleColor()">{{ getPaymentStatusSubtitle() }}</p>
-              </div>
-            </div>
-          </div>
-          
-          <div *ngIf="user.subscription?.hasUnpaidInvoices" class="space-y-5 mb-6">
-            <div class="flex items-center justify-between py-4 border-b border-gray-200">
-              <span class="text-sm font-semibold text-gray-700 flex items-center">
-                <svg class="w-4 h-4 mr-2 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                </svg>
-                Factures impayées:
-              </span>
-              <span class="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-bold bg-gradient-to-r from-red-100 to-red-200 text-red-800 border border-red-300 shadow-sm">
-                {{ user.subscription.unpaidInvoicesCount }}
-              </span>
-            </div>
-            <div class="flex items-center justify-between py-4">
-              <span class="text-sm font-semibold text-gray-700 flex items-center">
-                <svg class="w-4 h-4 mr-2 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
-                </svg>
-                Montant impayé:
-              </span>
-              <span class="text-lg font-bold text-red-600">{{ formatCurrency(user.subscription.totalUnpaidAmount) }}</span>
-            </div>
-          </div>
-
-          <div *ngIf="user.subscription?.hasUnpaidInvoices" class="flex space-x-4">
-            <button 
-              (click)="markAsPaid()"
-              class="flex-1 inline-flex items-center justify-center px-6 py-3 border border-transparent text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-emerald-500 via-emerald-600 to-green-600 hover:from-emerald-600 hover:via-emerald-700 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5">
-              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-              Marquer payé
-            </button>
-            <button 
-              (click)="sendPaymentReminder()"
-              class="flex-1 inline-flex items-center justify-center px-6 py-3 border border-gray-300 text-sm font-semibold rounded-xl text-gray-700 bg-white hover:bg-gray-50 hover:border-amber-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5">
-              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-              </svg>
-              Rappel
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Additional Information -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      <!-- User Information -->
-      <div class="bg-white rounded-lg shadow overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
-          <h3 class="text-lg font-medium text-gray-900">Informations Complémentaires</h3>
-        </div>
-        <div class="p-6">
-          <div class="space-y-4">
-            <div class="flex items-center justify-between py-3 border-b border-gray-100">
-              <span class="text-sm font-medium text-gray-600">Téléphone:</span>
-              <span class="text-sm font-semibold text-gray-900">{{ user.phoneNumber || 'Non renseigné' }}</span>
-            </div>
-            <div class="flex items-center justify-between py-3 border-b border-gray-100">
-              <span class="text-sm font-medium text-gray-600">Type d'utilisateur:</span>
-              <span class="bg-blue-100 text-blue-800 px-2.5 py-0.5 rounded-full text-xs font-medium">
-                {{ user.userType }}
-              </span>
-            </div>
-            <div class="flex items-center justify-between py-3 border-b border-gray-100">
-              <span class="text-sm font-medium text-gray-600">Compte créé le:</span>
-              <span class="text-sm font-semibold text-gray-900">{{ formatDate(user.createdAt) }}</span>
-            </div>
-            <div class="flex items-center justify-between py-3">
-              <span class="text-sm font-medium text-gray-600">Dernière connexion:</span>
-              <span class="text-sm font-semibold text-gray-900">{{ formatDate(user.financialSummary?.lastPaymentDate) }}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Activity Summary -->
-      <div class="bg-white rounded-lg shadow overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
-          <h3 class="text-lg font-medium text-gray-900">Résumé d'Activité</h3>
-        </div>
-        <div class="p-6">
-          <div class="space-y-6">
-            <div class="flex items-center p-4 rounded-lg bg-green-50 border border-green-200">
-              <div class="flex-shrink-0">
-                <div class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center">
-                  <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-                  </svg>
-                </div>
-              </div>
-              <div class="ml-4">
-                <p class="text-sm font-medium text-green-700">Revenus Générés</p>
-                <p class="text-xl font-bold text-gray-900">{{ formatCurrency((user.financialSummary?.totalRevenue) || 0) }}</p>
-                <p class="text-sm text-green-600">{{ formatCurrency((user.financialSummary?.monthlyRevenue) || 0) }}/mois en moyenne</p>
-              </div>
-            </div>
-            
-            <div class="flex items-center p-4 rounded-lg bg-blue-50 border border-blue-200">
-              <div class="flex-shrink-0">
-                <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center">
-                  <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                  </svg>
-                </div>
-              </div>
-              <div class="ml-4">
-                <p class="text-sm font-medium text-blue-700">Portfolio Immobilier</p>
-                <p class="text-xl font-bold text-gray-900">{{ (user.properties?.total) || 0 }} propriétés</p>
-                <p class="text-sm text-blue-600">{{ (user.properties?.totalUnits) || 0 }} unités au total</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+  <!-- Loading -->
+  <div class="admin-loading-overlay" *ngIf="isLoading">
+    <div class="admin-loader">
+      <div class="admin-spinner"></div>
+      <p>Chargement des détails...</p>
     </div>
   </div>
 
   <!-- Error State -->
-  <div *ngIf="!isLoading && !user" class="flex items-center justify-center min-h-96">
-    <div class="text-center">
-      <svg class="w-16 h-16 text-red-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-      </svg>
-      <h3 class="text-lg font-semibold text-slate-900 mb-2">Utilisateur non trouvé</h3>
-      <p class="text-slate-600 mb-6">L'utilisateur demandé n'existe pas ou a été supprimé.</p>
-      <button 
-        (click)="goBack()"
-        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all">
-        Retour à la liste
+  <div class="admin-empty-state" *ngIf="!isLoading && !user">
+    <i class="fas fa-exclamation-triangle admin-empty-icon"></i>
+    <h3>Utilisateur non trouvé</h3>
+    <p>L'utilisateur demandé n'existe pas ou a été supprimé.</p>
+    <button class="admin-btn admin-btn-primary" (click)="goBack()">Retour à la liste</button>
+  </div>
+
+  <!-- Content -->
+  <ng-container *ngIf="!isLoading && user">
+    <!-- Stats Cards -->
+    <div class="admin-stats-grid">
+      <div class="admin-stat-card admin-stat-success">
+        <div class="admin-stat-icon"><i class="fas fa-building"></i></div>
+        <div class="admin-stat-content">
+          <div class="admin-stat-number">{{ (user.properties?.total) || 0 }}</div>
+          <div class="admin-stat-label">Propriétés</div>
+          <div class="admin-stat-trend">{{ (user.properties?.active) || 0 }} actives</div>
+        </div>
+      </div>
+      <div class="admin-stat-card admin-stat-info">
+        <div class="admin-stat-icon"><i class="fas fa-door-open"></i></div>
+        <div class="admin-stat-content">
+          <div class="admin-stat-number">{{ (user.properties?.totalUnits) || 0 }}</div>
+          <div class="admin-stat-label">Unités totales</div>
+          <div class="admin-stat-trend">{{ (user.properties?.occupiedUnits) || 0 }} occupées</div>
+        </div>
+      </div>
+      <div class="admin-stat-card admin-stat-warning">
+        <div class="admin-stat-icon"><i class="fas fa-dollar-sign"></i></div>
+        <div class="admin-stat-content">
+          <div class="admin-stat-number">{{ formatCurrency((user.financialSummary?.totalRevenue) || 0) }}</div>
+          <div class="admin-stat-label">Revenus totaux</div>
+          <div class="admin-stat-trend">{{ formatCurrency((user.financialSummary?.monthlyRevenue) || 0) }}/mois</div>
+        </div>
+      </div>
+      <div class="admin-stat-card admin-stat-primary">
+        <div class="admin-stat-icon"><i class="fas fa-chart-pie"></i></div>
+        <div class="admin-stat-content">
+          <div class="admin-stat-number">{{ (user.financialSummary?.averageOccupancy) || 0 }}%</div>
+          <div class="admin-stat-label">Taux d'occupation</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="admin-bottom-grid">
+      <!-- Subscription Details -->
+      <div class="admin-health-card">
+        <div class="admin-card-header">
+          <h3>Souscription</h3>
+          <button class="admin-btn admin-btn-ghost admin-btn-sm" (click)="refreshSubscription()">
+            <i class="fas fa-sync-alt"></i>
+          </button>
+        </div>
+        <div class="admin-health-content" *ngIf="user.subscription; else noSubscription">
+          <div class="admin-health-services">
+            <div class="admin-service-item">
+              <span class="admin-service-name">Plan</span>
+              <span [class]="getPlanBadgeClass(user.subscription.plan)">{{ getPlanLabel(user.subscription.plan) }}</span>
+            </div>
+            <div class="admin-service-item">
+              <span class="admin-service-name">Statut</span>
+              <span [class]="getStatusBadgeClass(user.subscription.accountStatus)">{{ getStatusLabel(user.subscription.accountStatus) }}</span>
+            </div>
+            <div class="admin-service-item">
+              <span class="admin-service-name">Propriétés</span>
+              <span class="admin-service-status">{{ (user.properties?.total) || 0 }} / {{ user.subscription.propertyLimit || '∞' }}</span>
+            </div>
+            <div class="admin-service-item">
+              <span class="admin-service-name">Montant mensuel</span>
+              <span class="admin-service-status">{{ formatCurrency(user.subscription.monthlyAmount || 0) }}</span>
+            </div>
+            <div class="admin-service-item">
+              <span class="admin-service-name">Membre depuis</span>
+              <span class="admin-service-status">{{ formatDate(user.subscription.createdAt) }}</span>
+            </div>
+          </div>
+        </div>
+        <ng-template #noSubscription>
+          <div class="admin-empty-state" style="padding: 1rem;">
+            <p>Aucune souscription trouvée</p>
+          </div>
+        </ng-template>
+      </div>
+
+      <!-- Payment Status -->
+      <div class="admin-health-card">
+        <div class="admin-card-header">
+          <h3>État des paiements</h3>
+          <button
+            class="admin-btn admin-btn-ghost admin-btn-sm"
+            *ngIf="user.subscription?.hasUnpaidInvoices"
+            (click)="sendPaymentReminder()"
+            title="Envoyer un rappel">
+            <i class="fas fa-envelope"></i>
+          </button>
+        </div>
+        <div class="admin-health-content" *ngIf="user.subscription">
+          <!-- Status Banner -->
+          <div class="admin-service-item" style="padding: 0.75rem; border-radius: 6px; margin-bottom: 1rem;"
+               [style.background]="user.subscription.hasUnpaidInvoices ? '#fff3cd' : '#d4edda'">
+            <i class="fas" [class.fa-check-circle]="!user.subscription.hasUnpaidInvoices"
+               [class.fa-exclamation-triangle]="user.subscription.hasUnpaidInvoices"
+               [style.color]="user.subscription.hasUnpaidInvoices ? '#856404' : '#155724'"></i>
+            <span [style.color]="user.subscription.hasUnpaidInvoices ? '#856404' : '#155724'" style="margin-left: 0.5rem; font-weight: 600;">
+              {{ user.subscription.hasUnpaidInvoices ? 'Paiements en retard' : 'Paiements à jour' }}
+            </span>
+          </div>
+
+          <div class="admin-health-services" *ngIf="user.subscription.hasUnpaidInvoices">
+            <div class="admin-service-item">
+              <span class="admin-service-name">Factures impayées</span>
+              <span class="admin-service-status down">{{ user.subscription.unpaidInvoicesCount }}</span>
+            </div>
+            <div class="admin-service-item">
+              <span class="admin-service-name">Montant impayé</span>
+              <span class="admin-service-status down">{{ formatCurrency(user.subscription.totalUnpaidAmount) }}</span>
+            </div>
+          </div>
+
+          <div class="admin-service-item" *ngIf="user.subscription.lastPaymentDate">
+            <span class="admin-service-name">Dernier paiement</span>
+            <span class="admin-service-status">{{ formatDate(user.subscription.lastPaymentDate) }}</span>
+          </div>
+
+          <!-- Actions paiement -->
+          <div class="admin-bulk-buttons" style="margin-top: 1rem;" *ngIf="user.subscription.hasUnpaidInvoices">
+            <button
+              class="admin-btn admin-btn-success admin-btn-sm"
+              (click)="markAsPaid()"
+              [disabled]="isMarkingPaid">
+              <i class="fas fa-check" [class.fa-spinner]="isMarkingPaid" [class.fa-spin]="isMarkingPaid"></i>
+              {{ isMarkingPaid ? 'En cours...' : 'Marquer payé' }}
+            </button>
+            <button class="admin-btn admin-btn-outline admin-btn-sm" (click)="sendPaymentReminder()">
+              <i class="fas fa-envelope"></i> Rappel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- User Info -->
+    <div class="admin-content-section">
+      <div class="admin-table-container">
+        <div class="admin-table-header">
+          <h3 class="admin-table-title"><i class="fas fa-user"></i> Informations utilisateur</h3>
+        </div>
+        <div class="admin-health-services" style="padding: 1rem;">
+          <div class="admin-service-item">
+            <span class="admin-service-name">Email</span>
+            <span class="admin-service-status">{{ user.email }}</span>
+          </div>
+          <div class="admin-service-item">
+            <span class="admin-service-name">Téléphone</span>
+            <span class="admin-service-status">{{ user.phoneNumber || 'Non renseigné' }}</span>
+          </div>
+          <div class="admin-service-item">
+            <span class="admin-service-name">Type</span>
+            <span class="admin-badge admin-badge-info">{{ user.userType }}</span>
+          </div>
+          <div class="admin-service-item">
+            <span class="admin-service-name">Statut compte</span>
+            <span class="admin-badge" [class.admin-badge-success]="user.isActive" [class.admin-badge-danger]="!user.isActive">
+              {{ user.isActive ? 'Actif' : 'Inactif' }}
+            </span>
+          </div>
+          <div class="admin-service-item">
+            <span class="admin-service-name">Créé le</span>
+            <span class="admin-service-status">{{ formatDate(user.createdAt) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>
+
+<!-- Modal Suspension -->
+<div class="admin-modal-overlay" *ngIf="showSuspendModal" (click)="cancelSuspend()">
+  <div class="admin-modal" (click)="$event.stopPropagation()">
+    <div class="admin-modal-header">
+      <h3>Suspendre le compte</h3>
+      <button class="admin-modal-close" (click)="cancelSuspend()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="admin-modal-body">
+      <label class="admin-form-label">Raison de la suspension <span style="color:red">*</span></label>
+      <textarea class="admin-form-control" rows="3" [(ngModel)]="suspendReason"
+        placeholder="Expliquez la raison de la suspension..."></textarea>
+    </div>
+    <div class="admin-modal-footer">
+      <button class="admin-btn admin-btn-secondary" (click)="cancelSuspend()">Annuler</button>
+      <button class="admin-btn admin-btn-warning" (click)="confirmSuspend()" [disabled]="!suspendReason.trim()">
+        <i class="fas fa-pause"></i> Confirmer la suspension
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Marquer payé -->
+<div class="admin-modal-overlay" *ngIf="showMarkPaidModal" (click)="cancelMarkPaid()">
+  <div class="admin-modal" (click)="$event.stopPropagation()">
+    <div class="admin-modal-header">
+      <h3>Marquer comme payé</h3>
+      <button class="admin-modal-close" (click)="cancelMarkPaid()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="admin-modal-body">
+      <label class="admin-form-label">Référence de paiement (optionnel)</label>
+      <input type="text" class="admin-form-control" [(ngModel)]="paymentRef"
+        placeholder="Ex: VIREMENT_2024_001 (laisser vide pour ADMIN_MANUAL)">
+    </div>
+    <div class="admin-modal-footer">
+      <button class="admin-btn admin-btn-secondary" (click)="cancelMarkPaid()">Annuler</button>
+      <button class="admin-btn admin-btn-success" (click)="confirmMarkPaid()">
+        <i class="fas fa-check"></i> Confirmer le paiement
       </button>
     </div>
   </div>

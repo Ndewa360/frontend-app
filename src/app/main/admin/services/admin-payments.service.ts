@@ -42,21 +42,18 @@ export class AdminPaymentsService {
    */
   getPayments(filters: PaymentFilters = {}): Observable<{ payments: AdminPayment[], total: number, meta: any }> {
     let params = new HttpParams();
-    
-    // Ajouter les filtres aux paramètres
     Object.keys(filters).forEach(key => {
-      const value = filters[key];
+      const value = (filters as any)[key];
       if (value !== undefined && value !== null && value !== '') {
-        if (value instanceof Date) {
-          params = params.set(key, value.toISOString());
-        } else {
-          params = params.set(key, value.toString());
-        }
+        params = params.set(key, value instanceof Date ? value.toISOString() : value.toString());
       }
     });
-
-    return this.http.get<ApiResultFormat<{ payments: AdminPayment[], total: number, meta: any }>>(`${this.apiUrl}`, { params }).pipe(
-      map(response => response.data)
+    return this.http.get<any>(`${this.apiUrl}`, { params }).pipe(
+      map(response => ({
+        payments: response.data || [],
+        total: response.meta?.total || 0,
+        meta: response.meta || { page: 1, limit: 20, totalPages: 0 }
+      }))
     );
   }
 
@@ -74,21 +71,18 @@ export class AdminPaymentsService {
    */
   getSubscriptions(filters: SubscriptionFilters = {}): Observable<{ subscriptions: AdminSubscription[], total: number, meta: any }> {
     let params = new HttpParams();
-    
-    // Ajouter les filtres aux paramètres
     Object.keys(filters).forEach(key => {
-      const value = filters[key];
+      const value = (filters as any)[key];
       if (value !== undefined && value !== null && value !== '') {
-        if (value instanceof Date) {
-          params = params.set(key, value.toISOString());
-        } else {
-          params = params.set(key, value.toString());
-        }
+        params = params.set(key, value instanceof Date ? value.toISOString() : value.toString());
       }
     });
-
-    return this.http.get<ApiResultFormat<{ subscriptions: AdminSubscription[], total: number, meta: any }>>(`${this.apiUrl}/subscriptions`, { params }).pipe(
-      map(response => response.data)
+    return this.http.get<any>(`${this.apiUrl}/subscriptions`, { params }).pipe(
+      map(response => ({
+        subscriptions: response.data || [],
+        total: response.meta?.total || 0,
+        meta: response.meta || { page: 1, limit: 20, totalPages: 0 }
+      }))
     );
   }
 
@@ -105,16 +99,13 @@ export class AdminPaymentsService {
    * Annuler une souscription
    */
   cancelSubscription(subscriptionId: string, reason?: string): Observable<AdminSubscription> {
-    return this.http.patch<ApiResultFormat<AdminSubscription>>(`${this.apiUrl}/subscriptions/${subscriptionId}/cancel`, { reason }).pipe(
+    return this.http.put<ApiResultFormat<AdminSubscription>>(`${this.apiUrl}/subscriptions/${subscriptionId}/cancel`, { reason }).pipe(
       map(response => response.data)
     );
   }
 
-  /**
-   * Renouveler une souscription
-   */
   renewSubscription(subscriptionId: string): Observable<AdminSubscription> {
-    return this.http.patch<ApiResultFormat<AdminSubscription>>(`${this.apiUrl}/subscriptions/${subscriptionId}/renew`, {}).pipe(
+    return this.http.put<ApiResultFormat<AdminSubscription>>(`${this.apiUrl}/subscriptions/${subscriptionId}/renew`, {}).pipe(
       map(response => response.data)
     );
   }
@@ -124,21 +115,18 @@ export class AdminPaymentsService {
    */
   getCoupons(filters: CouponFilters = {}): Observable<{ coupons: AdminCoupon[], total: number, meta: any }> {
     let params = new HttpParams();
-    
-    // Ajouter les filtres aux paramètres
     Object.keys(filters).forEach(key => {
-      const value = filters[key];
+      const value = (filters as any)[key];
       if (value !== undefined && value !== null && value !== '') {
-        if (value instanceof Date) {
-          params = params.set(key, value.toISOString());
-        } else {
-          params = params.set(key, value.toString());
-        }
+        params = params.set(key, value instanceof Date ? value.toISOString() : value.toString());
       }
     });
-
-    return this.http.get<ApiResultFormat<{ coupons: AdminCoupon[], total: number, meta: any }>>(`${this.apiUrl}/coupons`, { params }).pipe(
-      map(response => response.data)
+    return this.http.get<any>(`${this.apiUrl}/coupons`, { params }).pipe(
+      map(response => ({
+        coupons: response.data || [],
+        total: response.meta?.total || 0,
+        meta: response.meta || { page: 1, limit: 20, totalPages: 0 }
+      }))
     );
   }
 

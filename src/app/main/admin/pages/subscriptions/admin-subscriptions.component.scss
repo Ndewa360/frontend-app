@@ -1,0 +1,641 @@
+// Variables
+$primary: #cc8c0a;
+$primary-light: rgba(204, 140, 10, 0.1);
+$white: #ffffff;
+$gray-50: #f8fafc;
+$gray-100: #f1f5f9;
+$gray-200: #e2e8f0;
+$gray-300: #cbd5e1;
+$gray-400: #94a3b8;
+$gray-500: #64748b;
+$gray-700: #334155;
+$gray-900: #0f172a;
+
+$blue:   #3b82f6;
+$gold:   #f59e0b;
+$green:  #10b981;
+$orange: #f97316;
+$red:    #ef4444;
+
+.subs-page {
+  padding: 0;
+  font-family: 'Inter', -apple-system, sans-serif;
+}
+
+// ── Header ────────────────────────────────────────────────────────────────────
+.subs-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+
+  .subs-title {
+    font-size: 1.375rem;
+    font-weight: 700;
+    color: $gray-900;
+    margin: 0 0 4px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .subs-title-icon { color: $gold; font-size: 1.125rem; }
+  }
+
+  .subs-subtitle {
+    font-size: 0.875rem;
+    color: $gray-500;
+    margin: 0;
+  }
+
+  .subs-header-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+}
+
+// ── Buttons ───────────────────────────────────────────────────────────────────
+.subs-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  &.subs-btn-primary {
+    background: $primary;
+    color: $white;
+    &:hover:not(:disabled) { background: darken($primary, 8%); }
+  }
+
+  &.subs-btn-outline {
+    background: $white;
+    color: $gray-700;
+    border: 1px solid $gray-300;
+    &:hover:not(:disabled) { border-color: $primary; color: $primary; }
+    &.active { border-color: $primary; color: $primary; background: $primary-light; }
+  }
+
+  &.subs-btn-ghost {
+    background: transparent;
+    color: $gray-500;
+    border: 1px solid transparent;
+    &:hover:not(:disabled) { background: $gray-100; color: $gray-700; }
+  }
+}
+
+// ── Stats ─────────────────────────────────────────────────────────────────────
+.subs-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.subs-stat-card {
+  background: $white;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  border: 1px solid $gray-200;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+  &:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+
+  .subs-stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    color: $white;
+    flex-shrink: 0;
+  }
+
+  .subs-stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: $gray-900;
+    line-height: 1.2;
+  }
+
+  .subs-stat-label {
+    font-size: 0.75rem;
+    color: $gray-500;
+    margin-top: 2px;
+  }
+
+  &.subs-stat-blue   .subs-stat-icon { background: $blue; }
+  &.subs-stat-gold   .subs-stat-icon { background: $gold; }
+  &.subs-stat-green  .subs-stat-icon { background: $green; }
+  &.subs-stat-orange .subs-stat-icon { background: $orange; }
+  &.subs-stat-red    .subs-stat-icon { background: $red; }
+}
+
+// ── Filters ───────────────────────────────────────────────────────────────────
+.subs-filters {
+  background: $white;
+  border: 1px solid $gray-200;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+
+  .subs-filters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .subs-filter-group {
+    label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: $gray-500;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 6px;
+    }
+  }
+
+  .subs-filters-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+}
+
+.subs-input, .subs-select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid $gray-300;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  color: $gray-700;
+  background: $white;
+  transition: border-color 0.15s ease;
+  box-sizing: border-box;
+
+  &:focus {
+    outline: none;
+    border-color: $primary;
+    box-shadow: 0 0 0 3px rgba($primary, 0.1);
+  }
+}
+
+// ── Table Card ────────────────────────────────────────────────────────────────
+.subs-table-card {
+  background: $white;
+  border: 1px solid $gray-200;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  overflow: hidden;
+}
+
+.subs-table-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid $gray-100;
+
+  .subs-table-title {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: $gray-900;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    i { color: $primary; }
+  }
+
+  .subs-table-count {
+    font-size: 0.8125rem;
+    color: $gray-500;
+    background: $gray-100;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+}
+
+// ── Loading ───────────────────────────────────────────────────────────────────
+.subs-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 48px;
+  color: $gray-500;
+  font-size: 0.875rem;
+}
+
+.subs-spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid $gray-200;
+  border-top-color: $primary;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+// ── Table ─────────────────────────────────────────────────────────────────────
+.subs-table-wrapper { overflow-x: auto; }
+
+.subs-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+
+  th {
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: $gray-500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    background: $gray-50;
+    border-bottom: 1px solid $gray-200;
+    white-space: nowrap;
+
+    &.sortable {
+      cursor: pointer;
+      user-select: none;
+      &:hover { color: $primary; }
+      i { margin-left: 4px; font-size: 0.625rem; }
+    }
+
+    &.col-actions { text-align: center; width: 60px; }
+  }
+
+  td {
+    padding: 14px 16px;
+    border-bottom: 1px solid $gray-100;
+    vertical-align: middle;
+    color: $gray-700;
+
+    &.col-actions { text-align: center; }
+    &.subs-date-cell { white-space: nowrap; color: $gray-500; font-size: 0.8125rem; }
+  }
+
+  .subs-row {
+    transition: background 0.1s ease;
+    &:hover { background: $gray-50; }
+    &:last-child td { border-bottom: none; }
+  }
+}
+
+// ── User Cell ─────────────────────────────────────────────────────────────────
+.subs-user-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.subs-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, $primary, darken($primary, 15%));
+  color: $white;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  text-transform: uppercase;
+}
+
+.subs-user-name  { font-weight: 600; color: $gray-900; font-size: 0.875rem; }
+.subs-user-email { font-size: 0.75rem; color: $gray-500; margin-top: 1px; }
+.subs-user-type  { font-size: 0.6875rem; color: $gray-400; margin-top: 1px; text-transform: uppercase; letter-spacing: 0.04em; }
+
+// ── Badges ────────────────────────────────────────────────────────────────────
+.subs-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+
+  &.subs-badge-sm { padding: 2px 8px; font-size: 0.6875rem; }
+
+  &.subs-badge-success { background: #dcfce7; color: #166534; }
+  &.subs-badge-warning { background: #fef3c7; color: #92400e; }
+  &.subs-badge-danger  { background: #fee2e2; color: #991b1b; }
+  &.subs-badge-info    { background: #dbeafe; color: #1e40af; }
+  &.subs-badge-secondary { background: $gray-100; color: $gray-700; }
+}
+
+// ── Payment Cell ──────────────────────────────────────────────────────────────
+.subs-payment-cell {
+  .subs-unpaid-detail {
+    margin-top: 4px;
+    font-size: 0.6875rem;
+    color: $red;
+  }
+}
+
+// ── Properties Cell ───────────────────────────────────────────────────────────
+.subs-prop-cell {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+  color: $gray-900;
+
+  .subs-prop-limit { color: $gray-400; font-weight: 400; }
+  .subs-prop-unlimited { color: $green; font-size: 0.875rem; }
+}
+
+// ── Actions Dropdown ──────────────────────────────────────────────────────────
+.subs-actions {
+  position: relative;
+  display: inline-block;
+}
+
+.subs-menu-btn {
+  width: 32px;
+  height: 32px;
+  border: 1px solid $gray-200;
+  border-radius: 6px;
+  background: $white;
+  color: $gray-500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+
+  &:hover { border-color: $primary; color: $primary; background: $primary-light; }
+}
+
+.subs-dropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 4px);
+  background: $white;
+  border: 1px solid $gray-200;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  min-width: 180px;
+  z-index: 100;
+  overflow: hidden;
+  animation: dropIn 0.15s ease;
+}
+
+@keyframes dropIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.subs-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 9px 14px;
+  background: none;
+  border: none;
+  font-size: 0.8125rem;
+  color: $gray-700;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.1s ease;
+
+  i { width: 14px; text-align: center; color: $gray-400; }
+
+  &:hover { background: $gray-50; color: $gray-900; i { color: $primary; } }
+  &.subs-item-warning { color: $orange; i { color: $orange; } &:hover { background: #fff7ed; } }
+  &.subs-item-success { color: $green;  i { color: $green;  } &:hover { background: #f0fdf4; } }
+}
+
+.subs-dropdown-divider {
+  height: 1px;
+  background: $gray-100;
+  margin: 4px 0;
+}
+
+// ── Empty State ───────────────────────────────────────────────────────────────
+.subs-empty {
+  text-align: center;
+  padding: 64px 24px;
+  color: $gray-500;
+
+  .subs-empty-icon {
+    font-size: 3rem;
+    color: $gray-300;
+    display: block;
+    margin-bottom: 16px;
+  }
+
+  h3 { font-size: 1.125rem; font-weight: 600; color: $gray-700; margin: 0 0 8px; }
+  p  { font-size: 0.875rem; margin: 0; }
+}
+
+// ── Pagination ────────────────────────────────────────────────────────────────
+.subs-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-top: 1px solid $gray-100;
+  flex-wrap: wrap;
+  gap: 12px;
+
+  .subs-pagination-info {
+    font-size: 0.8125rem;
+    color: $gray-500;
+  }
+
+  .subs-pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .subs-page-btn {
+    width: 32px;
+    height: 32px;
+    border: 1px solid $gray-200;
+    border-radius: 6px;
+    background: $white;
+    color: $gray-500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    transition: all 0.15s ease;
+
+    &:hover:not(:disabled) { border-color: $primary; color: $primary; }
+    &:disabled { opacity: 0.4; cursor: not-allowed; }
+  }
+
+  .subs-page-current {
+    font-size: 0.8125rem;
+    color: $gray-700;
+    font-weight: 500;
+    padding: 0 4px;
+  }
+}
+
+// ── Pagination ────────────────────────────────────────────────────────────────
+.subs-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-top: 1px solid $gray-100;
+  flex-wrap: wrap;
+  gap: 12px;
+
+  .subs-pagination-info {
+    font-size: 0.8125rem;
+    color: $gray-500;
+  }
+
+  .subs-pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .subs-page-btn {
+    width: 32px;
+    height: 32px;
+    border: 1px solid $gray-200;
+    border-radius: 6px;
+    background: $white;
+    color: $gray-500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    transition: all 0.15s ease;
+
+    &:hover:not(:disabled) { border-color: $primary; color: $primary; }
+    &:disabled { opacity: 0.4; cursor: not-allowed; }
+  }
+
+  .subs-page-current {
+    font-size: 0.8125rem;
+    color: $gray-700;
+    font-weight: 500;
+    padding: 0 4px;
+  }
+}
+
+// ── Tab Navigation ────────────────────────────────────────────────────────────
+.subs-tab-nav {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 20px;
+  background: $white;
+  border: 1px solid $gray-200;
+  border-radius: 10px;
+  padding: 4px;
+
+  .subs-tab-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 7px;
+    background: transparent;
+    color: $gray-500;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+
+    i { font-size: 12px; }
+
+    &:hover { background: $gray-50; color: $gray-700; }
+
+    &.active {
+      background: $primary;
+      color: $white;
+      font-weight: 600;
+    }
+  }
+}
+
+// ── Analytics ─────────────────────────────────────────────────────────────────
+.subs-analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.subs-analytics-card {
+  background: $white;
+  border: 1px solid $gray-200;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+  &:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+
+  .subs-analytics-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+
+    i { font-size: 1rem; color: $primary; }
+    h4 { font-size: 0.8125rem; font-weight: 600; color: $gray-500; margin: 0; text-transform: uppercase; letter-spacing: 0.04em; }
+  }
+
+  .subs-analytics-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: $gray-900;
+    margin-bottom: 4px;
+
+    &.subs-value-danger { color: $red; }
+  }
+
+  .subs-analytics-desc {
+    font-size: 0.75rem;
+    color: $gray-400;
+    margin: 0;
+  }
+}
+
+// ── Responsive ────────────────────────────────────────────────────────────────
+@media (max-width: 768px) {
+  .subs-header { flex-direction: column; }
+  .subs-stats  { grid-template-columns: repeat(2, 1fr); }
+  .subs-table th:nth-child(5),
+  .subs-table td:nth-child(5) { display: none; }
+}
