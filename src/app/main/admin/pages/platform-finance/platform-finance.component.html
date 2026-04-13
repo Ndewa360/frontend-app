@@ -1,0 +1,412 @@
+<div class="pf-container">
+  <!-- Header -->
+  <div class="admin-page-header">
+    <div class="admin-header-content">
+      <div class="admin-header-text">
+        <h1 class="admin-page-title"><i class="fas fa-wallet admin-title-icon"></i> Super Wallet Plateforme</h1>
+        <p class="admin-page-subtitle">Revenus, solde disponible et gestion des retraits</p>
+      </div>
+      <div class="admin-header-actions">
+        <select class="admin-filter-select" [(ngModel)]="selectedCurrency" (change)="onCurrencyChange(selectedCurrency)">
+          <option *ngFor="let c of (config?.supportedCurrencies || ['XAF'])" [value]="c">{{ c }}</option>
+        </select>
+        <button class="admin-btn admin-btn-secondary" (click)="onRefresh()">
+          <i class="fas fa-sync-alt"></i> Actualiser
+        </button>
+        <button class="admin-btn admin-btn-secondary" (click)="openConfigModal()">
+          <i class="fas fa-cog"></i> Config
+        </button>
+        <button class="admin-btn admin-btn-primary" (click)="openWithdrawalModal()">
+          <i class="fas fa-arrow-up"></i> Nouveau retrait
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="admin-stats-grid" *ngIf="balance">
+    <div class="admin-stat-card admin-stat-success">
+      <div class="admin-stat-icon"><i class="fas fa-coins"></i></div>
+      <div class="admin-stat-content">
+        <div class="admin-stat-number">{{ formatCurrency(balance.available, balance.currency) }}</div>
+        <div class="admin-stat-label">Solde disponible</div>
+        <div class="admin-stat-trend">Réservé : {{ formatCurrency(balance.reservedWithdrawals, balance.currency) }}</div>
+      </div>
+    </div>
+    <div class="admin-stat-card admin-stat-primary">
+      <div class="admin-stat-icon"><i class="fas fa-chart-line"></i></div>
+      <div class="admin-stat-content">
+        <div class="admin-stat-number">{{ formatCurrency(balance.grossRevenue, balance.currency) }}</div>
+        <div class="admin-stat-label">Revenus bruts totaux</div>
+        <div class="admin-stat-trend">Souscriptions + Accès premium + Frais</div>
+      </div>
+    </div>
+    <div class="admin-stat-card admin-stat-info">
+      <div class="admin-stat-icon"><i class="fas fa-arrow-trend-up"></i></div>
+      <div class="admin-stat-content">
+        <div class="admin-stat-number">{{ formatCurrency(kpis?.currentMonthRevenue || 0, selectedCurrency) }}</div>
+        <div class="admin-stat-label">Revenus ce mois</div>
+        <div class="admin-stat-trend" [class.pf-positive]="growthPositive" [class.pf-negative]="!growthPositive">
+          <i class="fas" [class.fa-arrow-up]="growthPositive" [class.fa-arrow-down]="!growthPositive"></i>
+          {{ kpis?.monthOverMonthGrowth | number:'1.1-1' }}% vs mois précédent
+        </div>
+      </div>
+    </div>
+    <div class="admin-stat-card admin-stat-warning">
+      <div class="admin-stat-icon"><i class="fas fa-arrow-down"></i></div>
+      <div class="admin-stat-content">
+        <div class="admin-stat-number">{{ formatCurrency(balance.confirmedWithdrawals, balance.currency) }}</div>
+        <div class="admin-stat-label">Total retraits confirmés</div>
+        <div class="admin-stat-trend">ARPU : {{ formatCurrency(kpis?.arpu || 0, selectedCurrency) }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Breakdown -->
+  <div class="pf-breakdown" *ngIf="balance">
+    <div class="pf-breakdown-item">
+      <span class="pf-breakdown-label"><i class="fas fa-calendar-check"></i> Souscriptions</span>
+      <span class="pf-breakdown-value">{{ formatCurrency(balance.breakdown.subscriptions, balance.currency) }}</span>
+    </div>
+    <div class="pf-breakdown-item">
+      <span class="pf-breakdown-label"><i class="fas fa-star"></i> Accès premium</span>
+      <span class="pf-breakdown-value">{{ formatCurrency(balance.breakdown.premiumAccess, balance.currency) }}</span>
+    </div>
+    <div class="pf-breakdown-item">
+      <span class="pf-breakdown-label"><i class="fas fa-percent"></i> Frais de retrait récupérés</span>
+      <span class="pf-breakdown-value">{{ formatCurrency(balance.breakdown.withdrawalFees, balance.currency) }}</span>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="admin-content-section">
+    <div class="admin-table-container">
+      <div class="admin-table-header">
+        <div class="admin-tabs-nav">
+          <button class="admin-tab-btn" [class.active]="selectedTab==='overview'" (click)="onTabChange('overview')">
+            <i class="fas fa-chart-bar"></i> Revenus
+          </button>
+          <button class="admin-tab-btn" [class.active]="selectedTab==='transactions'" (click)="onTabChange('transactions')">
+            <i class="fas fa-list"></i> Transactions
+          </button>
+          <button class="admin-tab-btn" [class.active]="selectedTab==='withdrawals'" (click)="onTabChange('withdrawals')">
+            <i class="fas fa-arrow-up"></i> Retraits
+            <span class="admin-badge admin-badge-warning pf-badge" *ngIf="pendingWithdrawalsCount > 0">{{ pendingWithdrawalsCount }}</span>
+          </button>
+        </div>
+        <!-- Period selector for overview -->
+        <div class="pf-period-controls" *ngIf="selectedTab==='overview'">
+          <select class="admin-filter-select" [(ngModel)]="selectedYear" (change)="onYearChange(selectedYear)">
+            <option *ngFor="let y of years" [value]="y">{{ y }}</option>
+          </select>
+          <div class="pf-period-btns">
+            <button class="pf-period-btn" [class.active]="selectedPeriod==='monthly'" (click)="onPeriodChange('monthly')">Mensuel</button>
+            <button class="pf-period-btn" [class.active]="selectedPeriod==='quarterly'" (click)="onPeriodChange('quarterly')">Trimestriel</button>
+            <button class="pf-period-btn" [class.active]="selectedPeriod==='semester'" (click)="onPeriodChange('semester')">Semestriel</button>
+          </div>
+          <button class="admin-btn admin-btn-ghost admin-btn-sm" (click)="onComputeSnapshot()" title="Recalculer snapshot">
+            <i class="fas fa-calculator"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- ── Overview Tab ── -->
+      <div *ngIf="selectedTab==='overview'">
+        <div class="pf-chart-container" *ngIf="revenueData.length">
+          <div class="pf-bars">
+            <div class="pf-bar-group" *ngFor="let d of revenueData">
+              <div class="pf-bar-stack">
+                <div class="pf-bar pf-bar-sub"
+                     [style.height.%]="getBarHeight(d.subscriptions.revenue, getMaxBarHeight(revenueData))"
+                     [title]="'Souscriptions: ' + formatCurrency(d.subscriptions.revenue, selectedCurrency)"></div>
+                <div class="pf-bar pf-bar-premium"
+                     [style.height.%]="getBarHeight(d.premiumAccess.revenue, getMaxBarHeight(revenueData))"
+                     [title]="'Accès premium: ' + formatCurrency(d.premiumAccess.revenue, selectedCurrency)"></div>
+                <div class="pf-bar pf-bar-fees"
+                     [style.height.%]="getBarHeight(d.withdrawalFees.revenue, getMaxBarHeight(revenueData))"
+                     [title]="'Frais: ' + formatCurrency(d.withdrawalFees.revenue, selectedCurrency)"></div>
+              </div>
+              <div class="pf-bar-label">{{ getPeriodLabel(d.period) }}</div>
+              <div class="pf-bar-total">{{ formatCurrency(d.total, selectedCurrency) }}</div>
+            </div>
+          </div>
+          <div class="pf-legend">
+            <span class="pf-legend-item pf-legend-sub"><span></span> Souscriptions</span>
+            <span class="pf-legend-item pf-legend-premium"><span></span> Accès premium</span>
+            <span class="pf-legend-item pf-legend-fees"><span></span> Frais retrait</span>
+          </div>
+        </div>
+        <div class="admin-empty-state" *ngIf="!revenueData.length">
+          <i class="fas fa-chart-bar admin-empty-icon"></i>
+          <h3>Aucune donnée pour cette période</h3>
+        </div>
+      </div>
+
+      <!-- ── Transactions Tab ── -->
+      <div *ngIf="selectedTab==='transactions'">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Type</th><th>Montant</th><th>Devise</th><th>Utilisateur</th><th>Date</th><th>Référence</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let tx of transactions">
+              <td>
+                <span class="admin-badge" [class.admin-badge-primary]="tx.type==='subscription'" [class.admin-badge-warning]="tx.type==='premium_access'">
+                  {{ tx.type === 'subscription' ? 'Souscription' : 'Accès premium' }}
+                </span>
+              </td>
+              <td><strong>{{ formatCurrency(tx.amount, tx.currency) }}</strong></td>
+              <td>{{ tx.currency }}</td>
+              <td>{{ tx.user?.name || tx.userId || 'N/A' }}</td>
+              <td>{{ tx.date | date:'dd/MM/yyyy HH:mm' }}</td>
+              <td><span class="admin-badge admin-badge-secondary">{{ tx.reference || '—' }}</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="admin-empty-state" *ngIf="!transactions.length">
+          <i class="fas fa-list admin-empty-icon"></i><h3>Aucune transaction</h3>
+        </div>
+      </div>
+
+      <!-- ── Withdrawals Tab ── -->
+      <div *ngIf="selectedTab==='withdrawals'">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Référence</th><th>Montant</th><th>Frais</th><th>Net</th><th>Méthode</th><th>Bénéficiaire</th><th>Statut</th><th>Demandé par</th><th>Date</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let w of withdrawals">
+              <td><strong>{{ w.reference }}</strong></td>
+              <td>{{ formatCurrency(w.requestedAmount, w.currency) }}</td>
+              <td>{{ formatCurrency(w.feeAmount, w.currency) }} ({{ w.feePercent }}%)</td>
+              <td><strong>{{ formatCurrency(w.netAmount, w.currency) }}</strong></td>
+              <td>{{ w.method === 'BANK_TRANSFER' ? 'Virement' : 'Mobile Money' }}</td>
+              <td>
+                <div>{{ w.recipientName }}</div>
+                <small class="pf-muted">{{ w.recipientAccount }}</small>
+              </td>
+              <td><span class="admin-badge" [ngClass]="getStatusClass(w.status)">{{ getStatusLabel(w.status) }}</span></td>
+              <td>{{ w.requestedBy?.name || '—' }}</td>
+              <td>{{ w.createdAt | date:'dd/MM/yyyy' }}</td>
+              <td>
+                <div class="pf-actions">
+                  <button *ngIf="w.status==='PENDING'" class="admin-btn admin-btn-sm admin-btn-success" (click)="openApproveModal(w)" title="Approuver">
+                    <i class="fas fa-check"></i>
+                  </button>
+                  <button *ngIf="w.status==='APPROVED'" class="admin-btn admin-btn-sm admin-btn-primary" (click)="openConfirmModal(w)" title="Confirmer virement">
+                    <i class="fas fa-check-double"></i>
+                  </button>
+                  <button *ngIf="w.status==='APPROVED' || w.status==='PROCESSING'" class="admin-btn admin-btn-sm admin-btn-danger" (click)="openFailModal(w)" title="Marquer échoué">
+                    <i class="fas fa-times"></i>
+                  </button>
+                  <button *ngIf="w.status==='PENDING' || w.status==='APPROVED'" class="admin-btn admin-btn-sm admin-btn-secondary" (click)="openCancelModal(w)" title="Annuler">
+                    <i class="fas fa-ban"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="admin-empty-state" *ngIf="!withdrawals.length">
+          <i class="fas fa-arrow-up admin-empty-icon"></i><h3>Aucun retrait</h3>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Modal Nouveau retrait ── -->
+<div class="admin-modal-overlay" *ngIf="showWithdrawalModal" (click)="showWithdrawalModal=false">
+  <div class="admin-modal" (click)="$event.stopPropagation()">
+    <div class="admin-modal-header">
+      <h3>Nouveau retrait plateforme</h3>
+      <button class="admin-modal-close" (click)="showWithdrawalModal=false"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="admin-modal-body">
+      <form [formGroup]="withdrawalForm">
+        <div class="admin-form-grid">
+          <div class="admin-form-group">
+            <label class="admin-form-label">Montant *</label>
+            <input type="number" class="admin-form-control" formControlName="requestedAmount" placeholder="Ex: 50000">
+          </div>
+          <div class="admin-form-group">
+            <label class="admin-form-label">Devise</label>
+            <select class="admin-filter-select" formControlName="currency">
+              <option *ngFor="let c of (config?.supportedCurrencies || ['XAF'])" [value]="c">{{ c }}</option>
+            </select>
+          </div>
+          <div class="admin-form-group">
+            <label class="admin-form-label">Méthode *</label>
+            <select class="admin-filter-select" formControlName="method">
+              <option value="BANK_TRANSFER">Virement bancaire</option>
+              <option value="MOBILE_MONEY">Mobile Money</option>
+            </select>
+          </div>
+          <div class="admin-form-group">
+            <label class="admin-form-label">Nom bénéficiaire *</label>
+            <input type="text" class="admin-form-control" formControlName="recipientName">
+          </div>
+          <div class="admin-form-group">
+            <label class="admin-form-label">Numéro de compte / téléphone *</label>
+            <input type="text" class="admin-form-control" formControlName="recipientAccount">
+          </div>
+          <div class="admin-form-group" *ngIf="withdrawalForm.get('method')?.value==='BANK_TRANSFER'">
+            <label class="admin-form-label">Nom de la banque</label>
+            <input type="text" class="admin-form-control" formControlName="bankName">
+          </div>
+          <div class="admin-form-group" *ngIf="withdrawalForm.get('method')?.value==='MOBILE_MONEY'">
+            <label class="admin-form-label">Opérateur</label>
+            <select class="admin-filter-select" formControlName="operator">
+              <option value="orange">Orange Money</option>
+              <option value="mtn">MTN Mobile Money</option>
+            </select>
+          </div>
+          <div class="admin-form-group pf-full-width">
+            <label class="admin-form-label">Notes</label>
+            <textarea class="admin-form-control" formControlName="notes" rows="2"></textarea>
+          </div>
+        </div>
+        <div class="pf-fee-info" *ngIf="config">
+          <i class="fas fa-info-circle"></i>
+          Frais admin : <strong>0%</strong> — Solde disponible : <strong>{{ formatCurrency(balance?.available || 0, selectedCurrency) }}</strong>
+        </div>
+      </form>
+    </div>
+    <div class="admin-modal-footer">
+      <button class="admin-btn admin-btn-secondary" (click)="showWithdrawalModal=false">Annuler</button>
+      <button class="admin-btn admin-btn-primary" (click)="submitWithdrawal()" [disabled]="withdrawalForm.invalid || isLoading">
+        <i class="fas fa-arrow-up"></i> Créer la demande
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Modal Approuver ── -->
+<div class="admin-modal-overlay" *ngIf="showApproveModal" (click)="showApproveModal=false">
+  <div class="admin-modal" (click)="$event.stopPropagation()">
+    <div class="admin-modal-header">
+      <h3>Approuver le retrait {{ selectedWithdrawal?.reference }}</h3>
+      <button class="admin-modal-close" (click)="showApproveModal=false"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="admin-modal-body">
+      <p>Montant : <strong>{{ formatCurrency(selectedWithdrawal?.requestedAmount || 0, selectedWithdrawal?.currency || 'XAF') }}</strong></p>
+      <p>Bénéficiaire : <strong>{{ selectedWithdrawal?.recipientName }}</strong> — {{ selectedWithdrawal?.recipientAccount }}</p>
+      <label class="admin-form-label" style="margin-top:12px">Notes (optionnel)</label>
+      <textarea class="admin-form-control" [(ngModel)]="approveNotes" rows="2"></textarea>
+    </div>
+    <div class="admin-modal-footer">
+      <button class="admin-btn admin-btn-secondary" (click)="showApproveModal=false">Annuler</button>
+      <button class="admin-btn admin-btn-success" (click)="confirmApprove()"><i class="fas fa-check"></i> Approuver</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Modal Confirmer ── -->
+<div class="admin-modal-overlay" *ngIf="showConfirmModal" (click)="showConfirmModal=false">
+  <div class="admin-modal" (click)="$event.stopPropagation()">
+    <div class="admin-modal-header">
+      <h3>Confirmer le virement {{ selectedWithdrawal?.reference }}</h3>
+      <button class="admin-modal-close" (click)="showConfirmModal=false"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="admin-modal-body">
+      <p>Montant net versé : <strong>{{ formatCurrency(selectedWithdrawal?.netAmount || 0, selectedWithdrawal?.currency || 'XAF') }}</strong></p>
+      <div class="admin-form-group">
+        <label class="admin-form-label">Référence externe (bancaire/opérateur)</label>
+        <input type="text" class="admin-form-control" [(ngModel)]="confirmExternalRef" placeholder="Ex: TXN-2025-XXXXXX">
+      </div>
+      <div class="admin-form-group" style="margin-top:8px">
+        <label class="admin-form-label">Notes</label>
+        <textarea class="admin-form-control" [(ngModel)]="confirmNotes" rows="2"></textarea>
+      </div>
+    </div>
+    <div class="admin-modal-footer">
+      <button class="admin-btn admin-btn-secondary" (click)="showConfirmModal=false">Annuler</button>
+      <button class="admin-btn admin-btn-primary" (click)="submitConfirm()"><i class="fas fa-check-double"></i> Confirmer le virement</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Modal Échec ── -->
+<div class="admin-modal-overlay" *ngIf="showFailModal" (click)="showFailModal=false">
+  <div class="admin-modal" (click)="$event.stopPropagation()">
+    <div class="admin-modal-header">
+      <h3>Marquer échoué — {{ selectedWithdrawal?.reference }}</h3>
+      <button class="admin-modal-close" (click)="showFailModal=false"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="admin-modal-body">
+      <label class="admin-form-label">Raison de l'échec *</label>
+      <textarea class="admin-form-control" [(ngModel)]="failReason" rows="3" placeholder="Ex: Compte bancaire invalide..."></textarea>
+    </div>
+    <div class="admin-modal-footer">
+      <button class="admin-btn admin-btn-secondary" (click)="showFailModal=false">Annuler</button>
+      <button class="admin-btn admin-btn-danger" (click)="submitFail()" [disabled]="!failReason.trim()"><i class="fas fa-times"></i> Confirmer l'échec</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Modal Annuler ── -->
+<div class="admin-modal-overlay" *ngIf="showCancelModal" (click)="showCancelModal=false">
+  <div class="admin-modal" (click)="$event.stopPropagation()">
+    <div class="admin-modal-header">
+      <h3>Annuler le retrait {{ selectedWithdrawal?.reference }}</h3>
+      <button class="admin-modal-close" (click)="showCancelModal=false"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="admin-modal-body">
+      <label class="admin-form-label">Raison (optionnel)</label>
+      <textarea class="admin-form-control" [(ngModel)]="cancelReason" rows="2"></textarea>
+    </div>
+    <div class="admin-modal-footer">
+      <button class="admin-btn admin-btn-secondary" (click)="showCancelModal=false">Fermer</button>
+      <button class="admin-btn admin-btn-warning" (click)="submitCancel()"><i class="fas fa-ban"></i> Annuler le retrait</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Modal Config ── -->
+<div class="admin-modal-overlay" *ngIf="showConfigModal" (click)="showConfigModal=false">
+  <div class="admin-modal" (click)="$event.stopPropagation()">
+    <div class="admin-modal-header">
+      <h3>Configuration du wallet plateforme</h3>
+      <button class="admin-modal-close" (click)="showConfigModal=false"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="admin-modal-body">
+      <form [formGroup]="configForm">
+        <div class="admin-form-grid">
+          <div class="admin-form-group">
+            <label class="admin-form-label">Frais retrait utilisateurs (%)</label>
+            <input type="number" class="admin-form-control" formControlName="userWithdrawalFeePercent" min="0" max="100">
+            <small class="pf-muted">0% pour les admins (non modifiable)</small>
+          </div>
+          <div class="admin-form-group">
+            <label class="admin-form-label">Montant minimum retrait</label>
+            <input type="number" class="admin-form-control" formControlName="minWithdrawalAmount" min="0">
+          </div>
+          <div class="admin-form-group">
+            <label class="admin-form-label">Montant maximum retrait</label>
+            <input type="number" class="admin-form-control" formControlName="maxWithdrawalAmount" min="1">
+          </div>
+          <div class="admin-form-group">
+            <label class="admin-form-label">Devise par défaut</label>
+            <input type="text" class="admin-form-control" formControlName="defaultCurrency">
+          </div>
+          <div class="admin-form-group pf-full-width">
+            <label class="admin-form-label">Double validation obligatoire</label>
+            <input type="checkbox" formControlName="requireDualValidation"> Oui
+          </div>
+          <div class="admin-form-group pf-full-width">
+            <label class="admin-form-label">Notifications email</label>
+            <input type="checkbox" formControlName="notifyOnWithdrawal"> Activer les notifications
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="admin-modal-footer">
+      <button class="admin-btn admin-btn-secondary" (click)="showConfigModal=false">Annuler</button>
+      <button class="admin-btn admin-btn-primary" (click)="submitConfig()"><i class="fas fa-save"></i> Sauvegarder</button>
+    </div>
+  </div>
+</div>

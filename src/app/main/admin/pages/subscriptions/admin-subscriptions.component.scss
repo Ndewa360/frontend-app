@@ -505,53 +505,6 @@ $red:    #ef4444;
   }
 }
 
-// ── Pagination ────────────────────────────────────────────────────────────────
-.subs-pagination {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 20px;
-  border-top: 1px solid $gray-100;
-  flex-wrap: wrap;
-  gap: 12px;
-
-  .subs-pagination-info {
-    font-size: 0.8125rem;
-    color: $gray-500;
-  }
-
-  .subs-pagination-controls {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .subs-page-btn {
-    width: 32px;
-    height: 32px;
-    border: 1px solid $gray-200;
-    border-radius: 6px;
-    background: $white;
-    color: $gray-500;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.75rem;
-    transition: all 0.15s ease;
-
-    &:hover:not(:disabled) { border-color: $primary; color: $primary; }
-    &:disabled { opacity: 0.4; cursor: not-allowed; }
-  }
-
-  .subs-page-current {
-    font-size: 0.8125rem;
-    color: $gray-700;
-    font-weight: 500;
-    padding: 0 4px;
-  }
-}
-
 // ── Tab Navigation ────────────────────────────────────────────────────────────
 .subs-tab-nav {
   display: flex;
@@ -589,6 +542,157 @@ $red:    #ef4444;
 }
 
 // ── Analytics ─────────────────────────────────────────────────────────────────
+.subs-analytics-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.subs-analytics-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: $gray-900;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  i { color: $primary; }
+}
+
+.subs-period-btns {
+  display: flex;
+  border: 1px solid $gray-200;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.subs-period-btn {
+  padding: 6px 14px;
+  font-size: 0.8rem;
+  border: none;
+  border-right: 1px solid $gray-200;
+  background: $white;
+  cursor: pointer;
+  color: $gray-500;
+  font-weight: 500;
+  transition: all 0.15s;
+
+  &:last-child { border-right: none; }
+  &.active { background: $primary; color: $white; }
+  &:hover:not(.active) { background: $gray-50; }
+}
+
+.subs-analytics-section { margin-bottom: 20px; }
+
+// KPI cards
+.subs-analytics-kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.subs-kpi-card {
+  background: $white;
+  border: 1px solid $gray-200;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  transition: transform 0.15s, box-shadow 0.15s;
+
+  &:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+
+  .subs-kpi-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    color: $white;
+    flex-shrink: 0;
+  }
+
+  .subs-kpi-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: $gray-900;
+    line-height: 1.2;
+    word-break: break-word;
+  }
+
+  .subs-kpi-label {
+    font-size: 0.75rem;
+    color: $gray-500;
+    margin-top: 3px;
+  }
+
+  &.subs-kpi-revenue .subs-kpi-icon  { background: #10b981; }
+  &.subs-kpi-monthly .subs-kpi-icon  { background: #3b82f6; }
+  &.subs-kpi-unpaid  .subs-kpi-icon  { background: #ef4444; }
+  &.subs-kpi-free    .subs-kpi-icon  { background: #6366f1; }
+}
+
+// Distribution des plans
+.subs-plan-distribution {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.subs-plan-bar-row {
+  display: grid;
+  grid-template-columns: 80px 1fr 60px 50px;
+  align-items: center;
+  gap: 12px;
+}
+
+.subs-plan-bar-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: $gray-700;
+}
+
+.subs-plan-bar-track {
+  height: 10px;
+  background: $gray-100;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.subs-plan-bar {
+  height: 100%;
+  border-radius: 5px;
+  transition: width 0.5s ease;
+  min-width: 2px;
+
+  &.subs-plan-bar-premium   { background: #f59e0b; }
+  &.subs-plan-bar-free      { background: #6366f1; }
+  &.subs-plan-bar-suspended { background: #ef4444; }
+}
+
+.subs-plan-bar-count {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: $gray-900;
+  text-align: right;
+}
+
+.subs-plan-bar-pct {
+  font-size: 0.75rem;
+  color: $gray-500;
+  text-align: right;
+}
+
+// Analytics cards (métriques de conversion)
 .subs-analytics-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -609,11 +713,32 @@ $red:    #ef4444;
   .subs-analytics-header {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 12px;
+    gap: 10px;
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid $gray-100;
 
-    i { font-size: 1rem; color: $primary; }
-    h4 { font-size: 0.8125rem; font-weight: 600; color: $gray-500; margin: 0; text-transform: uppercase; letter-spacing: 0.04em; }
+    i {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: $primary-light;
+      color: $primary;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    h4 {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: $gray-500;
+      margin: 0;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
   }
 
   .subs-analytics-value {
@@ -621,21 +746,127 @@ $red:    #ef4444;
     font-weight: 700;
     color: $gray-900;
     margin-bottom: 4px;
-
-    &.subs-value-danger { color: $red; }
+    line-height: 1.2;
   }
 
   .subs-analytics-desc {
     font-size: 0.75rem;
     color: $gray-400;
-    margin: 0;
+    margin: 0 0 8px;
   }
+}
+
+// Analytics detail
+.subs-analytics-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid $gray-100;
+
+  span {
+    font-size: 0.75rem;
+    color: $gray-400;
+  }
+}
+
+// Graphique tendances
+.subs-trend-chart {
+  padding: 20px;
+  overflow-x: auto;
+}
+
+.subs-trend-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 160px;
+  padding-bottom: 36px;
+  min-width: 300px;
+}
+
+.subs-trend-bar-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 32px;
+}
+
+.subs-trend-bar-wrap {
+  width: 100%;
+  height: 120px;
+  display: flex;
+  align-items: flex-end;
+}
+
+.subs-trend-bar {
+  width: 100%;
+  background: $primary;
+  border-radius: 3px 3px 0 0;
+  min-height: 3px;
+  transition: height 0.4s ease;
+  opacity: 0.85;
+
+  &:hover { opacity: 1; }
+}
+
+.subs-trend-bar-label {
+  font-size: 0.65rem;
+  color: $gray-400;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.subs-trend-bar-value {
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: $gray-700;
+  text-align: center;
+  white-space: nowrap;
+}
+
+// Usage bar
+.subs-usage-bar {
+  height: 8px;
+  background: $gray-100;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 3px;
+  width: 100px;
+}
+
+.subs-usage-fill {
+  height: 100%;
+  background: #6366f1;
+  border-radius: 4px;
+  transition: width 0.4s ease;
+
+  &.subs-usage-high   { background: #ef4444; }
+  &.subs-usage-medium { background: #f59e0b; }
 }
 
 // ── Responsive ────────────────────────────────────────────────────────────────
 @media (max-width: 768px) {
   .subs-header { flex-direction: column; }
   .subs-stats  { grid-template-columns: repeat(2, 1fr); }
+  .subs-analytics-kpis { grid-template-columns: repeat(2, 1fr); }
+  .subs-analytics-grid { grid-template-columns: repeat(2, 1fr); }
+  .subs-plan-bar-row { grid-template-columns: 70px 1fr 50px 40px; gap: 8px; }
   .subs-table th:nth-child(5),
   .subs-table td:nth-child(5) { display: none; }
+  .subs-analytics-toolbar { flex-direction: column; align-items: flex-start; }
+}
+
+@media (max-width: 480px) {
+  .subs-stats  { grid-template-columns: 1fr; }
+  .subs-analytics-kpis { grid-template-columns: 1fr; }
+  .subs-analytics-grid { grid-template-columns: 1fr; }
+  .subs-plan-bar-row { grid-template-columns: 60px 1fr 40px; }
+  .subs-plan-bar-pct { display: none; }
 }

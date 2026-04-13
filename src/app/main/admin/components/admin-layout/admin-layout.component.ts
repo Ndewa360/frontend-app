@@ -59,6 +59,7 @@ export class AdminLayoutComponent implements OnInit, OnDestroy {
       { id: 'geography',      label: this.translate.instant('ADMIN.MENU.GEOGRAPHY'),           icon: 'globe-africa',    route: this.getRouteWithLang('/admin/geography'),      description: this.translate.instant('ADMIN.DESCRIPTIONS.GEOGRAPHY') },
       { id: 'payments',       label: this.translate.instant('ADMIN.MENU.PAYMENTS'),            icon: 'credit-card',     route: this.getRouteWithLang('/admin/payments'),       description: this.translate.instant('ADMIN.DESCRIPTIONS.PAYMENTS') },
       { id: 'agents',         label: this.translate.instant('ADMIN.MENU.AGENTS') || 'Agents', icon: 'user-tie',        route: this.getRouteWithLang('/admin/agents'),         description: 'Validation des agents' },
+      { id: 'platform-finance', label: 'Super Wallet',                                          icon: 'wallet',          route: this.getRouteWithLang('/admin/platform-finance'), description: 'Revenus et retraits plateforme' },
       { id: 'settings',       label: this.translate.instant('ADMIN.MENU.SETTINGS'),            icon: 'cog',             route: this.getRouteWithLang('/admin/settings'),       description: this.translate.instant('ADMIN.DESCRIPTIONS.SETTINGS') },
       { id: 'monitoring',     label: this.translate.instant('ADMIN.MENU.MONITORING'),          icon: 'chart-line',      route: this.getRouteWithLang('/admin/monitoring'),     description: this.translate.instant('ADMIN.DESCRIPTIONS.MONITORING') }
     ];

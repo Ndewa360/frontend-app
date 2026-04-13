@@ -17,6 +17,7 @@ import { AdminPaymentsComponent } from './pages/payments/admin-payments.componen
 import { AdminSettingsComponent } from './pages/settings/admin-settings.component';
 import { AgentManagementComponent } from './pages/agent-management/agent-management.component';
 import { AdminSubscriptionsComponent } from './pages/subscriptions/admin-subscriptions.component';
+import { PlatformFinanceComponent } from './pages/platform-finance/platform-finance.component';
 
 // ── Modals / Components ───────────────────────────────────────────────────────
 import { CountrySelectionModalComponent } from './components/country-selection-modal/country-selection-modal.component';
@@ -61,6 +62,7 @@ import { AdminRoutingModule } from './admin-routing.module';
     AdminSettingsComponent,
     AgentManagementComponent,
     AdminSubscriptionsComponent,
+    PlatformFinanceComponent,
     CountrySelectionModalComponent,
     CountryDeleteModalComponent,
     CountryViewModalComponent,

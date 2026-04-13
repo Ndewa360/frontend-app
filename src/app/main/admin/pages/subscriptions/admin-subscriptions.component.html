@@ -147,11 +147,11 @@
             <tr *ngFor="let sub of subscriptions$ | async; trackBy: trackBySubscriptionId" class="subs-row">
               <td>
                 <div class="subs-user-cell">
-                  <div class="subs-avatar">{{ sub.user.firstName.charAt(0) }}{{ sub.user.lastName.charAt(0) }}</div>
+                  <div class="subs-avatar">{{ getUserInitials(sub.user) }}</div>
                   <div class="subs-user-info">
-                    <div class="subs-user-name">{{ sub.user.firstName }} {{ sub.user.lastName }}</div>
-                    <div class="subs-user-email">{{ sub.user.email }}</div>
-                    <div class="subs-user-type">{{ sub.user.userType }}</div>
+                    <div class="subs-user-name">{{ getUserFullName(sub.user) }}</div>
+                    <div class="subs-user-email">{{ sub.user?.email }}</div>
+                    <div class="subs-user-type">{{ sub.user?.userType }}</div>
                   </div>
                 </div>
               </td>
@@ -250,6 +250,16 @@
   <!-- ── TAB: Analytics ── -->
   <ng-container *ngIf="selectedTab === 'analytics'">
 
+    <!-- Sélecteur de période -->
+    <div class="subs-analytics-toolbar">
+      <h3 class="subs-analytics-title"><i class="fas fa-chart-line"></i> Analytics des souscriptions</h3>
+      <div class="subs-period-btns">
+        <button class="subs-period-btn" [class.active]="analyticsTimeRange==='7d'"  (click)="onAnalyticsTimeRangeChange('7d')">7 jours</button>
+        <button class="subs-period-btn" [class.active]="analyticsTimeRange==='30d'" (click)="onAnalyticsTimeRangeChange('30d')">30 jours</button>
+        <button class="subs-period-btn" [class.active]="analyticsTimeRange==='90d'" (click)="onAnalyticsTimeRangeChange('90d')">90 jours</button>
+      </div>
+    </div>
+
     <!-- Loading analytics -->
     <div class="subs-loading" *ngIf="isLoadingAnalytics">
       <div class="subs-spinner"></div>
@@ -258,7 +268,86 @@
 
     <ng-container *ngIf="!isLoadingAnalytics">
 
-      <!-- Conversion Metrics -->
+      <!-- ── KPIs depuis stats store ── -->
+      <ng-container *ngIf="stats$ | async as stats">
+        <div class="subs-analytics-kpis">
+          <div class="subs-kpi-card subs-kpi-revenue">
+            <div class="subs-kpi-icon"><i class="fas fa-coins"></i></div>
+            <div class="subs-kpi-body">
+              <div class="subs-kpi-value">{{ formatCurrency(stats.overview.totalRevenue) }}</div>
+              <div class="subs-kpi-label">Revenus totaux</div>
+            </div>
+          </div>
+          <div class="subs-kpi-card subs-kpi-monthly">
+            <div class="subs-kpi-icon"><i class="fas fa-calendar-alt"></i></div>
+            <div class="subs-kpi-body">
+              <div class="subs-kpi-value">{{ formatCurrency(stats.overview.monthlyRevenue) }}</div>
+              <div class="subs-kpi-label">Revenus ce mois</div>
+            </div>
+          </div>
+          <div class="subs-kpi-card subs-kpi-unpaid">
+            <div class="subs-kpi-icon"><i class="fas fa-exclamation-circle"></i></div>
+            <div class="subs-kpi-body">
+              <div class="subs-kpi-value">{{ formatCurrency(stats.overview.totalUnpaidAmount) }}</div>
+              <div class="subs-kpi-label">Montant impayé ({{ stats.overview.unpaidInvoicesCount }} factures)</div>
+            </div>
+          </div>
+          <div class="subs-kpi-card subs-kpi-free">
+            <div class="subs-kpi-icon"><i class="fas fa-user"></i></div>
+            <div class="subs-kpi-body">
+              <div class="subs-kpi-value">{{ stats.overview.freeUsers | number }}</div>
+              <div class="subs-kpi-label">Utilisateurs gratuits</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Distribution des plans ── -->
+        <div class="subs-table-card subs-analytics-section">
+          <div class="subs-table-header">
+            <h3 class="subs-table-title"><i class="fas fa-chart-pie"></i> Distribution des plans</h3>
+          </div>
+          <div class="subs-plan-distribution">
+            <div class="subs-plan-bar-row">
+              <span class="subs-plan-bar-label">Premium</span>
+              <div class="subs-plan-bar-track">
+                <div class="subs-plan-bar subs-plan-bar-premium"
+                     [style.width.%]="stats.overview.totalUsers > 0 ? (stats.overview.premiumUsers / stats.overview.totalUsers * 100) : 0">
+                </div>
+              </div>
+              <span class="subs-plan-bar-count">{{ stats.overview.premiumUsers | number }}</span>
+              <span class="subs-plan-bar-pct">
+                {{ stats.overview.totalUsers > 0 ? (stats.overview.premiumUsers / stats.overview.totalUsers * 100 | number:'1.0-1') : 0 }}%
+              </span>
+            </div>
+            <div class="subs-plan-bar-row">
+              <span class="subs-plan-bar-label">Gratuit</span>
+              <div class="subs-plan-bar-track">
+                <div class="subs-plan-bar subs-plan-bar-free"
+                     [style.width.%]="stats.overview.totalUsers > 0 ? (stats.overview.freeUsers / stats.overview.totalUsers * 100) : 0">
+                </div>
+              </div>
+              <span class="subs-plan-bar-count">{{ stats.overview.freeUsers | number }}</span>
+              <span class="subs-plan-bar-pct">
+                {{ stats.overview.totalUsers > 0 ? (stats.overview.freeUsers / stats.overview.totalUsers * 100 | number:'1.0-1') : 0 }}%
+              </span>
+            </div>
+            <div class="subs-plan-bar-row">
+              <span class="subs-plan-bar-label">Suspendus</span>
+              <div class="subs-plan-bar-track">
+                <div class="subs-plan-bar subs-plan-bar-suspended"
+                     [style.width.%]="stats.overview.totalUsers > 0 ? (stats.overview.suspendedUsers / stats.overview.totalUsers * 100) : 0">
+                </div>
+              </div>
+              <span class="subs-plan-bar-count">{{ stats.overview.suspendedUsers | number }}</span>
+              <span class="subs-plan-bar-pct">
+                {{ stats.overview.totalUsers > 0 ? (stats.overview.suspendedUsers / stats.overview.totalUsers * 100 | number:'1.0-1') : 0 }}%
+              </span>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- ── Métriques de conversion ── -->
       <div class="subs-analytics-grid" *ngIf="analyticsData">
         <div class="subs-analytics-card">
           <div class="subs-analytics-header">
@@ -266,38 +355,68 @@
             <h4>Taux de conversion</h4>
           </div>
           <div class="subs-analytics-value">{{ analyticsData.conversionRate | number:'1.1-1' }}%</div>
-          <p class="subs-analytics-desc">Free → Premium</p>
+          <p class="subs-analytics-desc">Free → Premium sur {{ analyticsTimeRange }}</p>
+          <div class="subs-analytics-detail">
+            <span>{{ analyticsData.newPremium | number }} nouveaux premium</span>
+            <span>sur {{ analyticsData.newUsers | number }} inscrits</span>
+          </div>
         </div>
         <div class="subs-analytics-card">
           <div class="subs-analytics-header">
-            <i class="fas fa-door-open"></i>
-            <h4>Taux de churn</h4>
+            <i class="fas fa-user-plus"></i>
+            <h4>Nouveaux inscrits</h4>
           </div>
-          <div class="subs-analytics-value" [class.subs-value-danger]="analyticsData.churnRate > 5">
-            {{ analyticsData.churnRate | number:'1.1-1' }}%
-          </div>
-          <p class="subs-analytics-desc">Taux d'abandon mensuel</p>
+          <div class="subs-analytics-value">{{ analyticsData.newUsers | number }}</div>
+          <p class="subs-analytics-desc">Sur les {{ analyticsTimeRange }}</p>
         </div>
         <div class="subs-analytics-card">
+          <div class="subs-analytics-header">
+            <i class="fas fa-crown"></i>
+            <h4>Nouveaux premium</h4>
+          </div>
+          <div class="subs-analytics-value">{{ analyticsData.newPremium | number }}</div>
+          <p class="subs-analytics-desc">Sur les {{ analyticsTimeRange }}</p>
+        </div>
+        <div class="subs-analytics-card" *ngIf="stats$ | async as stats">
           <div class="subs-analytics-header">
             <i class="fas fa-user-dollar"></i>
             <h4>ARPU</h4>
           </div>
-          <div class="subs-analytics-value">{{ formatCurrency(analyticsData.averageRevenuePerUser) }}</div>
+          <div class="subs-analytics-value">{{ formatCurrency(stats.overview.totalRevenue / (stats.overview.totalUsers || 1)) }}</div>
           <p class="subs-analytics-desc">Revenu moyen par utilisateur</p>
-        </div>
-        <div class="subs-analytics-card">
-          <div class="subs-analytics-header">
-            <i class="fas fa-check-double"></i>
-            <h4>Taux de paiement</h4>
-          </div>
-          <div class="subs-analytics-value">{{ analyticsData.paymentSuccessRate | number:'1.1-1' }}%</div>
-          <p class="subs-analytics-desc">Paiements réussis</p>
         </div>
       </div>
 
-      <!-- Churn Risk Users -->
-      <div class="subs-table-card" *ngIf="churnRiskUsers.length > 0">
+      <!-- ── Graphique tendances revenus ── -->
+      <div class="subs-table-card subs-analytics-section" *ngIf="revenueTrends.length > 0">
+        <div class="subs-table-header">
+          <h3 class="subs-table-title"><i class="fas fa-chart-bar"></i> Tendances des revenus</h3>
+          <span class="subs-table-count">{{ revenueTrends.length }} points</span>
+        </div>
+        <div class="subs-trend-chart">
+          <div class="subs-trend-bars">
+            <div class="subs-trend-bar-group" *ngFor="let d of revenueTrends">
+              <div class="subs-trend-bar-wrap">
+                <div class="subs-trend-bar"
+                     [style.height.%]="getBarHeightPercent(d.revenue || 0)"
+                     [title]="formatCurrency(d.revenue || 0)"></div>
+              </div>
+              <div class="subs-trend-bar-label">{{ formatTrendDate(d) }}</div>
+              <div class="subs-trend-bar-value">{{ formatCurrency(d.revenue || 0) }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="subs-table-card subs-analytics-section" *ngIf="revenueTrends.length === 0 && !isLoadingAnalytics">
+        <div class="subs-empty" style="padding:32px">
+          <i class="fas fa-chart-bar subs-empty-icon"></i>
+          <h3>Aucune tendance de revenus</h3>
+          <p>Aucun paiement enregistré sur cette période.</p>
+        </div>
+      </div>
+
+      <!-- ── Utilisateurs à risque de churn ── -->
+      <div class="subs-table-card subs-analytics-section" *ngIf="churnRiskUsers.length > 0">
         <div class="subs-table-header">
           <h3 class="subs-table-title">
             <i class="fas fa-exclamation-triangle" style="color:#f97316"></i>
@@ -311,8 +430,7 @@
                 <th>Utilisateur</th>
                 <th>Plan</th>
                 <th>Statut</th>
-                <th>Impayés</th>
-                <th>Dernier paiement</th>
+                <th>Factures impayées</th>
                 <th class="col-actions">Actions</th>
               </tr>
             </thead>
@@ -320,10 +438,10 @@
               <tr *ngFor="let sub of churnRiskUsers" class="subs-row">
                 <td>
                   <div class="subs-user-cell">
-                    <div class="subs-avatar">{{ sub.user.firstName.charAt(0) }}{{ sub.user.lastName.charAt(0) }}</div>
+                    <div class="subs-avatar">{{ getUserInitials(sub.user) }}</div>
                     <div class="subs-user-info">
-                      <div class="subs-user-name">{{ sub.user.firstName }} {{ sub.user.lastName }}</div>
-                      <div class="subs-user-email">{{ sub.user.email }}</div>
+                      <div class="subs-user-name">{{ getUserFullName(sub.user) }}</div>
+                      <div class="subs-user-email">{{ sub.user?.email }}</div>
                     </div>
                   </div>
                 </td>
@@ -336,15 +454,11 @@
                   </span>
                 </td>
                 <td>
-                  <span class="subs-badge subs-badge-danger" *ngIf="sub.hasUnpaidInvoices">
-                    {{ formatCurrency(sub.totalUnpaidAmount) }}
-                  </span>
-                  <span class="subs-badge subs-badge-success" *ngIf="!sub.hasUnpaidInvoices">À jour</span>
+                  <span class="subs-badge subs-badge-danger">{{ sub.unpaidCount || 0 }} facture(s)</span>
                 </td>
-                <td class="subs-date-cell">{{ formatDate(sub.lastPaymentDate) }}</td>
                 <td class="col-actions">
                   <button class="subs-btn subs-btn-outline" style="padding:4px 10px;font-size:0.75rem"
-                          (click)="onSendPaymentReminder(sub)" *ngIf="sub.hasUnpaidInvoices">
+                          (click)="onSendPaymentReminder(sub)">
                     <i class="fas fa-envelope"></i> Rappel
                   </button>
                 </td>
@@ -353,9 +467,16 @@
           </table>
         </div>
       </div>
+      <div class="subs-table-card subs-analytics-section" *ngIf="churnRiskUsers.length === 0 && !isLoadingAnalytics">
+        <div class="subs-empty" style="padding:32px">
+          <i class="fas fa-check-circle subs-empty-icon" style="color:#10b981"></i>
+          <h3>Aucun utilisateur à risque</h3>
+          <p>Tous les comptes premium sont à jour.</p>
+        </div>
+      </div>
 
-      <!-- Upgrade Opportunities -->
-      <div class="subs-table-card" *ngIf="upgradeOpportunities.length > 0">
+      <!-- ── Opportunités d'upgrade ── -->
+      <div class="subs-table-card subs-analytics-section" *ngIf="upgradeOpportunities.length > 0">
         <div class="subs-table-header">
           <h3 class="subs-table-title">
             <i class="fas fa-arrow-up" style="color:#10b981"></i>
@@ -367,9 +488,9 @@
             <thead>
               <tr>
                 <th>Utilisateur</th>
-                <th>Propriétés</th>
+                <th>Propriétés utilisées</th>
                 <th>Limite</th>
-                <th>Montant mensuel</th>
+                <th>Taux d'utilisation</th>
                 <th class="col-actions">Actions</th>
               </tr>
             </thead>
@@ -377,16 +498,25 @@
               <tr *ngFor="let sub of upgradeOpportunities" class="subs-row">
                 <td>
                   <div class="subs-user-cell">
-                    <div class="subs-avatar">{{ sub.user.firstName.charAt(0) }}{{ sub.user.lastName.charAt(0) }}</div>
+                    <div class="subs-avatar">{{ getUserInitials(sub.user) }}</div>
                     <div class="subs-user-info">
-                      <div class="subs-user-name">{{ sub.user.firstName }} {{ sub.user.lastName }}</div>
-                      <div class="subs-user-email">{{ sub.user.email }}</div>
+                      <div class="subs-user-name">{{ getUserFullName(sub.user) }}</div>
+                      <div class="subs-user-email">{{ sub.user?.email }}</div>
                     </div>
                   </div>
                 </td>
                 <td><strong>{{ sub.propertyCount }}</strong></td>
                 <td>{{ sub.propertyLimit }}</td>
-                <td>{{ formatCurrency(sub.monthlyAmount) }}</td>
+                <td>
+                  <div class="subs-usage-bar">
+                    <div class="subs-usage-fill"
+                         [style.width.%]="(sub.usageRate || 0) * 100"
+                         [class.subs-usage-high]="(sub.usageRate || 0) >= 0.9"
+                         [class.subs-usage-medium]="(sub.usageRate || 0) >= 0.7 && (sub.usageRate || 0) < 0.9">
+                    </div>
+                  </div>
+                  <small>{{ ((sub.usageRate || 0) * 100) | number:'1.0-0' }}%</small>
+                </td>
                 <td class="col-actions">
                   <button class="subs-btn subs-btn-primary" style="padding:4px 10px;font-size:0.75rem"
                           (click)="onForceUpgrade(sub)">
@@ -398,12 +528,12 @@
           </table>
         </div>
       </div>
-
-      <!-- Empty analytics state -->
-      <div class="subs-empty" *ngIf="!analyticsData && churnRiskUsers.length === 0 && upgradeOpportunities.length === 0">
-        <i class="fas fa-chart-line subs-empty-icon"></i>
-        <h3>Aucune donnée analytique disponible</h3>
-        <p>Les données analytics apparaîtront ici une fois que des souscriptions seront actives.</p>
+      <div class="subs-table-card subs-analytics-section" *ngIf="upgradeOpportunities.length === 0 && !isLoadingAnalytics">
+        <div class="subs-empty" style="padding:32px">
+          <i class="fas fa-arrow-up subs-empty-icon" style="color:#10b981"></i>
+          <h3>Aucune opportunité d'upgrade</h3>
+          <p>Tous les utilisateurs gratuits ont encore de la marge.</p>
+        </div>
       </div>
 
     </ng-container>

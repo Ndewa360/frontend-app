@@ -31,9 +31,11 @@ export class AdminSubscriptionsComponent implements OnInit, OnDestroy {
 
   // Analytics data
   analyticsData: any = null;
+  revenueTrends: any[] = [];
   churnRiskUsers: any[] = [];
   upgradeOpportunities: any[] = [];
   isLoadingAnalytics = false;
+  analyticsTimeRange = '30d';
 
   // Filter options
   planOptions = [
@@ -96,6 +98,9 @@ export class AdminSubscriptionsComponent implements OnInit, OnDestroy {
 
   onTabChange(tab: string): void {
     this.selectedTab = tab;
+    if (tab === 'analytics' && !this.analyticsData) {
+      this.loadAnalytics();
+    }
   }
 
   onToggleFilters(): void {
@@ -172,18 +177,37 @@ export class AdminSubscriptionsComponent implements OnInit, OnDestroy {
 
   private loadAnalytics(): void {
     this.isLoadingAnalytics = true;
-    this.subscriptionsService.getConversionMetrics('30d')
+
+    // Charger les métriques de conversion
+    this.subscriptionsService.getConversionMetrics(this.analyticsTimeRange)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (data) => { this.analyticsData = data; this.isLoadingAnalytics = false; },
-        error: () => this.isLoadingAnalytics = false
+        next: (data) => {
+          this.analyticsData = data;
+          this.isLoadingAnalytics = false;
+        },
+        error: () => { this.isLoadingAnalytics = false; }
       });
+
+    // Charger les tendances de revenus
+    this.subscriptionsService.getRevenueTrends(this.analyticsTimeRange)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data: any) => {
+          this.revenueTrends = Array.isArray(data) ? data : [];
+        },
+        error: () => { this.revenueTrends = []; }
+      });
+
+    // Charger les utilisateurs à risque
     this.subscriptionsService.getChurnRiskUsers()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (users) => this.churnRiskUsers = users || [],
         error: () => this.churnRiskUsers = []
       });
+
+    // Charger les opportunités d'upgrade
     this.subscriptionsService.getUpgradeOpportunities()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -192,10 +216,31 @@ export class AdminSubscriptionsComponent implements OnInit, OnDestroy {
       });
   }
 
+  onAnalyticsTimeRangeChange(range: string): void {
+    this.analyticsTimeRange = range;
+    this.loadAnalytics();
+  }
+
+  // Helpers graphique tendances
+  getMaxRevenue(): number {
+    if (!this.revenueTrends.length) return 1;
+    return Math.max(...this.revenueTrends.map((d: any) => d.revenue || 0), 1);
+  }
+
+  getBarHeightPercent(value: number): number {
+    return Math.round((value / this.getMaxRevenue()) * 100);
+  }
+
+  formatTrendDate(item: any): string {
+    if (!item) return '';
+    if (item._id) return item._id;
+    return `${item.year || ''}-${String(item.month || '').padStart(2, '0')}`;
+  }
+
   onRefreshData(): void {
     this.isRefreshing = true;
     this.store.dispatch(new AdminSubscriptionsAction.RefreshData());
-    this.loadAnalytics();
+    if (this.selectedTab === 'analytics') this.loadAnalytics();
     setTimeout(() => this.isRefreshing = false, 1000);
   }
 
@@ -283,5 +328,22 @@ export class AdminSubscriptionsComponent implements OnInit, OnDestroy {
 
   getPaginationEnd(pagination: any): number {
     return Math.min(pagination.page * pagination.limit, pagination.total);
+  }
+
+  // ── User helpers sécurisés ────────────────────────────────────────────────
+
+  getUserInitials(user: any): string {
+    if (!user) return '?';
+    const first = (user.firstName || user.name?.split(' ')[0] || '').charAt(0);
+    const last  = (user.lastName  || user.name?.split(' ')[1] || '').charAt(0);
+    return (first + last).toUpperCase() || '?';
+  }
+
+  getUserFullName(user: any): string {
+    if (!user) return 'Inconnu';
+    if (user.firstName || user.lastName) {
+      return `${user.firstName || ''} ${user.lastName || ''}`.trim();
+    }
+    return user.name || user.email || 'Inconnu';
   }
 }

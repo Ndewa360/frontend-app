@@ -16,6 +16,7 @@ import { AdminSettingsComponent } from './pages/settings/admin-settings.componen
 import { UserDetailsComponent } from './pages/user-details/user-details.component';
 import { AgentManagementComponent } from './pages/agent-management/agent-management.component';
 import { AdminSubscriptionsComponent } from './pages/subscriptions/admin-subscriptions.component';
+import { PlatformFinanceComponent } from './pages/platform-finance/platform-finance.component';
 
 const routes: Routes = [
   {
@@ -90,10 +91,12 @@ const routes: Routes = [
       {
         path: 'subscriptions',
         component: AdminSubscriptionsComponent,
-        data: {
-          title: 'ADMIN.PAGE_TITLES.SUBSCRIPTIONS',
-          breadcrumb: 'ADMIN.BREADCRUMBS.SUBSCRIPTIONS'
-        }
+        data: { title: 'ADMIN.PAGE_TITLES.SUBSCRIPTIONS', breadcrumb: 'ADMIN.BREADCRUMBS.SUBSCRIPTIONS' }
+      },
+      {
+        path: 'platform-finance',
+        component: PlatformFinanceComponent,
+        data: { title: 'Super Wallet Plateforme', breadcrumb: 'Wallet Plateforme' }
       },
       {
         path: 'monitoring',
