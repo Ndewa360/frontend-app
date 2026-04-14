@@ -39,7 +39,7 @@ export interface ContractVariables {
   montantCaution: string;
 }
 
-// Interface pour les variables de template
+// Interface pour les variables de template (déclarée une seule fois)
 export interface TemplateVariable {
   key: string;
   label: string;
@@ -98,10 +98,11 @@ export interface UpdateContractTemplateDTO {
   contentHash?: string;
 }
 
+// DuplicateContractTemplateDTO déclarée une seule fois
 export interface DuplicateContractTemplateDTO {
+  sourceTemplateId: string;
   name: string;
   description?: string;
-  sourceTemplateId: string;
   isDefault?: boolean;
   customVariables?: { [key: string]: string };
 }
@@ -120,12 +121,6 @@ export interface ContractTemplateFilterDTO {
 export interface UploadTemplateContentDTO {
   content: string;
   customVariables?: { [key: string]: string };
-}
-
-export interface DuplicateContractTemplateDTO {
-  sourceTemplateId: string;
-  name: string;
-  description?: string;
 }
 
 export interface PreviewContractTemplateDTO {
@@ -165,17 +160,6 @@ export interface ContractEditorConfig {
   menubar: boolean;
   statusbar: boolean;
   branding: boolean;
-}
-
-// Interface pour les variables d'édition
-export interface TemplateVariable {
-  key: string;
-  label: string;
-  description: string;
-  type: 'text' | 'number' | 'date' | 'boolean';
-  required: boolean;
-  defaultValue?: any;
-  category: 'bailleur' | 'locataire' | 'logement' | 'contrat' | 'custom';
 }
 
 // Interface pour l'état de l'éditeur

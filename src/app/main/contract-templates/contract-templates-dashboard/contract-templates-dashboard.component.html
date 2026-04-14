@@ -185,11 +185,11 @@
           <div class="template-meta">
             <div class="template-usage">
               <i class="fas fa-chart-line text-sm mr-1"></i>
-              <span>{{ template.usageCount }} {{ 'CONTRACT_TEMPLATES.RECENT_TEMPLATES.USAGE_COUNT' | translate }}</span>
+              <span>{{ template.usageCount || 0 }} {{ 'CONTRACT_TEMPLATES.RECENT_TEMPLATES.USAGE_COUNT' | translate }}</span>
             </div>
             <div class="template-date">
               <i class="fas fa-calendar text-sm mr-1"></i>
-              <span>{{ template.updatedAt | date:'dd/MM/yyyy' }}</span>
+              <span>{{ (template.lastUsedAt || template.updatedAt) | date:'dd/MM/yyyy' }}</span>
             </div>
           </div>
 
@@ -205,6 +205,14 @@
             <button ibmButton="ghost" size="sm" (click)="viewTemplate(template)">
               <i class="fas fa-eye text-sm mr-1"></i>
               {{ 'CONTRACT_TEMPLATES.RECENT_TEMPLATES.VIEW' | translate }}
+            </button>
+            <button
+              ibmButton="danger--ghost"
+              size="sm"
+              (click)="deleteTemplate(template)"
+              *ngIf="!template.isSystemDefault"
+              title="Supprimer ce modèle">
+              <i class="fas fa-trash text-sm"></i>
             </button>
           </div>
         </div>

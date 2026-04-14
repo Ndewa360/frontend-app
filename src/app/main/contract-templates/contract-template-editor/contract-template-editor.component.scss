@@ -1256,56 +1256,16 @@
     .preview-viewport {
       transform-origin: top center;
       transition: transform 0.3s ease;
+      width: 210mm;
 
-      .document-preview {
-        background: white;
-        padding: 3rem;
+      .document-preview-frame {
+        width: 210mm;
+        min-height: 297mm;
+        border: none;
         border-radius: 0.5rem;
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        max-width: 210mm; // Format A4
-        min-height: 297mm; // Format A4
-        font-family: 'Times New Roman', serif;
-        line-height: 1.6;
-        color: #374151;
-
-        // Styles pour le contenu du document
-        h1, h2, h3, h4, h5, h6 {
-          color: #1f2937;
-          margin-top: 1.5em;
-          margin-bottom: 0.5em;
-          font-weight: 600;
-        }
-
-        h1 { font-size: 1.875rem; }
-        h2 { font-size: 1.5rem; }
-        h3 { font-size: 1.25rem; }
-
-        p {
-          margin-bottom: 1em;
-          text-align: justify;
-        }
-
-        .variable {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          color: white;
-          padding: 2px 8px;
-          border-radius: 12px;
-          font-size: 0.875rem;
-          font-weight: 500;
-        }
-
-        .signature-section {
-          margin-top: 3em;
-          border-top: 2px solid #e5e7eb;
-          padding-top: 2em;
-        }
-
-        // Styles pour l'impression
-        @media print {
-          box-shadow: none;
-          border-radius: 0;
-          padding: 0;
-        }
+        background: white;
+        display: block;
       }
     }
   }

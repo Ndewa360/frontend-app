@@ -157,8 +157,13 @@
 
         <!-- Contenu du template -->
         <div class="preview-content"
-             *ngIf="!isLoadingContent && !loadingError && content"
-             [innerHTML]="content">
+             *ngIf="!isLoadingContent && !loadingError && content">
+          <iframe
+            class="template-preview-frame"
+            [srcdoc]="iframeContent"
+            sandbox="allow-same-origin"
+            frameborder="0">
+          </iframe>
         </div>
 
         <!-- Message si pas de contenu -->

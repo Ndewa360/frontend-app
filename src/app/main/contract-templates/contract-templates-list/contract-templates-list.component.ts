@@ -36,6 +36,8 @@ export class ContractTemplatesListComponent implements OnInit, OnDestroy {
   viewMode: 'grid' | 'list' = 'grid';
   showAdvancedFilters = false;
   isDuplicateMode = false;
+  // État local des menus de cartes (évite la mutation du store)
+  _menuStates: Record<string, boolean> = {};
 
   // Filtres locaux
   searchQuery = '';
@@ -283,35 +285,34 @@ export class ContractTemplatesListComponent implements OnInit, OnDestroy {
 
   /**
    * Basculer le menu de la carte
+   * Utilise selectSnapshot pour éviter les fuites de subscriptions et la mutation du store
    */
   toggleCardMenu(templateId: string): void {
-    // Fermer tous les autres menus
-    this.templates$.subscribe(templates => {
-      templates.forEach(template => {
-        if (template._id !== templateId) {
-          (template as any).showMenu = false;
-        }
-      });
-    });
-
-    // Basculer le menu du template sélectionné
-    this.templates$.subscribe(templates => {
-      const template = templates.find(t => t._id === templateId);
-      if (template) {
-        (template as any).showMenu = !(template as any).showMenu;
-      }
-    });
+    const templates = this.store.selectSnapshot(ContractTemplateState.selectStateTemplates);
+    // Créer de nouveaux objets (immutabilité) plutôt que de muter les objets du store
+    const updated = templates.map(t => ({
+      ...t,
+      showMenu: t._id === templateId ? !(t as any).showMenu : false
+    }));
+    // Stocker l'état des menus localement sans toucher au store
+    this._menuStates = updated.reduce((acc, t) => {
+      acc[t._id] = (t as any).showMenu || false;
+      return acc;
+    }, {} as Record<string, boolean>);
   }
 
   /**
    * Fermer tous les menus
    */
   closeAllMenus(): void {
-    this.templates$.subscribe(templates => {
-      templates.forEach(template => {
-        (template as any).showMenu = false;
-      });
-    });
+    this._menuStates = {};
+  }
+
+  /**
+   * Vérifier si le menu d'une carte est ouvert
+   */
+  isMenuOpen(templateId: string): boolean {
+    return this._menuStates[templateId] || false;
   }
 
   /**

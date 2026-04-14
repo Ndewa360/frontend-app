@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, forwardRef } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil, filter, take } from 'rxjs';
 import { ContractTemplateService } from '../../services/contract-template.service';
 import {
   ContractTemplateModel,
@@ -182,20 +182,32 @@ export class ContractTemplateSelectorComponent implements OnInit, OnDestroy, Con
 
   /**
    * Chercher et définir le template par ID
+   * Utilise un Subject pour éviter la récursion infinie en cas d'erreur réseau
    */
   private findAndSetTemplate(templateId: string): void {
     const template = this.templates.find(t => t._id === templateId);
     if (template) {
       this.selectedTemplate = template;
-    } else if (this.templates.length === 0) {
-      // Si les templates ne sont pas encore chargés, attendre et réessayer
-      console.log('Templates pas encore chargés, attente...', templateId);
-      setTimeout(() => {
-        this.findAndSetTemplate(templateId);
-      }, 500);
+      return;
+    }
+
+    if (this.templates.length === 0 && !this.isLoading) {
+      // Templates pas encore chargés : recharger une seule fois puis chercher
+      this.loadTemplates();
+      // Attendre la fin du chargement via l'observable du service
+      this.contractTemplateService.templates$
+        .pipe(
+          filter(templates => templates.length > 0),
+          take(1),
+          takeUntil(this.destroy$)
+        )
+        .subscribe(templates => {
+          const found = templates.find(t => t._id === templateId);
+          this.selectedTemplate = found || null;
+          if (!found) console.warn('Template non trouvé après rechargement:', templateId);
+        });
     } else {
-      // Template non trouvé dans la liste
-      console.warn('Template non trouvé:', templateId);
+      console.warn('Template non trouvé dans la liste:', templateId);
       this.selectedTemplate = null;
     }
   }

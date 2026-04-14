@@ -11,7 +11,7 @@
         <div class="header-info">
           <h1 class="app-productive-heading-03">{{ isEditMode ? ('CONTRACT_TEMPLATES.EDITOR.EDIT_TEMPLATE' | translate) : ('CONTRACT_TEMPLATES.EDITOR.NEW_TEMPLATE' | translate) }}</h1>
           <div class="header-meta">
-            <span class="app-body-short-01" *ngIf="templateName">{{ templateName }}</span>
+            <span class="app-body-short-01" *ngIf="isEditMode && templateName">{{ templateName }}</span>
             <div class="status-indicators">
               <div class="save-status" [ngClass]="getSaveStatusClass()">
                 <i [class]="'fas ' + getSaveStatusIcon() + ' text-sm mr-1'"></i>
@@ -273,13 +273,13 @@
 
         <!-- Zone de prévisualisation -->
         <div class="preview-container">
-          <div class="preview-viewport">
-            <!-- Injecter les styles du template -->
-            <style [innerHTML]="getPreviewStyles()"></style>
-            <div class="document-preview"
-                 [style.transform]="'scale(' + (previewZoom / 100) + ')'"
-                 [innerHTML]="getPreviewBodyContent()">
-            </div>
+          <div class="preview-viewport" [style.transform]="'scale(' + (previewZoom / 100) + ')'">
+            <iframe
+              class="document-preview-frame"
+              [srcdoc]="getPreviewHtml()"
+              sandbox="allow-same-origin"
+              frameborder="0">
+            </iframe>
           </div>
         </div>
       </div>

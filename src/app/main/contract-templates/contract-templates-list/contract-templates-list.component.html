@@ -197,11 +197,11 @@
         <div class="card-meta">
           <div class="meta-item">
             <i class="fas fa-chart-line"></i>
-            <span>{{ template.usageCount }} {{ 'CONTRACT_TEMPLATES.LIST.TABLE.USAGE' | translate }}</span>
+            <span>{{ (template.usageCount || 0) }} {{ 'CONTRACT_TEMPLATES.LIST.TABLE.USAGE' | translate }}</span>
           </div>
           <div class="meta-item">
             <i class="fas fa-calendar"></i>
-            <span>{{ template.updatedAt | date:getDateFormat() }}</span>
+            <span>{{ (template.lastUsedAt || template.updatedAt) | date:getDateFormat() }}</span>
           </div>
         </div>
         
@@ -269,11 +269,13 @@
       </div>
       
       <div class="col-usage">
-        <span class="usage-count">{{ template.usageCount }}</span>
+        <span class="usage-count">{{ template.usageCount || 0 }}</span>
       </div>
       
       <div class="col-date">
-        <span class="date-text">{{ template.updatedAt | date:getDateFormat() }}</span>
+        <span class="date-text" [title]="(template.lastUsedAt || template.updatedAt) | date:'dd/MM/yyyy HH:mm'">
+          {{ (template.lastUsedAt || template.updatedAt) | date:getDateFormat() }}
+        </span>
       </div>
       
       <div class="col-actions">

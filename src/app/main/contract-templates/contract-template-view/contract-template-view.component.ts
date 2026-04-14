@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, Observable } from 'rxjs';
-import { takeUntil, filter, take } from 'rxjs/operators';
+import { takeUntil, filter, take, switchMap } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
 import { MatDialog } from '@angular/material/dialog';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
@@ -33,6 +33,7 @@ export class ContractTemplateViewComponent implements OnInit, OnDestroy {
   // État local
   templateId: string = '';
   content: SafeHtml | string = '';
+  iframeContent: SafeHtml = '';
   isLoadingContent = false;
   isDefaultTemplate = false;
   loadingError: string | null = null;
@@ -78,66 +79,76 @@ export class ContractTemplateViewComponent implements OnInit, OnDestroy {
     this.loadingError = null;
 
     if (this.isDefaultTemplate) {
-      // Charger le template par défaut
-      console.log('Loading default template');
       this.store.dispatch(new ContractTemplateAction.LoadDefaultTemplate());
     } else {
-      // Charger un template utilisateur
-      console.log('Loading user template:', templateId);
       this.store.dispatch(new ContractTemplateAction.FetchTemplate(templateId));
     }
 
-    // Charger le contenu après un délai pour s'assurer que le template est chargé
-    setTimeout(() => {
-      this.loadContent(templateId);
-    }, 500);
+    // Charger le contenu dès que le template est disponible dans le store
+    // (évite le setTimeout arbitraire)
+    this.template$.pipe(
+      filter(t => t !== null),
+      take(1),
+      takeUntil(this.destroy$),
+      switchMap(() => {
+        this.isLoadingContent = true;
+        this.loadingError = null;
+        return this.contractTemplateService.getTemplateContent(templateId);
+      })
+    ).subscribe({
+      next: (response) => {
+        const html = response.content || '<p>Aucun contenu disponible</p>';
+        this.content = this.sanitizer.bypassSecurityTrustHtml(html);
+        this.iframeContent = this.buildIframeContent(html);
+        this.isLoadingContent = false;
+      },
+      error: (error) => {
+        console.error('Erreur lors du chargement du contenu:', error);
+        this.loadingError = 'Impossible de charger le contenu du modèle';
+        this.content = '<p>Erreur lors du chargement du contenu</p>';
+        this.iframeContent = this.sanitizer.bypassSecurityTrustHtml('<p>Erreur lors du chargement du contenu</p>');
+        this.isLoadingContent = false;
+      }
+    });
   }
 
   /**
-   * Charger le contenu du modèle
+   * Charger le contenu du modèle (méthode conservée pour compatibilité)
    */
   loadContent(templateId: string): void {
-    console.log('Loading content for template:', templateId);
     this.isLoadingContent = true;
     this.loadingError = null;
 
-    if (this.isDefaultTemplate) {
-      // Pour le template par défaut, utiliser directement l'ID spécial
-      console.log('Loading default template content');
-      this.contractTemplateService.getTemplateContent('default')
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            console.log('Default template content loaded:', response);
-            this.content = this.sanitizer.bypassSecurityTrustHtml(response.content || '<p>Aucun contenu disponible</p>');
-            this.isLoadingContent = false;
-          },
-          error: (error) => {
-            console.error('Erreur lors du chargement du contenu par défaut:', error);
-            this.loadingError = 'Impossible de charger le contenu du modèle par défaut';
-            this.content = '<p>Erreur lors du chargement du contenu</p>';
-            this.isLoadingContent = false;
-          }
-        });
-    } else {
-      // Pour les templates utilisateur, utiliser directement l'ID fourni
-      console.log('Loading user template content for ID:', templateId);
-      this.contractTemplateService.getTemplateContent(templateId)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            console.log('User template content loaded:', response);
-            this.content = this.sanitizer.bypassSecurityTrustHtml(response.content || '<p>Aucun contenu disponible</p>');
-            this.isLoadingContent = false;
-          },
-          error: (error) => {
-            console.error('Erreur lors du chargement du contenu utilisateur:', error);
-            this.loadingError = 'Impossible de charger le contenu du modèle';
-            this.content = '<p>Erreur lors du chargement du contenu</p>';
-            this.isLoadingContent = false;
-          }
-        });
-    }
+    this.contractTemplateService.getTemplateContent(templateId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          const html = response.content || '<p>Aucun contenu disponible</p>';
+          this.content = this.sanitizer.bypassSecurityTrustHtml(html);
+          this.iframeContent = this.buildIframeContent(html);
+          this.isLoadingContent = false;
+        },
+        error: (error) => {
+          console.error('Erreur lors du chargement du contenu:', error);
+          this.loadingError = 'Impossible de charger le contenu du modèle';
+          this.content = '<p>Erreur lors du chargement du contenu</p>';
+          this.iframeContent = this.sanitizer.bypassSecurityTrustHtml('<p>Erreur lors du chargement du contenu</p>');
+          this.isLoadingContent = false;
+        }
+      });
+  }
+
+  /**
+   * Construit le HTML complet pour l'iframe en préservant les styles du template.
+   * Si le HTML reçu est déjà un document complet (<!DOCTYPE html>), on l'utilise tel quel.
+   * Sinon on l'enveloppe dans un document minimal.
+   */
+  private buildIframeContent(html: string): SafeHtml {
+    const isFullDocument = /<!DOCTYPE|<html/i.test(html);
+    const fullHtml = isFullDocument
+      ? html
+      : `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><style>body{margin:0;padding:20px;font-family:sans-serif;}</style></head><body>${html}</body></html>`;
+    return this.sanitizer.bypassSecurityTrustHtml(fullHtml);
   }
 
   /**
@@ -302,35 +313,40 @@ export class ContractTemplateViewComponent implements OnInit, OnDestroy {
    * Supprimer le template
    */
   deleteTemplate(): void {
-    this.template$.pipe(takeUntil(this.destroy$)).subscribe(template => {
-      if (template && !template.isSystemDefault) {
-        const dialogRef = this.dialog.open(DeleteConfirmationModalComponent, {
-          width: '500px',
-          maxWidth: '90vw',
-          data: {
-            title: 'Supprimer le modèle',
-            message: `Êtes-vous sûr de vouloir supprimer le modèle "${template.name}" ?`,
-            warning: 'Cette action est irréversible. Le fichier sera également supprimé du stockage.',
-            confirmText: 'Supprimer',
-            cancelText: 'Annuler'
-          },
-          disableClose: true,
-          panelClass: ['custom-dialog-container', 'delete-confirmation-dialog'],
-          hasBackdrop: true,
-          backdropClass: 'delete-confirmation-backdrop'
-        });
+    this.template$.pipe(take(1), takeUntil(this.destroy$)).subscribe(template => {
+      if (!template || template.isSystemDefault) return;
 
-        dialogRef.afterClosed().subscribe(result => {
-          if (result === true) {
-            // Dispatch l'action de suppression
-            this.store.dispatch(new ContractTemplateAction.DeleteTemplate(template._id));
+      const dialogRef = this.dialog.open(DeleteConfirmationModalComponent, {
+        width: '500px',
+        maxWidth: '90vw',
+        data: {
+          title: 'Supprimer le modèle',
+          message: `Êtes-vous sûr de vouloir supprimer le modèle "${template.name}" ?`,
+          warning: 'Cette action est irréversible. Le fichier sera également supprimé du stockage.',
+          confirmText: 'Supprimer',
+          cancelText: 'Annuler'
+        },
+        disableClose: true,
+        panelClass: ['custom-dialog-container', 'delete-confirmation-dialog'],
+        hasBackdrop: true,
+        backdropClass: 'delete-confirmation-backdrop'
+      });
 
-            // Rediriger vers la liste après suppression
-            const currentLang = this.languageUrlService.getCurrentLanguage();
-            this.router.navigate([`/${currentLang}/app/contract-templates`]);
-          }
-        });
-      }
+      dialogRef.afterClosed().subscribe(result => {
+        if (result === true) {
+          // Dispatch la suppression et rediriger immédiatement
+          // Le store retire le template de la liste sans attendre
+          this.store.dispatch(new ContractTemplateAction.DeleteTemplate(template._id)).subscribe({
+            next: () => {
+              const currentLang = this.languageUrlService.getCurrentLanguage();
+              this.router.navigate([`/${currentLang}/app/contract-templates`]);
+            },
+            error: () => {
+              // L'erreur est déjà affichée via toastr dans le state
+            }
+          });
+        }
+      });
     });
   }
 }

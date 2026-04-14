@@ -187,14 +187,11 @@ export class ContractTemplateService {
   /**
    * Supprimer un modèle
    */
-  deleteTemplate(templateId: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${templateId}`).pipe(
+  deleteTemplate(templateId: string): Observable<{ deletedId: string }> {
+    return this.http.delete<{ deletedId: string }>(`${this.apiUrl}/${templateId}`).pipe(
       tap(() => {
-        // Retirer de la liste
         const currentTemplates = this.templatesSubject.value.filter(t => t._id !== templateId);
         this.templatesSubject.next(currentTemplates);
-        
-        // Nettoyer le template courant si c'est le même
         if (this.currentTemplateSubject.value?._id === templateId) {
           this.currentTemplateSubject.next(null);
         }

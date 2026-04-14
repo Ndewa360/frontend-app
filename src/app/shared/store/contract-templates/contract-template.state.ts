@@ -1,7 +1,7 @@
 import { Action, Selector, State, StateContext, createSelector } from "@ngxs/store";
 import { Injectable } from "@angular/core";
 import { tap, catchError } from "rxjs/operators";
-import { throwError } from "rxjs";
+import { throwError, of, Observable } from "rxjs";
 import { ToastrService } from "ngx-toastr";
 import { TranslateService } from "@ngx-translate/core";
 
@@ -14,7 +14,8 @@ import {
     ContractTemplateStatsDTO,
     UpdateContractTemplateDTO,
     DuplicateContractTemplateDTO,
-    UploadTemplateContentDTO
+    UploadTemplateContentDTO,
+    ContractTemplateStatus
 } from "../../models/contract-template.model";
 import { ContractTemplateStateModel } from "./contract-template.model";
 
@@ -206,14 +207,11 @@ export class ContractTemplateState {
 
     @Action(ContractTemplateAction.FetchRecentTemplates)
     fetchRecentTemplates(ctx: StateContext<ContractTemplateStateModel>, { limit }: ContractTemplateAction.FetchRecentTemplates) {
-        ctx.patchState({
-            loading: true,
-            error: null
-        });
+        ctx.patchState({ loading: true, error: null });
 
         return this.contractTemplateService.getTemplates({
             limit,
-            sortBy: 'lastUsedAt',
+            sortBy: 'usageCount',
             sortOrder: 'desc'
         }).pipe(
             tap(response => {
@@ -324,28 +322,30 @@ export class ContractTemplateState {
     deleteTemplate(ctx: StateContext<ContractTemplateStateModel>, { templateId }: ContractTemplateAction.DeleteTemplate) {
         const state = ctx.getState();
 
-        ctx.patchState({
-            loading: true,
-            error: null
-        });
+        ctx.patchState({ loading: true, error: null });
 
         return this.contractTemplateService.deleteTemplate(templateId).pipe(
             tap(() => {
-                const filteredTemplates = state.templates.filter(t => t._id !== templateId);
-
+                // Retrait immédiat du template de toutes les listes du store
                 ctx.patchState({
                     loading: false,
-                    templates: filteredTemplates,
+                    templates: state.templates.filter(t => t._id !== templateId),
+                    recentTemplates: state.recentTemplates.filter(t => t._id !== templateId),
                     currentTemplate: state.currentTemplate?._id === templateId ? null : state.currentTemplate
                 });
-                this.toastrService.success(this.translateService.instant('NOTIFICATIONS.CONTRACT_TEMPLATE_DELETED_SUCCESS'), 'Succès');
+                this.toastrService.success(
+                    this.translateService.instant('NOTIFICATIONS.CONTRACT_TEMPLATE_DELETED_SUCCESS'),
+                    'Succès'
+                );
             }),
             catchError(error => {
-                ctx.patchState({
-                    loading: false,
-                    error: 'Erreur lors de la suppression du modèle'
-                });
-                this.toastrService.error(this.translateService.instant('NOTIFICATIONS.CONTRACT_TEMPLATE_DELETE_ERROR'), 'Erreur');
+                ctx.patchState({ loading: false, error: 'Erreur lors de la suppression du modèle' });
+                // Afficher le message d'erreur du serveur (ex: template utilisé par des locations)
+                const serverMessage = error?.error?.message || error?.message;
+                this.toastrService.error(
+                    serverMessage || this.translateService.instant('NOTIFICATIONS.CONTRACT_TEMPLATE_DELETE_ERROR'),
+                    'Erreur'
+                );
                 return throwError(error);
             })
         );
@@ -358,6 +358,85 @@ export class ContractTemplateState {
         ctx.patchState({
             currentTemplate: template
         });
+    }
+
+    @Action(ContractTemplateAction.SetLoading)
+    setLoading(ctx: StateContext<ContractTemplateStateModel>, { loading }: ContractTemplateAction.SetLoading) {
+        ctx.patchState({ loading });
+    }
+
+    @Action(ContractTemplateAction.SetTemplateAsDefault)
+    setTemplateAsDefault(ctx: StateContext<ContractTemplateStateModel>, { templateId }: ContractTemplateAction.SetTemplateAsDefault) {
+        const state = ctx.getState();
+
+        ctx.patchState({ loading: true, error: null });
+
+        return this.contractTemplateService.setAsDefault(templateId).pipe(
+            tap(updatedTemplate => {
+                const updatedTemplates = state.templates.map(t => ({
+                    ...t,
+                    isDefault: t._id === templateId
+                }));
+                ctx.patchState({
+                    loading: false,
+                    templates: updatedTemplates,
+                    currentTemplate: state.currentTemplate?._id === templateId ? updatedTemplate : state.currentTemplate
+                });
+                this.toastrService.success(
+                    this.translateService.instant('NOTIFICATIONS.CONTRACT_TEMPLATE_DEFAULT_SET_SUCCESS'),
+                    'Succès'
+                );
+            }),
+            catchError(error => {
+                ctx.patchState({ loading: false, error: 'Erreur lors de la définition du modèle par défaut' });
+                this.toastrService.error(
+                    this.translateService.instant('NOTIFICATIONS.CONTRACT_TEMPLATE_DEFAULT_SET_ERROR'),
+                    'Erreur'
+                );
+                return throwError(error);
+            })
+        );
+    }
+
+    @Action(ContractTemplateAction.ToggleTemplateStatus)
+    toggleTemplateStatus(ctx: StateContext<ContractTemplateStateModel>, { templateId }: ContractTemplateAction.ToggleTemplateStatus): Observable<any> {
+        const state = ctx.getState();
+        const template = state.templates.find(t => t._id === templateId);
+        if (!template) {
+            ctx.patchState({ error: 'Template introuvable' });
+            return of(null);
+        }
+
+        const newStatus = template.status === ContractTemplateStatus.ACTIVE
+            ? ContractTemplateStatus.INACTIVE
+            : ContractTemplateStatus.ACTIVE;
+
+        ctx.patchState({ loading: true, error: null });
+
+        return this.contractTemplateService.updateTemplate(templateId, { status: newStatus }).pipe(
+            tap(updatedTemplate => {
+                const updatedTemplates = state.templates.map(t =>
+                    t._id === templateId ? updatedTemplate : t
+                );
+                ctx.patchState({
+                    loading: false,
+                    templates: updatedTemplates,
+                    currentTemplate: state.currentTemplate?._id === templateId ? updatedTemplate : state.currentTemplate
+                });
+                this.toastrService.success(
+                    this.translateService.instant('NOTIFICATIONS.CONTRACT_TEMPLATE_STATUS_TOGGLED'),
+                    'Succès'
+                );
+            }),
+            catchError(error => {
+                ctx.patchState({ loading: false, error: 'Erreur lors du changement de statut' });
+                this.toastrService.error(
+                    this.translateService.instant('NOTIFICATIONS.CONTRACT_TEMPLATE_STATUS_TOGGLE_ERROR'),
+                    'Erreur'
+                );
+                return throwError(error);
+            })
+        );
     }
 
     @Action(ContractTemplateAction.ClearCurrentTemplate)

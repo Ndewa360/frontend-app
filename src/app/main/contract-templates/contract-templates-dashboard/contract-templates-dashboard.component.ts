@@ -15,6 +15,7 @@ import {
 } from '../../../shared/store/contract-templates';
 import { TemplateSelectionModalComponent, TemplateSelectionData, TemplateSelectionResult } from '../components/template-selection-modal/template-selection-modal.component';
 import { DuplicateTemplateModalComponent } from '../components/duplicate-template-modal/duplicate-template-modal.component';
+import { DeleteConfirmationModalComponent } from '../components/delete-confirmation-modal/delete-confirmation-modal.component';
 
 @Component({
   selector: 'app-contract-templates-dashboard',
@@ -56,9 +57,10 @@ export class ContractTemplatesDashboardComponent implements OnInit, OnDestroy {
    * Charger les données du dashboard
    */
   private loadDashboardData(): void {
-    // Dispatcher les actions pour charger les données
-    this.store.dispatch(new ContractTemplateAction.FetchTemplateStatistics());
-    this.store.dispatch(new ContractTemplateAction.FetchRecentTemplates(6));
+    this.store.dispatch([
+      new ContractTemplateAction.FetchTemplateStatistics(),
+      new ContractTemplateAction.FetchRecentTemplates(6)
+    ]);
   }
 
   /**
@@ -145,13 +147,42 @@ export class ContractTemplatesDashboardComponent implements OnInit, OnDestroy {
     this.router.navigate(['view', template._id], { relativeTo: this.route });
   }
 
+  /**
+   * Supprimer un modèle depuis les templates récents
+   */
+  deleteTemplate(template: ContractTemplateModel): void {
+    if (template.isSystemDefault) return;
+
+    const dialogRef = this.dialog.open(DeleteConfirmationModalComponent, {
+      width: '500px',
+      maxWidth: '90vw',
+      data: {
+        title: 'Supprimer le modèle',
+        message: `Êtes-vous sûr de vouloir supprimer le modèle "${template.name}" ?`,
+        warning: 'Cette action est irréversible. Le fichier sera également supprimé du stockage.',
+        confirmText: 'Supprimer',
+        cancelText: 'Annuler'
+      },
+      disableClose: true,
+      panelClass: ['custom-dialog-container', 'delete-confirmation-dialog'],
+      hasBackdrop: true,
+      backdropClass: 'delete-confirmation-backdrop'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === true) {
+        this.store.dispatch(new ContractTemplateAction.DeleteTemplate(template._id));
+      }
+    });
+  }
+
 
 
   /**
    * Obtenir le pourcentage de modèles actifs
    */
   getActivePercentage(statistics: ContractTemplateStatsDTO): number {
-    if (statistics.totalTemplates === 0) return 0;
+    if (!statistics || statistics.totalTemplates === 0) return 0;
     return Math.round((statistics.activeTemplates / statistics.totalTemplates) * 100);
   }
 
@@ -159,7 +190,7 @@ export class ContractTemplatesDashboardComponent implements OnInit, OnDestroy {
    * Obtenir le pourcentage de modèles personnalisés
    */
   getCustomPercentage(statistics: ContractTemplateStatsDTO): number {
-    if (statistics.totalTemplates === 0) return 0;
+    if (!statistics || statistics.totalTemplates === 0) return 0;
     return Math.round((statistics.customTemplates / statistics.totalTemplates) * 100);
   }
 

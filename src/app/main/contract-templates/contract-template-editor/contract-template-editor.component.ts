@@ -2,11 +2,13 @@ import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Location } from '@angular/common';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ContractTemplateService } from '../../../shared/services/contract-template.service';
 import { ContractTemplateType, ContractTemplateStatus } from '../../../shared/models/contract-template.model';
 import { htmlContentValidator, templateNameValidator, templateVariablesValidator } from '../../../shared/validators/html-content.validator';
 import { MultilingualNotificationService } from '../../../shared/services/notification/multilingual-notification.service';
 import { LanguageUrlService } from '../../../shared/services/language-url.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-contract-template-editor',
@@ -17,7 +19,7 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
   templateForm: FormGroup;
   isEditMode = false;
   templateId: string | null = null;
-  apiKey = "jc0rxaqsy4dc37g2tn6d7jh1oob7gm87jfjyl268edebg4zp"
+  readonly apiKey = environment.tinyMceApiKey;
 
   // Template properties
   templateName = '';
@@ -309,17 +311,16 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
     return baseStyles + (this.extractedStyles ? '\n\n/* Styles du template */\n' + this.extractedStyles : '');
   }
 
-  // Options for dropdowns
+  // Options for dropdowns — valeurs alignées sur les enums backend
   templateTypeOptions = [
-    { content: 'Contrat de location', value: 'RENTAL', selected: false },
-    { content: 'Contrat de vente', value: 'SALE', selected: false },
-    { content: 'Contrat de gestion', value: 'MANAGEMENT', selected: false }
+    { content: 'Personnalisé', value: ContractTemplateType.CUSTOM, selected: true },
+    { content: 'Dupliqué', value: ContractTemplateType.DUPLICATED, selected: false }
   ];
 
   statusOptions = [
-    { content: 'Actif', value: 'ACTIVE', selected: true },
-    { content: 'Inactif', value: 'INACTIVE', selected: false },
-    { content: 'Brouillon', value: 'DRAFT', selected: false }
+    { content: 'Actif', value: ContractTemplateStatus.ACTIVE, selected: true },
+    { content: 'Inactif', value: ContractTemplateStatus.INACTIVE, selected: false },
+    { content: 'Archivé', value: ContractTemplateStatus.ARCHIVED, selected: false }
   ];
 
   // Variable categories for template
@@ -374,7 +375,8 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
     private location: Location,
     private contractTemplateService: ContractTemplateService,
     private notification: MultilingualNotificationService,
-    private languageUrlService: LanguageUrlService
+    private languageUrlService: LanguageUrlService,
+    private sanitizer: DomSanitizer
   ) {
     this.templateForm = this.fb.group({
       name: ['', [Validators.required, templateNameValidator()]],
@@ -744,6 +746,28 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
 
     const previewBodyContent = this.getPreviewBodyContent();
     return this.combineContentWithStyles(previewBodyContent, this.extractedStyles);
+  }
+
+  /**
+   * Retourne le HTML complet pour l'iframe de prévisualisation
+   * Combine les styles extraits + le contenu body avec variables remplacées
+   */
+  getPreviewHtml(): SafeHtml {
+    const bodyContent = this.getPreviewBodyContent();
+    const styles = this.extractedStyles || '';
+    const html = `<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { margin: 0; padding: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    ${styles}
+  </style>
+</head>
+<body>${bodyContent}</body>
+</html>`;
+    return this.sanitizer.bypassSecurityTrustHtml(html);
   }
 
   /**
