@@ -3,8 +3,8 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Store, Actions, ofActionCompleted, ofActionErrored, ofActionSuccessful, Select } from '@ngxs/store';
-import { has } from 'cypress/types/lodash';
 import { Observable } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { CityModel, CountryModel, CountryState, PropertyAction, UserProfileState } from 'src/app/shared/store';
 import { FormUtils } from 'src/app/shared/utils';
 import { SubscriptionLimitAction } from 'src/app/shared/store/subscription-limit';
@@ -136,12 +136,7 @@ export class AddPropertyComponent implements OnInit {
    * Gérer le changement de localisation
    */
   onLocationChanged(location: CountryCityValue): void {
-    console.log('Localisation sélectionnée:', location);
-    // Le FormControl 'geolocation' est automatiquement mis à jour
-    // Optionnel : actions supplémentaires quand la localisation change
-    if (location.country && location.city) {
-      console.log(`Pays: ${location.country.fullName}, Ville: ${location.city.fullName}`);
-    }
+    // Le FormControl 'geolocation' est automatiquement mis à jour par le composant
   }
 
   isValid(name) {
@@ -211,10 +206,8 @@ export class AddPropertyComponent implements OnInit {
 
     this._store.dispatch(new SubscriptionLimitAction.CheckCanCreateProperty()).subscribe({
       next: () => {
-        // Vérifier le résultat dans le store
         const canCreate = this._store.selectSnapshot(state => state.subscriptionLimit.canCreateProperty);
         const needsUpgrade = this._store.selectSnapshot(state => state.subscriptionLimit.needsUpgrade);
-
         if (canCreate) {
           this.createProperty();
         } else {
@@ -224,15 +217,11 @@ export class AddPropertyComponent implements OnInit {
       },
       error: (error) => {
         this.waittingResponse = false;
-        console.error('Erreur lors de la vérification des limites:', error);
-
-        // Vérifier le type d'erreur
         if (error.error?.error === 'Account/Suspended') {
           this.showAccountSuspendedModal();
         } else if (error.error?.error === 'PropertyLimit/Exceeded') {
           this.showSubscriptionLimitModal(true);
         } else {
-          // Erreur générique, permettre la création quand même
           this.createProperty();
         }
       }
@@ -243,9 +232,7 @@ export class AddPropertyComponent implements OnInit {
     const formValue = this.formGroup.value;
     const location = formValue.geolocation;
 
-    // Vérifier que la localisation est complète
     if (!location || !location.country || !location.city) {
-      console.error('Localisation incomplète');
       return;
     }
 
@@ -377,19 +364,17 @@ export class AddPropertyComponent implements OnInit {
       if (email) params.append('email', email);
       if (phoneNumber) params.append('phoneNumber', phoneNumber);
 
-      const response: any = await this.http.get(`${environment.apiUrl}/users/check-owner?${params.toString()}`).toPromise();
-      
+      const response: any = await firstValueFrom(
+        this.http.get(`${environment.apiUrl}/users/check-owner?${params.toString()}`)
+      );
+
       if (response.data) {
-        // Propriétaire existant trouvé
         this.existingOwner = response.data;
         this.showOwnerConfirmModal = true;
       } else {
-        // Aucun propriétaire trouvé, continuer normalement
         this.checkSubscriptionLimits();
       }
-    } catch (error) {
-      console.error('Erreur lors de la vérification du propriétaire:', error);
-      // En cas d'erreur, continuer normalement
+    } catch {
       this.checkSubscriptionLimits();
     }
   }

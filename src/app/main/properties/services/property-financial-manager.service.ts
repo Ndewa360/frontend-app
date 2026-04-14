@@ -179,12 +179,7 @@ export class PropertyFinancialManagerService {
    * Extrait les performances des locataires depuis les données backend
    */
   extractTenantPerformances(data: EnrichedStatisticResponse): any[] {
-    console.log('👥 Extraction des performances locataires depuis les calculs centralisés du backend');
-
-    if (!data) {
-      return [];
-    }
-
+    if (!data) return [];
     const rooms = data.data.rooms || [];
 
     return rooms

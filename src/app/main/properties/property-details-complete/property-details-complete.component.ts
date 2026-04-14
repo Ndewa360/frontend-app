@@ -15,18 +15,14 @@ import {
   LocataireState,
   LocationAction,
   LocationState,
-  HistoryLocationPaymentAction,
-  HistoryLocationPaymentState,
   StatisticAction
 } from 'src/app/shared/store';
-import { PropertyDataService, Unit, Tenant, HistoryItem } from '../services/property-data.service';
+import { PropertyDataService, HistoryItem } from '../services/property-data.service';
 import { UnitAction } from '../components/property-units-list/property-units-list.component';
 import { UpdatePropertyComponent, UpdatePropertyDialogData } from '../update-property/update-property.component';
 import { GaleryComponent } from '../../room/components/galery/galery.component';
 import { PropertyGalleryComponent } from '../components/property-gallery/property-gallery.component';
 import { ModernUnitModalComponent } from '../components/modern-unit-modal/modern-unit-modal.component';
-// import { AddLocataireComponent } from '../../locataires/components/add-locataire/add-locataire.component';
-// import { UpdateRoomComponent } from '../../room/components/update-room/update-room.component';
 import { AssignLocationModalService } from '../../assign-location/services/assign-location-modal.service';
 import { ModernContractTerminationModalComponent } from '../components/modern-contract-termination-modal/modern-contract-termination-modal.component';
 import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
@@ -57,36 +53,23 @@ interface PropertyMetrics {
 export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
-  // Données principales via le store
   property$: Observable<PropertyModel | null>;
   units$: Observable<RoomModel[]>;
   tenants$: Observable<LocataireModel[]>;
   history$: Observable<HistoryItem[]>;
-  loadingStates$: Observable<{
-    property: boolean;
-    units: boolean;
-    tenants: boolean;
-  }>;
+  loadingStates$: Observable<{ property: boolean; units: boolean; tenants: boolean; }>;
 
-  // État local
   propertyId: string | null = null;
   activeTab: string = 'overview';
   currentUser: any = null;
   isAgent = false;
   currentProperty: PropertyModel | null = null;
 
-  // Métriques de la propriété
   metrics: PropertyMetrics = {
-    totalUnits: 0,
-    occupiedUnits: 0,
-    availableUnits: 0,
-    occupancyRate: 0,
-    monthlyRevenue: 0,
-    averageRent: 0,
-    revenueGrowth: 0
+    totalUnits: 0, occupiedUnits: 0, availableUnits: 0,
+    occupancyRate: 0, monthlyRevenue: 0, averageRent: 0, revenueGrowth: 0
   };
 
-  // Configuration des onglets (sera mise à jour selon le rôle)
   tabs: Tab[] = [];
 
   constructor(
@@ -99,7 +82,6 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
     private languageUrlService: LanguageUrlService,
     public propertyAccessService: PropertyAccessService
   ) {
-    // Initialiser les observables vides
     this.property$ = new Observable();
     this.units$ = new Observable();
     this.tenants$ = new Observable();
@@ -108,15 +90,10 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // Correction : la clé du store est 'userprofile' (minuscule)
     this.currentUser = this.store.selectSnapshot((state: any) => state.userprofile?.userProfile);
     this.isAgent = this.currentUser?.userType === 'AGENT';
-    
     this.propertyId = this.route.snapshot.paramMap.get('id');
-
-    if (this.propertyId) {
-      this.initializeSubscriptions();
-    }
+    if (this.propertyId) this.initializeSubscriptions();
   }
 
   ngOnDestroy(): void {
@@ -127,26 +104,17 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
   private initializeSubscriptions(): void {
     if (!this.propertyId) return;
 
-    // S'abonner aux données déjà chargées par le resolver
-
-    // Les données sont déjà disponibles dans le store grâce au resolver
-    // On peut directement s'abonner aux observables
-
-    // Initialiser les observables avec le store
     this.property$ = this.propertyDataService.getProperty(this.propertyId);
     this.units$ = this.store.select(RoomState.selectStateRoomByPropertyId(this.propertyId));
     this.tenants$ = this.store.select(LocataireState.selectStateLocataireByPropertyId(this.propertyId));
     this.history$ = this.propertyDataService.getPropertyHistory(this.propertyId);
     this.loadingStates$ = this.propertyDataService.getLoadingStates();
 
-    // Charger les données financières pour l'année courante
     const currentYear = new Date().getFullYear();
     this.store.dispatch(new StatisticAction.FetchStaticByPropertyIdAndYear(this.propertyId, currentYear.toString()));
 
-    // Mettre à jour les compteurs des onglets
     this.updateTabCounts();
-    
-    // S'abonner aux changements de propriété pour déterminer le rôle
+
     this.property$.pipe(takeUntil(this.destroy$)).subscribe(property => {
       this.currentProperty = property;
       this.updateTabsForUserRole();
@@ -154,12 +122,9 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
   }
 
   private updateTabCounts(): void {
-    // Mettre à jour les compteurs des onglets basés sur les données
     this.units$.pipe(takeUntil(this.destroy$)).subscribe(units => {
       const unitsTab = this.tabs.find(tab => tab.id === 'units');
       if (unitsTab) unitsTab.count = units.length;
-
-      // Calculer les métriques
       this.calculateMetrics(units);
     });
 
@@ -179,25 +144,12 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
     const occupiedUnits = units.filter(unit => !unit.isFree).length;
     const availableUnits = totalUnits - occupiedUnits;
     const occupancyRate = totalUnits > 0 ? (occupiedUnits / totalUnits) * 100 : 0;
-
-    const monthlyRevenue = units.reduce((total, unit) => {
-      return total + (!unit.isFree ? (unit.price || 0) : 0);
-    }, 0);
-
+    const monthlyRevenue = units.reduce((total, unit) => total + (!unit.isFree ? (unit.price || 0) : 0), 0);
     const averageRent = occupiedUnits > 0 ? monthlyRevenue / occupiedUnits : 0;
 
-    this.metrics = {
-      totalUnits,
-      occupiedUnits,
-      availableUnits,
-      occupancyRate,
-      monthlyRevenue,
-      averageRent,
-      revenueGrowth: 0 // Calculé par le backend via trendIndicator dans globalMetrics
-    };
+    this.metrics = { totalUnits, occupiedUnits, availableUnits, occupancyRate, monthlyRevenue, averageRent, revenueGrowth: 0 };
   }
 
-  // Gestion des onglets
   setActiveTab(tabId: string): void {
     this.activeTab = tabId;
   }
@@ -205,14 +157,13 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
   private updateTabsForUserRole(): void {
     const baseTabs = [
       { id: 'overview', label: 'PROPERTY_DETAILS.TABS.OVERVIEW', icon: 'home' },
-      { id: 'units', label: 'PROPERTY_DETAILS.TABS.UNITS', icon: 'balcony' }
+      { id: 'units',    label: 'PROPERTY_DETAILS.TABS.UNITS',    icon: 'balcony' }
     ];
 
-    const isOwner = this.propertyAccessService.isOwner(this.propertyId);
+    const isOwner   = this.propertyAccessService.isOwner(this.propertyId);
     const isManager = this.propertyAccessService.isManager(this.propertyId);
 
     if (isOwner) {
-      // Propriétaire : accès complet + onglet Gérants
       this.tabs = [
         ...baseTabs,
         { id: 'tenants',  label: 'PROPERTY_DETAILS.TABS.TENANTS',  icon: 'user' },
@@ -221,293 +172,153 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
         { id: 'managers', label: 'PROPERTY_MANAGERS.TAB_LABEL',    icon: 'user-multiple' },
       ];
     } else if (isManager) {
-      // Gérant : onglets selon ses permissions
       const tabs = [...baseTabs];
-      if (this.propertyAccessService.canManageTenants(this.propertyId)) {
+      if (this.propertyAccessService.canManageTenants(this.propertyId))
         tabs.push({ id: 'tenants', label: 'PROPERTY_DETAILS.TABS.TENANTS', icon: 'user' });
-      }
-      if (this.propertyAccessService.canViewFinances(this.propertyId)) {
+      if (this.propertyAccessService.canViewFinances(this.propertyId))
         tabs.push({ id: 'finances', label: 'PROPERTY_DETAILS.TABS.FINANCES', icon: 'money' });
-      }
       this.tabs = tabs;
     } else {
-      // Fallback : accès de base uniquement
       this.tabs = [...baseTabs];
     }
   }
-  
-  // Vérifier si l'utilisateur peut accéder à un onglet
+
   canAccessTab(tabId: string): boolean {
     if (!this.propertyId) return true;
     if (this.propertyAccessService.isOwner(this.propertyId)) return true;
     switch (tabId) {
       case 'tenants':  return this.propertyAccessService.canManageTenants(this.propertyId);
       case 'finances': return this.propertyAccessService.canViewFinances(this.propertyId);
-      case 'history':  return this.propertyAccessService.isOwner(this.propertyId);
+      case 'history':
       case 'managers': return this.propertyAccessService.isOwner(this.propertyId);
       default: return true;
     }
   }
 
-  // Vérifier si l'utilisateur peut effectuer une action
   canPerformAction(action: string): boolean {
     if (!this.propertyId) return true;
     if (this.propertyAccessService.isOwner(this.propertyId)) return true;
     switch (action) {
-      case 'assign_tenant':   return this.propertyAccessService.canManageTenants(this.propertyId);
-      case 'terminate_lease': return this.propertyAccessService.canManageContracts(this.propertyId);
-      case 'add_tenant':      return this.propertyAccessService.canManageTenants(this.propertyId);
-      case 'financial_report':return this.propertyAccessService.canViewFinances(this.propertyId);
-      case 'add_unit':        return this.propertyAccessService.canManageUnits(this.propertyId);
+      case 'assign_tenant':    return this.propertyAccessService.canManageTenants(this.propertyId);
+      case 'terminate_lease':  return this.propertyAccessService.canManageContracts(this.propertyId);
+      case 'add_tenant':       return this.propertyAccessService.canManageTenants(this.propertyId);
+      case 'financial_report': return this.propertyAccessService.canViewFinances(this.propertyId);
+      case 'add_unit':         return this.propertyAccessService.canManageUnits(this.propertyId);
       default: return true;
     }
   }
 
-  // Gestionnaires d'événements pour les composants enfants
   onUnitAction(action: UnitAction): void {
     switch (action.type) {
-      case 'view':
-        this.onViewUnit(action.room);
-        break;
-      case 'edit':
-        this.onEditUnit(action.room);
-        break;
-      case 'assign_tenant':
-        if (this.canPerformAction('assign_tenant')) {
-          this.onAssignTenant(action.room);
-        }
-        break;
-      case 'terminate_lease':
-        if (this.canPerformAction('terminate_lease')) {
-          this.onTerminateLease(action.room);
-        }
-        break;
-      case 'manage_media':
-        this.onManageMedia(action.room);
-        break;
-      case 'toggle_status':
-        this.onToggleStatus(action.room);
-        break;
-      case 'edit_galery':
-        this.onEditGaleryUnit(action.room);
-        break;
+      case 'view':            this.onViewUnit(action.room); break;
+      case 'edit':            this.onEditUnit(action.room); break;
+      case 'assign_tenant':   if (this.canPerformAction('assign_tenant'))  this.onAssignTenant(action.room); break;
+      case 'terminate_lease': if (this.canPerformAction('terminate_lease')) this.onTerminateLease(action.room); break;
+      case 'manage_media':    this.onManageMedia(action.room); break;
+      case 'toggle_status':   this.onToggleStatus(action.room); break;
+      case 'edit_galery':     this.onEditGaleryUnit(action.room); break;
     }
   }
 
   onAddUnit(): void {
-    console.log('🔧 PropertyDetailsComplete: onAddUnit appelé');
-    console.log('🔧 PropertyId:', this.propertyId);
-    console.log('🔧 Dialog service:', this.dialog);
+    if (!this.propertyId) return;
 
-    if (!this.dialog) {
-      console.error('❌ Service MatDialog non disponible dans PropertyDetailsComplete !');
-      return;
-    }
+    const dialogRef = this.dialog.open(ModernUnitModalComponent, {
+      width: '100%',
+      maxWidth: '900px',
+      disableClose: true,
+      data: { property: { _id: this.propertyId } }
+    });
 
-    if (this.propertyId) {
-      console.log('📝 Ouverture du modal AddPropertyRoomComponent depuis PropertyDetailsComplete...');
-
-      try {
-        const dialogRef = this.dialog.open(ModernUnitModalComponent, {
-          width: '100%',
-          maxWidth: '900px',
-          disableClose: true,
-          data: {
-            property: { _id: this.propertyId }
-          }
-        });
-
-        console.log('✅ Modal ouvert depuis PropertyDetailsComplete, dialogRef:', dialogRef);
-
-        dialogRef.afterClosed().subscribe(result => {
-          console.log('🔄 Modal fermé avec résultat:', result);
-          if (result) {
-            console.log('✅ Nouvelle unité ajoutée avec succès');
-            // Recharger les données de la propriété
-            this.reloadPropertyData();
-          }
-        });
-      } catch (error) {
-        console.error('❌ Erreur lors de l\'ouverture du modal depuis PropertyDetailsComplete:', error);
-      }
-    } else {
-      console.error('❌ PropertyId manquant pour ajouter une unité');
-    }
+    dialogRef.afterClosed()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(result => { if (result) this.reloadPropertyData(); });
   }
 
-  // Actions sur les unités
+  // Correction : navigue vers la page de détails de la propriété (onglet units)
+  // La route /:lang/app/rooms/:id n'existe pas dans le routing
   private onViewUnit(room: RoomModel): void {
-    console.log('Voir les détails de l\'unité:', room);
     const currentLang = this.languageUrlService.getCurrentLanguage();
-    this.router.navigate([`/${currentLang}/app/rooms`, room._id]);
+    this.router.navigate([`/${currentLang}/app/properties/details`, this.propertyId], { fragment: 'units' });
   }
 
-  private onEditUnit(room: RoomModel): void {
-    // TODO
+  private onEditUnit(_room: RoomModel): void {
+    // TODO: ouvrir le modal d'édition d'unité
   }
 
   private onAssignTenant(room: RoomModel): void {
-    console.log('🔧 PropertyDetailsComplete: onAssignTenant appelé pour:', room);
-
-    // Utiliser le service d'assignation de locataire
     this.assignLocationModalService.openAssignLocationModal({
       propertyId: this.propertyId,
       roomId: room._id,
       assistant: true,
       returnUrl: this.router.url
     }).subscribe(result => {
-      if (result && result.success) {
-        console.log('✅ Locataire assigné avec succès');
-        // Recharger les données
-        this.reloadPropertyData();
-      }
+      if (result?.success) this.reloadPropertyData();
     });
   }
 
   private onTerminateLease(room: RoomModel): void {
-    console.log('🔧 PropertyDetailsComplete: onTerminateLease appelé pour:', room);
-
-    if (!this.dialog) {
-      console.error('❌ Service MatDialog non disponible !');
-      return;
-    }
-
-    // Récupérer la location active pour cette chambre depuis le store
     const locations = this.store.selectSnapshot(LocationState.selectStateLocations);
     const location = locations?.find(loc => loc.room === room._id && loc.isRunning);
+    if (!location) return;
 
-    if (!location) {
-      console.error('❌ Aucune location active trouvée pour cette unité');
-      return;
-    }
-
-    console.log('📝 Ouverture du modal ModernContractTerminationModalComponent...');
-
-    // Récupérer les données nécessaires depuis le store
-    const rooms = this.store.selectSnapshot(RoomState.selectStateRooms);
+    const rooms   = this.store.selectSnapshot(RoomState.selectStateRooms);
     const tenants = this.store.selectSnapshot(LocataireState.selectStateLocataires);
     const roomData = rooms?.find(r => r._id === location.room);
-    const tenant = tenants?.find(l => l._id === location.locataire);
+    const tenant   = tenants?.find(l => l._id === location.locataire);
 
-    try {
-      const dialogRef = this.dialog.open(ModernContractTerminationModalComponent, {
-        width: '100%',
-        maxWidth: '900px',
-        disableClose: true,
-        data: {
-          location: location,
-          tenant: tenant,
-          room: roomData || room // Utiliser roomData si disponible, sinon room du paramètre
-        }
-      });
+    const dialogRef = this.dialog.open(ModernContractTerminationModalComponent, {
+      width: '100%', maxWidth: '900px', disableClose: true,
+      data: { location, tenant, room: roomData || room }
+    });
 
-      console.log('✅ Modal ModernContractTermination ouvert, dialogRef:', dialogRef);
-
-      dialogRef.afterClosed().subscribe(result => {
-        console.log('🔄 Modal ModernContractTermination fermé avec résultat:', result);
-        if (result) {
-          console.log('✅ Contrat résilié avec succès');
-          // Recharger les données
-          this.reloadPropertyData();
-        }
-      });
-    } catch (error) {
-      console.error('❌ Erreur lors de l\'ouverture du modal ModernContractTermination:', error);
-    }
+    dialogRef.afterClosed()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(result => { if (result) this.reloadPropertyData(); });
   }
 
-  private onManageMedia(room: RoomModel): void {
-    console.log('Gérer les médias de l\'unité:', room);
-    // TODO: Ouvrir le gestionnaire de médias
+  private onManageMedia(_room: RoomModel): void {
+    // TODO: ouvrir le gestionnaire de médias
   }
 
-  private onToggleStatus(room: RoomModel): void {
-    console.log('Changer le statut de l\'unité:', room);
-    // TODO: Implémenter le changement de statut
+  private onToggleStatus(_room: RoomModel): void {
+    // TODO: implémenter le changement de statut
   }
 
-  private onEditGaleryUnit(room:RoomModel): void {
+  private onEditGaleryUnit(room: RoomModel): void {
     const dialogRef = this.dialog.open(GaleryComponent, {
-          width: '900px',
-          maxWidth: '95vw',
-          height: '90vh',
-          maxHeight: '90vh',
-          panelClass: ['property-form-dialog', 'unit-gallery-modal'],
-          disableClose: true,
-          data: {room}
-        });
-
-    // Écouter la fermeture du modal et recharger les données si nécessaire
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('🔄 Modal GaleryComponent fermé avec résultat:', result);
-      if (result && result.mediaUpdated) {
-        console.log('✅ Médias mis à jour, rechargement des données de l\'unité');
-        // Recharger les données de l'unité pour refléter les changements
-        this.store.dispatch(new RoomAction.FetchRoomsByPropertyID(this.propertyId));
-      }
+      width: '900px', maxWidth: '95vw', height: '90vh', maxHeight: '90vh',
+      panelClass: ['property-form-dialog', 'unit-gallery-modal'],
+      disableClose: true, data: { room }
     });
+
+    dialogRef.afterClosed()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(result => {
+        if (result?.mediaUpdated)
+          this.store.dispatch(new RoomAction.FetchRoomsByPropertyID(this.propertyId));
+      });
   }
 
-  // Actions générales
+  // Correction : utilise selectSnapshot au lieu d'une subscription ouverte
   onEditProperty(): void {
-    this.property$.pipe(takeUntil(this.destroy$)).subscribe(property => {
-      if (property) {
-        const dialogData: UpdatePropertyDialogData = {
-          property: property
-        };
+    const property = this.store.selectSnapshot(PropertyState.selectStateProperty(this.propertyId));
+    if (!property) return;
 
-        const dialogRef = this.dialog.open(UpdatePropertyComponent, {
-          width: '900px',
-          maxWidth: '95vw',
-          height: '90vh',
-          maxHeight: '90vh',
-          panelClass: 'property-form-dialog',
-          disableClose: true,
-          data: dialogData
-        });
-
-        dialogRef.afterClosed().subscribe(result => {
-          if (result) {
-            console.log('Propriété mise à jour avec succès');
-            // Recharger les données pour refléter les changements
-            this.refreshData();
-          }
-        });
-      }
+    const dialogRef = this.dialog.open(UpdatePropertyComponent, {
+      width: '900px', maxWidth: '95vw', height: '90vh', maxHeight: '90vh',
+      panelClass: 'property-form-dialog', disableClose: true,
+      data: { property } as UpdatePropertyDialogData
     });
+
+    dialogRef.afterClosed()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(result => { if (result) this.refreshData(); });
   }
 
   onAddTenant(): void {
-    // Vérifier si l'utilisateur peut ajouter des locataires
-    if (!this.canPerformAction('add_tenant')) {
-      console.log('⚠️ Action non autorisée pour les agents');
-      return;
-    }
-    
-    // Code pour ajouter un locataire (désactivé pour le moment)
-    // try {
-    //   const dialogRef = this.dialog.open(AddLocataireComponent, {
-    //     width: '100%',
-    //     maxWidth: '800px',
-    //     disableClose: true,
-    //     data: {
-    //       propertyId: this.propertyId
-    //     }
-    //   });
-
-    //   console.log('✅ Modal AddLocataire ouvert, dialogRef:', dialogRef);
-
-    //   dialogRef.afterClosed().subscribe(result => {
-    //     console.log('🔄 Modal AddLocataire fermé avec résultat:', result);
-    //     if (result) {
-    //       console.log('✅ Nouveau locataire ajouté avec succès');
-    //       // Recharger les données
-    //       this.reloadPropertyData();
-    //     }
-    //   });
-    // } catch (error) {
-    //   console.error('❌ Erreur lors de l\'ouverture du modal AddLocataire:', error);
-    // }
+    if (!this.canPerformAction('add_tenant')) return;
+    // TODO: implémenter l'ajout de locataire
   }
 
   goBack(): void {
@@ -515,134 +326,79 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
     this.router.navigate([`/${currentLang}/app/properties/home`]);
   }
 
-  // Méthodes utilitaires pour les templates
-  trackByTabId(index: number, tab: Tab): string {
-    return tab.id;
-  }
+  trackByTabId(index: number, tab: Tab): string { return tab.id; }
 
   getTabIcon(iconName: string): string {
-    // Mapper les noms d'icônes aux icônes IBM Carbon
     const iconMap: { [key: string]: string } = {
-      'home': 'home',
-      'building': 'building',
-      'user': 'user',
-      'time': 'time',
-      'money': 'currency-dollar'
+      'home': 'home', 'building': 'building', 'user': 'user',
+      'time': 'time', 'money': 'currency-dollar'
     };
     return iconMap[iconName] || iconName;
   }
 
-  // Méthodes de formatage
   formatPrice(amount: number): string {
     return new Intl.NumberFormat('fr-FR', {
-      style: 'currency',
-      currency: 'XAF',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
+      style: 'currency', currency: 'XAF',
+      minimumFractionDigits: 0, maximumFractionDigits: 0
     }).format(amount);
   }
 
-  formatPercentage(value: number): string {
-    return `${Math.round(value)}%`;
-  }
+  formatPercentage(value: number): string { return `${Math.round(value)}%`; }
 
-  // Méthodes pour les actions rapides depuis l'overview
   onQuickAction(actionType: string): void {
     switch (actionType) {
-      case 'add_unit':
-        this.onAddUnit();
-        break;
-      case 'add_tenant':
-        if (this.canPerformAction('add_tenant')) {
-          this.onAddTenant();
-        }
-        break;
-      case 'financial_report':
-        if (this.canPerformAction('financial_report')) {
-          this.generateFinancialReport();
-        }
-        break;
-      case 'schedule_maintenance':
-        this.scheduleMaintenance();
-        break;
-      case 'edit_property':
-        this.onEditProperty()
-        break;
-      default:
-        console.log('Action non reconnue:', actionType);
+      case 'add_unit':         this.onAddUnit(); break;
+      case 'add_tenant':       if (this.canPerformAction('add_tenant')) this.onAddTenant(); break;
+      case 'financial_report': if (this.canPerformAction('financial_report')) this.generateFinancialReport(); break;
+      case 'schedule_maintenance': this.scheduleMaintenance(); break;
+      case 'edit_property':    this.onEditProperty(); break;
     }
   }
 
   private generateFinancialReport(): void {
-    console.log('Générer un rapport financier');
-    // TODO: Implémenter la génération de rapport
+    // TODO: implémenter la génération de rapport
   }
 
   private scheduleMaintenance(): void {
-    console.log('Planifier une maintenance');
-    // TODO: Implémenter la planification de maintenance
+    // TODO: implémenter la planification de maintenance
   }
 
-  // Méthodes pour la gestion des erreurs
-  onError(error: any): void {
-    console.error('Erreur dans PropertyDetailsComplete:', error);
-    // TODO: Afficher un message d'erreur à l'utilisateur
+  onError(_error: any): void {
+    // Les erreurs sont gérées par l'intercepteur HTTP
   }
 
-  // Méthodes pour le rechargement des données
   refreshData(): void {
-    if (this.propertyId) {
-      this.initializeSubscriptions();
-    }
+    if (this.propertyId) this.initializeSubscriptions();
   }
 
-  /**
-   * Recharge les données de la propriété après ajout d'une unité
-   */
   reloadPropertyData(): void {
-    if (this.propertyId) {
-      const currentYear = new Date().getFullYear();
-      // FetchPropertyForced pour forcer le rechargement (fonctionne aussi pour les biens gérés)
-      this.store.dispatch(new PropertyAction.FetchPropertyForced(this.propertyId));
-      this.store.dispatch(new RoomAction.FetchRoomsByPropertyID(this.propertyId));
-      this.store.dispatch(new LocationAction.FetchLocationsByPropertyId(this.propertyId));
-      this.store.dispatch(new StatisticAction.FetchStaticByPropertyIdAndYear(this.propertyId, currentYear.toString()));
-    }
+    if (!this.propertyId) return;
+    const currentYear = new Date().getFullYear();
+    this.store.dispatch(new PropertyAction.FetchPropertyForced(this.propertyId));
+    this.store.dispatch(new RoomAction.FetchRoomsByPropertyID(this.propertyId));
+    this.store.dispatch(new LocationAction.FetchLocationsByPropertyId(this.propertyId));
+    this.store.dispatch(new StatisticAction.FetchStaticByPropertyIdAndYear(this.propertyId, currentYear.toString()));
   }
 
-  // Méthodes pour l'export de données
-  exportData(format: 'pdf' | 'excel' | 'csv'): void {
-    console.log('Exporter les données au format:', format);
-    // TODO: Implémenter l'export de données
+  exportData(_format: 'pdf' | 'excel' | 'csv'): void {
+    // TODO: implémenter l'export de données
   }
 
   onOpenPropertyGallery(): void {
     const property = this.store.selectSnapshot(PropertyState.selectStateProperty(this.propertyId));
-    if (property) {
-      const dialogRef = this.dialog.open(PropertyGalleryComponent, {
-        width: '900px',
-        maxWidth: '95vw',
-        height: '90vh',
-        maxHeight: '90vh',
-        panelClass: ['property-form-dialog', 'property-gallery-modal'],
-        disableClose: true,
-        data: { property }
-      });
+    if (!property) return;
 
-      dialogRef.afterClosed().subscribe(result => {
-        console.log('🔄 Modal PropertyGallery fermé avec résultat:', result);
-      });
-    }
+    this.dialog.open(PropertyGalleryComponent, {
+      width: '900px', maxWidth: '95vw', height: '90vh', maxHeight: '90vh',
+      panelClass: ['property-form-dialog', 'property-gallery-modal'],
+      disableClose: true, data: { property }
+    });
   }
 
+  // Correction : utilise selectSnapshot pour éviter le retour toujours 0
   getTotalMediaCount(): number {
-    let totalCount = 0;
-    this.property$.pipe(takeUntil(this.destroy$)).subscribe(property => {
-      if (property?.medias) {
-        totalCount = property.medias.length;
-      }
-    });
-    return totalCount;
+    const property = this.store.selectSnapshot(PropertyState.selectStateProperty(this.propertyId));
+    return property?.medias?.length ?? 0;
   }
 
   getTabLabel(tabId: string): string {

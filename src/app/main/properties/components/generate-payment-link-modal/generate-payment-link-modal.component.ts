@@ -3,6 +3,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { PaymentLinkService } from 'src/app/shared/services/payment-link.service';
 import { RoomModel } from 'src/app/shared/store';
+import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
+import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-generate-payment-link-modal',
@@ -19,6 +22,9 @@ export class GeneratePaymentLinkModalComponent implements OnInit {
     private dialogRef: MatDialogRef<GeneratePaymentLinkModalComponent>,
     private formBuilder: FormBuilder,
     private paymentLinkService: PaymentLinkService,
+    private languageUrlService: LanguageUrlService,
+    private toastr: ToastrService,
+    private translate: TranslateService,
     @Inject(MAT_DIALOG_DATA) public data: {
       room: RoomModel;
       tenant: any;
@@ -36,37 +42,28 @@ export class GeneratePaymentLinkModalComponent implements OnInit {
   }
 
   checkExistingLink(): void {
-    if (!this.data.location?._id) {
-      return;
-    }
+    if (!this.data.location?._id) return;
 
-    // Ne pas afficher le loader lors de la vérification initiale
     this.paymentLinkService.getExistingPaymentLink(this.data.location._id).subscribe({
       next: (response) => {
-        // Un lien existe déjà, l'afficher
         this.generatedLink = response.data.paymentUrl;
-        console.log('✅ Lien existant trouvé:', response.data);
       },
       error: (error) => {
-        // Aucun lien existant, continuer normalement
-        // Ne pas afficher d'erreur à l'utilisateur, c'est normal
-        console.log('ℹ️ Aucun lien existant, prêt à en créer un nouveau');
-
-        // Vérifier si c'est vraiment une erreur ou juste l'absence de lien
+        // 404 = aucun lien existant, comportement normal
         if (error.status !== 404) {
-          console.warn('⚠️ Erreur inattendue lors de la vérification du lien:', error);
+          console.warn('Erreur lors de la vérification du lien existant:', error.status);
         }
       }
     });
   }
 
   onSubmit(): void {
-    if (this.formGroup.invalid || !this.data.location) {
-      return;
-    }
+    if (this.formGroup.invalid || !this.data.location) return;
 
     this.loading = true;
-    const lang = window.location.pathname.split('/')[1] || 'fr';
+    // Utiliser LanguageUrlService au lieu de window.location.pathname
+    // pour garantir la bonne langue en production
+    const lang = this.languageUrlService.getCurrentLanguage();
 
     const request = {
       locationId: this.data.location._id,
@@ -79,10 +76,12 @@ export class GeneratePaymentLinkModalComponent implements OnInit {
         this.generatedLink = response.data.paymentUrl;
         this.loading = false;
       },
-      error: (error) => {
-        console.error('Erreur lors de la génération du lien:', error);
+      error: () => {
         this.loading = false;
-        alert('Impossible de générer le lien de paiement. Veuillez réessayer.');
+        this.toastr.error(
+          this.translate.instant('PAYMENT_LINK.GENERATION_ERROR'),
+          'Ndewa360°'
+        );
       }
     });
   }

@@ -55,23 +55,14 @@ export class HomePropertyComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    console.log('🏠 HomePropertyComponent - Initialisation');
-
-    // Observer l'état de chargement global
     this.globalLoadingState$ = this.loadingStateService.getGlobalLoadingState();
 
-    // Écouter les changements du nombre de propriétés
     this.properties$
       .pipe(takeUntil(this.destroy$))
       .subscribe(properties => {
         this.propertyCount = properties ? properties.length : 0;
-        console.log('Nombre de propriétés:', this.propertyCount);
-
-        // Le DataDrivenLoaderService observe automatiquement les stores
-        // Pas besoin de marquage manuel
       });
 
-    // Écouter l'état de chargement
     this.loading$
       .pipe(takeUntil(this.destroy$))
       .subscribe(loading => {
@@ -92,13 +83,6 @@ export class HomePropertyComponent implements OnInit, OnDestroy {
   // Navigation entre les vues
   switchView(view: ViewType): void {
     this.currentView = view;
-
-    // Analytics ou actions spécifiques selon la vue
-    if (view === 'dashboard') {
-      console.log('Basculement vers le dashboard financier');
-    } else {
-      console.log('Basculement vers la liste des propriétés');
-    }
   }
 
   // Création d'une nouvelle propriété
@@ -123,12 +107,9 @@ export class HomePropertyComponent implements OnInit, OnDestroy {
     this.addPropertyDialogRef.afterClosed()
       .pipe(takeUntil(this.destroy$))
       .subscribe(result => {
-        this.addPropertyDialogRef = null; // Reset de la référence
-
+        this.addPropertyDialogRef = null;
         if (result) {
-          console.log('Propriété créée avec succès');
           this.switchView('properties');
-          // Recharger les propriétés pour mettre à jour le compteur
           this._store.dispatch(new PropertyAction.FetchProperties());
         }
       });

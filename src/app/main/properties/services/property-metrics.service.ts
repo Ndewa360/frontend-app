@@ -142,9 +142,12 @@ export class PropertyMetricsService {
     return (property?.insuranceCost || 0) / 12;
   }
 
-  getNetProfit(metrics,property:PropertyModel): number {
+  getNetProfit(metrics, property: PropertyModel): number {
     const revenue = metrics?.monthlyRevenue || 0;
-    const expenses = this.getMonthlyExpenses(property) + this.getManagementFees(property) + this.getMaintenanceCosts(property) + this.getInsuranceCosts(property);
+    // getMonthlyExpenses inclut déjà insuranceCost/12 — ne pas rajouter getInsuranceCosts()
+    const expenses = this.getMonthlyExpenses(property)
+                   + this.getManagementFees(property)
+                   + this.getMaintenanceCosts(property);
     return revenue - expenses;
   }
 

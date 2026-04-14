@@ -1,13 +1,12 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { Select } from '@ngxs/store';
-import { Observable, combineLatest } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Select, Store } from '@ngxs/store';
+import { Observable, Subject, combineLatest } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
-import { PropertyModel, PropertyState, RoomState, LocationPaymentState, LocationState } from 'src/app/shared/store';
+import { PropertyModel, PropertyState, RoomState, LocationPaymentState } from 'src/app/shared/store';
 import { AddPropertyComponent } from '../add-property/add-property.component';
-import { Store } from '@ngxs/store';
 import { UpdatePropertyComponent } from '../update-property/update-property.component';
 import { PropertyAlert } from '../components/property-overview-card/property-overview-card.component';
 import { ModernTenantModalComponent } from '../components/modern-tenant-modal/modern-tenant-modal.component';
@@ -15,24 +14,42 @@ import { PropertyNavigationService } from '../services/property-navigation.servi
 import { PropertiesTourService } from '../services/properties-tour.service';
 import { PropertyManagerState, ManagedPropertyItem, PropertyManagerAction } from 'src/app/shared/store/property-manager';
 import { PropertyAccessService } from 'src/app/shared/services/property-access.service';
+import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
+
+/** Métriques pré-calculées par propriété pour éviter selectSnapshot dans le template */
+interface PropertyCardMetrics {
+  occupancyRate: number;
+  occupiedRooms: number;
+  freeRooms: number;
+  monthlyRevenue: number;
+  revenueGrowth: number;
+  overduePayments: number;
+}
 
 @Component({
   selector: 'app-list-property',
   templateUrl: './list-property.component.html',
   styleUrls: ['./list-property.component.scss'],
-  encapsulation:ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None
 })
-export class ListPropertyComponent implements OnInit {
+export class ListPropertyComponent implements OnInit, OnDestroy {
 
-
-  @Select(PropertyState.selectStateProperties) properties$:Observable<PropertyModel[]>;
-  @Select(PropertyState.selectStateInitLoading) initLoading$:Observable<string>;
+  @Select(PropertyState.selectStateProperties) properties$: Observable<PropertyModel[]>;
+  @Select(PropertyState.selectStateInitLoading) initLoading$: Observable<string>;
   @Select(PropertyManagerState.selectManagedProperties) managedProperties$: Observable<ManagedPropertyItem[]>;
 
-  // État de chargement pour la navigation
   loadingProperties$: Observable<Set<string>>;
- 
- 
+
+  // Métriques globales pré-calculées (pour la barre de stats)
+  totalProperties = 0;
+  totalUnits = 0;
+  globalOccupancyRate = 0;
+  totalMonthlyRevenue = 0;
+
+  // Métriques par propriété pré-calculées (pour les cartes)
+  propertyMetrics: Map<string, PropertyCardMetrics> = new Map();
+
+  private destroy$ = new Subject<void>();
 
   constructor(
     private dialog: MatDialog,
@@ -41,200 +58,233 @@ export class ListPropertyComponent implements OnInit {
     private propertyNavigationService: PropertyNavigationService,
     private translate: TranslateService,
     private propertiesTourService: PropertiesTourService,
-    public propertyAccessService: PropertyAccessService
-  ) { }
+    public propertyAccessService: PropertyAccessService,
+    private languageUrlService: LanguageUrlService
+  ) {}
 
   ngOnInit(): void {
-    this.initLoading$.subscribe((value)=>{
-      if (value === 'LOADED') {
-        setTimeout(() => {
-          this.propertiesTourService.startPropertiesMainTour();
-        }, 1000);
-      }
-    })
-    this.properties$.subscribe((value)=>{
-      console.log("Value Property ",value)
-    })
-
     this.loadingProperties$ = this.propertyNavigationService.loading$;
-
-    // Toujours recharger les assignments (même après refresh de page)
     this._store.dispatch(new PropertyManagerAction.LoadMyAssignments());
-  }
 
+    // Pré-calculer toutes les métriques une seule fois quand les données changent
+    this.properties$.pipe(takeUntil(this.destroy$)).subscribe(properties => {
+      if (!properties) return;
+      this.totalProperties = properties.length;
+      this.recalculateAllMetrics(properties);
+    });
 
-  getNumberOfRoom(propertyID)
-  {
-    return this._store.select(RoomState.selectStateNumberOfRoomByPropertyId(propertyID))
-  }
-
-
-
-    updateProperty(property,event)
-      {
-        event.stopPropagation();
-        this.dialog.open(UpdatePropertyComponent, {
-          viewContainerRef:null,
-          disableClose: true,
-          role: 'alertdialog',
-          width: '500px',
-          data:{
-            property
-          }
-        })
+    this.initLoading$.pipe(takeUntil(this.destroy$)).subscribe(value => {
+      if (value === 'LOADED') {
+        setTimeout(() => this.propertiesTourService.startPropertiesMainTour(), 1000);
       }
-
-  // Méthodes pour le nouveau composant PropertyOverviewCard
-  trackByPropertyId(index: number, property: PropertyModel): string {
-    return property._id;
+    });
   }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  /** Recalcule toutes les métriques en une seule passe — appelé uniquement quand les données changent */
+  private recalculateAllMetrics(properties: PropertyModel[]): void {
+    let totalRooms = 0;
+    let totalOccupied = 0;
+    let totalRevenue = 0;
+
+    properties.forEach(property => {
+      const rooms = this._store.selectSnapshot(RoomState.selectStateRoomByPropertyId(property._id)) || [];
+      const payments = this._store.selectSnapshot(LocationPaymentState.selectStateLocationPaymentByPropertyId(property._id)) || [];
+
+      const occupied = rooms.filter(r => !r.isFree).length;
+      const free = rooms.filter(r => r.isFree).length;
+      const rate = rooms.length > 0 ? Math.round((occupied / rooms.length) * 100) : 0;
+      const monthly = this.calcMonthlyRevenue(payments);
+      const growth = this.calcRevenueGrowth(payments);
+      const overdue = this.calcOverduePayments(payments);
+
+      this.propertyMetrics.set(property._id, {
+        occupancyRate: rate,
+        occupiedRooms: occupied,
+        freeRooms: free,
+        monthlyRevenue: monthly,
+        revenueGrowth: growth,
+        overduePayments: overdue
+      });
+
+      totalRooms += rooms.length;
+      totalOccupied += occupied;
+      totalRevenue += rooms.filter(r => !r.isFree).reduce((s, r) => s + (r.price || 0), 0);
+    });
+
+    this.totalUnits = properties.reduce((s, p) => s + (p.roomLength || 0), 0);
+    this.globalOccupancyRate = totalRooms > 0 ? Math.round((totalOccupied / totalRooms) * 100) : 0;
+    this.totalMonthlyRevenue = totalRevenue;
+  }
+
+  private calcMonthlyRevenue(payments: any[]): number {
+    if (!payments?.length) return 0;
+    const now = new Date();
+    const start = new Date(now.getFullYear(), now.getMonth(), 1);
+    const end = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    return payments
+      .filter(p => {
+        const d = new Date(p.datePayment);
+        return d >= start && d < end && p.isPaid;
+      })
+      .reduce((s, p) => s + (p.amount || 0), 0);
+  }
+
+  private calcRevenueGrowth(payments: any[]): number {
+    if (!payments?.length) return 0;
+    const now = new Date();
+    const curStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const curEnd   = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    const prevStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const prevEnd   = curStart;
+
+    const cur = payments
+      .filter(p => { const d = new Date(p.createdAt || p.datePayment); return d >= curStart && d < curEnd && p.isPaid; })
+      .reduce((s, p) => s + (p.amount || 0), 0);
+
+    const prev = payments
+      .filter(p => { const d = new Date(p.createdAt || p.datePayment); return d >= prevStart && d < prevEnd && p.isPaid; })
+      .reduce((s, p) => s + (p.amount || 0), 0);
+
+    if (prev === 0) return cur > 0 ? 100 : 0;
+    return Math.round(((cur - prev) / prev) * 100);
+  }
+
+  private calcOverduePayments(payments: any[]): number {
+    if (!payments?.length) return 0;
+    const today = new Date();
+    return payments.filter(p => new Date(p.datePayment) < today && !p.isPaid).length;
+  }
+
+  // ── Accesseurs pour le template (lecture depuis le Map pré-calculé) ──────
 
   getPropertyOccupancyRate(propertyId: string): number {
-    // Calculer le taux d'occupation basé sur les chambres occupées
-    // Cette logique devrait être adaptée selon votre modèle de données
-    const rooms = this._store.selectSnapshot(RoomState.selectStateRoomByPropertyId(propertyId));
-    if (!rooms || rooms.length === 0) return 0;
-
-    const occupiedRooms = rooms.filter(room => !room.isFree).length;
-    return Math.round((occupiedRooms / rooms.length) * 100);
+    return this.propertyMetrics.get(propertyId)?.occupancyRate ?? 0;
   }
 
   getMonthlyRevenue(propertyId: string): number {
-    // Calculer les revenus mensuels pour cette propriété
-    // Cette logique devrait être adaptée selon votre modèle de données
-    const payments = this._store.selectSnapshot(LocationPaymentState.selectStateLocationPaymentByPropertyId(propertyId));
-    if (!payments) return 0;
-
-    const currentMonth = new Date().getMonth();
-    const currentYear = new Date().getFullYear();
-
-    return payments
-      .filter(payment => {
-        const paymentDate = new Date(payment.datePayment);
-        return paymentDate.getMonth() === currentMonth &&
-               paymentDate.getFullYear() === currentYear &&
-               payment.isPaid;
-      })
-      .reduce((total, payment) => total + (payment.amount || 0), 0);
-  }
-
-  getRevenueGrowth(propertyId: string): number {
-    // Calculer la croissance des revenus basée sur les paiements récents
-    const payments = this._store.selectSnapshot(LocationPaymentState.selectStateLocationPaymentByPropertyId(propertyId));
-    if (!payments || payments.length < 2) return 0;
-
-    const now = new Date();
-    const currentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-
-    const currentMonthPayments = payments.filter(payment => {
-      const paymentDate = new Date(payment.createdAt || payment.datePayment);
-      return paymentDate >= currentMonth && payment.isPaid;
-    }).reduce((sum, payment) => sum + (payment.amount || 0), 0);
-
-    const lastMonthPayments = payments.filter(payment => {
-      const paymentDate = new Date(payment.createdAt || payment.datePayment);
-      return paymentDate >= lastMonth && paymentDate < currentMonth && payment.isPaid;
-    }).reduce((sum, payment) => sum + (payment.amount || 0), 0);
-
-    if (lastMonthPayments === 0) return currentMonthPayments > 0 ? 100 : 0;
-
-    return Math.round(((currentMonthPayments - lastMonthPayments) / lastMonthPayments) * 100);
-  }
-
-  getOverduePayments(propertyId: string): number {
-    // Compter les paiements en retard
-    const payments = this._store.selectSnapshot(LocationPaymentState.selectStateLocationPaymentByPropertyId(propertyId));
-    if (!payments) return 0;
-
-    const today = new Date();
-    return payments.filter(payment => {
-      const dueDate = new Date(payment.datePayment);
-      return dueDate < today && !payment.isPaid;
-    }).length;
-  }
-
-  getFreeRooms(propertyId: string): number {
-    const rooms = this._store.selectSnapshot(RoomState.selectStateRoomByPropertyId(propertyId));
-    if (!rooms) return 0;
-    return rooms.filter(room => room.isFree).length;
+    return this.propertyMetrics.get(propertyId)?.monthlyRevenue ?? 0;
   }
 
   getOccupiedRooms(propertyId: string): number {
-    const rooms = this._store.selectSnapshot(RoomState.selectStateRoomByPropertyId(propertyId));
-    if (!rooms) return 0;
-    return rooms.filter(room => !room.isFree).length;
+    return this.propertyMetrics.get(propertyId)?.occupiedRooms ?? 0;
   }
 
+  getFreeRooms(propertyId: string): number {
+    return this.propertyMetrics.get(propertyId)?.freeRooms ?? 0;
+  }
+
+  getOverduePayments(propertyId: string): number {
+    return this.propertyMetrics.get(propertyId)?.overduePayments ?? 0;
+  }
+
+  getRevenueGrowth(propertyId: string): number {
+    return this.propertyMetrics.get(propertyId)?.revenueGrowth ?? 0;
+  }
+
+  // ── Métriques globales (déjà pré-calculées) ──────────────────────────────
+
+  getTotalProperties(): number { return this.totalProperties; }
+  getTotalUnits(): number { return this.totalUnits; }
+  getOccupancyRate(): number { return this.globalOccupancyRate; }
+  getTotalMonthlyRevenue(): number { return this.totalMonthlyRevenue; }
+
+  // ── Alertes ──────────────────────────────────────────────────────────────
+
   getPropertyAlerts(propertyId: string): PropertyAlert[] {
+    const lang = this.languageUrlService.getCurrentLanguage();
     const alerts: PropertyAlert[] = [];
 
-    // Vérifier les paiements en retard
     const overdueCount = this.getOverduePayments(propertyId);
     if (overdueCount > 0) {
       alerts.push({
         type: overdueCount > 2 ? 'critical' : 'warning',
         message: `${overdueCount} ${this.translate.instant('properties.card.paymentOverdue')}`,
-        actionRoute: `/app/properties/${propertyId}/payments`
+        actionRoute: `/${lang}/app/properties/details/${propertyId}`
       });
     }
 
-    // Vérifier les chambres vacantes depuis longtemps
     const freeRooms = this.getFreeRooms(propertyId);
     if (freeRooms > 0) {
       alerts.push({
         type: 'info',
         message: `${freeRooms} ${this.translate.instant('properties.card.roomsFree')}`,
-        actionRoute: `/app/properties/${propertyId}/rooms`
+        actionRoute: `/${lang}/app/properties/details/${propertyId}`
       });
     }
 
     return alerts;
   }
 
-  // Gestionnaires d'événements pour le nouveau composant
-  onAddTenant(property: PropertyModel): void {
-    this.dialog.open(ModernTenantModalComponent, {
-      width: '100%',
-      maxWidth: '800px',
-      disableClose: true,
-      data: {
-        property: property,
-        mode: 'add'
-      }
-    });
-  }
+  // ── Navigation ───────────────────────────────────────────────────────────
 
-  onRecordPayment(property: PropertyModel): void {
-    this.router.navigate(['/app/location-payment', 'add'], {
-      queryParams: { propertyId: property._id }
-    });
-  }
-
-  onViewFinances(property: PropertyModel): void {
-    this.router.navigate(['/app/properties', property._id], {
-      fragment: 'finances'
-    });
-  }
-
-  onAlertClick(alert: PropertyAlert): void {
-    if (alert.actionRoute) {
-      this.router.navigate([alert.actionRoute]);
-    }
-  }
-
-  // Nouvelles méthodes pour la navigation et les actions
   onViewPropertyDetails(property: PropertyModel): void {
     this.propertyNavigationService.navigateToPropertyDetails(property._id);
   }
 
   onViewManagedPropertyDetails(propertyId: string): void {
-    if (!propertyId) {
-      console.error('❌ propertyId manquant pour la navigation vers le bien géré');
-      return;
-    }
+    if (!propertyId) return;
     this.propertyNavigationService.navigateToPropertyDetails(propertyId);
   }
+
+  onRecordPayment(property: PropertyModel): void {
+    const lang = this.languageUrlService.getCurrentLanguage();
+    this.router.navigate([`/${lang}/app/location-payment`, 'add'], {
+      queryParams: { propertyId: property._id }
+    });
+  }
+
+  onViewFinances(property: PropertyModel): void {
+    const lang = this.languageUrlService.getCurrentLanguage();
+    this.router.navigate([`/${lang}/app/properties/details`, property._id], { fragment: 'finances' });
+  }
+
+  onAlertClick(alert: PropertyAlert): void {
+    if (alert.actionRoute) this.router.navigateByUrl(alert.actionRoute);
+  }
+
+  // ── Actions sur les propriétés ───────────────────────────────────────────
+
+  updateProperty(property: PropertyModel, event: Event): void {
+    event.stopPropagation();
+    this.dialog.open(UpdatePropertyComponent, {
+      viewContainerRef: null,
+      disableClose: true,
+      role: 'alertdialog',
+      width: '500px',
+      data: { property }
+    });
+  }
+
+  onEditProperty(property: PropertyModel): void {
+    this.updateProperty(property, new Event('click'));
+  }
+
+  onAddTenant(property: PropertyModel): void {
+    this.dialog.open(ModernTenantModalComponent, {
+      width: '100%',
+      maxWidth: '800px',
+      disableClose: true,
+      data: { property, mode: 'add' }
+    });
+  }
+
+  onAddProperty(): void {
+    this.dialog.open(AddPropertyComponent, {
+      viewContainerRef: null,
+      disableClose: true,
+      role: 'alertdialog',
+      width: '500px',
+      maxWidth: '90vw',
+      maxHeight: '90vh'
+    });
+  }
+
+  // ── Permissions ──────────────────────────────────────────────────────────
 
   getManagedPropertyPermissions(propertyId: string): string[] {
     return this.propertyAccessService.getPermissionsForProperty(propertyId);
@@ -249,104 +299,32 @@ export class ListPropertyComponent implements OnInit {
     }
   }
 
-  // Méthode helper pour vérifier si une propriété est en cours de chargement
   isPropertyLoading(propertyId: string): boolean {
     return this.propertyNavigationService.isPropertyLoading(propertyId);
   }
 
-  onEditProperty(property: PropertyModel): void {
-    // Ouvrir le dialog d'édition au lieu de naviguer
-    this.updateProperty(property, new Event('click'));
+  trackByPropertyId(index: number, property: PropertyModel): string {
+    return property._id;
   }
 
-  onToggleFavorite(property: PropertyModel): void {
-    // Logique pour ajouter/supprimer des favoris
-    // À implémenter selon votre système de favoris
-    console.log('Toggle favorite for property:', property.name);
-  }
+  // ── Tour guidé ───────────────────────────────────────────────────────────
 
-  onQuickAction(property: PropertyModel): void {
-    // Afficher un menu d'actions rapides ou naviguer vers une page d'actions
-    console.log('Quick action for property:', property.name);
-    // Exemple : ouvrir un menu contextuel ou naviguer vers les actions rapides
-  }
-
-  onAddProperty(): void {
-    // Ouvrir le dialog d'ajout de propriété
-    this.dialog.open(AddPropertyComponent, {
-      viewContainerRef: null,
-      disableClose: true,
-      role: 'alertdialog',
-      width: '500px',
-      maxWidth: '90vw',
-      maxHeight: '90vh'
-    });
-  }
-
-  // Méthodes pour les métriques globales du header
-  getTotalProperties(): number {
-    const properties = this._store.selectSnapshot(PropertyState.selectStateProperties);
-    return properties ? properties.length : 0;
-  }
-
-  getTotalUnits(): number {
-    const properties = this._store.selectSnapshot(PropertyState.selectStateProperties);
-    if (!properties) return 0;
-
-    return properties.reduce((total, property) => {
-      return total + (property.roomLength || 0);
-    }, 0);
-  }
-
-  getOccupancyRate(): number {
-    const properties = this._store.selectSnapshot(PropertyState.selectStateProperties);
-    if (!properties || properties.length === 0) return 0;
-
-    let totalRooms = 0;
-    let occupiedRooms = 0;
-
-    properties.forEach(property => {
-      const rooms = this._store.selectSnapshot(RoomState.selectStateRoomByPropertyId(property._id));
-      if (rooms) {
-        totalRooms += rooms.length;
-        occupiedRooms += rooms.filter(room => !room.isFree).length;
-      }
-    });
-
-    return totalRooms > 0 ? Math.round((occupiedRooms / totalRooms) * 100) : 0;
-  }
-
-  getTotalMonthlyRevenue(): number {
-    const properties = this._store.selectSnapshot(PropertyState.selectStateProperties);
-    if (!properties) return 0;
-
-    return properties.reduce((total, property) => {
-      // Calculer le revenu mensuel pour chaque propriété
-      const rooms = this._store.selectSnapshot(RoomState.selectStateRoomByPropertyId(property._id));
-      if (!rooms) return total;
-
-      const monthlyRevenue = rooms
-        .filter(room => !room.isFree)
-        .reduce((sum, room) => sum + (room.price || 0), 0);
-
-      return total + monthlyRevenue;
-    }, 0);
-  }
-
-  // Méthodes pour le tour guidé
   startTour(): void {
-    console.log('ListPropertyComponent: startTour called');
-    console.log('Service available:', !!this.propertiesTourService);
-    
-    // Forcer le reset pour les tests
     this.propertiesTourService.resetTour('properties_main');
     this.propertiesTourService.startPropertiesMainTour();
   }
 
   resetTour(): void {
-    console.log('ListPropertyComponent: resetTour called');
     this.propertiesTourService.resetTour('properties_main');
     this.startTour();
   }
 
+  // ── Méthodes non utilisées conservées pour compatibilité ─────────────────
+
+  getNumberOfRoom(propertyID: string): Observable<number> {
+    return this._store.select(RoomState.selectStateNumberOfRoomByPropertyId(propertyID));
+  }
+
+  onToggleFavorite(_property: PropertyModel): void { /* À implémenter */ }
+  onQuickAction(_property: PropertyModel): void { /* À implémenter */ }
 }

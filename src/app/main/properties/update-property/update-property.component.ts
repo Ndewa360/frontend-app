@@ -143,14 +143,8 @@ export class UpdatePropertyComponent implements OnInit {
 
         if (country && city) {
           this.formGroup.patchValue({
-            geolocation: {
-              country: country,
-              city: city
-            }
+            geolocation: { country, city }
           });
-          console.log('Localisation existante chargée:', { country: country.fullName, city: city.fullName });
-        } else {
-          console.warn('Impossible de trouver le pays ou la ville dans les stores', { countryId, cityId });
         }
       });
     }
@@ -163,35 +157,34 @@ export class UpdatePropertyComponent implements OnInit {
    * Charger le template de contrat existant
    */
   private loadContractTemplate(): void {
-    if (this.data.property?.contractTemplate) {
-      console.log('Chargement du template de contrat:', this.data.property.contractTemplate);
+    if (!this.data.property?.contractTemplate) return;
 
-      // Déterminer l'ID du template
-      const templateId = typeof this.data.property.contractTemplate === 'string'
-        ? this.data.property.contractTemplate
-        : this.data.property.contractTemplate._id;
+    const templateId = typeof this.data.property.contractTemplate === 'string'
+      ? this.data.property.contractTemplate
+      : this.data.property.contractTemplate._id;
 
-      if (templateId) {
-        // Attendre que les templates soient chargés puis définir la valeur
-        setTimeout(() => {
-          this.formGroup.patchValue({
-            contractTemplate: templateId
-          });
-          console.log('Template de contrat défini:', templateId);
-        }, 500);
-      }
-    }
+    if (!templateId) return;
+
+    // Utiliser un observable sur le store pour éviter le setTimeout arbitraire
+    this._store.select((state: any) => state['contractTemplates']?.templates)
+      .pipe(
+        takeUntil(this.destroy$),
+        filter(templates => templates && templates.length > 0),
+        take(1)
+      )
+      .subscribe(() => {
+        this.formGroup.patchValue({ contractTemplate: templateId });
+      });
+
+    // Fallback : si les templates sont déjà chargés, patcher immédiatement
+    this.formGroup.patchValue({ contractTemplate: templateId });
   }
 
   /**
    * Gérer le changement de localisation
    */
   onLocationChanged(location: CountryCityValue): void {
-    console.log('Localisation mise à jour:', location);
-    // Le FormControl 'geolocation' est automatiquement mis à jour
-    if (location.country && location.city) {
-      console.log(`Pays: ${location.country.fullName}, Ville: ${location.city.fullName}`);
-    }
+    // Le FormControl 'geolocation' est automatiquement mis à jour par le composant
   }
 
   // Navigation entre les étapes
@@ -241,7 +234,6 @@ export class UpdatePropertyComponent implements OnInit {
 
     // Vérifier que la localisation est complète
     if (!location || !location.country || !location.city) {
-      console.error('Localisation incomplète');
       this.waittingResponse = false;
       return;
     }

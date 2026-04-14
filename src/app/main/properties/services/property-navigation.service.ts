@@ -36,39 +36,21 @@ export class PropertyNavigationService {
    * Navigue vers les détails d'une propriété avec protection contre les clics multiples
    */
   navigateToPropertyDetails(propertyId: string): Promise<boolean> {
-    if (!propertyId) {
-      console.error('❌ navigateToPropertyDetails: propertyId est undefined ou null');
-      return Promise.resolve(false);
-    }
+    if (!propertyId) return Promise.resolve(false);
+    if (this.isPropertyLoading(propertyId)) return Promise.resolve(false);
 
-    // Vérifier si cette propriété est déjà en cours de chargement
-    if (this.isPropertyLoading(propertyId)) {
-      console.log(`⏳ Navigation vers ${propertyId} déjà en cours, ignorée`);
-      return Promise.resolve(false);
-    }
-
-    // Marquer comme en cours de chargement
     this.setPropertyLoading(propertyId, true);
-    console.log(`🚀 Navigation vers les détails de la propriété ${propertyId}`);
-
-    // Naviguer vers la page de détails avec la langue
     const currentLang = this.languageUrlService.getCurrentLanguage();
     return this.router.navigate([`/${currentLang}/app/properties/details`, propertyId])
       .then((success) => {
         if (success) {
-          console.log(`✅ Navigation réussie vers ${propertyId}`);
-          // Garder le loading pendant un moment pour éviter les clics rapides
-          setTimeout(() => {
-            this.setPropertyLoading(propertyId, false);
-          }, 1000); // 1 seconde de protection
+          setTimeout(() => this.setPropertyLoading(propertyId, false), 1000);
         } else {
-          console.error(`❌ Échec de navigation vers ${propertyId}`);
           this.setPropertyLoading(propertyId, false);
         }
         return success;
       })
-      .catch((error) => {
-        console.error(`❌ Erreur lors de la navigation vers ${propertyId}:`, error);
+      .catch(() => {
         this.setPropertyLoading(propertyId, false);
         return false;
       });
@@ -94,7 +76,6 @@ export class PropertyNavigationService {
   clearAllLoading(): void {
     this.loadingProperties.clear();
     this.loadingSubject.next(new Set());
-    console.log('🧹 Tous les états de chargement réinitialisés');
   }
 
   /**

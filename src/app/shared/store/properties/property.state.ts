@@ -60,13 +60,12 @@ export class PropertyState{
     
     }
 
-    static selectStatePropertyByPropertyName(name=null)
+    static selectStatePropertyByPropertyName(name: string = null)
     {
-        return createSelector([PropertyState],(state)=> state.propertys.filter((property)=>{
-                if(name==null) return property;
-                if(property.name.indexOf(name)) return property;
-            }))
-    
+        return createSelector([PropertyState], (state: PropertyStateModel) => state.properties.filter((property) => {
+            if (name == null) return true;
+            return property.name.toLowerCase().includes(name.toLowerCase());
+        }));
     }
 
     @Action(PropertyAction.UpdateProperty)
@@ -76,12 +75,10 @@ export class PropertyState{
         ctx.patchState({
             loadingProperty: true
         })
-        console.log("To update ",property,id)
         return this._propertysService.updateProperty(property,id).pipe(
             tap(
                 (result)=>{
                     const data = [...state.properties]
-                    console.log("Result ",result)
                     let index = data.findIndex((u)=>u._id==id);
                     if(index>-1) data[index]=result.data;
                     ctx.patchState({
@@ -164,22 +161,29 @@ export class PropertyState{
    
 
     @Action(PropertyAction.FetchProperty)
-    fetchProperty(ctx:StateContext<PropertyStateModel>,{propertyId}:PropertyAction.FetchProperty)
+    fetchProperty(ctx: StateContext<PropertyStateModel>, { propertyId }: PropertyAction.FetchProperty)
     {
         const state = ctx.getState();
-        let index = state.properties.findIndex((u)=>u._id==propertyId);
+        const index = state.properties.findIndex((u) => u._id == propertyId);
+        if (index > -1) return of(true);
 
-        if(index>-1) return of(true);
-
-        ctx.patchState({ loadingProperty:true })
+        ctx.patchState({ loadingProperty: true });
         return this._propertysService.getProperty(propertyId).pipe(
             tap(result => {
                 ctx.patchState({
-                    loadingProperty:false,
-                    properties:[...state.properties, result.data]
-                })
+                    loadingProperty: false,
+                    properties: [...ctx.getState().properties, result.data]
+                });
+            }),
+            catchError((error) => {
+                ctx.patchState({ loadingProperty: false });
+                this._toastrService.error(
+                    this._translateService.instant('NOTIFICATIONS.GENERIC_ERROR_RETRY'),
+                    'Ndewa360°'
+                );
+                return throwError(error);
             })
-        )
+        );
     }
 
     @Action(PropertyAction.FetchPropertyForced)
@@ -257,25 +261,27 @@ export class PropertyState{
     }
 
     @Action(PropertyAction.FetchProperties)
-    fetchProperties(ctx:StateContext<PropertyStateModel>)
+    fetchProperties(ctx: StateContext<PropertyStateModel>)
     {
-        if(ctx.getState().initLoadingState=="LOADED") return of(true);
+        if (ctx.getState().initLoadingState == 'LOADED') return of(true);
 
-        const state = ctx.getState();
-        ctx.patchState({
-            loadingProperty:true,
-            initLoadingState:"LOADING"
-        })
+        ctx.patchState({ loadingProperty: true, initLoadingState: 'LOADING' });
         return this._propertysService.getProperties().pipe(
-            tap(
-                result => {
-                    if(state.initLoadingState!="LOADED") ctx.patchState({initLoadingState:'LOADED'})
-                    ctx.patchState({
-                        loadingProperty:false,
-                        properties:[...result.data],
-                    })
-                }
-            )
-        )
+            tap(result => {
+                ctx.patchState({
+                    loadingProperty: false,
+                    initLoadingState: 'LOADED',
+                    properties: [...result.data]
+                });
+            }),
+            catchError((error) => {
+                ctx.patchState({ loadingProperty: false, initLoadingState: 'NO_LOADED' });
+                this._toastrService.error(
+                    this._translateService.instant('NOTIFICATIONS.GENERIC_ERROR_RETRY'),
+                    'Ndewa360°'
+                );
+                return throwError(error);
+            })
+        );
     }
 }
