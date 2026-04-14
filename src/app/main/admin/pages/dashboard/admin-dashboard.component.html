@@ -188,7 +188,7 @@
                 <div class="admin-activity-content">
                   <p class="admin-activity-description">{{ activity.description }}</p>
                   <div class="admin-activity-meta">
-                    <span class="admin-activity-user">{{ activity.user?.name || activity.userName || 'Système' }}</span>
+                    <span class="admin-activity-user">{{ activity.user || activity.userName || 'Système' }}</span>
                     <span class="admin-activity-time">{{ activity.timestamp | date:'short' }}</span>
                   </div>
                 </div>

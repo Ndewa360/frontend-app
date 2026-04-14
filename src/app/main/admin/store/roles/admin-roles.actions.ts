@@ -174,4 +174,22 @@ export namespace AdminRolesAction {
     static readonly type = '[Admin Roles] Toggle Role Permission Failure';
     constructor(public error: any) {}
   }
+
+  // Create Permission
+  export class CreatePermission {
+    static readonly type = '[Admin Roles] Create Permission';
+    constructor(public permissionData: any) {}
+  }
+
+  // Update Permission
+  export class UpdatePermission {
+    static readonly type = '[Admin Roles] Update Permission';
+    constructor(public permissionId: string, public permissionData: any) {}
+  }
+
+  // Delete Permission
+  export class DeletePermission {
+    static readonly type = '[Admin Roles] Delete Permission';
+    constructor(public permissionId: string) {}
+  }
 }

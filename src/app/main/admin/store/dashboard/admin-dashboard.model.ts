@@ -1,124 +1,57 @@
 import { AdminChartData } from '../../models/shared.types';
 
+/** Structure exacte retournée par GET /admin/dashboard/stats */
 export interface DashboardStats {
-  overview: OverviewStats;
-  users: UserOverview;
-  properties: PropertyOverview;
-  payments: PaymentOverview;
-  subscriptions: SubscriptionOverview;
-  roles: RolesOverview;
-  geography: GeographyOverview;
-  coupons: CouponsOverview;
-  system: SystemOverview;
-  systemHealth: any;
-  charts: DashboardCharts;
+  users: {
+    total: number;
+    active: number;
+    newThisMonth: number;
+    verified: number;
+    suspended: number;
+    statusDistribution: any[];
+    registrationTrend: any[];
+  };
+  subscriptions: {
+    total: number;
+    free: number;
+    premium: number;
+    active: number;
+    suspended: number;
+    totalRevenue: number;
+    monthlyRevenue: number;
+    unpaidAmount: number;
+    unpaidCount: number;
+    topMetrics: any;
+  };
+  payments: {
+    totalRevenue: number;
+    monthlyRevenue: number;
+    activeSubscriptions: number;
+    successfulPayments: number;
+  };
+  roles: {
+    total: number;
+    active: number;
+    permissions: number;
+  };
+  geography: {
+    countries: number;
+    cities: number;
+    currencies: number;
+  };
+  coupons: {
+    total: number;
+    active: number;
+    totalUsages: number;
+    totalDiscount: number;
+  };
+  systemHealth: {
+    status: string;
+    uptime: number;
+    memory: any;
+    timestamp: Date;
+  };
 }
-
-export interface SubscriptionOverview {
-  total: number;
-  free: number;
-  premium: number;
-  active: number;
-  suspended: number;
-  totalRevenue: number;
-  monthlyRevenue: number;
-  unpaidAmount: number;
-  unpaidCount: number;
-  topMetrics: any;
-}
-
-export interface RolesOverview {
-  total: number;
-  active: number;
-  permissions: number;
-}
-
-export interface GeographyOverview {
-  countries: number;
-  cities: number;
-  currencies: number;
-}
-
-export interface CouponsOverview {
-  total: number;
-  active: number;
-  totalUsages: number;
-  totalDiscount: number;
-}
-
-export interface OverviewStats {
-  totalUsers: number;
-  activeUsers: number;
-  totalProperties: number;
-  totalRevenue: number;
-  monthlyGrowth: number;
-  systemHealth: number;
-}
-
-export interface UserOverview {
-  total: number;
-  active: number;
-  newThisMonth: number;
-  growthRate: number;
-  topCountries: CountryData[];
-  statusDistribution: StatusData[];
-}
-
-export interface PropertyOverview {
-  total: number;
-  occupied: number;
-  available: number;
-  occupancyRate: number;
-  averageRent: number;
-  topCities: CityData[];
-}
-
-export interface PaymentOverview {
-  totalRevenue: number;
-  monthlyRevenue: number;
-  pendingPayments: number;
-  overduePayments: number;
-  successRate: number;
-  revenueGrowth: number;
-}
-
-export interface SystemOverview {
-  uptime: number;
-  responseTime: number;
-  errorRate: number;
-  activeConnections: number;
-  memoryUsage: number;
-  cpuUsage: number;
-}
-
-export interface DashboardCharts {
-  userGrowth: AdminChartData[];
-  revenue: AdminChartData[];
-  propertyOccupancy: AdminChartData[];
-  systemMetrics: AdminChartData[];
-}
-
-export interface CountryData {
-  country: string;
-  count: number;
-  percentage: number;
-}
-
-export interface CityData {
-  city: string;
-  country: string;
-  count: number;
-  percentage: number;
-}
-
-export interface StatusData {
-  status: string;
-  count: number;
-  percentage: number;
-  color: string;
-}
-
-// ChartData moved to shared.types.ts as AdminChartData
 
 export interface SystemHealth {
   status: 'healthy' | 'warning' | 'critical';
@@ -153,20 +86,19 @@ export interface SystemAlert {
   message: string;
   timestamp: Date;
   resolved: boolean;
+  link?: string;
+  severity?: string;
+  actionRequired?: boolean;
 }
 
 export interface RecentActivity {
   id: string;
-  type: 'user' | 'property' | 'payment' | 'system';
-  action: string;
+  type: string;
   description: string;
+  user: string;
   userName?: string;
-  user: {
-    id: string;
-    name: string;
-    avatar?: string;
-  };
   timestamp: Date;
+  hasError?: boolean;
   metadata?: any;
 }
 

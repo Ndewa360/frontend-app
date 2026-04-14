@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject, firstValueFrom } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
+import { ToastrService } from 'ngx-toastr';
 import { AdminRolesService } from '../../services/admin-roles.service';
 
 // Actions
@@ -51,7 +52,7 @@ export class AdminRolesComponent implements OnInit, OnDestroy {
   permissionSearchQuery = '';
   expandedModules: Set<string> = new Set(['users', 'roles', 'admin']); // Modules expanded by default
 
-  constructor(private store: Store, private fb: FormBuilder, private adminRolesService: AdminRolesService) {}
+  constructor(private store: Store, private fb: FormBuilder, private adminRolesService: AdminRolesService, private toastr: ToastrService) {}
 
   ngOnInit(): void {
     this.loadData();
@@ -119,39 +120,72 @@ export class AdminRolesComponent implements OnInit, OnDestroy {
     setTimeout(() => this.loadData(), 500);
   }
 
+  // Modal state
+  showDeleteRoleModal = false;
+  showDuplicateRoleModal = false;
+  showToggleStatusModal = false;
+  duplicateRoleName = '';
+  roleToAction: AdminRole | null = null;
+
   onDeleteRole(role: AdminRole): void {
     if (role.isSystem) {
-      alert('Impossible de supprimer un rôle système');
+      this.toastr?.warning('Impossible de supprimer un rôle système');
       return;
     }
+    this.roleToAction = role;
+    this.showDeleteRoleModal = true;
+  }
 
-    if (confirm(`Êtes-vous sûr de vouloir supprimer le rôle "${role.displayName}" ?`)) {
-      this.store.dispatch(new AdminRolesAction.DeleteRole(role._id));
-    }
+  confirmDeleteRole(): void {
+    if (!this.roleToAction) return;
+    this.store.dispatch(new AdminRolesAction.DeleteRole(this.roleToAction._id));
+    this.showDeleteRoleModal = false;
+    this.roleToAction = null;
   }
 
   onToggleRoleStatus(role: AdminRole): void {
     if (role.isSystem) {
-      alert('Impossible de modifier un rôle système');
+      this.toastr?.warning('Impossible de modifier un rôle système');
       return;
     }
+    this.roleToAction = role;
+    this.showToggleStatusModal = true;
+  }
 
-    this.store.dispatch(new AdminRolesAction.UpdateRole(role._id, { isActive: !role.isActive }));
+  confirmToggleStatus(): void {
+    if (!this.roleToAction) return;
+    this.store.dispatch(new AdminRolesAction.UpdateRole(this.roleToAction._id, { isActive: !this.roleToAction.isActive }));
+    this.showToggleStatusModal = false;
+    this.roleToAction = null;
   }
 
   onDuplicateRole(role: AdminRole): void {
     if (role.isSystem) {
-      alert('Impossible de dupliquer un rôle système');
+      this.toastr?.warning('Impossible de dupliquer un rôle système');
       return;
     }
-    const newName = window.prompt('Nom du nouveau rôle :', `${role.name}_copy`);
-    if (!newName) return;
-    this.adminRolesService.duplicateRole(role._id, newName)
+    this.roleToAction = role;
+    this.duplicateRoleName = `${role.name}_copy`;
+    this.showDuplicateRoleModal = true;
+  }
+
+  confirmDuplicateRole(): void {
+    if (!this.roleToAction || !this.duplicateRoleName.trim()) return;
+    this.adminRolesService.duplicateRole(this.roleToAction._id, this.duplicateRoleName)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: () => this.loadData(),
-        error: () => {}
+        next: () => { this.loadData(); this.toastr?.success('Rôle dupliqué'); },
+        error: () => this.toastr?.error('Erreur lors de la duplication')
       });
+    this.showDuplicateRoleModal = false;
+    this.roleToAction = null;
+  }
+
+  cancelRoleAction(): void {
+    this.showDeleteRoleModal = false;
+    this.showDuplicateRoleModal = false;
+    this.showToggleStatusModal = false;
+    this.roleToAction = null;
   }
 
   onRefreshData(): void {
@@ -714,36 +748,81 @@ export class AdminRolesComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Créer une nouvelle permission
-   */
+  // ==================== PERMISSIONS CRUD ====================
+
+  showCreatePermissionModal = false;
+  showEditPermissionModal = false;
+  showDeletePermissionModal = false;
+  selectedPermission: AdminPermission | null = null;
+
+  permissionForm: FormGroup = this.fb.group({
+    name:        ['', [Validators.required, Validators.pattern(/^[a-z0-9._]+$/)]],
+    displayName: ['', Validators.required],
+    description: [''],
+    module:      ['', Validators.required],
+    action:      ['read'],
+    resource:    [''],
+    category:    ['management']
+  });
+
   onCreatePermission(): void {
-    // TODO: Ouvrir le modal de création de permission
-    console.log('Créer une nouvelle permission');
+    this.permissionForm.reset({ action: 'read', category: 'management' });
+    this.showCreatePermissionModal = true;
   }
 
-  /**
-   * Voir les détails d'une permission
-   */
   onViewPermission(permission: AdminPermission): void {
-    // TODO: Ouvrir le modal de détails de permission
-    console.log('Voir la permission:', permission);
+    this.selectedPermission = permission;
+    this.showEditPermissionModal = true;
+    this.permissionForm.patchValue(permission);
+    this.permissionForm.disable();
   }
 
-  /**
-   * Modifier une permission
-   */
   onEditPermission(permission: AdminPermission): void {
-    // TODO: Ouvrir le modal d'édition de permission
-    console.log('Modifier la permission:', permission);
+    this.selectedPermission = permission;
+    this.permissionForm.enable();
+    this.permissionForm.patchValue(permission);
+    this.showEditPermissionModal = true;
   }
 
-  /**
-   * Supprimer une permission
-   */
   onDeletePermission(permission: AdminPermission): void {
-    // TODO: Confirmer et supprimer la permission
-    console.log('Supprimer la permission:', permission);
+    if (permission.isSystem) {
+      this.toastr.warning('Impossible de supprimer une permission système');
+      return;
+    }
+    this.selectedPermission = permission;
+    this.showDeletePermissionModal = true;
+  }
+
+  submitPermission(): void {
+    if (this.permissionForm.invalid) { this.permissionForm.markAllAsTouched(); return; }
+    const data = this.permissionForm.value;
+    if (this.selectedPermission) {
+      this.store.dispatch(new AdminRolesAction.UpdatePermission(this.selectedPermission._id, data));
+      this.toastr.success('Permission mise à jour');
+    } else {
+      this.store.dispatch(new AdminRolesAction.CreatePermission(data));
+      this.toastr.success('Permission créée');
+    }
+    this.closePermissionModal();
+    setTimeout(() => this.loadData(), 500);
+  }
+
+  confirmDeletePermission(): void {
+    if (!this.selectedPermission) return;
+    this.store.dispatch(new AdminRolesAction.DeletePermission(this.selectedPermission._id));
+    this.toastr.success('Permission supprimée');
+    this.showDeletePermissionModal = false;
+    this.selectedPermission = null;
+    setTimeout(() => this.loadData(), 500);
+  }
+
+  closePermissionModal(): void {
+    this.showCreatePermissionModal = false;
+    this.showEditPermissionModal = false;
+    this.showDeletePermissionModal = false;
+    this.selectedPermission = null;
+    this.permissionForm.enable();
+    this.permissionForm.reset();
   }
 
   /**

@@ -52,7 +52,7 @@
       <div class="admin-stat-content">
         <div class="admin-stat-number">{{ stats.activeUsers | number }}</div>
         <div class="admin-stat-label">Utilisateurs actifs</div>
-        <div class="admin-stat-percentage">{{ ((stats.activeUsers / stats.totalUsers) * 100) | number:'1.0-1' }}% du total</div>
+        <div class="admin-stat-percentage">{{ (stats.totalUsers > 0 ? (stats.activeUsers / stats.totalUsers * 100) : 0) | number:'1.0-1' }}% du total</div>
       </div>
     </div>
     <div class="admin-stat-card admin-stat-info">
@@ -60,7 +60,7 @@
       <div class="admin-stat-content">
         <div class="admin-stat-number">{{ stats.verifiedUsers | number }}</div>
         <div class="admin-stat-label">Utilisateurs vérifiés</div>
-        <div class="admin-stat-percentage">{{ ((stats.verifiedUsers / stats.totalUsers) * 100) | number:'1.0-1' }}% du total</div>
+        <div class="admin-stat-percentage">{{ (stats.totalUsers > 0 ? (stats.verifiedUsers / stats.totalUsers * 100) : 0) | number:'1.0-1' }}% du total</div>
       </div>
     </div>
     <div class="admin-stat-card admin-stat-warning">
@@ -296,67 +296,67 @@
 
 <!-- ── Modal Création / Édition Utilisateur ── -->
 <div class="admin-modal-overlay" *ngIf="showCreateModal || showEditModal" (click)="onCloseModal()">
-  <div class="admin-modal-container" (click)="$event.stopPropagation()" style="max-width:560px">
+  <div class="admin-modal" (click)="$event.stopPropagation()" style="max-width:580px;width:100%">
     <div class="admin-modal-header">
-      <h3 class="admin-modal-title">
+      <h3>
         <i class="fas fa-user-plus" *ngIf="showCreateModal"></i>
         <i class="fas fa-user-edit" *ngIf="showEditModal"></i>
         {{ showCreateModal ? 'Nouvel utilisateur' : 'Modifier l\'utilisateur' }}
       </h3>
       <button class="admin-modal-close" (click)="onCloseModal()"><i class="fas fa-times"></i></button>
     </div>
-    <div class="admin-modal-content">
+    <div class="admin-modal-body">
       <form [formGroup]="userForm" (ngSubmit)="onSubmitUser()">
-        <div class="admin-form-grid">
-          <div class="admin-form-group" style="grid-column:1/-1">
-            <label>Nom complet *</label>
-            <input type="text" class="admin-form-input" formControlName="name" placeholder="Nom complet">
-            <small class="text-red-500" *ngIf="userForm.get('name')?.invalid && userForm.get('name')?.touched">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div style="grid-column:1/-1">
+            <label class="admin-form-label">Nom complet *</label>
+            <input type="text" class="admin-form-control" formControlName="name" placeholder="Nom complet">
+            <small style="color:#ef4444" *ngIf="userForm.get('name')?.invalid && userForm.get('name')?.touched">
               Nom requis (min. 2 caractères)
             </small>
           </div>
-          <div class="admin-form-group">
-            <label>Email *</label>
-            <input type="email" class="admin-form-input" formControlName="email" placeholder="email@exemple.com"
-                   [readonly]="showEditModal">
-            <small class="text-red-500" *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched">
+          <div>
+            <label class="admin-form-label">Email *</label>
+            <input type="email" class="admin-form-control" formControlName="email" placeholder="email@exemple.com"
+                   [attr.readonly]="showEditModal ? true : null">
+            <small style="color:#ef4444" *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched">
               Email invalide
             </small>
           </div>
-          <div class="admin-form-group">
-            <label>Téléphone</label>
-            <input type="tel" class="admin-form-input" formControlName="phoneNumber" placeholder="+237 6XX XXX XXX">
+          <div>
+            <label class="admin-form-label">Téléphone</label>
+            <input type="tel" class="admin-form-control" formControlName="phoneNumber" placeholder="+237 6XX XXX XXX">
           </div>
-          <div class="admin-form-group">
-            <label>{{ showCreateModal ? 'Mot de passe *' : 'Nouveau mot de passe (optionnel)' }}</label>
-            <input type="password" class="admin-form-input" formControlName="password"
+          <div>
+            <label class="admin-form-label">{{ showCreateModal ? 'Mot de passe *' : 'Nouveau mot de passe (optionnel)' }}</label>
+            <input type="password" class="admin-form-control" formControlName="password"
                    [placeholder]="showCreateModal ? 'Min. 8 caractères' : 'Laisser vide pour ne pas changer'">
-            <small class="text-red-500" *ngIf="userForm.get('password')?.invalid && userForm.get('password')?.touched">
+            <small style="color:#ef4444" *ngIf="userForm.get('password')?.invalid && userForm.get('password')?.touched">
               Mot de passe requis (min. 8 caractères)
             </small>
           </div>
-          <div class="admin-form-group">
-            <label>Statut</label>
-            <select class="admin-filter-select" formControlName="status">
+          <div>
+            <label class="admin-form-label">Statut</label>
+            <select class="admin-form-control" formControlName="status">
               <option value="active">Actif</option>
               <option value="inactive">Inactif</option>
               <option value="suspended">Suspendu</option>
               <option value="pending">En attente</option>
             </select>
           </div>
-          <div class="admin-form-group">
-            <label>Pays</label>
-            <input type="text" class="admin-form-input" formControlName="country" placeholder="Ex: Cameroun">
+          <div>
+            <label class="admin-form-label">Pays</label>
+            <input type="text" class="admin-form-control" formControlName="country" placeholder="Ex: Cameroun">
           </div>
         </div>
-        <div class="admin-form-actions" style="margin-top:1.5rem">
-          <button type="button" class="admin-btn admin-btn-secondary" (click)="onCloseModal()">Annuler</button>
-          <button type="submit" class="admin-btn admin-btn-primary" [disabled]="userForm.invalid">
-            <i class="fas fa-save"></i>
-            {{ showCreateModal ? 'Créer l\'utilisateur' : 'Enregistrer' }}
-          </button>
-        </div>
       </form>
+    </div>
+    <div class="admin-modal-footer">
+      <button type="button" class="admin-btn admin-btn-secondary" (click)="onCloseModal()">Annuler</button>
+      <button type="button" class="admin-btn admin-btn-primary" [disabled]="userForm.invalid" (click)="onSubmitUser()">
+        <i class="fas fa-save"></i>
+        {{ showCreateModal ? 'Créer l\'utilisateur' : 'Enregistrer' }}
+      </button>
     </div>
   </div>
 </div>

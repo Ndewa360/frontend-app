@@ -7,8 +7,9 @@
           <i class="fas fa-arrow-left"></i> Retour
         </button>
         <h1 class="admin-page-title" *ngIf="user">
-          {{ user.firstName }} {{ user.lastName }}
+          {{ user.firstName && user.lastName ? (user.firstName + ' ' + user.lastName) : user.email }}
         </h1>
+        <p class="admin-page-subtitle" *ngIf="user">{{ user.email }}</p>
       </div>
       <div class="admin-header-actions" *ngIf="user">
         <button class="admin-btn admin-btn-secondary" (click)="refreshSubscription()">
@@ -61,7 +62,7 @@
         <div class="admin-stat-content">
           <div class="admin-stat-number">{{ (user.properties?.total) || 0 }}</div>
           <div class="admin-stat-label">Propriétés</div>
-          <div class="admin-stat-trend">{{ (user.properties?.active) || 0 }} actives</div>
+          <div class="admin-stat-trend">{{ (user.properties?.occupiedUnits) || 0 }} unités occupées</div>
         </div>
       </div>
       <div class="admin-stat-card admin-stat-info">
@@ -69,7 +70,7 @@
         <div class="admin-stat-content">
           <div class="admin-stat-number">{{ (user.properties?.totalUnits) || 0 }}</div>
           <div class="admin-stat-label">Unités totales</div>
-          <div class="admin-stat-trend">{{ (user.properties?.occupiedUnits) || 0 }} occupées</div>
+          <div class="admin-stat-trend">{{ (user.properties?.vacant) || 0 }} vacantes</div>
         </div>
       </div>
       <div class="admin-stat-card admin-stat-warning">
@@ -85,6 +86,9 @@
         <div class="admin-stat-content">
           <div class="admin-stat-number">{{ (user.financialSummary?.averageOccupancy) || 0 }}%</div>
           <div class="admin-stat-label">Taux d'occupation</div>
+          <div class="admin-stat-trend" *ngIf="user.financialSummary?.unpaidAmount > 0" style="color:#ef4444">
+            {{ formatCurrency(user.financialSummary.unpaidAmount) }} impayés
+          </div>
         </div>
       </div>
     </div>
@@ -195,6 +199,10 @@
         </div>
         <div class="admin-health-services" style="padding: 1rem;">
           <div class="admin-service-item">
+            <span class="admin-service-name">Nom</span>
+            <span class="admin-service-status">{{ user.firstName && user.lastName ? (user.firstName + ' ' + user.lastName) : user.email }}</span>
+          </div>
+          <div class="admin-service-item">
             <span class="admin-service-name">Email</span>
             <span class="admin-service-status">{{ user.email }}</span>
           </div>
@@ -204,7 +212,7 @@
           </div>
           <div class="admin-service-item">
             <span class="admin-service-name">Type</span>
-            <span class="admin-badge admin-badge-info">{{ user.userType }}</span>
+            <span class="admin-badge admin-badge-info">{{ user.userType || 'OWNER' }}</span>
           </div>
           <div class="admin-service-item">
             <span class="admin-service-name">Statut compte</span>

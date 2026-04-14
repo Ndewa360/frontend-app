@@ -67,8 +67,8 @@ export class AgentManagementComponent implements OnInit {
 
   async loadApprovedAgents(): Promise<void> {
     try {
-      const response: any = await firstValueFrom(this.http.get(`${environment.apiUrl}/agents?status=approved`));
-      this.approvedAgents = response.data || response || [];
+      const response: any = await firstValueFrom(this.http.get(`${environment.apiUrl}/agents/approved`));
+      this.approvedAgents = response.data || [];
     } catch {
       this.approvedAgents = [];
     }

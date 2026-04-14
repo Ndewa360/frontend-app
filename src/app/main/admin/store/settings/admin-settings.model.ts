@@ -18,6 +18,12 @@ export interface GeneralSettings {
   defaultCurrency: string;
   supportEmail: string;
   supportPhone: string;
+  // Champs backend (ApplicationSettings.GeneralSettings)
+  contactEmail?: string;
+  companyPhone?: string;
+  companyName?: string;
+  companyAddress?: string;
+  companyWebsite?: string;
   termsOfServiceUrl: string;
   privacyPolicyUrl: string;
   maintenanceMode: boolean;

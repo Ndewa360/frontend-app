@@ -225,7 +225,16 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
       this.store.dispatch(new AdminUsersAction.UpdateUser(this.selectedUser._id, updateData));
       this.toastr.success('Utilisateur mis à jour');
     } else {
-      this.store.dispatch(new AdminUsersAction.CreateUser(data));
+      // Création : envoyer name (pas firstName/lastName)
+      const createData: any = {
+        name:        data.name,
+        email:       data.email,
+        password:    data.password,
+        phoneNumber: data.phoneNumber,
+        status:      data.status || 'active',
+        country:     data.country
+      };
+      this.store.dispatch(new AdminUsersAction.CreateUser(createData));
       this.toastr.success('Utilisateur créé');
     }
     this.onCloseModal();

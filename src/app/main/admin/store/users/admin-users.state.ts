@@ -107,12 +107,12 @@ export class AdminUsersState {
   @Action(AdminUsersAction.LoadUsersSuccess)
   loadUsersSuccess(ctx: StateContext<AdminUsersStateModel>, action: AdminUsersAction.LoadUsersSuccess) {
     ctx.patchState({
-      users: action.users,
+      users: action.users || [],
       pagination: {
-        page: action.meta.page,
-        limit: action.meta.limit,
-        total: action.total,
-        totalPages: action.meta.totalPages
+        page: action.meta?.page || 1,
+        limit: action.meta?.limit || 20,
+        total: action.total || 0,
+        totalPages: action.meta?.totalPages || 0
       },
       loading: false,
       error: null,

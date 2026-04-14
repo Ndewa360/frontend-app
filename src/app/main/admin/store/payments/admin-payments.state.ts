@@ -120,19 +120,27 @@ export class AdminPaymentsState {
   @Action(AdminPaymentsAction.LoadPayments)
   loadPayments(ctx: StateContext<AdminPaymentsStateModel>, action: AdminPaymentsAction.LoadPayments) {
     ctx.patchState({ loading: true, error: null });
-    
     const filters = action.filters || ctx.getState().filters.payments;
-    
     return this.adminPaymentsService.getPayments(filters).pipe(
       tap(response => {
-        ctx.dispatch(new AdminPaymentsAction.LoadPaymentsSuccess(
-          response.payments, 
-          response.total, 
-          response.meta
-        ));
+        ctx.patchState({
+          payments: response.payments || (response as any).data || [],
+          pagination: {
+            ...ctx.getState().pagination,
+            payments: {
+              page: response.meta?.page || 1,
+              limit: response.meta?.limit || 20,
+              total: response.total || 0,
+              totalPages: response.meta?.totalPages || 0
+            }
+          },
+          loading: false,
+          error: null,
+          lastUpdated: new Date()
+        });
       }),
       catchError(error => {
-        ctx.dispatch(new AdminPaymentsAction.LoadPaymentsFailure(error));
+        ctx.patchState({ loading: false, error: error.message });
         return throwError(error);
       })
     );
@@ -141,14 +149,14 @@ export class AdminPaymentsState {
   @Action(AdminPaymentsAction.LoadPaymentsSuccess)
   loadPaymentsSuccess(ctx: StateContext<AdminPaymentsStateModel>, action: AdminPaymentsAction.LoadPaymentsSuccess) {
     ctx.patchState({
-      payments: action.payments,
+      payments: action.payments || [],
       pagination: {
         ...ctx.getState().pagination,
         payments: {
-          page: action.meta.page,
-          limit: action.meta.limit,
-          total: action.total,
-          totalPages: action.meta.totalPages
+          page: action.meta?.page || 1,
+          limit: action.meta?.limit || 20,
+          total: action.total || 0,
+          totalPages: action.meta?.totalPages || 0
         }
       },
       loading: false,
@@ -168,19 +176,27 @@ export class AdminPaymentsState {
   @Action(AdminPaymentsAction.LoadSubscriptions)
   loadSubscriptions(ctx: StateContext<AdminPaymentsStateModel>, action: AdminPaymentsAction.LoadSubscriptions) {
     ctx.patchState({ loading: true, error: null });
-    
     const filters = action.filters || ctx.getState().filters.subscriptions;
-    
     return this.adminPaymentsService.getSubscriptions(filters).pipe(
       tap(response => {
-        ctx.dispatch(new AdminPaymentsAction.LoadSubscriptionsSuccess(
-          response.subscriptions, 
-          response.total, 
-          response.meta
-        ));
+        ctx.patchState({
+          subscriptions: response.subscriptions || (response as any).data || [],
+          pagination: {
+            ...ctx.getState().pagination,
+            subscriptions: {
+              page: response.meta?.page || 1,
+              limit: response.meta?.limit || 20,
+              total: response.total || 0,
+              totalPages: response.meta?.totalPages || 0
+            }
+          },
+          loading: false,
+          error: null,
+          lastUpdated: new Date()
+        });
       }),
       catchError(error => {
-        ctx.dispatch(new AdminPaymentsAction.LoadSubscriptionsFailure(error));
+        ctx.patchState({ loading: false, error: error.message });
         return throwError(error);
       })
     );
@@ -189,14 +205,14 @@ export class AdminPaymentsState {
   @Action(AdminPaymentsAction.LoadSubscriptionsSuccess)
   loadSubscriptionsSuccess(ctx: StateContext<AdminPaymentsStateModel>, action: AdminPaymentsAction.LoadSubscriptionsSuccess) {
     ctx.patchState({
-      subscriptions: action.subscriptions,
+      subscriptions: action.subscriptions || [],
       pagination: {
         ...ctx.getState().pagination,
         subscriptions: {
-          page: action.meta.page,
-          limit: action.meta.limit,
-          total: action.total,
-          totalPages: action.meta.totalPages
+          page: action.meta?.page || 1,
+          limit: action.meta?.limit || 20,
+          total: action.total || 0,
+          totalPages: action.meta?.totalPages || 0
         }
       },
       loading: false,

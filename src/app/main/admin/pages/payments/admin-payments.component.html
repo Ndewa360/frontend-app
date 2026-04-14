@@ -7,9 +7,6 @@
         <p class="admin-page-subtitle">Suivi des transactions, abonnements et coupons</p>
       </div>
       <div class="admin-header-actions">
-        <button class="admin-btn admin-btn-secondary" (click)="onProcessPendingPayments()" [disabled]="isProcessing">
-          <i class="fas fa-cog" [class.fa-spin]="isProcessing"></i> Traiter en attente
-        </button>
         <button class="admin-btn admin-btn-secondary" (click)="onRefreshData()" [disabled]="isRefreshing">
           <i class="fas fa-sync-alt" [class.fa-spin]="isRefreshing"></i> Actualiser
         </button>
@@ -18,33 +15,33 @@
   </div>
 
   <!-- Stats -->
-  <div class="admin-stats-grid">
+  <div class="admin-stats-grid" *ngIf="stats$ | async as stats">
     <div class="admin-stat-card admin-stat-primary">
       <div class="admin-stat-icon"><i class="fas fa-credit-card"></i></div>
       <div class="admin-stat-content">
-        <div class="admin-stat-number">{{ (stats$ | async)?.overview?.totalPayments || 0 }}</div>
+        <div class="admin-stat-number">{{ stats.totalPayments ?? 0 }}</div>
         <div class="admin-stat-label">Paiements totaux</div>
       </div>
     </div>
     <div class="admin-stat-card admin-stat-success">
       <div class="admin-stat-icon"><i class="fas fa-check-circle"></i></div>
       <div class="admin-stat-content">
-        <div class="admin-stat-number">{{ (stats$ | async)?.overview?.successfulPayments || 0 }}</div>
+        <div class="admin-stat-number">{{ stats.successfulPayments ?? 0 }}</div>
         <div class="admin-stat-label">Complétés</div>
       </div>
     </div>
     <div class="admin-stat-card admin-stat-warning">
-      <div class="admin-stat-icon"><i class="fas fa-clock"></i></div>
+      <div class="admin-stat-icon"><i class="fas fa-coins"></i></div>
       <div class="admin-stat-content">
-        <div class="admin-stat-number">{{ (stats$ | async)?.overview?.pendingPayments || 0 }}</div>
-        <div class="admin-stat-label">En attente</div>
+        <div class="admin-stat-number">{{ formatCurrency(stats.totalRevenue ?? 0) }}</div>
+        <div class="admin-stat-label">Revenus totaux</div>
       </div>
     </div>
     <div class="admin-stat-card admin-stat-info">
       <div class="admin-stat-icon"><i class="fas fa-ticket-alt"></i></div>
       <div class="admin-stat-content">
-        <div class="admin-stat-number">{{ (stats$ | async)?.coupons?.totalCoupons || 0 }}</div>
-        <div class="admin-stat-label">Coupons actifs</div>
+        <div class="admin-stat-number">{{ stats.topCoupons?.length ?? 0 }}</div>
+        <div class="admin-stat-label">Coupons utilisés</div>
       </div>
     </div>
   </div>
@@ -69,19 +66,17 @@
         </button>
       </div>
 
-      <!-- Loading -->
       <div class="admin-loading-overlay" *ngIf="isLoading$ | async">
         <div class="admin-loader"><div class="admin-spinner"></div></div>
       </div>
 
       <!-- ── Payments Tab ── -->
       <div *ngIf="selectedTab === 'payments' && !(isLoading$ | async)">
-        <!-- Filters -->
         <div class="admin-filters-container" style="padding:12px 16px;border-bottom:1px solid #f1f5f9">
           <div class="admin-search-section">
             <div class="admin-search-input-group">
               <i class="fas fa-search admin-search-icon"></i>
-              <input type="text" class="admin-search-input" placeholder="Rechercher par utilisateur, ID..."
+              <input type="text" class="admin-search-input" placeholder="Rechercher..."
                      [(ngModel)]="paymentSearchTerm" (input)="onPaymentSearch($event)">
             </div>
           </div>
@@ -93,7 +88,6 @@
                 <option value="completed">Complété</option>
                 <option value="pending">En attente</option>
                 <option value="failed">Échoué</option>
-                <option value="refunded">Remboursé</option>
               </select>
             </div>
           </div>
@@ -102,7 +96,7 @@
         <table class="admin-table">
           <thead>
             <tr>
-              <th>ID Transaction</th>
+              <th>Référence</th>
               <th>Utilisateur</th>
               <th>Montant</th>
               <th>Méthode</th>
@@ -113,25 +107,25 @@
           </thead>
           <tbody>
             <tr *ngFor="let payment of payments$ | async; trackBy: trackByPaymentId">
-              <td><span class="admin-badge admin-badge-secondary">{{ payment._id?.slice(-8) }}</span></td>
+              <td><span class="admin-badge admin-badge-secondary">{{ payment.reference ?? payment._id?.slice(-8) }}</span></td>
               <td>
                 <div class="admin-user-info">
-                  <div class="admin-user-name">{{ payment.user?.firstName }} {{ payment.user?.lastName }}</div>
+                  <div class="admin-user-name">{{ getUserName(payment.user) }}</div>
                   <div class="admin-user-email">{{ payment.user?.email }}</div>
                 </div>
               </td>
-              <td><strong>{{ payment.amount | currency:payment.currency:'symbol':'1.0-0' }}</strong></td>
-              <td>{{ payment.method || 'N/A' }}</td>
+              <td><strong>{{ payment.amount | currency:(payment.currency ?? 'XAF'):'symbol':'1.0-0' }}</strong></td>
+              <td>{{ payment.method ?? 'N/A' }}</td>
               <td>
                 <span class="admin-badge" [ngClass]="getPaymentStatusClasses(payment.status)">
                   {{ getPaymentStatusLabel(payment.status) }}
                 </span>
               </td>
-              <td>{{ payment.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
+              <td>{{ (payment.processedAt ?? payment.createdAt) | date:'dd/MM/yyyy HH:mm' }}</td>
               <td>
                 <button class="admin-btn admin-btn-outline admin-btn-sm"
                         *ngIf="payment.status === 'completed'"
-                        (click)="onRefundPayment(payment)" title="Rembourser">
+                        (click)="onRefundPayment(payment)">
                   <i class="fas fa-undo"></i>
                 </button>
               </td>
@@ -141,29 +135,29 @@
         <div class="admin-empty-state" *ngIf="(payments$ | async)?.length === 0">
           <i class="fas fa-credit-card admin-empty-icon"></i>
           <h3>Aucun paiement trouvé</h3>
-        </div>
-
-        <!-- Pagination payments -->
-        <div class="admin-pagination" *ngIf="(payments$ | async)?.length > 0">
-          <div class="admin-pagination-info">
-            <span>{{ (payments$ | async)?.length }} paiement(s) affichés</span>
-          </div>
+          <p>Les paiements de souscriptions apparaîtront ici.</p>
         </div>
       </div>
 
       <!-- ── Subscriptions Tab ── -->
       <div *ngIf="selectedTab === 'subscriptions' && !(isLoading$ | async)">
-        <!-- Filters -->
         <div class="admin-filters-container" style="padding:12px 16px;border-bottom:1px solid #f1f5f9">
           <div class="admin-filters-section">
+            <div class="admin-filter-group">
+              <label class="admin-filter-label">Plan</label>
+              <select class="admin-filter-select" (change)="onSubscriptionPlanFilter($event)">
+                <option value="">Tous les plans</option>
+                <option value="free">Gratuit</option>
+                <option value="premium">Premium</option>
+              </select>
+            </div>
             <div class="admin-filter-group">
               <label class="admin-filter-label">Statut</label>
               <select class="admin-filter-select" (change)="onSubscriptionStatusFilter($event)">
                 <option value="">Tous</option>
                 <option value="active">Actif</option>
-                <option value="inactive">Inactif</option>
-                <option value="cancelled">Annulé</option>
-                <option value="expired">Expiré</option>
+                <option value="cancelled">Suspendu</option>
+                <option value="inactive">Désactivé</option>
               </select>
             </div>
           </div>
@@ -174,10 +168,10 @@
             <tr>
               <th>Utilisateur</th>
               <th>Plan</th>
-              <th>Montant</th>
+              <th>Montant/mois</th>
               <th>Statut</th>
-              <th>Début</th>
-              <th>Fin</th>
+              <th>Limite propriétés</th>
+              <th>Depuis</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -185,24 +179,29 @@
             <tr *ngFor="let sub of subscriptions$ | async; trackBy: trackBySubscriptionId">
               <td>
                 <div class="admin-user-info">
-                  <div class="admin-user-name">{{ sub.user?.firstName }} {{ sub.user?.lastName }}</div>
+                  <div class="admin-user-name">{{ getUserName(sub.user) }}</div>
                   <div class="admin-user-email">{{ sub.user?.email }}</div>
                 </div>
               </td>
-              <td>{{ sub.plan || 'Standard' }}</td>
-              <td>{{ sub.amount | currency:sub.currency:'symbol':'1.0-0' }}/mois</td>
               <td>
-                <span class="admin-badge" [ngClass]="getSubscriptionStatusClasses(sub.status)">
-                  {{ getSubscriptionStatusLabel(sub.status) }}
+                <span class="admin-badge" [class.admin-badge-warning]="sub.plan === 'premium'" [class.admin-badge-secondary]="sub.plan !== 'premium'">
+                  <i class="fas" [class.fa-crown]="sub.plan === 'premium'" [class.fa-user]="sub.plan !== 'premium'"></i>
+                  {{ sub.plan === 'premium' ? 'Premium' : 'Gratuit' }}
                 </span>
               </td>
-              <td>{{ sub.startDate | date:'dd/MM/yyyy' }}</td>
-              <td>{{ sub.endDate | date:'dd/MM/yyyy' }}</td>
+              <td>{{ getSubAmount(sub) | currency:getSubCurrency(sub):'symbol':'1.0-0' }}</td>
+              <td>
+                <span class="admin-badge" [ngClass]="getSubscriptionStatusClasses(getSubStatus(sub))">
+                  {{ getSubscriptionStatusLabel(getSubStatus(sub)) }}
+                </span>
+              </td>
+              <td>{{ getSubPropertyLimit(sub) }}</td>
+              <td>{{ sub.createdAt | date:'dd/MM/yyyy' }}</td>
               <td>
                 <button class="admin-btn admin-btn-outline admin-btn-sm admin-btn-danger"
-                        *ngIf="sub.status === 'active'"
-                        (click)="onCancelSubscription(sub)" title="Annuler">
-                  <i class="fas fa-times"></i>
+                        *ngIf="getSubStatus(sub) === 'active' || getSubStatus(sub) === 'ACTIVE'"
+                        (click)="onCancelSubscription(sub)">
+                  <i class="fas fa-pause"></i>
                 </button>
               </td>
             </tr>
@@ -216,7 +215,6 @@
 
       <!-- ── Coupons Tab ── -->
       <div *ngIf="selectedTab === 'coupons' && !(isLoading$ | async)">
-        <!-- Filters -->
         <div class="admin-filters-container" style="padding:12px 16px;border-bottom:1px solid #f1f5f9">
           <div class="admin-search-section">
             <div class="admin-search-input-group">
@@ -227,106 +225,115 @@
           </div>
         </div>
 
-        <div class="admin-coupons-grid">
-          <ng-container *ngIf="coupons$ | async as allCoupons">
-            <div class="admin-coupon-card"
-                 *ngFor="let coupon of filterCoupons(allCoupons); trackBy: trackByCouponId">
-              <div class="admin-coupon-main">
-                <span class="admin-code-text">{{ coupon.code }}</span>
-                <div class="admin-coupon-actions">
-                  <button class="admin-btn admin-btn-outline admin-btn-sm" (click)="onEditCoupon(coupon)" title="Modifier">
-                    <i class="fas fa-edit"></i>
-                  </button>
-                  <button class="admin-btn admin-btn-outline admin-btn-sm admin-btn-danger" (click)="onDeleteCoupon(coupon)" title="Supprimer">
-                    <i class="fas fa-trash"></i>
-                  </button>
-                </div>
-              </div>
-              <div class="admin-coupon-content">
-                <div class="admin-coupon-name">{{ coupon.name }}</div>
-                <div class="admin-coupon-value">
-                  <strong>{{ coupon.value }}{{ coupon.type === 'percentage' ? '%' : ' FCFA' }}</strong> de réduction
-                </div>
-                <div class="admin-coupon-usage">
-                  Utilisations : {{ coupon.usageCount || 0 }}/{{ coupon.usageLimit || '∞' }}
-                </div>
-              </div>
-              <div class="admin-coupon-footer">
-                <button class="admin-toggle-btn" [class.active]="coupon.isActive" (click)="onToggleCouponStatus(coupon)">
-                  <span class="admin-toggle-slider"></span>
-                </button>
-                <span class="admin-badge" [class.admin-badge-success]="coupon.isActive" [class.admin-badge-secondary]="!coupon.isActive">
-                  {{ coupon.isActive ? 'Actif' : 'Inactif' }}
-                </span>
-              </div>
-            </div>
-            <div class="admin-empty-state" *ngIf="allCoupons?.length === 0">
-              <i class="fas fa-ticket-alt admin-empty-icon"></i>
-              <h3>Aucun coupon trouvé</h3>
-              <button class="admin-btn admin-btn-primary" (click)="onCreateCoupon()"><i class="fas fa-plus"></i> Créer un coupon</button>
-            </div>
-          </ng-container>
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Nom</th>
+              <th>Valeur</th>
+              <th>Utilisations</th>
+              <th>Expiration</th>
+              <th>Statut</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngIf="coupons$ | async as allCoupons">
+              <tr *ngFor="let coupon of filterCoupons(allCoupons); trackBy: trackByCouponId">
+                <td><strong class="admin-badge admin-badge-secondary">{{ coupon.code }}</strong></td>
+                <td>{{ coupon.name }}</td>
+                <td><strong>{{ getCouponValueLabel(coupon) }}</strong></td>
+                <td>{{ getCouponUsage(coupon) }}</td>
+                <td>
+                  <span *ngIf="getCouponExpiry(coupon)">{{ getCouponExpiry(coupon) | date:'dd/MM/yyyy' }}</span>
+                  <span *ngIf="!getCouponExpiry(coupon)" class="admin-badge admin-badge-secondary">Illimité</span>
+                </td>
+                <td>
+                  <span class="admin-badge" [class.admin-badge-success]="coupon.isActive" [class.admin-badge-secondary]="!coupon.isActive">
+                    {{ coupon.isActive ? 'Actif' : 'Inactif' }}
+                  </span>
+                </td>
+                <td>
+                  <div style="display:flex;gap:4px">
+                    <button class="admin-btn admin-btn-outline admin-btn-sm" (click)="onEditCoupon(coupon)">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="admin-btn admin-btn-outline admin-btn-sm" (click)="onToggleCouponStatus(coupon)">
+                      <i class="fas" [class.fa-toggle-on]="coupon.isActive" [class.fa-toggle-off]="!coupon.isActive"></i>
+                    </button>
+                    <button class="admin-btn admin-btn-outline admin-btn-sm admin-btn-danger" (click)="onDeleteCoupon(coupon)">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </table>
+        <div class="admin-empty-state" *ngIf="(coupons$ | async)?.length === 0">
+          <i class="fas fa-ticket-alt admin-empty-icon"></i>
+          <h3>Aucun coupon trouvé</h3>
+          <button class="admin-btn admin-btn-primary" (click)="onCreateCoupon()">
+            <i class="fas fa-plus"></i> Créer un coupon
+          </button>
         </div>
-
+      </div>
     </div>
   </div>
 
-  <!-- Coupon Modal -->
+  <!-- Modal Coupon -->
   <div class="admin-modal-overlay" *ngIf="showCouponModal" (click)="onCloseCouponModal()">
-    <div class="admin-modal-container" (click)="$event.stopPropagation()">
+    <div class="admin-modal" (click)="$event.stopPropagation()">
       <div class="admin-modal-header">
-        <h3 class="admin-modal-title">
-          <i class="fas fa-ticket-alt"></i>
-          {{ editingCoupon ? 'Modifier le coupon' : 'Nouveau coupon' }}
-        </h3>
+        <h3><i class="fas fa-ticket-alt"></i> {{ editingCoupon ? 'Modifier le coupon' : 'Nouveau coupon' }}</h3>
         <button class="admin-modal-close" (click)="onCloseCouponModal()"><i class="fas fa-times"></i></button>
       </div>
-      <div class="admin-modal-content">
-        <form [formGroup]="couponForm" (ngSubmit)="onSaveCoupon()">
-          <div class="admin-form-grid">
-            <div class="admin-form-group">
-              <label>Nom *</label>
-              <input type="text" class="admin-form-input" formControlName="name" placeholder="Nom du coupon">
+      <div class="admin-modal-body">
+        <form [formGroup]="couponForm">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+            <div>
+              <label class="admin-form-label">Nom *</label>
+              <input type="text" class="admin-form-control" formControlName="name" placeholder="Nom du coupon">
             </div>
-            <div class="admin-form-group">
-              <label>Code *</label>
-              <input type="text" class="admin-form-input" formControlName="code" placeholder="CODE2025" style="text-transform:uppercase">
+            <div>
+              <label class="admin-form-label">Code *</label>
+              <input type="text" class="admin-form-control" formControlName="code" placeholder="CODE2025" style="text-transform:uppercase">
             </div>
-            <div class="admin-form-group">
-              <label>Description</label>
-              <input type="text" class="admin-form-input" formControlName="description" placeholder="Description optionnelle">
+            <div style="grid-column:1/-1">
+              <label class="admin-form-label">Description</label>
+              <input type="text" class="admin-form-control" formControlName="description">
             </div>
-            <div class="admin-form-group">
-              <label>Type *</label>
-              <select class="admin-filter-select" formControlName="type">
+            <div>
+              <label class="admin-form-label">Type *</label>
+              <select class="admin-form-control" formControlName="type">
                 <option value="percentage">Pourcentage (%)</option>
                 <option value="fixed">Montant fixe (FCFA)</option>
               </select>
             </div>
-            <div class="admin-form-group">
-              <label>Valeur *</label>
-              <input type="number" class="admin-form-input" formControlName="value" min="0">
+            <div>
+              <label class="admin-form-label">Valeur *</label>
+              <input type="number" class="admin-form-control" formControlName="value" min="0">
             </div>
-            <div class="admin-form-group">
-              <label>Limite d'utilisation</label>
-              <input type="number" class="admin-form-input" formControlName="usageLimit" min="1" placeholder="Illimité si vide">
+            <div>
+              <label class="admin-form-label">Limite d'utilisation</label>
+              <input type="number" class="admin-form-control" formControlName="usageLimit" min="1" placeholder="Illimité si vide">
             </div>
-            <div class="admin-form-group">
-              <label>Date de début</label>
-              <input type="date" class="admin-form-input" formControlName="startDate">
+            <div>
+              <label class="admin-form-label">Date de début</label>
+              <input type="date" class="admin-form-control" formControlName="startDate">
             </div>
-            <div class="admin-form-group">
-              <label>Date de fin</label>
-              <input type="date" class="admin-form-input" formControlName="endDate">
+            <div>
+              <label class="admin-form-label">Date de fin</label>
+              <input type="date" class="admin-form-control" formControlName="endDate">
             </div>
-          </div>
-          <div class="admin-form-actions">
-            <button type="button" class="admin-btn admin-btn-secondary" (click)="onCloseCouponModal()">Annuler</button>
-            <button type="submit" class="admin-btn admin-btn-primary" [disabled]="couponForm.invalid">
-              <i class="fas fa-save"></i> {{ editingCoupon ? 'Mettre à jour' : 'Créer' }}
-            </button>
           </div>
         </form>
+      </div>
+      <div class="admin-modal-footer">
+        <button type="button" class="admin-btn admin-btn-secondary" (click)="onCloseCouponModal()">Annuler</button>
+        <button type="button" class="admin-btn admin-btn-primary" [disabled]="couponForm.invalid" (click)="onSaveCoupon()">
+          <i class="fas fa-save"></i> {{ editingCoupon ? 'Mettre à jour' : 'Créer' }}
+        </button>
       </div>
     </div>
   </div>
@@ -339,45 +346,40 @@
         <button class="admin-modal-close" (click)="cancelRefund()"><i class="fas fa-times"></i></button>
       </div>
       <div class="admin-modal-body">
-        <div class="admin-form-group">
-          <label class="admin-form-label">Montant à rembourser (laisser vide pour remboursement total)</label>
-          <input type="number" class="admin-form-control" [(ngModel)]="refundAmount"
-            [placeholder]="'Max : ' + (refundingPayment?.amount || 0)" min="0" [max]="refundingPayment?.amount">
+        <div>
+          <label class="admin-form-label">Montant (laisser vide pour remboursement total)</label>
+          <input type="number" class="admin-form-control" [(ngModel)]="refundAmount" min="0">
         </div>
-        <div class="admin-form-group" style="margin-top:12px">
+        <div style="margin-top:12px">
           <label class="admin-form-label">Raison *</label>
-          <textarea class="admin-form-control" rows="2" [(ngModel)]="refundReason"
-            placeholder="Raison du remboursement..."></textarea>
+          <textarea class="admin-form-control" rows="2" [(ngModel)]="refundReason" placeholder="Raison..."></textarea>
         </div>
       </div>
       <div class="admin-modal-footer">
         <button class="admin-btn admin-btn-secondary" (click)="cancelRefund()">Annuler</button>
         <button class="admin-btn admin-btn-warning" (click)="confirmRefund()">
-          <i class="fas fa-undo"></i> Confirmer le remboursement
+          <i class="fas fa-undo"></i> Confirmer
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Modal Annulation abonnement -->
+  <!-- Modal Suspension abonnement -->
   <div class="admin-modal-overlay" *ngIf="showCancelModal" (click)="cancelCancelSubscription()">
     <div class="admin-modal" (click)="$event.stopPropagation()">
       <div class="admin-modal-header">
-        <h3>Annuler l'abonnement</h3>
+        <h3>Suspendre l'abonnement</h3>
         <button class="admin-modal-close" (click)="cancelCancelSubscription()"><i class="fas fa-times"></i></button>
       </div>
       <div class="admin-modal-body">
-        <p style="margin-bottom:12px">Annuler l'abonnement de
-          <strong>{{ cancellingSubscription?.user?.firstName }} {{ cancellingSubscription?.user?.lastName }}</strong> ?
-        </p>
+        <p style="margin-bottom:12px">Suspendre l'abonnement de <strong>{{ getCancellingUserName() }}</strong> ?</p>
         <label class="admin-form-label">Raison</label>
-        <textarea class="admin-form-control" rows="2" [(ngModel)]="cancelReason"
-          placeholder="Raison de l'annulation (optionnel)..."></textarea>
+        <textarea class="admin-form-control" rows="2" [(ngModel)]="cancelReason" placeholder="Raison (optionnel)..."></textarea>
       </div>
       <div class="admin-modal-footer">
         <button class="admin-btn admin-btn-secondary" (click)="cancelCancelSubscription()">Annuler</button>
         <button class="admin-btn admin-btn-danger" (click)="confirmCancelSubscription()">
-          <i class="fas fa-times"></i> Confirmer l'annulation
+          <i class="fas fa-pause"></i> Confirmer la suspension
         </button>
       </div>
     </div>

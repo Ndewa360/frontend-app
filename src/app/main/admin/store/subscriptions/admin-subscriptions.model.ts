@@ -2,8 +2,9 @@ export interface AdminUserSubscription {
   _id: string;
   user: {
     _id: string;
-    firstName: string;
-    lastName: string;
+    name?: string;
+    firstName?: string;
+    lastName?: string;
     email: string;
     phoneNumber?: string;
     userType: 'OWNER' | 'AGENT';

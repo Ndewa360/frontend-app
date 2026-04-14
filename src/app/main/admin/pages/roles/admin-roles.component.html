@@ -734,3 +734,130 @@
     </div>
   </div>
 </div>
+
+<!-- Modal Supprimer rôle -->
+<div class="admin-modal-overlay" *ngIf="showDeleteRoleModal" (click)="cancelRoleAction()">
+  <div class="admin-modal" (click)="$event.stopPropagation()">
+    <div class="admin-modal-header">
+      <h3>Supprimer le rôle</h3>
+      <button class="admin-modal-close" (click)="cancelRoleAction()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="admin-modal-body">
+      <p>Supprimer définitivement le rôle <strong>"{{ roleToAction?.displayName }}"</strong> ?</p>
+      <p style="color:#ef4444;font-size:0.85rem">Cette action est irréversible. Les utilisateurs avec ce rôle le perdront.</p>
+    </div>
+    <div class="admin-modal-footer">
+      <button class="admin-btn admin-btn-secondary" (click)="cancelRoleAction()">Annuler</button>
+      <button class="admin-btn admin-btn-danger" (click)="confirmDeleteRole()">
+        <i class="fas fa-trash"></i> Supprimer
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Toggle statut rôle -->
+<div class="admin-modal-overlay" *ngIf="showToggleStatusModal" (click)="cancelRoleAction()">
+  <div class="admin-modal" (click)="$event.stopPropagation()">
+    <div class="admin-modal-header">
+      <h3>{{ roleToAction?.isActive ? 'Désactiver' : 'Activer' }} le rôle</h3>
+      <button class="admin-modal-close" (click)="cancelRoleAction()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="admin-modal-body">
+      <p>{{ roleToAction?.isActive ? 'Désactiver' : 'Activer' }} le rôle <strong>"{{ roleToAction?.displayName }}"</strong> ?</p>
+    </div>
+    <div class="admin-modal-footer">
+      <button class="admin-btn admin-btn-secondary" (click)="cancelRoleAction()">Annuler</button>
+      <button class="admin-btn admin-btn-warning" (click)="confirmToggleStatus()">
+        <i class="fas fa-toggle-on"></i> Confirmer
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Dupliquer rôle -->
+<div class="admin-modal-overlay" *ngIf="showDuplicateRoleModal" (click)="cancelRoleAction()">
+  <div class="admin-modal" (click)="$event.stopPropagation()">
+    <div class="admin-modal-header">
+      <h3>Dupliquer le rôle</h3>
+      <button class="admin-modal-close" (click)="cancelRoleAction()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="admin-modal-body">
+      <label class="admin-form-label">Nom du nouveau rôle *</label>
+      <input type="text" class="admin-form-control" [(ngModel)]="duplicateRoleName" placeholder="ex: manager_copy">
+    </div>
+    <div class="admin-modal-footer">
+      <button class="admin-btn admin-btn-secondary" (click)="cancelRoleAction()">Annuler</button>
+      <button class="admin-btn admin-btn-primary" (click)="confirmDuplicateRole()" [disabled]="!duplicateRoleName.trim()">
+        <i class="fas fa-copy"></i> Dupliquer
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Créer/Modifier permission -->
+<div class="admin-modal-overlay" *ngIf="showCreatePermissionModal || showEditPermissionModal" (click)="closePermissionModal()">
+  <div class="admin-modal" (click)="$event.stopPropagation()">
+    <div class="admin-modal-header">
+      <h3>{{ selectedPermission ? 'Permission' : 'Nouvelle permission' }}</h3>
+      <button class="admin-modal-close" (click)="closePermissionModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="admin-modal-body">
+      <form [formGroup]="permissionForm">
+        <div class="admin-form-grid">
+          <div class="admin-form-group">
+            <label class="admin-form-label">Nom technique *</label>
+            <input type="text" class="admin-form-control" formControlName="name" placeholder="ex: users.create">
+          </div>
+          <div class="admin-form-group">
+            <label class="admin-form-label">Nom d'affichage *</label>
+            <input type="text" class="admin-form-control" formControlName="displayName" placeholder="ex: Créer des utilisateurs">
+          </div>
+          <div class="admin-form-group">
+            <label class="admin-form-label">Module *</label>
+            <input type="text" class="admin-form-control" formControlName="module" placeholder="ex: users">
+          </div>
+          <div class="admin-form-group">
+            <label class="admin-form-label">Action</label>
+            <select class="admin-form-control" formControlName="action">
+              <option value="read">read</option>
+              <option value="create">create</option>
+              <option value="update">update</option>
+              <option value="delete">delete</option>
+              <option value="manage">manage</option>
+            </select>
+          </div>
+          <div class="admin-form-group" style="grid-column:1/-1">
+            <label class="admin-form-label">Description</label>
+            <textarea class="admin-form-control" formControlName="description" rows="2"></textarea>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="admin-modal-footer">
+      <button class="admin-btn admin-btn-secondary" (click)="closePermissionModal()">Annuler</button>
+      <button class="admin-btn admin-btn-primary" (click)="submitPermission()" [disabled]="permissionForm.invalid || permissionForm.disabled">
+        <i class="fas fa-save"></i> {{ selectedPermission ? 'Enregistrer' : 'Créer' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Supprimer permission -->
+<div class="admin-modal-overlay" *ngIf="showDeletePermissionModal" (click)="closePermissionModal()">
+  <div class="admin-modal" (click)="$event.stopPropagation()">
+    <div class="admin-modal-header">
+      <h3>Supprimer la permission</h3>
+      <button class="admin-modal-close" (click)="closePermissionModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="admin-modal-body">
+      <p>Supprimer la permission <strong>"{{ selectedPermission?.displayName || selectedPermission?.name }}"</strong> ?</p>
+      <p style="color:#ef4444;font-size:0.85rem">Les rôles qui possèdent cette permission la perdront.</p>
+    </div>
+    <div class="admin-modal-footer">
+      <button class="admin-btn admin-btn-secondary" (click)="closePermissionModal()">Annuler</button>
+      <button class="admin-btn admin-btn-danger" (click)="confirmDeletePermission()">
+        <i class="fas fa-trash"></i> Supprimer
+      </button>
+    </div>
+  </div>
+</div>

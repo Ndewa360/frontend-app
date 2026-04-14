@@ -5,13 +5,15 @@ export interface AdminPayment {
   amount: number;
   currency: string;
   status: 'pending' | 'completed' | 'failed' | 'cancelled' | 'refunded';
-  method: 'card' | 'mobile_money' | 'bank_transfer' | 'cash';
-  provider: string;
+  method: string;
+  provider?: string;
+  reference?: string;
   transactionId?: string;
   user: {
     _id: string;
-    firstName: string;
-    lastName: string;
+    name?: string;
+    firstName?: string;
+    lastName?: string;
     email: string;
   };
   subscription?: {
@@ -21,7 +23,7 @@ export interface AdminPayment {
   };
   metadata?: any;
   createdAt: Date;
-  updatedAt: Date;
+  updatedAt?: Date;
   processedAt?: Date;
 }
 
@@ -29,22 +31,26 @@ export interface AdminSubscription {
   _id: string;
   user: {
     _id: string;
-    firstName: string;
-    lastName: string;
+    name?: string;
+    firstName?: string;
+    lastName?: string;
     email: string;
   };
   plan: 'free' | 'premium';
   status: 'active' | 'inactive' | 'cancelled' | 'expired';
-  startDate: Date;
-  endDate: Date;
-  autoRenew: boolean;
-  amount: number;
-  currency: string;
+  accountStatus?: string;
+  startDate?: Date;
+  endDate?: Date;
+  autoRenew?: boolean;
+  amount?: number;
+  monthlyAmount?: number;
+  currency?: string;
+  propertyLimit?: number;
   paymentMethod?: string;
   lastPayment?: Date;
   nextPayment?: Date;
   createdAt: Date;
-  updatedAt: Date;
+  updatedAt?: Date;
 }
 
 export interface AdminCoupon {
@@ -52,25 +58,48 @@ export interface AdminCoupon {
   code: string;
   name: string;
   description?: string;
-  type: 'percentage' | 'fixed';
+  type: 'percentage' | 'fixed' | 'PERCENTAGE' | 'FIXED_AMOUNT' | 'FREE_TRIAL' | 'PREMIUM_UPGRADE';
   value: number;
   currency?: string;
   minAmount?: number;
   maxDiscount?: number;
+  // Champs frontend
   usageLimit?: number;
-  usageCount: number;
+  usageCount?: number;
+  // Champs backend (Coupon schema)
+  maxUses?: number;
+  usedCount?: number;
+  maxUsesPerUser?: number;
+  minimumAmount?: number;
+  validFrom?: Date;
+  validUntil?: Date;
   userLimit?: number;
   isActive: boolean;
   startDate?: Date;
   endDate?: Date;
-  applicableTo: string[];
+  applicableTo?: string[];
   createdAt: Date;
-  updatedAt: Date;
-  createdBy: string;
+  updatedAt?: Date;
+  createdBy?: string;
 }
 
 export interface PaymentStats {
-  overview: {
+  // Champs directs retournés par le backend
+  totalRevenue?: number;
+  monthlyRevenue?: number;
+  totalSubscriptions?: number;
+  activeSubscriptions?: number;
+  totalPayments?: number;
+  successfulPayments?: number;
+  failedPayments?: number;
+  averageRevenuePerUser?: number;
+  churnRate?: number;
+  conversionRate?: number;
+  revenueByPlan?: any[];
+  revenueByMonth?: any[];
+  topCoupons?: any[];
+  // Structure overview (ancienne)
+  overview?: {
     totalRevenue: number;
     monthlyRevenue: number;
     totalPayments: number;
@@ -81,7 +110,7 @@ export interface PaymentStats {
     successRate: number;
     averageAmount: number;
   };
-  subscriptions: {
+  subscriptions?: {
     totalSubscriptions: number;
     activeSubscriptions: number;
     freeSubscriptions: number;
@@ -90,14 +119,14 @@ export interface PaymentStats {
     churnRate: number;
     conversionRate: number;
   };
-  coupons: {
+  coupons?: {
     totalCoupons: number;
     activeCoupons: number;
     usedCoupons: number;
     totalDiscount: number;
     mostUsedCoupons: CouponUsage[];
   };
-  trends: {
+  trends?: {
     revenueChart: AdminChartData[];
     paymentsChart: AdminChartData[];
     subscriptionsChart: AdminChartData[];

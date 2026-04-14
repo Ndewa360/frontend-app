@@ -132,10 +132,6 @@ export interface CreateAdminUserDto {
   roles?: string[];
   status?: string;
   country?: string;
-  location?: string;
-  timezone?: string;
-  preferredLanguage?: string;
-  emailConfirmed?: boolean;
   sendWelcomeEmail?: boolean;
 }
 

@@ -333,9 +333,75 @@ export class AdminRolesState {
 
   @Action(AdminRolesAction.ToggleRolePermissionFailure)
   toggleRolePermissionFailure(ctx: StateContext<AdminRolesStateModel>, action: AdminRolesAction.ToggleRolePermissionFailure) {
-    ctx.patchState({
-      error: action.error,
-      loading: false
-    });
+    ctx.patchState({ error: action.error, loading: false });
+  }
+
+  @Action(AdminRolesAction.CreatePermission)
+  createPermission(ctx: StateContext<AdminRolesStateModel>, action: AdminRolesAction.CreatePermission) {
+    ctx.patchState({ loading: true });
+    return this.adminRolesService.createPermission(action.permissionData).pipe(
+      tap(permission => {
+        const state = ctx.getState();
+        ctx.patchState({ permissions: [...state.permissions, permission as any], loading: false });
+      }),
+      catchError(error => {
+        ctx.patchState({ loading: false, error: error.message });
+        return throwError(error);
+      })
+    );
+  }
+
+  @Action(AdminRolesAction.UpdatePermission)
+  updatePermission(ctx: StateContext<AdminRolesStateModel>, action: AdminRolesAction.UpdatePermission) {
+    ctx.patchState({ loading: true });
+    return this.adminRolesService.updatePermission(action.permissionId, action.permissionData).pipe(
+      tap(updated => {
+        const state = ctx.getState();
+        ctx.patchState({
+          permissions: state.permissions.map(p => (p as any)._id === action.permissionId ? updated as any : p),
+          loading: false
+        });
+      }),
+      catchError(error => {
+        ctx.patchState({ loading: false, error: error.message });
+        return throwError(error);
+      })
+    );
+  }
+
+  @Action(AdminRolesAction.DeletePermission)
+  deletePermission(ctx: StateContext<AdminRolesStateModel>, action: AdminRolesAction.DeletePermission) {
+    ctx.patchState({ loading: true });
+    return this.adminRolesService.deletePermission(action.permissionId).pipe(
+      tap(() => {
+        const state = ctx.getState();
+        ctx.patchState({
+          permissions: state.permissions.filter(p => (p as any)._id !== action.permissionId),
+          loading: false
+        });
+      }),
+      catchError(error => {
+        ctx.patchState({ loading: false, error: error.message });
+        return throwError(error);
+      })
+    );
+  }
+
+  @Action(AdminRolesAction.DeleteRole)
+  deleteRole(ctx: StateContext<AdminRolesStateModel>, action: AdminRolesAction.DeleteRole) {
+    ctx.patchState({ loading: true });
+    return this.adminRolesService.deleteRole(action.roleId).pipe(
+      tap(() => {
+        const state = ctx.getState();
+        ctx.patchState({
+          roles: state.roles.filter(r => r._id !== action.roleId),
+          loading: false
+        });
+      }),
+      catchError(error => {
+        ctx.patchState({ loading: false, error: error.message });
+        return throwError(error);
+      })
+    );
   }
 }

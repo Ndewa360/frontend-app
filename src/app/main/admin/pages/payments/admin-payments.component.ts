@@ -29,7 +29,6 @@ export class AdminPaymentsComponent implements OnInit, OnDestroy {
   editingCoupon: AdminCoupon | null = null;
   isProcessing = false;
   isRefreshing = false;
-  openMenuId: string | null = null;
 
   // Modal refund
   showRefundModal = false;
@@ -42,16 +41,12 @@ export class AdminPaymentsComponent implements OnInit, OnDestroy {
   cancellingSubscription: AdminSubscription | null = null;
   cancelReason = '';
 
-  couponForm: FormGroup;
+  // Filters
+  paymentSearchTerm = '';
+  paymentStatusFilter = '';
+  couponSearchTerm = '';
 
-  paymentStatusOptions = [
-    { value: '', label: 'Tous les statuts' },
-    { value: 'pending',   label: 'En attente' },
-    { value: 'completed', label: 'Complété' },
-    { value: 'failed',    label: 'Échoué' },
-    { value: 'cancelled', label: 'Annulé' },
-    { value: 'refunded',  label: 'Remboursé' }
-  ];
+  couponForm: FormGroup;
 
   constructor(
     private store: Store,
@@ -72,9 +67,7 @@ export class AdminPaymentsComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnInit(): void {
-    this.loadData();
-  }
+  ngOnInit(): void { this.loadData(); }
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -98,14 +91,17 @@ export class AdminPaymentsComponent implements OnInit, OnDestroy {
     setTimeout(() => this.isRefreshing = false, 1000);
   }
 
-  onProcessPendingPayments(): void {
-    if (!confirm('Traiter tous les paiements en attente ?')) return;
-    this.isProcessing = true;
-    this.store.dispatch(new AdminPaymentsAction.ProcessPendingPayments());
-    setTimeout(() => this.isProcessing = false, 2000);
+  // ── Payments ──────────────────────────────────────────────────────────────
+
+  onPaymentSearch(event: Event): void {
+    this.paymentSearchTerm = (event.target as HTMLInputElement).value;
   }
 
-  // Payments
+  onPaymentStatusFilter(event: Event): void {
+    this.paymentStatusFilter = (event.target as HTMLSelectElement).value;
+    this.store.dispatch(new AdminPaymentsAction.LoadPayments({ status: this.paymentStatusFilter }));
+  }
+
   onRefundPayment(payment: AdminPayment): void {
     this.refundingPayment = payment;
     this.refundAmount = null;
@@ -121,31 +117,24 @@ export class AdminPaymentsComponent implements OnInit, OnDestroy {
     this.paymentsService.refundPayment(this.refundingPayment._id, { amount, reason })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: () => {
-          this.toastr.success('Remboursement effectué');
-          this.store.dispatch(new AdminPaymentsAction.LoadPayments());
-        },
+        next: () => { this.toastr.success('Remboursement effectué'); this.store.dispatch(new AdminPaymentsAction.LoadPayments()); },
         error: () => this.toastr.error('Erreur lors du remboursement')
       });
     this.refundingPayment = null;
   }
 
-  cancelRefund(): void {
-    this.showRefundModal = false;
-    this.refundingPayment = null;
+  cancelRefund(): void { this.showRefundModal = false; this.refundingPayment = null; }
+
+  // ── Subscriptions ─────────────────────────────────────────────────────────
+
+  onSubscriptionStatusFilter(event: Event): void {
+    const status = (event.target as HTMLSelectElement).value;
+    this.store.dispatch(new AdminPaymentsAction.LoadSubscriptions({ status }));
   }
 
-  // Filters
-  paymentSearchTerm = '';
-  paymentStatusFilter = '';
-
-  onPaymentSearch(event: Event): void {
-    this.paymentSearchTerm = (event.target as HTMLInputElement).value;
-  }
-
-  onPaymentStatusFilter(event: Event): void {
-    this.paymentStatusFilter = (event.target as HTMLSelectElement).value;
-    this.store.dispatch(new AdminPaymentsAction.LoadPayments({ status: this.paymentStatusFilter }));
+  onSubscriptionPlanFilter(event: Event): void {
+    const plan = (event.target as HTMLSelectElement).value;
+    this.store.dispatch(new AdminPaymentsAction.LoadSubscriptions({ subscriptionPlan: plan } as any));
   }
 
   onCancelSubscription(subscription: AdminSubscription): void {
@@ -161,21 +150,16 @@ export class AdminPaymentsComponent implements OnInit, OnDestroy {
     this.paymentsService.cancelSubscription(this.cancellingSubscription._id, reason)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: () => {
-          this.toastr.success('Abonnement annulé');
-          this.store.dispatch(new AdminPaymentsAction.LoadSubscriptions());
-        },
-        error: () => this.toastr.error('Erreur lors de l\'annulation')
+        next: () => { this.toastr.success('Abonnement suspendu'); this.store.dispatch(new AdminPaymentsAction.LoadSubscriptions()); },
+        error: () => this.toastr.error('Erreur lors de la suspension')
       });
     this.cancellingSubscription = null;
   }
 
-  cancelCancelSubscription(): void {
-    this.showCancelModal = false;
-    this.cancellingSubscription = null;
-  }
+  cancelCancelSubscription(): void { this.showCancelModal = false; this.cancellingSubscription = null; }
 
-  // Coupons
+  // ── Coupons ───────────────────────────────────────────────────────────────
+
   onCreateCoupon(): void {
     this.editingCoupon = null;
     this.couponForm.reset({ type: 'percentage', value: 0, isActive: true });
@@ -199,10 +183,7 @@ export class AdminPaymentsComponent implements OnInit, OnDestroy {
   }
 
   onSaveCoupon(): void {
-    if (this.couponForm.invalid) {
-      this.couponForm.markAllAsTouched();
-      return;
-    }
+    if (this.couponForm.invalid) { this.couponForm.markAllAsTouched(); return; }
     const data = this.couponForm.value;
     if (this.editingCoupon) {
       this.store.dispatch(new AdminPaymentsAction.UpdateCoupon(this.editingCoupon._id, data));
@@ -222,22 +203,69 @@ export class AdminPaymentsComponent implements OnInit, OnDestroy {
     this.store.dispatch(new AdminPaymentsAction.UpdateCoupon(coupon._id, { isActive: !coupon.isActive }));
   }
 
-  onCloseCouponModal(): void {
-    this.showCouponModal = false;
-    this.editingCoupon = null;
+  onCloseCouponModal(): void { this.showCouponModal = false; this.editingCoupon = null; }
+
+  filterCoupons(coupons: AdminCoupon[]): AdminCoupon[] {
+    if (!coupons) return [];
+    if (!this.couponSearchTerm) return coupons;
+    const term = this.couponSearchTerm.toLowerCase();
+    return coupons.filter(c =>
+      c.code?.toLowerCase().includes(term) ||
+      c.name?.toLowerCase().includes(term)
+    );
   }
 
-  toggleMenu(id: string): void {
-    this.openMenuId = this.openMenuId === id ? null : id;
+  // ── Helpers ───────────────────────────────────────────────────────────────
+
+  formatCurrency(amount: number): string {
+    return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XAF', minimumFractionDigits: 0 }).format(amount || 0);
+  }
+
+  getUserName(user: any): string {
+    if (!user) return 'N/A';
+    return user.name || `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email || 'N/A';
+  }
+
+  getSubStatus(sub: AdminSubscription): string {
+    return sub.status || (sub as any).accountStatus || 'inactive';
+  }
+
+  getSubAmount(sub: AdminSubscription): number {
+    return sub.amount || (sub as any).monthlyAmount || 0;
+  }
+
+  getSubCurrency(sub: AdminSubscription): string {
+    return sub.currency || 'XAF';
+  }
+
+  getSubPropertyLimit(sub: AdminSubscription): string {
+    return sub.propertyLimit ? sub.propertyLimit.toString() : '∞';
+  }
+
+  getCouponUsage(coupon: AdminCoupon): string {
+    const used = coupon.usageCount ?? (coupon as any).usedCount ?? 0;
+    const limit = coupon.usageLimit ?? (coupon as any).maxUses;
+    return `${used} / ${limit ?? '∞'}`;
+  }
+
+  getCouponExpiry(coupon: AdminCoupon): Date | null {
+    return coupon.endDate || (coupon as any).validUntil || null;
+  }
+
+  getCouponValueLabel(coupon: AdminCoupon): string {
+    const t = coupon.type?.toString().toLowerCase();
+    return (t === 'percentage' || t === 'percent') ? `${coupon.value}%` : `${coupon.value} FCFA`;
+  }
+
+  getCancellingUserName(): string {
+    const user = this.cancellingSubscription?.user;
+    return this.getUserName(user);
   }
 
   getPaymentStatusClasses(status: string): string {
     const map: Record<string, string> = {
-      completed: 'admin-badge-success',
-      pending:   'admin-badge-warning',
-      failed:    'admin-badge-danger',
-      cancelled: 'admin-badge-secondary',
-      refunded:  'admin-badge-info'
+      completed: 'admin-badge-success', pending: 'admin-badge-warning',
+      failed: 'admin-badge-danger', cancelled: 'admin-badge-secondary', refunded: 'admin-badge-info'
     };
     return map[status] || 'admin-badge-secondary';
   }
@@ -252,15 +280,20 @@ export class AdminPaymentsComponent implements OnInit, OnDestroy {
 
   getSubscriptionStatusClasses(status: string): string {
     const map: Record<string, string> = {
-      active: 'admin-badge-success', inactive: 'admin-badge-secondary',
-      cancelled: 'admin-badge-danger', expired: 'admin-badge-warning'
+      active: 'admin-badge-success', ACTIVE: 'admin-badge-success',
+      inactive: 'admin-badge-secondary', DISABLED: 'admin-badge-secondary',
+      cancelled: 'admin-badge-danger', SUSPENDED: 'admin-badge-warning',
+      expired: 'admin-badge-warning'
     };
     return map[status] || 'admin-badge-secondary';
   }
 
   getSubscriptionStatusLabel(status: string): string {
     const map: Record<string, string> = {
-      active: 'Actif', inactive: 'Inactif', cancelled: 'Annulé', expired: 'Expiré'
+      active: 'Actif', ACTIVE: 'Actif',
+      inactive: 'Inactif', DISABLED: 'Désactivé',
+      cancelled: 'Annulé', SUSPENDED: 'Suspendu',
+      expired: 'Expiré'
     };
     return map[status] || status;
   }
@@ -268,21 +301,4 @@ export class AdminPaymentsComponent implements OnInit, OnDestroy {
   trackByPaymentId(_: number, p: AdminPayment): string      { return p._id; }
   trackBySubscriptionId(_: number, s: AdminSubscription): string { return s._id; }
   trackByCouponId(_: number, c: AdminCoupon): string        { return c._id; }
-
-  couponSearchTerm = '';
-
-  onSubscriptionStatusFilter(event: Event): void {
-    const status = (event.target as HTMLSelectElement).value;
-    this.store.dispatch(new AdminPaymentsAction.LoadSubscriptions({ status }));
-  }
-
-  filterCoupons(coupons: AdminCoupon[]): AdminCoupon[] {
-    if (!coupons) return [];
-    if (!this.couponSearchTerm) return coupons;
-    const term = this.couponSearchTerm.toLowerCase();
-    return coupons.filter(c =>
-      c.code?.toLowerCase().includes(term) ||
-      c.name?.toLowerCase().includes(term)
-    );
-  }
 }

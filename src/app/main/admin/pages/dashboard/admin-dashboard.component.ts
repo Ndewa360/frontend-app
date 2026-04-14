@@ -56,23 +56,30 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   }
 
   private loadAlerts(): void {
-    // Les alertes sont chargées depuis le backend via le dashboard stats
     this.dashboardStats$.pipe(takeUntil(this.destroy$)).subscribe(stats => {
       if (!stats) return;
       this.alerts = [];
-      const sub = (stats as any).subscriptions;
+      const sub = stats.subscriptions;
+      const lang = this.languageUrlService.getCurrentLanguage();
       if (sub?.unpaidAmount > 0) {
         this.alerts.push({
           type: 'warning', title: 'Factures impayées',
           message: `${sub.unpaidCount} facture(s) — ${this.formatCurrency(sub.unpaidAmount)}`,
-          link: '/admin/subscriptions'
+          link: `/${lang}/admin/subscriptions`
         });
       }
       if (sub?.suspended > 0) {
         this.alerts.push({
           type: 'info', title: 'Comptes suspendus',
           message: `${sub.suspended} compte(s) suspendu(s)`,
-          link: '/admin/subscriptions'
+          link: `/${lang}/admin/subscriptions`
+        });
+      }
+      if (stats.users?.newThisMonth > 0) {
+        this.alerts.push({
+          type: 'success', title: 'Nouveaux utilisateurs',
+          message: `${stats.users.newThisMonth} nouvel(s) utilisateur(s) ce mois`,
+          link: `/${lang}/admin/users`
         });
       }
     });

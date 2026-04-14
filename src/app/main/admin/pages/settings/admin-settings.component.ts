@@ -147,56 +147,56 @@ export class AdminSettingsComponent implements OnInit, OnDestroy {
 
   private populateForm(settings: AdminSettings): void {
     this.settingsForm.patchValue({
-      // General
-      appName: settings.general.appName,
-      appDescription: settings.general.appDescription,
-      supportEmail: settings.general.supportEmail,
-      supportPhone: settings.general.supportPhone,
-      defaultLanguage: settings.general.defaultLanguage,
-      defaultTimezone: settings.general.defaultTimezone,
-      defaultCurrency: settings.general.defaultCurrency,
-      maintenanceMode: settings.general.maintenanceMode,
-      registrationEnabled: settings.general.registrationEnabled,
-      emailVerificationRequired: settings.general.emailVerificationRequired,
-      
+      // General — utiliser les vrais champs du backend
+      appName:                  settings.general?.appName,
+      appDescription:           settings.general?.appDescription,
+      supportEmail:             settings.general?.contactEmail || settings.general?.supportEmail,
+      supportPhone:             settings.general?.companyPhone || '',
+      defaultLanguage:          settings.general?.defaultLanguage,
+      defaultTimezone:          settings.general?.defaultTimezone,
+      defaultCurrency:          settings.general?.defaultCurrency,
+      maintenanceMode:          settings.general?.maintenanceMode || (settings as any).maintenance?.isMaintenanceMode || false,
+      registrationEnabled:      settings.general?.registrationEnabled ?? true,
+      emailVerificationRequired: settings.general?.emailVerificationRequired ?? true,
+
       // Email
-      emailProvider: settings.email.provider,
-      smtpHost: settings.email.smtpHost,
-      smtpPort: settings.email.smtpPort,
-      smtpSecure: settings.email.smtpSecure,
-      smtpUser: settings.email.smtpUser,
-      fromEmail: settings.email.fromEmail,
-      fromName: settings.email.fromName,
-      
-      // Payment
-      stripeEnabled: settings.payment.providers.stripe.enabled,
-      stripePublicKey: settings.payment.providers.stripe.publicKey,
-      paypalEnabled: settings.payment.providers.paypal.enabled,
-      paypalClientId: settings.payment.providers.paypal.clientId,
-      mobileMoneyEnabled: settings.payment.providers.mobileMoney.enabled,
-      
+      emailProvider: settings.email?.provider,
+      smtpHost:      (settings.email as any)?.smtp?.host || settings.email?.smtpHost,
+      smtpPort:      (settings.email as any)?.smtp?.port || settings.email?.smtpPort,
+      smtpSecure:    (settings.email as any)?.smtp?.secure || settings.email?.smtpSecure,
+      smtpUser:      (settings.email as any)?.smtp?.username || settings.email?.smtpUser,
+      fromEmail:     settings.email?.fromEmail,
+      fromName:      settings.email?.fromName,
+
+      // Payment — backend utilise isEnabled pas enabled
+      stripeEnabled:     settings.payment?.providers?.stripe?.enabled ?? (settings.payment as any)?.stripe?.isEnabled ?? false,
+      stripePublicKey:   settings.payment?.providers?.stripe?.publicKey ?? (settings.payment as any)?.stripe?.publicKey ?? '',
+      paypalEnabled:     settings.payment?.providers?.paypal?.enabled ?? (settings.payment as any)?.paypal?.isEnabled ?? false,
+      paypalClientId:    settings.payment?.providers?.paypal?.clientId ?? (settings.payment as any)?.paypal?.clientId ?? '',
+      mobileMoneyEnabled: settings.payment?.providers?.mobileMoney?.enabled ?? false,
+
       // Security
-      passwordMinLength: settings.security.passwordMinLength,
-      passwordRequireUppercase: settings.security.passwordRequireUppercase,
-      passwordRequireLowercase: settings.security.passwordRequireLowercase,
-      passwordRequireNumbers: settings.security.passwordRequireNumbers,
-      passwordRequireSymbols: settings.security.passwordRequireSymbols,
-      sessionTimeout: settings.security.sessionTimeout,
-      maxLoginAttempts: settings.security.maxLoginAttempts,
-      lockoutDuration: settings.security.lockoutDuration,
-      twoFactorRequired: settings.security.twoFactorRequired,
-      
+      passwordMinLength:        settings.security?.passwordMinLength,
+      passwordRequireUppercase: settings.security?.passwordRequireUppercase,
+      passwordRequireLowercase: settings.security?.passwordRequireLowercase,
+      passwordRequireNumbers:   settings.security?.passwordRequireNumbers,
+      passwordRequireSymbols:   settings.security?.passwordRequireSymbols,
+      sessionTimeout:           settings.security?.sessionTimeout ?? (settings.security as any)?.sessionTimeout,
+      maxLoginAttempts:         settings.security?.maxLoginAttempts ?? (settings.security as any)?.maxLoginAttempts,
+      lockoutDuration:          settings.security?.lockoutDuration ?? (settings.security as any)?.lockoutDuration,
+      twoFactorRequired:        settings.security?.twoFactorRequired ?? false,
+
       // Notifications
-      emailNotificationsEnabled: settings.notifications.email.enabled,
-      smsNotificationsEnabled: settings.notifications.sms.enabled,
-      pushNotificationsEnabled: settings.notifications.push.enabled,
-      
+      emailNotificationsEnabled: settings.notifications?.email?.enabled ?? true,
+      smsNotificationsEnabled:   settings.notifications?.sms?.enabled ?? false,
+      pushNotificationsEnabled:  settings.notifications?.push?.enabled ?? false,
+
       // Maintenance
-      backupsEnabled: settings.maintenance.backups.enabled,
-      backupFrequency: settings.maintenance.backups.frequency,
-      backupRetention: settings.maintenance.backups.retention
+      backupsEnabled:    settings.maintenance?.backups?.enabled ?? true,
+      backupFrequency:   settings.maintenance?.backups?.frequency ?? 'daily',
+      backupRetention:   settings.maintenance?.backups?.retention ?? 30
     });
-    
+
     this.settingsForm.markAsPristine();
     this.hasUnsavedChanges = false;
   }
