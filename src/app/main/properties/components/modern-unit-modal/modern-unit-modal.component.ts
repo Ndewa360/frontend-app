@@ -117,7 +117,8 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
       isInternalShower: [true],
       hasKitchen: [false],
       isInternalKitchen: [false],
-      numberOfKitchen: [0, [Validators.min(0)]], 
+      numberOfKitchen: [0, [Validators.min(0)]],
+      numberOfRooms: [null, [Validators.min(1)]], 
       
       // Caution
       shouldPayCaution: [false],
@@ -184,6 +185,7 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
         hasKitchen: unit.specifity?.hasKitchen ?? false,
         isInternalKitchen: unit.specifity?.isInternalKitchen ?? false,
         numberOfKitchen: unit.specifity?.numberOfKitchen || 0,
+        numberOfRooms: unit.specifity?.numberOfRooms || null,
         shouldPayCaution: unit.shouldPayCaution ?? false,
         cautionPrice: unit.cautionPrice || 0,
         isActiveForSouscription: unit.isActiveForSouscription ?? true,
@@ -396,7 +398,8 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
           isInternalShower: formData.isInternalShower,
           hasKitchen: formData.hasKitchen,
           isInternalKitchen: formData.isInternalKitchen,
-          numberOfKitchen: formData.numberOfKitchen
+          numberOfKitchen: formData.numberOfKitchen,
+          numberOfRooms: this.isApartment() ? (formData.numberOfRooms || null) : null
         }
       };
 
@@ -408,6 +411,7 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
       delete unitData.numberOfLivingRoom;
       delete unitData.numberOfShower;
       delete unitData.numberOfBathroom;
+      delete unitData.numberOfRooms;
 
       if (this.data.mode === 'create') {
         delete unitData.code;
@@ -499,6 +503,11 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
   // Validation helpers
   hasKitchen(): boolean {
     return this.formGroup.get('hasKitchen')?.value || false;
+  }
+
+  isApartment(): boolean {
+    const type = this.formGroup.get('type')?.value;
+    return type === RoomType.SIMPLE_APARTMENT || type === RoomType.FURNISHED_APARTMENT;
   }
 
   shouldPayCaution(): boolean {

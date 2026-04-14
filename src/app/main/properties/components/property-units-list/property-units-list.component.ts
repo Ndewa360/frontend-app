@@ -446,6 +446,13 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
     return room.specifity?.isInternalShower || false;
   }
 
+  /**
+   * Indique si le type d'unité est un appartement (affiche le nombre de chambres)
+   */
+  isApartmentType(room: RoomModel): boolean {
+    return room.type === RoomType.SIMPLE_APARTMENT || room.type === RoomType.FURNISHED_APARTMENT;
+  }
+
   // Actions sur les unités
   onViewUnit(room: RoomModel): void {
     console.log('Voir les détails de l\'unité:', room);

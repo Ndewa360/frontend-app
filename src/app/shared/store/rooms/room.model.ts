@@ -28,7 +28,8 @@ export interface RoomModel {
         isInternalShower?:boolean,
         hasKitchen?:boolean,
         isInternalKitchen?:boolean,
-        numberOfKitchen?:boolean
+        numberOfKitchen?:boolean,
+        numberOfRooms?:number
     }
     description?:string;
     country? :string

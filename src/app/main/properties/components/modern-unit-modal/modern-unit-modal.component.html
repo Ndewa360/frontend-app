@@ -177,6 +177,17 @@
                      placeholder="1">
             </div>
 
+            <!-- Nombre de chambres : uniquement pour les appartements -->
+            <div class="form-group" *ngIf="isApartment()">
+              <label class="form-label">{{ 'UNIT_MANAGEMENT.NUMBER_OF_ROOMS' | translate }}</label>
+              <input type="number"
+                     formControlName="numberOfRooms"
+                     class="form-input"
+                     min="1"
+                     [placeholder]="'UNIT_MANAGEMENT.NUMBER_OF_ROOMS_PLACEHOLDER' | translate">
+              <div class="mt-1 text-sm text-gray-500">{{ 'UNIT_MANAGEMENT.NUMBER_OF_ROOMS_HINT' | translate }}</div>
+            </div>
+
             <div class="form-group">
               <div class="checkbox-group">
                 <label class="checkbox-label">

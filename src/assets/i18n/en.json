@@ -2764,7 +2764,10 @@
     "ACTIVE_FOR_SUBSCRIPTION": "Active for subscription",
     "VISIBLE_TO_PUBLIC": "Visible to the public",
     "UNIT_AVAILABLE": "Unit available",
-    "AGENT_AVAILABILITY_INFO": "As an agent you can mark this unit as available or not"
+    "AGENT_AVAILABILITY_INFO": "As an agent you can mark this unit as available or not",
+    "NUMBER_OF_ROOMS": "Number of bedrooms",
+    "NUMBER_OF_ROOMS_PLACEHOLDER": "e.g. 3",
+    "NUMBER_OF_ROOMS_HINT": "Optional — for apartments only"
   },
   "ASSIGNMENT": {
     "ASSIGN_UNIT": "Assign a rental unit",
@@ -3060,7 +3063,8 @@
         "UNKNOWN_DATE": "Date unknown"
       },
       "NEXT_PAYMENT": "Next payment:",
-      "PAYMENT_OVERDUE": "Payment overdue since"
+      "PAYMENT_OVERDUE": "Payment overdue since",
+      "ROOMS_SHORT": "bed."
     },
     "NAVIGATION": {
       "BACK_TO_PROPERTIES": "Back to properties",
@@ -3594,7 +3598,9 @@
       "NOT_AVAILABLE_STATUS": "Not available",
       "CURRENT_TENANT": "Current tenant",
       "NOT_PROVIDED_INFO": "Not specified",
-      "TERMINATE_CONTRACT_BUTTON": "Terminate the contract"
+      "TERMINATE_CONTRACT_BUTTON": "Terminate the contract",
+      "NUMBER_OF_ROOMS": "No. of bedrooms",
+      "NOT_SPECIFIED": "N/A"
     }
   },
   "ASSIGNMENT_ASSISTANT": {

@@ -2763,7 +2763,10 @@
     "ACTIVE_FOR_SUBSCRIPTION": "Actif pour souscription",
     "VISIBLE_TO_PUBLIC": "Visible au public",
     "UNIT_AVAILABLE": "Unité disponible",
-    "AGENT_AVAILABILITY_INFO": "En tant qu'agent, vous pouvez marquer cette unité comme disponible ou non"
+    "AGENT_AVAILABILITY_INFO": "En tant qu'agent, vous pouvez marquer cette unité comme disponible ou non",
+    "NUMBER_OF_ROOMS": "Nombre de chambres",
+    "NUMBER_OF_ROOMS_PLACEHOLDER": "Ex: 3",
+    "NUMBER_OF_ROOMS_HINT": "Optionnel — uniquement pour les appartements"
   },
   "ASSIGNMENT": {
     "ASSIGN_UNIT": "Assigner une unité locative",
@@ -3059,7 +3062,8 @@
         "UNKNOWN_DATE": "Date inconnue"
       },
       "NEXT_PAYMENT": "Prochain paiement :",
-      "PAYMENT_OVERDUE": "Paiement en retard depuis le"
+      "PAYMENT_OVERDUE": "Paiement en retard depuis le",
+      "ROOMS_SHORT": "ch."
     },
     "NAVIGATION": {
       "BACK_TO_PROPERTIES": "Retour aux propriétés",
@@ -3593,7 +3597,9 @@
       "NOT_AVAILABLE_STATUS": "Non disponible",
       "CURRENT_TENANT": "Locataire actuel",
       "NOT_PROVIDED_INFO": "Non renseigné",
-      "TERMINATE_CONTRACT_BUTTON": "Résilier le contrat"
+      "TERMINATE_CONTRACT_BUTTON": "Résilier le contrat",
+      "NUMBER_OF_ROOMS": "Nb. de chambres",
+      "NOT_SPECIFIED": "N/A"
     }
   },
   "ASSIGNMENT_ASSISTANT": {
