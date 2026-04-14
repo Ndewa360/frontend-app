@@ -1,0 +1,88 @@
+<div class="reports-container">
+
+  <!-- En-tête -->
+  <div class="reports-header">
+    <div>
+      <h2 class="reports-title">📊 Mes Rapports Mensuels</h2>
+      <p class="reports-subtitle">Historique de vos récapitulatifs financiers envoyés par email</p>
+    </div>
+    <button class="btn-dashboard" (click)="navigateToDashboard()">
+      Voir mon tableau de bord →
+    </button>
+  </div>
+
+  <!-- Chargement -->
+  <div *ngIf="loading" class="reports-loading">
+    <div class="spinner"></div>
+    <p>Chargement de vos rapports...</p>
+  </div>
+
+  <!-- Erreur -->
+  <div *ngIf="error && !loading" class="reports-error">
+    <p>⚠️ Impossible de charger vos rapports. Veuillez réessayer.</p>
+  </div>
+
+  <!-- Aucun rapport -->
+  <div *ngIf="!loading && !error && reports.length === 0" class="reports-empty">
+    <div class="empty-icon">📭</div>
+    <h3>Aucun rapport disponible</h3>
+    <p>Vos rapports mensuels apparaîtront ici dès le 1er du mois suivant.</p>
+    <p class="empty-hint">Les rapports sont générés automatiquement le 1er de chaque mois et envoyés par email.</p>
+  </div>
+
+  <!-- Liste des rapports -->
+  <div *ngIf="!loading && !error && reports.length > 0" class="reports-list">
+
+    <!-- Info -->
+    <div class="reports-info">
+      <span>📎 {{ reports.length }} rapport(s) disponible(s)</span>
+      <span class="info-hint">Les rapports PDF sont joints à vos emails et téléchargeables ici.</span>
+    </div>
+
+    <!-- Grille -->
+    <div class="reports-grid">
+      <div *ngFor="let report of reports" class="report-card">
+
+        <!-- En-tête de la carte -->
+        <div class="report-card-header">
+          <div class="report-period">
+            <span class="report-month">{{ getMonthName(report.month) }}</span>
+            <span class="report-year">{{ report.year }}</span>
+          </div>
+          <span class="badge" [ngClass]="getStatusClass(report.status)">
+            {{ getStatusLabel(report.status) }}
+          </span>
+        </div>
+
+        <!-- Infos -->
+        <div class="report-card-body">
+          <div class="report-info-row" *ngIf="report.sentAt">
+            <span class="info-label">Envoyé le</span>
+            <span class="info-value">{{ report.sentAt | date:'dd/MM/yyyy à HH:mm' }}</span>
+          </div>
+          <div class="report-info-row">
+            <span class="info-label">Généré le</span>
+            <span class="info-value">{{ report.createdAt | date:'dd/MM/yyyy' }}</span>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="report-card-footer">
+          <button
+            *ngIf="report.pdfUrl"
+            class="btn-download"
+            (click)="downloadPdf(report)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+            </svg>
+            Télécharger le PDF
+          </button>
+          <span *ngIf="!report.pdfUrl" class="no-pdf">PDF non disponible</span>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+</div>

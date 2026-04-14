@@ -132,6 +132,11 @@ export class HeaderComponent extends BaseComponent implements OnInit {
     this.router.navigate([`/${currentLang}/app/profile`]);
   }
 
+  navigateToMonthlyReports(): void {
+    const currentLang = this.languageUrlService.getCurrentLanguage();
+    this.router.navigate([`/${currentLang}/app/profile/rapports-mensuels`]);
+  }
+
   navigateToSearch(): void {
     const currentLang = this.languageUrlService.getCurrentLanguage();
     this.router.navigate([`/${currentLang}/search/index`]);

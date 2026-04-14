@@ -6,13 +6,15 @@ import { UserProfileComponent } from './user-profile/user-profile.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { UserProfileInfosComponent } from './components/user-profile-infos/user-profile-infos.component';
 import { LocalizationSettingsComponent } from './components/user-profile-infos/localization-settings.component';
+import { MonthlyReportsComponent } from './components/monthly-reports/monthly-reports.component';
 
 
 @NgModule({
   declarations: [
     UserProfileComponent,
     UserProfileInfosComponent,
-    LocalizationSettingsComponent
+    LocalizationSettingsComponent,
+    MonthlyReportsComponent,
   ],
   imports: [
     CommonModule,

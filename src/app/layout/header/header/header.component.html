@@ -73,6 +73,11 @@
             {{ 'HEADER.PROFILE' | translate }}
           </div>
         </div>
+        <div class="app-list__item" ngbDropdownItem (click)="navigateToMonthlyReports()">
+          <div class="app-list__item__content">
+            📊 {{ 'HEADER.MONTHLY_REPORTS' | translate }}
+          </div>
+        </div>
         <div class="app-list__item" ngbDropdownItem (click)="navigateToSearch()">
           <div class="app-list__item__content">
             {{ 'HEADER.SEARCH_SPACE' | translate }}

@@ -1,0 +1,194 @@
+.reports-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.reports-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.reports-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 4px;
+}
+
+.reports-subtitle {
+  font-size: 13px;
+  color: #6B7280;
+  margin: 0;
+}
+
+.btn-dashboard {
+  background: #BB890B;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  &:hover { background: #A07809; }
+}
+
+// Loading
+.reports-loading {
+  text-align: center;
+  padding: 48px;
+  color: #6B7280;
+  .spinner {
+    width: 36px; height: 36px;
+    border: 3px solid #E5E7EB;
+    border-top-color: #BB890B;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 12px;
+  }
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+// Erreur
+.reports-error {
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+  border-radius: 8px;
+  padding: 16px;
+  color: #DC2626;
+  text-align: center;
+}
+
+// Vide
+.reports-empty {
+  text-align: center;
+  padding: 48px 24px;
+  .empty-icon { font-size: 48px; margin-bottom: 16px; }
+  h3 { font-size: 18px; font-weight: 600; color: #374151; margin-bottom: 8px; }
+  p { color: #6B7280; font-size: 13px; margin-bottom: 4px; }
+  .empty-hint { font-size: 12px; color: #9CA3AF; margin-top: 12px; }
+}
+
+// Info bar
+.reports-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #EFF6FF;
+  border: 1px solid #BFDBFE;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 12px;
+  color: #1E40AF;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 8px;
+  .info-hint { color: #3B82F6; }
+}
+
+// Grille
+.reports-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+// Carte rapport
+.report-card {
+  background: #fff;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+  &:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+}
+
+.report-card-header {
+  background: linear-gradient(135deg, #BB890B, #D4A017);
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.report-period {
+  display: flex;
+  flex-direction: column;
+}
+
+.report-month {
+  font-size: 18px;
+  font-weight: 700;
+  color: white;
+}
+
+.report-year {
+  font-size: 12px;
+  color: rgba(255,255,255,0.8);
+}
+
+// Badges
+.badge {
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.badge-green  { background: #D1FAE5; color: #065F46; }
+.badge-blue   { background: #DBEAFE; color: #1E40AF; }
+.badge-yellow { background: #FEF3C7; color: #92400E; }
+.badge-red    { background: #FEE2E2; color: #991B1B; }
+.badge-gray   { background: #F3F4F6; color: #6B7280; }
+
+.report-card-body {
+  padding: 14px 16px;
+  border-bottom: 1px solid #F3F4F6;
+}
+
+.report-info-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  margin-bottom: 6px;
+  &:last-child { margin-bottom: 0; }
+}
+
+.info-label { color: #9CA3AF; }
+.info-value  { color: #374151; font-weight: 500; }
+
+.report-card-footer {
+  padding: 12px 16px;
+}
+
+.btn-download {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  background: #F9FAFB;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s;
+  &:hover {
+    background: #BB890B;
+    color: white;
+    border-color: #BB890B;
+  }
+}
+
+.no-pdf {
+  font-size: 11px;
+  color: #9CA3AF;
+  font-style: italic;
+}
