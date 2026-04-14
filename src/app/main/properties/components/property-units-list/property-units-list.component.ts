@@ -37,6 +37,7 @@ import {
 } from 'src/app/shared/store';
 import { UtilsString } from 'src/app/shared/utils';
 import { UnitDetailsViewService } from '../../services/unit-details-view.service';
+import { UnitDetailsService } from '../../services/unit-details.service';
 import { GaleryComponent } from '../../../room/components/galery/galery.component';
 import { GeneratePaymentLinkModalComponent } from '../generate-payment-link-modal/generate-payment-link-modal.component';
 import { ExportService, ExportColumn } from '../../services/export.service';
@@ -130,6 +131,7 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
   constructor(
     private store: Store,
     public viewService: UnitDetailsViewService,
+    private unitDetailsService: UnitDetailsService,
     private router: Router,
     private dialog: MatDialog,
     private assignLocationModalService: AssignLocationModalService,
@@ -774,6 +776,31 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
     return room.isFree 
       ? this.translateService.instant('PROPERTY_DETAILS.UNIT_CARD.STATUS.FREE_SINCE') 
       : this.translateService.instant('PROPERTY_DETAILS.UNIT_CARD.STATUS.OCCUPIED_SINCE');
+  }
+
+  /**
+   * Calcule la date du prochain paiement pour une unité occupée
+   * Réutilise la même logique que UnitDetailsService
+   */
+  getNextPaymentDate(room: RoomModel): Date | null {
+    if (!room || room.isFree !== false) return null;
+
+    const location = this.locations.find(loc => loc.room === room._id && loc.isRunning !== false);
+    if (!location?.startedAt) return null;
+
+    const allPaymentHistory = this.store.selectSnapshot(HistoryLocationPaymentState.selectStateHistoryLocationPayments);
+    const roomHistory = allPaymentHistory?.find(h => h.room._id === room._id);
+    const payments = roomHistory?.transactions || [];
+
+    return this.unitDetailsService.computeNextPaymentDate(location, payments, room.price || 0);
+  }
+
+  /**
+   * Indique si le prochain paiement est en retard
+   */
+  isNextPaymentOverdue(room: RoomModel): boolean {
+    const next = this.getNextPaymentDate(room);
+    return next ? next < new Date() : false;
   }
 
   // Méthodes pour les modals

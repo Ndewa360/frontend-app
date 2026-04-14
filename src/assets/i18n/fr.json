@@ -3057,7 +3057,9 @@
         "WORK_IN_PROGRESS": "Travaux en cours",
         "TEMPORARILY_UNAVAILABLE": "Indisponible temporairement",
         "UNKNOWN_DATE": "Date inconnue"
-      }
+      },
+      "NEXT_PAYMENT": "Prochain paiement :",
+      "PAYMENT_OVERDUE": "Paiement en retard depuis le"
     },
     "NAVIGATION": {
       "BACK_TO_PROPERTIES": "Retour aux propriétés",

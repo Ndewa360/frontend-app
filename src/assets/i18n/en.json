@@ -13,7 +13,7 @@
     "MESSAGES": "Messages",
     "VIEW_ALL": "See all",
     "ACCOUNT_DETAILS": "Account details",
-    "LOGGED_IN_AS": "Logged in as", 
+    "LOGGED_IN_AS": "Logged in as",
     "PLEASE_LOGIN": "Log in",
     "PROFILE": "Profile",
     "HOME": "Welcome",
@@ -1874,7 +1874,7 @@
     }
   },
   "LANDING": {
-   "HERO": {
+    "HERO": {
       "TITLE_PART1": "Switch to",
       "TITLE_PART2": "smart property management",
       "SUBTITLE_BOLD": "No more notebooks and disorder.",
@@ -2943,7 +2943,7 @@
       "ACCOUNT_EMAIL": "Account email *",
       "SEARCHING": "Searching...",
       "NOT_FOUND": "No account found with this email",
-      "FOUND_BADGE": "\u2713 Account found",
+      "FOUND_BADGE": "✓ Account found",
       "PERMISSIONS_LABEL": "Granted permissions *",
       "CANCEL": "Cancel",
       "CREATE_AND_ASSIGN": "Create and assign",
@@ -3058,7 +3058,9 @@
         "WORK_IN_PROGRESS": "Work in progress",
         "TEMPORARILY_UNAVAILABLE": "Temporarily unavailable",
         "UNKNOWN_DATE": "Date unknown"
-      }
+      },
+      "NEXT_PAYMENT": "Next payment:",
+      "PAYMENT_OVERDUE": "Payment overdue since"
     },
     "NAVIGATION": {
       "BACK_TO_PROPERTIES": "Back to properties",
@@ -3722,7 +3724,6 @@
     "ASSIGNMENT_TYPE_LABEL_SHORT": "Type of assignment",
     "ENTRY_DATE_LABEL": "Entry date",
     "COMMENT_LABEL": "Comment",
-    
     "ENTRY_DATE_KNOWN": "I know the exact entry date",
     "ENTRY_DATE_WILL_BE_USED": "Entry date will be used for calculations",
     "BALANCE_BASED_CALCULATION": "Calculation based only on current balance",
