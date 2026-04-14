@@ -101,12 +101,6 @@ export class AuthTokenState {
 
     @Action(AuthTokenAction.SetToken)
     setToken(ctx: StateContext<AuthTokenStateModel>, { authToken, refreshToken }: AuthTokenAction.SetToken) {
-        console.log('🔍 Setting tokens in state:');
-        console.log('  - Access token length:', authToken?.length);
-        console.log('  - Refresh token length:', refreshToken?.length);
-        console.log('  - Access token preview:', authToken?.substring(0, 50) + '...');
-        console.log('  - Refresh token preview:', refreshToken?.substring(0, 50) + '...');
-
         const expiration = this.getTokenExpiration(authToken);
         ctx.patchState({
             authToken,
@@ -199,7 +193,7 @@ export class AuthTokenState {
             const { exp } = JSON.parse(jsonPayload);
             return exp;
         } catch (e) {
-            this._toastrService.error(this._translateService.instant('NOTIFICATIONS.TOKEN_DECODE_ERROR'), "Ndewa360°");
+            console.warn('⚠️ Impossible de décoder le token JWT:', e);
             return null;
         }
     }

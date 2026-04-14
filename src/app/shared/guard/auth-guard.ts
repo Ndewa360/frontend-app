@@ -25,7 +25,6 @@ export class AuthGuard implements CanActivate {
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot){
     return this._store.select(AuthTokenState.selectStateAuthToken).pipe(
       map((authToken)=>{
-        console.warn("Auth Token ",authToken)
         if(authToken) return true;
 
         const currentLang = this.languagePreservation.getCurrentOrPreservedLanguage();
@@ -35,7 +34,7 @@ export class AuthGuard implements CanActivate {
           return this.router.parseUrl(`/${currentLang}/auth/signin`);
         }
 
-        this._toastrService.warning(this.languagePreservation['translate']?.instant('NOTIFICATIONS.AUTH_REQUIRED') || 'Veuillez vous connecter pour accéder à cette page.', "Ndewa360°");
+        this._toastrService.warning(this.languagePreservation.getLocalizedMessage('NOTIFICATIONS.AUTH_REQUIRED') || 'Veuillez vous connecter pour accéder à cette page.', "Ndewa360°");
         return this.router.parseUrl(`/${currentLang}/auth/signin?returnUrl=${encodeURIComponent(state.url)}`)
       })
     )

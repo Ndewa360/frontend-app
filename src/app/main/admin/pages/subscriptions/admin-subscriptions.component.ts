@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { SubscriptionDetailsModalComponent } from '../../components/subscription-details-modal/subscription-details-modal.component';
 import { AdminSubscriptionsAction } from '../../store/subscriptions/admin-subscriptions.actions';
 import { AdminSubscriptionsState } from '../../store/subscriptions/admin-subscriptions.state';
-import { AdminUserSubscription, SubscriptionFilters, SubscriptionStats } from '../../store/subscriptions/admin-subscriptions.model';
+import { AdminUserSubscription, SubscriptionFilters } from '../../store/subscriptions/admin-subscriptions.model';
 import { AdminSubscriptionsService } from '../../services/admin-subscriptions.service';
 
 @Component({
@@ -17,27 +17,25 @@ import { AdminSubscriptionsService } from '../../services/admin-subscriptions.se
 export class AdminSubscriptionsComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
-  // Observables
   subscriptions$ = this.store.select(AdminSubscriptionsState.selectSubscriptions);
-  stats$ = this.store.select(AdminSubscriptionsState.selectStats);
-  isLoading$ = this.store.select(AdminSubscriptionsState.selectIsLoading);
-  pagination$ = this.store.select(AdminSubscriptionsState.selectPagination);
-  filters$ = this.store.select(AdminSubscriptionsState.selectFilters);
+  stats$         = this.store.select(AdminSubscriptionsState.selectStats);
+  isLoading$     = this.store.select(AdminSubscriptionsState.selectIsLoading);
+  pagination$    = this.store.select(AdminSubscriptionsState.selectPagination);
+  filters$       = this.store.select(AdminSubscriptionsState.selectFilters);
 
-  // Component state
-  selectedTab = 'overview';
-  showFilters = false;
+  selectedTab  = 'overview';
+  showFilters  = false;
   isRefreshing = false;
+  openMenuId: string | null = null;
 
-  // Analytics data
-  analyticsData: any = null;
-  revenueTrends: any[] = [];
-  churnRiskUsers: any[] = [];
+  // Analytics — toutes les propriétés requises par le HTML
+  analyticsData: any        = null;
+  revenueTrends: any[]      = [];
+  churnRiskUsers: any[]     = [];
   upgradeOpportunities: any[] = [];
-  isLoadingAnalytics = false;
-  analyticsTimeRange = '30d';
+  isLoadingAnalytics        = false;
+  analyticsTimeRange        = '30d';
 
-  // Filter options
   planOptions = [
     { value: '', label: 'Tous les plans' },
     { value: 'free', label: 'Gratuit' },
@@ -58,12 +56,8 @@ export class AdminSubscriptionsComponent implements OnInit, OnDestroy {
     { value: 'unpaid', label: 'Impayé' }
   ];
 
-  // Current filters
   currentFilters: SubscriptionFilters = {
-    page: 1,
-    limit: 20,
-    sortBy: 'createdAt',
-    sortOrder: 'desc'
+    page: 1, limit: 20, sortBy: 'createdAt', sortOrder: 'desc'
   };
 
   constructor(
@@ -75,7 +69,6 @@ export class AdminSubscriptionsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.loadData();
     this.setupSubscriptions();
-    this.loadAnalytics();
   }
 
   ngOnDestroy(): void {
@@ -91,8 +84,8 @@ export class AdminSubscriptionsComponent implements OnInit, OnDestroy {
   }
 
   private setupSubscriptions(): void {
-    this.filters$.pipe(takeUntil(this.destroy$)).subscribe(filters => {
-      this.currentFilters = { ...filters };
+    this.filters$.pipe(takeUntil(this.destroy$)).subscribe(f => {
+      this.currentFilters = { ...f };
     });
   }
 
@@ -103,9 +96,7 @@ export class AdminSubscriptionsComponent implements OnInit, OnDestroy {
     }
   }
 
-  onToggleFilters(): void {
-    this.showFilters = !this.showFilters;
-  }
+  onToggleFilters(): void { this.showFilters = !this.showFilters; }
 
   onApplyFilters(filters: SubscriptionFilters): void {
     this.currentFilters = { ...this.currentFilters, ...filters, page: 1 };
@@ -114,12 +105,7 @@ export class AdminSubscriptionsComponent implements OnInit, OnDestroy {
   }
 
   onClearFilters(): void {
-    this.currentFilters = {
-      page: 1,
-      limit: 20,
-      sortBy: 'createdAt',
-      sortOrder: 'desc'
-    };
+    this.currentFilters = { page: 1, limit: 20, sortBy: 'createdAt', sortOrder: 'desc' };
     this.store.dispatch(new AdminSubscriptionsAction.SetFilters(this.currentFilters));
     this.store.dispatch(new AdminSubscriptionsAction.LoadSubscriptions(this.currentFilters));
   }
@@ -136,34 +122,15 @@ export class AdminSubscriptionsComponent implements OnInit, OnDestroy {
   }
 
   onViewDetails(subscription: AdminUserSubscription): void {
-    // Ouvrir un modal avec les détails complets
     const dialogRef = this.dialog.open(SubscriptionDetailsModalComponent, {
-      width: '600px',
-      data: { subscription }
+      width: '600px', data: { subscription }
     });
-
     dialogRef.afterClosed().subscribe(result => {
-      if (result?.action) {
-        // Recharger les données après une action
-        this.onRefreshData();
-      }
+      if (result?.action) this.onRefreshData();
     });
   }
 
-  onUpgradePlan(subscription: AdminUserSubscription): void {
-    this.store.dispatch(new AdminSubscriptionsAction.ForceUpgradeToPremium(subscription._id));
-  }
-
-  onSuspendAccount(subscription: AdminUserSubscription): void {
-    const reason = 'Suspension administrative';
-    this.store.dispatch(new AdminSubscriptionsAction.SuspendAccount(subscription._id, reason));
-  }
-
-  onReactivateAccount(subscription: AdminUserSubscription): void {
-    this.store.dispatch(new AdminSubscriptionsAction.ReactivateAccount(subscription._id));
-  }
-
-  onForceUpgrade(subscription: AdminUserSubscription): void {
+  onForceUpgrade(subscription: any): void {
     this.store.dispatch(new AdminSubscriptionsAction.ForceUpgradeToPremium(subscription._id));
   }
 
@@ -171,48 +138,64 @@ export class AdminSubscriptionsComponent implements OnInit, OnDestroy {
     this.store.dispatch(new AdminSubscriptionsAction.ChangePlan(subscription._id, plan));
   }
 
-  onSendPaymentReminder(subscription: AdminUserSubscription): void {
+  onSuspendAccount(subscription: AdminUserSubscription): void {
+    this.store.dispatch(new AdminSubscriptionsAction.SuspendAccount(subscription._id, 'Suspension administrative'));
+  }
+
+  onReactivateAccount(subscription: AdminUserSubscription): void {
+    this.store.dispatch(new AdminSubscriptionsAction.ReactivateAccount(subscription._id));
+  }
+
+  onSendPaymentReminder(subscription: any): void {
     this.store.dispatch(new AdminSubscriptionsAction.SendPaymentReminder(subscription._id));
   }
+
+  onRefreshData(): void {
+    this.isRefreshing = true;
+    this.store.dispatch(new AdminSubscriptionsAction.RefreshData());
+    if (this.selectedTab === 'analytics') this.loadAnalytics();
+    setTimeout(() => this.isRefreshing = false, 1000);
+  }
+
+  onExportData(): void {
+    this.store.dispatch(new AdminSubscriptionsAction.ExportSubscriptions(this.currentFilters));
+  }
+
+  toggleSubscriptionMenu(id: string): void {
+    this.openMenuId = this.openMenuId === id ? null : id;
+  }
+
+  // ── Analytics ─────────────────────────────────────────────────────────────
 
   private loadAnalytics(): void {
     this.isLoadingAnalytics = true;
 
-    // Charger les métriques de conversion
     this.subscriptionsService.getConversionMetrics(this.analyticsTimeRange)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (data) => {
-          this.analyticsData = data;
-          this.isLoadingAnalytics = false;
-        },
+        next: (data) => { this.analyticsData = data; this.isLoadingAnalytics = false; },
         error: () => { this.isLoadingAnalytics = false; }
       });
 
-    // Charger les tendances de revenus
     this.subscriptionsService.getRevenueTrends(this.analyticsTimeRange)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (data: any) => {
-          this.revenueTrends = Array.isArray(data) ? data : [];
-        },
+        next: (data: any) => { this.revenueTrends = Array.isArray(data) ? data : []; },
         error: () => { this.revenueTrends = []; }
       });
 
-    // Charger les utilisateurs à risque
     this.subscriptionsService.getChurnRiskUsers()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (users) => this.churnRiskUsers = users || [],
-        error: () => this.churnRiskUsers = []
+        next: (users) => { this.churnRiskUsers = users || []; },
+        error: () => { this.churnRiskUsers = []; }
       });
 
-    // Charger les opportunités d'upgrade
     this.subscriptionsService.getUpgradeOpportunities()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (users) => this.upgradeOpportunities = users || [],
-        error: () => this.upgradeOpportunities = []
+        next: (users) => { this.upgradeOpportunities = users || []; },
+        error: () => { this.upgradeOpportunities = []; }
       });
   }
 
@@ -221,7 +204,6 @@ export class AdminSubscriptionsComponent implements OnInit, OnDestroy {
     this.loadAnalytics();
   }
 
-  // Helpers graphique tendances
   getMaxRevenue(): number {
     if (!this.revenueTrends.length) return 1;
     return Math.max(...this.revenueTrends.map((d: any) => d.revenue || 0), 1);
@@ -237,100 +219,7 @@ export class AdminSubscriptionsComponent implements OnInit, OnDestroy {
     return `${item.year || ''}-${String(item.month || '').padStart(2, '0')}`;
   }
 
-  onRefreshData(): void {
-    this.isRefreshing = true;
-    this.store.dispatch(new AdminSubscriptionsAction.RefreshData());
-    if (this.selectedTab === 'analytics') this.loadAnalytics();
-    setTimeout(() => this.isRefreshing = false, 1000);
-  }
-
-  onExportData(): void {
-    this.store.dispatch(new AdminSubscriptionsAction.ExportSubscriptions(this.currentFilters));
-  }
-
-  // Status helper methods
-  getAccountStatusColor(status: string): string {
-    switch (status) {
-      case 'active':    return 'success';
-      case 'suspended': return 'warning';
-      case 'disabled':  return 'danger';
-      default:          return 'secondary';
-    }
-  }
-
-  getAccountStatusLabel(status: string): string {
-    switch (status) {
-      case 'active':
-        return 'Actif';
-      case 'suspended':
-        return 'Suspendu';
-      case 'disabled':
-        return 'Désactivé';
-      default:
-        return status;
-    }
-  }
-
-  getPlanColor(plan: string): string {
-    switch (plan) {
-      case 'premium': return 'success';
-      case 'free':    return 'info';
-      default:        return 'secondary';
-    }
-  }
-
-  getPlanLabel(plan: string): string {
-    switch (plan) {
-      case 'premium':
-        return 'Premium';
-      case 'free':
-        return 'Gratuit';
-      default:
-        return plan;
-    }
-  }
-
-  getPaymentStatusColor(hasUnpaid: boolean, totalUnpaid: number): string {
-    if (!hasUnpaid) return 'success';
-    if (totalUnpaid > 0) return 'danger';
-    return 'warning';
-  }
-
-  getPaymentStatusLabel(hasUnpaid: boolean, totalUnpaid: number): string {
-    if (!hasUnpaid) return 'À jour';
-    if (totalUnpaid > 0) return `${totalUnpaid} FCFA impayé`;
-    return 'En retard';
-  }
-
-  formatCurrency(amount: number): string {
-    return new Intl.NumberFormat('fr-FR', {
-      style: 'currency',
-      currency: 'XAF',
-      minimumFractionDigits: 0
-    }).format(amount || 0);
-  }
-
-  formatDate(date: any): string {
-    if (!date) return 'N/A';
-    return new Date(date).toLocaleDateString('fr-FR');
-  }
-
-  trackBySubscriptionId(index: number, subscription: AdminUserSubscription): string {
-    return subscription._id;
-  }
-
-  // Menu state
-  openMenuId: string | null = null;
-
-  toggleSubscriptionMenu(subscriptionId: string): void {
-    this.openMenuId = this.openMenuId === subscriptionId ? null : subscriptionId;
-  }
-
-  getPaginationEnd(pagination: any): number {
-    return Math.min(pagination.page * pagination.limit, pagination.total);
-  }
-
-  // ── User helpers sécurisés ────────────────────────────────────────────────
+  // ── Helpers ───────────────────────────────────────────────────────────────
 
   getUserInitials(user: any): string {
     if (!user) return '?';
@@ -345,5 +234,56 @@ export class AdminSubscriptionsComponent implements OnInit, OnDestroy {
       return `${user.firstName || ''} ${user.lastName || ''}`.trim();
     }
     return user.name || user.email || 'Inconnu';
+  }
+
+  getPaginationEnd(pagination: any): number {
+    return Math.min(pagination.page * pagination.limit, pagination.total);
+  }
+
+  getAccountStatusColor(status: string): string {
+    const map: Record<string, string> = {
+      active: 'success', suspended: 'warning', disabled: 'danger'
+    };
+    return map[status] || 'secondary';
+  }
+
+  getAccountStatusLabel(status: string): string {
+    const map: Record<string, string> = {
+      active: 'Actif', suspended: 'Suspendu', disabled: 'Désactivé'
+    };
+    return map[status] || status;
+  }
+
+  getPlanColor(plan: string): string {
+    return plan === 'premium' ? 'success' : plan === 'free' ? 'info' : 'secondary';
+  }
+
+  getPlanLabel(plan: string): string {
+    return plan === 'premium' ? 'Premium' : plan === 'free' ? 'Gratuit' : plan;
+  }
+
+  getPaymentStatusColor(hasUnpaid: boolean, totalUnpaid: number): string {
+    if (!hasUnpaid) return 'success';
+    return totalUnpaid > 0 ? 'danger' : 'warning';
+  }
+
+  getPaymentStatusLabel(hasUnpaid: boolean, totalUnpaid: number): string {
+    if (!hasUnpaid) return 'À jour';
+    return totalUnpaid > 0 ? `${totalUnpaid} FCFA impayé` : 'En retard';
+  }
+
+  formatCurrency(amount: number): string {
+    return new Intl.NumberFormat('fr-FR', {
+      style: 'currency', currency: 'XAF', minimumFractionDigits: 0
+    }).format(amount || 0);
+  }
+
+  formatDate(date: any): string {
+    if (!date) return 'N/A';
+    return new Date(date).toLocaleDateString('fr-FR');
+  }
+
+  trackBySubscriptionId(_: number, s: AdminUserSubscription): string {
+    return s._id;
   }
 }

@@ -47,7 +47,7 @@
 
 
   <!-- Dropdown utilisateur - visible seulement si connecté -->
-  <div *ngIf="authState$ | async as authState"
+  <div *ngIf="(authState$ | async)?.isAuthenticated"
        ngbDropdown
        placement="bottom-right"
        container="body">
@@ -63,7 +63,7 @@
           <div class="app-list__item__content mr-4">
             <div>
               <div class="app-helper-text-01">{{ 'HEADER.LOGGED_IN_AS' | translate }}</div>
-              <div class="app-expressive-heading-02">{{authState.profile?.name || 'Utilisateur'}}</div>
+              <div class="app-expressive-heading-02">{{(authState$ | async)?.profile?.name || 'Utilisateur'}}</div>
             </div>
           </div>
         </div>
@@ -78,11 +78,6 @@
             {{ 'HEADER.SEARCH_SPACE' | translate }}
           </div>
         </div>
-        <!-- <div class="app-list__item" ngbDropdownItem (click)="navigateToBillingPlan()">
-          <div class="app-list__item__content">
-            Plan
-          </div>
-        </div> -->
         <div class="app-list__item" ngbDropdownItem (click)="navigateToSettings()">
           <div class="app-list__item__content">
             {{ 'HEADER.SETTINGS' | translate }}

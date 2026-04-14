@@ -60,7 +60,7 @@ export class AuthSignupComponent implements OnInit {
       password: ['', [Validators.required, Validators.minLength(8)]],
       phoneNumber: [null, [Validators.required, Validators.pattern('^(\\+\\d{1,3}\\s)?(\\d{2,3}[\\s.-]?){4}$')]],
       businessName: [''],
-      condition: [true],
+      condition: [true, [Validators.requiredTrue]],
     });
 
     this.formGroup.get('profileType')?.valueChanges.subscribe(type => {

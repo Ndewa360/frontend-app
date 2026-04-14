@@ -19,7 +19,6 @@ export class LanguagePreservationService {
     try {
       const currentLanguage = this.translate.currentLang || 'fr';
       localStorage.setItem('ndiye-preferred-language', currentLanguage);
-      console.log('💾 Langue préservée:', currentLanguage);
     } catch (error) {
       console.warn('⚠️ Impossible de préserver la langue:', error);
     }
@@ -92,7 +91,6 @@ export class LanguagePreservationService {
   clearPreservedLanguage(): void {
     try {
       localStorage.removeItem('ndiye-preferred-language');
-      console.log('🗑️ Langue préservée supprimée');
     } catch (error) {
       console.warn('⚠️ Impossible de supprimer la langue préservée:', error);
     }

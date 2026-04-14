@@ -20,24 +20,19 @@
           </div>
         </div>
         <div class="app-list__divider"></div>
-        <div class="app-list__item" ngbDropdownItem routerLink="/app/welcome">
+        <div class="app-list__item" ngbDropdownItem [routerLink]="'/' + currentLang + '/app/welcome'">
           <div class="app-list__item__content">
             Espace membre
           </div>
         </div>
-        <div class="app-list__item" ngbDropdownItem routerLink="/app/profile">
+        <div class="app-list__item" ngbDropdownItem [routerLink]="'/' + currentLang + '/app/profile'">
             <div class="app-list__item__content">
                 Profil
             </div>
           </div>
-        <!-- <div class="app-list__item" ngbDropdownItem routerLink="/app/facturation/choix-plan">
+        <div class="app-list__item" ngbDropdownItem [routerLink]="'/' + currentLang + '/app/user/settings'">
           <div class="app-list__item__content">
-            Plan
-          </div>
-        </div> -->
-        <div class="app-list__item" ngbDropdownItem routerLink="/app/user/settings">
-          <div class="app-list__item__content">
-            Parametre
+            Paramètres
           </div>
         </div>
         <div class="app-list__divider"></div>

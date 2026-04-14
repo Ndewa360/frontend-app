@@ -115,8 +115,7 @@ export class UserProfileState {
                 // Démarrer la surveillance d'activité
                 ctx.dispatch(new AuthTokenAction.StartActivityMonitoring());
                 this.refreshTokenService.startActivityMonitoring();
-
-                this._toastrService.success(this._translateService.instant('NOTIFICATIONS.WELCOME_LOGIN'), 'Ndewa360°');
+                // Le toast de bienvenue est géré uniquement dans le composant login (ofActionSuccessful)
             }),
             catchError((error) => {
                 ctx.patchState({
@@ -283,7 +282,8 @@ export class UserProfileState {
             tap((result) => {
                 ctx.patchState({
                     waitingForUserProfilSaved: false,
-                    userProfile: userProfile,
+                    // Utiliser la réponse du backend si disponible, sinon l'objet local
+                    userProfile: result?.data || userProfile,
                 });
                 this._toastrService.success(this._translateService.instant('NOTIFICATIONS.PROFILE_UPDATED_SUCCESS'), 'Ndewa360°');
             }),
@@ -488,8 +488,6 @@ export class UserProfileState {
         // Vérifier d'abord si l'utilisateur est connecté
         const authState = this._store.selectSnapshot(state => state.authtoken);
         if (!authState?.token) {
-            // Pas de token, utilisateur non connecté - ne pas essayer de charger le profil
-            console.log('👤 Utilisateur non connecté, profil non chargé');
             ctx.patchState({
                 loadingUserProfile: false,
                 initLoadingState: "NO_LOADED",
@@ -533,7 +531,6 @@ export class UserProfileState {
                         this._languagePreservation.redirectToLogin();
                         this._toastrService.warning(this._translateService.instant('NOTIFICATIONS.SESSION_EXPIRED_RECONNECT'), 'Ndewa360°');
                     } else {
-                        console.log('👤 Token invalide sur page publique, nettoyage silencieux');
                         this._store.dispatch(new AuthTokenAction.Logout());
                     }
                 } else if (forceRedirectOnError) {

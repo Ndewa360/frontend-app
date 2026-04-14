@@ -41,12 +41,9 @@ export class DisconnexionService
         this.authService.logout().pipe(
             catchError(error => {
                 console.warn('Erreur lors de la déconnexion backend:', error);
-                // Continuer la déconnexion côté frontend même si le backend échoue
                 return of(null);
             })
-        ).subscribe(() => {
-            console.log('✅ Déconnexion backend réussie');
-        });
+        ).subscribe();
 
         // Nettoyer tous les stores frontend
         this.store.dispatch(new CityAction.Logout())

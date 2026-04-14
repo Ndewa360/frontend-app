@@ -242,11 +242,16 @@
 
     <!-- Conditions -->
     <div class="app-form__item app-form__item--opts">
-      <div class="flex justify-between items-center">
-        <ibm-checkbox formControlName="condition">
-          {{ 'AUTH.ACCEPT_TERMS_START' | translate }}
-          <a class="app-link">{{ 'AUTH.TERMS_CONDITIONS' | translate }}</a>
-        </ibm-checkbox>
+      <div class="flex flex-col gap-2">
+        <div class="flex justify-between items-center">
+          <ibm-checkbox formControlName="condition">
+            {{ 'AUTH.ACCEPT_TERMS_START' | translate }}
+            <a class="app-link">{{ 'AUTH.TERMS_CONDITIONS' | translate }}</a>
+          </ibm-checkbox>
+        </div>
+        <div *ngIf="isValid('condition')" class="text-red-600 text-sm">
+          {{ 'AUTH.TERMS_REQUIRED' | translate }}
+        </div>
       </div>
     </div>
 

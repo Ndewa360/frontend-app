@@ -77,7 +77,6 @@ export class AuthTokenInterceptor implements HttpInterceptor {
    */
   private prepareRequestWithToken(req: HttpRequest<any>, token: any): HttpRequest<any> {
     if (req.url.includes('user/auth/refresh')) {
-      console.log('🔍 Preparing refresh request with token:', token.refreshToken?.substring(0, 50) + '...');
       return this.addToken(req, token.refreshToken);
     } else if (token.accessToken) {
       return this.addToken(req, token.accessToken);
@@ -136,9 +135,7 @@ export class AuthTokenInterceptor implements HttpInterceptor {
   }
 
   private handle401Error(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    // Vérifier l'état d'activité de l'utilisateur avant de tenter un refresh
     if (this.userActivityService.isUserCriticallyInactive()) {
-      console.log('🔴 Utilisateur en inactivité critique - déconnexion forcée');
       const criticalMessage = this.translate.instant('NOTIFICATIONS.SESSION_EXPIRED');
       this.forceLogoutWithRedirect(criticalMessage);
       return throwError(() => new Error('User critically inactive'));
@@ -148,24 +145,17 @@ export class AuthTokenInterceptor implements HttpInterceptor {
       this.isRefreshing = true;
       this.refreshTokenSubject.next(null);
 
-      console.log('🔄 Tentative de rafraîchissement du token suite à une erreur 401');
-
       return this.refreshTokenService.refreshAccessToken().pipe(
-        timeout(10000), // 10 secondes maximum pour le refresh
+        timeout(10000),
         switchMap((newToken: string) => {
           this.isRefreshing = false;
           this.refreshTokenSubject.next(newToken);
-
-          console.log('✅ Token rafraîchi avec succès - retry de la requête');
           return next.handle(this.addToken(request, newToken));
         }),
         catchError((err) => {
           this.isRefreshing = false;
           this.refreshTokenSubject.next(null);
 
-          console.error('❌ Échec du rafraîchissement du token:', err);
-
-          // Gestion différenciée selon le type d'erreur avec messages traduits
           if (err.message?.includes('User inactive')) {
             const inactiveMessage = this.translate.instant('NOTIFICATIONS.SESSION_EXPIRED');
             const inactiveTitle = `Ndewa360° - ${this.translate.instant('COMMON.INFO')}`;
@@ -185,14 +175,11 @@ export class AuthTokenInterceptor implements HttpInterceptor {
         })
       );
     } else {
-      // Attendre que le token soit rafraîchi avec un timeout
-      console.log('⏳ Attente du rafraîchissement en cours...');
       return this.refreshTokenSubject.pipe(
         filter(token => token !== null),
         take(1),
-        timeout(15000), // 15 secondes maximum d'attente
+        timeout(15000),
         switchMap(newToken => {
-          console.log('✅ Token reçu - retry de la requête');
           return next.handle(this.addToken(request, newToken));
         }),
         catchError(error => {
@@ -252,12 +239,7 @@ export class AuthTokenInterceptor implements HttpInterceptor {
   }
 
   private addToken(request: HttpRequest<any>, token: string): HttpRequest<any> {
-
-    if (!token) {
-      console.error('❌ Token is null or undefined');
-      return request;
-    }
-
+    if (!token) return request;
     return request.clone({
       setHeaders: { Authorization: `Bearer ${token}` },
     });

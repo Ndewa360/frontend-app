@@ -42,33 +42,27 @@ export class AuthStateService {
    * Initialise la surveillance de l'état d'authentification
    */
   private initializeAuthState(): void {
-    // Surveiller le token pour déterminer l'état d'authentification
     this.token$.subscribe(token => {
       const isAuth = !!token;
       this.isAuthenticated$.next(isAuth);
-      
-      // Déterminer si on doit charger le profil
       const currentRoute = this.router.url;
       const shouldLoad = isAuth && !this.isPublicRoute(currentRoute);
       this.shouldLoadProfile$.next(shouldLoad);
-      
-      console.log('🔐 État d\'authentification:', {
-        isAuthenticated: isAuth,
-        currentRoute,
-        shouldLoadProfile: shouldLoad
-      });
     });
   }
 
   /**
-   * Vérifie si une route est publique
+   * Vérifie si une route est publique (gère le préfixe de langue /:lang/)
    */
   private isPublicRoute(route: string): boolean {
+    // Supprimer le préfixe de langue (ex: /fr/home -> /home, /en/search -> /search)
+    const normalized = route.replace(/^\/[a-z]{2}(\/|$)/, '/').replace(/\?.*$/, '').replace(/\/$/, '') || '/';
     return this.publicRoutes.some(publicRoute => {
-      if (publicRoute === '/') {
-        return route === '/' || route === '';
+      const cleanPublic = publicRoute.replace(/\/$/, '') || '/';
+      if (cleanPublic === '/') {
+        return normalized === '/' || normalized === '';
       }
-      return route.startsWith(publicRoute);
+      return normalized === cleanPublic || normalized.startsWith(cleanPublic + '/');
     });
   }
 
@@ -80,23 +74,13 @@ export class AuthStateService {
     const currentRoute = this.router.url;
     const isPublic = this.isPublicRoute(currentRoute);
 
-    console.log('👤 Chargement conditionnel du profil:', {
-      isAuthenticated: isAuth,
-      currentRoute,
-      isPublicRoute: isPublic,
-      forceRedirectOnError
-    });
-
     if (isAuth) {
-      // Utilisateur connecté : charger le profil
       this.store.dispatch(new UserProfileAction.FetchUserProfileConditional(forceRedirectOnError));
     } else if (!isPublic) {
-      // Utilisateur non connecté sur page privée : rediriger
-      console.log('🚫 Accès non autorisé à une page privée');
-      this.router.navigateByUrl('/auth/signin');
-    } else {
-      // Utilisateur non connecté sur page publique : ne rien faire
-      console.log('✅ Accès autorisé à une page publique');
+      // Extraire la langue depuis l'URL courante pour la redirection
+      const langMatch = currentRoute.match(/^\/([a-z]{2})\//)
+      const lang = langMatch ? langMatch[1] : 'fr';
+      this.router.navigateByUrl(`/${lang}/auth/signin`);
     }
   }
 

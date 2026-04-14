@@ -2,11 +2,9 @@ import {Component, OnInit, OnDestroy, ViewEncapsulation} from '@angular/core'
 import {
   UntypedFormGroup,
   UntypedFormBuilder,
-  FormControl,
-  ReactiveFormsModule,
   Validators
 } from "@angular/forms"
-import {ActivatedRoute, ActivatedRouteSnapshot, Router} from '@angular/router'
+import {ActivatedRoute, Router} from '@angular/router'
 import { Actions, ofActionCompleted, ofActionErrored, ofActionSuccessful, Store } from '@ngxs/store'
 import { UserProfileAction, UserProfileState } from 'src/app/shared/store'
 import { Subscription } from 'rxjs'
@@ -49,27 +47,19 @@ export class AuthLoginComponent implements OnInit, OnDestroy {
       password: ['', Validators.required],
     });
 
-    // S'abonner aux actions réussies
     const successSub = this._ngxsAction.pipe(
       ofActionSuccessful(UserProfileAction.LoginUserProfile)
-    ).subscribe((value) => {
-      // Récupérer les paramètres de requête
+    ).subscribe(() => {
       const returnUrl = this.route.snapshot.queryParams['returnUrl'];
       const reason = this.route.snapshot.queryParams['reason'];
 
-      // Message spécifique selon la raison de la reconnexion
-      if (reason === 'inactive') {
-        const reconnectMessage = this.translate.instant('NOTIFICATIONS.WELCOME_LOGIN');
-        const sessionTitle = `Ndewa360° - ${this.translate.instant('COMMON.SUCCESS')}`;
-        this._toastrService.success(reconnectMessage, sessionTitle, { timeOut: 6000, extendedTimeOut: 2000 });
-      } else if (reason === 'critical_inactive') {
-        const secureMessage = this.translate.instant('NOTIFICATIONS.WELCOME_LOGIN');
-        const securityTitle = `Ndewa360° - ${this.translate.instant('COMMON.SUCCESS')}`;
-        this._toastrService.success(secureMessage, securityTitle, { timeOut: 6000, extendedTimeOut: 2000 });
-      } else if (reason === 'token_expired') {
-        const renewedMessage = this.translate.instant('NOTIFICATIONS.WELCOME_LOGIN');
-        const authTitle = `Ndewa360° - ${this.translate.instant('COMMON.SUCCESS')}`;
-        this._toastrService.success(renewedMessage, authTitle, { timeOut: 5000, extendedTimeOut: 2000 });
+      // Toast unique de bienvenue (le state ne l'affiche plus)
+      if (reason === 'inactive' || reason === 'critical_inactive' || reason === 'token_expired') {
+        this._toastrService.success(
+          this.translate.instant('NOTIFICATIONS.WELCOME_LOGIN'),
+          `Ndewa360° - ${this.translate.instant('COMMON.SUCCESS')}`,
+          { timeOut: 6000, extendedTimeOut: 2000 }
+        );
       } else {
         this._toastrService.success(
           this.translate.instant('NOTIFICATIONS.WELCOME_LOGIN'),
@@ -78,74 +68,55 @@ export class AuthLoginComponent implements OnInit, OnDestroy {
         );
       }
 
-      // Redirection après connexion réussie
       if (returnUrl) {
-        // Sécuriser la redirection pour éviter les attaques de redirection
         const decodedUrl = decodeURIComponent(returnUrl);
         if (this.isValidReturnUrl(decodedUrl)) {
-          window.location.href = decodedUrl;
+          this.router.navigateByUrl(decodedUrl);
         } else {
-          console.warn('URL de retour non sécurisée détectée:', decodedUrl);
           this.redirectBasedOnUserType();
         }
       } else {
-        // Redirection intelligente selon le type d'utilisateur
         this.redirectBasedOnUserType();
       }
     });
     this.subscriptions.push(successSub);
 
-    // S'abonner aux actions complétées (succès ou échec)
     const completedSub = this._ngxsAction.pipe(
       ofActionCompleted(UserProfileAction.LoginUserProfile)
     ).subscribe((value) => {
       this.waittingResponse = false;
-      
-      // Vérifier si c'est une erreur 406 (compte inactif)
       if (value?.result?.error?.['status'] == 406) {
         this.languagePreservation.navigateWithLanguage(`/auth/confirmation/${this.formGroup.value.email}`);
       }
     });
     this.subscriptions.push(completedSub);
 
-    // S'abonner aux erreurs
     const errorSub = this._ngxsAction.pipe(
       ofActionErrored(UserProfileAction.LoginUserProfile)
-    ).subscribe((value) => {
+    ).subscribe(() => {
       this.waittingResponse = false;
-      
-      // Afficher un message d'erreur générique si aucun message spécifique n'est fourni
-      // if (!value?.error?.message) {
-      //   this._toastrService.error("Échec de la connexion. Veuillez vérifier vos identifiants.", "Ndewa360°");
-      // }
     });
     this.subscriptions.push(errorSub);
   }
 
   ngOnDestroy(): void {
-    // Se désabonner de tous les observables pour éviter les fuites de mémoire
     this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
   onSubmit() {
-    // Ne soumettre que si le formulaire est valide
     if (this.formGroup.valid) {
       this.formGroup.markAllAsTouched();
       this.waittingResponse = true;
-      
-      // Trim des valeurs pour éviter les espaces
       const email = this.formGroup.value.email.trim();
       const password = this.formGroup.value.password;
-      
       this._store.dispatch(new UserProfileAction.LoginUserProfile(email, password));
     } else {
-      // Marquer tous les champs comme touchés pour afficher les erreurs
       this.formGroup.markAllAsTouched();
       this._toastrService.warning(this.translate.instant('VALIDATION.REQUIRED'), "Ndewa360°");
     }
   }
 
-  isValid(name) {
+  isValid(name: string) {
     const instance = this.formGroup.get(name);
     return instance.invalid && (instance.dirty || instance.touched);
   }
@@ -158,121 +129,81 @@ export class AuthLoginComponent implements OnInit, OnDestroy {
     this.showPassword = !this.showPassword;
   }
 
-  private async redirectBasedOnUserType(): Promise<void> {
-    try {
-      // Attendre que le profil utilisateur soit chargé
-      const user = this._store.selectSnapshot(UserProfileState.selectStateUserProfile);
-      
-      if (!user) {
-        // Attendre un peu plus si l'utilisateur n'est pas encore chargé
-        setTimeout(() => {
-          const retryUser = this._store.selectSnapshot(UserProfileState.selectStateUserProfile);
-          if (retryUser) {
-            this.performRedirection(retryUser);
-          } else {
-            const currentLang = this.languageUrlService.getCurrentLanguage();
-            window.location.href = `/${currentLang}/app/welcome`;
-          }
-        }, 1000);
-        return;
-      }
-
-      this.performRedirection(user);
-    } catch (error) {
-      console.error('Erreur lors de la redirection:', error);
-      const currentLang = this.languageUrlService.getCurrentLanguage();
-      window.location.href = `/${currentLang}/app/welcome`;
-    }
+  loginWithGoogle(): void {
+    // Rediriger vers l'endpoint OAuth2 Google du backend
+    const currentLang = this.languageUrlService.getCurrentLanguage();
+    const returnUrl = encodeURIComponent(`/${currentLang}/app/properties/home`);
+    window.location.href = `${environment.apiUrl}/user/auth/google?returnUrl=${returnUrl}`;
   }
 
-  private async performRedirection(user: any): Promise<void> {
-    // Vérifier si c'est un admin
-    if (this.isAdmin(user)) {
-      // Attendre plus longtemps pour que le profil soit bien chargé
+  private redirectBasedOnUserType(): void {
+    const user = this._store.selectSnapshot(UserProfileState.selectStateUserProfile);
+    if (!user) {
       setTimeout(() => {
-        const currentLang = this.languageUrlService.getCurrentLanguage();
-        window.location.href = `/${currentLang}/app/properties/home`;
-      }, 2000); // Augmenté pour laisser plus de temps au loader
-      return;
-    }
-
-    // Vérifier si c'est un agent
-    if (user.userType === 'AGENT') {
-      await this.redirectAgent(user);
-      return;
-    }
-
-    // Utilisateur normal
-    setTimeout(() => {
-      const currentLang = this.languageUrlService.getCurrentLanguage();
-      window.location.href = `/${currentLang}/app/properties/home`;
-    }, 1000); // Augmenté pour laisser plus de temps au loader
-  }
-
-  private async redirectAgent(user: any): Promise<void> {
-    try {
-      const response: any = await this.http.get(`${environment.apiUrl}/agents/${user._id}`).toPromise();
-      
-      if (!response) {
-        setTimeout(() => {
+        const retryUser = this._store.selectSnapshot(UserProfileState.selectStateUserProfile);
+        if (retryUser) {
+          this.performRedirection(retryUser);
+        } else {
           const currentLang = this.languageUrlService.getCurrentLanguage();
-          window.location.href = `/${currentLang}/app/agent/complete-profile`;
-        }, 500);
-        return;
-      }
-      
-      const agentProfile = response.data || response;
-
-      const currentLang = this.languageUrlService.getCurrentLanguage();
-      if (!agentProfile || !agentProfile.isProfileCompleted) {
-        setTimeout(() => window.location.href = `/${currentLang}/app/agent/complete-profile`, 1000);
-      } else if (agentProfile.status === 'PENDING' || agentProfile.status === 'ADMIN_REVIEW') {
-        setTimeout(() => window.location.href = `/${currentLang}/app/agent/pending-approval`, 1000);
-      } else if (agentProfile.status === 'REJECTED') {
-        setTimeout(() => window.location.href = `/${currentLang}/app/agent/pending-approval`, 500);
-      } else if (agentProfile.status === 'APPROVED') {
-        setTimeout(() => window.location.href = `/${currentLang}/app/properties/home`, 500);
-      } else {
-        setTimeout(() => window.location.href = `/${currentLang}/app/agent/complete-profile`, 500);
-      }
-    } catch (error) {
-      console.error('Erreur lors de la vérification du profil agent:', error);
-      setTimeout(() => {
-        const currentLang = this.languageUrlService.getCurrentLanguage();
-        window.location.href = `/${currentLang}/app/agent/complete-profile`;
-      }, 500);
+          this.router.navigate([`/${currentLang}/app/welcome`]);
+        }
+      }, 800);
+      return;
     }
+    this.performRedirection(user);
+  }
+
+  private performRedirection(user: any): void {
+    const currentLang = this.languageUrlService.getCurrentLanguage();
+
+    if (this.isAdmin(user)) {
+      this.router.navigate([`/${currentLang}/app/properties/home`]);
+      return;
+    }
+
+    if (user.userType === 'AGENT') {
+      this.redirectAgent(user);
+      return;
+    }
+
+    this.router.navigate([`/${currentLang}/app/properties/home`]);
+  }
+
+  private redirectAgent(user: any): void {
+    const currentLang = this.languageUrlService.getCurrentLanguage();
+    this.http.get(`${environment.apiUrl}/agents/${user._id}`).subscribe({
+      next: (response: any) => {
+        const agentProfile = response?.data || response;
+        if (!agentProfile || !agentProfile.isProfileCompleted) {
+          this.router.navigate([`/${currentLang}/app/agent/complete-profile`]);
+        } else if (agentProfile.status === 'PENDING' || agentProfile.status === 'ADMIN_REVIEW' || agentProfile.status === 'REJECTED') {
+          this.router.navigate([`/${currentLang}/app/agent/pending-approval`]);
+        } else if (agentProfile.status === 'APPROVED') {
+          this.router.navigate([`/${currentLang}/app/properties/home`]);
+        } else {
+          this.router.navigate([`/${currentLang}/app/agent/complete-profile`]);
+        }
+      },
+      error: () => {
+        this.router.navigate([`/${currentLang}/app/agent/complete-profile`]);
+      }
+    });
   }
 
   private isAdmin(user: any): boolean {
-    if (!user.roles || !Array.isArray(user.roles)) {
-      return false;
-    }
-
+    if (!user?.roles || !Array.isArray(user.roles)) return false;
     return user.roles.some((role: any) => {
-      const roleName = typeof role === 'string' ? role : role.name;
+      const roleName = typeof role === 'string' ? role : role?.name;
       return roleName === 'super-admin' || roleName === 'admin';
     });
   }
 
-  /**
-   * Vérifie si l'URL de retour est sécurisée (même domaine)
-   */
   private isValidReturnUrl(url: string): boolean {
     try {
-      // Vérifier si c'est une URL relative
-      if (url.startsWith('/')) {
-        return true;
-      }
-      
-      // Vérifier si c'est une URL absolue du même domaine
+      if (url.startsWith('/')) return true;
       const urlObj = new URL(url);
-      const currentOrigin = window.location.origin;
-      
-      return urlObj.origin === currentOrigin;
-    } catch (error) {
-      // En cas d'erreur de parsing, considérer comme non sécurisé
-      console.warn('Erreur lors de la validation de l\'URL de retour:', error);
+      return urlObj.origin === window.location.origin;
+    } catch {
       return false;
     }
   }

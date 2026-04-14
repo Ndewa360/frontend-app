@@ -47,10 +47,8 @@ export class HeaderComponent extends BaseComponent implements OnInit {
     this.userProfil$
       .pipe(takeUntil(this.destroy$))
       .subscribe((user) => {
-        if (user) this.isAdmin = user.email === 'support@ndewa-360.com';
+        if (user) this.isAdmin = this.checkIsAdmin(user);
       });
-
-    // Les redirections de déconnexion sont gérées par le DisconnectionService
 
     // Surveiller le nombre de notifications non lues
     this.notificationManager.getUnreadCount()
@@ -90,9 +88,16 @@ export class HeaderComponent extends BaseComponent implements OnInit {
   }
 
   logout(): void {
-    // Préserver la langue avant la déconnexion
     this.languagePreservation.preserveCurrentLanguage();
     this._store.dispatch(new UserProfileAction.LogoutUserProfile(true));
+  }
+
+  private checkIsAdmin(user: any): boolean {
+    if (!user?.roles || !Array.isArray(user.roles)) return false;
+    return user.roles.some((role: any) => {
+      const roleName = typeof role === 'string' ? role : role?.name;
+      return roleName === 'super-admin' || roleName === 'admin';
+    });
   }
 
   navigateToProperties(): void {

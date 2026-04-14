@@ -49,48 +49,46 @@
       <h3 *ngIf="!collapsed" class="nav-section-title">Principal</h3>
       
       <div class="nav-items">
-        <a *ngFor="let item of mainNavItems; trackBy: trackByNavItem"
-           [routerLink]="item.route"
-           routerLinkActive="nav-item-active"
-           [ngClass]="getNavItemClasses(item)"
-           [title]="collapsed ? item.label : ''"
-           (click)="onNavItemClick(item)">
-          
-          <div class="nav-item-icon">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="item.icon"></path>
-            </svg>
-          </div>
-          
-          <span *ngIf="!collapsed" class="nav-item-label">{{ item.label }}</span>
-          
-          <div *ngIf="item.badge && !collapsed" class="nav-item-badge">
-            {{ item.badge }}
-          </div>
-          
-          <div *ngIf="item.children && !collapsed" class="nav-item-arrow">
-            <svg class="w-4 h-4 transition-transform" 
-                 [class.rotate-90]="item.expanded"
-                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
-        
-        <!-- Sous-éléments -->
-        <div *ngIf="item.children && item.expanded && !collapsed" 
-             class="nav-subitems">
-          <a *ngFor="let subItem of item.children"
-             [routerLink]="subItem.route"
-             routerLinkActive="nav-subitem-active"
-             class="nav-subitem"
-             (click)="onNavItemClick(subItem)">
-            <span class="nav-subitem-label">{{ subItem.label }}</span>
-            <div *ngIf="subItem.badge" class="nav-subitem-badge">
-              {{ subItem.badge }}
+        <ng-container *ngFor="let item of mainNavItems; trackBy: trackByNavItem">
+          <a [routerLink]="item.route"
+             routerLinkActive="nav-item-active"
+             [ngClass]="getNavItemClasses(item)"
+             [title]="collapsed ? item.label : ''"
+             (click)="onNavItemClick(item)">
+            
+            <div class="nav-item-icon">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="item.icon"></path>
+              </svg>
+            </div>
+            
+            <span *ngIf="!collapsed" class="nav-item-label">{{ item.label }}</span>
+            
+            <div *ngIf="item.badge && !collapsed" class="nav-item-badge">
+              {{ item.badge }}
+            </div>
+            
+            <div *ngIf="item.children && !collapsed" class="nav-item-arrow">
+              <svg class="w-4 h-4 transition-transform" 
+                   [class.rotate-90]="item.expanded"
+                   fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
             </div>
           </a>
-        </div>
+          
+          <!-- Sous-éléments (dans le ng-container, pas hors du *ngFor) -->
+          <div *ngIf="item.children && item.expanded && !collapsed" class="nav-subitems">
+            <a *ngFor="let subItem of item.children"
+               [routerLink]="subItem.route"
+               routerLinkActive="nav-subitem-active"
+               class="nav-subitem"
+               (click)="onNavItemClick(subItem)">
+              <span class="nav-subitem-label">{{ subItem.label }}</span>
+              <div *ngIf="subItem.badge" class="nav-subitem-badge">{{ subItem.badge }}</div>
+            </a>
+          </div>
+        </ng-container>
       </div>
     </div>
     
