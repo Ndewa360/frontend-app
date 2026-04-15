@@ -149,22 +149,14 @@ export class SearchPageComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.initializeSmartFilters();
+    this.setupFormAutoApply();       // UN seul abonnement valueChanges
     this.setupSearchSubscriptions();
-    this.setupUrlSubscriptions(); // Écouter les changements d'URL
     this.loadInitialData();
     this.loadFavorites();
     this.loadCities();
 
-    // Prioriser les paramètres URL avant la géolocalisation
-    this.handleRouteParams().then(() => {
-      // Détecter la géolocalisation seulement si aucune ville n'est spécifiée dans l'URL
-      if (!this.currentFilters.city) {
-        this.detectUserLocation();
-      }
-
-      // Vérifier si une unité doit être ouverte depuis l'URL
-      this.checkForUnitInUrl();
-    });
+    // Lire les params URL UNE SEULE FOIS au démarrage (take(1))
+    this.initFromUrlParams();
   }
 
   ngOnDestroy(): void {
@@ -177,68 +169,43 @@ export class SearchPageComponent implements OnInit, OnDestroy {
 
   private initializeForm(): void {
     this.searchForm = this.fb.group({
-      // Recherche et localisation
       searchText: [''],
       city: [''],
       district: [''],
-
-      // Type de chambre (selon enum RoomType)
-      roomType: [''], // ROOM, STUDIO, SIMPLE_APARTMENT, FURNISHED_APARTMENT
-
-      // Prix
+      roomType: [''],
       priceMin: [0],
       priceMax: [500000],
-
-      // Superficie minimale
       minArea: [0],
-
-      // Spécificités de la chambre (RoomSpecificity)
       hasKitchen: [false],
       isInternalKitchen: [false],
-      hasPrivateShower: [false], // Corrigé pour correspondre au backend
+      hasPrivateShower: [false],
       numberOfBathroom: [''],
       numberOfLivingRoom: [''],
       numberOfShower: [''],
-
-      // Propriétés de la propriété
       hasParking: [false],
       hasClosure: [false],
-
-      // Disponibilité
-      isFree: [true], // Toujours true pour la recherche
-      isShowToPublic: [true], // Toujours true pour la recherche
-      isActiveForSouscription: [true], // Toujours true pour la recherche
-
-      // Tri
-      sortBy: ['createdAt'], // price, createdAt, area
-      sortOrder: ['desc'] // asc, desc
+      isFree: [true],
+      isShowToPublic: [true],
+      isActiveForSouscription: [true],
+      sortBy: ['createdAt'],
+      sortOrder: ['desc']
     });
-
-    // Écouter les changements du formulaire pour application automatique
-    this.setupFormAutoApply();
   }
 
   /**
-   * Configure l'application automatique des filtres
+   * Configure l'application automatique des filtres — UN SEUL abonnement à valueChanges
    */
   private setupFormAutoApply(): void {
-    // Appliquer automatiquement les filtres avec un délai pour éviter trop de requêtes
     this.searchForm.valueChanges
       .pipe(
-        debounceTime(500), // Attendre 500ms après le dernier changement
+        debounceTime(500),
         distinctUntilChanged((prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)),
         takeUntil(this.destroy$)
       )
       .subscribe(formValues => {
-        console.log('🔄 Application automatique des filtres:', formValues);
+        // Mettre à jour currentFilters ET smartFilters en une seule passe
+        this.currentFilters = { ...this.currentFilters, ...formValues };
 
-        // Mettre à jour les filtres actuels
-        this.currentFilters = {
-          ...this.currentFilters,
-          ...formValues
-        };
-
-        // Mettre à jour les filtres intelligents avec synchronisation forcée
         Object.keys(formValues).forEach(key => {
           this.smartFiltersService.updateFilter(key, formValues[key]);
           if (formValues[key] !== null && formValues[key] !== undefined && formValues[key] !== '') {
@@ -246,98 +213,52 @@ export class SearchPageComponent implements OnInit, OnDestroy {
           }
         });
 
-        console.log('🔄 Filtres après mise à jour:', {
-          currentFilters: this.currentFilters,
-          smartFilters: this.smartFiltersService.getActiveFilters()
-        });
-
-        // Marquer qu'une recherche va être effectuée
         this.hasSearched = true;
-
-        // Réinitialiser la pagination
         this.currentPage = 1;
-
-        // Effectuer la recherche et mettre à jour l'URL
         this.performSearch();
         this.updateUrl();
       });
   }
 
   /**
-   * Configure l'écoute des changements d'URL pour recharger les données
+   * Lit les paramètres URL UNE SEULE FOIS au démarrage (take(1)).
+   * Pas d'abonnement persistant → pas de boucle URL → recherche.
    */
-  private setupUrlSubscriptions(): void {
-    // Écouter les changements de paramètres d'URL
+  private initFromUrlParams(): void {
     this.route.queryParams
-      .pipe(
-        debounceTime(300), // Éviter les rechargements trop fréquents
-        takeUntil(this.destroy$)
-      )
+      .pipe(take(1), takeUntil(this.destroy$))
       .subscribe(params => {
-        console.log('🔗 Changement des paramètres URL:', params);
+        const cityParam = params['city'] || params['ville'] || '';
+        const hasParams = Object.keys(params).length > 0;
 
-        // Vérifier si les paramètres ont vraiment changé
-        const hasChanged = this.hasUrlParamsChanged(params);
+        if (cityParam) {
+          // Attendre que les villes soient chargées pour convertir nom → ID
+          this.cities$.pipe(
+            filter(cities => cities && cities.length > 0),
+            take(1)
+          ).subscribe(cities => {
+            let finalCityId = cityParam;
 
-        if (hasChanged) {
-          console.log('🔄 Rechargement des données suite au changement d\'URL');
-          // Recharger les filtres depuis l'URL et effectuer une nouvelle recherche
-          this.loadFiltersFromUrl(params);
-        }
-      });
-  }
-
-  /**
-   * Vérifie si les paramètres URL ont changé
-   */
-  private hasUrlParamsChanged(newParams: any): boolean {
-    const currentParams = this.route.snapshot.queryParams;
-    return JSON.stringify(currentParams) !== JSON.stringify(newParams);
-  }
-
-  /**
-   * Charge les filtres depuis les paramètres URL
-   */
-  private loadFiltersFromUrl(params: any): void {
-    const cityParam = params['ville'] || params['city'] || '';
-
-    console.log('🔗 Chargement des filtres depuis URL:', params);
-    console.log('🏙️ Paramètre ville:', cityParam);
-
-    // Gérer le paramètre ville (peut être un nom ou un ID)
-    if (cityParam) {
-      // Attendre que les villes soient chargées avant de traiter
-      this.cities$.pipe(
-        filter(cities => cities && cities.length > 0),
-        take(1)
-      ).subscribe(cities => {
-        let finalCityId = cityParam;
-
-        // Vérifier si c'est déjà un ID valide
-        const isValidId = this.cityResolver.isObjectId(cityParam);
-        const cityExists = cities.find(city => city._id === cityParam);
-
-        if (isValidId && cityExists) {
-          // C'est déjà un ID valide
-          finalCityId = cityParam;
-          this.processCityFilters(finalCityId, params);
-        } else {
-          // C'est un nom, il faut le convertir en ID
-          this.cityResolver.getCityIdByName(cityParam).subscribe(cityId => {
-            if (cityId) {
-              console.log('✅ Ville convertie:', cityParam, '->', cityId);
-              this.processCityFilters(cityId, params);
-            } else {
-              console.warn('🏙️ Ville non trouvée dans l\'URL:', cityParam);
-              this.processCityFilters(cityParam, params);
+            if (!this.cityResolver.isObjectId(cityParam)) {
+              const found = cities.find(c =>
+                c.fullName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '') ===
+                cityParam.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+              );
+              if (found) finalCityId = found._id;
             }
+
+            this.processCityFilters(finalCityId, params);
+            this.checkForUnitInUrl();
           });
+        } else if (hasParams) {
+          this.processCityFilters('', params);
+          this.checkForUnitInUrl();
+        } else {
+          // Aucun paramètre URL : géolocalisation
+          this.detectUserLocation();
+          this.checkForUnitInUrl();
         }
       });
-    } else {
-      // Pas de ville dans l'URL, utiliser les autres paramètres
-      this.processCityFilters('', params);
-    }
   }
 
   /**
@@ -385,7 +306,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Initialiser les filtres intelligents
+   * Initialiser les filtres intelligents — sans second abonnement à valueChanges
    */
   private initializeSmartFilters(): void {
     const defaultFilters = {
@@ -405,18 +326,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
     };
 
     this.smartFiltersService.initializeFilters(defaultFilters);
-
-    // Écouter les changements du formulaire
-    this.searchForm.valueChanges
-      .pipe(
-        takeUntil(this.destroy$),
-        debounceTime(300)
-      )
-      .subscribe(formValue => {
-        Object.keys(formValue).forEach(key => {
-          this.smartFiltersService.updateFilter(key, formValue[key]);
-        });
-      });
+    // L'abonnement à valueChanges est géré uniquement dans setupFormAutoApply()
   }
 
   private initializeQuickFilters(): void {
@@ -545,81 +455,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
       });
   }
 
-  private handleRouteParams(): Promise<void> {
-    return new Promise((resolve) => {
-      this.route.queryParams
-        .pipe(takeUntil(this.destroy$))
-        .subscribe(params => {
-          let hasParams = false;
-
-          // Supporter les deux paramètres : 'ville' (ancien) et 'city' (nouveau)
-          const cityParam = params['city'] || params['ville'];
-          if (cityParam) {
-            this.currentFilters.city = cityParam;
-            this.searchForm.patchValue({ city: cityParam }, { emitEvent: false });
-
-            // Mettre à jour la localisation affichée si ville dans URL
-            this.userLocation = {
-              city: cityParam,
-              country: 'Cameroun',
-              region: '',
-              latitude: 0,
-              longitude: 0
-            };
-            this.locationDetected = false; // Indiquer que c'est depuis l'URL
-            this.isFromUrl = true; // Nouvelle propriété pour identifier la source
-            hasParams = true;
-            
-            // S'assurer que le sélecteur se synchronise avec la ville de l'URL
-            setTimeout(() => this.ensureCitySelectorSync(), 500);
-          }
-
-          if (params['search']) {
-            this.searchControl.setValue(params['search']);
-            hasParams = true;
-          }
-
-          if (params['priceMin']) {
-            this.currentFilters.priceMin = +params['priceMin'];
-            this.searchForm.patchValue({ priceMin: +params['priceMin'] });
-            hasParams = true;
-          }
-
-          if (params['priceMax']) {
-            this.currentFilters.priceMax = +params['priceMax'];
-            this.searchForm.patchValue({ priceMax: +params['priceMax'] });
-            hasParams = true;
-          }
-
-          if (params['hasKitchen']) {
-            this.currentFilters.hasKitchen = params['hasKitchen'] === 'true';
-            this.searchForm.patchValue({ hasKitchen: params['hasKitchen'] === 'true' });
-            hasParams = true;
-          }
-
-          if (params['hasParking']) {
-            this.currentFilters.hasParking = params['hasParking'] === 'true';
-            this.searchForm.patchValue({ hasParking: params['hasParking'] === 'true' });
-            hasParams = true;
-          }
-
-          if (params['hasPrivateShower']) {
-            this.currentFilters.hasPrivateShower = params['hasPrivateShower'] === 'true';
-            this.searchForm.patchValue({ hasPrivateShower: params['hasPrivateShower'] === 'true' });
-            hasParams = true;
-          }
-
-          // Lancer la recherche si des paramètres sont présents
-          if (hasParams) {
-            this.performSearch();
-          }
-
-          resolve();
-        });
-    });
-  }
-
-  private loadSuggestions(query: string): void {
+private loadSuggestions(query: string): void {
     this.cities$
       .pipe(
         map(cities => cities.filter(city =>
@@ -675,9 +511,12 @@ export class SearchPageComponent implements OnInit, OnDestroy {
     let label = '';
 
     if (search.roomType) {
-      const roomTypeLabel = search.roomType === 'STUDIO' ? this.translationService.instant('SEARCH_MODULE.POPULAR_SEARCHES.STUDIOS') :
-                           search.roomType === 'ROOM' ? this.translationService.instant('SEARCH_MODULE.POPULAR_SEARCHES.ROOMS') : 
-                           this.translationService.instant('SEARCH_MODULE.POPULAR_SEARCHES.PROPERTIES');
+      // Normaliser en majuscules pour la comparaison (le backend stocke en minuscules)
+      const roomTypeUpper = search.roomType.toUpperCase();
+      const roomTypeLabel =
+        roomTypeUpper === 'STUDIO' ? this.translationService.instant('SEARCH_MODULE.POPULAR_SEARCHES.STUDIOS') :
+        roomTypeUpper === 'ROOM'   ? this.translationService.instant('SEARCH_MODULE.POPULAR_SEARCHES.ROOMS') :
+                                     this.translationService.instant('SEARCH_MODULE.POPULAR_SEARCHES.PROPERTIES');
       label += roomTypeLabel;
     } else {
       label += this.translationService.instant('SEARCH_MODULE.POPULAR_SEARCHES.PROPERTIES');
@@ -855,46 +694,44 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   }
 
   onPopularSearchClick(popularSearch: PopularSearch): void {
-    console.log('🔥 Clic sur recherche populaire:', popularSearch);
+    // Appliquer les filtres directement sans passer par l'URL
+    // (initFromUrlParams utilise take(1) donc ne se re-déclenche pas)
+    const cityId = popularSearch.cityId;
+    const filters = popularSearch.filters;
 
-    // Construire les paramètres URL pour rester sur la même page
-    const queryParams: any = {};
+    // Mettre à jour currentFilters
+    this.currentFilters = {
+      city: cityId || '',
+      roomType: filters.roomType || '',
+      priceMin: filters.priceMin || 0,
+      priceMax: filters.priceMax || 500000,
+      hasKitchen: filters.hasKitchen || false,
+      hasParking: filters.hasParking || false,
+      hasPrivateShower: filters.hasPrivateShower || false,
+      sortBy: 'createdAt',
+      sortOrder: 'desc'
+    };
 
-    // Ajouter la ville (utiliser le nom de la ville pour l'URL)
-    if (popularSearch.cityName) {
-      queryParams.ville = popularSearch.cityName;
-    } else if (popularSearch.cityId) {
-      // Fallback sur l'ID si le nom n'est pas disponible
-      queryParams.ville = popularSearch.cityId;
-    }
+    // Mettre à jour le formulaire sans déclencher valueChanges
+    this.searchForm.patchValue(this.currentFilters, { emitEvent: false });
 
-    // Ajouter les autres filtres de la recherche populaire
-    if (popularSearch.filters.roomType) {
-      queryParams.roomType = popularSearch.filters.roomType;
-    }
-    if (popularSearch.filters.priceMin) {
-      queryParams.priceMin = popularSearch.filters.priceMin;
-    }
-    if (popularSearch.filters.priceMax) {
-      queryParams.priceMax = popularSearch.filters.priceMax;
-    }
-    if (popularSearch.filters.hasKitchen) {
-      queryParams.hasKitchen = popularSearch.filters.hasKitchen;
-    }
-    if (popularSearch.filters.hasParking) {
-      queryParams.hasParking = popularSearch.filters.hasParking;
-    }
-    if (popularSearch.filters.hasPrivateShower) {
-      queryParams.hasPrivateShower = popularSearch.filters.hasPrivateShower;
-    }
-
-    console.log('🔥 Mise à jour URL avec paramètres recherche populaire:', queryParams);
-
-    // Mettre à jour l'URL de la page actuelle avec les nouveaux paramètres
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams
+    // Mettre à jour les filtres intelligents
+    Object.keys(this.currentFilters).forEach(key => {
+      this.smartFiltersService.updateFilter(key, this.currentFilters[key]);
+      if (this.currentFilters[key]) {
+        this.smartFiltersService.markFieldAsModified(key);
+      }
     });
+
+    // Synchroniser l'affichage de la ville
+    if (cityId) {
+      this.syncLocationDisplayWithCity(cityId);
+    }
+
+    this.currentPage = 1;
+    this.hasSearched = true;
+    this.performSearch();
+    this.updateUrl();
   }
 
 
@@ -929,44 +766,25 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   }
 
   private performSearch(): void {
-    // Protection contre les recherches en boucle
     if (this.isPerformingSearch) {
-      console.log('🔄 Recherche déjà en cours, ignorée');
       return;
     }
 
-    // Utiliser les filtres intelligents pour obtenir seulement les filtres actifs
     const activeFilters = this.smartFiltersService.getActiveFilters();
-
-    // Fallback sur currentFilters si les filtres intelligents sont vides
     const filtersToUse = Object.keys(activeFilters).length > 0 ? activeFilters : this.currentFilters;
 
-    console.log('🔍 Début de performSearch:', {
-      activeFilters: activeFilters,
-      currentFilters: this.currentFilters,
-      filtersToUse: filtersToUse,
-      searchControlValue: this.searchControl.value,
-      isLoading: this.isLoading,
-      hasSearched: this.hasSearched
-    });
-
-    // Si aucun filtre et pas de recherche textuelle, ne pas effectuer de recherche
     if (Object.keys(filtersToUse).length === 0 && !this.searchControl.value) {
-      console.log('🚫 Aucun filtre actif et pas de recherche textuelle');
       return;
     }
 
     this.isPerformingSearch = true;
     this.isLoading = true;
-    this.hasSearched = true; // Marquer qu'une recherche a été effectuée
+    this.hasSearched = true;
 
-    console.log('🔍 Recherche démarrée - hasSearched:', this.hasSearched);
-
-    // Utiliser les filtres déterminés avec limite backend élevée
     const filters: AdvancedSearchFilters = {
       ...filtersToUse,
-      page: 1, // Toujours page 1 pour récupérer tous les résultats
-      limit: this.BACKEND_LIMIT // Charger 10000 unités depuis le backend
+      page: 1,
+      limit: this.BACKEND_LIMIT
     };
 
     this.searchService.advancedSearch(filters)
@@ -974,30 +792,12 @@ export class SearchPageComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response) => {
           if (response.statusCode === 200) {
-            // Vérification de la structure des données
             const data = response.data?.data || response.data || [];
-
-            this.allResults = Array.isArray(data) ? data : []; // Stocker tous les résultats
-            this.totalResults = this.allResults.length; // Total des résultats reçus
-            console.warn("Total Result ",this.allResults.length)
-            this.updatePagination(); // Calculer la pagination côté client
-
-            // Réinitialiser les index d'images pour les nouvelles cartes
+            this.allResults = Array.isArray(data) ? data : [];
+            this.totalResults = this.allResults.length;
+            this.currentPage = 1;
+            this.updatePagination();
             this.currentImageIndexes = {};
-
-            console.log('✅ Recherche terminée avec succès:', {
-              resultCount: this.searchResults.length,
-              totalResults: this.totalResults,
-              hasSearched: this.hasSearched,
-              filters: filters
-            });
-
-            // Si aucun résultat, afficher l'état vide au lieu de faire un fallback automatique
-            if (this.allResults.length === 0) {
-              console.log('📭 Aucun résultat trouvé - affichage de l\'état vide');
-              // Ne pas faire de fallback automatique, laisser l'utilisateur voir l'état vide
-              // this.fallbackToBangangte();
-            }
           }
           this.isLoading = false;
           this.isPerformingSearch = false;
@@ -1006,12 +806,6 @@ export class SearchPageComponent implements OnInit, OnDestroy {
           console.error('Erreur de recherche:', error);
           this.isLoading = false;
           this.isPerformingSearch = false;
-
-          // En cas d'erreur, essayer Bangangté si ce n'était pas déjà le cas
-          if (filters.city !== 'Bangangté') {
-            console.log('Erreur de recherche, fallback vers Bangangté...');
-            this.fallbackToBangangte();
-          }
         }
       });
   }
@@ -1174,67 +968,6 @@ export class SearchPageComponent implements OnInit, OnDestroy {
       
       // S'assurer que le sélecteur affiche la bonne ville
       this.ensureCitySelectorSync();
-    });
-  }
-
-  /**
-   * Fallback vers Bangangté en cas d'absence de résultats
-   */
-  private fallbackToBangangte(): void {
-    const defaultLocation = this.geolocationService.getDefaultLocation();
-    this.userLocation = defaultLocation;
-
-    console.log('🔄 Fallback vers Bangangté');
-
-    // Utiliser le service de résolution pour obtenir l'ID de Bangangté
-    this.cityResolver.getDefaultCityId().subscribe(cityId => {
-      const finalCityId = cityId || defaultLocation.city;
-      console.log('🏙️ Ville par défaut (Bangangté):', finalCityId);
-
-      this.currentFilters = {
-        ...this.currentFilters,
-        city: finalCityId,
-        page: 1
-      };
-
-      // Mettre à jour les filtres intelligents
-      this.smartFiltersService.updateFilter('city', finalCityId);
-      this.smartFiltersService.markFieldAsModified('city');
-
-      this.currentPage = 1;
-
-      console.log('Recherche de fallback à Bangangté avec ID:', finalCityId);
-
-      const filters: AdvancedSearchFilters = {
-        ...this.currentFilters,
-        page: this.currentPage,
-        limit: this.ITEMS_PER_PAGE
-      };
-
-      this.searchService.advancedSearch(filters)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            if (response.statusCode === 200) {
-              // Vérification de la structure des données
-              const data = response.data?.data || response.data || [];
-
-              this.allResults = Array.isArray(data) ? data : [];
-              this.totalResults = this.allResults.length;
-              this.updatePagination();
-
-              // Réinitialiser les index d'images pour les nouvelles cartes
-              this.currentImageIndexes = {};
-            }
-            this.isLoading = false;
-          },
-          error: (error) => {
-            console.error('Erreur lors du fallback vers Bangangté:', error);
-            this.allResults = [];
-            this.searchResults = [];
-            this.isLoading = false;
-          }
-        });
     });
   }
 

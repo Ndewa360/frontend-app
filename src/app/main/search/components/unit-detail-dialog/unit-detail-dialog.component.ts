@@ -59,6 +59,9 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
   private touchEndX = 0;
   private minSwipeDistance = 50;
 
+  // Référence stable pour addEventListener/removeEventListener
+  private boundHandleKeyDown = this.handleKeyDown.bind(this);
+
   constructor(
     public dialogRef: MatDialogRef<UnitDetailDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: UnitDetailDialogData,
@@ -88,6 +91,7 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    document.removeEventListener('keydown', this.boundHandleKeyDown);
     this.destroy$.next();
     this.destroy$.complete();
   }
@@ -99,7 +103,7 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
   }
 
   private setupKeyboardNavigation(): void {
-    document.addEventListener('keydown', this.handleKeyDown.bind(this));
+    document.addEventListener('keydown', this.boundHandleKeyDown);
   }
 
   private handleKeyDown(event: KeyboardEvent): void {
@@ -144,7 +148,7 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
 
   closeDialog(): void {
     this.removeUnitFromUrl();
-    document.removeEventListener('keydown', this.handleKeyDown.bind(this));
+    document.removeEventListener('keydown', this.boundHandleKeyDown);
     this.dialogRef.close(null);
   }
 
