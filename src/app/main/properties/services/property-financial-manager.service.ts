@@ -174,7 +174,7 @@ export class PropertyFinancialManagerService {
   }
 
   /**
-   * Extrait les données mensuelles depuis les calculs centralisés du backend
+   * Extrait les données mensuelles avec PROJECTION cumulé — utilisé par financial-overview
    */
   extractMonthlyData(data: EnrichedStatisticResponse): MonthlyFinancialData[] {
     if (!data || !data.data || !data.data.revenueDistribution) {
@@ -185,10 +185,8 @@ export class PropertyFinancialManagerService {
     const monthlyAnalysis = data.data.revenueDistribution.monthlyAnalysis;
     const selectedYear = data.data.year ? parseInt(data.data.year) : new Date().getFullYear();
 
-    // Calcul de la projection mensuelle agrégée : pour chaque mois, somme des coveredAmountInYear
-    // distribuée sur les mois couverts de chaque chambre
+    // Projection mensuelle agrégée : mois couverts par le cumul des paiements depuis l'entrée
     const projectedByMonth = Array(12).fill(0);
-    const currentDate = new Date();
     rooms.forEach((roomData: any) => {
       const coveredUntil = roomData.coveredUntilDate ? new Date(roomData.coveredUntilDate) : null;
       const entryDate    = roomData.entryDate ? new Date(roomData.entryDate) : null;
@@ -206,23 +204,19 @@ export class PropertyFinancialManagerService {
     });
 
     return monthlyAnalysis.map((item, month) => {
-      const monthlyReceived = item.distributed;  // encaissé dans l'année
-      const monthlyExpected = item.expected;     // attendu pour l'année
-      const projectedAmount = projectedByMonth[month]; // couvert par projection
+      const monthlyReceived = item.distributed;
+      const monthlyExpected = item.expected;
+      const projectedAmount = projectedByMonth[month];
       const collectionRate  = item.fulfillmentRate;
-      const profit = monthlyReceived;
 
-      // Croissance sur les paiements bruts réels
       let growth = 0;
       if (month > 0) {
-        const currentRaw  = rooms.reduce((s, r) => s + (r.paymentValue?.[month]   || 0), 0);
-        const previousRaw = rooms.reduce((s, r) => s + (r.paymentValue?.[month-1] || 0), 0);
-        growth = previousRaw > 0
-          ? ((currentRaw - previousRaw) / previousRaw) * 100
-          : 0;
+        const currentRaw  = rooms.reduce((s: number, r: any) => s + (r.paymentValue?.[month]   || 0), 0);
+        const previousRaw = rooms.reduce((s: number, r: any) => s + (r.paymentValue?.[month-1] || 0), 0);
+        growth = previousRaw > 0 ? ((currentRaw - previousRaw) / previousRaw) * 100 : 0;
       }
 
-      const paymentsCount = rooms.filter(r => (r.paymentValue?.[month] || 0) > 0).length;
+      const paymentsCount = rooms.filter((r: any) => (r.paymentValue?.[month] || 0) > 0).length;
 
       return {
         month:      this.translationUtils.getMonthName(month + 1),
@@ -231,13 +225,68 @@ export class PropertyFinancialManagerService {
         received:   Math.round(monthlyReceived  * 100) / 100,
         projected:  Math.round(projectedAmount  * 100) / 100,
         rate:       Math.round(collectionRate   * 100) / 100,
-        profit:     Math.round(profit           * 100) / 100,
+        profit:     Math.round(monthlyReceived  * 100) / 100,
         growth:     Math.round(growth           * 100) / 100,
         performancePercentage: Math.round(collectionRate * 100) / 100,
         monthName:  this.translationUtils.getMonthName(month + 1),
         totalRevenue: Math.round(monthlyReceived * 100) / 100,
         paymentsCount,
         collectionRate: Math.round(collectionRate * 100) / 100,
+        activeUnits: item.totalActiveRooms
+      };
+    });
+  }
+
+  /**
+   * Extrait les paiements bruts réels par mois — utilisé par monthly-revenue-analysis
+   * Un versement de 150 000 FCFA en janvier apparaît intégralement en janvier.
+   */
+  extractRawMonthlyData(data: EnrichedStatisticResponse): MonthlyFinancialData[] {
+    if (!data || !data.data || !data.data.revenueDistribution) {
+      return this.getEmptyMonthlyData();
+    }
+
+    const rooms = data.data.rooms || [];
+    const monthlyAnalysis = data.data.revenueDistribution.monthlyAnalysis;
+
+    return monthlyAnalysis.map((item, month) => {
+      // Somme brute des paiements reçus ce mois (datePayment dans le mois)
+      const rawReceived = rooms.reduce(
+        (sum: number, r: any) => sum + (r.paymentValue?.[month] || 0), 0
+      );
+      const monthlyExpected = item.expected;
+      const collectionRate  = monthlyExpected > 0
+        ? Math.round((rawReceived / monthlyExpected) * 100 * 100) / 100
+        : 0;
+
+      let growth = 0;
+      if (month > 0) {
+        const prevReceived = rooms.reduce(
+          (sum: number, r: any) => sum + (r.paymentValue?.[month - 1] || 0), 0
+        );
+        growth = prevReceived > 0
+          ? Math.round(((rawReceived - prevReceived) / prevReceived) * 100 * 100) / 100
+          : 0;
+      }
+
+      const paymentsCount = rooms.filter(
+        (r: any) => (r.paymentValue?.[month] || 0) > 0
+      ).length;
+
+      return {
+        month:      this.translationUtils.getMonthName(month + 1),
+        monthIndex: month,
+        expected:   Math.round(monthlyExpected * 100) / 100,
+        received:   Math.round(rawReceived     * 100) / 100,
+        projected:  0,
+        rate:       collectionRate,
+        profit:     Math.round(rawReceived     * 100) / 100,
+        growth,
+        performancePercentage: Math.min(collectionRate, 100),
+        monthName:  this.translationUtils.getMonthName(month + 1),
+        totalRevenue: Math.round(rawReceived   * 100) / 100,
+        paymentsCount,
+        collectionRate,
         activeUnits: item.totalActiveRooms
       };
     });

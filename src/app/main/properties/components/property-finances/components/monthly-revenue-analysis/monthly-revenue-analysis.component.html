@@ -5,8 +5,11 @@
   <div class="header-section">
     <div class="header-content">
       <div class="header-text">
-        <h3 class="header-title">{{ 'MONTHLY_REVENUE_ANALYSIS.TITLE' | translate }}</h3>
-        <p class="header-subtitle">{{ 'MONTHLY_REVENUE_ANALYSIS.SUBTITLE' | translate:{ year: selectedYear } }}</p>
+        <h3 class="header-title">Revenus encaissés — {{ selectedYear }}</h3>
+        <p class="header-subtitle">
+          Montants physiquement reçus par mois — un versement de 150 000 FCFA en janvier
+          apparaît intégralement en janvier, quelle que soit la période couverte
+        </p>
       </div>
 
       <!-- Actions d'export -->
@@ -156,8 +159,8 @@
           <thead>
             <tr>
               <th>{{ 'MONTHLY_REVENUE_ANALYSIS.TABLE.HEADERS.MONTH' | translate }}</th>
-              <th>Encaissé (reçu)</th>
-              <th>Couvert (projection)</th>
+              <th>Encaissé</th>
+              <th>Attendu</th>
               <th>{{ 'MONTHLY_REVENUE_ANALYSIS.TABLE.HEADERS.ACTIVE_UNITS' | translate }}</th>
               <th>{{ 'MONTHLY_REVENUE_ANALYSIS.TABLE.HEADERS.EVOLUTION' | translate }}</th>
               <th>{{ 'MONTHLY_REVENUE_ANALYSIS.TABLE.HEADERS.PERFORMANCE' | translate }}</th>
@@ -178,25 +181,20 @@
                 </div>
               </td>
 
-              <!-- Encaissé dans l'année -->
+              <!-- Encaissé brut réel -->
               <td>
                 <div class="revenue-info">
                   <div class="revenue-amount">{{ month.received | currency:'XAF':'symbol':'1.0-0' }}</div>
                   <div class="revenue-details">
-                    <span class="payments-count">{{ month.paymentsCount }} paiements</span>
+                    <span class="payments-count">{{ month.paymentsCount }} paiement(s)</span>
                   </div>
                 </div>
               </td>
 
-              <!-- Couvert par projection -->
+              <!-- Attendu -->
               <td>
                 <div class="revenue-info">
-                  <div class="revenue-amount" [ngClass]="{
-                    'text-green-600': (month.projected || 0) > 0,
-                    'text-gray-400':  (month.projected || 0) === 0
-                  }">
-                    {{ (month.projected || 0) | currency:'XAF':'symbol':'1.0-0' }}
-                  </div>
+                  <div class="revenue-amount text-gray-500">{{ month.expected | currency:'XAF':'symbol':'1.0-0' }}</div>
                   <div class="revenue-details">
                     <span class="collection-rate">{{ formatPercentage(month.collectionRate) }}</span>
                   </div>

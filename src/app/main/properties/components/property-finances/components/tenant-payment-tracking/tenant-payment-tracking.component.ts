@@ -81,7 +81,7 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
   };
 
   selectedPeriod: 'all' | 'last_2_months' | 'current_month' = 'all';
-  selectedStatus: 'all' | 'up_to_date' | 'partial' | 'late' | 'ahead' | 'behind' = 'all';
+  selectedStatus: 'all' | 'up_to_date' | 'partial' | 'late' | 'advance' | 'behind' = 'all';
   searchTerm: string = '';
 
   // Pagination

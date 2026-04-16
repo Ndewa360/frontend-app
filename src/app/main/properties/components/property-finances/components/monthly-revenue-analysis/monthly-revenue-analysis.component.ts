@@ -81,7 +81,7 @@ export class MonthlyRevenueAnalysisComponent implements OnInit, OnChanges, OnDes
       .subscribe({
         next: (backendData) => {
           if (backendData && backendData.length > 0) {
-            this.monthlyData = this.propertyFinancialManager.extractMonthlyData(backendData[0]);
+            this.monthlyData = this.propertyFinancialManager.extractRawMonthlyData(backendData[0]);
             this.calculateYearlyStats();
           } else {
             this.monthlyData = [];

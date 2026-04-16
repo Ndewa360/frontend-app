@@ -311,11 +311,6 @@ export class StatisticState{
         )
     }
 
-    @Action(StatisticAction.FetchStaticByPropertyIdAndYear)
-    fetchStaticByPropertyIdAndYearAlias(ctx: StateContext<StatisticStateModel>, action: StatisticAction.FetchStaticRoomDataByPropertyIdAndYear) {
-        return this.fetchRoomStatisticByPropertyAndYear(ctx, action);
-    }
-
     @Action(StatisticAction.FetchStatisticPaymentRecapitulationAccountOfAllPropertyByYear)
     fetchPaymentRecapitulationByYear(ctx:StateContext<StatisticStateModel>,{year}:StatisticAction.FetchStatisticPaymentRecapitulationAccountOfAllPropertyByYear)
     {
