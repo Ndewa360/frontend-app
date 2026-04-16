@@ -1,302 +1,364 @@
-<!-- Vue d'ensemble financière -->
+<!-- Situation financière — onglet principal -->
 <div class="financial-overview-container">
-  
-  <!-- Header avec actions -->
+
+  <!-- Header -->
   <div class="overview-header">
     <div class="header-content">
       <div class="header-text">
-        <h2 class="header-title">{{ 'FINANCIAL_OVERVIEW.TITLE' | translate }}</h2>
-        <p class="header-subtitle">{{ 'FINANCIAL_OVERVIEW.SUBTITLE' | translate:{ year: selectedYear } }}</p>
+        <h2 class="header-title">Situation financière — {{ selectedYear }}</h2>
+        <p class="header-subtitle">
+          État basé sur le cumul des paiements depuis l'entrée de chaque locataire,
+          interprété pour l'année {{ selectedYear }}
+        </p>
       </div>
-
-      <div class="header-actions">
-        <button (click)="onExportOverview()" class="btn-export">
-          <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-          </svg>
-          <span>{{ 'FINANCIAL_OVERVIEW.EXPORT_OVERVIEW' | translate }}</span>
-        </button>
-      </div>
+      <button (click)="onExportOverview()" class="btn-export">
+        <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        </svg>
+        <span>Exporter</span>
+      </button>
     </div>
   </div>
 
-  <!-- Métriques principales -->
-  <div class="metrics-grid">
+  <!-- ═══ BLOC 1 : RÉSUMÉ EN 4 CHIFFRES CLÉS ═══ -->
+  <div class="section-block">
+    <div class="section-title-bar">
+      <div class="section-badge projection">1</div>
+      <div>
+        <h3 class="section-title">Résumé de l'année {{ selectedYear }}</h3>
+        <p class="section-subtitle">
+          Que s'est-il passé cette année ? Combien de loyers sont couverts ?
+        </p>
+      </div>
+    </div>
 
-    <!-- Revenus totaux -->
-    <div class="metric-card primary">
-      <div class="metric-content">
-        <div class="metric-icon">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="getMetricIcon('revenue')"></path>
-          </svg>
-        </div>
-        <div class="metric-info">
-          <p class="metric-label">{{ 'FINANCIAL_OVERVIEW.METRICS.REVENUE_RECEIVED' | translate }}</p>
-          <p class="metric-value">{{ formatPrice(metrics.totalRevenue) }}</p>
-          <p class="metric-description">{{ 'COMMON.ON' | translate }} {{ formatPrice(metrics.totalExpected) }} {{ 'FINANCIAL_OVERVIEW.METRICS.EXPECTED_REVENUE' | translate }}</p>
-          <div class="metric-progress">
-            <div class="progress-bar">
-              <!-- ✅ Plafonné à 100 pour éviter le débordement visuel -->
-              <div class="progress-fill" [style.width.%]="metrics.collectionRateCapped"></div>
+    <div class="metrics-grid">
+
+      <!-- Taux de couverture de l'année -->
+      <div class="metric-card" [ngClass]="{
+        'success': metrics.collectionRate >= 95,
+        'warning': metrics.collectionRate >= 50 && metrics.collectionRate < 95,
+        'danger':  metrics.collectionRate < 50
+      }">
+        <div class="metric-content">
+          <div class="metric-icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <div class="metric-info">
+            <p class="metric-label">Couverture {{ selectedYear }}</p>
+            <p class="metric-value">{{ formatPercentage(metrics.collectionRate) }}</p>
+            <p class="metric-description">
+              {{ formatPrice(metrics.totalCoveredInYear) }} couverts
+              sur {{ formatPrice(metrics.totalExpected) }} attendus
+            </p>
+            <div class="metric-progress">
+              <div class="progress-bar">
+                <div class="progress-fill" [style.width.%]="metrics.collectionRateCapped"></div>
+              </div>
+              <span class="progress-text">
+                {{ metrics.collectionRate >= 95 ? '✅ À jour' :
+                   metrics.collectionRate >= 50 ? '⚠️ Retard modéré' : '🚨 Retard critique' }}
+              </span>
             </div>
-            <span class="progress-text">{{ formatPercentage(metrics.collectionRate) }}</span>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Taux de recouvrement -->
-    <div class="metric-card success" [ngClass]="{
-      'success': metrics.collectionRate >= 90,
-      'warning': metrics.collectionRate >= 70 && metrics.collectionRate < 90,
-      'danger': metrics.collectionRate < 70
-    }">
-      <div class="metric-content">
-        <div class="metric-icon">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="getMetricIcon('collection')"></path>
-          </svg>
-        </div>
-        <div class="metric-info">
-          <p class="metric-label">{{ 'FINANCIAL_OVERVIEW.METRICS.COLLECTION_RATE' | translate }}</p>
-          <p class="metric-value">{{ formatPercentage(metrics.collectionRate) }}</p>
-          <p class="metric-description">{{ 'FINANCIAL_OVERVIEW.METRICS.COLLECTION_PERFORMANCE' | translate }}</p>
-          <div class="metric-status">
-            <span class="status-badge" [ngClass]="{
-              'status-excellent': metrics.collectionRate >= 90,
-              'status-good': metrics.collectionRate >= 70 && metrics.collectionRate < 90,
-              'status-poor': metrics.collectionRate < 70
-            }">
-              {{ metrics.collectionRate >= 90 ? ('FINANCIAL_OVERVIEW.STATUS.EXCELLENT' | translate) : metrics.collectionRate >= 70 ? ('FINANCIAL_OVERVIEW.STATUS.GOOD' | translate) : ('FINANCIAL_OVERVIEW.STATUS.TO_IMPROVE' | translate) }}
-            </span>
+      <!-- Taux d'occupation -->
+      <div class="metric-card" [ngClass]="{
+        'success': metrics.occupancyRate >= 85,
+        'warning': metrics.occupancyRate >= 70 && metrics.occupancyRate < 85,
+        'danger':  metrics.occupancyRate < 70
+      }">
+        <div class="metric-content">
+          <div class="metric-icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+            </svg>
           </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Taux d'occupation -->
-    <div class="metric-card info" [ngClass]="{
-      'success': metrics.occupancyRate >= 85,
-      'warning': metrics.occupancyRate >= 70 && metrics.occupancyRate < 85,
-      'danger': metrics.occupancyRate < 70
-    }">
-      <div class="metric-content">
-        <div class="metric-icon">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="getMetricIcon('occupancy')"></path>
-          </svg>
-        </div>
-        <div class="metric-info">
-          <p class="metric-label">{{ 'FINANCIAL_OVERVIEW.METRICS.OCCUPANCY_RATE' | translate }}</p>
-          <p class="metric-value">{{ formatPercentage(metrics.occupancyRate) }}</p>
-          <p class="metric-description">{{ metrics.occupiedRooms }}/{{ metrics.totalRooms }} {{ 'FINANCIAL_OVERVIEW.METRICS.UNITS_OCCUPIED' | translate }}</p>
-          <div class="metric-progress">
-            <div class="progress-bar">
-              <!-- ✅ Plafonné à 100 -->
-              <div class="progress-fill" [style.width.%]="metrics.occupancyRateCapped"></div>
+          <div class="metric-info">
+            <p class="metric-label">Occupation</p>
+            <p class="metric-value">{{ formatPercentage(metrics.occupancyRate) }}</p>
+            <p class="metric-description">
+              {{ metrics.occupiedRooms }} unité(s) occupée(s) sur {{ metrics.totalRooms }}
+            </p>
+            <div class="metric-progress">
+              <div class="progress-bar">
+                <div class="progress-fill" [style.width.%]="metrics.occupancyRateCapped"></div>
+              </div>
+              <span class="progress-text">{{ metrics.occupiedRooms }}/{{ metrics.totalRooms }}</span>
             </div>
-            <span class="progress-text">{{ metrics.occupiedRooms }} {{ 'COMMON.UNITS' | translate }}</span>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Loyer moyen -->
-    <div class="metric-card secondary">
-      <div class="metric-content">
-        <div class="metric-icon">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="getMetricIcon('average')"></path>
-          </svg>
-        </div>
-        <div class="metric-info">
-          <p class="metric-label">{{ 'FINANCIAL_OVERVIEW.METRICS.AVERAGE_RENT' | translate }}</p>
-          <p class="metric-value">{{ formatPrice(metrics.averageRent) }}</p>
-          <p class="metric-description">{{ 'FINANCIAL_OVERVIEW.METRICS.PER_UNIT_MONTH' | translate }}</p>
-          <div class="metric-trend"></div>
+      <!-- Loyer moyen -->
+      <div class="metric-card secondary">
+        <div class="metric-content">
+          <div class="metric-icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+            </svg>
+          </div>
+          <div class="metric-info">
+            <p class="metric-label">Loyer moyen</p>
+            <p class="metric-value">{{ formatPrice(metrics.averageRent) }}</p>
+            <p class="metric-description">Par unité occupée / mois</p>
+          </div>
         </div>
       </div>
+
+      <!-- Cautions reçues -->
+      <div class="metric-card info">
+        <div class="metric-content">
+          <div class="metric-icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+            </svg>
+          </div>
+          <div class="metric-info">
+            <p class="metric-label">Cautions reçues</p>
+            <p class="metric-value">{{ formatPrice(metrics.totalDeposits) }}</p>
+            <p class="metric-description">Remboursables en fin de contrat</p>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 
-  <!-- Graphique mensuel et détails -->
-  <div class="content-grid">
-
-    <!-- Évolution mensuelle -->
-    <div class="monthly-evolution-card">
-      <div class="card-header">
-        <div class="header-info">
-          <h3 class="card-title">{{ 'FINANCIAL_OVERVIEW.MONTHLY_EVOLUTION.TITLE' | translate }}</h3>
-          <p class="card-subtitle">{{ 'FINANCIAL_OVERVIEW.MONTHLY_EVOLUTION.SUBTITLE' | translate }}</p>
-        </div>
-        <button (click)="onExportMonthlyData()" class="btn-export-small">
-          <svg class="btn-icon-small" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-          </svg>
-          <span>{{ 'FINANCIAL_OVERVIEW.MONTHLY_EVOLUTION.EXPORT' | translate }}</span>
-        </button>
+  <!-- ═══ BLOC 2 : DÉTAIL MENSUEL ═══ -->
+  <div class="section-block">
+    <div class="section-title-bar">
+      <div class="section-badge projection">2</div>
+      <div>
+        <h3 class="section-title">Détail mois par mois — {{ selectedYear }}</h3>
+        <p class="section-subtitle">
+          Pour chaque mois : ce qui était attendu, ce qui est couvert par le cumul des paiements,
+          et ce qui a été encaissé dans l'année
+        </p>
       </div>
+      <button (click)="onExportMonthlyData()" class="btn-export-small">
+        <svg class="btn-icon-small" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        </svg>
+        <span>Export</span>
+      </button>
+    </div>
 
-      <div class="monthly-chart">
-        <div *ngFor="let month of monthlyData; let i = index"
-             class="month-row"
-             [style.animation-delay.ms]="i * 100">
+    <!-- Légende -->
+    <div class="legend-row mb-4">
+      <span class="legend-item">
+        <span class="legend-dot" style="background:#10b981"></span>
+        Couvert (projection cumul)
+      </span>
+      <span class="legend-item">
+        <span class="legend-dot" style="background:rgb(204,140,10)"></span>
+        Encaissé dans {{ selectedYear }}
+      </span>
+      <span class="legend-item">
+        <span class="legend-dot" style="background:#e5e7eb; border:1px solid #d1d5db"></span>
+        Attendu
+      </span>
+    </div>
 
-          <div class="month-label">
-            <!-- ✅ monthName est la string traduite, on prend les 3 premiers caractères -->
-            <span class="month-name">{{ (month.monthName || month.month).substring(0, 3) }}</span>
-            <span class="month-index">{{ (i + 1).toString().padStart(2, '0') }}</span>
-          </div>
+    <div class="monthly-chart">
+      <div *ngFor="let month of monthlyData; let i = index"
+           class="month-row" [style.animation-delay.ms]="i * 50">
 
-          <div class="progress-container">
-            <div class="progress-track">
-              <!-- ✅ Plafonné à 100 -->
-              <div class="progress-bar-fill"
-                   [style.width.%]="month.rate > 100 ? 100 : month.rate"
-                   [ngClass]="{
-                     'excellent': month.rate >= 90,
-                     'good': month.rate >= 70 && month.rate < 90,
-                     'poor': month.rate < 70
-                   }">
-                <div class="progress-shine"></div>
-              </div>
-            </div>
+        <div class="month-label">
+          <span class="month-name">{{ (month.monthName || month.month).substring(0, 3) }}</span>
+          <span class="month-index">{{ (i + 1).toString().padStart(2, '0') }}</span>
+        </div>
 
-            <div class="progress-values">
-              <div class="value-received">
-                <span class="value-label">{{ 'FINANCIAL_OVERVIEW.MONTHLY_EVOLUTION.RECEIVED' | translate }}</span>
-                <span class="value-amount">{{ formatPrice(month.received) }}</span>
-              </div>
-              <div class="value-expected">
-                <span class="value-label">{{ 'FINANCIAL_OVERVIEW.MONTHLY_EVOLUTION.EXPECTED' | translate }}</span>
-                <span class="value-amount">{{ formatPrice(month.expected) }}</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="rate-display">
-            <span class="rate-percentage"
-                  [ngClass]="{
-                    'rate-excellent': month.rate >= 90,
-                    'rate-good': month.rate >= 70 && month.rate < 90,
-                    'rate-poor': month.rate < 70
-                  }">
-              {{ formatPercentage(month.rate) }}
-            </span>
-            <div class="rate-indicator"
+        <div class="progress-container">
+          <!-- Barre basée sur le COUVERT (projection cumul) / attendu -->
+          <div class="progress-track">
+            <div class="progress-bar-fill"
+                 [style.width.%]="month.expected > 0 ? Math.min(((month.projected ?? 0) / month.expected) * 100, 100) : 0"
                  [ngClass]="{
-                   'indicator-excellent': month.rate >= 90,
-                   'indicator-good': month.rate >= 70 && month.rate < 90,
-                   'indicator-poor': month.rate < 70
+                   'excellent': month.expected > 0 && (month.projected ?? 0) >= month.expected * 0.95,
+                   'good':      month.expected > 0 && (month.projected ?? 0) >= month.expected * 0.5 && (month.projected ?? 0) < month.expected * 0.95,
+                   'poor':      month.expected === 0 || (month.projected ?? 0) < month.expected * 0.5
                  }">
+              <div class="progress-shine"></div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
 
-    <!-- Résumé financier -->
-    <div class="financial-summary-card">
-      <div class="summary-header">
-        <h3 class="summary-title">{{ 'FINANCIAL_OVERVIEW.FINANCIAL_SUMMARY.TITLE' | translate }}</h3>
-        <div class="summary-badge">
-          <span class="badge-text">{{ selectedYear }}</span>
-        </div>
-      </div>
-
-      <div class="summary-content">
-        <!-- Total des cautions reçues -->
-        <div class="summary-item deposits">
-          <div class="item-icon">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-            </svg>
-          </div>
-          <div class="item-content">
-            <div class="item-info">
-              <p class="item-label">{{ 'FINANCIAL_OVERVIEW.FINANCIAL_SUMMARY.TOTAL_DEPOSITS' | translate }}</p>
-              <!-- ✅ totalDeposits = cautionsAnalysis.summary.totalCautionsReceived -->
-              <p class="item-description">{{ 'FINANCIAL_OVERVIEW.FINANCIAL_SUMMARY.SECURED_AMOUNT' | translate }}</p>
+          <div class="progress-values">
+            <div class="value-received">
+              <span class="value-label">Couvert</span>
+              <span class="value-amount" style="color:#10b981">
+                {{ formatPrice(month.projected ?? 0) }}
+              </span>
             </div>
-            <div class="item-value">
-              <p class="value-amount">{{ formatPrice(metrics.totalDeposits) }}</p>
+            <div class="value-expected">
+              <span class="value-label">Encaissé</span>
+              <span class="value-amount" style="color:rgb(204,140,10)">
+                {{ formatPrice(month.received) }}
+              </span>
+            </div>
+            <div class="value-expected">
+              <span class="value-label">Attendu</span>
+              <span class="value-amount" style="color:#9ca3af">
+                {{ formatPrice(month.expected) }}
+              </span>
             </div>
           </div>
         </div>
 
-        <!-- Performance globale -->
-        <div class="summary-item performance">
-          <div class="item-icon">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-            </svg>
-          </div>
-          <div class="item-content">
-            <div class="item-info">
-              <p class="item-label">{{ 'FINANCIAL_OVERVIEW.FINANCIAL_SUMMARY.GLOBAL_PERFORMANCE' | translate }}</p>
-              <p class="item-description">{{ 'FINANCIAL_OVERVIEW.FINANCIAL_SUMMARY.COLLECTION_RATE' | translate }}</p>
-            </div>
-            <div class="item-value">
-              <p class="value-amount">{{ formatPercentage(metrics.collectionRate) }}</p>
-              <div class="performance-bar">
-                <div class="bar-track"></div>
-                <!-- ✅ Plafonné à 100 -->
-                <div class="bar-fill" [style.width.%]="metrics.collectionRateCapped"></div>
-                <div class="bar-indicator" [style.left.%]="metrics.collectionRateCapped"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Manque à gagner -->
-        <div class="summary-item loss">
-          <div class="item-icon">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
-            </svg>
-          </div>
-          <div class="item-content">
-            <div class="item-info">
-              <p class="item-label">{{ 'FINANCIAL_OVERVIEW.FINANCIAL_SUMMARY.SHORTFALL' | translate }}</p>
-              <p class="item-description">{{ 'FINANCIAL_OVERVIEW.FINANCIAL_SUMMARY.UNCOLLECTED_REVENUE' | translate }}</p>
-            </div>
-            <div class="item-value">
-              <!-- ✅ shortfall = Math.max(0, totalExpected - totalRevenue) — toujours >= 0 -->
-              <p class="value-amount">{{ formatPrice(metrics.shortfall) }}</p>
-              <div class="loss-percentage">
-                <!-- ✅ Plafonné à 0 si collectionRate > 100 -->
-                <span class="loss-rate">{{ formatPercentage(metrics.collectionRate >= 100 ? 0 : 100 - metrics.collectionRate) }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Projection annuelle -->
-        <div class="summary-item projection">
-          <div class="item-icon">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-            </svg>
-          </div>
-          <div class="item-content">
-            <div class="item-info">
-              <p class="item-label">{{ 'FINANCIAL_OVERVIEW.FINANCIAL_SUMMARY.ANNUAL_PROJECTION' | translate }}</p>
-              <p class="item-description">{{ 'FINANCIAL_OVERVIEW.FINANCIAL_SUMMARY.MAXIMUM_POTENTIAL' | translate }}</p>
-            </div>
-            <div class="item-value">
-              <!-- ✅ totalExpected = montant attendu selon les contrats (calculé par le backend) -->
-              <p class="value-amount">{{ formatPrice(metrics.totalExpected) }}</p>
-              <div class="projection-trend">
-                <svg class="trend-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"></path>
-                </svg>
-                <span class="trend-label">{{ 'FINANCIAL_OVERVIEW.FINANCIAL_SUMMARY.YEAR_TARGET' | translate:{ year: selectedYear } }}</span>
-              </div>
-            </div>
-          </div>
+        <div class="rate-display">
+          <!-- Taux affiché = couvert / attendu -->
+          <span class="rate-percentage" [ngClass]="{
+            'rate-excellent': month.expected > 0 && (month.projected ?? 0) >= month.expected * 0.95,
+            'rate-good':      month.expected > 0 && (month.projected ?? 0) >= month.expected * 0.5 && (month.projected ?? 0) < month.expected * 0.95,
+            'rate-poor':      month.expected === 0 || (month.projected ?? 0) < month.expected * 0.5
+          }">
+            {{ month.expected > 0 ? formatPercentage(Math.min(((month.projected ?? 0) / month.expected) * 100, 100)) : '—' }}
+          </span>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- ═══ BLOC 3 : AVANCES ET RETARDS ═══ -->
+  <div class="section-block">
+    <div class="section-title-bar">
+      <div class="section-badge revenue">3</div>
+      <div>
+        <h3 class="section-title">Avances et retards</h3>
+        <p class="section-subtitle">
+          Basés sur la projection du cumul des paiements par rapport aux mois dus à ce jour
+        </p>
+      </div>
+    </div>
+
+    <div class="financial-summary-card">
+      <div class="summary-content">
+
+        <!-- Couvert dans l'année -->
+        <div class="summary-item deposits">
+          <div class="item-content">
+            <div class="item-icon">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+            <div class="item-info">
+              <p class="item-label">Couvert en {{ selectedYear }}</p>
+              <p class="item-description">
+                Mois de {{ selectedYear }} couverts par le cumul des paiements depuis l'entrée
+              </p>
+            </div>
+            <div class="item-value">
+              <p class="value-amount">{{ formatPrice(metrics.totalCoveredInYear) }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Non couvert -->
+        <div class="summary-item loss">
+          <div class="item-content">
+            <div class="item-icon">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+              </svg>
+            </div>
+            <div class="item-info">
+              <p class="item-label">Non couvert en {{ selectedYear }}</p>
+              <p class="item-description">
+                Mois de {{ selectedYear }} non encore couverts (retards ou mois futurs)
+              </p>
+            </div>
+            <div class="item-value">
+              <p class="value-amount">{{ formatPrice(metrics.yearShortfall) }}</p>
+              <div class="loss-percentage" *ngIf="metrics.collectionRate < 100">
+                <span class="loss-rate">
+                  {{ formatPercentage(100 - metrics.collectionRate) }} non couvert
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Avances globales -->
+        <div class="summary-item performance" *ngIf="metrics.totalAdvances > 0">
+          <div class="item-content">
+            <div class="item-icon">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+              </svg>
+            </div>
+            <div class="item-info">
+              <p class="item-label">Avances des locataires</p>
+              <p class="item-description">
+                Certains locataires ont payé au-delà des mois dus à ce jour
+              </p>
+            </div>
+            <div class="item-value">
+              <p class="value-amount" style="color:#10b981">
+                +{{ formatPrice(metrics.totalAdvances) }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Retards globaux -->
+        <div class="summary-item loss" *ngIf="metrics.totalDebts > 0">
+          <div class="item-content">
+            <div class="item-icon">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path>
+              </svg>
+            </div>
+            <div class="item-info">
+              <p class="item-label">Retards cumulés</p>
+              <p class="item-description">
+                Loyers non encore couverts par les paiements reçus
+              </p>
+            </div>
+            <div class="item-value">
+              <p class="value-amount" style="color:#ef4444">
+                -{{ formatPrice(metrics.totalDebts) }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tout à jour -->
+        <div class="summary-item deposits"
+             *ngIf="metrics.totalAdvances === 0 && metrics.totalDebts === 0">
+          <div class="item-content">
+            <div class="item-icon">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M5 13l4 4L19 7"></path>
+              </svg>
+            </div>
+            <div class="item-info">
+              <p class="item-label">Tous les locataires sont à jour</p>
+              <p class="item-description">Aucun retard ni avance détecté</p>
+            </div>
+            <div class="item-value">
+              <p class="value-amount" style="color:#10b981">✅</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
 </div>

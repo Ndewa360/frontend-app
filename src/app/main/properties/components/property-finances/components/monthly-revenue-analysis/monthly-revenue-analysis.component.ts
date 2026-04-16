@@ -245,10 +245,12 @@ export class MonthlyRevenueAnalysisComponent implements OnInit, OnChanges, OnDes
   }
   
   getWorstMonth(): string {
-    const monthsWithRevenue = this.monthlyData.filter(m => m.received > 0);
-    if (monthsWithRevenue.length === 0) return 'N/A';
+    // FIX #F11 : filtrer sur expected > 0 pour inclure les mois impayés
+    // (un mois avec expected > 0 et received = 0 est le pire mois, pas un mois futur)
+    const monthsWithQuota = this.monthlyData.filter(m => m.expected > 0);
+    if (monthsWithQuota.length === 0) return 'N/A';
 
-    const worstMonth = monthsWithRevenue.reduce((worst, current) =>
+    const worstMonth = monthsWithQuota.reduce((worst, current) =>
       current.rate < worst.rate ? current : worst
     );
 

@@ -28,45 +28,19 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
   @Input() finances: any = null; // Garde pour compatibilité
 
   selectedYear: number = new Date().getFullYear();
-  activeSection: 'dashboard' | 'overview' | 'tenants' | 'deposits' | 'monthly' = 'dashboard';
+  // 4 onglets clairs et distincts
+  activeSection: 'situation' | 'tenants' | 'deposits' | 'monthly' = 'situation';
   isLoading: boolean = false;
 
-  // Configuration des onglets finances
   financeTabs: Array<{
-    id: 'dashboard' | 'overview' | 'tenants' | 'deposits' | 'monthly';
+    id: 'situation' | 'tenants' | 'deposits' | 'monthly';
     label: string;
     icon: string;
-    count?: number;
-  }> = [
-    {
-      id: 'dashboard',
-      label: 'Tableau de Bord',
-      icon: 'dashboard'
-    },
-    {
-      id: 'overview',
-      label: 'Vue d\'ensemble',
-      icon: 'analytics'
-    },
-    {
-      id: 'tenants',
-      label: 'Locataires',
-      icon: 'user'
-    },
-    {
-      id: 'deposits',
-      label: 'Cautions',
-      icon: 'security'
-    },
-    {
-      id: 'monthly',
-      label: 'Revenus',
-      icon: 'money'
-    }
-  ];
+  }> = [];
 
   backendData: any = null;
 
+  private subscriptionReset$ = new Subject<void>();
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -80,52 +54,26 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
 
   private initializeFinanceTabs(): void {
     this.financeTabs = [
-      {
-        id: 'dashboard',
-        label: this.translate.instant('FINANCIAL_DASHBOARD.DASHBOARD'),
-        icon: 'dashboard'
-      },
-      {
-        id: 'overview',
-        label: this.translate.instant('FINANCIAL_DASHBOARD.OVERVIEW'),
-        icon: 'analytics'
-      },
-      {
-        id: 'tenants',
-        label: this.translate.instant('FINANCIAL_DASHBOARD.TENANTS'),
-        icon: 'user'
-      },
-      {
-        id: 'deposits',
-        label: this.translate.instant('FINANCIAL_DASHBOARD.DEPOSITS'),
-        icon: 'security'
-      },
-      {
-        id: 'monthly',
-        label: this.translate.instant('FINANCIAL_DASHBOARD.REVENUE'),
-        icon: 'money'
-      }
+      { id: 'situation', label: 'Situation financière', icon: 'analytics' },
+      { id: 'tenants',   label: 'Locataires',           icon: 'user'      },
+      { id: 'deposits',  label: 'Cautions',             icon: 'security'  },
+      { id: 'monthly',   label: 'Revenus encaissés',    icon: 'money'     }
     ];
   }
 
   ngOnInit(): void {
-    
     this.ensureValidSelectedYear();
-    
     if (this.propertyId) {
-      // D'abord configurer les subscriptions
       this.setupDataSubscriptions();
-      // Puis charger les données
       this.loadFinancialData();
-    } else {
-      console.log('⚠️ Pas de propertyId au démarrage');
     }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['propertyId'] || changes['selectedYear']) {
       if (this.propertyId) {
-        // Reconfigurer les subscriptions avec les nouvelles valeurs
+        // FIX #F7 : annuler la subscription précédente avant d'en créer une nouvelle
+        this.subscriptionReset$.next();
         this.setupDataSubscriptions();
         this.loadFinancialData();
       }
@@ -135,35 +83,32 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
 
 
   ngOnDestroy(): void {
+    this.subscriptionReset$.next();
+    this.subscriptionReset$.complete();
     this.destroy$.next();
     this.destroy$.complete();
   }
 
   private loadFinancialData(): void {
-    if (!this.propertyId) {
-      console.log('❌ Pas de propertyId, arrêt du chargement');
-      return;
-    }
-    
+    if (!this.propertyId) return;
     this.isLoading = true;
-    
-    // Déclencher l'action pour récupérer les calculs centralisés
     this.store.dispatch(new StatisticAction.FetchStaticByPropertyIdAndYear(this.propertyId, this.selectedYear.toString()));
   }
 
 
   private setupDataSubscriptions(): void {
-    
+    // FIX #F7 : takeUntil sur subscriptionReset$ pour annuler à chaque changement
+    // et sur destroy$ pour annuler à la destruction du composant
     this.store.select(
       StatisticState.selectStateStatisticPropertyIdAndYear(this.propertyId, this.selectedYear)
     ).pipe(
+      takeUntil(this.subscriptionReset$),
       takeUntil(this.destroy$)
     ).subscribe({
       next: (backendData) => {
         this.backendData = backendData;
         if (backendData && backendData.length > 0) {
           this.isLoading = false;
-          // ✅ Alimenter les alertes depuis les données enrichies du backend
           this.performanceAlertsService.loadAlertsFromEnrichedData(
             backendData[0],
             `Propriété ${this.propertyId}`
@@ -227,29 +172,26 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
     this.onYearChange(this.getCurrentYear());
   }
 
-  onSectionChange(section: 'dashboard' | 'overview' | 'tenants' | 'deposits' | 'monthly'): void {
+  onSectionChange(section: 'situation' | 'tenants' | 'deposits' | 'monthly'): void {
     this.activeSection = section;
   }
 
   getSectionLabel(section: string): string {
     const labels = {
-      'dashboard': 'Tableau de Bord',
-      'overview': 'Vue d\'ensemble',
-      'tenants': 'Locataires',
-      'deposits': 'Cautions',
-      'monthly': 'Revenus'
+      'situation': 'Situation financière',
+      'tenants':   'Locataires',
+      'deposits':  'Cautions',
+      'monthly':   'Revenus encaissés'
     };
     return labels[section as keyof typeof labels] || section;
   }
 
   getCurrentSectionIndex(): number {
-    const sections = ['dashboard', 'overview', 'tenants', 'deposits', 'monthly'];
+    const sections = ['situation', 'tenants', 'deposits', 'monthly'];
     return sections.indexOf(this.activeSection);
   }
 
-  getTotalSections(): number {
-    return 5; // Nombre total de sections
-  }
+  getTotalSections(): number { return 4; }
 
   getSectionProgress(): number {
     const currentIndex = this.getCurrentSectionIndex();
@@ -268,27 +210,14 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
 
   private exportToExcel(exportData: ExportData): void {
     try {
-      // Ajouter des métadonnées à l'export
       const enrichedData = this.enrichExportData(exportData.data);
-
-      this.excelExportService.exportToExcel(
-        enrichedData,
-        exportData.filename,
-        {
-          sheetName: this.getSheetName(),
-          includeMetadata: true,
-          metadata: {
-            propertyId: this.propertyId,
-            year: this.selectedYear,
-            exportDate: new Date().toLocaleDateString('fr-FR'),
-            section: this.activeSection
-          }
-        }
-      );
-
-      console.log('✅ Export Excel réussi:', exportData.filename);
+      this.excelExportService.exportToExcel(enrichedData, exportData.filename, {
+        sheetName: this.getSheetName(),
+        includeMetadata: true,
+        metadata: { propertyId: this.propertyId, year: this.selectedYear, exportDate: new Date().toLocaleDateString('fr-FR'), section: this.activeSection }
+      });
     } catch (error) {
-      console.error('❌ Erreur lors de l\'export Excel:', error);
+      console.error('❌ Erreur export Excel:', error);
     }
   }
 
@@ -296,9 +225,8 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
     try {
       const csvContent = this.convertToCSV(exportData.data);
       this.downloadCSV(csvContent, exportData.filename);
-      console.log('✅ Export CSV réussi:', exportData.filename);
     } catch (error) {
-      console.error('❌ Erreur lors de l\'export CSV:', error);
+      console.error('❌ Erreur export CSV:', error);
     }
   }
 
@@ -313,11 +241,10 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
 
   private getSheetName(): string {
     const sectionNames = {
-      dashboard: 'Tableau de bord',
-      overview: 'Vue d\'ensemble',
-      tenants: 'Locataires',
-      deposits: 'Cautions',
-      monthly: 'Revenus mensuels'
+      situation: 'Situation financière',
+      tenants:   'Locataires',
+      deposits:  'Cautions',
+      monthly:   'Revenus encaissés'
     };
     return sectionNames[this.activeSection] || 'Données financières';
   }

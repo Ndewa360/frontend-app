@@ -1,63 +1,60 @@
 <!-- Récapitulatif des cautions -->
 <div class="deposits-summary-container">
 
-  <!-- Header avec gradient thème -->
+  <!-- Header -->
   <div class="header-section">
     <div class="header-content">
       <div class="header-text">
-        <h2 class="header-title">{{ 'DEPOSITS_SUMMARY.TITLE' | translate }}</h2>
-        <p class="header-subtitle">{{ 'DEPOSITS_SUMMARY.SUBTITLE' | translate:{ year: selectedYear } }}</p>
+        <h2 class="header-title">Cautions — {{ selectedYear }}</h2>
+        <p class="header-subtitle">
+          État des cautions versées · Remboursables à la fin du contrat de location
+        </p>
       </div>
-
       <div class="header-actions">
         <button (click)="onExportDepositSummary()" class="btn-export">
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
           </svg>
-          <span>{{ 'DEPOSITS_SUMMARY.EXPORT_DEPOSITS' | translate }}</span>
+          <span>Exporter</span>
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Section métriques avec design moderne -->
+  <!-- Métriques -->
   <div class="metrics-section">
     <div class="metrics-grid">
 
-      <!-- Total des cautions attendues -->
+      <!-- Cautions attendues -->
       <div class="metric-card info">
         <div class="metric-content">
           <div class="metric-icon">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
             </svg>
           </div>
           <div class="metric-info">
-            <p class="metric-label">{{ 'DEPOSITS_SUMMARY.METRICS.EXPECTED_DEPOSITS' | translate }}</p>
+            <p class="metric-label">Cautions attendues</p>
             <p class="metric-value">{{ formatPrice(globalStats.totalExpectedDeposits) }}</p>
-            <p class="metric-description">{{ 'DEPOSITS_SUMMARY.METRICS.EXPECTED_DEPOSITS_DESC' | translate:{ count: globalStats.roomsRequiringCaution } }}</p>
-            <div class="metric-trend">
-              <svg class="trend-icon neutral" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
-              </svg>
-              <span class="trend-text">{{ 'DEPOSITS_SUMMARY.METRICS.YEAR_TARGET' | translate:{ year: selectedYear } }}</span>
-            </div>
+            <p class="metric-description">{{ globalStats.roomsRequiringCaution }} unité(s) avec caution requise</p>
           </div>
         </div>
       </div>
 
-      <!-- Total des cautions reçues -->
+      <!-- Cautions reçues (remboursables) -->
       <div class="metric-card success">
         <div class="metric-content">
           <div class="metric-icon">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
             </svg>
           </div>
           <div class="metric-info">
-            <p class="metric-label">{{ 'DEPOSITS_SUMMARY.METRICS.RECEIVED_DEPOSITS' | translate }}</p>
+            <p class="metric-label">Cautions reçues</p>
             <p class="metric-value">{{ formatPrice(globalStats.totalReceivedDeposits) }}</p>
-            <p class="metric-description">{{ 'DEPOSITS_SUMMARY.METRICS.RECEIVED_DEPOSITS_DESC' | translate:{ count: globalStats.completeDeposits } }}</p>
+            <p class="metric-description">
+              {{ globalStats.completeDeposits }} complètes · {{ globalStats.partialDeposits }} partielles
+            </p>
             <div class="metric-progress">
               <div class="progress-bar">
                 <div class="progress-fill" [style.width.%]="globalStats.averageDepositRate"></div>
@@ -68,31 +65,20 @@
         </div>
       </div>
 
-      <!-- Taux de collecte -->
-      <div class="metric-card primary" [ngClass]="{
-        'success': globalStats.averageDepositRate >= 90,
-        'warning': globalStats.averageDepositRate >= 70 && globalStats.averageDepositRate < 90,
-        'danger': globalStats.averageDepositRate < 70
-      }">
+      <!-- À rembourser (contrats terminés) -->
+      <div class="metric-card warning">
         <div class="metric-content">
           <div class="metric-icon">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2-2V7a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 002 2h2a2 2 0 012-2V7a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 00-2 2h-2a2 2 0 00-2 2v6a2 2 0 01-2 2H9z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path>
             </svg>
           </div>
           <div class="metric-info">
-            <p class="metric-label">{{ 'DEPOSITS_SUMMARY.METRICS.COLLECTION_RATE' | translate }}</p>
-            <p class="metric-value">{{ formatPercentage(globalStats.averageDepositRate) }}</p>
-            <p class="metric-description">{{ 'DEPOSITS_SUMMARY.METRICS.COLLECTION_PERFORMANCE' | translate }}</p>
-            <div class="metric-status">
-              <span class="status-badge" [ngClass]="{
-                'status-excellent': globalStats.averageDepositRate >= 90,
-                'status-good': globalStats.averageDepositRate >= 70 && globalStats.averageDepositRate < 90,
-                'status-poor': globalStats.averageDepositRate < 70
-              }">
-                {{ globalStats.averageDepositRate >= 90 ? ('DEPOSITS_SUMMARY.STATUS_LABELS.EXCELLENT' | translate) : globalStats.averageDepositRate >= 70 ? ('DEPOSITS_SUMMARY.STATUS_LABELS.GOOD' | translate) : ('DEPOSITS_SUMMARY.STATUS_LABELS.TO_IMPROVE' | translate) }}
-              </span>
-            </div>
+            <p class="metric-label">À rembourser</p>
+            <p class="metric-value">{{ formatPrice(toRefundAmount) }}</p>
+            <p class="metric-description">
+              {{ toRefundCount }} contrat(s) terminé(s) avec caution à rembourser
+            </p>
           </div>
         </div>
       </div>
@@ -106,50 +92,43 @@
             </svg>
           </div>
           <div class="metric-info">
-            <p class="metric-label">{{ 'DEPOSITS_SUMMARY.METRICS.MISSING_DEPOSITS' | translate }}</p>
+            <p class="metric-label">Cautions manquantes</p>
             <p class="metric-value">{{ formatPrice(Math.max(0, globalStats.totalExpectedDeposits - globalStats.totalReceivedDeposits)) }}</p>
-            <p class="metric-description">{{ 'DEPOSITS_SUMMARY.METRICS.MISSING_DEPOSITS_DESC' | translate:{ count: globalStats.missingDeposits + globalStats.partialDeposits } }}</p>
-            <div class="metric-breakdown">
-              <div class="breakdown-item">
-                <span class="breakdown-label">{{ 'DEPOSITS_SUMMARY.METRICS.MISSING_COUNT' | translate }}</span>
-                <span class="breakdown-value">{{ globalStats.missingDeposits }}</span>
-              </div>
-              <div class="breakdown-item">
-                <span class="breakdown-label">{{ 'DEPOSITS_SUMMARY.METRICS.PARTIAL_COUNT' | translate }}</span>
-                <span class="breakdown-value">{{ globalStats.partialDeposits }}</span>
-              </div>
-            </div>
+            <p class="metric-description">
+              {{ globalStats.missingDeposits }} non payées · {{ globalStats.partialDeposits }} partielles
+            </p>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Section filtres et recherche -->
+  <!-- Alertes cautions -->
+  <div *ngIf="cautionAlerts && cautionAlerts.length > 0" class="alerts-section mb-6">
+    <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+      <h4 class="text-sm font-semibold text-yellow-800 mb-2">⚠️ Alertes cautions</h4>
+      <ul class="space-y-1">
+        <li *ngFor="let alert of cautionAlerts" class="text-sm text-yellow-700">{{ alert }}</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Filtres -->
   <div class="filters-section">
     <div class="filters-container">
-
-      <!-- Filtres par statut -->
       <div class="filters-group">
-        <label class="filter-label">{{ 'DEPOSITS_SUMMARY.FILTERS.FILTER_BY_STATUS' | translate }}</label>
-        <select [(ngModel)]="statusFilter"
-                (ngModelChange)="onStatusFilterChange()"
-                class="filter-select">
-          <option value="all">{{ 'DEPOSITS_SUMMARY.FILTERS.ALL_STATUS' | translate }}</option>
-          <option value="complete">{{ 'DEPOSITS_SUMMARY.FILTERS.COMPLETE' | translate }}</option>
-          <option value="partial">{{ 'DEPOSITS_SUMMARY.FILTERS.PARTIAL' | translate }}</option>
-          <option value="missing">{{ 'DEPOSITS_SUMMARY.FILTERS.MISSING' | translate }}</option>
-          <option value="no_tenant">{{ 'DEPOSITS_SUMMARY.FILTERS.NO_TENANT' | translate }}</option>
+        <label class="filter-label">Filtrer par statut</label>
+        <select [(ngModel)]="statusFilter" (ngModelChange)="onStatusFilterChange()" class="filter-select">
+          <option value="all">Tous</option>
+          <option value="complete">Payée complètement</option>
+          <option value="partial">Partielle</option>
+          <option value="missing">Non payée</option>
+          <option value="overpaid">Surpayée</option>
         </select>
       </div>
-
-      <!-- Recherche -->
       <div class="search-container">
-        <input type="text"
-               [(ngModel)]="searchTerm"
-               (ngModelChange)="onSearchChange()"
-               [placeholder]="'DEPOSITS_SUMMARY.FILTERS.SEARCH_PLACEHOLDER' | translate"
-               class="search-input">
+        <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
+               placeholder="Rechercher une unité..." class="search-input">
         <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
         </svg>
@@ -157,70 +136,79 @@
     </div>
   </div>
 
-  <!-- Section contenu principal -->
+  <!-- Tableau des cautions -->
   <div class="content-section">
-
-    <!-- Header du tableau -->
     <div class="table-header">
-      <h3 class="table-title">{{ 'DEPOSITS_SUMMARY.TABLE.TITLE' | translate }}</h3>
+      <h3 class="table-title">Détail par unité</h3>
       <div class="table-summary">
-        <span class="summary-text">{{ 'DEPOSITS_SUMMARY.TABLE.SUMMARY' | translate:{ count: filteredSummaries.length } }}</span>
+        <span class="summary-text">{{ filteredSummaries.length }} unité(s)</span>
       </div>
     </div>
 
-    <!-- Tableau amélioré -->
     <div class="table-container">
       <table>
         <thead>
           <tr>
-            <th>{{ 'DEPOSITS_SUMMARY.TABLE.HEADERS.UNIT' | translate }}</th>
-            <th>{{ 'DEPOSITS_SUMMARY.TABLE.HEADERS.TYPE' | translate }}</th>
-            <th>{{ 'DEPOSITS_SUMMARY.TABLE.HEADERS.RENT' | translate }}</th>
-            <th>{{ 'DEPOSITS_SUMMARY.TABLE.HEADERS.EXPECTED_DEPOSIT' | translate }}</th>
-            <th>{{ 'DEPOSITS_SUMMARY.TABLE.HEADERS.RECEIVED_DEPOSIT' | translate }}</th>
-            <th>{{ 'DEPOSITS_SUMMARY.TABLE.HEADERS.RATE' | translate }}</th>
-            <th>{{ 'DEPOSITS_SUMMARY.TABLE.HEADERS.TENANT' | translate }}</th>
-            <th>{{ 'DEPOSITS_SUMMARY.TABLE.HEADERS.STATUS' | translate }}</th>
+            <th>Unité</th>
+            <th>Locataire</th>
+            <th>Loyer</th>
+            <th>Caution attendue</th>
+            <th>Caution reçue</th>
+            <th>Taux</th>
+            <th>Statut caution</th>
+            <th>Fin de contrat</th>
+            <th>À rembourser</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let deposit of filteredSummaries; trackBy: trackByRoomId; let i = index"
-              [style.animation-delay.ms]="i * 50">
+              [style.animation-delay.ms]="i * 50"
+              [ngClass]="{ 'bg-orange-50': isContractEnded(deposit) && deposit.receivedDeposit > 0 }">
 
-            <!-- Code de l'unité -->
+            <!-- Unité -->
             <td>
               <div class="unit-info">
                 <div class="unit-code">{{ deposit.roomCode }}</div>
-                <div class="unit-id">{{ 'DEPOSITS_SUMMARY.TABLE.UNIT_ID' | translate }} {{ deposit.roomId.substring(0, 8) }}...</div>
+                <div class="unit-id text-xs text-gray-400">{{ deposit.roomType }}</div>
               </div>
             </td>
 
-            <!-- Type d'unité -->
+            <!-- Locataire -->
             <td>
-              <div class="unit-type">
-                <span class="type-badge">{{ deposit.roomType }}</span>
+              <div class="tenant-info">
+                <div class="tenant-avatar" *ngIf="deposit.tenantName && deposit.tenantName !== 'Aucun locataire'">
+                  {{ deposit.tenantName.charAt(0).toUpperCase() }}
+                </div>
+                <div class="tenant-details">
+                  <span class="tenant-name">{{ deposit.tenantName || 'Aucun locataire' }}</span>
+                  <span *ngIf="deposit.locationStartDate" class="text-xs text-gray-400">
+                    Depuis {{ deposit.locationStartDate | date:'dd/MM/yyyy' }}
+                  </span>
+                </div>
               </div>
             </td>
 
-            <!-- Loyer mensuel -->
+            <!-- Loyer -->
             <td>
-              <div class="price-info">
-                <span class="price-amount">{{ formatPrice(deposit.roomPrice) }}</span>
-                <span class="price-label">{{ 'DEPOSITS_SUMMARY.TABLE.PER_MONTH' | translate }}</span>
-              </div>
+              <span class="price-amount">{{ formatPrice(deposit.roomPrice) }}</span>
+              <span class="price-label text-xs text-gray-400">/mois</span>
             </td>
 
             <!-- Caution attendue -->
             <td>
-              <div class="expected-amount">{{ formatPrice(deposit.expectedDeposit) }}</div>
+              <span class="font-medium">{{ formatPrice(deposit.expectedDeposit) }}</span>
             </td>
 
             <!-- Caution reçue -->
             <td>
-              <div class="received-amount">{{ formatPrice(deposit.receivedDeposit) }}</div>
+              <span class="font-medium" [ngClass]="{
+                'text-green-600': deposit.receivedDeposit >= deposit.expectedDeposit,
+                'text-yellow-600': deposit.receivedDeposit > 0 && deposit.receivedDeposit < deposit.expectedDeposit,
+                'text-red-600': deposit.receivedDeposit === 0
+              }">{{ formatPrice(deposit.receivedDeposit) }}</span>
             </td>
 
-            <!-- Taux de caution -->
+            <!-- Taux -->
             <td>
               <div class="progress-container">
                 <div class="progress-bar">
@@ -228,8 +216,8 @@
                        [style.width.%]="Math.min(deposit.depositRate, 100)"
                        [ngClass]="{
                          'excellent': deposit.depositRate >= 100,
-                         'good': deposit.depositRate >= 50 && deposit.depositRate < 100,
-                         'poor': deposit.depositRate < 50
+                         'good':      deposit.depositRate >= 50 && deposit.depositRate < 100,
+                         'poor':      deposit.depositRate < 50
                        }">
                     <div class="progress-shine"></div>
                   </div>
@@ -238,20 +226,7 @@
               </div>
             </td>
 
-            <!-- Locataire -->
-            <td>
-              <div class="tenant-info">
-                <div class="tenant-avatar" *ngIf="deposit.tenantName">
-                  {{ deposit.tenantName.charAt(0).toUpperCase() }}
-                </div>
-                <div class="tenant-details">
-                  <span class="tenant-name">{{ deposit.tenantName || ('DEPOSITS_SUMMARY.TABLE.NO_TENANT' | translate) }}</span>
-                  <span class="tenant-status" *ngIf="!deposit.tenantName">{{ 'DEPOSITS_SUMMARY.TABLE.UNIT_FREE' | translate }}</span>
-                </div>
-              </div>
-            </td>
-
-            <!-- Statut -->
+            <!-- Statut caution -->
             <td>
               <span class="status-badge" [ngClass]="getStatusColor(deposit.status)">
                 <svg class="status-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -260,6 +235,56 @@
                 {{ getStatusLabel(deposit.status) | translate }}
               </span>
             </td>
+
+            <!-- Fin de contrat -->
+            <td>
+              <div *ngIf="deposit.locationEndDate; else noEndDate">
+                <span class="text-sm font-medium" [ngClass]="{
+                  'text-red-600':    isContractEnded(deposit),
+                  'text-orange-600': isContractEndingSoon(deposit),
+                  'text-gray-600':   !isContractEnded(deposit) && !isContractEndingSoon(deposit)
+                }">
+                  {{ deposit.locationEndDate | date:'dd/MM/yyyy' }}
+                </span>
+                <div class="text-xs mt-0.5" [ngClass]="{
+                  'text-red-500':    isContractEnded(deposit),
+                  'text-orange-500': isContractEndingSoon(deposit)
+                }">
+                  {{ isContractEnded(deposit) ? 'Terminé' : isContractEndingSoon(deposit) ? 'Bientôt' : '' }}
+                </div>
+              </div>
+              <ng-template #noEndDate>
+                <span class="text-xs text-gray-400">En cours</span>
+              </ng-template>
+            </td>
+
+            <!-- À rembourser -->
+            <td>
+              <div *ngIf="deposit.receivedDeposit > 0">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold"
+                      [ngClass]="{
+                        'bg-orange-100 text-orange-800': isContractEnded(deposit),
+                        'bg-blue-100  text-blue-800':   !isContractEnded(deposit)
+                      }">
+                  <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          [attr.d]="isContractEnded(deposit)
+                            ? 'M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6'
+                            : 'M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z'">
+                    </path>
+                  </svg>
+                  {{ isContractEnded(deposit) ? 'À rembourser' : 'En garantie' }}
+                </span>
+                <div class="text-xs font-medium mt-1" [ngClass]="{
+                  'text-orange-700': isContractEnded(deposit),
+                  'text-blue-700':   !isContractEnded(deposit)
+                }">
+                  {{ formatPrice(deposit.receivedDeposit) }}
+                </div>
+              </div>
+              <span *ngIf="deposit.receivedDeposit === 0" class="text-xs text-gray-400">—</span>
+            </td>
+
           </tr>
         </tbody>
       </table>
@@ -270,22 +295,19 @@
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
       </svg>
-      <h3>{{ 'DEPOSITS_SUMMARY.EMPTY_STATE.TITLE' | translate }}</h3>
-      <p>{{ 'DEPOSITS_SUMMARY.EMPTY_STATE.MESSAGE' | translate }}</p>
+      <h3>Aucune caution trouvée</h3>
+      <p>Aucune unité ne nécessite de caution ou aucun résultat pour ce filtre.</p>
       <button (click)="statusFilter = 'all'; searchTerm = ''; applyFilters()" class="btn-reset">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-        </svg>
-        {{ 'DEPOSITS_SUMMARY.EMPTY_STATE.RESET_FILTERS' | translate }}
+        Réinitialiser les filtres
       </button>
     </div>
   </div>
 
-  <!-- Indicateur de chargement -->
+  <!-- Chargement -->
   <div *ngIf="isLoading" class="loading-overlay">
     <div class="loading-content">
       <div class="loading-spinner"></div>
-      <span class="loading-text">{{ 'DEPOSITS_SUMMARY.LOADING_MESSAGE' | translate }}</span>
+      <span class="loading-text">Chargement des cautions...</span>
     </div>
   </div>
 </div>

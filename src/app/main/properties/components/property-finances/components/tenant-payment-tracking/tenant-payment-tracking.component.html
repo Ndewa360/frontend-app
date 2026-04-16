@@ -112,20 +112,20 @@
     <!-- Tableau des locataires -->
     <div *ngIf="!isLoading && getPaginatedTenants().length > 0" class="table-container">
       <table>
-        <thead>
+          <thead>
           <tr>
             <th>{{ 'TENANT_PAYMENT_TRACKING.TABLE.TENANT' | translate }}</th>
             <th>{{ 'TENANT_PAYMENT_TRACKING.TABLE.UNIT' | translate }}</th>
             <th>{{ 'TENANT_PAYMENT_TRACKING.TABLE.MONTHLY_RENT' | translate }}</th>
-            <th>{{ 'TENANT_PAYMENT_TRACKING.TABLE.TOTAL_EXPECTED' | translate }}</th>
-            <th>{{ 'TENANT_PAYMENT_TRACKING.TABLE.TOTAL_RECEIVED' | translate }}</th>
+            <th>Attendu à ce jour</th>
+            <th>Couvert {{ selectedYear }}</th>
             <th>{{ 'TENANT_PAYMENT_TRACKING.TABLE.BEHIND' | translate }}</th>
-            <th>{{ 'TENANT_PAYMENT_TRACKING.TABLE.RATE' | translate }}</th>
+            <th>Taux année</th>
             <th>{{ 'TENANT_PAYMENT_TRACKING.TABLE.STATUS' | translate }}</th>
             <th>{{ 'TENANT_PAYMENT_TRACKING.TABLE.LAST_PAYMENT' | translate }}</th>
             <th>{{ 'TENANT_PAYMENT_TRACKING.TABLE.NEXT_PAYMENT' | translate }}</th>
           </tr>
-        </thead>
+          </thead>
         <tbody>
           <tr *ngFor="let tenant of getPaginatedTenants(); trackBy: trackByTenantId"
               (click)="selectTenant(tenant)">
@@ -155,14 +155,16 @@
               <div class="text-gray-900">{{ tenant.monthlyRent | currency:'XAF':'symbol':'1.0-0' }}</div>
             </td>
 
-            <!-- Total attendu -->
+            <!-- Total attendu à ce jour -->
             <td>
               <div class="text-gray-900">{{ tenant.expectedPaymentToDate | currency:'XAF':'symbol':'1.0-0' }}</div>
+              <div class="text-xs text-gray-400">{{ tenant.monthsOccupied | number:'1.0-1' }} mois dus</div>
             </td>
 
-            <!-- Total reçu -->
+            <!-- Couvert dans l'année -->
             <td>
               <div class="font-medium text-green-600">{{ tenant.totalPaid | currency:'XAF':'symbol':'1.0-0' }}</div>
+              <div class="text-xs text-gray-400">sur {{ tenant.monthlyRent * 12 | currency:'XAF':'symbol':'1.0-0' }}</div>
             </td>
 
             <!-- Montant en retard -->

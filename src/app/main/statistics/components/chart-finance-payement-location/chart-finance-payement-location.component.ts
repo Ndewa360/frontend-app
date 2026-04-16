@@ -56,16 +56,40 @@ export class ChartFinancePayementLocationComponent implements OnChanges, OnDestr
 
     data.forEach(item => {
       legendData.push(item.locataire.fullName);
+      // paymentValue = montant couvert par mois dans l'année (projection)
+      // 0 = mois non couvert, loyer = mois couvert
       dataSeries.push({
         name: item.locataire.fullName,
         type: 'line',
-        stack: 'Total',
-        data: item.paymentValue
+        smooth: false,
+        step: 'middle',
+        data: item.paymentValue,
+        lineStyle: { width: 2 },
+        symbol: 'circle',
+        symbolSize: 6,
+        tooltip: {
+          valueFormatter: (v: number) =>
+            v > 0 ? `${v.toLocaleString('fr-FR')} FCFA (couvert)` : 'Non couvert'
+        }
       });
     });
 
     return {
-      tooltip: { trigger: 'axis' },
+      tooltip: {
+        trigger: 'axis',
+        formatter: (params: any[]) => {
+          const monthName = UtilsString.capitalizedFirstLetter(
+            new Date(this.selectedYear, params[0].dataIndex)
+              .toLocaleDateString('fr-FR', { month: 'long' })
+          );
+          let content = `<strong>${monthName} ${this.selectedYear}</strong><br/>`;
+          params.forEach(p => {
+            const icon = p.value > 0 ? '✅' : '❌';
+            content += `${icon} ${p.seriesName} : <strong>${p.value > 0 ? p.value.toLocaleString('fr-FR') + ' FCFA' : 'Non couvert'}</strong><br/>`;
+          });
+          return content;
+        }
+      },
       legend: { data: legendData },
       grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
       toolbox: { feature: { saveAsImage: {} } },
@@ -77,7 +101,8 @@ export class ChartFinancePayementLocationComponent implements OnChanges, OnDestr
       },
       yAxis: {
         type: 'value',
-        name: 'Montant (FCFA)'
+        name: 'Montant couvert (FCFA)',
+        axisLabel: { formatter: (v: number) => v > 0 ? v.toLocaleString('fr-FR') : '0' }
       },
       series: dataSeries
     };

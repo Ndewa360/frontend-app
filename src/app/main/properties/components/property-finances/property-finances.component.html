@@ -60,18 +60,10 @@
           <button *ngFor="let tab of financeTabs; trackBy: trackByTabId"
                   (click)="onSectionChange(tab.id)"
                   class="property-tab-button px-6 py-4 text-sm font-medium border-b-2 border-transparent transition-all duration-300 ease-in-out"
-                  [ngClass]="{
-                    'active': activeSection === tab.id
-                  }">
+                  [ngClass]="{ 'active': activeSection === tab.id }">
             <div class="flex items-center">
-              <youpez-ibm-icon [iconName]="tab.icon"
-                               iconSize="16"
-                               class="mr-2"></youpez-ibm-icon>
+              <youpez-ibm-icon [iconName]="tab.icon" iconSize="16" class="mr-2"></youpez-ibm-icon>
               {{ tab.label }}
-              <span *ngIf="tab.count !== undefined"
-                    class="ml-2 bg-gray-100 text-gray-900 py-1 px-2 rounded-full text-xs font-medium tab-count">
-                {{ tab.count }}
-              </span>
             </div>
           </button>
         </nav>
@@ -129,18 +121,9 @@
 
     <!-- Contenu des sections (affiché seulement s'il y a des données) -->
     <ng-container *ngIf="hasFinancialData()">
-      <!-- Tableau de bord avancé -->
-      <div *ngIf="activeSection === 'dashboard'">
-        <app-advanced-financial-dashboard
-          [selectedYear]="selectedYear"
-          [propertyId]="propertyId"
-          [isLoading]="isLoading"
-          (exportData)="onExportData($event)">
-        </app-advanced-financial-dashboard>
-      </div>
 
-      <!-- Vue d'ensemble -->
-      <div *ngIf="activeSection === 'overview'">
+      <!-- Situation financière (fusion Tableau de bord + Vue d'ensemble) -->
+      <div *ngIf="activeSection === 'situation'">
         <app-financial-overview
           [selectedYear]="selectedYear"
           [propertyId]="propertyId"
@@ -160,7 +143,7 @@
         </app-tenant-payment-tracking>
       </div>
 
-      <!-- Récapitulatif des cautions -->
+      <!-- Cautions -->
       <div *ngIf="activeSection === 'deposits'">
         <app-deposits-summary
           [enrichedData]="backendData"
@@ -171,7 +154,7 @@
         </app-deposits-summary>
       </div>
 
-      <!-- Revenus mensuels -->
+      <!-- Revenus encaissés -->
       <div *ngIf="activeSection === 'monthly'">
         <app-monthly-revenue-analysis
           [selectedYear]="selectedYear"
@@ -180,6 +163,7 @@
           (exportData)="onExportData($event)">
         </app-monthly-revenue-analysis>
       </div>
+
     </ng-container>
   </div>
 

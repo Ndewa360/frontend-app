@@ -1,118 +1,94 @@
 <!-- Analyse des paiements des locataires -->
 <div class="tenant-payment-analysis-container p-8">
-  
-  <!-- Header avec actions -->
+
+  <!-- Header -->
   <div class="flex items-center justify-between mb-6">
     <div>
       <h2 class="text-2xl font-bold text-gray-900">{{ 'TENANT_PAYMENT_ANALYSIS.TITLE' | translate }}</h2>
-      <p class="text-gray-600 mt-1">{{ 'TENANT_PAYMENT_ANALYSIS.SUBTITLE' | translate:{ year: selectedYear } }}</p>
+      <p class="text-gray-600 mt-1">
+        Situation projetée pour {{ selectedYear }} — basée sur le cumul des paiements depuis l'entrée
+      </p>
     </div>
-    
-    <div class="flex items-center space-x-3">
-      <button (click)="onExportTenantAnalysis()"
-              class="flex items-center space-x-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors duration-200">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-        </svg>
-        <span>{{ 'TENANT_PAYMENT_ANALYSIS.EXPORT_BUTTON' | translate }}</span>
-      </button>
-    </div>
+    <button (click)="onExportTenantAnalysis()"
+            class="flex items-center space-x-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors duration-200">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+      </svg>
+      <span>{{ 'TENANT_PAYMENT_ANALYSIS.EXPORT_BUTTON' | translate }}</span>
+    </button>
   </div>
 
   <!-- Statistiques globales -->
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
-    
-    <!-- Total des locataires -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-      <div class="text-center">
-        <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-3">
-          <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-          </svg>
-        </div>
-        <p class="text-2xl font-bold text-gray-900">{{ globalStats.totalTenants }}</p>
-        <p class="text-sm text-gray-600">{{ 'TENANT_PAYMENT_ANALYSIS.STATS.TOTAL_TENANTS' | translate }}</p>
+
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 text-center">
+      <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-3">
+        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+        </svg>
       </div>
+      <p class="text-2xl font-bold text-gray-900">{{ globalStats.totalTenants }}</p>
+      <p class="text-sm text-gray-600">{{ 'TENANT_PAYMENT_ANALYSIS.STATS.TOTAL_TENANTS' | translate }}</p>
     </div>
 
-    <!-- Excellents payeurs -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-      <div class="text-center">
-        <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mx-auto mb-3">
-          <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-          </svg>
-        </div>
-        <p class="text-2xl font-bold text-green-600">{{ globalStats.excellentTenants }}</p>
-        <p class="text-sm text-gray-600">{{ 'TENANT_PAYMENT_ANALYSIS.STATS.EXCELLENT' | translate }}</p>
+    <div class="bg-white rounded-xl shadow-sm border border-green-200 p-6 text-center">
+      <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mx-auto mb-3">
+        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
       </div>
+      <p class="text-2xl font-bold text-green-600">{{ globalStats.excellentTenants }}</p>
+      <p class="text-sm text-gray-600">À jour / En avance</p>
     </div>
 
-    <!-- Bons payeurs -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-      <div class="text-center">
-        <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-3">
-          <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"></path>
-          </svg>
-        </div>
-        <p class="text-2xl font-bold text-blue-600">{{ globalStats.goodTenants }}</p>
-        <p class="text-sm text-gray-600">{{ 'TENANT_PAYMENT_ANALYSIS.STATS.GOOD' | translate }}</p>
+    <div class="bg-white rounded-xl shadow-sm border border-blue-200 p-6 text-center">
+      <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-3">
+        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+        </svg>
       </div>
+      <p class="text-2xl font-bold text-blue-600">{{ globalStats.goodTenants }}</p>
+      <p class="text-sm text-gray-600">Bons payeurs (≥95%)</p>
     </div>
 
-    <!-- À surveiller -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-      <div class="text-center">
-        <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center mx-auto mb-3">
-          <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-          </svg>
-        </div>
-        <p class="text-2xl font-bold text-yellow-600">{{ globalStats.warningTenants }}</p>
-        <p class="text-sm text-gray-600">{{ 'TENANT_PAYMENT_ANALYSIS.STATS.WARNING' | translate }}</p>
+    <div class="bg-white rounded-xl shadow-sm border border-yellow-200 p-6 text-center">
+      <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center mx-auto mb-3">
+        <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+        </svg>
       </div>
+      <p class="text-2xl font-bold text-yellow-600">{{ globalStats.warningTenants }}</p>
+      <p class="text-sm text-gray-600">Retard modéré (50–95%)</p>
     </div>
 
-    <!-- Critiques -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-      <div class="text-center">
-        <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center mx-auto mb-3">
-          <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-          </svg>
-        </div>
-        <p class="text-2xl font-bold text-red-600">{{ globalStats.criticalTenants }}</p>
-        <p class="text-sm text-gray-600">{{ 'TENANT_PAYMENT_ANALYSIS.STATS.CRITICAL' | translate }}</p>
+    <div class="bg-white rounded-xl shadow-sm border border-red-200 p-6 text-center">
+      <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center mx-auto mb-3">
+        <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
       </div>
+      <p class="text-2xl font-bold text-red-600">{{ globalStats.criticalTenants }}</p>
+      <p class="text-sm text-gray-600">Retard critique (&lt;50%)</p>
     </div>
   </div>
 
-  <!-- Filtres et recherche -->
+  <!-- Filtres -->
   <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
     <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
-      
-      <!-- Filtres par statut -->
       <div class="flex items-center space-x-4">
         <label class="text-sm font-medium text-gray-700">{{ 'TENANT_PAYMENT_ANALYSIS.FILTERS.FILTER_BY_STATUS' | translate }}</label>
-        <select [(ngModel)]="statusFilter" 
-                (ngModelChange)="onStatusFilterChange()"
+        <select [(ngModel)]="statusFilter" (ngModelChange)="onStatusFilterChange()"
                 class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-custom-primary focus:border-custom-primary">
-          <option value="all">{{ 'TENANT_PAYMENT_ANALYSIS.FILTERS.ALL_STATUS' | translate }}</option>
-          <option value="excellent">{{ 'TENANT_PAYMENT_ANALYSIS.FILTERS.EXCELLENT' | translate }}</option>
-          <option value="good">{{ 'TENANT_PAYMENT_ANALYSIS.FILTERS.GOOD' | translate }}</option>
-          <option value="warning">{{ 'TENANT_PAYMENT_ANALYSIS.FILTERS.WARNING' | translate }}</option>
-          <option value="critical">{{ 'TENANT_PAYMENT_ANALYSIS.FILTERS.CRITICAL' | translate }}</option>
+          <option value="all">Tous</option>
+          <option value="excellent">À jour / En avance</option>
+          <option value="warning">Retard modéré</option>
+          <option value="critical">Retard critique</option>
         </select>
       </div>
-
-      <!-- Recherche -->
       <div class="flex items-center space-x-2">
         <label class="text-sm font-medium text-gray-700">{{ 'TENANT_PAYMENT_ANALYSIS.FILTERS.SEARCH' | translate }}</label>
-        <input type="text" 
-               [(ngModel)]="searchTerm"
-               (ngModelChange)="onSearchChange()"
-               placeholder="{{ 'TENANT_PAYMENT_ANALYSIS.FILTERS.SEARCH_PLACEHOLDER' | translate }}"
+        <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
+               placeholder="Nom ou chambre..."
                class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-custom-primary focus:border-custom-primary">
       </div>
     </div>
@@ -120,42 +96,83 @@
 
   <!-- Liste des locataires -->
   <div class="space-y-4">
-    <div *ngFor="let tenant of filteredSummaries; trackBy: trackByTenantId" 
+    <div *ngFor="let tenant of filteredSummaries; trackBy: trackByTenantId"
          class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-      
-      <!-- Header du locataire -->
+
+      <!-- Header locataire -->
       <div class="px-6 py-4 border-b border-gray-200">
         <div class="flex items-center justify-between">
           <div class="flex items-center space-x-4">
             <div>
               <h3 class="text-lg font-semibold text-gray-900">{{ tenant.tenantName }}</h3>
-              <p class="text-sm text-gray-600">{{ 'TENANT_PAYMENT_ANALYSIS.TENANT_CARD.ROOM' | translate }} {{ tenant.roomCode }}</p>
+              <p class="text-sm text-gray-500">
+                {{ tenant.roomCode }} &bull; Entrée : {{ tenant.entryDate | date:'dd/MM/yyyy' }}
+                &bull; {{ tenant.totalMonthsCovered | number:'1.1-1' }} mois couverts au total
+              </p>
+              <!-- Dates de paiement -->
+              <div class="flex items-center gap-4 mt-1">
+                <span class="text-xs text-gray-400" *ngIf="tenant.lastPaymentDate">
+                  💳 Dernier paiement : <strong>{{ tenant.lastPaymentDate | date:'dd/MM/yyyy' }}</strong>
+                </span>
+                <span class="text-xs font-medium" *ngIf="tenant.nextPaymentDate"
+                      [ngClass]="{
+                        'text-red-500':    tenant.nextPaymentDate < today,
+                        'text-orange-500': tenant.nextPaymentDate >= today && tenant.nextPaymentDate <= in30Days,
+                        'text-green-600':  tenant.nextPaymentDate > in30Days
+                      }">
+                  📅 Prochain paiement : <strong>{{ tenant.nextPaymentDate | date:'dd/MM/yyyy' }}</strong>
+                  <span *ngIf="tenant.nextPaymentDate < today"> (⚠️ En retard)</span>
+                  <span *ngIf="tenant.nextPaymentDate >= today && tenant.nextPaymentDate <= in30Days"> (Bientôt dû)</span>
+                </span>
+              </div>
             </div>
             <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium"
                   [ngClass]="getCalculationStatusColor(tenant.status)">
-              {{ getCalculationStatusLabel(tenant.status) }}
+              {{ getCalculationStatusLabel(tenant.status) | translate }}
             </span>
           </div>
-          
+
           <div class="text-right">
-            <p class="text-lg font-bold text-gray-900">{{ formatPercentage(tenant.paymentRate) }}</p>
-            <p class="text-sm text-gray-600">{{ 'TENANT_PAYMENT_ANALYSIS.TENANT_CARD.PAYMENT_RATE' | translate }}</p>
+            <!-- Taux de couverture de l'année complète -->
+            <p class="text-2xl font-bold" [ngClass]="{
+              'text-green-600':  tenant.paymentRate >= 95,
+              'text-yellow-600': tenant.paymentRate >= 50 && tenant.paymentRate < 95,
+              'text-red-600':    tenant.paymentRate < 50
+            }">{{ formatPercentage(tenant.paymentRate) }}</p>
+            <p class="text-xs text-gray-500">
+              {{ formatPrice(tenant.coveredAmountInYear) }} / {{ formatPrice(tenant.expectedFullYear) }}
+            </p>
+            <!-- Statut par rapport à aujourd'hui -->
+            <p class="text-xs font-semibold mt-1" [ngClass]="{
+              'text-green-600': tenant.status === 'up_to_date' || tenant.status === 'advance',
+              'text-red-500':   tenant.status === 'behind'
+            }">
+              {{ tenant.status === 'advance' ? '↑ ' + tenant.advanceMonths + ' mois d\'avance' :
+                 tenant.status === 'up_to_date' ? '✓ À jour' :
+                 '↓ ' + tenant.monthsBehind + ' mois de retard' }}
+            </p>
           </div>
         </div>
       </div>
 
-      <!-- Détails des paiements mensuels -->
+      <!-- Grille mensuelle — mois couverts par la projection -->
       <div class="px-6 py-4">
-        <div class="grid grid-cols-12 gap-2">
+        <p class="text-xs text-gray-500 mb-2">
+          Couverture {{ selectedYear }} — vert = mois couvert par le cumul des paiements
+          <span *ngIf="tenant.coveredUntilDate">
+            (couvert jusqu'au {{ tenant.coveredUntilDate | date:'dd/MM/yyyy' }})
+          </span>
+        </p>
+        <div class="grid grid-cols-12 gap-1">
           <div *ngFor="let payment of tenant.monthlyPayments; let monthIndex = index"
                class="text-center">
-            <div class="text-xs font-medium text-gray-600 mb-1">{{ getMonthName(monthIndex).substring(0, 3) }}</div>
-            <div class="w-full h-8 rounded-lg flex items-center justify-center text-xs font-medium"
+            <div class="text-xs font-medium text-gray-500 mb-1">{{ getMonthName(monthIndex).substring(0, 3) }}</div>
+            <div class="h-8 rounded flex items-center justify-center text-xs font-semibold"
                  [ngClass]="{
-                   'bg-green-100 text-green-700': payment > 0,
-                   'bg-gray-100 text-gray-400': payment === 0
+                   'bg-green-100 text-green-700 border border-green-300': payment > 0,
+                   'bg-gray-50  text-gray-400  border border-gray-200':  payment === 0
                  }">
-              {{ payment > 0 ? (payment | currency:'XAF':'symbol':'1.0-0') : '-' }}
+              {{ payment > 0 ? '✓' : '–' }}
             </div>
           </div>
         </div>
@@ -163,26 +180,70 @@
 
       <!-- Résumé financier -->
       <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">
-        <div class="grid grid-cols-3 gap-4 text-center">
-          <div>
-            <p class="text-sm font-medium text-gray-600">{{ 'TENANT_PAYMENT_ANALYSIS.TENANT_CARD.TOTAL_EXPECTED' | translate }}</p>
-            <p class="text-lg font-bold text-gray-900">{{ formatPrice(tenant.totalExpected) }}</p>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+
+          <!-- Couvert en 2026 / Attendu année complète -->
+          <div class="bg-white rounded-lg p-3 border border-gray-200">
+            <p class="text-xs text-gray-500 mb-1">Couvert en {{ selectedYear }}</p>
+            <p class="text-lg font-bold text-green-600">{{ formatPrice(tenant.coveredAmountInYear) }}</p>
+            <p class="text-xs text-gray-400">sur {{ formatPrice(tenant.expectedFullYear) }} (année complète)</p>
           </div>
-          <div>
-            <p class="text-sm font-medium text-gray-600">{{ 'TENANT_PAYMENT_ANALYSIS.TENANT_CARD.TOTAL_RECEIVED' | translate }}</p>
-            <p class="text-lg font-bold text-green-600">{{ formatPrice(tenant.totalReceived) }}</p>
+
+          <!-- Mois couverts / Mois dus à ce jour -->
+          <div class="bg-white rounded-lg p-3 border border-gray-200">
+            <p class="text-xs text-gray-500 mb-1">Mois couverts {{ selectedYear }}</p>
+            <p class="text-xl font-bold" [ngClass]="{
+              'text-green-600': tenant.rateVsToday >= 95,
+              'text-yellow-600': tenant.rateVsToday >= 50 && tenant.rateVsToday < 95,
+              'text-red-600': tenant.rateVsToday < 50
+            }">{{ tenant.coveredMonthsInYear }} / {{ tenant.monthsDueInYear }}</p>
+            <p class="text-xs text-gray-400">mois couverts / dus à ce jour</p>
           </div>
-          <div>
-            <p class="text-sm font-medium text-gray-600">{{ 'TENANT_PAYMENT_ANALYSIS.TENANT_CARD.SHORTFALL' | translate }}</p>
-            <p class="text-lg font-bold text-red-600">{{ formatPrice(tenant.totalExpected - tenant.totalReceived) }}</p>
+
+          <!-- Situation par rapport à aujourd'hui -->
+          <div class="bg-white rounded-lg p-3 border"
+               [ngClass]="{
+                 'border-blue-200':  tenant.advanceMonths > 0,
+                 'border-red-200':   tenant.monthsBehind > 0,
+                 'border-green-200': tenant.advanceMonths === 0 && tenant.monthsBehind === 0
+               }">
+            <p class="text-xs text-gray-500 mb-1">Situation aujourd'hui</p>
+            <p class="text-lg font-bold"
+               [ngClass]="{
+                 'text-blue-600':  tenant.advanceMonths > 0,
+                 'text-red-600':   tenant.monthsBehind > 0,
+                 'text-green-600': tenant.advanceMonths === 0 && tenant.monthsBehind === 0
+               }">
+              {{ tenant.advanceMonths > 0
+                  ? '+' + tenant.advanceMonths + ' mois'
+                  : tenant.monthsBehind > 0
+                    ? '-' + tenant.monthsBehind + ' mois'
+                    : 'À jour' }}
+            </p>
+            <p class="text-xs text-gray-400">
+              {{ tenant.advanceAmount > 0
+                  ? formatPrice(tenant.advanceAmount)
+                  : tenant.amountBehind > 0
+                    ? formatPrice(tenant.amountBehind)
+                    : '' }}
+            </p>
           </div>
+
+          <!-- Cumul total depuis l'entrée (informatif) -->
+          <div class="bg-white rounded-lg p-3 border border-gray-100">
+            <p class="text-xs text-gray-400 mb-1">Cumul depuis l'entrée</p>
+            <p class="text-lg font-bold text-gray-500">{{ formatPrice(tenant.totalPaid) }}</p>
+            <p class="text-xs text-gray-400">{{ tenant.totalMonthsCovered | number:'1.1-1' }} mois couverts au total</p>
+          </div>
+
         </div>
       </div>
     </div>
   </div>
 
   <!-- État vide -->
-  <div *ngIf="filteredSummaries.length === 0" class="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
+  <div *ngIf="filteredSummaries.length === 0 && !isLoading"
+       class="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
     <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
       <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
@@ -192,7 +253,7 @@
     <p class="text-gray-600">{{ 'TENANT_PAYMENT_ANALYSIS.EMPTY_STATE.MESSAGE' | translate }}</p>
   </div>
 
-  <!-- Indicateur de chargement -->
+  <!-- Chargement -->
   <div *ngIf="isLoading" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white rounded-lg p-6 flex items-center space-x-3">
       <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-custom-primary"></div>

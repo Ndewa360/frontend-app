@@ -21,6 +21,9 @@ export class FinancialOverviewComponent implements OnInit, OnChanges, OnDestroy 
   monthlyData: MonthlyFinancialData[] = [];
   private destroy$ = new Subject<void>();
 
+  // Exposer Math pour le template
+  Math = Math;
+
   constructor(
     private store: Store,
     private propertyFinancialManager: PropertyFinancialManagerService
@@ -162,21 +165,32 @@ export class FinancialOverviewComponent implements OnInit, OnChanges, OnDestroy 
 
   get metrics() {
     return {
-      totalRevenue: this.totalRevenue,
-      totalExpected: this.totalExpected,
+      // --- Revenus de l'année (onglet Revenus) ---
+      totalRevenue:   this.totalRevenue,
+      totalExpected:  this.totalExpected,
       collectionRate: this.collectionRate,
-      totalRooms: this.totalRooms,
+      // --- Projection cumul sur l'année (tous les autres onglets) ---
+      totalCoveredInYear:  this.propertyMetrics?.totalCoveredInYear  ?? 0,
+      totalPaidAllTime:    this.propertyMetrics?.totalPaidAllTime    ?? 0,
+      expectedSinceEntry:  this.propertyMetrics?.expectedSinceEntry  ?? 0,
+      realCollectionRate:  this.propertyMetrics?.realCollectionRate  ?? 0,
+      realCollectionRateCapped: Math.min(this.propertyMetrics?.realCollectionRate ?? 0, 100),
+      totalDebts:    this.propertyMetrics?.totalDebts    ?? 0,
+      totalAdvances: this.propertyMetrics?.totalAdvances ?? 0,
+      realShortfall: Math.max(0, (this.propertyMetrics?.expectedSinceEntry ?? 0) - (this.propertyMetrics?.totalPaidAllTime ?? 0)),
+      yearShortfall: Math.max(0, (this.propertyMetrics?.totalExpected ?? 0) - (this.propertyMetrics?.totalCoveredInYear ?? 0)),
+      // --- Occupation ---
+      totalRooms:    this.totalRooms,
       occupiedRooms: this.occupiedRooms,
       occupancyRate: this.occupancyRate,
-      averageRent: this.averageRent,
+      averageRent:   this.averageRent,
+      // --- Cautions ---
       totalDeposits: this.totalDeposits,
-      totalAdvances: this.propertyMetrics?.totalAdvances ?? 0,
-      totalDebts: this.propertyMetrics?.totalDebts ?? 0,
-      // ✅ shortfall exposé pour le template
-      shortfall: this.shortfall,
-      // ✅ collectionRate plafonné à 100 pour les barres de progression
+      // --- Compatibilité barres de progression ---
       collectionRateCapped: Math.min(this.collectionRate, 100),
-      occupancyRateCapped: Math.min(this.occupancyRate, 100)
+      occupancyRateCapped:  Math.min(this.occupancyRate,  100),
+      // --- Manque à gagner année (onglet Revenus) ---
+      shortfall: this.shortfall
     };
   }
 

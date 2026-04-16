@@ -50,15 +50,29 @@ export class AdvancedFinancialDashboardComponent implements OnInit, OnChanges, O
     tenantAnalysisChart: null
   };
 
-  // Données calculées
+  // Données calculées — état réel
   totalRevenue: number = 0;
   totalExpected: number = 0;
   collectionRate: number = 0;
+  totalPaidAllTime: number = 0;
+  expectedSinceEntry: number = 0;
+  realCollectionRate: number = 0;
+  totalDebts: number = 0;
+  totalAdvances: number = 0;
   averageRent: number = 0;
   occupancyRate: number = 0;
   occupiedRooms: number = 0;
   totalRooms: number = 0;
   totalProperties: number = 0;
+  // Nouvelles métriques de projection
+  coveredMonthsInYear: number = 0;
+  monthsDueInYear: number = 0;
+  coveredAmountInYear: number = 0;
+  // Statuts des locataires
+  totalTenantsCount: number = 0;
+  lateTenantsCount: number = 0;
+  upToDateTenantsCount: number = 0;
+  advanceTenantsCount: number = 0;
 
   // Changements calculés
   revenueChange: { value: number, type: 'increase' | 'decrease' | 'neutral' } = { value: 0, type: 'neutral' };
@@ -103,8 +117,6 @@ export class AdvancedFinancialDashboardComponent implements OnInit, OnChanges, O
       return;
     }
 
-    console.log(`📊 Chargement des données financières centralisées - Propriété: ${this.propertyId}, Année: ${this.selectedYear}`);
-
     this.financialManager.loadPropertyFinancialData(this.propertyId, this.selectedYear)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -136,55 +148,80 @@ export class AdvancedFinancialDashboardComponent implements OnInit, OnChanges, O
   }
 
   private calculateMetrics(): void {
-    if (!this.propertyMetrics) {
-      this.resetMetrics();
-      return;
-    }
+    if (!this.propertyMetrics) { this.resetMetrics(); return; }
 
-    // Assigner les valeurs depuis les métriques du backend
-    this.totalRevenue = this.propertyMetrics.totalRevenue;
-    this.totalExpected = this.propertyMetrics.totalExpected;
-    this.collectionRate = this.propertyMetrics.collectionRate;
-    this.averageRent = this.propertyMetrics.averageRent;
-    this.occupancyRate = this.propertyMetrics.occupancyRate;
-    this.occupiedRooms = this.propertyMetrics.occupiedRooms;
-    this.totalRooms = this.propertyMetrics.totalRooms;
-    this.totalProperties = 1; // Une propriété analysée
+    this.totalRevenue        = this.propertyMetrics.totalRevenue;
+    this.totalExpected       = this.propertyMetrics.totalExpected;
+    this.collectionRate      = this.propertyMetrics.collectionRate;
+    this.totalPaidAllTime    = this.propertyMetrics.totalCoveredInYear;
+    this.expectedSinceEntry  = this.propertyMetrics.expectedSinceEntry;
+    this.realCollectionRate  = this.propertyMetrics.realCollectionRate;
+    this.totalDebts          = this.propertyMetrics.totalDebts;
+    this.totalAdvances       = this.propertyMetrics.totalAdvances;
+    this.averageRent         = this.propertyMetrics.averageRent;
+    this.occupancyRate       = this.propertyMetrics.occupancyRate;
+    this.occupiedRooms       = this.propertyMetrics.occupiedRooms;
+    this.totalRooms          = this.propertyMetrics.totalRooms;
+    this.totalProperties     = 1;
 
-    // Calculer les changements
-    this.revenueChange = this.calculateRevenueChange();
+    // Métriques de projection : ratio global (pas une somme par chambre)
+    // coveredMonthsInYear = mois couverts / mois dus en moyenne sur toutes les chambres
+    // On utilise les montants pour avoir un ratio pondéré
+    const totalCoveredAmt  = this.propertyMetrics.totalCoveredInYear;
+    const totalExpectedAmt = this.propertyMetrics.totalExpected;
+    const avgMonthlyRent   = this.propertyMetrics.averageRent || 1;
+
+    // Convertir les montants en "mois équivalents" pour l'affichage
+    // Ex: 30 000 couverts / 15 000 loyer moyen = 2 mois couverts
+    this.coveredMonthsInYear = totalExpectedAmt > 0
+      ? Math.round((totalCoveredAmt / totalExpectedAmt) * this.propertyMetrics.monthsDueInYear * 10) / 10
+      : 0;
+    this.monthsDueInYear     = this.propertyMetrics.monthsDueInYear ?? this.propertyMetrics.totalRooms * 12;
+    this.coveredAmountInYear = totalCoveredAmt;
+
+    // Taux de couverture de l'année (plafonné à 100%)
+    this.realCollectionRate = Math.min(this.propertyMetrics.collectionRate, 100);
+
+    // Statuts des locataires depuis tenantsAnalysis (injecté via backendData)
+    // Ces valeurs sont calculées dans buildFinancialMetrics via tenantPerformances
+    this.totalTenantsCount   = this.tenantPerformances.length;
+    this.lateTenantsCount    = this.tenantPerformances.filter(t =>
+      t.paymentStatus === 'late' || t.paymentStatus === 'critical' || t.paymentStatus === 'no_payment'
+    ).length;
+    this.upToDateTenantsCount = this.tenantPerformances.filter(t => t.paymentStatus === 'up_to_date').length;
+    this.advanceTenantsCount  = this.tenantPerformances.filter(t => t.paymentStatus === 'advance').length;
+
+    this.revenueChange        = this.calculateRevenueChange();
     this.collectionRateChange = this.calculateCollectionRateChange();
-    this.occupancyRateChange = this.calculateOccupancyRateChange();
-    this.averageRentChange = this.calculateAverageRentChange();
-
+    this.occupancyRateChange  = this.calculateOccupancyRateChange();
+    this.averageRentChange    = this.calculateAverageRentChange();
     this.buildFinancialMetrics();
   }
 
   private buildFinancialMetrics(): void {
-    // Calculer les changements réels par rapport aux données disponibles
-    const revenueChange = this.calculateRevenueChange();
+    const revenueChange       = this.calculateRevenueChange();
     const collectionRateChange = this.calculateCollectionRateChange();
-    const occupancyRateChange = this.calculateOccupancyRateChange();
-    const averageRentChange = this.calculateAverageRentChange();
+    const occupancyRateChange  = this.calculateOccupancyRateChange();
+    const averageRentChange    = this.calculateAverageRentChange();
 
     this.financialMetrics = [
       {
-        label: 'ADVANCED_FINANCIAL_DASHBOARD.METRICS.TOTAL_REVENUE',
-        value: this.totalRevenue,
+        label: 'Couvert en ' + this.selectedYear,
+        value: this.totalPaidAllTime,
         change: revenueChange.value,
         changeType: revenueChange.type,
         icon: 'currency--dollar',
         color: this.successColor,
-        description: 'Revenus collectés cette année'
+        description: 'Mois de ' + this.selectedYear + ' couverts par le cumul des paiements'
       },
       {
-        label: 'ADVANCED_FINANCIAL_DASHBOARD.METRICS.COLLECTION_RATE',
-        value: this.collectionRate,
+        label: 'Taux de couverture ' + this.selectedYear,
+        value: this.realCollectionRate,
         change: collectionRateChange.value,
         changeType: collectionRateChange.type,
         icon: 'chart--pie',
         color: this.primaryColor,
-        description: 'Pourcentage des loyers collectés'
+        description: 'Mois couverts / mois dus dans l\'année'
       },
       {
         label: 'ADVANCED_FINANCIAL_DASHBOARD.METRICS.OCCUPANCY_RATE',
@@ -406,63 +443,27 @@ export class AdvancedFinancialDashboardComponent implements OnInit, OnChanges, O
 
   private buildMonthlyTrendChart(): any {
     const trendData = this.getMonthlyTrendData();
-    
     return {
-      title: {
-        text: 'Tendance Mensuelle: Attendu vs Reçu',
-        textStyle: {
-          color: '#374151',
-          fontSize: 16,
-          fontWeight: 'bold'
-        }
-      },
+      title: { text: `Couvert vs Attendu — ${this.selectedYear}`, textStyle: { color: '#374151', fontSize: 15, fontWeight: 'bold' } },
       tooltip: {
-        trigger: 'axis'
-      },
-      legend: {
-        data: ['Attendu', 'Reçu'],
-        textStyle: {
-          color: '#6b7280'
+        trigger: 'axis',
+        formatter: (params: any[]) => {
+          let html = `<strong>${params[0].name}</strong><br/>`;
+          params.forEach(p => {
+            html += `<span style="color:${p.color}">●</span> ${p.seriesName} : <strong>${(p.value||0).toLocaleString('fr-FR')} FCFA</strong><br/>`;
+          });
+          return html;
         }
       },
-      xAxis: {
-        type: 'category',
-        data: trendData.months,
-        axisLabel: {
-          color: '#6b7280'
-        }
-      },
-      yAxis: {
-        type: 'value',
-        axisLabel: {
-          color: '#6b7280',
-          formatter: (value: number) => this.formatCurrency(value)
-        }
-      },
+      legend: { data: ['Attendu', 'Couvert (projection)', 'Encaissé'], textStyle: { color: '#6b7280' } },
+      xAxis: { type: 'category', data: trendData.months, axisLabel: { color: '#6b7280' } },
+      yAxis: { type: 'value', axisLabel: { color: '#6b7280', formatter: (v: number) => this.formatCurrency(v) } },
       series: [
-        {
-          name: 'Attendu',
-          type: 'bar',
-          data: trendData.expected,
-          itemStyle: {
-            color: '#e5e7eb'
-          }
-        },
-        {
-          name: 'Reçu',
-          type: 'bar',
-          data: trendData.received,
-          itemStyle: {
-            color: this.primaryColor
-          }
-        }
+        { name: 'Attendu',              type: 'bar', data: trendData.expected,  itemStyle: { color: '#e5e7eb' } },
+        { name: 'Couvert (projection)', type: 'bar', data: trendData.projected, itemStyle: { color: this.successColor } },
+        { name: 'Encaissé',            type: 'line', data: trendData.received, lineStyle: { color: this.primaryColor, width: 2, type: 'dashed' }, itemStyle: { color: this.primaryColor } }
       ],
-      grid: {
-        left: '3%',
-        right: '4%',
-        bottom: '3%',
-        containLabel: true
-      }
+      grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true }
     };
   }
 
@@ -591,16 +592,16 @@ export class AdvancedFinancialDashboardComponent implements OnInit, OnChanges, O
     }));
   }
 
-  private getMonthlyTrendData(): { months: string[], expected: number[], received: number[] } {
+  private getMonthlyTrendData(): { months: string[], expected: number[], received: number[], projected: number[] } {
     if (!this.monthlyData || this.monthlyData.length === 0) {
-      return { months: [], expected: [], received: [] };
+      return { months: [], expected: [], received: [], projected: [] };
     }
-
     const chartData = this.financialManager.generateRevenueChartData(this.monthlyData);
     return {
-      months: chartData.months,
-      expected: chartData.expected,
-      received: chartData.revenues
+      months:    chartData.months,
+      expected:  chartData.expected,
+      received:  chartData.revenues,
+      projected: this.monthlyData.map(m => m.projected ?? 0)
     };
   }
 
@@ -621,12 +622,13 @@ export class AdvancedFinancialDashboardComponent implements OnInit, OnChanges, O
 
 
   private resetMetrics(): void {
-    this.totalRevenue = 0;
-    this.totalExpected = 0;
-    this.collectionRate = 0;
-    this.averageRent = 0;
-    this.occupancyRate = 0;
-    this.totalProperties = 0;
+    this.totalRevenue = 0; this.totalExpected = 0; this.collectionRate = 0;
+    this.totalPaidAllTime = 0; this.expectedSinceEntry = 0; this.realCollectionRate = 0;
+    this.totalDebts = 0; this.totalAdvances = 0;
+    this.averageRent = 0; this.occupancyRate = 0; this.totalProperties = 0;
+    this.coveredMonthsInYear = 0; this.monthsDueInYear = 0; this.coveredAmountInYear = 0;
+    this.totalTenantsCount = 0; this.lateTenantsCount = 0;
+    this.upToDateTenantsCount = 0; this.advanceTenantsCount = 0;
     this.financialMetrics = [];
   }
 

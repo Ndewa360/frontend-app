@@ -83,6 +83,9 @@ export class DepositsSummaryComponent implements OnInit, OnChanges {
   Math = Math;
   
   cautionAlerts: string[] = [];
+  // Montant total à rembourser (contrats terminés avec caution reçue)
+  toRefundAmount: number = 0;
+  toRefundCount: number = 0;
 
   constructor(
     private store: Store,
@@ -164,6 +167,16 @@ export class DepositsSummaryComponent implements OnInit, OnChanges {
     };
     
     this.cautionAlerts = cautionsData.alerts || [];
+
+    // Calculer les montants à rembourser (contrats terminés avec caution reçue)
+    const now = new Date();
+    this.toRefundAmount = this.depositSummaries
+      .filter(d => d.locationEndDate && new Date(d.locationEndDate) < now && d.receivedDeposit > 0)
+      .reduce((sum, d) => sum + d.receivedDeposit, 0);
+    this.toRefundCount = this.depositSummaries
+      .filter(d => d.locationEndDate && new Date(d.locationEndDate) < now && d.receivedDeposit > 0)
+      .length;
+
     this.applyFilters();
   }
 
@@ -301,5 +314,20 @@ export class DepositsSummaryComponent implements OnInit, OnChanges {
       case 'overpaid': return 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6';
       default: return 'M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z';
     }
+  }
+
+  // Contrat terminé (date de fin passée)
+  isContractEnded(deposit: DepositSummary): boolean {
+    if (!deposit.locationEndDate) return false;
+    return new Date(deposit.locationEndDate) < new Date();
+  }
+
+  // Contrat se terminant dans les 30 prochains jours
+  isContractEndingSoon(deposit: DepositSummary): boolean {
+    if (!deposit.locationEndDate) return false;
+    const endDate = new Date(deposit.locationEndDate);
+    const now = new Date();
+    const in30Days = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+    return endDate >= now && endDate <= in30Days;
   }
 }

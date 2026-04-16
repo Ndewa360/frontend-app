@@ -102,23 +102,24 @@ export class AnnualFinancialRecapComponent implements OnInit, OnChanges {
   }
 
   private calculateAnnualSummary(): void {
-    // ✅ Priorité aux données enrichies du backend
     if (this.enrichedData?.data?.propertyMetrics) {
       const m = this.enrichedData.data.propertyMetrics;
       const cautionsReceived = this.enrichedData.data.cautionsAnalysis?.summary?.totalCautionsReceived || 0;
+      // totalCoveredInYear = montant couvert dans l'année par la projection du cumul
+      const coveredInYear = (m as any).totalCoveredInYear ?? m.totalRevenue;
       this.annualSummary = {
         ...this.annualSummary,
         totalExpectedRevenue: m.totalExpected,
-        totalReceivedRevenue: m.totalRevenue,
-        totalRevenue: m.totalRevenue,
+        totalReceivedRevenue: coveredInYear,   // couvert dans l'année
+        totalRevenue:         coveredInYear,
         totalDeposits: cautionsReceived,
-        totalUnits: m.totalRooms,
+        totalUnits:    m.totalRooms,
         occupiedUnits: m.occupiedRooms,
         occupancyRate: m.occupancyRate,
         collectionRate: m.collectionRate,
-        performanceScore: Math.round((m.occupancyRate + m.collectionRate) / 2),
+        performanceScore: Math.round(m.collectionRate * 0.6 + m.occupancyRate * 0.4),
         averageRentPerUnit: m.averageRent,
-        totalMissedRevenue: m.totalDebts
+        totalMissedRevenue: Math.max(0, m.totalExpected - coveredInYear)
       };
       return;
     }
@@ -150,7 +151,7 @@ export class AnnualFinancialRecapComponent implements OnInit, OnChanges {
       occupiedUnits,
       occupancyRate,
       collectionRate,
-      performanceScore: Math.round((occupancyRate + collectionRate) / 2),
+      performanceScore: Math.round(collectionRate * 0.6 + occupancyRate * 0.4), // FIX #F17
       averageRentPerUnit: this.yearlyStats.length > 0 ? totalRentSum / this.yearlyStats.length : 0,
       totalMissedRevenue: totalExpected - totalReceived
     };
@@ -159,23 +160,37 @@ export class AnnualFinancialRecapComponent implements OnInit, OnChanges {
   private buildMonthlyBreakdown(): void {
     this.annualSummary.monthlyBreakdown = [];
 
-    if (this.recapitulation?.paymentProperty && Array.isArray(this.recapitulation.paymentProperty)) {
-      // Construire les données mensuelles à partir de la structure réelle
-      const monthlyData: { [key: number]: { expected: number, received: number, count: number } } = {};
+    // FIX #F16 : priorité aux données enrichies du backend (revenueDistribution.monthlyAnalysis)
+    // qui contiennent les vraies données mensuelles calculées par le moteur financier
+    if (this.enrichedData?.data?.revenueDistribution?.monthlyAnalysis) {
+      this.annualSummary.monthlyBreakdown = this.enrichedData.data.revenueDistribution.monthlyAnalysis.map(item => ({
+        month: item.month - 1, // monthlyAnalysis.month est 1-based, on le convertit en 0-based
+        monthName: this.getMonthName(item.month - 1),
+        expected: item.expected,
+        received: item.distributed,
+        rate: item.fulfillmentRate,
+        performance: item.fulfillmentRate,
+        revenue: item.distributed,
+        paymentsCount: item.roomsAtQuota
+      }));
+      return;
+    }
 
-      // Initialiser les 12 mois
+    // Fallback : recapitulation avec le bon nom de champ (totalAmountToBeReceveid avec typo backend)
+    if (this.recapitulation?.paymentProperty && Array.isArray(this.recapitulation.paymentProperty)) {
+      const monthlyData: { [key: number]: { expected: number; received: number; count: number } } = {};
       for (let i = 0; i < 12; i++) {
         monthlyData[i] = { expected: 0, received: 0, count: 0 };
       }
 
-      // Agréger les données de toutes les propriétés avec vérifications de sécurité
       this.recapitulation.paymentProperty.forEach(propertyData => {
         if (propertyData?.amountMonth && Array.isArray(propertyData.amountMonth)) {
           propertyData.amountMonth.forEach(monthData => {
             if (monthData && typeof monthData.month === 'number') {
-              const monthIndex = (monthData.month - 1) % 12; // Convertir 1-12 en 0-11
+              const monthIndex = (monthData.month - 1) % 12;
               if (monthIndex >= 0 && monthIndex < 12) {
-                monthlyData[monthIndex].expected += monthData.totalAmountToBeReceived || 0;
+                // FIX #F16 : utiliser le bon nom de champ du modèle (typo conservée pour cohérence backend/frontend)
+                monthlyData[monthIndex].expected += monthData.totalAmountToBeReceveid || 0;
                 monthlyData[monthIndex].received += monthData.totalAmountReceived || 0;
                 monthlyData[monthIndex].count += 1;
               }
@@ -188,7 +203,6 @@ export class AnnualFinancialRecapComponent implements OnInit, OnChanges {
         const monthIndex = parseInt(monthKey);
         const data = monthlyData[monthIndex];
         const rate = data.expected > 0 ? (data.received / data.expected) * 100 : 0;
-
         return {
           month: monthIndex,
           monthName: this.getMonthName(monthIndex),
@@ -201,35 +215,37 @@ export class AnnualFinancialRecapComponent implements OnInit, OnChanges {
         };
       });
     } else {
-      // Créer des données vides pour les 12 mois
       for (let i = 0; i < 12; i++) {
         this.annualSummary.monthlyBreakdown.push({
           month: i,
           monthName: this.getMonthName(i),
-          expected: 0,
-          received: 0,
-          rate: 0,
-          performance: 0,
-          revenue: 0,
-          paymentsCount: 0
+          expected: 0, received: 0, rate: 0,
+          performance: 0, revenue: 0, paymentsCount: 0
         });
       }
     }
   }
 
   private buildUnitPerformance(): void {
-    // ✅ Priorité aux données enrichies du backend
     if (this.enrichedData?.data?.rooms) {
       const rooms = this.enrichedData.data.rooms;
-      this.annualSummary.unitPerformance = rooms.map((roomData: any) => ({
-        unitCode: roomData.room?.code || 'N/A',
-        unitType: this.getRoomTypeLabel(roomData.room?.type),
-        monthlyRent: roomData.room?.price || 0,
-        totalExpected: roomData.expectedAmount || 0,
-        totalReceived: roomData.totalReceived || 0,
-        performanceRate: roomData.collectionRate || 0,
-        monthsOccupied: roomData.monthsDue || 0
-      })).sort((a, b) => b.performanceRate - a.performanceRate);
+      this.annualSummary.unitPerformance = rooms.map((roomData: any) => {
+        // Utiliser coveredAmountInYear (projection) comme montant reçu pour l'année
+        const coveredInYear = (roomData as any).coveredAmountInYear ?? roomData.totalReceived ?? 0;
+        const expectedInYear = roomData.expectedAmount || 0;
+        const perfRate = expectedInYear > 0
+          ? Math.min((coveredInYear / expectedInYear) * 100, 100)
+          : 0;
+        return {
+          unitCode: roomData.room?.code || 'N/A',
+          unitType: this.getRoomTypeLabel(roomData.room?.type),
+          monthlyRent: roomData.room?.price || 0,
+          totalExpected: expectedInYear,
+          totalReceived: coveredInYear,
+          performanceRate: Math.round(perfRate * 100) / 100,
+          monthsOccupied: roomData.monthsDue || 0
+        };
+      }).sort((a, b) => b.performanceRate - a.performanceRate);
 
       this.annualSummary.unitBreakdown = this.annualSummary.unitPerformance.map(u => ({
         unitCode: u.unitCode,

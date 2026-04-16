@@ -26,8 +26,9 @@ export interface StatisticRoomYearModel {
 
 // ─── Métriques globales de propriété ─────────────────────────────────────────
 export interface PropertyMetrics {
-  totalRevenue: number;
-  totalExpected: number;
+  totalRevenue: number;          // encaissé dans l'année
+  totalCoveredInYear?: number;   // montant couvert dans l'année (projection cumul)
+  totalExpected: number;         // attendu pour l'année
   collectionRate: number;
   averageRent: number;
   occupancyRate: number;
@@ -103,9 +104,16 @@ export interface TenantFinancialAnalysis {
   paymentConsistency: number;
   monthlyPayments: number[];
   collectionRate: number;
-  // ✅ Dates de paiement
   lastPaymentDate?: Date | null;
   nextPaymentDate?: Date | null;
+  // Champs de projection sur l'année
+  lateMonths?: number;
+  advanceMonths?: number;
+  coveredMonthsInYear?: number;
+  coveredAmountInYear?: number;
+  coveredUntilDate?: Date | null;
+  totalMonthsCovered?: number;
+  monthsDueInYear?: number;
 }
 
 export interface TenantAnalysisItem {

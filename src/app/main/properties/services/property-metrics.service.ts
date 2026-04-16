@@ -144,9 +144,9 @@ export class PropertyMetricsService {
 
   getNetProfit(metrics, property: PropertyModel): number {
     const revenue = metrics?.monthlyRevenue || 0;
-    // getMonthlyExpenses inclut déjà insuranceCost/12 — ne pas rajouter getInsuranceCosts()
+    // FIX #F5 : getMonthlyExpenses inclut déjà managementFees
+    // Ne pas rajouter getManagementFees() pour éviter le double comptage
     const expenses = this.getMonthlyExpenses(property)
-                   + this.getManagementFees(property)
                    + this.getMaintenanceCosts(property);
     return revenue - expenses;
   }

@@ -125,15 +125,17 @@ export class PropertyDataService {
     return this.store.select(LocationPaymentState.selectStateLocationPaymentByPropertyId(propertyId)).pipe(
       map(payments => {
         if (!payments || payments.length === 0) return [];
-        
+
+        // FIX #F6 : utiliser les vrais noms de champs du modèle LocationPayment
+        // locationPaymentPrice (pas amount), room (pas roomId), locataire (pas locataireId)
         return payments.map(payment => ({
           id: payment._id,
           date: new Date(payment.createdAt || Date.now()),
           type: 'payment' as const,
-          description: `Paiement de loyer - ${payment.amount} XAF`,
-          amount: payment.amount,
-          unitId: payment.roomId,
-          tenantId: payment.locataireId
+          description: `Paiement de loyer - ${payment.locationPaymentPrice || 0} XAF`,
+          amount: payment.locationPaymentPrice || 0,
+          unitId: payment.room || null,
+          tenantId: payment.locataire || null
         }));
       })
     );

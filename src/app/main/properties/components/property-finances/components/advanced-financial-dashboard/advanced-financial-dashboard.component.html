@@ -1,24 +1,21 @@
-<!-- Tableau de bord financier avancé -->
+<!-- Tableau de bord financier -->
 <div class="advanced-financial-dashboard">
-  
-  <!-- Header avec gradient et actions -->
+
+  <!-- Header -->
   <div class="dashboard-header">
     <div class="header-content">
       <div class="header-info">
-        <h1 class="app-productive-heading-05">{{ 'ADVANCED_FINANCIAL_DASHBOARD.TITLE' | translate }} {{ selectedYear }}</h1>
-        <p class="app-body-short-01 opacity-90">{{ 'ADVANCED_FINANCIAL_DASHBOARD.SUBTITLE' | translate }}</p>
+        <h1 class="app-productive-heading-05">Tableau de bord {{ selectedYear }}</h1>
+        <p class="app-body-short-01 opacity-90">
+          Situation projetée — cumul des paiements depuis l'entrée, interprété pour {{ selectedYear }}
+        </p>
       </div>
-      
       <div class="header-actions">
-        <button (click)="exportToExcel()" 
-                [disabled]="isLoading"
-                class="btn-export">
+        <button (click)="exportToExcel()" [disabled]="isLoading" class="btn-export">
           <youpez-ibm-icon iconName="download" iconSize="16"></youpez-ibm-icon>
           <span>Excel</span>
         </button>
-        <button (click)="exportToCSV()" 
-                [disabled]="isLoading"
-                class="btn-export">
+        <button (click)="exportToCSV()" [disabled]="isLoading" class="btn-export">
           <youpez-ibm-icon iconName="document" iconSize="16"></youpez-ibm-icon>
           <span>CSV</span>
         </button>
@@ -26,82 +23,89 @@
     </div>
   </div>
 
-  <!-- Section métriques synthétiques (4 colonnes) -->
+  <!-- 4 cartes métriques -->
   <div class="metrics-overview">
     <div class="metrics-container four-columns">
 
-      <!-- Métrique Revenus Totaux -->
-      <div class="metric-card primary">
+      <!-- Carte 1 : Mois couverts / Mois dus -->
+      <div class="metric-card" [ngClass]="{
+        'success': realCollectionRate >= 95,
+        'warning': realCollectionRate >= 50 && realCollectionRate < 95,
+        'danger':  realCollectionRate < 50
+      }">
         <div class="metric-icon">
-          <youpez-ibm-icon iconName="currency--dollar" iconSize="32"></youpez-ibm-icon>
+          <youpez-ibm-icon iconName="calendar" iconSize="32"></youpez-ibm-icon>
         </div>
         <div class="metric-content">
-          <div class="metric-value">{{ formatCurrency(totalRevenue) }}</div>
-          <div class="metric-label">{{ 'ADVANCED_FINANCIAL_DASHBOARD.METRICS.REVENUE_TOTALS_YEAR' | translate:{ year: selectedYear } }}</div>
+          <div class="metric-value">{{ coveredMonthsInYear }} / {{ monthsDueInYear }}</div>
+          <div class="metric-label">Mois couverts en {{ selectedYear }}</div>
+          <div class="metric-description">
+            {{ coveredAmountInYear | number:'1.0-0' }} / {{ totalExpected | number:'1.0-0' }} FCFA
+          </div>
           <div class="metric-trend" [ngClass]="{
-            'positive': revenueChange.type === 'increase',
-            'negative': revenueChange.type === 'decrease',
-            'neutral': revenueChange.type === 'neutral'
+            'positive': realCollectionRate >= 95,
+            'negative': realCollectionRate < 95
           }">
-            <youpez-ibm-icon [iconName]="revenueChange.type === 'increase' ? 'trending--up' : revenueChange.type === 'decrease' ? 'trending--down' : 'trending--flat'" iconSize="16"></youpez-ibm-icon>
-            <span>{{ revenueChange.type === 'increase' ? '+' : revenueChange.type === 'decrease' ? '-' : '' }}{{ revenueChange.value | number:'1.1-1' }}% {{ 'ADVANCED_FINANCIAL_DASHBOARD.METRICS.VS_EXPECTED' | translate }}</span>
+            <youpez-ibm-icon [iconName]="realCollectionRate >= 95 ? 'checkmark--filled' : 'warning--filled'" iconSize="16"></youpez-ibm-icon>
+            <span>{{ formatPercentage(realCollectionRate) }} couvert</span>
           </div>
         </div>
       </div>
 
-      <!-- Métrique Taux d'Occupation -->
+      <!-- Carte 2 : Taux d'occupation -->
       <div class="metric-card" [ngClass]="{
         'success': occupancyRate >= 85,
         'warning': occupancyRate >= 70 && occupancyRate < 85,
-        'danger': occupancyRate < 70
+        'danger':  occupancyRate < 70
       }">
         <div class="metric-icon">
           <youpez-ibm-icon iconName="home" iconSize="32"></youpez-ibm-icon>
         </div>
         <div class="metric-content">
           <div class="metric-value">{{ formatPercentage(occupancyRate) }}</div>
-          <div class="metric-label">{{ 'ADVANCED_FINANCIAL_DASHBOARD.METRICS.OCCUPANCY_RATE' | translate }}</div>
-          <div class="metric-description">{{ occupiedRooms }} / {{ totalRooms }} {{ 'ADVANCED_FINANCIAL_DASHBOARD.METRICS.OCCUPIED_UNITS' | translate }}</div>
+          <div class="metric-label">Taux d'occupation</div>
+          <div class="metric-description">{{ occupiedRooms }} / {{ totalRooms }} unités occupées</div>
+          <div class="metric-trend" [ngClass]="{ 'positive': occupancyRate >= 85, 'negative': occupancyRate < 85 }">
+            <youpez-ibm-icon [iconName]="occupancyRate >= 85 ? 'trending--up' : 'trending--down'" iconSize="16"></youpez-ibm-icon>
+            <span>{{ occupancyRate >= 85 ? 'Bonne occupation' : 'À améliorer' }}</span>
+          </div>
         </div>
       </div>
 
-      <!-- Métrique Loyer Moyen --> 
+      <!-- Carte 3 : Loyer moyen -->
       <div class="metric-card info">
         <div class="metric-icon">
           <youpez-ibm-icon iconName="money" iconSize="32"></youpez-ibm-icon>
         </div>
         <div class="metric-content">
           <div class="metric-value">{{ formatCurrency(averageRent) }}</div>
-          <div class="metric-label">{{ 'ADVANCED_FINANCIAL_DASHBOARD.METRICS.AVERAGE_RENT' | translate }}</div>
-          <div class="metric-trend" [ngClass]="{
-            'positive': averageRentChange.type === 'increase',
-            'negative': averageRentChange.type === 'decrease',
-            'neutral': averageRentChange.type === 'neutral'
-          }">
-            <youpez-ibm-icon [iconName]="averageRentChange.type === 'increase' ? 'trending--up' : averageRentChange.type === 'decrease' ? 'trending--down' : 'trending--flat'" iconSize="16"></youpez-ibm-icon>
-            <span>{{ averageRentChange.type === 'increase' ? '+' : averageRentChange.type === 'decrease' ? '-' : '' }}{{ averageRentChange.value | number:'1.1-1' }}% {{ 'ADVANCED_FINANCIAL_DASHBOARD.METRICS.VS_MEDIAN' | translate }}</span>
+          <div class="metric-label">Loyer moyen / unité</div>
+          <div class="metric-description">Sur les unités occupées</div>
+          <div class="metric-trend neutral">
+            <youpez-ibm-icon iconName="trending--flat" iconSize="16"></youpez-ibm-icon>
+            <span>{{ averageRentChange.type === 'increase' ? '+' : averageRentChange.type === 'decrease' ? '-' : '' }}{{ averageRentChange.value | number:'1.1-1' }}% vs médiane</span>
           </div>
         </div>
       </div>
 
-       <!-- Métrique Taux de Recouvrement -->
+      <!-- Carte 4 : Locataires en retard -->
       <div class="metric-card" [ngClass]="{
-        'success': collectionRate >= 90,
-        'warning': collectionRate >= 70 && collectionRate < 90,
-        'danger': collectionRate < 70
+        'success': lateTenantsCount === 0,
+        'warning': lateTenantsCount > 0 && lateTenantsCount <= 2,
+        'danger':  lateTenantsCount > 2
       }">
         <div class="metric-icon">
-          <youpez-ibm-icon iconName="chart--pie" iconSize="24"></youpez-ibm-icon>
+          <youpez-ibm-icon iconName="user--warning" iconSize="32"></youpez-ibm-icon>
         </div>
         <div class="metric-content">
-          <div class="metric-value">{{ formatPercentage(collectionRate) }}</div>
-          <div class="metric-label">{{ 'ADVANCED_FINANCIAL_DASHBOARD.METRICS.COLLECTION_RATE' | translate }}</div>
-          <div class="metric-trend" [ngClass]="{
-              'positive': collectionRate >= 85,
-              'negative': collectionRate < 85
-            }">
-            <youpez-ibm-icon [iconName]="collectionRate >= 85 ? 'trending--up' : 'trending--down'" iconSize="16"></youpez-ibm-icon>
-            <span>{{ collectionRate >= 85 ? ('ADVANCED_FINANCIAL_DASHBOARD.METRICS.EXCELLENT' | translate) : collectionRate >= 70 ? ('ADVANCED_FINANCIAL_DASHBOARD.METRICS.GOOD' | translate) : ('ADVANCED_FINANCIAL_DASHBOARD.METRICS.TO_IMPROVE' | translate) }}</span>
+          <div class="metric-value">{{ lateTenantsCount }} / {{ totalTenantsCount }}</div>
+          <div class="metric-label">Locataires en retard</div>
+          <div class="metric-description">
+            {{ advanceTenantsCount }} en avance · {{ upToDateTenantsCount }} à jour
+          </div>
+          <div class="metric-trend" [ngClass]="{ 'positive': lateTenantsCount === 0, 'negative': lateTenantsCount > 0 }">
+            <youpez-ibm-icon [iconName]="lateTenantsCount === 0 ? 'checkmark' : 'warning'" iconSize="16"></youpez-ibm-icon>
+            <span>{{ lateTenantsCount === 0 ? 'Tous à jour' : lateTenantsCount + ' en retard' }}</span>
           </div>
         </div>
       </div>
@@ -109,105 +113,65 @@
     </div>
   </div>
 
-
-
-  <!-- Grille unifiée pour graphiques et KPI détaillés -->
+  <!-- Graphiques -->
   <div class="dashboard-grid">
 
-    <!-- Graphique des revenus mensuels -->
+    <!-- Graphique 1 : Couvert vs Attendu par mois -->
     <div class="dashboard-item chart-item">
       <div class="chart-header">
-        <h3 class="app-productive-heading-03">{{ 'ADVANCED_FINANCIAL_DASHBOARD.CHARTS.EVOLUTION_REVENUES' | translate }}</h3>
-        <p class="app-body-short-01">{{ 'ADVANCED_FINANCIAL_DASHBOARD.CHARTS.MONTHLY_TREND' | translate }}</p>
+        <h3 class="app-productive-heading-03">Couvert vs Attendu — {{ selectedYear }}</h3>
+        <p class="app-body-short-01">Mois couverts par le cumul des paiements vs mois dus</p>
       </div>
       <div class="chart-content">
         <youpez-echarts-container>
-          <youpez-echarts
-            [options]="chartData.revenueChart"
-            [loading]="isLoading"
-            class="chart-echarts">
+          <youpez-echarts [options]="chartData.monthlyTrendChart" [loading]="isLoading" class="chart-echarts">
           </youpez-echarts>
         </youpez-echarts-container>
       </div>
     </div>
 
-    <!-- Graphique des statuts de paiement -->
+    <!-- Graphique 2 : Répartition des statuts -->
     <div class="dashboard-item chart-item">
       <div class="chart-header">
-        <h3 class="app-productive-heading-03">{{ 'ADVANCED_FINANCIAL_DASHBOARD.CHARTS.PAYMENT_STATUS' | translate }}</h3>
-        <p class="app-body-short-01">{{ 'ADVANCED_FINANCIAL_DASHBOARD.CHARTS.PAYMENT_STATUS_DISTRIBUTION' | translate }}</p>
+        <h3 class="app-productive-heading-03">Statuts des locataires</h3>
+        <p class="app-body-short-01">Répartition par rapport à la date actuelle</p>
       </div>
       <div class="chart-content">
         <youpez-echarts-container>
-          <youpez-echarts
-            [options]="chartData.paymentStatusChart"
-            [loading]="isLoading"
-            class="chart-echarts">
+          <youpez-echarts [options]="chartData.paymentStatusChart" [loading]="isLoading" class="chart-echarts">
           </youpez-echarts>
         </youpez-echarts-container>
       </div>
     </div>
 
-    <!-- Graphique de tendance mensuelle -->
+    <!-- Graphique 3 : Performance par unité -->
     <div class="dashboard-item chart-item">
       <div class="chart-header">
-        <h3 class="app-productive-heading-03">{{ 'ADVANCED_FINANCIAL_DASHBOARD.CHARTS.EXPECTED_VS_RECEIVED' | translate }}</h3>
-        <p class="app-body-short-01">{{ 'ADVANCED_FINANCIAL_DASHBOARD.CHARTS.MONTHLY_COMPARISON' | translate }}</p>
+        <h3 class="app-productive-heading-03">Couverture par unité</h3>
+        <p class="app-body-short-01">% de mois couverts dans {{ selectedYear }} par chambre</p>
       </div>
       <div class="chart-content">
         <youpez-echarts-container>
-          <youpez-echarts
-            [options]="chartData.monthlyTrendChart"
-            [loading]="isLoading"
-            class="chart-echarts">
+          <youpez-echarts [options]="chartData.propertyPerformanceChart" [loading]="isLoading" class="chart-echarts">
           </youpez-echarts>
         </youpez-echarts-container>
       </div>
     </div>
 
-    <!-- Graphique de performance par unité -->
+    <!-- Graphique 4 : Revenus encaissés dans l'année -->
     <div class="dashboard-item chart-item">
       <div class="chart-header">
-        <h3 class="app-productive-heading-03">{{ 'ADVANCED_FINANCIAL_DASHBOARD.CHARTS.UNIT_PERFORMANCE' | translate }}</h3>
-        <p class="app-body-short-01">{{ 'ADVANCED_FINANCIAL_DASHBOARD.CHARTS.UNIT_COLLECTION_RATE' | translate }}</p>
+        <h3 class="app-productive-heading-03">Encaissements {{ selectedYear }}</h3>
+        <p class="app-body-short-01">Paiements reçus dont la date est dans {{ selectedYear }}</p>
       </div>
       <div class="chart-content">
         <youpez-echarts-container>
-          <youpez-echarts
-            [options]="chartData.propertyPerformanceChart"
-            [loading]="isLoading"
-            class="chart-echarts">
+          <youpez-echarts [options]="chartData.revenueChart" [loading]="isLoading" class="chart-echarts">
           </youpez-echarts>
         </youpez-echarts-container>
       </div>
     </div>
 
-    <!-- Graphique d'analyse des locataires -->
-    <!-- <div class="dashboard-item chart-item">
-      <div class="chart-header">
-        <h3 class="app-productive-heading-03">Analyse Locataires</h3>
-        <p class="app-body-short-01">Répartition des locataires actifs</p>
-      </div>
-      <div class="chart-content">
-        <youpez-echarts-container>
-          <youpez-echarts
-            [options]="chartData.tenantAnalysisChart"
-            [loading]="isLoading"
-            class="chart-echarts">
-          </youpez-echarts>
-        </youpez-echarts-container>
-      </div>
-    </div> -->
-
-  </div>
-
-  <!-- État de chargement -->
-  <div *ngIf="isLoading" class="loading-overlay">
-    <div class="loading-content">
-      <div class="skeleton-carbon h-4 w-48 mb-4"></div>
-      <div class="skeleton-carbon h-3 w-32"></div>
-    </div>
   </div>
 
 </div>
-

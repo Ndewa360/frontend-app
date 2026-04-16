@@ -43,7 +43,7 @@
         </div>
       </div>
 
-      <!-- Valeur de la propriété -->
+      <!-- Projection annuelle (depuis le backend si disponible, sinon estimation locale) -->
       <div class="bg-white rounded-xl border-4 border-gray-400 shadow-xl p-6 hover:border-purple-500 hover:shadow-2xl transition-all duration-300">
         <div class="flex items-center">
           <div class="p-4 bg-purple-50 rounded-xl border-2 border-purple-300">
@@ -53,9 +53,12 @@
           </div>
           <div class="ml-5 flex-1">
             <p class="text-sm font-semibold text-gray-700 mb-1">{{ 'PROPERTY_DETAILS.OVERVIEW.METRICS.ESTIMATED_VALUE' | translate }}</p>
+            <!-- Affiche getActualMonthlyRevenue() * 12 : projection théorique basée sur l'occupation actuelle -->
+            <!-- Note : l'onglet Finance > Vue d'ensemble affiche totalExpected (calcul précis du backend) -->
             <p class="text-3xl font-bold text-purple-600">{{ formatPrice(getActualMonthlyRevenue() * 12) }}</p>
             <p class="text-xs text-gray-600 mt-1">
               {{ 'PROPERTY_DETAILS.OVERVIEW.HARD_CODED_TEXTS.ANNUAL_PROJECTION' | translate }}
+              <span class="text-gray-400 text-xs ml-1">(occupation actuelle × 12)</span>
             </p>
           </div>
         </div>
@@ -117,7 +120,7 @@
                 <span class="font-bold text-green-700">{{ formatPrice(getActualMonthlyRevenue()) }}</span>
               </div>
               <div class="flex justify-between">
-                <span class="text-sm text-gray-700">{{ 'PROPERTY_DETAILS.OVERVIEW.HARD_CODED_TEXTS.ANNUAL_PROJECTION' | translate }}</span>
+                <span class="text-sm text-gray-700">{{ 'PROPERTY_DETAILS.OVERVIEW.HARD_CODED_TEXTS.ANNUAL_PROJECTION' | translate }} <span class="text-gray-400 text-xs">(occupation actuelle × 12)</span></span>
                 <span class="font-bold text-green-700">{{ formatPrice(getActualMonthlyRevenue() * 12) }}</span>
               </div>
             </div>

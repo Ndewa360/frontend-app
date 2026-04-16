@@ -113,57 +113,83 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
       return;
     }
 
-    this.tenantTrackingData = this.enrichedData[0].data.tenantsAnalysis.tenants.map(tenant => {
-      const paymentRate = tenant.financialAnalysis.expectedPaymentToDate > 0 
-        ? (tenant.financialAnalysis.totalPaid / tenant.financialAnalysis.expectedPaymentToDate) * 100 
-        : 0;
-        
-      return {
-        tenantId: tenant.locataire?._id || tenant.room?._id || '',
-        tenantName: tenant.locataire?.fullName || 'Locataire inconnu',
-        roomCode: tenant.room?.code || 'N/A',
-        monthlyRent: tenant.financialAnalysis.monthlyRent,
-        entryDate: new Date(tenant.financialAnalysis.entryDate),
-        monthsElapsed: tenant.financialAnalysis.monthsElapsed,
-        totalPaid: tenant.financialAnalysis.totalPaid,
-        expectedPaymentToDate: tenant.financialAnalysis.expectedPaymentToDate,
-        status: tenant.financialAnalysis.status,
-        monthsBehind: tenant.financialAnalysis.monthsBehind,
-        amountBehind: tenant.financialAnalysis.amountBehind,
-        advanceAmount: tenant.financialAnalysis.advanceAmount,
-        paymentConsistency: tenant.financialAnalysis.paymentConsistency,
-        paymentRate,
-        lastPaymentMonth: tenant.financialAnalysis.lastPaymentMonth,
-        // ✅ Dates de paiement depuis le backend
-        lastPaymentDate: tenant.financialAnalysis.lastPaymentDate
-          ? new Date(tenant.financialAnalysis.lastPaymentDate) : null,
-        nextPaymentDate: tenant.financialAnalysis.nextPaymentDate
-          ? new Date(tenant.financialAnalysis.nextPaymentDate) : null,
-        // Propriétés pour compatibilité
-        totalExpected: tenant.financialAnalysis.expectedPaymentToDate,
-        totalReceived: tenant.financialAnalysis.totalPaid,
-        monthsOccupied: tenant.financialAnalysis.monthsElapsed,
-        contractStatus: tenant.financialAnalysis.status
-      };
-    });
+    this.tenantTrackingData = this.enrichedData[0].data.tenantsAnalysis.tenants
+      .filter(tenant => tenant.locataire !== null)
+      .map(tenant => {
+        const fa = tenant.financialAnalysis;
+
+        // Loyer réel = room.price (plus fiable que fa.monthlyRent / locationPriceUnit)
+        const roomPrice = (tenant.room as any)?.price || fa.monthlyRent;
+
+        // Projection sur l'année sélectionnée
+        const coveredMonthsInYear = (fa as any).coveredMonthsInYear ?? 0;
+        const monthsDueInYear     = (fa as any).monthsDueInYear     ?? 0;
+        const coveredAmountInYear = (fa as any).coveredAmountInYear ?? 0;
+        const totalMonthsCovered  = (fa as any).totalMonthsCovered  ?? 0;
+
+        // Attendu pour l'année complète (12 mois × loyer réel)
+        const expectedFullYear = roomPrice * 12;
+
+        // Taux = couvert dans l'année / attendu année complète
+        // Ex: 60 000 couverts / 180 000 attendus = 33%
+        const paymentRate = expectedFullYear > 0
+          ? Math.min((coveredAmountInYear / expectedFullYear) * 100, 100)
+          : 0;
+
+        // Attendu à ce jour (pour la colonne "Total attendu")
+        const expectedToDate = monthsDueInYear * roomPrice;
+
+        return {
+          tenantId:   tenant.locataire?._id || tenant.room?._id || '',
+          tenantName: tenant.locataire?.fullName || 'Locataire inconnu',
+          roomCode:   tenant.room?.code || 'N/A',
+          monthlyRent: roomPrice,
+          entryDate:   new Date(fa.entryDate),
+          monthsElapsed: fa.monthsElapsed,
+          // Projection sur l'année (pas le cumul brut)
+          totalPaid:             coveredAmountInYear,   // couvert dans l'année
+          expectedPaymentToDate: expectedToDate,        // attendu à ce jour
+          status: fa.status,
+          monthsBehind:  (fa as any).lateMonths    ?? fa.monthsBehind ?? 0,
+          amountBehind:  (fa as any).debtAmount    ?? fa.amountBehind ?? 0,
+          advanceAmount: (fa as any).advanceAmount ?? 0,
+          paymentConsistency: fa.paymentConsistency,
+          paymentRate,
+          lastPaymentMonth: fa.lastPaymentMonth,
+          lastPaymentDate: (fa as any).lastPaymentDate
+            ? new Date((fa as any).lastPaymentDate) : null,
+          nextPaymentDate: (fa as any).nextPaymentDate
+            ? new Date((fa as any).nextPaymentDate) : null,
+          // Compatibilité template
+          totalExpected:    expectedToDate,
+          totalReceived:    coveredAmountInYear,
+          monthsOccupied:   monthsDueInYear,
+          contractStatus:   fa.status,
+          // Champs supplémentaires pour l'affichage
+          coveredAmountInYear,
+          expectedFullYear,
+          coveredMonthsInYear,
+          monthsDueInYear,
+          totalMonthsCovered,
+          totalPaidAllTime: fa.totalPaid  // cumul brut (informatif)
+        };
+      });
 
     this.paymentSummary = {
-      totalTenants: this.enrichedData[0].data.tenantsAnalysis.summary.totalTenants,
-      upToDateTenants: this.enrichedData[0].data.tenantsAnalysis.summary.upToDateTenants,
-      lateTenants: this.enrichedData[0].data.tenantsAnalysis.summary.lateTenants,
+      totalTenants:          this.enrichedData[0].data.tenantsAnalysis.summary.totalTenants,
+      upToDateTenants:       this.enrichedData[0].data.tenantsAnalysis.summary.upToDateTenants,
+      lateTenants:           this.enrichedData[0].data.tenantsAnalysis.summary.lateTenants,
       partialPaymentTenants: this.enrichedData[0].data.tenantsAnalysis.summary.partialPaymentTenants,
-      aheadTenants: this.enrichedData[0].data.tenantsAnalysis.summary.aheadTenants,
-      behindTenants: this.enrichedData[0].data.tenantsAnalysis.summary.behind,
-      // ✅ Utiliser les totaux calculés par le backend
-      totalExpectedRevenue: this.enrichedData[0].data.tenantsAnalysis.summary.totalExpectedByTenants,
-      totalReceivedRevenue: this.enrichedData[0].data.tenantsAnalysis.summary.totalPaidByTenants,
-      totalAdvanceAmount: this.enrichedData[0].data.tenantsAnalysis.summary.totalAdvanceAmount,
-      totalAmountBehind: this.enrichedData[0].data.tenantsAnalysis.summary.totalAmountBehind,
-      globalPaymentRate: this.enrichedData[0].data.tenantsAnalysis.summary.globalCollectionRate,
-      averageConsistency: this.enrichedData[0].data.tenantsAnalysis.summary.averagePaymentConsistency
-    }
+      aheadTenants:          this.enrichedData[0].data.tenantsAnalysis.summary.aheadTenants,
+      behindTenants:         this.enrichedData[0].data.tenantsAnalysis.summary.behind,
+      totalExpectedRevenue:  this.enrichedData[0].data.tenantsAnalysis.summary.totalExpectedByTenants,
+      totalReceivedRevenue:  this.enrichedData[0].data.tenantsAnalysis.summary.totalPaidByTenants,
+      totalAdvanceAmount:    this.enrichedData[0].data.tenantsAnalysis.summary.totalAdvanceAmount,
+      totalAmountBehind:     this.enrichedData[0].data.tenantsAnalysis.summary.totalAmountBehind,
+      globalPaymentRate:     this.enrichedData[0].data.tenantsAnalysis.summary.globalCollectionRate,
+      averageConsistency:    this.enrichedData[0].data.tenantsAnalysis.summary.averagePaymentConsistency
+    };
 
-    console.log(`✅ ${this.tenantTrackingData.length} locataires traités`);
     this.calculatePaymentSummary();
     this.updatePagination();
   }
@@ -225,15 +251,37 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
   }
 
   getStatusLabel(status: string): string {
-    const labels = {
-      'up_to_date': 'TENANT_PAYMENT_TRACKING.STATUS_LABELS.UP_TO_DATE',
-      'ahead': 'TENANT_PAYMENT_TRACKING.STATUS_LABELS.AHEAD',
-      'partial': 'TENANT_PAYMENT_TRACKING.STATUS_LABELS.PARTIAL',
-      'late': 'TENANT_PAYMENT_TRACKING.STATUS_LABELS.LATE',
-      'no_contract': 'TENANT_PAYMENT_TRACKING.STATUS_LABELS.NO_CONTRACT',
+    const labels: Record<string, string> = {
+      'up_to_date':     'TENANT_PAYMENT_TRACKING.STATUS_LABELS.UP_TO_DATE',
+      'advance':        'TENANT_PAYMENT_TRACKING.STATUS_LABELS.AHEAD',
+      'ahead':          'TENANT_PAYMENT_TRACKING.STATUS_LABELS.AHEAD',
+      'behind':         'TENANT_PAYMENT_TRACKING.STATUS_LABELS.LATE',
+      'late':           'TENANT_PAYMENT_TRACKING.STATUS_LABELS.LATE',
+      'critical':       'TENANT_PAYMENT_TRACKING.STATUS_LABELS.LATE',
+      'no_payment':     'TENANT_PAYMENT_TRACKING.STATUS_LABELS.LATE',
+      'partial':        'TENANT_PAYMENT_TRACKING.STATUS_LABELS.PARTIAL',
+      'no_contract':    'TENANT_PAYMENT_TRACKING.STATUS_LABELS.NO_CONTRACT',
       'ended_contract': 'TENANT_PAYMENT_TRACKING.STATUS_LABELS.ENDED_CONTRACT'
     };
-    return labels[status] || 'TENANT_PAYMENT_TRACKING.STATUS_LABELS.UNKNOWN';
+    // 'unknown' et tout autre statut → à jour (locataire en avance)
+    return labels[status] || 'TENANT_PAYMENT_TRACKING.STATUS_LABELS.UP_TO_DATE';
+  }
+
+  getStatusColor(status: string): string {
+    const colors: Record<string, string> = {
+      'up_to_date':     'text-green-600 bg-green-100',
+      'advance':        'text-blue-600 bg-blue-100',
+      'ahead':          'text-blue-600 bg-blue-100',
+      'behind':         'text-red-600 bg-red-100',
+      'late':           'text-red-600 bg-red-100',
+      'critical':       'text-red-600 bg-red-100',
+      'no_payment':     'text-red-600 bg-red-100',
+      'partial':        'text-yellow-600 bg-yellow-100',
+      'no_contract':    'text-gray-600 bg-gray-100',
+      'ended_contract': 'text-purple-600 bg-purple-100'
+    };
+    // 'unknown' → vert (locataire en avance)
+    return colors[status] || 'text-green-600 bg-green-100';
   }
   
   getStatusPriority(status: string): number {
@@ -258,19 +306,7 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
     return 0;
   }
 
-  getStatusColor(status: string): string {
-    const colors = {
-      'up_to_date': 'text-green-600 bg-green-100',
-      'ahead': 'text-blue-600 bg-blue-100',
-      'partial': 'text-yellow-600 bg-yellow-100',
-      'late': 'text-red-600 bg-red-100',
-      'no_contract': 'text-gray-600 bg-gray-100',
-      'ended_contract': 'text-purple-600 bg-purple-100'
-    };
-    return colors[status] || 'text-gray-600 bg-gray-100';
-  }
 
-  // Méthodes d'export améliorées
   exportToExcel(): void {
     const data = this.prepareExportData();
     this.exportData.emit({
