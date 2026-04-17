@@ -1,1 +1,12 @@
-<p>basic-chart works!</p>
+<div class="app-card">
+  <div class="app-card__header">
+    <div *ngIf="title" class="app-expressive-heading-03 text-center">{{ title }}</div>
+    <div>
+      <chart-skeleton *ngIf="isLoading" [height]="height" [showTitle]="false" [showLegend]="false"></chart-skeleton>
+      <youpez-echarts-container *ngIf="!isLoading">
+        <youpez-echarts [options]="chartOptions" class="app-echarts-component" [style.height]="height">
+        </youpez-echarts>
+      </youpez-echarts-container>
+    </div>
+  </div>
+</div>

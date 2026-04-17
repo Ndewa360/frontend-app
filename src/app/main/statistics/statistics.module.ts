@@ -49,7 +49,8 @@ import { FormsModule } from '@angular/forms';
     ChartErrorComponent,
     AdvancedFiltersComponent,
     ExportDialogComponent,
-    PerformanceAlertsComponent
+    PerformanceAlertsComponent,
+    BasicChartComponent
   ],
   providers:    [ CurrencyPipe ]
 })

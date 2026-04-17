@@ -85,6 +85,7 @@ export class ChartFinanceRoomComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private buildChart(data: EnrichedStatisticResponse): any {
+    // data est EnrichedStatisticResponse, data.data est EnrichedStatisticData
     if (!data || !data.data || !data.data.rooms || data.data.rooms.length === 0) {
       return this.getEmptyChart();
     }

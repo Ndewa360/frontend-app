@@ -70,9 +70,11 @@ export interface MonthlyRevenue {
 export interface MonthlyParkData {
   monthIndex: number;
   monthName: string;
-  totalReceived: number;
+  totalProjected: number;   // projection cumul (mois couverts par les paiements depuis l'entrée)
+  totalReceived: number;    // revenus bruts encaissés dans le mois
   totalExpected: number;
-  collectionRate: number;
+  projectionRate: number;   // taux projection / attendu
+  collectionRate: number;   // taux encaissé / attendu
 }
 
 // ─── Composant ───────────────────────────────────────────────────────────────
@@ -174,26 +176,39 @@ export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
   }
 
   private buildPropertiesSummary(yearData: StatisticPaymentOfAllPropertyByYear): void {
-    const totalReceivedPark = yearData.paymentYear?.totalAmountReceived || 0;
+    // Pour la section "Performance par bien", on utilise la PROJECTION
+    // (mois couverts par le cumul des paiements depuis l'entrée)
+    // et non les revenus bruts encaissés dans l'année.
+    // Source : detailedMetrics.totalCoveredInYear + detailedMetrics.collectionRate
+    const totalCoveredPark = (yearData.paymentProperty || []).reduce((s, pp) => {
+      const metrics = pp.detailedMetrics;
+      return s + ((metrics as any)?.totalCoveredInYear ?? metrics?.totalRevenue ?? 0);
+    }, 0);
 
     this.propertiesSummary = (yearData.paymentProperty || []).map(pp => {
-      const received = pp.amountProperty?.totalAmountReceived || 0;
-      const expected = pp.amountProperty?.totalAmountToBeReceveid || 0;
-      const metrics  = pp.detailedMetrics;
+      const metrics = pp.detailedMetrics;
 
-      const collectionRate = expected > 0 ? Math.round((received / expected) * 100) : 0;
-      const totalUnits     = metrics?.totalRooms    ?? 0;
-      const occupiedUnits  = metrics?.occupiedRooms ?? 0;
-      const occupancyRate  = totalUnits > 0 ? Math.round((occupiedUnits / totalUnits) * 100) : 0;
-      const averageRent    = metrics?.averageRent ?? 0;
+      // Projection : montant couvert dans l'année (pas les encaissements bruts)
+      const covered  = (metrics as any)?.totalCoveredInYear ?? metrics?.totalRevenue ?? 0;
+      const expected = metrics?.totalExpected ?? pp.amountProperty?.totalAmountToBeReceveid ?? 0;
+      // Taux basé sur la projection
+      const collectionRate = metrics?.collectionRate
+        ?? (expected > 0 ? Math.round((covered / expected) * 100) : 0);
 
-      // Locataires depuis tenantsAnalysis si disponible, sinon approximation
+      const totalUnits    = metrics?.totalRooms    ?? 0;
+      const occupiedUnits = metrics?.occupiedRooms ?? 0;
+      const occupancyRate = totalUnits > 0 ? Math.round((occupiedUnits / totalUnits) * 100) : 0;
+      const averageRent   = metrics?.averageRent ?? 0;
+
+      // Dettes et avances basées sur la projection
+      const totalArrears  = metrics?.totalDebts    ?? 0;
+      const totalAdvances = metrics?.totalAdvances ?? 0;
+
+      // Locataires
       const tenantsSummary = (pp as any).tenantsAnalysis?.summary;
-      const totalTenants  = tenantsSummary?.totalTenants  ?? occupiedUnits;
-      const lateTenants   = tenantsSummary?.lateTenants   ?? 0;
-      const advanceTenants = tenantsSummary?.aheadTenants ?? 0;
-      const totalArrears   = tenantsSummary?.totalAmountBehind  ?? (metrics?.totalDebts    || 0);
-      const totalAdvances  = tenantsSummary?.totalAdvanceAmount ?? (metrics?.totalAdvances || 0);
+      const totalTenants   = tenantsSummary?.totalTenants  ?? occupiedUnits;
+      const lateTenants    = tenantsSummary?.lateTenants   ?? 0;
+      const advanceTenants = tenantsSummary?.aheadTenants  ?? 0;
 
       const monthlyData: MonthlyRevenue[] = (pp.amountMonth || []).map((m: any) => ({
         monthIndex: m.month - 1,
@@ -205,10 +220,10 @@ export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
       return {
         propertyId:    pp.property._id,
         propertyName:  pp.property.name,
-        totalReceived: received,
+        totalReceived: covered,          // projection (pas encaissements bruts)
         totalExpected: expected,
         collectionRate,
-        shortfall:     Math.max(0, expected - received),
+        shortfall:     Math.max(0, expected - covered),
         totalUnits,
         occupiedUnits,
         occupancyRate,
@@ -218,7 +233,7 @@ export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
         advanceTenants,
         totalArrears,
         totalAdvances,
-        revenueShare:  totalReceivedPark > 0 ? Math.round((received / totalReceivedPark) * 100) : 0,
+        revenueShare:  totalCoveredPark > 0 ? Math.round((covered / totalCoveredPark) * 100) : 0,
         monthlyData,
         performanceLevel: this.getPerformanceLevel(collectionRate)
       };
@@ -295,31 +310,45 @@ export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
   }
 
   private buildMonthlyParkData(yearData: StatisticPaymentOfAllPropertyByYear): void {
-    // Agréger les 12 mois sur tous les biens
     const monthly = Array.from({ length: 12 }, (_, i) => ({
-      monthIndex: i,
-      monthName:  this.MONTHS[i],
-      totalReceived: 0,
-      totalExpected: 0,
+      monthIndex:     i,
+      monthName:      this.MONTHS[i],
+      totalProjected: 0,  // projection cumul (distributed depuis revenueDistribution)
+      totalReceived:  0,  // revenus bruts encaissés (paymentValue)
+      totalExpected:  0,
+      projectionRate: 0,
       collectionRate: 0
     }));
 
     (yearData.paymentProperty || []).forEach(pp => {
+      // Projection : depuis revenueDistribution.monthlyAnalysis.distributed
+      const monthlyAnalysis = (pp as any).revenueDistribution?.monthlyAnalysis || [];
+      monthlyAnalysis.forEach((ma: any) => {
+        const idx = (ma.month || 0) - 1;
+        if (idx >= 0 && idx < 12) {
+          monthly[idx].totalProjected += ma.distributed || 0;
+          monthly[idx].totalExpected  += ma.expected    || 0;
+        }
+      });
+
+      // Revenus bruts : depuis amountMonth.totalAmountReceived
       (pp.amountMonth || []).forEach((m: any) => {
         const idx = m.month - 1;
         if (idx >= 0 && idx < 12) {
           monthly[idx].totalReceived += m.totalAmountReceived || 0;
-          monthly[idx].totalExpected += m.totalAmountToBeReceveid || 0;
         }
       });
     });
 
     this.monthlyParkData = monthly.map(m => ({
       ...m,
-      totalReceived: Math.round(m.totalReceived),
-      totalExpected: Math.round(m.totalExpected),
+      totalProjected: Math.round(m.totalProjected),
+      totalReceived:  Math.round(m.totalReceived),
+      totalExpected:  Math.round(m.totalExpected),
+      projectionRate: m.totalExpected > 0
+        ? Math.round((m.totalProjected / m.totalExpected) * 100) : 0,
       collectionRate: m.totalExpected > 0
-        ? Math.round((m.totalReceived / m.totalExpected) * 100) : 0
+        ? Math.round((m.totalReceived  / m.totalExpected) * 100) : 0
     }));
   }
 
@@ -383,15 +412,20 @@ export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
     return '#ef4444';
   }
 
-  getMaxMonthlyReceived(): number {
+  getMaxMonthly(): number {
     if (!this.monthlyParkData.length) return 1;
-    return Math.max(...this.monthlyParkData.map(m => m.totalReceived)) || 1;
+    return Math.max(
+      ...this.monthlyParkData.map(m => Math.max(m.totalProjected, m.totalReceived))
+    ) || 1;
   }
+
+  // Conserver pour compatibilité template
+  getMaxMonthlyReceived(): number { return this.getMaxMonthly(); }
 
   getBestMonth(): MonthlyParkData | null {
     if (!this.monthlyParkData.length) return null;
     return this.monthlyParkData.reduce((best, m) =>
-      m.totalReceived > best.totalReceived ? m : best
+      m.totalProjected > best.totalProjected ? m : best
     );
   }
 
@@ -399,7 +433,7 @@ export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
     const withExpected = this.monthlyParkData.filter(m => m.totalExpected > 0);
     if (!withExpected.length) return null;
     return withExpected.reduce((worst, m) =>
-      m.collectionRate < worst.collectionRate ? m : worst
+      m.projectionRate < worst.projectionRate ? m : worst
     );
   }
 

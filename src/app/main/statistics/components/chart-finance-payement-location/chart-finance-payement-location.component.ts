@@ -19,6 +19,9 @@ export class ChartFinancePayementLocationComponent implements OnChanges, OnDestr
 
   charsOpts: any = {};
 
+  // FIX : subject dédié pour annuler la subscription courante avant d'en créer une nouvelle
+  // (même pattern que chart-finance-payement-annee — fix #F18)
+  private subscriptionReset$ = new Subject<void>();
   private destroy$ = new Subject<void>();
 
   constructor(private _store: Store) {}
@@ -27,8 +30,8 @@ export class ChartFinancePayementLocationComponent implements OnChanges, OnDestr
     if (changes['propertyID'] || changes['selectedYear']) {
       this.title = `Encaissements par locataire — ${this.selectedYear}`;
 
-      // Renouveler le subject pour annuler la subscription précédente
-      this.destroy$.next();
+      // Annuler la subscription précédente sans compléter destroy$
+      this.subscriptionReset$.next();
 
       if (!this.propertyID || !this.selectedYear) return;
 
@@ -38,14 +41,18 @@ export class ChartFinancePayementLocationComponent implements OnChanges, OnDestr
 
       this._store.select(
         StatisticState.selectStateStatisticLocataireByPropertyIdAndYear(this.propertyID, this.selectedYear)
-      ).pipe(takeUntil(this.destroy$))
-        .subscribe(value => {
+      ).pipe(
+        takeUntil(this.subscriptionReset$),
+        takeUntil(this.destroy$)
+      ).subscribe(value => {
           this.charsOpts = this.getChart(value);
         });
     }
   }
 
   ngOnDestroy(): void {
+    this.subscriptionReset$.next();
+    this.subscriptionReset$.complete();
     this.destroy$.next();
     this.destroy$.complete();
   }

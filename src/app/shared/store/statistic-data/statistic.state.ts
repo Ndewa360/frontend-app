@@ -281,14 +281,18 @@ export class StatisticState{
             tap(
                 result => {
                     const key = `${propertyID}-${year}`;
-                    // ✅ result.data est directement l'objet EnrichedStatisticData renvoyé par le backend
-                    // L'API retourne { statusCode, message, data: EnrichedStatisticData, ... }
+                    // ✅ result est ApiResultFormat<EnrichedStatisticResponse>
+                    // result.data est l'EnrichedStatisticResponse (qui contient lui-même data: EnrichedStatisticData)
+                    // On stocke directement result.data pour que les composants accèdent à propertyStats[0].data.data.rooms
+                    // CORRECTION : on stocke result (l'enveloppe complète) pour éviter la confusion
+                    // Les composants accèdent via propertyStats[0].data qui est EnrichedStatisticResponse
                     const filteredPropertyStats = state.propertyStatistic.filter((u) => u.key !== key);
                     const finalStatistic = [...filteredPropertyStats, { key, data: result.data }];
 
                     ctx.patchState({
                         loadingPropertyStatistic: false,
-                        propertyStatistic: finalStatistic
+                        propertyStatistic: finalStatistic,
+                        error: null
                     });
                 }
             ),

@@ -348,7 +348,9 @@
         <div class="park-section__badge">5</div>
         <div>
           <h3 class="park-section__title">Évolution mensuelle — {{ selectedYear }}</h3>
-          <p class="park-section__subtitle">Encaissements mois par mois sur l'ensemble du parc</p>
+          <p class="park-section__subtitle">
+            Projection (mois couverts par cumul) vs Revenus effectivement encaissés
+          </p>
         </div>
       </div>
 
@@ -360,24 +362,25 @@
           </div>
 
           <div class="monthly-chart__bars">
-            <!-- Barre encaissé -->
+            <!-- Barre 1 : Projection (or/ambre) -->
             <div class="monthly-chart__bar-track">
-              <div class="monthly-chart__bar monthly-chart__bar--received"
-                [style.width.%]="m.totalReceived > 0 ? (m.totalReceived / getMaxMonthlyReceived()) * 100 : 0">
+              <div class="monthly-chart__bar monthly-chart__bar--projected"
+                [style.width.%]="m.totalProjected > 0 ? (m.totalProjected / getMaxMonthly()) * 100 : 0">
               </div>
             </div>
-            <!-- Barre attendu (fond) -->
-            <div class="monthly-chart__bar-track monthly-chart__bar-track--expected">
-              <div class="monthly-chart__bar monthly-chart__bar--expected"
-                [style.width.%]="m.totalExpected > 0 ? Math.min((m.totalExpected / getMaxMonthlyReceived()) * 100, 100) : 0">
+            <!-- Barre 2 : Revenus bruts encaissés (bleu) -->
+            <div class="monthly-chart__bar-track">
+              <div class="monthly-chart__bar monthly-chart__bar--received"
+                [style.width.%]="m.totalReceived > 0 ? (m.totalReceived / getMaxMonthly()) * 100 : 0">
               </div>
             </div>
           </div>
 
           <div class="monthly-chart__values">
-            <span class="monthly-chart__received">{{ formatPrice(m.totalReceived) }}</span>
-            <span class="monthly-chart__rate" [ngClass]="getRateClass(m.collectionRate)">
-              {{ formatPercent(m.collectionRate) }}
+            <span class="monthly-chart__projected-val">{{ formatPrice(m.totalProjected) }}</span>
+            <span class="monthly-chart__received-val">{{ formatPrice(m.totalReceived) }}</span>
+            <span class="monthly-chart__rate" [ngClass]="getRateClass(m.projectionRate)">
+              {{ formatPercent(m.projectionRate) }}
             </span>
           </div>
 
@@ -386,7 +389,10 @@
         <!-- Légende -->
         <div class="monthly-chart__legend">
           <span class="legend-item">
-            <span class="legend-dot legend-dot--received"></span> Encaissé
+            <span class="legend-dot legend-dot--projected"></span> Projection (couvert)
+          </span>
+          <span class="legend-item">
+            <span class="legend-dot legend-dot--received"></span> Encaissé effectif
           </span>
           <span class="legend-item">
             <span class="legend-dot legend-dot--expected"></span> Attendu
@@ -401,7 +407,9 @@
         <div class="park-section__badge">6</div>
         <div>
           <h3 class="park-section__title">Performance par bien</h3>
-          <p class="park-section__subtitle">Classement et détail de chaque propriété</p>
+          <p class="park-section__subtitle">
+            Projection cumul des paiements depuis l'entrée de chaque locataire — {{ selectedYear }}
+          </p>
         </div>
         <!-- Tri -->
         <div class="sort-controls">
@@ -420,9 +428,9 @@
       <div class="property-table">
         <div class="property-table__header">
           <span>Bien</span>
-          <span>Encaissé</span>
+          <span>Couvert (projection)</span>
           <span>Attendu</span>
-          <span>Taux</span>
+          <span>Taux couverture</span>
           <span>Occupation</span>
           <span>Arriérés</span>
           <span>Part du parc</span>
@@ -443,9 +451,10 @@
             </div>
           </div>
 
-          <!-- Encaissé -->
+          <!-- Couvert (projection) -->
           <div class="property-table__cell">
             <span class="property-table__amount">{{ formatPrice(p.totalReceived) }}</span>
+            <span style="font-size:.7rem;color:#94a3b8">mois couverts</span>
           </div>
 
           <!-- Attendu -->

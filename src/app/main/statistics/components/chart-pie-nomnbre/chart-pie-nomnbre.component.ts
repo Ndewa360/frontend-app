@@ -1,11 +1,11 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 
 @Component({
   selector: 'chart-pie-nomnbre',
   templateUrl: './chart-pie-nomnbre.component.html',
   styleUrls: ['./chart-pie-nomnbre.component.css']
 })
-export class ChartPieNomnbreComponent implements OnInit{
+export class ChartPieNomnbreComponent implements OnInit, OnChanges {
   @Input() nbreTotal: number = 0;
   @Input() nbreActif: number = 0;
   @Input() label: string = ''
@@ -15,9 +15,15 @@ export class ChartPieNomnbreComponent implements OnInit{
 
   locataireOpts: any={};
 
-
   ngOnInit(): void {
-     this.locataireOpts = this.getGauge()
+    this.locataireOpts = this.getGauge();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['nbreTotal'] || changes['nbreActif'] || changes['label'] || changes['title'] ||
+        changes['chartColorBegin'] || changes['chartColorEnd']) {
+      this.locataireOpts = this.getGauge();
+    }
   }
 
     
