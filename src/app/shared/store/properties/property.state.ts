@@ -263,9 +263,14 @@ export class PropertyState{
     @Action(PropertyAction.FetchProperties)
     fetchProperties(ctx: StateContext<PropertyStateModel>)
     {
-        if (ctx.getState().initLoadingState == 'LOADED') return of(true);
+        // Si déjà chargé, recharger en arrière-plan sans vider les données existantes
+        // Cela évite le flash de 0 lors du retour sur la page
+        const alreadyLoaded = ctx.getState().initLoadingState === 'LOADED';
 
-        ctx.patchState({ loadingProperty: true, initLoadingState: 'LOADING' });
+        if (!alreadyLoaded) {
+            ctx.patchState({ loadingProperty: true, initLoadingState: 'LOADING' });
+        }
+
         return this._propertysService.getProperties().pipe(
             tap(result => {
                 ctx.patchState({

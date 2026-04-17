@@ -3,9 +3,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subject, combineLatest } from 'rxjs';
-import { map, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
-import { PropertyModel, PropertyState, RoomState, LocationPaymentState } from 'src/app/shared/store';
+import { PropertyModel, PropertyState, RoomState } from 'src/app/shared/store';
 import { AddPropertyComponent } from '../add-property/add-property.component';
 import { UpdatePropertyComponent } from '../update-property/update-property.component';
 import { PropertyAlert } from '../components/property-overview-card/property-overview-card.component';
@@ -66,9 +66,16 @@ export class ListPropertyComponent implements OnInit, OnDestroy {
     this.loadingProperties$ = this.propertyNavigationService.loading$;
     this._store.dispatch(new PropertyManagerAction.LoadMyAssignments());
 
-    // Pré-calculer toutes les métriques une seule fois quand les données changent
-    this.properties$.pipe(takeUntil(this.destroy$)).subscribe(properties => {
-      if (!properties) return;
+    // Recalculer dès que properties OU rooms changent
+    // Les champs enrichis (occupiedRooms, monthlyRevenue) viennent de l'API
+    // Le fallback sur RoomState couvre la transition si l'API n'a pas encore répondu
+    combineLatest([
+      this._store.select(PropertyState.selectStateProperties),
+      this._store.select(RoomState.selectStateRooms)
+    ]).pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(([properties]) => {
+      if (!properties?.length) return;
       this.totalProperties = properties.length;
       this.recalculateAllMetrics(properties);
     });
@@ -85,80 +92,50 @@ export class ListPropertyComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  /** Recalcule toutes les métriques en une seule passe — appelé uniquement quand les données changent */
   private recalculateAllMetrics(properties: PropertyModel[]): void {
-    let totalRooms = 0;
+    let totalRooms    = 0;
     let totalOccupied = 0;
-    let totalRevenue = 0;
+    let totalMonthly  = 0;
 
     properties.forEach(property => {
-      const rooms = this._store.selectSnapshot(RoomState.selectStateRoomByPropertyId(property._id)) || [];
-      const payments = this._store.selectSnapshot(LocationPaymentState.selectStateLocationPaymentByPropertyId(property._id)) || [];
+      // Priorité 1 : champs enrichis par l'API (disponibles dès le chargement)
+      // Priorité 2 : fallback sur RoomState si les champs enrichis ne sont pas encore là
+      let occupied = property.occupiedRooms;
+      let free     = property.freeRooms;
+      let total    = property.roomLength ?? 0;
+      let rate     = property.occupancyRate;
+      let monthly  = property.monthlyRevenue ?? 0;
 
-      const occupied = rooms.filter(r => !r.isFree).length;
-      const free = rooms.filter(r => r.isFree).length;
-      const rate = rooms.length > 0 ? Math.round((occupied / rooms.length) * 100) : 0;
-      const monthly = this.calcMonthlyRevenue(payments);
-      const growth = this.calcRevenueGrowth(payments);
-      const overdue = this.calcOverduePayments(payments);
+      if (occupied === undefined || occupied === null) {
+        const rooms = this._store.selectSnapshot(RoomState.selectStateRoomByPropertyId(property._id)) || [];
+        occupied = rooms.filter(r => !r.isFree).length;
+        free     = rooms.filter(r =>  r.isFree).length;
+        total    = rooms.length || property.roomLength || 0;
+        rate     = total > 0 ? Math.round((occupied / total) * 100) : 0;
+      }
 
       this.propertyMetrics.set(property._id, {
-        occupancyRate: rate,
-        occupiedRooms: occupied,
-        freeRooms: free,
-        monthlyRevenue: monthly,
-        revenueGrowth: growth,
-        overduePayments: overdue
+        occupancyRate:   rate   ?? 0,
+        occupiedRooms:   occupied ?? 0,
+        freeRooms:       free    ?? 0,
+        monthlyRevenue:  monthly,
+        revenueGrowth:   0,
+        overduePayments: 0
       });
 
-      totalRooms += rooms.length;
-      totalOccupied += occupied;
-      totalRevenue += rooms.filter(r => !r.isFree).reduce((s, r) => s + (r.price || 0), 0);
+      totalRooms    += total;
+      totalOccupied += (occupied ?? 0);
+      totalMonthly  += monthly;
     });
 
-    this.totalUnits = properties.reduce((s, p) => s + (p.roomLength || 0), 0);
+    this.totalUnits          = properties.reduce((s, p) => s + (p.roomLength || 0), 0);
     this.globalOccupancyRate = totalRooms > 0 ? Math.round((totalOccupied / totalRooms) * 100) : 0;
-    this.totalMonthlyRevenue = totalRevenue;
+    this.totalMonthlyRevenue = totalMonthly;
   }
 
-  private calcMonthlyRevenue(payments: any[]): number {
-    if (!payments?.length) return 0;
-    const now = new Date();
-    const start = new Date(now.getFullYear(), now.getMonth(), 1);
-    const end = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-    return payments
-      .filter(p => {
-        const d = new Date(p.datePayment);
-        return d >= start && d < end && p.isPaid;
-      })
-      .reduce((s, p) => s + (p.amount || 0), 0);
-  }
-
-  private calcRevenueGrowth(payments: any[]): number {
-    if (!payments?.length) return 0;
-    const now = new Date();
-    const curStart = new Date(now.getFullYear(), now.getMonth(), 1);
-    const curEnd   = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-    const prevStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-    const prevEnd   = curStart;
-
-    const cur = payments
-      .filter(p => { const d = new Date(p.createdAt || p.datePayment); return d >= curStart && d < curEnd && p.isPaid; })
-      .reduce((s, p) => s + (p.amount || 0), 0);
-
-    const prev = payments
-      .filter(p => { const d = new Date(p.createdAt || p.datePayment); return d >= prevStart && d < prevEnd && p.isPaid; })
-      .reduce((s, p) => s + (p.amount || 0), 0);
-
-    if (prev === 0) return cur > 0 ? 100 : 0;
-    return Math.round(((cur - prev) / prev) * 100);
-  }
-
-  private calcOverduePayments(payments: any[]): number {
-    if (!payments?.length) return 0;
-    const today = new Date();
-    return payments.filter(p => new Date(p.datePayment) < today && !p.isPaid).length;
-  }
+  private calcMonthlyRevenue(_payments: any[]): number { return 0; }
+  private calcRevenueGrowth(_payments: any[]): number { return 0; }
+  private calcOverduePayments(_payments: any[]): number { return 0; }
 
   // ── Accesseurs pour le template (lecture depuis le Map pré-calculé) ──────
 

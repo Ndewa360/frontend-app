@@ -19,6 +19,10 @@ export interface PropertyModel {
     hasParking?:boolean;
     owner?:string;
     roomLength?:number;
+    occupiedRooms?: number;   // retourné directement par l'API
+    freeRooms?: number;       // retourné directement par l'API
+    occupancyRate?: number;   // retourné directement par l'API
+    monthlyRevenue?: number;  // revenus du mois courant retournés par l'API
 
     // Nouvelles propriétés pour une gestion immobilière complète
     propertyType?: 'APARTMENT' | 'HOUSE' | 'COMMERCIAL' | 'MIXED' | 'LAND';
