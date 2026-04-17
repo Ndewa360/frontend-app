@@ -25,7 +25,7 @@ export class ChartFinancePayementLocationComponent implements OnChanges, OnDestr
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['propertyID'] || changes['selectedYear']) {
-      this.title = `Paiement de locataire ${this.selectedYear}`;
+      this.title = `Encaissements par locataire — ${this.selectedYear}`;
 
       // Renouveler le subject pour annuler la subscription précédente
       this.destroy$.next();
@@ -56,20 +56,16 @@ export class ChartFinancePayementLocationComponent implements OnChanges, OnDestr
 
     data.forEach(item => {
       legendData.push(item.locataire.fullName);
-      // paymentValue = montant couvert par mois dans l'année (projection)
-      // 0 = mois non couvert, loyer = mois couvert
+      // paymentValue = montants bruts réellement versés par mois (après correction backend)
       dataSeries.push({
         name: item.locataire.fullName,
-        type: 'line',
-        smooth: false,
-        step: 'middle',
+        type: 'bar',
+        stack: 'encaisse',
         data: item.paymentValue,
-        lineStyle: { width: 2 },
-        symbol: 'circle',
-        symbolSize: 6,
+        itemStyle: { opacity: 0.85 },
         tooltip: {
           valueFormatter: (v: number) =>
-            v > 0 ? `${v.toLocaleString('fr-FR')} FCFA (couvert)` : 'Non couvert'
+            v > 0 ? `${v.toLocaleString('fr-FR')} FCFA` : 'Aucun encaissement'
         }
       });
     });
@@ -85,7 +81,7 @@ export class ChartFinancePayementLocationComponent implements OnChanges, OnDestr
           let content = `<strong>${monthName} ${this.selectedYear}</strong><br/>`;
           params.forEach(p => {
             const icon = p.value > 0 ? '✅' : '❌';
-            content += `${icon} ${p.seriesName} : <strong>${p.value > 0 ? p.value.toLocaleString('fr-FR') + ' FCFA' : 'Non couvert'}</strong><br/>`;
+            content += `${icon} ${p.seriesName} : <strong>${p.value > 0 ? p.value.toLocaleString('fr-FR') + ' FCFA encaissés' : 'Aucun encaissement'}</strong><br/>`;
           });
           return content;
         }
@@ -96,12 +92,12 @@ export class ChartFinancePayementLocationComponent implements OnChanges, OnDestr
       xAxis: {
         type: 'category',
         name: 'Mois',
-        boundaryGap: false,
+        boundaryGap: true,
         data: UtilsString.getListOfMonth()
       },
       yAxis: {
         type: 'value',
-        name: 'Montant couvert (FCFA)',
+        name: 'Montant encaissé (FCFA)',
         axisLabel: { formatter: (v: number) => v > 0 ? v.toLocaleString('fr-FR') : '0' }
       },
       series: dataSeries

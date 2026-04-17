@@ -1,38 +1,81 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Select, Store } from '@ngxs/store';
-import { Observable, Subject } from 'rxjs';
+import { Store } from '@ngxs/store';
+import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { TranslateService } from '@ngx-translate/core';
 import { StatisticState, StatisticAction } from 'src/app/shared/store';
-import { MONTH } from 'src/app/shared/store/global/global.model';
 import { StatisticPaymentOfAllPropertyByYear } from 'src/app/shared/store/statistic-data/statistic.model';
 import { PerformanceAlertsService } from 'src/app/main/statistics/services/performance-alerts.service';
 
-interface FinancialMetric {
-  label: string;
-  value: number;
-  change: number;
-  changeType: 'increase' | 'decrease' | 'neutral';
-  icon: string;
-  color: string;
-  isMoney:boolean
+// ─── Interfaces ──────────────────────────────────────────────────────────────
+
+export interface GlobalFinancialMetrics {
+  // Bloc 1 — Performance financière
+  totalReceived: number;
+  totalExpected: number;
+  collectionRate: number;
+  shortfall: number;
+  averageRevenuePerProperty: number;
+  // Bloc 2 — Parc immobilier
+  totalProperties: number;
+  activeProperties: number;    // au moins 1 unité occupée
+  vacantProperties: number;    // aucune unité occupée
+  totalUnits: number;
+  occupiedUnits: number;
+  vacantUnits: number;
+  occupancyRate: number;
+  averageRentPerUnit: number;
+  potentialUnexploitedRevenue: number;  // unités libres × loyer moyen × 12
+  // Bloc 3 — Locataires
+  totalTenants: number;
+  upToDateTenants: number;
+  lateTenants: number;
+  advanceTenants: number;
+  lateTenantsRate: number;     // % locataires en retard
+  totalArrears: number;        // somme des dettes
+  totalAdvances: number;       // somme des avances
+  // Bloc 4 — Cautions
+  totalCautionsReceived: number;
+  totalCautionsMissing: number;    // unités occupées sans caution
+  totalCautionsToRefund: number;   // contrats terminés, caution à restituer
 }
 
-interface MonthlyData {
-  month: string;
-  revenue: number;
-  expenses: number;
-  profit: number;
-}
-
-interface PropertyFinancialSummary {
+export interface PropertySummary {
   propertyId: string;
   propertyName: string;
-  totalRevenue: number;
-  expectedRevenue: number;
+  totalReceived: number;
+  totalExpected: number;
   collectionRate: number;
-  monthlyData: MonthlyData[];
+  shortfall: number;
+  totalUnits: number;
+  occupiedUnits: number;
+  occupancyRate: number;
+  averageRent: number;
+  totalTenants: number;
+  lateTenants: number;
+  advanceTenants: number;
+  totalArrears: number;
+  totalAdvances: number;
+  revenueShare: number;         // % de contribution au revenu total du parc
+  monthlyData: MonthlyRevenue[];
+  performanceLevel: 'excellent' | 'good' | 'fair' | 'poor';
 }
+
+export interface MonthlyRevenue {
+  monthIndex: number;
+  monthName: string;
+  received: number;
+  expected: number;
+}
+
+export interface MonthlyParkData {
+  monthIndex: number;
+  monthName: string;
+  totalReceived: number;
+  totalExpected: number;
+  collectionRate: number;
+}
+
+// ─── Composant ───────────────────────────────────────────────────────────────
 
 @Component({
   selector: 'app-modern-financial-dashboard',
@@ -40,280 +83,342 @@ interface PropertyFinancialSummary {
   styleUrls: ['./modern-financial-dashboard.component.scss']
 })
 export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
-  private destroy$ = new Subject<void>();
 
-  @Select(StatisticState.selectPaymentRecapitulationStatisticLoading) 
-  loading$!: Observable<boolean>;
+  private destroy$          = new Subject<void>();
+  private subscriptionReset$ = new Subject<void>();
 
-  // Données
+  isLoading   = false;
   currentYear = new Date().getFullYear();
   selectedYear = this.currentYear;
-  selectedPeriod: 'month' | 'quarter' | 'year' = 'month';
-  
-  // Métriques principales
-  financialMetrics: FinancialMetric[] = [];
+  yearOptions: { value: number; label: string }[] = [];
 
-  // Données des propriétés
-  propertiesSummary: PropertyFinancialSummary[] = [];
-  
-  // Données pour les graphiques
-  revenueChartData: any[] = [];
-  collectionRateData: any[] = [];
-  
-  // Options de période
-  periodOptions = [
-    { value: 'month', label: 'FINANCIAL_DASHBOARD.MONTHLY' },
-    { value: 'quarter', label: 'FINANCIAL_DASHBOARD.QUARTERLY' },
-    { value: 'year', label: 'FINANCIAL_DASHBOARD.YEARLY' }
+  // Données traitées
+  globalMetrics: GlobalFinancialMetrics | null = null;
+  propertiesSummary: PropertySummary[] = [];
+  monthlyParkData: MonthlyParkData[] = [];
+
+  // Tri & filtre des biens
+  sortBy: 'revenue' | 'rate' | 'name' = 'revenue';
+  sortedProperties: PropertySummary[] = [];
+
+  Math = Math; // Exposer Math au template
+
+  private readonly MONTHS = [
+    'Janvier','Février','Mars','Avril','Mai','Juin',
+    'Juillet','Août','Septembre','Octobre','Novembre','Décembre'
   ];
-
-  // Options d'année
-  yearOptions: any[] = [];
 
   constructor(
     private store: Store,
-    private translate: TranslateService,
     private performanceAlertsService: PerformanceAlertsService
   ) {
-    this.initializeYearOptions();
-    this.initializeFinancialMetrics();
-  }
-
-  ngOnInit(): void {
-    this.loadFinancialData();
-    this.updatePeriodOptions();
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
-
-  private initializeYearOptions(): void {
-    this.yearOptions = Array.from({length: 5}, (_, i) => ({
+    this.yearOptions = Array.from({ length: 5 }, (_, i) => ({
       value: this.currentYear - i,
       label: (this.currentYear - i).toString()
     }));
   }
 
-  private initializeFinancialMetrics(): void {
-    this.financialMetrics = [
-      {
-        label: 'FINANCIAL_DASHBOARD.TOTAL_REVENUE',
-        value: 0,
-        change: 0,
-        changeType: 'neutral',
-        icon: 'money',
-        color: 'success',
-        isMoney: true
-      },
-      {
-        label: 'FINANCIAL_DASHBOARD.COLLECTION_RATE',
-        value: 0,
-        change: 0,
-        changeType: 'neutral',
-        icon: 'percentage',
-        color: 'info',
-        isMoney: false
-      },
-      {
-        label: 'FINANCIAL_DASHBOARD.ACTIVE_PROPERTIES',
-        value: 0,
-        change: 0,
-        changeType: 'neutral',
-        icon: 'home',
-        color: 'primary',
-        isMoney: false
-      },
-      {
-        label: 'FINANCIAL_DASHBOARD.TOTAL_DEFICIT',
-        value: 0,
-        change: 0,
-        changeType: 'neutral',
-        icon: 'trending-down',
-        color: 'warning',
-        isMoney: true
-      }
-    ];
+  ngOnInit(): void {
+    this.loadData();
   }
 
-  private updatePeriodOptions(): void {
-    this.periodOptions = [
-      { value: 'month', label: 'FINANCIAL_DASHBOARD.MONTHLY' },
-      { value: 'quarter', label: 'FINANCIAL_DASHBOARD.QUARTERLY' },
-      { value: 'year', label: 'FINANCIAL_DASHBOARD.YEARLY' }
-    ];
+  ngOnDestroy(): void {
+    this.subscriptionReset$.next();
+    this.subscriptionReset$.complete();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
-  private loadFinancialData(): void {
-    // Charger les données depuis le store
-    this.store.select(StatisticState.selectStateStatisticRecapitulationPaymentBydYear(this.selectedYear))
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((data: StatisticPaymentOfAllPropertyByYear[]) => {
-        if (data && data.length > 0) {
-          this.processFinancialData(data);
-        }
-      });
+  // ─── Chargement ────────────────────────────────────────────────────────────
 
-    // Dispatcher l'action pour charger les données
-    this.store.dispatch(new StatisticAction.FetchStatisticPaymentRecapitulationAccountOfAllPropertyByYear(this.selectedYear));
-  }
+  private loadData(): void {
+    this.subscriptionReset$.next();
+    this.isLoading = true;
 
-  private processFinancialData(data: StatisticPaymentOfAllPropertyByYear[]): void {
-    this.propertiesSummary = [];
-
-    data.forEach(yearData => {
-      if (yearData.paymentProperty && yearData.paymentProperty.length > 0) {
-        yearData.paymentProperty.forEach(propertyPayment => {
-          // ✅ Utiliser detailedMetrics du backend si disponible
-          const metrics = propertyPayment.detailedMetrics;
-          const totalReceived = metrics?.totalRevenue ?? (propertyPayment.amountProperty?.totalAmountReceived || 0);
-          const totalExpected = metrics?.totalExpected ?? (propertyPayment.amountProperty?.totalAmountToBeReceveid || 0);
-          const collectionRate = metrics?.collectionRate ?? this.calculateCollectionRate(totalReceived, totalExpected);
-
-          this.propertiesSummary.push({
-            propertyId: propertyPayment.property._id,
-            propertyName: propertyPayment.property.name,
-            totalRevenue: totalReceived,
-            expectedRevenue: totalExpected,
-            collectionRate,
-            monthlyData: this.generateMonthlyDataFromProperty(propertyPayment)
-          });
-        });
-
-        // ✅ Alimenter les alertes depuis les données backend
-        this.performanceAlertsService.loadAlertsFromRecapitulation(yearData);
+    this.store.select(
+      StatisticState.selectStateStatisticRecapitulationPaymentBydYear(this.selectedYear)
+    ).pipe(
+      takeUntil(this.subscriptionReset$),
+      takeUntil(this.destroy$)
+    ).subscribe((data: StatisticPaymentOfAllPropertyByYear[]) => {
+      if (data && data.length > 0) {
+        this.isLoading = false;
+        this.process(data);
       }
     });
 
-    this.updateMetrics(data);
-    this.updateChartData();
+    this.store.dispatch(
+      new StatisticAction.FetchStatisticPaymentRecapitulationAccountOfAllPropertyByYear(this.selectedYear)
+    ).subscribe(() => {
+      const cached = this.store.selectSnapshot(
+        StatisticState.selectStateStatisticRecapitulationPaymentBydYear(this.selectedYear)
+      );
+      if (cached && cached.length > 0) {
+        this.isLoading = false;
+        this.process(cached);
+      }
+    });
   }
 
-  private calculateCollectionRate(received: number, expected: number): number {
-    if (expected === 0) return 0;
-    return Math.round((received / expected) * 100);
+  // ─── Traitement des données ─────────────────────────────────────────────────
+
+  private process(data: StatisticPaymentOfAllPropertyByYear[]): void {
+    const yearData = data[0];
+    if (!yearData) return;
+
+    this.buildPropertiesSummary(yearData);
+    this.buildGlobalMetrics(yearData);
+    this.buildMonthlyParkData(yearData);
+    this.applySortProperties();
+    this.performanceAlertsService.loadAlertsFromRecapitulation(yearData);
   }
 
-  private generateMonthlyDataFromProperty(propertyPayment: any): MonthlyData[] {
-    if (!propertyPayment.amountMonth || propertyPayment.amountMonth.length === 0) return [];
+  private buildPropertiesSummary(yearData: StatisticPaymentOfAllPropertyByYear): void {
+    const totalReceivedPark = yearData.paymentYear?.totalAmountReceived || 0;
 
-    const monthNames = Object.values(MONTH);
-    return propertyPayment.amountMonth.map((monthData: any) => {
-      const monthName = monthNames[monthData.month - 1] || `Mois ${monthData.month}`;
-      const revenue = monthData.totalAmountReceived || 0;
-      // ✅ Pas de charges fictives : profit = revenus reçus (pas de dépenses inventées)
+    this.propertiesSummary = (yearData.paymentProperty || []).map(pp => {
+      const received = pp.amountProperty?.totalAmountReceived || 0;
+      const expected = pp.amountProperty?.totalAmountToBeReceveid || 0;
+      const metrics  = pp.detailedMetrics;
+
+      const collectionRate = expected > 0 ? Math.round((received / expected) * 100) : 0;
+      const totalUnits     = metrics?.totalRooms    ?? 0;
+      const occupiedUnits  = metrics?.occupiedRooms ?? 0;
+      const occupancyRate  = totalUnits > 0 ? Math.round((occupiedUnits / totalUnits) * 100) : 0;
+      const averageRent    = metrics?.averageRent ?? 0;
+
+      // Locataires depuis tenantsAnalysis si disponible, sinon approximation
+      const tenantsSummary = (pp as any).tenantsAnalysis?.summary;
+      const totalTenants  = tenantsSummary?.totalTenants  ?? occupiedUnits;
+      const lateTenants   = tenantsSummary?.lateTenants   ?? 0;
+      const advanceTenants = tenantsSummary?.aheadTenants ?? 0;
+      const totalArrears   = tenantsSummary?.totalAmountBehind  ?? (metrics?.totalDebts    || 0);
+      const totalAdvances  = tenantsSummary?.totalAdvanceAmount ?? (metrics?.totalAdvances || 0);
+
+      const monthlyData: MonthlyRevenue[] = (pp.amountMonth || []).map((m: any) => ({
+        monthIndex: m.month - 1,
+        monthName:  this.MONTHS[m.month - 1] || `Mois ${m.month}`,
+        received:   m.totalAmountReceived || 0,
+        expected:   m.totalAmountToBeReceveid || 0
+      }));
+
       return {
-        month: monthName,
-        revenue,
-        expenses: 0,
-        profit: revenue
+        propertyId:    pp.property._id,
+        propertyName:  pp.property.name,
+        totalReceived: received,
+        totalExpected: expected,
+        collectionRate,
+        shortfall:     Math.max(0, expected - received),
+        totalUnits,
+        occupiedUnits,
+        occupancyRate,
+        averageRent,
+        totalTenants,
+        lateTenants,
+        advanceTenants,
+        totalArrears,
+        totalAdvances,
+        revenueShare:  totalReceivedPark > 0 ? Math.round((received / totalReceivedPark) * 100) : 0,
+        monthlyData,
+        performanceLevel: this.getPerformanceLevel(collectionRate)
       };
     });
   }
 
-  private updateMetrics(data?: StatisticPaymentOfAllPropertyByYear[]): void {
-    if (!this.financialMetrics || this.financialMetrics.length < 4) return;
+  private buildGlobalMetrics(yearData: StatisticPaymentOfAllPropertyByYear): void {
+    const gm = yearData.globalMetrics;
+    const py = yearData.paymentYear;
 
-    // ✅ Utiliser globalMetrics du backend si disponible
-    const globalMetrics = data?.[0]?.globalMetrics;
-    const paymentYear = data?.[0]?.paymentYear;
+    const totalReceived = py?.totalAmountReceived  || 0;
+    const totalExpected = py?.totalAmountToBeReceveid || 0;
+    const collectionRate = totalExpected > 0
+      ? Math.round((totalReceived / totalExpected) * 100 * 10) / 10 : 0;
 
-    const totalRevenue = globalMetrics?.netCashFlow !== undefined
-      ? (paymentYear?.totalAmountReceived || 0)
-      : this.propertiesSummary.reduce((sum, prop) => sum + prop.totalRevenue, 0);
+    // Agrégations depuis propertiesSummary (source of truth = amountProperty brut)
+    const totalUnits    = this.propertiesSummary.reduce((s, p) => s + p.totalUnits, 0);
+    const occupiedUnits = this.propertiesSummary.reduce((s, p) => s + p.occupiedUnits, 0);
+    const vacantUnits   = totalUnits - occupiedUnits;
+    const occupancyRate = totalUnits > 0 ? Math.round((occupiedUnits / totalUnits) * 100 * 10) / 10 : 0;
+    const averageRent   = occupiedUnits > 0
+      ? Math.round(this.propertiesSummary.reduce((s, p) => s + p.averageRent * p.occupiedUnits, 0) / occupiedUnits)
+      : 0;
+    const potentialUnexploitedRevenue = vacantUnits * averageRent * 12;
 
-    const avgCollectionRate = globalMetrics?.averageCollectionRate
-      ?? (this.propertiesSummary.length > 0
-        ? this.propertiesSummary.reduce((sum, prop) => sum + prop.collectionRate, 0) / this.propertiesSummary.length
-        : 0);
+    const activeProperties = this.propertiesSummary.filter(p => p.occupiedUnits > 0).length;
+    const vacantProperties = this.propertiesSummary.filter(p => p.occupiedUnits === 0).length;
 
-    const totalDeficit = paymentYear?.totalAmountRelicat
-      ?? Math.max(0, this.propertiesSummary.reduce((sum, p) => sum + p.expectedRevenue, 0) - totalRevenue);
+    const totalTenants   = this.propertiesSummary.reduce((s, p) => s + p.totalTenants, 0);
+    const lateTenants    = this.propertiesSummary.reduce((s, p) => s + p.lateTenants, 0);
+    const advanceTenants = this.propertiesSummary.reduce((s, p) => s + p.advanceTenants, 0);
+    const upToDateTenants = totalTenants - lateTenants - advanceTenants;
+    const lateTenantsRate = totalTenants > 0 ? Math.round((lateTenants / totalTenants) * 100) : 0;
+    const totalArrears   = this.propertiesSummary.reduce((s, p) => s + p.totalArrears, 0);
+    const totalAdvances  = this.propertiesSummary.reduce((s, p) => s + p.totalAdvances, 0);
 
-    if (this.financialMetrics[0]) this.financialMetrics[0].value = totalRevenue;
-    if (this.financialMetrics[1]) this.financialMetrics[1].value = Math.round(avgCollectionRate * 10) / 10;
-    if (this.financialMetrics[2]) this.financialMetrics[2].value = globalMetrics?.totalProperties ?? this.propertiesSummary.length;
-    if (this.financialMetrics[3]) this.financialMetrics[3].value = totalDeficit;
-  }
+    // Cautions agrégées depuis cautionsAnalysis si disponible
+    const cautionsReceived = (yearData.paymentProperty || []).reduce((s, pp) => {
+      const c = (pp as any).cautionsAnalysis?.summary;
+      return s + (c?.totalCautionsReceived || 0);
+    }, 0);
+    const cautionsMissing = (yearData.paymentProperty || []).reduce((s, pp) => {
+      const c = (pp as any).cautionsAnalysis?.summary;
+      return s + (c?.roomsWithCautionUnpaid || 0);
+    }, 0);
 
-  private updateChartData(): void {
-    // Mettre à jour les données des graphiques
-    this.revenueChartData = this.propertiesSummary.map(prop => ({
-      name: prop.propertyName,
-      value: prop.totalRevenue
-    }));
-
-    this.collectionRateData = this.propertiesSummary.map(prop => ({
-      name: prop.propertyName,
-      value: prop.collectionRate
-    }));
-  }
-
-
-  // Méthodes d'événements
-  onYearChange(event: Event): void {
-    const target = event.target as HTMLSelectElement;
-    this.selectedYear = +target.value;
-    this.loadFinancialData();
-  }
-
-  onPeriodChange(event: Event): void {
-    const target = event.target as HTMLSelectElement;
-    this.selectedPeriod = target.value as 'month' | 'quarter' | 'year';
-    this.updateChartData();
-  }
-
-  onPropertyClick(property: PropertyFinancialSummary): void {
-    // Navigation vers les détails de la propriété
-    console.log('Voir détails de la propriété:', property.propertyName);
-  }
-
-  exportData(): void {
-    // Exporter les données
-    console.log('Export des données financières');
-  }
-
-  getMetricIcon(metric: FinancialMetric): string {
-    return metric.icon;
-  }
-
-  getMetricColorClass(metric: FinancialMetric): string {
-    const colorMap: { [key: string]: string } = {
-      'success': 'text-carbon-green-70 bg-carbon-green-10',
-      'warning': 'text-carbon-yellow-70 bg-carbon-yellow-10',
-      'info': 'text-carbon-blue-70 bg-carbon-blue-10',
-      'primary': 'text-carbon-primary-70 bg-carbon-primary-10'
+    this.globalMetrics = {
+      totalReceived,
+      totalExpected,
+      collectionRate,
+      shortfall:                  Math.max(0, totalExpected - totalReceived),
+      averageRevenuePerProperty:  this.propertiesSummary.length > 0
+        ? Math.round(totalReceived / this.propertiesSummary.length) : 0,
+      totalProperties:    gm?.totalProperties ?? this.propertiesSummary.length,
+      activeProperties,
+      vacantProperties,
+      totalUnits,
+      occupiedUnits,
+      vacantUnits,
+      occupancyRate,
+      averageRentPerUnit: averageRent,
+      potentialUnexploitedRevenue,
+      totalTenants,
+      upToDateTenants:    Math.max(0, upToDateTenants),
+      lateTenants,
+      advanceTenants,
+      lateTenantsRate,
+      totalArrears:       Math.round(totalArrears),
+      totalAdvances:      Math.round(totalAdvances),
+      totalCautionsReceived: Math.round(cautionsReceived),
+      totalCautionsMissing:  cautionsMissing,
+      totalCautionsToRefund: 0  // calculé si disponible dans future version
     };
-    return colorMap[metric.color] || 'text-carbon-gray-70 bg-carbon-gray-10';
   }
 
-  getChangeIcon(changeType: string): string {
-    switch (changeType) {
-      case 'increase': return 'trending--up';
-      case 'decrease': return 'trending--down';
-      default: return 'trending--flat';
-    }
+  private buildMonthlyParkData(yearData: StatisticPaymentOfAllPropertyByYear): void {
+    // Agréger les 12 mois sur tous les biens
+    const monthly = Array.from({ length: 12 }, (_, i) => ({
+      monthIndex: i,
+      monthName:  this.MONTHS[i],
+      totalReceived: 0,
+      totalExpected: 0,
+      collectionRate: 0
+    }));
+
+    (yearData.paymentProperty || []).forEach(pp => {
+      (pp.amountMonth || []).forEach((m: any) => {
+        const idx = m.month - 1;
+        if (idx >= 0 && idx < 12) {
+          monthly[idx].totalReceived += m.totalAmountReceived || 0;
+          monthly[idx].totalExpected += m.totalAmountToBeReceveid || 0;
+        }
+      });
+    });
+
+    this.monthlyParkData = monthly.map(m => ({
+      ...m,
+      totalReceived: Math.round(m.totalReceived),
+      totalExpected: Math.round(m.totalExpected),
+      collectionRate: m.totalExpected > 0
+        ? Math.round((m.totalReceived / m.totalExpected) * 100) : 0
+    }));
   }
 
-  getChangeColorClass(changeType: string): string {
-    switch (changeType) {
-      case 'increase': return 'text-carbon-green-70';
-      case 'decrease': return 'text-carbon-red-70';
-      default: return 'text-carbon-gray-70';
+  // ─── Tri des biens ─────────────────────────────────────────────────────────
+
+  applySortProperties(): void {
+    const sorted = [...this.propertiesSummary];
+    switch (this.sortBy) {
+      case 'revenue': sorted.sort((a, b) => b.totalReceived - a.totalReceived); break;
+      case 'rate':    sorted.sort((a, b) => b.collectionRate - a.collectionRate); break;
+      case 'name':    sorted.sort((a, b) => a.propertyName.localeCompare(b.propertyName)); break;
     }
+    this.sortedProperties = sorted;
   }
 
-  getProgressWidth(value: number): number {
-    if (!this.revenueChartData || this.revenueChartData.length === 0) {
-      return 0;
-    }
+  onSortChange(sort: 'revenue' | 'rate' | 'name'): void {
+    this.sortBy = sort;
+    this.applySortProperties();
+  }
 
-    const maxValue = Math.max(...this.revenueChartData.map(item => item.value));
-    if (maxValue === 0) {
-      return 0;
-    }
+  // ─── Événements ────────────────────────────────────────────────────────────
 
-    return Math.round((value / maxValue) * 100);
+  onYearChange(event: Event): void {
+    this.selectedYear = +(event.target as HTMLSelectElement).value;
+    this.loadData();
+  }
+
+  // ─── Utilitaires template ──────────────────────────────────────────────────
+
+  getPerformanceLevel(rate: number): 'excellent' | 'good' | 'fair' | 'poor' {
+    if (rate >= 90) return 'excellent';
+    if (rate >= 70) return 'good';
+    if (rate >= 50) return 'fair';
+    return 'poor';
+  }
+
+  getPerformanceLabel(level: string): string {
+    const map = { excellent: 'Excellent', good: 'Bon', fair: 'Moyen', poor: 'Faible' };
+    return map[level] || level;
+  }
+
+  getPerformanceClass(level: string): string {
+    const map = {
+      excellent: 'badge-excellent',
+      good:      'badge-good',
+      fair:      'badge-fair',
+      poor:      'badge-poor'
+    };
+    return map[level] || 'badge-fair';
+  }
+
+  getRateClass(rate: number): string {
+    if (rate >= 90) return 'text-green-600';
+    if (rate >= 70) return 'text-yellow-600';
+    return 'text-red-600';
+  }
+
+  getBarColor(rate: number): string {
+    if (rate >= 90) return '#10b981';
+    if (rate >= 70) return '#f59e0b';
+    return '#ef4444';
+  }
+
+  getMaxMonthlyReceived(): number {
+    if (!this.monthlyParkData.length) return 1;
+    return Math.max(...this.monthlyParkData.map(m => m.totalReceived)) || 1;
+  }
+
+  getBestMonth(): MonthlyParkData | null {
+    if (!this.monthlyParkData.length) return null;
+    return this.monthlyParkData.reduce((best, m) =>
+      m.totalReceived > best.totalReceived ? m : best
+    );
+  }
+
+  getWorstMonth(): MonthlyParkData | null {
+    const withExpected = this.monthlyParkData.filter(m => m.totalExpected > 0);
+    if (!withExpected.length) return null;
+    return withExpected.reduce((worst, m) =>
+      m.collectionRate < worst.collectionRate ? m : worst
+    );
+  }
+
+  formatPrice(value: number): string {
+    if (!value && value !== 0) return '0 FCFA';
+    return new Intl.NumberFormat('fr-CM', {
+      style: 'currency', currency: 'XAF', minimumFractionDigits: 0
+    }).format(value);
+  }
+
+  formatPercent(value: number): string {
+    return `${(value || 0).toFixed(1)}%`;
+  }
+
+  trackByPropertyId(_: number, p: PropertySummary): string {
+    return p.propertyId;
+  }
+
+  trackByMonth(_: number, m: MonthlyParkData): number {
+    return m.monthIndex;
   }
 }

@@ -31,7 +31,7 @@ export class ChartFinanceRoomComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['propertyID'] || changes['selectedYear']) {
-      this.title = `Révenu unité ${this.selectedYear}`;
+      this.title = `Revenus encaissés par chambre — ${this.selectedYear}`;
       this.loadData();
     }
   }
@@ -97,35 +97,15 @@ export class ChartFinanceRoomComponent implements OnInit, OnChanges, OnDestroy {
       const room = roomData.room;
       const roomName = `${room?.code || 'Chambre'} - ${room?.type || 'Standard'}`;
 
-      // paymentValue = encaissements réels de l'année (onglet Revenus)
+      // paymentValue = encaissements bruts réels de l'année (datePayment dans le mois)
       const monthlyPayments = roomData.paymentValue || Array(12).fill(0);
-
-      // Projection mensuelle : distribuer coveredAmountInYear sur les mois couverts
-      // Un mois est couvert si paymentState[month].state === 'payed'
-      const projectedMonthly = Array(12).fill(0);
-      if (roomData.coveredMonthsInYear > 0 && room?.price > 0) {
-        // Identifier les mois couverts dans l'année via la coveredUntilDate
-        const coveredUntil = roomData.coveredUntilDate ? new Date(roomData.coveredUntilDate) : null;
-        const entryDate    = roomData.entryDate ? new Date(roomData.entryDate) : null;
-        if (coveredUntil && entryDate) {
-          for (let m = 0; m < 12; m++) {
-            const monthStart = new Date(this.selectedYear, m, 1);
-            const monthEnd   = new Date(this.selectedYear, m + 1, 0, 23, 59, 59);
-            const isOccupied = entryDate <= monthEnd;
-            if (isOccupied && coveredUntil >= monthStart) {
-              projectedMonthly[m] = room.price;
-            }
-          }
-        }
-      }
-
-      const totalReceived: number = roomData.totalReceived != null
-        ? roomData.totalReceived
-        : (monthlyPayments as number[]).reduce((s: number, v: number) => s + (v || 0), 0);
+      const totalReceived: number = (monthlyPayments as number[]).reduce(
+        (s: number, v: number) => s + (v || 0), 0
+      );
 
       legendData.push(roomName);
 
-      // Série 1 : encaissements réels (barres)
+      // Série unique : encaissements bruts réels (barres)
       dataSeries.push({
         name: roomName,
         type: 'bar',
@@ -137,23 +117,14 @@ export class ChartFinanceRoomComponent implements OnInit, OnChanges, OnDestroy {
           monthsDue:      roomData.monthsDue || 12,
           totalReceived,
           expectedAmount: roomData.expectedAmount || 0,
-          collectionRate: roomData.collectionRate || 0,
+          // Bug #6 fix : collectionRate basé sur les mêmes données brutes que les barres
+          collectionRate: roomData.expectedAmount > 0
+            ? Math.min((totalReceived / roomData.expectedAmount) * 100, 100)
+            : 0,
           paymentStatus:  roomData.paymentStatus || 'unknown',
           coveredMonthsInYear: roomData.coveredMonthsInYear || 0,
           coveredAmountInYear: roomData.coveredAmountInYear || 0
         }
-      });
-
-      // Série 2 : projection (ligne pointillée) — mois couverts par le cumul
-      dataSeries.push({
-        name: `${roomName} (couvert)`,
-        type: 'line',
-        data: projectedMonthly,
-        lineStyle: { type: 'dashed', width: 2 },
-        symbol: 'circle',
-        symbolSize: 6,
-        showInLegend: false,
-        _isProjection: true
       });
     });
 
@@ -162,8 +133,8 @@ export class ChartFinanceRoomComponent implements OnInit, OnChanges, OnDestroy {
 
     return {
       title: {
-        text: `Revenus par chambre ${this.selectedYear}`,
-        subtext: 'Barres = encaissé | Ligne pointillée = couvert par cumul',
+        text: `Revenus encaissés par chambre — ${this.selectedYear}`,
+        subtext: 'Montants physiquement reçus par mois (datePayment dans le mois)',
         textStyle: { fontSize: 16, fontWeight: 'bold' }
       },
       tooltip: {
@@ -175,8 +146,7 @@ export class ChartFinanceRoomComponent implements OnInit, OnChanges, OnDestroy {
               .toLocaleDateString('fr-FR', { month: 'long' })
           );
           let content = `<strong>${monthName}</strong><br/>`;
-          params.filter(p => !dataSeries.find(s => s.name === p.seriesName)?._isProjection)
-            .forEach(param => {
+          params.forEach(param => {
               const series = dataSeries.find(s => s.name === param.seriesName);
               const info = series?._roomInfo || {};
               const icon = this.getStatusIcon(info.paymentStatus);
@@ -185,8 +155,8 @@ export class ChartFinanceRoomComponent implements OnInit, OnChanges, OnDestroy {
                   <strong>${param.seriesName}</strong> ${icon}<br/>
                   · Encaissé ce mois : <strong>${(param.value || 0).toLocaleString('fr-FR')} FCFA</strong><br/>
                   · Loyer mensuel : ${(info.monthlyRent || 0).toLocaleString('fr-FR')} FCFA<br/>
-                  · Mois couverts ${this.selectedYear} : ${info.coveredMonthsInYear || 0}<br/>
-                  · Taux couverture : <strong>${(info.collectionRate || 0).toFixed(1)}%</strong>
+                  · Total encaissé ${this.selectedYear} : ${(info.totalReceived || 0).toLocaleString('fr-FR')} FCFA<br/>
+                  · Taux encaissement : <strong>${(info.collectionRate || 0).toFixed(1)}%</strong>
                 </div>`;
             });
           return content;
@@ -223,7 +193,7 @@ export class ChartFinanceRoomComponent implements OnInit, OnChanges, OnDestroy {
 
   private getEmptyChart(): any {
     return {
-      title: { text: `Revenus par chambre ${this.selectedYear}`, textStyle: { fontSize: 16, fontWeight: 'bold' } },
+      title: { text: `Revenus encaissés par chambre — ${this.selectedYear}`, textStyle: { fontSize: 16, fontWeight: 'bold' } },
       xAxis: { type: 'category', data: UtilsString.getListOfMonth(), name: 'Mois' },
       yAxis: { type: 'value', name: 'Montant (FCFA)' },
       series: [],

@@ -1,274 +1,519 @@
-<!-- Dashboard Financier Moderne -->
-<div class="modern-financial-dashboard bg-white p-6">
-  
-  <!-- En-tête avec contrôles -->
-  <div class="dashboard-header mb-6">
-    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-      
-      <!-- Titre et description -->
-      <div class="header-content">
-        <h2 class="text-2xl font-bold text-carbon-primary mb-2">
-          {{ 'FINANCIAL_DASHBOARD.TITLE' | translate }}
-        </h2>
-        <p class="text-carbon-secondary">
-          {{ 'FINANCIAL_DASHBOARD.SUBTITLE' | translate }}
-        </p>
-      </div>
+<div class="park-dashboard">
 
-      <!-- Contrôles -->
-      <div class="header-controls flex items-center gap-4">
-        <!-- Sélecteur d'année -->
-        <div class="control-group">
-          <label class="text-sm text-carbon-secondary mb-1 block">{{ 'FINANCIAL_DASHBOARD.YEAR' | translate }}</label>
-          <select 
-            class="input-carbon px-3 py-2 text-sm min-w-[120px]"
-            [value]="selectedYear"
-            (change)="onYearChange($event)">
-            <option *ngFor="let year of yearOptions" [value]="year.value">
-              {{ year.label }}
-            </option>
-          </select>
-        </div>
-
-        <!-- Sélecteur de période -->
-        <div class="control-group">
-          <label class="text-sm text-carbon-secondary mb-1 block">{{ 'FINANCIAL_DASHBOARD.PERIOD' | translate }}</label>
-          <select 
-            class="input-carbon px-3 py-2 text-sm min-w-[120px]"
-            [value]="selectedPeriod"
-            (change)="onPeriodChange($event)">
-            <option *ngFor="let period of periodOptions" [value]="period.value">
-              {{ period.label | translate }}
-            </option>
-          </select>
-        </div>
-
-        <!-- Bouton d'export -->
-        <button 
-          class="btn-carbon-tertiary inline-flex items-center focus-carbon"
-          (click)="exportData()">
-          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                  d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-            </path>
-          </svg>
-          {{ 'FINANCIAL_DASHBOARD.EXPORT' | translate }}
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Métriques principales -->
-  <div class="financial-metrics mb-8">
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      <div 
-        *ngFor="let metric of financialMetrics"
-        class="metric-card card-carbon-elevated p-6 hover:scale-105 transition-transform duration-200">
-        
-        <!-- En-tête de la métrique -->
-        <div class="metric-header flex items-center justify-between mb-4">
-          <div class="metric-icon p-3 rounded-full" [ngClass]="getMetricColorClass(metric)">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" *ngIf="metric.isMoney">
-              <!-- Icône dynamique basée sur metric.icon -->
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
-            </svg>
-          </div>
-          
-          <!-- Indicateur de changement -->
-          <div class="metric-change flex items-center" [ngClass]="getChangeColorClass(metric.changeType)">
-            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                    d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-            </svg>
-            <span class="text-sm font-medium">
-              {{ metric.change > 0 ? '+' : '' }}{{ metric.change }}%
-            </span>
-          </div>
-        </div>
-
-        <!-- Valeur et label -->
-        <div class="metric-content">
-          <div class="metric-value text-2xl font-bold text-carbon-primary mb-1">
-            <ng-container *ngIf="!metric.isMoney; else currencyValue">
-              {{ metric.value }}%
-            </ng-container>
-            <ng-template #currencyValue>
-              {{ metric.value | currency:'XAF':'symbol':'1.0-0' }}
-            </ng-template>
-          </div>
-          <div class="metric-label text-sm text-carbon-secondary">
-            {{ metric.label | translate }}
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Graphiques et analyses -->
-  <div class="financial-charts mb-8">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      
-      <!-- Graphique des revenus par propriété -->
-      <div class="chart-card card-carbon-elevated p-6">
-        <div class="chart-header mb-6">
-          <h3 class="text-lg font-semibold text-carbon-primary mb-2">
-            {{ 'FINANCIAL_DASHBOARD.REVENUE_BY_PROPERTY' | translate }}
-          </h3>
-          <p class="text-sm text-carbon-secondary">
-            {{ 'FINANCIAL_DASHBOARD.REVENUE_DISTRIBUTION' | translate }}
-          </p>
-        </div>
-        
-        <div class="chart-content">
-          <!-- Graphique en barres simple -->
-          <div class="revenue-bars space-y-3">
-            <div *ngFor="let item of revenueChartData" class="revenue-bar-item">
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-sm font-medium text-carbon-primary">{{ item.name }}</span>
-                <span class="text-sm text-carbon-secondary">{{ item.value | currency:'XAF':'symbol':'1.0-0' }}</span>
-              </div>
-              <div class="progress-bar bg-carbon-gray-20 h-2 rounded-full overflow-hidden">
-                <div
-                  class="progress-fill h-full bg-gradient-to-r from-carbon-primary-60 to-carbon-primary-40 transition-all duration-500"
-                  [style.width.%]="getProgressWidth(item.value)">
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Taux de recouvrement -->
-      <div class="chart-card card-carbon-elevated p-6">
-        <div class="chart-header mb-6">
-          <h3 class="text-lg font-semibold text-carbon-primary mb-2">
-            {{ 'FINANCIAL_DASHBOARD.COLLECTION_RATE' | translate }}
-          </h3>
-          <p class="text-sm text-carbon-secondary">
-            {{ 'FINANCIAL_DASHBOARD.COLLECTION_PERFORMANCE' | translate }}
-          </p>
-        </div>
-        
-        <div class="chart-content">
-          <!-- Graphique en anneaux -->
-          <div class="collection-rings space-y-4">
-            <div *ngFor="let item of collectionRateData" class="collection-item flex items-center">
-              <div class="ring-container relative w-16 h-16 mr-4">
-                <svg class="ring-chart w-full h-full transform -rotate-90" viewBox="0 0 36 36">
-                  <path class="ring-bg" 
-                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                        fill="none" 
-                        stroke="var(--carbon-gray-20)" 
-                        stroke-width="3"/>
-                  <path class="ring-progress" 
-                        [attr.stroke-dasharray]="item.value + ', 100'"
-                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                        fill="none" 
-                        [attr.stroke]="item.value >= 90 ? 'var(--carbon-green-60)' : item.value >= 70 ? 'var(--carbon-primary-60)' : 'var(--carbon-red-60)'"
-                        stroke-width="3"/>
-                </svg>
-                <div class="ring-text absolute inset-0 flex items-center justify-center">
-                  <span class="text-xs font-bold text-carbon-primary">{{ item.value }}%</span>
-                </div>
-              </div>
-              <div class="item-info flex-1">
-                <div class="text-sm font-medium text-carbon-primary">{{ item.name }}</div>
-                <div class="text-xs text-carbon-secondary">
-                  <span [ngClass]="{
-                    'text-carbon-green-70': item.value >= 90,
-                    'text-carbon-primary-70': item.value >= 70 && item.value < 90,
-                    'text-carbon-red-70': item.value < 70
-                  }">
-                    {{ item.value >= 90 ? ('FINANCIAL_DASHBOARD.EXCELLENT' | translate) : item.value >= 70 ? ('FINANCIAL_DASHBOARD.GOOD' | translate) : ('FINANCIAL_DASHBOARD.TO_IMPROVE' | translate) }}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Liste des propriétés -->
-  <div class="properties-summary">
-    <div class="summary-header mb-6">
-      <h3 class="text-lg font-semibold text-carbon-primary mb-2">
-        {{ 'FINANCIAL_DASHBOARD.PROPERTY_SUMMARY' | translate }}
-      </h3>
-      <p class="text-sm text-carbon-secondary">
-        {{ 'FINANCIAL_DASHBOARD.DETAILED_PERFORMANCE' | translate }}
+  <!-- ═══ HEADER ═══ -->
+  <div class="park-header">
+    <div class="park-header__left">
+      <h2 class="park-header__title">Dashboard financier — Parc immobilier</h2>
+      <p class="park-header__subtitle">
+        Vue consolidée de l'ensemble de vos biens pour {{ selectedYear }}
       </p>
     </div>
+    <div class="park-header__controls">
+      <label class="park-header__label">Année</label>
+      <select class="park-header__select" [value]="selectedYear" (change)="onYearChange($event)">
+        <option *ngFor="let y of yearOptions" [value]="y.value">{{ y.label }}</option>
+      </select>
+    </div>
+  </div>
 
-    <div class="properties-grid grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-      <div 
-        *ngFor="let property of propertiesSummary"
-        class="property-card card-carbon-elevated p-6 cursor-pointer hover:scale-105 transition-transform duration-200"
-        (click)="onPropertyClick(property)">
-        
-        <!-- En-tête de la propriété -->
-        <div class="property-header mb-4">
-          <h4 class="text-lg font-semibold text-carbon-primary mb-2">
-            {{ property.propertyName }}
-          </h4>
-          <div class="property-metrics grid grid-cols-2 gap-4">
-            <div class="metric">
-              <div class="text-xl font-bold text-carbon-primary">
-                {{ property.totalRevenue | currency:'XAF':'symbol':'1.0-0' }}
+  <!-- ═══ LOADING ═══ -->
+  <div *ngIf="isLoading" class="park-loading">
+    <div class="park-loading__spinner"></div>
+    <span>Chargement des données...</span>
+  </div>
+
+  <ng-container *ngIf="!isLoading && globalMetrics">
+
+    <!-- ═══ BLOC 1 — PERFORMANCE FINANCIÈRE GLOBALE ═══ -->
+    <div class="park-section">
+      <div class="park-section__header">
+        <div class="park-section__badge">1</div>
+        <div>
+          <h3 class="park-section__title">Performance financière — {{ selectedYear }}</h3>
+          <p class="park-section__subtitle">Ce que votre parc a encaissé vs ce qu'il aurait dû encaisser</p>
+        </div>
+      </div>
+
+      <div class="kpi-grid kpi-grid--4">
+
+        <!-- Total encaissé -->
+        <div class="kpi-card kpi-card--green">
+          <div class="kpi-card__icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+            </svg>
+          </div>
+          <div class="kpi-card__body">
+            <p class="kpi-card__label">Total encaissé</p>
+            <p class="kpi-card__value">{{ formatPrice(globalMetrics.totalReceived) }}</p>
+            <p class="kpi-card__sub">Paiements reçus en {{ selectedYear }}</p>
+          </div>
+        </div>
+
+        <!-- Total attendu -->
+        <div class="kpi-card kpi-card--blue">
+          <div class="kpi-card__icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+          </div>
+          <div class="kpi-card__body">
+            <p class="kpi-card__label">Total attendu</p>
+            <p class="kpi-card__value">{{ formatPrice(globalMetrics.totalExpected) }}</p>
+            <p class="kpi-card__sub">Loyers théoriques {{ selectedYear }}</p>
+          </div>
+        </div>
+
+        <!-- Taux de recouvrement -->
+        <div class="kpi-card" [ngClass]="{
+          'kpi-card--green':  globalMetrics.collectionRate >= 90,
+          'kpi-card--yellow': globalMetrics.collectionRate >= 70 && globalMetrics.collectionRate < 90,
+          'kpi-card--red':    globalMetrics.collectionRate < 70
+        }">
+          <div class="kpi-card__icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+          <div class="kpi-card__body">
+            <p class="kpi-card__label">Taux de recouvrement</p>
+            <p class="kpi-card__value">{{ formatPercent(globalMetrics.collectionRate) }}</p>
+            <div class="kpi-card__bar">
+              <div class="kpi-card__bar-fill"
+                [style.width.%]="Math.min(globalMetrics.collectionRate, 100)"
+                [style.background]="getBarColor(globalMetrics.collectionRate)">
               </div>
-              <div class="text-xs text-carbon-secondary">{{ 'FINANCIAL_DASHBOARD.COLLECTED_REVENUE' | translate }}</div>
-            </div>
-            <div class="metric">
-              <div class="text-xl font-bold" [ngClass]="{
-                'text-carbon-green-70': property.collectionRate >= 90,
-                'text-carbon-primary-70': property.collectionRate >= 70 && property.collectionRate < 90,
-                'text-carbon-red-70': property.collectionRate < 70
-              }">
-                {{ property.collectionRate }}%
-              </div>
-              <div class="text-xs text-carbon-secondary">{{ 'FINANCIAL_DASHBOARD.COLLECTION_RATE' | translate }}</div>
             </div>
           </div>
         </div>
 
-        <!-- Barre de progression -->
-        <div class="property-progress mb-4">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-xs text-carbon-secondary">{{ 'FINANCIAL_DASHBOARD.TARGET' | translate }}</span>
-            <span class="text-xs text-carbon-secondary">
-              {{ property.expectedRevenue | currency:'XAF':'symbol':'1.0-0' }}
+        <!-- Manque à gagner -->
+        <div class="kpi-card kpi-card--red">
+          <div class="kpi-card__icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"/>
+            </svg>
+          </div>
+          <div class="kpi-card__body">
+            <p class="kpi-card__label">Manque à gagner</p>
+            <p class="kpi-card__value">{{ formatPrice(globalMetrics.shortfall) }}</p>
+            <p class="kpi-card__sub">Attendu non encaissé</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Ligne secondaire : revenus moyen par bien + meilleur/pire mois -->
+      <div class="kpi-grid kpi-grid--3 mt-4">
+
+        <div class="kpi-card kpi-card--gray">
+          <div class="kpi-card__body">
+            <p class="kpi-card__label">Revenu moyen / bien</p>
+            <p class="kpi-card__value kpi-card__value--md">{{ formatPrice(globalMetrics.averageRevenuePerProperty) }}</p>
+            <p class="kpi-card__sub">Sur {{ globalMetrics.totalProperties }} bien(s)</p>
+          </div>
+        </div>
+
+        <div class="kpi-card kpi-card--gray">
+          <div class="kpi-card__body">
+            <p class="kpi-card__label">Meilleur mois</p>
+            <p class="kpi-card__value kpi-card__value--md">
+              {{ getBestMonth()?.monthName || '—' }}
+            </p>
+            <p class="kpi-card__sub">{{ formatPrice(getBestMonth()?.totalReceived || 0) }} encaissés</p>
+          </div>
+        </div>
+
+        <div class="kpi-card kpi-card--gray">
+          <div class="kpi-card__body">
+            <p class="kpi-card__label">Mois le plus faible</p>
+            <p class="kpi-card__value kpi-card__value--md">
+              {{ getWorstMonth()?.monthName || '—' }}
+            </p>
+            <p class="kpi-card__sub">{{ formatPercent(getWorstMonth()?.collectionRate || 0) }} de recouvrement</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ═══ BLOC 2 — PARC IMMOBILIER ═══ -->
+    <div class="park-section">
+      <div class="park-section__header">
+        <div class="park-section__badge">2</div>
+        <div>
+          <h3 class="park-section__title">État du parc immobilier</h3>
+          <p class="park-section__subtitle">Occupation et exploitation de vos unités</p>
+        </div>
+      </div>
+
+      <div class="kpi-grid kpi-grid--4">
+
+        <!-- Biens actifs / vacants -->
+        <div class="kpi-card kpi-card--blue">
+          <div class="kpi-card__icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+            </svg>
+          </div>
+          <div class="kpi-card__body">
+            <p class="kpi-card__label">Biens</p>
+            <p class="kpi-card__value">{{ globalMetrics.totalProperties }}</p>
+            <div class="kpi-card__tags">
+              <span class="tag tag--green">{{ globalMetrics.activeProperties }} actifs</span>
+              <span class="tag tag--gray">{{ globalMetrics.vacantProperties }} vacants</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Taux d'occupation -->
+        <div class="kpi-card" [ngClass]="{
+          'kpi-card--green':  globalMetrics.occupancyRate >= 85,
+          'kpi-card--yellow': globalMetrics.occupancyRate >= 70 && globalMetrics.occupancyRate < 85,
+          'kpi-card--red':    globalMetrics.occupancyRate < 70
+        }">
+          <div class="kpi-card__icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+          </div>
+          <div class="kpi-card__body">
+            <p class="kpi-card__label">Taux d'occupation</p>
+            <p class="kpi-card__value">{{ formatPercent(globalMetrics.occupancyRate) }}</p>
+            <p class="kpi-card__sub">{{ globalMetrics.occupiedUnits }} / {{ globalMetrics.totalUnits }} unités</p>
+            <div class="kpi-card__bar">
+              <div class="kpi-card__bar-fill"
+                [style.width.%]="Math.min(globalMetrics.occupancyRate, 100)"
+                [style.background]="getBarColor(globalMetrics.occupancyRate)">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Unités libres -->
+        <div class="kpi-card kpi-card--yellow">
+          <div class="kpi-card__icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+            </svg>
+          </div>
+          <div class="kpi-card__body">
+            <p class="kpi-card__label">Unités libres</p>
+            <p class="kpi-card__value">{{ globalMetrics.vacantUnits }}</p>
+            <p class="kpi-card__sub">Sur {{ globalMetrics.totalUnits }} unités totales</p>
+          </div>
+        </div>
+
+        <!-- Revenu potentiel inexploité -->
+        <div class="kpi-card kpi-card--red">
+          <div class="kpi-card__icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+          <div class="kpi-card__body">
+            <p class="kpi-card__label">Revenu potentiel inexploité</p>
+            <p class="kpi-card__value">{{ formatPrice(globalMetrics.potentialUnexploitedRevenue) }}</p>
+            <p class="kpi-card__sub">{{ globalMetrics.vacantUnits }} unités × loyer moyen × 12</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Loyer moyen -->
+      <div class="kpi-grid kpi-grid--1 mt-4">
+        <div class="kpi-card kpi-card--gray kpi-card--inline">
+          <div class="kpi-card__body">
+            <p class="kpi-card__label">Loyer moyen par unité occupée</p>
+            <p class="kpi-card__value kpi-card__value--md">{{ formatPrice(globalMetrics.averageRentPerUnit) }} / mois</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ BLOC 3 — LOCATAIRES ═══ -->
+    <div class="park-section">
+      <div class="park-section__header">
+        <div class="park-section__badge">3</div>
+        <div>
+          <h3 class="park-section__title">Situation des locataires</h3>
+          <p class="park-section__subtitle">Profil global de paiement sur l'ensemble du parc</p>
+        </div>
+      </div>
+
+      <div class="kpi-grid kpi-grid--4">
+
+        <!-- Total locataires -->
+        <div class="kpi-card kpi-card--blue">
+          <div class="kpi-card__body">
+            <p class="kpi-card__label">Total locataires actifs</p>
+            <p class="kpi-card__value">{{ globalMetrics.totalTenants }}</p>
+            <div class="kpi-card__tags">
+              <span class="tag tag--green">{{ globalMetrics.upToDateTenants }} à jour</span>
+              <span class="tag tag--blue">{{ globalMetrics.advanceTenants }} en avance</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Locataires en retard -->
+        <div class="kpi-card" [ngClass]="{
+          'kpi-card--green': globalMetrics.lateTenantsRate === 0,
+          'kpi-card--yellow': globalMetrics.lateTenantsRate > 0 && globalMetrics.lateTenantsRate <= 20,
+          'kpi-card--red': globalMetrics.lateTenantsRate > 20
+        }">
+          <div class="kpi-card__body">
+            <p class="kpi-card__label">Locataires en retard</p>
+            <p class="kpi-card__value">{{ globalMetrics.lateTenants }}</p>
+            <p class="kpi-card__sub">{{ formatPercent(globalMetrics.lateTenantsRate) }} du total</p>
+            <div class="kpi-card__bar">
+              <div class="kpi-card__bar-fill"
+                [style.width.%]="Math.min(globalMetrics.lateTenantsRate, 100)"
+                [style.background]="getBarColor(100 - globalMetrics.lateTenantsRate)">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Montant total des arriérés -->
+        <div class="kpi-card kpi-card--red">
+          <div class="kpi-card__body">
+            <p class="kpi-card__label">Total arriérés</p>
+            <p class="kpi-card__value">{{ formatPrice(globalMetrics.totalArrears) }}</p>
+            <p class="kpi-card__sub">Dettes cumulées tous biens</p>
+          </div>
+        </div>
+
+        <!-- Montant total des avances -->
+        <div class="kpi-card kpi-card--green">
+          <div class="kpi-card__body">
+            <p class="kpi-card__label">Total avances</p>
+            <p class="kpi-card__value">{{ formatPrice(globalMetrics.totalAdvances) }}</p>
+            <p class="kpi-card__sub">Trésorerie anticipée</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ═══ BLOC 4 — CAUTIONS ═══ -->
+    <div class="park-section">
+      <div class="park-section__header">
+        <div class="park-section__badge">4</div>
+        <div>
+          <h3 class="park-section__title">Cautions</h3>
+          <p class="park-section__subtitle">État des garanties sur l'ensemble du parc</p>
+        </div>
+      </div>
+
+      <div class="kpi-grid kpi-grid--3">
+
+        <div class="kpi-card kpi-card--green">
+          <div class="kpi-card__body">
+            <p class="kpi-card__label">Total cautions reçues</p>
+            <p class="kpi-card__value">{{ formatPrice(globalMetrics.totalCautionsReceived) }}</p>
+            <p class="kpi-card__sub">Garanties encaissées</p>
+          </div>
+        </div>
+
+        <div class="kpi-card" [ngClass]="globalMetrics.totalCautionsMissing > 0 ? 'kpi-card--red' : 'kpi-card--green'">
+          <div class="kpi-card__body">
+            <p class="kpi-card__label">Cautions manquantes</p>
+            <p class="kpi-card__value">{{ globalMetrics.totalCautionsMissing }}</p>
+            <p class="kpi-card__sub">Unités occupées sans caution</p>
+          </div>
+        </div>
+
+        <div class="kpi-card kpi-card--yellow">
+          <div class="kpi-card__body">
+            <p class="kpi-card__label">Cautions à rembourser</p>
+            <p class="kpi-card__value">{{ formatPrice(globalMetrics.totalCautionsToRefund) }}</p>
+            <p class="kpi-card__sub">Contrats terminés</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ═══ BLOC 5 — ÉVOLUTION MENSUELLE ═══ -->
+    <div class="park-section">
+      <div class="park-section__header">
+        <div class="park-section__badge">5</div>
+        <div>
+          <h3 class="park-section__title">Évolution mensuelle — {{ selectedYear }}</h3>
+          <p class="park-section__subtitle">Encaissements mois par mois sur l'ensemble du parc</p>
+        </div>
+      </div>
+
+      <div class="monthly-chart">
+        <div *ngFor="let m of monthlyParkData; trackBy: trackByMonth" class="monthly-chart__row">
+
+          <div class="monthly-chart__label">
+            <span class="monthly-chart__month">{{ m.monthName.substring(0, 3) }}</span>
+          </div>
+
+          <div class="monthly-chart__bars">
+            <!-- Barre encaissé -->
+            <div class="monthly-chart__bar-track">
+              <div class="monthly-chart__bar monthly-chart__bar--received"
+                [style.width.%]="m.totalReceived > 0 ? (m.totalReceived / getMaxMonthlyReceived()) * 100 : 0">
+              </div>
+            </div>
+            <!-- Barre attendu (fond) -->
+            <div class="monthly-chart__bar-track monthly-chart__bar-track--expected">
+              <div class="monthly-chart__bar monthly-chart__bar--expected"
+                [style.width.%]="m.totalExpected > 0 ? Math.min((m.totalExpected / getMaxMonthlyReceived()) * 100, 100) : 0">
+              </div>
+            </div>
+          </div>
+
+          <div class="monthly-chart__values">
+            <span class="monthly-chart__received">{{ formatPrice(m.totalReceived) }}</span>
+            <span class="monthly-chart__rate" [ngClass]="getRateClass(m.collectionRate)">
+              {{ formatPercent(m.collectionRate) }}
             </span>
           </div>
-          <div class="progress-bar bg-carbon-gray-20 h-2 rounded-full overflow-hidden">
-            <div 
-              class="progress-fill h-full transition-all duration-500"
-              [ngClass]="{
-                'bg-carbon-green-60': property.collectionRate >= 90,
-                'bg-carbon-primary-60': property.collectionRate >= 70 && property.collectionRate < 90,
-                'bg-carbon-red-60': property.collectionRate < 70
-              }"
-              [style.width.%]="property.collectionRate">
-            </div>
-          </div>
+
         </div>
 
-        <!-- Actions -->
-        <div class="property-actions">
-          <button class="btn-carbon-tertiary w-full text-sm">
-            {{ 'FINANCIAL_DASHBOARD.VIEW_DETAILS' | translate }}
+        <!-- Légende -->
+        <div class="monthly-chart__legend">
+          <span class="legend-item">
+            <span class="legend-dot legend-dot--received"></span> Encaissé
+          </span>
+          <span class="legend-item">
+            <span class="legend-dot legend-dot--expected"></span> Attendu
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ BLOC 6 — CLASSEMENT DES BIENS ═══ -->
+    <div class="park-section">
+      <div class="park-section__header">
+        <div class="park-section__badge">6</div>
+        <div>
+          <h3 class="park-section__title">Performance par bien</h3>
+          <p class="park-section__subtitle">Classement et détail de chaque propriété</p>
+        </div>
+        <!-- Tri -->
+        <div class="sort-controls">
+          <button class="sort-btn" [class.sort-btn--active]="sortBy === 'revenue'" (click)="onSortChange('revenue')">
+            Par revenus
+          </button>
+          <button class="sort-btn" [class.sort-btn--active]="sortBy === 'rate'" (click)="onSortChange('rate')">
+            Par taux
+          </button>
+          <button class="sort-btn" [class.sort-btn--active]="sortBy === 'name'" (click)="onSortChange('name')">
+            Par nom
           </button>
         </div>
       </div>
+
+      <div class="property-table">
+        <div class="property-table__header">
+          <span>Bien</span>
+          <span>Encaissé</span>
+          <span>Attendu</span>
+          <span>Taux</span>
+          <span>Occupation</span>
+          <span>Arriérés</span>
+          <span>Part du parc</span>
+          <span>Niveau</span>
+        </div>
+
+        <div *ngFor="let p of sortedProperties; trackBy: trackByPropertyId"
+             class="property-table__row">
+
+          <!-- Nom du bien -->
+          <div class="property-table__name">
+            <div class="property-table__dot"
+              [style.background]="getBarColor(p.collectionRate)">
+            </div>
+            <div>
+              <div class="property-table__property-name">{{ p.propertyName }}</div>
+              <div class="property-table__units">{{ p.occupiedUnits }}/{{ p.totalUnits }} unités</div>
+            </div>
+          </div>
+
+          <!-- Encaissé -->
+          <div class="property-table__cell">
+            <span class="property-table__amount">{{ formatPrice(p.totalReceived) }}</span>
+          </div>
+
+          <!-- Attendu -->
+          <div class="property-table__cell">
+            <span class="property-table__amount property-table__amount--secondary">{{ formatPrice(p.totalExpected) }}</span>
+          </div>
+
+          <!-- Taux de recouvrement -->
+          <div class="property-table__cell">
+            <span class="property-table__rate" [ngClass]="getRateClass(p.collectionRate)">
+              {{ formatPercent(p.collectionRate) }}
+            </span>
+            <div class="property-table__bar">
+              <div class="property-table__bar-fill"
+                [style.width.%]="Math.min(p.collectionRate, 100)"
+                [style.background]="getBarColor(p.collectionRate)">
+              </div>
+            </div>
+          </div>
+
+          <!-- Occupation -->
+          <div class="property-table__cell">
+            <span [ngClass]="getRateClass(p.occupancyRate)">{{ formatPercent(p.occupancyRate) }}</span>
+          </div>
+
+          <!-- Arriérés -->
+          <div class="property-table__cell">
+            <span class="property-table__arrears" [class.property-table__arrears--zero]="p.totalArrears === 0">
+              {{ p.totalArrears > 0 ? formatPrice(p.totalArrears) : '—' }}
+            </span>
+          </div>
+
+          <!-- Part du parc -->
+          <div class="property-table__cell">
+            <div class="share-bar">
+              <div class="share-bar__track">
+                <div class="share-bar__fill" [style.width.%]="p.revenueShare"></div>
+              </div>
+              <span class="share-bar__label">{{ p.revenueShare }}%</span>
+            </div>
+          </div>
+
+          <!-- Niveau de performance -->
+          <div class="property-table__cell">
+            <span class="badge" [ngClass]="getPerformanceClass(p.performanceLevel)">
+              {{ getPerformanceLabel(p.performanceLevel) }}
+            </span>
+          </div>
+
+        </div>
+
+        <!-- État vide -->
+        <div *ngIf="sortedProperties.length === 0" class="property-table__empty">
+          Aucune donnée disponible pour {{ selectedYear }}
+        </div>
+      </div>
     </div>
+
+  </ng-container>
+
+  <!-- État vide global -->
+  <div *ngIf="!isLoading && !globalMetrics" class="park-empty">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+    </svg>
+    <h3>Aucune donnée pour {{ selectedYear }}</h3>
+    <p>Aucun paiement enregistré sur votre parc pour cette année.</p>
   </div>
 
-  <!-- État de chargement -->
-  <div *ngIf="loading$ | async" class="loading-overlay fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
-    <div class="loading-content bg-white p-8 rounded-lg border border-gray-200 shadow-lg">
-      <div class="skeleton-carbon h-4 w-48 mb-4"></div>
-      <div class="skeleton-carbon h-4 w-32"></div>
-    </div>
-  </div>
 </div>

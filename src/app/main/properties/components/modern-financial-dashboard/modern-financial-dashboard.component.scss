@@ -1,354 +1,700 @@
-// Import des styles Carbon
-@import '../../../../../assets/styles/carbon-utilities.scss';
+// ─── Variables thème application ─────────────────────────────────────────────
+$primary:   rgb(204, 140, 10);
+$primary-10: rgba(204, 140, 10, 0.08);
+$primary-20: rgba(204, 140, 10, 0.15);
+$primary-30: rgba(204, 140, 10, 0.25);
 
-.modern-financial-dashboard {
-  height: 100%; // Hauteur complète pour permettre le scroll
-  background-color: #ffffff; // Fond blanc forcé pour le thème clair
-  overflow-y: auto; // Permettre le scroll vertical
-  overflow-x: hidden; // Empêcher le scroll horizontal
-  padding-bottom: 2rem; // Espace en bas pour le scroll
-  
-  // En-tête du dashboard
-  .dashboard-header {
-    .header-content {
-      h2 {
-        background: linear-gradient(135deg, var(--carbon-primary-60), var(--carbon-primary-40));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-      }
+$success:   #059669;
+$success-bg: rgba(5, 150, 105, 0.08);
+$warning:   #d97706;
+$warning-bg: rgba(217, 119, 6, 0.08);
+$danger:    #dc2626;
+$danger-bg: rgba(220, 38, 38, 0.08);
+$info:      #2563eb;
+$info-bg:   rgba(37, 99, 235, 0.08);
+$neutral:   #64748b;
+$neutral-bg: rgba(100, 116, 139, 0.08);
+
+$text-primary:   #111827;
+$text-secondary: #374151;
+$text-muted:     #6b7280;
+$text-faint:     #9ca3af;
+
+$border:    #e5e7eb;
+$border-light: #f3f4f6;
+$bg-page:   #f8fafc;
+$bg-card:   #ffffff;
+$bg-subtle: #f9fafb;
+
+$radius-card: 16px;
+$radius-sm:   10px;
+$radius-xs:   6px;
+$shadow-card: 0 2px 12px rgba(0, 0, 0, 0.06);
+$shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.10);
+
+// ─── Conteneur principal ──────────────────────────────────────────────────────
+.park-dashboard {
+  padding: 1.5rem;
+  background: $bg-page;
+  min-height: 100%;
+  font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  &::-webkit-scrollbar { width: 6px; }
+  &::-webkit-scrollbar-track { background: $bg-page; }
+  &::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+}
+
+// ─── Header ──────────────────────────────────────────────────────────────────
+.park-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 1.25rem 1.5rem;
+  background: $bg-card;
+  border-radius: $radius-card;
+  border: 1px solid $border;
+  box-shadow: $shadow-card;
+  border-left: 4px solid $primary;
+
+  &__title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: $text-primary;
+    margin: 0 0 .25rem;
+  }
+
+  &__subtitle {
+    font-size: .8125rem;
+    color: $text-muted;
+    margin: 0;
+  }
+
+  &__controls {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+  }
+
+  &__label {
+    font-size: .8125rem;
+    font-weight: 600;
+    color: $text-secondary;
+  }
+
+  &__select {
+    padding: .5rem .875rem;
+    border: 1px solid $border;
+    border-radius: $radius-xs;
+    font-size: .875rem;
+    color: $text-primary;
+    background: $bg-card;
+    cursor: pointer;
+    outline: none;
+    transition: border-color .2s;
+    &:focus { border-color: $primary; box-shadow: 0 0 0 3px $primary-10; }
+  }
+}
+
+// ─── Loading ─────────────────────────────────────────────────────────────────
+.park-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 5rem;
+  color: $text-muted;
+  font-size: .9375rem;
+
+  &__spinner {
+    width: 28px;
+    height: 28px;
+    border: 3px solid $border;
+    border-top-color: $primary;
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+  }
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+// ─── Section ─────────────────────────────────────────────────────────────────
+.park-section {
+  background: $bg-card;
+  border-radius: $radius-card;
+  border: 1px solid $border;
+  box-shadow: $shadow-card;
+  padding: 1.5rem;
+  margin-bottom: 1.25rem;
+  animation: fadeInUp .4s ease both;
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    gap: .875rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid $border-light;
+    flex-wrap: wrap;
+  }
+
+  &__badge {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: $primary-10;
+    color: $primary;
+    font-size: .8125rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+    border: 1px solid $primary-20;
+  }
+
+  &__title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: $text-primary;
+    margin: 0 0 .2rem;
+  }
+
+  &__subtitle {
+    font-size: .78125rem;
+    color: $text-muted;
+    margin: 0;
+  }
+}
+
+.mt-4 { margin-top: 1rem; }
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+// ─── KPI Grid ────────────────────────────────────────────────────────────────
+.kpi-grid {
+  display: grid;
+  gap: 1rem;
+
+  &--1 { grid-template-columns: 1fr; }
+  &--3 { grid-template-columns: repeat(3, 1fr); }
+  &--4 { grid-template-columns: repeat(4, 1fr); }
+
+  @media (max-width: 1200px) { &--4 { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 900px)  { &--3 { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 640px)  { &--4, &--3 { grid-template-columns: 1fr; } }
+}
+
+// ─── KPI Card ────────────────────────────────────────────────────────────────
+.kpi-card {
+  border-radius: $radius-sm;
+  padding: 1.125rem 1.25rem;
+  display: flex;
+  gap: .875rem;
+  align-items: flex-start;
+  border: 1px solid $border;
+  background: $bg-card;
+  transition: box-shadow .2s, transform .2s;
+  position: relative;
+  overflow: hidden;
+
+  // Barre colorée en haut
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: $radius-sm $radius-sm 0 0;
+  }
+
+  &:hover {
+    box-shadow: $shadow-hover;
+    transform: translateY(-2px);
+  }
+
+  // Variantes couleur — fond très doux pour le confort visuel
+  &--primary {
+    background: linear-gradient(135deg, $primary-10, rgba(204,140,10,.04));
+    border-color: $primary-20;
+    &::before { background: $primary; }
+    .kpi-card__icon { background: $primary-20; color: $primary; }
+  }
+  &--green {
+    background: linear-gradient(135deg, $success-bg, rgba(5,150,105,.03));
+    border-color: rgba(5,150,105,.2);
+    &::before { background: $success; }
+    .kpi-card__icon { background: rgba(5,150,105,.15); color: $success; }
+  }
+  &--blue {
+    background: linear-gradient(135deg, $info-bg, rgba(37,99,235,.03));
+    border-color: rgba(37,99,235,.2);
+    &::before { background: $info; }
+    .kpi-card__icon { background: rgba(37,99,235,.15); color: $info; }
+  }
+  &--yellow {
+    background: linear-gradient(135deg, $warning-bg, rgba(217,119,6,.03));
+    border-color: rgba(217,119,6,.2);
+    &::before { background: $warning; }
+    .kpi-card__icon { background: rgba(217,119,6,.15); color: $warning; }
+  }
+  &--red {
+    background: linear-gradient(135deg, $danger-bg, rgba(220,38,38,.03));
+    border-color: rgba(220,38,38,.2);
+    &::before { background: $danger; }
+    .kpi-card__icon { background: rgba(220,38,38,.15); color: $danger; }
+  }
+  &--gray {
+    background: linear-gradient(135deg, $neutral-bg, rgba(100,116,139,.03));
+    border-color: rgba(100,116,139,.2);
+    &::before { background: $neutral; }
+    .kpi-card__icon { background: rgba(100,116,139,.15); color: $neutral; }
+  }
+
+  &--inline {
+    .kpi-card__body {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
     }
+    .kpi-card__label { margin-bottom: 0; }
+  }
 
-    .header-controls {
-      .control-group {
-        label {
-          font-weight: 500;
-        }
-      }
+  &__icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    svg { width: 20px; height: 20px; }
+  }
+
+  &__body { flex: 1; min-width: 0; }
+
+  &__label {
+    font-size: .71875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: $text-muted;
+    margin-bottom: .3rem;
+  }
+
+  &__value {
+    font-size: 1.1875rem;
+    font-weight: 700;
+    color: $text-primary;
+    margin-bottom: .25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: 'IBM Plex Mono', monospace;
+
+    &--md { font-size: 1rem; }
+  }
+
+  &__sub {
+    font-size: .71875rem;
+    color: $text-faint;
+    margin: 0;
+  }
+
+  &__bar {
+    margin-top: .625rem;
+    height: 5px;
+    background: rgba(0,0,0,.07);
+    border-radius: 3px;
+    overflow: hidden;
+
+    &-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width .7s cubic-bezier(.4,0,.2,1);
     }
   }
 
-  // Métriques principales
-  .financial-metrics {
-    .metric-card {
-      border-radius: 0; // Carbon style
-      border-left: 4px solid var(--carbon-primary-60);
-      
-      &:hover {
-        border-left-color: var(--carbon-primary-70);
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-      }
+  &__tags {
+    display: flex;
+    gap: .375rem;
+    margin-top: .4rem;
+    flex-wrap: wrap;
+  }
+}
 
-      .metric-header {
-        .metric-icon {
-          transition: all 0.3s ease;
-          
-          svg {
-            transition: transform 0.3s ease;
-          }
-        }
+// ─── Tags ────────────────────────────────────────────────────────────────────
+.tag {
+  font-size: .6875rem;
+  font-weight: 600;
+  padding: .15rem .5rem;
+  border-radius: 999px;
 
-        .metric-change {
-          font-size: 0.875rem;
-          
-          svg {
-            transition: transform 0.3s ease;
-          }
-        }
-      }
+  &--green { background: rgba(5,150,105,.12);  color: $success; }
+  &--blue  { background: rgba(37,99,235,.12);  color: $info; }
+  &--gray  { background: rgba(100,116,139,.12); color: $neutral; }
+  &--red   { background: rgba(220,38,38,.12);  color: $danger; }
+  &--amber { background: $primary-10; color: $primary; }
+}
 
-      .metric-content {
-        .metric-value {
-          font-family: 'IBM Plex Mono', monospace;
-          letter-spacing: -0.02em;
-        }
+// ─── Graphique mensuel ───────────────────────────────────────────────────────
+.monthly-chart {
+  display: flex;
+  flex-direction: column;
+  gap: .375rem;
 
-        .metric-label {
-          font-weight: 500;
-          text-transform: uppercase;
-          letter-spacing: 0.05em;
-        }
-      }
+  &__row {
+    display: grid;
+    grid-template-columns: 72px 1fr 180px;
+    align-items: center;
+    gap: .875rem;
+    padding: .5rem .25rem;
+    border-radius: $radius-xs;
+    transition: background .15s;
+    &:hover { background: $bg-subtle; }
+  }
 
-      &:hover {
-        .metric-icon svg {
-          transform: scale(1.1);
-        }
+  &__label { text-align: right; }
 
-        .metric-change svg {
-          transform: translateX(2px);
-        }
-      }
+  &__month {
+    font-size: .8125rem;
+    font-weight: 600;
+    color: $text-secondary;
+  }
+
+  &__bars {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__bar-track {
+    height: 10px;
+    background: $border-light;
+    border-radius: 5px;
+    overflow: hidden;
+
+    &--expected {
+      height: 5px;
+      background: $border;
     }
   }
 
-  // Graphiques
-  .financial-charts {
-    .chart-card {
-      border-radius: 0; // Carbon style
-      
-      .chart-header {
-        border-bottom: 1px solid var(--carbon-border-subtle-01);
-        padding-bottom: 1rem;
-        margin-bottom: 1.5rem;
+  &__bar {
+    height: 100%;
+    border-radius: 5px;
+    transition: width .7s cubic-bezier(.4,0,.2,1);
 
-        h3 {
-          color: var(--carbon-text-primary);
-          font-weight: 600;
-        }
-
-        p {
-          color: var(--carbon-text-secondary);
-          font-size: 0.875rem;
-        }
-      }
-
-      .chart-content {
-        // Barres de revenus
-        .revenue-bars {
-          .revenue-bar-item {
-            .progress-bar {
-              background-color: var(--carbon-layer-02);
-              
-              .progress-fill {
-                background: linear-gradient(90deg, var(--carbon-primary-60), var(--carbon-primary-40));
-                transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-              }
-            }
-          }
-        }
-
-        // Anneaux de collection
-        .collection-rings {
-          .collection-item {
-            .ring-container {
-              .ring-chart {
-                .ring-bg {
-                  stroke: var(--carbon-gray-20);
-                  stroke-width: 3;
-                }
-
-                .ring-progress {
-                  stroke-width: 3;
-                  stroke-linecap: round;
-                  transition: stroke-dasharray 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-                }
-              }
-
-              .ring-text {
-                font-family: 'IBM Plex Mono', monospace;
-                font-weight: 700;
-              }
-            }
-
-            .item-info {
-              .text-sm {
-                font-weight: 500;
-              }
-            }
-          }
-        }
-      }
+    &--received {
+      background: linear-gradient(90deg, $primary, rgba(204,140,10,.75));
+    }
+    &--expected {
+      background: #d1d5db;
     }
   }
 
-  // Résumé des propriétés
-  .properties-summary {
-    .summary-header {
-      h3 {
-        color: var(--carbon-text-primary);
-        font-weight: 600;
-      }
-
-      p {
-        color: var(--carbon-text-secondary);
-      }
-    }
-
-    .properties-grid {
-      .property-card {
-        border-radius: 0; // Carbon style
-        border-top: 3px solid var(--carbon-primary-60);
-        transition: all 0.3s ease;
-        
-        &:hover {
-          border-top-color: var(--carbon-primary-70);
-          box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
-          transform: translateY(-4px) scale(1.02);
-        }
-
-        .property-header {
-          h4 {
-            color: var(--carbon-text-primary);
-            font-weight: 600;
-            margin-bottom: 1rem;
-          }
-
-          .property-metrics {
-            .metric {
-              text-align: center;
-              
-              .text-xl {
-                font-family: 'IBM Plex Mono', monospace;
-                font-weight: 700;
-                letter-spacing: -0.02em;
-              }
-
-              .text-xs {
-                font-weight: 500;
-                text-transform: uppercase;
-                letter-spacing: 0.05em;
-              }
-            }
-          }
-        }
-
-        .property-progress {
-          .progress-bar {
-            background-color: var(--carbon-layer-02);
-            
-            .progress-fill {
-              transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            }
-          }
-        }
-
-        .property-actions {
-          button {
-            transition: all 0.3s ease;
-            
-            &:hover {
-              transform: translateY(-1px);
-            }
-          }
-        }
-      }
-    }
+  &__values {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem;
   }
 
-  // État de chargement
-  .loading-overlay {
-    backdrop-filter: blur(4px);
-    
-    .loading-content {
-      border-radius: 0; // Carbon style
-      border: 1px solid var(--carbon-border-subtle-01);
-      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
-    }
+  &__received {
+    font-size: .8125rem;
+    font-weight: 600;
+    color: $text-primary;
+    font-family: 'IBM Plex Mono', monospace;
   }
 
-  // Animations
-  @keyframes slideInUp {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+  &__rate {
+    font-size: .75rem;
+    font-weight: 700;
+    min-width: 48px;
+    text-align: right;
   }
 
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
+  &__legend {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: .875rem;
+    padding-top: .875rem;
+    border-top: 1px solid $border-light;
+  }
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: .375rem;
+  font-size: .78125rem;
+  color: $text-muted;
+  font-weight: 500;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 6px;
+  border-radius: 3px;
+
+  &--received { background: $primary; }
+  &--expected { background: #d1d5db; }
+}
+
+// ─── Tri ─────────────────────────────────────────────────────────────────────
+.sort-controls {
+  display: flex;
+  gap: .375rem;
+  margin-left: auto;
+  flex-wrap: wrap;
+}
+
+.sort-btn {
+  padding: .375rem .75rem;
+  font-size: .78125rem;
+  font-weight: 500;
+  border: 1px solid $border;
+  border-radius: $radius-xs;
+  background: $bg-card;
+  color: $text-muted;
+  cursor: pointer;
+  transition: all .15s;
+
+  &:hover { border-color: $primary; color: $primary; background: $primary-10; }
+
+  &--active {
+    background: $primary;
+    border-color: $primary;
+    color: #fff;
+    font-weight: 600;
+  }
+}
+
+// ─── Tableau des biens ───────────────────────────────────────────────────────
+.property-table {
+  width: 100%;
+  overflow-x: auto;
+
+  &__header {
+    display: grid;
+    grid-template-columns: 2fr 1.2fr 1.2fr 1.4fr 1fr 1.2fr 1fr 1fr;
+    gap: .75rem;
+    padding: .625rem 1rem;
+    font-size: .6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: $text-faint;
+    border-bottom: 2px solid $border-light;
+    background: $bg-subtle;
+    border-radius: $radius-xs $radius-xs 0 0;
   }
 
-  .metric-card,
-  .chart-card,
-  .property-card {
-    animation: slideInUp 0.6s ease-out;
+  &__row {
+    display: grid;
+    grid-template-columns: 2fr 1.2fr 1.2fr 1.4fr 1fr 1.2fr 1fr 1fr;
+    gap: .75rem;
+    align-items: center;
+    padding: .875rem 1rem;
+    border-bottom: 1px solid $border-light;
+    transition: background .15s;
+
+    &:hover { background: $bg-subtle; }
+    &:last-child { border-bottom: none; }
   }
 
-  .financial-metrics .metric-card {
-    &:nth-child(1) { animation-delay: 0.1s; }
-    &:nth-child(2) { animation-delay: 0.2s; }
-    &:nth-child(3) { animation-delay: 0.3s; }
-    &:nth-child(4) { animation-delay: 0.4s; }
+  &__name {
+    display: flex;
+    align-items: center;
+    gap: .625rem;
   }
 
-  .financial-charts .chart-card {
-    &:nth-child(1) { animation-delay: 0.5s; }
-    &:nth-child(2) { animation-delay: 0.6s; }
-  }
-
-  .properties-grid .property-card {
-    animation: fadeIn 0.8s ease-out;
-    
-    &:nth-child(1) { animation-delay: 0.7s; }
-    &:nth-child(2) { animation-delay: 0.8s; }
-    &:nth-child(3) { animation-delay: 0.9s; }
-  }
-
-  // Responsive design
-  @media (max-width: 768px) {
-    padding: 1rem;
-
-    .dashboard-header {
-      .header-controls {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 1rem;
-
-        .control-group {
-          width: 100%;
-        }
-      }
-    }
-
-    .financial-metrics {
-      .metric-card {
-        padding: 1rem;
-      }
-    }
-
-    .financial-charts {
-      .chart-card {
-        padding: 1rem;
-      }
-    }
-
-    .properties-summary {
-      .properties-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-  }
-
-  // Thème clair forcé pour le dashboard
-  background-color: #ffffff !important; // Fond blanc forcé
-
-  .metric-card,
-  .chart-card,
-  .property-card {
-    background-color: #ffffff !important; // Cartes blanches
-    border-color: #e0e0e0 !important; // Bordures claires
-  }
-
-  // Styles de scrollbar personnalisés pour le dashboard
-  &::-webkit-scrollbar {
+  &__dot {
     width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
   }
 
-  &::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 4px;
+  &__property-name {
+    font-size: .875rem;
+    font-weight: 600;
+    color: $text-primary;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
-  &::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
-    border-radius: 4px;
+  &__units {
+    font-size: .71875rem;
+    color: $text-faint;
+  }
 
-    &:hover {
-      background: #a8a8a8;
+  &__cell {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  &__amount {
+    font-size: .8125rem;
+    font-weight: 600;
+    color: $text-primary;
+    font-family: 'IBM Plex Mono', monospace;
+
+    &--secondary { color: $text-muted; font-weight: 500; }
+  }
+
+  &__rate {
+    font-size: .875rem;
+    font-weight: 700;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  &__bar {
+    height: 4px;
+    background: $border-light;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 3px;
+
+    &-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width .7s cubic-bezier(.4,0,.2,1);
     }
   }
 
-  // Firefox scrollbar
-  scrollbar-width: thin;
-  scrollbar-color: #c1c1c1 #f1f1f1;
+  &__arrears {
+    font-size: .8125rem;
+    font-weight: 600;
+    color: $danger;
+    font-family: 'IBM Plex Mono', monospace;
+
+    &--zero { color: $text-faint; font-weight: 400; }
+  }
+
+  &__empty {
+    padding: 3rem;
+    text-align: center;
+    color: $text-faint;
+    font-size: .9375rem;
+  }
+}
+
+// ─── Barre de part ───────────────────────────────────────────────────────────
+.share-bar {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+
+  &__track {
+    flex: 1;
+    height: 5px;
+    background: $border-light;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  &__fill {
+    height: 100%;
+    background: linear-gradient(90deg, $primary, rgba(204,140,10,.7));
+    border-radius: 3px;
+    transition: width .7s cubic-bezier(.4,0,.2,1);
+  }
+
+  &__label {
+    font-size: .71875rem;
+    font-weight: 700;
+    color: $primary;
+    white-space: nowrap;
+    min-width: 32px;
+    text-align: right;
+  }
+}
+
+// ─── Badges performance ──────────────────────────────────────────────────────
+.badge {
+  display: inline-block;
+  padding: .2rem .625rem;
+  border-radius: 999px;
+  font-size: .6875rem;
+  font-weight: 700;
+  letter-spacing: .02em;
+
+  &-excellent { background: rgba(5,150,105,.12);  color: $success; }
+  &-good      { background: $info-bg;             color: $info; }
+  &-fair      { background: $warning-bg;          color: $warning; }
+  &-poor      { background: $danger-bg;           color: $danger; }
+}
+
+// ─── Couleurs texte ──────────────────────────────────────────────────────────
+.text-green-600  { color: $success; }
+.text-yellow-600 { color: $warning; }
+.text-red-600    { color: $danger; }
+
+// ─── État vide ───────────────────────────────────────────────────────────────
+.park-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 5rem 2rem;
+  text-align: center;
+  background: $bg-card;
+  border-radius: $radius-card;
+  border: 2px dashed $border;
+
+  svg {
+    width: 52px;
+    height: 52px;
+    margin-bottom: 1.25rem;
+    color: $text-faint;
+    opacity: .5;
+  }
+
+  h3 {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    color: $text-secondary;
+    margin: 0 0 .5rem;
+  }
+
+  p {
+    font-size: .875rem;
+    color: $text-muted;
+    margin: 0;
+  }
+}
+
+// ─── Responsive ──────────────────────────────────────────────────────────────
+@media (max-width: 768px) {
+  .park-dashboard { padding: 1rem; }
+
+  .park-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .monthly-chart__row {
+    grid-template-columns: 48px 1fr 110px;
+    gap: .5rem;
+  }
+
+  .property-table {
+    &__header,
+    &__row {
+      grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      > *:nth-child(n+5) { display: none; }
+    }
+  }
+
+  .sort-controls { margin-left: 0; }
+  .park-section__header { flex-direction: column; }
 }
