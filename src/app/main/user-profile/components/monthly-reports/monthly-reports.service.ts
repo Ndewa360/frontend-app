@@ -19,7 +19,7 @@ export class MonthlyReportService {
 
   constructor(private http: HttpClient) {}
 
-  getMyReports(ownerId: string): Observable<{ data: MonthlyReportSummary[] }> {
-    return this.http.get<{ data: MonthlyReportSummary[] }>(`${this.base}/owner/${ownerId}`);
+  getMyReports(): Observable<{ data: MonthlyReportSummary[] }> {
+    return this.http.get<{ data: MonthlyReportSummary[] }>(`${this.base}/my-reports`);
   }
 }

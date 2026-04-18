@@ -1,6 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Store } from '@ngxs/store';
-import { UserProfileState } from 'src/app/shared/store';
 import { MonthlyReportService, MonthlyReportSummary } from './monthly-reports.service';
 import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
 
@@ -18,16 +16,12 @@ export class MonthlyReportsComponent implements OnInit {
   error = false;
 
   constructor(
-    private store: Store,
     private reportService: MonthlyReportService,
     private languageUrlService: LanguageUrlService,
   ) {}
 
   ngOnInit(): void {
-    const user = this.store.selectSnapshot(UserProfileState.selectStateUserProfile);
-    if (!user?._id) { this.loading = false; return; }
-
-    this.reportService.getMyReports(user._id).subscribe({
+    this.reportService.getMyReports().subscribe({
       next: (res) => {
         this.reports = res.data || [];
         this.loading = false;
