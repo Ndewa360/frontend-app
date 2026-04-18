@@ -152,9 +152,10 @@ export class AdminSubscriptionsComponent implements OnInit, OnDestroy {
 
   onRefreshData(): void {
     this.isRefreshing = true;
-    this.store.dispatch(new AdminSubscriptionsAction.RefreshData());
+    this.store.dispatch(new AdminSubscriptionsAction.RefreshData())
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({ complete: () => this.isRefreshing = false, error: () => this.isRefreshing = false });
     if (this.selectedTab === 'analytics') this.loadAnalytics();
-    setTimeout(() => this.isRefreshing = false, 1000);
   }
 
   onExportData(): void {

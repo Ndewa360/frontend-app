@@ -242,7 +242,7 @@
             </div>
             <div class="admin-service-item">
               <span class="admin-service-name">Mémoire utilisée</span>
-              <span class="admin-service-status">{{ health.memory?.heapUsed || 0 }} MB</span>
+              <span class="admin-service-status">{{ formatMemory(health.memory?.heapUsed) }}</span>
             </div>
             <div class="admin-service-item">
               <span class="admin-service-name">Node.js</span>

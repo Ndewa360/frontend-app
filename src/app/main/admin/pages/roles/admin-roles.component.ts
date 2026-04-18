@@ -111,13 +111,14 @@ export class AdminRolesComponent implements OnInit, OnDestroy {
       return;
     }
     const data = this.roleForm.value;
-    if (this.showEditModal && this.selectedRole) {
-      this.store.dispatch(new AdminRolesAction.UpdateRole(this.selectedRole._id, data));
-    } else {
-      this.store.dispatch(new AdminRolesAction.CreateRole(data));
-    }
-    this.onCloseModal();
-    setTimeout(() => this.loadData(), 500);
+    const action$ = this.showEditModal && this.selectedRole
+      ? this.store.dispatch(new AdminRolesAction.UpdateRole(this.selectedRole._id, data))
+      : this.store.dispatch(new AdminRolesAction.CreateRole(data));
+
+    action$.pipe(takeUntil(this.destroy$)).subscribe({
+      next:  () => { this.toastr.success(this.showEditModal ? 'Rôle mis à jour' : 'Rôle créé'); this.onCloseModal(); setTimeout(() => this.loadData(), 300); },
+      error: (e) => this.toastr.error(e?.error?.message || 'Erreur lors de l\'opération')
+    });
   }
 
   // Modal state
@@ -294,32 +295,18 @@ export class AdminRolesComponent implements OnInit, OnDestroy {
    * Appliquer un changement de permission immédiatement
    */
   private async applyPermissionChange(roleId: string, permissionId: string, granted: boolean): Promise<void> {
-    if (this.isApplyingChange) return; // Éviter les appels multiples
-
+    if (this.isApplyingChange) return;
     try {
       this.isApplyingChange = true;
-
-      // Trouver la permission dans la matrice
       const matrix = this.store.selectSnapshot(AdminRolesState.selectPermissionsMatrix);
       if (!matrix) return;
-
       const permission = matrix.permissions?.find((p: any) => p._id === permissionId);
-      if (!permission) {
-        console.error('Permission non trouvée:', permissionId);
-        return;
-      }
-
-      // Appeler l'API pour basculer la permission
+      if (!permission) { this.toastr.error('Permission introuvable'); return; }
       const permissionCode = permission.code || permission.name;
       await firstValueFrom(this.store.dispatch(new AdminRolesAction.ToggleRolePermission(roleId, permissionCode, granted)));
-
-      // Recharger la matrice pour refléter les changements
       await firstValueFrom(this.store.dispatch(new AdminRolesAction.LoadPermissionsMatrix()));
-
     } catch (error) {
-      console.error('Erreur lors de l\'application du changement de permission:', error);
-
-      // Recharger la matrice pour annuler le changement visuel
+      this.toastr.error('Erreur lors de la modification de la permission');
       await firstValueFrom(this.store.dispatch(new AdminRolesAction.LoadPermissionsMatrix()));
     } finally {
       this.isApplyingChange = false;
@@ -359,29 +346,22 @@ export class AdminRolesComponent implements OnInit, OnDestroy {
    * Appliquer le changement de toutes les permissions pour un rôle
    */
   private async applyAllPermissionsChange(roleId: string, granted: boolean): Promise<void> {
-    if (this.isApplyingChange) return; // Éviter les appels multiples
-
+    if (this.isApplyingChange) return;
     try {
       this.isApplyingChange = true;
-
       const matrix = this.store.selectSnapshot(AdminRolesState.selectPermissionsMatrix);
-      if (!matrix || !matrix.permissions) return;
+      if (!matrix?.permissions) return;
 
-      // Appliquer les changements pour toutes les permissions
-      const promises = matrix.permissions.map(async (permission: any) => {
+      // Séquentiel pour éviter de saturer le serveur
+      for (const permission of matrix.permissions) {
         const permissionCode = permission.code || permission.name;
-        return firstValueFrom(this.store.dispatch(new AdminRolesAction.ToggleRolePermission(roleId, permissionCode, granted)));
-      });
-
-      await Promise.all(promises);
-
-      // Recharger la matrice pour refléter les changements
+        await firstValueFrom(
+          this.store.dispatch(new AdminRolesAction.ToggleRolePermission(roleId, permissionCode, granted))
+        );
+      }
       await firstValueFrom(this.store.dispatch(new AdminRolesAction.LoadPermissionsMatrix()));
-
     } catch (error) {
-      console.error('Erreur lors de l\'application des changements de permissions:', error);
-
-      // Recharger la matrice pour annuler les changements visuels
+      this.toastr.error('Erreur lors de la modification des permissions');
       await firstValueFrom(this.store.dispatch(new AdminRolesAction.LoadPermissionsMatrix()));
     } finally {
       this.isApplyingChange = false;
@@ -403,41 +383,26 @@ export class AdminRolesComponent implements OnInit, OnDestroy {
    * Sauvegarder les changements de permissions
    */
   async onSavePermissions(): Promise<void> {
-    if (Object.keys(this.pendingChanges).length === 0) {
-      this.isEditMode = false;
-      return;
-    }
-
+    if (Object.keys(this.pendingChanges).length === 0) { this.isEditMode = false; return; }
     this.isSaving = true;
-
     try {
-      // Envoyer les changements au backend
       const matrix = this.store.selectSnapshot(AdminRolesState.selectPermissionsMatrix);
       if (!matrix) return;
-
       for (const roleId of Object.keys(this.pendingChanges)) {
         for (const permissionId of Object.keys(this.pendingChanges[roleId])) {
-          const granted = this.pendingChanges[roleId][permissionId];
-
-          // Trouver la permission dans la liste
+          const granted    = this.pendingChanges[roleId][permissionId];
           const permission = matrix.permissions?.find((p: any) => p._id === permissionId);
           if (!permission) continue;
-
-          // Appeler l'API pour basculer la permission
           const permissionCode = permission.code || permission.name;
           await firstValueFrom(this.store.dispatch(new AdminRolesAction.ToggleRolePermission(roleId, permissionCode, granted)));
         }
       }
-
-      // Recharger la matrice
       await firstValueFrom(this.store.dispatch(new AdminRolesAction.LoadPermissionsMatrix()));
-
-      // Réinitialiser l'état
       this.pendingChanges = {};
       this.isEditMode = false;
-
+      this.toastr.success('Permissions sauvegardées');
     } catch (error) {
-      console.error('Erreur lors de la sauvegarde des permissions:', error);
+      this.toastr.error('Erreur lors de la sauvegarde des permissions');
     } finally {
       this.isSaving = false;
     }
@@ -733,18 +698,13 @@ export class AdminRolesComponent implements OnInit, OnDestroy {
    */
   async onRefreshPermissions(): Promise<void> {
     if (this.isRefreshing) return;
-
     try {
       this.isRefreshing = true;
       await firstValueFrom(this.store.dispatch(new AdminRolesAction.LoadPermissions()));
-
-      // Petit délai pour l'animation
-      setTimeout(() => {
-        this.isRefreshing = false;
-      }, 500);
-    } catch (error) {
-      console.error('Erreur lors de l\'actualisation des permissions:', error);
-      this.isRefreshing = false;
+    } catch {
+      this.toastr.error('Erreur lors de l\'actualisation des permissions');
+    } finally {
+      setTimeout(() => this.isRefreshing = false, 300);
     }
   }
 
@@ -796,24 +756,25 @@ export class AdminRolesComponent implements OnInit, OnDestroy {
   submitPermission(): void {
     if (this.permissionForm.invalid) { this.permissionForm.markAllAsTouched(); return; }
     const data = this.permissionForm.value;
-    if (this.selectedPermission) {
-      this.store.dispatch(new AdminRolesAction.UpdatePermission(this.selectedPermission._id, data));
-      this.toastr.success('Permission mise à jour');
-    } else {
-      this.store.dispatch(new AdminRolesAction.CreatePermission(data));
-      this.toastr.success('Permission créée');
-    }
-    this.closePermissionModal();
-    setTimeout(() => this.loadData(), 500);
+    const action$ = this.selectedPermission
+      ? this.store.dispatch(new AdminRolesAction.UpdatePermission(this.selectedPermission._id, data))
+      : this.store.dispatch(new AdminRolesAction.CreatePermission(data));
+
+    action$.pipe(takeUntil(this.destroy$)).subscribe({
+      next:  () => { this.toastr.success(this.selectedPermission ? 'Permission mise à jour' : 'Permission créée'); this.closePermissionModal(); setTimeout(() => this.loadData(), 300); },
+      error: (e) => this.toastr.error(e?.error?.message || 'Erreur lors de l\'opération')
+    });
   }
 
   confirmDeletePermission(): void {
     if (!this.selectedPermission) return;
-    this.store.dispatch(new AdminRolesAction.DeletePermission(this.selectedPermission._id));
-    this.toastr.success('Permission supprimée');
-    this.showDeletePermissionModal = false;
-    this.selectedPermission = null;
-    setTimeout(() => this.loadData(), 500);
+    const perm = this.selectedPermission;
+    this.store.dispatch(new AdminRolesAction.DeletePermission(perm._id))
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next:  () => { this.toastr.success('Permission supprimée'); this.showDeletePermissionModal = false; this.selectedPermission = null; setTimeout(() => this.loadData(), 300); },
+        error: (e) => this.toastr.error(e?.error?.message || 'Erreur lors de la suppression')
+      });
   }
 
   closePermissionModal(): void {

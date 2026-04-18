@@ -1,4 +1,5 @@
 <div class="admin-users-container">
+
   <!-- Header -->
   <div class="admin-page-header">
     <div class="admin-header-content">
@@ -6,30 +7,28 @@
         <button class="admin-btn admin-btn-ghost admin-btn-sm" (click)="goBack()">
           <i class="fas fa-arrow-left"></i> Retour
         </button>
-        <h1 class="admin-page-title" *ngIf="user">
-          {{ user.firstName && user.lastName ? (user.firstName + ' ' + user.lastName) : user.email }}
-        </h1>
+        <h1 class="admin-page-title" *ngIf="user">{{ getUserDisplayName() }}</h1>
         <p class="admin-page-subtitle" *ngIf="user">{{ user.email }}</p>
       </div>
       <div class="admin-header-actions" *ngIf="user">
-        <button class="admin-btn admin-btn-secondary" (click)="refreshSubscription()">
+        <button class="admin-btn admin-btn-secondary" (click)="refreshData()">
           <i class="fas fa-sync-alt"></i> Actualiser
         </button>
-        <button
-          class="admin-btn admin-btn-primary"
-          *ngIf="user.subscription?.plan === 'free'"
+        <!-- Upgrade : visible si plan free ou trial ET compte actif -->
+        <button class="admin-btn admin-btn-primary"
+          *ngIf="user.subscription && user.subscription.plan !== 'premium' && user.subscription.accountStatus === 'active'"
           (click)="upgradeToPremium()">
           <i class="fas fa-crown"></i> Upgrade Premium
         </button>
-        <button
-          class="admin-btn admin-btn-warning"
+        <!-- Suspendre : visible si compte actif -->
+        <button class="admin-btn admin-btn-warning"
           *ngIf="user.subscription?.accountStatus === 'active'"
           (click)="suspendAccount()">
           <i class="fas fa-pause"></i> Suspendre
         </button>
-        <button
-          class="admin-btn admin-btn-success"
-          *ngIf="user.subscription?.accountStatus === 'suspended'"
+        <!-- Réactiver : visible si compte suspendu OU désactivé -->
+        <button class="admin-btn admin-btn-success"
+          *ngIf="user.subscription?.accountStatus === 'suspended' || user.subscription?.accountStatus === 'disabled'"
           (click)="reactivateAccount()">
           <i class="fas fa-play"></i> Réactiver
         </button>
@@ -55,51 +54,101 @@
 
   <!-- Content -->
   <ng-container *ngIf="!isLoading && user">
-    <!-- Stats Cards -->
+
+    <!-- ── KPI Cards ── -->
     <div class="admin-stats-grid">
       <div class="admin-stat-card admin-stat-success">
         <div class="admin-stat-icon"><i class="fas fa-building"></i></div>
         <div class="admin-stat-content">
-          <div class="admin-stat-number">{{ (user.properties?.total) || 0 }}</div>
+          <div class="admin-stat-number">{{ user.properties?.total || 0 }}</div>
           <div class="admin-stat-label">Propriétés</div>
-          <div class="admin-stat-trend">{{ (user.properties?.occupiedUnits) || 0 }} unités occupées</div>
+          <div class="admin-stat-trend">{{ user.properties?.occupiedUnits || 0 }} unités occupées</div>
         </div>
       </div>
       <div class="admin-stat-card admin-stat-info">
         <div class="admin-stat-icon"><i class="fas fa-door-open"></i></div>
         <div class="admin-stat-content">
-          <div class="admin-stat-number">{{ (user.properties?.totalUnits) || 0 }}</div>
+          <div class="admin-stat-number">{{ user.properties?.totalUnits || 0 }}</div>
           <div class="admin-stat-label">Unités totales</div>
-          <div class="admin-stat-trend">{{ (user.properties?.vacant) || 0 }} vacantes</div>
+          <div class="admin-stat-trend">{{ user.properties?.vacant || 0 }} vacantes</div>
         </div>
       </div>
       <div class="admin-stat-card admin-stat-warning">
         <div class="admin-stat-icon"><i class="fas fa-dollar-sign"></i></div>
         <div class="admin-stat-content">
-          <div class="admin-stat-number">{{ formatCurrency((user.financialSummary?.totalRevenue) || 0) }}</div>
+          <div class="admin-stat-number">{{ formatCurrency(user.financialSummary?.totalRevenue || 0) }}</div>
           <div class="admin-stat-label">Revenus totaux</div>
-          <div class="admin-stat-trend">{{ formatCurrency((user.financialSummary?.monthlyRevenue) || 0) }}/mois</div>
+          <div class="admin-stat-trend">{{ formatCurrency(user.financialSummary?.monthlyRevenue || 0) }}/mois</div>
         </div>
       </div>
       <div class="admin-stat-card admin-stat-primary">
         <div class="admin-stat-icon"><i class="fas fa-chart-pie"></i></div>
         <div class="admin-stat-content">
-          <div class="admin-stat-number">{{ (user.financialSummary?.averageOccupancy) || 0 }}%</div>
+          <div class="admin-stat-number" [ngClass]="getOccupancyClass(user.financialSummary?.averageOccupancy || 0)">
+            {{ user.financialSummary?.averageOccupancy || 0 }}%
+          </div>
           <div class="admin-stat-label">Taux d'occupation</div>
-          <div class="admin-stat-trend" *ngIf="user.financialSummary?.unpaidAmount > 0" style="color:#ef4444">
+          <div class="admin-stat-trend" *ngIf="(user.financialSummary?.unpaidAmount || 0) > 0" style="color:#ef4444">
             {{ formatCurrency(user.financialSummary.unpaidAmount) }} impayés
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Main Grid -->
+    <!-- ── Main Grid ── -->
     <div class="admin-bottom-grid">
-      <!-- Subscription Details -->
+
+      <!-- Informations utilisateur -->
       <div class="admin-health-card">
         <div class="admin-card-header">
-          <h3>Souscription</h3>
-          <button class="admin-btn admin-btn-ghost admin-btn-sm" (click)="refreshSubscription()">
+          <h3><i class="fas fa-user" style="color:#cc8c0a;margin-right:8px"></i>Informations utilisateur</h3>
+        </div>
+        <div class="admin-health-content">
+          <div class="admin-health-services">
+            <div class="admin-service-item">
+              <span class="admin-service-name">Nom complet</span>
+              <span class="admin-service-status">{{ getUserDisplayName() }}</span>
+            </div>
+            <div class="admin-service-item">
+              <span class="admin-service-name">Email</span>
+              <span class="admin-service-status">{{ user.email }}</span>
+            </div>
+            <div class="admin-service-item">
+              <span class="admin-service-name">Téléphone</span>
+              <span class="admin-service-status">{{ user.phoneNumber || 'Non renseigné' }}</span>
+            </div>
+            <div class="admin-service-item">
+              <span class="admin-service-name">Type de compte</span>
+              <span class="admin-badge admin-badge-info">{{ user.userType }}</span>
+            </div>
+            <div class="admin-service-item">
+              <span class="admin-service-name">Statut utilisateur</span>
+              <!-- CORRECTION : affiche le vrai statut (active/inactive/suspended/banned/disabled) -->
+              <span [class]="getUserStatusClass(user.status)">{{ getUserStatusLabel(user.status) }}</span>
+            </div>
+            <div class="admin-service-item">
+              <span class="admin-service-name">Email confirmé</span>
+              <span [class]="user.emailConfirmed ? 'admin-badge admin-badge-success' : 'admin-badge admin-badge-warning'">
+                {{ user.emailConfirmed ? 'Oui' : 'Non' }}
+              </span>
+            </div>
+            <div class="admin-service-item" *ngIf="user.country">
+              <span class="admin-service-name">Pays</span>
+              <span class="admin-service-status">{{ user.country }}</span>
+            </div>
+            <div class="admin-service-item">
+              <span class="admin-service-name">Membre depuis</span>
+              <span class="admin-service-status">{{ formatDate(user.createdAt) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Souscription -->
+      <div class="admin-health-card">
+        <div class="admin-card-header">
+          <h3><i class="fas fa-crown" style="color:#cc8c0a;margin-right:8px"></i>Souscription</h3>
+          <button class="admin-btn admin-btn-ghost admin-btn-sm" (click)="refreshData()">
             <i class="fas fa-sync-alt"></i>
           </button>
         </div>
@@ -110,50 +159,59 @@
               <span [class]="getPlanBadgeClass(user.subscription.plan)">{{ getPlanLabel(user.subscription.plan) }}</span>
             </div>
             <div class="admin-service-item">
-              <span class="admin-service-name">Statut</span>
+              <span class="admin-service-name">Statut souscription</span>
               <span [class]="getStatusBadgeClass(user.subscription.accountStatus)">{{ getStatusLabel(user.subscription.accountStatus) }}</span>
             </div>
             <div class="admin-service-item">
-              <span class="admin-service-name">Propriétés</span>
-              <span class="admin-service-status">{{ (user.properties?.total) || 0 }} / {{ user.subscription.propertyLimit || '∞' }}</span>
+              <span class="admin-service-name">Propriétés utilisées</span>
+              <span class="admin-service-status">
+                {{ user.properties?.total || 0 }} / {{ user.subscription.propertyLimit || '∞' }}
+              </span>
             </div>
             <div class="admin-service-item">
               <span class="admin-service-name">Montant mensuel</span>
               <span class="admin-service-status">{{ formatCurrency(user.subscription.monthlyAmount || 0) }}</span>
             </div>
             <div class="admin-service-item">
-              <span class="admin-service-name">Membre depuis</span>
+              <span class="admin-service-name">Dernier paiement</span>
+              <span class="admin-service-status">{{ formatDate(user.subscription.lastPaymentDate) }}</span>
+            </div>
+            <div class="admin-service-item">
+              <span class="admin-service-name">Souscrit depuis</span>
               <span class="admin-service-status">{{ formatDate(user.subscription.createdAt) }}</span>
             </div>
           </div>
         </div>
         <ng-template #noSubscription>
-          <div class="admin-empty-state" style="padding: 1rem;">
-            <p>Aucune souscription trouvée</p>
+          <div class="admin-empty-state" style="padding:1rem">
+            <p>Aucune souscription active</p>
           </div>
         </ng-template>
       </div>
 
-      <!-- Payment Status -->
+    </div>
+
+    <!-- ── État des paiements ── -->
+    <div class="admin-bottom-grid" *ngIf="user.subscription">
       <div class="admin-health-card">
         <div class="admin-card-header">
-          <h3>État des paiements</h3>
-          <button
-            class="admin-btn admin-btn-ghost admin-btn-sm"
-            *ngIf="user.subscription?.hasUnpaidInvoices"
-            (click)="sendPaymentReminder()"
-            title="Envoyer un rappel">
+          <h3><i class="fas fa-credit-card" style="color:#cc8c0a;margin-right:8px"></i>État des paiements</h3>
+          <button class="admin-btn admin-btn-ghost admin-btn-sm"
+            *ngIf="user.subscription.hasUnpaidInvoices"
+            (click)="sendPaymentReminder()" title="Envoyer un rappel">
             <i class="fas fa-envelope"></i>
           </button>
         </div>
-        <div class="admin-health-content" *ngIf="user.subscription">
-          <!-- Status Banner -->
-          <div class="admin-service-item" style="padding: 0.75rem; border-radius: 6px; margin-bottom: 1rem;"
-               [style.background]="user.subscription.hasUnpaidInvoices ? '#fff3cd' : '#d4edda'">
-            <i class="fas" [class.fa-check-circle]="!user.subscription.hasUnpaidInvoices"
+        <div class="admin-health-content">
+          <!-- Bannière statut -->
+          <div style="padding:10px 14px;border-radius:8px;margin-bottom:14px;display:flex;align-items:center;gap:8px"
+               [style.background]="user.subscription.hasUnpaidInvoices ? '#FEF3C7' : '#D1FAE5'"
+               [style.border]="user.subscription.hasUnpaidInvoices ? '1px solid #FDE68A' : '1px solid #A7F3D0'">
+            <i class="fas"
+               [class.fa-check-circle]="!user.subscription.hasUnpaidInvoices"
                [class.fa-exclamation-triangle]="user.subscription.hasUnpaidInvoices"
-               [style.color]="user.subscription.hasUnpaidInvoices ? '#856404' : '#155724'"></i>
-            <span [style.color]="user.subscription.hasUnpaidInvoices ? '#856404' : '#155724'" style="margin-left: 0.5rem; font-weight: 600;">
+               [style.color]="user.subscription.hasUnpaidInvoices ? '#D97706' : '#059669'"></i>
+            <span [style.color]="user.subscription.hasUnpaidInvoices ? '#92400E' : '#065F46'" style="font-weight:600">
               {{ user.subscription.hasUnpaidInvoices ? 'Paiements en retard' : 'Paiements à jour' }}
             </span>
           </div>
@@ -164,83 +222,121 @@
               <span class="admin-service-status down">{{ user.subscription.unpaidInvoicesCount }}</span>
             </div>
             <div class="admin-service-item">
-              <span class="admin-service-name">Montant impayé</span>
+              <span class="admin-service-name">Montant total dû</span>
               <span class="admin-service-status down">{{ formatCurrency(user.subscription.totalUnpaidAmount) }}</span>
+            </div>
+            <!-- Première période impayée -->
+            <div class="admin-service-item" *ngIf="user.subscription.firstUnpaidPeriod">
+              <span class="admin-service-name">Période impayée</span>
+              <span class="admin-service-status">
+                {{ formatDateShort(user.subscription.firstUnpaidPeriod.startedAt) }}
+                → {{ formatDateShort(user.subscription.firstUnpaidPeriod.endedAt) }}
+                ({{ formatCurrency(user.subscription.firstUnpaidPeriod.calculatedAmount) }})
+              </span>
             </div>
           </div>
 
-          <div class="admin-service-item" *ngIf="user.subscription.lastPaymentDate">
-            <span class="admin-service-name">Dernier paiement</span>
-            <span class="admin-service-status">{{ formatDate(user.subscription.lastPaymentDate) }}</span>
-          </div>
-
           <!-- Actions paiement -->
-          <div class="admin-bulk-buttons" style="margin-top: 1rem;" *ngIf="user.subscription.hasUnpaidInvoices">
-            <button
-              class="admin-btn admin-btn-success admin-btn-sm"
-              (click)="markAsPaid()"
-              [disabled]="isMarkingPaid">
-              <i class="fas fa-check" [class.fa-spinner]="isMarkingPaid" [class.fa-spin]="isMarkingPaid"></i>
+          <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap" *ngIf="user.subscription.hasUnpaidInvoices">
+            <button class="admin-btn admin-btn-success admin-btn-sm"
+              (click)="markAsPaid()" [disabled]="isMarkingPaid">
+              <i class="fas" [class.fa-check]="!isMarkingPaid" [class.fa-spinner]="isMarkingPaid" [class.fa-spin]="isMarkingPaid"></i>
               {{ isMarkingPaid ? 'En cours...' : 'Marquer payé' }}
             </button>
             <button class="admin-btn admin-btn-outline admin-btn-sm" (click)="sendPaymentReminder()">
-              <i class="fas fa-envelope"></i> Rappel
+              <i class="fas fa-envelope"></i> Rappel email
             </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Historique des périodes -->
+      <div class="admin-health-card" *ngIf="user.subscription.recentPeriods?.length > 0">
+        <div class="admin-card-header">
+          <h3><i class="fas fa-history" style="color:#cc8c0a;margin-right:8px"></i>Historique des périodes</h3>
+        </div>
+        <div class="admin-health-content" style="max-height:280px;overflow-y:auto">
+          <table style="width:100%;border-collapse:collapse;font-size:11px">
+            <thead>
+              <tr style="background:#F3F4F6">
+                <th style="padding:6px 8px;text-align:left;font-weight:600;color:#374151">Période</th>
+                <th style="padding:6px 8px;text-align:right;font-weight:600;color:#374151">Montant</th>
+                <th style="padding:6px 8px;text-align:center;font-weight:600;color:#374151">Statut</th>
+                <th style="padding:6px 8px;text-align:left;font-weight:600;color:#374151">Payé le</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let period of user.subscription.recentPeriods" style="border-bottom:1px solid #F3F4F6">
+                <td style="padding:6px 8px;color:#374151">
+                  {{ formatDateShort(period.startedAt) }} → {{ formatDateShort(period.endedAt) }}
+                </td>
+                <td style="padding:6px 8px;text-align:right;color:#374151">
+                  {{ formatCurrency(period.calculatedAmount) }}
+                </td>
+                <td style="padding:6px 8px;text-align:center">
+                  <span [class]="getPeriodStateClass(period.state)">{{ getPeriodStateLabel(period.state) }}</span>
+                </td>
+                <td style="padding:6px 8px;color:#6B7280">
+                  {{ period.paymentDate ? formatDateShort(period.paymentDate) : '—' }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Résumé financier ── -->
+    <div class="admin-content-section">
+      <div class="admin-table-container">
+        <div class="admin-table-header">
+          <h3 class="admin-table-title"><i class="fas fa-chart-bar"></i> Résumé financier</h3>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;padding:16px">
+          <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:8px;padding:14px;text-align:center">
+            <div style="font-size:18px;font-weight:800;color:#059669">{{ formatCurrency(user.financialSummary?.totalRevenue || 0) }}</div>
+            <div style="font-size:11px;color:#6B7280;margin-top:4px">Revenus totaux encaissés</div>
+          </div>
+          <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:8px;padding:14px;text-align:center">
+            <div style="font-size:18px;font-weight:800;color:#2563EB">{{ formatCurrency(user.financialSummary?.monthlyRevenue || 0) }}</div>
+            <div style="font-size:11px;color:#6B7280;margin-top:4px">Revenus ce mois</div>
+          </div>
+          <div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;padding:14px;text-align:center">
+            <div style="font-size:18px;font-weight:800;color:#BB890B">{{ user.financialSummary?.averageOccupancy || 0 }}%</div>
+            <div style="font-size:11px;color:#6B7280;margin-top:4px">Taux d'occupation moyen</div>
+          </div>
+          <div *ngIf="(user.financialSummary?.unpaidAmount || 0) > 0"
+               style="background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:14px;text-align:center">
+            <div style="font-size:18px;font-weight:800;color:#DC2626">{{ formatCurrency(user.financialSummary.unpaidAmount) }}</div>
+            <div style="font-size:11px;color:#6B7280;margin-top:4px">Souscription impayée</div>
+          </div>
+          <div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;padding:14px;text-align:center">
+            <div style="font-size:18px;font-weight:800;color:#374151">{{ user.properties?.total || 0 }}</div>
+            <div style="font-size:11px;color:#6B7280;margin-top:4px">Biens immobiliers</div>
+          </div>
+          <div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;padding:14px;text-align:center">
+            <div style="font-size:18px;font-weight:800;color:#374151">{{ user.properties?.occupiedUnits || 0 }} / {{ user.properties?.totalUnits || 0 }}</div>
+            <div style="font-size:11px;color:#6B7280;margin-top:4px">Unités occupées / totales</div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- User Info -->
-    <div class="admin-content-section">
-      <div class="admin-table-container">
-        <div class="admin-table-header">
-          <h3 class="admin-table-title"><i class="fas fa-user"></i> Informations utilisateur</h3>
-        </div>
-        <div class="admin-health-services" style="padding: 1rem;">
-          <div class="admin-service-item">
-            <span class="admin-service-name">Nom</span>
-            <span class="admin-service-status">{{ user.firstName && user.lastName ? (user.firstName + ' ' + user.lastName) : user.email }}</span>
-          </div>
-          <div class="admin-service-item">
-            <span class="admin-service-name">Email</span>
-            <span class="admin-service-status">{{ user.email }}</span>
-          </div>
-          <div class="admin-service-item">
-            <span class="admin-service-name">Téléphone</span>
-            <span class="admin-service-status">{{ user.phoneNumber || 'Non renseigné' }}</span>
-          </div>
-          <div class="admin-service-item">
-            <span class="admin-service-name">Type</span>
-            <span class="admin-badge admin-badge-info">{{ user.userType || 'OWNER' }}</span>
-          </div>
-          <div class="admin-service-item">
-            <span class="admin-service-name">Statut compte</span>
-            <span class="admin-badge" [class.admin-badge-success]="user.isActive" [class.admin-badge-danger]="!user.isActive">
-              {{ user.isActive ? 'Actif' : 'Inactif' }}
-            </span>
-          </div>
-          <div class="admin-service-item">
-            <span class="admin-service-name">Créé le</span>
-            <span class="admin-service-status">{{ formatDate(user.createdAt) }}</span>
-          </div>
-        </div>
-      </div>
-    </div>
   </ng-container>
 </div>
 
 <!-- Modal Suspension -->
 <div class="admin-modal-overlay" *ngIf="showSuspendModal" (click)="cancelSuspend()">
-  <div class="admin-modal" (click)="$event.stopPropagation()">
+  <div class="admin-modal" (click)="$event.stopPropagation()" style="max-width:480px;width:100%">
     <div class="admin-modal-header">
-      <h3>Suspendre le compte</h3>
+      <h3><i class="fas fa-pause" style="color:#D97706"></i> Suspendre le compte</h3>
       <button class="admin-modal-close" (click)="cancelSuspend()"><i class="fas fa-times"></i></button>
     </div>
     <div class="admin-modal-body">
       <label class="admin-form-label">Raison de la suspension <span style="color:red">*</span></label>
       <textarea class="admin-form-control" rows="3" [(ngModel)]="suspendReason"
         placeholder="Expliquez la raison de la suspension..."></textarea>
+      <small style="color:#9CA3AF;font-size:11px">Un email de notification sera envoyé à l'utilisateur.</small>
     </div>
     <div class="admin-modal-footer">
       <button class="admin-btn admin-btn-secondary" (click)="cancelSuspend()">Annuler</button>
@@ -253,12 +349,17 @@
 
 <!-- Modal Marquer payé -->
 <div class="admin-modal-overlay" *ngIf="showMarkPaidModal" (click)="cancelMarkPaid()">
-  <div class="admin-modal" (click)="$event.stopPropagation()">
+  <div class="admin-modal" (click)="$event.stopPropagation()" style="max-width:480px;width:100%">
     <div class="admin-modal-header">
-      <h3>Marquer comme payé</h3>
+      <h3><i class="fas fa-check" style="color:#059669"></i> Marquer comme payé</h3>
       <button class="admin-modal-close" (click)="cancelMarkPaid()"><i class="fas fa-times"></i></button>
     </div>
     <div class="admin-modal-body">
+      <div *ngIf="user?.subscription?.firstUnpaidPeriod" style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;padding:12px;margin-bottom:14px;font-size:12px">
+        <div><strong>Période :</strong> {{ formatDateShort(user.subscription.firstUnpaidPeriod.startedAt) }} → {{ formatDateShort(user.subscription.firstUnpaidPeriod.endedAt) }}</div>
+        <div><strong>Montant :</strong> {{ formatCurrency(user.subscription.firstUnpaidPeriod.calculatedAmount) }}</div>
+        <div><strong>Réf. :</strong> {{ user.subscription.firstUnpaidPeriod.billingRef }}</div>
+      </div>
       <label class="admin-form-label">Référence de paiement (optionnel)</label>
       <input type="text" class="admin-form-control" [(ngModel)]="paymentRef"
         placeholder="Ex: VIREMENT_2024_001 (laisser vide pour ADMIN_MANUAL)">

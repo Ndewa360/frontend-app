@@ -222,8 +222,15 @@ export class AdminGeographyComponent implements OnInit, OnDestroy {
   // ── Villes ────────────────────────────────────────────────────────────────
 
   onToggleCityStatus(city: AdminCity): void {
-    this.store.dispatch(new AdminGeographyAction.ToggleCity(city._id, !city.isActive));
-    this.toastr.success(`Ville ${city.isActive ? 'désactivée' : 'activée'}`);
+    this.geographyService.toggleCity(city._id, !city.isActive)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.toastr.success(`Ville ${city.isActive ? 'désactivée' : 'activée'}`);
+          this.store.dispatch(new AdminGeographyAction.LoadCities());
+        },
+        error: () => this.toastr.error('Erreur lors du changement de statut de la ville')
+      });
   }
 
   onViewCity(city: AdminCity): void {
@@ -231,8 +238,17 @@ export class AdminGeographyComponent implements OnInit, OnDestroy {
   }
 
   onEditCity(city: AdminCity): void {
-    // Réutilise CitySelectionModal en mode édition — à implémenter si modal dédié
-    this.toastr.info('Édition de ville disponible via le modal de sélection');
+    // Réutilise le modal CitySelection en passant la ville à éditer
+    const dialogRef = this.dialog.open(CitySelectionModalComponent, {
+      width: '900px', maxWidth: '95vw', maxHeight: '90vh',
+      data: { editMode: true, city }
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result?.success) {
+        this.toastr.success(`La ville ${result.city?.fullName || city.name} a été mise à jour`);
+        this.loadData();
+      }
+    });
   }
 
   onDeleteCity(city: AdminCity): void {
@@ -338,17 +354,31 @@ export class AdminGeographyComponent implements OnInit, OnDestroy {
     }
   }
 
+  // Modal de confirmation suppression devise (remplace window.confirm)
+  showDeleteCurrencyModal = false;
+  currencyToDelete: AdminCurrency | null = null;
+
   onDeleteCurrency(currency: AdminCurrency): void {
-    if (!confirm(`Supprimer la devise "${currency.name}" ?`)) return;
+    this.currencyToDelete = currency;
+    this.showDeleteCurrencyModal = true;
+  }
+
+  confirmDeleteCurrency(): void {
+    if (!this.currencyToDelete) return;
+    const currency = this.currencyToDelete;
+    this.showDeleteCurrencyModal = false;
+    this.currencyToDelete = null;
     this.geographyService.deleteCurrency(currency._id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: () => {
-          this.toastr.success('Devise supprimée');
-          this.store.dispatch(new AdminGeographyAction.LoadCurrencies());
-        },
+        next:  () => { this.toastr.success('Devise supprimée'); this.store.dispatch(new AdminGeographyAction.LoadCurrencies()); },
         error: () => this.toastr.error('Erreur lors de la suppression')
       });
+  }
+
+  cancelDeleteCurrency(): void {
+    this.showDeleteCurrencyModal = false;
+    this.currencyToDelete = null;
   }
 
   onToggleCurrencyStatus(currency: AdminCurrency): void {

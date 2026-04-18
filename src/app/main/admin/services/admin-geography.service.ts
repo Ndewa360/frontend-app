@@ -53,20 +53,9 @@ export class AdminGeographyService {
 
     return this.http.get<any>(`${this.apiUrl}/countries`, { params }).pipe(
       map(response => {
-        console.log('🔧 Service countries - Réponse brute:', response);
-
-        // Le backend renvoie { statusCode, message, data: [...], meta: { total, page, ... } }
-        if (response && response.data && Array.isArray(response.data)) {
-          const result = {
-            countries: response.data,
-            total: response.meta?.total || response.data.length
-          };
-          console.log('🔧 Service countries - Résultat transformé:', result);
-          return result;
+        if (response?.data && Array.isArray(response.data)) {
+          return { countries: response.data, total: response.meta?.total || response.data.length };
         }
-
-        // Fallback si structure différente
-        console.log('🔧 Service countries - Structure inattendue, fallback');
         return { countries: [], total: 0 };
       })
     );
@@ -133,20 +122,9 @@ export class AdminGeographyService {
 
     return this.http.get<any>(`${this.apiUrl}/cities`, { params }).pipe(
       map(response => {
-        console.log('🔧 Service cities - Réponse brute:', response);
-
-        // Le backend renvoie { statusCode, message, data: [...], meta: { total, page, ... } }
-        if (response && response.data && Array.isArray(response.data)) {
-          const result = {
-            cities: response.data,
-            total: response.meta?.total || response.data.length
-          };
-          console.log('🔧 Service cities - Résultat transformé:', result);
-          return result;
+        if (response?.data && Array.isArray(response.data)) {
+          return { cities: response.data, total: response.meta?.total || response.data.length };
         }
-
-        // Fallback si structure différente
-        console.log('🔧 Service cities - Structure inattendue, fallback');
         return { cities: [], total: 0 };
       })
     );

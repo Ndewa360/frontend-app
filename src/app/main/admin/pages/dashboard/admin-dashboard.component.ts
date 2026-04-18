@@ -37,6 +37,12 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadDashboardData();
+
+    // Construire les alertes à chaque mise à jour des stats
+    this.store.select(AdminDashboardState.selectDashboardStats)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(stats => { if (stats) this.buildAlerts(stats); });
+
     this.store.select(AdminDashboardState.selectFinancialData)
       .pipe(takeUntil(this.destroy$))
       .subscribe(data => { if (data) this.financialData = data; });
@@ -52,43 +58,41 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     this.store.dispatch(new AdminDashboardAction.LoadSystemHealth());
     this.store.dispatch(new AdminDashboardAction.LoadRecentActivities(20));
     this.store.dispatch(new AdminDashboardAction.LoadFinancialDashboard());
-    this.loadAlerts();
   }
 
-  private loadAlerts(): void {
-    this.dashboardStats$.pipe(takeUntil(this.destroy$)).subscribe(stats => {
-      if (!stats) return;
-      this.alerts = [];
-      const sub = stats.subscriptions;
-      const lang = this.languageUrlService.getCurrentLanguage();
-      if (sub?.unpaidAmount > 0) {
-        this.alerts.push({
-          type: 'warning', title: 'Factures impayées',
-          message: `${sub.unpaidCount} facture(s) — ${this.formatCurrency(sub.unpaidAmount)}`,
-          link: `/${lang}/admin/subscriptions`
-        });
-      }
-      if (sub?.suspended > 0) {
-        this.alerts.push({
-          type: 'info', title: 'Comptes suspendus',
-          message: `${sub.suspended} compte(s) suspendu(s)`,
-          link: `/${lang}/admin/subscriptions`
-        });
-      }
-      if (stats.users?.newThisMonth > 0) {
-        this.alerts.push({
-          type: 'success', title: 'Nouveaux utilisateurs',
-          message: `${stats.users.newThisMonth} nouvel(s) utilisateur(s) ce mois`,
-          link: `/${lang}/admin/users`
-        });
-      }
-    });
+  private buildAlerts(stats: any): void {
+    this.alerts = [];
+    const sub  = stats.subscriptions;
+    const lang = this.languageUrlService.getCurrentLanguage();
+    if (sub?.unpaidAmount > 0) {
+      this.alerts.push({
+        type: 'warning', title: 'Factures impayées',
+        message: `${sub.unpaidCount} facture(s) — ${this.formatCurrency(sub.unpaidAmount)}`,
+        link: `/${lang}/admin/subscriptions`
+      });
+    }
+    if (sub?.suspended > 0) {
+      this.alerts.push({
+        type: 'info', title: 'Comptes suspendus',
+        message: `${sub.suspended} compte(s) suspendu(s)`,
+        link: `/${lang}/admin/subscriptions`
+      });
+    }
+    if (stats.users?.newThisMonth > 0) {
+      this.alerts.push({
+        type: 'success', title: 'Nouveaux utilisateurs',
+        message: `${stats.users.newThisMonth} nouvel(s) utilisateur(s) ce mois`,
+        link: `/${lang}/admin/users`
+      });
+    }
   }
 
   onRefreshData(): void { this.loadDashboardData(); }
 
   onExportReport(): void {
-    this.store.dispatch(new AdminDashboardAction.ExportDashboardReport());
+    this.store.dispatch(new AdminDashboardAction.ExportDashboardReport())
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({ error: () => {} });
   }
 
   onViewDetails(section: string): void {
@@ -105,51 +109,23 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
 
   // ── Helpers stats ─────────────────────────────────────────────────────────
 
-  getTotalUsers(stats: any): number {
-    return stats?.users?.total || stats?.subscriptions?.total || 0;
-  }
-
-  getUserGrowthRate(stats: any): number {
-    return stats?.users?.newThisMonth || 0;
-  }
-
-  getTotalRevenue(stats: any): number {
-    return stats?.subscriptions?.totalRevenue || stats?.payments?.totalRevenue || 0;
-  }
-
-  getMonthlyRevenue(stats: any): number {
-    return stats?.subscriptions?.monthlyRevenue || stats?.payments?.monthlyRevenue || 0;
-  }
-
-  getPremiumUsers(stats: any): number {
-    return stats?.subscriptions?.premium || 0;
-  }
-
-  getSuspendedUsers(stats: any): number {
-    return stats?.subscriptions?.suspended || 0;
-  }
-
-  getUnpaidAmount(stats: any): number {
-    return stats?.subscriptions?.unpaidAmount || 0;
-  }
-
-  getTotalCountries(stats: any): number {
-    return stats?.geography?.countries || 0;
-  }
-
-  getTotalCities(stats: any): number {
-    return stats?.geography?.cities || 0;
-  }
+  getTotalUsers(stats: any): number    { return stats?.users?.total || stats?.subscriptions?.total || 0; }
+  getUserGrowthRate(stats: any): number { return stats?.users?.newThisMonth || 0; }
+  getTotalRevenue(stats: any): number  { return stats?.subscriptions?.totalRevenue || stats?.payments?.totalRevenue || 0; }
+  getMonthlyRevenue(stats: any): number { return stats?.subscriptions?.monthlyRevenue || stats?.payments?.monthlyRevenue || 0; }
+  getPremiumUsers(stats: any): number  { return stats?.subscriptions?.premium || 0; }
+  getSuspendedUsers(stats: any): number { return stats?.subscriptions?.suspended || 0; }
+  getUnpaidAmount(stats: any): number  { return stats?.subscriptions?.unpaidAmount || 0; }
+  getTotalCountries(stats: any): number { return stats?.geography?.countries || 0; }
+  getTotalCities(stats: any): number   { return stats?.geography?.cities || 0; }
 
   // ── Helpers activités ─────────────────────────────────────────────────────
 
   getActivityIcon(type: string): string {
     const icons: Record<string, string> = {
-      user: 'fa-user', property: 'fa-home',
-      payment: 'fa-credit-card', system: 'fa-cog',
-      coupon: 'fa-tag', role: 'fa-shield-alt',
-      INFO: 'fa-info-circle', ERROR: 'fa-exclamation-circle',
-      WARNING: 'fa-exclamation-triangle'
+      user: 'fa-user', property: 'fa-home', payment: 'fa-credit-card',
+      system: 'fa-cog', coupon: 'fa-tag', role: 'fa-shield-alt',
+      INFO: 'fa-info-circle', ERROR: 'fa-exclamation-circle', WARNING: 'fa-exclamation-triangle'
     };
     return icons[type] || 'fa-circle';
   }
@@ -195,6 +171,12 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     if (d > 0) return `${d}j ${h}h ${m}m`;
     if (h > 0) return `${h}h ${m}m`;
     return `${m}m`;
+  }
+
+  /** Convertit des bytes en MB lisibles (Node.js retourne heapUsed en bytes) */
+  formatMemory(bytes: number): string {
+    if (!bytes) return '0 MB';
+    return `${Math.round(bytes / (1024 * 1024))} MB`;
   }
 
   formatCurrency(amount: number): string {

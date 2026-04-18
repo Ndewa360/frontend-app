@@ -32,6 +32,9 @@ export class AdminGuard implements CanActivate {
   }
 
   private checkIfUserHasAdminRole(userProfile: any): boolean {
+    // Vérifier d'abord le userType (source principale)
+    if (userProfile.userType === 'ADMIN' || userProfile.userType === 'SUPER_ADMIN') return true;
+    // Fallback sur les rôles assignés
     if (!userProfile.roles || !Array.isArray(userProfile.roles)) return false;
     return userProfile.roles.some((role: any) => {
       const roleName = typeof role === 'string' ? role : role.name;
