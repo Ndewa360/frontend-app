@@ -319,8 +319,9 @@ export class StatisticState{
     fetchPaymentRecapitulationByYear(ctx:StateContext<StatisticStateModel>,{year}:StatisticAction.FetchStatisticPaymentRecapitulationAccountOfAllPropertyByYear)
     {
         const state = ctx.getState();
-        let index = state.statisticRecapitulationPayment.findIndex((u)=>u.year==year.toString());
-        if(index>-1) return of(true);
+        // Toujours re-fetcher pour avoir les données à jour (tenantsAnalysis, etc.)
+        // On remplace l'entrée existante si elle existe
+        const filteredRecap = state.statisticRecapitulationPayment.filter((u) => u.year !== year.toString());
 
         ctx.patchState({
             loadingStatisticRecaptilationLoading:true
@@ -330,7 +331,7 @@ export class StatisticState{
                 result => {
                     ctx.patchState({
                         loadingStatisticRecaptilationLoading:false,
-                        statisticRecapitulationPayment:[...state.statisticRecapitulationPayment, result.data]
+                        statisticRecapitulationPayment:[...filteredRecap, result.data]
                     })
                 }
             ),

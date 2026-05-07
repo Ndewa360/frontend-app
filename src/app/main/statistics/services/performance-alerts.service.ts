@@ -210,18 +210,13 @@ export class PerformanceAlertsService {
     // Alerte taux d'arriérés global (depuis globalMetrics backend)
     const globalMetrics = data.globalMetrics;
     if (globalMetrics) {
-      const arrearsRate = globalMetrics.totalDebts > 0 && data.paymentYear.totalAmountToBeReceveid > 0
-        ? (globalMetrics.totalDebts / data.paymentYear.totalAmountToBeReceveid) * 100
-        : 0;
-
-      if (arrearsRate > this.currentThresholds.highArrearsRate) {
+      // riskLevel est calculé backend : 'high' si dettes > 30% des revenus
+      if (globalMetrics.riskLevel === 'high') {
         alerts.push({
           id: `arrears-${Date.now()}`,
           type: 'danger',
           title: "Taux d'arriérés élevé",
-          message: `Taux d'arriérés global : ${arrearsRate.toFixed(1)}%`,
-          value: arrearsRate,
-          threshold: this.currentThresholds.highArrearsRate,
+          message: `Niveau de risque élevé : dettes importantes détectées sur le portefeuille`,
           timestamp: new Date(),
           isRead: false,
           actionRequired: true

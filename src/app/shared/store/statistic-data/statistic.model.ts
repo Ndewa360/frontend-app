@@ -19,16 +19,15 @@ export interface StatisticRoomYearModel {
   contractEndDate?: Date;
   initialFinancialState?: string;
   initialSolde?: number;
-  // ✅ Dates de paiement
   lastPaymentDate?: Date | null;
   nextPaymentDate?: Date | null;
 }
 
 // ─── Métriques globales de propriété ─────────────────────────────────────────
 export interface PropertyMetrics {
-  totalRevenue: number;          // encaissé dans l'année
-  totalCoveredInYear?: number;   // montant couvert dans l'année (projection cumul)
-  totalExpected: number;         // attendu pour l'année
+  totalRevenue: number;
+  totalCoveredInYear?: number;
+  totalExpected: number;
   collectionRate: number;
   averageRent: number;
   occupancyRate: number;
@@ -55,10 +54,12 @@ export interface ComprehensiveReport {
 // ─── Analyse mensuelle ────────────────────────────────────────────────────────
 export interface MonthlyAnalysisItem {
   month: number;
-  distributed: number;
+  distributed: number;    // projection : mois couverts par le cumul (règle d'anniversaire)
+  realReceived: number;   // encaissements réels (datePayment dans le mois)
   expected: number;
   quota: number;
-  fulfillmentRate: number;
+  fulfillmentRate: number; // taux basé sur la projection
+  realRate: number;        // taux basé sur les encaissements réels
   deficit: number;
   status: 'complete' | 'good' | 'warning' | 'critical';
   roomsAtQuota: number;
@@ -68,6 +69,7 @@ export interface MonthlyAnalysisItem {
 // ─── Distribution des revenus ─────────────────────────────────────────────────
 export interface RevenueDistribution {
   monthlyDistribution: number[];
+  monthlyRealReceived: number[];  // encaissements réels par mois (datePayment)
   monthlyExpected: number[];
   monthlyQuota: number[];
   monthlyFulfillmentRate: number[];
@@ -89,6 +91,25 @@ export interface RoomQuotaDetail {
   contractEndDate?: Date;
 }
 
+// ─── Métriques agrégées calculées backend (frontend + mobile) ─────────────────
+export interface AggregatedMetrics {
+  totalRealReceived: number;
+  monthlyRealReceived: number[];
+  realYearCollectionRate: number;
+  totalCoveredInYear: number;
+  projectionCollectionRate: number;
+  totalPaidAllTime: number;
+  expectedSinceEntry: number;
+  realCollectionRate: number;
+  totalDebts: number;
+  totalAdvances: number;
+  monthsDueInYear: number;
+  shortfallYear: number;
+  shortfallSinceEntry: number;
+  bestMonth:  { index: number; rate: number };
+  worstMonth: { index: number; rate: number };
+}
+
 // ─── Analyse financière d'un locataire ───────────────────────────────────────
 export interface TenantFinancialAnalysis {
   monthlyRent: number;
@@ -106,7 +127,6 @@ export interface TenantFinancialAnalysis {
   collectionRate: number;
   lastPaymentDate?: Date | null;
   nextPaymentDate?: Date | null;
-  // Champs de projection sur l'année
   lateMonths?: number;
   advanceMonths?: number;
   coveredMonthsInYear?: number;
@@ -199,6 +219,7 @@ export interface EnrichedStatisticData {
   propertyMetrics: PropertyMetrics;
   comprehensiveReport: ComprehensiveReport;
   revenueDistribution: RevenueDistribution;
+  aggregatedMetrics: AggregatedMetrics;
   tenantsAnalysis: TenantsAnalysis;
   cautionsAnalysis: CautionsAnalysis;
   calculatedAt: Date;
@@ -283,6 +304,7 @@ export interface StatisticPaymentOfAllPropertyByYear {
       riskLevel: string;
     };
     revenueDistribution?: RevenueDistribution;
+    tenantsAnalysis?: TenantsAnalysis;
   }[];
   paymentYear: {
     totalAmountRelicat: number;
@@ -342,7 +364,6 @@ export interface StatisticAllPaymentLocataireYearModel {
   paymentStatus?: string;
   advanceAmount?: number;
   debtAmount?: number;
-  // ✅ Dates de paiement
   lastPaymentDate?: Date | null;
   nextPaymentDate?: Date | null;
 }

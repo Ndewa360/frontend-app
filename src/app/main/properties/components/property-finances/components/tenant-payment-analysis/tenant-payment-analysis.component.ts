@@ -109,22 +109,18 @@ export class TenantPaymentAnalysisComponent implements OnInit, OnChanges {
         // qui peut venir de locationPriceUnit mal renseigné
         const roomPrice = (tenant.room as any)?.price || fa.monthlyRent;
 
-        // --- Projection sur l'année sélectionnée ---
+        // Projection sur l'année sélectionnée — valeurs directement du backend
         const coveredMonthsInYear = (fa as any).coveredMonthsInYear ?? 0;
         const monthsDueInYear     = (fa as any).monthsDueInYear     ?? 0;
         const coveredAmountInYear = (fa as any).coveredAmountInYear ?? 0;
         const totalMonthsCovered  = (fa as any).totalMonthsCovered  ?? 0;
-
-        // Montant attendu pour l'année complète basé sur room.price
-        const expectedFullYear = roomPrice * 12;
-
-        // Taux de couverture par rapport à l'année complète
-        // Ex: 60 000 couverts / 180 000 attendus (12 mois) = 33%
+        // expectedAmount = attendu pour l'année (calculé backend avec offset 0)
+        const expectedFullYear    = fa.expectedPaymentToDate ?? (roomPrice * 12);
+        // Taux de couverture de l'année : coveredAmountInYear / expectedAmount
         const paymentRate = expectedFullYear > 0
           ? Math.min((coveredAmountInYear / expectedFullYear) * 100, 100)
           : 0;
-
-        // Taux par rapport aux mois dus à ce jour (pour le statut)
+        // Taux par rapport aux mois dus à ce jour
         const rateVsToday = monthsDueInYear > 0
           ? Math.min((coveredMonthsInYear / monthsDueInYear) * 100, 100)
           : 0;

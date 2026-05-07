@@ -127,17 +127,14 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
         const coveredAmountInYear = (fa as any).coveredAmountInYear ?? 0;
         const totalMonthsCovered  = (fa as any).totalMonthsCovered  ?? 0;
 
-        // Attendu pour l'année complète (12 mois × loyer réel)
-        const expectedFullYear = roomPrice * 12;
+        // Attendu à ce jour = mois dus dans l'année × loyer (calculé backend)
+        const expectedToDate = (fa as any).expectedPaymentToDate ?? monthsDueInYear * roomPrice;
+        const expectedFullYear = expectedToDate;
 
-        // Taux = couvert dans l'année / attendu année complète
-        // Ex: 60 000 couverts / 180 000 attendus = 33%
-        const paymentRate = expectedFullYear > 0
-          ? Math.min((coveredAmountInYear / expectedFullYear) * 100, 100)
-          : 0;
-
-        // Attendu à ce jour (pour la colonne "Total attendu")
-        const expectedToDate = monthsDueInYear * roomPrice;
+        // Taux de recouvrement depuis le backend (basé sur la projection)
+        const paymentRate = (fa as any).collectionRate ?? (
+          expectedToDate > 0 ? Math.min((coveredAmountInYear / expectedToDate) * 100, 100) : 0
+        );
 
         return {
           tenantId:   tenant.locataire?._id || tenant.room?._id || '',

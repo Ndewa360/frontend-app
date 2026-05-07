@@ -391,9 +391,7 @@ $shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.10);
     border-radius: 5px;
     transition: width .7s cubic-bezier(.4,0,.2,1);
 
-    // Barre 1 : Projection (or/ambre — couleur primaire app)
     &--projected { background: linear-gradient(90deg, $primary, rgba(204,140,10,.75)); }
-    // Barre 2 : Revenus bruts encaissés (bleu)
     &--received  { background: linear-gradient(90deg, $info, rgba(37,99,235,.75)); }
     &--expected  { background: #d1d5db; }
   }
@@ -425,31 +423,57 @@ $shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.10);
     text-align: right;
   }
 
-  &__legend {
+  // Légende dans le header (en haut à droite)
+  &__legend--header {
     display: flex;
-    gap: 1.5rem;
-    margin-top: .875rem;
-    padding-top: .875rem;
-    border-top: 1px solid $border-light;
+    align-items: center;
+    gap: 1.25rem;
+    margin-left: auto;
+    flex-wrap: wrap;
+    padding: .5rem .875rem;
+    background: $bg-subtle;
+    border: 1px solid $border-light;
+    border-radius: $radius-sm;
   }
 }
 
+// ─── Légende ──────────────────────────────────────────────────────────────────
 .legend-item {
   display: flex;
   align-items: center;
-  gap: .375rem;
-  font-size: .78125rem;
-  color: $text-muted;
-  font-weight: 500;
+  gap: .5rem;
+
+  &__text {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+
+  &__label {
+    font-size: .75rem;
+    font-weight: 700;
+    color: $text-secondary;
+    line-height: 1.2;
+  }
+
+  &__desc {
+    font-size: .6875rem;
+    color: $text-faint;
+    line-height: 1.2;
+  }
 }
 
-.legend-dot {
-  width: 10px;
-  height: 6px;
-  border-radius: 3px;
+.legend-swatch {
+  width: 28px;
+  height: 10px;
+  border-radius: 5px;
+  flex-shrink: 0;
 
-  &--received { background: $primary; }
-  &--expected { background: #d1d5db; }
+  &--projected { background: linear-gradient(90deg, $primary, rgba(204,140,10,.75)); }
+  &--received  { background: linear-gradient(90deg, $info, rgba(37,99,235,.75)); }
+  &--rate {
+    background: linear-gradient(90deg, $success, rgba(5,150,105,.6));
+  }
 }
 
 // ─── Tri ─────────────────────────────────────────────────────────────────────
@@ -554,6 +578,12 @@ $shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.10);
     font-family: 'IBM Plex Mono', monospace;
 
     &--secondary { color: $text-muted; font-weight: 500; }
+  }
+
+  &__sub-label {
+    font-size: .6875rem;
+    color: $text-faint;
+    font-family: 'IBM Plex Mono', monospace;
   }
 
   &__rate {
@@ -690,6 +720,12 @@ $shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.10);
   .monthly-chart__row {
     grid-template-columns: 48px 1fr 110px;
     gap: .5rem;
+  }
+
+  .monthly-chart__legend--header {
+    margin-left: 0;
+    width: 100%;
+    gap: .875rem;
   }
 
   .property-table {

@@ -106,7 +106,6 @@ export class ChartFinanceRoomComponent implements OnInit, OnChanges, OnDestroy {
 
       legendData.push(roomName);
 
-      // Série unique : encaissements bruts réels (barres)
       dataSeries.push({
         name: roomName,
         type: 'bar',
@@ -114,15 +113,13 @@ export class ChartFinanceRoomComponent implements OnInit, OnChanges, OnDestroy {
         data: monthlyPayments,
         itemStyle: { opacity: 0.85 },
         _roomInfo: {
-          monthlyRent:    room?.price || 0,
-          monthsDue:      roomData.monthsDue || 12,
+          monthlyRent:         roomData.room?.price        || 0,
+          monthsDue:           roomData.monthsDue          || 12,
           totalReceived,
-          expectedAmount: roomData.expectedAmount || 0,
-          // Bug #6 fix : collectionRate basé sur les mêmes données brutes que les barres
-          collectionRate: roomData.expectedAmount > 0
-            ? Math.min((totalReceived / roomData.expectedAmount) * 100, 100)
-            : 0,
-          paymentStatus:  roomData.paymentStatus || 'unknown',
+          expectedAmount:      roomData.expectedAmount     || 0,
+          // collectionRate vient directement du backend (basé sur la projection)
+          collectionRate:      roomData.collectionRate     ?? 0,
+          paymentStatus:       roomData.paymentStatus      || 'unknown',
           coveredMonthsInYear: roomData.coveredMonthsInYear || 0,
           coveredAmountInYear: roomData.coveredAmountInYear || 0
         }

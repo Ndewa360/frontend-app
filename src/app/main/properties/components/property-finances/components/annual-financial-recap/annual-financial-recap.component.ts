@@ -105,13 +105,13 @@ export class AnnualFinancialRecapComponent implements OnInit, OnChanges {
     if (this.enrichedData?.data?.propertyMetrics) {
       const m = this.enrichedData.data.propertyMetrics;
       const cautionsReceived = this.enrichedData.data.cautionsAnalysis?.summary?.totalCautionsReceived || 0;
-      // totalCoveredInYear = montant couvert dans l'année par la projection du cumul
-      const coveredInYear = (m as any).totalCoveredInYear ?? m.totalRevenue;
+      // totalRevenue = encaissements réels de l'année (datePayment dans l'année)
+      const realReceived = m.totalRevenue;
       this.annualSummary = {
         ...this.annualSummary,
         totalExpectedRevenue: m.totalExpected,
-        totalReceivedRevenue: coveredInYear,   // couvert dans l'année
-        totalRevenue:         coveredInYear,
+        totalReceivedRevenue: realReceived,
+        totalRevenue:         realReceived,
         totalDeposits: cautionsReceived,
         totalUnits:    m.totalRooms,
         occupiedUnits: m.occupiedRooms,
@@ -119,7 +119,7 @@ export class AnnualFinancialRecapComponent implements OnInit, OnChanges {
         collectionRate: m.collectionRate,
         performanceScore: Math.round(m.collectionRate * 0.6 + m.occupancyRate * 0.4),
         averageRentPerUnit: m.averageRent,
-        totalMissedRevenue: Math.max(0, m.totalExpected - coveredInYear)
+        totalMissedRevenue: Math.max(0, m.totalExpected - realReceived)
       };
       return;
     }
@@ -164,13 +164,13 @@ export class AnnualFinancialRecapComponent implements OnInit, OnChanges {
     // qui contiennent les vraies données mensuelles calculées par le moteur financier
     if (this.enrichedData?.data?.revenueDistribution?.monthlyAnalysis) {
       this.annualSummary.monthlyBreakdown = this.enrichedData.data.revenueDistribution.monthlyAnalysis.map(item => ({
-        month: item.month - 1, // monthlyAnalysis.month est 1-based, on le convertit en 0-based
+        month: item.month - 1,
         monthName: this.getMonthName(item.month - 1),
         expected: item.expected,
-        received: item.distributed,
-        rate: item.fulfillmentRate,
-        performance: item.fulfillmentRate,
-        revenue: item.distributed,
+        received: (item as any).realReceived ?? item.distributed,  // encaissements réels
+        rate: (item as any).realRate ?? item.fulfillmentRate,       // taux réel
+        performance: item.fulfillmentRate,                          // taux projection (pour le score)
+        revenue: (item as any).realReceived ?? item.distributed,
         paymentsCount: item.roomsAtQuota
       }));
       return;

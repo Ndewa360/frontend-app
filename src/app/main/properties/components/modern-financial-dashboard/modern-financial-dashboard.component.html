@@ -352,6 +352,30 @@
             Projection (mois couverts par cumul) vs Revenus effectivement encaissés
           </p>
         </div>
+        <!-- Légende déplacée en haut à droite -->
+        <div class="monthly-chart__legend monthly-chart__legend--header">
+          <div class="legend-item">
+            <span class="legend-swatch legend-swatch--projected"></span>
+            <span class="legend-item__text">
+              <span class="legend-item__label">Projection</span>
+              <span class="legend-item__desc">Mois couverts par le cumul des paiements</span>
+            </span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-swatch legend-swatch--received"></span>
+            <span class="legend-item__text">
+              <span class="legend-item__label">Encaissé</span>
+              <span class="legend-item__desc">Paiements reçus dans le mois (date réelle)</span>
+            </span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-swatch legend-swatch--rate"></span>
+            <span class="legend-item__text">
+              <span class="legend-item__label">Taux</span>
+              <span class="legend-item__desc">Projection / Attendu</span>
+            </span>
+          </div>
+        </div>
       </div>
 
       <div class="monthly-chart">
@@ -386,18 +410,6 @@
 
         </div>
 
-        <!-- Légende -->
-        <div class="monthly-chart__legend">
-          <span class="legend-item">
-            <span class="legend-dot legend-dot--projected"></span> Projection (couvert)
-          </span>
-          <span class="legend-item">
-            <span class="legend-dot legend-dot--received"></span> Encaissé effectif
-          </span>
-          <span class="legend-item">
-            <span class="legend-dot legend-dot--expected"></span> Attendu
-          </span>
-        </div>
       </div>
     </div>
 
@@ -453,8 +465,8 @@
 
           <!-- Couvert (projection) -->
           <div class="property-table__cell">
-            <span class="property-table__amount">{{ formatPrice(p.totalReceived) }}</span>
-            <span style="font-size:.7rem;color:#94a3b8">mois couverts</span>
+            <span class="property-table__amount">{{ formatPrice(p.totalCoveredInYear) }}</span>
+            <span class="property-table__sub-label">encaissé : {{ formatPrice(p.totalReceived) }}</span>
           </div>
 
           <!-- Attendu -->

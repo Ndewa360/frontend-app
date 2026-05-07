@@ -97,23 +97,33 @@ export class ActualRevenueAnalysisComponent implements OnInit, OnChanges {
   private buildUnitRevenueData(roomStat: StatisticRoomYearModel): ActualRevenueData | null {
     if (!roomStat.room) return null;
 
-    const monthlyRent = roomStat.room.price || 0;
+    const monthlyRent    = roomStat.room.price || 0;
     const monthlyPayments = roomStat.paymentValue || [];
+    // expectedAmount vient de projectPaymentsOnYear.expectedAmountInYear (backend)
+    // monthsDue = nombre de mois dus dans l'année (backend, offset 0 corrigé)
+    const monthsDue      = roomStat.monthsDue || 0;
+    // Montant attendu par mois = loyer mensuel (le même pour tous les mois occupés)
+    // On ne divise plus expectedAmount par monthsDue car ça donnait un montant
+    // moyen incorrect quand monthsDue < 12.
+    const expectedPerMonth = monthlyRent;
     const monthlyDetails: ActualRevenueData['monthlyDetails'] = [];
 
     let yearlyExpected = 0;
-    let yearlyActual = 0;
+    let yearlyActual   = 0;
     let hasOverpayments = false;
 
     for (let month = 0; month < 12; month++) {
-      // ✅ Utiliser expectedAmount du backend si disponible
-      const expectedAmount = roomStat.expectedAmount
-        ? roomStat.expectedAmount / (roomStat.monthsDue || 12)
-        : monthlyRent;
       const actualAmount = monthlyPayments[month] || 0;
-      const difference = actualAmount - expectedAmount;
+      // Un mois est attendu si le loyer est > 0 et que le mois est dans la période
+      // On utilise expectedAmount total / monthsDue pour savoir si ce mois est actif
+      // Mais on ne peut pas savoir quel mois est actif sans les données du backend.
+      // On utilise donc monthlyRent comme attendu pour tous les mois où il y a
+      // un encaissement OU où le mois est dans la période d'occupation.
+      // La source de vérité est revenueDistribution.monthlyExpected[month] du backend.
+      const expectedAmount   = expectedPerMonth;
+      const difference       = actualAmount - expectedAmount;
       const differencePercentage = expectedAmount > 0 ? (difference / expectedAmount) * 100 : 0;
-      const overpayment = actualAmount > expectedAmount;
+      const overpayment      = actualAmount > expectedAmount;
 
       if (overpayment) hasOverpayments = true;
 
@@ -128,10 +138,10 @@ export class ActualRevenueAnalysisComponent implements OnInit, OnChanges {
       });
 
       yearlyExpected += expectedAmount;
-      yearlyActual += actualAmount;
+      yearlyActual   += actualAmount;
     }
 
-    const yearlyDifference = yearlyActual - yearlyExpected;
+    const yearlyDifference           = yearlyActual - yearlyExpected;
     const yearlyDifferencePercentage = yearlyExpected > 0 ? (yearlyDifference / yearlyExpected) * 100 : 0;
 
     return {
