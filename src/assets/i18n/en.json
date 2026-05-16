@@ -1880,7 +1880,7 @@
       "SUBTITLE_BOLD": "No more notebooks and disorder.",
       "SUBTITLE_TEXT": "Ndewa360 digitalizes the management of your rooms and apartments with a simple, automated and transparent platform.",
       "BUTTONS": {
-        "START_FREE": "Start for free",
+        "START_FREE": "Manage my property now",
         "WATCH_DEMO": "Watch demo"
       },
       "RATING": "4.9/5",
@@ -2074,7 +2074,7 @@
       "TITLE": "Ready to regain control of your rents?",
       "SUBTITLE": "Join the 20+ property owners who have already transformed their real estate management",
       "BUTTONS": {
-        "START_FREE": "Start for free",
+        "START_FREE": "Try it free — no card needed",
         "TALK_EXPERT": "Talk to an expert"
       },
       "GUARANTEES": {
@@ -4725,7 +4725,7 @@
       "TITLE": "Ready to transform your real estate management?",
       "SUBTITLE": "Join the 20+ property owners who already trust us",
       "BUTTONS": {
-        "START_FREE": "Start for free",
+        "START_FREE": "Create my free account",
         "CALL_NOW": "Call now"
       }
     }

@@ -85,16 +85,33 @@ export class AuthLoginComponent implements OnInit, OnDestroy {
       ofActionCompleted(UserProfileAction.LoginUserProfile)
     ).subscribe((value) => {
       this.waittingResponse = false;
-      if (value?.result?.error?.['status'] == 406) {
-        this.languagePreservation.navigateWithLanguage(`/auth/confirmation/${this.formGroup.value.email}`);
-      }
     });
     this.subscriptions.push(completedSub);
 
     const errorSub = this._ngxsAction.pipe(
       ofActionErrored(UserProfileAction.LoginUserProfile)
-    ).subscribe(() => {
+    ).subscribe((actionCtx) => {
       this.waittingResponse = false;
+
+      // Récupérer l'erreur depuis le store
+      const lastError = this._store.selectSnapshot(UserProfileState.selectStateLastError);
+      const errorCode = (actionCtx as any)?.error?.error?.code
+        || (actionCtx as any)?.error?.error?.error;
+
+      // Erreur 406 : email non confirmé ET délai dépassé → rediriger vers la page de confirmation
+      const httpStatus = (actionCtx as any)?.error?.status;
+      if (httpStatus === 406 || errorCode === 'EMAIL_CONFIRMATION_EXPIRED' || errorCode === 'EmailNotConfirmed') {
+        const email = this.formGroup.value.email?.trim() || '';
+        const currentLang = this.languageUrlService.getCurrentLanguage();
+        this._toastrService.warning(
+          'Votre délai de confirmation est dépassé. Veuillez confirmer votre email.',
+          'Ndewa360°',
+          { timeOut: 5000 }
+        );
+        this.router.navigate([`/${currentLang}/auth/askto-valid-email`], {
+          queryParams: { email, expired: 'true' }
+        });
+      }
     });
     this.subscriptions.push(errorSub);
   }

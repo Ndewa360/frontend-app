@@ -1,88 +1,166 @@
 <div class="mb-8" fxHide fxShow.lt-md>
-    <youpez-logo class="cursor-pointer" type="white" logoWidth="130px"></youpez-logo>
-  </div>
-  
+  <youpez-logo class="cursor-pointer" type="white" logoWidth="130px"></youpez-logo>
+</div>
+
 <div class="post-registration">
+
+  <!-- ── CAS NORMAL : post-inscription ── -->
+  <ng-container *ngIf="!isExpired">
     <div>
-        <h1 class="app-expressive-heading-06 mb-1">Félicitations</h1>
-        <div class="app-body-long-02 mb-8">
-            <h4>Votre compte a été créé. Finalisez votre inscription en suivant les étape de confirmation de votre
-                E-mail.</h4>
-        </div>
+      <h1 class="app-expressive-heading-06 mb-1">Félicitations !</h1>
+      <div class="app-body-long-02 mb-8">
+        <h4>Votre compte a été créé. Finalisez votre inscription en confirmant votre email.</h4>
+      </div>
     </div>
+
     <div fxLayout="row wrap">
-        <div fxFlex="100%" >
-            <div fxLayout="row wrap">
-                <div fxFlex="100%" fxFlex.gt-md="100%">
-                    <div class="app-card app-card--m-0 ">
-                        <div class="app-card__content">
-                            <div class="app-timeline">
-                                <div class="app-timeline__group" fxLayout="row wrap">
-                                    <div class="app-timeline__time text-right" fxFlex="100%" fxFlex.gt-sm="105px"
-                                        ngClass.lt-sm="app-timeline__time--collapse">
-                                        <div class="app-helper-text-01"><h3>Etape 1</h3></div>
-                                    </div>
-                                    <div fxFlex
-                                        class="app-timeline__item app-timeline__item--circle app-timeline__item--info pb-5">
-                                        <div class="app-timeline__item__content">
-                                            <div fxFlex="100%" class="w-full shadow-md app-card row">
-                                                <div fxLayout="row wrap" class="app-card__blocks app-border-t p-2">
-                                                    <p>Ouvrez votre mail avec lequel vous vous êtes inscrit.</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+      <div fxFlex="100%">
+        <div class="app-card app-card--m-0">
+          <div class="app-card__content">
+            <div class="app-timeline">
 
-                                <div class="app-timeline__group" fxLayout="row wrap">
-                                    <div class="app-timeline__time text-right" fxFlex="100%" fxFlex.gt-sm="105px"
-                                        ngClass.lt-sm="app-timeline__time--collapse">
-                                        <div class="app-helper-text-01"><h3>Etape 2</h3></div>
-                                    </div>
-                                    <div fxFlex
-                                        class="app-timeline__item app-timeline__item--circle app-timeline__item--success pb-5">
-                                        <div class="app-timeline__item__content">
-                                            <div fxFlex="100%" class="w-full shadow-md app-card row">
-                                                <div fxLayout="row wrap" class="app-card__blocks app-border-t p-2">
-                                                    <p>Ouvrez le mail ''no-reply'' de Ndewa360 vous demandant de confirmer votre email. Veuillez vérifier les "SPAM" si le mail est introuvable</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="app-timeline__group" fxLayout="row wrap">
-                                    <div class="app-timeline__time text-right" fxFlex="100%" fxFlex.gt-sm="105px"
-                                        ngClass.lt-sm="app-timeline__time--collapse">
-                                        <div class="app-helper-text-01"><h3>Etape 3</h3></div>
-                                    </div>
-                                    <div fxFlex
-                                        class="app-timeline__item app-timeline__item--circle pb-5 app-timeline__item--warning">
-                                        <div class="app-timeline__item__content">
-                                            <div fxFlex="100%" class="w-full shadow-md app-card row">
-                                                <div fxLayout="row wrap" class="app-card__blocks app-border-t p-2">
-                                                    <p>Votre compte a été créé. Finalisez votre inscription en suivant les étape de confirmation de votre
-                                                        E-mail</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
+              <div class="app-timeline__group" fxLayout="row wrap">
+                <div class="app-timeline__time text-right" fxFlex="100%" fxFlex.gt-sm="105px"
+                     ngClass.lt-sm="app-timeline__time--collapse">
+                  <div class="app-helper-text-01"><h3>Etape 1</h3></div>
                 </div>
+                <div fxFlex class="app-timeline__item app-timeline__item--circle app-timeline__item--info pb-5">
+                  <div class="app-timeline__item__content">
+                    <div fxFlex="100%" class="w-full shadow-md app-card row">
+                      <div fxLayout="row wrap" class="app-card__blocks app-border-t p-2">
+                        <p>Ouvrez votre boîte mail avec laquelle vous vous êtes inscrit.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="app-timeline__group" fxLayout="row wrap">
+                <div class="app-timeline__time text-right" fxFlex="100%" fxFlex.gt-sm="105px"
+                     ngClass.lt-sm="app-timeline__time--collapse">
+                  <div class="app-helper-text-01"><h3>Etape 2</h3></div>
+                </div>
+                <div fxFlex class="app-timeline__item app-timeline__item--circle app-timeline__item--success pb-5">
+                  <div class="app-timeline__item__content">
+                    <div fxFlex="100%" class="w-full shadow-md app-card row">
+                      <div fxLayout="row wrap" class="app-card__blocks app-border-t p-2">
+                        <p>Ouvrez le mail <strong>no-reply</strong> de Ndewa360 vous demandant de confirmer votre email.
+                          Vérifiez les <strong>SPAM</strong> si le mail est introuvable.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="app-timeline__group" fxLayout="row wrap">
+                <div class="app-timeline__time text-right" fxFlex="100%" fxFlex.gt-sm="105px"
+                     ngClass.lt-sm="app-timeline__time--collapse">
+                  <div class="app-helper-text-01"><h3>Etape 3</h3></div>
+                </div>
+                <div fxFlex class="app-timeline__item app-timeline__item--circle pb-5 app-timeline__item--warning">
+                  <div class="app-timeline__item__content">
+                    <div fxFlex="100%" class="w-full shadow-md app-card row">
+                      <div fxLayout="row wrap" class="app-card__blocks app-border-t p-2">
+                        <p>Cliquez sur le lien de confirmation dans l'email. Votre compte sera activé et vous pourrez vous connecter.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
             </div>
+          </div>
         </div>
+      </div>
     </div>
 
+    <!-- Renvoi d'email (mode normal) -->
+    <div class="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200" *ngIf="userEmail">
+      <p class="text-sm text-gray-600 mb-3">
+        Vous n'avez pas reçu l'email ? Vérifiez vos spams ou renvoyez-le.
+      </p>
+      <button (click)="resendEmail()"
+              [disabled]="resending || resendSuccess"
+              class="text-sm font-semibold text-amber-700 hover:text-amber-900 underline disabled:opacity-50 transition">
+        {{ resending ? 'Envoi en cours...' : resendSuccess ? 'Email envoyé !' : 'Renvoyer l\'email de confirmation' }}
+      </button>
+    </div>
 
+    <div class="app-form__submit mt-6">
+      <button [routerLink]="'/' + currentLang + '/auth/signin'"
+              size="md" class="-app-ibm-btn-full custom-primary-button" ibmButton="primary">
+        <span class="btn-text">Se connecter</span>
+        <youpez-ibm-icon iconClass="cds--btn__icon" iconName="arrowRight" iconSize="20"></youpez-ibm-icon>
+      </button>
+    </div>
+  </ng-container>
+
+  <!-- ── CAS EXPIRÉ : délai 24h dépassé ── -->
+  <ng-container *ngIf="isExpired">
+    <div class="mb-6">
+      <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
+        <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+      </div>
+      <h1 class="app-expressive-heading-06 mb-2 text-red-700">Délai de confirmation dépassé</h1>
+      <p class="app-body-long-02 text-gray-600">
+        Votre délai de confirmation de compte (24h) est écoulé. Pour des raisons de sécurité,
+        vous devez confirmer votre email avant de pouvoir vous connecter.
+      </p>
+    </div>
+
+    <div class="p-5 bg-amber-50 border border-amber-200 rounded-xl mb-6">
+      <p class="text-sm font-semibold text-amber-800 mb-1">Que faire ?</p>
+      <p class="text-sm text-amber-700">
+        Cliquez sur le bouton ci-dessous pour recevoir un nouvel email de confirmation.
+        Une fois votre email confirmé, vous pourrez vous connecter normalement.
+      </p>
+      <p *ngIf="userEmail" class="text-xs text-amber-600 mt-2">
+        Email : <strong>{{ userEmail }}</strong>
+      </p>
+    </div>
+
+    <!-- Bouton renvoi email -->
+    <div class="mb-6">
+      <button (click)="resendEmail()"
+              [disabled]="resending || resendSuccess"
+              size="md"
+              class="-app-ibm-btn-full custom-primary-button"
+              ibmButton="primary">
+        <svg *ngIf="resending" class="animate-spin w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+        </svg>
+        <span class="btn-text">
+          {{ resending ? 'Envoi en cours...' : resendSuccess ? 'Email envoyé ! Vérifiez votre boîte mail' : 'Renvoyer l\'email de confirmation' }}
+        </span>
+        <youpez-ibm-icon *ngIf="!resending" iconClass="cds--btn__icon" iconName="email" iconSize="20"></youpez-ibm-icon>
+      </button>
+    </div>
+
+    <!-- Message de succès -->
+    <div *ngIf="resendSuccess"
+         class="p-4 bg-green-50 border border-green-200 rounded-xl mb-6 flex items-start gap-3">
+      <svg class="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+      </svg>
+      <div>
+        <p class="text-sm font-semibold text-green-800">Email envoyé avec succès !</p>
+        <p class="text-xs text-green-700 mt-1">
+          Vérifiez votre boîte mail (et vos spams). Cliquez sur le lien de confirmation,
+          puis revenez vous connecter.
+        </p>
+      </div>
+    </div>
 
     <div class="app-form__submit">
-        <button [routerLink]="'/auth/signin'" size="md" class="-app-ibm-btn-full custom-primary-button" ibmButton="primary">
-            <span class="btn-text">Connectez-vous</span>
-            <youpez-ibm-icon iconClass="cds--btn__icon" iconName="arrowRight" iconSize="20"></youpez-ibm-icon>
-        </button>
+      <button [routerLink]="'/' + currentLang + '/auth/signin'"
+              size="md" class="-app-ibm-btn-full" ibmButton="ghost">
+        <span class="btn-text">Retour à la connexion</span>
+      </button>
     </div>
+  </ng-container>
+
 </div>

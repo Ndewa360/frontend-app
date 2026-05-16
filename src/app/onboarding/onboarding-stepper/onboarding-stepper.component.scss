@@ -1,0 +1,69 @@
+.onboarding-wrapper {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+.onboarding-card {
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+}
+
+.bg-primary {
+  background-color: #BB890B;
+}
+
+.text-primary {
+  color: #BB890B;
+}
+
+.focus\:ring-primary:focus {
+  --tw-ring-color: #BB890B;
+}
+
+.focus\:border-primary:focus {
+  border-color: #BB890B;
+}
+
+.hover\:bg-primary\/90:hover {
+  background-color: rgba(187, 137, 11, 0.9);
+}
+
+.border-primary {
+  border-color: #BB890B;
+}
+
+.bg-primary\/5 {
+  background-color: rgba(187, 137, 11, 0.05);
+}
+
+.peer-checked\:bg-primary:checked ~ div {
+  background-color: #BB890B;
+}
+
+/* Transition fluide entre étapes */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Inputs */
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="number"],
+input[type="password"],
+select {
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  &:focus {
+    box-shadow: 0 0 0 3px rgba(187, 137, 11, 0.15);
+  }
+}
+
+/* Toggle switch */
+.peer:checked ~ div {
+  background-color: #BB890B;
+}
+
+.peer:checked ~ div + div {
+  transform: translateX(1.25rem);
+}

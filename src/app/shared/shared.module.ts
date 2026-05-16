@@ -55,6 +55,7 @@ import { NavigationButtonComponent } from './components/navigation-button/naviga
 import { ProspectionState } from './store/prospection/prospection.state';
 import { TranslateModule } from '@ngx-translate/core';
 import { PropertyManagerState } from './store/property-manager/property-manager.state';
+import { EmailConfirmationBannerComponent } from './components/email-confirmation-banner/email-confirmation-banner.component';
 
 const DECLARATIONS = [
   DummyTableRichComponent, DummyTablePaginationComponent, DummyTableExpansionComponent,
@@ -67,7 +68,7 @@ const DECLARATIONS = [
   ContractTemplateSelectorComponent, DataLoaderDebugComponent, SubscriptionLimitModalComponent,
   SubscriptionStatusWidgetComponent, NavigationButtonComponent, LanguageSwitcherComponent,
   ClickOutsideDirective, AdvancedLanguageSwitcherComponent, TenantAvatarComponent,
-  NavProgressBarComponent,
+  NavProgressBarComponent, EmailConfirmationBannerComponent,
 ];
 
 @NgModule({

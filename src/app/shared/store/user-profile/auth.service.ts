@@ -28,6 +28,13 @@ export class AuthService {
     return this._httpClient.post<ApiResultFormat<UserProfileModel>>(`${environment.apiUrl}/user/auth/register`, payload);
   }
 
+  registerWithOnboarding(payload: any): Observable<ApiResultFormat<any>> {
+    return this._httpClient.post<ApiResultFormat<any>>(
+      `${environment.apiUrl}/user/auth/register-with-onboarding`,
+      payload
+    );
+  }
+
   resetPassword(password: string, token: string) {
     return this._httpClient.put<ApiResultFormat<null>>(`${environment.apiUrl}/user/auth/reset-password`, {password}, {headers: {Authorization: `Bearer ${token}`}});
   }

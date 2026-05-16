@@ -103,6 +103,11 @@ const routes: Routes = [
 				loadChildren: () => import('./landing-page/landing-page.module').then(m => m.LandingPageModule)
 			},
 			{
+				path: 'onboarding',
+				data: { breadcrumb: 'Inscription' },
+				loadChildren: () => import('./onboarding/onboarding.module').then(m => m.OnboardingModule)
+			},
+			{
 				path: '',
 				redirectTo: 'home',
 				pathMatch: 'full'
@@ -125,6 +130,10 @@ const routes: Routes = [
 	{
 		path: 'search',
 		redirectTo: getBrowserLang() + '/search'
+	},
+	{
+		path: 'onboarding',
+		redirectTo: getBrowserLang() + '/onboarding'
 	},
 	{
 		path: 'support',

@@ -36,6 +36,39 @@ export namespace UserProfileAction
         constructor(public email:string,public password:string,public username:string,public phoneNumber:string,public userType?:string,public businessName?:string,public plan?:string){}
     }
 
+    // Inscription avec données d'onboarding (stepper)
+    export class SignupWithOnboarding
+    {
+        static readonly type = '[UserProfile] Signup with Onboarding'
+        constructor(public payload: {
+            email: string;
+            password: string;
+            name: string;
+            phoneNumber: string;
+            userType?: string;
+            businessName?: string;
+            plan?: string;
+            property?: {
+                name: string;
+                geolocationCountry: string;
+                geolocationCity: string;
+                location: string;
+                propertyType?: string;
+            };
+            units?: Array<{
+                type: string;
+                price: number;
+                shouldPayCaution?: boolean;
+                cautionPrice?: number;
+            }>;
+            tenants?: Array<{
+                fullName: string;
+                phoneNumber: string;
+                email?: string;
+            }>;
+        }){}
+    }
+
 
     //Set user profil
     export class SetUserProfile

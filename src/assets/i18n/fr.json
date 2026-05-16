@@ -1879,7 +1879,7 @@
       "SUBTITLE_BOLD": "Fini les cahiers et le désordre.",
       "SUBTITLE_TEXT": "Ndewa360 digitalise la gestion de vos chambres et appartements avec une plateforme simple, automatisée et transparente.",
       "BUTTONS": {
-        "START_FREE": "Commencer gratuitement",
+        "START_FREE": "Je gère mon bien maintenant",
         "WATCH_DEMO": "Voir la démo"
       },
       "RATING": "4.9/5",
@@ -2073,7 +2073,7 @@
       "TITLE": "Prêt à reprendre le contrôle de vos loyers ?",
       "SUBTITLE": "Rejoignez les 20+ propriétaires qui ont déjà transformé leur gestion immobilière",
       "BUTTONS": {
-        "START_FREE": "Commencer gratuitement",
+        "START_FREE": "Essayer gratuitement — sans carte",
         "TALK_EXPERT": "Parler à un expert"
       },
       "GUARANTEES": {
@@ -4730,7 +4730,7 @@
       "TITLE": "Prêt à transformer votre gestion immobilière ?",
       "SUBTITLE": "Rejoignez les 20+ propriétaires qui nous font déjà confiance",
       "BUTTONS": {
-        "START_FREE": "Commencer gratuitement",
+        "START_FREE": "Créer mon compte gratuit",
         "CALL_NOW": "Appeler maintenant"
       }
     }

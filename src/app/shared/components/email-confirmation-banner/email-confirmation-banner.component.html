@@ -1,0 +1,46 @@
+<div *ngIf="showBanner"
+     class="email-confirmation-banner w-full bg-amber-50 border-b border-amber-200 px-4 py-3 flex items-center justify-between gap-4 z-50">
+
+  <div class="flex items-center gap-3 flex-1 min-w-0">
+    <!-- Icône -->
+    <div class="flex-shrink-0 w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center">
+      <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+      </svg>
+    </div>
+
+    <!-- Message -->
+    <div class="min-w-0">
+      <p class="text-sm font-medium text-amber-800 truncate">
+        ⚠️ Confirmez votre email
+        <span *ngIf="hoursLeft > 0" class="font-normal text-amber-600">
+          — il vous reste <strong>{{ hoursLeft }}h{{ minutesLeft > 0 ? minutesLeft + 'min' : '' }}</strong>
+        </span>
+        <span *ngIf="hoursLeft === 0" class="font-normal text-red-600">
+          — délai expiré, renvoyez l'email
+        </span>
+      </p>
+      <p class="text-xs text-amber-600 hidden sm:block">
+        Un email a été envoyé à <strong>{{ userEmail }}</strong>. Vérifiez vos spams si nécessaire.
+      </p>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="flex items-center gap-2 flex-shrink-0">
+    <button (click)="resendEmail()"
+            [disabled]="resending"
+            class="text-xs font-semibold text-amber-700 hover:text-amber-900 underline disabled:opacity-50 transition whitespace-nowrap">
+      {{ resending ? 'Envoi...' : 'Renvoyer l\'email' }}
+    </button>
+
+    <button (click)="dismiss()"
+            class="text-amber-400 hover:text-amber-600 transition ml-2"
+            title="Fermer">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+    </button>
+  </div>
+</div>

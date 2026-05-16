@@ -53,6 +53,10 @@ export interface UserProfileModel {
 
     businessName?: string; // For agents only
 
+    // Onboarding
+    onboardingCompleted?: boolean;
+    onboardingSource?: string;
+
     // Métadonnées
     createdAt?: Date;
     isDeleted?: boolean;

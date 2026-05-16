@@ -141,6 +141,41 @@ export class UserProfileState {
         return of(true);
     }
 
+    @Action(UserProfileAction.SignupWithOnboarding)
+    signupWithOnboardingState(ctx: StateContext<UserProfileStateModel>, { payload }: UserProfileAction.SignupWithOnboarding) {
+        ctx.patchState({ loadingUserProfile: true, lastError: null });
+
+        return this._authService.registerWithOnboarding(payload).pipe(
+            tap((result) => {
+                if (!result || !result.data) throw new Error('Réponse invalide');
+
+                const data = result.data;
+                ctx.patchState({
+                    loadingUserProfile: false,
+                    userProfile: data.user,
+                    initLoadingState: 'LOADED'
+                });
+
+                // Stocker les tokens → connexion immédiate
+                ctx.dispatch(new AuthTokenAction.SetToken(data.access_token, data.refresh_token));
+                ctx.dispatch(new AuthTokenAction.StartActivityMonitoring());
+                this.refreshTokenService.startActivityMonitoring();
+
+                this._toastrService.success(
+                    this._translateService.instant('NOTIFICATIONS.ACCOUNT_CREATED_SUCCESS', { type: 'propriétaire' }),
+                    'Ndewa360°'
+                );
+            }),
+            catchError((error) => {
+                ctx.patchState({
+                    loadingUserProfile: false,
+                    lastError: error?.error?.message || 'Erreur lors de la création du compte'
+                });
+                return throwError(() => error);
+            })
+        );
+    }
+
     @Action(UserProfileAction.SignupSimpleUserProfile)
     signupSimpleUserProfileState(ctx: StateContext<UserProfileStateModel>, { email, password, username, phoneNumber, userType, businessName, plan }: UserProfileAction.SignupSimpleUserProfile) {
         ctx.patchState({
