@@ -42,6 +42,14 @@ export class WalletHttpService {
     return this.http.get<{ data: WithdrawalRequest }>(`${this.api}/withdraw/${withdrawalId}/status`);
   }
 
+  /**
+   * Supprime un retrait échoué ou annulé — DELETE /wallet/withdraw/:id.
+   * Le backend rejette les retraits COMPLETED, PENDING ou PROCESSING.
+   */
+  deleteWithdrawal(withdrawalId: string): Observable<{ statusCode: number; message: string }> {
+    return this.http.delete<{ statusCode: number; message: string }>(`${this.api}/withdraw/${withdrawalId}`);
+  }
+
   initiateDeposit(amount: number, provider: PaymentProvider, phoneNumber?: string, successUrl?: string, cancelUrl?: string): Observable<{ data: DepositInitiateResult }> {
     return this.http.post<{ data: DepositInitiateResult }>(`${this.api}/deposit/initiate`, {
       amount, provider, phoneNumber, successUrl, cancelUrl,

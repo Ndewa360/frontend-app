@@ -79,4 +79,6 @@ export interface WalletStateModel {
   error: string | null;
   /** ID du retrait en cours de polling (null si aucun) */
   pollingWithdrawalId: string | null;
+  /** ID du retrait en cours de suppression (null si aucun) */
+  deletingWithdrawalId: string | null;
 }

@@ -28,6 +28,7 @@ const MAX_POLLING_ATTEMPTS = 24;   // 2 minutes max (24 × 5s)
     depositLoading: false,
     error: null,
     pollingWithdrawalId: null,
+    deletingWithdrawalId: null,
   },
 })
 @Injectable()
@@ -59,6 +60,7 @@ export class WalletState implements OnDestroy {
   @Selector() static totalRentPayments(s: WalletStateModel): number { return s.totalRentPayments; }
   @Selector() static totalDeposits(s: WalletStateModel): number { return s.totalDeposits; }
   @Selector() static pollingWithdrawalId(s: WalletStateModel): string | null { return s.pollingWithdrawalId; }
+  @Selector() static deletingWithdrawalId(s: WalletStateModel): string | null { return s.deletingWithdrawalId; }
 
   @Action(WalletAction.LoadSummary)
   loadSummary(ctx: StateContext<WalletStateModel>) {
@@ -222,6 +224,32 @@ export class WalletState implements OnDestroy {
     ctx.patchState({ pollingWithdrawalId: null });
   }
 
+  @Action(WalletAction.DeleteWithdrawal)
+  deleteWithdrawal(ctx: StateContext<WalletStateModel>, { withdrawalId }: WalletAction.DeleteWithdrawal) {
+    ctx.patchState({ deletingWithdrawalId: withdrawalId, error: null });
+    return this.walletService.deleteWithdrawal(withdrawalId).pipe(
+      tap(() => {
+        // Retirer le retrait de la liste localement sans recharger
+        const state = ctx.getState();
+        ctx.patchState({
+          withdrawals:          state.withdrawals.filter(w => w._id !== withdrawalId),
+          totalWithdrawals:     Math.max(0, state.totalWithdrawals - 1),
+          deletingWithdrawalId: null,
+        });
+        this.toastr.success(
+          this.translate.instant('NOTIFICATIONS.WALLET_WITHDRAWAL_DELETED'),
+          'Ndewa360°',
+        );
+      }),
+      catchError(err => {
+        const msg = err.error?.message || this.translate.instant('NOTIFICATIONS.WALLET_WITHDRAWAL_DELETE_ERROR');
+        ctx.patchState({ deletingWithdrawalId: null, error: msg });
+        this.toastr.error(msg, 'Ndewa360°');
+        return throwError(err);
+      }),
+    );
+  }
+
   @Action(WalletAction.InitiateDeposit)
   initiateDeposit(ctx: StateContext<WalletStateModel>, { amount, provider, phoneNumber, successUrl, cancelUrl }: WalletAction.InitiateDeposit) {
     ctx.patchState({ depositLoading: true, error: null });
@@ -252,7 +280,7 @@ export class WalletState implements OnDestroy {
       summary: null, transactions: [], rentPayments: [], deposits: [], withdrawals: [],
       totalTransactions: 0, totalRentPayments: 0, totalDeposits: 0, totalWithdrawals: 0,
       loading: false, withdrawLoading: false, depositLoading: false, error: null,
-      pollingWithdrawalId: null,
+      pollingWithdrawalId: null, deletingWithdrawalId: null,
     });
   }
 }

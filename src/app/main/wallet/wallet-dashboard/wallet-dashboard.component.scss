@@ -605,6 +605,63 @@ $font:          'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     font-size: 0.8rem;
     color: darken($danger, 10%);
   }
+
+  // ── Header droit (badge + bouton supprimer) ──────────────────────────────
+  &__header-right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  // ── Bouton supprimer ─────────────────────────────────────────────────────
+  &__delete-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    border: 1px solid rgba($danger, 0.3);
+    background: $danger-light;
+    color: $danger;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+
+    svg { width: 0.875rem; height: 0.875rem; }
+
+    &:hover:not(:disabled) {
+      background: $danger;
+      color: #fff;
+      border-color: $danger;
+      transform: scale(1.05);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+  }
+
+  // ── Spinner dans le bouton supprimer ─────────────────────────────────────
+  &__delete-spinner {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border: 2px solid rgba($danger, 0.3);
+    border-top-color: $danger;
+    border-radius: 50%;
+    animation: wallet-spin 0.7s linear infinite;
+  }
+
+  // ── Carte en cours de suppression ────────────────────────────────────────
+  &--deleting {
+    opacity: 0.5;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
 }
 
 // ─── Badges ───────────────────────────────────────────────────────────────────
@@ -661,4 +718,102 @@ $font:          'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 @media (max-width: 480px) {
   .wallet-kpi-grid { grid-template-columns: 1fr; }
   .wallet-tabs__btn { padding: 0.75rem 1rem; font-size: 0.8125rem; }
+}
+
+// ─── Modal de confirmation de suppression ─────────────────────────────────────
+.wallet-confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-out;
+  padding: 1rem;
+}
+
+.wallet-confirm-modal {
+  background: $bg;
+  border-radius: 4px;
+  padding: 2rem;
+  max-width: 420px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  animation: slideInFromTop 0.25s ease-out;
+  text-align: center;
+
+  &__icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: $danger-light;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.25rem;
+    color: $danger;
+
+    svg { width: 1.5rem; height: 1.5rem; }
+  }
+
+  &__title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: $text-primary;
+    margin: 0 0 0.75rem;
+  }
+
+  &__message {
+    font-size: 0.9rem;
+    color: $text-secondary;
+    margin: 0 0 1.75rem;
+    line-height: 1.5;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+  }
+
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    padding: 0.625rem 1.5rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    font-family: $font;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    min-width: 120px;
+
+    &--cancel {
+      background: #f4f4f4;
+      color: $text-secondary;
+      border: 1px solid $border;
+
+      &:hover {
+        background: #e8e8e8;
+        color: $text-primary;
+      }
+    }
+
+    &--confirm {
+      background: $danger;
+      color: #fff;
+
+      svg { width: 0.875rem; height: 0.875rem; }
+
+      &:hover {
+        background: darken($danger, 8%);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba($danger, 0.35);
+      }
+    }
+  }
 }

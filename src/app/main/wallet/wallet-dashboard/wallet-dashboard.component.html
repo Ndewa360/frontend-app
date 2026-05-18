@@ -362,7 +362,9 @@
         </div>
 
         <div *ngIf="withdrawals.length > 0" class="wallet-withdrawal-grid">
-          <div *ngFor="let w of withdrawals" class="wallet-withdrawal">
+          <div *ngFor="let w of withdrawals" class="wallet-withdrawal"
+               [class.wallet-withdrawal--deleting]="deletingWithdrawalId === w._id">
+
             <div class="wallet-withdrawal__header">
               <div class="wallet-withdrawal__method">
                 <div class="wallet-withdrawal__method-icon">
@@ -380,13 +382,29 @@
                   <div class="wallet-withdrawal__recipient">{{ w.recipient }}</div>
                 </div>
               </div>
-              <span class="wallet-badge"
-                    [class.wallet-badge--success]="w.status === 'COMPLETED'"
-                    [class.wallet-badge--warning]="w.status === 'PENDING' || w.status === 'PROCESSING'"
-                    [class.wallet-badge--danger]="w.status === 'FAILED'"
-                    [class.wallet-badge--secondary]="w.status === 'CANCELLED'">
-                {{ getStatusLabel(w.status) }}
-              </span>
+
+              <div class="wallet-withdrawal__header-right">
+                <span class="wallet-badge"
+                      [class.wallet-badge--success]="w.status === 'COMPLETED'"
+                      [class.wallet-badge--warning]="w.status === 'PENDING' || w.status === 'PROCESSING'"
+                      [class.wallet-badge--danger]="w.status === 'FAILED'"
+                      [class.wallet-badge--secondary]="w.status === 'CANCELLED'">
+                  {{ getStatusLabel(w.status) }}
+                </span>
+
+                <!-- Bouton supprimer — visible uniquement pour FAILED et CANCELLED -->
+                <button *ngIf="isDeletable(w.status)"
+                        class="wallet-withdrawal__delete-btn"
+                        [disabled]="deletingWithdrawalId === w._id"
+                        (click)="openDeleteConfirm(w._id)"
+                        title="Supprimer ce retrait">
+                  <svg *ngIf="deletingWithdrawalId !== w._id" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                  </svg>
+                  <span *ngIf="deletingWithdrawalId === w._id" class="wallet-withdrawal__delete-spinner"></span>
+                </button>
+              </div>
             </div>
 
             <div class="wallet-withdrawal__amounts">
@@ -426,6 +444,37 @@
                       d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
               </svg>
               {{ w.failureReason }}
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ── Modal de confirmation de suppression ── -->
+        <div *ngIf="confirmDeleteId" class="wallet-confirm-overlay" (click)="cancelDelete()">
+          <div class="wallet-confirm-modal" (click)="$event.stopPropagation()">
+            <div class="wallet-confirm-modal__icon">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+              </svg>
+            </div>
+            <h3 class="wallet-confirm-modal__title">Supprimer ce retrait ?</h3>
+            <p class="wallet-confirm-modal__message">
+              Cette action est irréversible. L'entrée sera définitivement retirée de votre historique.
+            </p>
+            <div class="wallet-confirm-modal__actions">
+              <button class="wallet-confirm-modal__btn wallet-confirm-modal__btn--cancel"
+                      (click)="cancelDelete()">
+                Annuler
+              </button>
+              <button class="wallet-confirm-modal__btn wallet-confirm-modal__btn--confirm"
+                      (click)="confirmDelete()">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4 mr-1">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+                Supprimer
+              </button>
             </div>
           </div>
         </div>

@@ -31,6 +31,10 @@ export namespace WalletAction {
   export class StopWithdrawalPolling {
     static readonly type = '[Wallet] Stop Withdrawal Polling';
   }
+  export class DeleteWithdrawal {
+    static readonly type = '[Wallet] Delete Withdrawal';
+    constructor(public withdrawalId: string) {}
+  }
   export class InitiateDeposit {
     static readonly type = '[Wallet] Initiate Deposit';
     constructor(

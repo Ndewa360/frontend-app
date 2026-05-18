@@ -7,7 +7,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { WalletState, WalletAction, WalletSummary, WalletTransaction, WithdrawalRequest } from 'src/app/shared/store/wallet';
 import { WithdrawalModalComponent } from '../components/withdrawal-modal/withdrawal-modal.component';
 import { DepositModalComponent } from '../components/deposit-modal/deposit-modal.component';
-
 @Component({
   selector: 'app-wallet-dashboard',
   templateUrl: './wallet-dashboard.component.html',
@@ -24,6 +23,7 @@ export class WalletDashboardComponent implements OnInit, OnDestroy {
   @Select(WalletState.totalRentPayments) totalRentPayments$: Observable<number>;
   @Select(WalletState.totalDeposits)   totalDeposits$: Observable<number>;
   @Select(WalletState.pollingWithdrawalId) pollingWithdrawalId$: Observable<string | null>;
+  @Select(WalletState.deletingWithdrawalId) deletingWithdrawalId$: Observable<string | null>;
 
   summary: WalletSummary | null = null;
   rentPayments: WalletTransaction[] = [];
@@ -33,6 +33,10 @@ export class WalletDashboardComponent implements OnInit, OnDestroy {
   totalRentPayments = 0;
   totalDeposits = 0;
   pollingWithdrawalId: string | null = null;
+  deletingWithdrawalId: string | null = null;
+
+  /** ID du retrait pour lequel le modal de confirmation est ouvert */
+  confirmDeleteId: string | null = null;
 
   activeTab: 'overview' | 'rent' | 'deposits' | 'withdrawals' = 'overview';
   rentPage = 1;
@@ -60,6 +64,7 @@ export class WalletDashboardComponent implements OnInit, OnDestroy {
     this.totalRentPayments$.pipe(takeUntil(this.destroy$)).subscribe(t => this.totalRentPayments = t);
     this.totalDeposits$.pipe(takeUntil(this.destroy$)).subscribe(t => this.totalDeposits = t);
     this.pollingWithdrawalId$.pipe(takeUntil(this.destroy$)).subscribe(id => this.pollingWithdrawalId = id);
+    this.deletingWithdrawalId$.pipe(takeUntil(this.destroy$)).subscribe(id => this.deletingWithdrawalId = id);
   }
 
   ngOnDestroy(): void {
@@ -120,6 +125,30 @@ export class WalletDashboardComponent implements OnInit, OnDestroy {
   changeWithdrawalPage(page: number): void {
     this.withdrawalPage = page;
     this.store.dispatch(new WalletAction.LoadWithdrawals(page, this.pageSize));
+  }
+
+  // ── Suppression d'un retrait échoué ───────────────────────────────────────
+
+  /** Ouvre le modal de confirmation pour un retrait échoué/annulé */
+  openDeleteConfirm(withdrawalId: string): void {
+    this.confirmDeleteId = withdrawalId;
+  }
+
+  /** Annule la suppression */
+  cancelDelete(): void {
+    this.confirmDeleteId = null;
+  }
+
+  /** Confirme et exécute la suppression */
+  confirmDelete(): void {
+    if (!this.confirmDeleteId) return;
+    this.store.dispatch(new WalletAction.DeleteWithdrawal(this.confirmDeleteId));
+    this.confirmDeleteId = null;
+  }
+
+  /** Retourne true si le retrait peut être supprimé (FAILED ou CANCELLED uniquement) */
+  isDeletable(status: string): boolean {
+    return status === 'FAILED' || status === 'CANCELLED';
   }
 
   get rentTotalPages(): number { return Math.ceil(this.totalRentPayments / this.pageSize) || 1; }

@@ -1232,6 +1232,8 @@
     "WALLET_WITHDRAWAL_PROCESSING": "Your withdrawal request is being processed. You will be notified once confirmed.",
     "WALLET_WITHDRAWAL_TIMEOUT": "The withdrawal is still in progress. You will receive a notification once finalized.",
     "WALLET_WITHDRAWAL_ERROR": "Unable to process the withdrawal. Please try again.",
+    "WALLET_WITHDRAWAL_DELETED": "Withdrawal deleted successfully.",
+    "WALLET_WITHDRAWAL_DELETE_ERROR": "Unable to delete this withdrawal. Please try again.",
     "MANAGER_PERMISSIONS_UPDATED": "The manager's permissions have been updated successfully.",
     "MANAGER_REVOKED_SUCCESS": "The manager has been revoked successfully.",
     "CITY_LOAD_ERROR": "Unable to load the list of cities.",

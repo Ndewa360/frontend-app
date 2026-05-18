@@ -1229,6 +1229,8 @@
     "WALLET_WITHDRAWAL_PROCESSING": "Votre demande de retrait est en cours de traitement. Vous serez notifié dès la confirmation.",
     "WALLET_WITHDRAWAL_TIMEOUT": "Le retrait est toujours en cours. Vous recevrez une notification dès sa finalisation.",
     "WALLET_WITHDRAWAL_ERROR": "Impossible d'effectuer le retrait. Veuillez réessayer.",
+    "WALLET_WITHDRAWAL_DELETED": "Retrait supprimé avec succès.",
+    "WALLET_WITHDRAWAL_DELETE_ERROR": "Impossible de supprimer ce retrait. Veuillez réessayer.",
     "MANAGER_PERMISSIONS_UPDATED": "Les droits du gérant ont été mis à jour avec succès.",
     "MANAGER_REVOKED_SUCCESS": "Le gérant a été révoqué avec succès.",
     "CITY_LOAD_ERROR": "Impossible de charger la liste des villes.",
