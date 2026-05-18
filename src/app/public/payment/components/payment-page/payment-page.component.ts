@@ -544,15 +544,6 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Montant réellement payé — priorité : valeur du formulaire (saisie par l'utilisateur
-   * ou pré-remplie depuis le lien), puis montant du lien de paiement.
-   * Utilisé dans le récapitulatif de succès pour éviter d'afficher 0.
-   */
-  get paidAmount(): number {
-    return this.amountForm.getRawValue().amount || this.paymentDetails?.amount || 0;
-  }
-
-  /**
    * Détecte si une chaîne est une clé i18n non résolue (ex: "PAYMENT_LINK.DEFAULT_DESCRIPTION").
    * Cela arrive quand une ancienne valeur a été stockée en base avant la correction du modal.
    */
@@ -563,6 +554,17 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
   get amount(): number {
     return this.amountForm.getRawValue().amount || 0;
   }
+
+  /**
+   * Montant réellement payé — priorité : valeur du formulaire (saisie par l'utilisateur
+   * ou pré-remplie depuis le lien), puis montant du lien de paiement.
+   * Utilisé dans le récapitulatif de succès pour éviter d'afficher 0.
+   */
+  get paidAmount(): number {
+    return this.amountForm.getRawValue().amount || this.paymentDetails?.amount || 0;
+  }
+
+  get isAmountValid(): boolean {
     // Un champ disabled rend le FormGroup DISABLED (pas VALID) en Angular
     // On considère le montant valide si le form est valid OU disabled (montant fixé)
     return this.amountForm.valid || this.amountForm.disabled;
