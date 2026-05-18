@@ -229,6 +229,19 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Détermine si le paiement doit passer par la route publique (sans JWT).
+   *
+   * Règles :
+   *   - PREMIUM_ACCESS : toujours public (visiteur anonyme)
+   *   - RENT           : toujours public sur cette page (locataire sans compte)
+   *   - SUBSCRIPTION   : jamais public (propriétaire connecté dans le backoffice)
+   *   - WALLET_DEPOSIT : jamais public (propriétaire connecté)
+   */
+  private get isPublicPayment(): boolean {
+    return this.context === 'PREMIUM_ACCESS' || this.context === 'RENT';
+  }
+
   // ─── Stripe ───────────────────────────────────────────────────────────────
 
   private async payWithCard(amount: number): Promise<void> {
@@ -237,9 +250,6 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
     this.paymentError = null;
 
     const base = `${window.location.origin}/${this.lang}/payment`;
-    // externalRef sera connu après la réponse du backend — on le passera via metadata Stripe
-    // Le backend injecte déjà externalRef dans session.metadata, Stripe le renvoie dans l'URL via {CHECKOUT_SESSION_ID}
-    // On passe un placeholder __REF__ remplacé après réception de l'externalRef
     const dto: InitiatePaymentDto = {
       context: this.context,
       provider: 'STRIPE',
@@ -252,13 +262,12 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
       ...this.buildContextIds(),
     };
 
-    this.paymentService.initiatePayment(dto, this.context === 'PREMIUM_ACCESS')
+    this.paymentService.initiatePayment(dto, this.isPublicPayment)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: async (res) => {
           this.externalRef = res.data.externalRef;
           if (res.data.redirectUrl) {
-            // Injecter l'externalRef dans l'URL de succès pour le retrouver au retour
             const redirectUrl = res.data.redirectUrl.replace(
               encodeURIComponent(`${base}/${this.token}?payment=success&session_id={CHECKOUT_SESSION_ID}`),
               encodeURIComponent(`${base}/${this.token}?payment=success&session_id={CHECKOUT_SESSION_ID}&ext=${res.data.externalRef}`)
@@ -301,7 +310,7 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
       ...this.buildContextIds(),
     };
 
-    this.paymentService.initiatePayment(dto, this.context === 'PREMIUM_ACCESS')
+    this.paymentService.initiatePayment(dto, this.isPublicPayment)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res) => {
