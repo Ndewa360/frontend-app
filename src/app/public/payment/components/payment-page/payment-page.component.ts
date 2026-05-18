@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject, interval } from 'rxjs';
 import { takeUntil, switchMap } from 'rxjs/operators';
+import { TranslateService } from '@ngx-translate/core';
 
 import {
   UnifiedPaymentService,
@@ -13,16 +14,10 @@ import {
 } from '../../services/unified-payment.service';
 import { PaymentLinkService, PaymentLinkDetails } from '../../services/payment-link.service';
 import { AnonymousUserService } from 'src/app/shared/services/anonymous-user.service';
+import { LocationPaymentService } from 'src/app/shared/store/payment-location/location-payment.service';
 import { environment } from 'src/environments/environment';
 
 declare var Stripe: any;
-
-const CONTEXT_LABELS: Record<string, { title: string; icon: string; color: string }> = {
-  RENT:           { title: 'Paiement de loyer',       icon: 'fa-home',       color: '#2563eb' },
-  SUBSCRIPTION:   { title: 'Souscription Ndewa360°',  icon: 'fa-star',       color: '#059669' },
-  PREMIUM_ACCESS: { title: 'Accès Premium',            icon: 'fa-crown',      color: '#d97706' },
-  WALLET_DEPOSIT: { title: 'Dépôt wallet',            icon: 'fa-wallet',     color: '#7c3aed' },
-};
 
 @Component({
   selector: 'app-payment-page',
@@ -58,6 +53,13 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
 
   quickAmounts = [25000, 50000, 75000, 100000, 150000, 200000];
 
+  /** État du téléchargement du reçu (RENT uniquement) */
+  isDownloadingReceipt = false;
+  receiptDownloaded = false;
+  receiptError: string | null = null;
+
+  today = new Date();
+
   private stripe: any;
 
   constructor(
@@ -67,6 +69,8 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
     private paymentService: UnifiedPaymentService,
     private paymentLinkService: PaymentLinkService,
     private anonymousUserService: AnonymousUserService,
+    private locationPaymentService: LocationPaymentService,
+    private translate: TranslateService,
   ) {
     this.amountForm = this.fb.group({
       amount: [null, [Validators.required, Validators.min(100), Validators.max(10000000)]]
@@ -190,7 +194,29 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
   }
 
   get contextMeta(): { title: string; icon: string; color: string } {
-    return CONTEXT_LABELS[this.context] || CONTEXT_LABELS['RENT'];
+    const icons: Record<string, string> = {
+      RENT:           'fa-home',
+      SUBSCRIPTION:   'fa-star',
+      PREMIUM_ACCESS: 'fa-crown',
+      WALLET_DEPOSIT: 'fa-wallet',
+    };
+    const colors: Record<string, string> = {
+      RENT:           '#2563eb',
+      SUBSCRIPTION:   '#059669',
+      PREMIUM_ACCESS: '#d97706',
+      WALLET_DEPOSIT: '#7c3aed',
+    };
+    const titleKeys: Record<string, string> = {
+      RENT:           'PAYMENT_PAGE.CONTEXT.RENT_TITLE',
+      SUBSCRIPTION:   'PAYMENT_PAGE.CONTEXT.SUBSCRIPTION_TITLE',
+      PREMIUM_ACCESS: 'PAYMENT_PAGE.CONTEXT.PREMIUM_TITLE',
+      WALLET_DEPOSIT: 'PAYMENT_PAGE.CONTEXT.WALLET_TITLE',
+    };
+    return {
+      title: this.translate.instant(titleKeys[this.context] || 'PAYMENT_PAGE.CONTEXT.RENT_TITLE'),
+      icon:  icons[this.context]  || 'fa-home',
+      color: colors[this.context] || '#2563eb',
+    };
   }
 
   get isAmountFixed(): boolean {
@@ -440,6 +466,41 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
     this.currentStep = 'method';
     this.selectedMethod = null;
     this.mobileForm.reset();
+    this.receiptDownloaded = false;
+    this.receiptError = null;
+  }
+
+  /**
+   * Télécharge le reçu PDF après un paiement de loyer réussi via lien public.
+   * Utilise l'externalRef de la PaymentTransaction — route backend publique.
+   */
+  downloadReceipt(): void {
+    if (!this.externalRef || this.isDownloadingReceipt) return;
+
+    this.isDownloadingReceipt = true;
+    this.receiptError = null;
+
+    this.locationPaymentService.downloadReceiptByTransaction(this.externalRef)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (blob: Blob) => {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          const refLabel = this.externalRef?.slice(0, 8) || 'recu';
+          a.download = `recu_${refLabel}.pdf`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+          this.receiptDownloaded = true;
+          this.isDownloadingReceipt = false;
+        },
+        error: () => {
+          this.receiptError = 'Impossible de télécharger le reçu. Réessayez dans quelques instants.';
+          this.isDownloadingReceipt = false;
+        }
+      });
   }
 
   // ─── Helpers ──────────────────────────────────────────────────────────────
@@ -476,6 +537,14 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
     return this.amountForm.getRawValue().amount || 0;
   }
 
+  /**
+   * Détecte si une chaîne est une clé i18n non résolue (ex: "PAYMENT_LINK.DEFAULT_DESCRIPTION").
+   * Cela arrive quand une ancienne valeur a été stockée en base avant la correction du modal.
+   */
+  isI18nKey(value: string): boolean {
+    return /^[A-Z_]+(\.[A-Z_]+)+$/.test(value?.trim() || '');
+  }
+
   get isAmountValid(): boolean {
     // Un champ disabled rend le FormGroup DISABLED (pas VALID) en Angular
     // On considère le montant valide si le form est valid OU disabled (montant fixé)
@@ -495,12 +564,12 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
   }
 
   getMethodLabel(method: PaymentMethod): string {
-    const labels: Record<PaymentMethod, string> = {
-      orange_money: 'Orange Money',
-      mtn_money: 'MTN Mobile Money',
-      card: 'Carte bancaire',
-      easy_transact: 'Easy Transact',
+    const keys: Record<PaymentMethod, string> = {
+      orange_money:  'PAYMENT_PAGE.METHODS.ORANGE_MONEY',
+      mtn_money:     'PAYMENT_PAGE.METHODS.MTN_MONEY',
+      card:          'PAYMENT_PAGE.METHODS.CARD',
+      easy_transact: 'PAYMENT_PAGE.METHODS.EASY_TRANSACT',
     };
-    return labels[method];
+    return this.translate.instant(keys[method] || 'PAYMENT_PAGE.METHODS.CARD');
   }
 }

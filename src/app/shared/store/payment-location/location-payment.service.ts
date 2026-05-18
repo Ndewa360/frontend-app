@@ -58,4 +58,15 @@ export class LocationPaymentService
             { responseType: 'blob' }
         );
     }
+
+    /**
+     * Télécharge le reçu via l'externalRef de la PaymentTransaction.
+     * Route publique — utilisée après un paiement de loyer via lien public (locataire sans compte).
+     */
+    downloadReceiptByTransaction(externalRef: string): Observable<Blob> {
+        return this._httpClient.get(
+            `${environment.apiUrl}/location-payment/receipt/by-transaction/${externalRef}`,
+            { responseType: 'blob' }
+        );
+    }
 }

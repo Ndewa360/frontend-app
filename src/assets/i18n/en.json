@@ -4887,5 +4887,97 @@
       "SUCCESS_TEXT": "Check your inbox (and spam). Click the confirmation link, then come back to sign in.",
       "BACK_TO_LOGIN": "Back to sign in"
     }
+  },
+  "PAYMENT_PAGE": {
+    "SECURE_BADGE": "Secure payment",
+    "LOADING": "Loading payment…",
+    "INVALID_LINK_TITLE": "Invalid link",
+    "STEPS": {
+      "METHOD": "Payment method",
+      "DETAILS": "Details",
+      "CONFIRMATION": "Confirmation"
+    },
+    "CONTEXT": {
+      "UNIT_LABEL": "Unit",
+      "RENT_TITLE": "Rent payment",
+      "SUBSCRIPTION_TITLE": "Ndewa360° Subscription",
+      "PREMIUM_TITLE": "Premium Access",
+      "WALLET_TITLE": "Wallet deposit"
+    },
+    "METHOD_STEP": {
+      "TITLE": "How would you like to pay?",
+      "ORANGE_MONEY": "Orange Money",
+      "ORANGE_MONEY_DESC": "Pay via your Orange account",
+      "MTN_MONEY": "MTN Mobile Money",
+      "MTN_MONEY_DESC": "Pay via your MTN account",
+      "CARD": "Bank card",
+      "SECURITY_NOTE": "All transactions are encrypted and secure"
+    },
+    "DETAILS_STEP": {
+      "AMOUNT_LABEL": "Amount to pay",
+      "AMOUNT_PLACEHOLDER": "Enter amount",
+      "CURRENCY": "XAF",
+      "ERROR_MIN": "Minimum amount: 100 XAF",
+      "ERROR_MAX": "Maximum amount: 10,000,000 XAF",
+      "ERROR_REQUIRED": "Please enter an amount",
+      "PHONE_LABEL": "Phone number",
+      "PHONE_PLACEHOLDER": "6XX XXX XXX",
+      "PHONE_ERROR": "Invalid number. Format: 6XXXXXXXX",
+      "INSTRUCTION_1": "Enter your number and confirm",
+      "INSTRUCTION_2": "You will receive a notification on your phone",
+      "INSTRUCTION_3": "Confirm the payment with your PIN code",
+      "PAYMENT_METHOD_LABEL": "Payment method",
+      "TOTAL_LABEL": "Total",
+      "PAY_BUTTON": "Pay"
+    },
+    "PROCESSING_STEP": {
+      "CARD_TITLE": "Redirecting to secure payment…",
+      "CARD_DESC": "You will be redirected to the card payment page.",
+      "MOBILE_INIT_TITLE": "Initializing payment…",
+      "MOBILE_INIT_DESC_ORANGE": "Connecting to Orange Money, please wait.",
+      "MOBILE_INIT_DESC_MTN": "Connecting to MTN Mobile Money, please wait.",
+      "PENDING_TITLE": "Waiting for confirmation",
+      "PENDING_DESC": "A notification has been sent to",
+      "PENDING_PIN": "Confirm the payment with your PIN code.",
+      "USSD_LABEL": "Or dial this code:",
+      "POLLING_HINT": "Automatic check…",
+      "EXPIRES_AT": "Expires at"
+    },
+    "RESULT": {
+      "SUCCESS_TITLE": "Payment successful!",
+      "SUCCESS_MESSAGE": "Your payment has been processed successfully.",
+      "RECEIPT_SUMMARY_TITLE": "Payment summary",
+      "RECEIPT_TENANT": "Tenant",
+      "RECEIPT_PROPERTY": "Property",
+      "RECEIPT_UNIT": "Unit",
+      "RECEIPT_AMOUNT": "Amount paid",
+      "RECEIPT_DATE": "Date",
+      "RECEIPT_REF": "Reference",
+      "DOWNLOAD_RECEIPT": "Download PDF receipt",
+      "GENERATING_RECEIPT": "Generating receipt…",
+      "RECEIPT_DOWNLOADED": "Receipt downloaded",
+      "RECEIPT_ERROR": "Unable to download the receipt. Please try again in a moment.",
+      "RECEIPT_RETRY": "Retry",
+      "BACK_BUTTON": "Back",
+      "PRINT_BUTTON": "Print",
+      "FAILED_TITLE": "Payment failed",
+      "FAILED_DEFAULT_MESSAGE": "An error occurred while processing your payment.",
+      "RETRY_BUTTON": "Retry",
+      "CANCELLED_TITLE": "Payment cancelled",
+      "CANCELLED_MESSAGE": "You cancelled the payment. No amount has been charged.",
+      "RESTART_BUTTON": "Try again",
+      "SUPPORT_NOTE": "Need help? Contact our support."
+    },
+    "FOOTER": {
+      "TERMS": "Terms",
+      "PRIVACY": "Privacy",
+      "SUPPORT": "Support"
+    },
+    "METHODS": {
+      "ORANGE_MONEY": "Orange Money",
+      "MTN_MONEY": "MTN Mobile Money",
+      "CARD": "Bank card",
+      "EASY_TRANSACT": "Easy Transact"
+    }
   }
 }

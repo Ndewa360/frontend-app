@@ -927,3 +927,158 @@ $font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   .ndewa-payment__context-banner { padding: 0.875rem 1rem; gap: 0.75rem; }
   .ndewa-payment__context-icon { width: 36px; height: 36px; border-radius: 9px; }
 }
+
+// ── Récapitulatif du reçu (après paiement de loyer réussi) ──────────────────
+
+.ndewa-payment__receipt-summary {
+  width: 100%;
+  max-width: 380px;
+  background: #f8fafc;
+  border: 1.5px solid $border;
+  border-radius: $radius-md;
+  overflow: hidden;
+  margin: 0 auto 1.5rem;
+  text-align: left;
+}
+
+.ndewa-payment__receipt-summary-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: $primary-light;
+  border-bottom: 1px solid rgba($primary, 0.2);
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: $primary;
+  i { font-size: 1rem; }
+}
+
+.ndewa-payment__receipt-summary-body {
+  padding: 0.5rem 0;
+}
+
+.ndewa-payment__receipt-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.45rem 1rem;
+  font-size: 0.8125rem;
+  border-bottom: 1px solid rgba($border, 0.6);
+
+  &:last-child { border-bottom: none; }
+}
+
+.ndewa-payment__receipt-label {
+  color: $text-light;
+  font-weight: 500;
+  flex-shrink: 0;
+  margin-right: 0.5rem;
+}
+
+.ndewa-payment__receipt-value {
+  color: $text-dark;
+  font-weight: 600;
+  text-align: right;
+
+  &--amount {
+    color: $success;
+    font-size: 0.9375rem;
+    font-weight: 800;
+  }
+
+  &--ref {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    color: $text-light;
+    background: $border;
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+  }
+}
+
+// Bouton téléchargement reçu PDF
+.ndewa-payment__download-receipt-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: calc(100% - 2rem);
+  margin: 0.75rem 1rem 1rem;
+  padding: 0.75rem 1rem;
+  border: 2px solid $primary;
+  border-radius: $radius-md;
+  background: #fff;
+  color: $primary;
+  font-size: 0.9rem;
+  font-weight: 700;
+  font-family: $font;
+  transition: all 0.2s;
+  cursor: pointer;
+
+  i { font-size: 1rem; }
+
+  &:hover:not(:disabled) {
+    background: $primary;
+    color: #fff;
+    box-shadow: 0 4px 14px rgba($primary, 0.3);
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  &--done {
+    border-color: $success;
+    color: $success;
+    background: $success-light;
+
+    &:hover:not(:disabled) {
+      background: $success;
+      color: #fff;
+      box-shadow: 0 4px 14px rgba($success, 0.3);
+    }
+  }
+}
+
+// Spinner inline dans le bouton
+.ndewa-payment__btn-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba($primary, 0.3);
+  border-top-color: $primary;
+  border-radius: 50%;
+  animation: ndewa-spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+// Erreur téléchargement
+.ndewa-payment__receipt-error {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  font-size: 0.8rem;
+  color: $error;
+  padding: 0 1rem 0.75rem;
+  margin: 0;
+  i { font-size: 0.85rem; }
+}
+
+.ndewa-payment__receipt-retry {
+  background: none;
+  border: none;
+  color: $primary;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+  font-family: $font;
+  &:hover { color: $primary-dark; }
+}

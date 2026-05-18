@@ -31,12 +31,23 @@ export class GeneratePaymentLinkModalComponent implements OnInit {
       location: any;
     }
   ) {
+    // Valeur vide — sera remplie dans ngOnInit une fois les traductions chargées
     this.formGroup = this.formBuilder.group({
-      description: ['PAYMENT_LINK.DEFAULT_DESCRIPTION', Validators.required]
+      description: ['', Validators.required]
     });
   }
 
   ngOnInit(): void {
+    // Initialiser la description traduite une fois les fichiers i18n chargés
+    this.translate.get('PAYMENT_LINK.DEFAULT_DESCRIPTION').subscribe((translated: string) => {
+      // Construire une description par défaut avec le code de l'unité si disponible
+      const unitCode = this.data.room?.code || '';
+      const defaultDesc = unitCode
+        ? `${translated} ${unitCode}`
+        : translated;
+      this.formGroup.patchValue({ description: defaultDesc });
+    });
+
     // Vérifier d'abord s'il existe déjà un lien pour cette location
     this.checkExistingLink();
   }

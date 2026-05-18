@@ -4892,5 +4892,97 @@
       "SUCCESS_TEXT": "Vérifiez votre boîte mail (et vos spams). Cliquez sur le lien de confirmation, puis revenez vous connecter.",
       "BACK_TO_LOGIN": "Retour à la connexion"
     }
+  },
+  "PAYMENT_PAGE": {
+    "SECURE_BADGE": "Paiement sécurisé",
+    "LOADING": "Chargement du paiement…",
+    "INVALID_LINK_TITLE": "Lien invalide",
+    "STEPS": {
+      "METHOD": "Moyen de paiement",
+      "DETAILS": "Détails",
+      "CONFIRMATION": "Confirmation"
+    },
+    "CONTEXT": {
+      "UNIT_LABEL": "Unité",
+      "RENT_TITLE": "Paiement de loyer",
+      "SUBSCRIPTION_TITLE": "Souscription Ndewa360°",
+      "PREMIUM_TITLE": "Accès Premium",
+      "WALLET_TITLE": "Dépôt wallet"
+    },
+    "METHOD_STEP": {
+      "TITLE": "Comment souhaitez-vous payer ?",
+      "ORANGE_MONEY": "Orange Money",
+      "ORANGE_MONEY_DESC": "Paiement via votre compte Orange",
+      "MTN_MONEY": "MTN Mobile Money",
+      "MTN_MONEY_DESC": "Paiement via votre compte MTN",
+      "CARD": "Carte bancaire",
+      "SECURITY_NOTE": "Toutes les transactions sont chiffrées et sécurisées"
+    },
+    "DETAILS_STEP": {
+      "AMOUNT_LABEL": "Montant à payer",
+      "AMOUNT_PLACEHOLDER": "Saisissez le montant",
+      "CURRENCY": "FCFA",
+      "ERROR_MIN": "Montant minimum : 100 FCFA",
+      "ERROR_MAX": "Montant maximum : 10 000 000 FCFA",
+      "ERROR_REQUIRED": "Veuillez saisir un montant",
+      "PHONE_LABEL": "Numéro de téléphone",
+      "PHONE_PLACEHOLDER": "6XX XXX XXX",
+      "PHONE_ERROR": "Numéro invalide. Format : 6XXXXXXXX",
+      "INSTRUCTION_1": "Saisissez votre numéro et confirmez",
+      "INSTRUCTION_2": "Vous recevrez une notification sur votre téléphone",
+      "INSTRUCTION_3": "Confirmez le paiement avec votre code PIN",
+      "PAYMENT_METHOD_LABEL": "Moyen de paiement",
+      "TOTAL_LABEL": "Total",
+      "PAY_BUTTON": "Payer"
+    },
+    "PROCESSING_STEP": {
+      "CARD_TITLE": "Redirection vers le paiement sécurisé…",
+      "CARD_DESC": "Vous allez être redirigé vers la page de paiement par carte.",
+      "MOBILE_INIT_TITLE": "Initialisation du paiement…",
+      "MOBILE_INIT_DESC_ORANGE": "Connexion au service Orange Money en cours, veuillez patienter.",
+      "MOBILE_INIT_DESC_MTN": "Connexion au service MTN Mobile Money en cours, veuillez patienter.",
+      "PENDING_TITLE": "En attente de confirmation",
+      "PENDING_DESC": "Une notification a été envoyée au numéro",
+      "PENDING_PIN": "Confirmez le paiement avec votre code PIN.",
+      "USSD_LABEL": "Ou composez ce code :",
+      "POLLING_HINT": "Vérification automatique…",
+      "EXPIRES_AT": "Expire à"
+    },
+    "RESULT": {
+      "SUCCESS_TITLE": "Paiement réussi !",
+      "SUCCESS_MESSAGE": "Votre paiement a été traité avec succès.",
+      "RECEIPT_SUMMARY_TITLE": "Récapitulatif du paiement",
+      "RECEIPT_TENANT": "Locataire",
+      "RECEIPT_PROPERTY": "Propriété",
+      "RECEIPT_UNIT": "Unité",
+      "RECEIPT_AMOUNT": "Montant payé",
+      "RECEIPT_DATE": "Date",
+      "RECEIPT_REF": "Référence",
+      "DOWNLOAD_RECEIPT": "Télécharger le reçu PDF",
+      "GENERATING_RECEIPT": "Génération du reçu…",
+      "RECEIPT_DOWNLOADED": "Reçu téléchargé",
+      "RECEIPT_ERROR": "Impossible de télécharger le reçu. Réessayez dans quelques instants.",
+      "RECEIPT_RETRY": "Réessayer",
+      "BACK_BUTTON": "Retour",
+      "PRINT_BUTTON": "Imprimer",
+      "FAILED_TITLE": "Paiement échoué",
+      "FAILED_DEFAULT_MESSAGE": "Une erreur est survenue lors du traitement de votre paiement.",
+      "RETRY_BUTTON": "Réessayer",
+      "CANCELLED_TITLE": "Paiement annulé",
+      "CANCELLED_MESSAGE": "Vous avez annulé le paiement. Aucun montant n'a été débité.",
+      "RESTART_BUTTON": "Recommencer",
+      "SUPPORT_NOTE": "Besoin d'aide ? Contactez notre support."
+    },
+    "FOOTER": {
+      "TERMS": "Conditions",
+      "PRIVACY": "Confidentialité",
+      "SUPPORT": "Support"
+    },
+    "METHODS": {
+      "ORANGE_MONEY": "Orange Money",
+      "MTN_MONEY": "MTN Mobile Money",
+      "CARD": "Carte bancaire",
+      "EASY_TRANSACT": "Easy Transact"
+    }
   }
 }
