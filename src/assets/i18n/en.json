@@ -4957,6 +4957,7 @@
       "RECEIPT_AMOUNT": "Amount paid",
       "RECEIPT_DATE": "Date",
       "RECEIPT_REF": "Reference",
+      "RECEIPT_METHOD": "Payment method",
       "DOWNLOAD_RECEIPT": "Download PDF receipt",
       "GENERATING_RECEIPT": "Generating receipt…",
       "RECEIPT_DOWNLOADED": "Receipt downloaded",

@@ -374,8 +374,12 @@
               <div class="ndewa-payment__receipt-row">
                 <span class="ndewa-payment__receipt-label">{{ 'PAYMENT_PAGE.RESULT.RECEIPT_AMOUNT' | translate }}</span>
                 <span class="ndewa-payment__receipt-value ndewa-payment__receipt-value--amount">
-                  {{ formatAmount(paymentDetails?.amount || 0) }}
+                  {{ formatAmount(paidAmount) }}
                 </span>
+              </div>
+              <div class="ndewa-payment__receipt-row" *ngIf="selectedMethod">
+                <span class="ndewa-payment__receipt-label">{{ 'PAYMENT_PAGE.RESULT.RECEIPT_METHOD' | translate }}</span>
+                <span class="ndewa-payment__receipt-value">{{ getMethodLabel(selectedMethod) }}</span>
               </div>
               <div class="ndewa-payment__receipt-row">
                 <span class="ndewa-payment__receipt-label">{{ 'PAYMENT_PAGE.RESULT.RECEIPT_DATE' | translate }}</span>

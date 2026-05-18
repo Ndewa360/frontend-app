@@ -399,11 +399,21 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
     const extRef = this.route.snapshot.queryParams['ext'] || null;
     const refToCheck = extRef || this.token;
 
+    // Charger les détails du lien pour avoir le montant et les infos dans le récapitulatif
+    this.loadStripe();
+    this.loadPaymentDetails();
+
     this.paymentService.checkPaymentStatus(refToCheck)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res) => {
           if (res.data.status === 'SUCCESS') {
+            // Stocker l'externalRef pour le téléchargement du reçu
+            this.externalRef = extRef || res.data.externalRef || refToCheck;
+            // Stocker le montant depuis la transaction si paymentDetails n'est pas encore chargé
+            if (res.data.amount && !this.amountForm.getRawValue().amount) {
+              this.amountForm.patchValue({ amount: res.data.amount });
+            }
             this.paymentStatus = 'success';
             this.currentStep = 'result';
             this.handlePostPaymentSuccess();
@@ -533,8 +543,13 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
     };
   }
 
-  get amount(): number {
-    return this.amountForm.getRawValue().amount || 0;
+  /**
+   * Montant réellement payé — priorité : valeur du formulaire (saisie par l'utilisateur
+   * ou pré-remplie depuis le lien), puis montant du lien de paiement.
+   * Utilisé dans le récapitulatif de succès pour éviter d'afficher 0.
+   */
+  get paidAmount(): number {
+    return this.amountForm.getRawValue().amount || this.paymentDetails?.amount || 0;
   }
 
   /**
@@ -545,7 +560,9 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
     return /^[A-Z_]+(\.[A-Z_]+)+$/.test(value?.trim() || '');
   }
 
-  get isAmountValid(): boolean {
+  get amount(): number {
+    return this.amountForm.getRawValue().amount || 0;
+  }
     // Un champ disabled rend le FormGroup DISABLED (pas VALID) en Angular
     // On considère le montant valide si le form est valid OU disabled (montant fixé)
     return this.amountForm.valid || this.amountForm.disabled;

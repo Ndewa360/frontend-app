@@ -4962,6 +4962,7 @@
       "RECEIPT_AMOUNT": "Montant payé",
       "RECEIPT_DATE": "Date",
       "RECEIPT_REF": "Référence",
+      "RECEIPT_METHOD": "Moyen de paiement",
       "DOWNLOAD_RECEIPT": "Télécharger le reçu PDF",
       "GENERATING_RECEIPT": "Génération du reçu…",
       "RECEIPT_DOWNLOADED": "Reçu téléchargé",
