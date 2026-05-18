@@ -222,20 +222,60 @@ $font:          'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 // ─── Alerte ───────────────────────────────────────────────────────────────────
 .wallet-alert {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.75rem;
   padding: 0.875rem 1rem;
   border-radius: 4px;
   margin-bottom: 1.5rem;
   font-size: 0.875rem;
 
-  &__icon { width: 1.25rem; height: 1.25rem; flex-shrink: 0; }
+  &__icon { width: 1.25rem; height: 1.25rem; flex-shrink: 0; margin-top: 0.1rem; }
+
+  &__body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.5rem;
+    margin-top: 0.25rem;
+    font-size: 0.8125rem;
+    opacity: 0.9;
+  }
+
+  &__sep { opacity: 0.4; }
+
+  &__polling {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.4rem;
+    font-size: 0.75rem;
+    opacity: 0.75;
+  }
+
+  &__spinner {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: wallet-spin 0.7s linear infinite;
+    flex-shrink: 0;
+  }
 
   &--warning {
     background: $warning-light;
     border: 1px solid rgba($warning, 0.3);
     color: darken($warning, 25%);
   }
+}
+
+@keyframes wallet-spin {
+  to { transform: rotate(360deg); }
 }
 
 // ─── KPI Grid ─────────────────────────────────────────────────────────────────

@@ -77,4 +77,6 @@ export interface WalletStateModel {
   withdrawLoading: boolean;
   depositLoading: boolean;
   error: string | null;
+  /** ID du retrait en cours de polling (null si aucun) */
+  pollingWithdrawalId: string | null;
 }

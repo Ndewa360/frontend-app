@@ -89,11 +89,24 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0"/>
         </svg>
-        <div>
-          <strong>Retrait en cours de traitement</strong> —
-          {{ formatCurrency(summary.pendingWithdrawal?.amount) }} via {{ getMethodLabel(summary.pendingWithdrawal?.method) }}
-          <span class="wallet-badge wallet-badge--warning ml-2">{{ getStatusLabel(summary.pendingWithdrawal?.status) }}</span>
+        <div class="wallet-alert__body">
+          <strong>Retrait en cours de traitement</strong>
+          <div class="wallet-alert__details">
+            <span>Demandé : <strong>{{ formatCurrency(summary.pendingWithdrawal?.amount) }}</strong></span>
+            <span class="wallet-alert__sep">·</span>
+            <span>Frais (2%) : <strong class="wallet-debit">− {{ formatCurrency(summary.pendingWithdrawal?.fees) }}</strong></span>
+            <span class="wallet-alert__sep">·</span>
+            <span>Vous recevrez : <strong class="wallet-credit">{{ formatCurrency(summary.pendingWithdrawal?.netAmount) }}</strong></span>
+            <span class="wallet-alert__sep">·</span>
+            <span>Via {{ getMethodLabel(summary.pendingWithdrawal?.method) }}</span>
+          </div>
+          <!-- Indicateur de polling actif -->
+          <div *ngIf="pollingWithdrawalId" class="wallet-alert__polling">
+            <span class="wallet-alert__spinner"></span>
+            Vérification du statut en cours…
+          </div>
         </div>
+        <span class="wallet-badge wallet-badge--warning">{{ getStatusLabel(summary.pendingWithdrawal?.status) }}</span>
       </div>
 
       <!-- ═══ VUE D'ENSEMBLE ═══ -->

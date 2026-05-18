@@ -23,6 +23,7 @@ export class WalletDashboardComponent implements OnInit, OnDestroy {
   @Select(WalletState.loading)         loading$: Observable<boolean>;
   @Select(WalletState.totalRentPayments) totalRentPayments$: Observable<number>;
   @Select(WalletState.totalDeposits)   totalDeposits$: Observable<number>;
+  @Select(WalletState.pollingWithdrawalId) pollingWithdrawalId$: Observable<string | null>;
 
   summary: WalletSummary | null = null;
   rentPayments: WalletTransaction[] = [];
@@ -31,6 +32,7 @@ export class WalletDashboardComponent implements OnInit, OnDestroy {
   loading = false;
   totalRentPayments = 0;
   totalDeposits = 0;
+  pollingWithdrawalId: string | null = null;
 
   activeTab: 'overview' | 'rent' | 'deposits' | 'withdrawals' = 'overview';
   rentPage = 1;
@@ -57,6 +59,7 @@ export class WalletDashboardComponent implements OnInit, OnDestroy {
     this.loading$.pipe(takeUntil(this.destroy$)).subscribe(l => this.loading = l);
     this.totalRentPayments$.pipe(takeUntil(this.destroy$)).subscribe(t => this.totalRentPayments = t);
     this.totalDeposits$.pipe(takeUntil(this.destroy$)).subscribe(t => this.totalDeposits = t);
+    this.pollingWithdrawalId$.pipe(takeUntil(this.destroy$)).subscribe(id => this.pollingWithdrawalId = id);
   }
 
   ngOnDestroy(): void {

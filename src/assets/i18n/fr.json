@@ -1225,7 +1225,9 @@
     "PAYMENT_PROCESS_ERROR": "Une erreur est survenue lors du traitement du paiement.",
     "TRIAL_STARTED_SUCCESS": "Votre essai gratuit de 60 jours Premium a démarré ! Profitez de toutes les fonctionnalités.",
     "SOUSCRIPTION_REMOVED_SUCCESS": "Votre souscription a été retirée avec succès.",
-    "WALLET_WITHDRAWAL_SUCCESS": "Votre demande de retrait a été envoyée avec succès.",
+    "WALLET_WITHDRAWAL_SUCCESS": "Retrait effectué avec succès.",
+    "WALLET_WITHDRAWAL_PROCESSING": "Votre demande de retrait est en cours de traitement. Vous serez notifié dès la confirmation.",
+    "WALLET_WITHDRAWAL_TIMEOUT": "Le retrait est toujours en cours. Vous recevrez une notification dès sa finalisation.",
     "WALLET_WITHDRAWAL_ERROR": "Impossible d'effectuer le retrait. Veuillez réessayer.",
     "MANAGER_PERMISSIONS_UPDATED": "Les droits du gérant ont été mis à jour avec succès.",
     "MANAGER_REVOKED_SUCCESS": "Le gérant a été révoqué avec succès.",
@@ -1887,7 +1889,7 @@
       "SUBTITLE_BOLD": "Fini les cahiers et le désordre.",
       "SUBTITLE_TEXT": "Ndewa360 digitalise la gestion de vos chambres et appartements avec une plateforme simple, automatisée et transparente.",
       "BUTTONS": {
-        "START_FREE": "Je gère mon bien maintenant",
+        "START_FREE": "Lancez-vous dès maintenant",
         "WATCH_DEMO": "Voir la démo"
       },
       "RATING": "4.9/5",

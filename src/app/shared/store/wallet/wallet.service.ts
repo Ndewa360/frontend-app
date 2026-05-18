@@ -34,6 +34,14 @@ export class WalletHttpService {
     return this.http.post<{ data: WithdrawalRequest }>(`${this.api}/withdraw`, { amount, method, recipient });
   }
 
+  /**
+   * Polling du statut d'un retrait — appelle GET /wallet/withdraw/:id/status.
+   * Interroge le provider si le retrait est encore PENDING/PROCESSING.
+   */
+  getWithdrawalStatus(withdrawalId: string): Observable<{ data: WithdrawalRequest }> {
+    return this.http.get<{ data: WithdrawalRequest }>(`${this.api}/withdraw/${withdrawalId}/status`);
+  }
+
   initiateDeposit(amount: number, provider: PaymentProvider, phoneNumber?: string, successUrl?: string, cancelUrl?: string): Observable<{ data: DepositInitiateResult }> {
     return this.http.post<{ data: DepositInitiateResult }>(`${this.api}/deposit/initiate`, {
       amount, provider, phoneNumber, successUrl, cancelUrl,
