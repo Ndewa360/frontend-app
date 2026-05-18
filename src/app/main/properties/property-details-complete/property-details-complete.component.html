@@ -120,6 +120,7 @@
           [propertyId]="propertyId"
           [units]="units$ | async"
           [tenants]="tenants$ | async"
+          [locations]="(locations$ | async) ?? []"
           [history]="history$ | async"
           [loading]="(loadingStates$ | async)?.property || false"
           (quickAction)="onQuickAction($event)"> 
@@ -157,7 +158,11 @@
       <!-- Onglet Finances -->
       <div *ngIf="activeTab === 'finances'" class="tab-panel">
         <app-property-finances
-          [propertyId]="propertyId">
+          [propertyId]="propertyId"
+          [units]="(units$ | async) ?? []"
+          [tenants]="(tenants$ | async) ?? []"
+          [locations]="(locations$ | async) ?? []"
+          (quickAction)="onQuickAction($event)">
         </app-property-finances>
       </div>
 

@@ -15,6 +15,7 @@ import {
   LocataireState,
   LocationAction,
   LocationState,
+  LocationModel,
   StatisticAction
 } from 'src/app/shared/store';
 import { PropertyDataService, HistoryItem } from '../services/property-data.service';
@@ -23,6 +24,7 @@ import { UpdatePropertyComponent, UpdatePropertyDialogData } from '../update-pro
 import { GaleryComponent } from '../../room/components/galery/galery.component';
 import { PropertyGalleryComponent } from '../components/property-gallery/property-gallery.component';
 import { ModernUnitModalComponent } from '../components/modern-unit-modal/modern-unit-modal.component';
+import { ModernTenantModalComponent } from '../components/modern-tenant-modal/modern-tenant-modal.component';
 import { AssignLocationModalService } from '../../assign-location/services/assign-location-modal.service';
 import { ModernContractTerminationModalComponent } from '../components/modern-contract-termination-modal/modern-contract-termination-modal.component';
 import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
@@ -56,6 +58,7 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
   property$: Observable<PropertyModel | null>;
   units$: Observable<RoomModel[]>;
   tenants$: Observable<LocataireModel[]>;
+  locations$: Observable<LocationModel[]>;
   history$: Observable<HistoryItem[]>;
   loadingStates$: Observable<{ property: boolean; units: boolean; tenants: boolean; }>;
 
@@ -85,6 +88,7 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
     this.property$ = new Observable();
     this.units$ = new Observable();
     this.tenants$ = new Observable();
+    this.locations$ = new Observable();
     this.history$ = new Observable();
     this.loadingStates$ = new Observable();
   }
@@ -107,6 +111,7 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
     this.property$ = this.propertyDataService.getProperty(this.propertyId);
     this.units$ = this.store.select(RoomState.selectStateRoomByPropertyId(this.propertyId));
     this.tenants$ = this.store.select(LocataireState.selectStateLocataireByPropertyId(this.propertyId));
+    this.locations$ = this.store.select(LocationState.selectStateLocationByPropertyId(this.propertyId));
     this.history$ = this.propertyDataService.getPropertyHistory(this.propertyId);
     this.loadingStates$ = this.propertyDataService.getLoadingStates();
 
@@ -318,7 +323,21 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
 
   onAddTenant(): void {
     if (!this.canPerformAction('add_tenant')) return;
-    // TODO: implémenter l'ajout de locataire
+    if (!this.propertyId) return;
+
+    const property = this.store.selectSnapshot(PropertyState.selectStateProperty(this.propertyId));
+    if (!property) return;
+
+    const dialogRef = this.dialog.open(ModernTenantModalComponent, {
+      width: '100%',
+      maxWidth: '800px',
+      disableClose: true,
+      data: { mode: 'create', property }
+    });
+
+    dialogRef.afterClosed()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(result => { if (result) this.reloadPropertyData(); });
   }
 
   goBack(): void {
@@ -347,11 +366,39 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
 
   onQuickAction(actionType: string): void {
     switch (actionType) {
-      case 'add_unit':         this.onAddUnit(); break;
-      case 'add_tenant':       if (this.canPerformAction('add_tenant')) this.onAddTenant(); break;
-      case 'financial_report': if (this.canPerformAction('financial_report')) this.generateFinancialReport(); break;
-      case 'schedule_maintenance': this.scheduleMaintenance(); break;
-      case 'edit_property':    this.onEditProperty(); break;
+      case 'add_unit':
+        this.onAddUnit();
+        break;
+      case 'add_tenant':
+        if (this.canPerformAction('add_tenant')) this.onAddTenant();
+        break;
+      case 'financial_report':
+        if (this.canPerformAction('financial_report')) this.generateFinancialReport();
+        break;
+      case 'schedule_maintenance':
+        this.scheduleMaintenance();
+        break;
+      case 'edit_property':
+        this.onEditProperty();
+        break;
+
+      // ── Actions depuis les blocs empty-state de l'overview ──────────────
+      case 'go_add_unit':
+        // Naviguer vers le tab unités ET ouvrir le modal de création
+        this.setActiveTab('units');
+        setTimeout(() => this.onAddUnit(), 150);
+        break;
+
+      case 'go_add_tenant':
+        // Naviguer vers le tab locataires ET ouvrir le modal de création
+        this.setActiveTab('tenants');
+        setTimeout(() => this.onAddTenant(), 150);
+        break;
+
+      case 'go_assign_tenant':
+        // Naviguer vers le tab unités pour que l'utilisateur assigne depuis les cartes
+        this.setActiveTab('units');
+        break;
     }
   }
 

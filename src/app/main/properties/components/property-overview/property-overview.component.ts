@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges } from '@angular/core';
-import { PropertyModel, RoomModel, LocataireModel } from 'src/app/shared/store';
+import { PropertyModel, RoomModel, LocataireModel, LocationModel } from 'src/app/shared/store';
 import { PropertyMetrics, FinancialSummary, PropertyMetricsService } from '../../services/property-metrics.service';
 import { HistoryItem } from '../../services/property-data.service';
 import { PropertyDetailsTranslationService } from '../../services/property-details-translation.service';
@@ -16,6 +16,7 @@ export class PropertyOverviewComponent implements OnInit, OnChanges {
   @Input() propertyId: string | null = null;
   @Input() units: RoomModel[] = [];
   @Input() tenants: LocataireModel[] = [];
+  @Input() locations: LocationModel[] = [];
   @Input() history: HistoryItem[] = [];
   @Input() loading: boolean = false;
 
@@ -296,6 +297,37 @@ export class PropertyOverviewComponent implements OnInit, OnChanges {
 
   getTotalUnitsCount(): number {
     return this.units?.length || this.property?.roomLength || 0;
+  }
+
+  /** Nombre d'unités libres (non assignées à un locataire actif) */
+  getUnassignedUnitsCount(): number {
+    if (!this.units) return 0;
+    return this.units.filter(unit => unit.isFree).length;
+  }
+
+  // ── Helpers pour les blocs empty-state ────────────────────────────────────
+
+  /** true si aucune unité n'existe → afficher le bloc "Ajouter une unité" */
+  get showNoUnitsBlock(): boolean {
+    return (this.units || []).length === 0;
+  }
+
+  /** true si des unités existent mais aucun locataire → afficher le bloc "Ajouter un locataire" */
+  get showNoTenantsBlock(): boolean {
+    return (this.units || []).length > 0 && (this.tenants || []).length === 0;
+  }
+
+  /** true si unités + locataires existent mais aucun contrat actif → afficher le bloc "Assigner" */
+  get showNoLocationsBlock(): boolean {
+    const hasUnits   = (this.units   || []).length > 0;
+    const hasTenants = (this.tenants || []).length > 0;
+    const hasActiveLocation = (this.locations || []).some(loc => loc.isRunning);
+    return hasUnits && hasTenants && !hasActiveLocation;
+  }
+
+  /** true si au moins un bloc empty-state est actif → masquer le dashboard */
+  get showEmptyState(): boolean {
+    return this.showNoUnitsBlock || this.showNoTenantsBlock || this.showNoLocationsBlock;
   }
 
   getValueAppreciation(): number {

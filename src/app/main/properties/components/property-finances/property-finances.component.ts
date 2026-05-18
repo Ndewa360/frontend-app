@@ -1,11 +1,14 @@
-import { Component, Input, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
 import {
   StatisticAction,
-  StatisticPaymentStateType
+  StatisticPaymentStateType,
+  RoomModel,
+  LocataireModel,
+  LocationModel
 } from 'src/app/shared/store';
 import { StatisticState } from 'src/app/shared/store/statistic-data/statistic.state';
 import { ExcelExportService } from 'src/app/shared/services/excel-export.service';
@@ -26,6 +29,11 @@ export interface ExportData {
 export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
   @Input() propertyId: string = '';
   @Input() finances: any = null; // Garde pour compatibilité
+  @Input() units: RoomModel[] = [];
+  @Input() tenants: LocataireModel[] = [];
+  @Input() locations: LocationModel[] = [];
+
+  @Output() quickAction = new EventEmitter<string>();
 
   selectedYear: number = new Date().getFullYear();
   // 4 onglets clairs et distincts
@@ -158,6 +166,28 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
     return !this.hasFinancialData() && !this.isLoading;
   }
 
+  // ── Getters pour les blocs empty-state (même logique que l'overview) ──────
+
+  get showNoUnitsBlock(): boolean {
+    return (this.units || []).length === 0;
+  }
+
+  get showNoTenantsBlock(): boolean {
+    return (this.units || []).length > 0 && (this.tenants || []).length === 0;
+  }
+
+  get showNoLocationsBlock(): boolean {
+    const hasUnits          = (this.units     || []).length > 0;
+    const hasTenants        = (this.tenants   || []).length > 0;
+    const hasActiveLocation = (this.locations || []).some(loc => loc.isRunning);
+    return hasUnits && hasTenants && !hasActiveLocation;
+  }
+
+  /** true si au moins un bloc empty-state est actif → masquer le dashboard financier */
+  get showEmptyState(): boolean {
+    return this.showNoUnitsBlock || this.showNoTenantsBlock || this.showNoLocationsBlock;
+  }
+
   /**
    * Retourne l'année actuelle
    */
@@ -286,6 +316,10 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
     if (!this.propertyId) return;
     this.isLoading = true;
     this.loadFinancialData();
+  }
+
+  onQuickAction(action: string): void {
+    this.quickAction.emit(action);
   }
 
   // Méthode diagnoseFinancialData supprimée (dupliquée)
