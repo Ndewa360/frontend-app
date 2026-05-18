@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'src/environments/environment';
 import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
 
@@ -12,21 +13,17 @@ import { LanguageUrlService } from 'src/app/shared/services/language-url.service
 })
 export class AuthAsktoValidEmailComponent implements OnInit, OnDestroy {
 
-  /** Email passé en query param depuis la page de login */
   userEmail = '';
-
-  /** true si l'utilisateur arrive ici parce que le délai 24h est dépassé */
   isExpired = false;
-
   resending = false;
   resendSuccess = false;
-
   currentLang = 'fr';
 
   constructor(
     private route: ActivatedRoute,
     private http: HttpClient,
     private toastr: ToastrService,
+    private translate: TranslateService,
     private languageUrlService: LanguageUrlService,
   ) {}
 
@@ -50,7 +47,7 @@ export class AuthAsktoValidEmailComponent implements OnInit, OnDestroy {
           this.resending = false;
           this.resendSuccess = true;
           this.toastr.success(
-            'Email de confirmation renvoyé ! Vérifiez votre boîte mail.',
+            this.translate.instant('NOTIFICATIONS.EMAIL_SENT_SUCCESS'),
             'Ndewa360°',
             { timeOut: 6000 }
           );
@@ -58,7 +55,7 @@ export class AuthAsktoValidEmailComponent implements OnInit, OnDestroy {
         error: () => {
           this.resending = false;
           this.toastr.error(
-            'Impossible de renvoyer l\'email. Réessayez dans quelques instants.',
+            this.translate.instant('NOTIFICATIONS.GENERIC_ERROR_RETRY'),
             'Ndewa360°'
           );
         },

@@ -1784,7 +1784,7 @@
     "SUPPORT": "Support",
     "PRICING": "Prices",
     "SIGN_IN": "Log in",
-    "SIGN_UP": "Start for free",
+    "SIGN_UP": "Get Started",
     "OPEN_MENU": "Open menu",
     "CLOSE_MENU": "Close menu",
     "LOGGED_IN_AS": "Logged in as",
@@ -1888,7 +1888,7 @@
       "SUBTITLE_BOLD": "No more notebooks and disorder.",
       "SUBTITLE_TEXT": "Ndewa360 digitalizes the management of your rooms and apartments with a simple, automated and transparent platform.",
       "BUTTONS": {
-        "START_FREE": "Manage my property now",
+        "START_FREE": "Get started",
         "WATCH_DEMO": "Watch demo"
       },
       "RATING": "4.9/5",
@@ -2025,7 +2025,7 @@
           "ALL_FEATURES": "100% of features",
           "EMAIL_SUPPORT": "Email support"
         },
-        "BUTTON": "Start for free"
+        "BUTTON": "Get Started"
       },
       "PREMIUM": {
         "TITLE": "Premium",
@@ -4736,6 +4736,156 @@
         "START_FREE": "Create my free account",
         "CALL_NOW": "Call now"
       }
+    }
+  },
+
+  "ONBOARDING": {
+    "HEADER": {
+      "BRAND": "Ndewa360",
+      "SUBTITLE": "Sign up",
+      "ALREADY_ACCOUNT": "Already have an account?"
+    },
+    "STEPS": {
+      "STEP1_LABEL": "Your property",
+      "STEP2_LABEL": "Your units",
+      "STEP3_LABEL": "Your tenants",
+      "STEP4_LABEL": "Your account"
+    },
+    "STEP1": {
+      "TITLE": "Your property",
+      "SUBTITLE": "Tell us where your property is located. You can fill in the details later.",
+      "PROPERTY_NAME_LABEL": "Property name",
+      "PROPERTY_NAME_PLACEHOLDER": "Ex: Les Palmiers Residence",
+      "PROPERTY_NAME_ERROR": "Name is required (min. 2 characters)",
+      "COUNTRY_LABEL": "Country",
+      "COUNTRY_PLACEHOLDER": "-- Select a country --",
+      "COUNTRY_ERROR": "Please select a country",
+      "CITY_LABEL": "City",
+      "CITY_PLACEHOLDER": "-- Select a city --",
+      "CITY_LOADING": "Loading...",
+      "CITY_ERROR": "Please select a city",
+      "ADDRESS_LABEL": "Neighbourhood / Address",
+      "ADDRESS_PLACEHOLDER": "Ex: Bastos District, Mango Street",
+      "ADDRESS_ERROR": "Address is required",
+      "PROPERTY_TYPE_LABEL": "Property type",
+      "TYPES": {
+        "APARTMENT": "Apartment",
+        "HOUSE": "House",
+        "COMMERCIAL": "Commercial space",
+        "MIXED": "Mixed use"
+      }
+    },
+    "STEP2": {
+      "TITLE": "Your rental units",
+      "SUBTITLE": "Add the units in your property (rooms, studios, apartments).",
+      "FREE_PLAN_INFO": "Free plan: up to <strong>8 units per property</strong>. You can add up to 5 here and complete from the dashboard. Upgrade to Premium for unlimited units.",
+      "UNIT_LABEL": "Unit",
+      "REMOVE_UNIT": "Remove",
+      "TYPE_LABEL": "Type",
+      "PRICE_LABEL": "Monthly rent (FCFA)",
+      "PRICE_PLACEHOLDER": "Ex: 50000",
+      "CAUTION_LABEL": "Security deposit required",
+      "CAUTION_AMOUNT_PLACEHOLDER": "Deposit amount",
+      "ADD_UNIT": "+ Add a unit",
+      "ROOM_TYPES": {
+        "ROOM": "Room",
+        "STUDIO": "Studio",
+        "SIMPLE_APARTMENT": "Simple apartment",
+        "FURNISHED_APARTMENT": "Furnished apartment"
+      }
+    },
+    "STEP3": {
+      "TITLE": "Your tenants",
+      "SUBTITLE": "Do you already have tenants? You can assign them to their units after creating your account.",
+      "HAS_TENANTS_LABEL": "I already have tenants",
+      "TENANT_LABEL": "Tenant",
+      "REMOVE_TENANT": "Remove",
+      "FULL_NAME_LABEL": "Full name",
+      "FULL_NAME_PLACEHOLDER": "John Doe",
+      "PHONE_LABEL": "Phone",
+      "PHONE_PLACEHOLDER": "+237 6XX XXX XXX",
+      "EMAIL_LABEL": "Email (optional)",
+      "EMAIL_PLACEHOLDER": "john@example.com",
+      "ADD_TENANT": "+ Add a tenant",
+      "NO_TENANTS_MESSAGE": "No problem! You can add your tenants from the dashboard."
+    },
+    "STEP4": {
+      "TITLE": "Your account",
+      "SUBTITLE": "Last step! Create your account to access your dashboard.",
+      "NAME_LABEL": "Full name",
+      "NAME_PLACEHOLDER": "John Doe",
+      "NAME_ERROR": "Name is required",
+      "EMAIL_LABEL": "Email",
+      "EMAIL_PLACEHOLDER": "john@example.com",
+      "EMAIL_ERROR": "Invalid email",
+      "PHONE_LABEL": "Phone",
+      "PHONE_PLACEHOLDER": "+237 6XX XXX XXX",
+      "PHONE_ERROR": "Invalid number",
+      "PASSWORD_LABEL": "Password",
+      "PASSWORD_PLACEHOLDER": "Minimum 8 characters",
+      "PASSWORD_ERROR": "Minimum 8 characters",
+      "TERMS_TEXT": "I accept the",
+      "TERMS_LINK": "terms of use",
+      "PRIVACY_TEXT": "and the",
+      "PRIVACY_LINK": "privacy policy",
+      "TERMS_ERROR": "You must accept the terms",
+      "SUMMARY_TITLE": "What will be created automatically:",
+      "SUMMARY_PROPERTY": "Property:",
+      "SUMMARY_UNITS": "rental unit(s)",
+      "SUMMARY_TENANTS": "tenant(s)",
+      "SUMMARY_EMPTY": "No property data (you can add everything from the dashboard)",
+      "SUBMIT_BUTTON": "Create my account",
+      "SUBMITTING": "Creating..."
+    },
+    "NAVIGATION": {
+      "PREVIOUS": "Previous",
+      "NEXT": "Next",
+      "SKIP": "Skip this step"
+    },
+    "ERRORS": {
+      "LOAD_COUNTRIES": "Unable to load countries",
+      "LOAD_CITIES": "Unable to load cities"
+    }
+  },
+
+  "EMAIL_CONFIRMATION_BANNER": {
+    "TITLE": "Confirm your email",
+    "TIME_LEFT": "— you have",
+    "EXPIRED": "— deadline expired, resend the email",
+    "EMAIL_SENT_TO": "An email was sent to",
+    "CHECK_SPAM": "Check your spam if needed.",
+    "RESEND": "Resend email",
+    "RESENDING": "Sending..."
+  },
+
+  "AUTH_CONFIRM_EMAIL": {
+    "NORMAL": {
+      "TITLE": "Congratulations!",
+      "SUBTITLE": "Your account has been created. Complete your registration by confirming your email.",
+      "STEP1_LABEL": "Step 1",
+      "STEP1_TEXT": "Open the mailbox you used to sign up.",
+      "STEP2_LABEL": "Step 2",
+      "STEP2_TEXT": "Open the no-reply email from Ndewa360 asking you to confirm your email. Check your SPAM folder if you can't find it.",
+      "STEP3_LABEL": "Step 3",
+      "STEP3_TEXT": "Click the confirmation link in the email. Your account will be activated and you can sign in.",
+      "NO_EMAIL": "Didn't receive the email? Check your spam or resend it.",
+      "RESEND_BUTTON": "Resend confirmation email",
+      "RESENDING": "Sending...",
+      "RESEND_SUCCESS": "Email sent!",
+      "SIGNIN_BUTTON": "Sign in"
+    },
+    "EXPIRED": {
+      "TITLE": "Confirmation deadline passed",
+      "SUBTITLE": "Your account confirmation deadline (24h) has passed. For security reasons, you must confirm your email before signing in.",
+      "WHAT_TO_DO_TITLE": "What to do?",
+      "WHAT_TO_DO_TEXT": "Click the button below to receive a new confirmation email. Once your email is confirmed, you can sign in normally.",
+      "EMAIL_LABEL": "Email:",
+      "RESEND_BUTTON": "Resend confirmation email",
+      "RESENDING": "Sending...",
+      "RESEND_SUCCESS": "Email sent! Check your inbox",
+      "SUCCESS_TITLE": "Email sent successfully!",
+      "SUCCESS_TEXT": "Check your inbox (and spam). Click the confirmation link, then come back to sign in.",
+      "BACK_TO_LOGIN": "Back to sign in"
     }
   }
 }

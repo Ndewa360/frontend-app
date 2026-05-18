@@ -1783,7 +1783,7 @@
     "SUPPORT": "Support",
     "PRICING": "Tarifs",
     "SIGN_IN": "Se connecter",
-    "SIGN_UP": "Commencer gratuitement",
+    "SIGN_UP": "Lancez-vous",
     "OPEN_MENU": "Ouvrir le menu",
     "CLOSE_MENU": "Fermer le menu",
     "LOGGED_IN_AS": "Connecté en tant que",
@@ -4741,6 +4741,156 @@
         "START_FREE": "Créer mon compte gratuit",
         "CALL_NOW": "Appeler maintenant"
       }
+    }
+  },
+
+  "ONBOARDING": {
+    "HEADER": {
+      "BRAND": "Ndewa360",
+      "SUBTITLE": "Inscription",
+      "ALREADY_ACCOUNT": "Déjà un compte ?"
+    },
+    "STEPS": {
+      "STEP1_LABEL": "Votre bien",
+      "STEP2_LABEL": "Vos unités",
+      "STEP3_LABEL": "Vos locataires",
+      "STEP4_LABEL": "Votre compte"
+    },
+    "STEP1": {
+      "TITLE": "Votre bien immobilier",
+      "SUBTITLE": "Dites-nous où se trouve votre bien. Vous pourrez compléter les détails plus tard.",
+      "PROPERTY_NAME_LABEL": "Nom du bien",
+      "PROPERTY_NAME_PLACEHOLDER": "Ex: Résidence Les Palmiers",
+      "PROPERTY_NAME_ERROR": "Le nom est requis (min. 2 caractères)",
+      "COUNTRY_LABEL": "Pays",
+      "COUNTRY_PLACEHOLDER": "-- Sélectionner un pays --",
+      "COUNTRY_ERROR": "Veuillez sélectionner un pays",
+      "CITY_LABEL": "Ville",
+      "CITY_PLACEHOLDER": "-- Sélectionner une ville --",
+      "CITY_LOADING": "Chargement...",
+      "CITY_ERROR": "Veuillez sélectionner une ville",
+      "ADDRESS_LABEL": "Quartier / Adresse",
+      "ADDRESS_PLACEHOLDER": "Ex: Quartier Bastos, Rue des Manguiers",
+      "ADDRESS_ERROR": "L'adresse est requise",
+      "PROPERTY_TYPE_LABEL": "Type de bien",
+      "TYPES": {
+        "APARTMENT": "Appartement",
+        "HOUSE": "Maison",
+        "COMMERCIAL": "Local commercial",
+        "MIXED": "Usage mixte"
+      }
+    },
+    "STEP2": {
+      "TITLE": "Vos unités locatives",
+      "SUBTITLE": "Ajoutez les unités de votre bien (chambres, studios, appartements).",
+      "FREE_PLAN_INFO": "Plan gratuit : jusqu'à <strong>8 unités par bien</strong>. Vous pouvez en ajouter jusqu'à 5 ici, et compléter depuis le tableau de bord. Passez au plan Premium pour des unités illimitées.",
+      "UNIT_LABEL": "Unité",
+      "REMOVE_UNIT": "Supprimer",
+      "TYPE_LABEL": "Type",
+      "PRICE_LABEL": "Loyer mensuel (FCFA)",
+      "PRICE_PLACEHOLDER": "Ex: 50000",
+      "CAUTION_LABEL": "Caution requise",
+      "CAUTION_AMOUNT_PLACEHOLDER": "Montant caution",
+      "ADD_UNIT": "+ Ajouter une unité",
+      "ROOM_TYPES": {
+        "ROOM": "Chambre",
+        "STUDIO": "Studio",
+        "SIMPLE_APARTMENT": "Appartement simple",
+        "FURNISHED_APARTMENT": "Appartement meublé"
+      }
+    },
+    "STEP3": {
+      "TITLE": "Vos locataires",
+      "SUBTITLE": "Avez-vous déjà des locataires ? Vous pourrez les assigner à leurs unités après la création du compte.",
+      "HAS_TENANTS_LABEL": "J'ai déjà des locataires",
+      "TENANT_LABEL": "Locataire",
+      "REMOVE_TENANT": "Supprimer",
+      "FULL_NAME_LABEL": "Nom complet",
+      "FULL_NAME_PLACEHOLDER": "Jean Dupont",
+      "PHONE_LABEL": "Téléphone",
+      "PHONE_PLACEHOLDER": "+237 6XX XXX XXX",
+      "EMAIL_LABEL": "Email (optionnel)",
+      "EMAIL_PLACEHOLDER": "jean@exemple.com",
+      "ADD_TENANT": "+ Ajouter un locataire",
+      "NO_TENANTS_MESSAGE": "Pas de problème ! Vous pourrez ajouter vos locataires depuis le tableau de bord."
+    },
+    "STEP4": {
+      "TITLE": "Votre compte",
+      "SUBTITLE": "Dernière étape ! Créez votre compte pour accéder à votre tableau de bord.",
+      "NAME_LABEL": "Nom complet",
+      "NAME_PLACEHOLDER": "Jean Dupont",
+      "NAME_ERROR": "Le nom est requis",
+      "EMAIL_LABEL": "Email",
+      "EMAIL_PLACEHOLDER": "jean@exemple.com",
+      "EMAIL_ERROR": "Email invalide",
+      "PHONE_LABEL": "Téléphone",
+      "PHONE_PLACEHOLDER": "+237 6XX XXX XXX",
+      "PHONE_ERROR": "Numéro invalide",
+      "PASSWORD_LABEL": "Mot de passe",
+      "PASSWORD_PLACEHOLDER": "Minimum 8 caractères",
+      "PASSWORD_ERROR": "Minimum 8 caractères",
+      "TERMS_TEXT": "J'accepte les",
+      "TERMS_LINK": "conditions d'utilisation",
+      "PRIVACY_TEXT": "et la",
+      "PRIVACY_LINK": "politique de confidentialité",
+      "TERMS_ERROR": "Vous devez accepter les conditions",
+      "SUMMARY_TITLE": "Ce qui sera créé automatiquement :",
+      "SUMMARY_PROPERTY": "Bien :",
+      "SUMMARY_UNITS": "unité(s) locative(s)",
+      "SUMMARY_TENANTS": "locataire(s)",
+      "SUMMARY_EMPTY": "Aucune donnée immobilière (vous pourrez tout ajouter depuis le tableau de bord)",
+      "SUBMIT_BUTTON": "Créer mon compte",
+      "SUBMITTING": "Création en cours..."
+    },
+    "NAVIGATION": {
+      "PREVIOUS": "Précédent",
+      "NEXT": "Suivant",
+      "SKIP": "Passer cette étape"
+    },
+    "ERRORS": {
+      "LOAD_COUNTRIES": "Impossible de charger les pays",
+      "LOAD_CITIES": "Impossible de charger les villes"
+    }
+  },
+
+  "EMAIL_CONFIRMATION_BANNER": {
+    "TITLE": "Confirmez votre email",
+    "TIME_LEFT": "— il vous reste",
+    "EXPIRED": "— délai expiré, renvoyez l'email",
+    "EMAIL_SENT_TO": "Un email a été envoyé à",
+    "CHECK_SPAM": "Vérifiez vos spams si nécessaire.",
+    "RESEND": "Renvoyer l'email",
+    "RESENDING": "Envoi..."
+  },
+
+  "AUTH_CONFIRM_EMAIL": {
+    "NORMAL": {
+      "TITLE": "Félicitations !",
+      "SUBTITLE": "Votre compte a été créé. Finalisez votre inscription en confirmant votre email.",
+      "STEP1_LABEL": "Étape 1",
+      "STEP1_TEXT": "Ouvrez votre boîte mail avec laquelle vous vous êtes inscrit.",
+      "STEP2_LABEL": "Étape 2",
+      "STEP2_TEXT": "Ouvrez le mail no-reply de Ndewa360 vous demandant de confirmer votre email. Vérifiez les SPAM si le mail est introuvable.",
+      "STEP3_LABEL": "Étape 3",
+      "STEP3_TEXT": "Cliquez sur le lien de confirmation dans l'email. Votre compte sera activé et vous pourrez vous connecter.",
+      "NO_EMAIL": "Vous n'avez pas reçu l'email ? Vérifiez vos spams ou renvoyez-le.",
+      "RESEND_BUTTON": "Renvoyer l'email de confirmation",
+      "RESENDING": "Envoi en cours...",
+      "RESEND_SUCCESS": "Email envoyé !",
+      "SIGNIN_BUTTON": "Se connecter"
+    },
+    "EXPIRED": {
+      "TITLE": "Délai de confirmation dépassé",
+      "SUBTITLE": "Votre délai de confirmation de compte (24h) est écoulé. Pour des raisons de sécurité, vous devez confirmer votre email avant de pouvoir vous connecter.",
+      "WHAT_TO_DO_TITLE": "Que faire ?",
+      "WHAT_TO_DO_TEXT": "Cliquez sur le bouton ci-dessous pour recevoir un nouvel email de confirmation. Une fois votre email confirmé, vous pourrez vous connecter normalement.",
+      "EMAIL_LABEL": "Email :",
+      "RESEND_BUTTON": "Renvoyer l'email de confirmation",
+      "RESENDING": "Envoi en cours...",
+      "RESEND_SUCCESS": "Email envoyé ! Vérifiez votre boîte mail",
+      "SUCCESS_TITLE": "Email envoyé avec succès !",
+      "SUCCESS_TEXT": "Vérifiez votre boîte mail (et vos spams). Cliquez sur le lien de confirmation, puis revenez vous connecter.",
+      "BACK_TO_LOGIN": "Retour à la connexion"
     }
   }
 }

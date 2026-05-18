@@ -5,12 +5,12 @@
     <div class="bg-primary px-8 py-6">
       <div class="flex items-center justify-between mb-6">
         <div class="flex items-center gap-2">
-          <span class="text-white font-bold text-xl">Ndewa360</span>
-          <span class="text-white/60 text-sm">&middot; Inscription</span>
+          <span class="text-white font-bold text-xl">{{ 'ONBOARDING.HEADER.BRAND' | translate }}</span>
+          <span class="text-white/60 text-sm">&middot; {{ 'ONBOARDING.HEADER.SUBTITLE' | translate }}</span>
         </div>
         <a [routerLink]="['/' + getCurrentLanguage() + '/auth/signin']"
            class="text-white/80 hover:text-white text-sm underline">
-          Deja un compte ?
+          {{ 'ONBOARDING.HEADER.ALREADY_ACCOUNT' | translate }}
         </a>
       </div>
 
@@ -43,75 +43,75 @@
       <!-- ETAPE 1 : VOTRE BIEN -->
       <div *ngIf="currentStep === 1" [formGroup]="step1Form">
         <div class="mb-6">
-          <h2 class="text-2xl font-bold text-gray-900">Votre bien immobilier</h2>
-          <p class="text-gray-500 mt-1">Dites-nous ou se trouve votre bien. Vous pourrez completer les details plus tard.</p>
+          <h2 class="text-2xl font-bold text-gray-900">{{ 'ONBOARDING.STEP1.TITLE' | translate }}</h2>
+          <p class="text-gray-500 mt-1">{{ 'ONBOARDING.STEP1.SUBTITLE' | translate }}</p>
         </div>
 
         <!-- Nom du bien -->
         <div class="mb-4">
           <label class="block text-sm font-medium text-gray-700 mb-1">
-            Nom du bien <span class="text-red-500">*</span>
+            {{ 'ONBOARDING.STEP1.PROPERTY_NAME_LABEL' | translate }} <span class="text-red-500">*</span>
           </label>
           <input formControlName="propertyName" type="text"
-                 placeholder="Ex: Residence Les Palmiers"
+                 [placeholder]="'ONBOARDING.STEP1.PROPERTY_NAME_PLACEHOLDER' | translate"
                  class="w-full border rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-primary outline-none transition"
                  [ngClass]="{'border-red-400': isFieldInvalid(step1Form, 'propertyName'), 'border-gray-300': !isFieldInvalid(step1Form, 'propertyName')}">
           <p *ngIf="isFieldInvalid(step1Form, 'propertyName')" class="text-red-500 text-xs mt-1">
-            Le nom est requis (min. 2 caracteres)
+            {{ 'ONBOARDING.STEP1.PROPERTY_NAME_ERROR' | translate }}
           </p>
         </div>
 
         <!-- Pays -->
         <div class="mb-4">
           <label class="block text-sm font-medium text-gray-700 mb-1">
-            Pays <span class="text-red-500">*</span>
+            {{ 'ONBOARDING.STEP1.COUNTRY_LABEL' | translate }} <span class="text-red-500">*</span>
           </label>
           <select formControlName="propertyCountryId"
                   (change)="onCountryChange(step1Form.get('propertyCountryId').value)"
                   class="w-full border rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-primary outline-none transition"
                   [ngClass]="{'border-red-400': isFieldInvalid(step1Form, 'propertyCountryId'), 'border-gray-300': !isFieldInvalid(step1Form, 'propertyCountryId')}">
-            <option value="">-- Selectionner un pays --</option>
+            <option value="">{{ 'ONBOARDING.STEP1.COUNTRY_PLACEHOLDER' | translate }}</option>
             <option *ngFor="let c of countries" [value]="c._id">{{ c.fullName }}</option>
           </select>
           <p *ngIf="isFieldInvalid(step1Form, 'propertyCountryId')" class="text-red-500 text-xs mt-1">
-            Veuillez selectionner un pays
+            {{ 'ONBOARDING.STEP1.COUNTRY_ERROR' | translate }}
           </p>
         </div>
 
         <!-- Ville -->
         <div class="mb-4">
           <label class="block text-sm font-medium text-gray-700 mb-1">
-            Ville <span class="text-red-500">*</span>
+            {{ 'ONBOARDING.STEP1.CITY_LABEL' | translate }} <span class="text-red-500">*</span>
           </label>
           <select formControlName="propertyCityId"
                   class="w-full border rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-primary outline-none transition"
                   [ngClass]="{'border-red-400': isFieldInvalid(step1Form, 'propertyCityId'), 'border-gray-300': !isFieldInvalid(step1Form, 'propertyCityId')}"
                   [attr.disabled]="cities.length === 0 ? true : null">
-            <option value="">{{ loadingCities ? 'Chargement...' : '-- Selectionner une ville --' }}</option>
+            <option value="">{{ loadingCities ? ('ONBOARDING.STEP1.CITY_LOADING' | translate) : ('ONBOARDING.STEP1.CITY_PLACEHOLDER' | translate) }}</option>
             <option *ngFor="let c of cities" [value]="c._id">{{ c.fullName }}</option>
           </select>
           <p *ngIf="isFieldInvalid(step1Form, 'propertyCityId')" class="text-red-500 text-xs mt-1">
-            Veuillez selectionner une ville
+            {{ 'ONBOARDING.STEP1.CITY_ERROR' | translate }}
           </p>
         </div>
 
         <!-- Adresse -->
         <div class="mb-4">
           <label class="block text-sm font-medium text-gray-700 mb-1">
-            Quartier / Adresse <span class="text-red-500">*</span>
+            {{ 'ONBOARDING.STEP1.ADDRESS_LABEL' | translate }} <span class="text-red-500">*</span>
           </label>
           <input formControlName="propertyLocation" type="text"
-                 placeholder="Ex: Quartier Bastos, Rue des Manguiers"
+                 [placeholder]="'ONBOARDING.STEP1.ADDRESS_PLACEHOLDER' | translate"
                  class="w-full border rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-primary outline-none transition"
                  [ngClass]="{'border-red-400': isFieldInvalid(step1Form, 'propertyLocation'), 'border-gray-300': !isFieldInvalid(step1Form, 'propertyLocation')}">
           <p *ngIf="isFieldInvalid(step1Form, 'propertyLocation')" class="text-red-500 text-xs mt-1">
-            L'adresse est requise
+            {{ 'ONBOARDING.STEP1.ADDRESS_ERROR' | translate }}
           </p>
         </div>
 
         <!-- Type de bien -->
         <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700 mb-2">Type de bien</label>
+          <label class="block text-sm font-medium text-gray-700 mb-2">{{ 'ONBOARDING.STEP1.PROPERTY_TYPE_LABEL' | translate }}</label>
           <div class="grid grid-cols-2 gap-2">
             <label *ngFor="let pt of propertyTypes"
                    class="flex items-center gap-2 border rounded-lg px-3 py-2 cursor-pointer transition"
@@ -129,21 +129,15 @@
       <!-- ETAPE 2 : VOS UNITES -->
       <div *ngIf="currentStep === 2" [formGroup]="step2Form">
         <div class="mb-6">
-          <h2 class="text-2xl font-bold text-gray-900">Vos unites locatives</h2>
-          <p class="text-gray-500 mt-1">
-            Ajoutez les unites de votre bien (chambres, studios, appartements).
-          </p>
+          <h2 class="text-2xl font-bold text-gray-900">{{ 'ONBOARDING.STEP2.TITLE' | translate }}</h2>
+          <p class="text-gray-500 mt-1">{{ 'ONBOARDING.STEP2.SUBTITLE' | translate }}</p>
           <!-- Info plan FREE -->
           <div class="mt-3 flex items-start gap-2 p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-800">
             <svg class="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
-            <span>
-              <strong>Plan gratuit :</strong> jusqu'a <strong>8 unites par bien</strong>.
-              Vous pouvez en ajouter jusqu'a 5 ici, et completer depuis le tableau de bord.
-              Passez au plan Premium pour des unites illimitees.
-            </span>
+            <span [innerHTML]="'ONBOARDING.STEP2.FREE_PLAN_INFO' | translate"></span>
           </div>
         </div>
 
@@ -153,18 +147,18 @@
                class="border border-gray-200 rounded-xl p-4 mb-4 relative">
 
             <div class="flex items-center justify-between mb-3">
-              <span class="font-semibold text-gray-700 text-sm">Unite {{ i + 1 }}</span>
+              <span class="font-semibold text-gray-700 text-sm">{{ 'ONBOARDING.STEP2.UNIT_LABEL' | translate }} {{ i + 1 }}</span>
               <button *ngIf="unitsArray.length > 1" type="button"
                       (click)="removeUnit(i)"
                       class="text-red-400 hover:text-red-600 text-xs">
-                &#10005; Supprimer
+                &#10005; {{ 'ONBOARDING.STEP2.REMOVE_UNIT' | translate }}
               </button>
             </div>
 
             <div class="grid grid-cols-2 gap-3">
               <!-- Type -->
               <div>
-                <label class="block text-xs font-medium text-gray-600 mb-1">Type</label>
+                <label class="block text-xs font-medium text-gray-600 mb-1">{{ 'ONBOARDING.STEP2.TYPE_LABEL' | translate }}</label>
                 <select formControlName="type"
                         class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary outline-none">
                   <option *ngFor="let rt of roomTypes" [value]="rt.value">{{ rt.label }}</option>
@@ -174,10 +168,10 @@
               <!-- Loyer -->
               <div>
                 <label class="block text-xs font-medium text-gray-600 mb-1">
-                  Loyer mensuel (FCFA) <span class="text-red-500">*</span>
+                  {{ 'ONBOARDING.STEP2.PRICE_LABEL' | translate }} <span class="text-red-500">*</span>
                 </label>
                 <input formControlName="price" type="number" min="1"
-                       placeholder="Ex: 50000"
+                       [placeholder]="'ONBOARDING.STEP2.PRICE_PLACEHOLDER' | translate"
                        class="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary outline-none"
                        [ngClass]="{
                          'border-red-400': unit.get('price').invalid && unit.get('price').touched,
@@ -189,11 +183,11 @@
               <div class="col-span-2 flex items-center gap-3">
                 <label class="flex items-center gap-2 cursor-pointer">
                   <input type="checkbox" formControlName="shouldPayCaution" class="rounded">
-                  <span class="text-sm text-gray-700">Caution requise</span>
+                  <span class="text-sm text-gray-700">{{ 'ONBOARDING.STEP2.CAUTION_LABEL' | translate }}</span>
                 </label>
                 <input *ngIf="unit.get('shouldPayCaution').value"
                        formControlName="cautionPrice" type="number" min="0"
-                       placeholder="Montant caution"
+                       [placeholder]="'ONBOARDING.STEP2.CAUTION_AMOUNT_PLACEHOLDER' | translate"
                        class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary outline-none">
               </div>
             </div>
@@ -203,17 +197,15 @@
         <button *ngIf="unitsArray.length < 5" type="button"
                 (click)="addUnit()"
                 class="w-full border-2 border-dashed border-gray-300 rounded-xl py-3 text-sm text-gray-500 hover:border-primary hover:text-primary transition">
-          + Ajouter une unite
+          {{ 'ONBOARDING.STEP2.ADD_UNIT' | translate }}
         </button>
       </div>
 
       <!-- ETAPE 3 : VOS LOCATAIRES -->
       <div *ngIf="currentStep === 3" [formGroup]="step3Form">
         <div class="mb-6">
-          <h2 class="text-2xl font-bold text-gray-900">Vos locataires</h2>
-          <p class="text-gray-500 mt-1">
-            Avez-vous deja des locataires ? Vous pourrez les assigner a leurs unites apres la creation du compte.
-          </p>
+          <h2 class="text-2xl font-bold text-gray-900">{{ 'ONBOARDING.STEP3.TITLE' | translate }}</h2>
+          <p class="text-gray-500 mt-1">{{ 'ONBOARDING.STEP3.SUBTITLE' | translate }}</p>
         </div>
 
         <!-- Toggle hasTenants -->
@@ -224,7 +216,7 @@
               <div class="w-11 h-6 bg-gray-300 rounded-full peer peer-checked:bg-primary transition-colors"></div>
               <div class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform peer-checked:translate-x-5"></div>
             </div>
-            <span class="font-medium text-gray-700">J'ai deja des locataires</span>
+            <span class="font-medium text-gray-700">{{ 'ONBOARDING.STEP3.HAS_TENANTS_LABEL' | translate }}</span>
           </label>
         </div>
 
@@ -235,32 +227,35 @@
                class="border border-gray-200 rounded-xl p-4 mb-4">
 
             <div class="flex items-center justify-between mb-3">
-              <span class="font-semibold text-gray-700 text-sm">Locataire {{ i + 1 }}</span>
+              <span class="font-semibold text-gray-700 text-sm">{{ 'ONBOARDING.STEP3.TENANT_LABEL' | translate }} {{ i + 1 }}</span>
               <button *ngIf="tenantsArray.length > 1" type="button"
                       (click)="removeTenant(i)"
                       class="text-red-400 hover:text-red-600 text-xs">
-                &#10005; Supprimer
+                &#10005; {{ 'ONBOARDING.STEP3.REMOVE_TENANT' | translate }}
               </button>
             </div>
 
             <div class="grid grid-cols-1 gap-3">
               <div>
                 <label class="block text-xs font-medium text-gray-600 mb-1">
-                  Nom complet <span class="text-red-500">*</span>
+                  {{ 'ONBOARDING.STEP3.FULL_NAME_LABEL' | translate }} <span class="text-red-500">*</span>
                 </label>
-                <input formControlName="fullName" type="text" placeholder="Jean Dupont"
+                <input formControlName="fullName" type="text"
+                       [placeholder]="'ONBOARDING.STEP3.FULL_NAME_PLACEHOLDER' | translate"
                        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary outline-none">
               </div>
               <div>
                 <label class="block text-xs font-medium text-gray-600 mb-1">
-                  Telephone <span class="text-red-500">*</span>
+                  {{ 'ONBOARDING.STEP3.PHONE_LABEL' | translate }} <span class="text-red-500">*</span>
                 </label>
-                <input formControlName="phoneNumber" type="tel" placeholder="+237 6XX XXX XXX"
+                <input formControlName="phoneNumber" type="tel"
+                       [placeholder]="'ONBOARDING.STEP3.PHONE_PLACEHOLDER' | translate"
                        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary outline-none">
               </div>
               <div>
-                <label class="block text-xs font-medium text-gray-600 mb-1">Email (optionnel)</label>
-                <input formControlName="email" type="email" placeholder="jean@exemple.com"
+                <label class="block text-xs font-medium text-gray-600 mb-1">{{ 'ONBOARDING.STEP3.EMAIL_LABEL' | translate }}</label>
+                <input formControlName="email" type="email"
+                       [placeholder]="'ONBOARDING.STEP3.EMAIL_PLACEHOLDER' | translate"
                        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary outline-none">
               </div>
             </div>
@@ -269,67 +264,68 @@
           <button *ngIf="tenantsArray.length < 5" type="button"
                   (click)="addTenant()"
                   class="w-full border-2 border-dashed border-gray-300 rounded-xl py-3 text-sm text-gray-500 hover:border-primary hover:text-primary transition">
-            + Ajouter un locataire
+            {{ 'ONBOARDING.STEP3.ADD_TENANT' | translate }}
           </button>
         </div>
 
         <div *ngIf="!step3Form.get('hasTenants').value"
              class="text-center py-8 text-gray-400">
           <div class="text-4xl mb-2">&#127968;</div>
-          <p class="text-sm">Pas de probleme ! Vous pourrez ajouter vos locataires depuis le tableau de bord.</p>
+          <p class="text-sm">{{ 'ONBOARDING.STEP3.NO_TENANTS_MESSAGE' | translate }}</p>
         </div>
       </div>
 
       <!-- ETAPE 4 : VOTRE COMPTE -->
       <div *ngIf="currentStep === 4" [formGroup]="step4Form">
         <div class="mb-6">
-          <h2 class="text-2xl font-bold text-gray-900">Votre compte</h2>
-          <p class="text-gray-500 mt-1">
-            Derniere etape ! Creez votre compte pour acceder a votre tableau de bord.
-          </p>
+          <h2 class="text-2xl font-bold text-gray-900">{{ 'ONBOARDING.STEP4.TITLE' | translate }}</h2>
+          <p class="text-gray-500 mt-1">{{ 'ONBOARDING.STEP4.SUBTITLE' | translate }}</p>
         </div>
 
         <!-- Nom -->
         <div class="mb-4">
           <label class="block text-sm font-medium text-gray-700 mb-1">
-            Nom complet <span class="text-red-500">*</span>
+            {{ 'ONBOARDING.STEP4.NAME_LABEL' | translate }} <span class="text-red-500">*</span>
           </label>
-          <input formControlName="name" type="text" placeholder="Jean Dupont"
+          <input formControlName="name" type="text"
+                 [placeholder]="'ONBOARDING.STEP4.NAME_PLACEHOLDER' | translate"
                  class="w-full border rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary outline-none transition"
                  [ngClass]="{'border-red-400': isFieldInvalid(step4Form, 'name'), 'border-gray-300': !isFieldInvalid(step4Form, 'name')}">
-          <p *ngIf="isFieldInvalid(step4Form, 'name')" class="text-red-500 text-xs mt-1">Le nom est requis</p>
+          <p *ngIf="isFieldInvalid(step4Form, 'name')" class="text-red-500 text-xs mt-1">{{ 'ONBOARDING.STEP4.NAME_ERROR' | translate }}</p>
         </div>
 
         <!-- Email -->
         <div class="mb-4">
           <label class="block text-sm font-medium text-gray-700 mb-1">
-            Email <span class="text-red-500">*</span>
+            {{ 'ONBOARDING.STEP4.EMAIL_LABEL' | translate }} <span class="text-red-500">*</span>
           </label>
-          <input formControlName="email" type="email" placeholder="jean@exemple.com"
+          <input formControlName="email" type="email"
+                 [placeholder]="'ONBOARDING.STEP4.EMAIL_PLACEHOLDER' | translate"
                  class="w-full border rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary outline-none transition"
                  [ngClass]="{'border-red-400': isFieldInvalid(step4Form, 'email'), 'border-gray-300': !isFieldInvalid(step4Form, 'email')}">
-          <p *ngIf="isFieldInvalid(step4Form, 'email')" class="text-red-500 text-xs mt-1">Email invalide</p>
+          <p *ngIf="isFieldInvalid(step4Form, 'email')" class="text-red-500 text-xs mt-1">{{ 'ONBOARDING.STEP4.EMAIL_ERROR' | translate }}</p>
         </div>
 
         <!-- Telephone -->
         <div class="mb-4">
           <label class="block text-sm font-medium text-gray-700 mb-1">
-            Telephone <span class="text-red-500">*</span>
+            {{ 'ONBOARDING.STEP4.PHONE_LABEL' | translate }} <span class="text-red-500">*</span>
           </label>
-          <input formControlName="phoneNumber" type="tel" placeholder="+237 6XX XXX XXX"
+          <input formControlName="phoneNumber" type="tel"
+                 [placeholder]="'ONBOARDING.STEP4.PHONE_PLACEHOLDER' | translate"
                  class="w-full border rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary outline-none transition"
                  [ngClass]="{'border-red-400': isFieldInvalid(step4Form, 'phoneNumber'), 'border-gray-300': !isFieldInvalid(step4Form, 'phoneNumber')}">
-          <p *ngIf="isFieldInvalid(step4Form, 'phoneNumber')" class="text-red-500 text-xs mt-1">Numero invalide</p>
+          <p *ngIf="isFieldInvalid(step4Form, 'phoneNumber')" class="text-red-500 text-xs mt-1">{{ 'ONBOARDING.STEP4.PHONE_ERROR' | translate }}</p>
         </div>
 
         <!-- Mot de passe -->
         <div class="mb-4">
           <label class="block text-sm font-medium text-gray-700 mb-1">
-            Mot de passe <span class="text-red-500">*</span>
+            {{ 'ONBOARDING.STEP4.PASSWORD_LABEL' | translate }} <span class="text-red-500">*</span>
           </label>
           <div class="relative">
             <input formControlName="password" [type]="showPassword ? 'text' : 'password'"
-                   placeholder="Minimum 8 caracteres"
+                   [placeholder]="'ONBOARDING.STEP4.PASSWORD_PLACEHOLDER' | translate"
                    class="w-full border rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary outline-none transition pr-10"
                    [ngClass]="{'border-red-400': isFieldInvalid(step4Form, 'password'), 'border-gray-300': !isFieldInvalid(step4Form, 'password')}">
             <button type="button" (click)="togglePassword()"
@@ -342,7 +338,7 @@
               </svg>
             </button>
           </div>
-          <p *ngIf="isFieldInvalid(step4Form, 'password')" class="text-red-500 text-xs mt-1">Minimum 8 caracteres</p>
+          <p *ngIf="isFieldInvalid(step4Form, 'password')" class="text-red-500 text-xs mt-1">{{ 'ONBOARDING.STEP4.PASSWORD_ERROR' | translate }}</p>
         </div>
 
         <!-- CGU -->
@@ -350,32 +346,32 @@
           <label class="flex items-start gap-3 cursor-pointer">
             <input type="checkbox" formControlName="acceptTerms" class="mt-0.5 rounded">
             <span class="text-sm text-gray-600">
-              J'accepte les
-              <a href="#" class="text-primary underline">conditions d'utilisation</a>
-              et la
-              <a href="#" class="text-primary underline">politique de confidentialite</a>
+              {{ 'ONBOARDING.STEP4.TERMS_TEXT' | translate }}
+              <a href="#" class="text-primary underline">{{ 'ONBOARDING.STEP4.TERMS_LINK' | translate }}</a>
+              {{ 'ONBOARDING.STEP4.PRIVACY_TEXT' | translate }}
+              <a href="#" class="text-primary underline">{{ 'ONBOARDING.STEP4.PRIVACY_LINK' | translate }}</a>
             </span>
           </label>
           <p *ngIf="isFieldInvalid(step4Form, 'acceptTerms')" class="text-red-500 text-xs mt-1">
-            Vous devez accepter les conditions
+            {{ 'ONBOARDING.STEP4.TERMS_ERROR' | translate }}
           </p>
         </div>
 
         <!-- Resume onboarding -->
         <div class="bg-green-50 border border-green-200 rounded-xl p-4 mb-4 text-sm">
-          <p class="font-semibold text-green-800 mb-2">Ce qui sera cree automatiquement :</p>
+          <p class="font-semibold text-green-800 mb-2">{{ 'ONBOARDING.STEP4.SUMMARY_TITLE' | translate }}</p>
           <ul class="text-green-700 space-y-1">
             <li *ngIf="step1Form.get('propertyName').value">
-              Bien : <strong>{{ step1Form.get('propertyName').value }}</strong>
+              {{ 'ONBOARDING.STEP4.SUMMARY_PROPERTY' | translate }} <strong>{{ step1Form.get('propertyName').value }}</strong>
             </li>
             <li *ngIf="unitsArray.length > 0 && step1Form.get('propertyName').value">
-              {{ unitsArray.length }} unite(s) locative(s)
+              {{ unitsArray.length }} {{ 'ONBOARDING.STEP4.SUMMARY_UNITS' | translate }}
             </li>
             <li *ngIf="step3Form.get('hasTenants').value && tenantsArray.length > 0">
-              {{ tenantsArray.length }} locataire(s)
+              {{ tenantsArray.length }} {{ 'ONBOARDING.STEP4.SUMMARY_TENANTS' | translate }}
             </li>
             <li *ngIf="!step1Form.get('propertyName').value" class="text-gray-500">
-              Aucune donnee immobiliere (vous pourrez tout ajouter depuis le tableau de bord)
+              {{ 'ONBOARDING.STEP4.SUMMARY_EMPTY' | translate }}
             </li>
           </ul>
         </div>
@@ -390,7 +386,7 @@
       <button *ngIf="currentStep > 1" type="button"
               (click)="prevStep()"
               class="flex items-center gap-2 text-gray-600 hover:text-gray-900 text-sm font-medium transition">
-        &larr; Precedent
+        &larr; {{ 'ONBOARDING.NAVIGATION.PREVIOUS' | translate }}
       </button>
       <div *ngIf="currentStep === 1"></div>
 
@@ -399,14 +395,14 @@
         <button *ngIf="currentStep < 4" type="button"
                 (click)="skipStep()"
                 class="text-gray-400 hover:text-gray-600 text-sm transition">
-          Passer cette etape &rarr;
+          {{ 'ONBOARDING.NAVIGATION.SKIP' | translate }} &rarr;
         </button>
 
         <!-- Bouton Suivant (etapes 1-3) -->
         <button *ngIf="currentStep < 4" type="button"
                 (click)="nextStep()"
                 class="bg-primary text-white px-6 py-2.5 rounded-lg text-sm font-semibold hover:bg-primary/90 transition">
-          Suivant &rarr;
+          {{ 'ONBOARDING.NAVIGATION.NEXT' | translate }} &rarr;
         </button>
 
         <!-- Bouton Creer mon compte (etape 4) -->
@@ -418,7 +414,7 @@
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
           </svg>
-          <span>{{ isSubmitting ? 'Creation en cours...' : 'Creer mon compte' }}</span>
+          <span>{{ isSubmitting ? ('ONBOARDING.STEP4.SUBMITTING' | translate) : ('ONBOARDING.STEP4.SUBMIT_BUTTON' | translate) }}</span>
         </button>
       </div>
     </div>

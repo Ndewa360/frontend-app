@@ -13,16 +13,19 @@
     <!-- Message -->
     <div class="min-w-0">
       <p class="text-sm font-medium text-amber-800 truncate">
-        ⚠️ Confirmez votre email
+        ⚠️ {{ 'EMAIL_CONFIRMATION_BANNER.TITLE' | translate }}
         <span *ngIf="hoursLeft > 0" class="font-normal text-amber-600">
-          — il vous reste <strong>{{ hoursLeft }}h{{ minutesLeft > 0 ? minutesLeft + 'min' : '' }}</strong>
+          — {{ 'EMAIL_CONFIRMATION_BANNER.TIME_LEFT' | translate }}
+          <strong>{{ hoursLeft }}h{{ minutesLeft > 0 ? minutesLeft + 'min' : '' }}</strong>
         </span>
         <span *ngIf="hoursLeft === 0" class="font-normal text-red-600">
-          — délai expiré, renvoyez l'email
+          {{ 'EMAIL_CONFIRMATION_BANNER.EXPIRED' | translate }}
         </span>
       </p>
       <p class="text-xs text-amber-600 hidden sm:block">
-        Un email a été envoyé à <strong>{{ userEmail }}</strong>. Vérifiez vos spams si nécessaire.
+        {{ 'EMAIL_CONFIRMATION_BANNER.EMAIL_SENT_TO' | translate }}
+        <strong>{{ userEmail }}</strong>.
+        {{ 'EMAIL_CONFIRMATION_BANNER.CHECK_SPAM' | translate }}
       </p>
     </div>
   </div>
@@ -32,7 +35,7 @@
     <button (click)="resendEmail()"
             [disabled]="resending"
             class="text-xs font-semibold text-amber-700 hover:text-amber-900 underline disabled:opacity-50 transition whitespace-nowrap">
-      {{ resending ? 'Envoi...' : 'Renvoyer l\'email' }}
+      {{ resending ? ('EMAIL_CONFIRMATION_BANNER.RESENDING' | translate) : ('EMAIL_CONFIRMATION_BANNER.RESEND' | translate) }}
     </button>
 
     <button (click)="dismiss()"

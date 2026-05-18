@@ -7,9 +7,9 @@
   <!-- ── CAS NORMAL : post-inscription ── -->
   <ng-container *ngIf="!isExpired">
     <div>
-      <h1 class="app-expressive-heading-06 mb-1">Félicitations !</h1>
+      <h1 class="app-expressive-heading-06 mb-1">{{ 'AUTH_CONFIRM_EMAIL.NORMAL.TITLE' | translate }}</h1>
       <div class="app-body-long-02 mb-8">
-        <h4>Votre compte a été créé. Finalisez votre inscription en confirmant votre email.</h4>
+        <h4>{{ 'AUTH_CONFIRM_EMAIL.NORMAL.SUBTITLE' | translate }}</h4>
       </div>
     </div>
 
@@ -22,13 +22,13 @@
               <div class="app-timeline__group" fxLayout="row wrap">
                 <div class="app-timeline__time text-right" fxFlex="100%" fxFlex.gt-sm="105px"
                      ngClass.lt-sm="app-timeline__time--collapse">
-                  <div class="app-helper-text-01"><h3>Etape 1</h3></div>
+                  <div class="app-helper-text-01"><h3>{{ 'AUTH_CONFIRM_EMAIL.NORMAL.STEP1_LABEL' | translate }}</h3></div>
                 </div>
                 <div fxFlex class="app-timeline__item app-timeline__item--circle app-timeline__item--info pb-5">
                   <div class="app-timeline__item__content">
                     <div fxFlex="100%" class="w-full shadow-md app-card row">
                       <div fxLayout="row wrap" class="app-card__blocks app-border-t p-2">
-                        <p>Ouvrez votre boîte mail avec laquelle vous vous êtes inscrit.</p>
+                        <p>{{ 'AUTH_CONFIRM_EMAIL.NORMAL.STEP1_TEXT' | translate }}</p>
                       </div>
                     </div>
                   </div>
@@ -38,14 +38,13 @@
               <div class="app-timeline__group" fxLayout="row wrap">
                 <div class="app-timeline__time text-right" fxFlex="100%" fxFlex.gt-sm="105px"
                      ngClass.lt-sm="app-timeline__time--collapse">
-                  <div class="app-helper-text-01"><h3>Etape 2</h3></div>
+                  <div class="app-helper-text-01"><h3>{{ 'AUTH_CONFIRM_EMAIL.NORMAL.STEP2_LABEL' | translate }}</h3></div>
                 </div>
                 <div fxFlex class="app-timeline__item app-timeline__item--circle app-timeline__item--success pb-5">
                   <div class="app-timeline__item__content">
                     <div fxFlex="100%" class="w-full shadow-md app-card row">
                       <div fxLayout="row wrap" class="app-card__blocks app-border-t p-2">
-                        <p>Ouvrez le mail <strong>no-reply</strong> de Ndewa360 vous demandant de confirmer votre email.
-                          Vérifiez les <strong>SPAM</strong> si le mail est introuvable.</p>
+                        <p>{{ 'AUTH_CONFIRM_EMAIL.NORMAL.STEP2_TEXT' | translate }}</p>
                       </div>
                     </div>
                   </div>
@@ -55,13 +54,13 @@
               <div class="app-timeline__group" fxLayout="row wrap">
                 <div class="app-timeline__time text-right" fxFlex="100%" fxFlex.gt-sm="105px"
                      ngClass.lt-sm="app-timeline__time--collapse">
-                  <div class="app-helper-text-01"><h3>Etape 3</h3></div>
+                  <div class="app-helper-text-01"><h3>{{ 'AUTH_CONFIRM_EMAIL.NORMAL.STEP3_LABEL' | translate }}</h3></div>
                 </div>
                 <div fxFlex class="app-timeline__item app-timeline__item--circle pb-5 app-timeline__item--warning">
                   <div class="app-timeline__item__content">
                     <div fxFlex="100%" class="w-full shadow-md app-card row">
                       <div fxLayout="row wrap" class="app-card__blocks app-border-t p-2">
-                        <p>Cliquez sur le lien de confirmation dans l'email. Votre compte sera activé et vous pourrez vous connecter.</p>
+                        <p>{{ 'AUTH_CONFIRM_EMAIL.NORMAL.STEP3_TEXT' | translate }}</p>
                       </div>
                     </div>
                   </div>
@@ -77,19 +76,23 @@
     <!-- Renvoi d'email (mode normal) -->
     <div class="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200" *ngIf="userEmail">
       <p class="text-sm text-gray-600 mb-3">
-        Vous n'avez pas reçu l'email ? Vérifiez vos spams ou renvoyez-le.
+        {{ 'AUTH_CONFIRM_EMAIL.NORMAL.NO_EMAIL' | translate }}
       </p>
       <button (click)="resendEmail()"
               [disabled]="resending || resendSuccess"
               class="text-sm font-semibold text-amber-700 hover:text-amber-900 underline disabled:opacity-50 transition">
-        {{ resending ? 'Envoi en cours...' : resendSuccess ? 'Email envoyé !' : 'Renvoyer l\'email de confirmation' }}
+        {{ resending
+            ? ('AUTH_CONFIRM_EMAIL.NORMAL.RESENDING' | translate)
+            : resendSuccess
+              ? ('AUTH_CONFIRM_EMAIL.NORMAL.RESEND_SUCCESS' | translate)
+              : ('AUTH_CONFIRM_EMAIL.NORMAL.RESEND_BUTTON' | translate) }}
       </button>
     </div>
 
     <div class="app-form__submit mt-6">
       <button [routerLink]="'/' + currentLang + '/auth/signin'"
               size="md" class="-app-ibm-btn-full custom-primary-button" ibmButton="primary">
-        <span class="btn-text">Se connecter</span>
+        <span class="btn-text">{{ 'AUTH_CONFIRM_EMAIL.NORMAL.SIGNIN_BUTTON' | translate }}</span>
         <youpez-ibm-icon iconClass="cds--btn__icon" iconName="arrowRight" iconSize="20"></youpez-ibm-icon>
       </button>
     </div>
@@ -104,21 +107,19 @@
                 d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
         </svg>
       </div>
-      <h1 class="app-expressive-heading-06 mb-2 text-red-700">Délai de confirmation dépassé</h1>
+      <h1 class="app-expressive-heading-06 mb-2 text-red-700">{{ 'AUTH_CONFIRM_EMAIL.EXPIRED.TITLE' | translate }}</h1>
       <p class="app-body-long-02 text-gray-600">
-        Votre délai de confirmation de compte (24h) est écoulé. Pour des raisons de sécurité,
-        vous devez confirmer votre email avant de pouvoir vous connecter.
+        {{ 'AUTH_CONFIRM_EMAIL.EXPIRED.SUBTITLE' | translate }}
       </p>
     </div>
 
     <div class="p-5 bg-amber-50 border border-amber-200 rounded-xl mb-6">
-      <p class="text-sm font-semibold text-amber-800 mb-1">Que faire ?</p>
+      <p class="text-sm font-semibold text-amber-800 mb-1">{{ 'AUTH_CONFIRM_EMAIL.EXPIRED.WHAT_TO_DO_TITLE' | translate }}</p>
       <p class="text-sm text-amber-700">
-        Cliquez sur le bouton ci-dessous pour recevoir un nouvel email de confirmation.
-        Une fois votre email confirmé, vous pourrez vous connecter normalement.
+        {{ 'AUTH_CONFIRM_EMAIL.EXPIRED.WHAT_TO_DO_TEXT' | translate }}
       </p>
       <p *ngIf="userEmail" class="text-xs text-amber-600 mt-2">
-        Email : <strong>{{ userEmail }}</strong>
+        {{ 'AUTH_CONFIRM_EMAIL.EXPIRED.EMAIL_LABEL' | translate }} <strong>{{ userEmail }}</strong>
       </p>
     </div>
 
@@ -134,7 +135,11 @@
           <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
         </svg>
         <span class="btn-text">
-          {{ resending ? 'Envoi en cours...' : resendSuccess ? 'Email envoyé ! Vérifiez votre boîte mail' : 'Renvoyer l\'email de confirmation' }}
+          {{ resending
+              ? ('AUTH_CONFIRM_EMAIL.EXPIRED.RESENDING' | translate)
+              : resendSuccess
+                ? ('AUTH_CONFIRM_EMAIL.EXPIRED.RESEND_SUCCESS' | translate)
+                : ('AUTH_CONFIRM_EMAIL.EXPIRED.RESEND_BUTTON' | translate) }}
         </span>
         <youpez-ibm-icon *ngIf="!resending" iconClass="cds--btn__icon" iconName="email" iconSize="20"></youpez-ibm-icon>
       </button>
@@ -147,18 +152,15 @@
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
       </svg>
       <div>
-        <p class="text-sm font-semibold text-green-800">Email envoyé avec succès !</p>
-        <p class="text-xs text-green-700 mt-1">
-          Vérifiez votre boîte mail (et vos spams). Cliquez sur le lien de confirmation,
-          puis revenez vous connecter.
-        </p>
+        <p class="text-sm font-semibold text-green-800">{{ 'AUTH_CONFIRM_EMAIL.EXPIRED.SUCCESS_TITLE' | translate }}</p>
+        <p class="text-xs text-green-700 mt-1">{{ 'AUTH_CONFIRM_EMAIL.EXPIRED.SUCCESS_TEXT' | translate }}</p>
       </div>
     </div>
 
     <div class="app-form__submit">
       <button [routerLink]="'/' + currentLang + '/auth/signin'"
               size="md" class="-app-ibm-btn-full" ibmButton="ghost">
-        <span class="btn-text">Retour à la connexion</span>
+        <span class="btn-text">{{ 'AUTH_CONFIRM_EMAIL.EXPIRED.BACK_TO_LOGIN' | translate }}</span>
       </button>
     </div>
   </ng-container>

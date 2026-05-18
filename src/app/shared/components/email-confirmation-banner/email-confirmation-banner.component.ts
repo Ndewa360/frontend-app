@@ -4,6 +4,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'src/environments/environment';
 import { UserProfileState } from '../../store/user-profile/user-profile.state';
 
@@ -29,6 +30,7 @@ export class EmailConfirmationBannerComponent implements OnInit, OnDestroy {
     private store: Store,
     private http: HttpClient,
     private toastr: ToastrService,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -92,11 +94,17 @@ export class EmailConfirmationBannerComponent implements OnInit, OnDestroy {
       .subscribe({
         next: () => {
           this.resending = false;
-          this.toastr.success('Email de confirmation renvoyé !', 'Ndewa360°');
+          this.toastr.success(
+            this.translate.instant('NOTIFICATIONS.EMAIL_SENT_SUCCESS'),
+            'Ndewa360°'
+          );
         },
         error: () => {
           this.resending = false;
-          this.toastr.error('Impossible de renvoyer l\'email.', 'Ndewa360°');
+          this.toastr.error(
+            this.translate.instant('NOTIFICATIONS.GENERIC_ERROR_RETRY'),
+            'Ndewa360°'
+          );
         },
       });
   }

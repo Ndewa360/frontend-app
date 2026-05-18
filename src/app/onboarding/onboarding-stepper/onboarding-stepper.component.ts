@@ -77,17 +77,17 @@ export class OnboardingStepperComponent implements OnInit, OnDestroy {
 
   // ── Options ───────────────────────────────────────────────────────────────
   propertyTypes = [
-    { value: 'APARTMENT', label: 'Appartement', icon: '🏢' },
-    { value: 'HOUSE', label: 'Maison', icon: '🏠' },
-    { value: 'COMMERCIAL', label: 'Local commercial', icon: '🏪' },
-    { value: 'MIXED', label: 'Usage mixte', icon: '🏗️' },
+    { value: 'APARTMENT', label: '', icon: '🏢' },
+    { value: 'HOUSE',     label: '', icon: '🏠' },
+    { value: 'COMMERCIAL',label: '', icon: '🏪' },
+    { value: 'MIXED',     label: '', icon: '🏗️' },
   ];
 
   roomTypes = [
-    { value: 'room', label: 'Chambre' },
-    { value: 'studio', label: 'Studio' },
-    { value: 'simple_apartment', label: 'Appartement simple' },
-    { value: 'furnished_apartment', label: 'Appartement meublé' },
+    { value: 'room',               label: '' },
+    { value: 'studio',             label: '' },
+    { value: 'simple_apartment',   label: '' },
+    { value: 'furnished_apartment',label: '' },
   ];
 
   constructor(
@@ -106,6 +106,28 @@ export class OnboardingStepperComponent implements OnInit, OnDestroy {
     this.loadCountries();
     this.restoreFromStorage();
     this.listenToActions();
+    this.initTranslatedOptions();
+
+    // Mettre à jour les labels si la langue change
+    this.translate.onLangChange
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => this.initTranslatedOptions());
+  }
+
+  private initTranslatedOptions(): void {
+    this.propertyTypes = [
+      { value: 'APARTMENT',  label: this.translate.instant('ONBOARDING.STEP1.TYPES.APARTMENT'),  icon: '🏢' },
+      { value: 'HOUSE',      label: this.translate.instant('ONBOARDING.STEP1.TYPES.HOUSE'),      icon: '🏠' },
+      { value: 'COMMERCIAL', label: this.translate.instant('ONBOARDING.STEP1.TYPES.COMMERCIAL'), icon: '🏪' },
+      { value: 'MIXED',      label: this.translate.instant('ONBOARDING.STEP1.TYPES.MIXED'),      icon: '🏗️' },
+    ];
+
+    this.roomTypes = [
+      { value: 'room',                label: this.translate.instant('ONBOARDING.STEP2.ROOM_TYPES.ROOM') },
+      { value: 'studio',              label: this.translate.instant('ONBOARDING.STEP2.ROOM_TYPES.STUDIO') },
+      { value: 'simple_apartment',    label: this.translate.instant('ONBOARDING.STEP2.ROOM_TYPES.SIMPLE_APARTMENT') },
+      { value: 'furnished_apartment', label: this.translate.instant('ONBOARDING.STEP2.ROOM_TYPES.FURNISHED_APARTMENT') },
+    ];
   }
 
   ngOnDestroy(): void {
@@ -221,7 +243,7 @@ export class OnboardingStepperComponent implements OnInit, OnDestroy {
           this.countries = res.data || [];
         },
         error: () => {
-          this.toastr.error('Impossible de charger les pays', 'Ndewa360°');
+          this.toastr.error(this.translate.instant('ONBOARDING.ERRORS.LOAD_COUNTRIES'), 'Ndewa360°');
         },
       });
   }
@@ -242,7 +264,7 @@ export class OnboardingStepperComponent implements OnInit, OnDestroy {
         },
         error: () => {
           this.loadingCities = false;
-          this.toastr.error('Impossible de charger les villes', 'Ndewa360°');
+          this.toastr.error(this.translate.instant('ONBOARDING.ERRORS.LOAD_CITIES'), 'Ndewa360°');
         },
       });
   }
@@ -440,13 +462,13 @@ export class OnboardingStepperComponent implements OnInit, OnDestroy {
   }
 
   getStepLabel(step: number): string {
-    const labels: Record<number, string> = {
-      1: 'Votre bien',
-      2: 'Vos unités',
-      3: 'Vos locataires',
-      4: 'Votre compte',
+    const keys: Record<number, string> = {
+      1: 'ONBOARDING.STEPS.STEP1_LABEL',
+      2: 'ONBOARDING.STEPS.STEP2_LABEL',
+      3: 'ONBOARDING.STEPS.STEP3_LABEL',
+      4: 'ONBOARDING.STEPS.STEP4_LABEL',
     };
-    return labels[step] || '';
+    return this.translate.instant(keys[step] || '');
   }
 
   getCurrentLanguage(): string {
