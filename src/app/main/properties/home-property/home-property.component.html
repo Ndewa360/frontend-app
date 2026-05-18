@@ -74,21 +74,91 @@
 
   <!-- Contenu principal -->
   <div class="main-content">
-    <!-- Vue Liste des Propriétés -->
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         BLOC EMPTY-STATE — affiché quand aucune propriété n'existe.
+         Remplace les deux vues (liste + dashboard) tant qu'il n'y a rien.
+    ══════════════════════════════════════════════════════════════════ -->
+    <ng-container *ngIf="!isLoading && propertyCount === 0">
+      <div class="flex flex-col items-center justify-center min-h-[65vh] px-4 py-12">
+        <div class="w-full max-w-xl bg-white rounded-2xl border-2 border-dashed p-12 flex flex-col items-center text-center shadow-sm"
+             style="border-color: rgb(204,140,10);">
+
+          <!-- Icône -->
+          <div class="w-24 h-24 rounded-2xl flex items-center justify-center mb-8"
+               style="background-color: rgba(204,140,10,0.12);">
+            <svg class="w-12 h-12" style="color: rgb(204,140,10);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+              <polyline stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                        points="9 22 9 12 15 12 15 22"/>
+            </svg>
+          </div>
+
+          <!-- Texte -->
+          <h2 class="text-3xl font-bold text-gray-900 mb-4">
+            {{ 'PROPERTIES.EMPTY_STATE.TITLE' | translate }}
+          </h2>
+          <p class="text-gray-500 text-base leading-relaxed mb-3 max-w-md">
+            {{ 'PROPERTIES.EMPTY_STATE.SUBTITLE' | translate }}
+          </p>
+          <p class="text-sm text-gray-400 mb-10">
+            {{ 'PROPERTIES.EMPTY_STATE.HINT' | translate }}
+          </p>
+
+          <!-- Bouton principal -->
+          <button (click)="onCreate()"
+                  class="inline-flex items-center gap-3 px-10 py-4 rounded-xl text-white font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
+                  style="background-color: rgb(204,140,10);">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            {{ 'PROPERTIES.NEW_PROPERTY_BUTTON' | translate }}
+          </button>
+
+          <!-- Garanties -->
+          <div class="flex flex-wrap justify-center gap-4 mt-8 pt-8 border-t border-gray-100 w-full">
+            <div class="flex items-center gap-2 text-sm text-gray-500">
+              <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+              {{ 'PROPERTIES.EMPTY_STATE.GUARANTEE_FREE' | translate }}
+            </div>
+            <div class="flex items-center gap-2 text-sm text-gray-500">
+              <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+              {{ 'PROPERTIES.EMPTY_STATE.GUARANTEE_SETUP' | translate }}
+            </div>
+            <div class="flex items-center gap-2 text-sm text-gray-500">
+              <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+              {{ 'PROPERTIES.EMPTY_STATE.GUARANTEE_NO_CARD' | translate }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Vue Liste des Propriétés — masquée si aucune propriété -->
     <div
+      *ngIf="propertyCount > 0"
       class="view-container"
       [class.active]="currentView === 'properties'"
       [class.hidden]="currentView !== 'properties'">
       <app-list-property></app-list-property>
     </div>
 
-    <!-- Vue Dashboard Financier -->
+    <!-- Vue Dashboard Financier — masquée si aucune propriété -->
     <div
+      *ngIf="propertyCount > 0"
       class="view-container"
       [class.active]="currentView === 'dashboard'"
       [class.hidden]="currentView !== 'dashboard'">
       <app-modern-financial-dashboard></app-modern-financial-dashboard>
     </div>
+
   </div>
 
 </div>
