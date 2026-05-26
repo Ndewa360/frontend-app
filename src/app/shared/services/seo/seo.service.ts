@@ -369,19 +369,19 @@ export class SeoService {
 
   // Métadonnées pour la page d'accueil
   setupLandingPageMetaTags(): void {
-    this.titleService.setTitle('Ndewa360 - Location Immobilière en 360° au Cameroun');
+    this.titleService.setTitle('Ndewa360 - Gestion Immobilière Innovante & Visites 360° en Afrique');
     this.meta.addTags([
-      { name: 'description', content: 'Explorez des logements en 360°, trouvez des chambres, studios et appartements à louer facilement. Ndewa360 simplifie la recherche et la gestion immobilière.' },
+      { name: 'description', content: 'Simplifiez la gestion de vos biens immobiliers en Afrique. Suivi des loyers, génération de reçus automatiques et visites 360° pour la diaspora et les bailleurs.' },
       { name: 'keywords', content: 'location, logement, immobilier, Cameroun, 360°, étudiants, unités à louer, propriétaires, gestion immobilière' },
       { name: 'author', content: 'Ndewa360' },
-      { property: 'og:title', content: 'Ndewa360 - Location Immobilière en 360°' },
-      { property: 'og:description', content: 'Trouvez ou gérez des logements facilement au Cameroun grâce à Ndewa360. Visite virtuelle, gestion simplifiée, 100% digital.' },
+      { property: 'og:title', content: 'Ndewa360 - Gestion Immobilière Innovante & Visites 360° en Afrique' },
+      { property: 'og:description', content: 'Bailleurs, sécurisez vos revenus et gérez vos biens à distance. Locataires, visitez en 360° et trouvez votre logement gratuitement.' },
       { property: 'og:url', content: 'https://ndewa-360.com' },
       { property: 'og:type', content: 'website' },
       { property: 'og:image', content: 'https://ndewa-360.com/assets/img/logo/logo-basic.png' },
       { name: 'twitter:card', content: 'summary_large_image' },
-      { name: 'twitter:title', content: 'Ndewa360 - Location Immobilière en 360°' },
-      { name: 'twitter:description', content: 'Explorez et gérez vos logements facilement au Cameroun.' },
+      { name: 'twitter:title', content: 'Ndewa360 - Gestion Immobilière Innovante & Visites 360° en Afrique' },
+      { name: 'twitter:description', content: 'Bailleurs, sécurisez vos revenus et gérez vos biens à distance. Locataires, visitez en 360° et trouvez votre logement gratuitement.' },
       { name: 'twitter:image', content: 'https://ndewa-360.com/assets/img/logo/logo-basic.png' }
     ]);
 
