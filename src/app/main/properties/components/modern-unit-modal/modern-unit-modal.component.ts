@@ -61,7 +61,7 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
   // Déterminer si l'utilisateur est un agent
   isAgent = false;
   currentUser: any = null;
-
+ 
   constructor(
     private formBuilder: FormBuilder,
     private store: Store,
@@ -477,14 +477,14 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
   get cautionPrice() { return this.formGroup.get('cautionPrice'); }
 
   getTitle(): string {
-    return this.data.mode === 'create' ? 'unitManagement.addUnit' : 'unitManagement.editUnit';
+    return this.data.mode === 'create' ? 'UNIT_MANAGEMENT.ADD_UNIT' : 'UNIT_MANAGEMENT.EDIT_UNIT';
   }
 
   getSubmitText(): string {
     if (this.isLoading) {
-      return this.data.mode === 'create' ? 'unitManagement.creating' : 'unitManagement.updating';
+      return this.data.mode === 'create' ? 'UNIT_MANAGEMENT.CREATING' : 'UNIT_MANAGEMENT.UPDATING';
     }
-    return this.data.mode === 'create' ? 'unitManagement.createUnit' : 'unitManagement.updateUnit';
+    return this.data.mode === 'create' ? 'UNIT_MANAGEMENT.CREATE_UNIT' : 'UNIT_MANAGEMENT.UPDATE_UNIT';
   }
 
   getRoomTypeIcon(type: RoomType): string {

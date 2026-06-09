@@ -7,10 +7,11 @@ import { takeUntil } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
-import { LocataireModel, RoomModel, LocationModel, LocationState, RoomState, LocationPaymentModel, LocationPaymentState, HistoryLocationPaymentState } from 'src/app/shared/store';
+import { LocataireModel, RoomModel, LocationModel, LocationState, RoomState, LocationPaymentModel, LocationPaymentState, HistoryLocationPaymentState, HistoryLocationPaymentAction, LocataireAction, RoomAction } from 'src/app/shared/store';
 import { ModernPaymentModalComponent } from '../modern-payment-modal/modern-payment-modal.component';
 import { ModernDeletePaymentModalComponent } from '../modern-delete-payment-modal/modern-delete-payment-modal.component';
 import { PaymentReceiptModalComponent } from '../payment-receipt-modal/payment-receipt-modal.component';
+import { AssignLocationModalService } from 'src/app/main/assign-location/services/assign-location-modal.service';
 
 interface Tab {
   label: string;
@@ -91,7 +92,9 @@ export class TenantDetailsPanelComponent implements OnInit, OnDestroy, OnChanges
     private router: Router,
     private dialog: MatDialog,
     private toastr: ToastrService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private assignLocationModalService: AssignLocationModalService,
+    
   ) {}
 
   ngOnInit(): void {
@@ -310,13 +313,28 @@ export class TenantDetailsPanelComponent implements OnInit, OnDestroy, OnChanges
 
   onAssignRoom(): void {
     if (this.tenant) {
-      // Naviguer vers l'assistant d'assignation avec le locataire pré-sélectionné
-      this.router.navigate(['/app/assign-location'], {
-        queryParams: {
-          propertyId: this.propertyId,
-          locataireId: this.tenant._id,
-          assistant: true,
-          returnUrl: this.router.url
+      // propertyId: this.propertyId,
+      this.assignLocationModalService.openAssignLocationModal({
+        propertyId: this.propertyId,
+        locataireId: this.tenant._id,
+        assistant: true,
+        returnUrl: this.router.url
+      }).subscribe(result => {
+        console.log('🔄 Résultat du modal d\'assignation:', result);
+
+        if (result && result.success) {
+          console.log('✅ Assignation réussie depuis unité');
+          // Recharger les données après succès
+          this.reloadData();
+          this.toastr.success('Assignation réalisée avec succès', 'Succès');
+        } else if (result && result.success === false) {
+          // Erreur réelle d'assignation
+          console.error('❌ Assignation échouée:', result);
+          this.toastr.error('Erreur lors de l\'assignation', 'Erreur');
+        } else {
+          // Annulation par l'utilisateur (result === null)
+          console.log('🚫 Assignation annulée par l\'utilisateur');
+          // Pas de message pour une annulation normale
         }
       });
     }
@@ -417,7 +435,27 @@ export class TenantDetailsPanelComponent implements OnInit, OnDestroy, OnChanges
   }
 
   // === MÉTHODES UTILITAIRES ===
-
+  /**
+     * Recharger les données après une assignation réussie
+     */
+    private reloadData(): void {
+      if (this.propertyId) {
+        // Recharger les chambres
+        this.store.dispatch(new RoomAction.FetchRoomsByPropertyID(this.propertyId));
+  
+        // Recharger les locataires
+        this.store.dispatch(new LocataireAction.FetchLocatairesByPropertyId(this.propertyId));
+  
+        // Recharger les paiements
+        this.store.dispatch(new HistoryLocationPaymentAction.FetchHistoryLocationPaymentsByPropertyId(this.propertyId));
+  
+        // Mettre à jour les données après un délai
+        setTimeout(() => {
+          this.loadTenantPayments();
+        }, 1000);
+      }
+    }
+    
   getUniquePaymentIdentifier(payment: LocationPaymentModel): string {
     // Créer un identifiant unique basé sur plusieurs propriétés
     const date = new Date(payment.datePayment).getTime();
@@ -467,6 +505,7 @@ export class TenantDetailsPanelComponent implements OnInit, OnDestroy, OnChanges
       history: history
     };
   }
+
 
   /**
    * Ouvre le modal de reçu d'un paiement

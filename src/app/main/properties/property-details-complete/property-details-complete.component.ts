@@ -232,10 +232,13 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
       width: '100%',
       maxWidth: '900px',
       disableClose: true,
-      data: { property: { _id: this.propertyId } }
+      data: { 
+        property: { _id: this.propertyId },
+        mode: 'create',
+      }
     });
 
-    dialogRef.afterClosed()
+    dialogRef.afterClosed() 
       .pipe(takeUntil(this.destroy$))
       .subscribe(result => { if (result) this.reloadPropertyData(); });
   }

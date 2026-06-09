@@ -2778,7 +2778,13 @@
     "AGENT_AVAILABILITY_INFO": "En tant qu'agent, vous pouvez marquer cette unité comme disponible ou non",
     "NUMBER_OF_ROOMS": "Nombre de chambres",
     "NUMBER_OF_ROOMS_PLACEHOLDER": "Ex: 3",
-    "NUMBER_OF_ROOMS_HINT": "Optionnel — uniquement pour les appartements"
+    "NUMBER_OF_ROOMS_HINT": "Optionnel — uniquement pour les appartements",
+    "ADD_UNIT": "Ajouter une unité",
+    "EDIT_UNIT": "Modifier l'unité",
+    "CREATING": "Création...",
+    "UPDATING": "Mise à jour...",
+    "CREATE_UNIT": "Créer l'unité",
+    "UPDATE_UNIT": "Mettre à jour l'unité"
   },
   "ASSIGNMENT": {
     "ASSIGN_UNIT": "Assigner une unité locative",
@@ -3900,14 +3906,6 @@
     "UNIT_ASSIGNMENT_INFO": "Après la création du locataire, vous pourrez l'assigner à une unité locative via l'assistant d'assignation.",
     "CONFIRMATION_TEXT": "Je confirme que les informations saisies sont correctes",
     "CONFIRMATION_REQUIRED": "Vous devez confirmer les informations"
-  },
-  "UNIT_MANAGEMENT_ADDITIONAL": {
-    "ADD_UNIT": "Ajouter une unité",
-    "EDIT_UNIT": "Modifier l'unité",
-    "CREATING": "Création...",
-    "UPDATING": "Mise à jour...",
-    "CREATE_UNIT": "Créer l'unité",
-    "UPDATE_UNIT": "Mettre à jour l'unité"
   },
   "NOTIFICATIONS_ADDITIONAL": {
     "TENANT_CREATED_WITH_PHOTO": "Locataire créé avec photo avec succès",

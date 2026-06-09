@@ -2779,7 +2779,13 @@
     "AGENT_AVAILABILITY_INFO": "As an agent you can mark this unit as available or not",
     "NUMBER_OF_ROOMS": "Number of bedrooms",
     "NUMBER_OF_ROOMS_PLACEHOLDER": "e.g. 3",
-    "NUMBER_OF_ROOMS_HINT": "Optional — for apartments only"
+    "NUMBER_OF_ROOMS_HINT": "Optional — for apartments only",
+    "ADD_UNIT": "Add a unit",
+    "EDIT_UNIT": "Change unit",
+    "CREATING": "Creation...",
+    "UPDATING": "Update...",
+    "CREATE_UNIT": "Create the unit",
+    "UPDATE_UNIT": "Update unit"
   },
   "ASSIGNMENT": {
     "ASSIGN_UNIT": "Assign a rental unit",
@@ -3895,14 +3901,6 @@
     "UNIT_ASSIGNMENT_INFO": "After creating the tenant, you can assign them to a rental unit via the assignment wizard.",
     "CONFIRMATION_TEXT": "I confirm that the information entered is correct",
     "CONFIRMATION_REQUIRED": "You must confirm the information"
-  },
-  "UNIT_MANAGEMENT_ADDITIONAL": {
-    "ADD_UNIT": "Add a unit",
-    "EDIT_UNIT": "Change unit",
-    "CREATING": "Creation...",
-    "UPDATING": "Update...",
-    "CREATE_UNIT": "Create the unit",
-    "UPDATE_UNIT": "Update unit"
   },
   "NOTIFICATIONS_ADDITIONAL": {
     "TENANT_CREATED_WITH_PHOTO": "Tenant created with photo successfully",
