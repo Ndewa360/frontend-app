@@ -3757,7 +3757,12 @@
     "NOT_REQUIRED": "non requis",
     "DATE_NOT_USED_CALCULATION": "Cette date ne sera pas utilisée dans les calculs",
     "FINANCIAL_SITUATION_PREVIEW": "Aperçu de la situation financière",
-    "CALCULATION_BASED_ON_TODAY": "Calcul basé sur la date d'aujourd'hui comme référence"
+    "CALCULATION_BASED_ON_TODAY": "Calcul basé sur la date d'aujourd'hui comme référence",
+    "DEPOSIT_ALREADY_PAID_CHECKBOX": "La caution a deja ete versee",
+    "DEPOSIT_WILL_BE_RECORDED": "Caution enregistree :",
+    "DEPOSIT_NOT_YET_PAID": "La caution n a pas encore ete versee — aucune ecriture ne sera generee",
+    "DEPOSIT_ALREADY_PAID_CONFIRMED": "Caution deja versee et enregistree",
+    "DEPOSIT": "Caution"
   },
   "UNIT_PAYMENTS": {
     "PAYMENT_HISTORY": "Historique des paiements",
@@ -4745,7 +4750,6 @@
       }
     }
   },
-
   "ONBOARDING": {
     "HEADER": {
       "BRAND": "Ndewa360",
@@ -4854,7 +4858,6 @@
       "LOAD_CITIES": "Impossible de charger les villes"
     }
   },
-
   "EMAIL_CONFIRMATION_BANNER": {
     "TITLE": "Confirmez votre email",
     "TIME_LEFT": "— il vous reste",
@@ -4864,7 +4867,6 @@
     "RESEND": "Renvoyer l'email",
     "RESENDING": "Envoi..."
   },
-
   "AUTH_CONFIRM_EMAIL": {
     "NORMAL": {
       "TITLE": "Félicitations !",

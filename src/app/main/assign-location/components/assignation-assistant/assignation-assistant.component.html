@@ -412,63 +412,44 @@
                   {{ 'ASSIGNMENT_ASSISTANT.BALANCE_HELP' | translate }}
                 </div>
               </div>
-
-              <div class="form-field">
-                <label class="field-label">{{ 'ASSIGNMENT_ASSISTANT.DEPOSIT_ALREADY_PAID' | translate }}</label>
-                <input
-                  type="number"
-                  formControlName="cautionVersee"
-                  class="field-input"
-                  placeholder="0"
-                  min="0"
-                  step="0.01">
-                <div class="field-help">
-                  {{ 'ASSIGNMENT_ASSISTANT.DEPOSIT_PAID_AMOUNT' | translate }}
-                </div>
-              </div>
             </div>
 
-            <!-- Switcher pour caution existante -->
-            <div class="caution-control" *ngIf="configFinanciereForm.get('cautionVersee').value > 0">
-              <div class="switch-container">
-                <label class="switch-label">
-                  <input
-                    type="checkbox"
-                    formControlName="cautionExistanteActive"
-                    class="switch-input">
-                  <span class="switch-slider"></span>
-                </label>
-                <div class="switch-text">
-                  <span class="switch-title">{{ 'ASSIGNMENT_ASSISTANT.TRANSFER_EXISTING_DEPOSIT' | translate }}</span>
-                  <span class="switch-description">
-                    {{ configFinanciereForm.get('cautionExistanteActive')?.value ?
-                       ('ASSIGNMENT_ASSISTANT.DEPOSIT_TRANSFERRED' | translate) :
-                       ('ASSIGNMENT_ASSISTANT.DEPOSIT_NOT_CONSIDERED' | translate) }}
-                  </span>
+            <!-- Case a cocher : caution deja versee -->
+            <div class="caution-section" *ngIf="selectedRoom && selectedRoom.shouldPayCaution && selectedRoom.cautionPrice > 0">
+              <div class="caution-info-card">
+                <div class="caution-header">
+                  <div class="caution-title">
+                    <i class="fas fa-shield-alt" style="font-size: 20px;"></i>
+                    <h5>{{ 'ASSIGNMENT_ASSISTANT.UNIT_DEPOSIT' | translate }}</h5>
+                  </div>
+                  <div class="caution-amount">
+                    <span class="amount-label">{{ 'ASSIGNMENT_ASSISTANT.DEFINED_AMOUNT' | translate }}</span>
+                    <span class="amount-value">
+                      {{ selectedRoom.cautionPrice | currency:'XAF':'symbol':'1.0-0' }}
+                    </span>
+                  </div>
+                </div>
+
+                <div class="caution-control">
+                  <div class="switch-container">
+                    <label class="switch-label">
+                      <input
+                        type="checkbox"
+                        formControlName="cautionDejaVersee"
+                        class="switch-input">
+                      <span class="switch-slider"></span>
+                    </label>
+                    <div class="switch-text">
+                      <span class="switch-title">{{ 'ASSIGNMENT_ASSISTANT.DEPOSIT_ALREADY_PAID_CHECKBOX' | translate }}</span>
+                      <span class="switch-description">
+                        {{ configFinanciereForm.get('cautionDejaVersee')?.value
+                           ? (('ASSIGNMENT_ASSISTANT.DEPOSIT_WILL_BE_RECORDED' | translate) + ' ' + (selectedRoom.cautionPrice | currency:'XAF':'symbol':'1.0-0'))
+                           : ('ASSIGNMENT_ASSISTANT.DEPOSIT_NOT_YET_PAID' | translate) }}
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <!-- Information sur la caution de l'unité -->
-            <div class="unit-caution-info" *ngIf="selectedRoom">
-              <div class="info-note">
-                <div class="note-icon">
-                  <i class="fas fa-info-circle" style="font-size: 16px;"></i>
-                </div>
-                <div class="note-content">
-                  <h5>{{ 'ASSIGNMENT_ASSISTANT.UNIT_DEPOSIT_INFO' | translate }}</h5>
-                  <p *ngIf="selectedRoom.cautionPrice > 0">
-                    {{ 'ASSIGNMENT_ASSISTANT.UNIT_HAS_DEPOSIT' | translate }} <strong>{{ selectedRoom.cautionPrice | currency:'XAF':'symbol':'1.0-0' }}</strong>.
-                    {{ 'ASSIGNMENT_ASSISTANT.ADD_DEPOSIT_INFO' | translate }}
-                  </p>
-                  <p *ngIf="!selectedRoom.cautionPrice || selectedRoom.cautionPrice === 0">
-                    {{ 'ASSIGNMENT_ASSISTANT.NO_UNIT_DEPOSIT' | translate }}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div class="form-grid">
             </div>
 
             <!-- Aperçu de la situation financière -->
@@ -479,7 +460,7 @@
                   <i class="fas" [class.fa-check-circle]="configFinanciereForm.get('soldeActuel').value >= 0"
                      [class.fa-exclamation-triangle]="configFinanciereForm.get('soldeActuel').value < 0"
                      [style.color]="configFinanciereForm.get('soldeActuel').value >= 0 ? 'green' : 'orange'"></i>
-                  <span class="description-text">{{ getDescriptionSoldeActuel() }}</span>
+                  <span class="description-text">{{ getDescriptionRetard() }}</span>
                 </div>
                 
                 <div class="calculation-method" *ngIf="!configFinanciereForm.get('dateEntreeConnue')?.value">
@@ -503,9 +484,9 @@
                   <span class="label">{{ 'ASSIGNMENT_ASSISTANT.ARREARS_TO_REPORT' | translate }}</span>
                   <span class="value negative">{{ configFinanciereForm.get('soldeActuel').value | currency:'XAF':'symbol':'1.0-0' }}</span>
                 </div>
-                <div class="summary-item" *ngIf="configFinanciereForm.get('cautionVersee').value > 0">
+                <div class="summary-item" *ngIf="isCautionActive()">
                   <span class="label">{{ 'ASSIGNMENT_ASSISTANT.DEPOSIT_TO_TRANSFER' | translate }}</span>
-                  <span class="value">{{ configFinanciereForm.get('cautionVersee').value | currency:'XAF':'symbol':'1.0-0' }}</span>
+                  <span class="value">{{ getActiveCautionAmount() | currency:'XAF':'symbol':'1.0-0' }}</span>
                 </div>
               </div>
             </div>
@@ -707,6 +688,9 @@
               <div class="financial-item" *ngIf="isCautionActive()">
                 <label>{{ 'ASSIGNMENT_ASSISTANT.ACTIVE_DEPOSIT' | translate }}</label>
                 <span class="value amount">{{ getActiveCautionAmount() | currency:'XAF':'symbol':'1.0-0' }}</span>
+                <small style="color:#059669" *ngIf="typeForm.get('typeLocataire')?.value === TypeLocataire.EXISTANT">
+                  {{ 'ASSIGNMENT_ASSISTANT.DEPOSIT_ALREADY_PAID_CONFIRMED' | translate }}
+                </small>
               </div>
               <div class="financial-item" *ngIf="typeForm.get('typeLocataire')?.value === TypeLocataire.NOUVEAU">
                 <label>{{ 'ASSIGNMENT_ASSISTANT.AMOUNT_FOR_ADVANCE' | translate }}</label>

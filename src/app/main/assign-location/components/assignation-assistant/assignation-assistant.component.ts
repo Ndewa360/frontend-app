@@ -4,6 +4,8 @@ import { Subject, Observable } from 'rxjs';
 import { takeUntil, distinctUntilChanged, debounceTime } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
 import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
+
 
 import {
   AssignationConfig,
@@ -128,7 +130,8 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private store: Store,
     private toastr: ToastrService,
-    private assistantService: AssignationAssistantService
+    private assistantService: AssignationAssistantService,
+    private translate: TranslateService,
   ) {
     this.initializeForms();
   }
@@ -138,10 +141,37 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
     this.loadData();
     this.setupFormSubscriptions();
 
-    // Pré-sélections si fournies (avec délai pour s'assurer que les données sont chargées)
-    setTimeout(() => {
-      this.applyPreselections();
-    }, 500);
+    // Pre-selections : attendre que les donnees soient chargees
+    // On s'abonne a rooms$ et locataires$ et on applique des qu'ils sont disponibles
+    if (this.preselectedRoom || this.preselectedLocataire) {
+      this.rooms$.pipe(
+        takeUntil(this.destroy$)
+      ).subscribe(rooms => {
+        if (rooms && rooms.length > 0 && this.preselectedRoom) {
+          const roomExists = rooms.find(r => r._id === this.preselectedRoom._id);
+          if (roomExists && !this.assistantState.configuration.chambreId) {
+            this.assistantState.configuration.chambreId = this.preselectedRoom._id;
+            this.chambreForm.patchValue({ chambreId: this.preselectedRoom._id }, { emitEvent: true });
+            this.selectedRoom = this.preselectedRoom;
+            this.validateCurrentStep();
+          }
+        }
+      });
+
+      this.locataires$.pipe(
+        takeUntil(this.destroy$)
+      ).subscribe(locataires => {
+        if (locataires && locataires.length > 0 && this.preselectedLocataire) {
+          const locExists = locataires.find(l => l._id === this.preselectedLocataire._id);
+          if (locExists && !this.assistantState.configuration.locataireId) {
+            this.assistantState.configuration.locataireId = this.preselectedLocataire._id;
+            this.locataireForm.patchValue({ locataireId: this.preselectedLocataire._id }, { emitEvent: true });
+            this.selectedLocataire = this.preselectedLocataire;
+            this.validateCurrentStep();
+          }
+        }
+      });
+    }
   }
 
   private initializeSelectors(): void {
@@ -190,7 +220,7 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
     // Formulaire de configuration financière
     this.configFinanciereForm = this.formBuilder.group({
       // Champs communs - VIDE par défaut pour forcer la saisie
-      dateEntree: [null, Validators.required],
+      dateEntree: [null], // Validators gérés dynamiquement par updateFormValidators
       commentaire: [''],
       
       // Champs pour nouveau locataire
@@ -200,8 +230,7 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
       // Champs pour locataire existant
       situationActuelle: ['A_JOUR'],
       soldeActuel: [0],
-      cautionVersee: [0],
-      cautionExistanteActive: [true], // Switcher pour caution existante
+      cautionDejaVersee: [false], // case a cocher : caution deja versee (montant = room.cautionPrice)
       transfererHistorique: [true],
       ajustementType: [''],
       ajustementMontant: [0],
@@ -272,14 +301,15 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
         this.calculerEcrituresComptables();
       });
 
-    // Écouter spécifiquement les changements des switchers de caution
+    // Ecouter les changements du switcher caution (nouveau locataire)
     this.configFinanciereForm.get('prendreEnCompteCaution')?.valueChanges
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
         this.calculerEcrituresComptables();
       });
 
-    this.configFinanciereForm.get('cautionExistanteActive')?.valueChanges
+    // Ecouter la case a cocher caution deja versee (locataire existant)
+    this.configFinanciereForm.get('cautionDejaVersee')?.valueChanges
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
         this.calculerEcrituresComptables();
@@ -428,13 +458,11 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
         break;
 
       case EtapeAssistant.SELECTION_LOCATAIRE:
-        isValid = this.locataireForm.valid && this.locatairesList.length > 0;
-        console.log("Valid ",isValid,this.locataireForm.valid,this.assistantState.configuration.locataireId)
+        // Ne pas bloquer sur locatairesList.length : les donnees peuvent encore
+        // se charger. On valide uniquement la selection effective.
+        isValid = this.locataireForm.valid && !!this.assistantState.configuration.locataireId;
         if (!this.locataireForm.valid) {
-          errors.push('Veuillez sélectionner un locataire');
-        }
-        if (this.locatairesList.length === 0) {
-          errors.push('Aucun locataire disponible. Créez d\'abord un locataire.');
+          errors.push('Veuillez selectionner un locataire');
         }
         break;
 
@@ -449,62 +477,37 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
         break;
 
       case EtapeAssistant.CONFIGURATION_FINANCIERE:
-        isValid = true; // Commencer par true et invalider si nécessaire
+        isValid = true;
 
-        // Vérification de la date d'entrée selon le type et la configuration
         const dateEntree = this.configFinanciereForm.get('dateEntree')?.value;
         const dateEntreeConnue = this.configFinanciereForm.get('dateEntreeConnue')?.value;
         const typeLocataire = this.typeForm.get('typeLocataire')?.value;
-        
-        // Vérification stricte de la date d'entrée
-        if (dateEntreeConnue === true && (!dateEntree || dateEntree === '' || dateEntree === null)) {
-          isValid = false;
-          if (typeLocataire === TypeLocataire.NOUVEAU) {
-            errors.push('La date d\'entrée est obligatoire pour un nouveau locataire');
-          } else {
-            errors.push('La date d\'entrée est obligatoire quand "Je connais la date d\'entrée exacte" est coché');
-          }
-        }
-        
-        
 
-        // Vérifications spécifiques selon le type de locataire
         if (typeLocataire === TypeLocataire.NOUVEAU) {
-          // Pour nouveau locataire, la case doit toujours être cochée
-          if (dateEntreeConnue !== true) {
+          // Nouveau locataire : date toujours obligatoire
+          if (!dateEntree) {
             isValid = false;
             errors.push('La date d\'entrée est obligatoire pour un nouveau locataire');
           }
-
           const montantPercu = this.configFinanciereForm.get('paiementMontant')?.value;
           if (montantPercu === null || montantPercu === undefined || montantPercu < 0) {
             isValid = false;
             errors.push('Veuillez saisir le montant effectivement perçu (0 ou plus)');
           }
         } else {
-          // Pour locataire existant, vérifier le solde actuel
+          // Locataire existant : date obligatoire SEULEMENT si la case "date connue" est cochée
+          if (dateEntreeConnue === true && !dateEntree) {
+            isValid = false;
+            errors.push('La date d\'entrée est obligatoire quand "Je connais la date d\'entrée exacte" est coché');
+          }
+          // Solde peut être 0, null/undefined seulement invalide
           const soldeActuel = this.configFinanciereForm.get('soldeActuel')?.value;
           if (soldeActuel === null || soldeActuel === undefined) {
             isValid = false;
             errors.push('Veuillez saisir le solde actuel du locataire');
           }
-          
-          // Vérification supplémentaire pour la date si case cochée
-          if (dateEntreeConnue === true) {
-            const dateValue = this.configFinanciereForm.get('dateEntree')?.value;
-            if (!dateValue || dateValue === '') {
-              isValid = false;
-              // errors.push('La date d\'entrée est obligatoire quand "Je connais la date d\'entrée exacte" est coché');
-            }
-          }
         }
 
-        console.log('🔍 Validation configuration financière:', {
-          dateEntree,
-          typeLocataire,
-          isValid,
-          errors
-        });
         break;
 
       case EtapeAssistant.PREVIEW_ECRITURES:
@@ -594,9 +597,23 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
    * Construire le DTO pour l'assignation backend
    */
   private buildAssignationDTO(): any {
-    const typeAssignation = this.typeForm.get('typeLocataire').value;
-    const dateEntreeConnue = this.configFinanciereForm.get('dateEntreeConnue')?.value;
-    const dateEffet = dateEntreeConnue ? this.configFinanciereForm.get('dateEntree').value : new Date();
+    const typeAssignation    = this.typeForm.get('typeLocataire').value;
+    const dateEntreeConnue   = this.configFinanciereForm.get('dateEntreeConnue')?.value;
+    const soldeActuel        = this.configFinanciereForm.get('soldeActuel')?.value || 0;
+
+    // Date d'effet : si date connue, utiliser la saisie ; sinon estimer cote frontend
+    // pour que le backend ait coherence avec ce qu'affiche l'interface
+    let dateEffet: Date;
+    if (dateEntreeConnue) {
+      dateEffet = this.configFinanciereForm.get('dateEntree').value;
+    } else if (typeAssignation === TypeLocataire.EXISTANT && soldeActuel < 0 && this.selectedRoom?.price > 0) {
+      // Meme calcul que le backend : remonter de ceil(|solde|/loyer) mois
+      const moisArriere = Math.ceil(Math.abs(soldeActuel) / this.selectedRoom.price);
+      const aujourd = new Date();
+      dateEffet = new Date(aujourd.getFullYear(), aujourd.getMonth() - moisArriere, aujourd.getDate());
+    } else {
+      dateEffet = new Date();
+    }
 
     const baseDTO = {
       locataireId: this.selectedLocataire._id,
@@ -630,15 +647,13 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
         commentaire: this.configFinanciereForm.get('commentaire')?.value || ''
       };
     } else {
-      // Configuration pour locataire existant - utiliser la même structure que buildConfigurationFinanciere
       const config = this.buildConfigurationFinanciere();
       if (config && 'situationActuelle' in config) {
         baseDTO['configurationLocataireExistant'] = config;
-        console.log('📤 Configuration locataire existant envoyée:', config);
       }
     }
 
-    console.log('📤 DTO complet envoyé au backend:', baseDTO);
+    // console.log('📤 DTO complet envoyé au backend:', baseDTO);
     return baseDTO;
   }
 
@@ -699,43 +714,30 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
       console.log('✅ Configuration nouveau locataire construite:', config);
       return config;
     } else {
-      // Pour locataire existant, ne prendre en compte la caution que si le switcher est activé
-      const soldeActuel = this.configFinanciereForm.get('soldeActuel')?.value || 0;
-      const cautionVersee = this.configFinanciereForm.get('cautionVersee')?.value || 0;
-      const cautionActive = this.configFinanciereForm.get('cautionExistanteActive')?.value;
-      const dateEntreeConnue = this.configFinanciereForm.get('dateEntreeConnue')?.value;
-      const dateEntree = dateEntreeConnue ? this.configFinanciereForm.get('dateEntree')?.value : null;
+      const soldeActuel        = this.configFinanciereForm.get('soldeActuel')?.value || 0;
+      const cautionDejaVersee  = !!this.configFinanciereForm.get('cautionDejaVersee')?.value;
+      // Si la case est cochee, la caution versee = montant defini sur l'unite
+      const cautionVersee      = cautionDejaVersee ? (this.selectedRoom?.cautionPrice || 0) : 0;
+      const dateEntreeConnue   = this.configFinanciereForm.get('dateEntreeConnue')?.value;
+      const dateEntree         = dateEntreeConnue ? this.configFinanciereForm.get('dateEntree')?.value : null;
 
-      console.log('💰 Données financières locataire existant:', {
-        soldeActuel,
-        cautionVersee,
-        cautionActive,
-        dateEntreeConnue,
-        dateEntree
-      });
-
-      // Déterminer la situation actuelle basée sur le solde
       let situationActuelle = this.configFinanciereForm.get('situationActuelle')?.value;
       if (!situationActuelle || situationActuelle === '') {
-        if (soldeActuel < 0) {
-          situationActuelle = 'EN_RETARD';
-        } else if (soldeActuel > 0) {
-          situationActuelle = 'EN_AVANCE';
-        } else {
-          situationActuelle = 'A_JOUR';
-        }
+        if (soldeActuel < 0)      situationActuelle = 'EN_RETARD';
+        else if (soldeActuel > 0) situationActuelle = 'EN_AVANCE';
+        else                      situationActuelle = 'A_JOUR';
       }
 
       const config: LocataireExistantConfig = {
-        situationActuelle: situationActuelle,
-        soldeActuel: Number(soldeActuel) || 0,
-        cautionVersee: cautionActive ? Number(cautionVersee) || 0 : 0, // Caution selon le switcher
-        dateEntree: dateEntreeConnue ? dateEntree : null, // null si date inconnue pour activer le nouvel algorithme
+        situationActuelle,
+        soldeActuel:        Number(soldeActuel) || 0,
+        cautionVersee,  // 0 ou room.cautionPrice selon la case
+        dateEntree:         dateEntreeConnue ? dateEntree : null,
         transfererHistorique: Boolean(this.configFinanciereForm.get('transfererHistorique')?.value),
-        commentaire: this.configFinanciereForm.get('commentaire')?.value || ''
+        commentaire:        this.configFinanciereForm.get('commentaire')?.value || ''
       };
 
-      console.log('✅ Configuration locataire existant construite:', config);
+      console.log('Configuration locataire existant construite:', config);
       return config;
     }
   }
@@ -848,32 +850,22 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
     return Math.max(0, montantPercu - cautionActive);
   }
 
-  // Vérifier si la caution est active
   isCautionActive(): boolean {
     const typeLocataire = this.typeForm.get('typeLocataire')?.value;
-
     if (typeLocataire === TypeLocataire.NOUVEAU) {
       return this.configFinanciereForm.get('prendreEnCompteCaution')?.value &&
-             this.selectedRoom?.cautionPrice > 0;
+             (this.selectedRoom?.cautionPrice ?? 0) > 0;
     } else {
-      return this.configFinanciereForm.get('cautionExistanteActive')?.value &&
-             this.configFinanciereForm.get('cautionVersee')?.value > 0;
+      // Pour EXISTANT : case a cocher simple
+      return !!this.configFinanciereForm.get('cautionDejaVersee')?.value &&
+             (this.selectedRoom?.cautionPrice ?? 0) > 0;
     }
   }
 
-  // Obtenir le montant de la caution active
   getActiveCautionAmount(): number {
-    if (!this.isCautionActive()) {
-      return 0;
-    }
-
-    const typeLocataire = this.typeForm.get('typeLocataire')?.value;
-
-    if (typeLocataire === TypeLocataire.NOUVEAU) {
-      return this.selectedRoom?.cautionPrice || 0;
-    } else {
-      return this.configFinanciereForm.get('cautionVersee')?.value || 0;
-    }
+    if (!this.isCautionActive()) return 0;
+    // Dans tous les cas, la caution = montant defini sur l'unite
+    return this.selectedRoom?.cautionPrice || 0;
   }
 
   // Mettre à jour la chambre sélectionnée
@@ -1167,18 +1159,26 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
 
     if (typeLocataire === TypeLocataire.EXISTANT) {
       const dateEntreeConnue = this.configFinanciereForm.get('dateEntreeConnue')?.value;
-      
+      const soldeActuel = this.configFinanciereForm.get('soldeActuel')?.value || 0;
+      const prixMensuel = this.selectedRoom?.price || 0;
+
       if (dateEntreeConnue) {
-        // Calcul classique avec date d'entrée
-        const moisRetard = this.getMoisRetard();
-        if (moisRetard > 0) {
-          return `${moisRetard} mois d'avance (calcul depuis date d'entrée)`;
-        } else if (moisRetard < 0) {
-          return `${Math.abs(moisRetard)} mois de retard (calcul depuis date d'entrée)`;
+        // Date saisie par l'utilisateur : calcul classique depuis cette date
+        const dateEntree = this.configFinanciereForm.get('dateEntree')?.value;
+        if (dateEntree && prixMensuel > 0) {
+          const dateLabel = new Date(dateEntree).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+          if (soldeActuel < 0) {
+            const moisRetard = Math.ceil(Math.abs(soldeActuel) / prixMensuel);
+            return `En retard de ${moisRetard} mois — date d'entree : ${dateLabel}`;
+          } else if (soldeActuel > 0) {
+            const moisAvance = Math.floor(soldeActuel / prixMensuel);
+            return `En avance de ${moisAvance} mois — date d'entree : ${dateLabel}`;
+          }
+          return `A jour — date d'entree : ${dateLabel}`;
         }
-        return 'À jour (calcul depuis date d\'entrée)';
+        return 'Date d\'entree saisie — en attente de validation';
       } else {
-        // Calcul avec ancrage sur aujourd'hui
+        // Date inconnue : calcul depuis le solde uniquement
         return this.getDescriptionSoldeActuel();
       }
     }
@@ -1195,16 +1195,19 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
     const soldeActuel = this.configFinanciereForm.get('soldeActuel')?.value || 0;
     const prixMensuel = this.selectedRoom.price;
     
-    if (prixMensuel === 0) return 'Prix de la chambre non défini';
-    
-    const moisEcart = Math.round(soldeActuel / prixMensuel);
-    
-    if (moisEcart === 0) {
-      return 'À jour ce mois-ci (ancrage aujourd\'hui)';
-    } else if (moisEcart > 0) {
-      return `En avance de ${moisEcart} mois (ancrage aujourd'hui - payé jusqu'au ${this.getMonthName(new Date(), moisEcart)})`;
+    if (prixMensuel === 0) return 'Prix de la chambre non defini';
+
+    if (soldeActuel === 0) {
+      return 'A jour — aucun arriere ni avance';
+    } else if (soldeActuel < 0) {
+      const moisArriere = Math.ceil(Math.abs(soldeActuel) / prixMensuel);
+      const dateEstimee = new Date();
+      dateEstimee.setMonth(dateEstimee.getMonth() - moisArriere);
+      const dateLabel = dateEstimee.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+      return `En retard de ${moisArriere} mois — date d'entree estimee : ${dateLabel}`;
     } else {
-      return `En retard de ${Math.abs(moisEcart)} mois (ancrage aujourd'hui - doit depuis ${this.getMonthName(new Date(), moisEcart)})`;
+      const moisAvance = Math.floor(soldeActuel / prixMensuel);
+      return `En avance de ${moisAvance} mois — entree a la date d'effet`;
     }
   }
 

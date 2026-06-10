@@ -3758,7 +3758,12 @@
     "NOT_REQUIRED": "not required",
     "DATE_NOT_USED_CALCULATION": "This date will not be used in calculations",
     "FINANCIAL_SITUATION_PREVIEW": "Financial situation preview",
-    "CALCULATION_BASED_ON_TODAY": "Calculation based on today's date as reference"
+    "CALCULATION_BASED_ON_TODAY": "Calculation based on today's date as reference",
+    "DEPOSIT_ALREADY_PAID_CHECKBOX": "Deposit already paid",
+    "DEPOSIT_WILL_BE_RECORDED": "Deposit recorded:",
+    "DEPOSIT_NOT_YET_PAID": "Deposit not yet paid — no entry will be generated",
+    "DEPOSIT_ALREADY_PAID_CONFIRMED": "Deposit already paid and recorded",
+    "DEPOSIT": "Deposit"
   },
   "UNIT_PAYMENTS": {
     "PAYMENT_HISTORY": "Payment history",
@@ -4740,7 +4745,6 @@
       }
     }
   },
-
   "ONBOARDING": {
     "HEADER": {
       "BRAND": "Ndewa360",
@@ -4849,7 +4853,6 @@
       "LOAD_CITIES": "Unable to load cities"
     }
   },
-
   "EMAIL_CONFIRMATION_BANNER": {
     "TITLE": "Confirm your email",
     "TIME_LEFT": "— you have",
@@ -4859,7 +4862,6 @@
     "RESEND": "Resend email",
     "RESENDING": "Sending..."
   },
-
   "AUTH_CONFIRM_EMAIL": {
     "NORMAL": {
       "TITLE": "Congratulations!",

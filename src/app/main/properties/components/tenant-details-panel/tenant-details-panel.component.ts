@@ -167,9 +167,11 @@ export class TenantDetailsPanelComponent implements OnInit, OnDestroy, OnChanges
       this.currentRoom = null;
       return;
     }
-
+    const tenantRoomId = typeof this.tenant.room === 'object'
+      ? (this.tenant.room as any)?._id?.toString()
+      : this.tenant.room?.toString();
     const rooms = this.store.selectSnapshot(RoomState.selectStateRoomByPropertyId(this.propertyId));
-    this.currentRoom = rooms?.find((room: RoomModel) => room._id === this.tenant?.room) || null;
+    this.currentRoom = rooms?.find((room: RoomModel) => room._id?.toString() === tenantRoomId) || null;
   }
 
   private loadCurrentLocation(): void {
@@ -177,11 +179,14 @@ export class TenantDetailsPanelComponent implements OnInit, OnDestroy, OnChanges
       this.currentLocation = null;
       return;
     }
-
+    const tenantId = this.tenant._id.toString();
     const locations = this.store.selectSnapshot(LocationState.selectStateLocationByPropertyId(this.propertyId));
-    this.currentLocation = locations?.find((location: LocationModel) =>
-      location.locataire === this.tenant?._id && location.isRunning === true
-    ) || null;
+    this.currentLocation = locations?.find((location: LocationModel) => {
+      const locTenantId = typeof location.locataire === 'object'
+        ? (location.locataire as any)?._id?.toString()
+        : location.locataire?.toString();
+      return locTenantId === tenantId && location.isRunning === true;
+    }) || null;
   }
 
   private loadTenantPayments(): void {
@@ -194,28 +199,16 @@ export class TenantDetailsPanelComponent implements OnInit, OnDestroy, OnChanges
     this.store.select(LocationPaymentState.selectStateLocationPaymentByPropertyId(this.propertyId))
       .pipe(takeUntil(this.destroy$))
       .subscribe((payments: LocationPaymentModel[]) => {
-        console.log('Tous les paiements pour la propriété:', this.propertyId, payments);
         if (payments && this.tenant?._id) {
-          this.tenantPayments = payments.filter((payment: LocationPaymentModel) =>
-            payment.locataire === this.tenant._id
-          );
-          console.log('Paiements filtrés pour le locataire:', this.tenant.fullName, 'ID:', this.tenant._id, this.tenantPayments);
-
-          // Vérification des références de paiement
-          const uniqueRefs = new Set(this.tenantPayments.map(p => p.billingRef));
-          console.log('Références uniques:', uniqueRefs.size, 'sur', this.tenantPayments.length, 'paiements');
-          if (uniqueRefs.size !== this.tenantPayments.length) {
-            console.warn('⚠️ Attention: Des références de paiement sont dupliquées!');
-            console.log('Détail des références:', this.tenantPayments.map(p => ({
-              id: p._id,
-              ref: p.billingRef,
-              date: p.datePayment,
-              amount: p.locationPaymentPrice
-            })));
-          }
+          const tenantId = this.tenant._id.toString();
+          this.tenantPayments = payments.filter((payment: LocationPaymentModel) => {
+            const payLocataireId = typeof payment.locataire === 'object'
+              ? (payment.locataire as any)?._id?.toString()
+              : payment.locataire?.toString();
+            return payLocataireId === tenantId;
+          });
         } else {
           this.tenantPayments = [];
-          console.log('Aucun paiement trouvé - payments:', !!payments, 'tenant ID:', this.tenant?._id);
         }
       });
   }

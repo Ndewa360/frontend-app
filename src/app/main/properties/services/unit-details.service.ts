@@ -56,14 +56,32 @@ export class UnitDetailsService {
         };
 
         if (room.locataire) {
-          unitData.tenant = locataires.find(l => l._id === room.locataire) || null;
+          const locataireId = typeof room.locataire === 'object'
+            ? (room.locataire as any)?._id?.toString()
+            : room.locataire?.toString();
+          unitData.tenant = locataires.find(l => l._id?.toString() === locataireId) || null;
         }
 
-        const roomPaymentHistory = paymentHistory.find(h => h.room._id === room._id);
-        unitData.paymentHistory = roomPaymentHistory || null;
-        unitData.payments = roomPaymentHistory?.transactions || [];
+        const roomId = room._id?.toString();
+        // Fusionner toutes les locations de cette chambre (une chambre peut avoir plusieurs locations historiques)
+        const allRoomHistories = paymentHistory.filter(h => {
+          const hRoomId = typeof h.room === 'object' ? h.room?._id?.toString() : h.room;
+          return hRoomId === roomId;
+        });
+        // Prendre la location active en priorite, sinon la plus recente
+        unitData.paymentHistory = allRoomHistories.find(h =>
+          allRoomHistories.length === 1 || (h.location as any)?.isRunning === true
+        ) || allRoomHistories[allRoomHistories.length - 1] || null;
+        // Fusionner les transactions de toutes les locations
+        unitData.payments = allRoomHistories.flatMap(h => h.transactions || []);
 
-        unitData.location = locations.find(loc => loc.room === room._id) || null;
+        const roomIdStr = room._id?.toString();
+        const allRoomLocations = locations.filter(loc => {
+          const locRoomId = typeof loc.room === 'object' ? (loc.room as any)?._id?.toString() : loc.room?.toString();
+          return locRoomId === roomIdStr;
+        });
+        // Location active en priorite, sinon la plus recente
+        unitData.location = allRoomLocations.find(l => l.isRunning) || allRoomLocations[allRoomLocations.length - 1] || null;
 
         // ✅ Calcul des dates de paiement
         unitData.lastPaymentDate = this.computeLastPaymentDate(unitData.payments);
@@ -149,9 +167,9 @@ export class UnitDetailsService {
    * Formate les paiements pour l'affichage
    */
   getFormattedPayments(unitData: UnitDetailsData): any[] {
-    if (!unitData.paymentHistory) return [];
+    if (!unitData.payments || unitData.payments.length === 0) return [];
 
-    return unitData.paymentHistory.transactions.map((transaction) => ({
+    return unitData.payments.map((transaction) => ({
       chambre: this.getRoomString(unitData.room),
       date_paiement: this.formatPaymentDateLong(transaction.datePayment),
       price: this.formatPrice(transaction.locationPaymentPrice || 0),

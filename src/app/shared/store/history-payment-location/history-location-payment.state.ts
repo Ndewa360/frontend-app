@@ -236,7 +236,6 @@ export class HistoryLocationPaymentState{
         return this._historyLocationPaymentsService.getHistoryLocationPaymentsByProperty(propertyId).pipe(
             tap(
                 result => {
-                    console.log("History ",result.data)
                     let stateCopy = [...state.historyLocationPayments,...result.data];
                     ctx.patchState({
                         loadingHistoryLocationPayment:false,
@@ -252,6 +251,32 @@ export class HistoryLocationPaymentState{
                 return throwError(error);
             })
         )
+    }
+
+    @Action(HistoryLocationPaymentAction.RefreshHistoryLocationPaymentsByPropertyId)
+    refreshHistoryLocationPaymentsByPropertyId(ctx:StateContext<HistoryLocationPaymentStateModel>,{propertyId}:HistoryLocationPaymentAction.RefreshHistoryLocationPaymentsByPropertyId)
+    {
+        const state = ctx.getState();
+        // Supprimer les entrees existantes pour cette propriete puis recharger
+        const filtered = state.historyLocationPayments.filter(u => u.property._id !== propertyId);
+        ctx.patchState({
+            loadingHistoryLocationPayment: true,
+            initLoadingState: 'LOADING',
+            historyLocationPayments: filtered
+        });
+        return this._historyLocationPaymentsService.getHistoryLocationPaymentsByProperty(propertyId).pipe(
+            tap(result => {
+                ctx.patchState({
+                    loadingHistoryLocationPayment: false,
+                    historyLocationPayments: [...filtered, ...result.data],
+                    initLoadingState: 'LOADED'
+                });
+            }),
+            catchError(error => {
+                ctx.patchState({ loadingHistoryLocationPayment: false });
+                return throwError(error);
+            })
+        );
     }
 
 }
