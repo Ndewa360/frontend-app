@@ -1204,10 +1204,12 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
       const dateEstimee = new Date();
       dateEstimee.setMonth(dateEstimee.getMonth() - moisArriere);
       const dateLabel = dateEstimee.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
-      return `En retard de ${moisArriere} mois — date d'entree estimee : ${dateLabel}`;
+      return `En retard de ${moisArriere} mois (${Math.abs(soldeActuel).toLocaleString()} FCFA) — date d'entree estimée : ${dateLabel}`;
     } else {
       const moisAvance = Math.floor(soldeActuel / prixMensuel);
-      return `En avance de ${moisAvance} mois — entree a la date d'effet`;
+      // Le paiement créé = 1 mois dû (aujourd'hui = date d'entrée) + avance
+      const paiementCree = prixMensuel + soldeActuel;
+      return `En avance de ${moisAvance} mois (${soldeActuel.toLocaleString()} FCFA) — paiement initial créé : ${paiementCree.toLocaleString()} FCFA`;
     }
   }
 

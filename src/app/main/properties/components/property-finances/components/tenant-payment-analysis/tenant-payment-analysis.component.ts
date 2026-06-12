@@ -114,12 +114,12 @@ export class TenantPaymentAnalysisComponent implements OnInit, OnChanges {
         const monthsDueInYear     = (fa as any).monthsDueInYear     ?? 0;
         const coveredAmountInYear = (fa as any).coveredAmountInYear ?? 0;
         const totalMonthsCovered  = (fa as any).totalMonthsCovered  ?? 0;
-        // expectedAmount = attendu pour l'année (calculé backend avec offset 0)
-        const expectedFullYear    = fa.expectedPaymentToDate ?? (roomPrice * 12);
-        // Taux de couverture de l'année : coveredAmountInYear / expectedAmount
-        const paymentRate = expectedFullYear > 0
-          ? Math.min((coveredAmountInYear / expectedFullYear) * 100, 100)
-          : 0;
+        // expectedToDate = mois dus dans l'année × loyer (attendu jusqu'à aujourd'hui, pas 12 mois)
+        const expectedFullYear = monthsDueInYear > 0 ? monthsDueInYear * roomPrice : 0;
+        // paymentRate = collectionRate calculé dans le moteur (adjustedPaid / expectedPaymentToDate)
+        const paymentRate = fa.collectionRate ?? (
+          expectedFullYear > 0 ? Math.min((coveredAmountInYear / expectedFullYear) * 100, 100) : 0
+        );
         // Taux par rapport aux mois dus à ce jour
         const rateVsToday = monthsDueInYear > 0
           ? Math.min((coveredMonthsInYear / monthsDueInYear) * 100, 100)
@@ -148,7 +148,7 @@ export class TenantPaymentAnalysisComponent implements OnInit, OnChanges {
           expectedPaymentToDate: fa.expectedPaymentToDate,
           // Statut par rapport à aujourd'hui
           status,
-          monthsBehind:  (fa as any).lateMonths    ?? fa.monthsBehind ?? 0,
+          monthsBehind:  fa.monthsBehind ?? (fa as any).lateMonths ?? 0,
           amountBehind:  fa.amountBehind,
           advanceAmount: fa.advanceAmount,
           advanceMonths: (fa as any).advanceMonths ?? 0,
@@ -189,7 +189,7 @@ export class TenantPaymentAnalysisComponent implements OnInit, OnChanges {
     const excellentTenants = this.tenantAnalyses.filter(t =>
       t.status === 'up_to_date' || t.status === 'advance').length;
     const goodTenants = this.tenantAnalyses.filter(t =>
-      t.status === 'up_to_date' && this.getPaymentRate(t) >= 95).length;
+      (t.status === 'up_to_date' || t.status === 'advance') && this.getPaymentRate(t) >= 95).length;
     const warningTenants = this.tenantAnalyses.filter(t =>
       t.status === 'behind' && this.getPaymentRate(t) >= 50).length;
     const criticalTenants = this.tenantAnalyses.filter(t =>

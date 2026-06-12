@@ -182,11 +182,11 @@
       <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
 
-          <!-- Couvert en 2026 / Attendu année complète -->
+          <!-- Couvert dans l'année / Attendu à ce jour -->
           <div class="bg-white rounded-lg p-3 border border-gray-200">
             <p class="text-xs text-gray-500 mb-1">Couvert en {{ selectedYear }}</p>
             <p class="text-lg font-bold text-green-600">{{ formatPrice(tenant.coveredAmountInYear) }}</p>
-            <p class="text-xs text-gray-400">sur {{ formatPrice(tenant.expectedFullYear) }} (année complète)</p>
+            <p class="text-xs text-gray-400">sur {{ formatPrice(tenant.expectedFullYear) }} attendu à ce jour</p>
           </div>
 
           <!-- Mois couverts / Mois dus à ce jour -->

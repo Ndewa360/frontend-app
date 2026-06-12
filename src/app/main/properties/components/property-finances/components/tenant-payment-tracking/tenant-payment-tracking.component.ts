@@ -49,6 +49,7 @@ export interface TenantTrackingData {
   totalReceived: number;
   monthsOccupied: number;
   contractStatus: string;
+  totalPaidAllTime?: number;  // cumul brut depuis l'entrée (toutes années)
 }
 
 @Component({
@@ -81,7 +82,8 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
   };
 
   selectedPeriod: 'all' | 'last_2_months' | 'current_month' = 'all';
-  selectedStatus: 'all' | 'up_to_date' | 'partial' | 'late' | 'advance' | 'behind' = 'all';
+  // Statuts normalisés par le backend : 'up_to_date' | 'advance' | 'behind'
+  selectedStatus: 'all' | 'up_to_date' | 'advance' | 'behind' = 'all';
   searchTerm: string = '';
 
   // Pagination
@@ -148,7 +150,7 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
           expectedPaymentToDate: expectedToDate,        // attendu à ce jour
           status: fa.status,
           monthsBehind:  (fa as any).lateMonths    ?? fa.monthsBehind ?? 0,
-          amountBehind:  (fa as any).debtAmount    ?? fa.amountBehind ?? 0,
+          amountBehind:  fa.amountBehind ?? 0,
           advanceAmount: (fa as any).advanceAmount ?? 0,
           paymentConsistency: fa.paymentConsistency,
           paymentRate,
@@ -168,7 +170,7 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
           coveredMonthsInYear,
           monthsDueInYear,
           totalMonthsCovered,
-          totalPaidAllTime: fa.totalPaid  // cumul brut (informatif)
+          totalPaidAllTime: fa.totalPaid  // cumul brut toutes années — différent de coveredAmountInYear
         };
       });
 
@@ -282,16 +284,9 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
   }
   
   getStatusPriority(status: string): number {
-    // Priorité pour le tri (plus élevé = plus urgent)
-    const priorities = {
-      'late': 5,
-      'partial': 4,
-      'ended_contract': 3,
-      'no_contract': 2,
-      'up_to_date': 1,
-      'ahead': 0
-    };
-    return priorities[status] || 0;
+    // Statuts normalisés API : 'behind' > 'up_to_date' > 'advance'
+    const priorities: Record<string, number> = { 'behind': 2, 'up_to_date': 1, 'advance': 0 };
+    return priorities[status] ?? 0;
   }
   
   getPaymentHealthScore(tenant: TenantTrackingData): number {
@@ -408,9 +403,8 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
   }
   
   getUrgentTenants(): TenantTrackingData[] {
-    return this.tenantTrackingData.filter(tenant => 
-      tenant.status === 'late' || 
-      (tenant.status === 'partial' && tenant.paymentRate < 50)
+    return this.tenantTrackingData.filter(tenant =>
+      tenant.status === 'behind' && tenant.paymentRate < 50
     );
   }
 

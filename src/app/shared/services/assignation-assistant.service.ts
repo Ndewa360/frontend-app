@@ -58,26 +58,13 @@ export class AssignationAssistantService {
     dateEffet: Date
   ): EcritureComptablePreview[] {
     const ecritures: EcritureComptablePreview[] = [];
-    const aujourdhui     = new Date();
     const montantPaye    = config.paiementInitial.montant;
     const montantCaution = chambre.shouldPayCaution ? (chambre.cautionPrice || 0) : 0;
     const montantPourLoyer = Math.max(0, montantPaye - montantCaution);
 
-    // Mois dus depuis la date d'effet (approximation anniversaire cote frontend)
-    const moisDus      = this.calculerMoisDus(dateEffet, aujourdhui);
-    const montantDu    = moisDus * chambre.price;
-
-    // DEBIT : dette de loyer depuis l'entree
-    if (montantDu > 0) {
-      ecritures.push({
-        type: TypeEcritureComptable.DETTE_AVANCE,
-        libelle: `Dette loyer (${moisDus} mois depuis l'entree)`,
-        montant: montantDu,
-        sens: 'DEBIT',
-        compte: 'DETTE_LOCATAIRE',
-        description: `Loyer du depuis ${dateEffet.toLocaleDateString()} - Chambre ${chambre.code}`
-      });
-    }
+    // Miroir exact du backend : pas de DEBIT dette loyer pour NOUVEAU.
+    // Le paiement initial est enregistre dans LocationPayment — le moteur
+    // calcule le statut depuis totalPaidAllTime directement.
 
     // CREDIT : paiement initial (part loyer)
     if (montantPourLoyer > 0) {
@@ -152,14 +139,28 @@ export class AssignationAssistantService {
       dateEntreeCalculee = dateEffet;
     }
 
-    const moisEcoules    = this.calculerMoisDus(dateEntreeCalculee, aujourdhui);
-    const montantDuTotal = moisEcoules * chambre.price;
+    // Miroir exact du backend : branche dateConnue vs date estimee
+    let montantDuTotal: number;
+    let montantPaye: number;
+
+    if (dateEntree || soldeActuel >= 0) {
+      // Date connue (fournie ou estimee depuis solde >= 0) : calcul depuis la date
+      const moisEcoules = this.calculerMoisDus(dateEntreeCalculee, aujourdhui);
+      montantDuTotal = moisEcoules * chambre.price;
+      montantPaye = montantDuTotal + soldeActuel;
+    } else {
+      // Date inconnue + arrieres : le solde est la source de verite
+      // montantDuTotal = |solde| exactement, montantPaye = 0
+      montantDuTotal = Math.abs(soldeActuel);
+      montantPaye = 0;
+    }
 
     // DEBIT : dette de loyer
+    const moisLabel = chambre.price > 0 ? Math.round(montantDuTotal / chambre.price) : 0;
     if (montantDuTotal > 0) {
       ecritures.push({
         type: TypeEcritureComptable.DETTE_AVANCE,
-        libelle: `Dette loyer (${moisEcoules} mois ecoules)`,
+        libelle: `Dette loyer (${moisLabel} mois)`,
         montant: montantDuTotal,
         sens: 'DEBIT',
         compte: 'DETTE_LOCATAIRE',
@@ -167,25 +168,15 @@ export class AssignationAssistantService {
       });
     }
 
-    // CREDIT : paiements effectues
-    const montantPaye = montantDuTotal + soldeActuel;
+    // CREDIT : paiements effectues (montantPaye = 0 si date inconnue + arrieres)
     if (montantPaye > 0) {
       ecritures.push({
         type: TypeEcritureComptable.PAIEMENT_AVANCE,
         libelle: 'Paiements effectues',
-        montant: montantPaye,
+        montant: Math.round(montantPaye * 100) / 100,
         sens: 'CREDIT',
         compte: '512000',
         description: `Paiements cumules - Chambre ${chambre.code}`
-      });
-    } else if (montantDuTotal > 0) {
-      ecritures.push({
-        type: TypeEcritureComptable.PAIEMENT_AVANCE,
-        libelle: 'Aucun paiement enregistre',
-        montant: 0,
-        sens: 'CREDIT',
-        compte: '512000',
-        description: `Aucun paiement recu - Chambre ${chambre.code} (solde: ${soldeActuel} FCFA)`
       });
     }
 

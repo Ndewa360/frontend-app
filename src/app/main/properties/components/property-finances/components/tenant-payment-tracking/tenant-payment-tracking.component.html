@@ -90,11 +90,8 @@
                 (ngModelChange)="onFilterChange()">
           <option value="all">{{ 'TENANT_PAYMENT_TRACKING.FILTERS.ALL_STATUS' | translate }}</option>
           <option value="up_to_date">{{ 'TENANT_PAYMENT_TRACKING.FILTERS.UP_TO_DATE' | translate }}</option>
-          <option value="partial">{{ 'TENANT_PAYMENT_TRACKING.FILTERS.PARTIAL' | translate }}</option>
           <option value="advance">{{ 'TENANT_PAYMENT_TRACKING.FILTERS.AHEAD' | translate }}</option>
-          <option value="late">{{ 'TENANT_PAYMENT_TRACKING.FILTERS.LATE' | translate }}</option>
-          <option value="no_contract">{{ 'TENANT_PAYMENT_TRACKING.FILTERS.NO_CONTRACT' | translate }}</option>
-          <option value="ended_contract">{{ 'TENANT_PAYMENT_TRACKING.FILTERS.ENDED_CONTRACT' | translate }}</option>
+          <option value="behind">{{ 'TENANT_PAYMENT_TRACKING.FILTERS.LATE' | translate }}</option>
         </select>
 
         <select [(ngModel)]="selectedPeriod"
@@ -121,7 +118,7 @@
             <th>Attendu à ce jour</th>
             <th>Couvert {{ selectedYear }}</th>
             <th>{{ 'TENANT_PAYMENT_TRACKING.TABLE.BEHIND' | translate }}</th>
-            <th>Taux année</th>
+            <th>Taux recouvrement</th>
             <th>{{ 'TENANT_PAYMENT_TRACKING.TABLE.STATUS' | translate }}</th>
             <th>{{ 'TENANT_PAYMENT_TRACKING.TABLE.LAST_PAYMENT' | translate }}</th>
             <th>{{ 'TENANT_PAYMENT_TRACKING.TABLE.NEXT_PAYMENT' | translate }}</th>
@@ -165,7 +162,11 @@
             <!-- Couvert dans l'année -->
             <td>
               <div class="font-medium text-green-600">{{ tenant.totalPaid | currency:'XAF':'symbol':'1.0-0' }}</div>
-              <div class="text-xs text-gray-400">sur {{ tenant.monthlyRent * 12 | currency:'XAF':'symbol':'1.0-0' }}</div>
+              <div class="text-xs text-gray-400">sur {{ tenant.expectedPaymentToDate | currency:'XAF':'symbol':'1.0-0' }} attendu à ce jour</div>
+              <!-- Cumul total versé depuis l'entrée (peut différer si avance ou antérieure à cette année) -->
+              <!-- <div class="text-xs text-blue-500" *ngIf="tenant.totalPaidAllTime && tenant.totalPaidAllTime !== tenant.totalPaid">
+                Cumul total : {{ tenant.totalPaidAllTime | currency:'XAF':'symbol':'1.0-0' }}
+              </div> -->
             </td>
 
             <!-- Montant en retard -->

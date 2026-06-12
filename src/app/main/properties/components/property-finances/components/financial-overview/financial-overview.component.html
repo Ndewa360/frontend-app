@@ -183,11 +183,11 @@
           <!-- Barre basée sur le COUVERT (projection cumul) / attendu -->
           <div class="progress-track">
             <div class="progress-bar-fill"
-                 [style.width.%]="month.expected > 0 ? Math.min(((month.projected ?? 0) / month.expected) * 100, 100) : 0"
+                 [style.width.%]="Math.min(month.rate, 100)"
                  [ngClass]="{
-                   'excellent': month.expected > 0 && (month.projected ?? 0) >= month.expected * 0.95,
-                   'good':      month.expected > 0 && (month.projected ?? 0) >= month.expected * 0.5 && (month.projected ?? 0) < month.expected * 0.95,
-                   'poor':      month.expected === 0 || (month.projected ?? 0) < month.expected * 0.5
+                   'excellent': month.rate >= 95,
+                   'good':      month.rate >= 50 && month.rate < 95,
+                   'poor':      month.rate < 50
                  }">
               <div class="progress-shine"></div>
             </div>
@@ -215,14 +215,14 @@
           </div>
         </div>
 
-        <div class="rate-display">
-          <!-- Taux affiché = couvert / attendu -->
+          <div class="rate-display">
+          <!-- Taux affiché = fulfillmentRate backend (distributed/expected) -->
           <span class="rate-percentage" [ngClass]="{
-            'rate-excellent': month.expected > 0 && (month.projected ?? 0) >= month.expected * 0.95,
-            'rate-good':      month.expected > 0 && (month.projected ?? 0) >= month.expected * 0.5 && (month.projected ?? 0) < month.expected * 0.95,
-            'rate-poor':      month.expected === 0 || (month.projected ?? 0) < month.expected * 0.5
+            'rate-excellent': month.rate >= 95,
+            'rate-good':      month.rate >= 50 && month.rate < 95,
+            'rate-poor':      month.rate < 50
           }">
-            {{ month.expected > 0 ? formatPercentage(Math.min(((month.projected ?? 0) / month.expected) * 100, 100)) : '—' }}
+            {{ month.expected > 0 ? formatPercentage(month.rate) : '—' }}
           </span>
         </div>
       </div>
