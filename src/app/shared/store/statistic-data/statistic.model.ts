@@ -305,6 +305,7 @@ export interface StatisticPaymentOfAllPropertyByYear {
     };
     revenueDistribution?: RevenueDistribution;
     tenantsAnalysis?: TenantsAnalysis;
+    cautionsAnalysis?: CautionsAnalysis;
   }[];
   paymentYear: {
     totalAmountRelicat: number;

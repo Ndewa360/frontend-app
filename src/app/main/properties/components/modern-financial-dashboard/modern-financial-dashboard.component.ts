@@ -195,7 +195,8 @@ export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
 
       const totalUnits    = metrics?.totalRooms    ?? 0;
       const occupiedUnits = metrics?.occupiedRooms ?? 0;
-      const occupancyRate = totalUnits > 0 ? Math.round((occupiedUnits / totalUnits) * 100) : 0;
+      // occupancyRate directement depuis le backend — pas de recalcul
+      const occupancyRate = metrics?.occupancyRate ?? (totalUnits > 0 ? Math.round((occupiedUnits / totalUnits) * 100) : 0);
       const averageRent   = metrics?.averageRent ?? 0;
 
       const tenantsSummary  = pp.tenantsAnalysis?.summary;
@@ -235,7 +236,8 @@ export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
         revenueShare:  totalReceivedPark > 0
           ? Math.round((totalReceived / totalReceivedPark) * 100) : 0,
         monthlyData,
-        performanceLevel: this.getPerformanceLevel(collectionRate)
+        // performanceLevel depuis le backend directement si disponible
+        performanceLevel: (metrics as any)?.performanceLevel ?? this.getPerformanceLevel(collectionRate)
       };
     });
   }
@@ -267,27 +269,35 @@ export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
     const totalTenants    = this.propertiesSummary.reduce((s, p) => s + p.totalTenants, 0);
     const lateTenants     = this.propertiesSummary.reduce((s, p) => s + p.lateTenants, 0);
     const advanceTenants  = this.propertiesSummary.reduce((s, p) => s + p.advanceTenants, 0);
-    const upToDateTenants = this.propertiesSummary.reduce((s, p) => s + ((p as any).upToDateTenants ?? 0), 0);
+    const upToDateTenants = this.propertiesSummary.reduce((s, p) => s + (p.upToDateTenants ?? 0), 0);
     const lateTenantsRate = totalTenants > 0 ? Math.round((lateTenants / totalTenants) * 100) : 0;
     // Dettes et avances : toujours depuis tenantsAnalysis (cohérent avec lateTenants)
     // gm.totalDebts est basé sur la projection, pas sur tenantsAnalysis
     const totalArrears  = this.propertiesSummary.reduce((s, p) => s + p.totalArrears, 0);
     const totalAdvances = this.propertiesSummary.reduce((s, p) => s + p.totalAdvances, 0);
 
-    const cautionsReceived = (yearData.paymentProperty || []).reduce((s, pp) => {
-      const c = (pp as any).cautionsAnalysis?.summary;
-      return s + (c?.totalCautionsReceived || 0);
-    }, 0);
-    const cautionsMissing = (yearData.paymentProperty || []).reduce((s, pp) => {
-      const c = (pp as any).cautionsAnalysis?.summary;
-      return s + (c?.roomsWithCautionUnpaid || 0);
-    }, 0);
+    const cautionsReceived = (yearData.paymentProperty || []).reduce((s, pp) =>
+      s + (pp.cautionsAnalysis?.summary?.totalCautionsReceived || 0), 0
+    );
+    const cautionsMissing = (yearData.paymentProperty || []).reduce((s, pp) =>
+      s + (pp.cautionsAnalysis?.summary?.roomsWithCautionUnpaid || 0), 0
+    );
+    // Cautions à rembourser : contrats terminés (endedAt < now) avec caution versée
+    const now = new Date();
+    const cautionsToRefund = (yearData.paymentProperty || []).reduce((s, pp) =>
+      s + (pp.cautionsAnalysis?.roomsCautions || []).reduce((rs, rc) => {
+        const endedAt = rc.location?.endedAt ? new Date(rc.location.endedAt) : null;
+        return (endedAt && endedAt < now && rc.totalCautionPaid > 0)
+          ? rs + rc.totalCautionPaid : rs;
+      }, 0), 0
+    );
 
     this.globalMetrics = {
       totalReceived,
       totalExpected,
       collectionRate,
-      shortfall:                  Math.max(0, totalExpected - totalReceived),
+      // shortfall depuis paymentYear.totalAmountRelicat (maintenant = max(0, expected - received) backend)
+      shortfall:                  py?.totalAmountRelicat ?? Math.max(0, totalExpected - totalReceived),
       averageRevenuePerProperty:  this.propertiesSummary.length > 0
         ? Math.round(totalReceived / this.propertiesSummary.length) : 0,
       totalProperties:    gm?.totalProperties ?? this.propertiesSummary.length,
@@ -308,7 +318,7 @@ export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
       totalAdvances:         Math.round(totalAdvances),
       totalCautionsReceived: Math.round(cautionsReceived),
       totalCautionsMissing:  cautionsMissing,
-      totalCautionsToRefund: 0
+      totalCautionsToRefund: Math.round(cautionsToRefund)
     };
   }
 
@@ -430,8 +440,9 @@ export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
   getWorstMonth(): MonthlyParkData | null {
     const withExpected = this.monthlyParkData.filter(m => m.totalExpected > 0);
     if (!withExpected.length) return null;
+    // Pire mois = plus faible taux d'encaissement réel (cohérent avec getBestMonth)
     return withExpected.reduce((worst, m) =>
-      m.projectionRate < worst.projectionRate ? m : worst
+      m.collectionRate < worst.collectionRate ? m : worst
     );
   }
 

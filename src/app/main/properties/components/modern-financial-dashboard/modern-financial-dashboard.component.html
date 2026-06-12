@@ -220,9 +220,9 @@
             </svg>
           </div>
           <div class="kpi-card__body">
-            <p class="kpi-card__label">Revenu potentiel inexploité</p>
+            <p class="kpi-card__label">Potentiel annuel non exploité</p>
             <p class="kpi-card__value">{{ formatPrice(globalMetrics.potentialUnexploitedRevenue) }}</p>
-            <p class="kpi-card__sub">{{ globalMetrics.vacantUnits }} unités × loyer moyen × 12</p>
+            <p class="kpi-card__sub">{{ globalMetrics.vacantUnits }} unité(s) libre(s) × loyer moyen × 12 mois</p>
           </div>
         </div>
 
@@ -325,9 +325,9 @@
 
         <div class="kpi-card" [ngClass]="globalMetrics.totalCautionsMissing > 0 ? 'kpi-card--red' : 'kpi-card--green'">
           <div class="kpi-card__body">
-            <p class="kpi-card__label">Cautions manquantes</p>
+            <p class="kpi-card__label">Cautions non soldées</p>
             <p class="kpi-card__value">{{ globalMetrics.totalCautionsMissing }}</p>
-            <p class="kpi-card__sub">Unités occupées sans caution</p>
+            <p class="kpi-card__sub">Unités avec caution absente ou partielle</p>
           </div>
         </div>
 
@@ -335,7 +335,10 @@
           <div class="kpi-card__body">
             <p class="kpi-card__label">Cautions à rembourser</p>
             <p class="kpi-card__value">{{ formatPrice(globalMetrics.totalCautionsToRefund) }}</p>
-            <p class="kpi-card__sub">Contrats terminés</p>
+            <p class="kpi-card__sub">Contrats terminés — en attente de restitution</p>
+            <p class="kpi-card__note" *ngIf="globalMetrics.totalCautionsToRefund === 0" style="font-size:11px;color:#9ca3af;margin-top:4px;">
+              Aucun contrat terminé avec caution à restituer
+            </p>
           </div>
         </div>
 
@@ -371,8 +374,8 @@
           <div class="legend-item">
             <span class="legend-swatch legend-swatch--rate"></span>
             <span class="legend-item__text">
-              <span class="legend-item__label">Taux</span>
-              <span class="legend-item__desc">Projection / Attendu</span>
+              <span class="legend-item__label">Taux couverture</span>
+              <span class="legend-item__desc">Projection / Attendu (mois couverts)</span>
             </span>
           </div>
         </div>
@@ -445,7 +448,7 @@
           <span>Taux couverture</span>
           <span>Occupation</span>
           <span>Arriérés</span>
-          <span>Part du parc</span>
+          <span>Part encaissée</span>
           <span>Niveau</span>
         </div>
 
