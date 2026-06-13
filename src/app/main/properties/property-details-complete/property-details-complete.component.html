@@ -1,70 +1,80 @@
 <!-- Page de détails de propriété refactorisée -->
 <div class="property-management-container">
 
-  <!-- Header principal - Style identique à la page de liste -->
+  <!-- Header principal -->
   <div class="main-header">
     <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
 
-      <div class="header-content py-4">
-        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
-
-          <!-- Informations de l'en-tête -->
-          <div class="header-info mb-3 lg:mb-0">
-            <!-- Navigation redesignée -->
-            <div class="flex items-center space-x-3 mb-3">
-              <button (click)="goBack()"
-                      class="inline-flex items-center px-4 py-2 bg-white border-2 border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-all duration-300 shadow-sm hover:shadow-md">
-                <youpez-ibm-icon iconName="arrowLeft" iconSize="16" class="mr-2 text-gray-500"></youpez-ibm-icon>
-                <span class="font-medium">{{ 'PROPERTY_DETAILS.NAVIGATION.BACK_TO_PROPERTIES' | translate }}</span>
-              </button>
-              <div class="flex items-center text-sm text-gray-500">
-                <span>{{ 'PROPERTY_DETAILS.NAVIGATION.PROPERTIES' | translate }}</span>
-                <youpez-ibm-icon iconName="chevronRight" iconSize="16" class="mx-2"></youpez-ibm-icon>
-                <span class="text-gray-700 font-medium">{{ 'PROPERTY_DETAILS.NAVIGATION.DETAILS' | translate }}</span>
+      <!-- Desktop : layout 2 lignes normal -->
+      <div class="hidden lg:block">
+        <div class="header-content py-4">
+          <div class="flex items-center justify-between">
+            <div class="header-info">
+              <div class="flex items-center space-x-3 mb-3">
+                <button (click)="goBack()" class="inline-flex items-center px-4 py-2 bg-white border-2 border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-all duration-300 shadow-sm hover:shadow-md">
+                  <youpez-ibm-icon iconName="arrowLeft" iconSize="16" class="mr-2 text-gray-500"></youpez-ibm-icon>
+                  <span class="font-medium">{{ 'PROPERTY_DETAILS.NAVIGATION.BACK_TO_PROPERTIES' | translate }}</span>
+                </button>
+                <div class="flex items-center text-sm text-gray-500">
+                  <span>{{ 'PROPERTY_DETAILS.NAVIGATION.PROPERTIES' | translate }}</span>
+                  <youpez-ibm-icon iconName="chevronRight" iconSize="16" class="mx-2"></youpez-ibm-icon>
+                  <span class="text-gray-700 font-medium">{{ 'PROPERTY_DETAILS.NAVIGATION.DETAILS' | translate }}</span>
+                </div>
               </div>
+              <ng-container *ngIf="property$ | async as property; else loadingHeader">
+                <h1 class="text-2xl font-bold mb-1">{{ property.name }}</h1>
+                <p class="text-gray-600 flex items-center text-sm">
+                  <youpez-ibm-icon iconName="location" iconSize="16" class="mr-2 text-gray-400"></youpez-ibm-icon>
+                  {{ property.location ?? ('PROPERTY_DETAILS.NAVIGATION.ADDRESS_NOT_SPECIFIED' | translate) }}
+                </p>
+              </ng-container>
+              <ng-template #loadingHeader>
+                <div class="animate-pulse">
+                  <div class="h-6 bg-gray-200 rounded w-64 mb-1"></div>
+                  <div class="h-4 bg-gray-200 rounded w-48"></div>
+                </div>
+              </ng-template>
             </div>
-
-            <ng-container *ngIf="property$ | async as property; else loadingHeader">
-              <h1 class="text-2xl font-bold mb-1">
-                {{ property.name }}
-              </h1>
-              <p class="text-gray-600 flex items-center text-sm">
-                <youpez-ibm-icon iconName="location" iconSize="16" class="mr-2 text-gray-400"></youpez-ibm-icon>
-                {{ property.location ?? ('PROPERTY_DETAILS.NAVIGATION.ADDRESS_NOT_SPECIFIED' | translate) }}
-              </p>
-            </ng-container>
-
-            <ng-template #loadingHeader>
-              <div class="animate-pulse">
-                <div class="h-6 bg-gray-200 rounded w-64 mb-1"></div>
-                <div class="h-4 bg-gray-200 rounded w-48"></div>
-              </div>
-            </ng-template>
-          </div>
-
-          <!-- Actions de l'en-tête -->
-          <div class="header-actions flex items-center space-x-3">
-            <button class="gallery-btn inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-medium rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300 ease-in-out"
-                    (click)="onOpenPropertyGallery()">
-              <i class="fas fa-images mr-2 text-lg"></i>
-              <span>{{ 'PROPERTY_DETAILS.ACTIONS.MEDIA_GALLERY' | translate }}</span>
-              <div class="ml-2 bg-white bg-opacity-20 rounded-full px-2 py-1 text-xs font-semibold">
-                {{ getTotalMediaCount() }}
-              </div>
-            </button>
-            <!-- Bouton Modifier : visible uniquement pour le propriétaire -->
-            <button *ngIf="propertyId && propertyAccessService.isOwner(propertyId)"
-                    ibmButton="primary"
-                    size="md"
-                    class="custom-primary-button inline-flex items-center focus-carbon"
-                    (click)="onEditProperty()">
-              <youpez-ibm-icon iconName="edit" iconSize="16" class="mr-2"></youpez-ibm-icon>
-              {{ 'PROPERTY_DETAILS.ACTIONS.EDIT' | translate }}
-            </button>
+            <div class="header-actions flex items-center space-x-3">
+              <button class="gallery-btn inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-medium rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300 ease-in-out" (click)="onOpenPropertyGallery()">
+                <i class="fas fa-images mr-2 text-lg"></i>
+                <span>{{ 'PROPERTY_DETAILS.ACTIONS.MEDIA_GALLERY' | translate }}</span>
+                <div class="ml-2 bg-white bg-opacity-20 rounded-full px-2 py-1 text-xs font-semibold">{{ getTotalMediaCount() }}</div>
+              </button>
+              <button *ngIf="propertyId && propertyAccessService.isOwner(propertyId)" ibmButton="primary" size="md" class="custom-primary-button inline-flex items-center focus-carbon" (click)="onEditProperty()">
+                <youpez-ibm-icon iconName="edit" iconSize="16" class="mr-2"></youpez-ibm-icon>
+                {{ 'PROPERTY_DETAILS.ACTIONS.EDIT' | translate }}
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
+      <!-- Tablette/mobile : barre compacte sur UNE ligne 48px -->
+      <div class="flex items-center gap-2 lg:hidden h-12">
+
+        <!-- Bouton retour icône seule -->
+        <button (click)="goBack()" class="btn-back-compact flex-shrink-0" title="{{ 'PROPERTY_DETAILS.NAVIGATION.BACK_TO_PROPERTIES' | translate }}">
+          <youpez-ibm-icon iconName="arrowLeft" iconSize="16"></youpez-ibm-icon>
+        </button>
+
+        <!-- Nom du bien : tronqué, flex-1 -->
+        <div class="flex-1 min-w-0" *ngIf="property$ | async as property">
+          <div class="text-sm font-bold text-gray-900 truncate">{{ property.name }}</div>
+          <div class="text-xs text-gray-500 truncate">{{ property.location }}</div>
+        </div>
+
+        <!-- Actions droite : galerie (icône) + modifier (icône) -->
+        <div class="flex items-center gap-1 flex-shrink-0">
+          <button class="btn-icon-compact btn-gallery-compact" (click)="onOpenPropertyGallery()" title="{{ 'PROPERTY_DETAILS.ACTIONS.MEDIA_GALLERY' | translate }}">
+            <i class="fas fa-images"></i>
+            <span class="btn-icon-badge" *ngIf="getTotalMediaCount() > 0">{{ getTotalMediaCount() }}</span>
+          </button>
+          <button *ngIf="propertyId && propertyAccessService.isOwner(propertyId)" class="btn-icon-compact btn-edit-compact" (click)="onEditProperty()" title="{{ 'PROPERTY_DETAILS.ACTIONS.EDIT' | translate }}">
+            <youpez-ibm-icon iconName="edit" iconSize="16"></youpez-ibm-icon>
+          </button>
+        </div>
+      </div>
 
     </div>
   </div>
@@ -86,21 +96,16 @@
 
   <!-- Navigation par onglets -->
   <div class="tabs-navigation bg-gray-100 border-b border-gray-200 flex-shrink-0">
-    <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
-      <nav class="flex space-x-0" aria-label="Tabs">
+    <div class="max-w-full mx-auto px-2 sm:px-4 lg:px-8">
+      <nav class="flex overflow-x-auto scrollbar-hide" aria-label="Tabs" style="-webkit-overflow-scrolling: touch;">
         <button *ngFor="let tab of tabs; trackBy: trackByTabId"
                 (click)="setActiveTab(tab.id)"
-                class="property-tab-button px-6 py-4 text-sm font-medium border-b-2 border-transparent transition-all duration-300 ease-in-out"
-                [ngClass]="{
-                  'active': activeTab === tab.id
-                }">
+                class="property-tab-button flex-shrink-0"
+                [ngClass]="{ 'active': activeTab === tab.id }">
           <div class="flex items-center">
-            <youpez-ibm-icon [iconName]="getTabIcon(tab.icon)"
-                             iconSize="16"
-                             class="mr-2"></youpez-ibm-icon>
-            {{ getTabLabel(tab.id) | translate }}
-            <span *ngIf="tab.count !== undefined"
-                  class="ml-2 bg-gray-100 text-gray-900 py-1 px-2 rounded-full text-xs font-medium tab-count">
+            <youpez-ibm-icon [iconName]="getTabIcon(tab.icon)" iconSize="16" class="mr-1 lg:mr-2"></youpez-ibm-icon>
+            <span class="tab-label">{{ getTabLabel(tab.id) | translate }}</span>
+            <span *ngIf="tab.count !== undefined" class="ml-1 lg:ml-2 bg-gray-100 text-gray-900 py-0.5 px-1.5 rounded-full text-xs font-medium tab-count">
               {{ tab.count }}
             </span>
           </div>

@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store, Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 import { SouscriptionModel, SouscriptionState, SouscriptionAction, SouscriptionPeriodAction } from 'src/app/shared/store';
 import { SubscriptionLimitState, SubscriptionLimitAction, SubscriptionStatus } from 'src/app/shared/store/subscription-limit';
 import { SubscriptionPaymentState, SubscriptionPaymentAction, PaymentHistory, UnpaidInvoice } from 'src/app/shared/store/subscription-payment';
@@ -22,7 +24,7 @@ interface MenuChild {
   templateUrl: './billing-page.component.html',
   styleUrls: ['./billing-page.component.css'],
 })
-export class BillingPageComponent implements OnInit {
+export class BillingPageComponent implements OnInit, OnDestroy {
   @Select(SouscriptionState.selectStatePeriodDefaultWithRunningState) souscription$:Observable<SouscriptionModel>
   @Select(SouscriptionState.isEndLoadingData) hasLoading$:Observable<boolean>
 
@@ -34,12 +36,22 @@ export class BillingPageComponent implements OnInit {
   public sections: MenuSection[] = []
 
   public opened: boolean = false
+  private destroy$ = new Subject<void>();
 
   constructor(private store: Store, private translate: TranslateService) {
   }
 
   ngOnInit(): void {
-    this.initializeMenu();
+    // Initialiser le menu dès que les traductions sont prêtes
+    this.translate.onLangChange
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => this.initializeMenu());
+
+    // Premier chargement — attendre que les traductions soient prêtes
+    this.translate.get('BILLING.MENU.BILLING_PAYMENT').subscribe(() => {
+      this.initializeMenu();
+    });
+
     // Charger toutes les donnees necessaires aux 3 sous-pages
     this.store.dispatch(new SubscriptionLimitAction.GetSubscriptionStatus());
     this.store.dispatch(new SubscriptionPaymentAction.GetPaymentHistory());
@@ -69,23 +81,28 @@ export class BillingPageComponent implements OnInit {
           },
         ]
       },
-      {
-        name: this.translate.instant('BILLING.MENU.HISTORY_PAYMENTS'),
-        children: [
-          {
-            name: this.translate.instant('BILLING.MENU.TRANSACTION_HISTORY'),
-            path: undefined // Pas encore implémenté
-          },
-          {
-            name: this.translate.instant('BILLING.MENU.PAYMENT_METHODS'),
-            path: undefined // Pas encore implémenté
-          }
-        ]
-      },
+      // {
+      //   name: this.translate.instant('BILLING.MENU.HISTORY_PAYMENTS'),
+      //   children: [
+      //     {
+      //       name: this.translate.instant('BILLING.MENU.TRANSACTION_HISTORY'),
+      //       path: undefined // Pas encore implémenté
+      //     },
+      //     {
+      //       name: this.translate.instant('BILLING.MENU.PAYMENT_METHODS'),
+      //       path: undefined // Pas encore implémenté
+      //     }
+      //   ]
+      // },
     ];
   }
 
   onToggle() {
     this.opened = !this.opened
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

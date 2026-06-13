@@ -560,6 +560,21 @@ $primary-medium: rgba(204, 140, 10, 0.2);
     }
 
     // Responsive
+    @media (max-width: 960px) {
+      .cds--tabs__nav {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        scrollbar-width: none;
+        &::-webkit-scrollbar { display: none; }
+      }
+      .cds--tabs__nav-link {
+        padding: 0.75rem 0.875rem;
+        font-size: 0.75rem;
+        min-width: max-content;
+        white-space: nowrap;
+      }
+    }
+
     @media (max-width: 768px) {
       .cds--tabs__nav-link {
         padding: 0.75rem 1rem;

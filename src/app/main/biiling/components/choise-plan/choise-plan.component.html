@@ -1,227 +1,177 @@
 <div class="app-a-box app-scrollbar-fix">
     <ng-scrollbar>
-      <div fxLayout="row" fxLayoutAlign="center start" class="app-border-b  mb-5">
-        <div fxFlex="100%" fxFlex.gt-md="80%" fxFlex.gt-lg="70%" class="app-content app-content--default">
-          <div class="pt-5 pb-4">
-            <!-- <youpez-logo class="cursor-pointer" logoWidth="200px"></youpez-logo> -->
-            <youpez-logo class="cursor-pointer" type="nobg-white" logoWidth="150px"></youpez-logo>
-          </div>
-        </div>
+      <!-- Logo -->
+      <div class="flex justify-center border-b mb-5 py-4 px-4">
+        <youpez-logo class="cursor-pointer" type="nobg-white" logoWidth="150px"></youpez-logo>
       </div>
-      <div fxLayout="row wrap" fxLayoutAlign="center start">
-        <div fxFlex="100%" fxFlex.gt-md="80%" fxFlex.gt-lg="70%" class="app-content app-content--default">
-          <div>
-            <div class="">
-              <div class="text-center">
-                <div class="app-productive-heading-06 mb-4">
-                  {{ 'BILLING.PRICING_TITLE' | translate }}
-                </div>
-                <p class="app-body-long-02 mb-8">
-                  {{ 'BILLING.PRICING_SUBTITLE' | translate }}
-                </p>
-                
-              </div>
-              <div>
-                <div class="mb-8">
-                  <!-- Plan FREE -->
-                  <div fxLayout="row wrap" fxLayoutAlign="center" class="mb-6">
-                    <div fxFlex="100%" fxFlex.gt-md="100%">
-                      <div class="app-card" fxLayout="row wrap">
-                        <div fxFlex="100%" fxFlex.gt-md="300px">
-                          <div fxFlex
-                               class="p-12 text-center app-bg-info-lt-30 app-text-contrast">
-                            <div class="flex items-center justify-center">
-                              <span class="app-productive-heading-07 mr-1 font-bold">{{ 'BILLING.FREE_PLAN.TITLE' | translate }}</span>
-                            </div>
-                            <div class="app-body-short-01 mt-1 mb-8">
-                              {{ 'BILLING.FREE_PLAN.SUBTITLE' | translate }}
-                            </div>
-                            <div class="">
-                              <ng-container *ngIf="(currentSubscription$ | async) as sub; else loadingBtn">
-                                <button
-                                  *ngIf="sub.plan === 'FREE' || sub.plan === 'free'; else currentPlan"
-                                  disabled
-                                  ibmButton="secondary"
-                                  size="md"
-                                  class="app-ibm-btn-full">
-                                  {{ 'BILLING.FREE_PLAN.CURRENT_PLAN' | translate }}
-                                </button>
-                                <ng-template #currentPlan>
-                                  <button
-                                    disabled
-                                    ibmButton="tertiary"
-                                    size="md"
-                                    class="app-ibm-btn-full">
-                                    {{ 'BILLING.FREE_PLAN.BASE_PLAN' | translate }}
-                                  </button>
-                                </ng-template>
-                              </ng-container>
-                              <ng-template #loadingBtn>
-                                <button disabled ibmButton="secondary" size="md" class="app-ibm-btn-full">
-                                  <i class="fas fa-spinner fa-spin mr-2"></i>
-                                </button>
-                              </ng-template>
-                            </div>
-                          </div>
-                        </div>
-                        <div fxLayout="row wrap" fxLayoutAlign=" center" fxFlex="100%" fxFlex.gt-md="">
-                          <div fxFlex class="px-12 py-8">
-                            <div class="app-productive-heading-03 mb-3 font-bold">{{ 'BILLING.FREE_PLAN.NAME' | translate }}</div>
-                            <div class="app-body-short-02">
-                              {{ 'BILLING.FREE_PLAN.DESCRIPTION' | translate }}
-                            </div>
-                            <div class="app-separator app-separator--left mt-8 mb-4">
-                              <span class="app-label-01 font-bold">{{ 'BILLING.FREE_PLAN.LIMITS_TITLE' | translate }}</span>
-                            </div>
-                            <div fxLayout="row wrap">
-                              <div fxFlex="100%" fxFlex.gt-md="50%">
-                                <div class="flex items-center app-body-short-01 mb-1">
-                                  <i class="fas fa-home app-color-info mr-2"></i>
-                                  {{ 'BILLING.FREE_PLAN.MAX_PROPERTIES' | translate }}
-                                </div>
-                                <div class="flex items-center app-body-short-01">
-                                  <i class="fas fa-door-open app-color-info mr-2"></i>
-                                  {{ 'BILLING.FREE_PLAN.MAX_UNITS' | translate }}
-                                </div>
-                              </div>
-                              <div fxFlex="100%" fxFlex.gt-md="50%">
-                                <div class="flex items-center app-body-short-01 mb-1">
-                                  <i class="fas fa-check-circle app-color-success mr-2"></i>
-                                  {{ 'BILLING.FREE_PLAN.FINANCIAL_MANAGEMENT' | translate }}
-                                </div>
-                                <div class="flex items-center app-body-short-01">
-                                  <i class="fas fa-check-circle app-color-success mr-2"></i>
-                                  {{ 'BILLING.FREE_PLAN.CONTRACT_MANAGEMENT' | translate }}
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
 
-                  <!-- Plan PREMIUM -->
-                  <div fxLayout="row wrap" fxLayoutAlign="center">
-                    <div fxFlex="100%" fxFlex.gt-md="100%">
-                      <div class="app-card" fxLayout="row wrap">
-                        <div fxFlex="100%" fxFlex.gt-md="300px">
-                          <div fxFlex
-                               class="p-12 text-center app-bg-success-lt-30 app-text-contrast">
-                            <div class="flex items-center justify-center">
-                              <!-- <span class="app-productive-heading-02 mr-1">$</span> -->
-                              <span class="app-productive-heading-07 mr-1 font-bold">2%</span>
-                              <span class="app-productive-heading-02">/unité/mois</span>
-                            </div>
-                            <div class="app-body-short-01 mt-1 mb-8">
-                              {{ 'BILLING.PREMIUM_PLAN.SUBTITLE' | translate }}
-                            </div>
-                            <div class="">
-                              <ng-container *ngIf="(currentSubscription$ | async) as sub; else loadingPremiumBtn">
-                                <button
-                                  *ngIf="(sub.plan === 'FREE' || sub.plan === 'free') && sub.accountStatus !== 'suspended'; else alreadyPremium"
-                                  (click)="showBillingContract()"
-                                  [disabled]="isUpgrading$ | async"
-                                  ibmButton="primary"
-                                  size="md"
-                                  class="app-ibm-btn-full custom-primary-button">
-                                  <span *ngIf="!(isUpgrading$ | async)">{{ 'BILLING.PREMIUM_PLAN.UPGRADE_TO_PREMIUM' | translate }}</span>
-                                  <span *ngIf="isUpgrading$ | async">
-                                    <i class="fas fa-spinner fa-spin mr-2"></i>
-                                    {{ 'BILLING.PREMIUM_PLAN.UPGRADING' | translate }}
-                                  </span>
-                                </button>
-                                <ng-template #alreadyPremium>
-                                  <button
-                                    *ngIf="sub.accountStatus === 'suspended'; else isPremium"
-                                    disabled
-                                    ibmButton="danger"
-                                    size="md"
-                                    class="app-ibm-btn-full">
-                                    <i class="fas fa-ban mr-2"></i>
-                                    {{ 'BILLING.PREMIUM_PLAN.ACCOUNT_SUSPENDED' | translate }}
-                                  </button>
-                                  <ng-template #isPremium>
-                                    <button
-                                      disabled
-                                      ibmButton="primary"
-                                      size="md"
-                                      class="app-ibm-btn-full">
-                                      {{ 'BILLING.PREMIUM_PLAN.CURRENT_PLAN' | translate }}
-                                    </button>
-                                  </ng-template>
-                                </ng-template>
-                              </ng-container>
-                              <ng-template #loadingPremiumBtn>
-                                <button disabled ibmButton="primary" size="md" class="app-ibm-btn-full">
-                                  <i class="fas fa-spinner fa-spin mr-2"></i>
-                                </button>
-                              </ng-template>
-                            </div>
-                          </div>
-                        </div>
-                        <div fxLayout="row wrap" fxLayoutAlign=" center" fxFlex="100%" fxFlex.gt-md="">
-                          <div fxFlex class="px-12 py-8">
-                            <div class="app-productive-heading-03 mb-3 font-bold">{{ 'BILLING.PREMIUM_PLAN.NAME' | translate }}</div>
-                            <div class="app-body-short-02">
-                              {{ 'BILLING.PREMIUM_PLAN.DESCRIPTION' | translate }}
-                            </div>
-                            <div class="app-separator app-separator--left mt-8 mb-4">
-                              <span class="app-label-01 font-bold">{{ 'BILLING.PREMIUM_PLAN.FEATURES_TITLE' | translate }}</span>
-                            </div>
-                            <div fxLayout="row wrap">
-                              <div fxFlex="100%" fxFlex.gt-md="50%">
-                                <div class="flex items-center app-body-short-01 mb-1">
-                                  <i class="fas fa-infinity app-color-success mr-2"></i>
-                                  Biens immobiliers illimités
-                                </div>
-                                <div class="flex items-center app-body-short-01 mb-1">
-                                  <i class="fas fa-infinity app-color-success mr-2"></i>
-                                  Unités locatives illimitées
-                                </div>
-                                <div class="flex items-center app-body-short-01 mb-1">
-                                  <i class="fas fa-check-circle app-color-success mr-2"></i>
-                                  Gestion des finances
-                                </div>
-                                <div class="flex items-center app-body-short-01">
-                                  <i class="fas fa-check-circle app-color-success mr-2"></i>
-                                  Gestion des contrats
-                                </div>
-                              </div>
-                              <div fxFlex="100%" fxFlex.gt-md="50%">
-                                <div class="flex items-center app-body-short-01 mb-1">
-                                  <i class="fas fa-check-circle app-color-success mr-2"></i>
-                                  Notifications de non paiement
-                                </div>
-                                <div class="flex items-center app-body-short-01 mb-1">
-                                  <i class="fas fa-check-circle app-color-success mr-2"></i>
-                                  Tableau de bord détaillé
-                                </div>
-                                <div class="flex items-center app-body-short-01 mb-1">
-                                  <i class="fas fa-check-circle app-color-success mr-2"></i>
-                                  Support prioritaire
-                                </div>
-                                <div class="flex items-center app-body-short-01">
-                                  <i class="fas fa-check-circle app-color-success mr-2"></i>
-                                  Rapports avancés
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+      <!-- Contenu centré -->
+      <div class="w-full max-w-4xl mx-auto px-4 pb-8">
+        <!-- Titre -->
+        <div class="text-center mb-8">
+          <div class="app-productive-heading-06 mb-4">{{ 'BILLING.PRICING_TITLE' | translate }}</div>
+          <p class="app-body-long-02 mb-8">{{ 'BILLING.PRICING_SUBTITLE' | translate }}</p>
+        </div>
+
+        <!-- Plan FREE -->
+        <div class="app-card mb-6">
+          <div class="flex flex-col lg:flex-row">
+            <!-- Colonne prix -->
+            <div class="w-full lg:w-72 flex-shrink-0">
+              <div class="p-8 text-center app-bg-info-lt-30 app-text-contrast h-full flex flex-col justify-center">
+                <div class="flex items-center justify-center">
+                  <span class="app-productive-heading-07 mr-1 font-bold">{{ 'BILLING.FREE_PLAN.TITLE' | translate }}</span>
+                </div>
+                <div class="app-body-short-01 mt-1 mb-6">
+                  {{ 'BILLING.FREE_PLAN.SUBTITLE' | translate }}
+                </div>
+                <div>
+                  <ng-container *ngIf="(currentSubscription$ | async) as sub; else loadingBtn">
+                    <button
+                      *ngIf="sub.plan === 'FREE' || sub.plan === 'free'; else currentPlan"
+                      disabled
+                      ibmButton="secondary"
+                      size="md"
+                      class="app-ibm-btn-full">
+                      {{ 'BILLING.FREE_PLAN.CURRENT_PLAN' | translate }}
+                    </button>
+                    <ng-template #currentPlan>
+                      <button disabled ibmButton="tertiary" size="md" class="app-ibm-btn-full">
+                        {{ 'BILLING.FREE_PLAN.BASE_PLAN' | translate }}
+                      </button>
+                    </ng-template>
+                  </ng-container>
+                  <ng-template #loadingBtn>
+                    <button disabled ibmButton="secondary" size="md" class="app-ibm-btn-full">
+                      <i class="fas fa-spinner fa-spin mr-2"></i>
+                    </button>
+                  </ng-template>
                 </div>
               </div>
             </div>
-            <div>
-  
+            <!-- Colonne features -->
+            <div class="flex-1 px-6 sm:px-10 py-8">
+              <div class="app-productive-heading-03 mb-3 font-bold">{{ 'BILLING.FREE_PLAN.NAME' | translate }}</div>
+              <div class="app-body-short-02 mb-6">{{ 'BILLING.FREE_PLAN.DESCRIPTION' | translate }}</div>
+              <div class="app-separator app-separator--left mb-4">
+                <span class="app-label-01 font-bold">{{ 'BILLING.FREE_PLAN.LIMITS_TITLE' | translate }}</span>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <div class="flex items-center app-body-short-01">
+                  <i class="fas fa-home app-color-info mr-2"></i>
+                  {{ 'BILLING.FREE_PLAN.MAX_PROPERTIES' | translate }}
+                </div>
+                <div class="flex items-center app-body-short-01">
+                  <i class="fas fa-door-open app-color-info mr-2"></i>
+                  {{ 'BILLING.FREE_PLAN.MAX_UNITS' | translate }}
+                </div>
+                <div class="flex items-center app-body-short-01">
+                  <i class="fas fa-check-circle app-color-success mr-2"></i>
+                  {{ 'BILLING.FREE_PLAN.FINANCIAL_MANAGEMENT' | translate }}
+                </div>
+                <div class="flex items-center app-body-short-01">
+                  <i class="fas fa-check-circle app-color-success mr-2"></i>
+                  {{ 'BILLING.FREE_PLAN.CONTRACT_MANAGEMENT' | translate }}
+                </div>
+              </div>
             </div>
           </div>
-          <!-- <app-pricing-other></app-pricing-other> -->
         </div>
+
+        <!-- Plan PREMIUM -->
+        <div class="app-card mb-6">
+          <div class="flex flex-col lg:flex-row">
+            <!-- Colonne prix -->
+            <div class="w-full lg:w-72 flex-shrink-0">
+              <div class="p-8 text-center app-bg-success-lt-30 app-text-contrast h-full flex flex-col justify-center">
+                <div class="flex items-center justify-center">
+                  <span class="app-productive-heading-07 mr-1 font-bold">2%</span>
+                  <span class="app-productive-heading-02">/unité/mois</span>
+                </div>
+                <div class="app-body-short-01 mt-1 mb-6">
+                  {{ 'BILLING.PREMIUM_PLAN.SUBTITLE' | translate }}
+                </div>
+                <div>
+                  <ng-container *ngIf="(currentSubscription$ | async) as sub; else loadingPremiumBtn">
+                    <button
+                      *ngIf="(sub.plan === 'FREE' || sub.plan === 'free') && sub.accountStatus !== 'suspended'; else alreadyPremium"
+                      (click)="showBillingContract()"
+                      [disabled]="isUpgrading$ | async"
+                      ibmButton="primary"
+                      size="md"
+                      class="app-ibm-btn-full custom-primary-button">
+                      <span *ngIf="!(isUpgrading$ | async)">{{ 'BILLING.PREMIUM_PLAN.UPGRADE_TO_PREMIUM' | translate }}</span>
+                      <span *ngIf="isUpgrading$ | async">
+                        <i class="fas fa-spinner fa-spin mr-2"></i>
+                        {{ 'BILLING.PREMIUM_PLAN.UPGRADING' | translate }}
+                      </span>
+                    </button>
+                    <ng-template #alreadyPremium>
+                      <button *ngIf="sub.accountStatus === 'suspended'; else isPremium"
+                              disabled ibmButton="danger" size="md" class="app-ibm-btn-full">
+                        <i class="fas fa-ban mr-2"></i>
+                        {{ 'BILLING.PREMIUM_PLAN.ACCOUNT_SUSPENDED' | translate }}
+                      </button>
+                      <ng-template #isPremium>
+                        <button disabled ibmButton="primary" size="md" class="app-ibm-btn-full">
+                          {{ 'BILLING.PREMIUM_PLAN.CURRENT_PLAN' | translate }}
+                        </button>
+                      </ng-template>
+                    </ng-template>
+                  </ng-container>
+                  <ng-template #loadingPremiumBtn>
+                    <button disabled ibmButton="primary" size="md" class="app-ibm-btn-full">
+                      <i class="fas fa-spinner fa-spin mr-2"></i>
+                    </button>
+                  </ng-template>
+                </div>
+              </div>
+            </div>
+            <!-- Colonne features -->
+            <div class="flex-1 px-6 sm:px-10 py-8">
+              <div class="app-productive-heading-03 mb-3 font-bold">{{ 'BILLING.PREMIUM_PLAN.NAME' | translate }}</div>
+              <div class="app-body-short-02 mb-6">{{ 'BILLING.PREMIUM_PLAN.DESCRIPTION' | translate }}</div>
+              <div class="app-separator app-separator--left mb-4">
+                <span class="app-label-01 font-bold">{{ 'BILLING.PREMIUM_PLAN.FEATURES_TITLE' | translate }}</span>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <div class="flex items-center app-body-short-01">
+                  <i class="fas fa-infinity app-color-success mr-2"></i>
+                  Biens immobiliers illimités
+                </div>
+                <div class="flex items-center app-body-short-01">
+                  <i class="fas fa-infinity app-color-success mr-2"></i>
+                  Unités locatives illimitées
+                </div>
+                <div class="flex items-center app-body-short-01">
+                  <i class="fas fa-check-circle app-color-success mr-2"></i>
+                  Gestion des finances
+                </div>
+                <div class="flex items-center app-body-short-01">
+                  <i class="fas fa-check-circle app-color-success mr-2"></i>
+                  Gestion des contrats
+                </div>
+                <div class="flex items-center app-body-short-01">
+                  <i class="fas fa-check-circle app-color-success mr-2"></i>
+                  Notifications de non paiement
+                </div>
+                <div class="flex items-center app-body-short-01">
+                  <i class="fas fa-check-circle app-color-success mr-2"></i>
+                  Tableau de bord détaillé
+                </div>
+                <div class="flex items-center app-body-short-01">
+                  <i class="fas fa-check-circle app-color-success mr-2"></i>
+                  Support prioritaire
+                </div>
+                <div class="flex items-center app-body-short-01">
+                  <i class="fas fa-check-circle app-color-success mr-2"></i>
+                  Rapports avancés
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </ng-scrollbar>
   </div>
-  

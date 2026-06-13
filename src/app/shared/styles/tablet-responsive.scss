@@ -1,0 +1,180 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Règles responsives globales pour tablettes (600px – 960px)
+//
+// Ce fichier corrige les composants qui sont trop larges ou mal mis en page
+// sur tablette. Il est importé dans styles.scss.
+//
+// Stratégie : ne PAS modifier les composants un par un.
+// Ces règles CSS globales s'appliquent via des sélecteurs ciblés.
+// ─────────────────────────────────────────────────────────────────────────────
+
+$tablet-max: 960px;
+$mobile-max: 600px;
+
+// ── 1. Grilles de cards (grid-cols-2, grid-cols-3, grid-cols-4) ───────────────
+// Sur tablette, forcer 2 colonnes max pour les grilles à 3 ou 4 colonnes
+@media (max-width: #{$tablet-max}) {
+  // Grilles Tailwind à 3+ colonnes → 2 colonnes sur tablette
+  .grid-cols-3,
+  .sm\:grid-cols-3,
+  .md\:grid-cols-3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .grid-cols-4,
+  .sm\:grid-cols-4,
+  .md\:grid-cols-4,
+  .lg\:grid-cols-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  // Garder 2 colonnes en 2 colonnes
+  .grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+// ── 2. Tableaux — scroll horizontal automatique ───────────────────────────────
+// Tous les tableaux sur tablette/mobile deviennent scrollables horizontalement
+@media (max-width: #{$tablet-max}) {
+  .app-content table,
+  .cds--data-table-container,
+  [class*="table-container"],
+  [class*="table-wrapper"] {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    display: block;
+    max-width: 100%;
+  }
+
+  // S'assurer que les cellules ne se cassent pas
+  table {
+    min-width: max-content;
+  }
+}
+
+// ── 3. Sections avec flex-row → flex-col sur petites tablettes ────────────────
+@media (max-width: 720px) {
+  // Flex row → column pour les conteneurs principaux à 2+ panneaux côte à côte
+  .tablet-stack {
+    flex-direction: column !important;
+  }
+
+  .tablet-stack > * {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+// ── 4. Typographie — réduire légèrement les titres ────────────────────────────
+@media (max-width: #{$tablet-max}) {
+  h1, .text-4xl, .text-3xl {
+    font-size: 1.375rem !important;
+  }
+
+  h2, .text-2xl {
+    font-size: 1.125rem !important;
+  }
+}
+
+// ── 5. Modales et panels — pleine largeur sur tablette ────────────────────────
+@media (max-width: #{$tablet-max}) {
+  .cdk-overlay-pane {
+    max-width: 95vw !important;
+  }
+
+  // Modales Angular Material
+  mat-dialog-container,
+  .mat-mdc-dialog-container {
+    max-width: 95vw !important;
+    margin: 0 auto;
+  }
+}
+
+// ── 6. Padding des pages principales ─────────────────────────────────────────
+@media (max-width: #{$tablet-max}) {
+  // Réduire le padding des conteneurs de pages
+  .page-container,
+  [class*="page-wrapper"],
+  [class*="content-wrapper"] {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+  }
+
+  // Carbon BX grid sur tablette
+  .cds--grid {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  .cds--col,
+  [class*="cds--col-"] {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+}
+
+// ── 7. Stats cards — garder 2 colonnes minimum lisibles ──────────────────────
+@media (max-width: #{$tablet-max}) {
+  // Cartes de métriques dans les dashboards financiers
+  .metrics-grid,
+  [class*="metrics-row"],
+  [class*="stats-grid"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.75rem !important;
+  }
+}
+
+// ── 8. Graphiques — hauteur réduite sur tablette ─────────────────────────────
+@media (max-width: #{$tablet-max}) {
+  canvas {
+    max-height: 280px;
+  }
+}
+
+// ── 9. Sidebars et drawers internes ─────────────────────────────────────────
+// Si une page utilise un layout 2-panneaux (liste + détail)
+@media (max-width: #{$tablet-max}) {
+  .detail-panel,
+  [class*="detail-sidebar"],
+  [class*="side-panel"] {
+    position: fixed !important;
+    top: 48px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100% !important;
+    z-index: 50;
+    overflow-y: auto;
+  }
+}
+
+// ── 10. Boutons d'action — taille minimale tactile (44px) ────────────────────
+@media (max-width: #{$tablet-max}) {
+  button,
+  .cds--btn,
+  [class*="btn-"] {
+    min-height: 36px;
+  }
+
+  // Icônes seules dans les boutons — agrandir la zone tactile
+  .app-layout__header__btn--icon {
+    min-width: 44px !important;
+    min-height: 44px !important;
+  }
+}
+
+// ══ Notes module Properties ══════════════════════════════════════════════════════════
+// Les règles responsives spécifiques au module properties sont gérées
+// directement dans le SCSS de chaque composant (breakpoint 960px) :
+//   home-property.component.scss
+//   list-property.component.scss
+//   property-details-complete.component.scss
+//   property-units-list.component.scss
+//   property-overview.component.scss
+//   property-tenants.component.scss
+//   property-finances.component.scss
+//
+// Seul le manager-banner est conservé ici car son SCSS est dans
+// property-details-complete.component.scss qui gère déjà les deux.
+// ═══════════════════════════════════════════════════════════════════════════

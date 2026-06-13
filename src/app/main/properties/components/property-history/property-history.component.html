@@ -1,79 +1,88 @@
 <!-- Historique des paiements de la propriété -->
 <div class="property-history-container min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
 
-  <!-- Header principal avec design professionnel -->
-  <div class="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
-    <div class="px-8 py-6">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center space-x-4">
-          <!-- Icône décorative -->
-          <div class="w-12 h-12 bg-gradient-to-br from-yellow-100 to-yellow-200 rounded-xl flex items-center justify-center shadow-sm">
-            <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  <!-- Header principal — non sticky, scroll avec le contenu -->
+  <div class="bg-white border-b border-gray-200 shadow-sm">
+    <div class="px-4 sm:px-6 lg:px-8 py-4">
+
+      <!-- Desktop : layout complet -->
+      <div class="hidden sm:flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 bg-gradient-to-br from-yellow-100 to-yellow-200 rounded-xl flex items-center justify-center shadow-sm flex-shrink-0">
+            <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
           </div>
-
           <div>
-            <h1 class="text-3xl font-bold text-gray-900">
-              {{ 'PROPERTY_DETAILS.HISTORY.TITLE' | translate }}
-            </h1>
-            <p class="text-gray-600 mt-1 font-medium">
-              {{ 'PROPERTY_DETAILS.HISTORY.SUBTITLE' | translate }}
-            </p>
+            <h1 class="text-xl font-bold text-gray-900">{{ 'PROPERTY_DETAILS.HISTORY.TITLE' | translate }}</h1>
+            <p class="text-gray-500 text-xs">{{ 'PROPERTY_DETAILS.HISTORY.SUBTITLE' | translate }}</p>
           </div>
         </div>
-
-        <!-- Actions principales -->
-        <div class="flex items-center space-x-3">
-          <!-- Boutons d'export avec design du thème -->
-          <div class="flex items-center space-x-3">
-            <button (click)="exportHistoryToCSV()"
-                    class="btn-custom btn-secondary flex items-center space-x-2 px-5 py-3 rounded-xl font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 shadow-md hover:shadow-lg"
-                    [disabled]="!filteredHistory || filteredHistory.length === 0"
-                    [class.opacity-50]="!filteredHistory || filteredHistory.length === 0"
-                    [class.cursor-not-allowed]="!filteredHistory || filteredHistory.length === 0"
-                    [title]="'PROPERTY_DETAILS.HISTORY.EXPORT_CSV' | translate"
-                    style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: 2px solid #10b981;">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-              </svg>
-              <span class="text-sm font-medium">CSV ({{ filteredHistory?.length || 0 }})</span>
-            </button>
-
-            <button (click)="exportHistoryToExcel()"
-                    class="btn-custom btn-primary flex items-center space-x-2 px-5 py-3 rounded-xl font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 shadow-md hover:shadow-lg"
-                    [disabled]="!filteredHistory || filteredHistory.length === 0"
-                    [class.opacity-50]="!filteredHistory || filteredHistory.length === 0"
-                    [class.cursor-not-allowed]="!filteredHistory || filteredHistory.length === 0"
-                    [title]="'PROPERTY_DETAILS.HISTORY.EXPORT_EXCEL' | translate"
-                    style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: white; border: 2px solid #3b82f6;">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-              </svg>
-              <span class="text-sm font-medium">Excel ({{ filteredHistory?.length || 0 }})</span>
-            </button>
-          </div>
-
+        <div class="flex items-center gap-2 flex-shrink-0">
+          <button (click)="exportHistoryToCSV()"
+                  class="btn-custom btn-secondary flex items-center gap-1.5 px-3 py-2 rounded-lg font-medium text-xs transition-all duration-200"
+                  [disabled]="!filteredHistory || filteredHistory.length === 0"
+                  [class.opacity-50]="!filteredHistory || filteredHistory.length === 0"
+                  style="background: linear-gradient(135deg, #10b981, #059669); color: white; border: 1.5px solid #10b981;">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            CSV ({{ filteredHistory?.length || 0 }})
+          </button>
+          <button (click)="exportHistoryToExcel()"
+                  class="btn-custom btn-primary flex items-center gap-1.5 px-3 py-2 rounded-lg font-medium text-xs transition-all duration-200"
+                  [disabled]="!filteredHistory || filteredHistory.length === 0"
+                  [class.opacity-50]="!filteredHistory || filteredHistory.length === 0"
+                  style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; border: 1.5px solid #3b82f6;">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+            </svg>
+            Excel ({{ filteredHistory?.length || 0 }})
+          </button>
           <button (click)="toggleFiltersExpanded()"
-                  class="btn-custom flex items-center space-x-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:transform hover:-translate-y-1"
+                  class="btn-custom flex items-center gap-1.5 px-3 py-2 rounded-lg font-medium text-xs transition-all duration-200"
                   [class.btn-primary]="isFiltersExpanded"
                   [class.btn-secondary]="!isFiltersExpanded">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.414A1 1 0 013 6.707V4z"></path>
             </svg>
-            <span>{{ isFiltersExpanded ? ('PROPERTY_DETAILS.HISTORY.HIDE_FILTERS' | translate) : ('PROPERTY_DETAILS.HISTORY.SHOW_FILTERS' | translate) }}</span>
-            <span *ngIf="hasActiveFilters()"
-                  class="inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 rounded-full animate-pulse">
-              {{ getActiveFiltersCount() }}
-            </span>
+            {{ isFiltersExpanded ? ('PROPERTY_DETAILS.HISTORY.HIDE_FILTERS' | translate) : ('PROPERTY_DETAILS.HISTORY.SHOW_FILTERS' | translate) }}
+            <span *ngIf="hasActiveFilters()" class="inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-white bg-red-500 rounded-full">{{ getActiveFiltersCount() }}</span>
           </button>
         </div>
       </div>
+
+      <!-- Mobile : barre compacte 2 lignes -->
+      <div class="sm:hidden">
+        <div class="flex items-center justify-between mb-2">
+          <h1 class="text-base font-bold text-gray-900">{{ 'PROPERTY_DETAILS.HISTORY.TITLE' | translate }}</h1>
+          <button (click)="toggleFiltersExpanded()"
+                  class="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium border"
+                  [style]="isFiltersExpanded ? 'background:rgb(204,140,10);color:white;border-color:rgb(204,140,10)' : 'background:white;color:#374151;border-color:#d1d5db'">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.414A1 1 0 013 6.707V4z"></path>
+            </svg>
+            Filtres
+            <span *ngIf="hasActiveFilters()" class="inline-flex items-center justify-center w-3.5 h-3.5 text-xs font-bold text-white bg-red-500 rounded-full">{{ getActiveFiltersCount() }}</span>
+          </button>
+        </div>
+        <div class="flex gap-2">
+          <button (click)="exportHistoryToCSV()" [disabled]="!filteredHistory?.length" class="flex-1 flex items-center justify-center gap-1 py-1.5 rounded-lg text-xs font-medium text-white" style="background:#10b981;">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+            CSV
+          </button>
+          <button (click)="exportHistoryToExcel()" [disabled]="!filteredHistory?.length" class="flex-1 flex items-center justify-center gap-1 py-1.5 rounded-lg text-xs font-medium text-white" style="background:#3b82f6;">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+            Excel
+          </button>
+        </div>
+      </div>
+
     </div>
   </div>
   <!-- Panneau de filtres avec animation -->
   <div *ngIf="isFiltersExpanded"
-       class="mx-8 my-6 bg-white rounded-2xl shadow-xl border-2 border-primary-light overflow-hidden transform transition-all duration-500 ease-out animate-slideDown">
+       class="mx-2 sm:mx-4 lg:mx-8 my-4 bg-white rounded-2xl shadow-xl border-2 border-primary-light overflow-hidden transform transition-all duration-500 ease-out animate-slideDown">
 
     <!-- Header des filtres -->
     <div class="bg-gradient-to-r from-primary-light to-primary-medium px-6 py-4 border-b border-primary-light">
@@ -227,7 +236,7 @@
 </div>
 
 <!-- Liste des paiements -->
-<div class="px-8 pb-8">
+<div class="px-2 sm:px-4 lg:px-8 pb-4 sm:pb-8">
   <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
 
     <!-- Header de la liste -->

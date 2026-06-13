@@ -9,6 +9,7 @@ import { NotificationManagerService } from 'src/app/shared/services/notification
 import { AuthStateService } from 'src/app/shared/services/auth-state.service'
 import { LanguageUrlService } from 'src/app/shared/services/language-url.service'
 import { LanguagePreservationService } from 'src/app/shared/services/language-preservation.service'
+import { AgentStatusService } from 'src/app/shared/services/agent-status.service'
 
 @Component({
   selector: 'app-main-header',
@@ -23,6 +24,8 @@ export class HeaderComponent extends BaseComponent implements OnInit {
   @Output() itemClick: EventEmitter<any> = new EventEmitter()
 
   isAdmin = false;
+  isAgent = false;
+  canAccessProperties = true;
   showNotifications = false;
   unreadNotificationsCount = 0;
   isAuthenticated$ = this.authStateService.isAuthenticated();
@@ -37,7 +40,8 @@ export class HeaderComponent extends BaseComponent implements OnInit {
     private notificationManager: NotificationManagerService,
     private authStateService: AuthStateService,
     private languageUrlService: LanguageUrlService,
-    private languagePreservation: LanguagePreservationService
+    private languagePreservation: LanguagePreservationService,
+    private agentStatusService: AgentStatusService
   ) {
     super();
   }
@@ -47,7 +51,11 @@ export class HeaderComponent extends BaseComponent implements OnInit {
     this.userProfil$
       .pipe(takeUntil(this.destroy$))
       .subscribe((user) => {
-        if (user) this.isAdmin = this.checkIsAdmin(user);
+        if (user) {
+          this.isAdmin = this.checkIsAdmin(user);
+          this.isAgent = user.userType === 'AGENT';
+          this.canAccessProperties = this.agentStatusService.canAccessProperties();
+        }
       });
 
     // Surveiller le nombre de notifications non lues
@@ -108,6 +116,31 @@ export class HeaderComponent extends BaseComponent implements OnInit {
   navigateToBilling(): void {
     const currentLang = this.languageUrlService.getCurrentLanguage();
     this.router.navigate([`/${currentLang}/app/facturation/plan`]);
+  }
+
+  navigateToWallet(): void {
+    const currentLang = this.languageUrlService.getCurrentLanguage();
+    this.router.navigate([`/${currentLang}/app/portefeuille`]);
+  }
+
+  navigateToContractTemplates(): void {
+    const currentLang = this.languageUrlService.getCurrentLanguage();
+    this.router.navigate([`/${currentLang}/app/contract-templates`]);
+  }
+
+  navigateToSupport(): void {
+    const currentLang = this.languageUrlService.getCurrentLanguage();
+    this.router.navigate([`/${currentLang}/support/welcome`]);
+  }
+
+  navigateToAbout(): void {
+    const currentLang = this.languageUrlService.getCurrentLanguage();
+    this.router.navigate([`/${currentLang}/app/application/welcome`]);
+  }
+
+  navigateToPricing(): void {
+    const currentLang = this.languageUrlService.getCurrentLanguage();
+    this.router.navigate([`/${currentLang}/app/pricing/modern`]);
   }
 
   navigateToAdmin(): void {

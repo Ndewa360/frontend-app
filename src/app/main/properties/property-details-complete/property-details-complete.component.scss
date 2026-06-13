@@ -31,6 +31,15 @@ $primary-dark: rgb(184, 126, 9);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   flex-shrink: 0;
 
+  // Sur tablette : hauteur fixe de la barre compacte (h-12 = 48px + padding = 52px)
+  @media (max-width: 1023px) {
+    min-height: 52px;
+    display: flex;
+    align-items: center;
+
+    > div { width: 100%; }
+  }
+
   .header-content {
     .header-info {
       h1 {
@@ -81,6 +90,13 @@ $primary-dark: rgb(184, 126, 9);
   overflow-x: hidden;
   overflow-y: auto;
   max-width: 100%;
+
+  @media (max-width: 960px) {
+    > div { padding: 0.75rem !important; }
+  }
+  @media (max-width: 600px) {
+    > div { padding: 0.5rem !important; }
+  }
 
   .max-w-7xl {
     max-width: 100%;
@@ -344,42 +360,125 @@ $primary-dark: rgb(184, 126, 9);
   }
 }
 
-// Styles pour les onglets avec thème de l'application (style identique à la liste des biens)
+// ── Barre compacte tablette/mobile (header + onglets) ────────────────────────
+
+.scrollbar-hide {
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+// Bouton retour icône seule
+.btn-back-compact {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: #fff;
+  border: 1.5px solid #e5e7eb;
+  cursor: pointer;
+  color: #374151;
+  transition: all 0.15s;
+  flex-shrink: 0;
+
+  &:hover { background: #f3f4f6; border-color: #d1d5db; }
+}
+
+// Bouton icône générique
+.btn-icon-compact {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1.5px solid #e5e7eb;
+  cursor: pointer;
+  transition: all 0.15s;
+  flex-shrink: 0;
+
+  &.btn-gallery-compact {
+    background: linear-gradient(135deg, #3b82f6, #7c3aed);
+    border-color: transparent;
+    color: #fff;
+    font-size: 0.875rem;
+    &:hover { opacity: 0.9; }
+  }
+
+  &.btn-edit-compact {
+    background: rgb(204, 140, 10);
+    border-color: transparent;
+    color: #fff;
+    &:hover { background: rgb(184, 126, 9); }
+  }
+}
+
+.btn-icon-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 3px;
+  border-radius: 8px;
+  background: #fff;
+  color: #7c3aed;
+  font-size: 0.55rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e5e7eb;
+}
+
+// Onglets sur tablette : compacts, scroll horizontal
 .property-tab-button {
-  @apply px-6 py-4 text-sm font-medium border-b-2 border-transparent transition-all duration-300 ease-in-out;
-  color: #525252; // Gris moyen pour le texte
+  @apply text-sm font-medium border-b-2 border-transparent transition-all duration-300 ease-in-out;
+  padding: 1rem 1.5rem;   // desktop
+  color: #525252;
   background: transparent;
   display: flex;
   align-items: center;
+  white-space: nowrap;
+  flex-shrink: 0;
   position: relative;
-  border-radius: 8px 8px 0 0; // Coins arrondis en haut
+  border-radius: 8px 8px 0 0;
 
-  &:hover {
-    color: #161616; // Texte sombre sur fond clair
-    background-color: rgba(255, 255, 255, 0.7); // Fond blanc semi-transparent au hover
+  @media (max-width: 960px) {
+    padding: 0.625rem 0.75rem;
+    font-size: 0.72rem;
+    svg, youpez-ibm-icon { width: 0.875rem !important; height: 0.875rem !important; }
+    .tab-count { font-size: 0.6rem !important; padding: 1px 5px !important; margin-left: 0.25rem !important; }
   }
 
+  @media (max-width: 600px) {
+    padding: 0.5rem 0.625rem;
+    font-size: 0.68rem;
+    // Masquer le texte des onglets sur très petit écran, garder icône
+    .tab-label { display: none; }
+    svg, youpez-ibm-icon { margin-right: 0 !important; }
+  }
+
+  &:hover { color: #161616; background-color: rgba(255,255,255,0.7); }
+
   &.active {
-    color: $primary-color !important; // Couleur principale
+    color: $primary-color !important;
     border-bottom-color: $primary-color !important;
-    background-color: #ffffff; // Fond blanc pour l'onglet actif
-    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1); // Ombre subtile
+    background-color: #fff;
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
 
     &::after {
       content: '';
       position: absolute;
-      bottom: -2px;
-      left: 0;
-      right: 0;
+      bottom: -2px; left: 0; right: 0;
       height: 3px;
       background: linear-gradient(90deg, $primary-color, #fadc4d);
       border-radius: 2px 2px 0 0;
     }
 
-    .tab-count {
-      background-color: $primary-color !important;
-      color: white !important;
-    }
+    .tab-count { background-color: $primary-color !important; color: #fff !important; }
   }
 }
 
@@ -387,6 +486,17 @@ $primary-dark: rgb(184, 126, 9);
 .tabs-navigation {
   background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
   border-bottom: 1px solid #cbd5e1;
+
+  nav {
+    @media (max-width: 960px) {
+      overflow-x: auto;
+      overflow-y: hidden;
+      flex-wrap: nowrap !important;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      &::-webkit-scrollbar { display: none; }
+    }
+  }
 }
 
 // Styles globaux pour tous les boutons IBM dans les détails de propriété
@@ -456,31 +566,11 @@ $primary-dark: rgb(184, 126, 9);
   font-weight: 500;
 }
 
-// Responsive design simplifié
-@media (max-width: 768px) {
+// Responsive design
+@media (max-width: 600px) {
   .grid {
     grid-template-columns: 1fr !important;
-    gap: 1rem;
-  }
-
-  .flex-wrap {
-    flex-direction: column;
-
-    button {
-      width: 100%;
-      justify-content: center;
-    }
-  }
-}
-
-@media (max-width: 640px) {
-  :host {
-    font-size: 14px;
-  }
-
-  .px-4 {
-    padding-left: 1rem;
-    padding-right: 1rem;
+    gap: 0.875rem;
   }
 }
 

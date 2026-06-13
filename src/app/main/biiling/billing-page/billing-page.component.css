@@ -8,3 +8,66 @@
 .app-nav-list__item__text.disabled:hover {
   background-color: transparent;
 }
+
+/* ─── Responsive billing-page ─────────────────────────────────────────────── */
+
+/* Sur tablette/mobile : sidebar en haut, contenu en dessous */
+@media (max-width: 1024px) {
+  /* Le layout fxFlex force du flex-row — on repasse en colonne */
+  [fxlayout="row wrap"] {
+    flex-direction: column !important;
+  }
+
+  /* Sidebar : pleine largeur, compacte, pas de largeur fixe */
+  [fxflex="100%"][fxflex\.gt-md="20%"],
+  .app-docs-list-holder {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 0 0 100% !important;
+  }
+
+  /* Menu de navigation latéral : compact sur tablette */
+  .app-nav-list.app-content.w-64 {
+    width: 100% !important;
+  }
+
+  /* Contenu principal : pleine largeur */
+  [fxflex="100%"][fxflex\.gt-md="70%"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 0 0 100% !important;
+    margin-left: 0 !important;
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+  }
+
+  /* Titre des factures : taille réduite */
+  .app-main-header__text {
+    font-size: 1.5rem !important;
+  }
+
+  /* Alertes factures impayées : text plus petit */
+  .bg-red-50 .text-lg { font-size: 1rem !important; }
+}
+
+@media (max-width: 768px) {
+  /* Réduire les marges latérales */
+  .sm\:ml-10 { margin-left: 0.5rem !important; }
+
+  /* Masquer le logo en sidebar sur mobile — déjà visible dans le header global */
+  .app-content.pl-6.pt-2 { display: none; }
+
+  /* Navigation sidebar : style horizontal scrollable sur mobile */
+  .app-nav-list__children {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+
+  .app-nav-list__item__text {
+    display: inline-block;
+    padding: 0.375rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+  }
+}

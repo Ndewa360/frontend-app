@@ -1,106 +1,104 @@
 <!-- Interface moderne des locataires -->
 <div class="tenants-modern-interface">
 
-  <!-- En-tête optimisé avec statistiques -->
-  <div class="bg-gradient-to-br from-white via-amber-50 to-orange-50 rounded-xl shadow-lg border-2 border-amber-200 p-6 mb-6">
-    <div class="flex items-center justify-between mb-6">
-      <div class="flex items-center">
-        <div class="p-3 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 shadow-md mr-4">
-          <!-- Icône utilisateurs simplifiée -->
-          <i class="fas fa-users text-white text-lg"></i>
+  <!-- En-tête compact -->
+  <div class="bg-gradient-to-br from-white via-amber-50 to-orange-50 rounded-xl shadow-lg border-2 border-amber-200 p-3 sm:p-4 mb-4">
+
+    <!-- Ligne 1 : titre + actions -->
+    <div class="flex items-center justify-between gap-2 mb-3">
+      <div class="flex items-center min-w-0">
+        <div class="p-2 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 shadow-md mr-2 flex-shrink-0">
+          <i class="fas fa-users text-white text-sm"></i>
         </div>
-        <div>
-          <h2 class="text-2xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">{{ 'PROPERTY_DETAILS.TENANTS.TITLE' | translate }}</h2>
-          <p class="text-amber-600 text-sm">{{ getTotalTenants() }} {{ 'PROPERTY_DETAILS.TENANTS.TENANT_COUNT' | translate }} • {{ getActiveTenants() }} {{ 'PROPERTY_DETAILS.TENANTS.ACTIVE_COUNT' | translate }}</p>
+        <div class="min-w-0">
+          <h2 class="text-base sm:text-lg font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent truncate">{{ 'PROPERTY_DETAILS.TENANTS.TITLE' | translate }}</h2>
+          <p class="text-amber-600 text-xs truncate">{{ getTotalTenants() }} {{ 'PROPERTY_DETAILS.TENANTS.TENANT_COUNT' | translate }} • {{ getActiveTenants() }} {{ 'PROPERTY_DETAILS.TENANTS.ACTIVE_COUNT' | translate }}</p>
         </div>
       </div>
 
-      <!-- Actions compactes avec design du thème -->
-      <div class="flex space-x-3">
-        <!-- Boutons d'export avec design amélioré -->
+      <!-- Actions : icônes compactes sur tablette -->
+      <div class="flex items-center gap-1.5 flex-shrink-0">
         <button (click)="exportTenantsToCSV()"
-                class="export-btn export-btn-csv px-4 py-2 rounded-lg font-semibold transition-all duration-300 flex items-center shadow-md hover:shadow-lg text-sm hover:transform hover:-translate-y-1"
+                class="export-btn export-btn-csv p-2 rounded-lg transition-all duration-200 flex items-center shadow-sm"
                 [disabled]="filteredTenants.length === 0"
                 [class.opacity-50]="filteredTenants.length === 0"
-                [class.cursor-not-allowed]="filteredTenants.length === 0"
                 [title]="'PROPERTY_DETAILS.TENANTS.EXPORT_CSV_TITLE' | translate: {count: filteredTenants.length}">
-          <i class="fas fa-file-csv mr-2 text-white"></i>
-          <span class="text-white font-medium">{{ 'PROPERTY_DETAILS.TENANTS.ACTIONS.EXPORT_CSV' | translate }}</span>
+          <i class="fas fa-file-csv text-white text-sm"></i>
+          <span class="text-white text-xs font-medium ml-1 hidden md:inline">{{ 'PROPERTY_DETAILS.TENANTS.ACTIONS.EXPORT_CSV' | translate }}</span>
         </button>
 
         <button (click)="exportTenantsToExcel()"
-                class="export-btn export-btn-excel px-4 py-2 rounded-lg font-semibold transition-all duration-300 flex items-center shadow-md hover:shadow-lg text-sm hover:transform hover:-translate-y-1"
+                class="export-btn export-btn-excel p-2 rounded-lg transition-all duration-200 flex items-center shadow-sm"
                 [disabled]="filteredTenants.length === 0"
                 [class.opacity-50]="filteredTenants.length === 0"
-                [class.cursor-not-allowed]="filteredTenants.length === 0"
                 [title]="'PROPERTY_DETAILS.TENANTS.EXPORT_EXCEL_TITLE' | translate: {count: filteredTenants.length}">
-          <i class="fas fa-file-excel mr-2 text-white"></i>
-          <span class="text-white font-medium">{{ 'PROPERTY_DETAILS.TENANTS.ACTIONS.EXPORT_EXCEL' | translate }}</span>
+          <i class="fas fa-file-excel text-white text-sm"></i>
+          <span class="text-white text-xs font-medium ml-1 hidden md:inline">{{ 'PROPERTY_DETAILS.TENANTS.ACTIONS.EXPORT_EXCEL' | translate }}</span>
         </button>
 
         <button (click)="addTenant()"
                 *ngIf="propertyAccessService.canManageTenants(propertyId)"
-                class="custom-primary-button px-5 py-2 rounded-lg font-semibold transition-all duration-300 flex items-center shadow-md hover:shadow-lg text-sm hover:transform hover:-translate-y-1">
-          <i class="fas fa-plus mr-2"></i>
-          {{ 'PROPERTY_DETAILS.TENANTS.ACTIONS.NEW_TENANT' | translate }}
+                class="custom-primary-button p-2 rounded-lg transition-all duration-200 flex items-center shadow-sm">
+          <i class="fas fa-plus text-white text-sm"></i>
+          <span class="text-white text-xs font-medium ml-1 hidden sm:inline">{{ 'PROPERTY_DETAILS.TENANTS.ACTIONS.NEW_TENANT' | translate }}</span>
         </button>
       </div>
     </div>
 
-    <!-- Statistiques compactes avec icônes FontAwesome -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      <div class="bg-gradient-to-br from-amber-50 to-orange-100 p-4 rounded-lg border border-amber-200 shadow-sm hover:shadow-md transition-all duration-200">
-        <div class="flex items-center space-x-3">
-          <div class="p-2 bg-gradient-to-br from-amber-400 to-orange-500 rounded-lg shadow-sm">
-            <i class="fa fa-users text-white text-sm"></i>
+    <!-- Statistiques compactes 2×2 -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-2 mb-3">
+      <div class="bg-gradient-to-br from-amber-50 to-orange-100 p-2.5 rounded-lg border border-amber-200 shadow-sm">
+        <div class="flex items-center space-x-2">
+          <div class="p-1.5 bg-gradient-to-br from-amber-400 to-orange-500 rounded-lg shadow-sm flex-shrink-0">
+            <i class="fa fa-users text-white text-xs"></i>
           </div>
-          <div>
-            <div class="text-xl font-bold text-amber-800">{{ getTotalTenants() }}</div>
-            <div class="text-xs text-amber-600 font-medium">{{ 'PROPERTY_DETAILS.TENANTS.STATS.TOTAL' | translate }}</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="bg-gradient-to-br from-emerald-50 to-green-100 p-4 rounded-lg border border-emerald-200 shadow-sm hover:shadow-md transition-all duration-200">
-        <div class="flex items-center space-x-3">
-          <div class="p-2 bg-gradient-to-br from-emerald-400 to-green-500 rounded-lg shadow-sm">
-            <i class="fas fa-check-circle text-white text-sm"></i>
-          </div>
-          <div>
-            <div class="text-xl font-bold text-emerald-800">{{ getActiveTenants() }}</div>
-            <div class="text-xs text-emerald-600 font-medium">{{ 'PROPERTY_DETAILS.TENANTS.STATS.ACTIVE' | translate }}</div>
+          <div class="min-w-0">
+            <div class="text-lg font-bold text-amber-800">{{ getTotalTenants() }}</div>
+            <div class="text-xs text-amber-600 font-medium truncate">{{ 'PROPERTY_DETAILS.TENANTS.STATS.TOTAL' | translate }}</div>
           </div>
         </div>
       </div>
 
-      <div class="bg-gradient-to-br from-blue-50 to-indigo-100 p-4 rounded-lg border border-blue-200 shadow-sm hover:shadow-md transition-all duration-200">
-        <div class="flex items-center space-x-3">
-          <div class="p-2 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-lg shadow-sm">
-            <i class="fas fa-coins text-white text-sm"></i>
+      <div class="bg-gradient-to-br from-emerald-50 to-green-100 p-2.5 rounded-lg border border-emerald-200 shadow-sm">
+        <div class="flex items-center space-x-2">
+          <div class="p-1.5 bg-gradient-to-br from-emerald-400 to-green-500 rounded-lg shadow-sm flex-shrink-0">
+            <i class="fas fa-check-circle text-white text-xs"></i>
           </div>
-          <div>
-            <div class="text-lg font-bold text-blue-800">{{ formatPrice(getTotalRevenue()) }}</div>
-            <div class="text-xs text-blue-600 font-medium">{{ 'PROPERTY_DETAILS.TENANTS.STATS.REVENUE_MONTH' | translate }}</div>
+          <div class="min-w-0">
+            <div class="text-lg font-bold text-emerald-800">{{ getActiveTenants() }}</div>
+            <div class="text-xs text-emerald-600 font-medium truncate">{{ 'PROPERTY_DETAILS.TENANTS.STATS.ACTIVE' | translate }}</div>
           </div>
         </div>
       </div>
 
-      <div class="bg-gradient-to-br from-purple-50 to-violet-100 p-4 rounded-lg border border-purple-200 shadow-sm hover:shadow-md transition-all duration-200">
-        <div class="flex items-center space-x-3">
-          <div class="p-2 bg-gradient-to-br from-purple-400 to-violet-500 rounded-lg shadow-sm">
-            <i class="fas fa-chart-pie text-white text-sm"></i>
+      <div class="bg-gradient-to-br from-blue-50 to-indigo-100 p-2.5 rounded-lg border border-blue-200 shadow-sm">
+        <div class="flex items-center space-x-2">
+          <div class="p-1.5 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-lg shadow-sm flex-shrink-0">
+            <i class="fas fa-coins text-white text-xs"></i>
           </div>
-          <div>
-            <div class="text-xl font-bold text-purple-800">{{ getOccupancyRate() }}%</div>
-            <div class="text-xs text-purple-600 font-medium">{{ 'PROPERTY_DETAILS.TENANTS.STATS.OCCUPATION' | translate }}</div>
+          <div class="min-w-0">
+            <div class="text-sm font-bold text-blue-800 truncate">{{ formatPrice(getTotalRevenue()) }}</div>
+            <div class="text-xs text-blue-600 font-medium truncate">{{ 'PROPERTY_DETAILS.TENANTS.STATS.REVENUE_MONTH' | translate }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-gradient-to-br from-purple-50 to-violet-100 p-2.5 rounded-lg border border-purple-200 shadow-sm">
+        <div class="flex items-center space-x-2">
+          <div class="p-1.5 bg-gradient-to-br from-purple-400 to-violet-500 rounded-lg shadow-sm flex-shrink-0">
+            <i class="fas fa-chart-pie text-white text-xs"></i>
+          </div>
+          <div class="min-w-0">
+            <div class="text-lg font-bold text-purple-800">{{ getOccupancyRate() }}%</div>
+            <div class="text-xs text-purple-600 font-medium truncate">{{ 'PROPERTY_DETAILS.TENANTS.STATS.OCCUPATION' | translate }}</div>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Barre de recherche compacte -->
-  <div class="bg-white  p-4 mb-2 pt-8">
-    <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+  <div class="pt-2">
+    <div class="flex flex-col sm:flex-row sm:items-center gap-2">
       <!-- Recherche compacte -->
       <div class="flex-1">
         <div class="relative">

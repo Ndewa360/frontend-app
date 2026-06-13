@@ -70,30 +70,85 @@
   }
 
   // Responsive design
-  @media (max-width: 768px) {
-    .tenant-card {
-      .p-6 {
-        padding: 1rem;
-      }
-
-      .flex-1 {
-        .grid-cols-2 {
-          grid-template-columns: 1fr;
-        }
-      }
-    }
-
-    .stats-grid {
-      grid-template-columns: 1fr 1fr;
+  @media (max-width: 960px) {
+    // Header : titre + boutons en colonne
+    .flex.items-center.justify-between {
+      flex-direction: column;
+      align-items: flex-start;
       gap: 0.75rem;
     }
 
-    .filters-container {
-      flex-direction: column;
-      gap: 1rem;
+    // Groupe de boutons export + nouveau : wrap, taille compacte
+    .flex.space-x-3 {
+      flex-wrap: wrap;
+      gap: 0.5rem;
 
-      .search-input {
-        max-width: none;
+      button.export-btn {
+        font-size: 0.7rem;
+        padding: 0.375rem 0.625rem;
+
+        // Masquer le texte, garder icône
+        span { display: none; }
+        i.fas, i.fa { margin-right: 0; }
+      }
+
+      button.custom-primary-button {
+        font-size: 0.75rem;
+        padding: 0.4rem 0.875rem;
+      }
+    }
+
+    // Stats : déjà 2 colonnes dans le template (grid-cols-2 lg:grid-cols-4)
+    // Barre de recherche + filtres : colonne sur tablette
+    .flex.flex-col.sm\:flex-row {
+      flex-direction: column !important;
+      gap: 0.75rem;
+
+      .flex.gap-3 {
+        flex-wrap: wrap;
+        select { min-width: auto; flex: 1; }
+      }
+    }
+
+    // Carte locataire : simplifier
+    .tenant-card .p-6 {
+      padding: 0.875rem;
+
+      // Avatar + infos + actions : restructurer
+      > .flex.items-center.justify-between {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.625rem;
+      }
+
+      // Zone infos : prendre toute la largeur
+      .flex.items-center.space-x-4.flex-1 {
+        width: 100%;
+      }
+
+      // Infos détaillées
+      .flex-1 .flex.items-start.justify-between {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      // Contacts (email/tel) : 1 colonne
+      .grid.grid-cols-1.md\:grid-cols-2 {
+        grid-template-columns: 1fr !important;
+        gap: 0.25rem;
+      }
+
+      // Actions : déplacer sous les infos, inline
+      .flex.items-center.space-x-2.ml-4 {
+        margin-left: 0;
+        margin-top: 0.25rem;
+        flex-wrap: wrap;
+        gap: 0.375rem;
+
+        button {
+          width: 36px; height: 36px;
+          min-height: 36px;
+        }
       }
     }
   }

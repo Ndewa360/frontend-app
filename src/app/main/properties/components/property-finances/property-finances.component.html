@@ -101,55 +101,49 @@
   ══════════════════════════════════════════════════════════════════════ -->
   <ng-container *ngIf="!showEmptyState">
 
-  <!-- Header avec titre et contrôles alignés -->
-  <div class="finances-header bg-white rounded-xl shadow-xl border-4 border-gray-400 p-8 mb-8">
-    <!-- Titre de la section -->
-    <div class="flex items-center justify-between mb-6">
-      <div class="flex items-center">
-        <div class="p-4 rounded-xl border-2 border-yellow-300 bg-yellow-50 mr-4">
-          <svg class="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  <!-- Header compact avec titre et contrôles -->
+  <div class="finances-header bg-white rounded-xl shadow-sm border border-gray-200 p-3 sm:p-4 mb-4">
+    <!-- Titre + contrôles sur une ligne -->
+    <div class="flex items-center justify-between gap-2 mb-3">
+      <div class="flex items-center min-w-0">
+        <div class="p-2 rounded-lg border border-yellow-300 bg-yellow-50 mr-2 flex-shrink-0">
+          <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
           </svg>
         </div>
-        <div>
-          <h2 class="text-2xl font-bold text-gray-900">{{ 'FINANCIAL_DASHBOARD.FINANCIAL_ANALYSIS' | translate }}</h2>
-          <p class="text-gray-600">{{ 'FINANCIAL_DASHBOARD.REVENUE_TRACKING' | translate }}</p>
+        <div class="min-w-0">
+          <h2 class="text-base sm:text-lg font-bold text-gray-900 truncate">{{ 'FINANCIAL_DASHBOARD.FINANCIAL_ANALYSIS' | translate }}</h2>
+          <p class="text-gray-500 text-xs truncate">{{ 'FINANCIAL_DASHBOARD.REVENUE_TRACKING' | translate }}</p>
         </div>
       </div>
 
       <!-- Contrôles à droite -->
-      <div class="flex items-center space-x-4">
+      <div class="flex items-center gap-1.5 flex-shrink-0">
         <!-- Sélecteur d'année -->
-        <div class="flex items-center space-x-2">
-          <label class="text-sm font-medium text-gray-700">{{ 'FINANCIAL_DASHBOARD.YEAR_LABEL' | translate }}:</label>
-          <select [(ngModel)]="selectedYear"
-                  (ngModelChange)="onYearChange($event)"
-                  class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors">
-            <option *ngFor="let year of getAvailableYears()" [value]="year" [selected]="year === selectedYear">
-              {{ year }}
-            </option>
-          </select>
-        </div>
+        <select [(ngModel)]="selectedYear"
+                (ngModelChange)="onYearChange($event)"
+                class="border border-gray-300 rounded-lg px-2 py-1.5 text-xs focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors">
+          <option *ngFor="let year of getAvailableYears()" [value]="year" [selected]="year === selectedYear">{{ year }}</option>
+        </select>
 
         <!-- Indicateur de données -->
-        <div class="flex items-center space-x-2 text-sm text-gray-600">
-          <div class="w-2 h-2 rounded-full"
+        <div class="hidden sm:flex items-center gap-1 text-xs text-gray-600">
+          <div class="w-1.5 h-1.5 rounded-full"
                [class.bg-green-500]="hasFinancialData()"
                [class.bg-gray-400]="!hasFinancialData()">
           </div>
-          <span>{{ hasFinancialData() ? ('FINANCIAL_DASHBOARD.DATA_AVAILABLE' | translate) : ('FINANCIAL_DASHBOARD.NO_DATA' | translate) }}</span>
+          <span class="hidden md:inline">{{ hasFinancialData() ? ('FINANCIAL_DASHBOARD.DATA_AVAILABLE' | translate) : ('FINANCIAL_DASHBOARD.NO_DATA' | translate) }}</span>
         </div>
 
-        <!-- Bouton de rafraîchissement -->
+        <!-- Bouton rafraîchissement -->
         <button (click)="refreshData()"
                 [disabled]="isLoading"
-                class="flex items-center space-x-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors duration-200 disabled:opacity-50">
-          <svg class="w-4 h-4" [class.animate-spin]="isLoading" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                class="flex items-center gap-1 px-2 py-1.5 bg-gray-100 text-gray-700 rounded-lg text-xs font-medium hover:bg-gray-200 transition-colors disabled:opacity-50">
+          <svg class="w-3.5 h-3.5" [class.animate-spin]="isLoading" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
           </svg>
-          <span>{{ isLoading ? ('FINANCIAL_DASHBOARD.LOADING' | translate) : ('FINANCIAL_DASHBOARD.REFRESH' | translate) }}</span>
+          <span class="hidden sm:inline">{{ isLoading ? ('FINANCIAL_DASHBOARD.LOADING' | translate) : ('FINANCIAL_DASHBOARD.REFRESH' | translate) }}</span>
         </button>
-
       </div>
     </div>
 

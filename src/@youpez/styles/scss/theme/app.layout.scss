@@ -1,4 +1,6 @@
 $appMainHeaderHeight: 48px;
+// Breakpoint tablette : entre 600px et 960px
+$tabletBreakpoint: 960px;
 
 .app-layout {
   height: 100%;
@@ -86,7 +88,6 @@ $appMainHeaderHeight: 48px;
       }
     }
 
-
     .app-layout__header__inner {
 
     }
@@ -119,22 +120,58 @@ $appMainHeaderHeight: 48px;
   }
 }
 
+// ── Breakpoint tablette (600px – 960px) ──────────────────────────────────────
+// Sur tablette, on passe en mode header horizontal (comme mobile) pour libérer
+// la largeur maximale du contenu.
+@media (max-width: #{$tabletBreakpoint}) {
+  .app-layout {
+    .app-layout__header {
+      display: flex;
+    }
+
+    .app-layout__content {
+      left: 0;
+      top: 0;
+    }
+
+    .app-layout__content__inner {
+      top: $appMainHeaderHeight;
+    }
+
+    .app-layout__mini-sidebar {
+      display: none;
+    }
+  }
+}
+
 .app-content {
   position: relative;
 
   &.app-content--carbon {
     padding: 0 1.1rem 0 1.1rem;
+    @media (max-width: #{$tabletBreakpoint}) {
+      padding: 0 0.75rem;
+    }
   }
 
   &.app-content--default {
     padding: 1.1rem;
+    @media (max-width: #{$tabletBreakpoint}) {
+      padding: 0.75rem;
+    }
   }
 
   &.app-content--default-bottom {
     padding: 0 1.1rem 1.1rem 1.1rem;
+    @media (max-width: #{$tabletBreakpoint}) {
+      padding: 0 0.75rem 0.75rem;
+    }
   }
 
   &.app-content--sm {
     padding: 0.75rem 1.1rem;
+    @media (max-width: #{$tabletBreakpoint}) {
+      padding: 0.5rem 0.75rem;
+    }
   }
 }

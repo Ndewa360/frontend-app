@@ -12,9 +12,20 @@
 
 // Header principal - Thème clair
 .main-header {
-  background-color: #f8f9fa; // Gris très clair
-  border-bottom: 1px solid #e0e0e0; // Bordure claire
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); // Ombre très légère
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  flex-shrink: 0; // ne jamais se compresser
+
+  // Barre unifiée tablette/mobile : hauteur fixe
+  .header-unified {
+    &.py-3 { // le py-3 du HTML active ce mode
+      min-height: 52px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+  }
 
   .header-content {
     .header-info {
@@ -105,17 +116,18 @@
 
 // Contenu principal avec scroll
 .main-content {
-  flex: 1; // Prendre tout l'espace restant
-  overflow: hidden; // Empêcher le scroll sur le container
+  flex: 1;
+  overflow-y: auto; // scroll directement sur main-content
+  overflow-x: hidden;
   position: relative;
+  -webkit-overflow-scrolling: touch;
 
   .view-container {
     opacity: 1;
     transform: translateY(0);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    height: 100%; // Hauteur complète
-    overflow-y: auto; // Permettre le scroll vertical
-    overflow-x: hidden; // Empêcher le scroll horizontal
+    min-height: 100%;
+    overflow: visible; // le scroll est géré par main-content
 
     &.hidden {
       opacity: 0;
@@ -125,7 +137,6 @@
       top: 0;
       left: 0;
       right: 0;
-      bottom: 0; // Ajouté pour couvrir toute la hauteur
     }
 
     &.active {
@@ -133,7 +144,6 @@
       transform: translateY(0);
       pointer-events: auto;
       position: relative;
-      height: 100%; // Hauteur complète pour le scroll
     }
   }
 }
@@ -171,86 +181,81 @@
   animation: fadeIn 0.5s ease-out;
 }
 
-// Responsive design avec scroll amélioré
-@media (max-width: 768px) {
-  .property-management-container {
-    height: 100vh; // Hauteur fixe sur mobile
-    overflow: hidden;
-  }
-
-  .main-content {
-    .view-container {
-      // Scroll amélioré sur mobile
-      -webkit-overflow-scrolling: touch; // Scroll fluide sur iOS
-
-      &.active {
-        height: calc(100vh - 200px); // Ajuster selon la hauteur du header
-      }
-    }
-  }
-
-  .main-header {
-    flex-shrink: 0; // Empêcher la compression du header
-
-    .header-content {
-      padding: 1rem 0;
-
-      .flex {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1rem;
-      }
-
-      .header-info {
-        h1 {
-          font-size: 1.875rem;
-        }
-
-        p {
-          font-size: 1rem;
-        }
-      }
-    }
-
-    .tab-navigation {
-      nav {
-        .tab-button {
-          padding: 0.75rem 1rem;
-          font-size: 0.875rem;
-
-          svg {
-            width: 1rem;
-            height: 1rem;
-          }
-        }
-      }
-    }
-  }
+// Barre compacte tablette/mobile
+.scrollbar-hide {
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
 }
 
-@media (max-width: 640px) {
-  .main-header {
-    .tab-navigation {
-      nav {
-        flex-direction: column;
+.tab-button-compact {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #525252;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  height: 36px;
+  transition: all 0.2s ease;
 
-        .tab-button {
-          width: 100%;
-          justify-content: flex-start;
-          border-bottom: 1px solid #e0e0e0; // Bordure claire
-          border-right: none;
+  &:hover { background: #f0f0f0; color: #161616; }
 
-          &.active {
-            border-bottom-color: #e0e0e0;
-            border-left: 3px solid rgb(204, 140, 10); // Couleur principale
+  &.active {
+    color: rgb(204, 140, 10);
+    background: rgba(204, 140, 10, 0.1);
+    border-bottom: 2px solid rgb(204, 140, 10);
+  }
 
-            &::after {
-              display: none;
-            }
-          }
-        }
-      }
-    }
+  span { pointer-events: none; }
+}
+
+.tab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 9px;
+  background: rgb(204, 140, 10);
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: 700;
+}
+
+.btn-add-compact {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: 8px;
+  background: rgb(204, 140, 10);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  height: 36px;
+  transition: background 0.2s;
+
+  &:hover { background: rgb(184, 126, 9); }
+
+  // Sur très petit écran : masquer le label, garder l'icône
+  .btn-add-label {
+    @media (max-width: 480px) { display: none; }
+  }
+}
+// Tablette/mobile : touch scrolling optimisé
+@media (max-width: 960px) {
+  .main-content {
+    -webkit-overflow-scrolling: touch;
   }
 }
 

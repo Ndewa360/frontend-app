@@ -1,39 +1,56 @@
 <button (click)="onSideBarToggle($event)" class="app-layout__header__btn app-layout__header__btn--menu">
-  <!-- <youpez-ibm-icon iconName="menu"></youpez-ibm-icon> -->
   <youpez-logo type="nobg-white-sidebar" logoWidth="35px"></youpez-logo>
-
 </button>
 
 <div class="app-layout__header__tools">
+
+  <!-- Recherche -->
   <button class="app-layout__header__btn app-layout__header__btn--icon" (click)="onItemClick({key:'search'})">
     <youpez-ibm-icon iconName="search" iconSize="24"></youpez-ibm-icon>
   </button>
 
-  <button class="app-layout__header__btn app-layout__header__btn--icon" 
+  <!-- Propriétés -->
+  <button class="app-layout__header__btn app-layout__header__btn--icon"
+          *ngIf="canAccessProperties"
           (click)="navigateToProperties()"
           [ngClass]="{'app-mini-sidebar__list__item__active': isRouteActive('/app/properties')}">
     <youpez-ibm-icon iconName="home" iconSize="24"></youpez-ibm-icon>
   </button>
 
-  <button class="app-layout__header__btn app-layout__header__btn--icon" 
+  <!-- Facturation -->
+  <button class="app-layout__header__btn app-layout__header__btn--icon"
           (click)="navigateToBilling()"
           [ngClass]="{'app-mini-sidebar__list__item__active': isRouteActive('/app/facturation')}">
     <youpez-ibm-icon iconName="dashboardReference" iconSize="24"></youpez-ibm-icon>
   </button>
 
-  <!-- Bouton notifications - Masqué sur mobile pour éviter le panneau qui cache le site -->
+  <!-- Portefeuille -->
+  <button class="app-layout__header__btn app-layout__header__btn--icon"
+          (click)="navigateToWallet()"
+          [ngClass]="{'app-mini-sidebar__list__item__active': isRouteActive('/app/portefeuille')}">
+    <youpez-ibm-icon iconName="money" iconSize="24"></youpez-ibm-icon>
+  </button>
+
+  <!-- Modèles de contrats (masqué pour les agents) -->
+  <button *ngIf="!isAgent"
+          class="app-layout__header__btn app-layout__header__btn--icon"
+          (click)="navigateToContractTemplates()"
+          [ngClass]="{'app-mini-sidebar__list__item__active': isRouteActive('/app/contract-templates')}">
+    <youpez-ibm-icon iconName="document" iconSize="24"></youpez-ibm-icon>
+  </button>
+
+  <!-- Notifications (masquées sur mobile pour éviter le panneau qui cache le site) -->
   <button class="app-layout__header__btn app-layout__header__btn--icon notification-btn hidden md:block"
           (click)="toggleNotifications()"
           [class.has-notifications]="unreadNotificationsCount > 0">
     <youpez-ibm-icon iconName="notification" iconSize="24"></youpez-ibm-icon>
-    <span *ngIf="unreadNotificationsCount > 0"
-          class="notification-badge">
+    <span *ngIf="unreadNotificationsCount > 0" class="notification-badge">
       {{ unreadNotificationsCount > 99 ? '99+' : unreadNotificationsCount }}
     </span>
   </button>
 
-  <!-- Bouton Admin avec loader intégré -->
-  <button *ngIf="isAdmin" 
+  <!-- Admin -->
+  <button *ngIf="isAdmin"
           class="app-layout__header__btn app-layout__header__btn--icon admin-nav-button"
           [disabled]="isLoadingAdmin"
           (click)="navigateToAdmin()">
@@ -45,8 +62,36 @@
     </div>
   </button>
 
+  <!-- Aide (dropdown : Support / À propos / Tarifs) -->
+  <div ngbDropdown container="body">
+    <button class="app-layout__header__btn app-layout__header__btn--icon" ngbDropdownToggle>
+      <youpez-ibm-icon iconName="help" iconSize="24"></youpez-ibm-icon>
+    </button>
+    <div ngbDropdownMenu>
+      <div class="app-list app-list--hover app-list--no-border app-list--select">
+        <div class="app-list__item" ngbDropdownItem (click)="navigateToSupport()">
+          <div class="px-2">
+            <youpez-ibm-icon iconName="email" iconSize="20"></youpez-ibm-icon>
+          </div>
+          <div class="app-list__item__content">{{ 'SIDEBAR.SUPPORT' | translate }}</div>
+        </div>
+        <div class="app-list__item" ngbDropdownItem (click)="navigateToAbout()">
+          <div class="px-2">
+            <youpez-ibm-icon iconName="buildingInsights1" iconSize="20"></youpez-ibm-icon>
+          </div>
+          <div class="app-list__item__content">{{ 'SIDEBAR.ABOUT' | translate }}</div>
+        </div>
+        <div class="app-list__item" ngbDropdownItem (click)="navigateToPricing()">
+          <div class="px-2">
+            <youpez-ibm-icon iconName="tag" iconSize="20"></youpez-ibm-icon>
+          </div>
+          <div class="app-list__item__content">{{ 'SIDEBAR.PRICING' | translate }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-  <!-- Dropdown utilisateur - visible seulement si connecté -->
+  <!-- Compte utilisateur (connecté) -->
   <div *ngIf="(authState$ | async)?.isAuthenticated"
        ngbDropdown
        placement="bottom-right"
@@ -56,57 +101,44 @@
     </button>
     <div ngbDropdownMenu>
       <div class="app-list app-list--hover app-list--select app-list--no-border app-list--p">
-        <div class="app-list__item app-list__item--no-p" ngbDropdownItem>
+        <div class="app-list__item app-list__item--no-p mt-2" ngbDropdownItem>
           <div class="px-2">
             <img class="w-10 h-10 rounded-full" src="assets/img/avatar/avatarinit.png"/>
           </div>
           <div class="app-list__item__content mr-4">
-            <div>
-              <div class="app-helper-text-01">{{ 'HEADER.LOGGED_IN_AS' | translate }}</div>
-              <div class="app-expressive-heading-02">{{(authState$ | async)?.profile?.name || 'Utilisateur'}}</div>
-            </div>
+            <div class="app-helper-text-01">{{ 'SIDEBAR.LOGGED_IN_AS' | translate }}</div>
+            <div class="app-expressive-heading-02">{{(authState$ | async)?.profile?.name || 'Utilisateur'}}</div>
           </div>
         </div>
         <div class="app-list__divider"></div>
         <div class="app-list__item" ngbDropdownItem (click)="navigateToProfile()">
-          <div class="app-list__item__content">
-            {{ 'HEADER.PROFILE' | translate }}
-          </div>
+          <div class="app-list__item__content">{{ 'SIDEBAR.PROFILE' | translate }}</div>
         </div>
         <div class="app-list__item" ngbDropdownItem (click)="navigateToMonthlyReports()">
-          <div class="app-list__item__content">
-            📊 {{ 'HEADER.MONTHLY_REPORTS' | translate }}
-          </div>
+          <div class="app-list__item__content">📊 {{ 'HEADER.MONTHLY_REPORTS' | translate }}</div>
         </div>
         <div class="app-list__item" ngbDropdownItem (click)="navigateToSearch()">
-          <div class="app-list__item__content">
-            {{ 'HEADER.SEARCH_SPACE' | translate }}
-          </div>
+          <div class="app-list__item__content">{{ 'SIDEBAR.SEARCH_SPACE' | translate }}</div>
         </div>
         <div class="app-list__item" ngbDropdownItem (click)="navigateToSettings()">
-          <div class="app-list__item__content">
-            {{ 'HEADER.SETTINGS' | translate }}
-          </div>
+          <div class="app-list__item__content">{{ 'HEADER.SETTINGS' | translate }}</div>
         </div>
         <div class="app-list__divider"></div>
         <div class="app-list__item mb-2" ngbDropdownItem (click)="logout()">
-          <div class="app-list__item__content">
-            {{ 'HEADER.LOGOUT' | translate }}
-          </div>
+          <div class="app-list__item__content">{{ 'SIDEBAR.LOGOUT' | translate }}</div>
         </div>
       </div>
     </div>
   </div>
 
-
-
-  <!-- Bouton de connexion pour les utilisateurs non connectés -->
+  <!-- Bouton connexion si non connecté -->
   <button *ngIf="!(isAuthenticated$ | async)"
           class="app-layout__header__btn app-layout__header__btn--primary"
           (click)="navigateToLogin()">
     <youpez-ibm-icon iconName="user" iconSize="16"></youpez-ibm-icon>
     <span class="ml-2">{{ 'HEADER.LOGIN' | translate }}</span>
   </button>
+
 </div>
 
 <!-- Panneau de notifications -->

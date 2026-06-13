@@ -36,6 +36,9 @@
 // Import des styles de navigation admin
 @import './app/shared/styles/admin-navigation.scss';
 
+// Responsive tablette (600px – 960px)
+@import './app/shared/styles/tablet-responsive.scss';
+
 :root {
   @include theme.theme();
 }
