@@ -28,6 +28,29 @@ export function app(): express.Express {
     maxAge: '1y'
   }));
 
+  // Headers SEO et cache pour la landing page
+  server.use((req, res, next) => {
+    const url = req.url;
+    const isLanding = /^\/[a-z]{2}\/home(\?.*)?$/.test(url) || url === '/';
+    const isSearch  = /^\/[a-z]{2}\/search/.test(url);
+
+    if (isLanding) {
+      // Landing : cache 10 minutes CDN, revalidation en arrière-plan
+      res.setHeader('Cache-Control', 'public, max-age=600, s-maxage=3600, stale-while-revalidate=86400');
+      res.setHeader('X-Robots-Tag', 'index, follow');
+    } else if (isSearch) {
+      // Search : cache 5 minutes (contenu plus dynamique)
+      res.setHeader('Cache-Control', 'public, max-age=300, s-maxage=1800, stale-while-revalidate=3600');
+      res.setHeader('X-Robots-Tag', 'index, follow');
+    } else if (/^\/[a-z]{2}\/(app|auth|onboarding|admin)/.test(url)) {
+      // App privée : pas de cache CDN
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+      res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+    }
+
+    next();
+  });
+
   // All regular routes use the Universal engine
   server.get('*', (req, res) => {
     res.render(indexHtml, { req, providers: [{ provide: APP_BASE_HREF, useValue: req.baseUrl }] });

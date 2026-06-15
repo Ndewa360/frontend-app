@@ -1,33 +1,97 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <!-- Landing page FR -->
   <url>
-    <loc>https://ndewa-360.com/home</loc>
+    <loc>https://ndewa360.com/fr/home</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa360.com/fr/home"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa360.com/en/home"/>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+    <lastmod>2025-01-01</lastmod>
   </url>
+
+  <!-- Landing page EN -->
   <url>
-    <loc>https://ndewa-360.com/search/index</loc>
+    <loc>https://ndewa360.com/en/home</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa360.com/fr/home"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa360.com/en/home"/>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+    <lastmod>2025-01-01</lastmod>
   </url>
+
+  <!-- Recherche de logements FR -->
   <url>
-    <loc>https://ndewa-360.com/auth/signin</loc>
-    <changefreq>weekly</changefreq>
+    <loc>https://ndewa360.com/fr/search/index</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa360.com/fr/search/index"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa360.com/en/search/index"/>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Recherche de logements EN -->
+  <url>
+    <loc>https://ndewa360.com/en/search/index</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa360.com/fr/search/index"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa360.com/en/search/index"/>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Contact FR -->
+  <url>
+    <loc>https://ndewa360.com/fr/home/contact</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa360.com/fr/home/contact"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa360.com/en/home/contact"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Contact EN -->
+  <url>
+    <loc>https://ndewa360.com/en/home/contact</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa360.com/fr/home/contact"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa360.com/en/home/contact"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Inscription FR -->
+  <url>
+    <loc>https://ndewa360.com/fr/auth/signup</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa360.com/fr/auth/signup"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa360.com/en/auth/signup"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Inscription EN -->
+  <url>
+    <loc>https://ndewa360.com/en/auth/signup</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa360.com/fr/auth/signup"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa360.com/en/auth/signup"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Onboarding FR -->
+  <url>
+    <loc>https://ndewa360.com/fr/onboarding</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa360.com/fr/onboarding"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa360.com/en/onboarding"/>
+    <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
+
+  <!-- Onboarding EN -->
   <url>
-    <loc>https://ndewa-360.com/auth/signup</loc>
-    <changefreq>weekly</changefreq>
+    <loc>https://ndewa360.com/en/onboarding</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa360.com/fr/onboarding"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa360.com/en/onboarding"/>
+    <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
-  <url>
-    <loc>https://ndewa-360.com/auth/forgot-password</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://ndewa-360.com/search/room/679a80d49dc6e708265263dc</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
+
 </urlset>

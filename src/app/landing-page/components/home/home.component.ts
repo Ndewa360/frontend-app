@@ -11,6 +11,7 @@ import { LanguageUrlService } from 'src/app/shared/services/language-url.service
 import { TranslationService } from 'src/app/shared/services/localization/translation.service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
+import { SeoService } from 'src/app/shared/services/seo/seo.service';
 
 @Component({
   selector: 'home',
@@ -126,9 +127,12 @@ export class HomeComponent implements OnInit, OnDestroy {
     private translationService: TranslationService,
     private languageUrlService: LanguageUrlService,
     private http: HttpClient,
+    private seoService: SeoService,
   ) {}
 
   ngOnInit() {
+    const lang = this.languageUrlService.getCurrentLanguage() as 'fr' | 'en';
+    this.seoService.setLandingPageSeo(lang);
     this.initScrollAnimations();
   }
 

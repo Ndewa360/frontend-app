@@ -1,4 +1,30 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://ndewa-360.com/sitemap.xml
+# Pages publiques indexables
+Allow: /fr/home
+Allow: /en/home
+Allow: /fr/search
+Allow: /en/search
+Allow: /fr/home/contact
+Allow: /en/home/contact
+Allow: /fr/auth/signup
+Allow: /en/auth/signup
+Allow: /fr/onboarding
+Allow: /en/onboarding
+
+# Pages privées — ne pas indexer
+Disallow: /fr/app/
+Disallow: /en/app/
+Disallow: /fr/admin/
+Disallow: /en/admin/
+Disallow: /fr/auth/reset-password
+Disallow: /en/auth/reset-password
+Disallow: /fr/auth/confirm-email
+Disallow: /en/auth/confirm-email
+
+# Assets non pertinents pour l'indexation
+Disallow: /assets/i18n/
+Disallow: /*.json$
+
+Sitemap: https://ndewa360.com/assets/sitemap.xml

@@ -261,7 +261,12 @@
           "builder": "@nguniversal/builders:prerender",
           "options": {
             "routes": [
-              "/"
+              "/fr/home",
+              "/en/home",
+              "/fr/search/index",
+              "/en/search/index",
+              "/fr/home/contact",
+              "/en/home/contact"
             ]
           },
           "configurations": {

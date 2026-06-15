@@ -1,10 +1,8 @@
-// src/app/shared/services/seo/seo.service.ts
-import { Injectable } from '@angular/core';
-import { Title, Meta, DomSanitizer } from '@angular/platform-browser';
-import { HttpClient } from '@angular/common/http';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
+import { Title, Meta } from '@angular/platform-browser';
+import { isPlatformBrowser } from '@angular/common';
 import { Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
-import { environment } from 'src/environments/environment';
 import { RoomModel, RoomType } from '../../store/rooms/room.model';
 import { PropertyModel, PropertyService, RoomService } from '../../store';
 
@@ -16,274 +14,157 @@ export interface PageMetaData {
   ogDescription?: string;
   ogImage?: string;
   ogUrl?: string;
+  lang?: string;
 }
-
 
 interface RoomWithProperty {
   room: RoomModel;
   property: PropertyModel;
 }
 
+const BASE_URL = 'https://ndewa360.com';
+const DEFAULT_IMAGE = `${BASE_URL}/assets/img/logo/logo-basic.png`;
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class SeoService {
-  // Pages qui nécessitent des métadonnées
+
   private publicRoutes = [
-    '/',                  // Landing page
-    '/search/index',      // Page de recherche
-    '/search/room',       // Page d'unité locative (dynamique)
-    '/search/property',   // Page d'affichage de propriété
-    '/support'            // Module de support
+    '/',
+    '/search/index',
+    '/search/room',
+    '/search/property',
+    '/support'
   ];
 
   constructor(
     private titleService: Title,
     private meta: Meta,
     private roomService: RoomService,
-    private propertyService:PropertyService,
-    private sanitizer: DomSanitizer
+    private propertyService: PropertyService,
+    @Inject(PLATFORM_ID) private platformId: Object,
   ) {}
 
-  // Vérifie si la route actuelle nécessite des métadonnées
+  // ── Méthode principale appelée par AppComponent sur chaque navigation ──────
+
   needsMetaTags(url: string): boolean {
-    return this.publicRoutes.some(route => 
-      url === route || 
-      url.startsWith(route + '/') || 
+    return this.publicRoutes.some(route =>
+      url === route ||
+      url.startsWith(route + '/') ||
       url.startsWith(route + '?')
     );
   }
 
-  // Mise à jour des métadonnées en fonction de la route
   updateMetaTagsForRoute(url: string): void {
-    // Supprimer les métadonnées existantes
     this.clearMetaTags();
-    
-    // Si la route ne nécessite pas de métadonnées, on s'arrête là
-    if (!this.needsMetaTags(url)) {
-      return;
-    }
-    
-    // Définir les métadonnées en fonction de la route
-    if (url === '/' || url.startsWith('/?')) {
-      this.setupLandingPageMetaTags();
-    } else if (url.startsWith('/search/index')) {
-      this.setupSearchPageMetaTags();
-    } else if (url.startsWith('/search/room/')) {
-      // Extraire l'ID de l'unité locative de l'URL
-      const roomId = url.split('/').pop();
-      if (roomId) {
-        this.setupRoomPageMetaTags(roomId);
-      } else {
-        this.setupSearchPageMetaTags(); // Fallback
-      }
-    } else if (url.startsWith('/search/property/')) {
-      // Extraire l'ID de la propriété de l'URL
-      const propertyId = url.split('/').pop();
-      if (propertyId) {
-        this.setupPropertyDetailPageMetaTags(propertyId);
-      } else {
-        this.setupPropertyPageMetaTags(); // Fallback
-      }
-    } else if (url.startsWith('/search/property')) {
+    if (!this.needsMetaTags(url)) return;
+
+    // Détecter la langue depuis l'URL (/fr/... ou /en/...)
+    const langMatch = url.match(/^\/(fr|en)\//);
+    const lang = (langMatch ? langMatch[1] : 'fr') as 'fr' | 'en';
+
+    if (url.includes('/home') && !url.includes('/home/')) {
+      this.setLandingPageSeo(lang);
+    } else if (url.includes('/search/index') || url === '/') {
+      this.setSearchPageSeo(lang);
+    } else if (url.includes('/search/room/')) {
+      const roomId = url.split('/search/room/')[1]?.split('?')[0];
+      if (roomId) this.setupRoomPageMetaTags(roomId);
+      else this.setSearchPageSeo(lang);
+    } else if (url.includes('/search/property/')) {
+      const propertyId = url.split('/search/property/')[1]?.split('?')[0];
+      if (propertyId) this.setupPropertyDetailPageMetaTags(propertyId);
+      else this.setupPropertyPageMetaTags();
+    } else if (url.includes('/search/property')) {
       this.setupPropertyPageMetaTags();
-    } else if (url.startsWith('/support')) {
+    } else if (url.includes('/support')) {
       this.setupSupportPageMetaTags();
     }
   }
 
-  // Supprime toutes les métadonnées
-  clearMetaTags(): void {
-    this.meta.removeTag("name='description'");
-    this.meta.removeTag("name='keywords'");
-    this.meta.removeTag("property='og:title'");
-    this.meta.removeTag("property='og:description'");
-    this.meta.removeTag("property='og:url'");
-    this.meta.removeTag("property='og:image'");
-    this.meta.removeTag("name='twitter:title'");
-    this.meta.removeTag("name='twitter:description'");
-    this.meta.removeTag("name='twitter:image'");
+  // ── Landing page — avec support FR/EN ─────────────────────────────────────
 
-     // Supprimer le script JSON-LD s'il existe
-    const existingScript = document.getElementById('structured-data');
-    if (existingScript) {
-      existingScript.remove();
-    }
+  setLandingPageSeo(lang: 'fr' | 'en'): void {
+    const isFr = lang === 'fr';
+    const canonicalUrl = `${BASE_URL}/${lang}/home`;
+
+    this.apply({
+      title: isFr
+        ? 'Ndewa360 — Gestion immobilière locative intelligente en Afrique'
+        : 'Ndewa360 — Smart Rental Property Management in Africa',
+      description: isFr
+        ? 'Ndewa360 simplifie la gestion de vos biens locatifs : suivi des loyers, contrats automatiques, locataires, paiements Mobile Money. Plateforme No1 de gestion immobilière en Afrique francophone.'
+        : 'Ndewa360 simplifies rental property management: rent tracking, automatic contracts, tenant management, Mobile Money payments. #1 property management platform in francophone Africa.',
+      keywords: isFr
+        ? 'gestion immobilière, gestion locative, loyer, locataire, contrat location, Cameroun, Afrique, Mobile Money, propriétaire, agent immobilier, chambre à louer Douala, appartement Yaoundé'
+        : 'property management, rental management, rent, tenant, lease contract, Cameroon, Africa, Mobile Money, landlord, real estate agent, room for rent Douala',
+      ogTitle: isFr
+        ? 'Ndewa360 — Gérez vos loyers et locataires en toute simplicité'
+        : 'Ndewa360 — Manage your rents and tenants effortlessly',
+      ogDescription: isFr
+        ? 'Plateforme SaaS de gestion immobilière. Suivi des paiements, contrats PDF, alertes automatiques, visites 360°. Gratuit jusqu\'à 8 biens.'
+        : 'SaaS rental property management. Payment tracking, PDF contracts, automatic alerts, 360° tours. Free up to 8 properties.',
+      ogImage: DEFAULT_IMAGE,
+      ogUrl: canonicalUrl,
+      lang,
+    }, canonicalUrl, this.getLandingStructuredData(isFr));
   }
 
-  // Ajoute des données structurées au format JSON-LD
-  addStructuredData(data: any): void {
-    const existingScript = document.getElementById('structured-data');
-    if (existingScript) {
-      existingScript.remove();
-    }
+  // ── Page de recherche — avec support FR/EN ─────────────────────────────────
 
-    const script = document.createElement('script');
-    script.id = 'structured-data';
-    script.type = 'application/ld+json';
-    script.text = JSON.stringify(data);
-    document.head.appendChild(script);
+  setSearchPageSeo(lang: 'fr' | 'en'): void {
+    const isFr = lang === 'fr';
+    const canonicalUrl = `${BASE_URL}/${lang}/search/index`;
+
+    this.apply({
+      title: isFr
+        ? 'Rechercher un logement — Ndewa360 | Appartements et chambres en Afrique'
+        : 'Search Housing — Ndewa360 | Apartments and rooms in Africa',
+      description: isFr
+        ? 'Trouvez votre logement parmi des centaines d\'annonces vérifiées. Visites 360° gratuites, filtres avancés, contact propriétaire direct. Recherche gratuite.'
+        : 'Find your housing among hundreds of verified listings. Free 360° tours, advanced filters, direct owner contact. Free search.',
+      keywords: isFr
+        ? 'recherche logement, location Cameroun, chambres étudiants, appartements, filtres, prix, localisation, Douala, Yaoundé'
+        : 'housing search, rental Cameroon, student rooms, apartments, filters, price, location',
+      ogTitle: isFr
+        ? 'Trouver un logement en Afrique — Ndewa360'
+        : 'Find Housing in Africa — Ndewa360',
+      ogDescription: isFr
+        ? 'Annonces vérifiées, visites 360° gratuites, contact propriétaire à 500 FCFA.'
+        : 'Verified listings, free 360° tours, owner contact for 500 FCFA.',
+      ogImage: DEFAULT_IMAGE,
+      ogUrl: canonicalUrl,
+      lang,
+    }, canonicalUrl);
   }
 
-   // Récupère les détails d'une propriété
-  getPropertyDetails(propertyId: string): Observable<PropertyModel> {
-    return this.propertyService.getProperty(propertyId).pipe(
-          map(propertyResponse => propertyResponse.data ),
-          catchError((error) => {
-            console.error('Erreur lors de la récupération des détails de la propriété:', error);
-            return of(null);
-          })
-        );
+  // ── Méthodes existantes conservées (room, property, support) ──────────────
+
+  setupLandingPageMetaTags(): void {
+    this.setLandingPageSeo('fr');
   }
 
-  // Récupère les détails d'une unité locative et sa propriété associée
-  getRoomWithPropertyDetails(roomId: string): Observable<RoomWithProperty | null> {
-    return this.roomService.getRoom(roomId).pipe(
-      switchMap(roomResponse => {
-        if (!roomResponse || !roomResponse.data) {
-          return of(null);
-        }
-        
-        const room = roomResponse.data;
-        
-        // Récupérer les détails de la propriété associée
-        return this.propertyService.getProperty(room.property).pipe(
-          map(propertyResponse => {
-            if (!propertyResponse || !propertyResponse.data) {
-              return { room, property: null };
-            }
-            return { room, property: propertyResponse.data };
-          }),
-          catchError(() => {
-            // Si on ne peut pas récupérer la propriété, on retourne juste la chambre
-            return of({ room, property: null });
-          })
-        );
-      }),
-      catchError(error => {
-        console.error('Erreur lors de la récupération des détails de l\'unité:', error);
-        return of(null);
-      })
-    );
+  setupSearchPageMetaTags(): void {
+    this.setSearchPageSeo('fr');
   }
 
-  // Convertit le type de chambre en texte lisible
-  private getRoomTypeText(type: RoomType): string {
-    switch (type) {
-      case RoomType.ROOM:
-        return 'Chambre';
-      case RoomType.STUDIO:
-        return 'Studio';
-      case RoomType.SIMPLE_APARTMENT:
-        return 'Appartement';
-      case RoomType.FURNISHED_APARTMENT:
-        return 'Appartement meublé';
-      default:
-        return 'Logement';
-    }
-  }
-
-  // Génère une description SEO à partir des détails de la chambre
-  private generateRoomDescription(room: RoomModel, property?: PropertyModel): string {
-    const roomType = this.getRoomTypeText(room.type);
-    let description = `${roomType} ${room.code} à louer`;
-    
-    // Ajouter la localisation si disponible
-    if (property) {
-      description += ` à ${property.location}`;
-      if (property.geolocationCity && property.geolocationCity?.fullName) {
-        description += `, ${property.geolocationCity?.fullName}`;
-      }
-    }
-    
-    description += `. Prix: ${room.price} FCFA/mois`;
-    
-    if (room.description) {
-      description += `. ${room.description.substring(0, 100)}`;
-    }
-    
-    // Ajouter des détails sur les spécificités (version courte pour la description)
-    if (room.specifity) {
-      const specs = [];
-      
-      if (room.specifity.numberOfBathroom) {
-        specs.push(`${room.specifity.numberOfBathroom} SDB`);
-      }
-      
-      if (room.specifity.numberOfLivingRoom) {
-        specs.push(`${room.specifity.numberOfLivingRoom} salon(s)`);
-      }
-      
-      if (specs.length > 0) {
-        description += ` ${specs.join(', ')}.`;
-      }
-    }
-    
-    return description;
-  }
-
-  // Métadonnées pour la page d'unité locative (dynamique)
   setupRoomPageMetaTags(roomId: string): void {
     this.getRoomWithPropertyDetails(roomId).subscribe(data => {
-      if (!data || !data.room) {
-        // Fallback si les détails de l'unité ne sont pas disponibles
-        this.setupSearchPageMetaTags();
-        return;
-      }
-
+      if (!data?.room) { this.setSearchPageSeo('fr'); return; }
       const { room, property } = data;
-      
-      // Construire l'URL complète
-      const roomUrl = `https://ndewa-360.com/search/index?unit=${roomId}`;
-      
-      // Utiliser l'image principale ou la première des médias
-      const mainImage = room.image || (room.medias && room.medias.length > 0 ? room.medias[0] : 'https://ndewa-360.com/assets/img/logo/logo-basic.png');
-      
-      // Obtenir le type de chambre en texte
+      const roomUrl = `${BASE_URL}/search/room/${roomId}`;
+      const mainImage = room.image || (room.medias?.length > 0 ? room.medias[0] : DEFAULT_IMAGE);
       const roomTypeText = this.getRoomTypeText(room.type);
-      
-      // Titre optimisé pour le SEO
       let title = `${roomTypeText} ${room.code} - ${room.price} FCFA`;
-      
-      // Ajouter la localisation au titre si disponible
-      if (property && property.location) {
-        title += ` à ${property.location}`;
-      }
-      
+      if (property?.location) title += ` à ${property.location}`;
       title += ` | Ndewa360`;
-      
-      // Description optimisée pour le SEO
       const description = this.generateRoomDescription(room, property);
-      
-      // Mots-clés optimisés pour le SEO
       let keywords = `location, ${roomTypeText}, ${room.code}, ${room.price} FCFA, logement, immobilier, Ndewa360`;
-      
       if (property) {
         keywords += `, ${property.location}`;
-        if (property.geolocationCity && property.geolocationCity.fullName) {
-          keywords += `, ${property.geolocationCity.fullName}`;
-        }
+        if (property.geolocationCity?.fullName) keywords += `, ${property.geolocationCity.fullName}`;
       }
-
-      this.titleService.setTitle(title);
-      this.meta.addTags([
-        { name: 'description', content: description },
-        { name: 'keywords', content: keywords },
-        { name: 'author', content: 'Ndewa360' },
-        { property: 'og:title', content: title },
-        { property: 'og:description', content: description },
-        { property: 'og:url', content: roomUrl },
-        { property: 'og:type', content: 'website' },
-        { property: 'og:image', content: mainImage },
-        { name: 'twitter:card', content: 'summary_large_image' },
-        { name: 'twitter:title', content: title },
-        { name: 'twitter:description', content: description },
-        { name: 'twitter:image', content: mainImage }
-      ]);
-
-      // Ajouter des données structurées Schema.org pour l'immobilier
-      const structuredData = {
+      this.apply({ title, description, keywords, ogImage: mainImage, ogUrl: roomUrl }, roomUrl);
+      this.addStructuredData({
         '@context': 'https://schema.org',
         '@type': 'Apartment',
         'name': `${roomTypeText} ${room.code}`,
@@ -291,262 +172,245 @@ export class SeoService {
         'url': roomUrl,
         'image': mainImage,
         'numberOfRooms': room.specifity?.numberOfLivingRoom || 1,
-        'floorSize': {
-          '@type': 'QuantitativeValue',
-          'unitText': 'm²'
-          // 'value': room.size // Si vous avez cette information
-        },
         'amenityFeature': this.generateAmenityFeatures(room),
         'offers': {
           '@type': 'Offer',
           'price': room.price,
           'priceCurrency': 'XAF',
-          'availability': room.isFree ? 'https://schema.org/InStock' : 'https://schema.org/SoldOut'
-        }
-      };
-
-      // Ajouter les informations de localisation si disponibles
-      if (property) {
-        structuredData['address'] = {
-          '@type': 'PostalAddress',
-          'addressLocality': property.geolocationCity?.fullName || property.location,
-          'addressRegion': property.location,
-          'addressCountry': property.geolocationCountry?.fullName || 'Cameroun'
-        };
-        
-        // Ajouter la propriété parente
-        structuredData['containedInPlace'] = {
-          '@type': 'Residence',
-          'name': property.name,
-          'description': property.description
-        };
-      }
-
-      this.addStructuredData(structuredData);
+          'availability': room.isFree ? 'https://schema.org/InStock' : 'https://schema.org/SoldOut',
+        },
+        ...(property ? {
+          'address': {
+            '@type': 'PostalAddress',
+            'addressLocality': property.geolocationCity?.fullName || property.location,
+            'addressRegion': property.location,
+            'addressCountry': property.geolocationCountry?.fullName || 'Cameroun',
+          },
+        } : {}),
+      });
     });
   }
 
-  // Génère les caractéristiques d'aménagement pour les données structurées
-  private generateAmenityFeatures(room: RoomModel): any[] {
-    const amenities = [];
-    
-    if (room.specifity) {
-      if (room.specifity.hasKitchen) {
-        amenities.push({
-          '@type': 'LocationFeatureSpecification',
-          'name': 'Cuisine',
-          'value': room.specifity.isInternalKitchen ? 'Interne' : 'Externe'
-        });
-      }
-      
-      if (room.specifity.numberOfBathroom) {
-        amenities.push({
-          '@type': 'LocationFeatureSpecification',
-          'name': 'Salle de bain',
-          'value': room.specifity.numberOfBathroom
-        });
-      }
-      
-      if (room.specifity.numberOfShower) {
-        amenities.push({
-          '@type': 'LocationFeatureSpecification',
-          'name': 'Douche',
-          'value': `${room.specifity.numberOfShower} ${room.specifity.isInternalShower ? 'interne(s)' : 'externe(s)'}`
-        });
-      }
-      
-      if (room.specifity.numberOfLivingRoom) {
-        amenities.push({
-          '@type': 'LocationFeatureSpecification',
-          'name': 'Salon',
-          'value': room.specifity.numberOfLivingRoom
-        });
-      }
-    }
-    
-    return amenities;
-  }
-
-  // Métadonnées pour la page d'accueil
-  setupLandingPageMetaTags(): void {
-    this.titleService.setTitle('Ndewa360 - Gestion Immobilière Innovante & Visites 360° en Afrique');
-    this.meta.addTags([
-      { name: 'description', content: 'Simplifiez la gestion de vos biens immobiliers en Afrique. Suivi des loyers, génération de reçus automatiques et visites 360° pour la diaspora et les bailleurs.' },
-      { name: 'keywords', content: 'location, logement, immobilier, Cameroun, 360°, étudiants, unités à louer, propriétaires, gestion immobilière' },
-      { name: 'author', content: 'Ndewa360' },
-      { property: 'og:title', content: 'Ndewa360 - Gestion Immobilière Innovante & Visites 360° en Afrique' },
-      { property: 'og:description', content: 'Bailleurs, sécurisez vos revenus et gérez vos biens à distance. Locataires, visitez en 360° et trouvez votre logement gratuitement.' },
-      { property: 'og:url', content: 'https://ndewa-360.com' },
-      { property: 'og:type', content: 'website' },
-      { property: 'og:image', content: 'https://ndewa-360.com/assets/img/logo/logo-basic.png' },
-      { name: 'twitter:card', content: 'summary_large_image' },
-      { name: 'twitter:title', content: 'Ndewa360 - Gestion Immobilière Innovante & Visites 360° en Afrique' },
-      { name: 'twitter:description', content: 'Bailleurs, sécurisez vos revenus et gérez vos biens à distance. Locataires, visitez en 360° et trouvez votre logement gratuitement.' },
-      { name: 'twitter:image', content: 'https://ndewa-360.com/assets/img/logo/logo-basic.png' }
-    ]);
-
-    // Ajouter des données structurées pour l'organisation
-    const structuredData = {
-      '@context': 'https://schema.org',
-      '@type': 'Organization',
-      'name': 'Ndewa360',
-      'url': 'https://ndewa-360.com',
-      'logo': 'https://ndewa-360.com/assets/img/logo/logo-basic.png',
-      'description': 'Ndewa360 est une plateforme camerounaise qui permet de rechercher et gérer des logements grâce à des visites en 360°.',
-      'sameAs': [
-        'https://www.facebook.com/ndewa360',
-        'https://www.instagram.com/ndewa360'
-      ]
-    };
-
-    this.addStructuredData(structuredData);
-  }
-
-  // Métadonnées pour la page de recherche
-  setupSearchPageMetaTags(): void {
-    this.titleService.setTitle('Recherche de logements | Ndewa360');
-    this.meta.addTags([
-      { name: 'description', content: 'Trouvez le logement idéal parmi notre sélection de chambres, studios et appartements au Cameroun. Filtrez par prix, localisation et caractéristiques.' },
-      { name: 'keywords', content: 'recherche logement, location Cameroun, chambres étudiants, appartements, filtres, prix, localisation' },
-      { name: 'author', content: 'Ndewa360' },
-      { property: 'og:title', content: 'Recherche de logements | Ndewa360' },
-      { property: 'og:description', content: 'Trouvez le logement idéal parmi notre sélection de chambres, studios et appartements au Cameroun.' },
-      { property: 'og:url', content: 'https://ndewa-360.com/search/index' },
-      { property: 'og:type', content: 'website' },
-      { property: 'og:image', content: 'https://ndewa-360.com/assets/img/logo/logo-basic.png' },
-      { name: 'twitter:card', content: 'summary_large_image' },
-      { name: 'twitter:title', content: 'Recherche de logements | Ndewa360' },
-      { name: 'twitter:description', content: 'Trouvez le logement idéal parmi notre sélection de chambres, studios et appartements au Cameroun.' },
-      { name: 'twitter:image', content: 'https://ndewa-360.com/assets/img/logo/logo-basic.png' }
-    ]);
-  }
-
-  // Métadonnées pour la page de propriété
   setupPropertyPageMetaTags(): void {
-    this.titleService.setTitle('Détails du logement | Ndewa360');
-    this.meta.addTags([
-      { name: 'description', content: 'Découvrez ce logement en détail avec visite virtuelle 360°, photos, caractéristiques et informations de contact.' },
-      { name: 'keywords', content: 'détail logement, visite virtuelle, 360°, photos, caractéristiques, contact propriétaire' },
-      { name: 'author', content: 'Ndewa360' },
-      { property: 'og:title', content: 'Détails du logement | Ndewa360' },
-      { property: 'og:description', content: 'Découvrez ce logement en détail avec visite virtuelle 360°, photos et caractéristiques.' },
-      { property: 'og:url', content: 'https://ndewa-360.com/search/property' },
-      { property: 'og:type', content: 'website' },
-      { property: 'og:image', content: 'https://ndewa-360.com/assets/img/logo/logo-basic.png' },
-      { name: 'twitter:card', content: 'summary_large_image' },
-      { name: 'twitter:title', content: 'Détails du logement | Ndewa360' },
-      { name: 'twitter:description', content: 'Découvrez ce logement en détail avec visite virtuelle 360°, photos et caractéristiques.' },
-      { name: 'twitter:image', content: 'https://ndewa-360.com/assets/img/logo/logo-basic.png' }
-    ]);
+    this.apply({
+      title: 'Détails du logement | Ndewa360',
+      description: 'Découvrez ce logement en détail avec visite virtuelle 360°, photos, caractéristiques et informations de contact.',
+      keywords: 'détail logement, visite virtuelle, 360°, photos, caractéristiques, contact propriétaire',
+      ogUrl: `${BASE_URL}/search/property`,
+    }, `${BASE_URL}/search/property`);
   }
 
-  // Métadonnées pour la page de support
-  setupSupportPageMetaTags(): void {
-    this.titleService.setTitle('Support et aide | Ndewa360');
-    this.meta.addTags([
-      { name: 'description', content: 'Besoin d\'aide ? Consultez notre centre de support pour trouver des réponses à vos questions sur Ndewa360.' },
-      { name: 'keywords', content: 'support, aide, FAQ, questions fréquentes, contact, assistance' },
-      { name: 'author', content: 'Ndewa360' },
-      { property: 'og:title', content: 'Support et aide | Ndewa360' },
-      { property: 'og:description', content: 'Besoin d\'aide ? Consultez notre centre de support pour trouver des réponses à vos questions.' },
-      { property: 'og:url', content: 'https://ndewa-360.com/support' },
-      { property: 'og:type', content: 'website' },
-      { property: 'og:image', content: 'https://ndewa-360.com/assets/img/logo/logo-basic.png' },
-      { name: 'twitter:card', content: 'summary_large_image' },
-      { name: 'twitter:title', content: 'Support et aide | Ndewa360' },
-      { name: 'twitter:description', content: 'Besoin d\'aide ? Consultez notre centre de support pour trouver des réponses à vos questions.' },
-      { name: 'twitter:image', content: 'https://ndewa-360.com/assets/img/logo/logo-basic.png' }
-    ]);
-  }
-
-   // Métadonnées pour la page de détail d'une propriété
   setupPropertyDetailPageMetaTags(propertyId: string): void {
     this.getPropertyDetails(propertyId).subscribe(property => {
-      if (!property) {
-        // Fallback si les détails de la propriété ne sont pas disponibles
-        this.setupPropertyPageMetaTags();
-        return;
-      }
-
-      // Construire l'URL complète
-      const propertyUrl = `https://ndewa-360.com/search/property/${propertyId}`;
-      
-      // Utiliser l'image principale ou la première des médias
-      const mainImage = property.image || (property.medias && property.medias.length > 0 ? property.medias[0] : 'https://ndewa-360.com/assets/img/logo/logo-basic.png');
-      
-      // Titre optimisé pour le SEO
-      let title = `${property.name}`;
-      
-      // Ajouter la localisation au titre
+      if (!property) { this.setupPropertyPageMetaTags(); return; }
+      const propertyUrl = `${BASE_URL}/search/property/${propertyId}`;
+      const mainImage = property.image || (property.medias?.length > 0 ? property.medias[0] : DEFAULT_IMAGE);
+      let title = property.name;
       if (property.location) {
         title += ` à ${property.location}`;
-        if (property.geolocationCity && property.geolocationCity.fullName) {
-          title += `, ${property.geolocationCity.fullName}`;
-        }
+        if (property.geolocationCity?.fullName) title += `, ${property.geolocationCity.fullName}`;
       }
-      
       title += ` | Ndewa360`;
-      
-      // Description optimisée pour le SEO
       let description = `${property.name} situé(e) à ${property.location}`;
-      
-      if (property.geolocationCity && property.geolocationCity.fullName) {
-        description += `, ${property.geolocationCity.fullName}`;
-      }
-      
-      if (property.geolocationCountry && property.geolocationCountry.fullName) {
-        description += `, ${property.geolocationCountry.fullName}`;
-      }
-      
-      if (property.description) {
-        description += `. ${property.description.substring(0, 150)}`;
-      }
-      
-      if (property.roomLength) {
-        description += `. ${property.roomLength} unité(s) locative(s) disponible(s).`;
-      }
-      
-      const propertyFeatures = [];
-      
-      if (property.hasParking) {
-        propertyFeatures.push('parking');
-      }
-      
-      if (property.hasClosure) {
-        propertyFeatures.push('clôture');
-      }
-      
-      if (propertyFeatures.length > 0) {
-        description += ` La propriété dispose de: ${propertyFeatures.join(', ')}.`;
-      }
-      
-      // Mots-clés optimisés pour le SEO
+      if (property.geolocationCity?.fullName) description += `, ${property.geolocationCity.fullName}`;
+      if (property.description) description += `. ${property.description.substring(0, 150)}`;
+      if (property.roomLength) description += `. ${property.roomLength} unité(s) disponible(s).`;
       const keywords = [
-        'propriété',
-        property.name,
-        property.location,
-        property.geolocationCity?.fullName || '',
-        property.geolocationCountry?.fullName || '',
-        'logement',
-        'immobilier',
-        'Ndewa360'
+        'propriété', property.name, property.location,
+        property.geolocationCity?.fullName, property.geolocationCountry?.fullName,
+        'logement', 'immobilier', 'Ndewa360',
       ].filter(Boolean).join(', ');
-
-      this.titleService.setTitle(title);
-      this.meta.addTags([
-        { name: 'description', content: description },
-        { name: 'keywords', content: keywords },
-        { name: 'author', content: 'Ndewa360' },
-        { property: 'og:title', content: title },
-        { property: 'og:description', content: description },
-        { property: 'og:url', content: propertyUrl },
-        { property: 'og:type', content: 'website' },
-        { property: 'og:image', content: mainImage },
-        { name: 'twitter:card', content: 'summary_large_image' },
-        { name: 'twitter:title', content: title },
-        { name: 'twitter:description', content: description },
-        { name: 'twitter:image', content: mainImage }
-      ]);
+      this.apply({ title, description, keywords, ogImage: mainImage, ogUrl: propertyUrl }, propertyUrl);
     });
+  }
+
+  setupSupportPageMetaTags(): void {
+    this.apply({
+      title: 'Support et aide | Ndewa360',
+      description: 'Besoin d\'aide ? Consultez notre centre de support pour trouver des réponses à vos questions sur Ndewa360.',
+      keywords: 'support, aide, FAQ, questions fréquentes, contact, assistance',
+      ogUrl: `${BASE_URL}/support`,
+    }, `${BASE_URL}/support`);
+  }
+
+  // ── Méthodes utilitaires ───────────────────────────────────────────────────
+
+  clearMetaTags(): void {
+    this.meta.removeTag("name='description'");
+    this.meta.removeTag("name='keywords'");
+    this.meta.removeTag("name='language'");
+    this.meta.removeTag("name='robots'");
+    this.meta.removeTag("property='og:title'");
+    this.meta.removeTag("property='og:description'");
+    this.meta.removeTag("property='og:url'");
+    this.meta.removeTag("property='og:image'");
+    this.meta.removeTag("property='og:type'");
+    this.meta.removeTag("property='og:site_name'");
+    this.meta.removeTag("property='og:locale'");
+    this.meta.removeTag("name='twitter:card'");
+    this.meta.removeTag("name='twitter:title'");
+    this.meta.removeTag("name='twitter:description'");
+    this.meta.removeTag("name='twitter:image'");
+    if (isPlatformBrowser(this.platformId)) {
+      document.getElementById('structured-data')?.remove();
+    }
+  }
+
+  addStructuredData(data: any): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+    document.getElementById('structured-data')?.remove();
+    const script = document.createElement('script');
+    script.id = 'structured-data';
+    script.type = 'application/ld+json';
+    script.text = JSON.stringify(data);
+    document.head.appendChild(script);
+  }
+
+  getPropertyDetails(propertyId: string): Observable<PropertyModel> {
+    return this.propertyService.getProperty(propertyId).pipe(
+      map(r => r.data),
+      catchError(() => of(null))
+    );
+  }
+
+  getRoomWithPropertyDetails(roomId: string): Observable<RoomWithProperty | null> {
+    return this.roomService.getRoom(roomId).pipe(
+      switchMap(r => {
+        if (!r?.data) return of(null);
+        return this.propertyService.getProperty(r.data.property).pipe(
+          map(p => ({ room: r.data, property: p?.data || null })),
+          catchError(() => of({ room: r.data, property: null }))
+        );
+      }),
+      catchError(() => of(null))
+    );
+  }
+
+  // ── Méthode centrale d'application des meta tags ──────────────────────────
+
+  private apply(config: PageMetaData, canonicalUrl: string, structuredData?: any): void {
+    this.titleService.setTitle(config.title);
+
+    this.meta.updateTag({ name: 'description', content: config.description });
+    this.meta.updateTag({ name: 'robots', content: 'index, follow' });
+    if (config.keywords) this.meta.updateTag({ name: 'keywords', content: config.keywords });
+    if (config.lang)     this.meta.updateTag({ name: 'language', content: config.lang });
+
+    // Open Graph
+    this.meta.updateTag({ property: 'og:type',        content: 'website' });
+    this.meta.updateTag({ property: 'og:site_name',   content: 'Ndewa360' });
+    this.meta.updateTag({ property: 'og:title',       content: config.ogTitle || config.title });
+    this.meta.updateTag({ property: 'og:description', content: config.ogDescription || config.description });
+    this.meta.updateTag({ property: 'og:url',         content: canonicalUrl });
+    this.meta.updateTag({ property: 'og:image',       content: config.ogImage || DEFAULT_IMAGE });
+    if (config.lang) {
+      this.meta.updateTag({ property: 'og:locale', content: config.lang === 'fr' ? 'fr_FR' : 'en_US' });
+    }
+
+    // Twitter Card
+    this.meta.updateTag({ name: 'twitter:card',        content: 'summary_large_image' });
+    this.meta.updateTag({ name: 'twitter:title',       content: config.ogTitle || config.title });
+    this.meta.updateTag({ name: 'twitter:description', content: config.ogDescription || config.description });
+    this.meta.updateTag({ name: 'twitter:image',       content: config.ogImage || DEFAULT_IMAGE });
+
+    if (isPlatformBrowser(this.platformId)) {
+      this.setCanonical(canonicalUrl);
+      if (structuredData) this.addStructuredData(structuredData);
+    }
+  }
+
+  private setCanonical(url: string): void {
+    let link = document.querySelector('link[rel="canonical"]') as HTMLLinkElement;
+    if (!link) {
+      link = document.createElement('link');
+      link.setAttribute('rel', 'canonical');
+      document.head.appendChild(link);
+    }
+    link.setAttribute('href', url);
+  }
+
+  private getLandingStructuredData(isFr: boolean): any {
+    return {
+      '@context': 'https://schema.org',
+      '@type': 'SoftwareApplication',
+      'name': 'Ndewa360',
+      'url': BASE_URL,
+      'description': isFr
+        ? 'Plateforme SaaS de gestion immobilière locative en Afrique francophone.'
+        : 'SaaS rental property management platform in francophone Africa.',
+      'applicationCategory': 'BusinessApplication',
+      'operatingSystem': 'Web, iOS, Android',
+      'offers': {
+        '@type': 'Offer',
+        'price': '0',
+        'priceCurrency': 'XAF',
+        'description': isFr
+          ? 'Gratuit jusqu\'à 8 biens. Premium : 2% du loyer/unité occupée.'
+          : 'Free up to 8 properties. Premium: 2% of rent/occupied unit.',
+      },
+      'aggregateRating': {
+        '@type': 'AggregateRating',
+        'ratingValue': '4.9',
+        'reviewCount': '20',
+        'bestRating': '5',
+      },
+      'publisher': {
+        '@type': 'Organization',
+        'name': 'Ndewa360',
+        'url': BASE_URL,
+        'logo': DEFAULT_IMAGE,
+        'sameAs': [
+          'https://www.facebook.com/people/Ndewa360/61568162848247',
+          'https://www.tiktok.com/@ndewa360',
+          'https://www.instagram.com/ndewa.360',
+        ],
+      },
+    };
+  }
+
+  private getRoomTypeText(type: RoomType): string {
+    switch (type) {
+      case RoomType.ROOM:               return 'Chambre';
+      case RoomType.STUDIO:             return 'Studio';
+      case RoomType.SIMPLE_APARTMENT:   return 'Appartement';
+      case RoomType.FURNISHED_APARTMENT:return 'Appartement meublé';
+      default:                          return 'Logement';
+    }
+  }
+
+  private generateRoomDescription(room: RoomModel, property?: PropertyModel): string {
+    const roomType = this.getRoomTypeText(room.type);
+    let desc = `${roomType} ${room.code} à louer`;
+    if (property) {
+      desc += ` à ${property.location}`;
+      if (property.geolocationCity?.fullName) desc += `, ${property.geolocationCity.fullName}`;
+    }
+    desc += `. Prix: ${room.price} FCFA/mois`;
+    if (room.description) desc += `. ${room.description.substring(0, 100)}`;
+    if (room.specifity) {
+      const specs = [];
+      if (room.specifity.numberOfBathroom) specs.push(`${room.specifity.numberOfBathroom} SDB`);
+      if (room.specifity.numberOfLivingRoom) specs.push(`${room.specifity.numberOfLivingRoom} salon(s)`);
+      if (specs.length > 0) desc += ` ${specs.join(', ')}.`;
+    }
+    return desc;
+  }
+
+  private generateAmenityFeatures(room: RoomModel): any[] {
+    const amenities = [];
+    if (!room.specifity) return amenities;
+    if (room.specifity.hasKitchen) {
+      amenities.push({ '@type': 'LocationFeatureSpecification', 'name': 'Cuisine', 'value': room.specifity.isInternalKitchen ? 'Interne' : 'Externe' });
+    }
+    if (room.specifity.numberOfBathroom) {
+      amenities.push({ '@type': 'LocationFeatureSpecification', 'name': 'Salle de bain', 'value': room.specifity.numberOfBathroom });
+    }
+    if (room.specifity.numberOfShower) {
+      amenities.push({ '@type': 'LocationFeatureSpecification', 'name': 'Douche', 'value': `${room.specifity.numberOfShower} ${room.specifity.isInternalShower ? 'interne(s)' : 'externe(s)'}` });
+    }
+    if (room.specifity.numberOfLivingRoom) {
+      amenities.push({ '@type': 'LocationFeatureSpecification', 'name': 'Salon', 'value': room.specifity.numberOfLivingRoom });
+    }
+    return amenities;
   }
 }
