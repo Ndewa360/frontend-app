@@ -44,6 +44,33 @@ export class LandingHeaderComponent implements OnInit {
     );
   }
 
+  scrollToProfiles(): void {
+    const currentUrl = this.router.url;
+    const isOnHome = currentUrl.includes('/home') && !currentUrl.includes('/home/');
+
+    if (isOnHome) {
+      // Déjà sur la landing — scroll direct vers la section profils
+      const el = document.getElementById('profiles-section');
+      if (el) {
+        const offset = 80; // hauteur du header fixe
+        const top = el.getBoundingClientRect().top + window.scrollY - offset;
+        window.scrollTo({ top, behavior: 'smooth' });
+      }
+    } else {
+      // Naviguer vers la landing puis scroller
+      this.router.navigate([`/${this.getCurrentLanguage()}/home`]).then(() => {
+        setTimeout(() => {
+          const el = document.getElementById('profiles-section');
+          if (el) {
+            const offset = 80;
+            const top = el.getBoundingClientRect().top + window.scrollY - offset;
+            window.scrollTo({ top, behavior: 'smooth' });
+          }
+        }, 400);
+      });
+    }
+  }
+
   getCurrentLanguage(): string {
     return this.languageUrlService.getCurrentLanguage();
   }

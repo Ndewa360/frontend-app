@@ -10,7 +10,7 @@ import {
   Validators,
   FormArray,
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   Actions,
   ofActionCompleted,
@@ -58,17 +58,25 @@ const STORAGE_KEY = 'ndewa360_onboarding_data';
 export class OnboardingStepperComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
+  // ── Type de profil (owner | agent) ─────────────────────────────────────────
+  userType: 'owner' | 'agent' = 'owner';
+  plan: 'free' | 'trial' = 'free';
+
   // ── État du stepper ────────────────────────────────────────────────────────
   currentStep = 1;
-  totalSteps = 4;
   isSubmitting = false;
   showPassword = false;
 
+  /** Étapes affichées selon le profil : owner = [1,2,3,4], agent = [1,2,3] */
+  get totalSteps(): number { return this.userType === 'agent' ? 3 : 4; }
+  get stepsArray(): number[] { return Array.from({ length: this.totalSteps }, (_, i) => i + 1); }
+
   // ── Formulaires par étape ──────────────────────────────────────────────────
-  step1Form: UntypedFormGroup; // Bien
-  step2Form: UntypedFormGroup; // Unités
-  step3Form: UntypedFormGroup; // Locataires
-  step4Form: UntypedFormGroup; // Compte
+  step1Form: UntypedFormGroup; // Bien (owner) / Compte (agent)
+  step2Form: UntypedFormGroup; // Unités (owner) / Profil agence (agent)
+  step3Form: UntypedFormGroup; // Locataires (owner) / Confirmation (agent)
+  step4Form: UntypedFormGroup; // Compte (owner)
+  agentProfileForm: UntypedFormGroup; // Profil agence
 
   // ── Données géographiques ──────────────────────────────────────────────────
   countries: any[] = [];
@@ -93,6 +101,7 @@ export class OnboardingStepperComponent implements OnInit, OnDestroy {
   constructor(
     private fb: UntypedFormBuilder,
     private router: Router,
+    private route: ActivatedRoute,
     private store: Store,
     private actions$: Actions,
     private http: HttpClient,
@@ -102,6 +111,17 @@ export class OnboardingStepperComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    // Lire le type depuis le query param (?type=owner|agent)
+    this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params) => {
+      const t = params['type'];
+      const p = params['plan'];
+      this.userType = t === 'agent' ? 'agent' : 'owner';
+      this.plan = p === 'trial' ? 'trial' : 'free';
+      // Forcer le bon userType dans step4Form si déjà construit
+      if (this.step4Form) {
+        this.step4Form.patchValue({ userType: this.userType === 'agent' ? 'AGENT' : 'PROPERTY_OWNER' });
+      }
+    });
     this.buildForms();
     this.loadCountries();
     this.restoreFromStorage();
@@ -160,8 +180,14 @@ export class OnboardingStepperComponent implements OnInit, OnDestroy {
       email: ['', [Validators.required, Validators.email]],
       phoneNumber: ['', [Validators.required, Validators.pattern(/^(\+\d{1,3}\s)?(\d{2,3}[\s.-]?){2,5}$/)]],
       password: ['', [Validators.required, Validators.minLength(8)]],
-      userType: ['PROPERTY_OWNER'],
+      userType: [this.userType === 'agent' ? 'AGENT' : 'PROPERTY_OWNER'],
       acceptTerms: [false, Validators.requiredTrue],
+    });
+
+    this.agentProfileForm = this.fb.group({
+      businessName: ['', [Validators.required, Validators.minLength(2)]],
+      businessAddress: [''],
+      businessDescription: [''],
     });
 
     // Quand hasTenants change, ajouter/retirer le premier locataire
@@ -272,20 +298,38 @@ export class OnboardingStepperComponent implements OnInit, OnDestroy {
   // ── Navigation entre étapes ────────────────────────────────────────────────
 
   nextStep(): void {
-    if (this.currentStep === 1 && this.step1Form.invalid) {
-      this.step1Form.markAllAsTouched();
-      return;
-    }
-    if (this.currentStep === 2 && this.step2Form.invalid) {
-      this.step2Form.markAllAsTouched();
-      return;
-    }
-    if (this.currentStep === 3 && this.step3Form.invalid) {
-      this.step3Form.markAllAsTouched();
-      return;
+    if (this.userType === 'agent') {
+      // Parcours agent : Étape 1 = Compte, Étape 2 = Profil agence, Étape 3 = Confirmation
+      if (this.currentStep === 1 && this.step4Form.invalid) { this.step4Form.markAllAsTouched(); return; }
+      if (this.currentStep === 2 && this.agentProfileForm.invalid) { this.agentProfileForm.markAllAsTouched(); return; }
+    } else {
+      if (this.currentStep === 1 && this.step1Form.invalid) { this.step1Form.markAllAsTouched(); return; }
+      if (this.currentStep === 2 && this.step2Form.invalid) { this.step2Form.markAllAsTouched(); return; }
+      if (this.currentStep === 3 && this.step3Form.invalid) { this.step3Form.markAllAsTouched(); return; }
     }
     this.saveToStorage();
     if (this.currentStep < this.totalSteps) this.currentStep++;
+  }
+
+  isLastStep(): boolean {
+    return this.currentStep === this.totalSteps;
+  }
+
+  canSkipCurrentStep(): boolean {
+    if (this.userType === 'agent') return false;
+    return this.currentStep === 3; // Étape locataires : skippable
+  }
+
+  getSubmitLabel(): string {
+    if (this.userType === 'agent') {
+      return this.translate.instant('ONBOARDING.AGENT.STEP3.SUBMIT');
+    }
+    return this.translate.instant('ONBOARDING.STEP4.SUBMIT_BUTTON');
+  }
+
+  isFieldInvalidAgent(field: string): boolean {
+    const ctrl = this.agentProfileForm.get(field);
+    return !!(ctrl && ctrl.invalid && (ctrl.dirty || ctrl.touched));
   }
 
   prevStep(): void {
@@ -362,54 +406,61 @@ export class OnboardingStepperComponent implements OnInit, OnDestroy {
 
     this.isSubmitting = true;
 
-    const s1 = this.step1Form.value;
-    const s2 = this.step2Form.value;
-    const s3 = this.step3Form.value;
     const s4 = this.step4Form.value;
-
-    // Construire le payload — propriété seulement si les champs requis sont remplis
-    const hasProperty = s1.propertyName && s1.propertyCountryId && s1.propertyCityId && s1.propertyLocation;
-    const hasUnits = hasProperty && s2.units?.some((u: any) => u.price > 0);
-    const hasTenants = hasProperty && s3.hasTenants && s3.tenants?.length > 0;
-
     const payload: any = {
       email: s4.email.trim(),
       password: s4.password,
       name: s4.name.trim(),
       phoneNumber: s4.phoneNumber.trim(),
-      userType: s4.userType || 'PROPERTY_OWNER',
-      plan: 'free',
+      userType: this.userType === 'agent' ? 'AGENT' : 'PROPERTY_OWNER',
+      plan: this.plan,
     };
 
-    if (hasProperty) {
-      payload.property = {
-        name: s1.propertyName.trim(),
-        geolocationCountry: s1.propertyCountryId,
-        geolocationCity: s1.propertyCityId,
-        location: s1.propertyLocation.trim(),
-        propertyType: s1.propertyType || 'APARTMENT',
-      };
-    }
+    if (this.userType === 'agent') {
+      // Pour l'agent : aplatir les champs agentProfile directement dans le payload
+      const ap = this.agentProfileForm.value;
+      if (ap.businessName) {
+        payload.businessName = ap.businessName.trim();
+        payload.businessAddress = ap.businessAddress?.trim() || '';
+        payload.businessDescription = ap.businessDescription?.trim() || '';
+      }
+    } else {
+      const s1 = this.step1Form.value;
+      const s2 = this.step2Form.value;
+      const s3 = this.step3Form.value;
 
-    if (hasUnits) {
-      payload.units = s2.units
-        .filter((u: any) => u.price > 0)
-        .map((u: any) => ({
-          type: u.type,
-          price: Number(u.price),
-          shouldPayCaution: u.shouldPayCaution || false,
-          cautionPrice: u.shouldPayCaution ? Number(u.cautionPrice || 0) : 0,
-        }));
-    }
+      const hasProperty = s1.propertyName && s1.propertyCountryId && s1.propertyCityId && s1.propertyLocation;
+      const hasUnits = hasProperty && s2.units?.some((u: any) => u.price > 0);
+      const hasTenants = hasProperty && s3.hasTenants && s3.tenants?.length > 0;
 
-    if (hasTenants) {
-      payload.tenants = s3.tenants
-        .filter((t: any) => t.fullName && t.phoneNumber)
-        .map((t: any) => ({
-          fullName: t.fullName.trim(),
-          phoneNumber: t.phoneNumber.trim(),
-          email: t.email?.trim() || undefined,
-        }));
+      if (hasProperty) {
+        payload.property = {
+          name: s1.propertyName.trim(),
+          geolocationCountry: s1.propertyCountryId,
+          geolocationCity: s1.propertyCityId,
+          location: s1.propertyLocation.trim(),
+          propertyType: s1.propertyType || 'APARTMENT',
+        };
+      }
+      if (hasUnits) {
+        payload.units = s2.units
+          .filter((u: any) => u.price > 0)
+          .map((u: any) => ({
+            type: u.type,
+            price: Number(u.price),
+            shouldPayCaution: u.shouldPayCaution || false,
+            cautionPrice: u.shouldPayCaution ? Number(u.cautionPrice || 0) : 0,
+          }));
+      }
+      if (hasTenants) {
+        payload.tenants = s3.tenants
+          .filter((t: any) => t.fullName && t.phoneNumber)
+          .map((t: any) => ({
+            fullName: t.fullName.trim(),
+            phoneNumber: t.phoneNumber.trim(),
+            email: t.email?.trim() || undefined,
+          }));
+      }
     }
 
     this.store.dispatch(new UserProfileAction.SignupWithOnboarding(payload));
@@ -462,6 +513,14 @@ export class OnboardingStepperComponent implements OnInit, OnDestroy {
   }
 
   getStepLabel(step: number): string {
+    if (this.userType === 'agent') {
+      const agentKeys: Record<number, string> = {
+        1: 'ONBOARDING.AGENT.STEPS.STEP1_LABEL',
+        2: 'ONBOARDING.AGENT.STEPS.STEP2_LABEL',
+        3: 'ONBOARDING.AGENT.STEPS.STEP3_LABEL',
+      };
+      return this.translate.instant(agentKeys[step] || '');
+    }
     const keys: Record<number, string> = {
       1: 'ONBOARDING.STEPS.STEP1_LABEL',
       2: 'ONBOARDING.STEPS.STEP2_LABEL',

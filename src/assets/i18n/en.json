@@ -1896,7 +1896,17 @@
         "WATCH_DEMO": "Watch demo"
       },
       "RATING": "4.9/5",
-      "LIVE_DEMO": "Live demo"
+      "LIVE_DEMO": "Live demo",
+      "BADGE": "#1 Platform Africa",
+      "TRUST": "Trusted by hundreds of property owners",
+      "ILLUS": {
+        "PROPERTIES": "Properties",
+        "TENANTS": "Tenants",
+        "COLLECTED": "Collection rate",
+        "REVENUES": "Monthly revenues",
+        "CONTRACT_BADGE": "Contract generated \u2714",
+        "MOBILE_BADGE": "Mobile access 24/7"
+      }
     },
     "PROBLEMS": {
       "TITLE": "Do you recognize yourself in these situations?",
@@ -1991,13 +2001,15 @@
         "NAME": "Madame Tchouamo",
         "LOCATION": "Property Owner • Banganté",
         "QUOTE": "Thanks to Ndewa360, I no longer write rental contracts. They are directly generated online and I just have to send them to the tenant. In addition to that, I no longer have to worry about an Excel file to report rent payments and calculate them. Everything is now very simple and easy.",
-        "HIGHLIGHT": "Automated contracts"
+        "HIGHLIGHT": "Automated contracts",
+        "INITIALS": "MT"
       },
       "TESTIMONIAL_2": {
         "NAME": "Sévérin Nguendap",
         "LOCATION": "Property Owner • Dakar, Douala",
         "QUOTE": "Not being on site to manage my property, I entrusted it to a person who did not provide me with complete follow-up and I was lost in the follow-up because I did not know exactly who owes how much and on what date. Thanks to Ndewa360, I now sleep peacefully because I know exactly the financial state of my property and my tenants.",
-        "HIGHLIGHT": "Peace of mind"
+        "HIGHLIGHT": "Peace of mind",
+        "INITIALS": "SN"
       },
       "STATS": {
         "TITLE": "Average results of our users",
@@ -2050,6 +2062,33 @@
       "GUARANTEE": {
         "TITLE": "No commitment — automatic return to free plan",
         "DESCRIPTION": "60 days to test all Premium features with no credit card. At the end of the trial, automatic return to the Freemium plan."
+      },
+      "OWNER_SUBTITLE": "Plans adapted to your needs. You only pay when you generate revenue.",
+      "AGENT_SUBTITLE": "A free plan to get started, scalable with your portfolio.",
+      "SEEKER_SUBTITLE": "Search is completely free. Owner contact details are available via a one-time premium access.",
+      "AGENT_PLAN": {
+        "TITLE": "Agent Plan",
+        "PRICE": "Free",
+        "DESCRIPTION": "For real estate agents. Up to 5 managed properties on the free plan.",
+        "FEATURES": {
+          "MAX_PROPERTIES": "Up to 5 managed properties (free plan)",
+          "ALL_FEATURES": "100% of management features",
+          "VERIFIED_PROFILE": "Verified and visible agency profile",
+          "EMAIL_SUPPORT": "Email support"
+        },
+        "BUTTON": "Create my agent profile"
+      },
+      "SEEKER_PLAN": {
+        "TITLE": "Standard Access",
+        "PRICE": "Free",
+        "DESCRIPTION": "Search and 360 tours are completely free.",
+        "FEATURES": {
+          "FREE_SEARCH": "Unlimited free search",
+          "TOURS_360": "Free 360 virtual tours",
+          "VERIFIED_LISTINGS": "Verified listings",
+          "PREMIUM_ACCESS": "Owner contacts: 500 FCFA / 3 days"
+        },
+        "BUTTON": "Search a home"
       }
     },
     "FAQ": {
@@ -2079,6 +2118,30 @@
         "COUNTRIES": {
           "QUESTION": "Does Ndewa360 work in all African countries?",
           "ANSWER": "Yes, Ndewa360 works in all countries. Currencies, date formats and local regulations are taken into account. We have users in Senegal, Ivory Coast, Mali, Burkina Faso, Cameroon and many other countries."
+        },
+        "AGENT_REGISTER": {
+          "QUESTION": "How do I register as an agent?",
+          "ANSWER": "Click on Create my agent profile, fill in your personal info and agency details. You can submit verification documents (ID, professional card) during registration."
+        },
+        "AGENT_VALIDATION": {
+          "QUESTION": "How long does agent profile validation take?",
+          "ANSWER": "Our team reviews your application within 24-48 business hours. You will receive a confirmation email once your profile is approved. In the meantime your account is in limited mode."
+        },
+        "AGENT_PAYMENT": {
+          "QUESTION": "How much does it cost for a real estate agent?",
+          "ANSWER": "The free plan lets you manage up to 5 properties. Beyond that, the Premium plan applies: 2% of the rent of occupied units per month, same as for property owners."
+        },
+        "SEEKER_SEARCH": {
+          "QUESTION": "How do I search for a home on Ndewa360?",
+          "ANSWER": "From the search page, use the filters (city, neighborhood, type, price, amenities). All displayed listings are available and managed by verified owners or agents."
+        },
+        "SEEKER_360": {
+          "QUESTION": "Do I need to pay for the 360 tour?",
+          "ANSWER": "No, immersive 360 tours are completely free. You can explore every room of a property from anywhere in the world."
+        },
+        "SEEKER_PAYMENT": {
+          "QUESTION": "How do I contact the owner?",
+          "ANSWER": "For 500 FCFA you get full contact details (phone, WhatsApp, email) for all property owners for 3 days. One single payment for global access."
         }
       }
     },
@@ -2090,14 +2153,36 @@
         "TALK_EXPERT": "Talk to an expert"
       },
       "GUARANTEES": {
-        "FREE_FOREVER": "Free forever (Freemium plan)",
-        "NO_CARD": "No credit card required",
+        "FREE_FOREVER": "Free plan forever",
+        "NO_CARD": "No card required",
         "SUPPORT_INCLUDED": "Support included"
       },
       "TRUST_SIGNALS": {
         "GUARANTEE": "60-day trial",
         "RATING": "4.9/5 stars",
         "USERS": "20+ satisfied users"
+      },
+      "OWNER_BTN": "I am a property owner",
+      "AGENT_BTN": "I am an agent",
+      "SEEKER_BTN": "I am looking for housing",
+      "OWNER": {
+        "TITLE": "Ready to take control of your rents?",
+        "SUBTITLE": "Join hundreds of owners who have transformed their property management.",
+        "BTN": "Start my free onboarding",
+        "NOTE": "Free, no card required"
+      },
+      "AGENT": {
+        "TITLE": "Grow your real estate business with Ndewa360",
+        "SUBTITLE": "Create your verified agent profile and manage your portfolio professionally.",
+        "BTN_REGISTER": "Create my agent account",
+        "BTN_DEMO": "Request a personalized demo",
+        "NOTE": "Validation within 24-48h after document submission"
+      },
+      "SEEKER": {
+        "TITLE": "Find your ideal home now",
+        "SUBTITLE": "Hundreds of verified listings with free 360 virtual tours.",
+        "BTN": "Explore listings",
+        "NOTE": "Free access. Owner contacts available for 500 FCFA / 3 days"
       }
     },
     "VIDEO_MODAL": {
@@ -2204,6 +2289,171 @@
           "LABEL": "Free for seekers"
         }
       }
+    },
+    "PROFILES": {
+      "TITLE": "Ndewa360 is made for you",
+      "SUBTITLE": "Choose your profile.",
+      "OWNER": {
+        "BADGE": "OWNER",
+        "TITLE": "Property owner",
+        "DESCRIPTION": "Manage rents, contracts and tenants.",
+        "FEATURE_1": "Real-time rent tracking",
+        "FEATURE_2": "Automatic PDF contracts & receipts",
+        "FEATURE_3": "Automated alerts and reminders",
+        "CTA": "Get started for free",
+        "PAIN_HOOK": "You no longer know who paid, until when, or where your contracts are?"
+      },
+      "AGENT": {
+        "BADGE": "AGENT",
+        "TITLE": "Real estate agent",
+        "DESCRIPTION": "Create your verified profile and manage your portfolio.",
+        "FEATURE_1": "Verified and visible agency profile",
+        "FEATURE_2": "Pro management of your portfolio",
+        "FEATURE_3": "Fast validation process",
+        "CTA": "Create my agent profile",
+        "DEMO_TAG": "Request a demo",
+        "PAIN_HOOK": "You manage 10 mandates in WhatsApp. No pro tools, no visible credibility."
+      },
+      "SEEKER": {
+        "BADGE": "SEEKER",
+        "TITLE": "Home seeker",
+        "DESCRIPTION": "Explore verified listings.",
+        "FEATURE_1": "Real and verified listings",
+        "FEATURE_2": "Free 360\u00b0 virtual tours",
+        "FEATURE_3": "Owner contact: 500 FCFA / 3 days",
+        "CTA": "Search a home",
+        "PAIN_HOOK": "You paid a broker for nothing \u2014 viewing fees collected, no home found."
+      },
+      "MANAGER": {
+        "TITLE": "Property manager?",
+        "DESCRIPTION": "Access via invitation link received by email."
+      },
+      "SEE_MORE": "See what changes for me",
+      "SELECTED": "Selected"
+    },
+    "OWNER_SECTION": {
+      "BADGE": "For property owners",
+      "TITLE": "Everything to manage your portfolio",
+      "SUBTITLE": "Automate your rental management.",
+      "CTA": "Start my onboarding",
+      "CTA_SUB": "Free"
+    },
+    "AGENT_SECTION": {
+      "BADGE": "For real estate agents",
+      "TITLE": "Grow your agency",
+      "SUBTITLE": "Verified profile and portfolio.",
+      "ADVANTAGES_TITLE": "Your advantages",
+      "ADV_1_TITLE": "Verified profile",
+      "ADV_1_DESC": "Get the Verified Agent badge.",
+      "ADV_2_TITLE": "Portfolio management",
+      "ADV_2_DESC": "Mandates units tenants.",
+      "ADV_3_TITLE": "Reporting",
+      "ADV_3_DESC": "Monthly reports.",
+      "ADV_4_TITLE": "Client relations",
+      "ADV_4_DESC": "Auto contracts and receipts.",
+      "JOURNEY_TITLE": "Your journey",
+      "STEP_1_TITLE": "Account",
+      "STEP_1_DESC": "Basic info",
+      "STEP_2_TITLE": "Profile",
+      "STEP_2_DESC": "Agency address description",
+      "STEP_3_TITLE": "Documents",
+      "STEP_3_DESC": "ID pro card",
+      "STEP_4_TITLE": "Validated active",
+      "STEP_4_DESC": "Full access",
+      "CTA_REGISTER": "Register as agent",
+      "CTA_DEMO": "Request a demo",
+      "JOURNEY_RESULT": "Verified profile visible to the public"
+    },
+    "OWNER_PROBLEM": {
+      "LABEL": "The problem you face every month",
+      "TITLE": "You manage your properties in your head. And every month, it's the same struggle.",
+      "SUBTITLE": "Late calls, overflowing Excel sheets, missing contracts... Manual property management costs you time, money and energy.",
+      "BRIDGE": "What if all of this disappeared tomorrow?"
+    },
+    "AGENT_PROBLEM": {
+      "LABEL": "The problem 90% of agents in Africa face",
+      "TITLE": "You are serious. But nobody knows it yet.",
+      "SUBTITLE": "Without a verified professional profile and tracking tools, you manage your mandates in WhatsApp and clients don't trust you. It's not your fault \u2014 you just don't have the right tools.",
+      "BRIDGE": "Ndewa360 gives you the credibility and tools you deserve.",
+      "PAINS": {
+        "NO_TOOLS": "You manage everything in WhatsApp or Excel. Zero professional tracking tool.",
+        "NO_PROFILE": "You have no visible verified profile. Clients don't know if you're serious.",
+        "NO_TRACKING": "Impossible to track multiple mandates without mixing everything up.",
+        "NO_TRUST": "Without proof of professionalism, you lose clients to established agencies."
+      }
+    },
+    "SEEKER_PROBLEM": {
+      "LABEL": "What home seekers experience",
+      "TITLE": "Finding an apartment should not be an obstacle course.",
+      "SUBTITLE": "Agents who charge viewing fees with no guarantee, outdated listings, unreachable landlords... Finding a serious home takes weeks and costs money with no result.",
+      "BRIDGE": "Ndewa360 connects you directly to the right homes, without middlemen.",
+      "PAINS": {
+        "FAKE_ADS": "Outdated or invented listings \u2014 you travel for an apartment that has been taken for weeks.",
+        "NO_VISIT": "A broker charges you viewing fees. If it doesn't work out, they keep the money anyway.",
+        "UNREACHABLE": "You pay an intermediary who disappears without finding you a home, or outright scams you.",
+        "WASTED_TIME": "Weeks of searching, dozens of calls, money spent \u2014 for nothing serious in the end."
+      }
+    },
+    "SEEKER_SECTION": {
+      "BADGE": "For home seekers",
+      "TITLE": "Find your home",
+      "SUBTITLE": "Verified listings and 360 tours.",
+      "FEAT_1_TITLE": "Advanced search",
+      "FEAT_1_DESC": "Filter by city type budget.",
+      "FEAT_2_TITLE": "360 tours",
+      "FEAT_2_DESC": "Visit from home.",
+      "FEAT_3_TITLE": "Filtered listings",
+      "FEAT_3_DESC": "Verified properties.",
+      "FEAT_4_TITLE": "Contact owner",
+      "FEAT_4_DESC": "500 FCFA for 3 days access.",
+      "PREMIUM_BADGE": "PREMIUM ACCESS",
+      "CTA": "Search a home",
+      "CTA_SUB": "Free"
+    },
+    "OWNER_DEMO": {
+      "BADGE": "Product demo",
+      "TITLE": "See Ndewa360 in action in 2 minutes",
+      "SUBTITLE": "A concrete demo of what you will use every day: dashboard, rent tracking, automatic contracts.",
+      "PLAY": "Watch the demo",
+      "DURATION": "2 min",
+      "WHAT_YOU_SEE": "What you will see:",
+      "CTA": "Get started for free",
+      "CTA_NOTE": "No credit card \u2014 setup in 2 minutes",
+      "POINTS": {
+        "DASHBOARD": { "TITLE": "Real-time dashboard", "DESC": "See who paid, overdue amounts and this month's revenue at a glance" },
+        "PAYMENT": { "TITLE": "Recording a payment", "DESC": "In 3 clicks, a rent is recorded and the receipt sent by email" },
+        "CONTRACT": { "TITLE": "PDF contract generation", "DESC": "A complete contract ready to sign in seconds" },
+        "ALERT": { "TITLE": "Automatic reminder alerts", "DESC": "The system follows up with late tenants on your behalf" }
+      }
+    },
+    "AGENT_DEMO": {
+      "SECTION_BADGE": "Personalized demo",
+      "SECTION_TITLE": "Schedule your 20-minute demo",
+      "FORM_TITLE": "Schedule a 20-min demo",
+      "SECTION_SUBTITLE": "Managing a portfolio of mandates and want to see Ndewa360 in action? Our team shows you exactly what the platform does for you.",
+      "BENEFITS": {
+        "DURATION": "20-minute demo tailored to your agent profile",
+        "PERSONAL": "Presentation of the verified agent space and portfolio",
+        "QUESTIONS": "Direct answers to all your questions",
+        "SETUP": "Support for configuring your account"
+      },
+      "SOCIAL_PROOF": "\u201cThanks to the demo, I understood in 20 minutes how to migrate all my mandates. The setup was very quick.\u201d \u2014 Real estate agent, Douala",
+      "MODAL_SUBTITLE": "Contact form.",
+      "FIELD_NAME": "Full name",
+      "FIELD_NAME_PLACEHOLDER": "John Doe",
+      "FIELD_EMAIL": "Email",
+      "FIELD_EMAIL_PLACEHOLDER": "john@agency.com",
+      "FIELD_PHONE": "Phone",
+      "FIELD_PHONE_PLACEHOLDER": "+237 6XX XXX XXX",
+      "FIELD_AGENCY": "Agency (optional)",
+      "FIELD_AGENCY_PLACEHOLDER": "Immo Agency",
+      "FIELD_PORTFOLIO": "Portfolio",
+      "FIELD_PORTFOLIO_PLACEHOLDER": "Number of properties",
+      "PORTFOLIO_UNIT": "properties",
+      "SUBMIT": "Send request",
+      "SUBMITTING": "Sending...",
+      "SUCCESS_TITLE": "Request sent!",
+      "SUCCESS_MSG": "Our team will contact you within 24h."
     }
   },
   "SEARCH_MODULE": {
@@ -4749,7 +4999,8 @@
     "HEADER": {
       "BRAND": "Ndewa360",
       "SUBTITLE": "Sign up",
-      "ALREADY_ACCOUNT": "Already have an account?"
+      "ALREADY_ACCOUNT": "Already have an account?",
+      "SUBTITLE_AGENT": "Agent Registration"
     },
     "STEPS": {
       "STEP1_LABEL": "Your property",
@@ -4851,6 +5102,35 @@
     "ERRORS": {
       "LOAD_COUNTRIES": "Unable to load countries",
       "LOAD_CITIES": "Unable to load cities"
+    },
+    "AGENT": {
+      "STEPS": {
+        "STEP1_LABEL": "Your account",
+        "STEP2_LABEL": "Your agency",
+        "STEP3_LABEL": "Confirmation"
+      },
+      "STEP1": {
+        "TITLE": "Create your agent account",
+        "SUBTITLE": "Start by creating your account. You will complete your agency profile in the next step."
+      },
+      "STEP2": {
+        "TITLE": "Your agency profile",
+        "SUBTITLE": "This information will allow property owners to identify you and trust your services.",
+        "BUSINESS_NAME": "Agency name",
+        "BUSINESS_NAME_PLACEHOLDER": "Ex: Immo Agency Yaounde",
+        "BUSINESS_NAME_ERROR": "Agency name is required (min. 2 characters)",
+        "BUSINESS_ADDRESS": "Professional address",
+        "BUSINESS_ADDRESS_PLACEHOLDER": "Ex: Kennedy Avenue, Douala",
+        "DESCRIPTION": "About your agency",
+        "DESCRIPTION_PLACEHOLDER": "Describe your activity, specializations..."
+      },
+      "STEP3": {
+        "TITLE": "Application submitted successfully!",
+        "SUBTITLE": "Our team reviews your application within 24 to 48 business hours.",
+        "INFO": "Your account is in limited mode until your profile is validated. You will receive a confirmation email upon approval.",
+        "SUMMARY_TITLE": "Registration summary:",
+        "SUBMIT": "Create my agent account"
+      }
     }
   },
   "EMAIL_CONFIRMATION_BANNER": {

@@ -1,12 +1,17 @@
-﻿<div class="onboarding-wrapper min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center py-8 px-4">
+<div class="onboarding-wrapper min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center py-8 px-4">
   <div class="onboarding-card w-full max-w-2xl bg-white rounded-2xl shadow-xl overflow-hidden">
 
     <!-- HEADER + PROGRESS -->
-    <div class="bg-primary px-8 py-6">
+    <div class="px-8 py-6" [class]="userType === 'agent' ? 'header-agent' : 'header-owner'">
       <div class="flex items-center justify-between mb-6">
         <div class="flex items-center gap-2">
+          <img src="assets/img/logo/logo-basic-nobg.png" alt="Ndewa360" class="h-12 w-auto">
           <span class="text-white font-bold text-xl">{{ 'ONBOARDING.HEADER.BRAND' | translate }}</span>
-          <span class="text-white/60 text-sm">&middot; {{ 'ONBOARDING.HEADER.SUBTITLE' | translate }}</span>
+          <span class="text-white/60 text-sm">&middot;
+            {{ userType === 'agent'
+               ? ('ONBOARDING.HEADER.SUBTITLE_AGENT' | translate)
+               : ('ONBOARDING.HEADER.SUBTITLE' | translate) }}
+          </span>
         </div>
         <a [routerLink]="['/' + getCurrentLanguage() + '/auth/signin']"
            class="text-white/80 hover:text-white text-sm underline">
@@ -14,22 +19,23 @@
         </a>
       </div>
 
-      <!-- Progress steps -->
+      <!-- Progress steps — propriétaire : 4 étapes | agent : 3 étapes -->
       <div class="flex items-center">
-        <ng-container *ngFor="let s of [1,2,3,4]; let i = index">
+        <ng-container *ngFor="let s of stepsArray; let i = index">
           <div class="flex items-center gap-1">
             <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-all duration-300"
                  [ngClass]="{
-                   'bg-white text-primary border-white': currentStep === s,
+                   'bg-white border-white': currentStep === s,
                    'bg-white/20 text-white border-white/40': currentStep < s,
-                   'bg-white/60 text-primary border-white/60': currentStep > s
-                 }">
+                   'bg-white/60 border-white/60': currentStep > s
+                 }"
+                 [style.color]="currentStep === s || currentStep > s ? (userType === 'agent' ? '#16a34a' : '#BB890B') : '#fff'">
               <ng-container *ngIf="currentStep > s">&#10003;</ng-container>
               <ng-container *ngIf="currentStep <= s">{{ s }}</ng-container>
             </div>
             <span class="text-white/70 text-xs hidden sm:inline ml-1">{{ getStepLabel(s) }}</span>
           </div>
-          <div *ngIf="i < 3" class="flex-1 h-0.5 bg-white/30 mx-2">
+          <div *ngIf="i < stepsArray.length - 1" class="flex-1 h-0.5 bg-white/30 mx-2">
             <div class="h-full bg-white transition-all duration-500"
                  [style.width]="currentStep > s ? '100%' : '0%'"></div>
           </div>
@@ -40,14 +46,162 @@
     <!-- BODY -->
     <div class="px-8 py-6">
 
-      <!-- ETAPE 1 : VOTRE BIEN -->
-      <div *ngIf="currentStep === 1" [formGroup]="step1Form">
+      <!-- ═══════ PARCOURS AGENT ═══════ -->
+
+      <!-- AGENT — Étape 1 : Compte -->
+      <div *ngIf="userType === 'agent' && currentStep === 1" [formGroup]="step4Form">
+        <div class="mb-6">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+              <i class="fas fa-user text-green-600 text-sm"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-900">{{ 'ONBOARDING.AGENT.STEP1.TITLE' | translate }}</h2>
+          </div>
+          <p class="text-gray-500">{{ 'ONBOARDING.AGENT.STEP1.SUBTITLE' | translate }}</p>
+        </div>
+
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">
+            {{ 'ONBOARDING.STEP4.NAME_LABEL' | translate }} <span class="text-red-500">*</span>
+          </label>
+          <input formControlName="name" type="text"
+                 [placeholder]="'ONBOARDING.STEP4.NAME_PLACEHOLDER' | translate"
+                 class="w-full border rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-agent outline-none transition"
+                 [ngClass]="{'border-red-400': isFieldInvalid(step4Form, 'name'), 'border-gray-300': !isFieldInvalid(step4Form, 'name')}">
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">
+            {{ 'ONBOARDING.STEP4.EMAIL_LABEL' | translate }} <span class="text-red-500">*</span>
+          </label>
+          <input formControlName="email" type="email"
+                 [placeholder]="'ONBOARDING.STEP4.EMAIL_PLACEHOLDER' | translate"
+                 class="w-full border rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-agent outline-none transition"
+                 [ngClass]="{'border-red-400': isFieldInvalid(step4Form, 'email'), 'border-gray-300': !isFieldInvalid(step4Form, 'email')}">
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">
+            {{ 'ONBOARDING.STEP4.PHONE_LABEL' | translate }} <span class="text-red-500">*</span>
+          </label>
+          <input formControlName="phoneNumber" type="tel"
+                 [placeholder]="'ONBOARDING.STEP4.PHONE_PLACEHOLDER' | translate"
+                 class="w-full border rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-agent outline-none transition"
+                 [ngClass]="{'border-red-400': isFieldInvalid(step4Form, 'phoneNumber'), 'border-gray-300': !isFieldInvalid(step4Form, 'phoneNumber')}">
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">
+            {{ 'ONBOARDING.STEP4.PASSWORD_LABEL' | translate }} <span class="text-red-500">*</span>
+          </label>
+          <div class="relative">
+            <input formControlName="password" [type]="showPassword ? 'text' : 'password'"
+                   [placeholder]="'ONBOARDING.STEP4.PASSWORD_PLACEHOLDER' | translate"
+                   class="w-full border rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-agent outline-none transition pr-10"
+                   [ngClass]="{'border-red-400': isFieldInvalid(step4Form, 'password'), 'border-gray-300': !isFieldInvalid(step4Form, 'password')}">
+            <button type="button" (click)="togglePassword()"
+                    class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path *ngIf="!showPassword" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                <path *ngIf="showPassword" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="mb-6">
+          <label class="flex items-start gap-3 cursor-pointer">
+            <input type="checkbox" formControlName="acceptTerms" class="mt-0.5 rounded">
+            <span class="text-sm text-gray-600">
+              {{ 'ONBOARDING.STEP4.TERMS_TEXT' | translate }}
+              <a href="#" class="text-green-600 underline">{{ 'ONBOARDING.STEP4.TERMS_LINK' | translate }}</a>
+              {{ 'ONBOARDING.STEP4.PRIVACY_TEXT' | translate }}
+              <a href="#" class="text-green-600 underline">{{ 'ONBOARDING.STEP4.PRIVACY_LINK' | translate }}</a>
+            </span>
+          </label>
+        </div>
+      </div>
+
+      <!-- AGENT — Étape 2 : Profil agence -->
+      <div *ngIf="userType === 'agent' && currentStep === 2" [formGroup]="agentProfileForm">
+        <div class="mb-6">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+              <i class="fas fa-building text-green-600 text-sm"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-900">{{ 'ONBOARDING.AGENT.STEP2.TITLE' | translate }}</h2>
+          </div>
+          <p class="text-gray-500">{{ 'ONBOARDING.AGENT.STEP2.SUBTITLE' | translate }}</p>
+        </div>
+
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">
+            {{ 'ONBOARDING.AGENT.STEP2.BUSINESS_NAME' | translate }} <span class="text-red-500">*</span>
+          </label>
+          <input formControlName="businessName" type="text"
+                 [placeholder]="'ONBOARDING.AGENT.STEP2.BUSINESS_NAME_PLACEHOLDER' | translate"
+                 class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-agent outline-none transition"
+                 [ngClass]="{'border-red-400': isFieldInvalidAgent('businessName'), 'border-gray-300': !isFieldInvalidAgent('businessName')}">
+          <p *ngIf="isFieldInvalidAgent('businessName')" class="text-red-500 text-xs mt-1">{{ 'ONBOARDING.AGENT.STEP2.BUSINESS_NAME_ERROR' | translate }}</p>
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">{{ 'ONBOARDING.AGENT.STEP2.BUSINESS_ADDRESS' | translate }}</label>
+          <input formControlName="businessAddress" type="text"
+                 [placeholder]="'ONBOARDING.AGENT.STEP2.BUSINESS_ADDRESS_PLACEHOLDER' | translate"
+                 class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-agent outline-none transition">
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">{{ 'ONBOARDING.AGENT.STEP2.DESCRIPTION' | translate }}</label>
+          <textarea formControlName="businessDescription" rows="3"
+                    [placeholder]="'ONBOARDING.AGENT.STEP2.DESCRIPTION_PLACEHOLDER' | translate"
+                    class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-agent outline-none transition resize-none"></textarea>
+        </div>
+      </div>
+
+      <!-- AGENT — Étape 3 : Documents & En attente -->
+      <div *ngIf="userType === 'agent' && currentStep === 3">
+        <div class="mb-6 text-center">
+          <div class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-shield-alt text-green-600 text-2xl"></i>
+          </div>
+          <h2 class="text-2xl font-bold text-gray-900 mb-2">{{ 'ONBOARDING.AGENT.STEP3.TITLE' | translate }}</h2>
+          <p class="text-gray-500 text-sm">{{ 'ONBOARDING.AGENT.STEP3.SUBTITLE' | translate }}</p>
+        </div>
+
+        <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
+          <div class="flex items-start gap-3">
+            <i class="fas fa-info-circle text-amber-600 mt-0.5 flex-shrink-0"></i>
+            <p class="text-amber-800 text-sm">{{ 'ONBOARDING.AGENT.STEP3.INFO' | translate }}</p>
+          </div>
+        </div>
+
+        <!-- Résumé -->
+        <div class="bg-green-50 border border-green-200 rounded-xl p-4">
+          <p class="font-semibold text-green-800 mb-3 text-sm">{{ 'ONBOARDING.AGENT.STEP3.SUMMARY_TITLE' | translate }}</p>
+          <div class="space-y-2">
+            <div class="flex items-center gap-2 text-sm text-green-700">
+              <i class="fas fa-check-circle text-green-500"></i>
+              <span>{{ step4Form.get('name')?.value }}</span>
+            </div>
+            <div class="flex items-center gap-2 text-sm text-green-700">
+              <i class="fas fa-check-circle text-green-500"></i>
+              <span>{{ step4Form.get('email')?.value }}</span>
+            </div>
+            <div class="flex items-center gap-2 text-sm text-green-700" *ngIf="agentProfileForm.get('businessName')?.value">
+              <i class="fas fa-building text-green-500"></i>
+              <span>{{ agentProfileForm.get('businessName')?.value }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════ PARCOURS PROPRIÉTAIRE ═══════ -->
+
+      <!-- ÉTAPE 1 : VOTRE BIEN -->
+      <div *ngIf="userType !== 'agent' && currentStep === 1" [formGroup]="step1Form">
         <div class="mb-6">
           <h2 class="text-2xl font-bold text-gray-900">{{ 'ONBOARDING.STEP1.TITLE' | translate }}</h2>
           <p class="text-gray-500 mt-1">{{ 'ONBOARDING.STEP1.SUBTITLE' | translate }}</p>
         </div>
 
-        <!-- Nom du bien -->
         <div class="mb-4">
           <label class="block text-sm font-medium text-gray-700 mb-1">
             {{ 'ONBOARDING.STEP1.PROPERTY_NAME_LABEL' | translate }} <span class="text-red-500">*</span>
@@ -61,7 +215,6 @@
           </p>
         </div>
 
-        <!-- Pays -->
         <div class="mb-4">
           <label class="block text-sm font-medium text-gray-700 mb-1">
             {{ 'ONBOARDING.STEP1.COUNTRY_LABEL' | translate }} <span class="text-red-500">*</span>
@@ -78,7 +231,6 @@
           </p>
         </div>
 
-        <!-- Ville -->
         <div class="mb-4">
           <label class="block text-sm font-medium text-gray-700 mb-1">
             {{ 'ONBOARDING.STEP1.CITY_LABEL' | translate }} <span class="text-red-500">*</span>
@@ -95,7 +247,6 @@
           </p>
         </div>
 
-        <!-- Adresse -->
         <div class="mb-4">
           <label class="block text-sm font-medium text-gray-700 mb-1">
             {{ 'ONBOARDING.STEP1.ADDRESS_LABEL' | translate }} <span class="text-red-500">*</span>
@@ -109,7 +260,6 @@
           </p>
         </div>
 
-        <!-- Type de bien -->
         <div class="mb-4">
           <label class="block text-sm font-medium text-gray-700 mb-2">{{ 'ONBOARDING.STEP1.PROPERTY_TYPE_LABEL' | translate }}</label>
           <div class="grid grid-cols-2 gap-2">
@@ -126,12 +276,11 @@
         </div>
       </div>
 
-      <!-- ETAPE 2 : VOS UNITES -->
-      <div *ngIf="currentStep === 2" [formGroup]="step2Form">
+      <!-- ÉTAPE 2 : VOS UNITÉS -->
+      <div *ngIf="userType !== 'agent' && currentStep === 2" [formGroup]="step2Form">
         <div class="mb-6">
           <h2 class="text-2xl font-bold text-gray-900">{{ 'ONBOARDING.STEP2.TITLE' | translate }}</h2>
           <p class="text-gray-500 mt-1">{{ 'ONBOARDING.STEP2.SUBTITLE' | translate }}</p>
-          <!-- Info plan FREE -->
           <div class="mt-3 flex items-start gap-2 p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-800">
             <svg class="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -145,7 +294,6 @@
           <div *ngFor="let unit of unitsArray.controls; let i = index"
                [formGroupName]="i"
                class="border border-gray-200 rounded-xl p-4 mb-4 relative">
-
             <div class="flex items-center justify-between mb-3">
               <span class="font-semibold text-gray-700 text-sm">{{ 'ONBOARDING.STEP2.UNIT_LABEL' | translate }} {{ i + 1 }}</span>
               <button *ngIf="unitsArray.length > 1" type="button"
@@ -154,9 +302,7 @@
                 &#10005; {{ 'ONBOARDING.STEP2.REMOVE_UNIT' | translate }}
               </button>
             </div>
-
             <div class="grid grid-cols-2 gap-3">
-              <!-- Type -->
               <div>
                 <label class="block text-xs font-medium text-gray-600 mb-1">{{ 'ONBOARDING.STEP2.TYPE_LABEL' | translate }}</label>
                 <select formControlName="type"
@@ -164,8 +310,6 @@
                   <option *ngFor="let rt of roomTypes" [value]="rt.value">{{ rt.label }}</option>
                 </select>
               </div>
-
-              <!-- Loyer -->
               <div>
                 <label class="block text-xs font-medium text-gray-600 mb-1">
                   {{ 'ONBOARDING.STEP2.PRICE_LABEL' | translate }} <span class="text-red-500">*</span>
@@ -178,8 +322,6 @@
                          'border-gray-300': !(unit.get('price').invalid && unit.get('price').touched)
                        }">
               </div>
-
-              <!-- Caution -->
               <div class="col-span-2 flex items-center gap-3">
                 <label class="flex items-center gap-2 cursor-pointer">
                   <input type="checkbox" formControlName="shouldPayCaution" class="rounded">
@@ -201,14 +343,13 @@
         </button>
       </div>
 
-      <!-- ETAPE 3 : VOS LOCATAIRES -->
-      <div *ngIf="currentStep === 3" [formGroup]="step3Form">
+      <!-- ÉTAPE 3 : VOS LOCATAIRES -->
+      <div *ngIf="userType !== 'agent' && currentStep === 3" [formGroup]="step3Form">
         <div class="mb-6">
           <h2 class="text-2xl font-bold text-gray-900">{{ 'ONBOARDING.STEP3.TITLE' | translate }}</h2>
           <p class="text-gray-500 mt-1">{{ 'ONBOARDING.STEP3.SUBTITLE' | translate }}</p>
         </div>
 
-        <!-- Toggle hasTenants -->
         <div class="flex items-center gap-4 mb-6 p-4 bg-gray-50 rounded-xl">
           <label class="flex items-center gap-3 cursor-pointer">
             <div class="relative">
@@ -220,12 +361,10 @@
           </label>
         </div>
 
-        <!-- Liste des locataires -->
         <div *ngIf="step3Form.get('hasTenants').value" formArrayName="tenants">
           <div *ngFor="let tenant of tenantsArray.controls; let i = index"
                [formGroupName]="i"
                class="border border-gray-200 rounded-xl p-4 mb-4">
-
             <div class="flex items-center justify-between mb-3">
               <span class="font-semibold text-gray-700 text-sm">{{ 'ONBOARDING.STEP3.TENANT_LABEL' | translate }} {{ i + 1 }}</span>
               <button *ngIf="tenantsArray.length > 1" type="button"
@@ -234,7 +373,6 @@
                 &#10005; {{ 'ONBOARDING.STEP3.REMOVE_TENANT' | translate }}
               </button>
             </div>
-
             <div class="grid grid-cols-1 gap-3">
               <div>
                 <label class="block text-xs font-medium text-gray-600 mb-1">
@@ -260,7 +398,6 @@
               </div>
             </div>
           </div>
-
           <button *ngIf="tenantsArray.length < 5" type="button"
                   (click)="addTenant()"
                   class="w-full border-2 border-dashed border-gray-300 rounded-xl py-3 text-sm text-gray-500 hover:border-primary hover:text-primary transition">
@@ -268,21 +405,19 @@
           </button>
         </div>
 
-        <div *ngIf="!step3Form.get('hasTenants').value"
-             class="text-center py-8 text-gray-400">
+        <div *ngIf="!step3Form.get('hasTenants').value" class="text-center py-8 text-gray-400">
           <div class="text-4xl mb-2">&#127968;</div>
           <p class="text-sm">{{ 'ONBOARDING.STEP3.NO_TENANTS_MESSAGE' | translate }}</p>
         </div>
       </div>
 
-      <!-- ETAPE 4 : VOTRE COMPTE -->
-      <div *ngIf="currentStep === 4" [formGroup]="step4Form">
+      <!-- ÉTAPE 4 : VOTRE COMPTE (propriétaire) -->
+      <div *ngIf="userType !== 'agent' && currentStep === 4" [formGroup]="step4Form">
         <div class="mb-6">
           <h2 class="text-2xl font-bold text-gray-900">{{ 'ONBOARDING.STEP4.TITLE' | translate }}</h2>
           <p class="text-gray-500 mt-1">{{ 'ONBOARDING.STEP4.SUBTITLE' | translate }}</p>
         </div>
 
-        <!-- Nom -->
         <div class="mb-4">
           <label class="block text-sm font-medium text-gray-700 mb-1">
             {{ 'ONBOARDING.STEP4.NAME_LABEL' | translate }} <span class="text-red-500">*</span>
@@ -293,8 +428,6 @@
                  [ngClass]="{'border-red-400': isFieldInvalid(step4Form, 'name'), 'border-gray-300': !isFieldInvalid(step4Form, 'name')}">
           <p *ngIf="isFieldInvalid(step4Form, 'name')" class="text-red-500 text-xs mt-1">{{ 'ONBOARDING.STEP4.NAME_ERROR' | translate }}</p>
         </div>
-
-        <!-- Email -->
         <div class="mb-4">
           <label class="block text-sm font-medium text-gray-700 mb-1">
             {{ 'ONBOARDING.STEP4.EMAIL_LABEL' | translate }} <span class="text-red-500">*</span>
@@ -305,8 +438,6 @@
                  [ngClass]="{'border-red-400': isFieldInvalid(step4Form, 'email'), 'border-gray-300': !isFieldInvalid(step4Form, 'email')}">
           <p *ngIf="isFieldInvalid(step4Form, 'email')" class="text-red-500 text-xs mt-1">{{ 'ONBOARDING.STEP4.EMAIL_ERROR' | translate }}</p>
         </div>
-
-        <!-- Telephone -->
         <div class="mb-4">
           <label class="block text-sm font-medium text-gray-700 mb-1">
             {{ 'ONBOARDING.STEP4.PHONE_LABEL' | translate }} <span class="text-red-500">*</span>
@@ -317,8 +448,6 @@
                  [ngClass]="{'border-red-400': isFieldInvalid(step4Form, 'phoneNumber'), 'border-gray-300': !isFieldInvalid(step4Form, 'phoneNumber')}">
           <p *ngIf="isFieldInvalid(step4Form, 'phoneNumber')" class="text-red-500 text-xs mt-1">{{ 'ONBOARDING.STEP4.PHONE_ERROR' | translate }}</p>
         </div>
-
-        <!-- Mot de passe -->
         <div class="mb-4">
           <label class="block text-sm font-medium text-gray-700 mb-1">
             {{ 'ONBOARDING.STEP4.PASSWORD_LABEL' | translate }} <span class="text-red-500">*</span>
@@ -340,8 +469,6 @@
           </div>
           <p *ngIf="isFieldInvalid(step4Form, 'password')" class="text-red-500 text-xs mt-1">{{ 'ONBOARDING.STEP4.PASSWORD_ERROR' | translate }}</p>
         </div>
-
-        <!-- CGU -->
         <div class="mb-6">
           <label class="flex items-start gap-3 cursor-pointer">
             <input type="checkbox" formControlName="acceptTerms" class="mt-0.5 rounded">
@@ -357,7 +484,7 @@
           </p>
         </div>
 
-        <!-- Resume onboarding -->
+        <!-- Résumé -->
         <div class="bg-green-50 border border-green-200 rounded-xl p-4 mb-4 text-sm">
           <p class="font-semibold text-green-800 mb-2">{{ 'ONBOARDING.STEP4.SUMMARY_TITLE' | translate }}</p>
           <ul class="text-green-700 space-y-1">
@@ -382,7 +509,6 @@
     <!-- FOOTER NAVIGATION -->
     <div class="px-8 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
 
-      <!-- Bouton Precedent -->
       <button *ngIf="currentStep > 1" type="button"
               (click)="prevStep()"
               class="flex items-center gap-2 text-gray-600 hover:text-gray-900 text-sm font-medium transition">
@@ -391,30 +517,35 @@
       <div *ngIf="currentStep === 1"></div>
 
       <div class="flex items-center gap-3">
-        <!-- Bouton Passer (etapes 1-3 seulement) -->
-        <button *ngIf="currentStep < 4" type="button"
+        <!-- Passer — seulement sur certaines étapes -->
+        <button *ngIf="canSkipCurrentStep()" type="button"
                 (click)="skipStep()"
                 class="text-gray-400 hover:text-gray-600 text-sm transition">
           {{ 'ONBOARDING.NAVIGATION.SKIP' | translate }} &rarr;
         </button>
 
-        <!-- Bouton Suivant (etapes 1-3) -->
-        <button *ngIf="currentStep < 4" type="button"
+        <!-- Suivant -->
+        <button *ngIf="!isLastStep()" type="button"
                 (click)="nextStep()"
-                class="bg-primary text-white px-6 py-2.5 rounded-lg text-sm font-semibold hover:bg-primary/90 transition">
+                [class]="userType === 'agent'
+                  ? 'bg-green-600 text-white px-6 py-2.5 rounded-lg text-sm font-semibold hover:bg-green-700 transition'
+                  : 'bg-primary text-white px-6 py-2.5 rounded-lg text-sm font-semibold hover:bg-primary/90 transition'">
           {{ 'ONBOARDING.NAVIGATION.NEXT' | translate }} &rarr;
         </button>
 
-        <!-- Bouton Creer mon compte (etape 4) -->
-        <button *ngIf="currentStep === 4" type="button"
+        <!-- Créer mon compte (dernière étape) -->
+        <button *ngIf="isLastStep()" type="button"
                 (click)="onSubmit()"
                 [disabled]="isSubmitting || step4Form.invalid"
-                class="bg-primary text-white px-8 py-2.5 rounded-lg text-sm font-semibold hover:bg-primary/90 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+                [class]="(userType === 'agent'
+                  ? 'bg-green-600 hover:bg-green-700 '
+                  : 'bg-primary hover:bg-primary/90 ')
+                  + 'text-white px-8 py-2.5 rounded-lg text-sm font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2'">
           <svg *ngIf="isSubmitting" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
           </svg>
-          <span>{{ isSubmitting ? ('ONBOARDING.STEP4.SUBMITTING' | translate) : ('ONBOARDING.STEP4.SUBMIT_BUTTON' | translate) }}</span>
+          <span>{{ isSubmitting ? ('ONBOARDING.STEP4.SUBMITTING' | translate) : getSubmitLabel() }}</span>
         </button>
       </div>
     </div>

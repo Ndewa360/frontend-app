@@ -1,954 +1,954 @@
-<div class="w-full min-h-screen   home-content">
-<!-- ================= HEADER ================= -->
-<!-- <header class="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between fade-in">
-  <div class="flex items-center gap-3 font-bold text-2xl slide-right">
-    <img src="assets/img/logo/logo-basic-nobg.png" alt="Ndewa360 Logo" class="h-10 w-10 object-contain float">
-    <span class="text-gray-800">Ndewa360</span>
-  </div>
+<div class="w-full min-h-screen home-content">
 
-  <nav class="hidden md:flex gap-8 text-base font-medium slide-up" style="animation-delay: 0.2s">
-    <a href="#fonctionnalites" class="hover:text-primary transition-all duration-300 hover:scale-110">Fonctionnalités</a>
-    <a href="#tarifs" class="hover:text-primary transition-all duration-300 hover:scale-110">Tarifs</a>
-    <a href="#temoignages" class="hover:text-primary transition-all duration-300 hover:scale-110">Témoignages</a>
-    <a href="#faq" class="hover:text-primary transition-all duration-300 hover:scale-110">FAQ</a>
-  </nav>
+<!-- ═══════════════════════════════════════════════════════════
+     HERO
+═══════════════════════════════════════════════════════════ -->
+<section class="hero-section deco-bg">
+  <div class="hero-bg-gradient"></div>
+  <div class="hero-inner">
 
-  <a href="#" class="btn-primary text-white px-6 py-3 rounded-lg text-base font-semibold flex items-center gap-2 slide-left" style="animation-delay: 0.4s">
-    <i class="fas fa-rocket icon-bounce"></i>
-    Commencer gratuitement
-  </a>
-</header> -->
-
-<!-- ================= HERO ================= -->
-<section class="max-w-7xl mx-auto px-6 py-20">
-  <div class="grid lg:grid-cols-2 gap-16 items-center">
-    <div class="slide-left">
-      <h1 class="text-5xl lg:text-6xl font-bold leading-tight text-gray-900 mb-6">
-        {{ t('LANDING.HERO.TITLE_PART1') }} <span class="gradient-text">{{ t('LANDING.HERO.TITLE_PART2') }}</span>
+    <div class="hero-text slide-up">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        {{ t('LANDING.HERO.BADGE') }}
+      </div>
+      <h1 class="hero-title">
+        {{ t('LANDING.HERO.TITLE_PART1') }}
+        <span class="gradient-text">{{ t('LANDING.HERO.TITLE_PART2') }}</span>
       </h1>
-
-      <p class="text-xl text-gray-600 leading-relaxed mb-8">
-        <strong>{{ t('LANDING.HERO.SUBTITLE_BOLD') }}</strong><br>
-        {{ t('LANDING.HERO.SUBTITLE_TEXT') }}
-      </p>
-
-      <div class="flex flex-col sm:flex-row gap-4 mb-8">
-        <a [routerLink]="['/' + getCurrentLanguage() + '/onboarding']" class="btn-primary text-white px-8 py-4 rounded-lg font-bold text-lg flex items-center justify-center gap-3">
-          <i class="fas fa-rocket"></i>
-          {{ t('LANDING.HERO.BUTTONS.START_FREE') }}
-        </a>
-        <button (click)="openVideoModal()" class="border-2 border-gray-300 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white hover:border-primary transition-all duration-300 flex items-center justify-center gap-3">
-          <i class="fas fa-play-circle"></i>
-          {{ t('LANDING.HERO.BUTTONS.WATCH_DEMO') }}
-        </button>
-      </div>
-
-      <!-- Social Proof -->
-      <div class="flex flex-col sm:flex-row items-start sm:items-center gap-6 text-sm text-gray-600">
-        <div class="flex items-center gap-2">
-          <div class="flex">
-            <i class="fas fa-star text-yellow-500"></i>
-            <i class="fas fa-star text-yellow-500"></i>
-            <i class="fas fa-star text-yellow-500"></i>
-            <i class="fas fa-star text-yellow-500"></i>
-            <i class="fas fa-star text-yellow-500"></i>
-          </div>
-          <span>{{ t('LANDING.HERO.RATING') }}</span>
-        </div>
+      <p class="hero-subtitle">{{ t('LANDING.HERO.SUBTITLE_TEXT') }}</p>
+      <div class="hero-trust">
+        <div class="stars"><i class="fas fa-star" *ngFor="let s of [1,2,3,4,5]"></i></div>
+        <span>{{ t('LANDING.HERO.RATING') }} · {{ t('LANDING.HERO.TRUST') }}</span>
       </div>
     </div>
 
-    <div class="slide-right" style="animation-delay: 0.3s">
-      <div class="relative">
-        <video 
-          class="w-full rounded-2xl shadow-2xl" 
-          autoplay 
-          muted 
-          loop 
-          playsinline
-          poster="assets/landing/dashbord-revenu.png"
-        >
-          <source src="assets/presentation.mp4" type="video/mp4">
-          <!-- <img src="assets/landing/dashbord-revenu.png" alt="Dashboard Ndewa360" class="w-full rounded-2xl shadow-2xl"> -->
-        </video>
-        <div class="absolute -bottom-6 -left-6 bg-white p-4 rounded-xl shadow-lg">
-          <div class="flex items-center gap-3">
-            <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-            <span class="text-sm font-semibold">{{ t('LANDING.HERO.LIVE_DEMO') }}</span>
+    <!-- Illustration statique Hero (remplace la vidéo autoplay générique) -->
+    <div class="hero-illustration slide-up" style="animation-delay:.3s">
+
+      <!-- Dashboard mockup -->
+      <div class="hero-dashboard">
+        <!-- Header barre -->
+        <div class="hero-dash-header">
+          <div class="hero-dash-logo">
+            <i class="fas fa-building"></i>
+            <span>Ndewa360</span>
+          </div>
+          <div class="hero-dash-actions">
+            <div class="hero-dash-dot" style="background:#ef4444"></div>
+            <div class="hero-dash-dot" style="background:#f59e0b"></div>
+            <div class="hero-dash-dot" style="background:#22c55e"></div>
+          </div>
+        </div>
+
+        <!-- Stats KPI -->
+        <div class="hero-kpi-row">
+          <div class="hero-kpi">
+            <div class="hero-kpi__icon hero-kpi__icon--gold"><i class="fas fa-home"></i></div>
+            <div class="hero-kpi__value">12</div>
+            <div class="hero-kpi__label">{{ t('LANDING.HERO.ILLUS.PROPERTIES') }}</div>
+          </div>
+          <div class="hero-kpi">
+            <div class="hero-kpi__icon hero-kpi__icon--green"><i class="fas fa-users"></i></div>
+            <div class="hero-kpi__value">38</div>
+            <div class="hero-kpi__label">{{ t('LANDING.HERO.ILLUS.TENANTS') }}</div>
+          </div>
+          <div class="hero-kpi">
+            <div class="hero-kpi__icon hero-kpi__icon--blue"><i class="fas fa-chart-line"></i></div>
+            <div class="hero-kpi__value">98%</div>
+            <div class="hero-kpi__label">{{ t('LANDING.HERO.ILLUS.COLLECTED') }}</div>
+          </div>
+        </div>
+
+        <!-- Bar chart -->
+        <div class="hero-chart">
+          <div class="hero-chart__label">{{ t('LANDING.HERO.ILLUS.REVENUES') }}</div>
+          <div class="hero-chart__bars">
+            <div class="hero-bar" *ngFor="let h of heroBarHeights; let i = index"
+                 [style.height]="h + '%'"
+                 [class.hero-bar--active]="i === heroBarHeights.length - 1">
+            </div>
+          </div>
+          <div class="hero-chart__months">
+            <span *ngFor="let m of heroMonths">{{ m }}</span>
+          </div>
+        </div>
+
+        <!-- Liste paiements récents -->
+        <div class="hero-payments">
+          <div class="hero-pay-item" *ngFor="let p of heroPayments">
+            <div class="hero-pay-avatar" [class]="'hero-pay-avatar--' + p.color">{{ p.initials }}</div>
+            <div class="hero-pay-info">
+              <span class="hero-pay-name">{{ p.name }}</span>
+              <span class="hero-pay-unit">{{ p.unit }}</span>
+            </div>
+            <div class="hero-pay-amount" [class.hero-pay-amount--paid]="p.paid" [class.hero-pay-amount--late]="!p.paid">
+              <i class="fas" [class.fa-check-circle]="p.paid" [class.fa-exclamation-circle]="!p.paid"></i>
+              {{ p.amount }}
+            </div>
           </div>
         </div>
       </div>
+
+      <!-- Badge flottant -->
+      <div class="hero-float-badge hero-float-badge--contract">
+        <i class="fas fa-file-contract"></i>
+        <span>{{ t('LANDING.HERO.ILLUS.CONTRACT_BADGE') }}</span>
+      </div>
+      <div class="hero-float-badge hero-float-badge--mobile">
+        <i class="fas fa-mobile-alt"></i>
+        <span>{{ t('LANDING.HERO.ILLUS.MOBILE_BADGE') }}</span>
+      </div>
     </div>
+
   </div>
 </section>
 
-<!-- ================= PROBLEMES ================= -->
-<section class="bg-gray-50 py-20">
-  <div class="max-w-7xl mx-auto px-6">
-    <div class="text-center mb-16">
-      <h2 class="text-4xl font-bold text-gray-900 mb-6 scroll-animate">
-        {{ t('LANDING.PROBLEMS.TITLE') }}
-      </h2>
-      <p class="text-xl text-gray-600 scroll-animate">
-        {{ t('LANDING.PROBLEMS.SUBTITLE') }}
-      </p>
+<!-- ═══════════════════════════════════════════════════════════
+     SECTION PROFILS
+═══════════════════════════════════════════════════════════ -->
+<section class="profiles-section deco-grid" id="profiles-section">
+  <div class="section-inner">
+
+    <div class="section-header scroll-animate">
+      <h2 class="section-title">{{ t('LANDING.PROFILES.TITLE') }}</h2>
+      <p class="section-subtitle">{{ t('LANDING.PROFILES.SUBTITLE') }}</p>
     </div>
 
-    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-      <div class="bg-white p-6 rounded-xl shadow-lg card-hover scroll-animate-scale">
-        <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-4">
-          <i class="fas fa-question-circle text-red-600 text-xl"></i>
+    <div class="profiles-grid">
+
+      <!-- Propriétaire -->
+      <div class="profile-card scroll-animate-scale"
+           [class.profile-card--active]="activeProfile === 'owner'"
+           (click)="selectProfile('owner')">
+        <div class="profile-card__header pcard-owner">
+          <div class="profile-card__icon"><i class="fas fa-home"></i></div>
+          <span class="profile-card__badge">{{ t('LANDING.PROFILES.OWNER.BADGE') }}</span>
         </div>
-        <h3 class="font-bold text-gray-900 mb-2">{{ t('LANDING.PROBLEMS.CARDS.WHO_PAID.TITLE') }}</h3>
-        <p class="text-gray-600 text-sm">{{ t('LANDING.PROBLEMS.CARDS.WHO_PAID.DESCRIPTION') }}</p>
+        <div class="profile-card__body">
+          <h3>{{ t('LANDING.PROFILES.OWNER.TITLE') }}</h3>
+          <p class="profile-card__pain">{{ t('LANDING.PROFILES.OWNER.PAIN_HOOK') }}</p>
+          <ul>
+            <li><i class="fas fa-check-circle text-primary"></i>{{ t('LANDING.PROFILES.OWNER.FEATURE_1') }}</li>
+            <li><i class="fas fa-check-circle text-primary"></i>{{ t('LANDING.PROFILES.OWNER.FEATURE_2') }}</li>
+            <li><i class="fas fa-check-circle text-primary"></i>{{ t('LANDING.PROFILES.OWNER.FEATURE_3') }}</li>
+          </ul>
+          <div class="profile-card__cta pcard-cta--owner">
+            <span *ngIf="activeProfile !== 'owner'">{{ t('LANDING.PROFILES.SEE_MORE') }} <i class="fas fa-chevron-down"></i></span>
+            <span *ngIf="activeProfile === 'owner'"><i class="fas fa-chevron-up"></i> {{ t('LANDING.PROFILES.SELECTED') }}</span>
+          </div>
+        </div>
       </div>
 
-      <div class="bg-white p-6 rounded-xl shadow-lg card-hover scroll-animate-scale">
-        <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mb-4">
-          <i class="fas fa-calendar-times text-orange-600 text-xl"></i>
+      <!-- Agent -->
+      <div class="profile-card scroll-animate-scale" style="animation-delay:.1s"
+           [class.profile-card--active]="activeProfile === 'agent'"
+           (click)="selectProfile('agent')">
+        <div class="profile-card__header pcard-agent">
+          <div class="profile-card__icon"><i class="fas fa-briefcase"></i></div>
+          <span class="profile-card__badge">{{ t('LANDING.PROFILES.AGENT.BADGE') }}</span>
         </div>
-        <h3 class="font-bold text-gray-900 mb-2">{{ t('LANDING.PROBLEMS.CARDS.UNTIL_WHEN.TITLE') }}</h3>
-        <p class="text-gray-600 text-sm">{{ t('LANDING.PROBLEMS.CARDS.UNTIL_WHEN.DESCRIPTION') }}</p>
+        <div class="profile-card__body">
+          <h3>{{ t('LANDING.PROFILES.AGENT.TITLE') }}</h3>
+          <p class="profile-card__pain">{{ t('LANDING.PROFILES.AGENT.PAIN_HOOK') }}</p>
+          <ul>
+            <li><i class="fas fa-check-circle text-agent"></i>{{ t('LANDING.PROFILES.AGENT.FEATURE_1') }}</li>
+            <li><i class="fas fa-check-circle text-agent"></i>{{ t('LANDING.PROFILES.AGENT.FEATURE_2') }}</li>
+            <li><i class="fas fa-check-circle text-agent"></i>{{ t('LANDING.PROFILES.AGENT.FEATURE_3') }}</li>
+          </ul>
+          <div class="profile-card__cta pcard-cta--agent">
+            <span *ngIf="activeProfile !== 'agent'">{{ t('LANDING.PROFILES.SEE_MORE') }} <i class="fas fa-chevron-down"></i></span>
+            <span *ngIf="activeProfile === 'agent'"><i class="fas fa-chevron-up"></i> {{ t('LANDING.PROFILES.SELECTED') }}</span>
+          </div>
+        </div>
       </div>
 
-      <div class="bg-white p-6 rounded-xl shadow-lg card-hover scroll-animate-scale">
-        <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-4">
-          <i class="fas fa-file-alt text-red-600 text-xl"></i>
+      <!-- Chercheur -->
+      <div class="profile-card scroll-animate-scale" style="animation-delay:.2s"
+           [class.profile-card--active]="activeProfile === 'seeker'"
+           (click)="selectProfile('seeker')">
+        <div class="profile-card__header pcard-seeker">
+          <div class="profile-card__icon"><i class="fas fa-search-location"></i></div>
+          <span class="profile-card__badge">{{ t('LANDING.PROFILES.SEEKER.BADGE') }}</span>
         </div>
-        <h3 class="font-bold text-gray-900 mb-2">{{ t('LANDING.PROBLEMS.CARDS.NO_PROOF.TITLE') }}</h3>
-        <p class="text-gray-600 text-sm">{{ t('LANDING.PROBLEMS.CARDS.NO_PROOF.DESCRIPTION') }}</p>
+        <div class="profile-card__body">
+          <h3>{{ t('LANDING.PROFILES.SEEKER.TITLE') }}</h3>
+          <p class="profile-card__pain">{{ t('LANDING.PROFILES.SEEKER.PAIN_HOOK') }}</p>
+          <ul>
+            <li><i class="fas fa-check-circle text-seeker"></i>{{ t('LANDING.PROFILES.SEEKER.FEATURE_1') }}</li>
+            <li><i class="fas fa-check-circle text-seeker"></i>{{ t('LANDING.PROFILES.SEEKER.FEATURE_2') }}</li>
+            <li><i class="fas fa-check-circle text-seeker"></i>{{ t('LANDING.PROFILES.SEEKER.FEATURE_3') }}</li>
+          </ul>
+          <div class="profile-card__cta pcard-cta--seeker">
+            <span *ngIf="activeProfile !== 'seeker'">{{ t('LANDING.PROFILES.SEE_MORE') }} <i class="fas fa-chevron-down"></i></span>
+            <span *ngIf="activeProfile === 'seeker'"><i class="fas fa-chevron-up"></i> {{ t('LANDING.PROFILES.SELECTED') }}</span>
+          </div>
+        </div>
       </div>
 
-      <div class="bg-white p-6 rounded-xl shadow-lg card-hover scroll-animate-scale">
-        <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-          <i class="fas fa-brain text-gray-600 text-xl"></i>
-        </div>
-        <h3 class="font-bold text-gray-900 mb-2">{{ t('LANDING.PROBLEMS.CARDS.MENTAL_MANAGEMENT.TITLE') }}</h3>
-        <p class="text-gray-600 text-sm">{{ t('LANDING.PROBLEMS.CARDS.MENTAL_MANAGEMENT.DESCRIPTION') }}</p>
+    </div>
+
+    <div class="manager-note-wrapper scroll-animate">
+      <div class="manager-note">
+        <i class="fas fa-user-tie"></i>
+        <span>
+          <strong>{{ t('LANDING.PROFILES.MANAGER.TITLE') }}</strong>
+          {{ t('LANDING.PROFILES.MANAGER.DESCRIPTION') }}
+        </span>
       </div>
     </div>
 
-    <div class="text-center mt-12">
-      <div class="bg-red-50 border border-red-200 rounded-xl p-6 max-w-2xl mx-auto">
-        <h3 class="font-bold text-red-800 mb-3 flex items-center justify-center gap-2">
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     CONTENU PAR PROFIL
+═══════════════════════════════════════════════════════════ -->
+<div class="profile-content-wrapper" id="profile-content" *ngIf="activeProfile">
+
+  <!-- ══════════════════════════════
+       PROPRIÉTAIRE
+  ══════════════════════════════ -->
+  <ng-container *ngIf="activeProfile === 'owner'">
+
+    <!-- PROBLÈME — Section choc -->
+    <section class="problem-hero problem-hero--owner deco-bg">
+      <div class="section-inner">
+        <div class="problem-hero__label scroll-animate">
           <i class="fas fa-exclamation-triangle"></i>
-          {{ t('LANDING.PROBLEMS.RESULT.TITLE') }}
-        </h3>
-        <p class="text-red-700">{{ t('LANDING.PROBLEMS.RESULT.DESCRIPTION') }}</p>
-      </div>
-    </div>
-  </div>
-</section>
+          {{ t('LANDING.OWNER_PROBLEM.LABEL') }}
+        </div>
+        <h2 class="problem-hero__title scroll-animate">{{ t('LANDING.OWNER_PROBLEM.TITLE') }}</h2>
+        <p class="problem-hero__subtitle scroll-animate">{{ t('LANDING.OWNER_PROBLEM.SUBTITLE') }}</p>
 
-<!-- ================= SOLUTION ================= -->
-<section id="fonctionnalites" class="py-20">
-  <div class="max-w-7xl mx-auto px-6">
-    <div class="text-center mb-20">
-      <h2 class="text-5xl font-bold text-gray-900 mb-6 scroll-animate">
-        {{ t('LANDING.SOLUTION.TITLE') }}
-      </h2>
-      <p class="text-xl text-gray-600 max-w-3xl mx-auto scroll-animate">
-        {{ t('LANDING.SOLUTION.SUBTITLE') }}
-      </p>
-    </div>
-
-    <div class="space-y-24">
-      <!-- Feature 1: Suivi financier -->
-      <div class="grid lg:grid-cols-2 gap-16 items-center">
-        <div class="scroll-animate-left">
-          <div class="bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold inline-block mb-4">
-            {{ t('LANDING.SOLUTION.FEATURES.FEATURE_1.BADGE') }}
-          </div>
-          <h3 class="text-4xl font-bold mb-6">
-            <span class="gradient-text">{{ t('LANDING.SOLUTION.FEATURES.FEATURE_1.TITLE_PART1') }}</span> {{ t('LANDING.SOLUTION.FEATURES.FEATURE_1.TITLE_PART2') }}
-          </h3>
-          <p class="text-xl text-gray-600 mb-8">
-            {{ t('LANDING.SOLUTION.FEATURES.FEATURE_1.DESCRIPTION') }}
-          </p>
-          <ul class="space-y-4 text-lg">
-            <li class="flex items-center gap-3 scroll-animate">
-              <i class="fas fa-check-circle text-primary"></i>
-              <span>{{ t('LANDING.SOLUTION.FEATURES.FEATURE_1.BENEFITS.MULTI_MONTH') }}</span>
-            </li>
-            <li class="flex items-center gap-3 scroll-animate">
-              <i class="fas fa-check-circle text-primary"></i>
-              <span>{{ t('LANDING.SOLUTION.FEATURES.FEATURE_1.BENEFITS.AUTO_CALCULATION') }}</span>
-            </li>
-            <li class="flex items-center gap-3 scroll-animate">
-              <i class="fas fa-check-circle text-primary"></i>
-              <span>{{ t('LANDING.SOLUTION.FEATURES.FEATURE_1.BENEFITS.AUTO_ALERTS') }}</span>
-            </li>
-            <li class="flex items-center gap-3 scroll-animate">
-              <i class="fas fa-check-circle text-primary"></i>
-              <span>{{ t('LANDING.SOLUTION.FEATURES.FEATURE_1.BENEFITS.SECURE_HISTORY') }}</span>
-            </li>
-          </ul>
-        </div>
-        <div class="scroll-animate-right">
-          <img src="assets/landing/dashbord-revenu.png" alt="Dashboard financier Ndewa360" class="w-full rounded-2xl shadow-2xl hover-lift">
-        </div>
-      </div>
-
-      <!-- Feature 2: Génération automatique -->
-      <div class="grid lg:grid-cols-2 gap-16 items-center">
-        <div class="order-2 lg:order-1 scroll-animate-left">
-          <img src="assets/landing/previsualisaiton-modele-contrat.png" alt="Génération de contrats Ndewa360" class="w-full rounded-2xl shadow-2xl hover-lift">
-        </div>
-        <div class="order-1 lg:order-2 scroll-animate-right">
-          <div class="bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold inline-block mb-4">
-            {{ t('LANDING.SOLUTION.FEATURES.FEATURE_2.BADGE') }}
-          </div>
-          <h3 class="text-4xl font-bold mb-6">
-            <span class="gradient-text">{{ t('LANDING.SOLUTION.FEATURES.FEATURE_2.TITLE_PART1') }}</span> {{ t('LANDING.SOLUTION.FEATURES.FEATURE_2.TITLE_PART2') }}
-          </h3>
-          <p class="text-xl text-gray-600 mb-8">
-            {{ t('LANDING.SOLUTION.FEATURES.FEATURE_2.DESCRIPTION') }}
-          </p>
-          <ul class="space-y-4 text-lg">
-            <li class="flex items-center gap-3 scroll-animate">
-              <i class="fas fa-check-circle text-primary"></i>
-              <span>{{ t('LANDING.SOLUTION.FEATURES.FEATURE_2.BENEFITS.CUSTOM_CONTRACTS') }}</span>
-            </li>
-            <li class="flex items-center gap-3 scroll-animate">
-              <i class="fas fa-check-circle text-primary"></i>
-              <span>{{ t('LANDING.SOLUTION.FEATURES.FEATURE_2.BENEFITS.AUTO_INVOICES') }}</span>
-            </li>
-            <li class="flex items-center gap-3 scroll-animate">
-              <i class="fas fa-check-circle text-primary"></i>
-              <span>{{ t('LANDING.SOLUTION.FEATURES.FEATURE_2.BENEFITS.EMAIL_SENDING') }}</span>
-            </li>
-            <li class="flex items-center gap-3 scroll-animate">
-              <i class="fas fa-check-circle text-primary"></i>
-              <span>{{ t('LANDING.SOLUTION.FEATURES.FEATURE_2.BENEFITS.DIGITAL_ARCHIVE') }}</span>
-            </li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- Feature 3: Contrôle à distance -->
-      <div class="grid lg:grid-cols-2 gap-16 items-center">
-        <div class="slide-left">
-          <div class="bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold inline-block mb-4">
-            {{ t('LANDING.SOLUTION.FEATURES.FEATURE_3.BADGE') }}
-          </div>
-          <h3 class="text-4xl font-bold mb-6">
-            <span class="gradient-text">{{ t('LANDING.SOLUTION.FEATURES.FEATURE_3.TITLE_PART1') }}</span> {{ t('LANDING.SOLUTION.FEATURES.FEATURE_3.TITLE_PART2') }}
-          </h3>
-          <p class="text-xl text-gray-600 mb-8">
-            {{ t('LANDING.SOLUTION.FEATURES.FEATURE_3.DESCRIPTION') }}
-          </p>
-          <ul class="space-y-4 text-lg">
-            <li class="flex items-center gap-3">
-              <i class="fas fa-check-circle text-primary"></i>
-              <span>{{ t('LANDING.SOLUTION.FEATURES.FEATURE_3.BENEFITS.MOBILE_APP') }}</span>
-            </li>
-            <li class="flex items-center gap-3">
-              <i class="fas fa-check-circle text-primary"></i>
-              <span>{{ t('LANDING.SOLUTION.FEATURES.FEATURE_3.BENEFITS.REAL_TIME_SYNC') }}</span>
-            </li>
-            <li class="flex items-center gap-3">
-              <i class="fas fa-check-circle text-primary"></i>
-              <span>{{ t('LANDING.SOLUTION.FEATURES.FEATURE_3.BENEFITS.AUTO_NOTIFICATIONS') }}</span>
-            </li>
-            <li class="flex items-center gap-3">
-              <i class="fas fa-check-circle text-primary"></i>
-              <span>{{ t('LANDING.SOLUTION.FEATURES.FEATURE_3.BENEFITS.SECURE_ACCESS') }}</span>
-            </li>
-          </ul>
-        </div>
-        <div class="slide-right">
-          <div class="bg-gradient-to-br from-primary/10 to-primary/5 p-8 rounded-2xl">
-            <div class="grid grid-cols-2 gap-4">
-              <div class="bg-white p-4 rounded-xl shadow-lg">
-                <i class="fas fa-mobile-alt text-primary text-2xl mb-2"></i>
-                <h4 class="font-bold text-sm">{{ t('LANDING.SOLUTION.FEATURES.FEATURE_3.PLATFORMS.MOBILE.TITLE') }}</h4>
-                <p class="text-xs text-gray-600">{{ t('LANDING.SOLUTION.FEATURES.FEATURE_3.PLATFORMS.MOBILE.DESCRIPTION') }}</p>
-              </div>
-              <div class="bg-white p-4 rounded-xl shadow-lg">
-                <i class="fas fa-laptop text-primary text-2xl mb-2"></i>
-                <h4 class="font-bold text-sm">{{ t('LANDING.SOLUTION.FEATURES.FEATURE_3.PLATFORMS.WEB.TITLE') }}</h4>
-                <p class="text-xs text-gray-600">{{ t('LANDING.SOLUTION.FEATURES.FEATURE_3.PLATFORMS.WEB.DESCRIPTION') }}</p>
-              </div>
-              <div class="bg-white p-4 rounded-xl shadow-lg">
-                <i class="fas fa-cloud text-primary text-2xl mb-2"></i>
-                <h4 class="font-bold text-sm">{{ t('LANDING.SOLUTION.FEATURES.FEATURE_3.PLATFORMS.CLOUD.TITLE') }}</h4>
-                <p class="text-xs text-gray-600">{{ t('LANDING.SOLUTION.FEATURES.FEATURE_3.PLATFORMS.CLOUD.DESCRIPTION') }}</p>
-              </div>
-              <div class="bg-white p-4 rounded-xl shadow-lg">
-                <i class="fas fa-shield-alt text-primary text-2xl mb-2"></i>
-                <h4 class="font-bold text-sm">{{ t('LANDING.SOLUTION.FEATURES.FEATURE_3.PLATFORMS.SECURE.TITLE') }}</h4>
-                <p class="text-xs text-gray-600">{{ t('LANDING.SOLUTION.FEATURES.FEATURE_3.PLATFORMS.SECURE.DESCRIPTION') }}</p>
-              </div>
+        <div class="pain-grid-impact">
+          <div class="pain-card-impact scroll-animate-scale" *ngFor="let pain of ownerPains; let i = index" [style.animation-delay]="(i*.08)+'s'">
+            <div class="pain-card-impact__icon" [ngClass]="pain.bg">
+              <i [class]="pain.icon" [ngClass]="pain.color"></i>
+            </div>
+            <div class="pain-card-impact__content">
+              <h4>{{ t('LANDING.PROBLEMS.CARDS.' + pain.key + '.TITLE') }}</h4>
+              <p>{{ t('LANDING.PROBLEMS.CARDS.' + pain.key + '.DESCRIPTION') }}</p>
             </div>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-</section>
 
-<!-- ================= RECHERCHE & VISITES 360 ================= -->
-<section class="py-20" style="background: linear-gradient(180deg, #ffffff 0%, #FFF7F2 60%, #ffffff 100%)">
-  <div class="max-w-7xl mx-auto px-6">
-
-    <!-- En-tête de section -->
-    <div class="text-center mb-20">
-      <div class="bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold inline-block mb-4 scroll-animate">
-        {{ t('LANDING.DISCOVERY.BADGE') }}
-      </div>
-      <h2 class="text-5xl font-bold text-gray-900 mb-6 scroll-animate">
-        {{ t('LANDING.DISCOVERY.TITLE_PART1') }} <span class="gradient-text">{{ t('LANDING.DISCOVERY.TITLE_PART2') }}</span>
-      </h2>
-      
-      <p class="text-xl text-gray-600 scroll-animate">
-        {{ t('LANDING.DISCOVERY.SUBTITLE') }}
-      </p>
-    </div>
-
-    <!-- Deux colonnes : Propriétaires & Chercheurs -->
-    <div class="grid lg:grid-cols-2 gap-8 mb-20">
-
-      <!-- Colonne Propriétaires / Agents -->
-      <div class="bg-white rounded-2xl shadow-lg p-8 card-hover scroll-animate-left">
-        <div class="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mb-6">
-          <i class="fas fa-building text-primary text-2xl"></i>
-        </div>
-        <div class="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-semibold inline-block mb-4">
-          {{ t('LANDING.DISCOVERY.OWNERS.BADGE') }}
-        </div>
-        <h3 class="text-2xl font-bold text-gray-900 mb-4">
-          {{ t('LANDING.DISCOVERY.OWNERS.TITLE') }}
-        </h3>
-        <p class="text-gray-600 mb-6 leading-relaxed">
-          {{ t('LANDING.DISCOVERY.OWNERS.DESCRIPTION') }}
-        </p>
-        <ul class="space-y-3">
-          <li class="flex items-start gap-3">
-            <i class="fas fa-check-circle text-primary mt-1"></i>
-            <span class="text-gray-700">{{ t('LANDING.DISCOVERY.OWNERS.FEATURES.PUBLISH') }}</span>
-          </li>
-          <li class="flex items-start gap-3">
-            <i class="fas fa-check-circle text-primary mt-1"></i>
-            <span class="text-gray-700">{{ t('LANDING.DISCOVERY.OWNERS.FEATURES.PHOTOS_360') }}</span>
-          </li>
-          <li class="flex items-start gap-3">
-            <i class="fas fa-check-circle text-primary mt-1"></i>
-            <span class="text-gray-700">{{ t('LANDING.DISCOVERY.OWNERS.FEATURES.VISIBILITY') }}</span>
-          </li>
-          <li class="flex items-start gap-3">
-            <i class="fas fa-check-circle text-primary mt-1"></i>
-            <span class="text-gray-700">{{ t('LANDING.DISCOVERY.OWNERS.FEATURES.CONTACT') }}</span>
-          </li>
-        </ul>
-      </div>
-
-      <!-- Colonne Chercheurs -->
-      <div class="bg-white rounded-2xl shadow-lg p-8 card-hover scroll-animate-right">
-        <div class="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mb-6">
-          <i class="fas fa-search-location text-primary text-2xl"></i>
-        </div>
-        <div class="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-semibold inline-block mb-4">
-          {{ t('LANDING.DISCOVERY.SEEKERS.BADGE') }}
-        </div>
-        <h3 class="text-2xl font-bold text-gray-900 mb-4">
-          {{ t('LANDING.DISCOVERY.SEEKERS.TITLE') }}
-        </h3>
-        <p class="text-gray-600 mb-6 leading-relaxed">
-          {{ t('LANDING.DISCOVERY.SEEKERS.DESCRIPTION') }}
-        </p>
-        <ul class="space-y-3">
-          <li class="flex items-start gap-3">
-            <i class="fas fa-check-circle text-primary mt-1"></i>
-            <span class="text-gray-700">{{ t('LANDING.DISCOVERY.SEEKERS.FEATURES.SEARCH') }}</span>
-          </li>
-          <li class="flex items-start gap-3">
-            <i class="fas fa-check-circle text-primary mt-1"></i>
-            <span class="text-gray-700">{{ t('LANDING.DISCOVERY.SEEKERS.FEATURES.VISIT_360') }}</span>
-          </li>
-          <li class="flex items-start gap-3">
-            <i class="fas fa-check-circle text-primary mt-1"></i>
-            <span class="text-gray-700">{{ t('LANDING.DISCOVERY.SEEKERS.FEATURES.FILTERS') }}</span>
-          </li>
-          <li class="flex items-start gap-3">
-            <i class="fas fa-check-circle text-primary mt-1"></i>
-            <span class="text-gray-700">{{ t('LANDING.DISCOVERY.SEEKERS.FEATURES.CONTACT_OWNER') }}</span>
-          </li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- Fonctionnalité phare : Visite 360° -->
-    <div class="grid lg:grid-cols-2 gap-16 items-center mb-20">
-
-      <!-- Colonne gauche : texte + cartes bénéfices -->
-      <div class="scroll-animate-left">
-        <div class="bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold inline-block mb-4">
-          {{ t('LANDING.DISCOVERY.TOUR_360.BADGE') }}
-        </div>
-        <h3 class="text-4xl font-bold mb-4">
-          <span class="gradient-text">{{ t('LANDING.DISCOVERY.TOUR_360.TITLE_PART1') }}</span><br>{{ t('LANDING.DISCOVERY.TOUR_360.TITLE_PART2') }}
-        </h3>
-        <p class="text-lg text-gray-600 mb-8 leading-relaxed">
-          {{ t('LANDING.DISCOVERY.TOUR_360.DESCRIPTION') }}
-        </p>
-
-        <!-- 4 cartes bénéfices -->
-        <div class="grid grid-cols-2 gap-4 mb-8">
-          <div class="bg-white rounded-xl p-4 shadow-lg border border-gray-100 card-hover scroll-animate-scale">
-            <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center mb-3">
-              <i class="fas fa-street-view text-primary"></i>
-            </div>
-            <h4 class="font-bold text-gray-900 text-sm mb-1">{{ t('LANDING.DISCOVERY.TOUR_360.BENEFIT_CARDS.IMMERSIVE.TITLE') }}</h4>
-            <p class="text-xs text-gray-500">{{ t('LANDING.DISCOVERY.TOUR_360.BENEFIT_CARDS.IMMERSIVE.DESC') }}</p>
+        <!-- Pont émotionnel -->
+        <div class="solution-bridge scroll-animate">
+          <div class="bridge-arrow">
+            <i class="fas fa-arrow-down"></i>
           </div>
-          <div class="bg-white rounded-xl p-4 shadow-lg border border-gray-100 card-hover scroll-animate-scale">
-            <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center mb-3">
-              <i class="fas fa-globe-africa text-primary"></i>
-            </div>
-            <h4 class="font-bold text-gray-900 text-sm mb-1">{{ t('LANDING.DISCOVERY.TOUR_360.BENEFIT_CARDS.REMOTE.TITLE') }}</h4>
-            <p class="text-xs text-gray-500">{{ t('LANDING.DISCOVERY.TOUR_360.BENEFIT_CARDS.REMOTE.DESC') }}</p>
+          <p class="bridge-text">{{ t('LANDING.OWNER_PROBLEM.BRIDGE') }}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SOLUTION — Features -->
+    <section class="features-section bg-white deco-bg">
+      <div class="section-inner">
+        <div class="section-header scroll-animate">
+          <div class="profile-section-badge badge-owner">
+            <i class="fas fa-magic"></i> {{ t('LANDING.OWNER_SECTION.BADGE') }}
           </div>
-          <div class="bg-white rounded-xl p-4 shadow-lg border border-gray-100 card-hover scroll-animate-scale">
-            <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center mb-3">
-              <i class="fas fa-gift text-primary"></i>
-            </div>
-            <h4 class="font-bold text-gray-900 text-sm mb-1">{{ t('LANDING.DISCOVERY.TOUR_360.BENEFIT_CARDS.FREE.TITLE') }}</h4>
-            <p class="text-xs text-gray-500">{{ t('LANDING.DISCOVERY.TOUR_360.BENEFIT_CARDS.FREE.DESC') }}</p>
+          <h2 class="section-title">{{ t('LANDING.OWNER_SECTION.TITLE') }}</h2>
+          <p class="section-subtitle">{{ t('LANDING.OWNER_SECTION.SUBTITLE') }}</p>
+        </div>
+
+        <!-- Feature 1 -->
+        <div class="feature-row scroll-animate">
+          <div class="feature-text">
+            <div class="feature-number">01</div>
+            <div class="feature-badge-label">{{ t('LANDING.SOLUTION.FEATURES.FEATURE_1.BADGE') }}</div>
+            <h3>
+              <span class="gradient-text">{{ t('LANDING.SOLUTION.FEATURES.FEATURE_1.TITLE_PART1') }}</span>
+              {{ t('LANDING.SOLUTION.FEATURES.FEATURE_1.TITLE_PART2') }}
+            </h3>
+            <p>{{ t('LANDING.SOLUTION.FEATURES.FEATURE_1.DESCRIPTION') }}</p>
+            <ul class="feature-list">
+              <li *ngFor="let b of ['MULTI_MONTH','AUTO_CALCULATION','AUTO_ALERTS','SECURE_HISTORY']">
+                <i class="fas fa-check-circle text-primary"></i>
+                {{ t('LANDING.SOLUTION.FEATURES.FEATURE_1.BENEFITS.' + b) }}
+              </li>
+            </ul>
           </div>
-          <div class="bg-white rounded-xl p-4 shadow-lg border border-gray-100 card-hover scroll-animate-scale">
-            <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center mb-3">
-              <i class="fas fa-mobile-alt text-primary"></i>
-            </div>
-            <h4 class="font-bold text-gray-900 text-sm mb-1">{{ t('LANDING.DISCOVERY.TOUR_360.BENEFIT_CARDS.MOBILE.TITLE') }}</h4>
-            <p class="text-xs text-gray-500">{{ t('LANDING.DISCOVERY.TOUR_360.BENEFIT_CARDS.MOBILE.DESC') }}</p>
+          <div class="feature-visual">
+            <img src="assets/landing/dashbord-revenu.png" alt="Dashboard financier" class="feature-img hover-lift">
           </div>
         </div>
 
-        <a [routerLink]="['/' + getCurrentLanguage() + '/search']"
-           class="btn-primary text-white px-8 py-4 rounded-lg font-bold text-lg flex items-center gap-3 inline-flex">
-          <i class="fas fa-search"></i>
-          {{ t('LANDING.DISCOVERY.TOUR_360.CTA') }}
-        </a>
-      </div>
+        <!-- Feature 2 -->
+        <div class="feature-row feature-row--reverse scroll-animate">
+          <div class="feature-visual">
+            <img src="assets/landing/previsualisaiton-modele-contrat.png" alt="Contrats automatiques" class="feature-img hover-lift">
+          </div>
+          <div class="feature-text">
+            <div class="feature-number">02</div>
+            <div class="feature-badge-label">{{ t('LANDING.SOLUTION.FEATURES.FEATURE_2.BADGE') }}</div>
+            <h3>
+              <span class="gradient-text">{{ t('LANDING.SOLUTION.FEATURES.FEATURE_2.TITLE_PART1') }}</span>
+              {{ t('LANDING.SOLUTION.FEATURES.FEATURE_2.TITLE_PART2') }}
+            </h3>
+            <p>{{ t('LANDING.SOLUTION.FEATURES.FEATURE_2.DESCRIPTION') }}</p>
+            <ul class="feature-list">
+              <li *ngFor="let b of ['CUSTOM_CONTRACTS','AUTO_INVOICES','EMAIL_SENDING','DIGITAL_ARCHIVE']">
+                <i class="fas fa-check-circle text-primary"></i>
+                {{ t('LANDING.SOLUTION.FEATURES.FEATURE_2.BENEFITS.' + b) }}
+              </li>
+            </ul>
+          </div>
+        </div>
 
-      <!-- Colonne droite : mockup interactif -->
-      <div class="scroll-animate-right">
-        <div class="relative">
-
-          <!-- Carte principale mockup -->
-          <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
-
-            <!-- Header de la carte -->
-            <div class="bg-gradient-to-r from-primary to-primary-light px-6 py-4 flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <i class="fas fa-search text-white"></i>
-                <span class="text-white font-semibold text-sm">{{ t('LANDING.DISCOVERY.TOUR_360.MOCKUP.SEARCH_LABEL') }}</span>
-              </div>
-              <div class="bg-white/20 text-white px-3 py-1 rounded-full text-xs font-bold">
-                360° LIVE
-              </div>
-            </div>
-
-            <!-- Fenêtre de visite 360 -->
-            <div class="bg-gradient-to-br from-gray-800 to-gray-900 h-44 flex items-center justify-center relative overflow-hidden">
-              <!-- Effet grille perspective -->
-              <div class="absolute inset-0 opacity-10" style="background-image: linear-gradient(rgba(187,137,11,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(187,137,11,0.5) 1px, transparent 1px); background-size: 30px 30px;"></div>
-              <!-- Icône centrale -->
-              <div class="text-center relative z-10">
-                <div class="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-3 border-2 border-primary/40">
-                  <i class="fas fa-street-view text-primary text-3xl"></i>
+        <!-- Feature 3 -->
+        <div class="feature-row scroll-animate">
+          <div class="feature-text">
+            <div class="feature-number">03</div>
+            <div class="feature-badge-label">{{ t('LANDING.SOLUTION.FEATURES.FEATURE_3.BADGE') }}</div>
+            <h3>
+              <span class="gradient-text">{{ t('LANDING.SOLUTION.FEATURES.FEATURE_3.TITLE_PART1') }}</span>
+              {{ t('LANDING.SOLUTION.FEATURES.FEATURE_3.TITLE_PART2') }}
+            </h3>
+            <p>{{ t('LANDING.SOLUTION.FEATURES.FEATURE_3.DESCRIPTION') }}</p>
+            <ul class="feature-list">
+              <li *ngFor="let b of ['MOBILE_APP','REAL_TIME_SYNC','AUTO_NOTIFICATIONS','SECURE_ACCESS']">
+                <i class="fas fa-check-circle text-primary"></i>
+                {{ t('LANDING.SOLUTION.FEATURES.FEATURE_3.BENEFITS.' + b) }}
+              </li>
+            </ul>
+          </div>
+          <div class="feature-visual">
+            <div class="platforms-grid">
+              <div class="platform-card" *ngFor="let p of ['MOBILE','WEB','CLOUD','SECURE']">
+                <div class="platform-icon">
+                  <i class="fas fa-mobile-alt" *ngIf="p==='MOBILE'"></i>
+                  <i class="fas fa-laptop"     *ngIf="p==='WEB'"></i>
+                  <i class="fas fa-cloud"       *ngIf="p==='CLOUD'"></i>
+                  <i class="fas fa-shield-alt"  *ngIf="p==='SECURE'"></i>
                 </div>
-                <p class="text-white font-bold text-sm">{{ t('LANDING.DISCOVERY.TOUR_360.MOCKUP.TOUR_ACTIVE') }}</p>
-                <p class="text-gray-400 text-xs mt-1">{{ t('LANDING.DISCOVERY.TOUR_360.MOCKUP.DRAG_HINT') }}</p>
-              </div>
-              <!-- Points de navigation -->
-              <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
-                <div class="w-2 h-2 bg-primary rounded-full"></div>
-                <div class="w-2 h-2 bg-white/40 rounded-full"></div>
-                <div class="w-2 h-2 bg-white/40 rounded-full"></div>
-                <div class="w-2 h-2 bg-white/40 rounded-full"></div>
+                <strong>{{ t('LANDING.SOLUTION.FEATURES.FEATURE_3.PLATFORMS.' + p + '.TITLE') }}</strong>
+                <span>{{ t('LANDING.SOLUTION.FEATURES.FEATURE_3.PLATFORMS.' + p + '.DESCRIPTION') }}</span>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-            <!-- Infos du bien -->
-            <div class="p-5">
-              <div class="flex items-start justify-between mb-3">
+    <!-- DÉMO PROPRIÉTAIRE -->
+    <section class="demo-section deco-bg">
+      <div class="section-inner">
+        <div class="section-header scroll-animate">
+          <div class="profile-section-badge badge-owner">
+            <i class="fas fa-play-circle"></i> {{ t('LANDING.OWNER_DEMO.BADGE') }}
+          </div>
+          <h2 class="section-title">{{ t('LANDING.OWNER_DEMO.TITLE') }}</h2>
+          <p class="section-subtitle">{{ t('LANDING.OWNER_DEMO.SUBTITLE') }}</p>
+        </div>
+
+        <div class="demo-video-block scroll-animate">
+          <!-- Thumbnail cliquable -->
+          <div class="demo-thumbnail" (click)="openVideoModal()">
+            <img src="assets/landing/dashbord-revenu.png" alt="Démo Ndewa360" class="demo-thumb-img">
+            <div class="demo-play-overlay">
+              <div class="demo-play-btn">
+                <i class="fas fa-play"></i>
+              </div>
+              <span class="demo-play-label">{{ t('LANDING.OWNER_DEMO.PLAY') }}</span>
+            </div>
+            <div class="demo-thumb-badge">
+              <i class="fas fa-clock"></i>
+              {{ t('LANDING.OWNER_DEMO.DURATION') }}
+            </div>
+          </div>
+
+          <!-- Points clés de la démo -->
+          <div class="demo-highlights">
+            <h3 class="demo-highlights__title">{{ t('LANDING.OWNER_DEMO.WHAT_YOU_SEE') }}</h3>
+            <ul class="demo-highlights__list">
+              <li *ngFor="let point of ownerDemoPoints">
+                <div class="demo-highlight-icon"><i [class]="point.icon"></i></div>
                 <div>
-                  <h4 class="font-bold text-gray-900">{{ t('LANDING.DISCOVERY.TOUR_360.PREVIEW.PROPERTY_NAME') }}</h4>
-                  <div class="flex items-center gap-1 text-sm text-gray-500 mt-1">
-                    <i class="fas fa-map-marker-alt text-primary text-xs"></i>
-                    <span>{{ t('LANDING.DISCOVERY.TOUR_360.PREVIEW.LOCATION') }}</span>
-                  </div>
+                  <strong>{{ t('LANDING.OWNER_DEMO.POINTS.' + point.key + '.TITLE') }}</strong>
+                  <span>{{ t('LANDING.OWNER_DEMO.POINTS.' + point.key + '.DESC') }}</span>
                 </div>
-                <div class="text-right">
-                  <div class="text-primary font-bold">{{ t('LANDING.DISCOVERY.TOUR_360.PREVIEW.PRICE') }}</div>
-                  <div class="flex mt-1">
-                    <i class="fas fa-star text-yellow-500 text-xs"></i>
-                    <i class="fas fa-star text-yellow-500 text-xs"></i>
-                    <i class="fas fa-star text-yellow-500 text-xs"></i>
-                    <i class="fas fa-star text-yellow-500 text-xs"></i>
-                    <i class="fas fa-star text-yellow-500 text-xs"></i>
-                  </div>
+              </li>
+            </ul>
+            <a [routerLink]="['/' + getCurrentLanguage() + '/onboarding']" [queryParams]="{type:'owner'}"
+               class="demo-cta-btn">
+              <i class="fas fa-rocket"></i> {{ t('LANDING.OWNER_DEMO.CTA') }}
+            </a>
+            <p class="demo-cta-note">{{ t('LANDING.OWNER_DEMO.CTA_NOTE') }}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TÉMOIGNAGES -->
+    <section class="testimonials-section deco-grid">
+      <div class="section-inner">
+        <div class="section-header scroll-animate">
+          <div class="profile-section-badge badge-owner"><i class="fas fa-quote-left"></i> {{ t('LANDING.TESTIMONIALS.BADGE') }}</div>
+          <h2 class="section-title">{{ t('LANDING.TESTIMONIALS.TITLE') }}</h2>
+          <p class="section-subtitle">{{ t('LANDING.TESTIMONIALS.SUBTITLE') }}</p>
+        </div>
+        <div class="testimonials-grid">
+          <div class="testimonial-card scroll-animate-scale" *ngFor="let t_ of ['TESTIMONIAL_1','TESTIMONIAL_2']; let i = index" [style.animation-delay]="(i*.12)+'s'">
+            <div class="testimonial-quote-mark">"</div>
+            <p class="testimonial-quote">{{ t('LANDING.TESTIMONIALS.' + t_ + '.QUOTE') }}</p>
+            <div class="testimonial-footer">
+              <div class="testimonial-avatar">{{ t('LANDING.TESTIMONIALS.' + t_ + '.INITIALS') }}</div>
+              <div>
+                <div class="testimonial-name">{{ t('LANDING.TESTIMONIALS.' + t_ + '.NAME') }}</div>
+                <div class="testimonial-role">
+                  <span class="profile-pill pill-owner">{{ t('LANDING.PROFILES.OWNER.BADGE') }}</span>
+                  {{ t('LANDING.TESTIMONIALS.' + t_ + '.LOCATION') }}
                 </div>
               </div>
-              <!-- Tags du bien -->
-              <div class="flex gap-2 flex-wrap">
-                <span class="bg-primary/10 text-primary text-xs px-2 py-1 rounded-full font-medium">
-                  <i class="fas fa-utensils mr-1"></i>{{ t('LANDING.DISCOVERY.TOUR_360.MOCKUP.TAGS.KITCHEN') }}
-                </span>
-                <span class="bg-primary/10 text-primary text-xs px-2 py-1 rounded-full font-medium">
-                  <i class="fas fa-shower mr-1"></i>{{ t('LANDING.DISCOVERY.TOUR_360.MOCKUP.TAGS.SHOWER') }}
-                </span>
-                <span class="bg-primary/10 text-primary text-xs px-2 py-1 rounded-full font-medium">
-                  <i class="fas fa-car mr-1"></i>{{ t('LANDING.DISCOVERY.TOUR_360.MOCKUP.TAGS.PARKING') }}
-                </span>
-              </div>
+              <div class="testimonial-stars"><i class="fas fa-star" *ngFor="let s of [1,2,3,4,5]"></i></div>
+            </div>
+            <div class="testimonial-highlight">
+              <i class="fas fa-check-circle"></i>{{ t('LANDING.TESTIMONIALS.' + t_ + '.HIGHLIGHT') }}
             </div>
           </div>
-
-          <!-- Badge flottant haut-gauche -->
-          <div class="absolute -top-4 -left-4 bg-white rounded-xl shadow-lg px-4 py-3 flex items-center gap-2">
-            <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-              <i class="fas fa-check text-green-600 text-xs"></i>
-            </div>
-            <div>
-              <div class="text-xs font-bold text-gray-900">{{ t('LANDING.DISCOVERY.TOUR_360.MOCKUP.BADGE_VERIFIED.TITLE') }}</div>
-              <div class="text-xs text-gray-500">{{ t('LANDING.DISCOVERY.TOUR_360.MOCKUP.BADGE_VERIFIED.SUBTITLE') }}</div>
-            </div>
+        </div>
+        <div class="stats-row scroll-animate">
+          <div class="stat-item">
+            <div class="stat-value">{{ t('LANDING.TESTIMONIALS.STATS.TIME_SAVED.VALUE') }}</div>
+            <div class="stat-label">{{ t('LANDING.TESTIMONIALS.STATS.TIME_SAVED.LABEL') }}</div>
           </div>
-
-          <!-- Badge flottant bas-droite -->
-          <div class="absolute -bottom-4 -right-4 bg-white rounded-xl shadow-lg px-4 py-3 flex items-center gap-2">
-            <div class="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
-              <i class="fas fa-eye text-primary text-xs"></i>
-            </div>
-            <div>
-              <div class="text-xs font-bold text-gray-900">{{ t('LANDING.DISCOVERY.TOUR_360.MOCKUP.BADGE_VIEWS.TITLE') }}</div>
-              <div class="text-xs text-gray-500">{{ t('LANDING.DISCOVERY.TOUR_360.MOCKUP.BADGE_VIEWS.SUBTITLE') }}</div>
-            </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <div class="stat-value">{{ t('LANDING.TESTIMONIALS.STATS.ON_TIME_PAYMENTS.VALUE') }}</div>
+            <div class="stat-label">{{ t('LANDING.TESTIMONIALS.STATS.ON_TIME_PAYMENTS.LABEL') }}</div>
           </div>
-
-        </div>
-      </div>
-    </div>
-
-    <!-- Chiffres clés -->
-    <div class="bg-white rounded-2xl shadow-lg p-8 scroll-animate">
-      <div class="grid md:grid-cols-4 gap-8 text-center">
-        <div>
-          <div class="text-4xl font-bold text-primary mb-2">5+</div> 
-          <div class="text-gray-600 text-sm">{{ t('LANDING.DISCOVERY.STATS.CITIES.LABEL') }}</div>
-        </div>
-        <div>
-          <div class="text-4xl font-bold text-primary mb-2">50+</div>
-          <div class="text-gray-600 text-sm">{{ t('LANDING.DISCOVERY.STATS.LISTINGS.LABEL') }}</div>
-        </div>
-        <div>
-          <div class="text-4xl font-bold text-primary mb-2">360°</div>
-          <div class="text-gray-600 text-sm">{{ t('LANDING.DISCOVERY.STATS.TOURS.LABEL') }}</div>
-        </div>
-        <div>
-          <div class="text-4xl font-bold text-primary mb-2">100%</div>
-          <div class="text-gray-600 text-sm">{{ t('LANDING.DISCOVERY.STATS.FREE.LABEL') }}</div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<!-- ================= TEMOIGNAGES ================= -->
-<section id="temoignages" class="bg-gray-50 py-20">
-  <div class="max-w-7xl mx-auto px-6">
-    <div class="text-center mb-16">
-      <h2 class="text-4xl font-bold text-gray-900 mb-6 scroll-animate">
-        {{ t('LANDING.TESTIMONIALS.TITLE') }}
-      </h2>
-      <p class="text-xl text-gray-600 scroll-animate">
-        {{ t('LANDING.TESTIMONIALS.SUBTITLE') }}
-      </p>
-    </div>
-
-    <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-      <div class="bg-white p-8 rounded-2xl shadow-lg card-hover scroll-animate-scale">
-        <div class="flex items-center mb-6">
-          <div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center text-white font-bold text-lg">MT</div>
-          <div class="ml-4">
-            <h4 class="font-bold text-gray-900">{{ t('LANDING.TESTIMONIALS.TESTIMONIAL_1.NAME') }}</h4>
-            <p class="text-gray-600">{{ t('LANDING.TESTIMONIALS.TESTIMONIAL_1.LOCATION') }}</p>
-          </div>
-        </div>
-        <div class="flex mb-4">
-          <i class="fas fa-star text-yellow-500"></i>
-          <i class="fas fa-star text-yellow-500"></i>
-          <i class="fas fa-star text-yellow-500"></i>
-          <i class="fas fa-star text-yellow-500"></i>
-          <i class="fas fa-star text-yellow-500"></i>
-        </div>
-        <p class="text-gray-700 italic mb-4">
-          "{{ t('LANDING.TESTIMONIALS.TESTIMONIAL_1.QUOTE') }}"
-        </p>
-        <div class="bg-green-50 p-3 rounded-lg">
-          <p class="text-green-800 font-semibold text-sm">
-            <i class="fas fa-file-contract mr-2"></i>{{ t('LANDING.TESTIMONIALS.TESTIMONIAL_1.HIGHLIGHT') }}
-          </p>
-        </div>
-      </div>
-
-      <div class="bg-white p-8 rounded-2xl shadow-lg card-hover scroll-animate-scale">
-        <div class="flex items-center mb-6">
-          <div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center text-white font-bold text-lg">SN</div>
-          <div class="ml-4">
-            <h4 class="font-bold text-gray-900">{{ t('LANDING.TESTIMONIALS.TESTIMONIAL_2.NAME') }}</h4>
-            <p class="text-gray-600">{{ t('LANDING.TESTIMONIALS.TESTIMONIAL_2.LOCATION') }}</p>
-          </div>
-        </div>
-        <div class="flex mb-4">
-          <i class="fas fa-star text-yellow-500"></i>
-          <i class="fas fa-star text-yellow-500"></i>
-          <i class="fas fa-star text-yellow-500"></i>
-          <i class="fas fa-star text-yellow-500"></i>
-          <i class="fas fa-star text-yellow-500"></i>
-        </div>
-        <p class="text-gray-700 italic mb-4">
-          "{{ t('LANDING.TESTIMONIALS.TESTIMONIAL_2.QUOTE') }}"
-        </p>
-        <div class="bg-blue-50 p-3 rounded-lg">
-          <p class="text-blue-800 font-semibold text-sm">
-            <i class="fas fa-bed mr-2"></i>{{ t('LANDING.TESTIMONIALS.TESTIMONIAL_2.HIGHLIGHT') }}
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <div class="text-center mt-12">
-      <div class="bg-primary/10 border border-primary/20 rounded-xl p-6 max-w-2xl mx-auto">
-        <h3 class="font-bold text-primary mb-3">
-          <i class="fas fa-chart-line mr-2"></i>
-          {{ t('LANDING.TESTIMONIALS.STATS.TITLE') }}
-        </h3>
-        <div class="grid grid-cols-3 gap-4 text-center">
-          <div>
-            <div class="text-2xl font-bold text-primary">{{ t('LANDING.TESTIMONIALS.STATS.TIME_SAVED.VALUE') }}</div>
-            <div class="text-sm text-gray-600">{{ t('LANDING.TESTIMONIALS.STATS.TIME_SAVED.LABEL') }}</div>
-          </div>
-          <div>
-            <div class="text-2xl font-bold text-primary">{{ t('LANDING.TESTIMONIALS.STATS.ON_TIME_PAYMENTS.VALUE') }}</div>
-            <div class="text-sm text-gray-600">{{ t('LANDING.TESTIMONIALS.STATS.ON_TIME_PAYMENTS.LABEL') }}</div>
-          </div>
-          <div>
-            <div class="text-2xl font-bold text-primary">{{ t('LANDING.TESTIMONIALS.STATS.TENANT_CONFLICTS.VALUE') }}</div>
-            <div class="text-sm text-gray-600">{{ t('LANDING.TESTIMONIALS.STATS.TENANT_CONFLICTS.LABEL') }}</div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <div class="stat-value">{{ t('LANDING.TESTIMONIALS.STATS.TENANT_CONFLICTS.VALUE') }}</div>
+            <div class="stat-label">{{ t('LANDING.TESTIMONIALS.STATS.TENANT_CONFLICTS.LABEL') }}</div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-</section>
+    </section>
 
-<!-- ================= TARIFS ================= -->
-<section id="tarifs" class="py-20">
-  <div class="max-w-7xl mx-auto px-6">
-    <div class="text-center mb-16">
-      <h2 class="text-4xl font-bold text-gray-900 mb-6 slide-up">
-        {{ t('LANDING.PRICING.TITLE') }}
-      </h2>
-      <p class="text-xl text-gray-600 slide-up" style="animation-delay: 0.2s">
-        {{ t('LANDING.PRICING.SUBTITLE') }}
-      </p>
-    </div>
-
-    <div class="grid lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
-      <!-- Plan Freemium -->
-      <div class="bg-white p-8 rounded-2xl shadow-lg border-2 border-gray-200 card-hover slide-left">
-        <div class="text-center mb-8">
-          <h3 class="text-2xl font-bold text-gray-900 mb-2">{{ t('LANDING.PRICING.FREEMIUM.TITLE') }}</h3>
-          <div class="text-5xl font-bold text-gray-900 mb-2">{{ t('LANDING.PRICING.FREEMIUM.PRICE') }}</div>
-          <p class="text-gray-600">{{ t('LANDING.PRICING.FREEMIUM.DESCRIPTION') }}</p>
+    <!-- TARIF -->
+    <section class="pricing-section deco-hex">
+      <div class="section-inner">
+        <div class="section-header scroll-animate">
+          <h2 class="section-title">{{ t('LANDING.PRICING.TITLE') }}</h2>
+          <p class="section-subtitle">{{ t('LANDING.PRICING.OWNER_SUBTITLE') }}</p>
         </div>
-        
-        <div class="mb-8">
-          <h4 class="font-bold text-gray-900 mb-4">{{ t('LANDING.PRICING.FREEMIUM.SUBTITLE') }}</h4>
-          <ul class="space-y-3">
-            <li class="flex items-center gap-3">
-              <i class="fas fa-check text-green-500"></i>
-              <span>{{ t('LANDING.PRICING.FREEMIUM.FEATURES.PROPERTIES') }}</span>
-            </li>
-            <li class="flex items-center gap-3">
-              <i class="fas fa-check text-green-500"></i>
-              <span>{{ t('LANDING.PRICING.FREEMIUM.FEATURES.UNITS') }}</span>
-            </li>
-            <li class="flex items-center gap-3">
-              <i class="fas fa-check text-green-500"></i>
-              <span>{{ t('LANDING.PRICING.FREEMIUM.FEATURES.ALL_FEATURES') }}</span>
-            </li>
-            <li class="flex items-center gap-3">
-              <i class="fas fa-check text-green-500"></i>
-              <span>{{ t('LANDING.PRICING.FREEMIUM.FEATURES.EMAIL_SUPPORT') }}</span>
-            </li>
-          </ul>
+        <div class="pricing-grid">
+          <div class="pricing-card scroll-animate-scale">
+            <div class="pricing-plan-name">{{ t('LANDING.PRICING.FREEMIUM.TITLE') }}</div>
+            <div class="pricing-amount">{{ t('LANDING.PRICING.FREEMIUM.PRICE') }}</div>
+            <p class="pricing-desc">{{ t('LANDING.PRICING.FREEMIUM.DESCRIPTION') }}</p>
+            <ul class="pricing-features">
+              <li><i class="fas fa-check text-green-500"></i>{{ t('LANDING.PRICING.FREEMIUM.FEATURES.PROPERTIES') }}</li>
+              <li><i class="fas fa-check text-green-500"></i>{{ t('LANDING.PRICING.FREEMIUM.FEATURES.UNITS') }}</li>
+              <li><i class="fas fa-check text-green-500"></i>{{ t('LANDING.PRICING.FREEMIUM.FEATURES.ALL_FEATURES') }}</li>
+              <li><i class="fas fa-check text-green-500"></i>{{ t('LANDING.PRICING.FREEMIUM.FEATURES.EMAIL_SUPPORT') }}</li>
+            </ul>
+            <a [routerLink]="['/' + getCurrentLanguage() + '/auth/signup']" [queryParams]="{plan:'free'}"
+               class="pricing-btn pricing-btn--secondary">{{ t('LANDING.PRICING.FREEMIUM.BUTTON') }}</a>
+          </div>
+          <div class="pricing-card pricing-card--premium scroll-animate-scale" style="animation-delay:.1s">
+            <div class="pricing-recommended">{{ t('LANDING.PRICING.PREMIUM.BADGE') }}</div>
+            <div class="pricing-plan-name">{{ t('LANDING.PRICING.PREMIUM.TITLE') }}</div>
+            <div class="pricing-amount-premium">{{ t('LANDING.PRICING.PREMIUM.PRICE') }}</div>
+            <p class="pricing-desc">{{ t('LANDING.PRICING.PREMIUM.DESCRIPTION') }}</p>
+            <p class="pricing-note">{{ t('LANDING.PRICING.PREMIUM.SUBTITLE_1') }}</p>
+            <ul class="pricing-features pricing-features--premium">
+              <li><i class="fas fa-check"></i>{{ t('LANDING.PRICING.PREMIUM.FEATURES.UNLIMITED_PROPERTIES') }}</li>
+              <li><i class="fas fa-check"></i>{{ t('LANDING.PRICING.PREMIUM.FEATURES.UNLIMITED_UNITS') }}</li>
+              <li><i class="fas fa-check"></i>{{ t('LANDING.PRICING.PREMIUM.FEATURES.ALL_FEATURES') }}</li>
+              <li><i class="fas fa-check"></i>{{ t('LANDING.PRICING.PREMIUM.FEATURES.PRIORITY_SUPPORT') }}</li>
+              <li><i class="fas fa-check"></i>{{ t('LANDING.PRICING.PREMIUM.FEATURES.PERSONAL_TRAINING') }}</li>
+            </ul>
+            <a [routerLink]="['/' + getCurrentLanguage() + '/onboarding']" [queryParams]="{type:'owner', plan:'trial'}"
+               class="pricing-btn pricing-btn--primary"><i class="fas fa-rocket"></i>{{ t('LANDING.PRICING.PREMIUM.BUTTON') }}</a>
+          </div>
         </div>
-
-        <a [routerLink]="['/' + getCurrentLanguage() + '/auth/signup']" [queryParams]="{plan: 'free'}" class="w-full bg-gray-100 text-gray-800 py-4 px-6 rounded-lg font-bold text-center hover:bg-gray-200 transition-colors block">
-          {{ t('LANDING.PRICING.FREEMIUM.BUTTON') }}
-        </a>
-      </div>
-
-      <!-- Plan Premium -->
-      <div class="bg-gradient-to-br from-primary to-primary-light text-white p-8 rounded-2xl shadow-2xl border-2 border-primary card-hover slide-right relative" style="animation-delay: 0.2s">
-        <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-white text-primary px-6 py-2 rounded-full text-sm font-bold">
-          {{ t('LANDING.PRICING.PREMIUM.BADGE') }}
-        </div>
-        
-        <div class="text-center mb-8">
-          <h3 class="text-2xl font-bold mb-2">{{ t('LANDING.PRICING.PREMIUM.TITLE') }}</h3>
-          <div class="text-5xl font-bold mb-2">{{ t('LANDING.PRICING.PREMIUM.PRICE') }}</div>
-          <p class="opacity-90">{{ t('LANDING.PRICING.PREMIUM.DESCRIPTION') }}</p>
-          <p class="text-sm opacity-75 mt-2">{{ t('LANDING.PRICING.PREMIUM.SUBTITLE_1') }}</p>
-        </div>
-        
-        <div class="mb-8">
-          <h4 class="font-bold mb-4">{{ t('LANDING.PRICING.PREMIUM.SUBTITLE_2') }}</h4>
-          <ul class="space-y-3">
-            <li class="flex items-center gap-3">
-              <i class="fas fa-check text-white"></i>
-              <span>{{ t('LANDING.PRICING.PREMIUM.FEATURES.UNLIMITED_PROPERTIES') }}</span>
-            </li>
-            <li class="flex items-center gap-3">
-              <i class="fas fa-check text-white"></i>
-              <span>{{ t('LANDING.PRICING.PREMIUM.FEATURES.UNLIMITED_UNITS') }}</span>
-            </li>
-            <li class="flex items-center gap-3">
-              <i class="fas fa-check text-white"></i>
-              <span>{{ t('LANDING.PRICING.PREMIUM.FEATURES.ALL_FEATURES') }}</span>
-            </li>
-            <li class="flex items-center gap-3">
-              <i class="fas fa-check text-white"></i>
-              <span>{{ t('LANDING.PRICING.PREMIUM.FEATURES.PRIORITY_SUPPORT') }}</span>
-            </li>
-            <li class="flex items-center gap-3">
-              <i class="fas fa-check text-white"></i>
-              <span>{{ t('LANDING.PRICING.PREMIUM.FEATURES.PERSONAL_TRAINING') }}</span>
-            </li>
-          </ul>
-        </div>
-
-        <a [routerLink]="['/' + getCurrentLanguage() + '/auth/signup']" [queryParams]="{plan: 'trial'}" class="w-full bg-white text-primary py-4 px-6 rounded-lg font-bold text-center hover:bg-gray-100 transition-colors block">
-          <i class="fas fa-rocket mr-2"></i>{{ t('LANDING.PRICING.PREMIUM.BUTTON') }}
-        </a>
-      </div>
-    </div>
-
-    <!-- Bandeau de confiance -->
-    <div class="max-w-5xl mx-auto mt-8 mb-4">
-      <div class="bg-white border border-gray-100 rounded-xl shadow-sm px-6 py-4">
-        <div class="flex flex-col sm:flex-row items-center justify-center gap-6 text-sm text-gray-600">
-          <span class="flex items-center gap-2">
-            <i class="fas fa-credit-card text-green-500"></i>
-            {{ t('LANDING.CTA.GUARANTEES.NO_CARD') }}
-          </span>
-          <span class="hidden sm:block text-gray-300">|</span>
-          <span class="flex items-center gap-2">
-            <i class="fas fa-star text-primary"></i>
-            {{ t('LANDING.PRICING.PREMIUM.FEATURES.ALL_FEATURES') }}
-          </span>
-          <span class="hidden sm:block text-gray-300">|</span>
-          <span class="flex items-center gap-2">
-            <i class="fas fa-undo text-blue-500"></i>
-            {{ t('LANDING.PRICING.GUARANTEE.TITLE') }}
-          </span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Garantie -->
-    <div class="text-center mt-8">
-      <div class="bg-blue-50 border border-blue-200 rounded-xl p-6 max-w-lg mx-auto">
-        <h4 class="font-bold text-blue-800 mb-2 flex items-center justify-center gap-2">
+        <div class="guarantee-box scroll-animate">
           <i class="fas fa-clock"></i>
-          {{ t('LANDING.PRICING.GUARANTEE.TITLE') }}
-        </h4>
-        <p class="text-blue-700">{{ t('LANDING.PRICING.GUARANTEE.DESCRIPTION') }}</p>
+          <div>
+            <strong>{{ t('LANDING.PRICING.GUARANTEE.TITLE') }}</strong>
+            <p>{{ t('LANDING.PRICING.GUARANTEE.DESCRIPTION') }}</p>
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
 
-  </div>
-</section>
-
-<!-- ================= FAQ ================= -->
-<section id="faq" class="bg-gray-50 py-20">
-  <div class="max-w-4xl mx-auto px-6">
-    <div class="text-center mb-16">
-      <h2 class="text-4xl font-bold text-gray-900 mb-6 slide-up">{{ t('LANDING.FAQ.TITLE') }}</h2>
-      <p class="text-xl text-gray-600 slide-up" style="animation-delay: 0.2s">
-        {{ t('LANDING.FAQ.SUBTITLE') }}
-      </p>
-    </div>
-
-    <div class="space-y-6">
-      <div class="bg-white rounded-2xl shadow-lg p-8 hover-lift slide-up">
-        <h3 class="font-bold text-xl text-gray-900 mb-3 flex items-center gap-3">
-          <i class="fas fa-mobile-alt text-primary"></i>
-          {{ t('LANDING.FAQ.QUESTIONS.ACCESS.QUESTION') }}
-        </h3>
-        <p class="text-gray-600">
-          {{ t('LANDING.FAQ.QUESTIONS.ACCESS.ANSWER') }}
-        </p>
+    <!-- FAQ -->
+    <section class="faq-section deco-grid">
+      <div class="section-inner faq-inner">
+        <div class="section-header scroll-animate">
+          <h2 class="section-title">{{ t('LANDING.FAQ.TITLE') }}</h2>
+        </div>
+        <div class="faq-list faq-grid">
+          <div class="faq-item scroll-animate" *ngFor="let faq of ownerFaqs; let i = index" [style.animation-delay]="(i*.08)+'s'">
+            <div class="faq-q"><i [class]="faq.icon + ' text-primary'"></i>{{ t('LANDING.FAQ.QUESTIONS.' + faq.key + '.QUESTION') }}</div>
+            <p class="faq-a">{{ t('LANDING.FAQ.QUESTIONS.' + faq.key + '.ANSWER') }}</p>
+          </div>
+        </div>
       </div>
+    </section>
 
-      <div class="bg-white rounded-2xl shadow-lg p-8 hover-lift slide-up" style="animation-delay: 0.1s">
-        <h3 class="font-bold text-xl text-gray-900 mb-3 flex items-center gap-3">
-          <i class="fas fa-credit-card text-primary"></i>
-          {{ t('LANDING.FAQ.QUESTIONS.PAYMENT.QUESTION') }}
-        </h3>
-        <p class="text-gray-600">
-          {{ t('LANDING.FAQ.QUESTIONS.PAYMENT.ANSWER') }}
-        </p>
+    <!-- CTA -->
+    <section class="cta-section cta-section--owner">
+      <div class="cta-inner text-center">
+        <div class="cta-icon-wrap cta-icon--owner"><i class="fas fa-home"></i></div>
+        <h2 class="cta-title">{{ t('LANDING.CTA.OWNER.TITLE') }}</h2>
+        <p class="cta-subtitle">{{ t('LANDING.CTA.OWNER.SUBTITLE') }}</p>
+        <a [routerLink]="['/' + getCurrentLanguage() + '/onboarding']" [queryParams]="{type:'owner'}" class="cta-btn-main">
+          <i class="fas fa-rocket"></i> {{ t('LANDING.CTA.OWNER.BTN') }}
+        </a>
+        <p class="cta-note">{{ t('LANDING.CTA.OWNER.NOTE') }}</p>
+        <div class="cta-guarantees">
+          <span><i class="fas fa-check-circle"></i>{{ t('LANDING.CTA.GUARANTEES.FREE_FOREVER') }}</span>
+          <span><i class="fas fa-check-circle"></i>{{ t('LANDING.CTA.GUARANTEES.NO_CARD') }}</span>
+          <span><i class="fas fa-check-circle"></i>{{ t('LANDING.CTA.GUARANTEES.SUPPORT_INCLUDED') }}</span>
+        </div>
       </div>
+    </section>
 
-      <div class="bg-white rounded-2xl shadow-lg p-8 hover-lift slide-up" style="animation-delay: 0.2s">
-        <h3 class="font-bold text-xl text-gray-900 mb-3 flex items-center gap-3">
-          <i class="fas fa-lock text-primary"></i>
-          {{ t('LANDING.FAQ.QUESTIONS.SECURITY.QUESTION') }}
-        </h3>
-        <p class="text-gray-600">
-          {{ t('LANDING.FAQ.QUESTIONS.SECURITY.ANSWER') }}
-        </p>
+  </ng-container>
+
+  <!-- ══════════════════════════════
+       AGENT
+  ══════════════════════════════ -->
+  <ng-container *ngIf="activeProfile === 'agent'">
+
+    <!-- PROBLÈME AGENT -->
+    <section class="problem-hero problem-hero--agent deco-bg deco-bg--agent">
+      <div class="section-inner">
+        <div class="problem-hero__label scroll-animate">
+          <i class="fas fa-exclamation-triangle"></i>
+          {{ t('LANDING.AGENT_PROBLEM.LABEL') }}
+        </div>
+        <h2 class="problem-hero__title scroll-animate">{{ t('LANDING.AGENT_PROBLEM.TITLE') }}</h2>
+        <p class="problem-hero__subtitle scroll-animate">{{ t('LANDING.AGENT_PROBLEM.SUBTITLE') }}</p>
+
+        <div class="agent-pain-row scroll-animate">
+          <div class="agent-pain-card" *ngFor="let ap of agentPains; let i = index" [style.animation-delay]="(i*.1)+'s'">
+            <div class="agent-pain-card__icon"><i [class]="ap.icon"></i></div>
+            <p>{{ t('LANDING.AGENT_PROBLEM.PAINS.' + ap.key) }}</p>
+          </div>
+        </div>
+
+        <div class="solution-bridge scroll-animate">
+          <div class="bridge-arrow bridge-arrow--agent"><i class="fas fa-arrow-down"></i></div>
+          <p class="bridge-text bridge-text--agent">{{ t('LANDING.AGENT_PROBLEM.BRIDGE') }}</p>
+        </div>
       </div>
+    </section>
 
-      <div class="bg-white rounded-2xl shadow-lg p-8 hover-lift slide-up" style="animation-delay: 0.3s">
-        <h3 class="font-bold text-xl text-gray-900 mb-3 flex items-center gap-3">
-          <i class="fas fa-download text-primary"></i>
-          {{ t('LANDING.FAQ.QUESTIONS.IMPORT.QUESTION') }}
-        </h3>
-        <p class="text-gray-600">
-          {{ t('LANDING.FAQ.QUESTIONS.IMPORT.ANSWER') }}
-        </p>
+    <!-- SOLUTION AGENT -->
+    <section class="features-section bg-white deco-bg deco-bg--agent">
+      <div class="section-inner">
+        <div class="section-header scroll-animate">
+          <div class="profile-section-badge badge-agent"><i class="fas fa-magic"></i> {{ t('LANDING.AGENT_SECTION.BADGE') }}</div>
+          <h2 class="section-title">{{ t('LANDING.AGENT_SECTION.TITLE') }}</h2>
+          <p class="section-subtitle">{{ t('LANDING.AGENT_SECTION.SUBTITLE') }}</p>
+        </div>
+
+        <div class="feature-row scroll-animate">
+          <div class="feature-text">
+            <div class="feature-number feature-number--agent">01</div>
+            <h3>{{ t('LANDING.AGENT_SECTION.ADVANTAGES_TITLE') }}</h3>
+            <div class="agent-advantages">
+              <div class="advantage-card" *ngFor="let adv of agentAdvantages">
+                <div class="advantage-icon" [ngClass]="adv.bg">
+                  <i [class]="adv.icon" [ngClass]="adv.color"></i>
+                </div>
+                <div>
+                  <strong>{{ t('LANDING.AGENT_SECTION.' + adv.titleKey) }}</strong>
+                  <p>{{ t('LANDING.AGENT_SECTION.' + adv.descKey) }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="feature-visual">
+            <div class="agent-journey-card scroll-animate-right">
+              <div class="journey-card__title">
+                <i class="fas fa-route"></i>
+                {{ t('LANDING.AGENT_SECTION.JOURNEY_TITLE') }}
+              </div>
+              <div class="journey-steps">
+                <div class="journey-step" *ngFor="let step of agentSteps; let i = index; let last = last">
+                  <div class="step-num" [class.step-num--done]="last">
+                    <i class="fas fa-check" *ngIf="last"></i>
+                    <span *ngIf="!last">{{ i + 1 }}</span>
+                  </div>
+                  <div class="step-content">
+                    <strong [class.text-agent]="last">{{ t('LANDING.AGENT_SECTION.STEP_' + (i+1) + '_TITLE') }}</strong>
+                    <span>{{ t('LANDING.AGENT_SECTION.STEP_' + (i+1) + '_DESC') }}</span>
+                  </div>
+                  <div class="step-connector" *ngIf="!last"></div>
+                </div>
+              </div>
+              <div class="journey-result-badge">
+                <i class="fas fa-shield-alt"></i>
+                {{ t('LANDING.AGENT_SECTION.JOURNEY_RESULT') }}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
+    </section>
 
-      <div class="bg-white rounded-2xl shadow-lg p-8 hover-lift slide-up" style="animation-delay: 0.4s">
-        <h3 class="font-bold text-xl text-gray-900 mb-3 flex items-center gap-3">
-          <i class="fas fa-headset text-primary"></i>
-          {{ t('LANDING.FAQ.QUESTIONS.SUPPORT.QUESTION') }}
-        </h3>
-        <p class="text-gray-600">
-          {{ t('LANDING.FAQ.QUESTIONS.SUPPORT.ANSWER') }}
-        </p>
+    <!-- DÉMO AGENT — Formulaire inline -->
+    <section class="agent-demo-section deco-bg deco-bg--agent">
+      <div class="section-inner">
+        <div class="agent-demo-layout">
+
+          <!-- Colonne gauche : arguments -->
+          <div class="agent-demo-pitch scroll-animate">
+            <div class="profile-section-badge badge-agent">
+              <i class="fas fa-calendar-alt"></i> {{ t('LANDING.AGENT_DEMO.SECTION_BADGE') }}
+            </div>
+            <h2 class="agent-demo-title">{{ t('LANDING.AGENT_DEMO.SECTION_TITLE') }}</h2>
+            <p class="agent-demo-subtitle">{{ t('LANDING.AGENT_DEMO.SECTION_SUBTITLE') }}</p>
+
+            <ul class="agent-demo-benefits">
+              <li *ngFor="let b of agentDemoBenefits">
+                <div class="agent-demo-benefit-icon"><i [class]="b.icon"></i></div>
+                <span>{{ t('LANDING.AGENT_DEMO.BENEFITS.' + b.key) }}</span>
+              </li>
+            </ul>
+
+            <div class="agent-demo-social-proof">
+              <div class="agent-demo-sp-avatar">SN</div>
+              <blockquote>{{ t('LANDING.AGENT_DEMO.SOCIAL_PROOF') }}</blockquote>
+            </div>
+          </div>
+
+          <!-- Colonne droite : formulaire -->
+          <div class="agent-demo-form-card scroll-animate-right">
+            <div class="agent-demo-form-header">
+              <div class="agent-demo-form-icon"><i class="fas fa-calendar-check"></i></div>
+              <h3>{{ t('LANDING.AGENT_DEMO.FORM_TITLE') }}</h3>
+              <p>{{ t('LANDING.AGENT_DEMO.MODAL_SUBTITLE') }}</p>
+            </div>
+            <form (ngSubmit)="submitAgentDemoRequest()" class="demo-form">
+              <div class="form-row">
+                <label>{{ t('LANDING.AGENT_DEMO.FIELD_NAME') }} *</label>
+                <input type="text" [(ngModel)]="agentDemoForm.name" name="agentNameInline"
+                       required [placeholder]="t('LANDING.AGENT_DEMO.FIELD_NAME_PLACEHOLDER')" class="form-input">
+              </div>
+              <div class="form-row">
+                <label>{{ t('LANDING.AGENT_DEMO.FIELD_EMAIL') }} *</label>
+                <input type="email" [(ngModel)]="agentDemoForm.email" name="agentEmailInline"
+                       required [placeholder]="t('LANDING.AGENT_DEMO.FIELD_EMAIL_PLACEHOLDER')" class="form-input">
+              </div>
+              <div class="form-row">
+                <label>{{ t('LANDING.AGENT_DEMO.FIELD_PHONE') }} *</label>
+                <input type="tel" [(ngModel)]="agentDemoForm.phone" name="agentPhoneInline"
+                       required [placeholder]="t('LANDING.AGENT_DEMO.FIELD_PHONE_PLACEHOLDER')" class="form-input">
+              </div>
+              <div class="form-grid-2">
+                <div class="form-row">
+                  <label>{{ t('LANDING.AGENT_DEMO.FIELD_AGENCY') }}</label>
+                  <input type="text" [(ngModel)]="agentDemoForm.agency" name="agentAgencyInline"
+                         [placeholder]="t('LANDING.AGENT_DEMO.FIELD_AGENCY_PLACEHOLDER')" class="form-input">
+                </div>
+                <div class="form-row">
+                  <label>{{ t('LANDING.AGENT_DEMO.FIELD_PORTFOLIO') }}</label>
+                  <select [(ngModel)]="agentDemoForm.portfolio" name="agentPortfolioInline" class="form-input">
+                    <option value="">{{ t('LANDING.AGENT_DEMO.FIELD_PORTFOLIO_PLACEHOLDER') }}</option>
+                    <option value="1-5">1 – 5 {{ t('LANDING.AGENT_DEMO.PORTFOLIO_UNIT') }}</option>
+                    <option value="5-20">5 – 20 {{ t('LANDING.AGENT_DEMO.PORTFOLIO_UNIT') }}</option>
+                    <option value="20+">20+ {{ t('LANDING.AGENT_DEMO.PORTFOLIO_UNIT') }}</option>
+                  </select>
+                </div>
+              </div>
+              <button type="submit" [disabled]="isDemoSubmitting" class="demo-submit-btn">
+                <i class="fas fa-paper-plane" *ngIf="!isDemoSubmitting"></i>
+                <svg *ngIf="isDemoSubmitting" class="spin-icon" fill="none" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25"></circle>
+                  <path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" class="opacity-75"></path>
+                </svg>
+                {{ isDemoSubmitting ? t('LANDING.AGENT_DEMO.SUBMITTING') : t('LANDING.AGENT_DEMO.SUBMIT') }}
+              </button>
+              <div *ngIf="demoSubmitted" class="demo-success">
+                <i class="fas fa-check-circle"></i>
+                <strong>{{ t('LANDING.AGENT_DEMO.SUCCESS_TITLE') }}</strong>
+                <p>{{ t('LANDING.AGENT_DEMO.SUCCESS_MSG') }}</p>
+              </div>
+            </form>
+          </div>
+
+        </div>
       </div>
+    </section>
 
-      <div class="bg-white rounded-2xl shadow-lg p-8 hover-lift slide-up" style="animation-delay: 0.5s">
-        <h3 class="font-bold text-xl text-gray-900 mb-3 flex items-center gap-3">
-          <i class="fas fa-globe text-primary"></i>
-          {{ t('LANDING.FAQ.QUESTIONS.COUNTRIES.QUESTION') }}
-        </h3>
-        <p class="text-gray-600">
-          {{ t('LANDING.FAQ.QUESTIONS.COUNTRIES.ANSWER') }}
-        </p>
+    <!-- TARIF AGENT -->
+    <section class="pricing-section deco-hex">
+      <div class="section-inner">
+        <div class="section-header scroll-animate">
+          <h2 class="section-title">{{ t('LANDING.PRICING.TITLE') }}</h2>
+          <p class="section-subtitle">{{ t('LANDING.PRICING.AGENT_SUBTITLE') }}</p>
+        </div>
+        <div class="pricing-grid pricing-grid--single">
+          <div class="pricing-card pricing-card--agent scroll-animate-scale">
+            <div class="pricing-plan-name">{{ t('LANDING.PRICING.AGENT_PLAN.TITLE') }}</div>
+            <div class="pricing-amount agent-price">{{ t('LANDING.PRICING.AGENT_PLAN.PRICE') }}</div>
+            <p class="pricing-desc">{{ t('LANDING.PRICING.AGENT_PLAN.DESCRIPTION') }}</p>
+            <ul class="pricing-features">
+              <li *ngFor="let f of agentPricingFeatures">
+                <i class="fas fa-check text-agent"></i>{{ t('LANDING.PRICING.AGENT_PLAN.FEATURES.' + f) }}
+              </li>
+            </ul>
+            <a [routerLink]="['/' + getCurrentLanguage() + '/onboarding']" [queryParams]="{type:'agent'}"
+               class="pricing-btn pricing-btn--agent"><i class="fas fa-id-badge"></i>{{ t('LANDING.PRICING.AGENT_PLAN.BUTTON') }}</a>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-</section>
+    </section>
 
-<!-- ================= CTA FINAL ================= -->
-<section class="bg-gradient-to-r from-primary to-primary-light text-white py-24">
-  <div class="max-w-5xl mx-auto px-6 text-center">
-    <h2 class="text-4xl md:text-5xl font-bold mb-6 slide-up">
-      {{ t('LANDING.CTA.TITLE') }}
-    </h2>
-    <p class="text-xl mb-8 opacity-90 slide-up" style="animation-delay: 0.2s">
-      {{ t('LANDING.CTA.SUBTITLE') }}
-    </p>
-
-    <div class="flex flex-col sm:flex-row justify-center gap-6 mb-12 slide-up" style="animation-delay: 0.4s">
-      <a [routerLink]="['/' + getCurrentLanguage() + '/auth/signup']" class="bg-white text-primary px-10 py-5 rounded-lg font-bold text-xl hover:bg-gray-100 transition-all duration-300 hover:scale-105 flex items-center justify-center gap-3">
-        <i class="fas fa-rocket"></i>
-        {{ t('LANDING.CTA.BUTTONS.START_FREE') }}
-      </a>
-      <a [routerLink]="['/' + getCurrentLanguage() + '/home/contact']" class="border-2 border-white text-white px-10 py-5 rounded-lg font-bold text-xl hover:bg-white hover:text-primary transition-all duration-300 flex items-center justify-center gap-3">
-        <i class="fas fa-phone"></i>
-        {{ t('LANDING.CTA.BUTTONS.TALK_EXPERT') }}
-      </a>
-    </div>
-
-    <div class="slide-up" style="animation-delay: 0.6s">
-      <div class="flex flex-col sm:flex-row justify-center items-center gap-8 text-lg opacity-90 mb-6">
-        <span class="flex items-center gap-2">
-          <i class="fas fa-check-circle text-green-400"></i>
-          {{ t('LANDING.CTA.GUARANTEES.FREE_FOREVER') }}
-        </span>
-        <span class="flex items-center gap-2">
-          <i class="fas fa-check-circle text-green-400"></i>
-          {{ t('LANDING.CTA.GUARANTEES.NO_CARD') }}
-        </span>
-        <span class="flex items-center gap-2">
-          <i class="fas fa-check-circle text-green-400"></i>
-          {{ t('LANDING.CTA.GUARANTEES.SUPPORT_INCLUDED') }}
-        </span>
+    <!-- FAQ AGENT -->
+    <section class="faq-section deco-grid">
+      <div class="section-inner faq-inner">
+        <div class="section-header scroll-animate">
+          <h2 class="section-title">{{ t('LANDING.FAQ.TITLE') }}</h2>
+        </div>
+        <div class="faq-list faq-grid">
+          <div class="faq-item faq-item--agent scroll-animate" *ngFor="let faq of agentFaqs; let i = index" [style.animation-delay]="(i*.08)+'s'">
+            <div class="faq-q"><i [class]="faq.icon + ' text-agent'"></i>{{ t('LANDING.FAQ.QUESTIONS.' + faq.key + '.QUESTION') }}</div>
+            <p class="faq-a">{{ t('LANDING.FAQ.QUESTIONS.' + faq.key + '.ANSWER') }}</p>
+          </div>
+        </div>
       </div>
-      <div class="flex flex-col sm:flex-row justify-center items-center gap-8 text-sm opacity-75">
-        <span class="flex items-center gap-2">
-          <i class="fas fa-shield-alt"></i>
-          {{ t('LANDING.CTA.TRUST_SIGNALS.GUARANTEE') }}
-        </span>
-        <span class="flex items-center gap-2">
-          <i class="fas fa-star"></i>
-          {{ t('LANDING.CTA.TRUST_SIGNALS.RATING') }}
-        </span>
-        <span class="flex items-center gap-2">
-          <i class="fas fa-users"></i>
-          {{ t('LANDING.CTA.TRUST_SIGNALS.USERS') }}
-        </span>
-      </div>
-    </div>
-  </div>
-</section>
+    </section>
 
-<!-- ================= MODAL VIDÉO ================= -->
-<div id="videoModal" class="video-modal" [class.active]="isVideoModalOpen">
-  <!-- Overlay de fermeture -->
-  <div class="absolute inset-0 bg-black bg-opacity-75 backdrop-blur-sm" (click)="closeVideoModal()"></div>
-  
-  <!-- Contenu du modal -->
-  <div class="relative bg-black rounded-2xl shadow-2xl max-w-5xl max-h-[90vh] mx-4">
-    <!-- Header avec titre et boutons de fermeture -->
-    <div class="flex items-center justify-between p-4 border-b border-gray-700">
-      <h3 class="text-white text-xl font-bold">{{ t('LANDING.VIDEO_MODAL.TITLE') }}</h3>
-      <div class="flex items-center gap-2">
-        <!-- Bouton réduire -->
-        <button (click)="closeVideoModal()" class="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-gray-700 transition-colors" [title]="t('LANDING.VIDEO_MODAL.MINIMIZE')">
-          <i class="fas fa-minus"></i>
-        </button>
-        <!-- Bouton fermer principal -->
-        <button (click)="closeVideoModal()" class="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-red-600 transition-colors" [title]="t('LANDING.VIDEO_MODAL.CLOSE')">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-    </div>
-    
-    <!-- Vidéo -->
-    <div class="relative">
-      <video #modalVideo class="w-full h-auto max-h-[70vh] rounded-b-2xl" controls controlsList="nodownload">
-        <source src="assets/presentation.mp4" type="video/mp4">
-        {{ t('LANDING.VIDEO_MODAL.BROWSER_ERROR') }}
-      </video>
-      
-      <!-- Bouton fermeture flottant (secours) -->
-      <button (click)="closeVideoModal()" class="absolute top-4 right-4 bg-black bg-opacity-50 text-white p-3 rounded-full hover:bg-opacity-75 transition-all duration-300 hover:scale-110" [title]="t('LANDING.VIDEO_MODAL.CLOSE_VIDEO')">
-        <i class="fas fa-times text-lg"></i>
-      </button>
-    </div>
-    
-    <!-- Footer avec informations -->
-    <div class="p-4 bg-gray-900 rounded-b-2xl">
-      <div class="flex items-center justify-between text-sm text-gray-400">
-        <span>{{ t('LANDING.VIDEO_MODAL.DURATION') }}</span>
-        <div class="flex items-center gap-4">
-          <span>{{ t('LANDING.VIDEO_MODAL.CLOSE_ESC') }}</span>
-          <button (click)="closeVideoModal()" class="text-primary hover:text-primary-light font-semibold">
-            {{ t('LANDING.VIDEO_MODAL.CLOSE') }}
+    <!-- CTA AGENT -->
+    <section class="cta-section cta-section--agent">
+      <div class="cta-inner text-center">
+        <div class="cta-icon-wrap cta-icon--agent"><i class="fas fa-briefcase"></i></div>
+        <h2 class="cta-title">{{ t('LANDING.CTA.AGENT.TITLE') }}</h2>
+        <p class="cta-subtitle">{{ t('LANDING.CTA.AGENT.SUBTITLE') }}</p>
+        <div class="cta-dual-btns">
+          <a [routerLink]="['/' + getCurrentLanguage() + '/onboarding']" [queryParams]="{type:'agent'}" class="cta-btn-main cta-btn--agent">
+            <i class="fas fa-id-badge"></i> {{ t('LANDING.CTA.AGENT.BTN_REGISTER') }}
+          </a>
+          <button (click)="openAgentDemoModal()" class="cta-btn-outline">
+            <i class="fas fa-calendar-alt"></i> {{ t('LANDING.CTA.AGENT.BTN_DEMO') }}
           </button>
         </div>
+        <p class="cta-note">{{ t('LANDING.CTA.AGENT.NOTE') }}</p>
       </div>
+    </section>
+
+  </ng-container>
+
+  <!-- ══════════════════════════════
+       CHERCHEUR
+  ══════════════════════════════ -->
+  <ng-container *ngIf="activeProfile === 'seeker'">
+
+    <!-- PROBLÈME CHERCHEUR -->
+    <section class="problem-hero problem-hero--seeker deco-bg deco-bg--seeker">
+      <div class="section-inner">
+        <div class="problem-hero__label scroll-animate">
+          <i class="fas fa-exclamation-triangle"></i>
+          {{ t('LANDING.SEEKER_PROBLEM.LABEL') }}
+        </div>
+        <h2 class="problem-hero__title scroll-animate">{{ t('LANDING.SEEKER_PROBLEM.TITLE') }}</h2>
+        <p class="problem-hero__subtitle scroll-animate">{{ t('LANDING.SEEKER_PROBLEM.SUBTITLE') }}</p>
+
+        <div class="seeker-pain-row scroll-animate">
+          <div class="seeker-pain-card" *ngFor="let sp of seekerPains; let i = index" [style.animation-delay]="(i*.1)+'s'">
+            <div class="seeker-pain-card__icon"><i [class]="sp.icon"></i></div>
+            <p>{{ t('LANDING.SEEKER_PROBLEM.PAINS.' + sp.key) }}</p>
+          </div>
+        </div>
+
+        <div class="solution-bridge scroll-animate">
+          <div class="bridge-arrow bridge-arrow--seeker"><i class="fas fa-arrow-down"></i></div>
+          <p class="bridge-text bridge-text--seeker">{{ t('LANDING.SEEKER_PROBLEM.BRIDGE') }}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SOLUTION CHERCHEUR -->
+    <section class="features-section bg-white deco-bg deco-bg--seeker">
+      <div class="section-inner">
+        <div class="section-header scroll-animate">
+          <div class="profile-section-badge badge-seeker"><i class="fas fa-magic"></i> {{ t('LANDING.SEEKER_SECTION.BADGE') }}</div>
+          <h2 class="section-title">{{ t('LANDING.SEEKER_SECTION.TITLE') }}</h2>
+          <p class="section-subtitle">{{ t('LANDING.SEEKER_SECTION.SUBTITLE') }}</p>
+        </div>
+
+        <div class="feature-row scroll-animate">
+          <div class="feature-text">
+            <div class="seeker-features">
+              <div class="seeker-feat-card" *ngFor="let feat of seekerFeatures">
+                <div class="seeker-feat-icon" [class.seeker-feat-icon--premium]="feat.premium">
+                  <i [class]="feat.icon"></i>
+                </div>
+                <div>
+                  <strong>
+                    {{ t('LANDING.SEEKER_SECTION.' + feat.titleKey) }}
+                    <span class="premium-badge-inline" *ngIf="feat.premium">{{ t('LANDING.SEEKER_SECTION.PREMIUM_BADGE') }}</span>
+                  </strong>
+                  <p>{{ t('LANDING.SEEKER_SECTION.' + feat.descKey) }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="feature-visual">
+            <div class="seeker-mockup scroll-animate-right">
+              <div class="mockup-bar">
+                <div class="mockup-bar__left">
+                  <i class="fas fa-search"></i>
+                  <span>{{ t('LANDING.DISCOVERY.TOUR_360.MOCKUP.SEARCH_LABEL') }}</span>
+                </div>
+                <span class="mockup-360-badge">360° LIVE</span>
+              </div>
+              <div class="mockup-viewer">
+                <div class="mockup-viewer-inner">
+                  <div class="tour-icon-wrap"><i class="fas fa-street-view"></i></div>
+                  <p>{{ t('LANDING.DISCOVERY.TOUR_360.MOCKUP.TOUR_ACTIVE') }}</p>
+                  <small>{{ t('LANDING.DISCOVERY.TOUR_360.MOCKUP.DRAG_HINT') }}</small>
+                </div>
+              </div>
+              <div class="mockup-info-row">
+                <div>
+                  <strong>{{ t('LANDING.DISCOVERY.TOUR_360.PREVIEW.PROPERTY_NAME') }}</strong>
+                  <span><i class="fas fa-map-marker-alt"></i> {{ t('LANDING.DISCOVERY.TOUR_360.PREVIEW.LOCATION') }}</span>
+                </div>
+                <span class="mockup-price">{{ t('LANDING.DISCOVERY.TOUR_360.PREVIEW.PRICE') }}</span>
+              </div>
+              <div class="mockup-verified-badge">
+                <i class="fas fa-shield-check"></i>
+                {{ t('LANDING.DISCOVERY.TOUR_360.MOCKUP.BADGE_VERIFIED.TITLE') }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TARIF CHERCHEUR -->
+    <section class="pricing-section deco-hex">
+      <div class="section-inner">
+        <div class="section-header scroll-animate">
+          <h2 class="section-title">{{ t('LANDING.PRICING.TITLE') }}</h2>
+          <p class="section-subtitle">{{ t('LANDING.PRICING.SEEKER_SUBTITLE') }}</p>
+        </div>
+        <div class="pricing-grid pricing-grid--single">
+          <div class="pricing-card pricing-card--seeker scroll-animate-scale">
+            <div class="pricing-plan-name">{{ t('LANDING.PRICING.SEEKER_PLAN.TITLE') }}</div>
+            <div class="pricing-amount seeker-price">{{ t('LANDING.PRICING.SEEKER_PLAN.PRICE') }}</div>
+            <p class="pricing-desc">{{ t('LANDING.PRICING.SEEKER_PLAN.DESCRIPTION') }}</p>
+            <ul class="pricing-features">
+              <li *ngFor="let f of seekerPricingFeatures">
+                <i class="fas fa-check text-seeker"></i>{{ t('LANDING.PRICING.SEEKER_PLAN.FEATURES.' + f) }}
+              </li>
+            </ul>
+            <a [routerLink]="['/' + getCurrentLanguage() + '/search/index']"
+               class="pricing-btn pricing-btn--seeker"><i class="fas fa-search"></i>{{ t('LANDING.PRICING.SEEKER_PLAN.BUTTON') }}</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ CHERCHEUR -->
+    <section class="faq-section deco-grid">
+      <div class="section-inner faq-inner">
+        <div class="section-header scroll-animate">
+          <h2 class="section-title">{{ t('LANDING.FAQ.TITLE') }}</h2>
+        </div>
+        <div class="faq-list faq-grid">
+          <div class="faq-item faq-item--seeker scroll-animate" *ngFor="let faq of seekerFaqs; let i = index" [style.animation-delay]="(i*.08)+'s'">
+            <div class="faq-q"><i [class]="faq.icon + ' text-seeker'"></i>{{ t('LANDING.FAQ.QUESTIONS.' + faq.key + '.QUESTION') }}</div>
+            <p class="faq-a">{{ t('LANDING.FAQ.QUESTIONS.' + faq.key + '.ANSWER') }}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA CHERCHEUR -->
+    <section class="cta-section cta-section--seeker">
+      <div class="cta-inner text-center">
+        <div class="cta-icon-wrap cta-icon--seeker"><i class="fas fa-search-location"></i></div>
+        <h2 class="cta-title">{{ t('LANDING.CTA.SEEKER.TITLE') }}</h2>
+        <p class="cta-subtitle">{{ t('LANDING.CTA.SEEKER.SUBTITLE') }}</p>
+        <a [routerLink]="['/' + getCurrentLanguage() + '/search']" class="cta-btn-main cta-btn--seeker">
+          <i class="fas fa-search"></i> {{ t('LANDING.CTA.SEEKER.BTN') }}
+        </a>
+        <p class="cta-note">{{ t('LANDING.CTA.SEEKER.NOTE') }}</p>
+      </div>
+    </section>
+
+  </ng-container>
+
+</div><!-- /profile-content-wrapper -->
+
+
+<!-- MODALE DÉMO AGENT -->
+<div class="modal-overlay" [class.modal-overlay--open]="isAgentDemoModalOpen" (click)="closeAgentDemoModal()">
+  <div class="demo-modal" (click)="$event.stopPropagation()">
+    <button class="demo-modal__close" (click)="closeAgentDemoModal()"><i class="fas fa-times"></i></button>
+    <div class="demo-modal__header">
+      <div class="demo-modal__icon"><i class="fas fa-calendar-alt text-agent"></i></div>
+      <h3>{{ t('LANDING.AGENT_DEMO.SECTION_TITLE') }}</h3>
+      <p>{{ t('LANDING.AGENT_DEMO.MODAL_SUBTITLE') }}</p>
+    </div>
+    <form class="demo-form" (ngSubmit)="submitAgentDemoRequest()">
+      <div class="form-row">
+        <label>{{ t('LANDING.AGENT_DEMO.FIELD_NAME') }} *</label>
+        <input type="text" [(ngModel)]="agentDemoForm.name" name="name" required [placeholder]="t('LANDING.AGENT_DEMO.FIELD_NAME_PLACEHOLDER')" class="form-input">
+      </div>
+      <div class="form-row">
+        <label>{{ t('LANDING.AGENT_DEMO.FIELD_EMAIL') }} *</label>
+        <input type="email" [(ngModel)]="agentDemoForm.email" name="email" required [placeholder]="t('LANDING.AGENT_DEMO.FIELD_EMAIL_PLACEHOLDER')" class="form-input">
+      </div>
+      <div class="form-row">
+        <label>{{ t('LANDING.AGENT_DEMO.FIELD_PHONE') }} *</label>
+        <input type="tel" [(ngModel)]="agentDemoForm.phone" name="phone" required [placeholder]="t('LANDING.AGENT_DEMO.FIELD_PHONE_PLACEHOLDER')" class="form-input">
+      </div>
+      <div class="form-row">
+        <label>{{ t('LANDING.AGENT_DEMO.FIELD_AGENCY') }}</label>
+        <input type="text" [(ngModel)]="agentDemoForm.agency" name="agency" [placeholder]="t('LANDING.AGENT_DEMO.FIELD_AGENCY_PLACEHOLDER')" class="form-input">
+      </div>
+      <div class="form-row">
+        <label>{{ t('LANDING.AGENT_DEMO.FIELD_PORTFOLIO') }}</label>
+        <select [(ngModel)]="agentDemoForm.portfolio" name="portfolio" class="form-input">
+          <option value="">{{ t('LANDING.AGENT_DEMO.FIELD_PORTFOLIO_PLACEHOLDER') }}</option>
+          <option value="1-5">1 – 5 {{ t('LANDING.AGENT_DEMO.PORTFOLIO_UNIT') }}</option>
+          <option value="5-20">5 – 20 {{ t('LANDING.AGENT_DEMO.PORTFOLIO_UNIT') }}</option>
+          <option value="20+">20+ {{ t('LANDING.AGENT_DEMO.PORTFOLIO_UNIT') }}</option>
+        </select>
+      </div>
+      <button type="submit" [disabled]="isDemoSubmitting" class="demo-submit-btn">
+        <i class="fas fa-paper-plane" *ngIf="!isDemoSubmitting"></i>
+        <svg *ngIf="isDemoSubmitting" class="spin-icon" fill="none" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25"></circle>
+          <path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" class="opacity-75"></path>
+        </svg>
+        {{ isDemoSubmitting ? t('LANDING.AGENT_DEMO.SUBMITTING') : t('LANDING.AGENT_DEMO.SUBMIT') }}
+      </button>
+      <div *ngIf="demoSubmitted" class="demo-success">
+        <i class="fas fa-check-circle"></i>
+        <strong>{{ t('LANDING.AGENT_DEMO.SUCCESS_TITLE') }}</strong>
+        <p>{{ t('LANDING.AGENT_DEMO.SUCCESS_MSG') }}</p>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL VIDÉO -->
+<div class="modal-overlay video-modal-overlay" [class.modal-overlay--open]="isVideoModalOpen" (click)="closeVideoModal()">
+  <div class="video-modal" (click)="$event.stopPropagation()">
+    <div class="video-modal__header">
+      <h3>{{ t('LANDING.VIDEO_MODAL.TITLE') }}</h3>
+      <button (click)="closeVideoModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <video #modalVideo class="video-modal__player" controls controlsList="nodownload">
+      <source src="assets/presentation.mp4" type="video/mp4">
+    </video>
+    <div class="video-modal__footer">
+      <span>{{ t('LANDING.VIDEO_MODAL.DURATION') }}</span>
+      <button (click)="closeVideoModal()">{{ t('LANDING.VIDEO_MODAL.CLOSE') }}</button>
     </div>
   </div>
 </div>

@@ -1895,7 +1895,17 @@
         "WATCH_DEMO": "Voir la démo"
       },
       "RATING": "4.9/5",
-      "LIVE_DEMO": "Démo en direct"
+      "LIVE_DEMO": "Démo en direct",
+      "BADGE": "Plateforme No1 Afrique",
+      "TRUST": "Approuvé par des centaines de propriétaires",
+      "ILLUS": {
+        "PROPERTIES": "Propriétés",
+        "TENANTS": "Locataires",
+        "COLLECTED": "Recouvrement",
+        "REVENUES": "Revenus mensuels",
+        "CONTRACT_BADGE": "Contrat généré ✔",
+        "MOBILE_BADGE": "Accès mobile 24/7"
+      }
     },
     "PROBLEMS": {
       "TITLE": "Vous reconnaissez-vous dans ces situations ?",
@@ -1990,13 +2000,15 @@
         "NAME": "Madame Tchouamo",
         "LOCATION": "Propriétaire • Banganté",
         "QUOTE": "Grâce à Ndewa360, je ne rédige plus les contrats de locations. Ils sont directement générés en ligne et il me suffit de les envoyer au locataire. En plus de cela, je n'ai plus de soucis à me faire avec un fichier Excel pour reporter les paiements de loyer et les calculer. Tout est désormais très simple et facile.",
-        "HIGHLIGHT": "Contrats automatisés"
+        "HIGHLIGHT": "Contrats automatisés",
+        "INITIALS": "MT"
       },
       "TESTIMONIAL_2": {
         "NAME": "Sévérin Nguendap",
         "LOCATION": "Propriétaire • Dakar, Douala",
         "QUOTE": "N'étant pas sur place pour gérer mon bien je l'ai confié à une personne qui ne m'assurait pas de suivi complet et j'étais perdu le suivi car je ne savais pas exactement qui doit combien et à quelle date. Grâce à Ndewa360, je dors tranquillement désormais car je connais exactement l'état financier de mon bien et de mes locataires.",
-        "HIGHLIGHT": "Tranquillité d'esprit"
+        "HIGHLIGHT": "Tranquillité d'esprit",
+        "INITIALS": "SN"
       },
       "STATS": {
         "TITLE": "Résultats moyens de nos utilisateurs",
@@ -2049,6 +2061,33 @@
       "GUARANTEE": {
         "TITLE": "Aucun engagement — retour au plan gratuit automatique",
         "DESCRIPTION": "60 jours pour tester toutes les fonctionnalités Premium sans aucune carte bancaire. À la fin du trial, retour automatique au plan Freemium."
+      },
+      "OWNER_SUBTITLE": "Des plans adaptes a vos besoins. Vous ne payez que si vous generez des revenus.",
+      "AGENT_SUBTITLE": "Un plan gratuit pour demarrer, extensible selon votre portefeuille.",
+      "SEEKER_SUBTITLE": "La recherche est entierement gratuite. Les coordonnees du proprietaire sont disponibles via un acces premium ponctuel.",
+      "AGENT_PLAN": {
+        "TITLE": "Plan Agent",
+        "PRICE": "Gratuit",
+        "DESCRIPTION": "Pour les agents immobiliers. Jusqu a 5 biens geres en plan gratuit.",
+        "FEATURES": {
+          "MAX_PROPERTIES": "Jusqu a 5 biens geres (plan gratuit)",
+          "ALL_FEATURES": "100% des fonctionnalites de gestion",
+          "VERIFIED_PROFILE": "Profil agence verifie et visible",
+          "EMAIL_SUPPORT": "Support par email"
+        },
+        "BUTTON": "Creer mon profil agent"
+      },
+      "SEEKER_PLAN": {
+        "TITLE": "Acces Standard",
+        "PRICE": "Gratuit",
+        "DESCRIPTION": "La recherche et les visites 360 sont entierement gratuites.",
+        "FEATURES": {
+          "FREE_SEARCH": "Recherche illimitee et gratuite",
+          "TOURS_360": "Visites 360 gratuites",
+          "VERIFIED_LISTINGS": "Annonces verifiees",
+          "PREMIUM_ACCESS": "Coordonnees proprietaire : 500 FCFA / 3 jours"
+        },
+        "BUTTON": "Rechercher un logement"
       }
     },
     "FAQ": {
@@ -2078,6 +2117,30 @@
         "COUNTRIES": {
           "QUESTION": "Ndewa360 fonctionne-t-il dans tous les pays d'Afrique ?",
           "ANSWER": "Oui, Ndewa360 fonctionne dans tous les pays. Les devises, formats de dates et réglementations locales sont pris en compte. Nous avons des utilisateurs au Sénégal, Côte d'Ivoire, Mali, Burkina Faso, Cameroun et bien d'autres pays."
+        },
+        "AGENT_REGISTER": {
+          "QUESTION": "Comment m inscrire en tant qu agent ?",
+          "ANSWER": "Cliquez sur Creer mon profil agent, renseignez vos informations et les details de votre agence. Vous pouvez soumettre vos documents de verification (CNI, carte professionnelle) lors de l inscription."
+        },
+        "AGENT_VALIDATION": {
+          "QUESTION": "Combien de temps prend la validation du profil agent ?",
+          "ANSWER": "Notre equipe examine votre dossier sous 24 a 48h ouvrables. Vous recevrez un email de confirmation des que votre profil est approuve. En attendant votre compte est en mode limite."
+        },
+        "AGENT_PAYMENT": {
+          "QUESTION": "Combien ca coute pour un agent immobilier ?",
+          "ANSWER": "Le plan gratuit permet de gerer jusqu a 5 biens. Au-dela, le plan Premium s applique : 2% du loyer des unites occupees par mois, identique au plan proprietaire."
+        },
+        "SEEKER_SEARCH": {
+          "QUESTION": "Comment chercher un logement sur Ndewa360 ?",
+          "ANSWER": "Depuis la page de recherche, utilisez les filtres (ville, quartier, type, prix, equipements). Tous les logements affiches sont disponibles et geres par des proprietaires ou agents verifies."
+        },
+        "SEEKER_360": {
+          "QUESTION": "Est-ce que je dois payer pour la visite 360 ?",
+          "ANSWER": "Non, les visites immersives 360 sont entierement gratuites. Vous pouvez explorer chaque piece d un logement depuis n importe ou dans le monde."
+        },
+        "SEEKER_PAYMENT": {
+          "QUESTION": "Comment contacter le proprietaire ?",
+          "ANSWER": "Pour 500 FCFA vous accedez aux coordonnees completes (telephone, WhatsApp, email) de tous les proprietaires pendant 3 jours. Un seul paiement pour un acces global."
         }
       }
     },
@@ -2089,14 +2152,36 @@
         "TALK_EXPERT": "Parler à un expert"
       },
       "GUARANTEES": {
-        "FREE_FOREVER": "Gratuit pour toujours (plan Freemium)",
-        "NO_CARD": "Aucune carte bancaire requise",
+        "FREE_FOREVER": "Plan gratuit a vie",
+        "NO_CARD": "Aucune carte requise",
         "SUPPORT_INCLUDED": "Support inclus"
       },
       "TRUST_SIGNALS": {
         "GUARANTEE": "Garantie 60 jours",
         "RATING": "4.9/5 étoiles",
         "USERS": "20+ utilisateurs satisfaits"
+      },
+      "OWNER_BTN": "Je suis proprietaire",
+      "AGENT_BTN": "Je suis agent",
+      "SEEKER_BTN": "Je cherche un logement",
+      "OWNER": {
+        "TITLE": "Pret a reprendre le controle de vos loyers ?",
+        "SUBTITLE": "Rejoignez des centaines de proprietaires qui ont transforme leur gestion immobiliere.",
+        "BTN": "Commencer mon onboarding gratuit",
+        "NOTE": "Gratuit, aucune carte requise"
+      },
+      "AGENT": {
+        "TITLE": "Developpez votre activite avec Ndewa360",
+        "SUBTITLE": "Creez votre profil agent verifie et gerez votre portefeuille professionnellement.",
+        "BTN_REGISTER": "Creer mon compte agent",
+        "BTN_DEMO": "Demander une demo personnalisee",
+        "NOTE": "Validation sous 24-48h apres soumission des documents"
+      },
+      "SEEKER": {
+        "TITLE": "Trouvez votre logement ideal maintenant",
+        "SUBTITLE": "Des centaines de logements verifies avec visites 360 gratuites.",
+        "BTN": "Explorer les logements",
+        "NOTE": "Acces gratuit. Contacts proprietaires : 500 FCFA / 3 jours"
       }
     },
     "VIDEO_MODAL": {
@@ -2203,6 +2288,169 @@
           "LABEL": "Gratuit pour les chercheurs"
         }
       }
+    },
+    "PROFILES": {
+      "TITLE": "Ndewa360 est fait pour vous",
+      "SUBTITLE": "Choisissez votre profil.",
+      "OWNER": {
+        "BADGE": "PROPRIÉTAIRE",
+        "TITLE": "Propriétaire bailleur",
+        "DESCRIPTION": "Gérez loyers, contrats et locataires.",
+        "FEATURE_1": "Suivi des loyers en temps réel",
+        "FEATURE_2": "Contrats et reçus PDF automatiques",
+        "FEATURE_3": "Alertes et rappels automatiques",
+        "CTA": "Commencer gratuitement",
+        "PAIN_HOOK": "Vous ne savez plus qui a payé, jusqu'à quand, ni où sont vos contrats ?"
+      },
+      "AGENT": {
+        "BADGE": "AGENT",
+        "TITLE": "Agent immobilier",
+        "DESCRIPTION": "Créez votre profil vérifié et gérez votre portefeuille.",
+        "FEATURE_1": "Profil agence vérifié et visible",
+        "FEATURE_2": "Gestion pro de votre portefeuille",
+        "FEATURE_3": "Parcours de validation rapide",
+        "CTA": "Créer mon profil agent",
+        "DEMO_TAG": "Demander une démo",
+        "PAIN_HOOK": "Vous gérez 10 mandats dans WhatsApp. Aucun outil pro, aucune crédibilité visible."
+      },
+      "SEEKER": {
+        "BADGE": "CHERCHEUR",
+        "TITLE": "Chercheur de logement",
+        "DESCRIPTION": "Explorez des annonces vérifiées et visitez en 360°.",
+        "FEATURE_1": "Logements vérifiés et réels",
+        "FEATURE_2": "Visites virtuelles 360° gratuites",
+        "FEATURE_3": "Contact direct : 500 FCFA / 3 jours",
+        "CTA": "Rechercher un logement",
+        "PAIN_HOOK": "Vous avez payé un démarcheur pour rien — frais de visite encaissés, pas de logement trouvé."
+      },
+      "MANAGER": {
+        "TITLE": "Gérant de propriété ?",
+        "DESCRIPTION": "Vous êtes invité par un propriétaire. Vous recevrez un lien par email pour accéder à votre espace."
+      },
+      "SEE_MORE": "Voir ce que ça change pour moi",
+      "SELECTED": "Sélectionné"
+    },
+    "OWNER_PROBLEM": {
+      "LABEL": "Le problème que vous vivez chaque mois",
+      "TITLE": "Vous gérez vos biens dans votre tête. Et chaque mois, c'est la même galère.",
+      "SUBTITLE": "Appels en retard, tableaux Excel qui débordent, contrats introuvables... La gestion immobilière manuelle vous coûte du temps, de l'argent et de l'énergie.",
+      "BRIDGE": "Et si tout ça disparaissait demain ?"
+    },
+    "AGENT_PROBLEM": {
+      "LABEL": "Le problème que vivent 90% des agents en Afrique",
+      "TITLE": "Vous êtes sérieux. Mais personne ne le sait encore.",
+      "SUBTITLE": "Sans profil professionnel vérifié, sans outils de suivi, vous gérez vos mandats dans WhatsApp et vos clients ne vous font pas confiance. Ce n'est pas votre faute — vous n'avez pas les outils qu'il vous faut.",
+      "BRIDGE": "Ndewa360 vous donne la crédibilité et les outils que vous méritez.",
+      "PAINS": {
+        "NO_TOOLS": "Vous gérez tout dans WhatsApp ou Excel. Zéro outil de suivi professionnel.",
+        "NO_PROFILE": "Vous n'avez pas de profil visible et vérifié. Vos clients ne savent pas si vous êtes sérieux.",
+        "NO_TRACKING": "Impossible de suivre plusieurs mandats en même temps sans tout mélanger.",
+        "NO_TRUST": "Sans preuve de votre sérieux, vous perdez des clients au profit d'agences établies."
+      }
+    },
+    "SEEKER_PROBLEM": {
+      "LABEL": "Ce que vivent les chercheurs de logement",
+      "TITLE": "Chercher un appartement ne devrait pas être un parcours du combattant.",
+      "SUBTITLE": "Démarcheurs qui encaissent des frais de visite sans garantie, annonces qui n'existent plus, propriétaires injoignables... Trouver un logement sérieux prend des semaines et coûte de l'argent sans résultat.",
+      "BRIDGE": "Ndewa360 vous connecte directement aux bons logements, sans intermédiaire.",
+      "PAINS": {
+        "FAKE_ADS": "Des annonces obsolètes ou inventées — vous vous déplacez pour un logement déjà pris depuis des semaines.",
+        "NO_VISIT": "Un démarcheur vous fait payer des frais de visite. Et si ça ne convient pas, il garde l'argent quand même.",
+        "UNREACHABLE": "Vous payez un intermédiaire qui disparaît sans vous trouver de logement, ou qui vous arnaque purement et simplement.",
+        "WASTED_TIME": "Des semaines de recherche, des dizaines d'appels, de l'argent dépensé — pour finalement rien de sérieux."
+      }
+    },
+    "AGENT_SECTION": {
+      "BADGE": "Pour les agents immobiliers",
+      "TITLE": "Votre agence, enfin outillée comme il se doit.",
+      "SUBTITLE": "Créez votre profil professionnel vérifié, gérez votre portefeuille et développez votre activité avec des outils faits pour vous.",
+      "ADV_1_TITLE": "Profil vérifié & crédible",
+      "ADV_1_DESC": "Votre profil agence est visible publiquement après validation. Logo, description, portfolio — vos clients voient qui vous êtes.",
+      "ADV_2_TITLE": "Gestion multi-biens",
+      "ADV_2_DESC": "Gérez jusqu'à 5 biens en plan gratuit avec toutes les fonctionnalités : locataires, contrats, paiements.",
+      "ADV_3_TITLE": "Statistiques et suivi",
+      "ADV_3_DESC": "Tableau de bord complet. Taux d'occupation, revenus, historique — tout est centralisé.",
+      "ADV_4_TITLE": "Prospection facilitée",
+      "ADV_4_DESC": "Vos biens gérés sont visibles dans la recherche publique. Attirez de nouveaux mandats.",
+      "ADVANTAGES_TITLE": "Ce que Ndewa360 change pour vous",
+      "JOURNEY_TITLE": "Votre parcours d'inscription",
+      "STEP_1_TITLE": "Créez votre compte agent",
+      "STEP_1_DESC": "Email, mot de passe, choix du profil Agent.",
+      "STEP_2_TITLE": "Complétez votre profil agence",
+      "STEP_2_DESC": "Nom d'agence, adresse, description, logo.",
+      "STEP_3_TITLE": "Uploadez vos documents",
+      "STEP_3_DESC": "CNI ou passeport + carte professionnelle ou licence.",
+      "STEP_4_TITLE": "Validation et accès complet",
+      "STEP_4_DESC": "Notre équipe valide votre dossier sous 24-48h.",
+      "JOURNEY_RESULT": "Profil vérifié et visible publiquement"
+    },
+    "SEEKER_SECTION": {
+      "BADGE": "Pour les chercheurs",
+      "TITLE": "Trouvez votre logement",
+      "SUBTITLE": "Annonces verifiees et visites 360.",
+      "FEAT_1_TITLE": "Recherche avancee",
+      "FEAT_1_DESC": "Filtres ville quartier type budget.",
+      "FEAT_2_TITLE": "Visites 360",
+      "FEAT_2_DESC": "Visitez depuis chez vous.",
+      "FEAT_3_TITLE": "Annonces filtrees",
+      "FEAT_3_DESC": "Biens verifies.",
+      "FEAT_4_TITLE": "Contact proprietaire",
+      "FEAT_4_DESC": "500 FCFA pour 3 jours acces.",
+      "PREMIUM_BADGE": "PREMIUM ACCESS",
+      "CTA": "Rechercher un logement",
+      "CTA_SUB": "Gratuit"
+    },
+    "OWNER_DEMO": {
+      "BADGE": "Démo produit",
+      "TITLE": "Voyez Ndewa360 en action en 2 minutes",
+      "SUBTITLE": "Une démo concrète de ce que vous allez utiliser chaque jour : tableau de bord, suivi des loyers, contrats automatiques.",
+      "PLAY": "Lancer la démo",
+      "DURATION": "2 min",
+      "WHAT_YOU_SEE": "Ce que vous allez voir :",
+      "CTA": "Commencer gratuitement",
+      "CTA_NOTE": "Sans carte bancaire — configuration en 2 minutes",
+      "POINTS": {
+        "DASHBOARD": { "TITLE": "Tableau de bord en temps réel", "DESC": "Visualisez qui a payé, les impayés et vos revenus du mois" },
+        "PAYMENT": { "TITLE": "Enregistrement d’un paiement", "DESC": "En 3 clics, un loyer est enregistré et le reçu envoyé par email" },
+        "CONTRACT": { "TITLE": "Génération de contrat PDF", "DESC": "Un contrat complet prêt à signer en quelques secondes" },
+        "ALERT": { "TITLE": "Alertes de relance automatiques", "DESC": "Le système relance vos locataires en retard à votre place" }
+      }
+    },
+    "AGENT_DEMO": {
+      "SECTION_BADGE": "Démo personnalisée",
+      "SECTION_TITLE": "Planifiez votre démo de 20 minutes",
+      "FORM_TITLE": "Planifier une démo de 20 min",
+      "SECTION_SUBTITLE": "Vous gérez un portefeuille de mandats et voulez voir Ndewa360 en action sur votre cas précis ? Notre équipe vous montre exactement ce que la plateforme fait pour vous.",
+      "BENEFITS": {
+        "DURATION": "Démo de 20 minutes adaptée à votre profil agent",
+        "PERSONAL": "Présentation de l’espace agent vérifié et portfolio",
+        "QUESTIONS": "Réponses directes à toutes vos questions",
+        "SETUP": "Accompagnement à la configuration de votre compte"
+      },
+      "SOCIAL_PROOF": "“Grâce à la démo, j’ai compris en 20 minutes comment migrer tous mes mandats. La mise en place a été très rapide.” — Agent immobilier, Douala",
+      "MODAL_SUBTITLE": "Remplissez ce formulaire.",
+      "FIELD_NAME": "Nom complet",
+      "FIELD_NAME_PLACEHOLDER": "Jean Dupont",
+      "FIELD_EMAIL": "Email",
+      "FIELD_EMAIL_PLACEHOLDER": "jean@agence.com",
+      "FIELD_PHONE": "Telephone",
+      "FIELD_PHONE_PLACEHOLDER": "+237 6XX XXX XXX",
+      "FIELD_AGENCY": "Agence (optionnel)",
+      "FIELD_AGENCY_PLACEHOLDER": "Agence Immo",
+      "FIELD_PORTFOLIO": "Portefeuille",
+      "FIELD_PORTFOLIO_PLACEHOLDER": "Nombre de biens",
+      "PORTFOLIO_UNIT": "biens",
+      "SUBMIT": "Envoyer",
+      "SUBMITTING": "Envoi...",
+      "SUCCESS_TITLE": "Demande envoyee !",
+      "SUCCESS_MSG": "Notre equipe vous contacte sous 24h."
+    },
+    "OWNER_SECTION": {
+      "BADGE": "Pour les proprietaires",
+      "TITLE": "Tout pour gerer votre patrimoine",
+      "SUBTITLE": "Automatisez votre gestion locative.",
+      "CTA": "Demarrer mon onboarding",
+      "CTA_SUB": "Gratuit - Aucune carte requise"
     }
   },
   "SEARCH_MODULE": {
@@ -4754,7 +5002,8 @@
     "HEADER": {
       "BRAND": "Ndewa360",
       "SUBTITLE": "Inscription",
-      "ALREADY_ACCOUNT": "Déjà un compte ?"
+      "ALREADY_ACCOUNT": "Déjà un compte ?",
+      "SUBTITLE_AGENT": "Inscription Agent"
     },
     "STEPS": {
       "STEP1_LABEL": "Votre bien",
@@ -4845,7 +5094,7 @@
       "SUMMARY_UNITS": "unité(s) locative(s)",
       "SUMMARY_TENANTS": "locataire(s)",
       "SUMMARY_EMPTY": "Aucune donnée immobilière (vous pourrez tout ajouter depuis le tableau de bord)",
-      "SUBMIT_BUTTON": "Créer mon compte",
+      "SUBMIT_BUTTON": "Creer mon compte",
       "SUBMITTING": "Création en cours..."
     },
     "NAVIGATION": {
@@ -4856,6 +5105,35 @@
     "ERRORS": {
       "LOAD_COUNTRIES": "Impossible de charger les pays",
       "LOAD_CITIES": "Impossible de charger les villes"
+    },
+    "AGENT": {
+      "STEPS": {
+        "STEP1_LABEL": "Votre compte",
+        "STEP2_LABEL": "Votre agence",
+        "STEP3_LABEL": "Confirmation"
+      },
+      "STEP1": {
+        "TITLE": "Créez votre compte agent",
+        "SUBTITLE": "Commencez par créer votre compte. Vous compléterez votre profil agence à l’étape suivante."
+      },
+      "STEP2": {
+        "TITLE": "Votre profil agence",
+        "SUBTITLE": "Ces informations permettront aux propriétaires de vous identifier et de vous faire confiance.",
+        "BUSINESS_NAME": "Nom de l'agence",
+        "BUSINESS_NAME_PLACEHOLDER": "Ex: Agence Immo Yaoundé",
+        "BUSINESS_NAME_ERROR": "Le nom est requis (min. 2 caractères)",
+        "BUSINESS_ADDRESS": "Adresse professionnelle",
+        "BUSINESS_ADDRESS_PLACEHOLDER": "Ex: Avenue Kennedy, Douala",
+        "DESCRIPTION": "Présentation de votre agence",
+        "DESCRIPTION_PLACEHOLDER": "Décrivez votre activité, vos spécialisations..."
+      },
+      "STEP3": {
+        "TITLE": "Dossier soumis avec succès !",
+        "SUBTITLE": "Notre équipe examine votre dossier sous 24 à 48h ouvrables.",
+        "INFO": "Votre compte est en mode limité jusqu'à la validation de votre profil. Vous recevrez un email de confirmation dès l'approbation.",
+        "SUMMARY_TITLE": "Récapitulatif de votre inscription :",
+        "SUBMIT": "Créer mon compte agent"
+      }
     }
   },
   "EMAIL_CONFIRMATION_BANNER": {
