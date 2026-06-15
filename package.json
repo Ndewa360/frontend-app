@@ -20,8 +20,8 @@
     "serve:ssr": "node dist/app/server/main.js",
     "build:ssr": "ng build && ng run app:server",
     "prerender": "ng run app:prerender",
-    "prerender:prod": "ng run app:prerender:production",
-    "build:full": "ng build --configuration=production && ng run app:server:production && ng run app:prerender:production"
+    "prerender:prod": "ng build --configuration=production && ng run app:server:production && ng run app:prerender:production",
+    "build:full": "npm run prerender:prod"
   },
   "private": true,
   "dependencies": {
