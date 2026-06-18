@@ -12,6 +12,7 @@ import { ModernPaymentModalComponent } from '../modern-payment-modal/modern-paym
 import { ModernDeletePaymentModalComponent } from '../modern-delete-payment-modal/modern-delete-payment-modal.component';
 import { PaymentReceiptModalComponent } from '../payment-receipt-modal/payment-receipt-modal.component';
 import { AssignLocationModalService } from 'src/app/main/assign-location/services/assign-location-modal.service';
+import { GeneratePaymentLinkModalComponent } from '../generate-payment-link-modal/generate-payment-link-modal.component';
 
 interface Tab {
   label: string;
@@ -351,6 +352,21 @@ export class TenantDetailsPanelComponent implements OnInit, OnDestroy, OnChanges
     }
   }
 
+  onGeneratePaymentLink(): void {
+    if (!this.currentRoom || !this.currentLocation || !this.dialog) return;
+    this.dialog.open(GeneratePaymentLinkModalComponent, {
+      width: '800px',
+      maxWidth: '95vw',
+      maxHeight: '90vh',
+      disableClose: true,
+      data: {
+        room: this.currentRoom,
+        tenant: this.tenant,
+        location: this.currentLocation
+      }
+    });
+  }
+
   // === MÉTHODES DE PAIEMENTS ===
 
   getTotalPayments(): number {
@@ -414,7 +430,10 @@ export class TenantDetailsPanelComponent implements OnInit, OnDestroy, OnChanges
       group.payments.sort((a, b) => new Date(b.datePayment).getTime() - new Date(a.datePayment).getTime());
     });
 
-    return Object.values(groupedPayments);
+    // Trier les groupes par date du paiement le plus récent (décroissant)
+    return Object.values(groupedPayments).sort((a, b) =>
+      b.dateRange.end.getTime() - a.dateRange.end.getTime()
+    );
   }
 
   // === MÉTHODES DE TRACKING ===

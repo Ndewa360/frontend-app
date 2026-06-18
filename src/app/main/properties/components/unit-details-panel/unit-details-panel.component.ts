@@ -390,15 +390,8 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   onDeletePayment(payment: any): void {
-    console.log('🗑️ UnitDetailsPanel: onDeletePayment appelé', payment);
-    if (this.room) {
-      console.log('🗑️ UnitDetailsPanel: Émission de l\'action delete_payment');
-      this.action.emit({
-        type: 'delete_payment',
-        room: this.room,
-        data: payment
-      });
-    }
+    // Appeler directement onDeletePaymentModal qui gère tous les formats
+    this.onDeletePaymentModal(payment);
   }
 
   onGeneratePaymentLink(): void {
@@ -745,10 +738,18 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
       return groups;
     }, {});
 
-    // Convertir en tableau et trier par date
-    return Object.values(grouped).sort((a: any, b: any) =>
-      new Date(b.dateRange.end).getTime() - new Date(a.dateRange.end).getTime()
-    );
+    // Convertir en tableau, trier les paiements dans chaque groupe par date décroissante,
+    // puis trier les groupes par date du paiement le plus récent
+    return Object.values(grouped)
+      .map((group: any) => ({
+        ...group,
+        payments: [...group.payments].sort((a: any, b: any) =>
+          new Date(b.datePayment).getTime() - new Date(a.datePayment).getTime()
+        )
+      }))
+      .sort((a: any, b: any) =>
+        new Date(b.dateRange.end).getTime() - new Date(a.dateRange.end).getTime()
+      );
   }
 
   getTenantNameById(tenantId: string): string {

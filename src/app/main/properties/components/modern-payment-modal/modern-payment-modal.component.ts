@@ -286,6 +286,9 @@ export class ModernPaymentModalComponent implements OnInit, OnDestroy {
 
     this.isLoading = true;
 
+    // Sécurité : remettre isLoading à false après 15s max pour éviter le blocage définitif
+    const safetyTimeout = setTimeout(() => { this.isLoading = false; }, 15000);
+
     try {
       const formData = FormUtils.removeNullAttribut({ ...this.formGroup.value });
 
@@ -384,6 +387,7 @@ export class ModernPaymentModalComponent implements OnInit, OnDestroy {
     } catch (error) {
       console.error('Erreur lors de la préparation des données:', error);
       this.isLoading = false;
+      clearTimeout(safetyTimeout);
       this.toastr.error('Erreur lors de la préparation des données', 'Erreur');
     }
   }

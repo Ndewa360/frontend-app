@@ -194,23 +194,24 @@ export class PropertyHistoryComponent implements OnInit, OnDestroy, OnChanges {
       return;
     }
 
-    this.paymentHistory = this.allPayments.map(payment => {
-      const tenant = this.tenants.find(t => t._id === payment.locataire) || null;
-      const room = this.rooms.find(r => r._id === payment.room) || null;
-
-      return {
-        id: payment._id || '',
-        date: new Date(payment.datePayment),
-        type: payment.paymentLocationType,
-        amount: payment.locationPaymentPrice || 0,
-        tenant,
-        room,
-        reference: payment.billingRef || '',
-        reason: payment.reason,
-        createdAt: new Date(payment.createdAt || payment.datePayment),
-        rawPayment: payment
-      };
-    });
+    this.paymentHistory = this.allPayments
+      .map(payment => {
+        const tenant = this.tenants.find(t => t._id === payment.locataire) || null;
+        const room = this.rooms.find(r => r._id === payment.room) || null;
+        return {
+          id: payment._id || '',
+          date: new Date(payment.datePayment),
+          type: payment.paymentLocationType,
+          amount: payment.locationPaymentPrice || 0,
+          tenant,
+          room,
+          reference: payment.billingRef || '',
+          reason: payment.reason,
+          createdAt: new Date(payment.createdAt || payment.datePayment),
+          rawPayment: payment
+        };
+      })
+      .sort((a, b) => b.date.getTime() - a.date.getTime());
 
     this.applyFilters();
     this.calculateStats();
