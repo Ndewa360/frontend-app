@@ -1,4 +1,5 @@
-import { Component, OnInit, OnDestroy, Renderer2, ViewChild, ElementRef, HostListener, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, Renderer2, ViewChild, ElementRef, HostListener, ChangeDetectorRef, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { Store } from '@ngxs/store';
 import { RefreshTokenService } from './shared/store/auth-token/refresh-token.service';
 import { UserActivityService } from './shared/store/auth-token/user-activity.service';
@@ -24,7 +25,7 @@ import { DataDrivenLoaderService } from './shared/services/data-driven-loader.se
 import { LanguageUrlService } from './shared/services/language-url.service';
 
 const getSessionStorage = (key: string, defaultValue: string = null) => {
-  try { return sessionStorage.getItem(key) || defaultValue; }
+  try { return (typeof sessionStorage !== 'undefined' && sessionStorage.getItem(key)) || defaultValue; }
   catch { return defaultValue; }
 };
 
@@ -70,12 +71,15 @@ export class AppComponent implements OnInit, OnDestroy {
     public dataDrivenLoader: DataDrivenLoaderService,
     private languageUrlService: LanguageUrlService,
     private translateService: TranslateService,
+    @Inject(PLATFORM_ID) private platformId: Object,
   ) {}
 
   ngOnInit(): void {
     // Traductions — langue détectée depuis le navigateur
     this.translateService.setDefaultLang('en');
-    const browserLang = (navigator.language || '').split('-')[0].toLowerCase();
+    const browserLang = isPlatformBrowser(this.platformId)
+      ? (navigator.language || '').split('-')[0].toLowerCase()
+      : 'fr';
     const lang = ['fr', 'en'].includes(browserLang) ? browserLang : 'en';
     this.translateService.use(lang);
 
@@ -171,7 +175,9 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   @HostListener('window:resize')
-  onResize(): void { this.deviceService.onResize(); }
+  onResize(): void {
+    if (isPlatformBrowser(this.platformId)) this.deviceService.onResize();
+  }
 
   ngOnDestroy(): void {
     this.destroy$.next();

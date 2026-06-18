@@ -182,18 +182,31 @@ export class AuthTokenState {
     // Fonction utilitaire pour extraire la date d'expiration du token JWT
     private getTokenExpiration(token: string): number {
         if (!token) return null;
-        
         try {
             const base64Url = token.split('.')[1];
             const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-            const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => {
-                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-            }).join(''));
-            
+            const padding = base64.length % 4 ? '='.repeat(4 - base64.length % 4) : '';
+            // Décodage compatible browser ET Node.js sans dépendance à Buffer ou atob
+            const binaryStr = base64.replace(/[^A-Za-z0-9+/=]/g, '');
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+            let bytes = '';
+            let i = 0;
+            const b64 = (base64 + padding).replace(/=/g, '');
+            while (i < b64.length) {
+                const enc1 = chars.indexOf(b64[i++]);
+                const enc2 = chars.indexOf(b64[i++]);
+                const enc3 = chars.indexOf(b64[i++]);
+                const enc4 = chars.indexOf(b64[i++]);
+                bytes += String.fromCharCode((enc1 << 2) | (enc2 >> 4));
+                if (enc3 !== -1) bytes += String.fromCharCode(((enc2 & 15) << 4) | (enc3 >> 2));
+                if (enc4 !== -1) bytes += String.fromCharCode(((enc3 & 3) << 6) | enc4);
+            }
+            const jsonPayload = decodeURIComponent(bytes.split('').map(c =>
+                '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+            ).join(''));
             const { exp } = JSON.parse(jsonPayload);
             return exp;
         } catch (e) {
-            console.warn('⚠️ Impossible de décoder le token JWT:', e);
             return null;
         }
     }

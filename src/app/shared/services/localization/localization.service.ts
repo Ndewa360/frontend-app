@@ -127,6 +127,7 @@ export class LocalizationService {
    * Applique la direction RTL au document
    */
   private applyRTLToDocument(isRTL: boolean): void {
+    if (typeof document === 'undefined') return;
     const htmlElement = document.documentElement;
     if (isRTL) {
       htmlElement.setAttribute('dir', 'rtl');

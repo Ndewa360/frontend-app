@@ -1,6 +1,7 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { BehaviorSubject, Observable, fromEvent, merge, timer, Subject } from 'rxjs';
-import { debounceTime, takeUntil, tap, switchMap, filter } from 'rxjs/operators';
+import { debounceTime, takeUntil, filter } from 'rxjs/operators';
 
 export interface UserActivityConfig {
   /** Délai d'inactivité en millisecondes avant de considérer l'utilisateur comme inactif (défaut: 15 minutes) */
@@ -46,7 +47,7 @@ export class UserActivityService implements OnDestroy {
   private inactivityTimer?: any;
   private criticalTimer?: any;
 
-  constructor() {
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
     this.config = { ...this.defaultConfig };
     this.activityStatus$ = new BehaviorSubject<UserActivityStatus>(this.getInitialStatus());
   }
@@ -165,7 +166,7 @@ export class UserActivityService implements OnDestroy {
   }
 
   private setupActivityListeners(): void {
-    // Événements d'activité utilisateur à surveiller
+    if (!isPlatformBrowser(this.platformId)) return;
     const activityEvents = [
       fromEvent(document, 'mousedown'),
       fromEvent(document, 'mousemove'),

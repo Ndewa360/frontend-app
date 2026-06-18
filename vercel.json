@@ -1,6 +1,7 @@
 {
-  "buildCommand": "npm run build:full",
+  "buildCommand": "ng build --configuration=production",
   "outputDirectory": "dist/app/browser",
+  "ignoreCommand": "[ -f dist/app/browser/index.html ] && echo 1 || echo 0",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ],

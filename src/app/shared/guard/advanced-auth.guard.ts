@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router, UrlTree } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { Observable, of, combineLatest } from 'rxjs';
-import { map, catchError, switchMap, tap } from 'rxjs/operators';
+import { map, catchError, switchMap } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 import { AuthTokenState, UserProfileState } from '../store';
 import { RefreshTokenService } from '../store/auth-token/refresh-token.service';
@@ -16,11 +16,9 @@ export interface SessionCheckResult {
   message?: string;
 }
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class AdvancedAuthGuard implements CanActivate {
-  
+
   constructor(
     private store: Store,
     private router: Router,
@@ -31,37 +29,20 @@ export class AdvancedAuthGuard implements CanActivate {
     private languagePreservation: LanguagePreservationService
   ) {}
 
-  canActivate(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-  ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean | UrlTree> {
     return this.checkSessionValidity(state).pipe(
       map(result => {
-        if (result.canActivate) {
-          return true;
-        }
-        
-        if (result.message) {
-          this.toastrService.warning(result.message, 'Ndewa360°');
-        }
-        
-        // Éviter la redirection infinie si on est déjà sur la page d'auth
-        const redirectUrl = this.getSafeRedirectUrl(state.url);
-        return this.router.parseUrl(result.redirectUrl || redirectUrl);
+        if (result.canActivate) return true;
+        if (result.message) this.toastrService.warning(result.message, 'Ndewa360°');
+        return this.router.parseUrl(result.redirectUrl || this.getSafeRedirectUrl(state.url));
       }),
       catchError(error => {
-        console.error('❌ Erreur lors de la vérification de session:', error);
         this.toastrService.error('Erreur de vérification de session', 'Ndewa360°');
-        const redirectUrl = this.getSafeRedirectUrl(state.url);
-        return of(this.router.parseUrl(redirectUrl));
+        return of(this.router.parseUrl(this.getSafeRedirectUrl(state.url)));
       })
     );
   }
 
-  /**
-   * Vérifie la validité complète de la session
-   */
   private checkSessionValidity(state: RouterStateSnapshot): Observable<SessionCheckResult> {
     return combineLatest([
       this.store.select(AuthTokenState.selectStateToken),
@@ -69,173 +50,54 @@ export class AdvancedAuthGuard implements CanActivate {
       this.userActivityService.getActivityState()
     ]).pipe(
       switchMap(([token, userProfile, activityState]) => {
-        // 1. Vérifier si l'utilisateur a un token
         if (!token || !token.accessToken) {
-          const currentLang = this.languagePreservation.getCurrentOrPreservedLanguage();
-          return of({
-            canActivate: false,
-            redirectUrl: this.getSafeRedirectUrl(state.url, currentLang),
-            message: '🔑 Authentification requise pour accéder à cette section de Ndewa360°'
-          });
+          const lang = this.languagePreservation.getCurrentOrPreservedLanguage();
+          return of({ canActivate: false, redirectUrl: this.getSafeRedirectUrl(state.url, lang), message: '🔑 Authentification requise' });
         }
-
-        // 2. Vérifier l'état d'activité critique
         if (activityState === UserActivityState.CRITICAL_INACTIVE) {
-          const currentLang = this.languagePreservation.getCurrentOrPreservedLanguage();
-          return of({
-            canActivate: false,
-            redirectUrl: `/${currentLang}/auth/signin?returnUrl=${encodeURIComponent(state.url)}&reason=critical_inactive`,
-            message: '🔒 Session fermée automatiquement après 30 minutes d\'inactivité pour protéger vos données'
-          });
+          const lang = this.languagePreservation.getCurrentOrPreservedLanguage();
+          return of({ canActivate: false, redirectUrl: `/${lang}/auth/signin?returnUrl=${encodeURIComponent(state.url)}&reason=critical_inactive`, message: '🔒 Session fermée après inactivité prolongée' });
         }
-
-        // 3. Vérifier si l'utilisateur est inactif
         if (activityState === UserActivityState.INACTIVE) {
-          return this.handleInactiveUser(state.url);
+          const lang = this.languagePreservation.getCurrentOrPreservedLanguage();
+          return of({ canActivate: false, redirectUrl: `/${lang}/auth/signin?returnUrl=${encodeURIComponent(state.url)}&reason=inactive`, message: '⏰ Session suspendue pour inactivité' });
         }
-
-        // 4. Vérifier l'expiration du token
         return this.checkTokenExpiration(state.url);
       })
     );
   }
 
-  /**
-   * Gère le cas d'un utilisateur inactif
-   */
-  private handleInactiveUser(currentUrl: string): Observable<SessionCheckResult> {
-    const currentLang = this.languagePreservation.getCurrentOrPreservedLanguage();
-    return of({
-      canActivate: false,
-      redirectUrl: `/${currentLang}/auth/signin?returnUrl=${encodeURIComponent(currentUrl)}&reason=inactive`,
-      message: '⏰ Session suspendue pour inactivité. Reconnectez-vous pour reprendre là où vous vous êtes arrêté.'
-    });
-  }
-
-  /**
-   * Vérifie l'expiration du token et tente un refresh si nécessaire
-   */
   private checkTokenExpiration(currentUrl: string): Observable<SessionCheckResult> {
     return this.refreshTokenService.checkTokenExpiration().pipe(
       map(result => {
-        if (result) {
-          // Token valide ou rafraîchi avec succès
-          return { canActivate: true };
-        } else {
-          // Échec de la vérification/refresh du token
-          const currentLang = this.languagePreservation.getCurrentOrPreservedLanguage();
-          return {
-            canActivate: false,
-            redirectUrl: this.getSafeRedirectUrl(currentUrl, currentLang),
-            message: 'Votre session a expiré. Veuillez vous reconnecter.'
-          };
-        }
+        if (result) return { canActivate: true };
+        const lang = this.languagePreservation.getCurrentOrPreservedLanguage();
+        return { canActivate: false, redirectUrl: this.getSafeRedirectUrl(currentUrl, lang), message: 'Votre session a expiré.' };
       }),
-      catchError(error => {
-        console.error('❌ Erreur lors de la vérification du token:', error);
-        
-        // Gestion différenciée selon le type d'erreur
-        let message = 'Erreur de session. Veuillez vous reconnecter.';
-        if (error.message?.includes('User inactive')) {
-          message = 'Veuillez vous reconnecter pour continuer.';
-        } else if (error.message?.includes('critically inactive')) {
-          message = 'Session expirée pour cause d\'inactivité prolongée.';
-        }
-        
-        const currentLang = this.languagePreservation.getCurrentOrPreservedLanguage();
-        return of({
-          canActivate: false,
-          redirectUrl: this.getSafeRedirectUrl(currentUrl, currentLang),
-          message
-        });
+      catchError(() => {
+        const lang = this.languagePreservation.getCurrentOrPreservedLanguage();
+        return of({ canActivate: false, redirectUrl: this.getSafeRedirectUrl(currentUrl, lang), message: 'Erreur de session.' });
       })
     );
   }
 
-  /**
-   * Vérifie si l'utilisateur peut accéder à une route spécifique
-   * (peut être étendu pour des vérifications de rôles/permissions)
-   */
-  private checkRoutePermissions(route: ActivatedRouteSnapshot, userProfile: any): boolean {
-    // Vérifications de base
-    if (!userProfile) {
-      return false;
-    }
-
-    // Ici, on peut ajouter des vérifications de rôles/permissions
-    // Par exemple :
-    // const requiredRoles = route.data?.['roles'] as string[];
-    // if (requiredRoles && !this.hasRequiredRoles(userProfile.roles, requiredRoles)) {
-    //   return false;
-    // }
-
-    return true;
-  }
-
-  /**
-   * Vérifie si l'utilisateur a les rôles requis
-   */
-  private hasRequiredRoles(userRoles: string[], requiredRoles: string[]): boolean {
-    if (!requiredRoles || requiredRoles.length === 0) {
-      return true;
-    }
-    
-    if (!userRoles || userRoles.length === 0) {
-      return false;
-    }
-    
-    return requiredRoles.some(role => userRoles.includes(role));
-  }
-
-  /**
-   * Démarre la surveillance d'activité si elle n'est pas déjà active
-   */
-  private ensureActivityMonitoring(): void {
-    if (!this.userActivityService.isUserActive() &&
-        !this.userActivityService.isUserInactive() &&
-        !this.userActivityService.isUserCriticallyInactive()) {
-      this.userActivityService.startMonitoring();
-    }
-  }
-
-  /**
-   * Génère une URL de redirection sécurisée pour éviter les boucles infinies
-   */
   private getSafeRedirectUrl(currentUrl: string, lang?: string): string {
     const currentLang = lang || this.languagePreservation.getCurrentOrPreservedLanguage();
-    
-    // Si on est déjà sur une page d'auth, ne pas ajouter de returnUrl
-    if (currentUrl.includes('/auth/signin') ||
-        currentUrl.includes('/auth/signup') ||
-        currentUrl.includes('/auth/register') ||
-        currentUrl === '/auth' ||
-        currentUrl === '/') {
-      return `/${currentLang}/auth/signin`;
-    }
-
-    // Nettoyer l'URL pour éviter les paramètres returnUrl imbriqués
-    const cleanUrl = this.cleanReturnUrl(currentUrl);
-    return `/${currentLang}/auth/signin?returnUrl=${encodeURIComponent(cleanUrl)}`;
+    if (currentUrl.includes('/auth/')) return `/${currentLang}/auth/signin`;
+    return `/${currentLang}/auth/signin?returnUrl=${encodeURIComponent(this.cleanReturnUrl(currentUrl))}`;
   }
 
-  /**
-   * Nettoie l'URL de retour pour éviter les paramètres returnUrl imbriqués
-   */
   private cleanReturnUrl(url: string): string {
     try {
-      // Supprimer les paramètres returnUrl existants pour éviter l'imbrication
-      const urlObj = new URL(url, window.location.origin);
+      const origin = typeof window !== 'undefined' ? window.location.origin : 'http://localhost';
+      const urlObj = new URL(url, origin);
       urlObj.searchParams.delete('returnUrl');
-
-      // Retourner seulement le pathname et les paramètres nettoyés
-      const cleanPath = urlObj.pathname + (urlObj.search ? urlObj.search : '');
-      const currentLang = this.languagePreservation.getCurrentOrPreservedLanguage();
-      return cleanPath === '/' ? `/${currentLang}/app/welcome` : cleanPath;
-    } catch (error) {
-      // En cas d'erreur de parsing, retourner une URL par défaut
-      console.warn('Erreur lors du nettoyage de l\'URL:', error);
-      const currentLang = this.languagePreservation.getCurrentOrPreservedLanguage();
-      return `/${currentLang}/app/welcome`;
+      const clean = urlObj.pathname + (urlObj.search || '');
+      const lang = this.languagePreservation.getCurrentOrPreservedLanguage();
+      return clean === '/' ? `/${lang}/app/welcome` : clean;
+    } catch {
+      const lang = this.languagePreservation.getCurrentOrPreservedLanguage();
+      return `/${lang}/app/welcome`;
     }
   }
 }

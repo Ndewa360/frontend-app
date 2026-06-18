@@ -10,11 +10,16 @@ import { Error404Component } from './main/errors/error404/error404.component';
 /** Détecte la langue du navigateur et retourne 'fr', 'en' ou 'en' par défaut */
 function getBrowserLang(): string {
   try {
-    const saved = localStorage.getItem('selectedLanguage');
-    if (saved === 'fr' || saved === 'en') return saved;
+    if (typeof localStorage !== 'undefined') {
+      const saved = localStorage.getItem('selectedLanguage');
+      if (saved === 'fr' || saved === 'en') return saved;
+    }
   } catch {}
-  const browser = (navigator.language || '').split('-')[0].toLowerCase();
-  return browser === 'fr' ? 'fr' : 'en';
+  if (typeof navigator !== 'undefined') {
+    const browser = (navigator.language || '').split('-')[0].toLowerCase();
+    return browser === 'fr' ? 'fr' : 'en';
+  }
+  return 'fr';
 }
 
 

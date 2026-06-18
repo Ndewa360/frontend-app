@@ -16,12 +16,14 @@
     "detect-hardcoded": "node scripts/detect-hardcoded-text.js",
     "clean-languages": "node scripts/clean-unsupported-languages.js",
     "translation-audit": "npm run check-translations && npm run detect-hardcoded",
-    "dev:ssr": "ng run app:serve-ssr",
-    "serve:ssr": "node dist/app/server/main.js",
-    "build:ssr": "ng build && ng run app:server",
-    "prerender": "ng run app:prerender",
-    "prerender:prod": "ng build --configuration=production && ng run app:server:production && ng run app:prerender:production",
-    "build:full": "npm run prerender:prod"
+    "dev:ssr": "echo 'SSR désactivé'",
+    "serve:ssr": "echo 'SSR désactivé'",
+    "build:ssr": "echo 'SSR désactivé'",
+    "prerender": "echo 'SSR désactivé'",
+    "clean": "rmdir /s /q dist 2>nul || true",
+    "prerender:prod": "echo 'SSR désactivé'",
+    "prerender:local": "echo 'SSR désactivé'",
+    "build:full": "npm run build"
   },
   "private": true,
   "dependencies": {
