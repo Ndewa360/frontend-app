@@ -36,6 +36,7 @@ export interface PaymentModalData {
 export class ModernPaymentModalComponent implements OnInit, OnDestroy {
   formGroup: FormGroup;
   isLoading = false;
+  paymentMethods: { value: string; label: string; icon: string }[] = [];
   
   // Payment types
   paymentTypes = [
@@ -92,6 +93,13 @@ export class ModernPaymentModalComponent implements OnInit, OnDestroy {
         icon: 'shield',
         description: this.translate.instant('PAYMENT_MANAGEMENT.DEPOSIT_DESC')
       }
+    ];
+    this.paymentMethods = [
+      { value: 'CASH',          label: this.translate.instant('FINANCES.PAYMENT_METHODS.CASH'),          icon: 'money' },
+      { value: 'BANK_TRANSFER', label: this.translate.instant('FINANCES.PAYMENT_METHODS.BANK_TRANSFER'), icon: 'bank' },
+      { value: 'MOBILE_MONEY',  label: this.translate.instant('FINANCES.PAYMENT_METHODS.MOBILE_MONEY'),  icon: 'phone' },
+      { value: 'CHECK',         label: this.translate.instant('FINANCES.PAYMENT_METHODS.CHECK'),         icon: 'check' },
+      { value: 'CARD',          label: this.translate.instant('FINANCES.PAYMENT_METHODS.CREDIT_CARD'),   icon: 'card' }
     ];
   }
 
@@ -513,14 +521,8 @@ export class ModernPaymentModalComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Méthodes de paiement disponibles
+  // Méthodes de paiement disponibles — propriété stable, pas recréée à chaque cycle
   getPaymentMethods() {
-    return [
-      { value: 'CASH', label: this.translate.instant('FINANCES.PAYMENT_METHODS.CASH'), icon: 'money' },
-      { value: 'BANK_TRANSFER', label: this.translate.instant('FINANCES.PAYMENT_METHODS.BANK_TRANSFER'), icon: 'bank' },
-      { value: 'MOBILE_MONEY', label: this.translate.instant('FINANCES.PAYMENT_METHODS.MOBILE_MONEY'), icon: 'phone' },
-      { value: 'CHECK', label: this.translate.instant('FINANCES.PAYMENT_METHODS.CHECK'), icon: 'check' },
-      { value: 'CARD', label: this.translate.instant('FINANCES.PAYMENT_METHODS.CREDIT_CARD'), icon: 'card' }
-    ];
+    return this.paymentMethods;
   }
 }

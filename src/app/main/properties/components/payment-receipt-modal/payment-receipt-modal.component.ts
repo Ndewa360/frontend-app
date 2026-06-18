@@ -78,11 +78,11 @@ export class PaymentReceiptModalComponent implements OnInit {
 
   getPaymentMethodLabel(): string {
     switch (this.data.payment.paymentMethod) {
-      case 'CASH': return 'Espèces';
+      case 'CASH':          return 'Espèces';
       case 'BANK_TRANSFER': return 'Virement bancaire';
-      case 'MOBILE_MONEY': return 'Mobile Money';
-      case 'CHECK': return 'Chèque';
-      case 'CARD': return 'Carte de crédit';
+      case 'MOBILE_MONEY':  return 'Mobile Money';
+      case 'CHECK':         return 'Chèque';
+      case 'CARD':          return 'Carte de crédit';
       default: return this.data.payment.paymentMethod || 'Espèces';
     }
   }

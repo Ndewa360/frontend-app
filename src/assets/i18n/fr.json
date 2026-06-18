@@ -3293,6 +3293,8 @@
       },
       "NO_PAYMENTS_FOUND": "Aucun paiement trouvé",
       "NO_PAYMENTS_MESSAGE": "Aucun paiement ne correspond aux critères sélectionnés.",
+      "PAYMENT_SINGULAR": "paiement",
+      "PAYMENTS_PLURAL": "paiements",
       "PAGINATION": {
         "SHOWING": "Affichage",
         "OF": "sur",

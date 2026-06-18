@@ -3296,6 +3296,8 @@
       },
       "NO_PAYMENTS_FOUND": "No payments found",
       "NO_PAYMENTS_MESSAGE": "No payments match the selected criteria.",
+      "PAYMENT_SINGULAR": "payment",
+      "PAYMENTS_PLURAL": "payments",
       "PAGINATION": {
         "SHOWING": "Display",
         "OF": "on",

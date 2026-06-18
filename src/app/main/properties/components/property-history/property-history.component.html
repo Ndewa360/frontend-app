@@ -218,7 +218,7 @@
           <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
           </svg>
-          {{ filteredHistory.length }} {{ 'PROPERTY_DETAILS.HISTORY.RESULTS_COUNT' | translate: {count: filteredHistory.length} }}
+          {{ filteredHistory.length }} {{ filteredHistory.length > 1 ? ('PROPERTY_DETAILS.HISTORY.PAYMENTS_PLURAL' | translate) : ('PROPERTY_DETAILS.HISTORY.PAYMENT_SINGULAR' | translate) }}
         </div>
         <div *ngIf="hasActiveFilters()" class="text-xs text-gray-500">
           ({{ 'PROPERTY_DETAILS.HISTORY.FILTERED' | translate }})
@@ -252,7 +252,7 @@
             <h3 class="text-lg font-semibold text-gray-900">{{ 'PROPERTY_DETAILS.HISTORY.PAYMENT_HISTORY' | translate }}</h3>
             <div class="flex items-center space-x-2 mt-1">
               <span class="inline-flex items-center px-3 py-1 rounded-full bg-yellow-100 text-yellow-800 text-xs font-medium">
-                {{ filteredHistory.length }} {{ 'PROPERTY_DETAILS.HISTORY.PAYMENT_COUNT' | translate: {count: filteredHistory.length} }}
+                {{ filteredHistory.length }} {{ filteredHistory.length > 1 ? ('PROPERTY_DETAILS.HISTORY.PAYMENTS_PLURAL' | translate) : ('PROPERTY_DETAILS.HISTORY.PAYMENT_SINGULAR' | translate) }}
               </span>
               <span *ngIf="hasActiveFilters()" class="text-xs text-gray-500">• {{ 'PROPERTY_DETAILS.HISTORY.FILTERED_SHORT' | translate }}</span>
             </div>
