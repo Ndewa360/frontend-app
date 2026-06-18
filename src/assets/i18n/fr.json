@@ -1994,6 +1994,7 @@
       }
     },
     "TESTIMONIALS": {
+      "BADGE": "Témoignages clients",
       "TITLE": "Ils ont repris le contrôle de leurs loyers",
       "SUBTITLE": "Découvrez comment Ndewa360 a transformé la gestion de centaines de propriétaires",
       "TESTIMONIAL_1": {
@@ -2965,7 +2966,7 @@
       "GPS_AVAILABLE": "Coordonnées GPS disponibles",
       "OPEN_MAPS": "Ouvrir la localisation dans Google Maps",
       "VIEW_MAP": "Voir sur la carte",
-      "DEFAULT_LOCATION": "Douala, Cameroun"
+      "DEFAULT_LOCATION": "Bangangté, Cameroun"
     },
     "PREMIUM": {
       "ACTIVE_PLAN": "Package Premium Actif",

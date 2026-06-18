@@ -99,8 +99,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   readonly heroMonths = ['Juin','Juil','Août','Sep','Oct','Nov','Déc'];
   readonly heroPayments = [
     { initials: 'JD', name: 'Jean Dupont',    unit: 'Studio A2', amount: '85 000 FCFA', paid: true,  color: 'gold'  },
-    { initials: 'MT', name: 'Marie Tchouamo', unit: 'Appt B1',   amount: '120 000 FCFA', paid: true,  color: 'green' },
-    { initials: 'SN', name: 'Sévérin N.',    unit: 'Chambre 3', amount: '45 000 FCFA', paid: false, color: 'red'   },
+    { initials: 'MT', name: 'Mbamba Junior', unit: 'Appt B1',   amount: '120 000 FCFA', paid: true,  color: 'green' },
+    { initials: 'SN', name: 'Jaures NGUEUTCHEU',    unit: 'Chambre 3', amount: '45 000 FCFA', paid: false, color: 'red'   },
   ];
 
   // Points clés de la démo propriétaire
