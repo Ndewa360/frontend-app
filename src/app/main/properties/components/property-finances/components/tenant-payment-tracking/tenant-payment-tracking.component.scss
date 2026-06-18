@@ -452,7 +452,109 @@
       }
     }
 
-    // Badges de statut améliorés
+    // Badges de statut — nouveau design pill unifié
+    .status-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 130px;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 8px 4px 6px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      width: fit-content;
+      white-space: nowrap;
+      border: 1.5px solid transparent;
+
+      .status-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+
+      .status-label {
+        line-height: 1;
+      }
+
+      .status-count-chip {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1px 5px;
+        border-radius: 10px;
+        font-size: 0.65rem;
+        font-weight: 700;
+        line-height: 1.4;
+        margin-left: 2px;
+      }
+
+      &.status-pill--success {
+        background: #D1FAE5;
+        color: #065F46;
+        border-color: #6EE7B7;
+        .status-dot { background: #10B981; }
+        .status-count-chip { background: #10B981; color: #fff; }
+      }
+
+      &.status-pill--ahead {
+        background: #DBEAFE;
+        color: #1E40AF;
+        border-color: #93C5FD;
+        .status-dot { background: #3B82F6; }
+        .status-count-chip { background: #3B82F6; color: #fff; }
+      }
+
+      &.status-pill--behind {
+        background: #FEF3C7;
+        color: #92400E;
+        border-color: #FCD34D;
+        .status-dot { background: #F59E0B; }
+        .status-count-chip { background: #F59E0B; color: #fff; }
+      }
+
+      &.status-pill--critical {
+        background: #FEE2E2;
+        color: #991B1B;
+        border-color: #FCA5A5;
+        .status-dot { background: #EF4444; box-shadow: 0 0 0 3px rgba(239,68,68,0.2); }
+        .status-count-chip { background: #EF4444; color: #fff; }
+      }
+
+      &.status-pill--partial {
+        background: #FFF7ED;
+        color: #9A3412;
+        border-color: #FDBA74;
+        .status-dot { background: #F97316; }
+        .status-count-chip { background: #F97316; color: #fff; }
+      }
+
+      &.status-pill--neutral {
+        background: #F3F4F6;
+        color: #6B7280;
+        border-color: #D1D5DB;
+        .status-dot { background: #9CA3AF; }
+        .status-count-chip { background: #9CA3AF; color: #fff; }
+      }
+    }
+
+    .status-sub-label {
+      font-size: 0.68rem;
+      font-weight: 500;
+      white-space: nowrap;
+      padding-left: 2px;
+
+      &.status-sub-behind { color: #B45309; }
+      &.status-sub-ahead  { color: #1D4ED8; }
+    }
+
+    // Anciens badges (compatibilité)
     .status-badge {
       &.text-green-600 {
         background: linear-gradient(135deg, var(--success-color), rgba(16, 185, 129, 0.8));

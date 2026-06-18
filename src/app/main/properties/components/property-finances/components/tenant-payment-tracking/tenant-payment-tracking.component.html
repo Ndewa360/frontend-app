@@ -189,10 +189,29 @@
 
             <!-- Statut -->
             <td>
-              <span [ngClass]="getStatusColor(tenant.status)"
-                    class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium">
-                {{ getStatusLabel(tenant.status) | translate }}
-              </span>
+              <div class="status-cell">
+                <span [ngClass]="getStatusBadgeClass(tenant.status)"
+                      class="status-badge-pill">
+                  <span class="status-dot"></span>
+                  <span class="status-main-label">{{ getStatusLabel(tenant.status) | translate }}</span>
+                  <span *ngIf="tenant.status === 'behind' && tenant.monthsBehind > 0"
+                        class="status-count-chip">
+                    {{ tenant.monthsBehind }}m
+                  </span>
+                  <span *ngIf="tenant.status === 'advance' && getAdvanceMonths(tenant) > 0"
+                        class="status-count-chip">
+                    +{{ getAdvanceMonths(tenant) }}m
+                  </span>
+                </span>
+                <span *ngIf="tenant.status === 'behind' && tenant.monthsBehind > 0"
+                      class="status-sub-label status-sub-behind">
+                  {{ tenant.monthsBehind }} mois de retard
+                </span>
+                <span *ngIf="tenant.status === 'advance' && getAdvanceMonths(tenant) > 0"
+                      class="status-sub-label status-sub-ahead">
+                  {{ getAdvanceMonths(tenant) }} mois d'avance
+                </span>
+              </div>
             </td>
 
             <!-- Dernier paiement -->

@@ -133,10 +133,11 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
         const expectedToDate = (fa as any).expectedPaymentToDate ?? monthsDueInYear * roomPrice;
         const expectedFullYear = expectedToDate;
 
-        // Taux de recouvrement depuis le backend (basé sur la projection)
-        const paymentRate = (fa as any).collectionRate ?? (
-          expectedToDate > 0 ? Math.min((coveredAmountInYear / expectedToDate) * 100, 100) : 0
-        );
+        // Taux de recouvrement : coveredAmountInYear / expectedPaymentToDate
+        // Les deux sont sur la même base (année sélectionnée) → taux cohérent avec les colonnes affichées
+        const paymentRate = expectedToDate > 0
+          ? Math.min(Math.round((coveredAmountInYear / expectedToDate) * 10000) / 100, 100)
+          : 0;
 
         return {
           tenantId:   tenant.locataire?._id || tenant.room?._id || '',
@@ -266,6 +267,26 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
     return labels[status] || 'TENANT_PAYMENT_TRACKING.STATUS_LABELS.UP_TO_DATE';
   }
 
+  getAdvanceMonths(tenant: TenantTrackingData): number {
+    return (tenant as any).advanceMonths ?? 0;
+  }
+
+  getStatusBadgeClass(status: string): string {
+    const map: Record<string, string> = {
+      'up_to_date':     'status-pill--success',
+      'advance':        'status-pill--ahead',
+      'ahead':          'status-pill--ahead',
+      'behind':         'status-pill--behind',
+      'late':           'status-pill--behind',
+      'critical':       'status-pill--critical',
+      'no_payment':     'status-pill--behind',
+      'partial':        'status-pill--partial',
+      'no_contract':    'status-pill--neutral',
+      'ended_contract': 'status-pill--neutral',
+    };
+    return map[status] ?? 'status-pill--success';
+  }
+
   getStatusColor(status: string): string {
     const colors: Record<string, string> = {
       'up_to_date':     'text-green-600 bg-green-100',
@@ -340,25 +361,44 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
     });
   }
 
+  private getStatusLabelText(status: string): string {
+    const key = this.getStatusLabel(status);
+    return this.translateService.instant(key);
+  }
+
   private prepareExportData(): any[] {
-    return this.getFilteredTenants().map(tenant => ({
-      'Locataire': tenant.tenantName,
-      'Unité': tenant.roomCode,
-      'Loyer mensuel': tenant.monthlyRent,
-      'Mois occupés': tenant.monthsOccupied,
-      'Total attendu': tenant.totalExpected,
-      'Total reçu': tenant.totalReceived,
-      'Montant en retard': tenant.amountBehind,
-      'Taux de paiement': `${tenant.paymentRate.toFixed(1)}%`,
-      'Statut': this.getStatusLabel(tenant.status),
-      'Statut contrat': tenant.contractStatus,
-      'Mois de retard': tenant.monthsBehind,
-      'Montant d\'avance': tenant.advanceAmount,
-      'Score santé': this.getPaymentHealthScore(tenant),
-      'Date d\'entrée': tenant.entryDate.toLocaleDateString('fr-FR'),
-      'Dernier paiement': tenant.lastPaymentMonth >= 0 ? this.translationUtils.getMonthName(tenant.lastPaymentMonth + 1) : this.translateService.instant('TENANT_PAYMENT_TRACKING.TABLE.NONE'),
-      'Année': this.selectedYear
-    }));
+    return this.getFilteredTenants().map(tenant => {
+      // Taux recalculé depuis les montants réels — cohérent avec l'affichage
+      const tauxNum = tenant.expectedPaymentToDate > 0
+        ? Math.min(Math.round((tenant.totalPaid / tenant.expectedPaymentToDate) * 1000) / 10, 100)
+        : 0;
+
+      const advanceMonths = (tenant as any).advanceMonths ?? 0;
+
+      const lastPayment = tenant.lastPaymentDate
+        ? new Date(tenant.lastPaymentDate).toLocaleDateString('fr-FR')
+        : (tenant.lastPaymentMonth !== null && tenant.lastPaymentMonth >= 0)
+          ? this.translationUtils.getMonthName(tenant.lastPaymentMonth + 1)
+          : 'Aucun';
+
+      return {
+        'Locataire':           tenant.tenantName,
+        'Unité':               tenant.roomCode,
+        'Date d\'entrée':      tenant.entryDate.toLocaleDateString('fr-FR'),
+        'Loyer mensuel':       tenant.monthlyRent,
+        'Mois dus':            tenant.monthsOccupied,
+        'Attendu à ce jour':   tenant.expectedPaymentToDate,
+        'Couvert':             tenant.totalPaid,
+        'Taux recouvrement':   `${tauxNum.toFixed(1)}%`,
+        'Montant en retard':   tenant.amountBehind > 0 ? tenant.amountBehind : 0,
+        'Mois de retard':      tenant.monthsBehind > 0 ? tenant.monthsBehind : 0,
+        'Montant d\'avance':  tenant.advanceAmount > 0 ? tenant.advanceAmount : 0,
+        'Mois d\'avance':     advanceMonths > 0 ? advanceMonths : 0,
+        'Statut':              this.getStatusLabelText(tenant.status),
+        'Dernier paiement':    lastPayment,
+        'Année':               this.selectedYear,
+      };
+    });
   }
 
   getStringMonth(month: number): string {
