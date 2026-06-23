@@ -1303,6 +1303,8 @@
     "CURRENT_PLAN": "Forfait actuel :",
     "ACCOUNT_STATUS": "Statut du compte :",
     "PROPERTIES_CREATED": "Biens créés :",
+    "UNITS_PER_PROPERTY_LIMIT": "Limit. unités par bien :",
+    "UNITS_MAX": "max",
     "MONTHLY_AMOUNT": "Montant mensuel :",
     "PLAN_FREE": "Gratuit",
     "PLAN_PREMIUM": "Premium",

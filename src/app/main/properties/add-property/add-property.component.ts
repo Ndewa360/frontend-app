@@ -208,21 +208,25 @@ export class AddPropertyComponent implements OnInit {
       next: () => {
         const canCreate = this._store.selectSnapshot(state => state.subscriptionLimit.canCreateProperty);
         const needsUpgrade = this._store.selectSnapshot(state => state.subscriptionLimit.needsUpgrade);
+        const status = this._store.selectSnapshot(state => state.subscriptionLimit.subscriptionStatus);
         if (canCreate) {
           this.createProperty();
         } else {
           this.waittingResponse = false;
-          this.showSubscriptionLimitModal(needsUpgrade);
+          this.showSubscriptionLimitModal(needsUpgrade, status?.propertyLimit ?? 1);
         }
       },
       error: (error) => {
         this.waittingResponse = false;
-        if (error.error?.error === 'Account/Suspended') {
+        const errorCode = error?.error?.error || error?.error?.error;
+        if (errorCode === 'Account/Suspended') {
           this.showAccountSuspendedModal();
-        } else if (error.error?.error === 'PropertyLimit/Exceeded') {
-          this.showSubscriptionLimitModal(true);
+        } else if (errorCode === 'PropertyLimit/Exceeded') {
+          const status = this._store.selectSnapshot(state => state.subscriptionLimit.subscriptionStatus);
+          this.showSubscriptionLimitModal(true, status?.propertyLimit ?? 1);
         } else {
-          this.createProperty();
+          // Erreur inconnue — on bloque par sécurité, on n'autorise pas la création
+          console.error('Erreur lors de la vérification d\'abonnement:', error);
         }
       }
     });
@@ -306,10 +310,10 @@ export class AddPropertyComponent implements OnInit {
     }));
   }
 
-  private showSubscriptionLimitModal(needsUpgrade: boolean): void {
+  private showSubscriptionLimitModal(needsUpgrade: boolean, currentLimit: number = 1): void {
     const modalData: SubscriptionLimitModalData = {
       type: needsUpgrade ? 'limit_reached' : 'upgrade_prompt',
-      currentLimit: 1,
+      currentLimit,
       limitType: 'property'
     };
 

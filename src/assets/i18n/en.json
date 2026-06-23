@@ -1304,6 +1304,8 @@
     "CURRENT_PLAN": "Current plan:",
     "ACCOUNT_STATUS": "Account status:",
     "PROPERTIES_CREATED": "Assets created:",
+    "UNITS_PER_PROPERTY_LIMIT": "Units limit per property:",
+    "UNITS_MAX": "max",
     "MONTHLY_AMOUNT": "Monthly amount:",
     "PLAN_FREE": "Free",
     "PLAN_PREMIUM": "Premium",

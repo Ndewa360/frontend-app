@@ -16,7 +16,7 @@ export class SubscriptionLimitService {
 
   canCreateProperty(): Observable<ApiResultFormat<PropertyCreationCheck>> {
     return this.http.get<ApiResultFormat<PropertyCreationCheck>>(
-      `${environment.apiUrl}/subscription-limit/can-create-property`
+      `${environment.apiUrl}/subscription-limit/can-create-property` 
     );
   }
 

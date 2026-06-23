@@ -73,6 +73,11 @@
             </span>
           </div>
           
+          <div *ngIf="subscriptionStatus.plan === 'free' && subscriptionStatus.unitsPerPropertyLimit" class="info-item">
+            <span class="label">{{ 'SUBSCRIPTION_MODAL.UNITS_PER_PROPERTY_LIMIT' | translate }}</span>
+            <span class="value">{{ subscriptionStatus.unitsPerPropertyLimit }} {{ 'SUBSCRIPTION_MODAL.UNITS_MAX' | translate }}</span>
+          </div>
+          
           <div *ngIf="subscriptionStatus.plan === 'premium'" class="info-item">
             <span class="label">{{ 'SUBSCRIPTION_MODAL.MONTHLY_AMOUNT' | translate }}</span>
             <span class="value">{{ subscriptionStatus.monthlyAmount }} FCFA</span>
