@@ -8,7 +8,4 @@ import { Component, Input } from '@angular/core';
 export class ChartNombreRoomComponent {
   @Input() nbreRoomTotal: number = 0;
   @Input() nbreRoomActif: number = 0;
-
-  ngOnInit(): void {
-  }
 }

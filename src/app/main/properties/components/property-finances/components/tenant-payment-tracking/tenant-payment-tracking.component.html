@@ -116,7 +116,8 @@
             <th>{{ 'TENANT_PAYMENT_TRACKING.TABLE.UNIT' | translate }}</th>
             <th>{{ 'TENANT_PAYMENT_TRACKING.TABLE.MONTHLY_RENT' | translate }}</th>
             <th>Attendu à ce jour</th>
-            <th>Couvert {{ selectedYear }}</th>
+            <th title="Mois de l'année couverts par le cumul des paiements depuis l'entrée (projection)">Couvert {{ selectedYear }} &#9432;</th>
+            <th title="Montants réellement reçus dans l'année (datePayment dans l'année)">Encaissé {{ selectedYear }} &#9432;</th>
             <th>{{ 'TENANT_PAYMENT_TRACKING.TABLE.BEHIND' | translate }}</th>
             <th>Taux recouvrement</th>
             <th>{{ 'TENANT_PAYMENT_TRACKING.TABLE.STATUS' | translate }}</th>
@@ -159,14 +160,18 @@
               <div class="text-xs text-gray-400">{{ tenant.monthsOccupied | number:'1.0-1' }} mois dus</div>
             </td>
 
-            <!-- Couvert dans l'année -->
+            <!-- Couvert dans l'année (projection cumul) -->
             <td>
               <div class="font-medium text-green-600">{{ tenant.totalPaid | currency:'XAF':'symbol':'1.0-0' }}</div>
-              <div class="text-xs text-gray-400">sur {{ tenant.expectedPaymentToDate | currency:'XAF':'symbol':'1.0-0' }} attendu à ce jour</div>
-              <!-- Cumul total versé depuis l'entrée (peut différer si avance ou antérieure à cette année) -->
-              <!-- <div class="text-xs text-blue-500" *ngIf="tenant.totalPaidAllTime && tenant.totalPaidAllTime !== tenant.totalPaid">
-                Cumul total : {{ tenant.totalPaidAllTime | currency:'XAF':'symbol':'1.0-0' }}
-              </div> -->
+              <div class="text-xs text-gray-400">
+                {{ (tenant)['coveredMonthsInYear'] ?? 0 }}/{{ (tenant)['monthsDueInYear'] ?? tenant.monthsOccupied }} mois
+              </div>
+            </td>
+
+            <!-- Encaissé dans l'année (réel, datePayment dans l'année) -->
+            <td>
+              <div class="font-medium text-blue-600">{{ (tenant.totalPaidAllTime ?? 0) | currency:'XAF':'symbol':'1.0-0' }}</div>
+              <div class="text-xs text-gray-400">encaissements réels {{ selectedYear }}</div>
             </td>
 
             <!-- Montant en retard -->

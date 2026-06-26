@@ -1,10 +1,11 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges } from '@angular/core';
 import {
-  EnrichedStatisticResponse,
+  EnrichedStatisticData,
   StatisticPaymentStateType
 } from 'src/app/shared/store';
 import { Store } from '@ngxs/store';
 import { ExportData } from '../../property-finances.component';
+import { StoredPropertyStatistic } from '../tenant-payment-tracking/tenant-payment-tracking.component';
 
 export interface TenantFinancialAnalysis {
   tenantId: string;
@@ -49,7 +50,7 @@ export interface TenantFinancialAnalysis {
   styleUrls: ['./tenant-payment-analysis.component.scss']
 })
 export class TenantPaymentAnalysisComponent implements OnInit, OnChanges {
-  @Input() enrichedData: EnrichedStatisticResponse[] = [];
+  @Input() enrichedData: StoredPropertyStatistic[] = [];
   @Input() selectedYear: number = new Date().getFullYear();
   @Input() propertyId: string = '';
   @Input() isLoading: boolean = false;

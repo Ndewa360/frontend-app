@@ -246,17 +246,27 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
       this.dialogRef.close(true);
     });
 
-    // Erreurs de création
+    // Erreurs de création — distinguer les types d'erreurs
     this.actions.pipe(
       ofActionErrored(RoomAction.CreateRoom),
       takeUntil(this.destroy$)
-    ).subscribe(() => {
+    ).subscribe((actionCtx: any) => {
       this.isLoading = false;
-      console.log('🔍 Erreur de création interceptée');
+      const error = actionCtx?.error;
+      const errorCode = error?.error?.error;
 
-      // Pour l'instant, on affiche le modal de limite par défaut
-      // L'erreur spécifique sera gérée côté backend
-      this.showRoomLimitModal();
+      if (errorCode === 'Account/Suspended') {
+        this.showAccountSuspendedModal();
+      } else if (errorCode === 'RoomLimit/Exceeded') {
+        const status = this.store.selectSnapshot(SubscriptionLimitState.selectSubscriptionStatus);
+        this.showRoomLimitModal(status?.unitsPerPropertyLimit ?? 8);
+      } else {
+        // Erreur générique
+        this.toastr.error(
+          this.translate.instant('notifications.unitCreateError') || 'Erreur lors de la création de l\'unité',
+          this.translate.instant('notifications.error') || 'Erreur'
+        );
+      }
     });
 
     // Erreurs de modification
@@ -373,10 +383,47 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
   }
 
   private checkRoomLimits(): void {
-    // Pour la création d'unités, on laisse le backend gérer la vérification
-    // et on intercepte l'erreur dans setupActionListeners
-    console.log('🔍 Tentative de création d\'unité - vérification côté backend');
-    this.createOrUpdateRoom();
+    this.isLoading = true;
+    // Vérification réelle via le store — demande le statut d'abonnement à jour
+    this.store.dispatch(new SubscriptionLimitAction.GetSubscriptionStatus()).subscribe({
+      next: () => {
+        const status = this.store.selectSnapshot(SubscriptionLimitState.selectSubscriptionStatus);
+        if (!status) {
+          // Pas de statut, on laisse le backend décider
+          this.createOrUpdateRoom();
+          return;
+        }
+
+        if (status.accountStatus === 'suspended') {
+          this.isLoading = false;
+          this.showAccountSuspendedModal();
+          return;
+        }
+
+        if (status.plan === 'free') {
+          // Compter les unités actuelles de ce bien depuis le store
+          const propertyId = this.data.property._id;
+          const currentRooms = this.store.selectSnapshot(
+            (state: any) => (state.rooms?.rooms || []).filter((r: any) => r.property === propertyId)
+          );
+          const unitsLimit = status.unitsPerPropertyLimit ?? 8;
+
+          if (currentRooms.length >= unitsLimit) {
+            this.isLoading = false;
+            this.showRoomLimitModal(unitsLimit);
+            return;
+          }
+        }
+
+        // Tout est bon, créer l'unité
+        this.createOrUpdateRoom();
+      },
+      error: () => {
+        this.isLoading = false;
+        // En cas d'erreur réseau, on laisse le backend trancher
+        this.createOrUpdateRoom();
+      }
+    });
   }
 
   private async createOrUpdateRoom(): Promise<void> {
@@ -425,10 +472,10 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
     }
   }
 
-  private showRoomLimitModal(): void {
+  private showRoomLimitModal(currentLimit: number = 8): void {
     const modalData: SubscriptionLimitModalData = {
       type: 'limit_reached',
-      currentLimit: 8,
+      currentLimit,
       limitType: 'room'
     };
 

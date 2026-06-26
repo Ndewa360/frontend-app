@@ -1,12 +1,13 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges } from '@angular/core';
-import {
-  EnrichedStatisticResponse
-} from 'src/app/shared/store';
+import { EnrichedStatisticData } from 'src/app/shared/store';
 import { Store } from '@ngxs/store';
 import { TranslateService } from '@ngx-translate/core';
 import { TranslationUtilsService } from 'src/app/shared/services/translation-utils.service';
 import { ExportData } from '../../property-finances.component';
 import { PropertyFinancialManagerService } from 'src/app/main/properties/services/property-financial-manager.service';
+
+// Type exact du store : {key: string, data: EnrichedStatisticData}
+export type StoredPropertyStatistic = { key: string; data: EnrichedStatisticData };
 
 
 
@@ -38,6 +39,7 @@ export interface TenantTrackingData {
   monthsBehind: number;
   amountBehind: number;
   advanceAmount: number;
+  advanceMonths: number;
   paymentConsistency: number;
   paymentRate: number;
   lastPaymentMonth: number;
@@ -58,7 +60,7 @@ export interface TenantTrackingData {
   styleUrls: ['./tenant-payment-tracking.component.scss']
 })
 export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
-  @Input() enrichedData: EnrichedStatisticResponse [] = [];
+  @Input() enrichedData: StoredPropertyStatistic[] = [];
   @Input() selectedYear: number = new Date().getFullYear();
   @Input() isLoading: boolean = false;
   @Input() propertyId: string = '';
@@ -139,6 +141,9 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
           ? Math.min(Math.round((coveredAmountInYear / expectedToDate) * 10000) / 100, 100)
           : 0;
 
+        // Encaissements réels de l'année = somme de fa.monthlyPayments (datePayment dans l'année)
+        const realReceivedInYear = (fa.monthlyPayments || []).reduce((s: number, v: number) => s + (v || 0), 0);
+
         return {
           tenantId:   tenant.locataire?._id || tenant.room?._id || '',
           tenantName: tenant.locataire?.fullName || 'Locataire inconnu',
@@ -146,13 +151,13 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
           monthlyRent: roomPrice,
           entryDate:   new Date(fa.entryDate),
           monthsElapsed: fa.monthsElapsed,
-          // Projection sur l'année (pas le cumul brut)
-          totalPaid:             coveredAmountInYear,   // couvert dans l'année
-          expectedPaymentToDate: expectedToDate,        // attendu à ce jour
+          totalPaid:             coveredAmountInYear,   // couvert dans l'année (projection)
+          expectedPaymentToDate: expectedToDate,
           status: fa.status,
           monthsBehind:  (fa as any).lateMonths    ?? fa.monthsBehind ?? 0,
           amountBehind:  fa.amountBehind ?? 0,
           advanceAmount: (fa as any).advanceAmount ?? 0,
+          advanceMonths: (fa as any).advanceMonths ?? 0,
           paymentConsistency: fa.paymentConsistency,
           paymentRate,
           lastPaymentMonth: fa.lastPaymentMonth,
@@ -160,18 +165,16 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
             ? new Date((fa as any).lastPaymentDate) : null,
           nextPaymentDate: (fa as any).nextPaymentDate
             ? new Date((fa as any).nextPaymentDate) : null,
-          // Compatibilité template
           totalExpected:    expectedToDate,
           totalReceived:    coveredAmountInYear,
           monthsOccupied:   monthsDueInYear,
           contractStatus:   fa.status,
-          // Champs supplémentaires pour l'affichage
           coveredAmountInYear,
           expectedFullYear,
           coveredMonthsInYear,
           monthsDueInYear,
           totalMonthsCovered,
-          totalPaidAllTime: fa.totalPaid  // cumul brut toutes années — différent de coveredAmountInYear
+          totalPaidAllTime: realReceivedInYear  // encaissements réels de l'année (datePayment dans l'année)
         };
       });
 
@@ -268,7 +271,7 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
   }
 
   getAdvanceMonths(tenant: TenantTrackingData): number {
-    return (tenant as any).advanceMonths ?? 0;
+    return tenant.advanceMonths ?? 0;
   }
 
   getStatusBadgeClass(status: string): string {
@@ -388,7 +391,8 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
         'Loyer mensuel':       tenant.monthlyRent,
         'Mois dus':            tenant.monthsOccupied,
         'Attendu à ce jour':   tenant.expectedPaymentToDate,
-        'Couvert':             tenant.totalPaid,
+        'Couvert (projection)':  tenant.totalPaid,
+        'Encaissé réel':         tenant.totalPaidAllTime ?? 0,
         'Taux recouvrement':   `${tauxNum.toFixed(1)}%`,
         'Montant en retard':   tenant.amountBehind > 0 ? tenant.amountBehind : 0,
         'Mois de retard':      tenant.monthsBehind > 0 ? tenant.monthsBehind : 0,

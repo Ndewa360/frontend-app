@@ -6,7 +6,7 @@ import { of, throwError } from "rxjs";
 import { catchError, tap } from "rxjs/operators";
 import { UtilsString } from "../../utils";
 import { ToastrService } from "ngx-toastr";
-import { StatisticAllPaymentLocataireYearModel, StatisticLocataireYearModel, StatisticPaymentOfAllPropertyByYear, StatisticRoomYearModel, PropertyMetrics, ComprehensiveReport, EnrichedStatisticResponse } from "./statistic.model";
+import { StatisticAllPaymentLocataireYearModel, StatisticLocataireYearModel, StatisticPaymentOfAllPropertyByYear, StatisticRoomYearModel, PropertyMetrics, ComprehensiveReport, EnrichedStatisticData } from "./statistic.model";
 
 export interface StatisticError {
     message: string;
@@ -46,8 +46,8 @@ export class StatisticStateModel {
     allLocatairePayementByYearLastUpdated: Date | null
     statisticRecapitulationPaymentLastUpdated: Date | null
 
-    //PropertyStatistic
-    propertyStatistic:{key:string,data:EnrichedStatisticResponse}[]
+    //PropertyStatistic — stocke directement EnrichedStatisticData (pas d'enveloppe supplémentaire)
+    propertyStatistic:{key:string,data:EnrichedStatisticData}[]
 }
 
 
@@ -79,7 +79,6 @@ export class StatisticStateModel {
 
         propertyStatistic:[],
 
-        // Timestamps
         lastUpdated: null,
         roomStatisticLastUpdated: null,
         locataireStatisticLastUpdated: null,
@@ -269,50 +268,39 @@ export class StatisticState{
     }
 
     @Action(StatisticAction.FetchStaticByPropertyIdAndYear)
-    fetchRoomStatisticByPropertyAndYear(ctx:StateContext<StatisticStateModel>,{propertyID,year}:StatisticAction.FetchStaticRoomDataByPropertyIdAndYear)
+    fetchRoomStatisticByPropertyAndYear(ctx:StateContext<StatisticStateModel>,{propertyID,year}:StatisticAction.FetchStaticByPropertyIdAndYear)
     {
         const state = ctx.getState();
+        ctx.patchState({ loadingPropertyStatistic: true });
 
-        ctx.patchState({
-            loadingPropertyStatistic:true,
-        })
-
-        return this._statisticsService.getStatisticPropertyDataByYear(propertyID,year).pipe(
-            tap(
-                result => {
-                    const key = `${propertyID}-${year}`;
-                    // ✅ result est ApiResultFormat<EnrichedStatisticResponse>
-                    // result.data est l'EnrichedStatisticResponse (qui contient lui-même data: EnrichedStatisticData)
-                    // On stocke directement result.data pour que les composants accèdent à propertyStats[0].data.data.rooms
-                    // CORRECTION : on stocke result (l'enveloppe complète) pour éviter la confusion
-                    // Les composants accèdent via propertyStats[0].data qui est EnrichedStatisticResponse
-                    const filteredPropertyStats = state.propertyStatistic.filter((u) => u.key !== key);
-                    const finalStatistic = [...filteredPropertyStats, { key, data: result.data }];
-
-                    ctx.patchState({
-                        loadingPropertyStatistic: false,
-                        propertyStatistic: finalStatistic,
-                        error: null
-                    });
-                }
-            ),
-            catchError(error => {
-                console.error('❌ Error loading room statistics:', error);
-                const errorObj: StatisticError = {
-                    message: error.error?.message || 'Erreur lors du chargement des statistiques des chambres',
-                    code: error.error?.error || 'ROOM_STATS_ERROR',
-                    timestamp: new Date()
-                };
-
+        return this._statisticsService.getStatisticPropertyDataByYear(propertyID, year).pipe(
+            tap(result => {
+                const key = `${propertyID}-${year}`;
+                // result.data est directement EnrichedStatisticData — plus de double enveloppe
+                const filteredPropertyStats = state.propertyStatistic.filter(u => u.key !== key);
                 ctx.patchState({
                     loadingPropertyStatistic: false,
-                    roomStatisticError: errorObj
+                    propertyStatistic: [...filteredPropertyStats, { key, data: result.data }],
+                    error: null
                 });
-
+            }),
+            catchError(error => {
+                const errorObj: StatisticError = {
+                    message: error.error?.message || 'Erreur lors du chargement des statistiques',
+                    code: error.error?.error || 'PROPERTY_STATS_ERROR',
+                    timestamp: new Date()
+                };
+                ctx.patchState({ loadingPropertyStatistic: false, roomStatisticError: errorObj });
                 this._toastrService.error(errorObj.message, 'Erreur');
                 return throwError(error);
             })
-        )
+        );
+    }
+
+    // Handler de compatibilité pour l'action dépréciée — redirige vers la nouvelle
+    @Action(StatisticAction.FetchStaticRoomDataByPropertyIdAndYear)
+    fetchRoomStatisticDeprecated(ctx: StateContext<StatisticStateModel>, {propertyID, year}: StatisticAction.FetchStaticRoomDataByPropertyIdAndYear) {
+        return ctx.dispatch(new StatisticAction.FetchStaticByPropertyIdAndYear(propertyID, year));
     }
 
     @Action(StatisticAction.FetchStatisticPaymentRecapitulationAccountOfAllPropertyByYear)
@@ -359,12 +347,19 @@ export class StatisticState{
             loadingRoomStatistic:false,
             locataireStatisticLoading:false,
             allLocatairePayementByYearLoading:false,
+            loadingPropertyStatistic:false,
             roomStatistic:[],
             locataireStatistic:[],
             allLocatairePayementByYear:[],
+            statisticRecapitulationPayment:[],
+            propertyStatistic:[],
             propertyMetrics: {},
-            comprehensiveReports: {}
-            // initLoadingState:'NO_LOADED',
+            comprehensiveReports: {},
+            error: null,
+            roomStatisticError: null,
+            locataireStatisticError: null,
+            allLocatairePayementByYearError: null,
+            statisticRecapitulationPaymentError: null
         })
     }
 
@@ -376,12 +371,19 @@ export class StatisticState{
             loadingRoomStatistic:false,
             locataireStatisticLoading:false,
             allLocatairePayementByYearLoading:false,
+            loadingPropertyStatistic:false,
             roomStatistic:[],
             locataireStatistic:[],
             allLocatairePayementByYear:[],
+            statisticRecapitulationPayment:[],
+            propertyStatistic:[],
             propertyMetrics: {},
-            comprehensiveReports: {}
-            // initLoadingState:'NO_LOADED',
+            comprehensiveReports: {},
+            error: null,
+            roomStatisticError: null,
+            locataireStatisticError: null,
+            allLocatairePayementByYearError: null,
+            statisticRecapitulationPaymentError: null
         })
     }
 
@@ -389,57 +391,68 @@ export class StatisticState{
     fetchLocataireStatisticByPropertyAndYear(ctx:StateContext<StatisticStateModel>,{propertyID,year}:StatisticAction.FetchStaticLocataireDataByPropertyIdAndYear)
     {
         const state = ctx.getState();
-        let index = state.locataireStatistic.findIndex((u)=>u.locataire.property==propertyID && u.year==year.toString());
-        let locataireStatisticNewState = [...state.locataireStatistic]
-        if(index>-1) locataireStatisticNewState.splice(index,1);
+        let locataireStatisticNewState = state.locataireStatistic.filter(
+            u => !(u.locataire.property === propertyID && u.year === year.toString())
+        );
+        ctx.patchState({ loadingStatistic: true, locataireStatisticLoading: true });
 
-        // if(index>-1) return of(true);
-
-        ctx.patchState({
-            loadingStatistic:true,
-            locataireStatisticLoading:true
-        })
-        return this._statisticsService.getStatisticLocataireDataByYear(propertyID,year).pipe(
-            tap(
-                result => {
-                    //console.log("Result Locataire data",result)
-                    ctx.patchState({
-                        loadingStatistic:false,
-                        locataireStatisticLoading:false,
-                        locataireStatistic:[...locataireStatisticNewState, ...result.data]
-                    })
-                }
-            )
-        )
+        return this._statisticsService.getStatisticLocataireDataByYear(propertyID, year).pipe(
+            tap(result => {
+                ctx.patchState({
+                    loadingStatistic: false,
+                    locataireStatisticLoading: false,
+                    locataireStatistic: [...locataireStatisticNewState, ...result.data]
+                });
+            }),
+            catchError(error => {
+                const errorObj: StatisticError = {
+                    message: error.error?.message || 'Erreur lors du chargement des statistiques locataires',
+                    code: error.error?.error || 'LOCATAIRE_STATS_ERROR',
+                    timestamp: new Date()
+                };
+                ctx.patchState({
+                    loadingStatistic: false,
+                    locataireStatisticLoading: false,
+                    locataireStatisticError: errorObj
+                });
+                this._toastrService.error(errorObj.message, 'Erreur');
+                return throwError(error);
+            })
+        );
     }
 
     @Action(StatisticAction.FetchStaticAllPaymentLocataireDataByPropertyIdAndYear)
     fetchAllPayementLocataireStatisticByPropertyAndYear(ctx:StateContext<StatisticStateModel>,{propertyID,year}:StatisticAction.FetchStaticAllPaymentLocataireDataByPropertyIdAndYear)
     {
         const state = ctx.getState();
-        let index = state.allLocatairePayementByYear.findIndex((u)=>u.locataire.property==propertyID && year.toString()==u.year);
-        let allLocatairePayementByYearNewState = [...state.allLocatairePayementByYear]
-        if(index>-1) allLocatairePayementByYearNewState.splice(index,1);
+        const allLocatairePayementByYearNewState = state.allLocatairePayementByYear.filter(
+            u => !(u.locataire.property === propertyID && u.year === year.toString())
+        );
+        ctx.patchState({ loadingStatistic: true, allLocatairePayementByYearLoading: true });
 
-        // if(index>-1) return of(true);
-
-        ctx.patchState({
-            loadingStatistic:true,
-            allLocatairePayementByYearLoading:true            
-        })
-
-        return this._statisticsService.getAllPaymentLocataireStatisticDataByYear(propertyID,year).pipe(
-            tap(
-                result => {
-                    //console.log("Result Locataire Statistic",result)
-                    ctx.patchState({
-                        loadingStatistic:false,
-                        allLocatairePayementByYearLoading:false,
-                        allLocatairePayementByYear:[...allLocatairePayementByYearNewState, ...result.data]
-                    })
-                }
-            )
-        )
+        return this._statisticsService.getAllPaymentLocataireStatisticDataByYear(propertyID, year).pipe(
+            tap(result => {
+                ctx.patchState({
+                    loadingStatistic: false,
+                    allLocatairePayementByYearLoading: false,
+                    allLocatairePayementByYear: [...allLocatairePayementByYearNewState, ...result.data]
+                });
+            }),
+            catchError(error => {
+                const errorObj: StatisticError = {
+                    message: error.error?.message || 'Erreur lors du chargement des paiements locataires',
+                    code: error.error?.error || 'ALL_PAYMENT_STATS_ERROR',
+                    timestamp: new Date()
+                };
+                ctx.patchState({
+                    loadingStatistic: false,
+                    allLocatairePayementByYearLoading: false,
+                    allLocatairePayementByYearError: errorObj
+                });
+                this._toastrService.error(errorObj.message, 'Erreur');
+                return throwError(error);
+            })
+        );
     }
 
     @Action(StatisticAction.RefreshStatisticAfterPayment)

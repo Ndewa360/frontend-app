@@ -8,7 +8,7 @@ import {
   StatisticAllPaymentLocataireYearModel,
   StatisticLocataireYearModel,
   StatisticPaymentOfAllPropertyByYear,
-  EnrichedStatisticResponse
+  EnrichedStatisticData
 } from "./statistic.model";
 
 @Injectable({
@@ -21,19 +21,17 @@ export class StatisticService {
   /**
    * Statistiques enrichies par propriété et année
    * Retourne rooms, propertyMetrics, revenueDistribution, tenantsAnalysis, cautionsAnalysis
+   * L'API retourne { statusCode, message, data: EnrichedStatisticData, performanceMs, ... }
+   * On utilise ApiResultFormat<EnrichedStatisticData> pour récupérer directement result.data
    */
   getStatisticPropertyDataByYear(
     propertyID: string,
     year: string | number
-  ): Observable<ApiResultFormat<EnrichedStatisticResponse>> {
+  ): Observable<ApiResultFormat<EnrichedStatisticData>> {
     const url = `${environment.apiUrl}/statistic-location-payment/statistic-payement-by-property/${propertyID}/${year}/`;
-    return this._httpClient.get<ApiResultFormat<EnrichedStatisticResponse>>(url).pipe(
+    return this._httpClient.get<ApiResultFormat<EnrichedStatisticData>>(url).pipe(
       catchError(error => {
-        console.error('❌ API Error getStatisticPropertyDataByYear:', {
-          status: error.status,
-          url,
-          error: error.error
-        });
+        console.error('❌ API Error getStatisticPropertyDataByYear:', { status: error.status, url, error: error.error });
         throw error;
       })
     );

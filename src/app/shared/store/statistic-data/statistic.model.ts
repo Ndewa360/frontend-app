@@ -213,7 +213,8 @@ export interface CautionsAnalysis {
   alerts: string[];
 }
 
-// ─── Corps de la réponse enrichie (data.data) ─────────────────────────────────
+// ─── Corps de la réponse enrichie (data retournée par l'API)
+// C'est ce qui est stocké dans le store : propertyStatistic[].data
 export interface EnrichedStatisticData {
   rooms: StatisticRoomYearModel[];
   propertyMetrics: PropertyMetrics;
@@ -226,7 +227,8 @@ export interface EnrichedStatisticData {
   year: string;
 }
 
-// ─── Réponse complète de l'API (enveloppe) ────────────────────────────────────
+// ─── Métadonnées de la réponse HTTP (enveloppe du controller)
+// Utilisé uniquement pour typer la réponse HTTP brute — jamais stocké dans le store
 export interface EnrichedStatisticResponse {
   data: EnrichedStatisticData;
   performanceMs: number;

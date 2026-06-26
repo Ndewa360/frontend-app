@@ -3,7 +3,7 @@ import { Store } from '@ngxs/store';
 import { Subject, combineLatest } from 'rxjs';
 import { takeUntil, map } from 'rxjs/operators';
 import { StatisticState, StatisticAction, StatisticError } from 'src/app/shared/store';
-import { EnrichedStatisticResponse } from 'src/app/shared/store/statistic-data/statistic.model';
+import { EnrichedStatisticData } from 'src/app/shared/store/statistic-data/statistic.model';
 import { UtilsString } from 'src/app/shared/utils';
 
 @Component({
@@ -22,6 +22,8 @@ export class ChartFinanceRoomComponent implements OnInit, OnChanges, OnDestroy {
   isLoading: boolean = false;
   error: StatisticError | null = null;
   private destroy$ = new Subject<void>();
+  // Subject dédié pour annuler la subscription courante avant d'en créer une nouvelle
+  private subscriptionReset$ = new Subject<void>();
 
   constructor(private store: Store) {}
 
@@ -37,6 +39,8 @@ export class ChartFinanceRoomComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.subscriptionReset$.next();
+    this.subscriptionReset$.complete();
     this.destroy$.next();
     this.destroy$.complete();
   }
@@ -50,13 +54,14 @@ export class ChartFinanceRoomComponent implements OnInit, OnChanges, OnDestroy {
     this.isLoading = true;
     this.error = null;
 
-    // ✅ Dispatch vers FetchStaticByPropertyIdAndYear (qui stocke dans propertyStatistic)
+    // Annuler la subscription précédente avant d'en créer une nouvelle
+    this.subscriptionReset$.next();
+
     this.store.dispatch(new StatisticAction.FetchStaticByPropertyIdAndYear(
       this.propertyID,
       this.selectedYear.toString()
     ));
 
-    // ✅ Écoute le bon selector : selectStateStatisticPropertyIdAndYear
     combineLatest([
       this.store.select(
         StatisticState.selectStateStatisticPropertyIdAndYear(this.propertyID, this.selectedYear)
@@ -64,15 +69,15 @@ export class ChartFinanceRoomComponent implements OnInit, OnChanges, OnDestroy {
       this.store.select(StatisticState.selectStateLoadingPropertyStatistic),
       this.store.select(StatisticState.selectRoomStatisticError)
     ]).pipe(
+      takeUntil(this.subscriptionReset$),
       takeUntil(this.destroy$),
       map(([propertyStats, loading, error]) => ({ propertyStats, loading, error }))
     ).subscribe(({ propertyStats, loading, error }) => {
       this.error = error;
-
       if (propertyStats && propertyStats.length > 0) {
         this.isLoading = false;
-        // propertyStats[0].data est l'EnrichedStatisticResponse
-        this.charsOpts = this.buildChart(propertyStats[0].data as EnrichedStatisticResponse);
+        // propertyStats[0].data est directement EnrichedStatisticData (plus de double .data)
+        this.charsOpts = this.buildChart(propertyStats[0].data as EnrichedStatisticData);
       } else if (!loading) {
         this.isLoading = false;
         this.charsOpts = this.getEmptyChart();
@@ -84,13 +89,13 @@ export class ChartFinanceRoomComponent implements OnInit, OnChanges, OnDestroy {
     this.loadData();
   }
 
-  private buildChart(data: EnrichedStatisticResponse): any {
-    // data est EnrichedStatisticResponse, data.data est EnrichedStatisticData
-    if (!data || !data.data || !data.data.rooms || data.data.rooms.length === 0) {
+  private buildChart(data: EnrichedStatisticData): any {
+    // data est directement EnrichedStatisticData — accès via data.rooms (plus data.data.rooms)
+    if (!data || !data.rooms || data.rooms.length === 0) {
       return this.getEmptyChart();
     }
 
-    const rooms = data.data.rooms;
+    const rooms = data.rooms;
     const legendData: string[] = [];
     const dataSeries: any[] = [];
 

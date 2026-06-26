@@ -387,8 +387,9 @@ export class RoomState{
                     })
                 }
             ),
-            catchError((error)=>{
-                  return error;
+            catchError((error) => {
+                ctx.patchState({ loadingRoom: false });
+                return throwError(error);
             })
         )
     }
