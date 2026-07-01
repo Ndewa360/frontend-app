@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
-import { Store, Actions, ofActionSuccessful, ofActionErrored } from '@ngxs/store';
+import { Store, Actions, ofActionSuccessful, ofActionCompleted } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
@@ -246,39 +246,40 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
       this.dialogRef.close(true);
     });
 
-    // Erreurs de création — distinguer les types d'erreurs
+    // Erreurs de création — via ofActionCompleted pour accéder à result.error
     this.actions.pipe(
-      ofActionErrored(RoomAction.CreateRoom),
+      ofActionCompleted(RoomAction.CreateRoom),
       takeUntil(this.destroy$)
-    ).subscribe((actionCtx: any) => {
-      this.isLoading = false;
-      const error = actionCtx?.error;
-      const errorCode = error?.error?.error;
-
-      if (errorCode === 'Account/Suspended') {
-        this.showAccountSuspendedModal();
-      } else if (errorCode === 'RoomLimit/Exceeded') {
-        const status = this.store.selectSnapshot(SubscriptionLimitState.selectSubscriptionStatus);
-        this.showRoomLimitModal(status?.unitsPerPropertyLimit ?? 8);
-      } else {
-        // Erreur générique
-        this.toastr.error(
-          this.translate.instant('notifications.unitCreateError') || 'Erreur lors de la création de l\'unité',
-          this.translate.instant('notifications.error') || 'Erreur'
-        );
+    ).subscribe((completion) => {
+      if (!completion.result.successful) {
+        this.isLoading = false;
+        const errorCode = (completion.result.error as any)?.error?.error;
+        if (errorCode === 'Account/Suspended') {
+          this.showAccountSuspendedModal();
+        } else if (errorCode === 'RoomLimit/Exceeded') {
+          const status = this.store.selectSnapshot(SubscriptionLimitState.selectSubscriptionStatus);
+          this.showRoomLimitModal(status?.unitsPerPropertyLimit ?? 8);
+        } else {
+          this.toastr.error(
+            this.translate.instant('notifications.unitCreateError') || 'Erreur lors de la création de l\'unité',
+            this.translate.instant('notifications.error') || 'Erreur'
+          );
+        }
       }
     });
 
     // Erreurs de modification
     this.actions.pipe(
-      ofActionErrored(RoomAction.UpdateRoom),
+      ofActionCompleted(RoomAction.UpdateRoom),
       takeUntil(this.destroy$)
-    ).subscribe(() => {
-      this.isLoading = false;
-      this.toastr.error(
-        this.translate.instant('notifications.unitUpdateError'),
-        this.translate.instant('notifications.error')
-      );
+    ).subscribe((completion) => {
+      if (!completion.result.successful) {
+        this.isLoading = false;
+        this.toastr.error(
+          this.translate.instant('notifications.unitUpdateError'),
+          this.translate.instant('notifications.error')
+        );
+      }
     });
   }
 
@@ -402,9 +403,13 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
 
         if (status.plan === 'free') {
           // Compter les unités actuelles de ce bien depuis le store
+          // Comparer avec _id ou l'objet entier (property peut être un objet ou un string)
           const propertyId = this.data.property._id;
           const currentRooms = this.store.selectSnapshot(
-            (state: any) => (state.rooms?.rooms || []).filter((r: any) => r.property === propertyId)
+            (state: any) => (state.rooms?.rooms || []).filter((r: any) => {
+              const rProp = r.property?._id || r.property;
+              return rProp === propertyId || rProp?.toString() === propertyId?.toString();
+            })
           );
           const unitsLimit = status.unitsPerPropertyLimit ?? 8;
 

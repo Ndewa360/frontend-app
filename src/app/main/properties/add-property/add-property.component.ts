@@ -2,7 +2,7 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { Store, Actions, ofActionCompleted, ofActionErrored, ofActionSuccessful, Select } from '@ngxs/store';
+import { Store, Actions, ofActionCompleted, ofActionSuccessful, Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { firstValueFrom } from 'rxjs';
 import { CityModel, CountryModel, CountryState, PropertyAction, UserProfileState } from 'src/app/shared/store';
@@ -115,15 +115,17 @@ export class AddPropertyComponent implements OnInit {
       }
     );
     this._ngxsAction.pipe(ofActionCompleted(PropertyAction.CreateProperty)).subscribe(
-      (value) => {
-        this.waittingResponse=false;
-        
-      }
-    )
-
-    this._ngxsAction.pipe(ofActionErrored(PropertyAction.CreateProperty)).subscribe(
-      (value) => {
-        this.waittingResponse=false;
+      (completion) => {
+        this.waittingResponse = false;
+        if (!completion.result.successful) {
+          const errorCode = (completion.result.error as any)?.error?.error;
+          if (errorCode === 'Account/Suspended') {
+            this.showAccountSuspendedModal();
+          } else if (errorCode === 'PropertyLimit/Exceeded') {
+            const status = this._store.selectSnapshot(state => state.subscriptionLimit.subscriptionStatus);
+            this.showSubscriptionLimitModal(true, status?.propertyLimit ?? 1);
+          }
+        }
       })
   }
 
