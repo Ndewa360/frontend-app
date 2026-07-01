@@ -178,6 +178,7 @@ $gray-900: #0f172a;
     &.admin-btn-secondary{ background: $white; color: $gray-700; border: 1px solid $gray-200; &:hover { background: $gray-50; } }
     &.admin-btn-ghost    { background: transparent; color: $primary; &:hover { background: $primary-light; } }
     &.admin-btn-outline  { background: transparent; color: $gray-700; border: 1px solid $gray-200; &:hover { background: $gray-50; } }
+    &.admin-btn-danger   { background: $danger; color: $white; &:hover { background: darken($danger,8%); } }
 
     &:disabled { opacity: 0.5; cursor: not-allowed; }
   }

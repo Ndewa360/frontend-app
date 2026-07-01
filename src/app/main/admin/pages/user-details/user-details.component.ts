@@ -18,6 +18,51 @@ interface SubscriptionPeriodSummary {
   paymentReference?: string;
 }
 
+interface RentTransaction {
+  _id: string;
+  externalRef: string;
+  context: 'RENT' | 'SUBSCRIPTION';
+  status: 'PENDING' | 'FAILED' | 'SUCCESS' | 'CANCELLED' | 'EXPIRED';
+  amount: number;
+  currency: string;
+  provider: string;
+  description: string;
+  failureReason?: string;
+  eventProcessed: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  processedAt?: Date;
+  // Locataire enrichi
+  locataire?: {
+    _id: string;
+    fullName: string;
+    email: string;
+    phoneNumber?: string;
+    country?: string;
+    idCardNumber?: string;
+    idCardType?: string;
+    fullNameRef?: string;
+    phoneNumberRef?: string;
+  };
+  // Chambre enrichie
+  room?: { _id: string; type: string; code: string; price: number; cautionPrice?: number; description?: string };
+  // Contrat enrichi
+  location?: { _id: string; startedAt: Date; endedAt?: Date; locationPriceUnit: number; isRunning: boolean };
+  // Propriété enrichie
+  property?: { _id: string; name: string; location?: string; propertyType?: string; image?: string };
+  // Période souscription
+  period?: { _id: string; billingRef: string; startedAt: Date; endedAt: Date; calculatedAmount: number };
+  // IDs bruts
+  locationId?: string;
+  propertyId?: string;
+  roomId?: string;
+  locataireId?: string;
+  periodId?: string;
+  subscriptionId?: string;
+  paymentLinkId?: string;
+  rawProviderResponse?: Record<string, any>;
+}
+
 interface UserDetails {
   _id: string;
   name: string;
@@ -77,6 +122,28 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
   userId: string;
   isMarkingPaid = false;
 
+  // Transactions loyer en attente
+  rentTransactions: RentTransaction[] = [];
+  isLoadingRentTx  = false;
+  rentTxLoaded     = false;
+  recheckingRef: string | null = null;
+  confirmingRef: string | null = null;
+
+  // Modal confirmation manuelle
+  showConfirmModal  = false;
+  pendingConfirmRef: string | null = null;
+  pendingConfirmContext: string | null = null;
+  adminNote = '';
+
+  // Modal détail transaction
+  showTxDetailModal = false;
+  selectedTx: RentTransaction | null = null;
+
+  // Modal suppression transaction
+  showDeleteTxModal  = false;
+  pendingDeleteRef: string | null = null;
+  isDeletingTx = false;
+
   // Modals
   showSuspendModal  = false;
   showMarkPaidModal = false;
@@ -116,7 +183,11 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
     this.usersService.getUserDetails(this.userId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (user) => { this.user = user; this.isLoading = false; },
+        next: (user) => {
+          this.user = user;
+          this.isLoading = false;
+          this.loadRentTransactions();
+        },
         error: (error) => {
           this.isLoading = false;
           if      (error.status === 404) this.toastr.error('Utilisateur non trouvé');
@@ -132,6 +203,84 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
   }
 
   refreshData(): void { this.loadUserDetails(); }
+
+  // ── Transactions loyer en attente ─────────────────────────────────────────
+
+  loadRentTransactions(): void {
+    this.isLoadingRentTx = true;
+    this.usersService.getPendingRentTransactions(this.userId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (txs) => {
+          this.rentTransactions = txs;
+          this.isLoadingRentTx  = false;
+          this.rentTxLoaded     = true;
+        },
+        error: () => {
+          this.isLoadingRentTx = false;
+          this.rentTxLoaded    = true;
+        }
+      });
+  }
+
+  recheckTransaction(externalRef: string): void {
+    this.recheckingRef = externalRef;
+    this.usersService.recheckRentTransaction(externalRef)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result) => {
+          this.recheckingRef = null;
+          if (result.status === 'SUCCESS') {
+            this.toastr.success('Paiement confirmé par le provider !');
+            this.loadUserDetails();
+          } else {
+            this.toastr.info(result.message);
+            this.loadRentTransactions();
+          }
+        },
+        error: (e) => {
+          this.recheckingRef = null;
+          this.toastr.error(e?.error?.message || 'Erreur lors de la vérification');
+        }
+      });
+  }
+
+  openConfirmModal(externalRef: string): void {
+    const tx = this.rentTransactions.find(t => t.externalRef === externalRef);
+    this.pendingConfirmRef = externalRef;
+    this.pendingConfirmContext = tx?.context || null;
+    this.adminNote = '';
+    this.showConfirmModal = true;
+  }
+
+  cancelConfirmModal(): void {
+    this.showConfirmModal = false;
+    this.pendingConfirmRef = null;
+    this.pendingConfirmContext = null;
+    this.adminNote = '';
+  }
+
+  confirmTransaction(): void {
+    if (!this.pendingConfirmRef) return;
+    const ref = this.pendingConfirmRef;
+    this.confirmingRef = ref;
+    this.showConfirmModal = false;
+
+    this.usersService.confirmRentTransaction(ref, this.adminNote || undefined)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.confirmingRef = null;
+          this.pendingConfirmRef = null;
+          this.toastr.success('Paiement confirmé — LocationPayment créé et wallet crédité');
+          this.loadUserDetails();
+        },
+        error: (e) => {
+          this.confirmingRef = null;
+          this.toastr.error(e?.error?.message || 'Erreur lors de la confirmation');
+        }
+      });
+  }
 
   // ── Actions souscription ──────────────────────────────────────────────────
 
@@ -331,5 +480,99 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
     if (rate >= 85) return 'text-green-600';
     if (rate >= 60) return 'text-yellow-600';
     return 'text-red-600';
+  }
+
+  getTxStatusLabel(status: string): string {
+    const map: Record<string, string> = {
+      PENDING:   '⏳ En attente',
+      FAILED:    '❌ Échoué',
+      SUCCESS:   '✅ Réussi',
+      CANCELLED: '⏹ Annulé',
+      EXPIRED:   '⏰ Expiré',
+    };
+    return map[status] || status;
+  }
+
+  getTxStatusClass(status: string): string {
+    const map: Record<string, string> = {
+      PENDING:   'admin-badge admin-badge-warning',
+      FAILED:    'admin-badge admin-badge-danger',
+      SUCCESS:   'admin-badge admin-badge-success',
+      CANCELLED: 'admin-badge admin-badge-secondary',
+      EXPIRED:   'admin-badge admin-badge-secondary',
+    };
+    return map[status] || 'admin-badge admin-badge-secondary';
+  }
+
+  getTxContextLabel(context: string): string {
+    return context === 'RENT' ? '🏠 Loyer' : '💳 Souscription';
+  }
+
+  getTxContextClass(context: string): string {
+    return context === 'RENT' ? 'admin-badge admin-badge-info' : 'admin-badge admin-badge-secondary';
+  }
+
+  getProviderLabel(provider: string): string {
+    const map: Record<string, string> = {
+      MTN: 'MTN Money', ORANGE: 'Orange Money',
+      EASY_TRANSACT: 'EasyTransact', STRIPE: 'Stripe',
+    };
+    return map[provider] || provider;
+  }
+
+  isRecheckingTx(ref: string): boolean { return this.recheckingRef === ref; }
+  isConfirmingTx(ref: string): boolean { return this.confirmingRef === ref; }
+  isTxBusy(ref: string): boolean { return this.isRecheckingTx(ref) || this.isConfirmingTx(ref); }
+
+  // ── Modal détail transaction ──────────────────────────────────────────────────────────────────
+
+  openTxDetail(tx: RentTransaction): void {
+    this.selectedTx = tx;
+    this.showTxDetailModal = true;
+  }
+
+  closeTxDetail(): void {
+    this.showTxDetailModal = false;
+    this.selectedTx = null;
+  }
+
+  // ── Modal suppression transaction ────────────────────────────────────────────────────────────
+
+  openDeleteTxModal(externalRef: string): void {
+    this.pendingDeleteRef = externalRef;
+    this.showDeleteTxModal = true;
+  }
+
+  cancelDeleteTx(): void {
+    this.showDeleteTxModal = false;
+    this.pendingDeleteRef = null;
+  }
+
+  confirmDeleteTx(): void {
+    if (!this.pendingDeleteRef) return;
+    const ref = this.pendingDeleteRef;
+    this.isDeletingTx = true;
+    this.showDeleteTxModal = false;
+
+    this.usersService.deleteRentTransaction(ref)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.isDeletingTx = false;
+          this.pendingDeleteRef = null;
+          this.toastr.success('Transaction supprimée');
+          this.rentTransactions = this.rentTransactions.filter(t => t.externalRef !== ref);
+        },
+        error: (e) => {
+          this.isDeletingTx = false;
+          this.toastr.error(e?.error?.message || 'Erreur lors de la suppression');
+        }
+      });
+  }
+
+  isDeletingThisTx(ref: string): boolean { return this.isDeletingTx && this.pendingDeleteRef === ref; }
+
+  canDeleteTx(status: string): boolean {
+    return ['FAILED', 'CANCELLED', 'EXPIRED'].includes(status);
   }
 }

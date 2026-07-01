@@ -79,6 +79,42 @@ export class AdminUsersService {
   }
 
   /**
+   * Obtenir les transactions PENDING/FAILED (loyer + souscription) pour un propriétaire
+   */
+  getPendingRentTransactions(ownerId: string): Observable<any[]> {
+    return this.http.get<ApiResultFormat<any[]>>(`${this.apiUrl}/${ownerId}/rent-transactions`).pipe(
+      map(response => response.data)
+    );
+  }
+
+  /**
+   * Re-vérifier le statut d'une transaction auprès du provider
+   */
+  recheckRentTransaction(externalRef: string): Observable<{ externalRef: string; status: string; message: string }> {
+    return this.http.post<ApiResultFormat<any>>(
+      `${environment.apiUrl}/admin/rent-transactions/${externalRef}/recheck`, {}
+    ).pipe(map(response => response.data));
+  }
+
+  /**
+   * Confirmer manuellement un paiement de loyer en attente
+   */
+  confirmRentTransaction(externalRef: string, adminNote?: string): Observable<{ externalRef: string; status: string; message: string }> {
+    return this.http.post<ApiResultFormat<any>>(
+      `${environment.apiUrl}/admin/rent-transactions/${externalRef}/confirm`, { adminNote }
+    ).pipe(map(response => response.data));
+  }
+
+  /**
+   * Supprimer une transaction échouée / annulée / expirée
+   */
+  deleteRentTransaction(externalRef: string): Observable<{ message: string }> {
+    return this.http.delete<ApiResultFormat<any>>(
+      `${environment.apiUrl}/admin/rent-transactions/${externalRef}`
+    ).pipe(map(response => response.data));
+  }
+
+  /**
    * Créer un nouvel utilisateur
    */
   createUser(userData: CreateAdminUserDto): Observable<AdminUser> {

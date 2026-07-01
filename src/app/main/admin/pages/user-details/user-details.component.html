@@ -286,6 +286,137 @@
       </div>
     </div>
 
+    <!-- ── Transactions loyer en attente ── -->
+    <div class="admin-content-section" *ngIf="rentTxLoaded">
+      <div class="admin-table-container">
+        <div class="admin-table-header" style="display:flex;justify-content:space-between;align-items:center">
+          <h3 class="admin-table-title">
+            <i class="fas fa-exchange-alt" style="color:#cc8c0a"></i>
+            Historique des transactions (loyer + souscription)
+            <span *ngIf="rentTransactions.length > 0" class="admin-badge admin-badge-secondary" style="margin-left:8px">
+              {{ rentTransactions.length }}
+            </span>
+          </h3>
+          <button class="admin-btn admin-btn-ghost admin-btn-sm" (click)="loadRentTransactions()" [disabled]="isLoadingRentTx">
+            <i class="fas" [class.fa-sync-alt]="!isLoadingRentTx" [class.fa-spinner]="isLoadingRentTx" [class.fa-spin]="isLoadingRentTx"></i>
+          </button>
+        </div>
+
+        <!-- Loader -->
+        <div *ngIf="isLoadingRentTx" style="padding:24px;text-align:center;color:#94a3b8">
+          <i class="fas fa-spinner fa-spin"></i> Chargement...
+        </div>
+
+        <!-- Tableau -->
+        <div *ngIf="!isLoadingRentTx && rentTransactions.length > 0" style="overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse;font-size:12px">
+            <thead>
+              <tr style="background:#F3F4F6">
+                <th style="padding:8px 12px;text-align:left;font-weight:600;color:#374151">Date</th>
+                <th style="padding:8px 12px;text-align:left;font-weight:600;color:#374151">Type</th>
+                <th style="padding:8px 12px;text-align:left;font-weight:600;color:#374151">Détail</th>
+                <th style="padding:8px 12px;text-align:right;font-weight:600;color:#374151">Montant</th>
+                <th style="padding:8px 12px;text-align:left;font-weight:600;color:#374151">Provider</th>
+                <th style="padding:8px 12px;text-align:center;font-weight:600;color:#374151">Statut</th>
+                <th style="padding:8px 12px;text-align:center;font-weight:600;color:#374151">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let tx of rentTransactions"
+                  style="border-bottom:1px solid #F3F4F6"
+                  [style.background]="isTxBusy(tx.externalRef) ? '#FFFBEB' : 'white'">
+                <td style="padding:8px 12px;color:#6B7280">{{ formatDate(tx.createdAt) }}</td>
+                <td style="padding:8px 12px">
+                  <span [class]="getTxContextClass(tx.context)">{{ getTxContextLabel(tx.context) }}</span>
+                </td>
+                <td style="padding:8px 12px">
+                  <ng-container *ngIf="tx.context === 'RENT'">
+                    <div style="font-weight:600;color:#374151">{{ tx.locataire?.fullName || 'Locataire inconnu' }}</div>
+                    <div style="font-size:11px;color:#9CA3AF">{{ tx.property?.name || '' }} — {{ tx.room?.code || '' }}</div>
+                    <div style="font-size:11px;color:#9CA3AF">{{ tx.locataire?.phoneNumber || tx.locataire?.email || '' }}</div>
+                  </ng-container>
+                  <ng-container *ngIf="tx.context === 'SUBSCRIPTION'">
+                    <div style="font-weight:600;color:#374151">{{ tx.period?.billingRef || 'Période inconnue' }}</div>
+                    <div style="font-size:11px;color:#9CA3AF" *ngIf="tx.period">{{ formatDateShort(tx.period.startedAt) }} → {{ formatDateShort(tx.period.endedAt) }}</div>
+                  </ng-container>
+                </td>
+                <td style="padding:8px 12px;text-align:right;font-weight:700;color:#374151">
+                  {{ formatCurrency(tx.amount) }}
+                </td>
+                <td style="padding:8px 12px;color:#374151">{{ getProviderLabel(tx.provider) }}</td>
+                <td style="padding:8px 12px;text-align:center">
+                  <span [class]="getTxStatusClass(tx.status)">{{ getTxStatusLabel(tx.status) }}</span>
+                  <div *ngIf="tx.failureReason" style="font-size:10px;color:#EF4444;margin-top:2px">{{ tx.failureReason }}</div>
+                </td>
+                <td style="padding:8px 12px;text-align:center">
+                  <div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap">
+                    <!-- Bouton détail : toujours visible -->
+                    <button
+                      class="admin-btn admin-btn-ghost admin-btn-sm"
+                      (click)="openTxDetail(tx)"
+                      title="Voir les détails complets">
+                      <i class="fas fa-eye"></i>
+                    </button>
+
+                    <!-- Actions uniquement pour les transactions non finalisées -->
+                    <ng-container *ngIf="tx.status === 'PENDING' || tx.status === 'FAILED'">
+                      <!-- Re-vérifier : uniquement pour PENDING -->
+                      <button *ngIf="tx.status === 'PENDING'"
+                        class="admin-btn admin-btn-outline admin-btn-sm"
+                        (click)="recheckTransaction(tx.externalRef)"
+                        [disabled]="isTxBusy(tx.externalRef)"
+                        title="Interroger le provider pour vérifier si le paiement a abouti">
+                        <i class="fas"
+                           [class.fa-search]="!isRecheckingTx(tx.externalRef)"
+                           [class.fa-spinner]="isRecheckingTx(tx.externalRef)"
+                           [class.fa-spin]="isRecheckingTx(tx.externalRef)"></i>
+                        Vérifier
+                      </button>
+                      <!-- Confirmer manuellement -->
+                      <button
+                        class="admin-btn admin-btn-success admin-btn-sm"
+                        (click)="openConfirmModal(tx.externalRef)"
+                        [disabled]="isTxBusy(tx.externalRef)"
+                        title="Confirmer manuellement : l'argent a bien été reçu">
+                        <i class="fas"
+                           [class.fa-check]="!isConfirmingTx(tx.externalRef)"
+                           [class.fa-spinner]="isConfirmingTx(tx.externalRef)"
+                           [class.fa-spin]="isConfirmingTx(tx.externalRef)"></i>
+                        Confirmer
+                      </button>
+                    </ng-container>
+
+                    <!-- Supprimer : FAILED / CANCELLED / EXPIRED -->
+                    <button *ngIf="canDeleteTx(tx.status)"
+                      class="admin-btn admin-btn-danger admin-btn-sm"
+                      (click)="openDeleteTxModal(tx.externalRef)"
+                      [disabled]="isDeletingThisTx(tx.externalRef)"
+                      title="Supprimer cette transaction">
+                      <i class="fas"
+                         [class.fa-trash]="!isDeletingThisTx(tx.externalRef)"
+                         [class.fa-spinner]="isDeletingThisTx(tx.externalRef)"
+                         [class.fa-spin]="isDeletingThisTx(tx.externalRef)"></i>
+                    </button>
+
+                    <!-- Aucune action pour SUCCESS -->
+                    <span *ngIf="tx.status === 'SUCCESS'"
+                          style="color:#9CA3AF;font-size:11px">—</span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Empty -->
+        <div *ngIf="!isLoadingRentTx && rentTransactions.length === 0"
+             style="padding:20px;text-align:center;color:#94a3b8;font-size:13px">
+          <i class="fas fa-inbox" style="margin-right:6px"></i>
+          Aucune transaction enregistrée
+        </div>
+      </div>
+    </div>
+
     <!-- ── Résumé financier ── -->
     <div class="admin-content-section">
       <div class="admin-table-container">
@@ -327,12 +458,12 @@
 
 <!-- Modal Suspension -->
 <div class="admin-modal-overlay" *ngIf="showSuspendModal" (click)="cancelSuspend()">
-  <div class="admin-modal" (click)="$event.stopPropagation()" style="max-width:480px;width:100%">
+  <div class="admin-modal-container" (click)="$event.stopPropagation()" style="max-width:480px">
     <div class="admin-modal-header">
-      <h3><i class="fas fa-pause" style="color:#D97706"></i> Suspendre le compte</h3>
+      <h3 class="admin-modal-title"><i class="fas fa-pause" style="color:#D97706"></i> Suspendre le compte</h3>
       <button class="admin-modal-close" (click)="cancelSuspend()"><i class="fas fa-times"></i></button>
     </div>
-    <div class="admin-modal-body">
+    <div class="admin-modal-content">
       <label class="admin-form-label">Raison de la suspension <span style="color:red">*</span></label>
       <textarea class="admin-form-control" rows="3" [(ngModel)]="suspendReason"
         placeholder="Expliquez la raison de la suspension..."></textarea>
@@ -349,12 +480,12 @@
 
 <!-- Modal Marquer payé -->
 <div class="admin-modal-overlay" *ngIf="showMarkPaidModal" (click)="cancelMarkPaid()">
-  <div class="admin-modal" (click)="$event.stopPropagation()" style="max-width:480px;width:100%">
+  <div class="admin-modal-container" (click)="$event.stopPropagation()" style="max-width:480px">
     <div class="admin-modal-header">
-      <h3><i class="fas fa-check" style="color:#059669"></i> Marquer comme payé</h3>
+      <h3 class="admin-modal-title"><i class="fas fa-check" style="color:#059669"></i> Marquer comme payé</h3>
       <button class="admin-modal-close" (click)="cancelMarkPaid()"><i class="fas fa-times"></i></button>
     </div>
-    <div class="admin-modal-body">
+    <div class="admin-modal-content">
       <div *ngIf="user?.subscription?.firstUnpaidPeriod" style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;padding:12px;margin-bottom:14px;font-size:12px">
         <div><strong>Période :</strong> {{ formatDateShort(user.subscription.firstUnpaidPeriod.startedAt) }} → {{ formatDateShort(user.subscription.firstUnpaidPeriod.endedAt) }}</div>
         <div><strong>Montant :</strong> {{ formatCurrency(user.subscription.firstUnpaidPeriod.calculatedAmount) }}</div>
@@ -368,6 +499,283 @@
       <button class="admin-btn admin-btn-secondary" (click)="cancelMarkPaid()">Annuler</button>
       <button class="admin-btn admin-btn-success" (click)="confirmMarkPaid()">
         <i class="fas fa-check"></i> Confirmer le paiement
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Confirmation manuelle transaction loyer -->
+<div class="admin-modal-overlay" *ngIf="showConfirmModal" (click)="cancelConfirmModal()">
+  <div class="admin-modal-container" (click)="$event.stopPropagation()" style="max-width:500px">
+    <div class="admin-modal-header">
+      <h3 class="admin-modal-title"><i class="fas fa-check-circle" style="color:#059669"></i> Confirmer le paiement manuellement</h3>
+      <button class="admin-modal-close" (click)="cancelConfirmModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="admin-modal-content">
+      <div style="background:#FEF3C7;border:1px solid #FDE68A;border-radius:8px;padding:12px;margin-bottom:16px;font-size:12px;color:#92400E">
+        <i class="fas fa-exclamation-triangle" style="margin-right:6px"></i>
+        <strong>Action irréversible.</strong> Cette action va :
+        <ul style="margin:6px 0 0 16px;padding:0">
+          <li *ngIf="pendingConfirmContext === 'RENT'">Créer le paiement de loyer dans le système</li>
+          <li *ngIf="pendingConfirmContext === 'RENT'">Créditer le wallet du propriétaire</li>
+          <li *ngIf="pendingConfirmContext === 'SUBSCRIPTION'">Marquer la période de souscription comme payée</li>
+          <li *ngIf="pendingConfirmContext === 'SUBSCRIPTION'">Réactiver le compte si suspendu</li>
+          <li>Marquer la transaction comme réussie</li>
+          <li>Envoyer les emails de confirmation</li>
+        </ul>
+      </div>
+      <label class="admin-form-label">Note admin (optionnel)</label>
+      <input type="text" class="admin-form-control" [(ngModel)]="adminNote"
+        placeholder="Ex: Locataire a confirmé le paiement par téléphone">
+    </div>
+    <div class="admin-modal-footer">
+      <button class="admin-btn admin-btn-secondary" (click)="cancelConfirmModal()">Annuler</button>
+      <button class="admin-btn admin-btn-success" (click)="confirmTransaction()">
+        <i class="fas fa-check"></i> Confirmer la réception
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Détail transaction -->
+<div class="admin-modal-overlay" *ngIf="showTxDetailModal && selectedTx" (click)="closeTxDetail()">
+  <div class="admin-modal-container" (click)="$event.stopPropagation()"
+       style="max-width:640px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden">
+
+    <!-- Header fixe -->
+    <div class="admin-modal-header" style="flex-shrink:0">
+      <h3><i class="fas fa-receipt" style="color:#cc8c0a"></i> Détail de la transaction</h3>
+      <button class="admin-modal-close" (click)="closeTxDetail()"><i class="fas fa-times"></i></button>
+    </div>
+
+    <!-- Body scrollable -->
+    <div style="flex:1;overflow-y:auto;min-height:0">
+
+      <!-- Bandeau statut coloré selon les 5 statuts -->
+      <div style="padding:14px 20px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #E5E7EB"
+           [ngStyle]="{
+             background: selectedTx.status === 'SUCCESS'   ? '#D1FAE5' :
+                         selectedTx.status === 'PENDING'   ? '#FEF3C7' :
+                         selectedTx.status === 'FAILED'    ? '#FEE2E2' :
+                         selectedTx.status === 'CANCELLED' ? '#F3F4F6' : '#FFF7ED'
+           }">
+        <span [class]="getTxStatusClass(selectedTx.status)" style="font-size:13px">{{ getTxStatusLabel(selectedTx.status) }}</span>
+        <span [class]="getTxContextClass(selectedTx.context)">{{ getTxContextLabel(selectedTx.context) }}</span>
+        <span style="margin-left:auto;font-size:22px;font-weight:800"
+              [ngStyle]="{
+                color: selectedTx.status === 'SUCCESS'   ? '#059669' :
+                       selectedTx.status === 'PENDING'   ? '#D97706' :
+                       selectedTx.status === 'FAILED'    ? '#DC2626' :
+                       selectedTx.status === 'CANCELLED' ? '#6B7280' : '#EA580C'
+              }">
+          {{ formatCurrency(selectedTx.amount) }}
+        </span>
+      </div>
+
+      <div style="padding:18px 20px;display:flex;flex-direction:column;gap:18px">
+
+        <!-- Informations transaction -->
+        <div>
+          <div style="font-size:10px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Informations transaction</div>
+          <div style="display:flex;flex-direction:column;gap:0">
+            <div style="display:grid;grid-template-columns:160px 1fr;gap:0;font-size:12px">
+              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Référence externe</div>
+              <div style="padding:7px 0 7px 12px;font-family:monospace;color:#374151;word-break:break-all;border-bottom:1px solid #F3F4F6">{{ selectedTx.externalRef }}</div>
+
+              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Réf. provider</div>
+              <div style="padding:7px 0 7px 12px;font-family:monospace;color:#374151;border-bottom:1px solid #F3F4F6">{{ selectedTx.rawProviderResponse?.['transCode'] || '—' }}</div>
+
+              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Provider</div>
+              <div style="padding:7px 0 7px 12px;color:#374151;border-bottom:1px solid #F3F4F6">{{ getProviderLabel(selectedTx.provider) }}</div>
+
+              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Montant</div>
+              <div style="padding:7px 0 7px 12px;font-weight:700;color:#374151;border-bottom:1px solid #F3F4F6">{{ formatCurrency(selectedTx.amount) }} <span style="font-weight:400;color:#9CA3AF">{{ selectedTx.currency }}</span></div>
+
+              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Créé le</div>
+              <div style="padding:7px 0 7px 12px;color:#374151;border-bottom:1px solid #F3F4F6">{{ formatDate(selectedTx.createdAt) }}</div>
+
+              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Mis à jour le</div>
+              <div style="padding:7px 0 7px 12px;color:#374151;border-bottom:1px solid #F3F4F6">{{ formatDate(selectedTx.updatedAt) }}</div>
+
+              <ng-container *ngIf="selectedTx.processedAt">
+                <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Traité le</div>
+                <div style="padding:7px 0 7px 12px;color:#374151;border-bottom:1px solid #F3F4F6">{{ formatDate(selectedTx.processedAt) }}</div>
+              </ng-container>
+
+              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Event traité</div>
+              <div style="padding:7px 0 7px 12px;border-bottom:1px solid #F3F4F6">
+                <span [class]="selectedTx.eventProcessed ? 'admin-badge admin-badge-success' : 'admin-badge admin-badge-secondary'">
+                  {{ selectedTx.eventProcessed ? 'Oui' : 'Non' }}
+                </span>
+              </div>
+
+              <ng-container *ngIf="selectedTx.description">
+                <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Description</div>
+                <div style="padding:7px 0 7px 12px;color:#374151;border-bottom:1px solid #F3F4F6">{{ selectedTx.description }}</div>
+              </ng-container>
+
+              <ng-container *ngIf="selectedTx.failureReason">
+                <div style="padding:7px 0;color:#6B7280">Raison échec</div>
+                <div style="padding:7px 0 7px 12px;color:#DC2626;font-weight:500">{{ selectedTx.failureReason }}</div>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+
+        <!-- Locataire + Chambre + Contrat + Propriété (RENT) -->
+        <ng-container *ngIf="selectedTx.context === 'RENT'">
+
+          <!-- Locataire -->
+          <div style="border-top:2px solid #F3F4F6;padding-top:16px">
+            <div style="font-size:10px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Locataire</div>
+            <div style="display:grid;grid-template-columns:160px 1fr;font-size:12px">
+              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Nom complet</div>
+              <div style="padding:7px 0 7px 12px;color:#374151;font-weight:600;border-bottom:1px solid #F3F4F6">{{ selectedTx.locataire?.fullName || '—' }}</div>
+              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Email</div>
+              <div style="padding:7px 0 7px 12px;color:#374151;border-bottom:1px solid #F3F4F6">{{ selectedTx.locataire?.email || '—' }}</div>
+              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Téléphone</div>
+              <div style="padding:7px 0 7px 12px;color:#374151;border-bottom:1px solid #F3F4F6">{{ selectedTx.locataire?.phoneNumber || '—' }}</div>
+              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Pays</div>
+              <div style="padding:7px 0 7px 12px;color:#374151;border-bottom:1px solid #F3F4F6">{{ selectedTx.locataire?.country || '—' }}</div>
+              <ng-container *ngIf="selectedTx.locataire?.idCardNumber">
+                <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Pièce d'identité</div>
+                <div style="padding:7px 0 7px 12px;color:#374151;border-bottom:1px solid #F3F4F6">{{ selectedTx.locataire?.idCardType }} — {{ selectedTx.locataire?.idCardNumber }}</div>
+              </ng-container>
+              <ng-container *ngIf="selectedTx.locataire?.fullNameRef">
+                <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Contact urgence</div>
+                <div style="padding:7px 0 7px 12px;color:#374151;border-bottom:1px solid #F3F4F6">{{ selectedTx.locataire?.fullNameRef }} — {{ selectedTx.locataire?.phoneNumberRef }}</div>
+              </ng-container>
+              <div style="padding:7px 0;color:#6B7280">ID locataire</div>
+              <div style="padding:7px 0 7px 12px;font-family:monospace;color:#9CA3AF;font-size:11px">{{ selectedTx.locataireId || '—' }}</div>
+            </div>
+          </div>
+
+          <!-- Propriété -->
+          <div style="border-top:2px solid #F3F4F6;padding-top:16px">
+            <div style="font-size:10px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Propriété</div>
+            <div style="display:grid;grid-template-columns:160px 1fr;font-size:12px">
+              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Nom</div>
+              <div style="padding:7px 0 7px 12px;color:#374151;font-weight:600;border-bottom:1px solid #F3F4F6">{{ selectedTx.property?.name || '—' }}</div>
+              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Adresse</div>
+              <div style="padding:7px 0 7px 12px;color:#374151;border-bottom:1px solid #F3F4F6">{{ selectedTx.property?.location || '—' }}</div>
+              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Type</div>
+              <div style="padding:7px 0 7px 12px;color:#374151;border-bottom:1px solid #F3F4F6">{{ selectedTx.property?.propertyType || '—' }}</div>
+              <div style="padding:7px 0;color:#6B7280">ID propriété</div>
+              <div style="padding:7px 0 7px 12px;font-family:monospace;color:#9CA3AF;font-size:11px">{{ selectedTx.propertyId || '—' }}</div>
+            </div>
+          </div>
+
+          <!-- Unité / Chambre -->
+          <div style="border-top:2px solid #F3F4F6;padding-top:16px">
+            <div style="font-size:10px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Unité / Chambre</div>
+            <div style="display:grid;grid-template-columns:160px 1fr;font-size:12px">
+              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Code</div>
+              <div style="padding:7px 0 7px 12px;color:#374151;font-weight:600;border-bottom:1px solid #F3F4F6">{{ selectedTx.room?.code || '—' }}</div>
+              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Type</div>
+              <div style="padding:7px 0 7px 12px;color:#374151;border-bottom:1px solid #F3F4F6">{{ selectedTx.room?.type || '—' }}</div>
+              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Loyer mensuel</div>
+              <div style="padding:7px 0 7px 12px;color:#374151;border-bottom:1px solid #F3F4F6">{{ selectedTx.room?.price ? formatCurrency(selectedTx.room.price) : '—' }}</div>
+              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Caution</div>
+              <div style="padding:7px 0 7px 12px;color:#374151;border-bottom:1px solid #F3F4F6">{{ selectedTx.room?.cautionPrice ? formatCurrency(selectedTx.room.cautionPrice) : '—' }}</div>
+              <div style="padding:7px 0;color:#6B7280">ID unité</div>
+              <div style="padding:7px 0 7px 12px;font-family:monospace;color:#9CA3AF;font-size:11px">{{ selectedTx.roomId || '—' }}</div>
+            </div>
+          </div>
+
+          <!-- Contrat de location -->
+          <div style="border-top:2px solid #F3F4F6;padding-top:16px" *ngIf="selectedTx.location">
+            <div style="font-size:10px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Contrat de location</div>
+            <div style="display:grid;grid-template-columns:160px 1fr;font-size:12px">
+              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Début</div>
+              <div style="padding:7px 0 7px 12px;color:#374151;border-bottom:1px solid #F3F4F6">{{ formatDateShort(selectedTx.location.startedAt) }}</div>
+              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Fin</div>
+              <div style="padding:7px 0 7px 12px;color:#374151;border-bottom:1px solid #F3F4F6">{{ selectedTx.location.endedAt ? formatDateShort(selectedTx.location.endedAt) : 'En cours' }}</div>
+              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Loyer contrat</div>
+              <div style="padding:7px 0 7px 12px;color:#374151;font-weight:600;border-bottom:1px solid #F3F4F6">{{ formatCurrency(selectedTx.location.locationPriceUnit) }}</div>
+              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Statut</div>
+              <div style="padding:7px 0 7px 12px;border-bottom:1px solid #F3F4F6">
+                <span [class]="selectedTx.location.isRunning ? 'admin-badge admin-badge-success' : 'admin-badge admin-badge-secondary'">
+                  {{ selectedTx.location.isRunning ? 'Actif' : 'Terminé' }}
+                </span>
+              </div>
+              <div style="padding:7px 0;color:#6B7280">ID contrat</div>
+              <div style="padding:7px 0 7px 12px;font-family:monospace;color:#9CA3AF;font-size:11px">{{ selectedTx.locationId || '—' }}</div>
+            </div>
+          </div>
+
+        </ng-container>
+
+        <!-- Période souscription (SUBSCRIPTION) -->
+        <ng-container *ngIf="selectedTx.context === 'SUBSCRIPTION' && selectedTx.period">
+          <div style="border-top:2px solid #F3F4F6;padding-top:16px">
+            <div style="font-size:10px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Période de souscription</div>
+            <div style="display:grid;grid-template-columns:160px 1fr;font-size:12px">
+              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Référence</div>
+              <div style="padding:7px 0 7px 12px;color:#374151;font-weight:600;border-bottom:1px solid #F3F4F6">{{ selectedTx.period.billingRef }}</div>
+              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Début</div>
+              <div style="padding:7px 0 7px 12px;color:#374151;border-bottom:1px solid #F3F4F6">{{ formatDateShort(selectedTx.period.startedAt) }}</div>
+              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Fin</div>
+              <div style="padding:7px 0 7px 12px;color:#374151;border-bottom:1px solid #F3F4F6">{{ formatDateShort(selectedTx.period.endedAt) }}</div>
+              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Montant calculé</div>
+              <div style="padding:7px 0 7px 12px;color:#374151;font-weight:600;border-bottom:1px solid #F3F4F6">{{ formatCurrency(selectedTx.period.calculatedAmount) }}</div>
+              <div style="padding:7px 0;color:#6B7280">ID souscription</div>
+              <div style="padding:7px 0 7px 12px;font-family:monospace;color:#9CA3AF;font-size:11px">{{ selectedTx.subscriptionId || '—' }}</div>
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- Réponse provider brute -->
+        <div style="border-top:2px solid #F3F4F6;padding-top:16px"
+             *ngIf="selectedTx.rawProviderResponse && (selectedTx.rawProviderResponse | json) !== '{}'">
+          <div style="font-size:10px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Réponse provider</div>
+          <pre style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:6px;padding:12px;font-size:11px;color:#374151;overflow-x:auto;white-space:pre-wrap;word-break:break-all;margin:0">{{ selectedTx.rawProviderResponse | json }}</pre>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Footer fixe -->
+    <div class="admin-modal-footer" style="flex-shrink:0">
+      <button class="admin-btn admin-btn-secondary" (click)="closeTxDetail()">Fermer</button>
+      <button *ngIf="selectedTx.status === 'PENDING'"
+        class="admin-btn admin-btn-outline"
+        (click)="closeTxDetail(); recheckTransaction(selectedTx.externalRef)">
+        <i class="fas fa-search"></i> Vérifier
+      </button>
+      <button *ngIf="selectedTx.status === 'PENDING' || selectedTx.status === 'FAILED'"
+        class="admin-btn admin-btn-success"
+        (click)="closeTxDetail(); openConfirmModal(selectedTx.externalRef)">
+        <i class="fas fa-check"></i> Confirmer
+      </button>
+      <button *ngIf="canDeleteTx(selectedTx.status)"
+        class="admin-btn admin-btn-danger"
+        (click)="closeTxDetail(); openDeleteTxModal(selectedTx.externalRef)">
+        <i class="fas fa-trash"></i> Supprimer
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Suppression transaction -->
+<div class="admin-modal-overlay" *ngIf="showDeleteTxModal" (click)="cancelDeleteTx()">
+  <div class="admin-modal-container" (click)="$event.stopPropagation()" style="max-width:440px">
+    <div class="admin-modal-header">
+      <h3 class="admin-modal-title"><i class="fas fa-trash" style="color:#DC2626"></i> Supprimer la transaction</h3>
+      <button class="admin-modal-close" (click)="cancelDeleteTx()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="admin-modal-content">
+      <div style="background:#FEE2E2;border:1px solid #FECACA;border-radius:8px;padding:12px;font-size:13px;color:#991B1B">
+        <i class="fas fa-exclamation-triangle" style="margin-right:6px"></i>
+        <strong>Cette action est irréversible.</strong> La transaction sera définitivement supprimée de la base de données.
+      </div>
+      <p style="margin-top:12px;font-size:13px;color:#374151">
+        Seules les transactions <strong>échouées</strong>, <strong>annulées</strong> ou <strong>expirées</strong> peuvent être supprimées.
+      </p>
+    </div>
+    <div class="admin-modal-footer">
+      <button class="admin-btn admin-btn-secondary" (click)="cancelDeleteTx()">Annuler</button>
+      <button class="admin-btn admin-btn-danger" (click)="confirmDeleteTx()">
+        <i class="fas fa-trash"></i> Confirmer la suppression
       </button>
     </div>
   </div>
