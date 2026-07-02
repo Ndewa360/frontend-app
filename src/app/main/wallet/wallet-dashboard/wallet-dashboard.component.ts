@@ -92,13 +92,17 @@ export class WalletDashboardComponent implements OnInit, OnDestroy {
   refresh(): void { this.loadAll(); }
 
   openWithdrawalModal(): void {
-    const ref = this.dialog.open(WithdrawalModalComponent, {
-      width: '480px',
-      disableClose: false,
-      data: { balance: this.summary?.balance || 0 },
-    });
-    ref.afterClosed().subscribe(result => {
-      if (result?.success) this.loadAll();
+    // Recharger le solde frais avant d'ouvrir le modal pour éviter
+    // qu'un crédit récent (loyer reçu) bloque le validateur Validators.max.
+    this.store.dispatch(new WalletAction.LoadSummary()).subscribe(() => {
+      const ref = this.dialog.open(WithdrawalModalComponent, {
+        width: '480px',
+        disableClose: false,
+        data: { balance: this.summary?.balance || 0 },
+      });
+      ref.afterClosed().subscribe(result => {
+        if (result?.success) this.loadAll();
+      });
     });
   }
 

@@ -16,6 +16,7 @@ export interface WalletSummary {
   totalReceived: number;
   totalWithdrawn: number;
   totalFees: number;
+  totalSubscriptions: number;
   currency: string;
   hasPendingWithdrawal: boolean;
   pendingWithdrawal: WithdrawalRequest | null;

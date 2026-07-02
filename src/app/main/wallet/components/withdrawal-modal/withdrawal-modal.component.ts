@@ -9,9 +9,9 @@ import { WalletAction, WalletState, WithdrawalMethod } from 'src/app/shared/stor
 const FEE_RATE  = 0.02;
 const MIN_AMOUNT = 500;
 
-// Préfixes Cameroun par opérateur
-const ORANGE_PREFIXES = /^6(9|5[5-9]|6)/;  // 69X, 655-659, 66X
-const MTN_PREFIXES    = /^6(7|8|5[0-4])/;  // 67X, 68X, 650-654
+// Régex complètes Cameroun (préfixe + 6 chiffres restants = 9 chiffres total)
+const ORANGE_REGEX = /^6(9|5[5-9]|6)\d{6}$/;  // 69X, 655-659, 66X — identique au backend
+const MTN_REGEX    = /^6(7|8|5[0-4])\d{6}$/;  // 67X, 68X, 650-654 — identique au backend
 
 export interface WithdrawalMethodDef {
   value: WithdrawalMethod;
@@ -138,19 +138,14 @@ export class WithdrawalModalComponent implements OnInit, OnDestroy {
     if (method === 'ORANGE_MONEY') {
       ctrl?.setValidators([
         Validators.required,
-        Validators.minLength(9),
-        Validators.maxLength(9),
-        Validators.pattern(ORANGE_PREFIXES),
+        Validators.pattern(ORANGE_REGEX),
       ]);
     } else if (method === 'MTN_MONEY') {
       ctrl?.setValidators([
         Validators.required,
-        Validators.minLength(9),
-        Validators.maxLength(9),
-        Validators.pattern(MTN_PREFIXES),
+        Validators.pattern(MTN_REGEX),
       ]);
     } else {
-      // Virement bancaire : pas de contrainte de format
       ctrl?.setValidators([Validators.required, Validators.minLength(6)]);
     }
     ctrl?.updateValueAndValidity();
