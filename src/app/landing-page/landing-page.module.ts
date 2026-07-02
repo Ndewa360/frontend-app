@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 import { LandingPageRoutingModule } from './landing-page-routing.module';
 import { HomeComponent } from './components/home/home.component';
@@ -42,6 +43,7 @@ import { ContactComponent } from './components/contact/contact.component';
   ],
   imports: [
     CommonModule,
+    FormsModule,
     SharedModule,
     LandingPageRoutingModule
   ]

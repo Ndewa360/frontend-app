@@ -172,7 +172,9 @@ $shadow-2xl: 0 40px 80px rgba(0,0,0,.24);
 }
 .hero-subtitle {
   font-size: 1.25rem !important; color: $text-mid; line-height: 1.7 !important;
-  max-width: 44rem; margin: 0 auto 2.5rem !important; text-align: center; display: block;
+  max-width: 44rem; margin: 0 auto 2.5rem !important; display: block;
+  text-align: center;
+  @media(min-width:1024px) { text-align: left; margin-left: 0 !important; margin-right: 0 !important; }
 }
 .hero-actions { display: flex; justify-content: center; margin-bottom: 2rem; }
 
@@ -1489,12 +1491,18 @@ $shadow-2xl: 0 40px 80px rgba(0,0,0,.24);
   .cta-dual-btns         { flex-direction: column; align-items: center; }
   .testimonials-grid     { grid-template-columns: 1fr !important; }
   .pricing-grid          { grid-template-columns: 1fr !important; &.pricing-grid--single { grid-template-columns: 1fr !important; .pricing-card { grid-column: auto !important; } } }
+  .pain-card-impact      { padding: 1.25rem 1rem !important; }
+  .agent-pain-card       { padding: 1.25rem 1rem !important; }
+  .seeker-pain-card      { padding: 1.25rem 1rem !important; }
 }
 @media(max-width: 480px) {
   .hero-title   { font-size: 2rem     !important; }
   .cta-title    { font-size: 1.75rem  !important; }
   .cta-btn-main, .cta-btn-outline { padding: 1.125rem 1.75rem !important; font-size: 1rem !important; }
   .pricing-card { padding: 2rem 1.5rem !important; }
+  .pain-card-impact  { padding: 1rem .875rem !important; }
+  .agent-pain-card   { padding: 1rem .875rem !important; }
+  .seeker-pain-card  { padding: 1rem .875rem !important; }
 }
 @media(prefers-reduced-motion: reduce) {
   .slide-up,.slide-left,.scroll-animate,.scroll-animate-left,.scroll-animate-right,

@@ -122,6 +122,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   // ──────────────────────────────────────────────────────────────────────────
 
   private observer!: IntersectionObserver;
+  private scrollListener!: () => void;
 
   constructor(
     private translationService: TranslationService,
@@ -138,6 +139,9 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     if (this.observer) this.observer.disconnect();
+    if (this.scrollListener) window.removeEventListener('scroll', this.scrollListener);
+    if (this.parallaxRaf) cancelAnimationFrame(this.parallaxRaf);
+    document.body.style.overflow = '';
   }
 
   @HostListener('document:keydown', ['$event'])
@@ -178,7 +182,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   closeVideoModal() {
     this.isVideoModalOpen = false;
     if (this.modalVideo) this.modalVideo.nativeElement.pause();
-    document.body.style.overflow = 'auto';
+    document.body.style.overflow = '';
   }
 
   // ── Modale démo agent ─────────────────────────────────────────────────────
@@ -191,7 +195,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   closeAgentDemoModal() {
     this.isAgentDemoModalOpen = false;
-    document.body.style.overflow = 'auto';
+    document.body.style.overflow = '';
   }
 
   submitAgentDemoRequest() {
@@ -228,11 +232,10 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   private parallaxRaf = 0;
   private initParallaxShapes() {
-    const onScroll = () => {
+    this.scrollListener = () => {
       if (this.parallaxRaf) return;
       this.parallaxRaf = requestAnimationFrame(() => {
         this.parallaxRaf = 0;
-        const y = window.scrollY;
         document.querySelectorAll<HTMLElement>('.deco-bg, .deco-hex, .deco-grid').forEach((el) => {
           const rect = el.getBoundingClientRect();
           const center = rect.top + rect.height / 2;
@@ -241,7 +244,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         });
       });
     };
-    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('scroll', this.scrollListener, { passive: true });
   }
 
   private observeNewElements() {
