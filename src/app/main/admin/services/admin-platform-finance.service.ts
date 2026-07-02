@@ -136,6 +136,10 @@ export class AdminPlatformFinanceService {
     );
   }
 
+  checkWithdrawalStatus(id: string): Observable<PlatformWithdrawal> {
+    return this.http.get<any>(`${API}/withdrawals/${id}/status`).pipe(map(r => r.data));
+  }
+
   getWithdrawal(id: string): Observable<PlatformWithdrawal> {
     return this.http.get<any>(`${API}/withdrawals/${id}`).pipe(map(r => r.data));
   }

@@ -3,6 +3,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
+import { Store, Select } from '@ngxs/store';
+import { Observable } from 'rxjs';
 import {
   AdminPlatformFinanceService,
   PlatformBalance,
@@ -11,6 +13,8 @@ import {
   PlatformRevenuePeriod,
   PlatformFinanceConfig,
 } from '../../services/admin-platform-finance.service';
+import { PlatformFinanceState } from '../../store/platform-finance/platform-finance.state';
+import { PlatformFinanceAction } from '../../store/platform-finance/platform-finance.actions';
 
 @Component({
   selector: 'app-platform-finance',
@@ -20,6 +24,17 @@ import {
 export class PlatformFinanceComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
+  @Select(PlatformFinanceState.balance)           balance$: Observable<PlatformBalance | null>;
+  @Select(PlatformFinanceState.kpis)              kpis$: Observable<PlatformKpis | null>;
+  @Select(PlatformFinanceState.revenueData)       revenueData$: Observable<PlatformRevenuePeriod[]>;
+  @Select(PlatformFinanceState.withdrawals)       withdrawals$: Observable<PlatformWithdrawal[]>;
+  @Select(PlatformFinanceState.withdrawalsTotal)  withdrawalsTotal$: Observable<number>;
+  @Select(PlatformFinanceState.transactions)      transactions$: Observable<any[]>;
+  @Select(PlatformFinanceState.transactionsTotal) transactionsTotal$: Observable<number>;
+  @Select(PlatformFinanceState.config)            config$: Observable<PlatformFinanceConfig | null>;
+  @Select(PlatformFinanceState.loading)           loading$: Observable<boolean>;
+  @Select(PlatformFinanceState.configError)       configError$: Observable<string | null>;
+
   // State
   isLoading = false;
   selectedTab = 'overview';
@@ -27,7 +42,7 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
   selectedPeriod: 'monthly' | 'quarterly' | 'semester' = 'monthly';
   selectedYear = new Date().getFullYear();
 
-  // Data
+  // Data (sync depuis store)
   balance: PlatformBalance | null = null;
   allBalances: PlatformBalance[] = [];
   kpis: PlatformKpis | null = null;
@@ -67,6 +82,7 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
   years = Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i);
 
   constructor(
+    private store: Store,
     private financeService: AdminPlatformFinanceService,
     private fb: FormBuilder,
     private toastr: ToastrService,
@@ -93,6 +109,23 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    // Abonnements store
+    this.balance$.pipe(takeUntil(this.destroy$)).subscribe(b => this.balance = b);
+    this.kpis$.pipe(takeUntil(this.destroy$)).subscribe(k => this.kpis = k);
+    this.revenueData$.pipe(takeUntil(this.destroy$)).subscribe(r => this.revenueData = r);
+    this.withdrawals$.pipe(takeUntil(this.destroy$)).subscribe(w => this.withdrawals = w);
+    this.withdrawalsTotal$.pipe(takeUntil(this.destroy$)).subscribe(t => this.withdrawalsTotal = t);
+    this.transactions$.pipe(takeUntil(this.destroy$)).subscribe(t => this.transactions = t);
+    this.transactionsTotal$.pipe(takeUntil(this.destroy$)).subscribe(t => this.transactionsTotal = t);
+    this.loading$.pipe(takeUntil(this.destroy$)).subscribe(l => this.isLoading = l);
+    this.config$.pipe(takeUntil(this.destroy$)).subscribe(c => {
+      this.config = c;
+      if (c) this.configForm.patchValue(c);
+    });
+    // Fix #7 : afficher l'erreur config si elle survient
+    this.configError$.pipe(takeUntil(this.destroy$)).subscribe(err => {
+      if (err) this.toastr.error(err, 'Configuration');
+    });
     this.loadAll();
   }
 
@@ -102,69 +135,35 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
   }
 
   private loadAll(): void {
-    this.loadBalance();
-    this.loadKpis();
-    this.loadRevenue();
-    this.loadWithdrawals();
-    this.loadConfig();
+    this.store.dispatch(new PlatformFinanceAction.LoadBalance());
+    this.store.dispatch(new PlatformFinanceAction.LoadKpis(this.selectedCurrency));
+    this.store.dispatch(new PlatformFinanceAction.LoadRevenue(this.selectedPeriod, this.selectedYear, this.selectedCurrency));
+    this.store.dispatch(new PlatformFinanceAction.LoadWithdrawals(this.wdPage, this.wdLimit));
+    this.store.dispatch(new PlatformFinanceAction.LoadConfig());
   }
 
   loadBalance(): void {
-    this.financeService.getBalance()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data: any) => {
-          if (Array.isArray(data)) {
-            this.allBalances = data;
-            this.balance = data.find(b => b.currency === this.selectedCurrency) || data[0] || null;
-          } else {
-            this.balance = data;
-          }
-        },
-        error: () => this.toastr.error('Erreur chargement solde'),
-      });
+    this.store.dispatch(new PlatformFinanceAction.LoadBalance());
   }
 
   loadKpis(): void {
-    this.financeService.getKpis(this.selectedCurrency)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({ next: d => this.kpis = d, error: () => {} });
+    this.store.dispatch(new PlatformFinanceAction.LoadKpis(this.selectedCurrency));
   }
 
   loadRevenue(): void {
-    this.financeService.getRevenue(this.selectedPeriod, this.selectedYear, this.selectedCurrency)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({ next: d => this.revenueData = d, error: () => {} });
+    this.store.dispatch(new PlatformFinanceAction.LoadRevenue(this.selectedPeriod, this.selectedYear, this.selectedCurrency));
   }
 
   loadTransactions(): void {
-    this.financeService.getTransactions({ currency: this.selectedCurrency, page: this.txPage, limit: this.txLimit })
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: r => { this.transactions = r.data; this.transactionsTotal = r.total; },
-        error: () => this.toastr.error('Erreur chargement transactions'),
-      });
+    this.store.dispatch(new PlatformFinanceAction.LoadTransactions({ currency: this.selectedCurrency, page: this.txPage, limit: this.txLimit }));
   }
 
   loadWithdrawals(): void {
-    this.financeService.getWithdrawals({ page: this.wdPage, limit: this.wdLimit })
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: r => { this.withdrawals = r.data; this.withdrawalsTotal = r.total; },
-        error: () => this.toastr.error('Erreur chargement retraits'),
-      });
+    this.store.dispatch(new PlatformFinanceAction.LoadWithdrawals(this.wdPage, this.wdLimit));
   }
 
   loadConfig(): void {
-    this.financeService.getConfig()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: c => {
-          this.config = c;
-          this.configForm.patchValue(c);
-        },
-        error: () => {},
-      });
+    this.store.dispatch(new PlatformFinanceAction.LoadConfig());
   }
 
   onTabChange(tab: string): void {
@@ -174,19 +173,19 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
 
   onCurrencyChange(currency: string): void {
     this.selectedCurrency = currency;
-    this.loadBalance();
-    this.loadKpis();
-    this.loadRevenue();
+    this.store.dispatch(new PlatformFinanceAction.LoadBalance());
+    this.store.dispatch(new PlatformFinanceAction.LoadKpis(currency));
+    this.store.dispatch(new PlatformFinanceAction.LoadRevenue(this.selectedPeriod, this.selectedYear, currency));
   }
 
   onPeriodChange(period: 'monthly' | 'quarterly' | 'semester'): void {
     this.selectedPeriod = period;
-    this.loadRevenue();
+    this.store.dispatch(new PlatformFinanceAction.LoadRevenue(period, this.selectedYear, this.selectedCurrency));
   }
 
   onYearChange(year: number): void {
     this.selectedYear = year;
-    this.loadRevenue();
+    this.store.dispatch(new PlatformFinanceAction.LoadRevenue(this.selectedPeriod, year, this.selectedCurrency));
   }
 
   onRefresh(): void {
@@ -199,7 +198,11 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
     this.financeService.computeSnapshot(undefined, undefined, this.selectedCurrency)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: () => { this.isLoading = false; this.toastr.success('Snapshot calculé'); this.loadRevenue(); },
+        next: () => {
+          this.isLoading = false;
+          this.toastr.success('Snapshot calculé');
+          this.store.dispatch(new PlatformFinanceAction.LoadRevenue(this.selectedPeriod, this.selectedYear, this.selectedCurrency));
+        },
         error: () => { this.isLoading = false; this.toastr.error('Erreur calcul snapshot'); },
       });
   }
@@ -217,12 +220,17 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
     this.financeService.createWithdrawal(this.withdrawalForm.value)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: () => {
+        next: (w: any) => {
           this.isLoading = false;
           this.showWithdrawalModal = false;
-          this.toastr.success('Demande de retrait créée');
-          this.loadWithdrawals();
-          this.loadBalance();
+          // Super-admin : retrait directement confirmé, pas besoin d'approbation
+          if (w?.status === 'CONFIRMED') {
+            this.toastr.success('Retrait effectué avec succès');
+          } else {
+            this.toastr.success('Demande de retrait créée');
+          }
+          this.store.dispatch(new PlatformFinanceAction.LoadWithdrawals(this.wdPage, this.wdLimit));
+          this.store.dispatch(new PlatformFinanceAction.LoadBalance());
         },
         error: (e) => { this.isLoading = false; this.toastr.error(e?.error?.message || 'Erreur création retrait'); },
       });
@@ -241,7 +249,7 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
     this.financeService.approveWithdrawal(this.selectedWithdrawal._id, this.approveNotes)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: () => { this.showApproveModal = false; this.toastr.success('Retrait approuvé'); this.loadWithdrawals(); },
+        next: () => { this.showApproveModal = false; this.toastr.success('Retrait approuvé'); this.store.dispatch(new PlatformFinanceAction.LoadWithdrawals(this.wdPage, this.wdLimit)); },
         error: (e) => this.toastr.error(e?.error?.message || 'Erreur approbation'),
       });
   }
@@ -260,7 +268,7 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
     this.financeService.confirmWithdrawal(this.selectedWithdrawal._id, this.confirmExternalRef, this.confirmNotes)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: () => { this.showConfirmModal = false; this.toastr.success('Retrait confirmé'); this.loadWithdrawals(); this.loadBalance(); },
+        next: () => { this.showConfirmModal = false; this.toastr.success('Retrait confirmé'); this.store.dispatch(new PlatformFinanceAction.LoadWithdrawals(this.wdPage, this.wdLimit)); this.store.dispatch(new PlatformFinanceAction.LoadBalance()); },
         error: (e) => this.toastr.error(e?.error?.message || 'Erreur confirmation'),
       });
   }
@@ -278,7 +286,7 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
     this.financeService.failWithdrawal(this.selectedWithdrawal._id, this.failReason)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: () => { this.showFailModal = false; this.toastr.warning('Retrait marqué échoué'); this.loadWithdrawals(); this.loadBalance(); },
+        next: () => { this.showFailModal = false; this.toastr.warning('Retrait marqué échoué'); this.store.dispatch(new PlatformFinanceAction.LoadWithdrawals(this.wdPage, this.wdLimit)); this.store.dispatch(new PlatformFinanceAction.LoadBalance()); },
         error: (e) => this.toastr.error(e?.error?.message || 'Erreur'),
       });
   }
@@ -296,7 +304,7 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
     this.financeService.cancelWithdrawal(this.selectedWithdrawal._id, this.cancelReason)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: () => { this.showCancelModal = false; this.toastr.info('Retrait annulé'); this.loadWithdrawals(); this.loadBalance(); },
+        next: () => { this.showCancelModal = false; this.toastr.info('Retrait annulé'); this.store.dispatch(new PlatformFinanceAction.LoadWithdrawals(this.wdPage, this.wdLimit)); this.store.dispatch(new PlatformFinanceAction.LoadBalance()); },
         error: (e) => this.toastr.error(e?.error?.message || 'Erreur annulation'),
       });
   }
@@ -310,7 +318,7 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
     this.financeService.updateConfig(this.configForm.value)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: c => { this.config = c; this.showConfigModal = false; this.toastr.success('Configuration mise à jour'); },
+        next: c => { this.config = c; this.showConfigModal = false; this.toastr.success('Configuration mise à jour'); this.store.dispatch(new PlatformFinanceAction.LoadConfig()); },
         error: () => this.toastr.error('Erreur mise à jour configuration'),
       });
   }

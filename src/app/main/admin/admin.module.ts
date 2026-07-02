@@ -36,6 +36,7 @@ import { AdminPaymentsState } from './store/payments/admin-payments.state';
 import { AdminSettingsState } from './store/settings/admin-settings.state';
 import { AdminDashboardState } from './store/dashboard/admin-dashboard.state';
 import { AdminSubscriptionsState } from './store/subscriptions/admin-subscriptions.state';
+import { PlatformFinanceState } from './store/platform-finance/platform-finance.state';
 
 // ── Services ──────────────────────────────────────────────────────────────────
 import { AdminUsersService } from './services/admin-users.service';
@@ -45,6 +46,7 @@ import { AdminPaymentsService } from './services/admin-payments.service';
 import { AdminSettingsService } from './services/admin-settings.service';
 import { AdminDashboardService } from './services/admin-dashboard.service';
 import { AdminSubscriptionsService } from './services/admin-subscriptions.service';
+import { AdminPlatformFinanceService } from './services/admin-platform-finance.service';
 import { RestCountriesService } from './services/rest-countries.service';
 
 // ── Routing ───────────────────────────────────────────────────────────────────
@@ -87,6 +89,7 @@ import { AdminRoutingModule } from './admin-routing.module';
       AdminSettingsState,
       AdminDashboardState,
       AdminSubscriptionsState,
+      PlatformFinanceState,
     ]),
   ],
   providers: [
@@ -97,6 +100,7 @@ import { AdminRoutingModule } from './admin-routing.module';
     AdminSettingsService,
     AdminDashboardService,
     AdminSubscriptionsService,
+    AdminPlatformFinanceService,
     RestCountriesService,
   ],
 })
