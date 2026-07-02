@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Subject, interval } from 'rxjs';
-import { takeUntil, switchMap } from 'rxjs/operators';
+import { Subject, timer } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
 
 import {
@@ -45,8 +45,11 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
   /** externalRef retourné par POST /payment/initiate */
   externalRef: string | null = null;
   pollingAttempts = 0;
+  /** Compteur d'erreurs réseau consécutives pendant le polling (Fix #8) */
+  networkErrors = 0;
   readonly MAX_POLLING = 24;
-  /** Code USSD affiché pour Mobile Money (non retourné par le backend unifié — placeholder) */
+  readonly MAX_NETWORK_ERRORS = 5;
+  /** Code USSD affiché pour Mobile Money */
   ussdCode: string | null = null;
   /** Date d'expiration de la demande Mobile Money */
   expiresAt: string | null = null;
@@ -58,9 +61,12 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
   receiptDownloaded = false;
   receiptError: string | null = null;
 
+  /** Fix #10 : mis à jour au moment réel du succès, pas à l'instanciation */
   today = new Date();
 
   private stripe: any;
+  /** Fix #5 : Stripe chargé en lazy — seulement si l'utilisateur choisit la carte */
+  private stripeLoaded = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -103,7 +109,7 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.loadStripe();
+    // Fix #5 : Stripe NON chargé ici — chargé en lazy dans selectMethod() si carte choisie
     this.loadPaymentDetails();
   }
 
@@ -114,19 +120,20 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
 
   // ─── Chargement des détails ────────────────────────────────────────────────
 
+  /** Fix #5 : charge le SDK Stripe (~300KB) seulement si l'utilisateur choisit la carte */
   private loadStripe(): void {
-    if (!(window as any).Stripe) {
-      const script = document.createElement('script');
-      script.src = 'https://js.stripe.com/v3/';
-      script.onload = () => {
-        if (environment.stripePublicKey) {
-          this.stripe = (window as any).Stripe(environment.stripePublicKey);
-        }
-      };
-      document.head.appendChild(script);
-    } else if (environment.stripePublicKey) {
-      this.stripe = (window as any).Stripe(environment.stripePublicKey);
+    if (this.stripeLoaded) return;
+    this.stripeLoaded = true;
+    if ((window as any).Stripe) {
+      if (environment.stripePublicKey) this.stripe = (window as any).Stripe(environment.stripePublicKey);
+      return;
     }
+    const script = document.createElement('script');
+    script.src = 'https://js.stripe.com/v3/';
+    script.onload = () => {
+      if (environment.stripePublicKey) this.stripe = (window as any).Stripe(environment.stripePublicKey);
+    };
+    document.head.appendChild(script);
   }
 
   loadPaymentDetails(): void {
@@ -161,7 +168,9 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
       if (parts.length !== 3) return null;
       const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
       const padded = base64 + '=='.slice(0, (4 - base64.length % 4) % 4);
-      const payload = JSON.parse(decodeURIComponent(escape(atob(padded))));
+      // Fix #7 : TextDecoder au lieu de escape() déprécié — compatible tous navigateurs mobiles
+      const bytes = Uint8Array.from(atob(padded), c => c.charCodeAt(0));
+      const payload = JSON.parse(new TextDecoder().decode(bytes));
       if (!payload.context) return null;
       if (payload.exp && payload.exp * 1000 < Date.now()) {
         this.pageError = 'Ce lien de paiement a expiré.';
@@ -226,6 +235,8 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
   // ─── Navigation étapes ────────────────────────────────────────────────────
 
   selectMethod(method: PaymentMethod): void {
+    // Fix #5 : charger Stripe en lazy seulement si l'utilisateur choisit la carte
+    if (method === 'card') this.loadStripe();
     this.selectedMethod = method;
     this.currentStep = 'details';
     this.paymentError = null;
@@ -255,15 +266,6 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Détermine si le paiement doit passer par la route publique (sans JWT).
-   *
-   * Règles :
-   *   - PREMIUM_ACCESS : toujours public (visiteur anonyme)
-   *   - RENT           : toujours public sur cette page (locataire sans compte)
-   *   - SUBSCRIPTION   : jamais public (propriétaire connecté dans le backoffice)
-   *   - WALLET_DEPOSIT : jamais public (propriétaire connecté)
-   */
   private get isPublicPayment(): boolean {
     return this.context === 'PREMIUM_ACCESS' || this.context === 'RENT';
   }
@@ -352,54 +354,83 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
       });
   }
 
-  // ─── Polling (GET /payment/check/:externalRef) ────────────────────────────
+  // ─── Polling avec backoff exponentiel (Fix #3 + #8) ──────────────────────
 
   private startPolling(): void {
     this.pollingAttempts = 0;
+    this.networkErrors = 0;
 
-    interval(5000).pipe(
-      takeUntil(this.destroy$),
-      switchMap(() => {
-        this.pollingAttempts++;
-        return this.paymentService.checkPaymentStatus(this.externalRef!);
-      })
-    ).subscribe({
-      next: (res) => {
-        if (res.data.status === 'SUCCESS') {
-          this.paymentStatus = 'success';
-          this.currentStep = 'result';
-          this.handlePostPaymentSuccess();
-          this.destroy$.next();
-        } else if (['FAILED', 'CANCELLED', 'EXPIRED'].includes(res.data.status)) {
-          this.paymentError = 'Le paiement a été refusé ou annulé.';
-          this.paymentStatus = 'failed';
-          this.currentStep = 'result';
-          this.destroy$.next();
-        } else if (this.pollingAttempts >= this.MAX_POLLING) {
-          this.paymentError = 'Délai dépassé. Vérifiez votre téléphone et réessayez.';
-          this.paymentStatus = 'failed';
-          this.currentStep = 'result';
-          this.destroy$.next();
-        }
-      },
-      error: () => { /* ignorer erreurs réseau polling */ }
-    });
+    // Fix #3 : backoff exponentiel — délai croissant pour ne pas saturer une connexion faible
+    // Tentatives 1-4 : 5s | 5-8 : 8s | 9+ : 12s
+    const getDelay = (attempt: number): number => {
+      if (attempt <= 4) return 5_000;
+      if (attempt <= 8) return 8_000;
+      return 12_000;
+    };
+
+    const poll = () => {
+      if (this.pollingAttempts >= this.MAX_POLLING) {
+        this.paymentError = 'Délai dépassé. Vérifiez votre téléphone et réessayez.';
+        this.paymentStatus = 'failed';
+        this.currentStep = 'result';
+        return;
+      }
+
+      this.pollingAttempts++;
+      this.paymentService.checkPaymentStatus(this.externalRef!)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (res) => {
+            this.networkErrors = 0;
+            if (res.data.status === 'SUCCESS') {
+              this.paymentStatus = 'success';
+              this.currentStep = 'result';
+              this.today = new Date(); // Fix #10 : date réelle du paiement
+              this.handlePostPaymentSuccess();
+            } else if (['FAILED', 'CANCELLED', 'EXPIRED'].includes(res.data.status)) {
+              this.paymentError = 'Le paiement a été refusé ou annulé.';
+              this.paymentStatus = 'failed';
+              this.currentStep = 'result';
+            } else {
+              // Toujours PENDING — planifier le prochain tick avec backoff
+              timer(getDelay(this.pollingAttempts))
+                .pipe(takeUntil(this.destroy$))
+                .subscribe(() => poll());
+            }
+          },
+          // Fix #8 : retry sur erreur réseau — ne pas abandonner sur coupure momentanée
+          error: () => {
+            this.networkErrors++;
+            if (this.networkErrors >= this.MAX_NETWORK_ERRORS) {
+              this.paymentError = 'Connexion perdue. Vérifiez votre réseau et réessayez.';
+              this.paymentStatus = 'failed';
+              this.currentStep = 'result';
+              return;
+            }
+            // Réessayer après un délai doublé en cas d'erreur réseau
+            timer(getDelay(this.pollingAttempts) * 2)
+              .pipe(takeUntil(this.destroy$))
+              .subscribe(() => poll());
+          }
+        });
+    };
+
+    // Premier tick après 5s
+    timer(5_000).pipe(takeUntil(this.destroy$)).subscribe(() => poll());
   }
 
-  // ─── Retour Stripe (GET /payment/check/:externalRef) ─────────────────────
-  // Stripe redirige vers ?payment=success&session_id=cs_xxx
-  // On utilise session_id comme externalRef pour vérifier le statut
+  // ─── Retour Stripe ────────────────────────────────────────────────────────
 
   private handleStripeReturn(sessionId: string): void {
     this.pageLoading = false;
     this.currentStep = 'processing';
     this.paymentStatus = 'processing';
 
-    // Récupérer l'externalRef depuis les query params (injecté lors de la redirection Stripe)
     const extRef = this.route.snapshot.queryParams['ext'] || null;
     const refToCheck = extRef || this.token;
 
-    // Charger les détails du lien pour avoir le montant et les infos dans le récapitulatif
+    // Fix #9 : loadStripe() et loadPaymentDetails() appelés une seule fois ici
+    // (ngOnInit fait un return early avant d'appeler loadPaymentDetails)
     this.loadStripe();
     this.loadPaymentDetails();
 
@@ -408,14 +439,13 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (res) => {
           if (res.data.status === 'SUCCESS') {
-            // Stocker l'externalRef pour le téléchargement du reçu
             this.externalRef = extRef || res.data.externalRef || refToCheck;
-            // Stocker le montant depuis la transaction si paymentDetails n'est pas encore chargé
             if (res.data.amount && !this.amountForm.getRawValue().amount) {
               this.amountForm.patchValue({ amount: res.data.amount });
             }
             this.paymentStatus = 'success';
             this.currentStep = 'result';
+            this.today = new Date(); // Fix #10
             this.handlePostPaymentSuccess();
           } else {
             this.externalRef = res.data.externalRef;
@@ -435,8 +465,6 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
 
   private handlePostPaymentSuccess(): void {
     if (this.context === 'PREMIUM_ACCESS') {
-      // L'accès est activé côté backend par PremiumAccessPaymentHandler.
-      // On sauvegarde localement pour éviter un appel réseau au prochain chargement.
       const expiryDate = new Date();
       expiryDate.setDate(expiryDate.getDate() + 3);
       this.anonymousUserService.savePremiumAccess({
@@ -473,6 +501,7 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
     this.paymentError = null;
     this.externalRef = null;
     this.pollingAttempts = 0;
+    this.networkErrors = 0;
     this.currentStep = 'method';
     this.selectedMethod = null;
     this.mobileForm.reset();
@@ -480,10 +509,6 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
     this.receiptError = null;
   }
 
-  /**
-   * Télécharge le reçu PDF après un paiement de loyer réussi via lien public.
-   * Utilise l'externalRef de la PaymentTransaction — route backend publique.
-   */
   downloadReceipt(): void {
     if (!this.externalRef || this.isDownloadingReceipt) return;
 
@@ -515,7 +540,6 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
 
   // ─── Helpers ──────────────────────────────────────────────────────────────
 
-  /** Extrait les IDs métier depuis les détails du lien de paiement */
   private buildContextIds(): Partial<InitiatePaymentDto> {
     if (!this.paymentDetails) return {};
     const meta = this.paymentDetails.metadata || {};
@@ -530,7 +554,6 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
       };
     }
     if (this.context === 'WALLET_DEPOSIT') {
-      // Pas d'IDs métier supplémentaires pour un dépôt wallet
       return {};
     }
     // RENT
@@ -543,10 +566,6 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
     };
   }
 
-  /**
-   * Détecte si une chaîne est une clé i18n non résolue (ex: "PAYMENT_LINK.DEFAULT_DESCRIPTION").
-   * Cela arrive quand une ancienne valeur a été stockée en base avant la correction du modal.
-   */
   isI18nKey(value: string): boolean {
     return /^[A-Z_]+(\.[A-Z_]+)+$/.test(value?.trim() || '');
   }
@@ -555,18 +574,11 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
     return this.amountForm.getRawValue().amount || 0;
   }
 
-  /**
-   * Montant réellement payé — priorité : valeur du formulaire (saisie par l'utilisateur
-   * ou pré-remplie depuis le lien), puis montant du lien de paiement.
-   * Utilisé dans le récapitulatif de succès pour éviter d'afficher 0.
-   */
   get paidAmount(): number {
     return this.amountForm.getRawValue().amount || this.paymentDetails?.amount || 0;
   }
 
   get isAmountValid(): boolean {
-    // Un champ disabled rend le FormGroup DISABLED (pas VALID) en Angular
-    // On considère le montant valide si le form est valid OU disabled (montant fixé)
     return this.amountForm.valid || this.amountForm.disabled;
   }
 
