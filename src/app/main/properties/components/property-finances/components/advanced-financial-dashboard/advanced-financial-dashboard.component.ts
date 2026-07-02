@@ -153,9 +153,11 @@ export class AdvancedFinancialDashboardComponent implements OnInit, OnChanges, O
     this.totalRevenue        = this.propertyMetrics.totalRevenue;
     this.totalExpected       = this.propertyMetrics.totalExpected;
     this.collectionRate      = this.propertyMetrics.collectionRate;
+    // totalCoveredInYear = montant couvert dans l'année par la projection du cumul
     this.totalPaidAllTime    = this.propertyMetrics.totalCoveredInYear;
     this.expectedSinceEntry  = this.propertyMetrics.expectedSinceEntry;
-    this.realCollectionRate  = this.propertyMetrics.realCollectionRate;
+    // realCollectionRate = taux encaissements réels / attendu (depuis aggregatedMetrics)
+    this.realCollectionRate  = Math.min(this.propertyMetrics.realCollectionRate, 100);
     this.totalDebts          = this.propertyMetrics.totalDebts;
     this.totalAdvances       = this.propertyMetrics.totalAdvances;
     this.averageRent         = this.propertyMetrics.averageRent;
@@ -164,26 +166,18 @@ export class AdvancedFinancialDashboardComponent implements OnInit, OnChanges, O
     this.totalRooms          = this.propertyMetrics.totalRooms;
     this.totalProperties     = 1;
 
-    // Métriques de projection : ratio global (pas une somme par chambre)
-    // coveredMonthsInYear = mois couverts / mois dus en moyenne sur toutes les chambres
-    // On utilise les montants pour avoir un ratio pondéré
+    // Métriques de projection : ratio global pondéré par les montants
     const totalCoveredAmt  = this.propertyMetrics.totalCoveredInYear;
     const totalExpectedAmt = this.propertyMetrics.totalExpected;
-    const avgMonthlyRent   = this.propertyMetrics.averageRent || 1;
 
-    // Convertir les montants en "mois équivalents" pour l'affichage
-    // Ex: 30 000 couverts / 15 000 loyer moyen = 2 mois couverts
+    // Mois couverts équivalents = (couvert / attendu) * mois dus
     this.coveredMonthsInYear = totalExpectedAmt > 0
       ? Math.round((totalCoveredAmt / totalExpectedAmt) * this.propertyMetrics.monthsDueInYear * 10) / 10
       : 0;
     this.monthsDueInYear     = this.propertyMetrics.monthsDueInYear ?? this.propertyMetrics.totalRooms * 12;
     this.coveredAmountInYear = totalCoveredAmt;
 
-    // Taux de couverture de l'année (plafonné à 100%)
-    this.realCollectionRate = Math.min(this.propertyMetrics.collectionRate, 100);
-
-    // Statuts des locataires depuis tenantsAnalysis (injecté via backendData)
-    // Ces valeurs sont calculées dans buildFinancialMetrics via tenantPerformances
+    // Statuts des locataires depuis tenantPerformances (paymentStatus = statut interne du moteur)
     this.totalTenantsCount   = this.tenantPerformances.length;
     this.lateTenantsCount    = this.tenantPerformances.filter(t =>
       t.paymentStatus === 'late' || t.paymentStatus === 'critical' || t.paymentStatus === 'no_payment'
@@ -600,7 +594,9 @@ export class AdvancedFinancialDashboardComponent implements OnInit, OnChanges, O
     return {
       months:    chartData.months,
       expected:  chartData.expected,
+      // received = encaissements réels (item.realReceived via extractMonthlyData)
       received:  chartData.revenues,
+      // projected = projection cumul (item.distributed via extractMonthlyData)
       projected: this.monthlyData.map(m => m.projected ?? 0)
     };
   }

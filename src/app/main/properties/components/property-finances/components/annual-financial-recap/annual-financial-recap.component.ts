@@ -124,21 +124,24 @@ export class AnnualFinancialRecapComponent implements OnInit, OnChanges {
       return;
     }
 
-    // Fallback sur yearlyStats si pas de données enrichies
+    // Fallback sur yearlyStats : même filtre isFree === false
     let totalExpected = 0, totalReceived = 0, totalRentSum = 0, occupiedUnits = 0;
 
-    this.yearlyStats.forEach(roomStat => {
-      const monthlyPayments = roomStat.paymentValue || [];
-      const receivedForRoom = monthlyPayments.reduce((sum, payment) => sum + (payment || 0), 0);
-      const roomPrice = roomStat.room?.price || 0;
-      const monthsDue = roomStat.monthsDue ?? 12;
-      totalExpected += roomPrice * monthsDue;
-      totalReceived += receivedForRoom;
-      totalRentSum += roomPrice;
-      if (receivedForRoom > 0) occupiedUnits++;
-    });
+    this.yearlyStats
+      .filter(roomStat => roomStat.room?.isFree === false)
+      .forEach(roomStat => {
+        const monthlyPayments = roomStat.paymentValue || [];
+        const receivedForRoom = monthlyPayments.reduce((sum, payment) => sum + (payment || 0), 0);
+        const roomPrice = roomStat.room?.price || 0;
+        const monthsDue = roomStat.monthsDue ?? 12;
+        totalExpected += roomPrice * monthsDue;
+        totalReceived += receivedForRoom;
+        totalRentSum += roomPrice;
+        occupiedUnits++;
+      });
 
-    const occupancyRate = this.yearlyStats.length > 0 ? (occupiedUnits / this.yearlyStats.length) * 100 : 0;
+    const totalUnits   = this.yearlyStats.length;
+    const occupancyRate = totalUnits > 0 ? (occupiedUnits / totalUnits) * 100 : 0;
     const collectionRate = totalExpected > 0 ? Math.min((totalReceived / totalExpected) * 100, 100) : 0;
 
     this.annualSummary = {
@@ -229,23 +232,26 @@ export class AnnualFinancialRecapComponent implements OnInit, OnChanges {
   private buildUnitPerformance(): void {
     if (this.enrichedData?.data?.rooms) {
       const rooms = this.enrichedData.data.rooms;
-      this.annualSummary.unitPerformance = rooms.map((roomData: any) => {
-        // Utiliser coveredAmountInYear (projection) comme montant reçu pour l'année
-        const coveredInYear = (roomData as any).coveredAmountInYear ?? roomData.totalReceived ?? 0;
-        const expectedInYear = roomData.expectedAmount || 0;
-        const perfRate = expectedInYear > 0
-          ? Math.min((coveredInYear / expectedInYear) * 100, 100)
-          : 0;
-        return {
-          unitCode: roomData.room?.code || 'N/A',
-          unitType: this.getRoomTypeLabel(roomData.room?.type),
-          monthlyRent: roomData.room?.price || 0,
-          totalExpected: expectedInYear,
-          totalReceived: coveredInYear,
-          performanceRate: Math.round(perfRate * 100) / 100,
-          monthsOccupied: roomData.monthsDue || 0
-        };
-      }).sort((a, b) => b.performanceRate - a.performanceRate);
+      this.annualSummary.unitPerformance = rooms
+        // Exclure les chambres libres : isFree === true signifie pas de locataire actif
+        .filter((roomData: any) => roomData.room?.isFree === false)
+        .map((roomData: any) => {
+          // Utiliser coveredAmountInYear (projection) comme montant couvert pour l'année
+          const coveredInYear = (roomData as any).coveredAmountInYear ?? 0;
+          const expectedInYear = roomData.expectedAmount || 0;
+          const perfRate = expectedInYear > 0
+            ? Math.min((coveredInYear / expectedInYear) * 100, 100)
+            : 0;
+          return {
+            unitCode: roomData.room?.code || 'N/A',
+            unitType: this.getRoomTypeLabel(roomData.room?.type),
+            monthlyRent: roomData.room?.price || 0,
+            totalExpected: expectedInYear,
+            totalReceived: coveredInYear,
+            performanceRate: Math.round(perfRate * 100) / 100,
+            monthsOccupied: roomData.monthsDue || 0
+          };
+        }).sort((a, b) => b.performanceRate - a.performanceRate);
 
       this.annualSummary.unitBreakdown = this.annualSummary.unitPerformance.map(u => ({
         unitCode: u.unitCode,
@@ -259,23 +265,26 @@ export class AnnualFinancialRecapComponent implements OnInit, OnChanges {
       return;
     }
 
-    // Fallback sur yearlyStats
-    this.annualSummary.unitPerformance = this.yearlyStats.map(roomStat => {
-      const monthlyPayments = roomStat.paymentValue || [];
-      const totalReceived = monthlyPayments.reduce((sum, payment) => sum + (payment || 0), 0);
-      const monthlyRent = roomStat.room?.price || 0;
-      const monthsDue = roomStat.monthsDue ?? 12;
-      const totalExpected = monthlyRent * monthsDue;
-      return {
-        unitCode: roomStat.room?.code || 'N/A',
-        unitType: this.getRoomTypeLabel(roomStat.room?.type),
-        monthlyRent,
-        totalExpected,
-        totalReceived,
-        performanceRate: totalExpected > 0 ? Math.min((totalReceived / totalExpected) * 100, 100) : 0,
-        monthsOccupied: monthsDue
-      };
-    }).sort((a, b) => b.performanceRate - a.performanceRate);
+    // Fallback sur yearlyStats : utilisé uniquement si enrichedData est absent
+    // Une chambre est occupée si isFree === false (pas si elle a des paiements)
+    this.annualSummary.unitPerformance = this.yearlyStats
+      .filter(roomStat => roomStat.room?.isFree === false)
+      .map(roomStat => {
+        const monthlyPayments = roomStat.paymentValue || [];
+        const totalReceived = monthlyPayments.reduce((sum, payment) => sum + (payment || 0), 0);
+        const monthlyRent = roomStat.room?.price || 0;
+        const monthsDue = roomStat.monthsDue ?? 12;
+        const totalExpected = monthlyRent * monthsDue;
+        return {
+          unitCode: roomStat.room?.code || 'N/A',
+          unitType: this.getRoomTypeLabel(roomStat.room?.type),
+          monthlyRent,
+          totalExpected,
+          totalReceived,
+          performanceRate: totalExpected > 0 ? Math.min((totalReceived / totalExpected) * 100, 100) : 0,
+          monthsOccupied: monthsDue
+        };
+      }).sort((a, b) => b.performanceRate - a.performanceRate);
 
     this.annualSummary.unitBreakdown = this.annualSummary.unitPerformance.map(u => ({
       unitCode: u.unitCode,

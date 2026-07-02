@@ -460,7 +460,7 @@ export class StatisticState{
         const state = ctx.getState();
         const key = `${propertyID}-${year}`;
 
-        // Invalider toutes les données liées à cette propriété/année
+        // Invalider les données de la propriété/année
         const filteredPropertyStats = state.propertyStatistic.filter((u) => u.key !== key);
         const filteredLocataireStats = state.locataireStatistic.filter(
             (u) => !(u.locataire.property === propertyID && u.year === year.toString())
@@ -468,11 +468,17 @@ export class StatisticState{
         const filteredAllLocatairePayements = state.allLocatairePayementByYear.filter(
             (u) => !(u.locataire.property === propertyID && u.year === year.toString())
         );
+        // Invalider aussi le récapitulatif global : il agrège les données de tous les biens,
+        // donc un paiement sur un bien rend le récap périmé pour l'année concernée
+        const filteredRecap = state.statisticRecapitulationPayment.filter(
+            (u) => u.year !== year.toString()
+        );
 
         ctx.patchState({
             propertyStatistic: filteredPropertyStats,
             locataireStatistic: filteredLocataireStats,
-            allLocatairePayementByYear: filteredAllLocatairePayements
+            allLocatairePayementByYear: filteredAllLocatairePayements,
+            statisticRecapitulationPayment: filteredRecap
         });
 
         return ctx.dispatch(new StatisticAction.FetchStaticByPropertyIdAndYear(propertyID, year.toString()));

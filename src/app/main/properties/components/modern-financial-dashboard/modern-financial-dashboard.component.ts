@@ -178,8 +178,9 @@ export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
   }
 
   private buildPropertiesSummary(yearData: StatisticPaymentOfAllPropertyByYear): void {
-    const totalReceivedPark = (yearData.paymentProperty || []).reduce((s, pp) =>
-      s + (pp.amountProperty?.totalAmountReceived ?? 0), 0
+    // totalCoveredInYear (projection) sert de base pour revenueShare — cohérent avec collectionRate
+    const totalCoveredPark = (yearData.paymentProperty || []).reduce((s, pp) =>
+      s + (pp.detailedMetrics?.totalCoveredInYear ?? pp.amountProperty?.totalAmountReceived ?? 0), 0
     );
 
     this.propertiesSummary = (yearData.paymentProperty || []).map(pp => {
@@ -187,16 +188,18 @@ export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
 
       // Encaissements réels de l'année (datePayment dans l'année)
       const totalReceived      = pp.amountProperty?.totalAmountReceived ?? 0;
-      // Montant couvert dans l'année par la projection du cumul
+      // Montant couvert dans l'année par la projection du cumul (base du collectionRate)
       const totalCoveredInYear = metrics?.totalCoveredInYear ?? totalReceived;
       const expected           = metrics?.totalExpected ?? pp.amountProperty?.totalAmountToBeReceveid ?? 0;
-      // collectionRate = projection / attendu (vient du backend)
-      const collectionRate     = metrics?.collectionRate ?? 0;
+      // collectionRate = totalCoveredInYear / totalExpected (projection, cohérent avec le backend)
+      const collectionRate     = expected > 0
+        ? Math.round(Math.min((totalCoveredInYear / expected) * 100, 100) * 10) / 10
+        : (metrics?.collectionRate ?? 0);
 
       const totalUnits    = metrics?.totalRooms    ?? 0;
       const occupiedUnits = metrics?.occupiedRooms ?? 0;
-      // occupancyRate directement depuis le backend — pas de recalcul
-      const occupancyRate = metrics?.occupancyRate ?? (totalUnits > 0 ? Math.round((occupiedUnits / totalUnits) * 100) : 0);
+      // occupancyRate : toujours pondéré (occupiedUnits / totalUnits) pour cohérence avec le global
+      const occupancyRate = totalUnits > 0 ? Math.round((occupiedUnits / totalUnits) * 1000) / 10 : 0;
       const averageRent   = metrics?.averageRent ?? 0;
 
       const tenantsSummary  = pp.tenantsAnalysis?.summary;
@@ -204,9 +207,9 @@ export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
       const lateTenants     = tenantsSummary?.lateTenants     ?? 0;
       const advanceTenants  = tenantsSummary?.aheadTenants    ?? 0;
       const upToDateTenants = tenantsSummary?.upToDateTenants ?? Math.max(0, totalTenants - lateTenants - advanceTenants);
-      // Dettes et avances cohérentes avec lateTenants (depuis tenantsAnalysis)
-      const totalArrears  = tenantsSummary?.totalAmountBehind  ?? metrics?.totalDebts   ?? 0;
-      const totalAdvances = tenantsSummary?.totalAdvanceAmount ?? metrics?.totalAdvances ?? 0;
+      // Dettes et avances : source unique = tenantsAnalysis (depuis calculatePaymentStatus, cumul depuis entrée)
+      const totalArrears  = tenantsSummary?.totalAmountBehind  ?? 0;
+      const totalAdvances = tenantsSummary?.totalAdvanceAmount ?? 0;
 
       const monthlyData: MonthlyRevenue[] = (pp.amountMonth || []).map((m: any) => ({
         monthIndex: m.month - 1,
@@ -222,7 +225,8 @@ export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
         totalCoveredInYear,
         totalExpected: expected,
         collectionRate,
-        shortfall:     Math.max(0, expected - totalReceived),
+        // shortfall = max(0, expected - totalCoveredInYear) — même base que collectionRate (projection)
+        shortfall:     Math.max(0, expected - totalCoveredInYear),
         totalUnits,
         occupiedUnits,
         occupancyRate,
@@ -233,8 +237,8 @@ export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
         upToDateTenants,
         totalArrears,
         totalAdvances,
-        revenueShare:  totalReceivedPark > 0
-          ? Math.round((totalReceived / totalReceivedPark) * 100) : 0,
+        revenueShare:  totalCoveredPark > 0
+          ? Math.round((totalCoveredInYear / totalCoveredPark) * 100) : 0,
         monthlyData,
         // performanceLevel depuis le backend directement si disponible
         performanceLevel: (metrics as any)?.performanceLevel ?? this.getPerformanceLevel(collectionRate)
@@ -246,18 +250,22 @@ export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
     const gm = yearData.globalMetrics;
     const py = yearData.paymentYear;
 
-    // Utiliser les valeurs calculées backend directement
+    // totalReceived = encaissements réels (datePayment dans l'année)
     const totalReceived  = py?.totalAmountReceived     || 0;
     const totalExpected  = py?.totalAmountToBeReceveid || 0;
-    // collectionRate backend (pondéré : totalReçu / totalAttendu)
-    const collectionRate = gm?.globalCollectionRate
-      ?? (totalExpected > 0 ? Math.round((totalReceived / totalExpected) * 100 * 10) / 10 : 0);
 
+    // collectionRate global = totalCoveredInYear / totalExpected (même base que par bien = projection)
+    // On recalcule depuis propertiesSummary pour garantir la cohérence avec les taux par bien
+    const totalCoveredGlobal = this.propertiesSummary.reduce((s, p) => s + p.totalCoveredInYear, 0);
+    const collectionRate = totalExpected > 0
+      ? Math.round(Math.min((totalCoveredGlobal / totalExpected) * 100, 100) * 10) / 10
+      : (gm?.globalCollectionRate ?? 0);
+
+    // occupancyRate global : toujours pondéré (totalOccupied / totalUnits) — jamais moyenne arithmétique
     const totalUnits    = gm?.totalRooms         ?? this.propertiesSummary.reduce((s, p) => s + p.totalUnits, 0);
     const occupiedUnits = gm?.totalOccupiedRooms ?? this.propertiesSummary.reduce((s, p) => s + p.occupiedUnits, 0);
     const vacantUnits   = totalUnits - occupiedUnits;
-    const occupancyRate = gm?.averageOccupancyRate
-      ?? (totalUnits > 0 ? Math.round((occupiedUnits / totalUnits) * 100 * 10) / 10 : 0);
+    const occupancyRate = totalUnits > 0 ? Math.round((occupiedUnits / totalUnits) * 1000) / 10 : 0;
     const averageRent   = occupiedUnits > 0
       ? Math.round(this.propertiesSummary.reduce((s, p) => s + p.averageRent * p.occupiedUnits, 0) / occupiedUnits)
       : 0;
@@ -271,8 +279,7 @@ export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
     const advanceTenants  = this.propertiesSummary.reduce((s, p) => s + p.advanceTenants, 0);
     const upToDateTenants = this.propertiesSummary.reduce((s, p) => s + (p.upToDateTenants ?? 0), 0);
     const lateTenantsRate = totalTenants > 0 ? Math.round((lateTenants / totalTenants) * 100) : 0;
-    // Dettes et avances : toujours depuis tenantsAnalysis (cohérent avec lateTenants)
-    // gm.totalDebts est basé sur la projection, pas sur tenantsAnalysis
+    // Dettes et avances : somme depuis propertiesSummary (source unique = tenantsAnalysis par bien)
     const totalArrears  = this.propertiesSummary.reduce((s, p) => s + p.totalArrears, 0);
     const totalAdvances = this.propertiesSummary.reduce((s, p) => s + p.totalAdvances, 0);
 
@@ -297,7 +304,8 @@ export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
       totalExpected,
       collectionRate,
       // shortfall depuis paymentYear.totalAmountRelicat (maintenant = max(0, expected - received) backend)
-      shortfall:                  py?.totalAmountRelicat ?? Math.max(0, totalExpected - totalReceived),
+      // shortfall global = max(0, totalExpected - totalCoveredGlobal) — même base que collectionRate (projection)
+      shortfall:                  Math.max(0, totalExpected - totalCoveredGlobal),
       averageRevenuePerProperty:  this.propertiesSummary.length > 0
         ? Math.round(totalReceived / this.propertiesSummary.length) : 0,
       totalProperties:    gm?.totalProperties ?? this.propertiesSummary.length,
@@ -364,7 +372,8 @@ export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
   applySortProperties(): void {
     const sorted = [...this.propertiesSummary];
     switch (this.sortBy) {
-      case 'revenue': sorted.sort((a, b) => b.totalReceived - a.totalReceived); break;
+      // Tri par totalCoveredInYear (projection) — cohérent avec collectionRate et revenueShare
+      case 'revenue': sorted.sort((a, b) => b.totalCoveredInYear - a.totalCoveredInYear); break;
       case 'rate':    sorted.sort((a, b) => b.collectionRate - a.collectionRate); break;
       case 'name':    sorted.sort((a, b) => a.propertyName.localeCompare(b.propertyName)); break;
     }

@@ -72,7 +72,7 @@ export class HistoryLocationPaymentState{
    
     static selectStateHistoryLocationPaymentByLocataireId(locataireID)
     {
-        return createSelector([HistoryLocationPaymentState],(state)=> state.historyLocationPayments.filter((historyLocationPayment)=>historyLocationPayment.locataire._id==locataireID))
+        return createSelector([HistoryLocationPaymentState],(state)=> state.historyLocationPayments.filter((historyLocationPayment)=>historyLocationPayment.locataire?._id==locataireID))
     }   
 
    
@@ -107,7 +107,7 @@ export class HistoryLocationPaymentState{
         for(let index =0; index<historyLocationPayments.length;index++)
         {
             let historyLocationPayment = historyLocationPayments[index];
-            if(historyLocationPayment.locataire._id==locataireID)
+            if(historyLocationPayment.locataire?._id==locataireID)
             {
                 let indexTransaction = historyLocationPayment.transactions.findIndex((u)=>u._id==transactionId);
                 if(indexTransaction>-1)
@@ -143,7 +143,7 @@ export class HistoryLocationPaymentState{
         for(let index =0; index<historyLocationPayments.length;index++)
         {
             let historyLocationPayment = historyLocationPayments[index];
-            if(historyLocationPayment.locataire._id==locataireID)
+            if(historyLocationPayment.locataire?._id==locataireID)
             {
                 let indexTransaction = historyLocationPayment.transactions.findIndex((u)=>u._id==transactionId);
                 if(indexTransaction>-1)
@@ -174,7 +174,7 @@ export class HistoryLocationPaymentState{
         const state = ctx.getState();
         let historyLocationPayments = JSON.parse(JSON.stringify([...state.historyLocationPayments]));
 
-        let historyLocationPaymentIndex = historyLocationPayments.findIndex((u)=>u.locataire._id==locataireID);
+        let historyLocationPaymentIndex = historyLocationPayments.findIndex((u)=>u.locataire?._id==locataireID);
         if(historyLocationPaymentIndex<0) return of(true)
         
         let historyFoud = {...state.historyLocationPayments[historyLocationPaymentIndex]};
@@ -193,7 +193,7 @@ export class HistoryLocationPaymentState{
     fetchHistoryLocationPaymentsByLocataireId(ctx:StateContext<HistoryLocationPaymentStateModel>,{locataireID}:HistoryLocationPaymentAction.FetchHistoryLocationByLocataireId)
     {
         const state = ctx.getState();
-        if(state.historyLocationPayments.findIndex((u)=>u.locataire._id==locataireID)>-1) return of(true);
+        if(state.historyLocationPayments.findIndex((u)=>u.locataire?._id==locataireID)>-1) return of(true);
 
         ctx.patchState({
             loadingHistoryLocationPayment:true,

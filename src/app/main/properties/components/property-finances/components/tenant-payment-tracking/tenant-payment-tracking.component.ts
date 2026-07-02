@@ -40,6 +40,7 @@ export interface TenantTrackingData {
   amountBehind: number;
   advanceAmount: number;
   advanceMonths: number;
+  advanceRemainder?: number;  // reliquat partiel en FCFA (advanceAmount % monthlyRent)
   paymentConsistency: number;
   paymentRate: number;
   lastPaymentMonth: number;
@@ -158,6 +159,7 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
           amountBehind:  fa.amountBehind ?? 0,
           advanceAmount: (fa as any).advanceAmount ?? 0,
           advanceMonths: (fa as any).advanceMonths ?? 0,
+          advanceRemainder: (fa as any).advanceRemainder ?? 0,
           paymentConsistency: fa.paymentConsistency,
           paymentRate,
           lastPaymentMonth: fa.lastPaymentMonth,
@@ -174,7 +176,7 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
           coveredMonthsInYear,
           monthsDueInYear,
           totalMonthsCovered,
-          totalPaidAllTime: realReceivedInYear  // encaissements réels de l'année (datePayment dans l'année)
+          totalPaidAllTime: realReceivedInYear  // encaissements réels de l'année (datePayment dans l'année) — utilisé dans l'export CSV sous "Encaissé réel"
         };
       });
 
@@ -272,6 +274,10 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
 
   getAdvanceMonths(tenant: TenantTrackingData): number {
     return tenant.advanceMonths ?? 0;
+  }
+
+  getAdvanceRemainder(tenant: TenantTrackingData): number {
+    return tenant.advanceRemainder ?? 0;
   }
 
   getStatusBadgeClass(status: string): string {

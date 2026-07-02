@@ -207,6 +207,10 @@
                         class="status-count-chip">
                     +{{ getAdvanceMonths(tenant) }}m
                   </span>
+                  <span *ngIf="tenant.status === 'advance' && getAdvanceMonths(tenant) === 0 && getAdvanceRemainder(tenant) > 0"
+                        class="status-count-chip">
+                    +{{ getAdvanceRemainder(tenant) | currency:'XAF':'symbol':'1.0-0' }}
+                  </span>
                 </span>
                 <span *ngIf="tenant.status === 'behind' && tenant.monthsBehind > 0"
                       class="status-sub-label status-sub-behind">
@@ -215,6 +219,13 @@
                 <span *ngIf="tenant.status === 'advance' && getAdvanceMonths(tenant) > 0"
                       class="status-sub-label status-sub-ahead">
                   {{ getAdvanceMonths(tenant) }} mois d'avance
+                  <ng-container *ngIf="getAdvanceRemainder(tenant) > 0">
+                    + {{ getAdvanceRemainder(tenant) | currency:'XAF':'symbol':'1.0-0' }} de reliquat
+                  </ng-container>
+                </span>
+                <span *ngIf="tenant.status === 'advance' && getAdvanceMonths(tenant) === 0 && getAdvanceRemainder(tenant) > 0"
+                      class="status-sub-label status-sub-ahead">
+                  {{ getAdvanceRemainder(tenant) | currency:'XAF':'symbol':'1.0-0' }} d'avance partielle
                 </span>
               </div>
             </td>

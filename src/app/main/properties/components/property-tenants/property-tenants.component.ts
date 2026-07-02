@@ -633,14 +633,12 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
    */
   private loadPaymentDataForTenant(tenant: LocataireModel): Promise<{location: LocationModel, room: RoomModel}> {
     return new Promise((resolve, reject) => {
-      // Récupérer l'unité du locataire
       const room = this.units.find(r => r._id === tenant.room);
       if (!room) {
         reject('Unité non trouvée pour ce locataire');
         return;
       }
 
-      // Récupérer la location active
       const location = this.locations.find(loc =>
         loc.locataire === tenant._id &&
         loc.room === tenant.room &&
@@ -652,18 +650,7 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
         return;
       }
 
-      // Charger l'historique des paiements pour ce locataire
-      this.store.dispatch(new HistoryLocationPaymentAction.FetchHistoryLocationByLocataireId(tenant._id))
-        .subscribe({
-          next: () => {
-            console.log('✅ Historique des paiements chargé pour:', tenant.fullName);
-            resolve({ location, room });
-          },
-          error: (error) => {
-            console.error('❌ Erreur lors du chargement de l\'historique:', error);
-            reject('Erreur lors du chargement des données de paiement');
-          }
-        });
+      resolve({ location, room });
     });
   }
 
