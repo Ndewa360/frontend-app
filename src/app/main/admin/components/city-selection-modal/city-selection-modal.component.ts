@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { FormControl } from '@angular/forms';
-import { Subject, BehaviorSubject } from 'rxjs';
+import { Subject, BehaviorSubject, of } from 'rxjs';
 import { takeUntil, debounceTime, distinctUntilChanged, switchMap, catchError } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 import { Store } from '@ngxs/store';
@@ -17,6 +17,8 @@ export interface CitySelectionResult {
   city?: any;
 }
 
+const PAGE_SIZE = 20;
+
 @Component({
   selector: 'app-city-selection-modal',
   templateUrl: './city-selection-modal.component.html',
@@ -24,19 +26,21 @@ export interface CitySelectionResult {
 })
 export class CitySelectionModalComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
-  
-  // États du modal
+
   currentStep: 'country' | 'city' = 'country';
   isLoading$ = new BehaviorSubject<boolean>(false);
-  
-  // Données
+  isLoadingMore$ = new BehaviorSubject<boolean>(false);
+
   countries: AdminCountry[] = [];
   cities: TransformedCity[] = [];
-  filteredCities: TransformedCity[] = [];
   selectedCountry: AdminCountry | null = null;
   selectedCity: TransformedCity | null = null;
-  
-  // Contrôles de recherche
+
+  // Pagination
+  totalCount = 0;
+  currentStartRow = 0;
+  get hasMore(): boolean { return this.cities.length < this.totalCount; }
+
   countrySearchControl = new FormControl('');
   citySearchControl = new FormControl('');
 
@@ -49,8 +53,52 @@ export class CitySelectionModalComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.loadCountries();
-    this.setupSearch();
+    this.store.select(AdminGeographyState.selectCountries).pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(countries => {
+      this.countries = countries.filter(c => c.isActive);
+    });
+
+    // Recherche live avec debounce — interroge l'API à chaque frappe
+    this.citySearchControl.valueChanges.pipe(
+      takeUntil(this.destroy$),
+      debounceTime(400),
+      distinctUntilChanged(),
+      switchMap(term => {
+        if (!this.selectedCountry) return of(null);
+        const trimmed = (term || '').trim();
+
+        this.cities = [];
+        this.totalCount = 0;
+        this.currentStartRow = 0;
+        this.isLoading$.next(true);
+
+        if (!trimmed) {
+          // Champ vide → recharger les villes populaires du pays
+          return this.geonamesService.getCitiesByCountry(this.selectedCountry.code, PAGE_SIZE).pipe(
+            catchError(() => of(null))
+          );
+        }
+
+        return this.geonamesService.searchCitiesByName(trimmed, this.selectedCountry.iso2 || this.selectedCountry.code, PAGE_SIZE, 0).pipe(
+          catchError(() => of(null))
+        );
+      })
+    ).subscribe(result => {
+      this.isLoading$.next(false);
+      if (!result) return;
+
+      if (Array.isArray(result)) {
+        // Résultat de getCitiesByCountry (tableau simple)
+        this.cities = result;
+        this.totalCount = result.length;
+      } else {
+        // Résultat de searchCitiesByName { cities, totalCount }
+        this.cities = result.cities;
+        this.totalCount = result.totalCount;
+        this.currentStartRow = PAGE_SIZE;
+      }
+    });
   }
 
   ngOnDestroy(): void {
@@ -58,97 +106,57 @@ export class CitySelectionModalComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  /**
-   * Charger la liste des pays
-   */
-  private loadCountries(): void {
-    this.store.select(AdminGeographyState.selectCountries).pipe(
-      takeUntil(this.destroy$)
-    ).subscribe(countries => {
-      this.countries = countries.filter(country => country.isActive);
-    });
-  }
-
-  /**
-   * Configurer la recherche
-   */
-  private setupSearch(): void {
-    // Recherche de pays
-    this.countrySearchControl.valueChanges.pipe(
-      takeUntil(this.destroy$),
-      debounceTime(300),
-      distinctUntilChanged()
-    ).subscribe(searchTerm => {
-      this.filterCountries(searchTerm || '');
-    });
-
-    // Recherche de villes
-    this.citySearchControl.valueChanges.pipe(
-      takeUntil(this.destroy$),
-      debounceTime(300),
-      distinctUntilChanged()
-    ).subscribe(searchTerm => {
-      this.filterCities(searchTerm || '');
-    });
-  }
-
-  /**
-   * Filtrer les pays
-   */
-  private filterCountries(searchTerm: string): void {
-    // Le filtrage se fait déjà côté template avec le pipe
-  }
-
-  /**
-   * Filtrer les villes
-   */
-  private filterCities(searchTerm: string): void {
-    if (!searchTerm.trim()) {
-      this.filteredCities = this.cities;
-      return;
-    }
-
-    const term = searchTerm.toLowerCase();
-    this.filteredCities = this.cities.filter(city =>
-      city.name.toLowerCase().includes(term) ||
-      city.region?.toLowerCase().includes(term)
-    );
-  }
-
-  /**
-   * Sélectionner un pays
-   */
   onSelectCountry(country: AdminCountry): void {
     this.selectedCountry = country;
+    this.cities = [];
+    this.totalCount = 0;
+    this.currentStartRow = 0;
+    this.selectedCity = null;
+    this.citySearchControl.setValue('', { emitEvent: false });
     this.isLoading$.next(true);
-    
-    this.geonamesService.getCitiesByCountry(country.code).pipe(
+    this.currentStep = 'city';
+
+    // Chargement initial : villes les plus peuplées du pays
+    this.geonamesService.getCitiesByCountry(country.code, PAGE_SIZE).pipe(
       takeUntil(this.destroy$),
-      catchError(error => {
-        console.error('Erreur lors du chargement des villes:', error);
-        this.toastr.error('Erreur lors du chargement des villes depuis Geonames', 'Erreur');
+      catchError(() => {
+        this.toastr.error('Erreur lors du chargement des villes', 'Erreur');
         this.isLoading$.next(false);
-        throw error;
+        return of([]);
       })
     ).subscribe(cities => {
       this.cities = cities;
-      this.filteredCities = cities;
-      this.currentStep = 'city';
+      this.totalCount = cities.length; // pas de totalCount sur getCitiesByCountry
       this.isLoading$.next(false);
-      this.citySearchControl.setValue('');
     });
   }
 
-  /**
-   * Sélectionner une ville
-   */
-  onSelectCity(city: TransformedCity): void {
-    this.selectedCity = city;
+  loadMore(): void {
+    if (!this.selectedCountry || this.isLoadingMore$.value || !this.hasMore) return;
+
+    const term = (this.citySearchControl.value || '').trim();
+    if (!term) return; // "charger plus" n'a de sens qu'en mode recherche
+
+    this.isLoadingMore$.next(true);
+
+    this.geonamesService.searchCitiesByName(
+      term,
+      this.selectedCountry.iso2 || this.selectedCountry.code,
+      PAGE_SIZE,
+      this.currentStartRow
+    ).pipe(
+      takeUntil(this.destroy$),
+      catchError(() => of({ cities: [], totalCount: this.totalCount }))
+    ).subscribe(result => {
+      this.cities = [...this.cities, ...result.cities];
+      this.totalCount = result.totalCount;
+      this.currentStartRow += PAGE_SIZE;
+      this.isLoadingMore$.next(false);
+    });
   }
 
-  /**
-   * Confirmer la sélection
-   */
+  onSelectCity(city: TransformedCity): void { this.selectedCity = city; }
+
   onConfirm(): void {
     if (!this.selectedCountry || !this.selectedCity) {
       this.toastr.warning('Veuillez sélectionner un pays et une ville', 'Sélection incomplète');
@@ -157,17 +165,11 @@ export class CitySelectionModalComponent implements OnInit, OnDestroy {
 
     this.isLoading$.next(true);
 
-    // Transformer les données pour le backend
-    const cityData = this.geonamesService.transformCityForBackend(
-      this.selectedCity, 
-      this.selectedCountry._id
-    );
+    const cityData = this.geonamesService.transformCityForBackend(this.selectedCity, this.selectedCountry._id);
 
-    // Créer la ville via le store
     this.store.dispatch(new AdminGeographyAction.CreateCity(cityData)).pipe(
       takeUntil(this.destroy$),
       catchError(error => {
-        console.error('Erreur lors de la création de la ville:', error);
         this.toastr.error('Erreur lors de la création de la ville', 'Erreur');
         this.isLoading$.next(false);
         throw error;
@@ -175,88 +177,38 @@ export class CitySelectionModalComponent implements OnInit, OnDestroy {
     ).subscribe(() => {
       this.isLoading$.next(false);
       this.toastr.success(`La ville ${this.selectedCity!.name} a été ajoutée avec succès`, 'Succès');
-      
-      const result: CitySelectionResult = {
-        success: true,
-        city: {
-          ...cityData,
-          country: this.selectedCountry
-        }
-      };
-      
-      this.dialogRef.close(result);
+      this.dialogRef.close({ success: true, city: { ...cityData, country: this.selectedCountry } });
     });
   }
 
-  /**
-   * Annuler la sélection
-   */
-  onCancel(): void {
-    this.dialogRef.close({ success: false });
-  }
+  onCancel(): void { this.dialogRef.close({ success: false }); }
 
-  /**
-   * Retourner à l'étape précédente
-   */
   onBack(): void {
     if (this.currentStep === 'city') {
       this.currentStep = 'country';
       this.selectedCity = null;
       this.cities = [];
-      this.filteredCities = [];
+      this.totalCount = 0;
     }
   }
 
-  /**
-   * Obtenir les pays filtrés pour l'affichage
-   */
   getFilteredCountries(): AdminCountry[] {
-    const searchTerm = this.countrySearchControl.value?.toLowerCase() || '';
-    if (!searchTerm.trim()) {
-      return this.countries;
-    }
-
-    return this.countries.filter(country =>
-      country.name.toLowerCase().includes(searchTerm) ||
-      country.code.toLowerCase().includes(searchTerm)
+    const term = (this.countrySearchControl.value || '').toLowerCase();
+    if (!term) return this.countries;
+    return this.countries.filter(c =>
+      c.name.toLowerCase().includes(term) || c.code.toLowerCase().includes(term)
     );
   }
 
-  /**
-   * Vérifier si une ville est sélectionnée
-   */
-  isCitySelected(city: TransformedCity): boolean {
-    return this.selectedCity?.geonameId === city.geonameId;
-  }
+  isCitySelected(city: TransformedCity): boolean { return this.selectedCity?.geonameId === city.geonameId; }
 
-  /**
-   * Obtenir le texte du bouton de confirmation
-   */
   getConfirmButtonText(): string {
-    if (this.isLoading$.value) {
-      return 'Création en cours...';
-    }
+    if (this.isLoading$.value) return 'Création en cours...';
     return this.selectedCity ? `Ajouter ${this.selectedCity.name}` : 'Sélectionner une ville';
   }
 
-  /**
-   * Vérifier si la confirmation est possible
-   */
-  canConfirm(): boolean {
-    return !!(this.selectedCountry && this.selectedCity && !this.isLoading$.value);
-  }
+  canConfirm(): boolean { return !!(this.selectedCountry && this.selectedCity && !this.isLoading$.value); }
 
-  /**
-   * TrackBy function pour les pays
-   */
-  trackByCountryId(index: number, country: AdminCountry): string {
-    return country._id;
-  }
-
-  /**
-   * TrackBy function pour les villes
-   */
-  trackByCityId(index: number, city: TransformedCity): number {
-    return city.geonameId;
-  }
+  trackByCountryId(_: number, c: AdminCountry): string { return c._id; }
+  trackByCityId(_: number, c: TransformedCity): number { return c.geonameId; }
 }

@@ -137,6 +137,66 @@ export namespace AdminGeographyAction {
     constructor(public error: any) {}
   }
 
+  export class CreateCurrency {
+    static readonly type = '[Admin Geography] Create Currency';
+    constructor(public currencyData: any) {}
+  }
+
+  export class CreateCurrencySuccess {
+    static readonly type = '[Admin Geography] Create Currency Success';
+    constructor(public currency: any) {}
+  }
+
+  export class CreateCurrencyFailure {
+    static readonly type = '[Admin Geography] Create Currency Failure';
+    constructor(public error: any) {}
+  }
+
+  export class UpdateCurrency {
+    static readonly type = '[Admin Geography] Update Currency';
+    constructor(public currencyId: string, public currencyData: any) {}
+  }
+
+  export class UpdateCurrencySuccess {
+    static readonly type = '[Admin Geography] Update Currency Success';
+    constructor(public currency: any) {}
+  }
+
+  export class UpdateCurrencyFailure {
+    static readonly type = '[Admin Geography] Update Currency Failure';
+    constructor(public error: any) {}
+  }
+
+  export class DeleteCurrency {
+    static readonly type = '[Admin Geography] Delete Currency';
+    constructor(public currencyId: string) {}
+  }
+
+  export class DeleteCurrencySuccess {
+    static readonly type = '[Admin Geography] Delete Currency Success';
+    constructor(public currencyId: string) {}
+  }
+
+  export class DeleteCurrencyFailure {
+    static readonly type = '[Admin Geography] Delete Currency Failure';
+    constructor(public error: any) {}
+  }
+
+  export class SetDefaultCurrency {
+    static readonly type = '[Admin Geography] Set Default Currency';
+    constructor(public currencyId: string) {}
+  }
+
+  export class SetDefaultCurrencySuccess {
+    static readonly type = '[Admin Geography] Set Default Currency Success';
+    constructor(public currency: any) {}
+  }
+
+  export class SetDefaultCurrencyFailure {
+    static readonly type = '[Admin Geography] Set Default Currency Failure';
+    constructor(public error: any) {}
+  }
+
   // Stats
   export class LoadGeographyStats {
     static readonly type = '[Admin Geography] Load Geography Stats';

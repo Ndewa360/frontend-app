@@ -788,7 +788,7 @@
                       </td>
                       <td class="table-cell font-mono text-gray-700">{{ currency.symbol }}</td>
                       <td class="table-cell">
-                        <span class="text-gray-700">{{ currency.rate | number:'1.2-4' }}</span>
+                        <span class="text-gray-700">{{ currency.exchangeRate | number:'1.2-4' }}</span>
                       </td>
                       <td class="table-cell">
                         <span *ngIf="currency.isDefault" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">

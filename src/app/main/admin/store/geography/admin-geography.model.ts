@@ -54,7 +54,7 @@ export interface AdminCurrency {
   name: string;
   code: string;
   symbol: string;
-  rate: number;
+  exchangeRate: number;
   isActive: boolean;
   isDefault: boolean;
   createdAt: Date;
@@ -143,19 +143,11 @@ export interface CreateCountryDto {
 export interface UpdateCountryDto {
   name?: string;
   code?: string;
+  flag?: string;
   currency?: string;
   timezone?: string;
   capital?: string;
   phoneCode?: string;
-  isActive?: boolean;
-}
-
-export interface UpdateCountryDto {
-  name?: string;
-  code?: string;
-  flag?: string;
-  currency?: string;
-  timezone?: string;
   isActive?: boolean;
 }
 

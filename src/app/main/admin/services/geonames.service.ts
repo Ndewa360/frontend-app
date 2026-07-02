@@ -75,16 +75,19 @@ export class GeonamesService {
   }
 
   /**
-   * Rechercher les villes par nom via notre backend
+   * Rechercher les villes par nom via notre backend (recherche live, paginable)
    */
-  searchCitiesByName(name: string, countryCode?: string, maxRows: number = 20): Observable<TransformedCity[]> {
-    return this.adminGeographyService.searchCitiesFromGeonames(name, countryCode, maxRows).pipe(
-      map(data => {
-        if (data && Array.isArray(data)) {
-          return this.transformCities(data);
-        }
-        return [];
-      }),
+  searchCitiesByName(
+    name: string,
+    countryCode?: string,
+    maxRows: number = 20,
+    startRow: number = 0
+  ): Observable<{ cities: TransformedCity[]; totalCount: number }> {
+    return this.adminGeographyService.searchCitiesFromGeonames(name, countryCode, maxRows, startRow).pipe(
+      map(response => ({
+        cities: this.transformCities(response.cities),
+        totalCount: response.totalCount
+      })),
       catchError(error => {
         console.error('Erreur lors de la recherche de villes:', error);
         return throwError(() => new Error('Impossible de rechercher les villes'));

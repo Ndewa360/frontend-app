@@ -106,8 +106,12 @@
           <input 
             type="text" 
             class="search-input"
-            placeholder="Rechercher une ville..."
+            placeholder="Rechercher une ville, un village..."
             [formControl]="citySearchControl">
+          <i class="fas fa-spinner fa-spin search-icon-right" *ngIf="isLoading$ | async"></i>
+        </div>
+        <div class="search-hint" *ngIf="totalCount > 0">
+          <span>{{ cities.length }} / {{ totalCount }} résultat(s)</span>
         </div>
       </div>
 
@@ -122,7 +126,7 @@
       <!-- Liste des villes -->
       <div class="cities-grid" *ngIf="!(isLoading$ | async)">
         <div 
-          *ngFor="let city of filteredCities; trackBy: trackByCityId" 
+          *ngFor="let city of cities; trackBy: trackByCityId" 
           class="city-card"
           [class.selected]="isCitySelected(city)"
           (click)="onSelectCity(city)">
@@ -153,15 +157,25 @@
             <i class="fas fa-check"></i>
           </div>
         </div>
+
+        <!-- Bouton charger plus -->
+        <div class="load-more-container" *ngIf="hasMore && (citySearchControl.value || '').trim()">
+          <button class="load-more-btn" (click)="loadMore()" [disabled]="isLoadingMore$ | async">
+            <i class="fas fa-spinner fa-spin mr-2" *ngIf="isLoadingMore$ | async"></i>
+            <i class="fas fa-chevron-down mr-2" *ngIf="!(isLoadingMore$ | async)"></i>
+            Charger plus ({{ totalCount - cities.length }} restants)
+          </button>
+        </div>
       </div>
 
       <!-- État vide pour les villes -->
-      <div class="empty-state" *ngIf="filteredCities.length === 0 && !(isLoading$ | async)">
+      <div class="empty-state" *ngIf="cities.length === 0 && !(isLoading$ | async)">
         <div class="empty-icon">
           <i class="fas fa-city"></i>
         </div>
         <h3>Aucune ville trouvée</h3>
-        <p>Essayez de modifier votre recherche ou vérifiez la connexion à Geonames</p>
+        <p *ngIf="(citySearchControl.value || '').trim()">Essayez un autre terme de recherche</p>
+        <p *ngIf="!(citySearchControl.value || '').trim()">Tapez le nom d'une ville pour rechercher</p>
       </div>
     </div>
 

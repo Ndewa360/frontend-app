@@ -3,14 +3,16 @@ import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { tap, catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 
-// Models
 import { AdminGeographyStateModel, AdminCountry, AdminCity, AdminCurrency, GeographyStats } from './admin-geography.model';
-
-// Actions
 import { AdminGeographyAction } from './admin-geography.actions';
-
-// Services
 import { AdminGeographyService } from '../../services/admin-geography.service';
+
+export interface AdminGeographyStateModelExtended extends AdminGeographyStateModel {
+  loadingCountries: boolean;
+  loadingCities: boolean;
+  loadingCurrencies: boolean;
+  loadingStats: boolean;
+}
 
 @State<AdminGeographyStateModel>({
   name: 'adminGeography',
@@ -26,18 +28,8 @@ import { AdminGeographyService } from '../../services/admin-geography.service';
       sortOrder: 'asc'
     },
     pagination: {
-      countries: {
-        page: 1,
-        limit: 20,
-        total: 0,
-        totalPages: 0
-      },
-      cities: {
-        page: 1,
-        limit: 20,
-        total: 0,
-        totalPages: 0
-      }
+      countries: { page: 1, limit: 20, total: 0, totalPages: 0 },
+      cities: { page: 1, limit: 20, total: 0, totalPages: 0 }
     },
     loading: false,
     error: null,
@@ -119,24 +111,15 @@ export class AdminGeographyState {
 
     return this.adminGeographyService.getCountries(action.filters).pipe(
       tap(response => {
-        console.log('🌍 Réponse backend countries:', response);
-        console.log('🌍 Type de response:', typeof response);
-        console.log('🌍 Clés de response:', Object.keys(response || {}));
-
-        // Vérifier si response.countries existe
         if (response && response.countries) {
-          console.log('✅ response.countries trouvé:', response.countries.length, 'pays');
           ctx.dispatch(new AdminGeographyAction.LoadCountriesSuccess(response.countries, response.total || response.countries.length));
         } else if (Array.isArray(response)) {
-          console.log('✅ Response est un array direct:', response.length, 'pays');
           ctx.dispatch(new AdminGeographyAction.LoadCountriesSuccess(response, response.length));
         } else {
-          console.log('❌ Structure de response inattendue:', response);
           ctx.dispatch(new AdminGeographyAction.LoadCountriesSuccess([], 0));
         }
       }),
       catchError(error => {
-        console.error('❌ Erreur chargement countries:', error);
         ctx.dispatch(new AdminGeographyAction.LoadCountriesFailure(error));
         return throwError(error);
       })
@@ -174,24 +157,15 @@ export class AdminGeographyState {
 
     return this.adminGeographyService.getCities(action.filters).pipe(
       tap(response => {
-        console.log('🏙️ Réponse backend cities:', response);
-        console.log('🏙️ Type de response:', typeof response);
-        console.log('🏙️ Clés de response:', Object.keys(response || {}));
-
-        // Vérifier si response.cities existe
         if (response && response.cities) {
-          console.log('✅ response.cities trouvé:', response.cities.length, 'villes');
           ctx.dispatch(new AdminGeographyAction.LoadCitiesSuccess(response.cities, response.total || response.cities.length));
         } else if (Array.isArray(response)) {
-          console.log('✅ Response est un array direct:', response.length, 'villes');
           ctx.dispatch(new AdminGeographyAction.LoadCitiesSuccess(response, response.length));
         } else {
-          console.log('❌ Structure de response inattendue:', response);
           ctx.dispatch(new AdminGeographyAction.LoadCitiesSuccess([], 0));
         }
       }),
       catchError(error => {
-        console.error('❌ Erreur chargement cities:', error);
         ctx.dispatch(new AdminGeographyAction.LoadCitiesFailure(error));
         return throwError(error);
       })
@@ -226,9 +200,10 @@ export class AdminGeographyState {
   @Action(AdminGeographyAction.LoadCurrencies)
   loadCurrencies(ctx: StateContext<AdminGeographyStateModel>) {
     ctx.patchState({ loading: true, error: null });
-    
+
     return this.adminGeographyService.getCurrencies().pipe(
-      tap(currencies => {
+      tap(response => {
+        const currencies = Array.isArray(response) ? response : (response as any)?.data || [];
         ctx.dispatch(new AdminGeographyAction.LoadCurrenciesSuccess(currencies));
       }),
       catchError(error => {
@@ -479,6 +454,132 @@ export class AdminGeographyState {
       loading: false,
       error: action.error
     });
+  }
+
+  // === ACTIONS CRUD DEVISES ===
+
+  @Action(AdminGeographyAction.CreateCurrency)
+  createCurrency(ctx: StateContext<AdminGeographyStateModel>, action: AdminGeographyAction.CreateCurrency) {
+    ctx.patchState({ loading: true, error: null });
+
+    return this.adminGeographyService.createCurrency(action.currencyData).pipe(
+      tap(currency => {
+        ctx.dispatch(new AdminGeographyAction.CreateCurrencySuccess(currency));
+      }),
+      catchError(error => {
+        ctx.dispatch(new AdminGeographyAction.CreateCurrencyFailure(error));
+        return throwError(error);
+      })
+    );
+  }
+
+  @Action(AdminGeographyAction.CreateCurrencySuccess)
+  createCurrencySuccess(ctx: StateContext<AdminGeographyStateModel>, action: AdminGeographyAction.CreateCurrencySuccess) {
+    const state = ctx.getState();
+    ctx.patchState({
+      currencies: [...state.currencies, action.currency],
+      loading: false,
+      error: null,
+      lastUpdated: new Date()
+    });
+  }
+
+  @Action(AdminGeographyAction.CreateCurrencyFailure)
+  createCurrencyFailure(ctx: StateContext<AdminGeographyStateModel>, action: AdminGeographyAction.CreateCurrencyFailure) {
+    ctx.patchState({ loading: false, error: action.error });
+  }
+
+  @Action(AdminGeographyAction.UpdateCurrency)
+  updateCurrency(ctx: StateContext<AdminGeographyStateModel>, action: AdminGeographyAction.UpdateCurrency) {
+    ctx.patchState({ loading: true, error: null });
+
+    return this.adminGeographyService.updateCurrency(action.currencyId, action.currencyData).pipe(
+      tap(currency => {
+        ctx.dispatch(new AdminGeographyAction.UpdateCurrencySuccess(currency));
+      }),
+      catchError(error => {
+        ctx.dispatch(new AdminGeographyAction.UpdateCurrencyFailure(error));
+        return throwError(error);
+      })
+    );
+  }
+
+  @Action(AdminGeographyAction.UpdateCurrencySuccess)
+  updateCurrencySuccess(ctx: StateContext<AdminGeographyStateModel>, action: AdminGeographyAction.UpdateCurrencySuccess) {
+    const state = ctx.getState();
+    ctx.patchState({
+      currencies: state.currencies.map(c => c._id === action.currency._id ? action.currency : c),
+      loading: false,
+      error: null,
+      lastUpdated: new Date()
+    });
+  }
+
+  @Action(AdminGeographyAction.UpdateCurrencyFailure)
+  updateCurrencyFailure(ctx: StateContext<AdminGeographyStateModel>, action: AdminGeographyAction.UpdateCurrencyFailure) {
+    ctx.patchState({ loading: false, error: action.error });
+  }
+
+  @Action(AdminGeographyAction.DeleteCurrency)
+  deleteCurrency(ctx: StateContext<AdminGeographyStateModel>, action: AdminGeographyAction.DeleteCurrency) {
+    ctx.patchState({ loading: true, error: null });
+
+    return this.adminGeographyService.deleteCurrency(action.currencyId).pipe(
+      tap(() => {
+        ctx.dispatch(new AdminGeographyAction.DeleteCurrencySuccess(action.currencyId));
+      }),
+      catchError(error => {
+        ctx.dispatch(new AdminGeographyAction.DeleteCurrencyFailure(error));
+        return throwError(error);
+      })
+    );
+  }
+
+  @Action(AdminGeographyAction.DeleteCurrencySuccess)
+  deleteCurrencySuccess(ctx: StateContext<AdminGeographyStateModel>, action: AdminGeographyAction.DeleteCurrencySuccess) {
+    const state = ctx.getState();
+    ctx.patchState({
+      currencies: state.currencies.filter(c => c._id !== action.currencyId),
+      loading: false,
+      error: null,
+      lastUpdated: new Date()
+    });
+  }
+
+  @Action(AdminGeographyAction.DeleteCurrencyFailure)
+  deleteCurrencyFailure(ctx: StateContext<AdminGeographyStateModel>, action: AdminGeographyAction.DeleteCurrencyFailure) {
+    ctx.patchState({ loading: false, error: action.error });
+  }
+
+  @Action(AdminGeographyAction.SetDefaultCurrency)
+  setDefaultCurrency(ctx: StateContext<AdminGeographyStateModel>, action: AdminGeographyAction.SetDefaultCurrency) {
+    ctx.patchState({ loading: true, error: null });
+
+    return this.adminGeographyService.setDefaultCurrency(action.currencyId).pipe(
+      tap(currency => {
+        ctx.dispatch(new AdminGeographyAction.SetDefaultCurrencySuccess(currency));
+      }),
+      catchError(error => {
+        ctx.dispatch(new AdminGeographyAction.SetDefaultCurrencyFailure(error));
+        return throwError(error);
+      })
+    );
+  }
+
+  @Action(AdminGeographyAction.SetDefaultCurrencySuccess)
+  setDefaultCurrencySuccess(ctx: StateContext<AdminGeographyStateModel>, action: AdminGeographyAction.SetDefaultCurrencySuccess) {
+    const state = ctx.getState();
+    ctx.patchState({
+      currencies: state.currencies.map(c => ({ ...c, isDefault: c._id === action.currency._id })),
+      loading: false,
+      error: null,
+      lastUpdated: new Date()
+    });
+  }
+
+  @Action(AdminGeographyAction.SetDefaultCurrencyFailure)
+  setDefaultCurrencyFailure(ctx: StateContext<AdminGeographyStateModel>, action: AdminGeographyAction.SetDefaultCurrencyFailure) {
+    ctx.patchState({ loading: false, error: action.error });
   }
 
   // === ACTIONS GEONAMES ===

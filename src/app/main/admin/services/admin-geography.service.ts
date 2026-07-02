@@ -224,7 +224,7 @@ export class AdminGeographyService {
    * Mettre à jour les taux de change
    */
   updateExchangeRates(): Observable<{ updated: number }> {
-    return this.http.post<ApiResultFormat<{ updated: number }>>(`${this.apiUrl}/currencies/update-rates`, {}).pipe(
+    return this.http.put<ApiResultFormat<{ updated: number }>>(`${this.apiUrl}/currencies/update-rates`, {}).pipe(
       map(response => response.data)
     );
   }
@@ -340,17 +340,21 @@ export class AdminGeographyService {
   /**
    * Rechercher des villes par nom via GeoNames
    */
-  searchCitiesFromGeonames(name: string, country?: string, maxRows: number = 20): Observable<any> {
+  searchCitiesFromGeonames(name: string, country?: string, maxRows: number = 20, startRow: number = 0): Observable<{ cities: any[]; totalCount: number }> {
     let params = new HttpParams()
       .set('name', name)
-      .set('maxRows', maxRows.toString());
+      .set('maxRows', maxRows.toString())
+      .set('startRow', startRow.toString());
 
     if (country) {
       params = params.set('country', country);
     }
 
-    return this.http.get<ApiResultFormat<any>>(`${this.apiUrl}/geonames/search`, { params }).pipe(
-      map(response => response.data)
+    return this.http.get<any>(`${this.apiUrl}/geonames/search`, { params }).pipe(
+      map(response => ({
+        cities: response?.data || [],
+        totalCount: response?.meta?.totalCount || 0
+      }))
     );
   }
 

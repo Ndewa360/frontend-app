@@ -74,7 +74,7 @@ export class AdminGeographyComponent implements OnInit, OnDestroy {
       name:      ['', Validators.required],
       code:      ['', [Validators.required, Validators.maxLength(3)]],
       symbol:    ['', Validators.required],
-      rate:      [1, [Validators.required, Validators.min(0)]],
+      exchangeRate: [1, [Validators.required, Validators.min(0)]],
       isActive:  [true],
       isDefault: [false]
     });
@@ -309,7 +309,7 @@ export class AdminGeographyComponent implements OnInit, OnDestroy {
 
   onCreateCurrency(): void {
     this.editingCurrency = null;
-    this.currencyForm.reset({ rate: 1, isActive: true, isDefault: false });
+    this.currencyForm.reset({ exchangeRate: 1, isActive: true, isDefault: false });
     this.showCurrencyModal = true;
   }
 
@@ -319,7 +319,7 @@ export class AdminGeographyComponent implements OnInit, OnDestroy {
       name:      currency.name,
       code:      currency.code,
       symbol:    currency.symbol,
-      rate:      currency.rate,
+      exchangeRate: currency.exchangeRate,
       isActive:  currency.isActive,
       isDefault: currency.isDefault
     });
@@ -425,7 +425,7 @@ export class AdminGeographyComponent implements OnInit, OnDestroy {
         { key: 'name', label: 'Nom' },
         { key: 'code', label: 'Code' },
         { key: 'symbol', label: 'Symbole' },
-        { key: 'rate', label: 'Taux' },
+        { key: 'exchangeRate', label: 'Taux' },
         { key: 'isDefault', label: 'Par défaut', formatter: (v) => v ? 'Oui' : 'Non' },
         { key: 'isActive', label: 'Statut', formatter: (v) => v ? 'Actif' : 'Inactif' }
       ];
