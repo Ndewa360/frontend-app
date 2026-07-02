@@ -82,8 +82,9 @@ export class PaymentReceiptModalComponent implements OnInit {
       case 'BANK_TRANSFER': return 'Virement bancaire';
       case 'MOBILE_MONEY':  return 'Mobile Money';
       case 'CHECK':         return 'Chèque';
-      case 'CARD':          return 'Carte de crédit';
-      default: return this.data.payment.paymentMethod || 'Espèces';
+      case 'CARD':          return 'Carte bancaire';
+      case 'OTHER':         return 'Autre';
+      default: return this.data.payment.paymentMethod || 'Non spécifié';
     }
   }
 
@@ -109,26 +110,34 @@ export class PaymentReceiptModalComponent implements OnInit {
   }
 
   /**
-   * Calcule la période couverte par CE paiement, identique à la logique backend.
-   * - Début : jour exact d'entrée + mois déjà couverts par les paiements précédents
-   * - Fin   : veille du jour d'entrée dans le mois suivant la fin de couverture
+   * Calcule la période couverte par CE paiement.
+   * Logique identique au backend (projectPaymentsOnYear) :
+   * - entryDate = location.startedAt (jamais datePayment)
+   * - floor pour les mois couverts (un mois n'est couvert que s'il est entièrement payé)
+   * - anniversaryDate pour éviter le débordement JS sur les mois courts (28/29/30 jours)
    */
   getPeriodLabel(): string {
     const monthlyRent = this.data.room?.price || 0;
     const payments    = this.data.allPayments || [];
 
-    // Date d'entrée
+    // Date d'entrée depuis le contrat — jamais depuis datePayment
     const loc = this.data.location;
-    const entryDate = loc
-      ? new Date(loc.isKnowExactDateEntry && loc.startedAt ? loc.startedAt : (loc.createdAt || loc.startedAt || this.data.payment.datePayment))
-      : new Date(this.data.payment.datePayment);
-
-    if (!monthlyRent) {
-      // Pas de loyer connu : afficher le mois du paiement
-      return new Date(this.data.payment.datePayment).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+    if (!loc?.startedAt || !monthlyRent) {
+      return new Date(this.data.payment.datePayment)
+        .toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
     }
+    const entryDate = new Date(loc.startedAt);
 
-    // Total payé avant ce paiement
+    // Ajustement état financier initial (cohérent avec projectPaymentsOnYear)
+    const initialState = (loc as any).initialFinancialState;
+    const initialSolde = (loc as any).initialSolde || 0;
+    const adjust = (amount: number) => {
+      if (initialState === 'AVEC_ARRIERE') return Math.max(0, amount - initialSolde);
+      if (initialState === 'EN_AVANCE')    return amount + initialSolde;
+      return amount;
+    };
+
+    // Total payé AVANT ce paiement
     const refTime = new Date(this.data.payment.datePayment).getTime();
     const refId   = this.data.payment._id;
     const totalAvant = payments
@@ -138,22 +147,85 @@ export class PaymentReceiptModalComponent implements OnInit {
       })
       .reduce((s, p) => s + (p.locationPaymentPrice || 0), 0);
 
-    const moisDejaCouverts = Math.floor(totalAvant / monthlyRent);
-    const nbMoisCePaiement = Math.ceil(this.data.payment.locationPaymentPrice / monthlyRent);
+    // floor : mois entiers couverts avant et après ce paiement
+    const moisAvant  = Math.floor(adjust(totalAvant) / monthlyRent);
+    const moisApres  = Math.floor(adjust(totalAvant + this.data.payment.locationPaymentPrice) / monthlyRent);
 
-    const debut = new Date(
-      entryDate.getFullYear(),
-      entryDate.getMonth() + moisDejaCouverts,
-      entryDate.getDate()
-    );
-    const fin = new Date(
-      entryDate.getFullYear(),
-      entryDate.getMonth() + moisDejaCouverts + nbMoisCePaiement,
-      entryDate.getDate() - 1
-    );
+    if (moisApres <= moisAvant) {
+      // Paiement partiel qui ne complète pas encore un mois entier
+      return 'Paiement partiel (mois non encore couvert)';
+    }
+
+    // anniversaryDate : gère les mois courts (28/29/30 jours) sans débordement JS
+    const anniversaryDate = (offset: number): Date => {
+      const targetMonth = entryDate.getMonth() + offset;
+      const targetYear  = entryDate.getFullYear();
+      const lastDay     = new Date(targetYear, targetMonth + 1, 0).getDate();
+      const day         = Math.min(entryDate.getDate(), lastDay);
+      return new Date(targetYear, targetMonth, day, 0, 0, 0, 0);
+    };
+
+    const debutCouverture  = anniversaryDate(moisAvant);
+    const endOfLastCovered = anniversaryDate(moisApres);
+    const finCouverture    = new Date(endOfLastCovered.getTime() - 1);
 
     const fmt = (d: Date) => d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
-    return `${fmt(debut)} au ${fmt(fin)}`;
+    return `${fmt(debutCouverture)} au ${fmt(finCouverture)}`;
+  }
+
+  /**
+   * Statut financier du locataire après CE paiement, avec nombre de mois.
+   * Même logique que le backend (projectPaymentsOnYear via floor).
+   */
+  getTenantStatusLabel(): string {
+    const monthlyRent = this.data.room?.price || 0;
+    const loc         = this.data.location as any;
+    if (!loc?.startedAt || !monthlyRent) return '';
+
+    const entryDate    = new Date(loc.startedAt);
+    const payments     = this.data.allPayments || [];
+    const totalPaye    = payments.reduce((s, p) => s + (p.locationPaymentPrice || 0), 0);
+    const initialState = loc.initialFinancialState;
+    const initialSolde = loc.initialSolde || 0;
+
+    // Ajustement
+    let adjusted = totalPaye;
+    if (initialState === 'AVEC_ARRIERE') adjusted = Math.max(0, adjusted - initialSolde);
+    else if (initialState === 'EN_AVANCE') adjusted += initialSolde;
+
+    const fullMonthsCovered = Math.floor(adjusted / monthlyRent);
+
+    // Mois dus depuis l'entrée jusqu'à aujourd'hui (règle d'anniversaire)
+    const anniversaryDate = (offset: number): Date => {
+      const targetMonth = entryDate.getMonth() + offset;
+      const lastDay     = new Date(entryDate.getFullYear(), targetMonth + 1, 0).getDate();
+      return new Date(entryDate.getFullYear(), targetMonth, Math.min(entryDate.getDate(), lastDay), 0, 0, 0, 0);
+    };
+    const now = new Date();
+    let monthsDue = 0;
+    for (let offset = 0; ; offset++) {
+      const d = anniversaryDate(offset);
+      if (d > now) break;
+      monthsDue++;
+      if (offset > 600) break; // sécurité
+    }
+
+    const diff = fullMonthsCovered - monthsDue;
+
+    if (adjusted <= 0) {
+      return monthsDue > 0 ? `Aucun paiement — ${monthsDue} mois dus` : 'Aucun paiement';
+    }
+    if (diff > 0) {
+      return `En avance — ${diff} mois`;
+    }
+    if (diff === 0) {
+      return 'À jour';
+    }
+    const lateMonths = Math.abs(diff);
+    const rate = monthsDue > 0 ? (fullMonthsCovered / monthsDue) * 100 : 0;
+    return rate >= 50
+      ? `En retard — ${lateMonths} mois`
+      : `Critique — ${lateMonths} mois de retard`;
   }
 
   downloadPdf(): void {
@@ -216,6 +288,7 @@ export class PaymentReceiptModalComponent implements OnInit {
     const roomCode = this.data.room?.code || 'N/A';
     const periodLabel = this.getPeriodLabel();
     const paymentType = this.getPaymentTypeLabel();
+    const tenantStatus = this.getTenantStatusLabel();
 
     return `<!DOCTYPE html>
 <html lang="fr">
@@ -317,6 +390,10 @@ export class PaymentReceiptModalComponent implements OnInit {
           <td class="label">Mode de paiement</td>
           <td class="value">${this.getPaymentMethodLabel()}</td>
         </tr>
+        ${tenantStatus ? `<tr>
+          <td class="label">Statut locataire</td>
+          <td class="value">${tenantStatus}</td>
+        </tr>` : ''}
       </table>
     </div>
 

@@ -36,7 +36,13 @@ export interface PaymentModalData {
 export class ModernPaymentModalComponent implements OnInit, OnDestroy {
   formGroup: FormGroup;
   isLoading = false;
-  paymentMethods: { value: string; label: string; icon: string }[] = [];
+  paymentMethods: { value: string; label: string; icon: string }[] = [
+    { value: 'CASH',          label: 'Espèces',           icon: 'money' },
+    { value: 'BANK_TRANSFER', label: 'Virement bancaire', icon: 'bank'  },
+    { value: 'MOBILE_MONEY',  label: 'Mobile Money',      icon: 'phone' },
+    { value: 'CHECK',         label: 'Chèque',            icon: 'check' },
+    { value: 'CARD',          label: 'Carte bancaire',    icon: 'card'  },
+  ];
   
   // Payment types
   paymentTypes = [
@@ -94,12 +100,14 @@ export class ModernPaymentModalComponent implements OnInit, OnDestroy {
         description: this.translate.instant('PAYMENT_MANAGEMENT.DEPOSIT_DESC')
       }
     ];
+    // paymentMethods est déjà initialisé dans la déclaration de classe avec les labels i18n
+    // On met à jour les labels une fois les traductions disponibles
     this.paymentMethods = [
-      { value: 'CASH',          label: this.translate.instant('FINANCES.PAYMENT_METHODS.CASH'),          icon: 'money' },
-      { value: 'BANK_TRANSFER', label: this.translate.instant('FINANCES.PAYMENT_METHODS.BANK_TRANSFER'), icon: 'bank' },
-      { value: 'MOBILE_MONEY',  label: this.translate.instant('FINANCES.PAYMENT_METHODS.MOBILE_MONEY'),  icon: 'phone' },
-      { value: 'CHECK',         label: this.translate.instant('FINANCES.PAYMENT_METHODS.CHECK'),         icon: 'check' },
-      { value: 'CARD',          label: this.translate.instant('FINANCES.PAYMENT_METHODS.CREDIT_CARD'),   icon: 'card' }
+      { value: 'CASH',          label: this.translate.instant('FINANCES.PAYMENT_METHODS.CASH')          || 'Espèces',           icon: 'money' },
+      { value: 'BANK_TRANSFER', label: this.translate.instant('FINANCES.PAYMENT_METHODS.BANK_TRANSFER') || 'Virement bancaire', icon: 'bank'  },
+      { value: 'MOBILE_MONEY',  label: this.translate.instant('FINANCES.PAYMENT_METHODS.MOBILE_MONEY')  || 'Mobile Money',      icon: 'phone' },
+      { value: 'CHECK',         label: this.translate.instant('FINANCES.PAYMENT_METHODS.CHECK')         || 'Chèque',            icon: 'check' },
+      { value: 'CARD',          label: this.translate.instant('FINANCES.PAYMENT_METHODS.CREDIT_CARD')   || 'Carte bancaire',    icon: 'card'  },
     ];
   }
 

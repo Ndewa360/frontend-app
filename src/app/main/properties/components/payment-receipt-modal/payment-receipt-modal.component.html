@@ -85,6 +85,10 @@
               <td class="detail-label">Mode</td>
               <td class="detail-value">{{ getPaymentMethodLabel() }}</td>
             </tr>
+            <tr *ngIf="getTenantStatusLabel()">
+              <td class="detail-label">Statut locataire</td>
+              <td class="detail-value">{{ getTenantStatusLabel() }}</td>
+            </tr>
           </table>
         </div>
       </div>
