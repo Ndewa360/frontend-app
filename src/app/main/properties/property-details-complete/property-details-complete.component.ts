@@ -353,7 +353,7 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
   getTabIcon(iconName: string): string {
     const iconMap: { [key: string]: string } = {
       'home': 'home', 'building': 'building', 'user': 'user',
-      'time': 'time', 'money': 'currency-dollar'
+      'time': 'time', 'money': 'currency-dollar', 'user-multiple': 'user-multiple',
     };
     return iconMap[iconName] || iconName;
   }

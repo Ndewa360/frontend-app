@@ -141,14 +141,16 @@ export class PropertyManagerState {
 
   @Action(PropertyManagerAction.RevokeManager)
   revokeManager(ctx: StateContext<PropertyManagerStateModel>, { assignmentId }: PropertyManagerAction.RevokeManager) {
+    ctx.patchState({ loading: true });
     return this.api.revokeManager(assignmentId).pipe(
       tap(() => {
         const state = ctx.getState();
         const updated = state.propertyManagers.filter(m => m._id !== assignmentId);
-        ctx.patchState({ propertyManagers: updated });
+        ctx.patchState({ propertyManagers: updated, loading: false });
         this.toastr.success(this.translate.instant('NOTIFICATIONS.MANAGER_REVOKED_SUCCESS'), 'Ndewa360°');
       }),
       catchError(error => {
+        ctx.patchState({ loading: false });
         const msg = error?.error?.message?.[0] || this.translate.instant('NOTIFICATIONS.GENERIC_ERROR');
         this.toastr.error(msg, 'Ndewa360°');
         return throwError(() => error);
