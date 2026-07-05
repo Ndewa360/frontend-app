@@ -25,7 +25,8 @@
           </button>
           <button class="wallet-btn wallet-btn--primary"
                   (click)="openWithdrawalModal()"
-                  [disabled]="!summary || summary.balance < MIN_WITHDRAWAL || summary.hasPendingWithdrawal">
+                  [disabled]="!summary || summary.balance < MIN_WITHDRAWAL || summary.hasPendingWithdrawal"
+                  [title]="summary?.hasPendingWithdrawal ? 'Un retrait est déjà en cours de traitement' : summary?.balance < MIN_WITHDRAWAL ? 'Solde insuffisant (minimum ' + MIN_WITHDRAWAL + ' FCFA)' : 'Retirer des fonds'">
             <svg class="wallet-btn__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
             </svg>
@@ -135,7 +136,8 @@
               </button>
               <button class="wallet-kpi__action"
                       (click)="openWithdrawalModal()"
-                      [disabled]="summary.balance < MIN_WITHDRAWAL || summary.hasPendingWithdrawal">
+                      [disabled]="summary.balance < MIN_WITHDRAWAL || summary.hasPendingWithdrawal"
+                      [title]="summary.hasPendingWithdrawal ? 'Un retrait est déjà en cours' : summary.balance < MIN_WITHDRAWAL ? 'Solde insuffisant' : 'Retirer des fonds'">
                 Retirer
               </button>
             </div>
@@ -342,7 +344,8 @@
           <h2 class="wallet-section__title">Historique des retraits</h2>
           <button class="wallet-btn wallet-btn--primary wallet-btn--sm"
                   (click)="openWithdrawalModal()"
-                  [disabled]="!summary || summary.balance < MIN_WITHDRAWAL || summary.hasPendingWithdrawal">
+                  [disabled]="!summary || summary.balance < MIN_WITHDRAWAL || summary.hasPendingWithdrawal"
+                  [title]="summary?.hasPendingWithdrawal ? 'Un retrait est déjà en cours de traitement' : summary?.balance < MIN_WITHDRAWAL ? 'Solde insuffisant (minimum ' + MIN_WITHDRAWAL + ' FCFA)' : 'Nouveau retrait'">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4 mr-1">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
             </svg>

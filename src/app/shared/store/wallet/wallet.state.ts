@@ -8,8 +8,8 @@ import { WalletAction } from './wallet.actions';
 import { WalletStateModel, WalletSummary, WalletTransaction, WithdrawalRequest, DepositInitiateResult } from './wallet.model';
 import { WalletHttpService } from './wallet.service';
 
-const POLLING_INTERVAL_MS = 5000;  // 5 secondes — identique au module de paiement central
-const MAX_POLLING_ATTEMPTS = 24;   // 2 minutes max (24 × 5s)
+const POLLING_INTERVAL_MS = 5000;  // 5 secondes
+const MAX_POLLING_ATTEMPTS = 72;   // 6 minutes max (72 × 5s) — EasyTransact peut prendre plusieurs minutes
 
 @State<WalletStateModel>({
   name: 'wallet',
@@ -33,7 +33,11 @@ const MAX_POLLING_ATTEMPTS = 24;   // 2 minutes max (24 × 5s)
 })
 @Injectable()
 export class WalletState implements OnDestroy {
-  /** Subject pour stopper le polling en cours */
+  /**
+   * Subject recréé à chaque nouveau polling pour éviter le problème du singleton
+   * NGXS (ngOnDestroy jamais appelé sur un state root) : on ne complete() jamais
+   * le subject, on le remplace simplement par un nouveau lors du prochain polling.
+   */
   private stopPolling$ = new Subject<void>();
 
   constructor(
@@ -44,7 +48,6 @@ export class WalletState implements OnDestroy {
 
   ngOnDestroy(): void {
     this.stopPolling$.next();
-    this.stopPolling$.complete();
   }
 
   @Selector() static summary(s: WalletStateModel): WalletSummary | null { return s.summary; }
@@ -151,7 +154,7 @@ export class WalletState implements OnDestroy {
         ctx.dispatch(new WalletAction.LoadWithdrawals());
       }),
       catchError(err => {
-        const msg = err.error?.message || this.translate.instant('NOTIFICATIONS.WALLET_WITHDRAWAL_ERROR');
+        const msg = err.error?.message?.[0] || err.error?.message || this.translate.instant('NOTIFICATIONS.WALLET_WITHDRAWAL_ERROR');
         ctx.patchState({ withdrawLoading: false, error: msg });
         this.toastr.error(msg, 'Ndewa360°');
         return throwError(err);
@@ -161,8 +164,9 @@ export class WalletState implements OnDestroy {
 
   @Action(WalletAction.PollWithdrawalStatus)
   pollWithdrawalStatus(ctx: StateContext<WalletStateModel>, { withdrawalId }: WalletAction.PollWithdrawalStatus) {
-    // Stopper tout polling précédent
+    // Stopper tout polling précédent et recréer le subject (singleton NGXS safe)
     this.stopPolling$.next();
+    this.stopPolling$ = new Subject<void>();
 
     let attempts = 0;
 
@@ -221,6 +225,7 @@ export class WalletState implements OnDestroy {
   @Action(WalletAction.StopWithdrawalPolling)
   stopWithdrawalPolling(ctx: StateContext<WalletStateModel>) {
     this.stopPolling$.next();
+    this.stopPolling$ = new Subject<void>();
     ctx.patchState({ pollingWithdrawalId: null });
   }
 
@@ -276,6 +281,7 @@ export class WalletState implements OnDestroy {
   @Action(WalletAction.Reset)
   reset(ctx: StateContext<WalletStateModel>) {
     this.stopPolling$.next();
+    this.stopPolling$ = new Subject<void>();
     ctx.setState({
       summary: null, transactions: [], rentPayments: [], deposits: [], withdrawals: [],
       totalTransactions: 0, totalRentPayments: 0, totalDeposits: 0, totalWithdrawals: 0,

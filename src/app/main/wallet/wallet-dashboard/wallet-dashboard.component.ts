@@ -55,6 +55,7 @@ export class WalletDashboardComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.loadAll();
     this.handleDepositCallback();
+    this.resumePendingPolling();
 
     this.summary$.pipe(takeUntil(this.destroy$)).subscribe(s => this.summary = s);
     this.rentPayments$.pipe(takeUntil(this.destroy$)).subscribe(p => this.rentPayments = p);
@@ -70,6 +71,20 @@ export class WalletDashboardComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  private resumePendingPolling(): void {
+    // Si un retrait PENDING/PROCESSING existe au chargement de la page,
+    // relancer le polling automatiquement (cas rechargement navigateur).
+    this.summary$.pipe(takeUntil(this.destroy$)).subscribe(summary => {
+      if (
+        summary?.hasPendingWithdrawal &&
+        summary.pendingWithdrawal?._id &&
+        !this.pollingWithdrawalId
+      ) {
+        this.store.dispatch(new WalletAction.PollWithdrawalStatus(summary.pendingWithdrawal._id));
+      }
+    });
   }
 
   private loadAll(): void {
@@ -92,13 +107,13 @@ export class WalletDashboardComponent implements OnInit, OnDestroy {
   refresh(): void { this.loadAll(); }
 
   openWithdrawalModal(): void {
-    // Recharger le solde frais avant d'ouvrir le modal pour éviter
-    // qu'un crédit récent (loyer reçu) bloque le validateur Validators.max.
+    // Recharger le solde frais puis lire via selectSnapshot pour avoir la valeur à jour
     this.store.dispatch(new WalletAction.LoadSummary()).subscribe(() => {
+      const freshSummary = this.store.selectSnapshot(WalletState.summary);
       const ref = this.dialog.open(WithdrawalModalComponent, {
         width: '480px',
         disableClose: false,
-        data: { balance: this.summary?.balance || 0 },
+        data: { balance: freshSummary?.balance || 0 },
       });
       ref.afterClosed().subscribe(result => {
         if (result?.success) this.loadAll();
