@@ -36,7 +36,7 @@ export namespace LocationAction
     export class RemoveAssignationLocation
     {
         static readonly type = '[Location] Remove assignation Location'
-        constructor(public locationId:string,public description:string=""){}
+        constructor(public locationId:string, public description:string="", public terminationDate?:string){}
     }
     
     //Fetch  Location

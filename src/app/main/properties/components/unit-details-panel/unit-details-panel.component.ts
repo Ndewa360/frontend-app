@@ -929,6 +929,16 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
     return this.room?.isFree === false;
   }
 
+  /**
+   * Vrai si la location existe mais que la date d'entrée est dans le futur
+   * (isRunning=false, endedAt=null, startedAt > today)
+   */
+  isFutureLocation(): boolean {
+    const loc = this.unitData?.location;
+    if (!loc?.startedAt) return false;
+    return !loc.isRunning && !loc.endedAt && new Date(loc.startedAt) > new Date();
+  }
+
   viewPaymentDetails(payment: any): void {
     // Émettre l'action pour voir les détails du paiement
     this.action.emit({

@@ -80,8 +80,10 @@ export class UnitDetailsService {
           const locRoomId = typeof loc.room === 'object' ? (loc.room as any)?._id?.toString() : loc.room?.toString();
           return locRoomId === roomIdStr;
         });
-        // Location active en priorite, sinon la plus recente
-        unitData.location = allRoomLocations.find(l => l.isRunning) || allRoomLocations[allRoomLocations.length - 1] || null;
+        // Location active en priorite, sinon future (non terminée), sinon la plus recente
+        unitData.location = allRoomLocations.find(l => l.isRunning)
+          || allRoomLocations.find(l => !l.endedAt)
+          || allRoomLocations[allRoomLocations.length - 1] || null;
 
         // ✅ Calcul des dates de paiement
         unitData.lastPaymentDate = this.computeLastPaymentDate(unitData.payments);
@@ -101,7 +103,8 @@ export class UnitDetailsService {
    * Calcule la date du dernier paiement de loyer
    */
   computeLastPaymentDate(payments: LocationPaymentModel[]): Date | null {
-    const rentPayments = payments.filter(p => (p as any).paymentLocationType === 'LOCATION' || !(p as any).paymentLocationType);
+    // Filtrer uniquement les paiements de loyer (exclure les cautions)
+    const rentPayments = payments.filter(p => (p as any).paymentLocationType === 'LOCATION');
     if (rentPayments.length === 0) return null;
     const sorted = [...rentPayments].sort((a, b) =>
       new Date(b.datePayment).getTime() - new Date(a.datePayment).getTime()
@@ -121,12 +124,15 @@ export class UnitDetailsService {
   ): Date | null {
     if (!location?.startedAt) return null;
     if (location.endedAt && new Date(location.endedAt) < new Date()) return null;
+    // Location future : le prochain paiement est la date d'entrée elle-même
+    if (new Date(location.startedAt) > new Date()) return new Date(location.startedAt);
 
     const entryDate = location.isKnowExactDateEntry && location.startedAt
       ? new Date(location.startedAt)
       : new Date(location.createdAt || location.startedAt);
 
-    const rentPayments = payments.filter(p => (p as any).paymentLocationType === 'LOCATION' || !(p as any).paymentLocationType);
+    // Filtrer uniquement les paiements de loyer (exclure les cautions)
+    const rentPayments = payments.filter(p => (p as any).paymentLocationType === 'LOCATION');
     const totalPaid = rentPayments.reduce((sum, p) => sum + (p.locationPaymentPrice || 0), 0);
     const monthsCovered = monthlyRent > 0 ? Math.floor(totalPaid / monthlyRent) : 0;
 

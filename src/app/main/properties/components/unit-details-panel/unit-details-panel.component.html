@@ -414,30 +414,74 @@
       <div class="space-y-6">
 
         <!-- Cas 1: Unité occupée - Afficher les informations du locataire -->
-        <div *ngIf="unitData?.tenant && !room?.isFree" class="bg-carbon-layer-02 rounded-lg border border-carbon-subtle overflow-hidden">
-          <!-- Header avec statut occupé -->
-          <div class="bg-gradient-to-r from-red-50 to-red-100 px-8 py-5 border-b border-red-200">
+        <div *ngIf="(unitData?.tenant || unitData?.location) && !room?.isFree" class="bg-carbon-layer-02 rounded-lg border border-carbon-subtle overflow-hidden">
+          <!-- Header : couleur différente selon actif ou futur -->
+          <div class="px-8 py-5 border-b"
+               [class.bg-gradient-to-r]="true"
+               [class.from-red-50]="!isFutureLocation()"
+               [class.to-red-100]="!isFutureLocation()"
+               [class.border-red-200]="!isFutureLocation()"
+               [class.from-blue-50]="isFutureLocation()"
+               [class.to-blue-100]="isFutureLocation()"
+               [class.border-blue-200]="isFutureLocation()">
             <div class="flex items-center justify-between">
               <div class="flex items-center space-x-3">
-                <div class="p-2 bg-red-100 rounded-lg">
-                  <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                <div class="p-2 rounded-lg"
+                     [class.bg-red-100]="!isFutureLocation()"
+                     [class.bg-blue-100]="isFutureLocation()">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                       [class.text-red-600]="!isFutureLocation()"
+                       [class.text-blue-600]="isFutureLocation()">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          [attr.d]="isFutureLocation()
+                            ? 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z'
+                            : 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'">
+                    </path>
                   </svg>
                 </div>
                 <div>
-                  <h3 class="text-lg font-semibold text-red-800">{{ 'UNIT_DETAILS_PANEL.UNIT_OCCUPIED' | translate }}</h3>
-                  <p class="text-sm text-red-600">{{ 'UNIT_DETAILS_PANEL.TENANT_ASSIGNED' | translate }}</p>
+                  <h3 class="text-lg font-semibold"
+                      [class.text-red-800]="!isFutureLocation()"
+                      [class.text-blue-800]="isFutureLocation()">
+                    {{ isFutureLocation()
+                        ? ('UNIT_DETAILS_PANEL.PLANNED' | translate)
+                        : ('UNIT_DETAILS_PANEL.UNIT_OCCUPIED' | translate) }}
+                  </h3>
+                  <p class="text-sm"
+                     [class.text-red-600]="!isFutureLocation()"
+                     [class.text-blue-600]="isFutureLocation()">
+                    {{ isFutureLocation()
+                        ? (('CONTRACT_TERMINATION.PLANNED_FOR' | translate) + ' ' + formatDate(unitData?.location?.startedAt))
+                        : ('UNIT_DETAILS_PANEL.TENANT_ASSIGNED' | translate) }}
+                  </p>
                 </div>
               </div>
-              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                <div class="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
-                {{ 'UNIT_DETAILS_PANEL.OCCUPIED' | translate }}
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium"
+                    [class.bg-red-100]="!isFutureLocation()"
+                    [class.text-red-800]="!isFutureLocation()"
+                    [class.bg-blue-100]="isFutureLocation()"
+                    [class.text-blue-800]="isFutureLocation()">
+                <div class="w-2 h-2 rounded-full mr-2"
+                     [class.bg-red-500]="!isFutureLocation()"
+                     [class.bg-blue-500]="isFutureLocation()"></div>
+                {{ isFutureLocation()
+                    ? ('UNIT_DETAILS_PANEL.PLANNED' | translate)
+                    : ('UNIT_DETAILS_PANEL.OCCUPIED' | translate) }}
               </span>
             </div>
           </div>
 
           <!-- Informations du locataire -->
           <div class="p-8">
+            <!-- Message d'attente si location future sans tenant chargé -->
+            <div *ngIf="isFutureLocation() && !unitData?.tenant"
+                 class="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg flex items-center space-x-3">
+              <svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <p class="text-sm text-blue-700">{{ 'UNIT_DETAILS_PANEL.TENANT_ASSIGNED' | translate }}</p>
+            </div>
+
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <!-- Informations personnelles -->
               <div class="space-y-4">
@@ -503,9 +547,11 @@
                     <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
                           [class.bg-green-100]="unitData?.location?.isRunning"
                           [class.text-green-800]="unitData?.location?.isRunning"
-                          [class.bg-red-100]="!unitData?.location?.isRunning"
-                          [class.text-red-800]="!unitData?.location?.isRunning">
-                      {{ unitData?.location?.isRunning ? ('UNIT_DETAILS_PANEL.ACTIVE' | translate) : ('UNIT_DETAILS_PANEL.INACTIVE' | translate) }}
+                          [class.bg-blue-100]="!unitData?.location?.isRunning && !unitData?.location?.endedAt"
+                          [class.text-blue-800]="!unitData?.location?.isRunning && !unitData?.location?.endedAt"
+                          [class.bg-red-100]="!unitData?.location?.isRunning && unitData?.location?.endedAt"
+                          [class.text-red-800]="!unitData?.location?.isRunning && unitData?.location?.endedAt">
+                      {{ unitData?.location?.isRunning ? ('UNIT_DETAILS_PANEL.ACTIVE' | translate) : (!unitData?.location?.endedAt ? ('UNIT_DETAILS_PANEL.PLANNED' | translate) : ('UNIT_DETAILS_PANEL.INACTIVE' | translate)) }}
                     </span>
                   </div>
                   <div class="flex items-center justify-between py-2 border-b border-carbon-subtle">
@@ -524,10 +570,11 @@
               </div>
             </div>
 
-            <!-- Actions pour locataire occupé - selon les droits -->
+            <!-- Actions pour locataire occupé ou futur - selon les droits -->
             <div *ngIf="propertyAccessService.canManageTenants(propertyId) || propertyAccessService.canManageContracts(propertyId)" class="mt-6 pt-6 border-t border-carbon-subtle">
               <div class="flex flex-wrap gap-3">
-                <button (click)="onViewContract()"
+                <!-- Voir le contrat : seulement si location active -->
+                <button *ngIf="!isFutureLocation()" (click)="onViewContract()"
                         class="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium transition-all duration-200 hover:bg-blue-700 hover:shadow-lg">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
@@ -556,7 +603,7 @@
         </div>
 
         <!-- Cas 2: Unité libre - Proposer d'assigner un locataire -->
-        <div *ngIf="!unitData?.tenant || room?.isFree" class="bg-carbon-layer-02 rounded-lg border border-carbon-subtle overflow-hidden">
+        <div *ngIf="!unitData?.tenant && !unitData?.location && room?.isFree" class="bg-carbon-layer-02 rounded-lg border border-carbon-subtle overflow-hidden">
           <!-- Header avec statut libre -->
           <div class="bg-gradient-to-r from-green-50 to-green-100 px-8 py-5 border-b border-green-200">
             <div class="flex items-center justify-between">

@@ -177,10 +177,11 @@ export class ModernContractTerminationModalComponent implements OnInit, OnDestro
       handoverDate: formData.handoverDate
     };
 
-    // Dispatch l'action de résiliation
+    // Dispatch l'action de résiliation avec la date du formulaire
     this.store.dispatch(new LocationAction.RemoveAssignationLocation(
       this.data.location._id,
-      terminationData.terminationReason || 'Résiliation de contrat'
+      terminationData.terminationReason || 'Résiliation de contrat',
+      terminationData.terminationDate
     ));
   }
 
@@ -204,35 +205,28 @@ export class ModernContractTerminationModalComponent implements OnInit, OnDestro
     return this.data.room?.code || 'Unité inconnue';
   }
 
+  isFutureLocation(): boolean {
+    if (!this.data.location?.startedAt) return false;
+    return new Date(this.data.location.startedAt) > new Date();
+  }
+
   getContractStartDate(): string {
     if (!this.data.location?.startedAt) return 'Date inconnue';
-
-    const date = new Date(this.data.location.startedAt);
-    return date.toLocaleDateString('fr-FR', {
-      day: '2-digit',
-      month: 'long',
-      year: 'numeric'
+    return new Date(this.data.location.startedAt).toLocaleDateString('fr-FR', {
+      day: '2-digit', month: 'long', year: 'numeric'
     });
   }
 
   getContractDuration(): string {
     if (!this.data.location?.startedAt) return 'Durée inconnue';
+    if (this.isFutureLocation()) return 'Contrat non démarré';
 
-    const startDate = new Date(this.data.location.startedAt);
-    const today = new Date();
-    const diffTime = Math.abs(today.getTime() - startDate.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
-    if (diffDays < 30) {
-      return `${diffDays} jour(s)`;
-    } else if (diffDays < 365) {
-      const months = Math.floor(diffDays / 30);
-      return `${months} mois`;
-    } else {
-      const years = Math.floor(diffDays / 365);
-      const remainingMonths = Math.floor((diffDays % 365) / 30);
-      return `${years} an(s) ${remainingMonths > 0 ? `et ${remainingMonths} mois` : ''}`;
-    }
+    const diffDays = Math.ceil((new Date().getTime() - new Date(this.data.location.startedAt).getTime()) / (1000 * 60 * 60 * 24));
+    if (diffDays < 30) return `${diffDays} jour(s)`;
+    if (diffDays < 365) return `${Math.floor(diffDays / 30)} mois`;
+    const years = Math.floor(diffDays / 365);
+    const months = Math.floor((diffDays % 365) / 30);
+    return `${years} an(s)${months > 0 ? ` et ${months} mois` : ''}`;
   }
 
   getMonthlyRent(): string {

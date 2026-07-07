@@ -1,6 +1,8 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Store } from '@ngxs/store';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { isFormItemValid } from 'src/@youpez';
 import { LocataireModel, LocataireState, RoomModel, RoomState } from 'src/app/shared/store';
 import { UtilsString } from 'src/app/shared/utils';
@@ -12,8 +14,9 @@ import { UtilsString } from 'src/app/shared/utils';
   encapsulation: ViewEncapsulation.None,
 
 })
-export class AssignLocationFormComponent  implements OnInit, OnChanges{
+export class AssignLocationFormComponent implements OnInit, OnChanges, OnDestroy {
   public formGroup = null;
+  private destroy$ = new Subject<void>();
 
   @Input() propertyID:string=null;
   @Input() roomSelected:RoomModel = null;
@@ -50,6 +53,11 @@ export class AssignLocationFormComponent  implements OnInit, OnChanges{
     private formBuilder:FormBuilder,
     private _store:Store
   ){}
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   ngOnInit(): void {
 
@@ -101,30 +109,39 @@ export class AssignLocationFormComponent  implements OnInit, OnChanges{
     ) this.askForUpdate()
   }
 
-  askForUpdate()
-  {
-    if(!this.propertyID || !this.formGroup) return;
-    this._store.select(RoomState.selectStateFreeRoomByPropertyId(this.propertyID)).subscribe((roomList:RoomModel[])=>{
-      this.roomList = roomList.map((value)=>({content:value.code,valueType:value._id,selected:(this.roomSelected && this.roomSelected._id==value._id)?true:false}));
-      if(this.roomSelected) this.formGroup.get("roomId").setValue({content:this.roomSelected.code, valueType:this.roomSelected._id})
-      // console.log("RoomList ",this.roomList)
-    });
+  // Correction #7 : takeUntil(destroy$) sur chaque abonnement pour éviter les fuites mémoire
+  askForUpdate() {
+    if (!this.propertyID || !this.formGroup) return;
+    this._store.select(RoomState.selectStateFreeRoomByPropertyId(this.propertyID))
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((roomList: RoomModel[]) => {
+        this.roomList = roomList.map((value) => ({ content: value.code, valueType: value._id, selected: (this.roomSelected && this.roomSelected._id == value._id) ? true : false }));
+        if (this.roomSelected) this.formGroup.get('roomId').setValue({ content: this.roomSelected.code, valueType: this.roomSelected._id });
+      });
 
-    this._store.select(LocataireState.selectStateFreeLocataireByPropertyId(this.propertyID)).subscribe((locataireList:LocataireModel[])=>{
-      this.locataireList = locataireList.map((value)=>({content:value.fullName,valueType:value._id,selected:(this.locataireSelected && this.locataireSelected._id==value._id)?true:false}));
-      if(this.locataireSelected) this.formGroup.get("locataireId").setValue({content:this.locataireSelected._id, valueType:this.locataireSelected._id})
-
-    });
+    this._store.select(LocataireState.selectStateFreeLocataireByPropertyId(this.propertyID))
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((locataireList: LocataireModel[]) => {
+        this.locataireList = locataireList.map((value) => ({ content: value.fullName, valueType: value._id, selected: (this.locataireSelected && this.locataireSelected._id == value._id) ? true : false }));
+        if (this.locataireSelected) this.formGroup.get('locataireId').setValue({ content: this.locataireSelected._id, valueType: this.locataireSelected._id });
+      });
   }
 
-  refreshComponent(){
-    // window.location.reload()
-    this.roomList = []
+  // Correction #11 : refreshComponent ne rappelle plus ngOnInit() directement
+  refreshComponent() {
+    this.roomList = [];
     this.locataireList = [];
-    this.ngOnInit();
+    // Recréer le formulaire proprement sans appeler ngOnInit()
+    this.formGroup = this.formBuilder.group({
+      roomId: [null, [Validators.required]],
+      locataireId: [null, [Validators.required]],
+      startedDate: [null],
+      isKnowExactDateEntry: [false],
+      initialFinancialState: [this.fiancialStateList[0], [Validators.required]],
+      initialSolde: [0]
+    });
+    this.formGroup.controls['initialSolde'].disable();
     this.askForUpdate();
-    // console.log("Property ID ",this.propertyID)
-    
   }
 
 

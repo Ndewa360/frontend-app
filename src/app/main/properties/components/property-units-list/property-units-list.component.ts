@@ -674,10 +674,10 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
     const locations = this.store.selectSnapshot(LocationState.selectStateLocationByPropertyId(this.propertyId));
 
     if (locations && locations.length > 0) {
-      // Chercher une location active pour cette chambre
+      // Chercher une location active ou future (non terminée) pour cette chambre
       const location = locations.find(loc =>
         loc.room === room._id &&
-        loc.isRunning !== false
+        !loc.endedAt
       );
 
       if (location) {
@@ -724,19 +724,14 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
 
     // Vérifier si l'unité est actuellement occupée
     if (!room.isFree) {
-      // Unité occupée - chercher la location active
-      const activeLocation = this.locations.find(loc =>
-        loc.room === room._id && loc.isRunning === true
-      );
+      // Unité occupée (ou assignée future) - chercher la location par room, active ou future
+      const roomLocations = this.locations
+        .filter(loc => loc.room === room._id && !loc.endedAt)
+        .sort((a, b) => new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime());
 
-      if (activeLocation && activeLocation.startedAt) {
-        return new Date(activeLocation.startedAt).toLocaleDateString('fr-FR');
-      }
-
-      // Fallback : chercher le locataire et sa date de création
-      const tenant = this.locataires.find(loc => loc.room === room._id);
-      if (tenant && tenant.createdAt) {
-        return new Date(tenant.createdAt).toLocaleDateString('fr-FR');
+      const location = roomLocations[0];
+      if (location?.startedAt) {
+        return new Date(location.startedAt).toLocaleDateString('fr-FR');
       }
 
       return this.translateService.instant('PROPERTY_DETAILS.UNIT_CARD.STATUS.UNKNOWN_DATE');
@@ -777,12 +772,22 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
 
   /**
    * Obtenir le libellé selon le statut de l'unité
+   * Pour une assignation future : "Entrée prévue le" au lieu de "Occupé depuis le"
    */
   getOccupancyLabel(room: RoomModel): string {
     if (!room) return this.translateService.instant('PROPERTY_DETAILS.UNIT_CARD.STATUS.SINCE');
-    return room.isFree 
-      ? this.translateService.instant('PROPERTY_DETAILS.UNIT_CARD.STATUS.FREE_SINCE') 
-      : this.translateService.instant('PROPERTY_DETAILS.UNIT_CARD.STATUS.OCCUPIED_SINCE');
+    if (room.isFree) {
+      return this.translateService.instant('PROPERTY_DETAILS.UNIT_CARD.STATUS.FREE_SINCE');
+    }
+    // Vérifier si la date d'entrée est dans le futur
+    const location = this.locations
+      .filter(loc => loc.room === room._id && !loc.endedAt)
+      .sort((a, b) => new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime())[0];
+
+    if (location?.startedAt && new Date(location.startedAt) > new Date()) {
+      return this.translateService.instant('PROPERTY_DETAILS.UNIT_CARD.STATUS.ENTRY_PLANNED') || 'Entrée prévue le';
+    }
+    return this.translateService.instant('PROPERTY_DETAILS.UNIT_CARD.STATUS.OCCUPIED_SINCE');
   }
 
   /**
@@ -792,7 +797,7 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
   getNextPaymentDate(room: RoomModel): Date | null {
     if (!room || room.isFree !== false) return null;
 
-    const location = this.locations.find(loc => loc.room === room._id && loc.isRunning !== false);
+    const location = this.locations.find(loc => loc.room === room._id && !loc.endedAt);
     if (!location?.startedAt) return null;
 
     const allPaymentHistory = this.store.selectSnapshot(HistoryLocationPaymentState.selectStateHistoryLocationPayments);
@@ -873,13 +878,13 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Récupérer la location active pour cette chambre depuis le store
+    // Récupérer la location active ou future pour cette chambre depuis le store
     const locations = this.store.selectSnapshot(LocationState.selectStateLocations) as LocationModel[];
-    const location = locations?.find((loc: LocationModel) => loc.room === room._id && loc.isRunning);
+    const location = locations?.find((loc: LocationModel) => loc.room === room._id && !loc.endedAt);
 
     if (!location) {
-      console.error('❌ Aucune location active trouvée pour cette unité');
-      this.toastr.error('Aucune location active trouvée pour cette unité', 'Erreur');
+      console.error('❌ Aucune location trouvée pour cette unité');
+      this.toastr.error('Aucune location trouvée pour cette unité', 'Erreur');
       return;
     }
 
@@ -927,13 +932,13 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Récupérer la location active pour cette chambre depuis le store
+    // Récupérer la location active ou future pour cette chambre depuis le store
     const locations = this.store.selectSnapshot(LocationState.selectStateLocations) as LocationModel[];
-    const location = locations?.find((loc: LocationModel) => loc.room === room._id && loc.isRunning);
+    const location = locations?.find((loc: LocationModel) => loc.room === room._id && !loc.endedAt);
 
     if (!location) {
-      console.error('❌ Aucune location active trouvée pour cette unité');
-      this.toastr.error('Aucune location active trouvée pour cette unité', 'Erreur');
+      console.error('❌ Aucune location trouvée pour cette unité');
+      this.toastr.error('Aucune location trouvée pour cette unité', 'Erreur');
       return;
     }
 

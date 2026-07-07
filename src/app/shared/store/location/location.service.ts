@@ -55,12 +55,12 @@ export class LocationService
 
     }
 
-    removeAssignationLocation(locationId,description):Observable<ApiResultFormat<LocationModel>>
+    removeAssignationLocation(locationId: string, description: string, terminationDate?: string): Observable<ApiResultFormat<LocationModel>>
     {
-        let bodyToSend = {};
-        if(description) bodyToSend = {removeReason:description}
-        return this._httpClient.put<ApiResultFormat<LocationModel>>(`${environment.apiUrl}/location/remove-assignation/${locationId}`,bodyToSend)
-
+        const bodyToSend: any = {};
+        if (description) bodyToSend.removeReason = description;
+        if (terminationDate) bodyToSend.terminationDate = terminationDate;
+        return this._httpClient.put<ApiResultFormat<LocationModel>>(`${environment.apiUrl}/location/remove-assignation/${locationId}`, bodyToSend);
     }
 
     getLocations(propertyId:string):Observable<ApiResultFormat<LocationModel[]>>

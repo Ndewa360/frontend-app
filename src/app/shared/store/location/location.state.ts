@@ -272,43 +272,39 @@ export class LocationState{
     createAssignationWithAssistant(ctx:StateContext<LocationStateModel>,{assignationConfig}:LocationAction.CreateAssignationWithAssistant)
     {
         const state = ctx.getState();
-
-        ctx.patchState({
-            loadingLocation:true
-        })
+        ctx.patchState({ loadingLocation: true })
         return this._locationsService.createAssignationWithAssistant(assignationConfig).pipe(
-            tap(
-                result => {
-                    console.log("Assignation Created with Assistant ",result);
-                    ctx.patchState({
-                        loadingLocation:false,
-                        locations:[...state.locations, result.data.location]
-                    })
-                    this._toastrService.success(this._translateService.instant('NOTIFICATIONS.LOCATION_ASSISTANT_SUCCESS'), 'Ndewa360°');
-                    // Mettre à jour les stores liés
-                    if (result.data.location) {
-                        ctx.dispatch(new RoomAction.UpdateLocalRoomInfos(result.data.location.room,{isActiveForSouscription:true,isFree:false,locataire:result.data.location.locataire}))
-                        ctx.dispatch(new LocataireAction.UpdateLocataireRoom(result.data.location.locataire,result.data.location.room))
+            tap(result => {
+                ctx.patchState({
+                    loadingLocation: false,
+                    locations: [...state.locations, result.data.location]
+                })
+                this._toastrService.success(this._translateService.instant('NOTIFICATIONS.LOCATION_ASSISTANT_SUCCESS'), 'Ndewa360°');
+                if (result.data.location) {
+                    ctx.dispatch(new RoomAction.UpdateLocalRoomInfos(result.data.location.room, { isActiveForSouscription: true, isFree: false, locataire: result.data.location.locataire }))
+                    ctx.dispatch(new LocataireAction.UpdateLocataireRoom(result.data.location.locataire, result.data.location.room))
+                    // Correction #8 : invalider le cache en forçant le rechargement des locations
+                    // pour cette propriété (le cache FetchLocationsByPropertyId bloque sinon la MAJ)
+                    if (result.data.location.property) {
+                        ctx.dispatch(new LocationPaymentAction.FetchLocationPaymentsByPropertyId(result.data.location.property));
                     }
                 }
-            ),
-            catchError((error)=>{
-                ctx.patchState({
-                    loadingLocation: false
-                })
+            }),
+            catchError((error) => {
+                ctx.patchState({ loadingLocation: false })
                 return throwError(error);
             })
         )
     }
 
     @Action(LocationAction.RemoveAssignationLocation)
-    removeAssignationLocation(ctx:StateContext<LocationStateModel>,{locationId,description}:LocationAction.RemoveAssignationLocation)
+    removeAssignationLocation(ctx:StateContext<LocationStateModel>,{locationId,description,terminationDate}:LocationAction.RemoveAssignationLocation)
     {
         const state = ctx.getState();
         ctx.patchState({
             loadingLocation:true
         })
-        return this._locationsService.removeAssignationLocation(locationId,description).pipe(
+        return this._locationsService.removeAssignationLocation(locationId, description, terminationDate).pipe(
             tap(
                 result => {
                     const data = [...state.locations]
@@ -337,30 +333,22 @@ export class LocationState{
     fetchLocationsByPropertyId(ctx:StateContext<LocationStateModel>,{propertyId}:LocationAction.FetchLocationsByPropertyId)
     {
         const state = ctx.getState();
-        if(state.locations.findIndex((u)=>u.property==propertyId)>-1) return of(true);
-
-        ctx.patchState({
-            loadingLocation:true,
-            initLoadingState:"LOADING"
-        })
+        // Correction #8 : ne pas court-circuiter si une location existe déjà —
+        // le cache était trop agressif et empêchait l'affichage des nouvelles assignations.
+        // On recharge toujours depuis le backend pour garantir la fraîcheur des données.
+        ctx.patchState({ loadingLocation: true, initLoadingState: 'LOADING' })
         return this._locationsService.getLocations(propertyId).pipe(
-            tap(
-                (result:any) => {
-                    let locationFound=[...state.locations];
-                    result.data.forEach((location:LocationModel)=>{
-                        if(locationFound.findIndex((u)=>u._id==location._id)==-1) locationFound.push(location)
-                    })
-                    ctx.patchState({
-                        loadingLocation:false,
-                        locations:locationFound,
-                        initLoadingState:"LOADED"
-                    })
-                }
-            ),
-            catchError((error)=>{
+            tap((result: any) => {
+                // Fusionner en évitant les doublons (autres propriétés déjà en cache)
+                const otherLocations = state.locations.filter(l => l.property !== propertyId);
                 ctx.patchState({
-                    loadingLocation: false
+                    loadingLocation: false,
+                    locations: [...otherLocations, ...result.data],
+                    initLoadingState: 'LOADED'
                 })
+            }),
+            catchError((error) => {
+                ctx.patchState({ loadingLocation: false })
                 return throwError(error);
             })
         )

@@ -969,6 +969,7 @@
     "RENT": "Loyer",
     "DURATION": "Durée",
     "SINCE": "Depuis le",
+    "PLANNED_FOR": "Prévu le",
     "DEPOSIT": "Caution",
     "SECURITY_DEPOSIT": "Dépôt de garantie",
     "DATE_AND_REASON": "Date et motif de résiliation",
@@ -3322,6 +3323,7 @@
       "STATUS": {
         "SINCE": "Depuis le",
         "FREE_SINCE": "Libre depuis le",
+        "ENTRY_PLANNED": "Entrée prévue le",
         "OCCUPIED_SINCE": "Occupée depuis le",
         "OCCUPIED": "Occupée",
         "AVAILABLE": "Disponible",
@@ -4120,7 +4122,8 @@
     "NEXT_PAYMENT_DATE": "Prochain paiement",
     "NO_PAYMENT_YET": "Aucun paiement effectué",
     "PAYMENT_OVERDUE": "Paiement en retard !",
-    "CONTRACT_ENDED": "Contrat terminé"
+    "CONTRACT_ENDED": "Contrat terminé",
+    "PLANNED": "Planifié"
   },
   "TENANT_MANAGEMENT": {
     "ADD_TENANT": "Ajouter un locataire",

@@ -270,7 +270,6 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
         distinctUntilChanged() // Éviter les doublons
       )
       .subscribe(locataireId => {
-        console.log('🔄 Changement locataire sélectionné:', locataireId);
         this.assistantState.configuration.locataireId = locataireId;
         this.updateSelectedLocataire();
         this.validateCurrentStep();
@@ -282,14 +281,13 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
         distinctUntilChanged() // Éviter les doublons
       )
       .subscribe(chambreId => {
-        console.log('🔄 Changement chambre sélectionnée:', chambreId);
         this.assistantState.configuration.chambreId = chambreId;
         this.updateSelectedRoom();
         this.validateCurrentStep();
       });
 
     this.configFinanciereForm.valueChanges
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntil(this.destroy$), debounceTime(300))
       .subscribe(() => {
         // Mettre à jour la date d'effet
         const dateEntree = this.configFinanciereForm.get('dateEntree')?.value;
@@ -323,14 +321,12 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
     this.rooms$.pipe(takeUntil(this.destroy$))
       .subscribe(rooms => {
         this.roomsList = rooms ? rooms.filter(room => room.isFree) : [];
-        console.log('Chambres libres chargées:', this.roomsList);
       });
 
     // Charger les locataires libres
     this.locataires$.pipe(takeUntil(this.destroy$))
       .subscribe(locataires => {
         this.locatairesList = locataires || [];
-        console.log('Locataires libres chargés:', this.locatairesList);
       });
   }
 
@@ -418,7 +414,6 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
 
       // Si on passe à l'étape de prévisualisation, calculer les écritures
       if (this.assistantState.etapeActuelle === EtapeAssistant.PREVIEW_ECRITURES) {
-        console.log('📊 Passage à l\'étape de prévisualisation - Calcul des écritures...');
         setTimeout(() => {
           this.calculerEcrituresComptables();
         }, 100);
@@ -511,18 +506,16 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
         break;
 
       case EtapeAssistant.PREVIEW_ECRITURES:
-        // Forcer le calcul des écritures si elles ne sont pas encore générées
+        // Tenter de calculer les écritures si elles sont vides
         if (this.ecrituresPrevisionnelles.length === 0) {
-          console.log('🔄 Forçage du calcul des écritures pour la prévisualisation...');
           this.calculerEcrituresComptables();
         }
-
-        // Vérifier que les écritures ont été générées
-        isValid = this.ecrituresPrevisionnelles.length > 0;
-        if (!isValid) {
-          errors.push('Impossible de générer les écritures comptables');
-          console.log('❌ Échec de la génération des écritures après forçage');
-        }
+        // IMPORTANT : pour un nouveau locataire sans versement (S1/S2),
+        // genererEcrituresNouveauLocataire retourne [] car montantPaye = 0
+        // et shouldPayCaution peut être false. Ce n'est PAS une erreur —
+        // l'assignation est valide même sans écriture comptable.
+        // On laisse toujours passer cette étape.
+        isValid = true;
         break;
 
       case EtapeAssistant.CONFIRMATION:
@@ -544,7 +537,6 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
   }
 
   confirmerAssignation(): void {
-    console.log('✅ Confirmation de l\'assignation...');
     this.assistantState.isLoading = true;
 
     // Vérifier que toutes les données sont présentes
@@ -557,14 +549,11 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
     // Construire la configuration finale pour le backend
     const assignationDTO = this.buildAssignationDTO();
 
-    console.log('📤 Envoi de l\'assignation au backend:', assignationDTO);
-
     // Appeler le service backend
     this.store.dispatch(new LocationAction.CreateAssignationWithAssistant(assignationDTO))
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (result) => {
-          console.log('✅ Assignation créée avec succès:', result);
+        next: (_result) => {
           this.assistantState.isLoading = false;
           this.toastr.success('Assignation créée avec succès', 'Succès');
 
@@ -583,7 +572,6 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
           this.onSuccess.emit(config);
         },
         error: (error) => {
-          console.error('❌ Erreur lors de l\'assignation:', error);
           this.assistantState.isLoading = false;
           this.toastr.error(
             error?.error?.message || 'Erreur lors de la création de l\'assignation',
@@ -668,17 +656,10 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
 
   private buildConfigurationFinanciere(): NouveauLocataireConfig | LocataireExistantConfig {
     const typeLocataire = this.typeForm.get('typeLocataire')?.value;
-    console.log('🏗️ Construction configuration financière pour type:', typeLocataire);
 
     if (typeLocataire === TypeLocataire.NOUVEAU) {
       const montantPercu = this.configFinanciereForm.get('paiementMontant')?.value || 0;
       const cautionActive = this.getActiveCautionAmount();
-
-      console.log('💰 Données financières nouveau locataire:', {
-        montantPercu,
-        cautionActive,
-        isCautionActive: this.isCautionActive()
-      });
 
       // Déterminer le type de paiement selon l'état du switcher
       let typePaiement = TypePaiementInitial.AVANCE_SEULE;
@@ -688,12 +669,6 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
 
       const repartitionAvance = Math.max(0, montantPercu - cautionActive);
       const repartitionCaution = Math.min(montantPercu, cautionActive);
-
-      console.log('📊 Répartition calculée:', {
-        typePaiement,
-        repartitionAvance,
-        repartitionCaution
-      });
 
       const config: NouveauLocataireConfig = {
         montantAvance: 0, // Pas utilisé dans la nouvelle logique
@@ -711,7 +686,6 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
         commentaire: this.configFinanciereForm.get('commentaire')?.value || ''
       };
 
-      console.log('✅ Configuration nouveau locataire construite:', config);
       return config;
     } else {
       const soldeActuel        = this.configFinanciereForm.get('soldeActuel')?.value || 0;
@@ -737,7 +711,6 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
         commentaire:        this.configFinanciereForm.get('commentaire')?.value || ''
       };
 
-      console.log('Configuration locataire existant construite:', config);
       return config;
     }
   }
@@ -759,15 +732,6 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
    * Calculer les écritures comptables prévisionnelles
    */
   private calculerEcrituresComptables(): void {
-    console.log("🧮 Calcul des écritures comptables...");
-    console.log("Configuration actuelle:", this.assistantState.configuration);
-    console.log("Valeurs des formulaires:", {
-      typeLocataire: this.typeForm.get('typeLocataire')?.value,
-      locataireId: this.locataireForm.get('locataireId')?.value,
-      chambreId: this.chambreForm.get('chambreId')?.value,
-      dateEntree: this.configFinanciereForm.get('dateEntree')?.value
-    });
-
     // Récupérer le type d'assignation directement du formulaire
     const typeAssignation = this.typeForm.get('typeLocataire')?.value;
 
@@ -775,12 +739,6 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
     if (!this.assistantState.configuration.chambreId ||
         !this.assistantState.configuration.locataireId ||
         !typeAssignation) {
-      console.log("⚠️ Données manquantes pour le calcul des écritures:", {
-        chambreId: this.assistantState.configuration.chambreId,
-        locataireId: this.assistantState.configuration.locataireId,
-        typeAssignation: typeAssignation,
-        typeFromState: this.assistantState.configuration.typeAssignation
-      });
       this.ecrituresPrevisionnelles = [];
       this.resumeEcritures = null;
       return;
@@ -791,7 +749,6 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
 
     // Vérifier que les objets sélectionnés sont disponibles
     if (!this.selectedRoom || !this.selectedLocataire) {
-      console.log("⚠️ Chambre ou locataire non sélectionné");
       this.ecrituresPrevisionnelles = [];
       this.resumeEcritures = null;
       return;
@@ -820,15 +777,8 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
         throw new Error('Configuration financière manquante');
       }
 
-      // Générer les écritures comptables
-      console.log('Configuration pour génération écritures:', config);
-      console.log('Chambre sélectionnée:', chambre);
-
       this.ecrituresPrevisionnelles = this.assistantService.genererEcrituresComptables(config, chambre);
       this.resumeEcritures = this.assistantService.genererResumeEcritures(this.ecrituresPrevisionnelles);
-
-    console.log('Écritures comptables calculées:', this.ecrituresPrevisionnelles);
-    console.log('Résumé des écritures:', this.resumeEcritures);
 
     } catch (error) {
       console.error('❌ Erreur lors du calcul des écritures:', error);
@@ -872,7 +822,6 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
   private updateSelectedRoom(): void {
     const roomId = this.chambreForm.get('chambreId')?.value;
     this.selectedRoom = this.roomsList.find(room => room._id === roomId) || null;
-    console.log('🏠 Chambre sélectionnée mise à jour:', this.selectedRoom);
 
     // Recalculer les écritures si on a toutes les données
     if (this.selectedRoom && this.assistantState.configuration.locataireId) {
@@ -884,7 +833,6 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
   private updateSelectedLocataire(): void {
     const locataireId = this.locataireForm.get('locataireId')?.value;
     this.selectedLocataire = this.locatairesList.find(locataire => locataire._id === locataireId) || null;
-    console.log('👤 Locataire sélectionné mis à jour:', this.selectedLocataire);
 
     // Recalculer les écritures si on a toutes les données
     if (this.selectedLocataire && this.assistantState.configuration.chambreId) {
@@ -893,63 +841,9 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Appliquer les pré-sélections
-   */
-  private applyPreselections(): void {
-    console.log('🎯 Application des pré-sélections...');
-
-    // Pré-sélection de la chambre
-    if (this.preselectedRoom) {
-      console.log('🏠 Pré-sélection chambre:', this.preselectedRoom);
-
-      // Vérifier que la chambre est dans la liste des chambres disponibles
-      const roomExists = this.roomsList.find(room => room._id === this.preselectedRoom._id);
-      if (roomExists) {
-        this.assistantState.configuration.chambreId = this.preselectedRoom._id;
-        this.chambreForm.patchValue({ chambreId: this.preselectedRoom._id }, { emitEvent: false });
-        this.selectedRoom = this.preselectedRoom;
-
-        // Forcer la mise à jour de l'affichage
-        setTimeout(() => {
-          this.chambreForm.patchValue({ chambreId: this.preselectedRoom._id }, { emitEvent: true });
-        }, 100);
-      } else {
-        console.warn('⚠️ Chambre pré-sélectionnée non trouvée dans la liste');
-      }
-    }
-
-    // Pré-sélection du locataire
-    if (this.preselectedLocataire) {
-      console.log('👤 Pré-sélection locataire:', this.preselectedLocataire);
-
-      // Vérifier que le locataire est dans la liste des locataires disponibles
-      const locataireExists = this.locatairesList.find(locataire => locataire._id === this.preselectedLocataire._id);
-      if (locataireExists) {
-        this.assistantState.configuration.locataireId = this.preselectedLocataire._id;
-        this.locataireForm.patchValue({ locataireId: this.preselectedLocataire._id }, { emitEvent: false });
-        this.selectedLocataire = this.preselectedLocataire;
-
-        // Forcer la mise à jour de l'affichage
-        setTimeout(() => {
-          this.locataireForm.patchValue({ locataireId: this.preselectedLocataire._id }, { emitEvent: true });
-        }, 100);
-      } else {
-        console.warn('⚠️ Locataire pré-sélectionné non trouvé dans la liste');
-      }
-    }
-
-    // Valider l'étape actuelle après les pré-sélections
-    setTimeout(() => {
-      this.validateCurrentStep();
-    }, 200);
-  }
-
-  /**
    * Gestionnaire de clic sur une chambre
    */
   onRoomClick(room: RoomModel): void {
-    console.log('🏠 Clic sur chambre:', room);
-
     // Forcer la sélection
     this.chambreForm.patchValue({ chambreId: room._id }, { emitEvent: true });
     this.selectedRoom = room;
@@ -966,7 +860,6 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
    */
   onLocataireChange(event: any): void {
     const locataireId = event.target.value;
-    console.log('👤 Changement locataire:', locataireId);
 
     if (locataireId && locataireId !== 'null') {
       this.selectedLocataire = this.locatairesList.find(l => l._id === locataireId) || null;
@@ -1082,7 +975,7 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
           statut: 'En attente',
           classe: 'attente',
           icone: 'fa-clock',
-          description: 'En attente d\'entrée'
+          description: 'Entrée prévue le ' + dateEntreeObj.toLocaleDateString('fr-FR') + ' — aucun versement'
         };
       }
     }

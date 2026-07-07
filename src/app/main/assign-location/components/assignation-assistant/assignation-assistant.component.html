@@ -591,7 +591,21 @@
         </div>
 
         <div class="no-ecritures" *ngIf="ecrituresPrevisionnelles.length === 0">
-          <p>{{ 'ASSIGNMENT_ASSISTANT.NO_ACCOUNTING_ENTRIES' | translate }}</p>
+          <div class="info-note">
+            <div class="note-icon">
+              <i class="fas fa-info-circle" style="font-size: 20px; color: #2196F3;"></i>
+            </div>
+            <div class="note-content">
+              <h5>Aucune écriture comptable générée</h5>
+              <p *ngIf="typeForm.get('typeLocataire').value === TypeLocataire.NOUVEAU">
+                Aucun versement saisi (montant = 0) et pas de caution active — l'assignation est valide.
+                Le premier paiement sera enregistré manuellement ultérieurement.
+              </p>
+              <p *ngIf="typeForm.get('typeLocataire').value !== TypeLocataire.NOUVEAU">
+                Aucune écriture à générer pour cette configuration. Vous pouvez continuer.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 

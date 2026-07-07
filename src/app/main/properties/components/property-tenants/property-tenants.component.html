@@ -122,6 +122,7 @@
                   class="appearance-none px-4 py-3 pr-10 border border-amber-300 rounded-lg focus:border-amber-500 focus:ring-2 focus:ring-amber-200 transition-all duration-200 bg-white cursor-pointer text-gray-800 min-w-[120px]">
             <option value="">{{ 'PROPERTY_DETAILS.TENANTS.FILTERS.ALL' | translate }}</option>
             <option value="active">{{ 'PROPERTY_DETAILS.TENANTS.FILTERS.ACTIVE' | translate }}</option>
+            <option value="planned">{{ 'UNIT_DETAILS_PANEL.PLANNED' | translate }}</option>
             <option value="inactive">{{ 'PROPERTY_DETAILS.TENANTS.FILTERS.INACTIVE' | translate }}</option>
           </select>
           <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
@@ -220,8 +221,8 @@
                 <!-- Indicateur de statut -->
                 <div class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-white shadow-sm"
                      [class.bg-emerald-500]="getTenantStatus(tenant) === 'active'"
-                     [class.bg-red-500]="getTenantStatus(tenant) === 'inactive'"
-                     [class.bg-amber-500]="getTenantStatus(tenant) === 'pending'">
+                     [class.bg-blue-500]="getTenantStatus(tenant) === 'planned'"
+                     [class.bg-red-500]="getTenantStatus(tenant) === 'inactive'">
                 </div>
               </div>
 
@@ -237,10 +238,10 @@
                       <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold"
                             [class.bg-green-100]="getTenantStatus(tenant) === 'active'"
                             [class.text-green-800]="getTenantStatus(tenant) === 'active'"
+                            [class.bg-blue-100]="getTenantStatus(tenant) === 'planned'"
+                            [class.text-blue-800]="getTenantStatus(tenant) === 'planned'"
                             [class.bg-red-100]="getTenantStatus(tenant) === 'inactive'"
-                            [class.text-red-800]="getTenantStatus(tenant) === 'inactive'"
-                            [class.bg-yellow-100]="getTenantStatus(tenant) === 'pending'"
-                            [class.text-yellow-800]="getTenantStatus(tenant) === 'pending'">
+                            [class.text-red-800]="getTenantStatus(tenant) === 'inactive'">
                         {{ getTenantStatusLabel(tenant) }}
                       </span>
                     </div>
@@ -268,8 +269,15 @@
                         <span class="font-medium text-amber-600">{{ formatPrice(getTenantRent(tenant)) }}/{{ 'PROPERTY_DETAILS.TENANTS.TENANT_CARD.PER_MONTH' | translate }}</span>
                       </div>
                       <div class="flex items-center text-gray-600" *ngIf="getTenantLeaseStartDate(tenant)">
-                        <i class="fas fa-calendar mr-2 text-indigo-500"></i>
-                        <span>{{ 'PROPERTY_DETAILS.TENANTS.TENANT_CARD.ENTRY_DATE' | translate }} {{ formatDate(getTenantLeaseStartDate(tenant)) }}</span>
+                        <i class="fas fa-calendar mr-2"
+                           [class.text-indigo-500]="!isTenantLocationFuture(tenant)"
+                           [class.text-blue-500]="isTenantLocationFuture(tenant)"></i>
+                        <span>
+                          {{ isTenantLocationFuture(tenant)
+                              ? ('CONTRACT_TERMINATION.PLANNED_FOR' | translate)
+                              : ('PROPERTY_DETAILS.TENANTS.TENANT_CARD.ENTRY_DATE' | translate) }}
+                          {{ formatDate(getTenantLeaseStartDate(tenant)) }}
+                        </span>
                       </div>
                     </div>
                   </div>

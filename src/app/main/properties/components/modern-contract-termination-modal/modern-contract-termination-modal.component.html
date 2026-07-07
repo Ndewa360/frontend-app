@@ -73,7 +73,7 @@
           <div class="card-content">
             <h4 class="card-title">{{ 'CONTRACT_TERMINATION.DURATION' | translate }}</h4>
             <p class="card-value">{{ getContractDuration() }}</p>
-            <p class="card-detail">{{ 'CONTRACT_TERMINATION.SINCE' | translate }} {{ getContractStartDate() }}</p>
+            <p class="card-detail">{{ (isFutureLocation() ? 'CONTRACT_TERMINATION.PLANNED_FOR' : 'CONTRACT_TERMINATION.SINCE') | translate }} {{ getContractStartDate() }}</p>
           </div>
         </div>
 

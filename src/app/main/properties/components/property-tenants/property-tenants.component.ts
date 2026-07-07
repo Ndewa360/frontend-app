@@ -200,21 +200,25 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
     return this.tenantAvatarService.getTenantAvatarColor(tenant);
   }
 
-  getTenantStatus(tenant: LocataireModel): 'active' | 'inactive' | 'pending' {
-    // Logique pour déterminer le statut
-    if (tenant.room) {
-      return 'active';
-    }
-    return 'inactive';
+  getTenantStatus(tenant: LocataireModel): 'active' | 'planned' | 'inactive' {
+    if (!tenant.room) return 'inactive';
+    // Chercher la location pour cette chambre
+    const location = this.locations.find(loc =>
+      loc.locataire === tenant._id && loc.room === tenant.room && !loc.endedAt
+    );
+    if (!location) return 'active'; // fallback : room assignée sans location trouvée
+    if (location.isRunning) return 'active';
+    // isRunning=false, endedAt=null → date d'entrée future
+    return 'planned';
   }
 
   getTenantStatusLabel(tenant: LocataireModel): string {
     const status = this.getTenantStatus(tenant);
     switch (status) {
-      case 'active': return 'Actif';
+      case 'active':   return 'Actif';
+      case 'planned':  return 'Planifié';
       case 'inactive': return 'Inactif';
-      case 'pending': return 'En attente';
-      default: return 'Inconnu';
+      default:         return 'Inconnu';
     }
   }
 
@@ -234,23 +238,23 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
     return tenant.createdAt ? new Date(tenant.createdAt) : null;
   }
 
-  // Nouvelle méthode pour récupérer la vraie date d'entrée depuis LocationModel
+  // Récupère la vraie date d'entrée depuis LocationModel (active ou future)
   getTenantLeaseStartDate(tenant: LocataireModel): Date | null {
     if (!tenant.room) return null;
-
-    // Chercher la location active pour ce locataire et cette unité
     const location = this.locations.find(loc =>
-      loc.locataire === tenant._id &&
-      loc.room === tenant.room &&
-      loc.isRunning === true
+      loc.locataire === tenant._id && loc.room === tenant.room && !loc.endedAt
     );
-
-    if (location && location.startedAt) {
-      return new Date(location.startedAt);
-    }
-
-    // Fallback sur la date de création du locataire
+    if (location?.startedAt) return new Date(location.startedAt);
     return tenant.createdAt ? new Date(tenant.createdAt) : null;
+  }
+
+  /** Vrai si la location du locataire est planifiée (date d'entrée future) */
+  isTenantLocationFuture(tenant: LocataireModel): boolean {
+    if (!tenant.room) return false;
+    const location = this.locations.find(loc =>
+      loc.locataire === tenant._id && loc.room === tenant.room && !loc.endedAt
+    );
+    return !!location && !location.isRunning && new Date(location.startedAt) > new Date();
   }
 
   // Méthode pour récupérer l'email réel du locataire
@@ -517,33 +521,14 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   onViewContractFromPanel(tenant: LocataireModel): void {
-    console.log('📄 PropertyTenants: onViewContractFromPanel appelé pour:', tenant);
-
-    if (!this.dialog) {
-      console.error('❌ Service MatDialog non disponible !');
-      return;
-    }
-
-    // Récupérer l'unité du locataire
+    if (!this.dialog) return;
     const room = this.units.find(r => r._id === tenant.room);
-    if (!room) {
-      console.error('❌ Unité non trouvée pour ce locataire');
-      this.toastr.error('Unité non trouvée pour ce locataire', 'Erreur');
-      return;
-    }
-
-    // Récupérer la location active
+    if (!room) { this.toastr.error('Unité non trouvée pour ce locataire', 'Erreur'); return; }
+    // Accepter location active OU future
     const location = this.locations.find(loc =>
-      loc.locataire === tenant._id &&
-      loc.room === tenant.room &&
-      loc.isRunning === true
+      loc.locataire === tenant._id && loc.room === tenant.room && !loc.endedAt
     );
-
-    if (!location) {
-      console.error('❌ Aucune location active trouvée pour ce locataire');
-      this.toastr.error('Aucune location active trouvée pour ce locataire', 'Erreur');
-      return;
-    }
+    if (!location) { this.toastr.error('Aucune location trouvée pour ce locataire', 'Erreur'); return; }
 
     console.log('📄 Ouverture du modal ContractViewerModal...');
 
@@ -574,25 +559,12 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   onCancelContractFromPanel(tenant: LocataireModel): void {
-    console.log('🚫 PropertyTenants: onCancelContractFromPanel appelé pour:', tenant);
-
-    if (!this.dialog) {
-      console.error('❌ Service MatDialog non disponible !');
-      return;
-    }
-
-    // Récupérer la location active pour ce locataire
+    if (!this.dialog) return;
+    // Accepter location active OU future
     const location = this.locations.find(loc =>
-      loc.locataire === tenant._id &&
-      loc.room === tenant.room &&
-      loc.isRunning === true
+      loc.locataire === tenant._id && loc.room === tenant.room && !loc.endedAt
     );
-
-    if (!location) {
-      console.error('❌ Aucune location active trouvée pour ce locataire');
-      this.toastr.error('Aucune location active trouvée pour ce locataire', 'Erreur');
-      return;
-    }
+    if (!location) { this.toastr.error('Aucune location trouvée pour ce locataire', 'Erreur'); return; }
 
     console.log('🚫 Ouverture du modal ModernContractTerminationModalComponent...');
 
@@ -634,22 +606,12 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
   private loadPaymentDataForTenant(tenant: LocataireModel): Promise<{location: LocationModel, room: RoomModel}> {
     return new Promise((resolve, reject) => {
       const room = this.units.find(r => r._id === tenant.room);
-      if (!room) {
-        reject('Unité non trouvée pour ce locataire');
-        return;
-      }
-
+      if (!room) { reject('Unité non trouvée pour ce locataire'); return; }
+      // Accepter location active OU future
       const location = this.locations.find(loc =>
-        loc.locataire === tenant._id &&
-        loc.room === tenant.room &&
-        loc.isRunning === true
+        loc.locataire === tenant._id && loc.room === tenant.room && !loc.endedAt
       );
-
-      if (!location) {
-        reject('Aucune location active trouvée pour ce locataire');
-        return;
-      }
-
+      if (!location) { reject('Aucune location trouvée pour ce locataire'); return; }
       resolve({ location, room });
     });
   }
@@ -722,7 +684,7 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
       || this.locations.find(loc =>
           loc.locataire === tenant?._id &&
           loc.room === room?._id &&
-          loc.isRunning === true
+          !loc.endedAt
         ) || null;
 
     try {

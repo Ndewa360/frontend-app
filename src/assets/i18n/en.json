@@ -969,6 +969,7 @@
     "RENT": "Rent",
     "DURATION": "Duration",
     "SINCE": "Since the",
+    "PLANNED_FOR": "Planned for",
     "DEPOSIT": "Deposit",
     "SECURITY_DEPOSIT": "Security deposit",
     "DATE_AND_REASON": "Date and reason for termination",
@@ -3325,6 +3326,7 @@
       "STATUS": {
         "SINCE": "Since the",
         "FREE_SINCE": "Free since",
+        "ENTRY_PLANNED": "Entry planned on",
         "OCCUPIED_SINCE": "Occupied since",
         "OCCUPIED": "Busy",
         "AVAILABLE": "Available",
@@ -3677,6 +3679,7 @@
           "UNKNOWN_DATE": "Date unknown",
           "SINCE": "Since the",
           "FREE_SINCE": "Free since",
+          "ENTRY_PLANNED": "Entry planned on",
           "OCCUPIED_SINCE": "Occupied since"
         }
       }
@@ -4117,7 +4120,14 @@
     "NONE": "None",
     "BASIC": "Basic",
     "GOOD": "Good",
-    "EXCELLENT": "Excellent"
+    "EXCELLENT": "Excellent",
+    "VIEW_DETAILS": "See details",
+    "LAST_PAYMENT_DATE": "Last payment",
+    "NEXT_PAYMENT_DATE": "Next payment",
+    "NO_PAYMENT_YET": "No payment made yet",
+    "PAYMENT_OVERDUE": "Payment overdue!",
+    "CONTRACT_ENDED": "Contract ended",
+    "PLANNED": "Planned"
   },
   "TENANT_MANAGEMENT": {
     "ADD_TENANT": "Add a tenant",
