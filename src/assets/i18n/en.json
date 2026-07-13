@@ -1896,6 +1896,30 @@
     }
   },
   "LANDING": {
+    "TEAM": {
+      "TITLE": "Our team",
+      "SUBTITLE": "A passionate team dedicated to revolutionizing real estate management in Africa",
+      "VALUES": {
+        "TITLE": "Our values",
+        "SUBTITLE": "The principles that guide each of our daily actions",
+        "INNOVATION": {
+          "TITLE": "Innovation",
+          "DESCRIPTION": "We constantly push the boundaries of technology to offer modern and efficient solutions to our users."
+        },
+        "EXCELLENCE": {
+          "TITLE": "Excellence",
+          "DESCRIPTION": "We aim for quality in every feature, every interaction and every service we offer."
+        },
+        "COLLABORATION": {
+          "TITLE": "Collaboration",
+          "DESCRIPTION": "We believe in the power of teamwork and co-creation with our users to build the best possible platform."
+        },
+        "INTEGRITY": {
+          "TITLE": "Integrity",
+          "DESCRIPTION": "Transparency, honesty and respect are at the heart of all our relationships with clients, partners and collaborators."
+        }
+      }
+    },
     "HERO": {
       "TITLE_PART1": "Switch to",
       "TITLE_PART2": "smart property management",

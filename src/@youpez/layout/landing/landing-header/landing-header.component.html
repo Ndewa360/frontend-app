@@ -1,6 +1,6 @@
 <nav class="bg-white border-gray-200 dark:bg-gray-900 shadow-md fixed w-full nav-header">
     <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
-      <a [routerLink]="'/search/index'" class="flex items-center max-md:m-10 max-md:p-5">
+      <a [routerLink]="['/' + getCurrentLanguage() + '/home']" class="flex items-center max-md:m-10 max-md:p-5">
           <youpez-logo class="cursor-pointer" type="white" logoWidth="75px"></youpez-logo>
       </a>
       <div class="header-profil-user block md:hidden" *ngIf="(isLogin$ | async)">
@@ -34,7 +34,7 @@
             </a>
           </li>
           <li>
-            <a href="#" class="block py-2 px-3 text-gray-900 md:hover:bg-transparent md:border-0  md:p-0 dark:hover:text-white md:dark:hover:bg-transparent">
+            <a [routerLink]="['/' + getCurrentLanguage() + '/home/team']" routerLinkActive="active-nav-link" [routerLinkActiveOptions]="{exact: false}" class="block py-2 px-3 text-gray-900 md:hover:bg-transparent md:border-0  md:p-0 dark:hover:text-white md:dark:hover:bg-transparent">
               <span>{{ 'HEADER.TEAM' | translate }}</span>
             </a>
           </li>
@@ -153,7 +153,7 @@
                 </a>
               </li>
               <li (click)="toggleMenu()">
-                <a href="#" class="mobile-nav-link">
+                <a [routerLink]="['/' + getCurrentLanguage() + '/home/team']" class="mobile-nav-link">
                   <i class="fas fa-users mr-2"></i>
                   <span>{{ 'HEADER.TEAM' | translate }}</span>
                 </a>

@@ -11,7 +11,7 @@ interface TeamMember {
     twitter?: string;
     instagram?: string;
   };
-  experience: string;
+  experience?: string;
 }
 
 @Component({
@@ -25,27 +25,27 @@ export class TeamComponent implements OnInit {
     {
       id: 'cedric-nguendap',
       name: 'Cédric Nguendap',
-      position: 'CTO',
+      position: 'CEO',
       image: 'assets/team/cedric-nguendap.jpg',
       socialLinks: {
-        linkedin: 'https://linkedin.com/in/cedric-nguendap',
-        facebook: 'https://facebook.com/cedric.nguendap',
-        twitter: 'https://twitter.com/cedric_nguendap'
+        linkedin: 'https://www.linkedin.com/in/cedric-nguendap-bedjama-143544175/',
+        facebook: 'https://www.facebook.com/cedric.nguendap.77',
+        twitter: 'https://x.com/c_nguendap'
       },
-      experience: '8+ ans'
+      // experience: '8+ ans'
     },
     {
-      id: 'wawo-domguia',
-      name: 'Wawo Domguia',
-      position: 'CEO',
-      image: 'assets/team/wawo-domguia.jpg',
+      id: 'kell-momo',
+      name: 'Kell Momo',
+      position: 'CMO',
+      image: 'assets/team/kell-momo.jpg',
       socialLinks: {
-        linkedin: 'https://linkedin.com/in/wawo-domguia',
-        facebook: 'https://facebook.com/wawo.domguia',
-        twitter: 'https://twitter.com/wawo_domguia',
-        instagram: 'https://instagram.com/wawo.domguia'
+        linkedin: 'https://www.linkedin.com/in/kell-momo',
+        facebook: 'https://www.facebook.com/profile.php?id=100077568106642',
+        // twitter: 'https://twitter.com/kell_momo',
+        // instagram: 'https://instagram.com/kell.momo'
       },
-      experience: '10+ ans'
+      // experience: '10+ ans'
     },
     {
       id: 'konguep-elvira',
@@ -53,11 +53,11 @@ export class TeamComponent implements OnInit {
       position: 'CFO',
       image: 'assets/team/konguep-elvira.jpg',
       socialLinks: {
-        linkedin: 'https://linkedin.com/in/konguep-elvira',
-        facebook: 'https://facebook.com/konguep.elvira',
-        twitter: 'https://twitter.com/konguep_elvira'
+        linkedin: 'https://www.linkedin.com/in/elvira-konguep-43951422a/',
+        facebook: 'https://www.facebook.com/elvira.konguep',
+        // twitter: 'https://twitter.com/konguep_elvira'
       },
-      experience: '7+ ans'
+      // experience: '7+ ans'
     }
   ];
 

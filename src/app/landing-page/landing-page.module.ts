@@ -20,6 +20,8 @@ import { TarifsListComponent } from './components/tarifs-list/tarifs-list.compon
 import { SloganTextComponent } from './components/slogan-text/slogan-text.component';
 import { ScrollToTopComponent } from './components/scroll-to-top/scroll-to-top.component';
 import { ContactComponent } from './components/contact/contact.component';
+import { PrivacyPolicyComponent } from './components/privacy-policy/privacy-policy.component';
+import { TermsComponent } from './components/terms/terms.component';
 
 
 @NgModule({
@@ -39,7 +41,9 @@ import { ContactComponent } from './components/contact/contact.component';
     TarifsListComponent,
     SloganTextComponent,
     ScrollToTopComponent,
-    ContactComponent
+    ContactComponent,
+    PrivacyPolicyComponent,
+    TermsComponent
   ],
   imports: [
     CommonModule,

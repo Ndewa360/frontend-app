@@ -6,6 +6,8 @@ import { LandingAltComponent } from './components/landing-alt/landing-alt.compon
 import { AboutComponent } from './components/about/about.component';
 import { LandingLayoutComponent } from 'src/@youpez/layout/landing/landing-layout/landing-layout.component';
 import { ContactComponent } from './components/contact/contact.component';
+import { PrivacyPolicyComponent } from './components/privacy-policy/privacy-policy.component';
+import { TermsComponent } from './components/terms/terms.component';
 
 const routes: Routes = [
   {
@@ -30,6 +32,16 @@ const routes: Routes = [
       {
         path: 'contact',
         component: ContactComponent,
+        pathMatch: 'full'
+      },
+      {
+        path: 'privacy-policy',
+        component: PrivacyPolicyComponent,
+        pathMatch: 'full'
+      },
+      {
+        path: 'terms',
+        component: TermsComponent,
         pathMatch: 'full'
       },
       {
