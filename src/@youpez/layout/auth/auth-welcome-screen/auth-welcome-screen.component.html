@@ -1,25 +1,30 @@
 <div class="absolute bottom-0 right-0 left-0 top-0 opacity-50 z-0 app-bg-pattern-svg"></div>
-<div class="flex items-center h-full z-10 relative">
-  <div class="px-16">
-    <div class="app-display-04 mb-4">
+
+<!-- Logo -->
+<div routerLink="/" class="absolute cursor-pointer top-0 right-0 left-0 z-10">
+  <div class="px-8 py-6 flex justify-between">
+    <youpez-logo type="nobg-white" logoWidth="90px"></youpez-logo>
+  </div>
+</div>
+
+<!-- Main content -->
+<div class="flex items-center h-full z-10 relative overflow-hidden" style="padding-top: 100px; padding-bottom: 80px;">
+  <div class="px-8 xl:px-16 w-full">
+    <div class="auth-welcome-title mb-4">
       <div>{{ 'AUTH_LAYOUT.WELCOME_TITLE_1' | translate }}</div>
       <div>{{ 'AUTH_LAYOUT.WELCOME_TITLE_2' | translate }}</div>
       <div>{{ 'AUTH_LAYOUT.WELCOME_TITLE_3' | translate }}</div>
       <div>{{ 'AUTH_LAYOUT.WELCOME_TITLE_4' | translate }}</div>
     </div>
-    <p class="app-body-long-02 opacity-75" style="max-width:440px;">{{ 'AUTH_LAYOUT.WELCOME_DESCRIPTION' | translate }}</p>
-    <p class="app-body-long-02 opacity-75 pt-10" style="max-width:440px;"></p>
+    <p class="app-body-long-02 opacity-75" style="max-width:380px;">{{ 'AUTH_LAYOUT.WELCOME_DESCRIPTION' | translate }}</p>
   </div>
 </div>
-<div routerLink="/" class="absolute cursor-pointer top-0 right-0 left-0 z-10">
-  <div class="px-16 py-8 flex justify-between">
-    <youpez-logo type="nobg-white" logoWidth="90px"></youpez-logo>
-  </div>
-</div>
+
+<!-- Footer -->
 <div class="absolute bottom-0 right-0 left-0 z-10">
-  <div class="px-16 py-8 flex justify-between">
+  <div class="px-8 py-4 flex justify-between flex-wrap gap-2 text-sm">
     <div>©{{getCurrentYear()}} Ndewa360°</div>
-    <div><a href="mailto:contact@ndewa-360.com" class="text-white">contact@ndewa-360.com</a> </div>
+    <div><a href="mailto:contact@ndewa-360.com" class="text-white">contact@ndewa-360.com</a></div>
     <div>
       <a href="#" class="mr-3 text-white app-link">{{ 'AUTH_LAYOUT.PRIVACY' | translate }}</a>
       <a href="#" class="mr-3 text-white app-link">{{ 'AUTH_LAYOUT.SECURITY' | translate }}</a>

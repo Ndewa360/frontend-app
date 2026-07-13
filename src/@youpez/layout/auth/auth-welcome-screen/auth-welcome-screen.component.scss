@@ -1,0 +1,5 @@
+.auth-welcome-title {
+  font-weight: 300;
+  line-height: 1.2;
+  font-size: clamp(1.5rem, 3vw, 2.625rem); // adaptatif entre ~24px et 42px (app-display-04)
+}
