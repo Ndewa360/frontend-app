@@ -16,8 +16,10 @@ import { TranslateService } from '@ngx-translate/core';
 export class AuthResetPasswordComponent implements OnInit {
 
   public formGroup: UntypedFormGroup;
-  token=""
-  waittingResponse:boolean=false;
+  token = ""
+  waittingResponse: boolean = false;
+  showPassword = false;
+  showConfirmPassword = false;
 
   constructor(
     protected formBuilder: UntypedFormBuilder,
@@ -61,13 +63,25 @@ export class AuthResetPasswordComponent implements OnInit {
   }
 
   onSubmit() {
-    this._store.dispatch(new UserProfileAction.ResetPasswordForUserProfile(this.formGroup.value.password,this.token));
-    this.waittingResponse=true;
+    if (this.formGroup.value.password !== this.formGroup.value.passwordConfirm) {
+      this._toastrService.error(this.translate.instant('VALIDATION.PASSWORDS_NOT_MATCH'), 'Ndewa360°');
+      return;
+    }
+    this._store.dispatch(new UserProfileAction.ResetPasswordForUserProfile(this.formGroup.value.password, this.token));
+    this.waittingResponse = true;
   }
 
   isValid(name) {
     const instance = this.formGroup.get(name)
     return instance.invalid && (instance.dirty || instance.touched)
+  }
+
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
+  }
+
+  toggleConfirmPasswordVisibility() {
+    this.showConfirmPassword = !this.showConfirmPassword;
   }
   isValidConfirmPassword()
   {

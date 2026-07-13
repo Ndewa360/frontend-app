@@ -12,3 +12,31 @@
   height: 100vh;
   overflow: hidden;
 }
+
+.auth-form-panel {
+  padding: 64px;
+}
+
+.auth-form-inner {
+  width: 100%;
+}
+
+/* Tablette portrait : panneau droit masqué, exploiter l'espace */
+@media (max-width: 959px) and (min-width: 600px) {
+  .auth-form-panel {
+    padding: 48px 40px;
+  }
+}
+
+/* Mobile : padding réduit, pleine largeur */
+@media (max-width: 599px) {
+  .auth-form-panel {
+    padding: 24px 20px;
+    align-items: flex-start !important;
+  }
+
+  .auth-form-inner {
+    max-width: 100%;
+    padding-top: 16px;
+  }
+}

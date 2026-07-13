@@ -119,7 +119,14 @@
     "PROPERTY_OWNER": "Property owner",
     "REAL_ESTATE_AGENT": "Real estate agent",
     "PROPERTY_OWNER_DESC": "Manage your properties, find qualified tenants and track your rental income with ease.",
-    "REAL_ESTATE_AGENT_DESC": "Develop your business with our professional tools, verified profile and network of qualified customers."
+    "REAL_ESTATE_AGENT_DESC": "Develop your business with our professional tools, verified profile and network of qualified customers.",
+    "TERMS_REQUIRED": "You must accept the terms and conditions",
+    "VALIDATING": {
+      "LOADING_TITLE": "Activating your account...",
+      "SUCCESS_TITLE": "Account activated successfully!",
+      "ERROR_TITLE": "Error activating account",
+      "ERROR_RETRY": "Refresh the page to try again"
+    }
   },
   "AUTH_LAYOUT": {
     "WELCOME_TITLE_1": "Welcome to Ndewa360°",

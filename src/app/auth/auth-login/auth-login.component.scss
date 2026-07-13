@@ -1,21 +1,18 @@
-.cds--loading__stroke
-{
+.cds--loading__stroke {
     stroke: white !important;
 }
-.cds--loading
-{
+.cds--loading {
     width: 20px !important;
     height: 20px !important;
-    display: inline-block;    
+    display: inline-block;
     margin-left: 20px;
 }
 
-.btn-text, .cds--loading{
+.btn-text, .cds--loading {
     vertical-align: center;
 }
 
-button.w-full
-{
+button.w-full {
     min-width: 100%;
 }
 
@@ -43,8 +40,21 @@ button.w-full
   align-items: center;
   justify-content: center;
   z-index: 10;
+  min-width: 32px;
+  min-height: 32px;
 }
 
 .password-toggle-btn:hover {
   color: var(--cds-text-primary);
+}
+
+/* Boutons sociaux : pleine largeur sur mobile */
+.social-buttons {
+  width: 100%;
+}
+
+@media (max-width: 599px) {
+  .social-buttons > div {
+    width: 100%;
+  }
 }

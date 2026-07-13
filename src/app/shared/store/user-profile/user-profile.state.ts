@@ -9,6 +9,7 @@ import { AuthService } from "./auth.service";
 import { tap, catchError, switchMap, retry, finalize } from "rxjs/operators";
 import { NotificationService } from "carbon-components-angular";
 import { AuthTokenAction } from "../auth-token";
+import { AuthTokenState } from "../auth-token";
 import { Navigate } from '@ngxs/router-plugin';
 import { ToastrService } from "ngx-toastr";
 import { DisconnexionService } from "./disconnection.service";
@@ -521,8 +522,8 @@ export class UserProfileState {
         }
 
         // Vérifier d'abord si l'utilisateur est connecté
-        const authState = this._store.selectSnapshot(state => state.authtoken);
-        if (!authState?.token) {
+        const authToken = this._store.selectSnapshot(AuthTokenState.selectStateAuthToken);
+        if (!authToken) {
             ctx.patchState({
                 loadingUserProfile: false,
                 initLoadingState: "NO_LOADED",

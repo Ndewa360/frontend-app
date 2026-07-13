@@ -1,0 +1,14 @@
+.validating-image {
+  display: flex;
+  justify-content: center;
+  padding: 0;
+  margin-left: 0;
+}
+
+.validating-back-link {
+  margin-top: 2rem;
+}
+
+.text-red-600 {
+  color: #dc2626;
+}

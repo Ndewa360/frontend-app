@@ -6,8 +6,8 @@
       <div data-right fxFlex fxHide fxShow.gt-sm class="relative text-white app-bg-primary">
         <youpez-auth-welcome-screen></youpez-auth-welcome-screen>
       </div>
-      <div data-left fxFlex fxLayoutAlign="center center" class="px-16 py-16 app-bg-container">
-        <div fxFlex="400px" fxFlex.lt-sm="100%">
+      <div data-left fxFlex fxLayoutAlign="start center" fxLayoutAlign.gt-sm="center center" class="auth-form-panel app-bg-container">
+        <div class="auth-form-inner" fxFlex="400px" fxFlex.lt-sm="100%" fxFlex.md="520px">
           <router-outlet></router-outlet>
         </div>
       </div>

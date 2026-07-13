@@ -64,8 +64,6 @@ export class DisconnexionService
         this.store.dispatch(new AuthTokenAction.Logout('Manual logout'));
         
         // Rediriger vers la page de connexion avec la langue appropriée
-        setTimeout(() => {
-            this.languagePreservation.redirectToLogin();
-        }, 100);
+        this.languagePreservation.redirectToLogin();
     }
 }

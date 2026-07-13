@@ -119,7 +119,14 @@
     "PROPERTY_OWNER": "Propriétaire de biens",
     "REAL_ESTATE_AGENT": "Agent immobilier",
     "PROPERTY_OWNER_DESC": "Gérez vos propriétés, trouvez des locataires qualifiés et suivez vos revenus locatifs en toute simplicité.",
-    "REAL_ESTATE_AGENT_DESC": "Développez votre activité avec nos outils professionnels, profil vérifié et réseau de clients qualifiés."
+    "REAL_ESTATE_AGENT_DESC": "Développez votre activité avec nos outils professionnels, profil vérifié et réseau de clients qualifiés.",
+    "TERMS_REQUIRED": "Vous devez accepter les conditions d'utilisation",
+    "VALIDATING": {
+      "LOADING_TITLE": "Activation du compte en cours...",
+      "SUCCESS_TITLE": "Compte activé avec succès !",
+      "ERROR_TITLE": "Erreur lors de l'activation du compte",
+      "ERROR_RETRY": "Actualisez la page pour réessayer"
+    }
   },
   "AUTH_LAYOUT": {
     "WELCOME_TITLE_1": "Bienvenue sur Ndewa360°",

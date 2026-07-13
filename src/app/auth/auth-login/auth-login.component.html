@@ -88,8 +88,8 @@
 
 </div>
 <div class="app-separator mt-8 mb-8">{{ 'AUTH.OR_SIGN_IN_WITH' | translate }}</div>
-<div fxLayout="row" class="">
-  <div fxFlex="50" class="mr-1">
+<div fxLayout="row" fxLayout.lt-sm="column" fxLayoutGap="8px" class="social-buttons">
+  <div fxFlex fxFlex.lt-sm="100%">
     <button class="w-full" size="md" ibmButton="tertiary" (click)="loginWithGoogle()" [disabled]="waittingResponse">
       {{ 'AUTH.GOOGLE' | translate }}
       <svg class="cds--btn__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -98,7 +98,7 @@
       </svg>
     </button>
   </div>
-  <div fxFlex="50" class="ml-1">
+  <div fxFlex fxFlex.lt-sm="100%">
     <button class="w-full" ibmButton="tertiary" size="md" disabled title="Bientôt disponible">
       {{ 'AUTH.FACEBOOK' | translate }}
       <svg class="cds--btn__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">

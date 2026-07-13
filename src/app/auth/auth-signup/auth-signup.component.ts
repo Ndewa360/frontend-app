@@ -1,10 +1,12 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Actions, ofActionCompleted, ofActionErrored, ofActionSuccessful, Store } from '@ngxs/store';
 import { UserProfileAction } from "src/app/shared/store";
 import { TranslateService } from '@ngx-translate/core';
 import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-auth-signup',
@@ -12,13 +14,14 @@ import { LanguageUrlService } from 'src/app/shared/services/language-url.service
   styleUrls: ['./auth-signup.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class AuthSignupComponent implements OnInit {
+export class AuthSignupComponent implements OnInit, OnDestroy {
 
   public formGroup: UntypedFormGroup;
 
   waittingResponse = false;
   showPassword = false;
   selectedPlan: string = 'free';
+  private readonly destroy$ = new Subject<void>();
 
   profileTypes = [
     {
@@ -69,19 +72,24 @@ export class AuthSignupComponent implements OnInit {
 
     this.updateValidatorsForProfileType(this.formGroup.get('profileType')?.value);
 
-    this._ngxsAction.pipe(ofActionSuccessful(UserProfileAction.SignupSimpleUserProfile)).subscribe(() => {
+    this._ngxsAction.pipe(ofActionSuccessful(UserProfileAction.SignupSimpleUserProfile), takeUntil(this.destroy$)).subscribe(() => {
       this.waittingResponse = false;
       const currentLang = this.languageUrlService.getCurrentLanguage();
       this.router.navigate([`/${currentLang}/auth/askto-valid-email`]);
     });
 
-    this._ngxsAction.pipe(ofActionCompleted(UserProfileAction.SignupSimpleUserProfile)).subscribe(() => {
+    this._ngxsAction.pipe(ofActionCompleted(UserProfileAction.SignupSimpleUserProfile), takeUntil(this.destroy$)).subscribe(() => {
       this.waittingResponse = false;
     });
 
-    this._ngxsAction.pipe(ofActionErrored(UserProfileAction.SignupSimpleUserProfile)).subscribe(() => {
+    this._ngxsAction.pipe(ofActionErrored(UserProfileAction.SignupSimpleUserProfile), takeUntil(this.destroy$)).subscribe(() => {
       this.waittingResponse = false;
     });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   updateValidatorsForProfileType(profileType: string) {
