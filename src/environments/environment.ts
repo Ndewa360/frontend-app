@@ -12,7 +12,7 @@ export const environment = {
 	// 🔒 SÉCURITÉ CRITIQUE: Ne jamais exposer les clés secrètes dans le code
 	stripePublicKey: (window as any)?.env?.STRIPE_PUBLIC_KEY || '',
   tinyMceApiKey: (window as any)?.env?.TINYMCE_API_KEY || 'jc0rxaqsy4dc37g2tn6d7jh1oob7gm87jfjyl268edebg4zp',
-  googleClientId: (window as any)?.env?.GOOGLE_CLIENT_ID || '',
+  googleClientId: (window as any)?.env?.GOOGLE_CLIENT_ID || '293692850952-cba58thne3gjki7r4l678p9lcvftvav7.apps.googleusercontent.com',
   version: '2.0.0'
 }
   

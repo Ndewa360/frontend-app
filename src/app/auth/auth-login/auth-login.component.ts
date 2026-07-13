@@ -147,7 +147,7 @@ export class AuthLoginComponent implements OnInit, OnDestroy {
   }
 
   loginWithGoogle(): void {
-    const clientId = (window as any).__GOOGLE_CLIENT_ID__;
+    const clientId = environment.googleClientId;
     if (!clientId) {
       this._toastrService.error('Google Sign-In non configuré', 'Ndewa360°');
       return;

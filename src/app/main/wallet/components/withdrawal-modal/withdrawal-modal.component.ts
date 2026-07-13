@@ -59,15 +59,16 @@ export class WithdrawalModalComponent implements OnInit, OnDestroy {
       placeholder: '6XXXXXXXX',
       inputType:   'phone',
     },
-    {
-      value:       'BANK',
-      label:       'Virement bancaire',
-      description: 'Retrait vers votre compte bancaire',
-      badge:       '🏦',
-      badgeClass:  'badge--bank',
-      placeholder: 'IBAN ou numéro de compte',
-      inputType:   'text',
-    },
+    // Virement bancaire désactivé — non implémenté côté provider
+    // {
+    //   value:       'BANK',
+    //   label:       'Virement bancaire',
+    //   description: 'Retrait vers votre compte bancaire',
+    //   badge:       '🏦',
+    //   badgeClass:  'badge--bank',
+    //   placeholder: 'IBAN ou numéro de compte',
+    //   inputType:   'text',
+    // },
   ];
 
   constructor(

@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store, Select } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, filter, take } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { WalletState, WalletAction, WalletSummary, WalletTransaction, WithdrawalRequest } from 'src/app/shared/store/wallet';
 import { WithdrawalModalComponent } from '../components/withdrawal-modal/withdrawal-modal.component';
@@ -74,9 +74,14 @@ export class WalletDashboardComponent implements OnInit, OnDestroy {
   }
 
   private resumePendingPolling(): void {
-    // Si un retrait PENDING/PROCESSING existe au chargement de la page,
-    // relancer le polling automatiquement (cas rechargement navigateur).
-    this.summary$.pipe(takeUntil(this.destroy$)).subscribe(summary => {
+    // Lire le summary une seule fois au chargement (take(1)) — évite la boucle infinie
+    // où PollWithdrawalStatus → LoadSummary → summary$ émet → re-dispatch infini.
+    this.summary$.pipe(
+      takeUntil(this.destroy$),
+      // Ne réagir qu'une seule fois au premier summary non-null
+      filter(s => !!s),
+      take(1),
+    ).subscribe(summary => {
       if (
         summary?.hasPendingWithdrawal &&
         summary.pendingWithdrawal?._id &&

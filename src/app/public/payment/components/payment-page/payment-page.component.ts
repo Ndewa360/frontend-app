@@ -285,7 +285,8 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
       currency: this.paymentDetails?.currency || 'XAF',
       description: this.paymentDetails?.description || 'Paiement Ndewa360°',
       userEmail: this.paymentDetails?.userEmail,
-      successUrl: `${base}/${this.token}?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+      // successUrl avec placeholder CHECKOUT_SESSION_ID — externalRef ajouté après réponse backend
+      successUrl: `${base}/${this.token}?payment=success&session_id={CHECKOUT_SESSION_ID}&ext=EXTERNAL_REF_PLACEHOLDER`,
       cancelUrl: `${base}/${this.token}?payment=cancelled`,
       ...this.buildContextIds(),
     };
@@ -296,11 +297,12 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
         next: async (res) => {
           this.externalRef = res.data.externalRef;
           if (res.data.redirectUrl) {
-            const redirectUrl = res.data.redirectUrl.replace(
-              encodeURIComponent(`${base}/${this.token}?payment=success&session_id={CHECKOUT_SESSION_ID}`),
-              encodeURIComponent(`${base}/${this.token}?payment=success&session_id={CHECKOUT_SESSION_ID}&ext=${res.data.externalRef}`)
+            // Remplacer le placeholder par l'externalRef réel retourné par le backend
+            const finalUrl = res.data.redirectUrl.replace(
+              'EXTERNAL_REF_PLACEHOLDER',
+              encodeURIComponent(res.data.externalRef),
             );
-            window.location.href = redirectUrl || res.data.redirectUrl;
+            window.location.href = finalUrl;
           } else {
             this.paymentError = 'Impossible d\'obtenir l\'URL de paiement Stripe.';
             this.paymentStatus = 'failed';
@@ -426,29 +428,35 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
     this.currentStep = 'processing';
     this.paymentStatus = 'processing';
 
+    // ext = externalRef de notre transaction, toujours présent depuis la correction Bug #6
     const extRef = this.route.snapshot.queryParams['ext'] || null;
-    const refToCheck = extRef || this.token;
 
-    // Fix #9 : loadStripe() et loadPaymentDetails() appelés une seule fois ici
-    // (ngOnInit fait un return early avant d'appeler loadPaymentDetails)
     this.loadStripe();
     this.loadPaymentDetails();
 
-    this.paymentService.checkPaymentStatus(refToCheck)
+    if (!extRef) {
+      // Fallback : pas d'externalRef — impossible de vérifier le statut
+      this.paymentError = 'Référence de paiement manquante. Contactez le support si votre paiement a été débité.';
+      this.paymentStatus = 'failed';
+      this.currentStep = 'result';
+      return;
+    }
+
+    this.paymentService.checkPaymentStatus(extRef)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res) => {
           if (res.data.status === 'SUCCESS') {
-            this.externalRef = extRef || res.data.externalRef || refToCheck;
+            this.externalRef = extRef;
             if (res.data.amount && !this.amountForm.getRawValue().amount) {
               this.amountForm.patchValue({ amount: res.data.amount });
             }
             this.paymentStatus = 'success';
             this.currentStep = 'result';
-            this.today = new Date(); // Fix #10
+            this.today = new Date();
             this.handlePostPaymentSuccess();
           } else {
-            this.externalRef = res.data.externalRef;
+            this.externalRef = extRef;
             this.paymentStatus = 'pending_confirmation';
             this.startPolling();
           }
