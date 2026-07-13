@@ -4,15 +4,15 @@
 
 export const environment = {
 	// 🔒 SÉCURITÉ: Utiliser les variables d'environnement pour les URLs sensibles
-  apiUrl: (window as any)?.env?.API_URL || 'http://localhost:3001', //'http://192.168.1.5:3001',
-	url: (window as any)?.env?.APP_URL || 'http://localhost:4200', //'http://192.168.1.5:4200',
+  apiUrl: (window as any)?.env?.API_URL || 'http://localhost:3001',
+	url: (window as any)?.env?.APP_URL || 'http://localhost:4200',
 
 	production: false,
 
 	// 🔒 SÉCURITÉ CRITIQUE: Ne jamais exposer les clés secrètes dans le code
-	// Utiliser les variables d'environnement ou un service de configuration
-	stripePublicKey: (window as any)?.env?.STRIPE_PUBLIC_KEY || '', // ⚠️ À configurer via les variables d'environnement vraie clé publique Stripe
+	stripePublicKey: (window as any)?.env?.STRIPE_PUBLIC_KEY || '',
   tinyMceApiKey: (window as any)?.env?.TINYMCE_API_KEY || 'jc0rxaqsy4dc37g2tn6d7jh1oob7gm87jfjyl268edebg4zp',
+  googleClientId: (window as any)?.env?.GOOGLE_CLIENT_ID || '',
   version: '2.0.0'
 }
   

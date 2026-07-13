@@ -22,6 +22,12 @@ export namespace UserProfileAction
         constructor(public email:string,public password:string){}
     }
 
+    export class LoginWithGoogle
+    {
+        static readonly type = '[UserProfile] Login With Google'
+        constructor(public token: string){}
+    }
+
      //Forgot Action
      export class ForgotPasswordUserProfile
      {

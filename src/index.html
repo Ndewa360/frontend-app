@@ -110,6 +110,13 @@
     })();
   </script>
 
+  <!-- Google Identity Services SDK -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script>
+    // Le client_id Google est injecté ici (remplacer par la vraie valeur ou via env)
+    window.__GOOGLE_CLIENT_ID__ = window?.env?.GOOGLE_CLIENT_ID || '';
+  </script>
+
   <!-- Préchargement des ressources critiques -->
   <link rel="preload" href="theme-light.css" as="style">
   <link rel="preload" href="styles.css" as="style">

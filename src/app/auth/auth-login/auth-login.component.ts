@@ -48,7 +48,7 @@ export class AuthLoginComponent implements OnInit, OnDestroy {
     });
 
     const successSub = this._ngxsAction.pipe(
-      ofActionSuccessful(UserProfileAction.LoginUserProfile)
+      ofActionSuccessful(UserProfileAction.LoginUserProfile, UserProfileAction.LoginWithGoogle)
     ).subscribe(() => {
       const returnUrl = this.route.snapshot.queryParams['returnUrl'];
       const reason = this.route.snapshot.queryParams['reason'];
@@ -82,14 +82,14 @@ export class AuthLoginComponent implements OnInit, OnDestroy {
     this.subscriptions.push(successSub);
 
     const completedSub = this._ngxsAction.pipe(
-      ofActionCompleted(UserProfileAction.LoginUserProfile)
+      ofActionCompleted(UserProfileAction.LoginUserProfile, UserProfileAction.LoginWithGoogle)
     ).subscribe((value) => {
       this.waittingResponse = false;
     });
     this.subscriptions.push(completedSub);
 
     const errorSub = this._ngxsAction.pipe(
-      ofActionErrored(UserProfileAction.LoginUserProfile)
+      ofActionErrored(UserProfileAction.LoginUserProfile, UserProfileAction.LoginWithGoogle)
     ).subscribe((actionCtx) => {
       this.waittingResponse = false;
 
@@ -147,10 +147,27 @@ export class AuthLoginComponent implements OnInit, OnDestroy {
   }
 
   loginWithGoogle(): void {
-    // Rediriger vers l'endpoint OAuth2 Google du backend
-    const currentLang = this.languageUrlService.getCurrentLanguage();
-    const returnUrl = encodeURIComponent(`/${currentLang}/app/properties/home`);
-    window.location.href = `${environment.apiUrl}/user/auth/google?returnUrl=${returnUrl}`;
+    const clientId = (window as any).__GOOGLE_CLIENT_ID__;
+    if (!clientId) {
+      this._toastrService.error('Google Sign-In non configuré', 'Ndewa360°');
+      return;
+    }
+    (window as any).google.accounts.id.initialize({
+      client_id: clientId,
+      callback: (response: any) => this.handleGoogleCredential(response),
+      auto_select: false,
+      cancel_on_tap_outside: true,
+    });
+    (window as any).google.accounts.id.prompt();
+  }
+
+  private handleGoogleCredential(response: any): void {
+    if (!response?.credential) {
+      this._toastrService.error(this.translate.instant('NOTIFICATIONS.GENERIC_ERROR'), 'Ndewa360°');
+      return;
+    }
+    this.waittingResponse = true;
+    this._store.dispatch(new UserProfileAction.LoginWithGoogle(response.credential));
   }
 
   private redirectBasedOnUserType(): void {

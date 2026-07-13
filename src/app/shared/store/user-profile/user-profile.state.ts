@@ -128,6 +128,37 @@ export class UserProfileState {
         );
     }
 
+    @Action(UserProfileAction.LoginWithGoogle)
+    loginWithGoogleState(ctx: StateContext<UserProfileStateModel>, { token }: UserProfileAction.LoginWithGoogle) {
+        ctx.patchState({ loadingUserProfile: true, lastError: null });
+
+        return this._authService.loginWithGoogle(token).pipe(
+            tap((result) => {
+                if (!result || !result.data || !result.data.user) {
+                    throw new Error('Réponse de connexion Google invalide');
+                }
+                ctx.patchState({
+                    loadingUserProfile: false,
+                    userProfile: result.data.user,
+                    initLoadingState: 'LOADED'
+                });
+                ctx.dispatch(new AuthTokenAction.SetToken(result.data.access_token, result.data.refresh_token));
+                if (result.data.managedProperties && result.data.managedProperties.length > 0) {
+                    ctx.dispatch(new PropertyManagerAction.SetManagedProperties(result.data.managedProperties));
+                }
+                ctx.dispatch(new AuthTokenAction.StartActivityMonitoring());
+                this.refreshTokenService.startActivityMonitoring();
+            }),
+            catchError((error) => {
+                ctx.patchState({
+                    loadingUserProfile: false,
+                    lastError: error?.error?.message || 'Erreur de connexion Google'
+                });
+                return throwError(() => error);
+            })
+        );
+    }
+
     @Action(UserProfileAction.LogoutUserProfile)
     logoutUserProfileState(ctx: StateContext<UserProfileStateModel>) {
         // Arrêter la surveillance d'activité

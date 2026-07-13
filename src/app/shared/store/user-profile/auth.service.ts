@@ -16,6 +16,10 @@ export class AuthService {
 
   constructor(private _httpClient: HttpClient) {}
 
+  loginWithGoogle(token: string): Observable<ApiResultFormat<{access_token: string, refresh_token: string, user: UserProfileModel, managedProperties: any[]}>> {
+    return this._httpClient.post<ApiResultFormat<{access_token: string, refresh_token: string, user: UserProfileModel, managedProperties: any[]}>>(`${environment.apiUrl}/user/auth/google-login`, { token });
+  }
+
   login(email: string, password: string): Observable<ApiResultFormat<{access_token: string, refresh_token: string, user: UserProfileModel, managedProperties: any[]}>> {
     return this._httpClient.post<ApiResultFormat<{access_token: string, refresh_token: string, user: UserProfileModel, managedProperties: any[]}>>(`${environment.apiUrl}/user/auth/login`, {email, password});
   }
