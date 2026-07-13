@@ -1,10 +1,10 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Store, Actions, ofActionCompleted, ofActionSuccessful, Select } from '@ngxs/store';
-import { Observable } from 'rxjs';
-import { firstValueFrom } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
+import { firstValueFrom, takeUntil } from 'rxjs';
 import { CityModel, CountryModel, CountryState, PropertyAction, UserProfileState } from 'src/app/shared/store';
 import { FormUtils } from 'src/app/shared/utils';
 import { SubscriptionLimitAction } from 'src/app/shared/store/subscription-limit';
@@ -19,7 +19,7 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./add-property.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class AddPropertyComponent implements OnInit {
+export class AddPropertyComponent implements OnInit, OnDestroy {
   public formGroup: FormGroup;
   waittingResponse = false;
   currentStep = 1;
@@ -30,11 +30,7 @@ export class AddPropertyComponent implements OnInit {
   existingOwner: any = null;
   showOwnerConfirmModal = false;
 
-  // Plus besoin de ces propriétés avec le nouveau composant
-  // @Select(CountryState.selectStateCountries) countries$:Observable<CountryModel[]>;
-  // countriesList=[];
-  // citiesList:CityModel[]=[];
-  // selectedCitiesList=[]
+  private readonly destroy$ = new Subject<void>();
 
   constructor(
     private dialogRef: MatDialogRef<AddPropertyComponent>,
@@ -108,14 +104,18 @@ export class AddPropertyComponent implements OnInit {
     // Le composant country-city-selector gère automatiquement les pays et villes
 
 
-    this._ngxsAction.pipe(ofActionSuccessful(PropertyAction.CreateProperty)).subscribe((value)=>{
-      // Navigate to the parent
-      this.waittingResponse=false;
-      this.onClose()
-      }
-    );
-    this._ngxsAction.pipe(ofActionCompleted(PropertyAction.CreateProperty)).subscribe(
-      (completion) => {
+    this._ngxsAction.pipe(
+      ofActionSuccessful(PropertyAction.CreateProperty),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.waittingResponse = false;
+      this.onClose();
+    });
+
+    this._ngxsAction.pipe(
+      ofActionCompleted(PropertyAction.CreateProperty),
+      takeUntil(this.destroy$)
+    ).subscribe((completion) => {
         this.waittingResponse = false;
         if (!completion.result.successful) {
           const errorCode = (completion.result.error as any)?.error?.error;
@@ -126,7 +126,12 @@ export class AddPropertyComponent implements OnInit {
             this.showSubscriptionLimitModal(true, status?.propertyLimit ?? 1);
           }
         }
-      })
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   onClose() {

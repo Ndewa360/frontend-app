@@ -1,7 +1,6 @@
-
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { CUSTOM_ELEMENTS_SCHEMA, LOCALE_ID, NgModule, APP_INITIALIZER } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, LOCALE_ID, NgModule } from '@angular/core';
 import localeFr from '@angular/common/locales/fr';
 import { HttpClient } from '@angular/common/http';
 
@@ -23,23 +22,8 @@ import { registerLocaleData } from '@angular/common';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
-// Fonction simplifiée pour l'initialisation
-export function initStyles() {
-  return () => {
-    return new Promise<void>((resolve) => {
-
-      // Résoudre immédiatement pour éviter les blocages
-      setTimeout(() => {
-        resolve();
-      }, 100);
-    });
-  };
-}
-
 registerLocaleData(localeFr);
 
-
-// Factory function pour le loader de traduction
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
@@ -73,12 +57,6 @@ export function HttpLoaderFactory(http: HttpClient) {
 		{ provide: HTTP_INTERCEPTORS, useClass: AuthTokenInterceptor, multi: true },
 		{ provide: HTTP_INTERCEPTORS, useClass: MonitoringInterceptor, multi: true },
 		{ provide: LOCALE_ID, useValue: "fr-FR" },
-		// S'assurer que les styles sont chargés avant l'initialisation de l'application
-		{
-			provide: APP_INITIALIZER,
-			useFactory: initStyles,
-			multi: true
-		}
 	],
 	schemas: [
 		CUSTOM_ELEMENTS_SCHEMA
@@ -86,7 +64,5 @@ export function HttpLoaderFactory(http: HttpClient) {
 	bootstrap: [AppComponent]
 })
 export class AppModule {
-	constructor() {
-		// Le constructeur est vide
-	}
+	constructor() {}
 }

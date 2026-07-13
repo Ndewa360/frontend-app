@@ -31,7 +31,6 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import { ModuleRegistry } from '@ag-grid-community/core'
 import { CsvExportModule } from '@ag-grid-community/csv-export';
 import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model'
-import { FilterModule } from '@ag-grid-community/core/dist/types/src/filter/filterModule';
 import { HomePropertyComponent } from './properties/home-property/home-property.component';
 import { AssignLocationModule } from './assign-location/assign-location.module'
 // import { HomeComponent as SupportHome} from '../support/home/home.component'
