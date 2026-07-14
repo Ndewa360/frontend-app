@@ -179,12 +179,21 @@ export class WalletState implements OnDestroy {
       tap((res) => {
         const withdrawal = res.data;
 
-        // Mettre à jour le retrait dans la liste
+        // Mettre à jour le retrait dans la liste ET dans le summary (bannière)
         const state = ctx.getState();
         const updatedWithdrawals = state.withdrawals.map(w =>
           w._id === withdrawalId ? { ...w, ...withdrawal } : w,
         );
-        ctx.patchState({ withdrawals: updatedWithdrawals });
+        const updatedSummary = state.summary ? {
+          ...state.summary,
+          hasPendingWithdrawal: ['PENDING', 'PROCESSING'].includes(withdrawal.status)
+            ? state.summary.hasPendingWithdrawal
+            : state.summary.pendingWithdrawal?._id === withdrawalId ? false : state.summary.hasPendingWithdrawal,
+          pendingWithdrawal: state.summary.pendingWithdrawal?._id === withdrawalId
+            ? { ...state.summary.pendingWithdrawal, ...withdrawal }
+            : state.summary.pendingWithdrawal,
+        } : state.summary;
+        ctx.patchState({ withdrawals: updatedWithdrawals, summary: updatedSummary });
 
         if (withdrawal.status === 'COMPLETED') {
           // Retrait confirmé

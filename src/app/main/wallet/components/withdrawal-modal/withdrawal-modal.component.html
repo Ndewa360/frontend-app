@@ -114,7 +114,7 @@
                   d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
           </svg>
           <span *ngIf="form.get('amount')?.errors?.['min']">Minimum {{ formatCurrency(minAmount) }}</span>
-          <span *ngIf="form.get('amount')?.errors?.['max']">Solde insuffisant (max {{ formatCurrency(data.balance) }})</span>
+          <span *ngIf="form.get('amount')?.errors?.['max']">Montant trop élevé (max {{ formatCurrency(maxAmount) }})</span>
           <span *ngIf="form.get('amount')?.errors?.['required']">Montant requis</span>
         </div>
       </div>
@@ -218,7 +218,7 @@
           <strong>{{ formatCurrency(form.value.amount) }}</strong>
         </div>
         <div class="wmodal__recap-row wmodal__recap-row--fee">
-          <span>Frais de service (2%)</span>
+          <span>Frais (2%)</span>
           <span class="wmodal__fee">− {{ formatCurrency(fees) }}</span>
         </div>
         <div class="wmodal__recap-divider"></div>

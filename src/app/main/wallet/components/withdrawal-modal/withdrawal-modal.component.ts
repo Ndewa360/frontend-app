@@ -6,8 +6,9 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { WalletAction, WalletState, WithdrawalMethod } from 'src/app/shared/store/wallet';
 
-const FEE_RATE  = 0.02;
+const FEE_RATE  = 0.02;  // 2% total (1.5% EasyTransact + 0.5% Ndewa360)
 const MIN_AMOUNT = 500;
+const MAX_AMOUNT = 5_000_000;
 
 // Cameroun — 9 chiffres sans indicatif pays (+237 non inclus)
 // Orange : 69X (prefixe 2 chiffres + 7) | 655-659 (prefixe 3 chiffres + 6) | 66X (prefixe 2 chiffres + 7)
@@ -79,7 +80,7 @@ export class WithdrawalModalComponent implements OnInit, OnDestroy {
     private actions: Actions,
   ) {
     this.form = this.fb.group({
-      amount:    [null, [Validators.required, Validators.min(MIN_AMOUNT), Validators.max(data.balance)]],
+      amount:    [null, [Validators.required, Validators.min(MIN_AMOUNT), Validators.max(Math.min(data.balance, MAX_AMOUNT))]],
       method:    ['', Validators.required],
       recipient: ['', [Validators.required, Validators.minLength(9), Validators.maxLength(9)]],
     });
@@ -106,6 +107,7 @@ export class WithdrawalModalComponent implements OnInit, OnDestroy {
   get fees(): number      { return Math.round((this.form.value.amount || 0) * FEE_RATE); }
   get netAmount(): number { return (this.form.value.amount || 0) - this.fees; }
   get minAmount(): number { return MIN_AMOUNT; }
+  get maxAmount(): number { return Math.min(this.data.balance, MAX_AMOUNT); }
   get isPhone(): boolean  { return this.selectedMethodDef?.inputType === 'phone'; }
 
   selectMethod(m: WithdrawalMethodDef): void {

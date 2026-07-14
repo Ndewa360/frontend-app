@@ -44,6 +44,7 @@ export class WalletDashboardComponent implements OnInit, OnDestroy {
   withdrawalPage = 1;
   readonly pageSize = 10;
   readonly MIN_WITHDRAWAL = 500;
+  readonly MAX_WITHDRAWAL = 5_000_000;
 
   constructor(
     private store: Store,
