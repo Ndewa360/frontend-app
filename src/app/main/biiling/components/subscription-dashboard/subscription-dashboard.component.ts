@@ -261,15 +261,11 @@ export class SubscriptionDashboardComponent implements OnInit, OnDestroy {
   }
 
   getTotalUnpaidAmount(): number {
-    return this.subscriptionHistory
-      .flatMap(sub => sub.periods || [])
-      .filter(p => p.state === SouscriptionPayementState.UNPAYED)
-      .reduce((total, p) => total + (p.calculatedAmount || 0), 0);
+    return this.getUnpaidTotal();
   }
 
   getUnpaidPeriodsCount(): number {
-    return this.subscriptionHistory
-      .flatMap(sub => sub.periods || [])
-      .filter(p => p.state === SouscriptionPayementState.UNPAYED).length;
+    const invoices = this.store.selectSnapshot(SubscriptionPaymentState.selectUnpaidInvoices);
+    return (invoices || []).length;
   }
 }

@@ -101,9 +101,9 @@ export class SouscriptionState{
 
     static selectStateSouscriptionByRoomAndLocataireId(locataireId:string,roomId)
     {
+        // Ce selector est conservé pour compatibilité mais retourne toujours null
+        // car SouscriptionModel ne contient pas de champs locataire/room
         return createSelector([SouscriptionState],(state)=>{
-            let data=state.souscription.find((u)=>u.locataire==locataireId && u.room==roomId)
-            if(data) return data
             return null;
         })
     }
@@ -294,6 +294,32 @@ export class SouscriptionState{
     setCurrentSubscription(ctx:StateContext<SouscriptionStateModel>, {subscription}:SouscriptionAction.SetCurrentSubscription)
     {
         ctx.patchState({ currentSubscription: subscription });
+    }
+
+    @Action(SouscriptionAction.StartTrial)
+    startTrial(ctx:StateContext<SouscriptionStateModel>)
+    {
+        ctx.patchState({ loadingSouscription: true });
+        return this._souscriptionService.startTrial().pipe(
+            tap(result => {
+                ctx.patchState({
+                    loadingSouscription: false,
+                    currentSubscription: result.data
+                });
+                this._toastrService.success(
+                    this._translateService.instant('NOTIFICATIONS.TRIAL_STARTED_SUCCESS'),
+                    'Ndewa360°'
+                );
+            }),
+            catchError(error => {
+                ctx.patchState({ loadingSouscription: false });
+                this._toastrService.error(
+                    error?.error?.message?.[0] || this._translateService.instant('NOTIFICATIONS.TRIAL_START_ERROR'),
+                    'Ndewa360°'
+                );
+                return throwError(error);
+            })
+        );
     }
 
 }
