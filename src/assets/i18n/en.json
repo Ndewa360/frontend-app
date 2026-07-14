@@ -1386,7 +1386,11 @@
     "PROPERTIES_COUNT_LABEL": "Properties:",
     "PAY_NOW_ACTION": "Pay now",
     "NO_HISTORY": "No history",
-    "NO_HISTORY_MESSAGE": "Your subscription history will appear here."
+    "NO_HISTORY_MESSAGE": "Your subscription history will appear here.",
+    "ACCOUNT_SUSPENDED_TITLE": "Account suspended — Restricted access",
+    "ACCOUNT_SUSPENDED_DETAIL": "You have {{count}} unpaid invoice(s) totalling {{amount}}. Settle your outstanding balance to restore full access.",
+    "DEPOSIT_WALLET": "Top up my wallet",
+    "REACTIVATE_ACCOUNT": "Reactivate my account"
   },
   "ROOM_TYPES": {
     "ROOM": "Bedroom",

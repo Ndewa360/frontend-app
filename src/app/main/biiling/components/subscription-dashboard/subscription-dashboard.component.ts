@@ -191,6 +191,14 @@ export class SubscriptionDashboardComponent implements OnInit, OnDestroy {
     ) && (this.currentPeriod.calculatedAmount || 0) > 0;
   }
 
+  get isSuspended(): boolean {
+    return this.currentSubscription?.accountStatus === 'suspended';
+  }
+
+  goToWalletDeposit(): void {
+    this.router.navigate([`/${this.lang}/app/portefeuille`]);
+  }
+
   getPlanLabel(plan: SouscriptionPlan): string {
     return plan?.toLowerCase() === 'premium' ? 'Premium' : 'Gratuit';
   }

@@ -11,6 +11,7 @@ import { ListPropertyComponent } from './properties/list-property/list-property.
 import { HomePropertyComponent } from './properties/home-property/home-property.component'
 import { PropertyDetailsCompleteComponent } from './properties/property-details-complete/property-details-complete.component'
 import { AgentValidationGuard } from '../shared/guards/agent-validation-guard.service'
+import { SuspendedGuard } from '../shared/guards/suspended.guard'
 
 
 
@@ -22,7 +23,7 @@ const routes: Routes = [
   {
     path: '',
     component: LayoutComponent,
-    canActivate: [AgentValidationGuard],
+    canActivate: [AgentValidationGuard, SuspendedGuard],
     children: [      
       // {
       //   path: 'locataires',

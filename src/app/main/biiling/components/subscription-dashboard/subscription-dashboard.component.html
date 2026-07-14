@@ -1,5 +1,24 @@
 <!-- Dashboard de souscription -->
 <div class="subscription-dashboard">
+
+  <!-- Bandeau de suspension — affiché en priorité absolue -->
+  <div *ngIf="isSuspended" class="suspension-banner">
+    <div class="suspension-banner__icon"><i class="fas fa-lock"></i></div>
+    <div class="suspension-banner__content">
+      <strong>{{ 'SUBSCRIPTION_DASHBOARD.ACCOUNT_SUSPENDED_TITLE' | translate }}</strong>
+      <p>{{ 'SUBSCRIPTION_DASHBOARD.ACCOUNT_SUSPENDED_DETAIL' | translate : { count: getUnpaidPeriodsCount(), amount: formatCurrency(getUnpaidTotal()) } }}</p>
+    </div>
+    <div class="suspension-banner__actions">
+      <button (click)="goToWalletDeposit()" class="btn btn-outline-light">
+        <i class="fas fa-wallet"></i>
+        {{ 'SUBSCRIPTION_DASHBOARD.DEPOSIT_WALLET' | translate }}
+      </button>
+      <button (click)="reactivateAccount()" class="btn btn-light">
+        <i class="fas fa-redo"></i>
+        {{ 'SUBSCRIPTION_DASHBOARD.REACTIVATE_ACCOUNT' | translate }}
+      </button>
+    </div>
+  </div>
   
   <!-- Loading state -->
   <div *ngIf="loading" class="loading-container">

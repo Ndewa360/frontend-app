@@ -1385,7 +1385,11 @@
     "PROPERTIES_COUNT_LABEL": "Propriétés:",
     "PAY_NOW_ACTION": "Payer maintenant",
     "NO_HISTORY": "Aucun historique",
-    "NO_HISTORY_MESSAGE": "Votre historique de souscriptions apparaîtra ici."
+    "NO_HISTORY_MESSAGE": "Votre historique de souscriptions apparaîtra ici.",
+    "ACCOUNT_SUSPENDED_TITLE": "Compte suspendu — Accès restreint",
+    "ACCOUNT_SUSPENDED_DETAIL": "Vous avez {{count}} facture(s) impayée(s) pour un total de {{amount}}. Réglez vos impayés pour retrouver un accès complet.",
+    "DEPOSIT_WALLET": "Alimenter mon wallet",
+    "REACTIVATE_ACCOUNT": "Réactiver mon compte"
   },
   "ROOM_TYPES": {
     "ROOM": "Chambre",
