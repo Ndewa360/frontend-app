@@ -27,7 +27,7 @@ import { ApiResultFormat } from '../global/api-result-format.model';
 })
 export class RolesService {
   private readonly apiUrl = `${environment.apiUrl}/admin/roles`;
-  private readonly permissionsUrl = `${environment.apiUrl}/admin/permissions`;
+  private readonly permissionsUrl = `${environment.apiUrl}/admin/roles/permissions`;
 
   constructor(private http: HttpClient) {}
 

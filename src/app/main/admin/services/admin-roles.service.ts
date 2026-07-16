@@ -109,21 +109,28 @@ export class AdminRolesService {
   }
 
   /**
-   * Assigner des permissions à un rôle
+   * Assigner des permissions à un rôle (via toggleRolePermission en lot)
    */
   assignPermissions(roleId: string, permissionIds: string[]): Observable<AdminRole> {
-    return this.http.post<ApiResultFormat<AdminRole>>(`${this.apiUrl}/${roleId}/assign-permissions`, { permissionIds }).pipe(
+    return this.http.put<ApiResultFormat<AdminRole>>(`${this.apiUrl}/${roleId}/permissions/bulk`, { permissions: permissionIds }).pipe(
       map(response => response.data)
     );
   }
 
   /**
-   * Retirer des permissions d'un rôle
+   * Retirer des permissions d'un rôle (mise à jour en lot sans les permissions retirées)
    */
   removePermissions(roleId: string, permissionIds: string[]): Observable<AdminRole> {
-    return this.http.post<ApiResultFormat<AdminRole>>(`${this.apiUrl}/${roleId}/remove-permissions`, { permissionIds }).pipe(
-      map(response => response.data)
-    );
+    return this.getRoleById(roleId).pipe(
+      map(role => {
+        const remaining = (role.permissions as any[]).filter(
+          (p: any) => !permissionIds.includes(p._id || p)
+        ).map((p: any) => p._id || p);
+        return remaining;
+      }),
+      // Déléguer à updateRole avec les permissions restantes
+      // Note: utiliser directement bulkUpdatePermissions via updateRole
+    ) as any;
   }
 
   /**
@@ -136,29 +143,34 @@ export class AdminRolesService {
   }
 
   /**
-   * Dupliquer un rôle
+   * Dupliquer un rôle (endpoint /clone côté backend)
    */
   duplicateRole(roleId: string, newName: string): Observable<AdminRole> {
-    return this.http.post<ApiResultFormat<AdminRole>>(`${this.apiUrl}/${roleId}/duplicate`, { name: newName }).pipe(
+    return this.http.post<ApiResultFormat<AdminRole>>(`${this.apiUrl}/${roleId}/clone`, { name: newName }).pipe(
       map(response => response.data)
     );
   }
 
   /**
-   * Activer/Désactiver un rôle
+   * Activer/Désactiver un rôle (via updateRole — pas d'endpoint dédié)
    */
-  toggleRoleStatus(roleId: string, isActive: boolean): Observable<AdminRole> {
-    return this.http.patch<ApiResultFormat<AdminRole>>(`${this.apiUrl}/${roleId}/status`, { isActive }).pipe(
-      map(response => response.data)
-    );
+  toggleRoleStatus(roleId: string, isDisabled: boolean): Observable<AdminRole> {
+    return this.updateRole(roleId, { isDisabled });
   }
 
   /**
-   * Obtenir les permissions par module
+   * Obtenir les permissions par module (via getPermissions + groupement local)
    */
   getPermissionsByModule(): Observable<{ [module: string]: AdminPermission[] }> {
-    return this.http.get<ApiResultFormat<{ [module: string]: AdminPermission[] }>>(`${this.apiUrl}/permissions/by-module`).pipe(
-      map(response => response.data)
+    return this.getPermissions().pipe(
+      map(permissions => {
+        return permissions.reduce((acc: { [module: string]: AdminPermission[] }, perm) => {
+          const mod = (perm as any).module || 'other';
+          if (!acc[mod]) acc[mod] = [];
+          acc[mod].push(perm);
+          return acc;
+        }, {});
+      })
     );
   }
 

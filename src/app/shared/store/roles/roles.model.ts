@@ -15,8 +15,7 @@ export interface Role {
   description: string;
   permissions: Permission[];
   isSystemRole: boolean;
-  isActive: boolean;
-  userCount?: number;
+  isDisabled?: boolean;
   createdAt: Date;
   updatedAt: Date;
 }

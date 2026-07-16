@@ -317,6 +317,36 @@ export class AdminUsersState {
     );
   }
 
+  @Action(AdminUsersAction.AssignRole)
+  assignRole(ctx: StateContext<AdminUsersStateModel>, action: AdminUsersAction.AssignRole) {
+    return this.adminUsersService.assignRoles(action.userId, action.roleIds).pipe(
+      tap(user => {
+        ctx.dispatch(new AdminUsersAction.AssignRoleSuccess(action.userId, (user as any).roles || []));
+        ctx.dispatch(new AdminUsersAction.RefreshData());
+      }),
+      catchError(error => {
+        ctx.dispatch(new AdminUsersAction.AssignRoleFailure(error));
+        return throwError(error);
+      })
+    );
+  }
+
+  @Action(AdminUsersAction.AssignRoleSuccess)
+  assignRoleSuccess(ctx: StateContext<AdminUsersStateModel>, action: AdminUsersAction.AssignRoleSuccess) {
+    const state = ctx.getState();
+    ctx.patchState({
+      users: state.users.map(u =>
+        u._id === action.userId ? { ...u, roles: action.roles } : u
+      ),
+      loading: false
+    });
+  }
+
+  @Action(AdminUsersAction.AssignRoleFailure)
+  assignRoleFailure(ctx: StateContext<AdminUsersStateModel>, action: AdminUsersAction.AssignRoleFailure) {
+    ctx.patchState({ loading: false, error: action.error });
+  }
+
   @Action(AdminUsersAction.SetFilters)
   setFilters(ctx: StateContext<AdminUsersStateModel>, action: AdminUsersAction.SetFilters) {
     ctx.patchState({

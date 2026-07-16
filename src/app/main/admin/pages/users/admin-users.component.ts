@@ -35,10 +35,13 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
   isLoading = false;
 
   // Modals de confirmation (remplace window.confirm)
-  showDeleteModal   = false;
-  showResetPwdModal = false;
+  showDeleteModal      = false;
+  showResetPwdModal    = false;
+  showAssignRoleModal  = false;
   userToDelete: AdminUser | null = null;
   userToResetPwd: AdminUser | null = null;
+  userToAssignRole: AdminUser | null = null;
+  selectedRoleIds: string[] = [];
 
   // Filters
   searchTerm           = '';
@@ -235,7 +238,8 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
     } else {
       const createData: any = {
         name: data.name, email: data.email, password: data.password,
-        phoneNumber: data.phoneNumber, status: data.status || 'active', country: data.country
+        phoneNumber: data.phoneNumber, status: data.status || 'active',
+        country: data.country, roles: data.roles || []
       };
       this.store.dispatch(new AdminUsersAction.CreateUser(createData))
         .pipe(takeUntil(this.destroy$))
@@ -248,6 +252,38 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
 
   onViewUserDetails(user: AdminUser): void {
     this.router.navigate(['..', 'users', user._id], { relativeTo: this.route });
+  }
+
+  onOpenAssignRole(user: AdminUser): void {
+    this.userToAssignRole = user;
+    this.selectedRoleIds  = user.roles?.map((r: any) => r._id || r) || [];
+    this.showAssignRoleModal = true;
+  }
+
+  onRoleToggle(roleId: string): void {
+    const idx = this.selectedRoleIds.indexOf(roleId);
+    if (idx === -1) this.selectedRoleIds = [...this.selectedRoleIds, roleId];
+    else            this.selectedRoleIds = this.selectedRoleIds.filter(id => id !== roleId);
+  }
+
+  isRoleSelected(roleId: string): boolean {
+    return this.selectedRoleIds.includes(roleId);
+  }
+
+  onConfirmAssignRole(): void {
+    if (!this.userToAssignRole) return;
+    this.store.dispatch(new AdminUsersAction.AssignRole(this.userToAssignRole._id, this.selectedRoleIds))
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next:  () => { this.toastr.success('Rôles mis à jour'); this.onCancelAssignRole(); },
+        error: (e) => this.toastr.error(e?.error?.message || 'Erreur lors de l\'assignation')
+      });
+  }
+
+  onCancelAssignRole(): void {
+    this.showAssignRoleModal  = false;
+    this.userToAssignRole     = null;
+    this.selectedRoleIds      = [];
   }
 
   // Ouvre le modal de confirmation de suppression (remplace window.confirm)

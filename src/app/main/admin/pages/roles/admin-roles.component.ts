@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject, firstValueFrom } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -6,14 +6,9 @@ import { Store } from '@ngxs/store';
 import { ToastrService } from 'ngx-toastr';
 import { AdminRolesService } from '../../services/admin-roles.service';
 
-// Actions
 import { AdminRolesAction } from '../../store/roles/admin-roles.actions';
-
-// States
 import { AdminRolesState } from '../../store/roles/admin-roles.state';
-
-// Models
-import { AdminRole, AdminPermission, MatrixPermission } from '../../store/roles/admin-roles.model';
+import { AdminRole, AdminPermission, MatrixPermission, PermissionsMatrix } from '../../store/roles/admin-roles.model';
 
 @Component({
   selector: 'app-admin-roles',
@@ -23,45 +18,70 @@ import { AdminRole, AdminPermission, MatrixPermission } from '../../store/roles/
 export class AdminRolesComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
-  // Observables
-  roles$ = this.store.select(AdminRolesState.selectRoles);
+  roles$       = this.store.select(AdminRolesState.selectRoles);
   permissions$ = this.store.select(AdminRolesState.selectPermissions);
-  stats$ = this.store.select(AdminRolesState.selectStats);
-  permissionsMatrix$ = this.store.select(AdminRolesState.selectPermissionsMatrix);
-  isLoading$ = this.store.select(AdminRolesState.selectIsLoading);
+  stats$       = this.store.select(AdminRolesState.selectStats);
+  isLoading$   = this.store.select(AdminRolesState.selectIsLoading);
 
-  // Component state
-  selectedTab = 'roles';
+  matrixSnapshot: PermissionsMatrix | null = null;
+
+  selectedTab     = 'roles';
   showCreateModal = false;
-  showEditModal = false;
+  showEditModal   = false;
   selectedRole: AdminRole | null = null;
 
-  // Matrix state
-  isEditMode = false;
-  isSaving = false;
-  isApplyingChange = false;
-  isRefreshing = false;
-  selectedModule = '';
+  roleSearchQuery  = '';
+  roleStatusFilter = '';
+  roleTypeFilter   = '';
+
+  isSaving            = false;
+  isRefreshing        = false;
+  matrixLoading       = false;
+  isEditMode          = false;
+  selectedModule      = '';
   permissionSearchTerm = '';
-  filteredPermissions: AdminPermission[] = [];
-  pendingChanges: { [roleId: string]: { [permissionId: string]: boolean } } = {};
 
-  // Permissions list state
   selectedPermissionModule = '';
-  selectedPermissionType = '';
-  permissionSearchQuery = '';
-  expandedModules: Set<string> = new Set(['users', 'roles', 'admin']); // Modules expanded by default
+  selectedPermissionType   = '';
+  permissionSearchQuery    = '';
 
-  constructor(private store: Store, private fb: FormBuilder, private adminRolesService: AdminRolesService, private toastr: ToastrService) {}
+  openMenuId: string | null = null;
+
+  roleForm: FormGroup;
+
+  showDeleteRoleModal    = false;
+  showDuplicateRoleModal = false;
+  showToggleStatusModal  = false;
+  duplicateRoleName      = '';
+  roleToAction: AdminRole | null = null;
+
+  constructor(
+    private store: Store,
+    private fb: FormBuilder,
+    private adminRolesService: AdminRolesService,
+    private toastr: ToastrService
+  ) {}
 
   ngOnInit(): void {
-    this.loadData();
     this.initRoleForm();
+    this.loadData();
+    this.store.select(AdminRolesState.selectPermissionsMatrix)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(m => {
+        this.matrixSnapshot = m ? JSON.parse(JSON.stringify(m)) : null;
+      });
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (!(event.target as HTMLElement).closest('.ar-actions-menu')) {
+      this.openMenuId = null;
+    }
   }
 
   private loadData(): void {
@@ -75,96 +95,106 @@ export class AdminRolesComponent implements OnInit, OnDestroy {
 
   onTabChange(tab: string): void {
     this.selectedTab = tab;
+    this.openMenuId  = null;
+    if (tab === 'matrix' && !this.matrixSnapshot) {
+      this.store.dispatch(new AdminRolesAction.LoadPermissionsMatrix());
+    }
   }
 
-  // Role form
-  roleForm: FormGroup;
+  // ==================== ROLE FORM ====================
 
   private initRoleForm(): void {
     this.roleForm = this.fb.group({
-      name:        ['', [Validators.required, Validators.pattern(/^[a-z0-9_]+$/)]],
-      displayName: ['', Validators.required],
+      name:        ['', [Validators.required, Validators.pattern(/^[a-z0-9_-]+$/)]],
       description: [''],
-      color:       ['#6c757d']
+      color:       ['#6c757d'],
+      level:       [null]
     });
   }
 
   onCreateRole(): void {
-    this.roleForm.reset({ color: '#6c757d' });
+    this.roleForm.reset({ color: '#6c757d', level: null });
     this.showCreateModal = true;
   }
 
   onEditRole(role: AdminRole): void {
+    this.openMenuId  = null;
     this.selectedRole = role;
     this.roleForm.patchValue({
       name:        role.name,
-      displayName: role.displayName,
       description: role.description || '',
-      color:       role.color || '#6c757d'
+      color:       role.color || '#6c757d',
+      level:       role.level ?? null
     });
     this.showEditModal = true;
   }
 
   onSubmitRole(): void {
-    if (this.roleForm.invalid) {
-      this.roleForm.markAllAsTouched();
-      return;
-    }
+    if (this.roleForm.invalid) { this.roleForm.markAllAsTouched(); return; }
     const data = this.roleForm.value;
     const action$ = this.showEditModal && this.selectedRole
       ? this.store.dispatch(new AdminRolesAction.UpdateRole(this.selectedRole._id, data))
       : this.store.dispatch(new AdminRolesAction.CreateRole(data));
 
     action$.pipe(takeUntil(this.destroy$)).subscribe({
-      next:  () => { this.toastr.success(this.showEditModal ? 'Rôle mis à jour' : 'Rôle créé'); this.onCloseModal(); setTimeout(() => this.loadData(), 300); },
-      error: (e) => this.toastr.error(e?.error?.message || 'Erreur lors de l\'opération')
+      next:  () => {
+        this.toastr.success(this.showEditModal ? 'Role mis a jour' : 'Role cree');
+        this.onCloseModal();
+        setTimeout(() => this.loadData(), 300);
+      },
+      error: (e) => this.toastr.error(e?.error?.message || 'Erreur')
     });
   }
 
-  // Modal state
-  showDeleteRoleModal = false;
-  showDuplicateRoleModal = false;
-  showToggleStatusModal = false;
-  duplicateRoleName = '';
-  roleToAction: AdminRole | null = null;
+  onCloseModal(): void {
+    this.showCreateModal = false;
+    this.showEditModal   = false;
+    this.selectedRole    = null;
+  }
+
+  // ==================== ROLE ACTIONS ====================
 
   onDeleteRole(role: AdminRole): void {
-    if (role.isSystem) {
-      this.toastr?.warning('Impossible de supprimer un rôle système');
-      return;
-    }
+    this.openMenuId = null;
+    if (role.isSystemRole) { this.toastr.warning('Impossible de supprimer un role systeme'); return; }
     this.roleToAction = role;
     this.showDeleteRoleModal = true;
   }
 
   confirmDeleteRole(): void {
     if (!this.roleToAction) return;
-    this.store.dispatch(new AdminRolesAction.DeleteRole(this.roleToAction._id));
+    this.store.dispatch(new AdminRolesAction.DeleteRole(this.roleToAction._id))
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next:  () => { this.toastr.success('Role supprime'); setTimeout(() => this.loadData(), 300); },
+        error: (e) => this.toastr.error(e?.error?.message || 'Erreur lors de la suppression')
+      });
     this.showDeleteRoleModal = false;
     this.roleToAction = null;
   }
 
   onToggleRoleStatus(role: AdminRole): void {
-    if (role.isSystem) {
-      this.toastr?.warning('Impossible de modifier un rôle système');
-      return;
-    }
+    this.openMenuId = null;
+    if (role.isSystemRole) { this.toastr.warning('Impossible de modifier un role systeme'); return; }
     this.roleToAction = role;
     this.showToggleStatusModal = true;
   }
 
   confirmToggleStatus(): void {
     if (!this.roleToAction) return;
-    this.store.dispatch(new AdminRolesAction.UpdateRole(this.roleToAction._id, { isActive: !this.roleToAction.isActive }));
+    this.store.dispatch(new AdminRolesAction.UpdateRole(this.roleToAction._id, { isDisabled: !this.roleToAction.isDisabled }))
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next:  () => { this.toastr.success('Statut mis a jour'); setTimeout(() => this.loadData(), 300); },
+        error: (e) => this.toastr.error(e?.error?.message || 'Erreur')
+      });
     this.showToggleStatusModal = false;
     this.roleToAction = null;
   }
 
   onDuplicateRole(role: AdminRole): void {
-    if (role.isSystem) {
-      this.toastr?.warning('Impossible de dupliquer un rôle système');
-      return;
-    }
+    this.openMenuId = null;
+    if (role.isSystemRole) { this.toastr.warning('Impossible de dupliquer un role systeme'); return; }
     this.roleToAction = role;
     this.duplicateRoleName = `${role.name}_copy`;
     this.showDuplicateRoleModal = true;
@@ -175,17 +205,17 @@ export class AdminRolesComponent implements OnInit, OnDestroy {
     this.adminRolesService.duplicateRole(this.roleToAction._id, this.duplicateRoleName)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: () => { this.loadData(); this.toastr?.success('Rôle dupliqué'); },
-        error: () => this.toastr?.error('Erreur lors de la duplication')
+        next:  () => { this.loadData(); this.toastr.success('Role duplique'); },
+        error: () => this.toastr.error('Erreur lors de la duplication')
       });
     this.showDuplicateRoleModal = false;
     this.roleToAction = null;
   }
 
   cancelRoleAction(): void {
-    this.showDeleteRoleModal = false;
+    this.showDeleteRoleModal    = false;
     this.showDuplicateRoleModal = false;
-    this.showToggleStatusModal = false;
+    this.showToggleStatusModal  = false;
     this.roleToAction = null;
   }
 
@@ -193,622 +223,194 @@ export class AdminRolesComponent implements OnInit, OnDestroy {
     this.store.dispatch(new AdminRolesAction.RefreshData());
   }
 
-  onCloseModal(): void {
-    this.showCreateModal = false;
-    this.showEditModal = false;
-    this.selectedRole = null;
+  // ==================== ROLES FILTERS ====================
+
+  getFilteredRoles(roles: AdminRole[] | null): AdminRole[] {
+    if (!roles) return [];
+    let filtered = roles;
+    if (this.roleSearchQuery) {
+      const q = this.roleSearchQuery.toLowerCase();
+      filtered = filtered.filter(r =>
+        r.name.toLowerCase().includes(q) ||
+        (r.description && r.description.toLowerCase().includes(q))
+      );
+    }
+    if (this.roleStatusFilter === 'active')   filtered = filtered.filter(r => !r.isDisabled);
+    if (this.roleStatusFilter === 'inactive') filtered = filtered.filter(r =>  r.isDisabled);
+    if (this.roleTypeFilter   === 'system')   filtered = filtered.filter(r =>  r.isSystemRole);
+    if (this.roleTypeFilter   === 'custom')   filtered = filtered.filter(r => !r.isSystemRole);
+    return filtered;
   }
 
-  onRoleCreated(): void {
-    this.onCloseModal();
-    this.loadData();
-  }
+  onClearRoleFilters(): void { this.roleSearchQuery = ''; this.roleStatusFilter = ''; this.roleTypeFilter = ''; }
+  hasActiveRoleFilters(): boolean { return !!(this.roleSearchQuery || this.roleStatusFilter || this.roleTypeFilter); }
 
-  onRoleUpdated(): void {
-    this.onCloseModal();
-    this.loadData();
-  }
+  // ==================== HELPERS ====================
 
-  getStatusColor(isActive: boolean): string {
-    return isActive ? 'success' : 'secondary';
-  }
+  getStatusLabel(isDisabled: boolean): string { return isDisabled ? 'Inactif' : 'Actif'; }
+  trackByRoleId(_i: number, r: AdminRole): string { return r._id; }
+  trackByPermissionId(_i: number, p: AdminPermission): string { return p._id; }
 
-  getStatusLabel(isActive: boolean): string {
-    return isActive ? 'Actif' : 'Inactif';
-  }
-
-  trackByRoleId(_index: number, role: AdminRole): string {
-    return role._id;
-  }
-
-  trackByPermissionId(_index: number, permission: AdminPermission): string {
-    return permission._id;
-  }
-
-  // Menu state
-  openMenuId: string | null = null;
-
-  toggleRoleMenu(roleId: string): void {
+  toggleRoleMenu(roleId: string, event: MouseEvent): void {
+    event.stopPropagation();
     this.openMenuId = this.openMenuId === roleId ? null : roleId;
   }
 
-  // Template helper methods to simplify expressions
-  shouldShowRolesEmptyState(isLoading: boolean, roles: any[]): boolean {
+  shouldShowRolesEmptyState(isLoading: boolean | null, roles: AdminRole[] | null): boolean {
     return !isLoading && (!roles || roles.length === 0);
   }
 
-  shouldShowPermissionsEmptyState(permissions: any[]): boolean {
-    return !permissions || permissions.length === 0;
+  // ==================== MATRIX ====================
+
+  isPermissionGranted(roleId: string, permissionId: string): boolean {
+    if (!this.matrixSnapshot) return false;
+    return this.matrixSnapshot.matrix?.[roleId]?.[permissionId] || false;
   }
 
-  isPermissionGranted(matrix: any, roleId: string, permissionId: string): boolean {
-    // Vérifier d'abord les changements en attente
-    if (this.pendingChanges[roleId] && this.pendingChanges[roleId][permissionId] !== undefined) {
-      return this.pendingChanges[roleId][permissionId];
-    }
-
-    // Utiliser la structure matrix si disponible
-    if (matrix.matrix && matrix.matrix[roleId]) {
-      return matrix.matrix[roleId][permissionId] || false;
-    }
-
-    // Fallback vers l'ancienne structure
-    const role = matrix.roles?.find((r: any) => r._id === roleId);
-    if (!role) return false;
-
-    return role.permissions?.some((p: any) => p._id === permissionId) || false;
-  }
-
-  // ==================== MATRIX METHODS ====================
-
-  /**
-   * Basculer le mode édition
-   */
   onToggleEditMode(): void {
     this.isEditMode = !this.isEditMode;
-    if (!this.isEditMode) {
-      // Annuler les changements en attente
-      this.pendingChanges = {};
-    }
   }
 
-  /**
-   * Basculer une permission pour un rôle
-   */
-  onPermissionToggle(roleId: string, permissionId: string, event: any): void {
+  onPermissionToggle(roleId: string, permissionId: string, event: Event): void {
+    if (!this.isEditMode) { (event.target as HTMLInputElement).checked = !((event.target as HTMLInputElement).checked); return; }
     const granted = (event.target as HTMLInputElement).checked;
+    if (!this.matrixSnapshot) return;
+    if (!this.matrixSnapshot.matrix[roleId]) this.matrixSnapshot.matrix[roleId] = {};
+    this.matrixSnapshot.matrix[roleId][permissionId] = granted;
 
-    // Mode immédiat : appliquer le changement directement
-    if (!this.isEditMode) {
-      this.applyPermissionChange(roleId, permissionId, granted);
-      return;
-    }
+    const permission = this.matrixSnapshot.permissions.find(p => p._id === permissionId);
+    if (!permission) { this.toastr.error('Permission introuvable'); return; }
 
-    // Mode édition : stocker les changements pour application en batch
-    if (!this.pendingChanges[roleId]) {
-      this.pendingChanges[roleId] = {};
-    }
-    this.pendingChanges[roleId][permissionId] = granted;
-  }
-
-  /**
-   * Appliquer un changement de permission immédiatement
-   */
-  private async applyPermissionChange(roleId: string, permissionId: string, granted: boolean): Promise<void> {
-    if (this.isApplyingChange) return;
-    try {
-      this.isApplyingChange = true;
-      const matrix = this.store.selectSnapshot(AdminRolesState.selectPermissionsMatrix);
-      if (!matrix) return;
-      const permission = matrix.permissions?.find((p: any) => p._id === permissionId);
-      if (!permission) { this.toastr.error('Permission introuvable'); return; }
-      const permissionCode = permission.code || permission.name;
-      await firstValueFrom(this.store.dispatch(new AdminRolesAction.ToggleRolePermission(roleId, permissionCode, granted)));
-      await firstValueFrom(this.store.dispatch(new AdminRolesAction.LoadPermissionsMatrix()));
-    } catch (error) {
-      this.toastr.error('Erreur lors de la modification de la permission');
-      await firstValueFrom(this.store.dispatch(new AdminRolesAction.LoadPermissionsMatrix()));
-    } finally {
-      this.isApplyingChange = false;
-    }
-  }
-
-  /**
-   * Basculer toutes les permissions pour un rôle
-   */
-  async onToggleAllPermissions(roleId: string): Promise<void> {
-    const matrix = this.store.selectSnapshot(AdminRolesState.selectPermissionsMatrix);
-    if (!matrix) return;
-
-    const hasAll = this.hasAllPermissions(matrix, roleId);
-    const targetState = !hasAll; // Si il a toutes les permissions, on les retire, sinon on les ajoute
-
-    // Mode immédiat : appliquer les changements directement
-    if (!this.isEditMode) {
-      await this.applyAllPermissionsChange(roleId, targetState);
-      return;
-    }
-
-    // Mode édition : stocker les changements pour application en batch
-    if (!this.pendingChanges[roleId]) {
-      this.pendingChanges[roleId] = {};
-    }
-
-    // Utiliser la liste des permissions directement
-    if (matrix.permissions) {
-      matrix.permissions.forEach((permission: any) => {
-        this.pendingChanges[roleId][permission._id] = targetState;
-      });
-    }
-  }
-
-  /**
-   * Appliquer le changement de toutes les permissions pour un rôle
-   */
-  private async applyAllPermissionsChange(roleId: string, granted: boolean): Promise<void> {
-    if (this.isApplyingChange) return;
-    try {
-      this.isApplyingChange = true;
-      const matrix = this.store.selectSnapshot(AdminRolesState.selectPermissionsMatrix);
-      if (!matrix?.permissions) return;
-
-      // Séquentiel pour éviter de saturer le serveur
-      for (const permission of matrix.permissions) {
-        const permissionCode = permission.code || permission.name;
-        await firstValueFrom(
-          this.store.dispatch(new AdminRolesAction.ToggleRolePermission(roleId, permissionCode, granted))
-        );
-      }
-      await firstValueFrom(this.store.dispatch(new AdminRolesAction.LoadPermissionsMatrix()));
-    } catch (error) {
-      this.toastr.error('Erreur lors de la modification des permissions');
-      await firstValueFrom(this.store.dispatch(new AdminRolesAction.LoadPermissionsMatrix()));
-    } finally {
-      this.isApplyingChange = false;
-    }
-  }
-
-  /**
-   * Vérifier si un rôle a toutes les permissions
-   */
-  hasAllPermissions(matrix: any, roleId: string): boolean {
-    if (!matrix.permissions) return false;
-
-    return matrix.permissions.every((permission: any) => {
-      return this.isPermissionGranted(matrix, roleId, permission._id);
-    });
-  }
-
-  /**
-   * Sauvegarder les changements de permissions
-   */
-  async onSavePermissions(): Promise<void> {
-    if (Object.keys(this.pendingChanges).length === 0) { this.isEditMode = false; return; }
-    this.isSaving = true;
-    try {
-      const matrix = this.store.selectSnapshot(AdminRolesState.selectPermissionsMatrix);
-      if (!matrix) return;
-      for (const roleId of Object.keys(this.pendingChanges)) {
-        for (const permissionId of Object.keys(this.pendingChanges[roleId])) {
-          const granted    = this.pendingChanges[roleId][permissionId];
-          const permission = matrix.permissions?.find((p: any) => p._id === permissionId);
-          if (!permission) continue;
-          const permissionCode = permission.code || permission.name;
-          await firstValueFrom(this.store.dispatch(new AdminRolesAction.ToggleRolePermission(roleId, permissionCode, granted)));
+    this.store.dispatch(new AdminRolesAction.ToggleRolePermission(roleId, permission.code || permission.name, granted))
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        error: () => {
+          if (this.matrixSnapshot?.matrix[roleId]) {
+            this.matrixSnapshot.matrix[roleId][permissionId] = !granted;
+          }
+          this.toastr.error('Erreur lors de la modification');
         }
-      }
+      });
+  }
+
+  async onRefreshMatrix(): Promise<void> {
+    if (this.matrixLoading) return;
+    this.matrixLoading = true;
+    try {
       await firstValueFrom(this.store.dispatch(new AdminRolesAction.LoadPermissionsMatrix()));
-      this.pendingChanges = {};
-      this.isEditMode = false;
-      this.toastr.success('Permissions sauvegardées');
-    } catch (error) {
-      this.toastr.error('Erreur lors de la sauvegarde des permissions');
+    } catch {
+      this.toastr.error('Erreur lors de l\'actualisation');
     } finally {
-      this.isSaving = false;
+      this.matrixLoading = false;
     }
   }
 
-  /**
-   * Obtenir les modules uniques (pour la matrice)
-   */
   getUniqueModules(permissions: MatrixPermission[] | undefined): string[] {
     if (!permissions) return [];
-    const modules = permissions.map(p => p.module);
-    return [...new Set(modules)].sort();
+    return [...new Set(permissions.map(p => p.module))].sort();
   }
 
-  /**
-   * Filtrer les permissions (pour la matrice)
-   */
   getFilteredPermissions(permissions: MatrixPermission[] | undefined): MatrixPermission[] {
     if (!permissions) return [];
     let filtered = permissions;
-
-    // Filtrer par module
-    if (this.selectedModule) {
-      filtered = filtered.filter(p => p.module === this.selectedModule);
-    }
-
-    // Filtrer par recherche
+    if (this.selectedModule) filtered = filtered.filter(p => p.module === this.selectedModule);
     if (this.permissionSearchTerm) {
-      const term = this.permissionSearchTerm.toLowerCase();
+      const t = this.permissionSearchTerm.toLowerCase();
       filtered = filtered.filter(p =>
-        (p.displayName && p.displayName.toLowerCase().includes(term)) ||
-        (p.code && p.code.toLowerCase().includes(term)) ||
-        p.module.toLowerCase().includes(term) ||
-        (p.category && p.category.toLowerCase().includes(term))
+        (p.displayName && p.displayName.toLowerCase().includes(t)) ||
+        (p.code && p.code.toLowerCase().includes(t)) ||
+        p.module.toLowerCase().includes(t)
       );
     }
-
     return filtered;
   }
 
-  /**
-   * Grouper les permissions par module (pour la matrice)
-   */
-  getGroupedPermissions(permissions: MatrixPermission[]): { name: string, permissions: MatrixPermission[] }[] {
-    const grouped = permissions.reduce((acc, permission) => {
-      if (!acc[permission.module]) {
-        acc[permission.module] = [];
-      }
-      acc[permission.module].push(permission);
+  getGroupedPermissions(permissions: MatrixPermission[]): { name: string; permissions: MatrixPermission[] }[] {
+    const grouped = permissions.reduce((acc, p) => {
+      if (!acc[p.module]) acc[p.module] = [];
+      acc[p.module].push(p);
       return acc;
-    }, {} as { [module: string]: MatrixPermission[] });
-
-    return Object.keys(grouped).sort().map(module => ({
-      name: module,
-      permissions: grouped[module].sort((a, b) => {
-        const nameA = a.displayName || a.name;
-        const nameB = b.displayName || b.name;
-        return nameA.localeCompare(nameB);
-      })
+    }, {} as { [m: string]: MatrixPermission[] });
+    return Object.keys(grouped).sort().map(m => ({
+      name: m,
+      permissions: grouped[m].sort((a, b) => (a.displayName || a.name).localeCompare(b.displayName || b.name))
     }));
   }
 
-  /**
-   * Filtrer par module
-   */
-  onModuleFilter(): void {
-    // La méthode getFilteredPermissions gère déjà le filtrage
-  }
-
-  /**
-   * Rechercher dans les permissions (Matrix)
-   */
-  onMatrixPermissionSearch(): void {
-    // La méthode getFilteredPermissions gère déjà la recherche
-  }
-
-  /**
-   * Obtenir les initiales d'un nom
-   */
   getInitials(name: string): string {
     if (!name) return '?';
-
-    const words = name.trim().split(' ');
-    if (words.length === 1) {
-      return words[0].charAt(0).toUpperCase();
-    }
-
-    return (words[0].charAt(0) + words[words.length - 1].charAt(0)).toUpperCase();
+    const w = name.trim().split(' ');
+    return w.length === 1 ? w[0][0].toUpperCase() : (w[0][0] + w[w.length - 1][0]).toUpperCase();
   }
 
-  /**
-   * Obtenir le nombre de changements en attente
-   */
-  getPendingChangesCount(): number {
-    let count = 0;
-    for (const roleId of Object.keys(this.pendingChanges)) {
-      count += Object.keys(this.pendingChanges[roleId]).length;
-    }
-    return count;
+  onModuleFilter(): void {}
+  onMatrixPermissionSearch(): void {}
+
+  isSystemPermission(p: AdminPermission | MatrixPermission): boolean {
+    return !!(p.isSystem || (p as any).isSystemPermission);
   }
 
-  /**
-   * Annuler tous les changements en attente
-   */
-  onCancelChanges(): void {
-    this.pendingChanges = {};
-    this.isEditMode = false;
-  }
+  // ==================== PERMISSIONS LIST (lecture seule) ====================
 
-  /**
-   * Vérifier si une permission est une permission système
-   */
-  isSystemPermission(permission: AdminPermission | MatrixPermission): boolean {
-    return permission.isSystem || (permission as any).isSystemPermission || false;
-  }
-
-  // ==================== PERMISSIONS LIST METHODS ====================
-
-  /**
-   * Obtenir les modules des permissions
-   */
   getPermissionModules(): string[] {
-    const permissions = this.store.selectSnapshot(AdminRolesState.selectPermissions) || [];
-    const modules = permissions.map(p => p.module);
-    return [...new Set(modules)].sort();
+    return [...new Set((this.store.selectSnapshot(AdminRolesState.selectPermissions) || []).map(p => p.module))].sort();
   }
 
-  /**
-   * Obtenir les permissions filtrées
-   */
   getFilteredPermissionsList(): AdminPermission[] {
-    const permissions = this.store.selectSnapshot(AdminRolesState.selectPermissions) || [];
-    let filtered = permissions;
-
-    // Filtrer par module
-    if (this.selectedPermissionModule) {
-      filtered = filtered.filter(p => p.module === this.selectedPermissionModule);
-    }
-
-    // Filtrer par type
-    if (this.selectedPermissionType) {
-      if (this.selectedPermissionType === 'system') {
-        filtered = filtered.filter(p => this.isSystemPermission(p));
-      } else if (this.selectedPermissionType === 'custom') {
-        filtered = filtered.filter(p => !this.isSystemPermission(p));
-      }
-    }
-
-    // Filtrer par recherche
+    let filtered = this.store.selectSnapshot(AdminRolesState.selectPermissions) || [];
+    if (this.selectedPermissionModule) filtered = filtered.filter(p => p.module === this.selectedPermissionModule);
+    if (this.selectedPermissionType === 'system') filtered = filtered.filter(p =>  this.isSystemPermission(p));
+    if (this.selectedPermissionType === 'custom') filtered = filtered.filter(p => !this.isSystemPermission(p));
     if (this.permissionSearchQuery) {
-      const query = this.permissionSearchQuery.toLowerCase();
+      const q = this.permissionSearchQuery.toLowerCase();
       filtered = filtered.filter(p =>
-        (p.displayName && p.displayName.toLowerCase().includes(query)) ||
-        (p.code && p.code.toLowerCase().includes(query)) ||
-        p.name.toLowerCase().includes(query) ||
-        (p.description && p.description.toLowerCase().includes(query)) ||
-        p.module.toLowerCase().includes(query) ||
-        (p.action && p.action.toLowerCase().includes(query)) ||
-        (p.resource && p.resource.toLowerCase().includes(query))
+        (p.displayName && p.displayName.toLowerCase().includes(q)) ||
+        p.name.toLowerCase().includes(q) ||
+        (p.description && p.description.toLowerCase().includes(q)) ||
+        p.module.toLowerCase().includes(q)
       );
     }
-
     return filtered;
   }
 
-  /**
-   * Grouper les permissions par module
-   */
-  getGroupedPermissionsList(): { name: string, permissions: AdminPermission[] }[] {
-    const filtered = this.getFilteredPermissionsList();
-    const grouped = filtered.reduce((acc, permission) => {
-      if (!acc[permission.module]) {
-        acc[permission.module] = [];
-      }
-      acc[permission.module].push(permission);
-      return acc;
-    }, {} as { [module: string]: AdminPermission[] });
+  getTotalPermissionsCount():  number { return (this.store.selectSnapshot(AdminRolesState.selectPermissions) || []).length; }
+  getSystemPermissionsCount(): number { return (this.store.selectSnapshot(AdminRolesState.selectPermissions) || []).filter(p => p.isSystem).length; }
+  getCustomPermissionsCount(): number { return (this.store.selectSnapshot(AdminRolesState.selectPermissions) || []).filter(p => !this.isSystemPermission(p)).length; }
 
-    return Object.keys(grouped).sort().map(module => ({
-      name: module,
-      permissions: grouped[module].sort((a, b) => {
-        const nameA = a.displayName || a.name;
-        const nameB = b.displayName || b.name;
-        return nameA.localeCompare(nameB);
-      })
-    }));
-  }
+  getPermissionDisplayName(p: AdminPermission): string { return p.displayName || p.name || 'Permission sans nom'; }
 
-  /**
-   * Obtenir le nombre de permissions système
-   */
-  getSystemPermissionsCount(): number {
-    const permissions = this.store.selectSnapshot(AdminRolesState.selectPermissions) || [];
-    return permissions.filter(p => p.isSystem).length;
-  }
-
-  /**
-   * Obtenir le nombre de permissions personnalisées
-   */
-  getCustomPermissionsCount(): number {
-    const permissions = this.store.selectSnapshot(AdminRolesState.selectPermissions) || [];
-    return permissions.filter(p => !this.isSystemPermission(p)).length;
-  }
-
-  /**
-   * Obtenir le nombre total de permissions
-   */
-  getTotalPermissionsCount(): number {
-    const permissions = this.store.selectSnapshot(AdminRolesState.selectPermissions) || [];
-    return permissions.length;
-  }
-
-
-
-  /**
-   * Obtenir le nombre de modules
-   */
-  getModulesCount(): number {
-    return this.getPermissionModules().length;
-  }
-
-
-
-  /**
-   * Obtenir le nom d'affichage d'une permission
-   */
-  getPermissionDisplayName(permission: AdminPermission): string {
-    return permission.displayName || permission.name || 'Permission sans nom';
-  }
-
-  /**
-   * Basculer l'expansion d'un module
-   */
-  toggleModuleExpansion(moduleName: string): void {
-    if (this.expandedModules.has(moduleName)) {
-      this.expandedModules.delete(moduleName);
-    } else {
-      this.expandedModules.add(moduleName);
-    }
-  }
-
-  /**
-   * Vérifier si un module est étendu
-   */
-  isModuleExpanded(moduleName: string): boolean {
-    return this.expandedModules.has(moduleName);
-  }
-
-  /**
-   * Obtenir l'icône d'un module
-   */
   getModuleIcon(moduleName: string): string {
-    const icons: { [key: string]: string } = {
-      'users': 'fas fa-users',
-      'roles': 'fas fa-user-shield',
-      'admin': 'fas fa-cogs',
-      'properties': 'fas fa-building',
-      'contracts': 'fas fa-file-contract',
-      'payments': 'fas fa-credit-card',
-      'billing': 'fas fa-receipt',
-      'geography': 'fas fa-map-marker-alt',
-      'settings': 'fas fa-sliders-h',
-      'dashboard': 'fas fa-chart-line',
-      'notifications': 'fas fa-bell',
-      'reports': 'fas fa-chart-bar'
+    const icons: { [k: string]: string } = {
+      users: 'fas fa-users', roles: 'fas fa-user-shield', admin: 'fas fa-cogs',
+      properties: 'fas fa-building', contracts: 'fas fa-file-contract',
+      payments: 'fas fa-credit-card', billing: 'fas fa-receipt',
+      settings: 'fas fa-sliders-h', dashboard: 'fas fa-chart-line',
+      notifications: 'fas fa-bell', reports: 'fas fa-chart-bar'
     };
-    return icons[moduleName.toLowerCase()] || 'fas fa-folder';
+    return icons[moduleName?.toLowerCase()] || 'fas fa-folder';
   }
 
-  /**
-   * Filtrer par module de permission
-   */
-  onPermissionModuleFilter(): void {
-    // Le filtrage est géré par getFilteredPermissionsList()
-  }
-
-  /**
-   * Filtrer par type de permission
-   */
-  onPermissionTypeFilter(): void {
-    // Le filtrage est géré par getFilteredPermissionsList()
-  }
-
-  /**
-   * Rechercher dans les permissions
-   */
-  onPermissionSearch(): void {
-    // La recherche est gérée par getFilteredPermissionsList()
-  }
-
-  /**
-   * Actualiser les permissions
-   */
   async onRefreshPermissions(): Promise<void> {
     if (this.isRefreshing) return;
     try {
       this.isRefreshing = true;
       await firstValueFrom(this.store.dispatch(new AdminRolesAction.LoadPermissions()));
     } catch {
-      this.toastr.error('Erreur lors de l\'actualisation des permissions');
+      this.toastr.error('Erreur lors de l\'actualisation');
     } finally {
       setTimeout(() => this.isRefreshing = false, 300);
     }
   }
 
-  // ==================== PERMISSIONS CRUD ====================
+  hasActiveFilters(): boolean { return !!(this.selectedPermissionModule || this.selectedPermissionType || this.permissionSearchQuery); }
+  onClearFilters(): void { this.selectedPermissionModule = ''; this.selectedPermissionType = ''; this.permissionSearchQuery = ''; }
+  onPermissionModuleFilter(): void {}
+  onPermissionTypeFilter(): void {}
+  onPermissionSearch(): void {}
 
-  showCreatePermissionModal = false;
-  showEditPermissionModal = false;
-  showDeletePermissionModal = false;
-  selectedPermission: AdminPermission | null = null;
-
-  permissionForm: FormGroup = this.fb.group({
-    name:        ['', [Validators.required, Validators.pattern(/^[a-z0-9._]+$/)]],
-    displayName: ['', Validators.required],
-    description: [''],
-    module:      ['', Validators.required],
-    action:      ['read'],
-    resource:    [''],
-    category:    ['management']
-  });
-
-  onCreatePermission(): void {
-    this.permissionForm.reset({ action: 'read', category: 'management' });
-    this.showCreatePermissionModal = true;
-  }
-
-  onViewPermission(permission: AdminPermission): void {
-    this.selectedPermission = permission;
-    this.showEditPermissionModal = true;
-    this.permissionForm.patchValue(permission);
-    this.permissionForm.disable();
-  }
-
-  onEditPermission(permission: AdminPermission): void {
-    this.selectedPermission = permission;
-    this.permissionForm.enable();
-    this.permissionForm.patchValue(permission);
-    this.showEditPermissionModal = true;
-  }
-
-  onDeletePermission(permission: AdminPermission): void {
-    if (permission.isSystem) {
-      this.toastr.warning('Impossible de supprimer une permission système');
-      return;
-    }
-    this.selectedPermission = permission;
-    this.showDeletePermissionModal = true;
-  }
-
-  submitPermission(): void {
-    if (this.permissionForm.invalid) { this.permissionForm.markAllAsTouched(); return; }
-    const data = this.permissionForm.value;
-    const action$ = this.selectedPermission
-      ? this.store.dispatch(new AdminRolesAction.UpdatePermission(this.selectedPermission._id, data))
-      : this.store.dispatch(new AdminRolesAction.CreatePermission(data));
-
-    action$.pipe(takeUntil(this.destroy$)).subscribe({
-      next:  () => { this.toastr.success(this.selectedPermission ? 'Permission mise à jour' : 'Permission créée'); this.closePermissionModal(); setTimeout(() => this.loadData(), 300); },
-      error: (e) => this.toastr.error(e?.error?.message || 'Erreur lors de l\'opération')
-    });
-  }
-
-  confirmDeletePermission(): void {
-    if (!this.selectedPermission) return;
-    const perm = this.selectedPermission;
-    this.store.dispatch(new AdminRolesAction.DeletePermission(perm._id))
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next:  () => { this.toastr.success('Permission supprimée'); this.showDeletePermissionModal = false; this.selectedPermission = null; setTimeout(() => this.loadData(), 300); },
-        error: (e) => this.toastr.error(e?.error?.message || 'Erreur lors de la suppression')
-      });
-  }
-
-  closePermissionModal(): void {
-    this.showCreatePermissionModal = false;
-    this.showEditPermissionModal = false;
-    this.showDeletePermissionModal = false;
-    this.selectedPermission = null;
-    this.permissionForm.enable();
-    this.permissionForm.reset();
-  }
-
-  /**
-   * Vérifier s'il y a des filtres actifs
-   */
-  hasActiveFilters(): boolean {
-    return !!(this.selectedPermissionModule || this.selectedPermissionType || this.permissionSearchQuery);
-  }
-
-  /**
-   * Effacer tous les filtres
-   */
-  onClearFilters(): void {
-    this.selectedPermissionModule = '';
-    this.selectedPermissionType = '';
-    this.permissionSearchQuery = '';
-  }
-
-  /**
-   * Obtenir le message d'état vide
-   */
   getEmptyStateMessage(): string {
-    if (this.hasActiveFilters()) {
-      return 'Aucune permission ne correspond aux critères de recherche. Essayez de modifier vos filtres.';
-    }
-    return 'Aucune permission n\'est disponible dans le système. Les permissions sont générées automatiquement.';
+    return this.hasActiveFilters()
+      ? 'Aucune permission ne correspond aux criteres.'
+      : 'Les permissions sont generees automatiquement au demarrage.';
   }
 }

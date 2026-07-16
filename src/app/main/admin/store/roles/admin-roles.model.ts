@@ -1,16 +1,15 @@
 export interface AdminRole {
   _id: string;
   name: string;
-  displayName: string;
   description?: string;
   color?: string;
-  isSystem: boolean;
-  isActive: boolean;
+  level?: number;
+  isSystemRole: boolean;
+  isDisabled: boolean;
+  isDeleted?: boolean;
   permissions: AdminPermission[];
-  userCount: number;
-  createdAt: Date;
-  updatedAt: Date;
-  createdBy?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface AdminPermission {
@@ -115,20 +114,20 @@ export interface MatrixPermission {
 
 export interface CreateRoleDto {
   name: string;
-  displayName: string;
   description?: string;
   color?: string;
+  level?: number;
   permissions?: string[];
-  isActive?: boolean;
+  isDisabled?: boolean;
 }
 
 export interface UpdateRoleDto {
   name?: string;
-  displayName?: string;
   description?: string;
   color?: string;
+  level?: number;
   permissions?: string[];
-  isActive?: boolean;
+  isDisabled?: boolean;
 }
 
 export interface RoleFilters {

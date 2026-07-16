@@ -181,6 +181,9 @@
               <button class="admin-btn admin-btn-outline admin-btn-sm" (click)="onEditUser(user)" title="Modifier">
                 <i class="fas fa-edit"></i>
               </button>
+              <button class="admin-btn admin-btn-outline admin-btn-sm" (click)="onOpenAssignRole(user)" title="Gérer les rôles">
+                <i class="fas fa-user-tag"></i>
+              </button>
               <button class="admin-btn admin-btn-outline admin-btn-sm" (click)="onResetPassword(user)" title="Réinitialiser mot de passe">
                 <i class="fas fa-key"></i>
               </button>
@@ -204,6 +207,9 @@
                 </button>
                 <button class="admin-btn admin-btn-outline admin-btn-sm" (click)="onEditUser(user)" title="Modifier">
                   <i class="fas fa-edit"></i>
+                </button>
+                <button class="admin-btn admin-btn-outline admin-btn-sm" (click)="onOpenAssignRole(user)" title="Gérer les rôles">
+                  <i class="fas fa-user-tag"></i>
                 </button>
                 <button class="admin-btn admin-btn-outline admin-btn-sm admin-btn-danger" (click)="onDeleteUser(user)" title="Supprimer">
                   <i class="fas fa-trash"></i>
@@ -290,6 +296,46 @@
           </select>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Modal Assignation Rôles ── -->
+<div class="admin-modal-overlay" *ngIf="showAssignRoleModal" (click)="onCancelAssignRole()">
+  <div class="admin-modal" (click)="$event.stopPropagation()" style="max-width:480px;width:100%">
+    <div class="admin-modal-header">
+      <h3><i class="fas fa-user-tag" style="color:#cc8c0a"></i> Gérer les rôles</h3>
+      <button class="admin-modal-close" (click)="onCancelAssignRole()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="admin-modal-body">
+      <p style="margin-bottom:12px;font-size:0.875rem;color:#6f6f6f">
+        Utilisateur : <strong>{{ userToAssignRole?.name }}</strong>
+      </p>
+      <div class="assign-role-list">
+        <label
+          *ngFor="let role of availableRoles"
+          class="assign-role-item"
+          [class.selected]="isRoleSelected(role.id)"
+          (click)="onRoleToggle(role.id)">
+          <span class="assign-role-check">
+            <i class="fas fa-check" *ngIf="isRoleSelected(role.id)"></i>
+          </span>
+          <span class="assign-role-name">{{ role.name }}</span>
+        </label>
+        <p *ngIf="availableRoles.length === 0" style="color:#6f6f6f;font-size:0.875rem;text-align:center;padding:16px">
+          Aucun rôle disponible
+        </p>
+      </div>
+      <p style="margin-top:10px;font-size:0.78rem;color:#6f6f6f">
+        <i class="fas fa-info-circle"></i>
+        {{ selectedRoleIds.length }} rôle(s) sélectionné(s)
+      </p>
+    </div>
+    <div class="admin-modal-footer">
+      <button type="button" class="admin-btn admin-btn-secondary" (click)="onCancelAssignRole()">Annuler</button>
+      <button type="button" class="admin-btn admin-btn-primary" (click)="onConfirmAssignRole()">
+        <i class="fas fa-save"></i> Enregistrer
+      </button>
     </div>
   </div>
 </div>

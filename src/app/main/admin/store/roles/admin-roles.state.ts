@@ -317,18 +317,11 @@ export class AdminRolesState {
   @Action(AdminRolesAction.ToggleRolePermissionSuccess)
   toggleRolePermissionSuccess(ctx: StateContext<AdminRolesStateModel>, action: AdminRolesAction.ToggleRolePermissionSuccess) {
     const state = ctx.getState();
-
-    // Mettre à jour le rôle dans la liste des rôles
     const updatedRoles = state.roles.map(role =>
       role._id === action.updatedRole._id ? action.updatedRole : role
     );
-
-    ctx.patchState({
-      roles: updatedRoles
-    });
-
-    // Recharger la matrice des permissions pour refléter les changements
-    ctx.dispatch(new AdminRolesAction.LoadPermissionsMatrix());
+    ctx.patchState({ roles: updatedRoles });
+    // Ne pas recharger la matrice ici — le composant le fait après toutes les opérations
   }
 
   @Action(AdminRolesAction.ToggleRolePermissionFailure)

@@ -78,7 +78,7 @@ export class RolesState {
 
   @Selector()
   static selectActiveRoles(state: RolesStateModel): Role[] {
-    return state.roles.filter(role => role.isActive);
+    return state.roles.filter(role => !(role as any).isDisabled);
   }
 
   @Selector()
@@ -127,12 +127,11 @@ export class RolesState {
 
     return this.rolesService.getRoles(action.filters, action.page, action.limit).pipe(
       tap(response => {
-        if (response.statusCode === 200) {
-          ctx.patchState({
-            roles: response.data.roles,
-            loading: false
-          });
-        }
+        // L'endpoint /admin/roles retourne directement un tableau AdminRole[]
+        const roles = Array.isArray(response.data)
+          ? response.data
+          : (response.data as any)?.roles ?? [];
+        ctx.patchState({ roles, loading: false });
       }),
       catchError(error => {
         ctx.patchState({
@@ -253,12 +252,11 @@ export class RolesState {
 
     return this.rolesService.getPermissions(action.filters, action.page, action.limit).pipe(
       tap(response => {
-        if (response.statusCode === 200) {
-          ctx.patchState({
-            permissions: response.data.permissions,
-            loading: false
-          });
-        }
+        // L'endpoint /admin/roles/permissions retourne directement un tableau AdminPermission[]
+        const permissions = Array.isArray(response.data)
+          ? response.data
+          : (response.data as any)?.permissions ?? [];
+        ctx.patchState({ permissions, loading: false });
       }),
       catchError(error => {
         ctx.patchState({
