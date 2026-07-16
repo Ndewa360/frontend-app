@@ -23,7 +23,16 @@ export class AdminRolesComponent implements OnInit, OnDestroy {
   stats$       = this.store.select(AdminRolesState.selectStats);
   isLoading$   = this.store.select(AdminRolesState.selectIsLoading);
 
-  matrixSnapshot: PermissionsMatrix | null = null;
+  filteredPermissions: AdminPermission[] = [];
+  totalPermissionsCount  = 0;
+  systemPermissionsCount = 0;
+  customPermissionsCount = 0;
+
+  matrix$ = this.store.select(AdminRolesState.selectPermissionsMatrix);
+
+  // Matrice locale en mode édition (copie indépendante du store)
+  localMatrix: { [roleId: string]: { [permId: string]: boolean } } | null = null;
+  matrixDirty = false;
 
   selectedTab     = 'roles';
   showCreateModal = false;
@@ -65,10 +74,12 @@ export class AdminRolesComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.initRoleForm();
     this.loadData();
-    this.store.select(AdminRolesState.selectPermissionsMatrix)
+    // Réactivité de l'onglet permissions via observable
+    this.store.select(AdminRolesState.selectPermissions)
       .pipe(takeUntil(this.destroy$))
-      .subscribe(m => {
-        this.matrixSnapshot = m ? JSON.parse(JSON.stringify(m)) : null;
+      .subscribe(permissions => {
+        this._allPermissions = permissions || [];
+        this._recomputePermissions();
       });
   }
 
@@ -96,7 +107,7 @@ export class AdminRolesComponent implements OnInit, OnDestroy {
   onTabChange(tab: string): void {
     this.selectedTab = tab;
     this.openMenuId  = null;
-    if (tab === 'matrix' && !this.matrixSnapshot) {
+    if (tab === 'matrix' && !this.store.selectSnapshot(AdminRolesState.selectPermissionsMatrix)) {
       this.store.dispatch(new AdminRolesAction.LoadPermissionsMatrix());
     }
   }
@@ -140,7 +151,7 @@ export class AdminRolesComponent implements OnInit, OnDestroy {
       next:  () => {
         this.toastr.success(this.showEditModal ? 'Role mis a jour' : 'Role cree');
         this.onCloseModal();
-        setTimeout(() => this.loadData(), 300);
+        this.store.dispatch(new AdminRolesAction.LoadRoleStats());
       },
       error: (e) => this.toastr.error(e?.error?.message || 'Erreur')
     });
@@ -166,7 +177,7 @@ export class AdminRolesComponent implements OnInit, OnDestroy {
     this.store.dispatch(new AdminRolesAction.DeleteRole(this.roleToAction._id))
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next:  () => { this.toastr.success('Role supprime'); setTimeout(() => this.loadData(), 300); },
+        next:  () => { this.toastr.success('Role supprime'); this.store.dispatch(new AdminRolesAction.LoadRoleStats()); },
         error: (e) => this.toastr.error(e?.error?.message || 'Erreur lors de la suppression')
       });
     this.showDeleteRoleModal = false;
@@ -185,7 +196,7 @@ export class AdminRolesComponent implements OnInit, OnDestroy {
     this.store.dispatch(new AdminRolesAction.UpdateRole(this.roleToAction._id, { isDisabled: !this.roleToAction.isDisabled }))
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next:  () => { this.toastr.success('Statut mis a jour'); setTimeout(() => this.loadData(), 300); },
+        next:  () => { this.toastr.success('Statut mis a jour'); },
         error: (e) => this.toastr.error(e?.error?.message || 'Erreur')
       });
     this.showToggleStatusModal = false;
@@ -205,7 +216,12 @@ export class AdminRolesComponent implements OnInit, OnDestroy {
     this.adminRolesService.duplicateRole(this.roleToAction._id, this.duplicateRoleName)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next:  () => { this.loadData(); this.toastr.success('Role duplique'); },
+        next:  (role) => {
+          const state = this.store.selectSnapshot(AdminRolesState.selectRoles);
+          this.store.dispatch(new AdminRolesAction.LoadRolesSuccess([role, ...state]));
+          this.store.dispatch(new AdminRolesAction.LoadRoleStats());
+          this.toastr.success('Role duplique');
+        },
         error: () => this.toastr.error('Erreur lors de la duplication')
       });
     this.showDuplicateRoleModal = false;
@@ -248,8 +264,10 @@ export class AdminRolesComponent implements OnInit, OnDestroy {
   // ==================== HELPERS ====================
 
   getStatusLabel(isDisabled: boolean): string { return isDisabled ? 'Inactif' : 'Actif'; }
-  trackByRoleId(_i: number, r: AdminRole): string { return r._id; }
+  trackByRoleId(_i: number, r: { _id: string }): string { return r._id; }
   trackByPermissionId(_i: number, p: AdminPermission): string { return p._id; }
+  trackByPermId(_i: number, p: MatrixPermission): string { return p._id; }
+  trackByGroupName(_i: number, g: { name: string }): string { return g.name; }
 
   toggleRoleMenu(roleId: string, event: MouseEvent): void {
     event.stopPropagation();
@@ -262,35 +280,73 @@ export class AdminRolesComponent implements OnInit, OnDestroy {
 
   // ==================== MATRIX ====================
 
-  isPermissionGranted(roleId: string, permissionId: string): boolean {
-    if (!this.matrixSnapshot) return false;
-    return this.matrixSnapshot.matrix?.[roleId]?.[permissionId] || false;
+  isPermissionGranted(matrix: PermissionsMatrix | null, roleId: string, permId: string): boolean {
+    if (this.isEditMode && this.localMatrix) return this.localMatrix[roleId]?.[permId] || false;
+    if (!matrix) return false;
+    return matrix.matrix?.[roleId]?.[permId] || false;
   }
 
-  onToggleEditMode(): void {
-    this.isEditMode = !this.isEditMode;
+  onEnterEditMode(matrix: PermissionsMatrix): void {
+    // Cloner la matrice du store dans localMatrix
+    this.localMatrix = {};
+    for (const roleId of Object.keys(matrix.matrix)) {
+      this.localMatrix[roleId] = { ...matrix.matrix[roleId] };
+    }
+    this.matrixDirty = false;
+    this.isEditMode  = true;
   }
 
-  onPermissionToggle(roleId: string, permissionId: string, event: Event): void {
-    if (!this.isEditMode) { (event.target as HTMLInputElement).checked = !((event.target as HTMLInputElement).checked); return; }
+  onCancelEdit(): void {
+    this.localMatrix = null;
+    this.matrixDirty = false;
+    this.isEditMode  = false;
+  }
+
+  onPermissionToggle(roleId: string, permId: string, event: Event): void {
+    if (!this.isEditMode || !this.localMatrix) return;
     const granted = (event.target as HTMLInputElement).checked;
-    if (!this.matrixSnapshot) return;
-    if (!this.matrixSnapshot.matrix[roleId]) this.matrixSnapshot.matrix[roleId] = {};
-    this.matrixSnapshot.matrix[roleId][permissionId] = granted;
+    if (!this.localMatrix[roleId]) this.localMatrix[roleId] = {};
+    this.localMatrix[roleId][permId] = granted;
+    this.matrixDirty = true;
+  }
 
-    const permission = this.matrixSnapshot.permissions.find(p => p._id === permissionId);
-    if (!permission) { this.toastr.error('Permission introuvable'); return; }
+  async onSaveMatrix(matrix: PermissionsMatrix): Promise<void> {
+    if (!this.localMatrix || this.isSaving) return;
+    this.isSaving = true;
 
-    this.store.dispatch(new AdminRolesAction.ToggleRolePermission(roleId, permission.code || permission.name, granted))
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        error: () => {
-          if (this.matrixSnapshot?.matrix[roleId]) {
-            this.matrixSnapshot.matrix[roleId][permissionId] = !granted;
-          }
-          this.toastr.error('Erreur lors de la modification');
-        }
-      });
+    // Identifier les rôles modifiés et construire les payloads bulk
+    const saves: Promise<void>[] = [];
+    for (const role of matrix.roles) {
+      if (role.isSystemRole) continue;
+      const original = matrix.matrix[role._id] || {};
+      const local    = this.localMatrix[role._id] || {};
+      const changed  = matrix.permissions.some(p => (original[p._id] || false) !== (local[p._id] || false));
+      if (!changed) continue;
+
+      const permIds = matrix.permissions
+        .filter(p => local[p._id])
+        .map(p => p._id);
+
+      saves.push(
+        firstValueFrom(
+          this.adminRolesService.assignPermissions(role._id, permIds)
+        ).then(() => {})
+      );
+    }
+
+    try {
+      await Promise.all(saves);
+      // Recharger la matrice depuis le serveur
+      await firstValueFrom(this.store.dispatch(new AdminRolesAction.LoadPermissionsMatrix()));
+      this.toastr.success('Permissions sauvegardées');
+      this.localMatrix = null;
+      this.matrixDirty = false;
+      this.isEditMode  = false;
+    } catch {
+      this.toastr.error('Erreur lors de la sauvegarde');
+    } finally {
+      this.isSaving = false;
+    }
   }
 
   async onRefreshMatrix(): Promise<void> {
@@ -343,7 +399,7 @@ export class AdminRolesComponent implements OnInit, OnDestroy {
     return w.length === 1 ? w[0][0].toUpperCase() : (w[0][0] + w[w.length - 1][0]).toUpperCase();
   }
 
-  onModuleFilter(): void {}
+  onModuleFilter(): void        {}
   onMatrixPermissionSearch(): void {}
 
   isSystemPermission(p: AdminPermission | MatrixPermission): boolean {
@@ -352,12 +408,10 @@ export class AdminRolesComponent implements OnInit, OnDestroy {
 
   // ==================== PERMISSIONS LIST (lecture seule) ====================
 
-  getPermissionModules(): string[] {
-    return [...new Set((this.store.selectSnapshot(AdminRolesState.selectPermissions) || []).map(p => p.module))].sort();
-  }
+  private _allPermissions: AdminPermission[] = [];
 
-  getFilteredPermissionsList(): AdminPermission[] {
-    let filtered = this.store.selectSnapshot(AdminRolesState.selectPermissions) || [];
+  private _recomputePermissions(): void {
+    let filtered = this._allPermissions;
     if (this.selectedPermissionModule) filtered = filtered.filter(p => p.module === this.selectedPermissionModule);
     if (this.selectedPermissionType === 'system') filtered = filtered.filter(p =>  this.isSystemPermission(p));
     if (this.selectedPermissionType === 'custom') filtered = filtered.filter(p => !this.isSystemPermission(p));
@@ -370,12 +424,21 @@ export class AdminRolesComponent implements OnInit, OnDestroy {
         p.module.toLowerCase().includes(q)
       );
     }
-    return filtered;
+    this.filteredPermissions      = filtered;
+    this.totalPermissionsCount    = this._allPermissions.length;
+    this.systemPermissionsCount   = this._allPermissions.filter(p => p.isSystem).length;
+    this.customPermissionsCount   = this._allPermissions.filter(p => !this.isSystemPermission(p)).length;
   }
 
-  getTotalPermissionsCount():  number { return (this.store.selectSnapshot(AdminRolesState.selectPermissions) || []).length; }
-  getSystemPermissionsCount(): number { return (this.store.selectSnapshot(AdminRolesState.selectPermissions) || []).filter(p => p.isSystem).length; }
-  getCustomPermissionsCount(): number { return (this.store.selectSnapshot(AdminRolesState.selectPermissions) || []).filter(p => !this.isSystemPermission(p)).length; }
+  getPermissionModules(): string[] {
+    return [...new Set(this._allPermissions.map(p => p.module))].sort();
+  }
+
+  getFilteredPermissionsList(): AdminPermission[] { return this.filteredPermissions; }
+
+  getTotalPermissionsCount():  number { return this.totalPermissionsCount; }
+  getSystemPermissionsCount(): number { return this.systemPermissionsCount; }
+  getCustomPermissionsCount(): number { return this.customPermissionsCount; }
 
   getPermissionDisplayName(p: AdminPermission): string { return p.displayName || p.name || 'Permission sans nom'; }
 
@@ -403,10 +466,15 @@ export class AdminRolesComponent implements OnInit, OnDestroy {
   }
 
   hasActiveFilters(): boolean { return !!(this.selectedPermissionModule || this.selectedPermissionType || this.permissionSearchQuery); }
-  onClearFilters(): void { this.selectedPermissionModule = ''; this.selectedPermissionType = ''; this.permissionSearchQuery = ''; }
-  onPermissionModuleFilter(): void {}
-  onPermissionTypeFilter(): void {}
-  onPermissionSearch(): void {}
+  onClearFilters(): void {
+    this.selectedPermissionModule = '';
+    this.selectedPermissionType   = '';
+    this.permissionSearchQuery    = '';
+    this._recomputePermissions();
+  }
+  onPermissionModuleFilter(): void { this._recomputePermissions(); }
+  onPermissionTypeFilter(): void   { this._recomputePermissions(); }
+  onPermissionSearch(): void       { this._recomputePermissions(); }
 
   getEmptyStateMessage(): string {
     return this.hasActiveFilters()

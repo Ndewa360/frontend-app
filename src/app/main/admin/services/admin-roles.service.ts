@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 
 // Models
@@ -118,19 +118,17 @@ export class AdminRolesService {
   }
 
   /**
-   * Retirer des permissions d'un rôle (mise à jour en lot sans les permissions retirées)
+   * Retirer des permissions d'un rôle via bulk update
    */
-  removePermissions(roleId: string, permissionIds: string[]): Observable<AdminRole> {
+  removePermissions(roleId: string, permissionIdsToRemove: string[]): Observable<AdminRole> {
     return this.getRoleById(roleId).pipe(
-      map(role => {
-        const remaining = (role.permissions as any[]).filter(
-          (p: any) => !permissionIds.includes(p._id || p)
-        ).map((p: any) => p._id || p);
-        return remaining;
-      }),
-      // Déléguer à updateRole avec les permissions restantes
-      // Note: utiliser directement bulkUpdatePermissions via updateRole
-    ) as any;
+      switchMap(role => {
+        const remaining = (role.permissions as any[])
+          .map((p: any) => p._id?.toString() || p.toString())
+          .filter((id: string) => !permissionIdsToRemove.includes(id));
+        return this.assignPermissions(roleId, remaining);
+      })
+    );
   }
 
   /**

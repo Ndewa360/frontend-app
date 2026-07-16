@@ -125,6 +125,8 @@
           </div>
         </div>
 
+        <ng-container *ngIf="roles$ | async as roles">
+          <ng-container *ngIf="getFilteredRoles(roles) as filteredRoles">
         <table class="admin-table">
           <thead>
             <tr>
@@ -137,7 +139,7 @@
           </thead>
 
           <tbody>
-            <tr *ngFor="let role of getFilteredRoles(roles$ | async); trackBy: trackByRoleId">
+            <tr *ngFor="let role of filteredRoles; trackBy: trackByRoleId">
               <td>
                 <div class="admin-role-info">
                   <div class="admin-role-color" [style.background-color]="role.color"></div>
@@ -197,7 +199,7 @@
           </div>
 
           <!-- Empty State -->
-          <div *ngIf="shouldShowRolesEmptyState(isLoading$ | async, roles$ | async)" class="flex flex-col items-center justify-center py-12">
+          <div *ngIf="shouldShowRolesEmptyState(isLoading$ | async, filteredRoles)" class="flex flex-col items-center justify-center py-12">
             <svg class="w-12 h-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
             </svg>
@@ -207,11 +209,13 @@
               Créer un rôle
             </button>
           </div>
-        </div>
+          </ng-container>
+        </ng-container>
       </div>
 
       <!-- Permissions Matrix -->
       <div *ngIf="selectedTab === 'matrix'" class="matrix-container">
+        <ng-container *ngIf="matrix$ | async as matrix; else matrixLoadingTpl">
 
         <!-- Header -->
         <div class="matrix-header">
@@ -220,62 +224,59 @@
               <i class="fas fa-th"></i>
               Matrice des permissions
             </h4>
-            <span class="matrix-subtitle" *ngIf="matrixSnapshot">
-              {{ matrixSnapshot.roles?.length || 0 }} roles &bull;
-              {{ getFilteredPermissions(matrixSnapshot.permissions).length }} permissions
+            <span class="matrix-subtitle">
+              {{ matrix.roles?.length || 0 }} roles &bull;
+              {{ getFilteredPermissions(matrix.permissions).length }} permissions
             </span>
           </div>
           <div class="matrix-header-right">
-            <div class="matrix-filters" *ngIf="matrixSnapshot">
+            <div class="matrix-filters">
               <div class="admin-search-input-group" style="max-width:220px">
                 <i class="fas fa-search admin-search-icon"></i>
                 <input type="text" class="admin-search-input" [(ngModel)]="permissionSearchTerm"
-                  placeholder="Rechercher...">
+                  placeholder="Rechercher..." [disabled]="isEditMode">
               </div>
-              <select class="admin-filter-select" [(ngModel)]="selectedModule">
+              <select class="admin-filter-select" [(ngModel)]="selectedModule" [disabled]="isEditMode">
                 <option value="">Tous les modules</option>
-                <option *ngFor="let mod of getUniqueModules(matrixSnapshot.permissions)" [value]="mod">
+                <option *ngFor="let mod of getUniqueModules(matrix.permissions)" [value]="mod">
                   {{ mod | titlecase }}
                 </option>
               </select>
             </div>
-            <button class="admin-btn admin-btn-secondary admin-btn-sm" (click)="onRefreshMatrix()" [disabled]="matrixLoading">
-              <i [class]="matrixLoading ? 'fas fa-spinner fa-spin' : 'fas fa-sync-alt'"></i>
-              Actualiser
-            </button>
-            <button
-              class="admin-btn admin-btn-sm"
-              [class.matrix-edit-btn-on]="isEditMode"
-              [class.matrix-edit-btn-off]="!isEditMode"
-              (click)="onToggleEditMode()"
-              [disabled]="isSaving">
-              <i [class]="isEditMode ? 'fas fa-lock-open' : 'fas fa-lock'"></i>
-              {{ isEditMode ? 'Verrouiller' : 'Modifier' }}
-            </button>
+            <ng-container *ngIf="!isEditMode">
+              <button class="admin-btn admin-btn-secondary admin-btn-sm" (click)="onRefreshMatrix()" [disabled]="matrixLoading">
+                <i [class]="matrixLoading ? 'fas fa-spinner fa-spin' : 'fas fa-sync-alt'"></i>
+                Actualiser
+              </button>
+              <button class="admin-btn admin-btn-sm matrix-edit-btn-off" (click)="onEnterEditMode(matrix)">
+                <i class="fas fa-pencil-alt"></i> Modifier
+              </button>
+            </ng-container>
+            <ng-container *ngIf="isEditMode">
+              <button class="admin-btn admin-btn-secondary admin-btn-sm" (click)="onCancelEdit()" [disabled]="isSaving">
+                <i class="fas fa-times"></i> Annuler
+              </button>
+              <button class="admin-btn admin-btn-sm matrix-edit-btn-on" (click)="onSaveMatrix(matrix)" [disabled]="isSaving || !matrixDirty">
+                <i [class]="isSaving ? 'fas fa-spinner fa-spin' : 'fas fa-save'"></i>
+                {{ isSaving ? 'Sauvegarde...' : 'Sauvegarder' }}
+              </button>
+            </ng-container>
           </div>
         </div>
 
         <!-- Edit mode banner -->
         <div class="matrix-edit-banner" *ngIf="isEditMode">
           <i class="fas fa-pencil-alt"></i>
-          Mode édition actif — cliquez sur les cases pour assigner ou retirer des permissions
-        </div>
-
-        <!-- Saving indicator -->
-        <div class="matrix-saving-bar" *ngIf="isSaving">
-          <i class="fas fa-spinner fa-spin"></i>
-          Enregistrement en cours...
+          Mode édition — cochez/décochez les cases puis cliquez sur <strong>Sauvegarder</strong>
         </div>
 
         <!-- Table -->
-        <div class="matrix-table-wrapper" *ngIf="matrixSnapshot && !matrixLoading; else matrixLoadingTpl">
+        <div class="matrix-table-wrapper">
           <table class="matrix-table">
             <thead>
               <tr>
-                <th class="matrix-perm-col">
-                  <span>Permission</span>
-                </th>
-                <th *ngFor="let role of matrixSnapshot.roles" class="matrix-role-col">
+                <th class="matrix-perm-col"><span>Permission</span></th>
+                <th *ngFor="let role of matrix.roles" class="matrix-role-col">
                   <div class="matrix-role-header">
                     <div class="matrix-role-dot" [style.background]="role.color || '#6c757d'"></div>
                     <span class="matrix-role-name" [title]="role.name">{{ role.name }}</span>
@@ -285,10 +286,9 @@
               </tr>
             </thead>
             <tbody>
-              <ng-container *ngFor="let group of getGroupedPermissions(getFilteredPermissions(matrixSnapshot.permissions))">
-                <!-- Separateur module -->
+              <ng-container *ngFor="let group of getGroupedPermissions(getFilteredPermissions(matrix.permissions)); trackBy: trackByGroupName">
                 <tr class="matrix-module-row">
-                  <td [attr.colspan]="matrixSnapshot.roles.length + 1">
+                  <td [attr.colspan]="matrix.roles.length + 1">
                     <div class="matrix-module-label">
                       <i [class]="getModuleIcon(group.name)"></i>
                       <span>{{ group.name | titlecase }}</span>
@@ -296,30 +296,27 @@
                     </div>
                   </td>
                 </tr>
-                <!-- Lignes permissions -->
-                <tr *ngFor="let perm of group.permissions" class="matrix-perm-row">
+                <tr *ngFor="let perm of group.permissions; trackBy: trackByPermId" class="matrix-perm-row">
                   <td class="matrix-perm-cell">
                     <div class="matrix-perm-info">
                       <span class="matrix-perm-name">{{ perm.displayName || perm.name }}</span>
                       <span class="matrix-perm-code">{{ perm.code || perm.name }}</span>
                     </div>
                   </td>
-                  <td *ngFor="let role of matrixSnapshot.roles" class="matrix-check-cell">
+                  <td *ngFor="let role of matrix.roles; trackBy: trackByRoleId" class="matrix-check-cell">
                     <label
                       class="matrix-checkbox-label"
                       [class.is-system]="role.isSystemRole"
-                      [class.is-checked]="isPermissionGranted(role._id, perm._id)"
-                      [class.is-readonly]="!isEditMode"
+                      [class.is-checked]="isPermissionGranted(matrix, role._id, perm._id)"
+                      [class.is-readonly]="!isEditMode || role.isSystemRole"
                       [title]="role.isSystemRole ? 'Rôle système non modifiable' : (!isEditMode ? 'Cliquez sur Modifier pour éditer' : '')">
                       <input
                         type="checkbox"
                         class="matrix-checkbox"
-                        [checked]="isPermissionGranted(role._id, perm._id)"
-                        [disabled]="role.isSystemRole || isSaving || !isEditMode"
+                        [checked]="isPermissionGranted(matrix, role._id, perm._id)"
+                        [disabled]="role.isSystemRole || !isEditMode || isSaving"
                         (change)="onPermissionToggle(role._id, perm._id, $event)">
-                      <span class="matrix-checkmark">
-                        <i class="fas fa-check"></i>
-                      </span>
+                      <span class="matrix-checkmark"><i class="fas fa-check"></i></span>
                     </label>
                   </td>
                 </tr>
@@ -328,6 +325,7 @@
           </table>
         </div>
 
+        </ng-container>
         <ng-template #matrixLoadingTpl>
           <div class="matrix-loading">
             <div class="admin-spinner" style="width:32px;height:32px;border-width:3px;margin:0 auto 1rem"></div>
@@ -423,7 +421,7 @@
           </div>
           <div class="filters-right">
             <div class="results-info">
-              <span class="results-count">{{ getFilteredPermissionsList().length }} résultat(s)</span>
+              <span class="results-count">{{ filteredPermissions.length }} résultat(s)</span>
               <button *ngIf="hasActiveFilters()" class="clear-filters" (click)="onClearFilters()">
                 <i class="fas fa-times"></i>
                 Effacer
@@ -434,6 +432,7 @@
 
         <!-- Tableau des permissions standard -->
         <div class="permissions-table-container" *ngIf="permissions$ | async as permissions; else permissionsLoading">
+          <ng-container *ngIf="getFilteredPermissionsList() as filteredPerms">
           <table class="permissions-table">
             <thead>
               <tr>
@@ -469,14 +468,14 @@
                 </th>
               <th class="col-actions">
                   <div class="th-content">
-                    <i class="fas fa-tag"></i>
-                    Type
+                    <i class="fas fa-cog"></i>
+                    Actions
                   </div>
                 </th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let permission of getFilteredPermissionsList(); trackBy: trackByPermissionId"
+              <tr *ngFor="let permission of filteredPerms; trackBy: trackByPermissionId"
                   class="permission-row"
                   [class.system-permission]="isSystemPermission(permission)"
                   [class.custom-permission]="!isSystemPermission(permission)"
@@ -551,7 +550,7 @@
           </table>
 
           <!-- État vide -->
-          <div *ngIf="getFilteredPermissionsList().length === 0" class="empty-state-standard">
+          <div *ngIf="filteredPerms.length === 0" class="empty-state-standard">
             <div class="empty-content">
               <i class="fas fa-shield-alt empty-icon"></i>
               <h4>Aucune permission trouvée</h4>
@@ -562,6 +561,7 @@
               </button>
             </div>
           </div>
+          </ng-container>
         </div>
 
         <!-- État de chargement -->

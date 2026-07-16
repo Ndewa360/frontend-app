@@ -149,6 +149,10 @@ export interface AdminRolesStateModel {
   roleUsers: { [roleId: string]: any[] };
   filters: RoleFilters;
   loading: boolean;
+  rolesLoading: boolean;
+  permissionsLoading: boolean;
+  statsLoading: boolean;
+  matrixLoading: boolean;
   error: any;
   lastUpdated: Date | null;
 }
