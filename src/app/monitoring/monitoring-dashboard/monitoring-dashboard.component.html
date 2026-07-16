@@ -99,8 +99,9 @@
     <div *ngIf="selectedTab === 'overview'" class="tab-content overview-tab">
 
       <!-- Métriques principales -->
+      <ng-container *ngIf="dashboardData$ | async as data">
       <div class="metrics-grid">
-        <div class="metric-card" *ngIf="dashboardData$ | async as data">
+        <div class="metric-card">
           <div class="metric-icon">🚨</div>
           <div class="metric-content">
             <div class="metric-value">{{ data.errorStats?.totalErrors || 0 }}</div>
@@ -108,7 +109,7 @@
           </div>
         </div>
         
-        <div class="metric-card" *ngIf="dashboardData$ | async as data">
+        <div class="metric-card">
           <div class="metric-icon">⚡</div>
           <div class="metric-content">
             <div class="metric-value">{{ data.errorStats?.recentErrors || 0 }}</div>
@@ -116,7 +117,7 @@
           </div>
         </div>
         
-        <div class="metric-card" *ngIf="dashboardData$ | async as data">
+        <div class="metric-card">
           <div class="metric-icon" [ngClass]="getServiceStatusClass(data.systemHealth?.overallStatus)">
             {{ getStatusIcon(data.systemHealth?.overallStatus) }}
           </div>
@@ -126,7 +127,7 @@
           </div>
         </div>
         
-        <div class="metric-card" *ngIf="dashboardData$ | async as data">
+        <div class="metric-card">
           <div class="metric-icon">💾</div>
           <div class="metric-content">
             <div class="metric-value">{{ data.systemHealth?.systemMetrics?.memoryUsage || 0 }}%</div>
@@ -173,7 +174,7 @@
       </div>
 
       <!-- Services système -->
-      <div class="services-section" *ngIf="dashboardData$ | async as data">
+      <div class="services-section">
         <h3>🔧 État des services</h3>
         <div class="services-grid">
           <div 
@@ -196,6 +197,7 @@
           </div>
         </div>
       </div>
+      </ng-container>
     </div>
 
     <!-- Onglet Erreurs -->

@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, Subject, timer, combineLatest } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { takeUntil, map, startWith } from 'rxjs/operators';
 import { MonitoringService } from '../../shared/services/monitoring.service';
 import {
@@ -91,35 +91,37 @@ export class MonitoringDashboardComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.initializeData();
-    this.setupAutoRefresh();
     this.loadRecentErrors();
     this.loadHealthHistory();
+    if (this.autoRefresh) {
+      this.monitoringService.startAutoRefresh();
+    }
   }
 
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
+    this.monitoringService.stopAutoRefresh();
   }
 
   // ==================== INITIALIZATION ====================
 
   private initializeData() {
-    // Charger les données initiales
     this.monitoringService.getDashboardData()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data) => {
           this.isLoading = false;
+          this.currentDashboardData = data;
           this.processChartData(data);
         },
-        error: (error) => {
+        error: () => {
           this.isLoading = false;
           this.toastr.error('Erreur lors du chargement des données', 'Monitoring');
-          console.error('Dashboard loading error:', error);
         }
       });
 
-    // Surveiller les changements de données
+    // Surveiller les mises à jour du stream (auto-refresh du service)
     this.dashboardData$
       .pipe(takeUntil(this.destroy$))
       .subscribe(data => {
@@ -130,19 +132,7 @@ export class MonitoringDashboardComponent implements OnInit, OnDestroy {
       });
   }
 
-  private setupAutoRefresh() {
-    // Auto-refresh si activé
-    timer(0, this.refreshInterval)
-      .pipe(
-        takeUntil(this.destroy$),
-        map(() => this.autoRefresh)
-      )
-      .subscribe(shouldRefresh => {
-        if (shouldRefresh) {
-          this.refreshData();
-        }
-      });
-  }
+  // setupAutoRefresh délégué au MonitoringService (opt-in via startAutoRefresh)
 
   loadRecentErrors() {
     this.recentErrors$ = this.monitoringService.getErrors({
@@ -212,16 +202,20 @@ export class MonitoringDashboardComponent implements OnInit, OnDestroy {
           this.loadHealthHistory();
           this.toastr.success('Données mises à jour', 'Monitoring');
         },
-        error: (error) => {
+        error: () => {
           this.isLoading = false;
           this.toastr.error('Erreur lors de la mise à jour', 'Monitoring');
-          console.error('Erreur lors de l\'actualisation:', error);
         }
       });
   }
 
   toggleAutoRefresh() {
     this.autoRefresh = !this.autoRefresh;
+    if (this.autoRefresh) {
+      this.monitoringService.startAutoRefresh();
+    } else {
+      this.monitoringService.stopAutoRefresh();
+    }
     const message = this.autoRefresh ? 'Auto-refresh activé' : 'Auto-refresh désactivé';
     this.toastr.info(message, 'Monitoring');
   }

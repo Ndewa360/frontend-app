@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
-import { Subject, timer } from 'rxjs';
+import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MonitoringService } from '../../shared/services/monitoring.service';
 import {
@@ -17,7 +17,6 @@ import {
 })
 export class MonitoringAnalyticsComponent implements OnInit, OnDestroy {
   @Input() set errorStats(value: ErrorStats | null) {
-    console.log('📈 ErrorStats reçu:', value);
     this._errorStats = value;
   }
   get errorStats(): ErrorStats | null {
@@ -26,7 +25,6 @@ export class MonitoringAnalyticsComponent implements OnInit, OnDestroy {
   private _errorStats: ErrorStats | null = null;
 
   @Input() set systemHealth(value: SystemHealth | null) {
-    console.log('🔧 SystemHealth reçu dans Analytics:', value);
     this._systemHealth = value;
   }
   get systemHealth(): SystemHealth | null {
@@ -69,9 +67,7 @@ export class MonitoringAnalyticsComponent implements OnInit, OnDestroy {
   constructor(private monitoringService: MonitoringService) {}
 
   ngOnInit() {
-    console.log('📈 MonitoringAnalyticsComponent initialisé');
     this.processAnalyticsData();
-    this.setupAutoRefresh();
   }
 
   ngOnDestroy() {
@@ -146,15 +142,6 @@ export class MonitoringAnalyticsComponent implements OnInit, OnDestroy {
     this.criticalErrorsCount = this.errorStats.errorsByLevel[ErrorLevel.CRITICAL] || 0;
   }
 
-  private setupAutoRefresh() {
-    // Actualiser les données toutes les 2 minutes
-    timer(0, 120000)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        this.refreshAnalytics();
-      });
-  }
-
   // ==================== ACTIONS ====================
 
   refreshAnalytics() {
@@ -176,23 +163,27 @@ export class MonitoringAnalyticsComponent implements OnInit, OnDestroy {
   }
 
   onPeriodChange() {
-    // Recharger les données pour la nouvelle période
-    this.refreshAnalytics();
+    // Recharger les données avec la période sélectionnée
+    this.isLoading = true;
+    this.monitoringService.getErrorStats()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (stats) => {
+          this.errorStats = stats;
+          this.processAnalyticsData();
+          this.isLoading = false;
+        },
+        error: () => { this.isLoading = false; }
+      });
   }
 
   // ==================== CHART EVENTS ====================
 
-  onChartSelect(event: any) {
-    console.log('Chart selection:', event);
-  }
+  onChartSelect(event: any) {}
 
-  onChartActivate(event: any) {
-    console.log('Chart activate:', event);
-  }
+  onChartActivate(event: any) {}
 
-  onChartDeactivate(event: any) {
-    console.log('Chart deactivate:', event);
-  }
+  onChartDeactivate(event: any) {}
 
   // ==================== UTILITY METHODS ====================
 

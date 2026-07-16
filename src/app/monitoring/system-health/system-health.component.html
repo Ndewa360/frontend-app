@@ -261,7 +261,10 @@
   </div>
 </div>
 
-<!-- Modal de détails de service -->
+  </ng-scrollbar>
+</div>
+
+<!-- Modal de détails de service (hors scrollbar pour éviter le clipping) -->
 <div *ngIf="showServiceDetailsModal && selectedService" class="service-details-modal">
   <div class="modal-backdrop" (click)="closeServiceDetails()"></div>
   <div class="modal-content">
@@ -307,6 +310,4 @@
       </div>
     </div>
   </div>
-    </div>
-  </ng-scrollbar>
 </div>

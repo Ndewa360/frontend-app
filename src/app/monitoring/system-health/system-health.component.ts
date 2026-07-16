@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
-import { Subject, timer } from 'rxjs';
+import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MonitoringService } from '../../shared/services/monitoring.service';
 import {
@@ -15,7 +15,6 @@ import {
 })
 export class SystemHealthComponent implements OnInit, OnDestroy {
   @Input() set systemHealth(value: SystemHealth | null) {
-    console.log('🔧 SystemHealth reçu:', value);
     this._systemHealth = value;
   }
   get systemHealth(): SystemHealth | null {
@@ -24,7 +23,6 @@ export class SystemHealthComponent implements OnInit, OnDestroy {
   private _systemHealth: SystemHealth | null = null;
 
   @Input() set healthHistory(value: any[]) {
-    console.log('📊 HealthHistory reçu:', value?.length || 0, 'entrées');
     this._healthHistory = value;
   }
   get healthHistory(): any[] {
@@ -55,9 +53,7 @@ export class SystemHealthComponent implements OnInit, OnDestroy {
   constructor(private monitoringService: MonitoringService) {}
 
   ngOnInit() {
-    console.log('🔧 SystemHealthComponent initialisé');
     this.processHealthHistory();
-    this.setupAutoRefresh();
   }
 
   ngOnDestroy() {
@@ -87,15 +83,6 @@ export class SystemHealthComponent implements OnInit, OnDestroy {
       name: new Date(h.timestamp).toLocaleTimeString(),
       value: h.responseTime || 0
     }));
-  }
-
-  private setupAutoRefresh() {
-    // Actualiser les données toutes les 30 secondes
-    timer(0, 30000)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        this.refreshHealthData();
-      });
   }
 
   // ==================== ACTIONS ====================

@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Subject, firstValueFrom } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { MonitoringService } from '../../shared/services/monitoring.service';
@@ -81,7 +81,6 @@ export class ErrorManagementComponent implements OnInit, OnDestroy {
   // ==================== DATA LOADING ====================
 
   loadErrors() {
-    console.log('🔄 Chargement des erreurs...');
     this.isLoading = true;
     const currentFilters = {
       ...this.filters,
@@ -89,25 +88,17 @@ export class ErrorManagementComponent implements OnInit, OnDestroy {
       limit: this.pageSize
     };
 
-    console.log('📋 Filtres appliqués:', currentFilters);
-
     this.monitoringService.getErrors(currentFilters)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result) => {
-          console.log('✅ Erreurs chargées:', result);
           this.errors = result.errors || [];
           this.totalErrors = result.total || 0;
           this.isLoading = false;
-
-          if (this.errors.length === 0) {
-            console.log('⚠️ Aucune erreur trouvée');
-          }
         },
         error: (error) => {
           this.isLoading = false;
           this.toastr.error('Erreur lors du chargement des erreurs', 'Monitoring');
-          console.error('❌ Erreur lors du chargement:', error);
         }
       });
   }
@@ -260,8 +251,8 @@ export class ErrorManagementComponent implements OnInit, OnDestroy {
     }
 
     if (confirm(`Êtes-vous sûr de vouloir supprimer ${this.selectedErrors.size} erreur(s) ?`)) {
-      const deletePromises = Array.from(this.selectedErrors).map(id => 
-        this.monitoringService.deleteError(id).toPromise()
+      const deletePromises = Array.from(this.selectedErrors).map(id =>
+        firstValueFrom(this.monitoringService.deleteError(id))
       );
 
       Promise.all(deletePromises)
@@ -271,7 +262,7 @@ export class ErrorManagementComponent implements OnInit, OnDestroy {
           this.errorDeleted.emit();
           this.loadErrors();
         })
-        .catch((error) => {
+        .catch(() => {
           this.toastr.error('Erreur lors de la suppression en lot', 'Monitoring');
         });
     }
