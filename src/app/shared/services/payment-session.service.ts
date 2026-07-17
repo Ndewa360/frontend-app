@@ -41,38 +41,15 @@ export class PaymentSessionService {
     return this.http.post<{ data: PaymentSessionResponse }>(`${this.api}/create`, payload);
   }
 
-  // ─── Créer session avec fallback local si backend indisponible ────────────
+  // ─── Créer session avec gestion d'erreur explicite (sans fallback non sécurisé) ────────────
+  // Le fallback token non signé a été supprimé : un token généré côté client
+  // sans signature permettrait de forger un paiement avec un montant arbitraire.
+  // Si le backend est indisponible, on propage l'erreur pour que l'UI l'affiche.
   createSessionWithFallback(
     lang: string,
     payload: CreatePaymentSessionPayload
   ): Observable<{ data: PaymentSessionResponse }> {
-    return new Observable(observer => {
-      this.http.post<{ data: PaymentSessionResponse }>(`${this.api}/create`, payload).subscribe({
-        next: (res) => {
-          observer.next(res);
-          observer.complete();
-        },
-        error: () => {
-          // Backend indisponible — générer un token local non signé (base64 uniquement)
-          // ATTENTION: ce token n'est pas sécurisé, à utiliser uniquement en dev/fallback
-          const exp = Math.floor(Date.now() / 1000) + 30 * 60;
-          const fullPayload = { ...payload, exp, iat: Math.floor(Date.now() / 1000) };
-          const header = btoa(JSON.stringify({ alg: 'none', typ: 'JWT' }))
-            .replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
-          const body = btoa(unescape(encodeURIComponent(JSON.stringify(fullPayload))))
-            .replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
-          const token = `${header}.${body}.local`;
-          observer.next({
-            data: {
-              token,
-              paymentUrl: `/${lang}/payment/${token}`,
-              expiresAt: new Date(Date.now() + 30 * 60 * 1000).toISOString()
-            }
-          });
-          observer.complete();
-        }
-      });
-    });
+    return this.http.post<{ data: PaymentSessionResponse }>(`${this.api}/create`, payload);
   }
 
   // ─── Créer et rediriger ───────────────────────────────────────────────────

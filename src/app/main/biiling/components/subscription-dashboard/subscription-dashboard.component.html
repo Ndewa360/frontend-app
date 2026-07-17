@@ -163,7 +163,7 @@
             <div class="stat-label">{{ 'SUBSCRIPTION_DASHBOARD.PROPERTIES_COUNT' | translate }}</div>
           </div>
           <div class="stat-item" *ngIf="currentSubscription.plan === 'free'">
-            <div class="stat-value">{{ currentSubscription.propertyLimit || 8 }}</div>
+            <div class="stat-value">{{ currentSubscription.propertyLimit || 5 }}</div>
             <div class="stat-label">{{ 'SUBSCRIPTION_DASHBOARD.FREE_PLAN_LIMIT' | translate }}</div>
           </div>
           <div class="stat-item" *ngIf="currentPeriod">

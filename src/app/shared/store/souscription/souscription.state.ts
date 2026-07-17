@@ -99,13 +99,11 @@ export class SouscriptionState{
         })
     }
 
-    static selectStateSouscriptionByRoomAndLocataireId(locataireId:string,roomId)
-    {
-        // Ce selector est conservé pour compatibilité mais retourne toujours null
-        // car SouscriptionModel ne contient pas de champs locataire/room
-        return createSelector([SouscriptionState],(state)=>{
-            return null;
-        })
+    static selectStateSouscriptionByRoomAndLocataireId(locataireId: string, roomId: string) {
+        // Selector supprimé : SouscriptionModel ne contient pas de champs locataire/room.
+        // Conservé uniquement pour éviter les erreurs de compilation sur les anciens appels.
+        // Retourne toujours null — ne pas utiliser dans du nouveau code.
+        return createSelector([SouscriptionState], () => null);
     }
    
     @Action(SouscriptionAction.Logout)

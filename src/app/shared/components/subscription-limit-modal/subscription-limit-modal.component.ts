@@ -140,10 +140,10 @@ export class SubscriptionLimitModalComponent implements OnInit, OnDestroy {
     switch (this.data.type) {
       case 'limit_reached':
         return this.data.limitType === 'room'
-          ? this.translate.instant('SUBSCRIPTION_MODAL.MODAL_MESSAGES.ROOM_LIMIT_MESSAGE', { limit: this.data.currentLimit || 8 })
-          : this.translate.instant('SUBSCRIPTION_MODAL.MODAL_MESSAGES.PROPERTY_LIMIT_MESSAGE', { limit: this.data.currentLimit || 8 });
+          ? this.translate.instant('SUBSCRIPTION_MODAL.MODAL_MESSAGES.ROOM_LIMIT_MESSAGE', { limit: this.data.currentLimit || 5 })
+          : this.translate.instant('SUBSCRIPTION_MODAL.MODAL_MESSAGES.PROPERTY_LIMIT_MESSAGE', { limit: this.data.currentLimit || 5 });
       case 'room_limit_reached':
-        return this.translate.instant('SUBSCRIPTION_MODAL.MODAL_MESSAGES.ROOM_LIMIT_MESSAGE', { limit: this.data.currentLimit || 8 });
+        return this.translate.instant('SUBSCRIPTION_MODAL.MODAL_MESSAGES.ROOM_LIMIT_MESSAGE', { limit: this.data.currentLimit || 5 });
       case 'account_suspended':
         return this.translate.instant('SUBSCRIPTION_MODAL.MODAL_MESSAGES.ACCOUNT_SUSPENDED_MESSAGE');
       case 'upgrade_prompt':

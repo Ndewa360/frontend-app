@@ -30,8 +30,6 @@ export class SubscriptionDashboardComponent implements OnInit, OnDestroy {
   private lang = 'fr';
 
   @Select(SouscriptionState.selectCurrentSubscription) currentSubscription$: Observable<SouscriptionModel | null>;
-  @Select(SouscriptionState.selectSubscriptionHistory) subscriptionHistory$: Observable<SouscriptionModel[]>;
-  @Select(SouscriptionState.selectLoadingHistory) loadingHistory$: Observable<boolean>;
   @Select(SouscriptionState.selectStateLoading) loading$: Observable<boolean>;
   @Select(SubscriptionPaymentState.selectStripeLoading) stripeLoading$: Observable<boolean>;
   @Select(SubscriptionPaymentState.selectStripeError) stripeError$: Observable<string | null>;
@@ -40,13 +38,13 @@ export class SubscriptionDashboardComponent implements OnInit, OnDestroy {
   @Select(SubscriptionPaymentState.selectUnpaidInvoices) unpaidInvoices$: Observable<any[]>;
 
   currentSubscription: SouscriptionModel | null = null;
-  subscriptionHistory: SouscriptionModel[] = [];
   currentPeriod: SouscriptionPeriodModel | null = null;
   loading = true;
-  loadingHistory = false;
   stripeLoading = false;
   stripeError: string | null = null;
   stripeSession: any = null;
+  subscriptionHistory: SouscriptionModel[] = [];
+  loadingHistory = false;
 
   constructor(
     private store: Store,
@@ -71,14 +69,16 @@ export class SubscriptionDashboardComponent implements OnInit, OnDestroy {
   // ─── Chargement de toutes les données ─────────────────────────────────────
 
   private loadData(): void {
+    // Groupe 1 : souscription courante + période en temps réel
     this.store.dispatch(new SouscriptionAction.FetchCurrentSubscription());
-    this.store.dispatch(new SouscriptionAction.FetchSubscriptionHistory());
-    // FetchCurrentPeriodWithDetails appelle GET /souscription-period/current-with-details
-    // qui recalcule les montants en temps reel depuis les locations reelles
     this.store.dispatch(new SouscriptionPeriodAction.FetchCurrentPeriodWithDetails());
+
+    // Groupe 2 : paiements — GetUnpaidInvoices inclut déjà totalAmount,
+    // GetPaymentStatus est redondant et supprimé
     this.store.dispatch(new SubscriptionPaymentAction.GetPaymentHistory());
     this.store.dispatch(new SubscriptionPaymentAction.GetUnpaidInvoices());
-    this.store.dispatch(new SubscriptionPaymentAction.GetPaymentStatus());
+
+    // Groupe 3 : statut limites (compteurs biens, plan, suspension)
     this.store.dispatch(new SubscriptionLimitAction.GetSubscriptionStatus());
   }
 
@@ -87,18 +87,15 @@ export class SubscriptionDashboardComponent implements OnInit, OnDestroy {
       this.currentSubscription = subscription;
     });
 
-    // Lire la periode depuis selectCurrentPeriodWithDetails
-    // alimentee par FetchCurrentPeriodWithDetails qui recalcule en temps reel
     this.store.select(SouscriptionPeriodState.selectCurrentPeriodWithDetails)
       .pipe(takeUntil(this.destroy$), filter(p => !!p))
       .subscribe(period => { this.currentPeriod = period; });
 
-    this.subscriptionHistory$.pipe(takeUntil(this.destroy$)).subscribe(history => {
+    this.loading$.pipe(takeUntil(this.destroy$)).subscribe(l => this.loading = l);
+
+    this.paymentHistory$.pipe(takeUntil(this.destroy$)).subscribe(history => {
       this.subscriptionHistory = history || [];
     });
-
-    this.loading$.pipe(takeUntil(this.destroy$)).subscribe(l => this.loading = l);
-    this.loadingHistory$.pipe(takeUntil(this.destroy$)).subscribe(l => this.loadingHistory = l);
     this.stripeLoading$.pipe(takeUntil(this.destroy$)).subscribe(l => this.stripeLoading = l);
     this.stripeError$.pipe(takeUntil(this.destroy$)).subscribe(e => this.stripeError = e);
 
@@ -107,7 +104,18 @@ export class SubscriptionDashboardComponent implements OnInit, OnDestroy {
       filter(session => !!session?.redirectUrl)
     ).subscribe(session => {
       this.stripeSession = session;
-      window.location.href = session.redirectUrl;
+      // Valider que l'URL de redirection est bien une URL relative ou appartient
+      // au domaine autorisé pour éviter les attaques open redirect
+      const redirectUrl: string = session.redirectUrl;
+      const isSafeUrl = redirectUrl.startsWith('/') ||
+        redirectUrl.startsWith(window.location.origin) ||
+        redirectUrl.includes('checkout.stripe.com') ||
+        redirectUrl.includes('ndewa-360.com');
+      if (isSafeUrl) {
+        window.location.href = redirectUrl;
+      } else {
+        console.error('Redirection bloquée : URL non autorisée', redirectUrl);
+      }
     });
   }
 
