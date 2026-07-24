@@ -194,8 +194,6 @@ const Components = [
   LandingHeaderComponent,
   LandingHeaderProfilDataComponent,
   LandingLayoutComponent,
-
-
 ]
 
 const Pipes = [

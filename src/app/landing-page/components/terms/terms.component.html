@@ -1,34 +1,308 @@
-<section class="legal-page max-w-4xl mx-auto px-6 py-12">
-  <h1 class="text-3xl font-bold mb-2">{{ 'LEGAL.TERMS.TITLE' | translate }}</h1>
-  <p class="text-sm text-gray-500 mb-8">{{ 'LEGAL.TERMS.LAST_UPDATED' | translate }}</p>
+<div class="legal-page">
 
-  <div class="legal-section mb-8">
-    <h2 class="text-xl font-semibold mb-3">{{ 'LEGAL.TERMS.SECTION_1_TITLE' | translate }}</h2>
-    <p class="text-gray-700 leading-relaxed">{{ 'LEGAL.TERMS.SECTION_1_CONTENT' | translate }}</p>
+  <div class="legal-hero">
+    <span class="legal-hero__badge">
+      <i class="fas fa-file-alt"></i>
+      Légal
+    </span>
+    <h1>Conditions Générales d'Utilisation</h1>
+    <p class="legal-hero__meta">Version 1.0 &nbsp;·&nbsp; Janvier 2025 &nbsp;·&nbsp; Ndewa360 SARL</p>
   </div>
 
-  <div class="legal-section mb-8">
-    <h2 class="text-xl font-semibold mb-3">{{ 'LEGAL.TERMS.SECTION_2_TITLE' | translate }}</h2>
-    <p class="text-gray-700 leading-relaxed">{{ 'LEGAL.TERMS.SECTION_2_CONTENT' | translate }}</p>
-  </div>
+  <div class="legal-content">
 
-  <div class="legal-section mb-8">
-    <h2 class="text-xl font-semibold mb-3">{{ 'LEGAL.TERMS.SECTION_3_TITLE' | translate }}</h2>
-    <p class="text-gray-700 leading-relaxed">{{ 'LEGAL.TERMS.SECTION_3_CONTENT' | translate }}</p>
-  </div>
+    <nav class="legal-nav">
+      <a routerLink="../privacy-policy" routerLinkActive="active"><i class="fas fa-lock"></i> Confidentialité</a>
+      <a routerLink="../terms" routerLinkActive="active"><i class="fas fa-file-alt"></i> Conditions d'utilisation</a>
+      <a routerLink="../cookies" routerLinkActive="active"><i class="fas fa-cookie-bite"></i> Cookies</a>
+    </nav>
 
-  <div class="legal-section mb-8">
-    <h2 class="text-xl font-semibold mb-3">{{ 'LEGAL.TERMS.SECTION_4_TITLE' | translate }}</h2>
-    <p class="text-gray-700 leading-relaxed">{{ 'LEGAL.TERMS.SECTION_4_CONTENT' | translate }}</p>
-  </div>
+    <div class="legal-toc">
+      <h3>Sommaire</h3>
+      <ol>
+        <li><a href="#t1">Présentation du service</a></li>
+        <li><a href="#t2">Acceptation des conditions</a></li>
+        <li><a href="#t3">Accès au service et inscription</a></li>
+        <li><a href="#t4">Plans et tarification</a></li>
+        <li><a href="#t5">Obligations de l'utilisateur</a></li>
+        <li><a href="#t6">Propriété intellectuelle</a></li>
+        <li><a href="#t7">Données et confidentialité</a></li>
+        <li><a href="#t8">Disponibilité du service</a></li>
+        <li><a href="#t9">Limitation de responsabilité</a></li>
+        <li><a href="#t10">Suspension et résiliation</a></li>
+        <li><a href="#t11">Modifications des CGU</a></li>
+        <li><a href="#t12">Droit applicable et litiges</a></li>
+        <li><a href="#t13">Contact</a></li>
+      </ol>
+    </div>
 
-  <div class="legal-section mb-8">
-    <h2 class="text-xl font-semibold mb-3">{{ 'LEGAL.TERMS.SECTION_5_TITLE' | translate }}</h2>
-    <p class="text-gray-700 leading-relaxed">{{ 'LEGAL.TERMS.SECTION_5_CONTENT' | translate }}</p>
-  </div>
+    <div class="legal-section">
+      <span class="legal-section__anchor" id="t1"></span>
+      <h2><span class="section-number">1</span><span class="section-icon"><i class="fas fa-building"></i></span> Présentation du service</h2>
+      <p>Ndewa360 est une plateforme SaaS (Software as a Service) de gestion immobilière éditée par Ndewa360 SARL (en cours de constitution), dont le siège social est situé à Tchougo, Bangangté, Région de l'Ouest, Cameroun.</p>
+      <p>La plateforme permet aux utilisateurs de :</p>
+      <ul>
+        <li>gérer des biens immobiliers (appartements, maisons, studios, villas, locaux commerciaux) ;</li>
+        <li>enregistrer et suivre des locataires ;</li>
+        <li>gérer des contrats de location et générer des documents (contrats, factures, reçus) ;</li>
+        <li>suivre les paiements de loyers et de cautions ;</li>
+        <li>accéder à des statistiques financières et des tableaux de bord ;</li>
+        <li>publier des annonces de biens disponibles à la location.</li>
+      </ul>
+      <div class="legal-callout legal-callout--warn">
+        <span class="callout-icon"><i class="fas fa-exclamation-triangle"></i></span>
+        <div class="callout-body">
+          <strong>Note</strong>
+          <p>Ndewa360 est actuellement en cours de constitution juridique. Ces conditions seront mises à jour dès l'immatriculation effective de la société.</p>
+        </div>
+      </div>
+    </div>
 
-  <div class="legal-section mb-8">
-    <h2 class="text-xl font-semibold mb-3">{{ 'LEGAL.TERMS.CONTACT_TITLE' | translate }}</h2>
-    <p class="text-gray-700 leading-relaxed">{{ 'LEGAL.TERMS.CONTACT_CONTENT' | translate }}</p>
+    <div class="legal-section">
+      <span class="legal-section__anchor" id="t2"></span>
+      <h2><span class="section-number">2</span><span class="section-icon"><i class="fas fa-check-circle"></i></span> Acceptation des conditions</h2>
+      <p>En créant un compte sur la plateforme Ndewa360 ou en utilisant ses services, vous acceptez sans réserve les présentes Conditions Générales d'Utilisation (CGU).</p>
+      <p>Si vous n'acceptez pas ces conditions, veuillez ne pas utiliser notre service.</p>
+      <div class="legal-callout legal-callout--info">
+        <span class="callout-icon"><i class="fas fa-info-circle"></i></span>
+        <div class="callout-body">
+          <strong>Capacité juridique</strong>
+          <p>En acceptant ces conditions, vous déclarez être majeur et avoir la capacité juridique de conclure un contrat. L'utilisation de la plateforme par des mineurs est strictement interdite.</p>
+        </div>
+      </div>
+      <p>Ndewa360 se réserve le droit de modifier ces conditions à tout moment. Les modifications substantielles vous seront notifiées au moins <strong>30 jours</strong> avant leur entrée en vigueur (voir <a href="#t11">section 11</a>).</p>
+    </div>
+
+    <div class="legal-section">
+      <span class="legal-section__anchor" id="t3"></span>
+      <h2><span class="section-number">3</span><span class="section-icon"><i class="fas fa-user-plus"></i></span> Accès au service et inscription</h2>
+      <h3>Création de compte</h3>
+      <p>L'accès aux fonctionnalités de la plateforme nécessite la création d'un compte. Vous pouvez vous inscrire :</p>
+      <ul>
+        <li>directement via un formulaire d'inscription (email + mot de passe) ;</li>
+        <li>via votre compte Google (Google Sign-In) — optionnel.</li>
+      </ul>
+      <h3>Exactitude des informations</h3>
+      <p>Vous vous engagez à fournir des informations exactes, complètes et à jour lors de votre inscription et tout au long de l'utilisation du service. Ndewa360 ne saurait être tenu responsable des conséquences d'informations inexactes fournies par l'utilisateur.</p>
+      <h3>Sécurité du compte</h3>
+      <p>Vous êtes seul responsable de la confidentialité de vos identifiants de connexion. Vous vous engagez à :</p>
+      <ul>
+        <li>ne pas partager vos identifiants avec des tiers ;</li>
+        <li>notifier immédiatement Ndewa360 de toute utilisation non autorisée de votre compte à l'adresse <a href="mailto:support@ndewa-360.com">support@ndewa-360.com</a>.</li>
+      </ul>
+      <h3>Confirmation de compte</h3>
+      <p>Après inscription, un email de confirmation vous est envoyé. Votre compte doit être confirmé pour accéder à l'ensemble des fonctionnalités de la plateforme.</p>
+    </div>
+
+    <div class="legal-section">
+      <span class="legal-section__anchor" id="t4"></span>
+      <h2><span class="section-number">4</span><span class="section-icon"><i class="fas fa-tags"></i></span> Plans et tarification</h2>
+
+      <h3>Plan Gratuit (Freemium)</h3>
+      <div class="legal-callout legal-callout--success">
+        <span class="callout-icon"><i class="fas fa-check-circle"></i></span>
+        <div class="callout-body">
+          <strong>Plan Gratuit — Pour toujours</strong>
+          <p>Le plan gratuit est disponible sans limite de durée et sans carte bancaire requise.</p>
+        </div>
+      </div>
+      <ul>
+        <li>Jusqu'à <strong>1 bien immobilier</strong></li>
+        <li>Jusqu'à <strong>5 unités locatives</strong> par bien</li>
+        <li>Accès à <strong>100% des fonctionnalités</strong> de la plateforme</li>
+        <li>Support par email</li>
+      </ul>
+
+      <h3>Plan Trial (Essai Premium)</h3>
+      <ul>
+        <li>Durée : <strong>60 jours</strong> à compter de l'activation</li>
+        <li>Accès illimité à tous les biens et unités locatives</li>
+        <li>Toutes les fonctionnalités Premium incluses</li>
+        <li>Aucune carte bancaire requise</li>
+        <li>À l'expiration du trial, retour automatique au plan Gratuit</li>
+      </ul>
+
+      <h3>Plan Premium</h3>
+      <ul>
+        <li>Biens immobiliers et unités locatives <strong>illimités</strong></li>
+        <li>Facturation mensuelle : <strong>2% du loyer mensuel</strong> de chaque unité occupée (minimum 15 jours dans le mois)</li>
+        <li>Unité vide = 0 FCFA facturé</li>
+        <li>Toutes les fonctionnalités de la plateforme</li>
+        <li>Support prioritaire</li>
+      </ul>
+
+      <h3>Facturation</h3>
+      <p>La facturation Premium est automatique et mensuelle. Les factures sont disponibles dans votre espace personnel. En cas de non-paiement, votre compte peut être suspendu conformément à la <a href="#t10">section 10</a>.</p>
+
+      <div class="legal-table-wrap">
+        <table>
+          <thead><tr><th>Plan</th><th>Prix</th><th>Biens</th><th>Unités par bien</th></tr></thead>
+          <tbody>
+            <tr><td>Gratuit</td><td>0 FCFA</td><td>1</td><td>5 maximum</td></tr>
+            <tr><td>Trial</td><td>0 FCFA (60 jours)</td><td>Illimité</td><td>Illimité</td></tr>
+            <tr><td>Premium</td><td>2% du loyer/unité occupée/mois</td><td>Illimité</td><td>Illimité</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
   </div>
-</section>
+</div>
+
+<div class="legal-page">
+  <div class="legal-content">
+
+    <div class="legal-section">
+      <span class="legal-section__anchor" id="t5"></span>
+      <h2><span class="section-number">5</span><span class="section-icon"><i class="fas fa-tasks"></i></span> Obligations de l'utilisateur</h2>
+      <p>En utilisant la plateforme Ndewa360, vous vous engagez à :</p>
+      <ul class="commitment-list">
+        <li>fournir des informations exactes et à jour lors de votre inscription et de l'utilisation du service ;</li>
+        <li>utiliser la plateforme uniquement à des fins légales et conformes aux présentes CGU ;</li>
+        <li>respecter les droits des tiers, notamment les droits des locataires dont vous enregistrez les données ;</li>
+        <li>maintenir la confidentialité de vos identifiants de connexion ;</li>
+        <li>informer vos locataires de l'utilisation de leurs données personnelles sur la plateforme ;</li>
+        <li>ne pas tenter de contourner les mesures de sécurité de la plateforme ;</li>
+        <li>ne pas utiliser la plateforme pour diffuser des contenus illicites, diffamatoires ou portant atteinte aux droits de tiers.</li>
+      </ul>
+      <h3>Usages interdits</h3>
+      <ul class="commitment-list">
+        <li class="no">Utiliser la plateforme à des fins frauduleuses ou illégales.</li>
+        <li class="no">Tenter d'accéder aux données d'autres utilisateurs sans autorisation.</li>
+        <li class="no">Introduire des virus, malwares ou tout code malveillant dans la plateforme.</li>
+        <li class="no">Utiliser des robots ou scripts automatisés pour accéder à la plateforme sans autorisation préalable.</li>
+        <li class="no">Revendre ou sous-licencier l'accès à la plateforme à des tiers.</li>
+      </ul>
+      <p>Tout usage abusif entraînera la suspension immédiate du compte, sans préjudice de toute action légale que Ndewa360 pourrait engager.</p>
+    </div>
+
+    <div class="legal-section">
+      <span class="legal-section__anchor" id="t6"></span>
+      <h2><span class="section-number">6</span><span class="section-icon"><i class="fas fa-copyright"></i></span> Propriété intellectuelle</h2>
+      <h3>Droits de Ndewa360</h3>
+      <p>La plateforme Ndewa360, son code source, son design, ses logos, ses marques, ses textes et l'ensemble de ses contenus sont la propriété exclusive de Ndewa360 SARL et sont protégés par les lois applicables en matière de propriété intellectuelle.</p>
+      <p>Toute reproduction, distribution, modification ou utilisation commerciale de ces éléments sans autorisation écrite préalable de Ndewa360 est strictement interdite.</p>
+      <h3>Droits de l'utilisateur sur ses données</h3>
+      <p>Vous conservez l'intégralité des droits sur les données que vous saisissez dans la plateforme (données de biens, de locataires, de paiements, contrats). Ndewa360 ne revendique aucun droit de propriété sur ces données.</p>
+      <p>En utilisant la plateforme, vous accordez à Ndewa360 une licence limitée, non exclusive et révocable pour traiter ces données dans le seul but de vous fournir les services décrits dans les présentes CGU.</p>
+    </div>
+
+    <div class="legal-section">
+      <span class="legal-section__anchor" id="t7"></span>
+      <h2><span class="section-number">7</span><span class="section-icon"><i class="fas fa-shield-alt"></i></span> Données et confidentialité</h2>
+      <p>Le traitement de vos données personnelles est régi par notre <a routerLink="../privacy-policy">Politique de Confidentialité</a>, qui fait partie intégrante des présentes CGU.</p>
+      <p>En acceptant les présentes CGU, vous reconnaissez avoir pris connaissance de notre Politique de Confidentialité et en accepter les termes.</p>
+      <div class="legal-callout legal-callout--info">
+        <span class="callout-icon"><i class="fas fa-shield-alt"></i></span>
+        <div class="callout-body">
+          <strong>Données des locataires</strong>
+          <p>En tant que propriétaire ou agence utilisant Ndewa360, vous êtes responsable du traitement des données personnelles de vos locataires. Ndewa360 agit en tant que sous-traitant. Vous êtes tenu d'informer vos locataires de l'utilisation de leurs données et de disposer d'une base légale pour ce traitement.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="legal-section">
+      <span class="legal-section__anchor" id="t8"></span>
+      <h2><span class="section-number">8</span><span class="section-icon"><i class="fas fa-server"></i></span> Disponibilité du service</h2>
+      <p>Ndewa360 s'efforce de maintenir la plateforme disponible 24h/24 et 7j/7. Cependant, Ndewa360 ne peut garantir une disponibilité sans interruption.</p>
+      <p>Des interruptions peuvent survenir pour les raisons suivantes :</p>
+      <ul>
+        <li>Maintenance planifiée (vous serez informé au préalable dans la mesure du possible)</li>
+        <li>Pannes techniques imprévues</li>
+        <li>Incidents chez nos prestataires d'hébergement</li>
+        <li>Cas de force majeure</li>
+      </ul>
+      <p>Ndewa360 ne saurait être tenu responsable des préjudices résultant d'une indisponibilité temporaire de la plateforme.</p>
+    </div>
+
+    <div class="legal-section">
+      <span class="legal-section__anchor" id="t9"></span>
+      <h2><span class="section-number">9</span><span class="section-icon"><i class="fas fa-exclamation-circle"></i></span> Limitation de responsabilité</h2>
+      <p>Dans les limites autorisées par la loi applicable, Ndewa360 ne saurait être tenu responsable :</p>
+      <ul>
+        <li>des pertes de données résultant d'une utilisation incorrecte de la plateforme par l'utilisateur ;</li>
+        <li>des préjudices indirects, consécutifs ou immatériels résultant de l'utilisation ou de l'impossibilité d'utiliser la plateforme ;</li>
+        <li>des actions ou omissions de tiers, y compris les prestataires de services de paiement ;</li>
+        <li>des litiges entre propriétaires et locataires — Ndewa360 est un outil de gestion et n'est pas partie aux contrats de location conclus via la plateforme ;</li>
+        <li>de l'exactitude des informations saisies par les utilisateurs.</li>
+      </ul>
+      <div class="legal-callout legal-callout--warn">
+        <span class="callout-icon"><i class="fas fa-exclamation-triangle"></i></span>
+        <div class="callout-body">
+          <strong>Outil de gestion uniquement</strong>
+          <p>Ndewa360 est un outil de gestion immobilière. La plateforme ne fournit pas de conseils juridiques, fiscaux ou financiers. Les contrats générés via la plateforme sont fournis à titre indicatif. Il vous appartient de vérifier leur conformité avec la législation applicable à votre situation.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="legal-page">
+  <div class="legal-content">
+
+    <div class="legal-section">
+      <span class="legal-section__anchor" id="t10"></span>
+      <h2><span class="section-number">10</span><span class="section-icon"><i class="fas fa-user-slash"></i></span> Suspension et résiliation</h2>
+      <h3>Suspension pour non-paiement</h3>
+      <p>En cas de non-paiement des factures Premium échues, Ndewa360 se réserve le droit de suspendre l'accès à votre compte. Votre compte sera automatiquement réactivé dès le règlement des factures impayées.</p>
+      <h3>Suspension pour violation des CGU</h3>
+      <p>Ndewa360 se réserve le droit de suspendre ou de résilier votre compte sans préavis en cas de :</p>
+      <ul>
+        <li>violation des présentes CGU ;</li>
+        <li>utilisation frauduleuse ou illégale de la plateforme ;</li>
+        <li>comportement portant atteinte aux droits de tiers ou à la sécurité de la plateforme.</li>
+      </ul>
+      <h3>Résiliation à l'initiative de l'utilisateur</h3>
+      <p>Vous pouvez supprimer votre compte à tout moment depuis votre espace personnel ou en contactant notre support à <a href="mailto:support@ndewa-360.com">support@ndewa-360.com</a>.</p>
+      <p>Lors de la suppression de votre compte :</p>
+      <ul>
+        <li>vos données personnelles sont supprimées conformément à notre <a routerLink="../privacy-policy">Politique de Confidentialité</a> ;</li>
+        <li>les données nécessaires à l'historique comptable peuvent être conservées conformément aux obligations légales applicables ;</li>
+        <li>les factures impayées restent dues.</li>
+      </ul>
+    </div>
+
+    <div class="legal-section">
+      <span class="legal-section__anchor" id="t11"></span>
+      <h2><span class="section-number">11</span><span class="section-icon"><i class="fas fa-pen"></i></span> Modifications des CGU</h2>
+      <p>Ndewa360 se réserve le droit de modifier les présentes CGU à tout moment. En cas de modification substantielle, vous serez informé :</p>
+      <ul>
+        <li>par email à l'adresse associée à votre compte ;</li>
+        <li>et/ou par une notification visible sur la plateforme.</li>
+      </ul>
+      <p>Cette notification sera effectuée au moins <strong>30 jours</strong> avant l'entrée en vigueur des modifications.</p>
+      <p>La poursuite de l'utilisation de la plateforme après l'entrée en vigueur des modifications vaut acceptation des nouvelles CGU. Si vous n'acceptez pas les modifications, vous pouvez supprimer votre compte avant leur entrée en vigueur.</p>
+    </div>
+
+    <div class="legal-section">
+      <span class="legal-section__anchor" id="t12"></span>
+      <h2><span class="section-number">12</span><span class="section-icon"><i class="fas fa-globe"></i></span> Droit applicable et litiges</h2>
+      <p>Les présentes CGU sont régies par le <strong>droit camerounais</strong>.</p>
+      <p>En cas de litige relatif à l'interprétation ou à l'exécution des présentes CGU, les parties s'engagent à rechercher une solution amiable avant tout recours judiciaire.</p>
+      <p>À défaut de résolution amiable dans un délai de <strong>30 jours</strong> à compter de la notification du litige, les tribunaux compétents du Cameroun seront seuls compétents pour connaître du litige.</p>
+      <div class="legal-callout legal-callout--info">
+        <span class="callout-icon"><i class="fas fa-globe"></i></span>
+        <div class="callout-body">
+          <strong>Utilisateurs résidant dans l'Union Européenne</strong>
+          <p>Pour les utilisateurs résidant dans l'Union Européenne, les dispositions impératives de protection des consommateurs prévues par la législation de leur pays de résidence restent applicables dans la mesure où elles leur confèrent une protection plus élevée que le droit camerounais.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="legal-section">
+      <span class="legal-section__anchor" id="t13"></span>
+      <h2><span class="section-number">13</span><span class="section-icon"><i class="fas fa-envelope"></i></span> Contact</h2>
+      <p>Pour toute question relative aux présentes Conditions Générales d'Utilisation :</p>
+      <div class="legal-contact-box">
+        <h3>Nous contacter</h3>
+        <p>Notre équipe répond à toutes vos questions dans un délai de 48 heures.</p>
+        <a href="mailto:support@ndewa-360.com" class="legal-contact-btn"><i class="fas fa-envelope"></i> support@ndewa-360.com</a>
+      </div>
+      <p style="margin-top:1.5rem; color:#8d8d8d; font-size:0.85rem; text-align:center;">
+        Ndewa360 SARL (en cours de constitution) &nbsp;·&nbsp; Tchougo, Bangangté, Région de l'Ouest, Cameroun
+      </p>
+    </div>
+
+  </div>
+</div>

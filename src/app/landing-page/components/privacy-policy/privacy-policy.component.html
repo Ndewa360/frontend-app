@@ -1,34 +1,476 @@
-<section class="legal-page max-w-4xl mx-auto px-6 py-12">
-  <h1 class="text-3xl font-bold mb-2">{{ 'LEGAL.PRIVACY_POLICY.TITLE' | translate }}</h1>
-  <p class="text-sm text-gray-500 mb-8">{{ 'LEGAL.PRIVACY_POLICY.LAST_UPDATED' | translate }}</p>
+<div class="legal-page">
 
-  <div class="legal-section mb-8">
-    <h2 class="text-xl font-semibold mb-3">{{ 'LEGAL.PRIVACY_POLICY.SECTION_1_TITLE' | translate }}</h2>
-    <p class="text-gray-700 leading-relaxed">{{ 'LEGAL.PRIVACY_POLICY.SECTION_1_CONTENT' | translate }}</p>
+  <div class="legal-hero">
+    <span class="legal-hero__badge">
+      <i class="fas fa-shield-alt"></i>
+      Légal
+    </span>
+    <h1>Politique de Confidentialité</h1>
+    <p class="legal-hero__meta">Version 1.0 &nbsp;·&nbsp; Janvier 2025 &nbsp;·&nbsp; Ndewa360 SARL</p>
   </div>
 
-  <div class="legal-section mb-8">
-    <h2 class="text-xl font-semibold mb-3">{{ 'LEGAL.PRIVACY_POLICY.SECTION_2_TITLE' | translate }}</h2>
-    <p class="text-gray-700 leading-relaxed">{{ 'LEGAL.PRIVACY_POLICY.SECTION_2_CONTENT' | translate }}</p>
-  </div>
+  <div class="legal-content">
 
-  <div class="legal-section mb-8">
-    <h2 class="text-xl font-semibold mb-3">{{ 'LEGAL.PRIVACY_POLICY.SECTION_3_TITLE' | translate }}</h2>
-    <p class="text-gray-700 leading-relaxed">{{ 'LEGAL.PRIVACY_POLICY.SECTION_3_CONTENT' | translate }}</p>
-  </div>
+    <nav class="legal-nav">
+      <a routerLink="../privacy-policy" routerLinkActive="active"><i class="fas fa-lock"></i> Confidentialité</a>
+      <a routerLink="../terms" routerLinkActive="active"><i class="fas fa-file-alt"></i> Conditions d'utilisation</a>
+      <a routerLink="../cookies" routerLinkActive="active"><i class="fas fa-cookie-bite"></i> Cookies</a>
+    </nav>
 
-  <div class="legal-section mb-8">
-    <h2 class="text-xl font-semibold mb-3">{{ 'LEGAL.PRIVACY_POLICY.SECTION_4_TITLE' | translate }}</h2>
-    <p class="text-gray-700 leading-relaxed">{{ 'LEGAL.PRIVACY_POLICY.SECTION_4_CONTENT' | translate }}</p>
-  </div>
+    <div class="legal-toc">
+      <h3>Sommaire</h3>
+      <ol>
+        <li><a href="#s1">Qui sommes-nous ?</a></li>
+        <li><a href="#s2">Champ d'application</a></li>
+        <li><a href="#s3">Données collectées</a></li>
+        <li><a href="#s4">Bases légales et finalités</a></li>
+        <li><a href="#s5">Données provenant de Google</a></li>
+        <li><a href="#s6">Comment nous utilisons vos données</a></li>
+        <li><a href="#s7">Partage de vos données</a></li>
+        <li><a href="#s8">Cookies</a></li>
+        <li><a href="#s9">Sous-traitants et transferts</a></li>
+        <li><a href="#s10">Sécurité</a></li>
+        <li><a href="#s11">Durées de conservation</a></li>
+        <li><a href="#s12">Vos droits</a></li>
+        <li><a href="#s13">Données des locataires</a></li>
+        <li><a href="#s14">Modifications</a></li>
+        <li><a href="#s15">Contact</a></li>
+      </ol>
+    </div>
 
-  <div class="legal-section mb-8">
-    <h2 class="text-xl font-semibold mb-3">{{ 'LEGAL.PRIVACY_POLICY.SECTION_5_TITLE' | translate }}</h2>
-    <p class="text-gray-700 leading-relaxed">{{ 'LEGAL.PRIVACY_POLICY.SECTION_5_CONTENT' | translate }}</p>
-  </div>
+    <div class="legal-section">
+      <span class="legal-section__anchor" id="s1"></span>
+      <h2><span class="section-number">1</span><span class="section-icon"><i class="fas fa-building"></i></span> Qui sommes-nous ?</h2>
+      <p>Ndewa360 est une plateforme SaaS de gestion immobilière permettant aux propriétaires, agences immobilières et locataires de gérer des biens, des contrats de location, des paiements et des documents associés.</p>
+      <div class="legal-table-wrap">
+        <table>
+          <thead><tr><th>Élément</th><th>Valeur</th></tr></thead>
+          <tbody>
+            <tr><td>Dénomination sociale</td><td>Ndewa360 SARL <em>(en cours de constitution)</em></td></tr>
+            <tr><td>Forme juridique</td><td>Société à Responsabilité Limitée (SARL)</td></tr>
+            <tr><td>Numéro RCCM</td><td><em>En cours d'obtention</em></td></tr>
+            <tr><td>Siège social</td><td>Tchougo, Bangangté, Région de l'Ouest, Cameroun</td></tr>
+            <tr><td>Email de contact</td><td><a href="mailto:support@ndewa-360.com">support@ndewa-360.com</a></td></tr>
+            <tr><td>Site web</td><td>ndewa-360.com</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="legal-callout legal-callout--warn">
+        <span class="callout-icon"><i class="fas fa-exclamation-triangle"></i></span>
+        <div class="callout-body">
+          <strong>Note</strong>
+          <p>Ndewa360 est actuellement en cours de constitution juridique. Cette politique sera mise à jour dès l'immatriculation effective de la société.</p>
+        </div>
+      </div>
+    </div>
 
-  <div class="legal-section mb-8">
-    <h2 class="text-xl font-semibold mb-3">{{ 'LEGAL.PRIVACY_POLICY.CONTACT_TITLE' | translate }}</h2>
-    <p class="text-gray-700 leading-relaxed">{{ 'LEGAL.PRIVACY_POLICY.CONTACT_CONTENT' | translate }}</p>
+    <div class="legal-section">
+      <span class="legal-section__anchor" id="s2"></span>
+      <h2><span class="section-number">2</span><span class="section-icon"><i class="fas fa-globe"></i></span> Champ d'application</h2>
+      <p>La présente Politique de Confidentialité s'applique à :</p>
+      <ul>
+        <li>toutes les personnes qui créent un compte sur la plateforme Ndewa360 ;</li>
+        <li>toutes les personnes qui utilisent les services Ndewa360 (propriétaires, agences immobilières, locataires enregistrés) ;</li>
+        <li>toutes les personnes qui visitent le site web ndewa-360.com.</li>
+      </ul>
+      <div class="legal-callout legal-callout--info">
+        <span class="callout-icon"><i class="fas fa-info-circle"></i></span>
+        <div class="callout-body">
+          <strong>Utilisateurs concernés</strong>
+          <p>La plateforme est exclusivement destinée aux personnes majeures. L'inscription de mineurs est strictement interdite.</p>
+        </div>
+      </div>
+      <h3>Portée géographique</h3>
+      <p>Ndewa360 est principalement destinée aux utilisateurs situés au Cameroun et, progressivement, à l'ensemble du continent africain. Elle est également accessible aux membres de la diaspora africaine résidant à l'étranger, notamment en Europe, qui gèrent des biens immobiliers situés au Cameroun.</p>
+      <h3>Droit applicable</h3>
+      <p>La présente politique est régie par la <strong>loi camerounaise n°2024/017 du 23 décembre 2024</strong> relative à la protection des données à caractère personnel. Pour les utilisateurs résidant dans l'Union Européenne, Ndewa360 s'engage à respecter les principes fondamentaux du <strong>RGPD</strong> dans la mesure où ils renforcent la protection des utilisateurs sans contredire la loi camerounaise applicable.</p>
+    </div>
+
+    <div class="legal-section">
+      <span class="legal-section__anchor" id="s3"></span>
+      <h2><span class="section-number">3</span><span class="section-icon"><i class="fas fa-database"></i></span> Données collectées</h2>
+      <h3>3.1 Données fournies directement par l'utilisateur</h3>
+      <p><strong>Données de compte :</strong></p>
+      <ul>
+        <li>Nom complet</li>
+        <li>Adresse email</li>
+        <li>Numéro de téléphone</li>
+        <li>Photo de profil (optionnelle)</li>
+        <li>Mot de passe (stocké sous forme hachée)</li>
+      </ul>
+      <p><strong>Données relatives aux biens immobiliers :</strong></p>
+      <ul>
+        <li>Nom, description et adresse complète du bien</li>
+        <li>Type de bien, surface, nombre d'étages, année de construction</li>
+        <li>État du bien et équipements</li>
+        <li>Valeur d'acquisition, valeur actuelle estimée</li>
+        <li>Fourchette de loyers, charges, frais de gestion, taxe foncière, assurance</li>
+      </ul>
+      <p><strong>Données relatives aux locataires :</strong></p>
+      <ul>
+        <li>Nom complet, adresse email (optionnelle), numéro de téléphone</li>
+        <li>Numéro de pièce d'identité (CNI, passeport ou permis) — le document lui-même n'est pas collecté</li>
+        <li>Date de naissance, nationalité, profession (optionnelles)</li>
+        <li>Nom et coordonnées d'un contact d'urgence (optionnel)</li>
+      </ul>
+      <p><strong>Données financières et contractuelles :</strong></p>
+      <ul>
+        <li>Montants des loyers et des cautions</li>
+        <li>Historique des paiements (montant, date, méthode, référence)</li>
+        <li>Contrats de location générés sur la plateforme</li>
+        <li>Données de facturation liées à l'abonnement Ndewa360</li>
+      </ul>
+      <h3>3.2 Données collectées automatiquement</h3>
+      <p><strong>Données de navigation :</strong></p>
+      <ul>
+        <li>Pages visitées, fonctionnalités utilisées, durée des sessions</li>
+        <li>Type de navigateur, système d'exploitation, résolution d'écran</li>
+        <li>Ces données sont collectées via Google Analytics (voir section 8)</li>
+      </ul>
+      <p><strong>Logs de connexion :</strong></p>
+      <ul>
+        <li>Date et heure de connexion</li>
+        <li>Identifiant de session</li>
+      </ul>
+      <div class="legal-callout legal-callout--info">
+        <span class="callout-icon"><i class="fas fa-info-circle"></i></span>
+        <div class="callout-body">
+          <strong>Adresse IP</strong>
+          <p>Ndewa360 ne collecte pas l'adresse IP de ses utilisateurs.</p>
+        </div>
+      </div>
+      <h3>3.3 Données obtenues via Google Sign-In</h3>
+      <p>Lorsque vous choisissez de vous connecter via Google, nous recevons les données suivantes, sous réserve de votre consentement explicite accordé sur l'interface Google :</p>
+      <ul>
+        <li>Adresse email associée à votre compte Google</li>
+        <li>Nom complet tel qu'enregistré dans votre compte Google</li>
+        <li>Identifiant unique Google (Google ID)</li>
+        <li>Photo de profil (URL de l'image hébergée par Google)</li>
+      </ul>
+    </div>
+
+    <div class="legal-section">
+      <span class="legal-section__anchor" id="s4"></span>
+      <h2><span class="section-number">4</span><span class="section-icon"><i class="fas fa-balance-scale"></i></span> Bases légales et finalités de la collecte</h2>
+      <div class="legal-table-wrap">
+        <table>
+          <thead><tr><th>Catégorie de données</th><th>Base légale</th><th>Finalité</th></tr></thead>
+          <tbody>
+            <tr><td>Données de compte</td><td>Exécution du contrat de service</td><td>Création et gestion de votre compte, authentification</td></tr>
+            <tr><td>Données de biens immobiliers</td><td>Exécution du contrat de service</td><td>Fonctionnement des fonctionnalités de gestion immobilière</td></tr>
+            <tr><td>Données des locataires</td><td>Exécution du contrat / Intérêt légitime du propriétaire</td><td>Gestion des contrats de location, suivi des paiements</td></tr>
+            <tr><td>Données financières</td><td>Exécution du contrat / Obligation légale</td><td>Facturation, suivi des paiements, historique comptable</td></tr>
+            <tr><td>Données Google Sign-In</td><td>Consentement explicite</td><td>Authentification simplifiée via Google</td></tr>
+            <tr><td>Données Google Analytics</td><td>Consentement (bandeau cookies)</td><td>Amélioration de la plateforme, analyse d'audience</td></tr>
+            <tr><td>Logs de connexion</td><td>Intérêt légitime (sécurité)</td><td>Détection de fraudes, sécurité du compte</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
   </div>
-</section>
+</div>
+
+<!-- SECTIONS 5-8 -->
+<div class="legal-page">
+  <div class="legal-content">
+
+    <div class="legal-section">
+      <span class="legal-section__anchor" id="s5"></span>
+      <h2><span class="section-number">5</span><span class="section-icon"><i class="fab fa-google"></i></span> Utilisation des données provenant de Google</h2>
+      <div class="legal-callout legal-callout--info">
+        <span class="callout-icon"><i class="fab fa-google"></i></span>
+        <div class="callout-body">
+          <strong>Section dédiée à la conformité Google</strong>
+          <p>Cette section répond explicitement aux exigences de la <em>Google API Services User Data Policy</em> et des <em>Google APIs Terms of Service</em>.</p>
+        </div>
+      </div>
+      <h3>5.1 Données accédées (Data Accessed)</h3>
+      <p>Nous demandons uniquement les permissions (scopes) suivantes :</p>
+      <div class="legal-table-wrap">
+        <table>
+          <thead><tr><th>Scope Google</th><th>Données accédées</th><th>Raison</th></tr></thead>
+          <tbody>
+            <tr><td><span class="scope-badge">openid</span></td><td>Confirmation de votre identité Google</td><td>Authentification sécurisée</td></tr>
+            <tr><td><span class="scope-badge">email</span></td><td>Votre adresse email Google</td><td>Identification de votre compte Ndewa360</td></tr>
+            <tr><td><span class="scope-badge">profile</span></td><td>Votre nom complet et photo de profil</td><td>Pré-remplissage de votre profil Ndewa360</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="legal-callout legal-callout--success">
+        <span class="callout-icon"><i class="fas fa-check-circle"></i></span>
+        <div class="callout-body">
+          <strong>Principe de minimisation</strong>
+          <p>Nous ne demandons que les permissions strictement nécessaires à l'authentification. Nous n'accédons pas à vos emails, agenda, contacts, fichiers Google Drive, ni à aucune autre ressource Google.</p>
+        </div>
+      </div>
+      <h3>5.2 Utilisation des données (Data Usage)</h3>
+      <p>Les données reçues de Google sont utilisées <strong>exclusivement</strong> pour :</p>
+      <ul>
+        <li>créer votre compte Ndewa360 lors de votre première connexion via Google ;</li>
+        <li>vous authentifier lors de vos connexions ultérieures ;</li>
+        <li>pré-remplir votre nom et votre photo de profil dans votre espace personnel.</li>
+      </ul>
+      <ul class="commitment-list">
+        <li class="no">Les données Google ne sont pas utilisées à des fins publicitaires.</li>
+        <li class="no">Les données Google ne sont pas vendues à des tiers.</li>
+        <li class="no">Les données Google ne servent pas au profilage comportemental ou commercial.</li>
+        <li class="no">Les données Google ne servent pas à entraîner des modèles d'intelligence artificielle.</li>
+        <li class="no">Les données Google ne sont pas utilisées en violation de la Google API Services User Data Policy.</li>
+      </ul>
+      <p>L'utilisation est conforme à la <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener">Google API Services User Data Policy</a>.</p>
+      <h3>5.3 Partage des données (Data Sharing)</h3>
+      <p>Les données reçues de Google <strong>ne sont pas partagées</strong> avec des tiers, à l'exception des sous-traitants techniques listés à la <a href="#s9">section 9</a>.</p>
+      <h3>5.4 Stockage et protection (Data Storage and Protection)</h3>
+      <p>Les données reçues de Google sont stockées dans notre base de données MongoDB Atlas, région <strong>Europe — Paris, France</strong>. Les mesures de sécurité sont décrites à la <a href="#s10">section 10</a>.</p>
+      <h3>5.5 Conservation et suppression (Data Retention and Deletion)</h3>
+      <p>Les données Google sont conservées aussi longtemps que votre compte est actif. Lors de la suppression de votre compte, votre email Google, nom, Google ID et URL de photo de profil sont supprimés de notre base de données.</p>
+      <div class="legal-callout legal-callout--info">
+        <span class="callout-icon"><i class="fas fa-shield-alt"></i></span>
+        <div class="callout-body">
+          <strong>Refresh token</strong>
+          <p>Ndewa360 ne stocke pas de refresh token Google. Vous pouvez révoquer l'accès accordé à Ndewa360 depuis : <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener">myaccount.google.com/permissions</a></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="legal-section">
+      <span class="legal-section__anchor" id="s6"></span>
+      <h2><span class="section-number">6</span><span class="section-icon"><i class="fas fa-cogs"></i></span> Comment nous utilisons vos données</h2>
+      <h3>Fourniture du service</h3>
+      <ul>
+        <li>Créer et gérer votre compte</li>
+        <li>Vous permettre de gérer vos biens, locataires, contrats et paiements</li>
+        <li>Générer des documents (contrats, factures, reçus)</li>
+        <li>Vous envoyer des notifications relatives à votre compte et à vos biens</li>
+      </ul>
+      <h3>Amélioration du service</h3>
+      <ul>
+        <li>Analyser l'utilisation de la plateforme via Google Analytics afin d'améliorer les fonctionnalités</li>
+      </ul>
+      <h3>Sécurité</h3>
+      <ul>
+        <li>Détecter et prévenir les accès non autorisés</li>
+        <li>Maintenir les logs de connexion à des fins de sécurité</li>
+      </ul>
+      <h3>Ce que nous ne faisons pas</h3>
+      <ul class="commitment-list">
+        <li class="no">Nous ne vendons pas vos données personnelles.</li>
+        <li class="no">Nous n'utilisons pas vos données à des fins publicitaires.</li>
+        <li class="no">Nous ne créons pas de profils comportementaux à des fins commerciales.</li>
+        <li class="no">Nous n'utilisons pas vos données pour entraîner des modèles d'intelligence artificielle.</li>
+      </ul>
+    </div>
+
+    <div class="legal-section">
+      <span class="legal-section__anchor" id="s7"></span>
+      <h2><span class="section-number">7</span><span class="section-icon"><i class="fas fa-share-alt"></i></span> Partage de vos données</h2>
+      <p>Ndewa360 ne partage vos données personnelles avec des tiers que dans les cas suivants :</p>
+      <h3>Sous-traitants techniques</h3>
+      <p>Nous faisons appel à des prestataires techniques pour assurer le fonctionnement de la plateforme (voir <a href="#s9">section 9</a>). Ces prestataires n'ont accès qu'aux données strictement nécessaires à leur mission.</p>
+      <h3>Obligations légales</h3>
+      <p>Nous pouvons être amenés à communiquer vos données aux autorités compétentes si la loi nous y oblige ou si une décision judiciaire l'exige.</p>
+      <h3>Transfert d'entreprise</h3>
+      <p>En cas de fusion, acquisition ou cession d'actifs, vos données pourraient être transférées. Vous en seriez informé au préalable.</p>
+      <ul class="commitment-list">
+        <li class="no">Nous ne vendons pas vos données.</li>
+        <li class="no">Nous ne partageons pas vos données avec des annonceurs.</li>
+        <li class="no">Nous ne partageons pas vos données avec des partenaires commerciaux à des fins de marketing.</li>
+      </ul>
+    </div>
+
+    <div class="legal-section">
+      <span class="legal-section__anchor" id="s8"></span>
+      <h2><span class="section-number">8</span><span class="section-icon"><i class="fas fa-cookie-bite"></i></span> Cookies</h2>
+      <p>Pour une information complète, consultez notre <a routerLink="../cookies">Politique de Cookies dédiée</a>.</p>
+      <h3>Résumé</h3>
+      <div class="legal-table-wrap">
+        <table>
+          <thead><tr><th>Type</th><th>Exemple</th><th>Consentement requis</th></tr></thead>
+          <tbody>
+            <tr><td>Cookies strictement nécessaires</td><td>Session d'authentification (JWT)</td><td>Non — indispensables au service</td></tr>
+            <tr><td>Cookies analytiques</td><td>Google Analytics</td><td>Oui — via bandeau de consentement</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="action-required">
+        <strong>Action en cours :</strong> Un bandeau de gestion des cookies sera mis en place prochainement.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- SECTIONS 9-12 -->
+<div class="legal-page">
+  <div class="legal-content">
+
+    <div class="legal-section">
+      <span class="legal-section__anchor" id="s9"></span>
+      <h2><span class="section-number">9</span><span class="section-icon"><i class="fas fa-cloud"></i></span> Sous-traitants et transferts internationaux</h2>
+      <div class="legal-table-wrap">
+        <table>
+          <thead><tr><th>Prestataire</th><th>Rôle</th><th>Localisation des données</th><th>Politique de confidentialité</th></tr></thead>
+          <tbody>
+            <tr><td>Contabo GmbH</td><td>Hébergement du serveur backend</td><td>Allemagne (UE)</td><td><a href="https://contabo.com/en/legal/privacy/" target="_blank" rel="noopener">contabo.com</a></td></tr>
+            <tr><td>MongoDB Atlas</td><td>Hébergement de la base de données</td><td>Paris, France (UE)</td><td><a href="https://www.mongodb.com/legal/privacy-policy" target="_blank" rel="noopener">mongodb.com</a></td></tr>
+            <tr><td>Google Cloud Storage</td><td>Stockage des fichiers (photos, documents)</td><td>africa-south1 — Johannesburg</td><td><a href="https://cloud.google.com/terms/cloud-privacy-notice" target="_blank" rel="noopener">cloud.google.com</a></td></tr>
+            <tr><td>Google LLC</td><td>Authentification Google Sign-In, Google Analytics</td><td>États-Unis / mondial</td><td><a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com</a></td></tr>
+            <tr><td>Mailgun (Sinch)</td><td>Envoi d'emails transactionnels</td><td>États-Unis</td><td><a href="https://www.mailgun.com/legal/privacy-policy/" target="_blank" rel="noopener">mailgun.com</a></td></tr>
+            <tr><td>Easy Transact</td><td>Paiements mobiles (Orange Money, MTN Mobile Money)</td><td>À compléter</td><td>À compléter</td></tr>
+            <tr><td>Stripe</td><td>Paiements par carte bancaire (non encore actif)</td><td>États-Unis / Europe</td><td><a href="https://stripe.com/fr/privacy" target="_blank" rel="noopener">stripe.com</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>Transferts internationaux</h3>
+      <p>Certains de nos sous-traitants sont établis ou stockent des données en dehors du Cameroun, notamment aux États-Unis et en Europe. Ces transferts sont encadrés par les politiques de confidentialité et les certifications de chaque prestataire.</p>
+      <p>Pour les utilisateurs résidant dans l'Union Européenne, les transferts vers des pays tiers sont encadrés par les mécanismes appropriés prévus par le RGPD (clauses contractuelles types, décisions d'adéquation).</p>
+      <div class="action-required">
+        <strong>Action requise :</strong> Vérifier auprès d'Easy Transact les conditions de traitement et de localisation des données, et obtenir un accord de traitement des données (DPA) si nécessaire.
+      </div>
+    </div>
+
+    <div class="legal-section">
+      <span class="legal-section__anchor" id="s10"></span>
+      <h2><span class="section-number">10</span><span class="section-icon"><i class="fas fa-shield-alt"></i></span> Sécurité de vos données</h2>
+      <h3>Mesures en place</h3>
+      <ul class="commitment-list">
+        <li>Chiffrement des communications via le protocole HTTPS (TLS)</li>
+        <li>Hachage des mots de passe avec l'algorithme bcrypt</li>
+        <li>Authentification par token envoyé par email pour la confirmation de compte</li>
+        <li>Accès aux données restreint aux seuls membres de l'équipe qui en ont besoin</li>
+      </ul>
+      <h3>Mesures en cours d'implémentation</h3>
+      <div class="action-required">
+        <strong>Authentification à deux facteurs (2FA) :</strong> non disponible actuellement — prévu dans une prochaine version.
+      </div>
+      <div class="action-required">
+        <strong>Chiffrement des données au repos :</strong> non mis en place actuellement — fortement recommandé.
+      </div>
+      <div class="action-required">
+        <strong>Procédure de notification en cas de violation de données :</strong> non formalisée actuellement. La loi camerounaise n°2024/017 et le RGPD imposent de notifier les violations dans des délais stricts (72h pour le RGPD). Une procédure interne sera mise en place avant la mise en production complète.
+      </div>
+      <p>Malgré les mesures mises en place, aucun système n'est infaillible. En cas de suspicion de compromission de votre compte, contactez-nous immédiatement à <a href="mailto:support@ndewa-360.com">support@ndewa-360.com</a>.</p>
+    </div>
+
+    <div class="legal-section">
+      <span class="legal-section__anchor" id="s11"></span>
+      <h2><span class="section-number">11</span><span class="section-icon"><i class="fas fa-clock"></i></span> Durées de conservation</h2>
+      <div class="legal-table-wrap">
+        <table>
+          <thead><tr><th>Catégorie de données</th><th>Durée de conservation</th></tr></thead>
+          <tbody>
+            <tr><td>Données de compte (actif)</td><td>Durée de vie du compte</td></tr>
+            <tr><td>Données de compte (après suppression)</td><td>Suppression immédiate, sauf exceptions ci-dessous</td></tr>
+            <tr><td>Données financières et historique comptable</td><td>Conservation en cours de définition — voir note ci-dessous</td></tr>
+            <tr><td>Données des locataires</td><td>Durée de vie du compte du propriétaire</td></tr>
+            <tr><td>Logs de connexion</td><td>Conservation en cours de définition — voir note ci-dessous</td></tr>
+            <tr><td>Données Google Sign-In</td><td>Durée de vie du compte, suppression à la clôture</td></tr>
+            <tr><td>Données Google Analytics</td><td>26 mois (paramètre Google Analytics par défaut)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="action-required">
+        <strong>Action requise :</strong> Des durées de conservation précises sont en cours de définition pour les données financières (recommandation : 10 ans à compter de la dernière transaction, aligné sur les obligations comptables camerounaises) et pour les logs de connexion (recommandation : 12 mois glissants). Cette politique sera mise à jour dès que ces durées seront définies et implémentées.
+      </div>
+    </div>
+
+    <div class="legal-section">
+      <span class="legal-section__anchor" id="s12"></span>
+      <h2><span class="section-number">12</span><span class="section-icon"><i class="fas fa-user-shield"></i></span> Vos droits</h2>
+      <p>Conformément à la loi camerounaise n°2024/017 du 23 décembre 2024 et aux principes du RGPD pour les utilisateurs résidant dans l'Union Européenne, vous disposez des droits suivants :</p>
+      <div class="rights-grid">
+        <div class="right-card">
+          <div class="right-card__icon"><i class="fas fa-eye"></i></div>
+          <div class="right-card__title">Droit d'accès</div>
+          <div class="right-card__desc">Obtenir la confirmation que nous traitons vos données et en recevoir une copie.</div>
+        </div>
+        <div class="right-card">
+          <div class="right-card__icon"><i class="fas fa-pen"></i></div>
+          <div class="right-card__title">Droit de rectification</div>
+          <div class="right-card__desc">Corriger des données inexactes ou incomplètes vous concernant.</div>
+        </div>
+        <div class="right-card">
+          <div class="right-card__icon"><i class="fas fa-trash-alt"></i></div>
+          <div class="right-card__title">Droit à l'effacement</div>
+          <div class="right-card__desc">Demander la suppression de vos données dans les cas prévus par la loi.</div>
+        </div>
+        <div class="right-card">
+          <div class="right-card__icon"><i class="fas fa-download"></i></div>
+          <div class="right-card__title">Droit à la portabilité</div>
+          <div class="right-card__desc">Recevoir vos données dans un format structuré et lisible par machine.</div>
+        </div>
+        <div class="right-card">
+          <div class="right-card__icon"><i class="fas fa-ban"></i></div>
+          <div class="right-card__title">Droit d'opposition</div>
+          <div class="right-card__desc">Vous opposer au traitement de vos données dans certains cas.</div>
+        </div>
+        <div class="right-card">
+          <div class="right-card__icon"><i class="fas fa-pause-circle"></i></div>
+          <div class="right-card__title">Droit à la limitation</div>
+          <div class="right-card__desc">Demander la suspension temporaire du traitement de vos données.</div>
+        </div>
+      </div>
+      <h3>Comment exercer vos droits</h3>
+      <p>Adressez votre demande par email à : <a href="mailto:support@ndewa-360.com"><strong>support@ndewa-360.com</strong></a></p>
+      <p>Votre demande doit préciser : le droit que vous souhaitez exercer, les données concernées, et tout élément permettant de vérifier votre identité.</p>
+      <p><strong>Délai de réponse :</strong> Nous nous engageons à répondre dans un délai maximum de <strong>48 heures</strong> à compter de la réception de votre demande.</p>
+      <div class="action-required">
+        <strong>Portabilité des données :</strong> La fonctionnalité d'export de données depuis l'interface n'est pas encore disponible. Elle est prévue dans une prochaine version. En attendant, vous pouvez en faire la demande par email.
+      </div>
+      <h3>Réclamation auprès d'une autorité</h3>
+      <p>Si vous estimez que le traitement de vos données ne respecte pas la réglementation applicable, vous avez le droit d'introduire une réclamation auprès de l'autorité compétente :</p>
+      <ul>
+        <li><strong>Pour les utilisateurs au Cameroun :</strong> auprès de l'autorité camerounaise compétente désignée par la loi n°2024/017 (coordonnées à compléter dès que l'autorité sera opérationnelle).</li>
+        <li><strong>Pour les utilisateurs dans l'Union Européenne :</strong> auprès de l'autorité de protection des données de votre pays de résidence (en France : la CNIL — <a href="https://www.cnil.fr" target="_blank" rel="noopener">www.cnil.fr</a>).</li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+<!-- SECTIONS 13-15 -->
+<div class="legal-page">
+  <div class="legal-content">
+
+    <div class="legal-section">
+      <span class="legal-section__anchor" id="s13"></span>
+      <h2><span class="section-number">13</span><span class="section-icon"><i class="fas fa-user"></i></span> Données des locataires — Note spécifique</h2>
+      <p>Les propriétaires et agences qui utilisent Ndewa360 enregistrent des données personnelles concernant leurs locataires. Dans ce cadre :</p>
+      <ul>
+        <li>Le <strong>propriétaire ou l'agence</strong> agit en tant que responsable du traitement des données de ses locataires.</li>
+        <li><strong>Ndewa360</strong> agit en tant que sous-traitant pour le compte du propriétaire, en lui fournissant les outils techniques pour stocker et gérer ces données.</li>
+      </ul>
+      <div class="legal-callout legal-callout--warn">
+        <span class="callout-icon"><i class="fas fa-exclamation-triangle"></i></span>
+        <div class="callout-body">
+          <strong>Responsabilité des propriétaires et agences</strong>
+          <p>Les propriétaires et agences sont responsables de s'assurer qu'ils disposent d'une base légale pour collecter et traiter les données de leurs locataires, et d'informer ces derniers de l'utilisation de leurs données conformément à la réglementation applicable.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="legal-section">
+      <span class="legal-section__anchor" id="s14"></span>
+      <h2><span class="section-number">14</span><span class="section-icon"><i class="fas fa-pen"></i></span> Modifications de la présente politique</h2>
+      <p>Ndewa360 se réserve le droit de modifier la présente Politique de Confidentialité à tout moment. En cas de modification substantielle, vous serez informé par email ou par une notification visible sur la plateforme, au moins <strong>30 jours</strong> avant l'entrée en vigueur des modifications.</p>
+      <p>La version en vigueur est toujours accessible depuis le pied de page du site ndewa-360.com.</p>
+      <p>La poursuite de l'utilisation de la plateforme après l'entrée en vigueur des modifications vaut acceptation de la nouvelle politique.</p>
+    </div>
+
+    <div class="legal-section">
+      <span class="legal-section__anchor" id="s15"></span>
+      <h2><span class="section-number">15</span><span class="section-icon"><i class="fas fa-envelope"></i></span> Contact</h2>
+      <p>Pour toute question relative à la présente Politique de Confidentialité ou au traitement de vos données personnelles :</p>
+      <div class="legal-contact-box">
+        <h3>Nous contacter</h3>
+        <p>Notre équipe répond à toutes vos questions relatives à la protection de vos données dans un délai de 48 heures.</p>
+        <a href="mailto:support@ndewa-360.com" class="legal-contact-btn"><i class="fas fa-envelope"></i> support@ndewa-360.com</a>
+      </div>
+      <p style="margin-top:1.5rem; color:#6b7280; font-size:0.85rem; text-align:center;">
+        Ndewa360 SARL (en cours de constitution) &nbsp;·&nbsp; Tchougo, Bangangté, Région de l'Ouest, Cameroun
+      </p>
+    </div>
+
+  </div>
+</div>

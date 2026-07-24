@@ -22,6 +22,7 @@ import { ScrollToTopComponent } from './components/scroll-to-top/scroll-to-top.c
 import { ContactComponent } from './components/contact/contact.component';
 import { PrivacyPolicyComponent } from './components/privacy-policy/privacy-policy.component';
 import { TermsComponent } from './components/terms/terms.component';
+import { CookiesComponent } from './components/cookies/cookies.component';
 
 
 @NgModule({
@@ -43,7 +44,8 @@ import { TermsComponent } from './components/terms/terms.component';
     ScrollToTopComponent,
     ContactComponent,
     PrivacyPolicyComponent,
-    TermsComponent
+    TermsComponent,
+    CookiesComponent
   ],
   imports: [
     CommonModule,

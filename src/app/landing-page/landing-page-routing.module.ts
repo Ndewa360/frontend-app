@@ -8,6 +8,7 @@ import { LandingLayoutComponent } from 'src/@youpez/layout/landing/landing-layou
 import { ContactComponent } from './components/contact/contact.component';
 import { PrivacyPolicyComponent } from './components/privacy-policy/privacy-policy.component';
 import { TermsComponent } from './components/terms/terms.component';
+import { CookiesComponent } from './components/cookies/cookies.component';
 
 const routes: Routes = [
   {
@@ -42,6 +43,11 @@ const routes: Routes = [
       {
         path: 'terms',
         component: TermsComponent,
+        pathMatch: 'full'
+      },
+      {
+        path: 'cookies',
+        component: CookiesComponent,
         pathMatch: 'full'
       },
       {

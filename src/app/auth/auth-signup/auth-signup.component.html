@@ -246,7 +246,7 @@
         <div class="flex justify-between items-center">
           <ibm-checkbox formControlName="condition">
             {{ 'AUTH.ACCEPT_TERMS_START' | translate }}
-            <a class="app-link">{{ 'AUTH.TERMS_CONDITIONS' | translate }}</a>
+            <a class="app-link" [routerLink]="'../../home/terms'">{{ 'AUTH.TERMS_CONDITIONS' | translate }}</a>
           </ibm-checkbox>
         </div>
         <div *ngIf="isValid('condition')" class="text-red-600 text-sm">

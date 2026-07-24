@@ -1,12 +1,22 @@
 <app-landing-header></app-landing-header>
 
 <div class="app-a-box app-scrollbar-fix pb-2 mt-16">
-    <!-- <ng-scrollbar> -->
     <ng-scrollbar track="vertical">
-
         <router-outlet></router-outlet>
         <app-landing-footer></app-landing-footer>
-
     </ng-scrollbar>
+</div>
 
+<div class="cookie-banner" *ngIf="cookieBannerVisible">
+  <div class="cookie-banner__content">
+    <span class="cookie-banner__icon"><i class="fas fa-cookie-bite"></i></span>
+    <p>
+      Nous utilisons des cookies analytiques (Google Analytics) pour améliorer notre service.
+      Consultez notre <a routerLink="/cookies">Politique de Cookies</a>.
+    </p>
+  </div>
+  <div class="cookie-banner__actions">
+    <button class="cookie-btn cookie-btn--decline" (click)="declineCookies()">Refuser</button>
+    <button class="cookie-btn cookie-btn--accept" (click)="acceptCookies()">Accepter</button>
+  </div>
 </div>
