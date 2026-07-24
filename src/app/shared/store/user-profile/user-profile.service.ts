@@ -41,9 +41,7 @@ export class UserProfileService
 
     exportData(): Observable<Blob>
     {
-        // Export généré côté frontend à partir des données du profil
-        // Pas de route backend nécessaire
-        return new Observable();
+        return this._httpClient.get(`${environment.apiUrl}/user/profil/export-data`, { responseType: 'blob' })
     }
 
 }

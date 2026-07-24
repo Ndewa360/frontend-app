@@ -572,47 +572,23 @@ export class UserProfileState {
 
     @Action(UserProfileAction.ExportData)
     exportData(ctx: StateContext<UserProfileStateModel>) {
-        const profile = ctx.getState().userProfile;
-        if (!profile) {
-            this._toastrService.error('Aucun profil à exporter.', 'Ndewa360°');
-            return of(null);
-        }
-
-        const exportPayload = {
-            exportDate: new Date().toISOString(),
-            profile: {
-                name: profile.name,
-                email: profile.email,
-                phoneNumber: profile.phoneNumber,
-                bio: profile.bio,
-                location: profile.location,
-                country: profile.country,
-                whatsappContact: profile.whatsappContact,
-                skype: profile.skype,
-                websiteLink: profile.websiteLink,
-                preferredLanguage: profile.preferredLanguage,
-                preferredCurrency: profile.preferredCurrency,
-                timezone: profile.timezone,
-                dateFormat: profile.dateFormat,
-                numberFormat: profile.numberFormat,
-                theme: profile.theme,
-                userType: profile.userType,
-                emailConfirmed: profile.emailConfirmed,
-            }
-        };
-
-        const blob = new Blob([JSON.stringify(exportPayload, null, 2)], { type: 'application/json' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `ndewa360-mes-donnees-${new Date().toISOString().split('T')[0]}.json`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
-
-        this._toastrService.success('Export de vos données téléchargé.', 'Ndewa360°');
-        return of(null);
+        return this._userProfilesService.exportData().pipe(
+            tap((blob: Blob) => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `ndewa360-mes-donnees-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+                this._toastrService.success('Export de vos données téléchargé.', 'Ndewa360°');
+            }),
+            catchError((error) => {
+                this._toastrService.error('Erreur lors de l\'export des données.', 'Ndewa360°');
+                return throwError(() => error);
+            })
+        );
     }
 
     @Action(UserProfileAction.FetchUserProfileConditional)
