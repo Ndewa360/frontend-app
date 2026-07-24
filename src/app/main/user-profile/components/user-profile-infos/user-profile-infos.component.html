@@ -354,7 +354,22 @@
         <div class="danger-block">
           <div class="danger-block__info">
             <h3>Supprimer mon compte</h3>
-            <p>La suppression de votre compte est définitive. Toutes vos données (biens, locataires, contrats, paiements) seront supprimées conformément à notre <a href="/privacy-policy" target="_blank">Politique de Confidentialité</a>.</p>
+            <p>
+              La suppression anonymise définitivement vos données personnelles (nom, email, téléphone, photo).
+              Conformément à nos obligations légales, les données financières (paiements, contrats, factures)
+              sont conservées pendant la durée légale requise.
+              <a href="/privacy-policy" target="_blank">En savoir plus</a>.
+            </p>
+            <ul class="delete-info-list">
+              <li class="delete-info-list__item delete-info-list__item--deleted">
+                <i class="fas fa-times-circle"></i>
+                Supprimé : nom, email, téléphone, photo, adresse, bio
+              </li>
+              <li class="delete-info-list__item delete-info-list__item--kept">
+                <i class="fas fa-lock"></i>
+                Conservé (obligation légale) : paiements, contrats, factures, abonnements
+              </li>
+            </ul>
           </div>
           <button type="button" class="btn btn-danger" (click)="toggleDeleteConfirm()" *ngIf="!showDeleteConfirm">
             <youpez-ibm-icon iconName="trash-can" iconSize="16"></youpez-ibm-icon>
@@ -372,7 +387,7 @@
             <div class="delete-confirm__actions">
               <button type="button" class="btn btn-secondary" (click)="toggleDeleteConfirm()">Annuler</button>
               <button type="button" class="btn btn-danger" (click)="confirmDeleteAccount()" [disabled]="!canConfirmDelete() || isDeletingAccount">
-                {{ isDeletingAccount ? 'Suppression...' : 'Confirmer la suppression' }}
+                {{ isDeletingAccount ? 'Suppression en cours...' : 'Confirmer la suppression' }}
               </button>
             </div>
           </div>

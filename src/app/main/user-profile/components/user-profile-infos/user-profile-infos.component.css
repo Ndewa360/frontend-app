@@ -767,3 +767,37 @@ select.field-input {
   margin-top: 0.75rem;
   flex-wrap: wrap;
 }
+
+/* Liste d'info légale dans la zone de suppression */
+.delete-info-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.875rem 0 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.delete-info-list__item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.delete-info-list__item--deleted {
+  color: #ef4444;
+}
+.delete-info-list__item--deleted i {
+  color: #ef4444;
+  font-size: 0.875rem;
+}
+
+.delete-info-list__item--kept {
+  color: #16a34a;
+}
+.delete-info-list__item--kept i {
+  color: #16a34a;
+  font-size: 0.875rem;
+}
