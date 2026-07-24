@@ -18,6 +18,7 @@ import {
 } from 'src/app/shared/store/files-upload';
 import { FormUtils } from 'src/app/shared/utils';
 import { ToastrService } from 'ngx-toastr';
+import { UserBreachReportService } from 'src/app/shared/services/user-breach-report.service';
 
 const COOKIE_KEY = 'ndewa_cookie_consent';
 
@@ -57,6 +58,11 @@ export class UserProfileInfosComponent implements OnInit, OnDestroy {
 
 
 
+  // Propriétés pour le signalement de problème
+  showReportForm = false;
+  reportDescription = '';
+  isSendingReport = false;
+
   private destroy$ = new Subject<void>();
   
     constructor(
@@ -64,7 +70,8 @@ export class UserProfileInfosComponent implements OnInit, OnDestroy {
       private _store: Store,
       private _ngxsAction: Actions,
       private _activatedRoute: ActivatedRoute,
-      private toastr: ToastrService
+      private toastr: ToastrService,
+      private breachReportService: UserBreachReportService,
     ) { }
   
   ngOnInit(): void {
@@ -422,6 +429,27 @@ export class UserProfileInfosComponent implements OnInit, OnDestroy {
     if (!this.canConfirmDelete() || !this.userProfile?._id) return;
     this.isDeletingAccount = true;
     this._store.dispatch(new UserProfileAction.DeleteAccount(this.userProfile._id));
+  }
+
+  // --- Signalement problème de sécurité ---
+  submitReport(): void {
+    if (this.reportDescription.trim().length < 20) {
+      this.toastr.warning('Veuillez décrire le problème en au moins 20 caractères.', 'Signalement');
+      return;
+    }
+    this.isSendingReport = true;
+    this.breachReportService.report(this.reportDescription.trim()).subscribe({
+      next: () => {
+        this.toastr.success('Votre signalement a été transmis à notre équipe. Merci.', 'Signalement envoyé');
+        this.showReportForm = false;
+        this.reportDescription = '';
+        this.isSendingReport = false;
+      },
+      error: () => {
+        this.toastr.error('Erreur lors de l\'envoi du signalement.', 'Erreur');
+        this.isSendingReport = false;
+      },
+    });
   }
 
   // Méthode pour réinitialiser le formulaire

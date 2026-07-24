@@ -362,16 +362,20 @@
           <tbody>
             <tr><td>Données de compte (actif)</td><td>Durée de vie du compte</td></tr>
             <tr><td>Données de compte (après suppression)</td><td>Suppression immédiate, sauf exceptions ci-dessous</td></tr>
-            <tr><td>Données financières et historique comptable</td><td>Conservation en cours de définition — voir note ci-dessous</td></tr>
+            <tr><td>Données financières et historique comptable</td><td>10 ans à compter de la dernière transaction (obligations comptables camerounaises) — suppression automatique</td></tr>
             <tr><td>Données des locataires</td><td>Durée de vie du compte du propriétaire</td></tr>
-            <tr><td>Logs de connexion</td><td>Conservation en cours de définition — voir note ci-dessous</td></tr>
+            <tr><td>Logs de connexion</td><td>12 mois glissants — suppression automatique par TTL index MongoDB</td></tr>
             <tr><td>Données Google Sign-In</td><td>Durée de vie du compte, suppression à la clôture</td></tr>
             <tr><td>Données Google Analytics</td><td>26 mois (paramètre Google Analytics par défaut)</td></tr>
           </tbody>
         </table>
       </div>
-      <div class="action-required">
-        <strong>Action requise :</strong> Des durées de conservation précises sont en cours de définition pour les données financières (recommandation : 10 ans à compter de la dernière transaction, aligné sur les obligations comptables camerounaises) et pour les logs de connexion (recommandation : 12 mois glissants). Cette politique sera mise à jour dès que ces durées seront définies et implémentées.
+      <div class="legal-callout legal-callout--success">
+        <span class="callout-icon"><i class="fas fa-check-circle"></i></span>
+        <div class="callout-body">
+          <strong>Durées implémentées</strong>
+          <p>Ces durées de conservation sont appliquées automatiquement par des processus planifiés côté serveur. Les données financières sont purgées après 10 ans, les logs de connexion après 12 mois. Les comptes inactifs depuis plus d'un an font l'objet d'un avertissement par email 30 jours avant anonymisation automatique.</p>
+        </div>
       </div>
     </div>
 

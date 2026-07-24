@@ -88,11 +88,12 @@ export class LanguagePreservationService {
   }
 
   redirectToLogin(returnUrl?: string): void {
-    const queryParams: any = {};
-    if (returnUrl) {
-      queryParams.returnUrl = encodeURIComponent(returnUrl);
+    const lang = this.getCurrentOrPreservedLanguage();
+    if (returnUrl && !returnUrl.includes('/auth/')) {
+      this.router.navigate([`/${lang}/auth/signin`], { queryParams: { returnUrl } });
+    } else {
+      this.router.navigate([`/${lang}/auth/signin`]);
     }
-    this.navigateWithLanguage('/auth/signin', queryParams);
   }
 
   redirectToHome(): void {

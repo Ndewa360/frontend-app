@@ -17,6 +17,7 @@ import { UserDetailsComponent } from './pages/user-details/user-details.componen
 import { AgentManagementComponent } from './pages/agent-management/agent-management.component';
 import { AdminSubscriptionsComponent } from './pages/subscriptions/admin-subscriptions.component';
 import { PlatformFinanceComponent } from './pages/platform-finance/platform-finance.component';
+import { AdminBreachComponent } from './pages/breach/admin-breach.component';
 
 const routes: Routes = [
   {
@@ -97,6 +98,11 @@ const routes: Routes = [
         path: 'platform-finance',
         component: PlatformFinanceComponent,
         data: { title: 'Super Wallet Plateforme', breadcrumb: 'Wallet Plateforme' }
+      },
+      {
+        path: 'breach',
+        component: AdminBreachComponent,
+        data: { title: 'Violations de données', breadcrumb: 'Violations de données' }
       },
       {
         path: 'monitoring',

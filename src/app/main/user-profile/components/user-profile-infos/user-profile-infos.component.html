@@ -335,6 +335,39 @@
           </div>
         </div>
 
+        <!-- Signalement problème de sécurité -->
+        <div class="privacy-block">
+          <h3 class="privacy-block__title">Signaler un problème de sécurité</h3>
+          <p class="privacy-block__desc">
+            Vous avez constaté une anomalie, un accès suspect ou une fuite de données ? Signalez-le à notre équipe.
+            Votre signalement sera traité en priorité.
+          </p>
+          <div class="privacy-block__actions" *ngIf="!showReportForm">
+            <button type="button" class="btn btn-warning" (click)="showReportForm = true">
+              <youpez-ibm-icon iconName="warning" iconSize="16"></youpez-ibm-icon>
+              Signaler un problème
+            </button>
+          </div>
+          <div class="report-form" *ngIf="showReportForm">
+            <textarea
+              class="field-input field-textarea"
+              [(ngModel)]="reportDescription"
+              [ngModelOptions]="{standalone: true}"
+              rows="4"
+              placeholder="Décrivez le problème en détail (minimum 20 caractères)..."></textarea>
+            <div class="report-form__hint">{{ reportDescription.length }}/20 caractères minimum</div>
+            <div class="report-form__actions">
+              <button type="button" class="btn btn-secondary" (click)="showReportForm = false; reportDescription = ''">Annuler</button>
+              <button type="button" class="btn btn-warning"
+                (click)="submitReport()"
+                [disabled]="reportDescription.trim().length < 20 || isSendingReport">
+                <youpez-ibm-icon iconName="send-alt" iconSize="16"></youpez-ibm-icon>
+                {{ isSendingReport ? 'Envoi...' : 'Envoyer le signalement' }}
+              </button>
+            </div>
+          </div>
+        </div>
+
       </div>
     </section>
 

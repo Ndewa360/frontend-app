@@ -56,11 +56,11 @@ export class AdvancedAuthGuard implements CanActivate {
         }
         if (activityState === UserActivityState.CRITICAL_INACTIVE) {
           const lang = this.languagePreservation.getCurrentOrPreservedLanguage();
-          return of({ canActivate: false, redirectUrl: `/${lang}/auth/signin?returnUrl=${encodeURIComponent(state.url)}&reason=critical_inactive`, message: '🔒 Session fermée après inactivité prolongée' });
+          return of({ canActivate: false, redirectUrl: this.getSafeRedirectUrl(state.url, lang), message: '🔒 Session fermée après inactivité prolongée' });
         }
         if (activityState === UserActivityState.INACTIVE) {
           const lang = this.languagePreservation.getCurrentOrPreservedLanguage();
-          return of({ canActivate: false, redirectUrl: `/${lang}/auth/signin?returnUrl=${encodeURIComponent(state.url)}&reason=inactive`, message: '⏰ Session suspendue pour inactivité' });
+          return of({ canActivate: false, redirectUrl: this.getSafeRedirectUrl(state.url, lang), message: '⏰ Session suspendue pour inactivité' });
         }
         return this.checkTokenExpiration(state.url);
       })

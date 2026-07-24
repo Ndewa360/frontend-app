@@ -18,6 +18,7 @@ import { AdminSettingsComponent } from './pages/settings/admin-settings.componen
 import { AgentManagementComponent } from './pages/agent-management/agent-management.component';
 import { AdminSubscriptionsComponent } from './pages/subscriptions/admin-subscriptions.component';
 import { PlatformFinanceComponent } from './pages/platform-finance/platform-finance.component';
+import { AdminBreachComponent } from './pages/breach/admin-breach.component';
 
 // ── Modals / Components ───────────────────────────────────────────────────────
 import { CountrySelectionModalComponent } from './components/country-selection-modal/country-selection-modal.component';
@@ -38,6 +39,8 @@ import { AdminDashboardState } from './store/dashboard/admin-dashboard.state';
 import { AdminSubscriptionsState } from './store/subscriptions/admin-subscriptions.state';
 import { PlatformFinanceState } from './store/platform-finance/platform-finance.state';
 
+import { AdminBreachState } from './store/breach/admin-breach.state';
+
 // ── Services ──────────────────────────────────────────────────────────────────
 import { AdminUsersService } from './services/admin-users.service';
 import { AdminRolesService } from './services/admin-roles.service';
@@ -47,6 +50,7 @@ import { AdminSettingsService } from './services/admin-settings.service';
 import { AdminDashboardService } from './services/admin-dashboard.service';
 import { AdminSubscriptionsService } from './services/admin-subscriptions.service';
 import { AdminPlatformFinanceService } from './services/admin-platform-finance.service';
+import { AdminBreachService } from './services/admin-breach.service';
 import { RestCountriesService } from './services/rest-countries.service';
 
 // ── Routing ───────────────────────────────────────────────────────────────────
@@ -65,6 +69,7 @@ import { AdminRoutingModule } from './admin-routing.module';
     AgentManagementComponent,
     AdminSubscriptionsComponent,
     PlatformFinanceComponent,
+    AdminBreachComponent,
     CountrySelectionModalComponent,
     CountryDeleteModalComponent,
     CountryViewModalComponent,
@@ -90,6 +95,7 @@ import { AdminRoutingModule } from './admin-routing.module';
       AdminDashboardState,
       AdminSubscriptionsState,
       PlatformFinanceState,
+      AdminBreachState,
     ]),
   ],
   providers: [
@@ -102,6 +108,7 @@ import { AdminRoutingModule } from './admin-routing.module';
     AdminSubscriptionsService,
     AdminPlatformFinanceService,
     RestCountriesService,
+    AdminBreachService,
   ],
 })
 export class AdminModule {}

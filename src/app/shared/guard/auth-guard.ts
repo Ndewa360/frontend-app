@@ -25,14 +25,15 @@ export class AuthGuard implements CanActivate {
       map((authToken) => {
         if (authToken) return true;
         const currentLang = this.languagePreservation.getCurrentOrPreservedLanguage();
-        if (state.url.includes('/auth/signin') || state.url.includes('/auth/signup')) {
+        if (state.url.includes('/auth/')) {
           return this.router.parseUrl(`/${currentLang}/auth/signin`);
         }
         this._toastrService.warning(
           this.languagePreservation.getLocalizedMessage('NOTIFICATIONS.AUTH_REQUIRED') || 'Veuillez vous connecter.',
           'Ndewa360°'
         );
-        return this.router.parseUrl(`/${currentLang}/auth/signin?returnUrl=${encodeURIComponent(state.url)}`);
+        const tree = this.router.createUrlTree([`/${currentLang}/auth/signin`], { queryParams: { returnUrl: state.url } });
+        return tree;
       })
     );
   }

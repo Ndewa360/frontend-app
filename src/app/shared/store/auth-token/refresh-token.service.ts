@@ -89,14 +89,10 @@ export class RefreshTokenService {
    * Force la déconnexion avec un message personnalisé
    */
   private forceLogout(message: string): void {
-    // Préserver la langue avant la déconnexion
     this.languagePreservation.preserveCurrentLanguage();
-    
     this.store.dispatch(new AuthTokenAction.Logout());
     this.userActivityService.stopMonitoring();
-    
-    // Rediriger avec la langue appropriée
-    const currentUrl = this.router.url;
+    const currentUrl = this.getCleanCurrentUrl();
     this.languagePreservation.redirectToLogin(currentUrl);
     
     // Utiliser la langue préservée pour le message
@@ -202,15 +198,11 @@ export class RefreshTokenService {
    * Gère le cas où l'utilisateur est inactif et nécessite une reconnexion
    */
   private handleInactiveUserRefresh(): void {
-    // Préserver la langue avant la déconnexion
     this.languagePreservation.preserveCurrentLanguage();
-    
-    const currentUrl = this.router.url;
+    const currentUrl = this.getCleanCurrentUrl();
     this.store.dispatch(new AuthTokenAction.Logout());
     this.userActivityService.stopMonitoring();
-    
-    // Rediriger avec la langue et paramètres appropriés
-    this.languagePreservation.redirectToLogin(currentUrl + '&reason=inactive');
+    this.languagePreservation.redirectToLogin(currentUrl);
     
     const inactiveMessage = this.languagePreservation.getLocalizedMessage('NOTIFICATIONS.SESSION_EXPIRED');
     const securityTitle = this.languagePreservation.getLocalizedMessage('COMMON.INFO');
@@ -226,15 +218,11 @@ export class RefreshTokenService {
    * Gère les échecs de rafraîchissement de token
    */
   private handleRefreshFailure(message: string): void {
-    // Préserver la langue avant la déconnexion
     this.languagePreservation.preserveCurrentLanguage();
-    
-    const currentUrl = this.router.url;
+    const currentUrl = this.getCleanCurrentUrl();
     this.store.dispatch(new AuthTokenAction.Logout());
     this.userActivityService.stopMonitoring();
-    
-    // Rediriger avec la langue et paramètres appropriés
-    this.languagePreservation.redirectToLogin(currentUrl + '&reason=token_expired');
+    this.languagePreservation.redirectToLogin(currentUrl);
 
     // Messages traduits selon le type d'erreur
     let userMessage: string;
@@ -342,6 +330,21 @@ export class RefreshTokenService {
   /**
    * Décode un token JWT
    */
+  private getCleanCurrentUrl(): string {
+    const url = this.router.url;
+    // Si on est déjà sur une page auth, ne pas passer de returnUrl
+    if (url.includes('/auth/')) return '';
+    // Supprimer tout returnUrl existant pour éviter la boucle d'encodage
+    try {
+      const urlObj = new URL(url, window.location.origin);
+      urlObj.searchParams.delete('returnUrl');
+      urlObj.searchParams.delete('reason');
+      return urlObj.pathname + (urlObj.search !== '?' ? urlObj.search : '');
+    } catch {
+      return '';
+    }
+  }
+
   private parseJwt(token: string): any {
     try {
       const base64Url = token.split('.')[1];

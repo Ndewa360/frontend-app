@@ -1,0 +1,178 @@
+<div class="breach-page">
+
+  <!-- Header -->
+  <div class="breach-header">
+    <div class="breach-header-left">
+      <i class="fas fa-shield-virus breach-header-icon"></i>
+      <div>
+        <h1 class="breach-title">Violations de données</h1>
+        <p class="breach-subtitle">Registre des incidents — Conformité RGPD / Loi n°2024/017</p>
+      </div>
+    </div>
+    <button class="btn-declare" (click)="showDeclareForm = !showDeclareForm; showUpdatePanel = false">
+      <i class="fas fa-plus"></i> Déclarer un incident
+    </button>
+  </div>
+
+  <!-- Formulaire déclaration -->
+  <div class="breach-form-panel" *ngIf="showDeclareForm">
+    <h2 class="panel-title"><i class="fas fa-exclamation-triangle"></i> Nouvel incident</h2>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Type d'incident</label>
+        <select [(ngModel)]="form.type">
+          <option value="">-- Sélectionner --</option>
+          <option *ngFor="let t of types" [value]="t.value">{{ t.label }}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Sévérité</label>
+        <select [(ngModel)]="form.severity">
+          <option value="">-- Sélectionner --</option>
+          <option *ngFor="let s of severities" [value]="s.value">{{ s.label }}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Nombre d'utilisateurs affectés</label>
+        <input type="number" [(ngModel)]="form.affectedUsersCount" min="0" />
+      </div>
+      <div class="form-group">
+        <label>Date de détection</label>
+        <input type="datetime-local" [(ngModel)]="form.detectedAt" />
+      </div>
+      <div class="form-group form-group--full">
+        <label>Types de données affectées <span class="hint">(séparés par des virgules)</span></label>
+        <input type="text" [(ngModel)]="dataTypesInput" placeholder="email, téléphone, paiement..." />
+      </div>
+      <div class="form-group form-group--full">
+        <label>Description de l'incident</label>
+        <textarea [(ngModel)]="form.description" rows="4" placeholder="Décrivez l'incident en détail..."></textarea>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn-cancel" (click)="showDeclareForm = false">Annuler</button>
+      <button class="btn-submit" (click)="submitDeclare()"
+              [disabled]="!form.type || !form.severity || !form.description || (saving$ | async)">
+        <i class="fas fa-paper-plane"></i>
+        {{ (saving$ | async) ? 'Envoi...' : 'Déclarer et notifier le DPO' }}
+      </button>
+    </div>
+    <div class="form-notice">
+      <i class="fas fa-info-circle"></i>
+      La déclaration déclenche automatiquement un email d'alerte vers le DPO et démarre le compte à rebours de 72h.
+    </div>
+  </div>
+
+  <!-- Filtres -->
+  <div class="breach-filters">
+    <label>Filtrer par statut :</label>
+    <select [(ngModel)]="filterStatus" (change)="load()">
+      <option value="">Tous</option>
+      <option *ngFor="let s of statuses" [value]="s.value">{{ s.label }}</option>
+    </select>
+    <button class="btn-refresh" (click)="load()"><i class="fas fa-sync-alt"></i></button>
+  </div>
+
+  <!-- Contenu principal -->
+  <div class="breach-content">
+
+    <!-- Liste des incidents -->
+    <div class="breach-list" [class.breach-list--narrow]="showUpdatePanel">
+      <div *ngIf="loading$ | async" class="breach-loading">
+        <i class="fas fa-spinner fa-spin"></i> Chargement...
+      </div>
+
+      <ng-container *ngIf="!(loading$ | async)">
+        <div *ngIf="(incidents$ | async)?.length === 0" class="breach-empty">
+          <i class="fas fa-check-circle"></i>
+          <p>Aucun incident enregistré.</p>
+        </div>
+
+        <div *ngFor="let incident of incidents$ | async"
+             class="incident-card"
+             [class.incident-card--selected]="(selected$ | async)?._id === incident._id"
+             [class.incident-card--overdue]="isOverdue(incident.notificationDeadline) && incident.status !== 'resolved'"
+             (click)="selectIncident(incident)">
+
+          <div class="incident-card-header">
+            <span class="severity-badge" [style.background]="severityColor(incident.severity)">
+              {{ severityLabel(incident.severity) }}
+            </span>
+            <span class="incident-type">{{ typeLabel(incident.type) }}</span>
+            <span class="incident-status" [attr.data-status]="incident.status">
+              {{ statusLabel(incident.status) }}
+            </span>
+          </div>
+
+          <p class="incident-desc">{{ incident.description }}</p>
+
+          <div class="incident-meta">
+            <span><i class="fas fa-users"></i> {{ incident.affectedUsersCount }} utilisateur(s)</span>
+            <span><i class="fas fa-calendar"></i> {{ incident.detectedAt | date:'dd/MM/yyyy HH:mm' }}</span>
+            <span class="deadline" [class.deadline--overdue]="isOverdue(incident.notificationDeadline) && incident.status !== 'resolved'">
+              <i class="fas fa-clock"></i>
+              <ng-container *ngIf="incident.status !== 'resolved'">
+                <ng-container *ngIf="isOverdue(incident.notificationDeadline)">⚠️ Délai 72h dépassé</ng-container>
+                <ng-container *ngIf="!isOverdue(incident.notificationDeadline)">{{ hoursLeft(incident.notificationDeadline) }}h restantes</ng-container>
+              </ng-container>
+              <ng-container *ngIf="incident.status === 'resolved'">Résolu</ng-container>
+            </span>
+          </div>
+
+          <div class="incident-tags" *ngIf="incident.affectedDataTypes?.length">
+            <span *ngFor="let tag of incident.affectedDataTypes" class="data-tag">{{ tag }}</span>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+
+    <!-- Panneau de mise à jour -->
+    <div class="breach-detail" *ngIf="showUpdatePanel && (selected$ | async) as incident">
+      <div class="detail-header">
+        <h3>Mettre à jour l'incident</h3>
+        <button class="btn-close" (click)="closeDetail()"><i class="fas fa-times"></i></button>
+      </div>
+
+      <div class="detail-info">
+        <div class="detail-row"><strong>Type :</strong> {{ typeLabel(incident.type) }}</div>
+        <div class="detail-row"><strong>Sévérité :</strong>
+          <span class="severity-badge" [style.background]="severityColor(incident.severity)">{{ severityLabel(incident.severity) }}</span>
+        </div>
+        <div class="detail-row"><strong>Détecté le :</strong> {{ incident.detectedAt | date:'dd/MM/yyyy HH:mm' }}</div>
+        <div class="detail-row"><strong>Deadline 72h :</strong>
+          <span [class.text-danger]="isOverdue(incident.notificationDeadline)">
+            {{ incident.notificationDeadline | date:'dd/MM/yyyy HH:mm' }}
+          </span>
+        </div>
+        <div class="detail-row"><strong>Description :</strong> {{ incident.description }}</div>
+        <div class="detail-row" *ngIf="incident.resolutionNotes"><strong>Notes :</strong> {{ incident.resolutionNotes }}</div>
+        <div class="detail-row" *ngIf="incident.authorityNotifiedAt">
+          <strong>Autorité notifiée le :</strong> {{ incident.authorityNotifiedAt | date:'dd/MM/yyyy HH:mm' }}
+        </div>
+      </div>
+
+      <div class="detail-form">
+        <div class="form-group">
+          <label>Nouveau statut</label>
+          <select [(ngModel)]="updateForm.status">
+            <option *ngFor="let s of statuses" [value]="s.value">{{ s.label }}</option>
+          </select>
+        </div>
+        <div class="form-group" *ngIf="updateForm.status === 'notified'">
+          <label>Date de notification de l'autorité</label>
+          <input type="datetime-local" [(ngModel)]="updateForm.authorityNotifiedAt" />
+        </div>
+        <div class="form-group" *ngIf="updateForm.status === 'resolved'">
+          <label>Notes de résolution</label>
+          <textarea [(ngModel)]="updateForm.resolutionNotes" rows="3" placeholder="Décrivez les mesures prises..."></textarea>
+        </div>
+        <button class="btn-submit" (click)="submitUpdate(incident._id)"
+                [disabled]="!updateForm.status || (saving$ | async)">
+          <i class="fas fa-save"></i>
+          {{ (saving$ | async) ? 'Enregistrement...' : 'Enregistrer' }}
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
