@@ -20,12 +20,12 @@ import { MonitoringInterceptor } from './shared/interceptors/monitoring-intercep
 import { registerLocaleData } from '@angular/common';
 
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { CustomTranslateLoader } from './shared/services/localization/custom-translate-loader';
 
 registerLocaleData(localeFr);
 
 export function HttpLoaderFactory(http: HttpClient) {
-  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+  return new CustomTranslateLoader(http);
 }
 
 @NgModule({

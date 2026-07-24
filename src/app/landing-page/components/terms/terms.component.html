@@ -3,147 +3,151 @@
   <div class="legal-hero">
     <span class="legal-hero__badge">
       <i class="fas fa-file-alt"></i>
-      Légal
+      {{ 'LEGAL.COMMON.BADGE' | translate }}
     </span>
-    <h1>Conditions Générales d'Utilisation</h1>
-    <p class="legal-hero__meta">Version 1.0 &nbsp;·&nbsp; Janvier 2025 &nbsp;·&nbsp; Ndewa360 SARL</p>
+    <h1>{{ 'LEGAL.TERMS.SECTION_0.TITLE' | translate }}</h1>
+    <p class="legal-hero__meta">{{ 'LEGAL.COMMON.VERSION_META' | translate }}</p>
   </div>
 
   <div class="legal-content">
 
     <nav class="legal-nav">
-      <a routerLink="../privacy-policy" routerLinkActive="active"><i class="fas fa-lock"></i> Confidentialité</a>
-      <a routerLink="../terms" routerLinkActive="active"><i class="fas fa-file-alt"></i> Conditions d'utilisation</a>
-      <a routerLink="../cookies" routerLinkActive="active"><i class="fas fa-cookie-bite"></i> Cookies</a>
-      <a routerLink="../mentions-legales" routerLinkActive="active"><i class="fas fa-balance-scale"></i> Mentions légales</a>
-      <a routerLink="../remboursement" routerLinkActive="active"><i class="fas fa-undo"></i> Remboursement</a>
+      <a routerLink="../privacy-policy" routerLinkActive="active"><i class="fas fa-lock"></i> {{ 'LEGAL.COMMON.NAV_PRIVACY' | translate }}</a>
+      <a routerLink="../terms" routerLinkActive="active"><i class="fas fa-file-alt"></i> {{ 'LEGAL.COMMON.NAV_TERMS' | translate }}</a>
+      <a routerLink="../cookies" routerLinkActive="active"><i class="fas fa-cookie-bite"></i> {{ 'LEGAL.COMMON.NAV_COOKIES' | translate }}</a>
+      <a routerLink="../mentions-legales" routerLinkActive="active"><i class="fas fa-balance-scale"></i> {{ 'LEGAL.COMMON.NAV_MENTIONS' | translate }}</a>
+      <a routerLink="../remboursement" routerLinkActive="active"><i class="fas fa-undo"></i> {{ 'LEGAL.COMMON.NAV_REIMBURSEMENT' | translate }}</a>
     </nav>
 
     <div class="legal-toc">
-      <h3>Sommaire</h3>
+      <h3>{{ 'LEGAL.COMMON.TOC_TITLE' | translate }}</h3>
       <ol>
-        <li><a [routerLink]="[]" [fragment]="'t1'">Présentation du service</a></li>
-        <li><a [routerLink]="[]" [fragment]="'t2'">Acceptation des conditions</a></li>
-        <li><a [routerLink]="[]" [fragment]="'t3'">Accès au service et inscription</a></li>
-        <li><a [routerLink]="[]" [fragment]="'t4'">Plans et tarification</a></li>
-        <li><a [routerLink]="[]" [fragment]="'t5'">Obligations de l'utilisateur</a></li>
-        <li><a [routerLink]="[]" [fragment]="'t6'">Propriété intellectuelle</a></li>
-        <li><a [routerLink]="[]" [fragment]="'t7'">Données et confidentialité</a></li>
-        <li><a [routerLink]="[]" [fragment]="'t8'">Disponibilité du service</a></li>
-        <li><a [routerLink]="[]" [fragment]="'t9'">Limitation de responsabilité</a></li>
-        <li><a [routerLink]="[]" [fragment]="'t10'">Suspension et résiliation</a></li>
-        <li><a [routerLink]="[]" [fragment]="'t11'">Modifications des CGU</a></li>
-        <li><a [routerLink]="[]" [fragment]="'t12'">Droit applicable et litiges</a></li>
-        <li><a [routerLink]="[]" [fragment]="'t13'">Contact</a></li>
+        <li><a [routerLink]="[]" [fragment]="'t1'">{{ 'LEGAL.TERMS.SECTION_0.TITLE' | translate }}</a></li>
+        <li><a [routerLink]="[]" [fragment]="'t2'">{{ 'LEGAL.TERMS.SECTION_1.TITLE' | translate }}</a></li>
+        <li><a [routerLink]="[]" [fragment]="'t3'">{{ 'LEGAL.TERMS.SECTION_2.TITLE' | translate }}</a></li>
+        <li><a [routerLink]="[]" [fragment]="'t4'">{{ 'LEGAL.TERMS.SECTION_3.TITLE' | translate }}</a></li>
+        <li><a [routerLink]="[]" [fragment]="'t5'">{{ 'LEGAL.TERMS.SECTION_4.TITLE' | translate }}</a></li>
+        <li><a [routerLink]="[]" [fragment]="'t6'">{{ 'LEGAL.TERMS.SECTION_5.TITLE' | translate }}</a></li>
+        <li><a [routerLink]="[]" [fragment]="'t7'">{{ 'LEGAL.TERMS.SECTION_6.TITLE' | translate }}</a></li>
+        <li><a [routerLink]="[]" [fragment]="'t8'">{{ 'LEGAL.TERMS.SECTION_7.TITLE' | translate }}</a></li>
+        <li><a [routerLink]="[]" [fragment]="'t9'">{{ 'LEGAL.TERMS.SECTION_8.TITLE' | translate }}</a></li>
+        <li><a [routerLink]="[]" [fragment]="'t10'">{{ 'LEGAL.TERMS.SECTION_9.TITLE' | translate }}</a></li>
+        <li><a [routerLink]="[]" [fragment]="'t11'">{{ 'LEGAL.TERMS.SECTION_10.TITLE' | translate }}</a></li>
+        <li><a [routerLink]="[]" [fragment]="'t12'">{{ 'LEGAL.TERMS.SECTION_11.TITLE' | translate }}</a></li>
+        <li><a [routerLink]="[]" [fragment]="'t13'">{{ 'LEGAL.TERMS.SECTION_12.TITLE' | translate }}</a></li>
       </ol>
     </div>
 
     <div class="legal-section">
       <span class="legal-section__anchor" id="t1"></span>
-      <h2><span class="section-number">1</span><span class="section-icon"><i class="fas fa-building"></i></span> Présentation du service</h2>
-      <p>Ndewa360 est une plateforme SaaS (Software as a Service) de gestion immobilière éditée par Ndewa360 SARL (en cours de constitution), dont le siège social est situé à Tchougo, Bangangté, Région de l'Ouest, Cameroun.</p>
-      <p>La plateforme permet aux utilisateurs de :</p>
+      <h2><span class="section-number">1</span><span class="section-icon"><i class="fas fa-building"></i></span> {{ 'LEGAL.TERMS.SECTION_0.TITLE' | translate }}</h2>
+      <p>{{ 'LEGAL.TERMS.SECTION_0.BODY_0' | translate }}</p>
+      <p>{{ 'LEGAL.TERMS.SECTION_0.BODY_1' | translate }}</p>
       <ul>
-        <li>gérer des biens immobiliers (appartements, maisons, studios, villas, locaux commerciaux) ;</li>
-        <li>enregistrer et suivre des locataires ;</li>
-        <li>gérer des contrats de location et générer des documents (contrats, factures, reçus) ;</li>
-        <li>suivre les paiements de loyers et de cautions ;</li>
-        <li>accéder à des statistiques financières et des tableaux de bord ;</li>
-        <li>publier des annonces de biens disponibles à la location.</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_0.LIST_0' | translate }}</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_0.LIST_1' | translate }}</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_0.LIST_2' | translate }}</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_0.LIST_3' | translate }}</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_0.LIST_4' | translate }}</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_0.LIST_5' | translate }}</li>
       </ul>
       <div class="legal-callout legal-callout--warn">
         <span class="callout-icon"><i class="fas fa-exclamation-triangle"></i></span>
         <div class="callout-body">
-          <strong>Note</strong>
-          <p>Ndewa360 est actuellement en cours de constitution juridique. Ces conditions seront mises à jour dès l'immatriculation effective de la société.</p>
+          <strong>{{ 'LEGAL.TERMS.SECTION_0.CALLOUT_TITLE' | translate }}</strong>
+          <p>{{ 'LEGAL.TERMS.SECTION_0.CALLOUT_TEXT' | translate }}</p>
         </div>
       </div>
     </div>
 
     <div class="legal-section">
       <span class="legal-section__anchor" id="t2"></span>
-      <h2><span class="section-number">2</span><span class="section-icon"><i class="fas fa-check-circle"></i></span> Acceptation des conditions</h2>
-      <p>En créant un compte sur la plateforme Ndewa360 ou en utilisant ses services, vous acceptez sans réserve les présentes Conditions Générales d'Utilisation (CGU).</p>
-      <p>Si vous n'acceptez pas ces conditions, veuillez ne pas utiliser notre service.</p>
+      <h2><span class="section-number">2</span><span class="section-icon"><i class="fas fa-check-circle"></i></span> {{ 'LEGAL.TERMS.SECTION_1.TITLE' | translate }}</h2>
+      <p>{{ 'LEGAL.TERMS.SECTION_1.BODY_0' | translate }}</p>
+      <p>{{ 'LEGAL.TERMS.SECTION_1.BODY_1' | translate }}</p>
       <div class="legal-callout legal-callout--info">
         <span class="callout-icon"><i class="fas fa-info-circle"></i></span>
         <div class="callout-body">
-          <strong>Capacité juridique</strong>
-          <p>En acceptant ces conditions, vous déclarez être majeur et avoir la capacité juridique de conclure un contrat. L'utilisation de la plateforme par des mineurs est strictement interdite.</p>
+          <strong>{{ 'LEGAL.TERMS.SECTION_1.CALLOUT_TITLE' | translate }}</strong>
+          <p>{{ 'LEGAL.TERMS.SECTION_1.CALLOUT_TEXT' | translate }}</p>
         </div>
       </div>
-      <p>Ndewa360 se réserve le droit de modifier ces conditions à tout moment. Les modifications substantielles vous seront notifiées au moins <strong>30 jours</strong> avant leur entrée en vigueur (voir <a [routerLink]="[]" [fragment]="'t11'">section 11</a>).</p>
+      <p>{{ 'LEGAL.TERMS.SECTION_1.BODY_2' | translate }}</p>
     </div>
 
     <div class="legal-section">
       <span class="legal-section__anchor" id="t3"></span>
-      <h2><span class="section-number">3</span><span class="section-icon"><i class="fas fa-user-plus"></i></span> Accès au service et inscription</h2>
-      <h3>Création de compte</h3>
-      <p>L'accès aux fonctionnalités de la plateforme nécessite la création d'un compte. Vous pouvez vous inscrire :</p>
+      <h2><span class="section-number">3</span><span class="section-icon"><i class="fas fa-user-plus"></i></span> {{ 'LEGAL.TERMS.SECTION_2.TITLE' | translate }}</h2>
+      <h3>{{ 'LEGAL.TERMS.SECTION_2.SUBTITLE_0' | translate }}</h3>
+      <p>{{ 'LEGAL.TERMS.SECTION_2.BODY_0' | translate }}</p>
       <ul>
-        <li>directement via un formulaire d'inscription (email + mot de passe) ;</li>
-        <li>via votre compte Google (Google Sign-In) — optionnel.</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_2.LIST_0' | translate }}</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_2.LIST_1' | translate }}</li>
       </ul>
-      <h3>Exactitude des informations</h3>
-      <p>Vous vous engagez à fournir des informations exactes, complètes et à jour lors de votre inscription et tout au long de l'utilisation du service. Ndewa360 ne saurait être tenu responsable des conséquences d'informations inexactes fournies par l'utilisateur.</p>
-      <h3>Sécurité du compte</h3>
-      <p>Vous êtes seul responsable de la confidentialité de vos identifiants de connexion. Vous vous engagez à :</p>
+      <h3>{{ 'LEGAL.TERMS.SECTION_2.SUBTITLE_1' | translate }}</h3>
+      <p>{{ 'LEGAL.TERMS.SECTION_2.BODY_1' | translate }}</p>
+      <h3>{{ 'LEGAL.TERMS.SECTION_2.SUBTITLE_2' | translate }}</h3>
+      <p>{{ 'LEGAL.TERMS.SECTION_2.BODY_2' | translate }}</p>
       <ul>
-        <li>ne pas partager vos identifiants avec des tiers ;</li>
-        <li>notifier immédiatement Ndewa360 de toute utilisation non autorisée de votre compte à l'adresse <a href="mailto:support@ndewa-360.com">support@ndewa-360.com</a>.</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_2.LIST_2' | translate }}</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_2.LIST_3' | translate }}</li>
       </ul>
-      <h3>Confirmation de compte</h3>
-      <p>Après inscription, un email de confirmation vous est envoyé. Votre compte doit être confirmé pour accéder à l'ensemble des fonctionnalités de la plateforme.</p>
+      <h3>{{ 'LEGAL.TERMS.SECTION_2.SUBTITLE_3' | translate }}</h3>
+      <p>{{ 'LEGAL.TERMS.SECTION_2.BODY_3' | translate }}</p>
     </div>
 
     <div class="legal-section">
       <span class="legal-section__anchor" id="t4"></span>
-      <h2><span class="section-number">4</span><span class="section-icon"><i class="fas fa-tags"></i></span> Plans et tarification</h2>
+      <h2><span class="section-number">4</span><span class="section-icon"><i class="fas fa-tags"></i></span> {{ 'LEGAL.TERMS.SECTION_3.TITLE' | translate }}</h2>
 
-      <h3>Plan Gratuit (Freemium)</h3>
+      <h3>{{ 'LEGAL.TERMS.SECTION_3.SUBTITLE_0' | translate }}</h3>
       <div class="legal-callout legal-callout--success">
         <span class="callout-icon"><i class="fas fa-check-circle"></i></span>
         <div class="callout-body">
-          <strong>Plan Gratuit — Pour toujours</strong>
-          <p>Le plan gratuit est disponible sans limite de durée et sans carte bancaire requise.</p>
+          <strong>{{ 'LEGAL.TERMS.SECTION_3.CALLOUT_TITLE' | translate }}</strong>
+          <p>{{ 'LEGAL.TERMS.SECTION_3.CALLOUT_TEXT' | translate }}</p>
         </div>
       </div>
       <ul>
-        <li>Jusqu'à <strong>1 bien immobilier</strong></li>
-        <li>Jusqu'à <strong>5 unités locatives</strong> par bien</li>
-        <li>Accès à <strong>100% des fonctionnalités</strong> de la plateforme</li>
-        <li>Support par email</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_3.LIST_0' | translate }}</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_3.LIST_1' | translate }}</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_3.LIST_2' | translate }}</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_3.LIST_3' | translate }}</li>
       </ul>
 
-      <h3>Plan Trial (Essai Premium)</h3>
+      <h3>{{ 'LEGAL.TERMS.SECTION_3.SUBTITLE_1' | translate }}</h3>
       <ul>
-        <li>Durée : <strong>60 jours</strong> à compter de l'activation</li>
-        <li>Accès illimité à tous les biens et unités locatives</li>
-        <li>Toutes les fonctionnalités Premium incluses</li>
-        <li>Aucune carte bancaire requise</li>
-        <li>À l'expiration du trial, retour automatique au plan Gratuit</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_3.LIST_4' | translate }}</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_3.LIST_5' | translate }}</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_3.LIST_6' | translate }}</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_3.LIST_7' | translate }}</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_3.LIST_8' | translate }}</li>
       </ul>
 
-      <h3>Plan Premium</h3>
+      <h3>{{ 'LEGAL.TERMS.SECTION_3.SUBTITLE_2' | translate }}</h3>
       <ul>
-        <li>Biens immobiliers et unités locatives <strong>illimités</strong></li>
-        <li>Facturation mensuelle : <strong>2% du loyer mensuel</strong> de chaque unité occupée (minimum 15 jours dans le mois)</li>
-        <li>Unité vide = 0 FCFA facturé</li>
-        <li>Toutes les fonctionnalités de la plateforme</li>
-        <li>Support prioritaire</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_3.LIST_9' | translate }}</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_3.LIST_10' | translate }}</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_3.LIST_11' | translate }}</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_3.LIST_12' | translate }}</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_3.LIST_13' | translate }}</li>
       </ul>
 
-      <h3>Facturation</h3>
-      <p>La facturation Premium est automatique et mensuelle. Les factures sont disponibles dans votre espace personnel. En cas de non-paiement, votre compte peut être suspendu conformément à la <a [routerLink]="[]" [fragment]="'t10'">section 10</a>.</p>
-      <p>Les conditions de remboursement sont décrites dans notre <a routerLink="../remboursement">Politique de Remboursement</a>.</p>
+      <h3>{{ 'LEGAL.TERMS.SECTION_3.SUBTITLE_3' | translate }}</h3>
+      <p>{{ 'LEGAL.TERMS.SECTION_3.BODY_0' | translate }}</p>
+      <p>{{ 'LEGAL.TERMS.SECTION_3.BODY_1' | translate }}</p>
 
       <div class="legal-table-wrap">
         <table>
-          <thead><tr><th>Plan</th><th>Prix</th><th>Biens</th><th>Unités par bien</th></tr></thead>
+          <thead>
+            <tr>
+              <th *ngFor="let header of ('LEGAL.TERMS.SECTION_3.TABLE_HEADERS' | translate)">{{ header }}</th>
+            </tr>
+          </thead>
           <tbody>
-            <tr><td>Gratuit</td><td>0 FCFA</td><td>1</td><td>5 maximum</td></tr>
-            <tr><td>Trial</td><td>0 FCFA (60 jours)</td><td>Illimité</td><td>Illimité</td></tr>
-            <tr><td>Premium</td><td>2% du loyer/unité occupée/mois</td><td>Illimité</td><td>Illimité</td></tr>
+            <tr *ngFor="let row of ('LEGAL.TERMS.SECTION_3.TABLE_ROWS' | translate)">
+              <td *ngFor="let cell of row">{{ cell }}</td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -157,83 +161,83 @@
 
     <div class="legal-section">
       <span class="legal-section__anchor" id="t5"></span>
-      <h2><span class="section-number">5</span><span class="section-icon"><i class="fas fa-tasks"></i></span> Obligations de l'utilisateur</h2>
-      <p>En utilisant la plateforme Ndewa360, vous vous engagez à :</p>
+      <h2><span class="section-number">5</span><span class="section-icon"><i class="fas fa-tasks"></i></span> {{ 'LEGAL.TERMS.SECTION_4.TITLE' | translate }}</h2>
+      <p>{{ 'LEGAL.TERMS.SECTION_4.BODY_0' | translate }}</p>
       <ul class="commitment-list">
-        <li>fournir des informations exactes et à jour lors de votre inscription et de l'utilisation du service ;</li>
-        <li>utiliser la plateforme uniquement à des fins légales et conformes aux présentes CGU ;</li>
-        <li>respecter les droits des tiers, notamment les droits des locataires dont vous enregistrez les données ;</li>
-        <li>maintenir la confidentialité de vos identifiants de connexion ;</li>
-        <li>informer vos locataires de l'utilisation de leurs données personnelles sur la plateforme ;</li>
-        <li>ne pas tenter de contourner les mesures de sécurité de la plateforme ;</li>
-        <li>ne pas utiliser la plateforme pour diffuser des contenus illicites, diffamatoires ou portant atteinte aux droits de tiers.</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_4.LIST_0' | translate }}</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_4.LIST_1' | translate }}</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_4.LIST_2' | translate }}</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_4.LIST_3' | translate }}</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_4.LIST_4' | translate }}</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_4.LIST_5' | translate }}</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_4.LIST_6' | translate }}</li>
       </ul>
-      <h3>Usages interdits</h3>
+      <h3>{{ 'LEGAL.TERMS.SECTION_4.SUBTITLE_0' | translate }}</h3>
       <ul class="commitment-list">
-        <li class="no">Utiliser la plateforme à des fins frauduleuses ou illégales.</li>
-        <li class="no">Tenter d'accéder aux données d'autres utilisateurs sans autorisation.</li>
-        <li class="no">Introduire des virus, malwares ou tout code malveillant dans la plateforme.</li>
-        <li class="no">Utiliser des robots ou scripts automatisés pour accéder à la plateforme sans autorisation préalable.</li>
-        <li class="no">Revendre ou sous-licencier l'accès à la plateforme à des tiers.</li>
+        <li class="no">{{ 'LEGAL.TERMS.SECTION_4.NEGATIVE_LIST_0' | translate }}</li>
+        <li class="no">{{ 'LEGAL.TERMS.SECTION_4.NEGATIVE_LIST_1' | translate }}</li>
+        <li class="no">{{ 'LEGAL.TERMS.SECTION_4.NEGATIVE_LIST_2' | translate }}</li>
+        <li class="no">{{ 'LEGAL.TERMS.SECTION_4.NEGATIVE_LIST_3' | translate }}</li>
+        <li class="no">{{ 'LEGAL.TERMS.SECTION_4.NEGATIVE_LIST_4' | translate }}</li>
       </ul>
-      <p>Tout usage abusif entraînera la suspension immédiate du compte, sans préjudice de toute action légale que Ndewa360 pourrait engager.</p>
+      <p>{{ 'LEGAL.TERMS.SECTION_4.BODY_1' | translate }}</p>
     </div>
 
     <div class="legal-section">
       <span class="legal-section__anchor" id="t6"></span>
-      <h2><span class="section-number">6</span><span class="section-icon"><i class="fas fa-copyright"></i></span> Propriété intellectuelle</h2>
-      <h3>Droits de Ndewa360</h3>
-      <p>La plateforme Ndewa360, son code source, son design, ses logos, ses marques, ses textes et l'ensemble de ses contenus sont la propriété exclusive de Ndewa360 SARL et sont protégés par les lois applicables en matière de propriété intellectuelle.</p>
-      <p>Toute reproduction, distribution, modification ou utilisation commerciale de ces éléments sans autorisation écrite préalable de Ndewa360 est strictement interdite.</p>
-      <h3>Droits de l'utilisateur sur ses données</h3>
-      <p>Vous conservez l'intégralité des droits sur les données que vous saisissez dans la plateforme (données de biens, de locataires, de paiements, contrats). Ndewa360 ne revendique aucun droit de propriété sur ces données.</p>
-      <p>En utilisant la plateforme, vous accordez à Ndewa360 une licence limitée, non exclusive et révocable pour traiter ces données dans le seul but de vous fournir les services décrits dans les présentes CGU.</p>
+      <h2><span class="section-number">6</span><span class="section-icon"><i class="fas fa-copyright"></i></span> {{ 'LEGAL.TERMS.SECTION_5.TITLE' | translate }}</h2>
+      <h3>{{ 'LEGAL.TERMS.SECTION_5.SUBTITLE_0' | translate }}</h3>
+      <p>{{ 'LEGAL.TERMS.SECTION_5.BODY_0' | translate }}</p>
+      <p>{{ 'LEGAL.TERMS.SECTION_5.BODY_1' | translate }}</p>
+      <h3>{{ 'LEGAL.TERMS.SECTION_5.SUBTITLE_1' | translate }}</h3>
+      <p>{{ 'LEGAL.TERMS.SECTION_5.BODY_2' | translate }}</p>
+      <p>{{ 'LEGAL.TERMS.SECTION_5.BODY_3' | translate }}</p>
     </div>
 
     <div class="legal-section">
       <span class="legal-section__anchor" id="t7"></span>
-      <h2><span class="section-number">7</span><span class="section-icon"><i class="fas fa-shield-alt"></i></span> Données et confidentialité</h2>
-      <p>Le traitement de vos données personnelles est régi par notre <a routerLink="../privacy-policy">Politique de Confidentialité</a>, qui fait partie intégrante des présentes CGU.</p>
-      <p>En acceptant les présentes CGU, vous reconnaissez avoir pris connaissance de notre Politique de Confidentialité et en accepter les termes.</p>
+      <h2><span class="section-number">7</span><span class="section-icon"><i class="fas fa-shield-alt"></i></span> {{ 'LEGAL.TERMS.SECTION_6.TITLE' | translate }}</h2>
+      <p>{{ 'LEGAL.TERMS.SECTION_6.BODY_0' | translate }}</p>
+      <p>{{ 'LEGAL.TERMS.SECTION_6.BODY_1' | translate }}</p>
       <div class="legal-callout legal-callout--info">
         <span class="callout-icon"><i class="fas fa-shield-alt"></i></span>
         <div class="callout-body">
-          <strong>Données des locataires</strong>
-          <p>En tant que propriétaire ou agence utilisant Ndewa360, vous êtes responsable du traitement des données personnelles de vos locataires. Ndewa360 agit en tant que sous-traitant. Vous êtes tenu d'informer vos locataires de l'utilisation de leurs données et de disposer d'une base légale pour ce traitement.</p>
+          <strong>{{ 'LEGAL.TERMS.SECTION_6.CALLOUT_TITLE' | translate }}</strong>
+          <p>{{ 'LEGAL.TERMS.SECTION_6.CALLOUT_TEXT' | translate }}</p>
         </div>
       </div>
     </div>
 
     <div class="legal-section">
       <span class="legal-section__anchor" id="t8"></span>
-      <h2><span class="section-number">8</span><span class="section-icon"><i class="fas fa-server"></i></span> Disponibilité du service</h2>
-      <p>Ndewa360 s'efforce de maintenir la plateforme disponible 24h/24 et 7j/7. Cependant, Ndewa360 ne peut garantir une disponibilité sans interruption.</p>
-      <p>Des interruptions peuvent survenir pour les raisons suivantes :</p>
+      <h2><span class="section-number">8</span><span class="section-icon"><i class="fas fa-server"></i></span> {{ 'LEGAL.TERMS.SECTION_7.TITLE' | translate }}</h2>
+      <p>{{ 'LEGAL.TERMS.SECTION_7.BODY_0' | translate }}</p>
+      <p>{{ 'LEGAL.TERMS.SECTION_7.BODY_1' | translate }}</p>
       <ul>
-        <li>Maintenance planifiée (vous serez informé au préalable dans la mesure du possible)</li>
-        <li>Pannes techniques imprévues</li>
-        <li>Incidents chez nos prestataires d'hébergement</li>
-        <li>Cas de force majeure</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_7.LIST_0' | translate }}</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_7.LIST_1' | translate }}</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_7.LIST_2' | translate }}</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_7.LIST_3' | translate }}</li>
       </ul>
-      <p>Ndewa360 ne saurait être tenu responsable des préjudices résultant d'une indisponibilité temporaire de la plateforme.</p>
+      <p>{{ 'LEGAL.TERMS.SECTION_7.BODY_2' | translate }}</p>
     </div>
 
     <div class="legal-section">
       <span class="legal-section__anchor" id="t9"></span>
-      <h2><span class="section-number">9</span><span class="section-icon"><i class="fas fa-exclamation-circle"></i></span> Limitation de responsabilité</h2>
-      <p>Dans les limites autorisées par la loi applicable, Ndewa360 ne saurait être tenu responsable :</p>
+      <h2><span class="section-number">9</span><span class="section-icon"><i class="fas fa-exclamation-circle"></i></span> {{ 'LEGAL.TERMS.SECTION_8.TITLE' | translate }}</h2>
+      <p>{{ 'LEGAL.TERMS.SECTION_8.BODY_0' | translate }}</p>
       <ul>
-        <li>des pertes de données résultant d'une utilisation incorrecte de la plateforme par l'utilisateur ;</li>
-        <li>des préjudices indirects, consécutifs ou immatériels résultant de l'utilisation ou de l'impossibilité d'utiliser la plateforme ;</li>
-        <li>des actions ou omissions de tiers, y compris les prestataires de services de paiement ;</li>
-        <li>des litiges entre propriétaires et locataires — Ndewa360 est un outil de gestion et n'est pas partie aux contrats de location conclus via la plateforme ;</li>
-        <li>de l'exactitude des informations saisies par les utilisateurs.</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_8.LIST_0' | translate }}</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_8.LIST_1' | translate }}</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_8.LIST_2' | translate }}</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_8.LIST_3' | translate }}</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_8.LIST_4' | translate }}</li>
       </ul>
       <div class="legal-callout legal-callout--warn">
         <span class="callout-icon"><i class="fas fa-exclamation-triangle"></i></span>
         <div class="callout-body">
-          <strong>Outil de gestion uniquement</strong>
-          <p>Ndewa360 est un outil de gestion immobilière. La plateforme ne fournit pas de conseils juridiques, fiscaux ou financiers. Les contrats générés via la plateforme sont fournis à titre indicatif. Il vous appartient de vérifier leur conformité avec la législation applicable à votre situation.</p>
+          <strong>{{ 'LEGAL.TERMS.SECTION_8.CALLOUT_TITLE' | translate }}</strong>
+          <p>{{ 'LEGAL.TERMS.SECTION_8.CALLOUT_TEXT' | translate }}</p>
         </div>
       </div>
     </div>
@@ -246,64 +250,64 @@
 
     <div class="legal-section">
       <span class="legal-section__anchor" id="t10"></span>
-      <h2><span class="section-number">10</span><span class="section-icon"><i class="fas fa-user-slash"></i></span> Suspension et résiliation</h2>
-      <h3>Suspension pour non-paiement</h3>
-      <p>En cas de non-paiement des factures Premium échues, Ndewa360 se réserve le droit de suspendre l'accès à votre compte. Votre compte sera automatiquement réactivé dès le règlement des factures impayées.</p>
-      <h3>Suspension pour violation des CGU</h3>
-      <p>Ndewa360 se réserve le droit de suspendre ou de résilier votre compte sans préavis en cas de :</p>
+      <h2><span class="section-number">10</span><span class="section-icon"><i class="fas fa-user-slash"></i></span> {{ 'LEGAL.TERMS.SECTION_9.TITLE' | translate }}</h2>
+      <h3>{{ 'LEGAL.TERMS.SECTION_9.SUBTITLE_0' | translate }}</h3>
+      <p>{{ 'LEGAL.TERMS.SECTION_9.BODY_0' | translate }}</p>
+      <h3>{{ 'LEGAL.TERMS.SECTION_9.SUBTITLE_1' | translate }}</h3>
+      <p>{{ 'LEGAL.TERMS.SECTION_9.BODY_1' | translate }}</p>
       <ul>
-        <li>violation des présentes CGU ;</li>
-        <li>utilisation frauduleuse ou illégale de la plateforme ;</li>
-        <li>comportement portant atteinte aux droits de tiers ou à la sécurité de la plateforme.</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_9.LIST_0' | translate }}</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_9.LIST_1' | translate }}</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_9.LIST_2' | translate }}</li>
       </ul>
-      <h3>Résiliation à l'initiative de l'utilisateur</h3>
-      <p>Vous pouvez supprimer votre compte à tout moment depuis votre espace personnel ou en contactant notre support à <a href="mailto:support@ndewa-360.com">support@ndewa-360.com</a>.</p>
-      <p>Lors de la suppression de votre compte :</p>
+      <h3>{{ 'LEGAL.TERMS.SECTION_9.SUBTITLE_2' | translate }}</h3>
+      <p>{{ 'LEGAL.TERMS.SECTION_9.BODY_2' | translate }}</p>
+      <p>{{ 'LEGAL.TERMS.SECTION_9.BODY_3' | translate }}</p>
       <ul>
-        <li>vos données personnelles sont supprimées conformément à notre <a routerLink="../privacy-policy">Politique de Confidentialité</a> ;</li>
-        <li>les données nécessaires à l'historique comptable peuvent être conservées conformément aux obligations légales applicables ;</li>
-        <li>les factures impayées restent dues.</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_9.LIST_3' | translate }}</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_9.LIST_4' | translate }}</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_9.LIST_5' | translate }}</li>
       </ul>
     </div>
 
     <div class="legal-section">
       <span class="legal-section__anchor" id="t11"></span>
-      <h2><span class="section-number">11</span><span class="section-icon"><i class="fas fa-pen"></i></span> Modifications des CGU</h2>
-      <p>Ndewa360 se réserve le droit de modifier les présentes CGU à tout moment. En cas de modification substantielle, vous serez informé :</p>
+      <h2><span class="section-number">11</span><span class="section-icon"><i class="fas fa-pen"></i></span> {{ 'LEGAL.TERMS.SECTION_10.TITLE' | translate }}</h2>
+      <p>{{ 'LEGAL.TERMS.SECTION_10.BODY_0' | translate }}</p>
       <ul>
-        <li>par email à l'adresse associée à votre compte ;</li>
-        <li>et/ou par une notification visible sur la plateforme.</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_10.LIST_0' | translate }}</li>
+        <li>{{ 'LEGAL.TERMS.SECTION_10.LIST_1' | translate }}</li>
       </ul>
-      <p>Cette notification sera effectuée au moins <strong>30 jours</strong> avant l'entrée en vigueur des modifications.</p>
-      <p>La poursuite de l'utilisation de la plateforme après l'entrée en vigueur des modifications vaut acceptation des nouvelles CGU. Si vous n'acceptez pas les modifications, vous pouvez supprimer votre compte avant leur entrée en vigueur.</p>
+      <p>{{ 'LEGAL.TERMS.SECTION_10.BODY_1' | translate }}</p>
+      <p>{{ 'LEGAL.TERMS.SECTION_10.BODY_2' | translate }}</p>
     </div>
 
     <div class="legal-section">
       <span class="legal-section__anchor" id="t12"></span>
-      <h2><span class="section-number">12</span><span class="section-icon"><i class="fas fa-globe"></i></span> Droit applicable et litiges</h2>
-      <p>Les présentes CGU sont régies par le <strong>droit camerounais</strong>.</p>
-      <p>En cas de litige relatif à l'interprétation ou à l'exécution des présentes CGU, les parties s'engagent à rechercher une solution amiable avant tout recours judiciaire.</p>
-      <p>À défaut de résolution amiable dans un délai de <strong>30 jours</strong> à compter de la notification du litige, les tribunaux compétents du Cameroun seront seuls compétents pour connaître du litige.</p>
+      <h2><span class="section-number">12</span><span class="section-icon"><i class="fas fa-globe"></i></span> {{ 'LEGAL.TERMS.SECTION_11.TITLE' | translate }}</h2>
+      <p>{{ 'LEGAL.TERMS.SECTION_11.BODY_0' | translate }}</p>
+      <p>{{ 'LEGAL.TERMS.SECTION_11.BODY_1' | translate }}</p>
+      <p>{{ 'LEGAL.TERMS.SECTION_11.BODY_2' | translate }}</p>
       <div class="legal-callout legal-callout--info">
         <span class="callout-icon"><i class="fas fa-globe"></i></span>
         <div class="callout-body">
-          <strong>Utilisateurs résidant dans l'Union Européenne</strong>
-          <p>Pour les utilisateurs résidant dans l'Union Européenne, les dispositions impératives de protection des consommateurs prévues par la législation de leur pays de résidence restent applicables dans la mesure où elles leur confèrent une protection plus élevée que le droit camerounais.</p>
+          <strong>{{ 'LEGAL.TERMS.SECTION_11.CALLOUT_TITLE' | translate }}</strong>
+          <p>{{ 'LEGAL.TERMS.SECTION_11.CALLOUT_TEXT' | translate }}</p>
         </div>
       </div>
     </div>
 
     <div class="legal-section">
       <span class="legal-section__anchor" id="t13"></span>
-      <h2><span class="section-number">13</span><span class="section-icon"><i class="fas fa-envelope"></i></span> Contact</h2>
-      <p>Pour toute question relative aux présentes Conditions Générales d'Utilisation :</p>
+      <h2><span class="section-number">13</span><span class="section-icon"><i class="fas fa-envelope"></i></span> {{ 'LEGAL.TERMS.SECTION_12.TITLE' | translate }}</h2>
+      <p>{{ 'LEGAL.TERMS.SECTION_12.BODY_0' | translate }}</p>
       <div class="legal-contact-box">
-        <h3>Nous contacter</h3>
-        <p>Notre équipe répond à toutes vos questions dans un délai de 48 heures.</p>
+        <h3>{{ 'LEGAL.COMMON.CONTACT_TITLE' | translate }}</h3>
+        <p>{{ 'LEGAL.COMMON.CONTACT_DELAY' | translate }}</p>
         <a href="mailto:support@ndewa-360.com" class="legal-contact-btn"><i class="fas fa-envelope"></i> support@ndewa-360.com</a>
       </div>
       <p style="margin-top:1.5rem; color:#8d8d8d; font-size:0.85rem; text-align:center;">
-        Ndewa360 SARL (en cours de constitution) &nbsp;·&nbsp; Tchougo, Bangangté, Région de l'Ouest, Cameroun
+        {{ 'LEGAL.COMMON.FOOTER_COMPANY' | translate }}
       </p>
     </div>
 

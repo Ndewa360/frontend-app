@@ -3,144 +3,110 @@
   <div class="legal-hero">
     <span class="legal-hero__badge">
       <i class="fas fa-cookie-bite"></i>
-      Légal
+      {{ 'LEGAL.COMMON.BADGE' | translate }}
     </span>
     <h1>Politique de Cookies</h1>
-    <p class="legal-hero__meta">Version 1.0 &nbsp;·&nbsp; Janvier 2025 &nbsp;·&nbsp; Ndewa360 SARL</p>
+    <p class="legal-hero__meta">{{ 'LEGAL.COMMON.VERSION_META' | translate }}</p>
   </div>
 
   <div class="legal-content">
 
     <nav class="legal-nav">
-      <a routerLink="../privacy-policy" routerLinkActive="active"><i class="fas fa-lock"></i> Confidentialité</a>
-      <a routerLink="../terms" routerLinkActive="active"><i class="fas fa-file-alt"></i> Conditions d'utilisation</a>
-      <a routerLink="../cookies" routerLinkActive="active"><i class="fas fa-cookie-bite"></i> Cookies</a>
-      <a routerLink="../mentions-legales" routerLinkActive="active"><i class="fas fa-balance-scale"></i> Mentions légales</a>
-      <a routerLink="../remboursement" routerLinkActive="active"><i class="fas fa-undo"></i> Remboursement</a>
+      <a routerLink="../privacy-policy" routerLinkActive="active"><i class="fas fa-lock"></i> {{ 'LEGAL.COMMON.NAV_PRIVACY' | translate }}</a>
+      <a routerLink="../terms" routerLinkActive="active"><i class="fas fa-file-alt"></i> {{ 'LEGAL.COMMON.NAV_TERMS' | translate }}</a>
+      <a routerLink="../cookies" routerLinkActive="active"><i class="fas fa-cookie-bite"></i> {{ 'LEGAL.COMMON.NAV_COOKIES' | translate }}</a>
+      <a routerLink="../mentions-legales" routerLinkActive="active"><i class="fas fa-balance-scale"></i> {{ 'LEGAL.COMMON.NAV_MENTIONS' | translate }}</a>
+      <a routerLink="../remboursement" routerLinkActive="active"><i class="fas fa-undo"></i> {{ 'LEGAL.COMMON.NAV_REIMBURSEMENT' | translate }}</a>
     </nav>
 
     <div class="legal-toc">
-      <h3>Sommaire</h3>
+      <h3>{{ 'LEGAL.COMMON.TOC_TITLE' | translate }}</h3>
       <ol>
-        <li><a [routerLink]="[]" [fragment]="'c1'">Qu'est-ce qu'un cookie ?</a></li>
-        <li><a [routerLink]="[]" [fragment]="'c2'">Cookies que nous utilisons</a></li>
-        <li><a [routerLink]="[]" [fragment]="'c3'">Cookies tiers</a></li>
-        <li><a [routerLink]="[]" [fragment]="'c4'">Gérer vos préférences</a></li>
-        <li><a [routerLink]="[]" [fragment]="'c5'">Modifications</a></li>
-        <li><a [routerLink]="[]" [fragment]="'c6'">Contact</a></li>
+        <li><a [routerLink]="[]" [fragment]="'c1'">{{ 'LEGAL.COOKIES.SECTION_0.TITLE' | translate }}</a></li>
+        <li><a [routerLink]="[]" [fragment]="'c2'">{{ 'LEGAL.COOKIES.SECTION_1.TITLE' | translate }}</a></li>
+        <li><a [routerLink]="[]" [fragment]="'c3'">{{ 'LEGAL.COOKIES.SECTION_2.TITLE' | translate }}</a></li>
+        <li><a [routerLink]="[]" [fragment]="'c4'">{{ 'LEGAL.COOKIES.SECTION_3.TITLE' | translate }}</a></li>
+        <li><a [routerLink]="[]" [fragment]="'c5'">{{ 'LEGAL.COOKIES.SECTION_4.TITLE' | translate }}</a></li>
+        <li><a [routerLink]="[]" [fragment]="'c6'">{{ 'LEGAL.COOKIES.SECTION_5.TITLE' | translate }}</a></li>
       </ol>
     </div>
 
     <div class="legal-section">
       <span class="legal-section__anchor" id="c1"></span>
-      <h2><span class="section-number">1</span><span class="section-icon"><i class="fas fa-info-circle"></i></span> Qu'est-ce qu'un cookie ?</h2>
-      <p>Un cookie est un petit fichier texte déposé sur votre appareil (ordinateur, tablette, smartphone) lorsque vous visitez un site web. Les cookies permettent au site de mémoriser vos actions et préférences pendant une durée déterminée, afin que vous n'ayez pas à les ressaisir à chaque visite.</p>
-      <p>Les cookies peuvent être :</p>
+      <h2><span class="section-number">1</span><span class="section-icon"><i class="fas fa-info-circle"></i></span> {{ 'LEGAL.COOKIES.SECTION_0.TITLE' | translate }}</h2>
+      <p>{{ 'LEGAL.COOKIES.SECTION_0.BODY_0' | translate }}</p>
+      <p>{{ 'LEGAL.COOKIES.SECTION_0.BODY_1' | translate }}</p>
       <ul>
-        <li><strong>Cookies de session</strong> — supprimés automatiquement à la fermeture de votre navigateur.</li>
-        <li><strong>Cookies persistants</strong> — conservés sur votre appareil pendant une durée définie, même après la fermeture du navigateur.</li>
-        <li><strong>Cookies first-party</strong> — déposés directement par Ndewa360.</li>
-        <li><strong>Cookies third-party</strong> — déposés par des services tiers intégrés à la plateforme.</li>
+        <li><strong>{{ 'LEGAL.COOKIES.SECTION_0.LIST_0' | translate }}</strong></li>
+        <li><strong>{{ 'LEGAL.COOKIES.SECTION_0.LIST_1' | translate }}</strong></li>
+        <li><strong>{{ 'LEGAL.COOKIES.SECTION_0.LIST_2' | translate }}</strong></li>
+        <li><strong>{{ 'LEGAL.COOKIES.SECTION_0.LIST_3' | translate }}</strong></li>
       </ul>
     </div>
 
     <div class="legal-section">
       <span class="legal-section__anchor" id="c2"></span>
-      <h2><span class="section-number">2</span><span class="section-icon"><i class="fas fa-list"></i></span> Cookies que nous utilisons</h2>
+      <h2><span class="section-number">2</span><span class="section-icon"><i class="fas fa-list"></i></span> {{ 'LEGAL.COOKIES.SECTION_1.TITLE' | translate }}</h2>
 
-      <h3>2.1 Cookies strictement nécessaires</h3>
+      <h3>{{ 'LEGAL.COOKIES.SECTION_1.SUBTITLE_0' | translate }}</h3>
       <div class="legal-callout legal-callout--info">
         <span class="callout-icon"><i class="fas fa-info-circle"></i></span>
         <div class="callout-body">
-          <strong>Aucun consentement requis</strong>
-          <p>Ces cookies sont indispensables au fonctionnement de la plateforme. Ils ne peuvent pas être désactivés sans affecter votre expérience.</p>
+          <strong>{{ 'LEGAL.COOKIES.SECTION_1.CALLOUT_TITLE' | translate }}</strong>
+          <p>{{ 'LEGAL.COOKIES.SECTION_1.CALLOUT_TEXT' | translate }}</p>
         </div>
       </div>
       <div class="legal-table-wrap">
         <table>
           <thead>
-            <tr><th>Nom</th><th>Type</th><th>Durée</th><th>Finalité</th></tr>
+            <tr><th *ngFor="let h of ('LEGAL.COOKIES.SECTION_1.TABLE_HEADERS_0' | translate)">{{ h }}</th></tr>
           </thead>
           <tbody>
-            <tr>
-              <td><span class="scope-badge">access_token</span></td>
-              <td>Session / Persistant</td>
-              <td>Durée de la session</td>
-              <td>Maintien de votre connexion à la plateforme (JWT d'authentification)</td>
-            </tr>
-            <tr>
-              <td><span class="scope-badge">refresh_token</span></td>
-              <td>Persistant</td>
-              <td>30 jours</td>
-              <td>Renouvellement automatique de votre session sans reconnexion</td>
+            <tr *ngFor="let row of ('LEGAL.COOKIES.SECTION_1.TABLE_ROWS_0' | translate)">
+              <td *ngFor="let cell of row; let i = index"><span *ngIf="i === 0" class="scope-badge">{{ cell }}</span><span *ngIf="i !== 0">{{ cell }}</span></td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <h3>2.2 Cookies analytiques</h3>
+      <h3>{{ 'LEGAL.COOKIES.SECTION_1.SUBTITLE_1' | translate }}</h3>
       <div class="legal-callout legal-callout--warn">
         <span class="callout-icon"><i class="fas fa-exclamation-triangle"></i></span>
         <div class="callout-body">
-          <strong>Consentement requis</strong>
-          <p>Ces cookies nécessitent votre accord préalable. Utilisez le bandeau de consentement disponible en bas de page pour gérer vos préférences.</p>
+          <strong>{{ 'LEGAL.COOKIES.SECTION_1.CALLOUT_1_TITLE' | translate }}</strong>
+          <p>{{ 'LEGAL.COOKIES.SECTION_1.CALLOUT_1_TEXT' | translate }}</p>
         </div>
       </div>
       <div class="legal-table-wrap">
         <table>
           <thead>
-            <tr><th>Nom</th><th>Émetteur</th><th>Durée</th><th>Finalité</th></tr>
+            <tr><th *ngFor="let h of ('LEGAL.COOKIES.SECTION_1.TABLE_HEADERS_1' | translate)">{{ h }}</th></tr>
           </thead>
           <tbody>
-            <tr>
-              <td><span class="scope-badge">_ga</span></td>
-              <td>Google Analytics</td>
-              <td>2 ans</td>
-              <td>Distinguer les utilisateurs uniques</td>
-            </tr>
-            <tr>
-              <td><span class="scope-badge">_ga_*</span></td>
-              <td>Google Analytics</td>
-              <td>2 ans</td>
-              <td>Maintenir l'état de la session Analytics</td>
-            </tr>
-            <tr>
-              <td><span class="scope-badge">_gid</span></td>
-              <td>Google Analytics</td>
-              <td>24 heures</td>
-              <td>Distinguer les utilisateurs</td>
-            </tr>
-            <tr>
-              <td><span class="scope-badge">_gat</span></td>
-              <td>Google Analytics</td>
-              <td>1 minute</td>
-              <td>Limiter le taux de requêtes</td>
+            <tr *ngFor="let row of ('LEGAL.COOKIES.SECTION_1.TABLE_ROWS_1' | translate)">
+              <td *ngFor="let cell of row; let i = index"><span *ngIf="i === 0" class="scope-badge">{{ cell }}</span><span *ngIf="i !== 0">{{ cell }}</span></td>
             </tr>
           </tbody>
         </table>
       </div>
-      <p>Ces cookies sont utilisés uniquement pour mesurer l'audience de la plateforme (pages visitées, durée des sessions, type d'appareil) afin d'améliorer nos services. Ils ne sont pas utilisés à des fins publicitaires.</p>
+      <p>{{ 'LEGAL.COOKIES.SECTION_1.BODY_0' | translate }}</p>
     </div>
 
     <div class="legal-section">
       <span class="legal-section__anchor" id="c3"></span>
-      <h2><span class="section-number">3</span><span class="section-icon"><i class="fas fa-share-alt"></i></span> Cookies tiers</h2>
-      <p>Certains cookies sont déposés par des services tiers intégrés à la plateforme. Ces cookies sont soumis aux politiques de confidentialité de leurs émetteurs respectifs.</p>
+      <h2><span class="section-number">3</span><span class="section-icon"><i class="fas fa-share-alt"></i></span> {{ 'LEGAL.COOKIES.SECTION_2.TITLE' | translate }}</h2>
+      <p>{{ 'LEGAL.COOKIES.SECTION_2.BODY_0' | translate }}</p>
       <div class="legal-table-wrap">
         <table>
           <thead>
-            <tr><th>Service</th><th>Finalité</th><th>Politique de confidentialité</th></tr>
+            <tr><th *ngFor="let h of ('LEGAL.COOKIES.SECTION_2.TABLE_HEADERS' | translate)">{{ h }}</th></tr>
           </thead>
           <tbody>
-            <tr>
-              <td>Google Analytics</td>
-              <td>Mesure d'audience</td>
-              <td><a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com/privacy</a></td>
-            </tr>
-            <tr>
-              <td>Google Sign-In</td>
-              <td>Authentification via Google</td>
-              <td><a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com/privacy</a></td>
+            <tr *ngFor="let row of ('LEGAL.COOKIES.SECTION_2.TABLE_ROWS' | translate)">
+              <td *ngFor="let cell of row; let i = index">
+                <ng-container *ngIf="i < 2">{{ cell }}</ng-container>
+                <a *ngIf="i === 2" href="https://policies.google.com/privacy" target="_blank" rel="noopener">{{ cell }}</a>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -148,65 +114,65 @@
       <div class="legal-callout legal-callout--success">
         <span class="callout-icon"><i class="fas fa-check-circle"></i></span>
         <div class="callout-body">
-          <strong>Pas de cookies publicitaires</strong>
-          <p>Ndewa360 n'utilise aucun cookie à des fins publicitaires, de ciblage ou de profilage commercial.</p>
+          <strong>{{ 'LEGAL.COOKIES.SECTION_2.CALLOUT_TITLE' | translate }}</strong>
+          <p>{{ 'LEGAL.COOKIES.SECTION_2.CALLOUT_TEXT' | translate }}</p>
         </div>
       </div>
     </div>
 
     <div class="legal-section">
       <span class="legal-section__anchor" id="c4"></span>
-      <h2><span class="section-number">4</span><span class="section-icon"><i class="fas fa-sliders-h"></i></span> Gérer vos préférences</h2>
+      <h2><span class="section-number">4</span><span class="section-icon"><i class="fas fa-sliders-h"></i></span> {{ 'LEGAL.COOKIES.SECTION_3.TITLE' | translate }}</h2>
 
-      <h3>Bandeau de consentement</h3>
+      <h3>{{ 'LEGAL.COOKIES.SECTION_3.SUBTITLE_0' | translate }}</h3>
       <div class="legal-callout legal-callout--success">
         <span class="callout-icon"><i class="fas fa-check-circle"></i></span>
         <div class="callout-body">
-          <strong>Disponible</strong>
-          <p>Un bandeau de consentement est présent en bas de chaque page. Vous pouvez modifier vos préférences à tout moment via le bouton <strong>Préférences cookies</strong> en bas à droite, ou depuis la section <strong>Mes données &amp; Cookies</strong> de votre <a [routerLink]="['../../app/profile']" fragment="section-privacy">espace personnel</a>.</p>
-          <p>Google Analytics n'est chargé qu'après votre acceptation explicite. Si vous refusez, aucun cookie analytique n'est déposé.</p>
+          <strong>{{ 'LEGAL.COOKIES.SECTION_3.CALLOUT_TITLE' | translate }}</strong>
+          <p>{{ 'LEGAL.COOKIES.SECTION_3.CALLOUT_TEXT' | translate }}</p>
+          <p>{{ 'LEGAL.COOKIES.SECTION_3.BODY_0' | translate }}</p>
         </div>
       </div>
 
-      <h3>Paramètres de votre navigateur</h3>
-      <p>Vous pouvez à tout moment configurer votre navigateur pour accepter, refuser ou supprimer les cookies. Voici les liens vers les paramètres des principaux navigateurs :</p>
+      <h3>{{ 'LEGAL.COOKIES.SECTION_3.SUBTITLE_1' | translate }}</h3>
+      <p>{{ 'LEGAL.COOKIES.SECTION_3.BODY_1' | translate }}</p>
       <ul>
-        <li><a href="https://support.google.com/chrome/answer/95647" target="_blank" rel="noopener">Google Chrome</a></li>
-        <li><a href="https://support.mozilla.org/fr/kb/activer-desactiver-cookies" target="_blank" rel="noopener">Mozilla Firefox</a></li>
-        <li><a href="https://support.apple.com/fr-fr/guide/safari/sfri11471/mac" target="_blank" rel="noopener">Apple Safari</a></li>
-        <li><a href="https://support.microsoft.com/fr-fr/microsoft-edge/supprimer-les-cookies-dans-microsoft-edge-63947406-40ac-c3b8-57b9-2a946a29ae09" target="_blank" rel="noopener">Microsoft Edge</a></li>
+        <li><a href="https://support.google.com/chrome/answer/95647" target="_blank" rel="noopener">{{ 'LEGAL.COOKIES.SECTION_3.LIST_0' | translate }}</a></li>
+        <li><a href="https://support.mozilla.org/fr/kb/activer-desactiver-cookies" target="_blank" rel="noopener">{{ 'LEGAL.COOKIES.SECTION_3.LIST_1' | translate }}</a></li>
+        <li><a href="https://support.apple.com/fr-fr/guide/safari/sfri11471/mac" target="_blank" rel="noopener">{{ 'LEGAL.COOKIES.SECTION_3.LIST_2' | translate }}</a></li>
+        <li><a href="https://support.microsoft.com/fr-fr/microsoft-edge/supprimer-les-cookies-dans-microsoft-edge-63947406-40ac-c3b8-57b9-2a946a29ae09" target="_blank" rel="noopener">{{ 'LEGAL.COOKIES.SECTION_3.LIST_3' | translate }}</a></li>
       </ul>
       <div class="legal-callout legal-callout--warn">
         <span class="callout-icon"><i class="fas fa-exclamation-triangle"></i></span>
         <div class="callout-body">
-          <strong>Attention</strong>
-          <p>La désactivation des cookies strictement nécessaires (authentification) empêchera votre connexion à la plateforme Ndewa360.</p>
+          <strong>{{ 'LEGAL.COOKIES.SECTION_3.CALLOUT_1_TITLE' | translate }}</strong>
+          <p>{{ 'LEGAL.COOKIES.SECTION_3.CALLOUT_1_TEXT' | translate }}</p>
         </div>
       </div>
 
-      <h3>Désactiver Google Analytics</h3>
-      <p>Vous pouvez désactiver spécifiquement le suivi Google Analytics en installant l'extension officielle de désactivation :</p>
+      <h3>{{ 'LEGAL.COOKIES.SECTION_3.SUBTITLE_2' | translate }}</h3>
+      <p>{{ 'LEGAL.COOKIES.SECTION_3.BODY_2' | translate }}</p>
       <p><a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener">tools.google.com/dlpage/gaoptout</a></p>
     </div>
 
     <div class="legal-section">
       <span class="legal-section__anchor" id="c5"></span>
-      <h2><span class="section-number">5</span><span class="section-icon"><i class="fas fa-pen"></i></span> Modifications</h2>
-      <p>Ndewa360 se réserve le droit de modifier la présente Politique de Cookies à tout moment, notamment pour refléter l'ajout de nouveaux services ou l'évolution de la réglementation applicable.</p>
-      <p>La version en vigueur est toujours accessible depuis le pied de page du site ndewa-360.com.</p>
+      <h2><span class="section-number">5</span><span class="section-icon"><i class="fas fa-pen"></i></span> {{ 'LEGAL.COOKIES.SECTION_4.TITLE' | translate }}</h2>
+      <p>{{ 'LEGAL.COOKIES.SECTION_4.BODY_0' | translate }}</p>
+      <p>{{ 'LEGAL.COOKIES.SECTION_4.BODY_1' | translate }}</p>
     </div>
 
     <div class="legal-section">
       <span class="legal-section__anchor" id="c6"></span>
-      <h2><span class="section-number">6</span><span class="section-icon"><i class="fas fa-envelope"></i></span> Contact</h2>
-      <p>Pour toute question relative à notre utilisation des cookies :</p>
+      <h2><span class="section-number">6</span><span class="section-icon"><i class="fas fa-envelope"></i></span> {{ 'LEGAL.COOKIES.SECTION_5.TITLE' | translate }}</h2>
+      <p>{{ 'LEGAL.COOKIES.SECTION_5.BODY_0' | translate }}</p>
       <div class="legal-contact-box">
-        <h3>Nous contacter</h3>
-        <p>Notre équipe répond à toutes vos questions dans un délai de 48 heures.</p>
+        <h3>{{ 'LEGAL.COMMON.CONTACT_TITLE' | translate }}</h3>
+        <p>{{ 'LEGAL.COMMON.CONTACT_DELAY' | translate }}</p>
         <a href="mailto:support@ndewa-360.com" class="legal-contact-btn"><i class="fas fa-envelope"></i> support@ndewa-360.com</a>
       </div>
       <p style="margin-top:1.5rem; color:#8d8d8d; font-size:0.85rem; text-align:center;">
-        Ndewa360 SARL (en cours de constitution) &nbsp;·&nbsp; Tchougo, Bangangté, Région de l'Ouest, Cameroun
+        {{ 'LEGAL.COMMON.FOOTER_COMPANY' | translate }}
       </p>
     </div>
 

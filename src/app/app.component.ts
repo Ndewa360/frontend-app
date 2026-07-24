@@ -75,12 +75,9 @@ export class AppComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    // Traductions — langue détectée depuis le navigateur
-    this.translateService.setDefaultLang('en');
-    const browserLang = isPlatformBrowser(this.platformId)
-      ? (navigator.language || '').split('-')[0].toLowerCase()
-      : 'fr';
-    const lang = ['fr', 'en'].includes(browserLang) ? browserLang : 'en';
+    // Traductions — langue extraite depuis l'URL (prioritaire) ou le navigateur
+    this.translateService.setDefaultLang('fr');
+    const lang = this.getLanguageFromUrl();
     this.translateService.use(lang);
 
     // Overlay Angular piloté par DataDrivenLoaderService
@@ -172,6 +169,23 @@ export class AppComponent implements OnInit, OnDestroy {
       else if (attempts++ < 10) setTimeout(tryScroll, 100);
     };
     tryScroll();
+  }
+
+  /**
+   * Extrait la langue depuis la première segment de l'URL (ex: /en/home → 'en')
+   */
+  private getLanguageFromUrl(): string {
+    if (isPlatformBrowser(this.platformId)) {
+      const pathSegments = window.location.pathname.split('/').filter(Boolean);
+      const langFromUrl = pathSegments[0];
+      if (['fr', 'en'].includes(langFromUrl)) {
+        return langFromUrl;
+      }
+    }
+    const browserLang = isPlatformBrowser(this.platformId)
+      ? (navigator.language || '').split('-')[0].toLowerCase()
+      : 'fr';
+    return ['fr', 'en'].includes(browserLang) ? browserLang : 'fr';
   }
 
   @HostListener('window:resize')

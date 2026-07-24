@@ -3,72 +3,76 @@
   <div class="legal-hero">
     <span class="legal-hero__badge">
       <i class="fas fa-balance-scale"></i>
-      Légal
+      {{ 'LEGAL.COMMON.BADGE' | translate }}
     </span>
-    <h1>Mentions Légales</h1>
-    <p class="legal-hero__meta">Version 1.0 &nbsp;·&nbsp; Janvier 2025 &nbsp;·&nbsp; Ndewa360 SARL</p>
+    <h1>{{ 'LEGAL.COMMON.NAV_MENTIONS' | translate }}</h1>
+    <p class="legal-hero__meta">{{ 'LEGAL.COMMON.VERSION_META' | translate }}</p>
   </div>
 
   <div class="legal-content">
 
     <nav class="legal-nav">
-      <a routerLink="../privacy-policy" routerLinkActive="active"><i class="fas fa-lock"></i> Confidentialité</a>
-      <a routerLink="../terms" routerLinkActive="active"><i class="fas fa-file-alt"></i> Conditions d'utilisation</a>
-      <a routerLink="../cookies" routerLinkActive="active"><i class="fas fa-cookie-bite"></i> Cookies</a>
-      <a routerLink="../mentions-legales" routerLinkActive="active"><i class="fas fa-balance-scale"></i> Mentions légales</a>
-      <a routerLink="../remboursement" routerLinkActive="active"><i class="fas fa-undo"></i> Remboursement</a>
+      <a routerLink="../privacy-policy" routerLinkActive="active"><i class="fas fa-lock"></i> {{ 'LEGAL.COMMON.NAV_PRIVACY' | translate }}</a>
+      <a routerLink="../terms" routerLinkActive="active"><i class="fas fa-file-alt"></i> {{ 'LEGAL.COMMON.NAV_TERMS' | translate }}</a>
+      <a routerLink="../cookies" routerLinkActive="active"><i class="fas fa-cookie-bite"></i> {{ 'LEGAL.COMMON.NAV_COOKIES' | translate }}</a>
+      <a routerLink="../mentions-legales" routerLinkActive="active"><i class="fas fa-balance-scale"></i> {{ 'LEGAL.COMMON.NAV_MENTIONS' | translate }}</a>
+      <a routerLink="../remboursement" routerLinkActive="active"><i class="fas fa-undo"></i> {{ 'LEGAL.COMMON.NAV_REIMBURSEMENT' | translate }}</a>
     </nav>
 
     <div class="legal-toc">
-      <h3>Sommaire</h3>
+      <h3>{{ 'LEGAL.COMMON.TOC_TITLE' | translate }}</h3>
       <ol>
-        <li><a [routerLink]="[]" [fragment]="'ml1'">Éditeur du site</a></li>
-        <li><a [routerLink]="[]" [fragment]="'ml2'">Hébergeur</a></li>
-        <li><a [routerLink]="[]" [fragment]="'ml3'">Directeur de la publication</a></li>
-        <li><a [routerLink]="[]" [fragment]="'ml4'">Propriété intellectuelle</a></li>
-        <li><a [routerLink]="[]" [fragment]="'ml5'">Données personnelles</a></li>
-        <li><a [routerLink]="[]" [fragment]="'ml6'">Cookies</a></li>
-        <li><a [routerLink]="[]" [fragment]="'ml7'">Liens hypertextes</a></li>
-        <li><a [routerLink]="[]" [fragment]="'ml8'">Litiges</a></li>
+        <li><a [routerLink]="[]" [fragment]="'ml1'">{{ 'LEGAL.MENTIONS.SECTION_0.TITLE' | translate }}</a></li>
+        <li><a [routerLink]="[]" [fragment]="'ml2'">{{ 'LEGAL.MENTIONS.SECTION_1.TITLE' | translate }}</a></li>
+        <li><a [routerLink]="[]" [fragment]="'ml3'">{{ 'LEGAL.MENTIONS.SECTION_2.TITLE' | translate }}</a></li>
+        <li><a [routerLink]="[]" [fragment]="'ml4'">{{ 'LEGAL.MENTIONS.SECTION_3.TITLE' | translate }}</a></li>
+        <li><a [routerLink]="[]" [fragment]="'ml5'">{{ 'LEGAL.MENTIONS.SECTION_4.TITLE' | translate }}</a></li>
+        <li><a [routerLink]="[]" [fragment]="'ml6'">{{ 'LEGAL.MENTIONS.SECTION_5.TITLE' | translate }}</a></li>
+        <li><a [routerLink]="[]" [fragment]="'ml7'">{{ 'LEGAL.MENTIONS.SECTION_6.TITLE' | translate }}</a></li>
+        <li><a [routerLink]="[]" [fragment]="'ml8'">{{ 'LEGAL.MENTIONS.SECTION_7.TITLE' | translate }}</a></li>
       </ol>
     </div>
 
     <div class="legal-section">
       <span class="legal-section__anchor" id="ml1"></span>
-      <h2><span class="section-number">1</span><span class="section-icon"><i class="fas fa-building"></i></span> Éditeur du site</h2>
+      <h2><span class="section-number">1</span><span class="section-icon"><i class="fas fa-building"></i></span> {{ 'LEGAL.MENTIONS.SECTION_0.TITLE' | translate }}</h2>
       <div class="legal-table-wrap">
         <table>
-          <thead><tr><th>Élément</th><th>Valeur</th></tr></thead>
+          <thead>
+            <tr>
+              <th *ngFor="let header of ('LEGAL.MENTIONS.SECTION_0.TABLE_HEADERS' | translate)">{{ header }}</th>
+            </tr>
+          </thead>
           <tbody>
-            <tr><td>Dénomination sociale</td><td>Ndewa360 SARL <em>(en cours de constitution)</em></td></tr>
-            <tr><td>Forme juridique</td><td>Société à Responsabilité Limitée (SARL)</td></tr>
-            <tr><td>Numéro RCCM</td><td><em>En cours d'obtention</em></td></tr>
-            <tr><td>Numéro de compte contribuable (NCC)</td><td><em>En cours d'obtention</em></td></tr>
-            <tr><td>Siège social</td><td>Tchougo, Bangangté, Région de l'Ouest, Cameroun</td></tr>
-            <tr><td>Email de contact</td><td><a href="mailto:support@ndewa-360.com">support@ndewa-360.com</a></td></tr>
-            <tr><td>Site web</td><td><a href="https://ndewa-360.com" target="_blank" rel="noopener">ndewa-360.com</a></td></tr>
+            <tr *ngFor="let row of ('LEGAL.MENTIONS.SECTION_0.TABLE_ROWS' | translate)">
+              <td *ngFor="let cell of row">{{ cell }}</td>
+            </tr>
           </tbody>
         </table>
       </div>
       <div class="legal-callout legal-callout--warn">
         <span class="callout-icon"><i class="fas fa-exclamation-triangle"></i></span>
         <div class="callout-body">
-          <strong>Note</strong>
-          <p>Ndewa360 est actuellement en cours de constitution juridique. Ces mentions légales seront mises à jour dès l'immatriculation effective de la société.</p>
+          <strong>{{ 'LEGAL.MENTIONS.SECTION_0.CALLOUT_TITLE' | translate }}</strong>
+          <p>{{ 'LEGAL.MENTIONS.SECTION_0.CALLOUT_TEXT' | translate }}</p>
         </div>
       </div>
     </div>
 
     <div class="legal-section">
       <span class="legal-section__anchor" id="ml2"></span>
-      <h2><span class="section-number">2</span><span class="section-icon"><i class="fas fa-server"></i></span> Hébergeur</h2>
+      <h2><span class="section-number">2</span><span class="section-icon"><i class="fas fa-server"></i></span> {{ 'LEGAL.MENTIONS.SECTION_1.TITLE' | translate }}</h2>
       <div class="legal-table-wrap">
         <table>
-          <thead><tr><th>Service</th><th>Prestataire</th><th>Localisation</th></tr></thead>
+          <thead>
+            <tr>
+              <th *ngFor="let header of ('LEGAL.MENTIONS.SECTION_1.TABLE_HEADERS' | translate)">{{ header }}</th>
+            </tr>
+          </thead>
           <tbody>
-            <tr><td>Hébergement du serveur backend</td><td>Contabo GmbH</td><td>Allemagne (UE)</td></tr>
-            <tr><td>Hébergement de la base de données</td><td>MongoDB Atlas</td><td>Paris, France (UE)</td></tr>
-            <tr><td>Stockage des fichiers</td><td>Google Cloud Storage</td><td>Johannesburg, Afrique du Sud</td></tr>
+            <tr *ngFor="let row of ('LEGAL.MENTIONS.SECTION_1.TABLE_ROWS' | translate)">
+              <td *ngFor="let cell of row">{{ cell }}</td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -76,51 +80,51 @@
 
     <div class="legal-section">
       <span class="legal-section__anchor" id="ml3"></span>
-      <h2><span class="section-number">3</span><span class="section-icon"><i class="fas fa-user"></i></span> Directeur de la publication</h2>
-      <p>Le directeur de la publication du site ndewa-360.com est le représentant légal de Ndewa360 SARL.</p>
-      <p><strong>À compléter</strong> lors de l'immatriculation de la société.</p>
+      <h2><span class="section-number">3</span><span class="section-icon"><i class="fas fa-user"></i></span> {{ 'LEGAL.MENTIONS.SECTION_2.TITLE' | translate }}</h2>
+      <p>{{ 'LEGAL.MENTIONS.SECTION_2.BODY_0' | translate }}</p>
+      <p><strong>{{ 'LEGAL.MENTIONS.SECTION_2.BODY_1' | translate }}</strong></p>
     </div>
 
     <div class="legal-section">
       <span class="legal-section__anchor" id="ml4"></span>
-      <h2><span class="section-number">4</span><span class="section-icon"><i class="fas fa-copyright"></i></span> Propriété intellectuelle</h2>
-      <p>L'ensemble du contenu du site ndewa-360.com (textes, images, graphismes, logos, icônes, sons, logiciels, code source) est la propriété exclusive de Ndewa360 SARL ou de ses partenaires et est protégé par les lois camerounaises et internationales relatives à la propriété intellectuelle.</p>
-      <p>Toute reproduction, représentation, modification, publication, transmission ou dénaturation du site ou de son contenu, par quelque procédé que ce soit, est interdite sans autorisation préalable écrite de Ndewa360 SARL.</p>
-      <p>Les marques et logos figurant sur le site sont des marques déposées par Ndewa360 SARL. Toute utilisation non autorisée de ces marques est prohibée.</p>
+      <h2><span class="section-number">4</span><span class="section-icon"><i class="fas fa-copyright"></i></span> {{ 'LEGAL.MENTIONS.SECTION_3.TITLE' | translate }}</h2>
+      <p>{{ 'LEGAL.MENTIONS.SECTION_3.BODY_0' | translate }}</p>
+      <p>{{ 'LEGAL.MENTIONS.SECTION_3.BODY_1' | translate }}</p>
+      <p>{{ 'LEGAL.MENTIONS.SECTION_3.BODY_2' | translate }}</p>
     </div>
 
     <div class="legal-section">
       <span class="legal-section__anchor" id="ml5"></span>
-      <h2><span class="section-number">5</span><span class="section-icon"><i class="fas fa-shield-alt"></i></span> Données personnelles</h2>
-      <p>Le traitement des données personnelles est régi par notre <a routerLink="../privacy-policy">Politique de Confidentialité</a>, accessible depuis chaque page du site.</p>
-      <p>Conformément à la loi camerounaise n°2024/017 du 23 décembre 2024 relative à la protection des données à caractère personnel, vous disposez de droits sur vos données personnelles. Pour plus d'informations, consultez la <a routerLink="../privacy-policy">Politique de Confidentialité</a>.</p>
+      <h2><span class="section-number">5</span><span class="section-icon"><i class="fas fa-shield-alt"></i></span> {{ 'LEGAL.MENTIONS.SECTION_4.TITLE' | translate }}</h2>
+      <p>{{ 'LEGAL.MENTIONS.SECTION_4.BODY_0' | translate }}</p>
+      <p>{{ 'LEGAL.MENTIONS.SECTION_4.BODY_1' | translate }}</p>
       <div class="legal-callout legal-callout--info">
         <span class="callout-icon"><i class="fas fa-user-tie"></i></span>
         <div class="callout-body">
-          <strong>DPO</strong>
-          <p>Pour exercer vos droits ou pour toute question relative à la protection de vos données, contactez notre Délégué à la Protection des Données : <a href="mailto:dpo@ndewa-360.com">dpo@ndewa-360.com</a></p>
+          <strong>{{ 'LEGAL.MENTIONS.SECTION_4.CALLOUT_TITLE' | translate }}</strong>
+          <p>{{ 'LEGAL.MENTIONS.SECTION_4.CALLOUT_TEXT' | translate }}</p>
         </div>
       </div>
     </div>
 
     <div class="legal-section">
       <span class="legal-section__anchor" id="ml6"></span>
-      <h2><span class="section-number">6</span><span class="section-icon"><i class="fas fa-cookie-bite"></i></span> Cookies</h2>
-      <p>Le site ndewa-360.com utilise des cookies conformément à notre <a routerLink="../cookies">Politique de Cookies</a>. Les cookies strictement nécessaires au fonctionnement du site sont déposés sans consentement. Les cookies analytiques (Google Analytics) ne sont déposés qu'avec votre consentement explicite, recueilli via le bandeau de consentement.</p>
+      <h2><span class="section-number">6</span><span class="section-icon"><i class="fas fa-cookie-bite"></i></span> {{ 'LEGAL.MENTIONS.SECTION_5.TITLE' | translate }}</h2>
+      <p>{{ 'LEGAL.MENTIONS.SECTION_5.BODY_0' | translate }}</p>
     </div>
 
     <div class="legal-section">
       <span class="legal-section__anchor" id="ml7"></span>
-      <h2><span class="section-number">7</span><span class="section-icon"><i class="fas fa-link"></i></span> Liens hypertextes</h2>
-      <p>Le site ndewa-360.com peut contenir des liens hypertextes vers des sites tiers. Ndewa360 SARL n'exerce aucun contrôle sur le contenu de ces sites tiers et décline toute responsabilité quant à leur contenu, leurs pratiques en matière de protection des données ou leur disponibilité.</p>
-      <p>La création de liens hypertextes vers le site ndewa-360.com est soumise à l'autorisation préalable écrite de Ndewa360 SARL, à l'exception des liens provenant de moteurs de recherche.</p>
+      <h2><span class="section-number">7</span><span class="section-icon"><i class="fas fa-link"></i></span> {{ 'LEGAL.MENTIONS.SECTION_6.TITLE' | translate }}</h2>
+      <p>{{ 'LEGAL.MENTIONS.SECTION_6.BODY_0' | translate }}</p>
+      <p>{{ 'LEGAL.MENTIONS.SECTION_6.BODY_1' | translate }}</p>
     </div>
 
     <div class="legal-section">
       <span class="legal-section__anchor" id="ml8"></span>
-      <h2><span class="section-number">8</span><span class="section-icon"><i class="fas fa-gavel"></i></span> Litiges</h2>
-      <p>Les présentes mentions légales sont régies par le droit camerounais. En cas de litige, les parties s'engagent à rechercher une solution amiable avant tout recours judiciaire.</p>
-      <p>À défaut de résolution amiable dans un délai de 30 jours, les tribunaux compétents du Cameroun seront seuls compétents pour connaître du litige.</p>
+      <h2><span class="section-number">8</span><span class="section-icon"><i class="fas fa-gavel"></i></span> {{ 'LEGAL.MENTIONS.SECTION_7.TITLE' | translate }}</h2>
+      <p>{{ 'LEGAL.MENTIONS.SECTION_7.BODY_0' | translate }}</p>
+      <p>{{ 'LEGAL.MENTIONS.SECTION_7.BODY_1' | translate }}</p>
     </div>
 
   </div>

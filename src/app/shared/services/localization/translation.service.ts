@@ -69,6 +69,12 @@ export class TranslationService {
    */
   private async determineInitialLanguage(): Promise<string> {
     try {
+      // 0. Priorité absolue : langue depuis l'URL
+      const urlLang = this.getLanguageFromUrl();
+      if (urlLang && this.isLanguageSupported(urlLang)) {
+        return urlLang;
+      }
+
       // 1. Vérifier si l'utilisateur a une préférence dans son profil (utilisateur connecté)
       const userProfile = await this.userProfile$.pipe(take(1)).toPromise();
       if (userProfile?.preferredLanguage && this.isLanguageSupported(userProfile.preferredLanguage)) {
@@ -101,6 +107,22 @@ export class TranslationService {
       console.error('Erreur lors de la détermination de la langue');
       return 'fr';
     }
+  }
+
+  /**
+   * Extrait la langue depuis la première segment de l'URL (ex: /en/home → 'en')
+   */
+  private getLanguageFromUrl(): string | null {
+    try {
+      if (typeof window !== 'undefined' && window.location?.pathname) {
+        const pathSegments = window.location.pathname.split('/').filter(Boolean);
+        const langFromUrl = pathSegments[0];
+        if (['fr', 'en'].includes(langFromUrl)) {
+          return langFromUrl;
+        }
+      }
+    } catch {}
+    return null;
   }
 
 

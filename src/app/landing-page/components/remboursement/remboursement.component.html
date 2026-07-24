@@ -3,125 +3,126 @@
   <div class="legal-hero">
     <span class="legal-hero__badge">
       <i class="fas fa-undo"></i>
-      Légal
+      {{ 'LEGAL.COMMON.BADGE' | translate }}
     </span>
     <h1>Politique de Remboursement</h1>
-    <p class="legal-hero__meta">Version 1.0 &nbsp;·&nbsp; Janvier 2025 &nbsp;·&nbsp; Ndewa360 SARL</p>
+    <p class="legal-hero__meta">{{ 'LEGAL.COMMON.VERSION_META' | translate }}</p>
   </div>
 
   <div class="legal-content">
 
     <nav class="legal-nav">
-      <a routerLink="../privacy-policy" routerLinkActive="active"><i class="fas fa-lock"></i> Confidentialité</a>
-      <a routerLink="../terms" routerLinkActive="active"><i class="fas fa-file-alt"></i> Conditions d'utilisation</a>
-      <a routerLink="../cookies" routerLinkActive="active"><i class="fas fa-cookie-bite"></i> Cookies</a>
-      <a routerLink="../mentions-legales" routerLinkActive="active"><i class="fas fa-balance-scale"></i> Mentions légales</a>
-      <a routerLink="../remboursement" routerLinkActive="active"><i class="fas fa-undo"></i> Remboursement</a>
+      <a routerLink="../privacy-policy" routerLinkActive="active"><i class="fas fa-lock"></i> {{ 'LEGAL.COMMON.NAV_PRIVACY' | translate }}</a>
+      <a routerLink="../terms" routerLinkActive="active"><i class="fas fa-file-alt"></i> {{ 'LEGAL.COMMON.NAV_TERMS' | translate }}</a>
+      <a routerLink="../cookies" routerLinkActive="active"><i class="fas fa-cookie-bite"></i> {{ 'LEGAL.COMMON.NAV_COOKIES' | translate }}</a>
+      <a routerLink="../mentions-legales" routerLinkActive="active"><i class="fas fa-balance-scale"></i> {{ 'LEGAL.COMMON.NAV_MENTIONS' | translate }}</a>
+      <a routerLink="../remboursement" routerLinkActive="active"><i class="fas fa-undo"></i> {{ 'LEGAL.COMMON.NAV_REIMBURSEMENT' | translate }}</a>
     </nav>
 
     <div class="legal-toc">
-      <h3>Sommaire</h3>
+      <h3>{{ 'LEGAL.COMMON.TOC_TITLE' | translate }}</h3>
       <ol>
-        <li><a [routerLink]="[]" [fragment]="'r1'">Périmètre</a></li>
-        <li><a [routerLink]="[]" [fragment]="'r2'">Plan Gratuit et Trial</a></li>
-        <li><a [routerLink]="[]" [fragment]="'r3'">Plan Premium — Conditions de facturation</a></li>
-        <li><a [routerLink]="[]" [fragment]="'r4'">Erreurs de facturation</a></li>
-        <li><a [routerLink]="[]" [fragment]="'r5'">Annulation et remboursement</a></li>
-        <li><a [routerLink]="[]" [fragment]="'r6'">Procédure de demande</a></li>
-        <li><a [routerLink]="[]" [fragment]="'r7'">Délais de traitement</a></li>
-        <li><a [routerLink]="[]" [fragment]="'r8'">Modifications</a></li>
-        <li><a [routerLink]="[]" [fragment]="'r9'">Contact</a></li>
+        <li><a [routerLink]="[]" [fragment]="'r1'">{{ 'LEGAL.REMBOURSEMENT.SECTION_0.TITLE' | translate }}</a></li>
+        <li><a [routerLink]="[]" [fragment]="'r2'">{{ 'LEGAL.REMBOURSEMENT.SECTION_1.TITLE' | translate }}</a></li>
+        <li><a [routerLink]="[]" [fragment]="'r3'">{{ 'LEGAL.REMBOURSEMENT.SECTION_2.TITLE' | translate }}</a></li>
+        <li><a [routerLink]="[]" [fragment]="'r4'">{{ 'LEGAL.REMBOURSEMENT.SECTION_3.TITLE' | translate }}</a></li>
+        <li><a [routerLink]="[]" [fragment]="'r5'">{{ 'LEGAL.REMBOURSEMENT.SECTION_4.TITLE' | translate }}</a></li>
+        <li><a [routerLink]="[]" [fragment]="'r6'">{{ 'LEGAL.REMBOURSEMENT.SECTION_5.TITLE' | translate }}</a></li>
+        <li><a [routerLink]="[]" [fragment]="'r7'">{{ 'LEGAL.REMBOURSEMENT.SECTION_6.TITLE' | translate }}</a></li>
+        <li><a [routerLink]="[]" [fragment]="'r8'">{{ 'LEGAL.REMBOURSEMENT.SECTION_7.TITLE' | translate }}</a></li>
+        <li><a [routerLink]="[]" [fragment]="'r9'">{{ 'LEGAL.REMBOURSEMENT.SECTION_8.TITLE' | translate }}</a></li>
       </ol>
     </div>
 
     <div class="legal-section">
       <span class="legal-section__anchor" id="r1"></span>
-      <h2><span class="section-number">1</span><span class="section-icon"><i class="fas fa-info-circle"></i></span> Périmètre</h2>
-      <p>La présente Politique de Remboursement s'applique aux abonnements payants souscrits sur la plateforme Ndewa360, conformément aux <a routerLink="../terms">Conditions Générales d'Utilisation</a>.</p>
-      <p>Cette politique ne couvre pas les litiges entre propriétaires et locataires concernant les loyers ou cautions, qui relèvent de la responsabilité exclusive du propriétaire.</p>
+      <h2><span class="section-number">1</span><span class="section-icon"><i class="fas fa-info-circle"></i></span> {{ 'LEGAL.REMBOURSEMENT.SECTION_0.TITLE' | translate }}</h2>
+      <p>{{ 'LEGAL.REMBOURSEMENT.SECTION_0.BODY_0' | translate }}</p>
+      <p>{{ 'LEGAL.REMBOURSEMENT.SECTION_0.BODY_1' | translate }}</p>
     </div>
 
     <div class="legal-section">
       <span class="legal-section__anchor" id="r2"></span>
-      <h2><span class="section-number">2</span><span class="section-icon"><i class="fas fa-gift"></i></span> Plan Gratuit et Trial</h2>
-      <h3>Plan Gratuit</h3>
-      <p>Le plan Gratuit est disponible sans frais et sans limite de durée. Aucun remboursement n'est applicable car aucun paiement n'est effectué.</p>
-      <h3>Plan Trial (Essai Premium)</h3>
-      <p>Le plan Trial offre un accès gratuit aux fonctionnalités Premium pendant une durée de 60 jours. Aucune carte bancaire n'est requise. À l'expiration du trial, le compte revient automatiquement au plan Gratuit. Aucun remboursement n'est applicable car aucun paiement n'est effectué.</p>
+      <h2><span class="section-number">2</span><span class="section-icon"><i class="fas fa-gift"></i></span> {{ 'LEGAL.REMBOURSEMENT.SECTION_1.TITLE' | translate }}</h2>
+      <h3>{{ 'LEGAL.REMBOURSEMENT.SECTION_1.SUBTITLE_0' | translate }}</h3>
+      <p>{{ 'LEGAL.REMBOURSEMENT.SECTION_1.BODY_0' | translate }}</p>
+      <h3>{{ 'LEGAL.REMBOURSEMENT.SECTION_1.SUBTITLE_1' | translate }}</h3>
+      <p>{{ 'LEGAL.REMBOURSEMENT.SECTION_1.BODY_1' | translate }}</p>
     </div>
 
     <div class="legal-section">
       <span class="legal-section__anchor" id="r3"></span>
-      <h2><span class="section-number">3</span><span class="section-icon"><i class="fas fa-credit-card"></i></span> Plan Premium — Conditions de facturation</h2>
-      <h3>Modèle de facturation</h3>
-      <p>Le plan Premium est facturé mensuellement selon le modèle suivant :</p>
+      <h2><span class="section-number">3</span><span class="section-icon"><i class="fas fa-credit-card"></i></span> {{ 'LEGAL.REMBOURSEMENT.SECTION_2.TITLE' | translate }}</h2>
+      <h3>{{ 'LEGAL.REMBOURSEMENT.SECTION_2.SUBTITLE_0' | translate }}</h3>
+      <p>{{ 'LEGAL.REMBOURSEMENT.SECTION_2.BODY_0' | translate }}</p>
       <div class="legal-table-wrap">
         <table>
-          <thead><tr><th>Élément</th><th>Détail</th></tr></thead>
+          <thead>
+            <tr>
+              <th *ngFor="let header of ('LEGAL.REMBOURSEMENT.SECTION_2.TABLE_HEADERS' | translate)">{{ header }}</th>
+            </tr>
+          </thead>
           <tbody>
-            <tr><td>Taux de facturation</td><td>2% du loyer mensuel de chaque unité locative occupée</td></tr>
-            <tr><td>Seuil minimum de présence</td><td>L'unité doit être occupée au minimum 15 jours dans le mois pour être facturée</td></tr>
-            <tr><td>Unité vide</td><td>0 FCFA facturé</td></tr>
-            <tr><td>Périodicité</td><td>Mensuelle, en fin de mois</td></tr>
-            <tr><td>Moyens de paiement</td><td>Orange Money, MTN Mobile Money, Carte bancaire</td></tr>
+            <tr *ngFor="let row of ('LEGAL.REMBOURSEMENT.SECTION_2.TABLE_ROWS' | translate)">
+              <td *ngFor="let cell of row">{{ cell }}</td>
+            </tr>
           </tbody>
         </table>
       </div>
       <div class="legal-callout legal-callout--info">
         <span class="callout-icon"><i class="fas fa-info-circle"></i></span>
         <div class="callout-body">
-          <strong>Exemple de calcul</strong>
-          <p>Si vous avez 3 unités occupées avec des loyers de 50 000 FCFA, 75 000 FCFA et 100 000 FCFA, votre facture mensuelle sera : (50 000 × 2%) + (75 000 × 2%) + (100 000 × 2%) = 1 000 + 1 500 + 2 000 = <strong>4 500 FCFA</strong>.</p>
+          <strong>{{ 'LEGAL.REMBOURSEMENT.SECTION_2.CALLOUT_TITLE' | translate }}</strong>
+          <p>{{ 'LEGAL.REMBOURSEMENT.SECTION_2.CALLOUT_TEXT' | translate }}</p>
         </div>
       </div>
-      <h3>Facturation et paiement</h3>
-      <p>Les factures sont générées automatiquement et disponibles dans votre espace personnel. Le paiement est exigible dès réception de la facture.</p>
-      <p>En cas de non-paiement, conformément aux <a routerLink="../terms">CGU section 10</a>, votre compte peut être suspendu. Votre compte sera automatiquement réactivé dès le règlement des factures impayées.</p>
+      <h3>{{ 'LEGAL.REMBOURSEMENT.SECTION_2.SUBTITLE_1' | translate }}</h3>
+      <p>{{ 'LEGAL.REMBOURSEMENT.SECTION_2.BODY_1' | translate }}</p>
+      <p>{{ 'LEGAL.REMBOURSEMENT.SECTION_2.BODY_2' | translate }}</p>
     </div>
 
     <div class="legal-section">
       <span class="legal-section__anchor" id="r4"></span>
-      <h2><span class="section-number">4</span><span class="section-icon"><i class="fas fa-exclamation-triangle"></i></span> Erreurs de facturation</h2>
-      <p>Si vous constatez une erreur de facturation (montant incorrect, unité facturée alors qu'elle était vide, double facturation), vous disposez d'un délai de <strong>30 jours</strong> à compter de la date de la facture pour contacter notre support.</p>
-      <p>Après vérification, les erreurs confirmées donneront lieu à :</p>
+      <h2><span class="section-number">4</span><span class="section-icon"><i class="fas fa-exclamation-triangle"></i></span> {{ 'LEGAL.REMBOURSEMENT.SECTION_3.TITLE' | translate }}</h2>
+      <p>{{ 'LEGAL.REMBOURSEMENT.SECTION_3.BODY_0' | translate }}</p>
+      <p>{{ 'LEGAL.REMBOURSEMENT.SECTION_3.BODY_1' | translate }}</p>
       <ul>
-        <li>un <strong>remboursement intégral</strong> du montant payé en trop, dans les meilleurs délais ;</li>
-        <li>ou un <strong>avoir</strong> sur votre compte, déduit de la facture suivante, selon votre préférence.</li>
+        <li>{{ 'LEGAL.REMBOURSEMENT.SECTION_3.LIST_0' | translate }}</li>
+        <li>{{ 'LEGAL.REMBOURSEMENT.SECTION_3.LIST_1' | translate }}</li>
       </ul>
     </div>
 
     <div class="legal-section">
       <span class="legal-section__anchor" id="r5"></span>
-      <h2><span class="section-number">5</span><span class="section-icon"><i class="fas fa-undo"></i></span> Annulation et remboursement</h2>
-      <h3>Annulation par l'utilisateur</h3>
-      <p>Vous pouvez annuler votre abonnement Premium à tout moment depuis votre espace personnel. L'annulation prend effet à la fin de la période de facturation en cours.</p>
+      <h2><span class="section-number">5</span><span class="section-icon"><i class="fas fa-undo"></i></span> {{ 'LEGAL.REMBOURSEMENT.SECTION_4.TITLE' | translate }}</h2>
+      <h3>{{ 'LEGAL.REMBOURSEMENT.SECTION_4.SUBTITLE_0' | translate }}</h3>
+      <p>{{ 'LEGAL.REMBOURSEMENT.SECTION_4.BODY_0' | translate }}</p>
       <ul>
-        <li><strong>Annulation en cours de mois :</strong> la facture du mois en cours reste due. Aucun remboursement partiel n'est effectué pour la période restante du mois en cours.</li>
-        <li><strong>Annulation avant facturation :</strong> si vous annulez avant la génération de la facture mensuelle, aucun montant ne sera prélevé pour le mois suivant.</li>
+        <li>{{ 'LEGAL.REMBOURSEMENT.SECTION_4.LIST_0' | translate }}</li>
+        <li>{{ 'LEGAL.REMBOURSEMENT.SECTION_4.LIST_1' | translate }}</li>
       </ul>
-      <h3>Suppression de compte</h3>
-      <p>En cas de suppression de compte (depuis la section « Zone dangereuse » du profil), les factures impayées restent dues. Les paiements déjà effectués ne sont pas remboursés, sauf en cas d'erreur de facturation confirmée conformément à la <a [routerLink]="[]" [fragment]="'r4'">section 4</a>.</p>
-
+      <h3>{{ 'LEGAL.REMBOURSEMENT.SECTION_4.SUBTITLE_1' | translate }}</h3>
+      <p>{{ 'LEGAL.REMBOURSEMENT.SECTION_4.BODY_1' | translate }}</p>
       <div class="legal-callout legal-callout--warn">
         <span class="callout-icon"><i class="fas fa-exclamation-triangle"></i></span>
         <div class="callout-body">
-          <strong>Pas de remboursement au prorata</strong>
-          <p>Sauf en cas d'erreur de facturation de notre part, aucun remboursement au prorata n'est effectué pour les jours restants dans la période de facturation en cours lors de l'annulation.</p>
+          <strong>{{ 'LEGAL.REMBOURSEMENT.SECTION_4.CALLOUT_TITLE' | translate }}</strong>
+          <p>{{ 'LEGAL.REMBOURSEMENT.SECTION_4.CALLOUT_TEXT' | translate }}</p>
         </div>
       </div>
     </div>
 
     <div class="legal-section">
       <span class="legal-section__anchor" id="r6"></span>
-      <h2><span class="section-number">6</span><span class="section-icon"><i class="fas fa-envelope"></i></span> Procédure de demande</h2>
-      <p>Pour toute demande de remboursement (erreur de facturation ou autre) :</p>
+      <h2><span class="section-number">6</span><span class="section-icon"><i class="fas fa-envelope"></i></span> {{ 'LEGAL.REMBOURSEMENT.SECTION_5.TITLE' | translate }}</h2>
+      <p>{{ 'LEGAL.REMBOURSEMENT.SECTION_5.BODY_0' | translate }}</p>
       <div class="legal-contact-box">
-        <h3>Contacter le support</h3>
+        <h3>{{ 'LEGAL.REMBOURSEMENT.SECTION_5.CONTACT_TITLE' | translate }}</h3>
         <ul style="text-align:left; margin:1rem 0;">
-          <li>Envoyez un email à <a href="mailto:support@ndewa-360.com">support@ndewa-360.com</a></li>
-          <li>Objet de l'email : <strong>Demande de remboursement — [votre nom]</strong></li>
-          <li>Joignez toute pièce utile (capture d'écran de la facture, référence de paiement)</li>
-          <li>Précisez le motif de votre demande</li>
+          <li>{{ 'LEGAL.REMBOURSEMENT.SECTION_5.LIST_0' | translate }}</li>
+          <li>{{ 'LEGAL.REMBOURSEMENT.SECTION_5.LIST_1' | translate }}</li>
+          <li>{{ 'LEGAL.REMBOURSEMENT.SECTION_5.LIST_2' | translate }}</li>
+          <li>{{ 'LEGAL.REMBOURSEMENT.SECTION_5.LIST_3' | translate }}</li>
         </ul>
         <a href="mailto:support@ndewa-360.com?subject=Demande%20de%20remboursement" class="legal-contact-btn"><i class="fas fa-envelope"></i> support@ndewa-360.com</a>
       </div>
@@ -129,39 +130,42 @@
 
     <div class="legal-section">
       <span class="legal-section__anchor" id="r7"></span>
-      <h2><span class="section-number">7</span><span class="section-icon"><i class="fas fa-clock"></i></span> Délais de traitement</h2>
+      <h2><span class="section-number">7</span><span class="section-icon"><i class="fas fa-clock"></i></span> {{ 'LEGAL.REMBOURSEMENT.SECTION_6.TITLE' | translate }}</h2>
       <div class="legal-table-wrap">
         <table>
-          <thead><tr><th>Type de demande</th><th>Délai d'accusé de réception</th><th>Délai de traitement</th></tr></thead>
+          <thead>
+            <tr>
+              <th *ngFor="let header of ('LEGAL.REMBOURSEMENT.SECTION_6.TABLE_HEADERS' | translate)">{{ header }}</th>
+            </tr>
+          </thead>
           <tbody>
-            <tr><td>Erreur de facturation</td><td>24 heures</td><td>5 jours ouvrés</td></tr>
-            <tr><td>Demande de remboursement</td><td>24 heures</td><td>10 jours ouvrés</td></tr>
-            <tr><td>Remboursement par Mobile Money</td><td>—</td><td>2 à 5 jours ouvrés après validation</td></tr>
-            <tr><td>Remboursement par carte bancaire</td><td>—</td><td>5 à 10 jours ouvrés après validation</td></tr>
+            <tr *ngFor="let row of ('LEGAL.REMBOURSEMENT.SECTION_6.TABLE_ROWS' | translate)">
+              <td *ngFor="let cell of row">{{ cell }}</td>
+            </tr>
           </tbody>
         </table>
       </div>
-      <p>Le remboursement est effectué via le même moyen de paiement que celui utilisé lors de la transaction initiale, sauf accord contraire.</p>
+      <p>{{ 'LEGAL.REMBOURSEMENT.SECTION_6.BODY_0' | translate }}</p>
     </div>
 
     <div class="legal-section">
       <span class="legal-section__anchor" id="r8"></span>
-      <h2><span class="section-number">8</span><span class="section-icon"><i class="fas fa-pen"></i></span> Modifications</h2>
-      <p>Ndewa360 se réserve le droit de modifier la présente Politique de Remboursement à tout moment. En cas de modification substantielle, vous serez informé par email ou par une notification visible sur la plateforme, au moins <strong>30 jours</strong> avant l'entrée en vigueur des modifications.</p>
-      <p>La version en vigueur est toujours accessible depuis le pied de page du site ndewa-360.com.</p>
+      <h2><span class="section-number">8</span><span class="section-icon"><i class="fas fa-pen"></i></span> {{ 'LEGAL.REMBOURSEMENT.SECTION_7.TITLE' | translate }}</h2>
+      <p>{{ 'LEGAL.REMBOURSEMENT.SECTION_7.BODY_0' | translate }}</p>
+      <p>{{ 'LEGAL.REMBOURSEMENT.SECTION_7.BODY_1' | translate }}</p>
     </div>
 
     <div class="legal-section">
       <span class="legal-section__anchor" id="r9"></span>
-      <h2><span class="section-number">9</span><span class="section-icon"><i class="fas fa-envelope"></i></span> Contact</h2>
-      <p>Pour toute question relative à la présente Politique de Remboursement :</p>
+      <h2><span class="section-number">9</span><span class="section-icon"><i class="fas fa-envelope"></i></span> {{ 'LEGAL.REMBOURSEMENT.SECTION_8.TITLE' | translate }}</h2>
+      <p>{{ 'LEGAL.REMBOURSEMENT.SECTION_8.BODY_0' | translate }}</p>
       <div class="legal-contact-box">
-        <h3>Nous contacter</h3>
-        <p>Notre équipe répond à toutes vos questions dans un délai de 48 heures.</p>
+        <h3>{{ 'LEGAL.COMMON.CONTACT_TITLE' | translate }}</h3>
+        <p>{{ 'LEGAL.COMMON.CONTACT_DELAY' | translate }}</p>
         <a href="mailto:support@ndewa-360.com" class="legal-contact-btn"><i class="fas fa-envelope"></i> support@ndewa-360.com</a>
       </div>
       <p style="margin-top:1.5rem; color:#8d8d8d; font-size:0.85rem; text-align:center;">
-        Ndewa360 SARL (en cours de constitution) &nbsp;·&nbsp; Tchougo, Bangangté, Région de l'Ouest, Cameroun
+        {{ 'LEGAL.COMMON.FOOTER_COMPANY' | translate }}
       </p>
     </div>
 

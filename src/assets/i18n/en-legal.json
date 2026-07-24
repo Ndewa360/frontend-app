@@ -1,0 +1,642 @@
+{
+  "LEGAL": {
+    "COMMON": {
+      "BADGE": "Legal",
+      "NAV_PRIVACY": "Privacy",
+      "NAV_TERMS": "Terms of Use",
+      "NAV_COOKIES": "Cookies",
+      "NAV_MENTIONS": "Legal Notices",
+      "NAV_REIMBURSEMENT": "Refund Policy",
+      "TOC_TITLE": "Table of Contents",
+      "VERSION_META": "Version 1.0 · January 2025 · Ndewa360 SARL",
+      "CONTACT_TITLE": "Contact Us",
+      "CONTACT_DELAY": "Our team responds to all your questions within 48 hours.",
+      "FOOTER_COMPANY": "Ndewa360 SARL (in the process of being incorporated) · Tchougo, Bangangté, West Region, Cameroon"
+    },
+    "PRIVACY": {
+      "SECTION_0": {
+        "TITLE": "1. Who are we?",
+        "BODY_0": "Ndewa360 is a SaaS (Software as a Service) property management platform that enables owners, real estate agencies, and tenants to manage properties, rental contracts, payments, and associated documents.",
+        "TABLE_HEADERS": ["Element", "Value"],
+        "TABLE_ROWS": [
+          ["Company name", "Ndewa360 SARL (in the process of being incorporated)"],
+          ["Legal form", "Limited Liability Company (SARL)"],
+          ["RCCM number", "Pending acquisition"],
+          ["Registered office", "Tchougo, Bangangté, West Region, Cameroon"],
+          ["Contact email", "support@ndewa-360.com"],
+          ["Website", "ndewa-360.com"]
+        ],
+        "CALLOUT_TITLE": "Note",
+        "CALLOUT_TEXT": "Ndewa360 is currently in the process of being legally incorporated. This policy will be updated upon effective registration of the company."
+      },
+      "SECTION_1": {
+        "TITLE": "2. Scope of application",
+        "BODY_0": "This Privacy Policy applies to:",
+        "LIST_0": "all individuals who create an account on the Ndewa360 platform;",
+        "LIST_1": "all individuals who use Ndewa360 services (owners, real estate agencies, registered tenants);",
+        "LIST_2": "all individuals who visit the ndewa-360.com website.",
+        "CALLOUT_TITLE": "Users concerned",
+        "CALLOUT_TEXT": "The platform is exclusively intended for adults. Registration of minors is strictly prohibited.",
+        "SUBTITLE_0": "Geographic scope",
+        "BODY_1": "Ndewa360 is primarily intended for users located in Cameroon and, progressively, across the entire African continent. It is also accessible to members of the African diaspora residing abroad, particularly in Europe, who manage real estate properties located in Cameroon.",
+        "SUBTITLE_1": "Applicable law",
+        "BODY_2": "This policy is governed by Cameroonian law n°2024/017 of December 23, 2024, relating to the protection of personal data. For users residing in the European Union, Ndewa360 is committed to respecting the fundamental principles of the RGPD (GDPR) to the extent that they strengthen user protection without contradicting applicable Cameroonian law."
+      },
+      "SECTION_2": {
+        "TITLE": "3. Data collected",
+        "SUBTITLE_0": "3.1 Data provided directly by the user",
+        "LABEL_0": "Account data:",
+        "LIST_0": "Full name",
+        "LIST_1": "Email address",
+        "LIST_2": "Phone number",
+        "LIST_3": "Profile photo (optional)",
+        "LIST_4": "Password (stored in hashed form)",
+        "LABEL_1": "Property data:",
+        "LIST_5": "Name, description, and full address of the property",
+        "LIST_6": "Property type, area, number of floors, year of construction",
+        "LIST_7": "Property condition and equipment",
+        "LIST_8": "Acquisition value, estimated current value",
+        "LIST_9": "Rent range, charges, management fees, property tax, insurance",
+        "LABEL_2": "Tenant data:",
+        "LIST_10": "Full name, email address (optional), phone number",
+        "LIST_11": "ID document number (national ID, passport, or driver's license) — the document itself is not collected",
+        "LIST_12": "Date of birth, nationality, profession (optional)",
+        "LIST_13": "Emergency contact name and details (optional)",
+        "LABEL_3": "Financial and contractual data:",
+        "LIST_14": "Rent and deposit amounts",
+        "LIST_15": "Payment history (amount, date, method, reference)",
+        "LIST_16": "Rental contracts generated on the platform",
+        "LIST_17": "Billing data related to the Ndewa360 subscription",
+        "SUBTITLE_1": "3.2 Data collected automatically",
+        "LABEL_4": "Browsing data:",
+        "LIST_18": "Pages visited, features used, session duration",
+        "LIST_19": "Browser type, operating system, screen resolution",
+        "LIST_20": "This data is collected via Google Analytics (see section 8)",
+        "LABEL_5": "Connection logs:",
+        "LIST_21": "Date and time of connection",
+        "LIST_22": "Session identifier",
+        "CALLOUT_TITLE": "IP address",
+        "CALLOUT_TEXT": "Ndewa360 does not collect the IP addresses of its users.",
+        "SUBTITLE_2": "3.3 Data obtained via Google Sign-In",
+        "BODY_0": "When you choose to sign in via Google, we receive the following data, subject to your explicit consent granted on the Google interface:",
+        "LIST_23": "Email address associated with your Google account",
+        "LIST_24": "Full name as recorded in your Google account",
+        "LIST_25": "Unique Google identifier (Google ID)",
+        "LIST_26": "Profile photo (URL of the image hosted by Google)"
+      },
+      "SECTION_3": {
+        "TITLE": "4. Legal bases and purposes of data collection",
+        "TABLE_HEADERS": ["Data category", "Legal basis", "Purpose"],
+        "TABLE_ROWS": [
+          ["Account data", "Performance of the service contract", "Creation and management of your account, authentication"],
+          ["Property data", "Performance of the service contract", "Operation of property management features"],
+          ["Tenant data", "Performance of the contract / Legitimate interest of the owner", "Management of rental contracts, payment tracking"],
+          ["Financial data", "Performance of the contract / Legal obligation", "Billing, payment tracking, accounting history"],
+          ["Google Sign-In data", "Explicit consent", "Simplified authentication via Google"],
+          ["Google Analytics data", "Consent (cookie banner)", "Platform improvement, audience analysis"],
+          ["Connection logs", "Legitimate interest (security)", "Fraud detection, account security"]
+        ]
+      },
+      "SECTION_4": {
+        "TITLE": "5. Use of data from Google",
+        "CALLOUT_TITLE": "Section dedicated to Google compliance",
+        "CALLOUT_TEXT": "This section explicitly addresses the requirements of the Google API Services User Data Policy and the Google APIs Terms of Service.",
+        "SUBTITLE_0": "5.1 Data Accessed",
+        "BODY_0": "We only request the following permissions (scopes):",
+        "TABLE_HEADERS_0": ["Google Scope", "Data Accessed", "Reason"],
+        "TABLE_ROWS_0": [
+          ["openid", "Confirmation of your Google identity", "Secure authentication"],
+          ["email", "Your Google email address", "Identification of your Ndewa360 account"],
+          ["profile", "Your full name and profile photo", "Pre-filling your Ndewa360 profile"]
+        ],
+        "CALLOUT_1_TITLE": "Minimization principle",
+        "CALLOUT_1_TEXT": "We only request the permissions strictly necessary for authentication. We do not access your emails, calendar, contacts, Google Drive files, or any other Google resources.",
+        "SUBTITLE_1": "5.2 Data Usage",
+        "BODY_1": "The data received from Google is used exclusively to:",
+        "LIST_0": "create your Ndewa360 account upon your first sign-in via Google;",
+        "LIST_1": "authenticate you during subsequent sign-ins;",
+        "LIST_2": "pre-fill your name and profile photo in your personal space.",
+        "NEGATIVE_LIST_0": "Google data is not used for advertising purposes.",
+        "NEGATIVE_LIST_1": "Google data is not sold to third parties.",
+        "NEGATIVE_LIST_2": "Google data is not used for behavioral or commercial profiling.",
+        "NEGATIVE_LIST_3": "Google data is not used to train artificial intelligence models.",
+        "NEGATIVE_LIST_4": "Google data is not used in violation of the Google API Services User Data Policy.",
+        "BODY_2": "Usage complies with the Google API Services User Data Policy.",
+        "SUBTITLE_2": "5.3 Data Sharing",
+        "BODY_3": "The data received from Google is not shared with third parties, except for the technical subcontractors listed in section 9.",
+        "SUBTITLE_3": "5.4 Data Storage and Protection",
+        "BODY_4": "The data received from Google is stored in our MongoDB Atlas database, Europe region — Paris, France. Security measures are described in section 10.",
+        "SUBTITLE_4": "5.5 Data Retention and Deletion",
+        "BODY_5": "Google data is retained for as long as your account is active. Upon deletion of your account, your Google email, name, Google ID, and profile photo URL are deleted from our database.",
+        "CALLOUT_2_TITLE": "Refresh token",
+        "CALLOUT_2_TEXT": "Ndewa360 does not store a Google refresh token. You can revoke the access granted to Ndewa360 from: myaccount.google.com/permissions"
+      },
+      "SECTION_5": {
+        "TITLE": "6. How we use your data",
+        "SUBTITLE_0": "Service provision",
+        "LIST_0": "Create and manage your account",
+        "LIST_1": "Allow you to manage your properties, tenants, contracts, and payments",
+        "LIST_2": "Generate documents (contracts, invoices, receipts)",
+        "LIST_3": "Send you notifications related to your account and properties",
+        "SUBTITLE_1": "Service improvement",
+        "LIST_4": "Analyze platform usage via Google Analytics to improve features",
+        "SUBTITLE_2": "Security",
+        "LIST_5": "Detect and prevent unauthorized access",
+        "LIST_6": "Maintain connection logs for security purposes",
+        "SUBTITLE_3": "What we do not do",
+        "NEGATIVE_LIST_0": "We do not sell your personal data.",
+        "NEGATIVE_LIST_1": "We do not use your data for advertising purposes.",
+        "NEGATIVE_LIST_2": "We do not create behavioral profiles for commercial purposes.",
+        "NEGATIVE_LIST_3": "We do not use your data to train artificial intelligence models."
+      },
+      "SECTION_6": {
+        "TITLE": "7. Sharing your data",
+        "BODY_0": "Ndewa360 only shares your personal data with third parties in the following cases:",
+        "SUBTITLE_0": "Technical subcontractors",
+        "BODY_1": "We use technical service providers to ensure the operation of the platform (see section 9). These providers only have access to the data strictly necessary for their tasks.",
+        "SUBTITLE_1": "Legal obligations",
+        "BODY_2": "We may be required to disclose your data to the competent authorities if the law requires us to do so or if a court order demands it.",
+        "SUBTITLE_2": "Business transfer",
+        "BODY_3": "In the event of a merger, acquisition, or asset sale, your data may be transferred. You would be notified in advance.",
+        "NEGATIVE_LIST_0": "We do not sell your data.",
+        "NEGATIVE_LIST_1": "We do not share your data with advertisers.",
+        "NEGATIVE_LIST_2": "We do not share your data with business partners for marketing purposes."
+      },
+      "SECTION_7": {
+        "TITLE": "8. Cookies",
+        "BODY_0": "For complete information, please refer to our dedicated Cookie Policy.",
+        "SUBTITLE_0": "Summary",
+        "TABLE_HEADERS": ["Type", "Example", "Consent required"],
+        "TABLE_ROWS": [
+          ["Strictly necessary cookies", "Authentication session (JWT)", "No — essential to the service"],
+          ["Analytics cookies", "Google Analytics", "Yes — via the consent banner"]
+        ],
+        "ACTION_TEXT": "The cookie consent banner is active. You can change your preferences at any time using the floating button at the bottom of the page or from your personal space."
+      },
+      "SECTION_8": {
+        "TITLE": "9. Subcontractors and international transfers",
+        "TABLE_HEADERS": ["Service provider", "Role", "Data location", "Privacy policy"],
+        "TABLE_ROWS": [
+          ["Contabo GmbH", "Backend server hosting", "Germany (EU)", "contabo.com"],
+          ["MongoDB Atlas", "Database hosting", "Paris, France (EU)", "mongodb.com"],
+          ["Google Cloud Storage", "File storage (photos, documents)", "africa-south1 — Johannesburg", "cloud.google.com"],
+          ["Google LLC", "Google Sign-In authentication, Google Analytics", "United States / worldwide", "policies.google.com"],
+          ["Mailgun (Sinch)", "Transactional email sending", "United States", "mailgun.com"],
+          ["Easy Transact", "Mobile payments (Orange Money, MTN Mobile Money)", "To be completed", "easytransact.com"],
+          ["Stripe", "Credit card payments (not yet active)", "United States / Europe", "stripe.com"]
+        ],
+        "SUBTITLE_0": "International transfers",
+        "BODY_0": "Some of our subcontractors are established or store data outside Cameroon, notably in the United States and Europe. These transfers are governed by the privacy policies and certifications of each service provider.",
+        "BODY_1": "For users residing in the European Union, transfers to third countries are governed by the appropriate mechanisms provided by the RGPD (GDPR) (standard contractual clauses, adequacy decisions).",
+        "ACTION_TEXT": "Action required: Obtain the data processing agreement (DPA) from Easy Transact and verify the exact location of the data processed."
+      },
+      "SECTION_9": {
+        "TITLE": "10. Security of your data",
+        "SUBTITLE_0": "Measures in place",
+        "LIST_0": "Encryption of communications via the HTTPS protocol (TLS)",
+        "LIST_1": "Encryption of sensitive data at rest with AES-256-GCM (authenticated encryption) — account data (national ID, phone, address), tenant data, and payment data",
+        "LIST_2": "Password hashing with the bcrypt algorithm",
+        "LIST_3": "Encrypted data search via HMAC-SHA256 (for search fields without decryption)",
+        "LIST_4": "Token-based authentication sent by email for account confirmation",
+        "LIST_5": "Data access restricted to team members who need it",
+        "LIST_6": "Data breach notification procedure in accordance with Cameroonian law n°2024/017 and the RGPD (GDPR) (72-hour deadline)",
+        "SUBTITLE_1": "Measures being implemented",
+        "ACTION_TEXT": "Two-factor authentication (2FA): not currently available — planned for a future release.",
+        "BODY_0": "Despite the measures in place, no system is infallible. If you suspect your account has been compromised, contact us immediately at support@ndewa-360.com."
+      },
+      "SECTION_10": {
+        "TITLE": "11. Retention periods",
+        "TABLE_HEADERS": ["Data category", "Retention period"],
+        "TABLE_ROWS": [
+          ["Account data (active)", "Lifetime of the account"],
+          ["Account data (after deletion)", "Immediate deletion, except for the exceptions below"],
+          ["Financial data and accounting history", "10 years from the last transaction (Cameroonian accounting obligations) — automatic deletion"],
+          ["Tenant data", "Lifetime of the owner's account"],
+          ["Connection logs", "12 rolling months — automatic deletion via MongoDB TTL index"],
+          ["Google Sign-In data", "Lifetime of the account, deleted upon closure"],
+          ["Google Analytics data", "26 months (default Google Analytics setting)"]
+        ],
+        "CALLOUT_TITLE": "Implemented retention periods",
+        "CALLOUT_TEXT": "These retention periods are automatically enforced by scheduled server-side processes. Financial data is purged after 10 years, connection logs after 12 months. Accounts inactive for more than one year receive an email warning 30 days before automatic anonymization."
+      },
+      "SECTION_11": {
+        "TITLE": "12. Your rights",
+        "BODY_0": "In accordance with Cameroonian law n°2024/017 of December 23, 2024, and the principles of the RGPD (GDPR) for users residing in the European Union, you have the following rights:",
+        "RIGHTS_0_TITLE": "Right of access",
+        "RIGHTS_0_DESC": "Obtain confirmation that we process your data and receive a copy. You can export your data from your personal space.",
+        "RIGHTS_1_TITLE": "Right to rectification",
+        "RIGHTS_1_DESC": "Correct inaccurate or incomplete data concerning you, directly from your personal space.",
+        "RIGHTS_2_TITLE": "Right to erasure",
+        "RIGHTS_2_DESC": "Request the deletion of your data in the cases provided by law. You can delete your account from the dangerous section of your profile.",
+        "RIGHTS_3_TITLE": "Right to data portability",
+        "RIGHTS_3_DESC": "Receive your data in a structured, machine-readable format (JSON). Available via the \"Export my data\" button in your profile.",
+        "RIGHTS_4_TITLE": "Right to object",
+        "RIGHTS_4_DESC": "Object to the processing of your data in certain cases, particularly for direct marketing purposes.",
+        "RIGHTS_5_TITLE": "Right to restriction",
+        "RIGHTS_5_DESC": "Request the temporary suspension of the processing of your data, for example in the event of a dispute over its accuracy.",
+        "SUBTITLE_0": "How to exercise your rights",
+        "BODY_1": "You can exercise your rights as follows:",
+        "LIST_0": "Access, portability, and rectification: directly from your personal space (\"My Data & Cookies\" section).",
+        "LIST_1": "Account deletion: from the \"Danger Zone\" section of your profile.",
+        "LIST_2": "Restriction and objection: by email to dpo@ndewa-360.com.",
+        "BODY_2": "Your request must specify: the right you wish to exercise, the data concerned, and any information allowing us to verify your identity.",
+        "BODY_3": "Response time: We commit to responding within a maximum of 48 hours from receipt of your request.",
+        "SUBTITLE_1": "Complaint to an authority",
+        "BODY_4": "If you believe that the processing of your data does not comply with applicable regulations, you have the right to lodge a complaint with the competent authority:",
+        "LIST_3": "For users in Cameroon: with the competent Cameroonian authority designated by law n°2024/017 (contact details to be provided once the authority is operational).",
+        "LIST_4": "For users in the European Union: with the data protection authority of your country of residence (in France: the CNIL — www.cnil.fr)."
+      },
+      "SECTION_12": {
+        "TITLE": "13. Tenant data — Specific note",
+        "BODY_0": "Owners and agencies using Ndewa360 record personal data regarding their tenants. In this context:",
+        "LIST_0": "The owner or agency acts as the data controller for their tenants' data.",
+        "LIST_1": "Ndewa360 acts as a data processor on behalf of the owner, providing them with the technical tools to store and manage this data.",
+        "CALLOUT_TITLE": "Responsibility of owners and agencies",
+        "CALLOUT_TEXT": "Owners and agencies are responsible for ensuring they have a legal basis to collect and process their tenants' data, and for informing them of the use of their data in accordance with applicable regulations."
+      },
+      "SECTION_13": {
+        "TITLE": "14. Amendments to this policy",
+        "BODY_0": "Ndewa360 reserves the right to modify this Privacy Policy at any time. In the event of a substantial change, you will be notified by email or by a notification visible on the platform, at least 30 days before the changes take effect.",
+        "BODY_1": "The current version is always accessible from the footer of the ndewa-360.com website.",
+        "BODY_2": "Continued use of the platform after the changes take effect constitutes acceptance of the new policy."
+      },
+      "SECTION_14": {
+        "TITLE": "15. Data Protection Officer (DPO)",
+        "BODY_0": "In accordance with Cameroonian law n°2024/017 and the RGPD (GDPR) for users residing in the European Union, Ndewa360 has appointed a Data Protection Officer (DPO) responsible for ensuring compliance with applicable regulations.",
+        "CONTACT_TITLE": "Contact the DPO",
+        "BODY_1": "For any questions regarding the protection of your personal data or to exercise your rights, you can contact our DPO:"
+      },
+      "SECTION_15": {
+        "TITLE": "16. Contact",
+        "BODY_0": "For any questions regarding this Privacy Policy (other than exercising your rights):"
+      }
+    },
+    "COOKIES": {
+      "SECTION_0": {
+        "TITLE": "1. What is a cookie?",
+        "BODY_0": "A cookie is a small text file stored on your device (computer, tablet, smartphone) when you visit a website. Cookies allow the site to remember your actions and preferences for a specified duration, so that you do not have to re-enter them each time you visit.",
+        "BODY_1": "Cookies can be:",
+        "LIST_0": "Session cookies — automatically deleted when you close your browser.",
+        "LIST_1": "Persistent cookies — stored on your device for a defined period, even after closing the browser.",
+        "LIST_2": "First-party cookies — set directly by Ndewa360.",
+        "LIST_3": "Third-party cookies — set by third-party services integrated into the platform."
+      },
+      "SECTION_1": {
+        "TITLE": "2. Cookies we use",
+        "SUBTITLE_0": "2.1 Strictly necessary cookies",
+        "CALLOUT_TITLE": "No consent required",
+        "CALLOUT_TEXT": "These cookies are essential to the functioning of the platform. They cannot be disabled without affecting your experience.",
+        "TABLE_HEADERS_0": ["Name", "Type", "Duration", "Purpose"],
+        "TABLE_ROWS_0": [
+          ["access_token", "Session / Persistent", "Session duration", "Maintaining your connection to the platform (authentication JWT)"],
+          ["refresh_token", "Persistent", "30 days", "Automatic renewal of your session without re-authentication"]
+        ],
+        "SUBTITLE_1": "2.2 Analytics cookies",
+        "CALLOUT_1_TITLE": "Consent required",
+        "CALLOUT_1_TEXT": "These cookies require your prior consent. Use the consent banner available at the bottom of the page to manage your preferences.",
+        "TABLE_HEADERS_1": ["Name", "Issuer", "Duration", "Purpose"],
+        "TABLE_ROWS_1": [
+          ["_ga", "Google Analytics", "2 years", "Distinguish unique users"],
+          ["_ga_*", "Google Analytics", "2 years", "Maintain Analytics session state"],
+          ["_gid", "Google Analytics", "24 hours", "Distinguish users"],
+          ["_gat", "Google Analytics", "1 minute", "Throttle request rate"]
+        ],
+        "BODY_0": "These cookies are used solely to measure platform traffic (pages visited, session duration, device type) in order to improve our services. They are not used for advertising purposes."
+      },
+      "SECTION_2": {
+        "TITLE": "3. Third-party cookies",
+        "BODY_0": "Some cookies are set by third-party services integrated into the platform. These cookies are subject to the privacy policies of their respective issuers.",
+        "TABLE_HEADERS": ["Service", "Purpose", "Privacy policy"],
+        "TABLE_ROWS": [
+          ["Google Analytics", "Traffic measurement", "policies.google.com/privacy"],
+          ["Google Sign-In", "Authentication via Google", "policies.google.com/privacy"]
+        ],
+        "CALLOUT_TITLE": "No advertising cookies",
+        "CALLOUT_TEXT": "Ndewa360 does not use any cookies for advertising, targeting, or commercial profiling purposes."
+      },
+      "SECTION_3": {
+        "TITLE": "4. Managing your preferences",
+        "SUBTITLE_0": "Consent banner",
+        "CALLOUT_TITLE": "Available",
+        "CALLOUT_TEXT": "A consent banner is present at the bottom of every page. You can change your preferences at any time via the Cookie Preferences button at the bottom right, or from the My Data & Cookies section of your personal space.",
+        "BODY_0": "Google Analytics is only loaded after your explicit acceptance. If you decline, no analytics cookies are set.",
+        "SUBTITLE_1": "Your browser settings",
+        "BODY_1": "You can configure your browser at any time to accept, reject, or delete cookies. Here are the links to the settings of the main browsers:",
+        "LIST_0": "Google Chrome",
+        "LIST_1": "Mozilla Firefox",
+        "LIST_2": "Apple Safari",
+        "LIST_3": "Microsoft Edge",
+        "CALLOUT_1_TITLE": "Warning",
+        "CALLOUT_1_TEXT": "Disabling strictly necessary cookies (authentication) will prevent you from connecting to the Ndewa360 platform.",
+        "SUBTITLE_2": "Disable Google Analytics",
+        "BODY_2": "You can specifically disable Google Analytics tracking by installing the official opt-out extension:"
+      },
+      "SECTION_4": {
+        "TITLE": "5. Amendments",
+        "BODY_0": "Ndewa360 reserves the right to modify this Cookie Policy at any time, particularly to reflect the addition of new services or changes in applicable regulations.",
+        "BODY_1": "The current version is always accessible from the footer of the ndewa-360.com website."
+      },
+      "SECTION_5": {
+        "TITLE": "6. Contact",
+        "BODY_0": "For any questions regarding our use of cookies:"
+      }
+    },
+    "TERMS": {
+      "SECTION_0": {
+        "TITLE": "1. Service description",
+        "BODY_0": "Ndewa360 is a SaaS (Software as a Service) property management platform published by Ndewa360 SARL (in the process of being incorporated), whose registered office is located in Tchougo, Bangangté, West Region, Cameroon.",
+        "BODY_1": "The platform allows users to:",
+        "LIST_0": "manage real estate properties (apartments, houses, studios, villas, commercial premises);",
+        "LIST_1": "register and track tenants;",
+        "LIST_2": "manage rental contracts and generate documents (contracts, invoices, receipts);",
+        "LIST_3": "track rent and deposit payments;",
+        "LIST_4": "access financial statistics and dashboards;",
+        "LIST_5": "publish listings of properties available for rent.",
+        "CALLOUT_TITLE": "Note",
+        "CALLOUT_TEXT": "Ndewa360 is currently in the process of being legally incorporated. These terms will be updated upon effective registration of the company."
+      },
+      "SECTION_1": {
+        "TITLE": "2. Acceptance of terms",
+        "BODY_0": "By creating an account on the Ndewa360 platform or using its services, you accept these General Terms of Use (GTU) without reservation.",
+        "BODY_1": "If you do not accept these terms, please do not use our service.",
+        "CALLOUT_TITLE": "Legal capacity",
+        "CALLOUT_TEXT": "By accepting these terms, you declare that you are of legal age and have the legal capacity to enter into a contract. Use of the platform by minors is strictly prohibited.",
+        "BODY_2": "Ndewa360 reserves the right to modify these terms at any time. Substantial changes will be notified to you at least 30 days before they take effect (see section 11)."
+      },
+      "SECTION_2": {
+        "TITLE": "3. Service access and registration",
+        "SUBTITLE_0": "Account creation",
+        "BODY_0": "Access to the platform's features requires creating an account. You can register:",
+        "LIST_0": "directly via a registration form (email + password);",
+        "LIST_1": "via your Google account (Google Sign-In) — optional.",
+        "SUBTITLE_1": "Accuracy of information",
+        "BODY_1": "You agree to provide accurate, complete, and up-to-date information during your registration and throughout the use of the service. Ndewa360 cannot be held liable for the consequences of inaccurate information provided by the user.",
+        "SUBTITLE_2": "Account security",
+        "BODY_2": "You are solely responsible for the confidentiality of your login credentials. You agree to:",
+        "LIST_2": "not share your credentials with third parties;",
+        "LIST_3": "immediately notify Ndewa360 of any unauthorized use of your account at support@ndewa-360.com.",
+        "SUBTITLE_3": "Account confirmation",
+        "BODY_3": "After registration, a confirmation email is sent to you. Your account must be confirmed to access all platform features."
+      },
+      "SECTION_3": {
+        "TITLE": "4. Plans and pricing",
+        "SUBTITLE_0": "Free Plan (Freemium)",
+        "CALLOUT_TITLE": "Free Plan — Forever",
+        "CALLOUT_TEXT": "The free plan is available with no time limit and no credit card required.",
+        "LIST_0": "Up to 1 real estate property",
+        "LIST_1": "Up to 5 rental units per property",
+        "LIST_2": "Access to 100% of platform features",
+        "LIST_3": "Email support",
+        "SUBTITLE_1": "Trial Plan (Premium Trial)",
+        "LIST_4": "Duration: 60 days from activation",
+        "LIST_5": "Unlimited access to all properties and rental units",
+        "LIST_6": "All Premium features included",
+        "LIST_7": "No credit card required",
+        "LIST_8": "Upon trial expiration, automatic return to the Free plan",
+        "SUBTITLE_2": "Premium Plan",
+        "LIST_9": "Unlimited real estate properties and rental units",
+        "LIST_10": "Monthly billing: 2% of the monthly rent of each occupied unit (minimum 15 days in the month)",
+        "LIST_11": "Vacant unit = 0 FCFA billed",
+        "LIST_12": "All platform features",
+        "LIST_13": "Priority support",
+        "SUBTITLE_3": "Billing",
+        "BODY_0": "Premium billing is automatic and monthly. Invoices are available in your personal space. In the event of non-payment, your account may be suspended in accordance with section 10.",
+        "BODY_1": "Refund conditions are described in our Refund Policy.",
+        "TABLE_HEADERS": ["Plan", "Price", "Properties", "Units per property"],
+        "TABLE_ROWS": [
+          ["Free", "0 FCFA", "1", "5 maximum"],
+          ["Trial", "0 FCFA (60 days)", "Unlimited", "Unlimited"],
+          ["Premium", "2% of rent per occupied unit/month", "Unlimited", "Unlimited"]
+        ]
+      },
+      "SECTION_4": {
+        "TITLE": "5. User obligations",
+        "BODY_0": "By using the Ndewa360 platform, you agree to:",
+        "LIST_0": "provide accurate and up-to-date information during your registration and use of the service;",
+        "LIST_1": "use the platform solely for lawful purposes and in accordance with these GTU;",
+        "LIST_2": "respect the rights of third parties, particularly the rights of tenants whose data you record;",
+        "LIST_3": "maintain the confidentiality of your login credentials;",
+        "LIST_4": "inform your tenants of the use of their personal data on the platform;",
+        "LIST_5": "not attempt to circumvent the platform's security measures;",
+        "LIST_6": "not use the platform to disseminate unlawful, defamatory, or rights-infringing content.",
+        "SUBTITLE_0": "Prohibited uses",
+        "NEGATIVE_LIST_0": "Use the platform for fraudulent or illegal purposes.",
+        "NEGATIVE_LIST_1": "Attempt to access other users' data without authorization.",
+        "NEGATIVE_LIST_2": "Introduce viruses, malware, or any malicious code into the platform.",
+        "NEGATIVE_LIST_3": "Use automated robots or scripts to access the platform without prior authorization.",
+        "NEGATIVE_LIST_4": "Resell or sublicense access to the platform to third parties.",
+        "BODY_1": "Any abusive use will result in immediate account suspension, without prejudice to any legal action that Ndewa360 may take."
+      },
+      "SECTION_5": {
+        "TITLE": "6. Intellectual property",
+        "SUBTITLE_0": "Ndewa360's rights",
+        "BODY_0": "The Ndewa360 platform, its source code, design, logos, trademarks, texts, and all of its content are the exclusive property of Ndewa360 SARL and are protected by applicable intellectual property laws.",
+        "BODY_1": "Any reproduction, distribution, modification, or commercial use of these elements without prior written authorization from Ndewa360 is strictly prohibited.",
+        "SUBTITLE_1": "User's rights over their data",
+        "BODY_2": "You retain full rights over the data you enter into the platform (property data, tenant data, payments, contracts). Ndewa360 claims no ownership rights over this data.",
+        "BODY_3": "By using the platform, you grant Ndewa360 a limited, non-exclusive, and revocable license to process this data solely for the purpose of providing the services described in these GTU."
+      },
+      "SECTION_6": {
+        "TITLE": "7. Data and privacy",
+        "BODY_0": "The processing of your personal data is governed by our Privacy Policy, which is an integral part of these GTU.",
+        "BODY_1": "By accepting these GTU, you acknowledge having read our Privacy Policy and accepting its terms.",
+        "CALLOUT_TITLE": "Tenant data",
+        "CALLOUT_TEXT": "As an owner or agency using Ndewa360, you are responsible for the processing of your tenants' personal data. Ndewa360 acts as a data processor. You are required to inform your tenants of the use of their data and to have a legal basis for this processing."
+      },
+      "SECTION_7": {
+        "TITLE": "8. Service availability",
+        "BODY_0": "Ndewa360 strives to keep the platform available 24/7. However, Ndewa360 cannot guarantee uninterrupted availability.",
+        "BODY_1": "Interruptions may occur for the following reasons:",
+        "LIST_0": "Scheduled maintenance (you will be notified in advance whenever possible)",
+        "LIST_1": "Unexpected technical failures",
+        "LIST_2": "Incidents at our hosting providers",
+        "LIST_3": "Force majeure events",
+        "BODY_2": "Ndewa360 cannot be held liable for damages resulting from temporary unavailability of the platform."
+      },
+      "SECTION_8": {
+        "TITLE": "9. Limitation of liability",
+        "BODY_0": "To the extent permitted by applicable law, Ndewa360 cannot be held liable for:",
+        "LIST_0": "data loss resulting from incorrect use of the platform by the user;",
+        "LIST_1": "indirect, consequential, or immaterial damages resulting from the use or inability to use the platform;",
+        "LIST_2": "actions or omissions of third parties, including payment service providers;",
+        "LIST_3": "disputes between owners and tenants — Ndewa360 is a management tool and is not a party to rental contracts concluded through the platform;",
+        "LIST_4": "the accuracy of information entered by users.",
+        "CALLOUT_TITLE": "Management tool only",
+        "CALLOUT_TEXT": "Ndewa360 is a property management tool. The platform does not provide legal, tax, or financial advice. Contracts generated through the platform are provided for informational purposes only. It is your responsibility to verify their compliance with the legislation applicable to your situation."
+      },
+      "SECTION_9": {
+        "TITLE": "10. Suspension and termination",
+        "SUBTITLE_0": "Suspension for non-payment",
+        "BODY_0": "In the event of non-payment of overdue Premium invoices, Ndewa360 reserves the right to suspend access to your account. Your account will be automatically reactivated upon settlement of outstanding invoices.",
+        "SUBTITLE_1": "Suspension for GTU violation",
+        "BODY_1": "Ndewa360 reserves the right to suspend or terminate your account without notice in the event of:",
+        "LIST_0": "violation of these GTU;",
+        "LIST_1": "fraudulent or illegal use of the platform;",
+        "LIST_2": "conduct that infringes the rights of third parties or the security of the platform.",
+        "SUBTITLE_2": "Termination by the user",
+        "BODY_2": "You may delete your account at any time from your personal space or by contacting our support at support@ndewa-360.com.",
+        "BODY_3": "Upon deletion of your account:",
+        "LIST_3": "your personal data is deleted in accordance with our Privacy Policy;",
+        "LIST_4": "data necessary for accounting history may be retained in accordance with applicable legal obligations;",
+        "LIST_5": "unpaid invoices remain due."
+      },
+      "SECTION_10": {
+        "TITLE": "11. Amendments to the GTU",
+        "BODY_0": "Ndewa360 reserves the right to amend these GTU at any time. In the event of a substantial change, you will be notified:",
+        "LIST_0": "by email to the address associated with your account;",
+        "LIST_1": "and/or by a notification visible on the platform.",
+        "BODY_1": "This notification will be made at least 30 days before the changes take effect.",
+        "BODY_2": "Continued use of the platform after the changes take effect constitutes acceptance of the new GTU. If you do not accept the changes, you may delete your account before they take effect."
+      },
+      "SECTION_11": {
+        "TITLE": "12. Applicable law and disputes",
+        "BODY_0": "These GTU are governed by Cameroonian law.",
+        "BODY_1": "In the event of a dispute relating to the interpretation or performance of these GTU, the parties agree to seek an amicable solution before any legal proceedings.",
+        "BODY_2": "Failing an amicable resolution within 30 days from notification of the dispute, the competent courts of Cameroon shall have exclusive jurisdiction to hear the dispute.",
+        "CALLOUT_TITLE": "Users residing in the European Union",
+        "CALLOUT_TEXT": "For users residing in the European Union, the mandatory consumer protection provisions provided by the legislation of their country of residence remain applicable to the extent that they confer a higher level of protection than Cameroonian law."
+      },
+      "SECTION_12": {
+        "TITLE": "13. Contact",
+        "BODY_0": "For any questions regarding these General Terms of Use:"
+      }
+    },
+    "MENTIONS": {
+      "SECTION_0": {
+        "TITLE": "1. Website publisher",
+        "TABLE_HEADERS": ["Element", "Value"],
+        "TABLE_ROWS": [
+          ["Company name", "Ndewa360 SARL (in the process of being incorporated)"],
+          ["Legal form", "Limited Liability Company (SARL)"],
+          ["RCCM number", "Pending acquisition"],
+          ["Taxpayer account number (NCC)", "Pending acquisition"],
+          ["Registered office", "Tchougo, Bangangté, West Region, Cameroon"],
+          ["Contact email", "support@ndewa-360.com"],
+          ["Website", "ndewa-360.com"]
+        ],
+        "CALLOUT_TITLE": "Note",
+        "CALLOUT_TEXT": "Ndewa360 is currently in the process of being legally incorporated. These legal notices will be updated upon effective registration of the company."
+      },
+      "SECTION_1": {
+        "TITLE": "2. Hosting provider",
+        "TABLE_HEADERS": ["Service", "Provider", "Location"],
+        "TABLE_ROWS": [
+          ["Backend server hosting", "Contabo GmbH", "Germany (EU)"],
+          ["Database hosting", "MongoDB Atlas", "Paris, France (EU)"],
+          ["File storage", "Google Cloud Storage", "Johannesburg, South Africa"]
+        ]
+      },
+      "SECTION_2": {
+        "TITLE": "3. Publication director",
+        "BODY_0": "The publication director of the ndewa-360.com website is the legal representative of Ndewa360 SARL.",
+        "BODY_1": "To be completed upon registration of the company."
+      },
+      "SECTION_3": {
+        "TITLE": "4. Intellectual property",
+        "BODY_0": "All content on the ndewa-360.com website (text, images, graphics, logos, icons, sounds, software, source code) is the exclusive property of Ndewa360 SARL or its partners and is protected by Cameroonian and international intellectual property laws.",
+        "BODY_1": "Any reproduction, representation, modification, publication, transmission, or distortion of the site or its content, by any means whatsoever, is prohibited without prior written authorization from Ndewa360 SARL.",
+        "BODY_2": "The trademarks and logos appearing on the site are registered trademarks of Ndewa360 SARL. Any unauthorized use of these trademarks is prohibited."
+      },
+      "SECTION_4": {
+        "TITLE": "5. Personal data",
+        "BODY_0": "The processing of personal data is governed by our Privacy Policy, accessible from every page of the site.",
+        "BODY_1": "In accordance with Cameroonian law n°2024/017 of December 23, 2024, relating to the protection of personal data, you have rights over your personal data. For more information, please consult the Privacy Policy.",
+        "CALLOUT_TITLE": "DPO",
+        "CALLOUT_TEXT": "To exercise your rights or for any questions regarding the protection of your data, contact our Data Protection Officer: dpo@ndewa-360.com"
+      },
+      "SECTION_5": {
+        "TITLE": "6. Cookies",
+        "BODY_0": "The ndewa-360.com website uses cookies in accordance with our Cookie Policy. Cookies strictly necessary for the functioning of the site are set without consent. Analytics cookies (Google Analytics) are only set with your explicit consent, collected via the consent banner."
+      },
+      "SECTION_6": {
+        "TITLE": "7. Hyperlinks",
+        "BODY_0": "The ndewa-360.com website may contain hyperlinks to third-party sites. Ndewa360 SARL exercises no control over the content of these third-party sites and declines all responsibility regarding their content, their data protection practices, or their availability.",
+        "BODY_1": "Creating hyperlinks to the ndewa-360.com website is subject to prior written authorization from Ndewa360 SARL, except for links originating from search engines."
+      },
+      "SECTION_7": {
+        "TITLE": "8. Disputes",
+        "BODY_0": "These legal notices are governed by Cameroonian law. In the event of a dispute, the parties agree to seek an amicable solution before any legal proceedings.",
+        "BODY_1": "Failing an amicable resolution within 30 days, the competent courts of Cameroon shall have exclusive jurisdiction to hear the dispute."
+      }
+    },
+    "REMBOURSEMENT": {
+      "SECTION_0": {
+        "TITLE": "1. Scope",
+        "BODY_0": "This Refund Policy applies to paid subscriptions on the Ndewa360 platform, in accordance with the General Terms of Use.",
+        "BODY_1": "This policy does not cover disputes between owners and tenants regarding rent or deposits, which are the sole responsibility of the owner."
+      },
+      "SECTION_1": {
+        "TITLE": "2. Free Plan and Trial",
+        "SUBTITLE_0": "Free Plan",
+        "BODY_0": "The Free Plan is available at no cost and with no time limit. No refund applies as no payment is made.",
+        "SUBTITLE_1": "Trial Plan (Premium Trial)",
+        "BODY_1": "The Trial Plan offers free access to Premium features for a period of 60 days. No credit card is required. Upon trial expiration, the account automatically returns to the Free Plan. No refund applies as no payment is made."
+      },
+      "SECTION_2": {
+        "TITLE": "3. Premium Plan — Billing terms",
+        "SUBTITLE_0": "Billing model",
+        "BODY_0": "The Premium Plan is billed monthly according to the following model:",
+        "TABLE_HEADERS": ["Element", "Detail"],
+        "TABLE_ROWS": [
+          ["Billing rate", "2% of the monthly rent of each occupied rental unit"],
+          ["Minimum presence threshold", "The unit must be occupied for at least 15 days in the month to be billed"],
+          ["Vacant unit", "0 FCFA billed"],
+          ["Frequency", "Monthly, at the end of the month"],
+          ["Payment methods", "Orange Money, MTN Mobile Money, Credit card"]
+        ],
+        "CALLOUT_TITLE": "Calculation example",
+        "CALLOUT_TEXT": "If you have 3 occupied units with rents of 50,000 FCFA, 75,000 FCFA, and 100,000 FCFA, your monthly invoice will be: (50,000 × 2%) + (75,000 × 2%) + (100,000 × 2%) = 1,000 + 1,500 + 2,000 = 4,500 FCFA.",
+        "SUBTITLE_1": "Billing and payment",
+        "BODY_1": "Invoices are generated automatically and available in your personal space. Payment is due upon receipt of the invoice.",
+        "BODY_2": "In the event of non-payment, in accordance with GTU section 10, your account may be suspended. Your account will be automatically reactivated upon settlement of outstanding invoices."
+      },
+      "SECTION_3": {
+        "TITLE": "4. Billing errors",
+        "BODY_0": "If you notice a billing error (incorrect amount, unit billed while it was vacant, duplicate billing), you have 30 days from the invoice date to contact our support.",
+        "BODY_1": "After verification, confirmed errors will result in:",
+        "LIST_0": "a full refund of the overcharged amount, as soon as possible;",
+        "LIST_1": "or a credit on your account, deducted from the next invoice, according to your preference."
+      },
+      "SECTION_4": {
+        "TITLE": "5. Cancellation and refund",
+        "SUBTITLE_0": "Cancellation by the user",
+        "BODY_0": "You may cancel your Premium subscription at any time from your personal space. Cancellation takes effect at the end of the current billing period.",
+        "LIST_0": "Cancellation during the month: the current month's invoice remains due. No partial refund is issued for the remaining days of the current month.",
+        "LIST_1": "Cancellation before billing: if you cancel before the monthly invoice is generated, no amount will be charged for the following month.",
+        "SUBTITLE_1": "Account deletion",
+        "BODY_1": "In the event of account deletion (from the \"Danger Zone\" section of the profile), unpaid invoices remain due. Payments already made are not refunded, except in the case of a confirmed billing error in accordance with section 4.",
+        "CALLOUT_TITLE": "No pro-rata refund",
+        "CALLOUT_TEXT": "Unless there is a billing error on our part, no pro-rata refund is issued for the remaining days in the current billing period upon cancellation."
+      },
+      "SECTION_5": {
+        "TITLE": "6. Request procedure",
+        "BODY_0": "For any refund request (billing error or otherwise):",
+        "CONTACT_TITLE": "Contact support",
+        "LIST_0": "Send an email to support@ndewa-360.com",
+        "LIST_1": "Email subject: Refund request — [your name]",
+        "LIST_2": "Attach any relevant documents (screenshot of the invoice, payment reference)",
+        "LIST_3": "Specify the reason for your request"
+      },
+      "SECTION_6": {
+        "TITLE": "7. Processing times",
+        "TABLE_HEADERS": ["Request type", "Acknowledgment time", "Processing time"],
+        "TABLE_ROWS": [
+          ["Billing error", "24 hours", "5 business days"],
+          ["Refund request", "24 hours", "10 business days"],
+          ["Refund via Mobile Money", "—", "2 to 5 business days after approval"],
+          ["Refund via credit card", "—", "5 to 10 business days after approval"]
+        ],
+        "BODY_0": "The refund is made via the same payment method used for the original transaction, unless otherwise agreed."
+      },
+      "SECTION_7": {
+        "TITLE": "8. Amendments",
+        "BODY_0": "Ndewa360 reserves the right to modify this Refund Policy at any time. In the event of a substantial change, you will be notified by email or by a notification visible on the platform, at least 30 days before the changes take effect.",
+        "BODY_1": "The current version is always accessible from the footer of the ndewa-360.com website."
+      },
+      "SECTION_8": {
+        "TITLE": "9. Contact",
+        "BODY_0": "For any questions regarding this Refund Policy:"
+      }
+    }
+  }
+}

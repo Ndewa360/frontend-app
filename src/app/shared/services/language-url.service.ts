@@ -16,7 +16,23 @@ export class LanguageUrlService {
     private activatedRoute: ActivatedRoute,
     private translate: TranslateService
   ) {
+    // Appliquer la langue depuis l'URL immédiatement (avant NavigationEnd)
+    this.applyLanguageFromCurrentUrl();
+    // Puis écouter les navigations futures
     this.initializeLanguageFromUrl();
+  }
+
+  /**
+   * Lit la langue depuis l'URL courante et l'applique immédiatement
+   */
+  private applyLanguageFromCurrentUrl(): void {
+    try {
+      const urlSegments = this.router.url.split('/');
+      const langFromUrl = urlSegments[1];
+      if (this.supportedLanguages.includes(langFromUrl)) {
+        this.setLanguage(langFromUrl);
+      }
+    } catch {}
   }
 
   private initializeLanguageFromUrl(): void {
