@@ -15,17 +15,19 @@
       <a routerLink="../privacy-policy" routerLinkActive="active"><i class="fas fa-lock"></i> Confidentialité</a>
       <a routerLink="../terms" routerLinkActive="active"><i class="fas fa-file-alt"></i> Conditions d'utilisation</a>
       <a routerLink="../cookies" routerLinkActive="active"><i class="fas fa-cookie-bite"></i> Cookies</a>
+      <a routerLink="../mentions-legales" routerLinkActive="active"><i class="fas fa-balance-scale"></i> Mentions légales</a>
+      <a routerLink="../remboursement" routerLinkActive="active"><i class="fas fa-undo"></i> Remboursement</a>
     </nav>
 
     <div class="legal-toc">
       <h3>Sommaire</h3>
       <ol>
-        <li><a href="#c1">Qu'est-ce qu'un cookie ?</a></li>
-        <li><a href="#c2">Cookies que nous utilisons</a></li>
-        <li><a href="#c3">Cookies tiers</a></li>
-        <li><a href="#c4">Gérer vos préférences</a></li>
-        <li><a href="#c5">Modifications</a></li>
-        <li><a href="#c6">Contact</a></li>
+        <li><a [routerLink]="[]" [fragment]="'c1'">Qu'est-ce qu'un cookie ?</a></li>
+        <li><a [routerLink]="[]" [fragment]="'c2'">Cookies que nous utilisons</a></li>
+        <li><a [routerLink]="[]" [fragment]="'c3'">Cookies tiers</a></li>
+        <li><a [routerLink]="[]" [fragment]="'c4'">Gérer vos préférences</a></li>
+        <li><a [routerLink]="[]" [fragment]="'c5'">Modifications</a></li>
+        <li><a [routerLink]="[]" [fragment]="'c6'">Contact</a></li>
       </ol>
     </div>
 
@@ -161,7 +163,8 @@
         <span class="callout-icon"><i class="fas fa-check-circle"></i></span>
         <div class="callout-body">
           <strong>Disponible</strong>
-          <p>Un bandeau de consentement est présent en bas de chaque page. Vous pouvez modifier vos préférences à tout moment via le bouton <strong>Préférences cookies</strong> en bas à droite, ou depuis la section <strong>Mes données &amp; Cookies</strong> de votre <a routerLink="/user-profile">espace personnel</a>.</p>
+          <p>Un bandeau de consentement est présent en bas de chaque page. Vous pouvez modifier vos préférences à tout moment via le bouton <strong>Préférences cookies</strong> en bas à droite, ou depuis la section <strong>Mes données &amp; Cookies</strong> de votre <a [routerLink]="['../../app/profile']" fragment="section-privacy">espace personnel</a>.</p>
+          <p>Google Analytics n'est chargé qu'après votre acceptation explicite. Si vous refusez, aucun cookie analytique n'est déposé.</p>
         </div>
       </div>
 

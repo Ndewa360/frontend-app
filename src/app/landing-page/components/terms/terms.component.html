@@ -15,24 +15,26 @@
       <a routerLink="../privacy-policy" routerLinkActive="active"><i class="fas fa-lock"></i> Confidentialité</a>
       <a routerLink="../terms" routerLinkActive="active"><i class="fas fa-file-alt"></i> Conditions d'utilisation</a>
       <a routerLink="../cookies" routerLinkActive="active"><i class="fas fa-cookie-bite"></i> Cookies</a>
+      <a routerLink="../mentions-legales" routerLinkActive="active"><i class="fas fa-balance-scale"></i> Mentions légales</a>
+      <a routerLink="../remboursement" routerLinkActive="active"><i class="fas fa-undo"></i> Remboursement</a>
     </nav>
 
     <div class="legal-toc">
       <h3>Sommaire</h3>
       <ol>
-        <li><a href="#t1">Présentation du service</a></li>
-        <li><a href="#t2">Acceptation des conditions</a></li>
-        <li><a href="#t3">Accès au service et inscription</a></li>
-        <li><a href="#t4">Plans et tarification</a></li>
-        <li><a href="#t5">Obligations de l'utilisateur</a></li>
-        <li><a href="#t6">Propriété intellectuelle</a></li>
-        <li><a href="#t7">Données et confidentialité</a></li>
-        <li><a href="#t8">Disponibilité du service</a></li>
-        <li><a href="#t9">Limitation de responsabilité</a></li>
-        <li><a href="#t10">Suspension et résiliation</a></li>
-        <li><a href="#t11">Modifications des CGU</a></li>
-        <li><a href="#t12">Droit applicable et litiges</a></li>
-        <li><a href="#t13">Contact</a></li>
+        <li><a [routerLink]="[]" [fragment]="'t1'">Présentation du service</a></li>
+        <li><a [routerLink]="[]" [fragment]="'t2'">Acceptation des conditions</a></li>
+        <li><a [routerLink]="[]" [fragment]="'t3'">Accès au service et inscription</a></li>
+        <li><a [routerLink]="[]" [fragment]="'t4'">Plans et tarification</a></li>
+        <li><a [routerLink]="[]" [fragment]="'t5'">Obligations de l'utilisateur</a></li>
+        <li><a [routerLink]="[]" [fragment]="'t6'">Propriété intellectuelle</a></li>
+        <li><a [routerLink]="[]" [fragment]="'t7'">Données et confidentialité</a></li>
+        <li><a [routerLink]="[]" [fragment]="'t8'">Disponibilité du service</a></li>
+        <li><a [routerLink]="[]" [fragment]="'t9'">Limitation de responsabilité</a></li>
+        <li><a [routerLink]="[]" [fragment]="'t10'">Suspension et résiliation</a></li>
+        <li><a [routerLink]="[]" [fragment]="'t11'">Modifications des CGU</a></li>
+        <li><a [routerLink]="[]" [fragment]="'t12'">Droit applicable et litiges</a></li>
+        <li><a [routerLink]="[]" [fragment]="'t13'">Contact</a></li>
       </ol>
     </div>
 
@@ -70,7 +72,7 @@
           <p>En acceptant ces conditions, vous déclarez être majeur et avoir la capacité juridique de conclure un contrat. L'utilisation de la plateforme par des mineurs est strictement interdite.</p>
         </div>
       </div>
-      <p>Ndewa360 se réserve le droit de modifier ces conditions à tout moment. Les modifications substantielles vous seront notifiées au moins <strong>30 jours</strong> avant leur entrée en vigueur (voir <a href="#t11">section 11</a>).</p>
+      <p>Ndewa360 se réserve le droit de modifier ces conditions à tout moment. Les modifications substantielles vous seront notifiées au moins <strong>30 jours</strong> avant leur entrée en vigueur (voir <a [routerLink]="[]" [fragment]="'t11'">section 11</a>).</p>
     </div>
 
     <div class="legal-section">
@@ -132,7 +134,8 @@
       </ul>
 
       <h3>Facturation</h3>
-      <p>La facturation Premium est automatique et mensuelle. Les factures sont disponibles dans votre espace personnel. En cas de non-paiement, votre compte peut être suspendu conformément à la <a href="#t10">section 10</a>.</p>
+      <p>La facturation Premium est automatique et mensuelle. Les factures sont disponibles dans votre espace personnel. En cas de non-paiement, votre compte peut être suspendu conformément à la <a [routerLink]="[]" [fragment]="'t10'">section 10</a>.</p>
+      <p>Les conditions de remboursement sont décrites dans notre <a routerLink="../remboursement">Politique de Remboursement</a>.</p>
 
       <div class="legal-table-wrap">
         <table>

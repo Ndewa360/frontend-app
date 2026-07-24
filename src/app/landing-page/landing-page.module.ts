@@ -23,6 +23,8 @@ import { ContactComponent } from './components/contact/contact.component';
 import { PrivacyPolicyComponent } from './components/privacy-policy/privacy-policy.component';
 import { TermsComponent } from './components/terms/terms.component';
 import { CookiesComponent } from './components/cookies/cookies.component';
+import { MentionsLegalesComponent } from './components/mentions-legales/mentions-legales.component';
+import { RemboursementComponent } from './components/remboursement/remboursement.component';
 
 
 @NgModule({
@@ -45,7 +47,9 @@ import { CookiesComponent } from './components/cookies/cookies.component';
     ContactComponent,
     PrivacyPolicyComponent,
     TermsComponent,
-    CookiesComponent
+    CookiesComponent,
+    MentionsLegalesComponent,
+    RemboursementComponent
   ],
   imports: [
     CommonModule,

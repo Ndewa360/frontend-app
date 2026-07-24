@@ -21,6 +21,7 @@ import { ToastrService } from 'ngx-toastr';
 import { UserBreachReportService } from 'src/app/shared/services/user-breach-report.service';
 
 const COOKIE_KEY = 'ndewa_cookie_consent';
+const GA_ID = 'G-MKEB3L7EXL';
 
 @Component({
   selector: 'user-profile-infos',
@@ -397,13 +398,40 @@ export class UserProfileInfosComponent implements OnInit, OnDestroy {
   acceptCookies(): void {
     localStorage.setItem(COOKIE_KEY, 'accepted');
     this.cookieConsent = 'accepted';
+    this.loadGoogleAnalytics();
     this.toastr.success('Cookies analytiques acceptés.', 'Ndewa360°');
   }
 
   declineCookies(): void {
     localStorage.setItem(COOKIE_KEY, 'declined');
     this.cookieConsent = 'declined';
+    this.removeGoogleAnalytics();
     this.toastr.info('Cookies analytiques refusés.', 'Ndewa360°');
+  }
+
+  private loadGoogleAnalytics(): void {
+    if (document.getElementById('ga-script')) return;
+
+    const w = window as any;
+    w.dataLayer = w.dataLayer || [];
+    function gtag(...args: any[]) { w.dataLayer.push(args); }
+    w.gtag = gtag;
+    gtag('js', new Date());
+    gtag('config', GA_ID, { send_page_view: false });
+
+    const script = document.createElement('script');
+    script.id = 'ga-script';
+    script.async = true;
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`;
+    document.head.appendChild(script);
+  }
+
+  private removeGoogleAnalytics(): void {
+    const script = document.getElementById('ga-script');
+    if (script) script.remove();
+    const w = window as any;
+    delete w.gtag;
+    w.dataLayer = [];
   }
 
   // --- Export données ---

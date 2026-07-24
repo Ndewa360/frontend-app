@@ -15,26 +15,29 @@
       <a routerLink="../privacy-policy" routerLinkActive="active"><i class="fas fa-lock"></i> Confidentialité</a>
       <a routerLink="../terms" routerLinkActive="active"><i class="fas fa-file-alt"></i> Conditions d'utilisation</a>
       <a routerLink="../cookies" routerLinkActive="active"><i class="fas fa-cookie-bite"></i> Cookies</a>
+      <a routerLink="../mentions-legales" routerLinkActive="active"><i class="fas fa-balance-scale"></i> Mentions légales</a>
+      <a routerLink="../remboursement" routerLinkActive="active"><i class="fas fa-undo"></i> Remboursement</a>
     </nav>
 
     <div class="legal-toc">
       <h3>Sommaire</h3>
       <ol>
-        <li><a href="#s1">Qui sommes-nous ?</a></li>
-        <li><a href="#s2">Champ d'application</a></li>
-        <li><a href="#s3">Données collectées</a></li>
-        <li><a href="#s4">Bases légales et finalités</a></li>
-        <li><a href="#s5">Données provenant de Google</a></li>
-        <li><a href="#s6">Comment nous utilisons vos données</a></li>
-        <li><a href="#s7">Partage de vos données</a></li>
-        <li><a href="#s8">Cookies</a></li>
-        <li><a href="#s9">Sous-traitants et transferts</a></li>
-        <li><a href="#s10">Sécurité</a></li>
-        <li><a href="#s11">Durées de conservation</a></li>
-        <li><a href="#s12">Vos droits</a></li>
-        <li><a href="#s13">Données des locataires</a></li>
-        <li><a href="#s14">Modifications</a></li>
-        <li><a href="#s15">Contact</a></li>
+        <li><a [routerLink]="[]" [fragment]="'s1'">Qui sommes-nous ?</a></li>
+        <li><a [routerLink]="[]" [fragment]="'s2'">Champ d'application</a></li>
+        <li><a [routerLink]="[]" [fragment]="'s3'">Données collectées</a></li>
+        <li><a [routerLink]="[]" [fragment]="'s4'">Bases légales et finalités</a></li>
+        <li><a [routerLink]="[]" [fragment]="'s5'">Données provenant de Google</a></li>
+        <li><a [routerLink]="[]" [fragment]="'s6'">Comment nous utilisons vos données</a></li>
+        <li><a [routerLink]="[]" [fragment]="'s7'">Partage de vos données</a></li>
+        <li><a [routerLink]="[]" [fragment]="'s8'">Cookies</a></li>
+        <li><a [routerLink]="[]" [fragment]="'s9'">Sous-traitants et transferts</a></li>
+        <li><a [routerLink]="[]" [fragment]="'s10'">Sécurité</a></li>
+        <li><a [routerLink]="[]" [fragment]="'s11'">Durées de conservation</a></li>
+        <li><a [routerLink]="[]" [fragment]="'s12'">Vos droits</a></li>
+        <li><a [routerLink]="[]" [fragment]="'s13'">Données des locataires</a></li>
+        <li><a [routerLink]="[]" [fragment]="'s14'">Modifications</a></li>
+        <li><a [routerLink]="[]" [fragment]="'s15'">DPO</a></li>
+        <li><a [routerLink]="[]" [fragment]="'s16'">Contact</a></li>
       </ol>
     </div>
 
@@ -220,9 +223,9 @@
       </ul>
       <p>L'utilisation est conforme à la <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener">Google API Services User Data Policy</a>.</p>
       <h3>5.3 Partage des données (Data Sharing)</h3>
-      <p>Les données reçues de Google <strong>ne sont pas partagées</strong> avec des tiers, à l'exception des sous-traitants techniques listés à la <a href="#s9">section 9</a>.</p>
+      <p>Les données reçues de Google <strong>ne sont pas partagées</strong> avec des tiers, à l'exception des sous-traitants techniques listés à la <a [routerLink]="[]" [fragment]="'s9'">section 9</a>.</p>
       <h3>5.4 Stockage et protection (Data Storage and Protection)</h3>
-      <p>Les données reçues de Google sont stockées dans notre base de données MongoDB Atlas, région <strong>Europe — Paris, France</strong>. Les mesures de sécurité sont décrites à la <a href="#s10">section 10</a>.</p>
+      <p>Les données reçues de Google sont stockées dans notre base de données MongoDB Atlas, région <strong>Europe — Paris, France</strong>. Les mesures de sécurité sont décrites à la <a [routerLink]="[]" [fragment]="'s10'">section 10</a>.</p>
       <h3>5.5 Conservation et suppression (Data Retention and Deletion)</h3>
       <p>Les données Google sont conservées aussi longtemps que votre compte est actif. Lors de la suppression de votre compte, votre email Google, nom, Google ID et URL de photo de profil sont supprimés de notre base de données.</p>
       <div class="legal-callout legal-callout--info">
@@ -267,7 +270,7 @@
       <h2><span class="section-number">7</span><span class="section-icon"><i class="fas fa-share-alt"></i></span> Partage de vos données</h2>
       <p>Ndewa360 ne partage vos données personnelles avec des tiers que dans les cas suivants :</p>
       <h3>Sous-traitants techniques</h3>
-      <p>Nous faisons appel à des prestataires techniques pour assurer le fonctionnement de la plateforme (voir <a href="#s9">section 9</a>). Ces prestataires n'ont accès qu'aux données strictement nécessaires à leur mission.</p>
+      <p>Nous faisons appel à des prestataires techniques pour assurer le fonctionnement de la plateforme (voir <a [routerLink]="[]" [fragment]="'s9'">section 9</a>). Ces prestataires n'ont accès qu'aux données strictement nécessaires à leur mission.</p>
       <h3>Obligations légales</h3>
       <p>Nous pouvons être amenés à communiquer vos données aux autorités compétentes si la loi nous y oblige ou si une décision judiciaire l'exige.</p>
       <h3>Transfert d'entreprise</h3>
@@ -294,7 +297,7 @@
         </table>
       </div>
       <div class="action-required">
-        <strong>Action en cours :</strong> Un bandeau de gestion des cookies a été mis en place. Vous pouvez modifier vos préférences à tout moment depuis le bouton flottant en bas de page ou depuis votre <a routerLink="/user-profile">espace personnel</a>.
+        <strong>Action en cours :</strong> Un bandeau de gestion des cookies a été mis en place. Vous pouvez modifier vos préférences à tout moment depuis le bouton flottant en bas de page ou depuis votre <a [routerLink]="['../../app/profile']" fragment="section-privacy">espace personnel</a>.
       </div>
     </div>
 
@@ -317,8 +320,8 @@
             <tr><td>Google Cloud Storage</td><td>Stockage des fichiers (photos, documents)</td><td>africa-south1 — Johannesburg</td><td><a href="https://cloud.google.com/terms/cloud-privacy-notice" target="_blank" rel="noopener">cloud.google.com</a></td></tr>
             <tr><td>Google LLC</td><td>Authentification Google Sign-In, Google Analytics</td><td>États-Unis / mondial</td><td><a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com</a></td></tr>
             <tr><td>Mailgun (Sinch)</td><td>Envoi d'emails transactionnels</td><td>États-Unis</td><td><a href="https://www.mailgun.com/legal/privacy-policy/" target="_blank" rel="noopener">mailgun.com</a></td></tr>
-            <tr><td>Easy Transact</td><td>Paiements mobiles (Orange Money, MTN Mobile Money)</td><td>À compléter</td><td>À compléter</td></tr>
-            <tr><td>Stripe</td><td>Paiements par carte bancaire (non encore actif)</td><td>États-Unis / Europe</td><td><a href="https://stripe.com/fr/privacy" target="_blank" rel="noopener">stripe.com</a></td></tr>
+        <tr><td>Easy Transact</td><td>Paiements mobiles (Orange Money, MTN Mobile Money)</td><td>À compléter</td><td><a href="https://easytransact.com/privacy" target="_blank" rel="noopener">easytransact.com</a></td></tr>
+        <tr><td>Stripe</td><td>Paiements par carte bancaire (non encore actif)</td><td>États-Unis / Europe</td><td><a href="https://stripe.com/fr/privacy" target="_blank" rel="noopener">stripe.com</a></td></tr>
           </tbody>
         </table>
       </div>
@@ -326,7 +329,7 @@
       <p>Certains de nos sous-traitants sont établis ou stockent des données en dehors du Cameroun, notamment aux États-Unis et en Europe. Ces transferts sont encadrés par les politiques de confidentialité et les certifications de chaque prestataire.</p>
       <p>Pour les utilisateurs résidant dans l'Union Européenne, les transferts vers des pays tiers sont encadrés par les mécanismes appropriés prévus par le RGPD (clauses contractuelles types, décisions d'adéquation).</p>
       <div class="action-required">
-        <strong>Action requise :</strong> Vérifier auprès d'Easy Transact les conditions de traitement et de localisation des données, et obtenir un accord de traitement des données (DPA) si nécessaire.
+        <strong>Action requise :</strong> Obtenir l'accord de traitement des données (DPA) auprès d'Easy Transact et vérifier la localisation exacte des données traitées.
       </div>
     </div>
 
@@ -336,19 +339,16 @@
       <h3>Mesures en place</h3>
       <ul class="commitment-list">
         <li>Chiffrement des communications via le protocole HTTPS (TLS)</li>
+        <li>Chiffrement des données sensibles au repos avec AES-256-GCM (chiffrement authentifié) — données de compte (CNI, téléphone, adresse), données locataires et données de paiement</li>
         <li>Hachage des mots de passe avec l'algorithme bcrypt</li>
+        <li>Recherche sur données chiffrées via HMAC-SHA256 (pour les champs de recherche sans déchiffrement)</li>
         <li>Authentification par token envoyé par email pour la confirmation de compte</li>
         <li>Accès aux données restreint aux seuls membres de l'équipe qui en ont besoin</li>
+        <li>Procédure de notification en cas de violation de données conformément à la loi camerounaise n°2024/017 et au RGPD (délai de 72h)</li>
       </ul>
       <h3>Mesures en cours d'implémentation</h3>
       <div class="action-required">
         <strong>Authentification à deux facteurs (2FA) :</strong> non disponible actuellement — prévu dans une prochaine version.
-      </div>
-      <div class="action-required">
-        <strong>Chiffrement des données au repos :</strong> non mis en place actuellement — fortement recommandé.
-      </div>
-      <div class="action-required">
-        <strong>Procédure de notification en cas de violation de données :</strong> non formalisée actuellement. La loi camerounaise n°2024/017 et le RGPD imposent de notifier les violations dans des délais stricts (72h pour le RGPD). Une procédure interne sera mise en place avant la mise en production complète.
       </div>
       <p>Malgré les mesures mises en place, aucun système n'est infaillible. En cas de suspicion de compromission de votre compte, contactez-nous immédiatement à <a href="mailto:support@ndewa-360.com">support@ndewa-360.com</a>.</p>
     </div>
@@ -387,41 +387,43 @@
         <div class="right-card">
           <div class="right-card__icon"><i class="fas fa-eye"></i></div>
           <div class="right-card__title">Droit d'accès</div>
-          <div class="right-card__desc">Obtenir la confirmation que nous traitons vos données et en recevoir une copie.</div>
+          <div class="right-card__desc">Obtenir la confirmation que nous traitons vos données et en recevoir une copie. Vous pouvez exporter vos données depuis votre <a [routerLink]="['../../app/profile']" fragment="section-privacy">espace personnel</a>.</div>
         </div>
         <div class="right-card">
           <div class="right-card__icon"><i class="fas fa-pen"></i></div>
           <div class="right-card__title">Droit de rectification</div>
-          <div class="right-card__desc">Corriger des données inexactes ou incomplètes vous concernant.</div>
+          <div class="right-card__desc">Corriger des données inexactes ou incomplètes vous concernant, directement depuis votre <a [routerLink]="['../../app/profile']" fragment="section-privacy">espace personnel</a>.</div>
         </div>
         <div class="right-card">
           <div class="right-card__icon"><i class="fas fa-trash-alt"></i></div>
           <div class="right-card__title">Droit à l'effacement</div>
-          <div class="right-card__desc">Demander la suppression de vos données dans les cas prévus par la loi.</div>
+          <div class="right-card__desc">Demander la suppression de vos données dans les cas prévus par la loi. Vous pouvez supprimer votre compte depuis la <a [routerLink]="['../../app/profile']" fragment="section-danger">section dangereuse</a> de votre profil.</div>
         </div>
         <div class="right-card">
           <div class="right-card__icon"><i class="fas fa-download"></i></div>
           <div class="right-card__title">Droit à la portabilité</div>
-          <div class="right-card__desc">Recevoir vos données dans un format structuré et lisible par machine.</div>
+          <div class="right-card__desc">Recevoir vos données dans un format structuré et lisible par machine (JSON). Disponible via le bouton « Exporter mes données » de votre profil.</div>
         </div>
         <div class="right-card">
           <div class="right-card__icon"><i class="fas fa-ban"></i></div>
           <div class="right-card__title">Droit d'opposition</div>
-          <div class="right-card__desc">Vous opposer au traitement de vos données dans certains cas.</div>
+          <div class="right-card__desc">Vous opposer au traitement de vos données dans certains cas, notamment à des fins de prospection commerciale.</div>
         </div>
         <div class="right-card">
           <div class="right-card__icon"><i class="fas fa-pause-circle"></i></div>
           <div class="right-card__title">Droit à la limitation</div>
-          <div class="right-card__desc">Demander la suspension temporaire du traitement de vos données.</div>
+          <div class="right-card__desc">Demander la suspension temporaire du traitement de vos données, par exemple en cas de contestation de leur exactitude.</div>
         </div>
       </div>
       <h3>Comment exercer vos droits</h3>
-      <p>Adressez votre demande par email à : <a href="mailto:support@ndewa-360.com"><strong>support@ndewa-360.com</strong></a></p>
+      <p>Vous pouvez exercer vos droits de la manière suivante :</p>
+      <ul>
+        <li><strong>Accès, portabilité et rectification :</strong> directement depuis votre <a [routerLink]="['../../app/profile']" fragment="section-privacy">espace personnel</a> (section « Mes données & Cookies »).</li>
+        <li><strong>Suppression de compte :</strong> depuis la section « Zone dangereuse » de votre <a [routerLink]="['../../app/profile']" fragment="section-danger">profil</a>.</li>
+        <li><strong>Limitation et opposition :</strong> par email à <a href="mailto:dpo@ndewa-360.com"><strong>dpo@ndewa-360.com</strong></a>.</li>
+      </ul>
       <p>Votre demande doit préciser : le droit que vous souhaitez exercer, les données concernées, et tout élément permettant de vérifier votre identité.</p>
       <p><strong>Délai de réponse :</strong> Nous nous engageons à répondre dans un délai maximum de <strong>48 heures</strong> à compter de la réception de votre demande.</p>
-      <div class="action-required">
-        <strong>Portabilité des données :</strong> La fonctionnalité d'export de données depuis l'interface n'est pas encore disponible. Elle est prévue dans une prochaine version. En attendant, vous pouvez en faire la demande par email.
-      </div>
       <h3>Réclamation auprès d'une autorité</h3>
       <p>Si vous estimez que le traitement de vos données ne respecte pas la réglementation applicable, vous avez le droit d'introduire une réclamation auprès de l'autorité compétente :</p>
       <ul>
@@ -464,11 +466,25 @@
 
     <div class="legal-section">
       <span class="legal-section__anchor" id="s15"></span>
-      <h2><span class="section-number">15</span><span class="section-icon"><i class="fas fa-envelope"></i></span> Contact</h2>
-      <p>Pour toute question relative à la présente Politique de Confidentialité ou au traitement de vos données personnelles :</p>
+      <h2><span class="section-number">15</span><span class="section-icon"><i class="fas fa-user-tie"></i></span> Délégué à la Protection des Données (DPO)</h2>
+      <p>Conformément à la loi camerounaise n°2024/017 et au RGPD pour les utilisateurs résidant dans l'Union Européenne, Ndewa360 a désigné un Délégué à la Protection des Données (DPO) chargé de veiller au respect de la réglementation applicable.</p>
+      <div class="legal-contact-box">
+        <h3>Contacter le DPO</h3>
+        <p>Pour toute question relative à la protection de vos données personnelles ou pour exercer vos droits, vous pouvez contacter notre DPO :</p>
+        <a href="mailto:dpo@ndewa-360.com" class="legal-contact-btn"><i class="fas fa-user-tie"></i> dpo@ndewa-360.com</a>
+      </div>
+      <p style="margin-top:1.5rem; color:#6b7280; font-size:0.85rem; text-align:center;">
+        Ndewa360 SARL (en cours de constitution) &nbsp;·&nbsp; Tchougo, Bangangté, Région de l'Ouest, Cameroun
+      </p>
+    </div>
+
+    <div class="legal-section">
+      <span class="legal-section__anchor" id="s16"></span>
+      <h2><span class="section-number">16</span><span class="section-icon"><i class="fas fa-envelope"></i></span> Contact</h2>
+      <p>Pour toute question relative à la présente Politique de Confidentialité (hors exercice de vos droits) :</p>
       <div class="legal-contact-box">
         <h3>Nous contacter</h3>
-        <p>Notre équipe répond à toutes vos questions relatives à la protection de vos données dans un délai de 48 heures.</p>
+        <p>Notre équipe répond à toutes vos questions dans un délai de 48 heures.</p>
         <a href="mailto:support@ndewa-360.com" class="legal-contact-btn"><i class="fas fa-envelope"></i> support@ndewa-360.com</a>
       </div>
       <p style="margin-top:1.5rem; color:#6b7280; font-size:0.85rem; text-align:center;">

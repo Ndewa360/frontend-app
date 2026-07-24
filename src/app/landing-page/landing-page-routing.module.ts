@@ -9,6 +9,8 @@ import { ContactComponent } from './components/contact/contact.component';
 import { PrivacyPolicyComponent } from './components/privacy-policy/privacy-policy.component';
 import { TermsComponent } from './components/terms/terms.component';
 import { CookiesComponent } from './components/cookies/cookies.component';
+import { MentionsLegalesComponent } from './components/mentions-legales/mentions-legales.component';
+import { RemboursementComponent } from './components/remboursement/remboursement.component';
 
 const routes: Routes = [
   {
@@ -48,6 +50,16 @@ const routes: Routes = [
       {
         path: 'cookies',
         component: CookiesComponent,
+        pathMatch: 'full'
+      },
+      {
+        path: 'mentions-legales',
+        component: MentionsLegalesComponent,
+        pathMatch: 'full'
+      },
+      {
+        path: 'remboursement',
+        component: RemboursementComponent,
         pathMatch: 'full'
       },
       {
