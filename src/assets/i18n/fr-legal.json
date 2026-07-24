@@ -176,15 +176,15 @@
       "SECTION_8": {
         "TITLE": "9. Sous-traitants et transferts internationaux",
         "TABLE_HEADERS": ["Prestataire", "Rôle", "Localisation des données", "Politique de confidentialité"],
-        "TABLE_ROWS": [
-          ["Contabo GmbH", "Hébergement du serveur backend", "Allemagne (UE)", "contabo.com"],
-          ["MongoDB Atlas", "Hébergement de la base de données", "Paris, France (UE)", "mongodb.com"],
-          ["Google Cloud Storage", "Stockage des fichiers (photos, documents)", "africa-south1 — Johannesburg", "cloud.google.com"],
-          ["Google LLC", "Authentification Google Sign-In, Google Analytics", "États-Unis / mondial", "policies.google.com"],
-          ["Mailgun (Sinch)", "Envoi d'emails transactionnels", "États-Unis", "mailgun.com"],
-          ["Easy Transact", "Paiements mobiles (Orange Money, MTN Mobile Money)", "À compléter", "easytransact.com"],
-          ["Stripe", "Paiements par carte bancaire (non encore actif)", "États-Unis / Europe", "stripe.com"]
-        ],
+        "PROVIDERS": {
+          "CONTABO": { "ROLE": "Hébergement du serveur backend", "LOCATION": "Allemagne (UE)" },
+          "MONGODB": { "ROLE": "Hébergement de la base de données", "LOCATION": "Paris, France (UE)" },
+          "GCS": { "ROLE": "Stockage des fichiers (photos, documents)", "LOCATION": "africa-south1 — Johannesburg" },
+          "GOOGLE": { "ROLE": "Authentification Google Sign-In, Google Analytics", "LOCATION": "États-Unis / mondial" },
+          "MAILGUN": { "ROLE": "Envoi d'emails transactionnels", "LOCATION": "États-Unis" },
+          "EASYTRANSACT": { "ROLE": "Paiements mobiles (Orange Money, MTN Mobile Money)", "LOCATION": "À compléter" },
+          "STRIPE": { "ROLE": "Paiements par carte bancaire (non encore actif)", "LOCATION": "États-Unis / Europe" }
+        },
         "SUBTITLE_0": "Transferts internationaux",
         "BODY_0": "Certains de nos sous-traitants sont établis ou stockent des données en dehors du Cameroun, notamment aux États-Unis et en Europe. Ces transferts sont encadrés par les politiques de confidentialité et les certifications de chaque prestataire.",
         "BODY_1": "Pour les utilisateurs résidant dans l'Union Européenne, les transferts vers des pays tiers sont encadrés par les mécanismes appropriés prévus par le RGPD (clauses contractuelles types, décisions d'adéquation).",

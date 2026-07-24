@@ -176,15 +176,15 @@
       "SECTION_8": {
         "TITLE": "9. Subcontractors and international transfers",
         "TABLE_HEADERS": ["Service provider", "Role", "Data location", "Privacy policy"],
-        "TABLE_ROWS": [
-          ["Contabo GmbH", "Backend server hosting", "Germany (EU)", "contabo.com"],
-          ["MongoDB Atlas", "Database hosting", "Paris, France (EU)", "mongodb.com"],
-          ["Google Cloud Storage", "File storage (photos, documents)", "africa-south1 — Johannesburg", "cloud.google.com"],
-          ["Google LLC", "Google Sign-In authentication, Google Analytics", "United States / worldwide", "policies.google.com"],
-          ["Mailgun (Sinch)", "Transactional email sending", "United States", "mailgun.com"],
-          ["Easy Transact", "Mobile payments (Orange Money, MTN Mobile Money)", "To be completed", "easytransact.com"],
-          ["Stripe", "Credit card payments (not yet active)", "United States / Europe", "stripe.com"]
-        ],
+        "PROVIDERS": {
+          "CONTABO": { "ROLE": "Backend server hosting", "LOCATION": "Germany (EU)" },
+          "MONGODB": { "ROLE": "Database hosting", "LOCATION": "Paris, France (EU)" },
+          "GCS": { "ROLE": "File storage (photos, documents)", "LOCATION": "africa-south1 — Johannesburg" },
+          "GOOGLE": { "ROLE": "Google Sign-In authentication, Google Analytics", "LOCATION": "United States / worldwide" },
+          "MAILGUN": { "ROLE": "Transactional email sending", "LOCATION": "United States" },
+          "EASYTRANSACT": { "ROLE": "Mobile payments (Orange Money, MTN Mobile Money)", "LOCATION": "To be completed" },
+          "STRIPE": { "ROLE": "Credit card payments (not yet active)", "LOCATION": "United States / Europe" }
+        },
         "SUBTITLE_0": "International transfers",
         "BODY_0": "Some of our subcontractors are established or store data outside Cameroon, notably in the United States and Europe. These transfers are governed by the privacy policies and certifications of each service provider.",
         "BODY_1": "For users residing in the European Union, transfers to third countries are governed by the appropriate mechanisms provided by the RGPD (GDPR) (standard contractual clauses, adequacy decisions).",

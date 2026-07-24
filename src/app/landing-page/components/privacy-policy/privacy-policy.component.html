@@ -5,7 +5,7 @@
       <i class="fas fa-shield-alt"></i>
       {{ 'LEGAL.COMMON.BADGE' | translate }}
     </span>
-    <h1>{{ 'LEGAL.PRIVACY.SECTION_0.TITLE' | translate }}</h1>
+    <h1>Politique de Confidentialité</h1>
     <p class="legal-hero__meta">{{ 'LEGAL.COMMON.VERSION_META' | translate }}</p>
   </div>
 
@@ -48,14 +48,13 @@
       <p>{{ 'LEGAL.PRIVACY.SECTION_0.BODY_0' | translate }}</p>
       <div class="legal-table-wrap">
         <table>
-          <thead><tr><th>{{ 'LEGAL.PRIVACY.SECTION_0.TABLE_HEADERS[0]' | translate }}</th><th>{{ 'LEGAL.PRIVACY.SECTION_0.TABLE_HEADERS[1]' | translate }}</th></tr></thead>
+          <thead>
+            <tr><th *ngFor="let h of ('LEGAL.PRIVACY.SECTION_0.TABLE_HEADERS' | translate)">{{ h }}</th></tr>
+          </thead>
           <tbody>
-            <tr><td>{{ 'LEGAL.PRIVACY.SECTION_0.TABLE_ROWS[0][0]' | translate }}</td><td>{{ 'LEGAL.PRIVACY.SECTION_0.TABLE_ROWS[0][1]' | translate }}</td></tr>
-            <tr><td>{{ 'LEGAL.PRIVACY.SECTION_0.TABLE_ROWS[1][0]' | translate }}</td><td>{{ 'LEGAL.PRIVACY.SECTION_0.TABLE_ROWS[1][1]' | translate }}</td></tr>
-            <tr><td>{{ 'LEGAL.PRIVACY.SECTION_0.TABLE_ROWS[2][0]' | translate }}</td><td><em>{{ 'LEGAL.PRIVACY.SECTION_0.TABLE_ROWS[2][1]' | translate }}</em></td></tr>
-            <tr><td>{{ 'LEGAL.PRIVACY.SECTION_0.TABLE_ROWS[3][0]' | translate }}</td><td>{{ 'LEGAL.PRIVACY.SECTION_0.TABLE_ROWS[3][1]' | translate }}</td></tr>
-            <tr><td>{{ 'LEGAL.PRIVACY.SECTION_0.TABLE_ROWS[4][0]' | translate }}</td><td><a href="mailto:support@ndewa-360.com">{{ 'LEGAL.PRIVACY.SECTION_0.TABLE_ROWS[4][1]' | translate }}</a></td></tr>
-            <tr><td>{{ 'LEGAL.PRIVACY.SECTION_0.TABLE_ROWS[5][0]' | translate }}</td><td>{{ 'LEGAL.PRIVACY.SECTION_0.TABLE_ROWS[5][1]' | translate }}</td></tr>
+            <tr *ngFor="let row of ('LEGAL.PRIVACY.SECTION_0.TABLE_ROWS' | translate)">
+              <td *ngFor="let cell of row">{{ cell }}</td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -161,15 +160,13 @@
       <h2><span class="section-number">4</span><span class="section-icon"><i class="fas fa-balance-scale"></i></span> {{ 'LEGAL.PRIVACY.SECTION_3.TITLE' | translate }}</h2>
       <div class="legal-table-wrap">
         <table>
-          <thead><tr><th>{{ 'LEGAL.PRIVACY.SECTION_3.TABLE_HEADERS[0]' | translate }}</th><th>{{ 'LEGAL.PRIVACY.SECTION_3.TABLE_HEADERS[1]' | translate }}</th><th>{{ 'LEGAL.PRIVACY.SECTION_3.TABLE_HEADERS[2]' | translate }}</th></tr></thead>
+          <thead>
+            <tr><th *ngFor="let h of ('LEGAL.PRIVACY.SECTION_3.TABLE_HEADERS' | translate)">{{ h }}</th></tr>
+          </thead>
           <tbody>
-            <tr><td>{{ 'LEGAL.PRIVACY.SECTION_3.TABLE_ROWS[0][0]' | translate }}</td><td>{{ 'LEGAL.PRIVACY.SECTION_3.TABLE_ROWS[0][1]' | translate }}</td><td>{{ 'LEGAL.PRIVACY.SECTION_3.TABLE_ROWS[0][2]' | translate }}</td></tr>
-            <tr><td>{{ 'LEGAL.PRIVACY.SECTION_3.TABLE_ROWS[1][0]' | translate }}</td><td>{{ 'LEGAL.PRIVACY.SECTION_3.TABLE_ROWS[1][1]' | translate }}</td><td>{{ 'LEGAL.PRIVACY.SECTION_3.TABLE_ROWS[1][2]' | translate }}</td></tr>
-            <tr><td>{{ 'LEGAL.PRIVACY.SECTION_3.TABLE_ROWS[2][0]' | translate }}</td><td>{{ 'LEGAL.PRIVACY.SECTION_3.TABLE_ROWS[2][1]' | translate }}</td><td>{{ 'LEGAL.PRIVACY.SECTION_3.TABLE_ROWS[2][2]' | translate }}</td></tr>
-            <tr><td>{{ 'LEGAL.PRIVACY.SECTION_3.TABLE_ROWS[3][0]' | translate }}</td><td>{{ 'LEGAL.PRIVACY.SECTION_3.TABLE_ROWS[3][1]' | translate }}</td><td>{{ 'LEGAL.PRIVACY.SECTION_3.TABLE_ROWS[3][2]' | translate }}</td></tr>
-            <tr><td>{{ 'LEGAL.PRIVACY.SECTION_3.TABLE_ROWS[4][0]' | translate }}</td><td>{{ 'LEGAL.PRIVACY.SECTION_3.TABLE_ROWS[4][1]' | translate }}</td><td>{{ 'LEGAL.PRIVACY.SECTION_3.TABLE_ROWS[4][2]' | translate }}</td></tr>
-            <tr><td>{{ 'LEGAL.PRIVACY.SECTION_3.TABLE_ROWS[5][0]' | translate }}</td><td>{{ 'LEGAL.PRIVACY.SECTION_3.TABLE_ROWS[5][1]' | translate }}</td><td>{{ 'LEGAL.PRIVACY.SECTION_3.TABLE_ROWS[5][2]' | translate }}</td></tr>
-            <tr><td>{{ 'LEGAL.PRIVACY.SECTION_3.TABLE_ROWS[6][0]' | translate }}</td><td>{{ 'LEGAL.PRIVACY.SECTION_3.TABLE_ROWS[6][1]' | translate }}</td><td>{{ 'LEGAL.PRIVACY.SECTION_3.TABLE_ROWS[6][2]' | translate }}</td></tr>
+            <tr *ngFor="let row of ('LEGAL.PRIVACY.SECTION_3.TABLE_ROWS' | translate)">
+              <td *ngFor="let cell of row">{{ cell }}</td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -197,11 +194,13 @@
       <p>{{ 'LEGAL.PRIVACY.SECTION_4.BODY_0' | translate }}</p>
       <div class="legal-table-wrap">
         <table>
-          <thead><tr><th>{{ 'LEGAL.PRIVACY.SECTION_4.TABLE_HEADERS_0[0]' | translate }}</th><th>{{ 'LEGAL.PRIVACY.SECTION_4.TABLE_HEADERS_0[1]' | translate }}</th><th>{{ 'LEGAL.PRIVACY.SECTION_4.TABLE_HEADERS_0[2]' | translate }}</th></tr></thead>
+          <thead>
+            <tr><th *ngFor="let h of ('LEGAL.PRIVACY.SECTION_4.TABLE_HEADERS_0' | translate)">{{ h }}</th></tr>
+          </thead>
           <tbody>
-            <tr><td><span class="scope-badge">openid</span></td><td>{{ 'LEGAL.PRIVACY.SECTION_4.TABLE_ROWS_0[0][1]' | translate }}</td><td>{{ 'LEGAL.PRIVACY.SECTION_4.TABLE_ROWS_0[0][2]' | translate }}</td></tr>
-            <tr><td><span class="scope-badge">email</span></td><td>{{ 'LEGAL.PRIVACY.SECTION_4.TABLE_ROWS_0[1][1]' | translate }}</td><td>{{ 'LEGAL.PRIVACY.SECTION_4.TABLE_ROWS_0[1][2]' | translate }}</td></tr>
-            <tr><td><span class="scope-badge">profile</span></td><td>{{ 'LEGAL.PRIVACY.SECTION_4.TABLE_ROWS_0[2][1]' | translate }}</td><td>{{ 'LEGAL.PRIVACY.SECTION_4.TABLE_ROWS_0[2][2]' | translate }}</td></tr>
+            <tr *ngFor="let row of ('LEGAL.PRIVACY.SECTION_4.TABLE_ROWS_0' | translate)">
+              <td *ngFor="let cell of row; let i = index"><span *ngIf="i === 0" class="scope-badge">{{ cell }}</span><span *ngIf="i !== 0">{{ cell }}</span></td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -297,15 +296,21 @@
       <h3>{{ 'LEGAL.PRIVACY.SECTION_7.SUBTITLE_0' | translate }}</h3>
       <div class="legal-table-wrap">
         <table>
-          <thead><tr><th>{{ 'LEGAL.PRIVACY.SECTION_7.TABLE_HEADERS[0]' | translate }}</th><th>{{ 'LEGAL.PRIVACY.SECTION_7.TABLE_HEADERS[1]' | translate }}</th><th>{{ 'LEGAL.PRIVACY.SECTION_7.TABLE_HEADERS[2]' | translate }}</th></tr></thead>
+          <thead>
+            <tr><th *ngFor="let h of ('LEGAL.PRIVACY.SECTION_7.TABLE_HEADERS' | translate)">{{ h }}</th></tr>
+          </thead>
           <tbody>
-            <tr><td>{{ 'LEGAL.PRIVACY.SECTION_7.TABLE_ROWS[0][0]' | translate }}</td><td>{{ 'LEGAL.PRIVACY.SECTION_7.TABLE_ROWS[0][1]' | translate }}</td><td>{{ 'LEGAL.PRIVACY.SECTION_7.TABLE_ROWS[0][2]' | translate }}</td></tr>
-            <tr><td>{{ 'LEGAL.PRIVACY.SECTION_7.TABLE_ROWS[1][0]' | translate }}</td><td>{{ 'LEGAL.PRIVACY.SECTION_7.TABLE_ROWS[1][1]' | translate }}</td><td>{{ 'LEGAL.PRIVACY.SECTION_7.TABLE_ROWS[1][2]' | translate }}</td></tr>
+            <tr *ngFor="let row of ('LEGAL.PRIVACY.SECTION_7.TABLE_ROWS' | translate)">
+              <td *ngFor="let cell of row">{{ cell }}</td>
+            </tr>
           </tbody>
         </table>
       </div>
-      <div class="action-required">
-        <strong>{{ 'LEGAL.PRIVACY.SECTION_7.ACTION_TEXT' | translate }}</strong>
+      <div class="legal-callout legal-callout--info">
+        <span class="callout-icon"><i class="fas fa-info-circle"></i></span>
+        <div class="callout-body">
+          <p>{{ 'LEGAL.PRIVACY.SECTION_7.ACTION_TEXT' | translate }}</p>
+        </div>
       </div>
     </div>
 
@@ -322,23 +327,63 @@
       <h2><span class="section-number">9</span><span class="section-icon"><i class="fas fa-cloud"></i></span> {{ 'LEGAL.PRIVACY.SECTION_8.TITLE' | translate }}</h2>
       <div class="legal-table-wrap">
         <table>
-          <thead><tr><th>{{ 'LEGAL.PRIVACY.SECTION_8.TABLE_HEADERS[0]' | translate }}</th><th>{{ 'LEGAL.PRIVACY.SECTION_8.TABLE_HEADERS[1]' | translate }}</th><th>{{ 'LEGAL.PRIVACY.SECTION_8.TABLE_HEADERS[2]' | translate }}</th><th>{{ 'LEGAL.PRIVACY.SECTION_8.TABLE_HEADERS[3]' | translate }}</th></tr></thead>
+          <thead>
+            <tr><th *ngFor="let h of ('LEGAL.PRIVACY.SECTION_8.TABLE_HEADERS' | translate)">{{ h }}</th></tr>
+          </thead>
           <tbody>
-            <tr><td>Contabo GmbH</td><td>{{ 'LEGAL.PRIVACY.SECTION_8.TABLE_ROWS[0][1]' | translate }}</td><td>{{ 'LEGAL.PRIVACY.SECTION_8.TABLE_ROWS[0][2]' | translate }}</td><td><a href="https://contabo.com/en/legal/privacy/" target="_blank" rel="noopener">contabo.com</a></td></tr>
-            <tr><td>MongoDB Atlas</td><td>{{ 'LEGAL.PRIVACY.SECTION_8.TABLE_ROWS[1][1]' | translate }}</td><td>{{ 'LEGAL.PRIVACY.SECTION_8.TABLE_ROWS[1][2]' | translate }}</td><td><a href="https://www.mongodb.com/legal/privacy-policy" target="_blank" rel="noopener">mongodb.com</a></td></tr>
-            <tr><td>Google Cloud Storage</td><td>{{ 'LEGAL.PRIVACY.SECTION_8.TABLE_ROWS[2][1]' | translate }}</td><td>{{ 'LEGAL.PRIVACY.SECTION_8.TABLE_ROWS[2][2]' | translate }}</td><td><a href="https://cloud.google.com/terms/cloud-privacy-notice" target="_blank" rel="noopener">cloud.google.com</a></td></tr>
-            <tr><td>Google LLC</td><td>{{ 'LEGAL.PRIVACY.SECTION_8.TABLE_ROWS[3][1]' | translate }}</td><td>{{ 'LEGAL.PRIVACY.SECTION_8.TABLE_ROWS[3][2]' | translate }}</td><td><a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com</a></td></tr>
-            <tr><td>Mailgun (Sinch)</td><td>{{ 'LEGAL.PRIVACY.SECTION_8.TABLE_ROWS[4][1]' | translate }}</td><td>{{ 'LEGAL.PRIVACY.SECTION_8.TABLE_ROWS[4][2]' | translate }}</td><td><a href="https://www.mailgun.com/legal/privacy-policy/" target="_blank" rel="noopener">mailgun.com</a></td></tr>
-            <tr><td>Easy Transact</td><td>{{ 'LEGAL.PRIVACY.SECTION_8.TABLE_ROWS[5][1]' | translate }}</td><td>{{ 'LEGAL.PRIVACY.SECTION_8.TABLE_ROWS[5][2]' | translate }}</td><td><a href="https://easytransact.com/privacy" target="_blank" rel="noopener">easytransact.com</a></td></tr>
-            <tr><td>Stripe</td><td>{{ 'LEGAL.PRIVACY.SECTION_8.TABLE_ROWS[6][1]' | translate }}</td><td>{{ 'LEGAL.PRIVACY.SECTION_8.TABLE_ROWS[6][2]' | translate }}</td><td><a href="https://stripe.com/fr/privacy" target="_blank" rel="noopener">stripe.com</a></td></tr>
+            <tr>
+              <td>Contabo GmbH</td>
+              <td>{{ 'LEGAL.PRIVACY.SECTION_8.PROVIDERS.CONTABO.ROLE' | translate }}</td>
+              <td>{{ 'LEGAL.PRIVACY.SECTION_8.PROVIDERS.CONTABO.LOCATION' | translate }}</td>
+              <td><a href="https://contabo.com/en/legal/privacy/" target="_blank" rel="noopener">contabo.com</a></td>
+            </tr>
+            <tr>
+              <td>MongoDB Atlas</td>
+              <td>{{ 'LEGAL.PRIVACY.SECTION_8.PROVIDERS.MONGODB.ROLE' | translate }}</td>
+              <td>{{ 'LEGAL.PRIVACY.SECTION_8.PROVIDERS.MONGODB.LOCATION' | translate }}</td>
+              <td><a href="https://www.mongodb.com/legal/privacy-policy" target="_blank" rel="noopener">mongodb.com</a></td>
+            </tr>
+            <tr>
+              <td>Google Cloud Storage</td>
+              <td>{{ 'LEGAL.PRIVACY.SECTION_8.PROVIDERS.GCS.ROLE' | translate }}</td>
+              <td>{{ 'LEGAL.PRIVACY.SECTION_8.PROVIDERS.GCS.LOCATION' | translate }}</td>
+              <td><a href="https://cloud.google.com/terms/cloud-privacy-notice" target="_blank" rel="noopener">cloud.google.com</a></td>
+            </tr>
+            <tr>
+              <td>Google LLC</td>
+              <td>{{ 'LEGAL.PRIVACY.SECTION_8.PROVIDERS.GOOGLE.ROLE' | translate }}</td>
+              <td>{{ 'LEGAL.PRIVACY.SECTION_8.PROVIDERS.GOOGLE.LOCATION' | translate }}</td>
+              <td><a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com</a></td>
+            </tr>
+            <tr>
+              <td>Mailgun (Sinch)</td>
+              <td>{{ 'LEGAL.PRIVACY.SECTION_8.PROVIDERS.MAILGUN.ROLE' | translate }}</td>
+              <td>{{ 'LEGAL.PRIVACY.SECTION_8.PROVIDERS.MAILGUN.LOCATION' | translate }}</td>
+              <td><a href="https://www.mailgun.com/legal/privacy-policy/" target="_blank" rel="noopener">mailgun.com</a></td>
+            </tr>
+            <tr>
+              <td>Easy Transact</td>
+              <td>{{ 'LEGAL.PRIVACY.SECTION_8.PROVIDERS.EASYTRANSACT.ROLE' | translate }}</td>
+              <td>{{ 'LEGAL.PRIVACY.SECTION_8.PROVIDERS.EASYTRANSACT.LOCATION' | translate }}</td>
+              <td><a href="https://easytransact.com/privacy" target="_blank" rel="noopener">easytransact.com</a></td>
+            </tr>
+            <tr>
+              <td>Stripe</td>
+              <td>{{ 'LEGAL.PRIVACY.SECTION_8.PROVIDERS.STRIPE.ROLE' | translate }}</td>
+              <td>{{ 'LEGAL.PRIVACY.SECTION_8.PROVIDERS.STRIPE.LOCATION' | translate }}</td>
+              <td><a href="https://stripe.com/fr/privacy" target="_blank" rel="noopener">stripe.com</a></td>
+            </tr>
           </tbody>
         </table>
       </div>
       <h3>{{ 'LEGAL.PRIVACY.SECTION_8.SUBTITLE_0' | translate }}</h3>
       <p>{{ 'LEGAL.PRIVACY.SECTION_8.BODY_0' | translate }}</p>
       <p>{{ 'LEGAL.PRIVACY.SECTION_8.BODY_1' | translate }}</p>
-      <div class="action-required">
-        <strong>{{ 'LEGAL.PRIVACY.SECTION_8.ACTION_TEXT' | translate }}</strong>
+      <div class="legal-callout legal-callout--warn">
+        <span class="callout-icon"><i class="fas fa-exclamation-triangle"></i></span>
+        <div class="callout-body">
+          <p>{{ 'LEGAL.PRIVACY.SECTION_8.ACTION_TEXT' | translate }}</p>
+        </div>
       </div>
     </div>
 
@@ -357,8 +402,11 @@
         <li>{{ 'LEGAL.PRIVACY.SECTION_9.LIST_6' | translate }}</li>
       </ul>
       <h3>{{ 'LEGAL.PRIVACY.SECTION_9.SUBTITLE_1' | translate }}</h3>
-      <div class="action-required">
-        <strong>{{ 'LEGAL.PRIVACY.SECTION_9.ACTION_TEXT' | translate }}</strong>
+      <div class="legal-callout legal-callout--info">
+        <span class="callout-icon"><i class="fas fa-info-circle"></i></span>
+        <div class="callout-body">
+          <p>{{ 'LEGAL.PRIVACY.SECTION_9.ACTION_TEXT' | translate }}</p>
+        </div>
       </div>
       <p>{{ 'LEGAL.PRIVACY.SECTION_9.BODY_0' | translate }}</p>
     </div>
@@ -369,15 +417,13 @@
       <h2><span class="section-number">11</span><span class="section-icon"><i class="fas fa-clock"></i></span> {{ 'LEGAL.PRIVACY.SECTION_10.TITLE' | translate }}</h2>
       <div class="legal-table-wrap">
         <table>
-          <thead><tr><th>{{ 'LEGAL.PRIVACY.SECTION_10.TABLE_HEADERS[0]' | translate }}</th><th>{{ 'LEGAL.PRIVACY.SECTION_10.TABLE_HEADERS[1]' | translate }}</th></tr></thead>
+          <thead>
+            <tr><th *ngFor="let h of ('LEGAL.PRIVACY.SECTION_10.TABLE_HEADERS' | translate)">{{ h }}</th></tr>
+          </thead>
           <tbody>
-            <tr><td>{{ 'LEGAL.PRIVACY.SECTION_10.TABLE_ROWS[0][0]' | translate }}</td><td>{{ 'LEGAL.PRIVACY.SECTION_10.TABLE_ROWS[0][1]' | translate }}</td></tr>
-            <tr><td>{{ 'LEGAL.PRIVACY.SECTION_10.TABLE_ROWS[1][0]' | translate }}</td><td>{{ 'LEGAL.PRIVACY.SECTION_10.TABLE_ROWS[1][1]' | translate }}</td></tr>
-            <tr><td>{{ 'LEGAL.PRIVACY.SECTION_10.TABLE_ROWS[2][0]' | translate }}</td><td>{{ 'LEGAL.PRIVACY.SECTION_10.TABLE_ROWS[2][1]' | translate }}</td></tr>
-            <tr><td>{{ 'LEGAL.PRIVACY.SECTION_10.TABLE_ROWS[3][0]' | translate }}</td><td>{{ 'LEGAL.PRIVACY.SECTION_10.TABLE_ROWS[3][1]' | translate }}</td></tr>
-            <tr><td>{{ 'LEGAL.PRIVACY.SECTION_10.TABLE_ROWS[4][0]' | translate }}</td><td>{{ 'LEGAL.PRIVACY.SECTION_10.TABLE_ROWS[4][1]' | translate }}</td></tr>
-            <tr><td>{{ 'LEGAL.PRIVACY.SECTION_10.TABLE_ROWS[5][0]' | translate }}</td><td>{{ 'LEGAL.PRIVACY.SECTION_10.TABLE_ROWS[5][1]' | translate }}</td></tr>
-            <tr><td>{{ 'LEGAL.PRIVACY.SECTION_10.TABLE_ROWS[6][0]' | translate }}</td><td>{{ 'LEGAL.PRIVACY.SECTION_10.TABLE_ROWS[6][1]' | translate }}</td></tr>
+            <tr *ngFor="let row of ('LEGAL.PRIVACY.SECTION_10.TABLE_ROWS' | translate)">
+              <td *ngFor="let cell of row">{{ cell }}</td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -479,7 +525,7 @@
     </div>
 
     <!-- SECTION 15: DPO -->
-    <div class="legal-section">
+    <!-- <div class="legal-section">
       <span class="legal-section__anchor" id="s15"></span>
       <h2><span class="section-number">15</span><span class="section-icon"><i class="fas fa-user-tie"></i></span> {{ 'LEGAL.PRIVACY.SECTION_14.TITLE' | translate }}</h2>
       <p>{{ 'LEGAL.PRIVACY.SECTION_14.BODY_0' | translate }}</p>
@@ -491,7 +537,7 @@
       <p style="margin-top:1.5rem; color:#6b7280; font-size:0.85rem; text-align:center;">
         {{ 'LEGAL.COMMON.FOOTER_COMPANY' | translate }}
       </p>
-    </div>
+    </div> -->
 
     <!-- SECTION 16: Contact -->
     <div class="legal-section">
