@@ -545,6 +545,76 @@ export class UserProfileState {
         );
     }
 
+    @Action(UserProfileAction.DeleteAccount)
+    deleteAccount(ctx: StateContext<UserProfileStateModel>, { id }: UserProfileAction.DeleteAccount) {
+        ctx.patchState({ loadingUserProfile: true, lastError: null });
+
+        return this._userProfilesService.deleteAccount(id).pipe(
+            tap(() => {
+                ctx.dispatch(new AuthTokenAction.Logout());
+                ctx.setState({
+                    initLoadingState: 'NO_LOADED',
+                    loadingUserProfile: false,
+                    waitingForUserProfilSaved: false,
+                    userProfile: null,
+                    lastError: null
+                });
+                this._toastrService.success('Votre compte a été supprimé avec succès.', 'Ndewa360°');
+                this._languagePreservation.redirectToLogin();
+            }),
+            catchError((error) => {
+                ctx.patchState({ loadingUserProfile: false, lastError: error?.error?.message });
+                this._toastrService.error(error?.error?.message || 'Erreur lors de la suppression du compte.', 'Ndewa360°');
+                return throwError(() => error);
+            })
+        );
+    }
+
+    @Action(UserProfileAction.ExportData)
+    exportData(ctx: StateContext<UserProfileStateModel>) {
+        const profile = ctx.getState().userProfile;
+        if (!profile) {
+            this._toastrService.error('Aucun profil à exporter.', 'Ndewa360°');
+            return of(null);
+        }
+
+        const exportPayload = {
+            exportDate: new Date().toISOString(),
+            profile: {
+                name: profile.name,
+                email: profile.email,
+                phoneNumber: profile.phoneNumber,
+                bio: profile.bio,
+                location: profile.location,
+                country: profile.country,
+                whatsappContact: profile.whatsappContact,
+                skype: profile.skype,
+                websiteLink: profile.websiteLink,
+                preferredLanguage: profile.preferredLanguage,
+                preferredCurrency: profile.preferredCurrency,
+                timezone: profile.timezone,
+                dateFormat: profile.dateFormat,
+                numberFormat: profile.numberFormat,
+                theme: profile.theme,
+                userType: profile.userType,
+                emailConfirmed: profile.emailConfirmed,
+            }
+        };
+
+        const blob = new Blob([JSON.stringify(exportPayload, null, 2)], { type: 'application/json' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `ndewa360-mes-donnees-${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+
+        this._toastrService.success('Export de vos données téléchargé.', 'Ndewa360°');
+        return of(null);
+    }
+
     @Action(UserProfileAction.FetchUserProfileConditional)
     fetchUserProfileConditional(ctx: StateContext<UserProfileStateModel>, { forceRedirectOnError }: UserProfileAction.FetchUserProfileConditional) {
         // Si déjà chargé, ne pas recharger

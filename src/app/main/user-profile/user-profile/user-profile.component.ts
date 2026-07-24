@@ -35,7 +35,9 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     { id: 'contact', label: 'Contacts & Réseaux', labelKey: 'PROFILE.SECTIONS.CONTACT', icon: 'phone' },
     { id: 'location', label: 'Localisation', labelKey: 'PROFILE.SECTIONS.LOCATION', icon: 'location' },
     { id: 'localization', label: 'Langue & Devise', labelKey: 'PROFILE.SECTIONS.LOCALIZATION', icon: 'globe' },
-    { id: 'display', label: 'Affichage', labelKey: 'PROFILE.SECTIONS.DISPLAY', icon: 'view' }
+    { id: 'display', label: 'Affichage', labelKey: 'PROFILE.SECTIONS.DISPLAY', icon: 'view' },
+    { id: 'privacy', label: 'Mes données & Cookies', labelKey: 'PROFILE.SECTIONS.PRIVACY', icon: 'security' },
+    { id: 'danger', label: 'Zone dangereuse', labelKey: 'PROFILE.SECTIONS.DANGER', icon: 'warning' }
   ];
 
   private destroy$ = new Subject<void>();

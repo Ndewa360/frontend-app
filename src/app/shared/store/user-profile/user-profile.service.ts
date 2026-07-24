@@ -34,4 +34,16 @@ export class UserProfileService
         return this._httpClient.put<ApiResultFormat<UserProfileModel>>(`${environment.apiUrl}/user/profil/${id}`, contact)
     }
 
+    deleteAccount(id: string): Observable<ApiResultFormat<any>>
+    {
+        return this._httpClient.delete<ApiResultFormat<any>>(`${environment.apiUrl}/user/profil/${id}`)
+    }
+
+    exportData(): Observable<Blob>
+    {
+        // Export généré côté frontend à partir des données du profil
+        // Pas de route backend nécessaire
+        return new Observable();
+    }
+
 }

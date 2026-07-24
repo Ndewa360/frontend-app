@@ -78,3 +78,41 @@ $gray-80: #393939;
     &:hover { background: $primary-dark; color: #fff; }
   }
 }
+
+.cookie-banner--minimal {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  left: auto;
+  transform: none;
+  width: auto;
+  max-width: none;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+}
+
+.cookie-btn--prefs {
+  padding: 0.5rem 0.9rem;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid rgba($primary, 0.4);
+  background: $gray-90;
+  color: #c6c6c6;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+
+  i { color: $primary; }
+
+  &:hover {
+    background: $gray-80;
+    border-color: $primary;
+    color: #fff;
+  }
+}

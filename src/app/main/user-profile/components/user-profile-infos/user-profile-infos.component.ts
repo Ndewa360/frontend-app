@@ -19,6 +19,8 @@ import {
 import { FormUtils } from 'src/app/shared/utils';
 import { ToastrService } from 'ngx-toastr';
 
+const COOKIE_KEY = 'ndewa_cookie_consent';
+
 @Component({
   selector: 'user-profile-infos',
   templateUrl: './user-profile-infos.component.html',
@@ -46,6 +48,13 @@ export class UserProfileInfosComponent implements OnInit, OnDestroy {
   uploadProgress = 0;
   defaultAvatarUrl = 'assets/img/avatar/avatarinit.png';
 
+  // Propriétés pour la section données & cookies
+  cookieConsent: string | null = null;
+  isExportingData = false;
+  isDeletingAccount = false;
+  deleteConfirmText = '';
+  showDeleteConfirm = false;
+
 
 
   private destroy$ = new Subject<void>();
@@ -64,6 +73,9 @@ export class UserProfileInfosComponent implements OnInit, OnDestroy {
     
     // Charger le profil utilisateur
     this._store.dispatch(new UserProfileAction.FetchUserProfile());
+
+    // Charger le consentement cookies
+    this.cookieConsent = localStorage.getItem(COOKIE_KEY);
 
     // S'abonner aux changements du profil
     this.userProfile$
@@ -365,8 +377,51 @@ export class UserProfileInfosComponent implements OnInit, OnDestroy {
 
   // Méthode pour gérer les changements de localisation
   onLocalizationChange(changes: any): void {
-    // Les changements sont déjà appliqués au formulaire par le composant enfant
     console.log('Changements de localisation:', changes);
+  }
+
+  // --- Cookies ---
+  getCookieConsentLabel(): string {
+    if (this.cookieConsent === 'accepted') return 'Acceptés';
+    if (this.cookieConsent === 'declined') return 'Refusés';
+    return 'Non défini';
+  }
+
+  acceptCookies(): void {
+    localStorage.setItem(COOKIE_KEY, 'accepted');
+    this.cookieConsent = 'accepted';
+    this.toastr.success('Cookies analytiques acceptés.', 'Ndewa360°');
+  }
+
+  declineCookies(): void {
+    localStorage.setItem(COOKIE_KEY, 'declined');
+    this.cookieConsent = 'declined';
+    this.toastr.info('Cookies analytiques refusés.', 'Ndewa360°');
+  }
+
+  // --- Export données ---
+  exportData(): void {
+    this.isExportingData = true;
+    this._store.dispatch(new UserProfileAction.ExportData()).subscribe({
+      complete: () => { this.isExportingData = false; },
+      error: () => { this.isExportingData = false; }
+    });
+  }
+
+  // --- Suppression compte ---
+  toggleDeleteConfirm(): void {
+    this.showDeleteConfirm = !this.showDeleteConfirm;
+    this.deleteConfirmText = '';
+  }
+
+  canConfirmDelete(): boolean {
+    return this.deleteConfirmText === 'SUPPRIMER';
+  }
+
+  confirmDeleteAccount(): void {
+    if (!this.canConfirmDelete() || !this.userProfile?._id) return;
+    this.isDeletingAccount = true;
+    this._store.dispatch(new UserProfileAction.DeleteAccount(this.userProfile._id));
   }
 
   // Méthode pour réinitialiser le formulaire

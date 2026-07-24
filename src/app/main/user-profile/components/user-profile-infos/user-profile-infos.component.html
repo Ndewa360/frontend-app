@@ -298,6 +298,89 @@
       </div>
     </section>
 
+    <!-- Section Mes données & Cookies -->
+    <section id="section-privacy" class="profile-section">
+      <div class="section-header">
+        <div class="section-icon">
+          <youpez-ibm-icon iconName="security" iconSize="24"></youpez-ibm-icon>
+        </div>
+        <div class="section-title-group">
+          <h2 class="section-title">Mes données &amp; Cookies</h2>
+          <p class="section-description">Gérez vos préférences de cookies et exportez vos données personnelles.</p>
+        </div>
+      </div>
+      <div class="section-content">
+
+        <!-- Préférences cookies -->
+        <div class="privacy-block">
+          <h3 class="privacy-block__title">Cookies analytiques</h3>
+          <p class="privacy-block__desc">
+            Statut actuel : <strong [class.consent-accepted]="cookieConsent === 'accepted'" [class.consent-declined]="cookieConsent === 'declined'">{{ getCookieConsentLabel() }}</strong>
+          </p>
+          <div class="privacy-block__actions">
+            <button type="button" class="btn btn-secondary" (click)="declineCookies()" [disabled]="cookieConsent === 'declined'">Refuser</button>
+            <button type="button" class="btn btn-primary" (click)="acceptCookies()" [disabled]="cookieConsent === 'accepted'">Accepter</button>
+          </div>
+        </div>
+
+        <!-- Export données -->
+        <div class="privacy-block">
+          <h3 class="privacy-block__title">Exporter mes données</h3>
+          <p class="privacy-block__desc">Téléchargez une copie de toutes vos données personnelles (compte, biens, locataires, paiements) au format JSON.</p>
+          <div class="privacy-block__actions">
+            <button type="button" class="btn btn-secondary" (click)="exportData()" [disabled]="isExportingData">
+              <youpez-ibm-icon iconName="download" iconSize="16"></youpez-ibm-icon>
+              {{ isExportingData ? 'Export en cours...' : 'Télécharger mes données' }}
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Section Zone dangereuse -->
+    <section id="section-danger" class="profile-section profile-section--danger">
+      <div class="section-header">
+        <div class="section-icon section-icon--danger">
+          <youpez-ibm-icon iconName="warning" iconSize="24"></youpez-ibm-icon>
+        </div>
+        <div class="section-title-group">
+          <h2 class="section-title section-title--danger">Zone dangereuse</h2>
+          <p class="section-description">Ces actions sont irréversibles. Procédez avec prudence.</p>
+        </div>
+      </div>
+      <div class="section-content">
+
+        <div class="danger-block">
+          <div class="danger-block__info">
+            <h3>Supprimer mon compte</h3>
+            <p>La suppression de votre compte est définitive. Toutes vos données (biens, locataires, contrats, paiements) seront supprimées conformément à notre <a href="/privacy-policy" target="_blank">Politique de Confidentialité</a>.</p>
+          </div>
+          <button type="button" class="btn btn-danger" (click)="toggleDeleteConfirm()" *ngIf="!showDeleteConfirm">
+            <youpez-ibm-icon iconName="trash-can" iconSize="16"></youpez-ibm-icon>
+            Supprimer mon compte
+          </button>
+
+          <div class="delete-confirm" *ngIf="showDeleteConfirm">
+            <p class="delete-confirm__warning">Pour confirmer, saisissez <strong>SUPPRIMER</strong> ci-dessous :</p>
+            <input
+              type="text"
+              class="field-input"
+              [(ngModel)]="deleteConfirmText"
+              [ngModelOptions]="{standalone: true}"
+              placeholder="SUPPRIMER">
+            <div class="delete-confirm__actions">
+              <button type="button" class="btn btn-secondary" (click)="toggleDeleteConfirm()">Annuler</button>
+              <button type="button" class="btn btn-danger" (click)="confirmDeleteAccount()" [disabled]="!canConfirmDelete() || isDeletingAccount">
+                {{ isDeletingAccount ? 'Suppression...' : 'Confirmer la suppression' }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
     <!-- Actions du formulaire -->
     <div class="form-actions">
       <button

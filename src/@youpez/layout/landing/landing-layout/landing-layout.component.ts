@@ -38,4 +38,8 @@ export class LandingLayoutComponent implements OnInit, AfterViewInit{
     localStorage.setItem(COOKIE_KEY, 'declined');
     this.cookieBannerVisible = false;
   }
+
+  resetCookieChoice(): void {
+    this.cookieBannerVisible = true;
+  }
 }

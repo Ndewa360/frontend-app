@@ -164,6 +164,17 @@ export namespace UserProfileAction
         constructor(public photoUrl: string){}
     }
 
+    export class DeleteAccount
+    {
+        static readonly type = '[UserProfile] Delete Account'
+        constructor(public id: string){}
+    }
+
+    export class ExportData
+    {
+        static readonly type = '[UserProfile] Export Data'
+    }
+
     // Action pour charger le profil de manière conditionnelle (sans forcer la connexion)
     export class FetchUserProfileConditional
     {

@@ -20,3 +20,9 @@
     <button class="cookie-btn cookie-btn--accept" (click)="acceptCookies()">Accepter</button>
   </div>
 </div>
+
+<div class="cookie-banner cookie-banner--minimal" *ngIf="!cookieBannerVisible">
+  <button class="cookie-btn cookie-btn--prefs" (click)="resetCookieChoice()">
+    <i class="fas fa-cookie-bite"></i> Préférences cookies
+  </button>
+</div>

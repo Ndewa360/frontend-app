@@ -652,3 +652,118 @@ select.field-input {
 .avatar-container:hover::after {
   opacity: 1;
 }
+
+/* Section Mes données & Cookies */
+.privacy-block {
+  padding: 1.25rem;
+  background: var(--theme-appUIBg);
+  border: 1px solid var(--theme-appColorDecorative);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.privacy-block__title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--theme-appText);
+  margin: 0 0 0.5rem 0;
+}
+
+.privacy-block__desc {
+  font-size: 0.875rem;
+  color: var(--theme-appTextSecondary);
+  margin: 0 0 1rem 0;
+}
+
+.privacy-block__actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.consent-accepted { color: #22c55e; }
+.consent-declined { color: #ef4444; }
+
+/* Section Zone dangereuse */
+.profile-section--danger {
+  border-left: 4px solid #ef4444;
+}
+
+.section-icon--danger {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3) !important;
+}
+
+.section-title--danger {
+  color: #ef4444 !important;
+}
+
+.danger-block {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: 1.25rem;
+  background: rgba(239, 68, 68, 0.05);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 8px;
+  flex-wrap: wrap;
+}
+
+.danger-block__info h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--theme-appText);
+  margin: 0 0 0.5rem 0;
+}
+
+.danger-block__info p {
+  font-size: 0.875rem;
+  color: var(--theme-appTextSecondary);
+  margin: 0;
+  max-width: 500px;
+}
+
+.danger-block__info a {
+  color: rgb(204, 140, 10);
+  text-decoration: underline;
+}
+
+.btn-danger {
+  background: #ef4444;
+  color: white;
+  border: none;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: #dc2626;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
+.btn-danger:disabled {
+  background: #fca5a5;
+  cursor: not-allowed;
+}
+
+.delete-confirm {
+  width: 100%;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.delete-confirm__warning {
+  font-size: 0.875rem;
+  color: #ef4444;
+  margin: 0 0 0.75rem 0;
+}
+
+.delete-confirm__actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+  flex-wrap: wrap;
+}
