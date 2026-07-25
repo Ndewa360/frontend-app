@@ -11,7 +11,7 @@
       "VERSION_META": "Version 1.0 · Juillet 2026 · Ndewa360 SARL",
       "CONTACT_TITLE": "Nous contacter",
       "CONTACT_DELAY": "Notre équipe répond à toutes vos questions dans un délai de 48 heures.",
-      "FOOTER_COMPANY": "Ndewa360 SARL (en cours de constitution) · Tchougo, Bangangté, Région de l'Ouest, Cameroun"
+      "FOOTER_COMPANY": "Ndewa360 SARL (en cours d'immatriculation) · Tchougo, Bangangté, Région de l'Ouest, Cameroun"
     },
     "PRIVACY": {
       "SECTION_0": {
@@ -19,7 +19,7 @@
         "BODY_0": "Ndewa360 est une plateforme SaaS de gestion immobilière permettant aux propriétaires, agences immobilières et locataires de gérer des biens, des contrats de location, des paiements et des documents associés.",
         "TABLE_HEADERS": ["Élément", "Valeur"],
         "TABLE_ROWS": [
-          ["Dénomination sociale", "Ndewa360 SARL (en cours de constitution)"],
+          ["Dénomination sociale", "Ndewa360 SARL (en cours d'immatriculation)"],
           ["Forme juridique", "Société à Responsabilité Limitée (SARL)"],
           ["Numéro RCCM", "En cours d'obtention"],
           ["Siège social", "Tchougo, Bangangté, Région de l'Ouest, Cameroun"],
