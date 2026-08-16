@@ -280,6 +280,15 @@ export class AuthTokenInterceptor implements HttpInterceptor {
     /ValidationError/i,
     /buffering timed out/i,
     /topology/i,
+    // Erreurs techniques paiement
+    /ECONNREFUSED/i,
+    /ETIMEDOUT/i,
+    /ENOTFOUND/i,
+    /parsePhoneNumber/i,
+    /Cannot read propert/i,
+    /Échec de l'initiation/i,
+    /socket hang up/i,
+    /getaddrinfo/i,
   ];
 
   private sanitizeMessage(message: any): string {
