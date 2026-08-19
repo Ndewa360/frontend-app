@@ -62,7 +62,6 @@ export class GeneratePaymentLinkModalComponent implements OnInit {
       error: (error) => {
         // 404 = aucun lien existant, comportement normal
         if (error.status !== 404) {
-          console.warn('Erreur lors de la vérification du lien existant:', error.status);
         }
       }
     });

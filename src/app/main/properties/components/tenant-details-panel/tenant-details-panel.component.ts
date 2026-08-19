@@ -314,20 +314,16 @@ export class TenantDetailsPanelComponent implements OnInit, OnDestroy, OnChanges
         assistant: true,
         returnUrl: this.router.url
       }).subscribe(result => {
-        console.log('🔄 Résultat du modal d\'assignation:', result);
 
         if (result && result.success) {
-          console.log('✅ Assignation réussie depuis unité');
           // Recharger les données après succès
           this.reloadData();
           this.toastr.success('Assignation réalisée avec succès', 'Succès');
         } else if (result && result.success === false) {
           // Erreur réelle d'assignation
-          console.error('❌ Assignation échouée:', result);
           this.toastr.error('Erreur lors de l\'assignation', 'Erreur');
         } else {
           // Annulation par l'utilisateur (result === null)
-          console.log('🚫 Assignation annulée par l\'utilisateur');
           // Pas de message pour une annulation normale
         }
       });
@@ -517,7 +513,6 @@ export class TenantDetailsPanelComponent implements OnInit, OnDestroy, OnChanges
       history: history
     };
   }
-
 
   /**
    * Ouvre le modal de reçu d'un paiement

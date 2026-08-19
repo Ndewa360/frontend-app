@@ -196,23 +196,18 @@ export class TourHelpButtonComponent implements OnInit {
   clickCount = 0;
 
   ngOnInit() {
-    console.log('TourHelpButtonComponent ngOnInit - tourType:', this.tourType);
     
     // Test si le service est disponible
     if (!this.propertiesTourService) {
-      console.error('PropertiesTourService not available!');
     } else {
-      console.log('PropertiesTourService is available');
     }
   }
 
   constructor(public propertiesTourService: PropertiesTourService) {
-    console.log('TourHelpButtonComponent initialized with service:', this.propertiesTourService);
   }
 
   testClick(): void {
     this.clickCount++;
-    console.log('Button clicked! Count:', this.clickCount);
     
     // Tester d'abord si le clic fonctionne
     if (this.clickCount === 1) {
@@ -225,10 +220,8 @@ export class TourHelpButtonComponent implements OnInit {
   }
   
   startTour(): void {
-    console.log('TourHelpButton: startTour called with tourType:', this.tourType);
     
     if (!this.propertiesTourService) {
-      console.error('PropertiesTourService is not available!');
       alert('Service de tour non disponible');
       return;
     }
@@ -238,11 +231,9 @@ export class TourHelpButtonComponent implements OnInit {
       this.propertiesTourService.resetTour('properties_main');
       
       // Démarrer le tour approprié (pour l'instant, toujours le tour principal)
-      console.log('Starting main tour...');
       this.propertiesTourService.startPropertiesMainTour();
       
     } catch (error) {
-      console.error('Error starting tour:', error);
       alert('Erreur lors du démarrage du tour: ' + error.message);
     }
   }

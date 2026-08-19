@@ -103,7 +103,6 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
     // Plus besoin de cette logique avec le nouveau composant
     // Le composant country-city-selector gère automatiquement les pays et villes
 
-
     this._ngxsAction.pipe(
       ofActionSuccessful(PropertyAction.CreateProperty),
       takeUntil(this.destroy$)
@@ -233,7 +232,6 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
           this.showSubscriptionLimitModal(true, status?.propertyLimit ?? 1);
         } else {
           // Erreur inconnue — on bloque par sécurité, on n'autorise pas la création
-          console.error('Erreur lors de la vérification d\'abonnement:', error);
         }
       }
     });

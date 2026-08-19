@@ -64,7 +64,6 @@ export class TranslationValidatorService {
     return forkJoin(validations).pipe(
       map(results => this.generateSummary(results)),
       catchError(error => {
-        console.error('Erreur lors de la validation des traductions:', error);
         return of({
           languages: [],
           overallStatus: 'error',
@@ -86,7 +85,6 @@ export class TranslationValidatorService {
           observer.complete();
         },
         error: (error) => {
-          console.error(`Erreur lors du chargement des traductions pour ${language}:`, error);
           observer.next({
             language,
             missingKeys: [],

@@ -115,33 +115,27 @@ export class ExportService {
 
   // Excel Export Methods (simplified - would need a library like xlsx)
   private async exportRoomStatisticsToExcel(data: StatisticRoomYearModel[], options: ExportOptions): Promise<void> {
-    console.log('Excel export not implemented yet. Use CSV for now.');
     this.exportRoomStatisticsToCSV(data, { ...options, format: 'csv' });
   }
 
   private async exportTenantStatisticsToExcel(data: StatisticLocataireYearModel[], options: ExportOptions): Promise<void> {
-    console.log('Excel export not implemented yet. Use CSV for now.');
     this.exportTenantStatisticsToCSV(data, { ...options, format: 'csv' });
   }
 
   private async exportPaymentRecapitulationToExcel(data: StatisticPaymentOfAllPropertyByYear, options: ExportOptions): Promise<void> {
-    console.log('Excel export not implemented yet. Use CSV for now.');
     this.exportPaymentRecapitulationToCSV(data, { ...options, format: 'csv' });
   }
 
   // PDF Export Methods (simplified - would need a library like jsPDF)
   private async exportRoomStatisticsToPDF(data: StatisticRoomYearModel[], options: ExportOptions): Promise<void> {
-    console.log('PDF export not implemented yet. Use CSV for now.');
     this.exportRoomStatisticsToCSV(data, { ...options, format: 'csv' });
   }
 
   private async exportTenantStatisticsToPDF(data: StatisticLocataireYearModel[], options: ExportOptions): Promise<void> {
-    console.log('PDF export not implemented yet. Use CSV for now.');
     this.exportTenantStatisticsToCSV(data, { ...options, format: 'csv' });
   }
 
   private async exportPaymentRecapitulationToPDF(data: StatisticPaymentOfAllPropertyByYear, options: ExportOptions): Promise<void> {
-    console.log('PDF export not implemented yet. Use CSV for now.');
     this.exportPaymentRecapitulationToCSV(data, { ...options, format: 'csv' });
   }
 

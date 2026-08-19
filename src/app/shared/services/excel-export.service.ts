@@ -51,10 +51,7 @@ export class ExcelExportService {
       // Générer et télécharger le fichier
       const fileName = filename.endsWith('.xlsx') ? filename : `${filename}.xlsx`;
       XLSX.writeFile(workbook, fileName);
-
-      console.log('✅ Export Excel réussi:', fileName);
     } catch (error) {
-      console.error('❌ Erreur lors de l\'export Excel:', error);
       throw error;
     }
   }
@@ -74,10 +71,7 @@ export class ExcelExportService {
 
       const fileName = filename.endsWith('.xlsx') ? filename : `${filename}.xlsx`;
       XLSX.writeFile(workbook, fileName);
-
-      console.log('✅ Export Excel multi-feuilles réussi:', fileName);
     } catch (error) {
-      console.error('❌ Erreur lors de l\'export Excel multi-feuilles:', error);
       throw error;
     }
   }
@@ -224,7 +218,6 @@ export class ExcelExportService {
       const filename = `rapport-financier-${propertyId}-${year}`;
       this.exportMultipleSheets(sheets, filename);
     } catch (error) {
-      console.error('❌ Erreur lors de la création du rapport financier:', error);
       throw error;
     }
   }

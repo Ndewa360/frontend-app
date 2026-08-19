@@ -14,7 +14,6 @@ import { StatisticState } from 'src/app/shared/store/statistic-data/statistic.st
 import { ExcelExportService } from 'src/app/shared/services/excel-export.service';
 import { PerformanceAlertsService } from 'src/app/main/statistics/services/performance-alerts.service';
 
-
 export interface ExportData {
   type: 'excel' | 'csv';
   data: any[];
@@ -88,8 +87,6 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-
-
   ngOnDestroy(): void {
     this.subscriptionReset$.next();
     this.subscriptionReset$.complete();
@@ -102,7 +99,6 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
     this.isLoading = true;
     this.store.dispatch(new StatisticAction.FetchStaticByPropertyIdAndYear(this.propertyId, this.selectedYear.toString()));
   }
-
 
   private setupDataSubscriptions(): void {
     // FIX #F7 : takeUntil sur subscriptionReset$ pour annuler à chaque changement
@@ -124,7 +120,6 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
         }
       },
       error: (error) => {
-        console.error('Erreur lors du chargement des données:', error);
         this.isLoading = false;
       }
     });
@@ -247,7 +242,6 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
         metadata: { propertyId: this.propertyId, year: this.selectedYear, exportDate: new Date().toLocaleDateString('fr-FR'), section: this.activeSection }
       });
     } catch (error) {
-      console.error('❌ Erreur export Excel:', error);
     }
   }
 
@@ -256,7 +250,6 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
       const csvContent = this.convertToCSV(exportData.data);
       this.downloadCSV(csvContent, exportData.filename);
     } catch (error) {
-      console.error('❌ Erreur export CSV:', error);
     }
   }
 
@@ -348,10 +341,6 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-
-
-
-
   /**
    * TrackBy function pour les tabs
    */
@@ -371,8 +360,6 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
   formatPercentage(value: number): string {
     return `${value.toFixed(1)}%`;
   }
-
-
 
   getMonthName(monthIndex: number): string {
     const months = [

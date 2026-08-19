@@ -59,13 +59,11 @@ export class AddPaymentModalComponent implements OnInit {
   getLocationForPayment(): LocationModel | null {
     // Priorité 1: Location réelle existante
     if (this.location && this.location._id && !this.location._id.startsWith('temp_')) {
-      console.log('✅ Location réelle trouvée:', this.location._id);
       return this.location;
     }
 
     // Priorité 2: Créer une location temporaire avec les bonnes données
     if (this.room && this.tenant && this.propertyId) {
-      console.log('⚠️ Création d\'une location temporaire pour le paiement');
       this.tempLocation = {
         _id: null, // Pas d'ID temporaire - sera géré différemment
         room: this.room._id,
@@ -83,7 +81,6 @@ export class AddPaymentModalComponent implements OnInit {
       return this.tempLocation;
     }
 
-    console.error('❌ Impossible de créer une location pour le paiement - données manquantes');
     return null;
   }
 
@@ -100,7 +97,6 @@ export class AddPaymentModalComponent implements OnInit {
     const location = this.getLocationForPayment();
 
     if (!location) {
-      console.error('Aucune location disponible pour le paiement');
       return;
     }
 

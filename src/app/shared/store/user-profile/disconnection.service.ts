@@ -40,7 +40,6 @@ export class DisconnexionService
         // Appeler l'endpoint de déconnexion backend pour nettoyer le refresh token
         this.authService.logout().pipe(
             catchError(error => {
-                console.warn('Erreur lors de la déconnexion backend:', error);
                 return of(null);
             })
         ).subscribe();

@@ -160,10 +160,6 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
     this.currentUser = this.store.selectSnapshot(UserProfileState.selectStateUserProfile);
     this.isAgent = this.currentUser?.userType === 'AGENT';
     
-    console.log('🔍 PropertyUnitsList - Utilisateur depuis store:', this.currentUser);
-    console.log('🔍 PropertyUnitsList - Est agent:', this.isAgent);
-    console.log('🔍 PropertyUnitsList - UserType:', this.currentUser?.userType);
-
     // Les locataires sont déjà chargés par LoadingPropertyDataResolver
     // Initialiser les observables
     this.rooms$ = this.store.select(RoomState.selectStateRoomByPropertyId(this.propertyId));
@@ -188,7 +184,6 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
         if (userProfile !== this.currentUser) {
           this.currentUser = userProfile;
           this.isAgent = this.currentUser?.userType === 'AGENT';
-          console.log('🔄 PropertyUnitsList - Profil utilisateur mis à jour:', this.currentUser);
         }
         const previousRooms = this.rooms;
         this.rooms = rooms || [];
@@ -202,7 +197,6 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
         if (selectedRoom) {
           const updatedRoom = this.rooms.find(r => r._id === selectedRoom._id);
           if (updatedRoom && JSON.stringify(updatedRoom) !== JSON.stringify(selectedRoom)) {
-            console.log('✅ Unité sélectionnée mise à jour, rafraîchissement du service de vue');
             this.viewService.refreshSelectedRoom(updatedRoom);
           }
         }
@@ -219,19 +213,13 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
   }
   
   private debugTranslationService(): void {
-    console.log('🔍 Debug TranslateService:');
-    console.log('- Service disponible:', !!this.translateService);
-    console.log('- Langue par défaut:', this.translateService.getDefaultLang());
-    console.log('- Langue actuelle:', this.translateService.currentLang);
     
     // Test d'une traduction simple
     const testKey = 'COMMON.EDIT';
     const translation = this.translateService.instant(testKey);
-    console.log(`- Test traduction '${testKey}':`, translation);
     
     // Test avec observable
     this.translateService.get(testKey).subscribe(result => {
-      console.log(`- Test traduction observable '${testKey}':`, result);
     });
   }
 
@@ -455,7 +443,6 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
 
   // Actions sur les unités
   onViewUnit(room: RoomModel): void {
-    console.log('Voir les détails de l\'unité:', room);
     this.viewService.openUnitDetails(room);
 
     // Charger les paiements pour cette unité
@@ -463,19 +450,14 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
   }
 
   onEditUnit(room: RoomModel): void {
-    console.log('🔧 onEditUnit appelé', { room, propertyId: this.propertyId, dialog: this.dialog });
 
     if (!this.dialog) {
-      console.error('❌ Service MatDialog non disponible !');
       return;
     }
 
     if (!room) {
-      console.error('❌ Aucune unité fournie pour l\'édition');
       return;
     }
-
-    console.log('📝 Ouverture du modal ModernUnitModalComponent en mode édition...');
 
     try {
       const dialogRef = this.dialog.open(ModernUnitModalComponent, {
@@ -489,10 +471,7 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
         }
       });
 
-      console.log('✅ Modal d\'édition ouvert, dialogRef:', dialogRef);
-
       dialogRef.afterClosed().subscribe(result => {
-        console.log('🔄 Modal d\'édition fermé avec résultat:', result);
         if (result) {
           // Recharger les données après modification
           this.reloadData();
@@ -500,7 +479,6 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
         }
       });
     } catch (error) {
-      console.error('❌ Erreur lors de l\'ouverture du modal d\'édition:', error);
     }
 
     // Émettre l'événement pour compatibilité
@@ -515,8 +493,6 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
     this.unitAction.emit({ type: 'toggle_status', room });
   }
 
-
-
   onEditGaleryUnit(room: RoomModel): void {
     const dialogRef = this.dialog.open(GaleryComponent, {
       width: '900px',
@@ -530,7 +506,6 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result?.mediaUpdated) {
-        console.log('🔄 Médias mis à jour, rechargement des données de l\'unité');
         // Recharger les données de l'unité pour synchroniser les médias
         this.refreshUnitData(room._id);
       }
@@ -538,7 +513,6 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
   }
 
   private refreshUnitData(roomId: string): void {
-    console.log('🔄 PropertyUnitsList: Rechargement des données pour l\'unité', roomId);
     
     // Recharger les données de l'unité depuis le serveur
     this.store.dispatch(new RoomAction.FetchRoom(roomId));
@@ -546,7 +520,6 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
 
   // Méthodes pour les modals de paiement
   openAddPaymentModal(room: RoomModel): void {
-    console.log('🚀 Ouverture du modal AddPayment pour la room:', room);
 
     // Vérifier si la chambre est libre
     if (!room || room.isFree === true) {
@@ -557,8 +530,6 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
     // Récupérer les données du locataire et de la location
     const tenant = this.getTenantForRoom(room);
     const location = this.getLocationForRoom(room);
-
-    console.log('📊 Données pour le modal:', { room, tenant, location });
 
     // Ouvrir le nouveau modal moderne de paiement
     const dialogRef = this.dialog.open(ModernPaymentModalComponent, {
@@ -573,12 +544,8 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
       }
     });
 
-    console.log('✅ Modal ouvert, dialogRef:', dialogRef);
-
     dialogRef.afterClosed().subscribe(result => {
-      console.log('🔄 Modal fermé avec résultat:', result);
       if (result) {
-        console.log('💰 Paiement ajouté avec succès');
         // Recharger les données de l'unité
         this.refreshUnitData(room._id);
       }
@@ -587,7 +554,6 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
 
   openDeletePaymentModal(paymentData: any): void {
     if (!paymentData?.transaction || !paymentData?.history) {
-      console.error('Données de paiement manquantes pour la suppression');
       return;
     }
 
@@ -603,7 +569,6 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        console.log('🗑️ Paiement supprimé avec succès');
         // Recharger les données de l'unité
         if (paymentData.transaction?.roomId) {
           this.refreshUnitData(paymentData.transaction.roomId);
@@ -613,7 +578,6 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
   }
 
   openGeneratePaymentLinkModal(room: RoomModel, data: any): void {
-    console.log('🔗 Ouverture du modal GeneratePaymentLink pour la room:', room, 'data:', data);
 
     const dialogRef = this.dialog.open(GeneratePaymentLinkModalComponent, {
       width: '800px',
@@ -628,12 +592,8 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
       }
     });
 
-    console.log('✅ Modal GeneratePaymentLink ouvert, dialogRef:', dialogRef);
-
     dialogRef.afterClosed().subscribe(result => {
-      console.log('🔄 Modal GeneratePaymentLink fermé avec résultat:', result);
       if (result) {
-        console.log('🔗 Lien de paiement généré avec succès');
         // Optionnel: Recharger les données si nécessaire
       }
     });
@@ -656,12 +616,10 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
     if (tenants && tenants.length > 0) {
       const tenant = tenants.find(t => t._id === room.locataire);
       if (tenant) {
-        console.log('✅ Locataire trouvé pour la chambre:', room.code, tenant.fullName);
         return tenant;
       }
     }
 
-    console.log('⚠️ Aucun locataire trouvé pour la chambre:', room.code);
     return null;
   }
 
@@ -681,13 +639,11 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
       );
 
       if (location) {
-        console.log('✅ Location trouvée pour la chambre:', room.code, location._id);
         return location;
       }
     }
 
     // Si pas de location trouvée dans le store, créer une location temporaire
-    console.log('⚠️ Aucune location trouvée dans le store pour la chambre:', room.code);
 
     const tenant = this.getTenantForRoom(room);
     if (tenant) {
@@ -824,20 +780,16 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
       assistant: true,
       returnUrl: this.router.url
     }).subscribe(result => {
-      console.log('🔄 Résultat du modal d\'assignation:', result);
 
       if (result && result.success) {
-        console.log('✅ Assignation réussie depuis unité');
         // Recharger les données après succès
         this.reloadData();
         this.toastr.success('Assignation réalisée avec succès', 'Succès');
       } else if (result && result.success === false) {
         // Erreur réelle d'assignation
-        console.error('❌ Assignation échouée:', result);
         this.toastr.error('Erreur lors de l\'assignation', 'Erreur');
       } else {
         // Annulation par l'utilisateur (result === null)
-        console.log('🚫 Assignation annulée par l\'utilisateur');
         // Pas de message pour une annulation normale
       }
     });
@@ -871,10 +823,8 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
   }
 
   onTerminateLease(room: RoomModel): void {
-    console.log('🔧 PropertyUnitsList: onTerminateLease appelé pour:', room);
 
     if (!this.dialog) {
-      console.error('❌ Service MatDialog non disponible !');
       return;
     }
 
@@ -883,12 +833,9 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
     const location = locations?.find((loc: LocationModel) => loc.room === room._id && !loc.endedAt);
 
     if (!location) {
-      console.error('❌ Aucune location trouvée pour cette unité');
       this.toastr.error('Aucune location trouvée pour cette unité', 'Erreur');
       return;
     }
-
-    console.log('📝 Ouverture du modal ModernContractTerminationModalComponent...');
 
     // Récupérer le locataire pour cette location
     const tenant = this.getTenantForRoom(room);
@@ -905,19 +852,14 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
         }
       });
 
-      console.log('✅ Modal ModernContractTermination ouvert, dialogRef:', dialogRef);
-
       dialogRef.afterClosed().subscribe(result => {
-        console.log('🔄 Modal ModernContractTermination fermé avec résultat:', result);
         if (result) {
-          console.log('✅ Contrat résilié avec succès');
           // Recharger les données
           this.reloadData();
           this.toastr.success('Contrat résilié avec succès', 'Succès');
         }
       });
     } catch (error) {
-      console.error('❌ Erreur lors de l\'ouverture du modal ModernContractTermination:', error);
     }
   }
 
@@ -925,10 +867,8 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
    * Ouvre le modal de visualisation du contrat
    */
   onViewContract(room: RoomModel): void {
-    console.log('🔍 PropertyUnitsList: onViewContract appelé pour:', room);
 
     if (!this.dialog) {
-      console.error('❌ Service MatDialog non disponible !');
       return;
     }
 
@@ -937,7 +877,6 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
     const location = locations?.find((loc: LocationModel) => loc.room === room._id && !loc.endedAt);
 
     if (!location) {
-      console.error('❌ Aucune location trouvée pour cette unité');
       this.toastr.error('Aucune location trouvée pour cette unité', 'Erreur');
       return;
     }
@@ -945,8 +884,6 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
     // Récupérer le locataire
     const tenants = this.store.selectSnapshot(LocataireState.selectStateLocataires) as LocataireModel[];
     const tenant = tenants?.find((t: LocataireModel) => t._id === location.locataire);
-
-    console.log('📄 Ouverture du modal ContractViewerModal...');
 
     try {
       const dialogRef = this.dialog.open(ContractViewerModalComponent, {
@@ -963,13 +900,9 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
         }
       });
 
-      console.log('✅ Modal ContractViewer ouvert, dialogRef:', dialogRef);
-
       dialogRef.afterClosed().subscribe(result => {
-        console.log('🔄 Modal ContractViewer fermé');
       });
     } catch (error) {
-      console.error('❌ Erreur lors de l\'ouverture du modal ContractViewer:', error);
       this.toastr.error('Erreur lors de l\'ouverture du contrat', 'Erreur');
     }
   }
@@ -981,14 +914,12 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
     this.leaseStartDate = '';
   }
 
-
   closeUnitDetailsModal(): void {
     this.showUnitDetailsModal = false;
     this.selectedRoom = null;
   }
 
   onUnitDetailsAction(action: { type: string; room: RoomModel; data?: any }): void {
-    console.log('Action depuis le modal de détails:', action);
     // Gérer les actions depuis le modal de détails
     switch (action.type) {
       case 'edit':
@@ -1007,7 +938,6 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
   }
 
   onUnitPanelAction(action: { type: string; room: RoomModel; data?: any }): void {
-    console.log('🎯 PropertyUnitsList: Action reçue depuis le panneau de détails:', action);
     // Gérer les actions depuis le panneau de détails
     switch (action.type) {
       case 'edit':
@@ -1026,11 +956,9 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
         this.onViewContract(action.room);
         break;
       case 'view_image':
-        console.log('Voir l\'image:', action.data?.imageUrl);
         // TODO: Implémenter le visualiseur d'image
         break;
       case 'edit_gallery':
-        console.log('🎨 PropertyUnitsList: Cas edit_gallery détecté, ouverture du modal');
         this.onEditGaleryUnit(action.room);
         // Notifier le panel de détail pour qu'il se mette à jour après fermeture du modal
         break;
@@ -1041,13 +969,10 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
         this.openDeletePaymentModal(action.data);
         break;
       case 'generate_payment_link':
-        console.log('🔗 PropertyUnitsList: Cas generate_payment_link détecté, ouverture du modal');
         this.openGeneratePaymentLinkModal(action.room, action.data);
         break;
     }
   }
-
-
 
   // Méthodes pour le panneau simplifié
   getSelectedRoomName(): string {
@@ -1108,11 +1033,8 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
   }
 
   showContractModal(): void {
-    console.log('Afficher le contrat pour:', this.viewService.getSelectedRoom());
     // TODO: Implémenter l'affichage du contrat
   }
-
-
 
   contactTenant(): void {
     const tenant = this.getSelectedTenant();
@@ -1121,18 +1043,15 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
     } else if (tenant?.phoneNumber) {
       window.open(`tel:${tenant.phoneNumber}`, '_blank');
     } else {
-      console.log('Aucun moyen de contact disponible pour ce locataire');
     }
   }
 
   // Méthodes pour la gestion des paiements
   loadPaymentHistory(): void {
     if (!this.propertyId) {
-      console.log('Aucun propertyId disponible');
       return;
     }
 
-    console.log('Chargement de l\'historique des paiements pour la propriété:', this.propertyId);
     this.loadingPayments = true;
     this.store.dispatch(new HistoryLocationPaymentAction.FetchHistoryLocationPaymentsByPropertyId(this.propertyId));
 
@@ -1140,7 +1059,6 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
     this.store.select(HistoryLocationPaymentState.selectStateHistoryLocationPayments)
       .pipe(takeUntil(this.destroy$))
       .subscribe((payments) => {
-        console.log('Paiements reçus dans loadPaymentHistory:', payments);
         this.loadingPayments = false;
         // Filtrer les paiements pour la chambre sélectionnée si une chambre est déjà sélectionnée
         if (this.viewService.getSelectedRoom()) {
@@ -1152,20 +1070,15 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
   updateRoomPayments(): void {
     const selectedRoom = this.viewService.getSelectedRoom();
     if (!selectedRoom) {
-      console.log('Aucune chambre sélectionnée');
       return;
     }
-
-    console.log('Mise à jour des paiements pour la chambre:', selectedRoom._id);
 
     // Récupérer l'historique des paiements pour cette chambre
     this.store.select(HistoryLocationPaymentState.selectStateHistoryLocationPayments)
       .pipe(takeUntil(this.destroy$))
       .subscribe(allPaymentHistory => {
-        console.log('Historique des paiements reçu:', allPaymentHistory);
 
         if (!allPaymentHistory || allPaymentHistory.length === 0) {
-          console.log('Aucun historique de paiement trouvé');
           this.paymentHistory = null;
           this.roomPayments = [];
           return;
@@ -1176,12 +1089,9 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
           history.room._id === selectedRoom._id
         ) || null;
 
-        console.log('Historique trouvé pour cette chambre:', this.paymentHistory);
-
         // Extraire les paiements individuels
         this.roomPayments = this.paymentHistory?.transactions || [];
 
-        console.log('Paiements extraits:', this.roomPayments);
       });
   }
 
@@ -1297,20 +1207,14 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
 
   // Actions pour les paiements
   viewPaymentDetails(payment: any): void {
-    console.log('Voir les détails du paiement:', payment);
     // TODO: Implémenter la visualisation des détails
   }
 
   editPayment(payment: any): void {
-    console.log('🔧 editPayment appelé:', payment);
-    console.log('🔧 Dialog service:', this.dialog);
 
     if (!payment?.transaction || !payment?.history) {
-      console.error('❌ Données de paiement manquantes pour la modification');
       return;
     }
-
-    console.log('📝 Ouverture du modal ModernPaymentModalComponent...');
 
     // Récupérer les données nécessaires
     const room = this.rooms.find(r => r._id === payment.transaction.room);
@@ -1330,12 +1234,8 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
       }
     });
 
-    console.log('✅ Modal UpdatePayment ouvert, dialogRef:', dialogRef);
-
     dialogRef.afterClosed().subscribe(result => {
-      console.log('🔄 Modal UpdatePayment fermé avec résultat:', result);
       if (result) {
-        console.log('💰 Paiement modifié avec succès');
         // Recharger les données de l'unité
         if (payment.transaction?.roomId) {
           this.refreshUnitData(payment.transaction.roomId);
@@ -1378,7 +1278,6 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
 
   // Méthode pour forcer le rechargement des paiements (debug)
   forceReloadPayments(): void {
-    console.log('Force reload des paiements...');
     if (this.propertyId) {
       this.store.dispatch(new HistoryLocationPaymentAction.FetchHistoryLocationPaymentsByPropertyId(this.propertyId));
       setTimeout(() => {
@@ -1400,8 +1299,6 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
       this.closeAssignTenantModal();
     }
   }
-
-
 
   loadAvailableTenants(): void {
     // Charger les locataires disponibles depuis le store
@@ -1480,7 +1377,6 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
         this.showAddPaymentModal();
         break;
       case 'view':
-        console.log('Voir les détails du paiement:', action.data);
         break;
       case 'edit':
         this.editPayment(action.data);
@@ -1489,7 +1385,6 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
         this.openDeletePaymentModal(action.data);
         break;
       case 'export':
-        console.log('Export CSV effectué');
         break;
     }
   }
@@ -1521,7 +1416,6 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
 
   // Méthode appelée quand un paiement est ajouté
   onPaymentAdded(payment: any): void {
-    console.log('Paiement ajouté:', payment);
     this.closePaymentModal();
 
     // Recharger les données de paiement
@@ -1570,15 +1464,12 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
    * Ouvrir le modal d'ajout d'une nouvelle unité
    */
   onAddUnit(): void {
-    console.log('🔧 onAddUnit appelé', { propertyId: this.propertyId, dialog: this.dialog });
 
     if (!this.dialog) {
-      console.error('❌ Service MatDialog non disponible !');
       return;
     }
 
     if (this.propertyId) {
-      console.log('📝 Ouverture du modal ModernUnitModalComponent...');
 
       try {
         const dialogRef = this.dialog.open(ModernUnitModalComponent, {
@@ -1591,12 +1482,7 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
           }
         });
 
-        console.log('✅ Modal ouvert, dialogRef:', dialogRef);
-        console.log('✅ DialogRef id:', dialogRef.id);
-        console.log('✅ DialogRef componentInstance:', dialogRef.componentInstance);
-
         dialogRef.afterClosed().subscribe(result => {
-          console.log('🔄 Modal fermé avec résultat:', result);
           if (result) {
             // Recharger les données après création
             this.reloadData();
@@ -1604,10 +1490,8 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
           }
         });
       } catch (error) {
-        console.error('❌ Erreur lors de l\'ouverture du modal:', error);
       }
     } else {
-      console.error('❌ PropertyId manquant pour ajouter une unité');
     }
   }
 
@@ -1669,12 +1553,8 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
    * Supprimer une unité
    */
   onDeleteUnit(unit: RoomModel): void {
-    console.log('🗑️ PropertyUnitsList: onDeleteUnit appelé pour:', unit);
-    console.log('🔍 Unit isFree:', unit.isFree);
-    console.log('🔍 Event triggered successfully!');
 
     if (!this.dialog) {
-      console.error('❌ Service MatDialog non disponible !');
       return;
     }
 
@@ -1683,8 +1563,6 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
       this.toastr.warning('Impossible de supprimer une unité occupée. Résiliez d\'abord le contrat du locataire.', 'Attention');
       return;
     }
-
-    console.log('🗑️ Ouverture du modal de suppression d\'unité...');
 
     const dialogRef = this.dialog.open(ModernDeleteUnitModalComponent, {
       width: '100%',
@@ -1698,7 +1576,6 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        console.log('✅ Unité supprimée, rechargement des données...');
         // Les données sont automatiquement mises à jour par le state
         // Pas besoin de recharger manuellement
       }

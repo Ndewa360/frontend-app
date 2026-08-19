@@ -6,7 +6,6 @@ import { Select, Store } from '@ngxs/store';
 import { Observable, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { takeUntil, map, filter, take, switchMap } from 'rxjs/operators';
 
-
 // Services et modèles
 import { SearchService, AdvancedSearchFilters } from 'src/app/shared/store/search/search.service';
 import { CityModel, CityState, CityAction, SearchPropertyModel, SearchState, CountryAction, SearchAction } from 'src/app/shared/store';
@@ -113,8 +112,6 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   locationDetected = false;
   isFromUrl = false; // Indique si la localisation provient de l'URL
 
-
-
   // Loading states
   isLoading = false;
   isLoadingMore = false;
@@ -127,8 +124,6 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   getObjectKeys(obj: any): string {
     return obj ? Object.keys(obj).join(', ') : 'null';
   }
-
-
 
   constructor(
     private fb: FormBuilder,
@@ -379,7 +374,6 @@ export class SearchPageComponent implements OnInit, OnDestroy {
     this.searchResults$
       .pipe(takeUntil(this.destroy$))
       .subscribe(results => {
-        console.log('🔍 Nouveaux résultats de recherche reçus:', results?.length || 0);
         
         if (results && Array.isArray(results)) {
           this.allResults = results; // Stocker tous les résultats
@@ -389,13 +383,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
           // Réinitialiser les index d'images pour les nouvelles cartes
           this.currentImageIndexes = {};
           
-          console.log('✅ Résultats mis à jour:', {
-            totalCount: this.allResults.length,
-            totalResults: this.totalResults,
-            currentPage: this.currentPage,
-            totalPages: this.totalPages,
-            displayedCount: this.paginatedResults.length
-          });
+          ;
         }
       });
   }
@@ -417,7 +405,6 @@ export class SearchPageComponent implements OnInit, OnDestroy {
    * Charge la liste des villes depuis le backend
    */
   private loadCities(): void {
-    console.log('🏙️ Chargement des villes...');
 
     // D'abord charger les pays (qui contiennent les villes)
     this.store.dispatch(new CountryAction.FetchCountries());
@@ -429,15 +416,12 @@ export class SearchPageComponent implements OnInit, OnDestroy {
     this.cities$
       .pipe(takeUntil(this.destroy$))
       .subscribe(cities => {
-        console.log('🏙️ Villes chargées:', cities?.length || 0, cities);
 
         if (!cities || cities.length === 0) {
-          console.warn('⚠️ Aucune ville chargée, tentative de rechargement unique...');
 
           // Une seule tentative de rechargement, pas de setInterval répétitif
           if (!this.hasTriedReloading) {
             this.hasTriedReloading = true;
-            console.log('🔄 Tentative unique de rechargement des villes');
 
             // Attendre un peu avant de relancer pour éviter les conflits
             setTimeout(() => {
@@ -445,12 +429,10 @@ export class SearchPageComponent implements OnInit, OnDestroy {
               this.store.dispatch(new CityAction.LoadAllCities());
             }, 1000);
           } else {
-            console.error('❌ Impossible de charger les villes après tentative de rechargement');
           }
         } else {
           // Réinitialiser le flag si les villes sont chargées
           this.hasTriedReloading = false;
-          console.log('✅ Villes disponibles dans le dropdown:', cities.map(c => c.fullName));
         }
       });
   }
@@ -464,7 +446,6 @@ private loadSuggestions(query: string): void {
         takeUntil(this.destroy$)
       )
       .subscribe(filteredCities => {
-        console.log("citys",filteredCities)
         this.suggestions = [
           ...filteredCities.map(city => ({
             type: 'city' as const,
@@ -491,14 +472,11 @@ private loadSuggestions(query: string): void {
             cityId: search.cityId,
             cityName: search.cityName
           }));
-          console.log('✅ Recherches populaires chargées:', this.popularSearches);
         } else {
-          console.warn('⚠️ Aucune recherche populaire trouvée, utilisation des données par défaut');
           this.loadDefaultPopularSearches();
         }
       },
       error: (error) => {
-        console.error('❌ Erreur lors du chargement des recherches populaires:', error);
         this.loadDefaultPopularSearches();
       }
     });
@@ -576,8 +554,6 @@ private loadSuggestions(query: string): void {
         this.locationDetected = false; // Indiquer que c'est une sélection manuelle
         this.isFromUrl = true;
         
-        console.log('🏙️ Synchronisation géolocalisation avec ville sélectionnée:', selectedCity.fullName);
-        
         // Forcer la détection de changement pour mettre à jour l'affichage
         this.cdr.detectChanges();
       }
@@ -640,7 +616,6 @@ private loadSuggestions(query: string): void {
         cityName: 'Bangangté'
       }
     ];
-    console.log('⚠️ Utilisation des recherches populaires par défaut');
   }
 
   private updateCitySuggestions(cities: CityModel[]): void {
@@ -734,11 +709,8 @@ private loadSuggestions(query: string): void {
     this.updateUrl();
   }
 
-
-
   toggleFilters(): void {
     this.showFilters = !this.showFilters;
-    console.log('🔧 Toggle filters:', this.showFilters);
 
     if (this.showFilters) {
       this.blockPageScroll();
@@ -803,14 +775,11 @@ private loadSuggestions(query: string): void {
           this.isPerformingSearch = false;
         },
         error: (error) => {
-          console.error('Erreur de recherche:', error);
           this.isLoading = false;
           this.isPerformingSearch = false;
         }
       });
   }
-
-
 
   /**
    * Obtient les initiales du propriétaire pour l'avatar
@@ -869,10 +838,8 @@ private loadSuggestions(query: string): void {
   toggleFavorite(result: SearchPropertyModel): void {
     if (this.favoriteIds.has(result._id)) {
       this.favoriteIds.delete(result._id);
-      console.log(`Logement ${result.code} retiré des favoris`);
     } else {
       this.favoriteIds.add(result._id);
-      console.log(`Logement ${result.code} ajouté aux favoris`);
     }
 
     // Sauvegarder dans le localStorage
@@ -892,7 +859,6 @@ private loadSuggestions(query: string): void {
         this.favoriteIds = new Set(favoriteArray);
       }
     } catch (error) {
-      console.error('Erreur lors du chargement des favoris:', error);
       this.favoriteIds = new Set();
     }
   }
@@ -911,21 +877,16 @@ private loadSuggestions(query: string): void {
           this.locationDetected = true;
           this.isDetectingLocation = false;
 
-          console.log('📍 Localisation détectée:', location);
-
           // Lancer la recherche automatique pour la ville détectée
           this.searchByUserLocation();
         },
         error: (error) => {
-          console.error('❌ Erreur de géolocalisation:', error);
           this.isDetectingLocation = false;
 
           // Fallback vers Bangangté
           this.userLocation = this.geolocationService.getDefaultLocation();
           this.locationDetected = false;
 
-          console.log('🔄 Fallback vers ville par défaut:', this.userLocation.city);
-          
           // Lancer la recherche pour Bangangté
           this.searchByUserLocation();
         }
@@ -938,12 +899,9 @@ private loadSuggestions(query: string): void {
   private searchByUserLocation(): void {
     if (!this.userLocation) return;
 
-    console.log('📍 Recherche par géolocalisation:', this.userLocation.city);
-
     // Utiliser le service de résolution pour convertir le nom en ID
     this.cityResolver.getCityIdByName(this.userLocation.city).subscribe(cityId => {
       const finalCityId = cityId || this.userLocation!.city;
-      console.log('🏙️ Ville géolocalisée convertie:', this.userLocation!.city, '->', finalCityId);
 
       this.currentFilters = {
         city: finalCityId,
@@ -1042,13 +1000,10 @@ private loadSuggestions(query: string): void {
     }
   }
 
-
-
   /**
    * Ferme le panneau de filtres (les filtres s'appliquent automatiquement)
    */
   applyFilters(): void {
-    console.log('🔧 Fermeture du panneau de filtres');
     this.closeFilters();
   }
 
@@ -1104,8 +1059,6 @@ private loadSuggestions(query: string): void {
     this.updateUrl();
   }
 
-
-
   /**
    * Vérifie si la ville provient de l'URL
    */
@@ -1144,7 +1097,6 @@ private loadSuggestions(query: string): void {
     const cityToSync = this.currentFilters.city || this.route.snapshot.queryParams['city'] || this.route.snapshot.queryParams['ville'];
     
     if (cityToSync) {
-      console.log('🔄 Synchronisation sélecteur avec ville:', cityToSync);
       
       // Attendre que les villes soient chargées
       this.cities$.pipe(
@@ -1166,13 +1118,10 @@ private loadSuggestions(query: string): void {
         this.currentFilters.city = finalCityId;
         this.searchForm.patchValue({ city: finalCityId }, { emitEvent: false });
         
-        console.log('✅ Sélecteur synchronisé avec:', finalCityId);
         this.cdr.detectChanges();
       });
     }
   }
-
-
 
   /**
    * Compte le nombre de filtres actifs
@@ -1279,7 +1228,6 @@ private loadSuggestions(query: string): void {
    * Recharger manuellement les villes
    */
   reloadCities(): void {
-    console.log('🔄 Rechargement manuel des villes...');
     this.store.dispatch(new CountryAction.FetchCountries());
     this.store.dispatch(new CityAction.LoadAllCities());
   }
@@ -1291,14 +1239,6 @@ private loadSuggestions(query: string): void {
     const result = this.paginatedResults[cardIndex];
     const medias = this.getMediasForCard(result);
     const currentIndex = this.getCurrentImageIndex(cardIndex);
-
-    console.log(`🔍 Debug Slider Carte ${cardIndex}:`, {
-      result: result,
-      medias: medias,
-      mediasCount: medias.length,
-      currentIndex: currentIndex,
-      currentImageIndexes: this.currentImageIndexes
-    });
   }
 
   /**
@@ -1306,15 +1246,11 @@ private loadSuggestions(query: string): void {
    */
   debugCityConversion(): void {
     this.cities$.pipe(take(1)).subscribe(cities => {
-      console.log('🏙️ Debug Conversion de Ville:');
-      console.log('Villes disponibles:', cities?.map(c => ({ id: c._id, name: c.fullName })));
 
       if (cities && cities.length > 0) {
         const testCity = cities[0];
-        console.log(`Test conversion: "${testCity.fullName}" -> ID`);
 
         this.cityResolver.getCityIdByName(testCity.fullName).subscribe(id => {
-          console.log(`Résultat: "${testCity.fullName}" -> "${id}"`);
         });
       }
     });
@@ -1335,17 +1271,14 @@ private loadSuggestions(query: string): void {
   setCurrentImage(cardIndex: number, imageIndex: number): void {
     const result = this.paginatedResults[cardIndex];
     if (!result) {
-      console.warn(`🖼️ Slider: Résultat non trouvé pour carte ${cardIndex}`);
       return;
     }
 
     const medias = this.getMediasForCard(result);
     if (imageIndex < 0 || imageIndex >= medias.length) {
-      console.warn(`🖼️ Slider: Index ${imageIndex} invalide pour carte ${cardIndex} (max: ${medias.length - 1})`);
       return;
     }
 
-    console.log(`🖼️ Slider: Définir image ${imageIndex} pour carte ${cardIndex} (${medias.length} images)`);
     this.currentImageIndexes[cardIndex] = imageIndex;
 
     // Déclencher la détection de changement pour les animations
@@ -1358,19 +1291,16 @@ private loadSuggestions(query: string): void {
   nextImage(cardIndex: number): void {
     const result = this.paginatedResults[cardIndex];
     if (!result) {
-      console.log(`🖼️ Slider: Résultat non trouvé pour carte ${cardIndex}`);
       return;
     }
 
     const medias = this.getMediasForCard(result);
     if (medias.length <= 1) {
-      console.log(`🖼️ Slider: Pas d'image suivante pour carte ${cardIndex} (${medias.length} image(s))`);
       return;
     }
 
     const currentIndex = this.getCurrentImageIndex(cardIndex);
     const nextIndex = (currentIndex + 1) % medias.length;
-    console.log(`🖼️ Slider: Image suivante carte ${cardIndex}: ${currentIndex} → ${nextIndex} (total: ${medias.length})`);
     this.setCurrentImage(cardIndex, nextIndex);
   }
 
@@ -1380,19 +1310,16 @@ private loadSuggestions(query: string): void {
   previousImage(cardIndex: number): void {
     const result = this.paginatedResults[cardIndex];
     if (!result) {
-      console.log(`🖼️ Slider: Résultat non trouvé pour carte ${cardIndex}`);
       return;
     }
 
     const medias = this.getMediasForCard(result);
     if (medias.length <= 1) {
-      console.log(`🖼️ Slider: Pas d'image précédente pour carte ${cardIndex} (${medias.length} image(s))`);
       return;
     }
 
     const currentIndex = this.getCurrentImageIndex(cardIndex);
     const prevIndex = currentIndex === 0 ? medias.length - 1 : currentIndex - 1;
-    console.log(`🖼️ Slider: Image précédente carte ${cardIndex}: ${currentIndex} → ${prevIndex} (total: ${medias.length})`);
     this.setCurrentImage(cardIndex, prevIndex);
   }
 
@@ -1500,7 +1427,6 @@ private loadSuggestions(query: string): void {
    * Annulation du toucher sur une carte
    */
   onCardTouchCancel(event: TouchEvent, cardIndex: number): void {
-    console.log(`🖐️ Touch cancel carte ${cardIndex}`);
     delete this.cardTouchData[cardIndex];
   }
 
@@ -1637,12 +1563,10 @@ private loadSuggestions(query: string): void {
       if (this.cityResolver.isObjectId(this.currentFilters.city)) {
         // C'est un ID, le convertir en nom
         this.cityResolver.getCityNameById(this.currentFilters.city).subscribe(cityName => {
-          console.log('🔗 Conversion ID -> nom pour URL:', this.currentFilters.city, '->', cityName);
           this.buildAndNavigateUrl(cityName || this.currentFilters.city);
         });
       } else {
         // C'est déjà un nom
-        console.log('🔗 Utilisation du nom tel quel pour URL:', this.currentFilters.city);
         this.buildAndNavigateUrl(this.currentFilters.city);
       }
     } else {
@@ -1733,8 +1657,6 @@ private loadSuggestions(query: string): void {
       queryParams.page = this.currentPage;
     }
 
-    console.log('🔗 Mise à jour URL avec paramètres:', queryParams);
-
     // Remplacer tous les paramètres pour éviter les duplications
     this.router.navigate([], {
       relativeTo: this.route,
@@ -1777,8 +1699,6 @@ private loadSuggestions(query: string): void {
     });
   }
 
-
-
   /**
    * Gère le changement d'unité dans le modal
    */
@@ -1790,7 +1710,6 @@ private loadSuggestions(query: string): void {
    * Gère le contact avec le propriétaire
    */
   onContactOwner(unit: SearchPropertyModel): void {
-    console.log('🏠 Contact propriétaire pour:', unit.code || unit._id);
     // TODO: Implémenter la logique de contact
     // Peut ouvrir un modal de contact ou rediriger vers une page de contact
   }
@@ -1836,6 +1755,4 @@ private loadSuggestions(query: string): void {
       }
     }, 10000);
   }
-
-
 }

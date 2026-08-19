@@ -88,7 +88,6 @@ export class MonthlyRevenueAnalysisComponent implements OnInit, OnChanges, OnDes
           }
         },
         error: (error) => {
-          console.error('❌ Erreur lors du chargement des données mensuelles:', error);
           this.monthlyData = [];
         }
       });

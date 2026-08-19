@@ -72,7 +72,6 @@ export class PropertyGalleryComponent implements OnInit, OnDestroy {
     this.dialogRef.disableClose = true;
   }
   
-  
   ngOnInit(): void {
     this.loadMediaData();
     this.setupUploadSubscriptions();
@@ -112,7 +111,6 @@ export class PropertyGalleryComponent implements OnInit, OnDestroy {
           this.updateAllMediaItems();
           this.cdr.detectChanges();
         }).catch((error) => {
-          console.error('❌ Erreur lors du rafraîchissement des médias:', error);
         });
       }
     }, 100);
@@ -161,7 +159,6 @@ export class PropertyGalleryComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy$)
     ).subscribe((action) => {
       setTimeout(() => {
-        console.log('✅ Fichier supprimé avec succès');
         const fileUrl = action.removedUploadFile?.fileUrl;
         if (fileUrl) {
           this.deletingFiles.delete(fileUrl);
@@ -175,7 +172,6 @@ export class PropertyGalleryComponent implements OnInit, OnDestroy {
       ofActionErrored(UploadFilesAction.RemoveUploadedFile),
       takeUntil(this.destroy$)
     ).subscribe((action) => {
-      console.error('❌ Erreur lors de la suppression:', action);
       const fileUrl = action.removedUploadFile?.fileUrl;
       if (fileUrl) {
         this.deletingFiles.delete(fileUrl);

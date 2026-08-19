@@ -141,7 +141,6 @@ export class ModernTenantModalComponent implements OnInit, OnDestroy {
       ofActionSuccessful(LocataireAction.CreateLocataire),
       takeUntil(this.destroy$)
     ).subscribe(async (actionContext) => {
-      console.log('✅ Locataire créé avec succès');
 
       // Récupérer l'ID du locataire créé depuis le state
       const locataires = this.store.selectSnapshot(LocataireState.selectStateLocataires) as LocataireModel[];
@@ -152,13 +151,11 @@ export class ModernTenantModalComponent implements OnInit, OnDestroy {
 
       // Si une photo est sélectionnée, essayer de l'uploader avec l'ID réel
       if (this.selectedPhoto && createdTenant?._id) {
-        console.log('📸 Upload de la photo en cours...');
 
         try {
           const photoUrl = await this.uploadPhotoForTenant(createdTenant._id);
 
           if (photoUrl) {
-            console.log('✅ Photo uploadée avec succès:', photoUrl);
             // Afficher un message spécifique pour la photo
             this.toastr.success(
               this.translate.instant('NOTIFICATIONS_ADDITIONAL.TENANT_CREATED_WITH_PHOTO'),
@@ -172,7 +169,6 @@ export class ModernTenantModalComponent implements OnInit, OnDestroy {
             );
           }
         } catch (error) {
-          console.error('❌ Erreur lors de l\'upload de la photo:', error);
           // Afficher un message indiquant que le locataire est créé mais sans photo
           this.toastr.warning(
             this.translate.instant('NOTIFICATIONS_ADDITIONAL.TENANT_CREATED_PHOTO_ERROR'),
@@ -288,7 +284,6 @@ export class ModernTenantModalComponent implements OnInit, OnDestroy {
     if (!this.selectedPhoto) return null;
 
     this.isUploadingPhoto = true;
-    console.log('📤 Upload de photo pour locataire avec ID réel:', tenantId);
 
     try {
       const uploadObservable = this.uploadService.uploadFiles({
@@ -302,18 +297,14 @@ export class ModernTenantModalComponent implements OnInit, OnDestroy {
       );
 
       const uploadResult = await firstValueFrom(uploadObservable) as HttpResponse<any>;
-      console.log('✅ Upload réussi avec ID réel:', uploadResult);
 
       if (uploadResult && uploadResult.body && uploadResult.body.data && uploadResult.body.data.profilePicture) {
         const photoUrl = uploadResult.body.data.profilePicture;
-        console.log('📸 URL de la photo récupérée:', photoUrl);
         return photoUrl;
       } else {
-        console.warn('⚠️ Réponse d\'upload inattendue:', uploadResult);
         return null;
       }
     } catch (error) {
-      console.error('❌ Erreur lors de l\'upload de la photo:', error);
       throw error;
     } finally {
       this.isUploadingPhoto = false;
@@ -324,17 +315,10 @@ export class ModernTenantModalComponent implements OnInit, OnDestroy {
     if (!this.selectedPhoto) return null;
 
     this.isUploadingPhoto = true;
-    console.log('📤 Début de l\'upload de la photo de profil locataire');
 
     try {
       // Générer un ObjectId valide pour les nouveaux locataires
       const contentID = this.data.tenant?._id || this.generateObjectId();
-
-      console.log('📤 Upload de photo pour locataire:', {
-        isNewTenant: !this.data.tenant?._id,
-        contentID,
-        fileSize: this.selectedPhoto.size
-      });
 
       // Utiliser directement le service d'upload et filtrer pour obtenir la réponse finale
       const uploadObservable = this.uploadService.uploadFiles({
@@ -349,20 +333,15 @@ export class ModernTenantModalComponent implements OnInit, OnDestroy {
 
       const uploadResult = await firstValueFrom(uploadObservable) as HttpResponse<any>;
 
-      console.log('✅ Upload réussi:', uploadResult);
-
       // Extraire l'URL de la réponse
       if (uploadResult && uploadResult.body && uploadResult.body.data && uploadResult.body.data.profilePicture) {
         const photoUrl = uploadResult.body.data.profilePicture;
-        console.log('📸 URL de la photo récupérée:', photoUrl);
         return photoUrl;
       } else {
-        console.warn('⚠️ Pas d\'URL de photo dans la réponse:', uploadResult);
         return null;
       }
 
     } catch (error) {
-      console.error('❌ Erreur lors de l\'upload de la photo:', error);
       this.toastr.error(
         this.translate.instant('ERRORS_ADDITIONAL.UPLOAD_FAILED'),
         this.translate.instant('NOTIFICATIONS.ERROR')
@@ -394,7 +373,6 @@ export class ModernTenantModalComponent implements OnInit, OnDestroy {
         });
 
         delete tenantData.confirm;
-        console.log('👤 Création du locataire sans photo...');
         this.store.dispatch(new LocataireAction.CreateLocataire(tenantData));
 
         // La photo sera uploadée dans setupActionListeners après création réussie
@@ -403,7 +381,6 @@ export class ModernTenantModalComponent implements OnInit, OnDestroy {
         // Pour un locataire existant, uploader la photo d'abord si nécessaire
         let photoUrl = this.data.tenant?.profilePicture || null;
         if (this.selectedPhoto) {
-          console.log('📸 Upload de la photo pour locataire existant...');
           photoUrl = await this.uploadPhoto();
         }
 

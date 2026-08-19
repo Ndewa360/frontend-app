@@ -148,27 +148,6 @@ export class MenuConfigService {
             prefix: { type: 'icon', name: 'home' }
           }
         ]
-      },
-      {
-        groupName: 'Monitoring',
-        opened: false,
-        children: [
-          {
-            name: 'Système',
-            url: '/main/monitoring/system',
-            prefix: { type: 'icon', name: 'monitor' }
-          },
-          {
-            name: 'Analytics',
-            url: '/main/monitoring/analytics',
-            prefix: { type: 'icon', name: 'analytics' }
-          },
-          {
-            name: 'Logs',
-            url: '/main/monitoring/logs',
-            prefix: { type: 'icon', name: 'document--tasks' }
-          }
-        ]
       }
     ];
   }

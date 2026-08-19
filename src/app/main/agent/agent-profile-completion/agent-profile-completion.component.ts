@@ -57,13 +57,10 @@ export class AgentProfileCompletionComponent implements OnInit {
     // Récupérer les données utilisateur depuis le store
     this.currentUser = this.store.selectSnapshot(UserProfileState.selectStateUserProfile);
     
-    console.log('Current user data:', this.currentUser);
-    
     if (this.currentUser?.businessName) {
       this.profileForm.patchValue({
         businessName: this.currentUser.businessName
       });
-      console.log('Business name loaded:', this.currentUser.businessName);
     } else {
       // Si pas de données, essayer de les charger et réessayer
       this.store.dispatch(new UserProfileAction.FetchUserProfile());
@@ -74,7 +71,6 @@ export class AgentProfileCompletionComponent implements OnInit {
           this.profileForm.patchValue({
             businessName: user.businessName
           });
-          console.log('Business name updated from store:', user.businessName);
         }
       });
     }
@@ -132,18 +128,13 @@ export class AgentProfileCompletionComponent implements OnInit {
       xhr.addEventListener('load', () => {
         if (xhr.status >= 200 && xhr.status < 300) {
           const response = JSON.parse(xhr.responseText);
-          console.log('📦 Réponse upload pour', documentType, ':', response);
           
           // Vérifier la structure de la réponse
           const fileUrl = response.data?.fileUrl || response.data?.generatedUrl || response.data;
           this.uploadedFiles[documentType] = fileUrl;
           
-          console.log('📋 Fichier', documentType, 'uploadé vers:', fileUrl);
-          console.log('📋 État uploadedFiles:', this.uploadedFiles);
-          
           resolve(fileUrl);
         } else {
-          console.error('❌ Erreur upload status:', xhr.status, xhr.responseText);
           reject(new Error('Upload failed'));
         }
       });
@@ -158,32 +149,21 @@ export class AgentProfileCompletionComponent implements OnInit {
   }
 
   testClick(): void {
-    console.log('🔥 Bouton cliqué !');
     this.onSubmit();
   }
 
   async onSubmit(): Promise<void> {
-    console.log('🔥 onSubmit appelé!');
-    console.log('📋 État du formulaire:', {
-      valid: this.profileForm.valid,
-      invalid: this.profileForm.invalid,
-      errors: this.profileForm.errors,
-      values: this.profileForm.value
-    });
-    
     // Vérifier les champs obligatoires manuellement
     const requiredFields = ['businessName', 'businessAddress', 'verificationNumber'];
     const missingFields = requiredFields.filter(field => !this.profileForm.get(field)?.value);
     
     if (missingFields.length > 0) {
-      console.log('❌ Champs manquants:', missingFields);
       this.profileForm.markAllAsTouched();
       return;
     }
     
     // Vérifier qu'au moins le document de vérification est sélectionné
     if (!this.selectedFiles['verification']) {
-      console.log('❌ Document de vérification manquant');
       alert('Veuillez sélectionner un document d\'identité');
       return;
     }
@@ -198,12 +178,7 @@ export class AgentProfileCompletionComponent implements OnInit {
       }
       
       if (uploadPromises.length > 0) {
-        console.log('📤 Upload de', uploadPromises.length, 'fichiers...');
         const uploadResults = await Promise.all(uploadPromises);
-        console.log('✅ Résultats uploads:', uploadResults);
-        console.log('✅ Tous les fichiers uploadés:', this.uploadedFiles);
-      } else {
-        console.log('⚠️ Aucun fichier à uploader');
       }
 
       const userId = this.currentUser?._id;
@@ -224,21 +199,13 @@ export class AgentProfileCompletionComponent implements OnInit {
         businessLogoUrl: this.uploadedFiles['business-logo'] || ''
       };
 
-      console.log('📤 Envoi des données de profil vers API:', formData);
-      console.log('🎯 URL API:', `${environment.apiUrl}/agents/${userId}/complete-profile`);
-
       const response = await this.http.post(
         `${environment.apiUrl}/agents/${userId}/complete-profile`,
         formData
       ).toPromise();
 
-      console.log('✅ Réponse API profil complété:', response);
       this.router.navigate(['/app/agent/pending-approval']);
     } catch (error) {
-      console.error('❌ Erreur lors de la complétion du profil:', error);
-      if (error.error) {
-        console.error('❌ Détails de l\'erreur:', error.error);
-      }
     } finally {
       this.isSubmitting = false;
     }

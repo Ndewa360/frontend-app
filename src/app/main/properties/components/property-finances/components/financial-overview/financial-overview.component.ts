@@ -64,7 +64,6 @@ export class FinancialOverviewComponent implements OnInit, OnChanges, OnDestroy 
           }
         },
         error: (error) => {
-          console.error('Erreur chargement données financières:', error);
           this.resetMetrics();
         }
       });

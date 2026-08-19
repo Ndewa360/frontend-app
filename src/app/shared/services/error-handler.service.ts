@@ -21,16 +21,7 @@ export class ErrorHandlerService {
    */
   handleHttpError(error: HttpErrorResponse, context?: string): Observable<never> {
     const errorInfo = this.parseHttpError(error);
-    
-    // Log pour le debugging
-    console.error(`[${context || 'HTTP Error'}]`, {
-      status: error.status,
-      message: errorInfo.message,
-      url: error.url,
-      error: error.error
-    });
 
-    // Afficher le message à l'utilisateur (sauf si géré par le toast réseau persistant)
     if (errorInfo.code !== 'NO_INTERNET' && errorInfo.code !== 'SERVICE_UNAVAILABLE') {
       this.showErrorToast(errorInfo, context);
     }

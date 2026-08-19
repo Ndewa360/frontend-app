@@ -77,7 +77,6 @@ export class ContractTemplateSelectorComponent implements OnInit, OnDestroy, Con
           this.isLoading = false;
         },
         error: (error) => {
-          console.error('Erreur lors du chargement des modèles:', error);
           this.isLoading = false;
         }
       });
@@ -204,10 +203,8 @@ export class ContractTemplateSelectorComponent implements OnInit, OnDestroy, Con
         .subscribe(templates => {
           const found = templates.find(t => t._id === templateId);
           this.selectedTemplate = found || null;
-          if (!found) console.warn('Template non trouvé après rechargement:', templateId);
         });
     } else {
-      console.warn('Template non trouvé dans la liste:', templateId);
       this.selectedTemplate = null;
     }
   }

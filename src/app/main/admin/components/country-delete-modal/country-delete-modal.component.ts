@@ -52,7 +52,6 @@ export class CountryDeleteModalComponent implements OnInit, OnDestroy {
     this.adminGeographyService.getCitiesByCountry(this.data.country._id).pipe(
       takeUntil(this.destroy$),
       catchError(error => {
-        console.error('Erreur lors du chargement des villes:', error);
         this.citiesCount = 0;
         throw error;
       })
@@ -75,7 +74,6 @@ export class CountryDeleteModalComponent implements OnInit, OnDestroy {
     this.store.dispatch(new AdminGeographyAction.DeleteCountry(this.data.country._id)).pipe(
       takeUntil(this.destroy$),
       catchError(error => {
-        console.error('Erreur lors de la suppression du pays:', error);
         this.toastr.error('Erreur lors de la suppression du pays', 'Erreur');
         this.isLoading$.next(false);
         throw error;

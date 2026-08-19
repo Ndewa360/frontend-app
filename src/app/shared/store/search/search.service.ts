@@ -126,12 +126,6 @@ export class SearchService
             }
         });
 
-        console.log('🔍 Filtres envoyés à l\'API:', {
-            originalFilters: filters,
-            httpParams: params.toString(),
-            parsedParams: Object.fromEntries(params.keys().map(key => [key, params.get(key)]))
-        });
-
         return this._httpClient.get<ApiResultFormat<PaginatedSearchResponse>>(
             `${environment.apiUrl}/search/advanced`,
             { params }

@@ -198,7 +198,6 @@ export class ImageModalComponent {
     @Inject(MAT_DIALOG_DATA) public data: ImageModalData,
     private translate: TranslateService
   ) {
-    console.log('Modal data received:', data);
     this.currentIndex = data?.currentIndex || 0;
   }
   

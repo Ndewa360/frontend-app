@@ -178,7 +178,6 @@ export class SearchState{
     {
         let state = ctx.getState();
         let dataRooms = [...state.searchProperties];
-        console.log("Filter ",filter,isNewLocation)
         if(!isNewLocation)
         {
             if(!filter.ville) {
@@ -218,7 +217,6 @@ export class SearchState{
                 ...filter
             },
         })
-        console.log("Data Room ",dataRooms)
     }
 
 
@@ -301,16 +299,12 @@ export class SearchState{
             limit: filters.limit || 10000 // Limite backend élevée
         };
 
-        console.log('🔍 Recherche avancée avec filtres:', searchFilters);
-
         ctx.patchState({
             loadingSearch: true
         });
 
         return this._searchPropertiesService.advancedSearch(searchFilters).pipe(
             tap(result => {
-                console.log('✅ Résultats de recherche reçus:', result);
-                
                 const responseData = result.data;
                 const properties = responseData?.data || [];
                 const pagination = responseData?.pagination;
@@ -331,7 +325,6 @@ export class SearchState{
                 });
             }),
             catchError(error => {
-                console.error('❌ Erreur lors de la recherche avancée:', error);
                 ctx.patchState({
                     loadingSearch: false
                 });

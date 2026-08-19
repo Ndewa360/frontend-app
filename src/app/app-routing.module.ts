@@ -50,17 +50,6 @@ const routes: Routes = [
 				loadChildren: () => import('./main/search/search.module').then(m => m.SearchModule)
 			},
 			{
-				path: 'monitoring',
-				canActivate: [AuthGuard],
-				data: {
-					breadcrumb: 'Monitoring'
-				},
-				resolve: {
-					"initialData": InitialLoadingDataResolver
-				},
-				loadChildren: () => import('./monitoring/monitoring.module').then(m => m.MonitoringModule)
-			},
-			{
 				path: 'support',
 				resolve:{
 					"publicData": PublicDataResolver

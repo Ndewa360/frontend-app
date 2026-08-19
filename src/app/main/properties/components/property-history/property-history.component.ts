@@ -401,8 +401,6 @@ export class PropertyHistoryComponent implements OnInit, OnDestroy, OnChanges {
     this.isFiltersExpanded = !this.isFiltersExpanded;
   }
 
-
-
   // Méthodes utilitaires
   getEventTypeLabel(type: string): string {
     const labels = {
@@ -465,8 +463,6 @@ export class PropertyHistoryComponent implements OnInit, OnDestroy, OnChanges {
       minute: '2-digit'
     });
   }
-
-
 
   formatDateTime(date: Date | string | null | undefined): string {
     if (!date) return 'N/A';
@@ -639,9 +635,6 @@ export class PropertyHistoryComponent implements OnInit, OnDestroy, OnChanges {
     });
   }
 
-
-
-
   // === MÉTHODES POUR LES MODALS DE PAIEMENT ===
 
   /**
@@ -718,10 +711,8 @@ export class PropertyHistoryComponent implements OnInit, OnDestroy, OnChanges {
    * Affiche les détails d'un paiement
    */
   onViewPayment(payment: PaymentHistoryItem): void {
-    console.log('👁️ PropertyHistory: onViewPayment appelé', payment);
 
     if (!payment?.rawPayment) {
-      console.error('❌ Données de paiement manquantes pour la visualisation');
       this.toastr.error('Données de paiement manquantes', 'Erreur');
       return;
     }
@@ -782,23 +773,18 @@ export class PropertyHistoryComponent implements OnInit, OnDestroy, OnChanges {
    * Ouvre le modal de suppression d'un paiement
    */
   onDeletePayment(payment: PaymentHistoryItem): void {
-    console.log('🗑️ PropertyHistory: onDeletePayment appelé', payment);
 
     if (!payment?.rawPayment || !payment?.tenant) {
-      console.error('❌ Données de paiement manquantes pour la suppression');
       this.toastr.error('Données de paiement manquantes', 'Erreur');
       return;
     }
 
     if (!this.dialog) {
-      console.error('❌ Service MatDialog non disponible !');
       return;
     }
 
     // Construire les données nécessaires pour le modal
     const paymentData = this.buildPaymentModalData(payment);
-
-    console.log('🗑️ Ouverture du modal ModernDeletePaymentModalComponent...');
 
     try {
       const dialogRef = this.dialog.open(ModernDeletePaymentModalComponent, {
@@ -812,19 +798,14 @@ export class PropertyHistoryComponent implements OnInit, OnDestroy, OnChanges {
         }
       });
 
-      console.log('✅ Modal DeletePayment ouvert, dialogRef:', dialogRef);
-
       dialogRef.afterClosed().subscribe(result => {
-        console.log('🔄 Modal DeletePayment fermé avec résultat:', result);
         if (result) {
-          console.log('✅ Paiement supprimé avec succès');
           this.toastr.success('Paiement supprimé avec succès', 'Succès');
           // Recharger les données
           this.loadData();
         }
       });
     } catch (error) {
-      console.error('❌ Erreur lors de l\'ouverture du modal DeletePayment:', error);
       this.toastr.error('Erreur lors de l\'ouverture du modal', 'Erreur');
     }
   }
@@ -838,10 +819,6 @@ export class PropertyHistoryComponent implements OnInit, OnDestroy, OnChanges {
       minimumFractionDigits: 0
     }).format(amount);
   }
-
-
-
-
 
   getPaymentTypeLabel(type: LocationPaymentType): string {
     switch (type) {

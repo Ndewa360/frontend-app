@@ -69,9 +69,7 @@ export class GaleryComponent implements OnInit, OnDestroy {
     @Inject(MAT_DIALOG_DATA) public data: { room: RoomModel }
   ) {}
   
-  
   ngOnInit(): void {
-    console.log('📷 Initialisation de la galerie avec room:', this.data.room);
     
     // Initialisation directe avec les données de la room
     this.initializeDirectData();
@@ -83,10 +81,8 @@ export class GaleryComponent implements OnInit, OnDestroy {
   
   private async initializeDirectData(): Promise<void> {
     if (this.data.room?.medias && this.data.room.medias.length > 0) {
-      console.log('📷 Initialisation directe avec', this.data.room.medias.length, 'médias');
       try {
         const result = await MediaUtil.getStructMedia(this.data.room.medias);
-        console.log('📷 Résultat initialisation directe:', result);
         
         this.roomSelectedImages360 = result.images360;
         this.roomSelectedVideos = result.videos;
@@ -95,47 +91,36 @@ export class GaleryComponent implements OnInit, OnDestroy {
         this.isLoadingMedia = false;
         this.cdr.detectChanges();
       } catch (error) {
-        console.error('❌ Erreur lors de l\'initialisation directe:', error);
       }
     } else {
-      console.log('📷 Aucun média dans les données directes de la room');
       this.isLoadingMedia = false;
       this.cdr.detectChanges();
     }
   }
 
   private loadMediaData(): void {
-    console.log('📷 Chargement des médias pour la room:', this.data.room._id);
-    console.log('📷 Médias existants:', this.data.room.medias);
     
     this._store.select(RoomState.selectStateRoom(this.data.room._id))
       .pipe(
         takeUntil(this.destroy$),
         switchMap(async (room) => {
-          console.log('📷 Room récupérée du store:', room);
           
           if (room?.medias && room.medias.length > 0) {
-            console.log('📷 Traitement de', room.medias.length, 'médias');
             try {
               const result = await MediaUtil.getStructMedia(room.medias);
-              console.log('📷 Médias classés:', result);
               return result;
             } catch (error) {
-              console.error('❌ Erreur lors du traitement des médias:', error);
               return { images: [], videos: [], images360: [] };
             }
           }
           
-          console.log('📷 Aucun média trouvé pour cette room');
           return { images: [], videos: [], images360: [] };
         }),
         catchError((error) => {
-          console.error('❌ Erreur lors du chargement des médias:', error);
           return of({ images: [], videos: [], images360: [] });
         })
       )
       .subscribe((data) => {
-        console.log('📷 Données finales reçues:', data);
         this.roomSelectedImages360 = data.images360;
         this.roomSelectedVideos = data.videos;
         this.roomSelectedImages = data.images;
@@ -151,10 +136,6 @@ export class GaleryComponent implements OnInit, OnDestroy {
       ...this.roomSelectedVideos.map(url => ({ url, type: 'video' as const })),
       ...this.roomSelectedImages360.map(url => ({ url, type: '360' as const }))
     ];
-    console.log('📷 Tous les médias mis à jour:', this.allMediaItems);
-    console.log('📷 Images:', this.roomSelectedImages.length);
-    console.log('📷 Vidéos:', this.roomSelectedVideos.length);
-    console.log('📷 360°:', this.roomSelectedImages360.length);
   }
 
   private setupUploadSubscriptions(): void {
@@ -193,7 +174,6 @@ export class GaleryComponent implements OnInit, OnDestroy {
       ofActionSuccessful(UploadFilesAction.RemoveUploadedFile),
       takeUntil(this.destroy$)
     ).subscribe(() => {
-      console.log('✅ Fichier supprimé avec succès');
       // Recharger les données de la room depuis le serveur
       this._store.dispatch(new RoomAction.FetchRoom(this.data.room._id));
     });
@@ -204,7 +184,6 @@ export class GaleryComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy$)
     ).subscribe((action) => {
       const sanitizedError = JSON.stringify(action).replace(/[\r\n]/g, ' ');
-      console.error('❌ Erreur lors de la suppression:', sanitizedError);
       // Retirer le fichier de la liste des suppressions en cours en cas d'erreur
       const fileUrl = action.removedUploadFile?.fileUrl;
       if (fileUrl) {
@@ -253,8 +232,6 @@ export class GaleryComponent implements OnInit, OnDestroy {
       }
     }
   }
-
-
 
   // Méthodes publiques
   deleteFile(urlFile: string): void {

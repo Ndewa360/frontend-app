@@ -54,7 +54,6 @@ export class ModernDeletePaymentModalComponent implements OnInit, OnDestroy {
       ofActionSuccessful(LocationPaymentAction.DeleteLocationPayment),
       takeUntil(this.destroy$)
     ).subscribe(() => {
-      console.log('✅ Paiement supprimé avec succès');
       this.isLoading = false;
       this.toastr.success(this.translate.instant('NOTIFICATIONS.PAYMENT_DELETED_MODAL_SUCCESS'), 'Ndewa360°');
       
@@ -69,7 +68,6 @@ export class ModernDeletePaymentModalComponent implements OnInit, OnDestroy {
       ofActionErrored(LocationPaymentAction.DeleteLocationPayment),
       takeUntil(this.destroy$)
     ).subscribe((ctx) => {
-      console.error('❌ Erreur lors de la suppression du paiement:', ctx);
       this.isLoading = false;
       const errorMessage = this.getErrorMessage(ctx);
       this.toastr.error(errorMessage, 'Erreur de suppression');
@@ -86,11 +84,6 @@ export class ModernDeletePaymentModalComponent implements OnInit, OnDestroy {
 
     this.isLoading = true;
 
-    console.log('🗑️ Suppression du paiement:', {
-      transactionId: this.data.transaction._id,
-      tenantId: this.data.history.locataire._id,
-      propertyId: this.data.history.property._id
-    });
 
     // Utiliser l'action de suppression corrigée
     this.store.dispatch(new LocationPaymentAction.DeleteLocationPayment(
@@ -225,15 +218,10 @@ export class ModernDeletePaymentModalComponent implements OnInit, OnDestroy {
     const currentYear = new Date().getFullYear();
     
     if (propertyId) {
-      console.log('🔄 Déclenchement du rafraîchissement des statistiques après suppression pour:', {
-        propertyId,
-        year: currentYear
-      });
-      
+             
       // Déclencher le rafraîchissement des statistiques
       this.store.dispatch(new StatisticAction.RefreshStatisticAfterPayment(propertyId, currentYear));
     } else {
-      console.warn('⚠️ Impossible de rafraîchir les statistiques: propertyId manquant');
     }
   }
 }

@@ -203,7 +203,6 @@ export class DepositsSummaryComponent implements OnInit, OnChanges {
   }
 
   private calculateGlobalStats(): void {
-    console.log('📊 Statistiques globales des cautions chargées depuis le backend');
   }
   
   getMonthName(monthNumber: number): string {

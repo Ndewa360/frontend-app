@@ -96,7 +96,6 @@ export class LayoutMiniSidebarComponent implements OnInit, OnDestroy {
   private checkIfUserIsAdmin(user: any): boolean {
     // Vérifier uniquement les rôles de l'utilisateur (plus de vérification par email)
     if (!user.roles || !Array.isArray(user.roles)) {
-      console.log('❌ Admin access denied - No roles found for user:', user.email);
       return false;
     }
 
@@ -107,17 +106,9 @@ export class LayoutMiniSidebarComponent implements OnInit, OnDestroy {
     });
 
     if (hasAdminRole) {
-      console.log('✅ Admin access granted via role for user:', {
-        email: user.email,
-        roles: user.roles.map((role: any) => typeof role === 'string' ? role : role.name)
-      });
       return true;
     }
 
-    console.log('❌ Admin access denied - No admin role found for user:', {
-      email: user.email,
-      roles: user.roles.map((role: any) => typeof role === 'string' ? role : role.name)
-    });
     return false;
   }
 

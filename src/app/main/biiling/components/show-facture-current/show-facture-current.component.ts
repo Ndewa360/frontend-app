@@ -218,7 +218,6 @@ export class ShowFactureCurrentComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       },
       error: (error) => {
-        console.error('Erreur lors de la mise à jour du statut:', error);
         foundRoom.isLoading.next(false);
         // Remettre l'ancien état en cas d'erreur
         foundRoom.value.next(!event);
@@ -251,7 +250,6 @@ export class ShowFactureCurrentComponent implements OnInit, OnDestroy {
         }
       },
       error: (error) => {
-        console.error('Erreur lors du chargement de la période actuelle:', error);
       }
     });
   }

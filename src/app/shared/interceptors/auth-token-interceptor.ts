@@ -13,7 +13,6 @@ import { UserActivityService } from "../store/auth-token/user-activity.service";
 import { TranslateService } from "@ngx-translate/core";
 import { LanguagePreservationService } from "../services/language-preservation.service";
 
-
 @Injectable()
 export class AuthTokenInterceptor implements HttpInterceptor {
   private isRefreshing = false;
@@ -102,7 +101,6 @@ export class AuthTokenInterceptor implements HttpInterceptor {
 
     // Gestion des erreurs de réseau (laisser NetworkStatusService gérer l'affichage persistant)
     if (error.status === 0) {
-      console.error('🔴 Erreur de réseau:', error);
       // Ne pas afficher de toast ici pour éviter le spam. Le NetworkStatusService affiche un message persistant unique.
       this._store.dispatch(new GlobalAction.SetConnexionInternetState(false));
     } else if (!this.shouldSkipErrorDisplay(error, originalRequest)) {
@@ -185,7 +183,6 @@ export class AuthTokenInterceptor implements HttpInterceptor {
         catchError(error => {
           // Si le timeout est atteint, forcer une déconnexion
           if (error.name === 'TimeoutError') {
-            console.error('⏰ Timeout lors de l\'attente du rafraîchissement');
             const timeoutMessage = this.translate.instant('NOTIFICATIONS.NETWORK_ERROR');
             const connectionTitle = `Ndewa360° - ${this.translate.instant('COMMON.WARNING')}`;
             this._toastrService.warning(timeoutMessage, connectionTitle, { timeOut: 10000, extendedTimeOut: 5000 });
@@ -251,7 +248,6 @@ export class AuthTokenInterceptor implements HttpInterceptor {
   private shouldSkipErrorDisplay(error: HttpErrorResponse, request: HttpRequest<any>): boolean {
     // Ignorer les erreurs 404 pour la vérification de liens de paiement existants
     if (error.status === 404 && request.url.includes('/payment-link/existing/')) {
-      console.log('ℹ️ Erreur 404 ignorée pour vérification de lien de paiement:', request.url);
       return true;
     }
 

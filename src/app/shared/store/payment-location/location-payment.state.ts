@@ -140,14 +140,12 @@ export class LocationPaymentState{
                     if (locataireId) {
                         ctx.dispatch(new HistoryLocationPaymentAction.DeleteHistoryLocationPaymentTransaction(locationPaymentId, locataireId));
                     } else {
-                        console.warn('⚠️ ID de locataire manquant pour la suppression de l\'historique');
                     }
 
                     // Rafraîchissement des statistiques
                     if (propertyID) {
                         ctx.dispatch(new StatisticAction.RefreshStaticLocataireDataByPropertyIdAndYear(propertyID, `${new Date().getFullYear()}`));
                     } else {
-                        console.warn('⚠️ ID de propriété manquant pour le rafraîchissement des statistiques');
                     }
                 }
             ),
@@ -155,7 +153,6 @@ export class LocationPaymentState{
                 ctx.patchState({
                     loadingLocationPayment: false
                 })
-                console.error('Erreur lors de la suppression du paiement:', error);
                 this._toastrService.error(this._translateService.instant('NOTIFICATIONS.PAYMENT_DELETE_ERROR'), 'Erreur');
                 return throwError(error);
             })
@@ -187,7 +184,6 @@ export class LocationPaymentState{
                     if (locataireID) {
                         ctx.dispatch(new HistoryLocationPaymentAction.UpdateHistoryLocationPaymentTransaction(id, locataireID, result.data));
                     } else {
-                        console.warn('⚠️ ID de locataire manquant pour la mise à jour de l\'historique');
                     }
 
                     // Rafraîchissement des statistiques
@@ -195,7 +191,6 @@ export class LocationPaymentState{
                     if (propertyId) {
                         ctx.dispatch(new StatisticAction.RefreshStaticLocataireDataByPropertyIdAndYear(propertyId, `${new Date().getFullYear()}`));
                     } else {
-                        console.warn('⚠️ ID de propriété manquant pour le rafraîchissement des statistiques');
                     }
                 }
             ),
@@ -268,7 +263,6 @@ export class LocationPaymentState{
                     if (tenantId) {
                         ctx.dispatch(new HistoryLocationPaymentAction.AddHistoryLocationPaymentTransaction(tenantId, result.data));
                     } else {
-                        console.warn('⚠️ ID de locataire manquant pour la mise à jour de l\'historique');
                     }
 
                     // Rafraîchissement des statistiques
@@ -276,7 +270,6 @@ export class LocationPaymentState{
                     if (propertyId) {
                         ctx.dispatch(new StatisticAction.RefreshStaticLocataireDataByPropertyIdAndYear(propertyId, `${new Date().getFullYear()}`));
                     } else {
-                        console.warn('⚠️ ID de propriété manquant pour le rafraîchissement des statistiques');
                     }
                     this._toastrService.success(this._translateService.instant('NOTIFICATIONS.PAYMENT_CREATED_SUCCESS'), 'Ndewa360°');
 
@@ -286,7 +279,6 @@ export class LocationPaymentState{
                 ctx.patchState({
                     loadingLocationPayment: false
                 })
-                console.error('Erreur lors de l\'ajout du paiement:', error);
                 this._toastrService.error(this._translateService.instant('NOTIFICATIONS.PAYMENT_CREATE_ERROR'), 'Erreur');
                 return throwError(error);
             })

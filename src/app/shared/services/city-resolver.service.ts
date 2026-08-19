@@ -21,7 +21,6 @@ export class CityResolverService {
 
     // Si c'est déjà un ID, le retourner directement
     if (this.isObjectId(cityName)) {
-      console.log(`🏙️ "${cityName}" est déjà un ID`);
       return of(cityName);
     }
 
@@ -29,8 +28,6 @@ export class CityResolverService {
       filter(cities => cities && cities.length > 0),
       take(1),
       map((cities: CityModel[]) => {
-        console.log(`🏙️ Recherche de la ville "${cityName}" dans ${cities.length} villes`);
-
         const normalizedSearchName = this.normalizeCityName(cityName);
 
         // Recherche exacte d'abord
@@ -47,11 +44,6 @@ export class CityResolverService {
         }
 
         const result = foundCity ? foundCity._id : null;
-        console.log(`🏙️ Conversion nom -> ID: "${cityName}" -> "${result}"`);
-
-        if (!result) {
-          console.log('🏙️ Villes disponibles:', cities.map(c => c.fullName));
-        }
 
         return result;
       })
@@ -72,7 +64,6 @@ export class CityResolverService {
       map((cities: CityModel[]) => {
         const foundCity = cities.find(city => city._id === cityId);
         const result = foundCity ? foundCity.fullName : null;
-        console.log(`🏙️ Conversion ID -> nom: "${cityId}" -> "${result}"`);
         return result;
       })
     );
@@ -111,7 +102,6 @@ export class CityResolverService {
           }
         }
 
-        console.log(`🏙️ Recherche ville: "${identifier}" -> ${foundCity ? foundCity.fullName : 'non trouvée'}`);
         return foundCity || null;
       })
     );

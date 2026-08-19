@@ -114,7 +114,6 @@ export class SubscriptionDashboardComponent implements OnInit, OnDestroy {
       if (isSafeUrl) {
         window.location.href = redirectUrl;
       } else {
-        console.error('Redirection bloquée : URL non autorisée', redirectUrl);
       }
     });
   }

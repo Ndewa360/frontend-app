@@ -56,7 +56,6 @@ export class AgentProfileGuard implements CanActivate {
 
       return false;
     } catch (error) {
-      console.error('Error checking agent profile:', error);
       this.router.navigate(['/app/agent/complete-profile']);
       return false;
     }

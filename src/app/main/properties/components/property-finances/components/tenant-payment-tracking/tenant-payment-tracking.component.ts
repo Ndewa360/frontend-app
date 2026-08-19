@@ -9,8 +9,6 @@ import { PropertyFinancialManagerService } from 'src/app/main/properties/service
 // Type exact du store : {key: string, data: EnrichedStatisticData}
 export type StoredPropertyStatistic = { key: string; data: EnrichedStatisticData };
 
-
-
 export interface PaymentSummary {
   totalTenants: number;
   upToDateTenants: number;
@@ -199,8 +197,6 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
     this.updatePagination();
   }
 
-
-
   private calculatePaymentSummary(): void {
     // Les données sont déjà chargées depuis le backend dans processTenantPaymentData()
     // Aucun recalcul nécessaire
@@ -327,7 +323,6 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
     if (tenant.status === 'late') return Math.max(20, tenant.paymentRate * 0.8);
     return 0;
   }
-
 
   exportToExcel(): void {
     const data = this.prepareExportData();
@@ -460,7 +455,6 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
 
   selectTenant(tenant: TenantTrackingData): void {
     // Logique pour sélectionner un locataire (ouvrir un modal de détails par exemple)
-    console.log('Tenant selected:', tenant);
   }
 
   Math = Math; // Exposer Math pour le template

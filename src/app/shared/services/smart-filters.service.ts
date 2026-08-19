@@ -42,7 +42,6 @@ export class SmartFiltersService {
 
     this.filtersSubject.next(smartFilters);
     this.modifiedFields.clear();
-    console.log('🔧 Filtres intelligents initialisés:', smartFilters);
   }
 
   /**
@@ -76,7 +75,6 @@ export class SmartFiltersService {
       };
 
       this.filtersSubject.next(updatedFilters);
-      console.log(`🔧 Filtre mis à jour: ${fieldName} =`, value, `(modifié: ${isModified}, actif: ${isActive})`);
     }
   }
 
@@ -100,9 +98,6 @@ export class SmartFiltersService {
       }
     });
 
-    console.log('🎯 Filtres actifs:', activeFilters);
-    console.log('📝 Champs modifiés:', Array.from(this.modifiedFields));
-    
     return activeFilters;
   }
 
@@ -139,7 +134,6 @@ export class SmartFiltersService {
 
     this.filtersSubject.next(resetFilters);
     this.modifiedFields.clear();
-    console.log('🔄 Filtres réinitialisés');
   }
 
   /**
@@ -164,7 +158,6 @@ export class SmartFiltersService {
 
       this.filtersSubject.next(updatedFilters);
       this.modifiedFields.delete(fieldName);
-      console.log(`🔄 Filtre réinitialisé: ${fieldName}`);
     }
   }
 
@@ -260,7 +253,5 @@ export class SmartFiltersService {
         this.markFieldAsModified(key);
       }
     });
-    
-    console.log('🔗 Filtres chargés depuis l\'URL:', urlParams);
   }
 }

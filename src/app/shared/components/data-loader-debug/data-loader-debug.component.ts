@@ -186,7 +186,6 @@ export class DataLoaderDebugComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(state => {
         this.currentState = state;
-        console.log('🔍 Debug Loader - État mis à jour:', state);
       });
   }
 

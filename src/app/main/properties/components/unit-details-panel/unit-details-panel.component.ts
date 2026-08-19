@@ -99,15 +99,9 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
     this.currentUser = this.store.selectSnapshot(UserProfileState.selectStateUserProfile);
     this.isAgent = this.currentUser?.userType === 'AGENT';
     
-    console.log('🔍 UnitDetailsPanel - Utilisateur depuis store:', this.currentUser);
-    console.log('🔍 UnitDetailsPanel - Est agent:', this.isAgent);
-    console.log('🔍 UnitDetailsPanel - UserType:', this.currentUser?.userType);
-    
     // Initialiser les onglets avec les traductions et filtrer selon le rôle
     this.initializeTabs();
     this.updateTabsForUserRole();
-    
-    console.log('🔍 UnitDetailsPanel - Onglets après filtrage:', this.tabs);
     
     // S'abonner aux changements du profil utilisateur
     this.store.select(UserProfileState.selectStateUserProfile)
@@ -117,7 +111,6 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
           this.currentUser = userProfile;
           this.isAgent = this.currentUser?.userType === 'AGENT';
           this.updateTabsForUserRole();
-          console.log('🔄 UnitDetailsPanel - Profil utilisateur mis à jour:', this.currentUser);
         }
       });
     
@@ -135,7 +128,6 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
         this.animateContentChange();
       } else if (currentRoomId === previousRoomId && currentRoomId) {
         // Même unité mais données mises à jour (ex: après modification de galerie)
-        console.log('🔄 UnitDetailsPanel: Même unité détectée avec nouvelles données, rechargement');
         this.loadUnitData();
       }
     }
@@ -183,7 +175,6 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
       .pipe(takeUntil(this.destroy$))
       .subscribe(updatedRoom => {
         if (updatedRoom && updatedRoom._id === this.room._id) {
-          console.log('🔄 UnitDetailsPanel: Room mise à jour depuis le store', updatedRoom);
           // Mettre à jour la room locale
           this.room = updatedRoom as RoomModel;
           
@@ -346,12 +337,8 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-
-
   onEditGallery(): void {
-    console.log('🎨 UnitDetailsPanel: onEditGallery appelé', this.room);
     if (this.room) {
-      console.log('🎨 UnitDetailsPanel: Émission de l\'action edit_gallery');
       this.action.emit({
         type: 'edit_gallery',
         room: this.room
@@ -363,7 +350,6 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
    * Méthode pour recharger les données de l'unité après modification de la galerie
    */
   refreshUnitData(): void {
-    console.log('🔄 UnitDetailsPanel: Rechargement des données de l\'unité');
     if (this.room && this.propertyId) {
       this.loadUnitData();
     }
@@ -395,9 +381,7 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   onGeneratePaymentLink(): void {
-    console.log('🔗 UnitDetailsPanel: onGeneratePaymentLink appelé', this.room);
     if (this.room) {
-      console.log('🔗 UnitDetailsPanel: Émission de l\'action generate_payment_link');
       this.action.emit({
         type: 'generate_payment_link',
         room: this.room,
@@ -417,15 +401,11 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
    * Construit les données de paiement nécessaires pour les modals
    */
   private buildPaymentModalData(payment: any): {transaction: any, history: any} {
-    console.log('🔧 buildPaymentModalData appelé avec:', payment);
-    console.log('🔧 unitData:', this.unitData);
-    console.log('🔧 unitData.tenant:', this.unitData?.tenant);
 
     // Récupérer le locataire depuis les données de l'unité ou depuis le paiement
     const tenant = this.unitData?.tenant || payment.locataire || null;
 
     if (!tenant) {
-      console.error('❌ Aucun locataire trouvé pour construire les données de paiement');
       throw new Error('Aucun locataire trouvé pour ce paiement');
     }
 
@@ -437,8 +417,6 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
       property: { _id: this.propertyId },
       transactions: [payment]
     };
-
-    console.log('✅ Données construites:', { transaction: payment, history });
 
     return {
       transaction: payment,
@@ -477,38 +455,32 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
    * Ouvrir le modal de modification d'un paiement
    */
   onEditPayment(payment: any): void {
-    console.log('🔧 UnitDetailsPanel: onEditPayment appelé', payment);
 
     // Vérifier si les données ont la structure correcte
     if (!payment) {
-      console.error('❌ Aucune donnée de paiement fournie');
       this.toastr.error('Aucune donnée de paiement fournie', 'Erreur');
       return;
     }
 
     // Si les données ont déjà la structure {transaction, history}
     if (payment.transaction && payment.history) {
-      console.log('✅ Structure {transaction, history} détectée');
       this.openUpdatePaymentModal(payment.transaction, payment.history);
       return;
     }
 
     // Si c'est un objet LocationPaymentModel direct, construire la structure
     if (payment._id || payment.locationPaymentPrice) {
-      console.log('✅ Structure LocationPaymentModel détectée, construction des données...');
 
       try {
         const paymentData = this.buildPaymentModalData(payment);
         this.openUpdatePaymentModal(paymentData.transaction, paymentData.history);
         return;
       } catch (error) {
-        console.error('❌ Erreur lors de la construction des données:', error);
         this.toastr.error('Impossible de construire les données de paiement: ' + error.message, 'Erreur');
         return;
       }
     }
 
-    console.error('❌ Structure de données de paiement non reconnue:', payment);
     this.toastr.error('Structure de données de paiement non reconnue', 'Erreur');
   }
 
@@ -517,7 +489,6 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
    */
   private openUpdatePaymentModal(transaction: any, history: any): void {
     if (!this.dialog) {
-      console.error('❌ Service MatDialog non disponible !');
       return;
     }
 
@@ -543,7 +514,6 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
         }
       });
     } catch (error) {
-      console.error('❌ Erreur lors de l\'ouverture du modal UpdatePayment:', error);
       this.toastr.error('Erreur lors de l\'ouverture du modal', 'Erreur');
     }
   }
@@ -552,49 +522,33 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
    * Ouvrir le modal de suppression d'un paiement
    */
   onDeletePaymentModal(payment: any): void {
-    console.log('🗑️ UnitDetailsPanel: onDeletePaymentModal appelé avec:', payment);
-    console.log('🔍 Type de payment:', typeof payment);
-    console.log('🔍 Clés de payment:', payment ? Object.keys(payment) : 'null');
 
     // Vérifier si les données ont la structure correcte
     if (!payment) {
-      console.error('❌ Aucune donnée de paiement fournie');
       this.toastr.error('Aucune donnée de paiement fournie', 'Erreur');
       return;
     }
 
     // Si les données ont déjà la structure {transaction, history}
-    console.log('🔍 Vérification payment.transaction:', !!payment.transaction);
-    console.log('🔍 Vérification payment.history:', !!payment.history);
 
     if (payment.transaction && payment.history) {
-      console.log('✅ Structure {transaction, history} détectée');
-      console.log('🔍 Transaction:', payment.transaction);
-      console.log('🔍 History:', payment.history);
       this.openDeletePaymentModal(payment.transaction, payment.history);
       return;
     }
 
     // Si c'est un objet LocationPaymentModel direct, construire la structure
     if (payment._id || payment.locationPaymentPrice) {
-      console.log('✅ Structure LocationPaymentModel détectée, construction des données...');
-      console.log('🔍 Payment ID:', payment._id);
-      console.log('🔍 Payment Price:', payment.locationPaymentPrice);
 
       try {
         const paymentData = this.buildPaymentModalData(payment);
-        console.log('🔍 PaymentData construit:', paymentData);
         this.openDeletePaymentModal(paymentData.transaction, paymentData.history);
         return;
       } catch (error) {
-        console.error('❌ Erreur lors de la construction des données:', error);
         this.toastr.error('Impossible de construire les données de paiement: ' + error.message, 'Erreur');
         return;
       }
     }
 
-    console.error('❌ Structure de données de paiement non reconnue:', payment);
-    console.log('🔍 Propriétés disponibles:', payment ? Object.keys(payment) : 'aucune');
     this.toastr.error('Structure de données de paiement non reconnue', 'Erreur');
   }
 
@@ -603,11 +557,8 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
    */
   private openDeletePaymentModal(transaction: any, history: any): void {
     if (!this.dialog) {
-      console.error('❌ Service MatDialog non disponible !');
       return;
     }
-
-    console.log('🗑️ Ouverture du modal ModernDeletePaymentModalComponent...');
 
     try {
       const dialogRef = this.dialog.open(ModernDeletePaymentModalComponent, {
@@ -621,19 +572,14 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
         }
       });
 
-      console.log('✅ Modal DeletePayment ouvert, dialogRef:', dialogRef);
-
       dialogRef.afterClosed().subscribe(result => {
-        console.log('🔄 Modal DeletePayment fermé avec résultat:', result);
         if (result) {
-          console.log('✅ Paiement supprimé avec succès');
           this.toastr.success('Paiement supprimé avec succès', 'Succès');
           // Recharger les données de l'unité
           this.loadUnitData();
         }
       });
     } catch (error) {
-      console.error('❌ Erreur lors de l\'ouverture du modal DeletePayment:', error);
       this.toastr.error('Erreur lors de l\'ouverture du modal', 'Erreur');
     }
   }
@@ -650,22 +596,17 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
         this.onViewReceipt(paymentAction.data);
         break;
       case 'edit':
-        console.log("Edit payment ",paymentAction)
         this.onEditPayment(paymentAction.data);
         break;
       case 'delete':
         this.onDeletePaymentModal(paymentAction.data);
         break;
       case 'export':
-        console.log('Export CSV effectué');
         break;
     }
   }
 
-
-
   onPaymentAdded(payment: any): void {
-    console.log('Paiement ajouté:', payment);
     // Recharger les données de l'unité
     if (this.room && this.propertyId) {
       this.loadUnitData();
@@ -957,8 +898,6 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
     });
   }
 
-
-
   is360Media(media: any): boolean {
     if (typeof media === 'string') {
       return false; // Les strings ne peuvent pas être des 360°
@@ -986,8 +925,6 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
     }
     return media.id || media._id || index.toString();
   }
-
-
 
   openImageViewer(url: string): void {
     // Ouvrir le visualiseur d'image
@@ -1085,8 +1022,6 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
     });
   }
 
-
-
   deleteMedia(media: any): void {
     // Émettre l'action pour supprimer le média
     this.action.emit({
@@ -1109,11 +1044,8 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
    */
   onEditUnit(): void {
     if (!this.room) {
-      console.error('❌ Aucune unité sélectionnée pour l\'édition');
       return;
     }
-
-    console.log('🔧 UnitDetailsPanel: onEditUnit appelé', this.room);
 
     this.action.emit({
       type: 'edit',

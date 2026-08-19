@@ -231,7 +231,6 @@ export class RoomState{
         const state = ctx.getState();
         let index = state.rooms.findIndex((u)=>u._id==roomId);
 
-        console.log("Load Room", roomId)
         ctx.patchState({
             loadingRoom:true
         })
@@ -270,7 +269,6 @@ export class RoomState{
             tap(
                 result => {
                     let roomState = [...state.rooms];
-                    console.log("Prop ",roomState[index].property)
                     ctx.dispatch(new PropertyAction.ChangePropertyRoomLength(roomState[index].property));
                     roomState.splice(index, 1)
                     this._toastrService.success(this._translateService.instant('NOTIFICATIONS.ROOM_DELETED_SUCCESS'), 'Ndewa360°');

@@ -23,15 +23,9 @@ export class PropertiesTourService {
 
   // Tour principal du module propriétés
   startPropertiesMainTour(): void {
-    console.log('PropertiesTourService: startPropertiesMainTour called');
-    
     if (this.hasTourBeenSeen('properties_main')) {
-      console.log('Tour already seen, skipping...');
       return;
     }
-    
-    console.log('Starting properties main tour...');
-
     this.tourSteps = [
       {
         id: 'welcome',
@@ -189,7 +183,6 @@ export class PropertiesTourService {
   }
 
   private startTour(tourId: string): void {
-    console.log('Starting tour with ID:', tourId);
     this.showTourStep(0, tourId);
   }
 
@@ -612,7 +605,6 @@ export class PropertiesTourService {
 
   private hasTourBeenSeen(tourId: string): boolean {
     const seen = localStorage.getItem(`ndewa_tour_${tourId}`) === 'completed';
-    console.log(`Tour ${tourId} has been seen:`, seen);
     return seen;
   }
 

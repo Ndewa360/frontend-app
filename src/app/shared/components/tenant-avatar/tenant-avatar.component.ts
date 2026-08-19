@@ -60,7 +60,6 @@ export class TenantAvatarComponent implements OnInit, OnChanges {
   onAvatarClick(): void {
     if (this.clickable) {
       // Émettre un événement ou naviguer
-      console.log('Avatar cliqué:', this.tenant);
     }
   }
 }

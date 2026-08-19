@@ -24,11 +24,8 @@ export class PropertyDetailsResolver implements Resolve<any> {
         const propertyId = route.paramMap.get('id');
         
         if (!propertyId) {
-            console.error("❌ PropertyDetailsResolver: Aucun ID de propriété fourni");
             return of(false);
         }
-
-        console.log(`🔄 PropertyDetailsResolver - Chargement des données pour la propriété ${propertyId}`);
 
         // Toujours forcer le chargement de la propriété (gère aussi les biens gérés)
         this._store.dispatch(new PropertyAction.FetchPropertyForced(propertyId));
@@ -45,23 +42,18 @@ export class PropertyDetailsResolver implements Resolve<any> {
         return combineLatest([
             this._store.select((state) => state.rooms.initLoadingState).pipe(
                 skipWhile((state) => state === "LOADING"),
-                tap(() => console.log("✅ Chambres chargées"))
             ),
             this._store.select((state) => state.locataires.initLoadingState).pipe(
                 skipWhile((state) => state === "LOADING"),
-                tap(() => console.log("✅ Locataires chargés"))
             ),
             this._store.select((state) => state.locations.initLoadingState).pipe(
                 skipWhile((state) => state === "LOADING"),
-                tap(() => console.log("✅ Locations chargées"))
             ),
             this._store.select((state) => state.locationPayments.initLoadingState).pipe(
                 skipWhile((state) => state === "LOADING"),
-                tap(() => console.log("✅ Paiements de location chargés"))
             ),
             this._store.select((state) => state.historyLocationPayments.initLoadingState).pipe(
                 skipWhile((state) => state === "LOADING"),
-                tap(() => console.log("✅ Historique des paiements chargé"))
             )
         ]).pipe(
             take(1),
@@ -71,7 +63,6 @@ export class PropertyDetailsResolver implements Resolve<any> {
                 timestamp: new Date()
             })),
             catchError((error) => {
-                console.error(`❌ Erreur lors du chargement des données de la propriété ${propertyId}:`, error);
                 return of({ propertyId, dataLoaded: false, error: error.message, timestamp: new Date() });
             })
         );

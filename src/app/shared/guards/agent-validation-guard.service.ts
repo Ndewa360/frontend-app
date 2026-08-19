@@ -69,7 +69,6 @@ export class AgentValidationGuard implements CanActivate {
       this.router.navigateByUrl('/app/agent/complete-profile', { replaceUrl: true });
       return false;
     } catch (error) {
-      console.error('Error checking agent validation:', error);
       this.router.navigateByUrl('/app/agent/complete-profile', { replaceUrl: true });
       return false;
     }

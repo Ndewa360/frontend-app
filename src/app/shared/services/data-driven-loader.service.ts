@@ -54,7 +54,6 @@ export class DataDrivenLoaderService {
     '/app/assign-location':    { route: '/app/assign-location',    requiredStores: ['userprofile.initLoadingState', 'properties.initLoadingState'], customMessage: 'Chargement…', minLoadingTime: 0 },
     '/app/welcome':            { route: '/app/welcome',            requiredStores: ['userprofile.initLoadingState'], customMessage: 'Bienvenue sur Ndewa360°…',        minLoadingTime: 0 },
     '/admin':                  { route: '/admin',                  requiredStores: ['userprofile.initLoadingState'], customMessage: 'Chargement de l\'administration…', minLoadingTime: 0 },
-    '/monitoring':             { route: '/monitoring',             requiredStores: ['userprofile.initLoadingState'], customMessage: 'Chargement du monitoring…',       minLoadingTime: 0 },
     '/search':                 { route: '/search',                 requiredStores: ['countries.initLoadingState'],  customMessage: 'Chargement de la recherche…',     minLoadingTime: 0 },
     '/auth':                   { route: '/auth',                   requiredStores: [],                              customMessage: '',                                minLoadingTime: 0 },
     '/payment':                { route: '/payment',                requiredStores: [],                              customMessage: '',                                minLoadingTime: 0 },

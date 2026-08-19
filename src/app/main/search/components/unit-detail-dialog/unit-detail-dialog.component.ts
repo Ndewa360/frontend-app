@@ -292,7 +292,6 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
   }
 
   onTouchCancel(event: TouchEvent): void {
-    console.log('🖐️ Touch cancel dans dialog');
     // Réinitialiser les variables de toucher
     this.touchStartX = 0;
     this.touchEndX = 0;
@@ -313,7 +312,6 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
   }
 
   onImageError(event: any, index: number): void {
-    console.warn(`Erreur chargement image ${index}:`, event);
     event.target.src = '/assets/images/placeholder-room.jpg';
   }
 
@@ -428,7 +426,6 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
     });
     
     navigator.clipboard.writeText(`${text} ${url}`).then(() => {
-      console.log('✅ Share link copied');
     }).catch(() => {
       const textArea = document.createElement('textarea');
       textArea.value = `${text} ${url}`;
@@ -440,7 +437,6 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
   }
 
   onContactOwner(): void {
-    console.log('Contact owner:', this.unit.property?.owner);
   }
 
   // === PREMIUM ACCESS ===
@@ -604,6 +600,5 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
       window.open(googleMapsUrl, '_blank');
     }
   }
-
 
 }

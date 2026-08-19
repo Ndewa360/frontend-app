@@ -65,8 +65,6 @@ export class LanguageSwitcherComponent implements OnInit, OnDestroy {
 
       // Fermer le dropdown
       this.closeDropdown();
-
-      console.log('🌐 Langue changée vers:', languageCode);
     }
   }
 

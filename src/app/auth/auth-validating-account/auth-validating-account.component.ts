@@ -86,7 +86,6 @@ export class AuthValidatingAccountComponent implements OnInit {
         this.router.navigate([`/${currentLang}/app/properties`]);
       }, 500);
     } catch (error) {
-      console.error('Erreur lors de la redirection:', error);
       const currentLang = this.languageUrlService.getCurrentLanguage();
       this.router.navigate([`/${currentLang}/auth/signin`]);
     }
@@ -117,7 +116,6 @@ export class AuthValidatingAccountComponent implements OnInit {
         this.router.navigate([`/${currentLang}/app/agent/complete-profile`]);
       }
     } catch (error) {
-      console.error('Erreur lors de la vérification du profil agent:', error);
       const currentLang = this.languageUrlService.getCurrentLanguage();
       this.router.navigate([`/${currentLang}/app/agent/complete-profile`]);
     }

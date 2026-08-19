@@ -106,7 +106,6 @@ export class UserProfileInfosComponent implements OnInit, OnDestroy {
     // Avertir l'utilisateur s'il y a des changements non sauvegardés
     if (this.hasUnsavedChanges()) {
       // Note: Dans un vrai projet, on pourrait utiliser un guard pour empêcher la navigation
-      console.warn('Changements non sauvegardés détectés');
     }
     
     this.destroy$.next();
@@ -151,11 +150,6 @@ export class UserProfileInfosComponent implements OnInit, OnDestroy {
       // Séparer l'indicatif du numéro pour l'affichage
       const phoneData = this.parsePhoneNumber(this.userProfile.phoneNumber || '');
       const whatsappData = this.parsePhoneNumber(this.userProfile.whatsappContact || '');
-      
-      console.log('Phone original:', this.userProfile.phoneNumber);
-      console.log('Phone parsed:', phoneData);
-      console.log('WhatsApp original:', this.userProfile.whatsappContact);
-      console.log('WhatsApp parsed:', whatsappData);
       
       // Pas besoin de selectedCountryCode, on utilise le FormGroup directement
       
@@ -385,7 +379,6 @@ export class UserProfileInfosComponent implements OnInit, OnDestroy {
 
   // Méthode pour gérer les changements de localisation
   onLocalizationChange(changes: any): void {
-    console.log('Changements de localisation:', changes);
   }
 
   // --- Cookies ---

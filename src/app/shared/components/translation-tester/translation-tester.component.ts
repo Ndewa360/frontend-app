@@ -52,7 +52,6 @@ export class TranslationTesterComponent implements OnInit {
       this.validationSummary = await this.validator.validateAllTranslations().toPromise();
       this.validationReport = await this.validator.generateReport().toPromise();
     } catch (error) {
-      console.error('Erreur lors de la validation:', error);
       await this.notification.error('VALIDATION.ERROR');
     } finally {
       this.isValidating = false;
@@ -91,18 +90,6 @@ export class TranslationTesterComponent implements OnInit {
   testModalTranslations(): void {
     const tenantTranslations = this.modalTranslation.getTenantModalTranslations();
     const paymentTranslations = this.modalTranslation.getPaymentModalTranslations();
-    
-    console.group('🏠 Traductions Modal Locataire');
-    console.log('Titre ajout:', tenantTranslations.addTitle);
-    console.log('Titre édition:', tenantTranslations.editTitle);
-    console.log('Info personnelles:', tenantTranslations.personalInfo);
-    console.groupEnd();
-    
-    console.group('💰 Traductions Modal Paiement');
-    console.log('Titre ajout:', paymentTranslations.addTitle);
-    console.log('Titre édition:', paymentTranslations.editTitle);
-    console.log('Info paiement:', paymentTranslations.paymentInfo);
-    console.groupEnd();
   }
 
   /**
@@ -160,7 +147,6 @@ export class TranslationTesterComponent implements OnInit {
       await navigator.clipboard.writeText(this.validationReport);
       await this.notification.success('COMMON.COPIED');
     } catch (error) {
-      console.error('Erreur lors de la copie:', error);
       await this.notification.error('COMMON.COPY_ERROR');
     }
   }

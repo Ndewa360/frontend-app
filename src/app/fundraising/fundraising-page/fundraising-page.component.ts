@@ -286,7 +286,6 @@ export class FundraisingPageComponent implements OnInit, OnDestroy, AfterViewIni
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {
-            console.log('Donation successful:', response);
             this.fundraisingService.updateStatsAfterDonation(formData.amount);
             this.donationForm.reset();
             
@@ -299,8 +298,6 @@ export class FundraisingPageComponent implements OnInit, OnDestroy, AfterViewIni
             alert(this.translate.instant('FUNDRAISING.ALERTS.DONATION_SUCCESS'));
           },
           error: (error) => {
-            console.error('Donation failed:', error);
-            
             // Animation d'erreur
             if (button) {
               button.classList.remove('animate-pulse');
@@ -330,7 +327,6 @@ export class FundraisingPageComponent implements OnInit, OnDestroy, AfterViewIni
       
       // Simulation d'envoi
       setTimeout(() => {
-        console.log('Newsletter subscription:', formData);
         this.newsletterForm.reset();
         this.isSubmittingNewsletter = false;
         alert(this.translate.instant('FUNDRAISING.ALERTS.NEWSLETTER_SUCCESS'));
@@ -340,7 +336,6 @@ export class FundraisingPageComponent implements OnInit, OnDestroy, AfterViewIni
 
   openImageModal(imageSrc: string, title: string): void {
     const currentIndex = this.galleryImages.findIndex(img => img.src === imageSrc);
-    console.log('Opening gallery:', { imageSrc, title, currentIndex, images: this.galleryImages });
     const dialogRef = this.dialog.open(ImageModalComponent, {
       data: { 
         images: this.galleryImages, 

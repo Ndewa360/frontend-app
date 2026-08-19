@@ -85,22 +85,11 @@ export class ContractTemplateService {
    * Obtenir un modèle par ID
    */
   getTemplateById(templateId: string): Observable<ContractTemplateModel> {
-    console.log('Fetching template by ID:', templateId);
-    console.log('API URL:', `${this.apiUrl}/${templateId}`);
-
     return this.http.get<ContractTemplateModel>(`${this.apiUrl}/${templateId}`).pipe(
       tap(template => {
-        console.log('Template fetched:', template);
         this.currentTemplateSubject.next(template);
       }),
       catchError(error => {
-        console.error('Error fetching template:', error);
-        console.error('Error details:', {
-          status: error.status,
-          statusText: error.statusText,
-          url: error.url,
-          message: error.message
-        });
         throw error;
       })
     );
@@ -110,21 +99,8 @@ export class ContractTemplateService {
    * Obtenir le contenu d'un modèle
    */
   getTemplateContent(templateId: string): Observable<{ content: string }> {
-    console.log('Fetching template content for ID:', templateId);
-    console.log('API URL:', `${this.apiUrl}/${templateId}/content`);
-
     return this.http.get<{ content: string }>(`${this.apiUrl}/${templateId}/content`).pipe(
-      tap(response => {
-        console.log('Template content response:', response);
-      }),
       catchError(error => {
-        console.error('Error fetching template content:', error);
-        console.error('Error details:', {
-          status: error.status,
-          statusText: error.statusText,
-          url: error.url,
-          message: error.message
-        });
         throw error;
       })
     );
@@ -285,7 +261,6 @@ export class ContractTemplateService {
   getDefaultTemplate(): Observable<ContractTemplateModel> {
     return this.http.get<ContractTemplateModel>(`${this.apiUrl}/default`).pipe(
       catchError(error => {
-        console.error('Erreur lors du chargement du template par défaut:', error);
         throw error;
       })
     );
@@ -305,7 +280,6 @@ export class ContractTemplateService {
         this.updateTemplateInState(updatedTemplate);
       }),
       catchError(error => {
-        console.error('Erreur lors de la sauvegarde:', error);
         throw error;
       })
     );
@@ -317,7 +291,6 @@ export class ContractTemplateService {
   reindexUserTemplates(): Observable<{ indexed: number; updated: number; errors: string[] }> {
     return this.http.post<{ indexed: number; updated: number; errors: string[] }>(`${this.apiUrl}/reindex`, {}).pipe(
       catchError(error => {
-        console.error('Erreur lors de la réindexation:', error);
         throw error;
       })
     );
@@ -344,11 +317,7 @@ export class ContractTemplateService {
     const params = new HttpParams().set('templateId', templateId);
 
     return this.http.get(url, { params }).pipe(
-      tap(() => {
-        console.log('✅ Contrat généré avec template:', templateId);
-      }),
       catchError(error => {
-        console.error('❌ Erreur génération contrat avec template:', error);
         throw error;
       })
     );

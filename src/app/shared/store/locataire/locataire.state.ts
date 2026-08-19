@@ -241,7 +241,6 @@ export class LocataireState{
                     result.data.forEach((locataire:LocataireModel)=>{
                         if(locataireFound.findIndex((u)=>u._id==locataire._id)==-1) locataireFound.push(locataire)
                     })
-                console.log("Locataire Found ",locataireFound)
                     // let locatiresResult = 
                     ctx.patchState({
                         loadingLocataire:false,
@@ -277,8 +276,6 @@ export class LocataireState{
                         loadingLocataire: false,
                         locataires: updatedLocataires
                     });
-
-                    console.log('✅ Locataire supprimé du state:', locataireId);
                 }
             ),
             catchError((error) => {

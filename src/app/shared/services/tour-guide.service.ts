@@ -6,7 +6,6 @@ import { Injectable } from '@angular/core';
 export class TourGuideService {
 
   startTour(steps: any[], tourId: string) {
-    console.log('Tour guidé:', tourId, steps);
   }
 
   private hasTourBeenSeen(tourId: string): boolean {
@@ -22,6 +21,5 @@ export class TourGuideService {
   }
 
   startUserDetailsTour() {
-    console.log('Tour des détails utilisateur');
   }
 }

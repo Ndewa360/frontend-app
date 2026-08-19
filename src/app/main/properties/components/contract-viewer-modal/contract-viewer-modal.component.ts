@@ -88,7 +88,6 @@ export class ContractViewerModalComponent implements OnInit, OnDestroy {
    * Initialise les données du contrat
    */
   private initializeContractData(): void {
-    console.log('🔍 Initialisation des données du contrat pour:', this.data.room);
 
     // Récupérer la location si pas fournie
     if (!this.data.location) {
@@ -125,8 +124,6 @@ export class ContractViewerModalComponent implements OnInit, OnDestroy {
       return;
     }
 
-    console.log('📄 Chargement du contrat pour la location:', this.location._id);
-
     // Récupérer le locataire
     this.loadTenantData();
 
@@ -139,11 +136,9 @@ export class ContractViewerModalComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy$)
     ).subscribe(contract => {
       if (contract) {
-        console.log('✅ Contrat trouvé dans le store');
         this.contractPdfSrc = `data:application/pdf;base64,${contract.pdf}`;
         this.isLoading = false;
       } else {
-        console.log('📥 Chargement du contrat depuis l\'API...');
         this.store.dispatch(new ContractAction.FetchContract(this.location!._id));
       }
     });
@@ -182,7 +177,6 @@ export class ContractViewerModalComponent implements OnInit, OnDestroy {
    * Gère les erreurs
    */
   private handleError(message: string): void {
-    console.error('❌ Erreur:', message);
     this.hasError = true;
     this.errorMessage = message;
     this.isLoading = false;
@@ -230,7 +224,6 @@ export class ContractViewerModalComponent implements OnInit, OnDestroy {
       
       this.toastr.success(this.translate.instant('CONTRACT_VIEWER.CONTRACT_DOWNLOADED_SUCCESS'), this.translate.instant('NOTIFICATIONS.SUCCESS'));
     } catch (error) {
-      console.error('Erreur lors du téléchargement:', error);
       this.toastr.error(this.translate.instant('CONTRACT_VIEWER.DOWNLOAD_ERROR'), this.translate.instant('NOTIFICATIONS.ERROR'));
     }
   }
@@ -266,7 +259,6 @@ export class ContractViewerModalComponent implements OnInit, OnDestroy {
         printWindow.print();
       }
     } catch (error) {
-      console.error('Erreur lors de l\'impression:', error);
       this.toastr.error(this.translate.instant('CONTRACT_VIEWER.PRINT_ERROR'), this.translate.instant('NOTIFICATIONS.ERROR'));
     }
   }
@@ -290,7 +282,6 @@ export class ContractViewerModalComponent implements OnInit, OnDestroy {
     };
 
     // Appeler le service d'email (à implémenter)
-    console.log('Envoi par email:', emailData);
     this.toastr.success(this.translate.instant('CONTRACT_VIEWER.EMAIL_SENT_SUCCESS'), this.translate.instant('NOTIFICATIONS.SUCCESS'));
 
     // TODO: Remplacer par un vrai service d'email
@@ -344,10 +335,8 @@ export class ContractViewerModalComponent implements OnInit, OnDestroy {
         }
 
         this.isLoadingTemplates = false;
-        console.log('📝 Templates chargés:', this.availableTemplates.length, 'Template sélectionné:', this.selectedTemplateId);
       },
       error: (error) => {
-        console.error('❌ Erreur lors du chargement des templates:', error);
         this.isLoadingTemplates = false;
         this.toastr.error(this.translate.instant('CONTRACT_VIEWER.TEMPLATES_LOADING_ERROR'), this.translate.instant('NOTIFICATIONS.ERROR'));
       }
@@ -370,7 +359,6 @@ export class ContractViewerModalComponent implements OnInit, OnDestroy {
     }
 
     this.selectedTemplateId = templateId;
-    console.log('🎨 Changement de template:', templateId);
 
     // Régénérer le contrat avec le nouveau template
     this.regenerateContractWithTemplate(templateId);
@@ -389,17 +377,12 @@ export class ContractViewerModalComponent implements OnInit, OnDestroy {
     this.hasError = false;
     this.contractPdfSrc = '';
 
-    console.log('🔄 Régénération du contrat avec template:', templateId);
-    console.log('🗑️ Suppression du contrat existant du cache');
-
     // Supprimer le contrat existant du store pour forcer le rechargement
     this.store.dispatch(new ContractAction.RemoveContract(this.location._id));
 
     // Appeler l'API de génération avec le template spécifique
     this.contractTemplateService.generateContractWithTemplate(this.location._id, templateId).subscribe({
       next: (response) => {
-        console.log('✅ Contrat régénéré avec succès');
-        console.log('📊 Taille du nouveau contrat:', response.data.length, 'caractères');
 
         this.contractPdfSrc = `data:application/pdf;base64,${response.data}`;
         this.isLoading = false;
@@ -413,7 +396,6 @@ export class ContractViewerModalComponent implements OnInit, OnDestroy {
         this.toastr.success(this.translate.instant('CONTRACT_VIEWER.CONTRACT_REGENERATED_SUCCESS'), this.translate.instant('NOTIFICATIONS.SUCCESS'));
       },
       error: (error) => {
-        console.error('❌ Erreur lors de la régénération:', error);
         this.handleError('Erreur lors de la régénération du contrat');
         this.toastr.error(this.translate.instant('CONTRACT_VIEWER.REGENERATION_ERROR'), this.translate.instant('NOTIFICATIONS.ERROR'));
       }

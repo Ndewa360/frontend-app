@@ -44,7 +44,6 @@ export class FundraisingService {
   }
 
   submitDonation(donationData: DonationData): Observable<any> {
-    console.log('Donation submitted:', donationData);
     return new Observable(observer => {
       setTimeout(() => {
         observer.next({

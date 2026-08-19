@@ -33,10 +33,8 @@ export class TranslateUniversalLoader implements TranslateLoader {
         }
       }
 
-      console.warn(`[TranslateUniversalLoader] Fichier de traduction introuvable pour la langue: ${lang}`);
       return of({});
     } catch (err) {
-      console.error(`[TranslateUniversalLoader] Erreur lors du chargement de la traduction ${lang}:`, err);
       return of({});
     }
   }

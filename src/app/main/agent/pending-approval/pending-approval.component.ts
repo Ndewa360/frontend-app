@@ -29,7 +29,6 @@ export class PendingApprovalComponent implements OnInit {
       const response: any = await this.http.get(`${environment.apiUrl}/agents/${user._id}`).toPromise();
       this.agentProfile = response.data || response;
     } catch (error) {
-      console.error('Error loading agent profile:', error);
     } finally {
       this.isLoading = false;
     }

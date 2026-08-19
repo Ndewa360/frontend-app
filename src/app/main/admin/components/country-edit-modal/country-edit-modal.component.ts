@@ -130,7 +130,6 @@ export class CountryEditModalComponent implements OnInit, OnDestroy {
     this.adminGeographyService.updateCountry(this.data.country._id, updateData).pipe(
       takeUntil(this.destroy$),
       catchError(error => {
-        console.error('Erreur lors de la mise à jour du pays:', error);
         this.toastr.error('Erreur lors de la mise à jour du pays', 'Erreur');
         this.isLoading$.next(false);
         throw error;

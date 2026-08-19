@@ -74,7 +74,6 @@ export class ContractTemplateViewComponent implements OnInit, OnDestroy {
    * Charger le modèle et son contenu
    */
   loadTemplate(templateId: string): void {
-    console.log('Loading template with ID:', templateId);
     this.isDefaultTemplate = templateId === 'default';
     this.loadingError = null;
 
@@ -103,7 +102,6 @@ export class ContractTemplateViewComponent implements OnInit, OnDestroy {
         this.isLoadingContent = false;
       },
       error: (error) => {
-        console.error('Erreur lors du chargement du contenu:', error);
         this.loadingError = 'Impossible de charger le contenu du modèle';
         this.content = '<p>Erreur lors du chargement du contenu</p>';
         this.iframeContent = this.sanitizer.bypassSecurityTrustHtml('<p>Erreur lors du chargement du contenu</p>');
@@ -129,7 +127,6 @@ export class ContractTemplateViewComponent implements OnInit, OnDestroy {
           this.isLoadingContent = false;
         },
         error: (error) => {
-          console.error('Erreur lors du chargement du contenu:', error);
           this.loadingError = 'Impossible de charger le contenu du modèle';
           this.content = '<p>Erreur lors du chargement du contenu</p>';
           this.iframeContent = this.sanitizer.bypassSecurityTrustHtml('<p>Erreur lors du chargement du contenu</p>');
@@ -182,11 +179,9 @@ export class ContractTemplateViewComponent implements OnInit, OnDestroy {
 
         dialogRef.afterClosed().subscribe(result => {
           if (result?.success && result?.newTemplate) {
-            console.log('✅ Template dupliqué avec succès:', result.newTemplate);
             const currentLang = this.languageUrlService.getCurrentLanguage();
             this.router.navigate([`/${currentLang}/app/contract-templates/edit`, result.newTemplate._id]);
           } else if (result?.success) {
-            console.log('⚠️ Template dupliqué mais non retourné, utilisation du store...');
             this.store.select(ContractTemplateState.selectStateCurrentTemplate).pipe(
               takeUntil(this.destroy$),
               filter((newTemplate: ContractTemplateModel | null) =>

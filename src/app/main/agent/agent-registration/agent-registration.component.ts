@@ -167,7 +167,6 @@ export class AgentRegistrationComponent implements OnInit {
       if (this.validateFile(file)) {
         this.selectedFile = file;
       } else {
-        console.error('Fichier invalide: Veuillez sélectionner un fichier image (JPG, PNG) de moins de 5MB');
       }
     }
   }
@@ -232,18 +231,15 @@ export class AgentRegistrationComponent implements OnInit {
       this.agentService.registerAgent(formData, this.selectedFile).subscribe({
         next: (response) => {
           this.loading = false;
-          console.log('Inscription réussie:', response);
           this.router.navigate(['/auth/login']);
         },
         error: (error) => {
           this.loading = false;
-          console.error('Erreur d\'inscription:', error);
         }
       });
     } else {
       this.markCurrentStepAsTouched();
       if (!this.selectedFile) {
-        console.error('Document manquant: Veuillez sélectionner votre document d\'identité');
       }
     }
   }

@@ -182,7 +182,6 @@ export class HistoryLocationPaymentState{
         historyFoud.transactions = [...historyFoud.transactions,transactionData];
         historyLocationPayments[historyLocationPaymentIndex] = historyFoud;
         
-        console.log("History ",transactionData)
         ctx.patchState({
             historyLocationPayments:historyLocationPayments
         })

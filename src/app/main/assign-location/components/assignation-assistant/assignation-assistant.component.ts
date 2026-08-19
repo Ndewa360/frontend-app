@@ -781,7 +781,6 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
       this.resumeEcritures = this.assistantService.genererResumeEcritures(this.ecrituresPrevisionnelles);
 
     } catch (error) {
-      console.error('❌ Erreur lors du calcul des écritures:', error);
       this.ecrituresPrevisionnelles = [];
       this.resumeEcritures = null;
 

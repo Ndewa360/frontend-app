@@ -4,7 +4,6 @@ import { Store } from '@ngxs/store';
 import { RefreshTokenService } from './shared/store/auth-token/refresh-token.service';
 import { UserActivityService } from './shared/store/auth-token/user-activity.service';
 import { environment } from '../environments/environment';
-import { MonitoringService } from './shared/services/monitoring.service';
 import { LocalizationService } from './shared/services/localization/localization.service';
 import { TranslationService } from './shared/services/localization/translation.service';
 import { AuthTokenState } from './shared/store/auth-token';
@@ -18,7 +17,6 @@ import * as moment from 'moment';
 import { takeUntil, debounceTime, filter, catchError } from 'rxjs/operators';
 import { SeoService } from './shared/services/seo/seo.service';
 import { DeviceDetectionService } from './shared/services/device-detection.service';
-import { NetworkStatusService } from './shared/services/network-status.service';
 import { TranslateService } from '@ngx-translate/core';
 import { AuthStateService } from './shared/services/auth-state.service';
 import { DataDrivenLoaderService } from './shared/services/data-driven-loader.service';
@@ -61,8 +59,6 @@ export class AppComponent implements OnInit, OnDestroy {
     private titleService: Title,
     private meta: Meta,
     private seoService: SeoService,
-    private networkStatusService: NetworkStatusService,
-    private monitoringService: MonitoringService,
     private localizationService: LocalizationService,
     private translationService: TranslationService,
     private deviceService: DeviceDetectionService,
@@ -89,9 +85,6 @@ export class AppComponent implements OnInit, OnDestroy {
 
     this.dataDrivenLoader.overlayProgress$.pipe(takeUntil(this.destroy$))
       .subscribe(p => { this.overlayProgress = p; });
-
-    // Monitoring
-    this.monitoringService.initializeErrorCapture();
 
     // Front office detection
     this.initializeFrontOfficeDetection();

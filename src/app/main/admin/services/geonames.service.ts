@@ -68,7 +68,6 @@ export class GeonamesService {
         return [];
       }),
       catchError(error => {
-        console.error('Erreur lors de la récupération des villes depuis Geonames:', error);
         return throwError(() => new Error('Impossible de charger les villes depuis Geonames'));
       })
     );
@@ -89,7 +88,6 @@ export class GeonamesService {
         totalCount: response.totalCount
       })),
       catchError(error => {
-        console.error('Erreur lors de la recherche de villes:', error);
         return throwError(() => new Error('Impossible de rechercher les villes'));
       })
     );
@@ -107,7 +105,6 @@ export class GeonamesService {
         throw new Error('Ville non trouvée');
       }),
       catchError(error => {
-        console.error('Erreur lors de la récupération des détails de la ville:', error);
         return throwError(() => new Error('Impossible de charger les détails de la ville'));
       })
     );
@@ -169,7 +166,6 @@ export class GeonamesService {
   loadCountryCities(countryId: string): Observable<any> {
     return this.adminGeographyService.loadCountryCities(countryId).pipe(
       catchError(error => {
-        console.error('Erreur lors du chargement des villes du pays:', error);
         return throwError(() => new Error('Impossible de charger les villes du pays'));
       })
     );
@@ -181,7 +177,6 @@ export class GeonamesService {
   toggleCity(cityId: string, isActive: boolean): Observable<any> {
     return this.adminGeographyService.toggleCity(cityId, isActive).pipe(
       catchError(error => {
-        console.error('Erreur lors de la modification du statut de la ville:', error);
         return throwError(() => new Error('Impossible de modifier le statut de la ville'));
       })
     );
@@ -193,7 +188,6 @@ export class GeonamesService {
   createCity(cityData: any): Observable<any> {
     return this.adminGeographyService.createCityManually(cityData).pipe(
       catchError(error => {
-        console.error('Erreur lors de la création de la ville:', error);
         return throwError(() => new Error('Impossible de créer la ville'));
       })
     );
@@ -205,11 +199,9 @@ export class GeonamesService {
   testConnection(): Observable<boolean> {
     return this.adminGeographyService.getCitiesFromGeonames('FR', 1).pipe(
       map(() => {
-        console.log('✅ Connexion GeoNames via AdminGeographyService réussie');
         return true;
       }),
       catchError(error => {
-        console.error('❌ Erreur de connexion GeoNames:', error);
         return throwError(() => new Error('Test de connexion échoué'));
       })
     );

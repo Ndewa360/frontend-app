@@ -131,7 +131,6 @@ export class ExportDialogComponent implements OnInit {
       this.dialogRef.close({ success: true, options: exportOptions });
 
     } catch (error) {
-      console.error('Erreur lors de l\'export:', error);
       // Handle error (could show a toast or error message)
     } finally {
       this.isExporting = false;

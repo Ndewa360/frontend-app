@@ -131,7 +131,6 @@ export class AdvancedFinancialDashboardComponent implements OnInit, OnChanges, O
           }
         },
         error: (error) => {
-          console.error('❌ Erreur lors du chargement des données financières:', error);
           this.resetMetrics();
         }
       });
@@ -614,8 +613,6 @@ export class AdvancedFinancialDashboardComponent implements OnInit, OnChanges, O
       { value: inactiveTenantsCount, name: 'Locataires Inactifs', itemStyle: { color: this.dangerColor } }
     ];
   }
-
-
 
   private resetMetrics(): void {
     this.totalRevenue = 0; this.totalExpected = 0; this.collectionRate = 0;

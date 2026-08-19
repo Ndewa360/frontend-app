@@ -62,7 +62,6 @@ export class CityDeleteModalComponent implements OnInit {
           this.closeModal.emit();
         },
         error: (error) => {
-          console.error('Erreur lors de la suppression de la ville:', error);
         }
       });
   }

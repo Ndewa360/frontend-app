@@ -210,8 +210,6 @@ export class LocationState{
 
         return this._locationsService.createLocation(location).pipe(
             tap(result => {
-                console.log("✅ Location créée avec succès:", result);
-
                 // Mettre à jour le state avec la nouvelle location
                 ctx.patchState({
                     loadingLocation: false,
@@ -253,8 +251,6 @@ export class LocationState{
                 }, 1000);
             }),
             catchError((error) => {
-                console.error("❌ Erreur lors de la création de la location:", error);
-
                 ctx.patchState({
                     loadingLocation: false
                 });

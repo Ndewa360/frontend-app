@@ -120,7 +120,6 @@ export class ContractTemplatesDashboardComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe(result => {
       if (result && result.success && result.newTemplate) {
         // Rediriger vers l'éditeur du nouveau template avec l'URL complète
-        console.log('🔄 Redirection vers l\'éditeur du template dupliqué:', result.newTemplate._id);
         this.router.navigate(['/app/contract-templates/edit', result.newTemplate._id]);
       }
     });

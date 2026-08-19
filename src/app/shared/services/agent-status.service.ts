@@ -51,7 +51,6 @@ export class AgentStatusService {
         this.agentStatusSubject.next(agentProfile.status);
       }
     } catch (error) {
-      console.error('Error checking agent status:', error);
       this.agentStatusSubject.next('INCOMPLETE');
     }
   }

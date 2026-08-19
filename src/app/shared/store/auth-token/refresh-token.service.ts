@@ -73,12 +73,10 @@ export class RefreshTokenService {
 
       case UserActivityState.INACTIVE:
         // Utilisateur inactif : ne pas rafraîchir automatiquement
-        console.log('🟡 Utilisateur inactif - refresh automatique suspendu');
         break;
 
       case UserActivityState.CRITICAL_INACTIVE:
         // Inactivité critique : forcer la déconnexion
-        console.log('🔴 Inactivité critique - déconnexion forcée');
         const criticalMessage = this.languagePreservation.getLocalizedMessage('NOTIFICATIONS.SESSION_EXPIRED');
         this.forceLogout(criticalMessage);
         break;
@@ -137,17 +135,9 @@ export class RefreshTokenService {
     }
 
     this.refreshInProgress = true;
-    console.log('🔄 Rafraîchissement du token en cours...');
 
     // Vérifier le token avant de l'envoyer
     const token = this.store.selectSnapshot(AuthTokenState.selectStateToken);
-    console.log('🔍 Token state before refresh:', {
-      hasAccessToken: !!token?.accessToken,
-      hasRefreshToken: !!token?.refreshToken,
-      accessTokenLength: token?.accessToken?.length,
-      refreshTokenLength: token?.refreshToken?.length,
-      refreshTokenPreview: token?.refreshToken?.substring(0, 50) + '...'
-    });
 
     return this.http.get<ApiResultFormat<{ access_token: string, refresh_token: string }>>(`${environment.apiUrl}/user/auth/refresh`)
       .pipe(
@@ -168,14 +158,11 @@ export class RefreshTokenService {
           this.refreshTokenSubject.next(response.data.access_token);
           this.refreshInProgress = false;
 
-          console.log('✅ Token rafraîchi avec succès');
           return of(response.data.access_token);
         }),
         catchError((err) => {
           this.refreshInProgress = false;
           this.refreshTokenSubject.next(null);
-
-          console.error('❌ Échec du rafraîchissement du token:', err);
 
           // Gestion des différents types d'erreurs
           if (err.status === 401 || err.status === 403) {
@@ -262,24 +249,20 @@ export class RefreshTokenService {
 
       // Vérifier si le token est déjà expiré
       if (tokenData.exp && tokenData.exp <= currentTime) {
-        console.log('🔴 Token expiré - tentative de rafraîchissement');
         return this.refreshAccessToken();
       }
 
       // Si le token expire dans moins de 5 minutes (300 secondes) et que l'utilisateur est actif
       if (tokenData.exp && tokenData.exp - currentTime < 300) {
         if (this.userActivityService.isUserActive()) {
-          console.log('🟡 Token proche de l\'expiration - rafraîchissement préventif');
           return this.refreshAccessToken();
         } else {
-          console.log('🟡 Token proche de l\'expiration mais utilisateur inactif - pas de rafraîchissement');
           return of(token.accessToken);
         }
       }
 
       return of(token.accessToken);
     } catch (e) {
-      console.error('❌ Erreur lors de la vérification du token:', e);
       // En cas d'erreur de parsing, considérer le token comme invalide
       this.handleRefreshFailure('Token invalide détecté');
       return of(null);
@@ -300,7 +283,6 @@ export class RefreshTokenService {
       const tokenData = this.parseJwt(token.accessToken);
       return tokenData.exp || null;
     } catch (e) {
-      console.error('Erreur lors de la récupération de l\'expiration du token', e);
       return null;
     }
   }

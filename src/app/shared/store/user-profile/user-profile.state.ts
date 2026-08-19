@@ -437,7 +437,6 @@ export class UserProfileState {
         const currentUserProfile = state.userProfile;
 
         if (!currentUserProfile) {
-            console.warn('Aucun profil utilisateur trouvé pour mettre à jour la préférence de langue');
             return of(null);
         }
 
@@ -475,7 +474,6 @@ export class UserProfileState {
         const currentUserProfile = state.userProfile;
 
         if (!currentUserProfile) {
-            console.warn('Aucun profil utilisateur trouvé pour mettre à jour la préférence de devise');
             return of(null);
         }
 
@@ -513,7 +511,6 @@ export class UserProfileState {
         const currentUserProfile = state.userProfile;
 
         if (!currentUserProfile) {
-            console.warn('Aucun profil utilisateur trouvé pour mettre à jour les préférences de localisation');
             return of(null);
         }
 

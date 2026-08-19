@@ -74,8 +74,6 @@ export class UserActivityService implements OnDestroy {
 
     // Démarrer le timer de vérification périodique
     this.startPeriodicCheck();
-
-    console.log('🟢 UserActivityService: Surveillance démarrée', this.config);
   }
 
   /**
@@ -88,7 +86,6 @@ export class UserActivityService implements OnDestroy {
 
     this.isMonitoring = false;
     this.clearTimers();
-    console.log('🔴 UserActivityService: Surveillance arrêtée');
   }
 
   /**
@@ -223,10 +220,6 @@ export class UserActivityService implements OnDestroy {
   private updateActivityState(state: UserActivityState): void {
     const previousState = this.activityState$.value;
     this.activityState$.next(state);
-
-    if (previousState !== state) {
-      console.log(`🔄 UserActivityService: État changé de ${previousState} à ${state}`);
-    }
   }
 
   private updateActivityStatus(): void {

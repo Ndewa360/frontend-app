@@ -106,7 +106,6 @@ export class CountrySelectionModalComponent implements OnInit, OnDestroy {
     this.restCountriesService.getCountriesByRegion(region.name).pipe(
       takeUntil(this.destroy$),
       catchError(error => {
-        console.error('Erreur lors du chargement des pays:', error);
         this.toastr.error('Erreur lors du chargement des pays', 'Erreur');
         this.isLoading$.next(false);
         throw error;
@@ -174,7 +173,6 @@ export class CountrySelectionModalComponent implements OnInit, OnDestroy {
     this.adminGeographyService.createCountry(transformedCountry).pipe(
       takeUntil(this.destroy$),
       catchError(error => {
-        console.error('Erreur lors de la création du pays:', error);
         this.toastr.error('Erreur lors de la création du pays', 'Erreur');
         this.isLoading$.next(false);
         throw error;

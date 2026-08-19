@@ -65,8 +65,6 @@ export class DeviceDetectionService {
       platform
     };
 
-    console.log('📱 Détection d\'appareil (web):', deviceInfo);
-
     return deviceInfo;
   }
 
@@ -113,7 +111,6 @@ export class DeviceDetectionService {
    * Obtenir la route par défaut (front office public)
    */
   getDefaultRoute(): string {
-    console.log('🖥️ Application web -> /search/index (front office)');
     return '/search/index';
   }
 
@@ -123,17 +120,12 @@ export class DeviceDetectionService {
   redirectToAppropriateRoute(currentUrl?: string): void {
     const url = currentUrl || window.location.pathname;
 
-    console.log('🔄 Redirection depuis:', url);
-
     // Si on est sur la racine, rediriger vers l'accueil
     if (url === '/' || url === '') {
       const defaultRoute = this.getDefaultRoute();
-      console.log('➡️ Redirection vers:', defaultRoute);
       this.router.navigate([defaultRoute]);
       return;
     }
-
-    console.log('✅ Aucune redirection nécessaire');
   }
 
   /**

@@ -105,14 +105,6 @@ const routes: Routes = [
         data: { title: 'Violations de données', breadcrumb: 'Violations de données' }
       },
       {
-        path: 'monitoring',
-        loadChildren: () => import('../../monitoring/monitoring.module').then(m => m.MonitoringModule),
-        data: {
-          title: 'ADMIN.PAGE_TITLES.MONITORING',
-          breadcrumb: 'ADMIN.BREADCRUMBS.MONITORING'
-        }
-      },
-      {
         path: '**',
         redirectTo: 'dashboard',
         pathMatch: 'full'

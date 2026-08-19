@@ -21,7 +21,6 @@ export class MediaUtil {
           // Check if the image has a 2:1 ratio
           return width / height === 2;
         } catch (error) {
-          console.error('Error loading image:', error);
           return false;
         }
       }

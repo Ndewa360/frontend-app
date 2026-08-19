@@ -238,7 +238,6 @@ export class ContractTemplatesListComponent implements OnInit, OnDestroy {
     const templates = this.store.selectSnapshot(ContractTemplateState.selectStateTemplates);
 
     if (!templates || templates.length === 0) {
-      console.warn(this.translateService.instant('CONTRACT_TEMPLATES.LIST.NO_TEMPLATES_TO_EXPORT'));
       return;
     }
 
@@ -271,8 +270,6 @@ export class ContractTemplatesListComponent implements OnInit, OnDestroy {
     link.href = URL.createObjectURL(dataBlob);
     link.download = `contract-templates-export-${new Date().toISOString().split('T')[0]}.json`;
     link.click();
-
-    console.log(this.translateService.instant('CONTRACT_TEMPLATES.LIST.EXPORT_COMPLETED'), exportData.totalTemplates, this.translateService.instant('CONTRACT_TEMPLATES.LIST.TEMPLATES_EXPORTED'));
   }
 
   /**
@@ -443,18 +440,15 @@ export class ContractTemplatesListComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe(result => {
       if (result?.success && result?.newTemplate) {
         // La duplication a été effectuée avec succès
-        console.log(this.translateService.instant('CONTRACT_TEMPLATES.LIST.TEMPLATE_DUPLICATED_SUCCESS'), result.newTemplate);
         
         // Recharger la liste des templates
         this.loadTemplates();
         
         // Rediriger directement vers la page d'édition du nouveau template
-        console.log(this.translateService.instant('CONTRACT_TEMPLATES.LIST.REDIRECTING_TO_EDIT'), result.newTemplate._id);
         const currentLang = this.translateService.currentLang || 'fr';
         this.router.navigate([`/${currentLang}/app/contract-templates/edit`, result.newTemplate._id]);
       } else if (result?.success) {
         // Fallback : recharger la liste et rediriger
-        console.log(this.translateService.instant('CONTRACT_TEMPLATES.LIST.TEMPLATE_DUPLICATED_RELOADING'));
         this.loadTemplates();
         
         // Attendre un peu puis rediriger vers la liste

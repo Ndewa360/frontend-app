@@ -42,9 +42,7 @@ export class PaymentSuccessComponent implements OnInit {
       next: (response) => {
         this.paymentDetails = response.data;
       },
-      error: (error) => {
-        console.error('Erreur lors du chargement des détails:', error);
-      }
+      error: (error) => {}
     });
   }
 
@@ -75,6 +73,5 @@ export class PaymentSuccessComponent implements OnInit {
 
   downloadReceipt(): void {
     // TODO: Implémenter le téléchargement du reçu
-    console.log('Téléchargement du reçu...');
   }
 }

@@ -154,7 +154,6 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
     
     // Validation personnalisée pour s'assurer que le formulaire est valide
     this.formGroup.statusChanges.subscribe(status => {
-      console.log('Form status:', status, 'Form errors:', this.getFormErrors());
     });
   }
   
@@ -196,7 +195,6 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
       // Désactiver le champ prix si l'unité est occupée
       if (this.isUnitOccupied()) {
         this.formGroup.get('price')?.disable();
-        console.log('💡 Champ prix désactivé car l\'unité est occupée');
       }
       
       // Le code est toujours désactivé (généré automatiquement)
@@ -356,7 +354,6 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
       return [...existingImages, ...uploadedUrls];
       
     } catch (error) {
-      console.error('Erreur lors de l\'upload des images:', error);
       this.toastr.error(
         this.translate.instant('errors.uploadFailed'),
         this.translate.instant('notifications.error')
@@ -473,7 +470,6 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
       }
     } catch (error) {
       this.isLoading = false;
-      console.error('Erreur lors de la création/modification:', error);
     }
   }
 

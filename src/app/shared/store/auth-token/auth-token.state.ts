@@ -126,7 +126,6 @@ export class AuthTokenState {
         });
 
         if (reason) {
-            console.log(`🔴 Déconnexion: ${reason}`);
         }
 
         return of(true);
@@ -173,7 +172,6 @@ export class AuthTokenState {
             lastRefreshAttempt: Date.now()
         });
 
-        console.error('❌ Échec du refresh token:', error);
         return of(false);
     }
 

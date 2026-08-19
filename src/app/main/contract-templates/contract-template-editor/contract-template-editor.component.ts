@@ -392,12 +392,6 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
     this.templateId = this.route.snapshot.paramMap.get('id');
     this.isEditMode = !!this.templateId;
 
-    console.log('ContractTemplateEditor initialized:', {
-      templateId: this.templateId,
-      isEditMode: this.isEditMode,
-      route: this.route.snapshot.url
-    });
-
     if (this.isEditMode) {
       this.loadTemplate();
     } else {
@@ -413,12 +407,8 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
     }
   }
 
-
-
   loadTemplate(): void {
     if (!this.templateId) return;
-
-    console.log('Loading template:', this.templateId);
 
     // Activer les états de chargement
     this.isLoading = true;
@@ -428,7 +418,6 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
     // Charger les informations du template
     this.contractTemplateService.getTemplateById(this.templateId).subscribe({
       next: (template: any) => {
-        console.log('Template loaded:', template);
         this.templateName = template.name;
         this.templateDescription = template.description || '';
         this.isLoading = false;
@@ -440,7 +429,6 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
         // Charger le contenu du template
         this.contractTemplateService.getTemplateContent(this.templateId!).subscribe({
           next: (response) => {
-            console.log('Template content loaded:', response);
             const fullContent = response.content || '<p>Commencez à rédiger votre contrat...</p>';
 
             // Extraire les styles et le contenu du body
@@ -459,7 +447,6 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
             }, 100);
           },
           error: (error) => {
-            console.error('Erreur lors du chargement du contenu:', error);
             this.templateContent = '<p>Erreur lors du chargement du contenu. Veuillez réessayer.</p>';
             this.isContentLoading = false;
             this.loadingError = 'Impossible de charger le contenu du modèle';
@@ -467,7 +454,6 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
         });
       },
       error: (error) => {
-        console.error('Erreur lors du chargement du template:', error);
         this.templateName = 'Erreur de chargement';
         this.templateDescription = '';
         this.templateContent = '<p>Erreur lors du chargement du modèle. Veuillez réessayer.</p>';
@@ -482,9 +468,6 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
    * Force la mise à jour du contenu de l'éditeur TinyMCE
    */
   private updateEditorContent(): void {
-    console.log('Updating editor content:', this.templateContent);
-    console.log('Extracted styles:', this.extractedStyles);
-
     // Transformer les variables en composants visuels
     const contentWithComponents = this.transformVariablesToComponents(this.templateContent || '<p>Commencez à rédiger...</p>');
 
@@ -493,8 +476,6 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
       if ((window as any).tinymce) {
         const editor = (window as any).tinymce.activeEditor;
         if (editor && editor.initialized) {
-          console.log('Setting content in TinyMCE editor');
-
           // Mettre à jour les styles CSS de l'éditeur
           const newContentStyle = this.getContentStyle();
           if (editor.dom && editor.dom.doc) {
@@ -514,11 +495,9 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
           editor.setContent(contentWithComponents);
           editor.focus();
         } else {
-          console.log('Editor not ready, retrying...');
           setTimeout(updateEditor, 200);
         }
       } else {
-        console.log('TinyMCE not loaded, retrying...');
         setTimeout(updateEditor, 200);
       }
     };
@@ -576,8 +555,6 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
     const bodyContent = this.transformComponentsToVariables(this.templateContent);
     const contentForSave = this.combineContentWithStyles(bodyContent, this.extractedStyles);
 
-
-
     const templateData = {
       name: this.templateName,
       description: this.templateDescription,
@@ -598,8 +575,6 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
       const bodyContent = this.transformComponentsToVariables(this.templateContent);
       const contentForSave = this.combineContentWithStyles(bodyContent, this.extractedStyles);
 
-
-
       // D'abord mettre à jour les métadonnées
       this.contractTemplateService.updateTemplate(this.templateId, metadataUpdate).subscribe({
         next: (response) => {
@@ -612,12 +587,10 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
               this.lastSaveTime = new Date();
               // Sauvegarder les nouvelles valeurs comme valeurs originales
               this.saveOriginalValues();
-              console.log('Template mis à jour avec succès');
               this.notification.success('TEMPLATE.SAVE.SUCCESS', 'TEMPLATE.SAVE.TITLE');
             },
             error: (error) => {
               this.isSaving = false;
-              console.error('Erreur lors de la mise à jour du contenu:', error);
 
               // Afficher le message d'erreur spécifique du serveur
               let errorMessage = 'TEMPLATE.SAVE.ERROR';
@@ -633,7 +606,6 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           this.isSaving = false;
-          console.error('Erreur lors de la mise à jour des métadonnées:', error);
 
           // Afficher le message d'erreur spécifique du serveur
           let errorMessage = 'TEMPLATE.SAVE.ERROR';
@@ -654,7 +626,6 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
           this.lastSaveTime = new Date();
           // Sauvegarder les nouvelles valeurs comme valeurs originales
           this.saveOriginalValues();
-          console.log('Template créé avec succès');
           this.notification.success('TEMPLATE.CREATE.SUCCESS', 'TEMPLATE.CREATE.TITLE');
           // Rediriger vers la vue du template créé
           const currentLang = this.languageUrlService.getCurrentLanguage();
@@ -662,7 +633,6 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           this.isSaving = false;
-          console.error('Erreur lors de la création:', error);
 
           // Afficher le message d'erreur spécifique du serveur
           let errorMessage = 'TEMPLATE.CREATE.ERROR';
@@ -677,8 +647,6 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
       });
     }
   }
-
-
 
   /**
    * Sauvegarder les valeurs originales pour détecter les changements
@@ -711,16 +679,10 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
   }
 
   onTypeChange(event: any): void {
-    console.log('Type changed:', event);
   }
 
   onStatusChange(event: any): void {
-    console.log('Status changed:', event);
   }
-
-
-
-
 
   // Content change handlers
   onContentChange(content: any): void {
@@ -817,8 +779,6 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
     return this.sanitizeCss(this.extractedStyles || '');
   }
 
-
-
   printPreview(): void {
     // Créer un HTML complet avec les styles extraits du template
     const previewContent = this.getPreviewContent();
@@ -914,16 +874,10 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
    * Gérer la navigation retour avec vérification des modifications
    */
   handleBackNavigation(): void {
-    console.log('🔄 handleBackNavigation appelée');
-    console.log('📝 hasChanges():', this.hasChanges());
-
     if (this.hasChanges()) {
-      console.log('✅ Modifications détectées, affichage du modal');
       this.pendingNavigation = () => this.goBack();
       this.showUnsavedChangesModal = true;
-      console.log('🔍 showUnsavedChangesModal:', this.showUnsavedChangesModal);
     } else {
-      console.log('❌ Aucune modification, navigation directe');
       this.goBack();
     }
   }
@@ -1001,8 +955,6 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
   private extractStylesFromHtml(html: string): { styles: string; bodyContent: string } {
     if (!html) return { styles: '', bodyContent: '' };
 
-
-
     // Créer un parser DOM temporaire
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
@@ -1034,8 +986,6 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
     // Extraire le contenu du body
     const bodyElement = doc.querySelector('body');
     const bodyContent = bodyElement ? bodyElement.innerHTML : html;
-
-
 
     return {
       styles: extractedStyles.trim(),
@@ -1094,8 +1044,6 @@ ${cleanBodyContent}
       'figure', 'figcaption', 'address', 'time'
     ];
 
-
-
     // ÉTAPE 2: Supprimer les balises non autorisées du HTML avec styles protégés
     let cleanHtml = htmlWithProtectedStyles.replace(/<\/?([a-zA-Z][a-zA-Z0-9]*)\b[^>]*>/g, (match, tagName) => {
       const lowerTagName = tagName.toLowerCase();
@@ -1106,8 +1054,6 @@ ${cleanBodyContent}
         return '';
       }
     });
-
-
 
     // Supprimer les attributs dangereux même sur les balises autorisées
     cleanHtml = cleanHtml
@@ -1123,14 +1069,11 @@ ${cleanBodyContent}
     // Test final avec les patterns exacts du backend
     const validation = this.testHtmlWithBackendPatterns(cleanHtml);
     if (!validation.isValid) {
-      console.error('🚨 HTML final échoue à la validation backend:', validation.errors);
       // Essayer une version simplifiée
       if (originalBodyContent) {
-        console.log('🔄 Tentative avec HTML simplifié');
         const simpleHtml = this.createSimpleHtml(originalBodyContent);
         const simpleValidation = this.testHtmlWithBackendPatterns(simpleHtml);
         if (simpleValidation.isValid) {
-          console.log('✅ HTML simplifié validé');
           return simpleHtml;
         }
       }
@@ -1163,7 +1106,6 @@ ${this.sanitizeHtml(bodyContent)}
 </body>
 </html>`;
 
-
     return simpleHtml;
   }
 
@@ -1186,7 +1128,6 @@ ${this.sanitizeHtml(bodyContent)}
     dangerousPatterns.forEach(({ pattern, message }) => {
       if (pattern.test(html)) {
         errors.push(message);
-        console.error('🚨 Pattern détecté:', message, pattern);
       }
     });
 
@@ -1196,16 +1137,12 @@ ${this.sanitizeHtml(bodyContent)}
     };
   }
 
-
-
   /**
    * Nettoyer le HTML en supprimant les éléments dangereux
    * Utilise exactement les mêmes patterns que le backend
    */
   private sanitizeHtml(html: string): string {
     if (!html) return '';
-
-    console.log('🧹 Nettoyage HTML - Avant:', html.substring(0, 500) + '...');
 
     // Utiliser exactement les mêmes patterns que le backend
     let cleanHtml = html
@@ -1251,18 +1188,10 @@ ${this.sanitizeHtml(bodyContent)}
     let hasIssues = false;
     backendPatterns.forEach((pattern, index) => {
       if (pattern.test(cleanHtml)) {
-        console.error(`🚨 Pattern ${index + 1} encore présent:`, pattern);
         hasIssues = true;
       }
     });
 
-    if (hasIssues) {
-      console.error('🚨 HTML contient encore des éléments dangereux après nettoyage');
-    } else {
-      console.log('✅ HTML nettoyé et validé');
-    }
-
-    console.log('🧹 Nettoyage HTML - Après:', cleanHtml.substring(0, 500) + '...');
     return cleanHtml;
   }
 
@@ -1271,8 +1200,6 @@ ${this.sanitizeHtml(bodyContent)}
    */
   private sanitizeCss(css: string): string {
     if (!css) return '';
-
-    console.log('🎨 Nettoyage CSS - Avant:', css.substring(0, 200) + '...');
 
     // Supprimer les propriétés CSS potentiellement dangereuses
     let cleanCss = css
@@ -1295,16 +1222,12 @@ ${this.sanitizeHtml(bodyContent)}
 
     // Vérifier que nous n'avons pas supprimé tout le CSS
     if (css.length > 100 && cleanCss.length < 10) {
-      console.warn('⚠️ Nettoyage CSS trop agressif, restauration partielle');
       // Restaurer une version moins agressive
       cleanCss = css
         .replace(/expression\s*\([^)]*\)/gi, '')
         .replace(/javascript:/gi, '')
         .replace(/vbscript:/gi, '');
     }
-
-    console.log('🎨 Nettoyage CSS - Après:', cleanCss.substring(0, 200) + '...');
-    console.log('📊 Taille CSS - Avant:', css.length, 'Après:', cleanCss.length);
 
     return cleanCss;
   }
@@ -1320,7 +1243,6 @@ ${this.sanitizeHtml(bodyContent)}
 
       // Sauvegarder seulement si on peut (pas déjà en cours de sauvegarde et il y a des changements)
       if (!this.isSaving && this.hasChanges()) {
-        console.log('💾 Sauvegarde déclenchée par Ctrl+S');
         this.saveTemplate(true);
       } else if (!this.hasChanges()) {
         // Afficher un message si aucun changement à sauvegarder
@@ -1542,6 +1464,5 @@ ${this.sanitizeHtml(bodyContent)}
     this.closeExportModal();
     this.notification.success('TEMPLATE.EXPORT.WORD_SUCCESS', 'TEMPLATE.EXPORT.TITLE');
   }
-
 
 }

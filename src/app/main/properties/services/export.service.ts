@@ -40,7 +40,6 @@ export class ExportService {
       
       this.toastr.success(this.translate.instant('NOTIFICATIONS.EXPORT_SUCCESS', { count: options.data.length }), 'Ndewa360°');
     } catch (error) {
-      console.error('Erreur lors de l\'export CSV:', error);
       this.toastr.error(this.translate.instant('NOTIFICATIONS.EXPORT_ERROR'), 'Ndewa360°');
     }
   }
@@ -59,7 +58,6 @@ export class ExportService {
 
       this.toastr.success(this.translate.instant('NOTIFICATIONS.EXPORT_SUCCESS', { count: options.data.length }), 'Ndewa360°');
     } catch (error) {
-      console.error('Erreur lors de l\'export Excel:', error);
       this.toastr.error(this.translate.instant('NOTIFICATIONS.EXPORT_ERROR'), 'Ndewa360°');
     }
   }

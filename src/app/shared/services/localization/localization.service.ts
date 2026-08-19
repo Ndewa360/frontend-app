@@ -69,7 +69,6 @@ export class LocalizationService {
       try {
         registerLocaleData(localeData, code);
       } catch (error) {
-        console.warn(`Erreur lors de l'enregistrement de la locale ${code}:`, error);
       }
     });
   }

@@ -29,7 +29,6 @@ export class DetailsRoomGaleryComponent implements OnChanges {
 
   async ngOnChanges(changes: SimpleChanges) {
     if(changes['room'] && changes['room'].currentValue) {
-      console.log("Room changed media", changes['room'].currentValue);
       this.processImageUrl(changes['room'].currentValue.medias)}
   }
 
@@ -39,7 +38,6 @@ export class DetailsRoomGaleryComponent implements OnChanges {
     this.roomSelectedVideos=mediaData.videos;
     this.roomSelectedImages=mediaData.images;
 
-
     this.urlsQuadricUrlList = [
       ...mediaData.images360.map((img)=>({url:img,type:"360"})),
       ...mediaData.videos.map((img)=>({url:img,type:"video"})),
@@ -47,7 +45,6 @@ export class DetailsRoomGaleryComponent implements OnChanges {
     ]
 
   }
-
 
   deleteFile(urlItem)
   {

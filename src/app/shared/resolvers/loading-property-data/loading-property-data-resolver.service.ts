@@ -31,11 +31,8 @@ export class LoadingPropertyDataResolver implements Resolve<any> {
         const propertyId: string = route.paramMap.get("id");
 
         if (!propertyId) {
-            console.error("❌ LoadingPropertyDataReso Revenus Totaux 2025lver: Aucun ID de propriété fourni");
             return of(false);
         }
-
-        console.log(`🔄 LoadingPropertyDataResolver - Chargement des données pour la propriété ${propertyId}`);
 
         const currentYear = new Date().getFullYear();
 
@@ -58,45 +55,35 @@ export class LoadingPropertyDataResolver implements Resolve<any> {
         return combineLatest([
             this._store.select((state) => state.locataires.initLoadingState).pipe(
                 skipWhile((state) => state === "LOADING"),
-                tap(() => console.log("✅ Locataires chargés"))
             ),
             this._store.select((state) => state.rooms.initLoadingState).pipe(
                 skipWhile((state) => state === "LOADING"),
-                tap(() => console.log("✅ Chambres chargées"))
             ),
             this._store.select((state) => state.locations.initLoadingState).pipe(
                 skipWhile((state) => state === "LOADING"),
-                tap(() => console.log("✅ Locations chargées"))
             ),
             this._store.select((state) => state.locationPayments.initLoadingState).pipe(
                 skipWhile((state) => state === "LOADING"),
-                tap(() => console.log("✅ Paiements chargés"))
             ),
             this._store.select((state) => state.historyLocationPayments.initLoadingState).pipe(
                 skipWhile((state) => state === "LOADING"),
-                tap(() => console.log("✅ Historique des paiements chargé"))
             ),
             // Données financières
             this._store.select((state) => state.statisticData.loadingRoomStatistic).pipe(
                 skipWhile((loading) => loading === true),
-                tap(() => console.log("✅ Statistiques des chambres chargées"))
             ),
             this._store.select((state) => state.statisticData.locataireStatisticLoading).pipe(
                 skipWhile((loading) => loading === true),
-                tap(() => console.log("✅ Statistiques des locataires chargées"))
             ),
             this._store.select((state) => state.statisticData.allLocatairePayementByYearLoading).pipe(
                 skipWhile((loading) => loading === true),
-                tap(() => console.log("✅ Statistiques des paiements chargées"))
             ),
             this._store.select((state) => state.statisticData.loadingStatisticRecaptilationLoading).pipe(
                 skipWhile((loading) => loading === true),
-                tap(() => console.log("✅ Récapitulatif des paiements chargé"))
             )
         ]).pipe(
             take(1),
             map(() => {
-                console.log(`🎉 Toutes les données de la propriété ${propertyId} sont chargées`);
                 return {
                     propertyId,
                     dataLoaded: true,
@@ -104,7 +91,6 @@ export class LoadingPropertyDataResolver implements Resolve<any> {
                 };
             }),
             catchError((error) => {
-                console.error(`❌ Erreur lors du chargement des données de la propriété ${propertyId}:`, error);
                 return of({
                     propertyId,
                     dataLoaded: false,

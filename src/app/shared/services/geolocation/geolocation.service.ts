@@ -58,7 +58,6 @@ export class GeolocationService {
     ).pipe(
       timeout(this.GEOLOCATION_TIMEOUT),
       catchError((error) => {
-        console.error('Erreur de géolocalisation:', error);
         return throwError(() => error);
       })
     );
@@ -80,7 +79,6 @@ export class GeolocationService {
         longitude
       })),
       catchError((error) => {
-        console.error('Erreur de géocodage inverse:', error);
         // Fallback vers Bangangté
         return of({
           city: this.DEFAULT_CITY,
@@ -102,7 +100,6 @@ export class GeolocationService {
         this.getLocationInfo(position.latitude, position.longitude)
       ),
       catchError((error) => {
-        console.warn('Impossible de détecter la position, utilisation de Bangangté par défaut:', error);
         // Fallback vers Bangangté (coordonnées approximatives)
         return of({
           city: this.DEFAULT_CITY,

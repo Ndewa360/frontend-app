@@ -225,7 +225,6 @@ export class ContractTemplateState {
                     loading: false,
                     error: 'Erreur lors du chargement des modèles récents'
                 });
-                console.error('Erreur lors du chargement des modèles récents:', error);
                 return throwError(error);
             })
         );
@@ -250,7 +249,6 @@ export class ContractTemplateState {
                     loadingStatistics: false,
                     error: 'Erreur lors du chargement des statistiques'
                 });
-                console.error('Erreur lors du chargement des statistiques:', error);
                 return throwError(error);
             })
         );
@@ -539,7 +537,6 @@ export class ContractTemplateState {
                 this.toastrService.success(this.translateService.instant('NOTIFICATIONS.CONTRACT_TEMPLATE_REINDEX_SUCCESS', { indexed: result.indexed, updated: result.updated }), 'Ndewa360°');
 
                 if (result.errors.length > 0) {
-                    console.warn('Erreurs lors de la réindexation:', result.errors);
                     this.toastrService.warning(this.translateService.instant('NOTIFICATIONS.CONTRACT_TEMPLATE_REINDEX_WARNING', { errors: result.errors.length }), 'Ndewa360°');
                 }
 

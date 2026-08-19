@@ -52,7 +52,6 @@ export class CountryViewModalComponent implements OnInit, OnDestroy {
     this.adminGeographyService.getCitiesByCountry(this.data.country._id).pipe(
       takeUntil(this.destroy$),
       catchError(error => {
-        console.error('Erreur lors du chargement des villes:', error);
         this.cities = [];
         throw error;
       })

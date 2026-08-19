@@ -66,15 +66,12 @@ export class AssignLocationComponent implements OnInit, OnChanges {
   
 
   ngOnInit() {
-    console.log("On NgOnInit AssignLocation", { isModalMode: this.isModalMode, modalData: this.modalData });
-
     if (this.isModalMode && this.modalData) {
       // Mode modal : utiliser les données du modal
       this.loadDataFromModalData();
 
       // Vérifier si l'assistant doit être ouvert automatiquement en mode modal
       if (this.modalData.assistant === true) {
-        console.log('🚀 Ouverture automatique de l\'assistant en mode modal');
         // Ouvrir l'assistant après un court délai pour laisser le temps au composant de s'initialiser
         setTimeout(() => {
           this.assistantVisible = true;
@@ -110,14 +107,12 @@ export class AssignLocationComponent implements OnInit, OnChanges {
 
     this._ngxsAction.pipe(ofActionErrored(LocationAction.CreateLocation)).subscribe(
       (error) => {
-        console.error('❌ Erreur lors de l\'assignation classique:', error);
         this.waittingResponse = false;
         this.handleAssignationError(error);
       })
 
     this._ngxsAction.pipe(ofActionErrored(LocationAction.CreateAssignationWithAssistant)).subscribe(
       (error) => {
-        console.error('❌ Erreur lors de l\'assignation avec assistant:', error);
         this.waittingResponse = false;
         this.handleAssignationError(error);
       })
@@ -179,20 +174,16 @@ export class AssignLocationComponent implements OnInit, OnChanges {
     // Si on est en mode modal et que l'assistant était ouvert automatiquement,
     // fermer complètement le modal
     if (this.isModalMode && this.modalData?.assistant === true) {
-      console.log('🔒 Fermeture du modal après fermeture de l\'assistant');
       this.navigateBack();
     }
   }
 
   onAssignationSuccess(config: AssignationConfig): void {
-    console.log('✅ Assignation réussie, configuration:', config);
-
     // Fermer l'assistant
     this.fermerAssistant();
 
     // Si on est en mode modal, retourner le résultat et fermer le modal
     if (this.isModalMode && this.dialogRef) {
-      console.log('🎉 Retour du résultat de l\'assignation au modal');
       this.dialogRef.close({
         success: true,
         data: config
@@ -270,7 +261,6 @@ export class AssignLocationComponent implements OnInit, OnChanges {
   navigateBack(): void {
     if (this.isModalMode) {
       // Fermer le modal sans résultat (annulation)
-      console.log('🚫 Modal fermé par annulation utilisateur');
       if (this.dialogRef) {
         this.dialogRef.close(null); // null = annulation, pas d'erreur
       }
@@ -326,11 +316,8 @@ export class AssignLocationComponent implements OnInit, OnChanges {
    * Gérer le succès de l'assignation
    */
   private handleAssignationSuccess(value: any): void {
-    console.log('🎉 Assignation réussie, rafraîchissement des données...', value);
-
     // Rafraîchir toutes les données liées dans le store
     if (this.property?._id) {
-      console.log('🔄 Rafraîchissement des données du store...');
 
       // Rafraîchir les chambres
       this._store.dispatch(new RoomAction.FetchRoomsByPropertyID(this.property._id));
@@ -342,7 +329,6 @@ export class AssignLocationComponent implements OnInit, OnChanges {
       this._store.dispatch(new LocataireAction.FetchLocatairesByPropertyId(this.property._id));
 
       // Rafraichir les paiements et l'historique
-      console.log('💰 Rafraichissement des paiements et de l\'historique...');
       this._store.dispatch(new LocationPaymentAction.FetchLocationPaymentsByPropertyId(this.property._id));
       this._store.dispatch(new HistoryLocationPaymentAction.RefreshHistoryLocationPaymentsByPropertyId(this.property._id));
     }
@@ -365,8 +351,6 @@ export class AssignLocationComponent implements OnInit, OnChanges {
    * Gérer les erreurs d'assignation
    */
   private handleAssignationError(error: any): void {
-    console.error('❌ Erreur lors de l\'assignation:', error);
-
     // Extraire le message d'erreur
     let errorMessage = 'Une erreur est survenue lors de l\'assignation';
 
@@ -389,13 +373,10 @@ export class AssignLocationComponent implements OnInit, OnChanges {
       errorMessage = 'La propriété n\'a pas été trouvée. Veuillez actualiser la page.';
     }
 
-    console.log('💬 Message d\'erreur:', errorMessage);
-
     // En cas d'erreur critique, proposer de rafraîchir les données
     if (errorMessage.includes('not found')) {
       setTimeout(() => {
         if (this.property?._id) {
-          console.log('🔄 Rafraîchissement des données après erreur...');
           this._store.dispatch(new RoomAction.FetchRoomsByPropertyID(this.property._id));
           this._store.dispatch(new LocataireAction.FetchLocatairesByPropertyId(this.property._id));
         }
@@ -428,10 +409,8 @@ export class AssignLocationComponent implements OnInit, OnChanges {
       if (backdrop) {
         if (this.assistantVisible) {
           backdrop.classList.add('assistant-open');
-          console.log('🎨 Backdrop rendu transparent (assistant ouvert)');
         } else {
           backdrop.classList.remove('assistant-open');
-          console.log('🎨 Backdrop restauré (assistant fermé)');
         }
       }
     }, 50);

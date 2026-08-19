@@ -103,8 +103,6 @@ export class TranslationService {
       return 'fr';
 
     } catch (error) {
-      // Log error without exposing sensitive information
-      console.error('Erreur lors de la détermination de la langue');
       return 'fr';
     }
   }
@@ -146,7 +144,6 @@ export class TranslationService {
    */
   changeLanguage(languageCode: string): void {
     if (!languageCode || !this.isLanguageSupported(languageCode)) {
-      console.warn('Langue non supportée');
       return;
     }
 
@@ -158,7 +155,6 @@ export class TranslationService {
           this.saveLanguagePreference(languageCode);
         },
         error: () => {
-          console.error('Erreur lors du changement de langue');
         }
       });
     }
@@ -293,7 +289,6 @@ export class TranslationService {
         localStorage.setItem('ndiye-preferred-language', languageCode);
       }
     } catch (error) {
-      console.warn('Impossible de sauvegarder dans localStorage');
     }
   }
 
@@ -304,7 +299,6 @@ export class TranslationService {
     try {
       return localStorage.getItem('ndiye-preferred-language');
     } catch (error) {
-      console.warn('Impossible de lire localStorage');
       return null;
     }
   }
@@ -320,7 +314,6 @@ export class TranslationService {
         }, this.userProfile._id));
       }
     } catch (error) {
-      console.error('Erreur lors de la sauvegarde de la préférence de langue');
     }
   }
 

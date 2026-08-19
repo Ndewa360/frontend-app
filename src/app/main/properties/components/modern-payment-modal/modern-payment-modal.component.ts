@@ -170,13 +170,6 @@ export class ModernPaymentModalComponent implements OnInit, OnDestroy {
 
       // Désactiver le champ référence en mode édition (non modifiable)
       this.formGroup.get('billingRef')?.disable();
-
-      console.log('✅ Formulaire peuplé avec les données de transaction:', {
-        type: transaction.paymentLocationType,
-        amount: transaction.locationPaymentPrice,
-        date: datePayment,
-        ref: transaction.billingRef
-      });
     }
   }
 
@@ -209,7 +202,6 @@ export class ModernPaymentModalComponent implements OnInit, OnDestroy {
       ofActionSuccessful(LocationPaymentAction.AddLocationPayment),
       takeUntil(this.destroy$)
     ).subscribe(() => {
-      console.log('✅ Paiement ajouté avec succès');
       this.isLoading = false;
       this.toastr.success(
         this.translate.instant('NOTIFICATIONS.PAYMENT_CREATED_SUCCESS'),
@@ -227,7 +219,6 @@ export class ModernPaymentModalComponent implements OnInit, OnDestroy {
       ofActionSuccessful(LocationPaymentAction.UpdateLocationPayment),
       takeUntil(this.destroy$)
     ).subscribe(() => {
-      console.log('✅ Paiement modifié avec succès');
       this.isLoading = false;
       this.toastr.success(
         this.translate.instant('NOTIFICATIONS.PAYMENT_UPDATED_SUCCESS'),
@@ -245,7 +236,6 @@ export class ModernPaymentModalComponent implements OnInit, OnDestroy {
       ofActionErrored(LocationPaymentAction.AddLocationPayment),
       takeUntil(this.destroy$)
     ).subscribe((ctx) => {
-      console.error('❌ Erreur lors de l\'ajout du paiement:', ctx);
       this.isLoading = false;
       const errorMessage = this.getErrorMessage(ctx);
       this.toastr.error(
@@ -259,7 +249,6 @@ export class ModernPaymentModalComponent implements OnInit, OnDestroy {
       ofActionErrored(LocationPaymentAction.UpdateLocationPayment),
       takeUntil(this.destroy$)
     ).subscribe((ctx) => {
-      console.error('❌ Erreur lors de la modification du paiement:', ctx);
       this.isLoading = false;
       const errorMessage = this.getErrorMessage(ctx);
       this.toastr.error(
@@ -343,13 +332,7 @@ export class ModernPaymentModalComponent implements OnInit, OnDestroy {
         delete paymentData.billingRef;
       }
 
-      console.log('💰 Données de paiement préparées:', paymentData);
-      console.log('🔍 Validation des IDs:', {
-        roomId: paymentData.roomId,
-        locataireId: paymentData.locataireId,
-        propertyId: paymentData.propertyId,
-        locationId: this.data.location?._id
-      });
+       
 
       if (this.data.mode === 'create') {
         // Vérifier si on a une location réelle ou si on doit utiliser les IDs directs
@@ -357,22 +340,16 @@ export class ModernPaymentModalComponent implements OnInit, OnDestroy {
 
         if (targetLocation && targetLocation._id && !targetLocation._id.startsWith('temp_')) {
           // Cas 1: Location réelle existante
-          console.log('✅ Utilisation de la location existante:', targetLocation._id);
           this.store.dispatch(new LocationPaymentAction.AddLocationPayment({
             ...paymentData,
             locationId: targetLocation._id
           }));
         } else if (this.data.room && this.data.tenant) {
           // Cas 2: Pas de location réelle, utiliser les IDs directs
-          console.log('⚠️ Pas de location réelle, utilisation des IDs directs');
 
           // Vérifier que tous les IDs nécessaires sont présents
           if (!paymentData.roomId || !paymentData.locataireId || !paymentData.propertyId) {
-            console.error('❌ IDs manquants pour créer le paiement:', {
-              roomId: paymentData.roomId,
-              locataireId: paymentData.locataireId,
-              propertyId: paymentData.propertyId
-            });
+            
             this.isLoading = false;
             this.toastr.error('Données incomplètes pour créer le paiement', 'Erreur');
             return;
@@ -381,14 +358,12 @@ export class ModernPaymentModalComponent implements OnInit, OnDestroy {
           // Créer le paiement sans locationId (le backend se débrouillera)
           this.store.dispatch(new LocationPaymentAction.AddLocationPayment(paymentData));
         } else {
-          console.error('❌ Données insuffisantes pour créer le paiement');
           this.isLoading = false;
           this.toastr.error('Données insuffisantes pour créer le paiement', 'Erreur');
           return;
         }
       } else {
         if (!this.data.transaction?._id || !this.data.tenant?._id) {
-          console.error('Données de transaction manquantes pour la modification');
           this.isLoading = false;
           this.toastr.error('Données de transaction manquantes', 'Erreur');
           return;
@@ -401,7 +376,6 @@ export class ModernPaymentModalComponent implements OnInit, OnDestroy {
         ));
       }
     } catch (error) {
-      console.error('Erreur lors de la préparation des données:', error);
       this.isLoading = false;
       clearTimeout(safetyTimeout);
       this.toastr.error('Erreur lors de la préparation des données', 'Erreur');
@@ -516,16 +490,11 @@ export class ModernPaymentModalComponent implements OnInit, OnDestroy {
     const propertyId = this.data.room?.property || this.data.transaction?.property;
     const currentYear = new Date().getFullYear();
     
-    if (propertyId) {
-      console.log('🔄 Déclenchement du rafraîchissement des statistiques pour:', {
-        propertyId,
-        year: currentYear
-      });
+    if (propertyId) {     
       
       // Déclencher le rafraîchissement des statistiques
       this.store.dispatch(new StatisticAction.RefreshStatisticAfterPayment(propertyId, currentYear));
     } else {
-      console.warn('⚠️ Impossible de rafraîchir les statistiques: propertyId manquant');
     }
   }
 

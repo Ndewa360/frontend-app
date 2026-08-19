@@ -105,12 +105,10 @@ index = 0;
   }
 
   onImageError(event: any): void {
-    console.error('Erreur de chargement d\'image:', event.target.src);
     event.target.src = 'assets/img/utils/house.png';
   }
 
   onImageLoad(event: any): void {
-    console.log('Image chargée:', event.target.src);
     // Forcer la mise à jour du swiper après chargement d'image
     if (this.swiper?.nativeElement?.swiper) {
       this.swiper.nativeElement.swiper.update();

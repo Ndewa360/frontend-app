@@ -122,7 +122,6 @@ export class PropertyOverviewCardComponent extends BaseComponent implements OnIn
   viewProperty(): void {
     // Empêcher les clics multiples si la propriété est en cours de chargement
     if (this.isLoading) {
-      console.log(`⏳ Propriété ${this.property._id} déjà en cours de chargement, clic ignoré`);
       return;
     }
 

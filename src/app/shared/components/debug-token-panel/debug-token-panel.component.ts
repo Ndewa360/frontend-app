@@ -51,7 +51,6 @@ import { Router } from '@angular/router';
             <button (click)="simulateInactivity()" class="test-btn">😴 Simulate Inactivity</button>
             <button (click)="simulateCriticalInactivity()" class="test-btn">💀 Simulate Critical</button>
             <button (click)="resetActivity()" class="test-btn">🔄 Reset Activity</button>
-            <button (click)="openMonitoringDashboard()" class="test-btn monitoring-btn">📊 Monitoring Dashboard</button>
           </div>
         </div>
 
@@ -148,16 +147,6 @@ import { Router } from '@angular/router';
     .test-btn:hover {
       background: #007bff;
       color: white;
-    }
-
-    .monitoring-btn {
-      background: #28a745 !important;
-      color: white !important;
-      font-weight: bold;
-    }
-
-    .monitoring-btn:hover {
-      background: #218838 !important;
     }
 
     .success { color: #28a745; }
@@ -334,18 +323,8 @@ export class DebugTokenPanelComponent implements OnInit, OnDestroy {
   }
 
   openMonitoringDashboard() {
-    // Ouvrir le dashboard de monitoring dans un nouvel onglet ou naviguer vers la page
-    this.router.navigate(['/admin/monitoring/dashboard']);
-    this.addLog('📊 Opening monitoring dashboard', 'info');
-    this.toastr.info('Ouverture du dashboard de monitoring...', 'Debug');
+    this.toastr.warning('Monitoring déplacé vers Grafana', 'Info');
   }
-
-  // openMonitoringDashboard() {
-  //   // Ouvrir le dashboard de monitoring dans un nouvel onglet ou naviguer vers la page
-  //   this.router.navigate(['/monitoring/dashboard']);
-  //   this.addLog('📊 Opening monitoring dashboard', 'info');
-  //   this.toastr.info('Ouverture du dashboard de monitoring...', 'Debug');
-  // }
 
   getActivityStateClass(): string {
     switch (this.activityState) {

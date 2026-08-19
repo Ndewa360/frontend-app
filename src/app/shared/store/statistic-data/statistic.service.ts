@@ -31,7 +31,6 @@ export class StatisticService {
     const url = `${environment.apiUrl}/statistic-location-payment/statistic-payement-by-property/${propertyID}/${year}/`;
     return this._httpClient.get<ApiResultFormat<EnrichedStatisticData>>(url).pipe(
       catchError(error => {
-        console.error('❌ API Error getStatisticPropertyDataByYear:', { status: error.status, url, error: error.error });
         throw error;
       })
     );
