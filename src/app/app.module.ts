@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { CUSTOM_ELEMENTS_SCHEMA, LOCALE_ID, NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, ErrorHandler, LOCALE_ID, NgModule } from '@angular/core';
 import localeFr from '@angular/common/locales/fr';
 import { HttpClient } from '@angular/common/http';
 
@@ -20,6 +20,7 @@ import { registerLocaleData } from '@angular/common';
 
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { CustomTranslateLoader } from './shared/services/localization/custom-translate-loader';
+import { GlobalErrorHandler } from './shared/services/global-error-handler.service';
 
 registerLocaleData(localeFr);
 
@@ -55,6 +56,7 @@ export function HttpLoaderFactory(http: HttpClient) {
 	providers: [
 		{ provide: HTTP_INTERCEPTORS, useClass: AuthTokenInterceptor, multi: true },
 		{ provide: LOCALE_ID, useValue: "fr-FR" },
+		{ provide: ErrorHandler, useClass: GlobalErrorHandler },
 	],
 	schemas: [
 		CUSTOM_ELEMENTS_SCHEMA

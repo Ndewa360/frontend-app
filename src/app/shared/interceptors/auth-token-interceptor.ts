@@ -2,16 +2,15 @@ import { HttpInterceptor, HttpRequest, HttpHandler, HttpErrorResponse, HttpEvent
 import { Injectable } from "@angular/core";
 import { AuthTokenAction, AuthTokenState, GlobalAction } from "../store";
 import { Store } from "@ngxs/store";
-import { catchError, filter, map, mergeMap, switchMap, take, timeout, retry, delay } from "rxjs/operators";
-import { Router, RouterStateSnapshot } from "@angular/router";
+import { catchError, filter, switchMap, take, timeout } from "rxjs/operators";
+import { Router } from "@angular/router";
 import { BehaviorSubject, Observable, of, throwError, timer } from "rxjs";
 import { ToastrService } from "ngx-toastr";
-import { StoreHelper } from "../utils";
 import { RefreshTokenService } from "../store/auth-token/refresh-token.service";
-import { ApiResultFormat } from "../store";
 import { UserActivityService } from "../store/auth-token/user-activity.service";
 import { TranslateService } from "@ngx-translate/core";
 import { LanguagePreservationService } from "../services/language-preservation.service";
+import { ErrorLogService } from "../services/error-log.service";
 
 @Injectable()
 export class AuthTokenInterceptor implements HttpInterceptor {
@@ -28,7 +27,8 @@ export class AuthTokenInterceptor implements HttpInterceptor {
     private refreshTokenService: RefreshTokenService,
     private userActivityService: UserActivityService,
     private translate: TranslateService,
-    private languagePreservation: LanguagePreservationService
+    private languagePreservation: LanguagePreservationService,
+    private errorLog: ErrorLogService,
   ) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -49,7 +49,7 @@ export class AuthTokenInterceptor implements HttpInterceptor {
 
     // Exécuter la requête avec gestion d'erreur améliorée
     return next.handle(clonedReq).pipe(
-      catchError((error: HttpErrorResponse) => this.handleHttpError(error, req, next))
+      catchError((error: HttpErrorResponse) => this.handleHttpError(error, req, next, 0))
     );
   }
 
@@ -84,12 +84,19 @@ export class AuthTokenInterceptor implements HttpInterceptor {
   }
 
   /**
-   * Gère les erreurs HTTP avec logique améliorée
+   * Gère les erreurs HTTP avec retry, feedback réseau et logging
    */
-  private handleHttpError(error: HttpErrorResponse, originalRequest: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+  private handleHttpError(error: HttpErrorResponse, originalRequest: HttpRequest<any>, next: HttpHandler, retryCount: number): Observable<HttpEvent<any>> {
     // Éviter les boucles infinies en marquant les requêtes déjà traitées
     if (originalRequest.headers.has('X-Retry-Request')) {
-      console.error('🔴 Erreur après retry, arrêt du processus:', error);
+      this.errorLog.log({
+        type: 'http',
+        message: error.message || 'Erreur après retry',
+        statusCode: error.status,
+        url: originalRequest.url,
+        method: originalRequest.method,
+        timestamp: new Date().toISOString(),
+      });
       this._store.dispatch(new AuthTokenAction.Logout());
       return throwError(() => error);
     }
@@ -99,28 +106,52 @@ export class AuthTokenInterceptor implements HttpInterceptor {
       return this.handle401Error(originalRequest, next);
     }
 
-    // Gestion des erreurs de réseau (laisser NetworkStatusService gérer l'affichage persistant)
+    // Retry pour erreurs réseau (status 0) ou serveur (5xx)
+    if (this.shouldRetry(error, retryCount)) {
+      const delayMs = this.retryDelay * Math.pow(2, retryCount);
+      return timer(delayMs).pipe(
+        switchMap(() => {
+          const retriedReq = originalRequest.clone({ setHeaders: { 'X-Retry-Request': 'true' } });
+          return next.handle(retriedReq);
+        })
+      );
+    }
+
+    // Erreur réseau (status 0) — feedback persistant
     if (error.status === 0) {
-      // Ne pas afficher de toast ici pour éviter le spam. Le NetworkStatusService affiche un message persistant unique.
       this._store.dispatch(new GlobalAction.SetConnexionInternetState(false));
+      const online = navigator.onLine;
+      if (!online) {
+        this._toastrService.warning(
+          this.translate.instant('NOTIFICATIONS.NETWORK_ERROR') || 'Aucune connexion internet. Vérifiez votre réseau.',
+          'Ndewa360°',
+          { timeOut: 0, extendedTimeOut: 0, closeButton: true }
+        );
+      }
     } else if (!this.shouldSkipErrorDisplay(error, originalRequest)) {
-      // Ne pas afficher l'erreur si elle doit être ignorée
       this.showErrorMessage(error);
     }
+
+    // Logger l'erreur
+    this.errorLog.log({
+      type: 'http',
+      message: this.sanitizeMessage(error?.error?.message),
+      statusCode: error.status,
+      url: originalRequest.url,
+      method: originalRequest.method,
+      timestamp: new Date().toISOString(),
+    });
 
     return throwError(() => error);
   }
 
   /**
-   * Détermine si une requête doit être retentée
+   * Détermine si une requête doit être retentée (exponentielle backoff)
    */
   private shouldRetry(error: HttpErrorResponse, retryCount: number): boolean {
-    // Ne pas retry les erreurs d'authentification
     if (error.status === 401 || error.status === 403) {
       return false;
     }
-
-    // Retry seulement les erreurs de réseau ou serveur temporaires
     return (error.status === 0 || error.status >= 500) && retryCount < this.maxRetries;
   }
 

@@ -4,6 +4,7 @@ import { map, distinctUntilChanged, filter } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
 import { Router, NavigationStart, NavigationEnd, NavigationCancel, NavigationError } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { GlobalAction } from '../store';
 
 export interface PageLoadingState {
   route: string;
@@ -186,6 +187,7 @@ export class DataDrivenLoaderService {
     });
 
     window.addEventListener('online', () => {
+      this.store.dispatch(new GlobalAction.SetConnexionInternetState(true));
       this.toastr.success('Connexion rétablie.', 'En ligne', { timeOut: 3000 });
     });
   }

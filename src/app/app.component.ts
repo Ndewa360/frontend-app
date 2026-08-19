@@ -21,6 +21,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { AuthStateService } from './shared/services/auth-state.service';
 import { DataDrivenLoaderService } from './shared/services/data-driven-loader.service';
 import { LanguageUrlService } from './shared/services/language-url.service';
+import { HealthCheckService } from './shared/services/health-check.service';
 
 const getSessionStorage = (key: string, defaultValue: string = null) => {
   try { return (typeof sessionStorage !== 'undefined' && sessionStorage.getItem(key)) || defaultValue; }
@@ -67,10 +68,13 @@ export class AppComponent implements OnInit, OnDestroy {
     public dataDrivenLoader: DataDrivenLoaderService,
     private languageUrlService: LanguageUrlService,
     private translateService: TranslateService,
+    private healthCheck: HealthCheckService,
     @Inject(PLATFORM_ID) private platformId: Object,
   ) {}
 
   ngOnInit(): void {
+    // Health check backend
+    this.healthCheck.start();
     // Traductions — langue extraite depuis l'URL (prioritaire) ou le navigateur
     this.translateService.setDefaultLang('fr');
     const lang = this.getLanguageFromUrl();
@@ -191,5 +195,6 @@ export class AppComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
     this.tokenCheckInterval?.unsubscribe();
     this.userProfileCheckInterval?.unsubscribe();
+    this.healthCheck.stop();
   }
 }
