@@ -415,14 +415,14 @@ export class UserProfileState {
                     this._languagePreservation.redirectToLogin();
                     this._toastrService.warning(this._translateService.instant('NOTIFICATIONS.SESSION_EXPIRED_RECONNECT'), 'Ndewa360°');
                 } else {
-                    let message = error?.error?.message;
+                    let message = error?.error?.message || error?.message;
                     if (!message) message = this._translateService.instant('NOTIFICATIONS.GENERIC_ERROR_RETRY');
                     this._toastrService.error(message, 'Ndewa360°');
                 }
-                
-                return throwError(() => error);
+
+                // Ne pas propager — évite page blanche et toastr GlobalErrorHandler en double
+                return of(false);
             }),
-            // S'assurer que l'état de chargement est toujours réinitialisé
             finalize(() => {
                 if (ctx.getState().loadingUserProfile) {
                     ctx.patchState({ loadingUserProfile: false });

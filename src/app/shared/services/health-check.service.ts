@@ -11,7 +11,7 @@ export class HealthCheckService implements OnDestroy {
 
   private healthSub: Subscription;
   private readonly HEALTH_URL = `${environment.apiUrl}/health`;
-  private readonly CHECK_INTERVAL = 60000;
+  private readonly CHECK_INTERVAL = 300000; // 5 minutes au lieu de 60s
 
   constructor(
     private http: HttpClient,

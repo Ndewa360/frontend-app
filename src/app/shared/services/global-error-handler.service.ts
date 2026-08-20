@@ -16,6 +16,15 @@ export class GlobalErrorHandler implements ErrorHandler {
       this.errorLog = this.injector.get(ErrorLogService);
     }
 
+    // Ignorer les erreurs HTTP — déjà gérées par les catchError des states NGXS
+    if (error?.status !== undefined || error?.name === 'HttpErrorResponse') return;
+
+    // Ignorer les erreurs custom déjà gérées (marquées handled ou venant de NGXS)
+    if (error?.handled === true) return;
+
+    // Ignorer les erreurs de profil utilisateur — gérées dans user-profile.state.ts
+    if (error?.message?.includes('profil utilisateur') || error?.message?.includes('Réponse')) return;
+
     const message = error?.message || error?.toString() || 'Erreur inconnue';
     const stack = error?.stack || '';
 

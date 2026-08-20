@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store, Select } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
@@ -11,6 +11,7 @@ import { DepositModalComponent } from '../components/deposit-modal/deposit-modal
   selector: 'app-wallet-dashboard',
   templateUrl: './wallet-dashboard.component.html',
   styleUrls: ['./wallet-dashboard.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WalletDashboardComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
@@ -30,6 +30,7 @@ interface PropertyCardMetrics {
   selector: 'app-list-property',
   templateUrl: './list-property.component.html',
   styleUrls: ['./list-property.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None
 })
 export class ListPropertyComponent implements OnInit, OnDestroy {

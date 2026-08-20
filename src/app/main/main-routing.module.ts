@@ -5,11 +5,6 @@ import {Routes, RouterModule} from '@angular/router'
 import {LayoutComponent} from '../layout/default/layout.component'
 
 import {WelcomeComponent} from "./welcome/welcome.component"
-import { LoadingPropertyDataResolver } from '../shared/resolvers'
-import { PropertyDetailsResolver } from '../shared/resolvers/loading-property-data/property-details-resolver.service'
-import { ListPropertyComponent } from './properties/list-property/list-property.component'
-import { HomePropertyComponent } from './properties/home-property/home-property.component'
-import { PropertyDetailsCompleteComponent } from './properties/property-details-complete/property-details-complete.component'
 import { AgentValidationGuard } from '../shared/guards/agent-validation-guard.service'
 import { SuspendedGuard } from '../shared/guards/suspended.guard'
 
@@ -87,45 +82,10 @@ const routes: Routes = [
        
       {
         path: 'properties',
+        loadChildren: () => import('./properties/properties-page.module').then(m => m.PropertiesPageModule),
         data: {
           breadcrumb: 'Biens'
         },
-        children: [
-          {
-            path: 'home',
-            component: HomePropertyComponent,
-            data: {
-              breadcrumb: 'Accueil des biens'
-            },
-          },
-          {
-            path: 'list',
-            component: ListPropertyComponent,
-            data: {
-              breadcrumb: 'Liste des biens'
-            },
-          },
-          {
-            path: 'details/:id',
-            component: PropertyDetailsCompleteComponent,
-            resolve: {
-              "propertyDetailsData": PropertyDetailsResolver
-            },
-            data: {
-              breadcrumb: 'Détails complets'
-            },
-          },
-          {
-            path: '',
-            redirectTo: 'home',
-            pathMatch: 'full',
-          },
-          {
-            path: '**',
-            redirectTo: 'home',
-            pathMatch: 'full',
-          },
-        ],
       },
       {
         path: 'welcome',

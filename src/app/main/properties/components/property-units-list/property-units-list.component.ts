@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { MatDialog } from '@angular/material/dialog';
@@ -52,7 +52,8 @@ export interface UnitAction {
 @Component({
   selector: 'app-property-units-list',
   templateUrl: './property-units-list.component.html',
-  styleUrls: ['./property-units-list.component.scss']
+  styleUrls: ['./property-units-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PropertyUnitsListComponent implements OnInit, OnDestroy {
   @Input() propertyId: string | null = null;

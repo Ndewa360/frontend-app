@@ -126,8 +126,8 @@ export class AppComponent implements OnInit, OnDestroy {
       filter(() => this.store.selectSnapshot(AuthTokenState.selectStateUserIsLogin))
     ).subscribe(() => this.refreshTokenService.checkTokenExpiration().subscribe());
 
-    // Profil check toutes les 2 min
-    this.userProfileCheckInterval = interval(2 * 60 * 1000).pipe(
+    // Profil check toutes les 10 min (l'activité utilisateur gère déjà la session)
+    this.userProfileCheckInterval = interval(10 * 60 * 1000).pipe(
       takeUntil(this.destroy$),
       filter(() => this.store.selectSnapshot(AuthTokenState.selectStateUserIsLogin))
     ).subscribe(() => {
