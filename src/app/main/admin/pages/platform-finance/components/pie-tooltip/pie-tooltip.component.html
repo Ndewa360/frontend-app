@@ -1,0 +1,23 @@
+<div
+  class="pf-pt"
+  [class.pf-pt--below]="placement === 'below'"
+  [style.left.px]="left"
+  [style.top.px]="top"
+>
+  <div class="pf-pt-arrow"></div>
+
+  <div class="pf-pt-title">{{ title }}</div>
+
+  <div class="pf-pt-chart">
+    <pf-pie-chart [slices]="slices" [size]="size"></pf-pie-chart>
+  </div>
+
+  <div class="pf-pt-legend">
+    <div class="pf-pt-row" *ngFor="let s of slices">
+      <span class="pf-pt-dot" [style.background-color]="s.color"></span>
+      <span class="pf-pt-label">{{ s.label }}</span>
+      <span class="pf-pt-value">{{ s.formattedValue || s.value }}</span>
+      <span class="pf-pt-pct">{{ pct(s) }}</span>
+    </div>
+  </div>
+</div>

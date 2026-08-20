@@ -65,6 +65,95 @@
       </div>
     </div>
 
+    <!-- ── Global Stats (Portefeuille) ── -->
+    <div class="admin-stats-grid" *ngIf="globalStats">
+      <div class="admin-stat-card admin-stat-card-highlight">
+        <div class="admin-stat-icon wallet"><i class="fas fa-wallet"></i></div>
+        <div class="admin-stat-content">
+          <h3>{{ formatCurrency(globalStats.summary.totalPlatformBalance) }}</h3>
+          <p>Solde portefeuille plateforme</p>
+          <span class="admin-stat-change">
+            <i class="fas fa-arrow-up"></i> {{ formatCurrency(globalStats.platformWallet.monthlyDeposits) }} ce mois
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Owner Revenue Table ── -->
+    <div class="admin-bottom-section" *ngIf="ownerRevenues.length > 0">
+      <div class="admin-health-card">
+        <div class="admin-card-header">
+          <h3><i class="fas fa-home" style="color:#cc8c0a;margin-right:8px"></i>Revenus par propriétaire</h3>
+          <div style="display:flex;align-items:center;gap:12px">
+            <select class="admin-filter-select" [(ngModel)]="currentMonth" (change)="onOwnerRevenueFilterChange()">
+              <option *ngFor="let m of [1,2,3,4,5,6,7,8,9,10,11,12]" [value]="m">
+                {{ MONTH_LABELS[m-1] }}
+              </option>
+            </select>
+            <select class="admin-filter-select" [(ngModel)]="currentYear" (change)="onOwnerRevenueFilterChange()">
+              <option *ngFor="let y of [2024,2025,2026]" [value]="y">{{ y }}</option>
+            </select>
+          </div>
+        </div>
+        <div class="admin-health-content">
+          <!-- Résumé global -->
+          <div class="owner-revenue-summary" *ngIf="ownerRevenueSummary">
+            <div class="summary-item">
+              <span class="summary-label">Total encaissé</span>
+              <span class="summary-value positive">{{ formatCurrency(ownerRevenueSummary.totalCollected) }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Total attendu</span>
+              <span class="summary-value">{{ formatCurrency(ownerRevenueSummary.totalExpected) }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Taux global</span>
+              <span class="summary-value" [class.positive]="ownerRevenueSummary.globalCollectionRate >= 80" 
+                    [class.warning]="ownerRevenueSummary.globalCollectionRate < 80 && ownerRevenueSummary.globalCollectionRate >= 50"
+                    [class.negative]="ownerRevenueSummary.globalCollectionRate < 50">
+                {{ ownerRevenueSummary.globalCollectionRate }}%
+              </span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Propriétaires</span>
+              <span class="summary-value">{{ ownerRevenueSummary.totalOwners }}</span>
+            </div>
+          </div>
+
+          <!-- Tableau des revenus par propriétaire -->
+          <table class="admin-table" style="margin-top: 16px">
+            <thead>
+              <tr>
+                <th>Propriétaire</th>
+                <th>Email</th>
+                <th style="text-align:right">Encaissé</th>
+                <th style="text-align:right">Attendu</th>
+                <th style="text-align:center">Taux</th>
+                <th>Biens</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let owner of ownerRevenues">
+                <td><strong>{{ owner.ownerName }}</strong></td>
+                <td>{{ owner.ownerEmail }}</td>
+                <td style="text-align:right;color:#059669;font-weight:600">{{ formatCurrency(owner.totalCollected) }}</td>
+                <td style="text-align:right">{{ formatCurrency(owner.totalExpected) }}</td>
+                <td style="text-align:center">
+                  <span class="admin-badge" 
+                        [class.admin-badge-success]="owner.collectionRate >= 80"
+                        [class.admin-badge-warning]="owner.collectionRate < 80 && owner.collectionRate >= 50"
+                        [class.admin-badge-danger]="owner.collectionRate < 50">
+                    {{ owner.collectionRate }}%
+                  </span>
+                </td>
+                <td>{{ owner.properties.length }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
     <!-- ── Financial Dashboard ── -->
     <div class="admin-bottom-section" *ngIf="financialData">
       <div class="admin-bottom-grid">

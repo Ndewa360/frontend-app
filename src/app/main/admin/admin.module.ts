@@ -18,6 +18,8 @@ import { AdminSettingsComponent } from './pages/settings/admin-settings.componen
 import { AgentManagementComponent } from './pages/agent-management/agent-management.component';
 import { AdminSubscriptionsComponent } from './pages/subscriptions/admin-subscriptions.component';
 import { PlatformFinanceComponent } from './pages/platform-finance/platform-finance.component';
+import { PfPieChartComponent } from './pages/platform-finance/components/pie-chart/pie-chart.component';
+import { PfPieTooltipComponent } from './pages/platform-finance/components/pie-tooltip/pie-tooltip.component';
 
 // ── Modals / Components ───────────────────────────────────────────────────────
 import { CountrySelectionModalComponent } from './components/country-selection-modal/country-selection-modal.component';
@@ -65,6 +67,8 @@ import { AdminRoutingModule } from './admin-routing.module';
     AgentManagementComponent,
     AdminSubscriptionsComponent,
     PlatformFinanceComponent,
+    PfPieChartComponent,
+    PfPieTooltipComponent,
     CountrySelectionModalComponent,
     CountryDeleteModalComponent,
     CountryViewModalComponent,

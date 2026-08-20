@@ -18,6 +18,14 @@
         <h1>{{ 'ADMIN.TITLE' | translate }}</h1>
       </div>
 
+      <!-- Currency selector -->
+      <div class="admin-header-currency" title="Devise d'affichage">
+        <i class="fas fa-coins"></i>
+        <select class="admin-currency-select" [ngModel]="selectedCurrency" (ngModelChange)="onCurrencyChange($event)">
+          <option *ngFor="let c of currencies" [value]="c">{{ currencyLabels[c] }}</option>
+        </select>
+      </div>
+
       <!-- User zone -->
       <div class="admin-header-user" *ngIf="currentUser$ | async as user">
         <div class="admin-user-avatar-circle">

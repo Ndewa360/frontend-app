@@ -7,6 +7,12 @@ import { LanguageUrlService } from 'src/app/shared/services/language-url.service
 
 import { AdminDashboardAction } from '../../store/dashboard/admin-dashboard.actions';
 import { AdminDashboardState } from '../../store/dashboard/admin-dashboard.state';
+import { AdminCurrencyService } from '../../services/admin-currency.service';
+import { 
+  AdminDashboardService, 
+  OwnerRevenue, 
+  GlobalStatsResponse 
+} from '../../services/admin-dashboard.service';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -24,7 +30,18 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   financialData: any = null;
   alerts: any[] = [];
 
-  private readonly MONTH_LABELS = [
+  // Nouvelles données
+  ownerRevenues: OwnerRevenue[] = [];
+  ownerRevenueSummary: any = null;
+  globalStats: GlobalStatsResponse | null = null;
+  
+  // Filtres pour les revenus par propriétaire
+  currentYear = new Date().getFullYear();
+  currentMonth = new Date().getMonth() + 1;
+  ownerRevenuePage = 1;
+  ownerRevenueLimit = 10;
+
+  readonly MONTH_LABELS = [
     'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun',
     'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'
   ];
@@ -32,11 +49,15 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   constructor(
     private store: Store,
     private router: Router,
-    private languageUrlService: LanguageUrlService
+    private languageUrlService: LanguageUrlService,
+    private dashboardService: AdminDashboardService,
+    private currencyService: AdminCurrencyService,
   ) {}
 
   ngOnInit(): void {
     this.loadDashboardData();
+    this.loadOwnerRevenue();
+    this.loadGlobalStats();
 
     // Construire les alertes à chaque mise à jour des stats
     this.store.select(AdminDashboardState.selectDashboardStats)
@@ -58,6 +79,44 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     this.store.dispatch(new AdminDashboardAction.LoadSystemHealth());
     this.store.dispatch(new AdminDashboardAction.LoadRecentActivities(20));
     this.store.dispatch(new AdminDashboardAction.LoadFinancialDashboard());
+  }
+
+  private loadOwnerRevenue(): void {
+    this.dashboardService.getOwnerRevenue({
+      year: this.currentYear,
+      month: this.currentMonth,
+      page: this.ownerRevenuePage,
+      limit: this.ownerRevenueLimit
+    })
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (data) => {
+        this.ownerRevenues = data.owners;
+        this.ownerRevenueSummary = data.summary;
+      },
+      error: (err) => console.error('Erreur chargement revenus propriétaires:', err)
+    });
+  }
+
+  private loadGlobalStats(): void {
+    this.dashboardService.getGlobalStats()
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (data) => {
+        this.globalStats = data;
+      },
+      error: (err) => console.error('Erreur chargement stats globales:', err)
+    });
+  }
+
+  onOwnerRevenueFilterChange(): void {
+    this.ownerRevenuePage = 1;
+    this.loadOwnerRevenue();
+  }
+
+  onOwnerRevenuePageChange(page: number): void {
+    this.ownerRevenuePage = page;
+    this.loadOwnerRevenue();
   }
 
   private buildAlerts(stats: any): void {
@@ -180,9 +239,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   }
 
   formatCurrency(amount: number): string {
-    return new Intl.NumberFormat('fr-FR', {
-      style: 'currency', currency: 'XAF', minimumFractionDigits: 0
-    }).format(amount || 0);
+    return this.currencyService.format(amount);
   }
 
   formatDate(date: any): string {

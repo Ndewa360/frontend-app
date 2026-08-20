@@ -8,6 +8,7 @@ import { ToastrService } from 'ngx-toastr';
 import { AdminPaymentsAction } from '../../store/payments/admin-payments.actions';
 import { AdminPaymentsState } from '../../store/payments/admin-payments.state';
 import { AdminPaymentsService } from '../../services/admin-payments.service';
+import { AdminCurrencyService } from '../../services/admin-currency.service';
 import { AdminPayment, AdminSubscription, AdminCoupon } from '../../store/payments/admin-payments.model';
 
 @Component({
@@ -52,7 +53,8 @@ export class AdminPaymentsComponent implements OnInit, OnDestroy {
     private store: Store,
     private fb: FormBuilder,
     private paymentsService: AdminPaymentsService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private currencyService: AdminCurrencyService,
   ) {
     this.couponForm = this.fb.group({
       name:        ['', Validators.required],
@@ -218,7 +220,7 @@ export class AdminPaymentsComponent implements OnInit, OnDestroy {
   // ── Helpers ───────────────────────────────────────────────────────────────
 
   formatCurrency(amount: number): string {
-    return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XAF', minimumFractionDigits: 0 }).format(amount || 0);
+    return this.currencyService.format(amount);
   }
 
   getUserName(user: any): string {
@@ -232,10 +234,6 @@ export class AdminPaymentsComponent implements OnInit, OnDestroy {
 
   getSubAmount(sub: AdminSubscription): number {
     return sub.amount || (sub as any).monthlyAmount || 0;
-  }
-
-  getSubCurrency(sub: AdminSubscription): string {
-    return sub.currency || 'XAF';
   }
 
   getSubPropertyLimit(sub: AdminSubscription): string {

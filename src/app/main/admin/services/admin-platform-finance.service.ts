@@ -79,6 +79,10 @@ export class AdminPlatformFinanceService {
     return this.http.get<any>(`${API}/config`).pipe(map(r => r.data));
   }
 
+  getExchangeRates(): Observable<{ baseCurrency: string; rates: Record<string, number>; supportedCurrencies: string[] }> {
+    return this.http.get<any>(`${API}/exchange-rates`).pipe(map(r => r.data));
+  }
+
   updateConfig(dto: Partial<PlatformFinanceConfig>): Observable<PlatformFinanceConfig> {
     return this.http.patch<any>(`${API}/config`, dto).pipe(map(r => r.data));
   }

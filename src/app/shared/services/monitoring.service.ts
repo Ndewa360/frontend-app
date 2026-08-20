@@ -48,7 +48,7 @@ export class MonitoringService {
   };
 
   constructor(private http: HttpClient) {
-    this.initializeRealTimeUpdates();
+    // Les mises a jour sont demarrees par le dashboard, pas sur toutes les pages.
   }
 
   // ==================== ERROR MANAGEMENT ====================

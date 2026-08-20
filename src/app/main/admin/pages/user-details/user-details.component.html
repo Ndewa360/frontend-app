@@ -589,7 +589,7 @@
               <div style="padding:7px 0 7px 12px;color:#374151;border-bottom:1px solid #F3F4F6">{{ getProviderLabel(selectedTx.provider) }}</div>
 
               <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Montant</div>
-              <div style="padding:7px 0 7px 12px;font-weight:700;color:#374151;border-bottom:1px solid #F3F4F6">{{ formatCurrency(selectedTx.amount) }} <span style="font-weight:400;color:#9CA3AF">{{ selectedTx.currency }}</span></div>
+              <div style="padding:7px 0 7px 12px;font-weight:700;color:#374151;border-bottom:1px solid #F3F4F6">{{ formatCurrency(selectedTx.amount) }} <span style="font-weight:400;color:#9CA3AF">{{ displayCurrency }}</span></div>
 
               <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Créé le</div>
               <div style="padding:7px 0 7px 12px;color:#374151;border-bottom:1px solid #F3F4F6">{{ formatDate(selectedTx.createdAt) }}</div>

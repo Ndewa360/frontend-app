@@ -1,0 +1,28 @@
+<svg
+  class="pf-pc"
+  [attr.width]="size"
+  [attr.height]="size"
+  [attr.viewBox]="viewBox"
+  [attr.aria-label]="ariaLabel"
+  role="img"
+>
+  <ng-container *ngIf="hasData">
+    <circle
+      *ngIf="fullCircleColor"
+      [attr.cx]="cx"
+      [attr.cy]="cy"
+      [attr.r]="radius"
+      [attr.fill]="fullCircleColor"
+      [attr.stroke]="gapColor"
+      [attr.stroke-width]="strokeWidth"
+    ></circle>
+    <path
+      *ngFor="let p of paths; trackBy: trackByIndex"
+      [attr.d]="p.d"
+      [attr.fill]="p.color"
+      [attr.stroke]="gapColor"
+      [attr.stroke-width]="strokeWidth"
+    ></path>
+  </ng-container>
+  <circle *ngIf="!hasData" [attr.cx]="cx" [attr.cy]="cy" [attr.r]="radius" fill="#f1f5f9"></circle>
+</svg>
