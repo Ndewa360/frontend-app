@@ -4,6 +4,7 @@ import { Store } from '@ngxs/store';
 import { Observable, of, combineLatest } from 'rxjs';
 import { map, catchError, switchMap } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 import { AuthTokenState, UserProfileState } from '../store';
 import { RefreshTokenService } from '../store/auth-token/refresh-token.service';
 import { UserActivityService, UserActivityState } from '../store/auth-token/user-activity.service';
@@ -26,7 +27,8 @@ export class AdvancedAuthGuard implements CanActivate {
     private refreshTokenService: RefreshTokenService,
     private userActivityService: UserActivityService,
     private languageUrlService: LanguageUrlService,
-    private languagePreservation: LanguagePreservationService
+    private languagePreservation: LanguagePreservationService,
+    private translate: TranslateService
   ) {}
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean | UrlTree> {
@@ -37,7 +39,7 @@ export class AdvancedAuthGuard implements CanActivate {
         return this.router.parseUrl(result.redirectUrl || this.getSafeRedirectUrl(state.url));
       }),
       catchError(error => {
-        this.toastrService.error('Erreur de vérification de session', 'Ndewa360°');
+        this.toastrService.error(this.translate.instant('AUTH.SESSION_CHECK_ERROR'), 'Ndewa360°');
         return of(this.router.parseUrl(this.getSafeRedirectUrl(state.url)));
       })
     );
@@ -52,15 +54,15 @@ export class AdvancedAuthGuard implements CanActivate {
       switchMap(([token, userProfile, activityState]) => {
         if (!token || !token.accessToken) {
           const lang = this.languagePreservation.getCurrentOrPreservedLanguage();
-          return of({ canActivate: false, redirectUrl: this.getSafeRedirectUrl(state.url, lang), message: '🔑 Authentification requise' });
+          return of({ canActivate: false, redirectUrl: this.getSafeRedirectUrl(state.url, lang), message: this.translate.instant('AUTH.AUTH_REQUIRED') });
         }
         if (activityState === UserActivityState.CRITICAL_INACTIVE) {
           const lang = this.languagePreservation.getCurrentOrPreservedLanguage();
-          return of({ canActivate: false, redirectUrl: this.getSafeRedirectUrl(state.url, lang), message: '🔒 Session fermée après inactivité prolongée' });
+          return of({ canActivate: false, redirectUrl: this.getSafeRedirectUrl(state.url, lang), message: this.translate.instant('AUTH.SESSION_CRITICAL_INACTIVE') });
         }
         if (activityState === UserActivityState.INACTIVE) {
           const lang = this.languagePreservation.getCurrentOrPreservedLanguage();
-          return of({ canActivate: false, redirectUrl: this.getSafeRedirectUrl(state.url, lang), message: '⏰ Session suspendue pour inactivité' });
+          return of({ canActivate: false, redirectUrl: this.getSafeRedirectUrl(state.url, lang), message: this.translate.instant('AUTH.SESSION_INACTIVE') });
         }
         return this.checkTokenExpiration(state.url);
       })
@@ -72,11 +74,11 @@ export class AdvancedAuthGuard implements CanActivate {
       map(result => {
         if (result) return { canActivate: true };
         const lang = this.languagePreservation.getCurrentOrPreservedLanguage();
-        return { canActivate: false, redirectUrl: this.getSafeRedirectUrl(currentUrl, lang), message: 'Votre session a expiré.' };
+        return { canActivate: false, redirectUrl: this.getSafeRedirectUrl(currentUrl, lang), message: this.translate.instant('AUTH.SESSION_EXPIRED') };
       }),
       catchError(() => {
         const lang = this.languagePreservation.getCurrentOrPreservedLanguage();
-        return of({ canActivate: false, redirectUrl: this.getSafeRedirectUrl(currentUrl, lang), message: 'Erreur de session.' });
+        return of({ canActivate: false, redirectUrl: this.getSafeRedirectUrl(currentUrl, lang), message: this.translate.instant('AUTH.SESSION_ERROR') });
       })
     );
   }

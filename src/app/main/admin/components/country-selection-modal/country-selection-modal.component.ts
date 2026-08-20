@@ -4,6 +4,7 @@ import { FormControl } from '@angular/forms';
 import { Subject, BehaviorSubject, combineLatest } from 'rxjs';
 import { takeUntil, debounceTime, distinctUntilChanged, startWith, switchMap, catchError } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 
 import { RestCountriesService, RestCountry, Region } from '../../services/rest-countries.service';
 import { AdminGeographyService } from '../../services/admin-geography.service';
@@ -49,7 +50,8 @@ export class CountrySelectionModalComponent implements OnInit, OnDestroy {
     @Inject(MAT_DIALOG_DATA) public data: CountrySelectionModalData,
     private restCountriesService: RestCountriesService,
     private adminGeographyService: AdminGeographyService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private translate: TranslateService
   ) {
     this.title = data?.title || 'Ajouter un pays';
     this.subtitle = data?.subtitle || 'Sélectionnez une région puis un pays à ajouter';
@@ -106,7 +108,7 @@ export class CountrySelectionModalComponent implements OnInit, OnDestroy {
     this.restCountriesService.getCountriesByRegion(region.name).pipe(
       takeUntil(this.destroy$),
       catchError(error => {
-        this.toastr.error('Erreur lors du chargement des pays', 'Erreur');
+        this.toastr.error(this.translate.instant('GEOGRAPHY.COUNTRY.LOAD_ERROR'), this.translate.instant('COMMON.ERROR'));
         this.isLoading$.next(false);
         throw error;
       })
@@ -173,13 +175,13 @@ export class CountrySelectionModalComponent implements OnInit, OnDestroy {
     this.adminGeographyService.createCountry(transformedCountry).pipe(
       takeUntil(this.destroy$),
       catchError(error => {
-        this.toastr.error('Erreur lors de la création du pays', 'Erreur');
+        this.toastr.error(this.translate.instant('GEOGRAPHY.COUNTRY.CREATE_ERROR'), this.translate.instant('COMMON.ERROR'));
         this.isLoading$.next(false);
         throw error;
       })
     ).subscribe(result => {
       this.isLoading$.next(false);
-      this.toastr.success(`Le pays ${this.selectedCountry!.name.common} a été ajouté avec succès`, 'Succès');
+      this.toastr.success(this.translate.instant('GEOGRAPHY.COUNTRY.CREATE_SUCCESS', { name: this.selectedCountry!.name.common }), this.translate.instant('COMMON.SUCCESS'));
       
       const modalResult: CountrySelectionResult = {
         country: result,

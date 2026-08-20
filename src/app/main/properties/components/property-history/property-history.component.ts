@@ -4,6 +4,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 import {
   LocationPaymentModel,
   LocationPaymentState,
@@ -129,6 +130,7 @@ export class PropertyHistoryComponent implements OnInit, OnDestroy, OnChanges {
     private store: Store,
     private dialog: MatDialog,
     private toastr: ToastrService,
+    private translate: TranslateService,
     private exportService: ExportService
   ) { }
 
@@ -713,7 +715,7 @@ export class PropertyHistoryComponent implements OnInit, OnDestroy, OnChanges {
   onViewPayment(payment: PaymentHistoryItem): void {
 
     if (!payment?.rawPayment) {
-      this.toastr.error('Données de paiement manquantes', 'Erreur');
+      this.toastr.error(this.translate.instant('NOTIFICATIONS.PAYMENT_DATA_MISSING'), this.translate.instant('COMMON.ERROR'));
       return;
     }
 
@@ -727,7 +729,7 @@ export class PropertyHistoryComponent implements OnInit, OnDestroy, OnChanges {
    */
   onEditPayment(payment: PaymentHistoryItem): void {
     if (!payment?.rawPayment || !payment?.tenant) {
-      this.toastr.error('Données de paiement manquantes', 'Erreur');
+      this.toastr.error(this.translate.instant('NOTIFICATIONS.PAYMENT_DATA_MISSING'), this.translate.instant('COMMON.ERROR'));
       return;
     }
 
@@ -760,12 +762,12 @@ export class PropertyHistoryComponent implements OnInit, OnDestroy, OnChanges {
 
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
-          this.toastr.success('Paiement modifié avec succès', 'Succès');
+          this.toastr.success(this.translate.instant('NOTIFICATIONS.PAYMENT_MODIFIED_SUCCESS'), this.translate.instant('COMMON.SUCCESS'));
           this.loadData();
         }
       });
     } catch (error) {
-      this.toastr.error('Erreur lors de l\'ouverture du modal', 'Erreur');
+      this.toastr.error(this.translate.instant('NOTIFICATIONS.MODAL_OPEN_ERROR'), this.translate.instant('COMMON.ERROR'));
     }
   }
 
@@ -775,7 +777,7 @@ export class PropertyHistoryComponent implements OnInit, OnDestroy, OnChanges {
   onDeletePayment(payment: PaymentHistoryItem): void {
 
     if (!payment?.rawPayment || !payment?.tenant) {
-      this.toastr.error('Données de paiement manquantes', 'Erreur');
+      this.toastr.error(this.translate.instant('NOTIFICATIONS.PAYMENT_DATA_MISSING'), this.translate.instant('COMMON.ERROR'));
       return;
     }
 
@@ -800,13 +802,13 @@ export class PropertyHistoryComponent implements OnInit, OnDestroy, OnChanges {
 
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
-          this.toastr.success('Paiement supprimé avec succès', 'Succès');
+          this.toastr.success(this.translate.instant('NOTIFICATIONS.PAYMENT_DELETED_SUCCESS'), this.translate.instant('COMMON.SUCCESS'));
           // Recharger les données
           this.loadData();
         }
       });
     } catch (error) {
-      this.toastr.error('Erreur lors de l\'ouverture du modal', 'Erreur');
+      this.toastr.error(this.translate.instant('NOTIFICATIONS.MODAL_OPEN_ERROR'), this.translate.instant('COMMON.ERROR'));
     }
   }
 

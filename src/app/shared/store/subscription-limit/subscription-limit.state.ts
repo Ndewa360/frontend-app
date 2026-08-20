@@ -142,7 +142,7 @@ export class SubscriptionLimitState {
         });
         this.toastrService.success(
           this.translateService.instant('NOTIFICATIONS.SUBSCRIPTION_UPGRADE_SUCCESS'),
-          'Upgrade réussi'
+          'Ndewa360°'
         );
         // Recharger depuis le backend pour avoir les données fraîches
         ctx.dispatch(new SubscriptionLimitAction.GetSubscriptionStatus());
@@ -154,7 +154,7 @@ export class SubscriptionLimitState {
         });
         this.toastrService.error(
           this.translateService.instant('NOTIFICATIONS.SUBSCRIPTION_UPGRADE_ERROR'),
-          'Erreur'
+          'Ndewa360°'
         );
         return throwError(error);
       })
@@ -168,7 +168,7 @@ export class SubscriptionLimitState {
     return this.subscriptionLimitService.reactivateAccount().pipe(
       tap((response) => {
         ctx.patchState({ loading: false });
-        this.toastrService.success(this.translateService.instant('NOTIFICATIONS.ACCOUNT_REACTIVATED_SUCCESS'), 'Compte réactivé');
+        this.toastrService.success(this.translateService.instant('NOTIFICATIONS.ACCOUNT_REACTIVATED_SUCCESS'), 'Ndewa360°');
         
         // Recharger le statut après réactivation
         ctx.dispatch(new SubscriptionLimitAction.GetSubscriptionStatus());
@@ -178,7 +178,7 @@ export class SubscriptionLimitState {
           loading: false,
           error: error.message || 'Erreur lors de la réactivation'
         });
-        this.toastrService.error(this.translateService.instant('NOTIFICATIONS.ACCOUNT_REACTIVATION_ERROR'), 'Erreur');
+        this.toastrService.error(this.translateService.instant('NOTIFICATIONS.ACCOUNT_REACTIVATION_ERROR'), 'Ndewa360°');
         return throwError(error);
       })
     );
@@ -205,12 +205,12 @@ export class SubscriptionLimitState {
         }
         this.toastrService.info(
           this.translateService.instant('NOTIFICATIONS.MONTHLY_AMOUNT_CALCULATED', { amount: response.data.amount }),
-          'Calcul terminé'
+          'Ndewa360°'
         );
       }),
       catchError((error) => {
         ctx.patchState({ loading: false, error: error.message || 'Erreur lors du calcul' });
-        this.toastrService.error(this.translateService.instant('NOTIFICATIONS.MONTHLY_CALCULATION_ERROR'), 'Erreur');
+        this.toastrService.error(this.translateService.instant('NOTIFICATIONS.MONTHLY_CALCULATION_ERROR'), 'Ndewa360°');
         return throwError(error);
       })
     );

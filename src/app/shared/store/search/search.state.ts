@@ -253,7 +253,7 @@ export class SearchState{
                     loadingSearch: false,
                     loadingSearchItem:false
                 })
-                return throwError(error);
+                return of(null);
             })
         )
     }
@@ -283,7 +283,7 @@ export class SearchState{
                 ctx.patchState({
                     loadingSearchItem: false
                 })
-                return throwError(error);
+                return of(null);
             })
         )
     }
@@ -328,8 +328,7 @@ export class SearchState{
                 ctx.patchState({
                     loadingSearch: false
                 });
-                this._toastrService.error(this._translateService.instant('NOTIFICATIONS.SEARCH_ERROR'), 'Erreur');
-                return throwError(error);
+                return of(null);
             })
         );
     }

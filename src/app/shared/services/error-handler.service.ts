@@ -102,9 +102,7 @@ export class ErrorHandlerService {
    * Affiche un toast d'erreur
    */
   private showErrorToast(errorInfo: ErrorInfo, context?: string): void {
-    const title = context ? `Erreur - ${context}` : 'Erreur';
-    
-    this.toastr.error(errorInfo.message, title, {
+    this.toastr.error(errorInfo.message, 'Ndewa360°', {
       timeOut: 5000,
       closeButton: true,
       progressBar: true
@@ -136,7 +134,7 @@ export class ErrorHandlerService {
    */
   showValidationErrors(errors: string[]): void {
     errors.forEach(error => {
-      this.toastr.warning(error, 'Validation', {
+      this.toastr.warning(error, 'Ndewa360°', {
         timeOut: 4000
       });
     });

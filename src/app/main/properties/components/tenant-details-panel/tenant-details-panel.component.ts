@@ -318,10 +318,10 @@ export class TenantDetailsPanelComponent implements OnInit, OnDestroy, OnChanges
         if (result && result.success) {
           // Recharger les données après succès
           this.reloadData();
-          this.toastr.success('Assignation réalisée avec succès', 'Succès');
+          this.toastr.success(this.translate.instant('NOTIFICATIONS.ASSIGNATION_SUCCESS'), this.translate.instant('COMMON.SUCCESS'));
         } else if (result && result.success === false) {
           // Erreur réelle d'assignation
-          this.toastr.error('Erreur lors de l\'assignation', 'Erreur');
+          this.toastr.error(this.translate.instant('NOTIFICATIONS.ASSIGNATION_ERROR'), this.translate.instant('COMMON.ERROR'));
         } else {
           // Annulation par l'utilisateur (result === null)
           // Pas de message pour une annulation normale
@@ -545,7 +545,7 @@ export class TenantDetailsPanelComponent implements OnInit, OnDestroy, OnChanges
    */
   onEditPayment(payment: LocationPaymentModel): void {
     if (!payment || !this.tenant || !this.dialog) {
-      this.toastr.error('Données de paiement manquantes', 'Erreur');
+      this.toastr.error(this.translate.instant('NOTIFICATIONS.PAYMENT_DATA_MISSING'), this.translate.instant('COMMON.ERROR'));
       return;
     }
     const room = this.store.selectSnapshot(RoomState.selectStateRoom(payment.room));
@@ -563,10 +563,10 @@ export class TenantDetailsPanelComponent implements OnInit, OnDestroy, OnChanges
         }
       });
       dialogRef.afterClosed().subscribe(result => {
-        if (result) this.toastr.success('Paiement modifié avec succès', 'Succès');
+        if (result) this.toastr.success(this.translate.instant('NOTIFICATIONS.PAYMENT_MODIFIED_SUCCESS'), this.translate.instant('COMMON.SUCCESS'));
       });
     } catch (error) {
-      this.toastr.error('Erreur lors de l\'ouverture du modal', 'Erreur');
+      this.toastr.error(this.translate.instant('NOTIFICATIONS.MODAL_OPEN_ERROR'), this.translate.instant('COMMON.ERROR'));
     }
   }
 
@@ -575,7 +575,7 @@ export class TenantDetailsPanelComponent implements OnInit, OnDestroy, OnChanges
    */
   onDeletePayment(payment: LocationPaymentModel): void {
     if (!payment || !this.tenant || !this.dialog) {
-      this.toastr.error('Données de paiement manquantes', 'Erreur');
+      this.toastr.error(this.translate.instant('NOTIFICATIONS.PAYMENT_DATA_MISSING'), this.translate.instant('COMMON.ERROR'));
       return;
     }
     const paymentData = this.buildPaymentModalData(payment);
@@ -587,10 +587,10 @@ export class TenantDetailsPanelComponent implements OnInit, OnDestroy, OnChanges
         data: { transaction: paymentData.transaction, history: paymentData.history }
       });
       dialogRef.afterClosed().subscribe(result => {
-        if (result) this.toastr.success('Paiement supprimé avec succès', 'Succès');
+        if (result) this.toastr.success(this.translate.instant('NOTIFICATIONS.PAYMENT_DELETED_SUCCESS'), this.translate.instant('COMMON.SUCCESS'));
       });
     } catch (error) {
-      this.toastr.error('Erreur lors de l\'ouverture du modal', 'Erreur');
+      this.toastr.error(this.translate.instant('NOTIFICATIONS.MODAL_OPEN_ERROR'), this.translate.instant('COMMON.ERROR'));
     }
   }
 }

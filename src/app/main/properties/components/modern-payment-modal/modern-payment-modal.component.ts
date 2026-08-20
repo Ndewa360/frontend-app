@@ -351,7 +351,7 @@ export class ModernPaymentModalComponent implements OnInit, OnDestroy {
           if (!paymentData.roomId || !paymentData.locataireId || !paymentData.propertyId) {
             
             this.isLoading = false;
-            this.toastr.error('Données incomplètes pour créer le paiement', 'Erreur');
+            this.toastr.error(this.translate.instant('NOTIFICATIONS.INCOMPLETE_PAYMENT_DATA'), this.translate.instant('COMMON.ERROR'));
             return;
           }
 
@@ -359,13 +359,13 @@ export class ModernPaymentModalComponent implements OnInit, OnDestroy {
           this.store.dispatch(new LocationPaymentAction.AddLocationPayment(paymentData));
         } else {
           this.isLoading = false;
-          this.toastr.error('Données insuffisantes pour créer le paiement', 'Erreur');
+          this.toastr.error(this.translate.instant('NOTIFICATIONS.INSUFFICIENT_PAYMENT_DATA'), this.translate.instant('COMMON.ERROR'));
           return;
         }
       } else {
         if (!this.data.transaction?._id || !this.data.tenant?._id) {
           this.isLoading = false;
-          this.toastr.error('Données de transaction manquantes', 'Erreur');
+          this.toastr.error(this.translate.instant('NOTIFICATIONS.TRANSACTION_DATA_MISSING'), this.translate.instant('COMMON.ERROR'));
           return;
         }
 
@@ -378,7 +378,7 @@ export class ModernPaymentModalComponent implements OnInit, OnDestroy {
     } catch (error) {
       this.isLoading = false;
       clearTimeout(safetyTimeout);
-      this.toastr.error('Erreur lors de la préparation des données', 'Erreur');
+      this.toastr.error(this.translate.instant('NOTIFICATIONS.DATA_PREPARATION_ERROR'), this.translate.instant('COMMON.ERROR'));
     }
   }
 

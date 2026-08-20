@@ -186,12 +186,8 @@ export class RoomState{
                 }
             ),
             catchError((error) => {
-                // this._toastrService.error(error?.error?.message, 'Erreur');
-                ctx.patchState({
-                    loadingRoom: false
-                })
-                return throwError(error);
-                
+                ctx.patchState({ loadingRoom: false });
+                return of(null);
             })
         )
     }
@@ -239,10 +235,8 @@ export class RoomState{
                 result => {
                     const rooms = [...state.rooms];
                     if(index > -1) {
-                        // Mettre à jour la room existante
                         rooms[index] = result.data;
                     } else {
-                        // Ajouter la nouvelle room
                         rooms.push(result.data);
                     }
                     ctx.patchState({
@@ -250,7 +244,11 @@ export class RoomState{
                         rooms: rooms
                     })
                 }
-            )
+            ),
+            catchError((error) => {
+                ctx.patchState({ loadingRoom: false });
+                return throwError(error);
+            })
         )
     }
 
@@ -277,7 +275,11 @@ export class RoomState{
                         rooms:roomState
                     })
                 }
-            )
+            ),
+            catchError((error) => {
+                ctx.patchState({ loadingRoom: false });
+                return throwError(error);
+            })
         )
     }
 
@@ -301,7 +303,11 @@ export class RoomState{
                         initLoadingState:"LOADED"
                     })
                 }
-            )
+            ),
+            catchError((error) => {
+                ctx.patchState({ loadingRoom: false, initLoadingState: 'NO_LOADED' });
+                return throwError(error);
+            })
         )
     }
 
@@ -326,7 +332,11 @@ export class RoomState{
                         initLoadingState:"LOADED"
                     })
                 }
-            )
+            ),
+            catchError((error) => {
+                ctx.patchState({ loadingRoom: false, initLoadingState: 'NO_LOADED' });
+                return throwError(error);
+            })
         )
     }
 
@@ -359,7 +369,8 @@ export class RoomState{
                 }
             ),
             catchError((error)=>{
-                  return error;
+                  ctx.patchState({ loadingRoom: false, initLoadingState: 'NO_LOADED' });
+                  return of(null);
             })
         )
     }
@@ -411,7 +422,11 @@ export class RoomState{
                         rooms:[...state.rooms,...result.data],
                     })
                 }
-            )
+            ),
+            catchError((error) => {
+                ctx.patchState({ loadingRoom: false, initLoadingState: 'NO_LOADED' });
+                return throwError(error);
+            })
         )
     }
 }

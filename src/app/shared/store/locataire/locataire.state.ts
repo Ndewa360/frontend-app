@@ -136,7 +136,7 @@ export class LocataireState{
                 ctx.patchState({
                     loadingLocataire: false
                 })
-                return throwError(error);
+                return of(null);
                 
             })
         )
@@ -191,7 +191,11 @@ export class LocataireState{
                         locataires:[...state.locataires, result.data]
                     })
                 }
-            )
+            ),
+            catchError((error) => {
+                ctx.patchState({ loadingLocataire: false });
+                return throwError(error);
+            })
         )
     }
 
@@ -219,7 +223,7 @@ export class LocataireState{
                 ctx.patchState({
                     loadingLocataire: false
                 })
-                return throwError(error);
+                return of(null);
             })
         )
     }
@@ -253,7 +257,7 @@ export class LocataireState{
                 ctx.patchState({
                     loadingLocataire: false
                 })
-                return throwError(error);
+                return of(null);
             })
         )
     }
@@ -282,7 +286,7 @@ export class LocataireState{
                 ctx.patchState({
                     loadingLocataire: false
                 });
-                return throwError(error);
+                return of(null);
             })
         );
     }

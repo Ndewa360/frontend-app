@@ -4,7 +4,8 @@ import { ToastrService } from "ngx-toastr"
 import { ProspectionService } from "./prospection.service"
 import { TranslateService } from "@ngx-translate/core"
 import { ProspectionAction } from "./prospection.action"
-import { tap, catchError } from "rxjs"
+import { tap, catchError } from "rxjs/operators"
+import { of } from "rxjs"
 
 export class ProspectionStateModel {
     loadingProspection:boolean
@@ -51,7 +52,8 @@ export class ProspectionState{
                 }
             ),
             catchError((error)=>{
-                    return error;
+                    ctx.patchState({ loadingProspection: false });
+                    return of(null);
             })
         )
     }

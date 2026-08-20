@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 import { Store, Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import {
@@ -86,6 +87,7 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
     private financeService: AdminPlatformFinanceService,
     private fb: FormBuilder,
     private toastr: ToastrService,
+    private translate: TranslateService,
   ) {
     this.withdrawalForm = this.fb.group({
       requestedAmount: [null, [Validators.required, Validators.min(1)]],
@@ -124,7 +126,7 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
     });
     // Fix #7 : afficher l'erreur config si elle survient
     this.configError$.pipe(takeUntil(this.destroy$)).subscribe(err => {
-      if (err) this.toastr.error(err, 'Configuration');
+      if (err) this.toastr.error(err, 'Ndewa360°');
     });
     this.loadAll();
   }
@@ -190,7 +192,7 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
 
   onRefresh(): void {
     this.loadAll();
-    this.toastr.info('Données actualisées');
+    this.toastr.info(this.translate.instant('NOTIFICATIONS.ADMIN_DATA_REFRESHED'), 'Ndewa360°');
   }
 
   onComputeSnapshot(): void {
@@ -200,10 +202,10 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
       .subscribe({
         next: () => {
           this.isLoading = false;
-          this.toastr.success('Snapshot calculé');
+          this.toastr.success(this.translate.instant('NOTIFICATIONS.PLATFORM_SNAPSHOT_CALCULATED'), 'Ndewa360°');
           this.store.dispatch(new PlatformFinanceAction.LoadRevenue(this.selectedPeriod, this.selectedYear, this.selectedCurrency));
         },
-        error: () => { this.isLoading = false; this.toastr.error('Erreur calcul snapshot'); },
+        error: () => { this.isLoading = false; this.toastr.error(this.translate.instant('NOTIFICATIONS.PLATFORM_SNAPSHOT_CALC_ERROR'), 'Ndewa360°'); },
       });
   }
 
@@ -225,14 +227,14 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
           this.showWithdrawalModal = false;
           // Super-admin : retrait directement confirmé, pas besoin d'approbation
           if (w?.status === 'CONFIRMED') {
-            this.toastr.success('Retrait effectué avec succès');
+            this.toastr.success(this.translate.instant('NOTIFICATIONS.PLATFORM_WITHDRAWAL_DONE'), 'Ndewa360°');
           } else {
-            this.toastr.success('Demande de retrait créée');
+            this.toastr.success(this.translate.instant('NOTIFICATIONS.PLATFORM_WITHDRAWAL_REQUEST_CREATED'), 'Ndewa360°');
           }
           this.store.dispatch(new PlatformFinanceAction.LoadWithdrawals(this.wdPage, this.wdLimit));
           this.store.dispatch(new PlatformFinanceAction.LoadBalance());
         },
-        error: (e) => { this.isLoading = false; this.toastr.error(e?.error?.message || 'Erreur création retrait'); },
+        error: (e) => { this.isLoading = false; this.toastr.error(e?.error?.message || this.translate.instant('NOTIFICATIONS.PLATFORM_WITHDRAWAL_REQUEST_ERROR'), 'Ndewa360°'); },
       });
   }
 
@@ -249,8 +251,8 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
     this.financeService.approveWithdrawal(this.selectedWithdrawal._id, this.approveNotes)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: () => { this.showApproveModal = false; this.toastr.success('Retrait approuvé'); this.store.dispatch(new PlatformFinanceAction.LoadWithdrawals(this.wdPage, this.wdLimit)); },
-        error: (e) => this.toastr.error(e?.error?.message || 'Erreur approbation'),
+        next: () => { this.showApproveModal = false; this.toastr.success(this.translate.instant('NOTIFICATIONS.PLATFORM_WITHDRAWAL_APPROVED'), 'Ndewa360°'); this.store.dispatch(new PlatformFinanceAction.LoadWithdrawals(this.wdPage, this.wdLimit)); },
+        error: (e) => this.toastr.error(e?.error?.message || this.translate.instant('NOTIFICATIONS.PLATFORM_WITHDRAWAL_APPROVE_ERROR'), 'Ndewa360°'),
       });
   }
 
@@ -268,8 +270,8 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
     this.financeService.confirmWithdrawal(this.selectedWithdrawal._id, this.confirmExternalRef, this.confirmNotes)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: () => { this.showConfirmModal = false; this.toastr.success('Retrait confirmé'); this.store.dispatch(new PlatformFinanceAction.LoadWithdrawals(this.wdPage, this.wdLimit)); this.store.dispatch(new PlatformFinanceAction.LoadBalance()); },
-        error: (e) => this.toastr.error(e?.error?.message || 'Erreur confirmation'),
+        next: () => { this.showConfirmModal = false; this.toastr.success(this.translate.instant('NOTIFICATIONS.PLATFORM_WITHDRAWAL_CONFIRMED'), 'Ndewa360°'); this.store.dispatch(new PlatformFinanceAction.LoadWithdrawals(this.wdPage, this.wdLimit)); this.store.dispatch(new PlatformFinanceAction.LoadBalance()); },
+        error: (e) => this.toastr.error(e?.error?.message || this.translate.instant('NOTIFICATIONS.PLATFORM_WITHDRAWAL_CONFIRM_ERROR'), 'Ndewa360°'),
       });
   }
 
@@ -286,8 +288,8 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
     this.financeService.failWithdrawal(this.selectedWithdrawal._id, this.failReason)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: () => { this.showFailModal = false; this.toastr.warning('Retrait marqué échoué'); this.store.dispatch(new PlatformFinanceAction.LoadWithdrawals(this.wdPage, this.wdLimit)); this.store.dispatch(new PlatformFinanceAction.LoadBalance()); },
-        error: (e) => this.toastr.error(e?.error?.message || 'Erreur'),
+        next: () => { this.showFailModal = false; this.toastr.warning(this.translate.instant('NOTIFICATIONS.PLATFORM_WITHDRAWAL_FAILED_MARKED'), 'Ndewa360°'); this.store.dispatch(new PlatformFinanceAction.LoadWithdrawals(this.wdPage, this.wdLimit)); this.store.dispatch(new PlatformFinanceAction.LoadBalance()); },
+        error: (e) => this.toastr.error(e?.error?.message || this.translate.instant('COMMON.ERROR'), 'Ndewa360°'),
       });
   }
 
@@ -304,8 +306,8 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
     this.financeService.cancelWithdrawal(this.selectedWithdrawal._id, this.cancelReason)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: () => { this.showCancelModal = false; this.toastr.info('Retrait annulé'); this.store.dispatch(new PlatformFinanceAction.LoadWithdrawals(this.wdPage, this.wdLimit)); this.store.dispatch(new PlatformFinanceAction.LoadBalance()); },
-        error: (e) => this.toastr.error(e?.error?.message || 'Erreur annulation'),
+        next: () => { this.showCancelModal = false; this.toastr.info(this.translate.instant('NOTIFICATIONS.PLATFORM_WITHDRAWAL_CANCELLED'), 'Ndewa360°'); this.store.dispatch(new PlatformFinanceAction.LoadWithdrawals(this.wdPage, this.wdLimit)); this.store.dispatch(new PlatformFinanceAction.LoadBalance()); },
+        error: (e) => this.toastr.error(e?.error?.message || this.translate.instant('NOTIFICATIONS.PLATFORM_WITHDRAWAL_CANCEL_ERROR'), 'Ndewa360°'),
       });
   }
 
@@ -318,8 +320,8 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
     this.financeService.updateConfig(this.configForm.value)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: c => { this.config = c; this.showConfigModal = false; this.toastr.success('Configuration mise à jour'); this.store.dispatch(new PlatformFinanceAction.LoadConfig()); },
-        error: () => this.toastr.error('Erreur mise à jour configuration'),
+        next: c => { this.config = c; this.showConfigModal = false; this.toastr.success(this.translate.instant('NOTIFICATIONS.PLATFORM_CONFIG_UPDATED'), 'Ndewa360°'); this.store.dispatch(new PlatformFinanceAction.LoadConfig()); },
+        error: () => this.toastr.error(this.translate.instant('NOTIFICATIONS.PLATFORM_CONFIG_UPDATE_ERROR'), 'Ndewa360°'),
       });
   }
 

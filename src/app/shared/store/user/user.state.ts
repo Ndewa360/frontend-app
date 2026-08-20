@@ -6,6 +6,8 @@ import { UserService } from "./user.service";
 // import { ToastrService } from "ngx-toastr";
 import { of, throwError } from "rxjs";
 import { catchError, tap } from "rxjs/operators";
+import { ToastrService } from "ngx-toastr";
+import { TranslateService } from "@ngx-translate/core";
 
 export class UserStateModel {
     users:UserModel[]
@@ -26,6 +28,8 @@ export class UserStateModel {
 export class UserState{
     constructor(
         private _usersService:UserService,
+        private _toastrService:ToastrService,
+        private _translateService: TranslateService
     ){}
 
     @Selector()
@@ -80,11 +84,10 @@ export class UserState{
                 }
             ),
             catchError((error) => {
-                // this._toastrService.error(error?.error?.message, 'Erreur');
                 ctx.patchState({
                     loadingUser: false
                 })
-                return throwError(error);
+                return of(null);
                 
             })
         )
@@ -124,7 +127,11 @@ export class UserState{
                         users:[...state.users,result.data]
                     })
                 }
-            )
+            ),
+            catchError((error) => {
+                ctx.patchState({ loadingUser: false });
+                return of(null);
+            })
         )
     }
 
@@ -172,7 +179,11 @@ export class UserState{
                         users:[...result.data],
                     })
                 }
-            )
+            ),
+            catchError((error) => {
+                ctx.patchState({ loadingUser: false, initLoadingState: 'NO_LOADED' });
+                return of(null);
+            })
         )
     }
 
@@ -189,14 +200,17 @@ export class UserState{
         return this._usersService.getAllUsers().pipe(
             tap(
                 result => {
-                    //console.log("Fetch All Users",result)
                     if(state.initLoadingState!="LOADED") ctx.patchState({initLoadingState:'LOADING'})
                     ctx.patchState({
                         loadingUser:false,
                         users:[...result.data],
                     })
                 }
-            )
+            ),
+            catchError((error) => {
+                ctx.patchState({ loadingUser: false, initLoadingState: 'NO_LOADED' });
+                return of(null);
+            })
         )
     }
 }

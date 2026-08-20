@@ -5,6 +5,7 @@ import { take, takeUntil } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 
 import { AdminGeographyAction } from '../../store/geography/admin-geography.actions';
 import { AdminGeographyState } from '../../store/geography/admin-geography.state';
@@ -66,6 +67,7 @@ export class AdminGeographyComponent implements OnInit, OnDestroy {
     private store: Store,
     private dialog: MatDialog,
     private toastr: ToastrService,
+    private translate: TranslateService,
     private fb: FormBuilder,
     private geographyService: AdminGeographyService,
     private exportService: ExportService
@@ -116,7 +118,7 @@ export class AdminGeographyComponent implements OnInit, OnDestroy {
     });
     dialogRef.afterClosed().subscribe((result: CountrySelectionResult) => {
       if (result) {
-        this.toastr.success(`Le pays ${result.country.shortName} a été ajouté avec succès`);
+        this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_COUNTRY_ADDED'));
         this.loadData();
       }
     });
@@ -128,7 +130,7 @@ export class AdminGeographyComponent implements OnInit, OnDestroy {
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result?.success) {
-        this.toastr.success(`La ville ${result.city.fullName} a été ajoutée avec succès`);
+        this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_CITY_ADDED'));
         this.loadData();
       }
     });
@@ -148,10 +150,10 @@ export class AdminGeographyComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
-          this.toastr.success(`Pays ${country.isActive ? 'désactivé' : 'activé'} avec succès`);
+          this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_COUNTRY_STATUS_UPDATED'));
           this.store.dispatch(new AdminGeographyAction.LoadCountries());
         },
-        error: () => this.toastr.error('Erreur lors du changement de statut')
+        error: () => this.toastr.error(this.translate.instant('NOTIFICATIONS.ADMIN_STATUS_CHANGE_ERROR'))
       });
   }
 
@@ -167,7 +169,7 @@ export class AdminGeographyComponent implements OnInit, OnDestroy {
     });
     dialogRef.afterClosed().subscribe((updated) => {
       if (updated) {
-        this.toastr.success(`Pays ${updated.name} mis à jour`);
+        this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_COUNTRY_UPDATED'));
         this.loadData();
       }
     });
@@ -179,7 +181,7 @@ export class AdminGeographyComponent implements OnInit, OnDestroy {
     });
     dialogRef.afterClosed().subscribe((confirmed) => {
       if (confirmed) {
-        this.toastr.success(`Pays supprimé`);
+        this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_COUNTRY_DELETED'));
         this.loadData();
       }
     });
@@ -196,7 +198,7 @@ export class AdminGeographyComponent implements OnInit, OnDestroy {
 
   onExportCountries(): void {
     this.countries$.pipe(take(1)).subscribe((countries: AdminCountry[]) => {
-      if (!countries?.length) { this.toastr.warning('Aucun pays à exporter'); return; }
+      if (!countries?.length) { this.toastr.warning(this.translate.instant('NOTIFICATIONS.ADMIN_NO_COUNTRIES_TO_EXPORT')); return; }
       const columns: ExportColumn[] = [
         { key: 'name', label: 'Nom du pays' },
         { key: 'code', label: 'Code' },
@@ -226,15 +228,15 @@ export class AdminGeographyComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
-          this.toastr.success(`Ville ${city.isActive ? 'désactivée' : 'activée'}`);
+          this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_CITY_STATUS_UPDATED'));
           this.store.dispatch(new AdminGeographyAction.LoadCities());
         },
-        error: () => this.toastr.error('Erreur lors du changement de statut de la ville')
+        error: () => this.toastr.error(this.translate.instant('NOTIFICATIONS.ADMIN_CITY_STATUS_CHANGE_ERROR'))
       });
   }
 
   onViewCity(city: AdminCity): void {
-    this.toastr.info(`Ville : ${city.name} — ${city.country?.name || ''}`);
+    this.toastr.info(this.translate.instant('NOTIFICATIONS.ADMIN_CITY_INFO'));
   }
 
   onEditCity(city: AdminCity): void {
@@ -245,7 +247,7 @@ export class AdminGeographyComponent implements OnInit, OnDestroy {
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result?.success) {
-        this.toastr.success(`La ville ${result.city?.fullName || city.name} a été mise à jour`);
+        this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_CITY_UPDATED'));
         this.loadData();
       }
     });
@@ -266,7 +268,7 @@ export class AdminGeographyComponent implements OnInit, OnDestroy {
   onCloseCityDeleteModal(): void { this.showCityDeleteModal = false; this.cityToDelete = null; }
 
   onCityDeleted(_cityId: string): void {
-    this.toastr.success(`Ville "${this.cityToDelete?.fullName}" supprimée`);
+    this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_CITY_DELETED'));
     this.onCloseCityDeleteModal();
     this.onRefreshData();
   }
@@ -276,14 +278,14 @@ export class AdminGeographyComponent implements OnInit, OnDestroy {
   }
 
   onImportCitiesFromGeonames(): void {
-    this.toastr.info('Fonctionnalité d\'import GeoNames en cours de développement');
+    this.toastr.info(this.translate.instant('NOTIFICATIONS.ADMIN_GEONAMES_SOON'));
   }
 
   onCreateCity(): void { this.selectedTab = 'cities'; this.openCitySelectionModal(); }
 
   onExportCities(): void {
     this.cities$.pipe(take(1)).subscribe((cities: AdminCity[]) => {
-      if (!cities?.length) { this.toastr.warning('Aucune ville à exporter'); return; }
+      if (!cities?.length) { this.toastr.warning(this.translate.instant('NOTIFICATIONS.ADMIN_NO_CITIES_TO_EXPORT')); return; }
       const columns: ExportColumn[] = [
         { key: 'name', label: 'Ville' },
         { key: 'country', label: 'Pays', formatter: (v) => v?.name || 'N/A' },
@@ -334,22 +336,22 @@ export class AdminGeographyComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: () => {
-            this.toastr.success('Devise mise à jour');
+            this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_CURRENCY_UPDATED'));
             this.showCurrencyModal = false;
             this.store.dispatch(new AdminGeographyAction.LoadCurrencies());
           },
-          error: () => this.toastr.error('Erreur lors de la mise à jour')
+          error: () => this.toastr.error(this.translate.instant('NOTIFICATIONS.ADMIN_UPDATE_ERROR'))
         });
     } else {
       this.geographyService.createCurrency(data)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: () => {
-            this.toastr.success('Devise créée');
+            this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_CURRENCY_CREATED'));
             this.showCurrencyModal = false;
             this.store.dispatch(new AdminGeographyAction.LoadCurrencies());
           },
-          error: () => this.toastr.error('Erreur lors de la création')
+          error: () => this.toastr.error(this.translate.instant('NOTIFICATIONS.ADMIN_CREATE_ERROR'))
         });
     }
   }
@@ -371,8 +373,8 @@ export class AdminGeographyComponent implements OnInit, OnDestroy {
     this.geographyService.deleteCurrency(currency._id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next:  () => { this.toastr.success('Devise supprimée'); this.store.dispatch(new AdminGeographyAction.LoadCurrencies()); },
-        error: () => this.toastr.error('Erreur lors de la suppression')
+        next:  () => { this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_CURRENCY_DELETED')); this.store.dispatch(new AdminGeographyAction.LoadCurrencies()); },
+        error: () => this.toastr.error(this.translate.instant('NOTIFICATIONS.ADMIN_DELETE_ERROR'))
       });
   }
 
@@ -386,10 +388,10 @@ export class AdminGeographyComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
-          this.toastr.success(`Devise ${currency.isActive ? 'désactivée' : 'activée'}`);
+          this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_CURRENCY_STATUS_UPDATED'));
           this.store.dispatch(new AdminGeographyAction.LoadCurrencies());
         },
-        error: () => this.toastr.error('Erreur lors du changement de statut')
+        error: () => this.toastr.error(this.translate.instant('NOTIFICATIONS.ADMIN_STATUS_CHANGE_ERROR'))
       });
   }
 
@@ -398,10 +400,10 @@ export class AdminGeographyComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
-          this.toastr.success(`${currency.code} définie comme devise par défaut`);
+          this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_CURRENCY_DEFAULT_SET'));
           this.store.dispatch(new AdminGeographyAction.LoadCurrencies());
         },
-        error: () => this.toastr.error('Erreur lors du changement de devise par défaut')
+        error: () => this.toastr.error(this.translate.instant('NOTIFICATIONS.ADMIN_CURRENCY_DEFAULT_ERROR'))
       });
   }
 
@@ -420,7 +422,7 @@ export class AdminGeographyComponent implements OnInit, OnDestroy {
 
   onExportCurrencies(): void {
     this.currencies$.pipe(take(1)).subscribe((currencies: AdminCurrency[]) => {
-      if (!currencies?.length) { this.toastr.warning('Aucune devise à exporter'); return; }
+      if (!currencies?.length) { this.toastr.warning(this.translate.instant('NOTIFICATIONS.ADMIN_NO_CURRENCIES_TO_EXPORT')); return; }
       const columns: ExportColumn[] = [
         { key: 'name', label: 'Nom' },
         { key: 'code', label: 'Code' },

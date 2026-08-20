@@ -4,6 +4,7 @@ import { Subject, firstValueFrom } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
 import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 import { AdminRolesService } from '../../services/admin-roles.service';
 
 import { AdminRolesAction } from '../../store/roles/admin-roles.actions';
@@ -68,7 +69,8 @@ export class AdminRolesComponent implements OnInit, OnDestroy {
     private store: Store,
     private fb: FormBuilder,
     private adminRolesService: AdminRolesService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -149,11 +151,11 @@ export class AdminRolesComponent implements OnInit, OnDestroy {
 
     action$.pipe(takeUntil(this.destroy$)).subscribe({
       next:  () => {
-        this.toastr.success(this.showEditModal ? 'Role mis a jour' : 'Role cree');
+        this.toastr.success(this.showEditModal ? this.translate.instant('NOTIFICATIONS.ADMIN_ROLE_UPDATED') : this.translate.instant('NOTIFICATIONS.ADMIN_ROLE_CREATED'));
         this.onCloseModal();
         this.store.dispatch(new AdminRolesAction.LoadRoleStats());
       },
-      error: (e) => this.toastr.error(e?.error?.message || 'Erreur')
+      error: (e) => this.toastr.error(e?.error?.message || this.translate.instant('COMMON.ERROR'))
     });
   }
 
@@ -167,7 +169,7 @@ export class AdminRolesComponent implements OnInit, OnDestroy {
 
   onDeleteRole(role: AdminRole): void {
     this.openMenuId = null;
-    if (role.isSystemRole) { this.toastr.warning('Impossible de supprimer un role systeme'); return; }
+    if (role.isSystemRole) { this.toastr.warning(this.translate.instant('NOTIFICATIONS.ADMIN_CANNOT_DELETE_SYSTEM_ROLE')); return; }
     this.roleToAction = role;
     this.showDeleteRoleModal = true;
   }
@@ -177,8 +179,8 @@ export class AdminRolesComponent implements OnInit, OnDestroy {
     this.store.dispatch(new AdminRolesAction.DeleteRole(this.roleToAction._id))
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next:  () => { this.toastr.success('Role supprime'); this.store.dispatch(new AdminRolesAction.LoadRoleStats()); },
-        error: (e) => this.toastr.error(e?.error?.message || 'Erreur lors de la suppression')
+        next:  () => { this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_ROLE_DELETED')); this.store.dispatch(new AdminRolesAction.LoadRoleStats()); },
+        error: (e) => this.toastr.error(e?.error?.message || this.translate.instant('NOTIFICATIONS.ADMIN_DELETE_ERROR'))
       });
     this.showDeleteRoleModal = false;
     this.roleToAction = null;
@@ -186,7 +188,7 @@ export class AdminRolesComponent implements OnInit, OnDestroy {
 
   onToggleRoleStatus(role: AdminRole): void {
     this.openMenuId = null;
-    if (role.isSystemRole) { this.toastr.warning('Impossible de modifier un role systeme'); return; }
+    if (role.isSystemRole) { this.toastr.warning(this.translate.instant('NOTIFICATIONS.ADMIN_CANNOT_MODIFY_SYSTEM_ROLE')); return; }
     this.roleToAction = role;
     this.showToggleStatusModal = true;
   }
@@ -196,8 +198,8 @@ export class AdminRolesComponent implements OnInit, OnDestroy {
     this.store.dispatch(new AdminRolesAction.UpdateRole(this.roleToAction._id, { isDisabled: !this.roleToAction.isDisabled }))
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next:  () => { this.toastr.success('Statut mis a jour'); },
-        error: (e) => this.toastr.error(e?.error?.message || 'Erreur')
+        next:  () => { this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_STATUS_UPDATED')); },
+        error: (e) => this.toastr.error(e?.error?.message || this.translate.instant('COMMON.ERROR'))
       });
     this.showToggleStatusModal = false;
     this.roleToAction = null;
@@ -205,7 +207,7 @@ export class AdminRolesComponent implements OnInit, OnDestroy {
 
   onDuplicateRole(role: AdminRole): void {
     this.openMenuId = null;
-    if (role.isSystemRole) { this.toastr.warning('Impossible de dupliquer un role systeme'); return; }
+    if (role.isSystemRole) { this.toastr.warning(this.translate.instant('NOTIFICATIONS.ADMIN_CANNOT_DUPLICATE_SYSTEM_ROLE')); return; }
     this.roleToAction = role;
     this.duplicateRoleName = `${role.name}_copy`;
     this.showDuplicateRoleModal = true;
@@ -220,9 +222,9 @@ export class AdminRolesComponent implements OnInit, OnDestroy {
           const state = this.store.selectSnapshot(AdminRolesState.selectRoles);
           this.store.dispatch(new AdminRolesAction.LoadRolesSuccess([role, ...state]));
           this.store.dispatch(new AdminRolesAction.LoadRoleStats());
-          this.toastr.success('Role duplique');
+          this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_ROLE_DUPLICATED'));
         },
-        error: () => this.toastr.error('Erreur lors de la duplication')
+        error: () => this.toastr.error(this.translate.instant('NOTIFICATIONS.ADMIN_DUPLICATE_ERROR'))
       });
     this.showDuplicateRoleModal = false;
     this.roleToAction = null;
@@ -338,12 +340,12 @@ export class AdminRolesComponent implements OnInit, OnDestroy {
       await Promise.all(saves);
       // Recharger la matrice depuis le serveur
       await firstValueFrom(this.store.dispatch(new AdminRolesAction.LoadPermissionsMatrix()));
-      this.toastr.success('Permissions sauvegardées');
+      this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_PERMISSIONS_SAVED'));
       this.localMatrix = null;
       this.matrixDirty = false;
       this.isEditMode  = false;
     } catch {
-      this.toastr.error('Erreur lors de la sauvegarde');
+      this.toastr.error(this.translate.instant('NOTIFICATIONS.ADMIN_SAVE_ERROR'));
     } finally {
       this.isSaving = false;
     }
@@ -355,7 +357,7 @@ export class AdminRolesComponent implements OnInit, OnDestroy {
     try {
       await firstValueFrom(this.store.dispatch(new AdminRolesAction.LoadPermissionsMatrix()));
     } catch {
-      this.toastr.error('Erreur lors de l\'actualisation');
+      this.toastr.error(this.translate.instant('NOTIFICATIONS.ADMIN_REFRESH_ERROR'));
     } finally {
       this.matrixLoading = false;
     }
@@ -459,7 +461,7 @@ export class AdminRolesComponent implements OnInit, OnDestroy {
       this.isRefreshing = true;
       await firstValueFrom(this.store.dispatch(new AdminRolesAction.LoadPermissions()));
     } catch {
-      this.toastr.error('Erreur lors de l\'actualisation');
+      this.toastr.error(this.translate.instant('NOTIFICATIONS.ADMIN_REFRESH_ERROR'));
     } finally {
       setTimeout(() => this.isRefreshing = false, 300);
     }
@@ -478,7 +480,7 @@ export class AdminRolesComponent implements OnInit, OnDestroy {
 
   getEmptyStateMessage(): string {
     return this.hasActiveFilters()
-      ? 'Aucune permission ne correspond aux criteres.'
-      : 'Les permissions sont generees automatiquement au demarrage.';
+      ? this.translate.instant('NOTIFICATIONS.ADMIN_NO_PERMISSIONS_MATCH')
+      : this.translate.instant('NOTIFICATIONS.ADMIN_PERMISSIONS_AUTO_GENERATED');
   }
 }

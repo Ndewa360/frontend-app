@@ -70,7 +70,7 @@ export class ModernDeletePaymentModalComponent implements OnInit, OnDestroy {
     ).subscribe((ctx) => {
       this.isLoading = false;
       const errorMessage = this.getErrorMessage(ctx);
-      this.toastr.error(errorMessage, 'Erreur de suppression');
+      this.toastr.error(errorMessage, 'Ndewa360°');
     });
   }
 
@@ -125,7 +125,7 @@ export class ModernDeletePaymentModalComponent implements OnInit, OnDestroy {
     if (typeof error === 'string') {
       return error;
     }
-    return 'Une erreur inattendue est survenue lors de la suppression';
+    return this.translate.instant('NOTIFICATIONS.UNEXPECTED_DELETE_ERROR');
   }
 
   onCancel(): void {

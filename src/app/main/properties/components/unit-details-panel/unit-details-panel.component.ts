@@ -458,7 +458,7 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
 
     // Vérifier si les données ont la structure correcte
     if (!payment) {
-      this.toastr.error('Aucune donnée de paiement fournie', 'Erreur');
+      this.toastr.error(this.translate.instant('NOTIFICATIONS.NO_PAYMENT_DATA'), this.translate.instant('COMMON.ERROR'));
       return;
     }
 
@@ -476,12 +476,12 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
         this.openUpdatePaymentModal(paymentData.transaction, paymentData.history);
         return;
       } catch (error) {
-        this.toastr.error('Impossible de construire les données de paiement: ' + error.message, 'Erreur');
+        this.toastr.error(this.translate.instant('NOTIFICATIONS.PAYMENT_DATA_BUILD_ERROR') + error.message, this.translate.instant('COMMON.ERROR'));
         return;
       }
     }
 
-    this.toastr.error('Structure de données de paiement non reconnue', 'Erreur');
+    this.toastr.error(this.translate.instant('NOTIFICATIONS.PAYMENT_DATA_UNRECOGNIZED'), this.translate.instant('COMMON.ERROR'));
   }
 
   /**
@@ -514,7 +514,7 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
         }
       });
     } catch (error) {
-      this.toastr.error('Erreur lors de l\'ouverture du modal', 'Erreur');
+      this.toastr.error(this.translate.instant('NOTIFICATIONS.MODAL_OPEN_ERROR'), this.translate.instant('COMMON.ERROR'));
     }
   }
 
@@ -525,7 +525,7 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
 
     // Vérifier si les données ont la structure correcte
     if (!payment) {
-      this.toastr.error('Aucune donnée de paiement fournie', 'Erreur');
+      this.toastr.error(this.translate.instant('NOTIFICATIONS.NO_PAYMENT_DATA'), this.translate.instant('COMMON.ERROR'));
       return;
     }
 
@@ -544,12 +544,12 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
         this.openDeletePaymentModal(paymentData.transaction, paymentData.history);
         return;
       } catch (error) {
-        this.toastr.error('Impossible de construire les données de paiement: ' + error.message, 'Erreur');
+        this.toastr.error(this.translate.instant('NOTIFICATIONS.PAYMENT_DATA_BUILD_ERROR') + error.message, this.translate.instant('COMMON.ERROR'));
         return;
       }
     }
 
-    this.toastr.error('Structure de données de paiement non reconnue', 'Erreur');
+    this.toastr.error(this.translate.instant('NOTIFICATIONS.PAYMENT_DATA_UNRECOGNIZED'), this.translate.instant('COMMON.ERROR'));
   }
 
   /**
@@ -574,13 +574,13 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
 
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
-          this.toastr.success('Paiement supprimé avec succès', 'Succès');
+          this.toastr.success(this.translate.instant('NOTIFICATIONS.PAYMENT_DELETED_SUCCESS'), this.translate.instant('COMMON.SUCCESS'));
           // Recharger les données de l'unité
           this.loadUnitData();
         }
       });
     } catch (error) {
-      this.toastr.error('Erreur lors de l\'ouverture du modal', 'Erreur');
+      this.toastr.error(this.translate.instant('NOTIFICATIONS.MODAL_OPEN_ERROR'), this.translate.instant('COMMON.ERROR'));
     }
   }
 

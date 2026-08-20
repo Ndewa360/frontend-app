@@ -114,7 +114,7 @@ export class LocationState{
                 ctx.patchState({
                     loadingLocation: false
                 })
-                return throwError(error);
+                return of(null);
             })
         )
     }
@@ -153,7 +153,11 @@ export class LocationState{
                         locations:[...state.locations, ...result.data]
                     })
                 }
-            )
+            ),
+            catchError((error) => {
+                ctx.patchState({ loadingLocation: false });
+                return throwError(error);
+            })
         )
     }
 
@@ -196,7 +200,11 @@ export class LocationState{
                         locations:[...state.locations, result.data]
                     })
                 }
-            )
+            ),
+            catchError((error) => {
+                ctx.patchState({ loadingLocation: false });
+                return throwError(error);
+            })
         )
     }
 
@@ -254,12 +262,7 @@ export class LocationState{
                 ctx.patchState({
                     loadingLocation: false
                 });
-
-                // Afficher un message d'erreur plus informatif
-                const errorMessage = this._translateService.instant('NOTIFICATIONS.LOCATION_ERROR');
-                this._toastrService.error(errorMessage, 'Ndewa360°');
-
-                return throwError(error);
+                return of(null);
             })
         );
     }
@@ -288,7 +291,7 @@ export class LocationState{
             }),
             catchError((error) => {
                 ctx.patchState({ loadingLocation: false })
-                return throwError(error);
+                return of(null);
             })
         )
     }
@@ -319,7 +322,7 @@ export class LocationState{
                 ctx.patchState({
                     loadingLocation: false
                 })
-                return throwError(error);
+                return of(null);
             })
         )
     }
@@ -345,7 +348,7 @@ export class LocationState{
             }),
             catchError((error) => {
                 ctx.patchState({ loadingLocation: false })
-                return throwError(error);
+                return of(null);
             })
         )
     }

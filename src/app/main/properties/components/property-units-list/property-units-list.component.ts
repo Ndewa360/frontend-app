@@ -475,7 +475,7 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
         if (result) {
           // Recharger les données après modification
           this.reloadData();
-          this.toastr.success('Unité modifiée avec succès', 'Succès');
+          this.toastr.success(this.translateService.instant('NOTIFICATIONS.UNIT_MODIFIED_SUCCESS'), this.translateService.instant('COMMON.SUCCESS'));
         }
       });
     } catch (error) {
@@ -784,10 +784,10 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
       if (result && result.success) {
         // Recharger les données après succès
         this.reloadData();
-        this.toastr.success('Assignation réalisée avec succès', 'Succès');
+        this.toastr.success(this.translateService.instant('NOTIFICATIONS.ASSIGNATION_SUCCESS'), this.translateService.instant('COMMON.SUCCESS'));
       } else if (result && result.success === false) {
         // Erreur réelle d'assignation
-        this.toastr.error('Erreur lors de l\'assignation', 'Erreur');
+        this.toastr.error(this.translateService.instant('NOTIFICATIONS.ASSIGNATION_ERROR'), this.translateService.instant('COMMON.ERROR'));
       } else {
         // Annulation par l'utilisateur (result === null)
         // Pas de message pour une annulation normale
@@ -799,7 +799,7 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
     // Trouver la propriété et la chambre du locataire
     const property = this.property;
     if (!property) {
-      this.toastr.error('Propriété non trouvée', 'Erreur');
+      this.toastr.error(this.translateService.instant('NOTIFICATIONS.PROPERTY_NOT_FOUND'), this.translateService.instant('COMMON.ERROR'));
       return;
     }
 
@@ -817,7 +817,7 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
       if (result) {
         // Recharger les données après modification
         this.reloadData();
-        this.toastr.success('Locataire modifié avec succès', 'Succès');
+        this.toastr.success(this.translateService.instant('NOTIFICATIONS.TENANT_MODIFIED_SUCCESS'), this.translateService.instant('COMMON.SUCCESS'));
       }
     });
   }
@@ -833,11 +833,10 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
     const location = locations?.find((loc: LocationModel) => loc.room === room._id && !loc.endedAt);
 
     if (!location) {
-      this.toastr.error('Aucune location trouvée pour cette unité', 'Erreur');
+      this.toastr.error(this.translateService.instant('NOTIFICATIONS.NO_LOCATION_FOUND'), this.translateService.instant('COMMON.ERROR'));
       return;
     }
 
-    // Récupérer le locataire pour cette location
     const tenant = this.getTenantForRoom(room);
 
     try {
@@ -854,9 +853,8 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
 
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
-          // Recharger les données
           this.reloadData();
-          this.toastr.success('Contrat résilié avec succès', 'Succès');
+          this.toastr.success(this.translateService.instant('NOTIFICATIONS.CONTRACT_TERMINATED_SUCCESS'), this.translateService.instant('COMMON.SUCCESS'));
         }
       });
     } catch (error) {
@@ -877,7 +875,7 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
     const location = locations?.find((loc: LocationModel) => loc.room === room._id && !loc.endedAt);
 
     if (!location) {
-      this.toastr.error('Aucune location trouvée pour cette unité', 'Erreur');
+      this.toastr.error(this.translateService.instant('NOTIFICATIONS.NO_LOCATION_FOUND'), this.translateService.instant('COMMON.ERROR'));
       return;
     }
 
@@ -903,7 +901,7 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
       dialogRef.afterClosed().subscribe(result => {
       });
     } catch (error) {
-      this.toastr.error('Erreur lors de l\'ouverture du contrat', 'Erreur');
+      this.toastr.error(this.translateService.instant('NOTIFICATIONS.CONTRACT_OPEN_ERROR'), this.translateService.instant('COMMON.ERROR'));
     }
   }
 
@@ -1486,7 +1484,7 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
           if (result) {
             // Recharger les données après création
             this.reloadData();
-            this.toastr.success('Unité créée avec succès', 'Succès');
+            this.toastr.success(this.translateService.instant('NOTIFICATIONS.UNIT_CREATED_SUCCESS'), this.translateService.instant('COMMON.SUCCESS'));
           }
         });
       } catch (error) {
@@ -1560,7 +1558,7 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
 
     // Vérifier que l'unité n'est pas occupée
     if (!unit.isFree) {
-      this.toastr.warning('Impossible de supprimer une unité occupée. Résiliez d\'abord le contrat du locataire.', 'Attention');
+      this.toastr.warning(this.translateService.instant('NOTIFICATIONS.CANNOT_DELETE_OCCUPIED_UNIT'), this.translateService.instant('COMMON.WARNING'));
       return;
     }
 

@@ -104,7 +104,7 @@ export class AuthLoginComponent implements OnInit, OnDestroy {
         const email = this.formGroup.value.email?.trim() || '';
         const currentLang = this.languageUrlService.getCurrentLanguage();
         this._toastrService.warning(
-          'Votre délai de confirmation est dépassé. Veuillez confirmer votre email.',
+          this.translate.instant('NOTIFICATIONS.CONFIRMATION_EXPIRED'),
           'Ndewa360°',
           { timeOut: 5000 }
         );
@@ -149,7 +149,7 @@ export class AuthLoginComponent implements OnInit, OnDestroy {
   loginWithGoogle(): void {
     const clientId = environment.googleClientId;
     if (!clientId) {
-      this._toastrService.error('Google Sign-In non configuré', 'Ndewa360°');
+      this._toastrService.error(this.translate.instant('NOTIFICATIONS.GOOGLE_NOT_CONFIGURED'), 'Ndewa360°');
       return;
     }
     (window as any).google.accounts.id.initialize({

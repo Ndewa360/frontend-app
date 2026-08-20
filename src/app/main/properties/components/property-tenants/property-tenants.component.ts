@@ -5,6 +5,7 @@ import { HistoryLocationPaymentAction } from 'src/app/shared/store/history-payme
 import { Store } from '@ngxs/store';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 import { AssignLocationModalService } from 'src/app/main/assign-location/services/assign-location-modal.service';
 // Nouveaux modals modernes
 import { ModernTenantModalComponent } from '../modern-tenant-modal/modern-tenant-modal.component';
@@ -49,6 +50,7 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
     private store: Store,
     private dialog: MatDialog,
     private toastr: ToastrService,
+    private translate: TranslateService,
     private tenantAvatarService: TenantAvatarService,
     private exportService: ExportService,
     private assignLocationModalService: AssignLocationModalService,
@@ -299,7 +301,7 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
     const property = this.store.selectSnapshot(PropertyState.selectStateProperty(this.propertyId));
 
     if (!property) {
-      this.toastr.error('Propriété non trouvée', 'Erreur');
+      this.toastr.error(this.translate.instant('NOTIFICATIONS.PROPERTY_NOT_FOUND'), this.translate.instant('COMMON.ERROR'));
       return;
     }
 
@@ -316,12 +318,12 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
 
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
-          this.toastr.success('Locataire ajouté avec succès', 'Succès');
+          this.toastr.success(this.translate.instant('NOTIFICATIONS.TENANT_ADDED_SUCCESS'), this.translate.instant('COMMON.SUCCESS'));
           // Les données seront automatiquement mises à jour via les observables
         }
       });
     } catch (error) {
-      this.toastr.error('Erreur lors de l\'ouverture du modal', 'Erreur');
+      this.toastr.error(this.translate.instant('NOTIFICATIONS.MODAL_OPEN_ERROR'), this.translate.instant('COMMON.ERROR'));
     }
   }
 
@@ -358,12 +360,12 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
 
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
-          this.toastr.success('Locataire modifié avec succès', 'Succès');
+          this.toastr.success(this.translate.instant('NOTIFICATIONS.TENANT_MODIFIED_SUCCESS'), this.translate.instant('COMMON.SUCCESS'));
           // Les données seront automatiquement mises à jour via les observables
         }
       });
     } catch (error) {
-      this.toastr.error('Erreur lors de l\'ouverture du modal', 'Erreur');
+      this.toastr.error(this.translate.instant('NOTIFICATIONS.MODAL_OPEN_ERROR'), this.translate.instant('COMMON.ERROR'));
     }
   }
 
@@ -392,12 +394,12 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
 
         dialogRef.afterClosed().subscribe(result => {
           if (result) {
-            this.toastr.success('Paiement ajouté avec succès', 'Succès');
+            this.toastr.success(this.translate.instant('NOTIFICATIONS.PAYMENT_ADDED_SUCCESS'), this.translate.instant('COMMON.SUCCESS'));
           }
         });
       })
       .catch(error => {
-        this.toastr.error(error, 'Erreur');
+        this.toastr.error(error, this.translate.instant('COMMON.ERROR'));
       });
   }
 
@@ -417,10 +419,10 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
 
       if (result && result.success) {
         // Les données seront automatiquement mises à jour par le state
-        this.toastr.success('Locataire assigné avec succès', 'Succès');
+        this.toastr.success(this.translate.instant('NOTIFICATIONS.TENANT_ASSIGNED_SUCCESS'), this.translate.instant('COMMON.SUCCESS'));
       } else if (result && result.success === false) {
         // Erreur réelle d'assignation
-        this.toastr.error('Erreur lors de l\'assignation du locataire', 'Erreur');
+        this.toastr.error(this.translate.instant('NOTIFICATIONS.TENANT_ASSIGN_ERROR'), this.translate.instant('COMMON.ERROR'));
       } else {
         // Annulation par l'utilisateur (result === null)
         // Pas de message pour une annulation normale
@@ -457,12 +459,12 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
 
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
-          this.toastr.success('Locataire modifié avec succès', 'Succès');
+          this.toastr.success(this.translate.instant('NOTIFICATIONS.TENANT_MODIFIED_SUCCESS'), this.translate.instant('COMMON.SUCCESS'));
         }
         this.selectedTenant = null;
       });
     } catch (error) {
-      this.toastr.error('Erreur lors de l\'ouverture du modal', 'Erreur');
+      this.toastr.error(this.translate.instant('NOTIFICATIONS.MODAL_OPEN_ERROR'), this.translate.instant('COMMON.ERROR'));
       this.selectedTenant = null;
     }
   }
@@ -476,12 +478,12 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
   onViewContractFromPanel(tenant: LocataireModel): void {
     if (!this.dialog) return;
     const room = this.units.find(r => r._id === tenant.room);
-    if (!room) { this.toastr.error('Unité non trouvée pour ce locataire', 'Erreur'); return; }
+    if (!room) { this.toastr.error(this.translate.instant('NOTIFICATIONS.UNIT_NOT_FOUND'), this.translate.instant('COMMON.ERROR')); return; }
     // Accepter location active OU future
     const location = this.locations.find(loc =>
       loc.locataire === tenant._id && loc.room === tenant.room && !loc.endedAt
     );
-    if (!location) { this.toastr.error('Aucune location trouvée pour ce locataire', 'Erreur'); return; }
+    if (!location) { this.toastr.error(this.translate.instant('NOTIFICATIONS.NO_LOCATION_FOUND'), this.translate.instant('COMMON.ERROR')); return; }
 
     try {
       const dialogRef = this.dialog.open(ContractViewerModalComponent, {
@@ -501,7 +503,7 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
       dialogRef.afterClosed().subscribe(() => {
       });
     } catch (error) {
-      this.toastr.error('Erreur lors de l\'ouverture du contrat', 'Erreur');
+      this.toastr.error(this.translate.instant('NOTIFICATIONS.CONTRACT_OPEN_ERROR'), this.translate.instant('COMMON.ERROR'));
     }
   }
 
@@ -511,7 +513,7 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
     const location = this.locations.find(loc =>
       loc.locataire === tenant._id && loc.room === tenant.room && !loc.endedAt
     );
-    if (!location) { this.toastr.error('Aucune location trouvée pour ce locataire', 'Erreur'); return; }
+    if (!location) { this.toastr.error(this.translate.instant('NOTIFICATIONS.NO_LOCATION_FOUND'), this.translate.instant('COMMON.ERROR')); return; }
 
     // Récupérer la chambre pour ce locataire via la location
     const room = location.room ? { _id: location.room } : null;
@@ -530,13 +532,13 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
 
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
-          this.toastr.success('Contrat résilié avec succès', 'Succès');
+          this.toastr.success(this.translate.instant('NOTIFICATIONS.CONTRACT_TERMINATED_SUCCESS'), this.translate.instant('COMMON.SUCCESS'));
           this.selectedTenant = null;
           // Les données seront automatiquement mises à jour via les observables
         }
       });
     } catch (error) {
-      this.toastr.error('Erreur lors de la résiliation du contrat', 'Erreur');
+      this.toastr.error(this.translate.instant('NOTIFICATIONS.CONTRACT_TERMINATION_ERROR'), this.translate.instant('COMMON.ERROR'));
     }
   }
 
@@ -580,13 +582,13 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
 
         dialogRef.afterClosed().subscribe(result => {
           if (result) {
-            this.toastr.success('Paiement ajouté avec succès', 'Succès');
+            this.toastr.success(this.translate.instant('NOTIFICATIONS.PAYMENT_ADDED_SUCCESS'), this.translate.instant('COMMON.SUCCESS'));
           }
           this.selectedTenant = null;
         });
       })
       .catch(error => {
-        this.toastr.error(error, 'Erreur');
+        this.toastr.error(error, this.translate.instant('COMMON.ERROR'));
       });
   }
 
@@ -595,7 +597,7 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
    */
   onEditPayment(payment: any): void {
     if (!payment?.transaction || !payment?.history) {
-      this.toastr.error('Données de paiement manquantes', 'Erreur');
+      this.toastr.error(this.translate.instant('NOTIFICATIONS.PAYMENT_DATA_MISSING'), this.translate.instant('COMMON.ERROR'));
       return;
     }
 
@@ -632,10 +634,10 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
       });
 
       dialogRef.afterClosed().subscribe(result => {
-        if (result) this.toastr.success('Paiement modifié avec succès', 'Succès');
+        if (result) this.toastr.success(this.translate.instant('NOTIFICATIONS.PAYMENT_MODIFIED_SUCCESS'), this.translate.instant('COMMON.SUCCESS'));
       });
     } catch (error) {
-      this.toastr.error('Erreur lors de l\'ouverture du modal', 'Erreur');
+      this.toastr.error(this.translate.instant('NOTIFICATIONS.MODAL_OPEN_ERROR'), this.translate.instant('COMMON.ERROR'));
     }
   }
 
@@ -645,7 +647,7 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
   onDeletePayment(payment: any): void {
 
     if (!payment?.transaction || !payment?.history) {
-      this.toastr.error('Données de paiement manquantes', 'Erreur');
+      this.toastr.error(this.translate.instant('NOTIFICATIONS.PAYMENT_DATA_MISSING'), this.translate.instant('COMMON.ERROR'));
       return;
     }
 
@@ -666,11 +668,11 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
 
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
-          this.toastr.success('Paiement supprimé avec succès', 'Succès');
+          this.toastr.success(this.translate.instant('NOTIFICATIONS.PAYMENT_DELETED_SUCCESS'), this.translate.instant('COMMON.SUCCESS'));
         }
       });
     } catch (error) {
-      this.toastr.error('Erreur lors de l\'ouverture du modal', 'Erreur');
+      this.toastr.error(this.translate.instant('NOTIFICATIONS.MODAL_OPEN_ERROR'), this.translate.instant('COMMON.ERROR'));
     }
   }
 
@@ -732,7 +734,7 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
 
     // Vérifier que le locataire n'est pas assigné à une unité
     if (this.getTenantUnit(tenant)) {
-      this.toastr.warning('Impossible de supprimer un locataire assigné à une unité. Résiliez d\'abord son contrat.', 'Attention');
+      this.toastr.warning(this.translate.instant('NOTIFICATIONS.CANNOT_DELETE_ASSIGNED_TENANT'), this.translate.instant('COMMON.WARNING'));
       return;
     }
 

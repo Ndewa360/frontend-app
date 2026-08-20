@@ -153,7 +153,7 @@ export class LocationPaymentState{
                 ctx.patchState({
                     loadingLocationPayment: false
                 })
-                this._toastrService.error(this._translateService.instant('NOTIFICATIONS.PAYMENT_DELETE_ERROR'), 'Erreur');
+                this._toastrService.error(this._translateService.instant('NOTIFICATIONS.PAYMENT_DELETE_ERROR'), 'Ndewa360°');
                 return throwError(error);
             })
         )
@@ -279,7 +279,7 @@ export class LocationPaymentState{
                 ctx.patchState({
                     loadingLocationPayment: false
                 })
-                this._toastrService.error(this._translateService.instant('NOTIFICATIONS.PAYMENT_CREATE_ERROR'), 'Erreur');
+                this._toastrService.error(this._translateService.instant('NOTIFICATIONS.PAYMENT_CREATE_ERROR'), 'Ndewa360°');
                 return throwError(error);
             })
         )

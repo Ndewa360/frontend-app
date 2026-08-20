@@ -2,6 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store } from '@ngxs/store';
 import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 import { AdminSubscriptionsAction } from '../../store/subscriptions/admin-subscriptions.actions';
 import { AdminUserSubscription } from '../../store/subscriptions/admin-subscriptions.model';
 
@@ -25,7 +26,8 @@ export class SubscriptionDetailsModalComponent implements OnInit {
     public dialogRef: MatDialogRef<SubscriptionDetailsModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: SubscriptionDetailsModalData,
     private store: Store,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {}
@@ -61,7 +63,7 @@ export class SubscriptionDetailsModalComponent implements OnInit {
 
   onSendReminder(): void {
     this.store.dispatch(new AdminSubscriptionsAction.SendPaymentReminder(this.subscription._id));
-    this.toastr.success('Rappel de paiement envoyé');
+    this.toastr.success(this.translate.instant('ADMIN.SUBSCRIPTION.PAYMENT_REMINDER_SENT'));
     this.dialogRef.close({ action: 'reminder' });
   }
 
@@ -77,7 +79,7 @@ export class SubscriptionDetailsModalComponent implements OnInit {
         break;
       case 'suspend':
         if (!this.actionReason.trim()) {
-          this.toastr.warning('La raison de suspension est requise');
+          this.toastr.warning(this.translate.instant('ADMIN.SUBSCRIPTION.SUSPENSION_REASON_REQUIRED'));
           return;
         }
         this.store.dispatch(new AdminSubscriptionsAction.SuspendAccount(

@@ -4,6 +4,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
 import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 
 import { AdminPaymentsAction } from '../../store/payments/admin-payments.actions';
 import { AdminPaymentsState } from '../../store/payments/admin-payments.state';
@@ -52,7 +53,8 @@ export class AdminPaymentsComponent implements OnInit, OnDestroy {
     private store: Store,
     private fb: FormBuilder,
     private paymentsService: AdminPaymentsService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private translate: TranslateService
   ) {
     this.couponForm = this.fb.group({
       name:        ['', Validators.required],
@@ -117,8 +119,8 @@ export class AdminPaymentsComponent implements OnInit, OnDestroy {
     this.paymentsService.refundPayment(this.refundingPayment._id, { amount, reason })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: () => { this.toastr.success('Remboursement effectué'); this.store.dispatch(new AdminPaymentsAction.LoadPayments()); },
-        error: () => this.toastr.error('Erreur lors du remboursement')
+        next: () => { this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_REFUND_DONE')); this.store.dispatch(new AdminPaymentsAction.LoadPayments()); },
+        error: () => this.toastr.error(this.translate.instant('NOTIFICATIONS.ADMIN_REFUND_ERROR'))
       });
     this.refundingPayment = null;
   }
@@ -150,8 +152,8 @@ export class AdminPaymentsComponent implements OnInit, OnDestroy {
     this.paymentsService.cancelSubscription(this.cancellingSubscription._id, reason)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: () => { this.toastr.success('Abonnement suspendu'); this.store.dispatch(new AdminPaymentsAction.LoadSubscriptions()); },
-        error: () => this.toastr.error('Erreur lors de la suspension')
+        next: () => { this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_SUBSCRIPTION_CANCELLED')); this.store.dispatch(new AdminPaymentsAction.LoadSubscriptions()); },
+        error: () => this.toastr.error(this.translate.instant('NOTIFICATIONS.ADMIN_SUBSCRIPTION_CANCEL_ERROR'))
       });
     this.cancellingSubscription = null;
   }

@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-// Contextes alignés sur le backend (PaymentContext enum)
 import { PaymentContext } from 'src/app/public/payment/services/unified-payment.service';
 
 export interface CreatePaymentSessionPayload {
@@ -57,6 +57,12 @@ export class PaymentSessionService {
     this.createSessionWithFallback(lang, payload).subscribe({
       next: (res) => {
         this.router.navigate([`/${lang}/payment/${res.data.token}`]);
+      },
+      error: (err) => {
+        const message = err?.error?.message?.[0] || err?.message || 'Erreur lors de la création de la session de paiement';
+        this.router.navigate([`/${lang}/error/payment-error`], {
+          queryParams: { message }
+        });
       }
     });
   }

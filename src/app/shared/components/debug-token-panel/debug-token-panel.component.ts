@@ -7,6 +7,7 @@ import { RefreshTokenService } from '../../store/auth-token/refresh-token.servic
 import { UserActivityService, UserActivityState, UserActivityStatus } from '../../store/auth-token/user-activity.service';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-debug-token-panel',
@@ -226,7 +227,8 @@ export class DebugTokenPanelComponent implements OnInit, OnDestroy {
     private refreshTokenService: RefreshTokenService,
     private userActivityService: UserActivityService,
     private toastr: ToastrService,
-    private router: Router
+    private router: Router,
+    private translate: TranslateService
   ) {
     this.activityStatus$ = this.userActivityService.getActivityStatus();
   }
@@ -270,11 +272,11 @@ export class DebugTokenPanelComponent implements OnInit, OnDestroy {
     this.refreshTokenService.refreshAccessToken().subscribe({
       next: (result) => {
         this.addLog('✅ Refresh token test successful', 'success');
-        this.toastr.success('Refresh token test successful!');
+        this.toastr.success(this.translate.instant('DEBUG.TOKEN_REFRESH_SUCCESS'), 'Ndewa360°');
       },
       error: (error) => {
         this.addLog(`❌ Refresh token test failed: ${error.message}`, 'error');
-        this.toastr.error('Refresh token test failed!');
+        this.toastr.error(this.translate.instant('DEBUG.TOKEN_REFRESH_ERROR'), 'Ndewa360°');
       }
     });
   }
@@ -282,7 +284,7 @@ export class DebugTokenPanelComponent implements OnInit, OnDestroy {
   recordActivity() {
     this.userActivityService.recordActivity();
     this.addLog('👆 Activity recorded manually', 'info');
-    this.toastr.info('Activity recorded!');
+    this.toastr.info(this.translate.instant('DEBUG.ACTIVITY_RECORDED'), 'Ndewa360°');
   }
 
   simulateInactivity() {
@@ -293,8 +295,8 @@ export class DebugTokenPanelComponent implements OnInit, OnDestroy {
     });
     this.addLog('😴 Simulation d\'inactivité activée (1 seconde)', 'warning');
     this.toastr.warning(
-      '⚠️ Test d\'inactivité activé ! Vous serez déconnecté dans 1 seconde pour tester le système.',
-      'Debug - Test Inactivité',
+      this.translate.instant('DEBUG.INACTIVITY_TEST'),
+      'Ndewa360°',
       { timeOut: 8000 }
     );
   }
@@ -306,8 +308,8 @@ export class DebugTokenPanelComponent implements OnInit, OnDestroy {
     });
     this.addLog('💀 Simulation d\'inactivité critique activée (2 secondes)', 'error');
     this.toastr.error(
-      '🚨 Test d\'inactivité critique ! Déconnexion forcée dans 2 secondes pour tester la sécurité.',
-      'Debug - Test Critique',
+      this.translate.instant('DEBUG.CRITICAL_INACTIVITY_TEST'),
+      'Ndewa360°',
       { timeOut: 10000 }
     );
   }
@@ -319,11 +321,11 @@ export class DebugTokenPanelComponent implements OnInit, OnDestroy {
     });
     this.userActivityService.recordActivity();
     this.addLog('🔄 Activity monitoring reset to normal', 'success');
-    this.toastr.success('Activity monitoring reset!');
+    this.toastr.success(this.translate.instant('DEBUG.MONITORING_RESET'), 'Ndewa360°');
   }
 
   openMonitoringDashboard() {
-    this.toastr.warning('Monitoring déplacé vers Grafana', 'Info');
+    this.toastr.warning(this.translate.instant('DEBUG.MONITORING_GRAFANA'), 'Ndewa360°');
   }
 
   getActivityStateClass(): string {

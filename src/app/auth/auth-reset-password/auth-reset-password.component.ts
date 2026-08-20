@@ -36,7 +36,7 @@ export class AuthResetPasswordComponent implements OnInit {
   ngOnInit(): void {
     if(!this.route.snapshot.queryParamMap.has("resetTokenPwd"))
       {
-        this._toastrService.error(`Token non fournis! `, 'Ndewa360°');
+        this._toastrService.error(this.translate.instant('NOTIFICATIONS.TOKEN_NOT_PROVIDED'), 'Ndewa360°');
         const currentLang = this.languageUrlService.getCurrentLanguage();
         this.router.navigate([`/${currentLang}/auth/signin`])
         return;

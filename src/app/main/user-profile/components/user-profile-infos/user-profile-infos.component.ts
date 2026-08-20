@@ -19,6 +19,7 @@ import {
 import { FormUtils } from 'src/app/shared/utils';
 import { ToastrService } from 'ngx-toastr';
 import { UserBreachReportService } from 'src/app/shared/services/user-breach-report.service';
+import { TranslateService } from '@ngx-translate/core';
 
 const COOKIE_KEY = 'ndewa_cookie_consent';
 const GA_ID = 'G-MKEB3L7EXL';
@@ -73,6 +74,7 @@ export class UserProfileInfosComponent implements OnInit, OnDestroy {
       private _activatedRoute: ActivatedRoute,
       private toastr: ToastrService,
       private breachReportService: UserBreachReportService,
+      private translate: TranslateService,
     ) { }
   
   ngOnInit(): void {
@@ -190,7 +192,7 @@ export class UserProfileInfosComponent implements OnInit, OnDestroy {
       )
       .subscribe(() => {
         this.waittingResponse = false;
-        this.toastr.success('Profil mis à jour avec succès', 'Succès');
+        this.toastr.success(this.translate.instant('USER_PROFILE.UPDATE_SUCCESS'), this.translate.instant('COMMON.SUCCESS'));
       });
 
     this._ngxsAction
@@ -200,7 +202,7 @@ export class UserProfileInfosComponent implements OnInit, OnDestroy {
       )
       .subscribe(() => {
         this.waittingResponse = false;
-        this.toastr.error('Erreur lors de la mise à jour du profil', 'Erreur');
+        this.toastr.error(this.translate.instant('USER_PROFILE.UPDATE_ERROR'), this.translate.instant('COMMON.ERROR'));
       });
   }
 
@@ -239,12 +241,12 @@ export class UserProfileInfosComponent implements OnInit, OnDestroy {
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
 
     if (!allowedTypes.includes(file.type)) {
-      this.toastr.error('Format de fichier non supporté. Utilisez JPEG, PNG ou GIF.', 'Erreur');
+      this.toastr.error(this.translate.instant('USER_PROFILE.PHOTO_INVALID_FORMAT'), this.translate.instant('COMMON.ERROR'));
       return;
     }
 
     if (file.size > maxSize) {
-      this.toastr.error('Le fichier est trop volumineux. Maximum 5MB.', 'Erreur');
+      this.toastr.error(this.translate.instant('USER_PROFILE.PHOTO_TOO_LARGE'), this.translate.instant('COMMON.ERROR'));
       return;
     }
 
@@ -279,14 +281,14 @@ export class UserProfileInfosComponent implements OnInit, OnDestroy {
 
       // Mettre à jour le store avec les nouvelles données utilisateur
       this._store.dispatch(new UserProfileAction.SetUserProfile(updatedUser));
-      this.toastr.success('Photo de profil mise à jour avec succès', 'Succès');
+      this.toastr.success(this.translate.instant('USER_PROFILE.PHOTO_UPLOAD_SUCCESS'), this.translate.instant('COMMON.SUCCESS'));
 
       // Nettoyer les fichiers uploadés
       this._store.dispatch(new UploadFilesAction.ResetFileUploaded());
     } else if (state?.state === 'ERROR') {
       this.isUploadingPhoto = false;
       this.uploadProgress = 0;
-      this.toastr.error('Erreur lors de l\'upload de la photo', 'Erreur');
+      this.toastr.error(this.translate.instant('USER_PROFILE.PHOTO_UPLOAD_ERROR'), this.translate.instant('COMMON.ERROR'));
     }
   }
 
@@ -331,7 +333,7 @@ export class UserProfileInfosComponent implements OnInit, OnDestroy {
     this.formGroup.markAllAsTouched();
     
     if (this.formGroup.invalid) {
-      this.toastr.warning('Veuillez corriger les erreurs dans le formulaire', 'Formulaire invalide');
+      this.toastr.warning(this.translate.instant('USER_PROFILE.FORM_ERRORS'), this.translate.instant('USER_PROFILE.INVALID_FORM'));
       this.scrollToFirstError();
       return;
     }
@@ -392,14 +394,14 @@ export class UserProfileInfosComponent implements OnInit, OnDestroy {
     localStorage.setItem(COOKIE_KEY, 'accepted');
     this.cookieConsent = 'accepted';
     this.loadGoogleAnalytics();
-    this.toastr.success('Cookies analytiques acceptés.', 'Ndewa360°');
+    this.toastr.success(this.translate.instant('USER_PROFILE.COOKIES_ACCEPTED'), 'Ndewa360°');
   }
 
   declineCookies(): void {
     localStorage.setItem(COOKIE_KEY, 'declined');
     this.cookieConsent = 'declined';
     this.removeGoogleAnalytics();
-    this.toastr.info('Cookies analytiques refusés.', 'Ndewa360°');
+    this.toastr.info(this.translate.instant('USER_PROFILE.COOKIES_DECLINED'), 'Ndewa360°');
   }
 
   private loadGoogleAnalytics(): void {
@@ -455,19 +457,19 @@ export class UserProfileInfosComponent implements OnInit, OnDestroy {
   // --- Signalement problème de sécurité ---
   submitReport(): void {
     if (this.reportDescription.trim().length < 20) {
-      this.toastr.warning('Veuillez décrire le problème en au moins 20 caractères.', 'Signalement');
+      this.toastr.warning(this.translate.instant('USER_PROFILE.REPORT_DESCRIPTION_TOO_SHORT'), this.translate.instant('USER_PROFILE.REPORT'));
       return;
     }
     this.isSendingReport = true;
     this.breachReportService.report(this.reportDescription.trim()).subscribe({
       next: () => {
-        this.toastr.success('Votre signalement a été transmis à notre équipe. Merci.', 'Signalement envoyé');
+        this.toastr.success(this.translate.instant('USER_PROFILE.REPORT_SENT'), this.translate.instant('USER_PROFILE.REPORT_SENT_TITLE'));
         this.showReportForm = false;
         this.reportDescription = '';
         this.isSendingReport = false;
       },
       error: () => {
-        this.toastr.error('Erreur lors de l\'envoi du signalement.', 'Erreur');
+        this.toastr.error(this.translate.instant('USER_PROFILE.REPORT_ERROR'), this.translate.instant('COMMON.ERROR'));
         this.isSendingReport = false;
       },
     });
@@ -479,7 +481,7 @@ export class UserProfileInfosComponent implements OnInit, OnDestroy {
       this.updateFormWithUserData();
       this.formGroup.markAsUntouched();
       this.formGroup.markAsPristine();
-      this.toastr.info('Formulaire réinitialisé', 'Information');
+      this.toastr.info(this.translate.instant('USER_PROFILE.FORM_RESET'), this.translate.instant('COMMON.INFO'));
     }
   }
 

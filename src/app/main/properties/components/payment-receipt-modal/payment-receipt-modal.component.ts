@@ -241,11 +241,11 @@ export class PaymentReceiptModalComponent implements OnInit {
           a.click();
           URL.revokeObjectURL(url);
           this.isDownloading = false;
-          this.toastr.success('Reçu téléchargé avec succès', 'Ndewa360°');
+          this.toastr.success(this.translate.instant('NOTIFICATIONS.RECEIPT_DOWNLOADED_SUCCESS'), 'Ndewa360°');
         },
         error: () => {
           this.isDownloading = false;
-          this.toastr.error('Erreur lors du téléchargement du reçu', 'Erreur');
+          this.toastr.error(this.translate.instant('NOTIFICATIONS.RECEIPT_DOWNLOAD_ERROR'), this.translate.instant('COMMON.ERROR'));
         }
       });
       return;
@@ -256,7 +256,7 @@ export class PaymentReceiptModalComponent implements OnInit {
     try {
       const printWindow = window.open('', '_blank', 'width=900,height=700');
       if (!printWindow) {
-        this.toastr.error('Impossible d\'ouvrir la fenêtre d\'impression. Vérifiez les popups.', 'Erreur');
+        this.toastr.error(this.translate.instant('NOTIFICATIONS.PRINT_POPUP_ERROR'), this.translate.instant('COMMON.ERROR'));
         this.isDownloading = false;
         return;
       }
@@ -269,7 +269,7 @@ export class PaymentReceiptModalComponent implements OnInit {
         if (this.isDownloading) { printWindow.focus(); printWindow.print(); this.isDownloading = false; }
       }, 1500);
     } catch (error) {
-      this.toastr.error('Erreur lors de la génération du PDF', 'Erreur');
+      this.toastr.error(this.translate.instant('NOTIFICATIONS.PDF_GENERATION_ERROR'), this.translate.instant('COMMON.ERROR'));
       this.isDownloading = false;
     }
   }

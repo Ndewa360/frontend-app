@@ -4,6 +4,7 @@ import { Subject, BehaviorSubject } from 'rxjs';
 import { takeUntil, catchError } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 import { Store } from '@ngxs/store';
+import { TranslateService } from '@ngx-translate/core';
 
 import { AdminGeographyService } from '../../services/admin-geography.service';
 import { AdminCountry } from '../../store/geography/admin-geography.model';
@@ -30,7 +31,8 @@ export class CountryDeleteModalComponent implements OnInit, OnDestroy {
     @Inject(MAT_DIALOG_DATA) public data: CountryDeleteModalData,
     private adminGeographyService: AdminGeographyService,
     private toastr: ToastrService,
-    private store: Store
+    private store: Store,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -74,13 +76,13 @@ export class CountryDeleteModalComponent implements OnInit, OnDestroy {
     this.store.dispatch(new AdminGeographyAction.DeleteCountry(this.data.country._id)).pipe(
       takeUntil(this.destroy$),
       catchError(error => {
-        this.toastr.error('Erreur lors de la suppression du pays', 'Erreur');
+        this.toastr.error(this.translate.instant('GEOGRAPHY.COUNTRY.DELETE_ERROR'), this.translate.instant('COMMON.ERROR'));
         this.isLoading$.next(false);
         throw error;
       })
     ).subscribe(() => {
       this.isLoading$.next(false);
-      this.toastr.success(`Le pays ${this.data.country.name} a été supprimé avec succès`, 'Succès');
+      this.toastr.success(this.translate.instant('GEOGRAPHY.COUNTRY.DELETE_SUCCESS', { name: this.data.country.name }), this.translate.instant('COMMON.SUCCESS'));
       this.dialogRef.close(true);
     });
   }

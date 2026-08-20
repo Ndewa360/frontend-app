@@ -126,7 +126,6 @@ export class SouscriptionState{
         // Ne pas utiliser le cache si initLoadingState est LOADED mais forcer le rechargement
         // apres un upgrade (le cache est invalide)
         if (state.initLoadingState === 'LOADED') {
-            // Deja charge : mettre a jour silencieusement sans bloquer
             return this._souscriptionService.getSouscriptions(userId).pipe(
                 tap(result => {
                     ctx.patchState({
@@ -138,6 +137,9 @@ export class SouscriptionState{
                             ctx.dispatch(new SouscriptionPeriodAction.SetSouscriptionPeriod(u));
                         });
                     });
+                }),
+                catchError((error) => {
+                    return of(null);
                 })
             );
         }
@@ -158,7 +160,11 @@ export class SouscriptionState{
                     });
                     if(result.data.length==0) ctx.dispatch(new SouscriptionPeriodAction.SetInitLoading("LOADED"))
                 }
-            )
+            ),
+            catchError((error) => {
+                ctx.patchState({ loadingSouscription: false, initLoadingState: 'NO_LOADED' });
+                return throwError(error);
+            })
         )
     }
 
@@ -203,7 +209,7 @@ export class SouscriptionState{
                 ctx.patchState({
                     loadingSouscription: false
                 })
-                return throwError(error);
+                return of(null);
             })
         )
     }
@@ -232,7 +238,7 @@ export class SouscriptionState{
                 ctx.patchState({
                     loadingSouscription: false
                 })
-                return throwError(error);
+                return of(null);
             })
         )
     }
@@ -311,11 +317,7 @@ export class SouscriptionState{
             }),
             catchError(error => {
                 ctx.patchState({ loadingSouscription: false });
-                this._toastrService.error(
-                    error?.error?.message?.[0] || this._translateService.instant('NOTIFICATIONS.TRIAL_START_ERROR'),
-                    'Ndewa360°'
-                );
-                return throwError(error);
+                return of(null);
             })
         );
     }

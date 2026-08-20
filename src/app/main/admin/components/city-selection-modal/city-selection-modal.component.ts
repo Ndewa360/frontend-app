@@ -5,6 +5,7 @@ import { Subject, BehaviorSubject, of } from 'rxjs';
 import { takeUntil, debounceTime, distinctUntilChanged, switchMap, catchError } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 import { Store } from '@ngxs/store';
+import { TranslateService } from '@ngx-translate/core';
 
 import { GeonamesService, TransformedCity } from '../../services/geonames.service';
 import { AdminGeographyService } from '../../services/admin-geography.service';
@@ -49,7 +50,8 @@ export class CitySelectionModalComponent implements OnInit, OnDestroy {
     private geonamesService: GeonamesService,
     private adminGeographyService: AdminGeographyService,
     private toastr: ToastrService,
-    private store: Store
+    private store: Store,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -120,7 +122,7 @@ export class CitySelectionModalComponent implements OnInit, OnDestroy {
     this.geonamesService.getCitiesByCountry(country.code, PAGE_SIZE).pipe(
       takeUntil(this.destroy$),
       catchError(() => {
-        this.toastr.error('Erreur lors du chargement des villes', 'Erreur');
+        this.toastr.error(this.translate.instant('GEOGRAPHY.CITY.LOAD_ERROR'), this.translate.instant('COMMON.ERROR'));
         this.isLoading$.next(false);
         return of([]);
       })
@@ -159,7 +161,7 @@ export class CitySelectionModalComponent implements OnInit, OnDestroy {
 
   onConfirm(): void {
     if (!this.selectedCountry || !this.selectedCity) {
-      this.toastr.warning('Veuillez sélectionner un pays et une ville', 'Sélection incomplète');
+      this.toastr.warning(this.translate.instant('GEOGRAPHY.CITY.SELECT_COUNTRY_AND_CITY'), this.translate.instant('COMMON.WARNING'));
       return;
     }
 
@@ -170,13 +172,13 @@ export class CitySelectionModalComponent implements OnInit, OnDestroy {
     this.store.dispatch(new AdminGeographyAction.CreateCity(cityData)).pipe(
       takeUntil(this.destroy$),
       catchError(error => {
-        this.toastr.error('Erreur lors de la création de la ville', 'Erreur');
+        this.toastr.error(this.translate.instant('GEOGRAPHY.CITY.CREATE_ERROR'), this.translate.instant('COMMON.ERROR'));
         this.isLoading$.next(false);
         throw error;
       })
     ).subscribe(() => {
       this.isLoading$.next(false);
-      this.toastr.success(`La ville ${this.selectedCity!.name} a été ajoutée avec succès`, 'Succès');
+      this.toastr.success(this.translate.instant('GEOGRAPHY.CITY.CREATE_SUCCESS', { name: this.selectedCity!.name }), this.translate.instant('COMMON.SUCCESS'));
       this.dialogRef.close({ success: true, city: { ...cityData, country: this.selectedCountry } });
     });
   }

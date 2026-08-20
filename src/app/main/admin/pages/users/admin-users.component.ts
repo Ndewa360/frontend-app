@@ -5,6 +5,7 @@ import { takeUntil } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
 import { AdminUsersAction } from '../../store/users/admin-users.actions';
 import { AdminUsersState } from '../../store/users/admin-users.state';
@@ -71,6 +72,7 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private languageUrlService: LanguageUrlService,
     private toastr: ToastrService,
+    private translate: TranslateService,
     private fb: FormBuilder
   ) {
     this.userForm = this.fb.group({
@@ -232,8 +234,8 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
       this.store.dispatch(new AdminUsersAction.UpdateUser(this.selectedUser._id, updateData))
         .pipe(takeUntil(this.destroy$))
         .subscribe({
-          next:  () => { this.toastr.success('Utilisateur mis à jour'); this.onCloseModal(); },
-          error: (e) => this.toastr.error(e?.error?.message || 'Erreur lors de la mise à jour')
+          next:  () => { this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_USER_UPDATED')); this.onCloseModal(); },
+          error: (e) => this.toastr.error(e?.error?.message || this.translate.instant('NOTIFICATIONS.ADMIN_UPDATE_ERROR'))
         });
     } else {
       const createData: any = {
@@ -244,8 +246,8 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
       this.store.dispatch(new AdminUsersAction.CreateUser(createData))
         .pipe(takeUntil(this.destroy$))
         .subscribe({
-          next:  () => { this.toastr.success('Utilisateur créé'); this.onCloseModal(); },
-          error: (e) => this.toastr.error(e?.error?.message || 'Erreur lors de la création')
+          next:  () => { this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_USER_CREATED')); this.onCloseModal(); },
+          error: (e) => this.toastr.error(e?.error?.message || this.translate.instant('NOTIFICATIONS.ADMIN_CREATE_ERROR'))
         });
     }
   }
@@ -275,8 +277,8 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
     this.store.dispatch(new AdminUsersAction.AssignRole(this.userToAssignRole._id, this.selectedRoleIds))
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next:  () => { this.toastr.success('Rôles mis à jour'); this.onCancelAssignRole(); },
-        error: (e) => this.toastr.error(e?.error?.message || 'Erreur lors de l\'assignation')
+        next:  () => { this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_ROLES_UPDATED')); this.onCancelAssignRole(); },
+        error: (e) => this.toastr.error(e?.error?.message || this.translate.instant('NOTIFICATIONS.ADMIN_ASSIGN_ERROR'))
       });
   }
 
@@ -300,8 +302,8 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
     this.store.dispatch(new AdminUsersAction.DeleteUser(user._id))
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next:  () => this.toastr.success(`Utilisateur ${user.name} supprimé`),
-        error: (e) => this.toastr.error(e?.error?.message || 'Erreur lors de la suppression')
+        next:  () => this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_USER_DELETED')),
+        error: (e) => this.toastr.error(e?.error?.message || this.translate.instant('NOTIFICATIONS.ADMIN_DELETE_ERROR'))
       });
   }
 
@@ -314,7 +316,7 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
     const newStatus = user.status === 'active' ? 'inactive' : 'active';
     this.store.dispatch(new AdminUsersAction.UpdateUser(user._id, { status: newStatus }))
       .pipe(takeUntil(this.destroy$))
-      .subscribe({ error: (e) => this.toastr.error(e?.error?.message || 'Erreur') });
+      .subscribe({ error: (e) => this.toastr.error(e?.error?.message || this.translate.instant('COMMON.ERROR')) });
   }
 
   // Ouvre le modal de confirmation reset password (remplace window.confirm)
@@ -331,8 +333,8 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
     this.store.dispatch(new AdminUsersAction.ResetPassword(user._id))
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next:  () => this.toastr.success(`Email de réinitialisation envoyé à ${user.email}`),
-        error: (e) => this.toastr.error(e?.error?.message || 'Erreur lors de la réinitialisation')
+        next:  () => this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_RESET_EMAIL_SENT')),
+        error: (e) => this.toastr.error(e?.error?.message || this.translate.instant('NOTIFICATIONS.ADMIN_RESET_ERROR'))
       });
   }
 
@@ -343,14 +345,14 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
 
   onBulkAction(action: string): void {
     if (this.selectedUsers.length === 0) {
-      this.toastr.warning('Veuillez sélectionner au moins un utilisateur');
+      this.toastr.warning(this.translate.instant('NOTIFICATIONS.ADMIN_SELECT_AT_LEAST_ONE'));
       return;
     }
     this.store.dispatch(new AdminUsersAction.BulkAction(action, this.selectedUsers))
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next:  () => { this.toastr.success(`Action "${action}" appliquée`); this.selectedUsers = []; },
-        error: (e) => this.toastr.error(e?.error?.message || 'Erreur lors de l\'action groupée')
+        next:  () => { this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_BULK_ACTION_SUCCESS')); this.selectedUsers = []; },
+        error: (e) => this.toastr.error(e?.error?.message || this.translate.instant('NOTIFICATIONS.ADMIN_BULK_ACTION_ERROR'))
       });
   }
 
@@ -359,13 +361,13 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
     this.store.dispatch(new AdminUsersAction.ExportUsers(filters))
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next:  () => this.toastr.info('Export en cours de préparation…'),
-        error: () => this.toastr.error('Erreur lors de l\'export')
+        next:  () => this.toastr.info(this.translate.instant('NOTIFICATIONS.ADMIN_EXPORT_IN_PROGRESS')),
+        error: () => this.toastr.error(this.translate.instant('NOTIFICATIONS.ADMIN_EXPORT_ERROR'))
       });
   }
 
   onImportUsers(): void {
-    this.toastr.info('Fonctionnalité d\'import disponible prochainement');
+    this.toastr.info(this.translate.instant('NOTIFICATIONS.ADMIN_IMPORT_SOON'));
   }
 
   onRefreshData(): void {

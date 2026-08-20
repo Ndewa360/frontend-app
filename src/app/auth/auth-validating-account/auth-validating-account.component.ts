@@ -6,6 +6,7 @@ import { UserProfileAction, UserProfileState } from 'src/app/shared/store';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'auth-validating-account',
@@ -25,13 +26,14 @@ export class AuthValidatingAccountComponent implements OnInit {
     private router:Router,
     private route: ActivatedRoute,
     private http: HttpClient,
-    private languageUrlService: LanguageUrlService
+    private languageUrlService: LanguageUrlService,
+    private translate: TranslateService
   ){}
 
   ngOnInit(): void {
     if(!this.route.snapshot.queryParamMap.has("token"))
     {
-      this._toastrService.error(`Token non fournis! `, 'Ndewa360°');
+      this._toastrService.error(this.translate.instant('NOTIFICATIONS.TOKEN_NOT_PROVIDED'), 'Ndewa360°');
       const currentLang = this.languageUrlService.getCurrentLanguage();
       this.router.navigate([`/${currentLang}/auth/signin`])
       return;

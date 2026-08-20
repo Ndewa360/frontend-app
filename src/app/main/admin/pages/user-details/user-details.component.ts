@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 import { AdminUsersService } from '../../services/admin-users.service';
 import { AdminSubscriptionsService } from '../../services/admin-subscriptions.service';
 import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
@@ -160,13 +161,14 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
     private usersService: AdminUsersService,
     private subscriptionsService: AdminSubscriptionsService,
     private languageUrlService: LanguageUrlService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
     this.userId = this.route.snapshot.params['id'];
     if (!this.userId) {
-      this.toastr.error('Aucun utilisateur spécifié');
+      this.toastr.error(this.translate.instant('NOTIFICATIONS.ADMIN_NO_USER_SPECIFIED'));
       this.goBack();
       return;
     }
@@ -190,9 +192,9 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           this.isLoading = false;
-          if      (error.status === 404) this.toastr.error('Utilisateur non trouvé');
-          else if (error.status === 403) this.toastr.error('Accès non autorisé');
-          else                           this.toastr.error('Erreur de connexion au serveur');
+          if      (error.status === 404) this.toastr.error(this.translate.instant('NOTIFICATIONS.ADMIN_USER_NOT_FOUND'));
+          else if (error.status === 403) this.toastr.error(this.translate.instant('NOTIFICATIONS.ADMIN_ACCESS_DENIED'));
+          else                           this.toastr.error(this.translate.instant('NOTIFICATIONS.ADMIN_SERVER_ERROR'));
         }
       });
   }
@@ -231,7 +233,7 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
         next: (result) => {
           this.recheckingRef = null;
           if (result.status === 'SUCCESS') {
-            this.toastr.success('Paiement confirmé par le provider !');
+            this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_PAYMENT_CONFIRMED_BY_PROVIDER'));
             this.loadUserDetails();
           } else {
             this.toastr.info(result.message);
@@ -240,7 +242,7 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
         },
         error: (e) => {
           this.recheckingRef = null;
-          this.toastr.error(e?.error?.message || 'Erreur lors de la vérification');
+          this.toastr.error(e?.error?.message || this.translate.instant('NOTIFICATIONS.ADMIN_VERIFY_ERROR'));
         }
       });
   }
@@ -272,12 +274,12 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
         next: () => {
           this.confirmingRef = null;
           this.pendingConfirmRef = null;
-          this.toastr.success('Paiement confirmé — LocationPayment créé et wallet crédité');
+          this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_PAYMENT_CONFIRMED'));
           this.loadUserDetails();
         },
         error: (e) => {
           this.confirmingRef = null;
-          this.toastr.error(e?.error?.message || 'Erreur lors de la confirmation');
+          this.toastr.error(e?.error?.message || this.translate.instant('NOTIFICATIONS.ADMIN_CONFIRM_ERROR'));
         }
       });
   }
@@ -289,8 +291,8 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
     this.subscriptionsService.forceUpgradeToPremium(this.user.subscription._id, 'Upgrade administratif')
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next:  () => { this.toastr.success('Compte upgradé vers Premium'); this.loadUserDetails(); },
-        error: (e) => this.toastr.error(e?.error?.message || 'Erreur lors de l\'upgrade')
+        next:  () => { this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_ACCOUNT_UPGRADED')); this.loadUserDetails(); },
+        error: (e) => this.toastr.error(e?.error?.message || this.translate.instant('NOTIFICATIONS.ADMIN_UPGRADE_ERROR'))
       });
   }
 
@@ -306,8 +308,8 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
     this.subscriptionsService.suspendAccount(this.user.subscription._id, this.suspendReason)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next:  () => { this.toastr.success('Compte suspendu'); this.loadUserDetails(); },
-        error: (e) => this.toastr.error(e?.error?.message || 'Erreur lors de la suspension')
+        next:  () => { this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_ACCOUNT_SUSPENDED')); this.loadUserDetails(); },
+        error: (e) => this.toastr.error(e?.error?.message || this.translate.instant('NOTIFICATIONS.ADMIN_SUSPEND_ERROR'))
       });
   }
 
@@ -318,8 +320,8 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
     this.subscriptionsService.reactivateAccount(this.user.subscription._id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next:  () => { this.toastr.success('Compte réactivé'); this.loadUserDetails(); },
-        error: (e) => this.toastr.error(e?.error?.message || 'Erreur lors de la réactivation')
+        next:  () => { this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_ACCOUNT_REACTIVATED')); this.loadUserDetails(); },
+        error: (e) => this.toastr.error(e?.error?.message || this.translate.instant('NOTIFICATIONS.ADMIN_REACTIVATE_ERROR'))
       });
   }
 
@@ -328,8 +330,8 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
     this.subscriptionsService.sendPaymentReminder(this.user.subscription._id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next:  () => this.toastr.success('Rappel de paiement envoyé'),
-        error: (e) => this.toastr.error(e?.error?.message || 'Erreur lors de l\'envoi du rappel')
+        next:  () => this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_PAYMENT_REMINDER_SENT')),
+        error: (e) => this.toastr.error(e?.error?.message || this.translate.instant('NOTIFICATIONS.ADMIN_REMINDER_ERROR'))
       });
   }
 
@@ -345,7 +347,7 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
       || (this.user.subscription.currentPeriod?.state === 'unpaid' ? this.user.subscription.currentPeriod : null);
 
     if (!unpaidPeriod) {
-      this.toastr.warning('Aucune période impayée trouvée');
+      this.toastr.warning(this.translate.instant('NOTIFICATIONS.ADMIN_NO_UNPAID_PERIOD'));
       return;
     }
 
@@ -364,13 +366,13 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
-          this.toastr.success('Paiement marqué comme payé');
+          this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_PAYMENT_MARKED_PAID'));
           this.isMarkingPaid = false;
           this.selectedPeriodId = null;
           this.loadUserDetails();
         },
         error: (e) => {
-          this.toastr.error(e?.error?.message || 'Erreur lors du marquage du paiement');
+          this.toastr.error(e?.error?.message || this.translate.instant('NOTIFICATIONS.ADMIN_MARK_PAID_ERROR'));
           this.isMarkingPaid = false;
         }
       });
@@ -560,12 +562,12 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
         next: () => {
           this.isDeletingTx = false;
           this.pendingDeleteRef = null;
-          this.toastr.success('Transaction supprimée');
+          this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_TX_DELETED'));
           this.rentTransactions = this.rentTransactions.filter(t => t.externalRef !== ref);
         },
         error: (e) => {
           this.isDeletingTx = false;
-          this.toastr.error(e?.error?.message || 'Erreur lors de la suppression');
+          this.toastr.error(e?.error?.message || this.translate.instant('NOTIFICATIONS.ADMIN_DELETE_ERROR'));
         }
       });
   }

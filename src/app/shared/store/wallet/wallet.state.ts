@@ -273,13 +273,13 @@ export class WalletState implements OnDestroy {
         if (res.data.redirectUrl) {
           window.location.href = res.data.redirectUrl;
         } else {
-          this.toastr.success('Dépôt initié avec succès', 'Ndewa360°');
+          this.toastr.success(this.translate.instant('NOTIFICATIONS.WALLET_DEPOSIT_INITIATED'), 'Ndewa360°');
           ctx.dispatch(new WalletAction.LoadSummary());
           ctx.dispatch(new WalletAction.LoadDeposits());
         }
       }),
       catchError(err => {
-        const msg = err.error?.message?.[0] || err.error?.message || 'Erreur lors du dépôt';
+        const msg = err.error?.message?.[0] || err.error?.message || this.translate.instant('NOTIFICATIONS.WALLET_DEPOSIT_ERROR');
         ctx.patchState({ depositLoading: false, error: msg });
         this.toastr.error(msg, 'Ndewa360°');
         return throwError(err);

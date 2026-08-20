@@ -541,7 +541,7 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
 
     // Vérifier que toutes les données sont présentes
     if (!this.selectedRoom || !this.selectedLocataire) {
-      this.toastr.error('Veuillez sélectionner une chambre et un locataire', 'Erreur');
+      this.toastr.error(this.translate.instant('NOTIFICATIONS.SELECT_ROOM_AND_TENANT'), this.translate.instant('COMMON.ERROR'));
       this.assistantState.isLoading = false;
       return;
     }
@@ -555,7 +555,7 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (_result) => {
           this.assistantState.isLoading = false;
-          this.toastr.success('Assignation créée avec succès', 'Succès');
+          this.toastr.success(this.translate.instant('NOTIFICATIONS.ASSIGNATION_CREATED_SUCCESS'), this.translate.instant('COMMON.SUCCESS'));
 
           // Émettre le succès avec la configuration
           const config: AssignationConfig = {

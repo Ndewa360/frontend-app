@@ -4,6 +4,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
 import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 
 // Actions
 import { AdminSettingsAction } from '../../store/settings/admin-settings.actions';
@@ -50,7 +51,8 @@ export class AdminSettingsComponent implements OnInit, OnDestroy {
     private store: Store,
     private formBuilder: FormBuilder,
     private settingsService: AdminSettingsService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private translate: TranslateService
   ) {
     this.initializeForm();
   }
@@ -237,7 +239,7 @@ export class AdminSettingsComponent implements OnInit, OnDestroy {
   onTestEmailConfiguration(): void {
     const testEmail = this.settingsForm.get('supportEmail')?.value;
     if (!testEmail) {
-      this.toastr.warning('Veuillez renseigner un email de support');
+      this.toastr.warning(this.translate.instant('NOTIFICATIONS.ADMIN_SUPPORT_EMAIL_REQUIRED'));
       return;
     }
     this.settingsService.testEmailConfiguration(testEmail)
@@ -245,25 +247,25 @@ export class AdminSettingsComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (result) => {
           if (result.success) {
-            this.toastr.success('Email de test envoyé avec succès');
+            this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_TEST_EMAIL_SENT'));
           } else {
-            this.toastr.error(result.message || 'Erreur lors du test');
+            this.toastr.error(result.message || this.translate.instant('NOTIFICATIONS.ADMIN_TEST_EMAIL_ERROR'));
           }
         },
-        error: () => this.toastr.error('Erreur lors du test de configuration email')
+        error: () => this.toastr.error(this.translate.instant('NOTIFICATIONS.ADMIN_TEST_EMAIL_CONFIG_ERROR'))
       });
   }
 
   onCreateBackup(): void {
     if (!confirm('Créer une nouvelle sauvegarde ?')) return;
     this.store.dispatch(new AdminSettingsAction.BackupDatabase());
-    this.toastr.info('Sauvegarde en cours...');
+    this.toastr.info(this.translate.instant('NOTIFICATIONS.ADMIN_BACKUP_IN_PROGRESS'));
   }
 
   onClearCache(): void {
     if (!confirm('Vider le cache système ?')) return;
     this.store.dispatch(new AdminSettingsAction.ClearCache());
-    this.toastr.info('Cache en cours de nettoyage...');
+    this.toastr.info(this.translate.instant('NOTIFICATIONS.ADMIN_CACHE_CLEARING'));
   }
 
   onToggleMaintenanceMode(): void {

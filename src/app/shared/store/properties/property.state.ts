@@ -93,7 +93,7 @@ export class PropertyState{
                 ctx.patchState({
                     loadingProperty: false
                 })
-                return throwError(error);
+                return of(null);
                 
             })
         )
@@ -177,11 +177,7 @@ export class PropertyState{
             }),
             catchError((error) => {
                 ctx.patchState({ loadingProperty: false });
-                this._toastrService.error(
-                    this._translateService.instant('NOTIFICATIONS.GENERIC_ERROR_RETRY'),
-                    'Ndewa360°'
-                );
-                return throwError(error);
+                return of(null);
             })
         );
     }
@@ -202,7 +198,7 @@ export class PropertyState{
             }),
             catchError(error => {
                 ctx.patchState({ loadingProperty: false });
-                return throwError(error);
+                return of(null);
             })
         )
     }
@@ -255,7 +251,7 @@ export class PropertyState{
                 ctx.patchState({
                     loadingProperty: false
                 })
-                return throwError(error);
+                return of(null);
             })
         )
     }
@@ -281,11 +277,7 @@ export class PropertyState{
             }),
             catchError((error) => {
                 ctx.patchState({ loadingProperty: false, initLoadingState: 'NO_LOADED' });
-                this._toastrService.error(
-                    this._translateService.instant('NOTIFICATIONS.GENERIC_ERROR_RETRY'),
-                    'Ndewa360°'
-                );
-                return throwError(error);
+                return of(null);
             })
         );
     }

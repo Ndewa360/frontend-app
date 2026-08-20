@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Store } from '@ngxs/store';
 import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 import { firstValueFrom } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { UserProfileState } from 'src/app/shared/store/user-profile/user-profile.state';
@@ -39,7 +40,8 @@ export class AgentManagementComponent implements OnInit {
   constructor(
     private http: HttpClient,
     private store: Store,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -58,7 +60,7 @@ export class AgentManagementComponent implements OnInit {
       const response: any = await firstValueFrom(this.http.get(`${environment.apiUrl}/agents/pending`));
       this.pendingAgents = response.data || response || [];
     } catch {
-      this.toastr.error('Erreur lors du chargement des agents en attente');
+      this.toastr.error(this.translate.instant('NOTIFICATIONS.ADMIN_LOAD_AGENTS_ERROR'));
       this.pendingAgents = [];
     } finally {
       this.isLoading = false;
@@ -112,12 +114,12 @@ export class AgentManagementComponent implements OnInit {
       await firstValueFrom(this.http.patch(`${environment.apiUrl}/agents/${agent.userId._id}/admin-approve`, {
         adminId: this.adminId
       }));
-      this.toastr.success(`Agent ${agent.businessName} approuvé avec succès`);
+      this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_AGENT_APPROVED'));
       await this.loadPendingAgents();
       await this.loadApprovedAgents();
       this.selectedAgent = null;
     } catch {
-      this.toastr.error('Erreur lors de l\'approbation de l\'agent');
+      this.toastr.error(this.translate.instant('NOTIFICATIONS.ADMIN_AGENT_APPROVE_ERROR'));
     }
   }
 
@@ -129,7 +131,7 @@ export class AgentManagementComponent implements OnInit {
 
   async rejectAgent(): Promise<void> {
     if (!this.selectedAgent || !this.rejectionReason.trim()) {
-      this.toastr.warning('La raison du refus est requise');
+      this.toastr.warning(this.translate.instant('NOTIFICATIONS.ADMIN_REJECTION_REASON_REQUIRED'));
       return;
     }
     try {
@@ -137,11 +139,11 @@ export class AgentManagementComponent implements OnInit {
         adminId: this.adminId,
         reason: this.rejectionReason
       }));
-      this.toastr.success('Agent refusé avec succès');
+      this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_AGENT_REJECTED'));
       await this.loadPendingAgents();
       this.closeRejectModal();
     } catch {
-      this.toastr.error('Erreur lors du refus de l\'agent');
+      this.toastr.error(this.translate.instant('NOTIFICATIONS.ADMIN_AGENT_REJECT_ERROR'));
     }
   }
 
@@ -155,6 +157,6 @@ export class AgentManagementComponent implements OnInit {
 
   async refreshData(): Promise<void> {
     await Promise.all([this.loadPendingAgents(), this.loadApprovedAgents()]);
-    this.toastr.success('Données actualisées');
+    this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_DATA_REFRESHED'));
   }
 }

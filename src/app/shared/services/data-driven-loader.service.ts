@@ -4,6 +4,7 @@ import { map, distinctUntilChanged, filter } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
 import { Router, NavigationStart, NavigationEnd, NavigationCancel, NavigationError } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 import { GlobalAction } from '../store';
 
 export interface PageLoadingState {
@@ -64,6 +65,7 @@ export class DataDrivenLoaderService {
     private store: Store,
     private router: Router,
     private toastr: ToastrService,
+    private translate: TranslateService,
   ) {
     this.listenToNavigation();
     this.listenToNetworkStatus();
@@ -156,7 +158,7 @@ export class DataDrivenLoaderService {
       this.cancelSub();
       this.hide();
       this.toastr.warning(
-        'Le chargement prend plus de temps que prévu. Vérifiez votre connexion.',
+        this.translate.instant('LOADER.TIMEOUT_WARNING'),
         'Ndewa360°',
         { timeOut: 5000 }
       );
@@ -170,8 +172,8 @@ export class DataDrivenLoaderService {
       if (this._overlayVisible.value) {
         // Loader actif + connexion perdue
         this.toastr.error(
-          'Connexion internet perdue. Vérifiez votre réseau et réessayez.',
-          'Hors ligne',
+          this.translate.instant('LOADER.OFFLINE_ERROR'),
+          this.translate.instant('COMMON.OFFLINE'),
           { timeOut: 0, extendedTimeOut: 0, closeButton: true }
         );
         this.cancelSub();
@@ -179,8 +181,8 @@ export class DataDrivenLoaderService {
         this.hide();
       } else {
         this.toastr.warning(
-          'Connexion internet perdue.',
-          'Hors ligne',
+          this.translate.instant('LOADER.OFFLINE_WARNING'),
+          this.translate.instant('COMMON.OFFLINE'),
           { timeOut: 0, extendedTimeOut: 0, closeButton: true }
         );
       }
@@ -188,7 +190,7 @@ export class DataDrivenLoaderService {
 
     window.addEventListener('online', () => {
       this.store.dispatch(new GlobalAction.SetConnexionInternetState(true));
-      this.toastr.success('Connexion rétablie.', 'En ligne', { timeOut: 3000 });
+      this.toastr.success(this.translate.instant('LOADER.ONLINE_SUCCESS'), this.translate.instant('COMMON.ONLINE'), { timeOut: 3000 });
     });
   }
 

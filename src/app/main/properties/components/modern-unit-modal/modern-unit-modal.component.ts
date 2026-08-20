@@ -225,8 +225,8 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
     ).subscribe(() => {
       this.isLoading = false;
       this.toastr.success(
-        this.translate.instant('notifications.unitCreatedSuccess'),
-        this.translate.instant('notifications.success')
+        this.translate.instant('NOTIFICATIONS.UNIT_CREATED'),
+        'Ndewa360°'
       );
       this.dialogRef.close(true);
     });
@@ -238,8 +238,8 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
     ).subscribe(() => {
       this.isLoading = false;
       this.toastr.success(
-        this.translate.instant('notifications.unitUpdatedSuccess'),
-        this.translate.instant('notifications.success')
+        this.translate.instant('NOTIFICATIONS.UNIT_UPDATED'),
+        'Ndewa360°'
       );
       this.dialogRef.close(true);
     });
@@ -259,8 +259,8 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
           this.showRoomLimitModal(status?.unitsPerPropertyLimit ?? 8);
         } else {
           this.toastr.error(
-            this.translate.instant('notifications.unitCreateError') || 'Erreur lors de la création de l\'unité',
-            this.translate.instant('notifications.error') || 'Erreur'
+            this.translate.instant('NOTIFICATIONS.UNIT_CREATE_ERROR'),
+            'Ndewa360°'
           );
         }
       }
@@ -274,8 +274,8 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
       if (!completion.result.successful) {
         this.isLoading = false;
         this.toastr.error(
-          this.translate.instant('notifications.unitUpdateError'),
-          this.translate.instant('notifications.error')
+          this.translate.instant('NOTIFICATIONS.UNIT_UPDATE_ERROR'),
+          'Ndewa360°'
         );
       }
     });
@@ -291,15 +291,15 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
       const validFiles = files.filter(file => {
         if (!file.type.startsWith('image/')) {
           this.toastr.error(
-            this.translate.instant('errors.invalidFileType', { fileName: file.name }),
-            this.translate.instant('notifications.error')
+            this.translate.instant('ERRORS.INVALID_FILE_TYPE', { fileName: file.name }),
+            'Ndewa360°'
           );
           return false;
         }
         if (file.size > 5 * 1024 * 1024) { // 5MB
           this.toastr.error(
-            this.translate.instant('errors.fileTooLarge', { fileName: file.name }),
-            this.translate.instant('notifications.error')
+            this.translate.instant('ERRORS.FILE_TOO_LARGE', { fileName: file.name }),
+            'Ndewa360°'
           );
           return false;
         }
@@ -355,8 +355,8 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
       
     } catch (error) {
       this.toastr.error(
-        this.translate.instant('errors.uploadFailed'),
-        this.translate.instant('notifications.error')
+        this.translate.instant('ERRORS.UPLOAD_FAILED'),
+        'Ndewa360°'
       );
       return this.data.unit?.medias || [];
     } finally {

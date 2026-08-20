@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject, BehaviorSubject } from 'rxjs';
 import { takeUntil, catchError } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 
 import { AdminGeographyService } from '../../services/admin-geography.service';
 import { AdminCountry, UpdateCountryDto } from '../../store/geography/admin-geography.model';
@@ -68,7 +69,8 @@ export class CountryEditModalComponent implements OnInit, OnDestroy {
     @Inject(MAT_DIALOG_DATA) public data: CountryEditModalData,
     private fb: FormBuilder,
     private adminGeographyService: AdminGeographyService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private translate: TranslateService
   ) {
     this.countryForm = this.createForm();
   }
@@ -130,13 +132,13 @@ export class CountryEditModalComponent implements OnInit, OnDestroy {
     this.adminGeographyService.updateCountry(this.data.country._id, updateData).pipe(
       takeUntil(this.destroy$),
       catchError(error => {
-        this.toastr.error('Erreur lors de la mise à jour du pays', 'Erreur');
+        this.toastr.error(this.translate.instant('GEOGRAPHY.COUNTRY.UPDATE_ERROR'), this.translate.instant('COMMON.ERROR'));
         this.isLoading$.next(false);
         throw error;
       })
     ).subscribe(updatedCountry => {
       this.isLoading$.next(false);
-      this.toastr.success(`Le pays ${updatedCountry.name} a été mis à jour avec succès`, 'Succès');
+      this.toastr.success(this.translate.instant('GEOGRAPHY.COUNTRY.UPDATE_SUCCESS', { name: updatedCountry.name }), this.translate.instant('COMMON.SUCCESS'));
       this.dialogRef.close(updatedCountry);
     });
   }
