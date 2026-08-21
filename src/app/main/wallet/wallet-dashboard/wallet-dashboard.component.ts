@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store, Select } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
@@ -26,16 +26,6 @@ export class WalletDashboardComponent implements OnInit, OnDestroy {
   @Select(WalletState.pollingWithdrawalId) pollingWithdrawalId$: Observable<string | null>;
   @Select(WalletState.deletingWithdrawalId) deletingWithdrawalId$: Observable<string | null>;
 
-  summary: WalletSummary | null = null;
-  rentPayments: WalletTransaction[] = [];
-  deposits: WalletTransaction[] = [];
-  withdrawals: WithdrawalRequest[] = [];
-  loading = false;
-  totalRentPayments = 0;
-  totalDeposits = 0;
-  pollingWithdrawalId: string | null = null;
-  deletingWithdrawalId: string | null = null;
-
   /** ID du retrait pour lequel le modal de confirmation est ouvert */
   confirmDeleteId: string | null = null;
 
@@ -52,22 +42,13 @@ export class WalletDashboardComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private route: ActivatedRoute,
     private router: Router,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
     this.loadAll();
     this.handleDepositCallback();
     this.resumePendingPolling();
-
-    this.summary$.pipe(takeUntil(this.destroy$)).subscribe(s => this.summary = s);
-    this.rentPayments$.pipe(takeUntil(this.destroy$)).subscribe(p => this.rentPayments = p);
-    this.deposits$.pipe(takeUntil(this.destroy$)).subscribe(d => this.deposits = d);
-    this.withdrawals$.pipe(takeUntil(this.destroy$)).subscribe(w => this.withdrawals = w);
-    this.loading$.pipe(takeUntil(this.destroy$)).subscribe(l => this.loading = l);
-    this.totalRentPayments$.pipe(takeUntil(this.destroy$)).subscribe(t => this.totalRentPayments = t);
-    this.totalDeposits$.pipe(takeUntil(this.destroy$)).subscribe(t => this.totalDeposits = t);
-    this.pollingWithdrawalId$.pipe(takeUntil(this.destroy$)).subscribe(id => this.pollingWithdrawalId = id);
-    this.deletingWithdrawalId$.pipe(takeUntil(this.destroy$)).subscribe(id => this.deletingWithdrawalId = id);
   }
 
   ngOnDestroy(): void {
@@ -76,18 +57,16 @@ export class WalletDashboardComponent implements OnInit, OnDestroy {
   }
 
   private resumePendingPolling(): void {
-    // Lire le summary une seule fois au chargement (take(1)) — évite la boucle infinie
-    // où PollWithdrawalStatus → LoadSummary → summary$ émet → re-dispatch infini.
     this.summary$.pipe(
       takeUntil(this.destroy$),
-      // Ne réagir qu'une seule fois au premier summary non-null
       filter(s => !!s),
       take(1),
     ).subscribe(summary => {
+      const currentPollingId = this.store.selectSnapshot(WalletState.pollingWithdrawalId);
       if (
         summary?.hasPendingWithdrawal &&
         summary.pendingWithdrawal?._id &&
-        !this.pollingWithdrawalId
+        !currentPollingId
       ) {
         this.store.dispatch(new WalletAction.PollWithdrawalStatus(summary.pendingWithdrawal._id));
       }
@@ -107,6 +86,7 @@ export class WalletDashboardComponent implements OnInit, OnDestroy {
         this.router.navigate([], { relativeTo: this.route, queryParams: {}, replaceUrl: true });
         this.loadAll();
         this.activeTab = 'deposits';
+        this.cdr.markForCheck();
       }
     });
   }
@@ -114,7 +94,6 @@ export class WalletDashboardComponent implements OnInit, OnDestroy {
   refresh(): void { this.loadAll(); }
 
   openWithdrawalModal(): void {
-    // Recharger le solde frais puis lire via selectSnapshot pour avoir la valeur à jour
     this.store.dispatch(new WalletAction.LoadSummary()).subscribe(() => {
       const freshSummary = this.store.selectSnapshot(WalletState.summary);
       const ref = this.dialog.open(WithdrawalModalComponent, {
@@ -177,8 +156,8 @@ export class WalletDashboardComponent implements OnInit, OnDestroy {
     return status === 'FAILED' || status === 'CANCELLED';
   }
 
-  get rentTotalPages(): number { return Math.ceil(this.totalRentPayments / this.pageSize) || 1; }
-  get depositTotalPages(): number { return Math.ceil(this.totalDeposits / this.pageSize) || 1; }
+  get rentTotalPages(): number { return Math.ceil((this.store.selectSnapshot(WalletState.totalRentPayments) || 0) / this.pageSize) || 1; }
+  get depositTotalPages(): number { return Math.ceil((this.store.selectSnapshot(WalletState.totalDeposits) || 0) / this.pageSize) || 1; }
 
   formatCurrency(amount: number): string {
     return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XAF', minimumFractionDigits: 0 }).format(amount || 0);

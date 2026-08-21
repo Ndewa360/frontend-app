@@ -45,6 +45,7 @@ export class SubscriptionDashboardComponent implements OnInit, OnDestroy {
   stripeSession: any = null;
   subscriptionHistory: SouscriptionModel[] = [];
   loadingHistory = false;
+  progressPercentage = 0;
 
   constructor(
     private store: Store,
@@ -89,7 +90,10 @@ export class SubscriptionDashboardComponent implements OnInit, OnDestroy {
 
     this.store.select(SouscriptionPeriodState.selectCurrentPeriodWithDetails)
       .pipe(takeUntil(this.destroy$), filter(p => !!p))
-      .subscribe(period => { this.currentPeriod = period; });
+      .subscribe(period => {
+        this.currentPeriod = period;
+        this.progressPercentage = this._computeProgress(period);
+      });
 
     this.loading$.pipe(takeUntil(this.destroy$)).subscribe(l => this.loading = l);
 
@@ -262,12 +266,16 @@ export class SubscriptionDashboardComponent implements OnInit, OnDestroy {
     return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
   }
 
-  getProgressPercentage(): number {
-    if (!this.currentPeriod) return 0;
-    const start = new Date(this.currentPeriod.startedAt).getTime();
-    const end   = new Date(this.currentPeriod.endedAt).getTime();
+  private _computeProgress(period: SouscriptionPeriodModel | null): number {
+    if (!period) return 0;
+    const start = new Date(period.startedAt).getTime();
+    const end   = new Date(period.endedAt).getTime();
     const now   = Date.now();
     return Math.min(100, Math.max(0, ((now - start) / (end - start)) * 100));
+  }
+
+  getProgressPercentage(): number {
+    return this.progressPercentage;
   }
 
   getUnpaidTotal(): number {

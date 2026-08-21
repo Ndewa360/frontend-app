@@ -146,11 +146,16 @@ export class TranslationService {
     if (!languageCode || !this.isLanguageSupported(languageCode)) {
       return;
     }
+    // Évite la boucle : si la langue est déjà active, ne rien faire
+    if (this.currentLanguage$.value === languageCode) {
+      return;
+    }
 
     if (this.translateService.getLangs().includes(languageCode)) {
+      // Mettre à jour currentLanguage$ AVANT l'appel async pour éviter la race condition
+      this.currentLanguage$.next(languageCode);
       this.translateService.use(languageCode).subscribe({
         next: () => {
-          this.currentLanguage$.next(languageCode);
           this.saveLanguageToLocalStorage(languageCode);
           this.saveLanguagePreference(languageCode);
         },
@@ -308,7 +313,14 @@ export class TranslationService {
    */
   private async saveLanguagePreference(languageCode: string): Promise<void> {
     try {
-      if (this.userProfile && this.userProfile._id && languageCode && this.isLanguageSupported(languageCode)) {
+      // Ne dispatcher que si la langue diffère de celle déjà enregistrée dans le profil
+      if (
+        this.userProfile &&
+        this.userProfile._id &&
+        languageCode &&
+        this.isLanguageSupported(languageCode) &&
+        this.userProfile.preferredLanguage !== languageCode
+      ) {
         this.store.dispatch(new UserProfileAction.UpdateUserProfile({
           preferredLanguage: languageCode
         }, this.userProfile._id));

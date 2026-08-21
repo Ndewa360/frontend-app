@@ -34,7 +34,6 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
   showCreateModal = false;
   showEditModal   = false;
   selectedUser: AdminUser | null = null;
-  isLoading = false;
 
   // Modals de confirmation (remplace window.confirm)
   showDeleteModal      = false;
@@ -90,7 +89,6 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.loadData();
     this.loadAvailableRoles();
-    this.isLoading$.pipe(takeUntil(this.destroy$)).subscribe(l => this.isLoading = l);
   }
 
   ngOnDestroy(): void {

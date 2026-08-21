@@ -11,6 +11,7 @@ import { UserActivityService } from "../store/auth-token/user-activity.service";
 import { TranslateService } from "@ngx-translate/core";
 import { LanguagePreservationService } from "../services/language-preservation.service";
 import { ErrorLogService } from "../services/error-log.service";
+import { LogoutFlagService } from "../services/logout-flag.service";
 
 @Injectable()
 export class AuthTokenInterceptor implements HttpInterceptor {
@@ -32,6 +33,11 @@ export class AuthTokenInterceptor implements HttpInterceptor {
   ) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    // Logout volontaire en cours : laisser passer sans token ni gestion d'erreur 401
+    if (LogoutFlagService.isLoggingOut()) {
+      return next.handle(req).pipe(catchError(() => of(null as any)));
+    }
+
     // Ignorer les requêtes vers des assets ou des ressources statiques
     if (req.url.includes('.svg') || req.url.includes('.png') || req.url.includes('.jpg') || req.url.includes('.jpeg') || req.url.includes('.gif')) {
       return next.handle(req);

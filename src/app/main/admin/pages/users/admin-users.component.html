@@ -1,5 +1,6 @@
 <!-- Admin Users Component -->
 <div class="admin-users-container">
+<ng-container *ngIf="{ loading: isLoading$ | async } as ctx">
   <!-- Header Section -->
   <div class="admin-page-header">
     <div class="admin-header-content">
@@ -11,16 +12,16 @@
         <p class="admin-page-subtitle">Gérez les comptes utilisateurs, leurs rôles et permissions dans le système</p>
       </div>
       <div class="admin-header-actions">
-        <button class="admin-btn admin-btn-secondary" (click)="onRefreshData()" [disabled]="isLoading">
-          <i class="fas fa-sync-alt" [class.fa-spin]="isLoading"></i><span>Actualiser</span>
+        <button class="admin-btn admin-btn-secondary" (click)="onRefreshData()" [disabled]="ctx.loading">
+          <i class="fas fa-sync-alt" [class.fa-spin]="ctx.loading"></i><span>Actualiser</span>
         </button>
-        <button class="admin-btn admin-btn-outline" (click)="onExportUsers()" [disabled]="isLoading">
+        <button class="admin-btn admin-btn-outline" (click)="onExportUsers()" [disabled]="ctx.loading">
           <i class="fas fa-download"></i><span>Exporter</span>
         </button>
-        <button class="admin-btn admin-btn-outline" (click)="navigateToAgentValidation()" [disabled]="isLoading">
+        <button class="admin-btn admin-btn-outline" (click)="navigateToAgentValidation()" [disabled]="ctx.loading">
           <i class="fas fa-user-tie"></i><span>Valider les agents</span>
         </button>
-        <button class="admin-btn admin-btn-primary" (click)="onCreateUser()" [disabled]="isLoading">
+        <button class="admin-btn admin-btn-primary" (click)="onCreateUser()" [disabled]="ctx.loading">
           <i class="fas fa-plus"></i><span>Nouvel Utilisateur</span>
         </button>
       </div>
@@ -28,7 +29,7 @@
   </div>
 
   <!-- Loading State -->
-  <div class="admin-loading-overlay" *ngIf="isLoading">
+  <div class="admin-loading-overlay" *ngIf="ctx.loading">
     <div class="admin-loader">
       <div class="admin-spinner"></div>
       <p>Chargement des données...</p>
@@ -36,7 +37,7 @@
   </div>
 
   <!-- Stats Cards -->
-  <div class="admin-stats-grid" *ngIf="!isLoading && (stats$ | async) as stats">
+  <div class="admin-stats-grid" *ngIf="!ctx.loading && (stats$ | async) as stats">
     <div class="admin-stat-card admin-stat-primary">
       <div class="admin-stat-icon"><i class="fas fa-users"></i></div>
       <div class="admin-stat-content">
@@ -73,19 +74,19 @@
   </div>
 
   <!-- Filters and Search -->
-  <div class="admin-content-section" *ngIf="!isLoading">
+  <div class="admin-content-section" *ngIf="!ctx.loading">
     <div class="admin-filters-container">
       <div class="admin-search-section">
         <div class="admin-search-input-group">
           <i class="fas fa-search admin-search-icon"></i>
           <input type="text" class="admin-search-input" placeholder="Rechercher par nom, email ou téléphone..."
-                 [(ngModel)]="searchTerm" (input)="onSearch($event)" [disabled]="isLoading">
+                 [(ngModel)]="searchTerm" (input)="onSearch($event)" [disabled]="ctx.loading">
         </div>
       </div>
       <div class="admin-filters-section">
         <div class="admin-filter-group">
           <label class="admin-filter-label">Statut</label>
-          <select class="admin-filter-select" [(ngModel)]="selectedStatus" (change)="applyFilters()" [disabled]="isLoading">
+          <select class="admin-filter-select" [(ngModel)]="selectedStatus" (change)="applyFilters()" [disabled]="ctx.loading">
             <option value="">Tous les statuts</option>
             <option value="active">Actif</option>
             <option value="inactive">Inactif</option>
@@ -95,20 +96,20 @@
         </div>
         <div class="admin-filter-group">
           <label class="admin-filter-label">Rôle</label>
-          <select class="admin-filter-select" [(ngModel)]="selectedRole" (change)="applyFilters()" [disabled]="isLoading">
+          <select class="admin-filter-select" [(ngModel)]="selectedRole" (change)="applyFilters()" [disabled]="ctx.loading">
             <option value="">Tous les rôles</option>
             <option *ngFor="let role of availableRoles" [value]="role.id">{{ role.name }}</option>
           </select>
         </div>
         <div class="admin-filter-group">
           <label class="admin-filter-label">Vérification</label>
-          <select class="admin-filter-select" [(ngModel)]="selectedVerification" (change)="applyFilters()" [disabled]="isLoading">
+          <select class="admin-filter-select" [(ngModel)]="selectedVerification" (change)="applyFilters()" [disabled]="ctx.loading">
             <option value="">Tous</option>
             <option value="verified">Vérifiés</option>
             <option value="unverified">Non vérifiés</option>
           </select>
         </div>
-        <button class="admin-btn admin-btn-outline admin-btn-sm" (click)="onClearFilters()" [disabled]="isLoading">
+        <button class="admin-btn admin-btn-outline admin-btn-sm" (click)="onClearFilters()" [disabled]="ctx.loading">
           <i class="fas fa-times"></i> Effacer
         </button>
       </div>
@@ -116,12 +117,12 @@
   </div>
 
   <!-- Users Table Section -->
-  <div class="admin-content-section" *ngIf="!isLoading">
+  <div class="admin-content-section" *ngIf="!ctx.loading">
     <div class="admin-table-container">
       <div class="admin-table-header">
         <h3 class="admin-table-title"><i class="fas fa-list"></i> Liste des Utilisateurs</h3>
         <div class="admin-table-actions">
-          <button class="admin-btn admin-btn-outline admin-btn-sm" (click)="onToggleView()" [disabled]="isLoading">
+          <button class="admin-btn admin-btn-outline admin-btn-sm" (click)="onToggleView()" [disabled]="ctx.loading">
             <i [class]="viewMode === 'list' ? 'fas fa-th' : 'fas fa-list'"></i>
             <span>{{ viewMode === 'list' ? 'Grille' : 'Liste' }}</span>
           </button>
@@ -135,13 +136,13 @@
           <span>{{ selectedUsers.length }} utilisateur(s) sélectionné(s)</span>
         </div>
         <div class="admin-bulk-buttons">
-          <button class="admin-btn admin-btn-outline admin-btn-sm" (click)="onBulkAction('activate')" [disabled]="isLoading">
+          <button class="admin-btn admin-btn-outline admin-btn-sm" (click)="onBulkAction('activate')" [disabled]="ctx.loading">
             <i class="fas fa-check"></i> Activer
           </button>
-          <button class="admin-btn admin-btn-outline admin-btn-sm" (click)="onBulkAction('deactivate')" [disabled]="isLoading">
+          <button class="admin-btn admin-btn-outline admin-btn-sm" (click)="onBulkAction('deactivate')" [disabled]="ctx.loading">
             <i class="fas fa-times"></i> Désactiver
           </button>
-          <button class="admin-btn admin-btn-outline admin-btn-sm admin-btn-danger" (click)="onBulkAction('delete')" [disabled]="isLoading">
+          <button class="admin-btn admin-btn-outline admin-btn-sm admin-btn-danger" (click)="onBulkAction('delete')" [disabled]="ctx.loading">
             <i class="fas fa-trash"></i> Supprimer
           </button>
         </div>
@@ -257,7 +258,7 @@
           <i class="fas fa-users admin-empty-icon"></i>
           <h3>Aucun utilisateur trouvé</h3>
           <p>Il n'y a aucun utilisateur correspondant à vos critères de recherche.</p>
-          <button class="admin-btn admin-btn-primary" (click)="onCreateUser()" [disabled]="isLoading">
+          <button class="admin-btn admin-btn-primary" (click)="onCreateUser()" [disabled]="ctx.loading">
             <i class="fas fa-plus"></i> Créer un utilisateur
           </button>
         </div>
@@ -298,6 +299,7 @@
       </div>
     </div>
   </div>
+</ng-container>
 </div>
 
 <!-- ── Modal Assignation Rôles ── -->

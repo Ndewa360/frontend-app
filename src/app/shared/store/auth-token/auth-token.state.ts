@@ -7,6 +7,7 @@ import { NotificationService } from "carbon-components-angular";
 import { ToastrService } from "ngx-toastr";
 import { TranslateService } from "@ngx-translate/core";
 import { LanguagePreservationService } from "../../services/language-preservation.service";
+import { LogoutFlagService } from "../../services/logout-flag.service";
 
 export class AuthTokenStateModel {
     authToken: string;
@@ -112,8 +113,8 @@ export class AuthTokenState {
 
     @Action(AuthTokenAction.Logout)
     logout(ctx: StateContext<AuthTokenStateModel>, { reason }: AuthTokenAction.Logout) {
-        // Préserver la langue avant la déconnexion
         this._languagePreservation.preserveCurrentLanguage();
+        LogoutFlagService.setLoggingOut();
         
         ctx.setState({
             authToken: null,
@@ -124,9 +125,6 @@ export class AuthTokenState {
             lastRefreshAttempt: null,
             refreshInProgress: false
         });
-
-        if (reason) {
-        }
 
         return of(true);
     }
