@@ -2,6 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CUSTOM_ELEMENTS_SCHEMA, ErrorHandler, LOCALE_ID, NgModule } from '@angular/core';
 import localeFr from '@angular/common/locales/fr';
+import localeEn from '@angular/common/locales/en';
 import { HttpClient } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -15,7 +16,7 @@ import { SharedModule } from './shared/shared.module';
 import { NgxsModule } from '@ngxs/store';
 import { environment } from 'src/environments/environment';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { AuthTokenInterceptor } from './shared/interceptors';
+import { AuthTokenInterceptor, CorrelationIdInterceptor } from './shared/interceptors';
 import { registerLocaleData } from '@angular/common';
 
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
@@ -23,9 +24,23 @@ import { CustomTranslateLoader } from './shared/services/localization/custom-tra
 import { GlobalErrorHandler } from './shared/services/global-error-handler.service';
 
 registerLocaleData(localeFr);
+registerLocaleData(localeEn);
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new CustomTranslateLoader(http);
+}
+
+/**
+ * Locale dynamique basée sur la langue sauvegardée (ndiye-preferred-language).
+ * Utilisée pour le formatage des dates/nombres (DatePipe, DecimalPipe...).
+ */
+export function getDynamicLocale(): string {
+  try {
+    const lang = localStorage.getItem('ndiye-preferred-language') || 'fr';
+    return lang === 'en' ? 'en-US' : 'fr-FR';
+  } catch {
+    return 'fr-FR';
+  }
 }
 
 @NgModule({
@@ -54,8 +69,9 @@ export function HttpLoaderFactory(http: HttpClient) {
 		}),
 	],
 	providers: [
+		{ provide: HTTP_INTERCEPTORS, useClass: CorrelationIdInterceptor, multi: true },
 		{ provide: HTTP_INTERCEPTORS, useClass: AuthTokenInterceptor, multi: true },
-		{ provide: LOCALE_ID, useValue: "fr-FR" },
+		{ provide: LOCALE_ID, useFactory: getDynamicLocale },
 		{ provide: ErrorHandler, useClass: GlobalErrorHandler },
 	],
 	schemas: [

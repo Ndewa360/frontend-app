@@ -1148,6 +1148,7 @@
   "NOTIFICATIONS": {
     "SUCCESS": "Success",
     "ERROR": "Error",
+    "GENERIC_ERROR": "An error occurred. Please try again.",
     "WARNING": "Attention",
     "INFO": "Information",
     "TENANT_CREATED": "Tenant created successfully",

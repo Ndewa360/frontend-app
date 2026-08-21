@@ -1148,6 +1148,7 @@
   "NOTIFICATIONS": {
     "SUCCESS": "Succès",
     "ERROR": "Erreur",
+    "GENERIC_ERROR": "Une erreur est survenue. Veuillez réessayer.",
     "WARNING": "Attention",
     "INFO": "Information",
     "TENANT_CREATED": "Locataire créé avec succès",
@@ -1232,6 +1233,7 @@
     "PAYMENT_PROCESSED_SUCCESS": "Paiement traité avec succès.",
     "PAYMENT_PROCESS_ERROR": "Une erreur est survenue lors du traitement du paiement.",
     "TRIAL_STARTED_SUCCESS": "Votre essai gratuit de 60 jours Premium a démarré ! Profitez de toutes les fonctionnalités.",
+    "SOUSCRIPTION_CREATED_SUCCESS": "Votre abonnement a été activé avec succès.",
     "SOUSCRIPTION_REMOVED_SUCCESS": "Votre souscription a été retirée avec succès.",
     "WALLET_WITHDRAWAL_SUCCESS": "Retrait effectué avec succès.",
     "WALLET_WITHDRAWAL_PROCESSING": "Votre demande de retrait est en cours de traitement. Vous serez notifié dès la confirmation.",
@@ -1858,40 +1860,6 @@
     "ALL_RIGHTS_RESERVED": "Tous droits réservés.",
     "CURRENT": "Actuel"
   },
-  "LEGAL": {
-    "PRIVACY_POLICY": {
-      "TITLE": "Politique de confidentialité",
-      "LAST_UPDATED": "Dernière mise à jour : Janvier 2025",
-      "SECTION_1_TITLE": "1. Collecte des données",
-      "SECTION_1_CONTENT": "Ndewa360 collecte uniquement les données nécessaires au fonctionnement de la plateforme : nom, adresse email, numéro de téléphone et informations relatives à vos biens immobiliers. Ces données sont collectées lors de votre inscription et de l'utilisation de nos services.",
-      "SECTION_2_TITLE": "2. Utilisation des données",
-      "SECTION_2_CONTENT": "Vos données sont utilisées exclusivement pour vous fournir nos services de gestion immobilière, vous envoyer des notifications relatives à votre compte, et améliorer notre plateforme. Nous ne vendons ni ne partageons vos données personnelles avec des tiers à des fins commerciales.",
-      "SECTION_3_TITLE": "3. Sécurité des données",
-      "SECTION_3_CONTENT": "Vos données sont protégées par un chiffrement SSL 256 bits, les mêmes standards que les institutions bancaires. Elles sont sauvegardées quotidiennement sur des serveurs sécurisés. Nous appliquons des mesures techniques et organisationnelles strictes pour prévenir tout accès non autorisé.",
-      "SECTION_4_TITLE": "4. Vos droits",
-      "SECTION_4_CONTENT": "Conformément aux réglementations applicables, vous disposez d'un droit d'accès, de rectification, de suppression et de portabilité de vos données. Pour exercer ces droits, contactez-nous à l'adresse : support@ndewa-360.com.",
-      "SECTION_5_TITLE": "5. Cookies",
-      "SECTION_5_CONTENT": "Ndewa360 utilise des cookies techniques nécessaires au bon fonctionnement de la plateforme et des cookies analytiques anonymisés pour améliorer l'expérience utilisateur. Vous pouvez désactiver les cookies dans les paramètres de votre navigateur.",
-      "CONTACT_TITLE": "Contact",
-      "CONTACT_CONTENT": "Pour toute question relative à notre politique de confidentialité, contactez-nous à : support@ndewa-360.com ou via notre formulaire de contact disponible sur la plateforme."
-    },
-    "TERMS": {
-      "TITLE": "Conditions générales d'utilisation",
-      "LAST_UPDATED": "Dernière mise à jour : Janvier 2025",
-      "SECTION_1_TITLE": "1. Acceptation des conditions",
-      "SECTION_1_CONTENT": "En utilisant la plateforme Ndewa360, vous acceptez les présentes conditions générales d'utilisation. Si vous n'acceptez pas ces conditions, veuillez ne pas utiliser notre service. Ndewa360 se réserve le droit de modifier ces conditions à tout moment avec notification préalable.",
-      "SECTION_2_TITLE": "2. Description du service",
-      "SECTION_2_CONTENT": "Ndewa360 est une plateforme SaaS de gestion immobilière permettant aux propriétaires de gérer leurs biens, locataires, paiements et contrats. Le service est disponible en version gratuite (jusqu'à 1 bien, 5 unités) et en version Premium (2% du loyer des unités occupées par mois).",
-      "SECTION_3_TITLE": "3. Obligations de l'utilisateur",
-      "SECTION_3_CONTENT": "L'utilisateur s'engage à fournir des informations exactes lors de son inscription, à ne pas utiliser la plateforme à des fins illégales, à respecter les droits des tiers, et à maintenir la confidentialité de ses identifiants de connexion. Tout usage abusif entraînera la suspension du compte.",
-      "SECTION_4_TITLE": "4. Facturation et paiements",
-      "SECTION_4_CONTENT": "Le plan gratuit est disponible sans limite de durée. Le plan Premium est facturé mensuellement à hauteur de 2% du loyer mensuel de chaque unité occupée (minimum 15 jours dans le mois). La facturation est automatique et les factures sont disponibles dans votre espace personnel.",
-      "SECTION_5_TITLE": "5. Limitation de responsabilité",
-      "SECTION_5_CONTENT": "Ndewa360 s'efforce de maintenir la plateforme disponible 24h/24 et 7j/7, mais ne peut garantir une disponibilité sans interruption. Ndewa360 ne saurait être tenu responsable des pertes de données résultant d'une utilisation incorrecte de la plateforme par l'utilisateur.",
-      "CONTACT_TITLE": "Contact",
-      "CONTACT_CONTENT": "Pour toute question relative aux présentes conditions, contactez-nous à : support@ndewa-360.com."
-    }
-  },
   "SEARCH": {
     "PLACEHOLDER": "Rechercher une propriété...",
     "NO_RESULTS": "Aucun résultat trouvé",
@@ -2487,6 +2455,8 @@
       "STEP_3_DESC": "CNI ou passeport + carte professionnelle ou licence.",
       "STEP_4_TITLE": "Validation et accès complet",
       "STEP_4_DESC": "Notre équipe valide votre dossier sous 24-48h.",
+      "CTA_REGISTER": "Devenir agent",
+      "CTA_DEMO": "Demander une démo",
       "JOURNEY_RESULT": "Profil vérifié et visible publiquement"
     },
     "SEEKER_SECTION": {
@@ -3777,6 +3747,7 @@
           "UNKNOWN_DATE": "Date inconnue",
           "SINCE": "Depuis le",
           "FREE_SINCE": "Libre depuis le",
+          "ENTRY_PLANNED": "Entrée prévue le",
           "OCCUPIED_SINCE": "Occupée depuis le"
         }
       }

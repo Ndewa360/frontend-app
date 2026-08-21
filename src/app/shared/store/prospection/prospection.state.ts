@@ -42,7 +42,11 @@ export class ProspectionState{
         ctx.patchState({
             loadingProspection:true,
         })
-        return this._prospectionsService.addNewProspection(prosectionModel).pipe(
+        const payload = {
+            ...prosectionModel,
+            lang: this._translateService.currentLang === 'en' ? 'en' : 'fr'
+        };
+        return this._prospectionsService.addNewProspection(payload).pipe(
             tap(
                 result => {
                     ctx.patchState({
