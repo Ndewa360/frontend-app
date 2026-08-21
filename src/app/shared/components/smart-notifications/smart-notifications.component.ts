@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, interval } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { BaseComponent } from '../../utils/base-component';
@@ -27,6 +27,7 @@ export class SmartNotificationsComponent extends BaseComponent implements OnInit
   unreadCount: number = 0;
   activeFilter: string = 'all';
   hasMore: boolean = false;
+  relativeTimes: { [notificationId: string]: string } = {};
 
   quickFilters: QuickFilter[] = [
     { type: 'all', label: 'Toutes', icon: 'notification', count: 0 },
@@ -46,7 +47,7 @@ export class SmartNotificationsComponent extends BaseComponent implements OnInit
 
   ngOnInit(): void {
     this.loadNotifications();
-    this.setupSubscriptions();
+    this.setupRelativeTimeRefresh();
   }
 
   private loadNotifications(): void {
@@ -56,6 +57,7 @@ export class SmartNotificationsComponent extends BaseComponent implements OnInit
         this.notifications = notifications;
         this.updateFilteredNotifications();
         this.updateFilterCounts();
+        this.refreshRelativeTimes();
       });
 
     this.notificationManager.getUnreadCount()
@@ -65,14 +67,22 @@ export class SmartNotificationsComponent extends BaseComponent implements OnInit
       });
   }
 
-  private setupSubscriptions(): void {
-    // Écouter les nouvelles notifications
-    this.notificationManager.getNotifications()
+  private setupRelativeTimeRefresh(): void {
+    // Les libellés relatifs ("5m", "1h"...) sont précalculés hors détection de
+    // changements puis rafraîchis par intervalle : évite NG0100
+    // (ExpressionChangedAfterItHasBeenCheckedError) quand la minute bascule
+    // pendant un cycle de détection.
+    interval(30_000)
       .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        this.updateFilteredNotifications();
-        this.updateFilterCounts();
-      });
+      .subscribe(() => this.refreshRelativeTimes());
+  }
+
+  private refreshRelativeTimes(): void {
+    const times: { [notificationId: string]: string } = {};
+    for (const notification of this.notifications) {
+      times[notification.id] = this.computeRelativeTime(notification.createdAt);
+    }
+    this.relativeTimes = times;
   }
 
   private updateFilteredNotifications(): void {
@@ -199,7 +209,7 @@ export class SmartNotificationsComponent extends BaseComponent implements OnInit
     return classMap[priority] || 'text-gray-600';
   }
 
-  getRelativeTime(date: Date): string {
+  private computeRelativeTime(date: Date): string {
     const now = new Date();
     const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
     
