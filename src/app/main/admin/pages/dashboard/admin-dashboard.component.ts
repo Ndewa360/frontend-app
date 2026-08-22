@@ -10,7 +10,6 @@ import { AdminDashboardState } from '../../store/dashboard/admin-dashboard.state
 import { AdminCurrencyService } from '../../services/admin-currency.service';
 import { 
   AdminDashboardService, 
-  OwnerRevenue, 
   GlobalStatsResponse 
 } from '../../services/admin-dashboard.service';
 
@@ -30,16 +29,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   financialData: any = null;
   alerts: any[] = [];
 
-  // Nouvelles données
-  ownerRevenues: OwnerRevenue[] = [];
-  ownerRevenueSummary: any = null;
   globalStats: GlobalStatsResponse | null = null;
-  
-  // Filtres pour les revenus par propriétaire
-  currentYear = new Date().getFullYear();
-  currentMonth = new Date().getMonth() + 1;
-  ownerRevenuePage = 1;
-  ownerRevenueLimit = 10;
 
   readonly MONTH_LABELS = [
     'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun',
@@ -56,7 +46,6 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadDashboardData();
-    this.loadOwnerRevenue();
     this.loadGlobalStats();
 
     // Construire les alertes à chaque mise à jour des stats
@@ -81,23 +70,6 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     this.store.dispatch(new AdminDashboardAction.LoadFinancialDashboard());
   }
 
-  private loadOwnerRevenue(): void {
-    this.dashboardService.getOwnerRevenue({
-      year: this.currentYear,
-      month: this.currentMonth,
-      page: this.ownerRevenuePage,
-      limit: this.ownerRevenueLimit
-    })
-    .pipe(takeUntil(this.destroy$))
-    .subscribe({
-      next: (data) => {
-        this.ownerRevenues = data.owners;
-        this.ownerRevenueSummary = data.summary;
-      },
-      error: (err) => console.error('Erreur chargement revenus propriétaires:', err)
-    });
-  }
-
   private loadGlobalStats(): void {
     this.dashboardService.getGlobalStats()
     .pipe(takeUntil(this.destroy$))
@@ -107,16 +79,6 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
       },
       error: (err) => console.error('Erreur chargement stats globales:', err)
     });
-  }
-
-  onOwnerRevenueFilterChange(): void {
-    this.ownerRevenuePage = 1;
-    this.loadOwnerRevenue();
-  }
-
-  onOwnerRevenuePageChange(page: number): void {
-    this.ownerRevenuePage = page;
-    this.loadOwnerRevenue();
   }
 
   private buildAlerts(stats: any): void {

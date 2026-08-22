@@ -6,36 +6,6 @@ import { environment } from '../../../../environments/environment';
 import { DashboardStats, SystemHealth, RecentActivity } from '../store/dashboard/admin-dashboard.model';
 import { ApiResultFormat } from '../../../shared/store/global/api-result-format.model';
 
-export interface OwnerRevenue {
-  ownerId: string;
-  ownerName: string;
-  ownerEmail: string;
-  totalCollected: number;
-  totalExpected: number;
-  collectionRate: number;
-  properties: {
-    propertyName: string;
-    collected: number;
-    expected: number;
-  }[];
-}
-
-export interface OwnerRevenueResponse {
-  owners: OwnerRevenue[];
-  summary: {
-    totalOwners: number;
-    totalCollected: number;
-    totalExpected: number;
-    globalCollectionRate: number;
-  };
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
-}
-
 export interface GlobalStatsResponse {
   subscriptions: {
     totalAmount: number;
@@ -105,30 +75,6 @@ export class AdminDashboardService {
   exportDashboardReport(format = 'pdf'): Observable<{ downloadUrl: string }> {
     const params = new HttpParams().set('format', format);
     return this.http.post<ApiResultFormat<{ downloadUrl: string }>>(`${this.apiUrl}/export`, {}, { params }).pipe(
-      map(r => r.data)
-    );
-  }
-
-  // ═══════════════════════════════════════════════════════════════════════════
-  // NOUVEAUX ENDPOINTS
-  // ═══════════════════════════════════════════════════════════════════════════
-
-  /**
-   * Récupère les revenus de location récoltés par propriétaire.
-   */
-  getOwnerRevenue(filters: {
-    year?: number;
-    month?: number;
-    page?: number;
-    limit?: number;
-  } = {}): Observable<OwnerRevenueResponse> {
-    let params = new HttpParams();
-    if (filters.year) params = params.set('year', filters.year.toString());
-    if (filters.month) params = params.set('month', filters.month.toString());
-    if (filters.page) params = params.set('page', filters.page.toString());
-    if (filters.limit) params = params.set('limit', filters.limit.toString());
-
-    return this.http.get<ApiResultFormat<OwnerRevenueResponse>>(`${this.apiUrl}/owner-revenue`, { params }).pipe(
       map(r => r.data)
     );
   }
