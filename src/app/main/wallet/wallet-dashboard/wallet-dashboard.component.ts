@@ -4,7 +4,7 @@ import { Store, Select } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil, filter, take } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
-import { WalletState, WalletAction, WalletSummary, WalletTransaction, WithdrawalRequest } from 'src/app/shared/store/wallet';
+import { WalletState, WalletAction, WalletSummary, WalletTransaction, WithdrawalRequest, RecentMovement } from 'src/app/shared/store/wallet';
 import { WithdrawalModalComponent } from '../components/withdrawal-modal/withdrawal-modal.component';
 import { DepositModalComponent } from '../components/deposit-modal/deposit-modal.component';
 @Component({
@@ -25,9 +25,13 @@ export class WalletDashboardComponent implements OnInit, OnDestroy {
   @Select(WalletState.totalDeposits)   totalDeposits$: Observable<number>;
   @Select(WalletState.pollingWithdrawalId) pollingWithdrawalId$: Observable<string | null>;
   @Select(WalletState.deletingWithdrawalId) deletingWithdrawalId$: Observable<string | null>;
+  @Select(WalletState.recentMovements) recentMovements$: Observable<RecentMovement[]>;
 
   /** ID du retrait pour lequel le modal de confirmation est ouvert */
   confirmDeleteId: string | null = null;
+
+  /** Transaction loyer sélectionnée pour le modal de détail */
+  selectedRentTx: WalletTransaction | null = null;
 
   activeTab: 'overview' | 'rent' | 'deposits' | 'withdrawals' = 'overview';
   rentPage = 1;
@@ -134,6 +138,22 @@ export class WalletDashboardComponent implements OnInit, OnDestroy {
   /** Ouvre le modal de confirmation pour un retrait échoué/annulé */
   openDeleteConfirm(withdrawalId: string): void {
     this.confirmDeleteId = withdrawalId;
+  }
+
+  // ── Modal détail loyer ────────────────────────────────────────────────────
+
+  openRentDetail(tx: WalletTransaction): void { this.selectedRentTx = tx; }
+  closeRentDetail(): void { this.selectedRentTx = null; }
+
+  getRentTypeLabel(type: string | null): string {
+    return type === 'CAUTION' ? 'Caution' : type === 'MIXED' ? 'Loyer + Caution' : 'Loyer';
+  }
+
+  getPaymentMethodLabel(method: string | null): string {
+    const labels: Record<string, string> = {
+      MOBILE_MONEY: 'Mobile Money', CARD: 'Carte bancaire', CASH: 'Espèces', WALLET: 'Wallet',
+    };
+    return labels[method] || method || '—';
   }
 
   /** Annule la suppression */

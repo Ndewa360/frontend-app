@@ -185,30 +185,72 @@
         </div>
 
         <!-- Derniers mouvements -->
-        <ng-container *ngIf="rentPayments$ | async as rentPayments">
-          <div class="wallet-section" *ngIf="rentPayments.length > 0">
+        <ng-container *ngIf="recentMovements$ | async as recentMovements">
+          <div class="wallet-section" *ngIf="recentMovements.length > 0">
             <div class="wallet-section__header">
               <h2 class="wallet-section__title">Derniers mouvements</h2>
               <button class="wallet-link" (click)="activeTab = 'rent'">Voir tout →</button>
             </div>
             <div class="wallet-tx-list">
-              <div *ngFor="let tx of rentPayments.slice(0, 5)" class="wallet-tx">
-                <div class="wallet-tx__icon wallet-tx__icon--credit">
-                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div *ngFor="let mv of recentMovements" class="wallet-tx">
+
+                <!-- Icône selon le type -->
+                <div class="wallet-tx__icon"
+                     [class.wallet-tx__icon--credit]="mv.kind === 'rent' || mv.kind === 'deposit'"
+                     [class.wallet-tx__icon--debit]="mv.kind === 'withdrawal'">
+                  <!-- Loyer -->
+                  <svg *ngIf="mv.kind === 'rent'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                  </svg>
+                  <!-- Dépôt -->
+                  <svg *ngIf="mv.kind === 'deposit'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
                   </svg>
+                  <!-- Retrait -->
+                  <svg *ngIf="mv.kind === 'withdrawal'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+                  </svg>
                 </div>
+
                 <div class="wallet-tx__body">
-                  <div class="wallet-tx__label">{{ tx.description || 'Loyer reçu' }}</div>
-                  <div class="wallet-tx__date">{{ formatDate(tx.createdAt) }}</div>
+                  <div class="wallet-tx__label">
+                    <!-- Badge type -->
+                    <span class="wallet-tx__badge"
+                          [class.wallet-tx__badge--rent]="mv.kind === 'rent'"
+                          [class.wallet-tx__badge--deposit]="mv.kind === 'deposit'"
+                          [class.wallet-tx__badge--withdrawal]="mv.kind === 'withdrawal'">
+                      {{ mv.kind === 'rent' ? 'Loyer' : mv.kind === 'deposit' ? 'Dépôt' : 'Retrait' }}
+                    </span>
+                    {{ mv.label }}
+                  </div>
+                  <div class="wallet-tx__date">{{ formatDate(mv.createdAt) }}</div>
                 </div>
-                <div class="wallet-tx__amount wallet-tx__amount--credit">+{{ formatCurrency(tx.amount) }}</div>
+
+                <div class="wallet-tx__amount"
+                     [class.wallet-tx__amount--credit]="mv.kind === 'rent' || mv.kind === 'deposit'"
+                     [class.wallet-tx__amount--debit]="mv.kind === 'withdrawal'">
+                  {{ mv.kind === 'withdrawal' ? '−' : '+' }}{{ formatCurrency(mv.amount) }}
+                </div>
+
+                <!-- Bouton détail uniquement pour les loyers -->
+                <button *ngIf="mv.kind === 'rent'"
+                        class="wallet-btn wallet-btn--ghost wallet-btn--xs"
+                        (click)="openRentDetail(mv.rentTx)"
+                        title="Voir le détail"
+                        style="margin-left:8px;flex-shrink:0">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:14px;height:14px">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                  </svg>
+                </button>
+
               </div>
             </div>
           </div>
 
           <!-- État vide -->
-          <div *ngIf="rentPayments.length === 0 && !(loading$ | async)" class="wallet-empty">
+          <div *ngIf="recentMovements.length === 0 && !(loading$ | async)" class="wallet-empty">
             <div class="wallet-empty__icon">
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -241,16 +283,27 @@
               <thead>
                 <tr>
                   <th>Date</th><th>Description</th><th>Référence</th>
-                  <th class="text-right">Montant reçu</th><th class="text-right">Solde après</th>
+                  <th class="text-right">Montant reçu</th><th class="text-right">Solde après</th><th></th>
                 </tr>
               </thead>
               <tbody>
                 <tr *ngFor="let tx of rentPayments" class="wallet-table__row">
                   <td class="wallet-table__date">{{ formatDate(tx.createdAt) }}</td>
-                  <td>{{ tx.description || 'Loyer reçu' }}</td>
+                  <td>
+                    <div>{{ tx.locataire?.fullName || tx.description || 'Loyer reçu' }}</div>
+                    <div *ngIf="tx.locataire?.fullName && tx.room" style="font-size:11px;color:#9ca3af;margin-top:2px">{{ tx.room.code }}</div>
+                  </td>
                   <td><span class="wallet-ref">{{ tx.reference || '—' }}</span></td>
                   <td class="text-right"><strong class="wallet-credit">+{{ formatCurrency(tx.amount) }}</strong></td>
                   <td class="text-right wallet-table__balance">{{ formatCurrency(tx.balanceAfter) }}</td>
+                  <td class="text-center">
+                    <button class="wallet-btn wallet-btn--ghost wallet-btn--xs" (click)="openRentDetail(tx)" title="Voir le détail">
+                      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:14px;height:14px">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                      </svg>
+                    </button>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -465,4 +518,125 @@
     </ng-container>
   </div>
 
+</div>
+
+<!-- ═══ MODAL DÉTAIL LOYER ═══ -->
+<div class="wallet-confirm-overlay" *ngIf="selectedRentTx" (click)="closeRentDetail()">
+  <div class="wallet-detail-modal" (click)="$event.stopPropagation()">
+
+    <div class="wallet-detail-modal__header">
+      <h3 class="wallet-detail-modal__title">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:18px;height:18px;margin-right:8px;flex-shrink:0">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+        Détail du loyer encaissé
+      </h3>
+      <button class="wallet-detail-modal__close" (click)="closeRentDetail()">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:18px;height:18px">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="wallet-detail-modal__banner">
+      <span class="wallet-detail-modal__amount">+{{ formatCurrency(selectedRentTx.amount) }}</span>
+      <span class="wallet-badge wallet-badge--success">{{ getRentTypeLabel(selectedRentTx.paymentLocationType) }}</span>
+      <span class="wallet-badge wallet-badge--secondary">{{ getPaymentMethodLabel(selectedRentTx.paymentMethod) }}</span>
+    </div>
+
+    <div class="wallet-detail-modal__body">
+
+      <!-- Paiement -->
+      <div class="wallet-detail-section">
+        <div class="wallet-detail-section__title">Paiement</div>
+        <div class="wallet-detail-row"><span>Date encaissement</span><span>{{ formatDate(selectedRentTx.createdAt) }}</span></div>
+        <div class="wallet-detail-row" *ngIf="selectedRentTx.datePayment">
+          <span>Date paiement</span><span>{{ formatDate(selectedRentTx.datePayment) }}</span>
+        </div>
+        <div class="wallet-detail-row"><span>Référence</span><span class="wallet-ref">{{ selectedRentTx.reference || '—' }}</span></div>
+        <div class="wallet-detail-row"><span>Solde après</span><span class="wallet-credit">{{ formatCurrency(selectedRentTx.balanceAfter) }}</span></div>
+      </div>
+
+      <!-- Locataire -->
+      <div class="wallet-detail-section" *ngIf="selectedRentTx.locataire">
+        <div class="wallet-detail-section__title">Locataire</div>
+        <div class="wallet-detail-row"><span>Nom complet</span><strong>{{ selectedRentTx.locataire.fullName }}</strong></div>
+        <div class="wallet-detail-row" *ngIf="selectedRentTx.locataire.phoneNumber">
+          <span>Téléphone</span><span>{{ selectedRentTx.locataire.phoneNumber }}</span>
+        </div>
+        <div class="wallet-detail-row" *ngIf="selectedRentTx.locataire.email">
+          <span>Email</span><span>{{ selectedRentTx.locataire.email }}</span>
+        </div>
+        <div class="wallet-detail-row" *ngIf="selectedRentTx.locataire.country">
+          <span>Pays</span><span>{{ selectedRentTx.locataire.country }}</span>
+        </div>
+        <div class="wallet-detail-row" *ngIf="selectedRentTx.locataire.idCardNumber">
+          <span>Pièce d'identité</span>
+          <span>{{ selectedRentTx.locataire.idCardType }} — {{ selectedRentTx.locataire.idCardNumber }}</span>
+        </div>
+        <div class="wallet-detail-row" *ngIf="selectedRentTx.locataire.fullNameRef">
+          <span>Contact urgence</span>
+          <span>{{ selectedRentTx.locataire.fullNameRef }} — {{ selectedRentTx.locataire.phoneNumberRef }}</span>
+        </div>
+      </div>
+
+      <!-- Chambre -->
+      <div class="wallet-detail-section" *ngIf="selectedRentTx.room">
+        <div class="wallet-detail-section__title">Chambre / Unité</div>
+        <div class="wallet-detail-row"><span>Code</span><strong>{{ selectedRentTx.room.code }}</strong></div>
+        <div class="wallet-detail-row" *ngIf="selectedRentTx.room.type">
+          <span>Type</span><span>{{ selectedRentTx.room.type }}</span>
+        </div>
+        <div class="wallet-detail-row">
+          <span>Loyer mensuel</span><span>{{ formatCurrency(selectedRentTx.room.price) }}</span>
+        </div>
+        <div class="wallet-detail-row" *ngIf="selectedRentTx.room.cautionPrice">
+          <span>Caution</span><span>{{ formatCurrency(selectedRentTx.room.cautionPrice) }}</span>
+        </div>
+      </div>
+
+      <!-- Bien immobilier -->
+      <div class="wallet-detail-section" *ngIf="selectedRentTx.property">
+        <div class="wallet-detail-section__title">Bien immobilier</div>
+        <div class="wallet-detail-row"><span>Nom</span><strong>{{ selectedRentTx.property.name }}</strong></div>
+        <div class="wallet-detail-row" *ngIf="selectedRentTx.property.location">
+          <span>Adresse</span><span>{{ selectedRentTx.property.location }}</span>
+        </div>
+        <div class="wallet-detail-row" *ngIf="selectedRentTx.property.propertyType">
+          <span>Type</span><span>{{ selectedRentTx.property.propertyType }}</span>
+        </div>
+      </div>
+
+      <!-- Contrat de location -->
+      <div class="wallet-detail-section" *ngIf="selectedRentTx.location">
+        <div class="wallet-detail-section__title">Contrat de location</div>
+        <div class="wallet-detail-row"><span>Début</span><span>{{ formatDate(selectedRentTx.location.startedAt) }}</span></div>
+        <div class="wallet-detail-row">
+          <span>Fin</span>
+          <span>{{ selectedRentTx.location.endedAt ? formatDate(selectedRentTx.location.endedAt) : 'En cours' }}</span>
+        </div>
+        <div class="wallet-detail-row">
+          <span>Loyer contrat</span><strong>{{ formatCurrency(selectedRentTx.location.locationPriceUnit) }}</strong>
+        </div>
+        <div class="wallet-detail-row">
+          <span>Statut</span>
+          <span [class]="selectedRentTx.location.isRunning ? 'wallet-badge wallet-badge--success' : 'wallet-badge wallet-badge--secondary'">
+            {{ selectedRentTx.location.isRunning ? 'Actif' : 'Terminé' }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Aucun détail -->
+      <div *ngIf="!selectedRentTx.locataire && !selectedRentTx.room && !selectedRentTx.property"
+           style="padding:20px;text-align:center;color:#9ca3af;font-size:13px">
+        Détail non disponible pour ce paiement
+      </div>
+
+    </div>
+
+    <div class="wallet-detail-modal__footer">
+      <button class="wallet-btn wallet-btn--ghost" (click)="closeRentDetail()">Fermer</button>
+    </div>
+
+  </div>
 </div>

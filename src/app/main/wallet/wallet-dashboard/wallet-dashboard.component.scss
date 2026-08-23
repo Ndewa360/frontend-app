@@ -1,4 +1,4 @@
-// ─── Variables couleurs de l'application ─────────────────────────────────────
+﻿// Variables couleurs de l'application â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 $primary:       rgb(204, 140, 10);
 $primary-dark:  rgb(160, 110, 8);
 $primary-light: rgba(204, 140, 10, 0.10);
@@ -21,7 +21,7 @@ $text-secondary:#525252;
 $text-muted:    #8d8d8d;
 $font:          'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 
-// ─── Container principal ──────────────────────────────────────────────────────
+// Container principal  
 .wallet-container {
   height: 100vh;
   background-color: $bg;
@@ -35,7 +35,7 @@ $font:          'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-// ─── Header ───────────────────────────────────────────────────────────────────
+// Header 
 .wallet-header {
   background-color: $bg-header;
   border-bottom: 1px solid $border;
@@ -85,7 +85,7 @@ $font:          'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   gap: 0.75rem;
 }
 
-// ─── Boutons ──────────────────────────────────────────────────────────────────
+// Boutons
 .wallet-btn {
   display: inline-flex;
   align-items: center;
@@ -135,7 +135,7 @@ $font:          'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   &--sm { padding: 0.4rem 0.875rem; font-size: 0.8125rem; }
 }
 
-// ─── Onglets ──────────────────────────────────────────────────────────────────
+// Onglets
 .wallet-tabs {
   border-top: 1px solid $border;
 }
@@ -184,7 +184,7 @@ $font:          'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   font-weight: 700;
 }
 
-// ─── Contenu ──────────────────────────────────────────────────────────────────
+// Contenu
 .wallet-content {
   flex: 1;
   overflow-y: auto;
@@ -200,7 +200,7 @@ $font:          'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 
 .wallet-view { animation: fadeIn 0.35s ease-out; }
 
-// ─── Loading ──────────────────────────────────────────────────────────────────
+// Loading 
 .wallet-loading {
   display: flex;
   flex-direction: column;
@@ -219,7 +219,7 @@ $font:          'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   }
 }
 
-// ─── Alerte ───────────────────────────────────────────────────────────────────
+// Alerte 
 .wallet-alert {
   display: flex;
   align-items: flex-start;
@@ -278,7 +278,7 @@ $font:          'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   to { transform: rotate(360deg); }
 }
 
-// ─── KPI Grid ─────────────────────────────────────────────────────────────────
+// KPI Grid 
 .wallet-kpi-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -373,7 +373,7 @@ $font:          'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   }
 }
 
-// ─── Section ──────────────────────────────────────────────────────────────────
+// Section
 .wallet-section {
   background: $bg;
   border: 1px solid $border;
@@ -407,7 +407,7 @@ $font:          'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   &:hover { color: $primary-dark; text-decoration: underline; }
 }
 
-// ─── Transactions ─────────────────────────────────────────────────────────────
+// transactions
 .wallet-tx-list { display: flex; flex-direction: column; gap: 0.5rem; }
 
 .wallet-tx {
@@ -442,9 +442,26 @@ $font:          'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     &--credit { color: $success; }
     &--debit  { color: $danger; }
   }
+
+  &__badge {
+     display: inline-block;
+     padding: 1px 7px;
+     border-radius: 10px;
+     font-size: 0.7rem;
+     font-weight: 700;
+     text-transform: uppercase;
+     letter-spacing: 0.03em;
+     margin-right: 6px;
+     vertical-align: middle;
+ 
+     &--rent       { background: #eff6ff; color: #2563eb; }
+     &--deposit    { background: #f0fdf4; color: #16a34a; }
+     &--withdrawal { background: #fff7ed; color: #ea580c; }
+  }
+
 }
 
-// ─── Table ────────────────────────────────────────────────────────────────────
+// Table
 .wallet-table-wrap {
   background: $bg;
   border: 1px solid $border;
@@ -502,7 +519,7 @@ $font:          'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 .wallet-credit { color: $success; font-weight: 700; }
 .wallet-debit  { color: $danger; font-weight: 700; }
 
-// ─── Pagination ───────────────────────────────────────────────────────────────
+// Pagination
 .wallet-pagination {
   display: flex;
   align-items: center;
@@ -527,7 +544,7 @@ $font:          'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   &:disabled { opacity: 0.4; cursor: not-allowed; }
 }
 
-// ─── Retraits ─────────────────────────────────────────────────────────────────
+// Retraits 
 .wallet-withdrawal-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -606,7 +623,7 @@ $font:          'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     color: darken($danger, 10%);
   }
 
-  // ── Header droit (badge + bouton supprimer) ──────────────────────────────
+  // Header droit (badge + bouton supprimer) 
   &__header-right {
     display: flex;
     align-items: center;
@@ -614,7 +631,6 @@ $font:          'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     flex-shrink: 0;
   }
 
-  // ── Bouton supprimer ─────────────────────────────────────────────────────
   &__delete-btn {
     display: flex;
     align-items: center;
@@ -645,7 +661,6 @@ $font:          'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
   }
 
-  // ── Spinner dans le bouton supprimer ─────────────────────────────────────
   &__delete-spinner {
     display: inline-block;
     width: 12px;
@@ -656,7 +671,6 @@ $font:          'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     animation: wallet-spin 0.7s linear infinite;
   }
 
-  // ── Carte en cours de suppression ────────────────────────────────────────
   &--deleting {
     opacity: 0.5;
     pointer-events: none;
@@ -664,7 +678,6 @@ $font:          'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   }
 }
 
-// ─── Badges ───────────────────────────────────────────────────────────────────
 .wallet-badge {
   display: inline-block;
   padding: 0.2rem 0.6rem;
@@ -680,7 +693,6 @@ $font:          'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   &--secondary { background: #f4f4f4; color: $text-muted; }
 }
 
-// ─── État vide ────────────────────────────────────────────────────────────────
 .wallet-empty {
   display: flex;
   flex-direction: column;
@@ -702,7 +714,7 @@ $font:          'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   p  { font-size: 0.9rem; color: $text-muted; max-width: 400px; margin: 0; }
 }
 
-// ─── Responsive ───────────────────────────────────────────────────────────────
+// Responsive 
 @media (max-width: 768px) {
   .wallet-container { height: 100vh; overflow: hidden; }
   .wallet-content { padding: 1rem; }
@@ -720,7 +732,7 @@ $font:          'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   .wallet-tabs__btn { padding: 0.75rem 1rem; font-size: 0.8125rem; }
 }
 
-// ─── Modal de confirmation de suppression ─────────────────────────────────────
+// Modal de confirmation de suppression 
 .wallet-confirm-overlay {
   position: fixed;
   inset: 0;
@@ -816,4 +828,113 @@ $font:          'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       }
     }
   }
+}
+
+// Modal dÃ©tail loyer 
+
+.wallet-detail-modal {
+  background: #fff;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 560px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,.18);
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid #e5e7eb;
+    flex-shrink: 0;
+  }
+
+  &__title {
+    display: flex;
+    align-items: center;
+    font-size: 15px;
+    font-weight: 700;
+    color: #111827;
+    margin: 0;
+  }
+
+  &__close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #6b7280;
+    padding: 4px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    &:hover { background: #f3f4f6; color: #111827; }
+  }
+
+  &__banner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 20px;
+    background: #f0fdf4;
+    border-bottom: 1px solid #bbf7d0;
+    flex-shrink: 0;
+  }
+
+  &__amount {
+    font-size: 22px;
+    font-weight: 800;
+    color: #059669;
+    margin-right: auto;
+  }
+
+  &__body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 20px 16px;
+  }
+
+  &__footer {
+    padding: 12px 20px;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: flex-end;
+    flex-shrink: 0;
+  }
+}
+
+.wallet-detail-section {
+  padding-top: 16px;
+  border-top: 1px solid #f3f4f6;
+  margin-top: 4px;
+
+  &:first-child { border-top: none; margin-top: 0; }
+
+  &__title {
+    font-size: 10px;
+    font-weight: 700;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: 10px;
+  }
+}
+
+.wallet-detail-row {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  font-size: 12px;
+  border-bottom: 1px solid #f9fafb;
+
+  span:first-child { padding: 7px 0; color: #6b7280; }
+  span:last-child, strong { padding: 7px 0 7px 12px; color: #374151; word-break: break-word; }
+  strong { font-weight: 600; }
+}
+
+.wallet-btn--xs {
+  padding: 4px 6px;
+  font-size: 11px;
+  line-height: 1;
 }

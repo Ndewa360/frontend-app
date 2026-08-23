@@ -5,7 +5,7 @@ import { throwError, interval, Subject, forkJoin } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { WalletAction } from './wallet.actions';
-import { WalletStateModel, WalletSummary, WalletTransaction, WithdrawalRequest, DepositInitiateResult } from './wallet.model';
+import { WalletStateModel, WalletSummary, WalletTransaction, WithdrawalRequest, DepositInitiateResult, RecentMovement } from './wallet.model';
 import { WalletHttpService } from './wallet.service';
 
 const POLLING_INTERVAL_MS = 5000;  // 5 secondes
@@ -64,6 +64,26 @@ export class WalletState implements OnDestroy {
   @Selector() static totalDeposits(s: WalletStateModel): number { return s.totalDeposits; }
   @Selector() static pollingWithdrawalId(s: WalletStateModel): string | null { return s.pollingWithdrawalId; }
   @Selector() static deletingWithdrawalId(s: WalletStateModel): string | null { return s.deletingWithdrawalId; }
+
+  @Selector()
+  static recentMovements(s: WalletStateModel): RecentMovement[] {
+    const rents: RecentMovement[] = s.rentPayments.map(tx => ({
+      _id: tx._id, kind: 'rent', amount: tx.amount, createdAt: tx.createdAt,
+      label: tx.locataire?.fullName || tx.description || 'Loyer reçu',
+      rentTx: tx,
+    }));
+    const deposits: RecentMovement[] = s.deposits.map(tx => ({
+      _id: tx._id, kind: 'deposit', amount: tx.amount, createdAt: tx.createdAt,
+      label: tx.description || 'Dépôt',
+    }));
+    const withdrawals: RecentMovement[] = s.withdrawals.map(w => ({
+      _id: w._id, kind: 'withdrawal', amount: w.amount, createdAt: w.createdAt,
+      label: w.recipient, status: w.status,
+    }));
+    return [...rents, ...deposits, ...withdrawals]
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .slice(0, 5);
+  }
 
   @Action(WalletAction.LoadAll)
   loadAll(ctx: StateContext<WalletStateModel>, { rentPage, depositPage, withdrawalPage, pageSize }: WalletAction.LoadAll) {

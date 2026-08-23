@@ -33,6 +33,24 @@ export interface WalletTransaction {
   description: string | null;
   metadata: Record<string, any>;
   createdAt: Date;
+  // Enrichissement loyer
+  locataire?: {
+    _id: string;
+    fullName: string;
+    email?: string;
+    phoneNumber?: string;
+    country?: string;
+    idCardNumber?: string;
+    idCardType?: string;
+    fullNameRef?: string;
+    phoneNumberRef?: string;
+  } | null;
+  room?: { _id: string; code: string; type: string; price: number; cautionPrice?: number; description?: string } | null;
+  property?: { _id: string; name: string; location?: string; propertyType?: string } | null;
+  location?: { _id: string; startedAt: Date; endedAt?: Date; locationPriceUnit: number; isRunning: boolean } | null;
+  datePayment?: Date | null;
+  paymentLocationType?: string | null;
+  paymentMethod?: string | null;
 }
 
 export interface WithdrawalRequest {
@@ -62,6 +80,18 @@ export interface PaginatedResult<T> {
   page: number;
   limit: number;
   totalPages: number;
+}
+
+export type RecentMovementKind = 'rent' | 'deposit' | 'withdrawal';
+
+export interface RecentMovement {
+  _id: string;
+  kind: RecentMovementKind;
+  amount: number;
+  createdAt: Date;
+  label: string;        // nom locataire, description, ou destinataire
+  status?: string;      // pour les retraits
+  rentTx?: WalletTransaction; // référence complète pour ouvrir le modal
 }
 
 export interface WalletStateModel {
