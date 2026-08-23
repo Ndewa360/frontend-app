@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { tap, catchError, switchMap, takeUntil } from 'rxjs/operators';
-import { throwError, interval, Subject } from 'rxjs';
+import { throwError, interval, Subject, forkJoin } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { WalletAction } from './wallet.actions';
@@ -65,64 +65,83 @@ export class WalletState implements OnDestroy {
   @Selector() static pollingWithdrawalId(s: WalletStateModel): string | null { return s.pollingWithdrawalId; }
   @Selector() static deletingWithdrawalId(s: WalletStateModel): string | null { return s.deletingWithdrawalId; }
 
+  @Action(WalletAction.LoadAll)
+  loadAll(ctx: StateContext<WalletStateModel>, { rentPage, depositPage, withdrawalPage, pageSize }: WalletAction.LoadAll) {
+    ctx.patchState({ loading: true, error: null });
+    return forkJoin([
+      this.walletService.getSummary(),
+      this.walletService.getRentPayments(rentPage, pageSize),
+      this.walletService.getDeposits(depositPage, pageSize),
+      this.walletService.getWithdrawals(withdrawalPage, pageSize),
+    ]).pipe(
+      tap(([summaryRes, rentRes, depositsRes, withdrawalsRes]) => {
+        ctx.patchState({
+          summary:           summaryRes.data,
+          rentPayments:      rentRes.data.payments,
+          totalRentPayments: rentRes.data.total,
+          deposits:          depositsRes.data.deposits,
+          totalDeposits:     depositsRes.data.total,
+          withdrawals:       withdrawalsRes.data.withdrawals,
+          totalWithdrawals:  withdrawalsRes.data.total,
+          loading:           false,
+        });
+      }),
+      catchError(err => {
+        ctx.patchState({ loading: false, error: err.message });
+        return throwError(err);
+      }),
+    );
+  }
+
   @Action(WalletAction.LoadSummary)
   loadSummary(ctx: StateContext<WalletStateModel>) {
-    ctx.patchState({ loading: true, error: null });
     return this.walletService.getSummary().pipe(
-      tap(res => ctx.patchState({ summary: res.data, loading: false })),
-      catchError(err => { ctx.patchState({ loading: false, error: err.message }); return throwError(err); })
+      tap(res => ctx.patchState({ summary: res.data })),
+      catchError(err => { ctx.patchState({ error: err.message }); return throwError(err); })
     );
   }
 
   @Action(WalletAction.LoadTransactions)
   loadTransactions(ctx: StateContext<WalletStateModel>, { page, limit }: WalletAction.LoadTransactions) {
-    ctx.patchState({ loading: true });
     return this.walletService.getTransactions(page, limit).pipe(
       tap(res => ctx.patchState({
         transactions: res.data.transactions,
         totalTransactions: res.data.total,
-        loading: false,
       })),
-      catchError(err => { ctx.patchState({ loading: false }); return throwError(err); })
+      catchError(err => { ctx.patchState({ error: err.message }); return throwError(err); })
     );
   }
 
   @Action(WalletAction.LoadRentPayments)
   loadRentPayments(ctx: StateContext<WalletStateModel>, { page, limit }: WalletAction.LoadRentPayments) {
-    ctx.patchState({ loading: true });
     return this.walletService.getRentPayments(page, limit).pipe(
       tap(res => ctx.patchState({
         rentPayments: res.data.payments,
         totalRentPayments: res.data.total,
-        loading: false,
       })),
-      catchError(err => { ctx.patchState({ loading: false }); return throwError(err); })
+      catchError(err => { ctx.patchState({ error: err.message }); return throwError(err); })
     );
   }
 
   @Action(WalletAction.LoadDeposits)
   loadDeposits(ctx: StateContext<WalletStateModel>, { page, limit }: WalletAction.LoadDeposits) {
-    ctx.patchState({ loading: true });
     return this.walletService.getDeposits(page, limit).pipe(
       tap(res => ctx.patchState({
         deposits: res.data.deposits,
         totalDeposits: res.data.total,
-        loading: false,
       })),
-      catchError(err => { ctx.patchState({ loading: false }); return throwError(err); })
+      catchError(err => { ctx.patchState({ error: err.message }); return throwError(err); })
     );
   }
 
   @Action(WalletAction.LoadWithdrawals)
   loadWithdrawals(ctx: StateContext<WalletStateModel>, { page, limit }: WalletAction.LoadWithdrawals) {
-    ctx.patchState({ loading: true });
     return this.walletService.getWithdrawals(page, limit).pipe(
       tap(res => ctx.patchState({
         withdrawals: res.data.withdrawals,
         totalWithdrawals: res.data.total,
-        loading: false,
       })),
-      catchError(err => { ctx.patchState({ loading: false }); return throwError(err); })
+      catchError(err => { ctx.patchState({ error: err.message }); return throwError(err); })
     );
   }
 

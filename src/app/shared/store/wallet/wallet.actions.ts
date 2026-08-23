@@ -1,6 +1,10 @@
 import { WithdrawalMethod, PaymentProvider } from './wallet.model';
 
 export namespace WalletAction {
+  export class LoadAll {
+    static readonly type = '[Wallet] Load All';
+    constructor(public rentPage = 1, public depositPage = 1, public withdrawalPage = 1, public pageSize = 10) {}
+  }
   export class LoadSummary {
     static readonly type = '[Wallet] Load Summary';
   }

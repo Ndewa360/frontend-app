@@ -74,10 +74,7 @@ export class WalletDashboardComponent implements OnInit, OnDestroy {
   }
 
   private loadAll(): void {
-    this.store.dispatch(new WalletAction.LoadSummary());
-    this.store.dispatch(new WalletAction.LoadRentPayments(this.rentPage, this.pageSize));
-    this.store.dispatch(new WalletAction.LoadDeposits(this.depositPage, this.pageSize));
-    this.store.dispatch(new WalletAction.LoadWithdrawals(this.withdrawalPage, this.pageSize));
+    this.store.dispatch(new WalletAction.LoadAll(this.rentPage, this.depositPage, this.withdrawalPage, this.pageSize));
   }
 
   private handleDepositCallback(): void {
