@@ -73,6 +73,7 @@ import { AdminRoutingModule } from './admin-routing.module';
     PlatformFinanceComponent,
     AdminBreachComponent,
     PfPieTooltipComponent,
+    PfPieChartComponent,
     CountrySelectionModalComponent,
     CountryDeleteModalComponent,
     CountryEditModalComponent,

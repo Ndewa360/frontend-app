@@ -55,7 +55,7 @@ export class AdminPaymentsComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private paymentsService: AdminPaymentsService,
     private toastr: ToastrService,
-    private translate: TranslateService
+    private translate: TranslateService,
     private currencyService: AdminCurrencyService,
   ) {
     this.couponForm = this.fb.group({
