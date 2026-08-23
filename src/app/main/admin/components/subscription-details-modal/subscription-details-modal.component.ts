@@ -5,6 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { AdminSubscriptionsAction } from '../../store/subscriptions/admin-subscriptions.actions';
 import { AdminUserSubscription } from '../../store/subscriptions/admin-subscriptions.model';
+import { AdminCurrencyService } from '../../services/admin-currency.service';
 
 export interface SubscriptionDetailsModalData {
   subscription: AdminUserSubscription;
@@ -27,7 +28,8 @@ export class SubscriptionDetailsModalComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: SubscriptionDetailsModalData,
     private store: Store,
     private toastr: ToastrService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private currencyService: AdminCurrencyService,
   ) {}
 
   ngOnInit(): void {}
@@ -142,9 +144,7 @@ export class SubscriptionDetailsModalComponent implements OnInit {
   }
 
   formatCurrency(amount: number): string {
-    return new Intl.NumberFormat('fr-FR', {
-      style: 'currency', currency: 'XAF', minimumFractionDigits: 0
-    }).format(amount || 0);
+    return this.currencyService.format(amount);
   }
 
   formatDate(date: any): string {

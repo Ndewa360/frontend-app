@@ -7,6 +7,11 @@ import { LanguageUrlService } from 'src/app/shared/services/language-url.service
 
 import { AdminDashboardAction } from '../../store/dashboard/admin-dashboard.actions';
 import { AdminDashboardState } from '../../store/dashboard/admin-dashboard.state';
+import { AdminCurrencyService } from '../../services/admin-currency.service';
+import { 
+  AdminDashboardService, 
+  GlobalStatsResponse 
+} from '../../services/admin-dashboard.service';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -24,7 +29,9 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   financialData: any = null;
   alerts: any[] = [];
 
-  private readonly MONTH_LABELS = [
+  globalStats: GlobalStatsResponse | null = null;
+
+  readonly MONTH_LABELS = [
     'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun',
     'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'
   ];
@@ -32,11 +39,14 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   constructor(
     private store: Store,
     private router: Router,
-    private languageUrlService: LanguageUrlService
+    private languageUrlService: LanguageUrlService,
+    private dashboardService: AdminDashboardService,
+    private currencyService: AdminCurrencyService,
   ) {}
 
   ngOnInit(): void {
     this.loadDashboardData();
+    this.loadGlobalStats();
 
     // Construire les alertes à chaque mise à jour des stats
     this.store.select(AdminDashboardState.selectDashboardStats)
@@ -58,6 +68,17 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     this.store.dispatch(new AdminDashboardAction.LoadSystemHealth());
     this.store.dispatch(new AdminDashboardAction.LoadRecentActivities(20));
     this.store.dispatch(new AdminDashboardAction.LoadFinancialDashboard());
+  }
+
+  private loadGlobalStats(): void {
+    this.dashboardService.getGlobalStats()
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (data) => {
+        this.globalStats = data;
+      },
+      error: (err) => console.error('Erreur chargement stats globales:', err)
+    });
   }
 
   private buildAlerts(stats: any): void {
@@ -180,9 +201,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   }
 
   formatCurrency(amount: number): string {
-    return new Intl.NumberFormat('fr-FR', {
-      style: 'currency', currency: 'XAF', minimumFractionDigits: 0
-    }).format(amount || 0);
+    return this.currencyService.format(amount);
   }
 
   formatDate(date: any): string {

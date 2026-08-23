@@ -114,7 +114,7 @@
                   <div class="admin-user-email">{{ payment.user?.email }}</div>
                 </div>
               </td>
-              <td><strong>{{ payment.amount | currency:(payment.currency ?? 'XAF'):'symbol':'1.0-0' }}</strong></td>
+              <td><strong>{{ formatCurrency(payment.amount ?? 0) }}</strong></td>
               <td>{{ payment.method ?? 'N/A' }}</td>
               <td>
                 <span class="admin-badge" [ngClass]="getPaymentStatusClasses(payment.status)">
@@ -189,7 +189,7 @@
                   {{ sub.plan === 'premium' ? 'Premium' : 'Gratuit' }}
                 </span>
               </td>
-              <td>{{ getSubAmount(sub) | currency:getSubCurrency(sub):'symbol':'1.0-0' }}</td>
+              <td>{{ formatCurrency(getSubAmount(sub)) }}</td>
               <td>
                 <span class="admin-badge" [ngClass]="getSubscriptionStatusClasses(getSubStatus(sub))">
                   {{ getSubscriptionStatusLabel(getSubStatus(sub)) }}

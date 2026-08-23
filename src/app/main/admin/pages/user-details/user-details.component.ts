@@ -6,6 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { AdminUsersService } from '../../services/admin-users.service';
 import { AdminSubscriptionsService } from '../../services/admin-subscriptions.service';
+import { AdminCurrencyService } from '../../services/admin-currency.service';
 import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
 
 interface SubscriptionPeriodSummary {
@@ -162,7 +163,8 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
     private subscriptionsService: AdminSubscriptionsService,
     private languageUrlService: LanguageUrlService,
     private toastr: ToastrService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private currencyService: AdminCurrencyService,
   ) {}
 
   ngOnInit(): void {
@@ -460,9 +462,11 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
   }
 
   formatCurrency(amount: number): string {
-    return new Intl.NumberFormat('fr-FR', {
-      style: 'currency', currency: 'XAF', minimumFractionDigits: 0
-    }).format(amount || 0);
+    return this.currencyService.format(amount);
+  }
+
+  get displayCurrency(): string {
+    return this.currencyService.currency;
   }
 
   formatDate(date: any): string {

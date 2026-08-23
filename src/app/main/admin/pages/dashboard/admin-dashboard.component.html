@@ -65,6 +65,20 @@
       </div>
     </div>
 
+    <!-- ── Global Stats (Portefeuille) ── -->
+    <div class="admin-stats-grid" *ngIf="globalStats">
+      <div class="admin-stat-card admin-stat-card-highlight">
+        <div class="admin-stat-icon wallet"><i class="fas fa-wallet"></i></div>
+        <div class="admin-stat-content">
+          <h3>{{ formatCurrency(globalStats.summary.totalPlatformBalance) }}</h3>
+          <p>Solde portefeuille plateforme</p>
+          <span class="admin-stat-change">
+            <i class="fas fa-arrow-up"></i> {{ formatCurrency(globalStats.platformWallet.monthlyDeposits) }} ce mois
+          </span>
+        </div>
+      </div>
+    </div>
+
     <!-- ── Financial Dashboard ── -->
     <div class="admin-bottom-section" *ngIf="financialData">
       <div class="admin-bottom-grid">

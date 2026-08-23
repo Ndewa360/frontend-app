@@ -6,6 +6,34 @@ import { environment } from '../../../../environments/environment';
 import { DashboardStats, SystemHealth, RecentActivity } from '../store/dashboard/admin-dashboard.model';
 import { ApiResultFormat } from '../../../shared/store/global/api-result-format.model';
 
+export interface GlobalStatsResponse {
+  subscriptions: {
+    totalAmount: number;
+    monthlyAmount: number;
+    unpaidAmount: number;
+    activeCount: number;
+    freeCount: number;
+    premiumCount: number;
+  };
+  platformWallet: {
+    totalBalance: number;
+    monthlyDeposits: number;
+    monthlyWithdrawals: number;
+    pendingWithdrawals: number;
+  };
+  occupiedUnits: {
+    occupiedUnits: number;
+    totalRent: number;
+    commissionRate: number;
+    subscriptionRevenue: number;
+  };
+  summary: {
+    totalSubscriptions: number;
+    totalPlatformBalance: number;
+    monthlyRecurring: number;
+  };
+}
+
 @Injectable({ providedIn: 'root' })
 export class AdminDashboardService {
   private readonly apiUrl = `${environment.apiUrl}/admin/dashboard`;
@@ -47,6 +75,15 @@ export class AdminDashboardService {
   exportDashboardReport(format = 'pdf'): Observable<{ downloadUrl: string }> {
     const params = new HttpParams().set('format', format);
     return this.http.post<ApiResultFormat<{ downloadUrl: string }>>(`${this.apiUrl}/export`, {}, { params }).pipe(
+      map(r => r.data)
+    );
+  }
+
+  /**
+   * Récupère les statistiques globales : souscriptions + portefeuille plateforme.
+   */
+  getGlobalStats(): Observable<GlobalStatsResponse> {
+    return this.http.get<ApiResultFormat<GlobalStatsResponse>>(`${this.apiUrl}/global-stats`).pipe(
       map(r => r.data)
     );
   }

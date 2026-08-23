@@ -7,6 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { UserProfileState } from '../../../../shared/store/user-profile/user-profile.state';
 import { UserProfileAction } from '../../../../shared/store/user-profile/user-profile.actions';
 import { LanguagePreservationService } from '../../../../shared/services/language-preservation.service';
+import { AdminCurrencyService } from '../../services/admin-currency.service';
 
 interface AdminMenuItem {
   id: string;
@@ -32,19 +33,27 @@ export class AdminLayoutComponent implements OnInit, OnDestroy {
   pageTitle    = '';
   breadcrumbs: string[] = [];
   menuItems: AdminMenuItem[] = [];
+  selectedCurrency = 'XAF';
 
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private store: Store,
     private languagePreservation: LanguagePreservationService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private currencyService: AdminCurrencyService,
   ) {}
 
   ngOnInit(): void {
     this.buildMenuItems();
     this.setupRouteListener();
     this.updateCurrentRoute();
+
+    this.currencyService.init();
+    this.selectedCurrency = this.currencyService.currency;
+    this.currencyService.currencyChange$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(currency => this.selectedCurrency = currency);
 
     // Reconstruire le menu quand la langue change
     this.translate.onLangChange
@@ -127,5 +136,17 @@ export class AdminLayoutComponent implements OnInit, OnDestroy {
     const first = user?.firstName?.charAt(0) || '';
     const last  = user?.lastName?.charAt(0)  || '';
     return (first + last).toUpperCase() || (user?.name?.charAt(0) || 'A').toUpperCase();
+  }
+
+  onCurrencyChange(code: string): void {
+    this.currencyService.setCurrency(code);
+  }
+
+  get currencies(): string[] {
+    return this.currencyService.availableCurrencies;
+  }
+
+  get currencyLabels(): Record<string, string> {
+    return this.currencyService.currencyLabels;
   }
 }

@@ -8,6 +8,7 @@ import { AdminSubscriptionsAction } from '../../store/subscriptions/admin-subscr
 import { AdminSubscriptionsState } from '../../store/subscriptions/admin-subscriptions.state';
 import { AdminUserSubscription, SubscriptionFilters } from '../../store/subscriptions/admin-subscriptions.model';
 import { AdminSubscriptionsService } from '../../services/admin-subscriptions.service';
+import { AdminCurrencyService } from '../../services/admin-currency.service';
 
 @Component({
   selector: 'app-admin-subscriptions',
@@ -63,7 +64,8 @@ export class AdminSubscriptionsComponent implements OnInit, OnDestroy {
   constructor(
     private store: Store,
     private dialog: MatDialog,
-    private subscriptionsService: AdminSubscriptionsService
+    private subscriptionsService: AdminSubscriptionsService,
+    private currencyService: AdminCurrencyService,
   ) {}
 
   ngOnInit(): void {
@@ -270,13 +272,11 @@ export class AdminSubscriptionsComponent implements OnInit, OnDestroy {
 
   getPaymentStatusLabel(hasUnpaid: boolean, totalUnpaid: number): string {
     if (!hasUnpaid) return 'À jour';
-    return totalUnpaid > 0 ? `${totalUnpaid} FCFA impayé` : 'En retard';
+    return totalUnpaid > 0 ? `${this.formatCurrency(totalUnpaid)} impayé` : 'En retard';
   }
 
   formatCurrency(amount: number): string {
-    return new Intl.NumberFormat('fr-FR', {
-      style: 'currency', currency: 'XAF', minimumFractionDigits: 0
-    }).format(amount || 0);
+    return this.currencyService.format(amount);
   }
 
   formatDate(date: any): string {

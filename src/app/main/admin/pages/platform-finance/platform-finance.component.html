@@ -7,9 +7,6 @@
         <p class="admin-page-subtitle">Revenus, solde disponible et gestion des retraits</p>
       </div>
       <div class="admin-header-actions">
-        <select class="admin-filter-select" [(ngModel)]="selectedCurrency" (change)="onCurrencyChange(selectedCurrency)">
-          <option *ngFor="let c of (config?.supportedCurrencies || ['XAF'])" [value]="c">{{ c }}</option>
-        </select>
         <button class="admin-btn admin-btn-secondary" (click)="onRefresh()">
           <i class="fas fa-sync-alt"></i> Actualiser
         </button>
@@ -28,15 +25,15 @@
     <div class="admin-stat-card admin-stat-success">
       <div class="admin-stat-icon"><i class="fas fa-coins"></i></div>
       <div class="admin-stat-content">
-        <div class="admin-stat-number">{{ formatCurrency(balance.available, balance.currency) }}</div>
+        <div class="admin-stat-number">{{ formatCurrency(balance.available) }}</div>
         <div class="admin-stat-label">Solde disponible</div>
-        <div class="admin-stat-trend">Réservé : {{ formatCurrency(balance.reservedWithdrawals, balance.currency) }}</div>
+        <div class="admin-stat-trend">Réservé : {{ formatCurrency(balance.reservedWithdrawals) }}</div>
       </div>
     </div>
     <div class="admin-stat-card admin-stat-primary">
       <div class="admin-stat-icon"><i class="fas fa-chart-line"></i></div>
       <div class="admin-stat-content">
-        <div class="admin-stat-number">{{ formatCurrency(balance.grossRevenue, balance.currency) }}</div>
+        <div class="admin-stat-number">{{ formatCurrency(balance.grossRevenue) }}</div>
         <div class="admin-stat-label">Revenus bruts totaux</div>
         <div class="admin-stat-trend">Souscriptions + Accès premium + Frais</div>
       </div>
@@ -44,7 +41,7 @@
     <div class="admin-stat-card admin-stat-info">
       <div class="admin-stat-icon"><i class="fas fa-arrow-trend-up"></i></div>
       <div class="admin-stat-content">
-        <div class="admin-stat-number">{{ formatCurrency(kpis?.currentMonthRevenue || 0, selectedCurrency) }}</div>
+        <div class="admin-stat-number">{{ formatCurrency(kpis?.currentMonthRevenue || 0) }}</div>
         <div class="admin-stat-label">Revenus ce mois</div>
         <div class="admin-stat-trend" [class.pf-positive]="growthPositive" [class.pf-negative]="!growthPositive">
           <i class="fas" [class.fa-arrow-up]="growthPositive" [class.fa-arrow-down]="!growthPositive"></i>
@@ -55,9 +52,9 @@
     <div class="admin-stat-card admin-stat-warning">
       <div class="admin-stat-icon"><i class="fas fa-arrow-down"></i></div>
       <div class="admin-stat-content">
-        <div class="admin-stat-number">{{ formatCurrency(balance.confirmedWithdrawals, balance.currency) }}</div>
+        <div class="admin-stat-number">{{ formatCurrency(balance.confirmedWithdrawals) }}</div>
         <div class="admin-stat-label">Total retraits confirmés</div>
-        <div class="admin-stat-trend">ARPU : {{ formatCurrency(kpis?.arpu || 0, selectedCurrency) }}</div>
+        <div class="admin-stat-trend">ARPU : {{ formatCurrency(kpis?.arpu || 0) }}</div>
       </div>
     </div>
   </div>
@@ -66,15 +63,15 @@
   <div class="pf-breakdown" *ngIf="balance">
     <div class="pf-breakdown-item">
       <span class="pf-breakdown-label"><i class="fas fa-calendar-check"></i> Souscriptions</span>
-      <span class="pf-breakdown-value">{{ formatCurrency(balance.breakdown.subscriptions, balance.currency) }}</span>
+      <span class="pf-breakdown-value">{{ formatCurrency(balance.breakdown.subscriptions) }}</span>
     </div>
     <div class="pf-breakdown-item">
       <span class="pf-breakdown-label"><i class="fas fa-star"></i> Accès premium</span>
-      <span class="pf-breakdown-value">{{ formatCurrency(balance.breakdown.premiumAccess, balance.currency) }}</span>
+      <span class="pf-breakdown-value">{{ formatCurrency(balance.breakdown.premiumAccess) }}</span>
     </div>
     <div class="pf-breakdown-item">
       <span class="pf-breakdown-label"><i class="fas fa-percent"></i> Frais de retrait récupérés</span>
-      <span class="pf-breakdown-value">{{ formatCurrency(balance.breakdown.withdrawalFees, balance.currency) }}</span>
+      <span class="pf-breakdown-value">{{ formatCurrency(balance.breakdown.withdrawalFees) }}</span>
     </div>
   </div>
 
@@ -112,24 +109,33 @@
 
       <!-- ── Overview Tab ── -->
       <div *ngIf="selectedTab==='overview'">
-        <div class="pf-chart-container" *ngIf="revenueData.length">
+        <div class="pf-chart-container" *ngIf="revenueData.length" (scroll)="onChartScroll()">
           <div class="pf-bars">
-            <div class="pf-bar-group" *ngFor="let d of revenueData">
+            <div class="pf-bar-group"
+                 *ngFor="let d of revenueData"
+                 (mouseenter)="onBarHover($event, d)"
+                 (mouseleave)="onBarLeave()">
               <div class="pf-bar-stack">
                 <div class="pf-bar pf-bar-sub"
-                     [style.height.%]="getBarHeight(d.subscriptions.revenue, getMaxBarHeight(revenueData))"
-                     [title]="'Souscriptions: ' + formatCurrency(d.subscriptions.revenue, selectedCurrency)"></div>
+                     [style.height.%]="getBarHeight(d.subscriptions.revenue, getMaxBarHeight(revenueData))"></div>
                 <div class="pf-bar pf-bar-premium"
-                     [style.height.%]="getBarHeight(d.premiumAccess.revenue, getMaxBarHeight(revenueData))"
-                     [title]="'Accès premium: ' + formatCurrency(d.premiumAccess.revenue, selectedCurrency)"></div>
+                     [style.height.%]="getBarHeight(d.premiumAccess.revenue, getMaxBarHeight(revenueData))"></div>
                 <div class="pf-bar pf-bar-fees"
-                     [style.height.%]="getBarHeight(d.withdrawalFees.revenue, getMaxBarHeight(revenueData))"
-                     [title]="'Frais: ' + formatCurrency(d.withdrawalFees.revenue, selectedCurrency)"></div>
+                     [style.height.%]="getBarHeight(d.withdrawalFees.revenue, getMaxBarHeight(revenueData))"></div>
               </div>
               <div class="pf-bar-label">{{ getPeriodLabel(d.period) }}</div>
-              <div class="pf-bar-total">{{ formatCurrency(d.total, selectedCurrency) }}</div>
+              <div class="pf-bar-total">{{ formatCurrency(d.total) }}</div>
             </div>
           </div>
+          <pf-pie-tooltip
+            #pfTooltip
+            *ngIf="hoveredSlices.length"
+            [slices]="hoveredSlices"
+            [title]="hoveredTitle"
+            [left]="tooltipLeft"
+            [top]="tooltipTop"
+            [placement]="tooltipPlacement">
+          </pf-pie-tooltip>
           <div class="pf-legend">
             <span class="pf-legend-item pf-legend-sub"><span></span> Souscriptions</span>
             <span class="pf-legend-item pf-legend-premium"><span></span> Accès premium</span>
@@ -157,7 +163,7 @@
                   {{ tx.type === 'subscription' ? 'Souscription' : 'Accès premium' }}
                 </span>
               </td>
-              <td><strong>{{ formatCurrency(tx.amount, tx.currency) }}</strong></td>
+              <td><strong>{{ formatCurrency(tx.amount) }}</strong></td>
               <td>{{ tx.currency }}</td>
               <td>{{ tx.user?.name || tx.userId || 'N/A' }}</td>
               <td>{{ tx.date | date:'dd/MM/yyyy HH:mm' }}</td>
@@ -181,9 +187,9 @@
           <tbody>
             <tr *ngFor="let w of withdrawals">
               <td><strong>{{ w.reference }}</strong></td>
-              <td>{{ formatCurrency(w.requestedAmount, w.currency) }}</td>
-              <td>{{ formatCurrency(w.feeAmount, w.currency) }} ({{ w.feePercent }}%)</td>
-              <td><strong>{{ formatCurrency(w.netAmount, w.currency) }}</strong></td>
+              <td>{{ formatCurrency(w.requestedAmount) }}</td>
+              <td>{{ formatCurrency(w.feeAmount) }} ({{ w.feePercent }}%)</td>
+              <td><strong>{{ formatCurrency(w.netAmount) }}</strong></td>
               <td>{{ w.method === 'BANK_TRANSFER' ? 'Virement' : 'Mobile Money' }}</td>
               <td>
                 <div>{{ w.recipientName }}</div>
@@ -219,69 +225,239 @@
   </div>
 </div>
 
-<!-- ── Modal Nouveau retrait ── -->
-<div class="admin-modal-overlay" *ngIf="showWithdrawalModal" (click)="showWithdrawalModal=false">
-  <div class="admin-modal" (click)="$event.stopPropagation()">
-    <div class="admin-modal-header">
-      <h3>Nouveau retrait plateforme</h3>
-      <button class="admin-modal-close" (click)="showWithdrawalModal=false"><i class="fas fa-times"></i></button>
-    </div>
-    <div class="admin-modal-body">
-      <form [formGroup]="withdrawalForm">
-        <div class="admin-form-grid">
-          <div class="admin-form-group">
-            <label class="admin-form-label">Montant *</label>
-            <input type="number" class="admin-form-control" formControlName="requestedAmount" placeholder="Ex: 50000">
-          </div>
-          <div class="admin-form-group">
-            <label class="admin-form-label">Devise</label>
-            <select class="admin-filter-select" formControlName="currency">
-              <option *ngFor="let c of (config?.supportedCurrencies || ['XAF'])" [value]="c">{{ c }}</option>
-            </select>
-          </div>
-          <div class="admin-form-group">
-            <label class="admin-form-label">Méthode *</label>
-            <select class="admin-filter-select" formControlName="method">
-              <option value="BANK_TRANSFER">Virement bancaire</option>
-              <option value="MOBILE_MONEY">Mobile Money</option>
-            </select>
-          </div>
-          <div class="admin-form-group">
-            <label class="admin-form-label">Nom bénéficiaire *</label>
-            <input type="text" class="admin-form-control" formControlName="recipientName">
-          </div>
-          <div class="admin-form-group">
-            <label class="admin-form-label">Numéro de compte / téléphone *</label>
-            <input type="text" class="admin-form-control" formControlName="recipientAccount">
-          </div>
-          <div class="admin-form-group" *ngIf="withdrawalForm.get('method')?.value==='BANK_TRANSFER'">
-            <label class="admin-form-label">Nom de la banque</label>
-            <input type="text" class="admin-form-control" formControlName="bankName">
-          </div>
-          <div class="admin-form-group" *ngIf="withdrawalForm.get('method')?.value==='MOBILE_MONEY'">
-            <label class="admin-form-label">Opérateur</label>
-            <select class="admin-filter-select" formControlName="operator">
-              <option value="orange">Orange Money</option>
-              <option value="mtn">MTN Mobile Money</option>
-            </select>
-          </div>
-          <div class="admin-form-group pf-full-width">
-            <label class="admin-form-label">Notes</label>
-            <textarea class="admin-form-control" formControlName="notes" rows="2"></textarea>
-          </div>
+<!-- ── Modal Nouveau retrait (2 étapes) ── -->
+<div class="pw-overlay" *ngIf="showWithdrawalModal" (click)="showWithdrawalModal=false">
+  <div class="pw-modal" (click)="$event.stopPropagation()">
+
+    <!-- HEADER -->
+    <div class="pw-header">
+      <div class="pw-header-left">
+        <div class="pw-icon">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+          </svg>
         </div>
-        <div class="pf-fee-info" *ngIf="config">
-          <i class="fas fa-info-circle"></i>
-          Frais admin : <strong>0%</strong> — Solde disponible : <strong>{{ formatCurrency(balance?.available || 0, selectedCurrency) }}</strong>
+        <div>
+          <h2 class="pw-title">Nouveau retrait plateforme</h2>
+          <p class="pw-subtitle">Solde disponible : <strong>{{ formatCurrency(balance?.available || 0) }}</strong></p>
         </div>
-      </form>
-    </div>
-    <div class="admin-modal-footer">
-      <button class="admin-btn admin-btn-secondary" (click)="showWithdrawalModal=false">Annuler</button>
-      <button class="admin-btn admin-btn-primary" (click)="submitWithdrawal()" [disabled]="withdrawalForm.invalid || isLoading">
-        <i class="fas fa-arrow-up"></i> Créer la demande
+      </div>
+      <button class="pw-close" (click)="showWithdrawalModal=false" [disabled]="isLoading">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
       </button>
     </div>
+
+    <!-- STEPS INDICATOR -->
+    <div class="pw-steps">
+      <div class="pw-step" [class.active]="wStep === 'method'" [class.done]="wStep === 'details'">
+        <div class="pw-step-dot">
+          <svg *ngIf="wStep === 'details'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+          </svg>
+          <span *ngIf="wStep === 'method'">1</span>
+        </div>
+        <span class="pw-step-label">Méthode</span>
+      </div>
+      <div class="pw-step-line"></div>
+      <div class="pw-step" [class.active]="wStep === 'details'">
+        <div class="pw-step-dot"><span>2</span></div>
+        <span class="pw-step-label">Détails</span>
+      </div>
+    </div>
+
+    <!-- BODY -->
+    <div class="pw-body" [formGroup]="withdrawalForm">
+
+      <!-- ══ ÉTAPE 1 — CHOIX DE LA MÉTHODE ══ -->
+      <ng-container *ngIf="wStep === 'method'">
+        <p class="pw-step-title">Sélectionnez la méthode de retrait</p>
+        <div class="pw-methods">
+          <button *ngFor="let m of methods" type="button"
+                  class="pw-method-btn"
+                  [class.pw-method-btn--orange]="m.value === 'ORANGE_MONEY'"
+                  [class.pw-method-btn--mtn]="m.value === 'MTN_MONEY'"
+                  (click)="selectMethod(m)">
+            <div class="pw-method-badge" [ngClass]="m.badgeClass">
+              <span>{{ m.badge }}</span>
+            </div>
+            <div class="pw-method-info">
+              <strong>{{ m.label }}</strong>
+              <span>{{ m.description }}</span>
+            </div>
+            <svg class="pw-method-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </button>
+        </div>
+        <p class="pw-security-note">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+          </svg>
+          Transactions sécurisées via EasyTransac
+        </p>
+      </ng-container>
+
+      <!-- ══ ÉTAPE 2 — DÉTAILS ══ -->
+      <ng-container *ngIf="wStep === 'details'">
+
+        <!-- Méthode sélectionnée -->
+        <div class="pw-selected-method">
+          <button type="button" class="pw-back-btn" (click)="backToMethod()" [disabled]="isLoading">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+          </button>
+          <div class="pw-selected-badge" [ngClass]="selectedMethodDef?.badgeClass">
+            <span>{{ selectedMethodDef?.badge }}</span>
+          </div>
+          <span class="pw-selected-label">{{ selectedMethodDef?.label }}</span>
+        </div>
+
+        <!-- Montant -->
+        <div class="pw-field">
+          <label class="pw-label">
+            Montant à retirer
+          </label>
+          <div class="pw-amount-wrap">
+            <input type="number" formControlName="requestedAmount" class="pw-input"
+                   [class.pw-input--error]="withdrawalForm.get('requestedAmount')?.invalid && withdrawalForm.get('requestedAmount')?.touched"
+                   placeholder="Min. {{ formatCurrency(MIN_AMOUNT) }}">
+            <span class="pw-currency">FCFA</span>
+            <button type="button" class="pw-max-btn" (click)="setMaxAmount()" [disabled]="isLoading">Max</button>
+          </div>
+          <div *ngIf="withdrawalForm.get('requestedAmount')?.invalid && withdrawalForm.get('requestedAmount')?.touched" class="pw-error">
+            <span *ngIf="withdrawalForm.get('requestedAmount')?.errors?.['min']">Minimum {{ formatCurrency(MIN_AMOUNT) }}</span>
+            <span *ngIf="withdrawalForm.get('requestedAmount')?.errors?.['max']">Montant trop élevé (max {{ formatCurrency(wMaxAmount) }})</span>
+            <span *ngIf="withdrawalForm.get('requestedAmount')?.errors?.['required']">Montant requis</span>
+          </div>
+        </div>
+
+        <!-- Bénéficiaire -->
+        <div class="pw-field">
+          <label class="pw-label">
+            Nom du bénéficiaire
+          </label>
+          <input type="text" formControlName="recipientName" class="pw-input"
+                 [class.pw-input--error]="withdrawalForm.get('recipientName')?.invalid && withdrawalForm.get('recipientName')?.touched"
+                 placeholder="Nom complet">
+          <div *ngIf="withdrawalForm.get('recipientName')?.invalid && withdrawalForm.get('recipientName')?.touched" class="pw-error">
+            <span>Nom requis</span>
+          </div>
+        </div>
+
+        <!-- Numéro Mobile Money -->
+        <div class="pw-field">
+          <label class="pw-label">
+            Numéro {{ selectedMethodDef?.label }}
+          </label>
+          <div class="pw-phone-wrap">
+            <span class="pw-prefix">+237</span>
+            <input type="tel" formControlName="recipientAccount" class="pw-input pw-input--phone"
+                   [class.pw-input--error]="withdrawalForm.get('recipientAccount')?.invalid && withdrawalForm.get('recipientAccount')?.touched"
+                   [class.pw-input--valid]="withdrawalForm.get('recipientAccount')?.valid && withdrawalForm.get('recipientAccount')?.touched"
+                   [placeholder]="selectedMethodDef?.placeholder || '6XXXXXXXX'"
+                   maxlength="9">
+            <span class="pw-phone-status" *ngIf="withdrawalForm.get('recipientAccount')?.touched">
+              <svg *ngIf="withdrawalForm.get('recipientAccount')?.valid" class="pw-phone-status--ok"
+                   fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+              </svg>
+              <svg *ngIf="withdrawalForm.get('recipientAccount')?.invalid" class="pw-phone-status--err"
+                   fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+            </span>
+          </div>
+          <div class="pw-phone-hint"
+               [class.pw-phone-hint--orange]="selectedMethodDef?.value === 'ORANGE_MONEY'"
+               [class.pw-phone-hint--mtn]="selectedMethodDef?.value === 'MTN_MONEY'">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <span *ngIf="selectedMethodDef?.value === 'ORANGE_MONEY'">
+              Numéros Orange : <strong>69X</strong>, <strong>65[5-9]X</strong>, <strong>66X</strong>
+            </span>
+            <span *ngIf="selectedMethodDef?.value === 'MTN_MONEY'">
+              Numéros MTN : <strong>67X</strong>, <strong>68X</strong>, <strong>65[0-4]X</strong>
+            </span>
+          </div>
+          <div *ngIf="phoneError" class="pw-error">
+            {{ phoneError }}
+          </div>
+        </div>
+
+        <!-- Récapitulatif -->
+        <div class="pw-recap" *ngIf="withdrawalForm.value.requestedAmount > 0">
+          <div class="pw-recap-title">Récapitulatif</div>
+          <div class="pw-recap-row">
+            <span>Montant demandé</span>
+            <strong>{{ formatCurrency(withdrawalForm.value.requestedAmount) }}</strong>
+          </div>
+          <div class="pw-recap-row pw-recap-row--fee">
+            <span>Frais (0% admin)</span>
+            <span class="pw-fee">− {{ formatCurrency(0) }}</span>
+          </div>
+          <div class="pw-recap-divider"></div>
+          <div class="pw-recap-row pw-recap-row--net">
+            <span>Net versé</span>
+            <strong class="pw-net">{{ formatCurrency(wNetAmount) }}</strong>
+          </div>
+          <div class="pw-recap-row">
+            <span>Via</span>
+            <strong class="pw-method-label">{{ selectedMethodDef?.label }}</strong>
+          </div>
+          <div class="pw-recap-row">
+            <span>Bénéficiaire</span>
+            <strong>{{ withdrawalForm.value.recipientName || '—' }}</strong>
+          </div>
+          <div class="pw-recap-row">
+            <span>Téléphone</span>
+            <strong>+237 {{ withdrawalForm.value.recipientAccount || '—' }}</strong>
+          </div>
+        </div>
+
+        <!-- Erreur -->
+        <div *ngIf="wError" class="pw-alert">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+          </svg>
+          {{ wError }}
+        </div>
+
+      </ng-container>
+    </div>
+
+    <!-- FOOTER étape 1 -->
+    <div class="pw-footer pw-footer--single" *ngIf="wStep === 'method'">
+      <button type="button" class="pw-btn pw-btn--secondary" (click)="showWithdrawalModal=false">Annuler</button>
+    </div>
+
+    <!-- FOOTER étape 2 -->
+    <div class="pw-footer" *ngIf="wStep === 'details'">
+      <button type="button" class="pw-btn pw-btn--secondary" (click)="backToMethod()" [disabled]="isLoading">
+        Retour
+      </button>
+      <button type="button" class="pw-btn"
+              [class.pw-btn--orange]="selectedMethodDef?.value === 'ORANGE_MONEY'"
+              [class.pw-btn--mtn]="selectedMethodDef?.value === 'MTN_MONEY'"
+              [class.pw-btn--primary]="!(selectedMethodDef?.value === 'ORANGE_MONEY' || selectedMethodDef?.value === 'MTN_MONEY')"
+              (click)="submitWithdrawal()" [disabled]="withdrawalForm.invalid || isLoading">
+        <svg *ngIf="isLoading" class="pw-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+        </svg>
+        <svg *ngIf="!isLoading" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+        </svg>
+        {{ isLoading ? 'Traitement…' : 'Effectuer le retrait' }}
+      </button>
+    </div>
+
   </div>
 </div>
 
@@ -293,7 +469,7 @@
       <button class="admin-modal-close" (click)="showApproveModal=false"><i class="fas fa-times"></i></button>
     </div>
     <div class="admin-modal-body">
-      <p>Montant : <strong>{{ formatCurrency(selectedWithdrawal?.requestedAmount || 0, selectedWithdrawal?.currency || 'XAF') }}</strong></p>
+      <p>Montant : <strong>{{ formatCurrency(selectedWithdrawal?.requestedAmount || 0) }}</strong></p>
       <p>Bénéficiaire : <strong>{{ selectedWithdrawal?.recipientName }}</strong> — {{ selectedWithdrawal?.recipientAccount }}</p>
       <label class="admin-form-label" style="margin-top:12px">Notes (optionnel)</label>
       <textarea class="admin-form-control" [(ngModel)]="approveNotes" rows="2"></textarea>
@@ -313,7 +489,7 @@
       <button class="admin-modal-close" (click)="showConfirmModal=false"><i class="fas fa-times"></i></button>
     </div>
     <div class="admin-modal-body">
-      <p>Montant net versé : <strong>{{ formatCurrency(selectedWithdrawal?.netAmount || 0, selectedWithdrawal?.currency || 'XAF') }}</strong></p>
+      <p>Montant net versé : <strong>{{ formatCurrency(selectedWithdrawal?.netAmount || 0) }}</strong></p>
       <div class="admin-form-group">
         <label class="admin-form-label">Référence externe (bancaire/opérateur)</label>
         <input type="text" class="admin-form-control" [(ngModel)]="confirmExternalRef" placeholder="Ex: TXN-2025-XXXXXX">
