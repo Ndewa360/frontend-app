@@ -2576,6 +2576,7 @@
       "RELOAD_CITIES": "Recharger les villes",
       "LOADING_CITIES": "Chargement des villes...",
       "NO_CITIES": "Aucune ville disponible",
+      "SELECTED_CITY": "Ville sélectionnée",
       "LOCATION_SECTION": "Localisation",
       "PROPERTY_TYPE_SECTION": "Type de propriété",
       "ROOM_SPECIFICITY": "Spécifications de chambre",
@@ -2634,6 +2635,8 @@
       "SUBTITLE": "Découvrez les logements les plus recherchés",
       "AVAILABLE_UNITS": "logements disponibles",
       "PROPERTIES": "Propriétés",
+      "STUDIOS": "Studios",
+      "ROOMS": "Chambres",
       "IN": "à"
     },
     "UNIT_DETAIL": {

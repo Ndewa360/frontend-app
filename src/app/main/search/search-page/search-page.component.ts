@@ -95,14 +95,13 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   quickFilters: QuickFilter[] = [];
   currentFilters: AdvancedSearchFilters = {};
 
-  // Pagination
-  readonly ITEMS_PER_PAGE = 20; // 20 unités par page en frontend
-  readonly BACKEND_LIMIT = 10000; // Charger 10000 unités depuis le backend
+  // Pagination — réelle côté backend
+  readonly ITEMS_PER_PAGE = 20;
   currentPage = 1;
   totalPages = 1;
   totalResults = 0;
   paginatedResults: SearchPropertyModel[] = [];
-  allResults: SearchPropertyModel[] = []; // Stocker tous les résultats du backend
+  allResults: SearchPropertyModel[] = [];
 
   // Gestion des favoris (stockage local)
   favoriteIds: Set<string> = new Set();
@@ -120,11 +119,6 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   // Utilitaires pour le template
   Object = Object;
   Math = Math;
-
-  // ✅ DEBUG: Méthode pour voir les clés d'un objet
-  getObjectKeys(obj: any): string {
-    return obj ? Object.keys(obj).join(', ') : 'null';
-  }
 
   constructor(
     private fb: FormBuilder,
@@ -170,7 +164,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
       district: [''],
       roomType: [''],
       priceMin: [0],
-      priceMax: [500000],
+      priceMax: [0],
       minArea: [0],
       hasKitchen: [false],
       isInternalKitchen: [false],
@@ -180,9 +174,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
       numberOfShower: [''],
       hasParking: [false],
       hasClosure: [false],
-      isFree: [true],
-      isShowToPublic: [true],
-      isActiveForSouscription: [true],
+      furnished: [false],
       sortBy: ['createdAt'],
       sortOrder: ['desc']
     });
@@ -310,7 +302,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
       district: '',
       roomType: '',
       priceMin: 0,
-      priceMax: 500000,
+      priceMax: 0,
       minArea: 0,
       hasKitchen: false,
       isInternalKitchen: false,
@@ -322,35 +314,14 @@ export class SearchPageComponent implements OnInit, OnDestroy {
     };
 
     this.smartFiltersService.initializeFilters(defaultFilters);
-    // L'abonnement à valueChanges est géré uniquement dans setupFormAutoApply()
   }
 
   private initializeQuickFilters(): void {
     this.quickFilters = [
-      {
-        key: 'hasKitchen',
-        label: this.translationService.instant('SEARCH_MODULE.FILTERS.KITCHEN'),
-        icon: 'restaurant',
-        active: false
-      },
-      {
-        key: 'hasPrivateShower',
-        label: this.translationService.instant('SEARCH_MODULE.FILTERS.PRIVATE_SHOWER'),
-        icon: 'shower',
-        active: false
-      },
-      {
-        key: 'hasParking',
-        label: this.translationService.instant('SEARCH_MODULE.FILTERS.PARKING'),
-        icon: 'local_parking',
-        active: false
-      },
-      {
-        key: 'furnished',
-        label: this.translationService.instant('SEARCH_MODULE.FILTERS.FURNISHED'),
-        icon: 'chair',
-        active: false
-      }
+      { key: 'hasKitchen',      label: 'SEARCH_MODULE.FILTERS.KITCHEN',       icon: 'restaurant',    active: false },
+      { key: 'hasPrivateShower', label: 'SEARCH_MODULE.FILTERS.PRIVATE_SHOWER', icon: 'shower',        active: false },
+      { key: 'hasParking',      label: 'SEARCH_MODULE.FILTERS.PARKING',        icon: 'local_parking', active: false },
+      { key: 'furnished',       label: 'SEARCH_MODULE.FILTERS.FURNISHED',      icon: 'chair',         active: false }
     ];
   }
 
@@ -371,35 +342,15 @@ export class SearchPageComponent implements OnInit, OnDestroy {
         }
       });
 
-    // Écouter les changements de résultats de recherche
-    this.searchResults$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(results => {
-        
-        if (results && Array.isArray(results)) {
-          this.allResults = results; // Stocker tous les résultats
-          this.totalResults = results.length;
-          this.updatePagination(); // Calculer la pagination côté client
-          
-          // Réinitialiser les index d'images pour les nouvelles cartes
-          this.currentImageIndexes = {};
-          
-          ;
-        }
-      });
+    // L'abonnement au store searchResults$ est conservé pour compatibilité
+    // mais performSearch() gère directement les résultats via HTTP
+    this.searchResults$.pipe(takeUntil(this.destroy$)).subscribe();
   }
 
   private loadInitialData(): void {
-    // Charger les recherches populaires
     this.loadPopularSearches();
-
-    // Charger les villes
-    this.cities$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(cities => {
-        // Mettre à jour les suggestions avec les villes
-        this.updateCitySuggestions(cities);
-      });
+    // Un seul abonnement cities$ ici pour les suggestions
+    this.cities$.pipe(take(1)).subscribe(cities => this.updateCitySuggestions(cities));
   }
 
   /**
@@ -438,25 +389,22 @@ export class SearchPageComponent implements OnInit, OnDestroy {
       });
   }
 
-private loadSuggestions(query: string): void {
-    this.cities$
-      .pipe(
-        map(cities => cities.filter(city =>
-          city.fullName.toLowerCase().includes(query.toLowerCase())
-        )),
-        takeUntil(this.destroy$)
-      )
-      .subscribe(filteredCities => {
-        this.suggestions = [
-          ...filteredCities.map(city => ({
-            type: 'city' as const,
-            label: city.fullName,
-            value: city,
-            icon: 'location_on'
-          }))
-        ];
-        this.cdr.detectChanges();
-      });
+  private loadSuggestions(query: string): void {
+    // Utilise take(1) pour éviter la fuite mémoire (un seul événement par frappe)
+    this.cities$.pipe(
+      take(1),
+      map(cities => cities.filter(city =>
+        city.fullName.toLowerCase().includes(query.toLowerCase())
+      ))
+    ).subscribe(filteredCities => {
+      this.suggestions = filteredCities.map(city => ({
+        type: 'city' as const,
+        label: city.fullName,
+        value: city,
+        icon: 'location_on'
+      }));
+      this.cdr.markForCheck();
+    });
   }
 
   private loadPopularSearches(): void {
@@ -527,36 +475,16 @@ private loadSuggestions(query: string): void {
     return search.searchCount || 0;
   }
 
-  /**
-   * Synchroniser l'affichage de géolocalisation avec la ville sélectionnée
-   */
   private syncLocationDisplayWithCity(cityId: string): void {
-    if (!cityId) {
-      // Aucune ville sélectionnée, afficher "Toutes les villes"
-      this.userLocation = null;
-      return;
-    }
-
-    // Trouver le nom de la ville à partir de l'ID
-    this.cities$.pipe(
-      filter(cities => cities && cities.length > 0),
-      take(1)
-    ).subscribe(cities => {
+    if (!cityId) { this.userLocation = null; this.updateCurrentCityName(''); return; }
+    this.cities$.pipe(filter(cities => cities && cities.length > 0), take(1)).subscribe(cities => {
       const selectedCity = cities.find(city => city._id === cityId);
       if (selectedCity) {
-        // Mettre à jour l'affichage de géolocalisation
-        this.userLocation = {
-          city: selectedCity.fullName,
-          country: 'Cameroun',
-          region: '',
-          latitude: 0,
-          longitude: 0
-        };
-        this.locationDetected = false; // Indiquer que c'est une sélection manuelle
+        this.userLocation = { city: selectedCity.fullName, country: 'Cameroun', region: '', latitude: 0, longitude: 0 };
+        this.locationDetected = false;
         this.isFromUrl = true;
-        
-        // Forcer la détection de changement pour mettre à jour l'affichage
-        this.cdr.detectChanges();
+        this.updateCurrentCityName(cityId);
+        this.cdr.markForCheck();
       }
     });
   }
@@ -574,8 +502,7 @@ private loadSuggestions(query: string): void {
     if (search.hasKitchen) filters.hasKitchen = search.hasKitchen;
     if (search.hasParking) filters.hasParking = search.hasParking;
     if (search.hasPrivateShower) filters.hasPrivateShower = search.hasPrivateShower;
-    // Note: furnished n'est pas encore dans AdvancedSearchFilters
-    // if (search.furnished) filters.furnished = search.furnished;
+    if (search.furnished) filters.furnishingStatus = 'FURNISHED';
 
     return filters;
   }
@@ -739,25 +666,22 @@ private loadSuggestions(query: string): void {
   }
 
   private performSearch(): void {
-    if (this.isPerformingSearch) {
-      return;
-    }
+    if (this.isPerformingSearch) return;
 
     const activeFilters = this.smartFiltersService.getActiveFilters();
     const filtersToUse = Object.keys(activeFilters).length > 0 ? activeFilters : this.currentFilters;
 
-    if (Object.keys(filtersToUse).length === 0 && !this.searchControl.value) {
-      return;
-    }
+    if (Object.keys(filtersToUse).length === 0 && !this.searchControl.value) return;
 
     this.isPerformingSearch = true;
     this.isLoading = true;
     this.hasSearched = true;
+    this.cdr.markForCheck();
 
     const filters: AdvancedSearchFilters = {
       ...filtersToUse,
-      page: 1,
-      limit: this.BACKEND_LIMIT
+      page: this.currentPage,
+      limit: this.ITEMS_PER_PAGE
     };
 
     this.searchService.advancedSearch(filters)
@@ -765,19 +689,31 @@ private loadSuggestions(query: string): void {
       .subscribe({
         next: (response) => {
           if (response.statusCode === 200) {
-            const data = response.data?.data || response.data || [];
-            this.allResults = Array.isArray(data) ? data : [];
-            this.totalResults = this.allResults.length;
-            this.currentPage = 1;
-            this.updatePagination();
+            const payload = response.data as any;
+            // Le backend retourne { data: [...], pagination: {...} }
+            this.allResults = Array.isArray(payload?.data) ? payload.data : (Array.isArray(payload) ? payload : []);
+            this.paginatedResults = this.allResults;
+            this.searchResults = this.allResults;
+            // Pagination réelle depuis le backend
+            const pagination = payload?.pagination;
+            if (pagination) {
+              this.totalResults = pagination.total ?? this.allResults.length;
+              this.totalPages = pagination.totalPages ?? 1;
+              this.currentPage = pagination.page ?? this.currentPage;
+            } else {
+              this.totalResults = this.allResults.length;
+              this.totalPages = 1;
+            }
             this.currentImageIndexes = {};
           }
           this.isLoading = false;
           this.isPerformingSearch = false;
+          this.cdr.markForCheck();
         },
-        error: (error) => {
+        error: () => {
           this.isLoading = false;
           this.isPerformingSearch = false;
+          this.cdr.markForCheck();
         }
       });
   }
@@ -1013,13 +949,21 @@ private loadSuggestions(query: string): void {
    */
   resetFilters(): void {
     this.smartFiltersService.resetFilters();
-
-    // Mettre à jour le formulaire avec les valeurs par défaut
     const defaultValues = this.smartFiltersService.getAllFilters();
     this.searchForm.patchValue(defaultValues, { emitEvent: false });
-
+    this.quickFilters.forEach(f => f.active = false);
     this.currentFilters = {};
-    this.performSearch();
+    this.currentPage = 1;
+    this.allResults = [];
+    this.searchResults = [];
+    this.paginatedResults = [];
+    this.totalResults = 0;
+    this.totalPages = 1;
+    this.hasSearched = false;
+    this.userLocation = null;
+    this.cdr.markForCheck();
+    // Nettoyer l'URL
+    this.router.navigate([], { relativeTo: this.route, queryParams: {}, replaceUrl: true });
   }
 
   /**
@@ -1049,8 +993,7 @@ private loadSuggestions(query: string): void {
         this.currentFilters.hasPrivateShower = filter.active;
         break;
       case 'furnished':
-        // Note: furnished n'est pas encore dans l'interface AdvancedSearchFilters
-        // this.currentFilters.furnished = filter.active;
+        this.currentFilters.furnishingStatus = filter.active ? 'FURNISHED' : undefined;
         break;
       default:
         break;
@@ -1068,27 +1011,20 @@ private loadSuggestions(query: string): void {
     return params['city'] !== undefined || params['ville'] !== undefined;
   }
 
-  /**
-   * Obtenir le nom de la ville actuellement sélectionnée
-   */
-  getCurrentCityName(): string {
-    const selectedCityId = this.currentFilters.city || this.searchForm.get('city')?.value;
-    
-    if (!selectedCityId) {
-      return this.translationService.instant('SEARCH_MODULE.FILTERS.ALL_CITIES');
-    }
+  // Cache du nom de ville courant pour éviter le subscribe synchrone dans le template
+  currentCityName = '';
 
-    // Utiliser une approche synchrone avec les données déjà chargées
-    let cityName = this.translationService.instant('SEARCH_MODULE.FILTERS.SELECTED_CITY');
-    
-    this.cities$.pipe(take(1)).subscribe(cityList => {
-      const city = cityList?.find(c => c._id === selectedCityId);
-      if (city) {
-        cityName = city.fullName;
-      }
+  private updateCurrentCityName(cityId: string): void {
+    if (!cityId) { this.currentCityName = this.translationService.instant('SEARCH_MODULE.FILTERS.ALL_CITIES'); return; }
+    this.cities$.pipe(take(1)).subscribe(cities => {
+      const city = cities?.find(c => c._id === cityId);
+      this.currentCityName = city ? city.fullName : this.translationService.instant('SEARCH_MODULE.FILTERS.SELECTED_CITY');
+      this.cdr.markForCheck();
     });
+  }
 
-    return cityName;
+  getCurrentCityName(): string {
+    return this.currentCityName || this.translationService.instant('SEARCH_MODULE.FILTERS.ALL_CITIES');
   }
 
   /**
@@ -1139,7 +1075,7 @@ private loadSuggestions(query: string): void {
 
     // Filtres de prix
     if (formValues.priceMin && formValues.priceMin > 0) count++;
-    if (formValues.priceMax && formValues.priceMax < 500000) count++;
+    if (formValues.priceMax && formValues.priceMax > 0) count++;
 
     // Filtres de superficie
     if (formValues.minArea && formValues.minArea > 0) count++;
@@ -1330,30 +1266,17 @@ private loadSuggestions(query: string): void {
   getMediasForCard(result: any): string[] {
     const medias: string[] = [];
 
-    // Images de l'unité
     if (result.medias && Array.isArray(result.medias) && result.medias.length > 0) {
       medias.push(...result.medias);
     }
-
-    // Images de la propriété
     if (result.property?.medias && Array.isArray(result.property.medias) && result.property.medias.length > 0) {
       medias.push(...result.property.medias);
     }
-
-    // Image principale de la propriété
     if (result.property?.image) {
       medias.push(result.property.image);
     }
 
-    // Image principale de l'unité
-    if (result.image) {
-      medias.push(result.image);
-    }
-
-    // Supprimer les doublons et les valeurs nulles/undefined
     const uniqueMedias = [...new Set(medias.filter(media => media && typeof media === 'string'))];
-
-    // Retourner les médias ou une image par défaut
     return uniqueMedias.length > 0 ? uniqueMedias : ['/assets/images/placeholder-room.jpg'];
   }
 
@@ -1431,40 +1354,12 @@ private loadSuggestions(query: string): void {
     delete this.cardTouchData[cardIndex];
   }
 
-  /**
-   * Met à jour la pagination côté client
-   */
-  private updatePagination(): void {
-    this.totalPages = Math.ceil(this.totalResults / this.ITEMS_PER_PAGE);
-    this.updatePaginatedResults();
-  }
-
-  /**
-   * Met à jour les résultats paginés pour la page actuelle
-   */
-  private updatePaginatedResults(): void {
-    const startIndex = (this.currentPage - 1) * this.ITEMS_PER_PAGE;
-    const endIndex = startIndex + this.ITEMS_PER_PAGE;
-    this.paginatedResults = this.allResults.slice(startIndex, endIndex);
-    this.searchResults = this.paginatedResults; // Pour compatibilité avec le template
-  }
-
-  /**
-   * Navigue vers une page spécifique
-   */
   goToPage(page: number): void {
-    if (page >= 1 && page <= this.totalPages && page !== this.currentPage) {
-      this.currentPage = page;
-      
-      // Mettre à jour les résultats paginés côté client
-      this.updatePaginatedResults();
-
-      // Scroll vers le haut des résultats
-      const resultsElement = document.querySelector('.results-grid');
-      if (resultsElement) {
-        resultsElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    }
+    if (page < 1 || page > this.totalPages || page === this.currentPage) return;
+    this.currentPage = page;
+    this.performSearch();
+    const resultsElement = document.querySelector('.search-results-section');
+    if (resultsElement) resultsElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   /**

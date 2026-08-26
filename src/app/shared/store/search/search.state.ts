@@ -157,13 +157,13 @@ export class SearchState{
         if(prop.property.geolocationCity._id==filter.geolocationCity._id) priority+=2;
 
         if(prop.property.hasClosure==filter.specifity?.hasClosure) priority++;
-        if(prop.property.hasKitchen==filter.specifity?.hasKitchen) priority++;
         if(prop.property.hasParking==filter.specifity?.hasParking) priority++;
-        if(prop.property.isInternalKitchen==filter.specifity?.isInternalKitchen) priority++;
-        if(prop.property.isInternalShower==filter.specifity?.isInternalShower) priority++;
-        if(prop.property.numberOfBathroom==filter.specifity?.numberOfBathroom) priority++;
-        if(prop.property.numberOfLivingRoom==filter.specifity?.numberOfLivingRoom) priority++;
-        if(prop.property.numberOfShower==filter.specifity?.isInternalKitchen) priority++;
+        if(prop.specifity?.hasKitchen==filter.specifity?.hasKitchen) priority++;
+        if(prop.specifity?.isInternalKitchen==filter.specifity?.isInternalKitchen) priority++;
+        if(prop.specifity?.isInternalShower==filter.specifity?.isInternalShower) priority++;
+        if(prop.specifity?.numberOfBathroom==filter.specifity?.numberOfBathroom) priority++;
+        if(prop.specifity?.numberOfLivingRoom==filter.specifity?.numberOfLivingRoom) priority++;
+        if(prop.specifity?.numberOfShower==filter.specifity?.numberOfShower) priority++;
         //console.log("Prop => priority ", prop,priority)
         return priority;
     }

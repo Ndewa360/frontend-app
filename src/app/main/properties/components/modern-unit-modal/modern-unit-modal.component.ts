@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, Inject, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { Store, Actions, ofActionSuccessful, ofActionCompleted } from '@ngxs/store';
@@ -70,6 +70,7 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
     private translate: TranslateService,
     private dialog: MatDialog,
     private dialogRef: MatDialogRef<ModernUnitModalComponent>,
+    private cdr: ChangeDetectorRef,
     @Inject(MAT_DIALOG_DATA) public data: UnitModalData
   ) {
     // Vérifier si l'utilisateur est un agent
@@ -85,6 +86,7 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
     
     if (this.data.mode === 'edit' && this.data.unit) {
       this.populateForm();
+      this.cdr.detectChanges();
     }
   }
 
@@ -381,50 +383,52 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
   }
 
   private checkRoomLimits(): void {
-    this.isLoading = true;
-    // Vérification réelle via le store — demande le statut d'abonnement à jour
-    this.store.dispatch(new SubscriptionLimitAction.GetSubscriptionStatus()).subscribe({
-      next: () => {
-        const status = this.store.selectSnapshot(SubscriptionLimitState.selectSubscriptionStatus);
-        if (!status) {
-          // Pas de statut, on laisse le backend décider
-          this.createOrUpdateRoom();
-          return;
-        }
+    // Différer la mutation pour éviter NG0100 (ExpressionChangedAfterItHasBeenCheckedError)
+    Promise.resolve().then(() => {
+      this.isLoading = true;
+      this.cdr.detectChanges();
 
-        if (status.accountStatus === 'suspended') {
-          this.isLoading = false;
-          this.showAccountSuspendedModal();
-          return;
-        }
-
-        if (status.plan === 'free') {
-          // Compter les unités actuelles de ce bien depuis le store
-          // Comparer avec _id ou l'objet entier (property peut être un objet ou un string)
-          const propertyId = this.data.property._id;
-          const currentRooms = this.store.selectSnapshot(
-            (state: any) => (state.rooms?.rooms || []).filter((r: any) => {
-              const rProp = r.property?._id || r.property;
-              return rProp === propertyId || rProp?.toString() === propertyId?.toString();
-            })
-          );
-          const unitsLimit = status.unitsPerPropertyLimit ?? 8;
-
-          if (currentRooms.length >= unitsLimit) {
-            this.isLoading = false;
-            this.showRoomLimitModal(unitsLimit);
+      this.store.dispatch(new SubscriptionLimitAction.GetSubscriptionStatus()).subscribe({
+        next: () => {
+          const status = this.store.selectSnapshot(SubscriptionLimitState.selectSubscriptionStatus);
+          if (!status) {
+            this.createOrUpdateRoom();
             return;
           }
-        }
 
-        // Tout est bon, créer l'unité
-        this.createOrUpdateRoom();
-      },
-      error: () => {
-        this.isLoading = false;
-        // En cas d'erreur réseau, on laisse le backend trancher
-        this.createOrUpdateRoom();
-      }
+          if (status.accountStatus === 'suspended') {
+            this.isLoading = false;
+            this.cdr.detectChanges();
+            this.showAccountSuspendedModal();
+            return;
+          }
+
+          if (status.plan === 'free') {
+            const propertyId = this.data.property._id;
+            const currentRooms = this.store.selectSnapshot(
+              (state: any) => (state.rooms?.rooms || []).filter((r: any) => {
+                const rProp = r.property?._id || r.property;
+                return rProp === propertyId || rProp?.toString() === propertyId?.toString();
+              })
+            );
+            const unitsLimit = status.unitsPerPropertyLimit ?? 8;
+
+            if (currentRooms.length >= unitsLimit) {
+              this.isLoading = false;
+              this.cdr.detectChanges();
+              this.showRoomLimitModal(unitsLimit);
+              return;
+            }
+          }
+
+          this.createOrUpdateRoom();
+        },
+        error: () => {
+          this.isLoading = false;
+          this.cdr.detectChanges();
+          this.createOrUpdateRoom();
+        }
+      });
     });
   }
 

@@ -2576,6 +2576,7 @@
       "RELOAD_CITIES": "Recharge cities",
       "LOADING_CITIES": "Loading cities...",
       "NO_CITIES": "No city available",
+      "SELECTED_CITY": "Selected city",
       "LOCATION_SECTION": "Location",
       "PROPERTY_TYPE_SECTION": "Property type",
       "ROOM_SPECIFICITY": "Room specifications",
@@ -2634,6 +2635,8 @@
       "SUBTITLE": "Discover the most sought-after accommodation",
       "AVAILABLE_UNITS": "accommodation available",
       "PROPERTIES": "Properties",
+      "STUDIOS": "Studios",
+      "ROOMS": "Rooms",
       "IN": "in"
     },
     "UNIT_DETAIL": {

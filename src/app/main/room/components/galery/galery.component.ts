@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit, AfterViewInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store, Actions, ofActionErrored, ofActionSuccessful, Select } from '@ngxs/store';
@@ -32,7 +32,7 @@ interface UploadItem {
   styleUrls: ['./galery.component.css'],
   encapsulation: ViewEncapsulation.Emulated,
 })
-export class GaleryComponent implements OnInit, OnDestroy {
+export class GaleryComponent implements OnInit, AfterViewInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   // États de l'interface
@@ -70,32 +70,11 @@ export class GaleryComponent implements OnInit, OnDestroy {
   ) {}
   
   ngOnInit(): void {
-    
-    // Initialisation directe avec les données de la room
-    this.initializeDirectData();
-    
-    // Chargement depuis le store
-    this.loadMediaData();
     this.setupUploadSubscriptions();
   }
-  
-  private async initializeDirectData(): Promise<void> {
-    if (this.data.room?.medias && this.data.room.medias.length > 0) {
-      try {
-        const result = await MediaUtil.getStructMedia(this.data.room.medias);
-        
-        this.roomSelectedImages360 = result.images360;
-        this.roomSelectedVideos = result.videos;
-        this.roomSelectedImages = result.images;
-        this.updateAllMediaItems();
-        this.isLoadingMedia = false;
-        this.cdr.detectChanges();
-      } catch (error) {
-      }
-    } else {
-      this.isLoadingMedia = false;
-      this.cdr.detectChanges();
-    }
+
+  ngAfterViewInit(): void {
+    this.loadMediaData();
   }
 
   private loadMediaData(): void {

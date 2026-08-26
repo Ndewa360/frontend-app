@@ -381,7 +381,7 @@
         <button *ngFor="let filter of quickFilters || []" (click)="toggleQuickFilter(filter)"
           class="quick-filter-pill" [class.active]="filter.active" type="button">
           <youpez-ibm-icon [iconName]="filter.icon" iconSize="16"></youpez-ibm-icon>
-          <span>{{ filter.label }}</span>
+          <span>{{ filter.label | translate }}</span>
         </button>
       </div>
     </div>

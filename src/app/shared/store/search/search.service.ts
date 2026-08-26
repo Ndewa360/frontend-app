@@ -105,15 +105,18 @@ export class SearchService
 
             // Traitement spécial pour les différents types de valeurs
             if (value !== undefined && value !== null) {
-                // Pour les booléens, toujours envoyer (même false)
+                // Pour les booléens, envoyer SEULEMENT si true (false = pas de filtre)
                 if (typeof value === 'boolean') {
-                    params = params.set(key, value.toString());
+                    if (value === true) {
+                        params = params.set(key, 'true');
+                    }
+                    // false → ne pas envoyer (pas de restriction)
                 }
                 // Pour les nombres, envoyer même 0 (sauf pour priceMin = 0 et priceMax = 500000 qui sont les valeurs par défaut)
                 else if (typeof value === 'number') {
                     if (key === 'priceMin' && value > 0) {
                         params = params.set(key, value.toString());
-                    } else if (key === 'priceMax' && value < 500000) {
+                    } else if (key === 'priceMax' && value > 0) {
                         params = params.set(key, value.toString());
                     } else if (key !== 'priceMin' && key !== 'priceMax') {
                         params = params.set(key, value.toString());
