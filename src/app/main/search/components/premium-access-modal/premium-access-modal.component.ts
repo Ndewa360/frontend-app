@@ -1,5 +1,6 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, ChangeDetectorRef, Optional } from '@angular/core';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -46,6 +47,7 @@ export class PremiumAccessModalComponent implements OnInit, OnDestroy {
     private anonymousUserService: AnonymousUserService,
     private paymentSessionService: PaymentSessionService,
     private cdr: ChangeDetectorRef,
+    private translate: TranslateService,
     @Optional() private dialogRef: MatDialogRef<any>
   ) {}
 
@@ -183,7 +185,7 @@ export class PremiumAccessModalComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.loading = false;
-        this.error = err.error?.message || 'Impossible de créer la session de paiement.';
+        this.error = err.error?.message || this.translate.instant('SEARCH_MODULE.PREMIUM_MODAL.MISSING_PURCHASE_INFO');
         this.cdr.detectChanges();
       }
     });
@@ -198,20 +200,19 @@ export class PremiumAccessModalComponent implements OnInit, OnDestroy {
   // ─── Utilitaires template ─────────────────────────────────────────────────
 
   getRemainingDaysText(): string {
-    if (this.ownerInfo?.access) {
-      const d = this.ownerInfo.access.remainingDays;
-      if (d <= 0) return 'Accès expiré';
-      return d === 1 ? '1 jour restant' : `${d} jours restants`;
-    }
-    const d = this.anonymousUserService.getRemainingDays();
-    if (d <= 0) return '';
-    return d === 1 ? '1 jour restant' : `${d} jours restants`;
+    const d = this.ownerInfo?.access
+      ? this.ownerInfo.access.remainingDays
+      : this.anonymousUserService.getRemainingDays();
+    if (d <= 0) return this.translate.instant('SEARCH_MODULE.PREMIUM_MODAL.ACCESS_EXPIRED');
+    return d === 1
+      ? this.translate.instant('SEARCH_MODULE.PREMIUM_MODAL.REMAINING_DAYS_SINGULAR')
+      : this.translate.instant('SEARCH_MODULE.PREMIUM_MODAL.REMAINING_DAYS_PLURAL', { days: d });
   }
 
   getWhatsAppLink(): string {
     if (!this.ownerInfo?.owner.whatsapp) return '#';
     const phone = this.ownerInfo.owner.whatsapp.replace(/\s+/g, '');
-    const message = encodeURIComponent('Bonjour, je suis intéressé par votre propriété sur Ndewa360°.');
+    const message = encodeURIComponent(this.translate.instant('SEARCH_MODULE.PREMIUM_MODAL.WHATSAPP_MESSAGE'));
     return `https://wa.me/${phone}?text=${message}`;
   }
 
@@ -223,8 +224,8 @@ export class PremiumAccessModalComponent implements OnInit, OnDestroy {
 
   emailOwner(): void {
     if (this.ownerInfo?.owner.email) {
-      const subject = encodeURIComponent('Demande d\'information - Ndewa360°');
-      const body = encodeURIComponent('Bonjour,\n\nJe suis intéressé par votre propriété sur Ndewa360°.\n\nCordialement');
+      const subject = encodeURIComponent(this.translate.instant('SEARCH_MODULE.PREMIUM_MODAL.EMAIL_SUBJECT'));
+      const body = encodeURIComponent(this.translate.instant('SEARCH_MODULE.PREMIUM_MODAL.EMAIL_BODY'));
       window.location.href = `mailto:${this.ownerInfo.owner.email}?subject=${subject}&body=${body}`;
     }
   }

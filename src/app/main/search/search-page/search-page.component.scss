@@ -11,22 +11,18 @@
   // Empêcher le scroll quand les filtres sont ouverts
   &.filters-open {
     overflow: hidden !important;
-    position: fixed !important;
-    width: 100% !important;
-    height: 100% !important;
   }
 
   // === BARRE DE RECHERCHE ULTRA-COMPACTE ===
   .search-bar-minimal {
     background: var(--theme-appUIForegroundBg);
     border-bottom: 1px solid var(--theme-appBorderColor);
-    padding: 1.5rem 1.5rem 0.75rem; // Plus d'espace en haut
-    margin-top: 1rem; // Espacement avec le menu
+    padding: 1.5rem 1.5rem 0.75rem;
+    margin-top: 1rem;
     position: sticky;
-    top: 0;
+    top: 1rem; // Compense le margin-top pour que sticky fonctionne correctement
     z-index: 100;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-    backdrop-filter: blur(8px);
 
     .search-container {
       display: flex;
@@ -790,43 +786,54 @@
   height: 100vh !important;
   background: rgba(0, 0, 0, 0.6) !important;
   backdrop-filter: blur(8px) !important;
-  z-index: 9998 !important; 
+  z-index: 9998 !important;
   animation: fadeIn 0.3s ease-out;
   margin: 0 !important;
   padding: 0 !important;
   transform: none !important;
+  touch-action: none !important; // Bloque tout scroll tactile sur l'overlay
+  overscroll-behavior: contain;
+  pointer-events: all !important; // Capture tous les clics/touches — rien ne passe en dessous
+  user-select: none;
 }
 
-// === PANEL DE FILTRES SIDENAV COMPLET ===
+// Panel de filtres — drawer fixe depuis la droite
 .filters-floating-panel {
-  position: fixed !important;
-  top: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
-  width: 450px !important;
-  max-width: 90vw !important;
-  height: 100vh !important;
-  z-index: 10000 !important; // Z-index plus élevé que l'overlay
-  animation: slideInRight 0.3s ease-out;
-  pointer-events: auto; // Le panneau doit être cliquable
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 420px;
+  max-width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  animation: slideInFromRight 0.3s ease-out;
+  pointer-events: auto;
   margin: 0 !important;
   padding: 0 !important;
-  padding-top: 10px !important;
-  // Empêcher tout débordement
   overflow: hidden !important;
 
+  @media (max-width: 480px) {
+    width: 100vw;
+  }
+
   .filters-content {
-    width: 100% !important;
-    height: 100vh !important;
+    width: 100%;
+    height: 100%;
     background: var(--theme-appUIForegroundBg);
     box-shadow: -8px 0 40px rgba(0, 0, 0, 0.2);
-    overflow-y: auto;
+    overflow: hidden;
     border-left: 1px solid var(--theme-appBorderColor);
     pointer-events: auto;
     display: flex;
     flex-direction: column;
-    // S'assurer que le contenu prend toute la hauteur
-    position: relative;
+
+    // Zone scrollable : tout sauf header et actions
+    .filters-scrollable {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      overscroll-behavior: contain;
+    }
 
     .filters-header {
       display: flex;
@@ -835,8 +842,6 @@
       padding: 1.5rem;
       border-bottom: 1px solid var(--theme-appBorderColor);
       background: rgba($default_app_color, 0.05);
-      position: sticky;
-      top: 0;
       z-index: 10;
       
       // Amélioration responsive
@@ -1120,8 +1125,7 @@
     }
 
     .filters-actions {
-      position: sticky;
-      bottom: 0;
+      flex-shrink: 0; // Ne jamais rétrécir — toujours visible en bas
       background: var(--theme-appUIForegroundBg);
       border-top: 1px solid var(--theme-appBorderColor);
       padding: 1.5rem;
@@ -1168,166 +1172,8 @@
   }
 }
 
-.filter-group {
-  .filter-group-title {
-    display: flex;
-    align-items: center;
-    gap: var(--carbon-spacing-02);
-    font-size: var(--carbon-productive-heading-01);
-    font-weight: 600;
-    color: var(--carbon-text-primary);
-    margin-bottom: var(--carbon-spacing-04);
-
-    youpez-ibm-icon {
-      color: var(--carbon-primary-60);
-    }
-  }
-
-  .filter-row {
-    display: flex;
-    gap: var(--carbon-spacing-04);
-
-    .filter-field {
-      flex: 1;
-
-      &.full-width {
-        flex: none;
-        width: 100%;
-      }
-
-      .field-label {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        font-size: var(--carbon-label-01);
-        font-weight: 500;
-        color: var(--carbon-text-secondary);
-        margin-bottom: var(--carbon-spacing-02);
-
-        .reload-cities-btn {
-          background: none;
-          border: none;
-          color: var(--carbon-text-secondary);
-          cursor: pointer;
-          padding: 0.25rem;
-          border-radius: 0.25rem;
-          transition: all 0.2s ease;
-          font-size: 0.75rem;
-
-          &:hover {
-            color: var(--carbon-text-primary);
-            background: var(--carbon-background-hover);
-          }
-
-          &:active {
-            transform: scale(0.95);
-          }
-
-          i {
-            animation: none;
-          }
-
-          &:hover i {
-            animation: spin 1s linear infinite;
-          }
-        }
-      }
-
-      @keyframes spin {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-      }
-
-      .field-input,
-      .field-select {
-        width: 100%;
-        padding: var(--carbon-spacing-03);
-        border: 1px solid var(--carbon-border-subtle-01);
-        border-radius: 6px;
-        background: var(--carbon-field-01);
-        font-size: var(--carbon-body-01);
-        color: var(--carbon-text-primary);
-        transition: all 0.2s ease;
-
-        &:focus {
-          outline: none;
-          border-color: var(--carbon-primary-60);
-          box-shadow: 0 0 0 2px rgba(var(--carbon-primary-60), 0.2);
-        }
-
-        &::placeholder {
-          color: var(--carbon-text-placeholder);
-        }
-      }
-    }
-  }
-
-  .amenities-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: var(--carbon-spacing-03);
-
-    .amenity-checkbox {
-      display: flex;
-      align-items: center;
-      gap: var(--carbon-spacing-03);
-      cursor: pointer;
-      padding: var(--carbon-spacing-03);
-      border-radius: 6px;
-      transition: background 0.2s ease;
-
-      &:hover {
-        background: var(--carbon-layer-hover-01);
-      }
-
-      input[type="checkbox"] {
-        display: none;
-      }
-
-      .checkbox-custom {
-        width: 18px;
-        height: 18px;
-        border: 2px solid var(--carbon-border-subtle-01);
-        border-radius: 4px;
-        background: var(--carbon-field-01);
-        position: relative;
-        transition: all 0.2s ease;
-
-        &::after {
-          content: '';
-          position: absolute;
-          top: 2px;
-          left: 5px;
-          width: 6px;
-          height: 10px;
-          border: solid var(--carbon-text-on-color);
-          border-width: 0 2px 2px 0;
-          transform: rotate(45deg);
-          opacity: 0;
-          transition: opacity 0.2s ease;
-        }
-      }
-
-      input:checked+.checkbox-custom {
-        background: var(--carbon-primary-60);
-        border-color: var(--carbon-primary-60);
-
-        &::after {
-          opacity: 1;
-        }
-      }
-
-      youpez-ibm-icon {
-        color: var(--carbon-icon-secondary);
-      }
-
-      span:last-child {
-        font-size: var(--carbon-body-01);
-        color: var(--carbon-text-primary);
-      }
-    }
-  }
-}
+// Suppression du bloc .filter-group racine dupliqué — les styles sont définis
+// dans .filters-floating-panel .filters-content .filters-form .filter-group
 
 // === SECTION RÉSULTATS ===
 .search-results-section {
@@ -1490,8 +1336,13 @@
 // === GRILLE DES RÉSULTATS ===
 .results-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+
+  @media (min-width: 1200px) {
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 2rem;
+  }
 
   &.list-view {
     grid-template-columns: 1fr;
@@ -1524,8 +1375,8 @@
     position: relative;
 
     &:hover {
-      transform: translateY(-12px);
-      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.15);
+      transform: translateY(-6px);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
       border-color: rgba($default_app_color, 0.3);
 
       .card-image .room-image {
@@ -1550,11 +1401,11 @@
 
     .card-image {
       position: relative;
-      height: 280px;
+      height: 260px;
       overflow: hidden;
       
       @media (max-width: 768px) {
-        height: 450px;
+        height: 240px;
       }
 
       .room-image {
@@ -1783,6 +1634,7 @@
         rgba(0, 0, 0, 0.3) 100%);
     opacity: 0;
     transition: opacity 0.3s ease;
+    pointer-events: none;
   }
 
   .card-badges {
@@ -2415,12 +2267,22 @@
   }
 }
 
-@keyframes slideInRight {
+@keyframes slideInFromRight {
   from {
     transform: translateX(100%);
   }
-
   to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
     transform: translateX(0);
   }
 }
@@ -2430,62 +2292,22 @@
     opacity: 0;
     transform: translateY(30px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-@keyframes slideInRight {
-  from {
-    opacity: 0;
-    transform: translateX(30px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes shimmer {
-  0% {
-    background-position: -200px 0;
-  }
-
-  100% {
-    background-position: calc(200px + 100%) 0;
-  }
-}
-
-// Animation d'entrée pour les cartes
+// Animation d'entrée pour les cartes — désactivée sur re-render via animation-fill-mode
 .result-card {
-  animation: fadeInUp 0.6s ease-out;
+  animation: fadeInUp 0.4s ease-out both;
 
-  &:nth-child(1) {
-    animation-delay: 0.1s;
-  }
-
-  &:nth-child(2) {
-    animation-delay: 0.2s;
-  }
-
-  &:nth-child(3) {
-    animation-delay: 0.3s;
-  }
-
-  &:nth-child(4) {
-    animation-delay: 0.4s;
-  }
-
-  &:nth-child(5) {
-    animation-delay: 0.5s;
-  }
-
-  &:nth-child(6) {
-    animation-delay: 0.6s;
-  }
+  &:nth-child(1) { animation-delay: 0.05s; }
+  &:nth-child(2) { animation-delay: 0.1s; }
+  &:nth-child(3) { animation-delay: 0.15s; }
+  &:nth-child(4) { animation-delay: 0.2s; }
+  &:nth-child(5) { animation-delay: 0.25s; }
+  &:nth-child(6) { animation-delay: 0.3s; }
 }
 
 // Animation pour les suggestions
@@ -2671,7 +2493,7 @@
 
         .card-image {
           width: 100%;
-          height: 450px;
+          height: 240px;
         }
 
         .card-content {
@@ -2681,7 +2503,7 @@
 
       .result-card {
         .card-image {
-          height: 450px;
+          height: 240px;
         }
 
         .card-content {
@@ -2756,7 +2578,7 @@
     border-radius: 16px !important;
 
     .card-image {
-      height: 350px !important;
+      height: 200px !important;
     }
 
     .card-content {
@@ -2772,100 +2594,33 @@
     }
   }
 
-  // === RESPONSIVE ULTRA-COMPACT ===
-  @media (max-width: 768px) {
-    .search-bar-minimal {
-      .search-container {
-        .location-indicator .location-status span {
-          display: none; // Masquer le texte sur mobile
-        }
+  // Pagination responsive
+  .pagination-section {
+    .pagination-controls {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
 
-        .filters-toggle-btn .filters-text {
-          display: none; // Masquer le texte "Filtres" sur mobile
-        }
-      }
-    }
+      .pagination-btn {
+        flex: 0 0 auto;
 
-    // Sidenav plein écran sur mobile
-    .filters-floating-panel {
-      width: 100vw !important;
-      max-width: 100vw !important;
-    }
-
-    // Overlay couvre tout l'écran sur mobile
-    .filters-overlay {
-      right: 0 !important;
-      width: 100vw !important;
-    }
-
-    // Pagination responsive
-    .pagination-section {
-      .pagination-controls {
-        flex-direction: column;
-        gap: 1rem;
-
-        .pagination-btn {
-          width: 100%;
-          justify-content: center;
-
-          span {
-            display: none; // Masquer le texte sur mobile
-          }
-        }
-
-        .pagination-numbers {
-          margin: 0;
-          justify-content: center;
-          flex-wrap: wrap;
-
-          .pagination-number {
-            width: 35px;
-            height: 35px;
-            font-size: 0.8rem;
-          }
+        span {
+          display: none;
         }
       }
-    }
-  }
 
-  // === ANIMATIONS PROFESSIONNELLES ===
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
+      .pagination-numbers {
+        margin: 0;
+        justify-content: center;
+        flex-wrap: wrap;
 
-    to {
-      opacity: 1;
-    }
-  }
-
-  @keyframes slideInRight {
-    from {
-      transform: translateX(100%);
-      opacity: 0;
-    }
-
-    to {
-      transform: translateX(0);
-      opacity: 1;
-    }
-  }
-
-  @keyframes spin {
-    to {
-      transform: rotate(360deg);
-    }
-  }
-
-  @keyframes pulse {
-
-    0%,
-    100% {
-      transform: scale(1);
-    }
-
-    50% {
-      transform: scale(1.05);
+        .pagination-number {
+          width: 36px;
+          height: 36px;
+          font-size: 0.8rem;
+        }
+      }
     }
   }
 }

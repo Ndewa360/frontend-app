@@ -9,29 +9,12 @@
   overflow: hidden; // Empêche tout scroll sur l'host
 }
 
-// Styles pour le conteneur du dialog Material
-::ng-deep .unit-detail-dialog-container {
-  .mat-dialog-container {
-    padding: 0 !important;
-    margin: 0 !important;
-    border-radius: 0 !important;
-    max-width: 100vw !important;
-    max-height: 100vh !important;
-    width: 100vw !important;
-    height: 100vh !important;
-    overflow: hidden !important;
-  }
-}
+// Styles pour le dialog unit-detail
+// Les styles du conteneur MatDialog sont définis dans les styles globaux
+// (styles.scss ou app.component.scss) via la classe panelClass 'unit-detail-dialog-container'
+// pour éviter l'usage de ::ng-deep déprécié.
 
-// Suppression de toutes les barres de défilement horizontales
-* {
-  // overflow-x: hidden !important;
-}
 
-// Assurer que le body n'a pas de scroll horizontal
-::ng-deep body {
-  overflow-x: hidden !important;
-}
 
 // === VARIABLES DU THÈME CARBON PROFESSIONNEL ===
 // Couleurs principales de l'application (Carbon + Brand)
@@ -80,18 +63,25 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.
   display: flex;
   flex-direction: column;
   height: 100vh;
-  width: 100vw;
+  width: 100%;
+  max-width: 100%;
   background: $bg-primary;
   font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   overflow: hidden;
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0;
+  padding: 0;
   color: $text-primary;
+  box-sizing: border-box;
 
-  // Animation d'entrée Carbon
-  animation: dialogSlideIn 0.4s cubic-bezier(0.2, 0, 0.38, 0.9) forwards;
-  
+  animation: dialogSlideIn 0.35s cubic-bezier(0.2, 0, 0.38, 0.9) forwards;
+
   @media (max-width: 768px) {
-    overflow: hidden; // Garder le header fixe
+    overflow: hidden;
   }
 }
 
@@ -306,17 +296,24 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.
 .dialog-content {
   flex: 1;
   display: grid;
-  grid-template-columns: 60% 40%; // Images 60%, détails 40%
-  overflow: hidden; // Pas de scroll sur le contenu principal
+  grid-template-columns: 60% 40%;
+  overflow: hidden;
   width: 100%;
   max-width: 100vw;
-  
+  box-sizing: border-box;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 55% 45%;
+  }
+
   @media (max-width: 768px) {
     display: flex;
     flex-direction: column;
     overflow-y: auto;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
+    width: 100vw;
+    max-width: 100vw;
   }
   
   // === SECTION IMAGES CARBON (Côté Gauche) ===
@@ -1238,11 +1235,11 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.
 @keyframes dialogSlideIn {
   0% {
     opacity: 0;
-    transform: translateX(100%);
+    transform: translateY(20px);
   }
   100% {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateY(0);
   }
 }
 
@@ -2119,7 +2116,7 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.
     padding-top: 0;
     display: flex !important;
     flex-direction: column !important;
-    height: calc(100vh - 140px);
+    height: calc(100vh - 60px);
     overflow-y: auto !important;
     overflow-x: hidden !important;
     -webkit-overflow-scrolling: touch;
@@ -2129,7 +2126,7 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.
       position: relative;
       overflow: visible;
 
-      .main-image-container {
+    .main-image-container {
         height: 500px; // Hauteur augmentée pour mobile
         margin-bottom: 0.5rem;
         
@@ -2439,11 +2436,13 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.
 }
 
 // === FALLBACK POUR PRODUCTION ===
+// Les animations utilisent opacity:0 comme état initial.
+// Le fallback .loaded est appliqué dynamiquement depuis le TypeScript
+// pour garantir la visibilité si les animations CSS ne se déclenchent pas.
 .premium-info-section {
   .access-status,
   .contact-card,
   .location-card {
-    // Forcer l'affichage si les animations ne marchent pas
     opacity: 1 !important;
     transform: none !important;
   }
@@ -2475,5 +2474,258 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.
   }
   100% {
     background-position: calc(200px + 100%) 0;
+  }
+}
+
+// === MÉDIAS 360° ET VIDÉO ===
+
+// Badge "360°" affiché sur le slide panorama
+.panorama-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  backdrop-filter: blur(4px);
+  z-index: 5;
+  pointer-events: none;
+
+  i { font-size: 0.75rem; color: #4ade80; }
+}
+
+// Wrapper du slide panorama — le viewer photo-sphere a besoin d'une hauteur fixe
+.panorama-slide-wrapper {
+  galery-video360-item {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+// Miniature vidéo dans la barre de thumbnails
+.thumb-video-placeholder {
+  width: 100%;
+  height: 100%;
+  background: #1a1a2e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+
+  i {
+    font-size: 1.5rem;
+    color: rgba(255, 255, 255, 0.8);
+  }
+}
+
+// Miniature 360° dans la barre de thumbnails
+.thumb-360-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  border-radius: 4px;
+
+  i {
+    font-size: 1.25rem;
+    color: #4ade80;
+  }
+
+  span {
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.9);
+    letter-spacing: 0.05em;
+  }
+}
+
+// === VIEWER 360° PLEIN ÉCRAN ===
+.panorama-fullscreen-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.97);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .panorama-fullscreen-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    .panorama-fullscreen-header {
+      flex-shrink: 0;
+      height: 56px;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+      .panorama-fullscreen-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: white;
+        font-size: 1rem;
+        font-weight: 600;
+
+        i { color: #4ade80; font-size: 1.1rem; }
+      }
+
+      .panorama-close-btn {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        color: white;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background 0.2s;
+
+        &:hover { background: rgba(255, 255, 255, 0.2); }
+        i { font-size: 1rem; }
+      }
+    }
+
+    .panorama-fullscreen-viewer {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+
+      galery-video360-item {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+    }
+  }
+}
+
+// === SLIDE PANORAMA dans le slider principal ===
+.panorama-slide-wrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+
+  .panorama-thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.75);
+    transition: filter 0.3s;
+  }
+
+  &:hover .panorama-thumb { filter: brightness(0.6); }
+
+  .panorama-overlay-hint {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+
+    i {
+      font-size: 3rem;
+      color: rgba(255, 255, 255, 0.8);
+      text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    }
+  }
+
+  .panorama-badge-clickable {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.75);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255,255,255,0.2);
+    white-space: nowrap;
+    pointer-events: none;
+
+    i { color: #4ade80; font-size: 0.85rem; }
+  }
+}
+
+// === LOADING STATE pendant classification async ===
+.media-loading-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #111;
+
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255,255,255,0.1);
+    border-top-color: rgba(255,255,255,0.7);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// === PANORAMA dans la galerie plein écran ===
+.gallery-track {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.3s ease;
+}
+
+.gallery-panorama-placeholder {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .gallery-panorama-hint {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: white;
+
+    i { font-size: 3rem; color: #4ade80; }
+    span { font-size: 1rem; font-weight: 600; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
   }
 }

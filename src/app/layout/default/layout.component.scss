@@ -1,1 +1,30 @@
+// Layout principal — structure fixe avec header sticky
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  max-width: 100vw;
+  overflow-x: hidden;
+}
 
+// Header fixe en haut — ne scroll pas avec la page
+.app-layout__header {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  flex-shrink: 0;
+  width: 100%;
+  max-width: 100%;
+}
+
+// Zone de contenu — prend le reste de la hauteur
+.app-layout__content {
+  flex: 1;
+  overflow-x: hidden;
+  min-width: 0; // Empêche le flex child de déborder
+}
+
+.app-layout__content__inner {
+  overflow-x: hidden;
+  min-width: 0;
+}

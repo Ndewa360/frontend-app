@@ -48,14 +48,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 html, body { height: 100%; }
-body { 
-  margin: 0; 
+body {
+  margin: 0;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, "Helvetica Neue", sans-serif;
 }
 
 // Suppression de l'ombre parasite sur le modal des gérants
-// Le panelClass 'manager-modal-panel' est appliqué sur le cdk-overlay-pane
-// Les styles doivent cibler les éléments enfants sans encapsulation
 .manager-modal-panel {
   --mdc-dialog-container-elevation: none;
   --mdc-dialog-container-shadow-color: transparent;
@@ -72,11 +70,139 @@ body {
   }
 }
 
-// Cibler aussi via le cdk-overlay-pane parent
 .cdk-overlay-pane.manager-modal-panel {
   .mat-mdc-dialog-container .mdc-dialog__surface,
   .mat-mdc-dialog-surface {
     box-shadow: none !important;
     padding: 0 !important;
   }
+}
+
+// === DIALOG UNIT-DETAIL PLEIN ÉCRAN ===
+// Neutralise tous les offsets Angular Material sur le cdk-overlay-pane
+.cdk-overlay-pane.unit-detail-dialog-container {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: 100vw !important;
+  max-height: 100vh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  transform: none !important;
+  translate: none !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+.unit-detail-dialog-container {
+  // Angular Material v14
+  .mat-dialog-container {
+    padding: 0 !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+    overflow: hidden !important;
+    box-shadow: none !important;
+    transform: none !important;
+  }
+
+  // Angular Material v15+ (MDC)
+  .mat-mdc-dialog-container,
+  .mdc-dialog__container,
+  .mdc-dialog__surface,
+  .mat-mdc-dialog-surface {
+    padding: 0 !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+    overflow: hidden !important;
+    box-shadow: none !important;
+    transform: none !important;
+    translate: none !important;
+  }
+}
+
+// Empêcher le scroll du body quand le dialog est ouvert
+body.cdk-global-scrollblock {
+  overflow-y: hidden !important;
+}
+
+// Bloquer le scroll de page quand le panel de filtres est ouvert
+body.filters-panel-open,
+html:has(body.filters-panel-open) {
+  overflow: hidden !important;
+
+  // Bloquer tous les conteneurs scrollables du layout
+  main,
+  .app-layout,
+  .app-layout__content,
+  .app-layout__content__inner,
+  .app-sidenav-container,
+  .app-sidenav-container__content,
+  .mat-sidenav-content,
+  .mat-drawer-content,
+  youpez-sidenav-container {
+    overflow: hidden !important;
+  }
+}
+
+// Responsive global — éviter le débordement horizontal sur mobile
+@media (max-width: 768px) {
+  html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+
+  // Barre de recherche — masquer texte sur très petit écran
+  .search-bar-minimal .search-container {
+    .location-indicator .location-status span {
+      display: none;
+    }
+    .filters-toggle-btn .filters-text {
+      display: none;
+    }
+  }
+
+  // Panel filtres plein écran sur mobile
+  .filters-floating-panel {
+    width: 100vw !important;
+    max-width: 100vw !important;
+  }
+}
+
+// Prévention globale du scroll horizontal
+// S'applique à toutes les pages
+main {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+.app-layout,
+.app-layout__content,
+.app-layout__content__inner {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+// Sections décoratives de la landing page
+// Les formes radiales/hexagonales débordent intentionnellement
+// mais ne doivent pas créer de scrollbar
+.hero-section,
+.profiles-section,
+.features-section,
+.demo-section,
+.agent-demo-section,
+.testimonials-section,
+.pricing-section,
+.faq-section,
+.cta-section,
+.problem-hero {
+  overflow-x: hidden;
 }

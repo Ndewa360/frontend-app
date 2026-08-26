@@ -10,25 +10,15 @@
       </button>
 
       <div class="navigation-section" *ngIf="allUnits.length > 1">
-        <button
-          *ngIf="canNavigatePrevious"
-          (click)="navigateToPrevious()"
-          class="nav-button"
-          mat-icon-button>
+        <button *ngIf="canNavigatePrevious" (click)="navigateToPrevious()" class="nav-button" mat-icon-button>
           <i class="fas fa-chevron-left"></i>
         </button>
-
         <div class="unit-counter">
           <span class="current">{{ currentUnitIndex + 1 }}</span>
           <span class="separator">/</span>
           <span class="total">{{ allUnits.length }}</span>
         </div>
-
-        <button
-          *ngIf="canNavigateNext"
-          (click)="navigateToNext()"
-          class="nav-button"
-          mat-icon-button>
+        <button *ngIf="canNavigateNext" (click)="navigateToNext()" class="nav-button" mat-icon-button>
           <i class="fas fa-chevron-right"></i>
         </button>
       </div>
@@ -43,32 +33,21 @@
 
     <!-- Mobile Version -->
     <div class="header-content mobile-header">
-      <!-- Single line: Close, Navigation and Share -->
       <div class="mobile-header-row mobile-header-single">
         <button (click)="closeDialog()" class="mobile-close-button" mat-icon-button>
           <i class="fas fa-times"></i>
         </button>
 
         <div class="mobile-navigation" *ngIf="allUnits.length > 1">
-          <button
-            *ngIf="canNavigatePrevious"
-            (click)="navigateToPrevious()"
-            class="mobile-nav-button"
-            mat-icon-button>
+          <button *ngIf="canNavigatePrevious" (click)="navigateToPrevious()" class="mobile-nav-button" mat-icon-button>
             <i class="fas fa-chevron-left"></i>
           </button>
-
           <div class="mobile-unit-counter">
             <span class="current">{{ currentUnitIndex + 1 }}</span>
             <span class="separator">/</span>
             <span class="total">{{ allUnits.length }}</span>
           </div>
-
-          <button
-            *ngIf="canNavigateNext"
-            (click)="navigateToNext()"
-            class="mobile-nav-button"
-            mat-icon-button>
+          <button *ngIf="canNavigateNext" (click)="navigateToNext()" class="mobile-nav-button" mat-icon-button>
             <i class="fas fa-chevron-right"></i>
           </button>
         </div>
@@ -77,8 +56,6 @@
           <i class="fas fa-share-alt"></i>
         </button>
       </div>
-
-
     </div>
   </header>
 
@@ -88,8 +65,14 @@
     <!-- Images Section (Left Side) -->
     <section class="images-section">
       <div class="main-image-container">
-        <!-- Images with enhanced native swipe -->
-        <div class="image-swiper" 
+
+        <!-- Loading state pendant la classification async -->
+        <div *ngIf="mediaLoading" class="media-loading-placeholder">
+          <div class="loading-spinner"></div>
+        </div>
+
+        <!-- Slider une fois les médias classifiés -->
+        <div *ngIf="!mediaLoading" class="image-swiper"
              (touchstart)="onTouchStart($event)"
              (touchmove)="onTouchMove($event)"
              (touchend)="onTouchEnd($event)"
@@ -97,67 +80,106 @@
              style="touch-action: pan-x; user-select: none; -webkit-user-select: none;">
           <div class="slider-container">
             <div class="slider-track" [style.transform]="getSliderTransform()">
-              <div class="slider-slide" *ngFor="let image of unitImages; let i = index">
-                <img 
-                  [src]="image" 
+              <div class="slider-slide" *ngFor="let item of unitMediaItems; let i = index">
+
+                <!-- Image classique -->
+                <img
+                  *ngIf="item.type === 'image' || item.type === 'unknown'"
+                  [src]="item.url"
                   [alt]="('UNIT_DETAIL.IMAGES.PHOTO_ALT' | translate) + ' ' + (i + 1)"
                   class="property-image"
                   (click)="openImageGallery()"
                   (error)="onImageError($event, i)"
                   (load)="onImageLoad($event, i)"
                   loading="eager">
+
+                <!-- Vidéo -->
+                <video
+                  *ngIf="item.type === 'video'"
+                  [src]="item.url"
+                  controls
+                  class="property-image"
+                  style="background:#000;"
+                  preload="metadata">
+                </video>
+
+                <!-- Panorama 360° : miniature plate + badge cliquable -->
+                <div
+                  *ngIf="item.type === 'panorama'"
+                  class="panorama-slide-wrapper"
+                  (click)="openPanoramaFullscreen(item.url); $event.stopPropagation()">
+                  <img [src]="item.url" class="property-image panorama-thumb" alt="360°"
+                       (error)="onImageError($event, i)">
+                  <div class="panorama-overlay-hint">
+                    <i class="fas fa-expand-arrows-alt"></i>
+                  </div>
+                  <div class="panorama-badge panorama-badge-clickable">
+                    <i class="fas fa-globe"></i>
+                    <span>360° — Cliquer pour explorer</span>
+                  </div>
+                </div>
+
               </div>
             </div>
           </div>
-          
-          <!-- Navigation -->
-          <div *ngIf="unitImages.length > 1" class="slider-controls">
-            <button (click)="previousImage(); $event.stopPropagation()" 
-                    class="slider-btn slider-btn-prev" 
-                    type="button">
+
+          <!-- Navigation arrows -->
+          <div *ngIf="unitMediaItems.length > 1" class="slider-controls">
+            <button (click)="previousImage(); $event.stopPropagation()"
+                    class="slider-btn slider-btn-prev" type="button">
               <i class="fas fa-chevron-left"></i>
             </button>
-            <button (click)="nextImage(); $event.stopPropagation()" 
-                    class="slider-btn slider-btn-next" 
-                    type="button">
+            <button (click)="nextImage(); $event.stopPropagation()"
+                    class="slider-btn slider-btn-next" type="button">
               <i class="fas fa-chevron-right"></i>
             </button>
           </div>
-          
-          <!-- Pagination -->
-          <div *ngIf="unitImages.length > 1" class="slider-dots">
-            <span *ngFor="let image of unitImages; let i = index"
+
+          <!-- Dots -->
+          <div *ngIf="unitMediaItems.length > 1" class="slider-dots">
+            <span *ngFor="let item of unitMediaItems; let i = index"
                   (click)="goToImage(i); $event.stopPropagation()"
                   class="slider-dot"
                   [class.active]="i === currentImageIndex">
             </span>
           </div>
         </div>
-        
-        <!-- Overlay with Controls -->
-        <div class="image-overlay">
-          <!-- Image Counter -->
-          <div class="image-counter" *ngIf="unitImages.length > 1">
-            <i class="fas fa-camera"></i>
-            <span>{{ currentImageIndex + 1 }} / {{ unitImages.length }}</span>
-          </div>
 
-          <!-- Fullscreen Button -->
+        <!-- Overlay with Controls (uniquement pour images classiques) -->
+        <div class="image-overlay" *ngIf="!mediaLoading">
+          <div class="image-counter" *ngIf="unitMediaItems.length > 1">
+            <i class="fas fa-camera"></i>
+            <span>{{ currentImageIndex + 1 }} / {{ unitMediaItems.length }}</span>
+          </div>
+          <!-- Bouton plein écran : ouvre viewer 360 si panorama, galerie sinon -->
           <button (click)="openImageGallery()" class="fullscreen-button" mat-icon-button>
             <i class="fas fa-expand"></i>
           </button>
         </div>
       </div>
-      
+
       <!-- Thumbnails -->
-      <div *ngIf="unitImages.length > 1" class="thumbnails-section">
+      <div *ngIf="!mediaLoading && unitMediaItems.length > 1" class="thumbnails-section">
         <div class="thumbnails-wrapper">
-          <div 
-            *ngFor="let image of unitImages; let i = index; trackBy: trackByIndex" 
+          <div
+            *ngFor="let item of unitMediaItems; let i = index; trackBy: trackByIndex"
             (click)="goToImage(i)"
             class="thumbnail-item"
             [class.active]="i === currentImageIndex">
-            <img [src]="image" [alt]="('UNIT_DETAIL.IMAGES.THUMBNAIL_ALT' | translate) + ' ' + (i + 1)" loading="lazy">
+            <!-- Image -->
+            <img *ngIf="item.type === 'image' || item.type === 'unknown'"
+                 [src]="item.url"
+                 [alt]="('UNIT_DETAIL.IMAGES.THUMBNAIL_ALT' | translate) + ' ' + (i + 1)"
+                 loading="lazy">
+            <!-- Vidéo -->
+            <div *ngIf="item.type === 'video'" class="thumb-video-placeholder">
+              <i class="fas fa-play-circle"></i>
+            </div>
+            <!-- 360° -->
+            <div *ngIf="item.type === 'panorama'" class="thumb-360-placeholder">
+              <i class="fas fa-globe"></i>
+              <span>360°</span>
+            </div>
           </div>
         </div>
       </div>
@@ -165,8 +187,6 @@
 
     <!-- Details Section (Right Side with Scroll) -->
     <section class="details-section">
-      
-      <!-- Scrollable Content -->
       <div class="details-content">
         
         <!-- Property Header -->
@@ -178,7 +198,6 @@
               <span>{{ unit.property?.location || ('UNIT_DETAIL.PROPERTY.DEFAULT_LOCATION' | translate) }}</span>
             </div>
           </div>
-          
           <div class="price-display">
             <div class="price-amount">{{ formatPrice(unit.price) }}</div>
             <div class="price-frequency">{{ 'UNIT_DETAIL.PRICE.PER_MONTH' | translate }}</div>
@@ -191,7 +210,6 @@
             <i class="fas fa-home"></i>
             <span>{{ 'UNIT_DETAIL.SECTIONS.FEATURES' | translate }}</span>
           </h2>
-
           <div class="features-grid">
             <div class="feature-card">
               <i class="fas fa-building"></i>
@@ -200,7 +218,6 @@
                 <span class="feature-value">{{ unit.type || ('UNIT_DETAIL.FEATURES.DEFAULT_TYPE' | translate) }}</span>
               </div>
             </div>
-
             <div class="feature-card" *ngIf="unit.property?.totalSurface">
               <i class="fas fa-ruler-combined"></i>
               <div class="feature-content">
@@ -208,7 +225,6 @@
                 <span class="feature-value">{{ unit.property.totalSurface }} m²</span>
               </div>
             </div>
-
             <div class="feature-card" *ngIf="unit.specifity?.numberOfBathroom">
               <i class="fas fa-bath"></i>
               <div class="feature-content">
@@ -225,26 +241,22 @@
             <i class="fas fa-star"></i>
             <span>{{ 'UNIT_DETAIL.SECTIONS.AMENITIES' | translate }}</span>
           </h2>
-
           <div class="amenities-list">
             <div *ngIf="hasAmenity('kitchen')" class="amenity-item">
               <i class="fas fa-utensils"></i>
               <span>{{ 'UNIT_DETAIL.AMENITIES.KITCHEN' | translate }}</span>
               <i class="fas fa-check-circle check-icon"></i>
             </div>
-
             <div *ngIf="hasAmenity('privateShower')" class="amenity-item">
               <i class="fas fa-shower"></i>
               <span>{{ 'UNIT_DETAIL.AMENITIES.PRIVATE_SHOWER' | translate }}</span>
               <i class="fas fa-check-circle check-icon"></i>
             </div>
-
             <div *ngIf="hasAmenity('parking')" class="amenity-item">
               <i class="fas fa-parking"></i>
               <span>{{ 'UNIT_DETAIL.AMENITIES.PARKING' | translate }}</span>
               <i class="fas fa-check-circle check-icon"></i>
             </div>
-
             <div *ngIf="hasAmenity('security')" class="amenity-item">
               <i class="fas fa-shield-alt"></i>
               <span>{{ 'UNIT_DETAIL.AMENITIES.SECURITY' | translate }}</span>
@@ -288,14 +300,12 @@
           </div>
         </div>
 
-        <!-- Premium Information Section (after payment) -->
+        <!-- Premium Information Section -->
         <div class="premium-info-section" *ngIf="hasPremiumAccess && ownerInfo">
           <h2 class="section-heading">
             <i class="fas fa-crown"></i>
             <span>{{ 'UNIT_DETAIL.SECTIONS.CONTACT_INFO' | translate }}</span>
           </h2>
-
-          <!-- Access Status -->
           <div class="access-status">
             <div class="status-badge">
               <i class="fas fa-check-circle"></i>
@@ -306,7 +316,6 @@
               <span>{{ getRemainingDaysText() }}</span>
             </div>
           </div>
-
           <div class="premium-content">
             <div class="contact-card">
               <div class="contact-header">
@@ -317,20 +326,14 @@
                 <div class="contact-item">
                   <i class="fas fa-mobile-alt"></i>
                   <span>{{ getContactPhone() }}</span>
-                  <button class="copy-button"
-                          mat-icon-button
-                          (click)="copyToClipboard(getContactPhone(), 'phone')"
-                          [title]="'UNIT_DETAIL.CONTACT.COPY_PHONE' | translate">
+                  <button class="copy-button" mat-icon-button (click)="copyToClipboard(getContactPhone(), 'phone')" [title]="'UNIT_DETAIL.CONTACT.COPY_PHONE' | translate">
                     <i class="fas fa-copy"></i>
                   </button>
                 </div>
                 <div class="contact-item">
                   <i class="fas fa-envelope"></i>
                   <span>{{ getContactEmail() }}</span>
-                  <button class="copy-button"
-                          mat-icon-button
-                          (click)="copyToClipboard(getContactEmail(), 'email')"
-                          [title]="'UNIT_DETAIL.CONTACT.COPY_EMAIL' | translate">
+                  <button class="copy-button" mat-icon-button (click)="copyToClipboard(getContactEmail(), 'email')" [title]="'UNIT_DETAIL.CONTACT.COPY_EMAIL' | translate">
                     <i class="fas fa-copy"></i>
                   </button>
                 </div>
@@ -344,10 +347,7 @@
                 </div>
                 <div *ngIf="isPropertyManagedByAgent()" class="contact-item agency-info" style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 12px; display: flex; align-items: center;">
                   <div class="agency-logo" style="width: 40px; height: 40px; border-radius: 8px; background: #DAA520; display: flex; align-items: center; justify-content: center; margin-right: 12px;">
-                    <img *ngIf="getAgencyLogo(); else defaultAgencyIcon" 
-                         [src]="getAgencyLogo()" 
-                         [alt]="getAgencyName() + ' logo'"
-                         style="width: 32px; height: 32px; border-radius: 6px; object-fit: cover;">
+                    <img *ngIf="getAgencyLogo(); else defaultAgencyIcon" [src]="getAgencyLogo()" [alt]="getAgencyName() + ' logo'" style="width: 32px; height: 32px; border-radius: 6px; object-fit: cover;">
                     <ng-template #defaultAgencyIcon>
                       <i class="fas fa-building" style="color: white; font-size: 18px;"></i>
                     </ng-template>
@@ -360,7 +360,6 @@
                 </div>
               </div>
             </div>
-
             <div class="location-card">
               <div class="location-header">
                 <i class="fas fa-map-marked-alt"></i>
@@ -374,9 +373,7 @@
                 <div class="coordinates-item">
                   <i class="fas fa-crosshairs"></i>
                   <span>{{ 'UNIT_DETAIL.LOCATION.GPS_AVAILABLE' | translate }}</span>
-                  <button class="view-map-button"
-                          (click)="openMap()"
-                          [title]="'UNIT_DETAIL.LOCATION.OPEN_MAPS' | translate">
+                  <button class="view-map-button" (click)="openMap()" [title]="'UNIT_DETAIL.LOCATION.OPEN_MAPS' | translate">
                     <i class="fas fa-map-marked-alt"></i>
                     <span>{{ 'UNIT_DETAIL.LOCATION.VIEW_MAP' | translate }}</span>
                   </button>
@@ -386,58 +383,36 @@
           </div>
         </div>
 
-
-        <!-- Payment Section for premium access -->
+        <!-- Payment Section -->
         <div class="payment-section" *ngIf="!hasPremiumAccess">
           <h2 class="section-heading">
             <i class="fas fa-lock"></i>
             <span>{{ 'UNIT_DETAIL.PREMIUM.GLOBAL_PLAN' | translate }}</span>
           </h2>
-
-          <!-- Loading -->
           <div *ngIf="premiumLoading" class="premium-loading">
             <i class="fas fa-spinner fa-spin"></i>
             <span>{{ 'UNIT_DETAIL.PREMIUM.CHECKING_ACCESS' | translate }}</span>
           </div>
-
-          <!-- Error -->
           <div *ngIf="premiumError && !premiumLoading" class="premium-error">
             <i class="fas fa-exclamation-triangle"></i>
             <span>{{ premiumError }}</span>
           </div>
-
-          <!-- Payment Card -->
           <div *ngIf="!premiumLoading" class="payment-card">
             <div class="payment-header">
               <i class="fas fa-crown"></i>
               <h3>{{ 'UNIT_DETAIL.PREMIUM.ALL_OWNERS_ACCESS' | translate }}</h3>
               <p>{{ 'UNIT_DETAIL.PREMIUM.SINGLE_PAYMENT_DESC' | translate }}</p>
             </div>
-
             <div class="payment-features">
-              <div class="feature-item">
-                <i class="fas fa-check"></i>
-                <span>{{ 'UNIT_DETAIL.PREMIUM.FEATURES.ALL_OWNERS' | translate }}</span>
-              </div>
-              <div class="feature-item">
-                <i class="fas fa-check"></i>
-                <span>{{ 'UNIT_DETAIL.PREMIUM.FEATURES.DIRECT_CONTACTS' | translate }}</span>
-              </div>
-              <div class="feature-item">
-                <i class="fas fa-check"></i>
-                <span>{{ 'UNIT_DETAIL.PREMIUM.FEATURES.WHATSAPP' | translate }}</span>
-              </div>
-              <div class="feature-item">
-                <i class="fas fa-check"></i>
-                <span>{{ 'UNIT_DETAIL.PREMIUM.FEATURES.VALIDITY' | translate }}</span>
-              </div>
+              <div class="feature-item"><i class="fas fa-check"></i><span>{{ 'UNIT_DETAIL.PREMIUM.FEATURES.ALL_OWNERS' | translate }}</span></div>
+              <div class="feature-item"><i class="fas fa-check"></i><span>{{ 'UNIT_DETAIL.PREMIUM.FEATURES.DIRECT_CONTACTS' | translate }}</span></div>
+              <div class="feature-item"><i class="fas fa-check"></i><span>{{ 'UNIT_DETAIL.PREMIUM.FEATURES.WHATSAPP' | translate }}</span></div>
+              <div class="feature-item"><i class="fas fa-check"></i><span>{{ 'UNIT_DETAIL.PREMIUM.FEATURES.VALIDITY' | translate }}</span></div>
             </div>
-
             <div class="payment-price">
               <span class="price">{{ premiumPrice }} FCFA</span>
               <span class="duration">{{ 'UNIT_DETAIL.PREMIUM.DURATION' | translate }}</span>
             </div>
-
             <button (click)="onPurchasePremiumAccess()" class="premium-button" mat-raised-button>
               <i class="fas fa-crown"></i>
               <span>{{ 'UNIT_DETAIL.PREMIUM.BUY_PLAN' | translate }}</span>
@@ -445,8 +420,8 @@
           </div>
         </div>
       </div>
-      
-      <!-- Integrated Footer (LinkedIn Style) -->
+
+      <!-- Footer -->
       <footer class="details-footer">
         <div class="footer-content">
           <div class="price-summary">
@@ -454,18 +429,15 @@
             <span class="price-amount">{{ formatPrice(unit.price) }}</span>
             <span class="price-period">{{ 'UNIT_DETAIL.PRICE.PER_MONTH' | translate }}</span>
           </div>
-          
           <div class="action-buttons">
             <button (click)="onContactOwner()" class="primary-button" mat-raised-button color="primary">
               <i class="fas fa-comments"></i>
               <span>{{ 'UNIT_DETAIL.ACTIONS.CONTACT' | translate }}</span>
             </button>
-
             <button class="secondary-button" mat-stroked-button>
               <i class="fas fa-phone"></i>
               <span>{{ 'UNIT_DETAIL.ACTIONS.CALL' | translate }}</span>
             </button>
-
             <button class="icon-button" mat-icon-button>
               <i class="fas fa-calendar-alt"></i>
             </button>
@@ -476,12 +448,34 @@
   </main>
 </div>
 
-<!-- Full Screen Gallery -->
+<!-- Viewer 360° plein écran -->
+<div class="panorama-fullscreen-overlay" *ngIf="panoramaFullscreenUrl" (click)="closePanoramaFullscreen()">
+  <div class="panorama-fullscreen-container" (click)="$event.stopPropagation()">
+    <div class="panorama-fullscreen-header">
+      <div class="panorama-fullscreen-title">
+        <i class="fas fa-globe"></i>
+        <span>Visite 360°</span>
+      </div>
+      <button (click)="closePanoramaFullscreen()" class="panorama-close-btn" type="button">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="panorama-fullscreen-viewer">
+      <galery-video360-item
+        [urlFile]="panoramaFullscreenUrl"
+        [isFullScreen]="true"
+        [isDeleting]="false">
+      </galery-video360-item>
+    </div>
+  </div>
+</div>
+
+<!-- Full Screen Gallery (images classiques uniquement) -->
 <div class="image-gallery-overlay" *ngIf="isImageGalleryVisible" (click)="closeImageGallery()">
   <div class="gallery-container" (click)="$event.stopPropagation()">
     <div class="gallery-header">
       <div class="gallery-counter">
-        <span>{{ currentImageIndex + 1 }} / {{ unitImages.length }}</span>
+        <span>{{ currentImageIndex + 1 }} / {{ unitMediaItems.length }}</span>
       </div>
       <button (click)="closeImageGallery()" class="gallery-close-button" mat-icon-button>
         <i class="fas fa-times"></i>
@@ -491,15 +485,35 @@
          (touchstart)="onTouchStart($event)"
          (touchmove)="onTouchMove($event)"
          (touchend)="onTouchEnd($event)">
-      <div class="gallery-container" [style.transform]="'translateX(' + (-currentImageIndex * 100) + '%)'">
-        <div class="gallery-slide" *ngFor="let image of unitImages; let i = index">
-          <img [src]="image" [alt]="('UNIT_DETAIL.IMAGES.PHOTO_ALT' | translate) + ' ' + (i + 1)" class="gallery-image">
+      <div class="gallery-track" [style.transform]="'translateX(' + (-currentImageIndex * 100) + '%)'">
+        <div class="gallery-slide" *ngFor="let item of unitMediaItems; let i = index">
+          <img *ngIf="item.type === 'image' || item.type === 'unknown'"
+               [src]="item.url"
+               [alt]="('UNIT_DETAIL.IMAGES.PHOTO_ALT' | translate) + ' ' + (i + 1)"
+               class="gallery-image">
+          <video *ngIf="item.type === 'video'"
+                 [src]="item.url"
+                 controls
+                 class="gallery-image"
+                 style="background:#000;max-height:90vh;"
+                 preload="metadata">
+          </video>
+          <!-- Dans la galerie, les panoramas ouvrent le viewer 360 -->
+          <div *ngIf="item.type === 'panorama'"
+               class="gallery-panorama-placeholder"
+               (click)="openPanoramaFullscreen(item.url); closeImageGallery()">
+            <img [src]="item.url" class="gallery-image" style="opacity:0.5;" alt="360°">
+            <div class="gallery-panorama-hint">
+              <i class="fas fa-globe"></i>
+              <span>Cliquer pour ouvrir la visite 360°</span>
+            </div>
+          </div>
         </div>
       </div>
       <button *ngIf="currentImageIndex > 0" (click)="previousImage()" class="gallery-nav-button prev-button">
         <i class="fas fa-chevron-left"></i>
       </button>
-      <button *ngIf="currentImageIndex < unitImages.length - 1" (click)="nextImage()" class="gallery-nav-button next-button">
+      <button *ngIf="currentImageIndex < unitMediaItems.length - 1" (click)="nextImage()" class="gallery-nav-button next-button">
         <i class="fas fa-chevron-right"></i>
       </button>
     </div>

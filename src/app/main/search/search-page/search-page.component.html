@@ -56,33 +56,32 @@
   </div>
 
 
-<!-- Popular searches (displayed when no active search) -->
-<div *ngIf="!isLoading && (searchResults?.length || 0) === 0 && (popularSearches?.length || 0) > 0" class="popular-searches-section">
-  <div class="section-header">
-    <h3 class="section-title">{{ 'SEARCH_MODULE.POPULAR_SEARCHES.TITLE' | translate }}</h3>
-    <p class="section-subtitle">{{ 'SEARCH_MODULE.POPULAR_SEARCHES.SUBTITLE' | translate }}</p>
+  <!-- Popular searches (displayed when no active search) -->
+  <div *ngIf="!isLoading && !hasSearched && (allResults?.length || 0) === 0 && (popularSearches?.length || 0) > 0" class="popular-searches-section">
+    <div class="section-header">
+      <h3 class="section-title">{{ 'SEARCH_MODULE.POPULAR_SEARCHES.TITLE' | translate }}</h3>
+      <p class="section-subtitle">{{ 'SEARCH_MODULE.POPULAR_SEARCHES.SUBTITLE' | translate }}</p>
+    </div>
+
+    <div class="popular-searches-grid">
+      <button *ngFor="let search of popularSearches || []" (click)="onPopularSearchClick(search)" class="popular-search-card"
+        type="button">
+        <div class="card-content">
+          <h4 class="card-title">{{ search.label }}</h4>
+          <p class="card-count">{{ getAvailableUnitsCount(search) }} {{ 'SEARCH_MODULE.POPULAR_SEARCHES.AVAILABLE_UNITS' | translate }}</p>
+        </div>
+        <youpez-ibm-icon iconName="arrow_forward" iconSize="20" class="card-arrow">
+        </youpez-ibm-icon>
+      </button>
+    </div>
   </div>
 
-  <div class="popular-searches-grid">
-    <button *ngFor="let search of popularSearches || []" (click)="onPopularSearchClick(search)" class="popular-search-card"
-      type="button">
-      <div class="card-content">
-        <h4 class="card-title">{{ search.label }}</h4>
-        <p class="card-count">{{ getAvailableUnitsCount(search) }} {{ 'SEARCH_MODULE.POPULAR_SEARCHES.AVAILABLE_UNITS' | translate }}</p>
-      </div>
-      <youpez-ibm-icon iconName="arrow_forward" iconSize="20" class="card-arrow">
-      </youpez-ibm-icon>
-    </button>
-  </div>
-</div>
-
-<!-- Background overlay for filters -->
-<div *ngIf="showFilters" class="filters-overlay" (click)="closeFilters()"></div>
+  <!-- Background overlay for filters -->
+  <div *ngIf="showFilters" class="filters-overlay" (click)="closeFilters()"></div>
 
 
-
-<!-- Search results -->
-<div *ngIf="(searchResults?.length || 0) > 0 || isLoading" class="search-results-section">
+  <!-- Search results -->
+  <div *ngIf="(allResults?.length || 0) > 0 || isLoading" class="search-results-section">
 
   <!-- Results header -->
   <div class="results-header">
@@ -146,7 +145,7 @@
   <!-- Results grid -->
   <div *ngIf="!isLoading && (paginatedResults?.length || 0) > 0" class="results-grid" [class.list-view]="currentView === 'list'">
 
-    <div *ngFor="let result of paginatedResults || []; let i = index" class="result-card" (click)="openUnitDetail(result)">
+    <div *ngFor="let result of paginatedResults || []; let i = index" class="result-card" (click)="openUnitDetail(result)" role="article">
       <div class="card-image">
         <!-- Image slider with enhanced touch support -->
         <div class="image-slider" 
@@ -160,7 +159,7 @@
           <div class="slider-container">
             <div class="slider-track" [style.transform]="'translateX(-' + (getCurrentImageIndex(i) * 100) + '%)'">
               <div *ngFor="let media of getMediasForCard(result)" class="slider-slide">
-                <img [src]="media" [alt]="'Image of ' + result.code" class="room-image" loading="lazy">
+                <img [src]="media" [alt]="(getRoomTypeLabel(result.type) || '') + ' - ' + (result.property?.name || result.code) + ' - ' + (result.price | currency:'XAF':'symbol':'1.0-0') + '/mois'" class="room-image" loading="lazy">
               </div>
             </div>
           </div>
@@ -176,7 +175,7 @@
           </div>
 
           <!-- Pagination indicators -->
-          <div *ngIf="getMediasForCard(result).length > 1" class="slider-dots">
+          <div *ngIf="getMediasForCard(result).length > 1" class="slider-dots" (click)="$event.stopPropagation()">
             <span *ngFor="let media of getMediasForCard(result); let dotIndex = index"
                   (click)="setCurrentImage(i, dotIndex); $event.stopPropagation()"
                   class="slider-dot"
@@ -247,14 +246,11 @@
 
 
         <div class="card-actions">
-          <button class="btn btn-primary" (click)="openUnitDetail(result)" type="button">
-            <youpez-ibm-icon iconName="home" iconSize="16"></youpez-ibm-icon>
-            {{ 'SEARCH_MODULE.RESULTS.VIEW_DETAILS' | translate }}
-          </button>
-          <button class="btn btn-secondary" (click)="toggleFavorite(result)" type="button"
+          <button class="btn btn-secondary" (click)="toggleFavorite(result); $event.stopPropagation()" type="button"
             [title]="isFavorite(result) ? ('SEARCH_MODULE.RESULTS.REMOVE_FROM_FAVORITES' | translate) : ('SEARCH_MODULE.RESULTS.ADD_TO_FAVORITES' | translate)">
             <youpez-ibm-icon [iconName]="isFavorite(result) ? 'favorite' : 'favorite_border'" iconSize="16">
             </youpez-ibm-icon>
+            <span>{{ isFavorite(result) ? ('SEARCH_MODULE.RESULTS.REMOVE_FROM_FAVORITES' | translate) : ('SEARCH_MODULE.RESULTS.ADD_TO_FAVORITES' | translate) }}</span>
           </button>
         </div>
       </div>
@@ -351,7 +347,7 @@
           <youpez-ibm-icon iconName="refresh" iconSize="16"></youpez-ibm-icon>
           <span>{{ 'SEARCH_MODULE.EMPTY_STATE.RESET_FILTERS_BTN' | translate }}</span>
         </button>
-        <button (click)="showFilters = true" class="btn btn-outline" type="button">
+        <button (click)="openFilters()" class="btn btn-outline" type="button">
           <youpez-ibm-icon iconName="tune" iconSize="16"></youpez-ibm-icon>
           <span>{{ 'SEARCH_MODULE.EMPTY_STATE.MODIFY_FILTERS_BTN' | translate }}</span>
         </button>
@@ -359,9 +355,9 @@
     </div>
   </div>
 </div>
-</div>
+  </div>
 
-<!-- Floating filters panel -->
+  <!-- Floating filters panel -->
 <div *ngIf="showFilters" class="filters-floating-panel">
   <div class="filters-content" (click)="$event.stopPropagation()">
     <div class="filters-header">
@@ -373,6 +369,9 @@
         <youpez-ibm-icon iconName="close" iconSize="20"></youpez-ibm-icon>
       </button>
     </div>
+
+    <!-- Zone scrollable : filtres rapides + formulaire -->
+    <div class="filters-scrollable">
 
     <!-- Quick filters at top -->
     <div class="quick-filters-section">
@@ -597,17 +596,20 @@
         </div>
       </div>
 
-      <!-- Filter panel actions -->
-      <div class="filters-actions">
-        <button (click)="resetFilters()" class="btn-reset" type="button">
-          {{ 'SEARCH_MODULE.FILTERS.RESET' | translate }}
-        </button>
-        <button (click)="applyFilters()" class="btn-apply" type="button">
-          {{ 'SEARCH_MODULE.FILTERS.APPLY' | translate }}
-        </button>
-      </div>
     </form>
+
+    </div><!-- /.filters-scrollable -->
+
+    <!-- Filter panel actions (outside form, always visible) -->
+    <div class="filters-actions">
+      <button (click)="resetFilters()" class="btn-reset" type="button">
+        {{ 'SEARCH_MODULE.FILTERS.RESET' | translate }}
+      </button>
+      <button (click)="applyFilters()" class="btn-apply" type="button">
+        {{ 'SEARCH_MODULE.FILTERS.APPLY' | translate }}
+      </button>
+    </div>
   </div>
 </div>
 
-<!-- Unit details dialog is now handled by MatDialog -->
+  <!-- Unit details dialog is now handled by MatDialog -->

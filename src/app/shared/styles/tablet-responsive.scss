@@ -79,7 +79,8 @@ $mobile-max: 600px;
 
 // ── 5. Modales et panels — pleine largeur sur tablette ────────────────────────
 @media (max-width: #{$tablet-max}) {
-  .cdk-overlay-pane {
+  // Exclure le dialog unit-detail qui doit rester 100vw
+  .cdk-overlay-pane:not(.unit-detail-dialog-container) {
     max-width: 95vw !important;
   }
 

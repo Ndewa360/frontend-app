@@ -6,8 +6,8 @@
       <div class="pm__header-left">
         <div class="pm__crown"><i class="fa fa-crown"></i></div>
         <div>
-          <div class="pm__title">Accès Premium</div>
-          <div class="pm__subtitle">Contactez les propriétaires directement</div>
+          <div class="pm__title">{{ 'SEARCH_MODULE.PREMIUM_MODAL.TITLE' | translate }}</div>
+          <div class="pm__subtitle">{{ 'SEARCH_MODULE.PREMIUM_MODAL.SUBTITLE' | translate }}</div>
         </div>
       </div>
       <button class="pm__close" (click)="closeModal()">
@@ -21,7 +21,7 @@
       <!-- Vérification -->
       <div *ngIf="step === 'checking'" class="pm__state">
         <div class="pm__spinner"></div>
-        <span>Vérification en cours…</span>
+        <span>{{ 'SEARCH_MODULE.PREMIUM_MODAL.LOADING_TEXT' | translate }}</span>
       </div>
 
       <!-- Offre -->
@@ -29,7 +29,7 @@
 
         <div *ngIf="error" class="pm__error">
           <i class="fa fa-exclamation-circle"></i> {{ error }}
-          <button (click)="resolveUserIdentity()">Réessayer</button>
+          <button (click)="resolveUserIdentity()">{{ 'SEARCH_MODULE.PREMIUM_MODAL.RETRY_BUTTON' | translate }}</button>
         </div>
 
         <!-- Prix mis en avant -->
@@ -38,15 +38,15 @@
             <span class="pm__price-value">{{ premiumPrice | number }}</span>
             <span class="pm__price-currency">FCFA</span>
           </div>
-          <div class="pm__price-label">pour 3 jours d'accès illimité</div>
+          <div class="pm__price-label">{{ 'SEARCH_MODULE.UNIT_DETAIL.GLOBAL_ACCESS_3_DAYS' | translate }}</div>
         </div>
 
         <!-- Avantages -->
         <ul class="pm__benefits">
-          <li><i class="fa fa-check"></i> Téléphone direct du propriétaire</li>
-          <li><i class="fa fa-check"></i> Email et WhatsApp</li>
-          <li><i class="fa fa-check"></i> Adresse précise du bien</li>
-          <li><i class="fa fa-check"></i> Accès à TOUS les propriétaires</li>
+          <li><i class="fa fa-check"></i> {{ 'SEARCH_MODULE.PREMIUM_MODAL.BENEFIT_ALL_OWNERS' | translate }}</li>
+          <li><i class="fa fa-check"></i> {{ 'SEARCH_MODULE.PREMIUM_MODAL.BENEFIT_DIRECT_CONTACTS' | translate }}</li>
+          <li><i class="fa fa-check"></i> {{ 'SEARCH_MODULE.PREMIUM_MODAL.BENEFIT_ADDRESSES' | translate }}</li>
+          <li><i class="fa fa-check"></i> {{ 'SEARCH_MODULE.PREMIUM_MODAL.BENEFIT_3_DAYS' | translate }}</li>
         </ul>
 
         <!-- Méthodes de paiement disponibles -->
@@ -60,11 +60,11 @@
         <button class="pm__cta" [disabled]="loading" (click)="goToPayment()">
           <i *ngIf="loading" class="fa fa-spinner fa-spin"></i>
           <i *ngIf="!loading" class="fa fa-lock"></i>
-          <span>{{ loading ? 'Préparation…' : 'Accéder pour ' + formatAmount(premiumPrice) }}</span>
+          <span>{{ loading ? ('SEARCH_MODULE.PREMIUM_MODAL.PROCESSING_TEXT' | translate) : ('SEARCH_MODULE.UNIT_DETAIL.BUY_PACKAGE' | translate) + ' — ' + formatAmount(premiumPrice) }}</span>
         </button>
 
         <div class="pm__secure">
-          <i class="fa fa-shield-alt"></i> Paiement 100% sécurisé
+          <i class="fa fa-shield-alt"></i> {{ 'SEARCH_MODULE.PREMIUM_MODAL.SECURE_PAYMENT' | translate }}
         </div>
       </div>
 
@@ -74,13 +74,13 @@
         <!-- Badge accès actif -->
         <div class="pm__access-badge">
           <i class="fa fa-check-circle"></i>
-          <span>Accès actif — {{ getRemainingDaysText() }}</span>
+          <span>{{ 'SEARCH_MODULE.PREMIUM_MODAL.ACTIVE_ACCESS' | translate }} — {{ getRemainingDaysText() }}</span>
         </div>
 
         <!-- Chargement infos -->
         <div *ngIf="!ownerInfo" class="pm__state">
           <div class="pm__spinner"></div>
-          <span>Chargement des informations…</span>
+          <span>{{ 'SEARCH_MODULE.PREMIUM_MODAL.LOADING_TEXT' | translate }}</span>
         </div>
 
         <!-- Infos propriétaire -->
@@ -91,7 +91,7 @@
             <div class="pm__avatar">{{ ownerInfo.owner.name | slice:0:1 | uppercase }}</div>
             <div>
               <div class="pm__owner-name">{{ ownerInfo.owner.name }}</div>
-              <div class="pm__owner-tag">Propriétaire vérifié</div>
+              <div class="pm__owner-tag">{{ 'SEARCH_MODULE.PREMIUM_MODAL.OWNER_INFO_TITLE' | translate }}</div>
             </div>
           </div>
 
@@ -103,7 +103,7 @@
                 <i class="fa fa-phone"></i>
               </div>
               <div class="pm__contact-info">
-                <span class="pm__contact-label">Téléphone</span>
+                <span class="pm__contact-label">{{ 'SEARCH_MODULE.PREMIUM_MODAL.PHONE_LABEL' | translate }}</span>
                 <span class="pm__contact-value">{{ ownerInfo.owner.phone }}</span>
               </div>
               <i class="fa fa-chevron-right pm__contact-arrow"></i>
@@ -114,7 +114,7 @@
                 <i class="fab fa-whatsapp"></i>
               </div>
               <div class="pm__contact-info">
-                <span class="pm__contact-label">WhatsApp</span>
+                <span class="pm__contact-label">{{ 'SEARCH_MODULE.PREMIUM_MODAL.WHATSAPP_LABEL' | translate }}</span>
                 <span class="pm__contact-value">{{ ownerInfo.owner.whatsapp }}</span>
               </div>
               <i class="fa fa-chevron-right pm__contact-arrow"></i>
@@ -125,7 +125,7 @@
                 <i class="fa fa-envelope"></i>
               </div>
               <div class="pm__contact-info">
-                <span class="pm__contact-label">Email</span>
+                <span class="pm__contact-label">{{ 'SEARCH_MODULE.PREMIUM_MODAL.EMAIL_LABEL' | translate }}</span>
                 <span class="pm__contact-value">{{ ownerInfo.owner.email }}</span>
               </div>
               <i class="fa fa-chevron-right pm__contact-arrow"></i>
@@ -136,7 +136,7 @@
                 <i class="fa fa-map-marker-alt"></i>
               </div>
               <div class="pm__contact-info">
-                <span class="pm__contact-label">Adresse</span>
+                <span class="pm__contact-label">{{ 'SEARCH_MODULE.PREMIUM_MODAL.ADDRESS_LABEL' | translate }}</span>
                 <span class="pm__contact-value">{{ ownerInfo.owner.address }}</span>
               </div>
             </div>

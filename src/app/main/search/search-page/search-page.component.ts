@@ -4,11 +4,12 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
-import { takeUntil, map, filter, take, switchMap } from 'rxjs/operators';
+import { takeUntil, map, filter, take, finalize } from 'rxjs/operators';
 
 // Services et modèles
 import { SearchService, AdvancedSearchFilters } from 'src/app/shared/store/search/search.service';
 import { CityModel, CityState, CityAction, SearchPropertyModel, SearchState, CountryAction, SearchAction } from 'src/app/shared/store';
+import { MediaUtil } from 'src/app/shared/utils/media-utils';
 
 import { GeolocationService, LocationInfo } from 'src/app/shared/services/geolocation/geolocation.service';
 import { TranslationService } from 'src/app/shared/services/localization/translation.service';
@@ -639,12 +640,16 @@ export class SearchPageComponent implements OnInit, OnDestroy {
 
   toggleFilters(): void {
     this.showFilters = !this.showFilters;
-
     if (this.showFilters) {
       this.blockPageScroll();
     } else {
       this.unblockPageScroll();
     }
+  }
+
+  openFilters(): void {
+    this.showFilters = true;
+    this.blockPageScroll();
   }
 
   toggleView(): void {
@@ -685,16 +690,21 @@ export class SearchPageComponent implements OnInit, OnDestroy {
     };
 
     this.searchService.advancedSearch(filters)
-      .pipe(takeUntil(this.destroy$))
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => {
+          this.isLoading = false;
+          this.isPerformingSearch = false;
+          this.cdr.detectChanges();
+        })
+      )
       .subscribe({
         next: (response) => {
           if (response.statusCode === 200) {
             const payload = response.data as any;
-            // Le backend retourne { data: [...], pagination: {...} }
             this.allResults = Array.isArray(payload?.data) ? payload.data : (Array.isArray(payload) ? payload : []);
             this.paginatedResults = this.allResults;
             this.searchResults = this.allResults;
-            // Pagination réelle depuis le backend
             const pagination = payload?.pagination;
             if (pagination) {
               this.totalResults = pagination.total ?? this.allResults.length;
@@ -706,14 +716,10 @@ export class SearchPageComponent implements OnInit, OnDestroy {
             }
             this.currentImageIndexes = {};
           }
-          this.isLoading = false;
-          this.isPerformingSearch = false;
-          this.cdr.markForCheck();
+          this.cdr.detectChanges();
         },
         error: () => {
-          this.isLoading = false;
-          this.isPerformingSearch = false;
-          this.cdr.markForCheck();
+          this.cdr.detectChanges();
         }
       });
   }
@@ -890,51 +896,16 @@ export class SearchPageComponent implements OnInit, OnDestroy {
     this.unblockPageScroll();
   }
 
-  /**
-   * Bloque le scroll de la page
-   */
   private blockPageScroll(): void {
-    // Sauvegarder la position actuelle du scroll
-    const scrollY = window.scrollY;
-
-    // Appliquer les styles pour bloquer le scroll
-    document.body.style.position = 'fixed';
-    document.body.style.top = `-${scrollY}px`;
-    document.body.style.left = '0';
-    document.body.style.right = '0';
-    document.body.style.overflow = 'hidden';
-    document.body.style.width = '100%';
-
-    // Bloquer aussi le scroll sur l'élément html
     document.documentElement.style.overflow = 'hidden';
-
-    // Sauvegarder la position pour la restaurer plus tard
-    document.body.setAttribute('data-scroll-y', scrollY.toString());
+    document.body.style.overflow = 'hidden';
+    document.body.classList.add('filters-panel-open');
   }
 
-  /**
-   * Débloque le scroll de la page
-   */
   private unblockPageScroll(): void {
-    // Récupérer la position sauvegardée
-    const scrollY = document.body.getAttribute('data-scroll-y');
-
-    // Restaurer les styles
-    document.body.style.position = '';
-    document.body.style.top = '';
-    document.body.style.left = '';
-    document.body.style.right = '';
-    document.body.style.overflow = '';
-    document.body.style.width = '';
-
-    // Restaurer le scroll sur l'élément html
     document.documentElement.style.overflow = '';
-
-    // Restaurer la position du scroll
-    if (scrollY) {
-      window.scrollTo(0, parseInt(scrollY, 10));
-      document.body.removeAttribute('data-scroll-y');
-    }
+    document.body.style.overflow = '';
+    document.body.classList.remove('filters-panel-open');
   }
 
   /**
@@ -1264,20 +1235,20 @@ export class SearchPageComponent implements OnInit, OnDestroy {
    * Obtient la liste des médias pour une carte avec fallback
    */
   getMediasForCard(result: any): string[] {
-    const medias: string[] = [];
+    const raw: string[] = [];
 
-    if (result.medias && Array.isArray(result.medias) && result.medias.length > 0) {
-      medias.push(...result.medias);
-    }
-    if (result.property?.medias && Array.isArray(result.property.medias) && result.property.medias.length > 0) {
-      medias.push(...result.property.medias);
-    }
-    if (result.property?.image) {
-      medias.push(result.property.image);
-    }
+    if (result.medias && Array.isArray(result.medias)) raw.push(...result.medias);
+    if (result.property?.medias && Array.isArray(result.property.medias)) raw.push(...result.property.medias);
+    if (result.property?.image) raw.push(result.property.image);
 
-    const uniqueMedias = [...new Set(medias.filter(media => media && typeof media === 'string'))];
-    return uniqueMedias.length > 0 ? uniqueMedias : ['/assets/images/placeholder-room.jpg'];
+    // Garder uniquement les images plates pour les miniatures de carte
+    const images = [...new Set(raw.filter(url => url && typeof url === 'string'))]
+      .filter(url => {
+        const t = MediaUtil.classifyUrlSync(url);
+        return t === 'image' || t === 'unknown';
+      });
+
+    return images.length > 0 ? images : ['/assets/images/placeholder-room.jpg'];
   }
 
   // === GESTION TACTILE POUR LES CARTES ===
@@ -1581,7 +1552,8 @@ export class SearchPageComponent implements OnInit, OnDestroy {
       maxHeight: '100vh',
       panelClass: 'unit-detail-dialog-container',
       disableClose: false,
-      hasBackdrop: false // Pas de backdrop car on occupe tout l'écran
+      hasBackdrop: true,
+      backdropClass: 'unit-detail-backdrop'
     });
 
     // Écouter la fermeture du dialog
@@ -1633,22 +1605,15 @@ export class SearchPageComponent implements OnInit, OnDestroy {
    * Attend que les résultats de recherche soient chargés puis ouvre l'unité
    */
   private waitForSearchResultsAndOpenUnit(unitId: string): void {
-    const subscription = this.searchResults$.pipe(
+    this.searchResults$.pipe(
       filter((results: SearchPropertyModel[] | null) => results !== null && results.length > 0),
-      take(1)
+      take(1),
+      takeUntil(this.destroy$)
     ).subscribe((results: SearchPropertyModel[]) => {
       const unit = results.find((u: SearchPropertyModel) => u._id === unitId);
       if (unit) {
         setTimeout(() => this.openUnitDetail(unit), 200);
       }
-      subscription.unsubscribe();
     });
-
-    // Timeout de sécurité après 10 secondes
-    setTimeout(() => {
-      if (!subscription.closed) {
-        subscription.unsubscribe();
-      }
-    }, 10000);
   }
 }

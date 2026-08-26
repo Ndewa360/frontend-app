@@ -1,5 +1,6 @@
-import { Component, Inject, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, Inject, OnInit, OnDestroy, ChangeDetectorRef, AfterViewInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MediaUtil, MediaItem } from 'src/app/shared/utils/media-utils';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -22,7 +23,7 @@ export interface UnitDetailDialogData {
   templateUrl: './unit-detail-dialog.component.html',
   styleUrls: ['./unit-detail-dialog.component.scss']
 })
-export class UnitDetailDialogComponent implements OnInit, OnDestroy {
+export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestroy {
   private destroy$ = new Subject<void>();
   
   // Données du dialog
@@ -33,10 +34,13 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
   // État de la galerie d'images
   currentImageIndex = 0;
   isImageGalleryVisible = false;
-  
-  // Cache des images pour éviter les rechargements
-  private imageCache: string[] = [];
-  unitImages: string[] = [];
+
+  // Médias classifiés (image / panorama / video)
+  unitMediaItems: MediaItem[] = [];
+  mediaLoading = true; // true pendant la classification async
+
+  // Panorama 360° plein écran
+  panoramaFullscreenUrl: string | null = null;
 
   // Navigation
   canNavigatePrevious = false;
@@ -68,6 +72,7 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private store: Store,
+    private cdr: ChangeDetectorRef,
     private premiumAccessService: PremiumAccessService,
     private anonymousUserService: AnonymousUserService,
     private translate: TranslateService
@@ -78,16 +83,17 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // Calculer les images une seule fois
-    this.unitImages = this.calculateUnitImages();
-
     this.updateNavigationState();
     this.setupKeyboardNavigation();
     this.updateUrlWithUnit();
     this.loadCurrentUser();
     this.subscribeToPremiumStore();
-    this.preloadImages();
     this.checkPremiumReturnFromPayment();
+  }
+
+  ngAfterViewInit(): void {
+    // Classification async après que la vue est prête
+    this.buildMediaItemsAsync();
   }
 
   ngOnDestroy(): void {
@@ -128,10 +134,11 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
     if (this.canNavigatePrevious) {
       this.currentUnitIndex--;
       this.unit = this.allUnits[this.currentUnitIndex];
-      this.unitImages = this.calculateUnitImages();
       this.currentImageIndex = 0;
+      this.mediaLoading = true;
       this.updateNavigationState();
       this.updateUrlWithUnit();
+      this.buildMediaItemsAsync();
     }
   }
 
@@ -139,10 +146,11 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
     if (this.canNavigateNext) {
       this.currentUnitIndex++;
       this.unit = this.allUnits[this.currentUnitIndex];
-      this.unitImages = this.calculateUnitImages();
       this.currentImageIndex = 0;
+      this.mediaLoading = true;
       this.updateNavigationState();
       this.updateUrlWithUnit();
+      this.buildMediaItemsAsync();
     }
   }
 
@@ -176,69 +184,64 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
     });
   }
 
-  // === IMAGES ===
-  private calculateUnitImages(): string[] {
-    if (!this.unit) {
-      return ['/assets/images/placeholder-room.jpg'];
-    }
+  // === MÉDIAS ===
 
-    const images: string[] = [];
-
-    // Images de l'unité elle-même (priorité)
-    if (this.unit.medias && Array.isArray(this.unit.medias) && this.unit.medias.length > 0) {
-      const validMedias = this.unit.medias.filter(url => url && typeof url === 'string' && url.trim());
-      images.push(...validMedias);
-    }
-
-    // Images de la propriété
-    if (this.unit.property?.medias && Array.isArray(this.unit.property.medias) && this.unit.property.medias.length > 0) {
-      const validPropertyMedias = this.unit.property.medias.filter(url => url && typeof url === 'string' && url.trim());
-      images.push(...validPropertyMedias);
-    }
-
-    // Image principale de la propriété
-    if (this.unit.property?.image && typeof this.unit.property.image === 'string' && this.unit.property.image.trim()) {
-      images.push(this.unit.property.image);
-    }
-
-    // Image principale de l'unité
-    if (this.unit.image && typeof this.unit.image === 'string' && this.unit.image.trim()) {
-      images.push(this.unit.image);
-    }
-
-    // Supprimer les doublons et valider
-    const uniqueImages = [...new Set(images.filter(img => img && img.trim()))];
-    
-    // Image par défaut si aucune image
-    if (uniqueImages.length === 0) {
-      uniqueImages.push('/assets/images/placeholder-room.jpg');
-    }
-    
-    return uniqueImages;
+  private collectRawUrls(): string[] {
+    const raw: string[] = [];
+    const push = (url: any) => { if (url && typeof url === 'string' && url.trim()) raw.push(url.trim()); };
+    (this.unit?.medias ?? []).forEach(push);
+    (this.unit?.property?.medias ?? []).forEach(push);
+    push(this.unit?.property?.image);
+    push((this.unit as any)?.image);
+    return [...new Set(raw)];
   }
 
-  private preloadImages(): void {
-    this.unitImages.forEach((url) => {
-      if (url && url.trim()) {
-        const img = new Image();
-        img.src = url;
-      }
-    });
+  /**
+   * Classification async : charge chaque image pour mesurer le ratio 2:1.
+   * C'est la seule méthode fiable car les URLs GCS ne contiennent pas "360".
+   */
+  private async buildMediaItemsAsync(): Promise<void> {
+    if (!this.unit) {
+      this.unitMediaItems = [{ url: '/assets/images/placeholder-room.jpg', type: 'image' }];
+      this.mediaLoading = false;
+      this.cdr.detectChanges();
+      return;
+    }
+
+    const unique = this.collectRawUrls();
+
+    if (unique.length === 0) {
+      this.unitMediaItems = [{ url: '/assets/images/placeholder-room.jpg', type: 'image' }];
+      this.mediaLoading = false;
+      this.cdr.detectChanges();
+      return;
+    }
+
+    // Afficher d'abord les URLs comme images (sync) pour ne pas bloquer l'affichage
+    this.unitMediaItems = MediaUtil.getMediaItems(unique);
+    this.mediaLoading = false;
+    this.cdr.detectChanges();
+
+    // Puis reclassifier avec le ratio 2:1 (async) et mettre à jour
+    const classified = await MediaUtil.getMediaItemsAsync(unique);
+    this.unitMediaItems = classified;
+    this.currentImageIndex = 0;
+    this.cdr.detectChanges();
   }
 
   // === IMAGE NAVIGATION ===
   previousImage(): void {
-    if (this.unitImages.length <= 1) return;
-    this.currentImageIndex = this.currentImageIndex === 0 ? this.unitImages.length - 1 : this.currentImageIndex - 1;
+    if (this.unitMediaItems.length <= 1) return;
+    this.currentImageIndex = this.currentImageIndex === 0 ? this.unitMediaItems.length - 1 : this.currentImageIndex - 1;
   }
 
   nextImage(): void {
-    if (this.unitImages.length <= 1) return;
-    this.currentImageIndex = (this.currentImageIndex + 1) % this.unitImages.length;
+    if (this.unitMediaItems.length <= 1) return;
+    this.currentImageIndex = (this.currentImageIndex + 1) % this.unitMediaItems.length;
   }
 
   goToImage(index: number): void {
-    if (index >= 0 && index < this.unitImages.length) {
+    if (index >= 0 && index < this.unitMediaItems.length) {
       this.currentImageIndex = index;
     }
   }
@@ -261,17 +264,12 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
     const deltaY = touch.clientY - this.touchStartY;
     const absDeltaX = Math.abs(deltaX);
     const absDeltaY = Math.abs(deltaY);
-    
-    if (absDeltaX > 5 || absDeltaY > 5) {
-      if (absDeltaY > absDeltaX && absDeltaY > 5) {
-        // Mouvement vertical - scroll naturel qui suit le doigt
-        const dialogContent = document.querySelector('.dialog-content');
-        if (dialogContent) {
-          dialogContent.scrollBy(0, -deltaY);
-        }
-        this.touchStartY = touch.clientY;
-      }
+
+    // Si mouvement principalement horizontal, bloquer le scroll natif pour le swipe
+    if (absDeltaX > absDeltaY && absDeltaX > 5) {
+      event.preventDefault();
     }
+    // Le scroll vertical est géré nativement par le navigateur
   }
 
   onTouchEnd(event: TouchEvent): void {
@@ -299,11 +297,25 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
 
   // === GALLERY ===
   openImageGallery(): void {
-    this.isImageGalleryVisible = true;
+    const current = this.unitMediaItems[this.currentImageIndex];
+    if (current?.type === 'panorama') {
+      // Ouvrir directement le viewer 360° plein écran
+      this.panoramaFullscreenUrl = current.url;
+    } else {
+      this.isImageGalleryVisible = true;
+    }
   }
 
   closeImageGallery(): void {
     this.isImageGalleryVisible = false;
+  }
+
+  openPanoramaFullscreen(url: string): void {
+    this.panoramaFullscreenUrl = url;
+  }
+
+  closePanoramaFullscreen(): void {
+    this.panoramaFullscreenUrl = null;
   }
 
   // === UTILITIES ===
@@ -395,9 +407,9 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
   }
 
   getAgencyPhone(): string {
-    return this.unit?.property?.managedByAgent?.agencyPhone || 
-           this.unit?.property?.managedByAgent?.phoneNumber || 
-           '+237 690 123 456';
+    return this.unit?.property?.managedByAgent?.agencyPhone ||
+           this.unit?.property?.managedByAgent?.phoneNumber ||
+           '';
   }
 
   // === ACTIONS ===
@@ -437,6 +449,14 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
   }
 
   onContactOwner(): void {
+    if (!this.unit) return;
+    // Si accès premium, utiliser les infos propriétaire
+    if (this.hasPremiumAccess && this.ownerInfo?.owner?.phone) {
+      window.open(`tel:${this.ownerInfo.owner.phone}`, '_self');
+      return;
+    }
+    // Sinon ouvrir le modal premium
+    this.showPremiumModal = true;
   }
 
   // === PREMIUM ACCESS ===
@@ -567,19 +587,19 @@ export class UnitDetailDialogComponent implements OnInit, OnDestroy {
 
   getContactPhone(): string {
     if (this.isPropertyManagedByAgent()) {
-      return this.unit?.property?.managedByAgent?.phoneNumber || 
-             this.unit?.property?.managedByAgent?.phone || 
-             '+237 690 123 456';
+      return this.unit?.property?.managedByAgent?.phoneNumber ||
+             this.unit?.property?.managedByAgent?.phone ||
+             '';
     }
-    return this.ownerInfo?.owner?.phone || '+237 690 123 456';
+    return this.ownerInfo?.owner?.phone || '';
   }
 
   getContactEmail(): string {
     if (this.isPropertyManagedByAgent()) {
-      return this.unit?.property?.managedByAgent?.email || 
-             this.ownerInfo?.owner?.email || 'contact@ndewa360.com';
+      return this.unit?.property?.managedByAgent?.email ||
+             this.ownerInfo?.owner?.email || '';
     }
-    return this.ownerInfo?.owner?.email || 'contact@ndewa360.com';
+    return this.ownerInfo?.owner?.email || '';
   }
 
   getContactWhatsApp(): string {

@@ -97,6 +97,7 @@ $shadow-2xl: 0 40px 80px rgba(0,0,0,.24);
   font-family: 'Inter', sans-serif;
   background-color: $bg-page;
   color: $text-dark;
+  overflow-x: hidden; // Empêche tout débordement horizontal
   * { font-family: 'Inter', sans-serif !important; box-sizing: border-box; }
   h1,h2,h3,h4,h5,h6 { margin: 0 !important; padding: 0 !important; }
   ul,ol { list-style: none !important; margin: 0 !important; padding: 0 !important; }
@@ -109,7 +110,8 @@ $shadow-2xl: 0 40px 80px rgba(0,0,0,.24);
 // LAYOUT COMMUN
 // ═══════════════════════════════════════════════════════════
 .section-inner {
-  max-width: 84rem; margin: 0 auto; padding: 5.5rem 2rem;
+  max-width: 84rem; margin: 0 auto; padding: 5.5rem 1.25rem;
+  @media(min-width:768px) { padding: 5.5rem 2rem; }
 }
 .faq-inner { max-width: 58rem; }
 
@@ -146,10 +148,10 @@ $shadow-2xl: 0 40px 80px rgba(0,0,0,.24);
   &.deco-bg::after  { background: radial-gradient(ellipse, rgba($primary,.05) 0%, transparent 65%); bottom: -20%; left: -10%; width: 50%; height: 80%; }
 }
 .hero-inner {
-  max-width: 84rem; margin: 0 auto; padding: 6rem 2rem 5rem;
+  max-width: 84rem; margin: 0 auto; padding: 6rem 1.25rem 5rem;
   display: grid; grid-template-columns: 1fr; gap: 3.5rem;
   align-items: center; position: relative; z-index: 1;
-  @media(min-width:1024px) { grid-template-columns: 1fr 1fr; gap: 5rem; }
+  @media(min-width:1024px) { grid-template-columns: 1fr 1fr; gap: 5rem; padding: 6rem 2rem 5rem; }
 }
 .hero-text { text-align: center; @media(min-width:1024px) { text-align: left; } }
 
@@ -226,6 +228,7 @@ $shadow-2xl: 0 40px 80px rgba(0,0,0,.24);
 // ═══════════════════════════════════════════════════════════
 .hero-illustration {
   position: relative;
+  overflow: hidden;
   @media(max-width:1023px) { max-width: 36rem; margin: 0 auto; }
 }
 
@@ -321,15 +324,14 @@ $shadow-2xl: 0 40px 80px rgba(0,0,0,.24);
     top: -1rem; right: -1.5rem;
     i { color: $primary !important; }
     animation: float 4s ease-in-out infinite;
+    @media(max-width: 1023px) { right: .5rem; }
+    @media(max-width: 480px)  { display: none; } // Masquer sur très petit écran
   }
   &--mobile {
-    bottom: .5rem; left: -1.5rem;
+    bottom: .5rem; left: .5rem;
     i { color: $agent-dark !important; }
     animation: float 4s ease-in-out 1.5s infinite;
-  }
-  @media(max-width:1023px) {
-    &--contract { top: -.75rem; right: .5rem; }
-    &--mobile   { bottom: -.5rem; left: .5rem; }
+    @media(max-width: 480px)  { display: none; }
   }
 }
 
@@ -730,7 +732,7 @@ $shadow-2xl: 0 40px 80px rgba(0,0,0,.24);
 // Formes décoratives qui scrollent — injectées via CSS uniquement
 // Le parallax léger est obtenu via --deco-offset mis à jour par le TS au scroll
 .deco-bg {
-  position: relative; overflow: hidden;
+  position: relative; overflow: hidden; max-width: 100vw;
 
   // Forme 1 — grand cercle en haut à droite
   &::before {
@@ -805,7 +807,7 @@ $shadow-2xl: 0 40px 80px rgba(0,0,0,.24);
 
 // Lignes trame très légères sur les sections grises
 .deco-grid {
-  position: relative;
+  position: relative; overflow: hidden;
   background: $bg-gray;
   &::before {
     content: ''; pointer-events: none;
@@ -825,6 +827,7 @@ $shadow-2xl: 0 40px 80px rgba(0,0,0,.24);
 // Forme hexagone décoratif pour les sections tarifs
 .deco-hex {
   position: relative;
+  overflow: hidden; // Empêche les formes hexagonales de déborder
   background: #fff;
   &::before {
     content: ''; pointer-events: none;
