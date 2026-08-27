@@ -398,23 +398,21 @@
             <label class="field-label">
               {{ 'SEARCH_MODULE.FILTERS.LOCATION' | translate }}
               <button
-                *ngIf="!(cities$ | async) || (cities$ | async)?.length === 0"
+                *ngIf="!(cities$$ | async) || (cities$$ | async)?.length === 0"
                 (click)="reloadCities()"
                 class="reload-cities-btn"
                 type="button"
                 [title]="'SEARCH_MODULE.FILTERS.RELOAD_CITIES' | translate">
                 <i class="fas fa-sync-alt"></i>
               </button>
-
             </label>
             <select formControlName="city" class="field-select">
               <option value="">{{ 'SEARCH_MODULE.FILTERS.ALL_CITIES' | translate }}</option>
-              <option *ngFor="let city of cities$ | async; trackBy: trackByCity" [value]="city._id">
+              <option *ngFor="let city of cities$$ | async; trackBy: trackByCity" [value]="city._id">
                 {{ city.fullName }}
               </option>
-              <!-- Message if no cities are loaded -->
-              <option *ngIf="!(cities$ | async) || (cities$ | async)?.length === 0" value="" disabled>
-                {{ (cities$ | async) === null ? ('SEARCH_MODULE.FILTERS.LOADING_CITIES' | translate) : ('SEARCH_MODULE.FILTERS.NO_CITIES' | translate) }}
+              <option *ngIf="!(cities$$ | async) || (cities$$ | async)?.length === 0" value="" disabled>
+                {{ (cities$$ | async) === null ? ('SEARCH_MODULE.FILTERS.LOADING_CITIES' | translate) : ('SEARCH_MODULE.FILTERS.NO_CITIES' | translate) }}
               </option>
             </select>
           </div>

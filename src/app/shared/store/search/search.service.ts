@@ -1,12 +1,10 @@
 import { Injectable } from "@angular/core";
 import { SearchPropertyModel } from "./search.model";
 import { HttpClient, HttpParams } from "@angular/common/http";
-import { Observable, combineLatest, of, } from "rxjs";
+import { Observable } from "rxjs";
 import { ApiResultFormat } from "../global";
-import { switchMap } from "rxjs/operators";
 import { environment } from "src/environments/environment";
 
-// Interface pour les filtres de recherche avancée
 export interface AdvancedSearchFilters {
     city?: string;
     district?: string;
@@ -14,22 +12,23 @@ export interface AdvancedSearchFilters {
     priceMin?: number;
     priceMax?: number;
     roomType?: string;
+    // minArea est le nom du formulaire, envoyé tel quel au backend
     minArea?: number;
+    totalSurfaceMin?: number;
+    totalSurfaceMax?: number;
 
     // Spécificités de la chambre (RoomSpecificity)
     hasKitchen?: boolean;
     isInternalKitchen?: boolean;
     isInternalShower?: boolean;
-    numberOfBathroom?: string;
-    numberOfShower?: string;
-    numberOfLivingRoom?: string;
+    numberOfBathroom?: string | number;
+    numberOfShower?: string | number;
+    numberOfLivingRoom?: string | number;
 
-    // Équipements de la propriété existants
-    hasPrivateShower?: boolean; // Gardé pour compatibilité
+    // Équipements de la propriété
+    hasPrivateShower?: boolean;
     hasParking?: boolean;
     hasClosure?: boolean;
-
-    // Nouveaux équipements de propriété
     hasElevator?: boolean;
     hasGarden?: boolean;
     hasPool?: boolean;
@@ -39,11 +38,11 @@ export interface AdvancedSearchFilters {
     hasWater?: boolean;
     hasInternet?: boolean;
     condition?: 'NEW' | 'EXCELLENT' | 'GOOD' | 'FAIR' | 'POOR';
+    // furnished (boolean du formulaire) ET furnishingStatus (string enum) — les deux supportés
+    furnished?: boolean;
     furnishingStatus?: 'FURNISHED' | 'SEMI_FURNISHED' | 'UNFURNISHED';
     buildingYearMin?: number;
     buildingYearMax?: number;
-    totalSurfaceMin?: number;
-    totalSurfaceMax?: number;
 
     // Pagination et tri
     page?: number;
@@ -52,7 +51,6 @@ export interface AdvancedSearchFilters {
     sortOrder?: 'asc' | 'desc';
 }
 
-// Interface pour la réponse paginée
 export interface PaginatedSearchResponse {
     data: SearchPropertyModel[];
     pagination: {
@@ -65,24 +63,12 @@ export interface PaginatedSearchResponse {
 }
 
 @Injectable({
-    providedIn:'root'
+    providedIn: 'root'
 })
-export class SearchService
-{
-    /**
-     * Constructor
-     */
-    constructor(
-        private _httpClient: HttpClient
-    )
-    {}
-   
+export class SearchService {
+    constructor(private _httpClient: HttpClient) {}
 
-    /**
-     * Recherche simple par ville avec pagination
-     */
-    getSearch(city:string, page:number = 1, pageSize:number = 10000):Observable<ApiResultFormat<PaginatedSearchResponse>>
-    {
+    getSearch(city: string, page: number = 1, pageSize: number = 10000): Observable<ApiResultFormat<PaginatedSearchResponse>> {
         const params = new HttpParams()
             .set('page', page.toString())
             .set('limit', pageSize.toString());
@@ -92,40 +78,28 @@ export class SearchService
         );
     }
 
-    /**
-     * Recherche avancée avec filtres multiples
-     */
-    advancedSearch(filters: AdvancedSearchFilters): Observable<ApiResultFormat<PaginatedSearchResponse>>
-    {
+    advancedSearch(filters: AdvancedSearchFilters): Observable<ApiResultFormat<PaginatedSearchResponse>> {
         let params = new HttpParams();
 
-        // Ajouter tous les filtres non vides aux paramètres
         Object.keys(filters).forEach(key => {
-            const value = filters[key as keyof AdvancedSearchFilters];
+            const value = (filters as any)[key];
+            if (value === undefined || value === null) return;
 
-            // Traitement spécial pour les différents types de valeurs
-            if (value !== undefined && value !== null) {
-                // Pour les booléens, envoyer SEULEMENT si true (false = pas de filtre)
-                if (typeof value === 'boolean') {
-                    if (value === true) {
-                        params = params.set(key, 'true');
-                    }
-                    // false → ne pas envoyer (pas de restriction)
+            if (typeof value === 'boolean') {
+                // Envoyer seulement si true — false = pas de restriction
+                if (value === true) params = params.set(key, 'true');
+            } else if (typeof value === 'number') {
+                if (key === 'priceMin' && value > 0) {
+                    params = params.set(key, value.toString());
+                } else if (key === 'priceMax' && value > 0) {
+                    params = params.set(key, value.toString());
+                } else if (key === 'minArea' && value > 0) {
+                    params = params.set(key, value.toString());
+                } else if (key !== 'priceMin' && key !== 'priceMax' && key !== 'minArea') {
+                    params = params.set(key, value.toString());
                 }
-                // Pour les nombres, envoyer même 0 (sauf pour priceMin = 0 et priceMax = 500000 qui sont les valeurs par défaut)
-                else if (typeof value === 'number') {
-                    if (key === 'priceMin' && value > 0) {
-                        params = params.set(key, value.toString());
-                    } else if (key === 'priceMax' && value > 0) {
-                        params = params.set(key, value.toString());
-                    } else if (key !== 'priceMin' && key !== 'priceMax') {
-                        params = params.set(key, value.toString());
-                    }
-                }
-                // Pour les strings, envoyer seulement si non vide
-                else if (typeof value === 'string' && value !== '') {
-                    params = params.set(key, value);
-                }
+            } else if (typeof value === 'string' && value !== '') {
+                params = params.set(key, value);
             }
         });
 
@@ -135,76 +109,33 @@ export class SearchService
         );
     }
 
-    /**
-     * Recherche par ID de chambre
-     */
-    getSearchByIdRoom(idRoom:string):Observable<ApiResultFormat<SearchPropertyModel>>
-    {
-        return this._httpClient.get<ApiResultFormat<SearchPropertyModel>>(`${environment.apiUrl}/search/by-idroom/${idRoom}`)
-    }
-
-    /**
-     * Obtenir les statistiques de recherche pour les filtres
-     */
-    getSearchStats(city?: string): Observable<ApiResultFormat<any>>
-    {
-        let params = new HttpParams();
-        if (city) {
-            params = params.set('city', city);
-        }
-
-        return this._httpClient.get<ApiResultFormat<any>>(
-            `${environment.apiUrl}/search/stats`,
-            { params }
+    getSearchByIdRoom(idRoom: string): Observable<ApiResultFormat<SearchPropertyModel>> {
+        return this._httpClient.get<ApiResultFormat<SearchPropertyModel>>(
+            `${environment.apiUrl}/search/by-idroom/${idRoom}`
         );
     }
 
-    /**
-     * Obtenir les recherches populaires
-     */
-    getPopularSearches(limit?: number): Observable<ApiResultFormat<any>>
-    {
+    getSearchStats(city?: string): Observable<ApiResultFormat<any>> {
         let params = new HttpParams();
-        if (limit) {
-            params = params.set('limit', limit.toString());
-        }
-
-        return this._httpClient.get<ApiResultFormat<any>>(
-            `${environment.apiUrl}/search-stats/popular`,
-            { params }
-        );
+        if (city) params = params.set('city', city);
+        return this._httpClient.get<ApiResultFormat<any>>(`${environment.apiUrl}/search/stats`, { params });
     }
 
-    /**
-     * Obtenir les recherches populaires par ville
-     */
-    getPopularSearchesByCity(cityId: string, limit?: number): Observable<ApiResultFormat<any>>
-    {
+    getPopularSearches(limit?: number): Observable<ApiResultFormat<any>> {
+        let params = new HttpParams();
+        if (limit) params = params.set('limit', limit.toString());
+        return this._httpClient.get<ApiResultFormat<any>>(`${environment.apiUrl}/search-stats/popular`, { params });
+    }
+
+    getPopularSearchesByCity(cityId: string, limit?: number): Observable<ApiResultFormat<any>> {
         let params = new HttpParams().set('cityId', cityId);
-        if (limit) {
-            params = params.set('limit', limit.toString());
-        }
-
-        return this._httpClient.get<ApiResultFormat<any>>(
-            `${environment.apiUrl}/search-stats/popular-by-city`,
-            { params }
-        );
+        if (limit) params = params.set('limit', limit.toString());
+        return this._httpClient.get<ApiResultFormat<any>>(`${environment.apiUrl}/search-stats/popular-by-city`, { params });
     }
 
-    /**
-     * Obtenir les villes les plus recherchées
-     */
-    getTopSearchedCities(limit?: number): Observable<ApiResultFormat<any>>
-    {
+    getTopSearchedCities(limit?: number): Observable<ApiResultFormat<any>> {
         let params = new HttpParams();
-        if (limit) {
-            params = params.set('limit', limit.toString());
-        }
-
-        return this._httpClient.get<ApiResultFormat<any>>(
-            `${environment.apiUrl}/search-stats/top-cities`,
-            { params }
-        );
+        if (limit) params = params.set('limit', limit.toString());
+        return this._httpClient.get<ApiResultFormat<any>>(`${environment.apiUrl}/search-stats/top-cities`, { params });
     }
-
 }
