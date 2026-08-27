@@ -1,10 +1,13 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef, ChangeDetectionStrategy, TemplateRef } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subject, debounceTime, distinctUntilChanged, shareReplay } from 'rxjs';
 import { takeUntil, map, filter, take, finalize } from 'rxjs/operators';
+import { Overlay, OverlayRef } from '@angular/cdk/overlay';
+import { TemplatePortal } from '@angular/cdk/portal';
+import { ViewContainerRef } from '@angular/core';
 
 // Services et modèles
 import { SearchService, AdvancedSearchFilters } from 'src/app/shared/store/search/search.service';
@@ -54,6 +57,9 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   
   @ViewChild('searchInput', { static: true }) searchInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('filtersPanelTpl', { static: true }) filtersPanelTpl!: TemplateRef<any>;
+
+  private filtersOverlayRef: OverlayRef | null = null;
 
   // Store selectors
   @Select(CityState.selectStateCities) cities$: Observable<CityModel[]>;
@@ -138,7 +144,9 @@ export class SearchPageComponent implements OnInit, OnDestroy {
     private translationService: TranslationService,
     private dialog: MatDialog,
     private cityResolver: CityResolverService,
-    private smartFiltersService: SmartFiltersService
+    private smartFiltersService: SmartFiltersService,
+    private overlay: Overlay,
+    private viewContainerRef: ViewContainerRef
   ) {
     this.initializeForm();
     this.initializeQuickFilters();
@@ -161,9 +169,8 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-
-    // Restaurer le scroll au cas où
-    this.unblockPageScroll();
+    // Fermer le panel filtre si ouvert
+    this.closeFilters();
   }
 
   private initializeForm(): void {
@@ -631,17 +638,35 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   }
 
   toggleFilters(): void {
-    this.showFilters = !this.showFilters;
-    if (this.showFilters) {
-      this.blockPageScroll();
-    } else {
-      this.unblockPageScroll();
-    }
+    this.showFilters ? this.closeFilters() : this.openFilters();
   }
 
   openFilters(): void {
+    if (this.filtersOverlayRef) return;
     this.showFilters = true;
-    this.blockPageScroll();
+
+    // Créer l'overlay CDK directement dans le body — indépendant de tout conteneur scrollable
+    this.filtersOverlayRef = this.overlay.create({
+      hasBackdrop: false,       // On gère notre propre overlay visuel dans le template
+      scrollStrategy: this.overlay.scrollStrategies.block(), // Bloque le scroll de la page
+      positionStrategy: this.overlay.position().global(),    // Positionné par rapport au viewport
+      width: '100vw',
+      height: '100vh',
+    });
+
+    const portal = new TemplatePortal(this.filtersPanelTpl, this.viewContainerRef);
+    this.filtersOverlayRef.attach(portal);
+    this.cdr.markForCheck();
+  }
+
+  closeFilters(): void {
+    this.showFilters = false;
+    if (this.filtersOverlayRef) {
+      this.filtersOverlayRef.detach();
+      this.filtersOverlayRef.dispose();
+      this.filtersOverlayRef = null;
+    }
+    this.cdr.markForCheck();
   }
 
   toggleView(): void {
@@ -880,29 +905,6 @@ export class SearchPageComponent implements OnInit, OnDestroy {
     this.searchByUserLocation();
   }
 
-  /**
-   * Ferme le panneau de filtres
-   */
-  closeFilters(): void {
-    this.showFilters = false;
-    this.unblockPageScroll();
-  }
-
-  private blockPageScroll(): void {
-    document.documentElement.style.overflow = 'hidden';
-    document.body.style.overflow = 'hidden';
-    document.body.classList.add('filters-panel-open');
-  }
-
-  private unblockPageScroll(): void {
-    document.documentElement.style.overflow = '';
-    document.body.style.overflow = '';
-    document.body.classList.remove('filters-panel-open');
-  }
-
-  /**
-   * Ferme le panneau de filtres (les filtres s'appliquent automatiquement)
-   */
   applyFilters(): void {
     this.closeFilters();
   }

@@ -153,6 +153,12 @@ html:has(body.filters-panel-open) {
   }
 }
 
+// Le CDK Overlay place le panel filtres directement dans le body
+// S'assurer que le cdk-overlay-container est au-dessus de tout
+.cdk-overlay-container {
+  z-index: 9997 !important;
+}
+
 // Responsive global — éviter le débordement horizontal sur mobile
 @media (max-width: 768px) {
   html, body {

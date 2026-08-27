@@ -76,8 +76,7 @@
     </div>
   </div>
 
-  <!-- Background overlay for filters -->
-  <div *ngIf="showFilters" class="filters-overlay" (click)="closeFilters()"></div>
+  <!-- Background overlay for filters (rendu dans le body via portal) -->
 
 
   <!-- Search results -->
@@ -354,11 +353,14 @@
       </div>
     </div>
   </div>
-</div>
-  </div>
+</div><!-- /.empty-state -->
 
-  <!-- Floating filters panel -->
-<div *ngIf="showFilters" class="filters-floating-panel">
+</div><!-- /.modern-search-container -->
+
+<!-- Panel filtres rendu dans le body via CDK Overlay portal -->
+<ng-template #filtersPanelTpl>
+  <div class="filters-overlay" (click)="closeFilters()"></div>
+  <div class="filters-floating-panel">
   <div class="filters-content" (click)="$event.stopPropagation()">
     <div class="filters-header">
       <h3 class="filters-title">
@@ -608,6 +610,7 @@
       </button>
     </div>
   </div>
-</div>
+</div><!-- /.filters-floating-panel -->
+</ng-template>
 
   <!-- Unit details dialog is now handled by MatDialog -->
