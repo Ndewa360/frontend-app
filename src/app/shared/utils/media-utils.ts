@@ -59,14 +59,16 @@ export class MediaUtil {
     static async isPanorama(url: string): Promise<boolean> {
         try {
           const img = new Image();
-          const { width, height } = await new Promise<{ width: number; height: number }>(
-            (resolve, reject) => {
+          const result = await Promise.race([
+            new Promise<{ width: number; height: number }>((resolve, reject) => {
               img.onload = () => resolve({ width: img.width, height: img.height });
               img.onerror = reject;
               img.src = url;
-            }
-          );
-          return width > 0 && height > 0 && width / height === 2;
+            }),
+            // Timeout 3s : si l'image met trop longtemps, on abandonne
+            new Promise<never>((_, reject) => setTimeout(() => reject(new Error('timeout')), 3000))
+          ]) as { width: number; height: number };
+          return result.width > 0 && result.height > 0 && result.width / result.height === 2;
         } catch {
           return false;
         }
@@ -74,19 +76,16 @@ export class MediaUtil {
 
     static async getStructMedia(media: string[]): Promise<{ images: string[]; videos: string[]; images360: string[] }> {
         const data = { images: [] as string[], videos: [] as string[], images360: [] as string[] };
-        await Promise.all(media.map(async (url) => {
-            const t = await MediaUtil.classifyUrl(url);
-            if (t === 'video') data.videos.push(url);
-            else if (t === 'panorama') data.images360.push(url);
-            else data.images.push(url); // image + unknown → images
-        }));
+        // Utiliser la version limitée en concurrence
+        const items = await MediaUtil.getMediaItemsAsync(media);
+        for (const { url, type } of items) {
+            if (type === 'video') data.videos.push(url);
+            else if (type === 'panorama') data.images360.push(url);
+            else data.images.push(url);
+        }
         return data;
     }
 
-    /**
-     * Version synchrone de getStructMedia — utilisée dans les composants
-     * qui ne peuvent pas être async (templates, constructeurs).
-     */
     static getStructMediaSync(media: string[]): { images: string[]; videos: string[]; images360: string[] } {
         const data = { images: [] as string[], videos: [] as string[], images360: [] as string[] };
         for (const url of media) {
@@ -98,23 +97,24 @@ export class MediaUtil {
         return data;
     }
 
-    /**
-     * Retourne la liste classifiée sous forme de MediaItem[]
-     * pour les composants qui ont besoin du type par index.
-     * Version synchrone (nom de fichier uniquement).
-     */
     static getMediaItems(media: string[]): MediaItem[] {
         return media.map(url => ({ url, type: MediaUtil.classifyUrlSync(url) }));
     }
 
     /**
-     * Version async de getMediaItems — utilise le ratio 2:1 pour détecter
-     * les panoramas dont l'URL ne contient pas de mot-clé 360.
-     * C'est la méthode à utiliser dans les composants qui peuvent être async.
+     * Version async séquentielle (pas de Promise.all) pour éviter de saturer
+     * le réseau avec N requêtes simultanées. Limitée à 3 classifications en parallèle.
      */
     static async getMediaItemsAsync(media: string[]): Promise<MediaItem[]> {
-        return Promise.all(
-            media.map(async url => ({ url, type: await MediaUtil.classifyUrl(url) }))
-        );
+        const results: MediaItem[] = new Array(media.length);
+        const CONCURRENCY = 3;
+        for (let i = 0; i < media.length; i += CONCURRENCY) {
+            const batch = media.slice(i, i + CONCURRENCY);
+            const classified = await Promise.all(
+                batch.map(async url => ({ url, type: await MediaUtil.classifyUrl(url) }))
+            );
+            classified.forEach((item, j) => { results[i + j] = item; });
+        }
+        return results;
     }
 }

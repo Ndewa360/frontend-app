@@ -91,7 +91,7 @@
                   (click)="openImageGallery()"
                   (error)="onImageError($event, i)"
                   (load)="onImageLoad($event, i)"
-                  loading="eager">
+                  [loading]="i === 0 ? 'eager' : 'lazy'">
 
                 <!-- Vidéo -->
                 <video
@@ -100,15 +100,16 @@
                   controls
                   class="property-image"
                   style="background:#000;"
-                  preload="metadata">
+                  preload="none">
                 </video>
 
-                <!-- Panorama 360° : miniature plate + badge cliquable -->
+                <!-- Panorama 360° : miniature plate + badge cliquable (viewer chargé uniquement en plein écran) -->
                 <div
                   *ngIf="item.type === 'panorama'"
                   class="panorama-slide-wrapper"
                   (click)="openPanoramaFullscreen(item.url); $event.stopPropagation()">
                   <img [src]="item.url" class="property-image panorama-thumb" alt="360°"
+                       loading="lazy"
                        (error)="onImageError($event, i)">
                   <div class="panorama-overlay-hint">
                     <i class="fas fa-expand-arrows-alt"></i>

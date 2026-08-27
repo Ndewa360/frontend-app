@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, OnDestroy, ChangeDetectorRef, AfterViewInit } from '@angular/core';
+import { Component, Inject, OnInit, OnDestroy, ChangeDetectorRef, AfterViewInit, ChangeDetectionStrategy } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MediaUtil, MediaItem } from 'src/app/shared/utils/media-utils';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -21,7 +21,8 @@ export interface UnitDetailDialogData {
 @Component({
   selector: 'app-unit-detail-dialog',
   templateUrl: './unit-detail-dialog.component.html',
-  styleUrls: ['./unit-detail-dialog.component.scss']
+  styleUrls: ['./unit-detail-dialog.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestroy {
   private destroy$ = new Subject<void>();
@@ -92,12 +93,14 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
   }
 
   ngAfterViewInit(): void {
-    // Classification async après que la vue est prête
-    this.buildMediaItemsAsync();
+    // setTimeout(0) pour sortir du cycle de détection Angular courant
+    // et éviter NG0100 ExpressionChangedAfterItHasBeenCheckedError
+    setTimeout(() => this.buildMediaItems());
   }
 
   ngOnDestroy(): void {
     document.removeEventListener('keydown', this.boundHandleKeyDown);
+    this.mediaCache.clear();
     this.destroy$.next();
     this.destroy$.complete();
   }
@@ -138,7 +141,8 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
       this.mediaLoading = true;
       this.updateNavigationState();
       this.updateUrlWithUnit();
-      this.buildMediaItemsAsync();
+      this.cdr.markForCheck();
+      setTimeout(() => this.buildMediaItems());
     }
   }
 
@@ -150,7 +154,8 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
       this.mediaLoading = true;
       this.updateNavigationState();
       this.updateUrlWithUnit();
-      this.buildMediaItemsAsync();
+      this.cdr.markForCheck();
+      setTimeout(() => this.buildMediaItems());
     }
   }
 
@@ -196,11 +201,15 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
     return [...new Set(raw)];
   }
 
+  // Cache des médias par ID d'unité pour éviter de reclassifier à chaque navigation
+  private mediaCache = new Map<string, MediaItem[]>();
+
   /**
-   * Classification async : charge chaque image pour mesurer le ratio 2:1.
-   * C'est la seule méthode fiable car les URLs GCS ne contiennent pas "360".
+   * Construit la liste des médias — sync uniquement (pas de chargement réseau).
+   * La détection 360° par ratio 2:1 est supprimée : trop coûteuse (N requêtes réseau).
+   * Les panoramas sont détectés par mots-clés dans l'URL (360, pano, panorama...).
    */
-  private async buildMediaItemsAsync(): Promise<void> {
+  private buildMediaItems(): void {
     if (!this.unit) {
       this.unitMediaItems = [{ url: '/assets/images/placeholder-room.jpg', type: 'image' }];
       this.mediaLoading = false;
@@ -208,24 +217,22 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
       return;
     }
 
-    const unique = this.collectRawUrls();
-
-    if (unique.length === 0) {
-      this.unitMediaItems = [{ url: '/assets/images/placeholder-room.jpg', type: 'image' }];
+    const cacheKey = this.unit._id;
+    if (cacheKey && this.mediaCache.has(cacheKey)) {
+      this.unitMediaItems = this.mediaCache.get(cacheKey)!;
       this.mediaLoading = false;
       this.cdr.detectChanges();
       return;
     }
 
-    // Afficher d'abord les URLs comme images (sync) pour ne pas bloquer l'affichage
-    this.unitMediaItems = MediaUtil.getMediaItems(unique);
-    this.mediaLoading = false;
-    this.cdr.detectChanges();
+    const unique = this.collectRawUrls();
+    const items = unique.length > 0
+      ? MediaUtil.getMediaItems(unique)
+      : [{ url: '/assets/images/placeholder-room.jpg', type: 'image' as const }];
 
-    // Puis reclassifier avec le ratio 2:1 (async) et mettre à jour
-    const classified = await MediaUtil.getMediaItemsAsync(unique);
-    this.unitMediaItems = classified;
-    this.currentImageIndex = 0;
+    if (cacheKey) this.mediaCache.set(cacheKey, items);
+    this.unitMediaItems = items;
+    this.mediaLoading = false;
     this.cdr.detectChanges();
   }
 
