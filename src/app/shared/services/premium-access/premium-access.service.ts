@@ -86,6 +86,6 @@ export class PremiumAccessService {
   }
 
   getPremiumAccessPrice(): number {
-    return 500;
+    return 1000;
   }
 }

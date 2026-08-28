@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, finalize, timeout } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
 import { PremiumAccessState, PremiumAccessAction, OwnerInfoModel } from 'src/app/shared/store/premium-access';
 import { UserProfileState } from 'src/app/shared/store/user-profile';
@@ -32,7 +32,7 @@ export class PremiumAccessModalComponent implements OnInit, OnDestroy {
   error: string | null = null;
   hasActiveAccess = false;
   ownerInfo: OwnerInfoModel | null = null;
-  premiumPrice = 500;
+  premiumPrice = 1000;
 
   // Étapes : 'checking' | 'offer' | 'owner_info'
   step: 'checking' | 'offer' | 'owner_info' = 'checking';
@@ -87,17 +87,49 @@ export class PremiumAccessModalComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Vérifier côté backend
+    // Réutiliser la vérification déjà faite par le composant parent (unit-detail-dialog
+    // ou premium-access-button) au lieu de refaire un appel réseau / ré-écraser le
+    // chargement global du store à chaque ouverture du modal.
+    const state = this.store.selectSnapshot(PremiumAccessState);
+    if (state.initLoadingState === 'LOADED') {
+      this.hasActiveAccess = state.hasActiveAccess;
+      if (this.hasActiveAccess) {
+        this.step = 'owner_info';
+        if (state.ownerInfo) {
+          this.ownerInfo = state.ownerInfo;
+        } else if (this.ownerId && this.effectiveUserId) {
+          this.loadOwnerInfo();
+        }
+      } else {
+        this.step = 'offer';
+      }
+      return;
+    }
+
+    if (state.initLoadingState === 'LOADING') {
+      // Vérification déjà en cours → attendre (rester en 'checking');
+      // le subscribe au store chargera l'étape suivante quand elle se terminera.
+      this.step = 'checking';
+      return;
+    }
+
+    // Aucune vérification faite → la lancer
     this.step = 'checking';
     this.store.dispatch(new PremiumAccessAction.CheckActiveAccess(this.effectiveUserId));
   }
 
   private subscribeToPremiumStore(): void {
+    // NOTE : this.loading est délibérément piloté LOCALEMENT (goToPayment / finalize),
+    // PAS par le store. Le store PremiumAccessState.loading est global et partagé avec
+    // d'autres composants (unit-detail-dialog, premium-access-button…) ; l'utiliser pour
+    // désactiver le CTA faisait rester le bouton en "Traitement…" le temps que le store
+    // (parfois même après la disparition du modal) redescende, voire indéfiniment.
     this.store.select(PremiumAccessState.loading)
       .pipe(takeUntil(this.destroy$))
-      .subscribe(loading => {
-        this.loading = loading;
-        if (!loading && this.step === 'checking' && !this.hasActiveAccess) {
+      .subscribe(storeLoading => {
+        // Le store `loading` ne pilote que la transition "vérification" → "offre".
+        // Il ne doit jamais désactiver le bouton d'achat.
+        if (this.step === 'checking' && !storeLoading && !this.hasActiveAccess) {
           this.step = 'offer';
           this.cdr.detectChanges();
         }
@@ -114,11 +146,11 @@ export class PremiumAccessModalComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(hasAccess => {
         this.hasActiveAccess = hasAccess;
+        // Ne passer à owner_info que si un accès est réellement actif.
+        // (Le passage checking → offer est géré par le subscribe `loading` ci-dessus.)
         if (hasAccess && this.step !== 'owner_info') {
           this.step = 'owner_info';
           this.loadOwnerInfo();
-        } else if (!hasAccess && this.step === 'checking') {
-          this.step = 'offer';
         }
         this.cdr.detectChanges();
       });
@@ -155,40 +187,57 @@ export class PremiumAccessModalComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.error = null;
 
-    this.paymentSessionService.createSessionWithFallback(this.lang, {
-      context: 'PREMIUM_ACCESS',
+    // Les visiteurs anonymes n'ont pas de JWT → route publique (create-public).
+    // Les utilisateurs connectés → route sécurisée (create, JWT).
+    const payload = {
+      context: 'PREMIUM_ACCESS' as const,
       amount: this.premiumPrice,
       amountEditable: false,
       currency: 'XAF',
-      description: 'Accès Premium — Informations propriétaires (3 jours)',
+      description: 'Accès Premium — Informations propriétaires (24 heures)',
       userId: this.effectiveUserId,
       userEmail: email,
       metadata: {
         ownerId: this.ownerId,
         isAnonymous: this.isAnonymous,
-        visitorId: this.isAnonymous ? this.effectiveUserId : null,
+        visitorId: this.effectiveUserId,
         lang: this.lang
       },
       successRedirectPath: `${currentPath}${currentPath.includes('?') ? '&' : '?'}premium=success&visitorId=${this.effectiveUserId}`,
       cancelRedirectPath: currentPath
-    }).subscribe({
-      next: (res) => {
-        this.loading = false;
-        // Fermer le modal premium
-        this.close.emit();
-        // Fermer aussi le dialog Material parent (UnitDetailDialog) s'il existe
-        if (this.dialogRef) {
-          this.dialogRef.close();
+    };
+
+    const request$ = this.isAnonymous
+      ? this.paymentSessionService.createSessionPublic(payload)
+      : this.paymentSessionService.createSession(payload);
+
+    request$
+      .pipe(
+        // Robustesse du loader : jamais de spinner/bouton bloqué indéfiniment.
+        // Timeout si le backend ne répond pas + finalize pour libérer l'état.
+        timeout(15000),
+        takeUntil(this.destroy$),
+        finalize(() => {
+          this.loading = false;
+          this.cdr.detectChanges();
+        })
+      )
+      .subscribe({
+        next: (res) => {
+          // Fermer le modal premium
+          this.close.emit();
+          // Fermer aussi le dialog Material parent (UnitDetailDialog) s'il existe
+          if (this.dialogRef) {
+            this.dialogRef.close();
+          }
+          // Naviguer vers la page de paiement
+          this.router.navigate([`/${this.lang}/payment/${res.data.token}`]);
+        },
+        error: (err) => {
+          this.error = err.error?.message || this.translate.instant('SEARCH_MODULE.PREMIUM_MODAL.MISSING_PURCHASE_INFO');
+          this.cdr.detectChanges();
         }
-        // Naviguer vers la page de paiement
-        this.router.navigate([`/${this.lang}/payment/${res.data.token}`]);
-      },
-      error: (err) => {
-        this.loading = false;
-        this.error = err.error?.message || this.translate.instant('SEARCH_MODULE.PREMIUM_MODAL.MISSING_PURCHASE_INFO');
-        this.cdr.detectChanges();
-      }
-    });
+      });
   }
 
   // ─── Fermeture ────────────────────────────────────────────────────────────

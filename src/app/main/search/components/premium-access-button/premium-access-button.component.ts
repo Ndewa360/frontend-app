@@ -20,7 +20,7 @@ export class PremiumAccessButtonComponent implements OnInit, OnDestroy {
   hasActiveAccess = false;
   currentAccess: any = null;
   showModal = false;
-  premiumPrice = 500;
+  premiumPrice = 1000;
 
   private effectiveUserId = '';
   private destroy$ = new Subject<void>();

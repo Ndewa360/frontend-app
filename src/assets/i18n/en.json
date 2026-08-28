@@ -2158,7 +2158,7 @@
           "FREE_SEARCH": "Unlimited free search",
           "TOURS_360": "Free 360 virtual tours",
           "VERIFIED_LISTINGS": "Verified listings",
-          "PREMIUM_ACCESS": "Owner contacts: 500 FCFA / 3 days"
+          "PREMIUM_ACCESS": "Owner contacts: 1000 FCFA / 24 hours"
         },
         "BUTTON": "Search a home"
       }
@@ -2213,7 +2213,7 @@
         },
         "SEEKER_PAYMENT": {
           "QUESTION": "How do I contact the owner?",
-          "ANSWER": "For 500 FCFA you get full contact details (phone, WhatsApp, email) for all property owners for 3 days. One single payment for global access."
+          "ANSWER": "For 1000 FCFA you get full contact details (phone, WhatsApp, email) for all property owners for 24 hours. One single payment for global access."
         }
       }
     },
@@ -2254,7 +2254,7 @@
         "TITLE": "Find your ideal home now",
         "SUBTITLE": "Hundreds of verified listings with free 360 virtual tours.",
         "BTN": "Explore listings",
-        "NOTE": "Free access. Owner contacts available for 500 FCFA / 3 days"
+        "NOTE": "Free access. Owner contacts available for 1000 FCFA / 24 hours"
       }
     },
     "VIDEO_MODAL": {
@@ -2392,7 +2392,7 @@
         "DESCRIPTION": "Explore verified listings.",
         "FEATURE_1": "Real and verified listings",
         "FEATURE_2": "Free 360\u00b0 virtual tours",
-        "FEATURE_3": "Owner contact: 500 FCFA / 3 days",
+        "FEATURE_3": "Owner contact: 1000 FCFA / 24 hours",
         "CTA": "Search a home",
         "PAIN_HOOK": "You paid a broker for nothing \u2014 viewing fees collected, no home found."
       },
@@ -2477,7 +2477,7 @@
       "FEAT_3_TITLE": "Filtered listings",
       "FEAT_3_DESC": "Verified properties.",
       "FEAT_4_TITLE": "Contact owner",
-      "FEAT_4_DESC": "500 FCFA for 3 days access.",
+      "FEAT_4_DESC": "1000 FCFA for 24 hours access.",
       "PREMIUM_BADGE": "PREMIUM ACCESS",
       "CTA": "Search a home",
       "CTA_SUB": "Free"
@@ -2672,8 +2672,8 @@
       "ACCESS_ALL_OWNERS": "Access to ALL owners",
       "DIRECT_PHONES_EMAILS": "Direct telephones and emails",
       "WHATSAPP_CONTACTS": "WhatsApp Contacts",
-      "VALID_3_DAYS": "Package valid for 3 days",
-      "GLOBAL_ACCESS_3_DAYS": "for 3 days of global access",
+      "VALID_3_DAYS": "Package valid for 24 hours",
+      "GLOBAL_ACCESS_3_DAYS": "for 24 hours of global access",
       "BUY_PACKAGE": "Buy the package",
       "CLOSE_DIALOG": "Close",
       "FULLSCREEN_GALLERY": "Full screen gallery",
@@ -2715,13 +2715,13 @@
       "CALL_OWNER_BUTTON": "To call",
       "EMAIL_OWNER_BUTTON": "Send an email",
       "GLOBAL_PREMIUM_TITLE": "Premium Package - Global Access",
-      "GLOBAL_PREMIUM_DESC": "Access contact information for ALL owners for 3 days.",
+      "GLOBAL_PREMIUM_DESC": "Access contact information for ALL owners for 24 hours.",
       "BENEFIT_ALL_OWNERS": "Access to ALL owners",
       "BENEFIT_DIRECT_CONTACTS": "Direct telephones and emails",
       "BENEFIT_WHATSAPP": "WhatsApp Contacts",
       "BENEFIT_ADDRESSES": "Full addresses",
-      "BENEFIT_3_DAYS": "Package valid for 3 days",
-      "PRICE_DURATION": "for 3 days of global access",
+      "BENEFIT_3_DAYS": "Package valid for 24 hours",
+      "PRICE_DURATION": "for 24 hours of global access",
       "PROCESSING_TEXT": "Treatment...",
       "BUY_WITH_STRIPE": "Buy with Stripe",
       "SECURE_PAYMENT": "Secure payment by Stripe",
@@ -2739,12 +2739,12 @@
     },
     "PREMIUM_SUCCESS": {
       "TITLE": "Premium Access Activated!",
-      "SUBTITLE": "Congratulations ! You now have access to owner information for 7 days.",
+      "SUBTITLE": "Congratulations ! You now have access to owner information for 24 hours.",
       "ACCESS_SUMMARY": "Your premium access",
       "STATUS_LABEL": "Status",
       "STATUS_ACTIVE": "Active Premium Access",
       "DURATION_LABEL": "Duration",
-      "DURATION_VALUE": "7 days",
+      "DURATION_VALUE": "24 hours",
       "EXPIRES_LABEL": "Expires",
       "AMOUNT_PAID_LABEL": "Amount paid",
       "UNLOCKED_FEATURES": "Perks Unlocked",
@@ -3051,14 +3051,14 @@
       "CHECKING_ACCESS": "Access verification...",
       "ALL_OWNERS_ACCESS": "Access to ALL owners",
       "SINGLE_PAYMENT_DESC": "One payment to access information for all owners",
-      "DURATION": "for 3 days of global access",
+      "DURATION": "for 24 hours of global access",
       "BUY_PLAN": "Buy the package",
-      "REMAINING_DAYS": "3 days left",
+      "REMAINING_DAYS": "24 hours left",
       "FEATURES": {
         "ALL_OWNERS": "Access to ALL owners",
         "DIRECT_CONTACTS": "Direct telephones and emails",
         "WHATSAPP": "WhatsApp Contacts",
-        "VALIDITY": "Package valid for 3 days"
+        "VALIDITY": "Package valid for 24 hours"
       }
     },
     "SHARE": {

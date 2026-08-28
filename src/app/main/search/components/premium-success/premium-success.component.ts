@@ -90,7 +90,7 @@ export class PremiumSuccessComponent implements OnInit, OnDestroy {
 
   getExpiryDate(): Date {
     const expiryDate = new Date();
-    expiryDate.setDate(expiryDate.getDate() + 3);
+    expiryDate.setDate(expiryDate.getDate() + 1);
     return expiryDate;
   }
 

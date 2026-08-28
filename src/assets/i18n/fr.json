@@ -2158,7 +2158,7 @@
           "FREE_SEARCH": "Recherche illimitee et gratuite",
           "TOURS_360": "Visites 360 gratuites",
           "VERIFIED_LISTINGS": "Annonces verifiees",
-          "PREMIUM_ACCESS": "Coordonnees proprietaire : 500 FCFA / 3 jours"
+          "PREMIUM_ACCESS": "Coordonnees proprietaire : 1000 FCFA / 24 heures"
         },
         "BUTTON": "Rechercher un logement"
       }
@@ -2213,7 +2213,7 @@
         },
         "SEEKER_PAYMENT": {
           "QUESTION": "Comment contacter le proprietaire ?",
-          "ANSWER": "Pour 500 FCFA vous accedez aux coordonnees completes (telephone, WhatsApp, email) de tous les proprietaires pendant 3 jours. Un seul paiement pour un acces global."
+          "ANSWER": "Pour 1000 FCFA vous accedez aux coordonnees completes (telephone, WhatsApp, email) de tous les proprietaires pendant 24 heures. Un seul paiement pour un acces global."
         }
       }
     },
@@ -2254,7 +2254,7 @@
         "TITLE": "Trouvez votre logement ideal maintenant",
         "SUBTITLE": "Des centaines de logements verifies avec visites 360 gratuites.",
         "BTN": "Explorer les logements",
-        "NOTE": "Acces gratuit. Contacts proprietaires : 500 FCFA / 3 jours"
+        "NOTE": "Acces gratuit. Contacts proprietaires : 1000 FCFA / 24 heures"
       }
     },
     "VIDEO_MODAL": {
@@ -2392,7 +2392,7 @@
         "DESCRIPTION": "Explorez des annonces vérifiées et visitez en 360°.",
         "FEATURE_1": "Logements vérifiés et réels",
         "FEATURE_2": "Visites virtuelles 360° gratuites",
-        "FEATURE_3": "Contact direct : 500 FCFA / 3 jours",
+        "FEATURE_3": "Contact direct : 1000 FCFA / 24 heures",
         "CTA": "Rechercher un logement",
         "PAIN_HOOK": "Vous avez payé un démarcheur pour rien — frais de visite encaissés, pas de logement trouvé."
       },
@@ -2470,7 +2470,7 @@
       "FEAT_3_TITLE": "Annonces filtrees",
       "FEAT_3_DESC": "Biens verifies.",
       "FEAT_4_TITLE": "Contact proprietaire",
-      "FEAT_4_DESC": "500 FCFA pour 3 jours acces.",
+      "FEAT_4_DESC": "1000 FCFA pour 24 heures acces.",
       "PREMIUM_BADGE": "PREMIUM ACCESS",
       "CTA": "Rechercher un logement",
       "CTA_SUB": "Gratuit"
@@ -2672,8 +2672,8 @@
       "ACCESS_ALL_OWNERS": "Accès à TOUS les propriétaires",
       "DIRECT_PHONES_EMAILS": "Téléphones et emails directs",
       "WHATSAPP_CONTACTS": "Contacts WhatsApp",
-      "VALID_3_DAYS": "Package valide 3 jours",
-      "GLOBAL_ACCESS_3_DAYS": "pour 3 jours d'accès global",
+      "VALID_3_DAYS": "Package valide 24 heures",
+      "GLOBAL_ACCESS_3_DAYS": "pour 24 heures d'accès global",
       "BUY_PACKAGE": "Acheter le package",
       "CLOSE_DIALOG": "Fermer",
       "FULLSCREEN_GALLERY": "Galerie plein écran",
@@ -2715,13 +2715,13 @@
       "CALL_OWNER_BUTTON": "Appeler",
       "EMAIL_OWNER_BUTTON": "Envoyer un email",
       "GLOBAL_PREMIUM_TITLE": "Package Premium - Accès Global",
-      "GLOBAL_PREMIUM_DESC": "Accédez aux informations de contact de TOUS les propriétaires pendant 3 jours.",
+      "GLOBAL_PREMIUM_DESC": "Accédez aux informations de contact de TOUS les propriétaires pendant 24 heures.",
       "BENEFIT_ALL_OWNERS": "Accès à TOUS les propriétaires",
       "BENEFIT_DIRECT_CONTACTS": "Téléphones et emails directs",
       "BENEFIT_WHATSAPP": "Contacts WhatsApp",
       "BENEFIT_ADDRESSES": "Adresses complètes",
-      "BENEFIT_3_DAYS": "Package valide 3 jours",
-      "PRICE_DURATION": "pour 3 jours d'accès global",
+      "BENEFIT_3_DAYS": "Package valide 24 heures",
+      "PRICE_DURATION": "pour 24 heures d'accès global",
       "PROCESSING_TEXT": "Traitement...",
       "BUY_WITH_STRIPE": "Acheter avec Stripe",
       "SECURE_PAYMENT": "Paiement sécurisé par Stripe",
@@ -2739,12 +2739,12 @@
     },
     "PREMIUM_SUCCESS": {
       "TITLE": "Accès Premium Activé !",
-      "SUBTITLE": "Félicitations ! Vous avez maintenant accès aux informations des propriétaires pendant 7 jours.",
+      "SUBTITLE": "Félicitations ! Vous avez maintenant accès aux informations des propriétaires pendant 24 heures.",
       "ACCESS_SUMMARY": "Votre accès premium",
       "STATUS_LABEL": "Statut",
       "STATUS_ACTIVE": "Accès Premium Actif",
       "DURATION_LABEL": "Durée",
-      "DURATION_VALUE": "7 jours",
+      "DURATION_VALUE": "24 heures",
       "EXPIRES_LABEL": "Expire le",
       "AMOUNT_PAID_LABEL": "Montant payé",
       "UNLOCKED_FEATURES": "Avantages débloqués",
@@ -3051,14 +3051,14 @@
       "CHECKING_ACCESS": "Vérification d'accès...",
       "ALL_OWNERS_ACCESS": "Accès à TOUS les propriétaires",
       "SINGLE_PAYMENT_DESC": "Un seul paiement pour accéder aux informations de tous les propriétaires",
-      "DURATION": "pour 3 jours d'accès global",
+      "DURATION": "pour 24 heures d'accès global",
       "BUY_PLAN": "Acheter le package",
-      "REMAINING_DAYS": "3 jours restants",
+      "REMAINING_DAYS": "24 heures restantes",
       "FEATURES": {
         "ALL_OWNERS": "Accès à TOUS les propriétaires",
         "DIRECT_CONTACTS": "Téléphones et emails directs",
         "WHATSAPP": "Contacts WhatsApp",
-        "VALIDITY": "Package valide 3 jours"
+        "VALIDITY": "Package valide 24 heures"
       }
     },
     "SHARE": {

@@ -41,6 +41,13 @@ export class PaymentSessionService {
     return this.http.post<{ data: PaymentSessionResponse }>(`${this.api}/create`, payload);
   }
 
+  // ─── Créer une session publique (POST /payment-sessions/create-public) ────
+  // Pour les visiteurs anonymes (PREMIUM_ACCESS) — pas de JWT requis.
+  // Le visitorId doit être passé dans metadata.visitorId (et userId).
+  createSessionPublic(payload: CreatePaymentSessionPayload): Observable<{ data: PaymentSessionResponse }> {
+    return this.http.post<{ data: PaymentSessionResponse }>(`${this.api}/create-public`, payload);
+  }
+
   // ─── Créer session avec gestion d'erreur explicite (sans fallback non sécurisé) ────────────
   // Le fallback token non signé a été supprimé : un token généré côté client
   // sans signature permettrait de forger un paiement avec un montant arbitraire.
@@ -82,10 +89,10 @@ export class PaymentSessionService {
   ): void {
     this.createAndRedirect(lang, {
       context: 'PREMIUM_ACCESS',
-      amount: 500,
+      amount: 1000,
       amountEditable: false,
       currency: 'XAF',
-      description: 'Accès Premium — Informations propriétaires (3 jours)',
+      description: 'Accès Premium — Informations propriétaires (24 heures)',
       userId,
       userEmail,
       metadata: { ownerId, lang },

@@ -474,7 +474,7 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
   private handlePostPaymentSuccess(): void {
     if (this.context === 'PREMIUM_ACCESS') {
       const expiryDate = new Date();
-      expiryDate.setDate(expiryDate.getDate() + 3);
+      expiryDate.setDate(expiryDate.getDate() + 1);
       this.anonymousUserService.savePremiumAccess({
         accessId: this.externalRef || this.token,
         transactionId: this.externalRef || this.token,

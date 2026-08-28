@@ -129,8 +129,8 @@ export class SeoService {
         ? 'Trouver un logement en Afrique — Ndewa360'
         : 'Find Housing in Africa — Ndewa360',
       ogDescription: isFr
-        ? 'Annonces vérifiées, visites 360° gratuites, contact propriétaire à 500 FCFA.'
-        : 'Verified listings, free 360° tours, owner contact for 500 FCFA.',
+        ? 'Annonces vérifiées, visites 360° gratuites, contact propriétaire à 1000 FCFA pour 24 heures.'
+        : 'Verified listings, free 360° tours, owner contact for 1000 FCFA for 24 hours.',
       ogImage: DEFAULT_IMAGE,
       ogUrl: canonicalUrl,
       lang,

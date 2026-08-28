@@ -53,7 +53,7 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
   premiumError: string | null = null;
   ownerInfo: OwnerInfoModel | null = null;
   showPremiumModal = false;
-  premiumPrice = 500;
+  premiumPrice = 1000;
 
   // Données utilisateur courant (connecté ou anonyme)
   currentUserId: string = '';
@@ -497,13 +497,23 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
   }
 
   subscribeToPremiumStore(): void {
+    // Composant en ChangeDetectionStrategy.OnPush : les émissions du store
+    // (asynchrones) ne déclenchent pas de re-rendu automatique. On force une
+    // détection manuelle pour que la zone (infos propriétaire / paiement) se
+    // mette à jour et ne reste pas figée sur le loader.
     this.store.select(PremiumAccessState.loading)
       .pipe(takeUntil(this.destroy$))
-      .subscribe(loading => this.premiumLoading = loading);
+      .subscribe(loading => {
+        this.premiumLoading = loading;
+        this.cdr.detectChanges();
+      });
 
     this.store.select(PremiumAccessState.error)
       .pipe(takeUntil(this.destroy$))
-      .subscribe(error => this.premiumError = error);
+      .subscribe(error => {
+        this.premiumError = error;
+        this.cdr.detectChanges();
+      });
 
     this.store.select(PremiumAccessState.hasActiveAccess)
       .pipe(takeUntil(this.destroy$))
@@ -518,12 +528,16 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
             isAnonymous
           ));
         }
+        this.cdr.detectChanges();
       });
 
     this.store.select(PremiumAccessState.ownerInfo)
       .pipe(takeUntil(this.destroy$))
       .subscribe(ownerInfo => {
-        if (ownerInfo) this.ownerInfo = ownerInfo;
+        if (ownerInfo) {
+          this.ownerInfo = ownerInfo;
+          this.cdr.detectChanges();
+        }
       });
   }
 
