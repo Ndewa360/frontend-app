@@ -1,4 +1,13 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, ChangeDetectorRef, Optional } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnInit,
+  OnDestroy,
+  ChangeDetectorRef,
+  Optional,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { MatDialogRef } from '@angular/material/dialog';
@@ -14,7 +23,7 @@ import { PaymentSessionService } from 'src/app/shared/services/payment-session.s
 @Component({
   selector: 'app-premium-access-modal',
   templateUrl: './premium-access-modal.component.html',
-  styleUrls: ['./premium-access-modal.component.scss']
+  styleUrls: ['./premium-access-modal.component.scss'],
 })
 export class PremiumAccessModalComponent implements OnInit, OnDestroy {
   @Input() isOpen = false;
@@ -22,19 +31,17 @@ export class PremiumAccessModalComponent implements OnInit, OnDestroy {
   @Output() close = new EventEmitter<void>();
   @Output() accessGranted = new EventEmitter<void>();
 
-  // Identité résolue
   effectiveUserId = '';
   effectiveUserEmail = '';
   isAnonymous = false;
 
-  // État
   loading = false;
   error: string | null = null;
   hasActiveAccess = false;
   ownerInfo: OwnerInfoModel | null = null;
   premiumPrice = 1000;
 
-  // Étapes : 'checking' | 'offer' | 'owner_info'
+  // 'checking' | 'offer' | 'owner_info'
   step: 'checking' | 'offer' | 'owner_info' = 'checking';
 
   private lang = 'fr';
@@ -48,11 +55,10 @@ export class PremiumAccessModalComponent implements OnInit, OnDestroy {
     private paymentSessionService: PaymentSessionService,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
-    @Optional() private dialogRef: MatDialogRef<any>
+    @Optional() private dialogRef: MatDialogRef<any>,
   ) {}
 
   ngOnInit(): void {
-    // Extraire le lang depuis l'URL courante (ex: /fr/search/...)
     const urlParts = window.location.pathname.split('/');
     this.lang = urlParts[1] || 'fr';
     this.resolveUserIdentity();
@@ -79,25 +85,29 @@ export class PremiumAccessModalComponent implements OnInit, OnDestroy {
       this.isAnonymous = true;
     }
 
-    // Vérifier d'abord en local (0 appel réseau)
-    if (this.anonymousUserService.hasLocalActiveAccess()) {
-      this.hasActiveAccess = true;
-      this.step = 'owner_info';
-      this.loadOwnerInfo();
+    if (!this.ownerId) {
+      this.step = 'offer';
       return;
     }
 
-    // Réutiliser la vérification déjà faite par le composant parent (unit-detail-dialog
-    // ou premium-access-button) au lieu de refaire un appel réseau / ré-écraser le
-    // chargement global du store à chaque ouverture du modal.
-    const state = this.store.selectSnapshot(PremiumAccessState);
-    if (state.initLoadingState === 'LOADED') {
-      this.hasActiveAccess = state.hasActiveAccess;
-      if (this.hasActiveAccess) {
+    // Vérifier si l'accès pour CET ownerId est déjà en cache
+    const checkState = this.store.selectSnapshot(
+      PremiumAccessState.checkLoadingFor(this.ownerId),
+    );
+    const hasAccess = this.store.selectSnapshot(
+      PremiumAccessState.hasAccessForOwner(this.ownerId),
+    );
+    const cachedInfo = this.store.selectSnapshot(
+      PremiumAccessState.ownerInfoFor(this.ownerId),
+    );
+
+    if (checkState === 'LOADED') {
+      this.hasActiveAccess = hasAccess;
+      if (hasAccess) {
         this.step = 'owner_info';
-        if (state.ownerInfo) {
-          this.ownerInfo = state.ownerInfo;
-        } else if (this.ownerId && this.effectiveUserId) {
+        if (cachedInfo) {
+          this.ownerInfo = cachedInfo;
+        } else {
           this.loadOwnerInfo();
         }
       } else {
@@ -106,29 +116,25 @@ export class PremiumAccessModalComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (state.initLoadingState === 'LOADING') {
-      // Vérification déjà en cours → attendre (rester en 'checking');
-      // le subscribe au store chargera l'étape suivante quand elle se terminera.
+    if (checkState === 'LOADING') {
       this.step = 'checking';
       return;
     }
 
-    // Aucune vérification faite → la lancer
+    // Lancer la vérification pour cet ownerId
     this.step = 'checking';
-    this.store.dispatch(new PremiumAccessAction.CheckActiveAccess(this.effectiveUserId));
+    this.store.dispatch(new PremiumAccessAction.CheckAccessForOwner(
+      this.effectiveUserId,
+      this.ownerId,
+      this.isAnonymous,
+    ));
   }
 
   private subscribeToPremiumStore(): void {
-    // NOTE : this.loading est délibérément piloté LOCALEMENT (goToPayment / finalize),
-    // PAS par le store. Le store PremiumAccessState.loading est global et partagé avec
-    // d'autres composants (unit-detail-dialog, premium-access-button…) ; l'utiliser pour
-    // désactiver le CTA faisait rester le bouton en "Traitement…" le temps que le store
-    // (parfois même après la disparition du modal) redescende, voire indéfiniment.
+    // Écouter le loading global
     this.store.select(PremiumAccessState.loading)
       .pipe(takeUntil(this.destroy$))
       .subscribe(storeLoading => {
-        // Le store `loading` ne pilote que la transition "vérification" → "offre".
-        // Il ne doit jamais désactiver le bouton d'achat.
         if (this.step === 'checking' && !storeLoading && !this.hasActiveAccess) {
           this.step = 'offer';
           this.cdr.detectChanges();
@@ -142,29 +148,30 @@ export class PremiumAccessModalComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       });
 
-    this.store.select(PremiumAccessState.hasActiveAccess)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(hasAccess => {
-        this.hasActiveAccess = hasAccess;
-        // Ne passer à owner_info que si un accès est réellement actif.
-        // (Le passage checking → offer est géré par le subscribe `loading` ci-dessus.)
-        if (hasAccess && this.step !== 'owner_info') {
-          this.step = 'owner_info';
-          this.loadOwnerInfo();
-        }
-        this.cdr.detectChanges();
-      });
-
-    this.store.select(PremiumAccessState.ownerInfo)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(ownerInfo => {
-        if (ownerInfo) {
-          this.ownerInfo = ownerInfo;
-          this.step = 'owner_info';
-          this.accessGranted.emit();
+    // Écouter l'accès pour CET ownerId précis
+    if (this.ownerId) {
+      this.store.select(PremiumAccessState.hasAccessForOwner(this.ownerId))
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(hasAccess => {
+          this.hasActiveAccess = hasAccess;
+          if (hasAccess && this.step !== 'owner_info') {
+            this.step = 'owner_info';
+            this.loadOwnerInfo();
+          }
           this.cdr.detectChanges();
-        }
-      });
+        });
+
+      this.store.select(PremiumAccessState.ownerInfoFor(this.ownerId))
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(ownerInfo => {
+          if (ownerInfo) {
+            this.ownerInfo = ownerInfo;
+            this.step = 'owner_info';
+            this.accessGranted.emit();
+            this.cdr.detectChanges();
+          }
+        });
+    }
   }
 
   // ─── Chargement infos propriétaire ────────────────────────────────────────
@@ -174,37 +181,41 @@ export class PremiumAccessModalComponent implements OnInit, OnDestroy {
     this.store.dispatch(new PremiumAccessAction.GetOwnerInfo(
       this.effectiveUserId,
       this.ownerId,
-      this.isAnonymous
+      this.isAnonymous,
     ));
   }
 
-  // ─── Redirection vers la page de paiement centrale ────────────────────────
+  // ─── Redirection vers la page de paiement ─────────────────────────────────
 
   goToPayment(): void {
+    if (!this.ownerId) {
+      this.error = 'Propriétaire non identifié. Veuillez réessayer.';
+      return;
+    }
+
     const email = this.effectiveUserEmail || `${this.effectiveUserId}@visitor.ndewa360.com`;
     const currentPath = window.location.pathname + window.location.search;
 
     this.loading = true;
     this.error = null;
 
-    // Les visiteurs anonymes n'ont pas de JWT → route publique (create-public).
-    // Les utilisateurs connectés → route sécurisée (create, JWT).
     const payload = {
       context: 'PREMIUM_ACCESS' as const,
       amount: this.premiumPrice,
       amountEditable: false,
       currency: 'XAF',
-      description: 'Accès Premium — Informations propriétaires (24 heures)',
+      description: `Accès contacts propriétaire — 24 heures`,
       userId: this.effectiveUserId,
       userEmail: email,
       metadata: {
+        // ownerId transmis au handler via metadata
         ownerId: this.ownerId,
         isAnonymous: this.isAnonymous,
         visitorId: this.effectiveUserId,
-        lang: this.lang
+        lang: this.lang,
       },
-      successRedirectPath: `${currentPath}${currentPath.includes('?') ? '&' : '?'}premium=success&visitorId=${this.effectiveUserId}`,
-      cancelRedirectPath: currentPath
+      successRedirectPath: `${currentPath}${currentPath.includes('?') ? '&' : '?'}premium=success&ownerId=${this.ownerId}&visitorId=${this.effectiveUserId}`,
+      cancelRedirectPath: currentPath,
     };
 
     const request$ = this.isAnonymous
@@ -213,30 +224,23 @@ export class PremiumAccessModalComponent implements OnInit, OnDestroy {
 
     request$
       .pipe(
-        // Robustesse du loader : jamais de spinner/bouton bloqué indéfiniment.
-        // Timeout si le backend ne répond pas + finalize pour libérer l'état.
         timeout(15000),
         takeUntil(this.destroy$),
         finalize(() => {
           this.loading = false;
           this.cdr.detectChanges();
-        })
+        }),
       )
       .subscribe({
         next: (res) => {
-          // Fermer le modal premium
           this.close.emit();
-          // Fermer aussi le dialog Material parent (UnitDetailDialog) s'il existe
-          if (this.dialogRef) {
-            this.dialogRef.close();
-          }
-          // Naviguer vers la page de paiement
+          if (this.dialogRef) this.dialogRef.close();
           this.router.navigate([`/${this.lang}/payment/${res.data.token}`]);
         },
         error: (err) => {
           this.error = err.error?.message || this.translate.instant('SEARCH_MODULE.PREMIUM_MODAL.MISSING_PURCHASE_INFO');
           this.cdr.detectChanges();
-        }
+        },
       });
   }
 
@@ -248,20 +252,22 @@ export class PremiumAccessModalComponent implements OnInit, OnDestroy {
 
   // ─── Utilitaires template ─────────────────────────────────────────────────
 
-  getRemainingDaysText(): string {
-    const d = this.ownerInfo?.access
-      ? this.ownerInfo.access.remainingDays
-      : this.anonymousUserService.getRemainingDays();
-    if (d <= 0) return this.translate.instant('SEARCH_MODULE.PREMIUM_MODAL.ACCESS_EXPIRED');
-    return d === 1
-      ? this.translate.instant('SEARCH_MODULE.PREMIUM_MODAL.REMAINING_DAYS_SINGULAR')
-      : this.translate.instant('SEARCH_MODULE.PREMIUM_MODAL.REMAINING_DAYS_PLURAL', { days: d });
+  getRemainingHoursText(): string {
+    const info = this.ownerInfo;
+    if (!info?.access) return '';
+    const h = info.access.remainingHours;
+    if (h <= 0) return 'Accès expiré';
+    if (h < 2) return 'Moins d\'1 heure restante';
+    if (h < 24) return `${h} heures restantes`;
+    return '1 jour restant';
   }
 
   getWhatsAppLink(): string {
     if (!this.ownerInfo?.owner.whatsapp) return '#';
     const phone = this.ownerInfo.owner.whatsapp.replace(/\s+/g, '');
-    const message = encodeURIComponent(this.translate.instant('SEARCH_MODULE.PREMIUM_MODAL.WHATSAPP_MESSAGE'));
+    const message = encodeURIComponent(
+      this.translate.instant('SEARCH_MODULE.PREMIUM_MODAL.WHATSAPP_MESSAGE'),
+    );
     return `https://wa.me/${phone}?text=${message}`;
   }
 
@@ -273,8 +279,12 @@ export class PremiumAccessModalComponent implements OnInit, OnDestroy {
 
   emailOwner(): void {
     if (this.ownerInfo?.owner.email) {
-      const subject = encodeURIComponent(this.translate.instant('SEARCH_MODULE.PREMIUM_MODAL.EMAIL_SUBJECT'));
-      const body = encodeURIComponent(this.translate.instant('SEARCH_MODULE.PREMIUM_MODAL.EMAIL_BODY'));
+      const subject = encodeURIComponent(
+        this.translate.instant('SEARCH_MODULE.PREMIUM_MODAL.EMAIL_SUBJECT'),
+      );
+      const body = encodeURIComponent(
+        this.translate.instant('SEARCH_MODULE.PREMIUM_MODAL.EMAIL_BODY'),
+      );
       window.location.href = `mailto:${this.ownerInfo.owner.email}?subject=${subject}&body=${body}`;
     }
   }

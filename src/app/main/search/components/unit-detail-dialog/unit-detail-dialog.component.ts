@@ -7,6 +7,7 @@ import { takeUntil } from 'rxjs/operators';
 import { SearchPropertyModel } from 'src/app/shared/store';
 import { Store } from '@ngxs/store';
 import { PremiumAccessState, PremiumAccessAction, OwnerInfoModel } from 'src/app/shared/store/premium-access';
+import { PremiumAccessService } from 'src/app/shared/services/premium-access/premium-access.service';
 import { UserProfileState } from 'src/app/shared/store/user-profile';
 import { PremiumAccessService } from 'src/app/shared/services/premium-access/premium-access.service';
 import { AnonymousUserService } from 'src/app/shared/services/anonymous-user.service';
@@ -47,13 +48,16 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
   canNavigatePrevious = false;
   canNavigateNext = false;
 
-  // Accès premium
+  // Accès premium (par ownerId)
   hasPremiumAccess = false;
   premiumLoading = false;
   premiumError: string | null = null;
   ownerInfo: OwnerInfoModel | null = null;
   showPremiumModal = false;
   premiumPrice = 1000;
+
+  // ownerId de l'unité courante (recalculé à chaque navigation)
+  private currentOwnerId = '';
 
   // Données utilisateur courant (connecté ou anonyme)
   currentUserId: string = '';
@@ -87,6 +91,7 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
     this.updateNavigationState();
     this.setupKeyboardNavigation();
     this.updateUrlWithUnit();
+    this.currentOwnerId = this.unit?.property?.owner?._id || '';
     this.loadCurrentUser();
     this.subscribeToPremiumStore();
     this.checkPremiumReturnFromPayment();
@@ -141,6 +146,7 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
       this.mediaLoading = true;
       this.updateNavigationState();
       this.updateUrlWithUnit();
+      this.refreshPremiumStateForUnit();
       this.cdr.markForCheck();
       setTimeout(() => this.buildMediaItems());
     }
@@ -154,8 +160,50 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
       this.mediaLoading = true;
       this.updateNavigationState();
       this.updateUrlWithUnit();
+      this.refreshPremiumStateForUnit();
       this.cdr.markForCheck();
       setTimeout(() => this.buildMediaItems());
+    }
+  }
+
+  /**
+   * Recalcule l'état premium pour la nouvelle unité affichée.
+   * Chaque propriétaire a son propre accès — on relit le store pour le nouvel ownerId.
+   */
+  private refreshPremiumStateForUnit(): void {
+    const newOwnerId = this.unit?.property?.owner?._id || '';
+    if (newOwnerId === this.currentOwnerId) return;
+    this.currentOwnerId = newOwnerId;
+
+    // Lire l'état en cache pour ce nouvel ownerId
+    const hasAccess = this.store.selectSnapshot(
+      PremiumAccessState.hasAccessForOwner(newOwnerId),
+    );
+    const cachedInfo = this.store.selectSnapshot(
+      PremiumAccessState.ownerInfoFor(newOwnerId),
+    );
+
+    this.hasPremiumAccess = hasAccess;
+    this.ownerInfo = cachedInfo;
+
+    if (!hasAccess && newOwnerId) {
+      // Vérifier côté backend si pas encore vérifié
+      const checkState = this.store.selectSnapshot(
+        PremiumAccessState.checkLoadingFor(newOwnerId),
+      );
+      if (checkState === 'NO_LOADED') {
+        const profile = this.store.selectSnapshot(UserProfileState.selectStateUserProfile);
+        const isAnonymous = !profile?._id;
+        this.store.dispatch(new PremiumAccessAction.CheckAccessForOwner(
+          this.currentUserId, newOwnerId, isAnonymous,
+        ));
+      }
+    } else if (hasAccess && !cachedInfo && newOwnerId) {
+      const profile = this.store.selectSnapshot(UserProfileState.selectStateUserProfile);
+      const isAnonymous = !profile?._id;
+      this.store.dispatch(new PremiumAccessAction.GetOwnerInfo(
+        this.currentUserId, newOwnerId, isAnonymous,
+      ));
     }
   }
 
@@ -478,29 +526,43 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
       this.currentUserEmail = '';
     }
 
-    // Vérifier d'abord en local (0 appel réseau)
-    if (this.anonymousUserService.hasLocalActiveAccess()) {
+    const ownerId = this.currentOwnerId;
+    if (!ownerId) return;
+
+    const isAnonymous = !profile?._id;
+
+    // Lire le cache store pour cet ownerId
+    const hasAccess = this.store.selectSnapshot(
+      PremiumAccessState.hasAccessForOwner(ownerId),
+    );
+    const checkState = this.store.selectSnapshot(
+      PremiumAccessState.checkLoadingFor(ownerId),
+    );
+    const cachedInfo = this.store.selectSnapshot(
+      PremiumAccessState.ownerInfoFor(ownerId),
+    );
+
+    if (hasAccess) {
       this.hasPremiumAccess = true;
-      if (this.unit?.property?.owner?._id) {
-        const isAnonymous = !profile?._id;
+      if (cachedInfo) {
+        this.ownerInfo = cachedInfo;
+      } else {
         this.store.dispatch(new PremiumAccessAction.GetOwnerInfo(
-          this.currentUserId,
-          this.unit.property.owner._id,
-          isAnonymous
+          this.currentUserId, ownerId, isAnonymous,
         ));
       }
       return;
     }
 
-    // Vérifier côté backend
-    this.store.dispatch(new PremiumAccessAction.CheckActiveAccess(this.currentUserId));
+    // Pas encore vérifié pour cet ownerId → lancer la vérification
+    if (checkState === 'NO_LOADED') {
+      this.store.dispatch(new PremiumAccessAction.CheckAccessForOwner(
+        this.currentUserId, ownerId, isAnonymous,
+      ));
+    }
   }
 
   subscribeToPremiumStore(): void {
-    // Composant en ChangeDetectionStrategy.OnPush : les émissions du store
-    // (asynchrones) ne déclenchent pas de re-rendu automatique. On force une
-    // détection manuelle pour que la zone (infos propriétaire / paiement) se
-    // mette à jour et ne reste pas figée sur le loader.
     this.store.select(PremiumAccessState.loading)
       .pipe(takeUntil(this.destroy$))
       .subscribe(loading => {
@@ -515,30 +577,31 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
         this.cdr.detectChanges();
       });
 
-    this.store.select(PremiumAccessState.hasActiveAccess)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(hasAccess => {
-        this.hasPremiumAccess = hasAccess;
-        if (hasAccess && this.currentUserId && this.unit?.property?.owner?._id) {
-          const profile = this.store.selectSnapshot(UserProfileState.selectStateUserProfile);
-          const isAnonymous = !profile?._id;
-          this.store.dispatch(new PremiumAccessAction.GetOwnerInfo(
-            this.currentUserId,
-            this.unit.property.owner._id,
-            isAnonymous
-          ));
-        }
-        this.cdr.detectChanges();
-      });
-
-    this.store.select(PremiumAccessState.ownerInfo)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(ownerInfo => {
-        if (ownerInfo) {
-          this.ownerInfo = ownerInfo;
+    // Écouter l'accès pour l'ownerId de l'unité courante
+    if (this.currentOwnerId) {
+      this.store.select(PremiumAccessState.hasAccessForOwner(this.currentOwnerId))
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(hasAccess => {
+          this.hasPremiumAccess = hasAccess;
+          if (hasAccess && this.currentUserId && this.currentOwnerId) {
+            const profile = this.store.selectSnapshot(UserProfileState.selectStateUserProfile);
+            const isAnonymous = !profile?._id;
+            this.store.dispatch(new PremiumAccessAction.GetOwnerInfo(
+              this.currentUserId, this.currentOwnerId, isAnonymous,
+            ));
+          }
           this.cdr.detectChanges();
-        }
-      });
+        });
+
+      this.store.select(PremiumAccessState.ownerInfoFor(this.currentOwnerId))
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(ownerInfo => {
+          if (ownerInfo) {
+            this.ownerInfo = ownerInfo;
+            this.cdr.detectChanges();
+          }
+        });
+    }
   }
 
   onPurchasePremiumAccess(): void {
@@ -553,48 +616,42 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
     this.showPremiumModal = false;
   }
 
-  // Vérifier si on revient de la page de paiement avec succès
-  // Sécurisé : on vérifie côté backend au lieu de faire confiance au query param
+  /**
+   * Retour depuis la page de paiement.
+   * On vérifie l'accès pour l'ownerId passé en query param (plus précis que le check global).
+   */
   private checkPremiumReturnFromPayment(): void {
     const params = this.route.snapshot.queryParams;
     if (params['premium'] !== 'success') return;
 
-    // Nettoyer l'URL immédiatement
+    const returnedOwnerId = params['ownerId'] || this.currentOwnerId;
+
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: { premium: null, visitorId: null },
+      queryParams: { premium: null, ownerId: null, visitorId: null },
       queryParamsHandling: 'merge',
-      replaceUrl: true
+      replaceUrl: true,
     });
 
-    // Vérifier côté backend que l'accès est réellement actif
-    this.premiumAccessService.checkActiveAccess(this.currentUserId).subscribe({
+    if (!returnedOwnerId) return;
+
+    const profile = this.store.selectSnapshot(UserProfileState.selectStateUserProfile);
+    const isAnonymous = !profile?._id;
+
+    // Vider le cache pour forcer un rechargement frais depuis le backend
+    this.store.dispatch(new PremiumAccessAction.ClearOwnerCache(returnedOwnerId));
+
+    // Vérifier l'accès pour cet ownerId précis
+    this.premiumAccessService.checkAccessForOwner(this.currentUserId, returnedOwnerId).subscribe({
       next: (res) => {
         if (res.data.hasAccess) {
-          // Sauvegarder localement pour les visiteurs anonymes
-          const profile = this.store.selectSnapshot(UserProfileState.selectStateUserProfile);
-          const isAnonymous = !profile?._id;
-          if (isAnonymous && res.data.access?.expiryDate && !this.anonymousUserService.hasLocalActiveAccess()) {
-            this.anonymousUserService.savePremiumAccess({
-              accessId: res.data.access.id || 'confirmed',
-              transactionId: res.data.access.paymentTransactionRef || 'confirmed',
-              expiryDate: res.data.access.expiryDate,
-              phone: '',
-              paymentMethod: 'card',
-              paidAt: new Date().toISOString()
-            });
-          }
           this.hasPremiumAccess = true;
-          if (this.unit?.property?.owner?._id) {
-            this.store.dispatch(new PremiumAccessAction.GetOwnerInfo(
-              this.currentUserId,
-              this.unit.property.owner._id,
-              isAnonymous
-            ));
-          }
+          this.store.dispatch(new PremiumAccessAction.GetOwnerInfo(
+            this.currentUserId, returnedOwnerId, isAnonymous,
+          ));
         }
       },
-      error: () => {} // Silencieux — l'accès sera vérifié au prochain chargement
+      error: () => {},
     });
   }
 

@@ -1,40 +1,40 @@
 <div class="premium-access-section">
-  
+
   <!-- Loading -->
   <div *ngIf="loading" class="loading-state">
     <i class="fa fa-spinner fa-spin"></i>
     <span>Vérification de l'accès...</span>
   </div>
 
-  <!-- Has Active Access -->
+  <!-- Accès actif pour ce propriétaire -->
   <div *ngIf="!loading && hasActiveAccess" class="active-access">
     <div class="access-badge">
       <i class="fa fa-crown"></i>
-      <span>Accès Premium Actif</span>
+      <span>Accès actif</span>
     </div>
     <button class="view-info-btn" (click)="openModal()">
       <i class="fa fa-eye"></i>
-      <span>Voir les informations</span>
+      <span>Voir les contacts</span>
     </button>
     <div class="expiry-info">
       <i class="fa fa-clock"></i>
-      <span>{{ getRemainingDaysText() }}</span>
+      <span>{{ getRemainingHoursText() }}</span>
     </div>
   </div>
 
-  <!-- No Access -->
+  <!-- Pas d'accès pour ce propriétaire -->
   <div *ngIf="!loading && !hasActiveAccess" class="no-access">
     <div class="premium-offer">
       <div class="offer-header">
         <div class="premium-icon">
-          <i class="fa fa-crown"></i>
+          <i class="fa fa-lock"></i>
         </div>
         <div class="offer-text">
-          <h4>Forfait Premium Global</h4>
-          <p>Accès à tous les propriétaires</p>
+          <h4>Contacts du propriétaire</h4>
+          <p>1 000 FCFA — valable 24 heures</p>
         </div>
       </div>
-      
+
       <div class="offer-benefits">
         <div class="benefit">
           <i class="fa fa-phone"></i>
@@ -49,18 +49,18 @@
           <span>WhatsApp</span>
         </div>
       </div>
-      
+
       <div class="pricing">
         <div class="price">
           <span class="amount">{{ premiumPrice | number }}</span>
           <span class="currency">FCFA</span>
         </div>
-        <div class="duration">24 heures d'accès global</div>
+        <div class="duration">24 heures d'accès</div>
       </div>
-      
+
       <button class="premium-btn" (click)="openModal()">
-        <i class="fa fa-crown"></i>
-        <span>Forfait Premium</span>
+        <i class="fa fa-unlock"></i>
+        <span>Accéder aux contacts</span>
       </button>
     </div>
   </div>

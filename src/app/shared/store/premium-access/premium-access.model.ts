@@ -2,6 +2,7 @@ export interface PremiumAccessModel {
   id: string;
   userId: string;
   userEmail: string;
+  ownerId: string;
   amount: number;
   currency: string;
   paymentTransactionRef?: string;
@@ -11,16 +12,16 @@ export interface PremiumAccessModel {
   accessCount: number;
   firstAccessDate?: Date;
   lastAccessDate?: Date;
-  accessedOwners: string[];
 }
 
 export interface OwnerInfoModel {
   access: {
     id: string;
+    ownerId: string;
     expiryDate: string;
+    remainingHours: number;
     remainingDays: number;
     accessCount: number;
-    accessedOwnersCount: number;
     paymentTransactionRef?: string;
   };
   owner: {
@@ -36,9 +37,21 @@ export interface OwnerInfoModel {
 export interface PremiumAccessStateModel {
   loading: boolean;
   error: string | null;
-  currentAccess: PremiumAccessModel | null;
-  ownerInfo: OwnerInfoModel | null;
+
+  /**
+   * Liste des ownerId pour lesquels l'utilisateur a un accès actif en ce moment.
+   * Après 24h, l'ownerId disparaît de cette liste.
+   */
+  activeOwnerIds: string[];
+
+  /**
+   * Cache des infos propriétaire déjà chargées, indexé par ownerId.
+   * Évite de refaire un appel réseau si l'info est déjà en mémoire.
+   */
+  ownerInfoMap: Record<string, OwnerInfoModel>;
+
   accessHistory: PremiumAccessModel[];
-  hasActiveAccess: boolean;
-  initLoadingState: 'NO_LOADED' | 'LOADING' | 'LOADED';
+
+  /** État de la vérification initiale pour un ownerId donné */
+  checkLoadingMap: Record<string, 'NO_LOADED' | 'LOADING' | 'LOADED'>;
 }

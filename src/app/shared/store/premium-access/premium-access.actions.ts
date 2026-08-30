@@ -1,25 +1,35 @@
 export namespace PremiumAccessAction {
 
-  // ─── Vérifier l'accès actif (connecté ou anonyme) ────────────────────────
-  export class CheckActiveAccess {
-    static readonly type = '[PremiumAccess] Check Active Access';
-    constructor(public userId: string) {}
+  /**
+   * Vérifie si l'utilisateur a un accès actif pour UN propriétaire précis.
+   * À appeler à chaque ouverture de fiche propriétaire.
+   * Après 24h, l'accès est expiré → hasAccess = false → le client doit repayer.
+   */
+  export class CheckAccessForOwner {
+    static readonly type = '[PremiumAccess] Check Access For Owner';
+    constructor(public userId: string, public ownerId: string, public isAnonymous = false) {}
   }
 
-  // ─── Obtenir les infos propriétaire ──────────────────────────────────────
-  // Pour utilisateur connecté : userId = vrai userId (JWT)
-  // Pour visiteur anonyme    : userId = visitorId (localStorage)
+  /**
+   * Charge les infos du propriétaire si l'accès est actif.
+   * Retourne une erreur si l'accès est expiré ou inexistant.
+   */
   export class GetOwnerInfo {
     static readonly type = '[PremiumAccess] Get Owner Info';
     constructor(public userId: string, public ownerId: string, public isAnonymous = false) {}
   }
 
-  // ─── Historique (utilisateur connecté uniquement) ────────────────────────
+  /** Historique complet des accès (utilisateur connecté uniquement) */
   export class GetHistory {
     static readonly type = '[PremiumAccess] Get History';
   }
 
-  // ─── Utilitaires store ────────────────────────────────────────────────────
+  /** Vide le cache d'un propriétaire (forcer rechargement après paiement) */
+  export class ClearOwnerCache {
+    static readonly type = '[PremiumAccess] Clear Owner Cache';
+    constructor(public ownerId: string) {}
+  }
+
   export class SetLoading {
     static readonly type = '[PremiumAccess] Set Loading';
     constructor(public loading: boolean) {}

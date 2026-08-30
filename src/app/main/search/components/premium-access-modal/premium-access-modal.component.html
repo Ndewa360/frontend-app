@@ -38,15 +38,15 @@
             <span class="pm__price-value">{{ premiumPrice | number }}</span>
             <span class="pm__price-currency">FCFA</span>
           </div>
-          <div class="pm__price-label">{{ 'SEARCH_MODULE.UNIT_DETAIL.GLOBAL_ACCESS_3_DAYS' | translate }}</div>
+          <div class="pm__price-label">Accès aux contacts de ce propriétaire — 24 heures</div>
         </div>
 
         <!-- Avantages -->
         <ul class="pm__benefits">
-          <li><i class="fa fa-check"></i> {{ 'SEARCH_MODULE.PREMIUM_MODAL.BENEFIT_ALL_OWNERS' | translate }}</li>
-          <li><i class="fa fa-check"></i> {{ 'SEARCH_MODULE.PREMIUM_MODAL.BENEFIT_DIRECT_CONTACTS' | translate }}</li>
-          <li><i class="fa fa-check"></i> {{ 'SEARCH_MODULE.PREMIUM_MODAL.BENEFIT_ADDRESSES' | translate }}</li>
-          <li><i class="fa fa-check"></i> {{ 'SEARCH_MODULE.PREMIUM_MODAL.BENEFIT_3_DAYS' | translate }}</li>
+          <li><i class="fa fa-check"></i> Téléphone direct du propriétaire</li>
+          <li><i class="fa fa-check"></i> Contact WhatsApp</li>
+          <li><i class="fa fa-check"></i> Email et adresse</li>
+          <li><i class="fa fa-check"></i> Valable 24 heures pour ce propriétaire</li>
         </ul>
 
         <!-- Méthodes de paiement disponibles -->
@@ -74,7 +74,7 @@
         <!-- Badge accès actif -->
         <div class="pm__access-badge">
           <i class="fa fa-check-circle"></i>
-          <span>{{ 'SEARCH_MODULE.PREMIUM_MODAL.ACTIVE_ACCESS' | translate }} — {{ getRemainingDaysText() }}</span>
+          <span>Accès actif — {{ getRemainingHoursText() }}</span>
         </div>
 
         <!-- Chargement infos -->
