@@ -116,3 +116,8 @@ $gray-80: #393939;
     color: #fff;
   }
 }
+
+// Cacher le bouton "Préférences cookies" quand le panel de filtres de recherche est ouvert
+:host-context(body.filters-panel-open) .cookie-banner--minimal {
+  display: none !important;
+}

@@ -644,6 +644,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   openFilters(): void {
     if (this.filtersOverlayRef) return;
     this.showFilters = true;
+    document.body.classList.add('filters-panel-open');
 
     // Créer l'overlay CDK directement dans le body — indépendant de tout conteneur scrollable
     this.filtersOverlayRef = this.overlay.create({
@@ -661,6 +662,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
 
   closeFilters(): void {
     this.showFilters = false;
+    document.body.classList.remove('filters-panel-open');
     if (this.filtersOverlayRef) {
       this.filtersOverlayRef.detach();
       this.filtersOverlayRef.dispose();
