@@ -28,6 +28,7 @@ import { PaymentSessionService } from 'src/app/shared/services/payment-session.s
 export class PremiumAccessModalComponent implements OnInit, OnDestroy {
   @Input() isOpen = false;
   @Input() ownerId = '';
+  @Input() propertyId = '';
   @Output() close = new EventEmitter<void>();
   @Output() accessGranted = new EventEmitter<void>();
 
@@ -182,6 +183,7 @@ export class PremiumAccessModalComponent implements OnInit, OnDestroy {
       this.effectiveUserId,
       this.ownerId,
       this.isAnonymous,
+      this.propertyId || undefined,
     ));
   }
 

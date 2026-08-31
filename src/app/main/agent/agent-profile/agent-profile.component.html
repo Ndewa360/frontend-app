@@ -1,4 +1,40 @@
-<div class="agent-profile-container">
-  <h1>Mon Profil Agent</h1>
-  <p>Composant en cours de développement...</p>
+<div class="profile-card">
+  <div class="section-title">
+    <i class="fas fa-address-card" style="margin-right:.5rem;color:#6366f1"></i>
+    Contacts affichés après paiement
+  </div>
+
+  <p style="font-size:.85rem;color:#6b7280;margin-bottom:1.25rem">
+    Choisissez quelles coordonnées le client voit après avoir payé 1 000 FCFA pour accéder aux contacts.
+  </p>
+
+  <!-- Option AGENCY -->
+  <div class="toggle-row" [class.active]="contactDisplayMode === 'AGENCY'" (click)="selectMode('AGENCY')">
+    <div class="toggle-label">
+      <h4><i class="fas fa-building" style="margin-right:.4rem"></i>Coordonnées de l'agence</h4>
+      <p>Le client voit votre téléphone, email et adresse d'agence.</p>
+    </div>
+    <div class="radio-dot" [class.checked]="contactDisplayMode === 'AGENCY'"></div>
+  </div>
+
+  <!-- Option OWNER -->
+  <div class="toggle-row" [class.active]="contactDisplayMode === 'OWNER'" (click)="selectMode('OWNER')">
+    <div class="toggle-label">
+      <h4><i class="fas fa-user" style="margin-right:.4rem"></i>Coordonnées du propriétaire</h4>
+      <p>Le client voit les coordonnées du propriétaire réel du bien, pas les vôtres.</p>
+    </div>
+    <div class="radio-dot" [class.checked]="contactDisplayMode === 'OWNER'"></div>
+  </div>
+
+  <button class="save-btn" [disabled]="saving" (click)="save()">
+    <i *ngIf="saving" class="fas fa-spinner fa-spin" style="margin-right:.5rem"></i>
+    {{ saving ? 'Enregistrement...' : 'Enregistrer la préférence' }}
+  </button>
+
+  <div *ngIf="successMsg" class="alert alert-success">
+    <i class="fas fa-check-circle" style="margin-right:.4rem"></i>{{ successMsg }}
+  </div>
+  <div *ngIf="errorMsg" class="alert alert-error">
+    <i class="fas fa-exclamation-circle" style="margin-right:.4rem"></i>{{ errorMsg }}
+  </div>
 </div>

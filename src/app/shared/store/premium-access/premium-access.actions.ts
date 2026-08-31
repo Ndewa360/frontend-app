@@ -16,7 +16,12 @@ export namespace PremiumAccessAction {
    */
   export class GetOwnerInfo {
     static readonly type = '[PremiumAccess] Get Owner Info';
-    constructor(public userId: string, public ownerId: string, public isAnonymous = false) {}
+    constructor(
+      public userId: string,
+      public ownerId: string,
+      public isAnonymous = false,
+      public propertyId?: string,
+    ) {}
   }
 
   /** Historique complet des accès (utilisateur connecté uniquement) */

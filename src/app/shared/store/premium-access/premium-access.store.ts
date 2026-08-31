@@ -69,7 +69,7 @@ export class PremiumAccessState {
     const state = ctx.getState();
 
     // Déjà en cours de chargement pour cet owner → ne pas relancer
-    if (state.checkLoadingMap[action.ownerId] === 'LOADING') return;
+    if (state.checkLoadingMap[action.ownerId] === 'LOADING') return of(null);
 
     ctx.patchState({
       loading: true,
@@ -123,8 +123,8 @@ export class PremiumAccessState {
     ctx.patchState({ loading: true, error: null });
 
     const request$ = action.isAnonymous
-      ? this.premiumAccessService.getPublicOwnerInfo(action.ownerId, action.userId)
-      : this.premiumAccessService.getOwnerInfo(action.ownerId);
+      ? this.premiumAccessService.getPublicOwnerInfo(action.ownerId, action.userId, action.propertyId)
+      : this.premiumAccessService.getOwnerInfo(action.ownerId, action.propertyId);
 
     return request$.pipe(
       tap((response: any) => {

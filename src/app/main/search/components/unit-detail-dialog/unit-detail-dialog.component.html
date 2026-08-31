@@ -526,6 +526,7 @@
   *ngIf="showPremiumModal"
   [isOpen]="showPremiumModal"
   [ownerId]="unit?.property?.owner?._id || ''"
+  [propertyId]="unit?.property?._id || ''"
   (close)="closePremiumModal()"
   (accessGranted)="onPremiumAccessGranted()">
 </app-premium-access-modal>

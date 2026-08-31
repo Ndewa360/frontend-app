@@ -9,7 +9,6 @@ import { Store } from '@ngxs/store';
 import { PremiumAccessState, PremiumAccessAction, OwnerInfoModel } from 'src/app/shared/store/premium-access';
 import { PremiumAccessService } from 'src/app/shared/services/premium-access/premium-access.service';
 import { UserProfileState } from 'src/app/shared/store/user-profile';
-import { PremiumAccessService } from 'src/app/shared/services/premium-access/premium-access.service';
 import { AnonymousUserService } from 'src/app/shared/services/anonymous-user.service';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -201,8 +200,9 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
     } else if (hasAccess && !cachedInfo && newOwnerId) {
       const profile = this.store.selectSnapshot(UserProfileState.selectStateUserProfile);
       const isAnonymous = !profile?._id;
+      const propertyId = this.unit?.property?._id || (this.unit?.property as any)?._id?.toString();
       this.store.dispatch(new PremiumAccessAction.GetOwnerInfo(
-        this.currentUserId, newOwnerId, isAnonymous,
+        this.currentUserId, newOwnerId, isAnonymous, propertyId,
       ));
     }
   }
@@ -547,8 +547,9 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
       if (cachedInfo) {
         this.ownerInfo = cachedInfo;
       } else {
+        const propertyId = this.unit?.property?._id || (this.unit?.property as any)?._id?.toString();
         this.store.dispatch(new PremiumAccessAction.GetOwnerInfo(
-          this.currentUserId, ownerId, isAnonymous,
+          this.currentUserId, ownerId, isAnonymous, propertyId,
         ));
       }
       return;
@@ -586,8 +587,9 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
           if (hasAccess && this.currentUserId && this.currentOwnerId) {
             const profile = this.store.selectSnapshot(UserProfileState.selectStateUserProfile);
             const isAnonymous = !profile?._id;
+            const propertyId = this.unit?.property?._id || this.unit?.property?.toString();
             this.store.dispatch(new PremiumAccessAction.GetOwnerInfo(
-              this.currentUserId, this.currentOwnerId, isAnonymous,
+              this.currentUserId, this.currentOwnerId, isAnonymous, propertyId,
             ));
           }
           this.cdr.detectChanges();
@@ -646,8 +648,9 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
       next: (res) => {
         if (res.data.hasAccess) {
           this.hasPremiumAccess = true;
+          const propertyId = this.unit?.property?._id || (this.unit?.property as any)?._id?.toString();
           this.store.dispatch(new PremiumAccessAction.GetOwnerInfo(
-            this.currentUserId, returnedOwnerId, isAnonymous,
+            this.currentUserId, returnedOwnerId, isAnonymous, propertyId,
           ));
         }
       },

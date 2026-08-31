@@ -44,21 +44,26 @@ export class PremiumAccessService {
   }
 
   /**
-   * Infos propriétaire pour utilisateur connecté (JWT requis).
-   * Route: GET /premium-access/owner-info/:ownerId
+   * Vérifie si userId a AU MOINS UN accès actif (tous propriétaires).
+   * Route: GET /premium-access/check/:userId
    */
-  getOwnerInfo(ownerId: string): Observable<{ data: OwnerInfo }> {
-    return this.http.get<{ data: OwnerInfo }>(`${this.api}/owner-info/${ownerId}`);
+  checkAnyActiveAccess(userId: string): Observable<{ data: { hasAccess: boolean; access: any; activeOwnerIds: string[] } }> {
+    return this.http.get<{ data: { hasAccess: boolean; access: any; activeOwnerIds: string[] } }>(`${this.api}/check/${userId}`);
   }
 
   /**
-   * Infos propriétaire pour visiteur anonyme (pas de JWT).
-   * Route: GET /premium-access/public-owner-info/:ownerId?visitorId=
+   * Infos propriétaire pour utilisateur connecté (JWT requis).
+   * Route: GET /premium-access/owner-info/:ownerId
    */
-  getPublicOwnerInfo(ownerId: string, visitorId: string): Observable<{ data: OwnerInfo }> {
-    return this.http.get<{ data: OwnerInfo }>(
-      `${this.api}/public-owner-info/${ownerId}?visitorId=${visitorId}`,
-    );
+  getOwnerInfo(ownerId: string, propertyId?: string): Observable<{ data: OwnerInfo }> {
+    const params = propertyId ? `?propertyId=${propertyId}` : '';
+    return this.http.get<{ data: OwnerInfo }>(`${this.api}/owner-info/${ownerId}${params}`);
+  }
+
+  getPublicOwnerInfo(ownerId: string, visitorId: string, propertyId?: string): Observable<{ data: OwnerInfo }> {
+    let url = `${this.api}/public-owner-info/${ownerId}?visitorId=${visitorId}`;
+    if (propertyId) url += `&propertyId=${propertyId}`;
+    return this.http.get<{ data: OwnerInfo }>(url);
   }
 
   /**

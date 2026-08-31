@@ -43,31 +43,18 @@ export class PremiumSuccessComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.error = null;
 
-    // Résoudre l'identité
     const profile = this.store.selectSnapshot(UserProfileState.selectStateUserProfile);
     const userId = profile?._id || this.anonymousUserService.getVisitorId();
 
-    // Vérifier côté backend que l'accès est bien ACTIVE
-    this.premiumAccessService.checkActiveAccess(userId).subscribe({
+    // Utilise l'endpoint global /check/:userId (retourne hasAccess + activeOwnerIds)
+    this.premiumAccessService.checkAnyActiveAccess(userId).subscribe({
       next: (res) => {
         this.loading = false;
         if (res.data.hasAccess) {
           this.accessConfirmed = true;
-          // Sauvegarder localement pour les visiteurs anonymes
-          if (!profile?._id && res.data.access?.expiryDate) {
-            this.anonymousUserService.savePremiumAccess({
-              accessId: res.data.access.id || 'confirmed',
-              transactionId: res.data.access.paymentTransactionRef || 'confirmed',
-              expiryDate: res.data.access.expiryDate,
-              phone: '',
-              paymentMethod: 'card',
-              paidAt: new Date().toISOString(),
-            });
-          }
-          // Mettre à jour le store
-          this.store.dispatch(new PremiumAccessAction.CheckActiveAccess(userId));
+          // Réinitialiser le store pour forcer un rechargement propre
+          this.store.dispatch(new PremiumAccessAction.Reset());
         } else {
-          // Accès pas encore actif — réessayer dans 3s (webhook peut être en retard)
           setTimeout(() => this.verifyAccess(), 3000);
         }
       },
