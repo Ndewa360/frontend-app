@@ -416,7 +416,17 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
   }
 
   isPropertyManagedByAgent(): boolean {
-    return !!(this.unit?.property?.managedByAgent || this.unit?.property?.isManaged);
+    // Décide si les informations de l'AGENCE doivent être affichées au lieu de
+    // celles du propriétaire. On n'affiche l'agence que si :
+    //  - un agent gère vraiment la propriété (managedByAgent renseigné), ET
+    //  - l'agence n'a pas configuré contactDisplayMode = 'OWNER'
+    //    (contactDisplayMode 'AGENCY' par défaut).
+    const hasAgent = !!(this.unit?.property?.managedByAgent || this.unit?.property?.isManaged);
+    if (!hasAgent) return false;
+    const displayMode =
+      this.unit?.property?.managedByAgent?.agentProfile?.contactDisplayMode ||
+      'AGENCY';
+    return displayMode !== 'OWNER';
   }
 
   getContactPersonTitle(): string {
@@ -427,11 +437,14 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
 
   getContactPersonName(): string {
     if (this.isPropertyManagedByAgent()) {
-      return this.unit?.property?.managedByAgent?.fullName || 
-             this.unit?.property?.managedByAgent?.name || 
+      return this.unit?.property?.managedByAgent?.fullName ||
+             this.unit?.property?.managedByAgent?.name ||
+             this.unit?.property?.managedByAgent?.agentProfile?.businessName ||
              this.translate.instant('UNIT_DETAIL.CONTACT.CERTIFIED_AGENT');
     }
-    return this.unit?.property?.owner?.fullName || this.translate.instant('UNIT_DETAIL.CONTACT.CERTIFIED_OWNER');
+    return this.unit?.property?.owner?.fullName ||
+           this.unit?.property?.owner?.name ||
+           this.translate.instant('UNIT_DETAIL.CONTACT.CERTIFIED_OWNER');
   }
 
   getContactPersonInitials(): string {
@@ -450,20 +463,24 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
   }
 
   getAgencyName(): string {
-    return this.unit?.property?.managedByAgent?.agencyName || 
-           this.unit?.property?.managedByAgent?.company || 
+    return this.unit?.property?.managedByAgent?.agentProfile?.businessName ||
+           this.unit?.property?.managedByAgent?.businessName ||
+           this.unit?.property?.managedByAgent?.agencyName ||
+           this.unit?.property?.managedByAgent?.company ||
            this.translate.instant('UNIT_DETAIL.AGENCY.DEFAULT_NAME');
   }
 
   getAgencyLogo(): string | null {
-    return this.unit?.property?.managedByAgent?.agencyLogo || 
-           this.unit?.property?.managedByAgent?.logo || 
+    return this.unit?.property?.managedByAgent?.agentProfile?.businessLogoUrl ||
+           this.unit?.property?.managedByAgent?.businessLogoUrl ||
+           this.unit?.property?.managedByAgent?.agencyLogo ||
+           this.unit?.property?.managedByAgent?.logo ||
            null;
   }
 
   getAgencyPhone(): string {
-    return this.unit?.property?.managedByAgent?.agencyPhone ||
-           this.unit?.property?.managedByAgent?.phoneNumber ||
+    return this.unit?.property?.managedByAgent?.phoneNumber ||
+           this.unit?.property?.managedByAgent?.agencyPhone ||
            '';
   }
 

@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { AgentService } from '../../../shared/services/agent.service';
 import { AgentProfile, AgentStats, AgentStatus } from '../../../shared/models/agent.model';
 import { NotificationService } from 'carbon-components-angular';
+import { LanguageUrlService } from '../../../shared/services/language-url.service';
 
 @Component({
   selector: 'app-agent-dashboard',
@@ -22,7 +24,9 @@ export class AgentDashboardComponent implements OnInit {
 
   constructor(
     private agentService: AgentService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private router: Router,
+    private languageUrlService: LanguageUrlService
   ) {}
 
   ngOnInit(): void {
@@ -93,14 +97,17 @@ export class AgentDashboardComponent implements OnInit {
 
   // Actions rapides
   navigateToProperties(): void {
-    // Navigation vers la liste des biens
+    const lang = this.languageUrlService.getCurrentLanguage();
+    this.router.navigate([`/${lang}/app/agent/properties`]);
   }
 
   navigateToProfile(): void {
-    // Navigation vers le profil
+    const lang = this.languageUrlService.getCurrentLanguage();
+    this.router.navigate([`/${lang}/app/agent/profile`]);
   }
 
   navigateToStats(): void {
-    // Navigation vers les statistiques détaillées
+    const lang = this.languageUrlService.getCurrentLanguage();
+    this.router.navigate([`/${lang}/app/agent/stats`]);
   }
 }

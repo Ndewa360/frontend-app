@@ -27,6 +27,7 @@ import { environment } from 'src/environments/environment';
 })
 export class AgentProfileComponent implements OnInit {
   contactDisplayMode: 'AGENCY' | 'OWNER' = 'AGENCY';
+  agencyDisplayName = '';
   saving = false;
   successMsg = '';
   errorMsg = '';
@@ -40,7 +41,9 @@ export class AgentProfileComponent implements OnInit {
     if (this.userId) {
       this.http.get<any>(`${environment.apiUrl}/agents/${this.userId}`).subscribe({
         next: (res) => {
-          this.contactDisplayMode = res?.contactDisplayMode || res?.data?.contactDisplayMode || 'AGENCY';
+          const data = res?.data ?? res;
+          this.contactDisplayMode = data?.contactDisplayMode || 'AGENCY';
+          this.agencyDisplayName = data?.businessName || '';
         },
         error: () => {}
       });

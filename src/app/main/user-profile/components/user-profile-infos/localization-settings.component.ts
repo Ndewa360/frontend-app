@@ -102,7 +102,8 @@ import { LocalizationService } from '../../../../shared/services/localization/lo
                   <div class="custom-select-wrapper">
                     <select 
                       id="timezone"
-                      formControlName="timezone"
+                      [value]="getFormValue('timezone')"
+                      (change)="onTimezoneChange($any($event.target).value)"
                       class="field-input custom-select">
                       <option value="Africa/Douala">{{ 'SETTINGS.TIMEZONE_OPTIONS.AFRICA_DOUALA' | translate }}</option>
                       <option value="Europe/Paris">{{ 'SETTINGS.TIMEZONE_OPTIONS.EUROPE_PARIS' | translate }}</option>
@@ -122,7 +123,8 @@ import { LocalizationService } from '../../../../shared/services/localization/lo
                   <div class="custom-select-wrapper">
                     <select 
                       id="dateFormat"
-                      formControlName="dateFormat"
+                      [value]="getFormValue('dateFormat')"
+                      (change)="onDateFormatChange($any($event.target).value)"
                       class="field-input custom-select">
                       <option value="DD/MM/YYYY">{{ 'SETTINGS.DATE_FORMAT_OPTIONS.DD_MM_YYYY' | translate }}</option>
                       <option value="MM/DD/YYYY">{{ 'SETTINGS.DATE_FORMAT_OPTIONS.MM_DD_YYYY' | translate }}</option>
@@ -142,7 +144,8 @@ import { LocalizationService } from '../../../../shared/services/localization/lo
                 <div class="custom-select-wrapper">
                   <select 
                     id="numberFormat"
-                    formControlName="numberFormat"
+                    [value]="getFormValue('numberFormat')"
+                    (change)="onNumberFormatChange($any($event.target).value)"
                     class="field-input custom-select">
                     <option value="fr-FR">{{ 'SETTINGS.NUMBER_FORMAT_OPTIONS.FRENCH_FULL' | translate }}</option>
                     <option value="en-US">{{ 'SETTINGS.NUMBER_FORMAT_OPTIONS.ENGLISH_US_FULL' | translate }}</option>
@@ -260,6 +263,18 @@ export class LocalizationSettingsComponent implements OnInit, OnDestroy {
 
     // Mettre à jour le formulaire parent
     this.updateParentForm('preferredCurrency', currencyCode);
+  }
+
+  onTimezoneChange(timezone: string): void {
+    this.updateParentForm('timezone', timezone);
+  }
+
+  onDateFormatChange(dateFormat: string): void {
+    this.updateParentForm('dateFormat', dateFormat);
+  }
+
+  onNumberFormatChange(numberFormat: string): void {
+    this.updateParentForm('numberFormat', numberFormat);
   }
 
   toggleAdvancedSettings(): void {

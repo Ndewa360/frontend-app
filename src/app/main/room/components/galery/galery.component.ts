@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit, AfterViewInit, ViewEncapsulation } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, AfterViewInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store, Actions, ofActionErrored, ofActionSuccessful, Select } from '@ngxs/store';
@@ -65,7 +65,6 @@ export class GaleryComponent implements OnInit, AfterViewInit, OnDestroy {
     protected formBuilder: FormBuilder,
     private _store: Store,
     private _ngxsAction: Actions,
-    private cdr: ChangeDetectorRef,
     @Inject(MAT_DIALOG_DATA) public data: { room: RoomModel }
   ) {}
   
@@ -105,7 +104,6 @@ export class GaleryComponent implements OnInit, AfterViewInit, OnDestroy {
         this.roomSelectedImages = data.images;
         this.updateAllMediaItems();
         this.isLoadingMedia = false;
-        this.cdr.detectChanges(); // Force la détection des changements
       });
   }
 

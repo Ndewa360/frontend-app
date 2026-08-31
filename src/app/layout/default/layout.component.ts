@@ -221,6 +221,17 @@ export class LayoutComponent implements OnInit, OnDestroy {
               },
             ]
           },
+          {
+            groupName: this.translate.instant('COMMON.SETTINGS'),
+            opened: true,
+            children: [
+              {
+                name: this.translate.instant('NAVIGATION.PROFILE'),
+                prefix: { type: 'ibm-icon', name: 'userAvatar' },
+                url: `/${currentLang}/app/agent/profile`,
+              },
+            ]
+          },
         ];
       }
     } else {
