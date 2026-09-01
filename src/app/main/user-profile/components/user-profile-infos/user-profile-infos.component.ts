@@ -313,20 +313,34 @@ export class UserProfileInfosComponent implements OnInit, OnDestroy {
   getFieldError(fieldName: string): string {
     const field = this.formGroup.get(fieldName);
     if (field?.errors && (field.dirty || field.touched)) {
-      if (field.errors['required']) return `${fieldName} est requis`;
-      if (field.errors['minlength']) return `Minimum ${field.errors['minlength'].requiredLength} caractères`;
-      if (field.errors['maxlength']) return `Maximum ${field.errors['maxlength'].requiredLength} caractères`;
+      if (field.errors['required']) return `${this.translate.instant('PROFILE.FIELDS.' + this.labelKeyFor(fieldName))} ${this.translate.instant('PROFILE.ERRORS.REQUIRED')}`;
+      if (field.errors['minlength']) return this.translate.instant('PROFILE.ERRORS.MIN_LENGTH', { count: field.errors['minlength'].requiredLength });
+      if (field.errors['maxlength']) return this.translate.instant('PROFILE.ERRORS.MAX_LENGTH', { count: field.errors['maxlength'].requiredLength });
       if (field.errors['validatePhoneNumber']) {
-        return 'Numéro de téléphone invalide';
+        return this.translate.instant('PROFILE.ERRORS.PHONE_INVALID');
       }
       if (field.errors['pattern']) {
         if (fieldName === 'websiteLink') {
-          return 'URL invalide (doit commencer par http:// ou https://)';
+          return this.translate.instant('PROFILE.ERRORS.URL_INVALID');
         }
-        return 'Format invalide';
+        return this.translate.instant('PROFILE.ERRORS.FORMAT_INVALID');
       }
     }
     return '';
+  }
+
+  private labelKeyFor(fieldName: string): string {
+    const map: {[key: string]: string} = {
+      name: 'FULL_NAME',
+      phoneNumber: 'PHONE',
+      bio: 'BIO',
+      whatsappContact: 'WHATSAPP',
+      skype: 'SKYPE',
+      websiteLink: 'WEBSITE',
+      location: 'CITY',
+      country: 'COUNTRY'
+    };
+    return map[fieldName] || 'FULL_NAME';
   }
 
   onSubmitUpdateUserInfos(): void {
@@ -383,11 +397,16 @@ export class UserProfileInfosComponent implements OnInit, OnDestroy {
   onLocalizationChange(changes: any): void {
   }
 
+  // Vérifie si l'utilisateur est un agent pour afficher la section dédiée
+  isAgent(): boolean {
+    return this.userProfile?.userType === 'AGENT';
+  }
+
   // --- Cookies ---
   getCookieConsentLabel(): string {
-    if (this.cookieConsent === 'accepted') return 'Acceptés';
-    if (this.cookieConsent === 'declined') return 'Refusés';
-    return 'Non défini';
+    if (this.cookieConsent === 'accepted') return this.translate.instant('PROFILE.PRIVACY.ACCEPTED');
+    if (this.cookieConsent === 'declined') return this.translate.instant('PROFILE.PRIVACY.DECLINED');
+    return this.translate.instant('PROFILE.PRIVACY.UNDEFINED');
   }
 
   acceptCookies(): void {
@@ -445,7 +464,8 @@ export class UserProfileInfosComponent implements OnInit, OnDestroy {
   }
 
   canConfirmDelete(): boolean {
-    return this.deleteConfirmText === 'SUPPRIMER';
+    const confirmWord = this.translate.instant('USER_PROFILE.DELETE_CONFIRM_WORD');
+    return this.deleteConfirmText?.toUpperCase() === confirmWord.toUpperCase();
   }
 
   confirmDeleteAccount(): void {

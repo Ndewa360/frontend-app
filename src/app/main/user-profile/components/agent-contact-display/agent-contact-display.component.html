@@ -1,0 +1,49 @@
+<div class="acd-settings" *ngIf="isAgent && !loading">
+  <h3 class="acd-heading">
+    <i class="fas fa-address-card acd-heading-icon"></i>
+    {{ 'AGENT_CONTACT_DISPLAY.TITLE' | translate }}
+  </h3>
+
+  <p class="acd-description">
+    {{ 'AGENT_CONTACT_DISPLAY.DESCRIPTION' | translate }}
+  </p>
+
+  <div class="toggle-row" [class.active]="contactDisplayMode === 'AGENCY'" (click)="selectMode('AGENCY')">
+    <div class="toggle-label">
+      <h4><i class="fas fa-building" style="margin-right:.4rem"></i>{{ 'AGENT_CONTACT_DISPLAY.AGENCY_TITLE' | translate }}</h4>
+      <p>{{ 'AGENT_CONTACT_DISPLAY.AGENCY_DESC' | translate }}</p>
+    </div>
+    <div class="radio-dot" [class.checked]="contactDisplayMode === 'AGENCY'"></div>
+  </div>
+
+  <div class="toggle-row" [class.active]="contactDisplayMode === 'OWNER'" (click)="selectMode('OWNER')">
+    <div class="toggle-label">
+      <h4><i class="fas fa-user" style="margin-right:.4rem"></i>{{ 'AGENT_CONTACT_DISPLAY.OWNER_TITLE' | translate }}</h4>
+      <p>{{ 'AGENT_CONTACT_DISPLAY.OWNER_DESC' | translate }}</p>
+    </div>
+    <div class="radio-dot" [class.checked]="contactDisplayMode === 'OWNER'"></div>
+  </div>
+
+  <button class="acd-save-btn" [disabled]="saving" (click)="save()">
+    <i *ngIf="saving" class="fas fa-spinner fa-spin" style="margin-right:.5rem"></i>
+    {{ saving ? ('AGENT_CONTACT_DISPLAY.SAVING' | translate) : ('AGENT_CONTACT_DISPLAY.SAVE' | translate) }}
+  </button>
+
+  <div *ngIf="successMsg" class="acd-alert acd-alert-success">
+    <i class="fas fa-check-circle" style="margin-right:.4rem"></i>{{ successMsg }}
+  </div>
+  <div *ngIf="errorMsg" class="acd-alert acd-alert-error">
+    <i class="fas fa-exclamation-circle" style="margin-right:.4rem"></i>{{ errorMsg }}
+  </div>
+
+  <div class="acd-preview">
+    <div class="acd-preview-title">{{ 'AGENT_CONTACT_DISPLAY.PREVIEW_TITLE' | translate }}</div>
+    <div class="acd-preview-card">
+      <div class="acd-preview-avatar">{{ previewInitials() }}</div>
+      <div class="acd-preview-info">
+        <div class="acd-preview-name">{{ previewName() }}</div>
+        <div class="acd-preview-subtitle">{{ previewSubtitle() }}</div>
+      </div>
+    </div>
+  </div>
+</div>

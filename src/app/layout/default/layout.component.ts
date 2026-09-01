@@ -228,7 +228,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
               {
                 name: this.translate.instant('NAVIGATION.PROFILE'),
                 prefix: { type: 'ibm-icon', name: 'userAvatar' },
-                url: `/${currentLang}/app/agent/profile`,
+                url: `/${currentLang}/app/profile`,
               },
             ]
           },

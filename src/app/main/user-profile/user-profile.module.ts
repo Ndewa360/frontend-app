@@ -7,6 +7,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { UserProfileInfosComponent } from './components/user-profile-infos/user-profile-infos.component';
 import { LocalizationSettingsComponent } from './components/user-profile-infos/localization-settings.component';
 import { MonthlyReportsComponent } from './components/monthly-reports/monthly-reports.component';
+import { AgentContactDisplaySettingsComponent } from './components/agent-contact-display/agent-contact-display.component';
 
 
 @NgModule({
@@ -15,6 +16,7 @@ import { MonthlyReportsComponent } from './components/monthly-reports/monthly-re
     UserProfileInfosComponent,
     LocalizationSettingsComponent,
     MonthlyReportsComponent,
+    AgentContactDisplaySettingsComponent,
   ],
   imports: [
     CommonModule,

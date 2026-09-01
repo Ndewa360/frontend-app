@@ -23,6 +23,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
 
   title = 'Mon Profil';
   activeSection = 'personal';
+  isAgent = false;
 
   // Propriétés pour la détection de scroll
   private isScrolling = false;
@@ -36,6 +37,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     { id: 'location', label: 'Localisation', labelKey: 'PROFILE.SECTIONS.LOCATION', icon: 'location' },
     { id: 'localization', label: 'Langue & Devise', labelKey: 'PROFILE.SECTIONS.LOCALIZATION', icon: 'globe' },
     { id: 'display', label: 'Affichage', labelKey: 'PROFILE.SECTIONS.DISPLAY', icon: 'view' },
+    { id: 'agent', label: 'Agent', labelKey: 'PROFILE.SECTIONS.AGENT', icon: 'userAvatar' },
     { id: 'privacy', label: 'Mes données & Cookies', labelKey: 'PROFILE.SECTIONS.PRIVACY', icon: 'security' },
     { id: 'danger', label: 'Zone dangereuse', labelKey: 'PROFILE.SECTIONS.DANGER', icon: 'warning' }
   ];
@@ -49,6 +51,11 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     // Charger le profil utilisateur au démarrage
     this._store.dispatch(new UserProfileAction.FetchUserProfile());
+
+    // Détecter si l'utilisateur est un agent pour la navigation
+    this.userProfile$.subscribe(user => {
+      this.isAgent = user?.userType === 'AGENT';
+    });
 
     // Initialiser la détection de scroll après le rendu
     setTimeout(() => {

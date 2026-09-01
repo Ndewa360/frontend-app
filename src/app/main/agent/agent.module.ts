@@ -14,7 +14,6 @@ import { AgentRoutingModule } from './agent-routing.module';
 
 // Components
 import { AgentDashboardComponent } from './agent-dashboard/agent-dashboard.component';
-import { AgentProfileComponent } from './agent-profile/agent-profile.component';
 import { AgentPropertiesComponent } from './agent-properties/agent-properties.component';
 import { AgentStatsComponent } from './agent-stats/agent-stats.component';
 import { AgentProfileCompletionComponent } from './agent-profile-completion/agent-profile-completion.component';
@@ -23,7 +22,6 @@ import { PendingApprovalComponent } from './pending-approval/pending-approval.co
 @NgModule({
   declarations: [
     AgentDashboardComponent,
-    AgentProfileComponent,
     AgentPropertiesComponent,
     AgentStatsComponent,
     AgentProfileCompletionComponent,

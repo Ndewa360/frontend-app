@@ -11,14 +11,16 @@
   <!-- Navigation par sections -->
   <div class="profile-navigation">
     <div class="nav-container">
-      <button
-        *ngFor="let section of profileSections; trackBy: trackBySection"
-        class="nav-item"
-        [class.active]="activeSection === section.id"
-        (click)="scrollToSection(section.id)">
-        <youpez-ibm-icon [iconName]="section.icon" iconSize="16"></youpez-ibm-icon>
-        <span>{{ section.labelKey | translate }}</span>
-      </button>
+      <ng-container *ngFor="let section of profileSections; trackBy: trackBySection">
+        <button
+          class="nav-item"
+          [class.active]="activeSection === section.id"
+          *ngIf="section.id !== 'agent' || isAgent"
+          (click)="scrollToSection(section.id)">
+          <youpez-ibm-icon [iconName]="section.icon" iconSize="16"></youpez-ibm-icon>
+          <span>{{ section.labelKey | translate }}</span>
+        </button>
+      </ng-container>
     </div>
   </div>
 

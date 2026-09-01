@@ -103,7 +103,7 @@ export class AgentDashboardComponent implements OnInit {
 
   navigateToProfile(): void {
     const lang = this.languageUrlService.getCurrentLanguage();
-    this.router.navigate([`/${lang}/app/agent/profile`]);
+    this.router.navigate([`/${lang}/app/profile`]);
   }
 
   navigateToStats(): void {
