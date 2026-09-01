@@ -196,7 +196,18 @@ export class PremiumAccessModalComponent implements OnInit, OnDestroy {
     }
 
     const email = this.effectiveUserEmail || `${this.effectiveUserId}@visitor.ndewa360.com`;
-    const currentPath = window.location.pathname + window.location.search;
+
+    // Construire le successRedirectPath proprement :
+    // garder uniquement les params de filtres + unit, puis ajouter premium/ownerId/visitorId
+    const currentParams = new URLSearchParams(window.location.search);
+    currentParams.delete('premium');
+    currentParams.delete('ownerId');
+    currentParams.delete('visitorId');
+    currentParams.set('premium', 'success');
+    currentParams.set('ownerId', this.ownerId);
+    currentParams.set('visitorId', this.effectiveUserId);
+    const successRedirectPath = `${window.location.pathname}?${currentParams.toString()}`;
+    const cancelRedirectPath = window.location.pathname + window.location.search;
 
     this.loading = true;
     this.error = null;
@@ -216,8 +227,8 @@ export class PremiumAccessModalComponent implements OnInit, OnDestroy {
         visitorId: this.effectiveUserId,
         lang: this.lang,
       },
-      successRedirectPath: `${currentPath}${currentPath.includes('?') ? '&' : '?'}premium=success&ownerId=${this.ownerId}&visitorId=${this.effectiveUserId}`,
-      cancelRedirectPath: currentPath,
+      successRedirectPath,
+      cancelRedirectPath,
     };
 
     const request$ = this.isAnonymous

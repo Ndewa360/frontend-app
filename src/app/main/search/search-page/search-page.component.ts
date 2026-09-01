@@ -1529,14 +1529,15 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   /**
    * Ouvre le dialog de détails pour une unité avec MatDialog
    */
-  openUnitDetail(unit: SearchPropertyModel): void {
+  openUnitDetail(unit: SearchPropertyModel, premiumReturn: { ownerId: string; visitorId: string } | null = null): void {
     const currentIndex = this.allResults.findIndex(u => u._id === unit._id);
 
     const dialogRef = this.dialog.open(UnitDetailDialogComponent, {
       data: {
         unit: unit,
         allUnits: this.allResults,
-        currentIndex: currentIndex
+        currentIndex: currentIndex,
+        premiumReturn,
       },
       width: '100vw',
       height: '100vh',
@@ -1575,34 +1576,40 @@ export class SearchPageComponent implements OnInit, OnDestroy {
    * Vérifie si une unité doit être ouverte depuis l'URL
    */
   private checkForUnitInUrl(): void {
-    const unitId = this.route.snapshot.queryParams['unit'];
-    if (unitId) {
-      // Si les résultats sont déjà chargés, ouvrir directement
-      if (this.allResults && this.allResults.length > 0) {
-        const unit = this.allResults.find(u => u._id === unitId);
-        if (unit) {
-          setTimeout(() => this.openUnitDetail(unit), 100); // Petit délai pour s'assurer que tout est initialisé
-        }
-      } else {
-        // Sinon, attendre que les résultats soient chargés
-        this.waitForSearchResultsAndOpenUnit(unitId);
+    const params = this.route.snapshot.queryParams;
+    const unitId = params['unit'];
+    if (!unitId) return;
+
+    const premiumReturn = params['premium'] === 'success'
+      ? { ownerId: params['ownerId'] || '', visitorId: params['visitorId'] || '' }
+      : null;
+
+    if (this.allResults && this.allResults.length > 0) {
+      const unit = this.allResults.find(u => u._id === unitId);
+      if (unit) {
+        setTimeout(() => this.openUnitDetail(unit, premiumReturn), 100);
       }
+    } else {
+      this.waitForSearchResultsAndOpenUnit(unitId, premiumReturn);
     }
   }
 
   /**
-   * Attend que les résultats de recherche soient chargés puis ouvre l'unité
+   * Attend que les résultats locaux soient chargés puis ouvre l'unité.
+   * Surveille this.allResults via un polling léger (interval 200ms, max 10s).
    */
-  private waitForSearchResultsAndOpenUnit(unitId: string): void {
-    this.searchResults$.pipe(
-      filter((results: SearchPropertyModel[] | null) => results !== null && results.length > 0),
-      take(1),
-      takeUntil(this.destroy$)
-    ).subscribe((results: SearchPropertyModel[]) => {
-      const unit = results.find((u: SearchPropertyModel) => u._id === unitId);
+  private waitForSearchResultsAndOpenUnit(unitId: string, premiumReturn: { ownerId: string; visitorId: string } | null): void {
+    let attempts = 0;
+    const maxAttempts = 50; // 50 × 200ms = 10s
+    const interval = setInterval(() => {
+      attempts++;
+      const unit = this.allResults?.find(u => u._id === unitId);
       if (unit) {
-        setTimeout(() => this.openUnitDetail(unit), 200);
+        clearInterval(interval);
+        this.openUnitDetail(unit, premiumReturn);
+      } else if (attempts >= maxAttempts) {
+        clearInterval(interval);
       }
-    });
+    }, 200);
   }
 }

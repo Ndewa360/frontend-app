@@ -3,7 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MediaUtil, MediaItem } from 'src/app/shared/utils/media-utils';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, filter, take } from 'rxjs/operators';
 import { SearchPropertyModel } from 'src/app/shared/store';
 import { Store } from '@ngxs/store';
 import { PremiumAccessState, PremiumAccessAction, OwnerInfoModel } from 'src/app/shared/store/premium-access';
@@ -16,6 +16,7 @@ export interface UnitDetailDialogData {
   unit: SearchPropertyModel;
   allUnits: SearchPropertyModel[];
   currentIndex: number;
+  premiumReturn?: { ownerId: string; visitorId: string } | null;
 }
 
 @Component({
@@ -26,28 +27,20 @@ export interface UnitDetailDialogData {
 })
 export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestroy {
   private destroy$ = new Subject<void>();
-  
-  // Données du dialog
+
   unit: SearchPropertyModel;
   allUnits: SearchPropertyModel[];
   currentUnitIndex: number;
-  
-  // État de la galerie d'images
+
   currentImageIndex = 0;
   isImageGalleryVisible = false;
-
-  // Médias classifiés (image / panorama / video)
   unitMediaItems: MediaItem[] = [];
-  mediaLoading = true; // true pendant la classification async
-
-  // Panorama 360° plein écran
+  mediaLoading = true;
   panoramaFullscreenUrl: string | null = null;
 
-  // Navigation
   canNavigatePrevious = false;
   canNavigateNext = false;
 
-  // Accès premium (par ownerId)
   hasPremiumAccess = false;
   premiumLoading = false;
   premiumError: string | null = null;
@@ -55,20 +48,16 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
   showPremiumModal = false;
   premiumPrice = 1000;
 
-  // ownerId de l'unité courante (recalculé à chaque navigation)
   private currentOwnerId = '';
+  currentUserId = '';
+  currentUserEmail = '';
 
-  // Données utilisateur courant (connecté ou anonyme)
-  currentUserId: string = '';
-  currentUserEmail: string = '';
-
-  // Variables pour le swipe tactile
   private touchStartX = 0;
   private touchEndX = 0;
+  private touchStartY = 0;
   private minSwipeDistance = 50;
-
-  // Référence stable pour addEventListener/removeEventListener
   private boundHandleKeyDown = this.handleKeyDown.bind(this);
+  private mediaCache = new Map<string, MediaItem[]>();
 
   constructor(
     public dialogRef: MatDialogRef<UnitDetailDialogComponent>,
@@ -88,17 +77,28 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
 
   ngOnInit(): void {
     this.updateNavigationState();
-    this.setupKeyboardNavigation();
+    document.addEventListener('keydown', this.boundHandleKeyDown);
     this.updateUrlWithUnit();
-    this.currentOwnerId = this.unit?.property?.owner?._id || '';
-    this.loadCurrentUser();
+
+    // 1. Résoudre l'identité utilisateur
+    this.resolveCurrentUser();
+
+    // 2. Calculer l'ownerId de l'unité courante
+    this.currentOwnerId = this.resolveOwnerId(this.unit);
+
+    // 3. Initialiser l'état premium (cache store ou vérification backend)
+    this.initPremiumState();
+
+    // 4. S'abonner aux changements du store pour cet ownerId
     this.subscribeToPremiumStore();
-    this.checkPremiumReturnFromPayment();
+
+    // 5. Traiter le retour de paiement si applicable
+    if (this.data.premiumReturn?.ownerId) {
+      this.handlePremiumReturn(this.data.premiumReturn.ownerId);
+    }
   }
 
   ngAfterViewInit(): void {
-    // setTimeout(0) pour sortir du cycle de détection Angular courant
-    // et éviter NG0100 ExpressionChangedAfterItHasBeenCheckedError
     setTimeout(() => this.buildMediaItems());
   }
 
@@ -109,102 +109,193 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
     this.destroy$.complete();
   }
 
-  // === NAVIGATION ===
+  // ── Résolution identité ──────────────────────────────────────────────────
+
+  private resolveCurrentUser(): void {
+    const profile = this.store.selectSnapshot(UserProfileState.selectStateUserProfile);
+    if (profile?._id) {
+      this.currentUserId = profile._id;
+      this.currentUserEmail = profile.email || '';
+    } else {
+      this.currentUserId = this.anonymousUserService.getVisitorId();
+      this.currentUserEmail = '';
+    }
+  }
+
+  private get isAnonymous(): boolean {
+    const profile = this.store.selectSnapshot(UserProfileState.selectStateUserProfile);
+    return !profile?._id;
+  }
+
+  private resolveOwnerId(unit: SearchPropertyModel): string {
+    return unit?.property?.owner?._id || (unit?.property?.owner as any)?.toString() || '';
+  }
+
+  // ── État premium initial ─────────────────────────────────────────────────
+
+  /**
+   * Lit le cache store pour l'ownerId courant.
+   * - Si accès confirmé en cache → affiche directement les infos
+   * - Si infos manquantes → les charge
+   * - Si pas encore vérifié → lance la vérification backend
+   */
+  private initPremiumState(): void {
+    const ownerId = this.currentOwnerId;
+    if (!ownerId) return;
+
+    const hasAccess = this.store.selectSnapshot(PremiumAccessState.hasAccessForOwner(ownerId));
+    const cachedInfo = this.store.selectSnapshot(PremiumAccessState.ownerInfoFor(ownerId));
+    const checkState = this.store.selectSnapshot(PremiumAccessState.checkLoadingFor(ownerId));
+
+    if (hasAccess) {
+      this.hasPremiumAccess = true;
+      if (cachedInfo) {
+        this.ownerInfo = cachedInfo;
+      } else {
+        // Accès confirmé mais infos pas encore chargées
+        this.dispatchGetOwnerInfo(ownerId);
+      }
+      return;
+    }
+
+    // Pas d'accès en cache → vérifier si pas déjà en cours
+    if (checkState === 'NO_LOADED') {
+      this.store.dispatch(new PremiumAccessAction.CheckAccessForOwner(
+        this.currentUserId, ownerId, this.isAnonymous,
+      ));
+    }
+  }
+
+  // ── Abonnements store ────────────────────────────────────────────────────
+
+  private subscribeToPremiumStore(): void {
+    const ownerId = this.currentOwnerId;
+    if (!ownerId) return;
+
+    // Écouter le loading global
+    this.store.select(PremiumAccessState.loading)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(loading => {
+        this.premiumLoading = loading;
+        this.cdr.detectChanges();
+      });
+
+    this.store.select(PremiumAccessState.error)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(error => {
+        this.premiumError = error;
+        this.cdr.detectChanges();
+      });
+
+    // Écouter l'accès pour CET ownerId
+    this.store.select(PremiumAccessState.hasAccessForOwner(ownerId))
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(hasAccess => {
+        this.hasPremiumAccess = hasAccess;
+        this.cdr.detectChanges();
+      });
+
+    // Écouter les infos propriétaire pour CET ownerId
+    this.store.select(PremiumAccessState.ownerInfoFor(ownerId))
+      .pipe(
+        takeUntil(this.destroy$),
+        filter(info => !!info),
+      )
+      .subscribe(ownerInfo => {
+        this.ownerInfo = ownerInfo;
+        this.hasPremiumAccess = true;
+        this.cdr.detectChanges();
+      });
+  }
+
+  // ── Retour de paiement ───────────────────────────────────────────────────
+
+  /**
+   * Appelé quand SearchPageComponent rouvre le dialog avec premiumReturn.
+   * Vérifie l'accès côté backend et charge les infos propriétaire.
+   */
+  private handlePremiumReturn(returnedOwnerId: string): void {
+    // Nettoyer les query params premium de l'URL
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { premium: null, ownerId: null, visitorId: null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
+
+    // Vider le cache pour forcer un rechargement frais
+    this.store.dispatch(new PremiumAccessAction.ClearOwnerCache(returnedOwnerId));
+
+    // Vérifier l'accès côté backend
+    this.premiumAccessService.checkAccessForOwner(this.currentUserId, returnedOwnerId)
+      .pipe(take(1))
+      .subscribe({
+        next: (res) => {
+          if (res.data.hasAccess) {
+            this.dispatchGetOwnerInfo(returnedOwnerId);
+          }
+        },
+        error: () => {},
+      });
+  }
+
+  private dispatchGetOwnerInfo(ownerId: string): void {
+    const propertyId = this.unit?.property?._id || (this.unit?.property as any)?._id?.toString() || '';
+    this.store.dispatch(new PremiumAccessAction.GetOwnerInfo(
+      this.currentUserId, ownerId, this.isAnonymous, propertyId,
+    ));
+  }
+
+  // ── Navigation entre unités ──────────────────────────────────────────────
+
   private updateNavigationState(): void {
     this.canNavigatePrevious = this.currentUnitIndex > 0;
     this.canNavigateNext = this.currentUnitIndex < this.allUnits.length - 1;
   }
 
-  private setupKeyboardNavigation(): void {
-    document.addEventListener('keydown', this.boundHandleKeyDown);
-  }
-
   private handleKeyDown(event: KeyboardEvent): void {
     switch (event.key) {
-      case 'Escape':
-        this.closeDialog();
-        break;
-      case 'ArrowLeft':
-        if (this.canNavigatePrevious) {
-          this.navigateToPrevious();
-        }
-        break;
-      case 'ArrowRight':
-        if (this.canNavigateNext) {
-          this.navigateToNext();
-        }
-        break;
+      case 'Escape': this.closeDialog(); break;
+      case 'ArrowLeft': if (this.canNavigatePrevious) this.navigateToPrevious(); break;
+      case 'ArrowRight': if (this.canNavigateNext) this.navigateToNext(); break;
     }
   }
 
   navigateToPrevious(): void {
-    if (this.canNavigatePrevious) {
-      this.currentUnitIndex--;
-      this.unit = this.allUnits[this.currentUnitIndex];
-      this.currentImageIndex = 0;
-      this.mediaLoading = true;
-      this.updateNavigationState();
-      this.updateUrlWithUnit();
-      this.refreshPremiumStateForUnit();
-      this.cdr.markForCheck();
-      setTimeout(() => this.buildMediaItems());
-    }
+    if (!this.canNavigatePrevious) return;
+    this.currentUnitIndex--;
+    this.onUnitChanged();
   }
 
   navigateToNext(): void {
-    if (this.canNavigateNext) {
-      this.currentUnitIndex++;
-      this.unit = this.allUnits[this.currentUnitIndex];
-      this.currentImageIndex = 0;
-      this.mediaLoading = true;
-      this.updateNavigationState();
-      this.updateUrlWithUnit();
-      this.refreshPremiumStateForUnit();
-      this.cdr.markForCheck();
-      setTimeout(() => this.buildMediaItems());
-    }
+    if (!this.canNavigateNext) return;
+    this.currentUnitIndex++;
+    this.onUnitChanged();
   }
 
-  /**
-   * Recalcule l'état premium pour la nouvelle unité affichée.
-   * Chaque propriétaire a son propre accès — on relit le store pour le nouvel ownerId.
-   */
-  private refreshPremiumStateForUnit(): void {
-    const newOwnerId = this.unit?.property?.owner?._id || '';
-    if (newOwnerId === this.currentOwnerId) return;
-    this.currentOwnerId = newOwnerId;
+  private onUnitChanged(): void {
+    this.unit = this.allUnits[this.currentUnitIndex];
+    this.currentImageIndex = 0;
+    this.mediaLoading = true;
+    this.updateNavigationState();
+    this.updateUrlWithUnit();
 
-    // Lire l'état en cache pour ce nouvel ownerId
-    const hasAccess = this.store.selectSnapshot(
-      PremiumAccessState.hasAccessForOwner(newOwnerId),
-    );
-    const cachedInfo = this.store.selectSnapshot(
-      PremiumAccessState.ownerInfoFor(newOwnerId),
-    );
-
-    this.hasPremiumAccess = hasAccess;
-    this.ownerInfo = cachedInfo;
-
-    if (!hasAccess && newOwnerId) {
-      // Vérifier côté backend si pas encore vérifié
-      const checkState = this.store.selectSnapshot(
-        PremiumAccessState.checkLoadingFor(newOwnerId),
-      );
-      if (checkState === 'NO_LOADED') {
-        const profile = this.store.selectSnapshot(UserProfileState.selectStateUserProfile);
-        const isAnonymous = !profile?._id;
-        this.store.dispatch(new PremiumAccessAction.CheckAccessForOwner(
-          this.currentUserId, newOwnerId, isAnonymous,
-        ));
-      }
-    } else if (hasAccess && !cachedInfo && newOwnerId) {
-      const profile = this.store.selectSnapshot(UserProfileState.selectStateUserProfile);
-      const isAnonymous = !profile?._id;
-      const propertyId = this.unit?.property?._id || (this.unit?.property as any)?._id?.toString();
-      this.store.dispatch(new PremiumAccessAction.GetOwnerInfo(
-        this.currentUserId, newOwnerId, isAnonymous, propertyId,
-      ));
+    const newOwnerId = this.resolveOwnerId(this.unit);
+    if (newOwnerId !== this.currentOwnerId) {
+      this.currentOwnerId = newOwnerId;
+      // Réinitialiser l'état premium pour la nouvelle unité
+      this.hasPremiumAccess = false;
+      this.ownerInfo = null;
+      this.premiumError = null;
+      this.initPremiumState();
+      // Réabonner le store au nouvel ownerId
+      this.destroy$.next(); // Couper les anciens abonnements
+      this.destroy$ = new Subject<void>();
+      this.subscribeToPremiumStore();
     }
+
+    this.cdr.markForCheck();
+    setTimeout(() => this.buildMediaItems());
   }
 
   closeDialog(): void {
@@ -213,15 +304,13 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
     this.dialogRef.close(null);
   }
 
-  // === URL MANAGEMENT ===
+  // ── URL ──────────────────────────────────────────────────────────────────
+
   private updateUrlWithUnit(): void {
     const currentParams = this.route.snapshot.queryParams;
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: {
-        ...currentParams,
-        unit: this.unit._id
-      },
+      queryParams: { ...currentParams, unit: this.unit._id },
       replaceUrl: true
     });
   }
@@ -229,7 +318,6 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
   private removeUnitFromUrl(): void {
     const currentParams = { ...this.route.snapshot.queryParams };
     delete currentParams['unit'];
-    
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: currentParams,
@@ -237,7 +325,7 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
     });
   }
 
-  // === MÉDIAS ===
+  // ── Médias ───────────────────────────────────────────────────────────────
 
   private collectRawUrls(): string[] {
     const raw: string[] = [];
@@ -249,14 +337,6 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
     return [...new Set(raw)];
   }
 
-  // Cache des médias par ID d'unité pour éviter de reclassifier à chaque navigation
-  private mediaCache = new Map<string, MediaItem[]>();
-
-  /**
-   * Construit la liste des médias — sync uniquement (pas de chargement réseau).
-   * La détection 360° par ratio 2:1 est supprimée : trop coûteuse (N requêtes réseau).
-   * Les panoramas sont détectés par mots-clés dans l'URL (360, pano, panorama...).
-   */
   private buildMediaItems(): void {
     if (!this.unit) {
       this.unitMediaItems = [{ url: '/assets/images/placeholder-room.jpg', type: 'image' }];
@@ -284,7 +364,8 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
     this.cdr.detectChanges();
   }
 
-  // === IMAGE NAVIGATION ===
+  // ── Navigation images ────────────────────────────────────────────────────
+
   previousImage(): void {
     if (this.unitMediaItems.length <= 1) return;
     this.currentImageIndex = this.currentImageIndex === 0 ? this.unitMediaItems.length - 1 : this.currentImageIndex - 1;
@@ -296,195 +377,161 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
   }
 
   goToImage(index: number): void {
-    if (index >= 0 && index < this.unitMediaItems.length) {
-      this.currentImageIndex = index;
-    }
+    if (index >= 0 && index < this.unitMediaItems.length) this.currentImageIndex = index;
   }
 
   getSliderTransform(): string {
     return `translateX(-${this.currentImageIndex * 100}%)`;
   }
 
-  // === TOUCH EVENTS ===
-  private touchStartY = 0;
-  
+  // ── Touch ────────────────────────────────────────────────────────────────
+
   onTouchStart(event: TouchEvent): void {
     this.touchStartX = event.touches[0].clientX;
     this.touchStartY = event.touches[0].clientY;
   }
 
   onTouchMove(event: TouchEvent): void {
-    const touch = event.touches[0];
-    const deltaX = touch.clientX - this.touchStartX;
-    const deltaY = touch.clientY - this.touchStartY;
-    const absDeltaX = Math.abs(deltaX);
-    const absDeltaY = Math.abs(deltaY);
-
-    // Si mouvement principalement horizontal, bloquer le scroll natif pour le swipe
-    if (absDeltaX > absDeltaY && absDeltaX > 5) {
-      event.preventDefault();
-    }
-    // Le scroll vertical est géré nativement par le navigateur
+    const deltaX = Math.abs(event.touches[0].clientX - this.touchStartX);
+    const deltaY = Math.abs(event.touches[0].clientY - this.touchStartY);
+    if (deltaX > deltaY && deltaX > 5) event.preventDefault();
   }
 
   onTouchEnd(event: TouchEvent): void {
     this.touchEndX = event.changedTouches[0].clientX;
-    this.handleSwipe();
-  }
-
-  private handleSwipe(): void {
-    const swipeDistance = this.touchStartX - this.touchEndX;
-    
-    if (Math.abs(swipeDistance) > this.minSwipeDistance) {
-      if (swipeDistance > 0) {
-        this.nextImage();
-      } else {
-        this.previousImage();
-      }
+    const dist = this.touchStartX - this.touchEndX;
+    if (Math.abs(dist) > this.minSwipeDistance) {
+      dist > 0 ? this.nextImage() : this.previousImage();
     }
   }
 
-  onTouchCancel(event: TouchEvent): void {
-    // Réinitialiser les variables de toucher
+  onTouchCancel(_event: TouchEvent): void {
     this.touchStartX = 0;
     this.touchEndX = 0;
   }
 
-  // === GALLERY ===
+  // ── Galerie ──────────────────────────────────────────────────────────────
+
   openImageGallery(): void {
     const current = this.unitMediaItems[this.currentImageIndex];
     if (current?.type === 'panorama') {
-      // Ouvrir directement le viewer 360° plein écran
       this.panoramaFullscreenUrl = current.url;
     } else {
       this.isImageGalleryVisible = true;
     }
   }
 
-  closeImageGallery(): void {
-    this.isImageGalleryVisible = false;
-  }
+  closeImageGallery(): void { this.isImageGalleryVisible = false; }
+  openPanoramaFullscreen(url: string): void { this.panoramaFullscreenUrl = url; }
+  closePanoramaFullscreen(): void { this.panoramaFullscreenUrl = null; }
 
-  openPanoramaFullscreen(url: string): void {
-    this.panoramaFullscreenUrl = url;
-  }
+  // ── Utilitaires ──────────────────────────────────────────────────────────
 
-  closePanoramaFullscreen(): void {
-    this.panoramaFullscreenUrl = null;
-  }
-
-  // === UTILITIES ===
-  trackByIndex(index: number): number {
-    return index;
-  }
-
-  onImageError(event: any, index: number): void {
-    event.target.src = '/assets/images/placeholder-room.jpg';
-  }
-
-  onImageLoad(event: any, index: number): void {
-    // Image chargée avec succès
-  }
+  trackByIndex(index: number): number { return index; }
+  onImageError(event: any, _index: number): void { event.target.src = '/assets/images/placeholder-room.jpg'; }
+  onImageLoad(_event: any, _index: number): void {}
 
   formatPrice(price: number): string {
     if (!price) return '0';
     return new Intl.NumberFormat('fr-FR').format(price);
   }
 
-  // === AMENITIES ===
+  // ── Équipements ──────────────────────────────────────────────────────────
+
   hasAmenity(amenity: string): boolean {
     if (!this.unit) return false;
-    
     switch (amenity) {
-      case 'kitchen':
-        return this.unit.specifity?.hasKitchen || false;
-      case 'privateShower':
-        return this.unit.specifity?.isInternalShower || false;
-      case 'parking':
-        return this.unit.property?.hasParking || false;
-      case 'security':
-        return this.unit.property?.hasClosure || false;
-      default:
-        return false;
+      case 'kitchen': return this.unit.specifity?.hasKitchen || false;
+      case 'privateShower': return this.unit.specifity?.isInternalShower || false;
+      case 'parking': return this.unit.property?.hasParking || false;
+      case 'security': return this.unit.property?.hasClosure || false;
+      default: return false;
     }
   }
 
-  // === OWNER/AGENT ===
-  getOwnerInitials(owner: any): string {
-    if (!owner?.fullName) return 'PC';
-    return owner.fullName.split(' ').map((n: string) => n[0]).join('').toUpperCase();
-  }
+  // ── Contact propriétaire / agent ─────────────────────────────────────────
 
   isPropertyManagedByAgent(): boolean {
-    // Décide si les informations de l'AGENCE doivent être affichées au lieu de
-    // celles du propriétaire. On n'affiche l'agence que si :
-    //  - un agent gère vraiment la propriété (managedByAgent renseigné), ET
-    //  - l'agence n'a pas configuré contactDisplayMode = 'OWNER'
-    //    (contactDisplayMode 'AGENCY' par défaut).
     const hasAgent = !!(this.unit?.property?.managedByAgent || this.unit?.property?.isManaged);
     if (!hasAgent) return false;
-    const displayMode =
-      this.unit?.property?.managedByAgent?.agentProfile?.contactDisplayMode ||
-      'AGENCY';
+    const displayMode = this.unit?.property?.managedByAgent?.agentProfile?.contactDisplayMode || 'AGENCY';
     return displayMode !== 'OWNER';
   }
 
   getContactPersonTitle(): string {
-    return this.isPropertyManagedByAgent() ? 
-      this.translate.instant('UNIT_DETAIL.CONTACT.AGENT_TITLE') : 
-      this.translate.instant('UNIT_DETAIL.CONTACT.OWNER_TITLE');
+    return this.isPropertyManagedByAgent()
+      ? this.translate.instant('UNIT_DETAIL.CONTACT.AGENT_TITLE')
+      : this.translate.instant('UNIT_DETAIL.CONTACT.OWNER_TITLE');
   }
 
   getContactPersonName(): string {
     if (this.isPropertyManagedByAgent()) {
-      return this.unit?.property?.managedByAgent?.fullName ||
-             this.unit?.property?.managedByAgent?.name ||
-             this.unit?.property?.managedByAgent?.agentProfile?.businessName ||
-             this.translate.instant('UNIT_DETAIL.CONTACT.CERTIFIED_AGENT');
+      return this.unit?.property?.managedByAgent?.fullName
+        || this.unit?.property?.managedByAgent?.name
+        || this.unit?.property?.managedByAgent?.agentProfile?.businessName
+        || this.translate.instant('UNIT_DETAIL.CONTACT.CERTIFIED_AGENT');
     }
-    return this.unit?.property?.owner?.fullName ||
-           this.unit?.property?.owner?.name ||
-           this.translate.instant('UNIT_DETAIL.CONTACT.CERTIFIED_OWNER');
+    return this.unit?.property?.owner?.fullName
+      || this.unit?.property?.owner?.name
+      || this.translate.instant('UNIT_DETAIL.CONTACT.CERTIFIED_OWNER');
   }
 
   getContactPersonInitials(): string {
     const name = this.getContactPersonName();
-    const certifiedAgent = this.translate.instant('UNIT_DETAIL.CONTACT.CERTIFIED_AGENT');
-    const certifiedOwner = this.translate.instant('UNIT_DETAIL.CONTACT.CERTIFIED_OWNER');
-    if (name === certifiedAgent) return 'AC';
-    if (name === certifiedOwner) return 'PC';
+    if (name === this.translate.instant('UNIT_DETAIL.CONTACT.CERTIFIED_AGENT')) return 'AC';
+    if (name === this.translate.instant('UNIT_DETAIL.CONTACT.CERTIFIED_OWNER')) return 'PC';
     return name.split(' ').map((n: string) => n[0]).join('').toUpperCase();
   }
 
   getContactPersonBadge(): string {
-    return this.isPropertyManagedByAgent() ? 
-      'UNIT_DETAIL.CONTACT.VERIFIED_AGENT' : 
-      'UNIT_DETAIL.CONTACT.VERIFIED';
+    return this.isPropertyManagedByAgent() ? 'UNIT_DETAIL.CONTACT.VERIFIED_AGENT' : 'UNIT_DETAIL.CONTACT.VERIFIED';
   }
 
   getAgencyName(): string {
-    return this.unit?.property?.managedByAgent?.agentProfile?.businessName ||
-           this.unit?.property?.managedByAgent?.businessName ||
-           this.unit?.property?.managedByAgent?.agencyName ||
-           this.unit?.property?.managedByAgent?.company ||
-           this.translate.instant('UNIT_DETAIL.AGENCY.DEFAULT_NAME');
+    return this.unit?.property?.managedByAgent?.agentProfile?.businessName
+      || this.unit?.property?.managedByAgent?.businessName
+      || this.unit?.property?.managedByAgent?.agencyName
+      || this.unit?.property?.managedByAgent?.company
+      || this.translate.instant('UNIT_DETAIL.AGENCY.DEFAULT_NAME');
   }
 
   getAgencyLogo(): string | null {
-    return this.unit?.property?.managedByAgent?.agentProfile?.businessLogoUrl ||
-           this.unit?.property?.managedByAgent?.businessLogoUrl ||
-           this.unit?.property?.managedByAgent?.agencyLogo ||
-           this.unit?.property?.managedByAgent?.logo ||
-           null;
+    return this.unit?.property?.managedByAgent?.agentProfile?.businessLogoUrl
+      || this.unit?.property?.managedByAgent?.businessLogoUrl
+      || this.unit?.property?.managedByAgent?.agencyLogo
+      || this.unit?.property?.managedByAgent?.logo
+      || null;
   }
 
   getAgencyPhone(): string {
-    return this.unit?.property?.managedByAgent?.phoneNumber ||
-           this.unit?.property?.managedByAgent?.agencyPhone ||
-           '';
+    return this.unit?.property?.managedByAgent?.phoneNumber
+      || this.unit?.property?.managedByAgent?.agencyPhone
+      || '';
   }
 
-  // === ACTIONS ===
+  getContactPhone(): string {
+    if (this.isPropertyManagedByAgent()) {
+      return this.unit?.property?.managedByAgent?.phoneNumber
+        || this.unit?.property?.managedByAgent?.phone || '';
+    }
+    return this.ownerInfo?.owner?.phone || '';
+  }
+
+  getContactEmail(): string {
+    if (this.isPropertyManagedByAgent()) {
+      return this.unit?.property?.managedByAgent?.email || this.ownerInfo?.owner?.email || '';
+    }
+    return this.ownerInfo?.owner?.email || '';
+  }
+
+  getContactWhatsApp(): string { return this.getContactPhone(); }
+
+  getWhatsAppLink(): string {
+    return `https://wa.me/${this.getContactPhone().replace(/\D/g, '')}`;
+  }
+
+  // ── Actions ──────────────────────────────────────────────────────────────
+
   shareProperty(): void {
     const shareData = {
       title: this.unit.property?.name || this.unit.code || this.translate.instant('UNIT_DETAIL.SHARE.DEFAULT_TITLE'),
@@ -494,7 +541,6 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
       }),
       url: window.location.href
     };
-
     if (navigator.share) {
       navigator.share(shareData).catch(() => this.fallbackShare());
     } else {
@@ -503,220 +549,50 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
   }
 
   private fallbackShare(): void {
-    const url = window.location.href;
     const text = this.translate.instant('UNIT_DETAIL.SHARE.TEXT', {
       name: this.unit.property?.name || this.unit.code,
       price: this.formatPrice(this.unit.price)
     });
-    
-    navigator.clipboard.writeText(`${text} ${url}`).then(() => {
-    }).catch(() => {
-      const textArea = document.createElement('textarea');
-      textArea.value = `${text} ${url}`;
-      document.body.appendChild(textArea);
-      textArea.select();
+    navigator.clipboard.writeText(`${text} ${window.location.href}`).catch(() => {
+      const ta = document.createElement('textarea');
+      ta.value = `${text} ${window.location.href}`;
+      document.body.appendChild(ta);
+      ta.select();
       document.execCommand('copy');
-      document.body.removeChild(textArea);
+      document.body.removeChild(ta);
     });
   }
 
   onContactOwner(): void {
     if (!this.unit) return;
-    // Si accès premium, utiliser les infos propriétaire
     if (this.hasPremiumAccess && this.ownerInfo?.owner?.phone) {
       window.open(`tel:${this.ownerInfo.owner.phone}`, '_self');
       return;
     }
-    // Sinon ouvrir le modal premium
     this.showPremiumModal = true;
   }
 
-  // === PREMIUM ACCESS ===
-
-  private loadCurrentUser(): void {
-    const profile = this.store.selectSnapshot(UserProfileState.selectStateUserProfile);
-    if (profile?._id) {
-      this.currentUserId = profile._id;
-      this.currentUserEmail = profile.email || '';
-    } else {
-      this.currentUserId = this.anonymousUserService.getVisitorId();
-      this.currentUserEmail = '';
-    }
-
-    const ownerId = this.currentOwnerId;
-    if (!ownerId) return;
-
-    const isAnonymous = !profile?._id;
-
-    // Lire le cache store pour cet ownerId
-    const hasAccess = this.store.selectSnapshot(
-      PremiumAccessState.hasAccessForOwner(ownerId),
-    );
-    const checkState = this.store.selectSnapshot(
-      PremiumAccessState.checkLoadingFor(ownerId),
-    );
-    const cachedInfo = this.store.selectSnapshot(
-      PremiumAccessState.ownerInfoFor(ownerId),
-    );
-
-    if (hasAccess) {
-      this.hasPremiumAccess = true;
-      if (cachedInfo) {
-        this.ownerInfo = cachedInfo;
-      } else {
-        const propertyId = this.unit?.property?._id || (this.unit?.property as any)?._id?.toString();
-        this.store.dispatch(new PremiumAccessAction.GetOwnerInfo(
-          this.currentUserId, ownerId, isAnonymous, propertyId,
-        ));
-      }
-      return;
-    }
-
-    // Pas encore vérifié pour cet ownerId → lancer la vérification
-    if (checkState === 'NO_LOADED') {
-      this.store.dispatch(new PremiumAccessAction.CheckAccessForOwner(
-        this.currentUserId, ownerId, isAnonymous,
-      ));
-    }
-  }
-
-  subscribeToPremiumStore(): void {
-    this.store.select(PremiumAccessState.loading)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(loading => {
-        this.premiumLoading = loading;
-        this.cdr.detectChanges();
-      });
-
-    this.store.select(PremiumAccessState.error)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(error => {
-        this.premiumError = error;
-        this.cdr.detectChanges();
-      });
-
-    // Écouter l'accès pour l'ownerId de l'unité courante
-    if (this.currentOwnerId) {
-      this.store.select(PremiumAccessState.hasAccessForOwner(this.currentOwnerId))
-        .pipe(takeUntil(this.destroy$))
-        .subscribe(hasAccess => {
-          this.hasPremiumAccess = hasAccess;
-          if (hasAccess && this.currentUserId && this.currentOwnerId) {
-            const profile = this.store.selectSnapshot(UserProfileState.selectStateUserProfile);
-            const isAnonymous = !profile?._id;
-            const propertyId = this.unit?.property?._id || this.unit?.property?.toString();
-            this.store.dispatch(new PremiumAccessAction.GetOwnerInfo(
-              this.currentUserId, this.currentOwnerId, isAnonymous, propertyId,
-            ));
-          }
-          this.cdr.detectChanges();
-        });
-
-      this.store.select(PremiumAccessState.ownerInfoFor(this.currentOwnerId))
-        .pipe(takeUntil(this.destroy$))
-        .subscribe(ownerInfo => {
-          if (ownerInfo) {
-            this.ownerInfo = ownerInfo;
-            this.cdr.detectChanges();
-          }
-        });
-    }
-  }
-
-  onPurchasePremiumAccess(): void {
-    this.showPremiumModal = true;
-  }
-
-  closePremiumModal(): void {
-    this.showPremiumModal = false;
-  }
-
-  onPremiumAccessGranted(): void {
-    this.showPremiumModal = false;
-  }
-
-  /**
-   * Retour depuis la page de paiement.
-   * On vérifie l'accès pour l'ownerId passé en query param (plus précis que le check global).
-   */
-  private checkPremiumReturnFromPayment(): void {
-    const params = this.route.snapshot.queryParams;
-    if (params['premium'] !== 'success') return;
-
-    const returnedOwnerId = params['ownerId'] || this.currentOwnerId;
-
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: { premium: null, ownerId: null, visitorId: null },
-      queryParamsHandling: 'merge',
-      replaceUrl: true,
-    });
-
-    if (!returnedOwnerId) return;
-
-    const profile = this.store.selectSnapshot(UserProfileState.selectStateUserProfile);
-    const isAnonymous = !profile?._id;
-
-    // Vider le cache pour forcer un rechargement frais depuis le backend
-    this.store.dispatch(new PremiumAccessAction.ClearOwnerCache(returnedOwnerId));
-
-    // Vérifier l'accès pour cet ownerId précis
-    this.premiumAccessService.checkAccessForOwner(this.currentUserId, returnedOwnerId).subscribe({
-      next: (res) => {
-        if (res.data.hasAccess) {
-          this.hasPremiumAccess = true;
-          const propertyId = this.unit?.property?._id || (this.unit?.property as any)?._id?.toString();
-          this.store.dispatch(new PremiumAccessAction.GetOwnerInfo(
-            this.currentUserId, returnedOwnerId, isAnonymous, propertyId,
-          ));
-        }
-      },
-      error: () => {},
-    });
-  }
+  onPurchasePremiumAccess(): void { this.showPremiumModal = true; }
+  closePremiumModal(): void { this.showPremiumModal = false; }
+  onPremiumAccessGranted(): void { this.showPremiumModal = false; }
 
   getRemainingDaysText(): string {
     return this.translate.instant('UNIT_DETAIL.PREMIUM.REMAINING_DAYS');
   }
 
-  copyToClipboard(text: string, type: string): void {
+  copyToClipboard(text: string, _type: string): void {
     navigator.clipboard.writeText(text);
-  }
-
-  getContactPhone(): string {
-    if (this.isPropertyManagedByAgent()) {
-      return this.unit?.property?.managedByAgent?.phoneNumber ||
-             this.unit?.property?.managedByAgent?.phone ||
-             '';
-    }
-    return this.ownerInfo?.owner?.phone || '';
-  }
-
-  getContactEmail(): string {
-    if (this.isPropertyManagedByAgent()) {
-      return this.unit?.property?.managedByAgent?.email ||
-             this.ownerInfo?.owner?.email || '';
-    }
-    return this.ownerInfo?.owner?.email || '';
-  }
-
-  getContactWhatsApp(): string {
-    const phone = this.getContactPhone();
-    return phone;
-  }
-
-  getWhatsAppLink(): string {
-    const phone = this.getContactPhone().replace(/\D/g, '');
-    return `https://wa.me/${phone}`;
   }
 
   openMap(): void {
     const address = this.unit.property?.location;
     if (address) {
-      const encodedAddress = encodeURIComponent(address);
-      const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
-      window.open(googleMapsUrl, '_blank');
+      window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`, '_blank');
     }
   }
 
+  getOwnerInitials(owner: any): string {
+    if (!owner?.fullName) return 'PC';
+    return owner.fullName.split(' ').map((n: string) => n[0]).join('').toUpperCase();
+  }
 }
