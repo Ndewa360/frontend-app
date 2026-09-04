@@ -473,15 +473,31 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
 
   private handlePostPaymentSuccess(): void {
     if (this.context === 'PREMIUM_ACCESS') {
+      const meta = this.paymentDetails?.metadata || {};
+      const ownerId = meta['ownerId'] || '';
       const expiryDate = new Date();
       expiryDate.setDate(expiryDate.getDate() + 1);
       this.anonymousUserService.savePremiumAccess({
         accessId: this.externalRef || this.token,
         transactionId: this.externalRef || this.token,
+        ownerId,
         expiryDate: expiryDate.toISOString(),
         phone: this.mobileForm.value.phone || '',
         paymentMethod: this.selectedMethod || 'card',
         paidAt: new Date().toISOString()
+      });
+      // Redirection automatique vers la page de recherche avec les params premium
+      // sans attendre que l'utilisateur clique sur un bouton
+      this.autoRedirectAfterPremiumSuccess();
+    }
+  }
+
+  private autoRedirectAfterPremiumSuccess(): void {
+    const path = this.paymentDetails?.successRedirectPath;
+    if (path) {
+      // Délai court pour que l'utilisateur voie l'écran de succès (1.5s)
+      timer(1500).pipe(takeUntil(this.destroy$)).subscribe(() => {
+        window.location.href = path;
       });
     }
   }
@@ -553,7 +569,11 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
     const meta = this.paymentDetails.metadata || {};
 
     if (this.context === 'PREMIUM_ACCESS') {
-      return { visitorId: meta['visitorId'] || this.paymentDetails.userId };
+      return {
+        visitorId: meta['visitorId'] || this.paymentDetails.userId,
+        // ownerId DOIT être transmis pour que PremiumAccessPaymentHandler puisse créer l'accès
+        ownerId: meta['ownerId'] || '',
+      };
     }
     if (this.context === 'SUBSCRIPTION') {
       return {

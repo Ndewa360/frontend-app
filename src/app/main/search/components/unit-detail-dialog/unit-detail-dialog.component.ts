@@ -3,11 +3,10 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MediaUtil, MediaItem } from 'src/app/shared/utils/media-utils';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
-import { takeUntil, filter, take } from 'rxjs/operators';
+import { takeUntil, filter } from 'rxjs/operators';
 import { SearchPropertyModel } from 'src/app/shared/store';
 import { Store } from '@ngxs/store';
 import { PremiumAccessState, PremiumAccessAction, OwnerInfoModel } from 'src/app/shared/store/premium-access';
-import { PremiumAccessService } from 'src/app/shared/services/premium-access/premium-access.service';
 import { UserProfileState } from 'src/app/shared/store/user-profile';
 import { AnonymousUserService } from 'src/app/shared/services/anonymous-user.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -66,7 +65,6 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
     private route: ActivatedRoute,
     private store: Store,
     private cdr: ChangeDetectorRef,
-    private premiumAccessService: PremiumAccessService,
     private anonymousUserService: AnonymousUserService,
     private translate: TranslateService
   ) {
@@ -192,6 +190,11 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
       .pipe(takeUntil(this.destroy$))
       .subscribe(hasAccess => {
         this.hasPremiumAccess = hasAccess;
+        // Dès que l'accès est confirmé, charger les infos si pas encore en cache
+        if (hasAccess) {
+          const cached = this.store.selectSnapshot(PremiumAccessState.ownerInfoFor(ownerId));
+          if (!cached) this.dispatchGetOwnerInfo(ownerId);
+        }
         this.cdr.detectChanges();
       });
 
@@ -226,17 +229,11 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
     // Vider le cache pour forcer un rechargement frais
     this.store.dispatch(new PremiumAccessAction.ClearOwnerCache(returnedOwnerId));
 
-    // Vérifier l'accès côté backend
-    this.premiumAccessService.checkAccessForOwner(this.currentUserId, returnedOwnerId)
-      .pipe(take(1))
-      .subscribe({
-        next: (res) => {
-          if (res.data.hasAccess) {
-            this.dispatchGetOwnerInfo(returnedOwnerId);
-          }
-        },
-        error: () => {},
-      });
+    // Dispatcher CheckAccessForOwner via le store — le store met à jour activeOwnerIds
+    // puis subscribeToPremiumStore() détecte hasAccess=true et appelle GetOwnerInfo
+    this.store.dispatch(new PremiumAccessAction.CheckAccessForOwner(
+      this.currentUserId, returnedOwnerId, this.isAnonymous,
+    ));
   }
 
   private dispatchGetOwnerInfo(ownerId: string): void {

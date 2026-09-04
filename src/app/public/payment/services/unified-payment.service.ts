@@ -44,6 +44,8 @@ export interface InitiatePaymentDto {
   cancelUrl?: string;
   // Visiteur anonyme (PREMIUM_ACCESS public)
   visitorId?: string;
+  // Contexte PREMIUM_ACCESS
+  ownerId?: string;
 }
 
 export interface InitiatePaymentResponse {

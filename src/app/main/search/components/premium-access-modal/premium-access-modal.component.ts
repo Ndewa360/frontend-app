@@ -29,6 +29,7 @@ export class PremiumAccessModalComponent implements OnInit, OnDestroy {
   @Input() isOpen = false;
   @Input() ownerId = '';
   @Input() propertyId = '';
+  @Input() unitId = '';   // ID de l'unité pour reconstruire l'URL de retour
   @Output() close = new EventEmitter<void>();
   @Output() accessGranted = new EventEmitter<void>();
 
@@ -132,16 +133,6 @@ export class PremiumAccessModalComponent implements OnInit, OnDestroy {
   }
 
   private subscribeToPremiumStore(): void {
-    // Écouter le loading global
-    this.store.select(PremiumAccessState.loading)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(storeLoading => {
-        if (this.step === 'checking' && !storeLoading && !this.hasActiveAccess) {
-          this.step = 'offer';
-          this.cdr.detectChanges();
-        }
-      });
-
     this.store.select(PremiumAccessState.error)
       .pipe(takeUntil(this.destroy$))
       .subscribe(error => {
@@ -151,6 +142,16 @@ export class PremiumAccessModalComponent implements OnInit, OnDestroy {
 
     // Écouter l'accès pour CET ownerId précis
     if (this.ownerId) {
+      // Transition checking → offer : basée sur checkLoadingMap[ownerId], pas sur loading global
+      this.store.select(PremiumAccessState.checkLoadingFor(this.ownerId))
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(checkState => {
+          if (this.step === 'checking' && checkState === 'LOADED' && !this.hasActiveAccess) {
+            this.step = 'offer';
+            this.cdr.detectChanges();
+          }
+        });
+
       this.store.select(PremiumAccessState.hasAccessForOwner(this.ownerId))
         .pipe(takeUntil(this.destroy$))
         .subscribe(hasAccess => {
@@ -197,8 +198,8 @@ export class PremiumAccessModalComponent implements OnInit, OnDestroy {
 
     const email = this.effectiveUserEmail || `${this.effectiveUserId}@visitor.ndewa360.com`;
 
-    // Construire le successRedirectPath proprement :
-    // garder uniquement les params de filtres + unit, puis ajouter premium/ownerId/visitorId
+    // Construire le successRedirectPath :
+    // conserver tous les params actuels (filtres + unit) et ajouter premium/ownerId/visitorId
     const currentParams = new URLSearchParams(window.location.search);
     currentParams.delete('premium');
     currentParams.delete('ownerId');
@@ -206,8 +207,12 @@ export class PremiumAccessModalComponent implements OnInit, OnDestroy {
     currentParams.set('premium', 'success');
     currentParams.set('ownerId', this.ownerId);
     currentParams.set('visitorId', this.effectiveUserId);
+    // S'assurer que unit est présent pour rouvrir le bon dialog au retour
+    if (this.unitId && !currentParams.has('unit')) {
+      currentParams.set('unit', this.unitId);
+    }
     const successRedirectPath = `${window.location.pathname}?${currentParams.toString()}`;
-    const cancelRedirectPath = window.location.pathname + window.location.search;
+    const cancelRedirectPath  = window.location.pathname + window.location.search;
 
     this.loading = true;
     this.error = null;

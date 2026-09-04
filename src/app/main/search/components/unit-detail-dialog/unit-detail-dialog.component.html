@@ -527,6 +527,7 @@
   [isOpen]="showPremiumModal"
   [ownerId]="unit?.property?.owner?._id || ''"
   [propertyId]="unit?.property?._id || ''"
+  [unitId]="unit?._id || ''"
   (close)="closePremiumModal()"
   (accessGranted)="onPremiumAccessGranted()">
 </app-premium-access-modal>

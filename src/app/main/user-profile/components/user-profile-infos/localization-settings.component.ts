@@ -105,11 +105,11 @@ import { LocalizationService } from '../../../../shared/services/localization/lo
                       [value]="getFormValue('timezone')"
                       (change)="onTimezoneChange($any($event.target).value)"
                       class="field-input custom-select">
-                      <option value="Africa/Douala">{{ 'SETTINGS.TIMEZONE_OPTIONS.AFRICA_DOUALA' | translate }}</option>
-                      <option value="Europe/Paris">{{ 'SETTINGS.TIMEZONE_OPTIONS.EUROPE_PARIS' | translate }}</option>
-                      <option value="America/New_York">{{ 'SETTINGS.TIMEZONE_OPTIONS.AMERICA_NEW_YORK' | translate }}</option>
-                      <option value="Asia/Tokyo">{{ 'SETTINGS.TIMEZONE_OPTIONS.ASIA_TOKYO' | translate }}</option>
-                      <option value="UTC">{{ 'SETTINGS.TIMEZONE_OPTIONS.UTC' | translate }}</option>
+                      <option value="Africa/Douala">{{ 'SETTINGS.TIMEZONES.AFRICA_DOUALA' | translate }}</option>
+                      <option value="Europe/Paris">{{ 'SETTINGS.TIMEZONES.EUROPE_PARIS' | translate }}</option>
+                      <option value="America/New_York">{{ 'SETTINGS.TIMEZONES.AMERICA_NEW_YORK' | translate }}</option>
+                      <option value="Asia/Tokyo">{{ 'SETTINGS.TIMEZONES.ASIA_TOKYO' | translate }}</option>
+                      <option value="UTC">{{ 'SETTINGS.TIMEZONES.UTC' | translate }}</option>
                     </select>
                     <youpez-ibm-icon iconName="chevronDown" iconSize="16" class="select-icon"></youpez-ibm-icon>
                   </div>
@@ -126,10 +126,10 @@ import { LocalizationService } from '../../../../shared/services/localization/lo
                       [value]="getFormValue('dateFormat')"
                       (change)="onDateFormatChange($any($event.target).value)"
                       class="field-input custom-select">
-                      <option value="DD/MM/YYYY">{{ 'SETTINGS.DATE_FORMAT_OPTIONS.DD_MM_YYYY' | translate }}</option>
-                      <option value="MM/DD/YYYY">{{ 'SETTINGS.DATE_FORMAT_OPTIONS.MM_DD_YYYY' | translate }}</option>
-                      <option value="YYYY-MM-DD">{{ 'SETTINGS.DATE_FORMAT_OPTIONS.YYYY_MM_DD' | translate }}</option>
-                      <option value="DD-MM-YYYY">{{ 'SETTINGS.DATE_FORMAT_OPTIONS.DD_MM_YYYY_DASH' | translate }}</option>
+                      <option value="DD/MM/YYYY">{{ 'SETTINGS.DATE_FORMATS.DD_MM_YYYY' | translate }}</option>
+                      <option value="MM/DD/YYYY">{{ 'SETTINGS.DATE_FORMATS.MM_DD_YYYY' | translate }}</option>
+                      <option value="YYYY-MM-DD">{{ 'SETTINGS.DATE_FORMATS.YYYY_MM_DD' | translate }}</option>
+                      <option value="DD-MM-YYYY">{{ 'SETTINGS.DATE_FORMATS.DD_MM_YYYY_DASH' | translate }}</option>
                     </select>
                     <youpez-ibm-icon iconName="chevronDown" iconSize="16" class="select-icon"></youpez-ibm-icon>
                   </div>
@@ -147,11 +147,11 @@ import { LocalizationService } from '../../../../shared/services/localization/lo
                     [value]="getFormValue('numberFormat')"
                     (change)="onNumberFormatChange($any($event.target).value)"
                     class="field-input custom-select">
-                    <option value="fr-FR">{{ 'SETTINGS.NUMBER_FORMAT_OPTIONS.FRENCH_FULL' | translate }}</option>
-                    <option value="en-US">{{ 'SETTINGS.NUMBER_FORMAT_OPTIONS.ENGLISH_US_FULL' | translate }}</option>
-                    <option value="es-ES">{{ 'SETTINGS.NUMBER_FORMAT_OPTIONS.SPANISH_FULL' | translate }}</option>
-                    <option value="de-DE">{{ 'SETTINGS.NUMBER_FORMAT_OPTIONS.GERMAN_FULL' | translate }}</option>
-                    <option value="ar-SA">{{ 'SETTINGS.NUMBER_FORMAT_OPTIONS.ARABIC_FULL' | translate }}</option>
+                    <option value="fr-FR">{{ 'SETTINGS.NUMBER_FORMATS.FRENCH_FULL' | translate }}</option>
+                    <option value="en-US">{{ 'SETTINGS.NUMBER_FORMATS.ENGLISH_US_FULL' | translate }}</option>
+                    <option value="es-ES">{{ 'SETTINGS.NUMBER_FORMATS.SPANISH_FULL' | translate }}</option>
+                    <option value="de-DE">{{ 'SETTINGS.NUMBER_FORMATS.GERMAN_FULL' | translate }}</option>
+                    <option value="ar-SA">{{ 'SETTINGS.NUMBER_FORMATS.ARABIC_FULL' | translate }}</option>
                   </select>
                   <youpez-ibm-icon iconName="chevronDown" iconSize="16" class="select-icon"></youpez-ibm-icon>
                 </div>

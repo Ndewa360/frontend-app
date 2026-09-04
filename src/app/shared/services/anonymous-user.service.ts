@@ -6,10 +6,11 @@ const ACCESS_KEY = 'ndewa360_premium_access';
 export interface LocalPremiumAccess {
   accessId: string;
   transactionId: string;
-  expiryDate: string; // ISO string
+  ownerId: string;       // ID du propriétaire pour lequel l'accès a été payé
+  expiryDate: string;
   phone: string;
   paymentMethod: string;
-  paidAt: string; // ISO string
+  paidAt: string;
 }
 
 @Injectable({ providedIn: 'root' })
