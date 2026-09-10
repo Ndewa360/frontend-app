@@ -13,7 +13,10 @@ export const environment = {
 	stripePublicKey: (window as any)?.env?.STRIPE_PUBLIC_KEY || '',
   tinyMceApiKey: (window as any)?.env?.TINYMCE_API_KEY || 'jc0rxaqsy4dc37g2tn6d7jh1oob7gm87jfjyl268edebg4zp',
   googleClientId: (window as any)?.env?.GOOGLE_CLIENT_ID || '293692850952-cba58thne3gjki7r4l678p9lcvftvav7.apps.googleusercontent.com',
-  version: '2.0.0'
+  version: '2.0.0',
+  // KundAi — mode proxy : le frontend pointe vers le backend Ndewa360
+  kundaiTrackingUrl: (window as any)?.env?.API_URL ? `${(window as any).env.API_URL}/tracking` : 'http://localhost:3001/tracking',
+  kundaiApiKey: '', // vide en mode proxy — la clé reste côté backend
 }
   
   /*

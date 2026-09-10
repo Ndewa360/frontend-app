@@ -26,6 +26,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'src/environments/environment';
 import { UserProfileAction } from 'src/app/shared/store';
 import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
+import { KundaiService } from '@kundai/angular';
 
 export interface OnboardingData {
   // Étape 1 — Bien
@@ -108,6 +109,7 @@ export class OnboardingStepperComponent implements OnInit, OnDestroy {
     private toastr: ToastrService,
     private translate: TranslateService,
     private languageUrlService: LanguageUrlService,
+    private kundai: KundaiService,
   ) {}
 
   ngOnInit(): void {
@@ -473,6 +475,12 @@ export class OnboardingStepperComponent implements OnInit, OnDestroy {
       .pipe(ofActionSuccessful(UserProfileAction.SignupWithOnboarding), takeUntil(this.destroy$))
       .subscribe(() => {
         this.isSubmitting = false;
+        this.kundai.track('signup_completed', {
+          method: 'onboarding',
+          userType: this.userType,
+          plan: this.plan,
+          sessionId: this.kundai.getSessionId(),
+        });
         this.clearStorage();
         const lang = this.languageUrlService.getCurrentLanguage();
         this.router.navigate([`/${lang}/app/properties/home`]);

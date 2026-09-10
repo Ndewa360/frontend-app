@@ -22,6 +22,7 @@ import { registerLocaleData } from '@angular/common';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { CustomTranslateLoader } from './shared/services/localization/custom-translate-loader';
 import { GlobalErrorHandler } from './shared/services/global-error-handler.service';
+import { KundaiModule } from '@kundai/angular';
 
 registerLocaleData(localeFr);
 registerLocaleData(localeEn);
@@ -73,6 +74,11 @@ export function getDynamicLocale(): string {
 		{ provide: HTTP_INTERCEPTORS, useClass: AuthTokenInterceptor, multi: true },
 		{ provide: LOCALE_ID, useFactory: getDynamicLocale },
 		{ provide: ErrorHandler, useClass: GlobalErrorHandler },
+		KundaiModule.forRoot({
+			baseUrl: environment.kundaiTrackingUrl,
+			apiKey: environment.kundaiApiKey,
+			appId: 'ndewa360-web',
+		}),
 	],
 	schemas: [
 		CUSTOM_ELEMENTS_SCHEMA

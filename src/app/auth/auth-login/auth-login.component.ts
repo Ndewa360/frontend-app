@@ -14,6 +14,7 @@ import { environment } from 'src/environments/environment'
 import { LanguageUrlService } from 'src/app/shared/services/language-url.service'
 import { TranslateService } from '@ngx-translate/core'
 import { LanguagePreservationService } from 'src/app/shared/services/language-preservation.service'
+import { KundaiService } from '@kundai/angular'
 
 @Component({
   selector: 'app-auth-login',
@@ -38,7 +39,8 @@ export class AuthLoginComponent implements OnInit, OnDestroy {
     private http: HttpClient,
     private languageUrlService: LanguageUrlService,
     private translate: TranslateService,
-    private languagePreservation: LanguagePreservationService
+    private languagePreservation: LanguagePreservationService,
+    private kundai: KundaiService
   ) {}
 
   ngOnInit(): void {
@@ -50,6 +52,12 @@ export class AuthLoginComponent implements OnInit, OnDestroy {
     const successSub = this._ngxsAction.pipe(
       ofActionSuccessful(UserProfileAction.LoginUserProfile, UserProfileAction.LoginWithGoogle)
     ).subscribe(() => {
+      const user = this._store.selectSnapshot(UserProfileState.selectStateUserProfile);
+      if (user?._id) {
+        this.kundai.identify(user._id, user.email).catch(() => {});
+        this.kundai.track('login', { method: 'email', userId: user._id });
+      }
+
       const returnUrl = this.route.snapshot.queryParams['returnUrl'];
       const reason = this.route.snapshot.queryParams['reason'];
 
