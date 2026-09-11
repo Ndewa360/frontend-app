@@ -4,8 +4,7 @@
     "analytics": false,
     "schematicCollections": [
       "@cypress/schematic",
-      "@schematics/angular",
-      "@ionic/angular-toolkit"
+      "@schematics/angular"
     ]
   },
   "version": 1,
@@ -89,7 +88,7 @@
               "sourceMap": false,
               "namedChunks": false,
               "extractLicenses": true,
-              "vendorChunk": false,
+              "vendorChunk": true,
               "buildOptimizer": true,
               "fileReplacements": [
                 {
@@ -100,21 +99,13 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "9mb",
-                  "maximumError": "14mb"
+                  "maximumWarning": "8mb",
+                  "maximumError": "9mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "9mb",
-                  "maximumError": "14mb"
-                }
-              ]
-            },
-            "hmr": {
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.hmr.ts"
+                  "maximumWarning": "100kb",
+                  "maximumError": "1mb"
                 }
               ]
             },
@@ -133,16 +124,12 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
             "browserTarget": "app:build",
-            "host": "192.168.1.5",
+            "host": "0.0.0.0",
             "port": 4200
           },
           "configurations": {
             "production": {
               "browserTarget": "app:build:production"
-            },
-            "hmr": {
-              "hmr": true,
-              "browserTarget": "app:build:hmr"
             }
           }
         },
@@ -162,30 +149,6 @@
           "configurations": {
             "production": {
               "devServerTarget": "app:serve:production"
-            }
-          }
-        },
-        "ionic-cordova-serve": {
-          "builder": "@ionic/angular-toolkit:cordova-serve",
-          "options": {
-            "cordovaBuildTarget": "app:ionic-cordova-build",
-            "devServerTarget": "app:serve"
-          },
-          "configurations": {
-            "production": {
-              "cordovaBuildTarget": "app:ionic-cordova-build:production",
-              "devServerTarget": "app:serve:production"
-            }
-          }
-        },
-        "ionic-cordova-build": {
-          "builder": "@ionic/angular-toolkit:cordova-build",
-          "options": {
-            "browserTarget": "app:build"
-          },
-          "configurations": {
-            "production": {
-              "browserTarget": "app:build:production"
             }
           }
         },
@@ -249,12 +212,6 @@
     },
     "@schematics/angular:directive": {
       "prefix": "app"
-    },
-    "@ionic/angular-toolkit:component": {
-      "styleext": "scss"
-    },
-    "@ionic/angular-toolkit:page": {
-      "styleext": "scss"
     }
   }
 }

@@ -63,9 +63,9 @@ export class CountryState{
 
     static selectStateCountryByCountryName(name=null)
     {
-        return createSelector([CountryState],(state)=> state.countrys.filter((country)=>{
-                if(name==null) return country;
-                if(country.name.indexOf(name)) return country;
+        return createSelector([CountryState],(state)=> state.countries.filter((country)=>{
+                if(name==null) return true;
+                return country.name && country.name.includes(name);
             }))
     
     }

@@ -7,7 +7,6 @@ import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { AssignationConfig } from 'src/app/shared/models/assignation-assistant.model';
 import { filter } from 'rxjs/operators';
-import * as moment from 'moment';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AssignLocationModalData, AssignLocationModalResult } from '../services/assign-location-modal.service';
 

@@ -38,7 +38,9 @@
   <meta name="theme-color" content="#cc8c0a">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" href="favicon.ico" type="image/x-icon">
-  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -121,8 +123,6 @@
   <link rel="preload" href="theme-light.css" as="style">
   <link rel="preload" href="styles.css" as="style">
   <link rel="preload" href="assets/img/logo/logo-basic.png" as="image">
-  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" as="style">
-   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="dns-prefetch" href="//fonts.googleapis.com">
   <link rel="dns-prefetch" href="//fonts.gstatic.com">
   <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
@@ -132,8 +132,6 @@
   <link rel="stylesheet" href="styles.css">
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/js/all.min.js" integrity="sha512-b+nQTCdtTBIRIbraqNEwsjB6UvL3UEMkXnhzd8awtCYh0Kcsjl9uEgwVFVbhoj3uu1DO1ZMacNvLoyJJiNfcvg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="https://unpkg.com/flowbite@1.4.0/dist/flowbite.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-element-bundle.min.js"></script>
   <!-- <script src="https://cdn.tailwindcss.com/3.4.11"></script> -->
 
   <script type="application/ld+json">
@@ -320,149 +318,6 @@
       font-weight: 400;
     }
   </style>
-  <script>
-    (function (global) {
-      console.log('🚀 Script de diagnostic mobile chargé');
-
-      // Gestionnaire d'erreurs global
-      window.startupErrors = window.startupErrors || [];
-
-      window.onerror = function(message, source, lineno, colno, error) {
-        // Ignorer les erreurs communes et non critiques
-        var messageStr = message ? message.toString() : '';
-        var ignoredErrors = ['WebView', 'Script error', 'Non-Error promise rejection', 'ResizeObserver loop limit exceeded'];
-
-        if (ignoredErrors.some(function(ignored) { return messageStr.includes(ignored); })) {
-          return true; // Ignorer silencieusement
-        }
-
-        // Limiter le nombre d'erreurs stockées
-        if (window.startupErrors.length < 10) {
-          var errorInfo = {
-            message: messageStr.substring(0, 200), // Limiter la taille
-            source: source ? source.split('/').pop() : 'unknown', // Juste le nom du fichier
-            line: lineno,
-            timestamp: new Date().toISOString()
-          };
-
-          window.startupErrors.push(errorInfo);
-          console.error('❌ Erreur JavaScript:', errorInfo);
-        }
-        
-        return false;
-      };
-
-      // Gestionnaire pour les promesses rejetées
-      window.addEventListener('unhandledrejection', function(event) {
-        var errorInfo = {
-          type: 'Promise rejetée',
-          reason: event.reason ? event.reason.toString() : 'Raison inconnue',
-          timestamp: new Date().toISOString()
-        };
-
-        window.startupErrors.push(errorInfo);
-        console.error('❌ Promise rejetée capturée:', errorInfo);
-      });
-
-
-
-      // Détecter si on est sur mobile
-      var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-      console.log('📱 Appareil mobile détecté:', isMobile);
-
-      // Timeout de sécurité pour le loader - 8 SECONDES pour laisser plus de temps
-      var securityTimeout = setTimeout(function() {
-        var loader = document.getElementById("app-loading-holder");
-        var appRoot = document.querySelector('app-root');
-        var hasContent = appRoot && appRoot.children.length > 1;
-
-        if (loader && !hasContent) {
-          console.log('⚠️ TIMEOUT DE SÉCURITÉ - Loader encore présent après 8 secondes sans contenu');
-          console.log('🔧 Suppression forcée du loader...');
-
-          // Supprimer le loader immédiatement
-          loader.style.opacity = "0";
-          setTimeout(function() {
-            if (loader && loader.parentNode) {
-              loader.parentNode.removeChild(loader);
-              console.log('✅ Loader supprimé par timeout de sécurité');
-            }
-          }, 200);
-        } else if (loader && hasContent) {
-          console.log('✅ Contenu détecté, suppression normale du loader');
-          if (global.appBootstrap) {
-            global.appBootstrap();
-          }
-        }
-      }, 8000);
-
-      // main.ts call this function once the app is boostrapped
-      global.appBootstrap = function () {
-        console.log('✅ appBootstrap() appelée - Application Angular démarrée');
-
-        // Vérifier que le contenu est prêt avant de supprimer le loader
-        var checkContentReady = function() {
-          var appRoot = document.querySelector('app-root');
-          var routerOutlet = document.querySelector('router-outlet');
-          var hasContent = appRoot && (appRoot.children.length > 1 || 
-            (routerOutlet && routerOutlet.nextElementSibling));
-          
-          if (hasContent) {
-            // Annuler le timeout de sécurité
-            if (securityTimeout) {
-              clearTimeout(securityTimeout);
-              console.log('🔧 Timeout de sécurité annulé');
-            }
-
-            var loader = document.getElementById("app-loading-holder");
-            if (loader) {
-              console.log('🔧 Suppression du loader - contenu prêt...');
-              loader.style.opacity = "0";
-              setTimeout(function() {
-                if (loader && loader.parentNode) {
-                  loader.parentNode.removeChild(loader);
-                  console.log('✅ Loader supprimé avec succès');
-                }
-              }, 200);
-            } else {
-              console.log('⚠️ Loader déjà supprimé');
-            }
-          } else {
-            console.log('⏳ Contenu pas encore prêt, nouvelle vérification dans 100ms');
-            setTimeout(checkContentReady, 100);
-          }
-        };
-        
-        // Démarrer la vérification avec un petit délai
-        setTimeout(checkContentReady, 100);
-      };
-
-      // Diagnostic périodique optimisé - surveillance du contenu
-      var diagnosticCount = 0;
-      var maxDiagnostics = 15; // Maximum 15 diagnostics (15 secondes)
-
-      var diagnosticInterval = setInterval(function() {
-        diagnosticCount++;
-        var loader = document.getElementById("app-loading-holder");
-        var appRoot = document.querySelector('app-root');
-        var hasContent = appRoot && appRoot.children.length > 1;
-
-        // Log des erreurs JavaScript seulement s'il y en a
-        if (window.startupErrors && window.startupErrors.length > 0) {
-          console.log('❌ Erreurs de démarrage:', window.startupErrors.length);
-        }
-
-        // Arrêter le diagnostic si l'app est chargée avec du contenu OU si on a atteint le maximum
-        if (!loader || hasContent || diagnosticCount >= maxDiagnostics) {
-          clearInterval(diagnosticInterval);
-          if (hasContent) {
-            console.log('✅ Diagnostic arrêté - contenu détecté');
-          }
-        }
-      }, 1000);
-
-    })(window);
-  </script>
 </head>
 
 <body class="mat-typography">

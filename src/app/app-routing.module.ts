@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { InitialLoadingDataResolver, PublicDataResolver } from './shared/resolvers';
 import { AuthGuard } from './shared/guard';
+import { SelectivePreloadingStrategy } from './shared/services/preloading/selective-preloading-strategy';
 
 import { LayoutComponent } from './layout/default/layout.component';
 import { LoadingAdminDataResolver } from './shared/resolvers/loading-admin-data';
@@ -74,7 +75,8 @@ const routes: Routes = [
 				canActivate:[AuthGuard],
 				component: LayoutComponent,
 				data:{
-					breadcrumb: 'Acceuil'
+					breadcrumb: 'Acceuil',
+					preload: false
 				},
 				resolve:{
 					"initialData":LoadingAdminDataResolver
@@ -158,6 +160,7 @@ const routes: Routes = [
 @NgModule({
 	imports: [
 		RouterModule.forRoot(routes, {
+			preloadingStrategy: SelectivePreloadingStrategy,
     anchorScrolling: 'enabled',
     scrollOffset: [0, 64],
     useHash: false,

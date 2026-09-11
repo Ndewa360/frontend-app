@@ -13,7 +13,8 @@ import { Title, Meta } from '@angular/platform-browser';
 import { Router, ActivatedRoute, NavigationCancel, NavigationEnd, NavigationError } from '@angular/router';
 import { SettingsService } from 'src/@youpez';
 import { TutorialsService } from './shared/services/tutorials/tutorials.service';
-import * as moment from 'moment';
+import * as dayjs from 'dayjs';
+import 'dayjs/locale/fr';
 import { takeUntil, debounceTime, filter, catchError } from 'rxjs/operators';
 import { SeoService } from './shared/services/seo/seo.service';
 import { DeviceDetectionService } from './shared/services/device-detection.service';
@@ -93,8 +94,8 @@ export class AppComponent implements OnInit, OnDestroy {
     // Front office detection
     this.initializeFrontOfficeDetection();
 
-    // Moment.js
-    try { moment.locale(LOCAL_LANGUAGE.FR.toString()); } catch {}
+    // Day.js — locale française
+    try { dayjs.locale(LOCAL_LANGUAGE.FR.toString()); } catch {}
 
     // Fragments URL
     this.activatedRoute.fragment.pipe(

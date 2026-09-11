@@ -3,7 +3,7 @@ export const environment = {
   apiUrl: 'http://192.168.1.5:3001',
   url: 'http://192.168.1.5:4200',
   production: false,
-  stripePublicKey: 'pk_test_51RjAHg4JUiFvn520cM9NGTm5AGVYS2LkhY8YwZIqhWN3mPLP6rHG6uMdpwUt88cc87Ba3eKbPfVZEldyyobx9LBo00lRhoHxee',
+  stripePublicKey: (window as any)?.env?.STRIPE_PUBLIC_KEY || '',
   version: '2.0.0',
   
   // Configuration réseau mobile
