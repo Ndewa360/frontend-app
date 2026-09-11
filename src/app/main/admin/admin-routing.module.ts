@@ -5,19 +5,8 @@ import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from '../../shared/guard/auth-guard';
 import { AdminGuard } from './guards/admin.guard';
 
-// Components
+// Layout
 import { AdminLayoutComponent } from './components/admin-layout/admin-layout.component';
-import { AdminDashboardComponent } from './pages/dashboard/admin-dashboard.component';
-import { AdminUsersComponent } from './pages/users/admin-users.component';
-import { AdminRolesComponent } from './pages/roles/admin-roles.component';
-import { AdminGeographyComponent } from './pages/geography/admin-geography.component';
-import { AdminPaymentsComponent } from './pages/payments/admin-payments.component';
-import { AdminSettingsComponent } from './pages/settings/admin-settings.component';
-import { UserDetailsComponent } from './pages/user-details/user-details.component';
-import { AgentManagementComponent } from './pages/agent-management/agent-management.component';
-import { AdminSubscriptionsComponent } from './pages/subscriptions/admin-subscriptions.component';
-import { PlatformFinanceComponent } from './pages/platform-finance/platform-finance.component';
-import { AdminBreachComponent } from './pages/breach/admin-breach.component';
 
 const routes: Routes = [
   {
@@ -27,7 +16,7 @@ const routes: Routes = [
     children: [      
       {
         path: 'dashboard',
-        component: AdminDashboardComponent,
+        loadChildren: () => import('./pages/dashboard/admin-dashboard.module').then(m => m.AdminDashboardModule),
         data: {
           title: 'ADMIN.PAGE_TITLES.DASHBOARD',
           breadcrumb: 'ADMIN.BREADCRUMBS.DASHBOARD'
@@ -35,7 +24,7 @@ const routes: Routes = [
       },
       {
         path: 'users',
-        component: AdminUsersComponent,
+        loadChildren: () => import('./pages/users/admin-users.module').then(m => m.AdminUsersModule),
         data: {
           title: 'ADMIN.PAGE_TITLES.USERS',
           breadcrumb: 'ADMIN.BREADCRUMBS.USERS'
@@ -43,7 +32,7 @@ const routes: Routes = [
       },
       {
         path: 'users/:id',
-        component: UserDetailsComponent,
+        loadChildren: () => import('./pages/user-details/admin-user-details.module').then(m => m.AdminUserDetailsModule),
         data: {
           title: 'ADMIN.PAGE_TITLES.USER_DETAILS',
           breadcrumb: 'ADMIN.BREADCRUMBS.USER_DETAILS'
@@ -51,7 +40,7 @@ const routes: Routes = [
       },
       {
         path: 'roles',
-        component: AdminRolesComponent,
+        loadChildren: () => import('./pages/roles/admin-roles.module').then(m => m.AdminRolesModule),
         data: {
           title: 'ADMIN.PAGE_TITLES.ROLES',
           breadcrumb: 'ADMIN.BREADCRUMBS.ROLES'
@@ -59,7 +48,7 @@ const routes: Routes = [
       },
       {
         path: 'geography',
-        component: AdminGeographyComponent,
+        loadChildren: () => import('./pages/geography/admin-geography.module').then(m => m.AdminGeographyModule),
         data: {
           title: 'ADMIN.PAGE_TITLES.GEOGRAPHY',
           breadcrumb: 'ADMIN.BREADCRUMBS.GEOGRAPHY'
@@ -67,7 +56,7 @@ const routes: Routes = [
       },
       {
         path: 'payments',
-        component: AdminPaymentsComponent,
+        loadChildren: () => import('./pages/payments/admin-payments.module').then(m => m.AdminPaymentsModule),
         data: {
           title: 'ADMIN.PAGE_TITLES.PAYMENTS',
           breadcrumb: 'ADMIN.BREADCRUMBS.PAYMENTS'
@@ -75,7 +64,7 @@ const routes: Routes = [
       },
       {
         path: 'settings',
-        component: AdminSettingsComponent,
+        loadChildren: () => import('./pages/settings/admin-settings.module').then(m => m.AdminSettingsModule),
         data: {
           title: 'ADMIN.PAGE_TITLES.SETTINGS',
           breadcrumb: 'ADMIN.BREADCRUMBS.SETTINGS'
@@ -83,7 +72,7 @@ const routes: Routes = [
       },
       {
         path: 'agents',
-        component: AgentManagementComponent,
+        loadChildren: () => import('./pages/agent-management/admin-agent-management.module').then(m => m.AdminAgentManagementModule),
         data: {
           title: 'ADMIN.PAGE_TITLES.AGENTS',
           breadcrumb: 'ADMIN.BREADCRUMBS.AGENTS'
@@ -91,17 +80,17 @@ const routes: Routes = [
       },
       {
         path: 'subscriptions',
-        component: AdminSubscriptionsComponent,
+        loadChildren: () => import('./pages/subscriptions/admin-subscriptions.module').then(m => m.AdminSubscriptionsModule),
         data: { title: 'ADMIN.PAGE_TITLES.SUBSCRIPTIONS', breadcrumb: 'ADMIN.BREADCRUMBS.SUBSCRIPTIONS' }
       },
       {
         path: 'platform-finance',
-        component: PlatformFinanceComponent,
+        loadChildren: () => import('./pages/platform-finance/admin-platform-finance.module').then(m => m.AdminPlatformFinanceModule),
         data: { title: 'Super Wallet Plateforme', breadcrumb: 'Wallet Plateforme' }
       },
       {
         path: 'breach',
-        component: AdminBreachComponent,
+        loadChildren: () => import('./pages/breach/admin-breach.module').then(m => m.AdminBreachModule),
         data: { title: 'Violations de données', breadcrumb: 'Violations de données' }
       },
       {

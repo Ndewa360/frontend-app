@@ -1,35 +1,11 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatDialogModule } from '@angular/material/dialog';
 import { NgxsModule } from '@ngxs/store';
 import { SharedModule } from '../../shared/shared.module';
 
-// ── Pages ────────────────────────────────────────────────────────────────────
+// ── Layout ───────────────────────────────────────────────────────────────────
 import { AdminLayoutComponent } from './components/admin-layout/admin-layout.component';
-import { AdminDashboardComponent } from './pages/dashboard/admin-dashboard.component';
-import { AdminUsersComponent } from './pages/users/admin-users.component';
-import { UserDetailsComponent } from './pages/user-details/user-details.component';
-import { AdminRolesComponent } from './pages/roles/admin-roles.component';
-import { AdminGeographyComponent } from './pages/geography/admin-geography.component';
-import { AdminPaymentsComponent } from './pages/payments/admin-payments.component';
-import { AdminSettingsComponent } from './pages/settings/admin-settings.component';
-import { AgentManagementComponent } from './pages/agent-management/agent-management.component';
-import { AdminSubscriptionsComponent } from './pages/subscriptions/admin-subscriptions.component';
-import { PlatformFinanceComponent } from './pages/platform-finance/platform-finance.component';
-import { AdminBreachComponent } from './pages/breach/admin-breach.component';
-import { PfPieChartComponent } from './pages/platform-finance/components/pie-chart/pie-chart.component';
-import { PfPieTooltipComponent } from './pages/platform-finance/components/pie-tooltip/pie-tooltip.component';
-
-// ── Modals / Components ───────────────────────────────────────────────────────
-import { CountrySelectionModalComponent } from './components/country-selection-modal/country-selection-modal.component';
-import { CountryDeleteModalComponent } from './components/country-delete-modal/country-delete-modal.component';
-import { CountryViewModalComponent } from './components/country-view-modal/country-view-modal.component';
-import { CountryEditModalComponent } from './components/country-edit-modal/country-edit-modal.component';
-import { CitySelectionModalComponent } from './components/city-selection-modal/city-selection-modal.component';
-import { CityDeleteModalComponent } from './components/city-delete-modal/city-delete-modal.component';
-import { SubscriptionDetailsModalComponent } from './components/subscription-details-modal/subscription-details-modal.component';
 
 // ── NGXS States ───────────────────────────────────────────────────────────────
 import { AdminUsersState } from './store/users/admin-users.state';
@@ -61,34 +37,12 @@ import { AdminRoutingModule } from './admin-routing.module';
 @NgModule({
   declarations: [
     AdminLayoutComponent,
-    AdminDashboardComponent,
-    AdminUsersComponent,
-    UserDetailsComponent,
-    AdminRolesComponent,
-    AdminGeographyComponent,
-    AdminPaymentsComponent,
-    AdminSettingsComponent,
-    AgentManagementComponent,
-    AdminSubscriptionsComponent,
-    PlatformFinanceComponent,
-    AdminBreachComponent,
-    PfPieTooltipComponent,
-    PfPieChartComponent,
-    CountrySelectionModalComponent,
-    CountryDeleteModalComponent,
-    CountryEditModalComponent,
-    CitySelectionModalComponent,
-    CityDeleteModalComponent,
-    SubscriptionDetailsModalComponent,
   ],
   imports: [
     CommonModule,
     RouterModule,
-    FormsModule,
-    ReactiveFormsModule,
     SharedModule,
     AdminRoutingModule,
-    MatDialogModule,
     NgxsModule.forFeature([
       AdminUsersState,
       AdminRolesState,

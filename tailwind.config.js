@@ -67,9 +67,7 @@ const themes = {
 const config = {
     darkMode   : 'class',
     content    : [
-        './src/**/*.{html,css,scss,ts}',
-        "./node_modules/tw-elements/dist/js/**/*.js",
-        "./node_modules/flowbite/**/*.js"
+        './src/**/*.{html,css,scss,ts}'
     ],
     important  : true,
     theme      : {
@@ -315,8 +313,7 @@ const config = {
 
         // Other third party and/or custom plugins
         require('@tailwindcss/typography')({modifiers: ['sm', 'lg']}),
-        require('@tailwindcss/line-clamp'),
-        require('flowbite/plugin')
+        require('@tailwindcss/line-clamp')
         // require("tw-elements/dist/plugin.cjs")
     ]
 };

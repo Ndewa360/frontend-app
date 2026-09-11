@@ -2,8 +2,24 @@
 
 > **Document maître** regroupant l'analyse exhaustive du frontend Angular, le plan d'optimisation et la stratégie microfrontend.
 >
-> Version : 1.0 | Date : 2026 | Statut : Référence
+> Version : 1.1 | Date : 2026 | Statut : Référence
 > Jumeau backend : [`ANALYSE_COMPLETE_BACKEND.md`](ANALYSE_COMPLETE_BACKEND.md)
+
+---
+
+## Progression de la migration (mouvement 2026)
+
+Statut : **migration exécutée et vérifiée (build production ✅, design doré `#BB890B` préservé)**.
+
+| # | Action | Statut | Impact mesuré |
+|---|--------|--------|---------------|
+| 1 | Tailwind statique `assets/tailwind/tailwind.scss` supprimé (classes dynamiques = littérales complètes, JIT les régénère) | ✅ | `styles.css` 3,37 Mo → 1,46 Mo (−1,9 Mo) |
+| 2 | Admin lazy par page : 11 modules + `AdminSharedModule` (modals), scope identique à l'ancien parent | ✅ | Chunk admin commun ~135 kB (routing+states+services), pages chargées à la demande |
+| 3 | Libs mortes retirées : `flowbite` (JS 132 kB + plugin), `tw-elements`, `shepherd.js` (CSS), doublon `swiper-bundle.min.css` ; gardées `driver.js` + `ag-grid` (utilisées) | ✅ | `scripts.js` disparu du bundle |
+| — | OnPush / Standalone (240 composants) | ⏸️ différé | Casse les rendus en bloc → garder le visuel (décision utilisateur) |
+| — | Microfrontend Module Federation | ⏸️ différé | Route-split en place (admin lazy) = étape C recommandée pour équipe ≤4 devs |
+
+Autres changements antérieurs tracés : sécurité (clés Stripe/TinyMCE → `window.env`), `moment → dayjs`, budgets réalistes, `vendorChunk:true`, préchargement stratégique, suppression 32 `.md` de debug + `core/`, fix `CountryState.countrys`, nettoyage `index.html`.
 
 ---
 

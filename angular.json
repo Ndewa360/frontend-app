@@ -45,7 +45,6 @@
             "styles": [
               "src/@youpez/styles/scss/theme/app-custom-theme.scss",
               "driver.js/dist/driver.css",
-              "node_modules/shepherd.js/dist/css/shepherd.css",
               "src/styles.scss",
               {
                 "input": "src/@youpez/styles/scss/theme/app.carbon.light.scss",
@@ -65,15 +64,10 @@
               "src/@youpez/styles/scss/theme/app.scss",
               "node_modules/ngx-toastr/toastr.css",
               "src/app/shared/styles/app.themes.scss",
-              "src/assets/tailwind/tailwind.scss",
               "src/app/main/admin/styles/admin-design-system.scss",
-              "node_modules/@photo-sphere-viewer/core/index.css",
-              "node_modules/swiper/swiper-bundle.min.css"
-              
+              "node_modules/@photo-sphere-viewer/core/index.css"
             ],
-            "scripts": [
-              "node_modules/flowbite/dist/flowbite.min.js"
-            ],
+            "scripts": [],
             "vendorChunk": true,
             "extractLicenses": false,
             "buildOptimizer": false,
